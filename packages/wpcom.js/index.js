@@ -145,6 +145,10 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   var endpoint = url + path + '?pretty=true';
   debug('request to `%s`', endpoint);
 
+  if (!this.token) {
+    debug('WARNING: token is not defined');
+  }
+
   req({ url: endpoint, headers: this.headers }, function (err, res, body) {
     if (err) return fn(err);
 
