@@ -1,0 +1,15 @@
+
+{
+  "name": "wp-connect",
+  "description": "Wordpress REST API module for nodejs",
+  "version": "0.0.1",
+  "author": {
+    "name": "Damian Suarez",
+    "email": "rdsuarez@gmail.com"
+  },
+  "main": "./index.js",
+  "dependencies": {
+    "debug": "*",
+    "request": "2.33.0"
+  }
+}
