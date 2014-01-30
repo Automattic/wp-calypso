@@ -12,7 +12,7 @@ var debug = require('debug')('wp-connect');
  * Default options
  */
 
-var def = {
+var default_opts = {
   url: {
     api_rest_v1: "https://public-api.wordpress.com/rest/v1"
   }
@@ -22,7 +22,7 @@ var def = {
  * Globals
  */
 
-var url = def.url.api_rest_v1;
+var api_url = default_opts.url.api_rest_v1;
 
 /**
  * Wordpress connect class
@@ -122,10 +122,12 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
     opts = opts || {};
   }
 
-  var def = ends[type];
+  // endpoint config
+  var endpoint = ends[type];
 
   // build path
-  var path = def.path;
+  var path = endpoint.path;
+
   if (vars) {
     for (var k in vars) {
       var rg = new RegExp("%" + k + "%");
@@ -141,15 +143,15 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   qrs = qs.stringify(qrs);
   debug('qrs: `%s`', qrs);
 
-  // build endpoint
-  var endpoint = url + path + '?pretty=true';
-  debug('request to `%s`', endpoint);
+  // build endpoint url
+  var url = api_url + path + '?pretty=true';
+  debug('request to `%s`', url);
 
   if (!this.token) {
     debug('WARNING: token is not defined');
   }
 
-  req({ url: endpoint, headers: this.headers }, function (err, res, body) {
+  req({ url: url, headers: this.headers }, function (err, res, body) {
     if (err) return fn(err);
 
     var data = parse(body);
