@@ -155,7 +155,13 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   req({ url: url, headers: this.headers }, function (err, res, body) {
     if (err) return fn(err);
 
-    var data = parse(body);
+    var data;
+    try {
+      data = JSON.parse(body);
+    } catch(e) {
+      return fn(e);
+    }
+
     if (data.error) return fn(data);
 
     if ((/SyntaxError/).test(String(data))) {
@@ -172,15 +178,3 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
  */
 
 module.exports = WPCONN;
-
-/**
- * Try to parse the string
- */
-
-function parse(str){
-  try {
-    return JSON.parse(str);
-  } catch(e) {
-    return e;
-  }
-}
