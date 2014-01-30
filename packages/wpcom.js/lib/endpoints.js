@@ -1,8 +1,9 @@
 
 /**
- * Default endpoint options
+ * Module dependencies
  */
 
+var merge = require('merge');
 var debug = require('debug')('wp-connect:endpoint');
 
 /**
@@ -29,7 +30,12 @@ var endpoints = {
     "type": "GET",
     "path": "/sites/%site%/posts",
     "options": {
-      
+      "number": 20,
+      "offset": 0,
+      "page": 0,
+      "order": "DESC",
+      "order_by": "date",
+      "status": "publish"
     }
   },
 
@@ -64,6 +70,10 @@ function endpoint(type){
   if (!end) {
     return new Error(type + ' endpoint is not defined');
   }
+
+  // re-build endpoint default options
+  end.options = end.options || {};
+  merge(end.options, endpoint_options);
 
   debug('endpoint found');
   return end;
