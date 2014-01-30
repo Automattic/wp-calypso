@@ -6,7 +6,7 @@
 var req = require('request');
 var qs = require('querystring');
 var end = require('./lib/endpoints.js');
-var merge = require('merge');
+var merge = require('extend');
 var debug = require('debug')('wp-connect');
 
 /**
@@ -143,9 +143,9 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   debug('path: `%s`', path);
 
   // build query string
-  var _opts = merge(true, endpoint.options);
-  opts = merge(_opts, opts);
-  var qrs = qs.stringify(opts);
+  var qrs = {};
+  merge(qrs, endpoint.options, opts);
+  qrs = qs.stringify(qrs);
   debug('qrs: `%s`', qrs);
 
   // build endpoint url

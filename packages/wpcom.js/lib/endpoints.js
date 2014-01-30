@@ -3,7 +3,7 @@
  * Module dependencies
  */
 
-var merge = require('merge');
+var merge = require('extend');
 var debug = require('debug')('wp-connect:endpoint');
 
 /**

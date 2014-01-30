@@ -9,7 +9,7 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "merge": "1.1.2",
+    "extend": "1.2.1",
     "debug": "*",
     "request": "2.33.0"
   }
