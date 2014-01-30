@@ -5,7 +5,8 @@
 
 var req = require('request');
 var qs = require('querystring');
-var ends = require('./lib/endpoints.js');
+var end = require('./lib/endpoints.js');
+var merge = require('merge');
 var debug = require('debug')('wp-connect');
 
 /**
@@ -115,6 +116,11 @@ WPCONN.prototype.post = function (pid, rid, opts, fn){
 WPCONN.prototype.req = function(type, vars, opts, fn){
   debug('type: `%s`', type);
 
+  if (!this.token) {
+    debug('WARNING: token is not defined');
+  }
+
+  // options object - callback function
   if ('function' == typeof opts) {
     fn = opts;
     opts = {};
@@ -122,8 +128,8 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
     opts = opts || {};
   }
 
-  // endpoint config
-  var endpoint = ends[type];
+  // endpoint config object
+  var endpoint = end(type);
 
   // build path
   var path = endpoint.path;
@@ -137,19 +143,14 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   debug('path: `%s`', path);
 
   // build query string
-  var qrs = {
-    pretty: opts.pretty === false ? 'false' : 'true'
-  };
-  qrs = qs.stringify(qrs);
+  var _opts = merge(true, endpoint.options);
+  opts = merge(_opts, opts);
+  var qrs = qs.stringify(opts);
   debug('qrs: `%s`', qrs);
 
   // build endpoint url
-  var url = api_url + path + '?pretty=true';
+  var url = api_url + path + '?' + qrs;
   debug('request to `%s`', url);
-
-  if (!this.token) {
-    debug('WARNING: token is not defined');
-  }
 
   req({ url: url, headers: this.headers }, function (err, res, body) {
     if (err) return fn(err);
