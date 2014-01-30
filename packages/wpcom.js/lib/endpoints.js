@@ -1,6 +1,22 @@
 
 /**
- * Endpoints object
+ * Default endpoint options
+ */
+
+var debug = require('debug')('wp-connect:endpoint');
+
+/**
+ * Default endpoint option
+ */
+
+var endpoint_options = {
+  "content": "default",
+  "http_envelope": false,
+  "pretty": false
+};
+
+/**
+ * endpoints object
  */
 
 var endpoints = {
@@ -8,10 +24,15 @@ var endpoints = {
     "type": "GET",
     "path": "/me"
   },
+
   "posts": {
     "type": "GET",
-    "path": "/sites/%site%/posts"
+    "path": "/sites/%site%/posts",
+    "options": {
+      
+    }
   },
+
   "post": {
     "type": "GET",
     "path": "/sites/%site%/posts/%post_ID%"
@@ -22,4 +43,28 @@ var endpoints = {
  * Expose module
  */
 
-module.exports = endpoints;
+module.exports = endpoint;
+
+/**
+ * Return the endpoint object given the endpoint type
+ *
+ * @param {String} type
+ * @return {Object}
+ * @api public
+ */
+
+function endpoint(type){
+  if (!type) {
+    return new Error('`type` must be defined');
+  }
+
+  debug('getting endpoint for `%s`', type);
+  var end = endpoints[type];
+
+  if (!end) {
+    return new Error(type + ' endpoint is not defined');
+  }
+
+  debug('endpoint found');
+  return end;
+}
