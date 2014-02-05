@@ -73,6 +73,19 @@ WPCONN.prototype.me = function (opts, fn){
 };
 
 /**
+ * Get wordpress site info
+ *
+ * @param {String|Number} rid resource id
+ * @param {Object} opts
+ * @param {Function} fn
+ * @api public
+ */
+
+WPCONN.prototype.site = function (rid, opts, fn){
+  this.req('site', { site: rid }, opts, fn);
+};
+
+/**
  * Get wordpress posts
  *
  * @param {String} rid resource id
