@@ -26,6 +26,11 @@ var endpoints = {
     "path": "/me"
   },
 
+  "site": {
+    "type": "GET",
+    "path": "/sites/%site%"
+  },
+
   "posts": {
     "type": "GET",
     "path": "/sites/%site%/posts",
