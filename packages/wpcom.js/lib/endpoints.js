@@ -11,7 +11,6 @@ var debug = require('debug')('wp-connect:endpoint');
  */
 
 var endpoint_options = {
-  "content": "default",
   "http_envelope": false,
   "pretty": false
 };
