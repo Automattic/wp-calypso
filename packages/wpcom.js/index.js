@@ -5,7 +5,7 @@
 
 var req = require('request');
 var qs = require('querystring');
-var end = require('./lib/endpoints.js');
+var ends = require('./lib/endpoints.js');
 var merge = require('extend');
 var debug = require('debug')('wp-connect');
 
@@ -61,7 +61,7 @@ WPCONN.prototype.setToken = function(token){
 };
 
 /**
- * User profiles
+ * User profile
  *
  * @param {Object} opts (optional)
  * @param {Function} fn
@@ -142,27 +142,27 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   }
 
   // endpoint config object
-  var endpoint = end(type);
+  var end = ends(type);
 
-  // build path
-  var path = endpoint.path;
+  // build endpoint url
+  var endpoint = end.path;
 
   if (vars) {
     for (var k in vars) {
       var rg = new RegExp("%" + k + "%");
-      path = path.replace(rg, vars[k]);
+      endpoint = endpoint.replace(rg, vars[k]);
     }
   }
-  debug('path: `%s`', path);
+  debug('endpoint: `%s`', endpoint);
 
   // build query string
   var qrs = {};
-  merge(qrs, endpoint.options, opts);
+  merge(qrs, end.options, opts);
   qrs = qs.stringify(qrs);
   debug('qrs: `%s`', qrs);
 
-  // build endpoint url
-  var url = api_url + path + '?' + qrs;
+  // build endurl
+  var url = api_url + endpoint + '?' + qrs;
   debug('request to `%s`', url);
 
   req({ url: url, headers: this.headers }, function (err, res, body) {
