@@ -46,6 +46,11 @@ var endpoints = {
   "post": {
     "type": "GET",
     "path": "/sites/%site%/posts/%post_ID%"
+  },
+
+  "post_add": {
+    "type": "POST",
+    "path": "/sites/%site%/posts/new"
   }
 };
 
