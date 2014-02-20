@@ -6,6 +6,7 @@
 var req = require('request');
 var qs = require('querystring');
 var ends = require('./lib/endpoints.js');
+var Action = require('./lib/action');
 var merge = require('extend');
 var debug = require('debug')('wp-connect');
 
@@ -35,6 +36,9 @@ var api_url = default_opts.url.api_rest_v1;
 function WPCONN(options){
   this.options = options = {};
   this.headers = {};
+
+  // post methods
+  this.post = new Action('post', {}, this);
 }
 
 /**
@@ -108,19 +112,11 @@ WPCONN.prototype.posts = function (rid, opts, fn){
  * @api public
  */
 
-WPCONN.prototype.post = function (pid, rid, opts, fn){
-  var set = {
-    site: rid,
-    post_ID: pid
-  };
-
-  this.req('post', set, opts, fn);
-};
-
 /**
  * Request to WordPress REST API
  * 
  * @param {String} type
+ * @param {Object} vars to build endpoint
  * @param {Object} options
  * @param {Function} fn
  * @api private
@@ -140,6 +136,11 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   } else {
     opts = opts || {};
   }
+
+  // method
+  var method = (opts.method || 'get').toUpperCase();
+  delete opts.method;
+  debug('method: `%s`', method);
 
   // endpoint config object
   var end = ends(type);
@@ -165,7 +166,14 @@ WPCONN.prototype.req = function(type, vars, opts, fn){
   var url = api_url + endpoint + '?' + qrs;
   debug('request to `%s`', url);
 
-  req({ url: url, headers: this.headers }, function (err, res, body) {
+  var params = {
+    url: url,
+    method: method,
+    headers: this.headers,
+    form: opts.data
+  };
+
+  req(params, function (err, res, body) {
     if (err) return fn(err);
 
     var data;
