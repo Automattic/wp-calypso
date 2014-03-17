@@ -19,7 +19,7 @@ function WPCONN(options){
   this.headers = {};
 
   // post methods
-  this.post = new Action('post', {}, this);
+  this.post = new Action('post', this);
 }
 
 /**
