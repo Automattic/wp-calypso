@@ -84,14 +84,15 @@ function Req(type, vars, opts, fn){
   var url = api_url + endpoint + '?' + qrs;
   debug('request to `%s`', url);
 
-  console.log('-> opts.data -> ', opts.data);
-
   var params = {
     url: url,
     method: method,
-    headers: headers,
-    form: opts.data
+    headers: headers
   };
+
+  if (opts.data) {
+    params.form = opts.data;
+  }
 
   request(params, function (err, res, body) {
     if (err) return fn(err);
