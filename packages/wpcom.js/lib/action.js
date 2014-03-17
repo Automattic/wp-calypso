@@ -11,13 +11,11 @@ var debug = require('debug')('wp-connect:action');
  * Action methods
  *
  * @param {String} type
- * @param {Object} options
  * @param {WPCONN} wpconn
  * @api public
  */
 
-function Action(type, options, wpconn){
-  this.options = options = {};
+function Action(type, wpconn){
   this.wpconn = wpconn;
 }
 
