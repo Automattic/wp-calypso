@@ -103,16 +103,6 @@ WPCONN.prototype.posts = function (rid, opts, fn){
 };
 
 /**
- * Get WordPress post
- *
- * @param {Number} pid post id
- * @param {String} rid resource id
- * @param {Object} opts (optional)
- * @param {Function} fn
- * @api public
- */
-
-/**
  * Request to WordPress REST API
  * 
  * @param {String} type
