@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var req = require('request');
+var req = require('./req');
 var qs = require('querystring');
 var debug = require('debug')('wp-connect:action');
 
@@ -34,7 +34,8 @@ Action.prototype.get = function(pid, rid, opts, fn){
     post_ID: pid
   };
 
-  this.wpconn.req('post', set, opts, fn);
+  opts.token = opts.token || this.wpconn.token;
+  req('post', set, opts, fn);
 };
 
 /**
@@ -48,7 +49,10 @@ Action.prototype.get = function(pid, rid, opts, fn){
  */
 
 Action.prototype.add = function(data, rid, fn){
-  this.wpconn.req('post_add', { site: rid }, { method: 'post', data: data }, fn);
+  var opts = { method: 'post', data: data };
+  opts.token = opts.token || this.wpconn.token;
+
+  req('post_add', { site: rid }, opts, fn);
 };
 
 /**
