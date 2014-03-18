@@ -19,6 +19,37 @@ function Site(wpconn){
 }
 
 /**
+ * Set site identifier
+ *
+ * @api public
+ */
+
+Site.prototype.setId = function(id){
+  this.id = id;
+};
+
+/**
+ * require site data
+ *
+ * @api public
+ */
+
+Site.prototype.get = function(opts, fn){
+  if ('function' == typeof opts) {
+    fn = opts;
+    opts = {};
+  }
+
+  opts = opts || {};
+
+  if (!this.id) {
+    return fn(new Error('site id is not defined'));
+  }
+
+  req('site', { site: this.id }, opts, fn);
+};
+
+/**
  * Expose `Site` module
  */
 
