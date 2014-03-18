@@ -9,7 +9,7 @@ var debug = require('debug')('wp-connect:blog');
 /**
  * Create a Blog instance
  *
- * @param {String} token
+ * @param {String} token (optional)
  * @param {WPCONN} wpconn
  * @api public
  */
@@ -18,10 +18,14 @@ function Blog(token, wpconn){
   if (!(this instanceof Blog)) return new Blog(token, wpconn);
 
   if (!token) {
-    return new Error("`token` parameter must be defined");
+    debug('WARN: token is not defined');
   }
 
   this.token = token;
-
-  return this;
 }
+
+/**
+ * Expose `Blog` module
+ */
+
+module.exports = Blog;
