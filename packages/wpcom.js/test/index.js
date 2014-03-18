@@ -38,9 +38,14 @@ describe('wp app', function(){
     (Number(wpapp.client_id)).should.be.a.Number;
   });
 
-  it('`client secret` should be correct lenght', function(){
+  it('`client secret` lenght and type', function(){
     wpapp.client_secret
       .should.be.an.instanceOf(String)
       .and.length(64);
+  });
+
+  it('`token` should be an String', function(){
+    wpapp.token
+      .should.be.an.instanceOf(String);
   });
 });
