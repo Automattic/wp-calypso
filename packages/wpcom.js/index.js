@@ -54,6 +54,7 @@ WPCONN.prototype.setToken = function(token){
  */
 
 WPCONN.prototype.me = function (opts, fn){
+  opts.token = opts.token || this.token;
   req('me', null, opts, fn);
 };
 
