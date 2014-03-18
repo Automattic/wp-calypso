@@ -77,7 +77,7 @@ describe('WPCONN object', function(){
  */
 
 describe('me', function(){
-  it('should get user object', function(done){
+  it('should require user object', function(done){
     var wpconn = getInstance();
 
     wpconn.me(function(err, me){
@@ -92,6 +92,35 @@ describe('me', function(){
         .should.be.an.instanceOf(Number);
 
       done();
+    });
+  });
+});
+
+/**
+ * POSTS LIST
+ */
+
+describe('posts list', function(){
+  it('should request posts list', function(done){
+    var wpconn = getInstance();
+
+    wpconn.me(function(err, me){
+      if (err) throw err;
+
+      // testing user token site id
+      var token_site = me.token_site_id;
+
+      // me object data testing
+      token_site.should.be.an.instanceOf(Number);
+
+      wpconn.posts(token_site, function(err, list){
+        if (err) throw err;
+
+        // list object data testing
+        list.should.be.an.instanceOf(Object);
+
+        done();
+      });
     });
   });
 });
