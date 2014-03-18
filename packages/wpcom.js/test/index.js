@@ -100,7 +100,7 @@ describe('me', function(){
  * POSTS LIST
  */
 
-describe('posts list', function(){
+describe('posts', function(){
   it('should request posts list', function(done){
     var wpconn = getInstance();
 
@@ -125,6 +125,36 @@ describe('posts list', function(){
 
         list.posts
           .should.be.an.instanceOf(Array);
+
+        done();
+      });
+    });
+  });
+});
+
+/**
+ * ADD POST
+ */
+
+describe('post.add', function(){
+  it('should add a new post', function(done){
+    var wpconn = getInstance();
+
+    wpconn.me(function(err, me){
+      if (err) throw err;
+
+      // testing user token site id
+      var token_site = me.token_site_id;
+      var date = Date.parse(new Date().toString());
+
+      var new_post = {
+        "date": date,
+        "title": "A new post blog from testing",
+        "content": "<div>The content</div>"
+      };
+
+      wpconn.post.add(new_post, token_site, function(err, post){
+        if (err) throw err;
 
         done();
       });
