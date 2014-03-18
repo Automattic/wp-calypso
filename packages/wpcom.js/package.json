@@ -12,5 +12,9 @@
     "extend": "1.2.1",
     "debug": "*",
     "request": "2.33.0"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
   }
 }
