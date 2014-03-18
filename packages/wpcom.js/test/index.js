@@ -59,4 +59,15 @@ describe('WPCONN object', function(){
     var wpconn = new WPCONN();
     wpconn.should.be.instanceof(WPCONN);
   });
+
+  it('should set the token', function(){
+    var wpconn = new WPCONN();
+    var token = wpapp.token;
+    wpconn.setToken(token);
+
+    wpconn.token
+      .should.be.ok
+      .and.be.instanceOf(String)
+      .eql(token);
+  });
 });
