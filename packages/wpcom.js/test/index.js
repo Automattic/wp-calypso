@@ -32,13 +32,13 @@ describe('testing data', function(){
     (Number(wpapp.client_id)).should.be.a.Number;
   });
 
-  it('`client secret` lenght and type', function(){
+  it('`client secret` length and type', function(){
     wpapp.client_secret
       .should.be.an.instanceOf(String)
       .and.length(64);
   });
 
-  it('`token` should be an String', function(){
+  it('`token` should be a String', function(){
     wpapp.token
       .should.be.an.instanceOf(String);
   });
