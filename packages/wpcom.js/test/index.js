@@ -49,3 +49,14 @@ describe('wp app', function(){
       .should.be.an.instanceOf(String);
   });
 });
+
+/**
+ * WPCONN object
+ */
+
+describe('WPCONN object', function(){
+  it('should create a WPCONN object', function(){
+    var wpconn = new WPCONN();
+    wpconn.should.be.instanceof(WPCONN);
+  });
+});
