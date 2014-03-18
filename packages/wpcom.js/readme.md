@@ -9,21 +9,36 @@
 ### Create the wp connect object
 
 ```js
-var WPConn = require('wp-oauth');
-var wpconn = new WPConn();
+var WPCONN = require('wp-connect');
+var wpconn = new WPCONN();
 ```
 
 ## API
-
-### WPConn#setResource(id)
-
-### WPConn#setToken(token)
 
 ### WPConn#me()
 
 Request the user profile
 
-### WPConn#
+```js
+var WPCONN = require('wp-connect');
+var wpconn = new WPCONN();
+
+wpconn.me(function(err, user){
+  if (err) return console.log(err);
+  // user object
+});
+```
+
+### WPConn#blog(<token>)
+
+Return a blog instance
+
+```js
+var WPCONN = require('wp-connect');
+var wpconn = new WPCONN();
+
+var blog = wpconn.blog(token);
+```
 
 ## License
 
