@@ -33,8 +33,12 @@ describe('version', function(){
   });
 });
 
-describe('client id', function(){
-  it('should be a string of numbers', function(){
+describe('wp app', function(){
+  it('`client id` should be a string of numbers', function(){
     (Number(wpapp.client_id)).should.be.a.Number;
+  });
+
+  it('`client secret` should be correct lenght', function(){
+    wpapp.client_secret.should.be.length(64);
   });
 });
