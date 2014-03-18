@@ -119,6 +119,13 @@ describe('posts list', function(){
         // list object data testing
         list.should.be.an.instanceOf(Object);
 
+        // `posts list` object data testing
+        list.found
+          .should.be.an.instanceOf(Number);
+
+        list.posts
+          .should.be.an.instanceOf(Array);
+
         done();
       });
     });
