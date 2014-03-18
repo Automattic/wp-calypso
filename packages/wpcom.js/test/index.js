@@ -71,3 +71,24 @@ describe('WPCONN object', function(){
       .eql(token);
   });
 });
+
+/**
+ * ME
+ */
+
+describe('me', function(){
+  it('should get user object', function(done){
+    var wpconn = new WPCONN();
+    var token = wpapp.token;
+    wpconn.setToken(token);
+
+    wpconn.me(function(err, me){
+      if (err) throw err;
+
+      me.should.be.ok
+      .and.an.instanceOf(Object);
+
+      done();
+    });
+  });
+});
