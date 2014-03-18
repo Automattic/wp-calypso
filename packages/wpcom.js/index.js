@@ -4,6 +4,7 @@
  */
 
 var Action = require('./lib/action');
+var Blog = require('./lib/blog');
 var req = require('./lib/req');
 var debug = require('debug')('wp-connect');
 
@@ -21,6 +22,16 @@ function WPCONN(options){
   // post methods
   this.post = new Action('post', this);
 }
+
+/**
+ * Create and return a new Blog instance
+ *
+ * @api public
+ */
+
+WPCONN.prototype.blog = function(token){
+  return new Blog(token, this);
+};
 
 /**
  * Set Access token
