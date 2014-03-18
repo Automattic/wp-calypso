@@ -4,7 +4,6 @@
  */
 
 var req = require('./req');
-var qs = require('querystring');
 var debug = require('debug')('wp-connect:action');
 
 /**
