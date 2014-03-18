@@ -23,17 +23,6 @@ function WPCONN(options){
 }
 
 /**
- * Set Resource ID (blog, etc ...)
- *
- * @param {String} id
- * @api public
- */
-
-WPCONN.prototype.setResource = function(id){
-  this.resource = id;
-};
-
-/**
  * Set Access token
  *
  * @param {String} token
