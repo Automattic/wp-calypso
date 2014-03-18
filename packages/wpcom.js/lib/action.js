@@ -31,7 +31,7 @@ Action.prototype.get = function(pid, rid, opts, fn){
     post_ID: pid
   };
 
-  opts.token = opts.token || this.wpconn.token;
+  opts.token = opts.token || this.wpconn.opts.token;
   req('post', set, opts, fn);
 };
 
@@ -47,7 +47,7 @@ Action.prototype.get = function(pid, rid, opts, fn){
 
 Action.prototype.add = function(data, rid, fn){
   var opts = { method: 'post', data: data };
-  opts.token = opts.token || this.wpconn.token;
+  opts.token = opts.token || this.wpconn.opts.token;
 
   req('post_add', { site: rid }, opts, fn);
 };

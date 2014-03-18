@@ -18,22 +18,16 @@ var pkg = require('../package.json');
 var wpapp = require('./data');
 
 /**
- * WPCONN instance
- */
-
-var wpconn = new WPCONN();
-
-/**
  * Sync tests
  */
 
-describe('version', function(){
-  it('should have x.x.x format', function(){
+describe('package', function(){
+  it('version should have x.x.x format', function(){
     pkg.version.should.match(/\d\.\d\.\d/);
   });
 });
 
-describe('wp app', function(){
+describe('testing data', function(){
   it('`client id` should be a string of numbers', function(){
     (Number(wpapp.client_id)).should.be.a.Number;
   });
@@ -54,7 +48,7 @@ describe('wp app', function(){
  * WPCONN object
  */
 
-describe('WPCONN object', function(){
+describe('WPCONN', function(){
   it('should create a WPCONN object', function(){
     var wpconn = new WPCONN();
     wpconn.should.be.instanceof(WPCONN);
@@ -65,7 +59,7 @@ describe('WPCONN object', function(){
     var token = wpapp.token;
     wpconn.setToken(token);
 
-    wpconn.token
+    wpconn.opts.token
       .should.be.ok
       .and.be.instanceOf(String)
       .eql(token);
@@ -84,8 +78,9 @@ describe('me', function(){
       if (err) throw err;
 
       // testing object
-      me.should.be.ok
-      .and.an.instanceOf(Object);
+      me
+        .should.be.ok
+        .and.an.instanceOf(Object);
 
       // testing user data
       me.ID
@@ -117,7 +112,8 @@ describe('posts', function(){
         if (err) throw err;
 
         // list object data testing
-        list.should.be.an.instanceOf(Object);
+        list
+          .should.be.an.instanceOf(Object);
 
         // `posts list` object data testing
         list.found
@@ -162,7 +158,8 @@ describe('post.add', function(){
           .and.be.eql(token_site);
 
         // crossing data between user and post
-        post.author.ID.should.be.eql(me.ID);
+        post.author.ID
+          .should.be.eql(me.ID);
 
         done();
       });

@@ -4,34 +4,27 @@
  */
 
 var Action = require('./lib/action');
-var Blog = require('./lib/blog');
+var Site = require('./lib/site');
 var req = require('./lib/req');
 var debug = require('debug')('wp-connect');
 
 /**
  * Wordpress connect class
  *
- * @param {Object} options
+ * @param {Object} opts
  * @api public
  */
 
-function WPCONN(options){
-  this.options = options = {};
+function WPCONN(opts){
+  this.opts = opts = {};
   this.headers = {};
+
+  // site stuff
+  this.site = new Site(this);
 
   // post methods
   this.post = new Action('post', this);
 }
-
-/**
- * Create and return a new Blog instance
- *
- * @api public
- */
-
-WPCONN.prototype.blog = function(token){
-  return new Blog(token, this);
-};
 
 /**
  * Set Access token
@@ -41,8 +34,7 @@ WPCONN.prototype.blog = function(token){
  */
 
 WPCONN.prototype.setToken = function(token){
-  this.token = token;
-  this.headers.authorization = "Bearer " + this.token;
+  this.opts.token = token;
 };
 
 /**
@@ -54,7 +46,7 @@ WPCONN.prototype.setToken = function(token){
  */
 
 WPCONN.prototype.me = function (opts, fn){
-  opts.token = opts.token || this.token;
+  opts.token = opts.token || this.opts.token;
   req('me', null, opts, fn);
 };
 
@@ -67,9 +59,9 @@ WPCONN.prototype.me = function (opts, fn){
  * @api public
  */
 
-WPCONN.prototype.site = function (rid, opts, fn){
-  req('site', { site: rid }, opts, fn);
-};
+//WPCONN.prototype.site = function (rid, opts, fn){
+//  req('site', { site: rid }, opts, fn);
+//};
 
 /**
  * Get wordpress posts
@@ -81,7 +73,7 @@ WPCONN.prototype.site = function (rid, opts, fn){
  */
 
 WPCONN.prototype.posts = function (rid, opts, fn){
-  opts.token = opts.token || this.token;
+  opts.token = opts.token || this.opts.token;
   req('posts', { site: rid }, opts, fn);
 };
 
