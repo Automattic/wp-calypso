@@ -39,6 +39,8 @@ describe('wp app', function(){
   });
 
   it('`client secret` should be correct lenght', function(){
-    wpapp.client_secret.should.be.length(64);
+    wpapp.client_secret
+      .should.be.an.instanceOf(String)
+      .and.length(64);
   });
 });
