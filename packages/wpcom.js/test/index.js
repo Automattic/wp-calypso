@@ -156,6 +156,14 @@ describe('post.add', function(){
       wpconn.post.add(new_post, token_site, function(err, post){
         if (err) throw err;
 
+        // testing object post data
+        post.site_ID
+          .should.be.an.instanceOf(Number)
+          .and.be.eql(token_site);
+
+        // crossing data between user and post
+        post.author.ID.should.be.eql(me.ID);
+
         done();
       });
     });
