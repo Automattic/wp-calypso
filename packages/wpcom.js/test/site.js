@@ -35,8 +35,8 @@ describe('site', function(){
 
     it('should be set site identifier', function(){
       var wpconn = new WPCONN();
-      wpconn.site.setId(tdata.public_site);
-      wpconn.site.id
+      wpconn.site.id(tdata.public_site);
+      wpconn.site._id
         .should.be.eql(tdata.public_site);
     });
 
@@ -49,7 +49,7 @@ describe('site', function(){
         var wpconn = new WPCONN();
         var site = wpconn.site;
 
-        site.setId(tdata.public_site);
+        site.id(tdata.public_site);
 
         site.info(function(err, info){
           if (err) throw err;

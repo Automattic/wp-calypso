@@ -81,7 +81,7 @@ describe('testing data', function(){
       wpconn
         .should.be.an.instanceOf(WPCONN);
 
-      wpconn.site.id
+      wpconn.site._id
         .should.be.eql(tdata.public_site);
     });
   });
