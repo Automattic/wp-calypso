@@ -56,4 +56,13 @@ describe('util', function(){
     var wpconn = util.wpconn();
     wpconn.should.be.an.instanceOf(WPCONN);
   });
+
+  it('should create a wpconn instance setting site `id`', function(){
+    var wpconn = util.site();
+    wpconn
+      .should.be.an.instanceOf(WPCONN);
+
+    wpconn.site.id
+      .should.be.eql(tdata.site);
+  });
 });

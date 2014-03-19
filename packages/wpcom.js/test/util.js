@@ -41,7 +41,6 @@ Util.site = function(){
   return wpconn;
 };
 
-
 /**
  * Export module
  */
