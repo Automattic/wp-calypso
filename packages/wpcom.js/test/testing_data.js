@@ -1,5 +1,12 @@
 
 /**
+ * Module dependencies
+ */
+
+var WPCONN = require('../');
+var util = require('./util');
+
+/**
  * Package
  */
 
@@ -41,5 +48,12 @@ describe('testing data', function(){
     tdata.site
       .should.be.ok
       .and.an.instanceOf(String);
+  });
+});
+
+describe('til', function(){
+  it('should create a wpconn instance', function(){
+    var wpconn = util.wpconn();
+    wpconn.should.be.an.instanceOf(WPCONN);
   });
 });
