@@ -3,5 +3,10 @@
   "client_secret": "r1998taeOZlKg0jtgPp2d74uJOdtvZAY8nYRjcgcHu5lDssQQaGxO0GkKqWUngAb",
   "token": "HfvGPqv@^OpxGA33hWKr3V$wmvehuZVN4VpnRn4x32ulD75ANHknSL@Bro)fo2xb",
 
-  "site": "retrofox.wordpress.com"
+  "site": "retrofox.wordpress.com",
+
+  "post_data": {
+    "title": "new testing post",
+    "content": "<div style=\"color: red;\">The content of the new testing post</div>"
+  }
 }
