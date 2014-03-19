@@ -67,6 +67,22 @@ describe('post', function(){
       });
     });
 
+    it('should get the recently added post', function(done){
+
+      var wpconn = util.private_site();
+
+      wpconn.site.post.get(new_post.ID, function(err, post){
+        if (err) throw err;
+
+        // compare posts
+        post
+          .should.be.eql(new_post);
+
+        done();
+      });
+
+    });
+
   });
 
 });
