@@ -17,9 +17,6 @@ var debug = require('debug')('wp-connect:site');
 function Site(wpconn){
   if (!(this instanceof Site)) return new Site(wpconn);
   this.wpconn = wpconn;
-
-  // post methods
-  this.post = new Action('post', this.wpconn);
 }
 
 /**
@@ -45,6 +42,20 @@ Site.prototype.info = function(opts, fn){
   }
 
   req('site', { site: this.id }, opts, fn);
+};
+
+/**
+ * require site posts
+ *
+ * @api public
+ */
+
+Site.prototype.posts = function(opts, fn){
+  if (!this.id) {
+    return fn(new Error('site `id` is not defined'));
+  }
+
+  req('posts', { site: this.id }, opts, fn);
 };
 
 /**
