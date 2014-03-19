@@ -7,16 +7,14 @@ var req = require('./req');
 var debug = require('debug')('wp-connect:action');
 
 /**
- * Action methods
+ * Post methods
  *
- * @param {String} type
  * @param {WPCONN} wpconn
  * @api public
  */
 
-function Action(type, wpconn){
-  this.wpconn = wpconn;
-  this.site = wpconn.site;
+function Post(site){
+  this.site = site;
 }
 
 /**
@@ -26,7 +24,7 @@ function Action(type, wpconn){
  * @api public
  */
 
-Action.prototype.get = function(pid, rid, opts, fn){
+Post.prototype.get = function(pid, rid, opts, fn){
   var set = {
     site: rid,
     post_ID: pid
@@ -46,7 +44,7 @@ Action.prototype.get = function(pid, rid, opts, fn){
  * @api public
  */
 
-Action.prototype.add = function(data, fn){
+Post.prototype.add = function(data, fn){
   var opts = { method: 'post', data: data };
   opts.token = opts.token || this.wpconn.opts.token;
 
@@ -54,7 +52,7 @@ Action.prototype.add = function(data, fn){
 };
 
 /**
- * Expose `Action` module
+ * Expose `Post` module
  */
 
-module.exports = Action;
+module.exports = Post;
