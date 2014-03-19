@@ -51,9 +51,9 @@ function Req(type, vars, opts, fn){
   if ('function' == typeof opts) {
     fn = opts;
     opts = {};
-  } else {
-    opts = opts || {};
   }
+
+   opts = opts || {};
 
   // method
   var method = (opts.method || 'get').toUpperCase();
