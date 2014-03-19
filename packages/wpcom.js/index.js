@@ -28,20 +28,19 @@ function WPCONN(opts){
  * @api public
  */
 
-WPCONN.prototype.setToken = function(token){
-  this.token = token;
+WPCONN.prototype.token = function(token){
+  this.tkn = token;
 };
 
 /**
  * User profile
  *
- * @param {Object} opts (optional)
  * @param {Function} fn
  * @api private
  */
 
 WPCONN.prototype.me = function (fn){
-  req('me', null, { token: this.token }, fn);
+  req('me', null, { token: this.tkn }, fn);
 };
 
 /**
