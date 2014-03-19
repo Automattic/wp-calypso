@@ -20,23 +20,37 @@ function Util(){}
 
 Util.wpconn = function(){
   var wpconn = new WPCONN();
-  var token = tdata.token;
-  wpconn.setToken(token);
+  wpconn.setToken(tdata.token);
 
   return wpconn;
 };
 
 /**
- * Create a new WPCONN instance sitting site id
+ * Create a new WPCONN instance
+ * setting with a public site id
  *
  * @api public
  */
 
-Util.site = function(){
+Util.public_site = function(){
   var wpconn = new WPCONN();
-  var token = tdata.token;
-  wpconn.setToken(token);
-  wpconn.site.setId(tdata.site);
+  wpconn.setToken(tdata.token);
+  wpconn.site.setId(tdata.public_site);
+
+  return wpconn;
+};
+
+/**
+ * Create a new WPCONN instance
+ * setting with a private site id
+ *
+ * @api public
+ */
+
+Util.private_site = function(){
+  var wpconn = new WPCONN();
+  wpconn.setToken(tdata.token);
+  wpconn.site.setId(tdata.private_site);
 
   return wpconn;
 };
