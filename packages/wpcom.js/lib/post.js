@@ -20,18 +20,27 @@ function Post(wpconn){
 /**
  * Add method
  *
- * @param {String} pid
+ * @param {String} id
+ * @param {Object} params (optional)
+ * @param {Function} fn
  * @api public
  */
 
-Post.prototype.get = function(pid, rid, opts, fn){
+Post.prototype.get = function(id, params, fn){
+  // params || fn
+  fn = fn || params;
+  params = 'function' == typeof params ? {} : (params || {});
+
+  // pass token value in params object
+  params.token = this.wpconn.token;
+
+  // set endpoint
   var set = {
-    site: rid,
-    post_ID: pid
+    site: this.wpconn.site.id,
+    post_ID: id
   };
 
-  opts.token = opts.token || this.wpconn.opts.token;
-  req('post', set, opts, fn);
+  req('post', set, params, fn);
 };
 
 /**
@@ -39,19 +48,22 @@ Post.prototype.get = function(pid, rid, opts, fn){
  *
  * @param {Object} data
  * @param {String} rid
- * @param {Object} opts
+ * @param {Object} params
  * @param {Function} fn
  * @api public
  */
 
 Post.prototype.add = function(data, fn){
-  var opts = {
+  // set endpoint
+  var set = { site: this.wpconn.site.id };
+
+  var params = {
     token: this.wpconn.token,
     method: 'post',
     data: data
   };
 
-  req('post_add', { site: this.wpconn.site.id }, opts, fn);
+  req('post_add', set, params, fn);
 };
 
 /**
