@@ -107,7 +107,7 @@ function Req(type, vars, opts, fn){
 
     // create Error var
     if (data.error) {
-      return fn(new Error(data.error));
+      return fn(new Error(data.message));
     }
 
     // TODO: take a look to this one please
