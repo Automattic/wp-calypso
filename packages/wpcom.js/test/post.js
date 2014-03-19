@@ -24,10 +24,16 @@ var wpconn = new WPCONN();
  * Create a `Site` instance
  */
 
-describe('post - sync', function(){
-  it('should be an instance of `Site`', function(){
-    var wpconn = new WPCONN();
-    wpconn.site.post
-      .should.be.an.instanceOf(Post);
+describe('post', function(){
+
+  describe('sync', function(){
+
+    it('should be an instance of `Site`', function(){
+      var wpconn = new WPCONN();
+      wpconn.site.post
+        .should.be.an.instanceOf(Post);
+    });
+
   });
+
 });
