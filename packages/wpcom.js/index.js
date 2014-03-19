@@ -51,20 +51,6 @@ WPCONN.prototype.me = function (opts, fn){
 };
 
 /**
- * Get wordpress posts
- *
- * @param {String} rid resource id
- * @param {Object} opts
- * @param {Function} fn
- * @api public
- */
-
-WPCONN.prototype.posts = function (rid, opts, fn){
-  opts.token = opts.token || this.opts.token;
-  req('posts', { site: rid }, opts, fn);
-};
-
-/**
  * Expose `WPCONN` module
  */
 
