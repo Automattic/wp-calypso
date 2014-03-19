@@ -62,6 +62,7 @@ describe('site - async', function(){
   });
 
   describe('posts', function(){
+
     it('should request posts list', function(done){
       var wpconn = util.site();
 
@@ -78,6 +79,29 @@ describe('site - async', function(){
 
         list.posts
           .should.be.an.instanceOf(Array);
+
+        done();
+      });
+    });
+
+    it('should request only one post', function(done){
+      var wpconn = util.site();
+
+      wpconn.site.posts({ number: 1 }, function(err, list){
+        if (err) throw err;
+
+        // list object data testing
+        list
+          .should.be.an.instanceOf(Object);
+
+        // `posts list` object data testing
+        list.found
+          .should.be.an.instanceOf(Number);
+
+        // get only one post
+        list.posts
+          .should.be.an.instanceOf(Array)
+          .and.length(1);
 
         done();
       });
