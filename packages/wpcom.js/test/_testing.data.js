@@ -50,6 +50,18 @@ describe('testing data', function(){
         .should.be.ok
         .and.an.instanceOf(String);
     });
+
+    it('`post_data` should be ok', function(){
+      tdata.post_data
+        .should.be.ok
+        .and.an.instanceOf(Object);
+
+      tdata.post_data.title
+        .should.be.an.instanceOf(String);
+
+      tdata.post_data.content
+        .should.be.an.instanceOf(String);
+    });
   });
 
   describe('util', function(){
