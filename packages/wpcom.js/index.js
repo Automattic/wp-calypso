@@ -10,12 +10,11 @@ var debug = require('debug')('wp-connect');
 /**
  * Wordpress connect class
  *
- * @param {Object} opts
  * @api public
  */
 
-function WPCONN(opts){
-  this.opts = opts || {};
+function WPCONN(){
+  if (!(this instanceof WPCONN)) return new WPCONN();
 
   // site stuff
   this.site = new Site(this);
