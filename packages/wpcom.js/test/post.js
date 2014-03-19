@@ -42,7 +42,19 @@ describe('post', function(){
       var wpconn = util.private_site();
       wpconn.site.post.add(tdata.post_data, function(err, post){
         if (err) throw err;
-         
+
+        // checking some post date
+        post
+          .should.be.ok
+          .and.be.an.instanceOf(Object);
+
+        post.ID
+          .should.be.an.instanceOf(Number);
+
+        post.site_ID
+          .should.be.an.instanceOf(Number)
+          .and.be.eql(tdata.private_site_id);
+
         done();
       });
     });
