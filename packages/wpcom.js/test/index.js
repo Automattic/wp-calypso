@@ -26,7 +26,7 @@ describe('WPCONN', function(){
     var token = tdata.token;
     wpconn.setToken(token);
 
-    wpconn.opts.token
+    wpconn.token
       .should.be.ok
       .and.be.instanceOf(String)
       .eql(token);
