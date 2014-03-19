@@ -62,13 +62,13 @@ wpconn.site.posts({ number: 10 }, function(err, posts){
 });
 ```
 
-### WPCONN.site.post.info(id, fn);
+### WPCONN.site.post.get(id, fn);
 
 Get post site data
 
 ```js
 // get post info
-wpconn.site.post.info(435, function(err, post){
+wpconn.site.post.get(435, function(err, post){
   // post object data
 });
 ```
