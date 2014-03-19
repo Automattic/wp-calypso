@@ -33,7 +33,7 @@ wpconn.me(function(err, user){
 
 Set site identifier
 
-### WPCONN#site.info(params, fn);
+### WPCONN#site.info(`params`, fn);
 
 Get the site information
 
@@ -51,7 +51,7 @@ wpconn.site.info(function(err, site){
 });
 ```
 
-### WPCONN#site.posts(<params>, fn);
+### WPCONN#site.posts(`params`, fn);
 
 Get the site information
 
@@ -60,8 +60,9 @@ wpconn.site.id('blog.wordpress.com');
 wpconn.site.posts({ number: 10 }, function(err, posts){
   // array posts
 });
+```
 
-### WPCONN.site.post.info(<id>, fn);
+### WPCONN.site.post.info(`id`, fn);
 
 Get post site data
 
