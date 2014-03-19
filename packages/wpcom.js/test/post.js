@@ -36,4 +36,17 @@ describe('post', function(){
 
   });
 
+  describe('async', function(){
+
+    it('should add a new post', function(done){
+      var wpconn = util.private_site();
+      wpconn.site.post.add(tdata.post_data, function(err, post){
+        if (err) throw err;
+         
+        done();
+      });
+    });
+
+  });
+
 });
