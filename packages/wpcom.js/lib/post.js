@@ -13,8 +13,8 @@ var debug = require('debug')('wp-connect:action');
  * @api public
  */
 
-function Post(site){
-  this.site = site;
+function Post(wpconn){
+  this.wpconn = wpconn;
 }
 
 /**
@@ -45,10 +45,13 @@ Post.prototype.get = function(pid, rid, opts, fn){
  */
 
 Post.prototype.add = function(data, fn){
-  var opts = { method: 'post', data: data };
-  opts.token = opts.token || this.wpconn.opts.token;
+  var opts = {
+    token: this.wpconn.opts.token,
+    method: 'post',
+    data: data
+  };
 
-  req('post_add', { site: this.id }, opts, fn);
+  req('post_add', { site: this.wpconn.site.id }, opts, fn);
 };
 
 /**
