@@ -16,6 +16,7 @@ var debug = require('debug')('wp-connect:action');
 
 function Action(type, wpconn){
   this.wpconn = wpconn;
+  this.site = wpconn.site;
 }
 
 /**
@@ -45,11 +46,11 @@ Action.prototype.get = function(pid, rid, opts, fn){
  * @api public
  */
 
-Action.prototype.add = function(data, rid, fn){
+Action.prototype.add = function(data, fn){
   var opts = { method: 'post', data: data };
   opts.token = opts.token || this.wpconn.opts.token;
 
-  req('post_add', { site: rid }, opts, fn);
+  req('post_add', { site: this.id }, opts, fn);
 };
 
 /**

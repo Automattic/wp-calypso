@@ -16,7 +16,7 @@ wpconn.me(function(err, user){
 });
 
 // get site info
-var site = wpconn.site();
+wpconn.site.setId('blog.wordpress.com');
 site.get(function(err, site){
   // site object data
 });
@@ -37,14 +37,11 @@ var wpconn = new WPCONN();
 
 Request the user profile
 
-
-### WPConn#site(opts)
-
-Create a new `Blog` instance.
-
 ```js
 var WPCONN = require('wp-connect');
 var wpconn = new WPCONN();
+
+wpconn.setToken('<token>');
 
 wpconn.me(function(err, user){
   if (err) return console.log(err);
@@ -52,16 +49,7 @@ wpconn.me(function(err, user){
 });
 ```
 
-### WPConn#blog(<token>)
-
-Return a blog instance
-
-```js
-var WPCONN = require('wp-connect');
-var wpconn = new WPCONN();
-
-var blog = wpconn.blog(token);
-```
+### WPConn.site
 
 ## License
 

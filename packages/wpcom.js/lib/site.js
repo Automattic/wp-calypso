@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var Action = require('./action');
 var req = require('./req');
 var debug = require('debug')('wp-connect:site');
 
@@ -16,6 +17,9 @@ var debug = require('debug')('wp-connect:site');
 function Site(wpconn){
   if (!(this instanceof Site)) return new Site(wpconn);
   this.wpconn = wpconn;
+
+  // post methods
+  this.post = new Action('post', this.wpconn);
 }
 
 /**
@@ -25,6 +29,7 @@ function Site(wpconn){
  */
 
 Site.prototype.setId = function(id){
+  debug('set `%s` site id', id);
   this.id = id;
 };
 
@@ -34,7 +39,7 @@ Site.prototype.setId = function(id){
  * @api public
  */
 
-Site.prototype.get = function(opts, fn){
+Site.prototype.info = function(opts, fn){
   if ('function' == typeof opts) {
     fn = opts;
     opts = {};

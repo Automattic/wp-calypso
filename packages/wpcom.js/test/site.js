@@ -42,7 +42,7 @@ describe('site', function(){
 
     site.setId(tdata.site);
 
-    site.get(function(err, data){
+    site.info(function(err, data){
       if (err) throw err;
       done();
     });
