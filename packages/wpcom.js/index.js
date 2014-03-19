@@ -29,7 +29,7 @@ function WPCONN(opts){
  */
 
 WPCONN.prototype.setToken = function(token){
-  this.opts.token = token;
+  this.token = token;
 };
 
 /**
@@ -41,7 +41,7 @@ WPCONN.prototype.setToken = function(token){
  */
 
 WPCONN.prototype.me = function (fn){
-  req('me', null, { token: this.opts.token }, fn);
+  req('me', null, { token: this.token }, fn);
 };
 
 /**
