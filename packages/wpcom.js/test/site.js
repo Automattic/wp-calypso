@@ -6,6 +6,7 @@
 
 var WPCONN = require('../');
 var Site = require('../lib/site');
+var util = require('./util');
 
 /**
  * Testing data
@@ -23,7 +24,7 @@ var wpconn = new WPCONN();
  * Create a `Site` instance
  */
 
-describe('site', function(){
+describe('site - sync', function(){
   it('should be an instance of `Site`', function(){
     var wpconn = new WPCONN();
     wpconn.site.should.be.an.instanceOf(Site);
@@ -35,16 +36,44 @@ describe('site', function(){
     wpconn.site.id
       .should.be.eql(tdata.site);
   });
+});
 
-  it('should require site data', function(done){
-    var wpconn = new WPCONN();
-    var site = wpconn.site;
+describe('site - async', function(){
 
-    site.setId(tdata.site);
+  describe('info', function(){
+    it('should require site data', function(done){
+      var wpconn = new WPCONN();
+      var site = wpconn.site;
 
-    site.info(function(err, data){
-      if (err) throw err;
-      done();
+      site.setId(tdata.site);
+
+      site.info(function(err, data){
+        if (err) throw err;
+        done();
+      });
+    });
+  });
+
+  describe('posts', function(){
+    it('should request posts list', function(done){
+      var wpconn = util.site();
+
+      wpconn.site.posts({}, function(err, list){
+        if (err) throw err;
+
+        // list object data testing
+        list
+          .should.be.an.instanceOf(Object);
+
+        // `posts list` object data testing
+        list.found
+          .should.be.an.instanceOf(Number);
+
+        list.posts
+          .should.be.an.instanceOf(Array);
+
+        done();
+      });
     });
   });
 });
