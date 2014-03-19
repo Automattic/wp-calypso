@@ -37,11 +37,20 @@ describe('post', function(){
 
     before(function(done){
       var wpconn = util.private_site();
-
       wpconn.site.post.add(tdata.post_data, function(err, post){
         if (err) done(err);
 
         new_post = post;
+        done();
+      });
+    });
+
+    it('should get the recently added post', function(done){
+      var wpconn = util.private_site();
+      wpconn.site.post.get(new_post.ID, function(err, post){
+        if (err) throw err;
+
+        post.should.be.eql(new_post);
         done();
       });
     });
@@ -62,21 +71,6 @@ describe('post', function(){
         post.site_ID
           .should.be.an.instanceOf(Number)
           .and.be.eql(tdata.private_site_id);
-
-        done();
-      });
-    });
-
-    it('should get the recently added post', function(done){
-
-      var wpconn = util.private_site();
-
-      wpconn.site.post.get(new_post.ID, function(err, post){
-        if (err) throw err;
-
-        // compare posts
-        post
-          .should.be.eql(new_post);
 
         done();
       });
