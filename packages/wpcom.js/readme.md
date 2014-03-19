@@ -42,12 +42,12 @@ var WPCONN = require('wp-connect');
 var wpconn = new WPCONN();
 
 // set access token
-wpconn.token('<your token>');
+wpconn.token('<your token here>');
 
 // get site info
 wpconn.site.id('blog.wordpress.com');
 wpconn.site.info(function(err, site){
-  // site object data
+  // site data object
 });
 ```
 
@@ -58,7 +58,7 @@ Get the site information
 ```js
 wpconn.site.id('blog.wordpress.com');
 wpconn.site.posts({ number: 10 }, function(err, posts){
-  // array posts
+  // posts array
 });
 ```
 
@@ -69,7 +69,23 @@ Get post site data
 ```js
 // get post info
 wpconn.site.post.get(435, function(err, post){
-  // post object data
+  // post data object
+});
+```
+
+### WPCONN.site.post.add(data, fn);
+
+Add a new post
+
+```js
+// get post info
+var data = {
+  "title": "A new post",
+  "content": "<div>The content of the new post</div>"
+};
+
+wpconn.site.post.add(data, function(err, new_post){
+  // object data of the new post already added
 });
 ```
 
