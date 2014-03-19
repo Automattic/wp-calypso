@@ -28,9 +28,9 @@ function Site(wpconn){
  * @api public
  */
 
-Site.prototype.setId = function(id){
+Site.prototype.id = function(id){
   debug('set `%s` site id', id);
-  this.id = id;
+  this._id = id;
 };
 
 /**
@@ -41,11 +41,11 @@ Site.prototype.setId = function(id){
  */
 
 Site.prototype.info = function(fn){
-  if (!this.id) {
+  if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  req('site', { site: this.id }, fn);
+  req('site', { site: this._id }, fn);
 };
 
 /**
@@ -60,11 +60,11 @@ Site.prototype.posts = function(params, fn){
   fn = fn || params;
   params = 'function' == typeof obj ? {} : (params || {});
 
-  if (!this.id) {
+  if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  req('posts', { site: this.id }, params, fn);
+  req('posts', { site: this._id }, params, fn);
 };
 
 /**
