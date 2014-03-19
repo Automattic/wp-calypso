@@ -31,12 +31,13 @@ Site.prototype.setId = function(id){
 };
 
 /**
- * require site data
+ * Require site data through WP REST API
  *
+ * @param {Function} fn
  * @api public
  */
 
-Site.prototype.info = function(opts, fn){
+Site.prototype.info = function(fn){
   if (!this.id) {
     return fn(new Error('site `id` is not defined'));
   }
