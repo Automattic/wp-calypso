@@ -73,6 +73,12 @@ wpconn.site.post.get(435, function(err, post){
 });
 ```
 
+## Test
+
+```cli
+make
+```
+
 ## License
 
 MIT – Copyright 2014 Automattic
