@@ -27,6 +27,22 @@ Util.wpconn = function(){
 };
 
 /**
+ * Create a new WPCONN instance sitting site id
+ *
+ * @api public
+ */
+
+Util.site = function(){
+  var wpconn = new WPCONN();
+  var token = tdata.token;
+  wpconn.setToken(token);
+  wpconn.site.setId(tdata.site);
+
+  return wpconn;
+};
+
+
+/**
  * Export module
  */
 
