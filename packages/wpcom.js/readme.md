@@ -91,8 +91,31 @@ wpconn.site.post.add(data, function(err, new_post){
 
 ## Test
 
+Create `data.json` file into `test/` folder to can run the tests. You can copy
+or rename the `test/data_example.json` file.
+
+```json
+{
+  "client_id": "<your client_id here>",
+  "client_secret": "<your client_secret here>",
+  "token": "<your token app here>",
+
+  "public_site": "<a public blog here>",
+
+  "private_site": "<a private blog here>",
+  "private_site_id": "<the ID of the private blog>",
+
+  "new_post_data": {
+    "title": "New testing post",
+    "content": "<div style=\"color: red;\">The content of the new testing post</div>"
+  }
+}
+```
+
+Then ...
+
 ```cli
-make
+$ make
 ```
 
 ## License
