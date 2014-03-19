@@ -36,4 +36,10 @@ describe('testing data', function(){
     tdata.token
       .should.be.an.instanceOf(String);
   });
+
+  it('`site` should be defined', function(){
+    tdata.site
+      .should.be.ok
+      .and.an.instanceOf(String);
+  });
 });
