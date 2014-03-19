@@ -55,7 +55,7 @@ function Req(type, vars, opts, fn){
 
    opts = opts || {};
 
-  // method
+  // request method
   var method = (opts.method || 'get').toUpperCase();
   delete opts.method;
   debug('method: `%s`', method);
@@ -90,6 +90,7 @@ function Req(type, vars, opts, fn){
     headers: headers
   };
 
+  // pass data from opts object to form params
   if (opts.data) {
     params.form = opts.data;
   }
