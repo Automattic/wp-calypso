@@ -105,8 +105,12 @@ function Req(type, vars, opts, fn){
       return fn(e);
     }
 
-    if (data.error) return fn(data);
+    // create Error var
+    if (data.error) {
+      return fn(new Error(data.error));
+    }
 
+    // TODO: take a look to this one please
     if ((/SyntaxError/).test(String(data))) {
       return fn(data);
     }
