@@ -19,7 +19,7 @@ function Site(wpconn){
   this.wpconn = wpconn;
 
   // post methods
-  this.post = new Post(this);
+  this.post = new Post(this.wpconn);
 }
 
 /**
