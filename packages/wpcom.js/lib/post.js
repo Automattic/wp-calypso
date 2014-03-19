@@ -32,7 +32,7 @@ Post.prototype.get = function(id, params, fn){
   params = 'function' == typeof params ? {} : (params || {});
 
   // pass token value in params object
-  params.token = this.wpconn.token;
+  params.token = this.wpconn.tkn;
 
   // set endpoint
   var set = {
@@ -58,7 +58,7 @@ Post.prototype.add = function(data, fn){
   var set = { site: this.wpconn.site.id };
 
   var params = {
-    token: this.wpconn.token,
+    token: this.wpconn.tkn,
     method: 'post',
     data: data
   };
