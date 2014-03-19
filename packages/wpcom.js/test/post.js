@@ -18,14 +18,12 @@ var tdata = require('./data');
  * WPCONN instance
  */
 
-var wpconn = new WPCONN();
-
 describe('post', function(){
 
   describe('sync', function(){
 
     it('should be an instance of `Site`', function(){
-      var wpconn = new WPCONN();
+      var wpconn = WPCONN();
       wpconn.site.post
         .should.be.an.instanceOf(Post);
     });
@@ -37,7 +35,7 @@ describe('post', function(){
 
     before(function(done){
       var wpconn = util.private_site();
-      wpconn.site.post.add(tdata.post_data, function(err, post){
+      wpconn.site.post.add(tdata.new_post_data, function(err, post){
         if (err) done(err);
 
         new_post = post;
@@ -60,7 +58,7 @@ describe('post', function(){
     describe('add', function(){
       it('should add a new post', function(done){
         var wpconn = util.private_site();
-        wpconn.site.post.add(tdata.post_data, function(err, post){
+        wpconn.site.post.add(tdata.new_post_data, function(err, post){
           if (err) throw err;
 
           // checking some post date

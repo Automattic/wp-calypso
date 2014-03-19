@@ -57,15 +57,15 @@ describe('testing data', function(){
         .and.an.instanceOf(String);
     });
 
-    it('`post_data` should be ok', function(){
-      tdata.post_data
+    it('`new_post_data` should be ok', function(){
+      tdata.new_post_data
         .should.be.ok
         .and.an.instanceOf(Object);
 
-      tdata.post_data.title
+      tdata.new_post_data.title
         .should.be.an.instanceOf(String);
 
-      tdata.post_data.content
+      tdata.new_post_data.content
         .should.be.an.instanceOf(String);
     });
   });
