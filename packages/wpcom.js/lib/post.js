@@ -46,7 +46,7 @@ Post.prototype.get = function(pid, rid, opts, fn){
 
 Post.prototype.add = function(data, fn){
   var opts = {
-    token: this.wpconn.opts.token,
+    token: this.wpconn.token,
     method: 'post',
     data: data
   };
