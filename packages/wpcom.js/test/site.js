@@ -11,7 +11,7 @@ var Site = require('../lib/site');
  * Testing data
  */
 
-var wpapp = require('./data');
+var tdata = require('./data');
 
 /**
  * WPCONN instance
@@ -31,22 +31,19 @@ describe('site', function(){
 
   it('should be set site identifier', function(){
     var wpconn = new WPCONN();
-    var id = 'koke.me';
-    wpconn.site.setId('koke.me');
-
+    wpconn.site.setId(tdata.site);
     wpconn.site.id
-      .should.be.eql('koke.me');
+      .should.be.eql(tdata.site);
   });
 
   it('should require site data', function(done){
     var wpconn = new WPCONN();
     var site = wpconn.site;
 
-    site.setId('koke.me');
+    site.setId(tdata.site);
 
     site.get(function(err, data){
       if (err) throw err;
-
       done();
     });
   });
