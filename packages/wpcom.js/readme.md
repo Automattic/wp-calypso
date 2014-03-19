@@ -17,8 +17,19 @@ wpconn.me(function(err, user){
 
 // get site info
 wpconn.site.setId('blog.wordpress.com');
-site.get(function(err, site){
+wpconn.site.info(function(err, site){
   // site object data
+});
+
+// get ten posts from site
+wpconn.site.posts({ number: 10 }, function(err, posts){
+  // array posts
+});
+
+// get post info
+wpconn.site.post.setId('34163');
+wpconn.site.post.info(function(err, post){
+  // post object data
 });
 ```
 
