@@ -47,8 +47,15 @@ describe('site - async', function(){
 
       site.setId(tdata.site);
 
-      site.info(function(err, data){
+      site.info(function(err, info){
         if (err) throw err;
+
+        // check site info
+        info.ID
+          .should.be.an.instanceOf(Number);
+
+        info.name
+          .should.be.an.instanceOf(String);
         done();
       });
     });
@@ -58,7 +65,7 @@ describe('site - async', function(){
     it('should request posts list', function(done){
       var wpconn = util.site();
 
-      wpconn.site.posts({}, function(err, list){
+      wpconn.site.posts(function(err, list){
         if (err) throw err;
 
         // list object data testing
