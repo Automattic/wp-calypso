@@ -51,7 +51,7 @@ describe('testing data', function(){
   });
 });
 
-describe('til', function(){
+describe('util', function(){
   it('should create a wpconn instance', function(){
     var wpconn = util.wpconn();
     wpconn.should.be.an.instanceOf(WPCONN);
