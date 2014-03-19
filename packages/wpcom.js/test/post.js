@@ -27,8 +27,6 @@ var wpconn = new WPCONN();
 describe('post - sync', function(){
   it('should be an instance of `Site`', function(){
     var wpconn = new WPCONN();
-    console.log('-> wpconn.site.post -> ', wpconn.site.post);
-
     wpconn.site.post
       .should.be.an.instanceOf(Post);
   });
