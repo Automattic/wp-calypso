@@ -16,8 +16,7 @@ var debug = require('debug')('wp-connect');
  */
 
 function WPCONN(opts){
-  this.opts = opts = {};
-  this.headers = {};
+  this.opts = opts || {};
 
   // site stuff
   this.site = new Site(this);
@@ -45,9 +44,8 @@ WPCONN.prototype.setToken = function(token){
  * @api private
  */
 
-WPCONN.prototype.me = function (opts, fn){
-  opts.token = opts.token || this.opts.token;
-  req('me', null, opts, fn);
+WPCONN.prototype.me = function (fn){
+  req('me', null, { token: this.opts.token }, fn);
 };
 
 /**
