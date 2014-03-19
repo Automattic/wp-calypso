@@ -20,10 +20,6 @@ var tdata = require('./data');
 
 var wpconn = new WPCONN();
 
-/**
- * Create a `Site` instance
- */
-
 describe('post', function(){
 
   describe('sync', function(){
@@ -37,6 +33,18 @@ describe('post', function(){
   });
 
   describe('async', function(){
+    var new_post;
+
+    before(function(done){
+      var wpconn = util.private_site();
+
+      wpconn.site.post.add(tdata.post_data, function(err, post){
+        if (err) done(err);
+
+        new_post = post;
+        done();
+      });
+    });
 
     it('should add a new post', function(done){
       var wpconn = util.private_site();
