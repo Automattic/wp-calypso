@@ -31,7 +31,7 @@ Site.prototype.setId = function(id){
 };
 
 /**
- * Require site data through WP REST API
+ * Require site information through of WP REST API
  *
  * @param {Function} fn
  * @api public
@@ -42,21 +42,26 @@ Site.prototype.info = function(fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  req('site', { site: this.id }, opts, fn);
+  req('site', { site: this.id }, fn);
 };
 
 /**
- * require site posts
+ * Require posts site through of WP REST API
  *
+ * @param {Object} params (optional)
+ * @param {Function} fn
  * @api public
  */
 
-Site.prototype.posts = function(opts, fn){
+Site.prototype.posts = function(params, fn){
+  fn = fn || params;
+  params = 'function' == typeof obj ? {} : (params || {});
+
   if (!this.id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  req('posts', { site: this.id }, opts, fn);
+  req('posts', { site: this.id }, params, fn);
 };
 
 /**
