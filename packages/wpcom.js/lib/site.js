@@ -40,15 +40,8 @@ Site.prototype.setId = function(id){
  */
 
 Site.prototype.info = function(opts, fn){
-  if ('function' == typeof opts) {
-    fn = opts;
-    opts = {};
-  }
-
-  opts = opts || {};
-
   if (!this.id) {
-    return fn(new Error('site id is not defined'));
+    return fn(new Error('site `id` is not defined'));
   }
 
   req('site', { site: this.id }, opts, fn);
