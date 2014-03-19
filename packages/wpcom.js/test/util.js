@@ -19,7 +19,7 @@ function Util(){}
  */
 
 Util.wpconn = function(){
-  var wpconn = new WPCONN();
+  var wpconn = WPCONN();
   wpconn.token(tdata.token);
 
   return wpconn;
@@ -33,7 +33,7 @@ Util.wpconn = function(){
  */
 
 Util.public_site = function(){
-  var wpconn = new WPCONN();
+  var wpconn = WPCONN();
   wpconn.token(tdata.token);
   wpconn.site.id(tdata.public_site);
 
@@ -48,7 +48,7 @@ Util.public_site = function(){
  */
 
 Util.private_site = function(){
-  var wpconn = new WPCONN();
+  var wpconn = WPCONN();
   wpconn.token(tdata.token);
   wpconn.site.id(tdata.private_site);
 

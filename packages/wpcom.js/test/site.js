@@ -15,12 +15,6 @@ var util = require('./util');
 var tdata = require('./data');
 
 /**
- * WPCONN instance
- */
-
-var wpconn = new WPCONN();
-
-/**
  * Create a `Site` instance
  */
 
@@ -29,12 +23,12 @@ describe('site', function(){
   describe('sync', function(){
 
     it('should be an instance of `Site`', function(){
-      var wpconn = new WPCONN();
+      var wpconn = WPCONN();
       wpconn.site.should.be.an.instanceOf(Site);
     });
 
     it('should be set site identifier', function(){
-      var wpconn = new WPCONN();
+      var wpconn = WPCONN();
       wpconn.site.id(tdata.public_site);
       wpconn.site._id
         .should.be.eql(tdata.public_site);
@@ -46,7 +40,7 @@ describe('site', function(){
 
     describe('info', function(){
       it('should require site data', function(done){
-        var wpconn = new WPCONN();
+        var wpconn = WPCONN();
         var site = wpconn.site;
 
         site.id(tdata.public_site);
