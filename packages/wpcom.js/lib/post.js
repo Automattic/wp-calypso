@@ -36,7 +36,7 @@ Post.prototype.get = function(id, params, fn){
 
   // set endpoint
   var set = {
-    site: this.wpconn.site.id,
+    site: this.wpconn.site._id,
     post_ID: id
   };
 
@@ -55,7 +55,7 @@ Post.prototype.get = function(id, params, fn){
 
 Post.prototype.add = function(data, fn){
   // set endpoint
-  var set = { site: this.wpconn.site.id };
+  var set = { site: this.wpconn.site._id };
 
   var params = {
     token: this.wpconn.tkn,
