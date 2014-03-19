@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var Action = require('./lib/action');
 var Site = require('./lib/site');
 var req = require('./lib/req');
 var debug = require('debug')('wp-connect');
@@ -20,9 +19,6 @@ function WPCONN(opts){
 
   // site stuff
   this.site = new Site(this);
-
-  // post methods
-  this.post = new Action('post', this);
 }
 
 /**
