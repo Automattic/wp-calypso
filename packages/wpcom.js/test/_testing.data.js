@@ -45,8 +45,14 @@ describe('testing data', function(){
         .should.be.an.instanceOf(String);
     });
 
-    it('`site` should be defined', function(){
-      tdata.site
+    it('`public_site` should be defined', function(){
+      tdata.public_site
+        .should.be.ok
+        .and.an.instanceOf(String);
+    });
+
+    it('`private_site` should be defined', function(){
+      tdata.private_site
         .should.be.ok
         .and.an.instanceOf(String);
     });
@@ -71,12 +77,12 @@ describe('testing data', function(){
     });
 
     it('should create a wpconn instance setting site `id`', function(){
-      var wpconn = util.site();
+      var wpconn = util.public_site();
       wpconn
         .should.be.an.instanceOf(WPCONN);
 
       wpconn.site.id
-        .should.be.eql(tdata.site);
+        .should.be.eql(tdata.public_site);
     });
   });
 });
