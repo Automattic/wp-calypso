@@ -21,16 +21,11 @@ var wpconn = WPCONN();
 // set token app
 wpconn.token(wpapp.token);
 
-// Path to our public directory
-
-var pub = __dirname + '/public';
-
 // setup middleware
 
 var app = express();
-app.use(express.static(pub));
 
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/');
 app.set('view engine', 'jade');
 
 app.get('/', function(req, res){

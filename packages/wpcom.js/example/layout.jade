@@ -5,21 +5,24 @@ html
     link(rel="stylesheet", href="/stylesheets/style.css")
 
   body
-    h1: a(href=site.URL) !{site.name}
-    p.description !{site.description}
+    .info
+      h1: a(href=site.URL) !{site.name}
+      p.description !{site.description}
 
-    h3 Posts list
-    ul
-      each post in posts.posts
-        li
-          h4 #{post.title}
-          .excerpt !{post.excerpt}
-          .author by <em>!{post.author.nice_name}</em>
-        hr
+    .lastest-posts
+      h3 Posts list
+      ul
+        each post in posts.posts
+          li
+            h4 #{post.title}
+            .excerpt !{post.excerpt}
+            .author by <em>!{post.author.nice_name}</em>
+          hr
 
-    h3 metas
     div.metas
-      each val, name in site.meta.links
-        | &nbsp;
-        a(href=val) #{name}
-        | &nbsp;
+      h3 metas
+      div
+        each val, name in site.meta.links
+          | &nbsp;
+          a(href=val) #{name}
+          | &nbsp;
