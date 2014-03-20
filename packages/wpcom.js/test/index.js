@@ -16,44 +16,45 @@ var util = require('./util');
  */
 
 describe('WPCONN', function(){
-  it('should create a WPCONN object', function(){
-    var wpconn = new WPCONN();
-    wpconn.should.be.instanceof(WPCONN);
-  });
+  describe('sync', function(){
+    it('should create a WPCONN object', function(){
+      var wpconn = new WPCONN();
+      wpconn.should.be.instanceof(WPCONN);
+    });
 
-  it('should set the token', function(){
-    var wpconn = new WPCONN();
-    var token = tdata.token;
-    wpconn.token(token);
+    it('should set the token', function(){
+      var wpconn = new WPCONN();
+      var token = tdata.token;
+      wpconn.token(token);
 
-    wpconn.tkn
-      .should.be.ok
-      .and.be.instanceOf(String)
-      .eql(token);
-  });
-});
-
-/**
- * ME
- */
-
-describe('me', function(){
-  it('should require user object', function(done){
-    var wpconn = util.wpconn();
-
-    wpconn.me(function(err, me){
-      if (err) throw err;
-
-      // testing object
-      me
+      wpconn.tkn
         .should.be.ok
-        .and.an.instanceOf(Object);
+        .and.be.instanceOf(String)
+        .eql(token);
+    });
+  });
 
-      // testing user data
-      me.ID
-        .should.be.an.instanceOf(Number);
+  describe('async', function(){
 
-      done();
+    describe('me', function(){
+      it('should require user object', function(done){
+        var wpconn = util.wpconn();
+
+        wpconn.me(function(err, me){
+          if (err) throw err;
+
+          // testing object
+          me
+            .should.be.ok
+            .and.an.instanceOf(Object);
+
+          // testing user data
+          me.ID
+            .should.be.an.instanceOf(Number);
+
+          done();
+        });
+      });
     });
   });
 });
