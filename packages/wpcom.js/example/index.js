@@ -36,7 +36,7 @@ app.get('/', function(req, res){
   wpconn.site.info(function(err, site){
     if (err) return console.log(err);
 
-    // get lastest post
+    // get lastest posts
     wpconn.site.posts({ number: 10 }, function(err, posts) {
       if (err) return console.log(err);
 
@@ -46,4 +46,4 @@ app.get('/', function(req, res){
 });
 
 app.listen(3000);
-console.log('Express app started on port 3000');
+console.log('WPConn app started on port 3000');
