@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var req = require('./req');
 var debug = require('debug')('wp-connect:action');
 
 /**
@@ -31,16 +30,13 @@ Post.prototype.get = function(id, params, fn){
   fn = fn || params;
   params = 'function' == typeof params ? {} : (params || {});
 
-  // pass token value in params object
-  params.token = this.wpconn.tkn;
-
   // set endpoint
   var set = {
     site: this.wpconn.site._id,
     post_ID: id
   };
 
-  req('post', set, params, fn);
+  this.wpconn.req.exec('post', set, params, fn);
 };
 
 /**
@@ -58,12 +54,11 @@ Post.prototype.add = function(data, fn){
   var set = { site: this.wpconn.site._id };
 
   var params = {
-    token: this.wpconn.tkn,
     method: 'post',
     data: data
   };
 
-  req('post_add', set, params, fn);
+  this.wpconn.req.exec('post_add', set, params, fn);
 };
 
 /**
