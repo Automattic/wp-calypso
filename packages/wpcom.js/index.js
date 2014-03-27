@@ -16,6 +16,9 @@ var debug = require('debug')('wp-connect');
 function WPCONN(){
   if (!(this instanceof WPCONN)) return new WPCONN();
 
+  // request instance
+  this.req = new req(this);
+
   // site stuff
   this.site = new Site(this);
 }
@@ -39,7 +42,7 @@ WPCONN.prototype.token = function(token){
  */
 
 WPCONN.prototype.me = function (fn){
-  req('me', null, { token: this.tkn }, fn);
+  this.req.exec('me', null, fn);
 };
 
 /**
