@@ -27,6 +27,17 @@ var default_opts = {
 var api_url = default_opts.url.api_rest_v1;
 
 /**
+ * Request constructor
+ *
+ * @param {WPCONN} wpconn
+ * @api public
+ */
+
+function Req(wpconn){
+  this.wpconn = wpconn;
+}
+
+/**
  * Request to WordPress REST API
  * 
  * @param {String} type endpoint type
@@ -36,15 +47,20 @@ var api_url = default_opts.url.api_rest_v1;
  * @api private
  */
 
-function Req(type, vars, opts, fn){
+Req.prototype.exec = function (type, vars, opts, fn){
   debug('type: `%s`', type);
+
+  // token
+  var token = opts.token || this.wpconn.tkn;
+  // remove token from options
+  delete opts.token;
 
   // headers
   var headers = {};
-  if (!opts.token) {
+  if (!token) {
     debug('WARN: token is not defined');
   } else {
-    headers.authorization = "Bearer " + opts.token;
+    headers.authorization = "Bearer " + token;
   }
 
   // options object || callback function
@@ -118,7 +134,7 @@ function Req(type, vars, opts, fn){
     debug('request successful');
     fn (null, data);
   });
-}
+};
 
 /**
  * Expose `Req` module
