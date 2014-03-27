@@ -1,7 +1,8 @@
+# WP-Connect
 
-# Wordpress connect module
+### Wordpress connect module ###
 
-  Layer to get resources from WordPress using the REST API
+  Layer to get resources from [WordPress](http://www.wordpress.com) using the [developer.wordpress.com/docs/api/](REST API).
 
 ## API
 
@@ -11,7 +12,7 @@ Create a new instance of WPCONN
 
 ```js
 var WPCONN = require('wp-connect');
-var wpconn = new WPCONN();
+var wpconn = WPCONN();
 ```
 
 ### WPCONN#me();
@@ -87,6 +88,20 @@ var data = {
 wpconn.site.post.add(data, function(err, new_post){
   // object data of the new post already added
 });
+```
+
+## Example
+
+Into `example/` folder download the npm dependencies:
+
+```cli
+$ npm install
+```
+
+... and then run the application
+
+```cli
+$ node index.js
 ```
 
 ## Test
