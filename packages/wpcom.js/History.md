@@ -1,4 +1,11 @@
 
+0.1.1 / 2014-03-27
+==================
+
+ * core: cretae a Req instance in this.req property
+ * req: refact -> expose a Req constructor
+ * example: add simple exmaple application
+
 0.1.0 / 2014-03-19
 ==================
 
