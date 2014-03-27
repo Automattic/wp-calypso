@@ -20,6 +20,18 @@ var tdata = require('./data');
 
 describe('post', function(){
 
+  // Create a new_post before to start the tests
+  var new_post;
+  before(function(done){
+    var wpconn = util.private_site();
+    wpconn.site.post.add(tdata.new_post_data, function(err, post){
+      if (err) done(err);
+
+      new_post = post;
+      done();
+    });
+  });
+
   describe('sync', function(){
 
     it('should be an instance of `Site`', function(){
@@ -31,18 +43,6 @@ describe('post', function(){
   });
 
   describe('async', function(){
-    var new_post;
-
-    before(function(done){
-      var wpconn = util.private_site();
-      wpconn.site.post.add(tdata.new_post_data, function(err, post){
-        if (err) done(err);
-
-        new_post = post;
-        done();
-      });
-    });
-
     describe('get', function(){
       it('should get the recently added post', function(done){
         var wpconn = util.private_site();
