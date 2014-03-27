@@ -4,7 +4,6 @@
  */
 
 var Post = require('./post');
-var req = require('./req');
 var debug = require('debug')('wp-connect:site');
 
 /**
@@ -45,7 +44,7 @@ Site.prototype.info = function(fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  req('site', { site: this._id }, fn);
+  this.wpconn.req.exec('site', { site: this._id }, fn);
 };
 
 /**
@@ -64,7 +63,7 @@ Site.prototype.posts = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  req('posts', { site: this._id }, params, fn);
+  this.wpconn.req.exec('posts', { site: this._id }, params, fn);
 };
 
 /**
