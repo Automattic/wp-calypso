@@ -24,17 +24,6 @@ function WPCONN(){
 }
 
 /**
- * Set Access token
- *
- * @param {String} token
- * @api public
- */
-
-WPCONN.prototype.token = function(token){
-  this.tkn = token;
-};
-
-/**
  * User profile
  *
  * @param {Function} fn
