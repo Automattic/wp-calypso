@@ -2,6 +2,7 @@
 0.2.0 / 2014-03-28
 ==================
 
+ * pck: bump wp-connect@0.2.0
  * set token in the constructor
  * remove .token() method
 
