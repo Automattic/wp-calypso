@@ -16,10 +16,7 @@ var wpapp = require('../test/data');
  * Create a WPCONN instance
  */
 
-var wpconn = WPCONN();
-
-// set token app
-wpconn.token(wpapp.token);
+var wpconn = WPCONN(wpapp.token);
 
 // setup middleware
 
