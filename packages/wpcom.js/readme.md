@@ -8,7 +8,8 @@
 
 ### WPCONN(<token>);
 
-Create a new instance of WPCONN
+Create a new instance of WPCONN. If you wanna a way to get the access token
+then can use [WPOAuth](https://github.com/cloudup/wp-oauth) npm module.
 
 ```js
 var WPCONN = require('wp-connect');
