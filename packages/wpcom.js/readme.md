@@ -48,7 +48,7 @@ wpconn.site.info(function(err, site){
 
 ### WPCONN#site.posts(params, fn);
 
-Get the site information
+Get the site posts
 
 ```js
 wpconn.site.id('blog.wordpress.com');
