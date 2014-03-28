@@ -121,7 +121,7 @@ or rename the `test/data_example.json` file.
 }
 ```
 
-Then ...
+... and then
 
 ```cli
 $ make
