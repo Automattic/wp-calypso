@@ -6,7 +6,7 @@
 
 ## API
 
-### WPCONN();
+### WPCONN(<token>);
 
 Create a new instance of WPCONN
 
@@ -19,10 +19,7 @@ var wpconn = WPCONN();
 
 ```js
 var WPCONN = require('wp-connect');
-var wpconn = new WPCONN();
-
-// set access token
-wpconn.token('<your token>');
+var wpconn = new WPCONN('<your token>');
 
 // get the user info
 wpconn.me(function(err, user){
@@ -40,10 +37,7 @@ Get the site information
 
 ```js
 var WPCONN = require('wp-connect');
-var wpconn = new WPCONN();
-
-// set access token
-wpconn.token('<your token here>');
+var wpconn = new WPCONN('<your token here>');
 
 // get site info
 wpconn.site.id('blog.wordpress.com');
