@@ -1,4 +1,10 @@
 
+0.2.0 / 2014-03-28
+==================
+
+ * set token in the constructor
+ * remove .token() method
+
 0.1.1 / 2014-03-27
 ==================
 
