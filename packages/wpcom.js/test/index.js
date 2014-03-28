@@ -8,7 +8,7 @@ var WPCONN = require('../');
  * Testing data
  */
 
-var tdata = require('./data');
+var test = require('./data');
 var util = require('./util');
 
 /**
@@ -23,14 +23,11 @@ describe('WPCONN', function(){
     });
 
     it('should set the token', function(){
-      var wpconn = new WPCONN();
-      var token = tdata.token;
-      wpconn.token(token);
-
+      var wpconn = new WPCONN(test.token);
       wpconn.tkn
         .should.be.ok
         .and.be.instanceOf(String)
-        .eql(token);
+        .eql(test.token);
     });
   });
 

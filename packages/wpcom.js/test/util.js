@@ -3,7 +3,7 @@
  * Module dependencies
  */
 
-var tdata = require('./data');
+var test = require('./data');
 var WPCONN = require('../');
 
 /**
@@ -19,10 +19,7 @@ function Util(){}
  */
 
 Util.wpconn = function(){
-  var wpconn = WPCONN();
-  wpconn.token(tdata.token);
-
-  return wpconn;
+  return WPCONN(test.token);
 };
 
 /**
@@ -33,10 +30,8 @@ Util.wpconn = function(){
  */
 
 Util.public_site = function(){
-  var wpconn = WPCONN();
-  wpconn.token(tdata.token);
-  wpconn.site.id(tdata.public_site);
-
+  var wpconn = WPCONN(test.token);
+  wpconn.site.id(test.public_site);
   return wpconn;
 };
 
@@ -48,10 +43,8 @@ Util.public_site = function(){
  */
 
 Util.private_site = function(){
-  var wpconn = WPCONN();
-  wpconn.token(tdata.token);
-  wpconn.site.id(tdata.private_site);
-
+  var wpconn = WPCONN(test.token);
+  wpconn.site.id(test.private_site);
   return wpconn;
 };
 
