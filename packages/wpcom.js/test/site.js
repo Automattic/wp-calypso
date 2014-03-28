@@ -12,7 +12,7 @@ var util = require('./util');
  * Testing data
  */
 
-var tdata = require('./data');
+var test = require('./data');
 
 /**
  * Create a `Site` instance
@@ -29,9 +29,9 @@ describe('site', function(){
 
     it('should be set site identifier', function(){
       var wpconn = WPCONN();
-      wpconn.site.id(tdata.public_site);
+      wpconn.site.id(test.public_site);
       wpconn.site._id
-        .should.be.eql(tdata.public_site);
+        .should.be.eql(test.public_site);
     });
 
   });
@@ -43,7 +43,7 @@ describe('site', function(){
         var wpconn = WPCONN();
         var site = wpconn.site;
 
-        site.id(tdata.public_site);
+        site.id(test.public_site);
 
         site.info(function(err, info){
           if (err) throw err;

@@ -12,7 +12,7 @@ var util = require('./util');
  * Testing data
  */
 
-var tdata = require('./data');
+var test = require('./data');
 
 /**
  * WPCONN instance
@@ -24,7 +24,7 @@ describe('post', function(){
   var new_post;
   before(function(done){
     var wpconn = util.private_site();
-    wpconn.site.post.add(tdata.new_post_data, function(err, post){
+    wpconn.site.post.add(test.new_post_data, function(err, post){
       if (err) done(err);
 
       new_post = post;
@@ -58,7 +58,7 @@ describe('post', function(){
     describe('add', function(){
       it('should add a new post', function(done){
         var wpconn = util.private_site();
-        wpconn.site.post.add(tdata.new_post_data, function(err, post){
+        wpconn.site.post.add(test.new_post_data, function(err, post){
           if (err) throw err;
 
           // checking some post date
@@ -71,7 +71,7 @@ describe('post', function(){
 
           post.site_ID
             .should.be.an.instanceOf(Number)
-            .and.be.eql(tdata.private_site_id);
+            .and.be.eql(test.private_site_id);
 
           done();
         });
