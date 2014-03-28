@@ -17,10 +17,6 @@ var debug = require('debug')('wp-connect');
 function WPCONN(token){
   if (!(this instanceof WPCONN)) return new WPCONN(token);
 
-  if (!token || 'string' != typeof token) {
-    throw new Error('`token` value required');
-  }
-
   this.tkn = token;
 
   // request instance
