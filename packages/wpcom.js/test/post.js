@@ -43,6 +43,7 @@ describe('post', function(){
   });
 
   describe('async', function(){
+
     describe('get', function(){
       it('should get the recently added post', function(done){
         var wpconn = util.private_site();
@@ -53,9 +54,21 @@ describe('post', function(){
           done();
         });
       });
+
+      it('should get by slug', function(done){
+        var wpconn = util.private_site();
+        wpconn.site.post.getBySlug(new_post.slug, function(err, post){
+          if (err) throw err;
+
+          post.should.be.eql(new_post);
+          done();
+        });
+      });
+
     });
 
     describe('add', function(){
+
       it('should add a new post', function(done){
         var wpconn = util.private_site();
         wpconn.site.post.add(test.new_post_data, function(err, post){
