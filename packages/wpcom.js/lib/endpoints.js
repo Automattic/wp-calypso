@@ -48,6 +48,11 @@ var endpoints = {
     "path": "/sites/%site%/posts/%post_ID%"
   },
 
+  "post_get_by_slug": {
+    "type": "GET",
+    "path": "/sites/%site%/posts/slug:%post_slug%"
+  },
+
   "post_add": {
     "type": "POST",
     "path": "/sites/%site%/posts/new"
