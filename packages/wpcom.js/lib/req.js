@@ -42,17 +42,17 @@ function Req(wpconn){
  * 
  * @param {String} type endpoint type
  * @param {Object} vars to build endpoint
- * @param {Object} opts
+ * @param {Object} params
  * @param {Function} fn
  * @api private
  */
 
-Req.prototype.exec = function (type, vars, opts, fn){
+Req.prototype.exec = function (type, vars, params, fn){
   debug('type: `%s`', type);
 
   // token
-  var token = opts.token || this.wpconn.tkn;
-  delete opts.token;
+  var token = params.token || this.wpconn.tkn;
+  delete params.token;
 
   // headers
   var headers = {};
@@ -63,16 +63,16 @@ Req.prototype.exec = function (type, vars, opts, fn){
   }
 
   // options object || callback function
-  if ('function' == typeof opts) {
-    fn = opts;
-    opts = {};
+  if ('function' == typeof params) {
+    fn = params;
+    params = {};
   }
 
-  opts = opts || {};
+  params = params || {};
 
   // request method
-  var method = (opts.method || 'get').toLowerCase();
-  delete opts.method;
+  var method = (params.method || 'get').toLowerCase();
+  delete params.method;
   debug('method: `%s`', method);
 
   // endpoint config object
@@ -91,7 +91,7 @@ Req.prototype.exec = function (type, vars, opts, fn){
 
   // build query string
   var qrs = {};
-  merge(qrs, end.options, opts);
+  merge(qrs, end.options, params);
   qrs = qs.stringify(qrs);
   debug('qrs: `%s`', qrs);
 
@@ -100,8 +100,8 @@ Req.prototype.exec = function (type, vars, opts, fn){
   debug('request to `%s`', url);
 
   var req = request[method](url).set('authorization', headers.authorization);
-  if ('post' == method && opts.data) {
-    req.send(opts.data);
+  if ('post' == method && params.data) {
+    req.send(params.data);
   }
 
   req.end(function (err, res){
