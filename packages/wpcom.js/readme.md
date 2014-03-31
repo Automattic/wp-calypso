@@ -97,6 +97,16 @@ wpconn.site.post.add(data, function(err, new_post){
 });
 ```
 
+### WPCONN.site.post.edit(id, data, fn);
+
+Edit a post
+
+```js
+wpconn.site.post.edit(321, { title: "new Title !!!" }, function(err, edit_post){
+  // the title in edit_post has changed
+});
+```
+
 ## Example
 
 Into `example/` folder download the npm dependencies:
