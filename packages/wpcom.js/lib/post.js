@@ -17,7 +17,7 @@ function Post(wpconn){
 }
 
 /**
- * Get site post by the given id
+ * Get site post by the given `id`
  *
  * @param {String} id
  * @param {Object} params (optional)
@@ -35,7 +35,7 @@ Post.prototype.get = function(id, params, fn){
 };
 
 /**
- * Get site post by the given slug
+ * Get site post by the given `slug`
  *
  * @api public
  */
@@ -50,11 +50,9 @@ Post.prototype.getBySlug = function(slug, params, fn){
 };
 
 /**
- * Add method
+ * Add post
  *
  * @param {Object} data
- * @param {String} rid
- * @param {Object} params
  * @param {Function} fn
  * @api public
  */
@@ -69,6 +67,29 @@ Post.prototype.add = function(data, fn){
   };
 
   this.wpconn.req.exec('post_add', set, params, fn);
+};
+
+/**
+ * Edit post
+ *
+ * @param {String} id
+ * @param {Object} data
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.edit = function(id, data, fn){
+  var set = {
+    site: this.wpconn.site._id,
+    post_id: id
+  };
+
+  var params = {
+    method: 'post',
+    data: data
+  };
+
+  this.wpconn.req.exec('post_edit', set, params, fn);
 };
 
 /**
