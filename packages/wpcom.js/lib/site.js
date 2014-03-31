@@ -39,12 +39,12 @@ Site.prototype.id = function(id){
  * @api public
  */
 
-Site.prototype.info = function(fn){
+Site.prototype.info = function(params, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.exec('site', { site: this._id }, fn);
+  this.wpconn.req.exec('site', { site: this._id }, params, fn);
 };
 
 /**
@@ -56,9 +56,6 @@ Site.prototype.info = function(fn){
  */
 
 Site.prototype.posts = function(params, fn){
-  fn = fn || params;
-  params = 'function' == typeof obj ? {} : (params || {});
-
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }

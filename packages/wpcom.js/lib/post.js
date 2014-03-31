@@ -17,7 +17,7 @@ function Post(wpconn){
 }
 
 /**
- * Add method
+ * Get site post by the given id
  *
  * @param {String} id
  * @param {Object} params (optional)
@@ -26,10 +26,6 @@ function Post(wpconn){
  */
 
 Post.prototype.get = function(id, params, fn){
-  // params || fn
-  fn = fn || params;
-  params = 'function' == typeof params ? {} : (params || {});
-
   // set endpoint
   var set = {
     site: this.wpconn.site._id,
@@ -37,6 +33,15 @@ Post.prototype.get = function(id, params, fn){
   };
 
   this.wpconn.req.exec('post', set, params, fn);
+};
+
+/**
+ * Get site post by the given slug
+ *
+ * @api public
+ */
+
+Post.prototype.getBySlug = function(slug, params, fn){
 };
 
 /**
