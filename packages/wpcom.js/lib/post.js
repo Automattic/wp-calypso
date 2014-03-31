@@ -26,7 +26,6 @@ function Post(wpconn){
  */
 
 Post.prototype.get = function(id, params, fn){
-  // set endpoint
   var set = {
     site: this.wpconn.site._id,
     post_ID: id
@@ -42,6 +41,12 @@ Post.prototype.get = function(id, params, fn){
  */
 
 Post.prototype.getBySlug = function(slug, params, fn){
+  var set = {
+    site: this.wpconn.site._id,
+    post_slug: slug
+  };
+
+  this.wpconn.req.exec('post_get_by_slug', set, params, fn);
 };
 
 /**
