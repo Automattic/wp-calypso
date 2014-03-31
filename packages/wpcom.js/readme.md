@@ -1,4 +1,4 @@
-# wp-conect
+# wp-connect
 
 ### Wordpress connect module ###
 
