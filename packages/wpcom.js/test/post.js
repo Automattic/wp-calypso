@@ -92,6 +92,28 @@ describe('post', function(){
 
     });
 
+    describe('edit', function(){
+
+      it('should edit the new added post', function(done){
+        var wpconn = util.private_site();
+        var edited_title = new_post.title + ' has been changed';
+
+        wpconn.site.post.edit(new_post.ID, { title: edited_title }, function(err, post){
+          if (err) throw err;
+
+          post
+            .should.be.ok
+            .and.be.an.instanceOf(Object);
+
+          post.title
+            .should.be.eql(edited_title);
+
+          done();
+        });
+      });
+
+    });
+
   });
 
 });
