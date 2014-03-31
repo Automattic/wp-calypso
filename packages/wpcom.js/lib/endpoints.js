@@ -56,6 +56,11 @@ var endpoints = {
   "post_add": {
     "type": "POST",
     "path": "/sites/%site%/posts/new"
+  },
+
+  "post_edit": {
+    "type": "POST",
+    "path": "/sites/%site%/posts/%post_id%"
   }
 };
 
