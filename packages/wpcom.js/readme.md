@@ -64,7 +64,18 @@ Get post site data
 
 ```js
 // get post info
-wpconn.site.post.get(435, function(err, post){
+wpconn.site.post.get(435, params, function(err, post){
+  // post data object
+});
+```
+
+### WPCONN.site.post.getBySlug(slug, params, fn);
+
+Get post site data by the given slug
+
+```js
+// get post info
+wpconn.site.post.getBySlug('we-are-the-loosers', function(err, post){
   // post data object
 });
 ```
