@@ -68,7 +68,7 @@ Req.prototype.exec = function (type, vars, opts, fn){
     opts = {};
   }
 
-   opts = opts || {};
+  opts = opts || {};
 
   // request method
   var method = (opts.method || 'get').toLowerCase();
@@ -101,7 +101,7 @@ Req.prototype.exec = function (type, vars, opts, fn){
 
   var req = request[method](url).set('authorization', headers.authorization);
   if ('post' == method && opts.data) {
-     req.send(opts.data);
+    req.send(opts.data);
   }
 
   req.end(function (err, res){
