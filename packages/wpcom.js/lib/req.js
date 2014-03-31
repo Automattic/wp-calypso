@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var request = require('request');
+var request = require('superagent');
 var merge = require('extend');
 var qs = require('querystring');
 
@@ -52,7 +52,6 @@ Req.prototype.exec = function (type, vars, opts, fn){
 
   // token
   var token = opts.token || this.wpconn.tkn;
-  // remove token from options
   delete opts.token;
 
   // headers
@@ -72,7 +71,7 @@ Req.prototype.exec = function (type, vars, opts, fn){
    opts = opts || {};
 
   // request method
-  var method = (opts.method || 'get').toUpperCase();
+  var method = (opts.method || 'get').toLowerCase();
   delete opts.method;
   debug('method: `%s`', method);
 
@@ -100,39 +99,26 @@ Req.prototype.exec = function (type, vars, opts, fn){
   var url = api_url + endpoint + '?' + qrs;
   debug('request to `%s`', url);
 
-  var params = {
-    url: url,
-    method: method,
-    headers: headers
-  };
-
-  // pass data from opts object to form params
-  if (opts.data) {
-    params.form = opts.data;
+  var req = request[method](url).set('authorization', headers.authorization);
+  if ('post' == method && opts.data) {
+     req.send(opts.data);
   }
 
-  request(params, function (err, res, body) {
+  req.end(function (err, res){
     if (err) return fn(err);
 
-    var data;
-    try {
-      data = JSON.parse(body);
-    } catch(e) {
-      return fn(e);
-    }
-
     // create Error var
-    if (data.error) {
-      return fn(new Error(data.message));
+    if (res.body.error) {
+      return fn(new Error(res.body.message));
     }
 
     // TODO: take a look to this one please
-    if ((/SyntaxError/).test(String(data))) {
-      return fn(data);
+    if ((/SyntaxError/).test(String(res.body))) {
+      return fn(res.body);
     }
 
     debug('request successful');
-    fn (null, data);
+    fn (null, res.body);
   });
 };
 
