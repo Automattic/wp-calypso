@@ -63,7 +63,7 @@ wpconn.site.posts({ number: 10 }, function(err, posts){
 Get post site data
 
 ```js
-// get post info
+// get post data
 wpconn.site.post.get(435, params, function(err, post){
   // post data object
 });
@@ -74,7 +74,7 @@ wpconn.site.post.get(435, params, function(err, post){
 Get post site data by the given slug
 
 ```js
-// get post info
+// get post data
 wpconn.site.post.getBySlug('we-are-the-loosers', function(err, post){
   // post data object
 });
@@ -85,9 +85,10 @@ wpconn.site.post.getBySlug('we-are-the-loosers', function(err, post){
 Add a new post
 
 ```js
-// get post info
+// post data
 var data = {
   "title": "A new post",
+  "slug": "a-new-post",
   "content": "<div>The content of the new post</div>"
 };
 
