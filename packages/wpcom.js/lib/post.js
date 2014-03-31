@@ -31,7 +31,7 @@ Post.prototype.get = function(id, params, fn){
     post_ID: id
   };
 
-  this.wpconn.req.exec('post', set, params, fn);
+  this.wpconn.req.exec('post_get', set, params, fn);
 };
 
 /**

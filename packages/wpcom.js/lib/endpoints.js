@@ -43,7 +43,7 @@ var endpoints = {
     }
   },
 
-  "post": {
+  "post_get": {
     "type": "GET",
     "path": "/sites/%site%/posts/%post_ID%"
   },
