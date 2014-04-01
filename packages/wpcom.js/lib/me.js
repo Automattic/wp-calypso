@@ -20,22 +20,25 @@ function Me(wpconn){
 /**
  * Require user information
  *
+ * @param {Object} params(optional)
  * @param {Function} fn
  * @api public
  */
 
 Me.prototype.info = function(params, fn){
-  this.wpconn.req.exec('me.get', null, params, fn);
+  this.wpconn.req.get('me.get', null, params, fn);
 };
 
 /**
  * User likes
  *
+ * @param {Object} params(optional)
+ * @param {Function} fn
  * @api public
  */
 
 Me.prototype.likes = function(params, fn){
-  this.wpconn.req.exec('me.likes', null, params, fn);
+  this.wpconn.req.get('me.likes', null, params, fn);
 };
 
 /**

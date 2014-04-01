@@ -44,7 +44,7 @@ Site.prototype.info = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.exec('site.get', { site: this._id }, params, fn);
+  this.wpconn.req.get('site.get', { site: this._id }, params, fn);
 };
 
 /**
@@ -60,7 +60,7 @@ Site.prototype.posts = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.exec('posts.get', { site: this._id }, params, fn);
+  this.wpconn.req.get('posts.get', { site: this._id }, params, fn);
 };
 
 /**
