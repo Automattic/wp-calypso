@@ -38,7 +38,7 @@ Post.prototype.get = function(id, params, fn){
  * Get site post by the given `slug`
  *
  * @param {String} id
- * @param {Object} params(optional)
+ * @param {Object} params (optional)
  * @param {Function} fn
  * @api public
  */
