@@ -29,6 +29,16 @@ Me.prototype.info = function(params, fn){
 };
 
 /**
+ * User likes
+ *
+ * @api public
+ */
+
+Me.prototype.likes = function(params, fn){
+  this.wpconn.req.exec('me.likes', null, params, fn);
+};
+
+/**
  * Expose `Me` module
  */
 
