@@ -114,6 +114,27 @@ describe('post', function(){
 
     });
 
+    describe('delete', function(){
+
+      it('should delete the new added post', function(done){
+        var wpconn = util.private_site();
+
+        wpconn.site.post.del(new_post.ID, function(err, post){
+          if (err) throw err;
+
+          post
+            .should.be.ok
+            .and.be.an.instanceOf(Object);
+
+          post.ID
+            .should.be.eql(new_post.ID);
+
+          done();
+        });
+      });
+
+    });
+
   });
 
 });
