@@ -44,11 +44,11 @@ Site.prototype.info = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.exec('site', { site: this._id }, params, fn);
+  this.wpconn.req.exec('site.get', { site: this._id }, params, fn);
 };
 
 /**
- * Require posts site through of WP REST API
+ * Require posts site
  *
  * @param {Object} params (optional)
  * @param {Function} fn
@@ -60,7 +60,7 @@ Site.prototype.posts = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.exec('posts', { site: this._id }, params, fn);
+  this.wpconn.req.exec('posts.get', { site: this._id }, params, fn);
 };
 
 /**

@@ -7,7 +7,7 @@ var request = require('superagent');
 var merge = require('extend');
 var qs = require('querystring');
 
-var ends = require('./endpoints');
+var ends = require('./endpoint');
 var debug = require('debug')('wp-connect:req');
 
 /**

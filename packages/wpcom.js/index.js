@@ -34,7 +34,7 @@ function WPCONN(token){
  */
 
 WPCONN.prototype.me = function (fn){
-  this.req.exec('me', null, fn);
+  this.req.exec('me.get', null, fn);
 };
 
 /**
