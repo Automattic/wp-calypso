@@ -12,5 +12,10 @@
   "groups": {
     "method": "GET",
     "path": "/me/groups"
+  },
+
+  "connections": {
+    "method": "GET",
+    "path": "/me/connections"
   }
 }
