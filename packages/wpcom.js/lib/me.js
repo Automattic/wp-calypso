@@ -55,6 +55,19 @@ Me.prototype.groups = function(params, fn){
 };
 
 /**
+ * User connections
+ * A list of the current user's connections to third-party services
+ *
+ * @param {Object} params (optional)
+ * @param {Function} fn
+ * @api public
+ */
+
+Me.prototype.connections = function(params, fn){
+  this.wpconn.req.send('me.connections', null, params, fn);
+};
+
+/**
  * Expose `Me` module
  */
 
