@@ -41,6 +41,24 @@ describe('me', function(){
       });
     });
 
+    describe('likes', function(){
+      it('should require user likes', function(done){
+        var wpconn = util.wpconn();
+
+        wpconn.me.likes(function(err, likes){
+          if (err) throw err;
+
+          likes.found
+            .should.be.an.instanceOf(Number);
+
+          likes.likes
+            .should.be.an.instanceOf(Array);
+
+          done();
+        });
+      });
+    });
+
   });
 
 });
