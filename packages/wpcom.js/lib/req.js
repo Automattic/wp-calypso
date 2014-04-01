@@ -38,37 +38,16 @@ function Req(wpconn){
 }
 
 /**
- * GET request
- *
- * @api public
- */
-
-Req.prototype.get = function(type, set, params, fn){
-  this.exec(type, set, 'get', params, fn);
-};
-
-/**
- * POST request
- *
- * @api public
- */
-
-Req.prototype.post = function(type, set, data, fn){
-  this.exec(type, set, 'post', { data: data }, fn);
-};
-
-/**
  * Request to WordPress REST API
  * 
  * @param {String} type endpoint type
- * @param {Object} set to build endpoint
- * @param {String} mtd
+ * @param {Object} vars to build endpoint
  * @param {Object} params
  * @param {Function} fn
  * @api private
  */
 
-Req.prototype.exec = function (type, set, mtd, params, fn){
+Req.prototype.send = function (type, vars, params, fn){
   debug('type: `%s`', type);
 
   // token
@@ -94,13 +73,18 @@ Req.prototype.exec = function (type, set, mtd, params, fn){
   // endpoint config object
   var end = ends(type);
 
+  // request method
+  var method = (end.method || params.method || 'get').toLowerCase();
+  delete params.method;
+  debug('method: `%s`', method);
+
   // build endpoint url
   var endpoint = end.path;
 
-  if (set) {
-    for (var k in set) {
+  if (vars) {
+    for (var k in vars) {
       var rg = new RegExp("%" + k + "%");
-      endpoint = endpoint.replace(rg, set[k]);
+      endpoint = endpoint.replace(rg, vars[k]);
     }
   }
   debug('endpoint: `%s`', endpoint);
@@ -115,15 +99,19 @@ Req.prototype.exec = function (type, set, mtd, params, fn){
   var url = api_url + endpoint + '?' + qrs;
   debug('request to `%s`', url);
 
-  var req = request[mtd](url).set('authorization', headers.authorization);
-  if ('post' == mtd && params.data) {
+  var req =
+    request[method](url)
+    .set('authorization', headers.authorization);
+
+  if ('post' == method && params.data) {
     req.send(params.data);
   }
 
+  // start the request
   req.end(function (err, res){
     if (err) return fn(err);
 
-    // check response error
+    // check wpconn server error response
     if (res.body.error) {
       return fn(new Error(res.body.message));
     }
