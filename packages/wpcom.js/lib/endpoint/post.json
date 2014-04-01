@@ -1,0 +1,26 @@
+{
+  "get": {
+    "type": "GET",
+    "path": "/sites/%site%/posts/%post_ID%"
+  },
+
+  "get_by_slug": {
+    "type": "GET",
+    "path": "/sites/%site%/posts/slug:%post_slug%"
+  },
+
+  "add": {
+    "type": "POST",
+    "path": "/sites/%site%/posts/new"
+  },
+
+  "edit": {
+    "type": "POST",
+    "path": "/sites/%site%/posts/%post_id%"
+  },
+
+  "delete": {
+    "type": "POST",
+    "path": "/sites/%site%/posts/%post_id%/delete"
+  }
+}
