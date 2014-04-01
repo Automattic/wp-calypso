@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var Me = require('./lib/me');
 var Site = require('./lib/site');
 var req = require('./lib/req');
 var debug = require('debug')('wp-connect');
@@ -22,20 +23,10 @@ function WPCONN(token){
   // request instance
   this.req = new req(this);
 
-  // site stuff
+  // resource methods
+  this.me = new Me(this);
   this.site = new Site(this);
 }
-
-/**
- * User profile
- *
- * @param {Function} fn
- * @api private
- */
-
-WPCONN.prototype.me = function (fn){
-  this.req.exec('me.get', null, fn);
-};
 
 /**
  * Expose `WPCONN` module
