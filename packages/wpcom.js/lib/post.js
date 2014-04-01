@@ -58,13 +58,8 @@ Post.prototype.getBySlug = function(slug, params, fn){
  */
 
 Post.prototype.add = function(data, fn){
-  // set endpoint
   var set = { site: this.wpconn.site._id };
-
-  var params = {
-    method: 'post',
-    data: data
-  };
+  var params = { method: 'post', data: data };
 
   this.wpconn.req.exec('post_add', set, params, fn);
 };
@@ -83,13 +78,27 @@ Post.prototype.edit = function(id, data, fn){
     site: this.wpconn.site._id,
     post_id: id
   };
-
-  var params = {
-    method: 'post',
-    data: data
-  };
+  var params = { method: 'post', data: data };
 
   this.wpconn.req.exec('post_edit', set, params, fn);
+};
+
+/**
+ * Delete post
+ *
+ * @param {String} id
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.del = function(id, fn){
+  var set = {
+    site: this.wpconn.site._id,
+    post_id: id
+  };
+  var params = { method: 'post' };
+
+  this.wpconn.req.exec('post_delete', set, params, fn);
 };
 
 /**
