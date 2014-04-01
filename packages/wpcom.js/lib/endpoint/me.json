@@ -7,5 +7,10 @@
   "likes": {
     "type": "GET",
     "path": "/me/likes"
+  },
+
+  "groups": {
+    "type": "GET",
+    "path": "/me/groups"
   }
 }
