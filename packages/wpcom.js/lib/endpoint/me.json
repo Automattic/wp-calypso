@@ -1,16 +1,16 @@
 {
   "get": {
-    "type": "GET",
+    "method": "GET",
     "path": "/me"
   },
 
   "likes": {
-    "type": "GET",
+    "method": "GET",
     "path": "/me/likes"
   },
 
   "groups": {
-    "type": "GET",
+    "method": "GET",
     "path": "/me/groups"
   }
 }
