@@ -2,5 +2,10 @@
   "get": {
     "type": "GET",
     "path": "/me"
+  },
+
+  "likes": {
+    "type": "GET",
+    "path": "/me/likes"
   }
 }
