@@ -118,7 +118,7 @@ Req.prototype.exec = function (type, vars, params, fn){
     }
 
     debug('request successful');
-    fn (null, res.body);
+    fn(null, res.body);
   });
 };
 
