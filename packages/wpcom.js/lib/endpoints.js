@@ -61,6 +61,11 @@ var endpoints = {
   "post_edit": {
     "type": "POST",
     "path": "/sites/%site%/posts/%post_id%"
+  },
+
+  "post_delete": {
+    "type": "POST",
+    "path": "/sites/%site%/posts/%post_id%/delete"
   }
 };
 
