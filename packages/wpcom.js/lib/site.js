@@ -33,7 +33,7 @@ Site.prototype.id = function(id){
 };
 
 /**
- * Require site information through of WP REST API
+ * Require site information
  *
  * @param {Function} fn
  * @api public
