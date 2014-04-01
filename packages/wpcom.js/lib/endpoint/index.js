@@ -5,6 +5,12 @@
 
 var merge = require('extend');
 var debug = require('debug')('wp-connect:endpoint');
+var dot = require('dot-component');
+
+var me = require('./me');
+var site = require('./site');
+var posts = require('./posts');
+var post = require('./post');
 
 /**
  * Default endpoint option
@@ -20,53 +26,10 @@ var endpoint_options = {
  */
 
 var endpoints = {
-  "me": {
-    "type": "GET",
-    "path": "/me"
-  },
-
-  "site": {
-    "type": "GET",
-    "path": "/sites/%site%"
-  },
-
-  "posts": {
-    "type": "GET",
-    "path": "/sites/%site%/posts",
-    "options": {
-      "number": 20,
-      "offset": 0,
-      "page": 0,
-      "order": "DESC",
-      "order_by": "date",
-      "status": "publish"
-    }
-  },
-
-  "post_get": {
-    "type": "GET",
-    "path": "/sites/%site%/posts/%post_ID%"
-  },
-
-  "post_get_by_slug": {
-    "type": "GET",
-    "path": "/sites/%site%/posts/slug:%post_slug%"
-  },
-
-  "post_add": {
-    "type": "POST",
-    "path": "/sites/%site%/posts/new"
-  },
-
-  "post_edit": {
-    "type": "POST",
-    "path": "/sites/%site%/posts/%post_id%"
-  },
-
-  "post_delete": {
-    "type": "POST",
-    "path": "/sites/%site%/posts/%post_id%/delete"
-  }
+  me: me,
+  site: site,
+  posts: posts,
+  post: post
 };
 
 /**
@@ -89,10 +52,10 @@ function endpoint(type){
   }
 
   debug('getting endpoint for `%s`', type);
-  var end = endpoints[type];
+  var end = dot.get(endpoints, type);
 
   if (!end) {
-    return new Error(type + ' endpoint is not defined');
+    throw new Error(type + ' endpoint is not defined');
   }
 
   // re-build endpoint default options
