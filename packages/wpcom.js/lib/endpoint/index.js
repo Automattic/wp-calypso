@@ -48,7 +48,7 @@ module.exports = endpoint;
 
 function endpoint(type){
   if (!type) {
-    return new Error('`type` must be defined');
+    throw new Error('`type` must be defined');
   }
 
   debug('getting endpoint for `%s`', type);
