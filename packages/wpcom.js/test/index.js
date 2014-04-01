@@ -37,7 +37,7 @@ describe('WPCONN', function(){
       it('should require user object', function(done){
         var wpconn = util.wpconn();
 
-        wpconn.me(function(err, me){
+        wpconn.me.info(function(err, me){
           if (err) throw err;
 
           // testing object
