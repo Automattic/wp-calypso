@@ -62,9 +62,7 @@ Post.prototype.getBySlug = function(slug, params, fn){
 
 Post.prototype.add = function(data, fn){
   var set = { site: this.wpconn.site._id };
-  var params = { method: 'post', data: data };
-
-  this.wpconn.req.get('post.add', set, params, fn);
+  this.wpconn.req.post('post.add', set, data, fn);
 };
 
 /**
@@ -82,8 +80,7 @@ Post.prototype.edit = function(id, data, fn){
     post_id: id
   };
 
-  var params = { method: 'post', data: data };
-  this.wpconn.req.get('post.edit', set, params, fn);
+  this.wpconn.req.post('post.edit', set, data, fn);
 };
 
 /**
@@ -99,9 +96,8 @@ Post.prototype.del = function(id, fn){
     site: this.wpconn.site._id,
     post_id: id
   };
-  var params = { method: 'post' };
 
-  this.wpconn.req.get('post.delete', set, params, fn);
+  this.wpconn.req.post('post.delete', set, null, fn);
 };
 
 /**
