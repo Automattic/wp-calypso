@@ -47,7 +47,7 @@ function Req(wpconn){
  * @api private
  */
 
-Req.prototype.exec = function (type, vars, params, fn){
+Req.prototype.get = function (type, vars, params, fn){
   debug('type: `%s`', type);
 
   // token
