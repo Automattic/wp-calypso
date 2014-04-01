@@ -31,7 +31,7 @@ Post.prototype.get = function(id, params, fn){
     post_ID: id
   };
 
-  this.wpconn.req.get('post.get', set, params, fn);
+  this.wpconn.req.send('post.get', set, params, fn);
 };
 
 /**
@@ -49,7 +49,7 @@ Post.prototype.getBySlug = function(slug, params, fn){
     post_slug: slug
   };
 
-  this.wpconn.req.get('post.get_by_slug', set, params, fn);
+  this.wpconn.req.send('post.get_by_slug', set, params, fn);
 };
 
 /**
@@ -62,7 +62,7 @@ Post.prototype.getBySlug = function(slug, params, fn){
 
 Post.prototype.add = function(data, fn){
   var set = { site: this.wpconn.site._id };
-  this.wpconn.req.post('post.add', set, data, fn);
+  this.wpconn.req.send('post.add', set, { data: data }, fn);
 };
 
 /**
@@ -80,7 +80,7 @@ Post.prototype.edit = function(id, data, fn){
     post_id: id
   };
 
-  this.wpconn.req.post('post.edit', set, data, fn);
+  this.wpconn.req.send('post.edit', set, { data: data }, fn);
 };
 
 /**
@@ -97,7 +97,7 @@ Post.prototype.del = function(id, fn){
     post_id: id
   };
 
-  this.wpconn.req.post('post.delete', set, null, fn);
+  this.wpconn.req.send('post.delete', set, fn);
 };
 
 /**

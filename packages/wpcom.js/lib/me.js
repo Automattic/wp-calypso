@@ -26,7 +26,7 @@ function Me(wpconn){
  */
 
 Me.prototype.info = function(params, fn){
-  this.wpconn.req.get('me.get', null, params, fn);
+  this.wpconn.req.send('me.get', null, params, fn);
 };
 
 /**
@@ -38,7 +38,7 @@ Me.prototype.info = function(params, fn){
  */
 
 Me.prototype.likes = function(params, fn){
-  this.wpconn.req.get('me.likes', null, params, fn);
+  this.wpconn.req.send('me.likes', null, params, fn);
 };
 
 /**
@@ -51,7 +51,7 @@ Me.prototype.likes = function(params, fn){
  */
 
 Me.prototype.groups = function(params, fn){
-  this.wpconn.req.get('me.groups', null, params, fn);
+  this.wpconn.req.send('me.groups', null, params, fn);
 };
 
 /**
