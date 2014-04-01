@@ -16,7 +16,9 @@ var util = require('./util');
  */
 
 describe('WPCONN', function(){
+
   describe('sync', function(){
+
     it('should create a WPCONN object', function(){
       var wpconn = new WPCONN();
       wpconn.should.be.instanceof(WPCONN);
@@ -29,29 +31,7 @@ describe('WPCONN', function(){
         .and.be.instanceOf(String)
         .eql(test.token);
     });
+
   });
 
-  describe('async', function(){
-
-    describe('me', function(){
-      it('should require user object', function(done){
-        var wpconn = util.wpconn();
-
-        wpconn.me.info(function(err, me){
-          if (err) throw err;
-
-          // testing object
-          me
-            .should.be.ok
-            .and.an.instanceOf(Object);
-
-          // testing user data
-          me.ID
-            .should.be.an.instanceOf(Number);
-
-          done();
-        });
-      });
-    });
-  });
 });
