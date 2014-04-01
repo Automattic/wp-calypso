@@ -45,13 +45,13 @@ describe('me', function(){
       it('should require user likes', function(done){
         var wpconn = util.wpconn();
 
-        wpconn.me.likes(function(err, likes){
+        wpconn.me.likes(function(err, data){
           if (err) throw err;
 
-          likes.found
+          data.found
             .should.be.an.instanceOf(Number);
 
-          likes.likes
+          data.likes
             .should.be.an.instanceOf(Array);
 
           done();
@@ -63,10 +63,25 @@ describe('me', function(){
       it('should require groups', function(done){
         var wpconn = util.wpconn();
 
-        wpconn.me.groups(function(err,groups){
+        wpconn.me.groups(function(err, data){
           if (err) throw err;
 
-          groups.groups
+          data.groups
+            .should.be.an.instanceOf(Array);
+
+          done();
+        });
+      });
+    });
+
+    describe('connections()', function(){
+      it('should require third-party connections', function(done){
+        var wpconn = util.wpconn();
+
+        wpconn.me.connections(function(err, data){
+          if (err) throw err;
+
+          data.connections
             .should.be.an.instanceOf(Array);
 
           done();
