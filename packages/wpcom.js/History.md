@@ -1,4 +1,17 @@
 
+0.2.2 / 2014-04-02
+==================
+
+ * New methods:
+    - me.conenctions()
+    - me.groups()
+    - me.likes()
+    - post.edit()
+    - post.del()
+ * improve error handling
+ * improve endpoint files structure
+ * update documentation
+
 0.2.1 / 2014-03-31
 ==================
 
