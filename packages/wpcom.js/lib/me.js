@@ -30,6 +30,18 @@ Me.prototype.info = function(params, fn){
 };
 
 /**
+ * List of sites current user is member of
+ *
+ * @param {Object} params (optional)
+ * @param {Function} fn
+ * @api private
+ */
+
+Me.prototype.sites = function(params, fn){
+  this.wpconn.req.send('me.sites', null, params, fn);
+};
+
+/**
  * User likes
  *
  * @param {Object} params (optional)

@@ -4,6 +4,11 @@
     "path": "/me"
   },
 
+  "sites": {
+    "method": "GET",
+    "path": "/me/sites"
+  },
+
   "likes": {
     "method": "GET",
     "path": "/me/likes"

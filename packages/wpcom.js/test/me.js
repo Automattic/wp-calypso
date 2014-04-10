@@ -41,6 +41,17 @@ describe('me', function(){
       });
     });
 
+    describe('sites()', function(){
+      it('should require user sites object', function(done){
+        var wpconn = util.wpconn();
+
+        wpconn.me.sites(function(err, sites){
+          if (err) throw err;
+          done();
+        });
+      });
+    });
+
     describe('likes()', function(){
       it('should require user likes', function(done){
         var wpconn = util.wpconn();
