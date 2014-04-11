@@ -3,17 +3,17 @@
  * Module dependencies.
  */
 
-var debug = require('debug')('wp-connect:action');
+var debug = require('debug')('wpcom:action');
 
 /**
  * Post methods
  *
- * @param {WPCONN} wpconn
+ * @param {WPCOM} wpcom
  * @api public
  */
 
-function Post(wpconn){
-  this.wpconn = wpconn;
+function Post(wpcom){
+  this.wpcom = wpcom;
 }
 
 /**
@@ -26,8 +26,8 @@ function Post(wpconn){
  */
 
 Post.prototype.get = function(id, params, fn){
-  var set = { site: this.wpconn.site._id, post_ID: id };
-  this.wpconn.req.send('post.get', set, params, fn);
+  var set = { site: this.wpcom.site._id, post_ID: id };
+  this.wpcom.req.send('post.get', set, params, fn);
 };
 
 /**
@@ -40,8 +40,8 @@ Post.prototype.get = function(id, params, fn){
  */
 
 Post.prototype.getBySlug = function(slug, params, fn){
-  var set = { site: this.wpconn.site._id, post_slug: slug };
-  this.wpconn.req.send('post.get_by_slug', set, params, fn);
+  var set = { site: this.wpcom.site._id, post_slug: slug };
+  this.wpcom.req.send('post.get_by_slug', set, params, fn);
 };
 
 /**
@@ -53,8 +53,8 @@ Post.prototype.getBySlug = function(slug, params, fn){
  */
 
 Post.prototype.add = function(data, fn){
-  var set = { site: this.wpconn.site._id };
-  this.wpconn.req.send('post.add', set, { data: data }, fn);
+  var set = { site: this.wpcom.site._id };
+  this.wpcom.req.send('post.add', set, { data: data }, fn);
 };
 
 /**
@@ -67,8 +67,8 @@ Post.prototype.add = function(data, fn){
  */
 
 Post.prototype.edit = function(id, data, fn){
-  var set = { site: this.wpconn.site._id, post_id: id };
-  this.wpconn.req.send('post.edit', set, { data: data }, fn);
+  var set = { site: this.wpcom.site._id, post_id: id };
+  this.wpcom.req.send('post.edit', set, { data: data }, fn);
 };
 
 /**
@@ -80,8 +80,8 @@ Post.prototype.edit = function(id, data, fn){
  */
 
 Post.prototype.del = function(id, fn){
-  var set = { site: this.wpconn.site._id, post_id: id };
-  this.wpconn.req.send('post.delete', set, fn);
+  var set = { site: this.wpcom.site._id, post_id: id };
+  this.wpcom.req.send('post.delete', set, fn);
 };
 
 /**

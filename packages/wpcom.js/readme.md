@@ -1,111 +1,69 @@
-# wp-connect
+# node-wpcom
 
-### Wordpress connect module ###
+### WordPress API for nodejs
 
-  Layer to get resources from [WordPress](http://www.wordpress.com) using the [developer.wordpress.com/docs/api/](REST API).
+  Nodejs module to get resources from [WordPress](http://www.wordpress.com) using the [developer.wordpress.com/docs/api/](REST API).
+
+## How to use it
+
+```js
+var wpcom = require('wpcom')('<your-token>');
+
+// get the user info
+wpcom.me.info(function(err, user){
+  // Meta data about auth token's User
+});
+
+// set site
+wpcom.site.id('blog.wordpress.com');
+
+// get site information
+wpcom.site.info(function(err, site){
+  // `site` information object
+});
+
+// get site posts
+wpcom.site.posts(function(err, posts){
+  // site `posts` object
+});
+
+// add a new post
+wpcom.site.post.add({ title: 'The new post title !!!' }, function(err, post){
+  // new `post` object
+});
+```
 
 ## API
 
-### WPCONN(<token>);
+### WPCOM('&lt;token&gt;');
 
-Create a new instance of WPCONN. If you wanna a way to get the access token
-then can use [WPOAuth](https://github.com/cloudup/wp-oauth) npm module.
+Create a new instance of WPCOM. `token` parameter is optional but it's needed to
+make admin actions or to access to protected resources.
 
-```js
-var WPCONN = require('wp-connect');
-var wpconn = WPCONN();
-```
+Note: If you wanna a way to get the access token
+then can use [node-wpcom-oauth](https://github.com/Automattic/node-wpcom-oauth) npm module.
 
-### WPCONN#me();
+### WPCOM#me
 
-```js
-var WPCONN = require('wp-connect');
-var wpconn = new WPCONN('<your token>');
+* **#me.info(params, fn)** Meta data about auth token's User
+* **#me.sites(params, fn)** A list of the current user's sites
+* **#me.likes(params, fn)** List the currently authorized user's likes
+* **#me.groups(params, fn)** A list of the current user's group
+* **#me.connections(params, fn)** A list of the current user's connections to third-party services
 
-// get the user info
-wpconn.me(function(err, user){
-  // user info related with the given access token
-});
-```
+### WPCOM#site
 
-### WPCONN#site.id(<id>);
+* **#site.id(site_id)** Set site id
+* **#site.info(params, fn)** Information about site.id
+* **#site.posts(params, fn)** Matching posts
 
-Set site identifier
+### WPCOM#site.post
 
-### WPCONN#site.info(params, fn);
-
-Get the site information
-
-```js
-var WPCONN = require('wp-connect');
-var wpconn = new WPCONN('<your token here>');
-
-// get site info
-wpconn.site.id('blog.wordpress.com');
-wpconn.site.info(function(err, site){
-  // site data object
-});
-```
-
-### WPCONN#site.posts(params, fn);
-
-Get the site posts
-
-```js
-wpconn.site.id('blog.wordpress.com');
-wpconn.site.posts({ number: 10 }, function(err, posts){
-  // posts array
-});
-```
-
-### WPCONN.site.post.get(id, fn);
-
-Get post site data
-
-```js
-// get post data
-wpconn.site.post.get(435, params, function(err, post){
-  // post data object
-});
-```
-
-### WPCONN.site.post.getBySlug(slug, params, fn);
-
-Get post site data by the given slug
-
-```js
-// get post data
-wpconn.site.post.getBySlug('we-are-the-loosers', function(err, post){
-  // post data object
-});
-```
-
-### WPCONN.site.post.add(data, fn);
-
-Add a new post
-
-```js
-// post data
-var data = {
-  "title": "A new post",
-  "slug": "a-new-post",
-  "content": "<div>The content of the new post</div>"
-};
-
-wpconn.site.post.add(data, function(err, new_post){
-  // object data of the new post already added
-});
-```
-
-### WPCONN.site.post.edit(id, data, fn);
-
-Edit a post
-
-```js
-wpconn.site.post.edit(321, { title: "new Title !!!" }, function(err, edit_post){
-  // the title in edit_post has changed
-});
-```
+* **#site.post.get(id, params, fn)** Return a single Post (by id)
+* **#site.post.getBySlug(slug, params, fn)** Return a single Post (by id)
+* **#site.post.add(data, fn)** Create a post
+* **#site.post.edit(id, data, fn)** Edit a post
+* **#site.post.del(id, fn)** Delete a post
 
 ## Example
 
@@ -120,6 +78,8 @@ $ npm install
 ```cli
 $ node index.js
 ```
+
+Finally open a browser and load the page pointing to http://localhost:3000
 
 ## Test
 
@@ -142,6 +102,7 @@ or rename the `test/data_example.json` file.
     "content": "<div style=\"color: red;\">The content of the new testing post</div>"
   }
 }
+
 ```
 
 ... and then
@@ -149,6 +110,8 @@ or rename the `test/data_example.json` file.
 ```cli
 $ make
 ```
+
+**note**: for `public_site` and `private_site` don't add http:// to urls.
 
 ## License
 

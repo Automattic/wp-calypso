@@ -4,7 +4,7 @@
  */
 
 var test = require('./data');
-var WPCONN = require('../');
+var WPCOM = require('../');
 
 /**
  * `Util` module
@@ -13,39 +13,39 @@ var WPCONN = require('../');
 function Util(){}
 
 /**
- * Create a WPCONN instance
+ * Create a WPCOM instance
  *
  * @api public
  */
 
-Util.wpconn = function(){
-  return WPCONN(test.token);
+Util.wpcom = function(){
+  return WPCOM(test.token);
 };
 
 /**
- * Create a new WPCONN instance
+ * Create a new WPCOM instance
  * setting with a public site id
  *
  * @api public
  */
 
 Util.public_site = function(){
-  var wpconn = WPCONN(test.token);
-  wpconn.site.id(test.public_site);
-  return wpconn;
+  var wpcom = WPCOM(test.token);
+  wpcom.site.id(test.public_site);
+  return wpcom;
 };
 
 /**
- * Create a new WPCONN instance
+ * Create a new WPCOM instance
  * setting with a private site id
  *
  * @api public
  */
 
 Util.private_site = function(){
-  var wpconn = WPCONN(test.token);
-  wpconn.site.id(test.private_site);
-  return wpconn;
+  var wpcom = WPCOM(test.token);
+  wpcom.site.id(test.private_site);
+  return wpcom;
 };
 
 /**

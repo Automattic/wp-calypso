@@ -3,22 +3,22 @@
  * Module dependencies.
  */
 
-var debug = require('debug')('wp-connect:me');
+var debug = require('debug')('wpcom:me');
 
 /**
  * Create a Me instance
  *
- * @param {Me} wpconn
+ * @param {WPCOM} wpcom
  * @api public
  */
 
-function Me(wpconn){
-  if (!(this instanceof Me)) return new Me(wpconn);
-  this.wpconn = wpconn;
+function Me(wpcom){
+  if (!(this instanceof Me)) return new Me(wpcom);
+  this.wpcom = wpcom;
 }
 
 /**
- * Require user information
+ * Meta data about auth token's User
  *
  * @param {Object} params (optional)
  * @param {Function} fn
@@ -26,11 +26,11 @@ function Me(wpconn){
  */
 
 Me.prototype.info = function(params, fn){
-  this.wpconn.req.send('me.get', null, params, fn);
+  this.wpcom.req.send('me.get', null, params, fn);
 };
 
 /**
- * List of sites current user is member of
+ * A list of the current user's sites
  *
  * @param {Object} params (optional)
  * @param {Function} fn
@@ -38,11 +38,11 @@ Me.prototype.info = function(params, fn){
  */
 
 Me.prototype.sites = function(params, fn){
-  this.wpconn.req.send('me.sites', null, params, fn);
+  this.wpcom.req.send('me.sites', null, params, fn);
 };
 
 /**
- * User likes
+ * List the currently authorized user's likes
  *
  * @param {Object} params (optional)
  * @param {Function} fn
@@ -50,11 +50,10 @@ Me.prototype.sites = function(params, fn){
  */
 
 Me.prototype.likes = function(params, fn){
-  this.wpconn.req.send('me.likes', null, params, fn);
+  this.wpcom.req.send('me.likes', null, params, fn);
 };
 
 /**
- * User groups
  * A list of the current user's group
  *
  * @param {Object} params (optional)
@@ -63,11 +62,10 @@ Me.prototype.likes = function(params, fn){
  */
 
 Me.prototype.groups = function(params, fn){
-  this.wpconn.req.send('me.groups', null, params, fn);
+  this.wpcom.req.send('me.groups', null, params, fn);
 };
 
 /**
- * User connections
  * A list of the current user's connections to third-party services
  *
  * @param {Object} params (optional)
@@ -76,7 +74,7 @@ Me.prototype.groups = function(params, fn){
  */
 
 Me.prototype.connections = function(params, fn){
-  this.wpconn.req.send('me.connections', null, params, fn);
+  this.wpcom.req.send('me.connections', null, params, fn);
 };
 
 /**

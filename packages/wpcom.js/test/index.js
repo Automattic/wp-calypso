@@ -1,8 +1,8 @@
 /**
- * WPCONN module
+ * WPCOM module
  */
 
-var WPCONN = require('../');
+var WPCOM = require('../');
 
 /**
  * Testing data
@@ -12,21 +12,21 @@ var test = require('./data');
 var util = require('./util');
 
 /**
- * WPCONN object
+ * WPCOM object
  */
 
-describe('WPCONN', function(){
+describe('WPCOM', function(){
 
   describe('sync', function(){
 
-    it('should create a WPCONN object', function(){
-      var wpconn = new WPCONN();
-      wpconn.should.be.instanceof(WPCONN);
+    it('should create a WPCOM object', function(){
+      var wpcom = new WPCOM();
+      wpcom.should.be.instanceof(WPCOM);
     });
 
     it('should set the token', function(){
-      var wpconn = new WPCONN(test.token);
-      wpconn.tkn
+      var wpcom = new WPCOM(test.token);
+      wpcom.tkn
         .should.be.ok
         .and.be.instanceOf(String)
         .eql(test.token);

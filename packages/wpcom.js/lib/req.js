@@ -8,7 +8,7 @@ var merge = require('extend');
 var qs = require('querystring');
 
 var ends = require('./endpoint');
-var debug = require('debug')('wp-connect:req');
+var debug = require('debug')('wpcom:req');
 
 /**
  * Default options
@@ -29,12 +29,12 @@ var api_url = default_opts.url.api_rest_v1;
 /**
  * Request constructor
  *
- * @param {WPCONN} wpconn
+ * @param {WPCOM} wpcom
  * @api public
  */
 
-function Req(wpconn){
-  this.wpconn = wpconn;
+function Req(wpcom){
+  this.wpcom = wpcom;
 }
 
 /**
@@ -51,7 +51,7 @@ Req.prototype.send = function (type, vars, params, fn){
   debug('type: `%s`', type);
 
   // token
-  var token = params.token || this.wpconn.tkn;
+  var token = params.token || this.wpcom.tkn;
   delete params.token;
 
   // headers
@@ -111,7 +111,7 @@ Req.prototype.send = function (type, vars, params, fn){
   req.end(function (err, res){
     if (err) return fn(err);
 
-    // check wpconn server error response
+    // check wpcom server error response
     if (res.body.error) {
       return fn(new Error(res.body.message));
     }

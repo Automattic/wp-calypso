@@ -1,9 +1,9 @@
 
 /**
- * WPCONN module
+ * WPCOM module
  */
 
-var WPCONN = require('../');
+var WPCOM = require('../');
 var Site = require('../lib/site');
 var Post = require('../lib/post');
 var util = require('./util');
@@ -15,7 +15,7 @@ var util = require('./util');
 var test = require('./data');
 
 /**
- * WPCONN instance
+ * WPCOM instance
  */
 
 describe('post', function(){
@@ -23,8 +23,8 @@ describe('post', function(){
   // Create a new_post before to start the tests
   var new_post;
   before(function(done){
-    var wpconn = util.private_site();
-    wpconn.site.post.add(test.new_post_data, function(err, post){
+    var wpcom = util.private_site();
+    wpcom.site.post.add(test.new_post_data, function(err, post){
       if (err) done(err);
 
       new_post = post;
@@ -35,8 +35,8 @@ describe('post', function(){
   describe('sync', function(){
 
     it('should be an instance of `Site`', function(){
-      var wpconn = WPCONN();
-      wpconn.site.post
+      var wpcom = WPCOM();
+      wpcom.site.post
         .should.be.an.instanceOf(Post);
     });
 
@@ -46,8 +46,8 @@ describe('post', function(){
 
     describe('get', function(){
       it('should get the recently added post', function(done){
-        var wpconn = util.private_site();
-        wpconn.site.post.get(new_post.ID, function(err, post){
+        var wpcom = util.private_site();
+        wpcom.site.post.get(new_post.ID, function(err, post){
           if (err) throw err;
 
           post.should.be.eql(new_post);
@@ -56,8 +56,8 @@ describe('post', function(){
       });
 
       it('should get by slug', function(done){
-        var wpconn = util.private_site();
-        wpconn.site.post.getBySlug(new_post.slug, function(err, post){
+        var wpcom = util.private_site();
+        wpcom.site.post.getBySlug(new_post.slug, function(err, post){
           if (err) throw err;
 
           post.should.be.eql(new_post);
@@ -70,8 +70,8 @@ describe('post', function(){
     describe('add', function(){
 
       it('should add a new post', function(done){
-        var wpconn = util.private_site();
-        wpconn.site.post.add(test.new_post_data, function(err, post){
+        var wpcom = util.private_site();
+        wpcom.site.post.add(test.new_post_data, function(err, post){
           if (err) throw err;
 
           // checking some post date
@@ -95,10 +95,10 @@ describe('post', function(){
     describe('edit', function(){
 
       it('should edit the new added post', function(done){
-        var wpconn = util.private_site();
+        var wpcom = util.private_site();
         var edited_title = new_post.title + ' has been changed';
 
-        wpconn.site.post.edit(new_post.ID, { title: edited_title }, function(err, post){
+        wpcom.site.post.edit(new_post.ID, { title: edited_title }, function(err, post){
           if (err) throw err;
 
           post
@@ -117,9 +117,9 @@ describe('post', function(){
     describe('delete', function(){
 
       it('should delete the new added post', function(done){
-        var wpconn = util.private_site();
+        var wpcom = util.private_site();
 
-        wpconn.site.post.del(new_post.ID, function(err, post){
+        wpcom.site.post.del(new_post.ID, function(err, post){
           if (err) throw err;
 
           post

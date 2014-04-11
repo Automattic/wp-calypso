@@ -3,7 +3,7 @@
  * Module dependencies
  */
 
-var WPCONN = require('../');
+var WPCOM = require('../');
 var util = require('./util');
 
 /**
@@ -71,17 +71,17 @@ describe('testing data', function(){
   });
 
   describe('util', function(){
-    it('should create a wpconn instance', function(){
-      var wpconn = util.wpconn();
-      wpconn.should.be.an.instanceOf(WPCONN);
+    it('should create a wpcom instance', function(){
+      var wpcom = util.wpcom();
+      wpcom.should.be.an.instanceOf(WPCOM);
     });
 
-    it('should create a wpconn instance setting site `id`', function(){
-      var wpconn = util.public_site();
-      wpconn
-        .should.be.an.instanceOf(WPCONN);
+    it('should create a wpcom instance setting site `id`', function(){
+      var wpcom = util.public_site();
+      wpcom
+        .should.be.an.instanceOf(WPCOM);
 
-      wpconn.site._id
+      wpcom.site._id
         .should.be.eql(tdata.public_site);
     });
   });

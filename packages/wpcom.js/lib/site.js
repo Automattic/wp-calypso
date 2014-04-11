@@ -4,21 +4,21 @@
  */
 
 var Post = require('./post');
-var debug = require('debug')('wp-connect:site');
+var debug = require('debug')('wpcom:site');
 
 /**
  * Create a Site instance
  *
- * @param {Site} wpconn
+ * @param {WPCOM} wpcom
  * @api public
  */
 
-function Site(wpconn){
-  if (!(this instanceof Site)) return new Site(wpconn);
-  this.wpconn = wpconn;
+function Site(wpcom){
+  if (!(this instanceof Site)) return new Site(wpcom);
+  this.wpcom = wpcom;
 
   // post methods
-  this.post = new Post(this.wpconn);
+  this.post = new Post(this.wpcom);
 }
 
 /**
@@ -35,6 +35,7 @@ Site.prototype.id = function(id){
 /**
  * Require site information
  *
+ * @param {Object} params (optional)
  * @param {Function} fn
  * @api public
  */
@@ -44,7 +45,7 @@ Site.prototype.info = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.send('site.get', { site: this._id }, params, fn);
+  this.wpcom.req.send('site.get', { site: this._id }, params, fn);
 };
 
 /**
@@ -60,7 +61,7 @@ Site.prototype.posts = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpconn.req.send('posts.get', { site: this._id }, params, fn);
+  this.wpcom.req.send('posts.get', { site: this._id }, params, fn);
 };
 
 /**
