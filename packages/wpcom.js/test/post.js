@@ -57,7 +57,7 @@ describe('post', function(){
 
       it('should get by slug', function(done){
         var wpcom = util.private_site();
-        wpcom.site.post.getBySlug(new_post.slug, function(err, post){
+        wpcom.site.post.getbyslug(new_post.slug, function(err, post){
           if (err) throw err;
 
           post.should.be.eql(new_post);
