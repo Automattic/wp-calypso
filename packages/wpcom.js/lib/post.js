@@ -39,7 +39,7 @@ Post.prototype.get = function(id, params, fn){
  * @api public
  */
 
-Post.prototype.getBySlug = function(slug, params, fn){
+Post.prototype.getbyslug = function(slug, params, fn){
   var set = { site: this.wpcom.site._id, post_slug: slug };
   this.wpcom.req.send('post.get_by_slug', set, params, fn);
 };
