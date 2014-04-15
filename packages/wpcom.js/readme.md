@@ -4,6 +4,12 @@
 
   Nodejs module to get resources from [WordPress](http://www.wordpress.com) using the [developer.wordpress.com/docs/api/](REST API).
 
+## Installation
+
+```
+$ npm install node-wpcom
+```
+
 ## How to use it
 
 ```js
