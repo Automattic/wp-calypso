@@ -7,63 +7,52 @@
 ## How to use it
 
 ```js
+// create a WPCOM instance
 var wpcom = require('wpcom')('<your-token>');
 
-// get the user info
-wpcom.me.info(function(err, user){
-  // Meta data about auth token's User
-});
+// create a blog hanlder instance
+var blog = wpcom.sites('blog.wordpress.com');
 
-// set site
-wpcom.site.id('blog.wordpress.com');
-
-// get site information
-wpcom.site.info(function(err, site){
-  // `site` information object
-});
-
-// get site posts
-wpcom.site.posts(function(err, posts){
-  // site `posts` object
-});
-
-// add a new post
-wpcom.site.post.add({ title: 'The new post title !!!' }, function(err, post){
-  // new `post` object
+// get blog posts
+blog.posts({ number: 8 }, function(err, list){
+  // posts list object
 });
 ```
 
 ## API
 
-### WPCOM('&lt;token&gt;');
+### WPCOM('token');
 
 Create a new instance of WPCOM. `token` parameter is optional but it's needed to
 make admin actions or to access to protected resources.
 
-Note: If you wanna a way to get the access token
-then can use [node-wpcom-oauth](https://github.com/Automattic/node-wpcom-oauth) npm module.
+Note: If you wanna a way to get the access token can use [node-wpcom-oauth](https://github.com/Automattic/node-wpcom-oauth) npm module.
 
-### WPCOM#me
+### WPCOM#me()
 
-* **#me.info(params, fn)** Meta data about auth token's User
-* **#me.sites(params, fn)** A list of the current user's sites
-* **#me.likes(params, fn)** List the currently authorized user's likes
-* **#me.groups(params, fn)** A list of the current user's group
-* **#me.connections(params, fn)** A list of the current user's connections to third-party services
+Create a `Me` object. More info in [Me doc page](./doc/me.md).
 
-### WPCOM#site
+```js
+var wpcom = require('wpcom')('<your-token>');
+var me = wpcom.me();
 
-* **#site.id(site_id)** Set site id
-* **#site.info(params, fn)** Information about site.id
-* **#site.posts(params, fn)** Matching posts
+// get user information
+me.get(function(err, info){
+});
+```
 
-### WPCOM#site.post
+### WPCOM#sites('site-id')
 
-* **#site.post.get(id, params, fn)** Return a single Post (by id)
-* **#site.post.getBySlug(slug, params, fn)** Return a single Post (by id)
-* **#site.post.add(data, fn)** Create a post
-* **#site.post.edit(id, data, fn)** Edit a post
-* **#site.post.del(id, fn)** Delete a post
+Create a `Sites` object. More info in [Sites doc page](./doc/sites.md).
+
+```js
+var wpcom = require('wpcom')('<your-token>');
+var site = wpcom.sites();
+
+// get blog posts
+site.posts(function(err, list){
+});
+```
 
 ## Example
 
@@ -87,15 +76,22 @@ Create `data.json` file into `test/` folder to can run the tests. You can copy
 or rename the `test/data_example.json` file.
 
 ```json
+
 {
-  "client_id": "<your client_id here>",
-  "client_secret": "<your client_secret here>",
-  "token": "<your token app here>",
+  "token": {
+    "global": "<global token>",
+    "private": "<private token>"
+  },
 
-  "public_site": "<a public blog here>",
-
-  "private_site": "<a private blog here>",
-  "private_site_id": "<the ID of the private blog>",
+  "site": {
+    "public": {
+      "url": "<public blog url>"
+    },
+    "private" : {
+      "url": "<private blog url>",
+      "id": "<private blog id>"
+    }
+  },
 
   "new_post_data": {
     "title": "New testing post",
@@ -111,7 +107,7 @@ or rename the `test/data_example.json` file.
 $ make
 ```
 
-**note**: for `public_site` and `private_site` don't add http:// to urls.
+**note**: don't add `http://` in`public_site` and `private_site` values.
 
 ## License
 

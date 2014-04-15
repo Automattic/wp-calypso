@@ -4,14 +4,15 @@
  */
 
 var Me = require('./lib/me');
-var Site = require('./lib/site');
+var Sites = require('./lib/sites');
+
 var req = require('./lib/req');
 var debug = require('debug')('wpcom');
 
 /**
  * WordPress REST-API class
  *
- * @param {String} token (optional)
+ * @param {String} [token]
  * @api public
  */
 
@@ -22,11 +23,28 @@ function WPCOM(token){
 
   // request instance
   this.req = new req(this);
-
-  // add methods
-  this.me = new Me(this);
-  this.site = new Site(this);
 }
+
+/**
+ * Get me object instance
+ *
+ * @api public
+ */
+
+WPCOM.prototype.me = function(){
+  return Me(this);
+};
+
+/**
+ * Get site object instance
+ *
+ * @param {String} id
+ * @api public
+ */
+
+WPCOM.prototype.sites = function(id){
+  return Sites(id, this);
+};
 
 /**
  * Expose `WPCOM` module

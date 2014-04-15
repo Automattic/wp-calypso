@@ -6,7 +6,7 @@
 var debug = require('debug')('wpcom:me');
 
 /**
- * Create a Me instance
+ * Create a `Me` instance
  *
  * @param {WPCOM} wpcom
  * @api public
@@ -20,19 +20,19 @@ function Me(wpcom){
 /**
  * Meta data about auth token's User
  *
- * @param {Object} params (optional)
+ * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */
 
-Me.prototype.info = function(params, fn){
+Me.prototype.get = function(params, fn){
   this.wpcom.req.send('me.get', null, params, fn);
 };
 
 /**
  * A list of the current user's sites
  *
- * @param {Object} params (optional)
+ * @param {Object} [params]
  * @param {Function} fn
  * @api private
  */
@@ -44,7 +44,7 @@ Me.prototype.sites = function(params, fn){
 /**
  * List the currently authorized user's likes
  *
- * @param {Object} params (optional)
+ * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */
@@ -56,7 +56,7 @@ Me.prototype.likes = function(params, fn){
 /**
  * A list of the current user's group
  *
- * @param {Object} params (optional)
+ * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */
@@ -68,7 +68,7 @@ Me.prototype.groups = function(params, fn){
 /**
  * A list of the current user's connections to third-party services
  *
- * @param {Object} params (optional)
+ * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */

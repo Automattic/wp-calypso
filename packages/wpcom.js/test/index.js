@@ -25,11 +25,11 @@ describe('WPCOM', function(){
     });
 
     it('should set the token', function(){
-      var wpcom = new WPCOM(test.token);
+      var wpcom = new WPCOM(test.token.global);
       wpcom.tkn
         .should.be.ok
         .and.be.instanceOf(String)
-        .eql(test.token);
+        .eql(test.token.global);
     });
 
   });

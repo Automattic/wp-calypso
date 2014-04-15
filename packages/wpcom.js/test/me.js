@@ -16,15 +16,15 @@ var util = require('./util');
  * me
  */
 
-describe('me', function(){
+describe('WPCOM#Me', function(){
 
   describe('async', function(){
 
-    describe('info()', function(){
+    describe('get()', function(){
       it('should require user information object', function(done){
-        var wpcom = util.wpcom();
+        var me = util.wpcom().me();
 
-        wpcom.me.info(function(err, me){
+        me.get(function(err, me){
           if (err) throw err;
 
           // testing object
@@ -43,9 +43,9 @@ describe('me', function(){
 
     describe('sites()', function(){
       it('should require user sites object', function(done){
-        var wpcom = util.wpcom();
+        var me = util.wpcom().me();
 
-        wpcom.me.sites(function(err, sites){
+        me.sites(function(err, sites){
           if (err) throw err;
           done();
         });
@@ -54,9 +54,9 @@ describe('me', function(){
 
     describe('likes()', function(){
       it('should require user likes', function(done){
-        var wpcom = util.wpcom();
+        var me = util.wpcom().me();
 
-        wpcom.me.likes(function(err, data){
+        me.likes(function(err, data){
           if (err) throw err;
 
           data.found
@@ -72,9 +72,9 @@ describe('me', function(){
 
     describe('groups()', function(){
       it('should require groups', function(done){
-        var wpcom = util.wpcom();
+        var me = util.wpcom().me();
 
-        wpcom.me.groups(function(err, data){
+        me.groups(function(err, data){
           if (err) throw err;
 
           data.groups
@@ -87,9 +87,9 @@ describe('me', function(){
 
     describe('connections()', function(){
       it('should require third-party connections', function(done){
-        var wpcom = util.wpcom();
+        var me = util.wpcom().me();
 
-        wpcom.me.connections(function(err, data){
+        me.connections(function(err, data){
           if (err) throw err;
 
           data.connections

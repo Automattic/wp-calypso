@@ -4,6 +4,7 @@
  */
 
 var WPCOM = require('../');
+var Sites = require('../lib/sites');
 var util = require('./util');
 
 /**
@@ -16,7 +17,7 @@ var pkg = require('../package.json');
  * Testing data
  */
 
-var tdata = require('./data');
+var data = require('./data');
 
 /**
  * Sync tests
@@ -30,42 +31,32 @@ describe('testing data', function(){
   });
 
   describe('data', function(){
-    it('`client id` should be a string of numbers', function(){
-      (Number(tdata.client_id)).should.be.a.Number;
-    });
-
-    it('`client secret` length and type', function(){
-      tdata.client_secret
-        .should.be.an.instanceOf(String)
-        .and.length(64);
-    });
-
-    it('`token` should be a String', function(){
-      tdata.token
+    it('global `token` should be a String', function(){
+      data.token.global
         .should.be.an.instanceOf(String);
     });
 
     it('`public_site` should be defined', function(){
-      tdata.public_site
+      data.site.public.url
         .should.be.ok
         .and.an.instanceOf(String);
     });
 
     it('`private_site` should be defined', function(){
-      tdata.private_site
+      data.site.private.url
         .should.be.ok
         .and.an.instanceOf(String);
     });
 
     it('`new_post_data` should be ok', function(){
-      tdata.new_post_data
+      data.new_post_data
         .should.be.ok
         .and.an.instanceOf(Object);
 
-      tdata.new_post_data.title
+      data.new_post_data.title
         .should.be.an.instanceOf(String);
 
-      tdata.new_post_data.content
+      data.new_post_data.content
         .should.be.an.instanceOf(String);
     });
   });
@@ -76,13 +67,14 @@ describe('testing data', function(){
       wpcom.should.be.an.instanceOf(WPCOM);
     });
 
-    it('should create a wpcom instance setting site `id`', function(){
-      var wpcom = util.public_site();
-      wpcom
-        .should.be.an.instanceOf(WPCOM);
+    it('should create a blog instance', function(){
+      var site = util.public_site();
 
-      wpcom.site._id
-        .should.be.eql(tdata.public_site);
+      site
+        .should.be.an.instanceOf(Sites);
+
+      site._id
+        .should.be.eql(data.site.public.url);
     });
   });
 });

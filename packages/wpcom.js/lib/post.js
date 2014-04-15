@@ -8,39 +8,76 @@ var debug = require('debug')('wpcom:action');
 /**
  * Post methods
  *
+ * @param {String} id
+ * @param {String} sid site id
  * @param {WPCOM} wpcom
  * @api public
  */
 
-function Post(wpcom){
+function Post(id, sid, wpcom){
+  if (!(this instanceof Post)) return new Post(id, sid, wpcom);
+
   this.wpcom = wpcom;
+  this._sid = sid;
+
+  // set `id` and/or `slug` properties
+  id = id || {};
+  if ('object' != typeof id) {
+    this._id = id;
+  } else {
+    this._id = id.id;
+    this._slug = id.slug;
+  }
 }
 
 /**
- * Get site post by the given `id`
+ * Set post `id`
  *
- * @param {String} id
- * @param {Object} params (optional)
+ * @api public
+ */
+
+Post.prototype.id = function(id){
+  this._id = id;
+};
+
+/**
+ * Set post `slug`
+ *
+ * @param {String} slug
+ * @api public
+ */
+
+Post.prototype.slug = function(slug){
+  this._slug = slug;
+};
+
+/**
+ * Get post data
+ *
+ * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.get = function(id, params, fn){
-  var set = { site: this.wpcom.site._id, post_ID: id };
+Post.prototype.get = function(params, fn){
+  if (!this._id && this._slug) {
+    return this.getbyslug(params, fn);
+  }
+
+  var set = { site: this._sid, post_id: this._id };
   this.wpcom.req.send('post.get', set, params, fn);
 };
 
 /**
- * Get site post by the given `slug`
+ * Get post data by slug
  *
- * @param {String} id
- * @param {Object} params (optional)
+ * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.getbyslug = function(slug, params, fn){
-  var set = { site: this.wpcom.site._id, post_slug: slug };
+Post.prototype.getbyslug = function(params, fn){
+  var set = { site: this._sid, post_slug: this._slug };
   this.wpcom.req.send('post.get_by_slug', set, params, fn);
 };
 
@@ -53,35 +90,45 @@ Post.prototype.getbyslug = function(slug, params, fn){
  */
 
 Post.prototype.add = function(data, fn){
-  var set = { site: this.wpcom.site._id };
+  var set = { site: this._sid };
   this.wpcom.req.send('post.add', set, { data: data }, fn);
 };
 
 /**
  * Edit post
  *
- * @param {String} id
  * @param {Object} data
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.edit = function(id, data, fn){
-  var set = { site: this.wpcom.site._id, post_id: id };
+Post.prototype.update = function(data, fn){
+  var set = { site: this._sid, post_id: this._id };
   this.wpcom.req.send('post.edit', set, { data: data }, fn);
 };
 
 /**
  * Delete post
  *
- * @param {String} id
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.del = function(id, fn){
-  var set = { site: this.wpcom.site._id, post_id: id };
+Post.prototype.delete = function(fn){
+  var set = { site: this._sid, post_id: this._id };
   this.wpcom.req.send('post.delete', set, fn);
+};
+
+/**
+ * Get post likes
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.likes = function(fn){
+  var set = { site: this._sid, post_id: this._id };
+  this.wpcom.req.send('post.likes', set, fn);
 };
 
 /**

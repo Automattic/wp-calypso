@@ -69,6 +69,7 @@ Req.prototype.send = function (type, vars, params, fn){
   }
 
   params = params || {};
+  fn = fn || function(){};
 
   // endpoint config object
   var end = ends(type);

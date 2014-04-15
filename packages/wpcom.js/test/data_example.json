@@ -1,12 +1,18 @@
 {
-  "client_id": "<your client_id here>",
-  "client_secret": "<your client_secret here>",
-  "token": "<your token app here>",
+  "token": {
+    "global": "<global token>",
+    "private": "<private token>"
+  },
 
-  "public_site": "<a public blog here>",
-
-  "private_site": "<a private blog here>",
-  "private_site_id": "<the ID of the private blog>",
+  "site": {
+    "public": {
+      "url": "<public blog url>"
+    },
+    "private" : {
+      "url": "<private blog url>",
+      "id": "<private blog id>"
+    }
+  },
 
   "new_post_data": {
     "title": "New testing post",
