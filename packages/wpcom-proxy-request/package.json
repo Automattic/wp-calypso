@@ -1,0 +1,15 @@
+
+{
+  "name": "wpcom-cookie-auth",
+  "description": "Proxied cookie-authenticated REST API requests"
+  "version": "0.0.1",
+  "author": {
+    "name": "Damian Suarez",
+    "email": "rdsuarez@gmail.com"
+  },
+  "main": "./index.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
