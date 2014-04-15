@@ -1,14 +1,17 @@
 # node-wpcom
 
-### WordPress API for nodejs
+### [WordPress.com][] API for [Node.js][]
 
-  Nodejs module to get resources from [WordPress](http://www.wordpress.com) using the [developer.wordpress.com/docs/api/](REST API).
+  [Node.js][] module to get resources from [WordPress.com][] using
+  the [REST API][].
+
 
 ## Installation
 
 ```
-$ npm install node-wpcom
+$ npm install wpcom
 ```
+
 
 ## How to use it
 
@@ -25,14 +28,15 @@ blog.posts({ number: 8 }, function(err, list){
 });
 ```
 
+
 ## API
 
-### WPCOM('token');
+### new WPCOM('token');
 
 Create a new instance of WPCOM. `token` parameter is optional but it's needed to
 make admin actions or to access to protected resources.
 
-Note: If you wanna a way to get the access token can use [node-wpcom-oauth](https://github.com/Automattic/node-wpcom-oauth) npm module.
+**Note**: You can use the [node-wpcom-oauth][] module to get an _access token_.
 
 ### WPCOM#me()
 
@@ -113,8 +117,14 @@ or rename the `test/data_example.json` file.
 $ make
 ```
 
-**note**: don't add `http://` in`public_site` and `private_site` values.
+**Note**: don't add `http://` in`public_site` and `private_site` values.
+
 
 ## License
 
 MIT – Copyright 2014 Automattic
+
+[Node.js]: http://nodejs.org
+[REST API]: http://developer.wordpress.com/docs/api
+[WordPress.com]: http://www.wordpress.com
+[node-wpcom-oauth]: https://github.com/Automattic/node-wpcom-oauth
