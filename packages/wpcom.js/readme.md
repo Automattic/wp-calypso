@@ -19,7 +19,7 @@ $ npm install wpcom
 // create a WPCOM instance
 var wpcom = require('wpcom')('<your-token>');
 
-// create a blog hanlder instance
+// create a blog handler instance
 var blog = wpcom.sites('blog.wordpress.com');
 
 // get blog posts
