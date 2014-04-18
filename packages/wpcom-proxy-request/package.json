@@ -3,13 +3,11 @@
   "name": "wpcom-cookie-auth",
   "description": "Proxied cookie-authenticated REST API requests",
   "version": "0.0.1",
-  "author": {
-    "name": "Damian Suarez",
-    "email": "rdsuarez@gmail.com"
-  },
-  "main": "./index.js",
-  "dependencies": {
-  },
-  "devDependencies": {
-  }
+  "author": "Automattic, Inc.",
+  "contributors": [
+    "Damian Suarez <rdsuarez@gmail.com>",
+    "Nathan Rajlich <nathan@automattic.com>"
+  ],
+  "repository": "git@github.com:Automattic/wpcom-cookie-auth.git",
+  "main": "index.js"
 }
