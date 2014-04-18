@@ -1,4 +1,3 @@
-
 {
   "name": "wpcom",
   "description": "WordPress.com API for Node.js",
@@ -7,7 +6,7 @@
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
     "Nathan Rajlich <nathan@automattic.com>"
-  },
+  ],
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "main": "index.js",
   "dependencies": {
