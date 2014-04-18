@@ -1,4 +1,4 @@
-# node-wpcom
+# wpcom.js
 
 ### [WordPress.com][] API for [Node.js][]
 
