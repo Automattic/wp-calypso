@@ -1,13 +1,15 @@
 
 {
   "name": "wpcom",
-  "description": "Wordpress REST API module for nodejs",
+  "description": "WordPress.com API for Node.js",
   "version": "0.3.0",
-  "author": {
-    "name": "Damian Suarez",
-    "email": "rdsuarez@gmail.com"
+  "author": "Automattic, Inc.",
+  "contributors": [
+    "Damian Suarez <rdsuarez@gmail.com>",
+    "Nathan Rajlich <nathan@automattic.com>"
   },
-  "main": "./index.js",
+  "repository": "git@github.com:Automattic/wpcom.js.git",
+  "main": "index.js",
   "dependencies": {
     "extend": "1.2.1",
     "debug": "*",
