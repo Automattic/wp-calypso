@@ -8,7 +8,7 @@
 
 ## Installation
 
-```
+```bash
 $ npm install wpcom
 ```
 
@@ -68,13 +68,13 @@ site.posts(function(err, list){
 
 Into `example/` folder download the npm dependencies:
 
-```cli
+```bash
 $ npm install
 ```
 
 ... and then run the application
 
-```cli
+```bash
 $ node index.js
 ```
 
@@ -113,7 +113,7 @@ or rename the `test/data_example.json` file.
 
 ... and then
 
-```cli
+```bash
 $ make
 ```
 
