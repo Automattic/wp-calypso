@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WordPress.com REST API Proxy Request Test Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="wpcom-cookie-auth.js"></script>
+    <script>
+      wpcomProxyRequest({
+        metaAPI: { accessAllUsersBlogs: true }
+      }, function(err) {
+        if (err) throw err;
+        console.log('successfully upgraded to "access all users blogs" mode');
+      });
+
+      // ensure that node.js-style callback syntax works
+      wpcomProxyRequest('/me', function(err, res){
+        if (err) throw err;
+        console.log(res);
+
+        var div = document.createElement('div');
+        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '<\/b>';
+        document.body.appendChild(div);
+      });
+
+      // ensure that Promise-style return values work
+      var req = wpcomProxyRequest('/me');
+      setTimeout(function () {
+        req.then(function(res){
+          console.log(res);
+        });
+      }, 3000);
+      console.log(req);
+    </script>
+  </body>
+</html>
