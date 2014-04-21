@@ -40,16 +40,9 @@ describe('WPCOM#Sites#Post', function(){
     blog.deletePost(new_post.ID, function(err, post) {
       if (err) throw err;
 
-      blog.deletePost(new_post.ID, function(err, post) {
-        done();
-      });
-    });
-
-    // clean post_added post
-    blog.deletePost(post_added.ID, function(err, post) {
-      if (err) throw err;
-
+      // clean post_added post
       blog.deletePost(post_added.ID, function(err, post) {
+        if (err) throw err;
         done();
       });
     });
