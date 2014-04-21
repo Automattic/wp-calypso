@@ -1,6 +1,6 @@
 {
   "name": "wpcom-proxy-request",
-  "description": "Proxied cookie-authenticated REST API requests",
+  "description": "Proxied cookie-authenticated REST API requests to WordPress.com",
   "keywords": [
     "browser",
     "wpcom",
