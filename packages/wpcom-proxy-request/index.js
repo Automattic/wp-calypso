@@ -206,8 +206,15 @@ function onmessage (e) {
     var err = new Error();
     err.statusCode = statusCode;
     for (var i in res) err[i] = res[i];
-    if (!err.name && res.error) err.name = res.error;
+    if (res.error) err.name = toTitle(res.error) + 'Error';
 
     params.reject(err);
   }
+}
+
+function toTitle (str) {
+  if (!str || 'string' !== typeof str) return '';
+  return str.replace(/((^|_)[a-z])/g, function ($1) {
+    return $1.toUpperCase().replace('_', '');
+  });
 }
