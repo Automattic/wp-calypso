@@ -11,7 +11,7 @@
     }
   },
 
-  "media": {
+  "medias": {
     "get": {
       "method": "GET",
       "path": "/sites/%site%/media"

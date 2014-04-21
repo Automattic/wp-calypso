@@ -67,7 +67,7 @@ Sites.prototype.medias = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpcom.req.send('sites.media.get', { site: this._id }, params, fn);
+  this.wpcom.req.send('sites.medias.get', { site: this._id }, params, fn);
 };
 
 /**
