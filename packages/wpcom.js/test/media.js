@@ -27,7 +27,6 @@ describe('WPCOM#Sites#Media', function(){
     util.addMedia(function(err, media) {
       if (err) return done(err);
 
-      console.log('-> media -> ', media);
       new_media = media;
       done();
     });
