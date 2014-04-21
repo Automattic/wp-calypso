@@ -17,7 +17,7 @@ standalone: dist/wpcom-proxy-request.js
 install: node_modules
 
 clean:
-	@rm -rf node_modules dist/wpcom-proxy-request.js
+	@rm -rf node_modules dist
 
 dist:
 	@mkdir $@
