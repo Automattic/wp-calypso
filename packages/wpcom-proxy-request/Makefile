@@ -12,14 +12,14 @@ NPM ?= $(NODE) $(shell which npm)
 BROWSERIFY ?= $(NODE) $(BIN)/browserify
 ADD_COMPONENT_SYMLINKS ?= $(NODE) $(BIN)/add-component-symlinks
 
-standalone: wpcom-cookie-auth.js
+standalone: wpcom-proxy-request.js
 
 install: node_modules
 
 clean:
-	@rm -rf node_modules wpcom-cookie-auth.js
+	@rm -rf node_modules wpcom-proxy-request.js
 
-wpcom-cookie-auth.js: node_modules index.js
+wpcom-proxy-request.js: node_modules index.js
 	@$(BROWSERIFY) -s wpcomProxyRequest index.js > $@
 
 node_modules: package.json

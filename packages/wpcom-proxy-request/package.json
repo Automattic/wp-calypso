@@ -1,5 +1,5 @@
 {
-  "name": "wpcom-cookie-auth",
+  "name": "wpcom-proxy-request",
   "description": "Proxied cookie-authenticated REST API requests",
   "keywords": [
     "browser",
@@ -15,7 +15,7 @@
     "Damian Suarez <rdsuarez@gmail.com>",
     "Nathan Rajlich <nathan@automattic.com>"
   ],
-  "repository": "git@github.com:Automattic/wpcom-cookie-auth.git",
+  "repository": "git://github.com/Automattic/wpcom-proxy-request.git",
   "main": "index.js",
   "devDependencies": {
     "browserify": "3.44.0",
