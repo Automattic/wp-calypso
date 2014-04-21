@@ -107,6 +107,10 @@ describe('WPCOM#Sites#Post', function(){
             .and.be.eql(test.site.private.id);
 
           done();
+          // remove the post in background
+          post.delete(data.ID, function(err, del_post){
+            if (err) return console.log(err);
+          });
         });
       });
 
