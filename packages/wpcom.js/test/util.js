@@ -42,7 +42,7 @@ Util.public_site = function(){
  */
 
 Util.private_site = function(){
-  var wpcom = WPCOM(test.token.private);
+  var wpcom = WPCOM(test.site.private.token);
   return wpcom.sites(test.site.private.url);
 };
 
@@ -52,8 +52,16 @@ Util.private_site = function(){
 
 Util.addPost = function(fn){
   var site = Util.private_site();
-  var post = site.post();
-  post.add(test.new_post_data, fn);
+  site.addPost(test.new_post_data, fn);
+};
+
+/**
+ * Add a new media
+ */
+
+Util.addMedia = function(fn){
+  var site = Util.private_site();
+  site.addMedia(test.new_media_data, fn);
 };
 
 /**

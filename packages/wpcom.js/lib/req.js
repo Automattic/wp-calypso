@@ -81,7 +81,6 @@ Req.prototype.send = function (type, vars, params, fn){
 
   // build endpoint url
   var endpoint = end.path;
-
   if (vars) {
     for (var k in vars) {
       var rg = new RegExp("%" + k + "%");
@@ -90,14 +89,21 @@ Req.prototype.send = function (type, vars, params, fn){
   }
   debug('endpoint: `%s`', endpoint);
 
-  // build query string
-  var qrs = {};
-  merge(qrs, end.options, params);
-  qrs = qs.stringify(qrs);
-  debug('qrs: `%s`', qrs);
-
   // build endpoint url
-  var url = api_url + endpoint + '?' + qrs;
+  var url = api_url + endpoint;
+
+  if ('get' == method) {
+    // build query string
+    var qrs = {};
+    merge(qrs, end.options, params);
+
+    if (Object.keys(qrs).length) {
+      qrs = qs.stringify(qrs);
+      debug('qrs: `%s`', qrs);
+      url += '?' + qrs;
+    }
+  }
+
   debug('request to `%s`', url);
 
   var req =

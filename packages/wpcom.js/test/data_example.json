@@ -1,7 +1,6 @@
 {
   "token": {
-    "global": "<global token>",
-    "private": "<private token>"
+    "global": "<global token>"
   },
 
   "site": {
@@ -10,7 +9,8 @@
     },
     "private" : {
       "url": "<private blog url>",
-      "id": "<private blog id>"
+      "id": "<private blog id>",
+      "private": "<token>"
     }
   },
 

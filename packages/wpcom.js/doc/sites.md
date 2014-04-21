@@ -41,6 +41,8 @@ site.posts(function(err, list){
 });
 ```
 
+## Sites - Post
+
 ### Sites#post(id);
 
 Create a new `Post` instance.
@@ -64,5 +66,24 @@ Delete a blog post
 
 ```js
 var del_post = site.deletePost('<post-id>', function(err, post){
+});
+```
+
+## Sites - Media
+
+### Sites#media(id);
+
+Create a new `Media` instance.
+
+```js
+var media = site.media('<media-id>');
+```
+
+### Sites#addMedia(data, fn)
+
+Add a new media to site. Return a `Media` instance.
+
+```js
+var new_media = site.addMedia({ urls: [] }, function(err, list){
 });
 ```

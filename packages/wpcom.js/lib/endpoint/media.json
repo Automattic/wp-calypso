@@ -1,0 +1,22 @@
+
+{
+  "get": {
+    "method": "GET",
+    "path": "/sites/%site%/media/%media_id%"
+  },
+
+  "add": {
+    "method": "POST",
+    "path": "/sites/%site%/media/new"
+  },
+
+  "update": {
+    "method": "POST",
+    "path": "/sites/%site%/media/%media_id%"
+  },
+
+  "delete": {
+    "method": "POST",
+    "path": "/sites/%site%/media/%media_id%/delete"
+  }
+}

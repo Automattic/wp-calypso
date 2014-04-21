@@ -14,7 +14,7 @@
     "path": "/sites/%site%/posts/new"
   },
 
-  "edit": {
+  "update": {
     "method": "POST",
     "path": "/sites/%site%/posts/%post_id%"
   },

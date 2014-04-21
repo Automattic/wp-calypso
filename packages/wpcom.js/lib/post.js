@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var debug = require('debug')('wpcom:action');
+var debug = require('debug')('wpcom:post');
 
 /**
  * Post methods
@@ -104,7 +104,7 @@ Post.prototype.add = function(data, fn){
 
 Post.prototype.update = function(data, fn){
   var set = { site: this._sid, post_id: this._id };
-  this.wpcom.req.send('post.edit', set, { data: data }, fn);
+  this.wpcom.req.send('post.update', set, { data: data }, fn);
 };
 
 /**

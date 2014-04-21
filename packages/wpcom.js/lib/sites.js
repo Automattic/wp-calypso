@@ -4,7 +4,8 @@
  */
 
 var Post = require('./post');
-var debug = require('debug')('wpcom:site');
+var Media = require('./media');
+var debug = require('debug')('wpcom:sites');
 
 /**
  * Create a Sites instance
@@ -34,7 +35,7 @@ Sites.prototype.get = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpcom.req.send('site.get', { site: this._id }, params, fn);
+  this.wpcom.req.send('sites.get', { site: this._id }, params, fn);
 };
 
 /**
@@ -50,7 +51,23 @@ Sites.prototype.posts = function(params, fn){
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpcom.req.send('posts.get', { site: this._id }, params, fn);
+  this.wpcom.req.send('sites.posts.get', { site: this._id }, params, fn);
+};
+
+/**
+ * Require the media library
+ *
+ * @param {Object} [params]
+ * @param {Function} fn
+ * @api public
+ */
+
+Sites.prototype.medias = function(params, fn){
+  if (!this._id) {
+    return fn(new Error('site `id` is not defined'));
+  }
+
+  this.wpcom.req.send('sites.media.get', { site: this._id }, params, fn);
 };
 
 /**
@@ -90,6 +107,31 @@ Sites.prototype.deletePost = function(id, fn){
   var post = Post(id, this._id, this.wpcom);
   post.delete(fn);
   return post;
+};
+
+/**
+ * Create a `Media` instance
+ *
+ * @param {String} id
+ * @api public
+ */
+
+Sites.prototype.media = function(id){
+  return Media(id, this._id, this.wpcom);
+};
+
+/**
+ * Add a new blog media data
+ *
+ * @param {Object} data
+ * @param {Function} fn
+ * @return {Post} new Post instance
+ */
+
+Sites.prototype.addMedia = function(data, fn){
+  var media = Media(null, this._id, this.wpcom);
+  media.add(data, fn);
+  return media;
 };
 
 /**

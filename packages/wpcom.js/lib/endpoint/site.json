@@ -1,6 +1,0 @@
-{
-  "get": {
-    "method": "GET",
-    "path": "/sites/%site%"
-  }
-}

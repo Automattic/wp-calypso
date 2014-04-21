@@ -8,18 +8,15 @@ var debug = require('debug')('wp-connect:endpoint');
 var dot = require('dot-component');
 
 var me = require('./me');
-var site = require('./site');
-var posts = require('./posts');
+var sites = require('./sites');
 var post = require('./post');
+var media = require('./media');
 
 /**
- * Default endpoint option
+ * Endpoint default options
  */
 
-var endpoint_options = {
-  "http_envelope": false,
-  "pretty": false
-};
+var endpoint_options = {};
 
 /**
  * endpoints object
@@ -27,9 +24,9 @@ var endpoint_options = {
 
 var endpoints = {
   me: me,
-  site: site,
-  posts: posts,
-  post: post
+  sites: sites,
+  post: post,
+  media: media
 };
 
 /**

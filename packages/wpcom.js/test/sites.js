@@ -115,10 +115,35 @@ describe('WPCOM#Sites', function(){
       });
     });
 
+    describe('media()', function(){
+
+      it('should request media library list', function(done){
+        var site = util.public_site();
+
+        site.medias(function(err, list){
+          if (err) throw err;
+
+          // list object data testing
+          list
+            .should.be.an.instanceOf(Object);
+
+          // `posts list` object data testing
+          list.found
+            .should.be.an.instanceOf(Number);
+
+          list.media
+            .should.be.an.instanceOf(Array);
+
+          done();
+        });
+
+      });
+
+    });
+
     describe('addPost()', function(){
 
       it('should create a new blog post', function(done){
-
         var site = util.private_site();
 
         var post = site.addPost(test.new_post_data, function(err, data){

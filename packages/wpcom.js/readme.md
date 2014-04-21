@@ -89,8 +89,7 @@ or rename the `test/data_example.json` file.
 
 {
   "token": {
-    "global": "<global token>",
-    "private": "<private token>"
+    "global": "<global token>"
   },
 
   "site": {
@@ -99,7 +98,8 @@ or rename the `test/data_example.json` file.
     },
     "private" : {
       "url": "<private blog url>",
-      "id": "<private blog id>"
+      "id": "<private blog id>",
+      "private": "<token>"
     }
   },
 
