@@ -19,15 +19,39 @@ var test = require('./data');
  */
 
 describe('WPCOM#Sites#Post', function(){
+  // var to store post in `add()` test
+  var post_added;
 
   // Create a new_post before to start the tests
   var new_post;
   before(function(done){
     util.addPost(function(err, post) {
-      if (err) return done(err);
+      if (err) throw err;
 
       new_post = post;
       done();
+    });
+  });
+
+  after(function(done){
+    var blog = WPCOM(test.site.private.token).sites(test.site.private.id);
+
+    // clean new_post post
+    blog.deletePost(new_post.ID, function(err, post) {
+      if (err) throw err;
+
+      blog.deletePost(new_post.ID, function(err, post) {
+        done();
+      });
+    });
+
+    // clean post_added post
+    blog.deletePost(post_added.ID, function(err, post) {
+      if (err) throw err;
+
+      blog.deletePost(post_added.ID, function(err, post) {
+        done();
+      });
     });
   });
 
@@ -35,6 +59,7 @@ describe('WPCOM#Sites#Post', function(){
 
     it('should create an `Post` instance from `Sites`', function(){
       var post = WPCOM().sites().post();
+
       post
         .should.be.an.instanceOf(Post);
     });
@@ -106,11 +131,9 @@ describe('WPCOM#Sites#Post', function(){
             .should.be.an.instanceOf(Number)
             .and.be.eql(test.site.private.id);
 
+          post_added = data;
+
           done();
-          // remove the post in background
-          post.delete(data.ID, function(err, del_post){
-            if (err) return console.log(err);
-          });
         });
       });
 
