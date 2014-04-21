@@ -12,14 +12,17 @@ NPM ?= $(NODE) $(shell which npm)
 BROWSERIFY ?= $(NODE) $(BIN)/browserify
 ADD_COMPONENT_SYMLINKS ?= $(NODE) $(BIN)/add-component-symlinks
 
-standalone: wpcom-proxy-request.js
+standalone: dist/wpcom-proxy-request.js
 
 install: node_modules
 
 clean:
-	@rm -rf node_modules wpcom-proxy-request.js
+	@rm -rf node_modules dist/wpcom-proxy-request.js
 
-wpcom-proxy-request.js: node_modules index.js
+dist:
+	@mkdir $@
+
+dist/wpcom-proxy-request.js: node_modules index.js dist
 	@$(BROWSERIFY) -s wpcomProxyRequest index.js > $@
 
 node_modules: package.json
