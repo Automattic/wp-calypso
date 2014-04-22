@@ -4,6 +4,7 @@
  */
 
 var WPCOM = require('../');
+var assert = require('assert');
 
 /**
  * Testing data
@@ -28,13 +29,11 @@ describe('WPCOM#Me', function(){
           if (err) throw err;
 
           // testing object
-          me
-            .should.be.ok
-            .and.an.instanceOf(Object);
+          assert.ok(me);
+          assert.equal('object', typeof me);
 
           // testing user data
-          me.ID
-            .should.be.an.instanceOf(Number);
+          assert.equal('number', typeof me.ID);
 
           done();
         });
@@ -59,11 +58,9 @@ describe('WPCOM#Me', function(){
         me.likes(function(err, data){
           if (err) throw err;
 
-          data.found
-            .should.be.an.instanceOf(Number);
-
-          data.likes
-            .should.be.an.instanceOf(Array);
+          assert.equal('number', typeof data.found);
+          assert.equal('object', typeof data.likes);
+          assert.ok(data.likes instanceof Array);
 
           done();
         });
@@ -77,8 +74,8 @@ describe('WPCOM#Me', function(){
         me.groups(function(err, data){
           if (err) throw err;
 
-          data.groups
-            .should.be.an.instanceOf(Array);
+          assert.equal('object', typeof data.groups);
+          assert.ok(data.groups instanceof Array);
 
           done();
         });
@@ -92,8 +89,8 @@ describe('WPCOM#Me', function(){
         me.connections(function(err, data){
           if (err) throw err;
 
-          data.connections
-            .should.be.an.instanceOf(Array);
+          assert.equal('object', typeof data.connections);
+          assert.ok(data.connections instanceof Array);
 
           done();
         });

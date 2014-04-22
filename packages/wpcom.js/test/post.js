@@ -178,7 +178,8 @@ describe('WPCOM#Sites#Post', function(){
 
           assert.equal('number', typeof data.found);
           assert.equal('boolean', typeof data.i_like);
-          assert.equal('array', typeof data.likes);
+          assert.equal('object', typeof data.likes);
+          assert.ok(data.likes instanceof Array);
 
           done();
         });
