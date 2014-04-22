@@ -14,8 +14,8 @@
     "debug": "*",
     "dot-component": "0.1.1",
     "superagent": "0.17.0",
-    "wpcom-proxy-request": "git+ssh://git@github.com:Automattic/wpcom-proxy-request.git",
-    "wpcom-xhr-request": "git+ssh://git@github.com:Automattic/wpcom-xhr-request.git",
+    "wpcom-proxy-request": "0.1.0",
+    "wpcom-xhr-request": "0.1.0",
     "inherits": "2.0.1"
   },
   "devDependencies": {
