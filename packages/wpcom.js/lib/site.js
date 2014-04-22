@@ -5,17 +5,17 @@
 
 var Post = require('./post');
 var Media = require('./media');
-var debug = require('debug')('wpcom:sites');
+var debug = require('debug')('wpcom:site');
 
 /**
- * Create a Sites instance
+ * Create a Site instance
  *
  * @param {WPCOM} wpcom
  * @api public
  */
 
-function Sites(id, wpcom){
-  if (!(this instanceof Sites)) return new Sites(id, wpcom);
+function Site(id, wpcom){
+  if (!(this instanceof Site)) return new Site(id, wpcom);
   this.wpcom = wpcom;
 
   debug('set `%s` site id', id);
@@ -30,13 +30,13 @@ function Sites(id, wpcom){
  * @api public
  */
 
-Sites.prototype.get = function(query, fn){
+Site.prototype.get = function(query, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
   var set = { site: this._id };
-  this.wpcom.sendRequest('sites.get', set, { query: query }, fn);
+  this.wpcom.sendRequest('site.get', set, { query: query }, fn);
 };
 
 /**
@@ -47,13 +47,13 @@ Sites.prototype.get = function(query, fn){
  * @api public
  */
 
-Sites.prototype.posts = function(query, fn){
+Site.prototype.posts = function(query, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
   var set = { site: this._id };
-  this.wpcom.sendRequest('sites.posts.get', set, { query: query }, fn);
+  this.wpcom.sendRequest('site.posts.get', set, { query: query }, fn);
 };
 
 /**
@@ -64,13 +64,13 @@ Sites.prototype.posts = function(query, fn){
  * @api public
  */
 
-Sites.prototype.medias = function(query, fn){
+Site.prototype.medias = function(query, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
   var set = { site: this._id };
-  this.wpcom.sendRequest('sites.medias.get', set, { query: query }, fn);
+  this.wpcom.sendRequest('site.medias.get', set, { query: query }, fn);
 };
 
 /**
@@ -80,7 +80,7 @@ Sites.prototype.medias = function(query, fn){
  * @api public
  */
 
-Sites.prototype.post = function(id){
+Site.prototype.post = function(id){
   return Post(id, this._id, this.wpcom);
 };
 
@@ -92,7 +92,7 @@ Sites.prototype.post = function(id){
  * @return {Post} new Post instance
  */
 
-Sites.prototype.addPost = function(body, fn){
+Site.prototype.addPost = function(body, fn){
   var post = Post(null, this._id, this.wpcom);
   post.add(body, fn);
   return post;
@@ -106,7 +106,7 @@ Sites.prototype.addPost = function(body, fn){
  * @return {Post} remove Post instance
  */
 
-Sites.prototype.deletePost = function(id, fn){
+Site.prototype.deletePost = function(id, fn){
   var post = Post(id, this._id, this.wpcom);
   post.delete(fn);
   return post;
@@ -119,7 +119,7 @@ Sites.prototype.deletePost = function(id, fn){
  * @api public
  */
 
-Sites.prototype.media = function(id){
+Site.prototype.media = function(id){
   return Media(id, this._id, this.wpcom);
 };
 
@@ -131,14 +131,14 @@ Sites.prototype.media = function(id){
  * @return {Post} new Post instance
  */
 
-Sites.prototype.addMedia = function(body, fn){
+Site.prototype.addMedia = function(body, fn){
   var media = Media(null, this._id, this.wpcom);
   media.add(body, fn);
   return media;
 };
 
 /**
- * Expose `Sites` module
+ * Expose `Site` module
  */
 
-module.exports = Sites;
+module.exports = Site;

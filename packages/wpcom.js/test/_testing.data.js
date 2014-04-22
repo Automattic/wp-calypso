@@ -4,7 +4,7 @@
  */
 
 var WPCOM = require('../');
-var Sites = require('../lib/sites');
+var Site = require('../lib/site');
 var util = require('./util');
 var assert = require('assert');
 
@@ -64,7 +64,7 @@ describe('testing data', function(){
     it('should create a blog instance', function(){
       var site = util.public_site();
 
-      assert.ok(site instanceof Sites);
+      assert.ok(site instanceof Site);
       assert.equal(data.site.public.url, site._id);
     });
   });

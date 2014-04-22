@@ -4,7 +4,7 @@
  */
 
 var Me = require('./lib/me');
-var Sites = require('./lib/sites');
+var Site = require('./lib/site');
 var ends = require('./lib/endpoint');
 var debug = require('debug')('wpcom');
 
@@ -39,8 +39,8 @@ WPCOM.prototype.me = function(){
  * @api public
  */
 
-WPCOM.prototype.sites = function(id){
-  return new Sites(id, this);
+WPCOM.prototype.site = function(id){
+  return new Site(id, this);
 };
 
 /**

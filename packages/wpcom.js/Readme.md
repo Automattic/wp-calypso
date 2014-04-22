@@ -51,13 +51,13 @@ me.get(function(err, info){
 });
 ```
 
-### WPCOM#sites('site-id')
+### WPCOM#site('site-id')
 
-Create a `Sites` object. More info in [Sites doc page](./doc/sites.md).
+Create a `Site` object. More info in [Site doc page](./doc/site.md).
 
 ```js
 var wpcom = require('wpcom')('<your-token>');
-var site = wpcom.sites();
+var site = wpcom.site();
 
 // get blog posts
 site.posts(function(err, list){

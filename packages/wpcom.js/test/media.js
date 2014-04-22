@@ -4,7 +4,7 @@
  */
 
 var WPCOM = require('../');
-var Sites = require('../lib/sites');
+var Site = require('../lib/site');
 var Media = require('../lib/media');
 var util = require('./util');
 var assert = require('assert');
@@ -19,7 +19,7 @@ var test = require('./data');
  * WPCOM instance
  */
 
-describe('WPCOM#Sites#Media', function(){
+describe('WPCOM#Site#Media', function(){
 
   // Create a new_media before to start the tests
 
@@ -35,8 +35,8 @@ describe('WPCOM#Sites#Media', function(){
 
   describe('sync', function(){
 
-    it('should create an `Media` instance from `Sites`', function(){
-      var media = WPCOM().sites().media();
+    it('should create an `Media` instance from `Site`', function(){
+      var media = WPCOM().site().media();
       assert.ok(media instanceof Media);
     });
 

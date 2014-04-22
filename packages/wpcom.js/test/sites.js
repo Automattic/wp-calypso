@@ -5,7 +5,7 @@
  */
 
 var WPCOM = require('../');
-var Sites = require('../lib/sites');
+var Site = require('../lib/site');
 var util = require('./util');
 var assert = require('assert');
 
@@ -16,10 +16,10 @@ var assert = require('assert');
 var test = require('./data');
 
 /**
- * Create a `Sites` instance
+ * Create a `Site` instance
  */
 
-describe('WPCOM#Sites', function(){
+describe('WPCOM#Site', function(){
 
 
   // Create a new_post before to start the tests
@@ -38,7 +38,7 @@ describe('WPCOM#Sites', function(){
     it('should be create a site object instance', function(){
       var site = util.public_site();
 
-      assert.ok(site instanceof Sites);
+      assert.ok(site instanceof Site);
       assert.equal(test.site.public.url, site._id);
     });
 

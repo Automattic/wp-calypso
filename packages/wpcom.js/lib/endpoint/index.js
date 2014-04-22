@@ -21,7 +21,7 @@ var endpoints = {
   me: require('./me'),
   post: require('./post'),
   media: require('./media'),
-  sites: require('./sites'),
+  site: require('./site'),
   'freshly-pressed': require('./freshly-pressed')
 };
 

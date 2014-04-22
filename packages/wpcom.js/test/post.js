@@ -4,7 +4,7 @@
  */
 
 var WPCOM = require('../');
-var Sites = require('../lib/sites');
+var Site = require('../lib/site');
 var Post = require('../lib/post');
 var util = require('./util');
 var assert = require('assert');
@@ -19,7 +19,7 @@ var test = require('./data');
  * WPCOM instance
  */
 
-describe('WPCOM#Sites#Post', function(){
+describe('WPCOM#Site#Post', function(){
   // var to store post in `add()` test
   var post_added;
 
@@ -35,7 +35,7 @@ describe('WPCOM#Sites#Post', function(){
   });
 
   after(function(done){
-    var blog = WPCOM(test.site.private.token).sites(test.site.private.id);
+    var blog = WPCOM(test.site.private.token).site(test.site.private.id);
 
     // clean new_post post
     blog.deletePost(new_post.ID, function(err, post) {
@@ -51,21 +51,21 @@ describe('WPCOM#Sites#Post', function(){
 
   describe('sync', function(){
 
-    it('should create an `Post` instance from `Sites`', function(){
-      var post = WPCOM().sites().post();
+    it('should create an `Post` instance from `Site`', function(){
+      var post = WPCOM().site().post();
 
       assert.ok(post instanceof Post, 'post is not instance of Post');
     });
 
     it('should set post `id`', function(){
-      var post = WPCOM().sites().post();
+      var post = WPCOM().site().post();
       post.id(new_post.ID);
 
       assert.equal(new_post.ID, post._id);
     });
 
     it('should set post `slug`', function(){
-      var post = WPCOM().sites().post();
+      var post = WPCOM().site().post();
       post.slug(new_post.slug);
 
       assert.equal(new_post.slug, post._slug);
