@@ -6,6 +6,7 @@
 var WPCOM = require('../');
 var Sites = require('../lib/sites');
 var util = require('./util');
+var assert = require('assert');
 
 /**
  * Package
@@ -26,55 +27,45 @@ var data = require('./data');
 describe('testing data', function(){
   describe('package', function(){
     it('version should have x.x.x format', function(){
-      pkg.version.should.match(/\d\.\d\.\d/);
+      assert.ok((pkg.version).match(/\d\.\d\.\d/));
     });
   });
 
   describe('data', function(){
     it('global `token` should be a String', function(){
-      data.token.global
-        .should.be.an.instanceOf(String);
+      assert.equal('string', typeof data.token.global);
     });
 
     it('`public_site` should be defined', function(){
-      data.site.public.url
-        .should.be.ok
-        .and.an.instanceOf(String);
+      assert.equal('string', typeof data.site.public.url);
     });
 
     it('`private_site` should be defined', function(){
-      data.site.private.url
-        .should.be.ok
-        .and.an.instanceOf(String);
+      assert.equal('string', typeof data.site.private.url);
+      assert.equal('string', typeof data.site.private.id);
+      assert.equal('string', typeof data.site.private.token);
     });
 
     it('`new_post_data` should be ok', function(){
-      data.new_post_data
-        .should.be.ok
-        .and.an.instanceOf(Object);
+      assert.ok(data.new_post_data);
+      assert.equal('object', typeof data.new_post_data);
 
-      data.new_post_data.title
-        .should.be.an.instanceOf(String);
-
-      data.new_post_data.content
-        .should.be.an.instanceOf(String);
+      assert.equal('string', typeof data.new_post_data.title);
+      assert.equal('string', typeof data.new_post_data.content);
     });
   });
 
   describe('util', function(){
     it('should create a wpcom instance', function(){
       var wpcom = util.wpcom();
-      wpcom.should.be.an.instanceOf(WPCOM);
+      assert.ok(wpcom instanceof WPCOM);
     });
 
     it('should create a blog instance', function(){
       var site = util.public_site();
 
-      site
-        .should.be.an.instanceOf(Sites);
-
-      site._id
-        .should.be.eql(data.site.public.url);
+      assert.ok(site instanceof Sites);
+      assert.equal(data.site.public.url, site._id);
     });
   });
 });
