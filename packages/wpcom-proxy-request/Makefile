@@ -23,7 +23,7 @@ dist:
 	@mkdir $@
 
 dist/wpcom-proxy-request.js: node_modules index.js dist
-	@$(BROWSERIFY) -s wpcomProxyRequest index.js > $@
+	@$(BROWSERIFY) -s WPCOM.proxy index.js > $@
 
 node_modules: package.json
 	@NODE_ENV= $(NPM) install

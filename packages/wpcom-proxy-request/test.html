@@ -7,7 +7,7 @@
   <body>
     <script src="dist/wpcom-proxy-request.js"></script>
     <script>
-      wpcomProxyRequest({
+      WPCOM.proxy({
         metaAPI: { accessAllUsersBlogs: true }
       }, function(err) {
         if (err) throw err;
@@ -15,7 +15,7 @@
       });
 
       // ensure that node.js-style callback syntax works
-      wpcomProxyRequest('/me', function(err, res){
+      WPCOM.proxy('/me', function(err, res){
         if (err) throw err;
         console.log(res);
 
@@ -25,7 +25,7 @@
       });
 
       // ensure that Promise-style return values work
-      var req = wpcomProxyRequest('/me');
+      var req = WPCOM.proxy('/me');
       setTimeout(function () {
         req.then(function(res){
           console.log(res);
