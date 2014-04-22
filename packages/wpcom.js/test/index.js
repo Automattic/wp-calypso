@@ -3,6 +3,7 @@
  */
 
 var WPCOM = require('../');
+var assert = require('assert');
 
 /**
  * Testing data
@@ -21,15 +22,14 @@ describe('WPCOM', function(){
 
     it('should create a WPCOM object', function(){
       var wpcom = new WPCOM();
-      wpcom.should.be.instanceof(WPCOM);
+      assert.ok(wpcom instanceof WPCOM);
     });
 
     it('should set the token', function(){
       var wpcom = new WPCOM(test.token.global);
-      wpcom.tkn
-        .should.be.ok
-        .and.be.instanceOf(String)
-        .eql(test.token.global);
+      assert.ok(wpcom.tkn);
+      assert.equal('string', typeof wpcom.tkn);
+      assert.equal(test.token.global, wpcom.tkn);
     });
 
   });
