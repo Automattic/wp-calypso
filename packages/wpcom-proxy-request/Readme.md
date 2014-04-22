@@ -27,7 +27,7 @@ $ npm install wpcom-proxy-request
   <body>
     <script src="wpcom-proxy-request.js"></script>
     <script>
-      wpcomProxyRequest('/me', function(err, res){
+      WPCOM.proxy('/me', function(err, res){
         if (err) throw err;
 
         var div = document.createElement('div');
