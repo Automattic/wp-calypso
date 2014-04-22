@@ -80,9 +80,7 @@ function request (params) {
   params.supports_args = true; // supports receiving variable amount of arguments
 
   // force uppercase "method" since that's what the <iframe> is expecting
-  if (params.method) {
-    params.method = String(params.method).toUpperCase();
-  }
+  params.method = String(params.method || 'GET').toUpperCase();
 
   debug('params object:', params);
 
