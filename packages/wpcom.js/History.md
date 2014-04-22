@@ -1,4 +1,11 @@
 
+1.0.0 / 2014-04-22
+==================
+
+ * remove `req.js`, move send() fn to WPCOM class
+ * add wpcom+proxy.js and wpcom+xhr.js wrapper class scripts
+ * add browserify standalone build rules
+
 0.3.0 / 2014-04-11
 ==================
 
