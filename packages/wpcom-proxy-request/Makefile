@@ -10,7 +10,6 @@ BIN := $(THIS_DIR)/node_modules/.bin
 NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
 BROWSERIFY ?= $(NODE) $(BIN)/browserify
-ADD_COMPONENT_SYMLINKS ?= $(NODE) $(BIN)/add-component-symlinks
 
 standalone: dist/wpcom-proxy-request.js
 
@@ -27,7 +26,6 @@ dist/wpcom-proxy-request.js: node_modules index.js dist
 
 node_modules: package.json
 	@NODE_ENV= $(NPM) install
-	@$(ADD_COMPONENT_SYMLINKS)
 	@touch node_modules
 
 

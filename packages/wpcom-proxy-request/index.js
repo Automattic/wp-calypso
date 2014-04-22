@@ -4,7 +4,7 @@
  */
 
 var uid = require('uid');
-var event = require('event');
+var event = require('component-event');
 var Promise = require('promise');
 var debug = require('debug')('wpcom-proxy-request');
 
