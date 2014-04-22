@@ -7,6 +7,7 @@ var WPCOM = require('../');
 var Sites = require('../lib/sites');
 var Post = require('../lib/post');
 var util = require('./util');
+var assert = require('assert');
 
 /**
  * Testing data
@@ -53,22 +54,21 @@ describe('WPCOM#Sites#Post', function(){
     it('should create an `Post` instance from `Sites`', function(){
       var post = WPCOM().sites().post();
 
-      post
-        .should.be.an.instanceOf(Post);
+      assert.ok(post instanceof Post, 'post is not instance of Post');
     });
 
     it('should set post `id`', function(){
       var post = WPCOM().sites().post();
       post.id(new_post.ID);
 
-      post._id.should.be.eql(new_post.ID);
+      assert.equal(new_post.ID, post._id);
     });
 
     it('should set post `slug`', function(){
       var post = WPCOM().sites().post();
       post.slug(new_post.slug);
 
-      post._slug.should.be.eql(new_post.slug);
+      assert.equal(new_post.slug, post._slug);
     });
 
   });
@@ -84,7 +84,8 @@ describe('WPCOM#Sites#Post', function(){
         post.get(function(err, post){
           if (err) throw err;
 
-          post.should.be.eql(new_post);
+          assert.equal(new_post.ID, post.ID);
+          assert.equal(new_post.site_ID, post.site_ID);
           done();
         });
       });
@@ -96,7 +97,8 @@ describe('WPCOM#Sites#Post', function(){
         post.get(function(err, post){
           if (err) throw err;
 
-          post.should.be.eql(new_post);
+          assert.equal(new_post.ID, post.ID);
+          assert.equal(new_post.site_ID, post.site_ID);
           done();
         });
       });
@@ -113,16 +115,9 @@ describe('WPCOM#Sites#Post', function(){
           if (err) throw err;
 
           // checking some data date
-          data
-            .should.be.ok
-            .and.be.an.instanceOf(Object);
-
-          data.ID
-            .should.be.an.instanceOf(Number);
-
-          data.site_ID
-            .should.be.an.instanceOf(Number)
-            .and.be.eql(test.site.private.id);
+          assert.ok(data);
+          assert.ok(data instanceof Object, 'data is not an object');
+          assert.equal(test.site.private.id, data.site_ID);
 
           post_added = data;
 
@@ -143,12 +138,8 @@ describe('WPCOM#Sites#Post', function(){
         post.update({ title: edited_title }, function(err, data){
           if (err) throw err;
 
-          data
-            .should.be.ok
-            .and.be.an.instanceOf(Object);
-
-          data.title
-            .should.be.eql(edited_title);
+          assert.ok(data);
+          assert.equal(edited_title, data.title);
 
           done();
         });
@@ -165,12 +156,8 @@ describe('WPCOM#Sites#Post', function(){
         post.delete(function(err, data){
           if (err) throw err;
 
-          data
-            .should.be.ok
-            .and.be.an.instanceOf(Object);
-
-          data.ID
-            .should.be.eql(new_post.ID);
+          assert.ok(data);
+          assert.equal(new_post.ID, data.ID);
 
           done();
         });
@@ -187,18 +174,11 @@ describe('WPCOM#Sites#Post', function(){
         post.likes(function(err, data){
           if (err) throw err;
 
-          data
-            .should.be.ok
-            .and.be.an.instanceOf(Object);
+          assert.ok(data);
 
-          data.found
-            .should.be.an.instanceOf(Number);
-
-          data.i_like
-            .should.be.an.instanceOf(Boolean);
-
-          data.likes
-            .should.be.an.instanceOf(Array);
+          assert.equal('number', typeof data.found);
+          assert.equal('boolean', typeof data.i_like);
+          assert.equal('array', typeof data.likes);
 
           done();
         });
