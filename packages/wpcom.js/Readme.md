@@ -1,9 +1,7 @@
 # wpcom.js
 
-### [WordPress.com][] API for [Node.js][]
-
-  [Node.js][] module to get resources from [WordPress.com][] using
-  the [REST API][].
+  [WordPress.com][] JavaScript API client designed for Node.JS and
+  browsers.
 
 
 ## Installation
@@ -18,10 +16,8 @@ $ npm install wpcom
 // create a WPCOM instance
 var wpcom = require('wpcom')('<your-token>');
 
-// create a blog handler instance
-var blog = wpcom.sites('blog.wordpress.com');
-
-// get blog posts
+// get posts
+var blog = wpcom.site('blog.wordpress.com');
 blog.posts({ number: 8 }, function(err, list){
   // posts list object
 });
