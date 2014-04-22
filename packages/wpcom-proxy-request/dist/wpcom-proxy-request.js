@@ -7,7 +7,7 @@
 var uid = _dereq_('uid');
 var event = _dereq_('event');
 var Promise = _dereq_('promise');
-var debug = _dereq_('debug')('wpcom-cookie-auth');
+var debug = _dereq_('debug')('wpcom-proxy-request');
 
 /**
  * Export `request` function.
