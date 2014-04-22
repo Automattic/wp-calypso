@@ -79,6 +79,10 @@ function request (params) {
   var id = uid();
   params.callback = id;
   params.supports_args = true; // supports receiving variable amount of arguments
+
+  // force uppercase "method" since that's what the <iframe> is expecting
+  params.method = String(params.method || 'GET').toUpperCase();
+
   debug('params object:', params);
 
   var req = new Promise(function (resolve, reject) {
