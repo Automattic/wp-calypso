@@ -2,6 +2,9 @@
 
 **Proxied cookie-authenticated REST API requests to WordPress.com**
 
+You likely want to use the high-level APIs in [`wpcom.js`][wpcom.js]
+instead of using this module directly.
+
 This module offers access to the WordPress.com REST API via a proxying `<iframe>`
 pointing to a special URL that proxies API requests on the host page's behalf.
 
@@ -39,3 +42,6 @@ $ npm install wpcom-proxy-request
 ### License
 
 MIT – Copyright Automattic 2014
+
+
+[wpcom.js]: https://github.com/Automattic/wpcom.js
