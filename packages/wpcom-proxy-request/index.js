@@ -6,7 +6,7 @@
 var uid = require('uid');
 var event = require('event');
 var Promise = require('promise');
-var debug = require('debug')('wpcom-cookie-auth');
+var debug = require('debug')('wpcom-proxy-request');
 
 /**
  * Export `request` function.
