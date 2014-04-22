@@ -26,7 +26,7 @@ describe('WPCOM#Sites#Media', function(){
   var new_media;
   before(function(done){
     util.addMedia(function(err, media) {
-      if (err) return done(err);
+      if (err) throw err;
 
       new_media = media;
       done();
@@ -38,7 +38,6 @@ describe('WPCOM#Sites#Media', function(){
     it('should create an `Media` instance from `Sites`', function(){
       var media = WPCOM().sites().media();
       assert.ok(media instanceof Media);
-
     });
 
   });

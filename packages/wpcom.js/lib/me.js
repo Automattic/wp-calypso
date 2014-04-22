@@ -20,61 +20,61 @@ function Me(wpcom){
 /**
  * Meta data about auth token's User
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Me.prototype.get = function(params, fn){
-  this.wpcom.req.send('me.get', null, params, fn);
+Me.prototype.get = function(query, fn){
+  this.wpcom.sendRequest('me.get', null, { query: query }, fn);
 };
 
 /**
  * A list of the current user's sites
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api private
  */
 
-Me.prototype.sites = function(params, fn){
-  this.wpcom.req.send('me.sites', null, params, fn);
+Me.prototype.sites = function(query, fn){
+  this.wpcom.sendRequest('me.sites', null, { query: query }, fn);
 };
 
 /**
  * List the currently authorized user's likes
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Me.prototype.likes = function(params, fn){
-  this.wpcom.req.send('me.likes', null, params, fn);
+Me.prototype.likes = function(query, fn){
+  this.wpcom.sendRequest('me.likes', null, { query: query }, fn);
 };
 
 /**
  * A list of the current user's group
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Me.prototype.groups = function(params, fn){
-  this.wpcom.req.send('me.groups', null, params, fn);
+Me.prototype.groups = function(query, fn){
+  this.wpcom.sendRequest('me.groups', null, { query: query }, fn);
 };
 
 /**
  * A list of the current user's connections to third-party services
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Me.prototype.connections = function(params, fn){
-  this.wpcom.req.send('me.connections', null, params, fn);
+Me.prototype.connections = function(query, fn){
+  this.wpcom.sendRequest('me.connections', null, { query: query }, fn);
 };
 
 /**

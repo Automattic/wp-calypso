@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>wpcom.js browser example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="../../dist/wpcom-proxy.js"></script>
+    <script>
+      var wpcom = WPCOM();
+      wpcom.me().get(function(err, me){
+        if (err) throw err;
+        console.log(me);
+
+        var div = document.createElement('div');
+        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + me.username + '<\/b>';
+        document.body.appendChild(div);
+      });
+    </script>
+  </body>
+</html>

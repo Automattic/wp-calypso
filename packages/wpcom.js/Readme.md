@@ -12,7 +12,6 @@
 $ npm install wpcom
 ```
 
-
 ## How to use it
 
 ```js
@@ -64,9 +63,13 @@ site.posts(function(err, list){
 });
 ```
 
-## Example
+## Examples
 
-Into `example/` folder download the npm dependencies:
+### Express
+
+Into `example/express` folder:
+
+... download the npm dependencies:
 
 ```bash
 $ npm install
@@ -79,6 +82,15 @@ $ node index.js
 ```
 
 Finally open a browser and load the page pointing to http://localhost:3000
+Keep in mind that this app gets the config data from test/data.json file
+
+### Node.js
+
+Into `example/node` run:
+
+```nash
+$ node freshlyPressed.js
+```
 
 ## Test
 
@@ -86,7 +98,6 @@ Create `data.json` file into `test/` folder to can run the tests. You can copy
 or rename the `test/data_example.json` file.
 
 ```json
-
 {
   "token": {
     "global": "<global token>"
@@ -108,7 +119,6 @@ or rename the `test/data_example.json` file.
     "content": "<div style=\"color: red;\">The content of the new testing post</div>"
   }
 }
-
 ```
 
 ... and then
@@ -117,7 +127,7 @@ or rename the `test/data_example.json` file.
 $ make
 ```
 
-**Note**: don't add `http://` in`public_site` and `private_site` values.
+**Note**: Don't add `http://` in `public_site` and `private_site` values.
 
 
 ## License

@@ -94,6 +94,7 @@ describe('WPCOM#Sites', function(){
           assert.equal('number', typeof list.found);
           assert.equal('object', typeof list.posts);
           assert.ok(list.posts instanceof Array);
+          assert.ok(list.posts.length <= 1);
 
           done();
         });
@@ -105,7 +106,7 @@ describe('WPCOM#Sites', function(){
     describe('media()', function(){
 
       it('should request media library list', function(done){
-        var site = util.public_site();
+        var site = util.private_site();
 
         site.medias(function(err, list){
           if (err) throw err;

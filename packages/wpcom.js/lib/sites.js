@@ -25,49 +25,52 @@ function Sites(id, wpcom){
 /**
  * Require site information
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Sites.prototype.get = function(params, fn){
+Sites.prototype.get = function(query, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpcom.req.send('sites.get', { site: this._id }, params, fn);
+  var set = { site: this._id };
+  this.wpcom.sendRequest('sites.get', set, { query: query }, fn);
 };
 
 /**
  * Require posts site
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Sites.prototype.posts = function(params, fn){
+Sites.prototype.posts = function(query, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpcom.req.send('sites.posts.get', { site: this._id }, params, fn);
+  var set = { site: this._id };
+  this.wpcom.sendRequest('sites.posts.get', set, { query: query }, fn);
 };
 
 /**
  * Require the media library
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Sites.prototype.medias = function(params, fn){
+Sites.prototype.medias = function(query, fn){
   if (!this._id) {
     return fn(new Error('site `id` is not defined'));
   }
 
-  this.wpcom.req.send('sites.medias.get', { site: this._id }, params, fn);
+  var set = { site: this._id };
+  this.wpcom.sendRequest('sites.medias.get', set, { query: query }, fn);
 };
 
 /**
@@ -84,14 +87,14 @@ Sites.prototype.post = function(id){
 /**
  * Add a new blog post
  *
- * @param {Object} data
+ * @param {Object} body
  * @param {Function} fn
  * @return {Post} new Post instance
  */
 
-Sites.prototype.addPost = function(data, fn){
+Sites.prototype.addPost = function(body, fn){
   var post = Post(null, this._id, this.wpcom);
-  post.add(data, fn);
+  post.add(body, fn);
   return post;
 };
 
@@ -121,16 +124,16 @@ Sites.prototype.media = function(id){
 };
 
 /**
- * Add a new blog media data
+ * Add a new blog media body
  *
- * @param {Object} data
+ * @param {Object} body
  * @param {Function} fn
  * @return {Post} new Post instance
  */
 
-Sites.prototype.addMedia = function(data, fn){
+Sites.prototype.addMedia = function(body, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.add(data, fn);
+  media.add(body, fn);
   return media;
 };
 

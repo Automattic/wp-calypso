@@ -52,7 +52,7 @@ Post.prototype.slug = function(slug){
 };
 
 /**
- * Get post data
+ * Get post
  *
  * @param {Object} [params]
  * @param {Function} fn
@@ -65,46 +65,47 @@ Post.prototype.get = function(params, fn){
   }
 
   var set = { site: this._sid, post_id: this._id };
-  this.wpcom.req.send('post.get', set, params, fn);
+  this.wpcom.sendRequest('post.get', set, params, fn);
 };
 
 /**
- * Get post data by slug
+ * Get post by slug
  *
  * @param {Object} [params]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.getbyslug = function(params, fn){
+Post.prototype.getbyslug =
+Post.prototype.getBySlug = function(params, fn){
   var set = { site: this._sid, post_slug: this._slug };
-  this.wpcom.req.send('post.get_by_slug', set, params, fn);
+  this.wpcom.sendRequest('post.get_by_slug', set, params, fn);
 };
 
 /**
  * Add post
  *
- * @param {Object} data
+ * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.add = function(data, fn){
+Post.prototype.add = function(body, fn){
   var set = { site: this._sid };
-  this.wpcom.req.send('post.add', set, { data: data }, fn);
+  this.wpcom.sendRequest('post.add', set, { body: body }, fn);
 };
 
 /**
  * Edit post
  *
- * @param {Object} data
+ * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.update = function(data, fn){
+Post.prototype.update = function(body, fn){
   var set = { site: this._sid, post_id: this._id };
-  this.wpcom.req.send('post.update', set, { data: data }, fn);
+  this.wpcom.sendRequest('post.update', set, { body: body }, fn);
 };
 
 /**
@@ -116,7 +117,7 @@ Post.prototype.update = function(data, fn){
 
 Post.prototype.delete = function(fn){
   var set = { site: this._sid, post_id: this._id };
-  this.wpcom.req.send('post.delete', set, fn);
+  this.wpcom.sendRequest('post.delete', set, fn);
 };
 
 /**
@@ -128,7 +129,7 @@ Post.prototype.delete = function(fn){
 
 Post.prototype.likes = function(fn){
   var set = { site: this._sid, post_id: this._id };
-  this.wpcom.req.send('post.likes', set, fn);
+  this.wpcom.sendRequest('post.likes', set, fn);
 };
 
 /**

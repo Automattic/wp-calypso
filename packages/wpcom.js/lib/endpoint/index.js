@@ -4,13 +4,8 @@
  */
 
 var merge = require('extend');
-var debug = require('debug')('wp-connect:endpoint');
+var debug = require('debug')('wpcom:endpoint');
 var dot = require('dot-component');
-
-var me = require('./me');
-var sites = require('./sites');
-var post = require('./post');
-var media = require('./media');
 
 /**
  * Endpoint default options
@@ -23,10 +18,11 @@ var endpoint_options = {};
  */
 
 var endpoints = {
-  me: me,
-  sites: sites,
-  post: post,
-  media: media
+  me: require('./me'),
+  post: require('./post'),
+  media: require('./media'),
+  sites: require('./sites'),
+  'freshly-pressed': require('./freshly-pressed')
 };
 
 /**

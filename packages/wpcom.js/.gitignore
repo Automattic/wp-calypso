@@ -1,5 +1,6 @@
-dist
-node_modules
-test/data.json
-npm-debug.log
-tmp
+/node_modules
+/test/data.json
+/npm-debug.log
+/tmp
+
+/example/express/node_modules

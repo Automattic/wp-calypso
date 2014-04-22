@@ -27,9 +27,8 @@ describe('WPCOM', function(){
 
     it('should set the token', function(){
       var wpcom = new WPCOM(test.token.global);
-      assert.ok(wpcom.tkn);
-      assert.equal('string', typeof wpcom.tkn);
-      assert.equal(test.token.global, wpcom.tkn);
+      assert.equal('string', typeof wpcom.token);
+      assert.equal(test.token.global, wpcom.token);
     });
 
   });

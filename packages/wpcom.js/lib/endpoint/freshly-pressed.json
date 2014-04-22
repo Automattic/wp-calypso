@@ -1,0 +1,6 @@
+{
+  "get": {
+    "method": "GET",
+    "path": "/freshly-pressed"
+  }
+}

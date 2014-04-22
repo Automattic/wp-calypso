@@ -1,7 +1,7 @@
 
 {
-  "name": "wp-connect-testing-app",
-  "description": "A application to test the wp-connect",
+  "name": "wpcom-testing-app",
+  "description": "An application to test wpcom.js",
   "version": "0.0.1",
   "author": {
     "name": "Damian Suarez",
