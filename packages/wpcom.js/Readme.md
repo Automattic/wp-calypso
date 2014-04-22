@@ -4,25 +4,30 @@
   browsers.
 
 
-## Installation
+## How to use
 
-```bash
-$ npm install wpcom
-```
+### Node.JS
 
-## How to use it
+Introduce the `wpcom` dependency in your `package.json`, and
+then initialize it with your API Token.
 
 ```js
-// create a WPCOM instance
 var wpcom = require('wpcom')('<your-token>');
-
-// get posts
 var blog = wpcom.site('blog.wordpress.com');
-blog.posts({ number: 8 }, function(err, list){
-  // posts list object
-});
+blog.posts({ number: 8 }, function(err, list){});
 ```
 
+### Browser
+
+Include `dist/wpcom.js` in a `<script>` tag:
+
+```html
+<script src="wpcom.js"></script>
+<script>
+  var blog = wpcom('<token>');
+  blog.posts(function(err, list){});
+</script>
+```
 
 ## API
 
