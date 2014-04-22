@@ -19,7 +19,7 @@ clean:
 	@rm -rf node_modules dist
 
 dist:
-	@mkdir $@
+	@mkdir -p $@
 
 dist/wpcom-proxy-request.js: node_modules index.js dist
 	@$(BROWSERIFY) -s WPCOM.proxy index.js > $@
