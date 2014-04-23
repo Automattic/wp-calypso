@@ -5,7 +5,6 @@
 
 var Me = require('./lib/me');
 var Site = require('./lib/site');
-var ends = require('./lib/endpoint');
 var debug = require('debug')('wpcom');
 
 /**
@@ -58,41 +57,44 @@ WPCOM.prototype.freshlyPressed = function(params, fn){
 /**
  * Request to WordPress REST API
  *
- * @param {String} type endpoint type
- * @param {Object} vars to build endpoint
- * @param {Object} params
+ * @param {String||Object} params 
+ * @param {Object} [query]
+ * @param {Object} [body]
  * @param {Function} fn
  * @api private
  */
 
-WPCOM.prototype.sendRequest = function (type, vars, params, fn){
-  debug('sendRequest("%s")', type);
-
-  // params.query || callback function
-  if ('function' == typeof params.query) {
-    fn = params.query;
-    params.query = {};
+WPCOM.prototype.sendRequest = function (params, query, body, fn){
+  // `params` can be just the path (String)
+  if ('string' == typeof params) {
+    params = { path: params };
   }
 
+  debug('sendRequest("%s")', params.path);
+
+  // set `method` request param
+  params.method = (params.method || 'get').toUpperCase();
+
+  // `query` is optional
+  if ('function' == typeof query) {
+    fn = query;
+    query = null;
+  }
+
+  // `body` is optional
+  if ('function' == typeof body) {
+    fn = body;
+    body = null;
+  }
+
+  // pass `query` and/or `body` to request params
+  if (query) params.query = query;
+  if (body) params.body = body;
+
+  // callback `fn` function is optional
   if (!fn) fn = function(err){ if (err) throw err; };
 
-  // endpoint config object
-  var end = ends(type);
-
   // request method
-  params.method = (params.method || end.method || 'GET').toUpperCase();
-
-  // build endpoint url
-  var endpoint = end.path;
-  if (vars) {
-    for (var k in vars) {
-      var rg = new RegExp("%" + k + "%");
-      endpoint = endpoint.replace(rg, vars[k]);
-    }
-  }
-  params.path = endpoint;
-  debug('endpoint: `%s`', endpoint);
-
   this.request(params, fn);
 };
 

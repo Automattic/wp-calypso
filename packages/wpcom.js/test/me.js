@@ -38,6 +38,23 @@ describe('WPCOM#Me', function(){
           done();
         });
       });
+
+      it('should require user passin query parameter', function(done){
+        var me = util.wpcom().me();
+
+        me.get({ context: 'info' }, function(err, me){
+          if (err) throw err;
+
+          // testing object
+          assert.ok(me);
+          assert.equal('object', typeof me);
+
+          // testing user data
+          assert.equal('number', typeof me.ID);
+
+          done();
+        });
+      });
     });
 
     describe('sites()', function(){

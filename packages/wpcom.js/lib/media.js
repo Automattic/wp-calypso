@@ -29,14 +29,14 @@ function Media(id, sid, wpcom){
 /**
  * Get media
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Media.prototype.get = function(params, fn){
-  var set = { site: this._sid, media_id: this._id };
-  this.wpcom.sendRequest('media.get', set, params, fn);
+Media.prototype.get = function(query, fn){
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -48,8 +48,8 @@ Media.prototype.get = function(params, fn){
  */
 
 Media.prototype.add = function(body, fn){
-  var set = { site: this._sid };
-  this.wpcom.sendRequest('media.add', set, { body: body }, fn);
+  var path = '/sites/' + this._sid + '/media/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -61,8 +61,8 @@ Media.prototype.add = function(body, fn){
  */
 
 Media.prototype.update = function(body, fn){
-  var set = { site: this._sid, media_id: this._id };
-  this.wpcom.sendRequest('media.update', set, { body: body }, fn);
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -73,8 +73,8 @@ Media.prototype.update = function(body, fn){
  */
 
 Media.prototype.delete = function(fn){
-  var set = { site: this._sid, media_id: this._id };
-  this.wpcom.sendRequest('media.delete', set, fn);
+  var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**

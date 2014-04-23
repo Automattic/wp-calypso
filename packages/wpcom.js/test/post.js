@@ -90,6 +90,19 @@ describe('WPCOM#Site#Post', function(){
         });
       });
 
+      it('should get passing a query object', function(done){
+        var site = util.private_site();
+        var post = site.post(new_post.ID);
+
+        post.get({ content: 'edit' }, function(err, post){
+          if (err) throw err;
+
+          assert.equal(new_post.ID, post.ID);
+          assert.equal(new_post.site_ID, post.site_ID);
+          done();
+        });
+      });
+
       it('should get added post (by slug)', function(done){
         var site = util.private_site();
         var post = site.post({ slug: new_post.slug });

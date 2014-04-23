@@ -26,7 +26,7 @@ function Me(wpcom){
  */
 
 Me.prototype.get = function(query, fn){
-  this.wpcom.sendRequest('me.get', null, { query: query }, fn);
+  this.wpcom.sendRequest('/me', query, null, fn);
 };
 
 /**
@@ -38,7 +38,7 @@ Me.prototype.get = function(query, fn){
  */
 
 Me.prototype.sites = function(query, fn){
-  this.wpcom.sendRequest('me.sites', null, { query: query }, fn);
+  this.wpcom.sendRequest('/me/sites', query, null, fn);
 };
 
 /**
@@ -50,7 +50,7 @@ Me.prototype.sites = function(query, fn){
  */
 
 Me.prototype.likes = function(query, fn){
-  this.wpcom.sendRequest('me.likes', null, { query: query }, fn);
+  this.wpcom.sendRequest('/me/likes', query, null, fn);
 };
 
 /**
@@ -62,7 +62,7 @@ Me.prototype.likes = function(query, fn){
  */
 
 Me.prototype.groups = function(query, fn){
-  this.wpcom.sendRequest('me.groups', null, { query: query }, fn);
+  this.wpcom.sendRequest('/me/groups', query, null, fn);
 };
 
 /**
@@ -74,7 +74,7 @@ Me.prototype.groups = function(query, fn){
  */
 
 Me.prototype.connections = function(query, fn){
-  this.wpcom.sendRequest('me.connections', null, { query: query }, fn);
+  this.wpcom.sendRequest('/me/connections', query, null, fn);
 };
 
 /**

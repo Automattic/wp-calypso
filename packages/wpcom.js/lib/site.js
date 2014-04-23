@@ -31,12 +31,7 @@ function Site(id, wpcom){
  */
 
 Site.prototype.get = function(query, fn){
-  if (!this._id) {
-    return fn(new Error('site `id` is not defined'));
-  }
-
-  var set = { site: this._id };
-  this.wpcom.sendRequest('site.get', set, { query: query }, fn);
+  this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
 };
 
 /**
@@ -48,12 +43,7 @@ Site.prototype.get = function(query, fn){
  */
 
 Site.prototype.posts = function(query, fn){
-  if (!this._id) {
-    return fn(new Error('site `id` is not defined'));
-  }
-
-  var set = { site: this._id };
-  this.wpcom.sendRequest('site.posts.get', set, { query: query }, fn);
+  this.wpcom.sendRequest('/sites/' + this._id + '/posts', query, null, fn);
 };
 
 /**
@@ -65,12 +55,7 @@ Site.prototype.posts = function(query, fn){
  */
 
 Site.prototype.medias = function(query, fn){
-  if (!this._id) {
-    return fn(new Error('site `id` is not defined'));
-  }
-
-  var set = { site: this._id };
-  this.wpcom.sendRequest('site.medias.get', set, { query: query }, fn);
+  this.wpcom.sendRequest('/sites/' + this._id + '/media', query, null, fn);
 };
 
 /**

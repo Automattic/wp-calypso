@@ -12,7 +12,6 @@
   "dependencies": {
     "extend": "1.2.1",
     "debug": "*",
-    "dot-component": "0.1.1",
     "superagent": "0.17.0",
     "wpcom-proxy-request": "0.1.0",
     "wpcom-xhr-request": "0.1.0",

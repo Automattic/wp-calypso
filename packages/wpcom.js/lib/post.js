@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -54,32 +53,31 @@ Post.prototype.slug = function(slug){
 /**
  * Get post
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.get = function(params, fn){
+Post.prototype.get = function(query, fn){
   if (!this._id && this._slug) {
-    return this.getbyslug(params, fn);
+    return this.getBySlug(query, fn);
   }
 
-  var set = { site: this._sid, post_id: this._id };
-  this.wpcom.sendRequest('post.get', set, params, fn);
+  var path = '/sites/' + this._sid + '/posts/' + this._id;
+  this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
  * Get post by slug
  *
- * @param {Object} [params]
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.getbyslug =
-Post.prototype.getBySlug = function(params, fn){
-  var set = { site: this._sid, post_slug: this._slug };
-  this.wpcom.sendRequest('post.get_by_slug', set, params, fn);
+Post.prototype.getBySlug = function(query, fn){
+  var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
+  this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -91,8 +89,8 @@ Post.prototype.getBySlug = function(params, fn){
  */
 
 Post.prototype.add = function(body, fn){
-  var set = { site: this._sid };
-  this.wpcom.sendRequest('post.add', set, { body: body }, fn);
+  var path = '/sites/' + this._sid + '/posts/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -104,8 +102,8 @@ Post.prototype.add = function(body, fn){
  */
 
 Post.prototype.update = function(body, fn){
-  var set = { site: this._sid, post_id: this._id };
-  this.wpcom.sendRequest('post.update', set, { body: body }, fn);
+  var path = '/sites/' + this._sid + '/posts/' + this._id;
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -116,20 +114,21 @@ Post.prototype.update = function(body, fn){
  */
 
 Post.prototype.delete = function(fn){
-  var set = { site: this._sid, post_id: this._id };
-  this.wpcom.sendRequest('post.delete', set, fn);
+  var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
  * Get post likes
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.likes = function(fn){
-  var set = { site: this._sid, post_id: this._id };
-  this.wpcom.sendRequest('post.likes', set, fn);
+Post.prototype.likes = function(query, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
+  this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
