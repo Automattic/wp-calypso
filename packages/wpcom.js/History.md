@@ -1,4 +1,11 @@
 
+1.1.0 / 2014-04-22
+==================
+
+  * site: rename Sites to Site
+  * dist: add the compiled `wpcom-proxy.js` and `wpcom.js` files
+  * Readme: improve
+
 1.0.0 / 2014-04-22
 ==================
 
