@@ -1,4 +1,12 @@
 
+1.2.0 / 2014-04-23
+==================
+
+  * Remove internal "endpoints" `.json` files, saves ~8kb uncompressed (#19)
+  * package: update "description" field
+  * History: match `git changelog` output
+  * rename `doc` -> `docs` and `example` to `examples`
+
 1.1.0 / 2014-04-22
 ==================
 
