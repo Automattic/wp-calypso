@@ -57,7 +57,7 @@ WPCOM.prototype.freshlyPressed = function(params, fn){
 /**
  * Request to WordPress REST API
  *
- * @param {String||Object} params 
+ * @param {String||Object} params
  * @param {Object} [query]
  * @param {Object} [body]
  * @param {Function} fn
