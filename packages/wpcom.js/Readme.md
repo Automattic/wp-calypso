@@ -13,7 +13,7 @@ then initialize it with your API Token.
 
 ```js
 var wpcom = require('wpcom')('<your-token>');
-var blog = wpcom.site('blog.wordpress.com');
+var blog = wpcom.site('your-blog.wordpress.com');
 blog.posts({ number: 8 }, function(err, list){});
 ```
 
@@ -24,8 +24,9 @@ Include `dist/wpcom.js` in a `<script>` tag:
 ```html
 <script src="wpcom.js"></script>
 <script>
-  var blog = wpcom('<token>');
-  blog.posts(function(err, list){});
+  var wpcom = WPCOM('<your-token>');
+  var blog = wpcom.site('your-blog.wordpress.com');
+  blog.posts({ number: 8 }, function(err, list){});
 </script>
 ```
 
