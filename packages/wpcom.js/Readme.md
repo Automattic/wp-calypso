@@ -41,7 +41,7 @@ make admin actions or to access to protected resources.
 
 ### WPCOM#me()
 
-Create a `Me` object. More info in [Me doc page](./doc/me.md).
+Create a `Me` object. More info in [Me doc page](./docs/me.md).
 
 ```js
 var wpcom = require('wpcom')('<your-token>');
@@ -54,7 +54,7 @@ me.get(function(err, info){
 
 ### WPCOM#site('site-id')
 
-Create a `Site` object. More info in [Site doc page](./doc/site.md).
+Create a `Site` object. More info in [Site doc page](./docs/site.md).
 
 ```js
 var wpcom = require('wpcom')('<your-token>');
