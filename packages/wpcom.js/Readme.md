@@ -65,6 +65,21 @@ site.posts(function(err, list){
 });
 ```
 
+### WPCOM#freshlyPressed([query], fn)
+
+View Freshly Pressed posts from the WordPress.com homepage.
+
+```js
+wpcom.freshlyPressed(function(err, data){
+  if (err) throw err;
+  console.log('"Freshly Pressed" Posts:');
+  data.posts.forEach(function (post) {
+    console.log('  %s - %s', post.title, post.short_URL);
+  });
+});
+```
+
+
 ## Examples
 
 ### Express
