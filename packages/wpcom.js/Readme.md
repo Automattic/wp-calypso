@@ -105,7 +105,7 @@ Keep in mind that this app gets the config data from test/data.json file
 
 Into `example/node` run:
 
-```nash
+```bash
 $ node freshlyPressed.js
 ```
 
