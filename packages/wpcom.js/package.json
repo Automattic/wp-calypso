@@ -10,7 +10,6 @@
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "main": "wpcom+xhr.js",
   "dependencies": {
-    "extend": "1.2.1",
     "debug": "*",
     "superagent": "0.17.0",
     "wpcom-proxy-request": "0.1.0",
