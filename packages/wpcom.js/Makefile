@@ -36,12 +36,19 @@ node_modules: package.json
 	@NODE_ENV= $(NPM) install
 	@touch node_modules
 
+example-server:
+	cd examples/server/; $(NPM) install
+	$(NODE) examples/server/index.js
+
+example-browser-proxy: all
+	cd examples/browser-proxy-request/; $(NPM) install
+	$(NODE) examples/browser-proxy-request/index.js
+
 test:
 	@$(MOCHA) \
 		--timeout 10s \
 		--slow 3s \
 		--bail \
 		--reporter spec
-
 
 .PHONY: standalone install clean test

@@ -1,8 +1,10 @@
 
-// anonymous auth since `freshlyPressed()` doesn't require auth
-var WPCOM = require('../../')();
+var WPCOM = require('../../');
 
-WPCOM.freshlyPressed(function (err, res) {
+// anonymous auth since `freshlyPressed()` doesn't require auth
+var wpcom = WPCOM();
+
+wpcom.freshlyPressed(function (err, res) {
   if (err) throw err;
   console.log(res);
 });

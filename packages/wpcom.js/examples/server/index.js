@@ -29,7 +29,7 @@ app.set('view engine', 'jade');
 
 app.get('/', function(req, res){
   // set site id
-  var site = wpcom.sites(wpapp.site.public.url);
+  var site = wpcom.site(wpapp.site.public.url);
 
   // get site info
   site.get(function(err, info){
