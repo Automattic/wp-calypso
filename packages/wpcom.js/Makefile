@@ -38,7 +38,6 @@ node_modules: package.json
 
 test:
 	@$(MOCHA) \
-		--require should \
 		--timeout 10s \
 		--slow 3s \
 		--bail \
