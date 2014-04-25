@@ -113,7 +113,8 @@ Post.prototype.update = function(body, fn){
  * @api public
  */
 
-Post.prototype.delete = function(fn){
+Post.prototype['delete'] =
+Post.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
   this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };

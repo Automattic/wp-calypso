@@ -72,7 +72,8 @@ Media.prototype.update = function(body, fn){
  * @api public
  */
 
-Media.prototype.delete = function(fn){
+Media.prototype['delete'] =
+Media.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
   this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
