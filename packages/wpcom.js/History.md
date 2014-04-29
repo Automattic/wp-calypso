@@ -35,7 +35,7 @@
 ==================
 
   * New methods:
-    - me.conenctions()
+    - me.connections()
     - me.groups()
     - me.likes()
     - post.edit()
