@@ -51,4 +51,4 @@ test:
 		--bail \
 		--reporter spec
 
-.PHONY: standalone install clean test
+.PHONY: all standalone-xhr standalone-proxy install clean test
