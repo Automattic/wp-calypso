@@ -140,11 +140,13 @@ function install () {
 
   // create the <iframe>
   iframe = document.createElement('iframe');
-  iframe.src = proxyOrigin + '/rest-proxy/#' + origin;
-  iframe.style.display = 'none';
 
   // set `loaded` to true once the "load" event happens
   event.bind(iframe, 'load', onload);
+
+  // set `src` and hide the iframe
+  iframe.src = proxyOrigin + '/rest-proxy/#' + origin;
+  iframe.style.display = 'none';
 
   // inject the <iframe> into the <body>
   document.body.appendChild(iframe);
@@ -194,24 +196,24 @@ function onmessage (e) {
   var params = requests[id];
   delete requests[id];
 
-  var res = data[0];
+  var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
   debug('got %s status code for URL: %s', statusCode, params.path);
 
-  if (res && headers) {
-    res._headers = headers;
+  if (body && headers) {
+    body._headers = headers;
   }
 
   if (null == statusCode || 2 === Math.floor(statusCode / 100)) {
     // 2xx status code, success
-    params.resolve(res);
+    params.resolve(body);
   } else {
     // any other status code is a failure
     var err = new Error();
     err.statusCode = statusCode;
-    for (var i in res) err[i] = res[i];
-    if (res.error) err.name = toTitle(res.error) + 'Error';
+    for (var i in body) err[i] = body[i];
+    if (body.error) err.name = toTitle(body.error) + 'Error';
 
     params.reject(err);
   }
