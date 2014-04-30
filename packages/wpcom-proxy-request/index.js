@@ -139,11 +139,13 @@ function install () {
 
   // create the <iframe>
   iframe = document.createElement('iframe');
-  iframe.src = proxyOrigin + '/rest-proxy/#' + origin;
-  iframe.style.display = 'none';
 
   // set `loaded` to true once the "load" event happens
   event.bind(iframe, 'load', onload);
+
+  // set `src` and hide the iframe
+  iframe.src = proxyOrigin + '/rest-proxy/#' + origin;
+  iframe.style.display = 'none';
 
   // inject the <iframe> into the <body>
   document.body.appendChild(iframe);
