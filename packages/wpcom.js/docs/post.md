@@ -3,7 +3,7 @@
 
 `Post` handler class.
 
-### Create a `Post` instance from Blog
+### Create a `Post` instance from Site
 
 ```js
 var wpcom = require('wpcom')('<your-token>');

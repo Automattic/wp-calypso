@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -35,26 +34,26 @@ Site.prototype.get = function(query, fn){
 };
 
 /**
- * Require posts site
+ * Require site posts list
  *
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Site.prototype.posts = function(query, fn){
+Site.prototype.postsList = function(query, fn){
   this.wpcom.sendRequest('/sites/' + this._id + '/posts', query, null, fn);
 };
 
 /**
- * Require the media library
+ * Require the site media list
  *
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Site.prototype.medias = function(query, fn){
+Site.prototype.mediaList = function(query, fn){
   this.wpcom.sendRequest('/sites/' + this._id + '/media', query, null, fn);
 };
 
@@ -111,14 +110,14 @@ Site.prototype.media = function(id){
 /**
  * Add a new blog media body
  *
- * @param {Object} body
+ * @param {Array|String} files
  * @param {Function} fn
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMedia = function(body, fn){
+Site.prototype.addMediaFile = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.add(body, fn);
+  media.addFile(files, fn);
   return media;
 };
 

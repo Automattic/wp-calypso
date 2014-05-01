@@ -61,7 +61,7 @@ Util.addPost = function(fn){
 
 Util.addMedia = function(fn){
   var site = Util.private_site();
-  site.addMedia(test.new_media_data, fn);
+  site.addMediaFile(test.new_media_data.media, fn);
 };
 
 /**

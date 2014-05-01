@@ -7,7 +7,7 @@
 
 ```js
 var wpcom = require('wpcom')('<your-token>');
-var site = wpcom.site('<blog-id>');
+var post = wpcom.site('<site-id>').post('<post-id>');
 });
 ```
 
@@ -31,12 +31,22 @@ site.get(function(err, info){
 });
 ```
 
-### Site#posts([params], fn)
+### Site#postsList([params], fn)
 
-Get site posts
+Get site posts list
 
 ```js
-site.posts(function(err, list){
+site.postsList(function(err, list){
+  // `list` data object
+});
+```
+
+### Site#mediaList([params], fn)
+
+Get site media list
+
+```js
+site.mediaList(function(err, list){
   // `list` data object
 });
 ```

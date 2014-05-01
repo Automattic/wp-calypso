@@ -42,4 +42,24 @@ describe('WPCOM#Site#Media', function(){
 
   });
 
+  describe('async', function(){
+
+    describe('get()', function(){
+
+      it('should get added media', function(done){
+        var site = util.private_site();
+        var media = site.media(test.media_id);
+
+        media.get(function(err, info){
+          if (err) throw err;
+
+          assert.equal(3213, info.id);
+          done();
+        });
+      });
+
+    });
+
+  });
+
 });

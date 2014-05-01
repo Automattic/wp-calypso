@@ -8,6 +8,7 @@ var WPCOM = require('../');
 var Site = require('../lib/site');
 var util = require('./util');
 var assert = require('assert');
+var fs = require('fs');
 
 /**
  * Testing data
@@ -61,12 +62,12 @@ describe('WPCOM#Site', function(){
       });
     });
 
-    describe('posts()', function(){
+    describe('postsList()', function(){
 
       it('should request posts list', function(done){
         var site = util.public_site();
 
-        site.posts(function(err, list){
+        site.postsList(function(err, list){
           if (err) throw err;
 
           // list object data testing
@@ -86,7 +87,7 @@ describe('WPCOM#Site', function(){
 
         var site = util.public_site();
 
-        site.posts({ number: 1 }, function(err, list){
+        site.postsList({ number: 1 }, function(err, list){
           if (err) throw err;
 
           // list object data testing
@@ -103,12 +104,12 @@ describe('WPCOM#Site', function(){
 
     });
 
-    describe('media()', function(){
+    describe('mediaList()', function(){
 
       it('should request media library list', function(done){
         var site = util.private_site();
 
-        site.medias(function(err, list){
+        site.mediaList(function(err, list){
           if (err) throw err;
 
           // list object data testing
@@ -159,6 +160,28 @@ describe('WPCOM#Site', function(){
 
           done();
 
+        });
+
+      });
+
+    });
+
+    describe('addMediaFile(\'/path/to/file\')', function(){
+
+      it('should create a new site media', function(done){
+        var site = util.private_site();
+
+        var media = site.addMediaFile(test.new_media_data.media, function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.ok(data.media instanceof Array);
+          assert.equal(1, data.media.length);
+
+          var m = data.media[0];
+
+          assert.equal(0, m.id);
+          done();
         });
 
       });

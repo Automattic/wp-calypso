@@ -53,6 +53,26 @@ Media.prototype.add = function(body, fn){
 };
 
 /**
+ * Add media file
+ *
+ * @param {String|Array} files
+ * @param {Function} fn
+ */
+
+Media.prototype.addFile = function(files, fn){
+  var path = '/sites/' + this._sid + '/media/new';
+  var params = { path: path, method: 'post', formData: [] };
+
+  // process formData
+  files = Array.isArray(files) ? files : [ files ];
+  for (var i = 0; i < files.length; i++) {
+    params.formData.push(['media', files[i]]);
+  }
+
+  this.wpcom.sendRequest(params, null, null, fn);
+};
+
+/**
  * Edit media
  *
  * @param {Object} body
