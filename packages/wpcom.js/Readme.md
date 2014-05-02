@@ -40,11 +40,11 @@ make admin actions or to access to protected resources.
 
 ### API Sections
 
-* [Core]('./docs/core.md')
-* [Me]('./docs/me.md')
-* [Site]('./docs/site.md')
-* [Post]('./docs/post.md')
-* [Media]('./docs/media.md')
+* [Core](./docs/core.md)
+* [Me](./docs/me.md)
+* [Site](./docs/site.md)
+* [Post](./docs/post.md)
+* [Media](./docs/media.md)
 
 ## Examples
 
