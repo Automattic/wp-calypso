@@ -1,14 +1,20 @@
 
-WPCOM#me()
+# WPCOM
+
+### WPCOM('<token>');
+
+Create a new instance of WPCOM. `token` parameter is optional but it's needed to
+make admin actions or to access to protected resources.
+
+**Note**: You can use the [node-wpcom-oauth][] module to get an _access token_.
+
+### WPCOM#me(fn)
 
 Create a `Me` object. More info in [Me doc page](./docs/me.md).
 
 ```js
 var wpcom = require('wpcom')('<your-token>');
 var me = wpcom.me();
-
-// get user information
-me.get(function(err, info){
 });
 ```
 
@@ -19,13 +25,9 @@ Create a `Site` object. More info in [Site doc page](./docs/site.md).
 ```js
 var wpcom = require('wpcom')('<your-token>');
 var site = wpcom.site();
-
-// get blog posts
-site.posts(function(err, list){
-});
 ```
 
-### WPCOM#freshlyPressed([query], fn)
+### WPCOM#freshlyPressed([params, ]fn)
 
 View Freshly Pressed posts from the WordPress.com homepage.
 
