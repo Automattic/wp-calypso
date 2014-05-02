@@ -73,4 +73,4 @@ Delete a Post. Note: If the post object is of type post or page and the trash
 is enabled, this request will send the post to the trash. A second request will
 permanently delete the post.
 
-### Post#likes(fn)
+### Post#likesList(fn)

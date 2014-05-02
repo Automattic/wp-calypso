@@ -160,6 +160,89 @@ describe('WPCOM#Site#Post', function(){
 
     });
 
+    describe('likesList()', function(){
+
+      it('should get post likes list', function(done){
+        var site = util.private_site();
+        var post = site.post(new_post.ID);
+
+        post.likesList(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+
+          assert.equal('number', typeof data.found);
+          assert.equal('boolean', typeof data.i_like);
+          assert.equal('object', typeof data.likes);
+          assert.ok(data.likes instanceof Array);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('like.add()', function(){
+
+      it('should add a post like', function(done){
+        var site = util.private_site();
+        var like = site.post(new_post.ID).like();
+
+        like.add(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.ok(data.success);
+          assert.ok(data.i_like);
+          assert.equal(1, data.like_count);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('like.mine()', function(){
+
+      it('should get the post like status of mine', function(done){
+        util.private_site()
+        .post(new_post.ID)
+        .like()
+        .mine(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.equal(1, data.like_count);
+          assert.ok(data.i_like);
+
+          done();
+        });
+      });
+
+    });
+
+    describe('like.delete()', function(){
+
+      it('should remove your like from the post', function(done){
+        util.private_site()
+        .post(new_post.ID)
+        .like()
+        .del(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.ok(data.success);
+          assert.equal(0, data.like_count);
+          assert.ok(!(data.i_like));
+
+          done();
+        });
+      });
+
+    });
+
     describe('delete()', function(){
 
       it('should delete the new added post', function(done){
@@ -171,28 +254,6 @@ describe('WPCOM#Site#Post', function(){
 
           assert.ok(data);
           assert.equal(new_post.ID, data.ID);
-
-          done();
-        });
-      });
-
-    });
-
-    describe('likes()', function(){
-
-      it('should get post likes', function(done){
-        var site = util.private_site();
-        var post = site.post(new_post.ID);
-
-        post.likes(function(err, data){
-          if (err) throw err;
-
-          assert.ok(data);
-
-          assert.equal('number', typeof data.found);
-          assert.equal('boolean', typeof data.i_like);
-          assert.equal('object', typeof data.likes);
-          assert.ok(data.likes instanceof Array);
 
           done();
         });

@@ -1,7 +1,9 @@
+
 /**
  * Module dependencies.
  */
 
+var Like = require('./like');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -120,16 +122,26 @@ Post.prototype.del = function(fn){
 };
 
 /**
- * Get post likes
+ * Get post likes list
  *
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.likes = function(query, fn){
+Post.prototype.likesList = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
   this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Create a `Like` instance
+ *
+ * @api public
+ */
+
+Post.prototype.like = function(){
+  return Like( this._id, this._sid, this.wpcom);
 };
 
 /**

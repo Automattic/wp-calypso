@@ -45,13 +45,13 @@ WPCOM.prototype.site = function(id){
 /**
  * List Freshly Pressed Posts
  *
- * @param {Object} params (optional)
+ * @param {Object} [query]
  * @param {Function} fn callback function
  * @api public
  */
 
-WPCOM.prototype.freshlyPressed = function(params, fn){
-  this.sendRequest('/freshly-pressed', null, params, fn);
+WPCOM.prototype.freshlyPressed = function(query, fn){
+  this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
 /**
