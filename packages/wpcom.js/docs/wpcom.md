@@ -1,7 +1,7 @@
 
 # WPCOM
 
-### WPCOM('<token>');
+### WPCOM('token');
 
 Create a new instance of WPCOM. `token` parameter is optional but it's needed to
 make admin actions or to access to protected resources.
