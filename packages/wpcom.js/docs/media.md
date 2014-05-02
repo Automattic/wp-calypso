@@ -13,7 +13,7 @@ var media = wpcom.site('<site-id>').media('<media-id>');
 
 ## API
 
-### Media(id, site, WPCOM);
+### Media(id, site, WPCOM)
 
 Create a new `Media` instance giving `id`, `site-id` and `WPCOM` instance.
 
@@ -25,18 +25,16 @@ var media = Media('<id>', '<site-id>', WPCOM);
 
 Set media `id`
 
-### Media#get([params], fn)
+### Media#get([query, ]fn)
 
 Request a single media item
 
 ```js
-media.get(params, function(err, data){
+media.get(function(err, data){
   // media data object
 });
 ```
 
-### Media#add(data, fn);
+### Media#addFile(data, fn)
 
-### Media#update(data, fn);
-
-### Media#del(fn); - Media#delete(fn);
+### Media#delete(fn) - Media#delete(fn)

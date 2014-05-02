@@ -13,7 +13,7 @@ var me = wpcom.me();
 
 ## API
 
-### Me(WPCOM);
+### Me(WPCOM)
 
 Create a new `Me` giving a `WPCOM` instance.
 
@@ -21,7 +21,7 @@ Create a new `Me` giving a `WPCOM` instance.
 var me = Me(WPCOM);
 ```
 
-### Me#get([params], fn)
+### Me#get([query, ]fn)
 
 Get meta data about auth token's User
 
@@ -31,7 +31,7 @@ me.get(function(err, info){
 });
 ```
 
-### Me#sites([params], fn)
+### Me#sites([query, ]fn)
 
 Get a list of the current user's sites
 
@@ -41,7 +41,7 @@ me.sites(function(err, list){
 });
 ```
 
-### Me#likes([params], fn)
+### Me#likes([query, ]fn)
 
 Get a list the currently authorized user's likes
 
@@ -51,7 +51,7 @@ me.likes(function(err, data){
 });
 ```
 
-### Me#groups([params], fn)
+### Me#groups([query, ]fn)
 
 Get a list of the current user's group
 
@@ -61,7 +61,7 @@ me.groups(function(err, list){
 });
 ```
 
-### Me#connections([params], fn)
+### Me#connections([query, ]fn)
 
 Get a list of the current user's connections to third-party services
 

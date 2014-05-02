@@ -40,13 +40,13 @@ Set post `id`
 
 Set post `slug`.
 
-### Post#get([params], fn)
+### Post#get([query, ]fn)
 
 Get post data by `id` or `slug` depending on which of these parameter is
 defined, giving priority to `id` over `slug`
 
 ```js
-post.get(params, function(err, data){
+post.get(function(err, data){
   // post data object
 });
 ```
@@ -58,15 +58,19 @@ constructor or using .slug() method.
 
 ```js
 var post = Post({ slug: '<slug>' }, '<site-id>', WPCOM);
-post.getbyslug(params, function(err, data){
+post.getbyslug(function(err, data){
   // post data object
 });
 ```
 
-### Post#add(data, fn);
+### Post#add(data, fn)
 
-### Post#update(data, fn);
+### Post#update(data, fn)
 
-### Post#delete(fn);
+### Post#del(fn) - Post#delete(fn)
 
-### Post#likes(fn);
+Delete a Post. Note: If the post object is of type post or page and the trash
+is enabled, this request will send the post to the trash. A second request will
+permanently delete the post.
+
+### Post#likes(fn)

@@ -13,7 +13,7 @@ var post = wpcom.site('<site-id>').post('<post-id>');
 
 ## API
 
-### Site(id, WPCOM);
+### Site(id, WPCOM)
 
 Create a new `Site` instance giving `id` and `WPCOM` instance.
 
@@ -21,7 +21,7 @@ Create a new `Site` instance giving `id` and `WPCOM` instance.
 var site = Site('<id>', WPCOM);
 ```
 
-### Site#get([params], fn)
+### Site#get([query, ]fn)
 
 Get site information
 
@@ -31,7 +31,7 @@ site.get(function(err, info){
 });
 ```
 
-### Site#postsList([params], fn)
+### Site#postsList([query, ]fn)
 
 Get site posts list
 
@@ -41,7 +41,7 @@ site.postsList(function(err, list){
 });
 ```
 
-### Site#mediaList([params], fn)
+### Site#mediaList([query, ]fn)
 
 Get site media list
 
@@ -53,7 +53,7 @@ site.mediaList(function(err, list){
 
 ## Site - Post
 
-### Site#post(id);
+### Site#post(id)
 
 Create a new `Post` instance.
 
@@ -81,7 +81,7 @@ var del_post = site.deletePost('<post-id>', function(err, post){
 
 ## Site - Media
 
-### Site#media(id);
+### Site#media(id)
 
 Create a new `Media` instance.
 
@@ -89,7 +89,7 @@ Create a new `Media` instance.
 var media = site.media('<media-id>');
 ```
 
-### Site#addMedia(data, fn)
+### Site#addMediaFile(data, fn)
 
 Add a new media to site. Return a `Media` instance.
 
