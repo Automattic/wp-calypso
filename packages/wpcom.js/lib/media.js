@@ -53,7 +53,7 @@ Media.prototype.addFile = function(files, fn){
   // process formData
   files = Array.isArray(files) ? files : [ files ];
   for (var i = 0; i < files.length; i++) {
-    params.formData.push(['media', files[i]]);
+    params.formData.push([ 'media[]', files[i] ]);
   }
 
   this.wpcom.sendRequest(params, null, null, fn);
