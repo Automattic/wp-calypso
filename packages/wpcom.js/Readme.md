@@ -31,16 +31,7 @@ Include `dist/wpcom.js` in a `<script>` tag:
 
 ## API
 
-### new WPCOM('token');
-
-Create a new instance of WPCOM. `token` parameter is optional but it's needed to
-make admin actions or to access to protected resources.
-
-**Note**: You can use the [node-wpcom-oauth][] module to get an _access token_.
-
-### API Sections
-
-* [Core](./docs/core.md)
+* [WPCOM](./docs/wpcom.md)
 * [Me](./docs/me.md)
 * [Site](./docs/site.md)
 * [Post](./docs/post.md)
