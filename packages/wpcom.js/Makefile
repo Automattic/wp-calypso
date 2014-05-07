@@ -45,9 +45,11 @@ example-browser-proxy: all
 	$(NODE) examples/browser-proxy-request/index.js
 
 test:
+	@echo $(filter-out $@,$(MAKECMDGOALS))
 	@$(MOCHA) \
 		--timeout 10s \
 		--slow 3s \
+		--grep $(filter-out $@,$(MAKECMDGOALS)) \
 		--bail \
 		--reporter spec
 
