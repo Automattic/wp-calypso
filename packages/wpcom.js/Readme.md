@@ -73,13 +73,13 @@ or rename the `test/data_example.json` file.
 ... and then
 
 ```bash
-$ make test
+$ make test-all
 ```
 
-You can pass a first argument to filter tests in the test rule
+You use `make test` and pass a first argument to filter tests in the test rule
 
 ```bash
-$make test post.add()
+$make test site.addPost()
 ```
 
 **Note**: Don't add `http://` in `public_site` and `private_site` values.

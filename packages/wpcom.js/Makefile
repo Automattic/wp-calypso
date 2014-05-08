@@ -45,7 +45,6 @@ example-browser-proxy: all
 	$(NODE) examples/browser-proxy-request/index.js
 
 test:
-	@echo $(filter-out $@,$(MAKECMDGOALS))
 	@$(MOCHA) \
 		--timeout 10s \
 		--slow 3s \
@@ -53,4 +52,11 @@ test:
 		--bail \
 		--reporter spec
 
-.PHONY: all standalone-xhr standalone-proxy install clean test
+test-all:
+	@$(MOCHA) \
+		--timeout 10s \
+		--slow 3s \
+		--bail \
+		--reporter spec
+
+.PHONY: all standalone-xhr standalone-proxy install clean test test-all
