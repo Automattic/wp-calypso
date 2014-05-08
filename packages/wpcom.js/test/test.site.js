@@ -47,7 +47,7 @@ describe('WPCOM#Site', function(){
 
   describe('async', function(){
 
-    describe('get()', function(){
+    describe('site.get()', function(){
       it('should require site data', function(done){
         var site = util.public_site();
 
@@ -62,7 +62,7 @@ describe('WPCOM#Site', function(){
       });
     });
 
-    describe('postsList()', function(){
+    describe('site.postsList()', function(){
 
       it('should request posts list', function(done){
         var site = util.public_site();
@@ -104,7 +104,7 @@ describe('WPCOM#Site', function(){
 
     });
 
-    describe('mediaList()', function(){
+    describe('site.mediaList()', function(){
 
       it('should request media library list', function(done){
         var site = util.private_site();
@@ -126,7 +126,24 @@ describe('WPCOM#Site', function(){
 
     });
 
-    describe('addPost()', function(){
+    describe('site.usersList()', function(){
+
+      it('should request users list', function(done){
+        var site = util.private_site();
+
+        site.usersList(function(err, list){
+          if (err) throw err;
+
+          assert.equal('number', typeof list.found);
+          assert.ok(list.users instanceof Array);
+          done();
+        });
+
+      });
+
+    });
+
+    describe('site.addPost()', function(){
 
       it('should create a new blog post', function(done){
         var site = util.private_site();
@@ -144,7 +161,7 @@ describe('WPCOM#Site', function(){
 
     });
 
-    describe('deletePost()', function(){
+    describe('site.deletePost()', function(){
 
       it('should delete a blog post', function(done){
 
@@ -166,7 +183,7 @@ describe('WPCOM#Site', function(){
 
     });
 
-    describe('addMediaFile(\'/path/to/file\')', function(){
+    describe('site.addMediaFile(\'/path/to/file\')', function(){
 
       it('should create a new site media', function(done){
         var site = util.private_site();
@@ -176,11 +193,6 @@ describe('WPCOM#Site', function(){
 
           assert.ok(data);
           assert.ok(data.media instanceof Array);
-          assert.equal(1, data.media.length);
-
-          var m = data.media[0];
-
-          assert.equal(0, m.id);
           done();
         });
 

@@ -4,6 +4,7 @@
  */
 
 var Like = require('./like');
+var Reblog = require('./reblog');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -135,6 +136,19 @@ Post.prototype.likesList = function(query, fn){
 };
 
 /**
+ * Search within a site for related posts
+ *
+ * @param {Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.related = function(body, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
  * Create a `Like` instance
  *
  * @api public
@@ -142,6 +156,16 @@ Post.prototype.likesList = function(query, fn){
 
 Post.prototype.like = function(){
   return Like( this._id, this._sid, this.wpcom);
+};
+
+/**
+ * Create a `Reblog` instance
+ *
+ * @api public
+ */
+
+Post.prototype.reblog = function(){
+  return Reblog( this._id, this._sid, this.wpcom);
 };
 
 /**

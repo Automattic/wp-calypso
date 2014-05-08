@@ -42,7 +42,7 @@ describe('testing data', function(){
 
     it('`private_site` should be defined', function(){
       assert.equal('string', typeof data.site.private.url);
-      assert.equal('string', typeof data.site.private.id);
+      assert.equal('number', typeof data.site.private.id);
       assert.equal('string', typeof data.site.private.token);
     });
 

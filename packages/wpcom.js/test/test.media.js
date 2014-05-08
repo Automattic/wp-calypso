@@ -44,7 +44,7 @@ describe('WPCOM#Site#Media', function(){
 
   describe('async', function(){
 
-    describe('get()', function(){
+    describe('media.get()', function(){
 
       it('should get added media', function(done){
         var site = util.private_site();
@@ -53,7 +53,7 @@ describe('WPCOM#Site#Media', function(){
         media.get(function(err, info){
           if (err) throw err;
 
-          assert.equal(3213, info.id);
+          assert.equal(3, info.id);
           done();
         });
       });

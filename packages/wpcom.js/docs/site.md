@@ -31,6 +31,16 @@ site.get(function(err, info){
 });
 ```
 
+### Site#usersList([query, ]fn)
+
+List the users of a site
+
+```js
+site.usersList(function(err, list){
+  // `list` data object
+});
+```
+
 ### Site#postsList([query, ]fn)
 
 Get site posts list
@@ -56,6 +66,7 @@ site.mediaList(function(err, list){
 ### Site#post(id)
 
 Create a new `Post` instance.
+More info in [Site post page](./post.md).
 
 ```js
 var post = site.post('<post-id>');

@@ -58,6 +58,18 @@ Site.prototype.mediaList = function(query, fn){
 };
 
 /**
+ * List the users of a site
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Site.prototype.usersList = function(query, fn){
+  this.wpcom.sendRequest('/sites/' + this._id + '/users', query, null, fn);
+};
+
+/**
  * Create a `Post` instance
  *
  * @param {String} id

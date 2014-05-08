@@ -38,6 +38,7 @@ function Like(pid, sid, wpcom){
  * @api public
  */
 
+Like.prototype.state =
 Like.prototype.mine = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
   this.wpcom.sendRequest(path, query, null, fn);

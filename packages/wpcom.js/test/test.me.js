@@ -21,7 +21,7 @@ describe('WPCOM#Me', function(){
 
   describe('async', function(){
 
-    describe('get()', function(){
+    describe('me.get()', function(){
       it('should require user information object', function(done){
         var me = util.wpcom().me();
 
@@ -57,7 +57,7 @@ describe('WPCOM#Me', function(){
       });
     });
 
-    describe('sites()', function(){
+    describe('me.sites()', function(){
       it('should require user sites object', function(done){
         var me = util.wpcom().me();
 
@@ -68,7 +68,7 @@ describe('WPCOM#Me', function(){
       });
     });
 
-    describe('likes()', function(){
+    describe('me.likes()', function(){
       it('should require user likes', function(done){
         var me = util.wpcom().me();
 
@@ -84,7 +84,7 @@ describe('WPCOM#Me', function(){
       });
     });
 
-    describe('groups()', function(){
+    describe('me.groups()', function(){
       it('should require groups', function(done){
         var me = util.wpcom().me();
 
@@ -99,7 +99,7 @@ describe('WPCOM#Me', function(){
       });
     });
 
-    describe('connections()', function(){
+    describe('me.connections()', function(){
       it('should require third-party connections', function(done){
         var me = util.wpcom().me();
 
