@@ -148,6 +148,20 @@ Site.prototype.addMediaUrls = function(files, fn){
 };
 
 /**
+ * Delete a blog media
+ *
+ * @param {String} id
+ * @param {Function} fn
+ * @return {Post} removed Media instance
+ */
+
+Site.prototype.deleteMedia = function(id, fn){
+  var media = Media(id, this._id, this.wpcom);
+  media.del(fn);
+  return media;
+};
+
+/**
  * Expose `Site` module
  */
 
