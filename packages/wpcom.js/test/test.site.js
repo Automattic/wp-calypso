@@ -22,7 +22,6 @@ var test = require('./data');
 
 describe('WPCOM#Site', function(){
 
-
   // Create a new_post before to start the tests
   var new_post;
   before(function(done){
@@ -183,7 +182,7 @@ describe('WPCOM#Site', function(){
 
     });
 
-    describe('site.addMediaFiles(\'/path/to/file\')', function(){
+    describe('site.addMediaFiles([fs])', function(){
 
       it('should create a new media from a file', function(done){
         var site = util.private_site();
@@ -195,7 +194,7 @@ describe('WPCOM#Site', function(){
           files.push(fs.createReadStream(test.new_media_data.files[i]));
         }
 
-        var media = site.addMediaFiles(files, function(err, data){
+        site.addMediaFiles(files, function(err, data){
           if (err) throw err;
 
           assert.ok(data);
@@ -207,7 +206,6 @@ describe('WPCOM#Site', function(){
       });
 
     });
-
 
     describe('site.addMediaUrls([\'url1\', \'url2\'])', function(){
 
