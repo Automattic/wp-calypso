@@ -5,6 +5,7 @@
 
 var test = require('./data');
 var WPCOM = require('../');
+var fs = require('fs');
 
 /**
  * `Util` module
@@ -61,7 +62,7 @@ Util.addPost = function(fn){
 
 Util.addMedia = function(fn){
   var site = Util.private_site();
-  site.addMediaFiles(test.new_media_data.files[0], fn);
+  site.addMediaFiles(fs.createReadStream(test.new_media_data.files[0]), fn);
 };
 
 /**
