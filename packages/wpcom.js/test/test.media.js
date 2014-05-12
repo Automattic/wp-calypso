@@ -87,6 +87,26 @@ describe('WPCOM#Site#Media', function(){
 
     });
 
+    describe('media.addUrls([\'url1\', \'url2\'])', function(){
+
+      it('should create a new media', function(done){
+        var site = util.private_site();
+
+        site
+        .media()
+        .addUrls(test.new_media_data.media_urls, function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.ok(data.media instanceof Array);
+          assert.equal(test.new_media_data.media_urls.length, data.media.length);
+          done();
+        });
+
+      });
+
+    });
+
   });
 
 });
