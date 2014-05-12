@@ -90,7 +90,7 @@ Media.prototype.addUrls = function(files, fn){
 Media.prototype['delete'] =
 Media.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
