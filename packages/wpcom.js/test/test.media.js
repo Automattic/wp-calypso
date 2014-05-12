@@ -7,6 +7,7 @@ var WPCOM = require('../');
 var Site = require('../lib/site');
 var Media = require('../lib/media');
 var util = require('./util');
+var fs = require('fs');
 var assert = require('assert');
 
 /**
@@ -56,6 +57,32 @@ describe('WPCOM#Site#Media', function(){
           assert.equal(3, info.id);
           done();
         });
+      });
+
+    });
+
+    describe('media.addFiles([fs])', function(){
+
+      it('should create a new media from a file', function(done){
+        var site = util.private_site();
+
+        // pass streams
+        var files = [];
+        for (var i = 0; i < test.new_media_data.files.length; i++) {
+          files.push(fs.createReadStream(test.new_media_data.files[i]));
+        }
+
+        site
+        .media()
+        .addFiles(files, function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.ok(data.media instanceof Array);
+          assert.equal(test.new_media_data.files.length, data.media.length);
+          done();
+        });
+
       });
 
     });
