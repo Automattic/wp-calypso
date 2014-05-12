@@ -107,6 +107,25 @@ describe('WPCOM#Site#Media', function(){
 
     });
 
+    describe('media.delete()', function(){
+
+      it('should delete a media', function(done){
+        var site = util.private_site();
+
+
+        site
+        .media(new_media.media[0].id)
+        .del(function(err, data){
+          if (err) throw err;
+
+          assert.equal(new_media.media[0].id, data.id);
+          done();
+        });
+
+      });
+
+    });
+
   });
 
 });
