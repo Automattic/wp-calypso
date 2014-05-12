@@ -11,7 +11,6 @@
   "main": "wpcom+xhr.js",
   "dependencies": {
     "debug": "0.8.0",
-    "superagent": "0.17.0",
     "wpcom-proxy-request": "0.1.0",
     "wpcom-xhr-request": "0.2.0",
     "inherits": "2.0.1"

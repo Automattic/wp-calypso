@@ -21,6 +21,11 @@ it's also an express app but the requests are done from the browser using
 $ make example-browser-proxy
 ```
 
+there are two pages to test:
+
+* index.html
+* file_upload.html
+
 ## Node.js
 
 Simple node.js script to get freshly pressed list.

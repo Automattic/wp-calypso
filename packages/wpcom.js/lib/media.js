@@ -46,17 +46,38 @@ Media.prototype.get = function(query, fn){
  * @param {Function} fn
  */
 
-Media.prototype.addFile = function(files, fn){
+Media.prototype.addFiles = function(files, fn){
   var path = '/sites/' + this._sid + '/media/new';
   var params = { path: path, method: 'post', formData: [] };
 
   // process formData
   files = Array.isArray(files) ? files : [ files ];
   for (var i = 0; i < files.length; i++) {
-    params.formData.push([ 'media[]', files[i] ]);
+    params.formData.push(['media[]', files[i]]);
   }
 
   this.wpcom.sendRequest(params, null, null, fn);
+};
+
+/**
+ * Add media files from URL
+ *
+ * @param {String|Array} files
+ * @param {Function} fn
+ */
+
+Media.prototype.addUrls = function(files, fn){
+  var path = '/sites/' + this._sid + '/media/new';
+  var params = { path: path, method: 'post' };
+  var body = { media_urls: [] };
+
+  // process formData
+  files = Array.isArray(files) ? files : [ files ];
+  for (var i = 0; i < files.length; i++) {
+    body.media_urls.push(files[i]);
+  }
+
+  this.wpcom.sendRequest(params, null, body, fn);
 };
 
 /**

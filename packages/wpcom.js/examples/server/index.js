@@ -36,7 +36,7 @@ app.get('/', function(req, res){
     if (err) return console.log(err);
 
     // get lastest posts
-    site.posts({ number: 10 }, function(err, posts) {
+    site.postsList({ number: 10 }, function(err, posts) {
       if (err) return console.log(err);
 
       res.render('layout', { site: info, posts: posts });

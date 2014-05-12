@@ -16,6 +16,13 @@
         console.log('proxy now running in "access all user\'s blogs" mode');
       });
 
+      // upload image from url
+      wpcom
+      .site('publicsiteapitesting.wordpress.com')
+      .addMediaUrls('http://s.w.org/style/images/wp-header-logo-2x.png', function(err, data){
+        console.log(data);
+      });
+
       wpcom.me().get(function(err, me){
         if (err) throw err;
         console.log(me);

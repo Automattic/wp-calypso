@@ -183,6 +183,27 @@ describe('WPCOM#Site#Post', function(){
 
     });
 
+    describe('post.related()', function(){
+
+      it('should get related posts', function(done){
+        var site = util.private_site();
+        var post = site.post(new_post.ID);
+
+        post.related({ size: 5 }, function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.equal('number', typeof data.total);
+          assert.ok(data.hits instanceof Array);
+
+          done();
+        });
+
+      });
+
+    });
+
+
     describe('post.like.add()', function(){
 
       it('should add a post like', function(done){

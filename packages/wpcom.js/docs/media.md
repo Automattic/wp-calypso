@@ -35,6 +35,8 @@ media.get(function(err, data){
 });
 ```
 
-### Media#addFile(data, fn)
+### Media#addFiles(data, fn)
+
+### Media#addUrls(data, fn)
 
 ### Media#delete(fn) - Media#delete(fn)

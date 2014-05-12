@@ -120,16 +120,30 @@ Site.prototype.media = function(id){
 };
 
 /**
- * Add a new blog media body
+ * Add a media from a file
  *
  * @param {Array|String} files
  * @param {Function} fn
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMediaFile = function(files, fn){
+Site.prototype.addMediaFiles = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.addFile(files, fn);
+  media.addFiles(files, fn);
+  return media;
+};
+
+/**
+ * Add a new media from url
+ *
+ * @param {Array|String} files
+ * @param {Function} fn
+ * @return {Post} new Post instance
+ */
+
+Site.prototype.addMediaUrls = function(files, fn){
+  var media = Media(null, this._id, this.wpcom);
+  media.addUrls(files, fn);
   return media;
 };
 
