@@ -21,6 +21,7 @@ var test = require('./data');
  */
 
 describe('WPCOM#Site#Media', function(){
+  var post_added;
 
   // Create a new_media before to start the tests
 
@@ -31,6 +32,21 @@ describe('WPCOM#Site#Media', function(){
 
       new_media = media;
       done();
+    });
+  });
+
+  after(function(done){
+    var site = util.private_site();
+
+    // clean new_post post
+    site.deleteMedia(media_added.media[0].id, function(err, data) {
+      if (err) throw err;
+
+      // clean post_added post
+      site.deleteMedia(media_added.media[1].id, function(err, data) {
+        if (err) throw err;
+        done();
+      });
     });
   });
 
@@ -100,6 +116,9 @@ describe('WPCOM#Site#Media', function(){
           assert.ok(data);
           assert.ok(data.media instanceof Array);
           assert.equal(test.new_media_data.media_urls.length, data.media.length);
+
+          media_added = data;
+
           done();
         });
 
@@ -111,7 +130,6 @@ describe('WPCOM#Site#Media', function(){
 
       it('should delete a media', function(done){
         var site = util.private_site();
-
 
         site
         .media(new_media.media[0].id)

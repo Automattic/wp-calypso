@@ -194,7 +194,7 @@ describe('WPCOM#Site', function(){
           files.push(fs.createReadStream(test.new_media_data.files[i]));
         }
 
-        site.addMediaFiles(files, function(err, data){
+        var media = site.addMediaFiles(files, function(err, data){
           if (err) throw err;
 
           assert.ok(data);
