@@ -6,6 +6,7 @@
 
 var Me = _dereq_('./lib/me');
 var Site = _dereq_('./lib/site');
+var request = _dereq_('./lib/util/request');
 var debug = _dereq_('debug')('wpcom');
 
 /**
@@ -46,58 +47,16 @@ WPCOM.prototype.site = function(id){
 /**
  * List Freshly Pressed Posts
  *
- * @param {Object} params (optional)
+ * @param {Object} [query]
  * @param {Function} fn callback function
  * @api public
  */
 
-WPCOM.prototype.freshlyPressed = function(params, fn){
-  this.sendRequest('freshly-pressed.get', null, params, fn);
+WPCOM.prototype.freshlyPressed = function(query, fn){
+  this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
-/**
- * Request to WordPress REST API
- *
- * @param {String||Object} params
- * @param {Object} [query]
- * @param {Object} [body]
- * @param {Function} fn
- * @api private
- */
-
-WPCOM.prototype.sendRequest = function (params, query, body, fn){
-  // `params` can be just the path (String)
-  if ('string' == typeof params) {
-    params = { path: params };
-  }
-
-  debug('sendRequest("%s")', params.path);
-
-  // set `method` request param
-  params.method = (params.method || 'get').toUpperCase();
-
-  // `query` is optional
-  if ('function' == typeof query) {
-    fn = query;
-    query = null;
-  }
-
-  // `body` is optional
-  if ('function' == typeof body) {
-    fn = body;
-    body = null;
-  }
-
-  // pass `query` and/or `body` to request params
-  if (query) params.query = query;
-  if (body) params.body = body;
-
-  // callback `fn` function is optional
-  if (!fn) fn = function(err){ if (err) throw err; };
-
-  // request method
-  this.request(params, fn);
-};
+WPCOM.prototype.sendRequest = request;
 
 /**
  * Expose `WPCOM` module
@@ -105,7 +64,86 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
 
 module.exports = WPCOM;
 
-},{"./lib/me":2,"./lib/site":5,"debug":7}],2:[function(_dereq_,module,exports){
+},{"./lib/me":3,"./lib/site":7,"./lib/util/request":8,"debug":10}],2:[function(_dereq_,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var debug = _dereq_('debug')('wpcom:like');
+
+/**
+ * Like methods
+ *
+ * @param {String} pid post id
+ * @param {String} sid site id
+ * @param {WPCOM} wpcom
+ * @api public
+ */
+
+function Like(pid, sid, wpcom){
+  if (!sid) {
+    throw new Error('`side id` is not correctly defined');
+  }
+
+  if (!pid) {
+    throw new Error('`post id` is not correctly defined');
+  }
+
+  if (!(this instanceof Like)) return new Like(pid, sid, wpcom);
+
+  this.wpcom = wpcom;
+  this._pid = pid;
+  this._sid = sid;
+}
+
+/**
+ * Get your Like status for a Post
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Like.prototype.state =
+Like.prototype.mine = function(query, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
+  this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Like a post
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Like.prototype.add = function(query, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+};
+
+/**
+ * Remove your Like from a Post
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Like.prototype['delete'] =
+Like.prototype.del = function(fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+};
+
+/**
+ * Expose `Like` module
+ */
+
+module.exports = Like;
+
+},{"debug":10}],3:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -191,7 +229,7 @@ Me.prototype.connections = function(query, fn){
 
 module.exports = Me;
 
-},{"debug":7}],3:[function(_dereq_,module,exports){
+},{"debug":10}],4:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -234,29 +272,44 @@ Media.prototype.get = function(query, fn){
 };
 
 /**
- * Add media
+ * Add media file
  *
- * @param {Object} body
+ * @param {String|Array} files
  * @param {Function} fn
- * @api public
  */
 
-Media.prototype.add = function(body, fn){
+Media.prototype.addFiles = function(files, fn){
   var path = '/sites/' + this._sid + '/media/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  var params = { path: path, method: 'post', formData: [] };
+
+  // process formData
+  files = Array.isArray(files) ? files : [ files ];
+  for (var i = 0; i < files.length; i++) {
+    params.formData.push([ 'media[]', files[i]]);
+  }
+
+  this.wpcom.sendRequest(params, null, null, fn);
 };
 
 /**
- * Edit media
+ * Add media files from URL
  *
- * @param {Object} body
+ * @param {String|Array} files
  * @param {Function} fn
- * @api public
  */
 
-Media.prototype.update = function(body, fn){
-  var path = '/sites/' + this._sid + '/media/' + this._id;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+Media.prototype.addUrls = function(files, fn){
+  var path = '/sites/' + this._sid + '/media/new';
+  var params = { path: path, method: 'post' };
+  var body = { media_urls: [] };
+
+  // process formData
+  files = Array.isArray(files) ? files : [ files ];
+  for (var i = 0; i < files.length; i++) {
+    body.media_urls.push(files[i]);
+  }
+
+  this.wpcom.sendRequest(params, null, body, fn);
 };
 
 /**
@@ -266,7 +319,8 @@ Media.prototype.update = function(body, fn){
  * @api public
  */
 
-Media.prototype.delete = function(fn){
+Media.prototype['delete'] =
+Media.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
   this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
@@ -277,11 +331,14 @@ Media.prototype.delete = function(fn){
 
 module.exports = Media;
 
-},{"debug":7}],4:[function(_dereq_,module,exports){
+},{"debug":10}],5:[function(_dereq_,module,exports){
+
 /**
  * Module dependencies.
  */
 
+var Like = _dereq_('./like');
+var Reblog = _dereq_('./reblog');
 var debug = _dereq_('debug')('wpcom:post');
 
 /**
@@ -393,22 +450,56 @@ Post.prototype.update = function(body, fn){
  * @api public
  */
 
-Post.prototype.delete = function(fn){
+Post.prototype['delete'] =
+Post.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
   this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
- * Get post likes
+ * Get post likes list
  *
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.likes = function(query, fn){
+Post.prototype.likesList = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
   this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Search within a site for related posts
+ *
+ * @param {Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.related = function(body, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
+ * Create a `Like` instance
+ *
+ * @api public
+ */
+
+Post.prototype.like = function(){
+  return Like( this._id, this._sid, this.wpcom);
+};
+
+/**
+ * Create a `Reblog` instance
+ *
+ * @api public
+ */
+
+Post.prototype.reblog = function(){
+  return Reblog( this._id, this._sid, this.wpcom);
 };
 
 /**
@@ -417,8 +508,96 @@ Post.prototype.likes = function(query, fn){
 
 module.exports = Post;
 
-},{"debug":7}],5:[function(_dereq_,module,exports){
+},{"./like":2,"./reblog":6,"debug":10}],6:[function(_dereq_,module,exports){
 
+/**
+ * Module dependencies.
+ */
+
+var debug = _dereq_('debug')('wpcom:reblog');
+
+/**
+ * Reblog methods
+ *
+ * @param {String} pid post id
+ * @param {String} sid site id
+ * @param {WPCOM} wpcom
+ * @api public
+ */
+
+function Reblog(pid, sid, wpcom){
+  if (!sid) {
+    throw new Error('`side id` is not correctly defined');
+  }
+
+  if (!pid) {
+    throw new Error('`post id` is not correctly defined');
+  }
+
+  if (!(this instanceof Reblog)) return new Reblog(pid, sid, wpcom);
+
+  this.wpcom = wpcom;
+  this._pid = pid;
+  this._sid = sid;
+}
+
+/**
+ * Get your reblog status for a Post
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Reblog.prototype.state =
+Reblog.prototype.mine = function(query, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
+  this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Reblog a post
+ *
+ * @param {Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Reblog.prototype.add = function(body, fn){
+  if (body && !body.destination_site_id) {
+    return fn(new Error('destination_site_id is not defined'));
+  }
+
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
+ * Reblog a post to
+ * It's almost a alias of Reblogs#add()
+ *
+ * @param {Number} dest destination
+ * @param {String} [note]
+ * @param {Function} fn
+ * @api public
+ */
+
+Reblog.prototype.to = function(dest, note, fn){
+  if ('function' == typeof note) {
+    fn = note;
+    note = null;
+  }
+
+  this.add({ note: note, destination_site_id: dest }, fn);
+};
+
+/**
+ * Expose `Reblog` module
+ */
+
+module.exports = Reblog;
+
+},{"debug":10}],7:[function(_dereq_,module,exports){
 /**
  * Module dependencies.
  */
@@ -455,27 +634,39 @@ Site.prototype.get = function(query, fn){
 };
 
 /**
- * Require posts site
+ * Require site posts list
  *
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Site.prototype.posts = function(query, fn){
+Site.prototype.postsList = function(query, fn){
   this.wpcom.sendRequest('/sites/' + this._id + '/posts', query, null, fn);
 };
 
 /**
- * Require the media library
+ * Require the site media list
  *
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Site.prototype.medias = function(query, fn){
+Site.prototype.mediaList = function(query, fn){
   this.wpcom.sendRequest('/sites/' + this._id + '/media', query, null, fn);
+};
+
+/**
+ * List the users of a site
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Site.prototype.usersList = function(query, fn){
+  this.wpcom.sendRequest('/sites/' + this._id + '/users', query, null, fn);
 };
 
 /**
@@ -529,16 +720,30 @@ Site.prototype.media = function(id){
 };
 
 /**
- * Add a new blog media body
+ * Add a media from a file
  *
- * @param {Object} body
+ * @param {Array|String} files
  * @param {Function} fn
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMedia = function(body, fn){
+Site.prototype.addMediaFiles = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.add(body, fn);
+  media.addFiles(files, fn);
+  return media;
+};
+
+/**
+ * Add a new media from url
+ *
+ * @param {Array|String} files
+ * @param {Function} fn
+ * @return {Post} new Post instance
+ */
+
+Site.prototype.addMediaUrls = function(files, fn){
+  var media = Media(null, this._id, this.wpcom);
+  media.addUrls(files, fn);
   return media;
 };
 
@@ -548,7 +753,60 @@ Site.prototype.addMedia = function(body, fn){
 
 module.exports = Site;
 
-},{"./media":3,"./post":4,"debug":7}],6:[function(_dereq_,module,exports){
+},{"./media":4,"./post":5,"debug":10}],8:[function(_dereq_,module,exports){
+
+/**
+ * Module dependencies
+ */
+
+var debug = _dereq_('debug')('wpcom:request');
+
+/**
+ * Request to WordPress REST API
+ *
+ * @param {String||Object} params
+ * @param {Object} [query]
+ * @param {Object} [body]
+ * @param {Function} fn
+ * @api private
+ */
+
+module.exports = function (params, query, body, fn){
+  // `params` can be just the path (String)
+  if ('string' == typeof params) {
+    params = { path: params };
+  }
+
+  debug('sendRequest("%s")', params.path);
+
+  // set `method` request param
+  params.method = (params.method || 'get').toUpperCase();
+
+  // `query` is optional
+  if ('function' == typeof query) {
+    fn = query;
+    query = null;
+  }
+
+  // `body` is optional
+  if ('function' == typeof body) {
+    fn = body;
+    body = null;
+  }
+
+  // pass `query` and/or `body` to request params
+  if (query) params.query = query;
+  if (body) params.body = body;
+
+  // callback `fn` function is optional
+  if (!fn) fn = function(err){ if (err) throw err; };
+
+  // request method
+  this.request(params, fn);
+};
+
+
+},{"debug":10}],9:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -610,7 +868,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -749,7 +1007,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -774,7 +1032,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -1000,7 +1258,7 @@ function toTitle (str) {
   });
 }
 
-},{"component-event":10,"debug":7,"promise":12,"uid":14}],10:[function(_dereq_,module,exports){
+},{"component-event":13,"debug":10,"promise":15,"uid":17}],13:[function(_dereq_,module,exports){
 var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
     unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
     prefix = bind !== 'addEventListener' ? 'on' : '';
@@ -1036,7 +1294,7 @@ exports.unbind = function(el, type, fn, capture){
   el[unbind](prefix + type, fn, capture || false);
   return fn;
 };
-},{}],11:[function(_dereq_,module,exports){
+},{}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var asap = _dereq_('asap')
@@ -1143,7 +1401,7 @@ function doResolve(fn, onFulfilled, onRejected) {
   }
 }
 
-},{"asap":13}],12:[function(_dereq_,module,exports){
+},{"asap":16}],15:[function(_dereq_,module,exports){
 'use strict';
 
 //This file contains then/promise specific extensions to the core promise API
@@ -1317,7 +1575,7 @@ Promise.race = function (values) {
   });
 }
 
-},{"./core.js":11,"asap":13}],13:[function(_dereq_,module,exports){
+},{"./core.js":14,"asap":16}],16:[function(_dereq_,module,exports){
 (function (process){
 
 // Use the fastest possible means to execute a task in a future turn
@@ -1433,8 +1691,8 @@ function asap(task) {
 module.exports = asap;
 
 
-}).call(this,_dereq_("/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":6}],14:[function(_dereq_,module,exports){
+}).call(this,_dereq_("/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":9}],17:[function(_dereq_,module,exports){
 /**
  * Export `uid`
  */
@@ -1453,7 +1711,7 @@ function uid(len) {
   return Math.random().toString(35).substr(2, len);
 }
 
-},{}],15:[function(_dereq_,module,exports){
+},{}],18:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -1484,6 +1742,6 @@ function WPCOM () {
 }
 inherits(WPCOM, _WPCOM);
 
-},{"./index.js":1,"inherits":8,"wpcom-proxy-request":9}]},{},[15])
-(15)
+},{"./index.js":1,"inherits":11,"wpcom-proxy-request":12}]},{},[18])
+(18)
 });

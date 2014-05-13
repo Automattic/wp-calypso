@@ -1,4 +1,33 @@
 
+1.2.1 / 2014-05-13
+==================
+
+ * New methods:
+    - site.addMediaFiles()
+    - site.addMediaUrls()
+    - site.deleteMedia()
+    - site.usersList()
+    - site.likesList()
+
+    - media.addFiles()
+    - media.addUrls()
+    - media.delete()
+    - media.del()
+
+    - post.reblog()
+    - post.related()
+
+    - like.state()
+    - like.mine()
+    - like.delete()
+    - like.del()
+
+    - reblog.to()
+    - reblog.state()
+
+ * Add and update examples over the browser
+ * Improve and update documentation
+
 1.2.0 / 2014-04-23
 ==================
 
