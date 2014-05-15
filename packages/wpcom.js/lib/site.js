@@ -1,3 +1,4 @@
+
 /**
  * Module dependencies.
  */
@@ -5,6 +6,27 @@
 var Post = require('./post');
 var Media = require('./media');
 var debug = require('debug')('wpcom:site');
+
+/**
+ * Resources array
+ */
+
+var resources = [
+  'categories',
+  'comments',
+  'follows',
+  'media',
+  'posts',
+  [ 'stats', 'stats' ],
+  [ 'statsVisits', 'stats/visits' ],
+  [ 'statsReferrers', 'stats/referrers' ],
+  [ 'statsTopPosts', 'stats/top-posts' ],
+  [ 'statsCountryViews', 'stats/country-views' ],
+  [ 'statsClicks', 'stats/clicks' ],
+  [ 'statsSearchTerms', 'stats/search-terms' ],
+  'tags',
+  'users'
+];
 
 /**
  * Create a Site instance
@@ -34,42 +56,42 @@ Site.prototype.get = function(query, fn){
 };
 
 /**
- * Require site posts list
+ * List method builder
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {String} subpath
+ * @param {Function}
+ * @api private
  */
 
-Site.prototype.postsList = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id + '/posts', query, null, fn);
+var list = function(subpath) {
+
+  /**
+   * Return the <names>List method
+   *
+   * @param {Object} [query]
+   * @param {Function} fn
+   * @api public
+   */
+
+  return function (query, fn){
+    this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
+  };
 };
 
-/**
- * Require the site media list
- *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
- */
+// walk for each resource and create <resources>List method
+for (var i = 0; i < resources.length; i++) {
+  var res = resources[i];
+  var isarr = Array.isArray(res);
 
-Site.prototype.mediaList = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id + '/media', query, null, fn);
-};
+  var name =  isarr ? res[0] : res + 'List';
+  var subpath = isarr ? res[1] : res;
 
-/**
- * List the users of a site
- *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
- */
-
-Site.prototype.usersList = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id + '/users', query, null, fn);
-};
+  debug('builind `site.%s()` method in `%s` sub-path', name, subpath);
+  Site.prototype[name] = list.call(this, subpath);
+}
 
 /**
+ * :POST:
  * Create a `Post` instance
  *
  * @param {String} id
@@ -81,6 +103,7 @@ Site.prototype.post = function(id){
 };
 
 /**
+ * :POST:
  * Add a new blog post
  *
  * @param {Object} body
@@ -95,6 +118,7 @@ Site.prototype.addPost = function(body, fn){
 };
 
 /**
+ * :POST:
  * Delete a blog post
  *
  * @param {String} id
@@ -109,6 +133,7 @@ Site.prototype.deletePost = function(id, fn){
 };
 
 /**
+ * :MEDIA:
  * Create a `Media` instance
  *
  * @param {String} id
@@ -120,6 +145,7 @@ Site.prototype.media = function(id){
 };
 
 /**
+ * :MEDIA:
  * Add a media from a file
  *
  * @param {Array|String} files
@@ -134,6 +160,7 @@ Site.prototype.addMediaFiles = function(files, fn){
 };
 
 /**
+ * :MEDIA:
  * Add a new media from url
  *
  * @param {Array|String} files
@@ -148,6 +175,7 @@ Site.prototype.addMediaUrls = function(files, fn){
 };
 
 /**
+ * :MEDIA:
  * Delete a blog media
  *
  * @param {String} id
