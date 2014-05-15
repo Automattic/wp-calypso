@@ -5,7 +5,7 @@
 
 var Me = require('./lib/me');
 var Site = require('./lib/site');
-var request = require('./lib/util/request');
+var utilrequest = require('./lib/util/request');
 var debug = require('debug')('wpcom');
 
 /**
@@ -19,6 +19,7 @@ function WPCOM(request){
   if ('function' !== typeof request) {
     throw new TypeError('a `request` WP.com function must be passed in');
   }
+
   this.request = request;
 }
 
@@ -55,7 +56,11 @@ WPCOM.prototype.freshlyPressed = function(query, fn){
   this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
-WPCOM.prototype.sendRequest = request;
+/**
+ * Expose util/request in sendRequest
+ */
+
+WPCOM.prototype.sendRequest = utilrequest;
 
 /**
  * Expose `WPCOM` module

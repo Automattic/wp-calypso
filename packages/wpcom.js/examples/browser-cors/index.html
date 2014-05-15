@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>wpcom.js browser example with CORS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="/wpcom.js"></script>
+    <script>
+      var token = "<your-token>";
+      var wpcom = WPCOM(token);
+
+      wpcom
+      .me()
+      .get(function(err, me){
+        if (err) throw err;
+        console.log(me);
+
+        var div = document.createElement('div');
+        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + me.username + '<\/b>';
+        document.body.appendChild(div);
+      });
+    </script>
+  </body>
+</html>

@@ -44,6 +44,10 @@ example-browser-proxy: all
 	cd examples/browser-proxy-request/; $(NPM) install
 	$(NODE) examples/browser-proxy-request/index.js
 
+example-browser-cors: all
+	cd examples/browser-cors/; $(NPM) install
+	$(NODE) examples/browser-cors/index.js
+
 test:
 	@$(MOCHA) \
 		--timeout 10s \

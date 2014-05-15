@@ -6,7 +6,7 @@
 
 var Me = _dereq_('./lib/me');
 var Site = _dereq_('./lib/site');
-var request = _dereq_('./lib/util/request');
+var utilrequest = _dereq_('./lib/util/request');
 var debug = _dereq_('debug')('wpcom');
 
 /**
@@ -20,6 +20,7 @@ function WPCOM(request){
   if ('function' !== typeof request) {
     throw new TypeError('a `request` WP.com function must be passed in');
   }
+
   this.request = request;
 }
 
@@ -56,7 +57,11 @@ WPCOM.prototype.freshlyPressed = function(query, fn){
   this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
-WPCOM.prototype.sendRequest = request;
+/**
+ * Expose util/request in sendRequest
+ */
+
+WPCOM.prototype.sendRequest = utilrequest;
 
 /**
  * Expose `WPCOM` module
@@ -285,7 +290,7 @@ Media.prototype.addFiles = function(files, fn){
   // process formData
   files = Array.isArray(files) ? files : [ files ];
   for (var i = 0; i < files.length; i++) {
-    params.formData.push([ 'media[]', files[i]]);
+    params.formData.push(['media[]', files[i]]);
   }
 
   this.wpcom.sendRequest(params, null, null, fn);
@@ -322,7 +327,7 @@ Media.prototype.addUrls = function(files, fn){
 Media.prototype['delete'] =
 Media.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -598,6 +603,7 @@ Reblog.prototype.to = function(dest, note, fn){
 module.exports = Reblog;
 
 },{"debug":10}],7:[function(_dereq_,module,exports){
+
 /**
  * Module dependencies.
  */
@@ -605,6 +611,27 @@ module.exports = Reblog;
 var Post = _dereq_('./post');
 var Media = _dereq_('./media');
 var debug = _dereq_('debug')('wpcom:site');
+
+/**
+ * Resources array
+ */
+
+var resources = [
+  'categories',
+  'comments',
+  'follows',
+  'media',
+  'posts',
+  [ 'stats', 'stats' ],
+  [ 'statsVisits', 'stats/visits' ],
+  [ 'statsReferrers', 'stats/referrers' ],
+  [ 'statsTopPosts', 'stats/top-posts' ],
+  [ 'statsCountryViews', 'stats/country-views' ],
+  [ 'statsClicks', 'stats/clicks' ],
+  [ 'statsSearchTerms', 'stats/search-terms' ],
+  'tags',
+  'users'
+];
 
 /**
  * Create a Site instance
@@ -634,42 +661,42 @@ Site.prototype.get = function(query, fn){
 };
 
 /**
- * Require site posts list
+ * List method builder
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {String} subpath
+ * @param {Function}
+ * @api private
  */
 
-Site.prototype.postsList = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id + '/posts', query, null, fn);
+var list = function(subpath) {
+
+  /**
+   * Return the <names>List method
+   *
+   * @param {Object} [query]
+   * @param {Function} fn
+   * @api public
+   */
+
+  return function (query, fn){
+    this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
+  };
 };
 
-/**
- * Require the site media list
- *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
- */
+// walk for each resource and create <resources>List method
+for (var i = 0; i < resources.length; i++) {
+  var res = resources[i];
+  var isarr = Array.isArray(res);
 
-Site.prototype.mediaList = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id + '/media', query, null, fn);
-};
+  var name =  isarr ? res[0] : res + 'List';
+  var subpath = isarr ? res[1] : res;
 
-/**
- * List the users of a site
- *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
- */
-
-Site.prototype.usersList = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id + '/users', query, null, fn);
-};
+  debug('builind `site.%s()` method in `%s` sub-path', name, subpath);
+  Site.prototype[name] = list.call(this, subpath);
+}
 
 /**
+ * :POST:
  * Create a `Post` instance
  *
  * @param {String} id
@@ -681,6 +708,7 @@ Site.prototype.post = function(id){
 };
 
 /**
+ * :POST:
  * Add a new blog post
  *
  * @param {Object} body
@@ -695,6 +723,7 @@ Site.prototype.addPost = function(body, fn){
 };
 
 /**
+ * :POST:
  * Delete a blog post
  *
  * @param {String} id
@@ -709,6 +738,7 @@ Site.prototype.deletePost = function(id, fn){
 };
 
 /**
+ * :MEDIA:
  * Create a `Media` instance
  *
  * @param {String} id
@@ -720,6 +750,7 @@ Site.prototype.media = function(id){
 };
 
 /**
+ * :MEDIA:
  * Add a media from a file
  *
  * @param {Array|String} files
@@ -734,6 +765,7 @@ Site.prototype.addMediaFiles = function(files, fn){
 };
 
 /**
+ * :MEDIA:
  * Add a new media from url
  *
  * @param {Array|String} files
@@ -744,6 +776,21 @@ Site.prototype.addMediaFiles = function(files, fn){
 Site.prototype.addMediaUrls = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
   media.addUrls(files, fn);
+  return media;
+};
+
+/**
+ * :MEDIA:
+ * Delete a blog media
+ *
+ * @param {String} id
+ * @param {Function} fn
+ * @return {Post} removed Media instance
+ */
+
+Site.prototype.deleteMedia = function(id, fn){
+  var media = Media(id, this._id, this.wpcom);
+  media.del(fn);
   return media;
 };
 
@@ -804,7 +851,6 @@ module.exports = function (params, query, body, fn){
   // request method
   this.request(params, fn);
 };
-
 
 },{"debug":10}],9:[function(_dereq_,module,exports){
 // shim for using process in browser
@@ -1740,6 +1786,11 @@ function WPCOM () {
   if (!(this instanceof WPCOM)) return new WPCOM();
   _WPCOM.call(this, request);
 }
+
+/**
+ * Inherit from `WPCOM`
+ */
+
 inherits(WPCOM, _WPCOM);
 
 },{"./index.js":1,"inherits":11,"wpcom-proxy-request":12}]},{},[18])

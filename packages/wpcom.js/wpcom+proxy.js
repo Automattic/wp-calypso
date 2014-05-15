@@ -26,4 +26,9 @@ function WPCOM () {
   if (!(this instanceof WPCOM)) return new WPCOM();
   _WPCOM.call(this, request);
 }
+
+/**
+ * Inherit from `WPCOM`
+ */
+
 inherits(WPCOM, _WPCOM);

@@ -48,4 +48,3 @@ module.exports = function (params, query, body, fn){
   // request method
   this.request(params, fn);
 };
-
