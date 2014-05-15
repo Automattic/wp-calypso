@@ -86,7 +86,7 @@ for (var i = 0; i < resources.length; i++) {
   var name =  isarr ? res[0] : res + 'List';
   var subpath = isarr ? res[1] : res;
 
-  debug('builind `site.%s()` method in `%s` sub-path', name, subpath);
+  debug('adding `site.%s()` method in `%s` sub-path', name, subpath);
   Site.prototype[name] = list.call(this, subpath);
 }
 
