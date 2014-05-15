@@ -11,7 +11,6 @@
 
     - media.addFiles()
     - media.addUrls()
-    - media.delete()
     - media.del()
 
     - post.reblog()
@@ -19,7 +18,6 @@
 
     - like.state()
     - like.mine()
-    - like.delete()
     - like.del()
 
     - reblog.to()
