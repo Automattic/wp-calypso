@@ -691,7 +691,7 @@ for (var i = 0; i < resources.length; i++) {
   var name =  isarr ? res[0] : res + 'List';
   var subpath = isarr ? res[1] : res;
 
-  debug('builind `site.%s()` method in `%s` sub-path', name, subpath);
+  debug('adding `site.%s()` method in `%s` sub-path', name, subpath);
   Site.prototype[name] = list.call(this, subpath);
 }
 
@@ -1737,8 +1737,8 @@ function asap(task) {
 module.exports = asap;
 
 
-}).call(this,_dereq_("/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":9}],17:[function(_dereq_,module,exports){
+}).call(this,_dereq_("/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":9}],17:[function(_dereq_,module,exports){
 /**
  * Export `uid`
  */
