@@ -1,4 +1,21 @@
 
+1.2.2 / 2014-05-19
+==================
+
+ * New methods:
+    - post.comment()
+    - post.comments()
+
+    - comment.get()
+    - comment.update()
+    - comment.replies()
+    - comment.reply()
+    - comment.delete()
+
+ * dist: recompile
+ * add test for all new methods
+ * update documentation
+
 1.2.1 / 2014-05-13
 ==================
 
