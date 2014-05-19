@@ -103,3 +103,21 @@ More info in [Reblog doc page](./reblog.md).
 ```js
 var reblog = wpcom.sites('blog.wordpress.com').post(342).reblog();
 ```
+
+### Post#comment()
+
+Create and return a new `Comment` instance.
+More info in [Like doc page](./comment.md).
+
+### Post#comments()
+
+Recent recent comments
+
+```js
+wpcom
+.sites('blog.wordpress.com')
+.post(342)
+.comments(function(err, list){
+  // post comments list
+});
+```

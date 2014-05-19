@@ -5,6 +5,7 @@
 
 var Like = require('./like');
 var Reblog = require('./reblog');
+var Comment = require('./comment');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -165,7 +166,33 @@ Post.prototype.like = function(){
  */
 
 Post.prototype.reblog = function(){
-  return Reblog( this._id, this._sid, this.wpcom);
+  return Reblog(this._id, this._sid, this.wpcom);
+};
+
+/**
+ * Create a `Comment` instance
+ *
+ * @param {String} [cid] comment id
+ * @api public
+ */
+
+Post.prototype.comment = function(cid){
+  return Comment(cid, this._id, this._sid, this.wpcom);
+};
+
+/**
+ * :COMMENT:
+ * Return recent comments
+ *
+ * @param {Objecy} [query]
+ * @param {String} id
+ * @api public
+ */
+
+Post.prototype.comments = function(query, fn){
+  var comment = Comment(null, this._id, this._sid, this.wpcom);
+  comment.replies(query, fn);
+  return comment;
 };
 
 /**

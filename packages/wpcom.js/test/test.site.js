@@ -388,6 +388,28 @@ describe('WPCOM#Site', function(){
 
     });
 
+    describe('site.comment.get()', function(){
+
+      it('should request for a site comment', function(done){
+        var site = util.private_site();
+
+        site
+        .comment(41)
+        .get(function(err, data){
+          if (err) throw err;
+
+          assert.equal('number', typeof data.ID);
+          assert.equal('object', typeof data.post);
+          assert.ok(data.post instanceof Object);
+
+          done();
+
+        });
+
+      });
+
+    });
+
     describe('site.addPost()', function(){
 
       it('should create a new blog post', function(done){

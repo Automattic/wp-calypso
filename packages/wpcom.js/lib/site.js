@@ -5,10 +5,12 @@
 
 var Post = require('./post');
 var Media = require('./media');
+var Comment = require('./comment');
 var debug = require('debug')('wpcom:site');
 
 /**
  * Resources array
+ * A list of endpoints with the same structure
  */
 
 var resources = [
@@ -78,7 +80,7 @@ var list = function(subpath) {
   };
 };
 
-// walk for each resource and create <resources>List method
+// walk for each resource and create related method
 for (var i = 0; i < resources.length; i++) {
   var res = resources[i];
   var isarr = Array.isArray(res);
@@ -187,6 +189,18 @@ Site.prototype.deleteMedia = function(id, fn){
   var media = Media(id, this._id, this.wpcom);
   media.del(fn);
   return media;
+};
+
+/**
+ * :COMMENT:
+ * Create a `Comment` instance
+ *
+ * @param {String} id
+ * @api public
+ */
+
+Site.prototype.comment = function(id){
+  return Comment(id, null, this._id, this.wpcom);
 };
 
 /**

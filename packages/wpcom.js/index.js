@@ -24,7 +24,7 @@ function WPCOM(request){
 }
 
 /**
- * Get me object instance
+ * Get `Me` object instance
  *
  * @api public
  */
@@ -34,7 +34,7 @@ WPCOM.prototype.me = function(){
 };
 
 /**
- * Get site object instance
+ * Get `Site` object instance
  *
  * @param {String} id
  * @api public

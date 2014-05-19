@@ -25,7 +25,7 @@ function WPCOM(request){
 }
 
 /**
- * Get me object instance
+ * Get `Me` object instance
  *
  * @api public
  */
@@ -35,7 +35,7 @@ WPCOM.prototype.me = function(){
 };
 
 /**
- * Get site object instance
+ * Get `Site` object instance
  *
  * @param {String} id
  * @api public
@@ -69,7 +69,129 @@ WPCOM.prototype.sendRequest = utilrequest;
 
 module.exports = WPCOM;
 
-},{"./lib/me":3,"./lib/site":7,"./lib/util/request":8,"debug":10}],2:[function(_dereq_,module,exports){
+},{"./lib/me":4,"./lib/site":8,"./lib/util/request":9,"debug":11}],2:[function(_dereq_,module,exports){
+
+
+/**
+ * Module dependencies.
+ */
+
+var debug = _dereq_('debug')('wpcom:comment');
+
+/**
+ * Comment methods
+ *
+ * @param {String} [cid] comment id
+ * @param {String} [pid] post id
+ * @param {String} sid site id
+ * @param {WPCOM} wpcom
+ * @api public
+ */
+
+function Comment(cid, pid, sid, wpcom){
+  if (!sid) {
+    throw new Error('`side id` is not correctly defined');
+  }
+
+  if (!(this instanceof Comment)) return new Comment(cid, pid, sid, wpcom);
+
+  this.wpcom = wpcom;
+  this._cid = cid;
+  this._pid = pid;
+  this._sid = sid;
+}
+
+/**
+ * Return a single Comment
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.get = function(query, fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid;
+  this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Return recent comments for a post
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.replies = function(query, fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
+  this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Create a comment on a post
+ *
+ * @param {String|Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.add = function(body, fn){
+  body = 'string' == typeof body ? { content: body } : body;
+
+  var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
+ * Edit a comment
+ *
+ r @param {String|Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.update = function(body, fn){
+  body = 'string' == typeof body ? { content: body } : body;
+
+  var path = '/sites/' + this._sid + '/comments/' + this._cid;
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
+ * Create a Comment as a reply to another Comment
+ *
+ r @param {String|Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.reply = function(body, fn){
+  body = 'string' == typeof body ? { content: body } : body;
+
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
+ * Delete a comment
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype['delete'] =
+Comment.prototype.del = function(fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+};
+
+/**
+ * Expose `Comment` module
+ */
+
+module.exports = Comment;
+
+},{"debug":11}],3:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -148,7 +270,7 @@ Like.prototype.del = function(fn){
 
 module.exports = Like;
 
-},{"debug":10}],3:[function(_dereq_,module,exports){
+},{"debug":11}],4:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -234,7 +356,7 @@ Me.prototype.connections = function(query, fn){
 
 module.exports = Me;
 
-},{"debug":10}],4:[function(_dereq_,module,exports){
+},{"debug":11}],5:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -336,7 +458,7 @@ Media.prototype.del = function(fn){
 
 module.exports = Media;
 
-},{"debug":10}],5:[function(_dereq_,module,exports){
+},{"debug":11}],6:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -344,6 +466,7 @@ module.exports = Media;
 
 var Like = _dereq_('./like');
 var Reblog = _dereq_('./reblog');
+var Comment = _dereq_('./comment');
 var debug = _dereq_('debug')('wpcom:post');
 
 /**
@@ -504,7 +627,33 @@ Post.prototype.like = function(){
  */
 
 Post.prototype.reblog = function(){
-  return Reblog( this._id, this._sid, this.wpcom);
+  return Reblog(this._id, this._sid, this.wpcom);
+};
+
+/**
+ * Create a `Comment` instance
+ *
+ * @param {String} [cid] comment id
+ * @api public
+ */
+
+Post.prototype.comment = function(cid){
+  return Comment(cid, this._id, this._sid, this.wpcom);
+};
+
+/**
+ * :COMMENT:
+ * Return recent comments
+ *
+ * @param {Objecy} [query]
+ * @param {String} id
+ * @api public
+ */
+
+Post.prototype.comments = function(query, fn){
+  var comment = Comment(null, this._id, this._sid, this.wpcom);
+  comment.replies(query, fn);
+  return comment;
 };
 
 /**
@@ -513,7 +662,7 @@ Post.prototype.reblog = function(){
 
 module.exports = Post;
 
-},{"./like":2,"./reblog":6,"debug":10}],6:[function(_dereq_,module,exports){
+},{"./comment":2,"./like":3,"./reblog":7,"debug":11}],7:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -602,7 +751,7 @@ Reblog.prototype.to = function(dest, note, fn){
 
 module.exports = Reblog;
 
-},{"debug":10}],7:[function(_dereq_,module,exports){
+},{"debug":11}],8:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -610,10 +759,12 @@ module.exports = Reblog;
 
 var Post = _dereq_('./post');
 var Media = _dereq_('./media');
+var Comment = _dereq_('./comment');
 var debug = _dereq_('debug')('wpcom:site');
 
 /**
  * Resources array
+ * A list of endpoints with the same structure
  */
 
 var resources = [
@@ -683,7 +834,7 @@ var list = function(subpath) {
   };
 };
 
-// walk for each resource and create <resources>List method
+// walk for each resource and create related method
 for (var i = 0; i < resources.length; i++) {
   var res = resources[i];
   var isarr = Array.isArray(res);
@@ -795,12 +946,24 @@ Site.prototype.deleteMedia = function(id, fn){
 };
 
 /**
+ * :COMMENT:
+ * Create a `Comment` instance
+ *
+ * @param {String} id
+ * @api public
+ */
+
+Site.prototype.comment = function(id){
+  return Comment(id, null, this._id, this.wpcom);
+};
+
+/**
  * Expose `Site` module
  */
 
 module.exports = Site;
 
-},{"./media":4,"./post":5,"debug":10}],8:[function(_dereq_,module,exports){
+},{"./comment":2,"./media":5,"./post":6,"debug":11}],9:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies
@@ -852,7 +1015,7 @@ module.exports = function (params, query, body, fn){
   this.request(params, fn);
 };
 
-},{"debug":10}],9:[function(_dereq_,module,exports){
+},{"debug":11}],10:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -914,7 +1077,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -1053,7 +1216,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1078,7 +1241,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -1304,7 +1467,7 @@ function toTitle (str) {
   });
 }
 
-},{"component-event":13,"debug":10,"promise":15,"uid":17}],13:[function(_dereq_,module,exports){
+},{"component-event":14,"debug":11,"promise":16,"uid":18}],14:[function(_dereq_,module,exports){
 var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
     unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
     prefix = bind !== 'addEventListener' ? 'on' : '';
@@ -1340,7 +1503,7 @@ exports.unbind = function(el, type, fn, capture){
   el[unbind](prefix + type, fn, capture || false);
   return fn;
 };
-},{}],14:[function(_dereq_,module,exports){
+},{}],15:[function(_dereq_,module,exports){
 'use strict';
 
 var asap = _dereq_('asap')
@@ -1447,7 +1610,7 @@ function doResolve(fn, onFulfilled, onRejected) {
   }
 }
 
-},{"asap":16}],15:[function(_dereq_,module,exports){
+},{"asap":17}],16:[function(_dereq_,module,exports){
 'use strict';
 
 //This file contains then/promise specific extensions to the core promise API
@@ -1621,7 +1784,7 @@ Promise.race = function (values) {
   });
 }
 
-},{"./core.js":14,"asap":16}],16:[function(_dereq_,module,exports){
+},{"./core.js":15,"asap":17}],17:[function(_dereq_,module,exports){
 (function (process){
 
 // Use the fastest possible means to execute a task in a future turn
@@ -1737,8 +1900,13 @@ function asap(task) {
 module.exports = asap;
 
 
+<<<<<<< HEAD
+}).call(this,_dereq_("/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":10}],18:[function(_dereq_,module,exports){
+=======
 }).call(this,_dereq_("/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
 },{"/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":9}],17:[function(_dereq_,module,exports){
+>>>>>>> master
 /**
  * Export `uid`
  */
@@ -1757,7 +1925,7 @@ function uid(len) {
   return Math.random().toString(35).substr(2, len);
 }
 
-},{}],18:[function(_dereq_,module,exports){
+},{}],19:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -1793,6 +1961,6 @@ function WPCOM () {
 
 inherits(WPCOM, _WPCOM);
 
-},{"./index.js":1,"inherits":11,"wpcom-proxy-request":12}]},{},[18])
-(18)
+},{"./index.js":1,"inherits":12,"wpcom-proxy-request":13}]},{},[19])
+(19)
 });

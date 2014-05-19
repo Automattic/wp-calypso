@@ -22,14 +22,16 @@ var test = require('./data');
 describe('WPCOM#Site#Post', function(){
   // var to store post in `add()` test
   var post_added;
+  var comment_added;
 
   // Create a new_post before to start the tests
   var new_post;
   before(function(done){
-    util.addPost(function(err, post) {
+    util.addPost(function(err, post, comment) {
       if (err) throw err;
 
       new_post = post;
+      comment_added = comment;
       done();
     });
   });
@@ -203,20 +205,107 @@ describe('WPCOM#Site#Post', function(){
 
     });
 
-
     describe('post.like.add()', function(){
 
       it('should add a post like', function(done){
-        var site = util.private_site();
-        var like = site.post(new_post.ID).like();
-
-        like.add(function(err, data){
+        util
+        .private_site()
+        .post(new_post.ID)
+        .like()
+        .add(function(err, data){
           if (err) throw err;
 
           assert.ok(data);
           assert.ok(data.success);
           assert.ok(data.i_like);
           assert.equal(1, data.like_count);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('post.comment.add()', function(){
+
+      it('should add a post comment', function(done){
+        util
+        .private_site()
+        .post(new_post.ID)
+        .comment()
+        .add({ content: 'Nice post Buddy !!!' }, function(err, data){
+          if (err) throw err;
+
+          assert.equal('number', typeof data.ID);
+          assert.equal('object', typeof data.post);
+          assert.ok(data.post instanceof Object);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('post.comment.update()', function(){
+
+      it('should update a post comment', function(done){
+        util
+        .private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .update('Awful post Buddy !!!', function(err, data){
+          if (err) throw err;
+
+          assert.equal('number', typeof data.ID);
+          assert.equal('object', typeof data.post);
+          assert.ok(data.post instanceof Object);
+          assert.equal(comment_added.ID, data.ID);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('post.comment.reply()', function(){
+
+      it('should add a reply to a post comment', function(done){
+        util
+        .private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .reply('it sucks !!!', function(err, data){
+          if (err) throw err;
+
+          assert.equal('number', typeof data.ID);
+          assert.equal('object', typeof data.post);
+          assert.ok(data.post instanceof Object);
+          assert.equal(comment_added.ID, data.parent.ID);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('post.comment.delete()', function(){
+
+      it('should delete a comment', function(done){
+        util
+        .private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .del(function(err, data){
+          if (err) throw err;
+
+          assert.equal('number', typeof data.ID);
+          assert.equal('object', typeof data.post);
+          assert.ok(data.post instanceof Object);
+          assert.equal(comment_added.ID, data.ID);
 
           done();
         });
@@ -326,6 +415,24 @@ describe('WPCOM#Site#Post', function(){
 
           assert.ok(data);
           assert.equal(new_post.ID, data.ID);
+
+          done();
+        });
+      });
+
+    });
+
+    describe('post.comments()', function(){
+
+      it('should get the post like status of mine', function(done){
+        util.private_site()
+        .post(new_post.ID)
+        .comments(function(err, data){
+          if (err) throw err;
+
+          assert.equal('number', typeof data.found);
+          assert.equal('object', typeof data.comments);
+          assert.ok(data.comments instanceof Array);
 
           done();
         });

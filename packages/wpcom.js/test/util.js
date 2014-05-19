@@ -53,7 +53,19 @@ Util.private_site = function(){
 
 Util.addPost = function(fn){
   var site = Util.private_site();
-  site.addPost(test.new_post_data, fn);
+  site.addPost(test.new_post_data, function(err, post){
+    if (err) return fn(err);
+
+    site
+    .post(post.ID)
+    .comment()
+    .add('Really nice testing post !!', function(err, comment){
+      if (err) return fn(err);
+
+      fn (null, post, comment);
+    });
+
+  });
 };
 
 /**
