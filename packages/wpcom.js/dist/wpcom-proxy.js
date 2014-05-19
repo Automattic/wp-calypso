@@ -1900,13 +1900,8 @@ function asap(task) {
 module.exports = asap;
 
 
-<<<<<<< HEAD
 }).call(this,_dereq_("/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
 },{"/Users/retrofox/lab/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":10}],18:[function(_dereq_,module,exports){
-=======
-}).call(this,_dereq_("/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/nrajlich/wpcom.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":9}],17:[function(_dereq_,module,exports){
->>>>>>> master
 /**
  * Export `uid`
  */
