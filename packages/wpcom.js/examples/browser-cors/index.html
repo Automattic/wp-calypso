@@ -8,7 +8,11 @@
   <body>
     <script src="/wpcom.js"></script>
     <script>
-      var token = "<your-token>";
+      var token = ""; // <- your token here
+      if (!token.length) {
+        alert('define you token !! :-)');
+      }
+
       var wpcom = WPCOM(token);
 
       wpcom
