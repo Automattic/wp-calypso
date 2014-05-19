@@ -1,7 +1,7 @@
 {
   "name": "wpcom",
   "description": "WordPress.com JavaScript API client designed for Node.JS and browsers",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
