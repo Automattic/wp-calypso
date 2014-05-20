@@ -2568,6 +2568,14 @@ function WPCOM (token) {
 inherits(WPCOM, _WPCOM);
 
 /**
+ * Set access token
+ */
+
+WPCOM.prototype.setToken = function(v){
+  this.token = v;
+};
+
+/**
  * Overwrite the parent `sendRequest()` function so that we can
  * add the `authToken` to every API request if it's present.
  *
