@@ -8,13 +8,22 @@
   <body>
     <script src="/wpcom.js"></script>
     <script>
-      var token = "91&Atph#1G0gfnATTab%y66HokfLp7kBRt!LeZ&b#zZ%$yAnAddv%&)Wb$Qc6@jI";
+      // localhost token
+      //var token = "91&Atph#1G0gfnATTab%y66HokfLp7kBRt!LeZ&b#zZ%$yAnAddv%&)Wb$Qc6@jI";
+
+      // global token wpeditor.org
+      //var token = "Gul(dPIoHM8jyzelkRCXGgdGB!(IJG$lQskvd3qD0tP@V0ejW&LO3W#GbUtKhbGv";
+
+      // wpeditor.org private token
+      var token = "P4XH^1Ao3unxhxyWVaRn23qR2x0x%Z5z6XNsq%VYhUkW28*qxNh^WN@gkpwaUw*B";
+
       if (!token.length) {
         alert('define you token !! :-)');
       }
 
-      var wpcom = WPCOM(token);
-
+      var wpcom = WPCOM();
+      wpcom.setToken(token);
+/*
       wpcom
       .me()
       .get(function(err, me){
@@ -24,6 +33,12 @@
         var div = document.createElement('div');
         div.innerHTML = 'Your WordPress.com "username" is: <b>@' + me.username + '<\/b>';
         document.body.appendChild(div);
+      });
+*/
+      wpcom
+      .me()
+      .sites(function(err, list){
+        console.log('list: ', list);
       });
     </script>
   </body>
