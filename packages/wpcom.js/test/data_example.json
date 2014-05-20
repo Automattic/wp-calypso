@@ -1,8 +1,4 @@
 {
-  "token": {
-    "global": "<global token>"
-  },
-
   "site": {
     "public": {
       "url": "<public blog url>"
@@ -10,12 +6,32 @@
     "private" : {
       "url": "<private blog url>",
       "id": "<private blog id>",
-      "private": "<token>"
+      "token": "<token>",
+      "global": "<global token>"
+    },
+    "reblog": {
+      "note": "This post was really interesting",
+      "destination_site_id": 60487750
     }
   },
 
   "new_post_data": {
     "title": "New testing post",
-    "content": "<div style=\"color: red;\">The content of the new testing post</div>"
-  }
+    "content": "<div style=\"color: red;\">The content of the new testing post</div>",
+    "tags": "test,rest-api-test,testing",
+    "categories": "dev"
+  },
+
+  "new_media_data": {
+    "files": [
+      "<file-1>",
+      "<file-2>"
+    ],
+    "media_urls": [
+      "<url-1>",
+      "<url-1>",
+    ]
+  },
+
+  "media_id": <media-id>
 }
