@@ -33,7 +33,7 @@ describe('testing data', function(){
 
   describe('data', function(){
     it('global `token` should be a String', function(){
-      assert.equal('string', typeof data.token.global);
+      assert.equal('string', typeof data.site.private.global);
     });
 
     it('`public_site` should be defined', function(){

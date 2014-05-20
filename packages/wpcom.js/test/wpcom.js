@@ -25,7 +25,7 @@ if ('undefined' != typeof window) {
   WPCOM = require('../');
 
   var test = require('./data');
-  wpcom = WPCOM(test.token.global);
+  wpcom = WPCOM(test.site.private.global);
 }
 
 /**
