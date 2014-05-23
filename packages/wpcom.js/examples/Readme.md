@@ -12,16 +12,7 @@ Finally open a browser and load the page pointing to http://localhost:3000.
 
 Keep in mind that this app gets the config data from test/data.json file.
 
-## Proxy request (Browser)
-
-it's also an express app but the requests are done from the browser using
-[wpcom-proxy-request](https://github.com/Automattic/wpcom-proxy-request).
-
-```bash
-$ make example-browser-proxy
-```
-
-there are two pages to test:
+There are two pages to test:
 
 * index.html
 * file_upload.html

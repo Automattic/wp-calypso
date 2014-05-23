@@ -12,11 +12,7 @@ NPM ?= $(NODE) $(shell which npm)
 MOCHA ?= $(NODE) $(BIN)/mocha
 BROWSERIFY ?= $(NODE) $(BIN)/browserify
 
-all: dist/wpcom.js dist/wpcom-proxy.js
-
 standalone-xhr: dist/wpcom.js
-
-standalone-proxy: dist/wpcom-proxy.js
 
 install: node_modules
 
@@ -29,9 +25,6 @@ dist:
 dist/wpcom.js: node_modules index.js wpcom+xhr.js dist lib/*
 	@$(BROWSERIFY) -s WPCOM wpcom+xhr.js > $@
 
-dist/wpcom-proxy.js: node_modules index.js wpcom+proxy.js dist lib/*
-	@$(BROWSERIFY) -s WPCOM wpcom+proxy.js > $@
-
 node_modules: package.json
 	@NODE_ENV= $(NPM) install
 	@touch node_modules
@@ -39,10 +32,6 @@ node_modules: package.json
 example-server:
 	cd examples/server/; $(NPM) install
 	$(NODE) examples/server/index.js
-
-example-browser-proxy: all
-	cd examples/browser-proxy-request/; $(NPM) install
-	$(NODE) examples/browser-proxy-request/index.js
 
 example-browser-cors: all
 	cd examples/browser-cors/; $(NPM) install
@@ -52,7 +41,7 @@ test:
 	@$(MOCHA) \
 		--timeout 10s \
 		--slow 3s \
-		--grep $(filter-out $@,$(MAKECMDGOALS)) \
+		--grep "$(filter-out $@,$(MAKECMDGOALS))" \
 		--bail \
 		--reporter spec
 
@@ -63,4 +52,4 @@ test-all:
 		--bail \
 		--reporter spec
 
-.PHONY: all standalone-xhr standalone-proxy install clean test test-all
+.PHONY: all standalone-xhr install clean test test-all
