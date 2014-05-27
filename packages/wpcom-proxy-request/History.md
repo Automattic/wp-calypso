@@ -1,4 +1,10 @@
 
+0.2.0 / 2014-05-27
+==================
+
+  * index: update <iframe> "src" URL
+  * examples: fix <script> tag src location
+
 0.1.1 / 2014-05-12
 ==================
 
