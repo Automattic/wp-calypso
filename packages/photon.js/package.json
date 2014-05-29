@@ -1,0 +1,33 @@
+{
+  "name": "photon",
+  "version": "0.0.0",
+  "description": "JavaScript library for the WordPress.com Photon image manipulation service",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --spec reporter"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Automattic/photon.js.git"
+  },
+  "keywords": [
+    "wordpress",
+    "photon",
+    "image",
+    "resize",
+    "thumbnail",
+    "filter",
+    "service",
+    "api",
+    "library"
+  ],
+  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://n8.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Automattic/photon.js/issues"
+  },
+  "homepage": "https://github.com/Automattic/photon.js",
+  "dependencies": {
+    "debug": "0.8.1"
+  }
+}
