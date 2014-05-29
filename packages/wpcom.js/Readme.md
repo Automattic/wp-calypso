@@ -1,11 +1,11 @@
 # wpcom.js
 
-  [WordPress.com][] JavaScript API client designed for Node.JS and
-  browsers.
+  [WordPress.com][] JavaScript API client designed for Node.js and
+  web browsers.
 
 ## How to use
 
-### Node.JS
+### Node.js
 
 Introduce the `wpcom` dependency in your `package.json`, and
 then initialize it with your API Token.
