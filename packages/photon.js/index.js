@@ -4,6 +4,8 @@
  */
 
 var url = require('url');
+var crc32 = require('crc32');
+var seed = require('seed-random');
 var debug = require('debug')('photon');
 
 /**
@@ -46,11 +48,18 @@ function photon (imageUrl, opts) {
   // strip any leading `http(s)://`
   imageUrl = imageUrl.replace(/^https?\:\/\//i, '');
 
+  // determine which Photon server to connect to: `i0`, `i1`, or `i2`.
+  // statically hash the subdomain based on the URL, to optimize browser caches.
+  var hash = crc32(imageUrl);
+  var rng = seed(hash);
+  var server = 'i' + Math.floor(rng() * 3);
+  debug('determined server "%s" to use with "%s"', server, imageUrl);
+
   var params = {
     slashes: true,
     pathname: imageUrl,
     protocol: 'https:',
-    hostname: 'i0.wp.com'
+    hostname: server + '.wp.com'
   };
 
   if (opts) {

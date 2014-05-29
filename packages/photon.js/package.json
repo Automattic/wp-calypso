@@ -31,7 +31,9 @@
   },
   "homepage": "https://github.com/Automattic/photon.js",
   "dependencies": {
-    "debug": "0.8.1"
+    "crc32": "0.2.2",
+    "debug": "0.8.1",
+    "seed-random": "2.2.0"
   },
   "devDependencies": {
     "browserify": "4.1.6",
