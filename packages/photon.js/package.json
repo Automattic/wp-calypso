@@ -34,6 +34,7 @@
     "debug": "0.8.1"
   },
   "devDependencies": {
+    "browserify": "4.1.6",
     "mocha": "1.20.0"
   }
 }
