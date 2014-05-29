@@ -4,7 +4,7 @@
   "description": "JavaScript library for the WordPress.com Photon image manipulation service",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --spec reporter"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,8 @@
   "homepage": "https://github.com/Automattic/photon.js",
   "dependencies": {
     "debug": "0.8.1"
+  },
+  "devDependencies": {
+    "mocha": "1.20.0"
   }
 }
