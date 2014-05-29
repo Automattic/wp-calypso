@@ -21,7 +21,10 @@
     "api",
     "library"
   ],
-  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://n8.io/)",
+  "author": "Automattic, Inc.",
+  "contributors": [
+    "Nathan Rajlich <nathan@automattic.com>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Automattic/photon.js/issues"
