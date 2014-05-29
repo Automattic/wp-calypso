@@ -62,6 +62,12 @@ function photon (imageUrl, opts) {
         continue;
       }
 
+      // allow non-secure access
+      if (i === 'secure' && !opts[i]) {
+        params.protocol = 'http:';
+        continue;
+      }
+
       // any other options just gets passed through as query-string parameters
       if (!params.query) params.query = {};
 
