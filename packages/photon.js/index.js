@@ -69,6 +69,14 @@ function photon (imageUrl, opts) {
     }
   }
 
+  // prevent inception (attempting to Photon-ify a link that
+  // already is already pointing to the Photon hostname)
+  var h = params.hostname + '/';
+  if (0 === params.pathname.indexOf(h)) {
+    debug('preventing Photon URL "inception", stripping leading "%s"', h);
+    params.pathname = params.pathname.substring(h.length);
+  }
+
   var photonUrl = url.format(params);
   debug('generated Photon URL: %s', photonUrl);
   return photonUrl;
