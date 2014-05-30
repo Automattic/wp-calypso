@@ -1,7 +1,7 @@
 # wpcom.js
 
-  [WordPress.com][] JavaScript API client designed for Node.js and
-  web browsers.
+Official JavaScript library for the [WordPress.com][] [REST API][].
+Compatible with Node.js and web browsers.
 
 ## How to use
 
