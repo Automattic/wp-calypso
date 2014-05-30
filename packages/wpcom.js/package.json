@@ -1,6 +1,6 @@
 {
   "name": "wpcom",
-  "description": "WordPress.com JavaScript API client designed for Node.js and web browsers",
+  "description": "Official JavaScript library for the WordPress.com REST API",
   "version": "1.2.3",
   "author": "Automattic, Inc.",
   "contributors": [
