@@ -31,7 +31,7 @@ Util.wpcom = function(){
  */
 
 Util.public_site = function(){
-  var wpcom = WPCOM(test.token.global);
+  var wpcom = WPCOM(test.site.private.token);
   return wpcom.site(test.site.public.url);
 };
 
