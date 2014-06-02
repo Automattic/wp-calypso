@@ -8,9 +8,13 @@ service.
 
 ### Node.js
 
-_Not yet published on npm…_
+Install for Node.js via `npm`:
 
-Simply `require('photon')` in your module to generate Photon URLs.
+``` bash
+$ npm install photon
+```
+
+Now you can simply `require('photon')` in your module to generate Photon URLs.
 
 ```js
 var photon = require('photon');
@@ -35,6 +39,9 @@ variable function is exposed:
   // "https://i0.wp.com/wordpress.com/wp-content/mu-plugins/atlas/images/w.png"
 </script>
 ```
+
+You can also consume photon.js via browserify when installed via `npm` (see
+Node.js instructions above).
 
 
 ## License
