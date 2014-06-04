@@ -7,6 +7,14 @@
     "Damian Suarez <rdsuarez@gmail.com>",
     "Nathan Rajlich <nathan@automattic.com>"
   ],
+  "keywords": [
+    "wordpress",
+    "wordpress.com",
+    "browser",
+    "rest",
+    "api",
+    "library"
+  ],
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "main": "wpcom+xhr.js",
   "dependencies": {
