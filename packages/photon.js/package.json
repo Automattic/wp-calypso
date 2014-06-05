@@ -32,7 +32,7 @@
   "homepage": "https://github.com/Automattic/photon.js",
   "dependencies": {
     "crc32": "0.2.2",
-    "debug": "0.8.1",
+    "debug": "1.0.0",
     "seed-random": "2.2.0"
   },
   "devDependencies": {
