@@ -1,4 +1,19 @@
 
+2.0.0 / 2014-06-05
+==================
+
+  * dist: rebuild
+  * package: update "debug" and "wpcom-xhr-request" dependencies
+  * package: add "keywords" field
+  * test: fix testing data
+  * package: update "description"
+  * add LICENSE file
+  * package, Redme: use lowercase .JS, add "web"
+  * example: add uploading image browser example
+  * delete legacy wpcom-proxy (#39, @guille)
+  * examples: a few tweaks
+  * example: remove token value
+
 1.2.3 / 2014-05-20
 ==================
 
