@@ -19,10 +19,10 @@ Now you can simply `require('photon')` in your module to generate Photon URLs.
 ```js
 var photon = require('photon');
 
-var url = photon('http://wordpress.com/wp-content/mu-plugins/atlas/images/w.png');
+var url = photon('https://cloudup.com/logo/cloudup-salmon-logo.png')
 
 console.log(url);
-// "https://i0.wp.com/wordpress.com/wp-content/mu-plugins/atlas/images/w.png"
+// https://i2.wp.com/cloudup.com/logo/cloudup-salmon-logo.png
 ```
 
 ### Browser
@@ -33,10 +33,10 @@ variable function is exposed:
 ```html
 <script src="photon.js"></script>
 <script>
-  var url = photon('http://wordpress.com/wp-content/mu-plugins/atlas/images/w.png');
+  var url = photon('https://cloudup.com/logo/cloudup-salmon-logo.png')
 
   console.log(url);
-  // "https://i0.wp.com/wordpress.com/wp-content/mu-plugins/atlas/images/w.png"
+  // https://i2.wp.com/cloudup.com/logo/cloudup-salmon-logo.png
 </script>
 ```
 
