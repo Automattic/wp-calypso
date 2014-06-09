@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "component-event": "0.1.3",
-    "debug": "1.0.0",
+    "debug": "~1.0.0",
     "promise": "4.0.0",
     "uid": "0.0.2"
   }
