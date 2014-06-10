@@ -58,7 +58,7 @@ constructor or using the `.slug()` method.
 
 ```js
 var post = Post({ slug: '<slug>' }, '<site-id>', WPCOM);
-post.getbyslug(function(err, data){
+post.getBySlug(function(err, data){
   // post data object
 });
 ```
