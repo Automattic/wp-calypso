@@ -53,8 +53,8 @@ post.get(function(err, data){
 
 ### Post#getBySlug(fn)
 
-Get post data by `slug`. `slug` must have been previously defined throught of
-constructor or using .slug() method.
+Get post data by `slug`. `slug` must have been previously defined through the
+constructor or using the `.slug()` method.
 
 ```js
 var post = Post({ slug: '<slug>' }, '<site-id>', WPCOM);
