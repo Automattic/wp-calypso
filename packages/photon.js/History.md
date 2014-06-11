@@ -1,4 +1,11 @@
 
+1.0.1 / 2014-06-11
+==================
+
+  * package: be loose with the `debug` version
+  * package: update "debug" to v1.0.0
+  * Readme: use Cloudup image in examples
+
 1.0.0 / 2014-06-02
 ==================
 
