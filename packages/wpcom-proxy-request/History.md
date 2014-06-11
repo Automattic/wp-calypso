@@ -1,4 +1,11 @@
 
+0.2.2 / 2014-06-10
+==================
+
+  * dist: recompile
+  * examples: add `freshly-pressed.html` example
+  * package: be loose with the `debug` version
+
 0.2.1 / 2014-06-05
 ==================
 
