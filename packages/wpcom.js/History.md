@@ -1,4 +1,15 @@
 
+2.0.1 / 2014-06-10
+==================
+
+  * dist: recompile
+  * package: update "wpcom-xhr-request" to v0.2.2
+  * docs: fix typo in function name
+  * docs: fix typo in `post` docs
+  * docs: fix relative links in `WPCOM` main docs
+  * package: be loose with the `debug` version
+  * package: add "license" field
+
 2.0.0 / 2014-06-05
 ==================
 
