@@ -41,10 +41,6 @@ var mappings = {
 
 function photon (imageUrl, opts) {
 
-  if (/^https\:/i.test(imageUrl)) {
-    debug('WARN: `https://` URLs are not supported, standard port 80 access will be attempted');
-  }
-
   // strip any leading `http(s)://`
   imageUrl = imageUrl.replace(/^https?\:\/\//i, '');
 
