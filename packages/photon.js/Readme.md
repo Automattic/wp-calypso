@@ -44,6 +44,23 @@ You can also consume photon.js via browserify when installed via `npm` (see
 Node.js instructions above).
 
 
+## Terms of Service
+
+ * Use of this service is for users of the Jetpack by WordPress.com plugin only,
+   and may be used by sites hosted on WordPress.com, on Jetpack-connected
+   WordPress sites, or sites who have gotten special permission from Automattic
+   Inc. If you move to another platform, or disconnect Jetpack from your site,
+   we can’t promise it will continue to work.
+
+ * Abuse of the Jetpack by WordPress.com Terms of Service could result in
+   suspension of your site from WordPress.com-connected services. By
+   enabling Photon you agree to be responsible in what you publish; in
+   particular be sure that you don’t use the service for prohibited items
+   (things like spam, viruses, or hate content). WordPress.com reserves the
+   right, in its sole discretion, to temporarily or permanently revoke your
+   ability to use and access Photon, with or without notice.
+
+
 ## License
 
 MIT – Copyright 2014 Automattic
