@@ -1,4 +1,10 @@
 
+1.0.2 / 2014-06-13
+==================
+
+  * Readme: add "Terms of Service" section
+  * index: remove "port 80" debug note
+
 1.0.1 / 2014-06-11
 ==================
 
