@@ -140,7 +140,7 @@ function submitRequest (params, resolve, reject) {
       if (hasFile(params)) {
         // cache this check for the next API request
         hasFileSerializationBug = true;
-        debug('GAH! we have the File serialization bug!!!');
+        debug('this browser has the File serialization bug');
         postAsArrayBuffer(params, resolve, reject);
       } else {
         // not interested, rethrow
