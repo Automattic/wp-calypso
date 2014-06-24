@@ -26,7 +26,7 @@ var proxyOrigin = 'https://public-api.wordpress.com';
  */
 
 var origin = window.location.protocol + '//' + window.location.hostname;
-debug('using "origin": %s', origin);
+debug('using "origin": %o', origin);
 
 /**
  * Reference to the <iframe> DOM element.
@@ -48,6 +48,18 @@ var loaded = false;
  */
 
 var buffered;
+
+/**
+ * Firefox apparently doesn't like sending `File` instances cross-domain.
+ * It results in a "DataCloneError: The object could not be cloned." error.
+ * Apparently this is for "security purposes" but it's actually silly if that's
+ * the argument because we can just read the File manually into an ArrayBuffer
+ * and we can work around this "security restriction".
+ *
+ * See: https://bugzilla.mozilla.org/show_bug.cgi?id=722126#c8
+ */
+
+var hasFileSerializationBug = false;
 
 /**
  * In-flight API request Promise instances.
@@ -83,7 +95,7 @@ function request (params) {
   // force uppercase "method" since that's what the <iframe> is expecting
   params.method = String(params.method || 'GET').toUpperCase();
 
-  debug('params object:', params);
+  debug('params object: %o', params);
 
   var req = new Promise(function (resolve, reject) {
     if (loaded) {
@@ -112,14 +124,141 @@ function request (params) {
  */
 
 function submitRequest (params, resolve, reject) {
-  debug('sending API request to proxy <iframe>:', params);
+  debug('sending API request to proxy <iframe> %o', params);
 
-  iframe.contentWindow.postMessage(params, proxyOrigin);
+  if (hasFileSerializationBug && hasFile(params)) {
+    postAsArrayBuffer(params, resolve, reject);
+  } else {
+    try {
+      iframe.contentWindow.postMessage(params, proxyOrigin);
 
-  // needs to be added after the `.postMessage()` call otherwise
-  // a DOM error is thrown
-  params.resolve = resolve;
-  params.reject = reject;
+      // needs to be added after the `.postMessage()` call otherwise
+      // a DOM error is thrown
+      params.resolve = resolve;
+      params.reject = reject;
+    } catch (e) {
+      // were we trying to serialize a `File`?
+      if (hasFile(params)) {
+        // cache this check for the next API request
+        hasFileSerializationBug = true;
+        debug('this browser has the File serialization bug');
+        postAsArrayBuffer(params, resolve, reject);
+      } else {
+        // not interested, rethrow
+        throw e;
+      }
+    }
+  }
+}
+
+/**
+ * Returns `true` if there's a `File` instance in the `params`, or `false`
+ * otherwise.
+ *
+ * @param {Object} params
+ * @return {Boolean}
+ * @private
+ */
+
+function hasFile (params) {
+  var formData = params.formData;
+  if (formData && formData.length > 0) {
+    for (var i = 0; i < formData.length; i++) {
+      if (isFile(formData[i][1])) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Returns `true` if `v` is a DOM File instance, `false` otherwise.
+ *
+ * @param {Mixed} v
+ * @return {Boolean}
+ * @private
+ */
+
+function isFile (v) {
+  return v && Object.prototype.toString.call(v) === '[object File]';
+}
+
+/**
+ * Turns all `File` instances into `ArrayBuffer` objects in order to serialize
+ * the data over the iframe `postMessage()` call.
+ *
+ * @param {Object} params
+ * @param {Function} resolve
+ * @param {Function} reject
+ * @private
+ */
+
+function postAsArrayBuffer (params, resolve, reject) {
+  debug('converting File instances to ArrayBuffer before invoking postMessage()');
+
+  var count = 0;
+  var called = false;
+  var formData = params.formData;
+  for (var i = 0; i < formData.length; i++) {
+    var val = formData[i][1];
+    if (isFile(val)) {
+      count++;
+      fileToArrayBuffer(val, i, onload);
+    }
+  }
+
+  if (0 === count) postMessage();
+
+  function onload (err, file, i) {
+    if (called) return;
+    if (err) {
+      called = true;
+      reject(err);
+      return;
+    }
+
+    formData[i][1] = file;
+
+    count--;
+    if (0 === count) postMessage();
+  }
+
+  function postMessage () {
+    debug('finished reading all Files');
+    iframe.contentWindow.postMessage(params, proxyOrigin);
+
+    // needs to be added after the `.postMessage()` call otherwise
+    // a DOM error is thrown
+    params.resolve = resolve;
+    params.reject = reject;
+  }
+}
+
+/**
+ * Turns a `File` instance into a regular JavaScript object with `fileContents`
+ * as an ArrayBuffer, and `fileName` and `mimeTypes`.
+ *
+ * @param {File} file
+ * @param {Number} index
+ * @param {Function} fn
+ * @private
+ */
+
+function fileToArrayBuffer (file, index, fn) {
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    var arrayBuffer = e.target.result;
+    debug('finished reading file %o (%o bytes)', file.name, arrayBuffer.byteLength);
+    fn(null, {
+      fileContents: arrayBuffer,
+      fileName: file.name,
+      mimeType: file.type
+    }, index);
+  };
+  reader.onerror = function (err) {
+    debug('got error reading file %o (%o bytes)', file.name, err);
+    fn(err);
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 /**
@@ -182,7 +321,7 @@ function onmessage (e) {
 
   // safeguard...
   if (e.origin !== proxyOrigin) {
-    debug('ignoring message... %s !== %s', e.origin, proxyOrigin);
+    debug('ignoring message... %o !== %o', e.origin, proxyOrigin);
     return;
   }
 
@@ -199,7 +338,10 @@ function onmessage (e) {
   var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
-  debug('got %s status code for URL: %s', statusCode, params.path);
+
+  if (!params.metaAPI) {
+    debug('got %o status code for URL: %o', statusCode, params.path);
+  }
 
   if (body && headers) {
     body._headers = headers;
