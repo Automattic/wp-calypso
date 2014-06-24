@@ -193,25 +193,69 @@ function isFile (v) {
 
 function postAsArrayBuffer (params, resolve, reject) {
   debug('converting File instances to ArrayBuffer before invoking postMessage()');
-  // TODO: iterate over all the params and convert all File instances
-  var reader = new FileReader();
-  var file = params.formData[0][1];
-  reader.onload = function (e) {
-    var arrayBuffer = e.target.result;
-    debug('finished reading %o (%o bytes)', file.name, arrayBuffer.byteLength);
 
-    params.formData[0][1] = {
-      fileContents: arrayBuffer,
-      fileName: file.name,
-      mimeType: file.type
-    };
+  var count = 0;
+  var called = false;
+  var formData = params.formData;
+  for (var i = 0; i < formData.length; i++) {
+    var val = formData[i][1];
+    if (isFile(val)) {
+      count++;
+      fileToArrayBuffer(val, i, onload);
+    }
+  }
 
+  if (0 === count) postMessage();
+
+  function onload (err, file, i) {
+    if (called) return;
+    if (err) {
+      called = true;
+      reject(err);
+      return;
+    }
+
+    formData[i][1] = file;
+
+    count--;
+    if (0 === count) postMessage();
+  }
+
+  function postMessage () {
+    debug('finished reading all Files');
     iframe.contentWindow.postMessage(params, proxyOrigin);
 
     // needs to be added after the `.postMessage()` call otherwise
     // a DOM error is thrown
     params.resolve = resolve;
     params.reject = reject;
+  }
+}
+
+/**
+ * Turns a `File` instance into a regular JavaScript object with `fileContents`
+ * as an ArrayBuffer, and `fileName` and `mimeTypes`.
+ *
+ * @param {File} file
+ * @param {Number} index
+ * @param {Function} fn
+ * @private
+ */
+
+function fileToArrayBuffer (file, index, fn) {
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    var arrayBuffer = e.target.result;
+    debug('finished reading file %o (%o bytes)', file.name, arrayBuffer.byteLength);
+    fn(null, {
+      fileContents: arrayBuffer,
+      fileName: file.name,
+      mimeType: file.type
+    }, index);
+  };
+  reader.onerror = function (err) {
+    debug('got error reading file %o (%o bytes)', file.name, err);
+    fn(err);
   };
   reader.readAsArrayBuffer(file);
 }
