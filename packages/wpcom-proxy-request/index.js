@@ -25,7 +25,7 @@ var proxyOrigin = 'https://public-api.wordpress.com';
  */
 
 var origin = window.location.protocol + '//' + window.location.hostname;
-debug('using "origin": %s', origin);
+debug('using "origin": %o', origin);
 
 /**
  * Reference to the <iframe> DOM element.
@@ -94,7 +94,7 @@ function request (params) {
   // force uppercase "method" since that's what the <iframe> is expecting
   params.method = String(params.method || 'GET').toUpperCase();
 
-  debug('params object:', params);
+  debug('params object: %o', params);
 
   var req = new Promise(function (resolve, reject) {
     if (loaded) {
@@ -123,7 +123,7 @@ function request (params) {
  */
 
 function submitRequest (params, resolve, reject) {
-  debug('sending API request to proxy <iframe>:', params);
+  debug('sending API request to proxy <iframe> %o', params);
 
   if (hasFileSerializationBug && hasFile(params)) {
     postAsArrayBuffer(params, resolve, reject);
@@ -254,7 +254,7 @@ function onmessage (e) {
 
   // safeguard...
   if (e.origin !== proxyOrigin) {
-    debug('ignoring message... %s !== %s', e.origin, proxyOrigin);
+    debug('ignoring message... %o !== %o', e.origin, proxyOrigin);
     return;
   }
 
@@ -271,7 +271,7 @@ function onmessage (e) {
   var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
-  debug('got %s status code for URL: %s', statusCode, params.path);
+  debug('got %o status code for URL: %o', statusCode, params.path);
 
   if (body && headers) {
     body._headers = headers;
