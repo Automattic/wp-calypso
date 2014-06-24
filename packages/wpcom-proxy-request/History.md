@@ -1,4 +1,10 @@
 
+0.2.4 / 2014-06-24
+==================
+
+  * dist: recompile
+  * package: update all dependencies
+
 0.2.3 / 2014-06-24
 ==================
 
