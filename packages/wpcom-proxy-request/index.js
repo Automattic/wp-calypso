@@ -293,7 +293,10 @@ function onmessage (e) {
   var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
-  debug('got %o status code for URL: %o', statusCode, params.path);
+
+  if (!params.metaAPI) {
+    debug('got %o status code for URL: %o', statusCode, params.path);
+  }
 
   if (body && headers) {
     body._headers = headers;
