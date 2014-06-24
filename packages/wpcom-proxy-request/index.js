@@ -49,6 +49,18 @@ var loaded = false;
 var buffered;
 
 /**
+ * Firefox apparently doesn't like sending `File` instances cross-domain.
+ * It results in a "DataCloneError: The object could not be cloned." error.
+ * Apparently this is for "security purposes" but it's actually silly if that's
+ * the argument because we can just read the File manually into an ArrayBuffer
+ * and we can work around this "security restriction".
+ *
+ * See: https://bugzilla.mozilla.org/show_bug.cgi?id=722126#c8
+ */
+
+var hasFileSerializationBug = false;
+
+/**
  * In-flight API request Promise instances.
  */
 
@@ -113,12 +125,73 @@ function request (params) {
 function submitRequest (params, resolve, reject) {
   debug('sending API request to proxy <iframe>:', params);
 
-  iframe.contentWindow.postMessage(params, proxyOrigin);
+  if (hasFileSerializationBug && hasFile(params)) {
+    postAsArrayBuffer(params, resolve, reject);
+  } else {
+    try {
+      iframe.contentWindow.postMessage(params, proxyOrigin);
 
-  // needs to be added after the `.postMessage()` call otherwise
-  // a DOM error is thrown
-  params.resolve = resolve;
-  params.reject = reject;
+      // needs to be added after the `.postMessage()` call otherwise
+      // a DOM error is thrown
+      params.resolve = resolve;
+      params.reject = reject;
+    } catch (e) {
+      // were we trying to serialize a `File`?
+      if (hasFile(params)) {
+        // cache this check for the next API request
+        hasFileSerializationBug = true;
+        debug('GAH! we have the File serialization bug!!!');
+        postAsArrayBuffer(params, resolve, reject);
+      } else {
+        // not interested, rethrow
+        throw e;
+      }
+    }
+  }
+}
+
+/**
+ * Returns `true` if there's a `File` instance in the `params`, or `false`
+ * otherwise.
+ *
+ * @param {Object} params
+ * @return {Boolean}
+ * @private
+ */
+
+function hasFile (params) {
+  // TODO: add an explicit check for a `File` instance value
+  return params.formData && params.formData.length > 0;
+}
+
+/**
+ * Turns all `File` instances into `ArrayBuffer` objects in order to serialize
+ * the data over the iframe `postMessage()` call.
+ */
+
+function postAsArrayBuffer (params, resolve, reject) {
+  debug('converting File instances to ArrayBuffer before invoking postMessage()');
+  // TODO: iterate over all the params and convert all File instances
+  var reader = new FileReader();
+  var file = params.formData[0][1];
+  reader.onload = function (e) {
+    var arrayBuffer = e.target.result;
+    debug('finished reading %o (%o bytes)', file.name, arrayBuffer.byteLength);
+
+    params.formData[0][1] = {
+      fileContents: arrayBuffer,
+      fileName: file.name,
+      mimeType: file.type
+    };
+
+    iframe.contentWindow.postMessage(params, proxyOrigin);
+
+    // needs to be added after the `.postMessage()` call otherwise
+    // a DOM error is thrown
+    params.resolve = resolve;
+    params.reject = reject;
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 /**
