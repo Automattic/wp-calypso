@@ -1,4 +1,12 @@
 
+0.2.3 / 2014-06-24
+==================
+
+  * dist: recompile
+  * index: don't bother doing a debug() call for the metaAPI calls
+  * index: use %o debug formatter when it makes sense
+  * index: implement File -> ArrayBuffer manual conversion for Firefox
+
 0.2.2 / 2014-06-10
 ==================
 
