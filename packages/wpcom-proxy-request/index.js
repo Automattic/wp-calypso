@@ -160,8 +160,25 @@ function submitRequest (params, resolve, reject) {
  */
 
 function hasFile (params) {
-  // TODO: add an explicit check for a `File` instance value
-  return params.formData && params.formData.length > 0;
+  var formData = params.formData;
+  if (formData && formData.length > 0) {
+    for (var i = 0; i < formData.length; i++) {
+      if (isFile(formData[i][1])) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Returns `true` if `v` is a DOM File instance, `false` otherwise.
+ *
+ * @param {Mixed} v
+ * @return {Boolean}
+ * @private
+ */
+
+function isFile (v) {
+  return v && Object.prototype.toString.call(v) === '[object File]';
 }
 
 /**
