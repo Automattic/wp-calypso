@@ -184,6 +184,11 @@ function isFile (v) {
 /**
  * Turns all `File` instances into `ArrayBuffer` objects in order to serialize
  * the data over the iframe `postMessage()` call.
+ *
+ * @param {Object} params
+ * @param {Function} resolve
+ * @param {Function} reject
+ * @private
  */
 
 function postAsArrayBuffer (params, resolve, reject) {
