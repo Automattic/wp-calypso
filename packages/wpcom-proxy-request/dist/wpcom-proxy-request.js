@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),(f.WPCOM||(f.WPCOM={})).proxy=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),(f.WPCOM||(f.WPCOM={})).proxy=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -416,8 +416,11 @@ process.argv = [];
 function noop() {}
 
 process.on = noop;
+process.addListener = noop;
 process.once = noop;
 process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
 process.emit = noop;
 
 process.binding = function (name) {
@@ -1066,7 +1069,7 @@ var UNDEFINED = new ValuePromise(undefined)
 var ZERO = new ValuePromise(0)
 var EMPTYSTRING = new ValuePromise('')
 
-Promise.from = Promise.cast = function (value) {
+Promise.resolve = function (value) {
   if (value instanceof Promise) return value
 
   if (value === null) return NULL
@@ -1091,6 +1094,14 @@ Promise.from = Promise.cast = function (value) {
 
   return new ValuePromise(value)
 }
+
+Promise.from = Promise.cast = function (value) {
+  var err = new Error('Promise.from and Promise.cast are deprecated, use Promise.resolve instead')
+  err.name = 'Warning'
+  console.warn(err.stack)
+  return Promise.resolve(value)
+}
+
 Promise.denodeify = function (fn, argumentCount) {
   argumentCount = argumentCount || Infinity
   return function () {
@@ -1127,7 +1138,14 @@ Promise.nodeify = function (fn) {
 }
 
 Promise.all = function () {
-  var args = Array.prototype.slice.call(arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : arguments)
+  var calledWithArray = arguments.length === 1 && Array.isArray(arguments[0])
+  var args = Array.prototype.slice.call(calledWithArray ? arguments[0] : arguments)
+
+  if (!calledWithArray) {
+    var err = new Error('Promise.all should be called with a single array, calling it with multiple arguments is deprecated')
+    err.name = 'Warning'
+    console.warn(err.stack)
+  }
 
   return new Promise(function (resolve, reject) {
     if (args.length === 0) return resolve([])
@@ -1155,6 +1173,20 @@ Promise.all = function () {
   })
 }
 
+Promise.reject = function (value) {
+  return new Promise(function (resolve, reject) { 
+    reject(value);
+  });
+}
+
+Promise.race = function (values) {
+  return new Promise(function (resolve, reject) { 
+    values.forEach(function(value){
+      Promise.resolve(value).then(resolve, reject);
+    })
+  });
+}
+
 /* Prototype Methods */
 
 Promise.prototype.done = function (onFulfilled, onRejected) {
@@ -1167,7 +1199,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
 }
 
 Promise.prototype.nodeify = function (callback) {
-  if (callback === null || typeof callback == 'undefined') return this
+  if (typeof callback != 'function') return this
 
   this.then(function (value) {
     asap(function () {
@@ -1180,29 +1212,8 @@ Promise.prototype.nodeify = function (callback) {
   })
 }
 
-Promise.prototype.catch = function (onRejected) {
+Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
-}
-
-
-Promise.resolve = function (value) {
-  return new Promise(function (resolve) { 
-    resolve(value);
-  });
-}
-
-Promise.reject = function (value) {
-  return new Promise(function (resolve, reject) { 
-    reject(value);
-  });
-}
-
-Promise.race = function (values) {
-  return new Promise(function (resolve, reject) { 
-    values.map(function(value){
-      Promise.cast(value).then(resolve, reject);
-    })
-  });
 }
 
 },{"./core.js":7,"asap":9}],9:[function(_dereq_,module,exports){
@@ -1321,8 +1332,8 @@ function asap(task) {
 module.exports = asap;
 
 
-}).call(this,_dereq_("/Users/nrajlich/wpcom-proxy-request/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/nrajlich/wpcom-proxy-request/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":2}],10:[function(_dereq_,module,exports){
+}).call(this,_dereq_("FWaASH"))
+},{"FWaASH":2}],10:[function(_dereq_,module,exports){
 /**
  * Export `uid`
  */
