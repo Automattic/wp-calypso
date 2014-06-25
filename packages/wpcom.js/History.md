@@ -1,4 +1,15 @@
 
+2.0.2 / 2014-06-25
+==================
+
+  * dist: recompile
+  * examples: add "browser-proxy" example
+  * Makefile: remove `-xhr`
+  * index: inline the `sendRequest()` function
+  * package: update "browserify" to v4.1.11
+  * package: update "wpcom-xhr-request" to v0.2.3
+  * wpcom+xhr: add JSDoc comment
+
 2.0.1 / 2014-06-10
 ==================
 
