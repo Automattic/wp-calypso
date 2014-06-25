@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "debug": "~1.0.0",
-    "wpcom-xhr-request": "0.2.2",
+    "wpcom-xhr-request": "0.2.3",
     "inherits": "2.0.1"
   },
   "devDependencies": {
