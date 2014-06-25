@@ -12,7 +12,7 @@ NPM ?= $(NODE) $(shell which npm)
 MOCHA ?= $(NODE) $(BIN)/mocha
 BROWSERIFY ?= $(NODE) $(BIN)/browserify
 
-standalone-xhr: dist/wpcom.js
+standalone: dist/wpcom.js
 
 install: node_modules
 
@@ -52,4 +52,4 @@ test-all:
 		--bail \
 		--reporter spec
 
-.PHONY: all standalone-xhr install clean test test-all
+.PHONY: all standalone install clean test test-all
