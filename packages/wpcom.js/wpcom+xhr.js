@@ -33,11 +33,14 @@ function WPCOM (token) {
 inherits(WPCOM, _WPCOM);
 
 /**
- * Set access token
+ * Set access token.
+ *
+ * @param {String} token - API token to use for requests
+ * @public
  */
 
-WPCOM.prototype.setToken = function(v){
-  this.token = v;
+WPCOM.prototype.setToken = function (token) {
+  this.token = token;
 };
 
 /**
