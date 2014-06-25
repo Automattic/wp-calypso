@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.WPCOM=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.WPCOM=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -6,7 +6,6 @@
 
 var Me = _dereq_('./lib/me');
 var Site = _dereq_('./lib/site');
-var utilrequest = _dereq_('./lib/util/request');
 var debug = _dereq_('debug')('wpcom');
 
 /**
@@ -58,10 +57,48 @@ WPCOM.prototype.freshlyPressed = function(query, fn){
 };
 
 /**
- * Expose util/request in sendRequest
+ * Request to WordPress REST API
+ *
+ * @param {String|Object} params
+ * @param {Object} [query]
+ * @param {Object} [body]
+ * @param {Function} fn
+ * @api private
  */
 
-WPCOM.prototype.sendRequest = utilrequest;
+WPCOM.prototype.sendRequest = function (params, query, body, fn){
+  // `params` can be just the path (String)
+  if ('string' == typeof params) {
+    params = { path: params };
+  }
+
+  debug('sendRequest(%o)', params.path);
+
+  // set `method` request param
+  params.method = (params.method || 'get').toUpperCase();
+
+  // `query` is optional
+  if ('function' == typeof query) {
+    fn = query;
+    query = null;
+  }
+
+  // `body` is optional
+  if ('function' == typeof body) {
+    fn = body;
+    body = null;
+  }
+
+  // pass `query` and/or `body` to request params
+  if (query) params.query = query;
+  if (body) params.body = body;
+
+  // callback `fn` function is optional
+  if (!fn) fn = function(err){ if (err) throw err; };
+
+  // request method
+  this.request(params, fn);
+};
 
 /**
  * Expose `WPCOM` module
@@ -69,7 +106,7 @@ WPCOM.prototype.sendRequest = utilrequest;
 
 module.exports = WPCOM;
 
-},{"./lib/me":4,"./lib/site":8,"./lib/util/request":9,"debug":10}],2:[function(_dereq_,module,exports){
+},{"./lib/me":4,"./lib/site":8,"debug":9}],2:[function(_dereq_,module,exports){
 
 
 /**
@@ -191,7 +228,7 @@ Comment.prototype.del = function(fn){
 
 module.exports = Comment;
 
-},{"debug":10}],3:[function(_dereq_,module,exports){
+},{"debug":9}],3:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -270,7 +307,7 @@ Like.prototype.del = function(fn){
 
 module.exports = Like;
 
-},{"debug":10}],4:[function(_dereq_,module,exports){
+},{"debug":9}],4:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -356,7 +393,7 @@ Me.prototype.connections = function(query, fn){
 
 module.exports = Me;
 
-},{"debug":10}],5:[function(_dereq_,module,exports){
+},{"debug":9}],5:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -458,7 +495,7 @@ Media.prototype.del = function(fn){
 
 module.exports = Media;
 
-},{"debug":10}],6:[function(_dereq_,module,exports){
+},{"debug":9}],6:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -662,7 +699,7 @@ Post.prototype.comments = function(query, fn){
 
 module.exports = Post;
 
-},{"./comment":2,"./like":3,"./reblog":7,"debug":10}],7:[function(_dereq_,module,exports){
+},{"./comment":2,"./like":3,"./reblog":7,"debug":9}],7:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -751,7 +788,7 @@ Reblog.prototype.to = function(dest, note, fn){
 
 module.exports = Reblog;
 
-},{"debug":10}],8:[function(_dereq_,module,exports){
+},{"debug":9}],8:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -963,59 +1000,7 @@ Site.prototype.comment = function(id){
 
 module.exports = Site;
 
-},{"./comment":2,"./media":5,"./post":6,"debug":10}],9:[function(_dereq_,module,exports){
-
-/**
- * Module dependencies
- */
-
-var debug = _dereq_('debug')('wpcom:request');
-
-/**
- * Request to WordPress REST API
- *
- * @param {String||Object} params
- * @param {Object} [query]
- * @param {Object} [body]
- * @param {Function} fn
- * @api private
- */
-
-module.exports = function (params, query, body, fn){
-  // `params` can be just the path (String)
-  if ('string' == typeof params) {
-    params = { path: params };
-  }
-
-  debug('sendRequest("%s")', params.path);
-
-  // set `method` request param
-  params.method = (params.method || 'get').toUpperCase();
-
-  // `query` is optional
-  if ('function' == typeof query) {
-    fn = query;
-    query = null;
-  }
-
-  // `body` is optional
-  if ('function' == typeof body) {
-    fn = body;
-    body = null;
-  }
-
-  // pass `query` and/or `body` to request params
-  if (query) params.query = query;
-  if (body) params.body = body;
-
-  // callback `fn` function is optional
-  if (!fn) fn = function(err){ if (err) throw err; };
-
-  // request method
-  this.request(params, fn);
-};
-
-},{"debug":10}],10:[function(_dereq_,module,exports){
+},{"./comment":2,"./media":5,"./post":6,"debug":9}],9:[function(_dereq_,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -1161,7 +1146,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":11}],11:[function(_dereq_,module,exports){
+},{"./debug":10}],10:[function(_dereq_,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -1360,7 +1345,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":12}],12:[function(_dereq_,module,exports){
+},{"ms":11}],11:[function(_dereq_,module,exports){
 /**
  * Helpers.
  */
@@ -1473,7 +1458,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],13:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1498,7 +1483,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -1520,10 +1505,10 @@ module.exports = request;
 var proxyOrigin = 'https://public-api.wordpress.com';
 
 /**
- * WordPress.com v1 REST API URL.
+ * Default WordPress.com REST API Version.
  */
 
-var apiUrl = proxyOrigin + '/rest/v1';
+var defaultApiVersion = '1';
 
 /**
  * Performs an XMLHttpRequest against the WordPress.com REST API.
@@ -1543,7 +1528,10 @@ function request (params, fn) {
   debug('API HTTP Method: `%s`', method);
   delete params.method;
 
-  var url = apiUrl + params.path;
+  var apiVersion = params.apiVersion || defaultApiVersion;
+  delete params.apiVersion;
+
+  var url = proxyOrigin + '/rest/v' + apiVersion + params.path;
   debug('API URL: `%s`', url);
   delete params.path;
 
@@ -1614,7 +1602,7 @@ function toTitle (str) {
   });
 }
 
-},{"debug":10,"superagent":15}],15:[function(_dereq_,module,exports){
+},{"debug":9,"superagent":14}],14:[function(_dereq_,module,exports){
 /**
  * Module dependencies.
  */
@@ -2665,7 +2653,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":16,"reduce":17}],16:[function(_dereq_,module,exports){
+},{"emitter":15,"reduce":16}],15:[function(_dereq_,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -2831,7 +2819,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],17:[function(_dereq_,module,exports){
+},{}],16:[function(_dereq_,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -2856,7 +2844,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],18:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -2892,11 +2880,14 @@ function WPCOM (token) {
 inherits(WPCOM, _WPCOM);
 
 /**
- * Set access token
+ * Set access token.
+ *
+ * @param {String} token - API token to use for requests
+ * @public
  */
 
-WPCOM.prototype.setToken = function(v){
-  this.token = v;
+WPCOM.prototype.setToken = function (token) {
+  this.token = token;
 };
 
 /**
@@ -2916,6 +2907,6 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   return _WPCOM.prototype.sendRequest.call(this, params, query, body, fn);
 };
 
-},{"./index.js":1,"inherits":13,"wpcom-xhr-request":14}]},{},[18])
-(18)
+},{"./index.js":1,"inherits":12,"wpcom-xhr-request":13}]},{},[17])
+(17)
 });
