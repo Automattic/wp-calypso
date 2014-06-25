@@ -24,7 +24,7 @@ var proxyOrigin = 'https://public-api.wordpress.com';
  * "Origin" of the current HTML page.
  */
 
-var origin = window.location.protocol + '//' + window.location.hostname;
+var origin = window.location.protocol + '//' + window.location.host;
 debug('using "origin": %o', origin);
 
 /**
