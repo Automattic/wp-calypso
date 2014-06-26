@@ -1,4 +1,10 @@
 
+0.2.5 / 2014-06-26
+==================
+
+  * dist: recompile
+  * index: honor ports on the host page (#3, @rralian)
+
 0.2.4 / 2014-06-24
 ==================
 
