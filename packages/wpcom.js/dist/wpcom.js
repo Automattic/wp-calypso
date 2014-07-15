@@ -832,7 +832,7 @@ function Site(id, wpcom){
   if (!(this instanceof Site)) return new Site(id, wpcom);
   this.wpcom = wpcom;
 
-  debug('set `%s` site id', id);
+  debug('set %o site id', id);
   this._id = id;
 }
 
@@ -879,7 +879,7 @@ for (var i = 0; i < resources.length; i++) {
   var name =  isarr ? res[0] : res + 'List';
   var subpath = isarr ? res[1] : res;
 
-  debug('adding `site.%s()` method in `%s` sub-path', name, subpath);
+  debug('adding %o method in %o sub-path', 'site.' + name + '()', subpath);
   Site.prototype[name] = list.call(this, subpath);
 }
 
@@ -1069,7 +1069,7 @@ function formatArgs() {
     + (useColors ? '%c ' : ' ')
     + '+' + exports.humanize(this.diff);
 
-  if (!useColors) return args
+  if (!useColors) return args;
 
   var c = 'color: ' + this.color;
   args = [args[0], c, ''].concat(Array.prototype.slice.call(args, 1));
@@ -1290,7 +1290,7 @@ function enable(namespaces) {
 
   for (var i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace('*', '.*?');
+    namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
       exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
     } else {
@@ -1525,14 +1525,14 @@ function request (params, fn) {
   }
 
   var method = (params.method || 'GET').toLowerCase();
-  debug('API HTTP Method: `%s`', method);
+  debug('API HTTP Method: %o', method);
   delete params.method;
 
   var apiVersion = params.apiVersion || defaultApiVersion;
   delete params.apiVersion;
 
   var url = proxyOrigin + '/rest/v' + apiVersion + params.path;
-  debug('API URL: `%s`', url);
+  debug('API URL: %o', url);
   delete params.path;
 
   // create HTTP Request object
@@ -1547,7 +1547,7 @@ function request (params, fn) {
   // URL querystring values
   if (params.query) {
     req.query(params.query);
-    debug('API send URL querystring: ', params.query);
+    debug('API send URL querystring: %o', params.query);
     delete params.query;
   }
 
@@ -1564,7 +1564,7 @@ function request (params, fn) {
       var data = params.formData[i];
       var key = data[0];
       var value = data[1];
-      debug('adding FormData field "%s"', key);
+      debug('adding FormData field %o', key);
       req.field(key, value);
     }
   }
@@ -1575,7 +1575,7 @@ function request (params, fn) {
     var body = res.body;
     var headers = res.headers;
     var statusCode = res.status;
-    debug('%s -> %s status code', url, statusCode);
+    debug('%o -> %o status code', url, statusCode);
 
     if (body && headers) {
       body._headers = headers;
@@ -1589,7 +1589,7 @@ function request (params, fn) {
       err = new Error();
       err.statusCode = statusCode;
       for (var i in body) err[i] = body[i];
-      if (body.error) err.name = toTitle(body.error) + 'Error';
+      if (body && body.error) err.name = toTitle(body.error) + 'Error';
       fn(err);
     }
   });
