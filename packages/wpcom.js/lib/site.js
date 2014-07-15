@@ -41,7 +41,7 @@ function Site(id, wpcom){
   if (!(this instanceof Site)) return new Site(id, wpcom);
   this.wpcom = wpcom;
 
-  debug('set `%s` site id', id);
+  debug('set %o site id', id);
   this._id = id;
 }
 
@@ -88,7 +88,7 @@ for (var i = 0; i < resources.length; i++) {
   var name =  isarr ? res[0] : res + 'List';
   var subpath = isarr ? res[1] : res;
 
-  debug('adding `site.%s()` method in `%s` sub-path', name, subpath);
+  debug('adding %o method in %o sub-path', 'site.' + name + '()', subpath);
   Site.prototype[name] = list.call(this, subpath);
 }
 
