@@ -1,4 +1,12 @@
 
+2.0.3 / 2014-07-15
+==================
+
+ * dist: recompile
+ * package: update "browserify" to v4.2.0
+ * package: update "wpcom-xhr-request" to v0.2.5
+ * site: use `%o` formatter for debug() calls
+
 2.0.2 / 2014-06-25
 ==================
 
