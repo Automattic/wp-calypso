@@ -24,7 +24,7 @@
     "inherits": "2.0.1"
   },
   "devDependencies": {
-    "browserify": "4.1.11",
+    "browserify": "4.2.0",
     "mocha": "1.18.2"
   }
 }
