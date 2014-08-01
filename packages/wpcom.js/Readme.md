@@ -79,7 +79,7 @@ $ make test-all
 You use `make test` and pass a first argument to filter tests in the test rule
 
 ```bash
-$make test site.addPost()
+$ make test site.addPost()
 ```
 
 **Note**: Don't add `http://` in `public_site` and `private_site` values.
