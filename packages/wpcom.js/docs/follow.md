@@ -59,6 +59,6 @@ wpcom
 .sites('blog.wordpress.com')
 .follow()
 .mine(function(error, data){
-	
+  // mine status
 });
 ```
