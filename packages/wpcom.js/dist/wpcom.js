@@ -234,12 +234,12 @@ module.exports = Comment;
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:like');
+var debug = _dereq_('debug')('wpcom:follow');
 
 /**
- * Follow methods
+ * Follow 
  *
- * @param {String} site_id site id
+ * @param {String} site_id - site id
  * @param {WPCOM} wpcom
  * @api public
  */
@@ -252,49 +252,56 @@ function Follow(site_id, wpcom){
   if (!(this instanceof Follow)) return new Follow(site_id, wpcom);
 
   this.wpcom = wpcom;
-  this._site_id = site_id;
+  this._sid = site_id;
 }
-
-/**
- * :FOLLOW:
- * List a site's followers
- * in reverse-chronological
- * order
- *
- */
-Follow.prototype.followers = function(fn) {
-  this.wpcom.sendRequest('/sites/' + this._site_id + '/follows/', null, null, fn);
-};
 
 /**
  * :FOLLOW:
  * Follow the site
  *
+ * @param {Object} [query]
+ * @param {Function} fn
  */
-Follow.prototype.follow = function(fn) {
-  this.wpcom.sendRequest({method: 'POST', path: '/sites/' + this._site_id + '/follows/new'}, null, null, fn);
+
+Follow.prototype.follow =
+Follow.prototype.add = function(query, fn) {
+  var path = '/sites/' + this._sid + '/follows/new';
+  this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
 };
 
 /**
- * :FOLLOW:
  * Unfollow the site
  *
+ * @param {Object} [query]
+ * @param {Function} fn
  */
-Follow.prototype.unfollow = function(fn) {
-  this.wpcom.sendRequest({method: 'POST', path: '/sites/' + this._site_id + '/follows/mine/delete'}, null, null, fn);
+
+Follow.prototype.unfollow =
+Follow.prototype.del = function(query, fn) {
+  var path = '/sites/' + this._sid + '/follows/mine/delete';
+  this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
 };
 
 /**
- * :FOLLOW:
  * Get the follow status for current 
  * user on current blog site
  *
+ * @param {Object} [query]
+ * @param {Function} fn
  */
-Follow.prototype.is_following = function(fn) {
-  this.wpcom.sendRequest('/sites/' + this._site_id + '/follows/mine', null, null, fn);
+
+Follow.prototype.state =
+Follow.prototype.mine = function(query, fn) {
+  var path = '/sites/' + this._sid + '/follows/mine';
+  this.wpcom.sendRequest(path, query, null, fn);
 };
 
+/**
+ * Expose `Follow` module
+ */
+
 module.exports = Follow;
+
 },{"debug":10}],4:[function(_dereq_,module,exports){
 
 /**
@@ -1063,14 +1070,14 @@ Site.prototype.comment = function(id){
 };
 
 /**
- * :FOLLOW:
  * Create a `Follow` instance
  *
  * @api public
  */
-Site.prototype.follower = function() {
+
+Site.prototype.follow = function(){
   return Follow(this._id, this.wpcom);
-}
+};
 
 /**
  * Expose `Site` module
