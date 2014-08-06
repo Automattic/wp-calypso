@@ -3,6 +3,7 @@
 ==================
 
  * dist: recompile
+ * docs: update Follow doc page
  * Add `Follow` implementation
  * update "browserify" to v4.2.1
 
