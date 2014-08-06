@@ -1,4 +1,11 @@
 
+2.0.4 / 2014-08-05
+==================
+
+ * dist: recompile
+ * Add `Follow` implementation
+ * update "browserify" to v4.2.1
+
 2.0.3 / 2014-07-15
 ==================
 
