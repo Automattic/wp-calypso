@@ -6,6 +6,7 @@
 var Post = require('./post');
 var Media = require('./media');
 var Comment = require('./comment');
+var Follow = require('./follow');
 var debug = require('debug')('wpcom:site');
 
 /**
@@ -201,6 +202,16 @@ Site.prototype.deleteMedia = function(id, fn){
 
 Site.prototype.comment = function(id){
   return Comment(id, null, this._id, this.wpcom);
+};
+
+/**
+ * Create a `Follow` instance
+ *
+ * @api public
+ */
+
+Site.prototype.follow = function(){
+  return Follow(this._id, this.wpcom);
 };
 
 /**

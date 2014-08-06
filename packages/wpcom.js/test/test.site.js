@@ -410,6 +410,22 @@ describe('WPCOM#Site', function(){
 
     });
 
+    describe('site.follower.follow()', function() {
+      it('should follow the current site', function(done) {
+        var site = util.private_site();
+
+        site
+        .follower
+        .follow(function(error, data) {
+          if (error) throw error;
+
+          assert.equal(1, 1);
+
+          done();
+        });
+      });
+    });
+
     describe('site.addPost()', function(){
 
       it('should create a new blog post', function(done){
