@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="//s1.wp.com/i/favicon-stacked.ico?m=1311976025g" sizes="16x16 32x32 48x48">
+	<link rel="shortcut icon" type="image/x-icon" href="//s2.wp.com/i/favicon.ico?m=1311976025g" sizes="16x16">
+	<link rel="icon" type="image/x-icon" href="//s2.wp.com/i/favicon.ico?m=1311976025g" sizes="16x16">
+
+	<link rel="stylesheet" href="./static/css/style.css">
+  <link rel="stylesheet" href="./static/css/reset.css">
+  <link href='http://fonts.googleapis.com/css?family=Merriweather|Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+
+	
+	<title>WPCOM.js - Official JavaScript library for the WordPress.com REST API</title>
+	
+
+</head>
+<body>
+	
+<script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+		
+		// Add the missing url to the text
+		$("#url").text(window.location.pathname);
+		
+		// Fix the css locations dynamically
+		$("head link").each(function() {
+			for (var i=0; i<window.location.pathname.split(/\//g).length-2; i++)
+				$(this).attr("href", "../" + $(this).attr("href"));
+		});
+		
+	})
+</script>
+
+<p>
+	Sorry the page <b id="url"></b> could not be found on this server.
+</p>
+
+
+	
+	<script src="//code.jquery.com/jquery.min.js"></script>
+	<script src="./static/js/main.js"></script>
+  <script src="./static/js/velocity.js"></script>
+  <script src="./static/js/animations.js"></script>
+	
+</body>
+</html>

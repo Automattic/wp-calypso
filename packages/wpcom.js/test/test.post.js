@@ -314,6 +314,91 @@ describe('WPCOM#Site#Post', function(){
 
     });
 
+    describe('post.comment.like()', function(){
+
+      it('should add a comment like', function(done){
+        util
+        .private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .like()
+        .add(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.equal(1, data.like_count);
+          assert.ok(data.i_like);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('post.comment.like.mine()', function(){
+
+      it('should get the comment like status of mine', function(done){
+        util.private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .like()
+        .mine(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.equal(1, data.like_count);
+          assert.ok(data.i_like);
+
+          done();
+        });
+      });
+
+    });
+
+    describe('post.comment.likesList()', function(){
+
+      it('should get comment likes list', function(done){
+        util.private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .likesList(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.equal('number', typeof data.found);
+          assert.equal('boolean', typeof data.i_like);
+          assert.equal('object', typeof data.likes);
+          assert.ok(data.likes instanceof Array);
+
+          done();
+        });
+
+      });
+
+    });
+
+    describe('post.comment.like.delete()', function(){
+
+      it('should remove your like from the comment', function(done){
+        util.private_site()
+        .post(new_post.ID)
+        .comment(comment_added.ID)
+        .like()
+        .del(function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.ok(data.success);
+          assert.equal(0, data.like_count);
+          assert.ok(!(data.i_like));
+
+          done();
+        });
+      });
+
+    });
+
     describe('post.like.mine()', function(){
 
       it('should get the post like status of mine', function(done){

@@ -1,9 +1,9 @@
 
-
 /**
  * Module dependencies.
  */
 
+var CommentLike = require('./commentlike');
 var debug = require('debug')('wpcom:comment');
 
 /**
@@ -88,7 +88,7 @@ Comment.prototype.update = function(body, fn){
 /**
  * Create a Comment as a reply to another Comment
  *
- r @param {String|Object} body
+ * @param {String|Object} body
  * @param {Function} fn
  * @api public
  */
@@ -111,6 +111,29 @@ Comment.prototype['delete'] =
 Comment.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
   this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+};
+
+/**
+ * Create a `CommentLike` instance
+ *
+ * @api public
+ */
+
+Comment.prototype.like = function(){
+  return CommentLike(this._cid, this._sid, this.wpcom);
+};
+
+/**
+ * Get comment likes list
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.likesList = function(query, fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
+  this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
