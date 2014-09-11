@@ -1,4 +1,11 @@
 
+2.1.0 / 2014-09-11
+==================
+
+ * Add tests for comment likes
+ * add CommentLike module and functions to Comment (mirroring Like for Posts)
+ * landing v1
+
 2.0.4 / 2014-08-05
 ==================
 
