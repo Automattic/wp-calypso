@@ -1,12 +1,12 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.WPCOM=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.WPCOM=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var Me = _dereq_('./lib/me');
-var Site = _dereq_('./lib/site');
-var debug = _dereq_('debug')('wpcom');
+var Me = require('./lib/me');
+var Site = require('./lib/site');
+var debug = require('debug')('wpcom');
 
 /**
  * WordPress.com REST API class.
@@ -106,14 +106,14 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
 
 module.exports = WPCOM;
 
-},{"./lib/me":5,"./lib/site":9,"debug":10}],2:[function(_dereq_,module,exports){
-
+},{"./lib/me":6,"./lib/site":10,"debug":11}],2:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:comment');
+var CommentLike = require('./commentlike');
+var debug = require('debug')('wpcom:comment');
 
 /**
  * Comment methods
@@ -197,7 +197,7 @@ Comment.prototype.update = function(body, fn){
 /**
  * Create a Comment as a reply to another Comment
  *
- r @param {String|Object} body
+ * @param {String|Object} body
  * @param {Function} fn
  * @api public
  */
@@ -223,18 +223,120 @@ Comment.prototype.del = function(fn){
 };
 
 /**
+ * Create a `CommentLike` instance
+ *
+ * @api public
+ */
+
+Comment.prototype.like = function(){
+  return CommentLike(this._cid, this._sid, this.wpcom);
+};
+
+/**
+ * Get comment likes list
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.likesList = function(query, fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
+  this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
  * Expose `Comment` module
  */
 
 module.exports = Comment;
 
-},{"debug":10}],3:[function(_dereq_,module,exports){
+},{"./commentlike":3,"debug":11}],3:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:follow');
+var debug = require('debug')('wpcom:commentlike');
+
+/**
+ * CommentLike methods
+ *
+ * @param {String} cid comment id
+ * @param {String} sid site id
+ * @param {WPCOM} wpcom
+ * @api public
+ */
+
+function CommentLike(cid, sid, wpcom){
+  if (!sid) {
+    throw new Error('`side id` is not correctly defined');
+  }
+
+  if (!cid) {
+    throw new Error('`comment id` is not correctly defined');
+  }
+
+  if (!(this instanceof CommentLike)) return new CommentLike(cid, sid, wpcom);
+
+  this.wpcom = wpcom;
+  this._cid = cid;
+  this._sid = sid;
+}
+
+/**
+ * Get your Like status for a Comment
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+CommentLike.prototype.state =
+CommentLike.prototype.mine = function(query, fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
+  this.wpcom.sendRequest(path, query, null, fn);
+};
+
+/**
+ * Like a comment
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+CommentLike.prototype.add = function(query, fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+};
+
+/**
+ * Remove your Like from a Comment
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+CommentLike.prototype['delete'] =
+CommentLike.prototype.del = function(fn){
+  var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+};
+
+/**
+ * Expose `CommentLike` module
+ */
+
+module.exports = CommentLike;
+
+},{"debug":11}],4:[function(require,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var debug = require('debug')('wpcom:follow');
 
 /**
  * Follow 
@@ -302,13 +404,13 @@ Follow.prototype.mine = function(query, fn) {
 
 module.exports = Follow;
 
-},{"debug":10}],4:[function(_dereq_,module,exports){
+},{"debug":11}],5:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:like');
+var debug = require('debug')('wpcom:like');
 
 /**
  * Like methods
@@ -381,13 +483,13 @@ Like.prototype.del = function(fn){
 
 module.exports = Like;
 
-},{"debug":10}],5:[function(_dereq_,module,exports){
+},{"debug":11}],6:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:me');
+var debug = require('debug')('wpcom:me');
 
 /**
  * Create a `Me` instance
@@ -467,13 +569,13 @@ Me.prototype.connections = function(query, fn){
 
 module.exports = Me;
 
-},{"debug":10}],6:[function(_dereq_,module,exports){
+},{"debug":11}],7:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:media');
+var debug = require('debug')('wpcom:media');
 
 /**
  * Media methods
@@ -569,16 +671,16 @@ Media.prototype.del = function(fn){
 
 module.exports = Media;
 
-},{"debug":10}],7:[function(_dereq_,module,exports){
+},{"debug":11}],8:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var Like = _dereq_('./like');
-var Reblog = _dereq_('./reblog');
-var Comment = _dereq_('./comment');
-var debug = _dereq_('debug')('wpcom:post');
+var Like = require('./like');
+var Reblog = require('./reblog');
+var Comment = require('./comment');
+var debug = require('debug')('wpcom:post');
 
 /**
  * Post methods
@@ -773,13 +875,13 @@ Post.prototype.comments = function(query, fn){
 
 module.exports = Post;
 
-},{"./comment":2,"./like":4,"./reblog":8,"debug":10}],8:[function(_dereq_,module,exports){
+},{"./comment":2,"./like":5,"./reblog":9,"debug":11}],9:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var debug = _dereq_('debug')('wpcom:reblog');
+var debug = require('debug')('wpcom:reblog');
 
 /**
  * Reblog methods
@@ -862,17 +964,17 @@ Reblog.prototype.to = function(dest, note, fn){
 
 module.exports = Reblog;
 
-},{"debug":10}],9:[function(_dereq_,module,exports){
+},{"debug":11}],10:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var Post = _dereq_('./post');
-var Media = _dereq_('./media');
-var Comment = _dereq_('./comment');
-var Follow = _dereq_('./follow');
-var debug = _dereq_('debug')('wpcom:site');
+var Post = require('./post');
+var Media = require('./media');
+var Comment = require('./comment');
+var Follow = require('./follow');
+var debug = require('debug')('wpcom:site');
 
 /**
  * Resources array
@@ -1085,7 +1187,7 @@ Site.prototype.follow = function(){
 
 module.exports = Site;
 
-},{"./comment":2,"./follow":3,"./media":6,"./post":7,"debug":10}],10:[function(_dereq_,module,exports){
+},{"./comment":2,"./follow":4,"./media":7,"./post":8,"debug":11}],11:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -1093,7 +1195,7 @@ module.exports = Site;
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = _dereq_('./debug');
+exports = module.exports = require('./debug');
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -1234,7 +1336,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":11}],11:[function(_dereq_,module,exports){
+},{"./debug":12}],12:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -1248,7 +1350,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = _dereq_('ms');
+exports.humanize = require('ms');
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -1433,7 +1535,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":12}],12:[function(_dereq_,module,exports){
+},{"ms":13}],13:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -1546,7 +1648,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],13:[function(_dereq_,module,exports){
+},{}],14:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1571,14 +1673,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],15:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var superagent = _dereq_('superagent');
-var debug = _dereq_('debug')('wpcom-xhr-request');
+var superagent = require('superagent');
+var debug = require('debug')('wpcom-xhr-request');
 
 /**
  * Export a single `request` function.
@@ -1690,13 +1792,13 @@ function toTitle (str) {
   });
 }
 
-},{"debug":10,"superagent":15}],15:[function(_dereq_,module,exports){
+},{"debug":11,"superagent":16}],16:[function(require,module,exports){
 /**
  * Module dependencies.
  */
 
-var Emitter = _dereq_('emitter');
-var reduce = _dereq_('reduce');
+var Emitter = require('emitter');
+var reduce = require('reduce');
 
 /**
  * Root reference for iframes.
@@ -2741,7 +2843,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":16,"reduce":17}],16:[function(_dereq_,module,exports){
+},{"emitter":17,"reduce":18}],17:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -2907,7 +3009,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],17:[function(_dereq_,module,exports){
+},{}],18:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -2932,15 +3034,15 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],18:[function(_dereq_,module,exports){
+},{}],19:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var _WPCOM = _dereq_('./index.js');
-var request = _dereq_('wpcom-xhr-request');
-var inherits = _dereq_('inherits');
+var _WPCOM = require('./index.js');
+var request = require('wpcom-xhr-request');
+var inherits = require('inherits');
 
 /**
  * Module exports.
@@ -2995,6 +3097,5 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   return _WPCOM.prototype.sendRequest.call(this, params, query, body, fn);
 };
 
-},{"./index.js":1,"inherits":13,"wpcom-xhr-request":14}]},{},[18])
-(18)
+},{"./index.js":1,"inherits":14,"wpcom-xhr-request":15}]},{},[19])(19)
 });
