@@ -1,4 +1,18 @@
 
+2.2.0 / 2014-10-03
+==================
+
+ * test: add tag tests
+ * site: add site#tag() method
+ * tag: add tag library
+ * test: fix typeof asserts
+ * test: add category tests
+ * site: add site#category() method
+ * category: add category
+ * test: move up `global` testing value
+ * package: update "debug" to v2.0.0
+ * Add media.update method
+
 2.1.0 / 2014-09-11
 ==================
 

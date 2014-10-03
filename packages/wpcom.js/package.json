@@ -1,7 +1,7 @@
 {
   "name": "wpcom",
   "description": "Official JavaScript library for the WordPress.com REST API",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
