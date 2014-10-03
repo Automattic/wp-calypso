@@ -5,6 +5,7 @@
 
 var Post = require('./post');
 var Category= require('./category');
+var Tag= require('./tag');
 var Media = require('./media');
 var Comment = require('./comment');
 var Follow = require('./follow');
@@ -226,6 +227,17 @@ Site.prototype.follow = function(){
 Site.prototype.cat =
 Site.prototype.category = function(slug){
   return Category(slug, this._id, this.wpcom);
+};
+
+/**
+ * Create a `Tag` instance
+ *
+ * @param {String} [slug]
+ * @api public
+ */
+
+Site.prototype.tag = function(slug){
+  return Tag(slug, this._id, this.wpcom);
 };
 
 /**

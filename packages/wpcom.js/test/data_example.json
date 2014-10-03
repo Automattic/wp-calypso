@@ -22,6 +22,15 @@
     "categories": "dev"
   },
 
+  "new_category_data": {
+    "name": "<category name>",
+    "description": "<category description>"
+  },
+
+  "new_tag_data": {
+    "name": "<tag name>",
+    "description": "<tag description>"
+  },
   "new_media_data": {
     "files": [
       "<file-1>",
