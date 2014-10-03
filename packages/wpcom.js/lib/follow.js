@@ -25,7 +25,6 @@ function Follow(site_id, wpcom){
 }
 
 /**
- * :FOLLOW:
  * Follow the site
  *
  * @param {Object} [query]
