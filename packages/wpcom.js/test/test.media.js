@@ -77,6 +77,26 @@ describe('WPCOM#Site#Media', function(){
 
     });
 
+    describe('media.update()', function(){
+
+      it('should edit the media title', function(done){
+        var site = util.private_site();
+        var edited_title = "This is the new title";
+
+        site
+        .media(new_media.media[0].id)
+        .update( { title: edited_title }, function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          assert.equal(edited_title, data.title);
+
+          done();
+        });
+      });
+
+    });
+
     describe('media.addFiles([fs])', function(){
 
       it('should create a new media from a file', function(done){

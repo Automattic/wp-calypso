@@ -40,6 +40,19 @@ Media.prototype.get = function(query, fn){
 };
 
 /**
+ * Edit media
+ *
+ * @param {Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Media.prototype.update = function(body, fn){
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+};
+
+/**
  * Add media file
  *
  * @param {String|Array} files
