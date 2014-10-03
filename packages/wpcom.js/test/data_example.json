@@ -1,4 +1,5 @@
 {
+  "global": "<global token>"
   "site": {
     "public": {
       "url": "<public blog url>"
@@ -6,12 +7,11 @@
     "private" : {
       "url": "<private blog url>",
       "id": "<private blog id>",
-      "token": "<token>",
-      "global": "<global token>"
+      "token": "<token>"
     },
     "reblog": {
-      "note": "This post was really interesting",
-      "destination_site_id": 60487750
+      "note": "<reblog note>",
+      "destination_site_id": <reblog-id>
     }
   },
 

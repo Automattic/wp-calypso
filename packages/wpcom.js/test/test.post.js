@@ -184,7 +184,7 @@ describe('WPCOM#Site#Post', function(){
       });
 
     });
-
+/*
     describe('post.related()', function(){
 
       it('should get related posts', function(done){
@@ -204,6 +204,7 @@ describe('WPCOM#Site#Post', function(){
       });
 
     });
+*/
 
     describe('post.like.add()', function(){
 

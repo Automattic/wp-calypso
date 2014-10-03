@@ -14,7 +14,7 @@ if ('undefined' == typeof window) {
   WPCOM = require('../');
 
   var test = require('./data');
-  wpcom = WPCOM(test.site.private.global);
+  wpcom = WPCOM(test.global);
 }
 
 /**

@@ -20,7 +20,7 @@ function Util(){}
  */
 
 Util.wpcom = function(){
-  return WPCOM(test.site.private.global);
+  return WPCOM(test.global);
 };
 
 /**

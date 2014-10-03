@@ -4,6 +4,7 @@
  */
 
 var Post = require('./post');
+var Category= require('./category');
 var Media = require('./media');
 var Comment = require('./comment');
 var Follow = require('./follow');
@@ -212,6 +213,19 @@ Site.prototype.comment = function(id){
 
 Site.prototype.follow = function(){
   return Follow(this._id, this.wpcom);
+};
+
+/**
+ * Create a `Category` instance
+ * Set `cat` alias
+ *
+ * @param {String} [slug]
+ * @api public
+ */
+
+Site.prototype.cat =
+Site.prototype.category = function(slug){
+  return Category(slug, this._id, this.wpcom);
 };
 
 /**
