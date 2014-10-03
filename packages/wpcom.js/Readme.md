@@ -44,33 +44,7 @@ Include `dist/wpcom.js` in a `<script>` tag:
 ## Test
 
 Create `data.json` file into `test/` folder to can run the tests. You can copy
-or rename the `test/data_example.json` file.
-
-```json
-{
-  "token": {
-    "global": "<global token>"
-  },
-
-  "site": {
-    "public": {
-      "url": "<public blog url>"
-    },
-    "private" : {
-      "url": "<private blog url>",
-      "id": "<private blog id>",
-      "private": "<token>"
-    }
-  },
-
-  "new_post_data": {
-    "title": "New testing post",
-    "content": "<div style=\"color: red;\">The content of the new testing post</div>"
-  }
-}
-```
-
-... and then
+or rename the `test/data_example.json` file and then
 
 ```bash
 $ make test-all
@@ -79,11 +53,8 @@ $ make test-all
 You use `make test` and pass a first argument to filter tests in the test rule
 
 ```bash
-$ make test site.addPost()
+$ make test site.addPost
 ```
-
-**Note**: Don't add `http://` in `public_site` and `private_site` values.
-
 
 ## License
 
