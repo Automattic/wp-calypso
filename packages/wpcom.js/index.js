@@ -5,6 +5,7 @@
 
 var Me = require('./lib/me');
 var Site = require('./lib/site');
+var Batch = require('./lib/batch');
 var debug = require('debug')('wpcom');
 
 /**
@@ -41,6 +42,11 @@ WPCOM.prototype.me = function(){
 
 WPCOM.prototype.site = function(id){
   return new Site(id, this);
+};
+
+
+WPCOM.prototype.batch = function(){
+  return new Batch(this);
 };
 
 /**
