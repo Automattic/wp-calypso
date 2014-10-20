@@ -47,7 +47,7 @@ Batch.prototype.run = function(query, fn){
   }
   query.urls = this.urls;
 
-  this.wpcom.sendRequest('/batch', query, null, fn);
+  return this.wpcom.sendRequest('/batch', query, null, fn);
 };
 
 /**

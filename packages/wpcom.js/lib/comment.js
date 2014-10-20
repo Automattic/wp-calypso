@@ -39,7 +39,7 @@ function Comment(cid, pid, sid, wpcom){
 
 Comment.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -52,7 +52,7 @@ Comment.prototype.get = function(query, fn){
 
 Comment.prototype.replies = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -67,7 +67,7 @@ Comment.prototype.add = function(body, fn){
   body = 'string' == typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -82,7 +82,7 @@ Comment.prototype.update = function(body, fn){
   body = 'string' == typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -97,7 +97,7 @@ Comment.prototype.reply = function(body, fn){
   body = 'string' == typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -110,7 +110,7 @@ Comment.prototype.reply = function(body, fn){
 Comment.prototype['delete'] =
 Comment.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -133,7 +133,7 @@ Comment.prototype.like = function(){
 
 Comment.prototype.likesList = function(query, fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**

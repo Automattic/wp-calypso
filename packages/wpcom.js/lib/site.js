@@ -57,7 +57,7 @@ function Site(id, wpcom){
  */
 
 Site.prototype.get = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
+  return this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
 };
 
 /**
@@ -79,7 +79,7 @@ var list = function(subpath) {
    */
 
   return function (query, fn){
-    this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
+    return this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
   };
 };
 
@@ -92,7 +92,7 @@ for (var i = 0; i < resources.length; i++) {
   var subpath = isarr ? res[1] : res;
 
   debug('adding %o method in %o sub-path', 'site.' + name + '()', subpath);
-  Site.prototype[name] = list.call(this, subpath);
+  Site.prototype[name] = list(subpath);
 }
 
 /**

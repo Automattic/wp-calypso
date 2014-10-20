@@ -41,7 +41,7 @@ function Like(pid, sid, wpcom){
 Like.prototype.state =
 Like.prototype.mine = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -54,7 +54,7 @@ Like.prototype.mine = function(query, fn){
 
 Like.prototype.add = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
 };
 
 /**
@@ -67,7 +67,7 @@ Like.prototype.add = function(query, fn){
 Like.prototype['delete'] =
 Like.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**

@@ -47,7 +47,7 @@ Category.prototype.slug = function(slug){
 
 Category.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -60,7 +60,7 @@ Category.prototype.get = function(query, fn){
 
 Category.prototype.add = function(body, fn){
   var path = '/sites/' + this._sid + '/categories/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -73,7 +73,7 @@ Category.prototype.add = function(body, fn){
 
 Category.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -86,7 +86,7 @@ Category.prototype.update = function(body, fn){
 Category.prototype['delete'] =
 Category.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**

@@ -34,7 +34,7 @@ function Follow(site_id, wpcom){
 Follow.prototype.follow =
 Follow.prototype.add = function(query, fn) {
   var path = '/sites/' + this._sid + '/follows/new';
-  this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
+  return this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
 };
 
 /**
@@ -47,7 +47,7 @@ Follow.prototype.add = function(query, fn) {
 Follow.prototype.unfollow =
 Follow.prototype.del = function(query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine/delete';
-  this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
+  return this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
 };
 
 /**
@@ -61,7 +61,7 @@ Follow.prototype.del = function(query, fn) {
 Follow.prototype.state =
 Follow.prototype.mine = function(query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**

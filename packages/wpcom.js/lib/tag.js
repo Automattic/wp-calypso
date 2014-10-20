@@ -47,7 +47,7 @@ Tag.prototype.slug = function(slug){
 
 Tag.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -60,7 +60,7 @@ Tag.prototype.get = function(query, fn){
 
 Tag.prototype.add = function(body, fn){
   var path = '/sites/' + this._sid + '/tags/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -73,7 +73,7 @@ Tag.prototype.add = function(body, fn){
 
 Tag.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -86,7 +86,7 @@ Tag.prototype.update = function(body, fn){
 Tag.prototype['delete'] =
 Tag.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**

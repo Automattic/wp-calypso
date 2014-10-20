@@ -41,7 +41,7 @@ function Reblog(pid, sid, wpcom){
 Reblog.prototype.state =
 Reblog.prototype.mine = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -58,7 +58,7 @@ Reblog.prototype.add = function(body, fn){
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**

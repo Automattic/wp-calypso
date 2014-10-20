@@ -58,7 +58,7 @@ WPCOM.prototype.batch = function(){
  */
 
 WPCOM.prototype.freshlyPressed = function(query, fn){
-  this.sendRequest('/freshly-pressed', query, null, fn);
+  return this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
 /**
@@ -102,7 +102,7 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   if (!fn) fn = function(err){ if (err) throw err; };
 
   // request method
-  this.request(params, fn);
+  return this.request(params, fn);
 };
 
 /**

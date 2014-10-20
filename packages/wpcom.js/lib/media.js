@@ -36,7 +36,7 @@ function Media(id, sid, wpcom){
 
 Media.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -49,7 +49,7 @@ Media.prototype.get = function(query, fn){
 
 Media.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -69,7 +69,7 @@ Media.prototype.addFiles = function(files, fn){
     params.formData.push(['media[]', files[i]]);
   }
 
-  this.wpcom.sendRequest(params, null, null, fn);
+  return this.wpcom.sendRequest(params, null, null, fn);
 };
 
 /**
@@ -90,7 +90,7 @@ Media.prototype.addUrls = function(files, fn){
     body.media_urls.push(files[i]);
   }
 
-  this.wpcom.sendRequest(params, null, body, fn);
+  return this.wpcom.sendRequest(params, null, body, fn);
 };
 
 /**
@@ -103,7 +103,7 @@ Media.prototype.addUrls = function(files, fn){
 Media.prototype['delete'] =
 Media.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**

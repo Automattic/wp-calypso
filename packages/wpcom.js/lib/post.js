@@ -68,7 +68,7 @@ Post.prototype.get = function(query, fn){
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -81,7 +81,7 @@ Post.prototype.get = function(query, fn){
 
 Post.prototype.getBySlug = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -94,7 +94,7 @@ Post.prototype.getBySlug = function(query, fn){
 
 Post.prototype.add = function(body, fn){
   var path = '/sites/' + this._sid + '/posts/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -107,7 +107,7 @@ Post.prototype.add = function(body, fn){
 
 Post.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -120,7 +120,7 @@ Post.prototype.update = function(body, fn){
 Post.prototype['delete'] =
 Post.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -133,7 +133,7 @@ Post.prototype.del = function(fn){
 
 Post.prototype.likesList = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -146,7 +146,7 @@ Post.prototype.likesList = function(query, fn){
 
 Post.prototype.related = function(body, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
