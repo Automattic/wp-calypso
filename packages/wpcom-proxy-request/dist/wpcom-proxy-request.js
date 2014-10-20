@@ -119,7 +119,7 @@ function request (params, fn) {
       if (called) return;
       called = true;
       fn(null, e.response || xhr.response);
-    };
+    }
     function onerror (e) {
       if (called) return;
       called = true;
