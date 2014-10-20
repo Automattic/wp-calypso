@@ -5,8 +5,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
-    Select one or more files to upload to tootallnate.wordpress.com: 
-    <input type="file" id="file" multiple>
+    <div>Select one or more files to upload media library (site_id=<strong id="site"></strong>):</div>
+    <div><input type="file" id="file" multiple disabled></div>
     <script src="../dist/wpcom-proxy-request.js"></script>
     <script>
       WPCOM.proxy({
@@ -16,8 +16,17 @@
         console.log('proxy now running in "access all user\'s blogs" mode');
       });
 
-      // select files on the "input" element
+      var site;
       var input = document.getElementById('file');
+
+      WPCOM.proxy('/me', function (err, data) {
+        if (err) throw err;
+        site = data.primary_blog;
+        document.getElementById('site').innerHTML = site;
+        input.removeAttribute('disabled');
+      });
+
+      // select files on the "input" element
       input.onchange = function (e) {
 
         // construct a 2D `formData` array for the selected files
@@ -28,7 +37,7 @@
 
         // do the API request through the iframe proxy
         var req = WPCOM.proxy({
-          path: '/sites/tootallnate.wordpress.com/media/new',
+          path: '/sites/' + site + '/media/new',
           method: 'POST',
           formData: formData
         }, function(err, res){
