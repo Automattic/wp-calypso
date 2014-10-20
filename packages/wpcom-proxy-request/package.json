@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "component-event": "0.1.4",
-    "debug": "~1.0.0",
-    "promise": "5.0.0",
+    "debug": "~2.1.0",
+    "progress-event": "~1.0.0",
     "uid": "0.0.2"
   }
 }

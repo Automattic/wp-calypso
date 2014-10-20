@@ -15,7 +15,7 @@
       });
 
       // ensure that node.js-style callback syntax works
-      WPCOM.proxy('/me', function(err, res){
+      var req = WPCOM.proxy('/me', function(err, res){
         if (err) throw err;
         console.log(res);
 
@@ -24,13 +24,6 @@
         document.body.appendChild(div);
       });
 
-      // ensure that Promise-style return values work
-      var req = WPCOM.proxy('/me');
-      setTimeout(function () {
-        req.then(function(res){
-          console.log(res);
-        });
-      }, 3000);
       console.log(req);
     </script>
   </body>

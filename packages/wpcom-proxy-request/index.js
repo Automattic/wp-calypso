@@ -5,14 +5,14 @@
 
 var uid = require('uid');
 var event = require('component-event');
-var Promise = require('promise');
+var ProgressEvent = require('progress-event');
 var debug = require('debug')('wpcom-proxy-request');
 
 /**
  * Export `request` function.
  */
 
-module.exports = Promise.nodeify(request);
+module.exports = request;
 
 /**
  * WordPress.com REST API base endpoint.
@@ -61,23 +61,31 @@ var buffered;
 var hasFileSerializationBug = false;
 
 /**
- * In-flight API request Promise instances.
+ * In-flight API request XMLHttpRequest dummy "proxy" instances.
  */
 
 var requests = {};
 
 /**
+ * Are HTML5 XMLHttpRequest2 "progress" events supported?
+ * See: http://goo.gl/xxYf6D
+ */
+
+var supportsProgress = !!window.ProgressEvent && !!window.FormData;
+
+/**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
- * logged user's cookies).
+ * logged-in user's cookies).
  *
  * @param {Object|String} params
+ * @param {Function} [callback]
  * @api public
  */
 
-function request (params) {
-  debug('request()', params);
+function request (params, fn) {
+  debug('request(%o)', params);
 
   if ('string' == typeof params) {
     params = { path: params };
@@ -90,58 +98,68 @@ function request (params) {
   var id = uid();
   params.callback = id;
   params.supports_args = true; // supports receiving variable amount of arguments
+  params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
 
   // force uppercase "method" since that's what the <iframe> is expecting
   params.method = String(params.method || 'GET').toUpperCase();
 
   debug('params object: %o', params);
 
-  var req = new Promise(function (resolve, reject) {
-    if (loaded) {
-      submitRequest(params, resolve, reject);
-    } else {
-      debug('buffering API request since proxying <iframe> is not yet loaded');
-      buffered.push([ params, resolve, reject ]);
+  var xhr = new XMLHttpRequest();
+  xhr.params = params;
+
+  // store the `XMLHttpRequest` instance so that "onmessage" can access it again
+  requests[id] = xhr;
+
+  if ('function' === typeof fn) {
+    // a callback function was provided
+    var called = false;
+    function onload (e) {
+      if (called) return;
+      called = true;
+      fn(null, e.response || xhr.response);
+    };
+    function onerror (e) {
+      if (called) return;
+      called = true;
+      fn(e.error || e.err || e);
     }
-  });
+    xhr.onload = onload;
+    xhr.onerror = xhr.onabort = onerror;
+  }
 
-  // store the `params` object so that "onmessage" can access it again
-  requests[id] = params;
+  if (loaded) {
+    submitRequest(params);
+  } else {
+    debug('buffering API request since proxying <iframe> is not yet loaded');
+    buffered.push(params);
+  }
 
-  return req;
+  return xhr;
 }
 
 /**
- * Calls the postMessage() function on the <iframe>, and afterwards add the
- * `resolve` and `reject` functions to the "params" object (after it's been
- * serialized into the iframe context).
+ * Calls the `postMessage()` function on the <iframe>.
  *
  * @param {Object} params
- * @param {Function} resolve
- * @param {Function} reject
  * @api private
  */
 
-function submitRequest (params, resolve, reject) {
+function submitRequest (params) {
   debug('sending API request to proxy <iframe> %o', params);
 
   if (hasFileSerializationBug && hasFile(params)) {
-    postAsArrayBuffer(params, resolve, reject);
+    postAsArrayBuffer(params);
   } else {
     try {
       iframe.contentWindow.postMessage(params, proxyOrigin);
-
-      // needs to be added after the `.postMessage()` call otherwise
-      // a DOM error is thrown
-      params.resolve = resolve;
-      params.reject = reject;
     } catch (e) {
       // were we trying to serialize a `File`?
       if (hasFile(params)) {
+        debug('this browser has the File serialization bug');
         // cache this check for the next API request
         hasFileSerializationBug = true;
-        debug('this browser has the File serialization bug');
-        postAsArrayBuffer(params, resolve, reject);
+        postAsArrayBuffer(params);
       } else {
         // not interested, rethrow
         throw e;
@@ -186,12 +204,10 @@ function isFile (v) {
  * the data over the iframe `postMessage()` call.
  *
  * @param {Object} params
- * @param {Function} resolve
- * @param {Function} reject
  * @private
  */
 
-function postAsArrayBuffer (params, resolve, reject) {
+function postAsArrayBuffer (params) {
   debug('converting File instances to ArrayBuffer before invoking postMessage()');
 
   var count = 0;
@@ -224,11 +240,6 @@ function postAsArrayBuffer (params, resolve, reject) {
   function postMessage () {
     debug('finished reading all Files');
     iframe.contentWindow.postMessage(params, proxyOrigin);
-
-    // needs to be added after the `.postMessage()` call otherwise
-    // a DOM error is thrown
-    params.resolve = resolve;
-    params.reject = reject;
   }
 }
 
@@ -303,8 +314,9 @@ function onload (e) {
 
   // flush any buffered API calls
   for (var i = 0; i < buffered.length; i++) {
-    submitRequest.apply(null, buffered[i]);
+    submitRequest(buffered[i]);
   }
+
   buffered = null;
 }
 
@@ -325,21 +337,29 @@ function onmessage (e) {
   }
 
   var data = e.data;
-  if (!data || !data.length) {
+  if (!data) return debug('no `data`, bailing');
+
+  // check if we're receiving a "progress" event
+  if (data.upload || data.download) {
+    return onprogress(data);
+  }
+
+  if (!data.length) {
     debug('`e.data` doesn\'t appear to be an Array, bailing...');
     return;
   }
 
+  // first get the `xhr` instance that we're interested in
   var id = data[data.length - 1];
-  var params = requests[id];
+  var xhr = requests[id];
   delete requests[id];
 
   var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
 
-  if (!params.metaAPI) {
-    debug('got %o status code for URL: %o', statusCode, params.path);
+  if (!xhr.params.metaAPI) {
+    debug('got %o status code for URL: %o', statusCode, xhr.params.path);
   }
 
   if (body && headers) {
@@ -348,7 +368,7 @@ function onmessage (e) {
 
   if (null == statusCode || 2 === Math.floor(statusCode / 100)) {
     // 2xx status code, success
-    params.resolve(body);
+    resolve(xhr, body);
   } else {
     // any other status code is a failure
     var err = new Error();
@@ -356,8 +376,53 @@ function onmessage (e) {
     for (var i in body) err[i] = body[i];
     if (body.error) err.name = toTitle(body.error) + 'Error';
 
-    params.reject(err);
+    reject(xhr, err);
   }
+}
+
+/**
+ * Handles a "progress" event being proxied back from the iframe page.
+ *
+ * @param {Object} data
+ * @private
+ */
+
+function onprogress (data) {
+  debug('got "progress" event: %o', data);
+  var xhr = requests[data.callbackId];
+  if (xhr) {
+    var prog = new ProgressEvent('progress', data);
+    var target = data.upload ? xhr.upload : xhr;
+    target.dispatchEvent(prog);
+  }
+}
+
+/**
+ * Emits the "load" event on the `xhr`.
+ *
+ * @param {XMLHttpRequest} xhr
+ * @param {Object} body
+ * @private
+ */
+
+function resolve (xhr, body) {
+  var e = new ProgressEvent('load');
+  e.data = e.body = e.response = body;
+  xhr.dispatchEvent(e);
+}
+
+/**
+ * Emits the "error" event on the `xhr`.
+ *
+ * @param {XMLHttpRequest} xhr
+ * @param {Error} err
+ * @private
+ */
+
+function reject (xhr, err) {
+  var e = new ProgressEvent('error');
+  e.error = e.err = err;
+  xhr.dispatchEvent(e);
 }
 
 function toTitle (str) {
