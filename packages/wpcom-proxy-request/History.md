@@ -1,4 +1,10 @@
 
+1.0.1 / 2014-10-21
+==================
+
+ * index: bail if no matching XHR instance was found
+ * index: use `event` module to listen for XHR events
+
 1.0.0 / 2014-10-20
 ==================
 
