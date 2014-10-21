@@ -59,7 +59,7 @@ WPCOM.prototype.batch = function(){
  */
 
 WPCOM.prototype.freshlyPressed = function(query, fn){
-  this.sendRequest('/freshly-pressed', query, null, fn);
+  return this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
 /**
@@ -103,7 +103,7 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   if (!fn) fn = function(err){ if (err) throw err; };
 
   // request method
-  this.request(params, fn);
+  return this.request(params, fn);
 };
 
 /**
@@ -162,7 +162,7 @@ Batch.prototype.run = function(query, fn){
   }
   query.urls = this.urls;
 
-  this.wpcom.sendRequest('/batch', query, null, fn);
+  return this.wpcom.sendRequest('/batch', query, null, fn);
 };
 
 /**
@@ -221,7 +221,7 @@ Category.prototype.slug = function(slug){
 
 Category.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -234,7 +234,7 @@ Category.prototype.get = function(query, fn){
 
 Category.prototype.add = function(body, fn){
   var path = '/sites/' + this._sid + '/categories/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -247,7 +247,7 @@ Category.prototype.add = function(body, fn){
 
 Category.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -260,7 +260,7 @@ Category.prototype.update = function(body, fn){
 Category.prototype['delete'] =
 Category.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -311,7 +311,7 @@ function Comment(cid, pid, sid, wpcom){
 
 Comment.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -324,7 +324,7 @@ Comment.prototype.get = function(query, fn){
 
 Comment.prototype.replies = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -339,7 +339,7 @@ Comment.prototype.add = function(body, fn){
   body = 'string' == typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -354,7 +354,7 @@ Comment.prototype.update = function(body, fn){
   body = 'string' == typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -369,7 +369,7 @@ Comment.prototype.reply = function(body, fn){
   body = 'string' == typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -382,7 +382,7 @@ Comment.prototype.reply = function(body, fn){
 Comment.prototype['delete'] =
 Comment.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -405,7 +405,7 @@ Comment.prototype.like = function(){
 
 Comment.prototype.likesList = function(query, fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -458,7 +458,7 @@ function CommentLike(cid, sid, wpcom){
 CommentLike.prototype.state =
 CommentLike.prototype.mine = function(query, fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -471,7 +471,7 @@ CommentLike.prototype.mine = function(query, fn){
 
 CommentLike.prototype.add = function(query, fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
 };
 
 /**
@@ -484,7 +484,7 @@ CommentLike.prototype.add = function(query, fn){
 CommentLike.prototype['delete'] =
 CommentLike.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -530,7 +530,7 @@ function Follow(site_id, wpcom){
 Follow.prototype.follow =
 Follow.prototype.add = function(query, fn) {
   var path = '/sites/' + this._sid + '/follows/new';
-  this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
+  return this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
 };
 
 /**
@@ -543,7 +543,7 @@ Follow.prototype.add = function(query, fn) {
 Follow.prototype.unfollow =
 Follow.prototype.del = function(query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine/delete';
-  this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
+  return this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
 };
 
 /**
@@ -557,7 +557,7 @@ Follow.prototype.del = function(query, fn) {
 Follow.prototype.state =
 Follow.prototype.mine = function(query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -610,7 +610,7 @@ function Like(pid, sid, wpcom){
 Like.prototype.state =
 Like.prototype.mine = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -623,7 +623,7 @@ Like.prototype.mine = function(query, fn){
 
 Like.prototype.add = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
 };
 
 /**
@@ -636,7 +636,7 @@ Like.prototype.add = function(query, fn){
 Like.prototype['delete'] =
 Like.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -674,7 +674,7 @@ function Me(wpcom){
  */
 
 Me.prototype.get = function(query, fn){
-  this.wpcom.sendRequest('/me', query, null, fn);
+  return this.wpcom.sendRequest('/me', query, null, fn);
 };
 
 /**
@@ -686,7 +686,7 @@ Me.prototype.get = function(query, fn){
  */
 
 Me.prototype.sites = function(query, fn){
-  this.wpcom.sendRequest('/me/sites', query, null, fn);
+  return this.wpcom.sendRequest('/me/sites', query, null, fn);
 };
 
 /**
@@ -698,7 +698,7 @@ Me.prototype.sites = function(query, fn){
  */
 
 Me.prototype.likes = function(query, fn){
-  this.wpcom.sendRequest('/me/likes', query, null, fn);
+  return this.wpcom.sendRequest('/me/likes', query, null, fn);
 };
 
 /**
@@ -710,7 +710,7 @@ Me.prototype.likes = function(query, fn){
  */
 
 Me.prototype.groups = function(query, fn){
-  this.wpcom.sendRequest('/me/groups', query, null, fn);
+  return this.wpcom.sendRequest('/me/groups', query, null, fn);
 };
 
 /**
@@ -722,7 +722,7 @@ Me.prototype.groups = function(query, fn){
  */
 
 Me.prototype.connections = function(query, fn){
-  this.wpcom.sendRequest('/me/connections', query, null, fn);
+  return this.wpcom.sendRequest('/me/connections', query, null, fn);
 };
 
 /**
@@ -770,7 +770,7 @@ function Media(id, sid, wpcom){
 
 Media.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -783,7 +783,7 @@ Media.prototype.get = function(query, fn){
 
 Media.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -803,7 +803,7 @@ Media.prototype.addFiles = function(files, fn){
     params.formData.push(['media[]', files[i]]);
   }
 
-  this.wpcom.sendRequest(params, null, null, fn);
+  return this.wpcom.sendRequest(params, null, null, fn);
 };
 
 /**
@@ -824,7 +824,7 @@ Media.prototype.addUrls = function(files, fn){
     body.media_urls.push(files[i]);
   }
 
-  this.wpcom.sendRequest(params, null, body, fn);
+  return this.wpcom.sendRequest(params, null, body, fn);
 };
 
 /**
@@ -837,7 +837,7 @@ Media.prototype.addUrls = function(files, fn){
 Media.prototype['delete'] =
 Media.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -917,7 +917,7 @@ Post.prototype.get = function(query, fn){
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -930,7 +930,7 @@ Post.prototype.get = function(query, fn){
 
 Post.prototype.getBySlug = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -943,7 +943,7 @@ Post.prototype.getBySlug = function(query, fn){
 
 Post.prototype.add = function(body, fn){
   var path = '/sites/' + this._sid + '/posts/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -956,7 +956,7 @@ Post.prototype.add = function(body, fn){
 
 Post.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -969,7 +969,7 @@ Post.prototype.update = function(body, fn){
 Post.prototype['delete'] =
 Post.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -982,7 +982,7 @@ Post.prototype.del = function(fn){
 
 Post.prototype.likesList = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -995,7 +995,7 @@ Post.prototype.likesList = function(query, fn){
 
 Post.prototype.related = function(body, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -1094,7 +1094,7 @@ function Reblog(pid, sid, wpcom){
 Reblog.prototype.state =
 Reblog.prototype.mine = function(query, fn){
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -1111,7 +1111,7 @@ Reblog.prototype.add = function(body, fn){
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -1199,7 +1199,7 @@ function Site(id, wpcom){
  */
 
 Site.prototype.get = function(query, fn){
-  this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
+  return this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
 };
 
 /**
@@ -1221,7 +1221,7 @@ var list = function(subpath) {
    */
 
   return function (query, fn){
-    this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
+    return this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
   };
 };
 
@@ -1234,7 +1234,7 @@ for (var i = 0; i < resources.length; i++) {
   var subpath = isarr ? res[1] : res;
 
   debug('adding %o method in %o sub-path', 'site.' + name + '()', subpath);
-  Site.prototype[name] = list.call(this, subpath);
+  Site.prototype[name] = list(subpath);
 }
 
 /**
@@ -1260,8 +1260,7 @@ Site.prototype.post = function(id){
 
 Site.prototype.addPost = function(body, fn){
   var post = Post(null, this._id, this.wpcom);
-  post.add(body, fn);
-  return post;
+  return post.add(body, fn);
 };
 
 /**
@@ -1275,8 +1274,7 @@ Site.prototype.addPost = function(body, fn){
 
 Site.prototype.deletePost = function(id, fn){
   var post = Post(id, this._id, this.wpcom);
-  post.delete(fn);
-  return post;
+  return post.delete(fn);
 };
 
 /**
@@ -1302,8 +1300,7 @@ Site.prototype.media = function(id){
 
 Site.prototype.addMediaFiles = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.addFiles(files, fn);
-  return media;
+  return media.addFiles(files, fn);
 };
 
 /**
@@ -1317,8 +1314,7 @@ Site.prototype.addMediaFiles = function(files, fn){
 
 Site.prototype.addMediaUrls = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.addUrls(files, fn);
-  return media;
+  return media.addUrls(files, fn);
 };
 
 /**
@@ -1332,8 +1328,7 @@ Site.prototype.addMediaUrls = function(files, fn){
 
 Site.prototype.deleteMedia = function(id, fn){
   var media = Media(id, this._id, this.wpcom);
-  media.del(fn);
-  return media;
+  return media.del(fn);
 };
 
 /**
@@ -1438,7 +1433,7 @@ Tag.prototype.slug = function(slug){
 
 Tag.prototype.get = function(query, fn){
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  this.wpcom.sendRequest(path, query, null, fn);
+  return this.wpcom.sendRequest(path, query, null, fn);
 };
 
 /**
@@ -1451,7 +1446,7 @@ Tag.prototype.get = function(query, fn){
 
 Tag.prototype.add = function(body, fn){
   var path = '/sites/' + this._sid + '/tags/new';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -1464,7 +1459,7 @@ Tag.prototype.add = function(body, fn){
 
 Tag.prototype.update = function(body, fn){
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
 };
 
 /**
@@ -1477,7 +1472,7 @@ Tag.prototype.update = function(body, fn){
 Tag.prototype['delete'] =
 Tag.prototype.del = function(fn){
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
-  this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
 };
 
 /**
@@ -2082,6 +2077,8 @@ function request (params, fn) {
       fn(err);
     }
   });
+
+  return req.xhr;
 }
 
 function toTitle (str) {
@@ -2448,7 +2445,7 @@ Response.prototype.setHeaderProperties = function(header){
 
 Response.prototype.parseBody = function(str){
   var parse = request.parse[this.type];
-  return parse
+  return parse && str && str.length
     ? parse(str)
     : null;
 };
@@ -2544,9 +2541,16 @@ function Request(method, url) {
   this.header = {};
   this._header = {};
   this.on('end', function(){
-    var res = new Response(self);
-    if ('HEAD' == method) res.text = null;
-    self.callback(null, res);
+    try {
+      var res = new Response(self);
+      if ('HEAD' == method) res.text = null;
+      self.callback(null, res);
+    } catch(e) {
+      var err = new Error('Parser is unable to parse the response');
+      err.parse = true;
+      err.original = e;
+      self.callback(err);
+    }
   });
 }
 
@@ -2636,6 +2640,26 @@ Request.prototype.set = function(field, val){
   }
   this._header[field.toLowerCase()] = val;
   this.header[field] = val;
+  return this;
+};
+
+/**
+ * Remove header `field`.
+ *
+ * Example:
+ *
+ *      req.get('/')
+ *        .unset('User-Agent')
+ *        .end(callback);
+ *
+ * @param {String} field
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.unset = function(field){
+  delete this._header[field.toLowerCase()];
+  delete this.header[field];
   return this;
 };
 
