@@ -118,8 +118,7 @@ Site.prototype.post = function(id){
 
 Site.prototype.addPost = function(body, fn){
   var post = Post(null, this._id, this.wpcom);
-  post.add(body, fn);
-  return post;
+  return post.add(body, fn);
 };
 
 /**
@@ -133,8 +132,7 @@ Site.prototype.addPost = function(body, fn){
 
 Site.prototype.deletePost = function(id, fn){
   var post = Post(id, this._id, this.wpcom);
-  post.delete(fn);
-  return post;
+  return post.delete(fn);
 };
 
 /**
@@ -160,8 +158,7 @@ Site.prototype.media = function(id){
 
 Site.prototype.addMediaFiles = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.addFiles(files, fn);
-  return media;
+  return media.addFiles(files, fn);
 };
 
 /**
@@ -175,8 +172,7 @@ Site.prototype.addMediaFiles = function(files, fn){
 
 Site.prototype.addMediaUrls = function(files, fn){
   var media = Media(null, this._id, this.wpcom);
-  media.addUrls(files, fn);
-  return media;
+  return media.addUrls(files, fn);
 };
 
 /**
@@ -190,8 +186,7 @@ Site.prototype.addMediaUrls = function(files, fn){
 
 Site.prototype.deleteMedia = function(id, fn){
   var media = Media(id, this._id, this.wpcom);
-  media.del(fn);
-  return media;
+  return media.del(fn);
 };
 
 /**
