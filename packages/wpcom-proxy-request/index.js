@@ -124,8 +124,9 @@ function request (params, fn) {
       called = true;
       fn(e.error || e.err || e);
     }
-    xhr.onload = onload;
-    xhr.onerror = xhr.onabort = onerror;
+    event.bind(xhr, 'load', onload);
+    event.bind(xhr, 'abort', onerror);
+    event.bind(xhr, 'error', onerror);
   }
 
   if (loaded) {
