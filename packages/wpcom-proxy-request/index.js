@@ -346,12 +346,15 @@ function onmessage (e) {
   }
 
   if (!data.length) {
-    debug('`e.data` doesn\'t appear to be an Array, bailing...');
-    return;
+    return debug('`e.data` doesn\'t appear to be an Array, bailing...');
   }
 
   // first get the `xhr` instance that we're interested in
   var id = data[data.length - 1];
+  if (!(id in requests)) {
+    return debug('bailing, no matching request with callback: %o', id);
+  }
+
   var xhr = requests[id];
   delete requests[id];
 
