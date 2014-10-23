@@ -21,7 +21,8 @@ var test = require('./data');
  */
 
 describe('WPCOM#Site#Media', function(){
-  var post_added;
+  var add_urls_array;
+  var add_urls_object;
 
   // Create a new_media before to start the tests
 
@@ -38,16 +39,28 @@ describe('WPCOM#Site#Media', function(){
   after(function(done){
     var site = util.private_site();
 
-    // clean new_post post
-    site.deleteMedia(media_added.media[0].id, function(err, data) {
+    // clean media added through of array by urls
+    site.deleteMedia(add_urls_array.media[0].ID, function(err, data) {
       if (err) throw err;
 
-      // clean post_added post
-      site.deleteMedia(media_added.media[1].id, function(err, data) {
+      site.deleteMedia(add_urls_array.media[1].ID, function(err, data) {
         if (err) throw err;
-        done();
+
+        site.deleteMedia(add_urls_array.media[2].ID, function(err, data) {
+          if (err) throw err;
+
+          site.deleteMedia(add_urls_object.media[0].ID, function(err, data) {
+            if (err) throw err;
+
+            done();
+          });
+
+        });
+
       });
+
     });
+
   });
 
   describe('sync', function(){
@@ -70,7 +83,7 @@ describe('WPCOM#Site#Media', function(){
         media.get(function(err, info){
           if (err) throw err;
 
-          assert.equal(3, info.id);
+          assert.equal(3, info.ID);
           done();
         });
       });
@@ -84,8 +97,8 @@ describe('WPCOM#Site#Media', function(){
         var edited_title = "This is the new title";
 
         site
-        .media(new_media.media[0].id)
-        .update( { title: edited_title }, function(err, data){
+        .media(new_media.media[0].ID)
+        .update({ apiVersion: '1.1' }, { title: edited_title }, function(err, data){
           if (err) throw err;
 
           assert.ok(data);
@@ -102,15 +115,9 @@ describe('WPCOM#Site#Media', function(){
       it('should create a new media from a file', function(done){
         var site = util.private_site();
 
-        // pass streams
-        var files = [];
-        for (var i = 0; i < test.new_media_data.files.length; i++) {
-          files.push(fs.createReadStream(test.new_media_data.files[i]));
-        }
-
         site
         .media()
-        .addFiles(files, function(err, data){
+        .addFiles(test.new_media_data.files, function(err, data){
           if (err) throw err;
 
           assert.ok(data);
@@ -123,7 +130,26 @@ describe('WPCOM#Site#Media', function(){
 
     });
 
-    describe('media.addUrls([\'url1\', \'url2\'])', function(){
+    describe('media.addUrls(object)', function(){
+
+      it('should create a new media from an object', function(done){
+        var site = util.private_site();
+        var media_object = test.new_media_data.media_urls[1];
+
+        site
+        .media()
+        .addUrls(media_object, function(err, data){
+          if (err) throw err;
+
+          assert.ok(data);
+          add_urls_object = data;
+          done();
+        });
+      });
+
+    });
+
+    describe('media.addUrls(["url1", {object}, "url2"])', function(){
 
       it('should create a new media', function(done){
         var site = util.private_site();
@@ -137,7 +163,7 @@ describe('WPCOM#Site#Media', function(){
           assert.ok(data.media instanceof Array);
           assert.equal(test.new_media_data.media_urls.length, data.media.length);
 
-          media_added = data;
+          add_urls_array = data;
 
           done();
         });
@@ -152,11 +178,11 @@ describe('WPCOM#Site#Media', function(){
         var site = util.private_site();
 
         site
-        .media(new_media.media[0].id)
+        .media(new_media.media[0].ID)
         .del(function(err, data){
           if (err) throw err;
 
-          assert.equal(new_media.media[0].id, data.id);
+          assert.equal(new_media.media[0].ID, data.ID);
           done();
         });
 

@@ -473,14 +473,7 @@ describe('WPCOM#Site', function(){
       it('should create a new media from a file', function(done){
         var site = util.private_site();
 
-        // pass streams
-        var files = [];
-        //test.new_media_data.files
-        for (var i = 0; i < test.new_media_data.files.length; i++) {
-          files.push(fs.createReadStream(test.new_media_data.files[i]));
-        }
-
-        var media = site.addMediaFiles(files, function(err, data){
+        var media = site.addMediaFiles(test.new_media_data.files, function(err, data){
           if (err) throw err;
 
           assert.ok(data);

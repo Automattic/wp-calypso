@@ -39,7 +39,7 @@ example-browser-cors: all
 
 test:
 	@$(MOCHA) \
-		--timeout 10s \
+		--timeout 20s \
 		--slow 3s \
 		--grep "$(filter-out $@,$(MAKECMDGOALS))" \
 		--bail \
@@ -47,7 +47,7 @@ test:
 
 test-all:
 	@$(MOCHA) \
-		--timeout 10s \
+		--timeout 60s \
 		--slow 3s \
 		--bail \
 		--reporter spec

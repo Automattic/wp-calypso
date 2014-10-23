@@ -95,7 +95,11 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   }
 
   // pass `query` and/or `body` to request params
-  if (query) params.query = query;
+  if (query) {
+    params.query = query;
+    delete query.apiVersion;
+  }
+
   if (body) params.body = body;
 
   // callback `fn` function is optional
