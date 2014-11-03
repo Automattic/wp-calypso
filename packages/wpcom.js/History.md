@@ -1,4 +1,15 @@
 
+2.4.0 / 2014-11-03
+==================
+
+ * media: fix bug adding media files in client-side
+ * examples: add browser-proxy "upload.html" example
+ * media: add optional [query] parameter.
+ * pkg: update "wpcom-xhr-request" to v0.3.0
+ * add `return` statement to all `sendRequest()` calls
+ * media: support new api features
+ * media: use api version 1.1
+
 2.3.0 / 2014-10-10
 ==================
 

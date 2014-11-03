@@ -12,10 +12,10 @@
 
     <p id="message"></p>
 
-    <script src="/wpcom.js"></script>
+    <script src="/dist/wpcom.js"></script>
     <script>
-      var token = ""; // <- your token here
-      var site = ""; // <- your site here
+      var token = "8$L57^PE%1xfYdW4q86gvsO8FMxTA8c1(!JH*FA2RA7lN)!C%bE$LhW%D*vE(7H#"; // <- your token here
+      var site = "60487750"; // <- your site here
 
       if (!token.length) {
         alert('Define your token !! :-)');
@@ -39,14 +39,25 @@
 
         filecontainer.innerHTML = 'Uploading ' + files.length + ' images ...';
 
-        wpcom
+        var req = wpcom
         .site(site)
         .addMediaFiles(files, function(err, data){
           if (err) return filecontainer.innerHTML = err.message;
 
           filecontainer.innerHTML = data.media.length + ' files uploaded';
         });
+
+        req.upload.onprogress = onprogress;
       };
+
+      function onprogress (e) {
+        if (e.lengthComputable) {
+          var percentComplete = e.loaded / e.total * 100;
+          console.log('progress event! %s%', percentComplete.toFixed(2));
+        } else {
+          // Unable to compute progress information since the total size is unknown
+        }
+      }
 
     </script>
   </body>
