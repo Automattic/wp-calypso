@@ -6,7 +6,6 @@
 var fs = require('fs');
 var debug = require('debug')('wpcom:media');
 
-
 /**
  * Default api version
  */
@@ -104,10 +103,14 @@ Media.prototype.addFiles = function(query, files, fn){
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
 
-    // f != string
-    if ('string' != typeof f) {
-      // set attrs
+    f = 'string' == typeof f ? fs.createReadStream(f) : f;
+
+    if ('undefined' == typeof f.lastModified &&
+        'undefined' == typeof f._readableState) {
+
+      // process file attributes like as `title`, `description`, ...
       for (var k in f) {
+        debug('add %o => %o', k, f[k]);
         if ('file' != k) {
           var param = 'attrs[' + i + '][' + k + ']';
           params.formData.push([param, f[k]]);
@@ -115,11 +118,7 @@ Media.prototype.addFiles = function(query, files, fn){
       }
       // set file path
       f = f.file;
-    }
-
-    // create stream if it's necessary
-    if (!f._readableState) {
-      f = fs.createReadStream(f);
+      f = 'string' == typeof f ? fs.createReadStream(f) : f;
     }
 
     params.formData.push(['media[]', f]);
