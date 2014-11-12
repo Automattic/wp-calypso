@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>WordPress.com REST API Proxy Request Test Page</title>
+    <title>WordPress.com REST API Proxy Me Test Page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
@@ -19,9 +19,9 @@
         if (err) throw err;
         console.log(res);
 
-        var div = document.createElement('div');
-        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '<\/b>';
-        document.body.appendChild(div);
+        var d = document.createElement('pre');
+        d.innerHTML = JSON.stringify(res, null, 2);
+        document.body.appendChild(d);
       });
 
       console.log(req);
