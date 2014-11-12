@@ -4,22 +4,24 @@
  */
 
 var WPCOM = require('./wpcom');
-var wpcomXhrRequest = require('wpcom-xhr-request');
+var request = require('wpcom-xhr-request');
 
 /**
  * XMLHttpRequest (and CORS) API access method.
- * API authentication is done via an (optional) access `token`,
- * which needs to be retrieved via OAuth (see `wpcom-oauth` on npm).
  *
- * @param {String} token (optional) OAuth API access token
- * @api public
+ * API authentication is done via an (optional) access `token`,
+ * which needs to be retrieved via OAuth.
+ *
+ * (for server-side auth, use `wpcom-oauth` on npm).
+ * (for client-side auth, use `wpcom-browser-auth` on npm).
+ *
+ * @param {String} [token] - OAuth API access token
+ * @public
  */
 
 module.exports = function(token){
-  return WPCOM(request);
-
-  function request(params, fn){
+  return new WPCOM(function(params, fn){
     params.authToken = token;
-    return wpcomXhrRequest(params, fn);
-  }
+    return request(params, fn);
+  });
 };
