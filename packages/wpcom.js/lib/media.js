@@ -105,9 +105,13 @@ Media.prototype.addFiles = function(query, files, fn){
 
     f = 'string' == typeof f ? fs.createReadStream(f) : f;
 
-    if ('undefined' == typeof f.lastModified &&
-        'undefined' == typeof f._readableState) {
+    var isStream = !!f._readableState;
+    var isFile = f instanceof File;
 
+    debug('is stream: %s', isStream);
+    debug('is file: %s', isFile);
+
+    if (!isFile && !isStream) {
       // process file attributes like as `title`, `description`, ...
       for (var k in f) {
         debug('add %o => %o', k, f[k]);
