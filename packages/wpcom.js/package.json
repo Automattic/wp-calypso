@@ -16,7 +16,6 @@
     "library"
   ],
   "repository": "git@github.com:Automattic/wpcom.js.git",
-  "main": "wpcom+xhr.js",
   "license": "MIT",
   "dependencies": {
     "debug": "~2.1.0",

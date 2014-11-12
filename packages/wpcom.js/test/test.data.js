@@ -58,7 +58,7 @@ describe('testing data', function(){
   describe('util', function(){
     it('should create a wpcom instance', function(){
       var wpcom = util.wpcom();
-      assert.ok(wpcom instanceof WPCOM);
+      assert.ok(wpcom);
     });
 
     it('should create a blog instance', function(){
