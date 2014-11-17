@@ -57,7 +57,7 @@ Batch.prototype.run = function(query, fn){
 
 module.exports = Batch;
 
-},{"debug":14}],2:[function(require,module,exports){
+},{"debug":13}],2:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -155,7 +155,7 @@ Category.prototype.del = function(fn){
 
 module.exports = Category;
 
-},{"debug":14}],3:[function(require,module,exports){
+},{"debug":13}],3:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -300,7 +300,7 @@ Comment.prototype.likesList = function(query, fn){
 
 module.exports = Comment;
 
-},{"./commentlike":4,"debug":14}],4:[function(require,module,exports){
+},{"./commentlike":4,"debug":13}],4:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -379,7 +379,7 @@ CommentLike.prototype.del = function(fn){
 
 module.exports = CommentLike;
 
-},{"debug":14}],5:[function(require,module,exports){
+},{"debug":13}],5:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -452,7 +452,7 @@ Follow.prototype.mine = function(query, fn) {
 
 module.exports = Follow;
 
-},{"debug":14}],6:[function(require,module,exports){
+},{"debug":13}],6:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -531,7 +531,7 @@ Like.prototype.del = function(fn){
 
 module.exports = Like;
 
-},{"debug":14}],7:[function(require,module,exports){
+},{"debug":13}],7:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -617,13 +617,12 @@ Me.prototype.connections = function(query, fn){
 
 module.exports = Me;
 
-},{"debug":14}],8:[function(require,module,exports){
+},{"debug":13}],8:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var fs = require('fs');
 var debug = require('debug')('wpcom:media');
 
 /**
@@ -723,8 +722,6 @@ Media.prototype.addFiles = function(query, files, fn){
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
 
-    f = 'string' == typeof f ? fs.createReadStream(f) : f;
-
     var isStream = !!f._readableState;
     var isFile = 'undefined' != typeof File && f instanceof File;
 
@@ -740,9 +737,8 @@ Media.prototype.addFiles = function(query, files, fn){
           params.formData.push([param, f[k]]);
         }
       }
-      // set file path
+      // set file
       f = f.file;
-      f = 'string' == typeof f ? fs.createReadStream(f) : f;
     }
 
     params.formData.push(['media[]', f]);
@@ -832,7 +828,7 @@ Media.prototype.del = function(query, fn){
 
 module.exports = Media;
 
-},{"debug":14,"fs":13}],9:[function(require,module,exports){
+},{"debug":13}],9:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1036,7 +1032,7 @@ Post.prototype.comments = function(query, fn){
 
 module.exports = Post;
 
-},{"./comment":3,"./like":6,"./reblog":10,"debug":14}],10:[function(require,module,exports){
+},{"./comment":3,"./like":6,"./reblog":10,"debug":13}],10:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1125,7 +1121,7 @@ Reblog.prototype.to = function(dest, note, fn){
 
 module.exports = Reblog;
 
-},{"debug":14}],11:[function(require,module,exports){
+},{"debug":13}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1371,7 +1367,7 @@ Site.prototype.tag = function(slug){
 
 module.exports = Site;
 
-},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":14}],12:[function(require,module,exports){
+},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":13}],12:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1469,9 +1465,7 @@ Tag.prototype.del = function(fn){
 
 module.exports = Tag;
 
-},{"debug":14}],13:[function(require,module,exports){
-
-},{}],14:[function(require,module,exports){
+},{"debug":13}],13:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -1620,7 +1614,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":15}],15:[function(require,module,exports){
+},{"./debug":14}],14:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -1819,7 +1813,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":16}],16:[function(require,module,exports){
+},{"ms":15}],15:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -1932,7 +1926,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -2053,7 +2047,7 @@ function toTitle (str) {
   });
 }
 
-},{"debug":14,"superagent":18}],18:[function(require,module,exports){
+},{"debug":13,"superagent":17}],17:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3131,7 +3125,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":19,"reduce":20}],19:[function(require,module,exports){
+},{"emitter":18,"reduce":19}],18:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -3297,7 +3291,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -3322,7 +3316,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -3441,32 +3435,34 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
 
 module.exports = WPCOM;
 
-},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"debug":14}],22:[function(require,module,exports){
+},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"debug":13}],21:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
 var WPCOM = require('./wpcom');
-var wpcomXhrRequest = require('wpcom-xhr-request');
+var request = require('wpcom-xhr-request');
 
 /**
  * XMLHttpRequest (and CORS) API access method.
- * API authentication is done via an (optional) access `token`,
- * which needs to be retrieved via OAuth (see `wpcom-oauth` on npm).
  *
- * @param {String} token (optional) OAuth API access token
- * @api public
+ * API authentication is done via an (optional) access `token`,
+ * which needs to be retrieved via OAuth.
+ *
+ * (for server-side auth, use `wpcom-oauth` on npm).
+ * (for client-side auth, use `wpcom-browser-auth` on npm).
+ *
+ * @param {String} [token] - OAuth API access token
+ * @public
  */
 
 module.exports = function(token){
-  return WPCOM(request);
-
-  function request(params, fn){
+  return new WPCOM(function(params, fn){
     params.authToken = token;
-    return wpcomXhrRequest(params, fn);
-  }
+    return request(params, fn);
+  });
 };
 
-},{"./wpcom":21,"wpcom-xhr-request":17}]},{},[22])(22)
+},{"./wpcom":20,"wpcom-xhr-request":16}]},{},[21])(21)
 });
