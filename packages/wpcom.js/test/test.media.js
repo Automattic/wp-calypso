@@ -114,15 +114,16 @@ describe('WPCOM#Site#Media', function(){
 
       it('should create a new media from a file', function(done){
         var site = util.private_site();
+        var files = util.getFiles();
 
         site
         .media()
-        .addFiles(test.new_media_data.files, function(err, data){
+        .addFiles(files, function(err, data){
           if (err) throw err;
 
           assert.ok(data);
           assert.ok(data.media instanceof Array);
-          assert.equal(test.new_media_data.files.length, data.media.length);
+          assert.equal(files.length, data.media.length);
           done();
         });
 

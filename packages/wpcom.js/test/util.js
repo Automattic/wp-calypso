@@ -74,7 +74,35 @@ Util.addPost = function(fn){
 
 Util.addMedia = function(fn){
   var site = Util.private_site();
-  site.addMediaFiles(test.new_media_data.files[1], fn);
+  var file = test.new_media_data.files[1];
+  file = file._readableState ? file : fs.createReadStream(file);
+
+  site.addMediaFiles(file, fn);
+};
+
+/**
+ * Get media files
+ */
+
+Util.getFiles = function(){
+  // pre-process files array
+  var files = [];
+  for (var i = 0; i < test.new_media_data.files.length; i++) {
+
+    var f = test.new_media_data.files[i];
+    if ('string' == typeof f) {
+      files.push(fs.createReadStream(f));
+    } else {
+      files.push({
+        title: f.title,
+        description: f.description,
+        caption: f.caption,
+        file: fs.createReadStream(f.file)
+      });
+    }
+  }
+
+  return files;
 };
 
 /**
