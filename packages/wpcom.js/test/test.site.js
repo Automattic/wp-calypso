@@ -473,10 +473,7 @@ describe('WPCOM#Site', function(){
       it('should create a new media from a file', function(done){
         var site = util.private_site();
 
-        // pre-process files array
-        var files = util.getFiles();
-
-        var media = site.addMediaFiles(files, function(err, data){
+        var media = site.addMediaFiles(test.new_media_data.files, function(err, data){
           if (err) throw err;
 
           assert.ok(data);

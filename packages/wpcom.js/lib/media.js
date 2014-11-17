@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var fs = require('fs');
 var debug = require('debug')('wpcom:media');
 
 /**
@@ -102,6 +103,8 @@ Media.prototype.addFiles = function(query, files, fn){
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
 
+    f = 'string' == typeof f ? fs.createReadStream(f) : f;
+
     var isStream = !!f._readableState;
     var isFile = 'undefined' != typeof File && f instanceof File;
 
@@ -117,8 +120,9 @@ Media.prototype.addFiles = function(query, files, fn){
           params.formData.push([param, f[k]]);
         }
       }
-      // set file
+      // set file path
       f = f.file;
+      f = 'string' == typeof f ? fs.createReadStream(f) : f;
     }
 
     params.formData.push(['media[]', f]);
