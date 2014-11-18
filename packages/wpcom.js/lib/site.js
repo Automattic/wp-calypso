@@ -68,7 +68,7 @@ Site.prototype.get = function(query, fn){
  * @api private
  */
 
-var list = function(subpath) {
+var list = function(subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -79,7 +79,10 @@ var list = function(subpath) {
    */
 
   return function (query, fn){
-    return this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
+    return this.wpcom.sendRequest({
+      path: '/sites/' + this._id + '/' + subpath,
+      apiVersion: apiVersion
+    }, query, null, fn);
   };
 };
 
@@ -90,9 +93,10 @@ for (var i = 0; i < resources.length; i++) {
 
   var name =  isarr ? res[0] : res + 'List';
   var subpath = isarr ? res[1] : res;
+  var apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
-  debug('adding %o method in %o sub-path', 'site.' + name + '()', subpath);
-  Site.prototype[name] = list(subpath);
+  debug('adding %o method in %o sub-path (v%o)', 'site.' + name + '()', subpath, apiVersion);
+  Site.prototype[name] = list(subpath, apiVersion);
 }
 
 /**
