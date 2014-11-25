@@ -526,6 +526,38 @@ describe('WPCOM#Site#Post', function(){
 
     });
 
+    describe('post.restore()', function(){
+
+      it('should restore a post from trash', function(done){
+        var site = util.private_site();
+        var post = site.post();
+
+        post.add(test.new_post_data, function(err, data){
+          if (err) throw err;
+
+          post = site.post(data.ID);
+
+          post.delete(function(err, data){
+            if (err) throw err;
+
+            post.restore(function(err, data){
+              if (err) throw err;
+
+              assert.ok(data);
+              assert.equal(new_post.status, data.status);
+
+              post.delete(function(err, data){
+                if (err) throw err;
+
+                done();
+              });
+            });
+          });
+        });
+      });
+
+    });
+
   });
 
 });

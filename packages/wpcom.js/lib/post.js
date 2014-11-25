@@ -124,6 +124,18 @@ Post.prototype.del = function(fn){
 };
 
 /**
+ * Restore post
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.restore = function(fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+};
+
+/**
  * Get post likes list
  *
  * @param {Object} [query]
