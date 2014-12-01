@@ -57,7 +57,7 @@ Batch.prototype.run = function(query, fn){
 
 module.exports = Batch;
 
-},{"debug":13}],2:[function(require,module,exports){
+},{"debug":15}],2:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -155,7 +155,7 @@ Category.prototype.del = function(fn){
 
 module.exports = Category;
 
-},{"debug":13}],3:[function(require,module,exports){
+},{"debug":15}],3:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -300,7 +300,7 @@ Comment.prototype.likesList = function(query, fn){
 
 module.exports = Comment;
 
-},{"./commentlike":4,"debug":13}],4:[function(require,module,exports){
+},{"./commentlike":4,"debug":15}],4:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -379,7 +379,7 @@ CommentLike.prototype.del = function(fn){
 
 module.exports = CommentLike;
 
-},{"debug":13}],5:[function(require,module,exports){
+},{"debug":15}],5:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -452,7 +452,7 @@ Follow.prototype.mine = function(query, fn) {
 
 module.exports = Follow;
 
-},{"debug":13}],6:[function(require,module,exports){
+},{"debug":15}],6:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -531,7 +531,7 @@ Like.prototype.del = function(fn){
 
 module.exports = Like;
 
-},{"debug":13}],7:[function(require,module,exports){
+},{"debug":15}],7:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -617,12 +617,13 @@ Me.prototype.connections = function(query, fn){
 
 module.exports = Me;
 
-},{"debug":13}],8:[function(require,module,exports){
+},{"debug":15}],8:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var fs = require('fs');
 var debug = require('debug')('wpcom:media');
 
 /**
@@ -722,6 +723,8 @@ Media.prototype.addFiles = function(query, files, fn){
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
 
+    f = 'string' == typeof f ? fs.createReadStream(f) : f;
+
     var isStream = !!f._readableState;
     var isFile = 'undefined' != typeof File && f instanceof File;
 
@@ -737,8 +740,9 @@ Media.prototype.addFiles = function(query, files, fn){
           params.formData.push([param, f[k]]);
         }
       }
-      // set file
+      // set file path
       f = f.file;
+      f = 'string' == typeof f ? fs.createReadStream(f) : f;
     }
 
     params.formData.push(['media[]', f]);
@@ -828,7 +832,7 @@ Media.prototype.del = function(query, fn){
 
 module.exports = Media;
 
-},{"debug":13}],9:[function(require,module,exports){
+},{"debug":15,"fs":14}],9:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -955,6 +959,18 @@ Post.prototype.del = function(fn){
 };
 
 /**
+ * Restore post
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+Post.prototype.restore = function(fn){
+  var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
+  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+};
+
+/**
  * Get post likes list
  *
  * @param {Object} [query]
@@ -1032,7 +1048,7 @@ Post.prototype.comments = function(query, fn){
 
 module.exports = Post;
 
-},{"./comment":3,"./like":6,"./reblog":10,"debug":13}],10:[function(require,module,exports){
+},{"./comment":3,"./like":6,"./reblog":10,"debug":15}],10:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1121,7 +1137,7 @@ Reblog.prototype.to = function(dest, note, fn){
 
 module.exports = Reblog;
 
-},{"debug":13}],11:[function(require,module,exports){
+},{"debug":15}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1192,7 +1208,7 @@ Site.prototype.get = function(query, fn){
  * @api private
  */
 
-var list = function(subpath) {
+var list = function(subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -1203,7 +1219,10 @@ var list = function(subpath) {
    */
 
   return function (query, fn){
-    return this.wpcom.sendRequest('/sites/' + this._id + '/' + subpath, query, null, fn);
+    return this.wpcom.sendRequest({
+      path: '/sites/' + this._id + '/' + subpath,
+      apiVersion: apiVersion
+    }, query, null, fn);
   };
 };
 
@@ -1214,9 +1233,10 @@ for (var i = 0; i < resources.length; i++) {
 
   var name =  isarr ? res[0] : res + 'List';
   var subpath = isarr ? res[1] : res;
+  var apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
-  debug('adding %o method in %o sub-path', 'site.' + name + '()', subpath);
-  Site.prototype[name] = list(subpath);
+  debug('adding %o method in %o sub-path (v%o)', 'site.' + name + '()', subpath, apiVersion);
+  Site.prototype[name] = list(subpath, apiVersion);
 }
 
 /**
@@ -1367,7 +1387,7 @@ Site.prototype.tag = function(slug){
 
 module.exports = Site;
 
-},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":13}],12:[function(require,module,exports){
+},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":15}],12:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1465,7 +1485,49 @@ Tag.prototype.del = function(fn){
 
 module.exports = Tag;
 
-},{"debug":13}],13:[function(require,module,exports){
+},{"debug":15}],13:[function(require,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var debug = require('debug')('wpcom:users');
+
+/**
+ * Expose `Users` module
+ */
+
+module.exports = Users;
+
+/**
+ * Create a `Users` instance
+ *
+ * @param {WPCOM} wpcom
+ * @api public
+ */
+
+function Users(wpcom) {
+  if (!(this instanceof Users)) {
+    return new Users(wpcom);
+  }
+
+  this.wpcom = wpcom;
+}
+
+/**
+ * A list of @mention suggestions for the current user
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+Users.prototype.suggest = function (query, fn) {
+  return this.wpcom.sendRequest('/users/suggest', query, null, fn);
+};
+},{"debug":15}],14:[function(require,module,exports){
+
+},{}],15:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -1614,7 +1676,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":14}],14:[function(require,module,exports){
+},{"./debug":16}],16:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -1813,7 +1875,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":15}],15:[function(require,module,exports){
+},{"ms":17}],17:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -1926,7 +1988,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -2047,7 +2109,7 @@ function toTitle (str) {
   });
 }
 
-},{"debug":13,"superagent":17}],17:[function(require,module,exports){
+},{"debug":15,"superagent":19}],19:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3125,7 +3187,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":18,"reduce":19}],18:[function(require,module,exports){
+},{"emitter":20,"reduce":21}],20:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -3291,7 +3353,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -3316,7 +3378,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -3324,6 +3386,7 @@ module.exports = function(arr, fn, initial){
 
 var Me = require('./lib/me');
 var Site = require('./lib/site');
+var Users = require('./lib/users');
 var Batch = require('./lib/batch');
 var debug = require('debug')('wpcom');
 
@@ -3333,8 +3396,10 @@ var debug = require('debug')('wpcom');
  * @api public
  */
 
-function WPCOM(request){
-  if (!(this instanceof WPCOM)) return new WPCOM(request);
+function WPCOM(request) {
+  if (!(this instanceof WPCOM)) {
+    return new WPCOM(request);
+  }
 
   if ('function' !== typeof request) {
     throw new TypeError('a `request` WP.com function must be passed in');
@@ -3349,7 +3414,7 @@ function WPCOM(request){
  * @api public
  */
 
-WPCOM.prototype.me = function(){
+WPCOM.prototype.me = function () {
   return new Me(this);
 };
 
@@ -3360,12 +3425,22 @@ WPCOM.prototype.me = function(){
  * @api public
  */
 
-WPCOM.prototype.site = function(id){
+WPCOM.prototype.site = function (id) {
   return new Site(id, this);
 };
 
+/**
+ * Get `Users` object instance
+ *
+ * @api public
+ */
 
-WPCOM.prototype.batch = function(){
+WPCOM.prototype.users = function () {
+  return new Users(this);
+};
+
+
+WPCOM.prototype.batch = function () {
   return new Batch(this);
 };
 
@@ -3377,7 +3452,7 @@ WPCOM.prototype.batch = function(){
  * @api public
  */
 
-WPCOM.prototype.freshlyPressed = function(query, fn){
+WPCOM.prototype.freshlyPressed = function (query, fn) {
   return this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
@@ -3391,9 +3466,9 @@ WPCOM.prototype.freshlyPressed = function(query, fn){
  * @api private
  */
 
-WPCOM.prototype.sendRequest = function (params, query, body, fn){
+WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   // `params` can be just the path (String)
-  if ('string' == typeof params) {
+  if ('string' === typeof params) {
     params = { path: params };
   }
 
@@ -3403,13 +3478,13 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   params.method = (params.method || 'get').toUpperCase();
 
   // `query` is optional
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = null;
   }
 
   // `body` is optional
-  if ('function' == typeof body) {
+  if ('function' === typeof body) {
     fn = body;
     body = null;
   }
@@ -3420,10 +3495,14 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
     delete query.apiVersion;
   }
 
-  if (body) params.body = body;
+  if (body) {
+    params.body = body;
+  }
 
   // callback `fn` function is optional
-  if (!fn) fn = function(err){ if (err) throw err; };
+  if (!fn) {
+    fn = function (err) { if (err) { throw err; } };
+  }
 
   // request method
   return this.request(params, fn);
@@ -3435,7 +3514,7 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
 
 module.exports = WPCOM;
 
-},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"debug":13}],21:[function(require,module,exports){
+},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":15}],23:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -3464,5 +3543,5 @@ module.exports = function(token){
   });
 };
 
-},{"./wpcom":20,"wpcom-xhr-request":16}]},{},[21])(21)
+},{"./wpcom":22,"wpcom-xhr-request":18}]},{},[23])(23)
 });

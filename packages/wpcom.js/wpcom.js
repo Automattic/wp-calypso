@@ -5,6 +5,7 @@
 
 var Me = require('./lib/me');
 var Site = require('./lib/site');
+var Users = require('./lib/users');
 var Batch = require('./lib/batch');
 var debug = require('debug')('wpcom');
 
@@ -14,8 +15,10 @@ var debug = require('debug')('wpcom');
  * @api public
  */
 
-function WPCOM(request){
-  if (!(this instanceof WPCOM)) return new WPCOM(request);
+function WPCOM(request) {
+  if (!(this instanceof WPCOM)) {
+    return new WPCOM(request);
+  }
 
   if ('function' !== typeof request) {
     throw new TypeError('a `request` WP.com function must be passed in');
@@ -30,7 +33,7 @@ function WPCOM(request){
  * @api public
  */
 
-WPCOM.prototype.me = function(){
+WPCOM.prototype.me = function () {
   return new Me(this);
 };
 
@@ -41,12 +44,22 @@ WPCOM.prototype.me = function(){
  * @api public
  */
 
-WPCOM.prototype.site = function(id){
+WPCOM.prototype.site = function (id) {
   return new Site(id, this);
 };
 
+/**
+ * Get `Users` object instance
+ *
+ * @api public
+ */
 
-WPCOM.prototype.batch = function(){
+WPCOM.prototype.users = function () {
+  return new Users(this);
+};
+
+
+WPCOM.prototype.batch = function () {
   return new Batch(this);
 };
 
@@ -58,7 +71,7 @@ WPCOM.prototype.batch = function(){
  * @api public
  */
 
-WPCOM.prototype.freshlyPressed = function(query, fn){
+WPCOM.prototype.freshlyPressed = function (query, fn) {
   return this.sendRequest('/freshly-pressed', query, null, fn);
 };
 
@@ -72,9 +85,9 @@ WPCOM.prototype.freshlyPressed = function(query, fn){
  * @api private
  */
 
-WPCOM.prototype.sendRequest = function (params, query, body, fn){
+WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   // `params` can be just the path (String)
-  if ('string' == typeof params) {
+  if ('string' === typeof params) {
     params = { path: params };
   }
 
@@ -84,13 +97,13 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
   params.method = (params.method || 'get').toUpperCase();
 
   // `query` is optional
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = null;
   }
 
   // `body` is optional
-  if ('function' == typeof body) {
+  if ('function' === typeof body) {
     fn = body;
     body = null;
   }
@@ -101,10 +114,14 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn){
     delete query.apiVersion;
   }
 
-  if (body) params.body = body;
+  if (body) {
+    params.body = body;
+  }
 
   // callback `fn` function is optional
-  if (!fn) fn = function(err){ if (err) throw err; };
+  if (!fn) {
+    fn = function (err) { if (err) { throw err; } };
+  }
 
   // request method
   return this.request(params, fn);

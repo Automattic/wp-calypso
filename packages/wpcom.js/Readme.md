@@ -36,6 +36,7 @@ Include `dist/wpcom.js` in a `<script>` tag:
 * [Site](./docs/site.md)
 * [Post](./docs/post.md)
 * [Media](./docs/media.md)
+* [Users](./docs/users.md)
 
 ## Examples
 
