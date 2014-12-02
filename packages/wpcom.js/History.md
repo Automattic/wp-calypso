@@ -1,4 +1,20 @@
 
+3.0.0 / 2014-12-02
+==================
+
+ * add `requite` util module
+ * update coding
+ * core: Added users suggest endpoint
+ * Merge pull request #71 from Automattic/add/post-restore-endpoint
+ * Allow optional third-index apiVersion for resource list
+ * test: improve media util functions
+ * test: pre-process files in addFiles test
+ * test: update apiVersion tests using getFiles()
+ * test: add test.getFiles() method
+ * examples: better proxy me.html output
+ * test: fix testing data
+ * Get rid of confusion between `index.js` and `wpcom+xhr.js`
+
 2.6.0 / 2014-11-12
 ==================
 
