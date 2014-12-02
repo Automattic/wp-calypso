@@ -2,7 +2,7 @@
 /**
  * Module dependencies.
  */
-
+var request = require('./util/request');
 var debug = require('debug')('wpcom:me');
 
 /**
@@ -12,8 +12,11 @@ var debug = require('debug')('wpcom:me');
  * @api public
  */
 
-function Me(wpcom){
-  if (!(this instanceof Me)) return new Me(wpcom);
+function Me(wpcom) {
+  if (!(this instanceof Me)) {
+    return new Me(wpcom);
+  }
+
   this.wpcom = wpcom;
 }
 
@@ -25,8 +28,8 @@ function Me(wpcom){
  * @api public
  */
 
-Me.prototype.get = function(query, fn){
-  return this.wpcom.sendRequest('/me', query, null, fn);
+Me.prototype.get = function (query, fn) {
+  return request.get(this.wpcom, null, '/me', query, fn);
 };
 
 /**
@@ -37,8 +40,8 @@ Me.prototype.get = function(query, fn){
  * @api private
  */
 
-Me.prototype.sites = function(query, fn){
-  return this.wpcom.sendRequest('/me/sites', query, null, fn);
+Me.prototype.sites = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/sites', query, fn);
 };
 
 /**
@@ -49,8 +52,8 @@ Me.prototype.sites = function(query, fn){
  * @api public
  */
 
-Me.prototype.likes = function(query, fn){
-  return this.wpcom.sendRequest('/me/likes', query, null, fn);
+Me.prototype.likes = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/likes', query, fn);
 };
 
 /**
@@ -61,8 +64,8 @@ Me.prototype.likes = function(query, fn){
  * @api public
  */
 
-Me.prototype.groups = function(query, fn){
-  return this.wpcom.sendRequest('/me/groups', query, null, fn);
+Me.prototype.groups = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/groups', query, fn);
 };
 
 /**
@@ -73,8 +76,8 @@ Me.prototype.groups = function(query, fn){
  * @api public
  */
 
-Me.prototype.connections = function(query, fn){
-  return this.wpcom.sendRequest('/me/connections', query, null, fn);
+Me.prototype.connections = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/connections', query, fn);
 };
 
 /**

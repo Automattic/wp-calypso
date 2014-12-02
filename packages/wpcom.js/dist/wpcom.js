@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:batch');
 
 /**
@@ -13,8 +14,11 @@ var debug = require('debug')('wpcom:batch');
  * @api public
  */
 
-function Batch(wpcom){
-  if (!(this instanceof Batch)) return new Batch(wpcom);
+function Batch(wpcom) {
+  if (!(this instanceof Batch)) {
+    return new Batch(wpcom);
+  }
+
   this.wpcom = wpcom;
 
   this.urls = [];
@@ -27,7 +31,7 @@ function Batch(wpcom){
  * @api public
  */
 
-Batch.prototype.add = function(url){
+Batch.prototype.add = function (url) {
   this.urls.push(url);
   return this;
 };
@@ -40,15 +44,15 @@ Batch.prototype.add = function(url){
  * @api public
  */
 
-Batch.prototype.run = function(query, fn){
+Batch.prototype.run = function (query, fn) {
   // add urls to query object
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
   query.urls = this.urls;
 
-  return this.wpcom.sendRequest('/batch', query, null, fn);
+  return request.get(this.wpcom, null, '/batch', query, fn);
 };
 
 /**
@@ -56,13 +60,13 @@ Batch.prototype.run = function(query, fn){
  */
 
 module.exports = Batch;
-
-},{"debug":15}],2:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],2:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:category');
 
 /**
@@ -74,12 +78,14 @@ var debug = require('debug')('wpcom:category');
  * @api public
  */
 
-function Category(slug, sid, wpcom){
+function Category(slug, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
 
-  if (!(this instanceof Category)) return new Category(slug, sid, wpcom);
+  if (!(this instanceof Category)) {
+    return new Category(slug, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
@@ -93,7 +99,7 @@ function Category(slug, sid, wpcom){
  * @api public
  */
 
-Category.prototype.slug = function(slug){
+Category.prototype.slug = function (slug) {
   this._slug = slug;
 };
 
@@ -105,48 +111,50 @@ Category.prototype.slug = function(slug){
  * @api public
  */
 
-Category.prototype.get = function(query, fn){
+Category.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Add category
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Category.prototype.add = function(body, fn){
+Category.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/categories/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit category
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Category.prototype.update = function(body, fn){
+Category.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete category
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Category.prototype['delete'] =
-Category.prototype.del = function(fn){
+Category.prototype['delete'] = Category.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -154,13 +162,13 @@ Category.prototype.del = function(fn){
  */
 
 module.exports = Category;
-
-},{"debug":15}],3:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],3:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var CommentLike = require('./commentlike');
 var debug = require('debug')('wpcom:comment');
 
@@ -174,12 +182,14 @@ var debug = require('debug')('wpcom:comment');
  * @api public
  */
 
-function Comment(cid, pid, sid, wpcom){
+function Comment(cid, pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
 
-  if (!(this instanceof Comment)) return new Comment(cid, pid, sid, wpcom);
+  if (!(this instanceof Comment)) {
+    return new Comment(cid, pid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._cid = cid;
@@ -195,9 +205,9 @@ function Comment(cid, pid, sid, wpcom){
  * @api public
  */
 
-Comment.prototype.get = function(query, fn){
+Comment.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -208,67 +218,89 @@ Comment.prototype.get = function(query, fn){
  * @api public
  */
 
-Comment.prototype.replies = function(query, fn){
+Comment.prototype.replies = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Create a comment on a post
  *
+ * @param {Object} [query]
  * @param {String|Object} body
  * @param {Function} fn
  * @api public
  */
 
-Comment.prototype.add = function(body, fn){
-  body = 'string' == typeof body ? { content: body } : body;
+Comment.prototype.add = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
+  body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit a comment
  *
- r @param {String|Object} body
- * @param {Function} fn
- * @api public
- */
-
-Comment.prototype.update = function(body, fn){
-  body = 'string' == typeof body ? { content: body } : body;
-
-  var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
-};
-
-/**
- * Create a Comment as a reply to another Comment
- *
+ * @param {Object} [query]
  * @param {String|Object} body
  * @param {Function} fn
  * @api public
  */
 
-Comment.prototype.reply = function(body, fn){
-  body = 'string' == typeof body ? { content: body } : body;
+Comment.prototype.update = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
+  body = 'string' === typeof body ? { content: body } : body;
+
+  var path = '/sites/' + this._sid + '/comments/' + this._cid;
+  return request.put(this.wpcom, null, path, query, body, fn);
+};
+
+/**
+ * Create a Comment as a reply to another Comment
+ *
+ * @param {Object} [query]
+ * @param {String|Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.reply = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+  
+  body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete a comment
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
 Comment.prototype['delete'] =
-Comment.prototype.del = function(fn){
+Comment.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -277,7 +309,7 @@ Comment.prototype.del = function(fn){
  * @api public
  */
 
-Comment.prototype.like = function(){
+Comment.prototype.like = function() {
   return CommentLike(this._cid, this._sid, this.wpcom);
 };
 
@@ -289,9 +321,9 @@ Comment.prototype.like = function(){
  * @api public
  */
 
-Comment.prototype.likesList = function(query, fn){
+Comment.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -299,13 +331,13 @@ Comment.prototype.likesList = function(query, fn){
  */
 
 module.exports = Comment;
-
-},{"./commentlike":4,"debug":15}],4:[function(require,module,exports){
+},{"./commentlike":4,"./util/request":14,"debug":16}],4:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:commentlike');
 
 /**
@@ -317,7 +349,7 @@ var debug = require('debug')('wpcom:commentlike');
  * @api public
  */
 
-function CommentLike(cid, sid, wpcom){
+function CommentLike(cid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
@@ -326,7 +358,9 @@ function CommentLike(cid, sid, wpcom){
     throw new Error('`comment id` is not correctly defined');
   }
 
-  if (!(this instanceof CommentLike)) return new CommentLike(cid, sid, wpcom);
+  if (!(this instanceof CommentLike)) {
+    return new CommentLike(cid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._cid = cid;
@@ -342,9 +376,9 @@ function CommentLike(cid, sid, wpcom){
  */
 
 CommentLike.prototype.state =
-CommentLike.prototype.mine = function(query, fn){
+CommentLike.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -355,9 +389,9 @@ CommentLike.prototype.mine = function(query, fn){
  * @api public
  */
 
-CommentLike.prototype.add = function(query, fn){
+CommentLike.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
@@ -368,9 +402,9 @@ CommentLike.prototype.add = function(query, fn){
  */
 
 CommentLike.prototype['delete'] =
-CommentLike.prototype.del = function(fn){
+CommentLike.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -378,13 +412,13 @@ CommentLike.prototype.del = function(fn){
  */
 
 module.exports = CommentLike;
-
-},{"debug":15}],5:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],5:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:follow');
 
 /**
@@ -395,12 +429,14 @@ var debug = require('debug')('wpcom:follow');
  * @api public
  */
 
-function Follow(site_id, wpcom){
+function Follow(site_id, wpcom) {
   if (!site_id) {
     throw new Error('`site id` is not correctly defined');
   }
 
-  if (!(this instanceof Follow)) return new Follow(site_id, wpcom);
+  if (!(this instanceof Follow)) {
+    return new Follow(site_id, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = site_id;
@@ -414,9 +450,9 @@ function Follow(site_id, wpcom){
  */
 
 Follow.prototype.follow =
-Follow.prototype.add = function(query, fn) {
+Follow.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/new';
-  return this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -427,9 +463,9 @@ Follow.prototype.add = function(query, fn) {
  */
 
 Follow.prototype.unfollow =
-Follow.prototype.del = function(query, fn) {
+Follow.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine/delete';
-  return this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -441,9 +477,9 @@ Follow.prototype.del = function(query, fn) {
  */
 
 Follow.prototype.state =
-Follow.prototype.mine = function(query, fn) {
+Follow.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -451,13 +487,13 @@ Follow.prototype.mine = function(query, fn) {
  */
 
 module.exports = Follow;
-
-},{"debug":15}],6:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],6:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:like');
 
 /**
@@ -469,7 +505,7 @@ var debug = require('debug')('wpcom:like');
  * @api public
  */
 
-function Like(pid, sid, wpcom){
+function Like(pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
@@ -478,7 +514,9 @@ function Like(pid, sid, wpcom){
     throw new Error('`post id` is not correctly defined');
   }
 
-  if (!(this instanceof Like)) return new Like(pid, sid, wpcom);
+  if (!(this instanceof Like)) {
+    return new Like(pid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._pid = pid;
@@ -494,9 +532,9 @@ function Like(pid, sid, wpcom){
  */
 
 Like.prototype.state =
-Like.prototype.mine = function(query, fn){
+Like.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -507,9 +545,9 @@ Like.prototype.mine = function(query, fn){
  * @api public
  */
 
-Like.prototype.add = function(query, fn){
+Like.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -520,9 +558,9 @@ Like.prototype.add = function(query, fn){
  */
 
 Like.prototype['delete'] =
-Like.prototype.del = function(fn){
+Like.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -530,13 +568,12 @@ Like.prototype.del = function(fn){
  */
 
 module.exports = Like;
-
-},{"debug":15}],7:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],7:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
-
+var request = require('./util/request');
 var debug = require('debug')('wpcom:me');
 
 /**
@@ -546,8 +583,11 @@ var debug = require('debug')('wpcom:me');
  * @api public
  */
 
-function Me(wpcom){
-  if (!(this instanceof Me)) return new Me(wpcom);
+function Me(wpcom) {
+  if (!(this instanceof Me)) {
+    return new Me(wpcom);
+  }
+
   this.wpcom = wpcom;
 }
 
@@ -559,8 +599,8 @@ function Me(wpcom){
  * @api public
  */
 
-Me.prototype.get = function(query, fn){
-  return this.wpcom.sendRequest('/me', query, null, fn);
+Me.prototype.get = function (query, fn) {
+  return request.get(this.wpcom, null, '/me', query, fn);
 };
 
 /**
@@ -571,8 +611,8 @@ Me.prototype.get = function(query, fn){
  * @api private
  */
 
-Me.prototype.sites = function(query, fn){
-  return this.wpcom.sendRequest('/me/sites', query, null, fn);
+Me.prototype.sites = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/sites', query, fn);
 };
 
 /**
@@ -583,8 +623,8 @@ Me.prototype.sites = function(query, fn){
  * @api public
  */
 
-Me.prototype.likes = function(query, fn){
-  return this.wpcom.sendRequest('/me/likes', query, null, fn);
+Me.prototype.likes = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/likes', query, fn);
 };
 
 /**
@@ -595,8 +635,8 @@ Me.prototype.likes = function(query, fn){
  * @api public
  */
 
-Me.prototype.groups = function(query, fn){
-  return this.wpcom.sendRequest('/me/groups', query, null, fn);
+Me.prototype.groups = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/groups', query, fn);
 };
 
 /**
@@ -607,8 +647,8 @@ Me.prototype.groups = function(query, fn){
  * @api public
  */
 
-Me.prototype.connections = function(query, fn){
-  return this.wpcom.sendRequest('/me/connections', query, null, fn);
+Me.prototype.connections = function (query, fn) {
+  return request.get(this.wpcom, null, '/me/connections', query, fn);
 };
 
 /**
@@ -616,21 +656,23 @@ Me.prototype.connections = function(query, fn){
  */
 
 module.exports = Me;
-
-},{"debug":15}],8:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],8:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
 var fs = require('fs');
+var request = require('./util/request');
 var debug = require('debug')('wpcom:media');
 
 /**
- * Default api version
+ * Default
  */
 
-var api_version = '1.1';
+var def = {
+  "apiVersion": "1.1"
+};
 
 /**
  * Media methods
@@ -641,8 +683,10 @@ var api_version = '1.1';
  * @api public
  */
 
-function Media(id, sid, wpcom){
-  if (!(this instanceof Media)) return new Media(id, sid, wpcom);
+function Media(id, sid, wpcom) {
+  if (!(this instanceof Media)) {
+    return new Media(id, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
@@ -661,13 +705,9 @@ function Media(id, sid, wpcom){
  * @api public
  */
 
-Media.prototype.get = function(query, fn){
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/' + this._id
-  };
-
-  return this.wpcom.sendRequest(params, query, null, fn);
+Media.prototype.get = function (query, fn) {
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  return request.get(this.wpcom, def, path, query, fn);
 };
 
 /**
@@ -679,20 +719,9 @@ Media.prototype.get = function(query, fn){
  * @api public
  */
 
-Media.prototype.update = function(query, body, fn){
-  if ('function' == typeof body) {
-    fn = body;
-    body = query;
-    query = {};
-  }
-
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/' + this._id,
-    method: 'post'
-  };
-
-  return this.wpcom.sendRequest(params, query, body, fn);
+Media.prototype.update = function (query, body, fn) {
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  return request.put(this.wpcom, def, path, query, body, fn);
 };
 
 /**
@@ -703,52 +732,50 @@ Media.prototype.update = function(query, body, fn){
  * @param {Function} fn
  */
 
-Media.prototype.addFiles = function(query, files, fn){
-  if ('function' == typeof files) {
+Media.prototype.addFiles = function (query, files, fn) {
+  if ('function' === typeof files) {
     fn = files;
     files = query;
     query = {};
   }
 
   var params = {
-    apiVersion: query.apiVersion || api_version,
     path: '/sites/' + this._sid + '/media/new',
-    method: 'post',
     formData: []
   };
 
   // process formData
   files = Array.isArray(files) ? files : [files];
 
-  for (var i = 0; i < files.length; i++) {
-    var f = files[i];
+  var i, f, isStream, isFile, k, param;
+  for (i = 0; i < files.length; i++) {
+    f = files[i];
+    f = 'string' === typeof f ? fs.createReadStream(f) : f;
 
-    f = 'string' == typeof f ? fs.createReadStream(f) : f;
-
-    var isStream = !!f._readableState;
-    var isFile = 'undefined' != typeof File && f instanceof File;
+    isStream = !!f._readableState;
+    isFile = 'undefined' !== typeof File && f instanceof File;
 
     debug('is stream: %s', isStream);
     debug('is file: %s', isFile);
 
     if (!isFile && !isStream) {
       // process file attributes like as `title`, `description`, ...
-      for (var k in f) {
+      for (k in f) {
         debug('add %o => %o', k, f[k]);
-        if ('file' != k) {
-          var param = 'attrs[' + i + '][' + k + ']';
+        if ('file' !== k) {
+          param = 'attrs[' + i + '][' + k + ']';
           params.formData.push([param, f[k]]);
         }
       }
       // set file path
       f = f.file;
-      f = 'string' == typeof f ? fs.createReadStream(f) : f;
+      f = 'string' === typeof f ? fs.createReadStream(f) : f;
     }
 
     params.formData.push(['media[]', f]);
   }
 
-  return this.wpcom.sendRequest(params, query, null, fn);
+  return request.post(this.wpcom, def, params, query, null, fn);
 };
 
 /**
@@ -759,36 +786,34 @@ Media.prototype.addFiles = function(query, files, fn){
  * @param {Function} fn
  */
 
-Media.prototype.addUrls = function(query, media, fn){
-  if ('function' == typeof media) {
+Media.prototype.addUrls = function (query, media, fn) {
+  if ('function' === typeof media) {
     fn = media;
     media = query;
     query = {};
   }
 
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/new',
-    method: 'post'
-  };
-
+  var path = '/sites/' + this._sid + '/media/new';
   var body = { media_urls: [] };
 
   // process formData
-  media = Array.isArray(media) ? media : [ media ];
-  for (var i = 0; i < media.length; i++) {
-    var m = media[i];
-    var url;
+  var i, m, url, k;
 
-    if ('string' == typeof m) {
+  media = Array.isArray(media) ? media : [ media ];
+  for (i = 0; i < media.length; i++) {
+    m = media[i];
+
+    if ('string' === typeof m) {
       url = m;
     } else {
-      if (!body.attrs) body.attrs = [];
+      if (!body.attrs) {
+        body.attrs = [];
+      }
 
       // add attributes
       body.attrs[i] = {};
-      for (var k in m) {
-        if ('url' != k) {
+      for (k in m) {
+        if ('url' !== k) {
           body.attrs[i][k] = m[k];
         }
       }
@@ -799,7 +824,7 @@ Media.prototype.addUrls = function(query, media, fn){
     body.media_urls.push(url);
   }
 
-  return this.wpcom.sendRequest(params, query, body, fn);
+  return request.post(this.wpcom, def, path, query, body, fn);
 };
 
 /**
@@ -810,20 +835,9 @@ Media.prototype.addUrls = function(query, media, fn){
  * @api public
  */
 
-Media.prototype['delete'] =
-Media.prototype.del = function(query, fn){
-  if ('function' == typeof query) {
-    fn = query;
-    query = {};
-  }
-
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/' + this._id + '/delete',
-    method: 'post'
-  };
-
-  return this.wpcom.sendRequest(params, query, null, fn);
+Media.prototype['delete'] = Media.prototype.del = function (query, fn) {
+  var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
+  return request.del(this.wpcom, def, path, query, fn);
 };
 
 /**
@@ -831,8 +845,7 @@ Media.prototype.del = function(query, fn){
  */
 
 module.exports = Media;
-
-},{"debug":15,"fs":14}],9:[function(require,module,exports){
+},{"./util/request":14,"debug":16,"fs":15}],9:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -841,6 +854,7 @@ module.exports = Media;
 var Like = require('./like');
 var Reblog = require('./reblog');
 var Comment = require('./comment');
+var request = require('./util/request');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -852,15 +866,17 @@ var debug = require('debug')('wpcom:post');
  * @api public
  */
 
-function Post(id, sid, wpcom){
-  if (!(this instanceof Post)) return new Post(id, sid, wpcom);
+function Post(id, sid, wpcom) {
+  if (!(this instanceof Post)) {
+    return new Post(id, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
 
   // set `id` and/or `slug` properties
   id = id || {};
-  if ('object' != typeof id) {
+  if ('object' !== typeof id) {
     this._id = id;
   } else {
     this._id = id.id;
@@ -874,7 +890,7 @@ function Post(id, sid, wpcom){
  * @api public
  */
 
-Post.prototype.id = function(id){
+Post.prototype.id = function (id) {
   this._id = id;
 };
 
@@ -885,7 +901,7 @@ Post.prototype.id = function(id){
  * @api public
  */
 
-Post.prototype.slug = function(slug){
+Post.prototype.slug = function (slug) {
   this._slug = slug;
 };
 
@@ -897,13 +913,13 @@ Post.prototype.slug = function(slug){
  * @api public
  */
 
-Post.prototype.get = function(query, fn){
+Post.prototype.get = function (query, fn) {
   if (!this._id && this._slug) {
     return this.getBySlug(query, fn);
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -914,60 +930,64 @@ Post.prototype.get = function(query, fn){
  * @api public
  */
 
-Post.prototype.getBySlug = function(query, fn){
+Post.prototype.getBySlug = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Add post
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.add = function(body, fn){
+Post.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/posts/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit post
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.update = function(body, fn){
+Post.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete post
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
 Post.prototype['delete'] =
-Post.prototype.del = function(fn){
+Post.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Restore post
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.restore = function(fn){
+Post.prototype.restore = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -978,22 +998,23 @@ Post.prototype.restore = function(fn){
  * @api public
  */
 
-Post.prototype.likesList = function(query, fn){
+Post.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Search within a site for related posts
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.related = function(body, fn){
+Post.prototype.related = function (body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -1002,8 +1023,8 @@ Post.prototype.related = function(body, fn){
  * @api public
  */
 
-Post.prototype.like = function(){
-  return Like( this._id, this._sid, this.wpcom);
+Post.prototype.like = function () {
+  return new Like(this._id, this._sid, this.wpcom);
 };
 
 /**
@@ -1012,8 +1033,8 @@ Post.prototype.like = function(){
  * @api public
  */
 
-Post.prototype.reblog = function(){
-  return Reblog(this._id, this._sid, this.wpcom);
+Post.prototype.reblog = function () {
+  return new Reblog(this._id, this._sid, this.wpcom);
 };
 
 /**
@@ -1023,12 +1044,11 @@ Post.prototype.reblog = function(){
  * @api public
  */
 
-Post.prototype.comment = function(cid){
-  return Comment(cid, this._id, this._sid, this.wpcom);
+Post.prototype.comment = function (cid) {
+  return new Comment(cid, this._id, this._sid, this.wpcom);
 };
 
 /**
- * :COMMENT:
  * Return recent comments
  *
  * @param {Objecy} [query]
@@ -1036,8 +1056,8 @@ Post.prototype.comment = function(cid){
  * @api public
  */
 
-Post.prototype.comments = function(query, fn){
-  var comment = Comment(null, this._id, this._sid, this.wpcom);
+Post.prototype.comments = function (query, fn) {
+  var comment = new Comment(null, this._id, this._sid, this.wpcom);
   comment.replies(query, fn);
   return comment;
 };
@@ -1047,13 +1067,13 @@ Post.prototype.comments = function(query, fn){
  */
 
 module.exports = Post;
-
-},{"./comment":3,"./like":6,"./reblog":10,"debug":15}],10:[function(require,module,exports){
+},{"./comment":3,"./like":6,"./reblog":10,"./util/request":14,"debug":16}],10:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:reblog');
 
 /**
@@ -1065,7 +1085,7 @@ var debug = require('debug')('wpcom:reblog');
  * @api public
  */
 
-function Reblog(pid, sid, wpcom){
+function Reblog(pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
@@ -1074,7 +1094,9 @@ function Reblog(pid, sid, wpcom){
     throw new Error('`post id` is not correctly defined');
   }
 
-  if (!(this instanceof Reblog)) return new Reblog(pid, sid, wpcom);
+  if (!(this instanceof Reblog)) {
+    return new Reblog(pid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._pid = pid;
@@ -1090,26 +1112,33 @@ function Reblog(pid, sid, wpcom){
  */
 
 Reblog.prototype.state =
-Reblog.prototype.mine = function(query, fn){
+Reblog.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Reblog a post
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Reblog.prototype.add = function(body, fn){
+Reblog.prototype.add = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
   if (body && !body.destination_site_id) {
     return fn(new Error('destination_site_id is not defined'));
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
@@ -1122,8 +1151,8 @@ Reblog.prototype.add = function(body, fn){
  * @api public
  */
 
-Reblog.prototype.to = function(dest, note, fn){
-  if ('function' == typeof note) {
+Reblog.prototype.to = function (dest, note, fn) {
+  if ('function' === typeof note) {
     fn = note;
     note = null;
   }
@@ -1136,19 +1165,19 @@ Reblog.prototype.to = function(dest, note, fn){
  */
 
 module.exports = Reblog;
-
-},{"debug":15}],11:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
 var Post = require('./post');
-var Category= require('./category');
-var Tag= require('./tag');
+var Category = require('./category');
+var Tag = require('./tag');
 var Media = require('./media');
 var Comment = require('./comment');
 var Follow = require('./follow');
+var request = require('./util/request');
 var debug = require('debug')('wpcom:site');
 
 /**
@@ -1180,8 +1209,11 @@ var resources = [
  * @api public
  */
 
-function Site(id, wpcom){
-  if (!(this instanceof Site)) return new Site(id, wpcom);
+function Site(id, wpcom) {
+  if (!(this instanceof Site)) {
+    return new Site(id, wpcom);
+  }
+
   this.wpcom = wpcom;
 
   debug('set %o site id', id);
@@ -1196,8 +1228,8 @@ function Site(id, wpcom){
  * @api public
  */
 
-Site.prototype.get = function(query, fn){
-  return this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
+Site.prototype.get = function (query, fn) {
+  return request.get(this.wpcom, null, '/sites/' + this._id, query, fn);
 };
 
 /**
@@ -1208,7 +1240,7 @@ Site.prototype.get = function(query, fn){
  * @api private
  */
 
-var list = function(subpath, apiVersion) {
+var list = function (subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -1218,22 +1250,21 @@ var list = function(subpath, apiVersion) {
    * @api public
    */
 
-  return function (query, fn){
-    return this.wpcom.sendRequest({
-      path: '/sites/' + this._id + '/' + subpath,
-      apiVersion: apiVersion
-    }, query, null, fn);
+  return function (query, fn) {
+    var path = '/sites/' + this._id + '/' + subpath;
+    return request.get(this.wpcom, { apiVersion: apiVersion }, path, query, fn);
   };
 };
 
 // walk for each resource and create related method
-for (var i = 0; i < resources.length; i++) {
-  var res = resources[i];
-  var isarr = Array.isArray(res);
+var i, res, isarr, name, subpath, apiVersion;
+for (i = 0; i < resources.length; i++) {
+  res = resources[i];
+  isarr = Array.isArray(res);
 
-  var name =  isarr ? res[0] : res + 'List';
-  var subpath = isarr ? res[1] : res;
-  var apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
+  name =  isarr ? res[0] : res + 'List';
+  subpath = isarr ? res[1] : res;
+  apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
   debug('adding %o method in %o sub-path (v%o)', 'site.' + name + '()', subpath, apiVersion);
   Site.prototype[name] = list(subpath, apiVersion);
@@ -1247,8 +1278,8 @@ for (var i = 0; i < resources.length; i++) {
  * @api public
  */
 
-Site.prototype.post = function(id){
-  return Post(id, this._id, this.wpcom);
+Site.prototype.post = function (id) {
+  return new Post(id, this._id, this.wpcom);
 };
 
 /**
@@ -1260,8 +1291,8 @@ Site.prototype.post = function(id){
  * @return {Post} new Post instance
  */
 
-Site.prototype.addPost = function(body, fn){
-  var post = Post(null, this._id, this.wpcom);
+Site.prototype.addPost = function (body, fn) {
+  var post = new Post(null, this._id, this.wpcom);
   return post.add(body, fn);
 };
 
@@ -1274,25 +1305,23 @@ Site.prototype.addPost = function(body, fn){
  * @return {Post} remove Post instance
  */
 
-Site.prototype.deletePost = function(id, fn){
-  var post = Post(id, this._id, this.wpcom);
+Site.prototype.deletePost = function (id, fn) {
+  var post = new Post(id, this._id, this.wpcom);
   return post.delete(fn);
 };
 
 /**
- * :MEDIA:
  * Create a `Media` instance
  *
  * @param {String} id
  * @api public
  */
 
-Site.prototype.media = function(id){
-  return Media(id, this._id, this.wpcom);
+Site.prototype.media = function (id) {
+  return new Media(id, this._id, this.wpcom);
 };
 
 /**
- * :MEDIA:
  * Add a media from a file
  *
  * @param {Object} [query]
@@ -1301,13 +1330,12 @@ Site.prototype.media = function(id){
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMediaFiles = function(query, files, fn){
-  var media = Media(null, this._id, this.wpcom);
+Site.prototype.addMediaFiles = function (query, files, fn) {
+  var media = new Media(null, this._id, this.wpcom);
   return media.addFiles(query, files, fn);
 };
 
 /**
- * :MEDIA:
  * Add a new media from url
  *
  * @param {Object} [query]
@@ -1316,13 +1344,12 @@ Site.prototype.addMediaFiles = function(query, files, fn){
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMediaUrls = function(query, files, fn){
-  var media = Media(null, this._id, this.wpcom);
+Site.prototype.addMediaUrls = function (query, files, fn) {
+  var media = new Media(null, this._id, this.wpcom);
   return media.addUrls(query, files, fn);
 };
 
 /**
- * :MEDIA:
  * Delete a blog media
  *
  * @param {String} id
@@ -1330,21 +1357,20 @@ Site.prototype.addMediaUrls = function(query, files, fn){
  * @return {Post} removed Media instance
  */
 
-Site.prototype.deleteMedia = function(id, fn){
-  var media = Media(id, this._id, this.wpcom);
+Site.prototype.deleteMedia = function (id, fn) {
+  var media = new Media(id, this._id, this.wpcom);
   return media.del(fn);
 };
 
 /**
- * :COMMENT:
  * Create a `Comment` instance
  *
  * @param {String} id
  * @api public
  */
 
-Site.prototype.comment = function(id){
-  return Comment(id, null, this._id, this.wpcom);
+Site.prototype.comment = function (id) {
+  return new Comment(id, null, this._id, this.wpcom);
 };
 
 /**
@@ -1353,8 +1379,8 @@ Site.prototype.comment = function(id){
  * @api public
  */
 
-Site.prototype.follow = function(){
-  return Follow(this._id, this.wpcom);
+Site.prototype.follow = function () {
+  return new Follow(this._id, this.wpcom);
 };
 
 /**
@@ -1365,9 +1391,8 @@ Site.prototype.follow = function(){
  * @api public
  */
 
-Site.prototype.cat =
-Site.prototype.category = function(slug){
-  return Category(slug, this._id, this.wpcom);
+Site.prototype.cat = Site.prototype.category = function (slug) {
+  return new Category(slug, this._id, this.wpcom);
 };
 
 /**
@@ -1377,8 +1402,8 @@ Site.prototype.category = function(slug){
  * @api public
  */
 
-Site.prototype.tag = function(slug){
-  return Tag(slug, this._id, this.wpcom);
+Site.prototype.tag = function (slug) {
+  return new Tag(slug, this._id, this.wpcom);
 };
 
 /**
@@ -1386,13 +1411,13 @@ Site.prototype.tag = function(slug){
  */
 
 module.exports = Site;
-
-},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":15}],12:[function(require,module,exports){
+},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"./util/request":14,"debug":16}],12:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:tag');
 
 /**
@@ -1404,12 +1429,14 @@ var debug = require('debug')('wpcom:tag');
  * @api public
  */
 
-function Tag(slug, sid, wpcom){
+function Tag(slug, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
 
-  if (!(this instanceof Tag)) return new Tag(slug, sid, wpcom);
+  if (!(this instanceof Tag)) {
+    return new Tag(slug, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
@@ -1423,7 +1450,7 @@ function Tag(slug, sid, wpcom){
  * @api public
  */
 
-Tag.prototype.slug = function(slug){
+Tag.prototype.slug = function (slug) {
   this._slug = slug;
 };
 
@@ -1435,48 +1462,50 @@ Tag.prototype.slug = function(slug){
  * @api public
  */
 
-Tag.prototype.get = function(query, fn){
+Tag.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Add tag
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Tag.prototype.add = function(body, fn){
+Tag.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit tag
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Tag.prototype.update = function(body, fn){
+Tag.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete tag
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Tag.prototype['delete'] =
-Tag.prototype.del = function(fn){
+Tag.prototype['delete'] = Tag.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -1484,20 +1513,14 @@ Tag.prototype.del = function(fn){
  */
 
 module.exports = Tag;
-
-},{"debug":15}],13:[function(require,module,exports){
+},{"./util/request":14,"debug":16}],13:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:users');
-
-/**
- * Expose `Users` module
- */
-
-module.exports = Users;
 
 /**
  * Create a `Users` instance
@@ -1523,11 +1546,120 @@ function Users(wpcom) {
  */
 
 Users.prototype.suggest = function (query, fn) {
-  return this.wpcom.sendRequest('/users/suggest', query, null, fn);
+  return request.get(this.wpcom, null, '/users/suggest', query, fn);
 };
-},{"debug":15}],14:[function(require,module,exports){
 
-},{}],15:[function(require,module,exports){
+/**
+ * Expose `Users` module
+ */
+
+module.exports = Users;
+},{"./util/request":14,"debug":16}],14:[function(require,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var debug = require('debug')('wpcom:request');
+
+/**
+ * Expose `Request` module
+ */
+
+exports = module.exports = {};
+
+/**
+ * Request methods
+ *
+ * @param {WPCOM} wpcom
+ * @param {Object} def
+ * @param {Object|String} params
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+exports.get = function (wpcom, def, params, query, fn) {
+  // `query` is optional
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+  
+  defaultValues(def, query);
+
+  return wpcom.sendRequest(params, query, null, fn);
+};
+
+/**
+ * Make `update` request
+ *
+ * @param {WPCOM} wpcom
+ * @param {Object} def
+ * @param {Object|String} params
+ * @param {Object} [query]
+ * @param {Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+exports.put = 
+exports.post = function (wpcom, def, params, query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
+  defaultValues(def, query);
+
+  // params can be s string
+  params = 'string' === typeof params ? { path : params } : params;
+
+  // request method
+  params.method = 'post';
+
+  return wpcom.sendRequest(params, query, body, fn);
+};
+
+/**
+ * Make a `delete` request
+ *
+ * @param {WPCOM} wpcom
+ * @param {Object} def
+ * @param {Object|String} params
+ * @param {Object} [query]
+ * @param {Function} fn
+ * @api public
+ */
+
+exports.del = function (wpcom, def, params, query, fn) {  
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  return exports.post(wpcom, def, params, query, null, fn);
+};
+
+/**
+ * Set query object using the given parameters
+ *
+ * @api private
+ */
+
+function defaultValues (def, query) {
+  def = def || {};
+  query = query || {};
+
+  // `apiVersion`
+  if (def.apiVersion) {
+    query.apiVersion = query.apiVersion || def.apiVersion;
+  }
+};
+},{"debug":16}],15:[function(require,module,exports){
+
+},{}],16:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -1676,7 +1808,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":16}],16:[function(require,module,exports){
+},{"./debug":17}],17:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -1875,7 +2007,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":17}],17:[function(require,module,exports){
+},{"ms":18}],18:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -1988,7 +2120,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -2109,7 +2241,7 @@ function toTitle (str) {
   });
 }
 
-},{"debug":15,"superagent":19}],19:[function(require,module,exports){
+},{"debug":16,"superagent":20}],20:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3187,7 +3319,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":20,"reduce":21}],20:[function(require,module,exports){
+},{"emitter":21,"reduce":22}],21:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -3353,7 +3485,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -3378,7 +3510,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -3492,7 +3624,13 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   // pass `query` and/or `body` to request params
   if (query) {
     params.query = query;
-    delete query.apiVersion;
+
+    // Handle special query parameters
+    // - `apiVersion`
+    if (query.apiVersion) {
+      params.apiVersion = query.apiVersion;
+      delete query.apiVersion;
+    }
   }
 
   if (body) {
@@ -3513,8 +3651,7 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
  */
 
 module.exports = WPCOM;
-
-},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":15}],23:[function(require,module,exports){
+},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":16}],24:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -3543,5 +3680,5 @@ module.exports = function(token){
   });
 };
 
-},{"./wpcom":22,"wpcom-xhr-request":18}]},{},[23])(23)
+},{"./wpcom":23,"wpcom-xhr-request":19}]},{},[24])(24)
 });

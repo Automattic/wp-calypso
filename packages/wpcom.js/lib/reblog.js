@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:reblog');
 
 /**
@@ -14,7 +15,7 @@ var debug = require('debug')('wpcom:reblog');
  * @api public
  */
 
-function Reblog(pid, sid, wpcom){
+function Reblog(pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
@@ -23,7 +24,9 @@ function Reblog(pid, sid, wpcom){
     throw new Error('`post id` is not correctly defined');
   }
 
-  if (!(this instanceof Reblog)) return new Reblog(pid, sid, wpcom);
+  if (!(this instanceof Reblog)) {
+    return new Reblog(pid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._pid = pid;
@@ -39,26 +42,33 @@ function Reblog(pid, sid, wpcom){
  */
 
 Reblog.prototype.state =
-Reblog.prototype.mine = function(query, fn){
+Reblog.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Reblog a post
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Reblog.prototype.add = function(body, fn){
+Reblog.prototype.add = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
   if (body && !body.destination_site_id) {
     return fn(new Error('destination_site_id is not defined'));
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
@@ -71,8 +81,8 @@ Reblog.prototype.add = function(body, fn){
  * @api public
  */
 
-Reblog.prototype.to = function(dest, note, fn){
-  if ('function' == typeof note) {
+Reblog.prototype.to = function (dest, note, fn) {
+  if ('function' === typeof note) {
     fn = note;
     note = null;
   }

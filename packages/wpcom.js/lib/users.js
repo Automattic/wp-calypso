@@ -3,13 +3,8 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:users');
-
-/**
- * Expose `Users` module
- */
-
-module.exports = Users;
 
 /**
  * Create a `Users` instance
@@ -35,5 +30,11 @@ function Users(wpcom) {
  */
 
 Users.prototype.suggest = function (query, fn) {
-  return this.wpcom.sendRequest('/users/suggest', query, null, fn);
+  return request.get(this.wpcom, null, '/users/suggest', query, fn);
 };
+
+/**
+ * Expose `Users` module
+ */
+
+module.exports = Users;

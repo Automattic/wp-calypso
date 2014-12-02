@@ -4,13 +4,16 @@
  */
 
 var fs = require('fs');
+var request = require('./util/request');
 var debug = require('debug')('wpcom:media');
 
 /**
- * Default api version
+ * Default
  */
 
-var api_version = '1.1';
+var def = {
+  "apiVersion": "1.1"
+};
 
 /**
  * Media methods
@@ -21,8 +24,10 @@ var api_version = '1.1';
  * @api public
  */
 
-function Media(id, sid, wpcom){
-  if (!(this instanceof Media)) return new Media(id, sid, wpcom);
+function Media(id, sid, wpcom) {
+  if (!(this instanceof Media)) {
+    return new Media(id, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
@@ -41,13 +46,9 @@ function Media(id, sid, wpcom){
  * @api public
  */
 
-Media.prototype.get = function(query, fn){
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/' + this._id
-  };
-
-  return this.wpcom.sendRequest(params, query, null, fn);
+Media.prototype.get = function (query, fn) {
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  return request.get(this.wpcom, def, path, query, fn);
 };
 
 /**
@@ -59,20 +60,9 @@ Media.prototype.get = function(query, fn){
  * @api public
  */
 
-Media.prototype.update = function(query, body, fn){
-  if ('function' == typeof body) {
-    fn = body;
-    body = query;
-    query = {};
-  }
-
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/' + this._id,
-    method: 'post'
-  };
-
-  return this.wpcom.sendRequest(params, query, body, fn);
+Media.prototype.update = function (query, body, fn) {
+  var path = '/sites/' + this._sid + '/media/' + this._id;
+  return request.put(this.wpcom, def, path, query, body, fn);
 };
 
 /**
@@ -83,52 +73,50 @@ Media.prototype.update = function(query, body, fn){
  * @param {Function} fn
  */
 
-Media.prototype.addFiles = function(query, files, fn){
-  if ('function' == typeof files) {
+Media.prototype.addFiles = function (query, files, fn) {
+  if ('function' === typeof files) {
     fn = files;
     files = query;
     query = {};
   }
 
   var params = {
-    apiVersion: query.apiVersion || api_version,
     path: '/sites/' + this._sid + '/media/new',
-    method: 'post',
     formData: []
   };
 
   // process formData
   files = Array.isArray(files) ? files : [files];
 
-  for (var i = 0; i < files.length; i++) {
-    var f = files[i];
+  var i, f, isStream, isFile, k, param;
+  for (i = 0; i < files.length; i++) {
+    f = files[i];
+    f = 'string' === typeof f ? fs.createReadStream(f) : f;
 
-    f = 'string' == typeof f ? fs.createReadStream(f) : f;
-
-    var isStream = !!f._readableState;
-    var isFile = 'undefined' != typeof File && f instanceof File;
+    isStream = !!f._readableState;
+    isFile = 'undefined' !== typeof File && f instanceof File;
 
     debug('is stream: %s', isStream);
     debug('is file: %s', isFile);
 
     if (!isFile && !isStream) {
       // process file attributes like as `title`, `description`, ...
-      for (var k in f) {
+      for (k in f) {
         debug('add %o => %o', k, f[k]);
-        if ('file' != k) {
-          var param = 'attrs[' + i + '][' + k + ']';
+        if ('file' !== k) {
+          param = 'attrs[' + i + '][' + k + ']';
           params.formData.push([param, f[k]]);
         }
       }
       // set file path
       f = f.file;
-      f = 'string' == typeof f ? fs.createReadStream(f) : f;
+      f = 'string' === typeof f ? fs.createReadStream(f) : f;
     }
 
     params.formData.push(['media[]', f]);
   }
 
-  return this.wpcom.sendRequest(params, query, null, fn);
+  return request.post(this.wpcom, def, params, query, null, fn);
 };
 
 /**
@@ -139,36 +127,34 @@ Media.prototype.addFiles = function(query, files, fn){
  * @param {Function} fn
  */
 
-Media.prototype.addUrls = function(query, media, fn){
-  if ('function' == typeof media) {
+Media.prototype.addUrls = function (query, media, fn) {
+  if ('function' === typeof media) {
     fn = media;
     media = query;
     query = {};
   }
 
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/new',
-    method: 'post'
-  };
-
+  var path = '/sites/' + this._sid + '/media/new';
   var body = { media_urls: [] };
 
   // process formData
-  media = Array.isArray(media) ? media : [ media ];
-  for (var i = 0; i < media.length; i++) {
-    var m = media[i];
-    var url;
+  var i, m, url, k;
 
-    if ('string' == typeof m) {
+  media = Array.isArray(media) ? media : [ media ];
+  for (i = 0; i < media.length; i++) {
+    m = media[i];
+
+    if ('string' === typeof m) {
       url = m;
     } else {
-      if (!body.attrs) body.attrs = [];
+      if (!body.attrs) {
+        body.attrs = [];
+      }
 
       // add attributes
       body.attrs[i] = {};
-      for (var k in m) {
-        if ('url' != k) {
+      for (k in m) {
+        if ('url' !== k) {
           body.attrs[i][k] = m[k];
         }
       }
@@ -179,7 +165,7 @@ Media.prototype.addUrls = function(query, media, fn){
     body.media_urls.push(url);
   }
 
-  return this.wpcom.sendRequest(params, query, body, fn);
+  return request.post(this.wpcom, def, path, query, body, fn);
 };
 
 /**
@@ -190,20 +176,9 @@ Media.prototype.addUrls = function(query, media, fn){
  * @api public
  */
 
-Media.prototype['delete'] =
-Media.prototype.del = function(query, fn){
-  if ('function' == typeof query) {
-    fn = query;
-    query = {};
-  }
-
-  var params = {
-    apiVersion: query.apiVersion || api_version,
-    path: '/sites/' + this._sid + '/media/' + this._id + '/delete',
-    method: 'post'
-  };
-
-  return this.wpcom.sendRequest(params, query, null, fn);
+Media.prototype['delete'] = Media.prototype.del = function (query, fn) {
+  var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
+  return request.del(this.wpcom, def, path, query, fn);
 };
 
 /**

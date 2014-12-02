@@ -17,12 +17,12 @@ var test = require('./data');
  * Create a `Site` instance
  */
 
-describe('WPCOM#apiVersion', function(){
+describe('WPCOM#apiVersion', function() {
 
-  describe('async', function(){
+  describe('async', function() {
 
-    describe('wpcom.apiVersion()', function(){
-      it('should request changing api version', function(done){
+    describe('wpcom.apiVersion()', function() {
+      it('should request changing api version', function(done) {
 
         var wpcom = util.wpcom();
         var site = util.private_site();
@@ -35,12 +35,12 @@ describe('WPCOM#apiVersion', function(){
           assert.ok(data);
 
           site
-          .mediaList({ apiVersion: '1' }, function(err, data){
+          .mediaList({ apiVersion: '1' }, function(err, data) {
             if (err) throw err;
 
             site
             .addMediaFiles({ apiVersion: '1.1' }, test.new_media_data.files[0],
-            function(err, data){
+            function(err, data) {
               if (err) throw err;
 
               assert.ok(data);

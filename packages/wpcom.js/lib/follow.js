@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:follow');
 
 /**
@@ -13,12 +14,14 @@ var debug = require('debug')('wpcom:follow');
  * @api public
  */
 
-function Follow(site_id, wpcom){
+function Follow(site_id, wpcom) {
   if (!site_id) {
     throw new Error('`site id` is not correctly defined');
   }
 
-  if (!(this instanceof Follow)) return new Follow(site_id, wpcom);
+  if (!(this instanceof Follow)) {
+    return new Follow(site_id, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = site_id;
@@ -32,9 +35,9 @@ function Follow(site_id, wpcom){
  */
 
 Follow.prototype.follow =
-Follow.prototype.add = function(query, fn) {
+Follow.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/new';
-  return this.wpcom.sendRequest({ method: 'POST', path: path }, query, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -45,9 +48,9 @@ Follow.prototype.add = function(query, fn) {
  */
 
 Follow.prototype.unfollow =
-Follow.prototype.del = function(query, fn) {
+Follow.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine/delete';
-  return this.wpcom.sendRequest({method: 'POST', path: path}, query, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -59,9 +62,9 @@ Follow.prototype.del = function(query, fn) {
  */
 
 Follow.prototype.state =
-Follow.prototype.mine = function(query, fn) {
+Follow.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**

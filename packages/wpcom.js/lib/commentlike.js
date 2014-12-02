@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:commentlike');
 
 /**
@@ -14,7 +15,7 @@ var debug = require('debug')('wpcom:commentlike');
  * @api public
  */
 
-function CommentLike(cid, sid, wpcom){
+function CommentLike(cid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
@@ -23,7 +24,9 @@ function CommentLike(cid, sid, wpcom){
     throw new Error('`comment id` is not correctly defined');
   }
 
-  if (!(this instanceof CommentLike)) return new CommentLike(cid, sid, wpcom);
+  if (!(this instanceof CommentLike)) {
+    return new CommentLike(cid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._cid = cid;
@@ -39,9 +42,9 @@ function CommentLike(cid, sid, wpcom){
  */
 
 CommentLike.prototype.state =
-CommentLike.prototype.mine = function(query, fn){
+CommentLike.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -52,9 +55,9 @@ CommentLike.prototype.mine = function(query, fn){
  * @api public
  */
 
-CommentLike.prototype.add = function(query, fn){
+CommentLike.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
@@ -65,9 +68,9 @@ CommentLike.prototype.add = function(query, fn){
  */
 
 CommentLike.prototype['delete'] =
-CommentLike.prototype.del = function(fn){
+CommentLike.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**

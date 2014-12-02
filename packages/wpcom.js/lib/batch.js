@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:batch');
 
 /**
@@ -12,8 +13,11 @@ var debug = require('debug')('wpcom:batch');
  * @api public
  */
 
-function Batch(wpcom){
-  if (!(this instanceof Batch)) return new Batch(wpcom);
+function Batch(wpcom) {
+  if (!(this instanceof Batch)) {
+    return new Batch(wpcom);
+  }
+
   this.wpcom = wpcom;
 
   this.urls = [];
@@ -26,7 +30,7 @@ function Batch(wpcom){
  * @api public
  */
 
-Batch.prototype.add = function(url){
+Batch.prototype.add = function (url) {
   this.urls.push(url);
   return this;
 };
@@ -39,15 +43,15 @@ Batch.prototype.add = function(url){
  * @api public
  */
 
-Batch.prototype.run = function(query, fn){
+Batch.prototype.run = function (query, fn) {
   // add urls to query object
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
   query.urls = this.urls;
 
-  return this.wpcom.sendRequest('/batch', query, null, fn);
+  return request.get(this.wpcom, null, '/batch', query, fn);
 };
 
 /**

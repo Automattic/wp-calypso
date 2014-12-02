@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:tag');
 
 /**
@@ -14,12 +15,14 @@ var debug = require('debug')('wpcom:tag');
  * @api public
  */
 
-function Tag(slug, sid, wpcom){
+function Tag(slug, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
 
-  if (!(this instanceof Tag)) return new Tag(slug, sid, wpcom);
+  if (!(this instanceof Tag)) {
+    return new Tag(slug, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
@@ -33,7 +36,7 @@ function Tag(slug, sid, wpcom){
  * @api public
  */
 
-Tag.prototype.slug = function(slug){
+Tag.prototype.slug = function (slug) {
   this._slug = slug;
 };
 
@@ -45,48 +48,50 @@ Tag.prototype.slug = function(slug){
  * @api public
  */
 
-Tag.prototype.get = function(query, fn){
+Tag.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Add tag
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Tag.prototype.add = function(body, fn){
+Tag.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit tag
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Tag.prototype.update = function(body, fn){
+Tag.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete tag
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Tag.prototype['delete'] =
-Tag.prototype.del = function(fn){
+Tag.prototype['delete'] = Tag.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**

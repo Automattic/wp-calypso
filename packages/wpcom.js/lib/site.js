@@ -4,11 +4,12 @@
  */
 
 var Post = require('./post');
-var Category= require('./category');
-var Tag= require('./tag');
+var Category = require('./category');
+var Tag = require('./tag');
 var Media = require('./media');
 var Comment = require('./comment');
 var Follow = require('./follow');
+var request = require('./util/request');
 var debug = require('debug')('wpcom:site');
 
 /**
@@ -40,8 +41,11 @@ var resources = [
  * @api public
  */
 
-function Site(id, wpcom){
-  if (!(this instanceof Site)) return new Site(id, wpcom);
+function Site(id, wpcom) {
+  if (!(this instanceof Site)) {
+    return new Site(id, wpcom);
+  }
+
   this.wpcom = wpcom;
 
   debug('set %o site id', id);
@@ -56,8 +60,8 @@ function Site(id, wpcom){
  * @api public
  */
 
-Site.prototype.get = function(query, fn){
-  return this.wpcom.sendRequest('/sites/' + this._id, query, null, fn);
+Site.prototype.get = function (query, fn) {
+  return request.get(this.wpcom, null, '/sites/' + this._id, query, fn);
 };
 
 /**
@@ -68,7 +72,7 @@ Site.prototype.get = function(query, fn){
  * @api private
  */
 
-var list = function(subpath, apiVersion) {
+var list = function (subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -78,22 +82,21 @@ var list = function(subpath, apiVersion) {
    * @api public
    */
 
-  return function (query, fn){
-    return this.wpcom.sendRequest({
-      path: '/sites/' + this._id + '/' + subpath,
-      apiVersion: apiVersion
-    }, query, null, fn);
+  return function (query, fn) {
+    var path = '/sites/' + this._id + '/' + subpath;
+    return request.get(this.wpcom, { apiVersion: apiVersion }, path, query, fn);
   };
 };
 
 // walk for each resource and create related method
-for (var i = 0; i < resources.length; i++) {
-  var res = resources[i];
-  var isarr = Array.isArray(res);
+var i, res, isarr, name, subpath, apiVersion;
+for (i = 0; i < resources.length; i++) {
+  res = resources[i];
+  isarr = Array.isArray(res);
 
-  var name =  isarr ? res[0] : res + 'List';
-  var subpath = isarr ? res[1] : res;
-  var apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
+  name =  isarr ? res[0] : res + 'List';
+  subpath = isarr ? res[1] : res;
+  apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
   debug('adding %o method in %o sub-path (v%o)', 'site.' + name + '()', subpath, apiVersion);
   Site.prototype[name] = list(subpath, apiVersion);
@@ -107,8 +110,8 @@ for (var i = 0; i < resources.length; i++) {
  * @api public
  */
 
-Site.prototype.post = function(id){
-  return Post(id, this._id, this.wpcom);
+Site.prototype.post = function (id) {
+  return new Post(id, this._id, this.wpcom);
 };
 
 /**
@@ -120,8 +123,8 @@ Site.prototype.post = function(id){
  * @return {Post} new Post instance
  */
 
-Site.prototype.addPost = function(body, fn){
-  var post = Post(null, this._id, this.wpcom);
+Site.prototype.addPost = function (body, fn) {
+  var post = new Post(null, this._id, this.wpcom);
   return post.add(body, fn);
 };
 
@@ -134,25 +137,23 @@ Site.prototype.addPost = function(body, fn){
  * @return {Post} remove Post instance
  */
 
-Site.prototype.deletePost = function(id, fn){
-  var post = Post(id, this._id, this.wpcom);
+Site.prototype.deletePost = function (id, fn) {
+  var post = new Post(id, this._id, this.wpcom);
   return post.delete(fn);
 };
 
 /**
- * :MEDIA:
  * Create a `Media` instance
  *
  * @param {String} id
  * @api public
  */
 
-Site.prototype.media = function(id){
-  return Media(id, this._id, this.wpcom);
+Site.prototype.media = function (id) {
+  return new Media(id, this._id, this.wpcom);
 };
 
 /**
- * :MEDIA:
  * Add a media from a file
  *
  * @param {Object} [query]
@@ -161,13 +162,12 @@ Site.prototype.media = function(id){
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMediaFiles = function(query, files, fn){
-  var media = Media(null, this._id, this.wpcom);
+Site.prototype.addMediaFiles = function (query, files, fn) {
+  var media = new Media(null, this._id, this.wpcom);
   return media.addFiles(query, files, fn);
 };
 
 /**
- * :MEDIA:
  * Add a new media from url
  *
  * @param {Object} [query]
@@ -176,13 +176,12 @@ Site.prototype.addMediaFiles = function(query, files, fn){
  * @return {Post} new Post instance
  */
 
-Site.prototype.addMediaUrls = function(query, files, fn){
-  var media = Media(null, this._id, this.wpcom);
+Site.prototype.addMediaUrls = function (query, files, fn) {
+  var media = new Media(null, this._id, this.wpcom);
   return media.addUrls(query, files, fn);
 };
 
 /**
- * :MEDIA:
  * Delete a blog media
  *
  * @param {String} id
@@ -190,21 +189,20 @@ Site.prototype.addMediaUrls = function(query, files, fn){
  * @return {Post} removed Media instance
  */
 
-Site.prototype.deleteMedia = function(id, fn){
-  var media = Media(id, this._id, this.wpcom);
+Site.prototype.deleteMedia = function (id, fn) {
+  var media = new Media(id, this._id, this.wpcom);
   return media.del(fn);
 };
 
 /**
- * :COMMENT:
  * Create a `Comment` instance
  *
  * @param {String} id
  * @api public
  */
 
-Site.prototype.comment = function(id){
-  return Comment(id, null, this._id, this.wpcom);
+Site.prototype.comment = function (id) {
+  return new Comment(id, null, this._id, this.wpcom);
 };
 
 /**
@@ -213,8 +211,8 @@ Site.prototype.comment = function(id){
  * @api public
  */
 
-Site.prototype.follow = function(){
-  return Follow(this._id, this.wpcom);
+Site.prototype.follow = function () {
+  return new Follow(this._id, this.wpcom);
 };
 
 /**
@@ -225,9 +223,8 @@ Site.prototype.follow = function(){
  * @api public
  */
 
-Site.prototype.cat =
-Site.prototype.category = function(slug){
-  return Category(slug, this._id, this.wpcom);
+Site.prototype.cat = Site.prototype.category = function (slug) {
+  return new Category(slug, this._id, this.wpcom);
 };
 
 /**
@@ -237,8 +234,8 @@ Site.prototype.category = function(slug){
  * @api public
  */
 
-Site.prototype.tag = function(slug){
-  return Tag(slug, this._id, this.wpcom);
+Site.prototype.tag = function (slug) {
+  return new Tag(slug, this._id, this.wpcom);
 };
 
 /**

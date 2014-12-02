@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var CommentLike = require('./commentlike');
 var debug = require('debug')('wpcom:comment');
 
@@ -16,12 +17,14 @@ var debug = require('debug')('wpcom:comment');
  * @api public
  */
 
-function Comment(cid, pid, sid, wpcom){
+function Comment(cid, pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
 
-  if (!(this instanceof Comment)) return new Comment(cid, pid, sid, wpcom);
+  if (!(this instanceof Comment)) {
+    return new Comment(cid, pid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._cid = cid;
@@ -37,9 +40,9 @@ function Comment(cid, pid, sid, wpcom){
  * @api public
  */
 
-Comment.prototype.get = function(query, fn){
+Comment.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -50,67 +53,89 @@ Comment.prototype.get = function(query, fn){
  * @api public
  */
 
-Comment.prototype.replies = function(query, fn){
+Comment.prototype.replies = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Create a comment on a post
  *
+ * @param {Object} [query]
  * @param {String|Object} body
  * @param {Function} fn
  * @api public
  */
 
-Comment.prototype.add = function(body, fn){
-  body = 'string' == typeof body ? { content: body } : body;
+Comment.prototype.add = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
+  body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit a comment
  *
- r @param {String|Object} body
- * @param {Function} fn
- * @api public
- */
-
-Comment.prototype.update = function(body, fn){
-  body = 'string' == typeof body ? { content: body } : body;
-
-  var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
-};
-
-/**
- * Create a Comment as a reply to another Comment
- *
+ * @param {Object} [query]
  * @param {String|Object} body
  * @param {Function} fn
  * @api public
  */
 
-Comment.prototype.reply = function(body, fn){
-  body = 'string' == typeof body ? { content: body } : body;
+Comment.prototype.update = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
+  body = 'string' === typeof body ? { content: body } : body;
+
+  var path = '/sites/' + this._sid + '/comments/' + this._cid;
+  return request.put(this.wpcom, null, path, query, body, fn);
+};
+
+/**
+ * Create a Comment as a reply to another Comment
+ *
+ * @param {Object} [query]
+ * @param {String|Object} body
+ * @param {Function} fn
+ * @api public
+ */
+
+Comment.prototype.reply = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+  
+  body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete a comment
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
 Comment.prototype['delete'] =
-Comment.prototype.del = function(fn){
+Comment.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -119,7 +144,7 @@ Comment.prototype.del = function(fn){
  * @api public
  */
 
-Comment.prototype.like = function(){
+Comment.prototype.like = function() {
   return CommentLike(this._cid, this._sid, this.wpcom);
 };
 
@@ -131,9 +156,9 @@ Comment.prototype.like = function(){
  * @api public
  */
 
-Comment.prototype.likesList = function(query, fn){
+Comment.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**

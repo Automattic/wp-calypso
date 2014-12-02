@@ -6,6 +6,7 @@
 var Like = require('./like');
 var Reblog = require('./reblog');
 var Comment = require('./comment');
+var request = require('./util/request');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -17,15 +18,17 @@ var debug = require('debug')('wpcom:post');
  * @api public
  */
 
-function Post(id, sid, wpcom){
-  if (!(this instanceof Post)) return new Post(id, sid, wpcom);
+function Post(id, sid, wpcom) {
+  if (!(this instanceof Post)) {
+    return new Post(id, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._sid = sid;
 
   // set `id` and/or `slug` properties
   id = id || {};
-  if ('object' != typeof id) {
+  if ('object' !== typeof id) {
     this._id = id;
   } else {
     this._id = id.id;
@@ -39,7 +42,7 @@ function Post(id, sid, wpcom){
  * @api public
  */
 
-Post.prototype.id = function(id){
+Post.prototype.id = function (id) {
   this._id = id;
 };
 
@@ -50,7 +53,7 @@ Post.prototype.id = function(id){
  * @api public
  */
 
-Post.prototype.slug = function(slug){
+Post.prototype.slug = function (slug) {
   this._slug = slug;
 };
 
@@ -62,13 +65,13 @@ Post.prototype.slug = function(slug){
  * @api public
  */
 
-Post.prototype.get = function(query, fn){
+Post.prototype.get = function (query, fn) {
   if (!this._id && this._slug) {
     return this.getBySlug(query, fn);
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -79,60 +82,64 @@ Post.prototype.get = function(query, fn){
  * @api public
  */
 
-Post.prototype.getBySlug = function(query, fn){
+Post.prototype.getBySlug = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Add post
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.add = function(body, fn){
+Post.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/posts/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.post(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Edit post
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.update = function(body, fn){
+Post.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, body, fn);
 };
 
 /**
  * Delete post
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
 Post.prototype['delete'] =
-Post.prototype.del = function(fn){
+Post.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Restore post
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.restore = function(fn){
+Post.prototype.restore = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -143,22 +150,23 @@ Post.prototype.restore = function(fn){
  * @api public
  */
 
-Post.prototype.likesList = function(query, fn){
+Post.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
  * Search within a site for related posts
  *
+ * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
  */
 
-Post.prototype.related = function(body, fn){
+Post.prototype.related = function (body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, body, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -167,8 +175,8 @@ Post.prototype.related = function(body, fn){
  * @api public
  */
 
-Post.prototype.like = function(){
-  return Like( this._id, this._sid, this.wpcom);
+Post.prototype.like = function () {
+  return new Like(this._id, this._sid, this.wpcom);
 };
 
 /**
@@ -177,8 +185,8 @@ Post.prototype.like = function(){
  * @api public
  */
 
-Post.prototype.reblog = function(){
-  return Reblog(this._id, this._sid, this.wpcom);
+Post.prototype.reblog = function () {
+  return new Reblog(this._id, this._sid, this.wpcom);
 };
 
 /**
@@ -188,12 +196,11 @@ Post.prototype.reblog = function(){
  * @api public
  */
 
-Post.prototype.comment = function(cid){
-  return Comment(cid, this._id, this._sid, this.wpcom);
+Post.prototype.comment = function (cid) {
+  return new Comment(cid, this._id, this._sid, this.wpcom);
 };
 
 /**
- * :COMMENT:
  * Return recent comments
  *
  * @param {Objecy} [query]
@@ -201,8 +208,8 @@ Post.prototype.comment = function(cid){
  * @api public
  */
 
-Post.prototype.comments = function(query, fn){
-  var comment = Comment(null, this._id, this._sid, this.wpcom);
+Post.prototype.comments = function (query, fn) {
+  var comment = new Comment(null, this._id, this._sid, this.wpcom);
   comment.replies(query, fn);
   return comment;
 };

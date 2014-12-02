@@ -111,7 +111,13 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   // pass `query` and/or `body` to request params
   if (query) {
     params.query = query;
-    delete query.apiVersion;
+
+    // Handle special query parameters
+    // - `apiVersion`
+    if (query.apiVersion) {
+      params.apiVersion = query.apiVersion;
+      delete query.apiVersion;
+    }
   }
 
   if (body) {

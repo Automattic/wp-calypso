@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var request = require('./util/request');
 var debug = require('debug')('wpcom:like');
 
 /**
@@ -14,7 +15,7 @@ var debug = require('debug')('wpcom:like');
  * @api public
  */
 
-function Like(pid, sid, wpcom){
+function Like(pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`side id` is not correctly defined');
   }
@@ -23,7 +24,9 @@ function Like(pid, sid, wpcom){
     throw new Error('`post id` is not correctly defined');
   }
 
-  if (!(this instanceof Like)) return new Like(pid, sid, wpcom);
+  if (!(this instanceof Like)) {
+    return new Like(pid, sid, wpcom);
+  }
 
   this.wpcom = wpcom;
   this._pid = pid;
@@ -39,9 +42,9 @@ function Like(pid, sid, wpcom){
  */
 
 Like.prototype.state =
-Like.prototype.mine = function(query, fn){
+Like.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
-  return this.wpcom.sendRequest(path, query, null, fn);
+  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
@@ -52,9 +55,9 @@ Like.prototype.mine = function(query, fn){
  * @api public
  */
 
-Like.prototype.add = function(query, fn){
+Like.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, query, null, fn);
+  return request.put(this.wpcom, null, path, query, null, fn);
 };
 
 /**
@@ -65,9 +68,9 @@ Like.prototype.add = function(query, fn){
  */
 
 Like.prototype['delete'] =
-Like.prototype.del = function(fn){
+Like.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
-  return this.wpcom.sendRequest({ path: path, method: 'post' }, null, null, fn);
+  return request.del(this.wpcom, null, path, query, fn);
 };
 
 /**
