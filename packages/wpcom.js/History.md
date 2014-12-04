@@ -1,4 +1,9 @@
 
+3.1.0 / 2014-12-04
+==================
+
+ * core: request handler parameter in constructor
+
 3.0.0 / 2014-12-02
 ==================
 
