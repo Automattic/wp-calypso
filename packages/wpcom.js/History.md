@@ -1,4 +1,9 @@
 
+3.1.1 / 2014-12-08
+==================
+
+ * site: URIencode id. This allows to use the API wit Jetpack sites installed on subfolders.
+
 3.1.0 / 2014-12-04
 ==================
 

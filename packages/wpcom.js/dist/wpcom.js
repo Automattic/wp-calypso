@@ -1217,7 +1217,7 @@ function Site(id, wpcom) {
   this.wpcom = wpcom;
 
   debug('set %o site id', id);
-  this._id = id;
+  this._id = encodeURIComponent(id);
 }
 
 /**
@@ -1411,6 +1411,7 @@ Site.prototype.tag = function (slug) {
  */
 
 module.exports = Site;
+
 },{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"./util/request":14,"debug":16}],12:[function(require,module,exports){
 
 /**
@@ -3516,6 +3517,12 @@ module.exports = function(arr, fn, initial){
  * Module dependencies.
  */
 
+var request = require('wpcom-xhr-request');
+
+/**
+ * Local module dependencies.
+ */
+
 var Me = require('./lib/me');
 var Site = require('./lib/site');
 var Users = require('./lib/users');
@@ -3523,21 +3530,46 @@ var Batch = require('./lib/batch');
 var debug = require('debug')('wpcom');
 
 /**
- * WordPress.com REST API class.
+ * XMLHttpRequest (and CORS) API access method.
  *
- * @api public
+ * API authentication is done via an (optional) access `token`,
+ * which needs to be retrieved via OAuth.
+ *
+ * Request Handler is optional and XHR is defined as default.
+ *
+ * @param {String} [token] - OAuth API access token
+ * @param {Function} [reqHandler] - function Request Handler
+ * @public
  */
 
-function WPCOM(request) {
+function WPCOM(token, reqHandler) {
   if (!(this instanceof WPCOM)) {
-    return new WPCOM(request);
+    return new WPCOM(token, reqHandler);
   }
 
-  if ('function' !== typeof request) {
-    throw new TypeError('a `request` WP.com function must be passed in');
+  // `token` is optional
+  if ('function' === typeof token) {
+    reqHandler = token;
+    token = null;
   }
 
-  this.request = request;
+  // Set default request handler
+  if (!reqHandler) {
+    debug('No request handler. Adding default XHR request handler');
+
+    this.request = function (params, fn) {
+      params = params || {};
+
+      // token is optional
+      if (token) {
+        params.authToken = token;
+      }
+
+      return request(params, fn);
+    };
+  } else {
+    this.request = reqHandler;
+  }
 }
 
 /**
@@ -3651,34 +3683,6 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
  */
 
 module.exports = WPCOM;
-},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":16}],24:[function(require,module,exports){
 
-/**
- * Module dependencies.
- */
-
-var WPCOM = require('./wpcom');
-var request = require('wpcom-xhr-request');
-
-/**
- * XMLHttpRequest (and CORS) API access method.
- *
- * API authentication is done via an (optional) access `token`,
- * which needs to be retrieved via OAuth.
- *
- * (for server-side auth, use `wpcom-oauth` on npm).
- * (for client-side auth, use `wpcom-browser-auth` on npm).
- *
- * @param {String} [token] - OAuth API access token
- * @public
- */
-
-module.exports = function(token){
-  return new WPCOM(function(params, fn){
-    params.authToken = token;
-    return request(params, fn);
-  });
-};
-
-},{"./wpcom":23,"wpcom-xhr-request":19}]},{},[24])(24)
+},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":16,"wpcom-xhr-request":19}]},{},[23])(23)
 });
