@@ -49,7 +49,7 @@ function Site(id, wpcom) {
   this.wpcom = wpcom;
 
   debug('set %o site id', id);
-  this._id = id;
+  this._id = encodeURIComponent(id);
 }
 
 /**
