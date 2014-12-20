@@ -43,7 +43,7 @@ var mappings = {
 function photon (imageUrl, opts) {
 
   // strip any leading `http(s)://`
-  imageUrl = imageUrl.replace(/^https?\:\/\//i, '');
+  imageUrl = imageUrl.replace(/^https?\:\/\/(i\d.wp.com\/)?/i, '');
 
   // determine which Photon server to connect to: `i0`, `i1`, or `i2`.
   // statically hash the subdomain based on the URL, to optimize browser caches.
