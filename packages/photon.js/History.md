@@ -1,4 +1,11 @@
 
+1.0.3 / 2014-12-20
+==================
+
+  * fixes photonception issue (#2)
+  * package: update "browserify" to v6.1.0
+  * dist: recompile
+
 1.0.2 / 2014-06-13
 ==================
 
