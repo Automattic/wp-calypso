@@ -72,7 +72,7 @@ Site.prototype.get = function (query, fn) {
  * @api private
  */
 
-var list = function (subpath, apiVersion) {
+function list (subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -86,7 +86,7 @@ var list = function (subpath, apiVersion) {
     var path = '/sites/' + this._id + '/' + subpath;
     return request.get(this.wpcom, { apiVersion: apiVersion }, path, query, fn);
   };
-};
+}
 
 // walk for each resource and create related method
 var i, res, isarr, name, subpath, apiVersion;
@@ -236,6 +236,68 @@ Site.prototype.cat = Site.prototype.category = function (slug) {
 
 Site.prototype.tag = function (slug) {
   return new Tag(slug, this._id, this.wpcom);
+};
+
+/**
+ * Get a list of shortcodes available on a site.
+ *
+ * Note: The current user must have publishing access.
+ *
+ * @api public
+ */
+
+Site.prototype.shortcodesList = function (query, fn) {
+  var path = '/sites/' + this._id + '/shortcodes';
+  return request.get(this.wpcom, null, path, query, fn);
+};
+
+/**
+ * Get a rendered shortcode for a site.
+ *
+ * Note: The current user must have publishing access.
+ *
+ * @param {String} shortcode
+ * @api public
+ */
+
+Site.prototype.renderShortcode = function (shortcode, query, fn) {
+  if ('string' !== typeof shortcode) {
+    throw new TypeError('expected a shortcode String');
+  }
+
+  var path = '/sites/' + this._id + '/shortcodes/render';
+  return request.get(this.wpcom, { shortcode: shortcode }, path, query, fn);
+};
+
+/**
+ * Get a list of embed URLs available on a site.
+ *
+ * Note: The current user must have publishing access.
+ *
+ * @api public
+ */
+
+Site.prototype.embedsList = function (query, fn) {
+  var path = '/sites/' + this._id + '/embeds';
+  return request.get(this.wpcom, null, path, query, fn);
+};
+
+/**
+ * Get a rendered embed for a site.
+ *
+ * Note: The current user must have publishing access.
+ *
+ * @param {String} embed
+ * @api public
+ */
+
+Site.prototype.renderEmbed = function (embed, query, fn) {
+  if ('string' !== typeof embed) {
+    throw new TypeError('expected an embed String');
+  }
+
+  var path = '/sites/' + this._id + '/embeds/render';
+  return request.get(this.wpcom, { embed_url: embed }, path, query, fn);
 };
 
 /**

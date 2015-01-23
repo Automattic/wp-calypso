@@ -28,7 +28,7 @@ exports.get = function (wpcom, def, params, query, fn) {
     fn = query;
     query = {};
   }
-  
+
   defaultValues(def, query);
 
   return wpcom.sendRequest(params, query, null, fn);
@@ -46,7 +46,7 @@ exports.get = function (wpcom, def, params, query, fn) {
  * @api public
  */
 
-exports.put = 
+exports.put =
 exports.post = function (wpcom, def, params, query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
@@ -76,7 +76,7 @@ exports.post = function (wpcom, def, params, query, body, fn) {
  * @api public
  */
 
-exports.del = function (wpcom, def, params, query, fn) {  
+exports.del = function (wpcom, def, params, query, fn) {
   if ('function' == typeof query) {
     fn = query;
     query = {};
