@@ -42,22 +42,27 @@ var mappings = {
 
 function photon (imageUrl, opts) {
 
-  // strip any leading `http(s)://`
-  imageUrl = imageUrl.replace(/^https?\:\/\/(i\d.wp.com\/)?/i, '');
+  // parse the URL, assuming //host.com/path style URLs are ok and parse the querystring
+  var parsedUrl = url.parse( imageUrl, true, true );
 
-  // determine which Photon server to connect to: `i0`, `i1`, or `i2`.
-  // statically hash the subdomain based on the URL, to optimize browser caches.
-  var hash = crc32(imageUrl);
-  var rng = seed(hash);
-  var server = 'i' + Math.floor(rng() * 3);
-  debug('determined server "%s" to use with "%s"', server, imageUrl);
+  delete parsedUrl.protocol;
+  delete parsedUrl.auth;
+  delete parsedUrl.port;
 
   var params = {
     slashes: true,
-    pathname: imageUrl,
-    protocol: 'https:',
-    hostname: server + '.wp.com'
+    protocol: 'https:'
   };
+
+  if ( isAlreadyPhotoned( parsedUrl.host ) ) {
+    // We already have a server to use.
+    // Use it, even if it doesn't match our hash.
+    params.pathname = parsedUrl.pathname;
+    params.hostname = parsedUrl.hostname;
+  } else {
+    params.pathname = url.format( parsedUrl ).substring(1);
+    params.hostname = serverFromPathname( params.pathname );
+  }
 
   if (opts) {
     for (var i in opts) {
@@ -81,18 +86,30 @@ function photon (imageUrl, opts) {
     }
   }
 
-  // prevent inception (attempting to Photon-ify a link that
-  // already is already pointing to the Photon hostname)
-  var h = params.hostname + '/';
-  if (0 === params.pathname.indexOf(h)) {
-    debug('preventing Photon URL "inception", stripping leading "%s"', h);
-    params.pathname = params.pathname.substring(h.length);
-  }
-
   var photonUrl = url.format(params);
   debug('generated Photon URL: %s', photonUrl);
   return photonUrl;
 }
+
+function isAlreadyPhotoned( host ) {
+  return /^i[0-2]\.wp\.com$/.test(host);
+}
+
+/**
+ * Determine which Photon server to connect to: `i0`, `i1`, or `i2`.
+ *
+ * Statically hash the subdomain based on the URL, to optimize browser caches.
+ * @param  {string} pathname The pathname to use
+ * @return {string}          The hostname for the pathname
+ */
+function serverFromPathname( pathname ) {
+  var hash = crc32(pathname);
+  var rng = seed(hash);
+  var server = 'i' + Math.floor(rng() * 3);
+  debug('determined server "%s" to use with "%s"', server, pathname);
+  return server + '.wp.com';
+}
+
 
 },{"crc32":7,"debug":8,"seed-random":11,"url":6}],2:[function(require,module,exports){
 (function (global){
