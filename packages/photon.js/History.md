@@ -1,4 +1,11 @@
 
+1.0.4 / 2015-01-26
+==================
+
+  * package: allow any "debug" v2
+  * package: update "browserify" to v8.1.1
+  * Fix how querystrings are dealt with for photon hosts, protcolless URLs (#3, @blowery)
+
 1.0.3 / 2014-12-20
 ==================
 
