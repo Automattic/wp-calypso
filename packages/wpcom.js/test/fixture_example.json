@@ -1,46 +1,52 @@
 {
-  "global": "<global token>"
   "site": {
-    "public": {
-      "url": "<public blog url>"
-    },
-    "private" : {
-      "url": "<private blog url>",
-      "id": "<private blog id>",
-      "token": "<token>"
-    },
-    "reblog": {
-      "note": "<reblog note>",
-      "destination_site_id": <reblog-id>
-    }
+    "url": "<site-id>",
+    "token": "<global-token>"
   },
 
-  "new_post_data": {
-    "title": "New testing post",
-    "content": "<div style=\"color: red;\">The content of the new testing post</div>",
-    "tags": "test,rest-api-test,testing",
-    "categories": "dev"
+  "reblog": {
+    "original_blog": "<original-blog>",
+    "original_post": "<original-post>",
+    "note": "<note-to-add-to-reblogged-post>"
   },
 
-  "new_category_data": {
-    "name": "<category name>",
-    "description": "<category description>"
+  "post": {
+    "title": "<post-title>",
+    "content": "<post-description>",
+    "tags": "<tags,separated,by,commas>",
+    "categories": "<categories,separated,by,commas>"
   },
 
-  "new_tag_data": {
-    "name": "<tag name>",
-    "description": "<tag description>"
+  "category": {
+    "name": "<category-name>",
+    "description": "<category-description>"
   },
-  "new_media_data": {
+
+  "tag": {
+    "name": "<tag-name>",
+    "description": "<tag-description>"
+  },
+
+  "post_comment": "<comment-to-add-to-post>",
+
+  "media": {
     "files": [
-      "<file-1>",
-      "<file-2>"
+      {
+        "title": "<file-title>",
+        "description": "<file-description>",
+        "file": "<file-path>"
+      },
+      "<file-2-path>"
     ],
-    "media_urls": [
-      "<url-1>",
-      "<url-1>",
-    ]
-  },
 
-  "media_id": <media-id>
+    "urls": [
+      "<file-url>",
+      "<file-2-url>",
+      {
+        "title": "<file-3-title>",
+        "description": "<file-3-description>",
+        "url": "<file-3-url>"
+      }
+    ]
+  }
 }
