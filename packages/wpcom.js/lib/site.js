@@ -72,7 +72,7 @@ Site.prototype.get = function (query, fn) {
  * @api private
  */
 
-function list (subpath, apiVersion) {
+function list(subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -98,7 +98,7 @@ for (i = 0; i < resources.length; i++) {
   subpath = isarr ? res[1] : res;
   apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
-  debug('adding %o method in %o sub-path (v%o)', 'site.' + name + '()', subpath, apiVersion);
+  debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath, apiVersion);
   Site.prototype[name] = list(subpath, apiVersion);
 }
 

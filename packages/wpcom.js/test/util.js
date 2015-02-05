@@ -3,7 +3,7 @@
  * Module dependencies
  */
 
-var test = require('./data');
+var test = require('./fixture');
 var WPCOM = require('../');
 var fs = require('fs');
 
@@ -20,7 +20,7 @@ function Util(){}
  */
 
 Util.wpcom = function(){
-  return WPCOM(test.global);
+  return WPCOM();
 };
 
 /**

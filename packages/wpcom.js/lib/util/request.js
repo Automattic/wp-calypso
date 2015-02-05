@@ -56,7 +56,7 @@ exports.post = function (wpcom, def, params, query, body, fn) {
 
   defaultValues(def, query);
 
-  // params can be s string
+  // params can be a string
   params = 'string' === typeof params ? { path : params } : params;
 
   // request method

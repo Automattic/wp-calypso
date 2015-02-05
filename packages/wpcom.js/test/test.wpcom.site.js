@@ -1,71 +1,58 @@
 
-
 /**
  * WPCOM module
  */
 
 var WPCOM = require('../');
-var Site = require('../lib/site');
-var util = require('./util');
 var assert = require('assert');
-var fs = require('fs');
 
 /**
  * Testing data
  */
 
-var test = require('./data');
+var fixture = require('./fixture');
 
 /**
  * Create a `Site` instance
  */
 
-describe('WPCOM#Site', function(){
+describe('wpcom.site', function(){
+  // Global instances
+  var wpcom = WPCOM(fixture.site.token);
+  var site = wpcom.site(fixture.site.url);
+  var testing_post;
+  var new_post_ID;
+  var site_ID;
 
-  // Create a new_post before to start the tests
-  var new_post;
+  // Create a testing_post before to start tests
   before(function(done){
-    util.addPost(function(err, post) {
+    site.addPost(fixture.post, function(err, data_post) {
       if (err) return done(err);
 
-      new_post = post;
+      testing_post = data_post;
+
+      site.get(function(err, data_site){
+        if (err) return done(err);
+
+        site_ID = data_site.ID;
+        done();
+      })
+    });
+  });
+
+  // Delete testing post
+  after(function(done){
+    site.deletePost(testing_post.ID, function(err, data) {
+      if (err) throw err;
+      
       done();
     });
   });
 
-  describe('sync', function(){
+  describe('wpcom.site.lists', function(){
 
-    it('should be create a site object instance', function(){
-      var site = util.public_site();
-
-      assert.ok(site instanceof Site);
-      assert.equal(test.site.public.url, site._id);
-    });
-
-  });
-
-  describe('async', function(){
-
-    describe('site.get()', function(){
-      it('should require site data', function(done){
-        var site = util.public_site();
-
-        site.get(function(err, info){
-          if (err) throw err;
-
-          assert.equal('number', typeof info.ID);
-          assert.equal('string', typeof info.name);
-
-          done();
-        });
-      });
-    });
-
-    describe('site.postsList()', function(){
-
-      it('should request posts list', function(done){
-        var site = util.public_site();
-
+    describe('wpcom.site.postsList', function() {
+      it('should request posts list', function(done) {
         site.postsList(function(err, list){
           if (err) throw err;
 
@@ -82,11 +69,8 @@ describe('WPCOM#Site', function(){
         });
       });
 
-      it('should request only one post', function(done){
-
-        var site = util.public_site();
-
-        site.postsList({ number: 1 }, function(err, list){
+      it('should request only one post', function(done) {
+        site.postsList({ number: 1 }, function(err, list) {
           if (err) throw err;
 
           // list object data testing
@@ -98,16 +82,11 @@ describe('WPCOM#Site', function(){
 
           done();
         });
-
       });
-
     });
 
-    describe('site.mediaList()', function(){
-
+    describe('wpcom.site.mediaList', function(){
       it('should request media library list', function(done){
-        var site = util.private_site();
-
         site.mediaList(function(err, list){
           if (err) throw err;
 
@@ -118,18 +97,12 @@ describe('WPCOM#Site', function(){
           assert.ok(list.media instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.usersList()', function(){
-
+    describe('wpcom.site.usersList()', function(){
       it('should request users list', function(done){
-        var site = util.private_site();
-
         site.usersList(function(err, list){
           if (err) throw err;
 
@@ -137,16 +110,11 @@ describe('WPCOM#Site', function(){
           assert.ok(list.users instanceof Array);
           done();
         });
-
       });
-
     });
 
-    describe('site.commentsList()', function(){
-
+    describe('wpcom.site.commentsList', function(){
       it('should request comments list', function(done){
-        var site = util.private_site();
-
         site.commentsList(function(err, list){
           if (err) throw err;
 
@@ -157,18 +125,12 @@ describe('WPCOM#Site', function(){
           assert.ok(list.comments instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.followsList()', function(){
-
+    describe('wpcom.site.followsList', function(){
       it('should request follows list', function(done){
-        var site = util.private_site();
-
         site.followsList(function(err, list){
           if (err) throw err;
 
@@ -181,16 +143,11 @@ describe('WPCOM#Site', function(){
           done();
 
         });
-
       });
-
     });
 
-    describe('site.categoriesList()', function(){
-
+    describe('wpcom.site.categoriesList', function(){
       it('should request categories list', function(done){
-        var site = util.private_site();
-
         site.categoriesList(function(err, list){
           if (err) throw err;
 
@@ -201,18 +158,12 @@ describe('WPCOM#Site', function(){
           assert.ok(list.categories instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.tagsList()', function(){
-
+    describe('wpcom.site.tagsList', function(){
       it('should request tags list', function(done){
-        var site = util.private_site();
-
         site.tagsList(function(err, list){
           if (err) throw err;
 
@@ -223,18 +174,12 @@ describe('WPCOM#Site', function(){
           assert.ok(list.tags instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.stats()', function(){
-
+    describe('wpcom.site.stats', function(){
       it('should request stats data', function(done){
-        var site = util.private_site();
-
         site.stats(function(err, data){
           if (err) throw err;
 
@@ -248,16 +193,11 @@ describe('WPCOM#Site', function(){
           done();
 
         });
-
       });
-
     });
 
-    describe('site.statsVisits()', function(){
-
+    describe('wpcom.site.statsVisits', function(){
       it('should request visits stats', function(done){
-        var site = util.private_site();
-
         site.statsVisits(function(err, data){
           if (err) throw err;
 
@@ -270,18 +210,12 @@ describe('WPCOM#Site', function(){
           assert.ok(data.fields instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.statsReferrers()', function(){
-
+    describe('wpcom.site.statsReferrers', function(){
       it('should request referrers stats', function(done){
-        var site = util.private_site();
-
         site.statsReferrers(function(err, data){
           if (err) throw err;
 
@@ -294,18 +228,12 @@ describe('WPCOM#Site', function(){
           assert.ok(data.referrers instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.statsTopPosts()', function(){
-
+    describe('wpcom.site.statsTopPosts', function(){
       it('should request top posts stats', function(done){
-        var site = util.private_site();
-
         site.statsTopPosts(function(err, data){
           if (err) throw err;
 
@@ -314,18 +242,12 @@ describe('WPCOM#Site', function(){
           assert.ok(data['top-posts'] instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.statsCountryViews()', function(){
-
+    describe('wpcom.site.statsCountryViews', function(){
       it('should request country views stats', function(done){
-        var site = util.private_site();
-
         site.statsCountryViews(function(err, data){
           if (err) throw err;
 
@@ -334,18 +256,12 @@ describe('WPCOM#Site', function(){
           assert.ok(data['country-views'] instanceof Array);
 
           done();
-
         });
-
       });
-
     });
 
-    describe('site.statsClicks()', function(){
-
+    describe('wpcom.site.statsClicks', function(){
       it('should request clicks stats', function(done){
-        var site = util.private_site();
-
         site.statsClicks(function(err, data){
           if (err) throw err;
 
@@ -360,16 +276,11 @@ describe('WPCOM#Site', function(){
           done();
 
         });
-
       });
-
     });
 
-    describe('site.statsSearchTerms()', function(){
-
+    describe('wpcom.site.statsSearchTerms', function(){
       it('should request search terms stats', function(done){
-        var site = util.private_site();
-
         site.statsSearchTerms(function(err, data){
           if (err) throw err;
 
@@ -381,129 +292,80 @@ describe('WPCOM#Site', function(){
           assert.ok(data['search-terms'] instanceof Array);
 
           done();
-
         });
+      });
+    });
+  });
+ 
+  describe('wpcom.site.get', function(){
+    it('should require site data', function(done){
+      site.get(function(err, data){
+        if (err) throw err;
 
+        assert.equal('number', typeof data.ID);
+        assert.equal('string', typeof data.name);
+
+        done();
+      });
+    });
+  });
+
+  describe('wpcom.site.addPost', function(){
+    it('should create a new blog post', function(done){
+      site.addPost(fixture.post, function(err, data){
+        if (err) throw err;
+        
+        // store in post ID global var
+        new_post_ID = data.ID;
+
+        assert.equal('object', typeof data);
+        assert.equal(site_ID, data.site_ID);
+
+        done();
+      });
+    });
+  });
+
+  describe('wpcom.site.deletePost', function(){
+    it('should delete post added', function(done){
+      site.deletePost(new_post_ID, function(err, data){
+        if (err) throw err;
+
+        assert.equal('object', typeof data);
+        assert.equal(new_post_ID, data.ID);
+
+        done();
+
+      });
+    });
+  });
+
+  describe('wpcom.site.addMediaFiles', function(){
+    it('should create a new media from a file', function(done){
+      site.addMediaFiles(fixture.media.files, function(err, data){
+        if (err) throw err;
+
+        assert.ok(data);
+        assert.ok(data.media instanceof Array);
+        assert.equal(fixture.media.files.length, data.media.length);
+        done();
       });
 
     });
 
-  /*
-    describe('site.comment.get()', function(){
+  });
 
-      it('should request for a site comment', function(done){
-        var site = util.private_site();
+  describe('wpcom.site.addMediaUrls', function(){
+    it('should create a new site media', function(done){
+      media = site.addMediaUrls(fixture.media.urls, function(err, data){
+        if (err) throw err;
 
-        site
-        .comment(41)
-        .get(function(err, data){
-          if (err) throw err;
-
-          assert.equal('number', typeof data.ID);
-          assert.equal('object', typeof data.post);
-          assert.ok(data.post instanceof Object);
-
-          done();
-
-        });
-
-      });
-
-    });
-
-    describe('site.follower.follow()', function() {
-      it('should follow the current site', function(done) {
-        var site = util.private_site();
-
-        site
-        .follower
-        .follow(function(error, data) {
-          if (error) throw error;
-
-          assert.equal(1, 1);
-
-          done();
-        });
+        assert.ok(data);
+        assert.ok(data.media instanceof Array);
+        assert.equal(fixture.media.urls.length, data.media.length);
+        done();
       });
     });
-    */
-
-    describe('site.addPost()', function(){
-
-      it('should create a new blog post', function(done){
-        var site = util.private_site();
-
-        var post = site.addPost(test.new_post_data, function(err, data){
-          if (err) throw err;
-
-          assert.equal('object', typeof data);
-          assert.equal(test.site.private.id, data.site_ID);
-
-          done();
-        });
-
-      });
-
-    });
-
-    describe('site.deletePost()', function(){
-
-      it('should delete a blog post', function(done){
-
-        var site = util.private_site();
-
-        var post = site.deletePost(new_post.ID, function(err, data){
-
-          if (err) throw err;
-
-          assert.equal('object', typeof data);
-          assert.equal(test.site.private.id, data.site_ID);
-          assert.equal(new_post.ID, data.ID);
-
-          done();
-
-        });
-
-      });
-
-    });
-
-    describe('site.addMediaFiles([fs])', function(){
-
-      it('should create a new media from a file', function(done){
-        var site = util.private_site();
-
-        var media = site.addMediaFiles(test.new_media_data.files, function(err, data){
-          if (err) throw err;
-
-          assert.ok(data);
-          assert.ok(data.media instanceof Array);
-          assert.equal(test.new_media_data.files.length, data.media.length);
-          done();
-        });
-
-      });
-
-    });
-
-    describe('site.addMediaUrls([\'url1\', \'url2\'])', function(){
-
-      it('should create a new site media', function(done){
-        var site = util.private_site();
-
-        var media = site.addMediaUrls(test.new_media_data.media_urls, function(err, data){
-          if (err) throw err;
-
-          assert.ok(data);
-          assert.ok(data.media instanceof Array);
-          assert.equal(test.new_media_data.media_urls.length, data.media.length);
-          done();
-        });
-
-      });
-
-    });
-
   });
 
 });

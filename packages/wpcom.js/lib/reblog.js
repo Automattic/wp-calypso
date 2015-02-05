@@ -73,9 +73,9 @@ Reblog.prototype.add = function (query, body, fn) {
 
 /**
  * Reblog a post to
- * It's almost a alias of Reblogs#add()
+ * It's almost an alias of Reblogs#add
  *
- * @param {Number} dest destination
+ * @param {Number|String} dest site id destination
  * @param {String} [note]
  * @param {Function} fn
  * @api public

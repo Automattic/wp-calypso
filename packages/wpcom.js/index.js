@@ -39,6 +39,10 @@ function WPCOM(token, reqHandler) {
     token = null;
   }
 
+  if (token) {
+    debug('Token defined: %s…', token.substring(0, 6));
+  }
+
   // Set default request handler
   if (!reqHandler) {
     debug('No request handler. Adding default XHR request handler');

@@ -3,58 +3,46 @@
  * Module dependencies
  */
 
-var Site = require('../lib/site');
-var util = require('./util');
+var WPCOM = require('../');
 var assert = require('assert');
 
 /**
- * Testing data
+ * Fixture data
  */
 
-var test = require('./data');
+var fixture = require('./fixture');
 
 /**
  * Create a `Site` instance
  */
 
-describe('WPCOM#apiVersion', function() {
+describe('apiVersion', function() {
+  // Global instances
+  var wpcom = WPCOM(fixture.site.token);
+  var site = wpcom.site(fixture.site.url);
 
-  describe('async', function() {
+  it('should request changing api version', function(done) {
+    site
+    .addMediaUrls({ apiVersion: '1.1' }, fixture.media.urls[1],
+    function(err, data){
+      if (err) throw err;
 
-    describe('wpcom.apiVersion()', function() {
-      it('should request changing api version', function(done) {
+      assert.ok(data);
 
-        var wpcom = util.wpcom();
-        var site = util.private_site();
+      site
+      .mediaList({ apiVersion: '1' }, function(err, data) {
+        if (err) throw err;
 
         site
-        .addMediaUrls({ apiVersion: '1.1' }, test.new_media_data.media_urls[1],
-        function(err, data){
+        .addMediaFiles({ apiVersion: '1.1' }, fixture.media.files[0],
+        function(err, data) {
           if (err) throw err;
 
           assert.ok(data);
-
-          site
-          .mediaList({ apiVersion: '1' }, function(err, data) {
-            if (err) throw err;
-
-            site
-            .addMediaFiles({ apiVersion: '1.1' }, test.new_media_data.files[0],
-            function(err, data) {
-              if (err) throw err;
-
-              assert.ok(data);
-              done();
-            });
-
-          });
-
+          done();
         });
-
       });
-
     });
-
   });
 
 });
