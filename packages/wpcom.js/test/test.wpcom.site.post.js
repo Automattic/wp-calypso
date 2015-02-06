@@ -5,7 +5,6 @@
 
 var WPCOM = require('../');
 var Site = require('../lib/site');
-var util = require('./util');
 var assert = require('assert');
 
 /**
