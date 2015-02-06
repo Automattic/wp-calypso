@@ -945,8 +945,27 @@ Post.prototype.getBySlug = function (query, fn) {
  */
 
 Post.prototype.add = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
   var path = '/sites/' + this._sid + '/posts/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return request.post(this.wpcom, null, path, query, body, function (err, data) {
+    if (err) {
+      return fn(err);
+    }
+
+    // update POST object
+    this._id = data.ID;
+    debug('Set post _id: %s', this._id);
+
+    this._slug = data.slug;
+    debug('Set post _slug: %s', this._slug);
+
+    fn(null, data)
+  }.bind(this));
 };
 
 /**
@@ -1143,9 +1162,9 @@ Reblog.prototype.add = function (query, body, fn) {
 
 /**
  * Reblog a post to
- * It's almost a alias of Reblogs#add()
+ * It's almost an alias of Reblogs#add
  *
- * @param {Number} dest destination
+ * @param {Number|String} dest site id destination
  * @param {String} [note]
  * @param {Function} fn
  * @api public
@@ -1191,6 +1210,8 @@ var resources = [
   'follows',
   'media',
   'posts',
+  'shortcodes',
+  'embeds',
   [ 'stats', 'stats' ],
   [ 'statsVisits', 'stats/visits' ],
   [ 'statsReferrers', 'stats/referrers' ],
@@ -1240,7 +1261,7 @@ Site.prototype.get = function (query, fn) {
  * @api private
  */
 
-var list = function (subpath, apiVersion) {
+function list(subpath, apiVersion) {
 
   /**
    * Return the <names>List method
@@ -1254,7 +1275,7 @@ var list = function (subpath, apiVersion) {
     var path = '/sites/' + this._id + '/' + subpath;
     return request.get(this.wpcom, { apiVersion: apiVersion }, path, query, fn);
   };
-};
+}
 
 // walk for each resource and create related method
 var i, res, isarr, name, subpath, apiVersion;
@@ -1266,7 +1287,7 @@ for (i = 0; i < resources.length; i++) {
   subpath = isarr ? res[1] : res;
   apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
-  debug('adding %o method in %o sub-path (v%o)', 'site.' + name + '()', subpath, apiVersion);
+  debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath, apiVersion);
   Site.prototype[name] = list(subpath, apiVersion);
 }
 
@@ -1404,6 +1425,42 @@ Site.prototype.cat = Site.prototype.category = function (slug) {
 
 Site.prototype.tag = function (slug) {
   return new Tag(slug, this._id, this.wpcom);
+};
+
+/**
+ * Get a rendered shortcode for a site.
+ *
+ * Note: The current user must have publishing access.
+ *
+ * @param {String} shortcode
+ * @api public
+ */
+
+Site.prototype.renderShortcode = function (shortcode, query, fn) {
+  if ('string' !== typeof shortcode) {
+    throw new TypeError('expected a shortcode String');
+  }
+
+  var path = '/sites/' + this._id + '/shortcodes/render';
+  return request.get(this.wpcom, { shortcode: shortcode }, path, query, fn);
+};
+
+/**
+ * Get a rendered embed for a site.
+ *
+ * Note: The current user must have publishing access.
+ *
+ * @param {String} embed
+ * @api public
+ */
+
+Site.prototype.renderEmbed = function (embed, query, fn) {
+  if ('string' !== typeof embed) {
+    throw new TypeError('expected an embed String');
+  }
+
+  var path = '/sites/' + this._id + '/embeds/render';
+  return request.get(this.wpcom, { embed_url: embed }, path, query, fn);
 };
 
 /**
@@ -1586,7 +1643,7 @@ exports.get = function (wpcom, def, params, query, fn) {
     fn = query;
     query = {};
   }
-  
+
   defaultValues(def, query);
 
   return wpcom.sendRequest(params, query, null, fn);
@@ -1604,7 +1661,7 @@ exports.get = function (wpcom, def, params, query, fn) {
  * @api public
  */
 
-exports.put = 
+exports.put =
 exports.post = function (wpcom, def, params, query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
@@ -1614,7 +1671,7 @@ exports.post = function (wpcom, def, params, query, body, fn) {
 
   defaultValues(def, query);
 
-  // params can be s string
+  // params can be a string
   params = 'string' === typeof params ? { path : params } : params;
 
   // request method
@@ -1634,7 +1691,7 @@ exports.post = function (wpcom, def, params, query, body, fn) {
  * @api public
  */
 
-exports.del = function (wpcom, def, params, query, fn) {  
+exports.del = function (wpcom, def, params, query, fn) {
   if ('function' == typeof query) {
     fn = query;
     query = {};
@@ -1658,6 +1715,7 @@ function defaultValues (def, query) {
     query.apiVersion = query.apiVersion || def.apiVersion;
   }
 };
+
 },{"debug":16}],15:[function(require,module,exports){
 
 },{}],16:[function(require,module,exports){
@@ -1674,6 +1732,17 @@ exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
+
+/**
+ * Use chrome.storage.local if we are in an app
+ */
+
+var storage;
+
+if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined')
+  storage = chrome.storage.local;
+else
+  storage = window.localStorage;
 
 /**
  * Colors.
@@ -1764,10 +1833,10 @@ function formatArgs() {
  */
 
 function log() {
-  // This hackery is required for IE8,
-  // where the `console.log` function doesn't have 'apply'
-  return 'object' == typeof console
-    && 'function' == typeof console.log
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
     && Function.prototype.apply.call(console.log, console, arguments);
 }
 
@@ -1781,9 +1850,9 @@ function log() {
 function save(namespaces) {
   try {
     if (null == namespaces) {
-      localStorage.removeItem('debug');
+      storage.removeItem('debug');
     } else {
-      localStorage.debug = namespaces;
+      storage.debug = namespaces;
     }
   } catch(e) {}
 }
@@ -1798,7 +1867,7 @@ function save(namespaces) {
 function load() {
   var r;
   try {
-    r = localStorage.debug;
+    r = storage.debug;
   } catch(e) {}
   return r;
 }
@@ -3553,6 +3622,10 @@ function WPCOM(token, reqHandler) {
     token = null;
   }
 
+  if (token) {
+    debug('Token defined: %s…', token.substring(0, 6));
+  }
+
   // Set default request handler
   if (!reqHandler) {
     debug('No request handler. Adding default XHR request handler');
@@ -3683,6 +3756,5 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
  */
 
 module.exports = WPCOM;
-
 },{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":16,"wpcom-xhr-request":19}]},{},[23])(23)
 });
