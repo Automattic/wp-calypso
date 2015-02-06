@@ -23,6 +23,8 @@ var resources = [
   'follows',
   'media',
   'posts',
+  'shortcodes',
+  'embeds',
   [ 'stats', 'stats' ],
   [ 'statsVisits', 'stats/visits' ],
   [ 'statsReferrers', 'stats/referrers' ],
@@ -239,19 +241,6 @@ Site.prototype.tag = function (slug) {
 };
 
 /**
- * Get a list of shortcodes available on a site.
- *
- * Note: The current user must have publishing access.
- *
- * @api public
- */
-
-Site.prototype.shortcodesList = function (query, fn) {
-  var path = '/sites/' + this._id + '/shortcodes';
-  return request.get(this.wpcom, null, path, query, fn);
-};
-
-/**
  * Get a rendered shortcode for a site.
  *
  * Note: The current user must have publishing access.
@@ -267,19 +256,6 @@ Site.prototype.renderShortcode = function (shortcode, query, fn) {
 
   var path = '/sites/' + this._id + '/shortcodes/render';
   return request.get(this.wpcom, { shortcode: shortcode }, path, query, fn);
-};
-
-/**
- * Get a list of embed URLs available on a site.
- *
- * Note: The current user must have publishing access.
- *
- * @api public
- */
-
-Site.prototype.embedsList = function (query, fn) {
-  var path = '/sites/' + this._id + '/embeds';
-  return request.get(this.wpcom, null, path, query, fn);
 };
 
 /**
