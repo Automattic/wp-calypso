@@ -97,8 +97,27 @@ Post.prototype.getBySlug = function (query, fn) {
  */
 
 Post.prototype.add = function (query, body, fn) {
+  if ('function' === typeof body) {
+    fn = body;
+    body = query;
+    query = {};
+  }
+
   var path = '/sites/' + this._sid + '/posts/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return request.post(this.wpcom, null, path, query, body, function (err, data) {
+    if (err) {
+      return fn(err);
+    }
+
+    // update POST object
+    this._id = data.ID;
+    debug('Set post _id: %s', this._id);
+
+    this._slug = data.slug;
+    debug('Set post _slug: %s', this._slug);
+
+    fn(null, data)
+  }.bind(this));
 };
 
 /**
