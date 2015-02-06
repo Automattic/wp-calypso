@@ -1,4 +1,14 @@
 
+3.2.0 / 2015-02-05
+==================
+
+ * site: use `list` builder for `embdesList` method
+ * test: site: add embedsList() test
+ * site: use `list` builder for shortcodesList method
+ * test: add site.shortcodesList test
+ * post: propagate `id` and `slug` when post is added
+ * improve tests
+ 
 3.1.1 / 2014-12-08
 ==================
 
