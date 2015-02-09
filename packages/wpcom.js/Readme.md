@@ -31,6 +31,8 @@ Include `dist/wpcom.js` in a `<script>` tag:
 
 ## API
 
+# [WPCOM#Req](./docs/wpcom.req.md) - Direct requests to WordPress REST-API
+
 * [WPCOM](./docs/wpcom.md)
 * [Me](./docs/me.md)
 * [Site](./docs/site.md)
