@@ -7,7 +7,9 @@ Make a `GET` request directly to WordPress.com REST-API
 
 ```js
 // get sites list of current user
-wpcom.req.get('/me/sites')
+wpcom.req.get('/me/sites', function(err, data){
+	// data response
+})
 ```
 
 ### WPCOM.Req.post(params, query, body, fn)
