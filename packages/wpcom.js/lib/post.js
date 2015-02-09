@@ -6,7 +6,6 @@
 var Like = require('./like');
 var Reblog = require('./reblog');
 var Comment = require('./comment');
-var request = require('./util/request');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -71,7 +70,7 @@ Post.prototype.get = function (query, fn) {
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -84,7 +83,7 @@ Post.prototype.get = function (query, fn) {
 
 Post.prototype.getBySlug = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -104,7 +103,7 @@ Post.prototype.add = function (query, body, fn) {
   }
 
   var path = '/sites/' + this._sid + '/posts/new';
-  return request.post(this.wpcom, null, path, query, body, function (err, data) {
+  return this.wpcom.req.post(path, query, body, function (err, data) {
     if (err) {
       return fn(err);
     }
@@ -131,7 +130,7 @@ Post.prototype.add = function (query, body, fn) {
 
 Post.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -145,7 +144,7 @@ Post.prototype.update = function (query, body, fn) {
 Post.prototype['delete'] =
 Post.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -158,7 +157,7 @@ Post.prototype.del = function (query, fn) {
 
 Post.prototype.restore = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -171,7 +170,7 @@ Post.prototype.restore = function (query, fn) {
 
 Post.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -185,7 +184,7 @@ Post.prototype.likesList = function (query, fn) {
 
 Post.prototype.related = function (body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**

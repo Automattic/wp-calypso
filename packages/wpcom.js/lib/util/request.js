@@ -3,42 +3,40 @@
  * Module dependencies.
  */
 
+var sendRequest = require('./send-request');
 var debug = require('debug')('wpcom:request');
 
 /**
  * Expose `Request` module
  */
 
-exports = module.exports = {};
+
+function Req(wpcom) {
+  this.wpcom = wpcom;
+}
 
 /**
  * Request methods
  *
- * @param {WPCOM} wpcom
- * @param {Object} def
  * @param {Object|String} params
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-exports.get = function (wpcom, def, params, query, fn) {
+Req.prototype.get = function (params, query, fn) {
   // `query` is optional
   if ('function' == typeof query) {
     fn = query;
     query = {};
   }
-
-  defaultValues(def, query);
-
-  return wpcom.sendRequest(params, query, null, fn);
+  
+  return sendRequest.call(this.wpcom, params, query, null, fn);
 };
 
 /**
  * Make `update` request
  *
- * @param {WPCOM} wpcom
- * @param {Object} def
  * @param {Object|String} params
  * @param {Object} [query]
  * @param {Object} body
@@ -46,15 +44,13 @@ exports.get = function (wpcom, def, params, query, fn) {
  * @api public
  */
 
-exports.put =
-exports.post = function (wpcom, def, params, query, body, fn) {
+Req.prototype.put =
+Req.prototype.post = function (params, query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
     body = query;
     query = {};
   }
-
-  defaultValues(def, query);
 
   // params can be a string
   params = 'string' === typeof params ? { path : params } : params;
@@ -62,41 +58,29 @@ exports.post = function (wpcom, def, params, query, body, fn) {
   // request method
   params.method = 'post';
 
-  return wpcom.sendRequest(params, query, body, fn);
+  return sendRequest.call(this.wpcom, params, query, body, fn);
 };
 
 /**
  * Make a `delete` request
  *
- * @param {WPCOM} wpcom
- * @param {Object} def
  * @param {Object|String} params
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-exports.del = function (wpcom, def, params, query, fn) {
+Req.prototype.del = function (params, query, fn) {
   if ('function' == typeof query) {
     fn = query;
     query = {};
   }
 
-  return exports.post(wpcom, def, params, query, null, fn);
+  return this.post(params, query, null, fn);
 };
 
 /**
- * Set query object using the given parameters
- *
- * @api private
+ * Expose module
  */
 
-function defaultValues (def, query) {
-  def = def || {};
-  query = query || {};
-
-  // `apiVersion`
-  if (def.apiVersion) {
-    query.apiVersion = query.apiVersion || def.apiVersion;
-  }
-};
+module.exports = Req;

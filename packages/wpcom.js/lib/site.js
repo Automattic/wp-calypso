@@ -9,7 +9,6 @@ var Tag = require('./tag');
 var Media = require('./media');
 var Comment = require('./comment');
 var Follow = require('./follow');
-var request = require('./util/request');
 var debug = require('debug')('wpcom:site');
 
 /**
@@ -63,7 +62,7 @@ function Site(id, wpcom) {
  */
 
 Site.prototype.get = function (query, fn) {
-  return request.get(this.wpcom, null, '/sites/' + this._id, query, fn);
+  return this.wpcom.req.get('/sites/' + this._id, query, fn);
 };
 
 /**
@@ -74,7 +73,7 @@ Site.prototype.get = function (query, fn) {
  * @api private
  */
 
-function list(subpath, apiVersion) {
+function list(subpath) {
 
   /**
    * Return the <names>List method
@@ -86,22 +85,21 @@ function list(subpath, apiVersion) {
 
   return function (query, fn) {
     var path = '/sites/' + this._id + '/' + subpath;
-    return request.get(this.wpcom, { apiVersion: apiVersion }, path, query, fn);
+    return this.wpcom.req.get(path, query, fn);
   };
 }
 
 // walk for each resource and create related method
-var i, res, isarr, name, subpath, apiVersion;
+var i, res, isarr, name, subpath;
 for (i = 0; i < resources.length; i++) {
   res = resources[i];
   isarr = Array.isArray(res);
 
   name =  isarr ? res[0] : res + 'List';
   subpath = isarr ? res[1] : res;
-  apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
-  debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath, apiVersion);
-  Site.prototype[name] = list(subpath, apiVersion);
+  debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath);
+  Site.prototype[name] = list(subpath);
 }
 
 /**
@@ -254,8 +252,17 @@ Site.prototype.renderShortcode = function (shortcode, query, fn) {
     throw new TypeError('expected a shortcode String');
   }
 
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  query = query || {};
+  query.shortcode = shortcode;
+
   var path = '/sites/' + this._id + '/shortcodes/render';
-  return request.get(this.wpcom, { shortcode: shortcode }, path, query, fn);
+
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -272,8 +279,16 @@ Site.prototype.renderEmbed = function (embed, query, fn) {
     throw new TypeError('expected an embed String');
   }
 
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  query = query || {};
+  query.embed = embed;
+
   var path = '/sites/' + this._id + '/embeds/render';
-  return request.get(this.wpcom, { embed_url: embed }, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**

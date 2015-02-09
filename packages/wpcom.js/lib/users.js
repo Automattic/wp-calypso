@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:users');
 
 /**
@@ -30,7 +29,7 @@ function Users(wpcom) {
  */
 
 Users.prototype.suggest = function (query, fn) {
-  return request.get(this.wpcom, null, '/users/suggest', query, fn);
+  return this.wpcom.req.get('/users/suggest', query, fn);
 };
 
 /**

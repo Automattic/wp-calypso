@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var request = require('wpcom-xhr-request');
+var request_handler = require('wpcom-xhr-request');
 
 /**
  * Local module dependencies.
@@ -13,7 +13,10 @@ var Me = require('./lib/me');
 var Site = require('./lib/site');
 var Users = require('./lib/users');
 var Batch = require('./lib/batch');
+var Req = require('./lib/util/request');
+var sendRequest = require('./lib/util/send-request');
 var debug = require('debug')('wpcom');
+
 
 /**
  * XMLHttpRequest (and CORS) API access method.
@@ -55,11 +58,17 @@ function WPCOM(token, reqHandler) {
         params.authToken = token;
       }
 
-      return request(params, fn);
+      return request_handler(params, fn);
     };
   } else {
     this.request = reqHandler;
   }
+
+  // Add Req instance
+  this.req = new Req(this);
+
+  // Default api version;
+  this.apiVersion = '1.1';
 }
 
 /**
@@ -107,65 +116,23 @@ WPCOM.prototype.batch = function () {
  */
 
 WPCOM.prototype.freshlyPressed = function (query, fn) {
-  return this.sendRequest('/freshly-pressed', query, null, fn);
+  return this.req.get('/freshly-pressed', query, fn);
 };
 
 /**
- * Request to WordPress REST API
- *
- * @param {String|Object} params
- * @param {Object} [query]
- * @param {Object} [body]
- * @param {Function} fn
- * @api private
+ * Expose send-request
+ * @TODO: use `this.req` instead of this method
  */
 
 WPCOM.prototype.sendRequest = function (params, query, body, fn) {
-  // `params` can be just the path (String)
-  if ('string' === typeof params) {
-    params = { path: params };
+  var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
+  if (console && console.warn) {
+    console.warn(msg);  
+  } else {
+    console.log(msg);
   }
-
-  debug('sendRequest(%o)', params.path);
-
-  // set `method` request param
-  params.method = (params.method || 'get').toUpperCase();
-
-  // `query` is optional
-  if ('function' === typeof query) {
-    fn = query;
-    query = null;
-  }
-
-  // `body` is optional
-  if ('function' === typeof body) {
-    fn = body;
-    body = null;
-  }
-
-  // pass `query` and/or `body` to request params
-  if (query) {
-    params.query = query;
-
-    // Handle special query parameters
-    // - `apiVersion`
-    if (query.apiVersion) {
-      params.apiVersion = query.apiVersion;
-      delete query.apiVersion;
-    }
-  }
-
-  if (body) {
-    params.body = body;
-  }
-
-  // callback `fn` function is optional
-  if (!fn) {
-    fn = function (err) { if (err) { throw err; } };
-  }
-
-  // request method
-  return this.request(params, fn);
+  
+  return sendRequest.call(this, params, query, body, fn)
 };
 
 /**

@@ -1,10 +1,9 @@
-
+  
 /**
  * Module dependencies.
  */
 
 var fs = require('fs');
-var request = require('./util/request');
 var debug = require('debug')('wpcom:media');
 
 /**
@@ -48,7 +47,7 @@ function Media(id, sid, wpcom) {
 
 Media.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  return request.get(this.wpcom, def, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -62,7 +61,7 @@ Media.prototype.get = function (query, fn) {
 
 Media.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  return request.put(this.wpcom, def, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -116,7 +115,7 @@ Media.prototype.addFiles = function (query, files, fn) {
     params.formData.push(['media[]', f]);
   }
 
-  return request.post(this.wpcom, def, params, query, null, fn);
+  return this.wpcom.req.post(params, query, null, fn);
 };
 
 /**
@@ -165,7 +164,7 @@ Media.prototype.addUrls = function (query, media, fn) {
     body.media_urls.push(url);
   }
 
-  return request.post(this.wpcom, def, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -178,7 +177,7 @@ Media.prototype.addUrls = function (query, media, fn) {
 
 Media.prototype['delete'] = Media.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
-  return request.del(this.wpcom, def, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**

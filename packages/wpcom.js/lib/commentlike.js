@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:commentlike');
 
 /**
@@ -44,7 +43,7 @@ function CommentLike(cid, sid, wpcom) {
 CommentLike.prototype.state =
 CommentLike.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -57,7 +56,7 @@ CommentLike.prototype.mine = function (query, fn) {
 
 CommentLike.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -70,7 +69,7 @@ CommentLike.prototype.add = function (query, body, fn) {
 CommentLike.prototype['delete'] =
 CommentLike.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**

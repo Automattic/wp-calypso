@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:reblog');
 
 /**
@@ -44,7 +43,7 @@ function Reblog(pid, sid, wpcom) {
 Reblog.prototype.state =
 Reblog.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -68,7 +67,7 @@ Reblog.prototype.add = function (query, body, fn) {
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**

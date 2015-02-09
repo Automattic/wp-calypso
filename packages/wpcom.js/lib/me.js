@@ -2,7 +2,7 @@
 /**
  * Module dependencies.
  */
-var request = require('./util/request');
+
 var debug = require('debug')('wpcom:me');
 
 /**
@@ -29,7 +29,7 @@ function Me(wpcom) {
  */
 
 Me.prototype.get = function (query, fn) {
-  return request.get(this.wpcom, null, '/me', query, fn);
+  return this.wpcom.req.get('/me', query, fn);
 };
 
 /**
@@ -41,7 +41,7 @@ Me.prototype.get = function (query, fn) {
  */
 
 Me.prototype.sites = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/sites', query, fn);
+  return this.wpcom.req.get('/me/sites', query, fn);
 };
 
 /**
@@ -53,7 +53,7 @@ Me.prototype.sites = function (query, fn) {
  */
 
 Me.prototype.likes = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/likes', query, fn);
+  return this.wpcom.req.get('/me/likes', query, fn);
 };
 
 /**
@@ -65,7 +65,7 @@ Me.prototype.likes = function (query, fn) {
  */
 
 Me.prototype.groups = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/groups', query, fn);
+  return this.wpcom.req.get('/me/groups', query, fn);
 };
 
 /**
@@ -77,7 +77,7 @@ Me.prototype.groups = function (query, fn) {
  */
 
 Me.prototype.connections = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/connections', query, fn);
+  return this.wpcom.req.get('/me/connections', query, fn);
 };
 
 /**

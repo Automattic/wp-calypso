@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:follow');
 
 /**
@@ -28,6 +27,20 @@ function Follow(site_id, wpcom) {
 }
 
 /**
+ * Get the follow status for current 
+ * user on current blog sites
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ */
+
+Follow.prototype.state =
+Follow.prototype.mine = function (query, fn) {
+  var path = '/sites/' + this._sid + '/follows/mine';
+  return this.wpcom.req.get(path, query, fn);
+};
+
+/**
  * Follow the site
  *
  * @param {Object} [query]
@@ -37,7 +50,7 @@ function Follow(site_id, wpcom) {
 Follow.prototype.follow =
 Follow.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/new';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -50,21 +63,7 @@ Follow.prototype.add = function (query, fn) {
 Follow.prototype.unfollow =
 Follow.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine/delete';
-  return request.put(this.wpcom, null, path, query, null, fn);
-};
-
-/**
- * Get the follow status for current 
- * user on current blog site
- *
- * @param {Object} [query]
- * @param {Function} fn
- */
-
-Follow.prototype.state =
-Follow.prototype.mine = function (query, fn) {
-  var path = '/sites/' + this._sid + '/follows/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, null, fn);
 };
 
 /**

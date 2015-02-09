@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:tag');
 
 /**
@@ -50,7 +49,7 @@ Tag.prototype.slug = function (slug) {
 
 Tag.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -64,7 +63,7 @@ Tag.prototype.get = function (query, fn) {
 
 Tag.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -78,7 +77,7 @@ Tag.prototype.add = function (query, body, fn) {
 
 Tag.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -91,7 +90,7 @@ Tag.prototype.update = function (query, body, fn) {
 
 Tag.prototype['delete'] = Tag.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**

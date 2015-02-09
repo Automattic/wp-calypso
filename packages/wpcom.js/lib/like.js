@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:like');
 
 /**
@@ -44,7 +43,7 @@ function Like(pid, sid, wpcom) {
 Like.prototype.state =
 Like.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -57,7 +56,7 @@ Like.prototype.mine = function (query, fn) {
 
 Like.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -70,7 +69,7 @@ Like.prototype.add = function (query, fn) {
 Like.prototype['delete'] =
 Like.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**

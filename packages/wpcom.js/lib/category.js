@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:category');
 
 /**
@@ -50,7 +49,7 @@ Category.prototype.slug = function (slug) {
 
 Category.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -64,7 +63,7 @@ Category.prototype.get = function (query, fn) {
 
 Category.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/categories/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -78,7 +77,7 @@ Category.prototype.add = function (query, body, fn) {
 
 Category.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -91,7 +90,7 @@ Category.prototype.update = function (query, body, fn) {
 
 Category.prototype['delete'] = Category.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**

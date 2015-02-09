@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:batch');
 
 /**
@@ -51,7 +50,7 @@ Batch.prototype.run = function (query, fn) {
   }
   query.urls = this.urls;
 
-  return request.get(this.wpcom, null, '/batch', query, fn);
+  return this.wpcom.req.get('/batch', query, fn);
 };
 
 /**

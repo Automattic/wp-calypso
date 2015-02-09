@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:batch');
 
 /**
@@ -52,7 +51,7 @@ Batch.prototype.run = function (query, fn) {
   }
   query.urls = this.urls;
 
-  return request.get(this.wpcom, null, '/batch', query, fn);
+  return this.wpcom.req.get('/batch', query, fn);
 };
 
 /**
@@ -60,13 +59,12 @@ Batch.prototype.run = function (query, fn) {
  */
 
 module.exports = Batch;
-},{"./util/request":14,"debug":16}],2:[function(require,module,exports){
+},{"debug":17}],2:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:category');
 
 /**
@@ -113,7 +111,7 @@ Category.prototype.slug = function (slug) {
 
 Category.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -127,7 +125,7 @@ Category.prototype.get = function (query, fn) {
 
 Category.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/categories/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -141,7 +139,7 @@ Category.prototype.add = function (query, body, fn) {
 
 Category.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -154,7 +152,7 @@ Category.prototype.update = function (query, body, fn) {
 
 Category.prototype['delete'] = Category.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -162,13 +160,12 @@ Category.prototype['delete'] = Category.prototype.del = function (query, fn) {
  */
 
 module.exports = Category;
-},{"./util/request":14,"debug":16}],3:[function(require,module,exports){
+},{"debug":17}],3:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var CommentLike = require('./commentlike');
 var debug = require('debug')('wpcom:comment');
 
@@ -207,7 +204,7 @@ function Comment(cid, pid, sid, wpcom) {
 
 Comment.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -220,7 +217,7 @@ Comment.prototype.get = function (query, fn) {
 
 Comment.prototype.replies = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -242,7 +239,7 @@ Comment.prototype.add = function (query, body, fn) {
   body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -264,7 +261,7 @@ Comment.prototype.update = function (query, body, fn) {
   body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -286,7 +283,7 @@ Comment.prototype.reply = function (query, body, fn) {
   body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -300,7 +297,7 @@ Comment.prototype.reply = function (query, body, fn) {
 Comment.prototype['delete'] =
 Comment.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -323,7 +320,7 @@ Comment.prototype.like = function() {
 
 Comment.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -331,13 +328,12 @@ Comment.prototype.likesList = function (query, fn) {
  */
 
 module.exports = Comment;
-},{"./commentlike":4,"./util/request":14,"debug":16}],4:[function(require,module,exports){
+},{"./commentlike":4,"debug":17}],4:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:commentlike');
 
 /**
@@ -378,7 +374,7 @@ function CommentLike(cid, sid, wpcom) {
 CommentLike.prototype.state =
 CommentLike.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -391,7 +387,7 @@ CommentLike.prototype.mine = function (query, fn) {
 
 CommentLike.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -404,7 +400,7 @@ CommentLike.prototype.add = function (query, body, fn) {
 CommentLike.prototype['delete'] =
 CommentLike.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -412,13 +408,12 @@ CommentLike.prototype.del = function (query, fn) {
  */
 
 module.exports = CommentLike;
-},{"./util/request":14,"debug":16}],5:[function(require,module,exports){
+},{"debug":17}],5:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:follow');
 
 /**
@@ -443,6 +438,20 @@ function Follow(site_id, wpcom) {
 }
 
 /**
+ * Get the follow status for current 
+ * user on current blog sites
+ *
+ * @param {Object} [query]
+ * @param {Function} fn
+ */
+
+Follow.prototype.state =
+Follow.prototype.mine = function (query, fn) {
+  var path = '/sites/' + this._sid + '/follows/mine';
+  return this.wpcom.req.get(path, query, fn);
+};
+
+/**
  * Follow the site
  *
  * @param {Object} [query]
@@ -452,7 +461,7 @@ function Follow(site_id, wpcom) {
 Follow.prototype.follow =
 Follow.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/new';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -465,21 +474,7 @@ Follow.prototype.add = function (query, fn) {
 Follow.prototype.unfollow =
 Follow.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine/delete';
-  return request.put(this.wpcom, null, path, query, null, fn);
-};
-
-/**
- * Get the follow status for current 
- * user on current blog site
- *
- * @param {Object} [query]
- * @param {Function} fn
- */
-
-Follow.prototype.state =
-Follow.prototype.mine = function (query, fn) {
-  var path = '/sites/' + this._sid + '/follows/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, null, fn);
 };
 
 /**
@@ -487,13 +482,12 @@ Follow.prototype.mine = function (query, fn) {
  */
 
 module.exports = Follow;
-},{"./util/request":14,"debug":16}],6:[function(require,module,exports){
+},{"debug":17}],6:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:like');
 
 /**
@@ -534,7 +528,7 @@ function Like(pid, sid, wpcom) {
 Like.prototype.state =
 Like.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -547,7 +541,7 @@ Like.prototype.mine = function (query, fn) {
 
 Like.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -560,7 +554,7 @@ Like.prototype.add = function (query, fn) {
 Like.prototype['delete'] =
 Like.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -568,12 +562,12 @@ Like.prototype.del = function (query, fn) {
  */
 
 module.exports = Like;
-},{"./util/request":14,"debug":16}],7:[function(require,module,exports){
+},{"debug":17}],7:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
-var request = require('./util/request');
+
 var debug = require('debug')('wpcom:me');
 
 /**
@@ -600,7 +594,7 @@ function Me(wpcom) {
  */
 
 Me.prototype.get = function (query, fn) {
-  return request.get(this.wpcom, null, '/me', query, fn);
+  return this.wpcom.req.get('/me', query, fn);
 };
 
 /**
@@ -612,7 +606,7 @@ Me.prototype.get = function (query, fn) {
  */
 
 Me.prototype.sites = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/sites', query, fn);
+  return this.wpcom.req.get('/me/sites', query, fn);
 };
 
 /**
@@ -624,7 +618,7 @@ Me.prototype.sites = function (query, fn) {
  */
 
 Me.prototype.likes = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/likes', query, fn);
+  return this.wpcom.req.get('/me/likes', query, fn);
 };
 
 /**
@@ -636,7 +630,7 @@ Me.prototype.likes = function (query, fn) {
  */
 
 Me.prototype.groups = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/groups', query, fn);
+  return this.wpcom.req.get('/me/groups', query, fn);
 };
 
 /**
@@ -648,7 +642,7 @@ Me.prototype.groups = function (query, fn) {
  */
 
 Me.prototype.connections = function (query, fn) {
-  return request.get(this.wpcom, null, '/me/connections', query, fn);
+  return this.wpcom.req.get('/me/connections', query, fn);
 };
 
 /**
@@ -656,14 +650,13 @@ Me.prototype.connections = function (query, fn) {
  */
 
 module.exports = Me;
-},{"./util/request":14,"debug":16}],8:[function(require,module,exports){
-
+},{"debug":17}],8:[function(require,module,exports){
+  
 /**
  * Module dependencies.
  */
 
 var fs = require('fs');
-var request = require('./util/request');
 var debug = require('debug')('wpcom:media');
 
 /**
@@ -707,7 +700,7 @@ function Media(id, sid, wpcom) {
 
 Media.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  return request.get(this.wpcom, def, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -721,7 +714,7 @@ Media.prototype.get = function (query, fn) {
 
 Media.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/media/' + this._id;
-  return request.put(this.wpcom, def, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -775,7 +768,7 @@ Media.prototype.addFiles = function (query, files, fn) {
     params.formData.push(['media[]', f]);
   }
 
-  return request.post(this.wpcom, def, params, query, null, fn);
+  return this.wpcom.req.post(params, query, null, fn);
 };
 
 /**
@@ -824,7 +817,7 @@ Media.prototype.addUrls = function (query, media, fn) {
     body.media_urls.push(url);
   }
 
-  return request.post(this.wpcom, def, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -837,7 +830,7 @@ Media.prototype.addUrls = function (query, media, fn) {
 
 Media.prototype['delete'] = Media.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
-  return request.del(this.wpcom, def, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -845,7 +838,7 @@ Media.prototype['delete'] = Media.prototype.del = function (query, fn) {
  */
 
 module.exports = Media;
-},{"./util/request":14,"debug":16,"fs":15}],9:[function(require,module,exports){
+},{"debug":17,"fs":16}],9:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -854,7 +847,6 @@ module.exports = Media;
 var Like = require('./like');
 var Reblog = require('./reblog');
 var Comment = require('./comment');
-var request = require('./util/request');
 var debug = require('debug')('wpcom:post');
 
 /**
@@ -919,7 +911,7 @@ Post.prototype.get = function (query, fn) {
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -932,7 +924,7 @@ Post.prototype.get = function (query, fn) {
 
 Post.prototype.getBySlug = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/slug:' + this._slug;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -952,7 +944,7 @@ Post.prototype.add = function (query, body, fn) {
   }
 
   var path = '/sites/' + this._sid + '/posts/new';
-  return request.post(this.wpcom, null, path, query, body, function (err, data) {
+  return this.wpcom.req.post(path, query, body, function (err, data) {
     if (err) {
       return fn(err);
     }
@@ -979,7 +971,7 @@ Post.prototype.add = function (query, body, fn) {
 
 Post.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -993,7 +985,7 @@ Post.prototype.update = function (query, body, fn) {
 Post.prototype['delete'] =
 Post.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -1006,7 +998,7 @@ Post.prototype.del = function (query, fn) {
 
 Post.prototype.restore = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/restore';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -1019,7 +1011,7 @@ Post.prototype.restore = function (query, fn) {
 
 Post.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/likes';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -1033,7 +1025,7 @@ Post.prototype.likesList = function (query, fn) {
 
 Post.prototype.related = function (body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  return request.put(this.wpcom, null, path, query, null, fn);
+  return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -1086,13 +1078,12 @@ Post.prototype.comments = function (query, fn) {
  */
 
 module.exports = Post;
-},{"./comment":3,"./like":6,"./reblog":10,"./util/request":14,"debug":16}],10:[function(require,module,exports){
+},{"./comment":3,"./like":6,"./reblog":10,"debug":17}],10:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:reblog');
 
 /**
@@ -1133,7 +1124,7 @@ function Reblog(pid, sid, wpcom) {
 Reblog.prototype.state =
 Reblog.prototype.mine = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -1157,7 +1148,7 @@ Reblog.prototype.add = function (query, body, fn) {
   }
 
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -1184,7 +1175,7 @@ Reblog.prototype.to = function (dest, note, fn) {
  */
 
 module.exports = Reblog;
-},{"./util/request":14,"debug":16}],11:[function(require,module,exports){
+},{"debug":17}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1196,7 +1187,6 @@ var Tag = require('./tag');
 var Media = require('./media');
 var Comment = require('./comment');
 var Follow = require('./follow');
-var request = require('./util/request');
 var debug = require('debug')('wpcom:site');
 
 /**
@@ -1250,7 +1240,7 @@ function Site(id, wpcom) {
  */
 
 Site.prototype.get = function (query, fn) {
-  return request.get(this.wpcom, null, '/sites/' + this._id, query, fn);
+  return this.wpcom.req.get('/sites/' + this._id, query, fn);
 };
 
 /**
@@ -1261,7 +1251,7 @@ Site.prototype.get = function (query, fn) {
  * @api private
  */
 
-function list(subpath, apiVersion) {
+function list(subpath) {
 
   /**
    * Return the <names>List method
@@ -1273,22 +1263,21 @@ function list(subpath, apiVersion) {
 
   return function (query, fn) {
     var path = '/sites/' + this._id + '/' + subpath;
-    return request.get(this.wpcom, { apiVersion: apiVersion }, path, query, fn);
+    return this.wpcom.req.get(path, query, fn);
   };
 }
 
 // walk for each resource and create related method
-var i, res, isarr, name, subpath, apiVersion;
+var i, res, isarr, name, subpath;
 for (i = 0; i < resources.length; i++) {
   res = resources[i];
   isarr = Array.isArray(res);
 
   name =  isarr ? res[0] : res + 'List';
   subpath = isarr ? res[1] : res;
-  apiVersion = isarr && 'string' === typeof res[2] ? res[2] : '1';
 
-  debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath, apiVersion);
-  Site.prototype[name] = list(subpath, apiVersion);
+  debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath);
+  Site.prototype[name] = list(subpath);
 }
 
 /**
@@ -1441,8 +1430,17 @@ Site.prototype.renderShortcode = function (shortcode, query, fn) {
     throw new TypeError('expected a shortcode String');
   }
 
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  query = query || {};
+  query.shortcode = shortcode;
+
   var path = '/sites/' + this._id + '/shortcodes/render';
-  return request.get(this.wpcom, { shortcode: shortcode }, path, query, fn);
+
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -1459,8 +1457,16 @@ Site.prototype.renderEmbed = function (embed, query, fn) {
     throw new TypeError('expected an embed String');
   }
 
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  query = query || {};
+  query.embed = embed;
+
   var path = '/sites/' + this._id + '/embeds/render';
-  return request.get(this.wpcom, { embed_url: embed }, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -1468,14 +1474,12 @@ Site.prototype.renderEmbed = function (embed, query, fn) {
  */
 
 module.exports = Site;
-
-},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"./util/request":14,"debug":16}],12:[function(require,module,exports){
+},{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":17}],12:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:tag');
 
 /**
@@ -1522,7 +1526,7 @@ Tag.prototype.slug = function (slug) {
 
 Tag.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return request.get(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -1536,7 +1540,7 @@ Tag.prototype.get = function (query, fn) {
 
 Tag.prototype.add = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/new';
-  return request.post(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -1550,7 +1554,7 @@ Tag.prototype.add = function (query, body, fn) {
 
 Tag.prototype.update = function (query, body, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
-  return request.put(this.wpcom, null, path, query, body, fn);
+  return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -1563,7 +1567,7 @@ Tag.prototype.update = function (query, body, fn) {
 
 Tag.prototype['delete'] = Tag.prototype.del = function (query, fn) {
   var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
-  return request.del(this.wpcom, null, path, query, fn);
+  return this.wpcom.req.del(path, query, fn);
 };
 
 /**
@@ -1571,13 +1575,12 @@ Tag.prototype['delete'] = Tag.prototype.del = function (query, fn) {
  */
 
 module.exports = Tag;
-},{"./util/request":14,"debug":16}],13:[function(require,module,exports){
+},{"debug":17}],13:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('./util/request');
 var debug = require('debug')('wpcom:users');
 
 /**
@@ -1604,7 +1607,7 @@ function Users(wpcom) {
  */
 
 Users.prototype.suggest = function (query, fn) {
-  return request.get(this.wpcom, null, '/users/suggest', query, fn);
+  return this.wpcom.req.get('/users/suggest', query, fn);
 };
 
 /**
@@ -1612,48 +1615,46 @@ Users.prototype.suggest = function (query, fn) {
  */
 
 module.exports = Users;
-},{"./util/request":14,"debug":16}],14:[function(require,module,exports){
+},{"debug":17}],14:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
+var sendRequest = require('./send-request');
 var debug = require('debug')('wpcom:request');
 
 /**
  * Expose `Request` module
  */
 
-exports = module.exports = {};
+
+function Req(wpcom) {
+  this.wpcom = wpcom;
+}
 
 /**
  * Request methods
  *
- * @param {WPCOM} wpcom
- * @param {Object} def
  * @param {Object|String} params
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-exports.get = function (wpcom, def, params, query, fn) {
+Req.prototype.get = function (params, query, fn) {
   // `query` is optional
   if ('function' == typeof query) {
     fn = query;
     query = {};
   }
-
-  defaultValues(def, query);
-
-  return wpcom.sendRequest(params, query, null, fn);
+  
+  return sendRequest.call(this.wpcom, params, query, null, fn);
 };
 
 /**
  * Make `update` request
  *
- * @param {WPCOM} wpcom
- * @param {Object} def
  * @param {Object|String} params
  * @param {Object} [query]
  * @param {Object} body
@@ -1661,15 +1662,13 @@ exports.get = function (wpcom, def, params, query, fn) {
  * @api public
  */
 
-exports.put =
-exports.post = function (wpcom, def, params, query, body, fn) {
+Req.prototype.put =
+Req.prototype.post = function (params, query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
     body = query;
     query = {};
   }
-
-  defaultValues(def, query);
 
   // params can be a string
   params = 'string' === typeof params ? { path : params } : params;
@@ -1677,48 +1676,100 @@ exports.post = function (wpcom, def, params, query, body, fn) {
   // request method
   params.method = 'post';
 
-  return wpcom.sendRequest(params, query, body, fn);
+  return sendRequest.call(this.wpcom, params, query, body, fn);
 };
 
 /**
  * Make a `delete` request
  *
- * @param {WPCOM} wpcom
- * @param {Object} def
  * @param {Object|String} params
  * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-exports.del = function (wpcom, def, params, query, fn) {
+Req.prototype.del = function (params, query, fn) {
   if ('function' == typeof query) {
     fn = query;
     query = {};
   }
 
-  return exports.post(wpcom, def, params, query, null, fn);
+  return this.post(params, query, null, fn);
 };
 
 /**
- * Set query object using the given parameters
+ * Expose module
+ */
+
+module.exports = Req;
+},{"./send-request":15,"debug":17}],15:[function(require,module,exports){
+
+/**
+ * Module dependencies
+ */
+
+var debug = require('debug')('wpcom:send-request');
+
+/**
+ * Request to WordPress REST API
  *
+ * @param {String|Object} params
+ * @param {Object} [query]
+ * @param {Object} [body]
+ * @param {Function} fn
  * @api private
  */
 
-function defaultValues (def, query) {
-  def = def || {};
-  query = query || {};
+module.exports = function (params, query, body, fn) {
+  // `params` can be just the path (String)  
+  params = 'string' === typeof params ? { path : params } : params;
 
-  // `apiVersion`
-  if (def.apiVersion) {
-    query.apiVersion = query.apiVersion || def.apiVersion;
+  debug('sendRequest(%o)', params.path);
+
+  // set `method` request param
+  params.method = (params.method || 'get').toUpperCase();
+
+  // `query` is optional
+  if ('function' === typeof query) {
+    fn = query;
+    query = null;
   }
+
+  // `body` is optional
+  if ('function' === typeof body) {
+    fn = body;
+    body = null;
+  }
+
+  // pass `query` and/or `body` to request params
+  if (query) {
+    params.query = query;
+
+    // Handle special query parameters
+    // - `apiVersion`
+    if (query.apiVersion) {
+      params.apiVersion = query.apiVersion;
+      delete query.apiVersion;
+    } else {
+      params.apiVersion = this.apiVersion;
+    }
+  }
+
+  if (body) {
+    params.body = body;
+  }
+
+  // callback `fn` function is optional
+  if (!fn) {
+    fn = function (err) { if (err) { throw err; } };
+  }
+
+  // request method
+  return this.request(params, fn);
 };
+},{"debug":17}],16:[function(require,module,exports){
 
-},{"debug":16}],15:[function(require,module,exports){
-
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -1878,7 +1929,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":17}],17:[function(require,module,exports){
+},{"./debug":18}],18:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -2077,7 +2128,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":18}],18:[function(require,module,exports){
+},{"ms":19}],19:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -2190,7 +2241,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -2311,7 +2362,7 @@ function toTitle (str) {
   });
 }
 
-},{"debug":16,"superagent":20}],20:[function(require,module,exports){
+},{"debug":17,"superagent":21}],21:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3389,7 +3440,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":21,"reduce":22}],21:[function(require,module,exports){
+},{"emitter":22,"reduce":23}],22:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -3555,7 +3606,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -3580,13 +3631,13 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
-var request = require('wpcom-xhr-request');
+var request_handler = require('wpcom-xhr-request');
 
 /**
  * Local module dependencies.
@@ -3596,7 +3647,10 @@ var Me = require('./lib/me');
 var Site = require('./lib/site');
 var Users = require('./lib/users');
 var Batch = require('./lib/batch');
+var Req = require('./lib/util/request');
+var sendRequest = require('./lib/util/send-request');
 var debug = require('debug')('wpcom');
+
 
 /**
  * XMLHttpRequest (and CORS) API access method.
@@ -3638,11 +3692,17 @@ function WPCOM(token, reqHandler) {
         params.authToken = token;
       }
 
-      return request(params, fn);
+      return request_handler(params, fn);
     };
   } else {
     this.request = reqHandler;
   }
+
+  // Add Req instance
+  this.req = new Req(this);
+
+  // Default api version;
+  this.apiVersion = '1.1';
 }
 
 /**
@@ -3690,65 +3750,23 @@ WPCOM.prototype.batch = function () {
  */
 
 WPCOM.prototype.freshlyPressed = function (query, fn) {
-  return this.sendRequest('/freshly-pressed', query, null, fn);
+  return this.req.get('/freshly-pressed', query, fn);
 };
 
 /**
- * Request to WordPress REST API
- *
- * @param {String|Object} params
- * @param {Object} [query]
- * @param {Object} [body]
- * @param {Function} fn
- * @api private
+ * Expose send-request
+ * @TODO: use `this.req` instead of this method
  */
 
 WPCOM.prototype.sendRequest = function (params, query, body, fn) {
-  // `params` can be just the path (String)
-  if ('string' === typeof params) {
-    params = { path: params };
+  var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
+  if (console && console.warn) {
+    console.warn(msg);  
+  } else {
+    console.log(msg);
   }
-
-  debug('sendRequest(%o)', params.path);
-
-  // set `method` request param
-  params.method = (params.method || 'get').toUpperCase();
-
-  // `query` is optional
-  if ('function' === typeof query) {
-    fn = query;
-    query = null;
-  }
-
-  // `body` is optional
-  if ('function' === typeof body) {
-    fn = body;
-    body = null;
-  }
-
-  // pass `query` and/or `body` to request params
-  if (query) {
-    params.query = query;
-
-    // Handle special query parameters
-    // - `apiVersion`
-    if (query.apiVersion) {
-      params.apiVersion = query.apiVersion;
-      delete query.apiVersion;
-    }
-  }
-
-  if (body) {
-    params.body = body;
-  }
-
-  // callback `fn` function is optional
-  if (!fn) {
-    fn = function (err) { if (err) { throw err; } };
-  }
-
-  // request method
-  return this.request(params, fn);
+  
+  return sendRequest.call(this, params, query, body, fn)
 };
 
 /**
@@ -3756,5 +3774,5 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
  */
 
 module.exports = WPCOM;
-},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"debug":16,"wpcom-xhr-request":19}]},{},[23])(23)
+},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"./lib/util/request":14,"./lib/util/send-request":15,"debug":17,"wpcom-xhr-request":20}]},{},[24])(24)
 });
