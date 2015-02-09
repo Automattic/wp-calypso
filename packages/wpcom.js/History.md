@@ -1,4 +1,18 @@
 
+4.0.0 / 2015-02-09
+==================
+
+ * request: update path for send-request module
+ * core: add sendRequest() to suppoert compatibility
+ * test: add users suggest testing file
+ * update to wpcom.req method
+ * test: add site.follow testing file
+ * test: add site embeds testing file
+ * test: add site.shortcodes testing file
+ * send-response: set apiVersion from wpcom property
+ * core: add apiVersion as property. Define `1.1` as default
+ * request: refact -> create Req class
+
 3.2.0 / 2015-02-05
 ==================
 
