@@ -19,10 +19,9 @@ Make a `POST` request directly to WordPress.com REST-API
 
 ### WPCOM.Req.put(params, query, body, fn)
 
-It's an alias of WPCOM.Req.Post();
+It's an alias of `WPCOM.Req.Post()`;
 
 
 ### WPCOM.Req.del(params, query, fn)
 
-It's an alias of WPCOM.Req.Post() without passing `body` argument;
-
+It's an alias of `WPCOM.Req.Post()` without passing `body` argument;
