@@ -2,25 +2,25 @@
 1.0.2 / 2014-10-21
 ==================
 
- * Republish since npm messed up v1.0.1
+  * Republish since npm messed up v1.0.1
 
 1.0.1 / 2014-10-21
 ==================
 
- * index: bail if no matching XHR instance was found
- * index: use `event` module to listen for XHR events
+  * index: bail if no matching XHR instance was found
+  * index: use `event` module to listen for XHR events
 
 1.0.0 / 2014-10-20
 ==================
 
- * index: refactor to not use Promise anymore
- * examples: tweak "me.html" example since it no longer returns a Promise
- * examples: add "progress" listeners to upload example
- * examples: multiply percent complete by 100
- * examples: make "upload.html" example use user's primary blog
- * package: update "debug" to v2.1.0
- * package: update "browserify" to v6.1.0
- * package: remove unused "promise" dependency
+  * index: refactor to not use Promise anymore
+  * examples: tweak "me.html" example since it no longer returns a Promise
+  * examples: add "progress" listeners to upload example
+  * examples: multiply percent complete by 100
+  * examples: make "upload.html" example use user's primary blog
+  * package: update "debug" to v2.1.0
+  * package: update "browserify" to v6.1.0
+  * package: remove unused "promise" dependency
 
 0.2.5 / 2014-06-26
 ==================
