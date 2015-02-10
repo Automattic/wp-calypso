@@ -314,11 +314,12 @@ function onload (e) {
   loaded = true;
 
   // flush any buffered API calls
-  for (var i = 0; i < buffered.length; i++) {
-    submitRequest(buffered[i]);
+  if (buffered) {
+    for (var i = 0; i < buffered.length; i++) {
+      submitRequest(buffered[i]);
+    }
+    buffered = null;
   }
-
-  buffered = null;
 }
 
 /**
