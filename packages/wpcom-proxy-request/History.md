@@ -1,4 +1,10 @@
 
+1.0.3 / 2015-02-09
+==================
+
+  * index: don't throw in the case that there's no `buffered` Array
+  * examples: better me.html example output
+
 1.0.2 / 2014-10-21
 ==================
 
