@@ -21,6 +21,7 @@ describe('wpcom.site.tag', function(){
   // Create a testing_tag before to start tests
   var testing_tag;
   before(function(done){
+    fixture.tag.name += Math.random() * 1000000 | 0;
     site.tag()
     .add(fixture.tag, function(err, tag) {
       if (err) throw err;
