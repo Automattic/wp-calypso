@@ -243,13 +243,14 @@ Site.prototype.tag = function (slug) {
  *
  * Note: The current user must have publishing access.
  *
- * @param {String} shortcode
+ * @param {String} url
+ * @param {Object} [query]
  * @api public
  */
 
-Site.prototype.renderShortcode = function (shortcode, query, fn) {
-  if ('string' !== typeof shortcode) {
-    throw new TypeError('expected a shortcode String');
+Site.prototype.renderShortcode = function (url, query, fn) {
+  if ('string' !== typeof url) {
+    throw new TypeError('expected a url String');
   }
 
   if ('function' == typeof query) {
@@ -258,7 +259,7 @@ Site.prototype.renderShortcode = function (shortcode, query, fn) {
   }
 
   query = query || {};
-  query.shortcode = shortcode;
+  query.shortcode = url;
 
   var path = '/sites/' + this._id + '/shortcodes/render';
 
@@ -270,12 +271,13 @@ Site.prototype.renderShortcode = function (shortcode, query, fn) {
  *
  * Note: The current user must have publishing access.
  *
- * @param {String} embed
+ * @param {String} url
+ * @param {Object} [query]
  * @api public
  */
 
-Site.prototype.renderEmbed = function (embed, query, fn) {
-  if ('string' !== typeof embed) {
+Site.prototype.renderEmbed = function (url, query, fn) {
+  if ('string' !== typeof url) {
     throw new TypeError('expected an embed String');
   }
 
@@ -285,7 +287,7 @@ Site.prototype.renderEmbed = function (embed, query, fn) {
   }
 
   query = query || {};
-  query.embed = embed;
+  query.embed_url = url;
 
   var path = '/sites/' + this._id + '/embeds/render';
   return this.wpcom.req.get(path, query, fn);
