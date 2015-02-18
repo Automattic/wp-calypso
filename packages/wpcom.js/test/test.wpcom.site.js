@@ -246,7 +246,7 @@ describe('wpcom.site', function () {
 
     describe('wpcom.site.statsReferrers', function () {
       it('should request referrers stats', function (done) {
-        site.statsReferrers(function (err, data) {
+        site.statsReferrers({ apiVersion: '1' }, function (err, data) {
           if (err) throw err;
 
           assert.equal('string', typeof Date(data.date));
@@ -264,7 +264,7 @@ describe('wpcom.site', function () {
 
     describe('wpcom.site.statsTopPosts', function () {
       it('should request top posts stats', function (done) {
-        site.statsTopPosts(function (err, data) {
+        site.statsTopPosts({ apiVersion: '1' }, function (err, data) {
           if (err) throw err;
 
           assert.equal('string', typeof Date(data.date));
@@ -278,7 +278,7 @@ describe('wpcom.site', function () {
 
     describe('wpcom.site.statsCountryViews', function () {
       it('should request country views stats', function (done) {
-        site.statsCountryViews(function (err, data) {
+        site.statsCountryViews({ apiVersion: '1' }, function (err, data) {
           if (err) throw err;
 
           assert.equal('string', typeof Date(data.date));
@@ -292,7 +292,7 @@ describe('wpcom.site', function () {
 
     describe('wpcom.site.statsClicks', function () {
       it('should request clicks stats', function (done) {
-        site.statsClicks(function (err, data) {
+        site.statsClicks({ apiVersion: '1' }, function (err, data) {
           if (err) throw err;
 
           assert.equal('string', typeof Date(data.date));
@@ -310,7 +310,7 @@ describe('wpcom.site', function () {
 
     describe('wpcom.site.statsSearchTerms', function () {
       it('should request search terms stats', function (done) {
-        site.statsSearchTerms(function (err, data) {
+        site.statsSearchTerms({ apiVersion: '1' }, function (err, data) {
           if (err) throw err;
 
           assert.equal('string', typeof Date(data.date));
