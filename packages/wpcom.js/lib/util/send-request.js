@@ -27,7 +27,7 @@ module.exports = function (params, query, body, fn) {
   // `query` is optional
   if ('function' === typeof query) {
     fn = query;
-    query = null;
+    query = {};
   }
 
   // `body` is optional
@@ -37,17 +37,15 @@ module.exports = function (params, query, body, fn) {
   }
 
   // pass `query` and/or `body` to request params
-  if (query) {
-    params.query = query;
+  params.query = query;
 
-    // Handle special query parameters
-    // - `apiVersion`
-    if (query.apiVersion) {
-      params.apiVersion = query.apiVersion;
-      delete query.apiVersion;
-    } else {
-      params.apiVersion = this.apiVersion;
-    }
+  // Handle special query parameters
+  // - `apiVersion`
+  if (query.apiVersion) {
+    params.apiVersion = query.apiVersion;
+    delete query.apiVersion;
+  } else {
+    params.apiVersion = this.apiVersion;
   }
 
   if (body) {
@@ -59,6 +57,7 @@ module.exports = function (params, query, body, fn) {
     fn = function (err) { if (err) { throw err; } };
   }
 
+  debug('params: %o', params);
   // request method
   return this.request(params, fn);
 };
