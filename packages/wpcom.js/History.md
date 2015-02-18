@@ -1,4 +1,11 @@
 
+4.1.0 / 2015-02-18
+==================
+
+ * test: force apiVersion to 1 for some stats tests
+ * site: fix embed_url param
+ * send-request: default value for `query` is {}
+
 4.0.0 / 2015-02-09
 ==================
 
