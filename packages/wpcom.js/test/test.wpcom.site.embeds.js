@@ -24,15 +24,11 @@ describe('wpcom.site.embeds', function () {
   describe('wpcom.site.renderEmbed(\'embed\')', function () {
     it('should render embed', function(done){
 
-      var url = encodeURIComponent(fixture.embed);
-
-      site.renderEmbed(url, function(err, data){
+      site.renderEmbed(fixture.embed, function (err, data) {
         if (err) throw err;
 
-        assert.equal(data.shortcode, shortcode);
+        assert.equal(data.embed_url, fixture.embed);
         assert.ok(data.result);
-        assert.ok(data.scripts);
-        assert.ok(data.styles);
         done();
       });
     });
