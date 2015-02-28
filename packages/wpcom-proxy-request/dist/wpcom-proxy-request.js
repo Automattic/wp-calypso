@@ -29,6 +29,28 @@ var origin = window.location.protocol + '//' + window.location.host;
 debug('using "origin": %o', origin);
 
 /**
+ * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
+ * 6.0 and below only support strings as postMessage's message. This browsers
+ * will try to use the toString method.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+ * https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/The_structured_clone_algorithm
+ * https://github.com/Modernizr/Modernizr/issues/388#issuecomment-31127462
+ */
+
+var postStrings = (function (){
+  var r = false;
+  try {
+    window.postMessage({
+      toString: function () {
+        r = true;
+      }
+    },"*");
+  } catch (e) {}
+  return r;
+})();
+
+/**
  * Reference to the <iframe> DOM element.
  * Gets set in the install() function.
  */
@@ -154,7 +176,7 @@ function submitRequest (params) {
     postAsArrayBuffer(params);
   } else {
     try {
-      iframe.contentWindow.postMessage(params, proxyOrigin);
+      iframe.contentWindow.postMessage(postStrings ? JSON.stringify(params) : params, proxyOrigin);
     } catch (e) {
       // were we trying to serialize a `File`?
       if (hasFile(params)) {
@@ -315,11 +337,12 @@ function onload (e) {
   loaded = true;
 
   // flush any buffered API calls
-  for (var i = 0; i < buffered.length; i++) {
-    submitRequest(buffered[i]);
+  if (buffered) {
+    for (var i = 0; i < buffered.length; i++) {
+      submitRequest(buffered[i]);
+    }
+    buffered = null;
   }
-
-  buffered = null;
 }
 
 /**
@@ -340,6 +363,10 @@ function onmessage (e) {
 
   var data = e.data;
   if (!data) return debug('no `data`, bailing');
+
+  if (postStrings && 'string' === typeof data) {
+    data = JSON.parse(data);
+  }
 
   // check if we're receiving a "progress" event
   if (data.upload || data.download) {
@@ -489,6 +516,17 @@ exports.load = load;
 exports.useColors = useColors;
 
 /**
+ * Use chrome.storage.local if we are in an app
+ */
+
+var storage;
+
+if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined')
+  storage = chrome.storage.local;
+else
+  storage = window.localStorage;
+
+/**
  * Colors.
  */
 
@@ -577,10 +615,10 @@ function formatArgs() {
  */
 
 function log() {
-  // This hackery is required for IE8,
-  // where the `console.log` function doesn't have 'apply'
-  return 'object' == typeof console
-    && 'function' == typeof console.log
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
     && Function.prototype.apply.call(console.log, console, arguments);
 }
 
@@ -594,9 +632,9 @@ function log() {
 function save(namespaces) {
   try {
     if (null == namespaces) {
-      localStorage.removeItem('debug');
+      storage.removeItem('debug');
     } else {
-      localStorage.debug = namespaces;
+      storage.debug = namespaces;
     }
   } catch(e) {}
 }
@@ -611,7 +649,7 @@ function save(namespaces) {
 function load() {
   var r;
   try {
-    r = localStorage.debug;
+    r = storage.debug;
   } catch(e) {}
   return r;
 }
