@@ -9,7 +9,7 @@
     "api",
     "cookie"
   ],
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",

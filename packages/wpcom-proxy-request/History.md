@@ -1,4 +1,13 @@
 
+1.0.4 / 2015-02-27
+==================
+
+  * dist: recompile
+  * wrapping try/catch on an IIFE.
+  * optimization for short-circuit evaluation.
+  * detecting support for the structured clone algorithm.
+  * forcing JSON string for postMessage/onmessage to circumvent IE9 limitations.
+
 1.0.3 / 2015-02-09
 ==================
 
