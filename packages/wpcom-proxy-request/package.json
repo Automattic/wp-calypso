@@ -18,7 +18,7 @@
   "repository": "git://github.com/Automattic/wpcom-proxy-request.git",
   "main": "index.js",
   "devDependencies": {
-    "browserify": "6.1.0"
+    "browserify": "9.0.3"
   },
   "dependencies": {
     "component-event": "0.1.4",
