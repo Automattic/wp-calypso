@@ -1,4 +1,12 @@
 
+4.2.0 / 2015-03-13
+==================
+
+ * send-request: check `query` paramter
+ * test: add util req testing file
+ * test: update wpcom.site.tagsList test
+ * test: update wpcom.site.categoriesList test
+
 4.1.0 / 2015-02-18
 ==================
 
