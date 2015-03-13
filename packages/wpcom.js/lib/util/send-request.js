@@ -36,6 +36,9 @@ module.exports = function (params, query, body, fn) {
     body = null;
   }
 
+  // query could be `null`
+  query = query || {};
+
   // pass `query` and/or `body` to request params
   params.query = query;
 
