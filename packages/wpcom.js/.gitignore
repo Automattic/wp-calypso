@@ -3,4 +3,5 @@ npm-debug.log
 /test/data.json
 /test/fixture.json
 /tmp
+/gh-tmp
 .DS_Store
