@@ -108,3 +108,201 @@ Add a new media to site. Return a `Media` instance.
 var new_media = site.addMedia({ urls: [] }, function(err, list){
 });
 ```
+
+## Site - Stats
+
+With a site instance, you can also access all of the [stats endpoints](https://developer.wordpress.com/docs/api/#stats)
+
+```js
+var site = Site('<id>', WPCOM);
+```
+
+### Site#stats([query, ]fn)
+
+Returns basic site [stats](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/).
+
+```js
+site.stats( function(err, data){
+	// data is site stats response
+});
+```
+
+### Site#statsClicks([query, ]fn)
+
+Returns stats [clicks](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/clicks/) data.
+
+```js
+site.statsClicks( function(err, data){
+	// data clicks response
+});
+```
+
+### Site#statsComments([query, ]fn)
+
+Returns stats [comments](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/comments/) data.
+
+```js
+site.statsComments( function(err, data){
+	// data comments response
+});
+```
+
+### Site#statsCommentFollowers([query, ]fn)
+
+Returns stats [comment followers](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/comment-followers/) data.
+
+```js
+site.statsComments( function(err, data){
+	// data comment-follwers response
+});
+```
+
+### Site#statsCountryViews([query, ]fn)
+
+Returns stats [country views](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/country-views/) data.
+
+```js
+site.statsCountryViews( function(err, data){
+	// data country-views response
+});
+```
+
+### Site#statsFollowers([query, ]fn)
+
+Returns [followers](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/followers/) data.
+
+```js
+site.statsFollowers( function(err, data){
+	// data followers response
+});
+```
+
+### Site#statsPostViews(postId, fn)
+
+Returns stats for a certain [post](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/post/%24post_id/).
+
+```js
+site.statsPostViews( <postId>, function(err, data){
+	// data post views response
+});
+```
+
+### Site#statsPublicize([query, ]fn)
+
+Returns [publicize](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/publicize/) data.
+
+```js
+site.statsPublicize( function(err, data){
+	// data publicize response
+});
+```
+
+### Site#statsReferrers([query, ]fn)
+
+Returns [referrers](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/referrers/) data.
+
+```js
+site.statsReferrers( function(err, data){
+	// data referrers response
+});
+```
+
+### Site#statsRefferersSpamNew(domain, fn)
+
+Marks a certain domain referrer as [spam](https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/stats/referrers/spam/new/).
+
+```js
+site.statsRefferersSpamNew( <domain>, function(err, response){
+	// response returned from procedure
+});
+```
+
+### Site#statsRefferersSpamDelete(domain, fn)
+
+Removes a domain from referrer [spam](https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/stats/referrers/spam/delete/) list.
+
+```js
+site.statsRefferersSpamDelete( <domain>, function(err, response){
+	// response returned from procedure
+});
+```
+
+### Site#statsSearchTerms([query, ]fn)
+
+Returns [search terms](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/search-terms/) data.
+
+```js
+site.statsSearchTerms( function(err, data){
+	// data search terms response
+});
+```
+
+### Site#statsStreak([query, ]fn)
+
+Returns [streak](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/streak/) data.
+
+```js
+site.statsStreak( function(err, data){
+	// data streak response
+});
+```
+
+### Site#statsSummary([query, ]fn)
+
+Returns [summary](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/summary/) data.
+
+```js
+site.statsSummary( function(err, data){
+	// data summary response
+});
+```
+
+### Site#statsTags([query, ]fn)
+
+Returns [tags](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/tags/) data.
+
+```js
+site.statsTags( function(err, data){
+	// data tags response
+});
+```
+
+### Site#statsTopAutors([query, ]fn)
+
+Returns [top authors](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/top-authors/) data.
+
+```js
+site.statsTopAuthors( function(err, data){
+	// data top authors response
+});
+```
+
+### Site#statsVideo(videoId, fn)
+
+Returns stats about a particular VideoPress [video](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/video/%24post_id/).
+
+```js
+site.statsVideo( <videoId>, function(err, data){
+	// data about the video
+});
+```
+
+### Site#statsVideoPlays([query, ]fn)
+
+Returns [video plays](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/video-plays/) data.
+
+```js
+site.statsVideoPlays( function(err, data){
+	// data video plays response
+});
+```
+
+### Site#statsVisits([query, ]fn)
+
+Returns [visits](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/visits/) data.
+
+```js
+site.statsVisits( function(err, data){
+	// data visits response
+});
+```

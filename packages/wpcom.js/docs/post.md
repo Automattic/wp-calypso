@@ -107,7 +107,7 @@ var reblog = wpcom.sites('blog.wordpress.com').post(342).reblog();
 ### Post#comment()
 
 Create and return a new `Comment` instance.
-More info in [Like doc page](./comment.md).
+More info in [Comment doc page](./comment.md).
 
 ### Post#comments()
 

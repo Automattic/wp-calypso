@@ -7,13 +7,14 @@ Compatible with Node.js and web browsers.
 
 ### Node.js
 
-Introduce the `wpcom` dependency in your `package.json`, and
-then initialize it with your API Token.
+Introduce the `wpcom` dependency into your `package.json`, and then initialize
+it with your API token ([optional](#authentication)).
 
 ```js
+// Edit a post on a site
 var wpcom = require('wpcom')('<your-token>');
 var blog = wpcom.site('your-blog.wordpress.com');
-blog.posts({ number: 8 }, function(err, list){});
+blog.posts({ number: 8 }, function(err, list) { ... });
 ```
 
 ### Browser
@@ -25,9 +26,25 @@ Include `dist/wpcom.js` in a `<script>` tag:
 <script>
   var wpcom = WPCOM('<your-token>');
   var blog = wpcom.site('your-blog.wordpress.com');
-  blog.posts({ number: 8 }, function(err, list){});
+  blog.posts({ number: 8 }, function(err, list) { ... });
 </script>
 ```
+
+### Authentication
+
+Not all requests require a REST API token.  For example, listing posts on a
+public site is something anyone can do.
+
+If you do need a token, here are some links that will help you generate one:
+- [OAuth2 Authentication](https://developer.wordpress.com/docs/oauth2/)
+  at WordPress.com Developer Resources
+- [`wpcom-oauth-cors`](https://github.com/Automattic/wpcom-oauth-cors):
+  a client-side WordPress.com OAuth2 library using CORS
+- [`wpcom-oauth`](https://github.com/Automattic/node-wpcom-oauth):
+  a server-side (Node.js) WordPress.com OAuth2 library
+- If you just want to quickly create a token, the
+  [example app bundled with `wpcom-oauth`](https://github.com/Automattic/node-wpcom-oauth/tree/master/example)
+  is probably the easiest way.
 
 ## API
 
@@ -41,12 +58,30 @@ Include `dist/wpcom.js` in a `<script>` tag:
 
 ## Examples
 
-[Examples](./examples/Readme.md) doc page
+```js
+// Edit a post on a site
+var wpcom = require('wpcom')('<your-token>');
+var blog = wpcom.site('your-blog.wordpress.com');
+blog.post({ slug: 'a-post-slug' }).update(data, function(err, res) { ... });
+```
+
+You can omit the API token for operations that don't require permissions:
+
+```js
+// List the last 8 posts on a site
+var wpcom = require('wpcom')();
+var blog = wpcom.site('your-blog.wordpress.com');
+blog.posts({ number: 8 }, function(err, list) { ... });
+```
+
+More pre-made examples are in the [`examples/`](./examples/) directory.
 
 ## Test
 
-Create `data.json` file into `test/` folder to can run the tests. You can copy
-or rename the `test/data_example.json` file and then
+Create `fixture.json` file in the `test/` folder to can run the tests. You can copy
+or rename the `test/fixture_example.json`.  Be sure to update the <site-id> and <global-token> at the top of the file.
+
+To then run tests:
 
 ```bash
 $ make test-all

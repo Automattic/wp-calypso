@@ -5,47 +5,49 @@
   },
 
   "reblog": {
-    "original_blog": "<original-blog>",
-    "original_post": "<original-post>",
-    "note": "<note-to-add-to-reblogged-post>"
+    "original_blog": "en.blog.wordpress.com",
+    "original_post": 29857,
+    "note": "Testing reblog post"
   },
 
   "post": {
-    "title": "<post-title>",
-    "content": "<post-description>",
-    "tags": "<tags,separated,by,commas>",
-    "categories": "<categories,separated,by,commas>"
+    "title": "Testing POST",
+    "content": "<div style=\"color: red;\">The content of the new testing post</div>",
+    "tags": "wpcom,test,testing-post",
+    "categories": "development"
   },
 
   "category": {
-    "name": "<category-name>",
-    "description": "<category-description>"
+    "name": "Testing CATEGORY",
+    "description": "A category to test"
   },
 
   "tag": {
-    "name": "<tag-name>",
-    "description": "<tag-description>"
+    "name": "Testing TAG",
+    "description": "A tag to test"
   },
 
-  "post_comment": "<comment-to-add-to-post>",
+  "post_comment": "Nice comment in Testing POST",
+
+  "embed": "http://www.youtube.com/watch?v=JaNH56Vpg-A",
 
   "media": {
     "files": [
       {
-        "title": "<file-title>",
-        "description": "<file-description>",
-        "file": "<file-path>"
+        "title": "Testing Media FILE",
+        "description": "A nice picture uploaded from a FILE",
+        "file": "./test/wordpress-logo-notext-rgb.png"
       },
-      "<file-2-path>"
+      "./test/wordpress-logo-simplified-rgb.png"
     ],
 
     "urls": [
-      "<file-url>",
-      "<file-2-url>",
+      "http://s.w.org/about/images/logos/wordpress-logo-notext-rgb.png",
+      "http://s.w.org/about/images/logos/wordpress-logo-simplified-rgb.png",
       {
-        "title": "<file-3-title>",
-        "description": "<file-3-description>",
-        "url": "<file-3-url>"
+        "title": "Testing Media URL",
+        "description": "A nice picture added from a URL",
+        "url": "http://s.w.org/about/images/logos/wordpress-logo-notext-rgb.png"
       }
     ]
   }

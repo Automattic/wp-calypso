@@ -1,8 +1,13 @@
+4.3.0 / 2015-04-15
+==================
+
+ * site: add stats endpoints
+ * docs: update OAuth and testing docs
 
 4.2.1 / 2015-03-31
 ==================
 
- * pgk: bump `wpcom-xhr-request` to `0.3.1`
+ * pkg: bump `wpcom-xhr-request` to `0.3.1`
 
 4.2.0 / 2015-03-13
 ==================

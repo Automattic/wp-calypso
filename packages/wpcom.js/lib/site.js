@@ -25,12 +25,21 @@ var resources = [
   'shortcodes',
   'embeds',
   [ 'stats', 'stats' ],
-  [ 'statsVisits', 'stats/visits' ],
-  [ 'statsReferrers', 'stats/referrers' ],
-  [ 'statsTopPosts', 'stats/top-posts' ],
-  [ 'statsCountryViews', 'stats/country-views' ],
   [ 'statsClicks', 'stats/clicks' ],
+  [ 'statsComments', 'stats/comments' ],
+  [ 'statsCommentFollowers', 'stats/comment-followers' ],
+  [ 'statsCountryViews', 'stats/country-views' ],
+  [ 'statsFollowers', 'stats/followers' ],
+  [ 'statsPublicize', 'stats/publicize' ],
+  [ 'statsReferrers', 'stats/referrers' ],
   [ 'statsSearchTerms', 'stats/search-terms' ],
+  [ 'statsStreak', 'stats/streak' ],
+  [ 'statsSummary', 'stats/summary' ],
+  [ 'statsTags', 'stats/tags' ],
+  [ 'statsTopAuthors', 'stats/top-authors' ],
+  [ 'statsTopPosts', 'stats/top-posts' ],
+  [ 'statsVideoPlays', 'stats/video-plays' ],
+  [ 'statsVisits', 'stats/visits' ],
   'tags',
   'users'
 ];
@@ -291,6 +300,60 @@ Site.prototype.renderEmbed = function (url, query, fn) {
 
   var path = '/sites/' + this._id + '/embeds/render';
   return this.wpcom.req.get(path, query, fn);
+};
+
+/**
+ * Mark a referrering domain as spam
+ *
+ * @param {String} domain
+ * @api public
+ */
+
+Site.prototype.statsReferrersSpamNew = function (domain, fn) {
+  var path = '/sites/' + this._id + '/stats/referrers/spam/new';
+  var body = { domain: domain };
+
+  return this.wpcom.req.post(path, body, null, fn);
+};
+
+/**
+ * Remove referrering domain from spam
+ *
+ * @param {String} domain
+ * @api public
+ */
+
+Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
+  var path = '/sites/' + this._id + '/stats/referrers/spam/delete';
+  var body = { domain: domain };
+
+  return this.wpcom.req.post(path, body, null, fn);
+};
+
+/**
+ * Get detailed stats about a VideoPress video
+ *
+ * @param {String} videoId
+ * @api public
+ */
+
+Site.prototype.statsVideo = function (videoId, fn) {
+  var path = '/sites/' + this._id + '/stats/video/' + videoId;
+
+  return this.wpcom.req.get(path, query, fn);
+};
+
+/**
+ * Get detailed stats about a particular post
+ *
+ * @param {String} postId
+ * @api public
+ */
+
+Site.prototype.statsPostViews = function (postId, fn) {
+  var path = '/sites/' + this._id + '/stats/post/' + postId;
+
+  return this.wpcom.req.get(path, fn);
 };
 
 /**
