@@ -570,4 +570,20 @@ describe('wpcom.site', function () {
     });
   });
 
+  describe('wpcom.site.statsVideo', function() {
+    it('should request video stats', function (done) {
+      site.statsVideo( testing_post.ID, function(err, data) {
+        if (err) throw err;
+
+        assert.ok(data);
+        assert(data.fields instanceof Array);
+        assert(data.data instanceof Array);
+        assert(data.pages instanceof Array);
+
+        done();
+      });
+    });
+  });
+
+
 });

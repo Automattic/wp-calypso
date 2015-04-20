@@ -340,7 +340,7 @@ Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
 Site.prototype.statsVideo = function (videoId, fn) {
   var path = '/sites/' + this._id + '/stats/video/' + videoId;
 
-  return this.wpcom.req.get(path, query, fn);
+  return this.wpcom.req.get(path, fn);
 };
 
 /**
