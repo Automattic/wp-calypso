@@ -44,6 +44,7 @@ function WPCOM(token, reqHandler) {
 
   if (token) {
     debug('Token defined: %s…', token.substring(0, 6));
+    this.token = token;
   }
 
   // Set default request handler
