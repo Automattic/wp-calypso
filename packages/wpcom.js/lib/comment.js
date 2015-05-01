@@ -18,7 +18,7 @@ var debug = require('debug')('wpcom:comment');
 
 function Comment(cid, pid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!(this instanceof Comment)) {
@@ -131,8 +131,8 @@ Comment.prototype.reply = function (query, body, fn) {
  * @api public
  */
 
-Comment.prototype['delete'] =
-Comment.prototype.del = function (query, fn) {
+Comment.prototype.del =
+Comment.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
   return this.wpcom.req.del(path, query, fn);
 };

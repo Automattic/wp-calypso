@@ -16,7 +16,7 @@ var debug = require('debug')('wpcom:commentlike');
 
 function CommentLike(cid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!cid) {
@@ -40,8 +40,8 @@ function CommentLike(cid, sid, wpcom) {
  * @api public
  */
 
-CommentLike.prototype.state =
-CommentLike.prototype.mine = function (query, fn) {
+CommentLike.prototype.mine =
+CommentLike.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
   return this.wpcom.req.get(path, query, fn);
 };
@@ -54,20 +54,21 @@ CommentLike.prototype.mine = function (query, fn) {
  * @api public
  */
 
-CommentLike.prototype.add = function (query, body, fn) {
+CommentLike.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  return this.wpcom.req.post(path, query, body, fn);
+  return this.wpcom.req.post(path, query, fn);
 };
 
 /**
  * Remove your Like from a Comment
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-CommentLike.prototype['delete'] =
-CommentLike.prototype.del = function (query, fn) {
+CommentLike.prototype.del =
+CommentLike.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
   return this.wpcom.req.del(path, query, fn);
 };

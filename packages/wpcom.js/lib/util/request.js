@@ -44,8 +44,8 @@ Req.prototype.get = function (params, query, fn) {
  * @api public
  */
 
-Req.prototype.put =
-Req.prototype.post = function (params, query, body, fn) {
+Req.prototype.post =
+Req.prototype.put = function (params, query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
     body = query;

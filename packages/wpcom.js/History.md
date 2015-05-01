@@ -1,3 +1,9 @@
+4.4.0 / 2015-04-20
+==================
+
+ * test: fix a couple of failing tests and methods
+ * docs: prepare for auto-generated docs and code samples
+
 4.3.0 / 2015-04-15
 ==================
 

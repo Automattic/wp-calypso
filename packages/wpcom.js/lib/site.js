@@ -85,17 +85,19 @@ Site.prototype.get = function (query, fn) {
 function list(subpath) {
 
   /**
-   * Return the <names>List method
+   * Create and return the <names>List method
    *
    * @param {Object} [query]
    * @param {Function} fn
    * @api public
    */
 
-  return function (query, fn) {
+  var listMethod = function (query, fn) {
     var path = '/sites/' + this._id + '/' + subpath;
     return this.wpcom.req.get(path, query, fn);
   };
+  listMethod._publicAPI = true;
+  return listMethod;
 }
 
 // walk for each resource and create related method
@@ -254,6 +256,7 @@ Site.prototype.tag = function (slug) {
  *
  * @param {String} url
  * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
@@ -282,6 +285,7 @@ Site.prototype.renderShortcode = function (url, query, fn) {
  *
  * @param {String} url
  * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
@@ -306,6 +310,7 @@ Site.prototype.renderEmbed = function (url, query, fn) {
  * Mark a referrering domain as spam
  *
  * @param {String} domain
+ * @param {Function} fn
  * @api public
  */
 
@@ -320,6 +325,7 @@ Site.prototype.statsReferrersSpamNew = function (domain, fn) {
  * Remove referrering domain from spam
  *
  * @param {String} domain
+ * @param {Function} fn
  * @api public
  */
 
@@ -334,6 +340,7 @@ Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
  * Get detailed stats about a VideoPress video
  *
  * @param {String} videoId
+ * @param {Function} fn
  * @api public
  */
 
@@ -347,6 +354,7 @@ Site.prototype.statsVideo = function (videoId, fn) {
  * Get detailed stats about a particular post
  *
  * @param {String} postId
+ * @param {Function} fn
  * @api public
  */
 

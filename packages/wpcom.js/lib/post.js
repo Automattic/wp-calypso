@@ -38,6 +38,7 @@ function Post(id, sid, wpcom) {
 /**
  * Set post `id`
  *
+ * @param {String} id
  * @api public
  */
 
@@ -141,8 +142,8 @@ Post.prototype.update = function (query, body, fn) {
  * @api public
  */
 
-Post.prototype['delete'] =
-Post.prototype.del = function (query, fn) {
+Post.prototype.del =
+Post.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
   return this.wpcom.req.del(path, query, fn);
 };
@@ -176,7 +177,6 @@ Post.prototype.likesList = function (query, fn) {
 /**
  * Search within a site for related posts
  *
- * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
@@ -184,7 +184,7 @@ Post.prototype.likesList = function (query, fn) {
 
 Post.prototype.related = function (body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  return this.wpcom.req.put(path, query, null, fn);
+  return this.wpcom.req.put(path, body, null, fn);
 };
 
 /**
@@ -221,15 +221,14 @@ Post.prototype.comment = function (cid) {
 /**
  * Return recent comments
  *
- * @param {Objecy} [query]
- * @param {String} id
+ * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
 Post.prototype.comments = function (query, fn) {
   var comment = new Comment(null, this._id, this._sid, this.wpcom);
-  comment.replies(query, fn);
-  return comment;
+  return comment.replies(query, fn);
 };
 
 /**

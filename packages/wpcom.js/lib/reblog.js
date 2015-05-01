@@ -16,7 +16,7 @@ var debug = require('debug')('wpcom:reblog');
 
 function Reblog(pid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!pid) {
@@ -40,8 +40,8 @@ function Reblog(pid, sid, wpcom) {
  * @api public
  */
 
-Reblog.prototype.state =
-Reblog.prototype.mine = function (query, fn) {
+Reblog.prototype.mine =
+Reblog.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
   return this.wpcom.req.get(path, query, fn);
 };

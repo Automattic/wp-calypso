@@ -16,7 +16,7 @@ var debug = require('debug')('wpcom:tag');
 
 function Tag(slug, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!(this instanceof Tag)) {

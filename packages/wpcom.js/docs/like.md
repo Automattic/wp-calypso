@@ -44,3 +44,17 @@ wpcom
   // I like this 342 post
 });
 ```
+
+### Like#del(fn)
+
+Remove your existing Like from the post
+
+```js
+wpcom
+.sites('blog.wordpress.com')
+.post(342)
+.like()
+.del(function(err, data){
+  // I don't like this 342 post any more
+});
+```

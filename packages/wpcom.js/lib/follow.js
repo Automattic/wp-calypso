@@ -32,10 +32,11 @@ function Follow(site_id, wpcom) {
  *
  * @param {Object} [query]
  * @param {Function} fn
+ * @api public
  */
 
-Follow.prototype.state =
-Follow.prototype.mine = function (query, fn) {
+Follow.prototype.mine =
+Follow.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine';
   return this.wpcom.req.get(path, query, fn);
 };
@@ -45,6 +46,7 @@ Follow.prototype.mine = function (query, fn) {
  *
  * @param {Object} [query]
  * @param {Function} fn
+ * @api public
  */
 
 Follow.prototype.follow =
@@ -58,6 +60,7 @@ Follow.prototype.add = function (query, fn) {
  *
  * @param {Object} [query]
  * @param {Function} fn
+ * @api public
  */
 
 Follow.prototype.unfollow =
