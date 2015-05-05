@@ -340,28 +340,40 @@ Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
  * Get detailed stats about a VideoPress video
  *
  * @param {String} videoId
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Site.prototype.statsVideo = function (videoId, fn) {
+Site.prototype.statsVideo = function (videoId, query, fn) {
   var path = '/sites/' + this._id + '/stats/video/' + videoId;
 
-  return this.wpcom.req.get(path, fn);
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
  * Get detailed stats about a particular post
  *
  * @param {String} postId
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Site.prototype.statsPostViews = function (postId, fn) {
+Site.prototype.statsPostViews = function (postId, query, fn) {
   var path = '/sites/' + this._id + '/stats/post/' + postId;
 
-  return this.wpcom.req.get(path, fn);
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**

@@ -177,7 +177,7 @@ site.statsFollowers( function(err, data){
 });
 ```
 
-### Site#statsPostViews(postId, fn)
+### Site#statsPostViews(postId,[query, ]fn)
 
 Returns stats for a certain [post](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/post/%24post_id/).
 
@@ -277,7 +277,7 @@ site.statsTopAuthors( function(err, data){
 });
 ```
 
-### Site#statsVideo(videoId, fn)
+### Site#statsVideo(videoId,[query, ]fn)
 
 Returns stats about a particular VideoPress [video](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/video/%24post_id/).
 
