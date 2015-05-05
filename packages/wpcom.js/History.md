@@ -4,7 +4,7 @@
 
  * core: store token if is defined
 
- 4.4.0 / 2015-04-20
+4.4.0 / 2015-04-20
 ==================
 
  * test: fix a couple of failing tests and methods
