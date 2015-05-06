@@ -8,7 +8,7 @@
 ```js
 var wpcom = require('wpcom')('<your-token>');
 var post = wpcom
-           .sites('blog.wordpress.com')
+           .site('blog.wordpress.com')
            .post(342);
 });
 ```
@@ -79,7 +79,7 @@ Get post likes list
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .likesList(function(err, list){
   // like `list` object
@@ -92,7 +92,7 @@ Create and return a new `Like` instance.
 More info in [Like doc page](./like.md).
 
 ```js
-var like = wpcom.sites('blog.wordpress.com').post(342).like();
+var like = wpcom.site('blog.wordpress.com').post(342).like();
 ```
 
 ### Post#reblog()
@@ -101,7 +101,7 @@ Create and return a new `Reblog` instance.
 More info in [Reblog doc page](./reblog.md).
 
 ```js
-var reblog = wpcom.sites('blog.wordpress.com').post(342).reblog();
+var reblog = wpcom.site('blog.wordpress.com').post(342).reblog();
 ```
 
 ### Post#comment()
@@ -115,7 +115,7 @@ Recent recent comments
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .comments(function(err, list){
   // post comments list

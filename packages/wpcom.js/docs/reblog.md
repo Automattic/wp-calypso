@@ -23,7 +23,7 @@ Get your reblog status for the Post
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .reblog()
 .mine(function(err, data){
@@ -42,7 +42,7 @@ var body = {
 };
 
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .reblog()
 .add(body, function(err, data){
@@ -56,7 +56,7 @@ It's almost a `Reblog#mine` alias.
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .reblog()
 .to(456, 'Really nice a blog post !', function(err, data){

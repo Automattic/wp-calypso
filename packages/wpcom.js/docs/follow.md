@@ -22,7 +22,7 @@ Follow the current blog
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .follow()
 .add(function(err, data){
 	// response handler
@@ -39,7 +39,7 @@ Unfollow the current blog
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .follow()
 .del(function(err, data){
 	// respnose handler
@@ -56,7 +56,7 @@ Get your Follow status for a Site
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .follow()
 .mine(function(error, data){
   // mine status

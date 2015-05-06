@@ -19,7 +19,7 @@ Return a single Comment
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .comment(32)
 .get(function(err, data){
   // comment `data` object
@@ -32,7 +32,7 @@ Return recent comments for a post
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .comment()
 .replies(function(err, data){
@@ -45,7 +45,7 @@ Create a comment on a post
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .comment()
 .add('Nice blog post !!!', function(err, data){
@@ -58,7 +58,7 @@ Edit a comment
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .comment(123)
 .update('It is not a blog post !!!', function(err, data){
 });
@@ -70,7 +70,7 @@ Create a Comment as a reply to another Comment
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .comment(123)
 .reply('Im sorry, I've edited the previous comment', function(err, data){
 });
@@ -82,7 +82,7 @@ Delete a comment
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .comment(123)
 .del(function(err, data){
 });

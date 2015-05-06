@@ -23,7 +23,7 @@ Get your Like status for a Post
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .like()
 .mine(function(err, data){
@@ -37,7 +37,7 @@ Like the post
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .like()
 .add(function(err, data){
@@ -51,7 +51,7 @@ Remove your existing Like from the post
 
 ```js
 wpcom
-.sites('blog.wordpress.com')
+.site('blog.wordpress.com')
 .post(342)
 .like()
 .del(function(err, data){
