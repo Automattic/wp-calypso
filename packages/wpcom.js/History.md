@@ -1,3 +1,7 @@
+4.5.0 / 2015-05-06
+
+ * docs: fix references to `wpcom.sites()` -> `wpcom.site()`
+ * site: fix query args for `statsVideo` and `statsPostViews`
 
 4.4.1 / 2015-04-30
 ==================
