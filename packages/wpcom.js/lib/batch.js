@@ -48,7 +48,7 @@ Batch.prototype.run = function (query, fn) {
     fn = query;
     query = {};
   }
-  query.urls = this.urls;
+  query['urls[]'] = this.urls;
 
   return this.wpcom.req.get('/batch', query, fn);
 };
