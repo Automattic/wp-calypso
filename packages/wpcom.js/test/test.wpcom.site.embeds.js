@@ -3,7 +3,7 @@
  * WPCOM module
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var assert = require('assert');
 
 /**
@@ -18,8 +18,8 @@ var fixture = require('./fixture');
 
 describe('wpcom.site.embeds', function () {
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
-  var site = wpcom.site(fixture.site.url);
+  var wpcom = util.wpcom();
+  var site = wpcom.site(util.site());
 
   describe('wpcom.site.renderEmbed(\'embed\')', function () {
     it('should render embed', function(done){

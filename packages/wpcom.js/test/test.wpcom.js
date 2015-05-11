@@ -3,7 +3,7 @@
  * WPCOM module
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var assert = require('assert');
 
 /**
@@ -14,7 +14,7 @@ describe('wpcom', function(){
 
   describe('wpcom.freshlyPressed', function(){
     it('should require freshly pressed', function(done){
-      var wpcom = WPCOM();
+      var wpcom = util.wpcom_public();
 
       wpcom.freshlyPressed(function(err, data){
         if (err) throw err;

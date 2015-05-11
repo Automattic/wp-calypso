@@ -3,7 +3,7 @@
  * WPCOM module
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var assert = require('assert');
 
 /**
@@ -18,8 +18,8 @@ var fixture = require('./fixture');
 
 describe('wpcom.site', function () {
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
-  var site = wpcom.site(fixture.site.url);
+  var wpcom = util.wpcom();
+  var site = wpcom.site(util.site());
   var testing_post;
   var new_post_ID;
   var site_ID;
@@ -37,7 +37,7 @@ describe('wpcom.site', function () {
         site_ID = data_site.ID;
 
         done();
-      })
+      });
     });
   });
 
@@ -45,7 +45,7 @@ describe('wpcom.site', function () {
   after(function (done) {
     site.deletePost(testing_post.ID, function (err, data) {
       if (err) throw err;
-      
+
       done();
     });
   });
@@ -80,7 +80,6 @@ describe('wpcom.site', function () {
           assert.equal('object', typeof list.posts);
           assert.ok(list.posts instanceof Array);
           assert.ok(list.posts.length <= 1);
-
           done();
         });
       });
@@ -96,7 +95,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof list.found);
           assert.equal('object', typeof list.media);
           assert.ok(list.media instanceof Array);
-
           done();
         });
       });
@@ -109,7 +107,6 @@ describe('wpcom.site', function () {
 
           assert.equal('number', typeof list.found);
           assert.ok(list.users instanceof Array);
-
           done();
         });
       });
@@ -125,7 +122,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof list.found);
           assert.equal('object', typeof list.comments);
           assert.ok(list.comments instanceof Array);
-
           done();
         });
       });
@@ -141,7 +137,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof list.found);
           assert.equal('object', typeof list.users);
           assert.ok(list.users instanceof Array);
-
           done();
         });
       });
@@ -157,7 +152,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof list.found);
           assert.equal('object', typeof list.categories);
           assert.ok(list.categories instanceof Array);
-
           done();
         });
       });
@@ -172,7 +166,6 @@ describe('wpcom.site', function () {
           assert.equal('object', typeof list);
           assert.equal('object', typeof list.shortcodes);
           assert.ok(list.shortcodes instanceof Array);
-
           done();
         });
       });
@@ -187,7 +180,6 @@ describe('wpcom.site', function () {
           assert.equal('object', typeof list);
           assert.equal('object', typeof list.embeds);
           assert.ok(list.embeds instanceof Array);
-
           done();
         });
       });
@@ -203,7 +195,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof list.found);
           assert.equal('object', typeof list.tags);
           assert.ok(list.tags instanceof Array);
-
           done();
         });
       });
@@ -220,7 +211,6 @@ describe('wpcom.site', function () {
 
           assert.equal('object', typeof data.visits);
           assert.ok(data.visits instanceof Object);
-
           done();
         });
       });
@@ -234,11 +224,11 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.day));
           assert.ok(data.authors instanceof Array);
           assert.ok(data.posts instanceof Array);
+
           assert.equal('number', typeof data.monthly_comments);
-          assert.equal('number', typeof data.total_comments);
+          assert.equal('string', typeof data.total_comments);
           assert.equal('string', typeof data.most_active_day);
           assert.equal('string', typeof data.most_active_time);
-
           done();
         });
       });
@@ -254,7 +244,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof data.page);
           assert.equal('number', typeof data.pages);
           assert.equal('number', typeof data.total);
-
           done();
         });
       });
@@ -272,7 +261,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof data.total);
           assert.equal('number', typeof data.total_email);
           assert.equal('number', typeof data.total_wpcom);
-
           done();
         });
       });
@@ -285,7 +273,6 @@ describe('wpcom.site', function () {
 
           assert.equal('string', typeof Date(data.day));
           assert.ok(data.services instanceof Array);
-
           done();
         });
       });
@@ -298,7 +285,6 @@ describe('wpcom.site', function () {
 
           assert.equal('string', typeof Date(data.day));
           assert.ok(data.streak instanceof Object);
-
           done();
         });
       });
@@ -317,7 +303,6 @@ describe('wpcom.site', function () {
           assert.equal('number', typeof data.comments);
           assert.equal('number', typeof data.followers);
           assert.equal('number', typeof data.reblogs);
-
           done();
         });
       });
@@ -330,7 +315,6 @@ describe('wpcom.site', function () {
 
           assert.equal('string', typeof Date(data.day));
           assert.ok(data.tags instanceof Array);
-
           done();
         });
       });
@@ -344,7 +328,6 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.day));
           assert.equal('string', typeof data.period);
           assert.ok(data.days instanceof Object);
-
           done();
         });
       });
@@ -358,7 +341,6 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.day));
           assert.equal('string', typeof data.period);
           assert.ok(data.days instanceof Object);
-
           done();
         });
       });
@@ -376,7 +358,6 @@ describe('wpcom.site', function () {
 
           assert.equal('object', typeof data.fields);
           assert.ok(data.fields instanceof Array);
-
           done();
         });
       });
@@ -390,7 +371,6 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.date));
           assert.equal('object', typeof data.days);
           assert.equal('string', typeof data.period);
-
           done();
         });
       });
@@ -404,7 +384,6 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.date));
           assert.equal('object', typeof data.days);
           assert.equal('string', typeof data.period);
-
           done();
         });
       });
@@ -417,8 +396,7 @@ describe('wpcom.site', function () {
 
           assert.equal('string', typeof Date(data.date));
           assert.equal('object', typeof data.days);
-          assert.ok(data['country-info'] instanceof Array);
-
+          assert.equal('object', typeof data['country-info']);
           done();
         });
       });
@@ -432,7 +410,6 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.date));
           assert.equal('object', typeof data.days);
           assert.equal('string', typeof data.period);
-
           done();
         });
       });
@@ -446,7 +423,6 @@ describe('wpcom.site', function () {
           assert.equal('string', typeof Date(data.date));
           assert.equal('object', typeof data.days);
           assert.equal('string', typeof data.period);
-
           done();
         });
       });
@@ -460,7 +436,6 @@ describe('wpcom.site', function () {
 
         assert.equal('number', typeof data.ID);
         assert.equal('string', typeof data.name);
-
         done();
       });
     });
@@ -476,7 +451,6 @@ describe('wpcom.site', function () {
 
         assert.equal('object', typeof data);
         assert.equal(site_ID, data.site_ID);
-
         done();
       });
     });
@@ -489,7 +463,6 @@ describe('wpcom.site', function () {
 
         assert.equal('object', typeof data);
         assert.equal(new_post_ID, data.ID);
-
         done();
       });
     });
@@ -564,7 +537,6 @@ describe('wpcom.site', function () {
         assert.ok(data.fields instanceof Array);
         assert.ok(data.data instanceof Array);
         assert.ok(data.averages instanceof Object);
-
         done();
       });
     });
@@ -579,11 +551,8 @@ describe('wpcom.site', function () {
         assert(data.fields instanceof Array);
         assert(data.data instanceof Array);
         assert(data.pages instanceof Array);
-
         done();
       });
     });
   });
-
-
 });

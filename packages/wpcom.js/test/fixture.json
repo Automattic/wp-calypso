@@ -1,9 +1,4 @@
 {
-  "site": {
-    "url": "<site-id>",
-    "token": "<global-token>"
-  },
-
   "reblog": {
     "original_blog": "en.blog.wordpress.com",
     "original_post": 29857,
@@ -13,8 +8,8 @@
   "post": {
     "title": "Testing POST",
     "content": "<div style=\"color: red;\">The content of the new testing post</div>",
-    "tags": "wpcom,test,testing-post",
-    "categories": "development"
+    "tags": "wpcom.js,test,testing-post",
+    "categories": "testing"
   },
 
   "category": {
@@ -27,7 +22,7 @@
     "description": "A tag to test"
   },
 
-  "post_comment": "Nice comment in Testing POST",
+  "post_comment": "New testing comment",
 
   "embed": "http://www.youtube.com/watch?v=JaNH56Vpg-A",
 
@@ -35,7 +30,7 @@
     "files": [
       {
         "title": "Testing Media FILE",
-        "description": "A nice picture uploaded from a FILE",
+        "description": "Testing media file added from a local FILE",
         "file": "./test/wordpress-logo-notext-rgb.png"
       },
       "./test/wordpress-logo-simplified-rgb.png"
@@ -46,7 +41,7 @@
       "http://s.w.org/about/images/logos/wordpress-logo-simplified-rgb.png",
       {
         "title": "Testing Media URL",
-        "description": "A nice picture added from a URL",
+        "description": "Testing media file added from a URL",
         "url": "http://s.w.org/about/images/logos/wordpress-logo-notext-rgb.png"
       }
     ]

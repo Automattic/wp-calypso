@@ -3,7 +3,7 @@
  * WPCOM module
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var Site = require('../lib/site');
 var assert = require('assert');
 
@@ -19,8 +19,8 @@ var fixture = require('./fixture');
 
 describe('wpcom.site.post.like', function(){
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
-  var site = wpcom.site(fixture.site.url);
+  var wpcom = util.wpcom();
+  var site = wpcom.site(util.site());
   var testing_post;
 
   // Create a testing_post before to start the tests
@@ -28,7 +28,7 @@ describe('wpcom.site.post.like', function(){
     site.addPost(fixture.post, function (err, data) {
       if (err) throw err;
 
-      testing_post = site.post(data.ID)
+      testing_post = site.post(data.ID);
       done();
     });
   });

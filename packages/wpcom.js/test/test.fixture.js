@@ -20,11 +20,6 @@ var fixture = require('./fixture');
 describe('fixture', function() {
 
   describe('general', function() {
-    it('`private_site` should be defined', function() {
-      assert.equal('string', typeof fixture.site.url);
-      assert.equal('string', typeof fixture.site.token);
-    });
-
     it('`post` should be ok', function() {
       assert.ok(fixture.post);
       assert.equal('object', typeof fixture.post);

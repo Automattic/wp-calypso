@@ -1,4 +1,5 @@
-# wpcom.js
+wpcom.js
+========
 
 Official JavaScript library for the [WordPress.com][] [REST API][].
 Compatible with Node.js and web browsers.
@@ -78,19 +79,27 @@ More pre-made examples are in the [`examples/`](./examples/) directory.
 
 ## Test
 
-Create `fixture.json` file in the `test/` folder to can run the tests. You can copy
-or rename the `test/fixture_example.json`.  Be sure to update the <site-id> and <global-token> at the top of the file.
+The `token` and `site` vars must be given to testing scripts either using 
+`TOKEN` and `SITE` environment vars respectively or through of a 
+config.json file into `test/` folder like bellow:
 
-To then run tests:
+```json
+{
+  "site": "<site-url>",
+  "token": "<token>"
+}
+```
 
-```bash
+Run tests:
+
+```cli
 $ make test-all
 ```
 
-You use `make test` and pass a first argument to filter tests in the test rule
+Also tests can be filtered using `make test <filter>`:
 
-```bash
-$ make test site.addPost
+```cli
+$ make test wpcom.site.post
 ```
 
 ## License

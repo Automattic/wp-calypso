@@ -3,7 +3,7 @@
  * Module dependecies
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var Site = require('../lib/site');
 var assert = require('assert');
 
@@ -19,8 +19,8 @@ var fixture = require('./fixture');
 
 describe('wpcom', function(){
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
-  var site = wpcom.site(fixture.site.url);
+  var wpcom = util.wpcom();
+  var site = wpcom.site(util.site());
   var testing_post;
 
   describe('wpcom.util.req.post', function(){

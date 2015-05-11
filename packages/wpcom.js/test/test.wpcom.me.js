@@ -1,9 +1,9 @@
 
 /**
- * WPCOM module
+ * Module dependencies
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var assert = require('assert');
 
 /**
@@ -18,7 +18,7 @@ var fixture = require('./fixture');
 
 describe('wpcom.me', function(){
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
+  var wpcom = util.wpcom();
   var me = wpcom.me();
 
   describe('wpcom.me.get', function(){

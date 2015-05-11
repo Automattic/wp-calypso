@@ -3,7 +3,7 @@
  * WPCOM module
  */
 
-var WPCOM = require('../');
+var util = require('./util');
 var assert = require('assert');
 
 /**
@@ -12,10 +12,14 @@ var assert = require('assert');
 
 var fixture = require('./fixture');
 
+/**
+ * site.follow
+ */
+
 describe('wpcom.site.follow', function(){
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
-  var site = wpcom.site(fixture.site.url);
+  var wpcom = util.wpcom();
+  var site = wpcom.site(util.site());
   var follow = site.follow();
 
   describe('wpcom.site.follow.follow', function(){

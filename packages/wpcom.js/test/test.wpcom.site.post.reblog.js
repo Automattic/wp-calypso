@@ -3,8 +3,7 @@
  * WPCOM module
  */
 
-var WPCOM = require('../');
-var Site = require('../lib/site');
+var util = require('./util');
 var assert = require('assert');
 
 /**
@@ -14,13 +13,13 @@ var assert = require('assert');
 var fixture = require('./fixture');
 
 /**
- * WPCOM instance
+ * site.post.reblog
  */
 
 describe('wpcom.site.post.reblog', function(){
   // Global instances
-  var wpcom = WPCOM(fixture.site.token);
-  var site = wpcom.site(fixture.site.url);
+  var wpcom = util.wpcom();
+  var site = wpcom.site(util.site());
   var testing_reblog_post = wpcom
                             .site(fixture.reblog.original_blog)
                             .post(fixture.reblog.original_post);
@@ -31,7 +30,7 @@ describe('wpcom.site.post.reblog', function(){
     site.addPost(fixture.post, function (err, data) {
       if (err) throw err;
 
-      testing_post = site.post(data.ID)
+      testing_post = site.post(data.ID);
       done();
     });
   });
