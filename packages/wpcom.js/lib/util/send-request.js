@@ -4,6 +4,7 @@
  */
 
 var debug = require('debug')('wpcom:send-request');
+var debug_res = require('debug')('wpcom:send-request:res');
 
 /**
  * Request to WordPress REST API
@@ -62,5 +63,8 @@ module.exports = function (params, query, body, fn) {
 
   debug('params: %o', params);
   // request method
-  return this.request(params, fn);
+  return this.request(params, function(err, res) {
+    debug_res(res);
+    fn(err, res);
+  });
 };

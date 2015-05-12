@@ -226,7 +226,7 @@ describe('wpcom.site', function () {
           assert.ok(data.posts instanceof Array);
 
           assert.equal('number', typeof data.monthly_comments);
-          assert.equal('string', typeof data.total_comments);
+          assert.equal('number', typeof data.total_comments);
           assert.equal('string', typeof data.most_active_day);
           assert.equal('string', typeof data.most_active_time);
           done();
