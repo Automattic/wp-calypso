@@ -13,11 +13,11 @@ var assert = require('assert');
 var fixture = require('./fixture');
 
 /**
- * Create a `Site` instance
+ * wpcom.batch
  */
 
-describe('wpcom.site.batch', function() {
-  it('should require site data', function(done) {
+describe('wpcom.batch', function() {
+  it('should makes several data in only one request', function(done) {
     var wpcom = util.wpcom();
     var batch = wpcom.batch();
     var site = wpcom.site(util.site());
