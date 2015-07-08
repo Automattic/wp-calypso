@@ -47,9 +47,17 @@ module.exports = function (params, query, body, fn) {
   // - `apiVersion`
   if (query.apiVersion) {
     params.apiVersion = query.apiVersion;
+    debug('apiVersion: %o', params.apiVersion);
     delete query.apiVersion;
   } else {
     params.apiVersion = this.apiVersion;
+  }
+
+  // - `proxyOrigin`
+  if (query.proxyOrigin) {
+    params.proxyOrigin = query.proxyOrigin;
+    debug('proxyOrigin: %o', params.proxyOrigin);
+    delete query.proxyOrigin;
   }
 
   if (body) {
