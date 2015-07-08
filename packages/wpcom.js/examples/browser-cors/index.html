@@ -7,22 +7,17 @@
   <body>
     <script src="/wpcom.js"></script>
     <script>
-      var token = ""; // <- your token here
-      if (!token.length) {
-        alert('Define your token !! :-)');
-      }
-
-      var wpcom = WPCOM(token);
+      var wpcom = WPCOM();
 
       wpcom
-      .me()
-      .get(function(err, me){
+      .site('retrofocs.wordpress.com')
+      .get({
+        apiVersion: '1.2',
+        proxyOrigin: 'http://calypso-sync:3002'
+      } , function(err, me){
         if (err) throw err;
-        console.log(me);
 
-        var div = document.createElement('div');
-        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + me.username + '<\/b>';
-        document.body.appendChild(div);
+        console.log(me);
       });
     </script>
   </body>

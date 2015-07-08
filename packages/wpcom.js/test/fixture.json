@@ -6,10 +6,7 @@
   },
 
   "post": {
-    "title": "Testing POST",
-    "content": "<div style=\"color: red;\">The content of the new testing post</div>",
-    "tags": "wpcom.js,test,testing-post",
-    "categories": "testing"
+    "title": "Testing POST"
   },
 
   "category": {

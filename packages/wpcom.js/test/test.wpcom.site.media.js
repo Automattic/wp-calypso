@@ -27,7 +27,10 @@ describe('wpcom.site.media', function(){
 
   var testing_media;
   before(function(done){
-    site.addMediaFiles(fixture.media.files[0], function(err, data) {
+    site.addMediaFiles(fixture.media.files[1], function(err, data) {
+      console.log(err);
+      console.log(data);
+
       if (err) throw err;
 
       testing_media = data ? data.media[0] : {};

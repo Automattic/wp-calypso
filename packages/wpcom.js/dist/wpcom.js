@@ -49,7 +49,7 @@ Batch.prototype.run = function (query, fn) {
     fn = query;
     query = {};
   }
-  query.urls = this.urls;
+  query['urls[]'] = this.urls;
 
   return this.wpcom.req.get('/batch', query, fn);
 };
@@ -59,6 +59,7 @@ Batch.prototype.run = function (query, fn) {
  */
 
 module.exports = Batch;
+
 },{"debug":17}],2:[function(require,module,exports){
 
 /**
@@ -78,7 +79,7 @@ var debug = require('debug')('wpcom:category');
 
 function Category(slug, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!(this instanceof Category)) {
@@ -181,7 +182,7 @@ var debug = require('debug')('wpcom:comment');
 
 function Comment(cid, pid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!(this instanceof Comment)) {
@@ -294,8 +295,8 @@ Comment.prototype.reply = function (query, body, fn) {
  * @api public
  */
 
-Comment.prototype['delete'] =
-Comment.prototype.del = function (query, fn) {
+Comment.prototype.del =
+Comment.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
   return this.wpcom.req.del(path, query, fn);
 };
@@ -347,7 +348,7 @@ var debug = require('debug')('wpcom:commentlike');
 
 function CommentLike(cid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!cid) {
@@ -371,8 +372,8 @@ function CommentLike(cid, sid, wpcom) {
  * @api public
  */
 
-CommentLike.prototype.state =
-CommentLike.prototype.mine = function (query, fn) {
+CommentLike.prototype.mine =
+CommentLike.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
   return this.wpcom.req.get(path, query, fn);
 };
@@ -385,20 +386,21 @@ CommentLike.prototype.mine = function (query, fn) {
  * @api public
  */
 
-CommentLike.prototype.add = function (query, body, fn) {
+CommentLike.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
-  return this.wpcom.req.post(path, query, body, fn);
+  return this.wpcom.req.post(path, query, fn);
 };
 
 /**
  * Remove your Like from a Comment
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-CommentLike.prototype['delete'] =
-CommentLike.prototype.del = function (query, fn) {
+CommentLike.prototype.del =
+CommentLike.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
   return this.wpcom.req.del(path, query, fn);
 };
@@ -443,10 +445,11 @@ function Follow(site_id, wpcom) {
  *
  * @param {Object} [query]
  * @param {Function} fn
+ * @api public
  */
 
-Follow.prototype.state =
-Follow.prototype.mine = function (query, fn) {
+Follow.prototype.mine =
+Follow.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/follows/mine';
   return this.wpcom.req.get(path, query, fn);
 };
@@ -456,6 +459,7 @@ Follow.prototype.mine = function (query, fn) {
  *
  * @param {Object} [query]
  * @param {Function} fn
+ * @api public
  */
 
 Follow.prototype.follow =
@@ -469,6 +473,7 @@ Follow.prototype.add = function (query, fn) {
  *
  * @param {Object} [query]
  * @param {Function} fn
+ * @api public
  */
 
 Follow.prototype.unfollow =
@@ -501,7 +506,7 @@ var debug = require('debug')('wpcom:like');
 
 function Like(pid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!pid) {
@@ -525,8 +530,8 @@ function Like(pid, sid, wpcom) {
  * @api public
  */
 
-Like.prototype.state =
-Like.prototype.mine = function (query, fn) {
+Like.prototype.mine =
+Like.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
   return this.wpcom.req.get(path, query, fn);
 };
@@ -547,12 +552,13 @@ Like.prototype.add = function (query, fn) {
 /**
  * Remove your Like from a Post
  *
+ * @param {Object} [query]
  * @param {Function} fn
  * @api public
  */
 
-Like.prototype['delete'] =
-Like.prototype.del = function (query, fn) {
+Like.prototype.del =
+Like.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
   return this.wpcom.req.del(path, query, fn);
 };
@@ -650,6 +656,7 @@ Me.prototype.connections = function (query, fn) {
  */
 
 module.exports = Me;
+
 },{"debug":17}],8:[function(require,module,exports){
   
 /**
@@ -879,6 +886,7 @@ function Post(id, sid, wpcom) {
 /**
  * Set post `id`
  *
+ * @param {String} id
  * @api public
  */
 
@@ -982,8 +990,8 @@ Post.prototype.update = function (query, body, fn) {
  * @api public
  */
 
-Post.prototype['delete'] =
-Post.prototype.del = function (query, fn) {
+Post.prototype.del =
+Post.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/delete';
   return this.wpcom.req.del(path, query, fn);
 };
@@ -1017,7 +1025,6 @@ Post.prototype.likesList = function (query, fn) {
 /**
  * Search within a site for related posts
  *
- * @param {Object} [query]
  * @param {Object} body
  * @param {Function} fn
  * @api public
@@ -1025,7 +1032,7 @@ Post.prototype.likesList = function (query, fn) {
 
 Post.prototype.related = function (body, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._id + '/related';
-  return this.wpcom.req.put(path, query, null, fn);
+  return this.wpcom.req.put(path, body, null, fn);
 };
 
 /**
@@ -1062,15 +1069,14 @@ Post.prototype.comment = function (cid) {
 /**
  * Return recent comments
  *
- * @param {Objecy} [query]
- * @param {String} id
+ * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
 Post.prototype.comments = function (query, fn) {
   var comment = new Comment(null, this._id, this._sid, this.wpcom);
-  comment.replies(query, fn);
-  return comment;
+  return comment.replies(query, fn);
 };
 
 /**
@@ -1097,7 +1103,7 @@ var debug = require('debug')('wpcom:reblog');
 
 function Reblog(pid, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!pid) {
@@ -1121,8 +1127,8 @@ function Reblog(pid, sid, wpcom) {
  * @api public
  */
 
-Reblog.prototype.state =
-Reblog.prototype.mine = function (query, fn) {
+Reblog.prototype.mine =
+Reblog.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
   return this.wpcom.req.get(path, query, fn);
 };
@@ -1263,17 +1269,19 @@ Site.prototype.get = function (query, fn) {
 function list(subpath) {
 
   /**
-   * Return the <names>List method
+   * Create and return the <names>List method
    *
    * @param {Object} [query]
    * @param {Function} fn
    * @api public
    */
 
-  return function (query, fn) {
+  var listMethod = function (query, fn) {
     var path = '/sites/' + this._id + '/' + subpath;
     return this.wpcom.req.get(path, query, fn);
   };
+  listMethod._publicAPI = true;
+  return listMethod;
 }
 
 // walk for each resource and create related method
@@ -1432,6 +1440,7 @@ Site.prototype.tag = function (slug) {
  *
  * @param {String} url
  * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
@@ -1460,6 +1469,7 @@ Site.prototype.renderShortcode = function (url, query, fn) {
  *
  * @param {String} url
  * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
@@ -1484,6 +1494,7 @@ Site.prototype.renderEmbed = function (url, query, fn) {
  * Mark a referrering domain as spam
  *
  * @param {String} domain
+ * @param {Function} fn
  * @api public
  */
 
@@ -1498,6 +1509,7 @@ Site.prototype.statsReferrersSpamNew = function (domain, fn) {
  * Remove referrering domain from spam
  *
  * @param {String} domain
+ * @param {Function} fn
  * @api public
  */
 
@@ -1512,11 +1524,18 @@ Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
  * Get detailed stats about a VideoPress video
  *
  * @param {String} videoId
+ * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
-Site.prototype.statsVideo = function (videoId, fn) {
+Site.prototype.statsVideo = function (videoId, query, fn) {
   var path = '/sites/' + this._id + '/stats/video/' + videoId;
+
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
 
   return this.wpcom.req.get(path, query, fn);
 };
@@ -1525,13 +1544,20 @@ Site.prototype.statsVideo = function (videoId, fn) {
  * Get detailed stats about a particular post
  *
  * @param {String} postId
+ * @param {Object} [query]
+ * @param {Function} fn
  * @api public
  */
 
-Site.prototype.statsPostViews = function (postId, fn) {
+Site.prototype.statsPostViews = function (postId, query, fn) {
   var path = '/sites/' + this._id + '/stats/post/' + postId;
 
-  return this.wpcom.req.get(path, fn);
+  if ('function' == typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -1558,7 +1584,7 @@ var debug = require('debug')('wpcom:tag');
 
 function Tag(slug, sid, wpcom) {
   if (!sid) {
-    throw new Error('`side id` is not correctly defined');
+    throw new Error('`site id` is not correctly defined');
   }
 
   if (!(this instanceof Tag)) {
@@ -1727,8 +1753,8 @@ Req.prototype.get = function (params, query, fn) {
  * @api public
  */
 
-Req.prototype.put =
-Req.prototype.post = function (params, query, body, fn) {
+Req.prototype.post =
+Req.prototype.put = function (params, query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
     body = query;
@@ -1774,6 +1800,7 @@ module.exports = Req;
  */
 
 var debug = require('debug')('wpcom:send-request');
+var debug_res = require('debug')('wpcom:send-request:res');
 
 /**
  * Request to WordPress REST API
@@ -1816,9 +1843,17 @@ module.exports = function (params, query, body, fn) {
   // - `apiVersion`
   if (query.apiVersion) {
     params.apiVersion = query.apiVersion;
+    debug('apiVersion: %o', params.apiVersion);
     delete query.apiVersion;
   } else {
     params.apiVersion = this.apiVersion;
+  }
+
+  // - `proxyOrigin`
+  if (query.proxyOrigin) {
+    params.proxyOrigin = query.proxyOrigin;
+    debug('proxyOrigin: %o', params.proxyOrigin);
+    delete query.proxyOrigin;
   }
 
   if (body) {
@@ -1832,8 +1867,12 @@ module.exports = function (params, query, body, fn) {
 
   debug('params: %o', params);
   // request method
-  return this.request(params, fn);
+  return this.request(params, function(err, res) {
+    debug_res(res);
+    fn(err, res);
+  });
 };
+
 },{"debug":17}],16:[function(require,module,exports){
 
 },{}],17:[function(require,module,exports){
@@ -2385,6 +2424,10 @@ function request (params, fn) {
   var apiVersion = params.apiVersion || defaultApiVersion;
   delete params.apiVersion;
 
+
+  proxyOrigin = params.proxyOrigin || proxyOrigin;
+  delete params.proxyOrigin;
+
   var url = proxyOrigin + '/rest/v' + apiVersion + params.path;
   debug('API URL: %o', url);
   delete params.path;
@@ -2425,7 +2468,10 @@ function request (params, fn) {
 
   // start the request
   req.end(function (err, res){
-    if (err) return fn(err);
+    if (err && !res) {
+      return fn(err);
+    }
+
     var body = res.body;
     var headers = res.headers;
     var statusCode = res.status;
@@ -2435,17 +2481,21 @@ function request (params, fn) {
       body._headers = headers;
     }
 
-    if (2 === Math.floor(statusCode / 100)) {
-      // 2xx status code, success
-      fn(null, body);
-    } else {
-      // any other status code is a failure
-      err = new Error();
-      err.statusCode = statusCode;
-      for (var i in body) err[i] = body[i];
-      if (body && body.error) err.name = toTitle(body.error) + 'Error';
-      fn(err);
+    if (!err) {
+      return fn(null, body);
     }
+
+    err = new Error();
+    err.statusCode = statusCode;
+    for (var i in body) {
+      err[i] = body[i];
+    }
+
+    if (body && body.error) {
+      err.name = toTitle(body.error) + 'Error';
+    }
+
+    fn(err);
   });
 
   return req.xhr;
@@ -2471,7 +2521,7 @@ var reduce = require('reduce');
  */
 
 var root = 'undefined' == typeof window
-  ? this
+  ? (this || self)
   : window;
 
 /**
@@ -2510,7 +2560,8 @@ function isHost(obj) {
 
 request.getXHR = function () {
   if (root.XMLHttpRequest
-    && ('file:' != root.location.protocol || !root.ActiveXObject)) {
+      && (!root.location || 'file:' != root.location.protocol
+          || !root.ActiveXObject)) {
     return new XMLHttpRequest;
   } else {
     try { return new ActiveXObject('Microsoft.XMLHTTP'); } catch(e) {}
@@ -2846,6 +2897,11 @@ Response.prototype.parseBody = function(str){
  */
 
 Response.prototype.setStatusProperties = function(status){
+  // handle IE9 bug: http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+  if (status === 1223) {
+    status = 204;
+  }
+
   var type = status / 100 | 0;
 
   // status / class
@@ -2863,7 +2919,7 @@ Response.prototype.setStatusProperties = function(status){
 
   // sugar
   this.accepted = 202 == status;
-  this.noContent = 204 == status || 1223 == status;
+  this.noContent = 204 == status;
   this.badRequest = 400 == status;
   this.unauthorized = 401 == status;
   this.notAcceptable = 406 == status;
@@ -3371,12 +3427,18 @@ Request.prototype.end = function(fn){
   };
 
   // progress
+  var handleProgress = function(e){
+    if (e.total > 0) {
+      e.percent = e.loaded / e.total * 100;
+    }
+    self.emit('progress', e);
+  };
+  if (this.hasListeners('progress')) {
+    xhr.onprogress = handleProgress;
+  }
   try {
     if (xhr.upload && this.hasListeners('progress')) {
-      xhr.upload.onprogress = function(e){
-        e.percent = e.loaded / e.total * 100;
-        self.emit('progress', e);
-      };
+      xhr.upload.onprogress = handleProgress;
     }
   } catch(e) {
     // Accessing xhr.upload fails in IE from a web worker, so just pretend it doesn't exist.
@@ -3764,6 +3826,7 @@ module.exports = function(arr, fn, initial){
 };
 },{}],24:[function(require,module,exports){
 
+
 /**
  * Module dependencies.
  */
@@ -3809,6 +3872,7 @@ function WPCOM(token, reqHandler) {
 
   if (token) {
     debug('Token defined: %s…', token.substring(0, 6));
+    this.token = token;
   }
 
   // Set default request handler
@@ -3816,6 +3880,8 @@ function WPCOM(token, reqHandler) {
     debug('No request handler. Adding default XHR request handler');
 
     this.request = function (params, fn) {
+      console.log("params: ", params);
+
       params = params || {};
 
       // token is optional
@@ -3905,5 +3971,6 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
  */
 
 module.exports = WPCOM;
+
 },{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"./lib/util/request":14,"./lib/util/send-request":15,"debug":17,"wpcom-xhr-request":20}]},{},[24])(24)
 });

@@ -1,3 +1,10 @@
+
+4.5.1 / 2015-07-08
+==================
+
+ * pkg: bump "wpcom-xhr-request" to "0.3.2"
+ * send-request: handler proxyOrigin parameter
+
 4.5.0 / 2015-05-06
 ==================
 
