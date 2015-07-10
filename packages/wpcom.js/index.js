@@ -53,8 +53,6 @@ function WPCOM(token, reqHandler) {
     debug('No request handler. Adding default XHR request handler');
 
     this.request = function (params, fn) {
-      console.log("params: ", params);
-
       params = params || {};
 
       // token is optional
