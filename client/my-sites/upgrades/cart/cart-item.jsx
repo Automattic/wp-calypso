@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	range = require( 'lodash/utility/range' );
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ var analytics = require( 'analytics' ),
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	{ isPremium, isBusiness } = require( 'lib/products-values' ),
+	{ isPremium, isBusiness, isDomainRegistration } = require( 'lib/products-values' ),
 	isTheme = require( 'lib/products-values' ).isTheme;
 
 module.exports = React.createClass( {
@@ -107,6 +108,28 @@ module.exports = React.createClass( {
 		return info;
 	},
 
+	handleDomainVolumeSelection: function( event ) {
+		event.preventDefault();
+		let volume = parseInt( event.target.value );
+		upgradesActions.setVolume( {
+			cartItem: this.props.cartItem,
+			volume
+		} );
+	},
+
+	getVolumeOptions: function() {
+		return range( 1, 6 ).map( number => <option key={ number } value={ number }>{ this.translate( '%(number)s year', '%(number)s years', { args: { number }, count: number } ) }</option> );
+	},
+
+	domainVolumeSelection: function() {
+		return isDomainRegistration( this.props.cartItem ) ? (
+			<select name="product-domain-volume" onChange={ this.handleDomainVolumeSelection }>
+							className="product-domain-volume"
+				{ this.getVolumeOptions() }
+			</select>
+		) : null;
+	},
+
 	render: function() {
 		var name = this.getProductName();
 
@@ -115,6 +138,7 @@ module.exports = React.createClass( {
 				<div className="primary-details">
 					<span className="product-name">{ name || this.translate( 'Loading…' ) }</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
+					{ this.domainVolumeSelection() }
 				</div>
 
 				<div className="secondary-details">
@@ -140,6 +164,9 @@ module.exports = React.createClass( {
 				}
 			};
 
+		if ( isDomainRegistration( cartItem ) ) {
+			return cartItem.product_name;
+		}
 		if ( ! cartItem.volume ) {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
