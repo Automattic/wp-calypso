@@ -31,7 +31,7 @@ describe('wpcom', function(){
         var path = '/sites/' + site._id + '/posts/new';
         wpcom.req.post(path, function(err, data){
           assert.ok(err);
-          assert.equal(400, err.status);
+          assert.equal(400, err.statusCode);
           done();
         });
 

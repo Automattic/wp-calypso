@@ -27,9 +27,6 @@ describe('wpcom.site', function () {
   // Create a testing_post before to start tests
   before(function (done) {
     site.addPost(fixture.post, function (err, data_post) {
-      console.log("err: ",err.response.body);
-      console.log("data_post: ", data_post);
-
       if (err) return done(err);
 
       testing_post = data_post;

@@ -6,7 +6,8 @@
   },
 
   "post": {
-    "title": "Testing POST"
+    "title": "Testing POST",
+    "content": "Post content"
   },
 
   "category": {

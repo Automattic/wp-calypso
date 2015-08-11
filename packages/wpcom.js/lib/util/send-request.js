@@ -3,6 +3,7 @@
  * Module dependencies
  */
 
+var qs = require('qs');
 var debug = require('debug')('wpcom:send-request');
 var debug_res = require('debug')('wpcom:send-request:res');
 
@@ -59,6 +60,9 @@ module.exports = function (params, query, body, fn) {
     debug('proxyOrigin: %o', params.proxyOrigin);
     delete query.proxyOrigin;
   }
+
+  // Stringify query object before to send
+  query = qs.stringify(query);
 
   if (body) {
     params.body = body;
