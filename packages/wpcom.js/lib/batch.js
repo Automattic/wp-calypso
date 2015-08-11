@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var qs = require('qs');
 var debug = require('debug')('wpcom:batch');
 
 /**
@@ -19,7 +20,7 @@ function Batch(wpcom) {
 
   this.wpcom = wpcom;
 
-  this.urls = [];
+  this.urls = '';
 }
 
 /**
@@ -30,7 +31,7 @@ function Batch(wpcom) {
  */
 
 Batch.prototype.add = function (url) {
-  this.urls.push(url);
+  this.urls += encodeURIComponent('urls[]') + '=' + encodeURIComponent(url) + '&';
   return this;
 };
 
@@ -48,9 +49,8 @@ Batch.prototype.run = function (query, fn) {
     fn = query;
     query = {};
   }
-  query['urls[]'] = this.urls;
 
-  return this.wpcom.req.get('/batch', query, fn);
+  return this.wpcom.req.get('/batch', this.urls + qs.stringify(query), fn);
 };
 
 /**
