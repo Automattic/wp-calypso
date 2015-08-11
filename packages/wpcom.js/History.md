@@ -1,4 +1,9 @@
 
+4.5.2 / 2015-08-11
+==================
+
+ * Use PHP style query params for a batch request
+
 4.5.1 / 2015-07-08
 ==================
 
