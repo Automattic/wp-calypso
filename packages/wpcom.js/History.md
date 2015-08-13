@@ -1,4 +1,11 @@
 
+4.6.0 / 2015-08-13
+==================
+
+ * batch: remove bracket in url query
+ * send-request: parse and assign query param rightly
+ * example: add cors batch example
+
 4.5.3 / 2015-08-11
 ==================
 
