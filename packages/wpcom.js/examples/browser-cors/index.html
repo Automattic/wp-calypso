@@ -5,16 +5,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
-    <script src="/wpcom.js"></script>
+    <script src="/dist/wpcom.js"></script>
     <script>
       var wpcom = WPCOM();
 
       wpcom
       .site('retrofocs.wordpress.com')
-      .get({
-        apiVersion: '1.2',
-        proxyOrigin: 'http://calypso-sync:3002'
-      } , function(err, me){
+      .get(function(err, me){
         if (err) throw err;
 
         console.log(me);

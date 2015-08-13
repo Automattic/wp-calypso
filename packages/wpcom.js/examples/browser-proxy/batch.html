@@ -23,16 +23,13 @@
       });
 
 
-      var url_site = '/sites/en.blog.wordpress.com';
-      var url_posts = '/sites/en.blog.wordpress.com/posts';
-      var url_me = '/me';
-
-      // get information about the currently logged in user (via cookie)
       wpcom
       .batch()
-      .add(url_site)
-      .add(url_posts)
-      .add(url_me)
+      .add('/sites/en.blog.wordpress.com')
+      .add('/sites/en.blog.wordpress.com/posts')
+      .add('/read/tags')
+      .add('/read/lists')
+      .add('/read/teams')
       .run(function(err, me){
         if (err) throw err;
 

@@ -49,7 +49,7 @@ Batch.prototype.run = function (query, fn) {
   }
 
   // add urls to query object
-  query['urls[]'] = this.urls;
+  query['urls'] = this.urls;
 
   return this.wpcom.req.get('/batch', query, fn);
 };

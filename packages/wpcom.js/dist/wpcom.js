@@ -50,7 +50,7 @@ Batch.prototype.run = function (query, fn) {
   }
 
   // add urls to query object
-  query['urls[]'] = this.urls;
+  query['urls'] = this.urls;
 
   return this.wpcom.req.get('/batch', query, fn);
 };
@@ -1838,9 +1838,6 @@ module.exports = function (params, query, body, fn) {
   // query could be `null`
   query = query || {};
 
-  // pass `query` and/or `body` to request params
-  params.query = query;
-
   // Handle special query parameters
   // - `apiVersion`
   if (query.apiVersion) {
@@ -1859,7 +1856,10 @@ module.exports = function (params, query, body, fn) {
   }
 
   // Stringify query object before to send
-  query = qs.stringify(query);
+  query = qs.stringify(query, { arrayFormat: 'brackets' });
+
+  // pass `query` and/or `body` to request params
+  params.query = query;
 
   if (body) {
     params.body = body;
