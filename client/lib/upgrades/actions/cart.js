@@ -68,6 +68,14 @@ function removeItem( item ) {
 	} );
 }
 
+function setVolume( cartItem, volume ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.SET_CART_ITEM_VOLUME,
+		cartItem,
+		volume
+	} );
+}
+
 function addDomainToCart( domainSuggestion ) {
 	addItem( cartItems.domainRegistration( {
 		domain: domainSuggestion.domain_name,
@@ -97,6 +105,7 @@ export {
 	applyCoupon,
 	closeCartPopup,
 	openCartPopup,
+	setVolume,
 	removeDomainFromCart,
 	removeItem,
 	removePrivacyFromAllDomains
