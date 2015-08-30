@@ -1,4 +1,10 @@
 
+4.6.1 / 2015-08-30
+==================
+
+ * Add site.pageTemplates() test
+ * Add site.pageTemplates() method
+
 4.6.0 / 2015-08-13
 ==================
 
