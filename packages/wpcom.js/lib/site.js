@@ -24,6 +24,7 @@ var resources = [
   'posts',
   'shortcodes',
   'embeds',
+  [ 'pageTemplates', 'page-templates' ],
   [ 'stats', 'stats' ],
   [ 'statsClicks', 'stats/clicks' ],
   [ 'statsComments', 'stats/comments' ],

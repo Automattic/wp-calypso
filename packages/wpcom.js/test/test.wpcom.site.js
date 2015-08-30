@@ -428,7 +428,7 @@ describe('wpcom.site', function () {
       });
     });
   });
- 
+
   describe('wpcom.site.get', function () {
     it('should require site data', function (done) {
       site.get(function (err, data) {
@@ -445,7 +445,7 @@ describe('wpcom.site', function () {
     it('should create a new blog post', function (done) {
       site.addPost(fixture.post, function (err, data) {
         if (err) throw err;
-        
+
         // store in post ID global var
         new_post_ID = data.ID;
 
@@ -551,6 +551,18 @@ describe('wpcom.site', function () {
         assert(data.fields instanceof Array);
         assert(data.data instanceof Array);
         assert(data.pages instanceof Array);
+        done();
+      });
+    });
+  });
+
+  describe('wpcom.site.pageTemplates', function() {
+    it('should request page templates', function (done) {
+      site.pageTemplates( function(err, data) {
+        if (err) throw err;
+
+        assert.ok(data);
+        assert(data.templates instanceof Array);
         done();
       });
     });
