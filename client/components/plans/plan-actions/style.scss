@@ -23,6 +23,10 @@
 	display: block;
 	text-align: center;
 	width: 100%;
+
+	&.is-primary {
+		margin-bottom: .5em;
+	}
 }
 
 .plan-actions__trial-period {
@@ -114,6 +118,14 @@
 		&:before {
 			margin-left: -5px;
 			padding-right: 1px;
+		}
+	}
+}
+
+@mixin plans-in-three-columns() {
+	.plan-actions__current {
+		.plan-actions__plan-expiration {
+			padding-bottom: 27px;
 		}
 	}
 }
