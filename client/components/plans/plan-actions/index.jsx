@@ -159,9 +159,17 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
-						{ this.translate( 'Upgrade Now', { context: 'Store action' } ) }
+					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
+						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</button>
+
+				<small className="plan-actions__trial-period">
+					{ this.translate( 'Try it free for 14 days or', { context: 'Store action' } ) }&nbsp;
+					<a href='#'
+						onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) }>
+						{ this.translate( 'upgrade now', { context: 'Store action' } ) }
+					</a>.
+				</small>
 			</div>
 		);
 	},
@@ -249,6 +257,7 @@ module.exports = React.createClass( {
 			<div>
 				<span className="plan-actions__current-plan-label" onClick={ this.recordCurrentPlanClick }>
 				{ this.translate( 'Your current plan', { context: 'Informing the user of their current plan on /plans/' } ) }</span>
+				{ this.freePlanExpiration() }
 			</div>
 		);
 	},
