@@ -1,4 +1,11 @@
 
+4.6.2 / 2015-09-03
+==================
+
+ * Add Promise documentation
+ * circle: add config file. set node version
+ * Add Promsie Wrapper
+
 4.6.1 / 2015-08-30
 ==================
 
