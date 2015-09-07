@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.WPCOM=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.WPCOM = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -43,7 +43,7 @@ Batch.prototype.add = function (url) {
  * @api public
  */
 
-Batch.prototype.run = function (query, fn) {
+Batch.prototype.run = function (query={}, fn) {
   if ('function' === typeof query) {
     fn = query;
     query = {};
@@ -232,10 +232,15 @@ Comment.prototype.replies = function (query, fn) {
  */
 
 Comment.prototype.add = function (query, body, fn) {
-  if ('function' === typeof body) {
-    fn = body;
-    body = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === body ) {
+      body = query;
+      query = {};
+    } else if ( 'function' === typeof body ) {
+      fn = body;
+      body = query;
+      query = {};
+    }
   }
 
   body = 'string' === typeof body ? { content: body } : body;
@@ -281,7 +286,7 @@ Comment.prototype.reply = function (query, body, fn) {
     body = query;
     query = {};
   }
-  
+
   body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
@@ -330,6 +335,7 @@ Comment.prototype.likesList = function (query, fn) {
  */
 
 module.exports = Comment;
+
 },{"./commentlike":4,"debug":17}],4:[function(require,module,exports){
 
 /**
@@ -659,7 +665,7 @@ Me.prototype.connections = function (query, fn) {
 module.exports = Me;
 
 },{"debug":17}],8:[function(require,module,exports){
-  
+
 /**
  * Module dependencies.
  */
@@ -734,10 +740,15 @@ Media.prototype.update = function (query, body, fn) {
  */
 
 Media.prototype.addFiles = function (query, files, fn) {
-  if ('function' === typeof files) {
-    fn = files;
-    files = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === files ) {
+      files = query;
+      query = {};
+    } else if ( 'function' === typeof files ) {
+      fn = files;
+      files = query;
+      query = {};
+    }
   }
 
   var params = {
@@ -788,10 +799,15 @@ Media.prototype.addFiles = function (query, files, fn) {
  */
 
 Media.prototype.addUrls = function (query, media, fn) {
-  if ('function' === typeof media) {
-    fn = media;
-    media = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === media ) {
+      media = query;
+      query = {};
+    } else if ( 'function' === typeof media ) {
+      fn = media;
+      media = query;
+      query = {};
+    }
   }
 
   var path = '/sites/' + this._sid + '/media/new';
@@ -846,6 +862,7 @@ Media.prototype['delete'] = Media.prototype.del = function (query, fn) {
  */
 
 module.exports = Media;
+
 },{"debug":17,"fs":16}],9:[function(require,module,exports){
 
 /**
@@ -946,27 +963,41 @@ Post.prototype.getBySlug = function (query, fn) {
  */
 
 Post.prototype.add = function (query, body, fn) {
-  if ('function' === typeof body) {
-    fn = body;
-    body = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === body ) {
+      body = query;
+      query = {};
+    } else if ( 'function' === typeof body ) {
+      fn = body;
+      body = query;
+      query = {};
+    }
   }
 
   var path = '/sites/' + this._sid + '/posts/new';
-  return this.wpcom.req.post(path, query, body, function (err, data) {
-    if (err) {
-      return fn(err);
-    }
 
-    // update POST object
-    this._id = data.ID;
-    debug('Set post _id: %s', this._id);
+  return this.wpcom.req.post(path, query, body)
+    .then(data => {
+      // update POST object
+      this._id = data.ID;
+      debug('Set post _id: %s', this._id);
 
-    this._slug = data.slug;
-    debug('Set post _slug: %s', this._slug);
+      this._slug = data.slug;
+      debug('Set post _slug: %s', this._slug);
 
-    fn(null, data)
-  }.bind(this));
+      if ( 'function' === typeof fn ) {
+        fn(null, data);
+      } else {
+        return Promise.resolve( data );
+      }
+    })
+    .catch(err => {
+      if ( 'function' === typeof fn ) {
+        fn(err);
+      } else {
+        return Promise.reject( error );
+      }
+    });
 };
 
 /**
@@ -1085,6 +1116,7 @@ Post.prototype.comments = function (query, fn) {
  */
 
 module.exports = Post;
+
 },{"./comment":3,"./like":6,"./reblog":10,"debug":17}],10:[function(require,module,exports){
 
 /**
@@ -1169,12 +1201,16 @@ Reblog.prototype.add = function (query, body, fn) {
  */
 
 Reblog.prototype.to = function (dest, note, fn) {
-  if ('function' === typeof note) {
-    fn = note;
-    note = null;
+  if ( undefined === fn ) {
+    if ( undefined === note ) {
+      note = null;
+    } else if ('function' === typeof note) {
+      fn = note;
+      note = null;
+    }
   }
 
-  this.add({ note: note, destination_site_id: dest }, fn);
+  return this.add({ note: note, destination_site_id: dest }, fn);
 };
 
 /**
@@ -1182,6 +1218,7 @@ Reblog.prototype.to = function (dest, note, fn) {
  */
 
 module.exports = Reblog;
+
 },{"debug":17}],11:[function(require,module,exports){
 
 /**
@@ -1209,6 +1246,7 @@ var resources = [
   'posts',
   'shortcodes',
   'embeds',
+  [ 'pageTemplates', 'page-templates' ],
   [ 'stats', 'stats' ],
   [ 'statsClicks', 'stats/clicks' ],
   [ 'statsComments', 'stats/comments' ],
@@ -1740,7 +1778,7 @@ Req.prototype.get = function (params, query, fn) {
     fn = query;
     query = {};
   }
-  
+
   return sendRequest.call(this.wpcom, params, query, null, fn);
 };
 
@@ -1756,10 +1794,15 @@ Req.prototype.get = function (params, query, fn) {
 
 Req.prototype.post =
 Req.prototype.put = function (params, query, body, fn) {
-  if ('function' === typeof body) {
-    fn = body;
-    body = query;
-    query = {};
+  if (undefined === fn) {
+    if (undefined === body) {
+      body = query;
+      query = {}
+    } else if ( 'function' === typeof body) {
+      fn = body;
+      body = query;
+      query = {};
+    }
   }
 
   // params can be a string
@@ -1794,6 +1837,7 @@ Req.prototype.del = function (params, query, fn) {
  */
 
 module.exports = Req;
+
 },{"./send-request":15,"debug":17}],15:[function(require,module,exports){
 
 /**
@@ -1815,7 +1859,7 @@ var debug_res = require('debug')('wpcom:send-request:res');
  */
 
 module.exports = function (params, query, body, fn) {
-  // `params` can be just the path (String)  
+  // `params` can be just the path (String)
   params = 'string' === typeof params ? { path : params } : params;
 
   debug('sendRequest(%o)', params.path);
@@ -1864,18 +1908,24 @@ module.exports = function (params, query, body, fn) {
   if (body) {
     params.body = body;
   }
+  debug('params: %o', params);
 
-  // callback `fn` function is optional
-  if (!fn) {
-    fn = function (err) { if (err) { throw err; } };
+  // if callback is provided, behave traditionally
+  if ('function' === typeof fn) {
+    // request method
+    return this.request(params, function(err, res) {
+      debug_res(res);
+      fn(err, res);
+    });
   }
 
-  debug('params: %o', params);
-  // request method
-  return this.request(params, function(err, res) {
-    debug_res(res);
-    fn(err, res);
-  });
+  // but if not, return a Promise
+  return new Promise((resolve, reject) => {
+    this.request(params, (err, res) => {
+      debug_res(res);
+      err ? reject(err) : resolve(res);
+    });
+  } );
 };
 
 },{"debug":17,"qs":20}],16:[function(require,module,exports){
@@ -4369,6 +4419,10 @@ var Req = require('./lib/util/request');
 var sendRequest = require('./lib/util/send-request');
 var debug = require('debug')('wpcom');
 
+/**
+ * Local module constants
+ */
+var DEFAULT_ASYNC_TIMEOUT = 30000;
 
 /**
  * XMLHttpRequest (and CORS) API access method.
@@ -4480,13 +4534,68 @@ WPCOM.prototype.freshlyPressed = function (query, fn) {
 WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
   if (console && console.warn) {
-    console.warn(msg);  
+    console.warn(msg);
   } else {
     console.log(msg);
   }
-  
+
   return sendRequest.call(this, params, query, body, fn)
 };
+
+/**
+ * Wraps a library callback into a Promise
+ *
+ * Remember to bind the method to its parent
+ * context - extracting it out otherwise removes it.
+ *
+ * E.g.
+ * wpcom.Promise( comment.del.bind( comment ) );
+ *
+ * The promise rejects if the normal error return from
+ * an API call is not empty. It resolves otherwise.
+ *
+ * @param {function} callback wpcom.js method to call
+ * @param params variable list of parameters to send to callback
+ * @returns {Promise}
+ */
+WPCOM.prototype.Promise = ( callback, ...params ) => {
+  return new Promise( ( resolve, reject ) => {
+    // The functions here take a variable number of arguments,
+    // so pass in as many as we can but keep the callback last.
+    callback.apply( callback, [...params, ( error, data ) => {
+      error ? reject( error ) : resolve( data );
+    } ] );
+  } );
+};
+
+if ( ! Promise.prototype.timeout ) {
+	/**
+     * Returns a new promise with a deadline
+     *
+     * After the timeout interval, the promise will
+     * reject. If the actual promise settles before
+     * the deadline, the timer is cancelled.
+     *
+     * @param {number} delay how many ms to wait
+     * @returns {Promise}
+     */
+  Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
+    let cancelTimeout, timer, timeout;
+
+    timeout = new Promise( ( resolve, reject ) => {
+      timer = setTimeout( () => {
+        reject( new Error( 'Action timed out while waiting for response.' ) );
+      }, delay );
+    } );
+
+    cancelTimeout = () => {
+      clearTimeout( timer );
+      return this;
+    };
+
+    return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
+  };
+}
 
 /**
  * Expose `WPCOM` module
