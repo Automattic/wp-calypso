@@ -1,4 +1,10 @@
 
+4.7.0 / 2015-09-07
+==================
+
+ * Return the static Promise.{reject/resolve} objects
+ * Set default Promise return in absence of callback
+
 4.6.2 / 2015-09-03
 ==================
 
