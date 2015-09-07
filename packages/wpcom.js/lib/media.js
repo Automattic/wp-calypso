@@ -1,4 +1,4 @@
-  
+
 /**
  * Module dependencies.
  */
@@ -73,10 +73,15 @@ Media.prototype.update = function (query, body, fn) {
  */
 
 Media.prototype.addFiles = function (query, files, fn) {
-  if ('function' === typeof files) {
-    fn = files;
-    files = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === files ) {
+      files = query;
+      query = {};
+    } else if ( 'function' === typeof files ) {
+      fn = files;
+      files = query;
+      query = {};
+    }
   }
 
   var params = {
@@ -127,10 +132,15 @@ Media.prototype.addFiles = function (query, files, fn) {
  */
 
 Media.prototype.addUrls = function (query, media, fn) {
-  if ('function' === typeof media) {
-    fn = media;
-    media = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === media ) {
+      media = query;
+      query = {};
+    } else if ( 'function' === typeof media ) {
+      fn = media;
+      media = query;
+      query = {};
+    }
   }
 
   var path = '/sites/' + this._sid + '/media/new';

@@ -41,13 +41,8 @@ function wpcom() {
     var proxy = require('../node_modules/wpcom-proxy-request');
     var _wpcom = WPCOM(proxy);
 
-    _wpcom.request({
-      metaAPI: { accessAllUsersBlogs: true }
-    }, function(err) {
-      if (err) throw err;
-      console.log('proxy now running in "access all user\'s blogs" mode');
-    });
-
+    _wpcom.request({ metaAPI: { accessAllUsersBlogs: true }})
+      .then( () => console.log('proxy now running in "access all user\'s blogs" mode') );
     return _wpcom;
   } else {
     return WPCOM(token);

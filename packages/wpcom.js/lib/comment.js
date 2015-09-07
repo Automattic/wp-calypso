@@ -67,10 +67,15 @@ Comment.prototype.replies = function (query, fn) {
  */
 
 Comment.prototype.add = function (query, body, fn) {
-  if ('function' === typeof body) {
-    fn = body;
-    body = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === body ) {
+      body = query;
+      query = {};
+    } else if ( 'function' === typeof body ) {
+      fn = body;
+      body = query;
+      query = {};
+    }
   }
 
   body = 'string' === typeof body ? { content: body } : body;
@@ -116,7 +121,7 @@ Comment.prototype.reply = function (query, body, fn) {
     body = query;
     query = {};
   }
-  
+
   body = 'string' === typeof body ? { content: body } : body;
 
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';

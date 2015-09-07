@@ -30,7 +30,7 @@ Req.prototype.get = function (params, query, fn) {
     fn = query;
     query = {};
   }
-  
+
   return sendRequest.call(this.wpcom, params, query, null, fn);
 };
 
@@ -46,10 +46,15 @@ Req.prototype.get = function (params, query, fn) {
 
 Req.prototype.post =
 Req.prototype.put = function (params, query, body, fn) {
-  if ('function' === typeof body) {
-    fn = body;
-    body = query;
-    query = {};
+  if (undefined === fn) {
+    if (undefined === body) {
+      body = query;
+      query = {}
+    } else if ( 'function' === typeof body) {
+      fn = body;
+      body = query;
+      query = {};
+    }
   }
 
   // params can be a string

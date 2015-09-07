@@ -26,64 +26,59 @@ describe('wpcom.site.post.reblog', function(){
   var testing_post;
 
   // Create a testing_post before to start tests
-  before(function(done){
-    site.addPost(fixture.post, function (err, data) {
-      if (err) throw err;
-
-      testing_post = site.post(data.ID);
-      done();
-    });
+  before( done => {
+    site.addPost(fixture.post)
+      .then( data => {
+        testing_post = site.post(data.ID);
+        done();
+      })
+      .catch(done);
   });
 
-  after(function(done){
+  after( done => {
     // delete testing_post post
-    testing_post.delete(function(err, post) {
-      if (err) throw err;
-
-      done();
-    });
+    testing_post.delete()
+      .then(() => done())
+      .catch(done);
   });
 
 
   describe('wpcom.site.post.reblog.add', function() {
-    it('should reblog the added post', function (done) {
-      testing_reblog_post
-      .reblog()
-      .add({ note: fixture.reblog.note, destination_site_id: site._id }, function (err, data){
-        if (err) throw err;
-
-        assert.ok(data);
-        assert.ok(data.can_reblog);
-        done();
-      });
+    it('should reblog the added post', done => {
+      testing_reblog_post.reblog().add({
+          note: fixture.reblog.note,
+          destination_site_id: site._id
+        })
+        .then( data => {
+          assert.ok(data);
+          assert.ok(data.can_reblog);
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.reblog.to', function(){
-    it('should get reblog the added post', function(done){
-      testing_reblog_post
-      .reblog()
-      .to(site._id, fixture.reblog.note + '-to', function (err, data){
-        if (err) throw err;
-
-        assert.ok(data);
-        assert.ok(data.can_reblog);
-        done();
-      });
+    it('should get reblog the added post', done => {
+      testing_reblog_post.reblog().to(site._id, fixture.reblog.note + '-to')
+        .then( data => {
+          assert.ok(data);
+          assert.ok(data.can_reblog);
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.reblog.mine', function(){
-    it('should get the post reblog status of mine', function(done){
-      testing_post
-      .reblog()
-      .mine(function(err, data){
-        if (err) throw err;
-
-        assert.ok(data);
-        assert.ok(data.can_reblog);
-        done();
-      });
+    it('should get the post reblog status of mine', done => {
+      testing_post.reblog().mine()
+        .then( data => {
+          assert.ok(data);
+          assert.ok(data.can_reblog);
+          done();
+        })
+        .catch(done);
     });
   });
 

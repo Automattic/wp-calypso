@@ -26,18 +26,14 @@ describe('wpcom.batch', function() {
     var url_posts = '/sites/' + site._id + '/posts';
     var url_me = '/me';
 
-    batch
-    .add(url_site)
-    .add(url_posts)
-    .add(url_me)
-    .run(function(err, data) {
-      if (err) throw err;
-
-      assert.ok(data);
-      assert.ok(data[url_site]);
-      assert.ok(data[url_posts]);
-      assert.ok(data[url_me]);
-      done();
-    });
+    batch.add(url_site).add(url_posts).add(url_me).run()
+      .then(data => {
+        assert.ok(data);
+        assert.ok(data[url_site]);
+        assert.ok(data[url_posts]);
+        assert.ok(data[url_me]);
+        done();
+      })
+      .catch( done );
   });
 });

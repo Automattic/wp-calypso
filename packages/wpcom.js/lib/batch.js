@@ -42,7 +42,7 @@ Batch.prototype.add = function (url) {
  * @api public
  */
 
-Batch.prototype.run = function (query, fn) {
+Batch.prototype.run = function (query={}, fn) {
   if ('function' === typeof query) {
     fn = query;
     query = {};

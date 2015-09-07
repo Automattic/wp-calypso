@@ -97,27 +97,41 @@ Post.prototype.getBySlug = function (query, fn) {
  */
 
 Post.prototype.add = function (query, body, fn) {
-  if ('function' === typeof body) {
-    fn = body;
-    body = query;
-    query = {};
+  if ( undefined === fn ) {
+    if ( undefined === body ) {
+      body = query;
+      query = {};
+    } else if ( 'function' === typeof body ) {
+      fn = body;
+      body = query;
+      query = {};
+    }
   }
 
   var path = '/sites/' + this._sid + '/posts/new';
-  return this.wpcom.req.post(path, query, body, function (err, data) {
-    if (err) {
-      return fn(err);
-    }
 
-    // update POST object
-    this._id = data.ID;
-    debug('Set post _id: %s', this._id);
+  return this.wpcom.req.post(path, query, body)
+    .then(data => {
+      // update POST object
+      this._id = data.ID;
+      debug('Set post _id: %s', this._id);
 
-    this._slug = data.slug;
-    debug('Set post _slug: %s', this._slug);
+      this._slug = data.slug;
+      debug('Set post _slug: %s', this._slug);
 
-    fn(null, data)
-  }.bind(this));
+      if ( 'function' === typeof fn ) {
+        fn(null, data);
+      } else {
+        return Promise.resolve( data );
+      }
+    })
+    .catch(err => {
+      if ( 'function' === typeof fn ) {
+        fn(err);
+      } else {
+        return Promise.reject( error );
+      }
+    });
 };
 
 /**

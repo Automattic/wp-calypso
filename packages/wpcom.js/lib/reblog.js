@@ -81,12 +81,16 @@ Reblog.prototype.add = function (query, body, fn) {
  */
 
 Reblog.prototype.to = function (dest, note, fn) {
-  if ('function' === typeof note) {
-    fn = note;
-    note = null;
+  if ( undefined === fn ) {
+    if ( undefined === note ) {
+      note = null;
+    } else if ('function' === typeof note) {
+      fn = note;
+      note = null;
+    }
   }
 
-  this.add({ note: note, destination_site_id: dest }, fn);
+  return this.add({ note: note, destination_site_id: dest }, fn);
 };
 
 /**

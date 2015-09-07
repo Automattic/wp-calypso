@@ -22,16 +22,16 @@ describe('wpcom.users', function () {
   var users = wpcom.users();
 
   describe('wpcom.users.suggets', function() {
-    it('should get a list of possible users to suggest.', function (done) {
-      users.suggest(function (err, data) {
-        if (err) throw err;
+    it('should get a list of possible users to suggest.', done => {
+      users.suggest()
+        .then( data => {
+          assert.ok(data);
+          assert.equal('object', typeof data.suggestions);
+          assert.ok(data.suggestions instanceof Array);
 
-        assert.ok(data);
-        assert.equal('object', typeof data.suggestions);
-        assert.ok(data.suggestions instanceof Array);
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 

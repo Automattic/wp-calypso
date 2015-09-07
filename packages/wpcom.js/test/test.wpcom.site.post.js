@@ -25,147 +25,133 @@ describe('wpcom.site.post', function(){
   var testing_post;
 
   // Create a testing_post before to start the tests
-  before(function(done){
-    site.addPost(fixture.post, function (err, data_post) {
-      if (err) throw err;
+  before( done => {
+    site.addPost(fixture.post)
+      .then( data_post => {
+        testing_post = data_post;
 
-      testing_post = data_post;
-      site.get(function(err, data_site){
-        if (err) return done(err);
-
+        return site.get();
+      })
+      .then( data_site => {
         site_ID = data_site.ID;
+
         done();
-      });
-    });
+      })
+      .catch(done);
   });
 
-  after(function(done){
+  after( done => {
     // delete testing_post post
-    site.deletePost(testing_post.ID, function(err, post) {
-      if (err) throw err;
-
-      done();
-    });
+    site.deletePost(testing_post.ID)
+      .then(() => done())
+      .catch(done);
   });
 
   describe('wpcom.site.post.get', function(){
-    it('should get added post (by id)', function(done){
-      site
-      .post(testing_post.ID)
-      .get(function(err, data){
-        if (err) throw err;
-
-        assert.equal(testing_post.ID, data.ID);
-        assert.equal(testing_post.site_ID, data.site_ID);
-        done();
-      });
+    it('should get added post (by id)', done => {
+      site.post(testing_post.ID).get()
+        .then( data => {
+          assert.equal(testing_post.ID, data.ID);
+          assert.equal(testing_post.site_ID, data.site_ID);
+          done();
+        })
+        .catch(done);
     });
 
-    it('should get passing a query object', function(done){
-      site
-      .post(testing_post.ID)
-      .get({ content: 'edit' }, function(err, post){
-        if (err) throw err;
-
-        assert.equal(testing_post.ID, post.ID);
-        assert.equal(testing_post.site_ID, post.site_ID);
-        done();
-      });
+    it('should get passing a query object', done => {
+      site.post(testing_post.ID).get({ content: 'edit' })
+        .then( post => {
+          assert.equal(testing_post.ID, post.ID);
+          assert.equal(testing_post.site_ID, post.site_ID);
+          done();
+        })
+        .catch(done);
     });
 
-    it('should get added post (by slug)', function(done){
-      site
-      .post({ slug: testing_post.slug })
-      .get(function(err, post){
-        if (err) throw err;
-
-        assert.equal(testing_post.ID, post.ID);
-        assert.equal(testing_post.site_ID, post.site_ID);
-        done();
-      });
+    it('should get added post (by slug)', done => {
+      site.post({ slug: testing_post.slug }).get()
+        .then( post => {
+          assert.equal(testing_post.ID, post.ID);
+          assert.equal(testing_post.site_ID, post.site_ID);
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.add', function(){
-    it('should add a new post', function(done){
+    it('should add a new post', done => {
       fixture.post.title += '-added';
 
-      site
-      .post()
-      .add(fixture.post, function(err, data){
-        if (err) throw err;
+      site.post().add(fixture.post)
+        .then( data => {
+          // checking some data date
+          assert.ok(data);
+          assert.ok(data instanceof Object, 'data is not an object');
+          assert.equal(site_ID, data.site_ID);
+          new_post = data;
 
-        // checking some data date
-        assert.ok(data);
-        assert.ok(data instanceof Object, 'data is not an object');
-        assert.equal(site_ID, data.site_ID);
-        new_post = data;
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.update', function(){
-    it('should edit the new added post', function(done){
+    it('should edit the new added post', done => {
       var new_title = fixture.post.title + '-updated';
-      site
-      .post(testing_post.ID)
-      .update({ title: new_title }, function(err, data){
-        if (err) throw err;
 
-        assert.ok(data);
-        assert.equal(new_title, data.title);
+      site.post(testing_post.ID).update({ title: new_title })
+        .then( data => {
+          assert.ok(data);
+          assert.equal(new_title, data.title);
 
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.delete', function(){
-    it('should delete the new added post', function(done){
-      site
-      .post(testing_post.ID)
-      .delete(function(err, data){
-        if (err) throw err;
+    it('should delete the new added post', done => {
+      site.post(testing_post.ID).delete()
+        .then( data => {
+          assert.ok(data);
+          assert.equal(testing_post.ID, data.ID);
 
-        assert.ok(data);
-        assert.equal(testing_post.ID, data.ID);
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.restore', function(){
-    it('should restore a post from trash', function(done){
+    it('should restore a post from trash', done => {
       var post = site.post();
-      post.add(fixture.post, function(err, data1){
-        if (err) throw err;
 
-        assert.equal(post._id, data1.ID);
+      post.add(fixture.post)
+        .then( data => {
+          assert.equal(post._id, data.ID);
 
-        post.delete(function(err, data2){
-          if (err) throw err;
+          return post.delete();
+        })
+        .then( data => {
+          assert.equal(post._id, data.ID);
 
-          assert.equal(post._id, data2.ID);
+          return post.restore();
+        })
+        .then( data => {
+          assert.ok(data);
+          assert.equal(post._id, data.ID);
+          assert.equal(testing_post.status, data.status);
 
-          post.restore(function(err, data3){
-            if (err) throw err;
-
-            assert.ok(data3);
-            assert.equal(post._id, data3.ID);
-            assert.equal(testing_post.status, data3.status);
-
-            post.delete(function(err, data4){
-              if (err) throw err;
-
-              assert.equal(post._id, data4.ID);
-              done();
-            });
-          });
-        });
-      });
+          return post.delete();
+        })
+        .then( data => {
+          assert.equal(post._id, data.ID);
+          done();
+        })
+        .catch(done);
     });
   });
 

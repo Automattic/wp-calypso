@@ -18,7 +18,7 @@ var debug_res = require('debug')('wpcom:send-request:res');
  */
 
 module.exports = function (params, query, body, fn) {
-  // `params` can be just the path (String)  
+  // `params` can be just the path (String)
   params = 'string' === typeof params ? { path : params } : params;
 
   debug('sendRequest(%o)', params.path);
@@ -67,16 +67,22 @@ module.exports = function (params, query, body, fn) {
   if (body) {
     params.body = body;
   }
+  debug('params: %o', params);
 
-  // callback `fn` function is optional
-  if (!fn) {
-    fn = function (err) { if (err) { throw err; } };
+  // if callback is provided, behave traditionally
+  if ('function' === typeof fn) {
+    // request method
+    return this.request(params, function(err, res) {
+      debug_res(res);
+      fn(err, res);
+    });
   }
 
-  debug('params: %o', params);
-  // request method
-  return this.request(params, function(err, res) {
-    debug_res(res);
-    fn(err, res);
-  });
+  // but if not, return a Promise
+  return new Promise((resolve, reject) => {
+    this.request(params, (err, res) => {
+      debug_res(res);
+      err ? reject(err) : resolve(res);
+    });
+  } );
 };

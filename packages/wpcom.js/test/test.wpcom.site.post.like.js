@@ -24,89 +24,80 @@ describe('wpcom.site.post.like', function(){
   var testing_post;
 
   // Create a testing_post before to start the tests
-  before(function(done){
-    site.addPost(fixture.post, function (err, data) {
-      if (err) throw err;
-
-      testing_post = site.post(data.ID);
-      done();
-    });
+  before( done => {
+    site.addPost(fixture.post)
+      .then( data => {
+        testing_post = site.post(data.ID);
+        done();
+      })
+      .catch(done);
   });
 
-  after(function(done){
+  after( done => {
     // delete testing_post post
-    testing_post.delete(function(err, post) {
-      if (err) throw err;
-
-      done();
-    });
+    testing_post.delete()
+      .then( () => done() )
+      .catch(done);
   });
 
   describe('wpcom.site.post.like.add', function(){
-    it('should add a post like', function(done){
-      testing_post
-      .like()
-      .add(function(err, data){
-        if (err) throw err;
+    it('should add a post like', done => {
+      testing_post.like().add()
+        .then( data => {
+          assert.ok(data);
+          assert.ok(data.success);
+          assert.ok(data.i_like);
+          assert.equal(1, data.like_count);
 
-        assert.ok(data);
-        assert.ok(data.success);
-        assert.ok(data.i_like);
-        assert.equal(1, data.like_count);
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.like.mine', function(){
-    it('should get the post like status of mine', function(done){
-      testing_post
-      .like()
-      .mine(function(err, data){
-        if (err) throw err;
+    it('should get the post like status of mine', done => {
+      testing_post.like().mine()
+        .then( data => {
+          assert.ok(data);
+          assert.equal(1, data.like_count);
+          assert.ok(data.i_like);
 
-        assert.ok(data);
-        assert.equal(1, data.like_count);
-        assert.ok(data.i_like);
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.likesList', function(){
-    it('should get post likes list', function(done){
-      testing_post
-      .likesList(function(err, data){
-        if (err) throw err;
+    it('should get post likes list', done => {
+      testing_post.likesList()
+        .then( data => {
+          assert.ok(data);
 
-        assert.ok(data);
+          assert.equal('number', typeof data.found);
+          assert.equal('boolean', typeof data.i_like);
+          assert.equal('object', typeof data.likes);
+          assert.ok(data.likes instanceof Array);
 
-        assert.equal('number', typeof data.found);
-        assert.equal('boolean', typeof data.i_like);
-        assert.equal('object', typeof data.likes);
-        assert.ok(data.likes instanceof Array);
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.post.like.delete', function(){
-    it('should remove your like from the post', function(done){
-      testing_post
-      .like()
-      .del(function(err, data){
-        if (err) throw err;
+    it('should remove your like from the post', done => {
+      testing_post.like().del()
+        .then( data => {
+          assert.ok(data);
+          assert.ok(data.success);
+          assert.equal(0, data.like_count);
+          assert.ok(!(data.i_like));
 
-        assert.ok(data);
-        assert.ok(data.success);
-        assert.equal(0, data.like_count);
-        assert.ok(!(data.i_like));
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 

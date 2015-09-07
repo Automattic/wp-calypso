@@ -16,98 +16,92 @@ describe('wpcom.site.category', function() {
   // Global instances
   var wpcom = util.wpcom();
   var site = wpcom.site(util.site());
-  var new_category;
 
   // Create a testing_category before to start tests
   var testing_category;
-  before(function(done){
+  before(done => {
     fixture.category.name += Math.random() * 1000000 | 0;
-    site.category()
-    .add(fixture.category, function(err, category) {
-      if (err) throw err;
 
-      testing_category = category;
-      done();
-    });
+    site.category().add(fixture.category)
+      .then( category => {
+        testing_category = category;
+        done();
+      })
+      .catch(done);
   });
 
   // Delete testing category
-  after(function(done){
-    site.category(testing_category.slug)
-    .delete(function(err, category) {
-      if (err) throw err;
-
-      done();
-    });
+  after(done => {
+    site.category(testing_category.slug).delete()
+      .then(() => done())
+      .catch(done);
   });
 
-  
-  describe('wpcom.site.category.get', function(){
-    it('should get added category', function(done){
-      site.category(testing_category.slug)
-      .get(function(err, data){
-        if (err) throw err;
 
-        assert.ok(data);
-        assert.ok(data instanceof Object, 'data is not an object');
-        assert.equal(testing_category.slug, data.slug);
-        assert.equal(testing_category.name, data.name);
-        done();
-      });
+  describe('wpcom.site.category.get', function(){
+    it('should get added category', done => {
+      site.category(testing_category.slug).get()
+        .then(data => {
+          assert.ok(data);
+          assert.ok(data instanceof Object, 'data is not an object');
+          assert.equal(testing_category.slug, data.slug);
+          assert.equal(testing_category.name, data.name);
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.category.add', function(){
-    it('should add a new category', function(done){
+    it('should add a new category', done => {
       var category = site.category();
 
       fixture.category.name += '-added';
-      category.add(fixture.category, function(err, data){
-        if (err) throw err;
+      category.add(fixture.category)
+        .then(data => {
+          // checking some data date
+          assert.ok(data);
+          assert.ok(data instanceof Object, 'data is not an object');
 
-        // checking some data date
-        assert.ok(data);
-        assert.ok(data instanceof Object, 'data is not an object');
+          // store added catogory
+          new_category = data;
 
-        // store added catogory
-        new_category = data;
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.category.update', function(){
-    it('should edit the new added category', function(done){
+    it('should edit the new added category', done => {
       var category = site.category(new_category.slug);
       var edited_name = fixture.category.name + '-updated';
 
-      category.update({ name: edited_name }, function(err, data){
-        if (err) throw err;
+      category.update({ name: edited_name })
+        .then(data => {
+          assert.ok(data);
+          assert.equal(edited_name, data.name);
 
-        assert.ok(data);
-        assert.equal(edited_name, data.name);
+          // update added category
+          new_category = data;
 
-        // update added category
-        new_category = data;
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 
   describe('wpcom.site.category.delete', function(){
-    it('should delete the new added category', function(done){
-      site.category(new_category.slug)
-      .delete(function(err, data){
-        if (err) throw err;
+    it('should delete the new added category', done => {
+      site.category(new_category.slug).delete()
+        .then(data => {
+          assert.ok(data);
+          assert.equal('true', data.success);
+          assert.equal(new_category.slug, data.slug);
 
-        assert.ok(data);
-        assert.equal('true', data.success);
-        assert.equal(new_category.slug, data.slug);
-
-        done();
-      });
+          done();
+        })
+        .catch(done);
     });
   });
 

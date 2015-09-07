@@ -23,23 +23,19 @@ describe('wpcom.site.post.comment', function(){
   var testing_post;
   var testing_comment;
 
-  before(function(done){
-    site.addPost(fixture.post, function (err, data) {
-      if (err) throw err;
+  before( done => {
+    site.addPost(fixture.post)
+      .then( data => {
+        testing_post = site.post(data.ID);
 
-      testing_post = site.post(data.ID);
-
-      // Add comment to post
-      site
-      .post(data.ID)
-      .comment()
-      .add(fixture.post_comment, function (err, data_comment) {
-        if (err) throw err;
-
+        // Add comment to post
+        return site.post(data.ID).comment().add(fixture.post_comment);
+      })
+      .then( data_comment => {
         testing_comment = testing_post.comment(data_comment.ID);
         done();
-      });
-    });
+      })
+      .catch(done);
   });
 
   after(function(done){

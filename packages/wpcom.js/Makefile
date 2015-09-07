@@ -40,7 +40,7 @@ example-browser-cors: all
 test: node_modules
 	@$(MOCHA) \
 		--compilers js:babel/register \
-		--timeout 60s \
+		--timeout 120s \
 		--slow 3s \
 		--grep "$(filter-out $@,$(MAKECMDGOALS))" \
 		--bail \
@@ -49,7 +49,7 @@ test: node_modules
 test-all: node_modules
 	@$(MOCHA) \
 		--compilers js:babel/register \
-		--timeout 60s \
+		--timeout 120s \
 		--slow 3s \
 		--bail \
 		--reporter spec

@@ -23,37 +23,35 @@ describe('wpcom.site.shortcodes', function () {
   var testing_media;
 
   // add media testing
-  before(function(done){
-    site.addMediaFiles(fixture.media.files[0], function(err, data) {
-      if (err) throw err;
-
-      testing_media = data ? data.media[0] : {};
-      done();
-    });
+  before( done => {
+    site.addMediaFiles(fixture.media.files[0])
+      .then( data => {
+        testing_media = data ? data.media[0] : {};
+        done();
+      })
+      .catch(done);
   });
 
-  after(function(done){
+  after( done => {
     // delete media testing
-    site.deleteMedia(testing_media.ID, function(err, data) {
-      if (err) throw err;
-      
-      done();
-    });
+    site.deleteMedia(testing_media.ID)
+      .then(() => done())
+      .catch(done);
   });
 
   describe('wpcom.site.renderShortcode(\'gallery\')', function () {
-    it('should render [gallery] shortcode', function(done){
+    it('should render [gallery] shortcode', done => {
 
       var shortcode = '[gallery ids="' + testing_media.ID + '"]';
-      site.renderShortcode(shortcode, function(err, data){
-        if (err) throw err;
-
-        assert.equal(data.shortcode, shortcode);
-        assert.ok(data.result);
-        assert.ok(data.scripts);
-        assert.ok(data.styles);
-        done();
-      });
+      site.renderShortcode(shortcode)
+        .then( data => {
+          assert.equal(data.shortcode, shortcode);
+          assert.ok(data.result);
+          assert.ok(data.scripts);
+          assert.ok(data.styles);
+          done();
+        })
+        .catch(done);
     });
   });
 
