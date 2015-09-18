@@ -167,7 +167,6 @@ module.exports = React.createClass( {
 				}
 			},
 			hasDomainSuffix, gappsProductName;
-			
 		if ( isDomainRegistration( cartItem ) ) {
 			return cartItem.product_name;
 		}
