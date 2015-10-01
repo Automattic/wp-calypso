@@ -156,6 +156,7 @@ var TransactionStepsMixin = {
 		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_domain_registration', {
 				domain_tld: cartItems.getDomainRegistrationTld( cartItem ),
+				volume: cartItem.volume,
 				success: success
 			} );
 		} );

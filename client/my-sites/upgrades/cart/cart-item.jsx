@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analyticsMixin = require( 'lib/mixins/analytics' ),
 	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	getIncludedDomain = cartItems.getIncludedDomain,
@@ -22,9 +22,11 @@ var analytics = require( 'analytics' ),
 module.exports = React.createClass( {
 	displayName: 'CartItem',
 
+	mixins: [ analyticsMixin( 'cartItem' ) ],
+
 	removeFromCart: function( event ) {
 		event.preventDefault();
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Remove From Cart Icon', 'Product ID', this.props.cartItem.product_id );
+		this.recordEvent( 'remove', this.props.cartItem.product_id );
 		upgradesActions.removeItem( this.props.cartItem );
 	},
 
@@ -113,13 +115,19 @@ module.exports = React.createClass( {
 		let volume = parseInt( event.target.value );
 		upgradesActions.setVolume( this.props.cartItem, volume );
 
+		this.recordEvent( 'changeVolume', volume );
+
 		cartItems.getDependentProducts( this.props.cartItem, this.props.cart )
 			.filter( product => cartItems.isPrivacyProduct( product ) )
 			.forEach( cartItem => upgradesActions.setVolume( cartItem, volume ) );
 	},
 
 	getVolumeOptions: function() {
-		return range( 1, 6 ).map( number => <option key={ number } value={ number }>{ this.translate( '%(number)s year', '%(number)s years', { args: { number }, count: number } ) }</option> );
+		return range( 1, 6 ).map( number =>
+			<option key={ number } value={ number }>
+				{ this.translate( '%(number)s year', '%(number)s years', { args: { number }, count: number } ) }
+			</option>
+		);
 	},
 
 	domainVolumeSelection: function() {
