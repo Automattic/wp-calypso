@@ -30,6 +30,11 @@ module.exports = React.createClass( {
 		upgradesActions.removeItem( this.props.cartItem );
 	},
 
+	isBundlePlanApplied() {
+		var { cart, cartItem } = this.props;
+		return cartItems.hasDomainCredit( cart ) && isDomainProduct( cartItem ) && cartItem.cost === 0
+	},
+
 	price: function() {
 		var cost,
 			cart = this.props.cart,
@@ -43,7 +48,7 @@ module.exports = React.createClass( {
 			return this.getFreeTrialPrice();
 		}
 
-		if ( cartItems.hasDomainCredit( cart ) && isDomainProduct( cartItem ) && cartItem.cost === 0 ) {
+		if ( this.isBundlePlanApplied() ) {
 			return this.getDomainPlanPrice();
 		}
 
@@ -131,14 +136,18 @@ module.exports = React.createClass( {
 	},
 
 	domainVolumeSelection: function() {
-		return isDomainRegistration( this.props.cartItem ) ? (
+		if ( this.isBundlePlanApplied() || this.props.cartItem.free_trial || ! isDomainRegistration( this.props.cartItem ) ) {
+			return null;
+		}
+
+		return (
 			<select name="product-domain-volume"
 							className="product-domain-volume"
 							onChange={ this.handleDomainVolumeSelection }
 							value={ this.props.cartItem.volume }>
 				{ this.getVolumeOptions() }
 			</select>
-		) : null;
+		);
 	},
 
 	render: function() {
