@@ -26,64 +26,19 @@ function timedCallback( delay, caller = trueCallback ) {
 describe('wpcom', function(){
 	var wpcom = util.wpcom_public();
 
-	describe('wpcom.Promise', function(){
-		it('should resolve when true', done => {
-			wpcom.Promise( trueCallback )
-				.then( trueAssertion( done ) )
-				.catch( falseAssertion( done ) );
-		});
-
-		it('should reject when false', done => {
-			wpcom.Promise( falseCallback )
-				.then( falseAssertion( done ) )
-				.catch( trueAssertion( done ) );
-		});
-
+	describe.only('wpcom.promises', function(){
 		it('should fail when slower than timeout', done => {
-			wpcom.Promise( timedCallback( 1000 ) )
+			wpcom.site(util.site()).postsList()
 				.timeout( 10 )
 				.then( falseAssertion( done ) )
 				.catch( trueAssertion( done ) );
 		});
 
 		it('should still catch() with timeout()', done => {
-			wpcom.Promise( timedCallback( 10, falseCallback ) )
-				.timeout( 1000 )
+			wpcom.site(util.site()).post(-5).get()
+				.timeout( 10000 )
 				.then( falseAssertion( done ) )
 				.catch( trueAssertion( done ) );
-		});
-
-		it('should handle functions with no params', done => {
-			let test = callback => callback( null, 1337 );
-
-			wpcom.Promise( test )
-				.then( data => {
-					assert.equal( data, 1337 );
-					done();
-				})
-				.catch( falseAssertion(done) );
-		});
-
-		it('should handle functions with one param', done => {
-			let test = ( a, callback ) => callback( null, a );
-
-			wpcom.Promise( test, 'spline' )
-				.then( data => {
-					assert.equal( data, 'spline' );
-					done();
-				})
-				.catch( falseAssertion(done) );
-		});
-
-		it('should handle functions with 3+ params', done => {
-			let test = (a, b, c, callback) => { callback( null, a + b + c ); };
-
-			wpcom.Promise( test, 1, 2, 3 )
-				.then( data => {
-					assert.equal( data, 6 );
-					done();
-				})
-				.catch( falseAssertion( done ) );
 		});
 	});
 

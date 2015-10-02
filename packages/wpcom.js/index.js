@@ -141,32 +141,6 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   return sendRequest.call(this, params, query, body, fn)
 };
 
-/**
- * Wraps a library callback into a Promise
- *
- * Remember to bind the method to its parent
- * context - extracting it out otherwise removes it.
- *
- * E.g.
- * wpcom.Promise( comment.del.bind( comment ) );
- *
- * The promise rejects if the normal error return from
- * an API call is not empty. It resolves otherwise.
- *
- * @param {function} callback wpcom.js method to call
- * @param params variable list of parameters to send to callback
- * @returns {Promise}
- */
-WPCOM.prototype.Promise = ( callback, ...params ) => {
-  return new Promise( ( resolve, reject ) => {
-    // The functions here take a variable number of arguments,
-    // so pass in as many as we can but keep the callback last.
-    callback.apply( callback, [...params, ( error, data ) => {
-      error ? reject( error ) : resolve( data );
-    } ] );
-  } );
-};
-
 if ( ! Promise.prototype.timeout ) {
 	/**
      * Returns a new promise with a deadline
