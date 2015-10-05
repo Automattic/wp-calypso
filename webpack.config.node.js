@@ -73,7 +73,27 @@ module.exports = {
 	},
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } )
+		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
+		new webpack.IgnorePlugin( /^public/ ),
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		new webpack.IgnorePlugin( /^assets/ ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/warn$/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/paths/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/user/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^analytics$/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^post-editor/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/sites-popover/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/spinner/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/gravatar/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/site-stats-sticky-link/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^notifications$/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/layout-focus$/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/popover/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/cart-values/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/upgrades/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/wp/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /detect-history-navigation/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /section-nav/, 'components/empty' ),
 	],
 	externals: getExternals()
 };

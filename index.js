@@ -1,3 +1,5 @@
+global.localStorage = require( 'localStorage' ) // DO NOT MERGE
+
 /**
  * External dependencies.
  */

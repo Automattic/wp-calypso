@@ -3,13 +3,17 @@ var express = require( 'express' ),
 	crypto = require( 'crypto' ),
 	qs = require( 'qs' ),
 	cookieParser = require( 'cookie-parser' ),
-	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' );
+	i18nUtils = require( 'lib/i18n/utils' ),
+	assign = require( 'lodash/object/assign' ),
+	debug = require( 'debug' )( 'calypso:pages' ),
+	React = require( 'react' ),
+	ReactInjection = require( 'react/lib/ReactInjection' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' );
+	sections = require( '../../client/sections' ),
+	i18n = require( 'lib/mixins/i18n' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -340,6 +344,7 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
+
 			renderLoggedOutRoute( req, res );
 		}
 	} );
@@ -349,7 +354,27 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
-			renderLoggedOutRoute( req, res );
+			ReactInjection.Class.injectMixin( i18n.mixin );
+			i18n.initialize();
+
+			var themesLoggedOutLayoutComponent = require( 'layout/themes-logged-out' ),
+				themesComponent = require( 'my-sites/themes/themes-selection' ),
+				getButtonOptions = require( 'my-sites/themes/theme-options' ),
+				ThemesLoggedOutLayout = React.createFactory( themesLoggedOutLayoutComponent ),
+				Themes = React.createFactory( themesComponent ),
+				context = getDefaultContext( req ),
+				props = {
+					primary: Themes( {
+						getOptions: getButtonOptions.bind( null, () => {} ),
+						sites: false,
+						setSelectedTheme: () => {},
+					} ),
+					secondary: null,
+					tertiary: null
+				},
+				renderedString = React.renderToString( ThemesLoggedOutLayout( assign( context, props ) ) );
+
+			res.send( renderedString );
 		}
 	} );
 

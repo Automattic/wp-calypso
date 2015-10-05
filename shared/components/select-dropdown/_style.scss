@@ -1,0 +1,184 @@
+/**
+ * Select Dropdown
+ */
+
+.select-dropdown {
+	height: 43px;
+}
+
+.select-dropdown__container {
+	position: relative;
+	overflow: hidden;
+	display: inline-block;
+	width: auto;
+	max-width: 100%;
+
+	.select-dropdown.is-open & {
+		z-index: 170; // below the masterbar
+	}
+
+	.accessible-focus &:focus,
+	.accessible-focus .select-dropdown.is-open & {
+		z-index: 170; // below the masterbar
+		box-shadow: 0 0 0 2px $blue-light;
+		.select-dropdown__header {
+			border-color: $blue-wordpress;
+		}
+	}
+
+	.accessible-focus &:focus {
+		border-color: #00aadc;
+		box-shadow: 0 0 0 2px #78dcfa;
+		outline: 0;
+		border-radius: 4px;
+	}
+}
+
+.select-dropdown__header {
+	padding: 11px 44px 11px 16px; // 44 = padding (16) + arrow width (20) + arrow margin (8)
+	border-style: solid;
+	border-color: lighten( $gray, 20% );
+	border-width: 1px 1px 2px;
+	border-radius: 4px;
+	background-color: $white;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 18px;
+	color: $gray-dark;
+	transition: background-color 0.2s ease;
+	cursor: pointer;
+
+	&::after {
+		@include noticon('\f431', 22px);
+		position: absolute;
+			right: 13px;
+			top: 12px;
+
+		display: block;
+		line-height: 18px;
+		color: rgba( $gray, 0.5 );
+	}
+
+	.select-dropdown.is-open & {
+		border-radius: 4px 4px 0 0;
+		box-shadow: none;
+		background-color: $gray-light;
+
+		&::after {
+			content: '\f432';
+		}
+	}
+
+	.count {
+		margin-left: 8px;
+		opacity: 0.5;
+	}
+}
+
+.select-dropdown__header-text {
+	display: block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.select-dropdown__options {
+	visibility: hidden;
+	height: 0;
+	box-sizing: border-box;
+	padding: 0;
+	list-style: none;
+	margin: -2px 0 0 0; // account for border overlap with .select-dropdown__header
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+	// $blue-wordpress for outer (with focus shadow), $gray for border with header
+	border-radius: 0 0 4px 4px;
+
+	.accessible-focus & {
+		border: solid 1px $blue-wordpress;
+		border-top-color: lighten( $gray, 20% );
+	}
+
+	.select-dropdown.is-open & {
+		visibility: visible;
+		height: auto;
+	}
+}
+
+.select-dropdown__option {
+	&:last-child .select-dropdown__item {
+		border-radius: 0 0 4px 4px;
+	}
+}
+
+.select-dropdown__item,
+.select-dropdown__item-text {
+	padding: 11px 44px 11px 16px;
+}
+
+.select-dropdown__item {
+	display: block;
+	position: relative;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 18px;
+	color: $gray-dark;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	cursor: pointer;
+
+	&::before {
+		content: attr( data-bold-text );
+		font-weight: 700;
+		opacity: 0;
+	}
+
+	&:visited {
+		color: $gray-dark;
+	}
+
+	&.is-selected {
+		background-color: $blue-medium;
+		color: $white;
+	}
+
+	.notouch & {
+		// Make sure :visited links stay blue
+		&:hover {
+			color: $blue-medium;
+		}
+
+		&.is-selected:hover {
+			color: $white;
+		}
+	}
+}
+
+.select-dropdown__item-text {
+	padding-right: 16px;
+	box-sizing: border-box;
+	position: absolute;
+		top: 0;
+		left: 0;
+
+	width: 100%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: inherit;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+
+	.count {
+		opacity: 0.5;
+		color: inherit;
+		border-color: inherit;
+	}
+}
+
+.select-dropdown__separator {
+	border-top: 1px solid lighten( $gray, 20% );
+	display: block;
+	margin: 8px 0;
+}

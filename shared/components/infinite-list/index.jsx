@@ -54,25 +54,26 @@ module.exports = React.createClass( {
 	smartSetState: smartSetState,
 
 	componentWillMount: function() {
-		var url = page.current,
-			newState, scrollPosition;
+		if ( typeof( window ) !== 'undefined' ) {
+			var url = page.current,
+				newState, scrollPosition;
 
-		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			newState = InfiniteListPositionsStore.get( url );
-			scrollPosition = InfiniteListScrollStore.get( url );
-		}
+			if ( detectHistoryNavigation.loadedViaHistory() ) {
+				newState = InfiniteListPositionsStore.get( url );
+				scrollPosition = InfiniteListScrollStore.get( url );
+			}
 
-		if ( newState && scrollPosition ) {
-			debug( 'overriding scrollTop:', scrollPosition );
-			newState.scrollTop = scrollPosition;
-		}
+			if ( newState && scrollPosition ) {
+				debug( 'overriding scrollTop:', scrollPosition );
+				newState.scrollTop = scrollPosition;
+			}
 
-		this.scrollHelper = new ScrollHelper( this.boundsForRef );
-		this.scrollHelper.props = this.props;
-		if ( this._contextLoaded() ) {
-			this._scrollContainer = this.props.context || window;
-			this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
-		}
+			this.scrollHelper = new ScrollHelper( this.boundsForRef );
+			this.scrollHelper.props = this.props;
+			if ( this._contextLoaded() ) {
+				this._scrollContainer = this.props.context || window;
+				this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
+			}
 
 		this.isScrolling = false;
 
@@ -87,9 +88,10 @@ module.exports = React.createClass( {
 				bottomPlaceholderHeight: 0,
 				scrollTop: 0
 			};
+			debug( 'infinite list mounting', newState );
+			this.setState( newState );
 		}
-		debug( 'infinite list mounting', newState );
-		this.setState( newState );
+		}
 	},
 
 	componentDidMount: function() {
@@ -316,7 +318,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var lastRenderedIndex = this.state.lastRenderedIndex,
+		var lastRenderedIndex = this.state ? this.state.lastRenderedIndex : this.props.items.length - 1,
+			firstRenderedIndex = this.state ? this.state.firstRenderedIndex : 0,
 			itemsToRender = [],
 			propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
 			spacerClassName = 'infinite-list__spacer',
@@ -330,7 +333,7 @@ module.exports = React.createClass( {
 
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
-		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
+		for ( i = firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
 			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
 		}
 
@@ -342,12 +345,12 @@ module.exports = React.createClass( {
 			<div {...propsToTransfer}>
 				<div ref="topPlaceholder"
 					className={ spacerClassName }
-					style={ { height: this.state.topPlaceholderHeight } } />
+					style={ { height: this.state ? this.state.topPlaceholderHeight : 0 } } />
 				{ itemsToRender }
 				{ this.props.renderTrailingItems() }
 				<div ref="bottomPlaceholder"
 					className={ spacerClassName }
-					style={ { height: this.state.bottomPlaceholderHeight } } />
+					style={ { height: this.state ? this.state.bottomPlaceholderHeight : 0 } } />
 			</div>
 		);
 	},

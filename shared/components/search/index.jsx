@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	classNames = require( 'classnames' ),
 	debounce = require( 'lodash/function/debounce' ),
 	noop = () => {};
