@@ -27,7 +27,6 @@ const noticeOptions = {
 	duration: 10000,
 	showDismiss: false
 };
-
 const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 
@@ -68,7 +67,7 @@ module.exports = React.createClass( {
 		return {
 			olark: olarkStore.get(),
 			isSubmitting: false,
-			confirmationMessage: null,
+			confirmation: null,
 			sitesInitialized: sites.initialized
 		};
 	},
@@ -124,7 +123,34 @@ module.exports = React.createClass( {
 
 			this.setState( {
 				isSubmitting: false,
-				confirmationMessage: this.translate( "We've received your message, and you'll hear back from one of our Happiness Engineers shortly." )
+				confirmation: {
+					title: this.translate( "We're on it!" ),
+					message: this.translate( "We've received your message, and you'll hear back from one of our Happiness Engineers shortly." )
+				}
+			} );
+		} );
+	},
+
+	submitSupportForumsTopic: function( contactForm ) {
+		const { subject, message } = contactForm;
+
+		this.setState( { isSubmitting: true } );
+
+		wpcom.submitSupportForumsTopic( subject, message, ( error, data ) => {
+			if ( error ) {
+				// TODO: bump a stat here
+				notices.error( error.message );
+
+				this.setState( { isSubmitting: false } );
+				return;
+			}
+
+			this.setState( {
+				isSubmitting: false,
+				confirmation: {
+					title: this.translate( 'Got it!' ),
+					message: this.translate( 'Your message has been submitted to our {{a}}community forums{{/a}}', { components: { a: <a href={ data.topic_URL } /> } } )
+				}
 			} );
 		} );
 	},
@@ -230,15 +256,35 @@ module.exports = React.createClass( {
 		return site.visible && ! site.jetpack;
 	},
 
+	getPublicForumsForm: function() {
+		const { isSubmitting } = this.state;
+		const formDescription = this.translate( 'Post a new question in our {{strong}}public forums{{/strong}}, where it may be answered by helpful community members, by submitting the form below. {{strong}}Please do not{{/strong}} provide financial or contact information when submitting this form.',
+			{
+				components: {
+					strong: <strong />
+				}
+			}
+		);
+
+		return (
+			<HelpContactForm
+				onSubmit={ this.submitSupportForumsTopic }
+				formDescription={ formDescription }
+				buttonLabel={ isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ) }
+				showSubjectField={ true }
+				disabled={ isSubmitting }/>
+		);
+	},
+
 	/**
 	 * Get the view for the contact page. This could either be the olark chat widget if a chat is in progress or a contact form.
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmationMessage, sitesInitialized } = this.state;
+		const { olark, confirmation, sitesInitialized } = this.state;
 
-		if ( confirmationMessage ) {
-			return <HelpContactConfirmation title={ this.translate( "We're on it!" ) } message={ confirmationMessage }/>;
+		if ( confirmation ) {
+			return <HelpContactConfirmation { ...confirmation } />;
 		}
 
 		if ( ! ( olark.isOlarkReady && sitesInitialized ) ) {
@@ -249,11 +295,15 @@ module.exports = React.createClass( {
 			return <OlarkChatbox />;
 		}
 
-		if ( olark.isOperatorAvailable ) {
+		if ( olark.isUserEligible && olark.isOperatorAvailable ) {
 			return this.getChatForm();
 		}
 
-		return this.getKayakoTicketForm();
+		if ( olark.isUserEligible || olark.details.isConversing ) {
+			return this.getKayakoTicketForm();
+		}
+
+		return this.getPublicForumsForm();
 	},
 
 	render: function() {

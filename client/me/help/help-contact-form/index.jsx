@@ -22,6 +22,7 @@ module.exports = React.createClass( {
 	mixins: [ React.addons.LinkedStateMixin, React.addons.PureRenderMixin ],
 
 	propTypes: {
+		formDescription: React.PropTypes.node,
 		buttonLabel: React.PropTypes.string.isRequired,
 		onSubmit: React.PropTypes.func.isRequired,
 		showHowCanWeHelpField: React.PropTypes.bool,
@@ -35,6 +36,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			formDescription: '',
 			showHowCanWeHelpField: false,
 			showHowYouFeelField: false,
 			showSubjectField: false,
@@ -150,10 +152,14 @@ module.exports = React.createClass( {
 				{ value: 'panicked', label: this.translate( 'Panicked' ) }
 			];
 
-		const { buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField, showSiteField, siteList, siteFilter } = this.props;
+		const { formDescription, buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField, showSiteField, siteList, siteFilter } = this.props;
 
 		return (
 			<div className="help-contact-form">
+				{ formDescription ? (
+					<p>{ formDescription }</p>
+				) : null }
+
 				{ showHowCanWeHelpField ? (
 					<div>
 						<FormLabel>{ this.translate( 'How can we help?' ) }</FormLabel>
