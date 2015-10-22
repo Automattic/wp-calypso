@@ -32,7 +32,7 @@ var SecurePaymentForm = React.createClass( {
 		var cart = this.props.cart;
 
 		return {
-			userSelectedPaymentBox: null,
+			userSelectedPaymentBox: this.props.userSelectedPaymentBox,
 			visiblePaymentBox: this.getVisiblePaymentBox( cart ),
 			previousCart: null
 		};
