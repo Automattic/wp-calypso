@@ -49,7 +49,7 @@ module.exports = React.createClass( {
 	},
 
 	getAtlasButtons: function() {
-		var checkoutURL = 'https://wordpress.com/checkout/' + this.props.site.ID + '/' + this.props.plan.product_id;
+		//var checkoutURL = 'https://wordpress.com/checkout/' + this.props.site.ID + '/' + this.props.plan.product_id;
 
 		return (
 			<div>
@@ -178,7 +178,7 @@ module.exports = React.createClass( {
 				</button>
 
 				<small className="plan-actions__trial-period">
-					{ this.translate( 'Try it free for 14 days or', { context: 'Store action' } ) }&nbsp;
+					{ this.translate( 'Try it free for 14 days, no credit card needed, or', { context: 'Store action' } ) }&nbsp;
 					<a href='#'
 						onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) }>
 						{ this.translate( 'upgrade now', { context: 'Store action' } ) }
