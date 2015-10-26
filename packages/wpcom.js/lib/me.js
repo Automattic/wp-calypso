@@ -61,17 +61,6 @@ Me.prototype.groups = function (query, fn) {
   return this.wpcom.req.get('/me/groups', query, fn);
 };
 
-/**
- * A list of the current user's connections to third-party services
- *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
- */
-
-Me.prototype.connections = function (query, fn) {
-  return this.wpcom.req.get('/me/connections', query, fn);
-};
 
 /**
  * Expose `Me` module

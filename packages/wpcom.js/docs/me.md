@@ -60,13 +60,3 @@ me.groups(function(err, list){
   // groups list object
 });
 ```
-
-### Me#connections([query, ]fn)
-
-Get a list of the current user's connections to third-party services
-
-```js
-me.connections(function(err, list){
-  // connections list object
-});
-```

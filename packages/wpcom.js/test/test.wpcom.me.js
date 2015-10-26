@@ -88,17 +88,4 @@ describe('wpcom.me', function(){
     });
   });
 
-  describe('wpcom.me.connections', function(){
-    it('should require third-party connections', done => {
-      me.connections()
-        .then(data => {
-          assert.equal('object', typeof data.connections);
-          assert.ok(data.connections instanceof Array);
-
-          done();
-        })
-        .catch(done);
-    });
-  });
-
 });
