@@ -1,10 +1,3 @@
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:batch');
-
 /**
  * Create a `Batch` instance
  *

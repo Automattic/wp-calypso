@@ -1,10 +1,3 @@
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:reblog');
-
 /**
  * Reblog methods
  *
@@ -81,8 +74,8 @@ Reblog.prototype.add = function (query, body, fn) {
  */
 
 Reblog.prototype.to = function (dest, note, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === note ) {
+  if (undefined === fn) {
+    if (undefined === note) {
       note = null;
     } else if ('function' === typeof note) {
       fn = note;

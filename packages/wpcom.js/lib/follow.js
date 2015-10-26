@@ -1,12 +1,5 @@
-
 /**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:follow');
-
-/**
- * Follow 
+ * Follow
  *
  * @param {String} site_id - site id
  * @param {WPCOM} wpcom
@@ -27,7 +20,7 @@ function Follow(site_id, wpcom) {
 }
 
 /**
- * Get the follow status for current 
+ * Get the follow status for current
  * user on current blog sites
  *
  * @param {Object} [query]

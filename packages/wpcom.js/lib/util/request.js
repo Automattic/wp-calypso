@@ -4,7 +4,6 @@
  */
 
 var sendRequest = require('./send-request');
-var debug = require('debug')('wpcom:request');
 
 /**
  * Expose `Request` module
@@ -12,6 +11,7 @@ var debug = require('debug')('wpcom:request');
 
 
 function Req(wpcom) {
+
   this.wpcom = wpcom;
 }
 
@@ -26,7 +26,7 @@ function Req(wpcom) {
 
 Req.prototype.get = function (params, query, fn) {
   // `query` is optional
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -49,8 +49,8 @@ Req.prototype.put = function (params, query, body, fn) {
   if (undefined === fn) {
     if (undefined === body) {
       body = query;
-      query = {}
-    } else if ( 'function' === typeof body) {
+      query = {};
+    } else if ('function' === typeof body) {
       fn = body;
       body = query;
       query = {};
@@ -76,7 +76,7 @@ Req.prototype.put = function (params, query, body, fn) {
  */
 
 Req.prototype.del = function (params, query, fn) {
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }

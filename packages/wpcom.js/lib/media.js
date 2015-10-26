@@ -7,14 +7,6 @@ var fs = require('fs');
 var debug = require('debug')('wpcom:media');
 
 /**
- * Default
- */
-
-var def = {
-  "apiVersion": "1.1"
-};
-
-/**
  * Media methods
  *
  * @param {String} id
@@ -73,11 +65,11 @@ Media.prototype.update = function (query, body, fn) {
  */
 
 Media.prototype.addFiles = function (query, files, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === files ) {
+  if (undefined === fn) {
+    if (undefined === files) {
       files = query;
       query = {};
-    } else if ( 'function' === typeof files ) {
+    } else if ('function' === typeof files) {
       fn = files;
       files = query;
       query = {};
@@ -90,7 +82,7 @@ Media.prototype.addFiles = function (query, files, fn) {
   };
 
   // process formData
-  files = Array.isArray(files) ? files : [files];
+  files = Array.isArray(files) ? files : [ files ];
 
   var i, f, isStream, isFile, k, param;
   for (i = 0; i < files.length; i++) {
@@ -109,7 +101,7 @@ Media.prototype.addFiles = function (query, files, fn) {
         debug('add %o => %o', k, f[k]);
         if ('file' !== k) {
           param = 'attrs[' + i + '][' + k + ']';
-          params.formData.push([param, f[k]]);
+          params.formData.push([ param, f[k] ]);
         }
       }
       // set file path
@@ -117,7 +109,7 @@ Media.prototype.addFiles = function (query, files, fn) {
       f = 'string' === typeof f ? fs.createReadStream(f) : f;
     }
 
-    params.formData.push(['media[]', f]);
+    params.formData.push([ 'media[]', f ]);
   }
 
   return this.wpcom.req.post(params, query, null, fn);
@@ -132,11 +124,11 @@ Media.prototype.addFiles = function (query, files, fn) {
  */
 
 Media.prototype.addUrls = function (query, media, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === media ) {
+  if (undefined === fn) {
+    if (undefined === media) {
       media = query;
       query = {};
-    } else if ( 'function' === typeof media ) {
+    } else if ('function' === typeof media) {
       fn = media;
       media = query;
       query = {};

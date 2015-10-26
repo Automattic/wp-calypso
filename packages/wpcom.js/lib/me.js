@@ -1,10 +1,3 @@
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:me');
-
 /**
  * Create a `Me` instance
  *

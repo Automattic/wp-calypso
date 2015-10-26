@@ -107,7 +107,7 @@ for (i = 0; i < resources.length; i++) {
   res = resources[i];
   isarr = Array.isArray(res);
 
-  name =  isarr ? res[0] : res + 'List';
+  name = isarr ? res[0] : res + 'List';
   subpath = isarr ? res[1] : res;
 
   debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath);
@@ -266,7 +266,7 @@ Site.prototype.renderShortcode = function (url, query, fn) {
     throw new TypeError('expected a url String');
   }
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -295,7 +295,7 @@ Site.prototype.renderEmbed = function (url, query, fn) {
     throw new TypeError('expected an embed String');
   }
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -349,7 +349,7 @@ Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
 Site.prototype.statsVideo = function (videoId, query, fn) {
   var path = '/sites/' + this._id + '/stats/video/' + videoId;
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -369,7 +369,7 @@ Site.prototype.statsVideo = function (videoId, query, fn) {
 Site.prototype.statsPostViews = function (postId, query, fn) {
   var path = '/sites/' + this._id + '/stats/post/' + postId;
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }

@@ -1,0 +1,36 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "array-bracket-spacing": [ 2, "always" ],
+    "comma-spacing": [ 2, { "before": false, "after": true } ],
+    "eqeqeq": [ 2 ],
+    "indent": [ 2, 2, { "SwitchCase": 1 } ],
+    "linebreak-style": [ 2, "unix" ],
+    "no-lonely-if": [ 2 ],
+    "no-loop-func": [ 2 ],
+    "no-multi-spaces": [ 2 ],
+    "no-nested-ternary": [ 2 ],
+    "no-redeclare": [ 2, { "builtinGlobals": true } ],
+    "no-return-assign": [ 2, "always" ],
+    "no-spaced-func": [ 2 ],
+    "no-trailing-spaces": [ 2 ],
+    "no-unneeded-ternary": [ 2 ],
+    "no-use-before-define": [ 2 ],
+    "no-useless-call": [ 2 ],
+    "no-useless-concat": [ 2 ],
+    "object-curly-spacing": [ 2, "always" ],
+    "quotes": [ 2, "single" ],
+    "radix": [ 2 ],
+    "semi": [ 2, "always" ],
+    "space-before-blocks": [ 2, "always" ],
+    "space-before-function-paren": [ 2, { "anonymous": "always", "named": "never" } ],
+    "vars-on-top": [ 1 ],
+    "wrap-iife": [ 2, "inside" ]
+  }
+}

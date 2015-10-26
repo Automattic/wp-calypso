@@ -5,7 +5,8 @@
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
-    "Nathan Rajlich <nathan@automattic.com>"
+    "Nathan Rajlich <nathan@automattic.com>",
+    "Dennis Snell <dennis.snell@automattic.com>"
   ],
   "keywords": [
     "wordpress",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "babel": "^5.8.23",
+    "babel-eslint": "^4.1.3",
     "browserify": "^11.0.1",
     "mocha": "^2.2.5"
   }

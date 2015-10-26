@@ -72,7 +72,7 @@ module.exports = function (params, query, body, fn) {
   // if callback is provided, behave traditionally
   if ('function' === typeof fn) {
     // request method
-    return this.request(params, function(err, res) {
+    return this.request(params, function (err, res) {
       debug_res(res);
       fn(err, res);
     });
@@ -84,5 +84,5 @@ module.exports = function (params, query, body, fn) {
       debug_res(res);
       err ? reject(err) : resolve(res);
     });
-  } );
+  });
 };

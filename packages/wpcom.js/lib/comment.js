@@ -4,7 +4,6 @@
  */
 
 var CommentLike = require('./commentlike');
-var debug = require('debug')('wpcom:comment');
 
 /**
  * Comment methods
@@ -67,11 +66,11 @@ Comment.prototype.replies = function (query, fn) {
  */
 
 Comment.prototype.add = function (query, body, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === body ) {
+  if (undefined === fn) {
+    if (undefined === body) {
       body = query;
       query = {};
-    } else if ( 'function' === typeof body ) {
+    } else if ('function' === typeof body) {
       fn = body;
       body = query;
       query = {};
@@ -148,7 +147,7 @@ Comment.prototype['delete'] = function (query, fn) {
  * @api public
  */
 
-Comment.prototype.like = function() {
+Comment.prototype.like = function () {
   return CommentLike(this._cid, this._sid, this.wpcom);
 };
 

@@ -97,11 +97,11 @@ Post.prototype.getBySlug = function (query, fn) {
  */
 
 Post.prototype.add = function (query, body, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === body ) {
+  if (undefined === fn) {
+    if (undefined === body) {
       body = query;
       query = {};
-    } else if ( 'function' === typeof body ) {
+    } else if ('function' === typeof body) {
       fn = body;
       body = query;
       query = {};
@@ -119,17 +119,17 @@ Post.prototype.add = function (query, body, fn) {
       this._slug = data.slug;
       debug('Set post _slug: %s', this._slug);
 
-      if ( 'function' === typeof fn ) {
+      if ('function' === typeof fn) {
         fn(null, data);
       } else {
-        return Promise.resolve( data );
+        return Promise.resolve(data);
       }
     })
     .catch(err => {
-      if ( 'function' === typeof fn ) {
+      if ('function' === typeof fn) {
         fn(err);
       } else {
-        return Promise.reject( error );
+        return Promise.reject(err);
       }
     });
 };

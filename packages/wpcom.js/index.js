@@ -132,16 +132,16 @@ WPCOM.prototype.freshlyPressed = function (query, fn) {
 
 WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
-  if (console && console.warn) {
-    console.warn(msg);
+  if (console && console.warn) { //eslint-disable-line no-console
+    console.warn(msg); //eslint-disable-line no-console
   } else {
-    console.log(msg);
+    console.log(msg); //eslint-disable-line no-console
   }
 
-  return sendRequest.call(this, params, query, body, fn)
+  return sendRequest.call(this, params, query, body, fn);
 };
 
-if ( ! Promise.prototype.timeout ) {
+if (!Promise.prototype.timeout) {
 	/**
      * Returns a new promise with a deadline
      *
@@ -152,21 +152,21 @@ if ( ! Promise.prototype.timeout ) {
      * @param {number} delay how many ms to wait
      * @returns {Promise}
      */
-  Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
+  Promise.prototype.timeout = function (delay = DEFAULT_ASYNC_TIMEOUT) {
     let cancelTimeout, timer, timeout;
 
-    timeout = new Promise( ( resolve, reject ) => {
-      timer = setTimeout( () => {
-        reject( new Error( 'Action timed out while waiting for response.' ) );
-      }, delay );
-    } );
+    timeout = new Promise((resolve, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error('Action timed out while waiting for response.'));
+      }, delay);
+    });
 
     cancelTimeout = () => {
-      clearTimeout( timer );
+      clearTimeout(timer);
       return this;
     };
 
-    return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
+    return Promise.race([ this.then(cancelTimeout).catch(cancelTimeout), timeout ]);
   };
 }
 
