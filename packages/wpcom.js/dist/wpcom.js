@@ -1,11 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.WPCOM = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:batch');
-
 /**
  * Create a `Batch` instance
  *
@@ -61,14 +54,7 @@ Batch.prototype.run = function (query={}, fn) {
 
 module.exports = Batch;
 
-},{"debug":17}],2:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:category');
-
+},{}],2:[function(require,module,exports){
 /**
  * Category methods
  *
@@ -162,14 +148,13 @@ Category.prototype['delete'] = Category.prototype.del = function (query, fn) {
  */
 
 module.exports = Category;
-},{"debug":17}],3:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
 var CommentLike = require('./commentlike');
-var debug = require('debug')('wpcom:comment');
 
 /**
  * Comment methods
@@ -232,11 +217,11 @@ Comment.prototype.replies = function (query, fn) {
  */
 
 Comment.prototype.add = function (query, body, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === body ) {
+  if (undefined === fn) {
+    if (undefined === body) {
       body = query;
       query = {};
-    } else if ( 'function' === typeof body ) {
+    } else if ('function' === typeof body) {
       fn = body;
       body = query;
       query = {};
@@ -313,7 +298,7 @@ Comment.prototype['delete'] = function (query, fn) {
  * @api public
  */
 
-Comment.prototype.like = function() {
+Comment.prototype.like = function () {
   return CommentLike(this._cid, this._sid, this.wpcom);
 };
 
@@ -336,14 +321,7 @@ Comment.prototype.likesList = function (query, fn) {
 
 module.exports = Comment;
 
-},{"./commentlike":4,"debug":17}],4:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:commentlike');
-
+},{"./commentlike":4}],4:[function(require,module,exports){
 /**
  * CommentLike methods
  *
@@ -417,16 +395,9 @@ CommentLike.prototype['delete'] = function (query, fn) {
  */
 
 module.exports = CommentLike;
-},{"debug":17}],5:[function(require,module,exports){
-
+},{}],5:[function(require,module,exports){
 /**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:follow');
-
-/**
- * Follow 
+ * Follow
  *
  * @param {String} site_id - site id
  * @param {WPCOM} wpcom
@@ -447,7 +418,7 @@ function Follow(site_id, wpcom) {
 }
 
 /**
- * Get the follow status for current 
+ * Get the follow status for current
  * user on current blog sites
  *
  * @param {Object} [query]
@@ -494,14 +465,7 @@ Follow.prototype.del = function (query, fn) {
  */
 
 module.exports = Follow;
-},{"debug":17}],6:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:like');
-
+},{}],6:[function(require,module,exports){
 /**
  * Like methods
  *
@@ -575,14 +539,7 @@ Like.prototype['delete'] = function (query, fn) {
  */
 
 module.exports = Like;
-},{"debug":17}],7:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:me');
-
+},{}],7:[function(require,module,exports){
 /**
  * Create a `Me` instance
  *
@@ -646,17 +603,6 @@ Me.prototype.groups = function (query, fn) {
   return this.wpcom.req.get('/me/groups', query, fn);
 };
 
-/**
- * A list of the current user's connections to third-party services
- *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
- */
-
-Me.prototype.connections = function (query, fn) {
-  return this.wpcom.req.get('/me/connections', query, fn);
-};
 
 /**
  * Expose `Me` module
@@ -664,7 +610,7 @@ Me.prototype.connections = function (query, fn) {
 
 module.exports = Me;
 
-},{"debug":17}],8:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -672,14 +618,6 @@ module.exports = Me;
 
 var fs = require('fs');
 var debug = require('debug')('wpcom:media');
-
-/**
- * Default
- */
-
-var def = {
-  "apiVersion": "1.1"
-};
 
 /**
  * Media methods
@@ -740,11 +678,11 @@ Media.prototype.update = function (query, body, fn) {
  */
 
 Media.prototype.addFiles = function (query, files, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === files ) {
+  if (undefined === fn) {
+    if (undefined === files) {
       files = query;
       query = {};
-    } else if ( 'function' === typeof files ) {
+    } else if ('function' === typeof files) {
       fn = files;
       files = query;
       query = {};
@@ -757,7 +695,7 @@ Media.prototype.addFiles = function (query, files, fn) {
   };
 
   // process formData
-  files = Array.isArray(files) ? files : [files];
+  files = Array.isArray(files) ? files : [ files ];
 
   var i, f, isStream, isFile, k, param;
   for (i = 0; i < files.length; i++) {
@@ -776,7 +714,7 @@ Media.prototype.addFiles = function (query, files, fn) {
         debug('add %o => %o', k, f[k]);
         if ('file' !== k) {
           param = 'attrs[' + i + '][' + k + ']';
-          params.formData.push([param, f[k]]);
+          params.formData.push([ param, f[k] ]);
         }
       }
       // set file path
@@ -784,7 +722,7 @@ Media.prototype.addFiles = function (query, files, fn) {
       f = 'string' === typeof f ? fs.createReadStream(f) : f;
     }
 
-    params.formData.push(['media[]', f]);
+    params.formData.push([ 'media[]', f ]);
   }
 
   return this.wpcom.req.post(params, query, null, fn);
@@ -799,11 +737,11 @@ Media.prototype.addFiles = function (query, files, fn) {
  */
 
 Media.prototype.addUrls = function (query, media, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === media ) {
+  if (undefined === fn) {
+    if (undefined === media) {
       media = query;
       query = {};
-    } else if ( 'function' === typeof media ) {
+    } else if ('function' === typeof media) {
       fn = media;
       media = query;
       query = {};
@@ -834,7 +772,7 @@ Media.prototype.addUrls = function (query, media, fn) {
           body.attrs[i][k] = m[k];
         }
       }
-      url = m[k];
+      url = m.url;
     }
 
     // push url into [media_url]
@@ -963,11 +901,11 @@ Post.prototype.getBySlug = function (query, fn) {
  */
 
 Post.prototype.add = function (query, body, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === body ) {
+  if (undefined === fn) {
+    if (undefined === body) {
       body = query;
       query = {};
-    } else if ( 'function' === typeof body ) {
+    } else if ('function' === typeof body) {
       fn = body;
       body = query;
       query = {};
@@ -985,17 +923,17 @@ Post.prototype.add = function (query, body, fn) {
       this._slug = data.slug;
       debug('Set post _slug: %s', this._slug);
 
-      if ( 'function' === typeof fn ) {
+      if ('function' === typeof fn) {
         fn(null, data);
       } else {
-        return Promise.resolve( data );
+        return Promise.resolve(data);
       }
     })
     .catch(err => {
-      if ( 'function' === typeof fn ) {
+      if ('function' === typeof fn) {
         fn(err);
       } else {
-        return Promise.reject( error );
+        return Promise.reject(err);
       }
     });
 };
@@ -1118,13 +1056,6 @@ Post.prototype.comments = function (query, fn) {
 module.exports = Post;
 
 },{"./comment":3,"./like":6,"./reblog":10,"debug":17}],10:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:reblog');
-
 /**
  * Reblog methods
  *
@@ -1201,8 +1132,8 @@ Reblog.prototype.add = function (query, body, fn) {
  */
 
 Reblog.prototype.to = function (dest, note, fn) {
-  if ( undefined === fn ) {
-    if ( undefined === note ) {
+  if (undefined === fn) {
+    if (undefined === note) {
       note = null;
     } else if ('function' === typeof note) {
       fn = note;
@@ -1219,7 +1150,7 @@ Reblog.prototype.to = function (dest, note, fn) {
 
 module.exports = Reblog;
 
-},{"debug":17}],11:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1329,7 +1260,7 @@ for (i = 0; i < resources.length; i++) {
   res = resources[i];
   isarr = Array.isArray(res);
 
-  name =  isarr ? res[0] : res + 'List';
+  name = isarr ? res[0] : res + 'List';
   subpath = isarr ? res[1] : res;
 
   debug('adding method: %o - sub-path: %o - version: %s', ('site.' + name + '()'), subpath);
@@ -1488,7 +1419,7 @@ Site.prototype.renderShortcode = function (url, query, fn) {
     throw new TypeError('expected a url String');
   }
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -1517,7 +1448,7 @@ Site.prototype.renderEmbed = function (url, query, fn) {
     throw new TypeError('expected an embed String');
   }
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -1571,7 +1502,7 @@ Site.prototype.statsReferrersSpamDelete = function (domain, fn) {
 Site.prototype.statsVideo = function (videoId, query, fn) {
   var path = '/sites/' + this._id + '/stats/video/' + videoId;
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -1591,7 +1522,7 @@ Site.prototype.statsVideo = function (videoId, query, fn) {
 Site.prototype.statsPostViews = function (postId, query, fn) {
   var path = '/sites/' + this._id + '/stats/post/' + postId;
 
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -1605,13 +1536,6 @@ Site.prototype.statsPostViews = function (postId, query, fn) {
 
 module.exports = Site;
 },{"./category":2,"./comment":3,"./follow":5,"./media":8,"./post":9,"./tag":12,"debug":17}],12:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:tag');
-
 /**
  * Tag methods
  *
@@ -1705,14 +1629,7 @@ Tag.prototype['delete'] = Tag.prototype.del = function (query, fn) {
  */
 
 module.exports = Tag;
-},{"debug":17}],13:[function(require,module,exports){
-
-/**
- * Module dependencies.
- */
-
-var debug = require('debug')('wpcom:users');
-
+},{}],13:[function(require,module,exports){
 /**
  * Create a `Users` instance
  *
@@ -1745,14 +1662,13 @@ Users.prototype.suggest = function (query, fn) {
  */
 
 module.exports = Users;
-},{"debug":17}],14:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 /**
  * Module dependencies.
  */
 
 var sendRequest = require('./send-request');
-var debug = require('debug')('wpcom:request');
 
 /**
  * Expose `Request` module
@@ -1760,6 +1676,7 @@ var debug = require('debug')('wpcom:request');
 
 
 function Req(wpcom) {
+
   this.wpcom = wpcom;
 }
 
@@ -1774,7 +1691,7 @@ function Req(wpcom) {
 
 Req.prototype.get = function (params, query, fn) {
   // `query` is optional
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -1797,8 +1714,8 @@ Req.prototype.put = function (params, query, body, fn) {
   if (undefined === fn) {
     if (undefined === body) {
       body = query;
-      query = {}
-    } else if ( 'function' === typeof body) {
+      query = {};
+    } else if ('function' === typeof body) {
       fn = body;
       body = query;
       query = {};
@@ -1824,7 +1741,7 @@ Req.prototype.put = function (params, query, body, fn) {
  */
 
 Req.prototype.del = function (params, query, fn) {
-  if ('function' == typeof query) {
+  if ('function' === typeof query) {
     fn = query;
     query = {};
   }
@@ -1838,7 +1755,7 @@ Req.prototype.del = function (params, query, fn) {
 
 module.exports = Req;
 
-},{"./send-request":15,"debug":17}],15:[function(require,module,exports){
+},{"./send-request":15}],15:[function(require,module,exports){
 
 /**
  * Module dependencies
@@ -1913,7 +1830,7 @@ module.exports = function (params, query, body, fn) {
   // if callback is provided, behave traditionally
   if ('function' === typeof fn) {
     // request method
-    return this.request(params, function(err, res) {
+    return this.request(params, function (err, res) {
       debug_res(res);
       fn(err, res);
     });
@@ -1925,7 +1842,7 @@ module.exports = function (params, query, body, fn) {
       debug_res(res);
       err ? reject(err) : resolve(res);
     });
-  } );
+  });
 };
 
 },{"debug":17,"qs":20}],16:[function(require,module,exports){
@@ -1944,17 +1861,10 @@ exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
-
-/**
- * Use chrome.storage.local if we are in an app
- */
-
-var storage;
-
-if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined')
-  storage = chrome.storage.local;
-else
-  storage = localstorage();
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
 
 /**
  * Colors.
@@ -2062,9 +1972,9 @@ function log() {
 function save(namespaces) {
   try {
     if (null == namespaces) {
-      storage.removeItem('debug');
+      exports.storage.removeItem('debug');
     } else {
-      storage.debug = namespaces;
+      exports.storage.debug = namespaces;
     }
   } catch(e) {}
 }
@@ -2079,7 +1989,7 @@ function save(namespaces) {
 function load() {
   var r;
   try {
-    r = storage.debug;
+    r = exports.storage.debug;
   } catch(e) {}
   return r;
 }
@@ -2347,6 +2257,8 @@ module.exports = function(val, options){
  */
 
 function parse(str) {
+  str = '' + str;
+  if (str.length > 10000) return;
   var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
   if (!match) return;
   var n = parseFloat(match[1]);
@@ -3082,7 +2994,311 @@ function toTitle (str) {
   });
 }
 
-},{"debug":17,"superagent":25}],25:[function(require,module,exports){
+},{"debug":25,"superagent":28}],25:[function(require,module,exports){
+
+/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = require('./debug');
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+
+/**
+ * Use chrome.storage.local if we are in an app
+ */
+
+var storage;
+
+if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined')
+  storage = chrome.storage.local;
+else
+  storage = localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = [
+  'lightseagreen',
+  'forestgreen',
+  'goldenrod',
+  'dodgerblue',
+  'darkorchid',
+  'crimson'
+];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  return ('WebkitAppearance' in document.documentElement.style) ||
+    // is firebug? http://stackoverflow.com/a/398120/376773
+    (window.console && (console.firebug || (console.exception && console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function(v) {
+  return JSON.stringify(v);
+};
+
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs() {
+  var args = arguments;
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '')
+    + this.namespace
+    + (useColors ? ' %c' : ' ')
+    + args[0]
+    + (useColors ? '%c ' : ' ')
+    + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return args;
+
+  var c = 'color: ' + this.color;
+  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-z%]/g, function(match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+  return args;
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
+    && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      storage.removeItem('debug');
+    } else {
+      storage.debug = namespaces;
+    }
+  } catch(e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = storage.debug;
+  } catch(e) {}
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage(){
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+
+},{"./debug":26}],26:[function(require,module,exports){
+arguments[4][18][0].apply(exports,arguments)
+},{"dup":18,"ms":27}],27:[function(require,module,exports){
+/**
+ * Helpers.
+ */
+
+var s = 1000;
+var m = s * 60;
+var h = m * 60;
+var d = h * 24;
+var y = d * 365.25;
+
+/**
+ * Parse or format the given `val`.
+ *
+ * Options:
+ *
+ *  - `long` verbose formatting [false]
+ *
+ * @param {String|Number} val
+ * @param {Object} options
+ * @return {String|Number}
+ * @api public
+ */
+
+module.exports = function(val, options){
+  options = options || {};
+  if ('string' == typeof val) return parse(val);
+  return options.long
+    ? long(val)
+    : short(val);
+};
+
+/**
+ * Parse the given `str` and return milliseconds.
+ *
+ * @param {String} str
+ * @return {Number}
+ * @api private
+ */
+
+function parse(str) {
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
+  if (!match) return;
+  var n = parseFloat(match[1]);
+  var type = (match[2] || 'ms').toLowerCase();
+  switch (type) {
+    case 'years':
+    case 'year':
+    case 'yrs':
+    case 'yr':
+    case 'y':
+      return n * y;
+    case 'days':
+    case 'day':
+    case 'd':
+      return n * d;
+    case 'hours':
+    case 'hour':
+    case 'hrs':
+    case 'hr':
+    case 'h':
+      return n * h;
+    case 'minutes':
+    case 'minute':
+    case 'mins':
+    case 'min':
+    case 'm':
+      return n * m;
+    case 'seconds':
+    case 'second':
+    case 'secs':
+    case 'sec':
+    case 's':
+      return n * s;
+    case 'milliseconds':
+    case 'millisecond':
+    case 'msecs':
+    case 'msec':
+    case 'ms':
+      return n;
+  }
+}
+
+/**
+ * Short format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function short(ms) {
+  if (ms >= d) return Math.round(ms / d) + 'd';
+  if (ms >= h) return Math.round(ms / h) + 'h';
+  if (ms >= m) return Math.round(ms / m) + 'm';
+  if (ms >= s) return Math.round(ms / s) + 's';
+  return ms + 'ms';
+}
+
+/**
+ * Long format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function long(ms) {
+  return plural(ms, d, 'day')
+    || plural(ms, h, 'hour')
+    || plural(ms, m, 'minute')
+    || plural(ms, s, 'second')
+    || ms + ' ms';
+}
+
+/**
+ * Pluralization helper.
+ */
+
+function plural(ms, n, name) {
+  if (ms < n) return;
+  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
+  return Math.ceil(ms / n) + ' ' + name + 's';
+}
+
+},{}],28:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -4207,7 +4423,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":26,"reduce":27}],26:[function(require,module,exports){
+},{"emitter":29,"reduce":30}],29:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -4373,7 +4589,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -4398,7 +4614,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 
 
 /**
@@ -4533,42 +4749,16 @@ WPCOM.prototype.freshlyPressed = function (query, fn) {
 
 WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   var msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
-  if (console && console.warn) {
-    console.warn(msg);
+  if (console && console.warn) { //eslint-disable-line no-console
+    console.warn(msg); //eslint-disable-line no-console
   } else {
-    console.log(msg);
+    console.log(msg); //eslint-disable-line no-console
   }
 
-  return sendRequest.call(this, params, query, body, fn)
+  return sendRequest.call(this, params, query, body, fn);
 };
 
-/**
- * Wraps a library callback into a Promise
- *
- * Remember to bind the method to its parent
- * context - extracting it out otherwise removes it.
- *
- * E.g.
- * wpcom.Promise( comment.del.bind( comment ) );
- *
- * The promise rejects if the normal error return from
- * an API call is not empty. It resolves otherwise.
- *
- * @param {function} callback wpcom.js method to call
- * @param params variable list of parameters to send to callback
- * @returns {Promise}
- */
-WPCOM.prototype.Promise = ( callback, ...params ) => {
-  return new Promise( ( resolve, reject ) => {
-    // The functions here take a variable number of arguments,
-    // so pass in as many as we can but keep the callback last.
-    callback.apply( callback, [...params, ( error, data ) => {
-      error ? reject( error ) : resolve( data );
-    } ] );
-  } );
-};
-
-if ( ! Promise.prototype.timeout ) {
+if (!Promise.prototype.timeout) {
 	/**
      * Returns a new promise with a deadline
      *
@@ -4579,21 +4769,21 @@ if ( ! Promise.prototype.timeout ) {
      * @param {number} delay how many ms to wait
      * @returns {Promise}
      */
-  Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
+  Promise.prototype.timeout = function (delay = DEFAULT_ASYNC_TIMEOUT) {
     let cancelTimeout, timer, timeout;
 
-    timeout = new Promise( ( resolve, reject ) => {
-      timer = setTimeout( () => {
-        reject( new Error( 'Action timed out while waiting for response.' ) );
-      }, delay );
-    } );
+    timeout = new Promise((resolve, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error('Action timed out while waiting for response.'));
+      }, delay);
+    });
 
     cancelTimeout = () => {
-      clearTimeout( timer );
+      clearTimeout(timer);
       return this;
     };
 
-    return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
+    return Promise.race([ this.then(cancelTimeout).catch(cancelTimeout), timeout ]);
   };
 }
 
@@ -4603,5 +4793,5 @@ if ( ! Promise.prototype.timeout ) {
 
 module.exports = WPCOM;
 
-},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"./lib/util/request":14,"./lib/util/send-request":15,"debug":17,"wpcom-xhr-request":24}]},{},[28])(28)
+},{"./lib/batch":1,"./lib/me":7,"./lib/site":11,"./lib/users":13,"./lib/util/request":14,"./lib/util/send-request":15,"debug":17,"wpcom-xhr-request":24}]},{},[31])(31)
 });
