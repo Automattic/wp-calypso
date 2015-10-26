@@ -159,7 +159,7 @@ Media.prototype.addUrls = function (query, media, fn) {
           body.attrs[i][k] = m[k];
         }
       }
-      url = m[k];
+      url = m.url;
     }
 
     // push url into [media_url]

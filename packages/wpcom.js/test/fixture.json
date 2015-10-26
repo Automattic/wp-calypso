@@ -38,9 +38,9 @@
       "http://s.w.org/about/images/logos/wordpress-logo-notext-rgb.png",
       "http://s.w.org/about/images/logos/wordpress-logo-simplified-rgb.png",
       {
+        "url": "http://s.w.org/about/images/logos/wordpress-logo-notext-rgb.png",
         "title": "Testing Media URL",
-        "description": "Testing media file added from a URL",
-        "url": "http://s.w.org/about/images/logos/wordpress-logo-notext-rgb.png"
+        "description": "Testing media file added from a URL"
       }
     ]
   }
