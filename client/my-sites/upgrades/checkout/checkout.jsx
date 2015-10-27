@@ -98,7 +98,8 @@ module.exports = React.createClass( {
 
 	content: function() {
 		var selectedSite = this.props.sites.getSelectedSite();
-		var userSelectedPaymentBox;
+		var userSelectedPaymentBox = null;
+		var redirectTo = this.props.redirectTo;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -113,8 +114,10 @@ module.exports = React.createClass( {
 				<SecurePaymentForm.Placeholder />
 			);
 		} else {
-			userSelectedPaymentBox = this.props.cart.products.length === 1 && this.props.cart.products[0].free_trial
-				? 'credits' : null;
+			if ( this.props.cart.products.length === 1 && this.props.cart.products[0].free_trial ) {
+				userSelectedPaymentBox = 'credits';
+				redirectTo += '?free-trial=1';
+			}
 			return (
 				<SecurePaymentForm
 					cart={ this.props.cart }
@@ -123,7 +126,7 @@ module.exports = React.createClass( {
 					products={ this.props.productsList.get() }
 					selectedSite={ selectedSite }
 					userSelectedPaymentBox={ userSelectedPaymentBox }
-					redirectTo={ this.props.redirectTo } />
+					redirectTo={ redirectTo } />
 			);
 		}
 
