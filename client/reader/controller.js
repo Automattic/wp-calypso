@@ -448,19 +448,41 @@ module.exports = {
 		pageTitleSetter( context )( i18n.translate( 'Recommended Sites For You' ) );
 	},
 
-	listManagementContents: function( context ) {
-		var listManagementContents = require( 'reader/list-management/contents' ),
+	listManagementFeeds: function( context ) {
+		var listManagementFeeds = require( 'reader/list-management/feeds' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
-			mcKey = 'list_edit';
+			mcKey = 'list_feeds';
 
 		pageTitleSetter( context )( i18n.translate( 'Manage List' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagementContents, {
-				key: 'list-management-contents',
+			React.createElement( listManagementFeeds, {
+				key: 'list-management-feeds',
+				list: {
+					owner: context.params.user,
+					slug: context.params.list
+				}
+			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	listManagementTags: function( context ) {
+		var listManagementTags= require( 'reader/list-management/tags' ),
+			basePath = route.sectionify( context.path ),
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
+			mcKey = 'list_tags';
+
+		pageTitleSetter( context )( i18n.translate( 'Manage List' ) );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		ReactDom.render(
+			React.createElement( listManagementTags, {
+				key: 'list-management-tags',
 				list: {
 					owner: context.params.user,
 					slug: context.params.list
@@ -474,7 +496,7 @@ module.exports = {
 		var listManagementDescriptionEdit = require( 'reader/list-management/description-edit' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List Description',
-			mcKey = 'list_edit_description';
+			mcKey = 'list_edit';
 
 		pageTitleSetter( context )( i18n.translate( 'Manage List Description' ) );
 

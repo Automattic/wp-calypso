@@ -5,7 +5,7 @@ import NavItem from 'components/section-nav/item';
 
 const ListManagementNavigation = React.createClass( {
 	propTypes: {
-		selected: React.PropTypes.oneOf( [ 'contents', 'description-edit', 'followers' ] ).isRequired,
+		selected: React.PropTypes.oneOf( [ 'feeds', 'tags', 'description-edit', 'followers' ] ).isRequired,
 		list: React.PropTypes.shape( {
 			owner: React.PropTypes.string.isRequired,
 			slug: React.PropTypes.string.isRequired
@@ -15,7 +15,8 @@ const ListManagementNavigation = React.createClass( {
 	render() {
 		const current = this.props.selected;
 		const sectionNames = {
-			contents: this.translate( 'List Contents' ),
+			feeds: this.translate( 'Feeds' ),
+			tags: this.translate( 'Tags' ),
 			'description-edit': this.translate( 'List Description' ),
 			followers: this.translate( 'List Followers' )
 		};
@@ -24,8 +25,9 @@ const ListManagementNavigation = React.createClass( {
 		return (
 			<SectionNav selectedText={ sectionNames[ current ] }>
 				<NavTabs>
-					<NavItem path={ `${baseListUrl}/edit` } selected={current === 'contents'}>{ this.translate( 'Contents' )}</NavItem>
-					<NavItem path={ `${baseListUrl}/description/edit` } selected={current === 'description-edit'}>{ this.translate( 'Description' )}</NavItem>
+					<NavItem path={ `${baseListUrl}/feeds` } selected={current === 'feeds'}>{ this.translate( 'Feeds' )}</NavItem>
+					<NavItem path={ `${baseListUrl}/tags` } selected={current === 'tags'}>{ this.translate( 'Tags' )}</NavItem>
+					<NavItem path={ `${baseListUrl}/edit` } selected={current === 'description-edit'}>{ this.translate( 'Description' )}</NavItem>
 					<NavItem path={ `${baseListUrl}/followers` } selected={current === 'followers'}>{ this.translate( 'Followers' )}</NavItem>
 				</NavTabs>
 			</SectionNav>

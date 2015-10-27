@@ -57,8 +57,9 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'reader/list-management' ) ) {
-		page( '/read/list/:user/:list/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementContents );
-		page( '/read/list/:user/:list/description/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementDescriptionEdit );
+		page( '/read/list/:user/:list/feeds', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementFeeds );
+		page( '/read/list/:user/:list/tags', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementTags );
+		page( '/read/list/:user/:list/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementDescriptionEdit );
 		page( '/read/list/:user/:list/followers', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementFollowers );
 	}
 
