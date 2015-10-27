@@ -68,23 +68,41 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	thankYouHeader: function() {
-		var freeTrial;
-
 		if ( this.cartHasFreeTrial() ) {
-			freeTrial = cartItems.findFreeTrial( this.props.lastTransaction.cart );
-
 			return (
 				<h1>
 					{
-						this.translate( 'Thank you for trying %(productName)s!', {
-							args: { productName: freeTrial.product_name }
-						} )
+						this.translate( 'Your 14 day free trial starts today!' )
 					}
 				</h1>
 			);
 		} else {
 			return <h1>{ this.translate( 'Thank you for your purchase!' ) }</h1>;
 		}
+	},
+	thankYouSubHeader: function() {
+		var productName = this.getSingleProductName(),
+			headerText;
+
+		if ( this.cartHasFreeTrial() && productName ) {
+			headerText = this.translate( 'We hope you enjoy ' + "%(productName)s. What's next? Take it for a spin!", {
+				args: {
+					productName: productName
+				}
+			} );
+		} else if ( productName ) {
+			headerText = this.translate( 'You will receive an email confirmation shortly for your purchase of ' +
+				"%(productName)s. What's next?", {
+					args: {
+						productName: productName
+					}
+				}
+			);
+		} else {
+			headerText = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
+		}
+
+		return <h2>{ headerText }</h2>
 	},
 	getSingleProductName() {
 		var products;
@@ -97,27 +115,13 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	render: function() {
-		var productName = this.getSingleProductName(),
-			emailConfirmationNotice;
-
-		if ( productName ) {
-			emailConfirmationNotice = this.translate( 'You will receive an email confirmation shortly for your purchase of ' +
-				"%(productName)s. What's next?", {
-				args: {
-					productName: productName
-				}
-			} );
-		} else {
-			emailConfirmationNotice = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
-		}
-
 		return (
 			<Main className="checkout-thank-you">
 				<Card>
 					<div className="thank-you-message">
 						<span className="receipt-icon"></span>
 						{ this.thankYouHeader() }
-						<h2>{ emailConfirmationNotice }</h2>
+						{ this.thankYouSubHeader() }
 					</div>
 					{ this.productRelatedMessages() }
 				</Card>
@@ -153,7 +157,6 @@ var CheckoutThankYou = React.createClass( {
 		if ( this.cartHasFreeTrial() ) {
 			return (
 				<div className="try-out-message">
-					{ this.takeItForASpin() }
 					<p>
 						{ this.translate( 'You have %(days)d days to try out all of the WordPress.com Premium features:', {
 							args: { days: 14 },
@@ -170,7 +173,6 @@ var CheckoutThankYou = React.createClass( {
 		if ( this.cartHasFreeTrial() ) {
 			return (
 				<div className="try-out-message">
-					{ this.takeItForASpin() }
 					<p>
 						{ this.translate( 'You have %(days)d days to try out all of the WordPress.com Business features:', {
 							args: { days: 14 },
@@ -226,7 +228,6 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<div>
-				{ freeTrialMessage }
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
 					isFreeTrial: this.cartHasFreeTrial(),
