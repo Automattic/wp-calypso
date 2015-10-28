@@ -17,8 +17,8 @@ var SupportingText = React.createClass( {
 			content;
 
 		if ( cartItems.hasFreeTrial( cart ) ) {
-			title = this.translate( 'Why do you need my credit card?' );
-			content = this.translate( 'You will only be charged at the end of the trial. Cancel any time before then and pay nothing.' );
+			title = this.translate( 'Try all the features' );
+			content = this.translate( 'Enjoy the full premium experience except for the free domain for two weeks' );
 		} else {
 			title = this.translate( 'Easy Refunds' );
 			content = this.refundText();
