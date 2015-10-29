@@ -28,6 +28,7 @@ var analytics = require( 'analytics' ),
 	PostErrors = require( 'reader/post-errors' ),
 	PostStore = require( 'lib/feed-post-store' ),
 	PostStoreActions = require( 'lib/feed-post-store/actions' ),
+	Site = require( 'my-sites/site' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
@@ -176,6 +177,8 @@ FullPostView = React.createClass( {
 				<article className={ articleClasses } id="modal-full-post" ref="article">
 
 					<PostErrors post={ post } />
+
+					<Site site={ site.toJS() } href={ post.site_URL } />
 
 					{ hasFeaturedImage
 						? <div className="full-post__featured-image test">
