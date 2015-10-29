@@ -248,24 +248,11 @@ FullPostDialog = React.createClass( {
 					action: 'close',
 					isPrimary: true
 				}
-			], siteName, siteLink;
-
-		siteName = utils.siteNameFromSiteAndPost( site, post );
-
-		siteLink = this.props.suppressSiteNameLink ?
-			siteName :
-			( <SiteLink post={ post }>{ siteName }</SiteLink> );
+			];
 
 		if ( post && ! post._state ) {
 			shouldShowComments = PostCommentHelper.shouldShowComments( post );
 			shouldShowLikes = LikeHelper.shouldShowLikes( post );
-
-			buttons.push(
-				<div className="full-post__site" key="site-name">
-					<SiteIcon site={ site && site.toJS() } size={ 24 } />
-					<span className="full-post__site-name">{ siteLink }</span>
-				</div>
-			);
 
 			buttons.push( <PostOptions key="post-options" post={ post } site={ site } onBlock={ this.props.onClose } /> );
 
