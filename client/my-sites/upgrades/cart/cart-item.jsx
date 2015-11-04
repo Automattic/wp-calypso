@@ -121,10 +121,6 @@ module.exports = React.createClass( {
 		upgradesActions.setVolume( this.props.cartItem, volume );
 
 		this.recordEvent( 'changeVolume', volume );
-
-		cartItems.getDependentProducts( this.props.cartItem, this.props.cart )
-			.filter( product => cartItems.isPrivacyProduct( product ) )
-			.forEach( cartItem => upgradesActions.setVolume( cartItem, volume ) );
 	},
 
 	getVolumeOptions: function() {

@@ -674,9 +674,10 @@ function getIncludedDomain( cartItem ) {
 function setVolume( cartItem, volume ) {
 	function setItemVolume( items ) {
 		return items.map( item => {
-			if ( item.product_id === cartItem.product_id && item.meta === cartItem.meta ) {
+			if ( item.meta === cartItem.meta && ( item.product_id === cartItem.product_id || isPrivacyProduct( item ) ) ) {
 				return extend( {}, item, { volume } );
 			}
+
 			return item;
 		} );
 	}
