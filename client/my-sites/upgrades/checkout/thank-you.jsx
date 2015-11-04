@@ -286,6 +286,16 @@ PremiumPlanDetails = React.createClass( {
 					: null
 				}
 
+				{ ! showGetFreeDomainTip ?
+					<PurchaseDetail
+						additionalClass="ads-have-been-removed"
+						title={ this.translate( 'Ads have been removed!' ) }
+						description={ this.translate( 'WordPress.com ads will not show up on your blog.' ) }
+						buttonText={ this.translate( 'View Your Site' ) }
+						onButtonClick={ goToExternalPage( this.props.selectedSite.URL ) } />
+					: null
+				}
+
 				<PurchaseDetail
 					additionalClass="customize-fonts-and-colors"
 					title={ this.translate( 'Customize Fonts & Colors' ) }
@@ -299,16 +309,6 @@ PremiumPlanDetails = React.createClass( {
 					description={ this.translate( "Uploading videos to your blog couldn't be easier." ) }
 					buttonText={ this.translate( 'Start Using VideoPress' ) }
 					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/media-new.php' ) } />
-
-				{ ! showGetFreeDomainTip ?
-					<PurchaseDetail
-						additionalClass="ads-have-been-removed"
-						title={ this.translate( 'Ads have been removed!' ) }
-						description={ this.translate( 'WordPress.com ads will not show up on your blog.' ) }
-						buttonText={ this.translate( 'View My Site' ) }
-						onButtonClick={ goToExternalPage( this.props.selectedSite.URL ) } />
-					: null
-				}
 			</ul>
 		);
 	}
