@@ -98,7 +98,6 @@ module.exports = React.createClass( {
 
 	content: function() {
 		var selectedSite = this.props.sites.getSelectedSite();
-		var userSelectedPaymentBox = null;
 		var redirectTo = this.props.redirectTo;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
@@ -115,7 +114,6 @@ module.exports = React.createClass( {
 			);
 		} else {
 			if ( this.props.cart.products.length === 1 && this.props.cart.products[0].free_trial ) {
-				userSelectedPaymentBox = 'credits';
 				redirectTo += '?free-trial=1';
 			}
 			return (
@@ -125,7 +123,6 @@ module.exports = React.createClass( {
 					cards={ this.props.cards }
 					products={ this.props.productsList.get() }
 					selectedSite={ selectedSite }
-					userSelectedPaymentBox={ userSelectedPaymentBox }
 					redirectTo={ redirectTo } />
 			);
 		}
