@@ -105,6 +105,7 @@ module.exports = {
 				signup_flow_name: flowName,
 				nux_q_site_type: dependencies.surveySiteType,
 				nux_q_question_primary: dependencies.surveyQuestion,
+				jetpack_redirect: dependencies.jetpackRedirect
 			}
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
