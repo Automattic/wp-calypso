@@ -102,7 +102,8 @@ module.exports = {
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
 				validate: false,
-				signup_flow_name: flowName
+				signup_flow_name: flowName,
+				jetpack_redirect: dependencies.jetpackRedirect
 			}
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,

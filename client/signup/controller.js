@@ -27,7 +27,7 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 /**
  * Module variables
  */
-let refParameter;
+let refParameter, jetpackRedirect;
 
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
@@ -51,6 +51,14 @@ export default {
 	saveRefParameter( context, next ) {
 		if ( context.query.ref ) {
 			refParameter = context.query.ref;
+		}
+
+		next();
+	},
+
+	saveJetpackRedirectParameter( context, next ) {
+		if ( context.query.jetpack_redirect ) {
+			jetpackRedirect = context.query.jetpack_redirect;
 		}
 
 		next();
@@ -83,6 +91,7 @@ export default {
 			React.createElement( SignupComponent, {
 				path: context.path,
 				refParameter,
+				jetpackRedirect,
 				locale: utils.getLocale( context.params ),
 				flowName: flowName,
 				stepName: stepName,

@@ -63,5 +63,13 @@ module.exports = {
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme', 'images' ]
+	},
+
+	'jetpack-user': {
+		stepName: 'jetpack-user',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		dependencies: [ 'jetpackRedirect' ],
+		providesDependencies: [ 'bearer_token', 'username', 'jetpackRedirect' ]
 	}
 };
