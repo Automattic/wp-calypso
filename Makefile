@@ -37,7 +37,7 @@ CALYPSO_ENV ?= $(NODE_ENV)
 
 export NODE_ENV := $(NODE_ENV)
 export CALYPSO_ENV := $(CALYPSO_ENV)
-export NODE_PATH := server:shared:$(THIS_DIR)
+export NODE_PATH := server:shared:.
 
 .DEFAULT_GOAL := install
 
