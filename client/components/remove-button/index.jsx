@@ -53,7 +53,7 @@ export default React.createClass( {
 		}
 
 		return(
-			<button disabled={ this.props.disabled } className={ classNames( this.props.className, buttonClasses ) }>
+			<button onClick={ this.props.onClick } disabled={ this.props.disabled } className={ classNames( this.props.className, buttonClasses ) }>
 				<Gridicon icon={ buttonIcons[ this.props.icon ] } size={ iconSize } />
 				{ this.props.children }
 			</button>
