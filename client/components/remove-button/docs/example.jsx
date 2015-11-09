@@ -44,6 +44,13 @@ var Buttons = React.createClass( {
             <RemoveButton icon="deactivate">Deactivate</RemoveButton>
 						<RemoveButton disabled >Remove Disabled</RemoveButton>
 					</div>
+					<div className="design-assets__button-row">
+						<RemoveButton></RemoveButton>
+						<RemoveButton disabled ></RemoveButton>		
+						<RemoveButton icon="trash"></RemoveButton>
+						<RemoveButton icon="disconnect"></RemoveButton>
+
+					</div>
           <div className="design-assets__button-row">
 						<RemoveButton scary>Remove</RemoveButton>
 						<RemoveButton scary icon="trash">Trash</RemoveButton>
@@ -51,6 +58,12 @@ var Buttons = React.createClass( {
             <RemoveButton scary icon="disconnect">Disconnect</RemoveButton>
             <RemoveButton scary icon="deactivate">Deactivate</RemoveButton>
 						<RemoveButton scary disabled >Remove Disabled</RemoveButton>
+					</div>
+					<div className="design-assets__button-row">
+						<RemoveButton scary></RemoveButton>
+						<RemoveButton scary disabled ></RemoveButton>
+						<RemoveButton scary icon="trash"></RemoveButton>
+            <RemoveButton scary icon="disconnect"></RemoveButton>
 					</div>
 				</Card>
 			);
@@ -72,6 +85,14 @@ var Buttons = React.createClass( {
             <RemoveButton compact scary icon="disconnect">Disconnect</RemoveButton>
             <RemoveButton compact scary icon="deactivate">Deactivate</RemoveButton>
 						<RemoveButton compact scary disabled >Remove Disabled</RemoveButton>
+					</div>
+					<div className="design-assets__button-row">
+						<RemoveButton compact scary></RemoveButton>
+						<RemoveButton compact scary icon="trash"></RemoveButton>
+						<RemoveButton compact scary icon="delete"></RemoveButton>
+						<RemoveButton compact scary icon="disconnect"></RemoveButton>
+						<RemoveButton compact scary icon="deactivate"></RemoveButton>
+						<RemoveButton compact scary disabled ></RemoveButton>
 					</div>
 				</Card>
 			);
