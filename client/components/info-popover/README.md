@@ -18,6 +18,14 @@ The `position` property can be one of the following values:
 - `left`
 - `right`
 
+#### `toggle`
+
+The `toggle` property is a function that can be uset to controll the visibility of the InfoPopover from the parent component.
+
+### `isVisible`
+
+The `isVisible` property should be a boolian and needs to be set if you are also using the `toggle` property. 
+
 ### `InfoPopover` Usage
 
 ```js

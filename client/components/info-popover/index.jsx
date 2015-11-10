@@ -2,6 +2,8 @@
 * External dependencies
 */
 import React from 'react';
+import defer from 'lodash/function/defer';
+import noop from 'lodash/utility/noop';
 
 /**
 * Internal dependencies
@@ -19,12 +21,15 @@ export default React.createClass( {
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
 		gaEventCategory: React.PropTypes.string,
-		popoverName: React.PropTypes.string
+		popoverName: React.PropTypes.string,
+		isVisible: React.PropTypes.bool,
+		toggle: React.PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
-			position: 'bottom'
+			position: 'bottom',
+			toggle: noop
 		};
 	},
 
@@ -34,12 +39,19 @@ export default React.createClass( {
 		};
 	},
 
+	getVisibility() {
+		if ( typeof this.props.isVisible === 'undefined' ) {
+			return this.state.showPopover;
+		}
+		return this.props.isVisible;
+	},
+
 	render() {
 		return (
 			<span onClick={ this._onClick } ref="infoPopover" className={ classNames( 'info-popover', { 'is_active': this.state.showPopover }, this.props.className ) }>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<Popover
-					isVisible={ this.state.showPopover }
+					isVisible={ this.getVisibility() }
 					context={ this.refs && this.refs.infoPopover }
 					position={ this.props.position }
 					onClose={ this._onClose }
@@ -52,11 +64,13 @@ export default React.createClass( {
 
 	_onClick( event ) {
 		event.preventDefault();
+		this.props.toggle( ! this.getVisibility() );
 		this.setState( { showPopover: ! this.state.showPopover }, this._recordStats );
 	},
 
 	_onClose() {
 		this.setState( { showPopover: false }, this._recordStats );
+		defer( () => ( this.props.toggle( false ) ) );
 	},
 
 	_recordStats() {
@@ -67,5 +81,4 @@ export default React.createClass( {
 			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
 		}
 	}
-
 } );
