@@ -409,7 +409,7 @@ module.exports = React.createClass( {
 		} else {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
-			className="reader__content"
+			className="reader__content is-condensed"
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage()}
 			fetchingNextPage={ this.props.store.isFetchingNextPage()}

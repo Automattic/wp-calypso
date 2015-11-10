@@ -260,3 +260,50 @@
 	font-size: 12px;
 	line-height: 1;
 }
+
+
+// Condensed View
+.is-condensed {
+	.reader__card {
+		margin-bottom: 0;
+	}
+
+	.reader__card.card .site-icon {
+		display: none;
+	}
+
+	.reader__card.card  .site__title {
+		color: $gray;
+	}
+
+	.site__domain {
+		display: none;
+	}
+
+	.reader-post-byline {
+		display: none;
+	}
+
+	.reader__post-featured-image,
+	.reader__post-featured-video {
+		display: none;
+	}
+
+	.reader__post-title {
+		font-size: 15px;
+		margin: 4px 0 0 0;
+	}
+	
+	.reader__post-header {
+		margin-bottom: 0;
+	}
+
+	.post-excerpt,
+	.reader__card .reader__full-post-content {
+		display: none;
+	}
+
+	.reader__post-footer {
+		display: none;
+	}
+}
