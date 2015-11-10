@@ -68,7 +68,14 @@ var SelectDropdown = React.createClass( {
 		return initialState;
 	},
 
-	componentWillMount: function() {
+	getDefaultProps: function() {
+		return {
+			onSelect: noop,
+			onToggle: noop
+		};
+	},
+
+	componentDidMount: function() {
 		this.id = _instance;
 		_instance++;
 	},

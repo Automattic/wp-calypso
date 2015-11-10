@@ -344,7 +344,6 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
-
 			renderLoggedOutRoute( req, res );
 		}
 	} );
@@ -357,24 +356,27 @@ module.exports = function() {
 			ReactInjection.Class.injectMixin( i18n.mixin );
 			i18n.initialize();
 
-			var themesLoggedOutLayoutComponent = require( 'layout/themes-logged-out' ),
+			const themesLoggedOutLayoutComponent = require( 'layout/themes-logged-out' ),
 				themesComponent = require( 'my-sites/themes/themes-selection' ),
 				getButtonOptions = require( 'my-sites/themes/theme-options' ),
-				ThemesLoggedOutLayout = React.createFactory( themesLoggedOutLayoutComponent ),
-				Themes = React.createFactory( themesComponent ),
+				themesLoggedOutLayout = React.createFactory( themesLoggedOutLayoutComponent ),
+				themes = React.createFactory( themesComponent ),
 				context = getDefaultContext( req ),
 				props = {
-					primary: Themes( {
+					section: 'themes',
+					primary: themes( {
 						getOptions: getButtonOptions.bind( null, () => {} ),
 						sites: false,
+						togglePreview: () => {},
 						setSelectedTheme: () => {},
 					} ),
 					secondary: null,
 					tertiary: null
-				},
-				renderedString = React.renderToString( ThemesLoggedOutLayout( assign( context, props ) ) );
+				};
 
-			res.send( renderedString );
+			context.layout = React.renderToString( themesLoggedOutLayout( assign( context, props ) ) );
+
+			res.render( 'index.jade', context );
 		}
 	} );
 

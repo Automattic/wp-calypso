@@ -43,7 +43,8 @@ Spinner = React.createClass( {
 	 *                   elements, or false otherwise.
 	 */
 	isSVGCSSAnimationSupported: function() {
-		return ! /(MSIE |Trident\/)/.test( global.window.navigator.userAgent );
+		return false;
+		return typeof( window ) === undefined || ! /(MSIE |Trident\/)/.test( global.window.navigator.userAgent );
 	},
 
 	getClassName: function() {

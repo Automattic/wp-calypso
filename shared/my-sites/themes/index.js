@@ -17,7 +17,7 @@ const routing = {
 		{ value: '/design/:site_id', enableLoggedOut: false },
 		{ value: '/design/type/:tier/:site_id', enableLoggedOut: false },
 		{ value: '/design/type/:tier', enableLoggedOut: true },
-		{ value: '/design', enableLoggedOut: true },
+		{ value: '/design', enableLoggedOut: false },
 	],
 	middlewares: [
 		{ value: controller.navigation, enableLoggedOut: false },
