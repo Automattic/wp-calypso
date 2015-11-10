@@ -18,6 +18,7 @@ import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
+import siteList from 'lib/sites-list';
 
 /**
  * Module variables
@@ -28,6 +29,7 @@ const noticeOptions = {
 };
 
 const wpcom = wpcomLib.undocumented();
+const sites = siteList();
 
 module.exports = React.createClass( {
 	displayName: 'HelpContact',
@@ -36,6 +38,8 @@ module.exports = React.createClass( {
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
+
+		sites.on( 'change', this.onSitesChanged );
 
 		olarkActions.updateDetails();
 
@@ -56,13 +60,16 @@ module.exports = React.createClass( {
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
 		}
+
+		sites.removeListener( 'change', this.onSitesChanged );
 	},
 
 	getInitialState: function() {
 		return {
 			olark: olarkStore.get(),
 			isSubmitting: false,
-			confirmationMessage: null
+			confirmationMessage: null,
+			sitesInitialized: sites.initialized
 		};
 	},
 
@@ -70,17 +77,22 @@ module.exports = React.createClass( {
 		this.setState( { olark: olarkStore.get() } );
 	},
 
+	onSitesChanged: function() {
+		this.setState( { sitesInitialized: sites.initialized } );
+	},
+
 	backToHelp: function() {
 		page( '/help' );
 	},
 
 	startChat: function( contactForm ) {
-		const { message, howCanWeHelp, howYouFeel } = contactForm;
+		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
 		const notifications = [
 			'How can you help: ' + howCanWeHelp,
-			'How I feel: ' + howYouFeel
+			'How I feel: ' + howYouFeel,
+			'Site I need help with: ' + ( site ? site.URL : 'N/A' )
 		];
 
 		notifications.forEach( olarkActions.sendNotificationToOperator );
@@ -182,7 +194,7 @@ module.exports = React.createClass( {
 	getKayakoTicketForm: function() {
 		const { isSubmitting, olark } = this.state;
 
-		if ( olark.details.isConversing  ) {
+		if ( olark.details.isConversing ) {
 			// Hide the olark widget in the bottom right corner.
 			olarkActions.hideBox();
 		}
@@ -194,6 +206,9 @@ module.exports = React.createClass( {
 				showHowCanWeHelpField={ true }
 				showHowYouFeelField={ true }
 				showSubjectField={ true }
+				showSiteField={ sites.get().length > 1 }
+				siteList={ sites }
+				siteFilter={ this.siteFilter }
 				disabled={ isSubmitting }/>
 		);
 	},
@@ -204,8 +219,15 @@ module.exports = React.createClass( {
 				onSubmit={ this.startChat }
 				buttonLabel={ this.translate( 'Chat with us' ) }
 				showHowCanWeHelpField={ true }
-				showHowYouFeelField={ true }/>
+				showHowYouFeelField={ true }
+				showSiteField={ sites.get().length > 1 }
+				siteList={ sites }
+				siteFilter={ this.siteFilter }/>
 		);
+	},
+
+	siteFilter: function( site ) {
+		return site.visible && ! site.jetpack;
 	},
 
 	/**
@@ -213,13 +235,13 @@ module.exports = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmationMessage } = this.state;
+		const { olark, confirmationMessage, sitesInitialized } = this.state;
 
 		if ( confirmationMessage ) {
 			return <HelpContactConfirmation title={ this.translate( "We're on it!" ) } message={ confirmationMessage }/>;
 		}
 
-		if ( ! olark.isOlarkReady ) {
+		if ( ! ( olark.isOlarkReady && sitesInitialized ) ) {
 			return <div className="help-contact__placeholder" />;
 		}
 

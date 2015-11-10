@@ -10,11 +10,20 @@
 }
 
 .help-contact-form__subject,
+.help-contact-form__site-selection,
 .help-contact-form__selection {
 	margin-bottom: 24px;
 
 	@include breakpoint( ">960px" ) {
 		margin-bottom: 32px;
+	}
+}
+
+.help-contact-form__site-selection {
+	width: 100%;
+
+	@include breakpoint( ">960px" ) {
+		width: auto;
 	}
 }
 

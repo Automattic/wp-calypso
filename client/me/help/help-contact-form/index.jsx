@@ -14,6 +14,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import SelectSite from 'me/select-site';
 
 module.exports = React.createClass( {
 	displayName: 'HelpContactForm',
@@ -26,6 +27,9 @@ module.exports = React.createClass( {
 		showHowCanWeHelpField: React.PropTypes.bool,
 		showHowYouFeelField: React.PropTypes.bool,
 		showSubjectField: React.PropTypes.bool,
+		showSiteField: React.PropTypes.bool,
+		siteFilter: React.PropTypes.func,
+		siteList: React.PropTypes.object,
 		disabled: React.PropTypes.bool
 	},
 
@@ -34,6 +38,7 @@ module.exports = React.createClass( {
 			showHowCanWeHelpField: false,
 			showHowYouFeelField: false,
 			showSubjectField: false,
+			showSiteField: false,
 			disabled: false
 		}
 	},
@@ -43,12 +48,20 @@ module.exports = React.createClass( {
 	 * @return {Object} An object representing our initial state
 	 */
 	getInitialState: function() {
+		const { showSiteField, siteList } = this.props;
+
 		return {
 			howCanWeHelp: 'gettingStarted',
 			howYouFeel: 'unspecified',
 			message: '',
-			subject: ''
+			subject: '',
+			site: showSiteField ? siteList.getLastSelectedSite() || siteList.getPrimary() : null
 		};
+	},
+
+	setSite: function( event ) {
+		const site = this.props.siteList.getSite( parseInt( event.target.value, 10 ) );
+		this.setState( { site: site } );
 	},
 
 	/**
@@ -137,7 +150,7 @@ module.exports = React.createClass( {
 				{ value: 'panicked', label: this.translate( 'Panicked' ) }
 			];
 
-		const { buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField } = this.props;
+		const { buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField, showSiteField, siteList, siteFilter } = this.props;
 
 		return (
 			<div className="help-contact-form">
@@ -152,6 +165,18 @@ module.exports = React.createClass( {
 					<div>
 						<FormLabel>{ this.translate( 'Mind sharing how you feel?' ) }</FormLabel>
 						{ this.renderFormSelection( 'howYouFeel', howYouFeelOptions ) }
+					</div>
+				) : null }
+
+				{ showSiteField ? (
+					<div>
+						<FormLabel>{ this.translate( 'Which site do you need help with?' ) }</FormLabel>
+						<SelectSite
+							className="help-contact-form__site-selection"
+							sites={ siteList }
+							filter={ siteFilter }
+							value={ this.state.site.ID }
+							onChange={ this.setSite } />
 					</div>
 				) : null }
 
