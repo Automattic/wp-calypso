@@ -263,6 +263,23 @@
 
 
 // Condensed View
+.view-toggle {
+	text-align: right;
+	padding: 0 16px 16px 0;
+
+	.view-toggle__label {
+		color: darken( $gray, 30 );
+		margin-left: 8px;
+		font-size: 13px;
+	}
+
+	&:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+}
+
 .is-condensed {
 
 	// Hide a bunch of stuff

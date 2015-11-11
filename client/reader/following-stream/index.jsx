@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
+	assign = require( 'lodash/object/assign' ),
 	noop = require( 'lodash/utility/noop' ),
 	times = require( 'lodash/utility/times' );
 
@@ -22,6 +23,7 @@ var Main = require( 'components/main' ),
 	Post = require( './post' ),
 	CrossPost = require( './x-post' ),
 	page = require( 'page' ),
+	classnames = require( 'classnames' ),
 	PostUnavailable = require( './post-unavailable' ),
 	PostPlaceholder = require( './post-placeholder' ),
 	PostStore = require( 'lib/feed-post-store' ),
@@ -30,7 +32,8 @@ var Main = require( 'components/main' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+	XPostHelper = require( 'reader/xpost-helper' ),
+	FormToggle = require( 'components/forms/form-toggle' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -56,27 +59,37 @@ module.exports = React.createClass( {
 		suppressSiteNameLink: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
-		emptyContent: React.PropTypes.object
+		emptyContent: React.PropTypes.object,
+		viewInbox: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
-			onShowUpdates: noop
+			onShowUpdates: noop,
 		};
 	},
 
 	getInitialState: function() {
-		return this.getStateFromStores();
+		//return this.getStateFromStores();
+		return assign(
+			this.getStateFromStores(), {
+			viewInbox: false
+		} );
+	},
+
+	handleView: function() {
+		this.setState( { viewInbox: ! this.state.viewInbox } );
 	},
 
 	getStateFromStores: function( store ) {
 		store = store || this.props.store;
+
 		return {
 			posts: store.get(),
 			updateCount: store.getUpdateCount(),
-			selectedIndex: store.getSelectedIndex()
+			selectedIndex: store.getSelectedIndex(),
 		};
 	},
 
@@ -404,12 +417,17 @@ module.exports = React.createClass( {
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
 			body;
 
+		var contentClasses = classnames( {
+			'reader__content': true,
+			'is-condensed': this.state.viewInbox,
+		} );
+
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
-			className="reader__content is-condensed"
+			className={ contentClasses }
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage()}
 			fetchingNextPage={ this.props.store.isFetchingNextPage()}
@@ -428,6 +446,17 @@ module.exports = React.createClass( {
 				</MobileBackToSidebar>
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
+
+				<div className="view-toggle">
+					<FormToggle
+						checked={ this.state.viewInbox }
+						//toggling={ this.props.toggling }
+						//disabled={ this.props.disabled }
+						onChange={ this.handleView }
+						id={ 'view-toggle__inbox' }
+					/>
+					<span className="view-toggle__label">Condensed View</span>
+				</div>
 
 				{ this.props.children }
 
