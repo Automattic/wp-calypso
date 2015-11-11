@@ -343,9 +343,29 @@
 		}
 	}
 
-	// Hide x-posts for now. They need some thinking.
 	.reader__card.is-x-post {
-		display: none;
+		background: rgba( $white, 0.5 );
+		box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
+			0 1px 2px lighten( $gray, 30% );
+
+		&:hover {
+			box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
+				0 1px 2px lighten( $gray, 30% ),
+				inset 6px 0 0 lighten( $gray, 30 );
+		}
+
+		&:after {
+			display: none;
+		}
+
+		.reader__site-and-author-icon {
+			left: -8px;
+		}
+
+		.reader__post-title {
+			font-size: 15px;
+			font-weight: normal;
+		}
 	}
 
 	.reader__post-header {
