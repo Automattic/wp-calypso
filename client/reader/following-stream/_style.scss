@@ -322,13 +322,9 @@
 	}
 
 	.reader__card.has-featured-image {
-		.reader__post-featured-image {
-			display: none;
-		}
-
 		&.is-photo-only {
 			.reader__post-featured-image {
-				display: block;
+				//display: block;
 				z-index: 1;
 				left: 0;
 				width: 100%;
@@ -338,6 +334,30 @@
 
 				img {
 					margin-top: -24%;
+				}
+			}
+		}
+
+		&:not( .is-photo-only ) {
+			.reader__post-featured-image {
+				//display: block;
+				position: absolute;
+					top: 0;
+					left: 0;
+					bottom: 0;
+				height: 100%;
+				width: 32px;
+
+				img {
+					max-height: 100%;
+					max-width: none;
+					transition: opacity 0.1s ease-in-out;
+				}
+			}
+
+			&:hover {
+				.reader__post-featured-image img {
+					opacity: 0.4;
 				}
 			}
 		}
