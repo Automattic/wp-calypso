@@ -12,12 +12,13 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'notices/notice';
+import Notice from 'notices/simple-notice';
 import AuthStore from 'lib/oauth-store';
 import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
 import Gridicon from 'components/gridicon';
 import WordPressLogo from 'components/wordpress-logo';
+import AuthCodeButton from './auth-code-button';
 
 const LostPassword = React.createClass( {
 	render: function() {
@@ -142,6 +143,7 @@ module.exports = React.createClass( {
 					</FormButtonsBar>
 					{ ! requires2fa && <LostPassword /> }
 					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
+					{ requires2fa && <AuthCodeButton username={ this.state.login } password={ this.state.password } /> }
 				</form>
 				<a className="auth__help" target="_blank" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
 					<Gridicon icon="help" />
