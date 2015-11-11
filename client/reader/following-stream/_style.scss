@@ -329,44 +329,15 @@
 			.reader__post-featured-image {
 				display: block;
 				z-index: 1;
-				left: -64px;
-				width: calc( 100% + 80px );
-				max-height: 320px;
+				left: 0;
+				width: 100%;
+				max-height: 112px;
 				margin: 0 0 16px 0;
-				border-top: 1px solid lighten( $gray, 30 );
-
-				/*
-				position: absolute;
-					top: auto;
-					right: 16px;
-					bottom: 32px;
-					left: 64px;
-				width: auto;
-				height: 200px;
-				z-index: 1;
 				border-radius: 3px;
 
-
-				display: none;
-				position: absolute;
-					top: 8px;
-					left: 8px;
-					bottom: 8px;
-				border-radius: 3px;
-				width: 80px;
-				height: calc( 100% - 16px ) !important;
-				margin: 0;
-				overflow: hidden;
-				
 				img {
-					max-height: 100%;
-					max-width: none;
+					margin-top: -16%;
 				}
-				*/
-			}
-
-			.reader__post-footer {
-				//margin-top: 224px;
 			}
 		}
 	}
@@ -437,7 +408,7 @@
 	}
 
 	.reader__post-footer {
-		margin-top: 8px;
+		margin-top: 0;
 
 		.comment-button .gridicon__comments,
 		.like-button .gridicon {
