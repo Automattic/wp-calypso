@@ -300,10 +300,54 @@
 				//background: linear-gradient( to right, rgba( $gray-light, 0 ), $gray-light 50% );
 			}
 		}
+	}
 
-		&.has-featured-image {
-			//padding-left: 104px;
+	.reader__card.has-featured-image {
+		.reader__post-featured-image {
+			display: none;
 		}
+
+		&.is-photo-only {
+			.reader__post-featured-image {
+				display: block;
+				position: absolute;
+					top: auto;
+					right: 16px;
+					bottom: 32px;
+					left: 64px;
+				width: auto;
+				height: 200px;
+				z-index: 1;
+				border-radius: 3px;
+
+				/*
+				display: none;
+				position: absolute;
+					top: 8px;
+					left: 8px;
+					bottom: 8px;
+				border-radius: 3px;
+				width: 80px;
+				height: calc( 100% - 16px ) !important;
+				margin: 0;
+				overflow: hidden;
+				
+				img {
+					max-height: 100%;
+					max-width: none;
+				}
+				*/
+			}
+
+			.reader__post-footer {
+				margin-top: 224px;
+			}
+		}
+	}
+
+	// Hide x-posts for now. They need some thinking.
+	.reader__card.is-x-post {
+		display: none;
 	}
 
 	.reader__post-header {
@@ -319,50 +363,16 @@
 			overflow: visible;
 
 			.site__title {
-				position: absolute;
-					top: 24px;
-					left: -4px;
-				box-shadow: 0 0 0 1px rgba( $white, 0.8 );
-				background: lighten( $gray, 30 );
-				border: 1px solid lighten( $gray, 20 );
-				color: $gray-dark;
+				color: darken( $gray, 20 );
 				font-size: 13px;
-				margin: 4px 0 8px 0;
-				padding: 4px 8px;
-				border-radius: 3px;
-				z-index: 1;
-				opacity: 0;
-				transition: all 0.15s ease-in-out;
+				overflow: visible;
+				margin: 0 0 0 10px;
 			}
-		}
-
-		&:hover {
-			.site__content .site__title {
-				opacity: 1;
-			}
-		}
-	}
-
-	.reader__post-featured-image {
-		display: none;
-		position: absolute;
-			top: 8px;
-			left: 8px;
-			bottom: 8px;
-		border-radius: 3px;
-		width: 80px;
-		height: calc( 100% - 16px ) !important;
-		margin: 0;
-		overflow: hidden;
-		
-		img {
-			max-height: 100%;
-			max-width: none;
 		}
 	}
 
 	.reader__post-title {
-		margin: 0 0 2px 0;
+		margin: 22px 0 2px 0;
 		font-size: 16px;
 		white-space: nowrap;
 	}
