@@ -286,7 +286,6 @@
 	.site__domain,
 	.reader-post-byline,
 	.reader__post-featured-video,
-	.reader__card .reader__full-post-content,
 	.reader-post-images {
 		display: none;
 	}
@@ -317,7 +316,11 @@
 		&.is-selected {
 			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 				0 1px 2px lighten( $gray, 30% ),
-				inset 6px 0 0 $blue-wordpress;
+				-6px 0 0 $blue-wordpress;
+		}
+
+		.follow-button {
+			top: -18px;
 		}
 	}
 
@@ -385,6 +388,21 @@
 		.reader__post-title {
 			font-size: 15px;
 			font-weight: normal;
+		}
+	}
+
+	.reader__card.is-one-liner {
+		&:after {
+			display: none;
+		}
+
+		.reader__post-title {
+			white-space: normal;
+		}
+
+		.reader__full-post-content {
+			font-size: 14px;
+			color: darken( $gray, 20 );
 		}
 	}
 
