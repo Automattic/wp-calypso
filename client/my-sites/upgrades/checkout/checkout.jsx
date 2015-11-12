@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 
 	content: function() {
 		var selectedSite = this.props.sites.getSelectedSite();
-		var redirectTo = this.props.redirectTo;
+		var redirectTo = this.getCheckoutCompleteRedirectPath();
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -112,19 +112,10 @@ module.exports = React.createClass( {
 			return (
 				<SecurePaymentForm.Placeholder />
 			);
-		} else {
-			if ( this.props.cart.products.length === 1 && this.props.cart.products[0].free_trial ) {
-				redirectTo += '?free-trial=1';
-			}
-			return (
-				<SecurePaymentForm
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					cards={ this.props.cards }
-					products={ this.props.productsList.get() }
-					selectedSite={ selectedSite }
-					redirectTo={ redirectTo } />
-			);
+		} 
+
+		if ( this.props.cart.products.length === 1 && this.props.cart.products[0].free_trial ) {
+			redirectTo += '?free-trial=1';
 		}
 
 		return (
@@ -134,7 +125,7 @@ module.exports = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath() } />
+				redirectTo={ redirectTo } />
 		);
 	},
 
