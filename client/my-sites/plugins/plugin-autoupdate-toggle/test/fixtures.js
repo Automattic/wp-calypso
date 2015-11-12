@@ -3,7 +3,8 @@ module.exports = {
 		slug: 'test',
 		domain: '',
 		name: '',
-		canUpdateFiles: true
+		canUpdateFiles: true,
+		options: { file_mod_disabled: false }
 	},
 	plugin: { slug: 'test' },
 	notices: {
