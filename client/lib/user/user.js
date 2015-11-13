@@ -108,7 +108,7 @@ User.prototype.fetch = function() {
 
 	me.get( { meta: 'flags' }, function( error, data ) {
 		if ( error ) {
-			if ( ! config( 'wpcom_user_bootstrap' ) && ( error.error === 'authorization_required' || error.status === 403 ) ) {
+			if ( ! config( 'wpcom_user_bootstrap' ) && error.error === 'authorization_required' ) {
 				/**
 				 * if the user bootstrap is disabled (in development), we need to rely on a request to
 				 * /me to determine if the user is logged in.
