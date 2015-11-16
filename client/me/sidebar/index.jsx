@@ -73,21 +73,21 @@ module.exports = React.createClass( {
 						<h2 className="sidebar-heading">{ this.translate( 'Profile' ) }</h2>
 						<ul>
 							{ config.isEnabled( 'me/my-profile' ) &&
-									<MenuItem
-										selected={ selected === 'profile' }
-										href="/me"
-										label={ this.translate( 'My Profile' ) }
-										icon="user"
-									/>
+								<MenuItem
+									selected={ selected === 'profile' }
+									href="/me"
+									label={ this.translate( 'My Profile' ) }
+									icon="user"
+								/>
 							}
 
 							{ config.isEnabled( 'me/account' ) &&
-									<MenuItem
-										selected={ selected === 'account' }
-										href="/me/account"
-										label={ this.translate( 'Account Settings' ) }
-										icon="cog"
-									/>
+								<MenuItem
+									selected={ selected === 'account' }
+									href="/me/account"
+									label={ this.translate( 'Account Settings' ) }
+									icon="cog"
+								/>
 							}
 
 							{ config.isEnabled( 'upgrades/purchases/list' )
@@ -107,21 +107,21 @@ module.exports = React.createClass( {
 							}
 
 							{ config.isEnabled( 'me/security' ) &&
-									<MenuItem
-										selected={ selected === 'security' }
-										href="/me/security"
-										label={ this.translate( 'Security' ) }
-										icon="lock"
-									/>
+								<MenuItem
+									selected={ selected === 'security' }
+									href="/me/security"
+									label={ this.translate( 'Security' ) }
+									icon="lock"
+								/>
 							}
 
 							{ config.isEnabled( 'me/notifications' ) &&
-									<MenuItem
-										selected={ selected === 'notifications' }
-										href="/me/notifications"
-										label={ this.translate( 'Notifications' ) }
-										icon="bell"
-									/>
+								<MenuItem
+									selected={ selected === 'notifications' }
+									href="/me/notifications"
+									label={ this.translate( 'Notifications' ) }
+									icon="bell"
+								/>
 							}
 
 						</ul>
