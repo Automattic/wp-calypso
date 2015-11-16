@@ -72,19 +72,23 @@ module.exports = React.createClass( {
 					<li className="sidebar-menu me-profile">
 						<h2 className="sidebar-heading">{ this.translate( 'Profile' ) }</h2>
 						<ul>
-							<MenuItem
-								selected={ selected === 'profile' }
-								href={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
-								label={ this.translate( 'My Profile' ) }
-								icon="user"
-							/>
+							{ config.isEnabled( 'me/my-profile' ) &&
+									<MenuItem
+										selected={ selected === 'profile' }
+										href="/me"
+										label={ this.translate( 'My Profile' ) }
+										icon="user"
+									/>
+							}
 
-							<MenuItem
-								selected={ selected === 'account' }
-								href={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
-								label={ this.translate( 'Account Settings' ) }
-								icon="cog"
-							/>
+							{ config.isEnabled( 'me/account' ) &&
+									<MenuItem
+										selected={ selected === 'account' }
+										href="/me/account"
+										label={ this.translate( 'Account Settings' ) }
+										icon="cog"
+									/>
+							}
 
 							{ config.isEnabled( 'upgrades/purchases/list' )
 								? <MenuItem
@@ -93,27 +97,32 @@ module.exports = React.createClass( {
 									label={ this.translate( 'Manage Purchases' ) }
 									icon="credit-card"
 								/>
-								: <MenuItem
-									selected={ selected === 'billing' }
-									href={ config.isEnabled( 'me/billing-history' ) ? '/me/billing' : '//wordpress.com/me/billing' }
-									label={ this.translate( 'Billing History' ) }
-									icon="credit-card"
-								/>
+								: config.isEnabled( 'me/billing-history' ) &&
+									<MenuItem
+										selected={ selected === 'billing' }
+										href="/me/billing"
+										label={ this.translate( 'Billing History' ) }
+										icon="credit-card"
+									/>
 							}
 
-							<MenuItem
-								selected={ selected === 'security' }
-								href={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
-								label={ this.translate( 'Security' ) }
-								icon="lock"
-							/>
+							{ config.isEnabled( 'me/security' ) &&
+									<MenuItem
+										selected={ selected === 'security' }
+										href="/me/security"
+										label={ this.translate( 'Security' ) }
+										icon="lock"
+									/>
+							}
 
-							<MenuItem
-								selected={ selected === 'notifications' }
-								href={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-								label={ this.translate( 'Notifications' ) }
-								icon="bell"
-							/>
+							{ config.isEnabled( 'me/notifications' ) &&
+									<MenuItem
+										selected={ selected === 'notifications' }
+										href="/me/notifications"
+										label={ this.translate( 'Notifications' ) }
+										icon="bell"
+									/>
+							}
 
 						</ul>
 					</li>
