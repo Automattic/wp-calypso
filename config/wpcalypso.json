@@ -42,6 +42,7 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"premium-themes": true,
+		"premium-plans": true,
 		"press-this": true,
 		"manage/sharing": true,
 		"manage/plans": true,
