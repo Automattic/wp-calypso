@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! this.props.wporg ) {
-			return array( this.translate( 'This plugin is not in the WordPress.org plugin repository, so we can\'t autoupdate it.' ) );
+			return this.translate( 'This plugin is not in the WordPress.org plugin repository, so we can\'t autoupdate it.' );
 		}
 
 		if ( ! this.props.site.hasMinimumJetpackVersion ) {
