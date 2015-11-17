@@ -11,6 +11,8 @@ var analytics = require( 'analytics' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+	config = require( 'config' ),
+	EmptyContent = require( 'components/empty-content' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
 
 module.exports = React.createClass( {
@@ -49,10 +51,26 @@ module.exports = React.createClass( {
 		return <SidebarNavigation />;
 	},
 
+	renderUpgradePrompt() {
+		return (
+			<div className="main" role="main">
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate( 'Want to add extra features to your site?', { context: 'site setting upgrade' } ) }
+					line={ this.translate( 'Additional features are available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
+					/>
+			</div>
+		)
+	},
+
 	render: function() {
 		var classNames = 'main main-column ',
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
 				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain );
+
+		if ( ! config.isEnabled( 'premium-plans' ) ) {
+			return this.renderUpgradePrompt();
+		}
 
 		return (
 			<div className={ classNames } role="main">

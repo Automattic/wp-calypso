@@ -133,24 +133,27 @@ module.exports = React.createClass( {
 	},
 
 	upgradePrompt: function() {
-		var plansLink = '/plans/';
+		let upsell = {
+			illustration: '/calypso/images/drake/drake-whoops.svg',
+			title: this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ),
+			line: this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ),
+			isCompact: true,
+			actionCallback: this.trackUpgradeClick
+		};
 
-		if ( config.isEnabled( 'manage/plans' ) ) {
-			plansLink += this.props.site.domain;
-		} else {
-			plansLink += this.props.site.ID;
+		if ( config.isEnabled( 'premium-plans' ) ) {
+			upsell.action = this.translate( 'Upgrade Now', { context: 'site setting upgrade' } );
+			upsell.actionURL = '/plans/';
+
+			if ( config.isEnabled( 'manage/plans' ) ) {
+				upsell.actionURL += this.props.site.domain;
+			} else {
+				upsell.actionURL += this.props.site.ID;
+			}
 		}
 
 		return (
-			<EmptyContent
-				illustration="/calypso/images/drake/drake-whoops.svg"
-				title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
-				line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
-				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
-				actionURL={ plansLink }
-				isCompact={ true }
-				actionCallback={ this.trackUpgradeClick }
-			/>
+			<EmptyContent { ...upsell }/>
 		);
 	},
 
