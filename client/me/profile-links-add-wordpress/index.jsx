@@ -11,7 +11,8 @@ var config = require( 'config' ),
 	SimpleNotice = require( 'notices/simple-notice' ),
 	Site = require( 'my-sites/site' ),
 	sites = require( 'lib/sites-list' )(),
-	eventRecorder = require( 'me/event-recorder' );
+	eventRecorder = require( 'me/event-recorder' ),
+	Card = require( 'components/card' );
 
 module.exports = React.createClass( {
 
@@ -219,9 +220,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+			<Card>
 				{ 0 === sites.getPublic().length ? this.renderInvitationForm() : this.renderAddableSitesForm() }
-			</div>
+			</Card>
 		);
 	}
 } );
