@@ -28,6 +28,7 @@ var actions = require( 'lib/posts/actions' ),
 	SimpleNotice = require( 'notices/simple-notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
+	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
@@ -389,6 +390,9 @@ var PostEditor = React.createClass( {
 								onFocus={ this.onEditorFocus }
 								onTextEditorChange={ this.onEditorContentChange }
 								onTogglePin={ this.onTogglePin } />
+						</div>
+						<div className="post-editor__word-count-wrapper">
+							<EditorWordCount />
 						</div>
 						{ this.iframePreviewEnabled() ?
 							<EditorPreview
