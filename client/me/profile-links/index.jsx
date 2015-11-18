@@ -53,24 +53,9 @@ module.exports = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return {
-			showingForm: false,
+		return{
 			lastError: false
 		};
-	},
-
-	showAddWordPress: function( event ) {
-		event.preventDefault();
-		this.setState( { showingForm: 'wordpress' } );
-	},
-
-	showAddOther: function( event ) {
-		event.preventDefault();
-		this.setState( { showingForm: 'other' } );
-	},
-
-	hideForms: function() {
-		this.setState( { showingForm: false } );
 	},
 
 	onRemoveLinkResponse: function( error ) {
@@ -87,19 +72,6 @@ module.exports = React.createClass( {
 
 	onRemoveLink: function( profileLink ) {
 		this.props.userProfileLinks.deleteProfileLinkBySlug( profileLink.link_slug, this.onRemoveLinkResponse );
-	},
-
-	renderFormVisibilityControls: function() {
-		return (
-			<FormButtonsBar>
-				<FormButton onClick={ this.recordClickEvent( 'Add Other Site Button', this.showAddOther ) } isPrimary={ false } >
-					{ this.translate( 'Add Other Site' ) }
-				</FormButton>
-				<FormButton onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.showAddWordPress ) } isPrimary={ false } >
-					{ this.translate( 'Add a WordPress Site' ) }
-				</FormButton>
-			</FormButtonsBar>
-		);
 	},
 
 	possiblyRenderError: function() {
@@ -176,31 +148,6 @@ module.exports = React.createClass( {
 					: this.renderNoProfileLinks()
 				}
 
-				{
-					'wordpress' === this.state.showingForm
-					? (
-						<ProfileLinksAddWordPress
-							userProfileLinks={ this.props.userProfileLinks }
-							onSuccess={ this.hideForms }
-							onCancel={ this.hideForms }
-						/>
-					)
-					: null
-				}
-
-				{
-					'other' === this.state.showingForm
-					? (
-						<ProfileLinksAddOther
-							userProfileLinks={ this.props.userProfileLinks }
-							onSuccess={ this.hideForms }
-							onCancel={ this.hideForms }
-						/>
-					)
-					: null
-				}
-
-				{ ! this.state.showingForm ? this.renderFormVisibilityControls() : null }
 		</div>
 		);
 	}
