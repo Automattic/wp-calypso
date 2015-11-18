@@ -18,40 +18,20 @@ module.exports = React.createClass( {
   mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
   getDefaultProps: function() {
-    userProfileLinks: false
-  },
-
-  getInitialState: function() {
-    return {
-      showingForm: false,
-      lastError: false
+    return{
+      showingForm: false
     };
   },
 
-  showAddWordPress: function( event ) {
-    event.preventDefault();
-    this.setState( { showingForm: 'wordpress' } );
-  },
-
-  showAddOther: function( event ) {
-    event.preventDefault();
-    this.setState( { showingForm: 'other' } );
-  },
-
-  hideForms: function() {
-    this.setState( { showingForm: false } );
-  },
-
-  renderFormVisibilityControls: function() {
-    return (
+  renderButtons: function() {
+    return(
       <div>
-
-        <Button compact onClick={ this.recordClickEvent( 'Add Other Site Button', this.showAddOther ) } >
+        <Button compact onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) } >
           <Gridicon icon="plus-small" size={ 12 } />
           { this.translate( 'Add URL' ) }
         </Button>
 
-        <Button className="add-buttons__add-wp-site" compact primary onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.showAddWordPress ) } >
+        <Button className="add-buttons__add-wp-site" compact primary onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) } >
           <Gridicon icon="plus-small" size={ 12 } />
           { this.translate( 'Add WordPress Site' ) }
         </Button>
@@ -62,33 +42,11 @@ module.exports = React.createClass( {
   render: function() {
     return(
       <div>
-        {
-          'wordpress' === this.state.showingForm
-          ? (
-            <ProfileLinksAddWordPress
-              userProfileLinks={ this.props.userProfileLinks }
-              onSuccess={ this.hideForms }
-              onCancel={ this.hideForms }
-            />
-          )
+        { ! this.props.showingForm
+          ? this.renderButtons()
           : null
         }
-
-        {
-          'other' === this.state.showingForm
-          ? (
-            <ProfileLinksAddOther
-              userProfileLinks={ this.props.userProfileLinks }
-              onSuccess={ this.hideForms }
-              onCancel={ this.hideForms }
-            />
-          )
-          : null
-        }
-
-        { ! this.state.showingForm ? this.renderFormVisibilityControls() : null }
       </div>
     );
   }
-
 } );
