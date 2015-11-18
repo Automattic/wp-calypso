@@ -10,7 +10,8 @@ var React = require( 'react' ),
 var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	formBase = require( 'me/form-base' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
+	SectionHeader = require( 'components/section-header' ),
+	AddProfileLinksButtons = require( 'me/profile-links/add-buttons' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -18,6 +19,7 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	ProfileLinks = require( 'me/profile-links' ),
 	userProfileLinks = require( 'lib/user-profile-links' ),
+	ProfileLinkCreators = require( 'me/profile-links/creators.jsx' ),
 	ReauthRequired = require( 'me/reauth-required' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	Card = require( 'components/card' ),
@@ -124,13 +126,8 @@ module.exports = React.createClass( {
 					</form>
 				</Card>
 
-				<Card>
-					<FormSectionHeading>{ this.translate( 'Profile Links' ) }</FormSectionHeading>
-					<p>
-						{ this.translate( 'Manage which sites appear in your profile.' ) }
-					</p>
-					<ProfileLinks userProfileLinks={ userProfileLinks } />
-				</Card>
+				<ProfileLinks userProfileLinks={ userProfileLinks } />
+
 			</Main>
 		);
 	}

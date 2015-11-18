@@ -10,7 +10,8 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormButton = require( 'components/forms/form-button' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	Notice = require( 'components/notice' );
+	Notice = require( 'components/notice' ),
+	Card = require( 'components/card' );
 
 module.exports = React.createClass( {
 
@@ -126,40 +127,42 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<form className="profile-links-add-other" onSubmit={ this.onSubmit }>
-				<p>
-					{ this.translate( 'Please enter the URL and description of the site you want to add to your profile.' ) }
-				</p>
-				{ this.possiblyRenderError() }
-				<FormFieldset>
-					<FormTextInput
-						className="profile-links-add-other__value"
-						valueLink={ this.linkState( 'value' ) }
-						placeholder={ this.translate( 'Enter a URL' ) }
-						onFocus={ this.recordFocusEvent( 'Add Other Site URL Field' ) }
-					/>
-					<FormTextInput
-						className="profile-links-add-other__title"
-						valueLink={ this.linkState( 'title' ) }
-						placeholder={ this.translate( 'Enter a description' ) }
-						onFocus={ this.recordFocusEvent( 'Add Other Site Description Field' ) }
-					/>
-					<FormButton
-						className="profile-links-add-other__add"
-						disabled={ this.getFormDisabled() }
-						onClick={ this.recordClickEvent( 'Save Other Site Button' ) }
-					>
-						{ this.translate( 'Add Site' ) }
-					</FormButton>
-					<FormButton
-						className="profile-links-add-other__cancel"
-						isPrimary={ false }
-						onClick={ this.recordClickEvent( 'Cancel Other Site Button', this.onCancel ) }
-					>
-						{ this.translate( 'Cancel' ) }
-					</FormButton>
-				</FormFieldset>
-			</form>
+			<Card>
+				<form className="profile-links-add-other" onSubmit={ this.onSubmit }>
+					<p>
+						{ this.translate( 'Please enter the URL and description of the site you want to add to your profile.' ) }
+					</p>
+					{ this.possiblyRenderError() }
+					<FormFieldset>
+						<FormTextInput
+							className="profile-links-add-other__value"
+							valueLink={ this.linkState( 'value' ) }
+							placeholder={ this.translate( 'Enter a URL' ) }
+							onFocus={ this.recordFocusEvent( 'Add Other Site URL Field' ) }
+						/>
+						<FormTextInput
+							className="profile-links-add-other__title"
+							valueLink={ this.linkState( 'title' ) }
+							placeholder={ this.translate( 'Enter a description' ) }
+							onFocus={ this.recordFocusEvent( 'Add Other Site Description Field' ) }
+						/>
+						<FormButton
+							className="profile-links-add-other__add"
+							disabled={ this.getFormDisabled() }
+							onClick={ this.recordClickEvent( 'Save Other Site Button' ) }
+						>
+							{ this.translate( 'Add Site' ) }
+						</FormButton>
+						<FormButton
+							className="profile-links-add-other__cancel"
+							isPrimary={ false }
+							onClick={ this.recordClickEvent( 'Cancel Other Site Button', this.onCancel ) }
+						>
+							{ this.translate( 'Cancel' ) }
+						</FormButton>
+					</FormFieldset>
+				</form>
+			</Card>
 		);
 	}
 } );
