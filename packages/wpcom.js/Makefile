@@ -10,34 +10,43 @@ BIN := $(THIS_DIR)/node_modules/.bin
 NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
 MOCHA ?= $(NODE) $(BIN)/mocha
-BROWSERIFY ?= $(NODE) $(BIN)/browserify
+BABEL ?= $(NODE) $(BIN)/babel
+WEBPACK ?= $(NODE) $(BIN)/webpack
 
 standalone: dist/wpcom.js
 
-install: node_modules
-
 clean:
-	@rm -rf node_modules dist
+	@rm -rf dist
 
-dist:
+distclean: clean
+	@rm -rf node_modules
+
+dist: dist/lib dist/test
 	@mkdir -p $@
 
-dist/wpcom.js: node_modules *.js dist lib/*.js
-	@$(BROWSERIFY) -s WPCOM . > $@
+dist/lib: dist/lib/util
+	@mkdir -p $@
 
-node_modules: package.json
-	@NODE_ENV= $(NPM) install
-	@touch node_modules
+dist/lib/util:
+	@mkdir -p $@
+
+dist/test:
+	@mkdir -p $@
+
+dist/wpcom.js: *.js dist lib/*.js
+	@$(WEBPACK) -p --config webpack.config.js
+
+babelify: dist
+	@$(BABEL) index.js --out-file dist/index.js
+	@$(BABEL) lib --out-dir dist/lib
+	@$(BABEL) lib/util --out-dir dist/lib/util
+	@$(BABEL) test --out-dir dist/test
 
 example-server:
 	cd examples/server/; $(NPM) install
 	$(NODE) examples/server/index.js
 
-example-browser-cors: all
-	cd examples/browser-cors/; $(NPM) install
-	$(NODE) examples/browser-cors/index.js
-
-test: node_modules
+test: babelify
 	@$(MOCHA) \
 		--compilers js:babel/register \
 		--timeout 120s \
@@ -46,7 +55,7 @@ test: node_modules
 		--bail \
 		--reporter spec
 
-test-all: node_modules
+test-all: babelify
 	@$(MOCHA) \
 		--compilers js:babel/register \
 		--timeout 120s \
@@ -54,4 +63,7 @@ test-all: node_modules
 		--bail \
 		--reporter spec
 
-.PHONY: all standalone install clean test test-all
+publish: clean standalone
+	$(NPM) publish
+
+.PHONY: all standalone clean distclean babelify example-server example-browser-cors test test-all publish

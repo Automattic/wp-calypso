@@ -1,64 +1,87 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>wpcom.js over iframe proxy Media Upload Test Page</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <div>Select one or more files to upload media library (site_id=<strong id="site"></strong>):</div>
-    <div><input type="file" id="file" multiple disabled></div>
-    <script src="../../dist/wpcom.js"></script>
-    <script src="http://wzrd.in/standalone/wpcom-proxy-request@1.0.x"></script>
-    <script>
-      var wpcom = WPCOM();
+		<head>
+		<title>wpcom.js over iframe proxy Media Upload Test Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
 
-      // have this `wpcom` instance use the `wpcom-proxy-request`
-      // function for API requests
-      wpcom.request = wpcomProxyRequest;
+	<body>
+		<div>
+			Select one or more files to upload media library .
+		</div>
+		<br />
+		<div id="site">connecting to blog ...</div>
+		<hr />
+		<div>
+			<input type="file" id="file" multiple disabled />
+		</div>
+		<hr />
 
-      // upgrade to "access all users blogs" mode
-      wpcom.request({
-        metaAPI: { accessAllUsersBlogs: true }
-      }, function(err) {
-        if (err) throw err;
-        console.log('proxy now running in "access all user\'s blogs" mode');
-      });
+		<script src="../../dist/wpcom.js"></script>
+		<script src="http://wzrd.in/standalone/wpcom-proxy-request@1.0.x"></script>
+		<script>
+			var wpcom = WPCOM();
 
-      var site;
-      var input = document.getElementById('file');
+			// have this `wpcom` instance use the `wpcom-proxy-request`
+			// function for API requests
+			wpcom.request = wpcomProxyRequest;
 
-      wpcom.me().get(function (err, data) {
-        if (err) throw err;
-        site = data.primary_blog;
-        document.getElementById('site').innerHTML = site;
-        input.removeAttribute('disabled');
-      });
+			// upgrade to "access all users blogs" mode
+			wpcom.request({
+				metaAPI: { accessAllUsersBlogs: true }
+			}, function(err) {
+			if (err) throw err;
+				console.log('proxy now running in "access all user\'s blogs" mode');
+			});
 
-      // select files on the "input" element
-      input.onchange = function (e) {
+			var siteId;
+			var input = document.getElementById('file');
 
-        var files = [];
-        for (var i = 0; i < e.target.files.length; i++) {
-          files.push(e.target.files[i]);
-        }
+			wpcom.me().get(function (err, data) {
+				if (err) throw err;
 
-        // do the API request through the iframe proxy
-        var req = wpcom.site(site).addMediaFiles(files, function(err, res){
-          if (err) throw err;
-          console.log('response', res);
-        });
+				siteId = data.primary_blog;
 
-        req.upload.onprogress = onprogress;
-      };
+				wpcom
+				.site( siteId )
+				.get( function( err, data ) {
+					if (err) throw err;
 
-      function onprogress (e) {
-        if (e.lengthComputable) {
-          var percentComplete = e.loaded / e.total * 100;
-          console.log('progress event! %s%', percentComplete.toFixed(2));
-        } else {
-          // Unable to compute progress information since the total size is unknown
-        }
-      }
-    </script>
-  </body>
+					var html = '<br />site: <strong>' + data.URL + '</strong><br />';
+					html += '<em>' + data.description + '</em><br />';
+
+					document.getElementById('site').innerHTML = html;
+					input.removeAttribute('disabled');
+				} );
+			});
+
+			// select files on the "input" element
+			input.onchange = function (e) {
+				var files = [];
+				for (var i = 0; i < e.target.files.length; i++) {
+					files.push(e.target.files[i]);
+				}
+
+				// do the API request through the iframe proxy
+				var req = wpcom
+				.site(siteId)
+				.addMediaFiles(files, function(err, res){
+					if (err) throw err;
+
+					console.log('response', res);
+				});
+
+				req.upload.onprogress = onprogress;
+			};
+
+			function onprogress (e) {
+				if (e.lengthComputable) {
+				var percentComplete = e.loaded / e.total * 100;
+				console.log('progress event! %s%', percentComplete.toFixed(2));
+				} else {
+				// Unable to compute progress information since the total size is unknown
+				}
+			}
+		</script>
+	</body>
 </html>

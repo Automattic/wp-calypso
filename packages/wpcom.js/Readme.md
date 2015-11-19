@@ -22,9 +22,11 @@ blog.posts({ number: 8 })
 
 ### Browser
 
-Include `dist/wpcom.js` in a `<script>` tag:
+Include `dist/wpcom.js` and a suitable browser shim if needed
+to support the ES2015 features in `<script>` tags:
 
 ```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.25/browser-polyfill.js"></script>
 <script src="wpcom.js"></script>
 <script>
   var wpcom = WPCOM('<your-token>');

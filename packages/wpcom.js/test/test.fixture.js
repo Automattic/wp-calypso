@@ -3,7 +3,7 @@
  * Module dependencies
  */
 
-var WPCOM = require('../');
+var WPCOM = require('../dist/');
 var Site = require('../lib/site');
 var assert = require('assert');
 

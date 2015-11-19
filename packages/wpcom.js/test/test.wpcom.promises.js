@@ -26,7 +26,7 @@ function timedCallback( delay, caller = trueCallback ) {
 describe('wpcom', function(){
 	var wpcom = util.wpcom_public();
 
-	describe.only('wpcom.promises', function(){
+	describe('wpcom.promises', function(){
 		it('should fail when slower than timeout', done => {
 			wpcom.site(util.site()).postsList()
 				.timeout( 10 )

@@ -5,3 +5,6 @@ npm-debug.log
 /gh-tmp
 .DS_Store
 .idea
+/dist
+!/dist/wpcom.js
+!/dist/wpcom.js.map

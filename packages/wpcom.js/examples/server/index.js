@@ -10,7 +10,7 @@ var WPCOM = require('../../');
  * wpcon app data
  */
 
-var wpapp = require('../../test/data');
+var wpapp = require('../../test/config');
 
 /**
  * Create a WPCOM instance
@@ -29,7 +29,7 @@ app.set('view engine', 'jade');
 
 app.get('/', function(req, res){
   // set site id
-  var site = wpcom.site(wpapp.site.public.url);
+  var site = wpcom.site(wpapp.site);
 
   // get site info
   site.get(function(err, info){

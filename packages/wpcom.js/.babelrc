@@ -1,3 +1,4 @@
 {
-	"blacklist": [ "strict" ]
+	"blacklist": [ "strict" ],
+	"sourceMaps": "true"
 }
