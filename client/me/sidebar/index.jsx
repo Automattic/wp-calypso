@@ -98,7 +98,6 @@ module.exports = React.createClass( {
 									icon="credit-card"
 								/>
 								: config.isEnabled( 'me/billing-history' ) &&
-									<MenuItem
 										selected={ selected === 'billing' }
 										href="/me/billing"
 										label={ this.translate( 'Billing History' ) }
