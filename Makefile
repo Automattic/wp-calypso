@@ -26,7 +26,7 @@ LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= $(THIS_DIR)/server/devdocs/bin/generate-devdocs-index
 
 # files used as prereqs
-SASS_FILES := $(shell find client assets -type f -name '*.scss')
+SASS_FILES := $(shell find client shared assets -type f -name '*.scss')
 JS_FILES := $(shell find . -type f \( -name '*.js' -or -name '*.jsx' \) -and -not \( -path './node_modules/*' -or  -path './public/*' \) )
 MD_FILES := $(shell find . -name '*.md' -and -not -path '*node_modules*' -and -not -path '*.git*' | sed 's/ /\\ /g')
 CLIENT_CONFIG_FILE := client/config/index.js
