@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var Card = require( 'components/card' ),
 	Helpers = require( 'lib/themes/helpers' ),
+	config = require( 'config' ),
 	CurrentThemeButton = require( './button' );
 
 /**
@@ -48,11 +49,13 @@ var CurrentTheme = React.createClass( {
 					'current-theme__actions',
 					{ 'two-buttons': site.jetpack }
 					) } >
-					<CurrentThemeButton name="customize"
-						label={ this.translate( 'Customize' ) }
-						noticon="paintbrush"
-						href={ this.props.canCustomize ? Helpers.getCustomizeUrl( null, site ) : null }
-						onClick={ this.trackClick } />
+					{ config.isEnabled( 'manage/customize' ) &&
+						<CurrentThemeButton name="customize"
+							label={ this.translate( 'Customize' ) }
+							noticon="paintbrush"
+							href={ this.props.canCustomize ? Helpers.getCustomizeUrl( null, site ) : null }
+							onClick={ this.trackClick } />
+					}
 					<CurrentThemeButton name="details"
 						label={ this.translate( 'Details' ) }
 						noticon="info"
@@ -70,4 +73,3 @@ var CurrentTheme = React.createClass( {
 } );
 
 module.exports = CurrentTheme;
-
