@@ -12,14 +12,14 @@ export default React.createClass( {
 	displayName: 'RemoveButton',
 
 	propTypes: {
-  	icon: React.PropTypes.string,
-  	disabled: React.PropTypes.bool,
+		icon: React.PropTypes.string,
+		disabled: React.PropTypes.bool,
 		onClick: React.PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
-      icon: 'remove',
+			icon: 'remove',
 			disabled: false,
 			compact: false,
 			scary: false,
