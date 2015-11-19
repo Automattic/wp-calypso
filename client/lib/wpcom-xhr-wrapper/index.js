@@ -8,6 +8,10 @@ export default function( params, callback ) {
 			error.message = error.response.body.message;
 			error.error = error.response.body.error;
 			error.statusCode = error.status;
+
+			if ( error.error === 'invalid_token' ) {
+				require( 'lib/user/utils' ).logout();
+			}
 		}
 
 		callback( error, response );
