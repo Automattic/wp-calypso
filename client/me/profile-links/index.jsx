@@ -134,7 +134,7 @@ module.exports = React.createClass( {
 
 	renderPlaceholder: function() {
 		return (
-			<div className="profile-links">
+			<div>
 				{ _times( 2, function( index ) {
 					return (
 						<ProfileLink
