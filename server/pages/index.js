@@ -153,12 +153,6 @@ function getDefaultContext( request ) {
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
-	if ( CALYPSO_ENV === 'desktop' ) {
-		context.badge = 'desktop';
-		context.feedbackURL = 'https://github.com/Automattic/wordpress-desktop/issues';
-		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
-	}
-
 	if ( CALYPSO_ENV === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
