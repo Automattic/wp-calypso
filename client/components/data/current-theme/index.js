@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var CurrentThemeStore = require( 'lib/themes/stores/current-theme' ),
-	Actions = require( 'lib/themes/actions' );
+	Actions = require( 'lib/themes/flux-actions' );
 
 /**
  * Fetches the currently active theme of the supplied site

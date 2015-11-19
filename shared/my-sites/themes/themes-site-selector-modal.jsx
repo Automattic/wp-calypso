@@ -12,7 +12,7 @@ import partial from 'lodash/function/partial';
  */
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
-import Action from 'lib/themes/actions';
+import Action from 'lib/themes/flux-actions';
 import Helper from 'lib/themes/helpers';
 
 const ThemesSiteSelectorModal = React.createClass( {

@@ -72,6 +72,7 @@
     "react-redux": "3.1.0",
     "react-tap-event-plugin": "0.1.6",
     "redux": "3.0.4",
+    "redux-analytics": "0.3.0",
     "redux-thunk": "1.0.0",
     "rtlcss": "1.6.1",
     "sanitize-html": "1.11.1",

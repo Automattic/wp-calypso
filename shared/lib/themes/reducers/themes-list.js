@@ -24,7 +24,7 @@ const defaultQueryState = fromJS( {
 	isFetchingNextPage: false
 } );
 
-const initialState = query( fromJS( {
+export const initialState = query( fromJS( {
 	list: [],
 	nextId: 0,
 	query: {},
@@ -68,7 +68,7 @@ function searchJetpackThemes( state ) {
  * Pure helpers
  */
 
-function isLastPage( list, action ) {
+function isActionForLastPage( list, action ) {
 	return ! action.found ||
 		list.length === action.found ||
 		action.themes.length === 0;
@@ -88,8 +88,8 @@ function matches( theme, rawSearch ) {
 	) );
 }
 
-const reducer = ( state = initialState, payload ) => {
-	const { action } = payload;
+export const reducer = ( state = initialState, payload ) => {
+	const { action = payload } = payload;
 
 	switch ( action.type ) {
 		case ThemeConstants.QUERY_THEMES:
@@ -106,7 +106,7 @@ const reducer = ( state = initialState, payload ) => {
 
 				return searchJetpackThemes(
 					newState.setIn( [ 'queryState', 'isLastPage' ],
-						isLastPage( newState.get( 'list' ), action ) ) );
+						isActionForLastPage( newState.get( 'list' ), action ) ) );
 			}
 			return state;
 
@@ -135,4 +135,14 @@ const reducer = ( state = initialState, payload ) => {
 	return state;
 };
 
-export { initialState, reducer };
+export function getThemesList( state ) {
+	return state.get( 'list' );
+}
+
+export function getQueryParams( state ) {
+	return state.get( 'query' ).toObject();
+}
+
+export function isFetchingNextPage( state ) {
+	return state.getIn( [ 'queryState', 'isFetchingNextPage' ] );
+}
