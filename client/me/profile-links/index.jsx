@@ -9,14 +9,10 @@ var React = require( 'react' ),
  */
 var ProfileLink = require( 'me/profile-link' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ProfileLinksAddWordPress = require( 'me/profile-links-add-wordpress' ),
-	ProfileLinksAddOther = require( 'me/profile-links-add-other' ),
 	ProfileLinkCreators = require( 'me/profile-links/creators' ),
 	AddProfileLinksButtons = require( 'me/profile-links/add-buttons' ),
 	SectionHeader = require( 'components/section-header' ),
 	Card = require( 'components/card' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	Notice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' );
 
@@ -57,7 +53,7 @@ module.exports = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return{
+		return {
 			showingForm: false,
 			lastError: false
 		};
@@ -136,7 +132,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderPlaceholder: function(){
+	renderPlaceholder: function() {
 		return (
 			<div className="profile-links">
 				{ _times( 2, function( index ) {
@@ -179,7 +175,6 @@ module.exports = React.createClass( {
 						onShowAddWordPress={ this.showAddWordPress } />
 				</SectionHeader>
 				<Card>
-
 					<ProfileLinkCreators
 						userProfileLinks={ this.props.userProfileLinks }
 						showingForm={ this.state.showingForm }
@@ -190,9 +185,11 @@ module.exports = React.createClass( {
 					</p>
 
 					<div className="profile-links">
-							{ ! this.props.userProfileLinks.initialized
-								? this.renderPlaceholder()
-								: this.renderLinks() }
+						{
+							! this.props.userProfileLinks.initialized
+							? this.renderPlaceholder()
+							: this.renderLinks()
+						}
 					</div>
 				</Card>
 			</div>
