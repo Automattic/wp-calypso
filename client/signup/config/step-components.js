@@ -7,8 +7,7 @@ var EmailSignupComponent = require( 'signup/steps/email-signup-form' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
 	DomainsStepComponent = require( 'signup/steps/domains' ),
 	DSSStepComponent = require( 'signup/steps/dss' ),
-	config = require( 'config' ),
-	jetpackUserComponent = require( 'signup/steps/jetpack' );
+	config = require( 'config' );
 
 module.exports = {
 	themes: ThemeSelectionComponent,
@@ -20,5 +19,5 @@ module.exports = {
 	domains: DomainsStepComponent,
 	'domains-with-theme': DomainsStepComponent,
 	'theme-dss': DSSStepComponent,
-	'jetpack-user': jetpackUserComponent
+	'jetpack-user': EmailSignupComponent
 };
