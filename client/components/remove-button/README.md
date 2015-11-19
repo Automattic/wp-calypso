@@ -6,7 +6,7 @@ This component is used to implement dang sweet remove/trash/delete/disconnect/de
 #### How to use:
 
 ```js
-var Button = require( 'components/remove-button' );
+var RemoveButton = require( 'components/remove-button' );
 
 render: function() {
 	return (

@@ -9,7 +9,7 @@ var React = require( 'react' );
 var RemoveButton = require( 'components/remove-button' ),
 	Card = require( 'components/card' );
 
-var Buttons = React.createClass( {
+var RemoveButtons = React.createClass( {
 	displayName: 'RemoveButtons',
 
 	getInitialState: function() {
@@ -24,7 +24,7 @@ var Buttons = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/buttons">RemoveButton</a>
+					<a href="/devdocs/design/removebuttons">RemoveButton</a>
 					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
 				</h2>
 				{ this.renderButtons() }
@@ -46,7 +46,7 @@ var Buttons = React.createClass( {
 					</div>
 					<div className="design-assets__button-row">
 						<RemoveButton></RemoveButton>
-						<RemoveButton disabled ></RemoveButton>		
+						<RemoveButton disabled ></RemoveButton>
 						<RemoveButton icon="trash"></RemoveButton>
 						<RemoveButton icon="disconnect"></RemoveButton>
 
@@ -104,4 +104,4 @@ var Buttons = React.createClass( {
 	}
 } );
 
-module.exports = Buttons;
+module.exports = RemoveButtons;
