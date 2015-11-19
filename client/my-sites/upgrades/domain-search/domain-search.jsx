@@ -13,7 +13,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	Main = require( 'components/main' );
+	Main = require( 'components/main' ),
+	config = require( 'config' );
 
 module.exports = React.createClass( {
 	displayName: 'DomainSearch',
@@ -61,7 +62,15 @@ module.exports = React.createClass( {
 			} ),
 			content;
 
-		if ( ! this.state.domainRegistrationAvailable ) {
+		if ( ! config.isEnabled( 'premium-plans' ) ) {
+			content = (
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate( 'Want to use custom domains on your site?', { context: 'site setting upgrade' } ) }
+					line={ this.translate( 'Custom domains are available with WordPress.com.', { context: 'site setting upgrade' } ) }
+					/>
+			);
+		} else if ( ! this.state.domainRegistrationAvailable ) {
 			content = (
 				<EmptyContent
 					illustration='/calypso/images/drake/drake-500.svg'
