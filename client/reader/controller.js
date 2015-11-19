@@ -528,7 +528,8 @@ module.exports = {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				suppressSiteNameLink: true
+				suppressSiteNameLink: true,
+				showBack: false
 			} ),
 			document.getElementById( 'primary' )
 		);
