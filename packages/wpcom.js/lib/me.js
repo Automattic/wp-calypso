@@ -21,7 +21,7 @@ function Me(wpcom) {
  * @api public
  */
 
-Me.prototype.get = function (query, fn) {
+Me.prototype.get = function(query, fn) {
   return this.wpcom.req.get('/me', query, fn);
 };
 
@@ -33,7 +33,7 @@ Me.prototype.get = function (query, fn) {
  * @api private
  */
 
-Me.prototype.sites = function (query, fn) {
+Me.prototype.sites = function(query, fn) {
   return this.wpcom.req.get('/me/sites', query, fn);
 };
 
@@ -45,7 +45,7 @@ Me.prototype.sites = function (query, fn) {
  * @api public
  */
 
-Me.prototype.likes = function (query, fn) {
+Me.prototype.likes = function(query, fn) {
   return this.wpcom.req.get('/me/likes', query, fn);
 };
 
@@ -57,10 +57,9 @@ Me.prototype.likes = function (query, fn) {
  * @api public
  */
 
-Me.prototype.groups = function (query, fn) {
+Me.prototype.groups = function(query, fn) {
   return this.wpcom.req.get('/me/groups', query, fn);
 };
-
 
 /**
  * Expose `Me` module

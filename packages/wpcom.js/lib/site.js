@@ -3,12 +3,12 @@
  * Module dependencies.
  */
 
-var Post = require('./post');
-var Category = require('./category');
-var Tag = require('./tag');
-var Media = require('./media');
-var Comment = require('./comment');
-var Follow = require('./follow');
+var Post = require('./site.post');
+var Category = require('./site.category');
+var Tag = require('./site.tag');
+var Media = require('./site.media');
+var Comment = require('./site.comment');
+var Follow = require('./site.follow');
 var debug = require('debug')('wpcom:site');
 
 /**

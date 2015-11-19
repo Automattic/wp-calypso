@@ -3,9 +3,9 @@
  * Module dependencies.
  */
 
-var Like = require('./like');
-var Reblog = require('./reblog');
-var Comment = require('./comment');
+var Like = require('./site.post.like');
+var Reblog = require('./site.post.reblog');
+var Comment = require('./site.comment');
 var debug = require('debug')('wpcom:post');
 
 /**

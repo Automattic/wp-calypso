@@ -29,7 +29,7 @@
     "radix": [ 2 ],
     "semi": [ 2, "always" ],
     "space-before-blocks": [ 2, "always" ],
-    "space-before-function-paren": [ 2, { "anonymous": "always", "named": "never" } ],
+	"space-before-function-paren": [ 1, "never" ],
     "vars-on-top": [ 1 ],
     "wrap-iife": [ 2, "inside" ]
   }

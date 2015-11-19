@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var CommentLike = require('./commentlike');
+var CommentLike = require('./site.comment.like');
 
 /**
  * Comment methods
