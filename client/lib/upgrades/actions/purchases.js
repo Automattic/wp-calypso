@@ -17,6 +17,33 @@ const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 
+function cancelPurchase( purchaseId, onComplete ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.PURCHASES_CANCEL,
+		purchaseId
+	} );
+
+	wpcom.cancelPurchase( purchaseId, ( error, data ) => {
+		debug( error, data );
+
+		const success = ! error && data.success;
+
+		if ( success ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.PURCHASES_CANCEL_COMPLETED,
+				purchaseId
+			} );
+		} else {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.PURCHASES_CANCEL_FAILED,
+				purchaseId
+			} );
+		}
+
+		onComplete( success );
+	} );
+}
+
 function cancelPrivateRegistration( purchaseId, onComplete ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL,
@@ -142,6 +169,7 @@ function fetchUserPurchases() {
 }
 
 export {
+	cancelPurchase,
 	cancelPrivateRegistration,
 	deleteStoredCard,
 	fetchSitePurchases,

@@ -17,12 +17,6 @@ export default {
 		page( paths.list() );
 	},
 
-	goToCancelConfirmation() {
-		const { domain, id } = this.getPurchase();
-
-		page( paths.confirmCancelPurchase( domain, id ) );
-	},
-
 	goToEditCardDetails() {
 		const { domain, id, payment: { creditCard } } = this.getPurchase();
 

@@ -63,7 +63,7 @@ function submitForm( { form, onSubmit, selectedPurchase, selectedSite } ) {
 
 	button.disabled = true;
 
-	wpcom.cancelProduct( selectedPurchase.id, formData, ( error, response ) => {
+	wpcom.cancelAndRefundPurchase( selectedPurchase.id, formData, ( error, response ) => {
 		if ( error ) {
 			button.disabled = false;
 			onSubmit( error );

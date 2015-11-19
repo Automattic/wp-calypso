@@ -87,8 +87,7 @@ const CancelPurchase = React.createClass( {
 
 				<CompactCard className="cancel-purchase__footer">
 					<CancelPurchaseButton
-						purchase={ purchase }
-						onClick={ this.goToCancelConfirmation } />
+						purchase={ purchase } />
 				</CompactCard>
 			</Main>
 		);
