@@ -11,7 +11,7 @@ import Button from 'components/button';
 import { cancelPurchase } from 'lib/upgrades/actions';
 import paths from 'me/purchases/paths';
 import notices from 'notices';
-import { isRefundable, purchaseTitle } from 'lib/purchases';
+import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
@@ -31,18 +31,33 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	cancelPurchase() {
-		const { id } = this.props.purchase;
+		const { purchase } = this.props,
+			{ id } = purchase;
 
 		this.toggleDisabled();
 
 		cancelPurchase( id, ( success ) => {
+			const purchaseName = getName( purchase ),
+				subscriptionEndDate = getSubscriptionEndDate( purchase );
+
 			if ( success ) {
-				notices.success( this.translate( 'Purchase successfully cancelled.' ), { persistent: true } );
+				notices.success( this.translate(
+					'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.',
+					{
+						args: {
+							purchaseName,
+							subscriptionEndDate
+						}
+					}
+				), { persistent: true } );
 				page.redirect( paths.list() );
 			} else {
 				notices.error( this.translate(
-					'There was a problem canceling this purchase. ' +
-					'Please try again later or contact support.'
+					'There was a problem canceling %(purchaseName)s. ' +
+					'Please try again later or contact support.',
+					{
+						args: { purchaseName }
+					}
 				) );
 				this.toggleDisabled();
 			}
@@ -56,15 +71,15 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	render() {
-		const purchase = this.props.purchase,
-			productName = purchaseTitle( purchase );
+		const { purchase } = this.props,
+			purchaseName = getName( purchase );
 
 		if ( isRefundable( purchase ) ) {
 			return (
 				<Button type="button"
 					onClick={ this.goToCancelConfirmation }>
-					{ this.translate( 'Cancel and Refund %(productName)s', {
-						args: { productName }
+					{ this.translate( 'Cancel and Refund %(purchaseName)s', {
+						args: { purchaseName }
 					} ) }
 				</Button>
 			);
@@ -74,8 +89,8 @@ const CancelPurchaseButton = React.createClass( {
 			<Button type="button"
 				disabled={ this.state.disabled }
 				onClick={ this.cancelPurchase }>
-				{ this.translate( 'Cancel %(productName)s', {
-					args: { productName }
+				{ this.translate( 'Cancel %(purchaseName)s', {
+					args: { purchaseName }
 				} ) }
 			</Button>
 		);

@@ -28,6 +28,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	hasPaymentMethod,
 	hasPrivateRegistration,
+	isCancelable,
 	isExpired,
 	isExpiring,
 	isPaidWithCreditCard,
@@ -433,9 +434,9 @@ const ManagePurchase = React.createClass( {
 
 	renderCancelPurchaseNavItem() {
 		const purchase = this.getPurchase(),
-			{ domain, id, isCancelable } = purchase;
+			{ domain, id } = purchase;
 
-		if ( isExpired( purchase ) || ! isCancelable ) {
+		if ( isExpired( purchase ) || ! isCancelable( purchase ) ) {
 			return null;
 		}
 

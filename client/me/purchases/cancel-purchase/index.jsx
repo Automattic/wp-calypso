@@ -16,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
-import { purchaseTitle } from 'lib/purchases';
+import { isCancelable, purchaseTitle } from 'lib/purchases';
 import purchasesMixin from '../purchases-mixin';
 
 const CancelPurchase = React.createClass( {
@@ -101,9 +101,9 @@ const CancelPurchase = React.createClass( {
 		const purchase = this.getPurchase();
 
 		if ( purchase ) {
-			const { domain, id, isCancelable } = purchase;
+			const { domain, id } = purchase;
 
-			if ( ! isCancelable ) {
+			if ( ! isCancelable( purchase ) ) {
 				page.redirect( paths.managePurchase( domain, id ) );
 			}
 		} else {
