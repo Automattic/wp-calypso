@@ -40,7 +40,7 @@ export default React.createClass( {
 			'deactivate':	'cross',
 			'delete':			'trash',
 		};
-		const buttonClasses = classNames( {
+		const buttonClasses = classNames( this.props.className, {
 			'button-remove': true,
 			'is-compact': this.props.compact,
 			'is-scary': this.props.scary
@@ -53,8 +53,8 @@ export default React.createClass( {
 		}
 
 		return(
-			<button onClick={ this.props.onClick } disabled={ this.props.disabled } className={ classNames( this.props.className, buttonClasses ) }>
-				<Gridicon icon={ buttonIcons[ this.props.icon ] } size={ iconSize } />
+			<button onClick={ this.props.onClick } disabled={ this.props.disabled } className={ buttonClasses }>
+				<Gridicon icon={ buttonIcons[this.props.icon] } size={ iconSize } />
 				{ this.props.children }
 			</button>
 		);
