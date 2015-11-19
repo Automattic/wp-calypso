@@ -8,7 +8,7 @@ var React = require( 'react/addons' );
  */
 var Dialog = require( 'components/dialog' ),
 		PulsingDot = require( 'components/pulsing-dot' ),
-		Action = require( 'lib/themes/actions' ),
+		Action = require( 'lib/themes/flux-actions' ),
 		Helpers = require( 'lib/themes/helpers' );
 
 var ThanksModal = React.createClass( {

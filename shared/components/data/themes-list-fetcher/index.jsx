@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var ThemesStore = require( 'lib/themes/stores/themes' ),
 	ThemesListStore = require( 'lib/themes/stores/themes-list' ),
-	Actions = require( 'lib/themes/actions' ),
+	Actions = require( 'lib/themes/flux-actions' ),
 	Constants = require( 'lib/themes/constants' );
 
 function queryThemes( props ) {

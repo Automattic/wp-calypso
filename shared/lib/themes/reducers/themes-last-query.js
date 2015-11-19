@@ -8,15 +8,15 @@ import { fromJS } from 'immutable';
  */
 import ThemeConstants from '../constants';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	previousSiteId: 0,
 	currentSiteId: null,
 	isJetpack: null,
 	lastParams: null,
 } );
 
-const reducer = ( state = initialState, payload ) => {
-	const { action } = payload;
+export const reducer = ( state = initialState, payload ) => {
+	const { action = payload } = payload;
 
 	// FIXME To fully convert this store to a reducer, we need to remove
 	// dependency on the dispatcher (and, by extension, other stores). Will
@@ -24,7 +24,9 @@ const reducer = ( state = initialState, payload ) => {
 	// infrastructure to accommodate reducers?
 	const Dispatcher = require( 'dispatcher' );
 	const ThemesListStore = require( '../stores/themes-list' );
-	Dispatcher.waitFor( [ ThemesListStore.dispatchToken ] );
+	if ( Dispatcher._isDispatching ) {
+		Dispatcher.waitFor( [ ThemesListStore.dispatchToken ] );
+	}
 
 	switch ( action.type ) {
 		case ThemeConstants.QUERY_THEMES:
@@ -42,4 +44,10 @@ const reducer = ( state = initialState, payload ) => {
 	return state;
 };
 
-export { initialState, reducer };
+export function hasSiteChanged( state ) {
+	return state.get( 'previousSiteId' ) !== state.get( 'currentSiteId' );
+};
+
+export function hasParams( state ) {
+	return !! state.get( 'lastParams' );
+}

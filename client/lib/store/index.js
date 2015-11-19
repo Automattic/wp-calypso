@@ -45,6 +45,10 @@ export const createReducerStore = ( reducer, initialState = {}, waitFor = [] ) =
 	return ReducerStore;
 };
 
+function mergeStates( stores ) {
+	return ( total, store ) => Object.assign( total, { [ store ]: stores[ store ].get() } );
+}
+
 /**
  * Combine multiple Flux stores into a single one.
  *
