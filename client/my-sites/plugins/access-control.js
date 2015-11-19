@@ -51,8 +51,6 @@ function hasRestrictedAccess( site ) {
 	}
 
 	if ( hasErrorCondition( site, 'noBusinessPlan' ) ) {
-		var upgradeCTA = ( abtest( 'businessPluginsUpgradeCTA' ) === 'addEcommerce' ) ? i18n.translate( 'Add eCommerce' ) : i18n.translate( 'Upgrade Now' );
-
 		pluginPageError = {
 			title: i18n.translate( 'Want to add a store to your site?' ),
 			line: i18n.translate( 'Support for Shopify, Ecwid, and Gumroad is now available for WordPress.com Business.' ),
@@ -63,7 +61,7 @@ function hasRestrictedAccess( site ) {
 		};
 
 		if ( config.isEnabled( 'premium-plans' ) ) {
-			pluginPageError.action = upgradeCTA;
+			pluginPageError.action = i18n.translate( 'Upgrade Now' );
 			pluginPageError.actionURL = '/plans/' + site.slug;
 		}
 	}
