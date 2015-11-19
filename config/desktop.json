@@ -51,6 +51,7 @@
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/delete-site": true,
 		"premium-themes": true,
+		"premium-plans": true,
 
 		"reader": true,
 		"reader/teams": true,
