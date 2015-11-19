@@ -21,8 +21,6 @@
 	-webkit-appearance: none;
 	appearance: none;
 
-	border: 1px $alert-red solid;
-
 	&:hover {
 		border-color: lighten( $gray, 10% );
 		color: $gray-dark;
