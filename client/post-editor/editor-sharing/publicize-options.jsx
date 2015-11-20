@@ -14,7 +14,6 @@ var PublicizeMessage = require( './publicize-message' ),
 	PublicizeServices = require( './publicize-services' ),
 	paths = require( 'lib/paths' ),
 	PostMetadata = require( 'lib/post-metadata' ),
-	connections = require( 'lib/connections-list' )(),
 	PopupMonitor = require( 'lib/popup-monitor' ),
 	AddNewButton = require( 'components/add-new-button' ),
 	siteUtils = require( 'lib/site/utils' ),
@@ -29,7 +28,14 @@ module.exports = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
-		connections: React.PropTypes.array
+		connections: React.PropTypes.array,
+		fetchConnections: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			fetchConnections: () => {}
+		};
 	},
 
 	hasConnections: function() {
@@ -60,11 +66,7 @@ module.exports = React.createClass( {
 		}
 
 		this.connectionPopupMonitor.open( href );
-		this.connectionPopupMonitor.once( 'close', this.onNewConnectionPopupClosed );
-	},
-
-	onNewConnectionPopupClosed: function() {
-		connections.get( this.props.site.ID, { force: true } );
+		this.connectionPopupMonitor.once( 'close', this.props.fetchConnections );
 	},
 
 	newConnection: function() {
@@ -102,7 +104,7 @@ module.exports = React.createClass( {
 		// to connections previously returning a 400 error
 		this.props.site.once( 'change', () => {
 			if ( this.props.site.isModuleActive( 'publicize' ) ) {
-				connections.get( this.props.site.ID, { force: true } );
+				this.props.fetchConnections();
 			}
 		} );
 	},

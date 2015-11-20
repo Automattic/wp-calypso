@@ -69,6 +69,7 @@
     "raf": "2.0.4",
     "react": "0.13.3",
     "react-day-picker": "1.1.0",
+    "react-redux": "3.1.0",
     "react-tap-event-plugin": "0.1.6",
     "redux": "3.0.4",
     "redux-thunk": "1.0.0",

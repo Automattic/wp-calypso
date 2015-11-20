@@ -17,7 +17,8 @@ module.exports = React.createClass( {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
-		connections: React.PropTypes.array
+		connections: React.PropTypes.array,
+		fetchConnections: React.PropTypes.func
 	},
 
 	isSharingButtonsEnabled() {
@@ -66,9 +67,10 @@ module.exports = React.createClass( {
 
 		return (
 			<PublicizeOptions
-					post={ this.props.post }
-					site={ this.props.site }
-					connections={ this.props.connections } />
+				post={ this.props.post }
+				site={ this.props.site }
+				connections={ this.props.connections }
+				fetchConnections={ this.props.fetchConnections } />
 		);
 	},
 

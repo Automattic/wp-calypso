@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	uniq = require( 'lodash/array/uniq' );
 
 /**
  * Internal dependencies
  */
-var serviceConnections = require( 'my-sites/sharing/connections/service-connections' ),
+var user = require( 'lib/user' )(),
 	EditorSharingPublicizeConnection = require( './publicize-connection' );
 
 module.exports = React.createClass( {
@@ -20,7 +21,12 @@ module.exports = React.createClass( {
 	},
 
 	renderServices: function() {
-		var services = serviceConnections.getServicesFromConnections( this.props.connections );
+		var services = uniq( this.props.connections.map( ( connection ) => {
+			return {
+				name: connection.service,
+				label: connection.label
+			};
+		} ), 'name' );
 
 		return services.map( function( service ) {
 			return (
@@ -33,7 +39,11 @@ module.exports = React.createClass( {
 	},
 
 	renderConnections: function( serviceName ) {
-		var connections = serviceConnections.getConnections( serviceName, this.props.siteId );
+		const currentUser = user.get();
+		const connections = currentUser ? this.props.connections.filter( ( connection ) => {
+			const { service, keyring_connection_user_ID, shared } = connection;
+			return service === serviceName && ( shared || keyring_connection_user_ID === currentUser.ID );
+		} ) : [];
 
 		return connections.map( function( connection ) {
 			return (
