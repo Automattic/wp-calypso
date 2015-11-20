@@ -21,21 +21,17 @@ module.exports = React.createClass( {
 		};
 	},
 
-	handleAction: function() {
+	handleAction: function( event ) {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
-			this.togglePopover( ! this.state.showPopover );
+			this.refs.infoPopover._onClick( event );
 		}
-	},
-
-	togglePopover: function( state ) {
-		this.setState( { showPopover: state } );
 	},
 
 	renderLabel: function( id ) {
 		if ( this.props.label ) {
-			return ( <label className="plugin-action__label" onClick={ this.handleAction } htmlFor={ id }>{ this.props.label }</label> );
+			return ( <label className="plugin-action__label" ref="disabledInfoLabel" onClick={ this.handleAction } htmlFor={ id }>{ this.props.label }</label> );
 		}
 		return null;
 	},
@@ -44,7 +40,13 @@ module.exports = React.createClass( {
 		if ( this.props.disabledInfo ) {
 			return (
 				<div className="plugin-action__disabled-info">
-					<InfoPopover position="bottom left" ref="infoPopover" isVisible={ this.state.showPopover } toggle={ this.togglePopover } >
+					<InfoPopover
+						position="bottom left"
+						popoverName={ 'Plugin Action Disabled' + this.props.label }
+						gaEventCategory="Plugins"
+						ref="infoPopover"
+						ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+						>
 						{ this.props.disabledInfo }
 					</InfoPopover>
 					{ this.renderLabel( id ) }
