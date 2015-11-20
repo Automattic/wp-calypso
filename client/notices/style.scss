@@ -13,9 +13,11 @@
 	.notice__text {
 		flex-grow: 1;
 		flex-basis: 100px;
-		max-width: 680px; // For line-length sanity
-
 		padding: 11px 24px;
+
+		span {
+			max-width: 680px;
+		}
 
 		@include breakpoint( ">660px" ) {
 			padding: 13px 48px;
