@@ -75,7 +75,10 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		context.layout.setState( { section: 'signup' } );
+		context.layout.setState( {
+			section: 'signup',
+			noSidebar: true
+		} );
 
 		React.render(
 			React.createElement( SignupComponent, {

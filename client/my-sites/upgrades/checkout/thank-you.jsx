@@ -112,7 +112,7 @@ var CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-			<Main className="checkout-thank-you is-full">
+			<Main className="checkout-thank-you">
 				<Card>
 					<div className="thank-you-message">
 						<span className="receipt-icon"></span>

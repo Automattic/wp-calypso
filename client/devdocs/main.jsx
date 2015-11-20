@@ -146,8 +146,7 @@ module.exports = React.createClass( {
 		var containerClass = classNames( {
 			main: true,
 			'main-column': true,
-			devdocs: true,
-			'is-full': true
+			devdocs: true
 		} );
 
 		return (
