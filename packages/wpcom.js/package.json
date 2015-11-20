@@ -18,9 +18,6 @@
     "api",
     "library"
   ],
-  "scripts": {
-    "postinstall": "make babelify"
-  },
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "license": "MIT",
   "dependencies": {
