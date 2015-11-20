@@ -1,0 +1,16 @@
+.editor-delete-post {
+	color: lighten( $gray, 20% );
+	cursor: pointer;
+	font-size: 13px;
+	margin-left: 12px;
+	transition: color 200ms;
+
+	&:hover {
+		color: $orange-fire;
+	}
+
+	&.is-trashing {
+		color: $orange-fire;
+		animation: loading-dot-pulse 0.8s ease-in-out infinite;
+	}
+}

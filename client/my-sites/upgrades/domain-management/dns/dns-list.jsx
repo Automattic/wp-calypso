@@ -1,0 +1,53 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import DnsRecord from './dns-record';
+import notices from 'notices';
+import * as upgradesActions from 'lib/upgrades/actions';
+
+const DnsList = React.createClass( {
+	propTypes: {
+		dns: React.PropTypes.object.isRequired,
+		selectedDomainName: React.PropTypes.string.isRequired,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired
+	},
+
+	deleteDns: function( record ) {
+		upgradesActions.deleteDns( this.props.selectedDomainName, record, ( error ) => {
+			if ( error ) {
+				notices.error( error.message || this.translate( 'The DNS record has not been deleted.' ) );
+
+				upgradesActions.fetchDns( this.props.selectedDomainName );
+			} else {
+				notices.success( this.translate( 'The DNS record has been deleted.' ) );
+			}
+		} );
+	},
+
+	render: function() {
+		const dnsRecordsList = this.props.dns.records.map( function( dnsRecord, index ) {
+			return (
+				<DnsRecord
+					key={ index }
+					dnsRecord={ dnsRecord }
+					deleteDns={ this.deleteDns }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite } />
+			);
+		}, this );
+
+		return (
+			<ul className="dns__list">{ dnsRecordsList }</ul>
+		);
+	}
+} );
+
+export default DnsList;

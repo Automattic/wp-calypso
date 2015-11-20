@@ -1,0 +1,48 @@
+.editor-page-parent .post-selector {
+	border: 1px solid lighten( $gray, 20% );
+	height: 186px;
+	padding: 8px;
+	overflow: hidden;
+	overflow-y: auto;
+	margin: 8px 0 0 0;
+
+	&.is-compact {
+		border: none;
+		height: auto;
+		padding: 0;
+		overflow: visible;
+
+		.post-selector__label {
+			font-size: 14px;
+			margin-top: 0;
+		}
+	}
+}
+
+.editor-page-parent .post-selector__search {
+	position: relative;
+	margin: -9px -9px 4px;
+}
+
+.editor-page-parent .post-selector__list-item {
+    padding: 2px 0;
+    font-size: 13px;
+}
+
+.editor-page-parent input[type=radio] {
+    margin-right: 8px
+}
+
+.editor-page-parent .post-selector__label {
+    display: block;
+    margin-left: 24px;
+    margin-top: 2px;
+}
+
+.editor-page-parent__label-text {
+	color: $gray;
+	display: block;
+	font-size: 11px;
+	margin-bottom: 4px;
+	text-transform: uppercase;
+}

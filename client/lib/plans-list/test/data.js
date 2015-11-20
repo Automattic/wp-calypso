@@ -1,0 +1,110 @@
+var plans = [
+	{
+		"product_id":1003,
+		"product_name":"WordPress.com Premium",
+		"product_name_en":"WordPress.com Premium",
+		"prices":{
+			"USD":99,
+			"NZD":139,
+			"AUD":99,
+			"CAD":99,
+			"JPY":9800,
+			"EUR":80,
+			"GBP":70
+		},
+		"product_slug":"value_bundle",
+		"tagline":"Blog, supercharged",
+		"shortdesc":"Save up to 40% on our most popular upgrades. Get all of these great features to super-charge your blog in one simple purchase.",
+		"description":"Save up to 40% on our most popular upgrades. Get all of these great features to super-charge your blog in one simple purchase. Includes a domain name of your choice or domain mapping for an existing domain, VideoPress, Custom Design, 10GB Space Upgrade, and No Ads.",
+		"capability":"manage_options",
+		"cost":99,
+		"bill_period":365,
+		"product_type":"bundle",
+		"available":"yes",
+		"store":0,
+		"width":500,
+		"height":250,
+		"multi":0,
+		"support_document":"bundles",
+		"bundle_product_ids":[
+			9,
+			12,
+			45,
+			15,
+			5,
+			16,
+			6,
+			46,
+			54
+		],
+		"bill_period_label":"per year",
+		"price":"$99"
+	},
+	{
+	"product_id":1008,
+	"product_name":"WordPress.com Business",
+	"product_name_en":"WordPress.com Business",
+	"prices":{
+		"USD":299,
+		"NZD":399,
+		"AUD":299,
+		"CAD":299,
+		"JPY":28800,
+		"EUR":240,
+		"GBP":210
+	},
+	"product_slug":"business-bundle",
+	"tagline":"Build a great website",
+	"shortdesc":"All you need to build a great website: live chat support, unlimited premium themes, easy ecommerce, unlimited storage, and a custom domain name.",
+	"description":"All you need to build a great website:<ul><li>Chat live with a WordPress.com specialist, Monday to Friday between 7am and 7pm Eastern time.<\/li><li>Try any premium theme and change as often as you like, no extra charge.<\/li><li>Upload all the video and audio files you want with unlimited storage.<\/li><\/ul>Including all the features of WordPress.com Premium:<ul><li>A domain of your choice to replace your site\u2019s default address<\/li><li>Custom Design to customize your site\u2019s appearance and choose unique fonts and colors<\/li><li>VideoPress to embed beautiful HD video straight from your dashboard or from your mobile device<\/li><li>Hides all ads on your site<\/li><\/ul>",
+	"capability":"manage_options",
+	"cost":299,
+	"bill_period":365,
+	"width":500,
+	"height":435,
+	"product_type":"bundle",
+	"available":"yes",
+	"bundle_product_ids":[
+		12,
+		45,
+		15,
+		5,
+		48,
+		50,
+		49,
+		16,
+		6,
+		46,
+		54
+	],
+	"bill_period_label":"per year",
+	"price":"$299"
+	},
+	{
+	"product_id":1,
+	"product_name":"Beginner",
+	"product_name_en":"Beginner",
+	"prices":{
+		"USD":0,
+		"AUD":0,
+		"CAD":0,
+		"EUR":0,
+		"GBP":0,
+		"JPY":0
+	},
+	"product_slug":"free_plan",
+	"tagline":"Get started",
+	"shortdesc":"Get a free blog and be on your way to publishing your first post in less than five minutes.",
+	"description":"Just start blogging: get a free blog and be on your way to publishing your first post in less than five minutes.",
+	"capability":"manage_options",
+	"cost":0,
+	"bill_period":-1,
+	"product_type":"bundle",
+	"available":"yes",
+	"store":0,
+	"bill_period_label":"for life",
+	"price":"$0"
+	}
+];
+
+exports.plans = plans;

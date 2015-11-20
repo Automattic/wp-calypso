@@ -1,0 +1,286 @@
+// Setting up the sidebar container
+.sidebar,
+.secondary-cart { // This selects the sidebar on /checkout
+	overflow: auto;
+	padding: 0;
+	background: lighten( $gray, 30% );
+	position: fixed;
+		top: 47px;
+		bottom: 0;
+
+	@include breakpoint( "<960px" ) {
+		border-right: 1px solid lighten( $gray, 25% );
+		width: 224px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		border-right: 1px solid lighten( $gray, 25% );
+		left: 0;
+		width: 272px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		left: -100vw;
+		width: 100vw;
+		max-height: calc(100vh - 47px );
+		pointer-events: none;
+		transform: translateX( 0 );
+		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+
+		.focus-sidebar & {
+			pointer-events: auto;
+			-webkit-overflow-scrolling: touch;
+			transform: translateX( 100vw );
+		}
+
+		.focus-sites & {
+			transform: translateX( 100vw );
+		}
+	}
+}
+
+
+// Clearing out the sidebar list styles
+.wpcom-sidebar {
+	margin: 0;
+
+	ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	li {
+		position: relative;
+	}
+}
+
+
+// Sidebar group headings
+.sidebar-heading {
+	color: darken( $gray, 10% );
+	font-weight: 600;
+	font-size: 12px;
+	margin: 16px 8px 6px 14px;
+}
+
+
+// Menu Links
+.sidebar-menu {
+	display: block;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 24px;
+	}
+
+	li {
+		display: flex;
+
+		@include breakpoint( "<660px" ) {
+			background-color: $gray-light;
+			border-bottom: 1px solid rgba( lighten( $gray, 20% ), 0.5 );
+
+			&:first-child {
+				border-top: 1px solid lighten( $gray, 20% );
+			}
+
+			&:last-child {
+				border-bottom: 1px solid lighten( $gray, 20% );
+			}
+		}
+	}
+
+	a:first-child {
+		flex: 1 0 auto;
+		width: 0;
+
+		// Fade overlay for longer labels
+		&:after {
+			content: '';
+			text-align: right;
+			position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+			width: 15%;
+			background: linear-gradient(
+				to right,
+				rgba( lighten( $gray, 30% ), 0 ),
+				rgba( lighten( $gray, 30% ), 1 ) 50% );
+
+			@include breakpoint( "<660px" ) {
+				background: linear-gradient(
+					to right,
+					rgba( $gray-light, 0 ),
+					rgba( $gray-light, 1 ) 50% );
+			}
+		}
+	}
+
+	a {
+		font-size: 13px;
+		position: relative;
+		padding: 14px 16px 14px 55px;
+		color: $gray-dark;
+		box-sizing: border-box;
+		white-space: nowrap;
+		overflow: hidden;
+		display: flex;
+
+		&:focus {
+			outline: none;
+		}
+
+		@include breakpoint( "<660px" ) {
+			padding: 18px 16px 18px 53px;
+		}
+	}
+
+	a.add-new {
+		padding: 2px 8px 3px 8px;
+		height: 24px;
+		margin: 11px 8px 0 0;
+		line-height: 18px;
+		background-color: $gray-light;
+		color: darken( $gray, 20% );
+		font-size: 11px;
+		font-weight: 600;
+		border-radius: 3px;
+		border: 1px solid lighten( $gray, 20% );
+
+		@include breakpoint( "<660px" ) {
+			font-size: 14px;
+			height: 35px;
+			padding: 8px 16px;
+			margin: 10px 10px 0 0;
+		}
+	}
+
+	a.plan-name {
+		padding: 3px 8px 4px 8px;
+		position: absolute;
+			top: 12px;
+			right: 8px;
+		color: darken( $gray, 20% );
+		font-size: 11px;
+
+		@include breakpoint( "<660px" ) {
+			top: 16px;
+			right: 16px;
+		}
+	}
+
+	.gridicon {
+		position: absolute;
+			top: 11px;
+			left: 20px;
+		fill: $gray;
+		height: 24px;
+		width: 24px;
+
+		@include breakpoint( "<660px" ) {
+				top: 15px;
+				left: 16px;
+			height: 24px;
+			width: 24px;
+		}
+
+		// External indicator for sections that aren't available in Calypso
+		&.gridicons-external {
+			position: absolute;
+				top: 13px;
+				right: 8px;
+				left: auto;
+			z-index: 1;
+			height: 18px;
+
+			@include breakpoint( "<660px" ) {
+				top: 17px;
+			}
+		}
+	}
+
+	.noticon-external {
+		position: absolute;
+			top: 15px;
+			right: 19px;
+		z-index: 1;
+		color: $gray;
+
+		@include breakpoint( "<660px" ) {
+			top: 9px;
+			right: 16px;
+			font-size: 32px;
+		}
+	}
+}
+
+
+// Selected Menu
+@include breakpoint( ">660px" ) {
+	.sidebar-menu .selected {
+		background-color: $gray;
+
+		a {
+			color: $white;
+
+			&:first-child:after {
+				background: linear-gradient(
+					to right,
+					rgba( $gray, 0 ),
+					rgba( $gray, 1 ) 50% );
+			}
+		}
+
+		a.add-new {
+			color: darken( $gray, 30% );
+			border: 1px solid darken( $gray, 10% );
+		}
+
+		.gridicon {
+			fill: $white;
+		}
+
+		&.is-action-button-selected a {
+			&:first-child:after {
+				background: linear-gradient(
+					to right,
+					rgba( $gray-light, 0 ),
+					rgba( $gray-light, 1 ) 50% );
+			}
+		}
+	}
+}
+
+
+// Menu Hover
+.notouch .sidebar-menu li:hover {
+	&:not(.selected) {
+		background-color: $gray-light;
+
+		a {
+			color: $blue-medium;
+
+			&:first-child:after {
+				background: linear-gradient(
+					to right,
+					rgba( $gray-light, 0 ),
+					rgba( $gray-light, 1 ) 50% );
+			}
+
+			&.add-new {
+				background-color: $white;
+				color: $gray-dark;
+			}
+		}
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+	}
+}
+
+.notouch .sidebar-menu li:not(.selected) a {
+	&.add-new:hover {
+		color: $blue-medium;
+	}
+}

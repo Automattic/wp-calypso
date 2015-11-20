@@ -1,0 +1,14 @@
+.all-sites {
+	box-sizing: border-box;
+	display: flex;
+	flex: 1 0 auto;
+	justify-content: space-between;
+	padding: 0;
+	position: relative;
+}
+
+.all-sites .count {
+	position: absolute;
+		right: 16px;
+		top: 24px;
+}

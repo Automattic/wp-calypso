@@ -1,0 +1,61 @@
+/**
+ * Delete Site
+ * - panels specific to the delete site process
+ */
+
+.delete-site__content-list-header {
+	margin-bottom: 8px;
+	font-size: 11px;
+	line-height: 16px;
+	text-transform: uppercase;
+	text-align: left;
+	color: $gray;
+}
+
+.delete-site__content-list {
+	margin: 0 0 20px;
+	border: solid 1px lighten( $gray, 20% );
+	border-radius: 4px;
+	list-style: none;
+	text-align: left;
+}
+
+.delete-site__content-list-item {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 12px 16px;
+	border-top: solid 1px lighten( $gray, 20% );
+	font-size: 14px;
+	line-height: 18px;
+	color: $gray-dark;
+
+	&:first-child {
+		border-top: none;
+	}
+}
+
+// Confirm Dialog
+.delete-site__confirm-dialog {
+	max-width: 424px;
+	padding-bottom: 16px;
+}
+
+h1.delete-site__confirm-header {
+	height: auto;
+	margin-bottom: 16px;
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 24px;
+	color: $gray-dark;
+}
+
+.delete-site__confirm-paragraph {
+	margin-bottom: 8px;
+	font-size: 14px;
+	line-height: 24px;
+	color: $gray;
+}
+
+.delete-site__target-domain {
+	color: $alert-red;
+}

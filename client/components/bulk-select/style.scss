@@ -1,0 +1,28 @@
+.bulk-select {
+	position: relative;
+	display: flex;
+		align-items: center;
+	cursor: pointer;
+
+	.gridicon {
+		width: 16px;
+		height: 16px;
+		color: $blue-medium;
+		position: absolute;
+			left: 0px;
+			top: 0px;
+	}
+
+	> .count {
+		margin-left: 8px;
+	}
+}
+
+input[type=checkbox].bulk-select__box {
+	height: 16px;
+	margin: 0;
+	padding: 0;
+	width: 16px;
+	min-width: 16px;
+	appearance: none;
+}

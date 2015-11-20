@@ -1,0 +1,16 @@
+.application-password-item__password {
+	overflow: auto;
+}
+
+.application-password-item__details {
+	float: left;
+}
+
+.application-password-item__generated {
+	color: darken( $gray, 10% );
+	font-size: .9em;
+}
+
+.application-password-item__revoke {
+	float: right;
+}

@@ -1,0 +1,35 @@
+.vertical-nav-item {
+	.noticon {
+		box-sizing: border-box;
+		color: $gray;
+		font-size: 20px;
+		height: 100%;
+		padding-left: 3px;
+		padding-top: 20px;
+		position: absolute;
+			top: 0;
+			right: 0;
+		width: 55px;
+	}
+
+	.noticon-collapse {
+		transform: rotate( 90deg );
+	}
+}
+
+.vertical-nav-item.is-placeholder {
+	span {
+		@include placeholder( 23% );
+
+		display: inline-block;
+
+		&:first-child {
+			width: 35%;
+		}
+
+		&:last-child {
+			float: right;
+			width: 22px;
+		}
+	}
+}

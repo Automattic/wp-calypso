@@ -1,0 +1,61 @@
+.exporter__title {
+	margin-bottom: 1em;
+
+	font-size: 26px;
+	font-weight: 200;
+	color: $gray-dark;
+
+	clear: left;
+}
+
+.exporter__export-button {
+	float: right;
+}
+
+.exporter__more-info.card {
+	background-color: $gray-light;
+}
+
+.exporter__advanced-options-title {
+	margin-bottom: 1em;
+
+	font-size: 22px;
+	font-weight: 200;
+	color: $gray-dark;
+}
+
+.exporter__advanced-options-row {
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-wrap: wrap;
+	}
+}
+
+.exporter__option-fieldset {
+	margin-top: 10px;
+
+	@include breakpoint( ">960px" ) {
+		margin-top: inherit;
+		flex: 1;
+	}
+}
+
+// The following specificity is required to override the form-label selector:
+// .form-label input[type="checkbox"] + span { font-weight: normal }
+.exporter__option-fieldset-legend .exporter__option-fieldset-legend-text {
+	font-weight: bold;
+}
+
+.exporter__option-fieldset-description {
+	font-size: smaller;
+	color: $gray-dark;
+}
+
+.exporter__option-fieldset-fields {
+	padding-left: 24px;
+	padding-right: 24px;
+
+	select {
+		width: 100%;
+	}
+}

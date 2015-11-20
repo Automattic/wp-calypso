@@ -1,0 +1,25 @@
+.account .notice {
+	margin: 5px 0 0 0;
+}
+
+.account__username-form-toggle-enter {
+	opacity: 0.01;
+	transition: opacity .5s ease-in;
+}
+
+.account__username-form-toggle-enter-active {
+	opacity: 1;
+}
+
+.account__username-form-toggle-leave {
+	opacity: 1;
+	transition: opacity .01s ease-in;
+}
+
+.account__username-form-toggle-leave-active {
+	opacity: 0.01;
+}
+
+.account__settings-form select {
+	width: 100%;
+}

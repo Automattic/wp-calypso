@@ -1,0 +1,26 @@
+.media-library__upload-url {
+	display: flex;
+}
+
+.media-library__upload-url .form-text-input {
+	display: block;
+	width: 100%;
+}
+
+.media-library__upload-url-button-group {
+	display: flex;
+	padding-left: 8px;
+}
+
+.media-library__upload-url-cancel {
+	padding: 0 6px;
+	cursor: pointer;
+}
+
+.media-library__upload-url-cancel .gridicon {
+	fill: $gray;
+
+	&:hover {
+		fill: darken( $gray, 10% );
+	}
+}

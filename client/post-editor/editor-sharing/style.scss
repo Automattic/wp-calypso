@@ -1,0 +1,74 @@
+@import "publicize-message";
+@import "publicize-options";
+@import "publicize-services";
+
+.editor-fieldset.editor-sharing__sharing-like-options {
+	margin-top: 0;
+}
+
+.editor-sharing__shortlink {
+	border-top: 1px solid lighten( $gray, 30% );
+	color: $gray;
+	font-size: 11px;
+	margin: 16px -16px 0;
+	padding: 8px 16px 0;
+	text-align: left;
+	text-transform: uppercase;
+
+	&.is-standalone { // 'Sharing' section is hidden
+		border-top: none;
+		margin-top: -16px;
+	}
+}
+
+.editor-sharing__shortlink-label {
+	padding: 8px 0;
+	display: block;
+	user-select: none;
+}
+
+input[type="text"].editor-sharing__shortlink-field {
+	background: lighten( $gray, 30% );
+	color: $gray-dark;
+	flex-grow: 1;
+	font-size: 12px;
+	width: 100%;
+	line-height: 1;
+	vertical-align: bottom;
+}
+
+.editor-sharing__publicize-connection {
+	display: block;
+	padding: 2px 0;
+}
+
+.editor-sharing__broken-publicize-connection {
+	padding: 8px 16px 8px 41px;
+	margin: 8px -16px;
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 16px;
+	}
+
+	&:before {
+		top: 21px;
+		left: 22px;
+		font-size: 20px;
+	}
+
+	.notice__text {
+		padding: 0;
+	}
+
+	.gridicon {
+		float: right;
+		margin: 1px 0 0 4px;
+	}
+}
+
+.editor-sharing__broken-publicize-connection-button {
+	cursor: pointer;
+	color: white;
+	font-weight: bold;
+	text-decoration: underline;
+}

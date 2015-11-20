@@ -1,0 +1,68 @@
+.masterbar-new-post {
+	position: relative;
+	margin: 0 10px 0 0;
+
+	@include breakpoint( "<660px" ) {
+		margin-right: 0;
+	}
+
+	&.active {
+		background: none;
+		border-radius: 5px;
+	}
+}
+
+.masterbar .is-button.masterbar-new-post {
+	margin-left: 0;
+}
+
+.masterbar-new-post__button {
+	width: 56px;
+
+	&::before {
+		@include noticon( '\f411', 34px );
+		line-height: 1.4;
+		display: block;
+		margin: -5px auto 0;
+		padding-left: 4px #{"/*rtl:ignore*/"}; // nudge to balance pencil with plus sign
+
+		@include breakpoint( "<660px" ) {
+			margin: -8px auto 0;
+		}
+	}
+
+	&::after {
+		@include noticon( '\f8b3', 28px );
+		color: $blue-wordpress;
+		position: absolute;
+			left: 50%;
+			top: 50%;
+		transform: translate( -50%, -40% );
+
+		@include breakpoint( "<660px" ) {
+			margin-top: -3px;
+		}
+	}
+}
+
+.masterbar li a.masterbar-new-post__button {
+	@include breakpoint( "<660px" ) {
+		margin: 5px auto 0;
+		height: 36px;
+	}
+}
+
+.masterbar-new-post.active .masterbar-new-post__button,
+.masterbar-new-post.active .masterbar-new-post__button:focus,
+.masterbar-new-post.active .masterbar-new-post__button:hover {
+	background: $blue-dark;
+	color: $white;
+
+	&::after {
+		color: $white;
+	}
+}
+
+.masterbar-new-post__label {
+	@extend .screen-reader-text;
+}

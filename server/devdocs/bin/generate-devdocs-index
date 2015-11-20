@@ -1,0 +1,118 @@
+#!/usr/bin/env node
+
+/**
+ * This script generates a Lunr.js index and document array suitable
+ * for server-side documentation search. It accepts a newline-delimited list of .md files
+ * as its input, and writes the index to server/devdocs/search-index.js
+ *
+ * The design is currently limited by available RAM, both during indexing and serving the
+ * content. A more scalable solution would need to use a separate indexing service like Sphinx.
+ */
+
+var fs = require( 'fs' ),
+	fspath = require( 'path' ),
+	lunr = require( 'lunr' ),
+	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) );
+
+function main() {
+	// extract list of files to index and remove leading ./'s
+	var fileList = process.
+		argv.
+		splice( 2, process.argv.length ).
+		map( function ( fileWithPath ) {
+			return fileWithPath.replace( /^\.\//, '' );
+		} );
+
+	if( fileList.length === 0 ) {
+		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/search-index.js"' );
+		process.exit( 1 );
+	}
+
+	var documents = fileList.map( function( fileWithPath ) {
+		return documentFromFile( root, fileWithPath );
+	} ).
+	// skip empty/invalid files
+	filter( function( document ) {
+		return document.title && document.body;
+	} );
+
+	writeSearchIndex( documents, 'server/devdocs/search-index.js' );
+}
+
+function writeSearchIndex( documents, searchIndexPath ) {
+	var idx = lunr( function () {
+		this.field('title', { boost: 10 });
+		this.field('body');
+	} );
+
+	documents.forEach( function ( doc, index ) {
+		/*
+		 * we use the array index as the document id
+		 * so that we can look the preprocessed contents
+		 * up out of the "documents" array also exported below
+		 */
+
+		var indexDoc = {};
+		indexDoc.id = index;
+		indexDoc.title = doc.title;
+
+		//preprocess body to remove non-word characters, e.g. <optgroup> becomes optgroup
+		indexDoc.body = doc.body.replace(/<>\/="/, ' ');
+
+		idx.add( indexDoc );
+	} );
+
+	var searchIndexJS = 'module.exports.index = ' + jsFromJSON( JSON.stringify( idx ) ) + ';' +
+		'module.exports.documents = ' + jsFromJSON( JSON.stringify( documents ) ) + ';';
+
+	fs.writeFileSync( fspath.join( root, searchIndexPath ), searchIndexJS );
+}
+
+/**
+ * Some characters in JSON are invalid in JS. Replace them with ones that are.
+ *
+ * @copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>.
+ * @license See CREDITS.md.
+ * @see https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
+ */
+function jsFromJSON( json ) {
+	// some characters in JSON are invalid in JS
+	// lifted from https://github.com/strongloop/express/blob/b78bd3d1fd6caf8228a1875078fecce936cb2e46/lib/response.js#L293
+	return json.replace( /\u2028/g, '\\u2028' ).replace( /\u2029/g, '\\u2029' );
+}
+
+/**
+ * Strip formatting from content and extract the title and
+ * return a basic JSON object suitable for indexing
+ */
+
+function documentFromFile( root, fileWithPath ) {
+	var data = fs.readFileSync( fspath.join( root, fileWithPath ), { encoding: 'utf8' });
+
+	// render as markdown so that embedded HTML is properly escaped
+	// data = striptags( marked ( data) );
+
+	//strip leading and trailing lines/spaces
+	data = data.replace( /^\s*[\r\n]/gm, '' );
+
+	//strip common, noisy markdown stuff
+	data = data.replace( /^#+|^={2,}|^-{2,}/gm, '' );
+
+	var firstLineEnd = data.indexOf( '\n' );
+
+	if( firstLineEnd === -1 ) {
+		//this must be an empty file
+		return {};
+	}
+
+	var title = data.slice( 0, firstLineEnd );
+	var body = data.slice( firstLineEnd + 1 );
+
+	return {
+		path: fileWithPath,
+		title: title,
+		body: body
+	};
+}
+
+main();

@@ -1,0 +1,168 @@
+.plan { // This nesting is necessary to prevent these styles bleeding onto the /plans/compare screen
+	.plan-actions {
+		float: left;
+		width: 100%;
+		padding: 0 16px 16px 16px;
+		box-sizing: border-box;
+
+		&.is-image-button {
+			padding: 0;
+		}
+	}
+
+	.plan-actions__action-details {
+		clear: both;
+		font-size: 12px;
+		color: darken( $gray, 10% );
+		@include clear-fix;
+		text-align: center;
+	}
+}
+
+.plan-actions__upgrade-button {
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+
+.plan-actions__trial-period {
+	text-align: center;
+	line-height: 16px;
+	display: block;
+	padding: 5px 10px;
+	color: $gray-dark;
+	opacity: .8;
+}
+
+.plan-actions.is-placeholder {
+	.plan-actions__upgrade-button {
+		@include placeholder( 23% );
+		border: none;
+		border-radius: 0;
+		margin-bottom: 0.5em;
+		pointer-events: none;
+	}
+
+	.plan-actions__trial-period {
+		height: 3em;
+	}
+}
+
+.plan-actions__current {
+	.plan-actions__upgrade-button {
+		background: $white;
+		margin: 0 0 8px 0;
+	}
+
+	.plan-actions__plan-expiration {
+		color: $gray-dark;
+		display: block;
+		font-size: 11px;
+		opacity: .8;
+		padding: 7px 0 0 0;
+	}
+}
+
+.plan-actions__current-plan-label {
+	border: 1px solid lighten( $gray, 20% );
+	border-radius: 4px;
+	color: $gray-dark;
+	display: block;
+	font-size: 14px;
+	opacity: .6;
+	padding: 0.5em 1.2em 0.62em;
+	text-align: center;
+
+	&:before {
+		@extend %clear-text;
+		@include noticon( '\f418', 18px );
+
+		color: $alert-green;
+		margin-left: -10px;
+		padding-right: 5px;
+		text-align: center;
+		vertical-align: middle;
+	}
+}
+
+.plan-actions__trial-hint {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.plan-actions__trial-upgrade-now {
+	white-space: nowrap;
+}
+
+.plans-compare {
+	.plan-actions {
+		font-size: 16px;
+		padding: 10px;
+	}
+
+	.plan-actions__upgrade-button {
+		overflow: visible;
+		padding-left: 5px;
+		padding-right: 5px;
+		white-space: normal;
+	}
+
+	.plan-actions__current-plan-label {
+		font-size: 12px;
+		padding: 10px 5px;
+
+		&:before {
+			margin-left: -5px;
+			padding-right: 1px;
+		}
+	}
+}
+
+@mixin plans-collapsed {
+	.plans-compare {
+		.plan-actions {
+			display: none;
+		}
+	}
+}
+
+.plans.has-sidebar {
+	@include breakpoint( "<960px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.plans.has-no-sidebar {
+	@include breakpoint( "<660px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
+}
+.plan-actions__illustration {
+	width: 100px;
+	height: 100px;
+	margin: 5px auto 10px auto;
+	background-size: 100%;
+	border-radius: 50%;
+	border: 5px solid lighten( $gray, 30% );
+}
+
+.free_plan.plan-actions__illustration,
+.jetpack_free.plan-actions__illustration {
+	background-image: url('/calypso/images/plans/plan-beginner.svg');
+}
+.value_bundle.plan-actions__illustration,
+.jetpack_premium.plan-actions__illustration {
+	background-image: url('/calypso/images/plans/plan-premium.svg');
+}
+.business-bundle.plan-actions__illustration,
+.jetpack_business.plan-actions__illustration {
+	background-image: url('/calypso/images/plans/plan-business.svg');
+}

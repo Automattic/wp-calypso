@@ -1,0 +1,51 @@
+.wpcom-help__dialog.dialog.card {
+	@include breakpoint( ">660px" ) {
+		max-width: 700px;
+	}
+	.dialog__content {
+		height: 70vh;
+		margin: 0 -24px;
+		padding: 0 24px;
+		overflow-y: scroll;
+		transform: translateZ(0);
+		pointer-events: all;
+	}
+}
+
+.wpcom-help__heading {
+	font-size: 24px;
+}
+
+.wpcom-help__key,
+.wpcom-help__action {
+	border: 1px solid lighten( $gray, 20 );
+	font-weight: normal;
+	padding: 4px;
+}
+
+.wpcom-help__key {
+	width: 48px;
+	text-align: center;
+	border-width: 0 0 1px 0;
+	font-weight: 700;
+}
+.wpcom-help__action {
+	border-width: 0 1px 1px 0;
+}
+
+.wpcom-help__table {
+	border: 1px solid lighten( $gray, 20 );
+	border-collapse: separate;
+	border-spacing: 0;
+	border-width: 1px 0 0 1px;
+	margin: 0 0 1.6em;
+	table-layout: fixed; /* Prevents HTML tables from becoming too wide */
+
+	th {
+		font-weight: 700;
+	}
+
+	kbd {
+		color: $gray-dark;
+	}
+}

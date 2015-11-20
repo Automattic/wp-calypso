@@ -1,0 +1,116 @@
+/**
+ * External dependencies
+ */
+import React from 'react'
+import analytics from 'analytics'
+
+/**
+ * Internal dependencies
+ */
+import StepWrapper from 'signup/step-wrapper'
+import SignupForm from 'components/signup-form'
+import signupUtils from 'signup/utils'
+import SignupActions from 'lib/signup/actions'
+
+export default React.createClass( {
+
+	displayName: 'EmailSignupForm',
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.step && 'invalid' === nextProps.step.status ) {
+			this.setState( { submitting: false } );
+		}
+	},
+
+	save( form ) {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+			form: form
+		} );
+	},
+
+	submitForm( form, userData, analyticsData ) {
+		let flowName = this.props.flowName;
+
+		const formWithoutPassword = Object.assign( {}, form, {
+			password: Object.assign( {}, form.password, { value: '' } )
+		} );
+
+		analytics.tracks.recordEvent( 'calypso_signup_user_step_submit', analyticsData );
+
+		SignupActions.submitSignupStep( {
+			processingMessage: this.translate( 'Creating your account' ),
+			flowName,
+			userData,
+			stepName: this.props.stepName,
+			form: formWithoutPassword
+		} );
+
+		this.props.goToNextStep();
+	},
+
+	userCreationComplete() {
+		return this.props.step && 'completed' === this.props.step.status;
+	},
+
+	userCreationPending() {
+		return this.props.step && 'pending' === this.props.step.status;
+	},
+
+	userCreationStarted() {
+		return this.userCreationPending() || this.userCreationComplete();
+	},
+
+	getRedirectToAfterLoginUrl() {
+		const stepAfterRedirect = signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
+			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
+		return this.originUrl() + signupUtils.getStepUrl(
+				this.props.flowName,
+				stepAfterRedirect
+			);
+	},
+
+	originUrl() {
+		return window.location.protocol + '//' + window.location.hostname +
+			( window.location.port ? ':' + window.location.port : '' );
+	},
+
+	submitButtonText() {
+		if ( this.userCreationPending() ) {
+			return this.translate( 'Creating Your Account…' );
+		}
+
+		if ( this.userCreationComplete() ) {
+			return this.translate( 'Account created - Go to next step' );
+		}
+
+		return this.translate( 'Create My Account' );
+	},
+
+	renderSignupForm() {
+		return (
+			<SignupForm
+				{ ...this.props }
+				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
+				disabled={ this.userCreationStarted() }
+				submitting={ this.userCreationStarted() }
+				save={ this.save }
+				submitForm={ this.submitForm }
+				submitButtonText={ this.submitButtonText() }
+			/>
+		)
+	},
+
+	render() {
+		return (
+			<StepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				positionInFlow={ this.props.positionInFlow }
+				fallbackHeaderText={ this.translate( 'Create your account.' ) }
+				signupProgressStore={ this.props.signupProgressStore }
+				stepContent={ this.renderSignupForm() }
+			/>
+		)
+	}
+} );

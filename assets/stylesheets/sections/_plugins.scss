@@ -1,0 +1,56 @@
+// ==========================================================================
+// .plugins
+//
+//  section-specific styles
+// ==========================================================================
+
+
+// .toolbar-bulk customizations
+.toolbar-bulk__toggle {
+	.plugins & {
+		color: $blue-wordpress;
+		margin: -49px 40px 0 0;
+		z-index: 21;
+
+		@include breakpoint( '>660px' ) {
+			margin: -39px 84px 0 0;
+		}
+		&:hover {
+			color: $link-highlight;
+		}
+	}
+}
+
+.plugin__page .plugin-icon {
+	margin-bottom: 20px;
+}
+
+.plugin__page.is-wpcom .plugin-icon {
+	margin-bottom: 0;
+}
+
+.section-group-title {
+	margin-bottom: 5px;
+	font-size: 13px;
+	text-transform: uppercase;
+
+	.plugin__information + &,
+	.card.is-compact + & {
+		margin-top: 32px;
+	}
+}
+
+.plugins__list,
+.toolbar-bulk.is-all-sites {
+	margin-bottom: 20px;
+}
+
+.plugins__list-header {
+	background: $white;
+	color: $gray-dark;
+	font-size: 12px;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	padding: 14px 24px;
+	text-transform: uppercase;
+}

@@ -1,0 +1,37 @@
+.logged-in-accept__join-as {
+	color: darken( $gray, 30% );
+	font-family: $sans;
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 24px;
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.logged-in-accept__join-as-username {
+	font-family: $serif;
+	font-weight: 600;
+}
+
+.logged-in-accept__join-as .gravatar {
+	display: block;
+	margin: 0 auto 8px auto;
+}
+
+.logged-in-accept__button-bar {
+	display: flex;
+}
+
+.logged-in-accept__button-bar .button {
+	flex-basis: 0;
+	flex-grow: 1;
+	margin: 0 4px;
+
+	&:first-child {
+		margin-left: 0;
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+}

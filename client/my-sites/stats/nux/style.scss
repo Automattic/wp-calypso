@@ -1,0 +1,130 @@
+/* Styles for Stats NUX */
+
+.module-overlay {
+	position: absolute;
+	z-index: 1000;
+	height: 100%;
+	// to hide module's default border
+	width: 101%;
+	left: -1px;
+	background: linear-gradient(to bottom, rgba(233,239,243,0), rgba(233,239,243,0.3), rgba(233,239,243,1) 95%);
+
+	@include breakpoint( "<660px" ) {
+		// hide module's bottom border that's showing on mobile
+		bottom: -3px;
+	}
+}
+
+.stats-nux {
+
+	.module-header-actions {
+		display: none;
+	}
+
+	.module-column {
+
+		@include breakpoint( ">660px" ) {
+			width: calc(50% - 1em);
+			float: left;
+		}
+
+		&:first-child {
+			position: relative;
+		}
+
+		&:last-child {
+			float: right;
+
+			@include breakpoint( "<660px" ) {
+				float: none;
+				text-align: center;
+			}
+		}
+	}
+
+	.stats-module {
+
+		// to push module's bottom edge down and conceal it under the overlay
+		padding-bottom: 30px;
+
+		&.is-chart-tabs {
+			padding-bottom: 0;
+
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
+		}
+	}
+
+	.stats-section-title {
+		@include breakpoint( "<660px" ) {
+			text-align: center;
+		}
+	}
+
+	.stats-popular__item {
+		width: 100%;
+
+		&:last-child {
+			margin-top: -20px;
+		}
+	}
+
+	.module-tabs {
+
+		&.is-nux {
+
+			.module-tab {
+				width: auto;
+				float: none;
+				text-align: left;
+				padding: 12px 22px;
+				width: 100%;
+				border-bottom: 1px solid $gray-light;
+
+				@include breakpoint( "<480px" ) {
+					border-bottom: 0;
+				}
+
+				&:last-child {
+					border-bottom: 0;
+				}
+
+				&.is-post-summary {
+					width: 100%;
+				}
+
+				.label {
+					font-size: 14px;
+
+					@include breakpoint( "<480px" ) {
+						float: none;
+					}
+				}
+
+				.value {
+					float: right;
+
+					@include breakpoint( "<480px" ) {
+						margin-right: 0;
+					}
+				}
+
+				.gridicon {
+					margin-right: 18px;
+
+					@include breakpoint( "<480px" ) {
+						margin: 0 10px 0 0;
+					}
+				}
+			}
+		}
+	}
+}
+
+.stats-section-blurb {
+	color: $gray-dark;
+	font-weight: 300;
+	line-height: 1.6;
+	margin: -10px 0 15px;
+}

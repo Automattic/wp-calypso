@@ -1,0 +1,186 @@
+/**
+ * @component Search
+ */
+.search {
+	margin-bottom: 24px;
+	width: 60px;
+	height: 51px;
+	position: relative;
+	// places search above filters
+	z-index: 22;
+
+	@include breakpoint( "<660px" ) {
+		width: 50px;
+	}
+
+	.noticon-search {
+		position: absolute;
+			top: 0;
+			bottom: 0;
+		width: 60px;
+		z-index: 20;
+		color: $blue-wordpress;
+		cursor: pointer;
+
+		.accessible-focus &:focus {
+			outline: dotted 1px $blue-wordpress;
+		}
+
+		&::before {
+			position: absolute;
+				left: 0;
+				right: 0;
+				top: 50%;
+			margin-top: -12px;
+			font-size: 24px;
+			text-align: center;
+		}
+
+		@include breakpoint( "<660px" ) {
+			width: 50px;
+		}
+
+	}
+
+	.noticon-search:hover {
+		color: $gray-dark;
+	}
+
+	.noticon-close-alt {
+		position: absolute;
+			bottom: 0;
+			top: 0;
+			right: 0;
+		width: 60px;
+		cursor: pointer;
+		z-index: 20;
+		color: $gray-dark;
+		display: none;
+		opacity: 0;
+		transition: opacity .2s ease-in;
+
+		.accessible-focus &:focus {
+			outline: dotted 1px $blue-wordpress;
+		}
+
+		&::before {
+			position: absolute;
+				left: 0;
+				right: 0;
+				top: 50%;
+			margin-top: -8px;
+			font-size: 16px;
+			text-align: center;
+
+			@include breakpoint( "<660px" ) {
+				font-size: 14px;
+				margin-top: -7px;
+			}
+		}
+
+		@include breakpoint( "<660px" ) {
+			width: 50px;
+		}
+	}
+}
+
+// Position collapsed search-button to the right
+// of the container element
+.search.is-pinned {
+	margin-bottom: 0;
+	height: auto;
+	position: absolute;
+		bottom: 0;
+		top: 0;
+		right: 0;
+	// matching dropdown-selector
+	z-index: 170;
+
+	.noticon-search {
+		right: 0;
+	}
+
+	.search__input[type="search"] {
+		height: 100%;
+	}
+}
+
+.search__input[type="search"] {
+	display: none;
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	padding: 0 50px 0 60px;
+	border: none;
+	background: #fff;
+	height: 51px;
+	appearance: none;
+	box-sizing: border-box;
+	-webkit-appearance: none;
+
+	@include breakpoint( "<660px" ) {
+		opacity: 0;
+		left: 0;
+		padding-left: 50px;
+	}
+
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+	}
+
+	&:focus {
+		box-shadow: none;
+		border: none;
+	}
+}
+
+// When search input is opened
+.search.is-open {
+	margin-right: 0 !important;
+	width: 100%;
+
+	.noticon-search {
+		color: $gray-dark;
+		left: 0;
+	}
+
+	.noticon-close-alt {
+		display: inline-block;
+	}
+
+	.search__input,
+	.noticon-close-alt {
+		opacity: 1;
+	}
+
+	.search__input {
+		display: block;
+	}
+}
+
+.search .spinner {
+	display: none;
+	position: absolute;
+		top: 50%;
+		left: 30px;
+	transform: translate( -50%, -50% );
+
+	@include breakpoint( "<660px" ) {
+		left: 25px;
+	}
+}
+
+.search.is-searching .noticon-search {
+	display: none;
+}
+
+.search.is-searching .spinner {
+	display: block;
+	z-index: 20;
+}
+
+@include breakpoint( "<660px" ) {
+	.animating.search-opening .search input {
+		opacity: 1;
+	}
+}

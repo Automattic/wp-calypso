@@ -1,0 +1,41 @@
+.security-2fa-sms-settings .notice {
+	margin: 5px 0 0 0;
+}
+
+.security-2fa-sms-settings__fieldset-container .form-phone-input {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint( ">480px" ) {
+		flex-direction: row;
+	}
+}
+
+.security-2fa-sms-settings__fieldset-container .form-fieldset__country {
+	flex: 1;
+	padding-right: 0;
+
+	@include breakpoint( ">480px" ) {
+		padding-right: 20px;
+		margin-bottom: 5px;
+	}
+}
+
+.security-2fa-sms-settings__fieldset-container .form-country-select {
+	width: 100%;
+	overflow: ellipsis;
+}
+
+.security-2fa-sms-settings__fieldset-container .form-fieldset__phone-number {
+	flex: 2;
+	margin-bottom: 5px;
+}
+
+.security-2fa-sms-settings__cancel-button.form-button {
+	float: left;
+	margin-left: 0;
+}
+
+.security-2fa-sms-settings__buttons {
+	margin-top: 10px;
+}

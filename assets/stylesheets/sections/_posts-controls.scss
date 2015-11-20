@@ -1,0 +1,83 @@
+/**
+ * Post Controls
+ */
+.post-controls {
+	box-sizing: border-box;
+	background-color: $gray-light;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	height: (43 / 15) * 1em;
+}
+
+.post-controls__pane {
+	// Flex
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: stretch;
+	// Normal
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	list-style: none;
+	font-size: (14 / 15) * 1em;
+	margin: 0;
+	transition: transform 0.2s ease, opacity 0.2s ease;
+	> li {
+		// Flex
+		flex-grow: 1;
+		flex-shrink: 0;
+		flex-basis: auto;
+		// Normal
+		box-sizing: border-box;
+		text-align: center;
+		border-left: solid 1px lighten( $gray, 30% );
+		&:first-child {
+			border-left: none;
+		}
+		a {
+			display: block;
+			box-sizing: border-box;
+			font-size: inherit;
+			padding: (11 / 14) * 1em 0;
+			&:hover {
+				cursor: pointer;
+			}
+			.gridicon{
+				position: relative;
+				top: 3px;
+				margin-right: 6px;
+			}
+		}
+	}
+}
+
+
+
+.post-controls__more-options {
+	transform: scale(0);
+	opacity: 0;
+	pointer-events: none;
+}
+
+// @todo should be moved, together with its logic, to "post-controls" not "post"
+.post {
+	// Show More Options
+	&.show-more-options {
+		.post-controls__main-options {
+			transform: scale(0);
+			opacity: 0;
+			pointer-events: none;
+		}
+		.post-controls__more-options {
+			transform: scale(1);
+			opacity: 1;
+			pointer-events: auto;
+		}
+	}
+}

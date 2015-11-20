@@ -1,0 +1,31 @@
+.themes__search-card {
+	display: flex;
+	background: white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+
+	.search {
+		flex: 1 1 auto;
+		margin: 0;
+	}
+
+	.section-nav {
+		margin: 0;
+	}
+
+	.section-nav-tabs .noticon {
+		color: lighten( $gray, 10% );
+	}
+
+	.select-dropdown,
+	.more {
+		display: inline-block;
+		height: 43px;
+		margin-right: 4px;
+		flex: 0 0 auto;
+		align-self: center;
+	}
+
+	.select-dropdown .select-dropdown__header {
+		pointer-events: none;
+	}
+}

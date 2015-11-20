@@ -1,0 +1,41 @@
+.register-domain-step__search {
+	padding-bottom: 20px;
+
+	.search {
+		margin-bottom: 0;
+
+		&.is-refocused {
+			animation: shake .5s both;
+			box-shadow: 0 0 0 1px $gray,
+				0 2px 4px lighten( $gray, 20 );
+		}
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding-bottom: 30px;
+	}
+
+	&.disabled {
+		border-bottom: none; // so that bottom border is not there during google app dialog animation
+		opacity: 0.7;
+		transition: opacity, 0.3s, ease-in-out;
+	}
+
+	.search-card {
+		margin-bottom: 0;
+	}
+}
+
+@keyframes shake {
+	0%, 100% {
+	    transform: translate3d( 0, 0, 0 );
+	}
+
+	10%, 60% {
+	    transform: translate3d( -5px, 0, 0 );
+	}
+
+	30% {
+	    transform: translate3d( 5px, 0, 0 );
+	}
+}

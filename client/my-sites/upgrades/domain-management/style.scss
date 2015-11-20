@@ -1,0 +1,1006 @@
+.domain-main-placeholder {
+	.header-cake__title {
+		@include placeholder(23%);
+	}
+}
+
+.domain-main-placeholder__card {
+	p {
+		@include placeholder(23%);
+		margin-bottom: 0.5em;
+
+		&:first-child {
+			width: 35%;
+		}
+	}
+}
+
+.domain-management-form-footer,
+.primary-domain-actions {
+	border-top: 1px solid $gray-light;
+	margin: 16px -16px -16px -16px;
+	padding: 16px;
+
+	@include breakpoint('>480px') {
+		padding: 24px;
+		margin: 24px -24px -24px -24px;
+	}
+
+	.button {
+		float: right;
+		margin: 0;
+
+		+ .button {
+			margin: 15px 0 0 0;
+
+			@include breakpoint('>480px') {
+				margin: 0 15px 0 0;
+			}
+		}
+
+		@include breakpoint( '<480px' ) {
+			text-align: center;
+			width: 100%;
+		}
+	}
+}
+
+.domain-management-header__children {
+	white-space: nowrap;
+}
+
+.domain-management-list-item.card {
+	padding: 0;
+	@include clear-fix;
+}
+
+.domain-management-list-item__link {
+	cursor: pointer;
+	display: block;
+	padding: 16px;
+	overflow: hidden;
+
+	@include breakpoint( ">660px" ) {
+		padding: 24px;
+	}
+
+	&:after {
+		@include noticon( '\f431', 25px );
+		color: $gray;
+		display: block;
+		height: auto;
+		line-height: 72px;
+		position: absolute;
+			right: 16px;
+			top: 0;
+		transform: rotate( -90deg );
+
+		@include breakpoint( ">660px" ) {
+			line-height: 103px;
+		}
+	}
+}
+
+.domain-management-list-item__title {
+	display: block;
+	color: $gray-dark;
+	font-size: 14px;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: pre;
+	max-width: 70%;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+		font-weight: 700;
+		font-family: $serif;
+		max-width: none;
+		white-space: normal;
+	}
+}
+
+.domain-management-list-item__meta {
+	font-size: 11px;
+	color: $gray;
+	min-height: 20px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	@include breakpoint( ">480px" ) {
+		text-transform: uppercase;
+	}
+
+	.flag {
+		cursor: pointer;
+		margin: 0 0 0 5px;
+	}
+}
+
+.domain-management-list-item__type {
+	vertical-align: middle;
+}
+
+.domain-management-list-item.is-placeholder {
+	.domain-management-list-item__link {
+		cursor: default;
+	}
+
+	.domain-management-list-item__title {
+		@include placeholder(23%);
+		width: 60%;
+	}
+
+	.domain-management-list-item__type {
+		@include placeholder(23%);
+		display: inline-block;
+		width: 40%;
+	}
+}
+
+.domain-management-list__add-a-domain.add-new-button {
+	display: flex;
+	justify-content: center;
+}
+
+.domain-management-primary-domain {
+
+	.primary-domain-explanation {
+		color: $gray;
+		display: block;
+		font-size: 13px;
+		font-style: italic;
+		font-weight: 400;
+		margin: 5px 0;
+	}
+
+	.primary-domain-notice {
+		background: lighten( $gray, 30% );
+		font-size: 13px;
+		color: #000;
+		&::before {
+			line-height: 1.5em;
+		}
+	}
+}
+
+.contacts-privacy-card {
+	.settings-explanation {
+		color: $gray;
+		display: block;
+		font-size: 13px;
+		font-style: italic;
+		font-weight: 400;
+		margin: 5px 0;
+	}
+
+	.notice {
+		clear: both;
+		font-size: 12px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+
+	.contact-display {
+		h2 {
+			background-color: $gray-light;
+			border: 1px solid lighten( $gray, 30% );
+			border-bottom: 0;
+			color: $gray;
+			font-size: 11px;
+			font-weight: 600;
+			line-height: 1;
+			margin: 16px 0 0 0;
+			padding: 8px 0;
+			text-transform: uppercase;
+			text-align: center;
+		}
+
+		.contact-display-content {
+			border: 1px solid lighten( $gray, 30% );
+			color: lighten( $gray-dark, 20% );
+			font-size: 12px;
+			line-height: 140%;
+			margin: 0;
+			padding: 16px;
+
+			p {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+
+.domain-details-card {
+	.flag {
+		font-size: 11px;
+		padding: 3px 10px 3px 5px;
+		white-space: nowrap;
+
+		.noticon {
+			margin-right: 5px;
+		}
+
+		&.is-warning {
+			cursor: pointer;
+		}
+	}
+}
+
+.domain-details-card__property {
+	font-size: 13px;
+	margin-bottom: 10px;
+	@include clear-fix;
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+
+	strong {
+		float: left;
+		width: 50%;
+	}
+
+	& > span {
+		float: right;
+		text-align: right;
+		width: 50%;
+	}
+}
+
+.domain-details-card__subscription-settings-button {
+	margin-top: 15px;
+	text-decoration: none;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint( '>660px' ) {
+		text-align: inherit;
+		width: inherit;
+	}
+}
+
+.domain-management__add-a-domain {
+	text-align: center;
+
+	a {
+		color: $gray;
+		display: block;
+		font-size: 12px;
+		font-weight: 400;
+		padding: 20px 0;
+		text-transform: uppercase;
+	}
+}
+
+.edit-contact-info-privacy-enabled-card__settings-explanation {
+	color: $gray;
+	display: block;
+	font-size: 13px;
+	font-style: italic;
+	font-weight: 400;
+	margin: 5px 0;
+}
+
+.edit-contact-info-form-card__form-content {
+	margin-bottom: 20px;
+	overflow: auto;
+
+	.edit-contact-info-field {
+		margin-top: 15px;
+		position: relative;
+
+		input[type=text] {
+			margin: 0;
+		}
+
+		select {
+			width: 100%;
+		}
+
+		&.invalid {
+			input,
+			select {
+				border-color: $alert-red;
+			}
+		}
+
+		input[ disabled ], select[ disabled ] {
+			cursor: not-allowed;
+		}
+	}
+
+	.first-name {
+		margin-top: 0;
+	}
+
+	@include breakpoint( ">660px" ) {
+		.last-name {
+			margin-top: 0;
+		}
+
+		.edit-contact-info-field {
+			float: left;
+			width: 100%;
+		}
+
+		.last-name,
+		.phone,
+		.postal-code {
+			float: right;
+		}
+
+		.email,
+		.first-name,
+		.last-name,
+		.phone {
+			width: calc( 50% - 7px );
+		}
+
+		.city,
+		.postal-code,
+		.state {
+			width: calc( 33% - 8px );
+		}
+
+		.state {
+			margin-left: 14px;
+		}
+	}
+}
+
+.add-google-apps-card {
+	&.card {
+		padding: 0;
+	}
+}
+
+.add-google-apps-card__product-details {
+	background: $gray-light;
+	clear: both;
+	overflow: auto;
+	padding: 16px;
+
+	@include breakpoint( ">660px" ) {
+		padding: 24px;
+	}
+
+	.button {
+		display: block;
+		margin: 20px 0 5px 0;
+
+		@include breakpoint( "<660px" ) {
+			text-align: center;
+			width: 100%;
+		}
+
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+	}
+}
+
+.add-google-apps-card__description {
+	box-sizing: border-box;
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+		margin-right: 5%;
+		width: 60%;
+	}
+
+	p {
+		clear: left;
+		color: $gray;
+		font-size: 12px;
+		margin: 0;
+
+		a {
+			@include breakpoint( ">660px" ) {
+				display: block;
+			}
+		}
+	}
+}
+
+.add-google-apps-card__features {
+	box-sizing: border-box;
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+		width: 35%;
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 20px;
+	}
+}
+
+.add-google-apps-card__header {
+	border-bottom: 2px solid lighten( $gray, 20% );
+	overflow: auto;
+	padding: 16px;
+	position: relative;
+
+	@include breakpoint( ">660px" ) {
+		padding: 24px;
+		padding-bottom: 20px;
+	}
+
+	.button {
+		@include breakpoint( ">660px" ) {
+			position: absolute;
+				top: 30px;
+				right: 24px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
+	}
+}
+
+.add-google-apps-card__product-logo {
+	margin: -5px 0;
+
+	@include breakpoint( "<660px" ) {
+		width: 236px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+		margin: -10px 0 0 0;
+	}
+
+	strong {
+		background: url('/calypso/images/upgrades/google-apps-logo.png');
+		background-position: left center;
+		background-repeat: no-repeat;
+		background-size: 80px;
+		display: inline-block;
+		height: 40px;
+		margin: -1px 6px 0 0;
+		text-indent: -999999px;
+		vertical-align: text-top;
+		width: 80px;
+	}
+
+	span {
+		color: #888;
+		display: inline-block;
+		font-size: 22px;
+		font-weight: 400;
+		position: relative;
+			top: 10px;
+	}
+}
+
+.add-google-apps-card__price {
+	clear: both;
+	font-style: italic;
+	margin: 0;
+
+	.add-google-apps-card__price-per-user {
+		display: inline-block;
+
+		strong {
+			color: darken($gray, 15%);
+			font-size: 15px;
+			font-weight: 600;
+		}
+
+		span, em {
+			color: $gray;
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		em {
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
+		}
+	}
+
+	.add-google-apps-card__billing-period {
+		color: lighten( $gray, 10% );
+		display: inline-block;
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+}
+
+.add-google-apps-card__title {
+	color: $gray-dark;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 120%;
+	margin: 0 0 10px 0;
+}
+
+.add-google-apps-card__file-storage,
+.add-google-apps-card__professional-email {
+	color: darken( $gray, 10% );
+	font-size: 12px;
+	line-height: 130%;
+	margin: 9px 0;
+
+	&:first-child {
+		margin-top: 5px;
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	.noticon {
+		color: $alert-green;
+		margin-right: 5px;
+	}
+}
+
+.dns__details,
+.custom-nameservers-form__explanation,
+.email-forwarding__explanation,
+.site-redirect__explanation {
+	display: block;
+	margin-top: 5px;
+	font-size: 13px;
+	font-style: italic;
+	font-weight: 400;
+	color: $gray;
+}
+
+.email-forwarding-card,
+.site-redirect-card {
+	form label + input[type=text] {
+		margin-bottom: 10px;
+	}
+
+	&.fetching input[type=text] {
+		animation: pulse-light 0.8s ease-in-out infinite;
+		background: lighten( $gray, 20% );
+	}
+}
+
+.dns__add-new,
+.email-forwarding__add-new {
+	.email-forwarding__limit,
+	.form-content {
+		border-top: 1px solid $gray-light;
+		overflow: visible;
+		padding-top: 20px;
+	}
+
+	.is-hidden {
+		display: none;
+	}
+}
+
+.email-forwarding__form {
+	margin-top: 0;
+
+	@include breakpoint( '>480px' ) {
+		margin-top: 15px;
+	}
+}
+
+ul.email-forwarding__list {
+	list-style: none;
+	margin: 15px 0 0 0;
+	padding: 0;
+
+	li {
+		border-top: 1px solid $gray-light;
+		overflow: auto;
+		padding: 10px 0;
+		position: relative;
+
+		span {
+			font-size: 14px;
+			line-height: 40px;
+
+			@include breakpoint( '<660px' ) {
+				font-size: 12px;
+				line-height: 150%;
+			}
+
+			strong {
+				color: darken( $gray, 15% );
+				font-weight: normal;
+
+				&:first-child {
+					@include breakpoint( '<660px' ) {
+						display: block;
+					}
+				}
+
+				@include breakpoint( '>660px' ) {
+					font-weight: 600;
+				}
+			}
+
+			em {
+				color: $gray;
+			}
+		}
+
+		.button {
+			float: right;
+			margin-top: -2px;
+		}
+	}
+}
+
+.email-forwarding__limit {
+	font-size: 13px;
+	color: $gray;
+	line-height: 3em;
+	margin-bottom: 15px;
+}
+
+.privacy-protection-card {
+
+	&.card {
+		padding: 0;
+	}
+}
+
+.privacy-protection-card__header {
+	border-bottom: 2px solid lighten( $gray, 20% );
+	display: block;
+	overflow: auto;
+	padding: 16px;
+	padding-bottom: 20px;
+	position: relative;
+
+	@include breakpoint( ">660px" ) {
+		padding: 24px;
+	}
+
+	h3 {
+		font-size: 20px;
+		font-weight: 600;
+
+		@include breakpoint(">660px") {
+			font-size: 28px;
+			font-weight: 700;
+			font-family: $serif;
+		}
+	}
+
+	.button {
+		display: none;
+		position: absolute;
+			right: 24px;
+			top: 30px;
+
+		@include breakpoint( ">660px" ) {
+			display: block;
+		}
+	}
+}
+
+.privacy-protection-card__price {
+	clear: both;
+	font-style: italic;
+	margin: 0;
+
+	.privacy-protection-card__price-per-user {
+		display: inline-block;
+		color: $gray;
+		font-size: 12px;
+
+		strong {
+			color: darken( $gray, 15% );
+			font-size: 15px;
+			font-weight: 600;
+		}
+	}
+}
+
+.privacy-protection-card__content {
+	background: $gray-light;
+	clear: both;
+	display: block;
+	overflow: auto;
+	padding: 16px;
+
+	@include breakpoint( ">660px" ) {
+		padding: 24px;
+	}
+
+	.button {
+		cursor: pointer;
+		display: block;
+		margin: 20px 0 5px 0;
+		text-align: center;
+		width: 100%;
+
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+	}
+}
+
+.privacy-protection-card__features {
+	box-sizing: border-box;
+	margin-top: 20px;
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+		margin-top: 0;
+		width: 35%;
+	}
+
+	h5 {
+		color: darken( $gray, 10% );
+		font-size: 12px;
+		line-height: 130%;
+		margin: 9px 0;
+
+		&:first-child {
+			margin-top: 5px;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		.noticon {
+			color: $alert-green;
+			margin-right: 5px;
+		}
+	}
+}
+
+.privacy-protection-card__description {
+	box-sizing: border-box;
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+		margin-right: 5%;
+		width: 60%;
+	}
+
+	h2 {
+		color: $gray-dark;
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 120%;
+		margin: 0 0 10px 0;
+	}
+
+	p {
+		clear: left;
+		color: $gray;
+		font-size: 12px;
+		margin: 0;
+
+		a {
+			@include breakpoint( ">660px" ) {
+				display: block;
+			}
+		}
+	}
+}
+
+.add-email-addresses-card__inner {
+	@include clear-fix;
+}
+
+.add-email-addresses-card__add-another-email-address-link {
+	display: inline-block;
+	font-size: 12px;
+	margin-top: 5px;
+}
+
+.add-email-addresses-card__email-address-fieldsets {
+	.add-email-addresses-card__email-address-fieldset {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 10px;
+
+		@include breakpoint( ">480px" ) {
+			flex-direction: row;
+		}
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	select {
+		border-bottom-width: 1px;
+		border-top-left-radius: 0;
+
+		@include breakpoint( "<480px" ) {
+			border-top-right-radius: 0;
+			margin-top: -1px;
+		}
+
+		@include breakpoint( ">480px" ) {
+			border-bottom-left-radius: 0;
+			margin-left: -1px;
+		}
+	}
+}
+
+.name-servers__dns {
+	.name-servers__toggle {
+		display: inline-block;
+		float: right;
+	}
+	.name-servers__explanation {
+		animation: appear 0.5s ease-in-out;
+		color: $gray;
+		font-size: 13px;
+		font-style: italic;
+		margin-bottom: 0;
+	}
+}
+
+.custom-nameservers-form {
+	animation: appear 0.5s ease-in-out;
+}
+
+.name-servers {
+	.custom-nameservers-row {
+		margin-top: 10px;
+	}
+
+	.remove,
+	.add {
+		border-radius: 2px;
+		color: #FFF;
+		cursor: pointer;
+		display: inline-block;
+		font-size: 9px;
+		padding: 3px 8px;
+		position: absolute;
+		margin-top: 11px;
+		margin-right: 34px;
+		text-transform: uppercase;
+		right: 0px;
+	}
+
+	.add {
+		background: $alert-green;
+	}
+	.remove {
+		background: $alert-red;
+	}
+
+	.notice {
+		font-size: 12px;
+		margin-top: 10px;
+		padding-right: 15px;
+	}
+}
+
+.name-servers {
+	.icann-verification {
+		.button {
+			margin-bottom: 15px;
+
+			@include breakpoint( '<480px' ) {
+				width: 100%;
+			}
+		}
+	}
+
+	.icann-verification__explanation {
+		margin-bottom: 15px;
+	}
+}
+
+ul.dns__list {
+	list-style: none;
+	margin: 15px 0 0 0;
+	padding: 0;
+
+	li {
+		border-top: 1px solid $gray-light;
+		overflow: auto;
+		padding: 10px 0;
+		position: relative;
+
+		em {
+			color: #87a6bc;
+			display: block;
+			font-size: 11px;
+		}
+
+		label {
+			background: #87a6bc;
+			border-radius: 2px;
+			color: $white;
+			float: left;
+			font-size: 12px;
+			margin: 0 10px 0 0;
+			padding: 10px 5px;
+			text-align: center;
+			width: 60px;
+		}
+
+		strong {
+			color: #58819e;
+			font-weight: normal;
+		}
+	}
+	.remove {
+		background-color: #87a6bc;
+		border-radius: 2px;
+		color: #FFF;
+		cursor: pointer;
+		display: inline-block;
+		float: right;
+		font-size: 9px;
+		padding: 3px 8px;
+		text-transform: uppercase;
+	}
+}
+
+.dns__add-new {
+	fieldset {
+		label {
+			+ select,
+			+ textarea {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.google-apps-users-card.card {
+	@include clear-fix;
+}
+
+.google-apps-users-card__add-user-button {
+	@include breakpoint( '<480px' ) {
+		width: 100%;
+	}
+
+	@include breakpoint( '>480px' ) {
+		float: right;
+	}
+}
+
+.google-apps-users-card__subtext {
+	font-size: 13px;
+	margin: 5px 0;
+	font-style: italic;
+	font-weight: 400;
+	color: $gray;
+}
+
+.google-apps-users-card__notice.notice {
+	font-size: 13px;
+	margin: 10px 0;
+	animation: none;
+}
+
+.google-apps-users-card__user-list {
+	list-style: none;
+	margin: 0 0 16px 0;
+
+	li {
+		color: #58819e;
+		border-top: 1px solid $gray-light;
+		padding: 10px 0;
+		@include clear-fix;
+
+		&:last-of-type {
+			border-bottom: 1px solid $gray-light;
+		}
+	}
+}
+
+.google-apps-users-card__user-email {
+	float: left;
+}
+
+.google-apps-users-card__user-manage-link {
+	float: right;
+	font-size: 13px;
+}

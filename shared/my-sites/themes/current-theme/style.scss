@@ -1,0 +1,128 @@
+
+$current-theme-height: 56px;
+$current-theme-border: 1px solid lighten( $gray, 20% );
+
+.current-theme {
+	font-weight: 600;
+	padding: 0px;
+	margin-bottom: 24px;
+}
+
+.current-theme__info {
+	@include breakpoint( ">480px" ) {
+		width: 50%;
+		float: left;
+	}
+	height: $current-theme-height;
+}
+
+.current-theme__label {
+	font-size: 0.8em;
+	color: $gray;
+	text-transform: uppercase;
+	padding-left: 15px;
+	padding-top: 10px;
+	margin-bottom: -2px;
+	float: left;
+}
+
+.current-theme__name {
+	box-sizing: border-box;
+	padding-left: 15px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	float: left;
+	clear: both;
+}
+
+.current-theme__placeholder {
+	color: transparent;
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.current-theme__actions {
+	height: $current-theme-height;
+	border-top: $current-theme-border;
+	box-sizing: border-box;
+
+	@include breakpoint( ">480px" ) {
+		width: 50%;
+		float: right;
+		border-top: none;
+		border-left: $current-theme-border;
+	}
+
+	&.two-buttons {
+		@include breakpoint( ">480px" ) {
+			width: 33.3%;
+		}
+
+		.current-theme__button {
+			width: 50%;
+		}
+	}
+}
+
+.current-theme__button {
+	height: $current-theme-height;
+	box-sizing: border-box;
+	width: 33.33%;
+	float: left;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+	font-weight: normal;
+	/* transition: all 200ms ease-in-out; /* Unfortunately gradients don't transition (long-content-fade) */
+	position: relative;
+
+	&:link,
+	&:visited {
+		color: $gray-dark;
+	}
+
+	&.disabled {
+		cursor: default;
+
+		span {
+			color: $gray;
+		}
+	}
+
+	&:not(.disabled):hover {
+		background: $gray-light;
+		cursor: pointer;
+	}
+
+	&:not(.disabled):active {
+		background: $gray-light;
+	}
+
+	.accessible-focus &:focus {
+		z-index: 1;
+		outline: solid 3px $blue-light;
+	}
+}
+
+.current-theme__button-label {
+		overflow: hidden;
+		white-space: nowrap;
+		max-width: 95%;
+
+		&:after {
+			@include long-content-fade( $size: 10% );
+		}
+
+		.current-theme__button:not(.disabled):hover &:after {
+			@include long-content-fade( $size: 10%, $color: $gray-light );
+		}
+}
+
+.current-theme__details {
+	border-left: $current-theme-border;
+	border-right: $current-theme-border;
+}

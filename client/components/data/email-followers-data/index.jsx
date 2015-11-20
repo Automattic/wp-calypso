@@ -1,0 +1,110 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+import isEqual from 'lodash/lang/isEqual';
+import debugModule from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import EmailFollowersStore from 'lib/email-followers/store';
+import EmailFollowersActions from 'lib/email-followers/actions';
+import passToChildren from 'lib/react-pass-to-children';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:email-followers-data' );
+
+export default React.createClass( {
+	displayName: 'EmailFollowersData',
+
+	propTypes: {
+		fetchOptions: React.PropTypes.object.isRequired
+	},
+
+	getInitialState() {
+		return {
+			followers: false,
+			totalFollowers: false,
+			currentPage: false,
+			fetchInitialized: false
+		};
+	},
+
+	componentDidMount() {
+		EmailFollowersStore.on( 'change', this.refreshFollowers );
+		this.fetchIfEmpty( this.props.fetchOptions );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.fetchOptions ) {
+			return;
+		}
+		if ( ! isEqual( this.props.fetchOptions, nextProps.fetchOptions ) ) {
+			this.setState( this.getInitialState() );
+			this.fetchIfEmpty( nextProps.fetchOptions );
+		}
+	},
+
+	componentWillUnmount() {
+		EmailFollowersStore.removeListener( 'change', this.refreshFollowers );
+	},
+
+	fetchIfEmpty( fetchOptions ) {
+		fetchOptions = fetchOptions || this.props.fetchOptions;
+		if ( ! fetchOptions || ! fetchOptions.siteId ) {
+			return;
+		}
+		if ( EmailFollowersStore.getFollowers( fetchOptions ).length ) {
+			this.refreshFollowers( fetchOptions );
+			return;
+		}
+
+		// defer fetch requests to avoid dispatcher conflicts
+		let defer = function() {
+			var paginationData = EmailFollowersStore.getPaginationData( fetchOptions );
+			if ( paginationData.fetchingFollowers ) {
+				return;
+			}
+			EmailFollowersActions.fetchFollowers( fetchOptions );
+			this.setState( { fetchInitialized: true } );
+		}.bind( this );
+		setTimeout( defer, 0 );
+	},
+
+	isFetching: function() {
+		let fetchOptions = this.props.fetchOptions;
+		if ( ! fetchOptions.siteId ) {
+			debug( 'Is fetching because siteId is falsey' );
+			return true;
+		}
+		if ( ! this.state.followers ) {
+			debug( 'Is fetching because not followers' );
+			return true;
+		}
+
+		let followersPaginationData = EmailFollowersStore.getPaginationData( fetchOptions );
+		debug( 'Followers pagination data: ' + JSON.stringify( followersPaginationData ) );
+
+		if ( followersPaginationData.fetchingFollowers ) {
+			return true;
+		}
+		return false;
+	},
+
+	refreshFollowers( fetchOptions ) {
+		fetchOptions = fetchOptions || this.props.fetchOptions;
+		debug( 'Refreshing followers: ' + JSON.stringify( fetchOptions ) );
+		this.setState( {
+			followers: EmailFollowersStore.getFollowers( fetchOptions ),
+			totalFollowers: EmailFollowersStore.getPaginationData( fetchOptions ).totalFollowers,
+			currentPage: EmailFollowersStore.getPaginationData( fetchOptions ).followersCurrentPage
+		} );
+	},
+
+	render() {
+		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
+	}
+} );

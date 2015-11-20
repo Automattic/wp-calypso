@@ -1,0 +1,58 @@
+// ==========================================================================
+// Breakpoint Mixin
+// See https://wpcalypso.wordpress.com/devdocs/docs/coding-guidelines/css.md#media-queries
+// ==========================================================================
+
+$breakpoints: 480px, 660px, 960px, 1040px; // Think very carefully before adding a new breakpoint
+
+@mixin breakpoint( $size ){
+	@if type-of($size) == string {
+	  $approved-value: 0;
+		@each $breakpoint in $breakpoints {
+			$and-larger: ">" + $breakpoint;
+			$and-smaller: "<" + $breakpoint;
+
+			@if $size == $and-smaller {
+				$approved-value: 1;
+				@media ( max-width: $breakpoint ) {
+					@content;
+				}
+			}
+			@else {
+				@if $size == $and-larger {
+					$approved-value: 2;
+					@media ( min-width: $breakpoint + 1 ) {
+						@content;
+					}
+				}
+				@else {
+					@each $breakpoint-end in $breakpoints {
+						$range: $breakpoint + "-" + $breakpoint-end;
+						@if $size == $range {
+							$approved-value: 3;
+							@media ( min-width: $breakpoint + 1 ) and ( max-width: $breakpoint-end ) {
+								@content;
+							}
+						}
+					}
+				}
+			}
+		}
+		@if $approved-value == 0 {
+			$sizes: "";
+			@each $breakpoint in $breakpoints {
+				$sizes: $sizes + " " + $breakpoint;
+			}
+			// TODO - change this to use @error, when it is supported by node-sass
+			@warn "ERROR in breakpoint( #{ $size } ): You can only use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
+		}
+	}
+	@else {
+		$sizes: "";
+		@each $breakpoint in $breakpoints {
+			$sizes: $sizes + " " + $breakpoint;
+		}
+		// TODO - change this to use @error, when it is supported by node-sass
+		@warn "ERROR in breakpoint( #{ $size } ): Please wrap the breakpoint $size in parenthesis. You can use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
+	}
+}

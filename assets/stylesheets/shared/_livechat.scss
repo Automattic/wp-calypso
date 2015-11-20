@@ -1,0 +1,1019 @@
+// © Copyright Olark 2015
+#habla_window_div,
+#habla_window_div a,
+#habla_window_div abbr,
+#habla_window_div acronym,
+#habla_window_div address,
+#habla_window_div applet,
+#habla_window_div article,
+#habla_window_div aside,
+#habla_window_div audio,
+#habla_window_div b,
+#habla_window_div big,
+#habla_window_div blockquote,
+#habla_window_div caption,
+#habla_window_div cite,
+#habla_window_div code,
+#habla_window_div dd,
+#habla_window_div del,
+#habla_window_div dfn,
+#habla_window_div dialog,
+#habla_window_div div,
+#habla_window_div dl,
+#habla_window_div dt,
+#habla_window_div em,
+#habla_window_div fieldset,
+#habla_window_div figure,
+#habla_window_div font,
+#habla_window_div footer,
+#habla_window_div form,
+#habla_window_div h1,
+#habla_window_div h2,
+#habla_window_div h3,
+#habla_window_div h4,
+#habla_window_div h5,
+#habla_window_div h6,
+#habla_window_div header,
+#habla_window_div hgroup,
+#habla_window_div hr,
+#habla_window_div i,
+#habla_window_div iframe,
+#habla_window_div img,
+#habla_window_div input,
+#habla_window_div ins,
+#habla_window_div kbd,
+#habla_window_div label,
+#habla_window_div legend,
+#habla_window_div li,
+#habla_window_div mark,
+#habla_window_div menu,
+#habla_window_div nav,
+#habla_window_div object,
+#habla_window_div ol,
+#habla_window_div option,
+#habla_window_div p,
+#habla_window_div pre,
+#habla_window_div q,
+#habla_window_div s,
+#habla_window_div samp,
+#habla_window_div section,
+#habla_window_div select,
+#habla_window_div small,
+#habla_window_div span,
+#habla_window_div strike,
+#habla_window_div strong,
+#habla_window_div sub,
+#habla_window_div sup,
+#habla_window_div table,
+#habla_window_div tbody,
+#habla_window_div td,
+#habla_window_div textarea,
+#habla_window_div tfoot,
+#habla_window_div th,
+#habla_window_div thead,
+#habla_window_div time,
+#habla_window_div tr,
+#habla_window_div tt,
+#habla_window_div ul,
+#habla_window_div var,
+#habla_window_div video {
+	background-attachment:scroll;
+	background-color:transparent;
+	background-image:none;
+	background-position:0 0;
+	background-repeat:repeat;
+	border-color:#000;
+	border-style:none;
+	border-width:medium;
+	clear:none;
+	clip:auto;
+	color:inherit;
+	counter-increment:none;
+	counter-reset:none;
+	cursor:auto;
+	direction:inherit;
+	display:inline;
+	float:none;
+	font-family:inherit;
+	font-size:inherit;
+	font-style:inherit;
+	font-variant:normal;
+	font-weight:inherit;
+	height:auto;
+	letter-spacing:normal;
+	line-height:inherit;
+	list-style:inside;
+	list-style-type:inherit;
+	margin:0;
+	max-height:none;
+	max-width:none;
+	outline:none;
+	overflow:visible;
+	padding:0;
+	position:static;
+	quotes:"" "";
+	table-layout:auto;
+	text-align:inherit;
+	text-decoration:inherit;
+	text-transform:none;
+	unicode-bidi:normal;
+	vertical-align:baseline;
+	visibility:visible;
+	white-space:normal;
+	width:auto;
+	word-spacing:normal;
+	z-index:auto;
+	border-radius:0;
+	-moz-border-radius:0;
+	-webkit-border-radius:0;
+	opacity:1;
+}
+
+#habla_window_div,
+#habla_window_div address,
+#habla_window_div article,
+#habla_window_div aside,
+#habla_window_div blockquote,
+#habla_window_div caption,
+#habla_window_div dd,
+#habla_window_div dialog,
+#habla_window_div div,
+#habla_window_div dl,
+#habla_window_div dt,
+#habla_window_div fieldset,
+#habla_window_div figure,
+#habla_window_div footer,
+#habla_window_div form,
+#habla_window_div h1,
+#habla_window_div h2,
+#habla_window_div h3,
+#habla_window_div h4,
+#habla_window_div h5,
+#habla_window_div h6,
+#habla_window_div header,
+#habla_window_div hgroup,
+#habla_window_div hr,
+#habla_window_div menu,
+#habla_window_div nav,
+#habla_window_div ol,
+#habla_window_div option,
+#habla_window_div p,
+#habla_window_div pre,
+#habla_window_div section,
+#habla_window_div select,
+#habla_window_div table,
+#habla_window_div tbody,
+#habla_window_div td,
+#habla_window_div textarea,
+#habla_window_div tfoot,
+#habla_window_div th,
+#habla_window_div thead,
+#habla_window_div tr,
+#habla_window_div ul {
+	display:block;
+}
+
+#habla_window_div nav ol,
+#habla_window_div nav ul {
+	list-style-type:none;
+}
+
+#habla_window_div menu,
+#habla_window_div ul {
+	list-style-type:disc;
+}
+
+#habla_window_div ol {
+	list-style-type:decimal;
+}
+
+#habla_window_div menu menu,
+#habla_window_div menu ul,
+#habla_window_div ol menu,
+#habla_window_div ol ul,
+#habla_window_div ul menu,
+#habla_window_div ul ul {
+	list-style-type:circle;
+}
+
+#habla_window_div menu menu menu,
+#habla_window_div menu menu ul,
+#habla_window_div menu ol menu,
+#habla_window_div menu ol ul,
+#habla_window_div menu ul menu,
+#habla_window_div menu ul ul,
+#habla_window_div ol menu menu,
+#habla_window_div ol menu ul,
+#habla_window_div ol ol menu,
+#habla_window_div ol ol ul,
+#habla_window_div ol ul menu,
+#habla_window_div ol ul ul,
+#habla_window_div ul menu menu,
+#habla_window_div ul menu ul,
+#habla_window_div ul ol menu,
+#habla_window_div ul ol ul,
+#habla_window_div ul ul menu,
+#habla_window_div ul ul ul {
+	list-style-type:square;
+}
+
+#habla_window_div li {
+	display:list-item;
+	min-height:auto;
+	min-width:auto;
+}
+
+#habla_window_div strong {
+	font-weight:700;
+}
+
+#habla_window_div em {
+	font-style:italic;
+}
+
+#habla_window_div code,
+#habla_window_div kbd,
+#habla_window_div samp {
+	font-family:monospace;
+}
+
+#habla_window_div a,
+#habla_window_div a *,
+#habla_window_div input[type=checkbox],
+#habla_window_div input[type=radio],
+#habla_window_div input[type=submit],
+#habla_window_div select {
+	cursor:pointer;
+}
+
+#habla_window_div a:hover {
+	text-decoration:underline;
+}
+
+#habla_window_div button,
+#habla_window_div input[type=submit] {
+	text-align:center;
+}
+
+#habla_window_div input[type=hidden] {
+	display:none;
+}
+
+#habla_window_div abbr[title],
+#habla_window_div acronym[title],
+#habla_window_div dfn[title] {
+	cursor:help;
+	border-bottom-width:1px;
+	border-bottom-style:dotted;
+}
+
+#habla_window_div ins {
+	background-color:#ff9;
+	color:#000;
+}
+
+#habla_window_div del {
+	text-decoration:line-through;
+}
+
+#habla_window_div blockquote,
+#habla_window_div q {
+	quotes:none;
+}
+
+#habla_window_div blockquote:after,
+#habla_window_div blockquote:before,
+#habla_window_div li:after,
+#habla_window_div li:before,
+#habla_window_div q:after,
+#habla_window_div q:before {
+	content:"";
+	content:none;
+}
+
+#habla_window_div input,
+#habla_window_div select { vertical-align:middle;
+}
+
+#habla_window_div input,
+#habla_window_div select,
+#habla_window_div textarea {
+	border:1px solid #ccc;
+}
+
+#habla_window_div table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+#habla_window_div hr {
+	display:block;
+	height:1px;
+	border:0;
+	border-top:1px solid #ccc;
+	margin:1em 0;
+}
+
+#habla_window_div [dir=rtl] {
+	direction:rtl;
+}
+
+#habla_window_div mark {
+	background-color:#ff9;
+	color:#000;
+	font-style:italic;
+	font-weight:700;
+}
+
+// End of Reset sorta stuff
+//////////////////////////////////////////////////
+
+#habla_window_div {
+	line-height:1;
+	direction:ltr;
+	text-align:left;
+	color:#000;
+	font-style:normal;
+	font-weight:400;
+	text-decoration:none;
+}
+
+#habla_window_div.habla_window_div_base {
+	display:block!important;
+	z-index:99999999;
+}
+
+#habla_window_div #olark-callout-bubble,
+#habla_window_div #olark-callout-bubble-offline,
+#habla_window_div #olark-callout-bubble-online {
+	position:relative!important;
+}
+
+#habla_window_div #habla_panel_div {
+	overflow:hidden;
+}
+
+#habla_window_div #habla_middle_div {
+	padding:6px 10px 3px;
+	background: $white;
+}
+
+:first-child+html #habla_window_div #habla_middle_div {
+	padding:6px 0 0;
+}
+
+#habla_window_div textarea {
+	max-width:100%;
+	width:100%;
+}
+
+:first-child+html #habla_window_div textarea {
+	width:97%;
+}
+
+#habla_window_div #habla_input_div {
+
+}
+
+:first-child+html #habla_window_div #habla_input_div {
+	margin-left:0;
+	margin-right:0;
+	width:95%;
+}
+
+#habla_window_div #habla_chatform_form {
+	margin-top: 5px;
+}
+
+#habla_window_div #habla_conversation_div {
+	padding:6px 10px 0;
+	margin:-6px -10px 0;
+}
+
+:first-child+html #habla_window_div #habla_conversation_div,
+:first-child+html #habla_window_div #habla_offline_message_div,
+:first-child+html #habla_window_div #habla_pre_chat_div {
+	width:97%;
+}
+
+#habla_window_div #habla_name_input,
+#habla_window_div #habla_offline_body_input,
+#habla_window_div #habla_offline_email_input,
+#habla_window_div #habla_pre_chat_email_input,
+#habla_window_div #habla_pre_chat_name_input {
+	// overflow:hidden;
+}
+
+#habla_window_div #habla_offline_message_div,
+#habla_window_div #habla_offline_message_sent_div,
+#habla_window_div #habla_pre_chat_div {
+
+}
+
+:first-child+html #habla_window_div #habla_offline_message_div,
+:first-child+html #habla_window_div #habla_offline_message_sent_div,
+:first-child+html #habla_window_div #habla_pre_chat_div {
+	padding:5px;
+	margin-left:0;
+}
+
+#habla_middle_div {
+	line-height:1.5em;
+}
+
+#habla_window_div #habla_expanded_div {
+	// border-left:1px solid lighten( $gray, 30% );
+	// border-right:1px solid lighten( $gray, 30% );
+	border-left: 1px solid lighten( $gray, 20% );
+	border-right: 1px solid lighten( $gray, 20% );
+	box-shadow: -3px 1px 10px -2px rgba( $gray-dark, 0.075 );
+}
+
+#habla_window_div.habla_window_div_position_inline .habla_panel_border {
+	border-bottom:1px solid lighten( $gray, 30% );
+}
+
+#habla_window_div.olrk-fixed-bottom #habla_topbar_div,
+#habla_window_div.olrk-fixed-bottom .habla_panel_border {
+	// -moz-border-radius-topleft:5px;
+	// -moz-border-radius-topright:5px;
+	// border-top-left-radius:5px;
+	// border-top-right-radius:5px;
+}
+
+#habla_window_div.olrk-fixed-top .habla_panel_border {
+	// -moz-border-radius-bottomleft:5px;
+	// -moz-border-radius-bottomright:5px;
+	// border-bottom-left-radius:5px;
+	// border-bottom-right-radius:5px;
+}
+
+#habla_window_div.olrk-fixed-top #habla_expanded_div {
+	border-bottom:1px solid lighten( $gray, 30% );
+}
+
+#habla_window_div .habla_conversation_div {
+	background:0 0;
+	border-bottom:1px solid lighten( $gray, 30% );
+	line-height:1.5em;
+	overflow:auto;
+	color:#000;
+	width:100%;
+}
+
+#habla_window_div #habla_wcsend_input {
+	background:0 0;
+	overflow:auto;
+	padding:5px;
+	vertical-align:text-top;
+	line-height:1.5em;
+	min-height: 0 !important;
+	height: auto !important;
+}
+
+#habla_window_div .habla_wcsend_input_normal {
+	border:1px solid #b6b6b6;
+	color:#000;
+}
+
+#habla_window_div .habla_wcsend_input_pre {
+	color: $gray-dark;
+}
+
+#habla_window_div .habla_wcsend_input_highlighted {
+	border-color: $gray-dark !important;
+	color:#000;
+}
+
+#habla_window_div .habla_conversation_p_item {
+	background:0 0;
+	color:#000;
+	padding:0;
+	margin:0 0 0 20px;
+	text-indent:-20px;
+	overflow:visible;
+}
+
+#habla_window_div .habla_conversation_person1 {
+	color: lighten( $gray, 20% );
+	padding-right:5px;
+	display:inline;
+}
+
+#habla_window_div .habla_conversation_person2 {
+	color: $blue-wordpress;
+	padding-right:5px;
+}
+
+#habla_window_div .olrk_avatar {
+	float:right;
+	border:1px solid #d3d3d3;
+	margin-left:5px;
+	margin-bottom:5px;
+}
+
+#habla_window_div #habla_offline_message_span,
+#habla_window_div #habla_pre_chat_span {
+	margin-bottom:5px;
+	display:block;
+}
+
+#habla_window_div #habla_offline_message_div,
+#habla_window_div #habla_pre_chat_div {
+	line-height:1.5em;
+}
+
+#habla_window_div #habla_offline_message_span {
+	margin-bottom:5px;
+	display:block;
+}
+
+#habla_window_div #habla_name_input,
+#habla_window_div #habla_offline_body_input,
+#habla_window_div #habla_offline_email_input,
+#habla_window_div #habla_pre_chat_email_input,
+#habla_window_div #habla_pre_chat_name_input {
+	padding: 5px;
+	margin-bottom: 5px;
+	min-height: 0 !important;
+	height: auto!important;
+}
+
+#habla_window_div .habla_offline_submit_input {
+	border-radius: 3px;
+	border-style: solid;
+	border-width: 1px 1px 2px;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 13px;
+	margin: 0;
+	outline: 0;
+	overflow: hidden;
+	padding: .4em .9em;
+	text-overflow: ellipsis;
+	text-decoration: none;
+	vertical-align: top;
+	white-space: nowrap;
+	appearance: none;
+	box-shadow: 0 -1px 0 rgba(255,255,255,0.8) inset;
+	box-sizing: border-box;
+	background: $blue-medium;
+	border-color: shade( $blue-medium, 15% );
+	border-top-color: shade( $blue-medium, 10% );
+	border-bottom-color: shade( $blue-medium, 20% );
+	color: $white;
+	box-shadow: 0 -1px 0 rgba(255,255,255,0.15) inset;
+
+	&:hover,
+	&:focus {
+		background: $link-highlight;
+		border-color: shade($link-highlight, 15%);
+		border-bottom-color: shade($link-highlight, 20%)
+	}
+
+	&:focus {
+		border-color: $gray-dark; // MT / check this color
+		box-shadow: inset 0 1px 0 rgba(120, 200, 230, .6), 1px 1px 2px rgba(0, 0, 0, .4);
+	}
+}
+
+#habla_window_div #habla_pre_chat_error_span,
+#habla_window_div .habla_offline_error_span {
+	margin-top:-20px;
+	float:left;
+	padding-bottom:10px;
+	font-style:italic;
+	line-height:1.5em;
+}
+
+#habla_window_div #habla_topbar_div {
+	background: $blue-medium;
+	color: $white;
+	padding:10px;
+	cursor:pointer;
+}
+
+#habla_window_div #habla_oplink_a {
+	color:#fff;
+	text-decoration:none;
+}
+
+#habla_window_div #habla_oplink_a.habla_oplink_a_hover {
+	text-decoration:underline;
+}
+
+#habla_window_div .clear_style {
+	clear:both;
+}
+
+#habla_window_div .habla_button {
+	float:right;
+	margin-top:-1px;
+	margin-left:4px;
+	padding:0;
+	width:16px;
+	height:16px;
+	cursor:pointer!important;
+	overflow:hidden;
+}
+
+#habla_window_div .habla_button:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+#habla_window_div #habla_sizebutton_a {
+
+	&:before {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		font: 16px/1 Noticons;
+		content: '\f108';
+	}
+}
+
+.olrk-state-expanded #habla_window_div #habla_sizebutton_a {
+
+	&:before {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		font: 16px/1 Noticons;
+		content: '\f431';
+	}
+}
+
+#habla_window_div #habla_sizebutton_a:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+#habla_window_div #habla_closebutton_a {
+
+	&:before {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		font: 16px/1 Noticons;
+		content: '\f405';
+	}
+}
+
+#habla_window_div #habla_closebutton_a:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+#habla_window_div #habla_popout_a {
+
+	&:before {
+		width: 16px;
+		height: 16px;
+		font: 16px/1 Noticons;
+		content: '\f442';
+	}
+}
+
+#habla_window_div #habla_popout_a:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+#habla_window_div #habla_panel_div #habla_conversation_div a,
+#habla_window_div #habla_panel_div #habla_conversation_div a:active,
+#habla_window_div #habla_panel_div #habla_conversation_div a:visited,
+#habla_window_div #habla_panel_div #habla_expanded_div a,
+#habla_window_div #habla_panel_div #habla_expanded_div a:active,
+#habla_window_div #habla_panel_div #habla_expanded_div a:visited {
+	color: $blue-wordpress;
+}
+
+#habla_conversation_div .habla_conversation_p_item {
+	word-break: break-word;
+	word-wrap: break-word;
+}
+
+#habla_conversation_div .olark-feedback-wrapper {
+	background-color:#fff!important;
+	border:1px solid #e6e6e6;
+	border-radius:0;
+	-webkit-border-radius:0;
+	-moz-border-radius:0;
+	color:$gray-dark;
+	padding:10px 10px 12px!important;
+	filter:none!important;
+}
+
+#habla_conversation_div p .olark-feedback-wrapper {
+	color:$gray-dark;
+	color:rgba(0,0,0,.7);
+	line-height:1.2em;
+	font-size:13px;
+}
+
+#habla_conversation_div p.olark-feedback-question {
+	color:$gray-dark;
+	color:rgba(0,0,0,.7);
+	font-weight:700;
+}
+
+#habla_conversation_div .olark-feedback-error {
+	background-color:#FF9581;
+	border-radius:2px;
+	-webkit-border-radius:2px;
+	-moz-border-radius:2px;
+	color:#fff;
+	margin-bottom:3px;
+	padding:5px;
+}
+
+#habla_conversation_div .olark-feedback-hidden {
+	display:none;
+}
+
+#habla_conversation_div .olark-feedback-high-answer,
+#habla_conversation_div .olark-feedback-low-answer {
+	background:#E4E089;
+	border-radius:2px;
+	-webkit-border-radius:2px;
+	-moz-border-radius:2px;
+	color:$gray-dark;
+	display:inline-block;
+	font-size:12px;
+	line-height:1em;
+	margin:8px 0 15px;
+	padding:5px;
+	position:relative;
+	text-align:center;
+	max-width:42%;
+}
+
+#habla_conversation_div .olark-feedback-high-answer {
+	float:right;
+}
+
+#habla_conversation_div .olark-feedback-high-answer:after,
+#habla_conversation_div .olark-feedback-low-answer:after,
+#habla_conversation_div p .olark-feedback-high-answer:before,
+#habla_conversation_div p .olark-feedback-low-answer:before {
+	content:"";
+	position:absolute;
+	width:0;
+	height:0;
+}
+
+#habla_conversation_div .olark-feedback-low-answer:after,
+#habla_conversation_div p .olark-feedback-low-answer:before {
+	left:5px;
+	bottom:-5px;
+	border:4px solid;
+	border-color:#E4E089 transparent transparent #E4E089;
+}
+
+#habla_conversation_div .olark-feedback-high-answer:after,
+#habla_conversation_div p .olark-feedback-high-answer:before {
+	right:5px;
+	bottom:-5px;
+	border:4px solid;
+	border-color:#E4E089 #E4E089 transparent transparent;
+}
+
+#habla_conversation_div .olark-feedback-choices-wrap {
+	border-top:2px solid #CACACA;
+	clear:both;
+	height:15px;
+	text-align:justify;
+}
+
+#habla_conversation_div .olark-feedback-radio {
+	-webkit-appearance:radio;
+}
+
+#habla_conversation_div .olark-feedback-input {
+	border:0;
+	display:inline-block;
+	margin-top:-20px;
+}
+
+#habla_conversation_div .olark-feedback-choices-wrap:after {
+	content:'';
+	width:100%;
+	display:inline-block;
+}
+
+#habla_conversation_div .olark-feedback-question-number {
+	color:$gray-dark;
+	display:inline-block;
+	font-size:13px;
+	padding:6px 0;
+	margin-right:5px;
+}
+
+#habla_conversation_div .olark-feedback-text {
+	box-sizing:border-box;
+	color:$gray-dark;
+	font-size:14px;
+	min-height:100px;
+	margin-bottom:5px;
+	padding:3px;
+}
+
+#habla_conversation_div .olark-feedback-placeholder {
+	color:#AAA;
+}
+
+#habla_conversation_div .olark-feedback-submit {
+	background:#1eaedb;
+	border:0;
+	border-radius:2px;
+	-webkit-border-radius:2px;
+	-moz-border-radius:2px;
+	color:#fff;
+	display:inline-block;
+	font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	font-size:13px;
+	font-weight:700;
+	line-height:1em;
+	padding:5px;
+}
+
+#habla_conversation_div .olark-feedback-submit:disabled {
+	background:#DDD;
+	color:$gray-dark;
+}
+
+#habla_conversation_div .habla_conversation_notification.olark-feedback-wrapper {
+	color:$gray-dark!important;
+}
+
+#habla_conversation_div .habla_conversation_notification {
+	float: left;
+	color: $gray;
+	font-style: italic;
+	margin: 1em 0;
+}
+
+@-webkit-keyframes pulse {
+	50% {
+		background-color:rgba(255,0,0,.7)
+	}
+}
+
+@-webkit-keyframes tab_in_bottom{
+	0% {
+		margin-bottom:-50px;
+		padding-bottom:10px;
+	}
+	50% {
+		margin-bottom:0;
+		padding-bottom:15px;
+	}
+	100% {
+		padding-bottom:10px;
+	}
+}
+
+@-webkit-keyframes tab_in_top {
+	0% {
+		margin-top:-50px;
+		padding-top:10px;
+	}
+	50% {
+		margin-top:0;
+		padding-top:15px;
+	}
+	100% {
+		padding-top:10px;
+	}
+}
+
+.olrk-state-compressed .olrk-fixed-bottom #habla_topbar_div {
+	-webkit-animation-name:tab_in_bottom;
+	-webkit-animation-duration:1s;
+	-webkit-animation-iteration-count:1;
+	-webkit-animation-direction:alternate;
+	-webkit-animation-timing-function:ease-in-out;
+}
+
+.olrk-state-compressed .olrk-fixed-top #habla_topbar_div {
+	-webkit-animation-name:tab_in_top;
+	-webkit-animation-duration:1s;
+	-webkit-animation-iteration-count:1;
+	-webkit-animation-direction:alternate;
+	-webkit-animation-timing-function:ease-in-out;
+}
+
+#habla_window_div .habla_topbar_div_highlighted {
+	background:#d05c34;
+	color:#FFF;
+	-webkit-animation-name:pulse;
+	-webkit-animation-duration:3s;
+	-webkit-animation-iteration-count:2;
+	-webkit-animation-direction:alternate;
+	-webkit-animation-timing-function:ease-in-out;
+}
+
+a.hbl_pal_title_fg {
+	color:!important;
+}
+
+.hbl_pal_main_bg {
+	background-color:#fff!important;
+}
+
+.hbl_pal_local_fg,
+.hbl_pal_title_fg {
+	color:!important;
+}
+
+.hbl_pal_title_bg {
+	background-color:!important;
+}
+
+.hbl_pal_offline_submit_fg,
+.hbl_pal_remote_fg {
+	color:!important;
+}
+
+.hbl_pal_offline_submit_bg {
+	background-color:!important;
+}
+
+div.hbl_pal_main_height {
+	// height:150px!important;
+}
+
+div.hbl_pal_main_width {
+	width: 267px!important;
+}
+
+.olrk-fixed-top {
+	position:fixed;
+	bottom:auto;
+	top:0;
+}
+
+.olrk-fixed-bottom {
+	position:fixed;
+	bottom:0;
+	top:auto;
+}
+
+.olrk-fixed-left {
+	position:fixed;
+	right:auto;
+	left:0;
+}
+
+.olrk-fixed-right {
+	position:fixed;
+	right:0;
+	left:auto;
+}
+
+.habla_window_div_position {
+	bottom:0;
+	position:fixed;
+	right:0;
+	margin-right:10px;
+	margin-bottom:10px;
+}
+
+.habla_window_div_position_floating {
+	bottom:0;
+	position:fixed;
+	right:0;
+	margin-right:10px;
+	margin-bottom:10px;
+}
+
+.habla_window_div_position_floating_ie {
+	bottom:0;
+	position:absolute;
+	right:0;
+	margin-right:10px;
+	margin-bottom:10px;
+}
+
+.olrk-state-compressed #habla_window_div #habla_topbar_div {
+	margin-right: -10px;
+	background: transparent;
+}
+
+.olrk-state-compressed #habla_panel_div {
+	background: transparent !important;
+}
+
+.olrk-state-compressed #habla_window_div #habla_sizebutton_a {
+	background-color: $blue-medium;
+	padding: 5px 5px 3px 5px;
+	text-decoration: none;
+}
+
+.olrk-state-compressed #habla_window_div #habla_closebutton_a {
+	display: none;
+}
+.olrk-state-compressed #habla_oplink_a {
+	display: none;
+}
+
+.olrk-state-compressed div.hbl_pal_main_width {
+    width: 28px !important;
+}

@@ -1,0 +1,23 @@
+.wplink__dialog.dialog.card {
+	min-width: 380px;
+	z-index: 100200; // See: div.mce-inline-toolbar-grp
+}
+
+.wplink__remove-link {
+	color: $gray;
+	cursor: pointer;
+	float: left;
+	margin-right: 24px;
+	text-align: left;
+	padding: 7px 0 9px;
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+
+	.gridicon {
+		vertical-align: bottom;
+		margin-right: 5px;
+		margin-bottom: -3px;
+	}
+}

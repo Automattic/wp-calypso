@@ -1,0 +1,232 @@
+$date-picker_caption_height: 50px;
+$date-picker_nav_button_size: 20px;
+
+.date-picker {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	position: relative;
+	padding: 0;
+	user-select: none;
+	width: 100%;
+}
+
+.date-picker__day {
+	position: relative;
+	border-radius: 50%;
+	border: 1px solid $transparent;
+	width: 24px;
+	height: 24px;
+	color: inherit;
+	font-weight: inherit;
+	text-decoration: inherit;
+	line-height: 24px;
+	text-align: center;
+	margin: 0 auto;
+
+	&.is-selected {
+		color: $white;
+		&:hover {
+			color: $white;
+		}
+	}
+
+	&:hover {
+		color: lighten( $gray, 10% );
+	}
+}
+
+.date-picker__day_event {
+	border-color: lighten( $gray, 20 );
+}
+
+.date-picker__day-text {
+	position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	color: inherit;
+	font-weight: inherit;
+	text-decoration: inherit;
+	transition: color 90ms ease;
+}
+
+.date-picker__day-selected {
+	position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	transition: transform 125ms cubic-bezier( 0.215, 0.610, 0.355, 1.000 ), opacity 125ms ease-out;
+	transform: scale( 0 );
+	opacity: 0;
+	border-radius: 50%;
+	background-color: $blue-medium;
+}
+
+.date-picker__day.is-selected .date-picker__day-selected {
+	transition: transform 125ms cubic-bezier( 0.105, 1.075, 0.940, 1.080 ) , opacity 125ms ease-out;
+	transform: scale( 1 );
+	opacity: 1;
+}
+
+/**
+ * The follow class names are coming from react-day-picker component
+ * and they aren't possible change them without change its code base.
+ */
+
+.DayPicker-Month {
+	display: table;
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+	user-select: none;
+	margin: 0;
+}
+
+.DayPicker-NavBar {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: $date-picker_caption_height;
+}
+
+.DayPicker-NavButton {
+	position: absolute;
+	width: $date-picker_nav_button_size;
+	height: $date-picker_nav_button_size;
+	line-height: $date-picker_nav_button_size;
+	top: ( $date-picker_caption_height - $date-picker_nav_button_size ) / 2;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	cursor: pointer;
+	font-size: 18px;
+
+	&:before {
+		height: $date-picker_nav_button_size;
+	}
+}
+
+.DayPicker-NavButton--prev {
+	color: $gray;
+	left: 0;
+
+	&:before {
+		@include noticon( '\f431' );
+		transform: rotate( 90deg );
+	}
+}
+
+.DayPicker-NavButton--next {
+	color: $gray;
+	right: 0;
+
+	&:before {
+		@include noticon( '\f432' );
+		transform: rotate( 90deg );
+	}
+}
+
+.DayPicker-Caption {
+	display: table-caption;
+	color: $gray;
+	text-align: center;
+	height: $date-picker_caption_height;
+	line-height: $date-picker_caption_height;
+	font-size: 18px;
+	font-weight: 300;
+	margin: 0 $date-picker_nav_button_size * 1.5;
+	position: relative;
+	cursor: pointer;
+
+	&:first-letter {
+		text-transform: uppercase;
+	}
+}
+
+.DayPicker-Weekdays {
+	margin-top: 10px;
+	border-top: 1px solid lighten( $gray, 25% );
+	display: table-header-group;
+}
+
+.DayPicker-Weekday {
+	display: table-cell;
+	padding: 15px 0 10px;
+	font-size: 11px;
+	text-align: center;
+	font-weight: 600;
+	color: lighten( $gray, 20% );
+	text-transform: uppercase;
+}
+
+.DayPicker-Body {
+	display: table-row-group;
+}
+
+.DayPicker-Week {
+	display: table-row;
+}
+
+.DayPicker-Day {
+	display: table-cell;
+	position: relative;
+	height: 34px;
+	line-height: 34px;
+	vertical-align: middle;
+	text-align: center;
+	cursor: pointer;
+	font-size: 11px;
+	font-weight: 600;
+	color: $gray;
+}
+
+.DayPicker--interactionDisabled .DayPicker-Day {
+	cursor: default;
+}
+
+// Modifiers
+
+.DayPicker-Day--today {
+	&::before {
+		content: '';
+		box-sizing: border-box;
+		width: 24px;
+		height: 24px;
+		position: absolute;
+			left: 50%;
+			top: 50%;
+		margin: -12px 0 0 -12px;
+		border: solid 1px $orange-jazzy;
+		border-radius: 50%;
+	}
+}
+
+.DayPicker-Day--disabled {
+	color: lighten( $gray, 20% );
+	cursor: default;
+}
+
+.DayPicker-Day--sunday {
+	color: $gray-light;
+}
+
+.DayPicker-Day--outside {
+	cursor: pointer;
+	font-weight: normal;
+
+	.date-picker__day {
+		color: lighten( $gray, 20% );
+	}
+}
+
+.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+	color: $white;
+	background-color: $gray-light;
+}
+
+.DayPicker--ar {
+	direction: rtl;
+}

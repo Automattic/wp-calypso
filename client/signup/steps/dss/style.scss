@@ -1,0 +1,146 @@
+.dss-theme-selection__search {
+	margin: 0 auto;
+	max-width: 300px;
+
+	@include breakpoint( ">660px" ) {
+		max-width: 620px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		max-width: 650px;
+	}
+}
+
+.dss-theme-selection__search label[for="dss-theme-selection__search__field"] {
+	font-size: 15px;
+	font-weight: 400;
+	margin-bottom: 8px;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 16px;
+	}
+}
+
+// Since updating DSS screenshot markup is a heavy DOM operation,
+// we are absolute positioning the div containing the markup which
+// will prevent DOM reflows on the rest of the page. To reserve the
+// div's space in the rest of the page, we must set a height for
+// its containing div.
+.dss-theme-selection__screenshots {
+	height: 1760px;
+
+	@include breakpoint( ">660px" ) {
+		height: 850px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		height: 580px;
+	}
+}
+
+// Overlay all screenshots while the screenshot markup is loading.
+.dss-screenshot.is-loading {
+	.dss-screenshot__original:before,
+	.dss-screenshot__dynamic:before {
+		background-color: $white;
+		content: ' ';
+		height: 100%;
+		opacity: 0.6;
+		position: absolute;
+		width: 100%;
+		z-index: 10000;
+	}
+}
+
+// Center themes, regardless of how many columns.
+.dss-theme-selection__screenshots__themes {
+       margin: 0 auto;
+       width: 300px;
+
+       @include breakpoint( ">660px" ) {
+               width: 640px;
+       }
+
+       @include breakpoint( ">960px" ) {
+               width: 960px;
+       }
+}
+
+// Show the original screenshot image when the screenshot markup is loading.
+// Then swap it out with the dynamic screenshot when the markup is ready.
+.dss-screenshot__dynamic {
+	display: none;
+}
+
+.dss-screenshot.is-preview-ready {
+	.dss-screenshot__original {
+		display: none;
+	}
+
+	.dss-screenshot__dynamic {
+		display: block;
+	}
+}
+
+.dss-screenshot__markup {
+	height: 900px;
+	transform: scale( .25, .25 );
+	transform-origin: 0 0;
+	width: 1200px;
+}
+
+.dss-screenshot__original,
+.dss-screenshot__dynamic {
+	height: 225px;
+	overflow: hidden;
+	width: 300px;
+}
+
+.dss-theme-thumbnail__name {
+	background-color: $gray-light;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	display: block;
+	font-size: 16px;
+	padding: 12px 0;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+		padding: 10px 8px;
+		text-align: left;
+	}
+}
+
+.dss-theme-thumbnail__theme {
+	background: white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	box-sizing: border-box;
+	position: relative;
+	transition: all 0.2s ease-in-out 0s;
+	cursor: pointer;
+	margin: 20px 0;
+	width: 300px;
+
+	@include breakpoint( ">660px" ) {
+		float: left;
+		margin: 10px;
+	}
+
+	img {
+		display: block;
+		width: 100%;
+
+		@include breakpoint( ">960px" ) {
+			height: 225px;
+		}
+	}
+}
+
+.dss-theme-selection__credit {
+	color: $gray;
+	font-size: 11px;
+	font-weight: 300;
+	margin: 20px auto;
+	padding: 0 20px;
+	text-align: center;
+}

@@ -1,0 +1,41 @@
+.application-passwords__list {
+	list-style-type: none;
+	margin: 0;
+}
+
+.application-passwords__add-new {
+	margin-bottom: 1em;
+}
+
+.application-passwords__add-new-card{
+	display: none;
+	&.is-visible{
+		display: block;
+	}
+}
+
+.application-passwords__new-password {
+	margin-bottom: 1em;
+}
+
+.application-passwords__new-password-display {
+	background: lighten( $gray, 30% );
+	border: 1px solid $border-ultra-light-gray;
+	font-size: 200%;
+	font-weight: 600;
+	width: 70%;
+	display: block;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px;
+	letter-spacing: 2px;
+}
+
+.application-passwords__new-password-message {
+	color: darken( $gray, 10% );
+	font-size: .9em;
+}
+
+.application-passwords__new-password-help {
+	text-align: center;
+}

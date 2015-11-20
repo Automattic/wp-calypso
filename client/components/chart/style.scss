@@ -1,0 +1,566 @@
+// Chart
+// Life is a statistical anomaly
+
+.chart {
+	position: relative;
+	box-sizing: border-box;
+	background-color: $white;
+	padding: 8px 0 8px 20px;
+}
+
+// Y-axis
+
+// Y-axis markers (lines)
+// 1: Corresponds to padding of chart
+
+.chart .chart__y-axis-markers {
+	position: absolute;
+		top: 8px; // 1
+		left: 0;
+		right: 0;
+	height: 200px;
+}
+
+.chart .chart__y-axis-marker {
+	position: absolute;
+		top: 0;
+	width: 100%;
+	height: 1px;
+	border-top: 1px solid lighten( $gray, 30% );
+}
+
+// Y-axis marker lines inside each chart__bar
+// (This is needed so that bars overlap correctly)
+.chart__bar-marker {
+	z-index: 1;
+	position: absolute;
+		top: 0;
+	width: 100%;
+	height: 1px;
+	border-top: 1px solid rgba( lighten( $gray, 30% ), .1 );
+}
+
+.chart__bar-marker,
+.chart__y-axis-label,
+.chart .chart__y-axis-marker {
+	&.is-fifty {
+		top: 50%;
+	}
+
+	&.is-zero {
+		top: 100%;
+	}
+}
+
+// Y-axis labels
+// 1: matches Y-axis padding
+
+.chart__y-axis {
+	position: relative;
+	float: right;
+	height: 200px;
+	padding: 0 20px 0 10px;
+	font-size: 11px;
+	color: darken( $gray, 10% );
+	margin-bottom: 30px;
+}
+
+.chart__y-axis-label {
+	position: absolute;
+		top: 0;
+		right: 20px; // 1
+	text-align: right;
+}
+
+// For forcing the width of y-axis to the width of the label
+.chart__y-axis-width-fix {
+	color: $transparent;
+}
+
+// X-axis
+// 1: hides spaces between elements
+
+.chart__x-axis {
+	position: relative;
+	font-size: 0; // 1
+	padding: 5px 0;
+	min-height: 18px;
+	color: darken( $gray, 30% );
+}
+
+.chart__x-axis-label {
+	position: absolute;
+	display: inline-block;
+	vertical-align: top;
+	font-size: 11px;
+	text-align: center;
+}
+
+// X-axis label indicator
+// (vertical thin grey bar)
+
+.chart__x-axis-label::before {
+	content: '';
+	display: block;
+	position: absolute;
+		top: -4px;
+		left: 50%;
+	margin-left: -.5px;
+	width: 1px;
+	height: 5px;
+	background: $gray-light;
+	background-image: linear-gradient(to bottom, $gray-light 0%, lighten( $gray, 20% ) 100%);
+}
+
+// Bar wrapper
+// 1: hides spaces between elements
+
+.chart__bars {
+	position: relative;
+	font-size: 0; // 1
+	height: 200px;
+	text-align: center;
+	overflow: hidden;
+	display: -ms-flex;
+	display: flex;
+}
+
+// Individual bar
+// 1: Needs to be relative so that the contained graphic bar has boundaries
+
+.chart__bar {
+	text-align: center;
+	display: inline-block;
+	position: relative; // 1
+	height: 200px;
+	-ms-flex-grow: 1;
+	flex-grow: 1;
+	-ms-flex-shrink: 1;
+	flex-shrink: 1;
+
+
+	&.is-weekend {
+		background-color: rgba( lighten( $gray, 30% ), .5 );
+	}
+
+	&:hover {
+		cursor: pointer;
+		background-color: rgba( lighten( $gray, 30% ), .3 );
+	}
+
+	&.is-selected {
+		cursor: default;
+		background-color: rgba( $orange-jazzy, .1 );
+	}
+}
+
+// Individual bar wrapper & misc
+// 1: Positions the bar in the space as defined by .bar
+// 2: Default value for top so bars grow when they get a new value
+//    (doesn't function correctly for period switching right now, not sure why)
+//    (also doesn't work because updating the DOM is so heavy it stalls all animations)
+
+.chart__bar-section {
+	display: inline-block;
+	background-color: $blue-wordpress;
+	position: absolute;
+		top: 0; // 2
+		right: 16%; // 1
+		bottom: 0; // 1
+		left: 16%; // 1
+	z-index: 2;
+	transition: top .3s ease-out; // 2
+
+	.chart__bar:hover &.is-bar {
+		background-color: $blue-medium;
+	}
+
+	.chart__bar.is-selected &.is-bar {
+		background-color: $orange-jazzy;
+	}
+
+	&.is-spacer {
+		z-index: 0;
+		background-color: $transparent;
+	}
+
+	&.is-ghost::after {
+		content: "";
+		display: block;
+		position: absolute;
+			top: 160px;
+			bottom: 0;
+			left: 0;
+		z-index: 1;
+		width: 100%;
+		height: 40px;
+		background-image: linear-gradient(to bottom, $transparent, rgba( lighten( $gray, 30% ), .5 ) ); // TODO: needs to use default color for gradient
+
+		.chart__bar:hover & {
+			display: none;
+		}
+	}
+}
+
+.chart__bar-section-inner {
+	background: darken( $blue-dark, 5% );
+	position: absolute;
+		right: 23.33%;
+		bottom: 0;
+		left: 23.33%;
+
+	.chart__bar.is-selected & {
+		background-color: $orange-fire;
+	}
+}
+
+// Chart legend (wrapper)
+// 1: L/R matches padding of y-axis labels in chart
+
+.chart__legend {
+	@include clear-fix;
+	margin-bottom: -8px;
+}
+
+// Chart legend options (list)
+
+.chart__legend .chart__legend-options {
+	float: right;
+	color: lighten( $gray-dark, 20% );
+	list-style-type: none;
+	margin: 0;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+
+	@include breakpoint( "<480px" ) {
+		width: 100%;
+	}
+
+}
+
+// Chart legend option (list item)
+
+.chart__legend-option {
+	display: inline;
+	text-align: left;
+
+	// Expand labels to create bigger touch targets
+	@include breakpoint( "<480px") {
+		width: 50%;
+		display: inline-block;
+	}
+}
+
+// Chart legend label
+// 1: 19/10px instead of 20/12px because it aligns better optically
+
+.chart__legend-label {
+	display: inline-block;
+	padding: 12px 19px 10px 20px; // 1
+
+	&.is-selectable {
+		cursor: pointer;
+
+		&:focus,
+		&:hover {
+			color: $link-highlight;
+		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		display: block;
+	}
+}
+
+// Chart legend color
+// 1: Needed to overvwrite form styles in main stylesheets
+// 2: Make leftmost legend fit snugly up against the leftmost bars
+
+.chart__legend-option .chart__legend-color {
+	width: 10px;
+	height: 10px;
+	background: $blue-wordpress;
+	display: inline-block;
+	border-radius: 1px;
+	vertical-align: top;
+	margin: 3px 5px 3px 8px; // 1
+}
+
+@include breakpoint( "<480px" ) {
+	.chart__legend-option:first-child .chart__legend-color {
+		margin-left: 2px; // 2
+	}
+}
+
+.chart__legend-color.is-dark-blue {
+	background: darken( $blue-dark, 5% );
+}
+
+// Chart legend checkbox
+
+.chart__legend-option .chart__legend-checkbox {
+	margin: 0;
+	float: none;
+	vertical-align: top;
+}
+
+// Chart empty (message)
+// A message displayed when there's absolutely no data to chart
+
+.chart__empty {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	text-align: center;
+	font-size: 14px;
+	line-height: 24px;
+	clear: both;
+	z-index: 1;
+}
+
+.chart__empty_notice {
+	position: relative;
+		top: 97px;
+	padding: 11px 24px;
+	margin-bottom: 24px;
+	border-radius: 1px;
+	background: #fff;
+	box-sizing: border-box;
+	font-size: 14px;
+	line-height: 1.4285;
+	animation: appear .3s ease-in-out;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+
+	@include breakpoint( ">660px" ) {
+		padding: 13px 48px;
+		font-size: inherit;
+
+		&::before {
+			@extend %noticon;
+			content: '\f456';
+			position: absolute;
+				top: 23px;
+				left: 20px;
+			margin: -12px 0px 0 -8px;
+			font-size: 24px;
+			line-height: 1;
+		}
+	}
+}
+
+// Chart tooltip
+
+.chart__tooltip {
+	z-index: 1000;
+	position: absolute;
+	/* default offset for edge-cases: https://github.com/component/tip/pull/12 */
+	top: 0;
+	left: 0 #{"/*rtl:ignore*/"};
+	right: auto #{"/*rtl:ignore*/"};
+
+	&.tip-bottom-left {
+		.tip-arrow {
+			border-color: $transparent;
+			position: absolute;
+
+			&::before {
+				content: '';
+				border: 4px solid $transparent;
+				border-bottom-color: darken( $gray, 30% );
+				position: absolute;
+					left: 231px  #{"/*rtl:ignore*/"};
+					top: -3px;
+
+				.rtl & {
+					left: -18px  #{"/*rtl:ignore*/"};
+					top: -3px;
+				}
+			}
+		}
+	}
+
+	&.tip-bottom-right,
+	&.tip-bottom {
+		.tip-arrow {
+			border-color: $transparent;
+			position: absolute;
+
+			&::before {
+				content: '';
+				border: 4px solid $transparent;
+				border-bottom-color: darken( $gray, 30% );
+				position: absolute;
+					left: 11px  #{"/*rtl:ignore*/"};
+					top: -3px;
+
+				.rtl & {
+					left: -238px  #{"/*rtl:ignore*/"};
+					top: -3px;
+				}
+			}
+		}
+	}
+
+	&.tip-top {
+		.tip-arrow {
+			border-color: $transparent;
+			position: absolute;
+
+			&::before {
+				content: '';
+				border: 4px solid $transparent;
+				border-top-color: darken( $gray, 30% );
+				position: absolute;
+					left: 118px #{"/*rtl:ignore*"};
+					bottom: -40px;
+			}
+		}
+	}
+
+	&.tip-bottom {
+		.tip-arrow {
+			&::before {
+				left: 86px  #{"/*rtl:ignore*/"};
+				top: -4px;
+
+				.rtl & {
+					left: -93px  #{"/*rtl:ignore*/"};
+				}
+			}
+		}
+	}
+
+	.tip-inner {
+		border: 0px;
+		box-shadow: none;
+		border-radius: 2px;
+		color: $white;
+		background: darken( $gray, 30% );
+		font-size: 11px;
+		padding: 6px 10px;
+		margin-top: 5px;
+		width: 230px;
+		text-align: left;
+
+		ul {
+			@include clear-fix;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			li {
+				font-size: 11px;
+				text-transform: uppercase;
+				font-weight: 100;
+				height: 24px;
+				letter-spacing: 0.1em;
+				border: 0;
+
+				.wrapper {
+					display: block;
+					line-height: inherit;
+					line-height: 24px;
+					clear: both;
+				}
+
+				.value {
+					text-align: right;
+					float: right;
+					min-width: 22px;
+					color: lighten( $gray, 20% );
+				}
+
+				.label {
+					display: block;
+					overflow: hidden;
+					word-break: break-all;
+					vertical-align: baseline;
+				}
+
+				.gridicon {
+					vertical-align: middle;
+					margin-right: 6px;
+					margin-top: -3px;
+				}
+			}
+		}
+	}
+
+	&.is-streak {
+		.tip-arrow {
+			&::before {
+				left: 87px;
+			}
+		}
+
+		.tip-inner {
+			width: 160px;
+			position: relative;
+			top: -10px;
+
+			li {
+				height: 14px;
+
+				.label {
+					width: 100%;
+					float: left;
+					text-align: center;
+
+					.rtl & {
+						font-size: 11px;
+					}
+
+					.post-count {
+						font-weight: bold;
+					}
+				}
+				.value {
+					float: none;
+				}
+			}
+		}
+	}
+}
+
+.chart__tooltip .module-content-list-item {
+
+	&.is-date-label {
+		font-size: 11px;
+		margin-bottom: 2px;
+		text-transform: uppercase;
+		font-weight: bold;
+		border-bottom: 1px solid darken( $gray, 27% );
+		padding-bottom: 2px;
+	}
+
+	&.is-published-item {
+			height: 19px;
+
+		.label {
+			text-transform: none;
+			color: lighten( $gray, 20% );
+			overflow: hidden;
+			letter-spacing: 0;
+			height: 19px;
+		}
+
+		.value {
+			width: 0;
+			min-width: 0;
+
+			&::before {
+				content: '';
+				position: relative;
+				background-image: linear-gradient(to right, rgba(61, 89, 109, 0) 0%, rgba(61, 89, 109, 0.5), rgba(61, 89, 109, 1));
+				left: -30px;
+				width: 30px;
+				height: 24px;
+				display: block;
+			}
+		}
+	}
+}

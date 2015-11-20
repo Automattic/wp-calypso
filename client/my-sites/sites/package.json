@@ -1,0 +1,6 @@
+{
+  "name": "manage sites",
+  "version": "0.0.0",
+  "private": true,
+  "main": "sites.jsx"
+}

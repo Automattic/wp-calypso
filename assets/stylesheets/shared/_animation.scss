@@ -1,0 +1,255 @@
+/*
+ * Animations
+ *
+ * Defines `slide-in-up` `slide-out-up` `scale-fade`
+ * Used for section overlays
+ */
+
+$sidebar-width:	269px;
+
+body,
+html {
+	// Setup default styles for some animation classes
+	.slide-in-up {
+		transform: translate3d( 0, 100%, 0 );
+	}
+	.scale-fade {
+		opacity: 1;
+	}
+	.fade {
+		opacity: 0;
+	}
+	.slide-in-left {
+		transform: translate3d( -100%, 0, 0 );
+	}
+	.show-in {
+		opacity: 0;
+
+		&:nth-child(10n + 2) {
+			animation-delay: .05s !important;
+		}
+		&:nth-child(10n + 3) {
+			animation-delay: .1s !important;
+		}
+		&:nth-child(10n + 4) {
+			animation-delay: .15s !important;
+		}
+		&:nth-child(10n + 5) {
+			animation-delay: .2s !important;
+		}
+		&:nth-child(10n + 6) {
+			animation-delay: .25s !important;
+		}
+		&:nth-child(10n + 7) {
+			animation-delay: .3s !important;
+		}
+		&:nth-child(10n + 8) {
+			animation-delay: .35s !important;
+		}
+		&:nth-child(10n + 9) {
+			animation-delay: .4s !important;
+		}
+		&:nth-child(10n + 10) {
+			animation-delay: .45s !important;
+		}
+	}
+
+	// Setup transition parameter on `animate`
+	// Includes timings and animation curves
+	&.animate {
+		.slide-out-up {
+			transition: transform .2s ease-out;
+			transform: translate3d( 0, 0, 0 ) ;
+		}
+		.slide-in-up {
+			transition: transform .4s cubic-bezier( .215, .61, .355, 1 );
+		}
+		.slide-in-left {
+			transition: transform .3s cubic-bezier( .215, .61, .355, 1 ), opacity .3s cubic-bezier( .19, 1, .22, 1 );
+		}
+		.slide-out-right {
+			transition: transform .5s cubic-bezier( .215, .61, .355, 1 ), opacity .5s cubic-bezier( .19, 1, .22, 1 );
+		}
+		.scale-fade {
+			transition: transform .5s, opacity .5s;
+			transform-origin: 50% 60px;
+		}
+		.fade {
+			transition:  opacity .5s cubic-bezier( .4, 1, .4, 1 );
+		}
+		.fade-background {
+			transition: background-color .2s cubic-bezier( .4, 1, .4, 1 );
+		}
+	}
+
+	// Transformations for overlay class animation
+	&.overlay-open {
+		.slide-out-up {
+			transform: translate3d( 0, -46px, 0 );
+		}
+		.slide-in-up {
+			transform: translate3d( 0, 0, 0 );
+		}
+		.scale-fade {
+			transform: scale( .95 );
+			opacity: .8;
+		}
+		.fade {
+			opacity: 1;
+		}
+	}
+
+	&.customizer-section {
+		.slide-in-left {
+			transform: translate3d( -40%, 0, 0 );
+		}
+	}
+
+	&.themes-section {
+		.slide-out-right {
+			transform: translate3d( 100%, 0, 0 );
+		}
+		.slide-in-left {
+			transform: translate3d( 0, 0, 0 );
+		}
+	}
+}
+
+// Content sliding left and right to show sidebar
+
+@keyframes slideContentRight {
+	0% {
+		transform: translate3d( 0, 0, 0 );
+		transform: translate3d( 0, 0, 0 );
+	}
+
+	70% {
+		transform: translate3d( $sidebar-width + 20, 0, 0 );
+	}
+
+	100% {
+		transform: translate3d( $sidebar-width, 0, 0 );
+	}
+}
+
+@keyframes slideContentLeft {
+	0% {
+		transform: translate3d( 0, 0, 0 );
+	}
+
+	30% {
+		transform: translate3d( 20px, 0, 0 );
+	}
+
+	100% {
+		transform: translate3d( -$sidebar-width, 0, 0 );
+	}
+}
+
+// Sliding responsive filter and nav menus up and down
+
+@keyframes slideMenuDown {
+	0% {
+		opacity: 0;
+		transform: translate3d( 0, 0, 0 );
+	}
+
+	80% {
+		opacity: 1;
+		transform: translate3d( 0, 22px, 0 );
+	}
+
+	100% {
+		opacity: 1;
+		transform: translate3d( 0, 17px, 0 );
+	}
+}
+
+@keyframes slideMenuUp {
+	0% {
+		opacity: 1;
+		transform: translate3d( 0, 0, 0 );
+	}
+
+	20% {
+		opacity: 1;
+		transform: translate3d( 0, 5px, 0 );
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate3d( 0, -20px, 0 );
+	}
+}
+
+// Rotating chevrons when expanding and collapsing sections
+
+@keyframes rotateOpen {
+	0% {
+		transform: rotate(0);
+	}
+
+	50% {
+		transform: rotate(200deg)
+	}
+
+	75% {
+		transform: rotate(175deg);
+	}
+
+	90% {
+		transform: rotate(185deg)
+	}
+
+	100% {
+		transform: rotate(180deg)
+	}
+}
+
+@keyframes rotateClosed {
+	0% {
+		transform: rotate(180deg)
+	}
+
+	50% {
+		transform: rotate(-20deg)
+	}
+
+	75% {
+		transform: rotate(5deg);
+	}
+
+	90% {
+		transform: rotate(-5deg);
+	}
+
+	100% {
+		transform: rotate(0);
+	}
+}
+
+// Simple animation to make elements appear
+@keyframes "appear" {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes "pulse-light" {
+	50% { background-color: lighten( $gray, 30% ); }
+}
+
+@keyframes "loading-dot-pulse" {
+	0% { opacity: 0; }
+	50% { opacity: 1; }
+	100% { opacity: 0; }
+}
+
+@keyframes "loading-fade" {
+	0% { opacity: .5; }
+	50% { opacity: 1; }
+	100% { opacity: .5; }
+}

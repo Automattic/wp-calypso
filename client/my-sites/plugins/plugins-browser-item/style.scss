@@ -1,0 +1,126 @@
+.plugins-browser-item {
+	border-left: 1px solid lighten( $gray, 30% );
+	box-sizing: border-box;
+	cursor: pointer;
+	display: block;
+	float: left;
+	height: 96px;
+	margin: 0;
+	position: relative;
+	overflow: hidden;
+
+	&.is-placeholder,
+	&.is-empty {
+		cursor: default;
+	}
+
+	.plugins-browser-item__link {
+		padding: 16px;
+		display: block;
+	}
+
+	@include breakpoint( ">960px" ) {
+		width: 33.33%;
+
+		&:nth-child( 3n + 1 ) {
+			border-left: 0;
+		}
+
+		&:nth-child( n + 4 ) {
+			border-top: 1px solid lighten( $gray, 30% );
+		}
+	}
+
+	@include breakpoint( "<960px" ) {
+		width: 50%;
+
+		&:nth-child( 2n + 1 )  {
+			border-left: 0;
+		}
+
+		&:nth-child( n + 3 ) {
+			border-top: 1px solid lighten( $gray, 30% );
+		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		width: 100%;
+
+		&:nth-child( n + 2 ) {
+			border-top: 1px solid lighten( $gray, 30% );
+		}
+
+		&.is-empty {
+			display: none;
+		}
+	}
+}
+
+.plugins-browser-item {
+	.plugin-icon {
+		width: 40px;
+		height: 40px;
+
+		&.is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+	}
+}
+
+.plugins-browser-item__info {
+	overflow: hidden; // lazy clearfix
+	margin-bottom: 5px;
+}
+
+.plugins-browser-item__title,
+.plugins-browser-item__author {
+	margin-left: 52px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+
+	.is-placeholder & {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+
+.plugins-browser-item__title {
+	color: darken( $gray, 20% );
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.plugins-browser-item__author {
+	color: $gray;
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+.plugins-browser-item .plugin-icon.is-placeholder,
+.plugins-browser-item .plugin-icon[style*='undefined'] {
+	&:before {
+		width: 40px;
+		height: 40px;
+		font: normal 40px/40px Noticons;
+	}
+}
+
+.plugins-browser-item .plugin-icon {
+	margin-right: 0;
+}
+
+.plugins-browser-item  .rating {
+	padding-top: 10px;
+}
+
+.plugins-browser-item__installed {
+	position: absolute;
+		bottom: 8px;
+		right: 16px;
+	color: $gray;
+	font-size: 10px;
+	text-transform: uppercase;
+	animation: appear .15s ease-in;
+}

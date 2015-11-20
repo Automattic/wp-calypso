@@ -1,0 +1,20 @@
+.action-remove {
+	float: right;
+	padding-top: 8px;
+	display: inline-block;
+	color: darken( $gray, 10% );
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $blue-wordpress;
+	}
+
+	&:after {
+		@include noticon( '\f406', 16px );
+	}
+}

@@ -1,0 +1,349 @@
+/**
+ * Posts
+ */
+
+.posts__list {
+
+	.post {
+		position: relative;
+		padding: 0;
+		margin-bottom: (24 / 15) * 1em;
+		@include breakpoint( "<660px" ) {
+			font-size: 13px;
+		}
+	}
+
+	.post__body {
+		background-color: $white;
+	}
+
+	.post-attribution,
+	.post__content,
+	.post__info {
+		box-sizing: border-box;
+		padding: (14 / 10) * 1rem; // from _reset.scss: html { font-size: 62.5% } (or 10px), hence base 10
+		@include breakpoint( ">660px" ) {
+			padding: (24 / 10) * 1rem;
+		}
+	}
+
+	.post-attribution {
+		width: 100%;
+		font-size: (14 / 15) * 1em;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		color: $gray;
+		a {
+			color: inherit;
+		}
+		span:first-child {
+			.post-attribution-avatar {
+				margin-left: 0;
+			}
+		}
+		+ .post__content {
+			padding-top: 0;
+		}
+		@include breakpoint( ">660px" ) {
+			padding: (16 / 10) * 1rem (24 / 10) * 1rem;
+		}
+	}
+
+	.post-attribution-avatar {
+		width: (24 / 14) * 1em;
+		height: (24 / 14) * 1em;
+		margin: 0 (5 / 14) * 1em 0 (7 / 14) * 1em;
+		vertical-align: middle;
+		display: inline-block;
+		&.is-rounded {
+			border-radius: 50%;
+		}
+	}
+
+	.post__content {
+		padding-top: (16 / 10) * 1rem;
+		padding-bottom: (8 / 10) * 1rem;
+		margin: 0;
+		overflow: hidden;
+		+ .post__info {
+			padding-top: 0;
+		}
+		@include breakpoint( ">660px" ) {
+			padding-bottom: (12 / 10) * 1rem;
+		}
+	}
+
+	.post__content-link {
+		display: block;
+	}
+
+	.post__title-link {
+		+ .post__excerpt {
+			margin-top: (7 / 15) * 1em;
+		}
+		+ .featured-standard {
+			margin-top: (13 / 15) * 1em;
+			+ .post__excerpt {
+				margin-top: (7 / 15) * 1em;
+			}
+		}
+	}
+
+	.post__title {
+		color: $gray-dark;
+		font-size: (24 / 15) * 1em;
+		line-height: (32 / 24) * 1em;
+		font-family: $serif;
+		font-weight: 700;
+	}
+
+	.post__excerpt {
+		color: darken( $gray, 20 );
+		font-size: (16 / 15) * 1em;
+		line-height: (24 / 16) * 1em;
+		font-family: $serif;
+		p {
+			margin: 0;
+		}
+	}
+
+	.post__quote {
+		background: none;
+		font-family: $serif;
+		font-style: italic;
+		padding: 0;
+		margin: 0;
+		border-radius: 0;
+	}
+
+	.post__info {
+		width: 100%;
+		font-size: (14 / 15) * 1em;
+		padding-top: (16 / 10) * 1rem;
+		padding-bottom: (16 / 10) * 1rem;
+		color: $gray;
+		overflow: hidden;
+		@include breakpoint( ">660px" ) {
+			padding-top: (20 / 10) * 1rem;
+			padding-bottom: (20 / 10) * 1rem;
+		}
+	}
+
+	.post-relative-time-status {
+		float: left;
+		margin: 0;
+		.noticon {
+			font-size: (16 / 14) * 1em;
+			margin: (3 / 13) * 1em (3 / 13) * 1em 0 0;
+		}
+		a {
+			color: inherit;
+		}
+		small {
+			font-size: 0.9em;
+			color: lighten( $gray, 10% );
+		}
+	}
+
+	.post__meta {
+		float: right;
+		margin: 0;
+		list-style: none;
+		box-sizing: border-box;
+		li {
+			display: inline-block;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			margin-left: (15 / 14) * 1em;
+			color: $gray;
+			vertical-align: top;
+			&:first-child {
+				margin-left: 0;
+			}
+			a {
+				color: inherit;
+				&:before {
+					@extend %noticon;
+					font-size: (21 / 14) * 1em;
+					vertical-align: top;
+				}
+				&.is-empty {
+					.gridicon {
+						color: lighten( $gray, 20% );
+					}
+				}
+				.gridicon{
+					position: relative;
+					top: 6px;
+				}
+			}
+			span {
+				display: inline-block;
+				margin: (1 / 14) * 1em 0 0 (3 / 14) * 1em;
+			}
+		}
+	}
+
+	// ---- Image Elements ----
+	.image-large-format {
+		background-color: $gray-light;
+		// Flex
+		display: flex;
+		flex-wrap: nowrap;
+		align-content: flex-start;
+		.image-item {
+			box-sizing: border-box;
+			max-height: 100%;
+			padding: 0 (6 / 10) * 1rem;
+			flex: 1 0 auto;
+		}
+		.image-item-media {
+			vertical-align: bottom;
+		}
+	}
+
+	.post__header {
+		+ .post__content-link {
+			.image-large-format {
+				margin-top: (16 / 10) * 1rem;
+			}
+		}
+	}
+
+	// NOTE: Gallery & Image single are large formats
+	.image-gallery {
+		padding: (6 / 10) * 1rem (8 / 10) * 1rem;
+		// Flex
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		@include breakpoint( ">660px" ) {
+			padding: (6 / 10) * 1rem (18 / 10) * 1rem;
+		}
+	}
+
+	.image-single {
+		height: (226 / 15) * 1em;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		@include breakpoint( ">960px" ) {
+			background-size: contain;
+		}
+	}
+
+	// NOTE: Standard is meant to be inline with excerpt on standard posts
+	.featured-standard {
+		float: right;
+		width: (2 / 5) * 100%;
+		max-height: (136 / 15) * 1em;
+		margin: 0 0 (14 / 15) * 1em (14 / 15) * 1em;
+		overflow: hidden;
+		img {
+			display: block;
+		}
+		@include breakpoint( ">660px" ) {
+			margin: 0 0 (24 / 15) * 1em (24 / 15) * 1em;
+		}
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+		}
+	}
+
+	// ---- Post Variations ----
+	.post {
+		// Protected
+		&.is-protected {
+			.post__title {
+				&:before {
+					@include noticon( '\f470', 1em );
+					color: $gray;
+					margin-right: (4 / 24) * 1em;
+				}
+			}
+		}
+		// Placeholder
+		&.is-placeholder {
+			.post__time {
+				&:before {
+					content: '';
+					margin-right: 0;
+				}
+			}
+			.post-attribution-avatar {
+				display: inline-block;
+				background-color: lighten( $gray, 30% );
+			}
+		}
+	}
+
+	// ---- Placeholder helpers ----
+	.placeholder-text {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+}
+
+.post__header {
+	// Optical alignment of text to base grid
+	padding: 14px 16px 0;
+
+	@include breakpoint( ">660px" ) {
+		padding: 14px 24px 0;
+	}
+}
+.post .site-icon {
+	position: absolute;
+	top: 16px;
+	left: 16px;
+	@include breakpoint( ">660px" ) {
+		left: 24px;
+	}
+}
+.post__site-title {
+	color: darken( $gray, 20 );
+	display: block;
+	font-size: 14px;
+	line-height: 38px;
+	margin-right: 12px;
+	padding-left: 48px;
+
+	a {
+		color: darken( $gray, 20 );
+	}
+}
+.post__header.has-author {
+	// Vertically position the title
+	.post__site-title {
+		line-height: 1.4;
+	}
+}
+.post__author {
+	display: block;
+	color: $gray;
+	font-size: 12px;
+	padding-left: 48px;
+}
+
+
+/* RTL */
+.rtl .posts__list {
+  //smaller font, let's use Tahoma
+	.post__quote {
+		font-family: $sans-rtl;
+	}
+  //we can use the default sans for titles
+	.post__title {
+		font-family: $sans;
+	}
+}
+
+:lang(he) .rtl .posts__list {
+	.post__quote {
+		font-family: $sans;
+	}
+}

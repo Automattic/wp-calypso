@@ -1,0 +1,165 @@
+/**
+ * Site Selector
+ * @component `selector`
+ */
+.site-selector {
+	background: lighten( $gray, 30% );
+	border-right: 1px solid lighten( $gray, 25% );
+	position: fixed;
+		top: 47px;
+		bottom: 0;
+		left: -272px;
+	width: 272px;
+	overflow: hidden;
+	z-index: 10;
+
+	&.is-large .search  {
+		display: block;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100vw;
+		left: -100vw;
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
+// Styles for Site elements within the Selector
+.site-selector .site,
+.site-selector .all-sites {
+	font-size: 14px;
+
+	.site-icon__img {
+		// Renders a grayscale-filtered image at retina size
+		-webkit-transform: translateZ( 0 );
+	}
+
+	// Sites that are not selected display a dimmer icon
+	&:not( .is-selected ) {
+		.site-icon__img {
+			filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+, Firefox on Android */
+			filter: grayscale( 100% );
+			opacity: 0.7;
+		}
+	}
+
+	// Highlight selected site
+	&.is-selected,
+	.notouch &.is-selected:hover {
+		background-color: $gray;
+
+		.site__title,
+		.site__domain {
+			color: $white;
+		}
+
+		&.is-private .site__title::before {
+			color: $white;
+		}
+	}
+
+	// Hover effects
+	.notouch & {
+		&:hover {
+			background-color: $gray-light;
+			cursor: pointer;
+
+			.site__title,
+			.site__domain {
+				color: $blue-medium;
+			}
+
+			.site-icon__img {
+				filter: none;
+				opacity: 1;
+			}
+		}
+	}
+}
+
+.site-selector .search {
+	display: none;
+	margin-bottom: 0;
+	width: auto;
+	height: auto;
+	padding: 8px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+
+	.search__input[type="search"] {
+		position: relative;
+		height: auto;
+		padding-top: 6px;
+		padding-bottom: 6px;
+		padding-left: 32px;
+		font-size: 13px;
+		border: 1px solid lighten( $gray, 20% );
+		-webkit-appearance: none;
+
+		&:hover {
+			border: 1px solid lighten( $gray, 10% );
+			background-color: $white;
+		}
+
+		&::-webkit-input-placeholder {
+			color: $gray;
+		}
+
+		&::-moz-placeholder {
+			color: $gray;
+		}
+	}
+
+	.noticon-search {
+		background-color: transparent;
+		border-left: none;
+		color: $gray;
+		padding: 0;
+		width: auto;
+		position: absolute;
+			left: 18px;
+			top: 7px;
+
+		&::before {
+			font-size: 16px;
+		}
+	}
+
+	&.is-open {
+		.noticon-close-alt {
+			color: $gray;
+			height: 36px;
+			width: 34px;
+			top: 9px;
+			right: 9px;
+
+			&:before {
+				font-size: 12px;
+			}
+		}
+	}
+}
+
+// The actual list of sites
+.site-selector__sites {
+	max-height: calc( 100% - 89px );
+	overflow-y: auto;
+}
+
+.site-selector__no-results {
+	color: $gray;
+	font-style: italic;
+	padding: 10px 20px;
+}
+
+.site-selector .add-new-button {
+	padding: 8px 16px;
+
+	.gridicon {
+		margin-top: 2px;
+	}
+}
+
+// Containers in the list of sites are larger
+.site-selector .site-action {
+	padding-top: 15px;
+}

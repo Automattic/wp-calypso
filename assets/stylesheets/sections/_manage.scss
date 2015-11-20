@@ -1,0 +1,28 @@
+/* Status indicators */
+.corner-status {
+	width: 50px;
+	height: 50px;
+	transform: rotate(45deg);
+
+	position: absolute;
+	top: -25px;
+	right: -25px;
+}
+.corner-status.connected { background: #47b603; }
+.corner-status.disconnected, .corner-status.unapproved { background: #ffbb00; }
+
+.noticon.status-checkmark, .noticon.status-warning {
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: #fff;
+	font-size: 22px;
+	width: auto;
+	height: auto;
+}
+
+.noticon.status-warning {
+	font-size: 13px;
+	top: 4px;
+	right: 3px;
+}

@@ -1,0 +1,64 @@
+// FollowButton Component
+.follow-button {
+	position: relative;
+	cursor: pointer;
+
+	@include breakpoint( "<480px" ) {
+		padding-left: 16px;
+	}
+
+	.gridicon {
+		position: absolute;
+			top: 0;
+			left: 0;
+		height: 24px;
+		width: 24px;
+	}
+
+	.gridicon-follow {
+		fill: $gray;
+		opacity: 1;
+		transform: rotate( 0 );
+		transition: all 0.1s ease-in-out;
+	}
+
+	.gridicon-following {
+		fill: $alert-green;
+		opacity: 0;
+		transform: rotate( -90deg );
+		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+	}
+
+	&.is-mini {
+		.follow-button__label {
+			font-size: 13px;
+		}
+		.gridicon {
+			height: 16px;
+			width: 16px;
+		}
+	}
+
+	&.is-followed {
+		.gridicon-follow {
+			opacity: 0;
+			transform: rotate( -30deg );
+		}
+
+		.gridicon-following {
+			opacity: 1;
+			transform: rotate( 0 );
+		}
+	}
+}
+
+.follow-button__label {
+	display: inline-block;
+	padding-left: 30px;
+	color: $gray;
+	transition: all 0.1s linear;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
+}

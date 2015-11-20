@@ -1,0 +1,45 @@
+.editor-post-type {
+	color: lighten( $gray, 10% );
+	font-size: 11px;
+	padding: 5px 0;
+	text-align: center;
+	text-transform: uppercase;
+
+	.gridicon {
+		margin-left: 4px;
+		vertical-align: bottom;
+	}
+
+	&.is-switcher-enabled {
+		cursor: pointer;
+
+		&:hover {
+			color: $gray;
+		}
+	}
+}
+
+.editor-post-type__menu {
+	.popover__menu {
+		min-width: auto;
+	}
+
+	.gridicon {
+		color: darken( $gray, 10% );
+		margin-right: 8px;
+		vertical-align: bottom;
+	}
+
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		.gridicon {
+			color: $white;
+		}
+	}
+}
+
+@include breakpoint( "<480px" ) {
+	.editor-post-type {
+		display: none;
+	}
+}

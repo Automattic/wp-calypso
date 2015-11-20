@@ -1,0 +1,15 @@
+.plugins-browser__main-header {
+	.search {
+		position: relative;
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 2em;
+	}
+ }
+
+.plugins-browser .section-nav {
+	@include breakpoint( "<660px" ) {
+		margin-top: 2em;
+	}
+}

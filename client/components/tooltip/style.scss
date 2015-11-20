@@ -1,0 +1,77 @@
+.tooltip.popover {
+	.tip-arrow {
+		border-width: 6px;
+	}
+
+	&.tip-bottom-right,
+	&.tip-bottom-left,
+	&.tip-bottom {
+		.tip-arrow {
+			border-bottom-color: darken( $gray, 30% );
+			position: absolute;
+			top: 9px;
+			margin-left: -6px;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	&.tip-top,
+	&.tip-top-left,
+	&.tip-top-right {
+		.tip-arrow {
+			border-top-color: darken( $gray, 30% );
+			position: absolute;
+			bottom: 4px;
+			margin-left: -6px;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	&.tip-right {
+		padding-top: 0;
+		.tip-arrow {
+			border-right-color: darken( $gray, 30% );
+			position: absolute;
+			margin-left: 4px;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	.tip-inner {
+		border: 0px;
+		box-shadow: none;
+		border-radius: 2px;
+		color: $white;
+		background: darken( $gray, 30% );
+		font-size: 12px;
+		padding: 6px 10px;
+		margin-top: 5px;
+		text-align: left;
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			font-size: 11px;
+			font-weight: 100;
+			border: 0;
+		}
+	}
+}
+
+.tooltip__hr {
+	margin: 8px 0;
+	background: $gray;
+}

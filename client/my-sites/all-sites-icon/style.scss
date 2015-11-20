@@ -1,0 +1,105 @@
+/**
+ * Icon composite for All My Sites
+ */
+
+.all-sites-icon {
+	margin-right: 12px;
+	position: relative;
+		left: 0;
+		top: 0;
+	height: 32px;
+	width: 32px;
+
+	.site-icon.is-blank::before {
+		display: none;
+	}
+
+	&.is-shape-3::before,
+	&.is-shape-2::before,
+	&.is-shape-2::after,
+	&.is-shape-1::before,
+	&.is-shape-1::after {
+		background: $gray-dark;
+		content: '';
+		display: block;
+		height: 9px;
+		width: 9px;
+		position: absolute;
+			left: 17px;
+			top: 17px;
+	}
+
+	&.is-shape-2::after,
+	&.is-shape-1::after {
+		position: absolute;
+			left: 6px;
+			top: 6px;
+	}
+}
+
+.all-sites-icon .site-icon {
+	align-self: auto;
+	background: $gray;
+	border: none;
+	margin-right: 0;
+	height: 15px;
+	width: 15px;
+	position: absolute;
+}
+
+// Shape with one icon
+.all-sites-icon.is-shape-1 {
+	.site-icon {
+		overflow: visible;
+
+		&::after {
+			background: $gray;
+			content: '';
+			display: block;
+			position: absolute;
+				left: -17px;
+				top: 17px;
+			height: 15px;
+			width: 15px;
+		}
+	}
+}
+
+// Shape with two icons
+.all-sites-icon.is-shape-1 .site-icon,
+.all-sites-icon.is-shape-2 .site-icon {
+	left: auto;
+	right: 0;
+	top: 0;
+
+	& + .site-icon {
+		left: 0;
+		right: auto;
+		bottom: 0;
+		top: auto;
+	}
+}
+
+// Shape with three or more icons
+.all-sites-icon.is-shape-3 .site-icon {
+	// Top left
+	left: 0;
+	right: auto;
+	top: 0;
+
+	& + .site-icon {
+		// Bottom left
+		bottom: 0;
+		left: 0;
+		right: auto;
+		top: auto;
+	}
+
+	& + .site-icon + .site-icon {
+		// Top right
+		bottom: auto;
+		left: auto;
+		right: 0;
+		top: 0;
+	}
+}

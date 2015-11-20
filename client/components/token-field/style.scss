@@ -1,0 +1,120 @@
+.token-field {
+	@extend %form-field;
+
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+	color: $gray-dark;
+	cursor: text;
+	font-size: 16px;
+	line-height: 1.5;
+	transition: all .15s ease-in-out;
+
+	&:hover {
+		border-color: lighten( $gray, 10% );
+	}
+
+	&.is-active {
+		border-color: $blue-wordpress;
+		box-shadow: 0 0 0 2px $blue-light;
+	}
+}
+
+.token-field__input-container {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 7px 14px 0 0;
+}
+
+// Token input
+input[type="text"].token-field__input {
+	display: inline-block;
+	width: auto;
+	max-width: 100%;
+	margin: 0 0 7px 5px;
+	padding: 2px 0 2px 7px;
+	background: inherit;
+	border: 0;
+	outline: none;
+	font-family: inherit;
+	font-size: 14px;
+	color: $gray-dark;
+
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+// Tokens
+.token-field__token {
+	font-size: 14px;
+	display: inline-block;
+	margin: 2px 0 2px 8px;
+	padding: 0;
+	color: $white;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.token-field__token-text, .token-field__remove-token {
+	display: inline-block;
+	line-height: 24px;
+	background: darken( $gray, 20% );
+}
+
+.token-field__token-text {
+	border-radius: 4px 0 0 4px;
+	padding: 0 4px 0 6px;
+}
+
+.token-field__remove-token {
+	cursor: pointer;
+	border-radius: 0 4px 4px 0;
+	padding: 0 6px;
+	font-size: 10px;
+	color: lighten( $gray, 20% );
+
+	&:hover {
+		color: white;
+		background: darken( $gray, 10% );
+	}
+}
+
+
+// Suggestion list
+.token-field__suggestions-list {
+	background: $white;
+	max-height: 0;
+	overflow-y: scroll;
+	transition: all .15s ease-in-out;
+	list-style: none;
+	margin: 0;
+
+	&.is-expanded {
+		background: $white;
+		border-top: 1px solid lighten( $gray, 20% );
+		max-height: 9em;
+		padding-top: 3px;
+	}
+}
+
+.token-field__suggestion {
+	color: $gray;
+	display: block;
+	font-size: 13px;
+	padding: 4px 8px;
+	cursor: pointer;
+
+	&.is-selected {
+		background: $blue-medium;
+		color: $white;
+	}
+}
+
+.token-field__suggestion-match {
+	color: $gray-dark;
+}

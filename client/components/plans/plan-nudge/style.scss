@@ -1,0 +1,191 @@
+.plan-nudge__selection {
+	color: $gray-dark;
+}
+
+.plan-nudge__title {
+	font-size: 21px;
+	font-weight: 700;
+	line-height: 28px;
+	margin-top: 7%;
+	margin-bottom: 10px;
+}
+
+.plan-nudge__plan-container {
+	display: flex;
+}
+
+.plan-nudge__plan {
+	display: flex;
+	flex-flow: row wrap;
+	margin: 35px 0;
+
+	@include breakpoint( ">480px" ) {
+		padding-top: 30px;
+		position: relative;
+		width: 50%;
+	}
+
+	&.current-plan {
+		@include breakpoint( ">960px" ) {
+			margin-left: 8%;
+		}
+	}
+
+	&.new-plan {
+		@include breakpoint( ">480px" ) {
+			margin-left: 0;
+		}
+
+		@include breakpoint( ">960px" ) {
+			margin-right: 8%;
+		}
+	}
+
+	&.current-plan {
+		display: none;
+
+		@include breakpoint( ">480px" ) {
+			display: flex;
+		}
+	}
+}
+
+.plan__status {
+	display: none;
+	margin-bottom: 10px;
+	position: absolute;
+		top: 0;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
+	}
+
+	.new-plan & {
+		font-weight: 700;
+	}
+}
+
+.plan-nudge__footer {
+	&.card.is-compact {
+		padding: 30px 16px;
+
+		@include breakpoint( ">480px" ) {
+			padding-left: 65px;
+		}
+	}
+
+	.gridicons-info-outline {
+		position: absolute;
+			left: 27px;
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+
+	.footer__title {
+		font-weight: 700;
+		margin-bottom: 5px;
+	}
+}
+
+.plan-preview {
+	background: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	display: flex;
+	flex-direction: column;
+	padding: 28px 20px;
+
+	.current-plan & {
+		margin: 7px 0;
+		padding-top: 23px;
+	}
+
+	.price,
+	.bill-period {
+		&.free_plan,
+		&.jetpack_free {
+			display: none;
+		}
+	}
+
+	&.business-bundle,
+	&.jetpack_business {
+		background: $blue-medium;
+		color: white;
+
+		.plan-preview__title {
+			color: white;
+		}
+	}
+}
+
+.plan-preview__header {
+	background-repeat: no-repeat;
+	background-size: 45px;
+	min-height: 50px;
+
+	&::before {
+		background: lighten($gray, 20%) no-repeat center;
+		background-size: 52px 52px;
+		border: 3px solid #e9eff3;
+		border-radius: 50%;
+		content: "";
+		display: block;
+		height: 50px;
+		position: absolute;
+		width: 50px;
+
+		.free_plan &,
+		.jetpack_free & {
+			background-image: url( '/calypso/images/plans/plan-beginner.svg' );
+		}
+
+		.value_bundle &,
+		.jetpack_premium & {
+			background-image: url( '/calypso/images/plans/plan-premium.svg' );
+		}
+
+		.business-bundle &,
+		.jetpack_business & {
+			background-image: url( '/calypso/images/plans/plan-business.svg' );
+		}
+	}
+
+	.plan-preview__title {
+		color: $blue-wordpress;
+		font-size: 21px;
+		line-height: 1em;
+		margin-top: 10px;
+		padding-left: 65px;
+	}
+
+	.price {
+		padding-left: 65px;
+	}
+
+	.bill-period {
+		display: inline-block;
+		font-size: 10px;
+		font-style: italic;
+		padding-left: 3px;
+	}
+}
+
+.plan-preview__description {
+	font-size: 14px;
+	font-weight: 200;
+	margin: 15px 0;
+}
+
+.plan-preview__action {
+	text-align: center;
+	width: 100%;
+
+	.button {
+		width: 100%;
+	}
+}

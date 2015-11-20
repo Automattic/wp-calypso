@@ -1,0 +1,49 @@
+.security-2fa-enable__inner {
+	@include clear-fix;
+	display: flex;
+	margin-bottom: 20px;
+}
+
+.security-2fa-enable .security-2fa-enable__cancel {
+	float: left;
+	margin-left: 0;
+}
+
+.security-2fa-enable__first {
+	flex: 1;
+	margin-right: 20px;
+}
+
+.security-2fa-enable__first-label {
+	font-weight: bold;
+	margin-bottom: 0;
+}
+
+.security-2fa-enable__next {
+	flex: 2;
+}
+
+.security-2fa-enable__next-label {
+	font-weight: bold;
+	margin-bottom: 0;
+}
+
+.security-2fa-enable__app-options {
+	font-color: $gray-light;
+	font-size: 13px;
+	font-style: italic;
+	margin-top: 10px;
+}
+
+.security-2fa-enable__time-code {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.security-2fa-enable__toggle {
+	cursor: pointer;
+}
+
+.security-2fa-enable .notice {
+	margin: 5px 0 0 0;
+}

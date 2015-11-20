@@ -1,0 +1,93 @@
+/**
+ * External dependencies
+ */
+var React = require( 'react/addons' ),
+	joinClasses = require( 'react/lib/joinClasses' );
+
+/**
+ * Internal dependencies
+ */
+var Dialog = require( 'components/dialog' ),
+	SelectSite = require( 'me/select-site' ),
+	sitesList = require( 'lib/sites-list' )();
+
+/**
+ * Component
+ */
+var SiteSelectorModal = React.createClass( {
+	propTypes: {
+		// children: Custom content. Will be displayed above the `SitesDropdown`.
+		children: React.PropTypes.node,
+		// filter: Function to filter sites to display
+		filter: React.PropTypes.func,
+		// hide: Will be called when clicking either button. Should toggle the `isVisible` prop.
+		hide: React.PropTypes.func.isRequired,
+		// isVisible: Determines if `SiteSelectorModal` will be displayed.
+		isVisible: React.PropTypes.bool.isRequired,
+		// mainAction: Will be run upon clicking the call-for-action button. Receives `site` as argument.
+		mainAction: React.PropTypes.func.isRequired,
+		// getMainUrl: Use if the call-for-action button should be turned into an `<a>` link. Receives `site` as argument, returns a URL.
+		getMainUrl: React.PropTypes.func.isRequired,
+		// mainActionLabel: Label for the call-for-action button.
+		mainActionLabel: React.PropTypes.string.isRequired,
+		// className: class name(s) to be added to the Dialog
+		className: React.PropTypes.string
+	},
+
+	getInitialState: function() {
+		return ( {
+			site: sitesList.getPrimary().jetpack ?
+				sitesList.get().filter( this.props.filter )[0] :
+				sitesList.getPrimary()
+		} );
+	},
+
+	setSite: function( event ) {
+		var site = sitesList.getSite( parseInt( event.target.value ) );
+		this.setState( { site: site } );
+	},
+
+	onClose: function( action ) {
+		if ( 'mainAction' === action ) {
+			this.props.mainAction( this.state.site );
+		}
+
+		this.props.hide();
+	},
+
+	getMainLink: function() {
+		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
+
+		return url ?
+			<a href={ url } className="button is-primary">{ this.props.mainActionLabel }</a> :
+			{ action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
+	},
+
+	render: function() {
+		var mainLink = this.getMainLink(),
+			buttons = [
+				{ action: 'back', label: this.translate( 'Back' ) },
+				mainLink
+			],
+			classNames = joinClasses( 'site-selector-modal', this.props.className );
+
+		return (
+			<Dialog className={ classNames }
+				isVisible={ this.props.isVisible }
+				buttons={ buttons }
+				onClose={ this.onClose }>
+				<div className="site-selector-modal__content">
+					{ this.props.children }
+				</div>
+				<SelectSite className="site-selector-modal__dropdown"
+					sites={ sitesList }
+					value={ this.state.site && this.state.site.ID }
+					onChange={ this.setSite }
+					filter={ this.props.filter } />
+
+			</Dialog>
+		);
+	}
+} );
+
+module.exports = SiteSelectorModal;

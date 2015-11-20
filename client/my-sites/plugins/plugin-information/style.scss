@@ -1,0 +1,116 @@
+$plugin-information-rating-size: 160px;
+.plugin-information__wrapper {
+	@include breakpoint( '>480px' ) {
+		margin-left: $plugin-information-rating-size + 24;
+	}
+}
+
+.plugin-information__version-info {
+	@include breakpoint( '>480px' ) {
+		float: right;
+		width: 100%;
+	}
+}
+
+.plugin-information__last-updated {
+	font-size: 16px;
+
+	@include breakpoint( '<480px' ) {
+		display: inline-block;
+		color: $gray;
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+}
+
+.plugin-information__rating-info {
+	@include breakpoint( '>480px' ) {
+		float: left;
+		width: $plugin-information-rating-size;
+		margin-left: -1 * $plugin-information-rating-size - 24;
+	}
+
+	@include breakpoint( '<480px' ) {
+		margin-top: 16px;
+
+		& .gridicon {
+			font-size: 12px;
+		}
+	}
+}
+
+.plugin-information__rating-text {
+	@include breakpoint( '<480px' ) {
+		display: inline;
+	}
+}
+
+.plugin-information__rating-stars {
+	font-size: 24px;
+
+	@include breakpoint( '<480px' ) {
+		display: inline-block;
+		margin-right: 8px;
+		font-size: 16px;
+	}
+}
+
+.plugin-information__versions {
+	margin-top: 16px;
+}
+
+.plugin-information__version-limit {
+	margin-bottom: 4px;
+
+	&:before {
+		@include noticon( '\f418', 20px );
+		line-height: 14px;
+		color: $alert-green;
+	}
+}
+
+.plugin-information__links {
+	margin-top: 14px;
+
+	@include breakpoint( '>480px' ) {
+		float: left;
+	}
+}
+
+.plugin-information__external-link {
+	font-size: 11px;
+
+	.gridicons-external {
+		color: lighten( $gray, 10% );
+		margin-right: 8px;
+		top: 2px;
+		position: relative;
+	}
+}
+.plugin-information .plugin-version {
+	font-size: 11px;
+}
+.plugin-information__rating-text,
+.plugin-information__version-limit {
+	color: $gray;
+	font-size: 11px;
+	text-transform: uppercase;
+	white-space: pre;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.plugin-information.is-placeholder {
+	.plugin-information__description,
+	.plugin-information__version-info,
+	.plugin-information__last-updated,
+	.plugin-information__rating-text,
+	.plugin-card-header__text {
+		@include placeholder();
+	}
+
+	.rating {
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+

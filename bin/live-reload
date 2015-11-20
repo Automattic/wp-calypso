@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+var livereload = require('livereload'),
+	server = livereload.createServer({
+		exts: [ 'html', 'css', 'scss', 'js', 'jsx', 'png', 'gif', 'jpg', 'svg' ],
+		applyJSLive: false,
+		applyCSSLive: false,
+		exclusions: [ '.git', 'node_modules' ],
+		originalPath: 'http://calypso.localhost:3000',
+		debug: true
+	});
+
+server.watch( __dirname + '/..' );

@@ -1,0 +1,45 @@
+.button-group {
+
+	.button {
+		border-left-width: 0;
+		border-radius: 0;
+
+		&:focus {
+			// fixes focus styles in stacking context
+			position: relative;
+			z-index: 1;
+			box-shadow: inset 1px 0 0 $blue-medium, 0 0 0 2px $blue-light;
+		}
+		&.is-primary:focus {
+			box-shadow: inset 1px 0 0 $blue-dark, 0 0 0 2px $blue-light;
+		}
+		&.is-scary:focus {
+			box-shadow: inset 1px 0 0 $alert-red, 0 0 0 2px lighten( $alert-red, 20% );
+		}
+		&.is-primary.is-scary:focus {
+			box-shadow: inset 1px 0 0 darken( $alert-red, 30% ), 0 0 0 2px lighten( $alert-red, 20% );
+		}
+		&:first-child:focus {
+			box-shadow: 0 0 0 2px $blue-light;
+		}
+		&.is-scary:first-child:focus {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+		}
+	}
+
+	.button:first-child {
+		border-left-width: 1px;
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
+	}
+
+	.button:last-child {
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
+
+	&.example {
+		margin-bottom: 16px;
+		display: inline-block;
+	}
+}

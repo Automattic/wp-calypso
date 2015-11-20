@@ -1,0 +1,23 @@
+.comment-button {
+	color: lighten( $gray, 10 );
+	list-style-type: none;
+	padding: 4px 4px 4px 27px;
+	position: relative;
+	text-transform: uppercase;
+
+	&:hover {
+		color: $blue-light;
+		cursor: pointer;
+	}
+}
+
+.comment-button__icon {
+	fill: lighten( $gray, 10 );
+	position: absolute;
+		left: 0;
+		top: 2px;
+
+	&:hover {
+		fill: $blue-light;
+	}
+}

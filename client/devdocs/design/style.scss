@@ -1,0 +1,72 @@
+.card__component-instance {
+	background-color: $gray-light;
+	margin: 0;
+	padding: 15px 20px;
+
+	h3 span {
+		display: inline-block;
+		line-height: 25px;
+		vertical-align: top;
+		margin-left: 5px;
+	}
+
+	h3 .gridicon {
+		margin: 0 0 0 5px;
+	}
+
+	label {
+		font-size: 13px;
+		color: $gray;
+		display: inline-block;
+		margin: 5px 0 1px;
+	}
+
+	// card
+	a.card__property-action {
+		float: right;
+		font-size: 12px;
+		display: inline-block;
+		vertical-align: top;
+		height: 24px;
+		line-height: 24px;
+	}
+
+	// dropdowns
+	.select-dropdown__header {
+		height: 20px;
+		line-height: 20px;
+		font-size: 12px;
+		padding: 5px 10px;
+
+		&::after {
+			top: 7px;
+		}
+	}
+	.select-dropdown__item {
+		font-size: 12px;
+		line-height: 12px;
+	}
+
+	// editable-property input
+	input.editable-property {
+		line-height: 30px;
+		height: 30px;
+		padding: 0 10px;
+		font-size: 14px;
+	}
+}
+
+.card__block {
+	margin: 0 0 10px 0;
+}
+
+.state-value {
+	color: darken( $gray, 20% );
+	font-size: 13px;
+	background-color: $white;
+	padding: 5px;
+	border: 1px dotted $gray;
+	border-radius: 3px;
+	text-align: center;
+	cursor: default;
+}

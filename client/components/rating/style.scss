@@ -1,0 +1,9 @@
+.rating {
+	width: 80px;
+	color: $blue-medium;
+	line-height: 1;
+
+	.noticon-rating-empty {
+		color: lighten( $gray, 20% );
+	}
+}

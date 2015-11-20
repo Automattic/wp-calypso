@@ -1,0 +1,63 @@
+.domain-product-price {
+	color: darken( $gray, 10% );
+	display: inline-block;
+	font-size: 17px;
+	font-weight: 600;
+
+	@include breakpoint( ">660px" ) {
+		min-width: 125px
+	}
+
+	@include breakpoint( "<660px" ) {
+		font-size: 14px;
+	}
+
+	.map-domain-step & {
+		@include breakpoint( "<660px" ) {
+			padding-bottom: 5px;
+		}
+	}
+
+	small {
+		font-weight: 400;
+		opacity: .6;
+	}
+
+	.domain-product-price__free-text {
+		color: $alert-green;
+		display: block;
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+
+	&.is-free-domain {
+		display: block;
+		font-size: 13px;
+
+		@include breakpoint( ">960px" ) {
+			margin-top: -6px;
+		}
+
+		small {
+			font-size: 100%;
+			opacity: 1;
+		}
+
+		.domain-product-price__price {
+			opacity: .6;
+			text-decoration: line-through;
+		}
+	}
+
+	.is-placeholder & {
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+
+		@include breakpoint( "<660px" ) {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: lighten( $gray, 30% );
+			color: transparent;
+		}
+	}
+}

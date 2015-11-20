@@ -1,0 +1,110 @@
+// Page list
+
+.page-list {
+	margin: 0;
+	width: 100%;
+
+	.placeholder-text {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	.is-placeholder {
+		.noticon {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+			opacity: 0.3;
+		}
+	}
+}
+
+.page-list__header {
+	background: $gray-light;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	color: $gray;
+	font-size: 11px;
+	padding: 6px 11px;
+	text-transform: uppercase;
+
+	.noticon-time:before {
+		color: $gray;
+		margin-right: 4px;
+	}
+}
+
+// <Page> component
+.page {
+
+	.site-icon {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+			display: block;
+			float: left;
+			margin-right: 10px;
+		}
+	}
+
+}
+
+.page__title,
+.page__title:visited {
+	display: inline;
+	color: $gray-dark;
+	font-weight: 500;
+	font-family: $serif;
+	margin-right: 33px;
+
+	.noticon-home:before {
+		color: $gray;
+		font-size: 24px;
+		margin-left: -3px;
+		margin-right: 4px;
+	}
+}
+
+.page__site-url {
+	color: $gray;
+	display: block;
+	font-size: 12px;
+	font-style: italic;
+	margin-top: -3px;
+}
+
+.page__actions-toggle {
+	color: $gray;
+	cursor: pointer;
+	font-size: 24px;
+	margin: 17px 24px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.page__popover-more-info {
+	color: $gray;
+	padding: 4px 16px 8px;
+	font-size: 12px;
+	max-width: 200px;
+	text-align: left;
+}
+
+.page__trash-item.popover__menu-item {
+	&:hover,
+	&:focus {
+		background-color: $alert-red;
+		border: 0;
+		box-shadow: none;
+		color: white;
+	}
+}
+
+.page .updated-confirmation .conf-alert {
+	width: auto;
+	.undo {
+		display: inline;
+	}
+}
+

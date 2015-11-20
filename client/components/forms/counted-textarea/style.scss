@@ -1,0 +1,24 @@
+.counted-textarea {
+	border: 1px solid lighten( $gray, 20% );
+	background-color: lighten( $gray, 30% );
+
+	&.is-exceeding-acceptable-length {
+		background: $alert-red;
+		.counted-textarea__count-panel {
+			color: $white;
+		}
+	}
+}
+
+.counted-textarea__input {
+	display: block;
+	resize: vertical;
+	border: none;
+	padding: 8px;
+}
+
+.counted-textarea__count-panel {
+	padding: 8px;
+	font-size: 12px;
+	color: darken( $gray, 10% );
+}

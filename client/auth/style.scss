@@ -1,0 +1,161 @@
+/**
+ * Oauth login page, used in WordPress Desktop App
+ */
+
+html.is-desktop {
+	.logged-out-auth {
+		background: $blue-wordpress;
+
+		.wp-content {
+			margin: 0 auto;
+			overflow: hidden;
+			max-width: none;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.wp-content:after {
+			content: none;
+		}
+	}
+}
+
+.auth.main {
+	float: none;
+	height: 100%;
+	margin: 0 auto;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
+	background: none;
+
+	.notice {
+		width: calc( 100% - 20px );
+		margin: 20px auto 0 auto;
+	}
+
+	.notice.is-info {
+		color: $gray-light;
+		padding: 0;
+		margin: 20px 0 0 0;
+	}
+
+	.notice.is-info .notice__text {
+		padding: 0;
+	}
+
+	.notice.is-info:before {
+		content: none;
+	}
+}
+
+.auth__form {
+	width: 320px;
+	margin: 0 auto;
+
+		.form-fieldset input {
+		position: relative;
+		z-index: 1;
+	}
+
+	.form-fieldset input[type="text"],
+	.form-fieldset input[type="password"] {
+		padding-left: 36px;
+	}
+
+	.form-fieldset input:focus {
+		z-index: 2;
+	}
+
+	.form-password-input {
+		margin-top: -1px;
+	}
+
+	.form-buttons-bar button {
+		float: none;
+		margin: 0;
+		width: calc( 100% - 20px );
+	}
+
+	.form-buttons-bar button,
+	.form-buttons-bar .button.is-primary[disabled] {
+		background: #00a8db;
+		border: #00a8db;
+	}
+
+	.form-buttons-bar .button.is-primary[disabled],
+	.form-fieldset input[type="password"]:disabled,
+	.form-fieldset input[type="text"]:disabled {
+		opacity: .5;
+	}
+
+	.form-fieldset input[type="text"]:disabled {
+		margin-bottom: 1px;
+	}
+
+		.form-fieldset input[type="number"] {
+		text-align: center;
+	}
+
+	.form-password-input__toggle-visibility {
+		z-index: 4;
+		.gridicon {
+			position: static;
+		}
+	}
+
+	input[type="number"]::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
+
+.auth__input-wrapper {
+	position: relative;
+
+	.gridicon {
+		position: absolute;
+		z-index: 3;
+		left: 8px;
+		top: 7px;
+		fill: $gray;
+	}
+}
+
+.auth__lost-password {
+	margin-top: 1.5em;
+	text-align: center;
+}
+
+.auth__lost-password a {
+	color: lighten( $gray, 20% );
+}
+
+// should be a new component
+.wordpress-logo {
+	fill: $white;
+	margin: 0 auto 20px auto;
+}
+
+.auth__help {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	color: $white;
+}
+
+.auth__links {
+	position: absolute;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+}
+
+.auth__links a {
+	text-decoration: none;
+	color: $white;
+	margin: 0 16px;
+	padding: 10px 0;
+}

@@ -1,0 +1,40 @@
+.editor-action-bar {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: stretch;
+	margin: -48px -48px 24px;
+	padding: 12px 16px;
+
+	@include breakpoint( "<660px" ) {
+		margin: -24px -16px 16px;
+	}
+}
+
+.editor-action-bar__first-group {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: auto;
+	flex: 1 0;
+}
+
+.editor-action-bar__last-group {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: auto;
+	flex: 1 0;
+	text-align: right;
+}
+
+.editor-action-bar__view-link {
+	color: lighten( $gray, 20% );
+	margin-left: 12px;
+	transition: color 200ms;
+
+	&:hover,
+	&:focus {
+		color: darken( $gray, 10% );
+	}
+}

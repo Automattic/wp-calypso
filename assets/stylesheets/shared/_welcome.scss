@@ -1,0 +1,65 @@
+/**
+* Welcome Messages (currently on stats and post pages)
+*/
+
+.welcome-message {
+	@extend %container;
+	position: relative;
+	background: $gray-light;
+	margin-bottom: 6%;
+	padding: 16px;
+
+	.close-button {
+		position: absolute;
+		top: 0;
+		right: 0;
+		display: block;
+		padding: 14px 8px;
+
+		.noticon {
+			font-size: 32px;
+			line-height: 32px;
+		}
+
+		// Focus state
+		&:focus {
+			outline: none;
+			color: $link-highlight;
+		}
+	}
+
+	.welcome-section-title {
+		@extend %heading;
+
+		font-size: 21px;
+		line-height: 24px;
+		color: $gray;
+
+		margin-top: 0;
+		margin-bottom: 20px;
+		padding-right: 20px;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+
+	.welcome-intro-illustration {
+		width: 160px;
+		height: 160px;
+		float: right;
+		margin: 0 0 1em 1em;
+
+		@include breakpoint( "<480px" ) {
+			width: 120px;
+			height: 120px;
+		}
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding: 24px;
+		.close-button {
+			padding: 8px;
+		}
+	}
+}

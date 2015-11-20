@@ -1,0 +1,46 @@
+// Add new category
+a.add-new-button,
+button.add-new-button {
+	cursor: pointer;
+	color: darken( $gray, 20% );
+	margin: 0 0 8px;
+	padding: 8px 0;
+	font-size: 14px;
+	display: block;
+	text-align: left;
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	.gridicon {
+		float: left;
+		margin-top: 1px;
+	}
+	&.has-icon {
+		position: relative;
+
+		&:hover {
+			color: $gray-dark;
+		}
+
+		.gridicon {
+			margin-left: 8px;
+		}
+
+		.gridicons-plus-small {
+			position: absolute;
+			top: 5px;
+			left: 0;
+			margin-left: 0;
+		}
+	}
+}
+
+.add-new-button__text {
+	padding-left: 8px;
+	font-size: 11px;
+	font-weight: 400;
+	text-transform: uppercase;
+	line-height: 18px;
+}

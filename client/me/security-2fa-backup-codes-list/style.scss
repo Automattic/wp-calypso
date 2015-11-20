@@ -1,0 +1,121 @@
+.security-2fa-backup-codes-list {
+	@include clear-fix;
+}
+
+.security-2fa-backup-codes-list__print-agreement {
+	display: inline-block;
+	float: left;
+	min-width: 50%;
+	position: relative;
+	top: 8px;
+
+	.form-label{
+		font-weight: normal;
+		margin-left: 8px;
+		display: inline-block;
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-bottom: 24px;
+	}
+}
+
+.security-2fa-backup-codes-list__generate {
+	margin-top: 20px;
+}
+
+button.security-2fa-backups-codes-list__generate-button {
+	margin-left: 0;
+}
+
+.security-2fa-backup-codes-list__codes {
+	background: $gray-light;
+	list-style-type: none;
+	padding: 20px;
+	margin-left: 0;
+	overflow:hidden;
+}
+
+.security-2fa-backup-codes-list__codes li {
+	color: $gray-dark;
+	float: left;
+	font-size: 18px;
+	font-weight: bold;
+	line-height: 28px;
+	width: 50%;
+
+	&.is-placeholder span {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+
+		&:before {
+			content: ' ';
+			display: inline-block;
+			width: 5em;
+		}
+	}
+
+	&:before {
+		color: lighten( $gray, 20% );
+		display: inline-block;
+		font-weight: normal;
+		margin-right: 10px;
+		text-align: right;
+		width: 25px;
+	}
+
+	&:first-child:before {
+		content: '1.';
+	}
+
+	&:nth-of-type( 2 ):before {
+		content: '6.';
+	}
+
+	&:nth-of-type( 3 ):before {
+		content: '2.';
+	}
+
+	&:nth-of-type( 4 ):before {
+		content: '7.';
+	}
+
+	&:nth-of-type( 5 ):before {
+		content: '3.';
+	}
+
+	&:nth-of-type( 6 ):before {
+		content: '8.';
+	}
+
+	&:nth-of-type( 7 ):before {
+		content: '4.';
+	}
+
+	&:nth-of-type( 8 ):before {
+		content: '9.';
+	}
+
+	&:nth-of-type( 9 ):before {
+		content: '5.';
+	}
+
+	&:nth-of-type( 10 ):before {
+		content: '10.';
+	}
+}
+
+.security-2fa-backup-codes-list__warning {
+	font-size: 75%;
+
+	.noticon {
+		color: $alert-red;
+		margin-right: 8px;
+
+		&:before {
+			position: relative;
+			top: 1px;
+		}
+	}
+}

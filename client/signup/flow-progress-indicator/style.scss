@@ -1,0 +1,11 @@
+.flow-progress-indicator {
+	color: $gray;
+	font-size: 14px;
+	font-weight: 300;
+	margin-bottom: -10px;
+	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		padding-top: 10px;
+	}
+}

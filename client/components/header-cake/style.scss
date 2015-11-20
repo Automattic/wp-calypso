@@ -1,0 +1,53 @@
+// ==========================================================================
+// .header-cake
+//
+// The nav bar used as a tertiary content-level nav that consists of a back
+// button and a view title.
+// ==========================================================================
+
+.header-cake.card {
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	font-size: 14px;
+	line-height: 18px;
+	padding: 16px;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 10px;
+	}
+}
+
+.header-cake__title {
+	color: darken( $gray, 20% );
+	text-align: center;
+	word-break: break-word;
+	flex: 2 1;
+}
+
+.header-cake__corner {
+	display: flex;
+	flex: 1 0;
+}
+
+.header-cake__back {
+	flex: 1 0;
+	display: block;
+	margin: -16px;
+	margin-right: 0;
+	padding: 15px 16px 16px;
+	color: darken( $gray, 20% );
+	cursor: pointer;
+
+	.noticon {
+		margin-top: 1px;
+		opacity: 0.6;
+		transform: rotate( -90deg );
+	}
+}
+
+.header-cake__back-text {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}

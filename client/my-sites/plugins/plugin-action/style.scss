@@ -1,0 +1,45 @@
+// ==========================================================================
+// PluginActions
+// ==========================================================================
+
+.plugin-action {
+	clear:both;
+	line-height: 1;
+	margin-top: 16px;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&.is-warning {
+		.plugin-action__label {
+			color: $alert-red;
+		}
+	}
+}
+
+.plugin-action .toggle__switch {
+	float: right;
+}
+
+.plugin-action__label {
+	color: $gray;
+	font-size: 10px;
+	line-height: 16px;
+	margin-right: 10px;
+	vertical-align: top;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.plugin-action .form-toggle__label .form-toggle__switch {
+	float: right;
+}
+
+.plugin-action__children {
+	float: right;
+}
+
+.plugin-action__children .noticon {
+	margin-left: 8px;
+}

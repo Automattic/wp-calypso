@@ -1,0 +1,156 @@
+.plan {
+	background: $gray-light;
+	box-sizing: border-box;
+	position: relative;
+	float: left;
+	width: 100%;
+	margin: 0 0 15px 0;
+	padding: 0;
+
+	&.is-placeholder {
+		.plan__plan-tagline {
+			@include placeholder( 23% );
+		}
+
+		.plan__illustration {
+			display: none;
+		}
+
+		.plan__plan-details {
+			p {
+				@include placeholder( 25% );
+				margin-bottom: 5px;
+			}
+
+			p:nth-child(2) {
+				width: 70%;
+			}
+		}
+	}
+
+	.gridicons-checkmark-circle {
+		fill: $alert-green;
+		position: absolute;
+		z-index: 1;
+		left: 30px;
+		top: 6px;
+	}
+}
+
+.plan__plan-expand {
+	overflow: hidden;
+	transition: all 0.4s ease-in-out;
+	width: 100%;
+}
+
+.plan__plan-details {
+	box-sizing: border-box;
+	color: $gray-dark;
+	padding: 16px;
+	width: 100%;
+	font-size: 13px;
+	opacity: 0.8;
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		font-size: 12px;
+
+		li {
+			font-size: 13px;
+			padding: 3px 0;
+			opacity: .8;
+
+			&:before {
+				@include noticon( '\f418', 16px );
+				vertical-align: middle;
+			}
+		}
+	}
+
+	p {
+		margin: 0;
+	}
+
+	.plan__learn-more {
+		font-size: 13px;
+		display: block;
+		margin: 8px 0 0 0;
+	}
+}
+
+@mixin plans-collapsed() {
+	.plan.is-active {
+		.plan__plan-expand {
+			max-height: 500px;
+		}
+	}
+
+	.plan__plan-expand {
+		max-height: 0;
+	}
+
+	.plan__plan-tagline {
+		display: none;
+	}
+
+	.plan__illustration {
+		display: none;
+	}
+
+	.plan__plan-details {
+		border-top: 2px solid lighten( $gray, 20% );
+		float: left;
+	}
+}
+
+@mixin plans-in-three-columns() {
+	.plan {
+		width: 32%;
+		margin: 0 2% 15px 0;
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		.gridicons-checkmark-circle {
+			left: 50%;
+			top: 64px;
+			margin-left: 30px;
+		}
+	}
+
+	.plan__plan-tagline {
+		color: $gray;
+		font-size: 13px;
+		font-weight: bold;
+		margin: 0 0 5px 0;
+		padding: 0;
+		text-align: center;
+	}
+
+	.plan__plan-details {
+		min-height: 155px;
+	}
+}
+
+.plans.has-sidebar {
+	@include breakpoint( "<960px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.plans.has-no-sidebar {
+	@include breakpoint( "<660px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
+}

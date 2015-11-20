@@ -1,0 +1,29 @@
+.help__header {
+	margin-top: 15px;
+	@include breakpoint( "<660px" ) {
+		font: 300 16px/21px $sans;
+	}
+}
+
+.help__support-link {
+	margin-bottom: 10px;
+	@include breakpoint( ">660px" ) {
+		float: left;
+		width: 33%;
+	}
+}
+
+.help__support-link-title {
+	padding: 0px 10px 10px 0px;
+	font: 16px/21px $sans;
+	color: $blue-wordpress;
+	@include breakpoint( ">660px" ) {
+		font: 21px/24px $sans;
+	}
+}
+
+.help__support-link-content {
+	padding-right: 10px;
+	font: 14px/21px $sans;
+	color: $gray;
+}

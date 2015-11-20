@@ -1,0 +1,49 @@
+.plugin-ratings {
+	margin-top: 13px;
+}
+
+.plugin-ratings__rating-tier {
+	line-height: 18px;
+}
+
+.plugin-ratings__rating-container {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.plugin-ratings__rating-tier-text,
+.plugin-ratings__downloads {
+	font-size: 10px;
+	font-weight: bold;
+	color: #87a6bc;
+	white-space: pre;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	overflow: hidden;
+}
+
+.plugin-ratings__rating-tier-text {
+	padding-right: 16px;
+}
+
+.plugin-ratings__downloads {
+	margin-top: 16px;
+}
+
+.plugin_ratings__bar {
+	width: 78px;
+	display: inline-block;
+	flex-grow: 1;
+
+	.progress-bar {
+		border-radius: 0;
+		height: 8px;
+		background-color: lighten( $gray, 20% );
+	}
+
+	.progress-bar__progress {
+		border-radius: 0;
+		background-color: lighten( $blue-dark, 10% );
+	}
+}

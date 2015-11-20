@@ -1,0 +1,630 @@
+.billing-history-page {
+
+	#billing-history-wrapper * {
+		box-sizing: border-box;
+	}
+
+	#billing-history-content,
+	#upcoming-charges {
+		background-color: $white;
+	}
+
+	.billing-history-header p {
+		font-size: 14px;
+	}
+
+	// Transactions Table
+	// =============================================
+
+	.transactions {
+		border-collapse: collapse;
+	}
+
+	.transactions__no-results {
+		display: table-row;
+
+		td {
+			padding: 20px 0;
+			text-align: center;
+		}
+	}
+
+	// Table Header
+	// -----------------------------------
+
+	.transactions thead {
+		background-color: $gray-light;
+	}
+
+	.transactions thead .header-row {
+		vertical-align: top;
+		height: 40px;
+	}
+
+	.transactions thead .header-column {
+		vertical-align: top;
+		padding-top: 4px;
+	}
+
+	.search-form {
+		text-align: right;
+	}
+
+	.search_terms {
+		display: inline-block;
+		font-size: 13px;
+		margin-top: 2px;
+		margin-right: 12px;
+		text-align: left;
+		width: 100px;
+		padding: 3px 9px;
+		background-color: $white;
+		border-radius: 15px;
+		border: 1px solid lighten( $gray, 30% );
+		transition: width 0.25s ease-out;
+		outline: 0;
+
+		&:focus,
+		&:active	{
+			width: 150px;
+		}
+	}
+
+	.reset-search {
+		display: none;
+	}
+
+	// Table Body
+	// -----------------------------------
+
+	.transaction {
+		color: $gray-dark;
+		font-size: 14px;
+		height: 66px;
+		border-bottom: 1px solid lighten( $gray, 30% );
+	}
+
+	.transaction td {
+		vertical-align: top;
+		padding: 10px 0;
+	}
+
+	.transactions tbody .date {
+		width: 140px;
+		padding: 12px;
+	}
+
+	.transactions tbody .trans-app {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.transactions tbody .amount {
+		text-align: right;
+		padding: 12px;
+		width: 110px;
+	}
+
+	.trans-wrap {
+		@include clear-fix;
+	}
+
+	.service-name {
+		strong {
+			font-weight: normal;
+		}
+
+		small {
+			color: $gray;
+			display: block;
+			font-size: 12px;
+			font-style: italic;
+		}
+	}
+
+	.service-description {
+		float: left;
+	}
+
+	.transaction-links {
+		font-size: 12px;
+		margin: 4px 0 0 0;
+
+		a {
+			padding-right: 8px;
+		}
+	}
+
+	// Filter Popovers
+	// =============================================
+
+	.filter-popover {
+		position: relative;
+		display: inline-block;
+		padding: 4px 12px;
+		vertical-align: top;
+	}
+
+	.filter-popover-content {
+		display: none;
+		position: absolute;
+		top: 35px;
+		z-index: 1;
+		border-radius: 4px;
+		background-color: $white;
+		box-shadow: 0 1px 6px rgba(0,0,0,0.2), 0 0 25px 10px rgba(0,0,0,0.1);
+		outline: 0;
+
+		&.datepicker {
+			right: -115px;
+		}
+
+		&.app {
+			right: -147px;
+		}
+	}
+
+	.popped .filter-popover-content {
+		display: block;
+	}
+
+	.filter-popover-content:before {
+		@extend %clear-text;
+
+		display: block;
+		position: absolute;
+		top: -25px;
+		left: 21px;
+		color: $blue-wordpress;
+		content: '\f500';
+		font-family: Noticons;
+		font-size: 20px;
+	}
+
+	.filter-popover-content .overflow {
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+
+	.filter-popover-content table {
+		margin-bottom: 0;
+	}
+
+	.filter-popover-content tr:hover td {
+		background: rgba(0,0,0,0.02);
+		cursor: pointer;
+		color: $blue-light;
+	}
+
+	.filter-popover-content tr.selected td {
+		background-color: $gray-dark;
+		color: $white;
+	}
+
+	.filter-popover-content th {
+		@extend %clear-text;
+		padding: 8px 10px;
+		font-size: 12px;
+		font-weight: 600;
+		color: $white;
+		background: $blue-wordpress;
+		text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+		text-align: left;
+		border-bottom: 1px solid rgba(0,0,0,0.3);
+		white-space: nowrap;
+	}
+
+	.filter-popover-content th.transactions-header__count {
+		text-align: right;
+	}
+
+	.filter-popover-content thead:first-of-type th:first-child {
+		border-top-left-radius: 4px;
+	}
+
+	.filter-popover-content thead:first-of-type th:last-child {
+		border-top-right-radius: 4px;
+	}
+
+	.filter-popover-content td {
+		padding: 8px 10px;
+		font-size: 13px;
+		border-top: 1px dotted rgba(0,0,0,0.1);
+		color: $blue-wordpress;
+	}
+	.filter-popover-content td.descriptor {
+		font-weight: 400;
+		font-size: 13px;
+	}
+	.filter-popover-content td.transactions-header__count {
+		font-weight: 600;
+		font-size: 14px;
+		text-align: right;
+		color: #777;
+		color: rgba(0,0,0,0.8);
+	}
+
+	.filter-popover-toggle {
+		padding: 5px 10px;
+		border-radius: 3px;
+		cursor: pointer;
+		border-radius: 3px;
+		border: 1px solid transparent;
+
+		&:hover {
+			background-color: $white;
+			border-color: rgba(0,0,0,0.05);
+		}
+
+		&:after {
+			display: inline-block;
+			content: '\f431';
+			font-family: Noticons;
+			color: $blue-wordpress;
+			margin-left: 5px;
+			position: relative;
+			top: 2px;
+		}
+	}
+
+	.popped	.filter-popover-toggle {
+			background-color: rgba(0,0,0,0.1);
+			border-color: rgba(0,0,0,0.05);
+			box-shadow: 0 1px 0 rgba(255,255,255,0.4);
+		}
+
+	// View Receipt Modal
+	// =============================================
+
+	.wp-overlay {
+		.overlay-content {
+			background: $white;
+			width: 640px;
+			max-width: 100%;
+		}
+
+		.overlay-navigation {
+			background: $gray-dark;
+			padding: 10px;
+		}
+
+		.wp-content {
+			background: $white;
+
+			@include breakpoint( "<960px" ) {
+				padding: 0;
+			}
+		}
+
+		.settings-done {
+			margin-right: 10px;
+		}
+
+		.current-site .site {
+			padding-left: 20px;
+
+			@include breakpoint( "<480px" ) {
+				padding-left: 0;
+			}
+		}
+
+		.site-title,
+		.site-icon {
+			display: none;
+		}
+
+		.site-description {
+			font-size: 20px;
+			padding: 3px;
+		}
+	}
+
+
+	.view-receipt-wrapper {
+		margin: 30px auto 0 auto;
+		padding: 20px 0 0 0;
+
+		.app-overview {
+			min-height: 65px;
+			padding: 10px 40px;
+			position: relative;
+			overflow: auto;
+
+			@include breakpoint( "<480px" ) {
+				padding: 10px 20px;
+			}
+
+			img {
+				max-width: 65px;
+				min-height: 65px;
+				float: left;
+
+				@include breakpoint( "<480px" ) {
+					left: 20px;
+				}
+			}
+
+			h2 {
+				clear: none;
+				float: left;
+				padding: 10px 20px;
+
+				@include breakpoint( "<480px" ) {
+					padding-top: 0;
+				}
+
+				small {
+					display: block;
+				}
+			}
+
+			.transaction-date {
+				color: $gray;
+				font-size: 13px;
+				font-style: italic;
+				padding: 5px 0 0 0;
+
+				@include breakpoint( ">480px" ) {
+					position: absolute;
+						top: 10px;
+						right: 40px;
+				}
+			}
+		}
+
+		ul {
+			background: $gray-light;
+			list-style: none;
+			padding: 20px 40px;
+			margin: 20px 0 0 0;
+			overflow: auto;
+
+			@include breakpoint( "<480px" ) {
+				padding: 20px;
+			}
+
+			li {
+				color: $gray-dark;
+					font-size: 13px;
+				margin: 0 0 15px 0;
+				padding: 0;
+
+				&:last-child {
+					margin: 0;
+				}
+
+				strong {
+					color: darken( $gray, 20% );
+					display: block;
+					font-size: 12px;
+					font-weight: 600;
+					margin: 0 5px 0 0;
+					text-transform: uppercase;
+				}
+			}
+
+			li.billing-details div:hover {
+				border: 2px black dashed;
+			}
+		}
+
+		.resend {
+			padding: 0;
+			margin-left: 0;
+		}
+
+		.receipt {
+			padding: 30px 40px;
+
+			@include breakpoint( "<480px" ) {
+				padding: 30px 20px;
+			}
+
+			h4 {
+				font-size: 20px;
+			}
+
+			.receipt-line-items {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+
+				th {
+					border-bottom: 2px solid lighten( $gray, 25% );
+					color: $gray;
+					font-size: 12px;
+					font-weight: 400;
+					text-transform: uppercase;
+					width: auto;
+				}
+
+				th.receipt-desc {
+					width: 75%;
+					text-align: left;
+				}
+
+				th.receipt-amount {
+					text-align: right;
+				}
+
+				td,
+				th {
+					padding: 10px 0;
+				}
+
+				td.receipt-amount {
+					color: #444;
+					text-align: right;
+					vertical-align: middle;
+				}
+
+				.receipt-item-name {
+					small {
+						color: $gray;
+						font-size: 13px;
+						margin-left: 5px;
+						text-transform: lowercase;
+					}
+					em {
+						color: $gray;
+						display: block;
+						font-size: 13px;
+					}
+				}
+
+				tbody tr {
+					td {
+						border-bottom: 1px solid lighten( $gray, 30% );
+					}
+
+					&:last-child td {
+						border: none;
+					}
+				}
+
+				tfoot {
+					font-weight: 400;
+					text-align: right;
+					vertical-align: bottom;
+
+					td {
+						border-top: 2px solid lighten( $gray, 25% );
+						padding-bottom: 0;
+					}
+				}
+			}
+		}
+
+		.receipt-links {
+			border-top: 1px solid lighten( $gray, 25% );
+			margin: 0;
+			overflow: auto;
+			padding: 30px 40px;
+
+			@include breakpoint( "<480px" ) {
+				padding: 20px;
+			}
+
+			.button {
+				display: block;
+				margin: 10px 0;
+				padding: 15px;
+				text-align: center;
+
+				@include breakpoint( ">480px" ) {
+					float: left;
+					margin: 0 1%;
+					width: 48%;
+				}
+			}
+		}
+	}
+}
+
+@include breakpoint( "<480px" ) {
+	.billing-history-page {
+		thead {
+			display: block;
+		}
+
+		.transactions {
+			display: block;
+			max-width: 100%;
+
+			thead {
+				margin: 0 -16px;
+			}
+
+			.transaction {
+				display: inline-block;
+				height: auto;
+				padding: 1em;
+
+				&:first-of-type {
+					border-top: none;
+				}
+			}
+
+			.header-row {
+				display: block;
+				height: auto !important;
+				padding: .5em 0;
+
+				.date, .trans-app {
+					display: none;
+				}
+
+				.search-field {
+					display: block;
+					padding-top: 0;
+					width: 100%;
+				}
+
+				.search-form {
+					text-align: center;
+
+					.search_terms {
+						margin: 0;
+						width: 80%;
+					}
+				}
+			}
+
+			tbody {
+				td {
+					display: inline-block;
+					width: 100%;
+					padding: 0 !important;
+
+					&.amount {
+						text-align: left;
+					}
+
+					&.date {
+						font-weight: 600;
+					}
+				}
+			}
+		}
+
+		.view-receipt-wrapper {
+			.app-overview {
+				h2 {
+					small {
+						display: block;
+					}
+				}
+			}
+
+			dl {
+				padding: 0 30px;
+
+				dt {
+					text-align: left;
+					width: 50%;
+				}
+
+				dd {
+					width: 50%;
+				}
+			}
+		}
+	}
+}
+
+@media print {
+	#overlay-header,
+	#primary,
+	.receipt-links {
+		display: none;
+	}
+
+	.billing-history-page {
+		.wp-overlay .overlay-content,
+		.wp-content {
+			margin: 0 auto;
+			max-width: none;
+			width: 100%;
+		}
+	}
+}

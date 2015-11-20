@@ -1,0 +1,340 @@
+.upgrades {
+	.right-column {
+		overflow: hidden;
+	}
+}
+
+// Purchased Products
+.purchased {
+
+	hr {
+		float: left;
+		width: 100%;
+		display: block;
+		height: 2px;
+		background: lighten( $gray, 20% );
+	}
+
+	.product {
+		position: relative;
+		float: left;
+		width: 100%;
+		margin: 0 0 15px 0;
+		padding: 15px;
+		background: $white;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+		box-sizing: border-box;
+
+		.name {
+			width: 42%;
+			float: left;
+			margin: 0 10px 0 0;
+
+			h3 {
+				margin: 0 0 10px;
+				font-size: 15px;
+				line-height: 1;
+			}
+
+			p {
+				margin: 0;
+				padding: 0;
+				font-size: 13px;
+				color: darken( $gray, 10% );
+			}
+		}
+
+		.status {
+			float: left;
+			width: auto;
+
+			h4 {
+				margin: 2px 0 10px;
+				font-size: 13px;
+				line-height: 1;
+			}
+
+			p {
+				margin: 0;
+				padding: 0;
+				font-size: 13px;
+				color: $gray;
+
+			}
+		}
+
+		.actions {
+			float: right;
+			width: auto;
+			margin: 6px 0 0 0;
+
+			.toggle {
+				float: right;
+				display: inline-block;
+				width: 32px;
+				height: 32px;
+				margin: 0 0 0 5px;
+				color: $gray;
+
+				.noticon {
+					width: 32px;
+					text-align: center;
+					line-height: 32px;
+				}
+			}
+
+			.button {
+				float: right;
+			}
+		}
+	}
+}
+
+// Expiring Products
+.expiring {
+	.product {
+		position: relative;
+		float: left;
+		width: 100%;
+		margin: 0 0 15px 0;
+		padding: 15px;
+		background: $white;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+		box-sizing: border-box;
+
+		.name {
+			width: 42%;
+			float: left;
+			margin: 0 10px 0 0;
+
+			h3 {
+				margin: 0 0 10px;
+				font-size: 15px;
+				line-height: 1;
+			}
+
+			p {
+				margin: 0;
+				padding: 0;
+				font-size: 13px;
+				color: $gray;
+			}
+		}
+
+		.status {
+			float: left;
+			width: auto;
+
+			h4 {
+				margin: 2px 0 10px;
+				font-size: 13px;
+				line-height: 1;
+			}
+
+			p {
+				margin: 0;
+				padding: 0;
+				font-size: 13px;
+				color: $alert-red;
+
+			}
+		}
+
+		.actions {
+			float: right;
+			width: auto;
+			margin: 6px 0 0 0;
+
+			.toggle {
+				float: right;
+				display: inline-block;
+				width: 32px;
+				height: 32px;
+				margin: 0 0 0 5px;
+				color: $gray;
+
+				.noticon {
+					width: 32px;
+					text-align: center;
+					line-height: 32px;
+				}
+			}
+
+			.button {
+				float: right;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 770px) {
+	body {
+	}
+}
+
+@media screen and (max-width: 450px) {
+
+	.plan {
+		float: left;
+		width: 100%;
+		margin: 0 0 15px 0;
+
+		.plan-header {
+			float: left;
+			width: 100%;
+			height: 50px;
+			box-sizing: border-box;
+
+			.badge {
+				display: none;
+			}
+
+			h4 {
+				float: left;
+				display: inline-block;
+				margin: 0;
+				padding: 0;
+				text-align: left;
+				font-size: 13px;
+				line-height: 20px;
+			}
+
+			h3 {
+				display: inline-block;
+				margin: 0;
+				padding: 0;
+				font-size: 20px;
+				line-height: 20px;
+				text-align: right;
+			}
+
+			p {
+				display: inline-block;
+				text-align: right;
+			}
+		}
+
+		.plan-details {
+			float: left;
+			width: 100%;
+			box-sizing: border-box;
+
+			p {
+				margin: 0;
+				padding: 0;
+			}
+
+			.illustration {
+				display: none;
+			}
+		}
+
+		.actions {
+			float: left;
+			width: 100%;
+			padding: 15px;
+			box-sizing: border-box;
+			border-top: 1px solid lighten( $gray, 30% );
+
+			p {
+				margin: 0;
+				padding: 0;
+
+				&.current-plan {
+					margin: 0;
+					padding: 0;
+					color: $alert-green;
+					line-height: 1;
+					border: none;
+
+					&:before {
+						-webkit-font-smoothing: antialiased;
+						-moz-osx-font-smoothing: grayscale;
+
+						content: '\f418';
+						display: inline-block;
+						margin: -3px 5px 0 0;
+						font: normal 16px/1 Noticons;
+						vertical-align: middle;
+
+					}
+				}
+			}
+		}
+	}
+
+	// Purchased Upgrades
+
+	.purchased {
+
+		.product {
+			padding: 0;
+			background: $gray-light;
+
+			.name {
+				float: left;
+				width: 100%;
+				margin: 0;
+				padding: 15px;
+				border-bottom: 2px solid lighten( $gray, 30% );
+				box-sizing: border-box;
+				background: $white;
+
+				h3 {
+					display: inline;
+					float: left;
+					margin: 0;
+					padding: 0;
+					font-size: 13px;
+					font-weight: 600;
+				}
+
+				p {
+					display: inline;
+					float: right;
+					margin: 0;
+					padding: 0;
+					font-size: 13px;
+					line-height: 1;
+				}
+			}
+
+			.status {
+				float: left;
+				width: auto;
+				margin: 2px 0 0 0;
+				padding: 0 0 0 15px;
+
+				h4 {
+					display: inline;
+					float: left;
+					margin: 0 5px 0 0;
+					padding: 0;
+					font-size: 13px;
+					line-height: 46px;
+				}
+
+				p {
+					display: inline;
+					float: left;
+					margin: 0;
+					padding: 0;
+					font-size: 13px;
+					line-height: 46px;
+				}
+			}
+
+			.actions {
+				float: right;
+				width: auto;
+				margin: 0;
+				padding: 10px 15px 10px 0;
+
+				a {
+					font-size: 13px;
+				}
+			}
+		}
+	}
+
+}

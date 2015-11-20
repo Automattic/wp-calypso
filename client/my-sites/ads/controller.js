@@ -1,0 +1,72 @@
+/**
+ * External Dependencies
+ */
+var React = require( 'react' ),
+	page = require( 'page' );
+
+/**
+ * Internal Dependencies
+ */
+var sites = require( 'lib/sites-list' )(),
+	route = require( 'lib/route' ),
+	i18n = require( 'lib/mixins/i18n' ),
+	analytics = require( 'analytics' ),
+	titlecase = require( 'to-title-case' ),
+	AdsUtils = require( 'lib/ads/utils' ),
+	titleActions = require( 'lib/screen-title/actions' );
+
+function _recordPageView( context, analyticsPageTitle ) {
+	var basePath = route.sectionify( context.path );
+	if ( 'undefined' !== typeof context.params.section ) {
+		analyticsPageTitle += ' > ' + titlecase( context.params.section );
+	}
+
+	analytics.ga.recordPageView( basePath + '/:site', analyticsPageTitle );
+}
+
+function _getLayoutTitle( context ) {
+	switch ( context.params.section ) {
+		case 'earnings':
+			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: 'WordAds' } } );
+		case 'settings':
+			return i18n.translate( '%(wordads)s Settings', { args: { wordads: 'WordAds' } } );
+	}
+}
+
+module.exports = {
+
+	redirect: function( context ) {
+		page.redirect( '/ads/earnings/' + context.params.site_id );
+		return;
+	},
+
+	layout: function( context ) {
+		var Ads = require( 'my-sites/ads/main' ),
+			pathSuffix = sites.selected ? '/' + sites.selected : '',
+			layoutTitle = _getLayoutTitle( context ),
+			site = sites.getSelectedSite();
+
+		titleActions.setTitle( layoutTitle, { siteID: context.params.site_id } );
+
+		if ( ! site.user_can_manage ) {
+			page.redirect( '/stats' + pathSuffix );
+			return;
+		}
+
+		if ( ! AdsUtils.canAccessWordads( site ) ) {
+			page.redirect( '/stats' + pathSuffix );
+			return;
+		}
+
+		_recordPageView( context, layoutTitle );
+
+		React.render(
+			React.createElement( Ads, {
+				site: site,
+				section: context.params.section,
+				path: context.path,
+			} ),
+			document.getElementById( 'primary' )
+		);
+	}
+};

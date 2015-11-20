@@ -1,0 +1,50 @@
+// Stats Overview
+// (for the site list and the post detail view)
+.stats__overview, .stats__latest-post-summary {
+	.module-header__link {
+		display: block;
+		white-space: nowrap;
+		overflow: hidden;
+
+		@include breakpoint( "<480px" ) {
+
+			&:focus {
+				color: $link-highlight;
+			}
+		}
+	}
+
+	.module-header__site-icon {
+		float: left;
+		margin: 7px 8px 0 0;
+	}
+
+	.module-header__right-icon {
+		position: relative;
+		float: right;
+		background: $white;
+		padding-right: 15px;
+
+		// Fade out value if text is very long
+		&::before {
+			@include stats-fade-text( $white );
+		}
+
+		.gridicon {
+			vertical-align: middle;
+		}
+	}
+
+	.value{
+		font-size: 24px;
+		padding: 16px 0;
+	}
+
+}
+
+.stats__latest-post-summary{
+
+		.value{
+			font-size: 32px;
+		}
+}

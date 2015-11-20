@@ -1,0 +1,287 @@
+
+.draft__title {
+	display: inline-block;
+	font-family: $serif;
+	font-weight: bold;
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 95%;
+	vertical-align: bottom;
+	position: relative;
+
+	.has-all-actions & {
+		width: 85%;
+	}
+
+	a {
+		color: $gray-dark;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 20% );
+	}
+}
+
+.draft__excerpt {
+	color: darken( $gray, 20% );
+	font-size: 12px;
+	font-weight: 300;
+
+	.gridicon {
+		color: $gray;
+		vertical-align: text-bottom;
+		margin-right: 8px;
+	}
+}
+
+// used on multisite screen to show
+// which site a draft belongs to
+.draft .site-icon {
+	border: none;
+	position: absolute;
+	right: 16px;
+	top: 13px;
+}
+
+.draft__untitled {
+	color: $gray;
+	font-style: italic;
+	font-weight: 400;
+}
+
+// Images
+.draft__featured-image {
+	display: block;
+	position: absolute;
+		left: 0;
+		top: 0;
+
+	// set image thumbnail
+	height: 56px;
+	width: 75px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.draft__image {
+	max-width: 100%;
+}
+
+// pushes content to the right when the draft
+// has an image to display
+.draft.has-image {
+	.draft__title {
+		margin-left: 70px;
+		max-width: 65%;
+	}
+
+	&.has-all-actions {
+		.draft__title {
+			max-width: 56%
+		}
+	}
+
+	.draft__featured-image {
+		cursor: zoom-in;
+	}
+
+	@include breakpoint( "<660px" ) {
+		.draft__actions {
+			margin-left: 80px;
+		}
+	}
+
+	// when the image is expanded to its full dimensions
+	&.is-image-expanded {
+		.draft__title {
+			margin-left: 0;
+			max-width: 85%;
+		}
+		.draft__featured-image {
+			cursor: zoom-out;
+			border-top: 1px solid lighten( $gray, 30% );
+			margin-top: 16px;
+			padding-top: 16px;
+			height: auto;
+			width: 100%;
+			position: static;
+		}
+	}
+}
+
+.draft__actions {
+	display: block;
+
+	@include breakpoint( ">480px" ) {
+		display: inline-block;
+		float: right;
+	}
+}
+
+.draft__all-actions {
+	display: inline-block;
+	width: 10%;
+}
+
+.draft__actions-toggle {
+	color: $gray;
+	cursor: pointer;
+	font-size: 24px;
+	margin-left: 10px;
+}
+
+.draft .post-relative-time-status {
+	display: inline-block;
+	margin: 0;
+	color: $gray;
+
+	.time {
+		line-height: 1;
+	}
+
+	.time-text {
+		font-size: 10px;
+		color: $gray;
+		text-transform: uppercase;
+	}
+
+	small {
+		display: none;
+	}
+
+	.is-pending {
+		display: none;
+	}
+}
+
+.draft {
+	.gridicons-trash {
+		cursor: pointer;
+		fill: $gray;
+		opacity: 0;
+		padding: 4px 8px;
+		position: absolute;
+			right: 4px;
+			top: 14px;
+		transition: opacity 200ms;
+
+		&:hover {
+			fill: $alert-red;
+		}
+	}
+
+	&:hover .gridicons-trash,
+	&.is-touch .gridicons-trash {
+		opacity: 1;
+	}
+}
+
+
+.draft.is-placeholder {
+	.draft__title,
+	.time-text {
+		animation: pulse-light 0.8s ease-in-out infinite;
+	}
+
+	.draft__title {
+		background: lighten( $gray, 20% );
+		color: transparent;
+		height: 16px;
+		width: 30%;
+		&::after {
+			display: none;
+		}
+	}
+
+	.time-text {
+		background: lighten( $gray, 20% );
+		height: 10px;
+		width: 100px;
+	}
+}
+
+.draft .notice {
+	margin: -16px -24px 16px;
+}
+
+.draft__trash-item.popover__menu-item {
+	&:hover,
+	&:focus {
+		background-color: $alert-red;
+	}
+}
+
+.draft.is-trashed {
+	background: $gray-light;
+
+	.draft__title a {
+		color: lighten( $gray, 10% );
+	}
+
+	.draft__title {
+		width: 100%;
+		&.has-image {
+			width: 85%;
+		}
+		&::after {
+			@include long-content-fade( $size: 20%, $color: $gray-light );
+		}
+	}
+
+	.draft__actions-toggle {
+		display: none;
+	}
+
+	.draft__all-actions {
+		display: none;
+	}
+
+	.gridicons-trash {
+		display: none;
+	}
+
+	.draft__restore {
+		background: $gray-light;
+	}
+}
+
+.draft__restore {
+	cursor: pointer;
+	position: absolute;
+		right: 16px;
+		top: 0;
+		bottom: 0;
+	color: $gray;
+
+	.gridicon {
+		margin-right: 4px;
+		vertical-align: bottom;
+	}
+}
+
+.draft.is-restoring {
+	background: $white;
+	animation: pulse-light 0.8s ease-in-out infinite;
+
+	.draft__restore {
+		background: transparent;
+	}
+
+	.draft__title::after {
+		display: none;
+	}
+}
+
+.draft__pending-label {
+	background: $alert-yellow;
+	border-radius: 2px;
+	color: white;
+	font-family: $sans;
+	font-weight: 400;
+	font-size: 11px;
+	margin-right: 8px;
+	padding: 2px 8px;
+	text-transform: uppercase;
+}

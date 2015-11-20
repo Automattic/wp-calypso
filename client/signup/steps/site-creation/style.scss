@@ -1,0 +1,11 @@
+.site-creation__site-url.form-text-input {
+	padding-right: 122px;
+}
+
+.site-creation__wordpress-domain-suffix {
+	color: $gray;
+	line-height: 40px;
+	margin-left: -122px;
+	pointer-events: none;
+	position: absolute;
+}

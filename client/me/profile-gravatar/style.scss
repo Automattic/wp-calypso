@@ -1,0 +1,118 @@
+.profile-gravatar {
+	.gravatar {
+		display: block;
+		margin: 0 auto;
+	}
+}
+
+.profile-gravatar__edit-label-wrap {
+	text-align: center;
+	position: absolute;
+	top: -5px;
+	opacity: 0;
+	width: 150px;
+	height: 150px;
+	line-height: 150px;
+	border-radius: 50%;
+	background: rgba( $gray-dark, 0 );
+	color: $blue-wordpress;
+	transition: all 0.3s ease-in-out;
+	-webkit-appearance: preserve-3d;
+
+	@include breakpoint( '<660px' ) {
+		opacity: 1;
+		top: 110px;
+		background: rgba( $gray-dark, 0.8 );
+		color: $white;
+	}
+
+	&:after {
+		@include noticon( '\f441', 64px );
+		transition: all 0.3s ease-in-out;
+		-webkit-appearance: preserve-3d;
+
+		@include breakpoint( '<660px' ) {
+			color: $blue-light;
+			font-size: 32px;
+			left: 58px;
+			top: 2px;
+		}
+
+		color: $white;
+		display: block;
+		left: 43px;
+		position: absolute;
+		top: 5px;
+		z-index: 0;
+	}
+
+	.profile-gravatar__edit-label {
+		position: relative;
+		top: 10px;
+		z-index: 1000;
+	}
+}
+
+.profile-gravatar__edit {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	width: 150px;
+	height: 150px;
+	line-height: 150px;
+	border-radius: 50%;
+	border-color: lighten( $gray, 20% );
+	border-style: solid;
+	border-width: 2px;
+	margin:0 auto;
+	outline: none;
+	transition: all 0.3s ease-in-out;
+	-webkit-appearance: preserve-3d;
+
+	&:hover {
+		border-color: lighten( $gray, 10% );
+
+		.profile-gravatar__edit-label-wrap {
+			opacity: 1;
+			top: 0px;
+			background: rgba( $gray-dark, 0.8 );
+			color: $white;
+
+			&:after {
+				top: 15px;
+				color: $blue-light;
+
+				@include breakpoint( '<660px' ) {
+					font-size: 64px;
+					left: 43px;
+				}
+			}
+		}
+	}
+
+	.gravatar {
+		position: relative;
+		transition: all 0.3s ease-in-out;
+		-webkit-appearance: preserve-3d;
+	}
+}
+
+.profile-gravatar__user-secondary-info {
+	margin-bottom: 30px;
+	text-align: center;
+
+	a {
+		font-size: 16px;
+	}
+}
+
+.profile-gravatar__user-display-name {
+	font-size: 24px;
+	font-family: $serif;
+	font-weight: 700;
+	line-height: 32px;
+	margin: 8px 0 0;
+	text-align: center;
+	word-break: break-word;
+	word-wrap: break-word;
+}

@@ -1,0 +1,161 @@
+@include breakpoint( "<660px" ) {
+	.stream-header {
+		margin-top: 24px;
+
+		.follow-button {
+			right: 10px;
+		}
+
+		.follow-button__label {
+			display: none;
+		}
+	}
+}
+
+.stream-header {
+	.follow-button__label {
+		font-family: $sans;
+		font-size: 16px;
+	}
+
+	.follow-button {
+		.follow-button__label {
+			color: $gray;
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: $blue-medium;
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: $blue-medium;
+			}
+		}
+	}
+
+	.follow-button.is-following {
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: $gray;
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: $gray;
+			}
+		}
+	}
+}
+
+.is-section-reader .card.stream-header {
+	min-height: 72px;
+	padding: 24px;
+
+	&.has-icon {
+		padding-left: 72px;
+	}
+
+	&.has-description {
+		padding-top: 13px;
+		padding-bottom: 13px;
+	}
+
+	&:hover {
+		cursor: default;
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+	}
+}
+
+.stream-header__icon {
+	position: absolute;
+		top: 12px;
+		left: 12px;
+	height: 48px;
+	width: 48px;
+	background: lighten( $gray, 20 );
+	text-align: center;
+
+	.gridicon {
+		fill: $white;
+		height: 24px;
+		width: 24px;
+		position: relative;
+			top: 12px;
+	}
+
+	.gridicon__tag {
+		transform: rotate( -45deg );
+		top: 11px;
+		left: 1px;
+	}
+}
+
+.stream-header__title {
+	color: $gray-dark;
+	font-size: 16px;
+}
+
+.stream-header__description {
+	margin: 0;
+	color: $gray;
+}
+
+.stream-header.is-placeholder {
+	pointer-events: none;
+	user-select: none;
+
+	.stream-header__title,
+	.follow-button,
+	.follow-button__label {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	.stream-header__title {
+		margin-right: 25%;
+	}
+
+
+	.gridicon {
+		display: none;
+	}
+}
+
+.stream-header__follow {
+	.follow-button {
+		position: absolute;
+			top: 12px;
+			right: 24px;
+
+		@include breakpoint( "<660px" ) {
+			right: 8px;
+		}
+	}
+}
+
+.stream-header__edit {
+	.stream-header__action-label {
+		display: none;
+	}
+
+	.stream-header__action-icon svg {
+		fill: $gray;
+		position: absolute;
+		margin: auto;
+		top: 0;
+		bottom: 0;
+		right: 24px;
+	}
+}

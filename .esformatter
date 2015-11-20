@@ -1,0 +1,76 @@
+{
+	"root": true,
+
+	"preset": "default",
+	"indent": {
+		"value": "\t",
+		"IfStatementConditional": 2,
+		"SwitchStatement": 1,
+		"TopLevelFunctionBlock": 1
+	},
+	"lineBreak": {
+		"before": {
+			"VariableDeclarationWithoutInit": 0,
+			"ArrayExpressionClosing": 1
+		},
+		"after": {
+			"AssignmentOperator": -1,
+			"ArrayExpressionOpening": 1,
+			"ArrayExpressionComma": 1
+		}
+	},
+	"whiteSpace": {
+		"before": {
+			"ArgumentList": 1,
+			"ArgumentListArrayExpression": 1,
+			"ArgumentListFunctionExpression": 1,
+			"ArgumentListObjectExpression": 1,
+			"ArrayExpressionClosing": 1,
+			"ExpressionClosingParentheses": 1,
+			"ForInStatementExpressionClosing": 1,
+			"ForStatementExpressionClosing": 1,
+			"IfStatementConditionalClosing": 1,
+			"MemberExpressionClosing": 1,
+			"ParameterList": 1,
+			"SwitchDiscriminantClosing": 1,
+			"WhileStatementConditionalClosing": 1,
+			"CallExpression": -1
+		},
+		"after": {
+			"ArgumentList": 1,
+			"ArgumentListArrayExpression": 1,
+			"ArgumentListFunctionExpression": 1,
+			"ArgumentListObjectExpression": 1,
+			"ArrayExpressionOpening": 1,
+			"ExpressionOpeningParentheses": 1,
+			"ForInStatementExpressionOpening": 1,
+			"ForStatementExpressionOpening": 1,
+			"IfStatementConditionalOpening": 1,
+			"MemberExpressionOpening": 1,
+			"ParameterList": 1,
+			"SwitchDiscriminantOpening": 1,
+			"WhileStatementConditionalOpening": 1,
+			"CallExpression": 0
+		}
+	},
+	"collapseObjects": {
+		"ObjectExpression": {
+			"maxLineLength": 120,
+			"maxKeys": 1,
+			"forbidden": [ "FunctionExpression" ]
+		},
+		"ArrayExpression": {
+			"maxLineLength": 120,
+			"maxKeys": 10,
+			"forbidden": [ "FunctionExpression" ]
+		}
+	},
+	"plugins": [
+		"esformatter-quotes",
+		"esformatter-semicolons",
+		"esformatter-braces",
+		"esformatter-dot-notation",
+		"esformatter-special-bangs",
+		"esformatter-collapse-objects-a8c"
+	]
+}

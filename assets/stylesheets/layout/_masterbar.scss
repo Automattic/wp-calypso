@@ -1,0 +1,335 @@
+$masterbar-height: 46px;
+$autobar-height: 20px;
+
+/**
+ * The WordPress.com Masterbar
+ */
+.masterbar {
+	background: $blue-wordpress;
+	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	color: $white;
+	font-size: 0.9em;
+	height: $masterbar-height;
+	margin: 0;
+	position: absolute;
+		left: 0;
+		top: 0;
+	width: 100%;
+	z-index: 180;
+	-webkit-font-smoothing: subpixel-antialiased;
+
+	@include breakpoint( ">660px" ) {
+		position: fixed;
+		backface-visibility: hidden;
+	}
+
+	.wpcom-navigation {
+		padding: 0 12px 0 0;
+	}
+
+	#wpnt-notes-panel {
+		top: 48px;
+	}
+
+	.noticon {
+		font-size: 28px;
+		height: 28px;
+		width: 28px;
+		vertical-align: middle;
+	}
+
+	.sections-menu {
+		box-sizing: border-box;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		&.menu-right {
+			float: right;
+		}
+	}
+
+	.section-label {
+		margin-left: 8px;
+	}
+
+	li {
+		float: left;
+
+		&.active {
+			a,
+			a:hover,
+			a:focus {
+				background: $blue-dark;
+			}
+		}
+
+		a {
+			box-sizing: border-box;
+			color: $white;
+
+			cursor: pointer;
+			display: block;
+			height: $masterbar-height;
+			line-height: $masterbar-height;
+			margin: 0;
+			padding: 0 12px;
+			text-decoration: none;
+			transition: background 100ms ease-in-out, color 80ms ease-in-out;
+
+			@include breakpoint( ">660px" ) {
+				padding: 0 15px;
+			}
+
+			&:hover,
+			&:focus {
+				background: $blue-medium;
+				background: rgba( 255, 255, 255, 0.15 );
+				color: $white;
+				outline: 0;
+			}
+		}
+	}
+
+	&.collapsible {
+		@include breakpoint( "<660px" ) {
+			.wpcom-navigation {
+				padding: 0;
+			}
+
+			.sections-menu {
+				width: 40%;
+
+				&.menu-right {
+					width: 60%;
+
+					li {
+						width: 33.33%;
+					}
+				}
+			}
+
+			.noticon {
+				display: block;
+				margin: 0 auto;
+			}
+
+			.section-label {
+				display: block !important;
+				font-size: 10px;
+				height: 13px;
+				margin: 0;
+				overflow: hidden;
+				text-align: center;
+				text-overflow: clip;
+				white-space: nowrap;
+			}
+
+			li {
+				width: 50%;
+
+				a {
+					line-height: 1;
+					padding: 3px 0 0 0;
+				}
+			}
+		}
+	}
+
+	.is-button {
+		margin-left: 10px;
+
+		a {
+			background: $white;
+			border-radius: 5px;
+			color: $blue-wordpress;
+			height: 34px;
+			line-height: 34px;
+			margin-top: 6px;
+			overflow: hidden;
+			padding: 0 3px;
+			vertical-align: middle;
+
+			&:hover,
+			&:focus {
+				background: $gray-light;
+				color: $blue-wordpress;
+			}
+		}
+
+		.noticon {
+			@include breakpoint( "<480px" ) {
+				display: none;
+			}
+		}
+
+		.section-label {
+			margin: 0 10px;
+		}
+	}
+
+	/**
+	 * Me
+	 */
+	.me {
+		.section-label {
+			@include breakpoint( ">660px" ) {
+				clip: rect( 1px, 1px, 1px, 1px );
+				height: 1px;
+				overflow: hidden;
+				position: absolute !important;
+				width: 1px;
+			}
+		}
+	}
+
+	/**
+	 * Notifications
+	 */
+	.notifications {
+		display: block;
+		position: relative;
+		white-space: nowrap;
+
+		.section-label {
+			@include breakpoint( ">660px" ) {
+				clip: rect( 1px, 1px, 1px, 1px );
+				height: 1px;
+				overflow: hidden;
+				position: absolute !important;
+				width: 1px;
+			}
+		}
+
+		.noticon-bell {
+			font-size: 24px;
+			position: relative;
+			top: 2px;
+
+			@include breakpoint( ">660px" ) {
+				top: 1px;
+			}
+		}
+
+		.notification-bubble {
+			display: none;
+		}
+
+		&.unread {
+			.notification-bubble {
+				background: $orange-jazzy;
+				border: solid 2px $blue-wordpress;
+				border-radius: 50%;
+				display: block;
+				font-size: 8px;
+				height: 8px;
+				letter-spacing: 0;
+				line-height: 12px;
+				margin: 0;
+				padding: 0;
+				position: absolute;
+					top: 2px;
+					left: calc( 50% - 9px );
+				width: 8px;
+				z-index: 99999;
+
+				// Animation
+				transform: translateZ(0);
+				animation: unread-indication .5s linear both;
+
+				@include breakpoint( ">660px" ) {
+					font-size: 9px;
+					height: 9px;
+					left: 18px;
+					top: 7px;
+					width: 9px;
+				}
+			}
+
+			&.initial-load .notification-bubble {
+				animation: none;
+			}
+
+			&.active {
+				.notification-bubble {
+					border-color: $blue-dark;
+				}
+			}
+		}
+	}
+
+	.wpcom-title {
+		.section-label {
+			font-size: 16px;
+			font-weight: 300;
+			letter-spacing: 0.5px;
+			line-height: 46px;
+			line-height: 4.6rem;
+			text-decoration: none;
+			@include breakpoint( "<480px" ) {
+				display: none;
+			}
+		}
+
+		@include breakpoint( ">480px" ) {
+			.noticon {
+				height: 31px; // This was the only way I found to center the noticon vertically
+			}
+		}
+
+		.tld {
+			color: rgba(255, 255, 255, 0.6);
+		}
+	}
+}
+
+@keyframes unread-indication {
+	30% {
+		transform: scale(1.5);
+	}
+	60% {
+		transform: scale(.85);
+	}
+	80% {
+		transform: scale(1.1);
+	}
+}
+
+.masterbar .gravatar {
+	border: 2px solid $white;
+	border-radius: 50%;
+	height: 22px;
+	margin-bottom: 2px;
+	vertical-align: middle;
+	width: 22px;
+
+	@include breakpoint( "<660px" ) {
+		display: block;
+		height: 20px;
+		margin: 2px auto 2px;
+		width: 20px;
+	}
+}
+
+.rtl {
+	.masterbar {
+		.noticon-reader,
+		.new-post,
+		.noticon-bell {
+			filter: fliph; /* IE */
+			transform: rotateY( 180deg );
+		}
+	}
+}
+
+// Horizon replacement logo
+.masterbar .noticon.noticon-horizon {
+	font-size: 59px;
+	margin: -32px 21px 0 -27px;
+	padding-left: 15px;
+
+	@include breakpoint( "<660px" ) {
+		margin: -15px 0px 15px 8px;
+		padding-left: 0;
+	}
+}

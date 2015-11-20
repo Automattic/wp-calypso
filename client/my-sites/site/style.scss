@@ -1,0 +1,111 @@
+/**
+ * Site
+ */
+
+.site {
+	box-sizing: border-box;
+	display: flex;
+	flex: 1 0 auto;
+	justify-content: space-between;
+	padding: 0;
+	position: relative;
+
+	// Show lock icon on private sites
+	&.is-private {
+		.site__title::before {
+			@include noticon( '\f470', 16px );
+			color: $gray;
+			margin: 0 3px 2px 0;
+			vertical-align: bottom;
+		}
+	}
+
+	&.is-redirect {
+		.site__title::before {
+			@include noticon( '\f458', 16px );
+			color: $gray;
+			margin: 0 3px 2px 0;
+			vertical-align: bottom;
+		}
+	}
+
+	&.is-loading {
+		.site-icon {
+			animation: pulse-light 0.8s ease-in-out infinite;
+		}
+
+		.site__title,
+		.site__domain {
+			animation: pulse-light 0.8s ease-in-out infinite;
+			background-color: lighten( $gray, 30% );
+			color: transparent;
+		}
+
+		.notouch .sites-popover &:hover {
+			.site__title,
+			.site__domain {
+				color: transparent;
+			}
+		}
+
+	}
+}
+
+// Wraps the anchor element
+.site__content {
+	border-radius: 2px;
+	display: flex;
+	justify-content: space-between;
+	overflow: hidden;
+	padding: 16px;
+	position: relative;
+	width: 100%;
+}
+
+// Adjusts the SiteIcon component for use
+// within a Site item
+.site .site-icon {
+	position: relative;
+	background: lighten( $gray, 20% );
+	border: 1px solid white;
+	height: 30px;
+	width: 30px;
+	overflow: hidden;
+	align-self: center;
+	margin-right: 12px;
+}
+
+// The group of site title and domain
+.site__info {
+	width: 0; // Firefox needs explicit width (even 0)
+	flex: 1 0 auto;
+}
+
+.site__title {
+	color: $gray-dark;
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.site__domain {
+	color: $gray;
+	display: block;
+	max-width: 95%;
+	font: {
+		size: 11px;
+		style: italic;
+	}
+	line-height: 1.4;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.site__title,
+.site__domain {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

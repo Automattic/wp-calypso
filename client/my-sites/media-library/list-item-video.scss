@@ -1,0 +1,30 @@
+.media-library__list-item-video {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 100%;
+	background-size: cover;
+	background-position: center;
+}
+
+.media-library__list-item-video:before {
+	position: absolute;
+	display: block;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	content: "";
+	background: rgba( 135, 166, 188, 0.25 ); // $gray at 25% opacity
+}
+
+.media-library__list-item-video .media-library__list-item-icon {
+	width: 25%;
+	height: 100%;
+	color: white;
+
+	.gridicon {
+		width: 100%;
+		height: 100%;
+	}
+}

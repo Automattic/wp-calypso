@@ -1,0 +1,64 @@
+.like-button {
+	display: inline-block;
+	padding: 4px 4px 4px 27px;
+	color: lighten( $gray, 10 );;
+	position: relative;
+	box-sizing: border-box;
+	transition: color 0.15s linear;
+
+	.gridicon {
+		position: absolute;
+		top: 2px;
+		left: 0;
+	}
+
+	.gridicon__liked {
+		opacity: 0;
+		pointer-events: none;
+		fill: $orange-jazzy;
+		transform: scale( 4 ) rotate( 90deg );
+	}
+
+	&.is-animated .gridicon__liked {
+		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+	}
+
+	.gridicon__like-empty {
+		fill: lighten( $gray, 20 );
+	}
+
+	&.is-animated .gridicon__like-empty {
+		transition: all 0.2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: $blue-light;
+
+		.gridicon__like-empty {
+			fill: $blue-light;
+		}
+	}
+
+	&.is-liked {
+		color: lighten( $gray, 10 );;
+
+		.gridicon__liked {
+			opacity: 1;
+			fill: $orange-jazzy;
+			pointer-events: auto;
+			transform: scale( 1 ) rotate( 0 );
+		}
+
+		.gridicon__like-empty {
+			opacity: 0;
+			pointer-events: none;
+			fill: $orange-jazzy;
+			transform: translateX( -10px ) rotate( 1deg ) scale( 0.3 );
+		}
+
+		.like-button__label {
+			color: $orange-jazzy;
+		}
+	}
+}

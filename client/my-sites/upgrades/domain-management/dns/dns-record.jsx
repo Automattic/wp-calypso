@@ -1,0 +1,100 @@
+/**
+ * External dependencies
+ */
+var React = require( 'react' );
+
+var DnsRecord = React.createClass( {
+	propTypes: {
+		deleteDns: React.PropTypes.func.isRequired,
+		dnsRecord: React.PropTypes.object.isRequired,
+		selectedDomainName: React.PropTypes.string.isRequired
+	},
+
+	handledBy: function() {
+		var { type, data, aux, target, port, service, weight, protocol } = this.props.dnsRecord;
+
+		data = this.trimDot( data );
+		target = this.trimDot( target );
+
+		if ( this.props.dnsRecord.protected_field ) {
+			if ( 'MX' === type ) {
+				return this.translate( 'Mail handled by WordPress.com email forwarding' );
+			}
+
+			return this.translate( 'Handled by WordPress.com' );
+		}
+
+		switch ( type ) {
+			case 'A':
+			case 'AAAA':
+				return this.translate( 'Points to %(data)s', {
+					args: {
+						data: data
+					}
+				} );
+
+			case 'CNAME':
+				return this.translate( 'Alias of %(data)s', {
+					args: {
+						data: data
+					}
+				} );
+
+			case 'MX':
+				return this.translate( 'Mail handled by %(data)s with priority %(aux)s', {
+					args: {
+						data: data,
+						aux: aux
+					}
+				} );
+
+			case 'SRV':
+				return this.translate( 'Service %(service)s (%(protocol)s) on target %(target)s:%(port)s, with priority %(aux)s and weight %(weight)s', {
+					args: {
+						service,
+						protocol,
+						target,
+						port,
+						aux,
+						weight
+					}
+				} );
+		}
+
+		return data;
+	},
+
+	trimDot: function( str ) {
+		return typeof str === 'string' ? str.replace( /\.$/, '' ) : str;
+	},
+
+	getName: function() {
+		var { name, service, protocol } = this.props.dnsRecord,
+			domain = this.props.selectedDomainName,
+			isRoot = name === domain + '.';
+
+		if ( 'SRV' === this.props.dnsRecord.type ) {
+			return service + '_' + protocol + '.' + ( isRoot ? name + '.' : '' ) + domain;
+		}
+
+		return isRoot ? domain : name + '.' + domain;
+	},
+
+	deleteDns: function() {
+		this.props.deleteDns( this.props.dnsRecord );
+	},
+
+	render: function() {
+		return (
+			<li>
+				<label>{ this.props.dnsRecord.type }</label>
+				{ ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type ?
+					<button className="remove" onClick={ this.deleteDns }>{ this.translate( 'Delete' ) }</button> : null }
+				<strong>{ this.getName() }</strong>
+				<em>{ this.handledBy() }</em>
+			</li>
+		);
+	}
+} );
+
+module.exports = DnsRecord;

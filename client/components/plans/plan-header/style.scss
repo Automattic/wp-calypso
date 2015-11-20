@@ -1,0 +1,185 @@
+.plan, .plan-feature-column {
+	.plan-header__title {
+		&:before {
+			background-size: 100%;
+			content: '';
+			display: block;
+			margin: 0 auto;
+			width: 35px;
+			height: 35px;
+		}
+	}
+
+	&.free_plan,
+	&.jetpack_free {
+		.plan-header__title:before {
+			background-image: url( '/calypso/images/plans/plan-beginner.svg' );
+		}
+	}
+	&.value_bundle,
+	&.jetpack_premium {
+		.plan-header__title:before {
+			background-image: url( '/calypso/images/plans/plan-premium.svg' );
+		}
+	}
+	&.business-bundle,
+	&.jetpack_business {
+		.plan-header__title:before {
+			background-image: url( '/calypso/images/plans/plan-business.svg' );
+		}
+	}
+}
+
+.plan {
+	.plan-header {
+		background: $white;
+		width: 100%;
+		padding: 24px 16px;
+		position: relative;
+		box-sizing: border-box;
+		cursor: pointer;
+
+		&:after {
+			@include noticon( '\f431', 16px );
+			color: $blue-medium;
+			font-size: 30px;
+			position: absolute;
+				right: 10px;
+				top: 20px;
+			transition: all .3s ease-in-out;
+		}
+
+		.plan-header__title {
+			color: $blue-wordpress;
+			display: block;
+			font-size: 17px;
+			line-height: 16px;
+
+			&:before {
+				left: 10px;
+				top: 16px;
+				position: absolute;
+			}
+		}
+	}
+
+	&.is-active {
+		.plan-header:after {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.plan-header.is-placeholder {
+	.plan-header__title {
+		@include placeholder( 23% );
+		margin: 0 auto 5px;
+		width: 60%;
+
+		&:before {
+			display: none;
+		}
+	}
+}
+
+.plans-compare {
+	.plan-header {
+		border-bottom: 2px solid lighten( $gray, 20% );
+		height: 3em;
+		padding: 0 15px 10px 15px;
+
+		.plan-header__title {
+			text-align: center;
+			color: $gray-dark;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 18px;
+
+			.header-text {
+				&:first-line {
+					color: $white;
+					font-size: 13px;
+					color: darken( $gray, 10% );
+				}
+
+			}
+		}
+	}
+}
+
+@mixin plans-in-three-columns() {
+	.plan, .plan-feature-column {
+		.plan-header {
+			.plan-header__title {
+				&:before {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.plan.card {
+		.plan-header {
+			border-bottom: 2px solid lighten( $gray, 20% );
+			min-height: 230px;
+			padding: 16px;
+
+			&:after {
+				display: none;
+			}
+
+			.plan-header__title {
+				line-height: 20px;
+				text-align: center;
+			}
+		}
+	}
+}
+
+@mixin plans-collapsed() {
+	.plan.card {
+		.plan-header {
+			float: left;
+			height: 70px;
+
+			.plan-header__title {
+				margin: -8px 0 0 0;
+				padding: 0 0 0 40px;
+				text-align: left;
+			}
+			.plan-actions {
+				display: none;
+			}
+		}
+	}
+
+	.plans-compare {
+		.plan-header {
+			.plan-header__title {
+				.header-text {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+.plans.has-sidebar {
+	@include breakpoint( "<960px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.plans.has-no-sidebar {
+	@include breakpoint( "<660px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
+}

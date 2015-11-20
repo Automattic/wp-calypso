@@ -1,0 +1,66 @@
+.form-range {
+	-webkit-appearance: none;
+	display: block;
+	width: 100%;
+	height: 18px;
+	margin: 0;
+	padding: 0;
+	background: lighten( $gray, 20% );
+	background: linear-gradient(
+		to bottom,
+		transparent,
+		transparent 8px,
+		lighten( $gray, 20% ) 8px,
+		lighten( $gray, 20% ) 10px,
+		transparent 10px
+	);
+}
+
+.form-range:focus {
+	outline: none;
+}
+
+@mixin form-range-thumb() {
+	height: 26px;
+	width: 26px;
+	border: none;
+	background: radial-gradient(
+		$blue-medium,
+		$blue-medium 6px,
+		$blue-dark 7px,
+		transparent 8px,
+		transparent
+	);
+	cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb {
+	@include form-range-thumb();
+	-webkit-appearance: none;
+}
+
+.form-range::-moz-range-track {
+	background: transparent;
+	border: none;
+}
+
+.form-range::-moz-range-thumb {
+	@include form-range-thumb();
+}
+
+.form-range::-ms-track {
+	width: 100%;
+	cursor: pointer;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+}
+
+.form-range::-ms-fill-lower,
+.form-range::-ms-fill-upper {
+	background: transparent;
+}
+
+.form-range::-ms-thumb {
+	@include form-range-thumb();
+}

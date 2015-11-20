@@ -1,0 +1,63 @@
+.step-wrapper {
+	max-width: 960px;
+	margin: 0 auto;
+}
+
+// We don't need the space for a sidebar
+.is-section-signup .wp-primary {
+	margin-left: 0;
+}
+
+.signup__step {
+	margin: 0 24px;
+	position: absolute;
+		left: 0;
+		right: 0;
+}
+
+.signup__step-enter {
+	opacity: 0.01;
+
+	.is-animated-content {
+		transform: translate3d( 0, 32px, 0 );
+	}
+}
+
+.signup__step-enter.signup__step-enter-active,
+.signup__step-leave.signup__step-leave-active {
+	pointer-events: none;
+}
+
+.signup__step-enter.signup__step-enter-active {
+	opacity: 1;
+	transition: .3s ease-in-out;
+	transition-delay: .2s;
+
+	.is-animated-content {
+		transform: translate3d( 0, 0, 0 );
+		transition: .3s ease-in-out;
+		transition-delay: .2s;
+	}
+}
+
+.signup__step-leave {
+	opacity: 1;
+
+	.is-animated-content {
+		transform: translate3d( 0, 0, 0 );
+	}
+}
+
+.signup__step-leave.signup__step-leave-active {
+	opacity: 0.01;
+	transition: .3s ease-in-out;
+
+	.is-animated-content {
+		transform: translate3d( 0, 32px, 0 );
+		transition: .3s ease-in-out;
+	}
+}
+
+.is-section-signup .wp-content {
+	overflow: visible;
+}

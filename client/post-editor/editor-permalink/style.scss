@@ -1,0 +1,48 @@
+.editor-permalink .gridicon {
+	fill: $gray;
+	cursor: pointer;
+}
+
+.editor-permalink__popover .tip-inner {
+	padding: 12px;
+}
+
+.editor-permalink__popover .editor-slug,
+.editor-permalink__popover .clipboard-button {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.editor-permalink__popover .editor-slug {
+	position: relative;
+	padding-left: 4px;
+	text-align: left;
+	margin: 0;
+
+	&:not( .is-focused )::after {
+		@include long-content-fade( $size: 10% );
+	}
+}
+
+.editor-permalink__popover .editor-slug .form-text-input {
+	border: none;
+	color: darken( $gray, 10% );
+	font-size: 13px;
+	padding: 4px 0;
+	min-width: 100px;
+	width: 160px;
+
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+.editor-permalink__url-path {
+	color: lighten( $gray, 10% );
+	font-size: 13px;
+	margin-right: 0;
+}
+
+.editor-permalink__popover .clipboard-button {
+	margin-left: 8px;
+}

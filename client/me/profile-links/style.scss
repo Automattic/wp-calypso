@@ -1,0 +1,20 @@
+.profile-links {
+	margin: 0;
+	list-style: none;
+}
+
+.profile-links__no-links {
+	display: block;
+	font-style: italic;
+	color: $gray;
+}
+
+.profile-links .notice {
+	margin-bottom: 1.5em;
+}
+
+@include breakpoint( "<480px" ) {
+	.profile-links button {
+		margin-bottom: 10px;
+	}
+}

@@ -1,0 +1,144 @@
+/**
+ * The currently selected site block
+ * at the top of the sidebar in My Sites
+ */
+
+.current-site.card {
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+	border-bottom: 1px solid lighten( $gray, 25% );
+
+	&.is-loading {
+		.site-icon {
+			animation: pulse-light 0.8s ease-in-out infinite;
+		}
+
+		.site__title {
+			color: darken( $gray, 20% );
+			line-height: 35px;
+		}
+
+		.current-site__switch-sites {
+			cursor: default;
+
+			&::before {
+				visibility: hidden;
+			}
+		}
+	}
+}
+
+.current-site .site {
+	transition: opacity 0.15s ease-in-out;
+
+	.focus-sites & {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+}
+
+.current-site .add-new-button {
+	background: $gray-light;
+	border-bottom: 1px solid lighten( $gray, 25% );
+	font-size: 13px;
+	display: block;
+	padding: 8px 8px 8px 52px;
+	margin: 0;
+	color: $gray-dark;
+	box-sizing: border-box;
+	cursor: pointer;
+	position: relative;
+
+	@include breakpoint( "<660px" ) {
+		background-color: $gray-light;
+		padding: 18px 16px 18px 53px;
+	}
+
+	&:hover {
+		background-color: $gray-light;
+		color: $blue-medium;
+	}
+
+	.gridicon {
+		height: 16px;
+		width: 16px;
+		margin: 0;
+		float: none;
+		position: absolute;
+			top: 9px;
+			left: 24px;
+		fill: darken( $gray, 20% );
+		transition: all 0.2s cubic-bezier(0.680, -0.550, 0.265, 1.550);
+
+		@include breakpoint( "<660px" ) {
+				top: 15px;
+				left: 16px;
+			height: 24px;
+			width: 24px;
+		}
+	}
+
+	.add-new-button__text {
+		padding: 0;
+		font-size: 13px;
+		line-height: 1;
+		text-transform: none;
+	}
+}
+
+.current-site__switch-sites {
+	background: lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 25% );
+	font-size: 13px;
+	display: block;
+	padding: 8px 8px 8px 40px;
+	color: darken( $gray, 20% );
+	box-sizing: border-box;
+	cursor: pointer;
+	position: relative;
+
+	@include breakpoint( "<660px" ) {
+		background-color: $gray-light;
+		padding: 18px 16px 18px 40px;
+	}
+
+	&:hover {
+		background-color: $gray-light;
+		color: $blue-medium;
+
+		.current-site__site-count {
+			border-color: $white;
+			color: $white;
+		}
+	}
+
+	.gridicon {
+		position: absolute;
+			top: 9px;
+			left: 16px;
+		transition: all 0.2s cubic-bezier(0.680, -0.550, 0.265, 1.550);
+
+		@include breakpoint( "<660px" ) {
+				top: 15px;
+			height: 24px;
+			width: 24px;
+		}
+	}
+
+	.focus-sites & {
+		background-color: $gray;
+		color: $white;
+
+		.gridicon {
+			fill: $white;
+			transform: rotate( 180deg );
+		}
+	}
+}
+
+.rtl .current-site__switch-sites {
+	&:before {
+		content: '\f429';
+	}
+}

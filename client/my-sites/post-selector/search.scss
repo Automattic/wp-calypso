@@ -1,0 +1,20 @@
+.post-selector__search {
+	position: relative;
+	margin-bottom: 4px;
+}
+
+.post-selector__search .gridicon {
+	position: absolute;
+	left: 0;
+	padding: 8px 8px;
+}
+
+.post-selector__search input {
+	right: 0;
+	width: 100%;
+	height: 35px;
+	padding: 4px 8px 4px 30px;
+	background: $white;
+	font-size: 14px;
+	-webkit-appearance: none;
+}

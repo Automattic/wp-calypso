@@ -1,0 +1,20 @@
+@include breakpoint( '<480px' ) {
+	.account-password__buttons-group {
+		display: flex;
+		flex-wrap: wrap-reverse;
+		flex-direction: row-reverse;
+
+		.form-button {
+			float: none;
+			margin-top: 8px;
+			margin-right: 10px;
+			margin-left: 0;
+		}
+	}
+}
+
+/* rtl:ignore */
+.account-password .account-password__password-field {
+	padding-right: 30px;
+	direction: ltr;
+}

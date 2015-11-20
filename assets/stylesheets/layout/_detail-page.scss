@@ -1,0 +1,148 @@
+.detail-page__backdrop {
+	padding: 1px; // this fixes a strange rendering bug at the bottom of the full post card in safari and chrome -shaun
+	z-index: 190; // above the masterbar
+	box-sizing: border-box;
+	margin: 0;
+	position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	background-color: $white;
+
+	// Entrance transitions
+	&.detail-page-enter {
+		opacity: 0;
+		transform: translateX( 200px );
+	}
+
+	&.detail-page-enter-active {
+		opacity: 1;
+		transform: translateX( 0 );
+		transition: all 0.1s ease-out;
+	}
+
+	// Exit transitions
+	&.detail-page-leave {
+		transition: all 0.1s ease-in;
+	}
+
+	&.detail-page-leave-active {
+		opacity: 0;
+		transform: translateX( 200px );
+	}
+
+	.card {
+		margin: 0 auto;
+		min-height: 100vh;
+		background: transparent;
+		padding: 0;
+		box-shadow: none;
+	}
+}
+
+.detail-page__content {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+	-webkit-backface-visibility: hidden;
+}
+
+.detail-page__action-buttons {
+	position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	margin: 0;
+	z-index: 200; // above the masterbar
+	list-style: none;
+	text-align: right;
+	padding: 7px 6px;
+	box-sizing: border-box;
+	background: rgba( $white, 0.98 );
+	border-bottom: 1px solid lighten( $gray, 30 );
+
+	// These make our fixed inside fixed stuff work in Chrome
+	-webkit-backface-visibility: hidden;
+	-webkit-transform: translateZ(0);
+
+	.button.action-button {
+		color: lighten( $gray, 10 );
+		padding: 0 8px;
+		line-height: 32px;
+		text-align: center;
+		cursor: pointer;
+		background: transparent;
+		border: none;
+		border-radius: 0;
+
+		span {
+			display: none;
+			font-weight: normal;
+			color: $gray;
+		}
+
+		&:hover {
+			color: $blue-medium;
+		}
+
+		&:before {
+			position: relative;
+			margin-right: 4px;
+		}
+	}
+
+	.detail-page-close {
+		float: left;
+
+		&:before {
+			@include noticon( '\f430', 32px );
+			top: 1px;
+			left: -6px;
+			margin-right: 0;
+		}
+	}
+
+	.like-button, .comment-button, .reader-share {
+		top: 2px;
+		float: right;
+		margin-right: 16px;
+	}
+
+	.post-options {
+		float: right;
+		margin-right: 4px;
+
+		.post-options__trigger .gridicon__ellipsis {
+			padding: 4px 8px;
+		}
+	}
+}
+
+
+// Setup transitions for content
+html.detail-page-active {
+	overflow: hidden; // This prevents the normal page from scrolling -shaun
+
+	.wp-primary {
+		transition: all 0.1s ease-in;
+	}
+}
+
+// Transitions for content
+html.detail-page-open {
+	.reader-update-notice {
+		opacity: 0;
+	}
+
+	.wp-primary {
+		opacity: 0;
+		transform: translateX( -100px );
+		pointer-events: none;
+	}
+}

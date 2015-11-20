@@ -1,0 +1,29 @@
+.featured-plugins {
+	box-shadow: 0 1px 2px lighten( $gray, 30% );
+	font-size: 14px;
+	height: 210px;
+	margin: 0 0 25px;
+	overflow: hidden;
+	width: 100%;
+}
+
+.featured-plugins__element {
+	height: 100%;
+	text-align: center;
+	width: 100%;
+
+	a {
+		background-color: transparentize( $gray-dark, 0.7 );
+		border-radius: 3px;
+		color: $white;
+		padding: 10px 20px;
+		position: relative;
+		top: 160px;
+		text-align: center;
+		transition: all .2s ease-in-out;
+
+		&:hover {
+			background-color: transparentize( $gray-dark, 0.3 );
+		}
+	}
+}

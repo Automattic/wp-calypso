@@ -1,0 +1,55 @@
+.editor-title {
+	position: relative;
+
+	&:not( .is-focused ):not( .is-loading )::after {
+		@include long-content-fade( $color: $white );
+	}
+
+	&.is-loading::before {
+		content: '';
+		position: absolute;
+			top: 6px;
+			right: 14px;
+			bottom: 12px;
+			left: 10px;
+		animation: pulse-light 0.8s ease-in-out infinite;
+		background: lighten( $gray, 20% );
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-left: -24px;
+
+		.editor-permalink {
+			display: none;
+		}
+	}
+}
+
+.editor-title .editor-permalink {
+	position: absolute;
+		left: -26px;
+		top: 18px;
+}
+
+.editor-title__input[type="text"] {
+	margin-left: 16px;
+	border: none;
+	font-family: $serif;
+	font-size: 28px;
+	color: $gray-dark;
+	font-weight: 600;
+
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin-left: -4px;
+		font-size: 32px;
+	}
+}
+
+.editor-title.is-loading .editor-title__input[type="text"] {
+	color: transparent;
+}

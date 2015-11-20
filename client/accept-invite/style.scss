@@ -1,0 +1,8 @@
+.accept-invite {
+	margin: 0 auto;
+	max-width: 400px;
+
+	&.is-error {
+		max-width: none;
+	}
+}

@@ -1,0 +1,26 @@
+// Typeface Variables
+
+$monospace: "Courier 10 Pitch", Courier, monospace;
+$code: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", $monospace;
+
+$serif-fallback: Georgia, "Times New Roman", Times, serif;
+$serif: Merriweather, $serif-fallback;
+
+$sans-fallback: Helvetica, Arial, sans-serif;
+$sans: "Open Sans", $sans-fallback; // 400 400i 600 700 700i
+
+$sans-rtl: Tahoma, $sans-fallback;
+
+%content-font {
+	font-family: $serif;
+	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: darken( $gray, 30 );
+}
+
+
+// NOTE:
+// If there are exceptions to these stacks,
+// please mark them with a //typography-exception comment
+// so we can easily search for them later.

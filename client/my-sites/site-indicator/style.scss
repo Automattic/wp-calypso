@@ -1,0 +1,144 @@
+/**
+ * Site Indicator
+ */
+
+.site-indicator {
+	align-self: center;
+	margin-right: 16px;
+}
+
+.site-indicator__button {
+	background: $gray-light;
+	border: none;
+	border-radius: 50%;
+	box-shadow: none;
+	color: $gray;
+	cursor: default;
+	display: block;
+	width: 26px;
+	height: 26px;
+	padding: 2px;
+	position: relative;
+	text-align: center;
+	text-transform: none;
+	z-index: 3;
+	overflow: initial;
+
+	&::before {
+		@include noticon( '\f420', 16px );
+		line-height: 1;
+		margin: 0;
+		opacity: 0.8;
+		position: absolute;
+			top: 5px;
+			left: 5px;
+		vertical-align: middle;
+	}
+	&:focus {
+		box-shadow: none;
+	}
+	.accessible-focus &:focus {
+		outline: 0;
+		border: 1px dotted $blue-wordpress;
+		&::before {
+			top: 4px;
+			left: 4px;
+		}
+	}
+
+	.is-action & {
+		cursor: pointer;
+	}
+
+	.is-update & {
+		background: $alert-yellow;
+		color: $white;
+		&::before {
+			content: '\f420';
+		}
+	}
+
+	.is-warning & {
+		background: $alert-yellow;
+		color: $white;
+		&::before {
+			content: '\f414';
+		}
+	}
+
+	.is-error & {
+		background: $alert-red;
+		color: $white;
+		&::before {
+			content: '\f414',
+		}
+	}
+
+	.is-expanded & {
+		&::before {
+			content: '\f406';
+			font-size: 12px;
+			top: 7px;
+			left: 7px;
+		}
+		.accessible-focus &:focus {
+			border: 1px dotted $white;
+			&::before {
+				top: 6px;
+				left: 6px;
+			}
+		}
+	}
+
+	.notouch & {
+		&:hover {
+			cursor: pointer;
+		}
+	}
+}
+
+.site-indicator__progress-indicator.progress-indicator {
+	margin-top: -10px;
+	position: absolute;
+		top: 50%;
+		right: 21px;
+
+}
+// Displayed on top of a Site element once the user clicks on the button
+.site-indicator__message {
+	color: $white;
+	font-size: 12px;
+	padding: 5px 50px 5px 15px;
+	position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+	.is-warning &,
+	.is-update & {
+		background: $alert-yellow;
+	}
+	.is-error & {
+		background: $alert-red;
+	}
+	&::before {
+		content: '';
+		display: inline-block;
+		height: 100%;
+		margin-right: -0.25em;
+		vertical-align: middle;
+	}
+}
+.site-indicator__action {
+	display: inline-block;
+	vertical-align: middle;
+
+	// Links within the action message
+	a,
+	.button.is-link {
+		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
+		color: $white;
+		text-decoration: none;
+	}
+}

@@ -1,0 +1,16 @@
+.editor-page-order {
+	margin-top: 8px;
+}
+
+.editor-page-order__label-text {
+	color: $gray;
+	display: block;
+	font-size: 11px;
+	margin-bottom: 4px;
+	text-transform: uppercase;
+}
+
+.editor-page-order input[type="text"] {
+	font-size: 13px;
+	width: 50px;
+}

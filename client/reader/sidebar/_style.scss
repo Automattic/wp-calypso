@@ -1,0 +1,104 @@
+// Reader Sidebar
+.sidebar.reader-sidebar {
+
+	.sidebar-menu {
+		.selected {
+			.menu-link-icon,
+			.sidebar-dynamic-menu__action-icon {
+				fill: $white;
+			}
+
+			.sidebar-streams__edit-icon {
+				fill: $white;
+			}
+		}
+
+		.is-action-button-selected {
+			background-color: $gray-light;
+
+			.gridicon {
+				fill: darken( $gray, 20% );
+			}
+
+			.menu-link-text {
+				color: $gray-dark;
+			}
+
+			.add-new {
+				background-color: darken( $gray, 10% );
+				color: $white;
+			}
+		}
+	}
+
+	.sidebar-streams {
+	}
+
+	.sidebar-dynamic-menu__list,
+	.sidebar-dynamic-menu__tag,
+	.sidebar-dynamic-menu__explore {
+		a:first-child {
+			padding: 8px 16px 8px 24px;
+		}
+
+		a.add-new {
+			margin-top: 5px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			a:first-child {
+				padding: 18px 16px 18px 24px;
+			}
+
+			a.add-new {
+				margin-top: 10px;
+			}
+		}
+	}
+
+	.sidebar-dynamic-menu__add {
+		padding: 8px;
+
+		.gridicon {
+			top: 14px;
+		}
+	}
+
+	.sidebar-dynamic-menu__add-input {
+		font-size: 13px;
+		padding-left: 16px;
+	}
+
+	.sidebar-dynamic-menu__action {
+		position: absolute;
+			top: 3px;
+			right: 8px;
+	    line-height: 15px;
+		padding: 3px 4px 2px 4px;
+
+		.gridicon {
+			position: relative;
+				top: 0;
+				left: auto;
+		}
+
+		@include breakpoint( "<660px" ) {
+			top: 7px;
+
+			.gridicon {
+				top: 6px;
+			}
+		}
+	}
+
+	.sidebar-dynamic-menu__action-label {
+		display: none;
+	}
+
+	// Sidebar Activity Items
+	// My Comments
+	.sidebar-activity__comments {}
+
+	// My Likes
+	.sidebar-activity__likes {}
+}

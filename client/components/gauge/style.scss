@@ -1,0 +1,22 @@
+.gauge__label {
+	display: block;
+	position: relative;
+	text-align: center;
+
+	.gauge__number {
+		color: darken( $gray, 30% );
+		display: block;
+		margin-top: -5px;
+	}
+
+	.gauge__metric {
+		display: block;
+		color: darken( $gray, 20% );
+		text-transform: uppercase;
+		font-size: 10px;
+		letter-spacing: 0.1em;
+		font-weight: bold;
+		line-height: .7;
+	}
+
+}

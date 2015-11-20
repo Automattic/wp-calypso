@@ -1,0 +1,124 @@
+%clear-text {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+%noticon {
+	@extend %clear-text;
+	display: inline-block;
+	font: normal 16px/1 Noticons;
+	vertical-align: middle;
+}
+
+%container {
+	position: relative;
+	margin-bottom: 6%;
+	padding: 0 20px 12px;
+	background: $white;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.075);
+
+	@include clear-fix;
+
+	ul,
+	ol {
+		font-size: 14px;
+		margin-bottom: 4px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin-left: .25em;
+		margin-right: .25em;
+	}
+}
+
+%container-header {
+	background: $gray-light;
+	padding: 13px 20px 10px;
+	margin: 0 -20px;
+	min-height: 37px;
+	font-size: 14px;
+	line-height: 135%;
+	border-bottom: 1px solid #EBF0F2;
+}
+
+%status {
+	padding: 3px 5px;
+	font-size: 11px;
+	letter-spacing: 1px;
+	font-weight: 300;
+	text-transform: uppercase;
+	color: $white;
+	border-radius: 3px;
+}
+
+%status-draft,
+%status-pending {
+	background: $alert-yellow;
+	box-shadow: inset 0px 1px 0 darken($alert-yellow, 5%);
+}
+
+%status-scheduled {
+	background: $alert-green;
+	box-shadow: inset 0px 1px 0 darken($alert-green, 5%);
+}
+
+%placeholder {
+
+	.stats-module.is-loading & * {
+		color: transparent;
+	}
+
+	.stats-module.is-loading & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		position: relative;
+		color: transparent;
+		cursor: default;
+	}
+
+	.stats-module.is-loading &::after {
+		content: "";
+		display: block;
+		position: absolute;
+		background: $gray-light;
+		top: 35%;
+		bottom: 35%;
+		left: 0;
+		right: 0;
+		z-index: 2;
+	}
+}
+
+%placeholder-icon {
+
+	.stats-module.is-loading & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	.stats-module.is-loading &:hover::before,
+	.stats-module.is-loading &::before,
+	.stats-module.is-loading &:hover,
+	.stats-module.is-loading & {
+		color: $gray-light;
+		fill: $gray-light;
+	}
+}
+
+%heading {
+	color: darken( $gray, 20% );
+	font-size: 2rem;
+	font-weight: 300;
+	margin: 1em 0;
+}
+
+%mobile-link-element {
+	-webkit-tap-highlight-color: rgba($white, .4); // Until we capture ontouch events in JS this is better than :active
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+%mobile-interface-element {
+	@extend %mobile-link-element;
+	-webkit-touch-callout: none;
+}

@@ -1,0 +1,1077 @@
+.checkout {
+	position: relative;
+
+	.payment-box {
+		height: 0;
+		margin-bottom: 0;
+		opacity: 0;
+		overflow: hidden;
+		padding: 0;
+		transform: translateZ(0) scale(.8); // Zoom out effect
+		transition: all .3s ease-in-out;
+		visibility: hidden; // To deal with layering issues
+		width: 100%;
+
+		&:not(.domain-details) {
+			@include breakpoint( "<660px" ) {
+				background-color: transparent;
+				box-shadow: none;
+			}
+		}
+
+		&.selected {
+			height: auto;
+			opacity: 1;
+			transform: translateZ(0) scale(1); // Zoom in effect
+			visibility: visible; // To deal with layering issues
+		}
+
+		&.is-empty {
+			.payment-box-section {
+				border: 1px solid lighten( $gray, 30% );
+				margin: 5px 0;
+				display: flex;
+				flex-flow: row wrap;
+				justify-content: space-around;
+				background-color: $white;
+				padding: 10px;
+			}
+
+			.placeholder {
+				animation: pulse-light 0.8s ease-in-out infinite;
+				background: lighten( $gray, 20% );
+				width: 100%;
+				height: 100%;
+			}
+
+			.payment-box__title {
+				@extend .placeholder;
+				height: 22px;
+				width: 130px;
+
+				:after {
+					content: '';
+				}
+
+			}
+
+			.payment-box__header {
+				height: 16px;
+				width: 170px;
+				flex: 0 0 170px;
+			}
+
+			.placeholder-row {
+				height: 40px;
+				flex: 0 0 100%;
+				margin-bottom: 15px;
+			}
+
+			.placeholder-col-narrow {
+				height: 40px;
+				flex: 1 1 auto;
+				margin-bottom: 15px;
+
+				@include breakpoint( ">480px" ) {
+					flex: 2 1 auto;
+				}
+			}
+
+			.placeholder-inline-pad {
+				padding-right: 15px;
+			}
+
+			.placeholder-inline-pad-only-wide {
+				@include breakpoint( ">480px" ) {
+					padding-right: 15px;
+				}
+			}
+
+			.placeholder-col-wide {
+				height: 40px;
+				margin-bottom: 15px;
+				flex: 0 0 100%;
+
+				@include breakpoint( ">480px" ) {
+					flex: 6 3 auto;
+				}
+			}
+
+			.placeholder-button {
+				height: 50px;
+				width: 100%;
+
+				@include breakpoint ( ">480px" ) {
+					width: 80px;
+					height: 40px;
+				}
+			}
+
+			.placeholder-button-container {
+				margin-top: 55px;
+
+				@include breakpoint( ">480px" ) {
+						margin-top: 20px;
+				}
+			}
+
+			.payment-box-hr {
+				margin: 40px 0 20px 0;
+				width: 100%;
+				height: 0;
+				border-bottom: 1px solid lighten( $gray, 30% );
+
+				@include breakpoint( "<480px" ) {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.payment-box__content {
+		min-height: 140px;
+		margin-top: 10px;
+	}
+
+	h5 {
+		color: darken( $gray, 10% );
+		font-size: 15px;
+		font-weight: 600;
+		opacity: 0.7;
+		text-transform: uppercase;
+
+		:after {
+			@include noticon( '\f470', (13 / 12) * 1em );
+			float: right;
+		}
+	}
+
+	.box-padding {
+		padding: 16px 0;
+
+		@include breakpoint( ">660px" ) {
+			padding: 30px 30px 20px 30px;
+		}
+	}
+
+	.domain-details {
+		.box-padding {
+			@include breakpoint( "<660px" ) {
+				padding: 16px;
+			}
+		}
+	}
+
+	form {
+		margin-top: 5px;
+
+		@include breakpoint( ">660px" ) {
+			@include clear-fix;
+		}
+	}
+
+	button[type=submit].button-pay {
+		@include breakpoint( "<660px" ) {
+			width: 100%;
+
+			#wpcom & {
+				min-height: 50px;
+			}
+		}
+
+		@include breakpoint( ">660px" ) {
+			clear: both;
+			float: left;
+		}
+	}
+
+	input[type=number] {
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+
+	// Floating labels
+	// -----------------------------------
+
+	.checkout-field {
+		margin-top: 15px;
+		position: relative;
+
+		select {
+			font-size: 15px;
+			width: 100%;
+		}
+
+		&.invalid {
+			input,
+			select {
+				border-color: $alert-red;
+			}
+		}
+
+		input[ disabled ] {
+			cursor: not-allowed;
+		}
+	}
+
+	// Payment Boxes
+	// =============================================
+
+	.checkout-terms {
+		color: darken( $gray, 10% );
+		font-size: 12px;
+		font-weight: 100;
+		margin: 10px 0;
+		padding: 0 30px;
+		text-align: center;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 20px;
+			padding: 0;
+			text-align: left;
+		}
+	}
+
+	.payment-box-actions {
+		@include breakpoint( ">660px" ) {
+			margin: 20px -30px 0px -30px;
+			padding: 20px 30px 0 30px;
+			border-top: 1px solid lighten( $gray, 30% );
+			@include clear-fix;
+		}
+	}
+
+	.credit-card-payment-box {
+		.payment-box-sections {
+			background-color: $white;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+
+			@include breakpoint( ">660px" ) {
+				box-shadow: none;
+			}
+		}
+
+		.payment-box-section {
+			cursor: pointer;
+			border-bottom: 1px solid lighten( $gray, 30% );
+
+			&:first-of-type {
+				border-top: 1px solid lighten( $gray, 30% );
+			}
+
+			&.selected {
+				cursor: default;
+			}
+		}
+
+		.payment-box-section-inner {
+			border-left: 1px solid lighten( $gray, 30% );
+			padding-left: 2px;
+			position: relative;
+			border-right: 1px solid lighten( $gray, 30% );
+			min-height: 50px;
+		}
+
+		.payment-box-section.selected .payment-box-section-inner {
+			background-color: #fafdf6;
+			padding-left: 0;
+		}
+
+		.payment-box-section.selected:not( .no-stored-cards ) {
+			.payment-box-section-inner {
+				border-left: 3px solid $alert-green;
+			}
+			.new-card-fields {
+				background-color: #fafdf6;
+			}
+		}
+
+		.no-stored-cards .new-card-fields > .checkout-field:first-child {
+			margin-top: 0;
+		}
+
+		.payment-box-section .new-card-toggle {
+			box-shadow: none;
+			cursor: pointer;
+			font-size: 13px;
+			position: absolute;
+		}
+
+		.payment-box-section .new-card-fields {
+			background-color: $white;
+			max-height: 0;
+			overflow: hidden;
+			padding: 0 15px 0 12px;
+			position: relative;
+			transition: all 0.5s ease-in-out;
+		}
+
+		.payment-box-section.selected .new-card-fields {
+			max-height: 500px;
+			margin-bottom: 0;
+			padding-top: 15px;
+			padding-bottom: 15px;
+		}
+
+		.new-card-toggle {
+			color: $blue-wordpress;
+			padding: 15px 15px 15px 12px;
+			border: 0;
+			background: transparent;
+		}
+
+		.new-card-header {
+			color: $blue-medium;
+			font-weight: 400;
+		}
+
+		.all-fields-required {
+			color: lighten( $gray, 10% );
+			display: block;
+			font-size: 12px;
+			font-style: italic;
+
+			@include breakpoint( ">660px" ) {
+				top: 7px;
+			}
+
+			&.has-saved-cards {
+				top: 18px;
+
+				@include breakpoint( ">660px" ) {
+					position: absolute;
+						right: 18px;
+				}
+			}
+		}
+	}
+
+	// PayPal Payment Box
+	// -----------------------------------
+
+	.paypal-payment-box,
+	.credits-payment-box {
+		.payment-box-section {
+			background-color: $white;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+
+			@include breakpoint( ">660px" ) {
+				border: 1px solid lighten( $gray, 30% );
+				box-shadow: none;
+			}
+		}
+	}
+
+	.paypal-payment-box {
+		.payment-box-section {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			padding-bottom: 15px;
+			padding-right: 15px;
+		}
+
+		.country,
+		.postal-code {
+			margin-left: 15px;
+		}
+
+		.country {
+			flex-basis: auto;
+			flex-grow: 3;
+			flex-shrink: 0;
+
+			label {
+				display: none;
+			}
+		}
+
+		.postal-code {
+			flex-basis: 8em;
+			flex-grow: 2;
+			flex-shrink: 0;
+			margin-top: 15px;
+
+			label {
+				display: none;
+			}
+		}
+	}
+
+	// Credits Payment Box
+	// -----------------------------------
+	.credits-payment-box {
+		.payment-box-section {
+			box-sizing: border-box;
+			min-height: 91px;
+			padding: 20px 20px 20px 80px;
+			position: relative;
+
+			&::before {
+				color: $blue-medium;
+				left: 10px;
+				position: absolute;
+				top: 15px;
+				@include noticon( '\f205', 60px );
+			}
+
+			> h6 {
+				color: $blue-medium;
+				font-size: 18px;
+			}
+
+			> span {
+				color: darken( $gray, 10% );
+				font-size: 15px;
+			}
+
+			@include breakpoint( ">660px" ) {
+				padding-left: 100px;
+			}
+		}
+	}
+
+	// Supporting Text / Fine Print
+	// -----------------------------------
+	.supporting-text {
+		border-top: 1px solid lighten( $gray, 20% );
+		font-size: 13px;
+		list-style: none;
+		margin: 0;
+		padding: 15px 0;
+		@include clear-fix;
+
+		@include breakpoint( ">660px" ) {
+			border-bottom: 1px solid lighten( $gray, 20% );
+			margin: 30px 0;
+		}
+
+		li {
+			color: lighten( $gray, 10% );
+			text-align: center;
+
+			@include breakpoint( ">660px" ) {
+				float: left;
+				margin: 0 5%;
+				width: 40%;
+			}
+
+			@include breakpoint( "<660px" ) {
+				margin: 0;
+				padding: 15px;
+			}
+
+			h6 {
+				color: darken( $gray, 20% );
+				font-size: 14px;
+				font-weight: 600;
+			}
+
+			p {
+				font-size: 12px;
+				font-weight: 100;
+				margin: 10px 0 0 0;
+			}
+		}
+	}
+
+	.credit-card-supporting-text__refund-link {
+		white-space: nowrap;
+		color: lighten( $gray, 10% );
+		text-decoration: underline;
+	}
+
+	//
+	// Domain Registration Details Page
+	//
+
+	.domain-details {
+		.first-name {
+			margin-top: 0;
+		}
+
+		@include breakpoint( ">660px" ) {
+			.last-name {
+				margin-top: 0;
+			}
+
+			.hidden-input a,
+			.checkout-field {
+				float: left;
+				width: 100%;
+			}
+
+			.last-name,
+			.phone,
+			.postal-code {
+				float: right;
+			}
+
+			.email,
+			.first-name,
+			.last-name,
+			.phone {
+				width: calc( 50% - 7px );
+			}
+
+			.city,
+			.postal-code,
+			.state {
+				width: calc( 33% - 8px );
+			}
+
+			.state {
+				margin-left: 14px;
+
+				label + select {
+					min-width: inherit;
+				}
+			}
+		}
+
+		.hidden-input a {
+			display: block;
+			font-size: 12px;
+			margin-top: 5px;
+		}
+	}
+}
+
+.privacy-protection {
+	background-color: $gray-light;
+	float: left;
+	margin-bottom: 15px;
+	margin-top: 15px;
+	padding: 10px;
+
+	@include breakpoint( ">660px" ) {
+		box-sizing: border-box;
+		padding: 15px;
+		width: 100%;
+
+		section {
+			display: flex;
+		}
+	}
+
+	h6 {
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	label {
+		background-color: $white;
+		border: 3px solid $white;
+		border-radius: 3px;
+		display: block;
+		margin-top: 10px;
+		padding: 12px;
+		transition: all 0.3s ease-in-out;
+
+		&.selected {
+			border-color: #00AADC;
+		}
+
+		@include breakpoint( ">660px" ) {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			margin-top: 15px;
+			width: 50%;
+
+			&:last-child {
+				margin-left: 15px;
+			}
+		}
+	}
+
+	strong {
+		display: block;
+		font-size: 14px;
+		font-weight: normal;
+		line-height: 130%;
+	}
+
+	p {
+		color: #7096af;
+		font-size: 11px;
+		margin-bottom: 0;
+		margin-top: 5px;
+	}
+
+	input {
+		display: none;
+	}
+
+	button {
+		margin-top: 10px;
+		white-space: normal;
+		width: 100%;
+	}
+}
+
+.privacy-protection-dialog.dialog.card {
+	max-height: 95%;
+	overflow-y: auto;
+
+	.dialog__content {
+		header {
+			text-align: center;
+
+			h1 {
+				font-size: 30px;
+				font-weight: 200;
+				line-height: 130%;
+				height: auto;
+			}
+
+			p {
+				font-size: 13px;
+			}
+
+			.line-break {
+				@include breakpoint( ">660px" ) {
+					display: block;
+				}
+			}
+		}
+	}
+
+	.privacy-features {
+		border-bottom: 1px solid $gray-light;
+		border-top: 1px solid $gray-light;
+		list-style: none;
+		margin: 20px 0;
+		padding: 5px 0;
+
+		li {
+			padding: 5px 10px;
+			text-align: center;
+
+			@include breakpoint( ">660px" ) {
+				display: inline-block;
+				padding: 5px 30px;
+			}
+		}
+
+		h2 {
+			font-size: 14px;
+			font-weight: 600;
+
+			&:before {
+				@include noticon( '\f418', 28px );
+				color: $alert-green;
+				vertical-align: middle;
+			}
+		}
+	}
+
+	.privacy-comparison {
+		list-style: none;
+		margin: 0;
+		padding: 0 0 20px 0;
+
+		@include breakpoint( ">660px" ) {
+			overflow: auto;
+			padding-top: 20px;
+		}
+
+		li {
+			border: 1px solid lighten( $gray, 30% );
+			border-radius: 3px;
+			box-sizing: border-box;
+			margin: 40px 0 0 0;
+			padding: 20px;
+			position: relative;
+
+			@include breakpoint( ">660px" ) {
+				float: left;
+				margin: 0 2%;
+				width: 46%;
+			}
+
+			&:before {
+				border-radius: 50%;
+				color: #FFF;
+				display: block;
+				height: 25px;
+				position: absolute;
+					left: -8px;
+					top: -8px;
+				width: 25px;
+			}
+
+			&.with-privacy:before {
+				@include noticon( '\f418', 25px );
+				background: $alert-green;
+			}
+
+			&.without-privacy:before {
+				background: $alert-yellow;
+				content: '!';
+				font-size: 18px;
+				font-weight: 600;
+				line-height: 25px;
+				text-align: center;
+			}
+
+			h3 {
+				font-size: 16px;
+				font-weight: 600;
+				margin: 0;
+				text-align: center;
+			}
+
+			.privacy-price {
+				color: $gray;
+				font-size: 13px;
+				font-style: italic;
+				font-weight: 400;
+				text-align: center;
+			}
+
+			p {
+				background: $gray-light;
+				font-size: 12px;
+				margin: 20px -20px;
+				min-height: 126px;
+				padding: 20px;
+
+				span {
+					display: block;
+					width: 100%;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+			}
+
+			.button {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.checkout-thank-you {
+	box-sizing: border-box;
+	position: static;
+	text-align: center;
+	width: 100%;
+
+	.thank-you-message {
+		padding-bottom: 20px;
+
+		.receipt-icon {
+			display: inline-block;
+			position: relative;
+
+			&::before {
+				@include noticon( '\f425', 70px );
+				color: lighten( $gray, 20% );
+			}
+
+			&::after {
+				@include noticon( '\f418', 18px );
+				background: #53b66c;
+				border-radius: 18px;
+				color: $white;
+				position: absolute;
+					top: 6px;
+					right: 15px;
+				width: 18px;
+				height: 18px;
+			}
+		}
+
+		> h1 {
+			color: $gray-dark;
+			font-weight: 100;
+			margin: 0;
+		}
+
+		> h2 {
+			color: $gray-dark;
+			font-weight: 200;
+			opacity: 0.6;
+		}
+	}
+
+	.try-out-message {
+		padding-top: 20px;
+
+		> h3 {
+			font-weight: 600;
+		}
+	}
+
+	.purchase-details-list {
+		list-style: none;
+	}
+
+	.purchase-detail {
+		display: inline-block;
+		width: 33.333333%;
+
+		.purchase-detail-text {
+			&::before {
+				color: lighten( $gray, 20% );
+				@include noticon( '\f803' );
+				top: -8px;
+			}
+
+			> h3 {
+				font-weight: 600;
+			}
+
+			> p {
+				font-size: 12px;
+				opacity: 0.7;
+			}
+		}
+
+		&.get-free-domain {
+			.purchase-detail-text::before {
+				@include noticon( '\f475' );
+			}
+		}
+
+		&.customize-fonts-and-colors {
+			.purchase-detail-text::before {
+				@include noticon( '\f103' );
+			}
+		}
+
+		&.upload-to-videopress {
+			.purchase-detail-text::before {
+				@include noticon( '\f104' );
+			}
+		}
+
+		&.ads-have-been-removed {
+			.purchase-detail-text::before {
+				@include noticon( '\f803' );
+				top: -7px;
+			}
+		}
+
+		&.ecommerce {
+			.purchase-detail-text::before {
+				@include noticon( '\f447' );
+			}
+		}
+
+		&.live-chat {
+			.purchase-detail-text::before {
+				@include noticon( '\f108' );
+			}
+		}
+
+		&.unlimited-premium-themes {
+			.purchase-detail-text::before {
+				@include noticon( '\f103' );
+			}
+		}
+
+		&.important {
+			.purchase-detail-text::before {
+				@include noticon( '\f303' );
+			}
+		}
+
+		&.your-primary-domain {
+			.purchase-detail-text::before {
+				@include noticon( '\f475' );
+			}
+		}
+
+		&.upgrade-now {
+			.purchase-detail-text::before {
+				@include noticon( '\f800' );
+			}
+		}
+
+		&.google-apps-details {
+			.purchase-detail-text::before {
+				@include noticon( '\f410' );
+			}
+		}
+
+		&.redirect-now-working {
+			.purchase-detail-text::before {
+				@include noticon( '\f442' );
+			}
+		}
+
+		&.change-redirect-settings {
+			.purchase-detail-text::before {
+				@include noticon( '\f411' );
+			}
+		}
+	}
+
+	.get-support {
+		border-top: 1px solid lighten( $gray, 20% );
+		color: darken($gray, 10%);
+		font-size: 14px;
+
+		> h3 {
+			font-weight: 600;
+		}
+
+		> p {
+			margin-bottom: 0;
+		}
+
+		a {
+			border-bottom: 1px solid $blue-medium;
+		}
+	}
+}
+
+// Mobile styles
+@include breakpoint( "<660px" ) {
+	.checkout-thank-you {
+		background: transparent;
+		padding: 14px;
+
+		.card {
+			background: none;
+			box-shadow: none;
+			padding: 0;
+		}
+
+		.thank-you-message {
+			> h1,
+			> h2 {
+				font-size: 17px;
+			}
+		}
+
+		.purchase-details-list {
+			display: inline-block;
+			margin: 0 0 10px 0;
+		}
+
+		.purchase-detail {
+			background: $white;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+			box-sizing: border-box;
+			display: inline-block;
+			margin-bottom: 20px;
+			padding: 20px 10px;
+			text-align: left;
+			width: 100%;
+
+			.purchase-detail-text {
+				padding-left: 64px;
+				position: relative;
+
+				&::before {
+					font-size: 50px;
+					position: absolute;
+						left: 0;
+				}
+			}
+
+			> button {
+				height: 42px;
+				line-height: 42px;
+				padding: 0;
+				vertical-align: top;
+				width: 100%;
+			}
+		}
+
+		.get-support {
+			border-bottom: 1px solid lighten( $gray, 20% );
+			padding: 20px 0;
+		}
+	}
+}
+
+// Desktop styles
+@include breakpoint( ">660px" ) {
+	.checkout-thank-you {
+		.thank-you-message {
+			border-bottom: 1px solid lighten( $gray, 30% );
+
+			> h1 {
+				font-size: 25px;
+			}
+			> h2 {
+				font-size: 20px;
+				max-width: 50%;
+				margin: auto;
+			}
+		}
+
+		.purchase-details-list {
+			margin: 0;
+			padding: 30px 0;
+		}
+
+		.purchase-detail {
+			vertical-align: top;
+		}
+
+		.purchase-detail-text {
+			&::before {
+				font-size: 70px;
+			}
+
+			> p {
+				margin: 0 50px 10px 50px;
+			}
+		}
+
+		.get-support {
+			padding: 20px;
+
+			> h3 {
+				display: inline;
+				margin-right: 15px;
+			}
+
+			> p {
+				display: inline;
+			}
+		}
+	}
+}
+
+// If there's no sidebar, we don't show the cart on the checkout page.
+@include breakpoint( "<660px" ) {
+	.secondary-cart {
+		display: none;
+	}
+}
+
+@include breakpoint( ">660px" ) {
+	.pay-button {
+		float: left;
+	}
+}
+
+.credit-card-payment-box__switch-link {
+	color: $link-highlight;
+	font-style: italic;
+	font-weight: 800;
+	line-height: 40px;
+	display: block;
+	clear: both;
+	font-size: 12px;
+
+	@include breakpoint( "<660px" ) {
+		margin: 20px 0 0 0;
+		text-align: center;
+	}
+
+	@include breakpoint( ">960px" ) {
+		float: right;
+		clear: none;
+	}
+}

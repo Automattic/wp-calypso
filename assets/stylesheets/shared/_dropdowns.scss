@@ -1,0 +1,124 @@
+/**
+ * Dropdown menu for extra site options
+ */
+.dropdown-menu {
+	background-color: $white;
+	box-shadow: 0 1px 4px rgba($gray-dark, 0.2);
+	position: absolute;
+		right: 0;
+		top: 130%;
+	z-index: 9999;
+	display: none;
+	float: left;
+	margin: 2px 0 0;
+	padding: 6px 0;
+
+	.pointer {
+		position: absolute;
+			right: 8px;
+			top: -7px;
+		width: 12px;
+		height: 10px;
+		float: left;
+		overflow: hidden;
+
+		.pointer-outer,
+		.pointer-inner {
+			position: absolute;
+				top: 0;
+				left: 0;
+			display: inline-block;
+			margin-left: -1px;
+		}
+
+		.pointer-outer {
+			left: 0;
+			top: 0;
+			border-bottom: 7px solid rgba(0,0,0,0.06);
+			border-left: 7px solid transparent;
+			border-right: 7px solid transparent;
+		}
+
+		.pointer-inner {
+			top: 1px;
+			left: 1px;
+			border-left: 6px solid transparent;
+			border-right: 6px solid transparent;
+			border-bottom: 6px solid $white;
+		}
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
+
+	li {
+		box-sizing: border-box;
+		display: block;
+		float: none;
+		white-space: nowrap;
+
+		a {
+			background: transparent;
+			display: block;
+			font-size: 12px;
+			padding: 5px 20px 5px 18px;
+			text-align: left;
+
+			&:hover {
+				background: $gray-light;
+			}
+		}
+	}
+}
+
+/**
+ * Gear toggle button
+ */
+.gear-dropdown {
+	cursor: pointer;
+	position: absolute;
+		right: 10px;
+		top: 8px;
+	display: block;
+	height: 30px;
+	width: 30px;
+
+	&:after {
+		background: $gray-light;
+		border: 1px solid lighten( $gray, 20% );
+		border-radius: 3px;
+		display: inline-block;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		font: normal 18px/1 Noticons;
+		content: '\f445';
+		color: darken( $gray, 10% );
+		position: absolute;
+			top: 0;
+			left: 0;
+		height: 28px;
+		width: 28px;
+		line-height: 28px;
+		text-align: center;
+		z-index: 0;
+		box-shadow: 0 1px 1px rgba($gray-dark,0.1);
+	}
+
+	&:hover:after {
+		color: darken( $gray, 10% );
+	}
+
+	&.gear-open {
+		.dropdown-menu {
+			display: block;
+		}
+		&:after {
+			border-color: rgba( $blue-wordpress, 0.8 );
+			background: rgba( $blue-wordpress, 0.8 );
+			color: $white;
+		}
+	}
+}

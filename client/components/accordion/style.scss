@@ -1,0 +1,133 @@
+$accordion-padding: 16px;
+$accordion-subtitle-height: 16px;
+$accordion-background-collapsed: $gray-light; // same as body
+$accordion-background-hover: lighten( $gray, 30% );
+$accordion-background-expanded: $white;
+
+.accordion {
+	box-shadow: 0 -1px 0 lighten( $gray, 26% ),
+		0 1px 0 lighten( $gray, 26% );
+	margin-top: 1px;
+	position: relative;
+}
+
+.accordion__toggle {
+	display: block;
+	width: 100%;
+	cursor: pointer;
+	position: relative;
+	margin: 0;
+	padding: $accordion-padding;
+	padding-right: ( $accordion-padding + 22px );
+	color: $gray-dark;
+	background-color: $accordion-background-collapsed;
+	text-align: left;
+
+	&:hover {
+		background-color: $accordion-background-hover;
+	}
+
+	&::after {
+		@include noticon( '\f431', 22px );
+		position: absolute;
+			top: 50%;
+			right: $accordion-padding;
+		transform: translateY( -50% );
+		color: lighten( $gray, 10% );
+	}
+}
+
+.accordion.is-expanded {
+	box-shadow: 0 0 0 1px lighten( $gray, 20% );
+
+	.accordion__toggle {
+		background-color: $accordion-background-expanded;
+		box-shadow: 0 0 0 1px lighten( $gray, 20% );
+
+		&::after {
+			content: '\f432';
+		}
+	}
+
+	.accordion__content {
+		overflow: visible;
+	}
+}
+
+.accordion__header.has-subtitle .accordion__toggle {
+	padding-top: ( $accordion-padding - $accordion-subtitle-height / 2 );
+	padding-bottom: ( $accordion-padding - $accordion-subtitle-height / 2 );
+}
+
+.accordion__icon {
+	position: absolute;
+		left: $accordion-padding;
+		top: 50%;
+		transform: translateY( -50% );
+	margin-top: 3px;
+
+	.gridicon {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+.accordion__title,
+.accordion__subtitle {
+	display: block;
+}
+
+.accordion__header.has-icon .accordion__title,
+.accordion__header.has-icon .accordion__subtitle {
+	padding-left: 28px;
+}
+
+.accordion__subtitle {
+	font-size: 0.8em;
+	font-style: italic;
+	color: $gray;
+	white-space: nowrap;
+	overflow-x: hidden;
+	position: relative;
+	height: $accordion-subtitle-height;
+}
+
+.accordion:not( .is-expanded ) .accordion__toggle .accordion__subtitle {
+	&::after {
+		@include long-content-fade( $color: $accordion-background-collapsed );
+	}
+}
+
+.accordion:not( .is-expanded ) .accordion__toggle:hover .accordion__subtitle {
+	&::after {
+		@include long-content-fade( $color: $accordion-background-hover );
+	}
+}
+
+.accordion.is-expanded .accordion__subtitle {
+	&::after {
+		@include long-content-fade( $color: $accordion-background-expanded );
+	}
+}
+
+.accordion__content {
+	overflow: hidden;
+	height: 0;
+	background-color: $accordion-background-expanded;
+}
+
+.accordion.is-expanded .accordion__content {
+	height: auto;
+}
+
+.accordion__content-wrap {
+	padding: $accordion-padding;
+}
+
+.accordion__section {
+	margin-bottom: 24px;
+}
+
+.accordion__section:last-child {
+	margin-bottom: 0;
+}

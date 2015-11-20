@@ -1,0 +1,18 @@
+.reader__site-and-author-icon {
+
+	align-self: auto;
+	width: 40px;
+	position: relative;
+
+	.site-icon {
+		align-self: auto;
+	}
+
+	.gravatar {
+		width: 24px;
+		height: 24px;
+		position: absolute;
+		left: 12px;
+		top: 13px;
+	}
+}

@@ -1,0 +1,204 @@
+/*
+ * WP.com Overlay
+ * Used for Site specific contexts and the Editor
+ */
+
+// Overlay
+// 1: Indicate that clicking on the background performs an action (closes overlay)
+// 2: Reverse 1)
+
+.wp-overlay {
+	position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	z-index: 9999;
+	height: 100%;
+	overflow: scroll;
+	-webkit-overflow-scrolling: touch;
+	transform: translate3d( 0, 100%, 0 );
+	background-color: rgba( $gray-dark, 0 );
+	cursor: pointer; // 1
+
+	.overlay-content {
+		cursor: default; // 2
+	}
+
+	// Make overlay cover entire view
+	.overlay-is-front & {
+		transform: translate3d( 0, 0, 0 );
+	}
+
+	// Make overlay visually appear to the user
+	.overlay-open & {
+		background-color: rgba( $gray-dark, 0.9 );
+	}
+
+	.wpcom-masterbar {
+		background: transparent;
+		box-shadow: none;
+		position: absolute;
+			right: 0;
+			left: 0;
+			top: -56px;
+		width: auto;
+
+		.overlay-navigation {
+			background: transparent;
+			padding: 0;
+			overflow: hidden;
+
+			.user-actions ul {
+				list-style-type: none;
+			}
+
+			.user-actions,
+			.user-actions ul,
+			.user-actions ul li {
+				float: none;
+			}
+		}
+	}
+
+	// Close button
+	// 1: //To have the button label be optically centered, moving the icon half an icon size to the left
+	// 2: Optically align label including the x-icon
+	// 2: Needed for now to override settings, should be looked over once the overlay is more widely used
+
+	// Hack for now to make the button appear like a regular primary button
+	// Only used for the overlay Close button in Stats overlays
+	.user-actions ul li .button {
+		padding: 0 16px 0 22px; // 1
+		line-height: 40px;
+		height: 40px; // 2
+		float: right;
+
+		// Need to overrule default masterbar settings on hover :(
+		// These are copied from _buttons.scss
+		&:hover {
+			background: $gray-light;
+			box-shadow: 0 -1px 0 rgba(255,255,255,0.8) inset;
+		}
+	}
+
+	// Include X noticon
+	// Only used for the overlay Close button in Stats overlays
+	// TODO: shouldn't be called .settings-done but currently all secondary buttons are
+	.user-actions ul li a.settings-done::before {
+		@include noticon( '\f405' , 24px );
+		line-height: 40px;
+		margin-left: -12px; // 2
+	}
+
+	// Keep .site-settings here to not break Jetpack and Stats
+	// until those are updated
+	.site-settings .site {
+		float: left;
+		width: 28%;
+
+		@include breakpoint( "<660px" ) {
+			float: none;
+			width: 100%;
+		}
+
+		.site-content {
+			margin-bottom: 0;
+
+			@include breakpoint( "<660px" ) {
+				margin: 6px;
+			}
+		}
+
+		.site-options,
+		.site-more-options {
+			display: none;
+		}
+
+		&.jetpack {
+			border-bottom: 2px solid #8cc258;
+		}
+	}
+
+	// 1: Height of masterbar (46px) + (10px+2) margins top/bottom
+	.wp-content {
+		@include breakpoint( "<660px" ) {
+			background: lighten( $gray, 30% );
+			margin-top: 66px;
+		}
+	}
+
+	.content-header {
+		@include breakpoint( "<660px" ) {
+			margin-top: 10px;
+		}
+		.noticon-menu {
+			display: none;
+		}
+	}
+
+	/**
+	 * Iframe within the overlay to contain
+	 * elements like the Customizer
+	 */
+	iframe {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.overlay-content {
+	opacity: 0;
+	background: lighten( $gray, 30% );
+	margin: 0 auto 0;
+	max-width: 960px;
+	overflow: visible;
+
+	.overlay-is-front & {
+		opacity: 1;
+	}
+
+	@include breakpoint( ">960px" ) {
+		border-radius: 3px;
+	}
+}
+
+.overlay-open body, .overlay-open {
+	overflow: hidden;
+	overflow-y: hidden;
+}
+
+// 1: Roughly the width of the close button with all its bells and whistles on mobile
+.wp-overlay .current-site {
+	background-color: transparent;
+	box-shadow: none;
+	text-align: left;
+	padding-right: 100px; // 1
+
+	@include breakpoint( "<960px" ) {
+		padding-left: 10px;
+	}
+}
+
+.wp-overlay .actions-menu {
+	position: absolute;
+	top: 6px;
+	right: 0;
+
+	@include breakpoint( "<960px" ) {
+		right: 10px;
+	}
+}
+
+.wp-overlay .current-site .site {
+	color: lighten( $gray, 30% );
+	padding-left: 50px;
+}
+
+.wp-overlay .current-site .site-icon {
+	left: 0;
+}
+
+.wp-overlay .current-site .user-icon {
+	border-radius: 50%;
+}

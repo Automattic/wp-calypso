@@ -1,0 +1,98 @@
+.security-2fa-progress__container {
+	margin: 0 -24px 24px;
+
+	.security-2fa-progress__inner-container {
+		display: flex;
+		position: relative;
+
+		&:before {
+			background-color: lighten( $gray, 20% );
+			content: " ";
+			display: block;
+			height: 1px;
+			position: absolute;
+			top: 26px;
+			width: 100%;
+		}
+
+		.security-2fa-progress__item {
+			flex: 1;
+			position: relative;
+			text-align: center;
+
+			&.is-highlighted {
+
+				&:before {
+					background-color: $blue-wordpress;
+					content: " ";
+					display: block;
+					height: 2px;
+					position: absolute;
+					top: 24px;
+					width: 50%;
+				}
+
+				.noticon {
+					background: $blue-wordpress;
+					color: $white;
+					border-color: $blue-wordpress;
+				}
+
+				label {
+					color: $blue-wordpress;
+					font-weight: 600;
+				}
+			}
+
+			&.is-completed {
+
+				&:before {
+					background-color: $blue-wordpress;
+					content: " ";
+					display: block;
+					height: 2px;
+					position: absolute;
+					top: 24px;
+					width: 100%;
+				}
+
+				.noticon {
+					background: lighten( $gray, 20% );
+					color: $gray;
+				}
+
+				label {
+					color: $gray;
+				}
+			}
+
+			.noticon {
+				background: $white;
+				border: 1px lighten( $gray, 20% ) solid;
+				border-radius: 50%;
+				color: lighten( $gray, 20% );
+				display: block;
+				height: 48px;
+				margin: 0 auto;
+				position: relative;
+				width: 48px;
+
+				&:before {
+					font-size: 32px;
+					position: relative;
+					top: 8px;
+				}
+			}
+
+			label {
+				color: lighten( $gray, 20% );
+				display: inline-block;
+				font-size: 14px;
+				line-height: 1;
+				margin-top: 8px;
+				max-width: 112px;
+				text-align: center;
+			}
+		}
+	}
+}

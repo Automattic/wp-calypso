@@ -1,0 +1,14 @@
+// ==========================================================================
+// Placeholder mixin
+// Adds animation to placeholder section
+// ==========================================================================
+
+@mixin placeholder( $lighten-percentage: 30% ) {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, $lighten-percentage );
+	color: transparent;
+
+	&:after {
+		content: '\00a0';
+	}
+}

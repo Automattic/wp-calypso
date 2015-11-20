@@ -1,0 +1,88 @@
+// Stats Pagination
+// I like lamp.
+
+.stats-pagination {
+	width: 100%;
+}
+
+.stats-pagination__list {
+	background-color: $gray-light;
+	display: block;
+	list-style: none;
+	margin: 0;
+	padding: 2px 0;
+	text-align: center;
+	@include clear-fix;
+}
+
+// List item styles for all links
+.stats-pagination__list-item {
+	@extend %mobile-link-element;
+	display: inline-block;
+	padding: 0 .5em;
+	line-height: 40px;
+	text-align: center;
+	min-width: 16px;
+}
+
+// Left/right navigation arrows
+// 1: Vertical align doesn't work so well and it's really obvious
+// with an outer box in close proximity
+.stats-pagination__list-item.stats-pagination__arrow {
+	&,
+	&:hover {
+		color: $gray;
+		cursor: default;
+	}
+
+	&.is-left {
+		padding-left: 14px;
+		float: left;
+	}
+
+	&.is-right {
+		padding-right: 14px;
+		float: right;
+	}
+
+	.gridicon {
+		vertical-align: middle;
+		margin-top: -2px; // 1
+	}
+}
+
+// Display active links as blue
+.stats-pagination__list-item,
+.stats-pagination__list-item.is-active {
+	cursor: pointer;
+	color: $blue-wordpress;
+}
+
+.stats-pagination__list-item.is-active .gridicon {
+	cursor: pointer;
+}
+
+// Hover/focus states
+.stats-pagination__list-item:hover,
+.stats-pagination__list-item.is-active:hover,
+.stats-pagination__list-item:focus {
+	color: $link-highlight;
+}
+
+// Selected state
+.stats-pagination__list-item.is-selected,
+.stats-pagination__list-item.is-selected:hover {
+	background-color: $white;
+	font-weight: bold;
+	font-weight: 600;
+	color: $gray-dark;
+	cursor: default;
+}
+
+// Abridgement indication
+.stats-pagination__ellipsis,
+.stats-pagination__ellipsis:hover {
+	@extend %mobile-interface-element;
+	color: $gray;
+	cursor: default;
+}

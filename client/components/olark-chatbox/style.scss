@@ -1,0 +1,26 @@
+.olark-chatbox__container {
+	#habla_topbar_div {
+		// Hide the top bar because it contains buttons that hide/shrink the chat widget
+		display: none;
+	}
+
+	#habla_window_div {
+		// Override the inline styles added by olark so we can make the chatbox inlined instead of absolute positioned
+		margin: auto !important;
+		bottom: auto !important;
+		right: auto !important;
+		display: block !important;
+		position: inherit !important;
+
+		#habla_expanded_div {
+			// Add a border to the top and bottom that matches the side borders olark adds
+			border-top: 1px solid #c8d7e1;
+			border-bottom: 1px solid #c8d7e1;
+		}
+	}
+
+	.hbl_pal_main_width {
+		// Make the olark chat stretch to the width of the component
+		width: auto !important;
+	}
+}

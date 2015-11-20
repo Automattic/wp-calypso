@@ -1,0 +1,39 @@
+.editor-featured-image__preview {
+	position: relative;
+}
+
+.editor-featured-image__preview.is-transient::after {
+	content: '';
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	background-color: rgba( $white, 0.75 );
+	z-index: 10;
+}
+
+.editor-featured-image__preview .spinner {
+	display: none;
+}
+
+.editor-featured-image__preview.is-transient .spinner {
+	display: block;
+}
+
+.editor-featured-image__preview .spinner,
+.editor-featured-image .editor-drawer-well__remove {
+	z-index: 20;
+}
+
+.editor-featured-image__preview .spinner {
+	position: absolute;
+		top: 50%;
+		left: 50%;
+	transform: translate( -50%, -50% );
+}
+
+.editor-featured-image__preview .spinner__border {
+	fill: transparent;
+}
+

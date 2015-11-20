@@ -1,0 +1,79 @@
+.edit-post-status__sticky,
+.edit-post-status__pending-review {
+	align-content: center;
+	display: flex;
+	justify-content: space-between;
+
+	.gridicon {
+		margin-left: 4px;
+		vertical-align: middle;
+	}
+}
+
+.edit-post-status__pending-review {
+	margin-top: 8px;
+}
+
+.edit-post-status__label-text {
+	color: darken( $gray, 10% );
+	font-size: 13px;
+	line-height: 1.7;
+}
+
+.edit-post-status .select-dropdown__container {
+	// ensure 100% width
+	display: block;
+}
+
+.edit-post-status__revert-to-draft {
+	display: block;
+	margin: 16px 0 0;
+	width: 100%;
+}
+
+.edit-post-status__full-date {
+	color: darken( $gray, 10% );
+	font-size: 13px;
+	display: inline-block;
+	margin-bottom: 12px;
+	padding-right: 5px;
+	cursor: pointer;
+
+	.gridicon {
+		color: $gray;
+		margin-left: -2px;
+		margin-right: 8px;
+		vertical-align: bottom;
+	}
+
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+
+		.gridicon {
+			color: $gray-dark;
+		}
+	}
+}
+
+.edit-post-status__future-label {
+	background: $blue-medium;
+	border-radius: 2px;
+	color: $white;
+	display: inline-block;
+	font-size: 10px;
+	margin: -3px 4px 0 0;
+	overflow: hidden;
+	padding: 2px 6px 2px 6px;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: pre;
+	text-transform: uppercase;
+}
+
+.edit-post-status__post-schedule {
+	box-sizing: border-box;
+	display: block;
+	padding: 0 16px;
+	width: 237px;
+}

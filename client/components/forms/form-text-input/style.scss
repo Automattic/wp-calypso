@@ -1,0 +1,41 @@
+input[type="email"].form-text-input,
+input[type="password"].form-text-input,
+input[type="url"].form-text-input,
+input[type="text"].form-text-input { // input[type="text"] is needed to override the default styles
+	-webkit-appearance: none;
+
+	&.is-valid {
+		border-color: $alert-green;
+	}
+
+	&.is-valid:hover {
+		border-color: darken( $alert-green, 10 );
+	}
+
+	&.is-error {
+		border-color: $alert-red;
+	}
+
+	&.is-error:hover {
+		border-color: darken( $alert-red, 10 );
+	}
+
+	&:focus {
+		&.is-valid {
+			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+		}
+	}
+}

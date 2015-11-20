@@ -1,0 +1,15 @@
+.edit-team-member-form__form {
+	border-top: 1px solid lighten( $gray, 30% );
+	padding-top: 24px;
+	margin-top: 24px;
+}
+
+.edit-team-member-form__user-profile {
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.edit-team-member-form__remove-user {
+	cursor: pointer;
+}

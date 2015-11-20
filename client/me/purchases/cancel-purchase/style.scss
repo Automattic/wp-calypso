@@ -1,0 +1,102 @@
+.cancel-purchase__card {
+	margin-bottom: 0;
+
+	h2 {
+		color: $gray-dark;
+		font-size: 21px;
+		font-weight: 200;
+		margin-bottom: 20px;
+	}
+
+	p {
+		color: darken( $gray, 10% );
+		font-size: 14px;
+	}
+
+	hr {
+		background: $gray-light;
+	}
+}
+
+.cancel-purchase__info {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	overflow: auto;
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row-reverse;
+	}
+}
+
+.cancel-purchase__content {
+	margin: 0;
+	padding: 0 0 10px 0;
+
+	@include breakpoint( ">660px" ) {
+		width: 55%;
+	}
+
+	p {
+		color: darken( $gray, 5% );
+		display: block;
+		font-size: 13px;
+		line-height: 150%;
+		margin-top: 5px;
+	}
+
+	hr {
+		margin: 18px 0;
+	}
+}
+
+.cancel-purchase__section {
+	color: darken( $gray, 20% );
+	margin: 0;
+}
+
+.cancel-purchase__section-header {
+	display: block;
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.cancel-purchase__footer {
+	.button {
+		@include breakpoint( "<660px" ) {
+			width: 100%;
+		}
+	}
+}
+
+.cancel-purchase-support-box {
+	border: 1px solid lighten( $gray, 20% );
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin: 0 0 20px 0;
+	padding: 16px;
+
+	@include breakpoint( ">660px" ) {
+		width: 31%;
+	}
+
+	h3 {
+		color: lighten( $gray-dark, 10% );
+		font-size: 16px;
+		font-weight: 400;
+		margin: 0 0 10px 0;
+	}
+
+	.button {
+		margin: 20px 0 0 0;
+		text-align: center;
+		width: 100%;
+	}
+
+	p {
+		font-size: 13px;
+		margin: 0;
+	}
+}

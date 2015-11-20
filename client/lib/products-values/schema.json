@@ -1,0 +1,14 @@
+{
+	"title": "ProductValue",
+	"type": "object",
+	"required": [
+		"product_slug"
+	],
+	"additionalProperties": true,
+	"properties": {
+		"product_id": { "type": "number" },
+		"product_name": { "type": "string" },
+		"product_slug": { "type": "string" },
+		"is_domain_registration": { "type": "boolean" }
+	}
+}

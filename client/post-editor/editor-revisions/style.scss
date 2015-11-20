@@ -1,0 +1,27 @@
+.editor-revisions {
+	color: darken( $gray, 10% );
+	display: block;
+	font-size: 13px;
+	margin-bottom: 12px;
+
+	&:visited {
+		color: darken( $gray, 10% );
+	}
+
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+		outline: none;
+
+		.gridicon {
+			color: $gray-dark;
+		}
+	}
+
+	.gridicon {
+		color: $gray;
+		margin-left: -2px;
+		margin-right: 8px;
+		vertical-align: bottom;
+	}
+}

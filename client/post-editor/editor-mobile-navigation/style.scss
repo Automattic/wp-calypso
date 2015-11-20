@@ -1,0 +1,35 @@
+.editor-mobile-navigation {
+	color: $gray;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+
+	.gridicon {
+		cursor: pointer;
+		margin-right: 4px;
+		padding: 8px;
+		&:hover {
+			cursor: button;
+			fill: $gray-dark;
+		}
+	}
+}
+
+.editor-mobile-navigation .site {
+	.site__title {
+		padding: 6px 0;
+	}
+
+	.site__domain {
+		display: none;
+	}
+}
+
+.editor-mobile-navigation__toggle {
+	margin-right: 8px;
+}
+

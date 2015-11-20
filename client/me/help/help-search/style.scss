@@ -1,0 +1,37 @@
+.help-search {
+	margin-bottom: 30px;
+}
+
+.help-search .search-card {
+	margin-bottom: 0px;
+}
+
+.help-search__no-results {
+	margin-top: 1px;
+}
+
+.help-search .no-results {
+	margin-left: 35px;
+	@include breakpoint( "<660px" ) {
+		margin-left: 25px;
+	}
+}
+
+.help-results__placeholder {
+	.help-results__header,
+	.help-results__header-text,
+	.help-result__icon,
+	.help-result__title,
+	.help-result__description {
+		@include placeholder();
+	}
+	.help-results__header, {
+		background: $gray-light;
+	}
+	.help-results__header-text, {
+		background-color: lighten( $gray, 20% );
+	}
+	.help-results__footer {
+		display: none;
+	}
+}

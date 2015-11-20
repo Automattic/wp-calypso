@@ -1,0 +1,41 @@
+.me-sidebar__menu .sidebar {
+	padding-top: 16px;
+}
+
+.form-button.me-sidebar__menu__signout {
+	display: block;
+	margin: auto auto 24px auto;
+	max-width: 100%;
+	clear: both;
+	float: none;
+	padding: 8px 24px;
+}
+
+.me-sidebar__menu .me-sidebar-item a:first-child::before {
+	display: none;
+}
+
+.me-sidebar-item__gridicon,
+.me-sidebar-item__external {
+	color: $gray;
+}
+
+.me-sidebar-item__gridicon {
+	margin-right: 14px;
+}
+
+.me-sidebar-item.selected {
+	.me-sidebar-item__external,
+	.me-sidebar-item__gridicon {
+		color: $white;
+	}
+}
+
+.notouch .me-sidebar-item:hover {
+	&:not(.selected) {
+		.me-sidebar-item__external,
+		.me-sidebar-item__gridicon {
+			color: $blue-light;
+		}
+	}
+}

@@ -1,0 +1,162 @@
+body {
+	@extend %content-font;
+	font-family: $serif;
+	font-size: 15px;
+	line-height: 1.7;
+	margin-top: 32px;
+}
+
+p {
+	margin: 0 0 24px 0;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+blockquote,
+q {
+	hyphens: none;
+	quotes: none;
+}
+a:link,
+a:visited {
+	color: $blue-medium;
+}
+a:hover,
+a:active {
+	color: $blue-light;
+	outline: 0;
+}
+
+// Images and captions
+img {
+	max-width: 100%;
+	height: auto;
+}
+a img {
+	border: 0;
+}
+
+.ios img {
+	-webkit-user-select: none;
+}
+
+.alignleft {
+	margin: 16px 16px 16px 0;
+}
+.alignright {
+	margin: 16px 0 16px 16px;
+}
+
+.html5-captions .wp-caption {
+	background: none;
+	box-sizing: border-box;
+	border: none;
+	margin-bottom: 16px;
+	max-width: 100%;
+	padding-top: 0;
+
+	&.alignleft {
+		margin-right: 16px;
+	}
+
+	&.alignright {
+		margin-left: 16px;
+	}
+}
+
+.wp-caption-dt {
+	overflow: hidden;
+}
+
+/* iOS does not obey max-width if width is set. */
+.ios .wp-caption {
+	width: auto !important;
+}
+
+.wp-caption img {
+	display: block;
+	margin: 0;
+}
+
+.wp-caption-dd {
+	background: $gray-light;
+	color: darken( $gray, 20% );
+	font-size: 14px;
+	line-height: 1.7;
+	padding: 16px;
+}
+
+.wpview-body::before {
+	content: '';
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	cursor: default;
+
+	.wpview-wrap[data-mce-selected] & {
+		display: none;
+	}
+}
+
+.wpview-wrap iframe {
+	display: block;
+	width: 100%;
+}
+
+blockquote {
+	padding: 16px;
+	margin: 8px 0 24px 0;
+	border-left: 2px solid $gray;
+	color: darken( $gray, 20 );
+	background: lighten( $gray, 30 );
+}
+
+caption,
+th,
+td {
+	font-weight: normal;
+	text-align: left;
+}
+table,
+th,
+td {
+	border: 1px solid lighten( $gray, 20 );
+}
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+	border-width: 1px 0 0 1px;
+	margin: 0 0 1.6em;
+	table-layout: fixed; /* Prevents HTML tables from becoming too wide */
+	width: 100%;
+}
+caption,
+th,
+td {
+	font-weight: normal;
+	text-align: left;
+}
+th {
+	border-width: 0 1px 1px 0;
+	font-weight: 700;
+}
+td {
+	border-width: 0 1px 1px 0;
+}
+th, td {
+	padding: 0.4em;
+}
+.mce-item-table, .mce-item-table td, .mce-item-table th, .mce-item-table caption {
+	border: 1px solid lighten( $gray, 20 );
+}
+
+hr {
+	border: 0;
+	height: 1px;
+	margin: 8px 0;
+	background: lighten( $gray, 20 );
+}

@@ -1,0 +1,106 @@
+.sortable-list__list {
+	display: flex;
+	margin: 0;
+	user-select: none;
+}
+
+.sortable-list.is-horizontal .sortable-list__list {
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.sortable-list.is-vertical .sortable-list__list {
+	flex-direction: column;
+}
+
+.sortable-list__item {
+	display: inline-block;
+
+	&.is-active > * {
+		box-shadow: 0 0 0 2px white, 0 0 0 4px $blue-medium;
+	}
+
+	&.is-draggable.is-active {
+		position: fixed;
+		z-index: 1000;
+	}
+
+	&.is-shadow {
+		filter: url( "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale" );
+		filter: grayscale( 100% );
+		opacity: 0.5;
+	}
+
+	&.is-draggable > * {
+		cursor: move;
+		box-shadow: none;
+	}
+}
+
+.sortable-list__navigation {
+	margin-top: 18px;
+	text-align: right;
+}
+
+.sortable-list__navigation-button {
+	padding: 8px;
+	background-color: lighten( $gray, 33% );
+	border: 1px solid lighten( $gray, 20% );
+	color: $gray;
+
+	&:not( :disabled ):hover {
+		cursor: pointer;
+		color: $blue-medium;
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.4;
+	}
+}
+
+.sortable-list.is-horizontal .sortable-list__navigation-button {
+	display: inline-block;
+
+	&.is-previous {
+		padding-left: 12px;
+		border-top-left-radius: 50%;
+		border-bottom-left-radius: 50%;
+	}
+
+	&.is-next {
+		margin-left: -1px;
+		padding-right: 12px;
+		border-top-right-radius: 50%;
+		border-bottom-right-radius: 50%;
+	}
+}
+
+.sortable-list.is-horizontal .sortable-list__navigation-button .noticon {
+	transform: rotate( 90deg ) translateX( 1px );
+}
+
+.sortable-list.is-vertical .sortable-list__navigation-button {
+	display: block;
+	margin-left: auto;
+
+	&.is-previous {
+		border-top-right-radius: 50%;
+		border-top-left-radius: 50%;
+	}
+
+	&.is-next {
+		margin-top: -1px;
+		border-bottom-right-radius: 50%;
+		border-bottom-left-radius: 50%;
+	}
+}
+
+.sortable-list.is-vertical .sortable-list__navigation-button .noticon {
+	transform: rotate( 180deg ) translateX( 1px );
+}
+
+.sortable-list__navigation-button .noticon {
+	font-size: 24px;
+	font-weight: bold;
+}

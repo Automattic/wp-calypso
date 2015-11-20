@@ -1,0 +1,49 @@
+.section-header.card {
+	display: flex;
+	padding-top: 11px;
+	padding-bottom: 11px;
+	position: relative;
+
+	&:after {
+		content: '';
+	}
+}
+
+.section-header__label {
+	flex-grow: 1;
+	line-height: 28px;
+	position: relative;
+
+	&:before {
+		@include long-content-fade( $color : $white );
+	}
+
+	.count {
+		margin-left: 8px;
+		opacity: 0.5;
+		font-size: 11px;
+	}
+}
+
+.section-header__actions {
+	flex-grow: 0;
+	@include clear-fix;
+}
+
+.section-header__label,
+.section-header__button {
+	color: $gray;
+	font-size: 12px;
+	text-transform: uppercase;
+}
+
+.section-header__button {
+	background: none;
+	float: let;
+	margin-right: 8px;
+	padding: 2px 8px;
+
+	&:last-child {
+		margin-right: 0;
+	}
+}

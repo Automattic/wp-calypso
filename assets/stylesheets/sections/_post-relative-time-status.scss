@@ -1,0 +1,40 @@
+.post-relative-time-status {
+	.time,
+	.status {
+		display: inline-block;
+		margin-right: (11 / 12) * 1em;
+	}
+
+	.time .time-text {
+		display: inline-block;
+		&::first-letter {
+			text-transform: capitalize;
+		}
+	}
+
+	.status .status-text {
+		text-transform: capitalize;
+	}
+
+	.noticon {
+		display: inline-block;
+		font-size: (13 / 12) * 1em;
+		margin-right: (3 / 13) * 1em;
+	}
+
+	// Apply colors on /posts/* cards
+	.posts__list & {
+		.is-sticky {
+			color: $orange-jazzy;
+		}
+		.is-pending {
+			color: $alert-yellow;
+		}
+		.is-scheduled {
+			color: $blue-medium;
+		}
+		.is-trash {
+			color: $alert-red;
+		}
+	}
+}

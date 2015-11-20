@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var path = require('path');
+var fs = require('fs');
+var join = path.join;
+var read = fs.readFileSync;
+var write = fs.writeFileSync;
+var readdir = fs.readdirSync;
+
+var dep = process.argv[2];
+var version = process.argv[3];
+if (!dep || !version) {
+	console.log('usage:');
+	console.log('  ' + process.argv.slice(0, 2).join(' ') + ' <dependencyName> <newVersion>');
+	return process.exit(2);
+}
+
+console.log();
+console.log('  updating %s to %s', dep, version);
+var dirs = [
+	'server',
+	'client'
+];
+
+function visitPackageFiles(dir, callback) {
+	fs.readdir( dir, function( err, list ) {
+		if (err) {
+			callback( err );
+		}
+
+		list.forEach( function(file) {
+
+			file = join( dir, file );
+
+			if ( /package\.json$/.test( file ) ) {
+				callback( null, file );
+			}
+
+			fs.stat(file, function( err, stat ) {
+				if ( stat && stat.isDirectory() ) {
+			  		visitPackageFiles( file, callback );
+			  	}
+			});
+		});
+	});
+}
+
+dirs.forEach( function ( dir ) {
+	visitPackageFiles( dir, function( err, path ) {
+		if ( err ) { console.log( err ); }
+		var conf;
+		try {
+			conf = JSON.parse( read( path, 'utf8' ) );
+		} catch (e) {
+			//console.error('skipping %j: %s', name, e);
+			return;
+		}
+		[ 'dependencies', 'devDependencies' ].forEach(function (dependencies) {
+			if (! conf[dependencies] ) {
+				return;
+			}
+			if (! conf[dependencies][dep] ) {
+				return;
+			}
+			var curr = conf[dependencies][dep];
+			console.log('  updating %j %j %s v%s -> v%s', path, dependencies, dep, curr, version);
+			conf[dependencies][dep] = version;
+		});
+		var json = JSON.stringify(conf, null, 2);
+		write(path, json + '\n');
+	});
+});
+console.log('');

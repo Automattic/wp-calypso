@@ -1,0 +1,165 @@
+// Multisite
+.foldable-card.card {
+	@include clear-fix;
+	position: relative;
+	transition: margin .15s linear;
+	padding: 0;
+
+	&.is-expanded {
+		margin-bottom: 8px;
+	}
+
+}
+
+.foldable-card__header {
+	min-height: 64px;
+	width: 100%;
+	padding: 16px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+
+	&.is-clickable {
+		cursor: pointer;
+	}
+
+	.foldable-card.is-compact & {
+		padding: 8px 16px;
+		min-height: 40px;
+	}
+
+	.foldable-card.is-expanded & {
+		margin-bottom: 0px;
+		height: inherit;
+		min-height: 64px;
+	}
+
+	.foldable-card.is-expanded.is-compact & {
+		min-height: 40px;
+	}
+
+	.foldable-card.is-disabled & {
+		opacity: 0.2;
+	}
+}
+
+.foldable-card__action {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+
+	.foldable-card.is-expanded & {
+		height: 100%;
+	}
+
+	.foldable-card.is-disabled & {
+		cursor: default;
+	}
+
+	.accessible-focus &:focus {
+		outline: thin dotted;
+	}
+}
+
+button.foldable-card__action {
+	cursor: pointer;
+}
+
+.foldable-card__main {
+	max-width: calc( 100% - 36px );
+	display: flex;
+	align-items: center;
+	flex: 2 1;
+	margin-right: 5px;
+}
+
+.foldable-card__secondary {
+	display: flex;
+	align-items: center;
+	flex: 1 1;
+    justify-content: flex-end;
+}
+
+.foldable-card__expand {
+	width: 48px;
+
+	.gridicon {
+		fill: $gray;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		vertical-align: middle;
+
+		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+
+		.foldable-card.is-expanded & {
+			transform: rotate( 180deg );
+		}
+	}
+
+	.gridicon:hover {
+		fill: $gray;
+	}
+
+	&:hover .gridicon {
+		fill: $blue-medium;
+	}
+}
+
+.foldable-card__content {
+	display: none;
+
+	.foldable-card.is-expanded & {
+		display: block;
+		padding: 16px;
+		border-top: 1px solid $gray-light;
+
+
+		.foldable-card.is-compact & {
+			padding: 8px;
+		}
+	}
+}
+
+.foldable-card__summary,
+.foldable-card__summary_expanded {
+	margin-right: 40px;
+	color: $gray;
+	font-size: 12px;
+	transition: opacity 0.2s linear;
+	display: inline-block;
+
+	.foldable-card.has-expanded-summary & {
+		transition: none;
+		flex: 2;
+		text-align: right;	
+	}
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+ 	}
+}
+
+
+.foldable-card__summary {
+	opacity: 1;
+	display: inline-block;
+
+	.foldable-card.is-expanded & {
+		display: none;
+		.has-expanded-summary & {
+			display: none;
+		}
+	}
+}
+
+.foldable-card__summary_expanded {
+	display: none;
+
+	.foldable-card.is-expanded & {
+		display: inline-block;
+	}
+}

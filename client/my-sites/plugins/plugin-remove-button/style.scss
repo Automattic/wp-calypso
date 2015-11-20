@@ -1,0 +1,23 @@
+.plugin-remove-button__remove {
+	color: $gray;
+	font-size: 10px;
+	line-height: 16px;
+	margin-right: 10px;
+	vertical-align: top;
+	text-transform: uppercase;
+	display: block;
+}
+.plugin-site__actions .plugin-remove-button__remove{
+	margin-top: 0;
+	padding: 16px;
+}
+.plugin-remove-button__remove-link {
+	.gridicons-trash {
+		color: $gray;
+		cursor: pointer;
+		&:hover{
+			color: $alert-red;
+		}
+	}
+
+}

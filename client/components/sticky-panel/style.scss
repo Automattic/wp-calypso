@@ -1,0 +1,8 @@
+.sticky-panel__content {
+	position: relative;
+}
+
+.sticky-panel.is-sticky .sticky-panel__content {
+	position: fixed;
+	z-index: 20;
+}

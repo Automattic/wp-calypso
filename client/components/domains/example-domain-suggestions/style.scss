@@ -1,0 +1,84 @@
+.example-domain-suggestions {
+	background-color: $gray-light;
+	padding: 0;
+}
+
+.example-domain-suggestions__illustration {
+	background: url( '/calypso/images/drake/drake-nomedia.svg' ) center no-repeat;
+	background-size: 175%;
+	float: left;
+	height: 100%;
+	position: absolute;
+		top: 50%;
+	transform: translateY( -50% );
+	width: 25%;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
+.example-domain-suggestions__information {
+	background-color: $white;
+	width: 100%;
+
+	@include breakpoint( "<660px" ) {
+		padding: 5px 0;
+	}
+
+	@include breakpoint( ">660px" ) {
+		float: right;
+		width: 75%;
+	}
+}
+
+.example-domain-suggestions__header {
+	color: darken( $gray, 20% );
+	font-size: 22px;
+	font-weight: 200;
+	margin: 15px 20px;
+}
+
+.example-domain-suggestions__list {
+	list-style: none;
+	margin: 0 20px;
+
+	li {
+		background-color: $gray-light;
+		padding: 15px;
+		margin: 2px 0;
+
+		@include clear-fix;
+
+		@include breakpoint( ">480px" ) {
+			display: flex;
+		}
+	}
+}
+
+.example-domain-suggestions__price {
+	color: $gray;
+	font-size: 14px;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 16px;
+	}
+
+	@include breakpoint( ">480px" ) {
+		text-align: right;
+		width: 100%;
+	}
+
+	&.is-free {
+		text-transform: uppercase;
+	}
+}
+
+.example-domain-suggestions__mapping-information {
+	color: darken( $gray, 20% );
+	margin: 15px 20px;
+
+	a {
+		text-decoration: underline;
+	}
+}

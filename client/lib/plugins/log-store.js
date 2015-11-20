@@ -1,0 +1,186 @@
+/**
+ * External dependencies
+ */
+var reject = require( 'lodash/collection/reject' ),
+	isArray = require( 'lodash/lang/isArray' ),
+	clone = require( 'lodash/lang/clone' ),
+	indexOf = require( 'lodash/array/indexOf' ),
+	findIndex = require( 'lodash/array/findIndex' ),
+	pullAt = require( 'lodash/array/pullAt' ),
+	debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
+
+/**
+ * Internal dependencies
+ */
+var Dispatcher = require( 'dispatcher' ),
+	emitter = require( 'lib/mixins/emitter' );
+
+var _errors = [],
+	_inProgress = [],
+	_completed = [],
+	LogStore;
+
+function addLog( status, action, site, plugin, error ) {
+	var log = {
+		status: status,
+		action: action,
+		site: site,
+		plugin: plugin
+	};
+
+	debug( 'add in ' + status + ' data:', log );
+	switch ( status ) {
+		case 'error':
+			log.error = error;
+			_errors.push( log );
+			break;
+		case 'inProgress':
+			_inProgress.push( log );
+			debug( 'current in progress:', _inProgress );
+			break;
+		case 'completed':
+			_completed.push( log );
+			debug( 'current completed:', _completed );
+			break;
+	}
+}
+
+function removeLog( log ) {
+	debug( 'removing log:', log );
+	switch ( log.status ) {
+		case 'error':
+			_errors = reject( _errors, log );
+			debug( 'current errors:', _errors );
+			break;
+
+		case 'inProgress':
+			_inProgress = reject( _inProgress, log );
+			debug( 'current in progress:', _inProgress );
+			break;
+
+		case 'completed':
+			_completed = reject( _completed, log );
+			debug( 'current completed:', _completed );
+			break;
+	}
+}
+
+function removeSingleLog( log ) {
+	var index;
+	debug( 'removing log:', log );
+	switch ( log.status ) {
+		case 'error':
+			index = findIndex( _errors, log );
+			pullAt( _errors, index );
+			debug( 'current errors:', _errors );
+			break;
+
+		case 'inProgress':
+			index = findIndex( _inProgress, log );
+			pullAt( _inProgress, index );
+			debug( 'current in progress:', _inProgress );
+			break;
+
+		case 'completed':
+			index = findIndex( _completed, log );
+			pullAt( _completed, index );
+			debug( 'current completed:', _completed );
+			break;
+	}
+}
+
+LogStore = {
+
+	getErrors: function() {
+		return clone( _errors );
+	},
+
+	getInProgress: function() {
+		return clone( _inProgress );
+	},
+
+	getCompleted: function() {
+		return clone( _completed );
+	},
+
+	isInProgressAction: function( siteId, pluginSlug, action ) {
+		var dones = arguments.length;
+		return _inProgress.some( function( log ) {
+			var done = 0;
+			if ( action && isArray( action ) ) {
+				if ( indexOf( action, log.action ) !== -1 ) {
+					done++;
+				}
+			} else if ( action && action === log.action ) {
+				done++;
+			}
+
+			if ( siteId && siteId === log.site.ID ) {
+				done++;
+			}
+
+			if ( pluginSlug && pluginSlug === log.plugin.slug ) {
+				done++;
+			}
+
+			return done === dones;
+		} );
+	},
+
+	emitChange: function() {
+		this.emit( 'change' );
+	}
+};
+
+LogStore.dispatchToken = Dispatcher.register( function( payload ) {
+	var action = payload.action;
+
+	debug( 'register event Type', action.type, payload );
+	switch ( action.type ) {
+		case 'REMOVE_PLUGINS_NOTICES':
+			action.logs.forEach( removeLog );
+			LogStore.emitChange();
+			break;
+		case 'UPDATE_PLUGIN':
+		case 'ACTIVATE_PLUGIN':
+		case 'DEACTIVATE_PLUGIN':
+		case 'ENABLE_AUTOUPDATE_PLUGIN':
+		case 'DISABLE_AUTOUPDATE_PLUGIN':
+		case 'INSTALL_PLUGIN':
+		case 'REMOVE_PLUGIN':
+			addLog( 'inProgress', action.action, action.site, action.plugin );
+			LogStore.emitChange();
+			break;
+		case 'RECEIVE_UPDATED_PLUGIN':
+		case 'RECEIVE_ACTIVATED_PLUGIN':
+		case 'RECEIVE_DEACTIVATED_PLUGIN':
+		case 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN':
+		case 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN':
+		case 'RECEIVE_INSTALLED_PLUGIN':
+		case 'RECEIVE_REMOVE_PLUGIN':
+			removeSingleLog( {
+				status: 'inProgress',
+				action: action.action,
+				site: action.site,
+				plugin: action.plugin
+			} );
+			if ( action.type === 'RECEIVE_ACTIVATED_PLUGIN' ) {
+				if ( ! ( action.data && action.data.active ) && ! action.error ) {
+					action.error = { error: 'broken-plugin' };
+				}
+			}
+
+			if ( action.error && [ 'activation_error', 'deactivation_error' ].indexOf( action.error.error ) === -1 ) {
+				addLog( 'error', action.action, action.site, action.plugin, action.error );
+			} else {
+				addLog( 'completed', action.action, action.site, action.plugin );
+			}
+			LogStore.emitChange();
+			break;
+	}
+} );
+
+// Add the Store to the emitter so we can emit change events.
+emitter( LogStore );
+
+module.exports = LogStore;

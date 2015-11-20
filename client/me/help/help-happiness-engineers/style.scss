@@ -1,0 +1,36 @@
+.help-happiness-engineers {
+	margin: 4px 0px 64px 0px;
+	@include breakpoint( ">660px" ) {
+		margin: 24px 0px 64px 0px;
+	}
+}
+
+.help-happiness-engineers .form-section-heading {
+	@include breakpoint( "<660px" ) {
+		font: 300 16px/21px $sans;
+	}
+}
+
+.help-happiness-engineers__description {
+	margin: -16px 0px 12px 0px;
+	font: 11px/16px $sans;
+	color: darken( $gray, 10% );
+	@include breakpoint( ">660px" ) {
+		margin: -16px 0px 20px 0px;
+		font: 14px/21px $sans;
+	}
+}
+
+.help-happiness-engineers__tray {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	width: calc(100% + 10px);
+	height: 42px;
+	overflow: hidden;
+}
+
+.help-happiness-engineers__tray .gravatar {
+	margin-right: 10px;
+	height: 42px;
+}

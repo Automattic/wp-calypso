@@ -1,0 +1,62 @@
+.help-contact-confirmation {
+	text-align: center;
+	display: table;
+	width: 100%;
+
+	.gridicon.gridicons-checkmark-circle {
+		color: $alert-green;
+	}
+
+	.gridicon.gridicons-notice {
+		color: $alert-red;
+	}
+
+	.form-section-heading {
+		margin: 13px 0px 7px 0px;
+
+		@include breakpoint( "<660px" ) {
+			margin: 7px 0px 3px 0px;
+			font-size: 24px;
+			line-height: 32px;
+		}
+	}
+
+	min-height: calc( 100vh - 150px );
+
+	@include breakpoint( ">660px" ) {
+		min-height: auto;
+		height: 556px;
+	}
+}
+
+.help-contact-confirmation__contents {
+	display: table-cell;
+	vertical-align: middle;
+
+	@include breakpoint( ">660px" ) {
+		display: block;
+		margin-top: 100px;
+	}
+}
+
+.help-contact-confirmation__large-gridicon {
+	display: none;
+}
+
+@include breakpoint( ">660px" ) {
+	.help-contact-confirmation__large-gridicon {
+		display: block;
+	}
+
+	.help-contact-confirmation__small-gridicon {
+		display: none;
+	}
+}
+
+.help-contact-confirmation__message {
+	font: 14px/21px $sans;
+	color: $gray;
+	max-width: 340px;
+	display: inline-block;
+	margin-bottom: 0px;
+}

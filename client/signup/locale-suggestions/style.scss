@@ -1,0 +1,15 @@
+.locale-suggestions {
+	margin-top: 20px;
+}
+
+.locale-suggestions__list-item {
+	margin: 0 0 0.5em 0;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.locale-suggestions__locale-link {
+	margin: 0 5px;
+}

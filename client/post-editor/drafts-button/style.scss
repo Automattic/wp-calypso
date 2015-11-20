@@ -1,0 +1,10 @@
+.drafts-button {
+	color: $gray-dark;
+	cursor: pointer;
+	font-size: 11px;
+	text-transform: uppercase;
+
+	.count {
+		margin-left: 8px;
+	}
+}

@@ -1,0 +1,8 @@
+.reading-time {
+	color: $gray;
+	font-weight: 400;
+}
+
+.reading-time__approx {
+	color: lighten( $gray, 10 );
+}

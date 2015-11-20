@@ -1,0 +1,290 @@
+// domain search
+
+.domain-search__content {
+	overflow: visible;
+	padding: 0 0 20px 0;
+	position: static;
+}
+
+.domain-search-page-wrapper h2 {
+	@extend %heading;
+	margin: 0 0 10px 0;
+}
+
+.domain-search-page-wrapper h3 {
+	color: $gray-dark;
+	font-size: 15px;
+	word-wrap: break-word;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 17px;
+	}
+}
+
+// site redirect step
+
+.site-redirect-step {
+	padding: 0;
+
+	fieldset {
+		clear: left;
+	}
+
+	form.map-domain-step__form {
+		padding: 20px;
+		margin-bottom: 9px;
+	}
+
+	p {
+		color: $gray-dark;
+		font-size: 13px;
+		font-weight: 600;
+		margin-bottom: 0;
+		opacity: 0.7;
+	}
+
+	.domain-product-price {
+		@include breakpoint( ">660px" ) {
+			float: right;
+			margin-top: -5px;
+		}
+	}
+}
+
+.site-redirect-step__domain-description {
+	@include breakpoint( ">660px" ) {
+		float: left;
+		margin-bottom: 20px;
+	}
+}
+
+input.site-redirect-step__external-domain {
+	@include breakpoint( ">660px" ) {
+		float: left;
+		width: calc( 100% - 90px );
+	}
+}
+
+.site-redirect-step__go {
+	margin: 10px 0 0 0;
+	width: 100%;
+
+	@include breakpoint( ">660px" ) {
+		float: right;
+		margin: 0;
+		width: 80px;
+	}
+}
+
+//
+// Google Apps
+//
+
+// The `form` selector adds specificity to override the padding from the
+// `.card` class.
+form.google-apps-dialog {
+	padding: 0;
+
+	.google-apps-dialog__product-details {
+		background: $gray-light;
+		padding: 24px 0;
+		text-align: center;
+	}
+
+	.google-apps-dialog__product-name {
+		color: #888;
+		font-size: 25px;
+		font-weight: 100;
+		margin: 0;
+	}
+
+	.google-apps-dialog__product-logo {
+		background: url('/calypso/images/upgrades/google-apps-logo.png');
+		background-repeat: no-repeat;
+		background-size: contain;
+		display: inline-block;
+		height: 34px;
+		margin: 2px 7px 0 0;
+		text-indent: -999999px;
+		vertical-align: text-top;
+		width: 102px;
+	}
+
+	.google-apps-dialog__header {
+		padding: 18px;
+		text-align: center;
+
+		.google-apps-dialog__title {
+			color: $gray-dark;
+			font-weight: 600;
+			margin: 0;
+		}
+	}
+
+	.google-apps-dialog__no-setup-required {
+		color: lighten( $gray-dark, 20% );
+	}
+
+	.google-apps-dialog__file-storage,
+	.google-apps-dialog__professional-email {
+		color: darken( $gray, 10% );
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 130%;
+	}
+
+	.google-apps-dialog__professional-email {
+		border-bottom: 1px solid darken( $gray-light, 10% );
+		display: inline-block;
+		margin-bottom: 8px;
+		padding-bottom: 12px;
+	}
+
+	.google-apps-dialog__price-per-user {
+		color: $blue-medium;
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	.google-apps-dialog__billing-period {
+		color: lighten( $gray, 10% );
+		font-size: 12px;
+		text-transform: uppercase;
+	}
+
+	.notice li {
+		list-style: disc;
+	}
+}
+
+.google-apps-dialog__users-enter {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-in-out;
+}
+
+
+.google-apps-dialog__users-enter.google-apps-dialog__users-enter-active {
+	max-height: 300px;
+}
+
+.google-apps-dialog__users {
+	border-bottom: 1px solid darken( $gray-light, 5% );
+	display: block;
+	padding: 0 30px;
+
+	h4 {
+		color: #7799ae;
+		margin-top: 30px;
+		margin-bottom: 4px;
+	}
+
+	.google-apps-dialog__user-fields {
+        animation: google-apps-user-show 0.3s ease-in-out;
+		margin-bottom: 20px;
+	}
+
+	.google-apps-dialog__user-email {
+		margin-bottom: 9px;
+	}
+
+	.google-apps-dialog__user-first-name {
+		margin-bottom: 9px;
+
+		@include breakpoint( ">660px" ) {
+			display: inline-block;
+			margin: 0 4px 0 0;
+			width: calc( 50% - 4px );
+		}
+	}
+
+	.google-apps-dialog__user-last-name {
+		@include breakpoint( ">660px" ) {
+			display: inline-block;
+			margin: 0 0 0 5px;
+			width: calc( 50% - 5px );
+		}
+	}
+
+	.google-apps-dialog__add-another-user-button {
+		border: 2px dashed lighten( $gray, 20% );
+		color: $gray;
+		cursor: pointer;
+		margin: 0 0 30px;
+		padding: 12px 18px 12px 45px;
+		position: relative;
+		text-align: left;
+		width: 100%;
+
+		&:before {
+			position: absolute;
+				left: 15px;
+				top: 6px;
+			@include noticon( '\f8b3', 60px );
+		}
+	}
+}
+
+@keyframes "google-apps-user-show" {
+  0% {
+    max-height: 0px;
+  }
+
+  100% {
+    max-height: 150px;
+  }
+}
+
+.google-apps-dialog__footer {
+	padding: 30px;
+	@include clear-fix;
+
+	@include breakpoint( ">660px" ) {
+		padding: 18px;
+	}
+
+	.google-apps-dialog__cancel-link {
+		color: $blue-medium;
+		display: block;
+		font-size: 13px;
+		text-align: center;
+
+		@include breakpoint( ">660px" ) {
+			float: left;
+			line-height: 38px;
+		}
+	}
+
+	.google-apps-dialog__continue-button {
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 18px;
+			width: 100%;
+		}
+
+		@include breakpoint( ">660px" ) {
+			float: right;
+		}
+	}
+
+	.button {
+		width: 100%;
+		margin-top: 10px;
+
+		@include breakpoint( ">660px" ) {
+			width: auto;
+			margin: 0 auto auto 10px;
+		}
+
+		&:first-of-type {
+			margin-left: 0;
+			margin-top: 0;
+			&.is-primary {
+				margin-top: 10px;
+
+				@include breakpoint( ">660px" ) {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,16 @@
+.plugin-site-business.card.is-compact {
+	padding: 8px;
+
+	.site__content {
+		padding: 0;
+	}
+
+	.plugin-site-business__embed-action{
+		position: absolute;
+			top: 0;
+			right: 8px;
+		height: 100%;
+		display: flex;
+		align-items: center;
+	}
+}

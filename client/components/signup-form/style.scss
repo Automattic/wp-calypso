@@ -1,0 +1,20 @@
+/*rtl:ignore*/
+.signup-form__input {
+	direction: ltr;
+}
+
+.signup-form .logged-out-form__footer {
+	margin-top: 10px;
+}
+
+.signup-form__terms-of-service-link {
+	font-size: 11px;
+	margin: 0 0 20px 0;
+	text-align: center;
+
+	a {
+		@include breakpoint( ">480px" ) {
+			white-space: pre;
+		}
+	}
+}

@@ -1,0 +1,97 @@
+/**
+ * External dependencies
+ */
+import React, { Component, PropTypes } from 'react';
+
+/**
+ * Internal dependecies
+ */
+import shortcodeUtils from 'lib/shortcode';
+import GalleryShortcode from 'components/gallery-shortcode';
+
+class GalleryView extends Component {
+
+	static match( content ) {
+		const match = shortcodeUtils.next( 'gallery', content );
+
+		if ( match ) {
+			return {
+				index: match.index,
+				content: match.content,
+				options: {
+					shortcode: match.shortcode
+				}
+			};
+		}
+	}
+
+	static serialize( content ) {
+		return encodeURIComponent( content );
+	}
+
+	static edit( editor, content ) {
+		editor.execCommand( 'wpcomEditGallery', content );
+	}
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			wrapper: null
+		};
+	}
+
+	componentDidMount() {
+		this.setState( {
+			wrapper: React.findDOMNode( this.refs.view )
+		} );
+
+		if ( window.MutationObserver ) {
+			this.observer = new MutationObserver( this.props.onResize );
+			this.observer.observe( React.findDOMNode( this.refs.view ), {
+				attributes: true,
+				childList: true,
+				subtree: true
+			} );
+		}
+	}
+
+	componentWillUnmount() {
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
+	}
+
+	renderShortcode() {
+		if ( ! this.state.wrapper ) {
+			return;
+		}
+
+		return (
+			<GalleryShortcode siteId={ this.props.siteId } width={ this.state.wrapper.clientWidth }>
+				{ this.props.content }
+			</GalleryShortcode>
+		);
+	}
+
+	render() {
+		return (
+			<div ref="view" className="wpview-content wpview-type-gallery">
+				{ this.renderShortcode() }
+			</div>
+		);
+	}
+
+}
+
+GalleryView.propTypes = {
+	siteId: PropTypes.number,
+	content: PropTypes.string,
+	onResize: PropTypes.func
+};
+
+GalleryView.defaultProps = {
+	onResize: () => {}
+};
+
+export default GalleryView;

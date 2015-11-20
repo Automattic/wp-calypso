@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+NODE_ENV="test"
+
+for makefile in "$@"; do
+	cat "$makefile" | grep test: > /dev/null
+	if [[ $? -eq 0 ]]; then
+		make -C "$(dirname "$makefile")" --no-print-directory test 2>&1
+	fi
+done

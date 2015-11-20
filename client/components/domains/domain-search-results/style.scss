@@ -1,0 +1,24 @@
+.domain-search-results__domain-availability {
+	.notice.is-success {
+		margin: 0;
+	}
+
+	.domain-suggestion.card {
+		border: solid 2px $alert-green;
+		box-shadow: none;
+		opacity: 1;
+		position: static;
+		top: auto;
+		margin-bottom: 20px;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 30px;
+		}
+	}
+}
+
+.map-domain-step {
+	.domain-search-results__domain-availability {
+		margin-top: 30px;
+	}
+}

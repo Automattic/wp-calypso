@@ -1,0 +1,84 @@
+.plan-header .plan-price {
+	color: $gray-dark;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	text-align: right;
+}
+
+.plan-price__billing-period {
+	font-size: 12px;
+	font-style: italic;
+	color: darken( $gray, 10% );
+}
+
+.plan-price.is-placeholder {
+	@include placeholder( 23% );
+}
+
+.plan-price__discounted {
+	color: $gray;
+	text-decoration: line-through;
+}
+
+.plans-compare {
+	.plan-price {
+		font-size: 10px;
+		padding: 1em 0;
+
+		@include breakpoint( ">480px" ) {
+			font-size: 12px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			font-size: 16px;
+		}
+	}
+
+	.plan-price__billing-period {
+		display: block;
+		opacity: .7;
+	}
+}
+
+@mixin plans-collapsed() {
+	.plan-header .plan-price {
+		display: inline-block;
+		padding: 0 0 0 40px;
+	}
+
+	.plan-price__billing-period {
+		margin-left: 3px;
+	}
+}
+
+@mixin plans-in-three-columns() {
+	.plan-header .plan-price {
+		text-align: center;
+		font-size: 18px;
+	}
+
+	.plan-price__billing-period {
+		display: block;
+	}
+}
+
+.plans.has-sidebar {
+	@include breakpoint( "<960px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.plans.has-no-sidebar {
+	@include breakpoint( "<660px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
+}

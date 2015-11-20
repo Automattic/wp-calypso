@@ -1,0 +1,13 @@
+.credit-card-delete {
+	position: relative;
+
+	.credit-card-delete__button {
+		position: absolute;
+			right: 15px;
+			top: 15px;
+	}
+
+	.stored-card {
+		padding-right: 120px;
+	}
+}

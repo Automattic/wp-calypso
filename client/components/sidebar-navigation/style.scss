@@ -1,0 +1,13 @@
+/**
+ * Sidebar Navigation Header in Sections
+ */
+.current-section {
+	a p {
+		font-size: 9px;
+		margin: 3px 0 -4px;
+	}
+
+	.current-section__section-title {
+		font-size: 18px;
+	}
+}

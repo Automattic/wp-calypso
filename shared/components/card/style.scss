@@ -1,0 +1,56 @@
+.card {
+	display: block;
+	position: relative;
+	margin: 0 auto 10px auto;
+	padding: 16px;
+	box-sizing: border-box;
+	background: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+
+	@include clear-fix;
+
+	@include breakpoint( ">480px" ) {
+		margin-bottom: 16px;
+		padding: 24px;
+	}
+
+	// Compact Card
+	&.is-compact {
+		margin-bottom: 1px;
+
+		@include breakpoint( ">480px" ) {
+			margin-bottom: 1px;
+			padding: 16px 24px;
+		}
+	}
+
+	&.is-card-link {
+		padding-right: 48px;
+	}
+}
+
+// Clickable Card
+.card__link-indicator {
+	color: lighten( $gray, 20% );
+	display: block;
+	height: 100%;
+	position: absolute;
+		top: 0;
+		right: 16px;
+}
+
+a.card:hover {
+	.card__link-indicator {
+		color: lighten( $gray, 10% );
+	}
+}
+
+a.card:focus {
+	outline: 0;
+
+	.card__link-indicator {
+		color: $link-highlight;
+	}
+}
+

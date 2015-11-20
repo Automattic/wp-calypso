@@ -1,0 +1,95 @@
+.follow-button {
+	position: relative;
+	background: inherit;
+	border: none;
+	border-radius: 0;
+	color: darken( $gray, 10% );
+	cursor: pointer;
+	display: block;
+	font-size: 14px;
+	font-weight: 400;
+	margin: 0;
+	padding: 8px 16px;
+	text-align: left;
+
+	&:first-child {
+		margin-top: 5px;
+	}
+
+	&:hover,
+	&:focus {
+		border: 0;
+		box-shadow: none;
+	}
+
+	&:last-child {
+		margin-bottom: 5px;
+	}
+
+	&::-moz-focus-inner {
+		border: 0;
+	}
+
+	// Menu Items with Icons
+	&.has-icon {
+		padding-left: 42px;
+	}
+
+	.gridicon__follow {
+		opacity: 1;
+	}
+
+	.gridicon__following {
+		opacity: 0;
+		pointer-events: none;
+		transform: rotate( 180deg ) scale( 3 );
+	}
+
+	.gridicon__unfollow {
+		display: none;
+	}
+
+	&.is-following {
+		color: $alert-green;
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.gridicon__follow {
+			opacity: 0;
+			pointer-events: none;
+			transform: rotate( -180deg ) scale( 0.5 );
+		}
+
+		.gridicon__following {
+			opacity: 1;
+			pointer-events: auto;
+			transform: rotate( 0 ) scale( 1 );
+		}
+	}
+
+	&:hover {
+		color: $alert-green;
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		&.is-following {
+			.gridicon {
+				fill: lighten( $gray, 10 );
+			}
+
+			color: lighten( $gray, 10 );
+
+		}
+	}
+
+	.gridicon {
+		position: absolute;
+		top: 8px;
+		left: 13px;
+		fill: lighten( $gray, 10 );
+		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+}

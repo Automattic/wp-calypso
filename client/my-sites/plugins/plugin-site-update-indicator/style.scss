@@ -1,0 +1,13 @@
+.plugin-site-update-indicator {
+	line-height: 32px;
+	vertical-align: bottom;
+
+	.gridicon {
+		color: $alert-yellow;
+	}
+}
+
+.plugin-site-update-indicator__button {
+	margin-top: 8px;
+	float: left;
+}

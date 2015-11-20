@@ -1,0 +1,16 @@
+.plans {
+	.compare-plans-link {
+		clear: both;
+		display: block;
+		font-size: 12px;
+		margin: 20px 0 0 0;
+		text-align: center;
+
+		&:before {
+			@include noticon( '\f425', 16px );
+			color: $blue-medium;
+			vertical-align: middle;
+			margin: -2px 5px 0 0;
+		}
+	}
+}

@@ -1,0 +1,25 @@
+.credit-card-number-input {
+	input {
+		background-image: url( '/calypso/images/upgrades/cc-placeholder.svg' );
+		background-position: calc(100% - 10px) center;
+		background-repeat: no-repeat;
+		background-size: 32px auto;
+		padding-right: 50px;
+	}
+
+	.amex input {
+		background-image: url( '/calypso/images/upgrades/cc-amex.svg' );
+	}
+
+	.discover input {
+		background-image: url( '/calypso/images/upgrades/cc-discover.svg' );
+	}
+
+	.mastercard input {
+		background-image: url( '/calypso/images/upgrades/cc-mastercard.svg' );
+	}
+
+	.visa input {
+		background-image: url( '/calypso/images/upgrades/cc-visa.svg' );
+	}
+}

@@ -1,0 +1,41 @@
+@import 'search';
+
+.post-selector .placeholder-text {
+	color: transparent;
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.post-selector .is-empty-content {
+	font-size: 12px;
+	font-style: italic;
+}
+
+.post-selector__list {
+	padding: 0;
+	font-size: 14px;
+}
+
+.post-selector__nested-list {
+	margin-left: 1em;
+}
+
+.post-selector__list-item {
+	padding: 2px 0;
+
+	input[type=radio] + label,
+	input[type=checkbox] + label {
+		display: block;
+		margin-left: 24px;
+		transition: all 200ms ease-out;
+		color: $gray-dark;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
+
+	input[type=checkbox] {
+		margin-right: 8px;
+	}
+}

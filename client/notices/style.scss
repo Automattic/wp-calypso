@@ -1,0 +1,293 @@
+.notice {
+	display: flex;
+		flex-wrap: wrap;
+	position: relative;
+	margin-bottom: 24px;
+	border-radius: 1px;
+	background: $gray-light;
+	box-sizing: border-box;
+	font-size: 14px;
+	line-height: 1.4285;
+	animation: appear .3s ease-in-out;
+
+	.notice__text {
+		flex-grow: 1;
+		flex-basis: 100px;
+		max-width: 680px; // For line-length sanity
+
+		padding: 11px 24px;
+
+		@include breakpoint( ">660px" ) {
+			padding: 13px 48px;
+		}
+	}
+
+	@include breakpoint( ">660px" ) {
+		font-size: inherit;
+
+		&::before {
+			@extend %noticon;
+			content: '\f456';
+			position: absolute;
+				top: 26px;
+				left: 20px;
+			margin: -12px 0px 0 -8px;
+			font-size: 24px;
+			line-height: 1;
+		}
+	}
+
+	// Success!
+	&.is-success {
+		background: $alert-green;
+
+		@include breakpoint( ">660px" ) {
+			&:before {
+				content: '\f418';
+			}
+		}
+	}
+
+	// Warning
+	&.is-warning {
+		background: $alert-yellow;
+
+		&:before {
+		}
+	}
+
+	// Error! OHNO!
+	&.is-error {
+		background: $alert-red;
+
+		&:before {
+		}
+	}
+
+	// Information
+	&.is-info {
+		background: $blue-wordpress;
+
+		@include breakpoint( ">660px" ) {
+			&:before {
+				content: '\f455';
+			}
+		}
+	}
+
+	// Email Verification Notice
+	&.is-email-verification {
+		background: $white;
+		margin-left: 273px;
+		margin-bottom: 0;
+		box-shadow: 0 0 0 1px lighten( $gray, 20 );
+
+		// The signup screens don't have the sidebar
+		.is-section-signup & {
+			margin-left: 0;
+		}
+	}
+}
+
+// General styles for html elements
+// rendered inside a notice
+.notice {
+
+	a,
+	button.is-link {
+		line-height: 1.4285;
+		font-weight: 600;
+
+		// Medium text underline hack
+		background-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, #fff 50%);
+		background-repeat: repeat-x;
+		background-size: 2px 2px;
+		background-position: 0 1.14em; // ~18/15
+
+		@media not all, only screen and (min-resolution: 2dppx), only screen and (-webkit-min-device-pixel-ratio: 2) {
+			background-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, #fff 75%);
+			background-repeat: repeat-x;
+		}
+	}
+
+	ul {
+		margin-bottom: 0;
+		margin-left: 0;
+	}
+
+	li {
+		margin-left: 2em;
+		margin-top: 0.5em;
+	}
+
+	p {
+		margin-bottom: 0;
+		margin-top: 0.5em;
+
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+
+	&.is-success, // TODO fix this in pre-oss to be less bad
+	&.is-error,
+	&.is-warning,
+	&.is-info {
+		color: $white;
+
+		a,
+		button.is-link {
+			color: rgba( $white, 0.85 );
+
+			&:hover {
+				color: $white;
+			}
+		}
+
+		.notice__dismiss {
+			color: $white;
+		}
+	}
+}
+
+.notice__button {
+	cursor: pointer;
+	margin-left: 0.428em;
+}
+
+// "X" for dismissing a notice
+.notice__dismiss {
+	display: flex;
+	padding: 9px 16px;
+	cursor: pointer;
+	color: $gray;
+
+	@include breakpoint( ">660px" ) {
+		padding: 13px 16px;
+	}
+
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+	}
+
+	.notice & {
+		color: $gray;
+		opacity: 0.85;
+
+		&:hover,
+		&:focus {
+			opacity: 1;
+		}
+	}
+}
+
+// Compact notices
+.notice.is-compact {
+	margin-bottom: 8px;
+	font-size: 14px;
+
+	.notice__text {
+		padding: 11px 24px 11px 16px;
+	}
+
+	&::before {
+		display: none;
+	}
+
+	.notice__dismiss {
+		padding: 9px 16px;
+	}
+
+	a.notice__arrow-link .gridicon {
+		width: 18px;
+		height: 18px;
+	}
+}
+
+// ArrowLink sub-component
+// specificity for general `a` elements within notice is too great
+.notice a.notice__arrow-link {
+	background: rgba( 0, 0, 0, 0.2 );
+	box-sizing: border-box;
+	color: $white;
+	cursor: pointer;
+	display: flex;
+		align-items: center;
+	font-weight: 400;
+	line-height: 1.2;
+	margin-left: auto; // forces the element to the right;
+	padding: 13px 10px 13px 16px;
+	text-decoration: none;
+	white-space: nowrap;
+
+	.gridicon {
+		margin-left: 8px;
+	}
+
+	&:hover,
+	&:focus {
+		background: rgba( 255, 255, 255, 0.2 );
+	}
+}
+
+.notices-list {
+	@include breakpoint( ">660px" ) {
+		margin-left: 273px;
+	}
+
+	.notice {
+		margin-bottom: 0;
+	}
+
+	&.is-pinned {
+		width: 100%;
+			min-width: 320px;
+			max-width: 960px;
+		z-index: 180;
+		position: fixed;
+			top: 47px;
+
+		.notice {
+			z-index: 180;
+		}
+
+		@include breakpoint( "<480px" ) {
+			top: 0;
+			left: 0;
+		}
+	}
+}
+
+.notices-list__whitespace {
+	height: 71px;
+	width: 100%;
+	display: block;
+}
+
+.site-notice {
+	display: block;
+	line-height: 1.8;
+	overflow: hidden;
+	padding: 8px 18px 8px 18px;
+	text-overflow: ellipsis;
+	color: $white;
+
+	a {
+		color: rgba( $white, 0.85 );
+		text-decoration: underline;
+		font-weight: 600;
+	}
+
+	&.is-info {
+		background-color: $blue-wordpress;
+	}
+
+	&.is-warning {
+		background-color: $alert-yellow;
+	}
+
+	&.is-error {
+		background-color: $alert-red;
+	}
+}

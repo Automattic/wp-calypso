@@ -1,0 +1,84 @@
+// Most popular Day and Time section
+
+.stats-most-popular {
+	clear: both;
+}
+
+.stats-module.is-loading .stats-popular,
+.is-empty .stats-popular {
+	min-height: 150px;
+
+	.stats-popular__item {
+		display: none;
+	}
+}
+
+.stats-popular {
+	position: relative;
+	width: 80%;
+	margin: 0 auto;
+
+	@include breakpoint( "<480px" ) {
+		width: 100%;
+	}
+}
+
+.stats-popular__item {
+	width: 50%;
+	float: left;
+	text-align: center;
+	padding: 20px 0;
+	color: $gray-dark;
+
+	@include breakpoint ("<960px") {
+		width: 100%;
+
+		&:first-child {
+			padding-bottom: 0;
+		}
+	}
+}
+
+.stats-popular__label {
+	text-transform: uppercase;
+	font-size: 11px;
+	letter-spacing: 0.1em;
+}
+
+.stats-popular__percentage {
+	color: $gray;
+	display: block;
+	margin-top: -1em;
+	font-size: 14px;
+	letter-spacing: 0.01em;
+}
+
+.stats-popular__day,
+.stats-popular__hour {
+	display: block;
+}
+
+.stats-popular__day,
+.stats-popular__hour {
+	color: $gray-dark;
+	font-size: 20px;
+	margin: 6px 0 22px;
+}
+
+.stats-popular__empty {
+	position: absolute;
+		top: 40px;
+		right: 0;
+		left: 0;
+	text-align: center;
+	line-height: 24px;
+	clear: both;
+	z-index: 1;
+
+	.notice {
+		box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px $gray-light;
+		color: $gray-dark;
+		display: inline-block;
+		padding: 15px 45px;
+	}
+}

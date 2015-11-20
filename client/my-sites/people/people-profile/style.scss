@@ -1,0 +1,129 @@
+.people-profile {
+	position: relative;
+	@include clear-fix;
+
+	&.is-placeholder {
+		.people-profile__username,
+		.people-profile__login > span,
+		.people-profile__role-badge,
+		.gravatar.is-placeholder {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.people-profile__role-badge {
+			border: none;
+		}
+
+		.people-profile__username {
+			width: 36%;
+		}
+	}
+}
+
+.people-profile__gravatar {
+	float: left;
+}
+
+.people-profile__gravatar .gravatar {
+	width: 56px !important;
+	height: 56px !important;
+
+	@include breakpoint( '>480px' ) {
+		width: 72px !important;
+		height: 72px !important;
+	}
+}
+
+.people-profile__detail {
+	margin-left: 80px;
+
+	@include breakpoint( '>480px' ) {
+		margin-left: 96px;
+	}
+}
+
+.people-profile__username {
+	font-family: $serif;
+	color: $gray-dark;
+	font-size: 16px;
+	font-weight: 700;
+	white-space: pre;
+	text-overflow: clip;
+	overflow: hidden;
+
+	@include breakpoint( '>480px' ) {
+		font-size: 21px;
+	}
+
+	&:before {
+		@include long-content-fade( $color : $white );
+	}
+}
+
+.people-profile__login {
+	color: $gray-dark;
+	font-size: 13px;
+
+	@include breakpoint( '>480px' ) {
+		font-size: 15px;
+		margin-top: -3px;
+	}
+}
+
+.people-profile__badges {
+	@include clear-fix;
+	margin-top: 8px;
+}
+
+.people-profile__subscribed {
+	color: $gray;
+	font-size: 11px;
+	margin-top: 4px;
+	text-transform: uppercase;
+}
+
+.people-profile__role-badge {
+	float: left;
+	background: $white;
+	border: 1px solid $gray;
+	border-radius: 2px;
+	color: $gray;
+	display: inline-block;
+	font-size: 11px;
+	margin-left: 8px;
+	padding: 2px 6px 2px 6px;
+	white-space: pre;
+
+	&:first-child {
+		margin-left: 0;
+	}
+
+	&.role-super-admin {
+		background: $orange-fire;
+		border: none;
+		color: $white;
+	}
+
+	&.role-administrator,
+	&.role-admin-owner {
+		background: $gray-dark;
+		border: none;
+		color: $white;
+	}
+
+
+	&.role-editor {
+		background: $blue-dark;
+		border: none;
+		color: $white;
+	}
+
+	&.role-author,
+	&.role-contributor {
+		background: $blue-wordpress;
+		border: none;
+		color: $white;
+	}
+}

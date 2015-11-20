@@ -1,0 +1,28 @@
+.progress-bar {
+	width: 100%;
+	display: inline-block;
+	position: relative;
+	height: 9px;
+	background-color: lighten( $gray, 20% );
+	border-radius: 4.5px;
+}
+
+.progress-bar__progress {
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	background-color: lighten( $blue-dark, 10% );
+	border-radius: 4.5px;
+}
+
+/* Percentage bar */
+.percentage-bar {
+	border-radius: 0;
+	height: 8px;
+	width: 150px;
+	.progress-bar__progress{
+		border-radius: 0;
+	}
+}

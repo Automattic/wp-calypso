@@ -1,0 +1,65 @@
+.profile-link {
+	margin-bottom: 15px;
+	position: relative;
+	padding-left: 60px;
+	height: 50px;
+
+	&.is-placeholder {
+		.profile-link__image,
+		.profile-link__title,
+		.profile-link__url,
+		.profile-link__remove {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.profile-link__title {
+			height: 15px;
+		}
+
+		.profile-link__url {
+			height: 12px;
+		}
+
+	}
+
+	.action-remove {
+		float: none;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+}
+
+.profile-link__image {
+	display: block;
+	height: 50px;
+	width: 50px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.profile-link__link {
+	text-decoration: none;
+}
+
+.profile-link__title {
+	display: block;
+	font-size: 15px;
+	text-decoration: underline;
+	font-weight: bold;
+	overflow: hidden;
+	white-space: nowrap;
+
+	&:after {
+		@include long-content-fade( $size: 45% );
+	}
+}
+
+.profile-link__url {
+	display: block;
+	font-size: 12px;
+	color: $gray;
+}

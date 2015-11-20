@@ -1,0 +1,40 @@
+.editor-sharing__publicize-options {
+	&.has-connections,
+	&.has-add-option {
+		margin-bottom: 20px;
+	}
+
+	.add-new-button__text {
+		padding-right: 4px;
+	}
+
+	.editor-sharing__external-link-indicator {
+		float: right;
+		color: $gray;
+	}
+}
+
+.editor-sharing__add-connection {
+	position: relative;
+	display: block;
+	padding-left: 20px;
+	margin-bottom: 16px;
+}
+
+.editor-sharing__add-connection-icon {
+	position: absolute;
+		top: 50%;
+		left: 0;
+	transform: translateY( -50% );
+}
+
+.editor-sharing__publicize-disabled {
+	text-align: center;
+	span {
+		display: block;
+	}
+}
+
+.editor-sharing__jetpack-modules-button {
+	margin-top: 10px;
+}

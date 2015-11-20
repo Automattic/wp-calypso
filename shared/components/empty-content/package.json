@@ -1,0 +1,6 @@
+{
+  "name": "manage empty content",
+  "version": "0.0.0",
+  "private": true,
+  "main": "empty-content.jsx"
+}

@@ -1,0 +1,31 @@
+.flag {
+	border-radius: 2px;
+	color: $white;
+	display: inline-block;
+	font-size: 10px;
+	padding: 2px 6px 2px 6px;
+	text-decoration: none;
+	text-transform: uppercase;
+
+	.noticon {
+		margin-right: 2px;
+		vertical-align: middle;
+	}
+
+	.noticon-warning {
+		font-size: 12px;
+		margin-right: 5px;
+	}
+
+	&.is-success {
+		background: $alert-green;
+	}
+
+	&.is-warning {
+		background: $alert-yellow;
+	}
+
+	&.is-error {
+		background: $alert-red;
+	}
+}

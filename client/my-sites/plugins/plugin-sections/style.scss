@@ -1,0 +1,97 @@
+.plugin-sections__content {
+	position: relative;
+}
+
+.plugin-sections__content.trimmed {
+	overflow: hidden;
+	max-height: 150px;
+}
+
+.plugin-sections__content {
+	font-family: $sans;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 21px;
+	word-wrap: break-word;
+	hyphens: auto;
+}
+
+.plugin-sections__content {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 16px;
+	}
+	h1 {
+		font-size: 32px;
+	}
+	h2 {
+		font-size: 24px;
+	}
+	h3 {
+		font-size: 21px;
+	}
+	li {
+		margin-bottom: 8px;
+	}
+	a {
+		word-break: break-all;
+	}
+}
+
+.plugin-sections__read-more {
+	text-align: center;
+}
+
+.plugin-sections__read-more-link {
+	display: block;
+	position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	width: 100%;
+	padding-top: 12px;
+	padding-bottom: 16px;
+	background: $white;
+	color: $gray;
+	cursor: pointer;
+	font-size: 12px;
+	text-transform: uppercase;
+
+	&:focus {
+		.plugin-sections__read-more-text {
+			color: $blue-wordpress;
+			outline: solid $gray 1px;
+		}
+	}
+	&:after {
+		position: absolute;
+			left: 0;
+			bottom: 100%;
+		content: '';
+		width: 100%;
+		height: 44px;
+		background: linear-gradient(
+			to bottom,
+			rgba( 255, 255, 255, 0 ),
+			rgba( 255, 255, 255, 1 ) );
+	}
+}
+
+.plugin-sections__read-more-text {
+	padding: 8px;
+
+	&:before {
+		@include noticon( '\f431', 16px );
+
+		position: absolute;
+		top: 22px;
+		left: 50%;
+		margin-left: -8px;
+	}
+}

@@ -1,0 +1,21 @@
+.user {
+	&.is-placeholder {
+		.user__name {
+			animation: pulse-light 0.8s ease-in-out infinite;
+			background: lighten( $gray, 20% );
+			display: inline-block;
+			height: 14px;
+			width: 100px;
+			position: relative;
+				top: 3px;
+		}
+	}
+}
+.user .gravatar {
+	vertical-align: middle;
+}
+
+.user__name {
+	margin: 0 8px;
+	line-height: 26px;
+}

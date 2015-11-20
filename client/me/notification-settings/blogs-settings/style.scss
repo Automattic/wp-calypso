@@ -1,0 +1,128 @@
+%notification-settings-blog-settings-flexbox {
+	display: flex;
+	flex: 0 0 auto;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.notification-settings-blog-settings,
+.notification-settings-blog-settings-placeholder {
+	&.is-expanded {
+		margin-top: 16px;
+	}
+
+	&.card {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
+
+.notification-settings-blog-settings-header,
+.notification-settings-blog-settings-placeholder__header {
+	display: flex;
+	color: $gray;
+
+	@include breakpoint( ">480px" ) {
+		cursor: pointer;
+	}
+
+	.site__content {
+		padding-left: 0;
+	}
+}
+
+.notification-settings-blog-settings-header__legend {
+	@extend %notification-settings-blog-settings-flexbox;
+	margin-right: 10px;
+}
+
+.notification-settings-blog-settings-header__expand {
+	@extend %notification-settings-blog-settings-flexbox;
+	display: none;
+	color: lighten( $gray, 30% );
+
+	@include breakpoint( ">480px" ) {
+		display: flex;
+	}
+}
+
+.notification-settings-blog-settings-placeholder__blog {
+	box-sizing: border-box;
+	display: flex;
+	flex: 1 0 auto;
+	justify-content: space-between;
+	padding: 0;
+	position: relative;
+}
+
+.notification-settings-blog-settings-placeholder__blog__content {
+	border-radius: 2px;
+	display: flex;
+	justify-content: space-between;
+	overflow: hidden;
+	padding: 16px 16px 16px 0;
+	position: relative;
+	width: 100%;
+}
+
+.notification-settings-blog-settings-placeholder__blog__content__icon {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, 30% );
+	position: relative;
+	background: lighten( $gray, 20% );
+	border: 1px solid white;
+	height: 32px;
+	width: 32px;
+	line-height: 32px;
+	overflow: hidden;
+	align-self: center;
+	margin-right: 12px;
+}
+
+.notification-settings-blog-settings-placeholder__blog__content__icon__noticon {
+	color: #fff;
+	font-size: 32px;
+	line-height: 32px;
+	width: 32px;
+}
+
+.notification-settings-blog-settings-placeholder__blog__info {
+	width: 0; // Firefox needs explicit width (even 0)
+	flex: 1 0 auto;
+}
+
+.notification-settings-blog-settings-placeholder__blog__info__title {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, 30% );
+	width: 150px;
+	display: block;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.notification-settings-blog-settings-placeholder__blog__info__domain {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, 30% );
+	display: block;
+	width: 250px;
+	font: {
+		size: 0.8em;
+		style: italic;
+	}
+	margin-top: 1px;
+	line-height: 1.4;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.notification-settings-blog-settings-placeholder__legend {
+	@extend %notification-settings-blog-settings-flexbox;
+
+	em {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 30% );
+		width: 160px;
+		height: 22px;
+	}
+}

@@ -1,0 +1,15 @@
+.security-2fa-status__heading {
+	font-weight: bold;
+}
+
+.security-2fa-status__off {
+	text-transform: uppercase;
+	color: red;
+	font-weight: bold;
+}
+
+.security-2fa-status__on {
+	text-transform: uppercase;
+	color: green;
+	font-weight: bold;
+}

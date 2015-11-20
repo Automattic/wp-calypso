@@ -1,0 +1,114 @@
+// ==========================================================================
+// FormToggle
+// ==========================================================================
+
+.form-toggle[type="checkbox"] {
+	display: none;
+}
+
+.form-toggle__switch {
+	position: relative;
+	display: inline-block;
+	border-radius: 12px;
+	box-sizing: border-box;
+	padding: 2px;
+	width: 40px;
+	height: 24px;
+	background: lighten( $gray, 10% );
+	vertical-align: middle;
+	outline: 0;
+	cursor: pointer;
+	transition: all .4s ease, box-shadow 0s;
+
+	&:before,
+	&:after {
+		position: relative;
+		display: block;
+		content: "";
+		width: 20px;
+		height: 20px;
+	}
+	&:after {
+		left: 0;
+		border-radius: 50%;
+		background: $white;
+		transition: all .2s ease;
+	}
+	&:before {
+		display: none;
+	}
+	&:hover {
+		background: lighten( $gray, 20% );
+	}
+	.accessible-focus &:focus{
+		box-shadow: 0 0 0 2px $blue-medium;
+	}
+}
+
+.form-toggle__label {
+	cursor: pointer;
+}
+
+.form-toggle {
+	.accessible-focus &:focus {
+		+ .form-toggle__label .form-toggle__switch {
+			box-shadow: 0 0 0 2px $blue-medium;
+		}
+		&:checked + .form-toggle__label .form-toggle__switch {
+			box-shadow: 0 0 0 2px $blue-light;
+		}
+	}
+	&:checked{
+		+ .form-toggle__label .form-toggle__switch {
+			background: $blue-medium;
+
+			&:after {
+				left: 16px;
+			}
+		}
+	}
+	&:checked {
+		+ .form-toggle__label .form-toggle__switch:hover {
+			background: $blue-light;
+		}
+	}
+	&:disabled,
+	&:disabled:hover {
+		+ .form-toggle__label .form-toggle__switch {
+			background: lighten( $gray, 30% );
+		}
+	}
+}
+
+// Classes for toggle state before action is complete (updating plugin or something)
+.form-toggle.is-toggling {
+	+ .form-toggle__label .form-toggle__switch {
+		background: $blue-medium;
+	}
+	&:checked {
+		+ .form-toggle__label .form-toggle__switch {
+			background: lighten( $gray, 20% );
+		}
+	}
+}
+
+.form-toggle.is-compact {
+	+ .form-toggle__label .form-toggle__switch {
+		border-radius: 8px;
+		width: 24px;
+		height: 16px;
+
+		&:before,
+		&:after {
+			width: 12px;
+			height: 12px;
+		}
+	}
+	&:checked {
+		+ .form-toggle__label .form-toggle__switch {
+			&:after{
+				left: 8px;
+			}
+		}
+	}
+}

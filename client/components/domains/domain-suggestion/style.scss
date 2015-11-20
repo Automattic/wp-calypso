@@ -1,0 +1,90 @@
+.domain-suggestion {
+	box-sizing: border-box;
+	display: flex;
+
+	@include clear-fix;
+
+	@include breakpoint( ">660px" ) {
+		padding: 15px 20px;
+
+		.domain-product-price {
+			margin-left: 5%;
+		}
+	}
+
+	&.is-added {
+		background-color: lighten( $gray, 35% );
+
+		.domain-suggestion__content {
+			h3, .domain-product-price {
+				color: $gray;
+			}
+		}
+	}
+}
+
+.domain-suggestion__content {
+	width: 100%;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		margin: 8px 0 0 0;
+	}
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 30% );
+		color: transparent;
+	}
+
+	> h3 {
+		word-break: break-all;
+
+		@include breakpoint( ">660px" ) {
+			width: 75%;
+		}
+
+		.is-placeholder & {
+			color: transparent;
+		}
+	}
+}
+
+.domain-suggestion__action {
+	margin: 1px 0 0 5%;
+	min-width: 100px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 3px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		margin-top: 0;
+	}
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 30% );
+		border: none;
+		border-radius: 0;
+		color: transparent;
+
+		.button {
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+
+	.button {
+		width: 100%;
+
+		&.added {
+			background-color: $gray-light;
+
+			.noticon {
+				font-size: 25px;
+				line-height: 16px;
+			}
+		}
+	}
+}

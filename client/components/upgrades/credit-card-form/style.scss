@@ -1,0 +1,88 @@
+.credit-card-form__extras {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-left: -15px;
+
+	.credit-card-form__field,
+	.credit-card-form__label {
+		margin-left: 15px;
+	}
+
+	.cvv,
+	.expiration-date {
+		flex-basis: 6em;
+		flex-grow: 1;
+		flex-shrink: 0;
+	}
+
+	.country {
+		flex-basis: auto;
+		flex-grow: 3;
+		flex-shrink: 0;
+
+		label {
+			display: none;
+		}
+	}
+
+	.postal-code {
+		flex-basis: 8em;
+		flex-grow: 2;
+		flex-shrink: 0;
+	}
+}
+
+.credit-card-form__field {
+	margin-top: 15px;
+	position: relative;
+
+	select {
+		font-size: 15px;
+		width: 100%;
+	}
+
+	&.invalid {
+		input,
+		select {
+			border-color: $alert-red;
+		}
+	}
+
+	input[ disabled ] {
+		cursor: not-allowed;
+	}
+}
+
+.credit-card-form__label {
+	label {
+		color: darken( $gray, 10% );
+		display: none;
+		font-size: 11px;
+		font-weight: bold;
+		position: absolute;
+			left: 13px;
+			top: 12px;
+
+		.error {
+			color: $alert-red;
+			margin-left: 1em;
+		}
+	}
+
+	&.focus {
+		label {
+			color: $blue-medium;
+		}
+	}
+
+	&.active {
+		label {
+			display: inline;
+		}
+
+		input {
+			padding-top: 27px;
+		}
+	}
+}

@@ -1,0 +1,56 @@
+.cancel-confirm {
+	.modal.cancel-modal {
+		background: none;
+		padding: 0;
+		z-index: inherit;
+	}
+
+	ul.features-checklist {
+		overflow: inherit;
+		display: flex;
+		margin: 10px 0 20px -5px;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		li {
+			flex: 2 1 200px;
+			margin: 5px;
+
+			float: none;
+			width: 200px;
+
+
+			background-color: #f3f6f8;
+			box-sizing: border-box;
+			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+		}
+	}
+
+	.button-primary,
+	input[type=submit] {
+		@extend .button;
+		margin: 10px 0 !important;
+		font-size: inherit !important;
+		display: block !important;
+	}
+
+	h3,
+	form > h4 {
+		@extend .form-section-heading;
+
+		&:first-of-type {
+			margin-top: 10px;
+		}
+	}
+
+	#domain_cancel_reasons {
+		h4 {
+			display: none;
+		}
+
+		div {
+			margin-top: 20px;
+		}
+	}
+}

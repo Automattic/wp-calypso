@@ -1,0 +1,56 @@
+.editor-drawer {
+	padding-bottom: 16px;
+}
+
+.editor-drawer__description {
+	color: $gray;
+	font-size: 12px;
+}
+
+.editor-drawer__accordion.is-loading .accordion__subtitle {
+	position: relative;
+	color: transparent;
+
+	&::before {
+		content: '';
+		position: absolute;
+			top: 1px;
+			bottom: 1px;
+		width: 60%;
+		background-color: lighten( $gray, 25% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+
+.editor-drawer__label-text {
+	color: $gray;
+	display: block;
+	font-size: 11px;
+	margin-bottom: 4px;
+	text-transform: uppercase;
+}
+
+.editor-drawer__label-text .info-popover {
+	float: right;
+}
+
+.editor-drawer__heading {
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+
+.editor-drawer .form-textarea {
+	font-size: 13px;
+	font-family: $serif;
+	resize: vertical;
+}
+
+.editor-drawer .editor-delete-post::before {
+	content: '';
+	border-top: 1px solid lighten( $gray, 30 );
+	display: block;
+	margin-top: -16px;
+	position: absolute;
+		left: 0;
+		right: 0;
+}

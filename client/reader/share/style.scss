@@ -1,0 +1,49 @@
+.reader-share {
+	display: inline-block;
+	padding: 4px;
+	color: lighten( $gray, 10 );
+	position: relative;
+	box-sizing: border-box;
+	transition: color 0.15s linear;
+	cursor: pointer;
+
+	&:hover, &:focus, &:active, .is-active {
+		cursor: pointer;
+		color: $blue-light;
+
+		.gridicon {
+			color: $white;
+		}
+	}
+}
+
+.reader-share__popover-item {
+	span {
+		display: inline-block;
+		line-height: 24px;
+		margin-left: 32px;
+	}
+	.gridicon {
+		height: 24px;
+		width: 24px;
+		position: absolute;
+		top: 8px;
+		left: 16px;
+		padding: 0;
+	}
+
+	.gridicons-my-sites {
+		fill: $blue-wordpress;
+	}
+
+	.gridicons-twitter {
+		fill: #2aa9e0;
+	}
+
+	&:hover,
+	&:focus {
+		.gridicon {
+			fill: $white;
+		}
+	}
+}

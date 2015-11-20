@@ -1,0 +1,117 @@
+@import 'content';
+@import 'list-item';
+@import 'list-item-file-details';
+@import 'list-item-video';
+@import 'upload-button';
+@import 'upload-url';
+
+.media-library__header {
+	position: relative;
+	margin-bottom: 14px;
+}
+
+.media-library__header .button {
+	margin: 0 8px;
+
+	&.is-desktop {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+			display: inline-block;
+		}
+	}
+
+	&.is-mobile {
+		position: relative;
+		left: -1px;
+		height: 40px;
+		margin-left: 0;
+		padding-left: 8px;
+		padding-right: 8px;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+
+		.gridicon {
+			margin-top: 2px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+	}
+
+	&:first-of-type {
+		margin-left: 0;
+	}
+}
+
+.media-library__header .button.media-library__upload-button {
+	@include breakpoint( "<660px" ) {
+		margin-right: 0;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+}
+
+.media-library__heading {
+	@extend %heading;
+	display: inline-block;
+	margin: 0;
+	line-height: 40px;
+	margin-right: 12px;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
+}
+
+.media-library__upload-buttons {
+	display: inline;
+}
+
+.media-library__scale-toggle {
+	position: absolute;
+		top: 0;
+		right: 0;
+}
+
+.media-library__scale-toggle .gridicon {
+	margin: 2px 8px;
+	vertical-align: middle;
+}
+
+.media-library__content .notice {
+	margin-bottom: 0;
+}
+
+.media-library__list-item-edit {
+	position: absolute;
+		top: 8px;
+		right: 8px;
+	z-index: 20;
+	padding: 2px 6px 3px;
+	transition: 0.2s opacity;
+	opacity: 0;
+	color: darken( $gray, 10% );
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+}
+
+.media-library__list-item:hover .media-library__list-item-edit {
+	opacity: 1;
+}
+
+.media-library__list-item.is-small .media-library__list-item-edit {
+	display: none;
+}
+
+.media-library__list-item.is-small .media-library__list-item-file-details .media-library__list-item-icon {
+	top: 0;
+}
+
+.media-library__list-item.is-small .media-library__list-item-details-separator,
+.media-library__list-item.is-small .media-library__list-item-file-extension {
+	display: none;
+}

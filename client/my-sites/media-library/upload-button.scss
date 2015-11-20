@@ -1,0 +1,20 @@
+.media-library__upload-button {
+	position: relative;
+	display: inline-block;
+}
+
+.media-library__upload-button-input {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+@include breakpoint( "<480px" ) {
+	.media-library__upload-button {
+		margin-left: 0;
+	}
+}

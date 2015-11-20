@@ -1,0 +1,71 @@
+.next-steps-box {
+	background: white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	box-sizing: border-box;
+	position: relative;
+	margin: 0 0 20px 0;
+
+	@include breakpoint( ">480px" ) {
+		float: left;
+		width: 48%;
+
+		&:nth-child(2n) {
+			margin-right: 4%;
+		}
+
+		&.is-primary {
+			width: 100%;
+		}
+	}
+
+	.next-steps-box__step-header {
+		background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 no-repeat;
+		display: flex;
+		flex-direction: column-reverse;
+		padding: 20px 16px;
+
+		@include breakpoint( ">480px" ) {
+			min-height: 60px;
+		}
+
+		h2 {
+			color: $white;
+			font-size: 1.25em;
+			font-weight: 300;
+		}
+	}
+
+	.next-steps-box__step-body {
+		padding: 16px 16px 58px 16px;
+		position: relative;
+
+		@include breakpoint( ">480px" ) {
+			min-height: 150px;
+		}
+
+		&.is-primary {
+			min-height: 0;
+		}
+
+		p {
+			font-size: .9em;
+		}
+
+		.noticon {
+			vertical-align: middle;
+		}
+
+		.next-steps-box__step-action {
+			position: absolute;
+				bottom: 16px;
+				left: 16px;
+				right: 16px;
+
+			.button {
+				text-align: center;
+				width: 100%;
+			}
+		}
+	}
+}
