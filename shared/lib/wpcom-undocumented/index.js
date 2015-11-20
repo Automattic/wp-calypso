@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var WPCOM = require( 'wpcom-unpublished' ),
+var WPCOM = require( 'wpcom-private' ),
 	inherits = require( 'inherits' ),
 	assign = require( 'lodash/object/assign' ),
 	debug = require( 'debug' )( 'calypso:wpcom-undocumented' );
