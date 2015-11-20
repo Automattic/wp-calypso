@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,35 +17,12 @@ import InviteFormHeader from '../invite-form-header';
 
 const user = userModule();
 
-const mockData = {
-	invite: {
-		invite_slug: 'asdf2345',
-		blog_id: 1234,
-		user_id: 1234,
-		invited_id: 5678,
-		signed_up: '0000-00-00 00:00:00',
-		invite_date: '2015-11-03 16:45:37',
-		meta: {
-			role: 'editor'
-		}
-	},
-	blog_details: {
-		domain: 'example.com',
-		title: 'Example WordPress website',
-		icon: {
-			img: 'https://secure.gravatar.com/blavatar',
-			ico: 'https://secure.gravatar.com/blavatar'
-		}
-	}
-};
-
 export default React.createClass( {
 
 	displayName: 'LoggedInAccept',
 
 	getInviteRole() {
-		let meta = mockData.invite && mockData.invite.meta ? mockData.invite.meta : false;
-		return meta && meta.role ? meta.role : false;
+		return get( this.props, 'invite.meta.role', '' );
 	},
 
 	render() {
@@ -58,11 +36,11 @@ export default React.createClass( {
 						title={
 							this.translate( 'Would you like to become an %(siteRole)s on {{siteNameLink}}%(siteName)s{{/siteNameLink}}?', {
 								args: {
-									siteName: mockData.blog_details.title,
+									siteName: get( this.props, 'blog_details.title', '' ),
 									siteRole: this.getInviteRole()
 								},
 								components: {
-									siteNameLink: <a href={ mockData.blog_details.domain } className="logged-in-accept__site-name" />
+									siteNameLink: <a href={ get( this.props, 'blog_details.domain', null ) } className="logged-in-accept__site-name" />
 								}
 							} )
 						}
