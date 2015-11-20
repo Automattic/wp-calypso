@@ -30,8 +30,8 @@ To be able to clone and run the application you need:
 Clone this git repo to your machine via the terminal using the `git clone` command and then run `make` from the root calypso directory:
 
 ```bash
-$ git clone git@github.com:Automattic/calypso-pre-oss.git
-$ cd calypso-pre-oss
+$ git clone git@github.com:Automattic/wp-calypso.git
+$ cd wp-calypso
 $ make run
 ```
 
