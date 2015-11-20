@@ -45,7 +45,7 @@ function getName( purchase ) {
 }
 
 function getSubscriptionEndDate( purchase ) {
-	return i18n.moment( purchase.expiryDate ).format( 'LL' )
+	return purchase.expiryMoment.format( 'LL' );
 }
 
 function hasPaymentMethod( purchase ) {

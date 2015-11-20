@@ -9,9 +9,9 @@ import React from 'react';
  */
 import Button from 'components/button';
 import { cancelPurchase } from 'lib/upgrades/actions';
-import paths from 'me/purchases/paths';
-import notices from 'notices';
 import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import notices from 'notices';
+import paths from 'me/purchases/paths';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
