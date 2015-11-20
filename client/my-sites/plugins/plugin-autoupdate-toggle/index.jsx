@@ -10,7 +10,8 @@ var PluginsActions = require( 'lib/plugins/actions' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' ),
 	ExternalLink = require( 'components/external-link' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	utils = require( 'lib/site/utils' );
 
 module.exports = React.createClass( {
 
@@ -68,56 +69,26 @@ module.exports = React.createClass( {
 			} );
 		}
 
-		let reasons = [];
+
 		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
-			for ( let clue of this.props.site.options.file_mod_disabled ) {
-				switch ( clue ) {
-					case 'is_version_controlled':
-						reasons.push(
-							this.translate( '%(site)s is under version control, so we can\'t autoupdate plugins.', {
-								args: { site: this.props.site.title }
-							} )
-						);
-						break;
-					case 'has_no_file_system_write_access':
-						reasons.push(
-							this.translate( 'The file access permissions on this server prevent us from autoupdating plugins.', {
-								args: { site: this.props.site.title }
-							} )
-						);
-						break;
-					case 'automatic_updater_disabled':
-						reasons.push(
-							this.translate( 'The administrator of %(site)s has explicitly disabled any autoupdates.', {
-								args: { site: this.props.site.title }
-							} )
-						);
-						break;
-					case 'wp_auto_update_core_disabled':
-						reasons.push(
-							this.translate( 'The administrator of %(site)s has explicitly disabled core autoupdates.', {
-								args: { site: this.props.site.title }
-							} )
-						);
-						break;
-					case 'disallow_file_edit':
-						reasons.push(
-							this.translate( 'The administrator of %(site)s has explicitly prevented file edits.', {
-								args: { site: this.props.site.title }
-							} )
-						);
-						break;
-					case 'disallow_file_mods':
-						reasons.push(
-							this.translate( 'The administrator of %(site)s has explicitly prevented file modifications.', {
-								args: { site: this.props.site.title }
-							} )
-						);
-						break;
-				}
+			let reasons = utils.getSiteFileModDisableReason( this.props.site );
+			let html = [];
+
+			if ( reasons.length > 1 ) {
+				html.push( <p> { this.translate( 'Autoupdates are not available for %(site)s:', { args: { site: this.props.site.title } }
+						 ) } </p> );
+				let list = reasons.map( ( reason, i ) => ( <li key={ i } >{ reason }</li> ) );
+				html.push( <ul className="plugin-action__disabled-info-list">{ list }</ul> );
+			} else {
+				html.push( <p> {
+					this.translate( 'Autoupdates are not available for %(site)s.', {
+						args: { site: this.props.site.title }
+					} )
+					} { reasons[0] } </p> );
 			}
-			reasons.push( <ExternalLink href="https://jetpack.me/support/site-management/#file-update-disabled" >{ this.translate( 'How to fix it?' ) }</ExternalLink> );
-			return reasons.map( ( reason, i ) => ( <p key={ i } > { reason }</p> ) );
+			html.push( <ExternalLink href="https://jetpack.me/support/site-management/#file-update-disabled" >{ this.translate( 'How to fix it?' ) }</ExternalLink> );
+
+			return html;
 		}
 		return null;
 	},
