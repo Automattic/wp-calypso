@@ -2,8 +2,6 @@
 * External dependencies
 */
 import React from 'react';
-import defer from 'lodash/function/defer';
-import noop from 'lodash/utility/noop';
 
 /**
 * Internal dependencies
@@ -21,15 +19,12 @@ export default React.createClass( {
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
 		gaEventCategory: React.PropTypes.string,
-		popoverName: React.PropTypes.string,
-		isVisible: React.PropTypes.bool,
-		toggle: React.PropTypes.func
+		popoverName: React.PropTypes.string
 	},
 
 	getDefaultProps() {
 		return {
-			position: 'bottom',
-			toggle: noop
+			position: 'bottom'
 		};
 	},
 
@@ -39,20 +34,14 @@ export default React.createClass( {
 		};
 	},
 
-	getVisibility() {
-		if ( typeof this.props.isVisible === 'undefined' ) {
-			return this.state.showPopover;
-		}
-		return this.props.isVisible;
-	},
-
 	render() {
 		return (
-			<span onClick={ this._onClick } ref="infoPopover" className={ classNames( 'info-popover', { 'is_active': this.state.showPopover }, this.props.className ) }>
+			<span onClick={ this._onClick } ref="infoPopover" className={ classNames( 'info-popover', { is_active: this.state.showPopover }, this.props.className ) }>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<Popover
-					isVisible={ this.getVisibility() }
+					isVisible={ this.state.showPopover }
 					context={ this.refs && this.refs.infoPopover }
+					ignoreContext={ this.props.ignoreContext }
 					position={ this.props.position }
 					onClose={ this._onClose }
 					className={ classNames( 'popover', 'info-popover__tooltip', this.props.className ) }>
@@ -64,13 +53,11 @@ export default React.createClass( {
 
 	_onClick( event ) {
 		event.preventDefault();
-		this.props.toggle( ! this.getVisibility() );
 		this.setState( { showPopover: ! this.state.showPopover }, this._recordStats );
 	},
 
 	_onClose() {
 		this.setState( { showPopover: false }, this._recordStats );
-		defer( () => ( this.props.toggle( false ) ) );
 	},
 
 	_recordStats() {
