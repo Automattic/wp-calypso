@@ -45,13 +45,7 @@
 }
 .plugin-action__disabled-info .info-popover {
 	float: right;
-	color: $blue-medium;
-	margin-right: 2px;
-	width: 20px;
-
-	&:hover {
-		color: $blue-light;
-	}
+	margin: 0 3px;
 }
 
 .plugin-action__disabled-info-list {
