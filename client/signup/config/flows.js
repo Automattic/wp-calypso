@@ -70,6 +70,20 @@ const flows = {
 		lastModified: '2015-09-22'
 	},
 
+	'vert-blog': {
+		steps: [ 'survey-blog', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getCheckoutDestination,
+		description: 'Categorizing blog signups',
+		lastModified: null
+	},
+
+	'vert-site': {
+		steps: [ 'survey-site', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getCheckoutDestination,
+		description: 'Categorizing site signups',
+		lastModified: null
+	},
+
 	headstart: {
 		steps: [ 'theme-headstart', 'domains-with-theme', 'plans', 'user' ],
 		destination: getCheckoutDestination,
