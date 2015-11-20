@@ -69,7 +69,6 @@ module.exports = React.createClass( {
 			} );
 		}
 
-
 		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
 			let reasons = utils.getSiteFileModDisableReason( this.props.site );
 			let html = [];
@@ -86,7 +85,12 @@ module.exports = React.createClass( {
 					} )
 					} { reasons[0] } </p> );
 			}
-			html.push( <ExternalLink href="https://jetpack.me/support/site-management/#file-update-disabled" >{ this.translate( 'How do I fix this?' ) }</ExternalLink> );
+			html.push(
+				<ExternalLink
+					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix disabled autoupdates' ) }
+					href="https://jetpack.me/support/site-management/#file-update-disabled" >
+						{ this.translate( 'How do I fix this?' ) }
+					</ExternalLink> );
 
 			return html;
 		}
