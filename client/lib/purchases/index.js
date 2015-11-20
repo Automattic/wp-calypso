@@ -153,13 +153,6 @@ function purchaseType( purchase ) {
 	return null;
 }
 
-/**
- * @deprecated Use getName instead.
- */
-function purchaseTitle( purchase ) {
-	return getName( purchase );
-}
-
 function showCreditCardExpiringWarning( purchase ) {
 	return ! isIncludedWithPlan( purchase ) &&
 		isPaidWithCreditCard( purchase ) &&
@@ -191,7 +184,6 @@ export {
 	isRenewing,
 	paymentLogoType,
 	purchaseType,
-	purchaseTitle,
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
 }

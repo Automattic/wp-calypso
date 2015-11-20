@@ -16,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
-import { isCancelable, purchaseTitle } from 'lib/purchases';
+import { getName, isCancelable } from 'lib/purchases';
 import purchasesMixin from '../purchases-mixin';
 
 const CancelPurchase = React.createClass( {
@@ -54,9 +54,9 @@ const CancelPurchase = React.createClass( {
 
 				<Card className="cancel-purchase__card">
 					<h2>
-						{ this.translate( 'Cancel %(productName)s', {
+						{ this.translate( 'Cancel %(purchaseName)s', {
 							args: {
-								productName: purchaseTitle( purchase )
+								purchaseName: getName( purchase )
 							}
 						} ) }
 					</h2>

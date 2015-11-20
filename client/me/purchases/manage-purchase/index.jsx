@@ -26,6 +26,7 @@ import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { oldShowcaseUrl } from 'lib/themes/helpers';
 import {
 	creditCardExpiresBeforeSubscription,
+	getName,
 	hasPaymentMethod,
 	hasPrivateRegistration,
 	isCancelable,
@@ -40,9 +41,13 @@ import {
 	isOneTimePurchase,
 	paymentLogoType,
 	purchaseType,
+<<<<<<< 17f2d714fdd2b60b75a324128bc12e87d24219e9
 	purchaseTitle,
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
+=======
+	showCreditCardExpiringWarning
+>>>>>>> Purchases: Update purchase title method
 } from 'lib/purchases';
 import purchasesMixin from '../purchases-mixin';
 
@@ -81,10 +86,10 @@ const ManagePurchase = React.createClass( {
 				className="manage-purchase__purchase-expiring-notice"
 				showDismiss={ false }
 				status={ noticeStatus }
-				text={ this.translate( '%(purchase)s will expire and be removed from your site %(expiry)s.',
+				text={ this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.',
 					{
 						args: {
-							purchase: purchaseTitle( purchase ),
+							purchaseName: getName( purchase ),
 							expiry: this.moment( purchase.expiryMoment ).fromNow()
 						}
 					}
@@ -142,9 +147,9 @@ const ManagePurchase = React.createClass( {
 		let text;
 
 		if ( 'thank-you' === this.props.destinationType ) {
-			text = this.translate( '%(purchase)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
+			text = this.translate( '%(purchaseName)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
 				args: {
-					purchase: purchaseTitle( purchase )
+					purchaseName: getName( purchase )
 				},
 				components: {
 					a: <a href="https://support.wordpress.com/auto-renewal/" target="_blank" />
@@ -441,15 +446,15 @@ const ManagePurchase = React.createClass( {
 		}
 
 		const translateArgs = {
-			args: { purchase: purchaseTitle( purchase ) }
+			args: { purchaseName: getName( purchase ) }
 		};
 
 		return (
 			<VerticalNavItem path={ paths.cancelPurchase( domain, id ) }>
 				{
 					isRefundable( purchase )
-					? this.translate( 'Cancel and Refund %(purchase)s', translateArgs )
-					: this.translate( 'Cancel %(purchase)s', translateArgs )
+					? this.translate( 'Cancel and Refund %(purchaseName)s', translateArgs )
+					: this.translate( 'Cancel %(purchaseName)s', translateArgs )
 				}
 			</VerticalNavItem>
 		);
@@ -498,7 +503,7 @@ const ManagePurchase = React.createClass( {
 				'is-expired': purchase && isExpired( purchase )
 			} );
 			purchaseTypeSeparator = purchaseType( purchase ) ? '|' : '';
-			purchaseTitleText = purchaseTitle( purchase );
+			purchaseTitleText = getName( purchase );
 			purchaseTypeText = purchaseType( purchase );
 			siteName = purchase.siteName;
 			siteDomain = purchase.domain;
