@@ -102,7 +102,9 @@ module.exports = {
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
 				validate: false,
-				signup_flow_name: flowName
+				signup_flow_name: flowName,
+				nux_q_site_type: dependencies.surveySiteType,
+				nux_q_question_primary: dependencies.surveyQuestion,
 			}
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
