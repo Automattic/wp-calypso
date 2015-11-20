@@ -247,6 +247,10 @@ $sidebar-width-min: 228px;
 	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow-y: hidden;
+
+	.sidebar-off & {
+		padding-left: 32px;
+	}
 }
 
 // Tablets
@@ -254,6 +258,10 @@ $sidebar-width-min: 228px;
 	.wp-content {
 		padding: 24px;
 		padding-left: ( $sidebar-width-min + 24px );
+
+		.sidebar-off & {
+			padding-left: 24px;
+		}
 	}
 }
 
