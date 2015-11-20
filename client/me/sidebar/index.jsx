@@ -91,13 +91,15 @@ module.exports = React.createClass( {
 							}
 
 							{ config.isEnabled( 'upgrades/purchases/list' )
-								? <MenuItem
-									selected={ selected === 'billing' }
-									href="/purchases"
-									label={ this.translate( 'Manage Purchases' ) }
-									icon="credit-card"
-								/>
+								?
+									<MenuItem
+										selected={ selected === 'billing' }
+										href="/purchases"
+										label={ this.translate( 'Manage Purchases' ) }
+										icon="credit-card"
+									/>
 								: config.isEnabled( 'me/billing-history' ) &&
+									<MenuItem
 										selected={ selected === 'billing' }
 										href="/me/billing"
 										label={ this.translate( 'Billing History' ) }
