@@ -7,16 +7,16 @@
 	position: fixed;
 		top: 47px;
 		bottom: 0;
+		left: 0;
 
 	@include breakpoint( "<960px" ) {
 		border-right: 1px solid lighten( $gray, 25% );
-		width: 224px;
+		width: $sidebar-width-min;
 	}
 
 	@include breakpoint( ">960px" ) {
 		border-right: 1px solid lighten( $gray, 25% );
-		left: 0;
-		width: 272px;
+		width: $sidebar-width-max;
 	}
 
 	@include breakpoint( "<660px" ) {
