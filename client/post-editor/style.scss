@@ -1,6 +1,7 @@
 .is-section-post .wp-primary {
 	// We don't need the space for a sidebar
 	margin-left: 0;
+	padding-bottom: 0;
 
 	// Lets go full width on smaller screens
 	@include breakpoint( "<660px" ) {
@@ -334,27 +335,14 @@
 }
 
 .post-editor__word-count-wrapper {
-	position: fixed;
-		bottom: 0;
-		left: auto;
-		right: auto;
-
-	box-sizing: border-box;
-	width: 100%;
-
+	@include clear-fix;
+	border-top: 1px solid lighten( $gray, 30% );
+	background-color: $white;
 	font-size: 11px;
 	line-height: 18px;
 
-	@include breakpoint( ">660px" ) {
-		width: 683px; // TODO ???
-	}
-
 	& .editor-word-count {
 		float: right;
-		border-top: 1px solid lighten( $gray, 20% );
-		border-left: 1px solid lighten( $gray, 20% );
-		border-radius: 4px 0;
-		background-color: rgba( $white, 0.92 );
 		color: $gray;
 		text-transform: uppercase;
 		padding: 8px;
