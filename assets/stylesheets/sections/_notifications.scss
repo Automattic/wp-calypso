@@ -22,10 +22,7 @@
 	&.wpnt-closed {
 		opacity: 0;
 		pointer-events: none;
-
-		@include breakpoint( "<480px" ) {
-			display: none;
-		}
+		display: none;
 	}
 }
 
