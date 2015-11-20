@@ -96,7 +96,7 @@ module.exports = React.createClass( {
 		const { requires2fa, inProgress, errorMessage, errorLevel } = this.state;
 
 		return (
-			<Main className="auth is-full">
+			<Main className="auth">
 				<WordPressLogo />
 				<form className="auth__form" onSubmit={ this.submitForm }>
 					<FormFieldset>

@@ -16,6 +16,10 @@ module.exports = {
 		if ( OAuthToken.getToken() ) {
 			page( '/' );
 		} else {
+
+			// We don't need the sidebar on the login screen
+			context.layout.setState( { noSidebar: true } );
+			
 			React.render(
 				React.createElement( LoginComponent, {} ),
 				document.getElementById( 'primary' )

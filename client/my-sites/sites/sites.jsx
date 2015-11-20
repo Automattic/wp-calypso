@@ -195,7 +195,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="main main-column sites is-full" role="main">
+			<div className="main main-column sites" role="main">
 				<h2 className="sites__select-heading">{ siteSelectionHeaderText }</h2>
 				{ this.getSiteCount() > 1 ?
 					<SearchCard onSearch={ this.doSearch } analyticsGroup="Sites" />
