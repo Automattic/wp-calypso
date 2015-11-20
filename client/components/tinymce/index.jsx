@@ -32,7 +32,7 @@ require( './plugins/wpeditimage/plugin.js' )();
 require( './plugins/wplink/plugin.js' )();
 require( './plugins/media/plugin' )();
 require( './plugins/advanced/plugin' )();
-require( './plugins/tabindex/plugin' )();
+require( './plugins/wpcom-tabindex/plugin' )();
 require( './plugins/touch-scroll-toolbar/plugin' )();
 require( './plugins/editor-button-analytics/plugin' )();
 require( './plugins/calypso-alert/plugin' )();
@@ -89,6 +89,7 @@ const PLUGINS = [
 	'wpcom/advanced',
 	'wpcom/help',
 	'wpcom/charmap',
+	'wpcom/tabindex',
 	'wpcom/touchscrolltoolbar',
 	'wpcom/view',
 	'wpcom/editorbuttonanalytics',
