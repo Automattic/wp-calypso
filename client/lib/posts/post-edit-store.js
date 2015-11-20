@@ -229,6 +229,7 @@ function setRawContent( content ) {
 		if ( PostEditStore.isDirty() !== isDirty || PostEditStore.hasContent() !== hasContent ) {
 			PostEditStore.emit( 'change' );
 		}
+		PostEditStore.emit( 'rawContentChange' );
 	}
 }
 
