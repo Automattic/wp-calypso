@@ -58,7 +58,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.site.options.is_multi_network ) {
-			return this.translate( '%(site)s is part of a multi-network installation and is therefore not supported.', {
+			return this.translate( '%(site)s is part of a multi-network installation, which is not currently supported.', {
 				args: { site: this.props.site.title }
 			} );
 		}
@@ -86,7 +86,7 @@ module.exports = React.createClass( {
 					} )
 					} { reasons[0] } </p> );
 			}
-			html.push( <ExternalLink href="https://jetpack.me/support/site-management/#file-update-disabled" >{ this.translate( 'How to fix it?' ) }</ExternalLink> );
+			html.push( <ExternalLink href="https://jetpack.me/support/site-management/#file-update-disabled" >{ this.translate( 'How do I fix this?' ) }</ExternalLink> );
 
 			return html;
 		}

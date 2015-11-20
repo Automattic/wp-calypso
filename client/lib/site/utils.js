@@ -74,32 +74,32 @@ export default {
 			switch ( clue ) {
 				case 'is_version_controlled':
 					reasons.push(
-						i18n.translate( 'Site\'s code is under version control.' )
+						i18n.translate( 'This site\'s files are under version control.' )
 					);
 					break;
 				case 'has_no_file_system_write_access':
 					reasons.push(
-						i18n.translate( 'No file write access permission.' )
+						i18n.translate( 'The file permissions on this host prevent editing files.' )
 					);
 					break;
 				case 'automatic_updater_disabled':
 					reasons.push(
-						i18n.translate( 'Any autoupdates are explicitly disabled.' )
+						i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' )
 					);
 					break;
 				case 'wp_auto_update_core_disabled':
 					reasons.push(
-						i18n.translate( 'Core autoupdates are explicitly disabled.' )
+						i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' )
 					);
 					break
 				case 'disallow_file_edit':
 					reasons.push(
-						i18n.translate( 'File edits are explicitly disabled.' )
+						i18n.translate( 'File edits are explicitly disabled by a site administrator.' )
 					);
 					break;
 				case 'disallow_file_mods':
 					reasons.push(
-						i18n.translate( 'File modifications are explicitly disabled.' )
+						i18n.translate( 'File modifications are explicitly disabled by a site administrator.' )
 					);
 					break;
 			}
