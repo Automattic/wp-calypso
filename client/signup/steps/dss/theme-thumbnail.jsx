@@ -22,11 +22,11 @@ export default React.createClass( {
 
 	handleSubmit() {
 		const { lastKey, imageResultsByKey } = DSSImageStore.get();
-		const dssImage = imageResultsByKey[ lastKey ] ? JSON.stringify( imageResultsByKey[ lastKey ] ) : undefined;
-		var eventProps = {
+		const dssImage = imageResultsByKey[ lastKey ] ? imageResultsByKey[ lastKey ] : undefined;
+		const eventProps = {
 			theme: this.props.themeRepoSlug,
 			headstart: true,
-			images: dssImage,
+			images: dssImage ? JSON.stringify( dssImage ) : undefined,
 			searchterms: Object.keys( imageResultsByKey ).join( ',' ),
 			selectedterm: lastKey
 		};
@@ -35,7 +35,7 @@ export default React.createClass( {
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, null, {
 			theme: this.props.themeRepoSlug,
-			images: eventProps.images
+			images: dssImage ? [ dssImage ] : undefined
 		} );
 
 		this.props.goToNextStep();
