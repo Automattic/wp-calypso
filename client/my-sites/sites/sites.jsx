@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var SiteCard = require( './site-card' ),
 	SearchCard = require( 'components/search-card' ),
+	Gridicon = require( 'components/gridicon' ),
 	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	config = require( 'config' );
@@ -83,7 +84,7 @@ module.exports = React.createClass( {
 			<div className="site-card site-card__add-new" key="new-site-box">
 				<a href={ config( 'signup_url' ) + '?ref=calypso-sites' }>
 					<div className="site-card__content">
-						<span className="noticon noticon-plus" />
+						<Gridicon icon="add-outline" size={ 48 } />
 						<h3 className="site-card__title">{ this.translate( 'Start a New WordPress' ) }</h3>
 					</div>
 				</a>
