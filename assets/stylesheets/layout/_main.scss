@@ -271,6 +271,10 @@ $sidebar-width-min: 228px;
 		margin-left: 0;
 		padding: 8px;
 
+		.sidebar-off & {
+			padding-left: 8px;
+		}
+
 		.focus-sidebar & {
 			transform: translateX( 100vw );
 		}
