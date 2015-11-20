@@ -7,7 +7,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { createPurchasesArray } from '../assembler.js';
+import { createPurchasesArray } from '../assembler';
 
 describe( 'Purchases assembler', () => {
 	it( 'should be a function', () => {

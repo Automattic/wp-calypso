@@ -57,11 +57,15 @@ function hasPrivateRegistration( purchase ) {
 }
 
 function isCancelable( purchase ) {
-	if ( purchase.isRefundable ) {
+	if ( isRefundable( purchase ) ) {
 		return true;
 	}
 
-	return true;
+	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	return purchase.canDisableAutoRenew;
 }
 
 function isExpired( purchase ) {

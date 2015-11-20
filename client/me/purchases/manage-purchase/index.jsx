@@ -41,13 +41,8 @@ import {
 	isOneTimePurchase,
 	paymentLogoType,
 	purchaseType,
-<<<<<<< 17f2d714fdd2b60b75a324128bc12e87d24219e9
-	purchaseTitle,
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
-=======
-	showCreditCardExpiringWarning
->>>>>>> Purchases: Update purchase title method
 } from 'lib/purchases';
 import purchasesMixin from '../purchases-mixin';
 

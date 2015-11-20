@@ -50,7 +50,7 @@ const CancelPurchaseButton = React.createClass( {
 						}
 					}
 				), { persistent: true } );
-				page.redirect( paths.list() );
+				page( paths.list() );
 			} else {
 				notices.error( this.translate(
 					'There was a problem canceling %(purchaseName)s. ' +
