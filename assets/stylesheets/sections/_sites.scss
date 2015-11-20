@@ -200,7 +200,7 @@
 
 	// Banner image
 	.site-card__header {
-		background-color: $gray-light;
+		background-color: lighten( $gray, 30% );
 		background-size: cover;
 		position: absolute;
 			top: 0;
