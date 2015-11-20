@@ -1,5 +1,5 @@
 .plugin-ratings {
-	margin-top: 13px;
+	margin-top: 12px;
 }
 
 .plugin-ratings__rating-tier {
@@ -14,9 +14,8 @@
 
 .plugin-ratings__rating-tier-text,
 .plugin-ratings__downloads {
-	font-size: 10px;
-	font-weight: bold;
-	color: #87a6bc;
+	font-size: 11px;
+	color: $gray;
 	white-space: pre;
 	text-overflow: ellipsis;
 	text-transform: uppercase;
@@ -37,6 +36,8 @@
 	flex-grow: 1;
 
 	.progress-bar {
+		position: relative;
+		top: -2px;
 		border-radius: 0;
 		height: 8px;
 		background-color: lighten( $gray, 20% );
@@ -44,6 +45,6 @@
 
 	.progress-bar__progress {
 		border-radius: 0;
-		background-color: lighten( $blue-dark, 10% );
+		background-color: $blue-medium;
 	}
 }

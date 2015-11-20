@@ -1,7 +1,9 @@
 .plugin-activate-toggle .disconnect-jetpack-button {
-	font-size: 10px;
+	font-size: 11px;
+	color: $alert-red;
 	text-transform: uppercase;
 }
+
 .plugin-activate-toggle .plugin-action__children {
 	float: none;
 }
