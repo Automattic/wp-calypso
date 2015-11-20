@@ -85,7 +85,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 
-		var editURL = encodeURI( 'https://github.com/Automattic/calypso-pre-oss/edit/master/' + this.props.path ) +
+		var editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 
 		return (

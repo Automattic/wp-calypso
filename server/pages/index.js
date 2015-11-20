@@ -135,7 +135,7 @@ function getDefaultContext( request ) {
 
 	if ( CALYPSO_ENV === 'wpcalypso' ) {
 		context.badge = CALYPSO_ENV;
-		context.feedbackURL = 'https://github.com/Automattic/calypso-pre-oss/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
@@ -147,7 +147,7 @@ function getDefaultContext( request ) {
 
 	if ( CALYPSO_ENV === 'stage' ) {
 		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/calypso-pre-oss/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 

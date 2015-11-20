@@ -96,7 +96,7 @@ function buildPhpOutput( data, arrayName ) {
 	// prepend the matches array with this content to open the php file
 	matches.unshift( [
 		'<?php',
-		'\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. SEE https://github.com/Automattic/calypso-pre-oss/tree/develop/server/i18n */',
+		'\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. SEE https://github.com/Automattic/wp-calypso/tree/master/server/i18n */',
 		'\n$' + arrayName + ' = array('
 	].join( '' ) );
 
@@ -191,4 +191,3 @@ function readFile( outputFile, arrayName, inputFiles, done ) {
 }
 
 module.exports = readFile;
-

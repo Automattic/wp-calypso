@@ -1,11 +1,11 @@
 {
-  "name": "calypso-pre-oss",
+  "name": "wp-calypso",
   "version": "0.17.0",
   "description": "A pure REST-API and JS based version of the WordPress.com admin",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/Automattic/calypso-pre-oss.git"
+    "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "main": "index.js",
   "dependencies": {
