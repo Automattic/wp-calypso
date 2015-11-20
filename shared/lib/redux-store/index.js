@@ -9,6 +9,8 @@ import { createStore, applyMiddleware } from 'redux';
  */
 import reducers from './reducers';
 
-export default applyMiddleware(
-	thunkMiddleware
-)( createStore )( reducers );
+export default () => {
+	return applyMiddleware(
+		thunkMiddleware
+	)( createStore )( reducers );
+};
