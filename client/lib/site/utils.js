@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import i18n from 'lib/mixins/i18n';
 
 export default {
