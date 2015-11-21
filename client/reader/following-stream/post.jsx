@@ -250,13 +250,6 @@ var Post = React.createClass( {
 			return;
 		}
 
-		if ( this.props.post.use_excerpt && ! event.defaultPrevented ) {
-			event.preventDefault();
-			stats.recordPermalinkClick( 'summary_card' );
-			stats.recordGaEvent( 'Clicked Post Summary Card' );
-			window.open( postUrl );
-		}
-
 		// For Discover posts (but not site picks), open the original post in full post view
 		if ( this.state.originalPost ) {
 			postToOpen = this.state.originalPost;
