@@ -180,17 +180,6 @@ module.exports = React.createClass( {
 		return (
 			<Card className={ classNames.apply( null, classes ) }>
 				<div className="followers">
-					<div className="module-header">
-						{ moduleHeaderTitle }
-						<ul className="module-header-actions">
-							<li className="module-header-action toggle-info">
-								<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
-									<Gridicon icon={ infoIcon } />
-								</a>
-							</li>
-						</ul>
-					</div>
-
 					<div className="module-content">
 						<div className="module-content-text module-content-text-info">
 							<p>{ this.translate( 'Keep track of your overall number of followers, and how long each one has been following your site.' ) }</p>

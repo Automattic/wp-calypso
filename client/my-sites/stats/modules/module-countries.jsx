@@ -17,7 +17,8 @@ var toggle = require( '../mixin-toggle' ),
 	DownloadCsv = require( '../download-csv' ),
 	DatePicker = require( './module-date-picker' ),
 	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleCountries',
@@ -113,52 +114,39 @@ module.exports = React.createClass( {
 		countries = <StatsList moduleName={ this.props.path } data={ data } />;
 
 		return (
-			<Card className={ classNames.apply( null, classes ) }>
-				<div className="countryviews">
-					<div className="module-header">
-						{ moduleHeaderTitle }
-						<ul className="module-header-actions">
-							<li className="module-header-action toggle-info">
-								<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
-									<Gridicon icon={ infoIcon } />
-								</a>
-							</li>
-							{ moduleToggle }
-						</ul>
-					</div>
-					<div className="module-content">
-						<div className="module-content-text module-content-text-info">
-							<p>{ this.translate( 'Explore the list to see which countries and regions generate the most traffic to your site.' ) }</p>
-							<ul className="documentation">
-								<li><a href="http://en.support.wordpress.com/stats/#views-by-country" target="_blank"><Gridicon icon="info-outline" /> { this.translate( 'About Countries' ) }</a></li>
-							</ul>
-						</div>
-						{ ( noData  && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No countries recorded' ) } /> : null }
+			<div>
+				<SectionHeader label={ this.translate( 'Countries' ) } />
+				<Card className={ classNames.apply( null, classes ) }>
+					<div className="countryviews">
+						<div className="module-content">
+					
+							{ ( noData  && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No countries recorded' ) } /> : null }
 
-						{ geochart }
-						<div className="module-placeholder module-placeholder-block"></div>
-						<div className="stats-async-metabox-wrapper">
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.translate( 'Views' ) }</span>
+							{ geochart }
+							<div className="module-placeholder module-placeholder-block"></div>
+							<div className="stats-async-metabox-wrapper">
+								<ul className="module-content-list module-content-list-legend">
+									<li className="module-content-list-item">
+										<span className="module-content-list-item-wrapper">
+											<span className="module-content-list-item-right">
+												<span className="module-content-list-item-value">{ this.translate( 'Views' ) }</span>
+											</span>
+											<span className="module-content-list-item-label">{ this.translate( 'Country' ) }</span>
 										</span>
-										<span className="module-content-list-item-label">{ this.translate( 'Country' ) }</span>
-									</span>
-								</li>
-							</ul>
-							<div className="module-placeholder is-void"></div>
-							{ countries }
+									</li>
+								</ul>
+								<div className="module-placeholder is-void"></div>
+								{ countries }
+							</div>
+							{ this.props.summary ?
+								<DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
+							 : null }
+							{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
 						</div>
-						{ this.props.summary ?
-							<DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
-						 : null }
-						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
+						{ viewSummary }
 					</div>
-					{ viewSummary }
-				</div>
-			</Card>
+				</Card>
+			</div>
 		);
 	}
 } );

@@ -12,7 +12,9 @@ var SiteIcon = require( 'components/site-icon' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	route = require( 'lib/route' ),
 	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsModuleSiteOverview',
@@ -77,35 +79,30 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Card key={ site.ID } className={ classNames.apply( null, classes ) }>
+			<div>
+				<SectionHeader label={ this.translate( 'Today\'s Stats' ) }>
+					<Button compact href={ headerPath }>
+						<Gridicon icon="stats-alt" />
+					</Button>
+				</SectionHeader>
+				<Card key={ site.ID } className={ classNames.apply( null, classes ) }>
 
-				<div className="module-header">
-					<h3 className="module-header-title">
-						<a href={ headerPath } className="module-header__link">
-							{ icon }
-							<span className="module-header__right-icon">
-								<Gridicon icon="stats" />
-							</span>
-							{ title }
-						</a>
-					</h3>
-				</div>
-
-				<ul className="module-tabs">
-					<li className={ classSets.views }>
-						<a href={ siteStatsPath }><Gridicon icon="visible" size={ 18 } /><span className="label">{ this.translate( 'Views', { context:'noun' } ) }</span><span className="value">{ this.ensureValue( data.views ) }</span></a>
-					</li>
-					<li className={ classSets.visitors }>
-						<a href={ siteStatsPath + '?tab=visitors' }><Gridicon icon="user" size={ 18 } /><span className="label">{ this.translate( 'Visitors', { context:'noun' } ) }</span><span className="value">{ this.ensureValue( data.visitors ) }</span></a>
-					</li>
-					<li className={ classSets.likes }>
-						<a href={ siteStatsPath + '?tab=likes' }><Gridicon icon="star" size={ 18 } /><span className="label">{ this.translate( 'Likes', { context:'noun' } ) }</span> <span className="value">{ this.ensureValue( data.likes ) }</span></a>
-					</li>
-					<li className={ classSets.comments }>
-						<a href={ siteStatsPath + '?tab=comments' }><Gridicon icon="comment" size={ 18 } /><span className="label">{ this.translate( 'Comments', { context:'noun' } ) }</span> <span className="value">{ this.ensureValue( data.comments ) }</span></a>
-					</li>
-				</ul>
-			</Card>
+					<ul className="module-tabs">
+						<li className={ classSets.views }>
+							<a href={ siteStatsPath }><Gridicon icon="visible" size={ 18 } /><span className="label">{ this.translate( 'Views', { context:'noun' } ) }</span><span className="value">{ this.ensureValue( data.views ) }</span></a>
+						</li>
+						<li className={ classSets.visitors }>
+							<a href={ siteStatsPath + '?tab=visitors' }><Gridicon icon="user" size={ 18 } /><span className="label">{ this.translate( 'Visitors', { context:'noun' } ) }</span><span className="value">{ this.ensureValue( data.visitors ) }</span></a>
+						</li>
+						<li className={ classSets.likes }>
+							<a href={ siteStatsPath + '?tab=likes' }><Gridicon icon="star" size={ 18 } /><span className="label">{ this.translate( 'Likes', { context:'noun' } ) }</span> <span className="value">{ this.ensureValue( data.likes ) }</span></a>
+						</li>
+						<li className={ classSets.comments }>
+							<a href={ siteStatsPath + '?tab=comments' }><Gridicon icon="comment" size={ 18 } /><span className="label">{ this.translate( 'Comments', { context:'noun' } ) }</span> <span className="value">{ this.ensureValue( data.comments ) }</span></a>
+						</li>
+					</ul>
+				</Card>
+			</div>
 		);
 	}
 } );

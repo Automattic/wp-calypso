@@ -44,9 +44,6 @@ module.exports = React.createClass( {
 		return (
 			<Card className={ classNames.apply( null, classes ) }>
 				<div className="videoplays">
-					<div className="module-header">
-						<h4 className="module-header-title">{ this.translate( 'Video Embeds' ) }</h4>
-					</div>
 					<div className="module-content">
 						<div className="stats-async-metabox-wrapper">
 							<ul className="module-content-list module-content-list-legend">

@@ -140,16 +140,6 @@ module.exports = React.createClass( {
 
 		return (
 			<Card className={ classNames.apply( null, classes ) }>
-				<div className="module-header">
-					<h4 className="module-header-title">{ this.translate( 'Recent Weeks' ) }</h4>
-					<ul className="module-header-actions">
-						<li className="module-header-action toggle-info">
-							<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
-								<Gridicon icon={ infoIcon } />
-							</a>
-						</li>
-					</ul>
-				</div>
 				<div className="module-content">
 					<div className="module-content-text module-content-text-info">
 						<p className="message">{ this.translate( 'No views yet' ) }</p>
