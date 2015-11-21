@@ -19,7 +19,8 @@ export default React.createClass( {
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
 		gaEventCategory: React.PropTypes.string,
-		popoverName: React.PropTypes.string
+		popoverName: React.PropTypes.string,
+		ignoreContext: React.PropTypes.element,
 	},
 
 	getDefaultProps() {
