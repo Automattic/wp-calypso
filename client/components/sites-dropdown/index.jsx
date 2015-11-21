@@ -42,13 +42,21 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			search: ''
+			search: '',
+			selected: this.props.selected
 		};
 	},
 
-	getDefaultSite() {
-		return this.props.selected ? sites.getSite( this.props.selected ) : sites.getPrimary();
+	getSelectedSite() {
+		return sites.getSite( this.state.selected ) || sites.getPrimary();
 	},
+
+	selectSite( siteSlug ) {
+		this.setState( {
+			selected: siteSlug,
+			open: false
+		} );
+ 	},
 
 	render() {
 		return (
@@ -58,17 +66,17 @@ export default React.createClass( {
 					onClick={ () => this.setState( { open: ! this.state.open } ) }
 				>
 					<Site
-						site={ this.getDefaultSite() }
+						site={ this.getSelectedSite() }
 					/>
 					<Gridicon icon={ this.state.open ? 'chevron-up' : 'chevron-down' } />
 				</div>
 				{ this.state.open &&
 					<SiteSelector
 						sites={ sites }
-						siteBasePath="/post"
 						indicator={ false }
 						autoFocus={ true }
 						onClose={ this.props.onClose }
+						onSiteSelect={ this.selectSite }
 					/>
 				}
 			</div>
