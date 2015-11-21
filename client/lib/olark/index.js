@@ -65,7 +65,11 @@ const olark = {
 	},
 
 	handleError: function( error ) {
-		notices.error( error.message );
+		// error.error === 'authorization_required' when the user is logged out
+		// when https://github.com/Automattic/wp-calypso/issues/289 is fixed then we can remove this condition
+		if ( error.error !== 'authorization_required' ) {
+			notices.error( error.message );
+		}
 	},
 
 	getOlarkConfiguration: function() {
