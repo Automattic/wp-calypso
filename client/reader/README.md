@@ -7,6 +7,6 @@ The 'following' view is the default view in Calypso, served at `/`. These routes
 
 - /read/*
 - /following/*
-- /fresh
+- /discover
 - /recommendations
 - /activities/comments and /activities/likes
