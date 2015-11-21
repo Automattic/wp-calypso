@@ -215,6 +215,12 @@
 	}
 }
 
-.manage-purchase__payment-info .payment-logo {
-	margin-right: 5px;
+.manage-purchase__payment-info {
+	@include breakpoint( "<660px" ) {
+		float: right;
+	}
+
+	.payment-logo {
+		margin-right: 5px;
+	}
 }
