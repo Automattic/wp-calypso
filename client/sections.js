@@ -100,7 +100,7 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 }
 
 if ( config.isEnabled( 'reader' ) ) {
-	readerPaths = [ '/', '/read', '/fresh', '/activities', '/find-friends', '/tag' ];
+	readerPaths = [ '/', '/read', '/activities', '/find-friends', '/tag' ];
 
 	if ( config.isEnabled( 'reader/following-edit' ) ) {
 		readerPaths.push( '/following' );
