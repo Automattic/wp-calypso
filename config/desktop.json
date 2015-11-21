@@ -60,6 +60,7 @@
 		"reader/share": true,
 		"reader/following-edit": true,
 		"reader/recommendations": true,
+		"reader/discover": true,
 
 		"upgrades/checkout": true,
 		"upgrades/domain-management/contacts-privacy": true,
