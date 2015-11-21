@@ -27,11 +27,13 @@ module.exports = React.createClass( {
 		this.threshold = React.findDOMNode( this ).offsetTop;
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
+		window.addEventListener( 'resize', this.onWindowResize );
 		this.updateIsSticky();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
+		window.removeEventListener( 'resize', this.onWindowResize );
 		raf.cancel( this.rafHandle );
 	},
 
@@ -39,11 +41,18 @@ module.exports = React.createClass( {
 		this.rafHandle = raf( this.updateIsSticky );
 	},
 
+	onWindowResize: function() {
+		this.setState( {
+			spacerHeight: this.state.isSticky ? React.findDOMNode( this ).clientHeight : 0,
+			blockWidth: this.state.isSticky ? React.findDOMNode( this ).clientWidth : 0
+		} );
+	},
+
 	updateIsSticky: function() {
 		var isSticky = window.pageYOffset > this.threshold;
 
 		if ( viewport.isMobile() ) {
-			return;
+			return this.setState( { isSticky: false } );
 		}
 
 		if ( isSticky !== this.state.isSticky ) {
