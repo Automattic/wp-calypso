@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,10 +20,6 @@ export default React.createClass( {
 
 	displayName: 'LoggedInAccept',
 
-	getInviteRole() {
-		return get( this.props, 'invite.meta.role', '' );
-	},
-
 	render() {
 		let userObject = user.get(),
 			signInLink = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
@@ -32,28 +27,7 @@ export default React.createClass( {
 		return (
 			<div className={ classNames( 'logged-in-accept', this.props.className ) } >
 				<Card>
-					<InviteFormHeader
-						title={
-							this.translate( 'Would you like to become an %(siteRole)s on {{siteNameLink}}%(siteName)s{{/siteNameLink}}?', {
-								args: {
-									siteName: get( this.props, 'blog_details.title', '' ),
-									siteRole: this.getInviteRole()
-								},
-								components: {
-									siteNameLink: <a href={ get( this.props, 'blog_details.domain', null ) } className="logged-in-accept__site-name" />
-								}
-							} )
-						}
-						explanation={
-							this.translate(
-								'As an %(siteRole)s you will be able to publish and edit your own posts as well as upload media.', {
-									args: {
-										siteRole: this.getInviteRole()
-									}
-								}
-							)
-						}
-					/>
+					<InviteFormHeader { ...this.props } />
 					<div className="logged-in-accept__join-as">
 						<Gravatar user={ userObject } size={ 72 } />
 						{
