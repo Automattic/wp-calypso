@@ -282,13 +282,6 @@ module.exports = React.createClass( {
 
 						{ this.renderTeams() }
 
-						<li className={ this.itemLinkClass( '/fresh', { 'sidebar-streams__freshly-pressed': true } ) }>
-							<a href="https://wordpress.com/fresh/" rel="external" >
-								<Gridicon icon="my-sites" />
-								<span className="menu-link-text">{ this.translate( 'Freshly Pressed' ) }</span>
-							</a>
-						</li>
-
 						{
 							config.isEnabled( 'reader/discover' )
 							? (
