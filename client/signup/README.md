@@ -77,7 +77,7 @@ handleSubmit: function( event ) {
 - (optional) `providedDependencies`, an object describing the data added by the step to the Dependency Store. Use this only for data that does not come from API requests.
 - (optional) `processingMessage`, a message that is displayed at the end of the flow while the user waits for the apiRequestFunction to process. For example, "Creating your account" or "Setting up your site", depending on what your step does.
 
-Some background on `providedDependencies` and the Dependency Store: submitted steps are saved in the Progress Store, where they wait to have their dependencies met. For example, a step that creates a site needs to wait until a user account is created. Once that happens, the step is processed and its result is saved in the Dependency Store, so other steps can use it. You can read more about this [here](https://github.com/Automattic/calypso-pre-oss/tree/master/client/lib/signup).
+Some background on `providedDependencies` and the Dependency Store: submitted steps are saved in the Progress Store, where they wait to have their dependencies met. For example, a step that creates a site needs to wait until a user account is created. Once that happens, the step is processed and its result is saved in the Dependency Store, so other steps can use it. You can read more about this [here](https://github.com/Automattic/wp-calypso/tree/master/client/lib/signup).
 
 ### apiRequestFunction
 

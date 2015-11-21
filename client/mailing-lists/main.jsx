@@ -164,7 +164,6 @@ const MainComponent = React.createClass( {
 				{ this.renderCategoryAndEmail() }
 				<button className="button is-primary" onClick={ this.onResubscribeClick }>{ this.translate( 'Resubscribe' ) }</button>
 				{/* Hide link to manage all updates until that page is live.
-					See https://github.com/Automattic/calypso-pre-oss/pull/10771
 				<p></p>
 				<button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.translate( 'Manage all your updates from WordPress.com' ) }</button>
 				*/}

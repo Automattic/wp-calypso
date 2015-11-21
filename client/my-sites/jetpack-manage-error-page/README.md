@@ -1,12 +1,12 @@
 Jetpack Manage Error Pages
 ==========================
 
-This component is used to catch Jetpack management errors at a high level, 
+This component is used to catch Jetpack management errors at a high level,
 and render an appropriate error page before any management tools are rendered.
 
 This component is an extension of the [EmptyContent component][1], and it accepts
 the same properties.
-[1]: https://github.com/Automattic/calypso-pre-oss/tree/master/shared/components/empty-content
+[1]: https://github.com/Automattic/wp-calypso/tree/master/shared/components/empty-content
 
 Additionally, this component accepts a `template` property which will render some pre-defined
 templates. Here are acceptable values for `template` along with examples of how to use them.

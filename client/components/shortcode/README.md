@@ -58,4 +58,4 @@ Function to override default render result. Passed the original result of the [s
 
 ## Resources
 
-You may find it convenient to use the [`Shortcode` conversion library](https://github.com/Automattic/calypso-pre-oss/tree/master/client/lib/shortcode) in conjunction with this component to help with generating shortcode strings.
+You may find it convenient to use the [`Shortcode` conversion library](https://github.com/Automattic/wp-calypso/tree/master/client/lib/shortcode) in conjunction with this component to help with generating shortcode strings.
