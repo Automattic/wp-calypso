@@ -80,6 +80,7 @@
 		"reader/following-edit": true,
 		"reader/discover": true,
 		"reader/recommendations": true,
+		"reader/discover": true,
 		"ad-tracking": true,
 		"mailing-lists/unsubscribe": true
 	},
