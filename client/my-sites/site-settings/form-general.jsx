@@ -7,6 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
+	Button = require( 'components/button' ),
 	formBase = require( './form-base' ),
 	RelatedContentPreview = require( 'my-sites/site-settings/related-content-preview' ),
 	LanguageSelector = require( 'components/forms/language-selector' ),
@@ -397,44 +398,62 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Site Profile' ) } />
+				<SectionHeader label={ this.translate( 'Site Profile' ) }>
+					<Button
+						compact={ true }
+						onClick={ this.submitForm }
+						primary={ true }
+						type="submit"
+						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+							{ this.state.submittingForm
+								? this.translate( 'Saving…' )
+								: this.translate( 'Save Settings' )
+							}
+					</Button>
+				</SectionHeader>
 				<Card>
-					<form onSubmit={ this.submitForm } onChange={ this.markChanged }>
+					<form onChange={ this.markChanged }>
 						{ this.siteOptions() }
 						{ this.languageOptions() }
-						<button
-							type="submit"
-							className="button is-primary"
-							disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-								{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-						</button>
 					</form>
 				</Card>
-				<SectionHeader label={ this.translate( 'Address and visibility' ) } />
+				<SectionHeader label={ this.translate( 'Address and visibility' ) }>
+					<Button
+						compact={ true }
+						onClick={ this.submitForm }
+						primary={ true }
+						type="submit"
+						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+							{ this.state.submittingForm
+								? this.translate( 'Saving…' )
+								: this.translate( 'Save Settings' )
+							}
+					</Button>
+				</SectionHeader>
 				<Card>
-					<form onSubmit={ this.submitForm } onChange={ this.markChanged }>
+					<form onChange={ this.markChanged }>
 						{ this.blogAddress() }
 						{ this.visibilityOptions() }
-						<button
-							type="submit"
-							className="button is-primary"
-							disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-								{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-						</button>
 					</form>
 				</Card>
-				<SectionHeader label={ this.translate( 'Other' ) } />
+				<SectionHeader label={ this.translate( 'Other' ) }>
+					<Button
+						compact={ true }
+						onClick={ this.submitForm }
+						primary={ true }
+						type="submit"
+						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+							{ this.state.submittingForm
+								? this.translate( 'Saving…' )
+								: this.translate( 'Save Settings' )
+							}
+					</Button>
+				</SectionHeader>
 				<Card>
-					<form onSubmit={ this.submitForm } onChange={ this.markChanged }>
+					<form onChange={ this.markChanged }>
 						{ this.jetpackOptions() }
 						{ this.jetpackDisconnectOption() }
 						{ this.relatedPostsOptions() }
-						<button
-							type="submit"
-							className="button is-primary"
-							disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-								{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-						</button>
 					</form>
 				</Card>
 			</div>
