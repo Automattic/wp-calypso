@@ -9,14 +9,14 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
-	skeleton = require( './mixin-skeleton' ),
+var toggle = require( '../mixin-toggle' ),
+	skeleton = require( '../mixin-skeleton' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( './module-error' ),
-	InfoPanel = require( './info-panel' ),
-	StatsList = require( './stats-list' ),
-	DownloadCsv = require( './download-csv' ),
-	DatePicker = require( './module-date-picker' ),
+	ErrorPanel = require( '../modules/module-error' ),
+	InfoPanel = require( '../info-panel' ),
+	StatsList = require( '../stats-list' ),
+	DownloadCsv = require( '../download-csv' ),
+	DatePicker = require( '../modules/module-date-picker' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
 
@@ -45,9 +45,9 @@ module.exports = React.createClass( {
 
 	viewAllHandler: function( event ) {
 		var summaryPageLink = '/stats/' + this.props.period.period + '/' + this.props.path + '/' + this.props.site.slug + '?startDate=' + this.props.date;
-		
+
 		event.preventDefault();
-		
+
 		if ( this.props.beforeNavigate ) {
 			this.props.beforeNavigate();
 		}

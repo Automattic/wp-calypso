@@ -9,10 +9,10 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Follow = require( './action-follow' ),
-	Page = require( './action-page' ),
-	OpenLink = require( './action-link' ),
-	Spam = require( './action-spam' ),
+var Follow = require( '../action-follow' ),
+	Page = require( '../action-page' ),
+	OpenLink = require( '../action-link' ),
+	Spam = require( '../action-spam' ),
 	Emojify = require( 'components/emojify' ),
 	titlecase = require( 'to-title-case' ),
 	analytics = require( 'analytics' ),
