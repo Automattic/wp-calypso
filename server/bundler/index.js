@@ -2,7 +2,8 @@
  * External dependecies
  */
 var webpackMiddleware = require( 'webpack-dev-middleware' ),
-	webpack = require( 'webpack' );
+	webpack = require( 'webpack' ),
+	chalk = require( 'chalk' );
 
 var utils = require( './utils' ),
 	webpackConfig = require( 'webpack.config' );
@@ -11,6 +12,7 @@ function middleware( app ) {
 	var compiler = webpack( webpackConfig ),
 		callbacks = [],
 		built = false,
+		beforeFirstCompile = true,
 		assets;
 
 	app.set( 'compiler', compiler );
@@ -24,22 +26,49 @@ function middleware( app ) {
 		while( callbacks.length > 0 ) {
 			callbacks.shift()();
 		}
+
+		// In order to show our message *after* webpack's "bundle is now VALID"
+		// we need to skip two event loop ticks, because webpack's callback is
+		// also hooked on the "done" event, it calls nextTick to print the message
+		// and runs before our callback (calls app.use earlier in the code)
+		process.nextTick( function() {
+			process.nextTick( function() {
+				if ( beforeFirstCompile ) {
+					beforeFirstCompile = false;
+					console.info( chalk.blue( 'READY! You can load http://calypso.localhost:3000/ now. Have fun!' ) );
+				} else {
+					console.info( chalk.blue( 'READY! All assets are re-compiled. Have fun!' ) );
+				}
+			} );
+		} );
 	} );
 
-	function waitForCompiler( request, next ) {
+	function waitForCompiler( request, response, next ) {
 		if ( built ) {
 			return next();
 		}
 
-		console.log( "Waiting for webpack to finish compiling..." );
+		console.info( 'Compiling assets... Wait until you see READY! and then try http://calypso.localhost:3000/ again.' );
 
-		// Queue request handlers until the initial build is complete
-		callbacks.push( waitForCompiler.bind( null, request, next ) );
+		// a special message for newcomers, because seeing a blank page is confusing
+		if ( request.url === '/' ) {
+			response.send( `
+				<head>
+					<meta http-equiv="refresh" content="5">
+				</head>
+				<body>
+					<h1>Welcome to Calypso!</h1>
+					<p>Please wait until webpack has finished compiling and you see <code style="font-size: 1.2em; color: blue; font-weight: bold;">READY!</code> in the server console. This page should then refresh automatically. If it hasn&rsquo;t, hit <em>Refresh</em>.</p>
+					<p>In the meantime, try to follow all the emotions of the allmoji: <img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif" width="36" style="vertical-align: middle;">
+				</body>
+			` );
+		} else {
+			// Queue request handlers until the initial build is complete
+			callbacks.push( waitForCompiler.bind( null, request, response, next ) );
+		}
 	}
 
-	app.use( function( request, response, next ) {
-		waitForCompiler( request, next );
-	} );
+	app.use( waitForCompiler );
 
 	app.use( webpackMiddleware( compiler, {
 		publicPath: '/calypso/',
