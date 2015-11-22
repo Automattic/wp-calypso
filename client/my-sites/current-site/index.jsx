@@ -151,9 +151,9 @@ module.exports = React.createClass( {
 			return (
 				<Card className="current-site is-loading">
 					<div className="site">
-					{ hasOneSite ?
-						this.addNewWordPressButton() :
-						<span className="current-site__switch-sites" />
+					{ hasOneSite
+						? this.addNewWordPressButton()
+						: <span className="current-site__switch-sites" />
 					}
 						<a className="site__content">
 							<div className="site-icon" />
@@ -174,9 +174,9 @@ module.exports = React.createClass( {
 
 		return (
 			<Card className="current-site">
-				{ hasOneSite ?
-					this.addNewWordPressButton() :
-					<span
+				{ hasOneSite
+					? this.addNewWordPressButton()
+					: <span
 						className="current-site__switch-sites"
 						onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 16 } />
