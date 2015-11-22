@@ -10,7 +10,7 @@ import {
 	FETCH_PUBLICIZE_CONNECTIONS,
 	RECEIVE_PUBLICIZE_CONNECTIONS,
 	FAIL_PUBLICIZE_CONNECTIONS_REQUEST
-} from 'lib/redux-store/action-types';
+} from '../../action-types';
 import {
 	fetchingConnections,
 	connections,
