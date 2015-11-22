@@ -16,6 +16,7 @@
 		"code-splitting": false,
 		"network-connection": true,
 		"always_use_logout_url": true,
+		"notifications2beta": true,
 
 		"post-editor": true,
 		"post-editor/author-selector": true,
