@@ -16,6 +16,9 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	RecoveryEmails = require( './recovery-emails' ),
 	RecoveryPhone = require( './recovery-phone' );
 
+// @TODO remove this
+import FormExample from 'components/forms/docs/example.jsx';
+
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckup',
 
@@ -47,6 +50,20 @@ module.exports = React.createClass( {
 				<CompactCard>
 					<RecoveryPhone userSettings={ this.props.userSettings } />
 				</CompactCard>
+
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<FormExample />
 
 			</Main>
 		);
