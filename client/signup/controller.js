@@ -12,6 +12,7 @@ import i18n from 'lib/mixins/i18n';
 import config from 'config';
 import route from 'lib/route';
 import analytics from 'analytics';
+import layoutFocus from 'lib/layout-focus';
 import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
@@ -72,6 +73,7 @@ export default {
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
 		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		layoutFocus.set( 'content' );
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
