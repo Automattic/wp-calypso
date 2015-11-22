@@ -17,22 +17,22 @@ var Dispatcher = require( 'dispatcher' ),
 var _initialized = false,
 	_loading = false,
 	_phone = {},
-	_email = {};
+	_emails = {};
 
 var AccountRecoveryStore = {
-	getEmail: function() {
+	getEmails: function() {
 		fetchFromAPIIfNotInitialized();
 
 		return assign( {
-			loading: _loading,
-		}, _email );
+			loading: _loading
+		}, _emails );
 	},
 
 	getPhone: function() {
 		fetchFromAPIIfNotInitialized();
 
 		return assign( {
-			loading: _loading,
+			loading: _loading
 		}, _phone );
 	}
 };
@@ -45,7 +45,7 @@ function emitChange() {
 resetData();
 
 function resetData() {
-	resetEmail();
+	resetEmails();
 	resetPhone();
 }
 
@@ -58,13 +58,25 @@ function resetPhone() {
 }
 
 function updateEmail( email ) {
-	_email.data = {
-		email: email
+	_emails.data = {
+		emails: _emails.data.push( email )
 	};
 }
 
-function resetEmail() {
-	updateEmail( null );
+function updateEmails( emails ) {
+	_emails.data = {
+		emails: emails
+	};
+}
+
+function removeEmail( email ) {
+	_emails.data = {
+		emails: _emails.data.remove( email )
+	};
+}
+
+function resetEmails() {
+	updateEmails( [] );
 }
 
 function fetchFromAPIIfNotInitialized() {
@@ -104,8 +116,8 @@ function handleResponse( data ) {
 		} );
 	}
 
-	if ( data.email ) {
-		updateEmail( data.email );
+	if ( data.emails ) {
+		updateEmails( data.emails );
 	}
 
 	emitChange();
@@ -119,14 +131,14 @@ function setPhoneNotice( message, type ) {
 }
 
 function setEmailNotice( message, type ) {
-	_email.lastNotice = {
+	_emails.lastNotice = {
 		type: type,
 		message: message
 	};
 }
 
 function resetEmailNotice() {
-	_email.lastNotice = false;
+	_emails.lastNotice = false;
 }
 
 function resetPhoneNotice() {
@@ -203,17 +215,12 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 
 			updateEmail( action.email );
-			if ( ! action.previousEmail ) {
-				setEmailNotice( messages.EMAIL_ADDED );
-			} else {
-				setEmailNotice( messages.EMAIL_UPDATED );
-			}
-
+			setEmailNotice( messages.EMAIL_ADDED );
 			emitChange();
 			break;
 
 		case actions.DELETE_ACCOUNT_RECOVERY_EMAIL:
-			resetEmail();
+			removeEmail( action.email );
 			emitChange();
 			break;
 
@@ -223,7 +230,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			resetEmail();
+			removeEmail( action.email );
 			setEmailNotice( messages.EMAIL_DELETED );
 			emitChange();
 			break;

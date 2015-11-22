@@ -235,11 +235,9 @@ UndocumentedMe.prototype.updateNotificationSettings = function( settings, applyT
 
 UndocumentedMe.prototype.getAccountRecovery = function( callback ) {
 	var args = {
-		apiVersion: '1.1',
-		path: '/me/account-recovery'
+		apiVersion: '1.2'
 	};
-
-	return this.wpcom.req.get( args, callback );
+	return this.wpcom.req.get( '/me/account-recovery', args, callback );
 };
 
 UndocumentedMe.prototype.updateAccountRecoveryPhone = function( country, phoneNumber, callback ) {

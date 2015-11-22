@@ -9,7 +9,7 @@ import React from 'react';
 import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
 
 module.exports = React.createClass( {
-	displayName: 'SecurityCheckupRecoveryPhoneEdit',
+	displayName: 'SecurityCheckupRecoveryEmailAdd',
 
 	render: function() {
 

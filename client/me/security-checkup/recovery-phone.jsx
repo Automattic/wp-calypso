@@ -1,95 +1,55 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var AccountRecoveryStore = require( 'lib/security-checkup/account-recovery-store' ),
-	SecurityCheckupActions = require( 'lib/security-checkup/actions' ),
-	ManageContact = require( './manage-contact' ),
-	EditPhone = require( './edit-phone' ),
-	accept = require( 'lib/accept' );
+import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryPhone',
 
 	componentDidMount: function() {
-		AccountRecoveryStore.on( 'change', this.refreshData );
+		AccountRecoveryStore.on( 'change', this.refreshRecoveryPhone );
 	},
 
 	componentWillUnmount: function() {
-		AccountRecoveryStore.off( 'change', this.refreshData );
+		AccountRecoveryStore.off( 'change', this.refreshRecoveryEmails );
 	},
 
 	getInitialState: function() {
-		return assign( {}, this.getDataFromStores() );
+		return {
+			recoveryPhone: []
+		};
 	},
 
-	refreshData: function() {
-		this.setState( this.getDataFromStores() );
+	refreshRecoveryPhone: function() {
+		this.setState( { recoveryPhone: AccountRecoveryStore.getEmails() } );
 	},
 
-	getDataFromStores: function() {
-		return AccountRecoveryStore.getPhone();
-	},
-
-	render: function() {
-		var phone = ! isEmpty( this.state.data ) ? this.state.data : false,
-			twoStepEnabled = this.props.userSettings.isTwoStepEnabled(),
-			twoStepNotice = null;
-
-		if ( twoStepEnabled ) {
-			twoStepNotice = {
-				type: 'error',
-				message: this.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
-					components: {
-						a: <a href="/me/security/two-step" />
-					}
-				} ),
-				showDismiss: false
-			};
-		}
-
+	renderRecoveryPhonePlaceholder: function() {
 		return (
-			<ManageContact
-				type="sms"
-				isLoading={ this.state.loading }
-				title={ this.translate( 'Recovery SMS Number', {
-					comment: 'Account security'
-				} ) }
-				subtitle={ phone ? phone.numberFull : this.translate( 'Not set' ) }
-				hasValue={ !! phone }
-				lastNotice={ twoStepNotice || this.state.lastNotice }
-				disabled={ twoStepEnabled }
-
-				onSave={ this.onSave }
-				onDelete={ this.onDelete }
-				onDismissNotice={ this.onDismissNotice }
-				>
-					<EditPhone
-						storedPhone={ this.state.data }
-						/>
-				</ManageContact>
+			<div>
+				<p>Recovery phone</p>
+			</div>
 		);
 	},
 
-	onSave: function( phone ) {
-		SecurityCheckupActions.updatePhone( phone, this.state.data );
+	renderRecoveryPhone: function() {
+		return (
+			<div>
+				<p>Recovery phone</p>
+			</div>
+		);
 	},
 
-	onDelete: function() {
-		accept( this.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
-			if ( accepted ) {
-				SecurityCheckupActions.deletePhone();
-			}
-		} );
-	},
-
-	onDismissNotice: function() {
-		SecurityCheckupActions.dismissPhoneNotice();
+	render: function() {
+		return (
+			<div>
+				{ this.renderRecoveryPhone() }
+			</div>
+		);
 	}
 } );
