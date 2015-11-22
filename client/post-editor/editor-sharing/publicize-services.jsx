@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	uniq = require( 'lodash/array/uniq' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var user = require( 'lib/user' )(),
+var serviceConnections = require( 'my-sites/sharing/connections/service-connections' ),
 	EditorSharingPublicizeConnection = require( './publicize-connection' );
 
 module.exports = React.createClass( {
@@ -21,12 +20,7 @@ module.exports = React.createClass( {
 	},
 
 	renderServices: function() {
-		var services = uniq( this.props.connections.map( ( connection ) => {
-			return {
-				name: connection.service,
-				label: connection.label
-			};
-		} ), 'name' );
+		var services = serviceConnections.getServicesFromConnections( this.props.connections );
 
 		return services.map( function( service ) {
 			return (
@@ -39,11 +33,10 @@ module.exports = React.createClass( {
 	},
 
 	renderConnections: function( serviceName ) {
-		const currentUser = user.get();
-		const connections = currentUser ? this.props.connections.filter( ( connection ) => {
-			const { service, keyring_connection_user_ID, shared } = connection;
-			return service === serviceName && ( shared || keyring_connection_user_ID === currentUser.ID );
-		} ) : [];
+		const connections = serviceConnections.getConnectionsAvailableToCurrentUser(
+			serviceName,
+			this.props.connections
+		);
 
 		return connections.map( function( connection ) {
 			return (
