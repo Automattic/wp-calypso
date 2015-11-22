@@ -35,7 +35,7 @@ We also avoid Sass indentation outside of pseudo-selectors, media-queries, and `
 
 ## Folders
 
-Any component folder should be able to be moved to `client/components` at any time without losing meaning or having conflicts. We place components in folders for organizational pruposes, but they are not semantically coupled to this structure.
+Any component folder should be able to be moved to `client/components` at any time without losing meaning or having conflicts. We place components in folders for organizational purposes, but they are not semantically coupled to this structure.
 
 ### Example
 
