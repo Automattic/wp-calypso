@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	qs = require( 'qs' ),
 	debounce = require( 'lodash/function/debounce' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	EmptyContent = require( 'components/empty-content' );
 
 /**
  * Internal dependencies
@@ -95,6 +96,25 @@ var devdocs = {
 		React.render(
 			React.createElement( FormStateExamplesComponent, {
 				component: context.params.component
+			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	pleaseLogIn: function( context ) {
+		context.layout.setState( { section: 'devdocs-start' } );
+
+		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+		React.render(
+			React.createElement( EmptyContent, {
+				title: 'Log In to start hacking',
+				line: 'Required to access the WordPress.com API',
+				action: 'Log In to WordPress.com',
+				actionURL: 'https://wordpress.com/login',
+				secondaryAction: 'Register',
+				secondaryActionURL: 'https://wordpress.com/start',
+				illustration: '/calypso/images/drake/drake-nosites.svg'
 			} ),
 			document.getElementById( 'primary' )
 		);
