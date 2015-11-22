@@ -271,6 +271,11 @@ function boot() {
 				return startsWith( context.path, validPath );
 			} );
 
+			if ( '/' === context.path && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+				page.redirect( '/devdocs/start' );
+				return;
+			}
+
 			if ( isValidSection ) {
 				next();
 			}

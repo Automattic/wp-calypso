@@ -129,6 +129,7 @@
 		"olark" : true,
 		"olark_use_wpcom_configuration": true,
 		"devdocs": true,
+		"devdocs/redirect-loggedout-homepage": true,
 		"jetpack_core_inline_update": true,
 		"phone_signup": true,
 		"login": true,
