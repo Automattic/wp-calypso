@@ -127,6 +127,17 @@ module.exports = React.createClass( {
 		);
 	},
 
+	addNewWordPressButton: function() {
+		return (
+			<AddNewButton
+				isCompact={ true }
+				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+			>
+				{ this.translate( 'Add New WordPress' ) }
+			</AddNewButton>
+		);
+	},
+
 	render: function() {
 		var site,
 			hasOneSite = this.props.siteCount === 1;
@@ -136,12 +147,7 @@ module.exports = React.createClass( {
 				<Card className="current-site is-loading">
 					<div className="site">
 					{ hasOneSite ?
-						<AddNewButton
-							isCompact={ true }
-							href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-						>
-							{ this.translate( 'Add New WordPress' ) }
-						</AddNewButton> :
+						this.addNewWordPressButton() :
 						<span className="current-site__switch-sites" />
 					}
 						<a className="site__content">
@@ -164,12 +170,7 @@ module.exports = React.createClass( {
 		return (
 			<Card className="current-site">
 				{ hasOneSite ?
-					<AddNewButton
-						isCompact={ true }
-						href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-					>
-						{ this.translate( 'Add New WordPress' ) }
-					</AddNewButton> :
+					this.addNewWordPressButton() :
 					<span
 						className="current-site__switch-sites"
 						onClick={ this.switchSites }>
