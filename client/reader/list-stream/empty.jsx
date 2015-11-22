@@ -1,7 +1,6 @@
 var React = require( 'react' );
 
 var EmptyContent = require( 'components/empty-content' ),
-	ExternalLink = require( 'components/external-link' ),
 	stats = require( 'reader/stats' );
 
 var ListEmptyContent = React.createClass( {
@@ -15,8 +14,8 @@ var ListEmptyContent = React.createClass( {
 	},
 
 	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_freshly_pressed_on_empty' );
-		stats.recordGaEvent( 'Clicked Freshly Pressed on EmptyContent' );
+		stats.recordAction( 'clicked_discover_on_empty' );
+		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
 	},
 
 	render: function() {
@@ -24,10 +23,10 @@ var ListEmptyContent = React.createClass( {
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> ),
-			secondaryAction = ( <ExternalLink
+			secondaryAction = ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
-				href="https://wordpress.com/fresh/">{ this.translate( 'Explore our Editors\' Picks' ) }</ExternalLink> );
+				href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
 
 		return ( <EmptyContent
 			title={ this.translate( 'No recent posts…' ) }
