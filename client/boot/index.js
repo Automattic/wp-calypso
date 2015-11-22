@@ -37,7 +37,7 @@ var config = require( 'config' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
-	reduxStore = require( 'lib/redux-store' ),
+	createReduxStore = require( 'lib/create-redux-store' ),
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
@@ -79,13 +79,15 @@ function init() {
 }
 
 function setUpContext( layout ) {
+	var reduxStore = createReduxStore();
+
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
 	page( '*', function( context, next ) {
 		var parsed = url.parse( location.href, true );
 
 		context.layout = layout;
-		context.reduxStore = reduxStore();
+		context.reduxStore = reduxStore;
 
 		// Break routing and do full page load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
