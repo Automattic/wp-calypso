@@ -22,6 +22,11 @@
 	.wp-primary {
 		order: 2;
 		flex: 1;
+		margin-left: 0;
+
+		.main {
+			margin: 0 auto;
+		}
 	}
 
 	.wp-secondary {
