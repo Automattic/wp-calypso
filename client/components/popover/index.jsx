@@ -30,7 +30,8 @@ var Popover = React.createClass( {
 	propTypes: {
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
-		position: React.PropTypes.string
+		position: React.PropTypes.string,
+		ignoreContext: React.PropTypes.element,
 	},
 
 	getDefaultProps: function() {
