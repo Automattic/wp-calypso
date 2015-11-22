@@ -127,11 +127,16 @@ module.exports = React.createClass( {
 		);
 	},
 
+	focusContent: function() {
+		layoutFocus.set( 'content' );
+	},
+
 	addNewWordPressButton: function() {
 		return (
 			<AddNewButton
 				isCompact={ true }
 				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+				onClick={ this.focusContent }
 			>
 				{ this.translate( 'Add New WordPress' ) }
 			</AddNewButton>
