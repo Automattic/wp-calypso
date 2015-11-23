@@ -24,25 +24,6 @@
 	padding: 24px;
 }
 
-.devdocs__navigation {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-
-.devdocs__navigation-item a {
-	display: block;
-	padding: 16px 24px;
-	box-shadow: inset -0.296em 0 0 rgba(0,80,130,0.2);
-	color: $gray;
-	font-size: 16px;
-
-	&:hover {
-		background: $blue-medium;
-		color: $white;
-	}
-}
-
 .devdocs__result {
 	@extend %container;
 
