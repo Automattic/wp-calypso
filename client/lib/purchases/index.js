@@ -57,12 +57,16 @@ function hasPrivateRegistration( purchase ) {
 }
 
 function isCancelable( purchase ) {
-	if ( isRefundable( purchase ) ) {
-		return true;
-	}
-
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
+	}
+
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+
+	if ( isRefundable( purchase ) ) {
+		return true;
 	}
 
 	return purchase.canDisableAutoRenew;
@@ -99,6 +103,14 @@ function isRedeemable( purchase ) {
 
 function isRefundable( purchase ) {
 	return purchase.isRefundable;
+}
+
+function isRemovable( purchase ) {
+	if (  isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	return ( isExpired( purchase ) && purchase.isCancelable );
 }
 
 function isRenewable( purchase ) {
@@ -184,6 +196,7 @@ export {
 	isOneTimePurchase,
 	isRedeemable,
 	isRefundable,
+	isRemovable,
 	isRenewable,
 	isRenewing,
 	paymentLogoType,

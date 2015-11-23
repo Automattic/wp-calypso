@@ -36,6 +36,7 @@ import {
 	isPaidWithCreditCard,
 	isRedeemable,
 	isRefundable,
+	isRemovable,
 	isRenewable,
 	isRenewing,
 	isIncludedWithPlan,
@@ -450,7 +451,7 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props ),
 			{ domain, id } = purchase;
 
-		if ( isExpired( purchase ) || ! isCancelable( purchase ) ) {
+		if ( ! isCancelable( purchase ) ) {
 			return null;
 		}
 
@@ -466,6 +467,23 @@ const ManagePurchase = React.createClass( {
 					: this.translate( 'Cancel %(purchaseName)s', translateArgs )
 				}
 			</VerticalNavItem>
+		);
+	},
+
+	renderRemovePurchaseNavItem() {
+		const purchase = this.getPurchase(),
+				{ domain, id } = purchase;
+
+		if ( ! isRemovable( purchase ) ) {
+			return null;
+		}
+
+		return (
+				<VerticalNavItem path={ paths.confirmCancelPurchase( domain, id ) }>
+					{ this.translate( 'Remove %(purchaseName)s from my site', {
+						args: { purchaseName: getName( purchase ) }
+					} )}
+				</VerticalNavItem>
 		);
 	},
 
@@ -500,6 +518,7 @@ const ManagePurchase = React.createClass( {
 			expiredRenewNotice,
 			editPaymentMethodNavItem,
 			cancelPurchaseNavItem,
+			removePurchaseNavItem,
 			cancelPrivateRegistrationNavItem;
 
 		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
@@ -523,6 +542,7 @@ const ManagePurchase = React.createClass( {
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
+			removePurchaseNavItem = this.renderRemovePurchaseNavItem();
 			cancelPrivateRegistrationNavItem = this.renderCancelPrivateRegistration();
 			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
 		}
@@ -561,6 +581,7 @@ const ManagePurchase = React.createClass( {
 
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
+				{ removePurchaseNavItem }
 				{ cancelPrivateRegistrationNavItem }
 			</div>
 		);
