@@ -11,6 +11,9 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import AdvancedOptions from 'my-sites/exporter/advanced-options';
+import wpcom from 'lib/wp';
+
+const wpcomUndocumented = wpcom.undocumented();
 
 const defaults = {
 	advancedSettings: {
@@ -33,6 +36,18 @@ export default React.createClass( {
 	getInitialState() {
 		this.data = Immutable.fromJS( defaults );
 		return this.data.toJS();
+	},
+
+	componentWillReceiveProps( newProps ) {
+		const siteId = newProps.site.ID;
+		wpcomUndocumented.getExportAdvancedSettings( siteId, ( error, settings ) => {
+			if ( error ) {
+				console.error( error );
+				return;
+			}
+
+			console.log( settings );
+		} );
 	},
 
 	toggleAdvancedSettings() {
