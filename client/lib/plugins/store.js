@@ -264,9 +264,9 @@ PluginsStore = {
 			_compact(
 				plugin.sites.map( function( site ) {
 					// we create a copy of the site to avoid any possible modification down the line affecting the main list
-					let pluginSite = site.jetpack ?
-						new JetpackSite( sitesList.getSite( site.ID ) ) :
-						new Site( sitesList.getSite( site.ID ) );
+					let pluginSite = site.jetpack
+						? new JetpackSite( sitesList.getSite( site.ID ) )
+						: new Site( sitesList.getSite( site.ID ) );
 					pluginSite.plugin = site.plugin;
 					if ( site.visible ) {
 						return pluginSite;
@@ -314,7 +314,8 @@ PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
 	switch ( action.type ) {
 		case 'RECEIVE_PLUGINS':
 			if ( action.error ) {
-				// bail if there is an error since there will be nothing to update
+				updatePlugins( action.site, [] );
+				PluginsStore.emitChange();
 				return;
 			}
 

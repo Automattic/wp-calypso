@@ -183,7 +183,7 @@ describe( 'Plugins Store', function() {
 			} );
 		} );
 
-		it( 'Should not set value of the site if RECEIVE_PLUGINS errors', function() {
+		it( 'Should return an empty array if RECEIVE_PLUGINS errors', function() {
 			var UpdatedStore;
 			Dispatcher.handleServerAction( actions.fetchedError );
 			UpdatedStore = PluginsStore.getPlugins( {
@@ -191,7 +191,7 @@ describe( 'Plugins Store', function() {
 				jetpack: false,
 				plan: { product_slug: 'free_plan' }
 			} );
-			assert.isUndefined( UpdatedStore );
+			assert.equal( UpdatedStore.length, 0 );
 		} );
 
 		it( 'Should not set value of the site if NOT_ALLOWED_TO_RECEIVE_PLUGINS errors', function() {

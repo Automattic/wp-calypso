@@ -63,7 +63,7 @@ JetpackSite.prototype.fetchAvailableUpdates = function() {
 			debug( 'error fetching Updates data from api', error );
 			// 403 is returned when the user does not have manage capabilities.
 			if ( 403 !== error.statusCode && ! ( this.update instanceof Object ) ) {
-				this.set( { update: 'error' } );
+				this.set( { update: 'error', unreachable: true } );
 			}
 			return;
 		}

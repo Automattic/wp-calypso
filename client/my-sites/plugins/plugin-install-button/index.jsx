@@ -57,6 +57,13 @@ module.exports = React.createClass( {
 				</div>
 			);
 		}
+		if ( this.props.selectedSite.unreachable ) {
+			return (
+				<div className="plugin-install-button__install embed has-warning">
+					<span className="plugin-install-button__warning">{ this.translate( 'Site unreachable' ) }</span>
+				</div>
+			);
+		}
 		if ( this.props.isInstalling ) {
 			return (
 				<span className="plugin-install-button__install embed">
