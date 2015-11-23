@@ -4,6 +4,9 @@
 import find from 'lodash/collection/find';
 import includes from 'lodash/collection/includes';
 import moment from 'moment';
+import sitesFactory from 'lib/sites-list';
+
+const sites = sitesFactory();
 
 /**
  * Internal dependencies
@@ -27,6 +30,7 @@ function getPurchasesBySite( purchases ) {
 				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
+				slug: sites.getSite( currentValue.siteId ).slug,
 				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
 				purchases: [ currentValue ]
 			} );
