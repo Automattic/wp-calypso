@@ -1,0 +1,136 @@
+$blue-wordpress: #0085be;
+$blue-light:     #78dcfa;
+$blue-medium:    #00aadc;
+$blue-dark:      #005082;
+
+// Greys
+$grey:           #87a6bc;
+
+$grey-light:     lighten( $grey, 33% ); // #F3F6F8
+$grey-dark:      darken( $grey, 38% ); // #2E4453
+
+$alert-red:      #D94F4F;
+
+.wpcom-contact-form {
+	font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+	border: 1px solid rgba(0, 0, 0, 0);
+	border-radius: 3px;
+	background: #fafafa;
+
+	.contact-form-generator {
+		width: 300px;
+		background: white;
+		margin: 20px auto;
+		padding: 10px 0;
+
+		ul {
+			list-style-type: none;
+			text-align: left;
+			margin: 0 10px;
+			padding: 0;
+			color: $blue-medium;
+			border-bottom: 1px solid $grey-light;
+
+			li {
+				display: inline;
+				margin-right: 10px;
+
+				a {
+					text-decoration: none;
+				}
+			}
+
+			li.selected {
+				color: $grey;
+				border-bottom: 1px solid $grey-dark;
+			}
+		}
+
+		.form-fields {
+
+			.list {
+				.field {
+					.header {
+						height: 40px;
+						background: $grey-light;
+						margin: 10px 10px 0 10px;
+
+						.grab {
+							color: $blue-medium;
+							display: block;
+							float: left;
+							height: 20px;
+							margin-top: 11px;
+							margin-left: 10px;
+							padding-right: 5px;
+							font-size: 15px;
+							line-height: 18px;
+							border-right: 2px solid $grey;
+							cursor: move;
+						}
+
+						.label {
+							display: block;
+							float: left;
+							color: $grey;
+							margin-top: 7px;
+							margin-left: 5px;
+							padding-top: 1px;
+							text-align: left;
+							height: 20px;
+							width: 190px;
+						}
+
+						a {
+							display: block;
+							float: left;
+							height: 20px;
+							margin-top: 10px;
+							font-size: 12px;
+							padding-top: 3px;
+							text-transform: uppercase;
+							text-decoration: none;
+							color: $blue-medium;
+						}
+					}
+					.details {
+						max-height: 0;
+						overflow: hidden;
+					}
+				}
+			}
+
+
+			.add {
+				a {
+					display: block;
+					height: 40px;
+					border: 2px $grey dashed;
+					background: $grey-light;
+					text-align: center;
+					margin: 10px;
+					text-decoration: none;
+					line-height: 38px;
+				}
+
+				span {
+					line-height: 35px;
+				}
+			}
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	}
+}

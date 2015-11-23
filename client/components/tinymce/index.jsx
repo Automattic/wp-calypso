@@ -36,6 +36,7 @@ require( './plugins/tabindex/plugin' )();
 require( './plugins/touch-scroll-toolbar/plugin' )();
 require( './plugins/editor-button-analytics/plugin' )();
 require( './plugins/calypso-alert/plugin' )();
+require( './plugins/contact-form/plugin' )();
 
 /**
  * Internal Dependencies
@@ -94,6 +95,7 @@ const PLUGINS = [
 	'wpcom/editorbuttonanalytics',
 	'wpcom/calypsoalert',
 	'wpcom/tabindex',
+	'wpcom/contactform'
 ];
 
 const CONTENT_CSS = [
@@ -237,7 +239,7 @@ module.exports = React.createClass( {
 			indent: false,
 
 			autoresize_min_height: document.documentElement.clientHeight,
-			toolbar1: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced',
+			toolbar1: 'wpcom_add_media,wpcom_add_contact_form,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced',
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
