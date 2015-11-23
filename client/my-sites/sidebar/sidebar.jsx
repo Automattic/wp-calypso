@@ -455,8 +455,9 @@ module.exports = React.createClass( {
 		return (
 			<li className="wp-admin">
 				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank">
+					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'WP Admin' ) }</span>
-					<span className="noticon noticon-external"></span>
+					<span className="noticon noticon-external" />
 				</a>
 			</li>
 		);
@@ -606,7 +607,6 @@ module.exports = React.createClass( {
 				<li className="sidebar-menu">
 					<ul>
 						{ this.homepage() }
-						{ this.wpAdmin() }
 						{ this.stats() }
 						{ this.ads() }
 						{ this.plan() }
@@ -653,6 +653,7 @@ module.exports = React.createClass( {
 						{ this.plugins() }
 						{ this.upgrades() }
 						{ this.siteSettings() }
+						{ this.wpAdmin() }
 					</ul>
 				</li>
 				: null }
