@@ -7,6 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
+import FormSectionHeading from 'components/forms/form-section-heading';
+
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryPhone',
@@ -40,7 +42,7 @@ module.exports = React.createClass( {
 	renderRecoveryPhone: function() {
 		return (
 			<div>
-				<p>Recovery phone</p>
+				<FormSectionHeading>Recovery SMS number</FormSectionHeading>
 			</div>
 		);
 	},

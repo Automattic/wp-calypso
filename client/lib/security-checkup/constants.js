@@ -13,7 +13,6 @@ var constants;
 function _translateMessages() {
 	return {
 		EMAIL_ADDED: i18n.translate( 'Successfully added new recovery email address.' ),
-		EMAIL_UPDATED: i18n.translate( 'Successfully updated recovery email address.' ),
 		EMAIL_DELETED: i18n.translate( 'Successfully removed recovery email address.' ),
 		SMS_ADDED: i18n.translate( 'Successfully added new recovery SMS number.' ),
 		SMS_UPDATED: i18n.translate( 'Successfully updated recovery SMS number.' ),

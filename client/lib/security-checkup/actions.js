@@ -31,7 +31,7 @@ var SecurityCheckupActions = {
 			} );
 
 			let event = previousPhone ? 'edited' : 'added';
-			recordEvent( `calypso_security_checkup_sms_${ event }`, error );
+			recordEvent( 'calypso_security_checkup_sms_${ event }', error );
 		} );
 	},
 
@@ -47,7 +47,7 @@ var SecurityCheckupActions = {
 				error: error
 			} );
 
-			recordEvent( `calypso_security_checkup_sms_deleted`, error );
+			recordEvent( 'calypso_security_checkup_sms_deleted', error );
 		} );
 	},
 
@@ -61,14 +61,12 @@ var SecurityCheckupActions = {
 		me.updateAccountRecoveryEmail( email, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: actions.RECEIVE_UPDATED_ACCOUNT_RECOVERY_EMAIL,
-				previousEmail: previousEmail,
 				email: email,
 				data: data,
 				error: error
 			} );
 
-			let event = previousEmail ? 'edited' : 'added';
-			recordEvent( `calypso_security_checkup_email_${ event }`, error );
+			recordEvent( 'calypso_security_checkup_email_added', error );
 		} );
 	},
 
@@ -84,7 +82,7 @@ var SecurityCheckupActions = {
 				error: error
 			} );
 
-			recordEvent( `calypso_security_checkup_email_deleted`, error );
+			recordEvent( 'calypso_security_checkup_email_deleted', error );
 		} );
 	},
 

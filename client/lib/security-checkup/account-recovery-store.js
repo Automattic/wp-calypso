@@ -17,7 +17,14 @@ var Dispatcher = require( 'dispatcher' ),
 var _initialized = false,
 	_loading = false,
 	_phone = {},
-	_emails = {};
+	_emails = {
+		isAddingEmail: false,
+		lastEmailAddRequestStatus: {
+			isSuccessfull: false,
+			message: ''
+		},
+		data: {}
+	};
 
 var AccountRecoveryStore = {
 	getEmails: function() {
@@ -41,13 +48,6 @@ function emitChange() {
 	AccountRecoveryStore.emit( 'change' );
 }
 
-// initialize blank data
-resetData();
-
-function resetData() {
-	resetEmails();
-	resetPhone();
-}
 
 function updatePhone( phone ) {
 	_phone.data = assign( {}, phone );
@@ -204,18 +204,21 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case actions.UPDATE_ACCOUNT_RECOVERY_EMAIL:
-			updateEmail( action.email );
+			_emails.isAddingEmail = true;
 			emitChange();
 			break;
 
 		case actions.RECEIVE_UPDATED_ACCOUNT_RECOVERY_EMAIL:
+			_emails.isAddingEmail = false;
 			if ( action.error ) {
-				handleEmailError( action.error );
+				_emails.lastEmailAddRequestStatus.isSuccessfull = false;
+				_emails.lastEmailAddRequestStatus.message = action.error;
+				emitChange();
 				break;
 			}
 
-			updateEmail( action.email );
-			setEmailNotice( messages.EMAIL_ADDED );
+			_emails.lastEmailAddRequestStatus.isSuccessfull = false;
+			_emails.lastEmailAddRequestStatus.message = messages.EMAIL_ADDED;
 			emitChange();
 			break;
 

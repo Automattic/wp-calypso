@@ -7,11 +7,12 @@ import assign from 'lodash/object/assign';
 /**
  * Internal dependencies
  */
-import AccountRecoveryAction from 'lib/security-checkup/actions';
 import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
-import FormFieldSet from 'components/forms/form-buttons-bar';
-import FormTextInput from 'components/forms/form-buttons-bar';
-import FormSettingExplanation from 'components/forms/form-buttons-bar';
+import SecurityCheckupActions from 'lib/security-checkup/actions';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormFieldSet from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import ActionRemove from 'me/action-remove';
@@ -19,6 +20,8 @@ import isEmpty from 'lodash/lang/isEmpty';
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryEmails',
+
+	mixins: [ React.addons.LinkedStateMixin ],
 
 	componentDidMount: function() {
 		AccountRecoveryStore.on( 'change', this.refreshRecoveryEmails );
@@ -30,6 +33,7 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
+			recoveryEmail: '',
 			recoveryEmails: [],
 			isAddingRecoveryEmail: false
 		};
@@ -40,6 +44,7 @@ module.exports = React.createClass( {
 	},
 
 	saveEmail: function() {
+		SecurityCheckupActions.updateEmail( this.state.recoveryEmail );
 		this.setState( { isAddingRecoveryEmail: false } );
 	},
 
@@ -51,13 +56,9 @@ module.exports = React.createClass( {
 		this.setState( { recoveryEmails: AccountRecoveryStore.getEmails() } );
 	},
 
-	renderRecoveryEmailsPlaceholder: function() {
+	renderAddRecoveryEmail: function() {
 		return (
 			<div>
-				<p>Recovery emails</p>
-				<ul>
-					<li>Dummy recovery email</li>
-				</ul>
 			</div>
 		);
 	},
@@ -75,18 +76,17 @@ module.exports = React.createClass( {
 		if ( isEmpty( this.state.recoveryEmails ) ) {
 			return(
 				<div>
-					<p>You don't have any recovery emails</p>
+					<FormSectionHeading>Recovery emails</FormSectionHeading>
 				</div>
 			);
 		}
 
 		return (
 			<div>
-				<p>Recovery emails</p>
+				<FormSectionHeading>Recovery emails</FormSectionHeading>
 				<ul>
 					{ this.state.recoveryEmails.data.emails.map( recoveryEmail => this.renderRecoveryEmail( recoveryEmail ) ) }
 				</ul>
-
 			</div>
 		);
 	},
@@ -95,12 +95,16 @@ module.exports = React.createClass( {
 		if ( this.state.isAddingRecoveryEmail ) {
 			return(
 				<div>
+					<FormFieldSet>
+						<FormTextInput valueLink={ this.linkState( 'recoveryEmail' ) } ></FormTextInput>
+						<FormSettingExplanation>{ this.translate( 'Your primary email address is {{email/}}', { components: { email: <strong>n.prasath.002@gmail.com</strong> } } ) }</FormSettingExplanation>
+					</FormFieldSet>
 					<FormButtonsBar>
+						<FormButton onClick={ this.saveEmail } >
+							{ this.translate( 'Save Email' ) }
+						</FormButton>
 						<FormButton onClick={ this.cancelEmail }  isPrimary={ false } >
 							{ this.translate( 'Cancel' ) }
-						</FormButton>
-						<FormButton onClick={ this.saveEmail } isPrimary={ false } >
-							{ this.translate( 'Save Email' ) }
 						</FormButton>
 					</FormButtonsBar>
 				</div>
