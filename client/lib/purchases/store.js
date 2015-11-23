@@ -62,10 +62,7 @@ const PurchasesStore = createReducerStore( ( state, payload ) => {
 			return assign( {}, state, { error: action.error } );
 
 		case ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_COMPLETED:
-			return updatePurchaseById( state, action.purchaseId, {
-				error: null,
-				hasPrivateRegistration: false
-			} );
+			return updatePurchaseById( state, action.purchase.id, action.purchase );
 
 		case ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_FAILED:
 			return updatePurchaseById( state, action.purchaseId, {

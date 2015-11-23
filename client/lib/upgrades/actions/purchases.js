@@ -41,7 +41,7 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 		if ( success ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_COMPLETED,
-				purchaseId
+				purchase: purchasesAssembler.createPurchaseObject( data.upgrade )
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
