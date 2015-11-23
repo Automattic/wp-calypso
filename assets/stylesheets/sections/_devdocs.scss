@@ -101,22 +101,6 @@
 		background-color: $transparent;
 	}
 
-	header {
-		@extend %container;
-
-		padding : 1em;
-
-		h2 {
-			font-size : ( 12 / 15 ) * 1em;
-			color     : $gray-dark;
-			margin-bottom: 0;
-
-			a {
-				float: right;
-			}
-		}
-	}
-
 	.emoji {
 		height: 18px;
 	}
@@ -146,6 +130,18 @@
 			color: $invert;
 		}
 	}
+}
+
+.devdocs__doc-header {
+	font-size: 13px;
+
+	a {
+		float: right;
+	}
+}
+
+.devdocs__doc-content {
+	margin-top: 48px;
 }
 
 .design-assets__toggle {

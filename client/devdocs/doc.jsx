@@ -6,8 +6,9 @@ var React = require( 'react/addons' );
 /**
  * Internal dependencies
  */
-var DocService = require( './service' );
-var highlight = require( 'lib/highlight' );
+var DocService = require( './service' ),
+	CompactCard = require( 'components/card/compact' ),
+	highlight = require( 'lib/highlight' );
 
 module.exports = React.createClass( {
 	displayName: 'SingleDocument',
@@ -90,13 +91,15 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="devdocs devdocs__doc">
-				<header>
-					<h2>
-						Path: <code>{ this.props.path }</code>
-						<a href={ editURL } target="_blank">Improve this document on GitHub &rarr;</a>
-					</h2>
-				</header>
-				<div ref="body" dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }}></div>
+				<CompactCard className="devdocs__doc-header">
+					Path: <code>{ this.props.path }</code>
+					<a href={ editURL } target="_blank">Improve this document on GitHub &rarr;</a>
+				</CompactCard>
+				<div
+					className="devdocs__doc-content"
+					ref="body"
+					dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }}
+				/>
 			</div>
 		);
 	}
