@@ -13,6 +13,7 @@ var React = require( 'react' ),
 var DocsComponent = require( './main' ),
 	SingleDocComponent = require( './doc' ),
 	DesignAssetsComponent = require( './design' ),
+	DevWelcome = require( './welcome' ),
 	Sidebar = require( './sidebar' ),
 	FormStateExamplesComponent = require( './form-state-examples' );
 
@@ -116,6 +117,16 @@ var devdocs = {
 				secondaryActionURL: 'https://wordpress.com/start',
 				illustration: '/calypso/images/drake/drake-nosites.svg'
 			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	// Welcome screen
+	welcome: function( context ) {
+		context.layout.setState( { section: 'devdocs' } );
+
+		React.render(
+			React.createElement( DevWelcome, {} ),
 			document.getElementById( 'primary' )
 		);
 	}
