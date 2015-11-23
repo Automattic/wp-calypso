@@ -8,9 +8,9 @@ There are many ways to contribute – reporting bugs, feature suggestions, fixin
 
 Just [file a GitHub issue](https://github.com/Automattic/wp-calypso/issues/new), that’s all. If you want to prefix the title with a “Question:”, “Bug:”, or the general area of the application, that would be helpful, but by no means mandatory. If you have write access, add the appropriate labels.
 
-If you’re filing a bug, specific steps to reproduce are always incredibly helpful, alongside with what you expected to see and what happened instead.
+If you’re filing a bug, specific steps to reproduce are helpful. Please include the URL of the page that has the bug, along with what you expected to see and what happened instead.
 
-Here is a [handy link for submitting a new bug](https://github.com/Automattic/wp-calypso/issues/new?body=Steps+to+reproduce%3A%0A%0AWhat+I+expected%3A%0A%0AWhat+happened+instead%3A&title=Description%20of%20the%20problem).
+Here is a [handy link for submitting a new bug](https://github.com/Automattic/wp-calypso/issues/new?body=URL%3A%0A%0AWhat+I+expected%3A%0A%0ASteps+to+reproduce%3A%0A%0AWhat+happened+instead%3A&title=Description%20of%20the%20problem).
 
 ## Installing Calypso Locally
 
@@ -20,7 +20,7 @@ If you’d like to contribute code, first, you will need to run Calypso locally.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local hosts file.
 4.	Execute `make run` from the root directory of the repository.
-5.	Open `calypso.localhost:3000` in your browser.
+5.	Open `http://calypso.localhost:3000` in your browser.
 
 For more detailed instructions, see [Installing Calypso](docs/install.md).
 
