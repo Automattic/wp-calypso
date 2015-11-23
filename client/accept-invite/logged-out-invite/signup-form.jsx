@@ -10,6 +10,7 @@ import SignupForm from 'components/signup-form'
 import InviteFormHeader from '../invite-form-header'
 import { createAccount, acceptInvite } from '../actions'
 import WpcomLoginForm from 'signup/wpcom-login-form'
+import config from 'config'
 
 export default React.createClass( {
 
@@ -97,6 +98,15 @@ export default React.createClass( {
 		)
 	},
 
+	footerLink() {
+		let logInUrl = config( 'login_url' );
+		if ( config.isEnabled( 'login' ) ) {
+			logInUrl = '/log-in';
+		}
+		logInUrl += '?redirect_to=' + encodeURIComponent( window.location.href );
+		return <a href={ logInUrl } className="logged-out-form__link">{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }</a>;
+	},
+
 	render() {
 		return (
 			<div>
@@ -108,6 +118,7 @@ export default React.createClass( {
 					save={ this.save }
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
+					footerLink={ this.footerLink() }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>
