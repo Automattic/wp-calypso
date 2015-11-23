@@ -3,7 +3,27 @@
  */
 import React from 'react';
 
+/**
+ * Internal Dependencies
+ */
+import analytics from 'analytics';
+
 const CancelPurchaseSupportBox = React.createClass( {
+	propTypes: {
+		purchase: React.PropTypes.object.isRequired,
+	},
+
+	trackClickContactSupport() {
+		if ( ! this.props.purchase ) {
+			return;
+		}
+
+		analytics.tracks.recordEvent(
+			'calypso_purchases_click_contact_support',
+			{ product_slug: this.props.purchase.productSlug }
+		);
+	},
+
 	render() {
 		const contactSupportUrl = 'https://support.wordpress.com/';
 
@@ -20,7 +40,7 @@ const CancelPurchaseSupportBox = React.createClass( {
 						'If you are unsure about canceling or have any questions about this purchase, please {{a}}contact support{{/a}}.',
 						{
 							components: {
-								a: <a href={ contactSupportUrl } target="_blank" />
+								a: <a href={ contactSupportUrl } target="_blank" onClick={ this.trackClickContactSupport } />
 							}
 						}
 					) }
@@ -28,6 +48,7 @@ const CancelPurchaseSupportBox = React.createClass( {
 
 				<a href={ contactSupportUrl }
 					target="_blank"
+					onClick={ this.trackClickContactSupport }
 					className="button is-primary">
 					{ this.translate( 'Contact Support' ) }
 				</a>
