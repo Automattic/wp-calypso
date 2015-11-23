@@ -10,7 +10,7 @@ Just [file a GitHub issue](https://github.com/Automattic/wp-calypso/issues/new),
 
 If you’re filing a bug, specific steps to reproduce are always incredibly helpful, alongside with what you expected to see and what happened instead.
 
-Here is a [handy link for submitting a new bug](https://github.com/Automattic/wp-calypso/issues/new?body=Steps+to+reproduce%3A%0A%0AWhat+I+expected%3A%0A%0AWhat+happened+instead%3A&title=Descrption%20of%20the%20problem).
+Here is a [handy link for submitting a new bug](https://github.com/Automattic/wp-calypso/issues/new?body=Steps+to+reproduce%3A%0A%0AWhat+I+expected%3A%0A%0AWhat+happened+instead%3A&title=Description%20of%20the%20problem).
 
 ## Installing Calypso Locally
 
@@ -29,7 +29,7 @@ For more detailed instructions, see [Installing Calypso](docs/install.md).
 
 ### Build
 
-Running `make run` will build all the code and continuously watch the front-end JS and CSS/SASS for changes and rebuild accordingly. In the case of React components, after the rebuild, the code is reloaded live in the browser and you should be able to see the changes without a refresh (CSS and changes deeper in the logic still need a refresh, but this will change, soon).
+Running `make run` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly. In the case of React components, after the rebuild, the code is reloaded live in the browser and you should be able to see the changes without a refresh (CSS and changes deeper in the logic still need a refresh, but this will change, soon).
 
 ### Errors and Warnings
 
@@ -108,7 +108,7 @@ Once you know what the first small piece of your feature will be, follow this ge
   - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so he or she can test your changes. This will help speed up the review process.
   - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
 6. Mention that the PR is ready for review or if you have write access remove the **<span class="label status-in-progress">[Status] In Progress</span>** label from the pull request and add the **<span class="label status-needs-review">[Status] Needs Review</span>** label - someone will provide feedback on the latest unreviewed changes. The reviewer will also mark the pull request as **<span class="label status-awaiting-fixes">[Status] Awaiting Fixes</span>** if they think you need to change anything.
-7. If you get a <img src=“https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png” class=“emoji” />, <img src=“https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a5.png” class=“emoji” />, <img src=“https://assets-cdn.github.com/images/icons/emoji/unicode/1f6a2.png” class=“emoji” />, <img src=“https://assets-cdn.github.com/images/icons/emoji/shipit.png” class=“emoji” />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `master`.
+7. If you get a <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a5.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f6a2.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/shipit.png" class="emoji" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `master`.
 
 Whether somebody is reviewing your code or you are reviewing somebody else’s code, [a positive mindset towards code reviews](https://medium.com/medium-eng/the-code-review-mindset-3280a4af0a89) helps a ton. We’re building something together that is greater than the sum of its parts.
 
