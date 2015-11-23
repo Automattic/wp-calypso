@@ -1,7 +1,21 @@
 /**
+ * External Dependencies
+ */
+import assign from 'lodash/object/assign';
+import find from 'lodash/collection/find';
+
+/**
  * Internal dependencies
  */
 import { createReducerStore } from 'lib/store';
 import { getInitialState, reducer } from './reducer';
 
-export default createReducerStore( reducer, getInitialState() );
+const StoredCardsStore = createReducerStore( reducer, getInitialState() );
+
+assign( StoredCardsStore, {
+	getByCardId( cardId ) {
+		return find( this.get().list, { id: cardId } );
+	}
+} );
+
+export default StoredCardsStore;

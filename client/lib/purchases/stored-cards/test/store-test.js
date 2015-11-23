@@ -65,6 +65,16 @@ describe( 'Stored Cards Store', () => {
 		} );
 	} );
 
+	it( 'should return an object with a card for a specific id', () => {
+		expect( StoredCardsStore.getByCardId( 12345 ) ).to.be.eql( {
+			id: 12345,
+			expiry: '2016-11-30',
+			number: 2596,
+			type: 'amex',
+			name: 'Jane Doe'
+		} );
+	} );
+
 	it( 'should return an object with the previous list of cards and fetching disabled when fetching failed', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.STORED_CARDS_FETCH_FAILED,
