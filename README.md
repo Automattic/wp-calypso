@@ -159,3 +159,7 @@ or limit it as before with
 ```base
 DEBUG=calypso:* make run
 ```
+
+Troubleshooting
+---------
+If you have any problems running Calypso, [please see most common issues](./docs/troubleshooting.md).
