@@ -277,3 +277,4 @@ selector {
   transform: translate( -50%, -50% ) scale( 1 );
 }
 ```
+- DO [remove trailing whitespace](trailing-whitespace.md)

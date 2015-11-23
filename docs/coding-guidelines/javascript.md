@@ -22,6 +22,8 @@ These rules encourage liberal spacing for improved developer readability. The mi
 - All function bodies are indented by one tab, even if the entire file is wrapped in a closure
 - Spaces may align code within documentation blocks or within a line, but only tabs should be used at the start of a line
 
+Don't forget to [remove trailing whitespace](trailing-whitespace.md).
+
 ## Objects
 
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
