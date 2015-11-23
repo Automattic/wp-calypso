@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var DocService = require( './service' ),
 	Main = require( 'components/main' ),
-	Search = require( 'components/search' );
+	SearchCard = require( 'components/search-card' );
 
 var DEFAULT_FILES = [
 		'docs/guide/index.md',
@@ -146,7 +146,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<Main className="devdocs">
-				<Search
+				<SearchCard
 					autoFocus
 					placeholder="Search documentation…"
 					analyticsGroup="Docs"
