@@ -172,9 +172,9 @@ Lines should be broken into logical groups if it improves readability, such as s
 var baz = ( true === conditionalStatement() ) ? 'thing 1' : 'thing 2';
 
 // Better
-var baz = firstCondition( foo ) && secondCondition( bar ) ?
-    qux( foo, bar ) :
-    foo;
+var baz = firstCondition( foo ) && secondCondition( bar )
+    ? qux( foo, bar )
+    : foo;
 ```
 
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
