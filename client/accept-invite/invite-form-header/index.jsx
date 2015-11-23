@@ -29,94 +29,87 @@ export default React.createClass( {
 		return get( this.props, 'blog_details.domain' );
 	},
 
+	getSiteLink() {
+		const siteName = this.getSiteName();
+		const siteDomain = this.getSiteDomain();
+
+		if ( ! siteName || ! siteDomain ) {
+			return null;
+		}
+
+		return (
+			<a href={ siteDomain } className="invite-header__site-link">
+				{ siteName }
+			</a>
+		);
+	},
+
 	getLoggedOutTitleForInvite() {
 		let title = '';
-		let siteLink = (
-			<a href={ this.getSiteDomain() } className="invite-header__site-link" />
-		);
 
 		switch ( this.getRole() ) {
 			case 'administrator':
 				title = this.translate(
-					'Sign up to become an administrator of {{siteLink}}%(siteName)s{{/siteLink}}.', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Sign up to become an administrator of {{siteLink/}}.', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'editor':
 				title = this.translate(
-					'Sign up to become an editor of {{siteLink}}%(siteName)s{{/siteLink}}.', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Sign up to become an editor of {{siteLink/}}.', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'author':
 				title = this.translate(
-					'Sign up to become an author of {{siteLink}}%(siteName)s{{/siteLink}}.', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Sign up to become an author of {{siteLink/}}.', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'contributor':
 				title = this.translate(
-					'Sign up to become a contributor to {{siteLink}}%(siteName)s{{/siteLink}}.', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Sign up to become a contributor to {{siteLink/}}.', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'subscriber':
 				title = this.translate(
-					'Sign up to become a subscriber of {{siteLink}}%(siteName)s{{/siteLink}}.', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Sign up to become a subscriber of {{siteLink/}}.', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'follower':
 				title = this.translate(
-					'Sign up to become a follower of {{siteLink}}%(siteName)s{{/siteLink}}.', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Sign up to become a follower of {{siteLink/}}.', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			default:
 				title = this.translate(
-					'Sign up to join {{siteLink}}%(siteName)s{{/siteLink}} with a role of: {{strong}}%(siteRole)s{{/strong}}.', {
+					'Sign up to join {{siteLink/}} with a role of: {{strong}}%(siteRole)s{{/strong}}.', {
 						args: {
-							siteName: this.getSiteName(),
 							siteRole: this.getRole()
 						},
 						components: {
-							siteLink: siteLink,
+							siteLink: this.getSiteLink(),
 							strong: <strong />
 						}
 					}
@@ -128,91 +121,70 @@ export default React.createClass( {
 
 	getLoggedInTitleForInvite() {
 		let title = '';
-		let siteLink = (
-			<a href={ this.getSiteDomain() } className="invite-header__site-link" />
-		);
 
 		switch ( this.getRole() ) {
 			case 'administrator':
 				title = this.translate(
-					'Would you like to become an administrator of {{siteLink}}%(siteName)s{{/siteLink}}?', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Would you like to become an administrator of {{siteLink/}}?', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'editor':
 				title = this.translate(
-					'Would you like to become an editor of {{siteLink}}%(siteName)s{{/siteLink}}?', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Would you like to become an editor of {{siteLink/}}?', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'author':
 				title = this.translate(
-					'Would you like to become an author of {{siteLink}}%(siteName)s{{/siteLink}}?', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Would you like to become an author of {{siteLink/}}?', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'contributor':
 				title = this.translate(
-					'Would you like to become a contributor to {{siteLink}}%(siteName)s{{/siteLink}}?', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Would you like to become a contributor to {{siteLink/}}?', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'subscriber':
 				title = this.translate(
-					'Would you like to become a subscriber of {{siteLink}}%(siteName)s{{/siteLink}}?', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Would you like to become a subscriber of {{siteLink/}}?', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			case 'follower':
 				title = this.translate(
-					'Would you like to become a follower of {{siteLink}}%(siteName)s{{/siteLink}}?', {
-						args: {
-							siteName: this.getSiteName()
-						},
+					'Would you like to become a follower of {{siteLink/}}?', {
 						components: {
-							siteLink: siteLink
+							siteLink: this.getSiteLink()
 						}
 					}
 				);
 				break;
 			default:
 				title = this.translate(
-					'Would you like to join {{siteLink}}%(siteName)s{{/siteLink}} with a role of: {{strong}}%(siteRole)s{{/strong}}?', {
+					'Would you like to join {{siteLink/}} with a role of: {{strong}}%(siteRole)s{{/strong}}?', {
 						args: {
 							siteRole: this.getRole()
 						},
 						components: {
-							siteLink: siteLink,
+							siteLink: this.getSiteLink(),
 							strong: <strong />
 						}
 					}
