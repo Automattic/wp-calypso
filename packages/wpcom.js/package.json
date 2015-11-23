@@ -21,10 +21,10 @@
   "repository": "git@github.com:Automattic/wpcom.js.git",
   "license": "MIT",
   "dependencies": {
-    "debug": "^2.1.3",
+    "debug": "^2.2.0",
     "qs": "^4.0.0",
     "babel": "^5.8.23",
-    "wpcom-xhr-request": "0.3.2"
+    "wpcom-xhr-request": "0.3.3"
   },
   "devDependencies": {
     "babel-core": "^5.8.23",
