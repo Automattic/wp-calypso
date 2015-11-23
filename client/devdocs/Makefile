@@ -1,8 +1,13 @@
+UI ?= bdd
 REPORTER ?= spec
-MOCHA ?= ../../node_modules/.bin/mocha
+COMPILERS ?= jsx:babel/register
+NODE_BIN := $(shell npm bin)
+MOCHA ?= $(NODE_BIN)/mocha
+BASE_DIR := $(NODE_BIN)/../..
+NODE_PATH := test:$(BASE_DIR)/client:$(BASE_DIR)/shared
 
 # In order to simply stub modules, add test to the NODE_PATH
 test:
-	@NODE_ENV=test NODE_PATH=test:../../client $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)
+	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers $(COMPILERS) --reporter $(REPORTER) --ui $(UI)
 
 .PHONY: test
