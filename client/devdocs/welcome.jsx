@@ -16,10 +16,10 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<Card>
+			<Card className="devdocs__welcome">
 				<h1 className="devdocs__welcome-title">Welcome to WP Calypso!</h1>
-				<p>This is your local running copy of Calypso. If you want a quick start, check the Guide.</p>
-				<p>To access the documentation at any time, use the small badge in the bottom left corner.</p>
+				<img className="devdocs__welcome-illustration" src="/calypso/images/drake/drake-nosites.svg" />
+				<p>This is your local running copy of Calypso. If you want a quick start, check the Guide. To access the documentation at any time, use the small badge in the bottom left corner.</p>
 			</Card>
 		);
 	}
