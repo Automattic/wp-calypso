@@ -11,13 +11,13 @@ import paths from '../../paths';
 import CompactCard from 'components/card/compact';
 import Flag from 'components/flag';
 import {
+	getName,
 	isExpired,
 	isExpiring,
 	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	purchaseType,
-	purchaseTitle,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
 
@@ -119,7 +119,7 @@ const PurchaseItem = React.createClass( {
 			content = (
 				<span>
 					<div className="purchase-item__title">
-						{ purchaseTitle( this.props.purchase ) }
+						{ getName( this.props.purchase ) }
 					</div>
 					<div className="purchase-item__purchase-type">{ purchaseType( this.props.purchase ) }</div>
 					<div className="purchase-item__purchase-date">

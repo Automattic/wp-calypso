@@ -36,12 +36,36 @@ function getPurchasesBySite( purchases ) {
 	}, [] );
 }
 
+function getName( purchase ) {
+	if ( isDomainRegistration( purchase ) ) {
+		return purchase.meta;
+	}
+
+	return purchase.productName;
+}
+
+function getSubscriptionEndDate( purchase ) {
+	return purchase.expiryMoment.format( 'LL' );
+}
+
 function hasPaymentMethod( purchase ) {
 	return isPaidWithPaypal( purchase ) || isPaidWithCreditCard( purchase );
 }
 
 function hasPrivateRegistration( purchase ) {
 	return purchase.hasPrivateRegistration;
+}
+
+function isCancelable( purchase ) {
+	if ( isRefundable( purchase ) ) {
+		return true;
+	}
+
+	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	return purchase.canDisableAutoRenew;
 }
 
 function isExpired( purchase ) {
@@ -133,14 +157,6 @@ function purchaseType( purchase ) {
 	return null;
 }
 
-function purchaseTitle( purchase ) {
-	if ( isDomainRegistration( purchase ) ) {
-		return purchase.meta;
-	}
-
-	return purchase.productName;
-}
-
 function showCreditCardExpiringWarning( purchase ) {
 	return ! isIncludedWithPlan( purchase ) &&
 		isPaidWithCreditCard( purchase ) &&
@@ -154,9 +170,12 @@ function showEditPaymentDetails( purchase ) {
 
 export {
 	creditCardExpiresBeforeSubscription,
+	getName,
 	getPurchasesBySite,
+	getSubscriptionEndDate,
 	hasPaymentMethod,
 	hasPrivateRegistration,
+	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPaypal,
 	isExpired,
@@ -169,7 +188,6 @@ export {
 	isRenewing,
 	paymentLogoType,
 	purchaseType,
-	purchaseTitle,
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
 }
