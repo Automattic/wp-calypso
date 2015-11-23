@@ -38,10 +38,13 @@ When you open http://calypso.localhost:3000 in your browser and you encounter so
 ### I can see only big **W** logo!
 ![Only logo](https://cldup.com/8TZOLiD6WC-2000x2000.png)
 
-
+#### Domain other than calypso.localhost
 Please remember to access Calypso via **http://calypso.localhost:3000**
 
 Any other url will not work.
+
+#### JavaScript off
+Calypso requires JavaScript to function. Please enable it in your browser.
 
 #### I still have problems!
 We suggest you open the devTools and see if there maybe is some JavaScript error preventing code execution.
