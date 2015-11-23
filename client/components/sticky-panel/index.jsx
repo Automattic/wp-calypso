@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	throttle = require( 'lodash/function/throttle' ),
 	raf = require( 'raf' ),
 	classNames = require( 'classnames' );
 
@@ -25,13 +26,16 @@ module.exports = React.createClass( {
 		// Determine and cache vertical threshold from rendered element's
 		// offset relative the document
 		this.threshold = React.findDOMNode( this ).offsetTop;
+		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
+		window.addEventListener( 'resize', this.throttleOnResize );
 		this.updateIsSticky();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
+		window.removeEventListener( 'resize', this.throttleOnResize );
 		raf.cancel( this.rafHandle );
 	},
 
@@ -39,11 +43,18 @@ module.exports = React.createClass( {
 		this.rafHandle = raf( this.updateIsSticky );
 	},
 
+	onWindowResize: function() {
+		this.setState( {
+			spacerHeight: this.state.isSticky ? React.findDOMNode( this ).clientHeight : 0,
+			blockWidth: this.state.isSticky ? React.findDOMNode( this ).clientWidth : 0
+		} );
+	},
+
 	updateIsSticky: function() {
 		var isSticky = window.pageYOffset > this.threshold;
 
 		if ( viewport.isMobile() ) {
-			return;
+			return this.setState( { isSticky: false } );
 		}
 
 		if ( isSticky !== this.state.isSticky ) {
