@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import analytics from 'analytics';
 import camelCase from 'lodash/string/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
@@ -115,6 +116,11 @@ const EditCardDetails = React.createClass( {
 
 	updateCreditCard() {
 		const cardDetails = this.getCardDetails();
+
+		analytics.tracks.recordEvent(
+			'calypso_purchases_credit_card_form_submit',
+			{ product_slug: this.getPurchase().productSlug }
+		);
 
 		createPaygateToken( cardDetails, ( paygateError, token ) => {
 			if ( paygateError ) {
