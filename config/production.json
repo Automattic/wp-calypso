@@ -77,6 +77,7 @@
 		"reader/full-errors": false,
 		"reader/share": true,
 		"reader/following-edit": true,
+		"reader/discover": true,
 		"ad-tracking": true,
 		"mailing-lists/unsubscribe": true
 	},
