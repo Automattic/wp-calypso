@@ -12,7 +12,7 @@
 
 To be able to clone the repo and run the application you need:
 
--	[Node.js](http://nodejs.org/) and [NPM](https://www.npmjs.com/) installed. Here's a [handy installer](https://nodejs.org/dist/latest/) for Windows, Mac, and Linux. On Mac OSX using [brew]() is the easiets way to install `node` and `npm`.
+-	[Node.js](http://nodejs.org/) and [NPM](https://www.npmjs.com/) installed. Here's a [handy installer](https://nodejs.org/dist/latest/) for Windows, Mac, and Linux. On Mac OSX using [brew]() is the easiest way to install `node` and `npm`.
 -	[Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 -	The repository also uses `make` to orchestrate compiling the JavaScript, running the server, and several other tasks. On Mac OSX, the easiest way to install `make` is through Apple's [Command Line Tools for Xcode](https://developer.apple.com/downloads/) (requires free registration).
 
