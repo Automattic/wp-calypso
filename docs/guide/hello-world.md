@@ -1,8 +1,14 @@
-First [get setup with Calypso locally][1] if you haven't already...
+# Hello, World!
 
-Load [http://calypso.localhost:3000][2] in your browser. All good? Cool, now let's build our _Hello World_.
+After learning a bit about the values of the project, let’s get a taste of the codebase and some of the tools.
 
-# Adding a new section
+First [get setup with Calypso locally](../install.md) if you haven't already.
+
+Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser. All good? Cool, now let’s build our _Hello, World!_.
+
+## Adding a new section
+
+Sections are usually bigger areas of the appliction that have their own chunk of code, loaded asyncronously when its URLs is hit.
 
 Creating a new section is composed of five steps:
 
@@ -12,13 +18,15 @@ Creating a new section is composed of five steps:
 4. Setup the entry routes in `client/my-sites/my-section/index.js`.
 5. Register section in `client/sections.js.`
 
-### 1. Add feature
+### 1. Add a feature
 
 First thing is to enable your new feature in Calypso. We'll do that by opening `config/development.json` and adding a new feature entry in `features {}`:
 
 ```
 "hello-world": true
 ```
+
+Features flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../client/config).
 
 ### 2. Set up folder structure
 
@@ -99,10 +107,9 @@ This checks for our feature in the current environment to figure out whether it 
 
 Restart the server doing:
 
-* `make clean`
 * `make run`
 
-We are ready to load `calypso.localhost:3000/hello-world`! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
+We are ready to load http://calypso.localhost:3000/hello-world! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
 
 ----
 
@@ -112,7 +119,6 @@ Now let's build our main view using a React component. For this task we have two
 
 1. Create JSX file called `main.jsx` in `client/my-sites/hello-world`.
 2. Hook up controller.
-
 
 ### 1. Create main view
 
@@ -152,6 +158,8 @@ render() {
 }
 ```
 
+If you want to learn more about our approach to writing React components, check out the [Components](../components.md) page.
+
 ### 2. Hook up controller
 
 Time to hook this up with our controller function. Open `/hello-world/controller.js`. Import React again at the top of the file, then remove the `console.log` call and enter the following instead:
@@ -174,8 +182,6 @@ In the `Main` constant we are getting our main jsx file for our section. We then
 
 ### Ok, ready?
 
-Run `make run` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world][3] in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `controller.siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
+Run `make run` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world) in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `controller.siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
 
-[1]: https://github.com/Automattic/wp-calypso#installing-and-running
-[2]: http://calypso.localhost:3000
-[3]: http://calypso.localhost:3000/hello-world
+Previous: [Values](0-values.md) Next: [The Technology Behind Calypso](tech-behind-calypso.md)
