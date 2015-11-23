@@ -111,9 +111,9 @@ var devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: 'https://wordpress.com/login',
+				actionURL: 'https://wordpress.com/wp-login.php?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000',
 				secondaryAction: 'Register',
-				secondaryActionURL: 'https://wordpress.com/start',
+				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/drake/drake-nosites.svg'
 			} ),
 			document.getElementById( 'primary' )
