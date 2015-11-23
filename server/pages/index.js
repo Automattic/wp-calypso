@@ -385,6 +385,16 @@ module.exports = function() {
 		} );
 	}
 
+	if ( config.isEnabled( 'reader/discover' ) ) {
+		app.get( '/discover', function( req, res ) {
+			if ( req.cookies.wordpress_logged_in ) {
+				renderLoggedInRoute( req, res );
+			} else {
+				res.redirect( 'https://discover.wordpress.com' );
+			}
+		} );
+	}
+
 	// catchall path to serve shell for all non-static-file requests (other than auth routes)
 	app.get( '*', renderLoggedInRoute );
 
