@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
 
 /**
@@ -12,43 +12,33 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import AdvancedOptions from 'my-sites/exporter/advanced-options';
 
-const defaults = {
-	advancedSettings: {
-		isVisible: false,
-		posts: {
-			isEnabled: true
-		},
-		pages: {
-			isEnabled: true
-		},
-		feedback: {
-			isEnabled: true
-		}
-	}
-}
+import { toggleAdvancedSettings, toggleSection } from 'lib/exporter/actions';
+import ExporterStore, { getState } from 'lib/exporter/store';
 
 export default React.createClass( {
 	displayName: 'SiteSettingsExport',
 
+	propTypes: {
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired
+		} )
+	},
+
+	componentWillMount: function() {
+		ExporterStore.on( 'change', this.updateState );
+	},
+
+	componentWillUnmount: function() {
+		ExporterStore.off( 'change', this.updateState );
+	},
+
 	getInitialState() {
-		this.data = Immutable.fromJS( defaults );
-		return this.data.toJS();
+		return getState();
 	},
 
-	toggleAdvancedSettings() {
-		this.data = this.data.updateIn(
-			[ 'advancedSettings', 'isVisible' ],
-			( wasVisible ) => !wasVisible
-		);
-		this.setState( this.data.toJS() );
-	},
-
-	toggleFieldset( fieldset ) {
-		this.data = this.data.updateIn(
-			[ 'advancedSettings', fieldset, 'isEnabled' ],
-			( wasEnabled ) => !wasEnabled
-		);
-		this.setState( this.data.toJS() );
+	updateState() {
+		console.log( 'update state' );
+		this.setState( getState() );
 	},
 
 	render: function() {
@@ -67,9 +57,9 @@ export default React.createClass( {
 							{ this.translate( 'Download an Export File' ) }
 						</h1>
 					</header>
-					<a href="#" onClick={ this.toggleAdvancedSettings }>
+					<a href="#" onClick={ toggleAdvancedSettings }>
 						<Gridicon
-							icon={ this.state.advancedSettings.visible ? 'chevron-up' : 'chevron-down' }
+							icon={ this.state.advancedSettings.isVisible ? 'chevron-up' : 'chevron-down' }
 							size={ 16 } />
 						{ this.translate( 'Advanced Export Settings' ) }
 					</a>
@@ -79,7 +69,7 @@ export default React.createClass( {
 					this.state.advancedSettings.isVisible &&
 					<AdvancedOptions
 						{ ...this.state.advancedSettings }
-						onToggleFieldset={ this.toggleFieldset }
+						onToggleFieldset={ toggleSection }
 					/>
 				}
 			</div>
