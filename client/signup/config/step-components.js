@@ -9,7 +9,9 @@ var config = require( 'config' ),
 	SiteComponent = require( 'signup/steps/site' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
-	UserSignupComponent = require( 'signup/steps/user' );
+	UserSignupComponent = require( 'signup/steps/user' ),
+	MlbThemeSelectionComponent = require( 'signup/steps/mlb-theme-selection' ),
+	MlbDomainsStepComponent = require( 'signup/steps/mlb-domains' );
 
 module.exports = {
 	'design-type': DesignTypeComponent,
@@ -24,5 +26,7 @@ module.exports = {
 	'survey-user': UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
-	user: UserSignupComponent
+	user: UserSignupComponent,
+	'mlb-themes': MlbThemeSelectionComponent,
+	'mlb-domains': MlbDomainsStepComponent
 };

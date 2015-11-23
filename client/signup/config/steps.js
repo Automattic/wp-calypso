@@ -100,5 +100,18 @@ module.exports = {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	'mlb-themes': {
+		stepName: 'mlb-themes',
+		apiRequestFunction: stepActions.setThemeOnSite,
+		dependencies: [ 'siteSlug' ]
+	},
+
+	'mlb-domains': {
+		stepName: 'mlb-domains',
+		apiRequestFunction: stepActions.createSite,
+		providesDependencies: [ 'siteSlug' ],
+		delayApiRequestUntilComplete: true
 	}
 };
