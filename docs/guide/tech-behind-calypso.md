@@ -4,7 +4,7 @@ Understanding the technologies and abstractions on which Calypso is built can ma
 
 ## No Big Famous Framework
 
-Calypso is not using neither Angular, not Ember, because we are building Calypso for the long haul and updating and improving a home-grown framework is a better long-term approach for us. Currently we're using React and Flux and they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small starup project, we know it will need to scale and we our technology will need to scale with it.
+Calypso is using neither Angular, nor Ember, because we are building Calypso for the long haul and updating and improving a home-grown framework is a better long-term approach for us. Currently we're using React and Flux and they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
 
 ## Modern Modular JavaScript
 
@@ -30,7 +30,7 @@ Key concepts checklist:
 
 ## React
 
-[React](http://facebook.github.io/react/) is a library by Facebook, which implements a virtual DOM, so that instead of carefully changing the DOM, we can just re-render whole components when the data changes. React radically simplified our code and allowed for an awesome composition of reusable components.
+[React](http://facebook.github.io/react/) is a library by Facebook which implements a virtual DOM, so that instead of carefully changing the DOM, we can just re-render whole components when the data changes. React radically simplified our code and allowed for an awesome composition of reusable components.
 
 Here are some great React resources:
 
