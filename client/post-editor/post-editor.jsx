@@ -7,8 +7,7 @@ var React = require( 'react/addons' ),
 	classnames = require( 'classnames' ),
 	debounce = require( 'lodash/function/debounce' ),
 	throttle = require( 'lodash/function/throttle' ),
-	assign = require( 'lodash/object/assign' ),
-	browser = require( 'detect-browser' );
+	assign = require( 'lodash/object/assign' );
 
 /**
  * Internal dependencies

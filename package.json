@@ -33,7 +33,6 @@
     "cookie-parser": "1.3.2",
     "creditcards": "1.1.1",
     "debug": "2.2.0",
-    "detect-browser": "1.1.1",
     "dom-scroll-into-view": "1.0.1",
     "email-validator": "1.0.1",
     "emitter-component": "1.1.1",
