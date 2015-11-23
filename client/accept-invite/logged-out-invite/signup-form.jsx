@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react'
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -11,11 +10,6 @@ import SignupForm from 'components/signup-form'
 import InviteFormHeader from '../invite-form-header'
 import { createAccount, acceptInvite } from '../actions'
 import WpcomLoginForm from 'signup/wpcom-login-form'
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:accept-invite:logged-out' );
 
 export default React.createClass( {
 
@@ -42,7 +36,7 @@ export default React.createClass( {
 				acceptInvite(
 					this.props.invite,
 					bearerToken,
-					( error, response ) => this.setState( { error, userData, bearerToken } )
+					( acceptInviteError ) => this.setState( { acceptInviteError, userData, bearerToken } )
 				)
 		);
 	},
