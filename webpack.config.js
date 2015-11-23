@@ -21,11 +21,16 @@ var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
 
-function OpenCalypsoInBrowser() {}
+function OpenCalypsoInBrowser() {
+	this.isFirstBuild = true;
+}
 OpenCalypsoInBrowser.prototype.apply = function( compiler ) {
 	compiler.plugin( 'done', function() {
-		open( 'http://calypso.localhost:3000' );
-	} );
+		if ( this.isFirstBuild ) {
+			open( 'http://calypso.localhost:3000' );
+			this.isFirstBuild = false;
+		}
+	}.bind( this ) );
 };
 
 webpackConfig = {
