@@ -74,19 +74,19 @@ module.exports = React.createClass( {
 			let html = [];
 
 			if ( reasons.length > 1 ) {
-				html.push( <p> { this.translate( 'Autoupdates are not available for %(site)s:', { args: { site: this.props.site.title } }
+				html.push( <p key="reason-shell"> { this.translate( 'Autoupdates are not available for %(site)s:', { args: { site: this.props.site.title } }
 						 ) } </p> );
-				let list = reasons.map( ( reason, i ) => ( <li key={ i } >{ reason }</li> ) );
-				html.push( <ul className="plugin-action__disabled-info-list">{ list }</ul> );
+				let list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i'+ i + ' -' + this.props.site.ID } >{ reason }</li> ) );
+				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
 			} else {
-				html.push( <p> {
+				html.push( <p key="reason-shell"> {
 					this.translate( 'Autoupdates are not available for %(site)s.', {
 						args: { site: this.props.site.title }
 					} )
 					} { reasons[0] } </p> );
 			}
 			html.push(
-				<ExternalLink
+				<ExternalLink key="external-link"
 					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix disabled autoupdates' ) }
 					href="https://jetpack.me/support/site-management/#file-update-disabled" >
 						{ this.translate( 'How do I fix this?' ) }

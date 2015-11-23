@@ -31,7 +31,7 @@ var Popover = React.createClass( {
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		position: React.PropTypes.string,
-		ignoreContext: React.PropTypes.element,
+		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
 	},
 
 	getDefaultProps: function() {
