@@ -281,6 +281,11 @@
 }
 
 .is-condensed {
+	margin: 0 -32px;
+
+	@include breakpoint( "<660px" ) {
+		margin: -8px;
+	}
 
 	// Hide a bunch of stuff
 	.site__domain,
@@ -291,32 +296,39 @@
 	}
 
 	.reader__card {
-		padding: 16px 16px 16px 64px;
+		padding: 16px 24px;
 		overflow: hidden;
 		margin-bottom: 0;
+
+		@include breakpoint( "<660px" ) {
+			padding: 16px;
+
+		}
 
 		&:after {
 			content: '';
 			text-align: right;
 			position: absolute;
-				top: 0;
 				right: 0;
+				bottom: 40px;
 			width: 10%;
 			background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 50%);
 		    visibility: visible;
-    		height: calc( 100% - 40px );
+    		height: 30px;
 		}
 
 		&:hover {
 			box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
 				0 1px 2px lighten( $gray, 30% ),
-				inset 6px 0 0 lighten( $gray, 30 );
+				inset 0 1px 0 0 $gray,
+				inset 0 -1px 0 0 $gray;
 		}
 
 		&.is-selected {
-			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
 				0 1px 2px lighten( $gray, 30% ),
-				-6px 0 0 $blue-wordpress;
+				inset 0 -1px 0 0 $gray,
+				inset 0 3px 0 0 $blue-wordpress;
 		}
 
 		.follow-button {
@@ -327,7 +339,6 @@
 	.reader__card.has-featured-image {
 		&.is-photo-only {
 			.reader__post-featured-image {
-				//display: block;
 				z-index: 1;
 				left: 0;
 				width: 100%;
@@ -343,7 +354,7 @@
 
 		&:not( .is-photo-only ) {
 			.reader__post-featured-image {
-				//display: block;
+				display: none;
 				position: absolute;
 					top: 0;
 					left: 0;
@@ -396,10 +407,6 @@
 			display: none;
 		}
 
-		.reader__post-title {
-			white-space: normal;
-		}
-
 		.reader__full-post-content {
 			font-size: 14px;
 			color: darken( $gray, 20 );
@@ -420,13 +427,24 @@
 		.site__content {
 			display: block;
 			overflow: visible;
+			padding-left: 24px;
 
 			.site-icon {
 				margin: 0;
 				position: absolute;
 					top: 0;
-					left: -48px;
+					left: 0;
 				z-index: 2; // "Above" the featured image
+
+				// Overriding some inline styles from the <Site> component
+				height: 16px !important;
+				width: 16px !important;
+				line-height: 16px !important;
+
+				img {
+					height: 16px;
+					width: 16px;
+				}
 			}
 
 			.site__title {
@@ -445,7 +463,6 @@
 	.reader__post-title {
 		margin: 0 0 2px 0;
 		font-size: 18px;
-		white-space: nowrap;
 	}
 	
 	.reader__post-header {
@@ -469,7 +486,7 @@
 	.reader__post-footer {
 		margin-top: 0;
 
-		.comment-button .gridicon__comments,
+		.comment-button .gridicon,
 		.like-button .gridicon {
 			height: 18px;
 			top: 6px;
