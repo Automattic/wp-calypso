@@ -218,7 +218,7 @@ export default React.createClass( {
 				break;
 			case 'contributor':
 				explanation = this.translate(
-					'As a contributor, you will be able to write and manage your own posts, but you will not be able to publish on your own.'
+					'As a contributor, you will be able to write and manage your own posts, but you will not be able to publish.'
 				);
 				break;
 			case 'subscriber':
