@@ -47,8 +47,7 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_FAILED,
 				purchaseId,
-				error: i18n.translate( 'There was a problem canceling this private registration. ' +
-						'Please try again later or contact support.' )
+				error: error.message || i18n.translate( 'There was a problem canceling this private registration. Please try again later or contact support.' )
 			} );
 		}
 
