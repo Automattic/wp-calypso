@@ -9,6 +9,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
  */
 import sharing from './sharing/reducer';
 import sites from './sites/reducer';
+import siteSettings from './site-settings/reducer'
 import ui from './ui/reducer';
 
 /**
@@ -17,6 +18,7 @@ import ui from './ui/reducer';
 const reducer = combineReducers( {
 	sharing,
 	sites,
+	siteSettings,
 	ui
 } );
 
