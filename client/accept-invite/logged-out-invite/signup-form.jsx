@@ -99,12 +99,12 @@ export default React.createClass( {
 	},
 
 	footerLink() {
-		let logInUrl = config( 'login_url' );
-		if ( config.isEnabled( 'login' ) ) {
-			logInUrl = '/log-in';
-		}
-		logInUrl += '?redirect_to=' + encodeURIComponent( window.location.href );
-		return <a href={ logInUrl } className="logged-out-form__link">{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }</a>;
+		let logInUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+		return (
+			<a href={ logInUrl } className="logged-out-form__link">
+				{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+			</a>
+		);
 	},
 
 	render() {
