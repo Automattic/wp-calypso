@@ -416,6 +416,13 @@ audio {
     clear: both;
 }
 
+.wpview-type-contact-form {
+	border: 1px solid #87a6bc;
+	border-radius: 3px;
+	padding: 20px;
+	text-align: center;
+}
+
 .gallery img[data-mce-selected]:focus {
 	outline: none;
 }
