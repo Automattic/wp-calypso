@@ -1,6 +1,6 @@
 # Calypso
 
-Calypso is the new WordPress.com front-end – a single-page web application, powered by the WordPress.com REST API, that allows you to manage all of your WordPress sites in one place.
+Calypso is the new WordPress.com front-end – a beautiful redesign of the WordPress dashboard using a single-page web application, powered by the WordPress.com REST API. Calypso is built for for reading, writing, and managing all of your WordPress sites in one place.
 
 ![beautiful screenshot](https://developer.wordpress.com/wp-content/themes/a8c/wpcomdev3/calypso/images/speed.png)
 
