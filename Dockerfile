@@ -13,7 +13,7 @@ RUN     apt-get -y update && apt-get -y install \
           python \
           make \
           build-essential
-RUN     wget http://nodejs.org/dist/v0.12.6/node-v0.12.6-linux-x64.tar.gz && \
+RUN     wget https://nodejs.org/dist/v0.12.6/node-v0.12.6-linux-x64.tar.gz && \
           tar -zxf node-v0.12.6-linux-x64.tar.gz -C /usr/local && \
           ln -sf node-v0.12.6-linux-x64 /usr/local/node && \
           ln -sf /usr/local/node/bin/npm /usr/local/bin/ && \
