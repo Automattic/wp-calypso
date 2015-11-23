@@ -4,7 +4,7 @@ Understanding the technologies and abstractions on which Calypso is built can ma
 
 ## No Big Famous Framework
 
-Calypso is not using neither Angular, not Ember, because we are building Calypso for the long haul and updating and improving a home-grown framework is a better long-term approach for us. Currently we're using React and Flux and they're great, but knowing we have the control to use better ttechnologies as they come along makes us feel more confident in our future. Calypso isn't a small starup project, we know it will need to scale and we our technology will needto scale with it.
+Calypso is not using neither Angular, not Ember, because we are building Calypso for the long haul and updating and improving a home-grown framework is a better long-term approach for us. Currently we're using React and Flux and they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small starup project, we know it will need to scale and we our technology will need to scale with it.
 
 ## Modern Modular JavaScript
 
