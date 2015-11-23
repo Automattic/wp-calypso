@@ -7,20 +7,23 @@ import React from 'react';
  * Internal dependencies
  */
 import CountriesList from 'lib/countries-list';
-import { fetchUserPurchases } from 'lib/upgrades/actions';
+import { fetchStoredCards, fetchUserPurchases } from 'lib/upgrades/actions';
 import observe from 'lib/mixins/data-observe';
 import PurchasesStore from 'lib/purchases/store';
 import StoreConnection from 'components/data/store-connection';
+import StoredCardsStore from 'lib/purchases/stored-cards/store';
 
 /**
  * Module variables
  */
 const stores = [
-	PurchasesStore
+	PurchasesStore,
+	StoredCardsStore
 ];
 
 function getStateFromStores( props ) {
 	return {
+		card: StoredCardsStore.getByCardId( parseInt( props.cardId, 10 ) ),
 		countriesList: CountriesList.forPayments(),
 		selectedPurchase: PurchasesStore.getByPurchaseId( parseInt( props.purchaseId, 10 ) ),
 		selectedSite: props.selectedSite
@@ -38,6 +41,7 @@ const EditCardDetailsData = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
 
 	componentWillMount() {
+		fetchStoredCards();
 		fetchUserPurchases();
 	},
 
