@@ -124,6 +124,13 @@ const flows = {
 		destination: getCheckoutDestination,
 		description: 'Dynamic Screenshots and Headstart flow',
 		lastModified: '2015-11-13'
+	},
+
+	developer: {
+		steps: [ 'themes', 'site', 'user' ],
+		destination: '/me/next?welcome',
+		description: 'Signup flow for developers in developer environment',
+		lastModified: '2015-11-23'
 	}
 
 };
