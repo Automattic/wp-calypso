@@ -82,7 +82,7 @@ export default React.createClass( {
 				return redirectTo;
 				break;
 			default:
-				return redirectTo + '/posts/' + invite.blog_id ;
+				return redirectTo + '/posts/' + invite.blog_id;
 		}
 	},
 
