@@ -141,10 +141,6 @@ function fetchUserPurchases() {
 	wpcom.me().purchases( ( error, data ) => {
 		debug( error, data );
 
-		const purchases = purchasesAssembler.createPurchasesArray( data );
-
-		debug( purchases );
-
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_USER_FETCH_FAILED,
@@ -153,7 +149,7 @@ function fetchUserPurchases() {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_USER_FETCH_COMPLETED,
-				purchases
+				purchases: purchasesAssembler.createPurchasesArray( data )
 			} );
 		}
 	} );
