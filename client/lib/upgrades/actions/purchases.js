@@ -36,9 +36,9 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 	wpcom.cancelPrivateRegistration( purchaseId, ( error, data ) => {
 		debug( error, data );
 
-		const canceledSuccessfully = ! error && data.success;
+		const success = ! error && data.success;
 
-		if ( canceledSuccessfully ) {
+		if ( success ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_COMPLETED,
 				purchaseId
@@ -51,7 +51,7 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 			} );
 		}
 
-		onComplete( canceledSuccessfully );
+		onComplete( success );
 	} );
 }
 
@@ -64,15 +64,13 @@ function deleteStoredCard( card, onComplete ) {
 	wpcom.me().storedCardDelete( card, ( error, data ) => {
 		debug( error, data );
 
-		let success = false;
+		const success = Boolean( data );
 
-		if ( data ) {
+		if ( success ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_DELETE_COMPLETED,
 				card
 			} );
-
-			success = true;
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_DELETE_FAILED,
