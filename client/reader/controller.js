@@ -71,6 +71,10 @@ function pageTitleSetter() {
 
 module.exports = {
 	loadSubscriptions: function( context, next ) {
+		// these three are included to ensure that the stores required have been loaded and can accept actions
+		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ), // eslint-disable-line no-unused-vars
+			PostEmailSubscriptionStore = require( 'lib/reader-post-email-subscriptions' ), // eslint-disable-line no-unused-vars
+			CommentEmailSubscriptionStore = require( 'lib/reader-comment-email-subscriptions' ); // eslint-disable-line no-unused-vars
 		FeedSubscriptionActions.fetchAll();
 		next();
 	},
