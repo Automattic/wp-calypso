@@ -31,3 +31,24 @@ To clean up directory, just run:
 ```
 make distclean
 ```
+
+## Running
+When you open http://calypso.localhost:3000 in your browser and you encounter some problems - this is the proper section to look for answers.
+
+### I can see only big **W** logo!
+![Only logo](https://cldup.com/8TZOLiD6WC-2000x2000.png)
+
+
+Please remember to access Calypso via **http://calypso.localhost:3000**
+
+Any other url will not work.
+
+#### I still have problems!
+We suggest you open the devTools and see if there maybe is some JavaScript error preventing code execution.
+
+
+### An active access token must be used to query information about the current user.
+![An active access token must be used to query information about the current user](https://cldup.com/F0mPgigEp4-3000x3000.png)
+
+Please remember, that you have to log in to http://wordpress.com/login first to save a proper cookie in your browser.
+
