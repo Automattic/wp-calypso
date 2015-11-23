@@ -14,12 +14,10 @@ import EditorSharingAccordion from './accordion';
 
 class EditorSharingContainer extends Component {
 	constructor( props ) {
-		const { site, state } = props;
-
 		super( props );
 
 		// Trigger connection fetch
-		if ( ! hasFetchedConnections( state, site.ID ) ) {
+		if ( ! this.props.hasFetchedConnections ) {
 			this.fetchConnections();
 		}
 
@@ -52,9 +50,8 @@ class EditorSharingContainer extends Component {
 	}
 
 	render() {
-		const { site, state } = this.props;
+		const { site, connections } = this.props;
 		const { post, isNew } = this.state;
-		const connections = getConnectionsBySiteId( state, site.ID );
 
 		return (
 			<EditorSharingAccordion
@@ -70,12 +67,16 @@ class EditorSharingContainer extends Component {
 
 EditorSharingContainer.propTypes = {
 	site: PropTypes.object.isRequired,
-	state: PropTypes.object.isRequired,
-	dispatch: PropTypes.func.isRequired
+	dispatch: PropTypes.func.isRequired,
+	hasFetchedConnections: PropTypes.bool,
+	connections: PropTypes.array
 };
 
 export default connect(
-	( state ) => {
-		return { state };
+	( state, props ) => {
+		return {
+			hasFetchedConnections: hasFetchedConnections( state, props.site.ID ),
+			connections: getConnectionsBySiteId( state, props.site.ID )
+		};
 	}
 )( EditorSharingContainer );
