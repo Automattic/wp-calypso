@@ -33,9 +33,21 @@ module.exports = React.createClass( {
 		}
 
 		window.scrollTo( 0, 0 );
-		analytics.tracks.recordEvent( 'calypso_checkout_page_view', { saved_cards: this.props.cards.get().length } );
+		if ( this.props.cart.hasLoadedFromServer ) {
+			this.trackPageView( this.props.cart );
+		}
 		upgradesActions.resetTransaction();
 	},
+
+	componentWillUpdate: function( nextProps ) {
+		if ( this.props.cart.hasLoadedFromServer ) {
+			return;
+		}
+
+		if ( this.props.cart.hasLoadedFromServer !== nextProps.cart.hasLoadedFromServer ) {
+			this.trackPageView( nextProps.cart );
+		}
+  	},
 
 	componentDidUpdate: function() {
 		var previousCart, nextCart;
@@ -50,6 +62,13 @@ module.exports = React.createClass( {
 			this.redirectIfEmptyCart();
 			this.setState( { previousCart: nextCart } );
 		}
+	},
+
+	trackPageView: function ( cart ) {
+		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
+			saved_cards: this.props.cards.get().length,
+			is_renewal: cartItems.hasRenewalItem( cart )
+		});
 	},
 
 	redirectIfEmptyCart: function() {
