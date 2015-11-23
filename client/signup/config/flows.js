@@ -18,7 +18,7 @@ function getCheckoutDestination( dependencies ) {
 	}
 
 	/* NUX Trampoline A/B */
-	if ( 'notTested' === abtest( 'dss' ) && 'landing-main' === abtest( 'nuxTrampoline' ) ) {
+	if ( 'landing-main' === abtest( 'nuxTrampoline' ) ) {
 		return 'https://' + dependencies.siteSlug + '/?landing';
 	}
 
@@ -143,16 +143,8 @@ function removeUserStepFromFlow( flow ) {
 	return assign( {}, flow, { steps: reject( flow.steps, matches( 'user' ) ) } );
 }
 
-function getCurrentFlowNameFromTest() {
-	if ( 'dss' === abtest( 'dss' ) ) {
-		return 'dss';
-	}
-
-	return 'main';
-}
-
 module.exports = {
-	currentFlowName: getCurrentFlowNameFromTest(),
+	currentFlowName: 'main',
 
 	defaultFlowName: 'main',
 

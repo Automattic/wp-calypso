@@ -46,15 +46,6 @@ module.exports = {
 		},
 		defaultVariation: 'main'
 	},
-	dss: {
-		datestamp: '20151116',
-		variations: {
-			main: 10,
-			dss: 10,
-			notTested: 80
-		},
-		defaultVariation: 'main'
-	},
 	businessPluginsNudge: {
 		datestamp: '20151119',
 		variations: {
