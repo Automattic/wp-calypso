@@ -44,7 +44,7 @@ export NODE_PATH := server:shared:$(THIS_DIR)
 install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
-run: install build
+run: githooks-commit install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
 # a helper rule to ensure that a specific module is installed,
