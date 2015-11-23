@@ -1,6 +1,6 @@
 # Contributing to Calypso
 
-Hi! Thank you you interest in contributing to Calypso, we really appreciate it.
+Hi! Thank you for your interest in contributing to Calypso, we really appreciate it.
 
 There are many ways to contribute – reporting bugs, feature suggestions, fixing bugs, submitting pull requests for enhancements.
 
