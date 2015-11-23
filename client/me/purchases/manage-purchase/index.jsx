@@ -8,6 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
+import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
@@ -173,6 +174,12 @@ const ManagePurchase = React.createClass( {
 			cartItem = cartItems.getRenewalItemFromProduct( purchase, {
 				domain: purchase.meta
 			} );
+
+		// Track the renew now submit
+		analytics.tracks.recordEvent(
+			'calypso_purchases_renew_now_click',
+			{ product_slug: purchase.productSlug }
+		);
 
 		upgradesActions.addItem( cartItem );
 
