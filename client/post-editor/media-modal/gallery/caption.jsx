@@ -24,7 +24,7 @@ export default React.createClass( {
 	},
 
 	getValue() {
-		if ( this.state.caption ) {
+		if ( null !== this.state.caption ) {
 			return this.state.caption;
 		}
 
