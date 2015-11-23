@@ -371,7 +371,7 @@ export default React.createClass( {
 	},
 
 	footerLink() {
-		if ( this.props.positionInFlow !== 0 ) {
+		if ( 'undefined' !== typeof this.props.positionInFlow && this.props.positionInFlow !== 0 ) {
 			return;
 		}
 		let logInUrl = this.localizeUrlWithSubdomain( config( 'login_url' ) );
