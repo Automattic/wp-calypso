@@ -63,6 +63,8 @@ function deleteStoredCard( card, onComplete ) {
 	} );
 
 	wpcom.me().storedCardDelete( card, ( error, data ) => {
+		debug( error, data );
+
 		let success = false;
 
 		if ( data ) {
@@ -85,6 +87,8 @@ function deleteStoredCard( card, onComplete ) {
 
 function fetchSitePurchases( siteId ) {
 	function receiveSitePurchases( error, data ) {
+		debug( error, data );
+
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_SITE_FETCH_FAILED,
@@ -113,6 +117,8 @@ function fetchStoredCards() {
 	} );
 
 	wpcom.getStoredCards( ( error, data ) => {
+		debug( error, data );
+
 		if ( data ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.STORED_CARDS_FETCH_COMPLETED,
@@ -133,6 +139,8 @@ function fetchUserPurchases() {
 	} );
 
 	wpcom.me().purchases( ( error, data ) => {
+		debug( error, data );
+
 		const purchases = purchasesAssembler.createPurchasesArray( data );
 
 		debug( purchases );
