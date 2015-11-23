@@ -19,7 +19,7 @@ var _initialized = false,
 	_phone = {},
 	_emails = {
 		isAddingEmail: false,
-		lastEmailAddRequestStatus: {
+		lastRequestStatus: {
 			isSuccessfull: false,
 			message: ''
 		},
@@ -48,35 +48,18 @@ function emitChange() {
 	AccountRecoveryStore.emit( 'change' );
 }
 
-
 function updatePhone( phone ) {
 	_phone.data = assign( {}, phone );
 }
 
-function resetPhone() {
-	updatePhone( null );
-}
-
-function updateEmail( email ) {
-	_emails.data = {
-		emails: _emails.data.push( email )
-	};
-}
-
 function updateEmails( emails ) {
-	_emails.data = {
-		emails: emails
-	};
+	_emails.data = emails
 }
 
 function removeEmail( email ) {
 	_emails.data = {
 		emails: _emails.data.remove( email )
 	};
-}
-
-function resetEmails() {
-	updateEmails( [] );
 }
 
 function fetchFromAPIIfNotInitialized() {
@@ -188,18 +171,14 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case actions.DELETE_ACCOUNT_RECOVERY_PHONE:
-			resetPhone();
 			emitChange();
 			break;
 
 		case actions.RECEIVE_DELETED_ACCOUNT_RECOVERY_PHONE:
 			if ( action.error ) {
-				handlePhoneError( action.error );
 				break;
 			}
 
-			resetPhone();
-			setPhoneNotice( messages.SMS_DELETED );
 			emitChange();
 			break;
 
@@ -217,6 +196,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
+			_emails.data
 			_emails.lastEmailAddRequestStatus.isSuccessfull = false;
 			_emails.lastEmailAddRequestStatus.message = messages.EMAIL_ADDED;
 			emitChange();

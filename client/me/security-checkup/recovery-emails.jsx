@@ -34,7 +34,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			recoveryEmail: '',
-			recoveryEmails: [],
+			recoveryEmails: AccountRecoveryStore.getEmails(),
 			isAddingRecoveryEmail: false
 		};
 	},
@@ -66,17 +66,26 @@ module.exports = React.createClass( {
 	renderRecoveryEmail: function( recoveryEmail ) {
 		return (
 			<li>
-				{ recoveryEmail }
+				{ recoveryEmail.email }
 				<ActionRemove />
 			</li>
 		);
 	},
 
 	renderRecoveryEmails: function() {
-		if ( isEmpty( this.state.recoveryEmails ) ) {
+		if ( this.state.recoveryEmails.loading ) {
+			return(
+				<div>
+					<FormSectionHeading>Recovery emails placeholder</FormSectionHeading>
+				</div>
+			);
+		}
+
+		if ( isEmpty( this.state.recoveryEmails.data ) ) {
 			return(
 				<div>
 					<FormSectionHeading>Recovery emails</FormSectionHeading>
+					<p>No recovery emails</p>
 				</div>
 			);
 		}
@@ -85,13 +94,21 @@ module.exports = React.createClass( {
 			<div>
 				<FormSectionHeading>Recovery emails</FormSectionHeading>
 				<ul>
-					{ this.state.recoveryEmails.data.emails.map( recoveryEmail => this.renderRecoveryEmail( recoveryEmail ) ) }
+					{ this.state.recoveryEmails.data.map( recoveryEmail => this.renderRecoveryEmail( recoveryEmail ) ) }
 				</ul>
 			</div>
 		);
 	},
 
 	renderRecoveryEmailActions: function() {
+		if ( this.state.recoveryEmails.loading ) {
+			return(
+				<FormButton onClick={ this.addEmail } isPrimary={ false } >
+					{ this.translate( 'Add Email' ) }
+				</FormButton>
+			);
+		}
+
 		if ( this.state.isAddingRecoveryEmail ) {
 			return(
 				<div>
@@ -119,6 +136,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+console.log(this.state);
 		return (
 			<div>
 				{ this.renderRecoveryEmails() }

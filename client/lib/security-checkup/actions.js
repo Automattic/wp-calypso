@@ -51,11 +51,10 @@ var SecurityCheckupActions = {
 		} );
 	},
 
-	updateEmail: function( email, previousEmail ) {
+	updateEmail: function( email ) {
 		Dispatcher.handleViewAction( {
 			type: actions.UPDATE_ACCOUNT_RECOVERY_EMAIL,
-			email: email,
-			previousEmail: previousEmail
+			email: email
 		} );
 
 		me.updateAccountRecoveryEmail( email, function( error, data ) {
