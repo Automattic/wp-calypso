@@ -103,20 +103,13 @@ module.exports = React.createClass( {
 		if ( this.props.page.status === 'trash' ) {
 			return null;
 		}
-
-		if ( this.props.page.status !== 'publish' ) {
-			return (
-				<PopoverMenuItem onClick={ this.viewPage }>
-					<Gridicon icon="external" size={ 18 } />
-					{ this.translate( 'Preview' ) }
-				</PopoverMenuItem>
-			);
-		}
+		
+		var label = ( this.props.page.status !== 'publish' ) ? 'Preview' : 'View Page';
 
 		return (
 			<PopoverMenuItem onClick={ this.viewPage }>
 				<Gridicon icon="external" size={ 18 } />
-				{ this.translate( 'View Page' ) }
+				{ this.translate( label ) }
 			</PopoverMenuItem>
 		);
 	},
@@ -190,22 +183,16 @@ module.exports = React.createClass( {
 		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
+		
+		var label = ( this.props.page.status !== 'trash' ) ? 'Send to Trash' : 'Delete permanently';
+		var clickAction = ( this.props.page.status !== 'trash' ) ? this.updateStatusTrash : this.updateStatusDelete;
 
-		if ( this.props.page.status !== 'trash' ) {
-			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Send to Trash' ) }
-				</PopoverMenuItem>
-			);
-		} else {
-			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusDelete }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Delete permanently' ) }
-				</PopoverMenuItem>
-			);
-		}
+		return (
+			<PopoverMenuItem className="page__trash-item" onClick={ clickAction }>
+				<Gridicon icon="trash" size={ 18 } />
+				{ this.translate( label ) }
+			</PopoverMenuItem>
+		);
 	},
 
 	getRestoreItem: function() {
