@@ -4,7 +4,7 @@
 @import 'shared/colors';                 				// import all of our wpcom colors
 @import 'shared/utilities';              				// Helper classes
 @import 'shared/typography';             				// all the typographic rules, variables, etc.
-@import 'shared/mixins/mixins';                 				// sass mixins for gradients, bordius radii, etc.
+@import 'shared/mixins/mixins';                 // sass mixins for gradients, bordius radii, etc.
 @import 'shared/extends';                				// sass extends for commonly used styles
 @import 'shared/animation';              				// all UI animation
 @import 'shared/forms';                  				// form styling
@@ -19,7 +19,7 @@
 @import 'layout/masterbar';              				// masterbar styles
 @import 'layout/sidebar';                				// sidebar styles, shared across most pages
 @import 'layout/overlay';                				// overlay UX styling
-@import 'layout/detail-page';             				// detail page styles
+@import 'layout/detail-page';             			// detail page styles
 
 // Sections
 @import 'sections/sites';                				// sites section styles
@@ -41,7 +41,7 @@
 @import 'sections/plugins';
 @import 'sections/translator';
 @import 'sections/devdocs';              				// developer documentation at /devdocs
-@import 'sections/nux-welcome';                         // persistent welcome for new users
+@import 'sections/nux-welcome';                 // persistent welcome for new users
 
 // Components
 @import 'components';
