@@ -15,9 +15,10 @@ import { isDomainMapping, isDomainRegistration, isTheme, isPlan } from 'lib/prod
  * Returns an array of sites objects, each of which contains an array of purchases.
  *
  * @param {array} purchases An array of purchase objects.
+ * @param {SitesList} sites SitesList instance
  * @return {array} An array of sites with purchases attached.
  */
-function getPurchasesBySite( purchases ) {
+function getPurchasesBySite( purchases, sites ) {
 	return purchases.reduce( ( result, currentValue ) => {
 		const site = find( result, { id: currentValue.siteId } );
 		if ( site ) {
@@ -27,6 +28,7 @@ function getPurchasesBySite( purchases ) {
 				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
+				slug: sites.getSite( currentValue.siteId ).slug,
 				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
 				purchases: [ currentValue ]
 			} );
