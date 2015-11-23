@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	throttle = require( 'lodash/function/throttle' ),
 	raf = require( 'raf' ),
 	classNames = require( 'classnames' );
 
@@ -25,15 +26,16 @@ module.exports = React.createClass( {
 		// Determine and cache vertical threshold from rendered element's
 		// offset relative the document
 		this.threshold = React.findDOMNode( this ).offsetTop;
+		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
-		window.addEventListener( 'resize', this.onWindowResize );
+		window.addEventListener( 'resize', this.throttleOnResize );
 		this.updateIsSticky();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
-		window.removeEventListener( 'resize', this.onWindowResize );
+		window.removeEventListener( 'resize', this.throttleOnResize );
 		raf.cancel( this.rafHandle );
 	},
 
