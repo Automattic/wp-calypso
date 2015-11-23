@@ -7,7 +7,7 @@ import React from 'react';
 
 /**
  * Internal Dependencies
- **/
+ */
 import analytics from 'analytics';
 import Card from 'components/card';
 import loadEndpointForm from './load-endpoint-form';
