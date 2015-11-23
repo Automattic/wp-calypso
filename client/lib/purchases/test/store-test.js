@@ -13,6 +13,32 @@ import { action as actionTypes } from 'lib/upgrades/constants';
 import PurchasesStore from '../store';
 
 describe( 'Purchases Store', () => {
+	it( 'should be an object', () => {
+		expect( PurchasesStore ).to.be.an( 'object' );
+	} );
+
+	it( 'should return an object with the initial state', () => {
+		expect( PurchasesStore.get() ).to.be.eql( {
+			data: [],
+			error: null,
+			hasLoadedFromServer: false,
+			isFetching: false
+		} );
+	} );
+
+	it( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
+		Dispatcher.handleViewAction( {
+			type: actionTypes.PURCHASES_USER_FETCH
+		} );
+
+		expect( PurchasesStore.get() ).to.be.eql( {
+			data: [],
+			error: null,
+			hasLoadedFromServer: false,
+			isFetching: true
+		} );
+	} );
+
 	it( 'should return an object with the list of purchases when fetching completed', done => {
 		Dispatcher.handleServerAction( {
 			type: actionTypes.PURCHASES_USER_FETCH_COMPLETED,
