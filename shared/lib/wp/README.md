@@ -11,7 +11,7 @@ Calls to `wpcom` use the iframe REST proxy via `postMessage`, where authenticati
 
 ### 2 Server-side, or Client-side with `oauth` feature flag
 
-Uses the (`wpcom-xhr-request`)[https://github.com/Automattic/wpcom-xhr-request] library to communicate with the API endpoints after OAuth authentication.
+Uses the [`wpcom-xhr-request`](https://github.com/Automattic/wpcom-xhr-request) library to communicate with the API endpoints after OAuth authentication.
 
 ### Undocumented Endpoints
 
