@@ -32,6 +32,7 @@ function createPurchasesArray( dataTransferObject ) {
 			expiryStatus: camelCase( purchase.expiry_status ),
 			hasPrivateRegistration: Boolean( purchase.has_private_registration ),
 			includedDomain: purchase.included_domain,
+			isCancelable: Boolean( purchase.is_cancelable ),
 			isDomainRegistration: Boolean( purchase.is_domain_registration ),
 			isRedeemable: Boolean( purchase.is_redeemable ),
 			isRefundable: Boolean( purchase.is_refundable ),
