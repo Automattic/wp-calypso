@@ -35,7 +35,7 @@ module.exports = React.createClass( {
 		return {
 			recoveryEmail: '',
 			recoveryEmails: AccountRecoveryStore.getEmails(),
-			isAddingRecoveryEmail: false
+			isAddingRecoveryEmail: AccountRecoveryStore.isAddingRecoveryEmail()
 		};
 	},
 
@@ -53,14 +53,10 @@ module.exports = React.createClass( {
 	},
 
 	refreshRecoveryEmails: function() {
-		this.setState( { recoveryEmails: AccountRecoveryStore.getEmails() } );
-	},
-
-	renderAddRecoveryEmail: function() {
-		return (
-			<div>
-			</div>
-		);
+		this.setState( {
+			isAddingRecoveryEmail: AccountRecoveryStore.isAddingRecoveryEmail(),
+			recoveryEmails: AccountRecoveryStore.getEmails()
+		} );
 	},
 
 	renderRecoveryEmail: function( recoveryEmail ) {
@@ -104,7 +100,7 @@ module.exports = React.createClass( {
 		if ( this.state.recoveryEmails.loading ) {
 			return(
 				<FormButton onClick={ this.addEmail } isPrimary={ false } >
-					{ this.translate( 'Add Email' ) }
+					{ this.translate( 'Place holder' ) }
 				</FormButton>
 			);
 		}
@@ -118,7 +114,7 @@ module.exports = React.createClass( {
 					</FormFieldSet>
 					<FormButtonsBar>
 						<FormButton onClick={ this.saveEmail } >
-							{ this.translate( 'Save Email' ) }
+							{ this.state.submittingForm ? this.translate( 'Saving' ) : this.translate( 'Save' ) }
 						</FormButton>
 						<FormButton onClick={ this.cancelEmail }  isPrimary={ false } >
 							{ this.translate( 'Cancel' ) }
@@ -136,7 +132,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-console.log(this.state);
 		return (
 			<div>
 				{ this.renderRecoveryEmails() }

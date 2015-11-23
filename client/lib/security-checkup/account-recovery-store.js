@@ -27,6 +27,10 @@ var _initialized = false,
 	};
 
 var AccountRecoveryStore = {
+	isAddingRecoveryEmail: function() {
+		return _emails.isAddingEmail;
+	},
+
 	getEmails: function() {
 		fetchFromAPIIfNotInitialized();
 
@@ -190,15 +194,14 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case actions.RECEIVE_UPDATED_ACCOUNT_RECOVERY_EMAIL:
 			_emails.isAddingEmail = false;
 			if ( action.error ) {
-				_emails.lastEmailAddRequestStatus.isSuccessfull = false;
-				_emails.lastEmailAddRequestStatus.message = action.error;
+				_emails.lastRequestStatus.isSuccessfull = false;
+				_emails.lastRequestStatus.message = action.error;
 				emitChange();
 				break;
 			}
 
-			_emails.data
-			_emails.lastEmailAddRequestStatus.isSuccessfull = false;
-			_emails.lastEmailAddRequestStatus.message = messages.EMAIL_ADDED;
+			_emails.lastRequestStatus.isSuccessfull = false;
+			_emails.lastRequestStatus.message = messages.EMAIL_ADDED;
 			emitChange();
 			break;
 
