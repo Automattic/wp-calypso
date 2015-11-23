@@ -50,7 +50,7 @@ module.exports = React.createClass({
 
 	render: function() {
 		var siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '',
-			statusSlug = this.props.status,
+			statusSlug = this.props.status || 'published',
 			searchPlaceholder, selectedText, filterStrings;
 
 		filterStrings = {
@@ -60,22 +60,8 @@ module.exports = React.createClass({
 			status: this.translate( 'Status' )
 		};
 
-
-
-		switch( statusSlug ) {
-			case 'drafts':
-				searchPlaceholder = this.translate( 'Search drafts…', { context: 'Search placeholder for pages list', textOnly: true } );
-				selectedText = filterStrings.drafts;
-				break;
-			case 'trashed':
-				searchPlaceholder = this.translate( 'Search trash…', { context: 'Search placeholder for pages list', textOnly: true } );
-				selectedText = filterStrings.trashed;
-				break;
-			default:
-				searchPlaceholder = this.translate( 'Search published…', { context: 'Search placeholder for pages list', textOnly: true } );
-				selectedText = filterStrings.published;
-				break;
-		}
+		searchPlaceholder = this.translate( 'Search ' + statusSlug + '…', { context: 'Search placeholder for pages list', textOnly: true } );
+		selectedText = filterStrings[statusSlug];
 
 		return (
 			<div className="main main-column pages" role="main">
