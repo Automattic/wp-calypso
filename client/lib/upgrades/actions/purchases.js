@@ -86,7 +86,12 @@ function deleteStoredCard( card, onComplete ) {
 }
 
 function fetchSitePurchases( siteId ) {
-	function receiveSitePurchases( error, data ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.PURCHASES_SITE_FETCH,
+		siteId
+	} );
+
+	wpcom.siteUpgrades( siteId, ( error, data ) => {
 		debug( error, data );
 
 		if ( error ) {
@@ -101,14 +106,7 @@ function fetchSitePurchases( siteId ) {
 				purchases: purchasesAssembler.createPurchasesArray( data.upgrades )
 			} );
 		}
-	}
-
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.PURCHASES_SITE_FETCH,
-		siteId
 	} );
-
-	wpcom.siteUpgrades( siteId, receiveSitePurchases );
 }
 
 function fetchStoredCards() {
