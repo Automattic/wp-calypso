@@ -2,6 +2,8 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
+	without = require( 'lodash/array/without' ),
+	includes = require( 'lodash/collection/includes' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' );
 
@@ -39,7 +41,7 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.dragEnteredCounter = 0;
+		this.dragEnterNodes = [];
 
 		window.addEventListener( 'dragover', this.preventDefault );
 		window.addEventListener( 'drop', this.onDrop );
@@ -48,8 +50,6 @@ module.exports = React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		delete this.dragEnteredCounter;
-
 		window.removeEventListener( 'dragover', this.preventDefault );
 		window.removeEventListener( 'drop', this.onDrop );
 		window.removeEventListener( 'dragenter', this.toggleDraggingOverDocument );
@@ -59,9 +59,12 @@ module.exports = React.createClass( {
 	toggleDraggingOverDocument: function( event ) {
 		var isDraggingOverDocument, detail, isValidDrag;
 
-		switch ( event.type ) {
-			case 'dragenter': this.dragEnteredCounter++; break;
-			case 'dragleave': this.dragEnteredCounter--; break;
+		// Track nodes that have received a drag event. So long as nodes exist
+		// in the set, we can assume that an item is being dragged on the page.
+		if ( 'dragenter' === event.type && ! includes( this.dragEnterNodes, event.target ) ) {
+			this.dragEnterNodes.push( event.target );
+		} else if ( 'dragleave' === event.type ) {
+			this.dragEnterNodes = without( this.dragEnterNodes, event.target );
 		}
 
 		// In some contexts, it may be necessary to capture and redirect the
@@ -73,7 +76,7 @@ module.exports = React.createClass( {
 		detail = window.CustomEvent && event instanceof window.CustomEvent ? event.detail : event;
 
 		isValidDrag = this.props.onVerifyValidTransfer( detail.dataTransfer );
-		isDraggingOverDocument = isValidDrag && 0 !== this.dragEnteredCounter;
+		isDraggingOverDocument = isValidDrag && this.dragEnterNodes.length;
 
 		this.setState( {
 			isDraggingOverDocument: isDraggingOverDocument,
@@ -82,10 +85,9 @@ module.exports = React.createClass( {
 		} );
 
 		if ( window.CustomEvent && event instanceof window.CustomEvent ) {
-			// For redirected CustomEvent instances, immediately decrement the
-			// counter following the state update, since another "real" event
-			// will be triggered on the `window` object immediately following.
-			this.dragEnteredCounter--;
+			// For redirected CustomEvent instances, immediately remove window
+			// from tracked nodes since another "real" event will be triggered.
+			this.dragEnterNodes = without( this.dragEnterNodes, window );
 		}
 	},
 
