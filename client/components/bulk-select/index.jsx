@@ -41,7 +41,7 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className="bulk-select" onClick={ this.handleToggleAll }>
-				<input type="checkbox" className="bulk-select__box" checked={ this.hasAllElementsSelected() } />
+				<input type="checkbox" className="bulk-select__box" checked={ this.hasAllElementsSelected() } readOnly />
 				<Count count={ this.props.selectedElements } />
 				{ this.getStateIcon() }
 			</div>
