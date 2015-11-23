@@ -7,6 +7,7 @@ import React from 'react/addons';
  * Internal dependencies
  */
 
+
 export default React.createClass( {
 
 	displayName: 'DevdocsSidebar',
@@ -15,7 +16,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="devdocs__sidebar">
+			<div className="wpcom-sidebar sidebar devdocs__sidebar">
 				<h1 className="devdocs__title">Calypso Docs</h1>
 				<ul className="devdocs__navigation">
 					<li className="devdocs__navigation-item">
