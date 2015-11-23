@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var DocService = require( './service' ),
+	Main = require( 'components/main' ),
 	Search = require( 'components/search' );
 
 var DEFAULT_FILES = [
@@ -143,13 +144,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var containerClass = classNames( {
-			main: true,
-			devdocs: true,
-		} );
-
 		return (
-			<div className={ containerClass } role="main">
+			<Main className="devdocs">
 				<Search
 					autoFocus
 					placeholder="Search documentation…"
@@ -162,7 +158,7 @@ module.exports = React.createClass( {
 				<div className="devdocs__results">
 					{ this.results() }
 				</div>
-			</div>
+			</Main>
 		);
 	}
 } );
