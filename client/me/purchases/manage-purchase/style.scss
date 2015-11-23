@@ -9,7 +9,6 @@
 
 	&.is-expired {
 		background: $gray-light;
-		margin-bottom: 0;
 
 		.manage-purchase__detail,
 		.manage-purchase__detail-label,
@@ -17,6 +16,14 @@
 		.manage-purchase__title,
 		.manage-purchase__subtitle {
 			opacity: .6;
+		}
+	}
+
+	&.is-expired + .notice {
+		margin-top: -10px;
+
+		@include breakpoint ( ">480px" ) {
+			margin-top: -16px;
 		}
 	}
 
