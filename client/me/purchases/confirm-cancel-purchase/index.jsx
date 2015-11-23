@@ -67,7 +67,7 @@ const ConfirmCancelPurchase = React.createClass( {
 		notices.success( response.message, { persistent: true } );
 
 		analytics.tracks.recordEvent(
-			'calypso_purchases_submit_cancel_form',
+			'calypso_purchases_cancel_form_submit',
 			{ product_slug: this.getPurchase().productSlug }
 		);
 
