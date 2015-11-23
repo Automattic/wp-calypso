@@ -50,15 +50,19 @@ module.exports = {
 	},
 
 	getMessage: function( logs, messageFunction ) {
-		var sampleLog, translateArg;
-		sampleLog = logs[ 0 ];
-		translateArg = {
-			count: logs.length,
-			args: {
-				siteName: sampleLog.site.title,
-				numberOfSites: logs.length
-			}
-		};
+		const sampleLog = logs[ 0 ],
+			sites = logs.map( function( log ) {
+				return log.site && log.site.title;
+			} ),
+			translateArg = {
+				count: logs.length,
+				args: {
+					siteName: sampleLog.site.title,
+					siteNames: sites.join( ', ' ),
+					numberOfSites: sites.length
+				}
+			};
+
 		return messageFunction( sampleLog.action, translateArg, sampleLog );
 	},
 
@@ -110,8 +114,8 @@ module.exports = {
 					return this.translate( 'Error fetching plugins on %(siteName)s.', translateArg );
 				}
 				return this.translate(
-					'Error fetching plugins on %(numberOfSites)d site.',
-					'Error fetching plugins on %(numberOfSites)d sites.',
+					'Error fetching plugins on %(numberOfSites)d site: %(siteNames)s.',
+					'Error fetching plugins on %(numberOfSites)d sites: %(siteNames)s.',
 					translateArg );
 
 			case 'DISCONNECT_SITE':
@@ -122,8 +126,8 @@ module.exports = {
 							return this.translate( 'You don\'t have permission to disconnect %(siteName)s.', translateArg );
 						}
 						return this.translate(
-							'You don\'t have permission to disconnect %(numberOfSites)d site.',
-							'You don\'t have permission to disconnect %(numberOfSites)d sites.',
+							'You don\'t have permission to disconnect %(numberOfSites)d site: %(siteNames)s.',
+							'You don\'t have permission to disconnect %(numberOfSites)d sites: %(siteNames)s.',
 							translateArg );
 
 					default:
@@ -131,8 +135,8 @@ module.exports = {
 							return this.translate( 'Error disconnecting %(siteName)s.', translateArg );
 						}
 						return this.translate(
-							'Error disconnecting %(numberOfSites)d site.',
-							'Error disconnecting %(numberOfSites)d sites.',
+							'Error disconnecting %(numberOfSites)d site: %(siteNames)s.',
+							'Error disconnecting %(numberOfSites)d sites: %(siteNames)s.',
 							translateArg );
 				}
 
