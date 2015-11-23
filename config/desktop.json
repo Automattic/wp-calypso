@@ -16,6 +16,7 @@
 		"code-splitting": false,
 		"network-connection": true,
 		"always_use_logout_url": true,
+		"notifications2beta": true,
 
 		"post-editor": true,
 		"post-editor/author-selector": true,
@@ -51,6 +52,7 @@
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/delete-site": true,
 		"premium-themes": true,
+		"premium-plans": true,
 
 		"reader": true,
 		"reader/teams": true,
@@ -60,6 +62,7 @@
 		"reader/share": true,
 		"reader/following-edit": true,
 		"reader/recommendations": true,
+		"reader/discover": true,
 
 		"upgrades/checkout": true,
 		"upgrades/domain-management/contacts-privacy": true,
@@ -102,9 +105,6 @@
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
-	"desktop_oauth_token_endpoint": "https://public-api.wordpress.com/oauth2/token",
-	"desktop_oauth_client_id": "41936",
-	"desktop_oauth_client_secret": "IxkW0LDvREsjREmozU6zdK7uhzYIT2nHrmcPcVCDAfHYxelW8znDIEUkjPnvPDE2",
 	"mc_analytics_enabled": false,
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",

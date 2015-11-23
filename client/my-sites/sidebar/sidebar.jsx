@@ -139,8 +139,14 @@ module.exports = React.createClass( {
 
 	themes: function() {
 		var site = this.getSelectedSite(),
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			themesLink;
+			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
+
+		var itemProps = {
+			label: this.translate( 'Themes' ),
+			className: this.itemLinkClass( '/design', 'themes' ),
+			onNavigate: this.onNavigate,
+			icon: 'themes'
+		};
 
 		if ( site && ! site.isCustomizable() ) {
 			return null;
@@ -150,24 +156,21 @@ module.exports = React.createClass( {
 			return null;
 		}
 
+		if ( config.isEnabled( 'manage/customize' ) ) {
+			itemProps.buttonLink = getCustomizeUrl( null, site );
+			itemProps.buttonLabel = this.translate( 'Customize' );
+		}
+
 		if ( site.jetpack && ! jetpackEnabled && site.options ) {
-			themesLink = site.options.admin_url + 'themes.php';
+			itemProps.link = site.options.admin_url + 'themes.php';
 		} else if ( this.isSingle() ) {
-			themesLink = '/design' + this.siteSuffix();
+			itemProps.link = '/design' + this.siteSuffix();
 		} else {
-			themesLink = '/design';
+			itemProps.link = '/design';
 		}
 
 		return (
-			<SidebarMenuItem
-				label={ this.translate( 'Themes' ) }
-				className={ this.itemLinkClass( '/design', 'themes' ) }
-				link={ themesLink }
-				buttonLink={ getCustomizeUrl( null, site ) }
-				buttonLabel={ this.translate( 'Customize' ) }
-				onNavigate={ this.onNavigate }
-				icon={ 'themes' }
-			/>
+			<SidebarMenuItem { ...itemProps }/>
 		);
 	},
 

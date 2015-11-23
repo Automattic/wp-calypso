@@ -5,7 +5,8 @@ var React = require( 'react' ),
 	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
 	assign = require( 'lodash/object/assign' ),
-	classes = require( 'component-classes' );
+	classes = require( 'component-classes' ),
+	oAuthToken = require( 'lib/oauth-token' );
 
 /**
  * Internal dependencies
@@ -123,6 +124,15 @@ var Notifications = React.createClass({
 		} );
 	},
 
+	postAuth: function() {
+		if ( config.isEnabled( 'oauth' ) && oAuthToken.getToken() !== false ) {
+			this.postMessage( {
+				action: 'setAuthToken',
+				token: oAuthToken.getToken()
+			} );
+		}
+	},
+
 	receiveMessage: function(event) {
 		// Receives messages from the notifications widget
 		if ( event.origin !== widgetDomain ) {
@@ -147,6 +157,10 @@ var Notifications = React.createClass({
 			// the iframe is loaded, send any pending messages
 			this.setState( { 'iframeLoaded' : true } );
 			debug( 'notifications iframe loaded' );
+
+			// We always want this to happen, in addition to whatever may be queued
+			this.postAuth();
+
 			if ( this.queuedMessage ) {
 				this.postMessage( this.queuedMessage );
 				this.queuedMessage = null;

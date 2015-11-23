@@ -18,6 +18,8 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import EmptyContent from 'components/empty-content';
+import config from 'config';
 
 const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -31,11 +33,27 @@ const List = React.createClass( {
 		}
 	},
 
+	renderUpgradePrompt() {
+		return (
+			<Main>
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-whoops.svg"
+					title={ this.translate( 'Want to use custom domains on your site?', { context: 'site setting upgrade' } ) }
+					line={ this.translate( 'Custom domains are available with WordPress.com.', { context: 'site setting upgrade' } ) }
+					/>
+			</Main>
+		);
+	},
+
 	render() {
 		var headerText = this.translate( 'Domains', { context: 'A navigation label.' } );
 
 		if ( ! this.props.domains ) {
 			return null;
+		}
+
+		if ( ! config.isEnabled( 'premium-plans' ) ) {
+			return this.renderUpgradePrompt();
 		}
 
 		return (

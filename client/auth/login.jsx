@@ -18,6 +18,7 @@ import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
 import Gridicon from 'components/gridicon';
 import WordPressLogo from 'components/wordpress-logo';
+import config from 'config';
 
 const LostPassword = React.createClass( {
 	render: function() {
@@ -94,6 +95,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		const { requires2fa, inProgress, errorMessage, errorLevel } = this.state;
+		const signupLink = config.isEnabled( 'premium-plans' ) ? 'https://wordpress.com/start' : 'https://wordpress.com/start/desktop';
 
 		return (
 			<Main className="auth is-full">
@@ -148,7 +150,7 @@ module.exports = React.createClass( {
 				</a>
 				<div className="auth__links">
 					<a href="https://jetpack.me/support/site-management/" target="_blank">{ this.translate( 'Add self-hosted site' ) }</a>
-					<a href="https://wordpress.com/signup" target="_blank">{ this.translate( 'Create account' ) }</a>
+					<a href={ signupLink }>{ this.translate( 'Create account' ) }</a>
 				</div>
 			</Main>
 		);

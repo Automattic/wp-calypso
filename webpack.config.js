@@ -79,7 +79,7 @@ webpackConfig = {
 		new webpack.IgnorePlugin( /^props$/ ),
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ )
 	],
-	externals: [ 'ipc' ]
+	externals: [ 'electron' ]
 };
 
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {

@@ -25,6 +25,7 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"premium-themes": true,
+		"premium-plans": true,
 		"press-this": true,
 		"manage/sharing": true,
 		"manage/people": true,
@@ -83,6 +84,7 @@
 		"reader/full-errors": true,
 		"reader/share": true,
 		"reader/following-edit": true,
+		"reader/discover": true,
 		"ad-tracking": false,
 		"mailing-lists/unsubscribe": true
 	},
