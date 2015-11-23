@@ -22,24 +22,24 @@ const INITIAL_STATE = {
 };
 
 function updatePurchaseById( state, id, properties ) {
-	return assign( {}, state, { data: state.data.map( purchase => {
-		if ( id === purchase.id ) {
-			return assign( {}, purchase, properties );
-		}
-		return purchase;
-	} ) } );
+	return assign( {}, state, {
+		data: state.data.map( purchase => {
+			if ( id === purchase.id ) {
+				return assign( {}, purchase, properties );
+			}
+			return purchase;
+		} )
+	} );
 }
 
 const PurchasesStore = createReducerStore( ( state, payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.PURCHASES_SITE_FETCH_FAILED:
-		case ActionTypes.PURCHASES_USER_FETCH_FAILED:
-			return assign( {}, state, { error: action.error } );
 		case ActionTypes.PURCHASES_SITE_FETCH:
 		case ActionTypes.PURCHASES_USER_FETCH:
 			return assign( {}, state, { isFetching: true } );
+
 		case ActionTypes.PURCHASES_SITE_FETCH_COMPLETED:
 		case ActionTypes.PURCHASES_USER_FETCH_COMPLETED:
 			let { purchases } = action;
@@ -56,15 +56,22 @@ const PurchasesStore = createReducerStore( ( state, payload ) => {
 				isFetching: false,
 				hasLoadedFromServer: true
 			} );
+
+		case ActionTypes.PURCHASES_SITE_FETCH_FAILED:
+		case ActionTypes.PURCHASES_USER_FETCH_FAILED:
+			return assign( {}, state, { error: action.error } );
+
 		case ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_COMPLETED:
 			return updatePurchaseById( state, action.purchaseId, {
 				error: null,
 				hasPrivateRegistration: false
 			} );
+
 		case ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_FAILED:
 			return updatePurchaseById( state, action.purchaseId, {
 				error: action.error
 			} );
+
 		default:
 			return state;
 	}
