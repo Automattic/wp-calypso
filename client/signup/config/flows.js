@@ -128,7 +128,7 @@ const flows = {
 
 	developer: {
 		steps: [ 'themes', 'site', 'user' ],
-		destination: '/me/next?welcome',
+		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
 		lastModified: '2015-11-23'
 	}
