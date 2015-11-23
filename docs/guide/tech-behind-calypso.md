@@ -4,7 +4,7 @@ Understanding the technologies and abstractions on which Calypso is built can ma
 
 ## No Big Famous Framework
 
-Calypso is using neither Angular, nor Ember, because we are building Calypso for the long haul and updating and improving a home-grown framework is a better long-term approach for us. Currently we're using React and Flux and they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
+Calypso is using neither Angular nor Ember; because we are building Calypso for the long haul, updating and improving a home-grown framework is a better long-term approach for us. Currently, we're using React and Flux; they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
 
 ## Modern Modular JavaScript
 
@@ -30,7 +30,7 @@ Key concepts checklist:
 
 ## React
 
-[React](http://facebook.github.io/react/) is a library by Facebook which implements a virtual DOM, so that instead of carefully changing the DOM, we can just re-render whole components when the data changes. React radically simplified our code and allowed for an awesome composition of reusable components.
+[React](http://facebook.github.io/react/) is a library by Facebook that implements a virtual DOM. Instead of carefully changing the DOM, we can just re-render whole components when the data changes. React radically simplified our code and allowed for an awesome composition of reusable components.
 
 Here are some great React resources:
 
@@ -56,18 +56,18 @@ Key concepts checklist:
 
 ## Git
 
-Calypso is developed on Github and we use Git extensively. Git is almost infinitely powerful and understanding how it works and controlling it are an important part of our daily workflow.
+Calypso is developed on Github, and we use Git extensively. Git is extremely powerful, and understanding how it works and controlling it are an important part of our daily workflow.
 
 Essential Git resources:
 
-* The [Pro Git](http://git-scm.com/book/en/v2) book is online and free. A great resource, both for beginners and for intermediate users (few dare to call themselves advanced)
+* The [Pro Git](http://git-scm.com/book/en/v2) book is online and free. It's a great resource, both for beginners and for intermediate users (few dare to call themselves advanced).
 * [git ready](http://gitready.com) – byte-sized tips
 * Several shorter articles with tips:
 	- [A few git tips you didn't know about](http://mislav.uniqpath.com/2010/07/git-tips/)
 	- [25 Tips for Intermediate Git Users](https://www.andyjeffries.co.uk/25-tips-for-intermediate-git-users/)
 	- [Stupid Git Tricks](http://webchick.net/stupid-git-tricks)
 	- [9 Awesome Git Tricks](http://www.tychoish.com/posts/9-awesome-git-tricks/)
-* Some operations are easier using a GUI. [GitX](http://rowanj.github.io/gitx/) is a good simple one for OS X, [fugitive](https://github.com/tpope/vim-fugitive) is a must for `vim`. The GitHub app doesn’t entirely fit our workflow, but you can use it for pulling and committing, if you like it. You will have to do all the rebasing by hand, though.
+* Some operations are easier using a GUI. [GitX](http://rowanj.github.io/gitx/) is a simple one for OS X. [Fugitive](https://github.com/tpope/vim-fugitive) is a must for `vim`. The GitHub app doesn’t entirely fit our workflow, but you can use it for pulling and committing. One caveat is that you will have to do all rebasing manually.
 
 Key concepts checklist:
 
