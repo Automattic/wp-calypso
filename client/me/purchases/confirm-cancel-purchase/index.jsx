@@ -15,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
-import { goToManagePurchase } from '../utils';
+import { getPurchase, goToManagePurchase } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
@@ -68,7 +68,7 @@ const ConfirmCancelPurchase = React.createClass( {
 
 		analytics.tracks.recordEvent(
 			'calypso_purchases_cancel_form_submit',
-			{ product_slug: this.getPurchase().productSlug }
+			{ product_slug: getPurchase( this.props ).productSlug }
 		);
 
 		page.redirect( paths.list() );
