@@ -56,6 +56,10 @@
 				transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 			}
 
+			.count {
+				margin-left: 8px;
+			}
+
 			&:hover {
 				color: $blue-medium;
 
@@ -88,6 +92,13 @@
 					transform: rotate( 180deg );
 				}
 			}
+
+			.sidebar-menu__add-button {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+			}
+
 			.sidebar-menu__list {
 				height: auto;
 				padding: 8px 0;
@@ -96,6 +107,18 @@
 			.sidebar-menu__item {
 				opacity: 1;
 				transform: translateY( 0 );
+			}
+		}
+
+		&.is-add-open {
+			.sidebar-menu__add {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+			}
+
+			.sidebar-menu__list {
+				margin-top: 34px;
 			}
 		}
 	}
@@ -120,13 +143,36 @@
 		}
 	}
 
+	.sidebar-menu__add-button {
+		position: absolute;
+			top: 7px;
+			right: 8px;
+		border-width: 1px;
+		border-color: lighten( $gray, 20% );
+		padding: 6px 7px;
+		border-radius: 3px;
+
+		// Disabled by default
+		opacity: 0;
+		transform: translateX( -20px );
+		pointer-events: none;
+		transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
 	.sidebar-menu__add {
-		display: none;
-		padding: 8px;
+		opacity: 0;
+		transform: translateX( -30px );
+		transition: all 0.15s ease-in;
+		pointer-events: none;
+		padding: 8px 8px 8px 45px;
+		position: absolute;
+			top: 38px;
+			left: 0;
+			right: 0;
 
 		input {
 			font-size: 13px;
-			padding-left: 18px;
+			padding: 3px 8px;
 		}
 	}
 
@@ -141,6 +187,15 @@
 			position: relative;
 				top: 0;
 				left: auto;
+			fill: $gray !important; // this needs to be more specific
+		}
+
+		&:hover {
+			cursor: pointer;
+
+			.gridicon {
+				fill: $alert-red !important; // this needs to be more specific
+			}
 		}
 
 		@include breakpoint( "<660px" ) {

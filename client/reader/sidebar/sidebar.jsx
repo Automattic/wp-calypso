@@ -26,6 +26,8 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
+	Button = require( 'components/button' ),
+	Count = require( 'components/count' ),
 	config = require( 'config' );
 
 module.exports = React.createClass( {
@@ -94,6 +96,8 @@ module.exports = React.createClass( {
 		return assign(
 			{ isListsToggled: false },
 			{ isTagsToggled: false },
+			{ isListsAddOpen: false },
+			{ isTagsAddOpen: false },
 			this.getStateFromStores()
 		);
 	},
@@ -228,7 +232,7 @@ module.exports = React.createClass( {
 						{ tag.title || tag.slug }
 					</a>
 					{ tag.ID !== 'pending' ? <button className="sidebar-menu__action" data-tag-slug={ tag.slug } onClick={ this.unfollowTag }>
-						<Gridicon icon="cross" size={ 24 } />
+						<Gridicon icon="cross-small" />
 						<span className="sidebar-menu__action-label">{ this.translate( 'Unfollow' ) }</span>
 					</button> : null }
 				</li>
@@ -277,10 +281,24 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	toggleListsAdd: function( event ) {
+		event.preventDefault();
+		this.setState( {
+			isListsAddOpen: ! this.state.isListsAddOpen
+		} );
+	},
+
 	toggleMenuTags: function( event ) {
 		event.preventDefault();
 		this.setState( {
 			isTagsToggled: ! this.state.isTagsToggled
+		} );
+	},
+
+	toggleTagsAdd: function( event ) {
+		event.preventDefault();
+		this.setState( {
+			isTagsAddOpen: ! this.state.isTagsAddOpen
 		} );
 	},
 
@@ -291,13 +309,15 @@ module.exports = React.createClass( {
 				'sidebar-menu': true,
 				'is-dynamic': true,
 				'is-togglable': true,
-				'is-toggle-open': this.state.isListsToggled
+				'is-toggle-open': this.state.isListsToggled,
+				'is-add-open': this.state.isListsAddOpen
 			} ),
 			tagsClassNames = classNames( {
 				'sidebar-menu': true,
 				'is-dynamic': true,
 				'is-togglable': true,
-				'is-toggle-open': this.state.isTagsToggled
+				'is-toggle-open': this.state.isTagsToggled,
+				'is-add-open': this.state.isTagsAddOpen
 			} );
 
 		return (
@@ -356,19 +376,23 @@ module.exports = React.createClass( {
 					<h2 className="sidebar-heading" onClick={ this.toggleMenuLists }>
 						<Gridicon icon="chevron-down" />
 						<span>{ this.translate( 'Lists' ) }</span>
+						<Count count={ 5 } />
 					</h2>
 					
+					<Button compact className="sidebar-menu__add-button" onClick={ this.toggleListsAdd }>Add</Button>
+					
+					<div className="sidebar-menu__add" key="add-list">
+						<input
+							className="sidebar-menu__add-input"
+							type="text"
+							placeholder={ this.translate( 'Create a new list' ) }
+							ref="addListInput"
+							onKeyDown={ this.handleCreateListKeyDown }
+						/>
+					</div>
+
 					<ul className="sidebar-menu__list">
 						{ this.renderLists() }
-						<li className="sidebar-menu__add" key="add-list">
-							<input
-								className="sidebar-menu__add-input"
-								type="text"
-								placeholder={ this.translate( 'Create a new list' ) }
-								ref="addListInput"
-								onKeyDown={ this.handleCreateListKeyDown }
-							/>
-						</li>
 					</ul>
 				</li>
 
@@ -376,19 +400,23 @@ module.exports = React.createClass( {
 					<h2 className="sidebar-heading" onClick={ this.toggleMenuTags }>
 						<Gridicon icon="chevron-down" />
 						{ this.translate( 'Tags' ) }
+						<Count count={ 4 } />
 					</h2>
 					
+					<Button compact className="sidebar-menu__add-button" onClick={ this.toggleTagsAdd }>Add</Button>
+
+					<div className="sidebar-menu__add" key="add-tag">
+						<input
+							className="sidebar-menu__add-input"
+							type="text"
+							placeholder={ this.translate( 'Follow a Tag' ) }
+							ref="addTagInput"
+							onKeyDown={ this.handleFollowTagKeyDown }
+						/>
+					</div>
+
 					<ul className="sidebar-menu__list">
 						{ this.renderTags() }
-						<li className="sidebar-menu__add" key="add-tag">
-							<input
-								className="sidebar-menu__add-input"
-								type="text"
-								placeholder={ this.translate( 'Follow a Tag' ) }
-								ref="addTagInput"
-								onKeyDown={ this.handleFollowTagKeyDown }
-							/>
-						</li>
 					</ul>
 				</li>
 			</ul>
