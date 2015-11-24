@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react'
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -11,11 +10,7 @@ import SignupForm from 'components/signup-form'
 import InviteFormHeader from '../invite-form-header'
 import { createAccount, acceptInvite } from '../actions'
 import WpcomLoginForm from 'signup/wpcom-login-form'
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:accept-invite:logged-out' );
+import config from 'config'
 
 export default React.createClass( {
 
@@ -42,7 +37,7 @@ export default React.createClass( {
 				acceptInvite(
 					this.props.invite,
 					bearerToken,
-					( error, response ) => this.setState( { error, userData, bearerToken } )
+					( acceptInviteError ) => this.setState( { acceptInviteError, userData, bearerToken } )
 				)
 		);
 	},
@@ -88,7 +83,7 @@ export default React.createClass( {
 				return redirectTo;
 				break;
 			default:
-				return redirectTo + '/posts/' + invite.blog_id ;
+				return redirectTo + '/posts/' + invite.blog_id;
 		}
 	},
 
@@ -103,6 +98,15 @@ export default React.createClass( {
 		)
 	},
 
+	footerLink() {
+		let logInUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+		return (
+			<a href={ logInUrl } className="logged-out-form__link">
+				{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+			</a>
+		);
+	},
+
 	render() {
 		return (
 			<div>
@@ -114,6 +118,7 @@ export default React.createClass( {
 					save={ this.save }
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
+					footerLink={ this.footerLink() }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>

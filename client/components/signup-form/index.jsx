@@ -388,7 +388,7 @@ export default React.createClass( {
 				formFields={ this.formFields() }
 				formFooter={ this.props.formFooter || this.formFooter() }
 				formHeader={ this.props.formHeader }
-				footerLink={ this.footerLink() }
+				footerLink={ this.props.footerLink || this.footerLink() }
 				locale={ this.props.locale }
 				onSubmit={ this.handleSubmit }
 				path={ this.props.path } />
