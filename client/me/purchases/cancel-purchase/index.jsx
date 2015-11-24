@@ -17,7 +17,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
 import { getName, isCancelable } from 'lib/purchases';
-import { getPurchase, goToManagePurchase, isDataLoading } from '../helper';
+import { getPurchase, goToManagePurchase, isDataLoading } from '../utils';
 
 const CancelPurchase = React.createClass( {
 	propTypes: {

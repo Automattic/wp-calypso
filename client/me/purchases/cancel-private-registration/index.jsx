@@ -16,7 +16,7 @@ import paths from '../paths';
 import { isRefundable } from 'lib/purchases';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import SimpleNotice from 'notices/simple-notice';
-import { goToManagePurchase, isDataLoading } from '../helper';
+import { goToManagePurchase, isDataLoading } from '../utils';
 
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {

@@ -44,7 +44,7 @@ import {
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
 } from 'lib/purchases';
-import { getPurchase, goToList, isDataLoading } from '../helper';
+import { getPurchase, goToList, isDataLoading } from '../utils';
 
 const ManagePurchase = React.createClass( {
 	propTypes: {

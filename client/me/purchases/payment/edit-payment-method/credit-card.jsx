@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import FoldableCard from 'components/foldable-card';
 import notices from 'notices';
-import { getPurchase, goToEditCardDetails } from 'me/purchases/helper';
+import { getPurchase, goToEditCardDetails } from 'me/purchases/utils';
 
 const EditPaymentMethodCreditCard = React.createClass( {
 	propTypes: {

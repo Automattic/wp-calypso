@@ -14,7 +14,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
-import { goToManagePurchase } from '../helper';
+import { goToManagePurchase } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {

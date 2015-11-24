@@ -24,7 +24,7 @@ import ValidationErrorList from 'notices/validation-error-list';
 import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
 import paths from 'me/purchases/paths';
-import { goToManagePurchase, isDataLoading } from 'me/purchases/helper';
+import { goToManagePurchase, isDataLoading } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
 

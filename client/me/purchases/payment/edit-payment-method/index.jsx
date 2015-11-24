@@ -11,7 +11,7 @@ import EditPaymentMethodCreditCard from './credit-card';
 import HeaderCake from 'components/header-cake';
 import { isPaidWithCreditCard, isPaidWithPaypal } from 'lib/purchases';
 import Main from 'components/main';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/helper';
+import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
 
 const EditPaymentMethod = React.createClass( {
 	propTypes: {

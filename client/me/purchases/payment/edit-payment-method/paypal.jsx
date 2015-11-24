@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import FoldableCard from 'components/foldable-card';
 import notices from 'notices';
-import { getPurchase } from 'me/purchases/helper';
+import { getPurchase } from 'me/purchases/utils';
 
 const EditPaymentMethodPaypal = React.createClass( {
 	propTypes: {
