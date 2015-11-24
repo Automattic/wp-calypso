@@ -1,9 +1,12 @@
 // Reader Sidebar
 .is-section-reader .sidebar {
 
-	.sidebar__menu {
+	.sidebar-menu {
+		margin-bottom: 8px;
+
 		.selected {
 			.menu-link-icon,
+			.sidebar-menu__action .gridicon,
 			.sidebar-dynamic-menu__action-icon {
 				fill: $white;
 			}
@@ -31,55 +34,185 @@
 		}
 	}
 
-	.sidebar-streams {
-	}
+	.sidebar-streams {}
 
-	.sidebar-dynamic-menu__list,
-	.sidebar-dynamic-menu__tag,
-	.sidebar-dynamic-menu__explore {
-		a:first-child {
-			padding: 8px 16px 8px 24px;
-		}
-
-		a.add-new {
-			margin-top: 5px;
-		}
+	.is-togglable {
 
 		@include breakpoint( "<660px" ) {
-			a:first-child {
-				padding: 18px 16px 18px 24px;
+			margin-top: 0;
+		}
+
+		.sidebar-heading {
+			margin: 0;
+			padding: 10px 16px 10px 55px;
+			cursor: pointer;
+			position: relative;
+			transition: background-color 0.15s ease-in-out,
+				box-shadow 0.15s ease-in-out;
+
+			.gridicon {
+				top: 10px;
+				left: 20px;
+				height: 16px; // I know, I know...
+				transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 			}
 
-			a.add-new {
+			.count {
+				margin-left: 8px;
+			}
+
+			&:hover {
+				color: $blue-medium;
+				background-color: $gray-light;
+
+				.gridicon {
+					fill: $blue-medium;
+				}
+			}
+		}
+
+		.sidebar-menu__list {
+			height: 0;
+			overflow: hidden;
+		}
+
+		.sidebar-menu__item {
+			transition: transform 0.15s cubic-bezier(0.230, 1.000, 0.320, 1.000),
+				opacity 0.15s ease-in-out;
+			transition-delay: 0.05s;
+			opacity: 0;
+			transform: translateY( -100px );
+		}
+
+		&.is-toggle-open {
+			.sidebar-heading {
+				background-color: $gray-light;
+				box-shadow: 0 1px 0 lighten( $gray, 20 ),
+					0 -1px 0 lighten( $gray, 20 );
+
+				.gridicon {
+					transform: rotate( 180deg );
+				}
+			}
+
+			.sidebar-menu__add-button {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+			}
+
+			.sidebar-menu__list {
+				height: auto;
+				padding: 8px 0;
+			}
+
+			.sidebar-menu__item {
+				opacity: 1;
+				transform: translateY( 0 );
+			}
+		}
+
+		&.is-add-open {
+			.sidebar-menu__add {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+			}
+		}
+	}
+
+	.sidebar-menu__list {}
+
+	.sidebar-menu__empty,
+	.sidebar-menu__empty:hover {
+		padding: 0 32px 0 55px;
+		font-size: 13px;
+		color: $gray-dark;
+		background-color: transparent !important; // needs to be more specific
+	}
+
+	.sidebar-menu__item {
+		a.add-new {
+			margin-top: 5px;
+
+			@include breakpoint( "<660px" ) {
 				margin-top: 10px;
 			}
 		}
 	}
 
-	.sidebar-dynamic-menu__add {
-		padding: 8px;
+	.sidebar-menu__item-label {
+		padding: 8px 16px 8px 55px;
 
-		.gridicon {
-			top: 14px;
+		@include breakpoint( "<660px" ) {
+			padding: 18px 16px 18px 24px;
 		}
 	}
 
-	.sidebar-dynamic-menu__add-input {
-		font-size: 13px;
-		padding-left: 16px;
+	.sidebar-menu__add-button {
+		position: absolute;
+			top: 7px;
+			right: 8px;
+		border-width: 1px;
+		border-color: lighten( $gray, 20% );
+		padding: 6px 7px;
+		border-radius: 3px;
+		text-transform: none;
+
+		// Disabled by default
+		opacity: 0;
+		transform: translateX( -20px );
+		pointer-events: none;
+		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		transition-delay: 0.05s;
 	}
 
-	.sidebar-dynamic-menu__action {
+	.sidebar-menu__add {
+		opacity: 0;
+		transform: translateX( 100px );
+		transition: all 0.15s ease-in;
+		pointer-events: none;
+		padding: 0;
+		position: absolute;
+			top: -1px;
+			left: -1px;
+			right: -1px;
+
+		input {
+			font-size: 13px;
+			padding: 10px 24px 9px;
+		}
+
+		.gridicon {
+			cursor: pointer;
+			position: absolute;
+				top: 0;
+				right: 0;
+				left: auto;
+			padding: 8px 13px;
+		}
+	}
+
+	.sidebar-menu__action {
 		position: absolute;
 			top: 3px;
 			right: 8px;
-	    line-height: 15px;
+		line-height: 15px;
 		padding: 3px 4px 2px 4px;
 
 		.gridicon {
 			position: relative;
 				top: 0;
 				left: auto;
+			fill: $gray !important; // this needs to be more specific
+		}
+
+		&:hover {
+			cursor: pointer;
+
+			.gridicon {
+				fill: $alert-red !important; // this needs to be more specific
+			}
 		}
 
 		@include breakpoint( "<660px" ) {
@@ -91,7 +224,8 @@
 		}
 	}
 
-	.sidebar-dynamic-menu__action-label {
+	.sidebar-menu__action-label,
+	.sidebar-dynamic-menu__action_label {
 		display: none;
 	}
 

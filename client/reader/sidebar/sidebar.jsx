@@ -11,7 +11,8 @@ const assign = require( 'lodash/object/assign' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
-	last = require( 'lodash/array/last' );
+	last = require( 'lodash/array/last' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal Dependencies
@@ -30,7 +31,10 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
-	discoverHelper = require( 'reader/discover/helper' );
+	discoverHelper = require( 'reader/discover/helper' ),
+	Button = require( 'components/button' ),
+	Count = require( 'components/count' ),
+	config = require( 'config' );
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
@@ -92,7 +96,14 @@ module.exports = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return this.getStateFromStores();
+		//return this.getStateFromStores();
+		return assign(
+			{ isListsToggled: false },
+			{ isTagsToggled: false },
+			{ isListsAddOpen: false },
+			{ isTagsAddOpen: false },
+			this.getStateFromStores()
+		);
 	},
 
 	getStateFromStores: function() {
@@ -208,6 +219,7 @@ module.exports = React.createClass( {
 			const isActionButtonSelected = this.pathStartsWithOneOf( listManagementUrls );
 
 			const classes = classnames(
+				this.itemLinkClassStartsWithOneOf( [ listRelativeUrl ], { 'sidebar-menu__item has-buttons': true } ),
 				{
 					'sidebar-dynamic-menu__list has-buttons': true,
 					selected: isCurrentList || isActionButtonSelected,
@@ -216,8 +228,8 @@ module.exports = React.createClass( {
 			);
 
 			return (
-				<li className={ classes } key={ list.ID }>
-					<a href={ list.URL }><span className="menu-link-text">{ list.title }</span></a>
+				<li className={ classes } key={ list.ID } >
+					<a className="sidebar-menu__item-label" href={ list.URL }>{ list.title }</a>
 					{ list.is_owner ? <a href={ listManageUrl } rel={ listRel } className="add-new">{ this.translate( 'Manage' ) }</a> : null }
 				</li>
 			);
@@ -231,13 +243,13 @@ module.exports = React.createClass( {
 
 		return map( this.state.tags, function( tag ) {
 			return (
-				<li className={ this.itemLinkClass( '/tag/' + tag.slug, { 'sidebar-dynamic-menu__tag': true } ) } key={ tag.ID } >
-					<a href={ tag.URL }>
+				<li className={ this.itemLinkClass( '/tag/' + tag.slug, { 'sidebar-menu__item': true } ) } key={ tag.ID } >
+					<a className="sidebar-menu__item-label" href={ tag.URL }>
 						{ tag.display_name || tag.slug }
 					</a>
-					{ tag.ID !== 'pending' ? <button className="sidebar-dynamic-menu__action" data-tag-slug={ tag.slug } onClick={ this.unfollowTag }>
-						<Gridicon icon="cross" size={ 24 } />
-						<span className="sidebar-dynamic-menu__action-label">{ this.translate( 'Unfollow' ) }</span>
+					{ tag.ID !== 'pending' ? <button className="sidebar-menu__action" data-tag-slug={ tag.slug } onClick={ this.unfollowTag }>
+						<Gridicon icon="cross-small" />
+						<span className="sidebar-menu__action-label">{ this.translate( 'Unfollow' ) }</span>
 					</button> : null }
 				</li>
 			);
@@ -262,7 +274,112 @@ module.exports = React.createClass( {
 		}, this );
 	},
 
+	getFollowingEditLink: function() {
+		var followingEditUrl = '/following/edit',
+			followingEditRel;
+
+		// If Calypso following/edit isn't yet enabled, use the Atlas version
+		if ( ! config.isEnabled( 'reader/following-edit' ) ) {
+			followingEditUrl = 'https://wordpress.com'.concat( followingEditUrl );
+			followingEditRel = 'external';
+		}
+
+		return {
+			url: followingEditUrl,
+			rel: followingEditRel
+		};
+	},
+
+	toggleMenuLists: function( event ) {
+		this.setState( {
+			isListsToggled: ! this.state.isListsToggled
+		} );
+	},
+
+	toggleListsAdd: function( event ) {
+		this.setState( {
+			isListsAddOpen: ! this.state.isListsAddOpen
+		} );
+
+		if ( ! this.state.isListsAddOpen ) {
+			this.refs.addListInput.getDOMNode().focus();
+		}
+	},
+
+	disableListsAdd: function( event ) {
+		this.setState( {
+			isListsAddOpen: false
+		} );
+	},
+
+	toggleMenuTags: function( event ) {
+		this.setState( {
+			isTagsToggled: ! this.state.isTagsToggled
+		} );
+	},
+
+	toggleTagsAdd: function( event ) {
+		this.setState( {
+			isTagsAddOpen: ! this.state.isTagsAddOpen
+		} );
+
+		if ( ! this.state.isTagsAddOpen ) {
+			this.refs.addTagInput.getDOMNode().focus();
+		}
+	},
+
+	disableTagsAdd: function( event ) {
+		this.setState( {
+			isTagsAddOpen: false
+		} );
+	},
+
+	renderEmptyList: function() {
+		return(
+			<li className="sidebar-menu__empty">{ this.translate( 'Collect sites together by adding a\xa0list.' ) }</li>
+		);
+	},
+
+	renderEmptyTags: function() {
+		return(
+			<li className="sidebar-menu__empty">{ this.translate( 'Finds relevant posts by adding a\xa0tag.' ) }</li>
+		);
+	},
+
 	render: function() {
+		let followingEditLink = this.getFollowingEditLink();
+
+		var listsClassNames = classNames( {
+				'sidebar-menu': true,
+				'is-dynamic': true,
+				'is-togglable': true,
+				'is-toggle-open': this.state.isListsToggled,
+				'is-add-open': this.state.isListsAddOpen
+			} ),
+			tagsClassNames = classNames( {
+				'sidebar-menu': true,
+				'is-dynamic': true,
+				'is-togglable': true,
+				'is-toggle-open': this.state.isTagsToggled,
+				'is-add-open': this.state.isTagsAddOpen
+			} ),
+			isTags = false,
+			isLists = false,
+			tagCount = 0,
+			listCount = 0;
+
+		if ( typeof this.state.tags !== "undefined" && this.state.tags !== null && this.state.tags.length > 0 ) {
+			isTags = true;
+			tagCount = this.state.tags.length;
+		}
+
+		if ( typeof this.state.lists !== "undefined" && this.state.lists !== null && this.state.lists.length > 0 ) {
+			isLists = true;
+			listCount = this.state.lists.length;
+		}
+
+		console.log( listCount, tagCount );
+
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarMenu>
@@ -293,18 +410,18 @@ module.exports = React.createClass( {
 						{
 							config.isEnabled( 'reader/recommendations' )
 							? ( <li className={ this.itemLinkClassStartsWithOneOf( [ '/recommendations', '/tags' ], { 'sidebar-streams__recommendations': true } ) }>
-								<a href="/recommendations">
-									<svg className="gridicon menu-link-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 24 24"><g><path d="M7.189,12.664l0.624-0.046l0.557-0.409l0.801-1.115l0.578-1.228l0.357-0.91l0.223-0.523l0.267-0.432 l0.49-0.409l0.578-0.5l0.445-0.682l0.267-1.046l0.29-1.934V3.159L12.931,3l0.467,0.046l0.534,0.227l0.49,0.363L14.8,4.25 l0.177,0.75V5.66l-0.088,0.865l-0.223,0.615l-0.378,0.75l-0.2,0.5l-0.246,0.546l-0.133,0.5v0.432l0.111,0.273l2.38-0.023 l1.135,0.069l0.823,0.113l0.49,0.159l0.288,0.319l0.424,0.523l0.156,0.454v0.319l-0.09,0.296l-0.2,0.227l-0.29,0.5l0.111,0.296 l0.223,0.409l0.201,0.204l0.111,0.364l-0.09,0.273l-0.267,0.296l-0.267,0.34l-0.111,0.364l0.088,0.319l0.157,0.363l0.11,0.342v0.25 l-0.11,0.363l-0.223,0.273l-0.313,0.296l-0.223,0.273l-0.088,0.273v0.319l0.023,0.409l-0.111,0.25l-0.313,0.342l-0.4,0.363 c0,0-0.156,0.137-0.378,0.25c-0.223,0.114-0.868,0.273-0.868,0.273l-0.846,0.091l-1.868-0.023l-1.937-0.091l-1.379-0.159 l-2.916-0.523L7.189,12.664z M3,13.986c0-0.939,0.761-1.7,1.702-1.7c0.939,0,1.702,0.762,1.702,1.7v4.596 c0,0.939-0.762,1.7-1.702,1.7C3.761,20.283,3,19.52,3,18.582V13.986z"/></g></svg>
-									<span className="menu-link-text">{ this.translate( 'Recommendations' ) }</span>
+									<a href="/recommendations">
+										<svg className="gridicon menu-link-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 24 24"><g><path d="M7.189,12.664l0.624-0.046l0.557-0.409l0.801-1.115l0.578-1.228l0.357-0.91l0.223-0.523l0.267-0.432 l0.49-0.409l0.578-0.5l0.445-0.682l0.267-1.046l0.29-1.934V3.159L12.931,3l0.467,0.046l0.534,0.227l0.49,0.363L14.8,4.25 l0.177,0.75V5.66l-0.088,0.865l-0.223,0.615l-0.378,0.75l-0.2,0.5l-0.246,0.546l-0.133,0.5v0.432l0.111,0.273l2.38-0.023 l1.135,0.069l0.823,0.113l0.49,0.159l0.288,0.319l0.424,0.523l0.156,0.454v0.319l-0.09,0.296l-0.2,0.227l-0.29,0.5l0.111,0.296 l0.223,0.409l0.201,0.204l0.111,0.364l-0.09,0.273l-0.267,0.296l-0.267,0.34l-0.111,0.364l0.088,0.319l0.157,0.363l0.11,0.342v0.25 l-0.11,0.363l-0.223,0.273l-0.313,0.296l-0.223,0.273l-0.088,0.273v0.319l0.023,0.409l-0.111,0.25l-0.313,0.342l-0.4,0.363 c0,0-0.156,0.137-0.378,0.25c-0.223,0.114-0.868,0.273-0.868,0.273l-0.846,0.091l-1.868-0.023l-1.937-0.091l-1.379-0.159 l-2.916-0.523L7.189,12.664z M3,13.986c0-0.939,0.761-1.7,1.702-1.7c0.939,0,1.702,0.762,1.702,1.7v4.596 c0,0.939-0.762,1.7-1.702,1.7C3.761,20.283,3,19.52,3,18.582V13.986z"/></g></svg>
+										<span className="menu-link-text">{ this.translate( 'Recommendations' ) }</span>
+									</a>
+							</li> )
+							: ( <li className={ this.itemLinkClass( '/recommendations', { 'sidebar-streams__recommendations': true } ) }>
+								<a href="https://wordpress.com/recommendations/" rel="external">
+									<Gridicon icon="star-outline" />
+									<span className="menu-link-text">{ this.translate( 'Recommended Blogs' ) }</span>
 								</a>
-						</li> )
-						: ( <li className={ this.itemLinkClass( '/recommendations', { 'sidebar-streams__recommendations': true } ) }>
-							<a href="https://wordpress.com/recommendations/" rel="external">
-								<Gridicon icon="star-outline" />
-								<span className="menu-link-text">{ this.translate( 'Recommended Blogs' ) }</span>
-							</a>
-						</li> )
-					}
+							</li> )
+						}
 
 						<li className={ this.itemLinkClass( '/activities/likes', { 'sidebar-activity__likes': true } ) }>
 							<a href="/activities/likes">
@@ -314,25 +431,72 @@ module.exports = React.createClass( {
 						</li>
 					</ul>
 				</SidebarMenu>
-				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Lists' ) }</SidebarHeading>
-					<ul>
-						{ this.renderLists() }
 
-						<li className="sidebar-dynamic-menu__add" key="add-list">
-							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'New List' ) } ref="addListInput" onKeyDown={ this.handleCreateListKeyDown } />
-						</li>
+				<li className={ listsClassNames }>
+					<h2 className="sidebar-heading" onClick={ this.toggleMenuLists }>
+						<Gridicon icon="chevron-down" />
+						<span>{ this.translate( 'Lists' ) }</span>
+						{ isLists
+							? <Count count={ listCount } />
+							: null
+						}
+					</h2>
+
+					<Button compact className="sidebar-menu__add-button" onClick={ this.toggleListsAdd }>Add</Button>
+
+					<div className="sidebar-menu__add" key="add-list">
+						<input
+							className="sidebar-menu__add-input"
+							type="text"
+							placeholder={ this.translate( 'Give your list a name' ) }
+							ref="addListInput"
+							onKeyDown={ this.handleCreateListKeyDown }
+						/>
+						<Gridicon icon="cross-small" onClick={ this.disableListsAdd } />
+					</div>
+
+					<ul className="sidebar-menu__list">
+						{
+							// There's got to be a better way to do this...
+							isLists
+							? this.renderLists()
+							: this.renderEmptyList()
+						}
 					</ul>
-				</SidebarMenu>
-				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Tags' ) }</SidebarHeading>
-					<ul>
-						{ this.renderTags() }
-						<li className="sidebar-dynamic-menu__add" key="add-tag">
-							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'Follow a Tag' ) } ref="addTagInput" onKeyDown={ this.handleFollowTagKeyDown } />
-						</li>
+				</li>
+
+				<li className={ tagsClassNames }>
+					<h2 className="sidebar-heading" onClick={ this.toggleMenuTags }>
+						<Gridicon icon="chevron-down" />
+						{ this.translate( 'Tags' ) }
+						{ isTags
+							? <Count count={ tagCount } />
+							: null
+						}
+					</h2>
+
+					<Button compact className="sidebar-menu__add-button" onClick={ this.toggleTagsAdd }>Add</Button>
+
+					<div className="sidebar-menu__add" key="add-tag">
+						<input
+							className="sidebar-menu__add-input"
+							type="text"
+							placeholder={ this.translate( 'Add any tag' ) }
+							ref="addTagInput"
+							onKeyDown={ this.handleFollowTagKeyDown }
+						/>
+						<Gridicon icon="cross-small" onClick={ this.disableTagsAdd } />
+					</div>
+
+					<ul className="sidebar-menu__list">
+						{
+							// There's got to be a better way to do this...
+							isTags
+							? this.renderTags()
+							: this.renderEmptyTags()
+						}
 					</ul>
-				</SidebarMenu>
+				</li>
 			</Sidebar>
 		);
 	}
