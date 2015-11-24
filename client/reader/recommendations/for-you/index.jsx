@@ -3,6 +3,7 @@ import times from 'lodash/utility/times';
 import url from 'url';
 
 import Main from 'components/main';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import InfiniteList from 'components/infinite-list';
 import ListItem from 'reader/list-item';
 import Icon from 'reader/list-item/icon';
@@ -127,17 +128,21 @@ const RecommendedForYou = React.createClass( {
 	render() {
 		return (
 			<Main className="recommended-for-you">
+				<MobileBackToSidebar>
+					<h1>{ this.translate( 'Recommendations' ) }</h1>
+				</MobileBackToSidebar>
+
 				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' )}</h2>
 				<InfiniteList
-			items={ this.state.recommendations }
-			fetchingNextPage={ this.state.fetching }
-			lastPage={ this.state.recommendations && this.state.recommendations.length >= 100 }
-			guessedItemHeight={ 300 }
-			fetchNextPage={ this.loadMore }
-			getItemRef={ this.getItemRef }
-			renderItem={ this.renderItem }
-			renderLoadingPlaceholders={ this.renderPlaceholders }
-			/>
+					items={ this.state.recommendations }
+					fetchingNextPage={ this.state.fetching }
+					lastPage={ this.state.recommendations && this.state.recommendations.length >= 100 }
+					guessedItemHeight={ 300 }
+					fetchNextPage={ this.loadMore }
+					getItemRef={ this.getItemRef }
+					renderItem={ this.renderItem }
+					renderLoadingPlaceholders={ this.renderPlaceholders }
+					/>
 				</Main>
 			);
 	}
