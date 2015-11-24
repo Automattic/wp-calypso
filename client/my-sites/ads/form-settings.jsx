@@ -363,7 +363,7 @@ module.exports = React.createClass( {
 						name="tos"
 						checkedLink={ this.linkState( 'tos' ) }
 						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
-					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds{{/a}} Terms of Service.', {
+					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds Terms of Service{{/a}}.', {
 						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" /> }
 					} ) }</span>
 				</FormLabel>
