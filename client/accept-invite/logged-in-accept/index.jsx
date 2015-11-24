@@ -55,7 +55,7 @@ export default React.createClass( {
 						}
 					/>
 					<div className="logged-in-accept__join-as">
-						<Gravatar user={ userObject } size="72"/>
+						<Gravatar user={ userObject } size={ 72 } />
 						{
 							this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 								components: {
