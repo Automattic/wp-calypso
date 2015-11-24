@@ -1,17 +1,26 @@
-var CartSynchronizer = require( '../cart-synchronizer' ),
-	FakeWPCOM = require( './fake-wpcom' ),
-	cartValues = require( 'lib/cart-values' ),
-	emptyCart = cartValues.emptyCart,
-	applyCoupon = cartValues.applyCoupon,
-	assert = require( 'assert' );
 
-var TEST_SITE_ID = 91234567890;
-
-var poller = {
-	add: function() {}
-};
+var CartSynchronizer, FakeWPCOM, cartValues, emptyCart, applyCoupon, assert, poller, TEST_SITE_ID;
 
 describe( 'CartSynchronizer', function() {
+	before( function() {
+
+		require( 'lib/react-test-env-setup' )();
+
+		CartSynchronizer = require( '../cart-synchronizer' );
+		FakeWPCOM = require( './fake-wpcom' );
+		cartValues = require( 'lib/cart-values' );
+		emptyCart = cartValues.emptyCart;
+		applyCoupon = cartValues.applyCoupon;
+		assert = require( 'assert' );
+
+		TEST_SITE_ID = 91234567890;
+
+		poller = {
+			add: function() {
+			}
+		};
+
+	} );
 	describe( '*before* the first fetch from the server', function() {
 		it( 'should *not* allow the value to be read', function() {
 			var wpcom = FakeWPCOM(),
