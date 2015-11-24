@@ -12,13 +12,17 @@
 }
 
 .survey-step__title {
-	text-align: center;
 	display: block;
 	width: 100%;
 	margin-bottom: 0;
 	font-size: 14px;
 	font-weight: 600;
 	height: 50px;
+}
+
+.survey-step__title .survey-step__label {
+	text-align: center;
+	line-height: 18px;
 }
 
 .survey-step__vertical {
