@@ -2,6 +2,9 @@ import React, { PropTypes } from 'react';
 import CommentConstants from 'lib/comment-store/constants';
 
 const PostCommentContent = React.createClass( {
+
+	mixins: [ React.addons.PureRenderMixin ],
+
 	propTypes: {
 		content: PropTypes.string.isRequired,
 		state: PropTypes.string.isRequired,
