@@ -69,6 +69,11 @@ describe( 'PostEditor', function() {
 		sandbox.restore();
 	} );
 
+	after( function() {
+		mockery.deregisterAll();
+		mockery.disable();
+	} );
+
 	describe( 'onEditedPostChange', function() {
 		it( 'should clear content when store state transitions to isNew()', function() {
 			const tree = TestUtils.renderIntoDocument(
