@@ -9,6 +9,7 @@ const InviteMessageStore = createReducerStore( ( state, payload ) => {
 	switch ( action.type ) {
 		case DISPLAY_INVITE_ACCEPTED:
 			state.showAccepted = true;
+			state.siteId = action.siteId
 			break;
 		case DISPLAY_INVITE_DECLINED:
 			state.showDeclined = true;
@@ -20,7 +21,7 @@ const InviteMessageStore = createReducerStore( ( state, payload ) => {
 			break;
 	}
 	return state;
-}, { showAccepted: false, showDeclined: false } );
+}, { showAccepted: false, showDeclined: false, siteId: false } );
 
 InviteMessageStore.isVisible = function() {
 	const state = this.get();

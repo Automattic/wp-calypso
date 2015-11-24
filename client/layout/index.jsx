@@ -82,6 +82,25 @@ module.exports = React.createClass( {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
 	},
 
+	getAcceptInviteMessage() {
+		if ( ! InviteMessageStore.isVisible() ) {
+			return;
+		}
+		const siteId = InviteMessageStore.get().siteId;
+		if ( ! siteId ) {
+			return;
+		}
+		const site = this.props.sites.getSite( siteId );
+		if ( ! site ) {
+			return;
+		}
+		return (
+			<Welcome isVisible={ true } closeAction={ InviteMessageStore.dismiss }>
+				<InviteMessage accepted={ InviteMessageStore.get().showAccepted } siteTitle={ site.title } />
+			</Welcome>
+		)
+	},
+
 	render: function() {
 		var sectionClass = 'wp layout is-section-' + this.state.section + ' focus-' + this.props.focus.getCurrent(),
 			showWelcome = this.props.nuxWelcome.getWelcome(),
@@ -103,9 +122,7 @@ module.exports = React.createClass( {
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
 						<WelcomeMessage welcomeSite={ newestSite } />
 					</Welcome>
-					<Welcome isVisible={ InviteMessageStore.isVisible() } closeAction={ InviteMessageStore.dismiss }>
-						<InviteMessage accepted={ InviteMessageStore.get().showAccepted }/>
-					</Welcome>
+					{ this.getAcceptInviteMessage() }
 					<EmailVerificationNotice user={ this.props.user } />
 					<NoticesList id="notices" notices={ notices.list } forcePinned={ 'post' === this.state.section } />
 					<TranslatorInvitation isVisible={ showInvitation } />

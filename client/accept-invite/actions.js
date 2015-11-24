@@ -29,9 +29,10 @@ export function acceptInvite( invite, bearerToken, callback ) {
 	);
 }
 
-export function displayInviteAccepted() {
+export function displayInviteAccepted( siteId ) {
 	Dispatcher.handleViewAction( {
-		type: DISPLAY_INVITE_ACCEPTED
+		type: DISPLAY_INVITE_ACCEPTED,
+		siteId
 	} );
 }
 

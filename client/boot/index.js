@@ -230,8 +230,8 @@ function boot() {
 			nuxWelcome.clearTempWelcome();
 		}
 
-		if ( context.querystring === 'invite-accepted' ) {
-			inviteActions.displayInviteAccepted();
+		if ( context.query.invite_accepted ) {
+			inviteActions.displayInviteAccepted( parseInt( context.query.invite_accepted ) );
 			page( context.pathname );
 		}
 
