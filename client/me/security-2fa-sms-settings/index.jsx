@@ -42,9 +42,20 @@ module.exports = React.createClass( {
 	verifyByApp: null,
 
 	getInitialState: function() {
+		let phoneNumber = null;
+		let storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
+		let storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
+		if ( storedCountry && storedNumber ) {
+			phoneNumber = {
+				countryCode: storedCountry,
+				phoneNumber: storedNumber,
+				isValid: true
+			}
+		}
+
 		return {
 			lastError: false,
-			phoneNumber: null
+			phoneNumber
 		};
 	},
 
@@ -96,14 +107,21 @@ module.exports = React.createClass( {
 		}
 
 		this.props.userSettings.updateSetting( 'two_step_sms_phone_number', phoneNumber.phoneNumber );
-		this.props.userSettings.updateSetting( 'two_step_sms_country', phoneNumber.countryData.code );
+		this.props.userSettings.updateSetting( 'two_step_sms_country', phoneNumber.countryCode );
 
 		this.setState( { submittingForm: true } );
 		this.props.userSettings.saveSettings( this.onSubmitResponse );
 	},
 
 	onChangePhoneInput: function( phoneNumber ) {
-		this.setState( { phoneNumber } );
+		this.setState( {
+			phoneNumber: {
+				phoneNumber: phoneNumber.phoneNumber,
+				countryCode: phoneNumber.countryData.code,
+				isValid: phoneNumber.isValid,
+				validation: phoneNumber.validation
+			}
+		} );
 	},
 
 	onSubmitResponse: function( error ) {
