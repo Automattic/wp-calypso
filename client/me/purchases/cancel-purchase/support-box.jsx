@@ -14,10 +14,6 @@ const CancelPurchaseSupportBox = React.createClass( {
 	},
 
 	trackClickContactSupport() {
-		if ( ! this.props.purchase ) {
-			return;
-		}
-
 		analytics.tracks.recordEvent(
 			'calypso_purchases_click_contact_support',
 			{ product_slug: this.props.purchase.productSlug }
