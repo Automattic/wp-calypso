@@ -290,8 +290,8 @@ Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
 };
 
 Undocumented.prototype.acceptInvite = function( siteId, inviteKey, fn ) {
-	debug( '/sites/:site_id:/invites/ query' );
-	this.wpcom.req.post( { path: '/sites/' + siteId + '/invites/' }, {}, { invite_key: inviteKey }, fn );
+	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
+	this.wpcom.req.get( '/sites/' + siteId + '/invites/' + inviteKey + '/accept', fn );
 };
 
 /**
