@@ -56,6 +56,10 @@ class EditorSharingContainer extends Component {
 
 	fetchConnections() {
 		const { site, dispatch } = this.props;
+		if ( ! site ) {
+			return;
+		}
+
 		dispatch( fetchConnections( site.ID ) );
 	}
 
@@ -76,7 +80,7 @@ class EditorSharingContainer extends Component {
 }
 
 EditorSharingContainer.propTypes = {
-	site: PropTypes.object.isRequired,
+	site: PropTypes.object,
 	dispatch: PropTypes.func.isRequired,
 	hasFetchedConnections: PropTypes.bool,
 	connections: PropTypes.array
@@ -85,8 +89,8 @@ EditorSharingContainer.propTypes = {
 export default connect(
 	( state, props ) => {
 		return {
-			hasFetchedConnections: hasFetchedConnections( state, props.site.ID ),
-			connections: getConnectionsBySiteId( state, props.site.ID )
+			hasFetchedConnections: props.site && hasFetchedConnections( state, props.site.ID ),
+			connections: props.site ? getConnectionsBySiteId( state, props.site.ID ) : null
 		};
 	}
 )( EditorSharingContainer );
