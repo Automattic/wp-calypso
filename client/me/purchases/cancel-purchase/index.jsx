@@ -60,7 +60,7 @@ const CancelPurchase = React.createClass( {
 					</h2>
 
 					<div className="cancel-purchase__info">
-						<CancelPurchaseSupportBox />
+						<CancelPurchaseSupportBox purchase={ purchase } />
 
 						<div className="cancel-purchase__content">
 							<div className="cancel-purchase__section">
