@@ -29,7 +29,7 @@ export default React.createClass( {
 	renderStepTwoVertical( vertical ) {
 		const verticalLink = '#';
 		return (
-			<Card className="survey-step__vertical" href={ verticalLink } onClick={ this.handleNextStep.bind( null, vertical.value ) }>
+			<Card className="survey-step__vertical" href={ verticalLink } onClick={ this.handleNextStep.bind( null, vertical ) }>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
@@ -91,8 +91,7 @@ export default React.createClass( {
 
 	handleNextStep( vertical ) {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		// TODO: is this name ok? should we change it?
-		analytics.tracks.recordEvent( 'calypso_survey_v2', { category: vertical } );
+		analytics.tracks.recordEvent( 'calypso_survey_v2', { category: JSON.stringify( vertical ) } );
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: this.state.vertical } );
 		this.props.goToNextStep();
 	}
