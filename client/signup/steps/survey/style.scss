@@ -4,8 +4,7 @@
 }
 
 .survey-step__label {
-	display: block;
-	width: 100%;
+	display: inline-block;
 	margin-bottom: 0;
 	font-size: 14px;
 	font-weight: 600;
@@ -21,6 +20,7 @@
 }
 
 .survey-step__title .survey-step__label {
+	width: 100%;
 	text-align: center;
 	line-height: 18px;
 	color: darken( $gray, 20% );
@@ -28,4 +28,10 @@
 
 .survey-step__vertical {
 	margin-bottom: 0;
+}
+
+.survey-step__vertical__icon {
+	vertical-align: bottom;
+	margin-top: -2px;
+	margin-right: 4px;
 }

@@ -14,6 +14,7 @@ import verticals from './verticals';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
+import Gridicon from 'components/gridicon';
 
 const debug = debugFactory( 'calypso:steps:survey' );
 
@@ -35,8 +36,10 @@ export default React.createClass( {
 	},
 
 	renderStepOneVertical( vertical ) {
+		const icon = vertical.icon || 'user';
 		return (
 			<Card className="survey-step__vertical" href="#" onClick={ this.showStepTwo.bind( null, vertical ) }>
+				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
