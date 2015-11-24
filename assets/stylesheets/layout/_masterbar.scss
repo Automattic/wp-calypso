@@ -1,9 +1,7 @@
 $masterbar-height: 46px;
 $autobar-height: 20px;
 
-/**
- * The WordPress.com Masterbar
- */
+// The WordPress.com Masterbar
 .masterbar {
 	background: $blue-wordpress;
 	border-bottom: 1px solid darken( $blue-wordpress, 4% );
@@ -32,48 +30,6 @@ $autobar-height: 20px;
 		height: 28px;
 		width: 28px;
 		vertical-align: middle;
-	}
-
-	.masterbar__label {
-		margin-left: 8px;
-	}
-
-	li {
-		float: left;
-
-		&.is-active {
-			a,
-			a:hover,
-			a:focus {
-				background: $blue-dark;
-			}
-		}
-
-		a {
-			box-sizing: border-box;
-			color: $white;
-
-			cursor: pointer;
-			display: block;
-			height: $masterbar-height;
-			line-height: $masterbar-height;
-			margin: 0;
-			padding: 0 12px;
-			text-decoration: none;
-			transition: background 100ms ease-in-out, color 80ms ease-in-out;
-
-			@include breakpoint( ">660px" ) {
-				padding: 0 15px;
-			}
-
-			&:hover,
-			&:focus {
-				background: $blue-medium;
-				background: rgba( 255, 255, 255, 0.15 );
-				color: $white;
-				outline: 0;
-			}
-		}
 	}
 
 	&.collapsible {
@@ -121,122 +77,6 @@ $autobar-height: 20px;
 		}
 	}
 
-	.is-button {
-		margin-left: 10px;
-
-		a {
-			background: $white;
-			border-radius: 5px;
-			color: $blue-wordpress;
-			height: 34px;
-			line-height: 34px;
-			margin-top: 6px;
-			overflow: hidden;
-			padding: 0 3px;
-			vertical-align: middle;
-
-			&:hover,
-			&:focus {
-				background: $gray-light;
-				color: $blue-wordpress;
-			}
-		}
-
-		.noticon {
-			@include breakpoint( "<480px" ) {
-				display: none;
-			}
-		}
-
-		.masterbar__label {
-			margin: 0 10px;
-		}
-	}
-
-	.masterbar__me {
-		.masterbar__label {
-			@include breakpoint( ">660px" ) {
-				clip: rect( 1px, 1px, 1px, 1px );
-				height: 1px;
-				overflow: hidden;
-				position: absolute !important;
-				width: 1px;
-			}
-		}
-	}
-
-	.masterbar__notifications {
-		display: block;
-		position: relative;
-		white-space: nowrap;
-
-		.masterbar__label {
-			@include breakpoint( ">660px" ) {
-				clip: rect( 1px, 1px, 1px, 1px );
-				height: 1px;
-				overflow: hidden;
-				position: absolute !important;
-				width: 1px;
-			}
-		}
-
-		.noticon-bell {
-			font-size: 24px;
-			position: relative;
-			top: 2px;
-
-			@include breakpoint( ">660px" ) {
-				top: 1px;
-			}
-		}
-
-		.notification-bubble {
-			display: none;
-		}
-
-		&.has-unread {
-			.notification-bubble {
-				background: $orange-jazzy;
-				border: solid 2px $blue-wordpress;
-				border-radius: 50%;
-				display: block;
-				font-size: 8px;
-				height: 8px;
-				letter-spacing: 0;
-				line-height: 12px;
-				margin: 0;
-				padding: 0;
-				position: absolute;
-					top: 2px;
-					left: calc( 50% - 9px );
-				width: 8px;
-				z-index: 99999;
-
-				// Animation
-				transform: translateZ(0);
-				animation: unread-indication .5s linear both;
-
-				@include breakpoint( ">660px" ) {
-					font-size: 9px;
-					height: 9px;
-					left: 18px;
-					top: 7px;
-					width: 9px;
-				}
-			}
-
-			&.is-initial-load .notification-bubble {
-				animation: none;
-			}
-
-			&.is-active {
-				.notification-bubble {
-					border-color: $blue-dark;
-				}
-			}
-		}
-	}
-
 	.wpcom-title {
 		.masterbar__label {
 			font-size: 16px;
@@ -277,6 +117,170 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__label {
+	margin-left: 8px;
+}
+
+.masterbar__item {
+	float: left;
+
+	&.is-active {
+		a,
+		a:hover,
+		a:focus {
+			background: $blue-dark;
+		}
+	}
+
+	a {
+		box-sizing: border-box;
+		color: $white;
+
+		cursor: pointer;
+		display: block;
+		height: $masterbar-height;
+		line-height: $masterbar-height;
+		margin: 0;
+		padding: 0 12px;
+		text-decoration: none;
+		transition: background 100ms ease-in-out, color 80ms ease-in-out;
+
+		@include breakpoint( ">660px" ) {
+			padding: 0 15px;
+		}
+
+		&:hover,
+		&:focus {
+			background: $blue-medium;
+			background: rgba( 255, 255, 255, 0.15 );
+			color: $white;
+			outline: 0;
+		}
+	}
+}
+
+.masterbar__editor {
+	margin-left: 10px;
+
+	a {
+		background: $white;
+		border-radius: 5px;
+		color: $blue-wordpress;
+		height: 34px;
+		line-height: 34px;
+		margin-top: 6px;
+		overflow: hidden;
+		padding: 0 3px;
+		vertical-align: middle;
+
+		&:hover,
+		&:focus {
+			background: $gray-light;
+			color: $blue-wordpress;
+		}
+	}
+
+	.noticon {
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+
+	&.is-active {
+		a {
+			color: $white;
+		}
+	}
+
+	.masterbar__label {
+		margin: 0 10px;
+	}
+}
+
+.masterbar__me {
+	.masterbar__label {
+		@include breakpoint( ">660px" ) {
+			clip: rect( 1px, 1px, 1px, 1px );
+			height: 1px;
+			overflow: hidden;
+			position: absolute !important;
+			width: 1px;
+		}
+	}
+}
+
+.masterbar__notifications {
+	display: block;
+	position: relative;
+	white-space: nowrap;
+
+	.masterbar__label {
+		@include breakpoint( ">660px" ) {
+			clip: rect( 1px, 1px, 1px, 1px );
+			height: 1px;
+			overflow: hidden;
+			position: absolute !important;
+			width: 1px;
+		}
+	}
+
+	.noticon-bell {
+		font-size: 24px;
+		position: relative;
+		top: 2px;
+
+		@include breakpoint( ">660px" ) {
+			top: 1px;
+		}
+	}
+
+	.notification-bubble {
+		display: none;
+	}
+
+	&.has-unread {
+		.notification-bubble {
+			background: $orange-jazzy;
+			border: solid 2px $blue-wordpress;
+			border-radius: 50%;
+			display: block;
+			font-size: 8px;
+			height: 8px;
+			letter-spacing: 0;
+			line-height: 12px;
+			margin: 0;
+			padding: 0;
+			position: absolute;
+				top: 2px;
+				left: calc( 50% - 9px );
+			width: 8px;
+			z-index: 99999;
+
+			// Animation
+			transform: translateZ(0);
+			animation: unread-indication .5s linear both;
+
+			@include breakpoint( ">660px" ) {
+				font-size: 9px;
+				height: 9px;
+				left: 18px;
+				top: 7px;
+				width: 9px;
+			}
+		}
+
+		&.is-initial-load .notification-bubble {
+			animation: none;
+		}
+
+		&.is-active {
+			.notification-bubble {
+				border-color: $blue-dark;
+			}
+		}
+	}
+}
+
 @keyframes unread-indication {
 	30% {
 		transform: scale(1.5);
@@ -308,7 +312,7 @@ $autobar-height: 20px;
 .rtl {
 	.masterbar {
 		.noticon-reader,
-		.new-post,
+		.masterbar__editor,
 		.noticon-bell {
 			filter: fliph; /* IE */
 			transform: rotateY( 180deg );

@@ -65,7 +65,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		var notificationsClasses = 'masterbar__notifications',
+		var notificationsClasses = 'masterbar__notifications masterbar__item',
 			notificationsLink = this.renderNotificationsLink(),
 			readerUrl = '//wordpress.com/',
 			meUrl = '//wordpress.com/me',
@@ -103,7 +103,7 @@ export default React.createClass( {
 		return (
 			<nav className="masterbar__sections">
 				<ul className="masterbar__sections-menu">
-					<li className={ this.itemLinkClass( 'sites', { 'masterbar__my-sites': true } ) }>
+					<li className={ this.itemLinkClass( 'sites', { 'masterbar__item': true, 'masterbar__my-sites': true } ) }>
 						<SiteStatsStickyLink onClick={ this.focusSidebar } title={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }>
 							{ this.wordpressIcon() }
 							<span className="masterbar__label">
@@ -115,7 +115,7 @@ export default React.createClass( {
 							</span>
 						</SiteStatsStickyLink>
 					</li>
-					<li className={ this.itemLinkClass( 'reader', { 'masterbar__home': true, 'masterbar__reader': true } ) }>
+					<li className={ this.itemLinkClass( 'reader', { 'masterbar__item': true, 'masterbar__home': true, 'masterbar__reader': true } ) }>
 						<a href={ readerUrl } onClick={ this.focusContent } title={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) } rel="home">
 							<span className="noticon noticon-reader"></span>
 							<span className="masterbar__label">{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
@@ -126,9 +126,9 @@ export default React.createClass( {
 					<MasterbarNewPost
 						sites={ this.props.sites }
 						active={ 'post' === this.props.section }
-						className={ this.itemLinkClass( 'post', { post: true, 'masterbar__post-editor': true, 'new-post': true, 'is-button': true } ) }
+						className={ this.itemLinkClass( 'post', { 'masterbar__item': true, 'masterbar__editor': true } ) }
 					/>
-					<li className={ this.itemLinkClass( 'me', { 'masterbar__me': true } ) }>
+					<li className={ this.itemLinkClass( 'me', { 'masterbar__item': true, 'masterbar__me': true } ) }>
 						<a href={ meUrl } onClick={ this.focusSidebar } title={ this.translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }>
 							<Gravatar user={ this.props.user.get() } alt="Me" size={ 22 } />
 							<span className="masterbar__label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
