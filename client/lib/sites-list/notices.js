@@ -59,7 +59,7 @@ module.exports = {
 				args: {
 					siteName: sampleLog.site.title,
 					siteNames: sites.join( ', ' ),
-					numberOfSites: logs.length
+					numberOfSites: sites.length
 				}
 			};
 
@@ -114,8 +114,8 @@ module.exports = {
 					return this.translate( 'Error fetching plugins on %(siteName)s.', translateArg );
 				}
 				return this.translate(
-					'Error fetching plugins on %(numberOfSites)d site: %(siteNames)s',
-					'Error fetching plugins on %(numberOfSites)d sites: %(siteNames)s',
+					'Error fetching plugins on %(numberOfSites)d site: %(siteNames)s.',
+					'Error fetching plugins on %(numberOfSites)d sites: %(siteNames)s.',
 					translateArg );
 
 			case 'DISCONNECT_SITE':
@@ -126,8 +126,8 @@ module.exports = {
 							return this.translate( 'You don\'t have permission to disconnect %(siteName)s.', translateArg );
 						}
 						return this.translate(
-							'You don\'t have permission to disconnect %(numberOfSites)d site: %(siteNames)s',
-							'You don\'t have permission to disconnect %(numberOfSites)d sites: %(siteNames)s',
+							'You don\'t have permission to disconnect %(numberOfSites)d site: %(siteNames)s.',
+							'You don\'t have permission to disconnect %(numberOfSites)d sites: %(siteNames)s.',
 							translateArg );
 
 					default:
@@ -135,8 +135,8 @@ module.exports = {
 							return this.translate( 'Error disconnecting %(siteName)s.', translateArg );
 						}
 						return this.translate(
-							'Error disconnecting %(numberOfSites)d site: %(siteNames)s',
-							'Error disconnecting %(numberOfSites)d sites: %(siteNames)s',
+							'Error disconnecting %(numberOfSites)d site: %(siteNames)s.',
+							'Error disconnecting %(numberOfSites)d sites: %(siteNames)s.',
 							translateArg );
 				}
 
