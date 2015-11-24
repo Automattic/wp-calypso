@@ -68,7 +68,7 @@ Apart from the above structure, please adhere to these guidelines:
 - Don't use the `!important` declaration. If you think you need to do it, consider fixing the root cause.
 - Avoid using universal selectors (`*`).
 - Use hyphens, not underscores or camelCase, when naming things like IDs, classes, variable names, mixins, placeholders. Good: `.site-title`, Bad: `.siteTitle` or `.site_title`.
-- The only excpetion is the `__` syntax to signal the relationship within a component.
+- The only exception is the `__` syntax to signal the relationship within a component.
 - Avoid using over-qualified selectors like `div.my-class`.
 
 ## Classes
