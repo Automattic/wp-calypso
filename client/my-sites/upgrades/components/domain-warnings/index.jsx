@@ -20,9 +20,9 @@ const debug = _debug( 'calypso:domain-warnings' );
 const allAboutDomainsLink = <a href="https://support.wordpress.com/all-about-domains/" target="_blank"/>,
 	domainsLink = <a href="https://support.wordpress.com/domains/" target="_blank" />,
 	pNode = <p />,
-	renewLinkSingle = <a href="/my-upgrades"
+	renewLinkSingle = <a href="/purchases"
 													target="_blank">{ i18n.translate( 'Renew it now.', { context: 'Call to action link for renewing an expiring/expired domain' } ) }</a>,
-	renewLinkPlural = <a href="/my-upgrades"
+	renewLinkPlural = <a href="/purchases"
 													target="_blank">{ i18n.translate( 'Renew them now.', { context: 'Call to action link for renewing an expiring/expired domain' } ) }</a>;
 
 export default React.createClass( {

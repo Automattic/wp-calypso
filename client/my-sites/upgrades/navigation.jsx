@@ -64,7 +64,7 @@ var NAV_ITEMS = {
 	},
 
 	'My Upgrades': {
-		paths: [ '/my-upgrades' ],
+		paths: [ '/purchases' ],
 		label: i18n.translate( 'My Upgrades' ),
 		external: true
 	}
