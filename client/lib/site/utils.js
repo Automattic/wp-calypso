@@ -58,5 +58,29 @@ export default {
 		if ( site.options ) {
 			return site.options.default_post_format;
 		}
+	},
+
+	canUpdateFiles( site ) {
+		if ( site && ! site.hasMinimumJetpackVersion ) {
+			return false;
+		}
+
+		if ( site.options && site.options.unmapped_url !== site.options.main_network_site ) {
+			return false;
+		}
+
+		if ( site.options.is_multi_network ) {
+			return false;
+		}
+
+		if ( site.options.file_mod_disabled ) {
+			// Ignore the existance of
+			if ( site.options.file_mod_disabled.length === 1 && site.options.file_mod_disabled.indexOf( 'disallow_file_edit' ) !== -1 ) {
+				return true;
+			}
+			return false;
+		}
+
+		return true;
 	}
 };
