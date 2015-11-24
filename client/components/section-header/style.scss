@@ -32,14 +32,14 @@
 
 .section-header__label,
 .section-header__button {
-	color: $gray;
+	color: darken( $gray, 10 );
 	font-size: 12px;
 	text-transform: uppercase;
 }
 
 .section-header__button {
 	background: none;
-	float: let;
+	float: left;
 	margin-right: 8px;
 	padding: 2px 8px;
 

@@ -117,22 +117,28 @@
 }
 
 .following-edit__subscribe-form {
+	display: none;
+	position: absolute;
+		top: 0;
+		right: 0;
+		bototm: 0;
+		left: 0;
+
 	.search {
 		margin-bottom: 0;
+		height: auto;
 	}
 
 	.search__input[type="search"] {
-		height: 38px;
-		padding-left: 33px;
-		border: 1px solid #c8d7e1;
+		height: 50px;
+		padding-left: 46px;
+		border: 1px solid lighten( $gray, 20% );
 
 		&:focus {
-			border-color: #0087be;
- 			box-shadow: 0 0 0 2px #78dcfa;
+			border-color: $blue-wordpress;
+ 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
-
-	position: relative;
 
 	.noticon {
 		display: none;
@@ -140,9 +146,9 @@
 
 	.gridicons-add-outline {
 		position: absolute;
-		top: 7px;
-		left: 6px;
-		fill: #12b0df;
+		top: 12px;
+		left: 12px;
+		fill: $blue-wordpress;
 		z-index: 40;
 	}
 
@@ -240,11 +246,11 @@
 }
 
 .following-edit__existing-feed-search {
-	margin-bottom: 0;
-	margin-left: -1px;
+	margin: 24px 0 0 0;
+	background-color: $white;
+	box-shadow: 0 0 0 1px lighten( $gray, 20% );
 
 	.search__input[type="search"] {
-		box-shadow: inset 0 0 0 1px lighten( $gray, 20% );
 	}
 
 	.noticon-close-alt {
@@ -253,29 +259,17 @@
 }
 
 .following-edit-sort-controls {
-	position: absolute;
-		right: -1px;
-	z-index: 30;
-	background-color: $gray-light;
-	padding: 13px 8px 0 16px;
-	box-shadow: inset 0px 0px 0px 1px lighten( $gray, 20% );
-	min-height: 51px;
-	box-sizing: border-box;
+	float: left;
 
 	label {
-		vertical-align: middle;
-		color: $gray;
-		display: inline-block;
-		font-size: 13px;
-		font-weight: 600;
-		margin-top: -1px;
-		margin-right: 6px;
+		display: none;
 	}
 
 	select {
-		vertical-align: middle;
-		min-width: 100px;
-		display: inline;
+		font-size: 12px;
+		padding: 7px 20px 6px 8px;
+		line-height: 1;
+		color: darken( $gray, 10 );
 	}
 }
 
