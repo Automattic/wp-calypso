@@ -99,7 +99,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 	},
 
 	isWellFormedFeedUrl: function( parsedUrl ) {
-		if ( ! parsedUrl.hostname ) {
+		if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
 			return false;
 		}
 
