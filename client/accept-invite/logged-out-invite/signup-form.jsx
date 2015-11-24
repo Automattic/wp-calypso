@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react'
+import { get } from 'lodash'
 
 /**
  * Internal dependencies
@@ -42,11 +43,6 @@ export default React.createClass( {
 		);
 	},
 
-	getInviteRole() {
-		let meta = this.props.invite && this.props.invite.meta ? this.props.invite.meta : false;
-		return meta && meta.role ? meta.role : false;
-	},
-
 	getFormHeader() {
 		return (
 			<InviteFormHeader
@@ -54,7 +50,7 @@ export default React.createClass( {
 					this.translate( 'Sign up to become an %(siteRole)s on {{siteNameLink}}%(siteName)s{{/siteNameLink}}?', {
 						args: {
 							siteName: this.props.blog_details.title,
-							siteRole: this.getInviteRole()
+							siteRole: get( this.props, 'invite.meta.role' )
 						},
 						components: {
 							siteNameLink: <a href={ this.props.blog_details.domain } className="logged-in-accept__site-name" />
@@ -65,7 +61,7 @@ export default React.createClass( {
 					this.translate(
 						'As an %(siteRole)s you will be able to publish and edit your own posts as well as upload media.', {
 							args: {
-								siteRole: this.getInviteRole()
+								siteRole: get( this.props, 'invite.meta.role' )
 							}
 						}
 					)
