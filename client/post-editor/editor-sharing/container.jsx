@@ -16,21 +16,31 @@ class EditorSharingContainer extends Component {
 	constructor( props ) {
 		super( props );
 
-		// Trigger connection fetch
-		if ( ! this.props.hasFetchedConnections ) {
-			this.fetchConnections();
-		}
-
 		// Set state
 		this.state = this.getState();
+
+		// Trigger connection fetch
+		this.ensureHasConnections();
 
 		// Bind legacy store update handler
 		this.boundUpdateState = this.updateState.bind( this );
 		PostEditStore.on( 'change', this.boundUpdateState );
 	}
 
+	componentDidUpdate() {
+		this.ensureHasConnections();
+	}
+
 	componentWillUnmount() {
 		PostEditStore.off( 'change', this.boundUpdateState );
+	}
+
+	ensureHasConnections() {
+		if ( this.props.hasFetchedConnections ) {
+			return;
+		}
+
+		this.fetchConnections();
 	}
 
 	updateState() {
