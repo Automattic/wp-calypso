@@ -132,7 +132,7 @@ function confirmComment( siteId, postId, commentPlaceholderId, confirmedComment 
 	}
 
 	// Replace the comment with the new one and set the state to complete
-	confirmedComment.state = States.CONFIRMED;
+	confirmedComment.state = States.COMPLETE;
 
 	// If the comment can be published immediately (i.e. doesn't require moderation), increment the comment count
 	if ( confirmedComment.status === 'approved' ) {
