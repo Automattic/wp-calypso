@@ -92,7 +92,7 @@ export default React.createClass( {
 	handleNextStep( vertical ) {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_v2', { category: JSON.stringify( vertical ) } );
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: this.state.vertical } );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		this.props.goToNextStep();
 	}
 } );
