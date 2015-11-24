@@ -16,9 +16,9 @@ module.exports = React.createClass( {
 	handleSubmit: function() {
 		var themeSlug;
 		if ( this.props.team === 'mlb' ) {
-      themeSlug = ThemeHelper.getSlugFromName( 'partner-' + this.props.team );
+      themeSlug = 'partner-mlb-' + ThemeHelper.getSlugFromName( this.props.variation );
 		} else {
-			themeSlug = ThemeHelper.getSlugFromName( this.props.variation ) + '/' + this.props.team;
+			themeSlug = "vip/" + ThemeHelper.getSlugFromName( this.props.variation ) + '/' + this.props.team;
 		}
 
 		if ( true === this.props.useHeadstart && themeSlug ) {
@@ -55,7 +55,7 @@ module.exports = React.createClass( {
 		return (
 			<div onClick={ this.handleSubmit } className="theme-thumbnail__theme">
 				<img src={ this.getThumbnailUrl() } />
-				<span className="theme-thumbnail__name">{ this.props.theme }</span>
+				<span className="theme-thumbnail__name">{ this.props.variation }</span>
 			</div>
 		);
 	}
