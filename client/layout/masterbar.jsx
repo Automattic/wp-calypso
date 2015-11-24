@@ -15,8 +15,6 @@ import store from 'store';
 export default React.createClass( {
 	displayName: 'Masterbar',
 
-	defaultNoticon: '\uf800',
-
 	getInitialState() {
 		var newNote = false,
 			user;
