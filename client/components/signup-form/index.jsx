@@ -266,7 +266,7 @@ export default React.createClass( {
 						id="email"
 						name="email"
 						type="email"
-						value={ formState.getFieldValue( this.state.form, 'email' ) }
+						value={ formState.getFieldValue( this.state.form, 'email' ) || this.props.email }
 						isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
 						isValid={ formState.isFieldValid( this.state.form, 'email' ) }
 						onBlur={ this.handleBlur }
