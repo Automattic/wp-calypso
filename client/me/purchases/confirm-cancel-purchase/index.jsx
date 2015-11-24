@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  **/
+import analytics from 'analytics';
 import Card from 'components/card';
 import loadEndpointForm from './load-endpoint-form';
 import HeaderCake from 'components/header-cake';
@@ -64,6 +65,12 @@ const ConfirmCancelPurchase = React.createClass( {
 		}
 
 		notices.success( response.message, { persistent: true } );
+
+		analytics.tracks.recordEvent(
+			'calypso_purchases_cancel_form_submit',
+			{ product_slug: this.getPurchase().productSlug }
+		);
+
 		page.redirect( paths.list() );
 	},
 
