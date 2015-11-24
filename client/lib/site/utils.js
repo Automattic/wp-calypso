@@ -104,5 +104,25 @@ export default {
 			}
 		}
 		return reasons;
+	},
+
+	canUpdateFiles( site ) {
+		if ( site && ! site.hasMinimumJetpackVersion ) {
+			return false;
+		}
+
+		if ( site.options && site.options.unmapped_url !== site.options.main_network_site ) {
+			return false;
+		}
+
+		if ( site.options.is_multi_network ) {
+			return false;
+		}
+
+		if ( site.options.file_mod_disabled ) {
+			return false;
+		}
+
+		return true;
 	}
 };
