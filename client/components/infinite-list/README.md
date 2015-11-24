@@ -6,7 +6,7 @@ Important mainly for low end mobile devices.
 
 ## When to use
 
-There is simpler implementation of infinite scroll - the [infinite scroll](../mixins/infinite-scroll/) mixin. Use `InfiniteList` when:
+There is simpler implementation of infinite scroll - the [infinite scroll](../../lib/mixins/infinite-scroll/) mixin. Use `InfiniteList` when:
 
 * items contain images or other media
 * you expect that user will scroll a lot
