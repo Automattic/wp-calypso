@@ -31,10 +31,6 @@
 		border-top-left-radius: 0;
 		border-bottom-left-radius: 0;
 
-		.gridicon {
-			margin-top: 2px;
-		}
-
 		@include breakpoint( ">660px" ) {
 			display: none;
 		}
