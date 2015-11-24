@@ -13,6 +13,8 @@ var config = require( 'config' ),
 	viewport = require( 'lib/viewport' ),
 	SitesPopover = require( 'components/sites-popover' );
 
+import Gridicon from 'components/gridicon';
+
 module.exports = React.createClass( {
 	displayName: 'MasterbarNewPost',
 
@@ -96,6 +98,7 @@ module.exports = React.createClass( {
 					onClick={ this.onButtonClick }
 					title={ linkTitle }
 					className="masterbar-new-post__button">
+					<Gridicon icon="create" size={ 24 } />
 					<span className="masterbar-new-post__label">{ this.translate( 'New Post' ) }</span>
 				</a>
 				<SitesPopover
