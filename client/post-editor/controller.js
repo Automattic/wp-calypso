@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	page = require( 'page' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
 	startsWith = require( 'lodash/string/startsWith' ),
 	qs = require( 'querystring' );
 
@@ -37,12 +38,14 @@ function renderEditor( context, postType ) {
 
 	React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	React.render(
-		React.createElement( PreferencesData, null,
-			React.createElement( PostEditor, {
-				sites: sites,
-				type: postType
-			} )
-		),
+		React.createElement( ReduxProvider, { store: context.reduxStore }, () => {
+			return React.createElement( PreferencesData, null,
+				React.createElement( PostEditor, {
+					sites: sites,
+					type: postType
+				} )
+			)
+		} ),
 		document.getElementById( 'primary' )
 	);
 }

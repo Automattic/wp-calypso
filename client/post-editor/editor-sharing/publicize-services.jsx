@@ -33,7 +33,10 @@ module.exports = React.createClass( {
 	},
 
 	renderConnections: function( serviceName ) {
-		var connections = serviceConnections.getConnections( serviceName, this.props.siteId );
+		const connections = serviceConnections.getConnectionsAvailableToCurrentUser(
+			serviceName,
+			this.props.connections
+		);
 
 		return connections.map( function( connection ) {
 			return (

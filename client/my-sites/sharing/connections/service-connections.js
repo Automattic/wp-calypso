@@ -136,6 +136,28 @@ module.exports = {
 	},
 
 	/**
+	 * Given a service name and array of connection objects, returns the subset
+	 * of connections that are available for use by the current user.
+	 *
+	 * @param  {string} serviceName The name of the service
+	 * @param  {Array}  siteId      Connection objects
+	 * @return {Array}              Connections available to user
+	 */
+	getConnectionsAvailableToCurrentUser: function( serviceName, connections ) {
+		var currentUser = user.get();
+
+		if ( ! currentUser ) {
+			return [];
+		}
+
+		return connections.filter( function( connection ) {
+			// Only include connections of the specified service, filtered by
+			// those owned by the current user or shared.
+			return connection.service === serviceName && ( connection.keyring_connection_user_ID === currentUser.ID || connection.shared );
+		} );
+	},
+
+	/**
 	 * Given a service name and optional site ID, returns the available
 	 * connections for the current user.
 	 *
@@ -157,11 +179,8 @@ module.exports = {
 				siteId = null;
 			}
 
-			connections = connectionsList.get( siteId ).filter( function( connection ) {
-				// Only include connections of the specified service, filtered by
-				// those owned by the current user or shared.
-				return connection.service === serviceName && ( connection.keyring_connection_user_ID === currentUser.ID || connection.shared );
-			} );
+			connections = connectionsList.get( siteId );
+			connections = this.getConnectionsAvailableToCurrentUser( serviceName, connections );
 		} else {
 			connections = [];
 		}

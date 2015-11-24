@@ -23,7 +23,8 @@ module.exports = React.createClass( {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
-		connections: React.PropTypes.array
+		connections: React.PropTypes.array,
+		fetchConnections: React.PropTypes.func
 	},
 
 	getSubtitle: function() {
@@ -116,6 +117,7 @@ module.exports = React.createClass( {
 							post={ this.props.post }
 							isNew={ this.props.isNew }
 							connections={ this.props.connections }
+							fetchConnections={ this.props.fetchConnections }
 						/>
 					) }
 					{ this.renderShortUrl() }
