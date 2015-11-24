@@ -12,11 +12,10 @@ import MasterbarNewPost from 'layout/masterbar-new-post';
 import layoutFocus from 'lib/layout-focus';
 import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'MasterbarSectionsMenu',
-
-	defaultNoticon: '\uf800',
 
 	itemLinkClass( section, classes ) {
 		classes = classes || {};
@@ -48,7 +47,7 @@ export default React.createClass( {
 
 		return (
 			<a href="#" onClick={ this.props.toggleNotesFrame } ref="notificationLink" title={ linkTitle }>
-				<span className="noticon noticon-bell"></span>
+				<Gridicon icon="bell" size={ 24 } />
 				{ notificationIcon }
 				<span className="masterbar__label">{ toolbarTitle }</span>
 			</a>
@@ -61,7 +60,7 @@ export default React.createClass( {
 			return <span className="noticon noticon-horizon" />;
 		}
 
-		return <span className="noticon noticon-wordpress" />;
+		return <Gridicon icon="my-sites" size={ 24 } />;
 	},
 
 	render() {
@@ -117,8 +116,10 @@ export default React.createClass( {
 					</li>
 					<li className={ this.itemLinkClass( 'reader', { 'masterbar__item': true, 'masterbar__home': true, 'masterbar__reader': true } ) }>
 						<a href={ readerUrl } onClick={ this.focusContent } title={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) } rel="home">
-							<span className="noticon noticon-reader"></span>
-							<span className="masterbar__label">{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+							<Gridicon icon="reader" size={ 24 } />
+							<span className="masterbar__label">
+								{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+							</span>
 						</a>
 					</li>
 				</ul>
@@ -130,8 +131,10 @@ export default React.createClass( {
 					/>
 					<li className={ this.itemLinkClass( 'me', { 'masterbar__item': true, 'masterbar__me': true } ) }>
 						<a href={ meUrl } onClick={ this.focusSidebar } title={ this.translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }>
-							<Gravatar user={ this.props.user.get() } alt="Me" size={ 22 } />
-							<span className="masterbar__label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+							<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
+							<span className="masterbar__label">
+								{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+							</span>
 						</a>
 					</li>
 					<li className={ notificationsClasses }>

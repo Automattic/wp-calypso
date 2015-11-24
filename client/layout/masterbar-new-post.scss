@@ -17,30 +17,16 @@
 }
 
 .masterbar-new-post__button {
-	width: 56px;
+	width: 48px;
 
-	&::before {
-		@include noticon( '\f411', 34px );
+	.gridicon {
 		line-height: 1.4;
 		display: block;
-		margin: -5px auto 0;
-		padding-left: 4px #{"/*rtl:ignore*/"}; // nudge to balance pencil with plus sign
+		margin: 5px auto 0;
+		padding-left: 2px #{"/*rtl:ignore*/"}; // nudge to balance pencil with plus sign
 
 		@include breakpoint( "<660px" ) {
 			margin: -8px auto 0;
-		}
-	}
-
-	&::after {
-		@include noticon( '\f8b3', 28px );
-		color: $blue-wordpress;
-		position: absolute;
-			left: 50%;
-			top: 50%;
-		transform: translate( -50%, -40% );
-
-		@include breakpoint( "<660px" ) {
-			margin-top: -3px;
 		}
 	}
 }

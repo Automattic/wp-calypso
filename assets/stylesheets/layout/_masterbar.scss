@@ -124,6 +124,10 @@ $autobar-height: 20px;
 .masterbar__item {
 	float: left;
 
+	.gridicon {
+		vertical-align: middle;
+	}
+
 	&.is-active {
 		a,
 		a:hover,
@@ -164,13 +168,13 @@ $autobar-height: 20px;
 
 	a {
 		background: $white;
-		border-radius: 5px;
+		border-radius: 3px;
 		color: $blue-wordpress;
 		height: 34px;
 		line-height: 34px;
 		margin-top: 6px;
 		overflow: hidden;
-		padding: 0 3px;
+		padding: 0 4px;
 		vertical-align: middle;
 
 		&:hover,
@@ -296,10 +300,8 @@ $autobar-height: 20px;
 .masterbar .gravatar {
 	border: 2px solid $white;
 	border-radius: 50%;
-	height: 22px;
 	margin-bottom: 2px;
 	vertical-align: middle;
-	width: 22px;
 
 	@include breakpoint( "<660px" ) {
 		display: block;
