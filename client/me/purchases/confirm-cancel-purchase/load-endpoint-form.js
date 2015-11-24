@@ -134,6 +134,9 @@ function showDomainReasonDetail( { form, selectValue } ) {
 		case 'transfer':
 			selected = '#div_transfer';
 			break;
+		case 'misspelled':
+			selected = '#div_misspelled';
+			break;
 		case 'expectations':
 		case 'wanted_free':
 		case 'other':
