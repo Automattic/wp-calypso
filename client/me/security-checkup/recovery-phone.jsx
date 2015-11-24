@@ -2,13 +2,15 @@
  * External dependencies
  */
 import React from 'react';
+import isEmpty from 'lodash/lang/isEmpty';
 
 /**
  * Internal dependencies
  */
 import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
+import SecurityCheckupActions from 'lib/security-checkup/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
-
+import FormButton from 'components/forms/form-button';
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryPhone',
@@ -18,32 +20,59 @@ module.exports = React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		AccountRecoveryStore.off( 'change', this.refreshRecoveryEmails );
+		AccountRecoveryStore.off( 'change', this.refreshRecoveryPhone );
 	},
 
 	getInitialState: function() {
 		return {
-			recoveryPhone: []
+			recoveryPhone: AccountRecoveryStore.getPhone(),
+			isAddingRecoveryPhone: false,
+			isSavingRecoveryPhone: false
 		};
 	},
 
 	refreshRecoveryPhone: function() {
-		this.setState( { recoveryPhone: AccountRecoveryStore.getEmails() } );
+		this.setState( {
+			recoveryPhone: AccountRecoveryStore.getPhone(),
+			isSavingRecoveryPhone: AccountRecoveryStore.isSavingRecoveryPhone()
+		} );
 	},
 
-	renderRecoveryPhonePlaceholder: function() {
+	editPhone: function() {
+
+	},
+
+	renderRecoveryPhone: function() {
+		if ( this.state.recoveryPhone.loading ) {
+			return(
+				<div>
+					<FormSectionHeading>Recovery phone placeholder</FormSectionHeading>
+				</div>
+			);
+		}
+
+		if ( isEmpty( this.state.recoveryPhone.data ) ) {
+			return(
+				<div>
+					<FormSectionHeading>Recovery phone</FormSectionHeading>
+					<p>No recovery phone</p>
+				</div>
+			);
+		}
+
 		return (
 			<div>
-				<p>Recovery phone</p>
+				<FormSectionHeading>Recovery phone</FormSectionHeading>
+				<p>0775143910</p>
 			</div>
 		);
 	},
 
-	renderRecoveryPhone: function() {
-		return (
-			<div>
-				<FormSectionHeading>Recovery SMS number</FormSectionHeading>
-			</div>
+	renderRecoveryPhoneActions: function() {
+		return(
+			<FormButton onClick={ this.editPhone } isPrimary={ false } >
+				{ this.translate( 'Edit Phone' ) }
+			</FormButton>
 		);
 	},
 
@@ -51,6 +80,7 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				{ this.renderRecoveryPhone() }
+				{ this.renderRecoveryPhoneActions() }
 			</div>
 		);
 	}

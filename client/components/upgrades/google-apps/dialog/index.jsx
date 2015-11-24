@@ -71,7 +71,7 @@ var GoogleAppsDialog = React.createClass( {
 			return number % 1 === 0 ? number : number.toFixed( 2 );
 		} );
 
-		if ( this.state.isAddingEmail ) {
+		if ( this.state.isSavingEmail ) {
 			googleAppsUsers = (
 				<GoogleAppsUsers
 					analyticsSection={ this.props.analyticsSection }
@@ -162,8 +162,8 @@ var GoogleAppsDialog = React.createClass( {
 	},
 
 	footer: function() {
-		var continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail,
-			continueButtonText = this.state.isAddingEmail ?
+		var continueButtonHandler = this.state.isSavingEmail ? this.handleFormSubmit : this.handleAddEmail,
+			continueButtonText = this.state.isSavingEmail ?
 				this.translate( 'Continue \u00BB' ) :
 				this.translate( 'Add Email \u00BB' );
 

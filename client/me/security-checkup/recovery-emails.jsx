@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/object/assign';
+import isEmpty from 'lodash/lang/isEmpty';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import ActionRemove from 'me/action-remove';
-import isEmpty from 'lodash/lang/isEmpty';
 
 module.exports = React.createClass( {
 	displayName: 'SecurityCheckupRecoveryEmails',
@@ -35,8 +34,16 @@ module.exports = React.createClass( {
 		return {
 			recoveryEmail: '',
 			recoveryEmails: AccountRecoveryStore.getEmails(),
-			isAddingRecoveryEmail: AccountRecoveryStore.isAddingRecoveryEmail()
+			isAddingRecoveryEmail: false,
+			isSavingRecoveryEmail: false
 		};
+	},
+
+	refreshRecoveryEmails: function() {
+		this.setState( {
+			recoveryEmails: AccountRecoveryStore.getEmails(),
+			isSavingRecoveryEmail: AccountRecoveryStore.isSavingRecoveryEmail()
+		} );
 	},
 
 	addEmail: function() {
@@ -52,16 +59,9 @@ module.exports = React.createClass( {
 		this.setState( { isAddingRecoveryEmail: false } );
 	},
 
-	refreshRecoveryEmails: function() {
-		this.setState( {
-			isAddingRecoveryEmail: AccountRecoveryStore.isAddingRecoveryEmail(),
-			recoveryEmails: AccountRecoveryStore.getEmails()
-		} );
-	},
-
 	renderRecoveryEmail: function( recoveryEmail ) {
 		return (
-			<li>
+			<li key={ recoveryEmail } >
 				{ recoveryEmail.email }
 				<ActionRemove />
 			</li>
