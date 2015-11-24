@@ -19,6 +19,8 @@ var Masterbar = require( './masterbar' ),
 	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
+	InviteMessage = require( 'accept-invite/invite-message' ),
+	InviteMessageStore = require( 'accept-invite/invite-message/store' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	PulsingDot = require( 'components/pulsing-dot' ),
@@ -92,7 +94,6 @@ module.exports = React.createClass( {
 				layout__loader: true,
 				'is-active': this.state.isLoading
 			} );
-
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
@@ -101,6 +102,9 @@ module.exports = React.createClass( {
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
 						<WelcomeMessage welcomeSite={ newestSite } />
+					</Welcome>
+					<Welcome isVisible={ InviteMessageStore.isVisible() } closeAction={ InviteMessageStore.dismiss }>
+						<InviteMessage accepted={ InviteMessageStore.get().showAccepted }/>
 					</Welcome>
 					<EmailVerificationNotice user={ this.props.user } />
 					<NoticesList id="notices" notices={ notices.list } forcePinned={ 'post' === this.state.section } />
