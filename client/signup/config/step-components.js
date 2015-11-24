@@ -7,6 +7,7 @@ var EmailSignupComponent = require( 'signup/steps/email-signup-form' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
 	DomainsStepComponent = require( 'signup/steps/domains' ),
 	DSSStepComponent = require( 'signup/steps/dss' ),
+	MlbThemeSelectionComponent = require( 'signup/steps/mlb-theme-selection' ),
 	config = require( 'config' );
 
 module.exports = {
@@ -18,5 +19,6 @@ module.exports = {
 	plans: PlansStepComponent,
 	domains: DomainsStepComponent,
 	'domains-with-theme': DomainsStepComponent,
-	'theme-dss': DSSStepComponent
+	'theme-dss': DSSStepComponent,
+	'mlb-themes': MlbThemeSelectionComponent
 };

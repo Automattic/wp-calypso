@@ -124,8 +124,14 @@ const flows = {
 		destination: getCheckoutDestination,
 		description: 'Dynamic Screenshots and Headstart flow',
 		lastModified: '2015-11-13'
-	}
+	},
 
+	mlb: {
+		steps: [ 'mlb-themes', 'domains', 'user' ],
+		destination: '/me/next?welcome',
+		description: 'Major League Baseball Blogs Signup flow',
+		lastModified: '2015-11-22'
+	}
 };
 
 function removeUserStepFromFlow( flow ) {

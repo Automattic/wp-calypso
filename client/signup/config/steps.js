@@ -63,5 +63,9 @@ module.exports = {
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme', 'images' ]
+	},
+
+	'mlb-themes': {
+		stepName: 'mlb-themes'
 	}
 };
