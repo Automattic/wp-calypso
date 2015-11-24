@@ -165,6 +165,7 @@ If you want to learn more about our approach to writing React components, check 
 Time to hook this up with our controller function. Open `/hello-world/controller.js`. Import React again at the top of the file, then remove the `console.log` call and enter the following instead:
 
 ```javascript
+var React = require( 'react' );
 helloWorld() {
 	const Main = require( 'my-sites/hello-world/main' );
 
