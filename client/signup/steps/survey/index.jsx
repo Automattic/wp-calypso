@@ -27,18 +27,16 @@ export default React.createClass( {
 	},
 
 	renderStepTwoVertical( vertical ) {
-		const verticalLink = '#';
 		return (
-			<Card className="survey-step__vertical" href={ verticalLink } onClick={ this.handleNextStep.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" href="#" onClick={ this.handleNextStep.bind( null, vertical ) }>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
 	},
 
 	renderStepOneVertical( vertical ) {
-		const verticalLink = '#';
 		return (
-			<Card className="survey-step__vertical" href={ verticalLink } onClick={ this.showStepTwo.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" href="#" onClick={ this.showStepTwo.bind( null, vertical ) }>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
