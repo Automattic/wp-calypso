@@ -25,7 +25,7 @@ import ValidationErrorList from 'notices/validation-error-list';
 import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
 import paths from 'me/purchases/paths';
-import { goToManagePurchase, isDataLoading } from 'me/purchases/utils';
+import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -119,7 +119,7 @@ const EditCardDetails = React.createClass( {
 
 		analytics.tracks.recordEvent(
 			'calypso_purchases_credit_card_form_submit',
-			{ product_slug: this.getPurchase().productSlug }
+			{ product_slug: getPurchase( this.props ).productSlug }
 		);
 
 		createPaygateToken( cardDetails, ( paygateError, token ) => {
