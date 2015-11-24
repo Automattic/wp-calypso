@@ -77,6 +77,9 @@ function submitForm( { form, onSubmit, selectedPurchase, selectedSite } ) {
 function getFormData( { form, selectedPurchase, selectedSite } ) {
 	const inputs = zipObject(
 		toArray( form.elements )
+			.filter( ( element ) => {
+				return ( element.type === 'radio' ) ? element.checked : true;
+			} )
 			.map( ( element ) => [ element.name, element.value ] )
 	);
 
