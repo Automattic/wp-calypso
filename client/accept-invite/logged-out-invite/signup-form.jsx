@@ -115,6 +115,7 @@ export default React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.footerLink() }
+					email={ get( this.props, 'invite.meta.sent_to' ) }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>
