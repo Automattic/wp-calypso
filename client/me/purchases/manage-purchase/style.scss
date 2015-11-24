@@ -192,6 +192,10 @@
 		text-align: right;
 	}
 
+	.payment-logo {
+		margin-right: 5px;
+	}
+
 	a {
 		display: block;
 		font-size: 12px;
@@ -219,8 +223,4 @@
 			right: 24px;
 			top: 16px;
 	}
-}
-
-.manage-purchase__payment-info .payment-logo {
-	margin-right: 5px;
 }
