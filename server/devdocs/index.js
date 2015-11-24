@@ -13,7 +13,7 @@ var express = require( 'express' ),
  * Internal dependencies
  */
 var	config = require( 'config' ),
-	root = fspath.join( __dirname, '..', '..' ),
+	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	searchIndex = require( 'devdocs/search-index' ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
 	documents = searchIndex.documents;
@@ -172,28 +172,31 @@ module.exports = function() {
 	app.get( '/devdocs/service/content', function ( request, response ) {
 		var path = request.query.path;
 
-		if( ! path ) {
+		if ( ! path ) {
 			response.
 				status( 400 ).
 				send( 'Need to provide a file path (e.g. path=client/devdocs/README.md)' );
 			return;
-		} else if ( ! /\.md$/.test( path ) ) {
-			response.
-				status( 422 ).
-				send( 'Filename must end with .md (e.g. path=client/devdocs/README.md)' );
-			return;
 		}
 
-		var fullPath = fspath.join( root, path );
+		if ( ! /\.md$/.test( path ) ) {
+			path = fspath.join( path, 'README.md' );
+		}
 
-		if( ! fs.existsSync( fullPath ) ) {
+		try {
+			path = fs.realpathSync( fspath.join( root, path ) );
+		} catch ( err ) {
+			path = null;
+		}
+
+		if ( ! path || path.substring( 0, root.length + 1 ) !== root + '/' ) {
 			response.
 				status( 404 ).
 				send( 'File does not exist' );
 			return;
 		}
 
-		var fileContents = fs.readFileSync( fullPath, { encoding: 'utf8' });
+		var fileContents = fs.readFileSync( path, { encoding: 'utf8' });
 
 		response.send( marked( fileContents ) );
 	} );
