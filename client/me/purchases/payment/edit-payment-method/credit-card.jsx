@@ -58,12 +58,12 @@ const EditPaymentMethodCreditCard = React.createClass( {
 						args: {
 							type: creditCard.type.toUpperCase(),
 							number: creditCard.number
-							},
+						},
 						components: {
 							strong: <strong />
-							},
+						},
 						context: "type is a credit card type (e.g. 'VISA'), number is the last four digits of a credit card"
-						} ) }
+					} ) }
 					{ ' ' }
 					{ this.translate( 'Please note that this card will only be removed for this purchase.' ) }
 				</p>
@@ -86,15 +86,15 @@ const EditPaymentMethodCreditCard = React.createClass( {
 						args: {
 							type: creditCard.type.toUpperCase(),
 							number: creditCard.number
-							},
+						},
 						context: "type is a credit card type (e.g. 'VISA'), number is the last four digits of a credit card"
-						} ) }
+					} ) }
 				</strong>
 				<em>
 					{ this.translate( 'Expires %(date)s', {
 						args: { date: payment.creditCard.expiryDate },
 						context: 'date is of the form MM/YY'
-						} ) }
+					} ) }
 				</em>
 			</div>
 		);
