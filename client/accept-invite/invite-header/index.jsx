@@ -54,7 +54,7 @@ export default React.createClass( {
 				break;
 			case 'author':
 				text = this.translate(
-					'{{inviterName/}} invited you to author on:', {
+					'{{inviterName/}} invited you to be an author on:', {
 						components: {
 							inviterName: inviterName
 						}
