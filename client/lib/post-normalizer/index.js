@@ -605,8 +605,6 @@ normalizePost.content = {
 			'vimeo.com',
 			'cloudup.com',
 			'soundcloud.com',
-			'rdio.com',
-			'rd.io',
 			'vevo.com',
 			'spotify.com'
 		];
