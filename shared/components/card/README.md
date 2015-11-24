@@ -20,7 +20,7 @@ render: function() {
       </Card>
 
       <CompactCard>
-        <span>Your stuff in an CompactCard</span>
+        <span>Your stuff in a CompactCard</span>
       </CompactCard>
     </div>
   );
