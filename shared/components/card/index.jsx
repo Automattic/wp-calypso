@@ -24,17 +24,20 @@ module.exports = React.createClass( {
 		var element = this.props.tagName || 'div',
 			linkClassName = this.props.href ? 'is-card-link' : null,
 			props = assign( {}, this.props, { className: joinClasses( this.props.className, 'card', linkClassName ) } ),
-			children = [ this.props.children ];
+			linkIndicator = null;
 
 		if ( this.props.href ) {
 			element = 'a';
-			children.unshift(
-				<Gridicon
-					className='card__link-indicator'
-					icon={ this.props.target ? 'external' : 'chevron-right' } />
-			);
+			linkIndicator = <Gridicon
+				className='card__link-indicator'
+				icon={ this.props.target ? 'external' : 'chevron-right' } />;
 		}
 
-		return React.createElement( element, props, children );
+		return React.createElement(
+			element,
+			props,
+			this.props.href ? linkIndicator : null,
+			this.props.children
+		);
 	}
 } );
