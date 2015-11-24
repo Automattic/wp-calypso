@@ -20,9 +20,7 @@ export default React.createClass( {
 
 	itemLinkClass( section, classes ) {
 		classes = classes || {};
-
-		classes.active = ( section === this.props.section && ! this.props.showNotes );
-
+		classes[ 'is-active' ] = ( section === this.props.section && ! this.props.showNotes );
 		return classNames( classes );
 	},
 
@@ -49,10 +47,10 @@ export default React.createClass( {
 		notificationIcon = <span className='noticon notification-bubble' key={ 'notification-indicator-animation-state-' + Math.abs( this.props.animationState ) }></span>;
 
 		return (
-			<a href='#' onClick={ this.props.toggleNotesFrame } ref='notificationLink' title={ linkTitle }>
+			<a href="#" onClick={ this.props.toggleNotesFrame } ref="notificationLink" title={ linkTitle }>
 				<span className="noticon noticon-bell"></span>
 				{ notificationIcon }
-				<span className="section-label">{ toolbarTitle }</span>
+				<span className="masterbar__label">{ toolbarTitle }</span>
 			</a>
 		);
 	},
@@ -67,7 +65,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		var notificationsClasses = 'notifications',
+		var notificationsClasses = 'masterbar__notifications',
 			notificationsLink = this.renderNotificationsLink(),
 			readerUrl = '//wordpress.com/',
 			meUrl = '//wordpress.com/me',
@@ -93,22 +91,22 @@ export default React.createClass( {
 
 		// Adjust toolbar highlight and unread status of Notifications
 		if ( this.props.showNotes ) {
-			notificationsClasses += ' active';
+			notificationsClasses += ' is-active';
 		}
 		if ( this.props.newNote ) {
-			notificationsClasses += ' unread';
+			notificationsClasses += ' has-unread';
 		}
 		if ( -1 === this.props.animationState ) {
-			notificationsClasses += ' initial-load';
+			notificationsClasses += ' is-initial-load';
 		}
 
 		return (
-			<nav className="wpcom-sections">
-				<ul className="sections-menu">
-					<li className={ this.itemLinkClass( 'sites', { 'my-sites': true } ) }>
+			<nav className="masterbar__sections">
+				<ul className="masterbar__sections-menu">
+					<li className={ this.itemLinkClass( 'sites', { 'masterbar__my-sites': true } ) }>
 						<SiteStatsStickyLink onClick={ this.focusSidebar } title={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }>
 							{ this.wordpressIcon() }
-							<span className="section-label">
+							<span className="masterbar__label">
 								{
 									this.props.user.get().visible_site_count > 1
 									? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -117,22 +115,23 @@ export default React.createClass( {
 							</span>
 						</SiteStatsStickyLink>
 					</li>
-					<li className={ this.itemLinkClass( 'reader', { home: true, reader: true } ) }>
+					<li className={ this.itemLinkClass( 'reader', { 'masterbar__home': true, 'masterbar__reader': true } ) }>
 						<a href={ readerUrl } onClick={ this.focusContent } title={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) } rel="home">
 							<span className="noticon noticon-reader"></span>
-							<span className="section-label">{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+							<span className="masterbar__label">{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 						</a>
 					</li>
 				</ul>
-				<ul className="sections-menu menu-right">
+				<ul className="masterbar__sections-menu is-right">
 					<MasterbarNewPost
 						sites={ this.props.sites }
 						active={ 'post' === this.props.section }
-						className={ this.itemLinkClass( 'post', { post: true, 'masterbar__post-editor': true, 'new-post': true, 'is-button': true } ) } />
-					<li className={ this.itemLinkClass( 'me', { me: true } ) }>
+						className={ this.itemLinkClass( 'post', { post: true, 'masterbar__post-editor': true, 'new-post': true, 'is-button': true } ) }
+					/>
+					<li className={ this.itemLinkClass( 'me', { 'masterbar__me': true } ) }>
 						<a href={ meUrl } onClick={ this.focusSidebar } title={ this.translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }>
 							<Gravatar user={ this.props.user.get() } alt="Me" size={ 22 } />
-							<span className="section-label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+							<span className="masterbar__label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 						</a>
 					</li>
 					<li className={ notificationsClasses }>

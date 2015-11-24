@@ -34,25 +34,14 @@ $autobar-height: 20px;
 		vertical-align: middle;
 	}
 
-	.sections-menu {
-		box-sizing: border-box;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-
-		&.menu-right {
-			float: right;
-		}
-	}
-
-	.section-label {
+	.masterbar__label {
 		margin-left: 8px;
 	}
 
 	li {
 		float: left;
 
-		&.active {
+		&.is-active {
 			a,
 			a:hover,
 			a:focus {
@@ -93,7 +82,7 @@ $autobar-height: 20px;
 				padding: 0;
 			}
 
-			.sections-menu {
+			.masterbar__sections-menu {
 				width: 40%;
 
 				&.menu-right {
@@ -110,7 +99,7 @@ $autobar-height: 20px;
 				margin: 0 auto;
 			}
 
-			.section-label {
+			.masterbar__label {
 				display: block !important;
 				font-size: 10px;
 				height: 13px;
@@ -159,16 +148,13 @@ $autobar-height: 20px;
 			}
 		}
 
-		.section-label {
+		.masterbar__label {
 			margin: 0 10px;
 		}
 	}
 
-	/**
-	 * Me
-	 */
-	.me {
-		.section-label {
+	.masterbar__me {
+		.masterbar__label {
 			@include breakpoint( ">660px" ) {
 				clip: rect( 1px, 1px, 1px, 1px );
 				height: 1px;
@@ -179,15 +165,12 @@ $autobar-height: 20px;
 		}
 	}
 
-	/**
-	 * Notifications
-	 */
-	.notifications {
+	.masterbar__notifications {
 		display: block;
 		position: relative;
 		white-space: nowrap;
 
-		.section-label {
+		.masterbar__label {
 			@include breakpoint( ">660px" ) {
 				clip: rect( 1px, 1px, 1px, 1px );
 				height: 1px;
@@ -211,7 +194,7 @@ $autobar-height: 20px;
 			display: none;
 		}
 
-		&.unread {
+		&.has-unread {
 			.notification-bubble {
 				background: $orange-jazzy;
 				border: solid 2px $blue-wordpress;
@@ -242,11 +225,11 @@ $autobar-height: 20px;
 				}
 			}
 
-			&.initial-load .notification-bubble {
+			&.is-initial-load .notification-bubble {
 				animation: none;
 			}
 
-			&.active {
+			&.is-active {
 				.notification-bubble {
 					border-color: $blue-dark;
 				}
@@ -255,7 +238,7 @@ $autobar-height: 20px;
 	}
 
 	.wpcom-title {
-		.section-label {
+		.masterbar__label {
 			font-size: 16px;
 			font-weight: 300;
 			letter-spacing: 0.5px;
@@ -281,6 +264,17 @@ $autobar-height: 20px;
 
 .masterbar__navigation {
 	padding: 0 12px 0 0;
+}
+
+.masterbar__sections-menu {
+	box-sizing: border-box;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	&.is-right {
+		float: right;
+	}
 }
 
 @keyframes unread-indication {
