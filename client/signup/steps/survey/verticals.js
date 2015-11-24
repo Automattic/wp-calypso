@@ -1,7 +1,7 @@
 import { translate } from 'lib/mixins/i18n';
 
 const verticals = [
-	{ value: 'a8c.1', label: translate( 'Arts & Entertainment' ), stepTwo: [
+	{ value: 'a8c.1', label: translate( 'Arts & Entertainment' ), icon: 'video-camera', stepTwo: [
 		{ value: 'a8c.1', label: translate( 'General Arts & Entertainment' ) },
 		{ value: 'a8c.1.3.1', label: translate( 'Creative Arts & Design' ) },
 		{ value: 'a8c.1.3.2', label: translate( 'Entertainment & Culture' ) },
@@ -12,7 +12,7 @@ const verticals = [
 		{ value: 'a8c.17', label: translate( 'Sports & Recreation' ) },
 	] },
 
-	{ value: 'a8c.3', label: translate( 'Business & Services' ), stepTwo: [
+	{ value: 'a8c.3', label: translate( 'Business & Services' ), icon: 'bookmark', stepTwo: [
 		{ value: 'a8c.3', label: translate( 'General Business & Services' ) },
 		{ value: 'a8c.3.0.1', label: translate( 'Finance & Law' ) },
 		{ value: 'a8c.3.0.2', label: translate( 'Consulting & Coaching' ) },
@@ -25,7 +25,7 @@ const verticals = [
 		{ value: 'a8c.3.0.4', label: translate( 'Communications' ) },
 	] },
 
-	{ value: 'a8c.6', label: translate( 'Family, Home, & Lifestyle' ), stepTwo: [
+	{ value: 'a8c.6', label: translate( 'Family, Home, & Lifestyle' ), icon: 'house', stepTwo: [
 		{ value: 'a8c.6', label: translate( 'Family & Parenting' ) },
 		{ value: 'a8c.14.7', label: translate( 'Events & Weddings' ) },
 		{ value: 'a8c.10', label: translate( 'Home & Garden' ) },
@@ -35,7 +35,7 @@ const verticals = [
 		{ value: 'a8c.16', label: translate( 'Pets' ) },
 	] },
 
-	{ value: 'a8c.5', label: translate( 'Education & Organizations' ), stepTwo: [
+	{ value: 'a8c.5', label: translate( 'Education & Organizations' ), icon: 'clipboard', stepTwo: [
 		{ value: 'a8c.5', label: translate( 'General Education & Organizations' ) },
 		{ value: 'a8c.3.0.6', label: translate( 'Communities & Associations' ) },
 		{ value: 'a8c.3.0.5', label: translate( 'Non-Profit' ) },
@@ -46,7 +46,7 @@ const verticals = [
 		{ value: 'a8c.5.10', label: translate( 'Homeschooling' ) },
 	] },
 
-	{ value: 'a8c.7', label: translate( 'Health & Wellness' ), stepTwo: [
+	{ value: 'a8c.7', label: translate( 'Health & Wellness' ), icon: 'heart', stepTwo: [
 		{ value: 'a8c.7', label: translate( 'General Health & Wellness' ) },
 		{ value: 'a8c.7.18', label: translate( 'Depression' ) },
 		{ value: 'a8c.7.42', label: translate( 'Substance Abuse' ) },
@@ -57,7 +57,7 @@ const verticals = [
 		{ value: 'a8c.7.32', label: translate( 'Nutrition' ) },
 	] },
 
-	{ value: 'a8c.1.1', label: translate( 'Writing & Books' ), stepTwo: [
+	{ value: 'a8c.1.1', label: translate( 'Writing & Books' ), icon: 'create', stepTwo: [
 		{ value: 'a8c.1.1', label: translate( 'General Writing & Books' ) },
 		{ value: 'a8c.1.1.1', label: translate( 'Book Reviews & Clubs' ) },
 		{ value: 'a8c.1.4', label: translate( 'Humor' ) },
