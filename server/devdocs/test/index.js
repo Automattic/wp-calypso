@@ -107,8 +107,8 @@ describe( 'devdocs server', () => {
 			'index.js',
 			( err, res ) => {
 				expect( err ).not.to.be.null;
-				expect( res.statusCode ).to.equal( 422 );
-				expect( res.text ).to.match( /Filename must end with \.md/ );
+				expect( res.statusCode ).to.equal( 404 );
+				expect( res.text ).to.equal( 'File does not exist' );
 				done();
 			} );
 	} );
