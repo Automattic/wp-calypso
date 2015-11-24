@@ -78,18 +78,20 @@ export default React.createClass( {
 	},
 
 	showStepOne() {
-		// TODO: track this event
+		const { value, label } = this.state.stepOne;
+		analytics.tracks.recordEvent( 'calypso_survey_category_back_click', { category: JSON.stringify( { value, label } ) } );
 		this.setState( { stepOne: null } );
 	},
 
 	showStepTwo( stepOne ) {
-		// TODO: track this event
+		const { value, label } = stepOne;
+		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', { category: JSON.stringify( { value, label } ) } );
 		this.setState( { stepOne } );
 	},
 
 	handleNextStep( vertical ) {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_v2', { category: JSON.stringify( vertical ) } );
+		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( vertical ) } );
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		this.props.goToNextStep();
 	}
