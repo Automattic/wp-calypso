@@ -24,15 +24,13 @@
 }
 
 .site-card__add-new {
-	.noticon {
-		font-size: 64px;
-		height: 65px;
-		margin-top: 20px;
+	.gridicon {
+		margin: 28px 0 4px;
 		color: darken( $gray, 10% );
 		transition: all 0.1s ease-in-out;
 	}
 
-	a:hover .noticon {
+	a:hover .gridicon {
 		color: $blue-medium;
 	}
 
@@ -42,7 +40,7 @@
 		background: none;
 		box-shadow: none;
 		border: 2px dashed lighten( $gray, 20% );
-		padding-top: 25px;
+		padding-top: 24px;
 
 		.site-card__title {
 			color: darken( $gray, 10% );
@@ -200,7 +198,7 @@
 
 	// Banner image
 	.site-card__header {
-		background-color: $gray-light;
+		background-color: lighten( $gray, 30% );
 		background-size: cover;
 		position: absolute;
 			top: 0;
