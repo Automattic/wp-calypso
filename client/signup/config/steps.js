@@ -66,6 +66,7 @@ module.exports = {
 	},
 
 	'mlb-themes': {
-		stepName: 'mlb-themes'
+		stepName: 'mlb-themes',
+		apiRequestFunction: stepActions.setThemeOnSite
 	}
 };
