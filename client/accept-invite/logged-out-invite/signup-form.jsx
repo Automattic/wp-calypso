@@ -45,28 +45,7 @@ export default React.createClass( {
 
 	getFormHeader() {
 		return (
-			<InviteFormHeader
-				title={
-					this.translate( 'Sign up to become an %(siteRole)s on {{siteNameLink}}%(siteName)s{{/siteNameLink}}?', {
-						args: {
-							siteName: this.props.blog_details.title,
-							siteRole: get( this.props, 'invite.meta.role' )
-						},
-						components: {
-							siteNameLink: <a href={ this.props.blog_details.domain } className="logged-in-accept__site-name" />
-						}
-					} )
-				}
-				explanation={
-					this.translate(
-						'As an %(siteRole)s you will be able to publish and edit your own posts as well as upload media.', {
-							args: {
-								siteRole: get( this.props, 'invite.meta.role' )
-							}
-						}
-					)
-				}
-			/>
+			<InviteFormHeader { ...this.props } />
 		);
 	},
 
