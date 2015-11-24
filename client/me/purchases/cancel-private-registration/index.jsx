@@ -16,13 +16,21 @@ import paths from '../paths';
 import { isRefundable } from 'lib/purchases';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import SimpleNotice from 'notices/simple-notice';
-import { goToManagePurchase, isDataLoading } from '../utils';
+import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {
 		return {
 			disabled: false
 		};
+	},
+
+	componentWillMount() {
+		recordPageView( 'cancel_private_registration', this.props );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	},
 
 	cancel() {

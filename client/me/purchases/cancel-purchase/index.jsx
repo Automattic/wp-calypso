@@ -17,12 +17,20 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
 import { getName, isCancelable } from 'lib/purchases';
-import { getPurchase, goToManagePurchase, isDataLoading } from '../utils';
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
 const CancelPurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object
+	},
+
+	componentWillMount() {
+		recordPageView( 'cancel_purchase', this.props );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		recordPageView( 'cancel_purchase', this.props, nextProps );
 	},
 
 	componentDidMount() {
