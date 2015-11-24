@@ -66,6 +66,8 @@ export default React.createClass( {
 		} );
 
 		this.onChange( event );
+
+		event.target.scrollLeft = 0;
 	},
 
 	onFocus() {

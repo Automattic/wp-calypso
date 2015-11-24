@@ -16,16 +16,14 @@ import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
-import { purchaseTitle } from 'lib/purchases';
-import purchasesMixin from '../purchases-mixin';
+import { getName, isCancelable } from 'lib/purchases';
+import { getPurchase, goToManagePurchase, isDataLoading } from '../utils';
 
 const CancelPurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object
 	},
-
-	mixins: [ purchasesMixin ],
 
 	componentDidMount() {
 		this.ensurePageCanLoad();
@@ -36,9 +34,9 @@ const CancelPurchase = React.createClass( {
 	},
 
 	render() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
-		if ( this.isDataLoading() || ! purchase ) {
+		if ( isDataLoading( this.props ) || ! purchase ) {
 			return (
 				<Main className="cancel-purchase">
 					{ this.translate( 'Loading…' ) }
@@ -48,21 +46,21 @@ const CancelPurchase = React.createClass( {
 
 		return (
 			<Main className="cancel-purchase">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Cancel Purchase' ) }
 				</HeaderCake>
 
 				<Card className="cancel-purchase__card">
 					<h2>
-						{ this.translate( 'Cancel %(productName)s', {
+						{ this.translate( 'Cancel %(purchaseName)s', {
 							args: {
-								productName: purchaseTitle( purchase )
+								purchaseName: getName( purchase )
 							}
 						} ) }
 					</h2>
 
 					<div className="cancel-purchase__info">
-						<CancelPurchaseSupportBox />
+						<CancelPurchaseSupportBox purchase={ purchase } />
 
 						<div className="cancel-purchase__content">
 							<div className="cancel-purchase__section">
@@ -87,24 +85,23 @@ const CancelPurchase = React.createClass( {
 
 				<CompactCard className="cancel-purchase__footer">
 					<CancelPurchaseButton
-						purchase={ purchase }
-						onClick={ this.goToCancelConfirmation } />
+						purchase={ purchase } />
 				</CompactCard>
 			</Main>
 		);
 	},
 
 	ensurePageCanLoad() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return;
 		}
 
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		if ( purchase ) {
-			const { domain, id, isCancelable } = purchase;
+			const { domain, id } = purchase;
 
-			if ( ! isCancelable ) {
+			if ( ! isCancelable( purchase ) ) {
 				page.redirect( paths.managePurchase( domain, id ) );
 			}
 		} else {

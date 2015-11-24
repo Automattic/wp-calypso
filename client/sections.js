@@ -140,7 +140,8 @@ if ( config.isEnabled( 'devdocs' ) ) {
 	sections.push( {
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
-		module: 'devdocs'
+		module: 'devdocs',
+		enableLoggedOut: true
 	} );
 }
 

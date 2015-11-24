@@ -18,7 +18,7 @@ function getCheckoutDestination( dependencies ) {
 	}
 
 	/* NUX Trampoline A/B */
-	if ( 'notTested' === abtest( 'dss' ) && 'landing-main' === abtest( 'nuxTrampoline' ) ) {
+	if ( 'landing-main' === abtest( 'nuxTrampoline' ) ) {
 		return 'https://' + dependencies.siteSlug + '/?landing';
 	}
 
@@ -126,6 +126,13 @@ const flows = {
 		lastModified: '2015-11-13'
 	},
 
+	developer: {
+		steps: [ 'themes', 'site', 'user' ],
+		destination: '/devdocs/welcome',
+		description: 'Signup flow for developers in developer environment',
+		lastModified: '2015-11-23'
+	},
+
 	mlb: {
 		steps: [ 'mlb-themes', 'domains', 'user' ],
 		destination: '/me/next?welcome',
@@ -142,16 +149,8 @@ function removeUserStepFromFlow( flow ) {
 	return assign( {}, flow, { steps: reject( flow.steps, matches( 'user' ) ) } );
 }
 
-function getCurrentFlowNameFromTest() {
-	if ( 'dss' === abtest( 'dss' ) ) {
-		return 'dss';
-	}
-
-	return 'main';
-}
-
 module.exports = {
-	currentFlowName: getCurrentFlowNameFromTest(),
+	currentFlowName: 'main',
 
 	defaultFlowName: 'main',
 

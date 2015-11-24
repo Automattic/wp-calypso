@@ -282,13 +282,6 @@ module.exports = React.createClass( {
 
 						{ this.renderTeams() }
 
-						<li className={ this.itemLinkClass( '/fresh', { 'sidebar-streams__freshly-pressed': true } ) }>
-							<a href="https://wordpress.com/fresh/" rel="external" >
-								<Gridicon icon="my-sites" />
-								<span className="menu-link-text">{ this.translate( 'Freshly Pressed' ) }</span>
-							</a>
-						</li>
-
 						{
 							config.isEnabled( 'reader/discover' )
 							? (
@@ -316,6 +309,13 @@ module.exports = React.createClass( {
 							</a>
 						</li> )
 					}
+
+						<li className={ this.itemLinkClass( '/activities/likes', { 'sidebar-activity__likes': true } ) }>
+							<a href="/activities/likes">
+								<Gridicon icon="star" size={ 24 } />
+								<span className="menu-link-text">{ this.translate( 'My Likes' ) }</span>
+							</a>
+						</li>
 					</ul>
 				</li>
 
@@ -334,32 +334,8 @@ module.exports = React.createClass( {
 					<h2 className="sidebar-heading">{ this.translate( 'Tags' ) }</h2>
 					<ul>
 						{ this.renderTags() }
-						<li className={ this.itemLinkClass( '/tags/', { 'sidebar-dynamic-menu__explore': true } ) } key="explore-tags" >
-							<a href="https://wordpress.com/tags/" rel="external">
-								<span className="menu-link-text">{ this.translate( 'Explore Tags' ) }</span>
-							</a>
-						</li>
-
 						<li className="sidebar-dynamic-menu__add" key="add-tag">
 							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'Follow a Tag' ) } ref="addTagInput" onKeyDown={ this.handleFollowTagKeyDown } />
-						</li>
-					</ul>
-				</li>
-
-				<li className="sidebar-menu sidebar-activity">
-					<h2 className="sidebar-heading">{ this.translate( 'My Activity' ) }</h2>
-					<ul>
-						<li className={ this.itemLinkClass( '/activities/comments/', { 'sidebar-activity__comments': true } ) }>
-							<a href="https://wordpress.com/activities/comments/" rel="external">
-								<Gridicon icon="comment" size={ 24 } />
-								<span className="menu-link-text">{ this.translate( 'My Comments' ) }</span>
-							</a>
-						</li>
-						<li className={ this.itemLinkClass( '/activities/likes', { 'sidebar-activity__likes': true } ) }>
-							<a href="/activities/likes">
-								<Gridicon icon="star" size={ 24 } />
-								<span className="menu-link-text">{ this.translate( 'My Likes' ) }</span>
-							</a>
 						</li>
 					</ul>
 				</li>

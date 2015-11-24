@@ -7,22 +7,21 @@ import React from 'react';
 
 /**
  * Internal Dependencies
- **/
+ */
+import analytics from 'analytics';
 import Card from 'components/card';
 import loadEndpointForm from './load-endpoint-form';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
-import purchasesMixin from '../purchases-mixin';
+import { getPurchase, goToManagePurchase } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.object
 	},
-
-	mixins: [ purchasesMixin ],
 
 	componentDidMount() {
 		if ( ! this.props.selectedPurchase.hasLoadedFromServer || ! this.props.selectedSite ) {
@@ -59,12 +58,19 @@ const ConfirmCancelPurchase = React.createClass( {
 	handleSubmit( error, response ) {
 		if ( error ) {
 			notices.error( this.translate(
-				"Something went wrong and we couldn't cancel your subscription."
+				'There was a problem canceling this purchase. ' +
+				'Please try again later or contact support.'
 			) );
 			return;
 		}
 
 		notices.success( response.message, { persistent: true } );
+
+		analytics.tracks.recordEvent(
+			'calypso_purchases_cancel_form_submit',
+			{ product_slug: getPurchase( this.props ).productSlug }
+		);
+
 		page.redirect( paths.list() );
 	},
 
@@ -75,7 +81,7 @@ const ConfirmCancelPurchase = React.createClass( {
 	render() {
 		return (
 			<Main className="cancel-confirm">
-				<HeaderCake onClick={ this.goToManagePurchase }>{ this.translate( 'Confirm Cancellation' ) }</HeaderCake>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>{ this.translate( 'Confirm Cancellation' ) }</HeaderCake>
 				{ this.renderCard() }
 			</Main>
 		);

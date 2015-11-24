@@ -3,16 +3,22 @@
  */
 import React from 'react';
 
+/**
+ * Internal Dependencies
+ */
+import { getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+
 const CancelPurchaseRefundInformation = React.createClass( {
 	propTypes: {
 		purchase: React.PropTypes.object.isRequired
 	},
 
 	render() {
-		const { expiryDate, isRefundable, priceText, refundPeriodInDays } = this.props.purchase,
+		const purchase = this.props.purchase,
+			{ priceText, refundPeriodInDays } = purchase,
 			refundsSupportLink = <a href="https://support.wordpress.com/refunds/" target="_blank" />;
 
-		if ( isRefundable ) {
+		if ( isRefundable( purchase ) ) {
 			return (
 				<p>{ this.translate(
 					'Yes! You are canceling this purchase within the %(refundPeriodInDays)d day refund period. ' +
@@ -38,7 +44,7 @@ const CancelPurchaseRefundInformation = React.createClass( {
 				'{{a}}Learn more.{{/a}}',
 				{
 					args: {
-						subscriptionEndDate: this.moment( expiryDate ).format( 'LL' ),
+						subscriptionEndDate: getSubscriptionEndDate( purchase ),
 						refundPeriodInDays
 					},
 					components: {

@@ -22,6 +22,8 @@ These rules encourage liberal spacing for improved developer readability. The mi
 - All function bodies are indented by one tab, even if the entire file is wrapped in a closure
 - Spaces may align code within documentation blocks or within a line, but only tabs should be used at the start of a line
 
+Don't forget to [remove trailing whitespace](trailing-whitespace.md).
+
 ## Objects
 
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
@@ -170,9 +172,9 @@ Lines should be broken into logical groups if it improves readability, such as s
 var baz = ( true === conditionalStatement() ) ? 'thing 1' : 'thing 2';
 
 // Better
-var baz = firstCondition( foo ) && secondCondition( bar ) ?
-    qux( foo, bar ) :
-    foo;
+var baz = firstCondition( foo ) && secondCondition( bar )
+    ? qux( foo, bar )
+    : foo;
 ```
 
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.

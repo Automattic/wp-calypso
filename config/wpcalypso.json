@@ -78,6 +78,7 @@
 		"olark_use_wpcom_configuration": false,
 		"community-translator": true,
 		"devdocs": true,
+		"devdocs/redirect-loggedout-homepage": false,
 		"keyboard-shortcuts": true,
 		"jetpack_core_inline_update": true,
 		"me/my-profile": true,

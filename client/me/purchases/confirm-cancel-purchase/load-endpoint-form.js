@@ -63,7 +63,7 @@ function submitForm( { form, onSubmit, selectedPurchase, selectedSite } ) {
 
 	button.disabled = true;
 
-	wpcom.cancelProduct( selectedPurchase.id, formData, ( error, response ) => {
+	wpcom.cancelAndRefundPurchase( selectedPurchase.id, formData, ( error, response ) => {
 		if ( error ) {
 			button.disabled = false;
 			onSubmit( error );
@@ -77,6 +77,9 @@ function submitForm( { form, onSubmit, selectedPurchase, selectedSite } ) {
 function getFormData( { form, selectedPurchase, selectedSite } ) {
 	const inputs = zipObject(
 		toArray( form.elements )
+			.filter( ( element ) => {
+				return ( element.type === 'radio' ) ? element.checked : true;
+			} )
 			.map( ( element ) => [ element.name, element.value ] )
 	);
 

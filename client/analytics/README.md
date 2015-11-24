@@ -95,7 +95,7 @@ analytics.mc.bumpStat( {
 
 ## Google Analytics Naming Conventions
 
-For page view tracking, you should never pass a dynamic URL, or anything including a specific domain e.g. (/posts/apeatling.wordpress.com). Always pass a placeholder in these instances (/posts/:site). If you do not do this, we cannot accurately track views for a specific page. Titles should always use a ` > ` to break up the hierarchy of the page title. Examples are `Posts > My > Drafts`, `Reader > Following > Edit`, `Sharing > Connections`.
+For page view tracking, you should never pass a dynamic URL, or anything including a specific domain e.g. (/posts/example.wordpress.com). Always pass a placeholder in these instances (/posts/:site). If you do not do this, we cannot accurately track views for a specific page. Titles should always use a ` > ` to break up the hierarchy of the page title. Examples are `Posts > My > Drafts`, `Reader > Following > Edit`, `Sharing > Connections`.
 
 Events should be categorized by the section they are in. Examples are `Posts`, `Pages`, `Reader`, `Sharing`. Event actions should be written in readable form, and action centric. Good examples are `Clicked Save Button`, `Clicked Like`, `Activated Theme`.
 

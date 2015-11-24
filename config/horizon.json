@@ -56,6 +56,8 @@
 		"reader/activities": true,
 		"reader/share": true,
 		"reader/following-edit": true,
+		"reader/discover": true,
+		"reader/recommendations": true,
 
 		"upgrades/checkout": true,
 		"upgrades/purchases/cancel": true,

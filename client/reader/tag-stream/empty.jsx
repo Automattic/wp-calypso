@@ -15,25 +15,20 @@ var TagEmptyContent = React.createClass( {
 	},
 
 	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_freshly_pressed_on_empty' );
-		stats.recordGaEvent( 'Clicked Freshly Pressed on EmptyContent' );
+		stats.recordAction( 'clicked_discover_on_empty' );
+		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
 	},
 
 	render: function() {
-		var action = ( <ExternalLink
-			className="empty-content__action button is-primary"
-			onClick={ this.recordAction }
-			href="https://wordpress.com/tags/">{ this.translate( 'Explore Tags' ) }</ExternalLink> ),
-			secondaryAction = ( <ExternalLink
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="https://wordpress.com/fresh/">{ this.translate( 'Explore our Editors\' Picks' ) }</ExternalLink> );
+		var action = ( <a
+			className="empty-content__action button"
+			onClick={ this.recordSecondaryAction }
+			href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
 
 		return ( <EmptyContent
 			title={ this.translate( 'No recent posts…' ) }
 			line={ this.translate( 'No posts have recently been tagged with this tag for your language.' ) }
 			action={ action }
-			secondaryAction={ secondaryAction }
 			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 			illustrationWidth={ 500 }
 			/> );

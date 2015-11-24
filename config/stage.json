@@ -83,6 +83,8 @@
 		"reader/full-errors": true,
 		"reader/share": true,
 		"reader/following-edit": true,
+		"reader/discover": true,
+		"reader/recommendations": true,
 		"ad-tracking": false,
 		"mailing-lists/unsubscribe": true
 	},

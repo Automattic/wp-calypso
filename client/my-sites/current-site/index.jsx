@@ -127,6 +127,22 @@ module.exports = React.createClass( {
 		);
 	},
 
+	focusContent: function() {
+		layoutFocus.set( 'content' );
+	},
+
+	addNewWordPressButton: function() {
+		return (
+			<AddNewButton
+				isCompact={ true }
+				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+				onClick={ this.focusContent }
+			>
+				{ this.translate( 'Add New WordPress' ) }
+			</AddNewButton>
+		);
+	},
+
 	render: function() {
 		var site,
 			hasOneSite = this.props.siteCount === 1;
@@ -135,14 +151,9 @@ module.exports = React.createClass( {
 			return (
 				<Card className="current-site is-loading">
 					<div className="site">
-					{ hasOneSite ?
-						<AddNewButton
-							isCompact={ true }
-							href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-						>
-							{ this.translate( 'Add New WordPress' ) }
-						</AddNewButton> :
-						<span className="current-site__switch-sites" />
+					{ hasOneSite
+						? this.addNewWordPressButton()
+						: <span className="current-site__switch-sites" />
 					}
 						<a className="site__content">
 							<div className="site-icon" />
@@ -163,14 +174,9 @@ module.exports = React.createClass( {
 
 		return (
 			<Card className="current-site">
-				{ hasOneSite ?
-					<AddNewButton
-						isCompact={ true }
-						href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-					>
-						{ this.translate( 'Add New WordPress' ) }
-					</AddNewButton> :
-					<span
+				{ hasOneSite
+					? this.addNewWordPressButton()
+					: <span
 						className="current-site__switch-sites"
 						onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 16 } />

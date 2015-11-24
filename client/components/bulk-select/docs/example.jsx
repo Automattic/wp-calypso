@@ -36,14 +36,14 @@ module.exports = React.createClass( {
 	},
 
 	renderElements() {
-		return this.state.elements.map( element => {
+		return this.state.elements.map( (element, index) => {
 			const onClick = function() {
 				element.selected = ! element.selected;
 				this.forceUpdate();
 			}.bind( this );
 			return (
-				<label >
-					<input type="checkbox" onClick={ onClick } checked={ element.selected } />
+				<label key={ index }>
+					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
 					{ element.title }
 				</label>
 			);

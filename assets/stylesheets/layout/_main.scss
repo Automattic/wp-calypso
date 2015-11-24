@@ -429,16 +429,29 @@ body.newdash div.wordpress-com-extension-promo {
 		text-transform: uppercase;
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
+		transition: all 0.2s ease-out;
 		&:before {
 			content: '';
 			position: absolute;
-				left: -4px;
+				left: -1px;
 				right: 0;
 				top: 0;
 				bottom: 0;
 			z-index: -1;
 			background-color: $white;
 			border: solid 1px $gray-dark;
+		}
+		&:first-of-type:before {
+			left: -4px;
+		}
+		a {
+			text-decoration: none;
+			display: inline-block;
+			color: black;
+
+			&:hover {
+				transform: scale( 1.1 );
+			}
 		}
 		&.is-staging {
 			&:before {
@@ -448,6 +461,11 @@ body.newdash div.wordpress-com-extension-promo {
 		&.is-wpcalypso {
 			&:before {
 				background-color: #B1EED0;
+			}
+		}
+		&.is-dev {
+			&:before {
+				background-color: $alert-red;
 			}
 		}
 		&.is-horizon,

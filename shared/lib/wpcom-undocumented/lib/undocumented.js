@@ -1706,23 +1706,31 @@ Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.getCancellationPageHTML = function( cancellationId, productId, fn ) {
-	debug( 'upgrades/{cancellationId}/cancel_form?product_id={productId}' );
-
-	this.wpcom.req.get( {
-		path: `/upgrades/${cancellationId}/cancel_form`,
-		body: { client_timezone_offset: moment().format( 'Z' ) }
-	}, { product_id: productId }, fn );
-}
-
-Undocumented.prototype.cancelProduct = function( cancellationId, data, fn ) {
-	debug( 'upgrades/{cancellationId}/cancel' );
+Undocumented.prototype.cancelPurchase = function( purchaseId, fn ) {
+	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
 
 	this.wpcom.req.post( {
-		path: `/upgrades/${cancellationId}/cancel`,
+		path: `/upgrades/${purchaseId}/disable-auto-renew`
+	}, fn );
+};
+
+Undocumented.prototype.getCancellationPageHTML = function( purchaseId, productId, fn ) {
+	debug( 'upgrades/{purchaseId}/cancel_form?product_id={productId}' );
+
+	this.wpcom.req.get( {
+		path: `/upgrades/${purchaseId}/cancel_form`,
+		body: { client_timezone_offset: moment().format( 'Z' ) }
+	}, { product_id: productId }, fn );
+};
+
+Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn ) {
+	debug( 'upgrades/{purchaseId}/cancel' );
+
+	this.wpcom.req.post( {
+		path: `/upgrades/${purchaseId}/cancel`,
 		body: data
 	}, fn );
-}
+};
 
 Undocumented.prototype.cancelPrivateRegistration = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );

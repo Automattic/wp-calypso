@@ -22,6 +22,7 @@ function createPurchasesArray( dataTransferObject ) {
 			active: Boolean( purchase.active ),
 			amount: Number( purchase.amount ),
 			attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
+			canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 			currencyCode: purchase.currency_code,
 			currencySymbol: purchase.currency_symbol,
 			domain: purchase.domain,

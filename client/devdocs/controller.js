@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	qs = require( 'qs' ),
 	debounce = require( 'lodash/function/debounce' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	EmptyContent = require( 'components/empty-content' );
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ var React = require( 'react' ),
 var DocsComponent = require( './main' ),
 	SingleDocComponent = require( './doc' ),
 	DesignAssetsComponent = require( './design' ),
+	DevWelcome = require( './welcome' ),
 	Sidebar = require( './sidebar' ),
 	FormStateExamplesComponent = require( './form-state-examples' );
 
@@ -96,6 +98,35 @@ var devdocs = {
 			React.createElement( FormStateExamplesComponent, {
 				component: context.params.component
 			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	pleaseLogIn: function( context ) {
+		context.layout.setState( { section: 'devdocs-start' } );
+
+		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+		React.render(
+			React.createElement( EmptyContent, {
+				title: 'Log In to start hacking',
+				line: 'Required to access the WordPress.com API',
+				action: 'Log In to WordPress.com',
+				actionURL: 'https://wordpress.com/wp-login.php?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000/devdocs/welcome',
+				secondaryAction: 'Register',
+				secondaryActionURL: '/start/developer',
+				illustration: '/calypso/images/drake/drake-nosites.svg'
+			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	// Welcome screen
+	welcome: function( context ) {
+		context.layout.setState( { section: 'devdocs' } );
+
+		React.render(
+			React.createElement( DevWelcome, {} ),
 			document.getElementById( 'primary' )
 		);
 	}

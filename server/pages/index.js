@@ -122,7 +122,8 @@ function getDefaultContext( request ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
 		faviconURL: '//s1.wp.com/i/favicon.ico',
-		isFluidWidth: !! config.isEnabled( 'fluid-width' )
+		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
+		devDocsURL: '/devdocs'
 	};
 
 	context.app = {
@@ -135,6 +136,7 @@ function getDefaultContext( request ) {
 
 	if ( CALYPSO_ENV === 'wpcalypso' ) {
 		context.badge = CALYPSO_ENV;
+		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
@@ -158,6 +160,9 @@ function getDefaultContext( request ) {
 	}
 
 	if ( CALYPSO_ENV === 'development' ) {
+		context.badge = 'dev';
+		context.devDocs = true;
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 	}
 
@@ -376,6 +381,16 @@ module.exports = function() {
 				renderLoggedInRoute( req, res );
 			} else {
 				renderLoggedOutRoute( req, res );
+			}
+		} );
+	}
+
+	if ( config.isEnabled( 'reader/discover' ) ) {
+		app.get( '/discover', function( req, res ) {
+			if ( req.cookies.wordpress_logged_in ) {
+				renderLoggedInRoute( req, res );
+			} else {
+				res.redirect( 'https://discover.wordpress.com' );
 			}
 		} );
 	}

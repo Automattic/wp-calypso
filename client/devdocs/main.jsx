@@ -9,7 +9,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var DocService = require( './service' ),
-	Search = require( 'components/search' );
+	Main = require( 'components/main' ),
+	SearchCard = require( 'components/search-card' );
 
 var DEFAULT_FILES = [
 		'docs/guide/index.md',
@@ -143,16 +144,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var containerClass = classNames( {
-			main: true,
-			'main-column': true,
-			devdocs: true,
-			'is-full': true
-		} );
-
 		return (
-			<div className={ containerClass } role="main">
-				<Search
+			<Main className="devdocs">
+				<SearchCard
 					autoFocus
 					placeholder="Search documentation…"
 					analyticsGroup="Docs"
@@ -164,7 +158,7 @@ module.exports = React.createClass( {
 				<div className="devdocs__results">
 					{ this.results() }
 				</div>
-			</div>
+			</Main>
 		);
 	}
 } );

@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import analytics from 'analytics';
 import camelCase from 'lodash/string/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
@@ -19,12 +20,12 @@ import kebabCase from 'lodash/string/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/object/mapKeys';
 import notices from 'notices';
-import purchasesMixin from '../../purchases-mixin';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
 import paths from 'me/purchases/paths';
+import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -34,8 +35,6 @@ const EditCardDetails = React.createClass( {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
 	},
-
-	mixins: [ purchasesMixin ],
 
 	getInitialState() {
 		return {
@@ -118,6 +117,11 @@ const EditCardDetails = React.createClass( {
 	updateCreditCard() {
 		const cardDetails = this.getCardDetails();
 
+		analytics.tracks.recordEvent(
+			'calypso_purchases_credit_card_form_submit',
+			{ product_slug: getPurchase( this.props ).productSlug }
+		);
+
 		createPaygateToken( cardDetails, ( paygateError, token ) => {
 			if ( paygateError ) {
 				notices.error( paygateError.message );
@@ -182,7 +186,7 @@ const EditCardDetails = React.createClass( {
 	},
 
 	render() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return (
 				<Main className="edit-card-details">
 					{ this.translate( 'Loading…' ) }
@@ -192,7 +196,7 @@ const EditCardDetails = React.createClass( {
 
 		return (
 			<Main className="edit-card-details">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }
 				</HeaderCake>
 

@@ -24,12 +24,6 @@ export default React.createClass( {
 	},
 
 	render() {
-		let children = [];
-		children.push( this.props.children );
-		if ( this.props.icon ) {
-			children.push( <Gridicon icon="external" size={ 18 } /> );
-		}
-
 		const classes = classnames( 'external-link', this.props.className, {
 			'has-icon': !! this.props.icon,
 		} );
@@ -38,6 +32,12 @@ export default React.createClass( {
 			className: classes,
 			rel: 'external'
 		} );
-		return React.createElement( 'a', props, children );
+
+		return (
+			<a { ...props }>
+				{ this.props.children }
+				{ this.props.icon ? <Gridicon icon="external" size={ 18 } /> : null }
+			</a>
+		);
 	}
 } );

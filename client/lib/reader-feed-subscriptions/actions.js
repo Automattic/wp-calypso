@@ -105,7 +105,9 @@ var FeedSubscriptionActions = {
 		callback = inflight.requestTracker( requestKey, function( error, data ) {
 			FeedSubscriptionStore.setIsFetching( false );
 			FeedSubscriptionActions.receiveFollowingList( error, data );
-			cb && cb( error, data );
+			if ( cb ) {
+				cb( error, data );
+			}
 		} );
 
 		FeedSubscriptionStore.setIsFetching( true );
@@ -131,12 +133,13 @@ var FeedSubscriptionActions = {
 
 	/**
 	* Fetch next page of followed feeds via the REST API
-	*/
+	*
+	* @param cb callback to invoke when complete
+	**/
 	fetchNextPage: function( cb ) {
 		var params;
 
 		if ( FeedSubscriptionStore.isLastPage() ) {
-			onComplete();
 			return;
 		}
 

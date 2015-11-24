@@ -1,41 +1,99 @@
 /**
  * External Dependencies
  */
+import page from 'page';
 import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import { purchaseTitle } from 'lib/purchases';
+import Button from 'components/button';
+import { cancelPurchase } from 'lib/upgrades/actions';
+import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import notices from 'notices';
+import paths from 'me/purchases/paths';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
 		purchase: React.PropTypes.object.isRequired
 	},
 
-	render() {
-		return (
-			<button type="button"
-				onClick={ this.props.onClick }
-				className="button">
-				{ this.renderText() }
-			</button>
-		);
+	getInitialState() {
+		return {
+			disabled: false
+		};
 	},
 
-	renderText() {
-		const { isRefundable } = this.props.purchase,
-			productName = purchaseTitle( this.props.purchase );
+	goToCancelConfirmation() {
+		const { domain, id } = this.props.purchase;
 
-		if ( isRefundable ) {
-			return this.translate( 'Cancel and Refund %(productName)s', {
-				args: { productName }
-			} );
+		page( paths.confirmCancelPurchase( domain, id ) );
+	},
+
+	cancelPurchase() {
+		const { purchase } = this.props,
+			{ id } = purchase;
+
+		this.toggleDisabled();
+
+		cancelPurchase( id, ( success ) => {
+			const purchaseName = getName( purchase ),
+				subscriptionEndDate = getSubscriptionEndDate( purchase );
+
+			if ( success ) {
+				notices.success( this.translate(
+					'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.',
+					{
+						args: {
+							purchaseName,
+							subscriptionEndDate
+						}
+					}
+				), { persistent: true } );
+				page( paths.list() );
+			} else {
+				notices.error( this.translate(
+					'There was a problem canceling %(purchaseName)s. ' +
+					'Please try again later or contact support.',
+					{
+						args: { purchaseName }
+					}
+				) );
+				this.toggleDisabled();
+			}
+		} );
+	},
+
+	toggleDisabled() {
+		this.setState( {
+			disabled: ! this.state.disabled
+		} );
+	},
+
+	render() {
+		const { purchase } = this.props,
+			purchaseName = getName( purchase );
+
+		if ( isRefundable( purchase ) ) {
+			return (
+				<Button type="button"
+					onClick={ this.goToCancelConfirmation }>
+					{ this.translate( 'Cancel and Refund %(purchaseName)s', {
+						args: { purchaseName }
+					} ) }
+				</Button>
+			);
 		}
 
-		return this.translate( 'Cancel %(productName)s', {
-			args: { productName }
-		} );
+		return (
+			<Button type="button"
+				disabled={ this.state.disabled }
+				onClick={ this.cancelPurchase }>
+				{ this.translate( 'Cancel %(purchaseName)s', {
+					args: { purchaseName }
+				} ) }
+			</Button>
+		);
 	}
 } );
 

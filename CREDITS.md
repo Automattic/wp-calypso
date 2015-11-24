@@ -1,7 +1,7 @@
 Credits
 =======
 
-This project makes use of Open Source components. Below is a list of these components included in this project's source code, and their license information. This project also uses NPM packages, released under open licenses by NPM, see [package.json](/package.json). Source code and license information for each of these packages is available at https://npmjs.org. Many thanks to all of the original authors!
+This project makes use of Open Source components. Below is a list of these components included in this project's source code, and their license information. This project also uses js packages released by NPM, see [package.json](/package.json). Source code and license information for each of these packages is available at https://npmjs.org. Many thanks to all of the original authors!
 
 ### https://github.com/thoughtbot/bourbon
 #### assets/stylesheets/shared/\_functions.scss

@@ -2,6 +2,7 @@ PostSchedule
 ============
 
 This React component implements a small calendar (shown by month) which allows us to select a date through its interface. PostSchedule can be localized to display days/events in a given timezone by passing in a `timezone` or `gmtOffset` properties.
+
 ---
 
 ## Example Usage
