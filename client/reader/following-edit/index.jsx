@@ -26,7 +26,9 @@ const Main = require( 'components/main' ),
 	smartSetState = require( 'lib/react-smart-set-state' ),
 	escapeRegexp = require( 'escape-string-regexp' ),
 	FollowingEditSortControls = require( './sort-controls' ),
-	FollowingEditHelper = require( 'reader/following-edit/helper' );
+	FollowingEditHelper = require( 'reader/following-edit/helper' ),
+	SectionHeader = require( 'components/section-header' ),
+	SectionHeaderButton = require( 'components/section-header/button' );
 
 const initialLoadFeedCount = 20;
 
@@ -333,12 +335,20 @@ var FollowingEdit = React.createClass( {
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
+
+				<SectionHeader label={ this.translate( 'Followed Sites' ) } count={ 30 }>
+					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+					<SectionHeaderButton onClick={ function() { console.log( 'adding' ); } }>
+						{ this.translate( 'Follow Site' ) }
+					</SectionHeaderButton>
+				</SectionHeader>
+
 				<FollowingEditSubscribeForm
 					onSearch={ this.handleNewSubscriptionSearch }
 					onSearchClose={ this.handleNewSubscriptionSearchClose }
 					onFollow={ this.handleFollow }
 					initialSearchString={ this.props.initialFollowUrl } />
-				<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+				
 				<Search
 					key="existingFeedSearch"
 					autoFocus={ false }
@@ -348,6 +358,7 @@ var FollowingEdit = React.createClass( {
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search ?
 					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
+				
 				<InfiniteList role="main"
 					items={ subscriptionsToDisplay }
 					lastPage={ this.state.isLastPage }

@@ -128,19 +128,21 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		return (
 			<div className="following-edit__subscribe-form">
-				<Gridicon icon="add-outline" onClick={ this.handleFollowIconClick } />
-				<Search
-					key="newSubscriptionSearch"
-					onSearch={ this.handleSearch }
-					onSearchClose={ this.handleSearchClose }
-					placeholder={ this.translate( 'Enter a site URL to follow', { context: 'field placeholder' } ) }
-					delaySearch={ false }
-					ref="followingEditSubscriptionSearch"
-					onKeyDown={ this.handleKeyDown }
-					disableAutocorrect={ true }
-					autoFocus={ true }
-					initialValue={ this.props.initialSearchString }
-				/>
+				<div className="following-edit__input">
+					<Gridicon icon="add-outline" onClick={ this.handleFollowIconClick } />
+					<Search
+						key="newSubscriptionSearch"
+						onSearch={ this.handleSearch }
+						onSearchClose={ this.handleSearchClose }
+						placeholder={ this.translate( 'Enter a site URL to follow', { context: 'field placeholder' } ) }
+						delaySearch={ false }
+						ref="followingEditSubscriptionSearch"
+						onKeyDown={ this.handleKeyDown }
+						disableAutocorrect={ true }
+						autoFocus={ true }
+						initialValue={ this.props.initialSearchString }
+					/>
+				</div>
 				{ searchResult }
 			</div>
 		);
