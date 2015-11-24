@@ -53,6 +53,7 @@ body {
 	padding: 0;
 	text-align: inherit;
 	border-color: lighten( $gray, 20% );
+	z-index: 100300; // Appear above dialog
 
 	.webui-popover-title {
 	  background-color: lighten( $gray, 20% );
