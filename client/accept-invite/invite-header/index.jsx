@@ -36,7 +36,7 @@ export default React.createClass( {
 		switch ( get( this.props, 'invite.meta.role' ) ) {
 			case 'administrator':
 				text = this.translate(
-					'{{inviterName/}} invited you to administer:', {
+					'{{inviterName/}} invited you to manage:', {
 						components: {
 							inviterName: inviterName
 						}
