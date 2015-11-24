@@ -1,26 +1,24 @@
-
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	MasterbarNewPost = require( 'layout/masterbar-new-post' ),
-	layoutFocus = require( 'lib/layout-focus' ),
-	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' ),
-	Gravatar = require( 'components/gravatar' );
+import config from 'config';
+import MasterbarNewPost from 'layout/masterbar-new-post';
+import layoutFocus from 'lib/layout-focus';
+import SiteStatsStickyLink from 'components/site-stats-sticky-link';
+import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
-
-	displayName: 'Masterbar',
+export default React.createClass( {
+	displayName: 'MasterbarSectionsMenu',
 
 	defaultNoticon: '\uf800',
 
-	itemLinkClass: function( section, classes ) {
+	itemLinkClass( section, classes ) {
 		classes = classes || {};
 
 		classes.active = ( section === this.props.section && ! this.props.showNotes );
@@ -28,15 +26,15 @@ module.exports = React.createClass( {
 		return classNames( classes );
 	},
 
-	focusSidebar: function() {
+	focusSidebar() {
 		layoutFocus.setNext( 'sidebar' );
 	},
 
-	focusContent: function() {
+	focusContent() {
 		layoutFocus.setNext( 'content' );
 	},
 
-	renderNotificationsLink: function() {
+	renderNotificationsLink() {
 		var linkTitle = this.translate( 'Manage your notifications', {
 				textOnly: true
 			} ),
@@ -59,7 +57,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	wordpressIcon: function() {
+	wordpressIcon() {
 		// WP icon replacement for "horizon" environment
 		if ( config( 'hostname' ) === 'horizon.wordpress.com' ) {
 			return <span className="noticon noticon-horizon" />;
@@ -68,7 +66,7 @@ module.exports = React.createClass( {
 		return <span className="noticon noticon-wordpress" />;
 	},
 
-	render: function() {
+	render() {
 		var notificationsClasses = 'notifications',
 			notificationsLink = this.renderNotificationsLink(),
 			readerUrl = '//wordpress.com/',
