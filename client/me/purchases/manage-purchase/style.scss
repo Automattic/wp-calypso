@@ -55,6 +55,21 @@
 		.manage-purchase__title {
 			width: 60%;
 		}
+
+		@include breakpoint( "<660px" ) {
+			.manage-purchase__detail {
+				width: 25%;
+			}
+
+			.manage-purchase__detail-label {
+				width: 70%;
+			}
+
+			.manage-purchase__detail,
+			.manage-purchase__detail-label {
+				height: 25px;
+			}
+		}
 	}
 }
 
