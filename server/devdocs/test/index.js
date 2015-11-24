@@ -10,19 +10,27 @@ import { expect } from 'chai';
 /**
  * Test setup
  */
-mockery.registerMock( 'config', {
-	isEnabled: function() {
-		return true;
-	}
+mockery.enable( {
+	warnOnReplace: false,
+	warnOnUnregistered: false
 } );
-mockery.registerMock( 'server/devdocs/search-index', {
-	index: {} // for speed - the real search index is very large
+mockery.registerMock( 'config', {
+	isEnabled: () => true
+} );
+// for speed - the real search index is very large
+mockery.registerMock( 'devdocs/search-index', {
+	index: {}
+} );
+mockery.registerMock( 'lunr', {
+	Index: {
+		load: () => null
+	}
 } );
 
 /**
  * Internal dependencies
  */
-import devdocs from '../';
+const devdocs = require( '../' );
 
 /**
  * Module variables
@@ -51,6 +59,8 @@ describe( 'devdocs server', () => {
 	} );
 
 	after( done => {
+		mockery.deregisterAll();
+		mockery.disable();
 		server.close( done );
 	} );
 
