@@ -16,18 +16,13 @@ import paths from '../paths';
 import { isRefundable } from 'lib/purchases';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import SimpleNotice from 'notices/simple-notice';
+import { goToManagePurchase, isDataLoading } from '../utils';
 
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {
 		return {
 			disabled: false
 		};
-	},
-
-	goToManagePurchase() {
-		const { domain, id } = this.props.selectedPurchase.data;
-
-		page( paths.managePurchase( domain, id ) );
 	},
 
 	cancel() {
@@ -42,10 +37,6 @@ const CancelPrivateRegistration = React.createClass( {
 				page( paths.managePurchaseDestination( domain, id, 'canceled-private-registration' ) );
 			}
 		} );
-	},
-
-	isDataLoading() {
-		return ( ! this.props.selectedSite || ! this.props.selectedPurchase.hasLoadedFromServer );
 	},
 
 	renderDescriptionText() {
@@ -105,7 +96,7 @@ const CancelPrivateRegistration = React.createClass( {
 
 	render() {
 		const classes = classNames( 'cancel-private-registration__card', {
-			'is-placeholder': this.isDataLoading()
+			'is-placeholder': isDataLoading( this.props )
 		} );
 
 		let notice,
@@ -122,7 +113,7 @@ const CancelPrivateRegistration = React.createClass( {
 				</p>
 			);
 
-		if ( ! this.isDataLoading() ) {
+		if ( ! isDataLoading( this.props ) ) {
 			notice = this.renderNotice();
 			button = this.renderButton();
 			descriptionText = this.renderDescriptionText();
@@ -132,7 +123,7 @@ const CancelPrivateRegistration = React.createClass( {
 		return (
 
 			<Main className="manage-purchase__detail">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Cancel Private Registration' ) }
 				</HeaderCake>
 				{ notice }
