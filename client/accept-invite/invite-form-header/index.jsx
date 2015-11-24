@@ -50,7 +50,7 @@ export default React.createClass( {
 		switch ( this.getRole() ) {
 			case 'administrator':
 				title = this.translate(
-					'Sign up to become an administrator of {{siteLink/}}.', {
+					'Sign up to start managing {{siteLink/}}.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -59,7 +59,7 @@ export default React.createClass( {
 				break;
 			case 'editor':
 				title = this.translate(
-					'Sign up to become an editor of {{siteLink/}}.', {
+					'Sign up to start editing {{siteLink/}}.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -68,7 +68,7 @@ export default React.createClass( {
 				break;
 			case 'author':
 				title = this.translate(
-					'Sign up to become an author of {{siteLink/}}.', {
+					'Sign up to start writing for {{siteLink/}}.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -77,7 +77,7 @@ export default React.createClass( {
 				break;
 			case 'contributor':
 				title = this.translate(
-					'Sign up to become a contributor to {{siteLink/}}.', {
+					'Sign up to start contributing to {{siteLink/}}.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -86,7 +86,7 @@ export default React.createClass( {
 				break;
 			case 'subscriber':
 				title = this.translate(
-					'Sign up to become a subscriber of {{siteLink/}}.', {
+					'Sign up to start your subscription to {{siteLink/}}.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -95,7 +95,7 @@ export default React.createClass( {
 				break;
 			case 'follower':
 				title = this.translate(
-					'Sign up to become a follower of {{siteLink/}}.', {
+					'Sign up to start following {{siteLink/}} in the WordPress.com reader.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -104,7 +104,7 @@ export default React.createClass( {
 				break;
 			default:
 				title = this.translate(
-					'Sign up to join {{siteLink/}} with a role of: {{strong}}%(siteRole)s{{/strong}}.', {
+					'Sign up to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}.', {
 						args: {
 							siteRole: this.getRole()
 						},
@@ -125,7 +125,7 @@ export default React.createClass( {
 		switch ( this.getRole() ) {
 			case 'administrator':
 				title = this.translate(
-					'Would you like to become an administrator of {{siteLink/}}?', {
+					'Would you like to start managing {{siteLink/}}?', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -134,7 +134,7 @@ export default React.createClass( {
 				break;
 			case 'editor':
 				title = this.translate(
-					'Would you like to become an editor of {{siteLink/}}?', {
+					'Would you like to start editing {{siteLink/}}?', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -143,7 +143,7 @@ export default React.createClass( {
 				break;
 			case 'author':
 				title = this.translate(
-					'Would you like to become an author of {{siteLink/}}?', {
+					'Would you like to start writing for {{siteLink/}}?', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -152,7 +152,7 @@ export default React.createClass( {
 				break;
 			case 'contributor':
 				title = this.translate(
-					'Would you like to become a contributor to {{siteLink/}}?', {
+					'Would you like to start contributing to {{siteLink/}}?', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -161,7 +161,7 @@ export default React.createClass( {
 				break;
 			case 'subscriber':
 				title = this.translate(
-					'Would you like to become a subscriber of {{siteLink/}}?', {
+					'Would you like to start following {{siteLink/}} in the WordPress.com reader?', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -179,7 +179,7 @@ export default React.createClass( {
 				break;
 			default:
 				title = this.translate(
-					'Would you like to join {{siteLink/}} with a role of: {{strong}}%(siteRole)s{{/strong}}?', {
+					'Would you like to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}?', {
 						args: {
 							siteRole: this.getRole()
 						},

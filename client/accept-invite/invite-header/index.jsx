@@ -33,10 +33,12 @@ export default React.createClass( {
 			</strong>
 		);
 
-		switch ( get( this.props, 'invite.meta.role' ) ) {
+		const role = get( this.props, 'invite.meta.role' );
+
+		switch ( role ) {
 			case 'administrator':
 				text = this.translate(
-					'{{inviterName/}} invited you to manage:', {
+					'{{inviterName/}} invited you to be an administrator on:', {
 						components: {
 							inviterName: inviterName
 						}
@@ -45,7 +47,7 @@ export default React.createClass( {
 				break;
 			case 'editor':
 				text = this.translate(
-					'{{inviterName/}} invited you to edit:', {
+					'{{inviterName/}} invited you to be an editor on:', {
 						components: {
 							inviterName: inviterName
 						}
@@ -63,7 +65,7 @@ export default React.createClass( {
 				break;
 			case 'contributor':
 				text = this.translate(
-					'{{inviterName/}} invited you to contribute to:', {
+					'{{inviterName/}} invited you to be a contributor on:', {
 						components: {
 							inviterName: inviterName
 						}
@@ -90,7 +92,10 @@ export default React.createClass( {
 				break
 			default:
 				text = this.translate(
-					'{{inviterName/}} invited you to join:', {
+					'{{inviterName/}} invited you to be: %(invitedRole)s on:', {
+						args: {
+							invitedRole: role
+						},
 						components: {
 							inviterName: inviterName
 						}
