@@ -1,30 +1,28 @@
+
 .plugin-meta__banner {
-	margin-bottom: 0;
-}
-
-.plugin-meta__banner-background {
 	position: relative;
-	top: -24px;
-	left: -24px;
-	display: inline-block;
-	width: calc(100% + 46px);
-
-	@include breakpoint( "<480px" ) {
-		top: -16px;
+		top: 0;
 		left: -16px;
-		max-width: calc(100% + 32px);
+	width: calc( 100% + 32px );
+	overflow: hidden;
+	margin-top: -16px;
+	margin-bottom: 16px;
+	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
+	background: rgba( lighten( $gray, 30 ), 0.3 );
+
+	@include breakpoint( ">480px" ) {
+		left: -24px;
+		width: calc( 100% + 48px );
+		margin-top: -24px;
+		margin-bottom: 24px;
 	}
-}
 
-.plugin-meta__banner-background {
-	padding-bottom: 34.8%;
-	background: lighten( $gray, 20 );
-}
-
-.plugin-meta__banner-image {
-	position: absolute;
-	top: 0;
-	left: 0;
+	img {
+		display: block;
+		width: auto;
+		max-height: 70vh;
+		margin: 0 auto;
+	}
 }
 
 .plugin-meta__information {

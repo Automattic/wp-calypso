@@ -32,7 +32,6 @@ module.exports = React.createClass( {
 	displayBanner: function() {
 		if ( this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
 			return <div className="plugin-meta__banner">
-						<div className="plugin-meta__banner-background"></div>
 						<img className="plugin-meta__banner-image" src={ this.props.plugin.banners.high || this.props.plugin.banners.low }/>
 					</div>;
 		}
@@ -69,9 +68,9 @@ module.exports = React.createClass( {
 
 	renderSettingsLink: function() {
 		if ( ! this.props.plugin ||
-			! this.props.plugin.wp_admin_settings_page_url ||
-			! this.props.plugin.active ||
-			! this.props.selectedSite ) {
+				! this.props.plugin.wp_admin_settings_page_url ||
+				! this.props.plugin.active ||
+				! this.props.selectedSite ) {
 			return;
 		}
 
