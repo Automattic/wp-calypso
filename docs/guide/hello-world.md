@@ -49,6 +49,11 @@ touch client/my-sites/hello-world/controller.js
 There you'll write your controller with a function called `helloWorld`:
 
 ```javascript
+/**
+ * External Dependencies
+ */
+var React = require( 'react' );
+
 const Controller = {
 	helloWorld() {
 		console.log( 'Hello, world?' );
