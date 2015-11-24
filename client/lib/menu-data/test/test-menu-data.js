@@ -14,7 +14,7 @@ var chai = require( 'chai' ),
 	find = require( 'lodash/collection/find' ),
 	last = require( 'lodash/array/last' ),
 	cloneDeep = require( 'lodash/lang/cloneDeep' ),
-	deepGet = require( 'lodash-deep' ).deepGet,
+	get = require( 'lodash/object/get' ),
 	deepMapValues = require( 'lodash-deep' ).deepMapValues,
 	fixtures = require( './fixtures' );
 
@@ -522,7 +522,7 @@ describe( 'MenuData', function() {
 
 			deepMapValues( menu.items, function( value, propertyPath ) {
 				if ( 'id' === last( propertyPath ) ) {
-					expect( value ).to.not.equal( deepGet( originalMenu.items, propertyPath ) );
+					expect( value ).to.not.equal( get( originalMenu.items, propertyPath ) );
 				}
 			});
 		} );
@@ -534,7 +534,7 @@ describe( 'MenuData', function() {
 			deepMapValues( menu.items, function( value, propertyPath ) {
 				if ( 'server_id' === propertyPath.pop() ) {
 					propertyPath.push( 'id' );
-					expect( value ).to.equal( deepGet( originalMenu.items, propertyPath ) );
+					expect( value ).to.equal( get( originalMenu.items, propertyPath ) );
 				}
 			});
 		} );
@@ -555,7 +555,7 @@ describe( 'MenuData', function() {
 
 			deepMapValues( this.menuData.data.menus[0].items, function( value, propertyPath ) {
 				if ( 'id' === last( propertyPath ) ) {
-					expect( value ).to.equal( deepGet( originalMenu.items, propertyPath ) );
+					expect( value ).to.equal( get( originalMenu.items, propertyPath ) );
 				}
 			});
 		} );
