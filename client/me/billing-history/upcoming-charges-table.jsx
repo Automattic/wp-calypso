@@ -17,10 +17,11 @@ module.exports = React.createClass( {
 			<TransactionsTable
 				{ ...this.props }
 				initialFilter={ { date: { newest: 20 } } }
-				description={ function() {
+				description={ function( { domain, id } = transaction ) {
+					const link = '/purchases/' + domain + '/' + id
 					return (
 						<div className="transaction-links">
-							<a href="/my-upgrades">
+							<a href={ link }>
 								{ this.translate( 'Manage Upgrade' ) }
 							</a>
 						</div>

@@ -58,7 +58,7 @@ module.exports = React.createClass( {
 									'A complete history of all billing transactions for your WordPress.com account. If you are looking to add or cancel a plan go to {{link}}My Upgrades{{/link}}.',
 									{
 										components: {
-											link: <a href="//wordpress.com/my-upgrades/" rel="external" onClick={ this.recordClickEvent( 'My Upgrades Link on Billing History' ) }/>
+											link: <a href="/purchases" onClick={ this.recordClickEvent( 'My Upgrades Link on Billing History' ) }/>
 										}
 									}
 								)
