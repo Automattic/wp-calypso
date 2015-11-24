@@ -26,7 +26,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			isOrdering: false
+			isEditing: false
 		};
 	},
 
@@ -43,13 +43,13 @@ export default React.createClass( {
 		return (
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
 				<SegmentedControlItem
-					selected={ ! this.state.isOrdering }
-					onClick={ () => this.setState( { isOrdering: false } ) }>
+					selected={ ! this.state.isEditing }
+					onClick={ () => this.setState( { isEditing: false } ) }>
 					{ this.translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
-					selected={ this.state.isOrdering }
-					onClick={ () => this.setState( { isOrdering: true } ) }>
+					selected={ this.state.isEditing }
+					onClick={ () => this.setState( { isEditing: true } ) }>
 					{ this.translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
@@ -63,7 +63,7 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( this.state.isOrdering ) {
+		if ( this.state.isEditing ) {
 			return (
 				<EditorMediaModalGalleryEdit
 					site={ site }
