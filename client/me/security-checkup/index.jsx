@@ -58,11 +58,6 @@ module.exports = React.createClass( {
 				<br/>
 				<br/>
 				<br/>
-				<br/>
-				<br/>
-				<br/>
-				<br/>
-				<br/>
 				<FormExample />
 
 			</Main>

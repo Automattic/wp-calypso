@@ -68,30 +68,31 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderRecoveryEmails: function() {
+	getRecoveryEmails: function() {
 		if ( this.state.recoveryEmails.loading ) {
 			return(
-				<div>
-					<FormSectionHeading>Recovery emails placeholder</FormSectionHeading>
-				</div>
+				<p>No recovery emails</p>
 			);
 		}
 
 		if ( isEmpty( this.state.recoveryEmails.data ) ) {
 			return(
-				<div>
-					<FormSectionHeading>Recovery emails</FormSectionHeading>
-					<p>No recovery emails</p>
-				</div>
+				<p>No recovery emails</p>
 			);
 		}
 
 		return (
+			<ul>
+				{ this.state.recoveryEmails.data.map( recoveryEmail => this.renderRecoveryEmail( recoveryEmail ) ) }
+			</ul>
+		);
+	},
+
+	renderRecoveryEmails: function() {
+		return(
 			<div>
-				<FormSectionHeading>Recovery emails</FormSectionHeading>
-				<ul>
-					{ this.state.recoveryEmails.data.map( recoveryEmail => this.renderRecoveryEmail( recoveryEmail ) ) }
-				</ul>
+				<FormSectionHeading>Recovery emails placeholder</FormSectionHeading>
+				{ this.getRecoveryEmails() }
 			</div>
 		);
 	},
