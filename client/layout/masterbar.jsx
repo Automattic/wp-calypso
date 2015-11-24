@@ -114,8 +114,20 @@ export default React.createClass( {
 
 	renderMenu() {
 		if ( this.props.user ) {
-			return <MasterbarSectionsMenu ref="masterbar" user={ this.props.user } section={ this.props.section } sites={ this.props.sites } toggleNotesFrame={ this.toggleNotesFrame } showNotes={ this.state.showNotes } newNote={ this.state.newNote } animationState={ this.state.animationState } />;
+			return (
+				<MasterbarSectionsMenu
+					ref="masterbar"
+					user={ this.props.user }
+					section={ this.props.section }
+					sites={ this.props.sites }
+					toggleNotesFrame={ this.toggleNotesFrame }
+					showNotes={ this.state.showNotes }
+					newNote={ this.state.newNote }
+					animationState={ this.state.animationState }
+				/>
+			);
 		}
+
 		return <MasterbarLoggedOutMenu />;
 	},
 
@@ -139,7 +151,7 @@ export default React.createClass( {
 
 		return (
 			<header id="header" className={ masterbarClass }>
-				<div className="wpcom-navigation site-navigation" role="navigation">
+				<div className="masterbar__navigation" role="navigation">
 					{ this.renderMenu() }
 				</div>
 				{ this.renderNotifications() }

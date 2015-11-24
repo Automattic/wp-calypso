@@ -23,10 +23,6 @@ $autobar-height: 20px;
 		backface-visibility: hidden;
 	}
 
-	.wpcom-navigation {
-		padding: 0 12px 0 0;
-	}
-
 	#wpnt-notes-panel {
 		top: 48px;
 	}
@@ -93,7 +89,7 @@ $autobar-height: 20px;
 
 	&.collapsible {
 		@include breakpoint( "<660px" ) {
-			.wpcom-navigation {
+			.masterbar__navigation {
 				padding: 0;
 			}
 
@@ -281,6 +277,10 @@ $autobar-height: 20px;
 			color: rgba(255, 255, 255, 0.6);
 		}
 	}
+}
+
+.masterbar__navigation {
+	padding: 0 12px 0 0;
 }
 
 @keyframes unread-indication {
