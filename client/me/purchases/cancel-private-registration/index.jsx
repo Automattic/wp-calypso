@@ -16,18 +16,13 @@ import paths from '../paths';
 import { isRefundable } from 'lib/purchases';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
 import SimpleNotice from 'notices/simple-notice';
+import { goToManagePurchase } from '../helper';
 
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {
 		return {
 			disabled: false
 		};
-	},
-
-	goToManagePurchase() {
-		const { domain, id } = this.props.selectedPurchase.data;
-
-		page( paths.managePurchase( domain, id ) );
 	},
 
 	cancel() {
@@ -132,7 +127,7 @@ const CancelPrivateRegistration = React.createClass( {
 		return (
 
 			<Main className="manage-purchase__detail">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Cancel Private Registration' ) }
 				</HeaderCake>
 				{ notice }

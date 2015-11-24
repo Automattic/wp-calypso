@@ -11,7 +11,7 @@ import EditPaymentMethodCreditCard from './credit-card';
 import HeaderCake from 'components/header-cake';
 import { isPaidWithCreditCard, isPaidWithPaypal } from 'lib/purchases';
 import Main from 'components/main';
-import purchasesMixin from '../../purchases-mixin';
+import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/helper';
 
 const EditPaymentMethod = React.createClass( {
 	propTypes: {
@@ -19,10 +19,8 @@ const EditPaymentMethod = React.createClass( {
 		selectedSite: React.PropTypes.object.isRequired
 	},
 
-	mixins: [ purchasesMixin ],
-
 	render() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return (
 				<Main className="edit-payment-method">
 					{ this.translate( 'Loading…' ) }
@@ -30,11 +28,11 @@ const EditPaymentMethod = React.createClass( {
 			);
 		}
 
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		return (
 			<Main className="edit-payment-method">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Edit Payment Method' ) }
 				</HeaderCake>
 

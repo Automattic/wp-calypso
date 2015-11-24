@@ -11,15 +11,13 @@ import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import FoldableCard from 'components/foldable-card';
 import notices from 'notices';
-import purchasesMixin from '../../purchases-mixin';
+import { getPurchase } from 'me/purchases/helper';
 
 const EditPaymentMethodPaypal = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
 	},
-
-	mixins: [ purchasesMixin ],
 
 	getInitialState() {
 		return {
@@ -72,7 +70,7 @@ const EditPaymentMethodPaypal = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				{ this.translate( 'Account Name: %(name)s', { args: { name: this.getPurchase().payment.name } } ) }
+				{ this.translate( 'Account Name: %(name)s', { args: { name: getPurchase( this.props ).payment.name } } ) }
 			</div>
 		);
 	},
@@ -82,7 +80,7 @@ const EditPaymentMethodPaypal = React.createClass( {
 			<FoldableCard header={ this.renderHeader() }>
 				<div className="edit-payment-method__details is-paypal">
 					<strong>{ this.translate( 'Name on Account', { context: 'Input field description', comment: 'PayPal account' } ) }</strong>
-					<span>{ this.getPurchase().payment.name }</span>
+					<span>{ getPurchase( this.props ).payment.name }</span>
 				</div>
 
 				<div className="edit-payment-method__actions">

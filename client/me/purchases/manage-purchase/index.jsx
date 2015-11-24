@@ -44,7 +44,7 @@ import {
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
 } from 'lib/purchases';
-import purchasesMixin from '../purchases-mixin';
+import { getPurchase, goToList, isDataLoading } from '../helper';
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
@@ -53,8 +53,6 @@ const ManagePurchase = React.createClass( {
 		selectedSite: React.PropTypes.object,
 		destinationType: React.PropTypes.string
 	},
-
-	mixins: [ purchasesMixin ],
 
 	isDataFetchingAfterRenewal() {
 		return 'thank-you' === this.props.destinationType && this.props.selectedPurchase.isFetching;
@@ -65,10 +63,10 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPurchaseExpiringNotice() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 		let noticeStatus = 'is-info';
 
-		if ( this.isDataLoading() || ! isExpiring( purchase ) || this.isDataFetchingAfterRenewal() ) {
+		if ( isDataLoading( this.props ) || ! isExpiring( purchase ) || this.isDataFetchingAfterRenewal() ) {
 			return null;
 		}
 
@@ -97,11 +95,11 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderCreditCardExpiringNotice() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return null;
 		}
 
-		const purchase = this.getPurchase(),
+		const purchase = getPurchase( this.props ),
 			{ domain, id, payment: { creditCard } } = purchase;
 
 		if ( isExpired( purchase ) || isOneTimePurchase( purchase ) || isIncludedWithPlan( purchase ) ) {
@@ -134,11 +132,11 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPathNotice() {
-		if ( this.isDataLoading() || ! this.props.destinationType ) {
+		if ( isDataLoading( this.props ) || ! this.props.destinationType ) {
 			return;
 		}
 
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 		let text;
 
 		if ( 'thank-you' === this.props.destinationType ) {
@@ -171,7 +169,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	handleRenew() {
-		const purchase = this.getPurchase(),
+		const purchase = getPurchase( this.props ),
 			cartItem = cartItems.getRenewalItemFromProduct( purchase, {
 				domain: purchase.meta
 			} );
@@ -204,7 +202,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPrice() {
-		const purchase = this.getPurchase(),
+		const purchase = getPurchase( this.props ),
 			{ amount, currencyCode, currencySymbol } = purchase;
 
 		if ( isOneTimePurchase( purchase ) ) {
@@ -230,7 +228,7 @@ const ManagePurchase = React.createClass( {
 
 	renderProductLink() {
 		const { selectedSite } = this.props,
-			purchase = this.getPurchase();
+			purchase = getPurchase( this.props );
 		let url, text;
 
 		if ( isPlan( purchase ) ) {
@@ -265,9 +263,9 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPaymentInfo() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return <span className="manage-purchase__detail" />;
 		}
 
@@ -298,22 +296,22 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPaymentDetails() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
-		if ( ! this.isDataLoading() && isOneTimePurchase( purchase ) ) {
+		if ( ! isDataLoading( this.props ) && isOneTimePurchase( purchase ) ) {
 			return null;
 		}
 
 		let paymentDetails = (
 			<span>
 				<em className="manage-purchase__detail-label">
-					{ this.isDataLoading() ? null : this.translate( 'Payment method' ) }
+					{ isDataLoading( this.props ) ? null : this.translate( 'Payment method' ) }
 				</em>
 				{ this.renderPaymentInfo() }
 			</span>
 		);
 
-		if ( this.isDataLoading() || ! showEditPaymentDetails( purchase ) ) {
+		if ( isDataLoading( this.props ) || ! showEditPaymentDetails( purchase ) ) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -333,7 +331,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderRenewButton() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		if ( ! isRenewable( purchase ) || isExpired( purchase ) || isExpiring( purchase ) || this.isDataFetchingAfterRenewal() ) {
 			return null;
@@ -345,7 +343,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderExpiredRenewNotice() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		if ( ! isRenewable( purchase ) && ! isRedeemable( purchase ) ) {
 			return null;
@@ -368,7 +366,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderRenewsOrExpiresOnLabel() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		if ( ! this.isDataFetchingAfterRenewal() && ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) ) {
 			return this.translate( 'Expires on' );
@@ -382,7 +380,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderRenewsOrExpiresOn() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		if ( this.isDataFetchingAfterRenewal() ) {
 			return null;
@@ -418,7 +416,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderEditPaymentMethodNavItem() {
-		const purchase = this.getPurchase(),
+		const purchase = getPurchase( this.props ),
 			{ domain, id, payment } = purchase;
 
 		if ( showEditPaymentDetails( purchase ) ) {
@@ -433,7 +431,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderCancelPurchaseNavItem() {
-		const purchase = this.getPurchase(),
+		const purchase = getPurchase( this.props ),
 			{ domain, id } = purchase;
 
 		if ( isExpired( purchase ) || ! isCancelable( purchase ) ) {
@@ -456,7 +454,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderCancelPrivateRegistration() {
-		const purchase = this.getPurchase(),
+		const purchase = getPurchase( this.props ),
 			{ domain, id } = purchase;
 
 		if ( isExpired( purchase ) || ! hasPrivateRegistration( purchase ) ) {
@@ -488,12 +486,12 @@ const ManagePurchase = React.createClass( {
 			cancelPurchaseNavItem,
 			cancelPrivateRegistrationNavItem;
 
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			classes = 'manage-purchase__info is-placeholder';
 			editPaymentMethodNavItem = <VerticalNavItem isPlaceholder />;
 			cancelPurchaseNavItem = <VerticalNavItem isPlaceholder />;
 		} else {
-			purchase = this.getPurchase();
+			purchase = getPurchase( this.props );
 			classes = classNames( 'manage-purchase__info', {
 				'is-expired': purchase && isExpired( purchase )
 			} );
@@ -532,7 +530,7 @@ const ManagePurchase = React.createClass( {
 					<ul className="manage-purchase__meta">
 						<li>
 							<em className="manage-purchase__detail-label">
-								{ this.isDataLoading() ? null : this.translate( 'Price' ) }
+								{ isDataLoading( this.props ) ? null : this.translate( 'Price' ) }
 							</em>
 							<span className="manage-purchase__detail">{ price }</span>
 						</li>
@@ -557,7 +555,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	render() {
-		if ( this.props.selectedPurchase.hasLoadedFromServer && ! this.getPurchase() ) {
+		if ( this.props.selectedPurchase.hasLoadedFromServer && ! getPurchase( this.props ) ) {
 			// TODO: redirect to purchases list
 			return null;
 		}
@@ -566,7 +564,7 @@ const ManagePurchase = React.createClass( {
 			<span>
 				{ this.renderPathNotice() }
 				<Main className="manage-purchase">
-					<HeaderCake onClick={ this.goToList }>{ this.translate( 'Manage Purchase' ) }</HeaderCake>
+					<HeaderCake onClick={ goToList }>{ this.translate( 'Manage Purchase' ) }</HeaderCake>
 					{ this.renderNotices() }
 					{ this.renderPurchaseDetail() }
 				</Main>

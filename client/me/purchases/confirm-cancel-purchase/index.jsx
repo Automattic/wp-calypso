@@ -14,15 +14,13 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
-import purchasesMixin from '../purchases-mixin';
+import { goToManagePurchase } from '../helper';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.object
 	},
-
-	mixins: [ purchasesMixin ],
 
 	componentDidMount() {
 		if ( ! this.props.selectedPurchase.hasLoadedFromServer || ! this.props.selectedSite ) {
@@ -76,7 +74,7 @@ const ConfirmCancelPurchase = React.createClass( {
 	render() {
 		return (
 			<Main className="cancel-confirm">
-				<HeaderCake onClick={ this.goToManagePurchase }>{ this.translate( 'Confirm Cancellation' ) }</HeaderCake>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>{ this.translate( 'Confirm Cancellation' ) }</HeaderCake>
 				{ this.renderCard() }
 			</Main>
 		);

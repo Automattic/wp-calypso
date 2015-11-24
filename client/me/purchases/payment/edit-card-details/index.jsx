@@ -19,12 +19,12 @@ import kebabCase from 'lodash/string/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/object/mapKeys';
 import notices from 'notices';
-import purchasesMixin from '../../purchases-mixin';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
 import paths from 'me/purchases/paths';
+import { goToManagePurchase, isDataLoading } from 'me/purchases/helper';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -34,8 +34,6 @@ const EditCardDetails = React.createClass( {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
 	},
-
-	mixins: [ purchasesMixin ],
 
 	getInitialState() {
 		return {
@@ -182,7 +180,7 @@ const EditCardDetails = React.createClass( {
 	},
 
 	render() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return (
 				<Main className="edit-card-details">
 					{ this.translate( 'Loading…' ) }
@@ -192,7 +190,7 @@ const EditCardDetails = React.createClass( {
 
 		return (
 			<Main className="edit-card-details">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }
 				</HeaderCake>
 

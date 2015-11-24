@@ -11,15 +11,13 @@ import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import FoldableCard from 'components/foldable-card';
 import notices from 'notices';
-import purchasesMixin from '../../purchases-mixin';
+import { getPurchase, goToEditCardDetails } from 'me/purchases/helper';
 
 const EditPaymentMethodCreditCard = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
 	},
-
-	mixins: [ purchasesMixin ],
 
 	getInitialState() {
 		return {
@@ -46,7 +44,7 @@ const EditPaymentMethodCreditCard = React.createClass( {
 				{ action: 'cancel', label: this.translate( 'Cancel' ) },
 				{ action: 'delete', label: this.translate( 'Delete Card' ), isPrimary: true }
 			],
-			{ payment: { creditCard } } = this.getPurchase();
+			{ payment: { creditCard } } = getPurchase( this.props );
 
 		return (
 			<Dialog
@@ -74,7 +72,7 @@ const EditPaymentMethodCreditCard = React.createClass( {
 	},
 
 	renderHeader() {
-		const { payment: { creditCard } } = this.getPurchase(),
+		const { payment: { creditCard } } = getPurchase( this.props ),
 			classes = classNames(
 				'edit-payment-method__header',
 				'manage-purchase__payment-detail',
@@ -103,7 +101,7 @@ const EditPaymentMethodCreditCard = React.createClass( {
 	},
 
 	renderCard() {
-		const { payment }  = this.getPurchase();
+		const { payment } = getPurchase( this.props );
 
 		return (
 			<FoldableCard header={ this.renderHeader() }>
@@ -116,7 +114,7 @@ const EditPaymentMethodCreditCard = React.createClass( {
 				</div>
 
 				<div className="edit-payment-method__actions">
-					<Button onClick={ this.goToEditCardDetails }>
+					<Button onClick={ goToEditCardDetails.bind( null, this.props ) }>
 						{ this.translate( 'Edit Card Details', { context: 'Button label', comment: 'Credit card' } ) }
 					</Button>
 

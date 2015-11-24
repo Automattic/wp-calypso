@@ -17,15 +17,13 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
 import { getName, isCancelable } from 'lib/purchases';
-import purchasesMixin from '../purchases-mixin';
+import { getPurchase, goToManagePurchase, isDataLoading } from '../helper';
 
 const CancelPurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object
 	},
-
-	mixins: [ purchasesMixin ],
 
 	componentDidMount() {
 		this.ensurePageCanLoad();
@@ -36,9 +34,9 @@ const CancelPurchase = React.createClass( {
 	},
 
 	render() {
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
-		if ( this.isDataLoading() || ! purchase ) {
+		if ( isDataLoading( this.props ) || ! purchase ) {
 			return (
 				<Main className="cancel-purchase">
 					{ this.translate( 'Loading…' ) }
@@ -48,7 +46,7 @@ const CancelPurchase = React.createClass( {
 
 		return (
 			<Main className="cancel-purchase">
-				<HeaderCake onClick={ this.goToManagePurchase }>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ this.translate( 'Cancel Purchase' ) }
 				</HeaderCake>
 
@@ -94,11 +92,11 @@ const CancelPurchase = React.createClass( {
 	},
 
 	ensurePageCanLoad() {
-		if ( this.isDataLoading() ) {
+		if ( isDataLoading( this.props ) ) {
 			return;
 		}
 
-		const purchase = this.getPurchase();
+		const purchase = getPurchase( this.props );
 
 		if ( purchase ) {
 			const { domain, id } = purchase;
