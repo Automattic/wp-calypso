@@ -288,7 +288,7 @@ const ManagePurchase = React.createClass( {
 			}
 
 			return (
-				<span className="manage-purchase__payment-info">
+				<span className="manage-purchase__detail manage-purchase__payment-info">
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
 				</span>
