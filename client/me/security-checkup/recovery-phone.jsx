@@ -56,10 +56,6 @@ module.exports = React.createClass( {
 	},
 
 	verifyCode: function() {
-		this.setState( { recoveryPhoneScreen: 'saveRecoveryPhone' } );
-	},
-
-	savePhone: function() {
 		this.setState( { recoveryPhoneScreen: 'recoveryPhone' } );
 	},
 
@@ -113,7 +109,7 @@ module.exports = React.createClass( {
 					<FormButton onClick={ this.sendCode } >
 						{ this.state.isSendingCode ? this.translate( 'Sending code' ) : this.translate( 'Send code' ) }
 					</FormButton>
-					<FormButton onClick={ this.cancelPhone }  isPrimary={ false } >
+					<FormButton onClick={ this.cancel }  isPrimary={ false } >
 						{ this.translate( 'Cancel' ) }
 					</FormButton>
 				</FormButtonsBar>
@@ -137,21 +133,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	saveRecoveryPhone: function() {
-		return(
-			<div>
-				<FormButtonsBar>
-					<FormButton onClick={ this.savePhone } >
-						{ this.state.isSendingCode ? this.translate( 'verifying' ) : this.translate( 'Verify code' ) }
-					</FormButton>
-					<FormButton onClick={ this.cancel }  isPrimary={ false } >
-						{ this.translate( 'Cancel' ) }
-					</FormButton>
-				</FormButtonsBar>
-			</div>
-		);
-	},
-
 	getRecoveryPhoneScreen: function() {
 		if ( this.state.recoveryPhone.loading ) {
 			return this.recoveryPhonePlaceHolder();
@@ -164,8 +145,6 @@ module.exports = React.createClass( {
 				return this.editRecoveryPhone();
 			case 'verfiyRecoveryPhone':
 				return this.verfiyRecoveryPhone();
-			case 'saveRecoveryPhone':
-				return this.saveRecoveryPhone();
 			default:
 				return this.recoveryPhone();
 		}
