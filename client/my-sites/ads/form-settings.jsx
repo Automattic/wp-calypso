@@ -114,6 +114,10 @@ module.exports = React.createClass( {
 			store = SettingsStore.getById( site.ID );
 
 		store.us_checked = 'yes' === store.us_resident;
+		if ( site.jetpack ) {
+			// JP doesn't matter, force yes to make things easier
+			store.show_to_logged_in = 'yes';
+		}
 
 		return store;
 	},
@@ -131,7 +135,7 @@ module.exports = React.createClass( {
 			name: '',
 			optimized_ads: false,
 			paypal: '',
-			show_to_logged_in: 'pause',
+			show_to_logged_in: this.props.site.jetpack ? 'yes' : 'pause',
 			state: '',
 			taxid_last4: '',
 			tos: 'signed',
@@ -359,7 +363,7 @@ module.exports = React.createClass( {
 						name="tos"
 						checkedLink={ this.linkState( 'tos' ) }
 						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
-					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds{{/a}} Terms of Service.', {
+					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds Terms of Service{{/a}}.', {
 						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" /> }
 					} ) }</span>
 				</FormLabel>
@@ -377,8 +381,8 @@ module.exports = React.createClass( {
 								{ this.state.isSubmitting ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
-					{ this.showAdsToOptions() }
-					{ this.additionalAdsOption() }
+					{ ! this.props.site.jetpack ? this.showAdsToOptions() : null }
+					{ ! this.props.site.jetpack ? this.additionalAdsOption() : null }
 					<FormSectionHeading>{ this.translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }
 					{ this.state.us_checked ? this.taxOptions() : null }
