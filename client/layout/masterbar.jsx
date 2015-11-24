@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var MasterbarLoggedOutMenu = require( './masterbar-logged-out-menu' ),
-	MasterbarSectionsMenu = require( './masterbar-sections-menu' ),
-	Notifications = require( 'notifications' ),
-	store = require( 'store' );
+import MasterbarLoggedOutMenu from './masterbar-logged-out-menu';
+import MasterbarSectionsMenu from './masterbar-sections-menu';
+import Notifications from 'notifications';
+import store from 'store';
 
-module.exports = React.createClass( {
-
+export default React.createClass( {
 	displayName: 'Masterbar',
 
 	defaultNoticon: '\uf800',
 
-	getInitialState: function() {
+	getInitialState() {
 		var newNote = false,
 			user;
 
@@ -40,11 +39,11 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getNotificationLinkDomNode: function() {
+	getNotificationLinkDomNode() {
 		return this.refs.masterbar.refs.notificationLink;
 	},
 
-	toggleNotesFrame: function( event ) {
+	toggleNotesFrame( event ) {
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -64,7 +63,7 @@ module.exports = React.createClass( {
 		}.bind( this ) );
 	},
 
-	checkToggleNotes: function( event, forceToggle ) {
+	checkToggleNotes( event, forceToggle ) {
 		var target = event ? event.target : false,
 			notificationNode = this.getNotificationLinkDomNode();
 
@@ -86,7 +85,7 @@ module.exports = React.createClass( {
 	 *
 	 * @param {Number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator: function( currentUnseenCount ) {
+	setNotesIndicator( currentUnseenCount ) {
 		var existingUnseenCount = store.get( 'wpnotes_unseen_count' ),
 			newAnimationState = this.state.animationState;
 
@@ -113,26 +112,23 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	renderMenu: function() {
+	renderMenu() {
 		if ( this.props.user ) {
 			return <MasterbarSectionsMenu ref="masterbar" user={ this.props.user } section={ this.props.section } sites={ this.props.sites } toggleNotesFrame={ this.toggleNotesFrame } showNotes={ this.state.showNotes } newNote={ this.state.newNote } animationState={ this.state.animationState } />;
 		}
 		return <MasterbarLoggedOutMenu />;
 	},
 
-	renderNotifications: function() {
+	renderNotifications() {
 		if ( this.props.user ) {
 			return <Notifications visible={ this.state.showNotes } checkToggle={ this.checkToggleNotes } setIndicator={ this.setNotesIndicator } />;
 		}
 	},
 
-	render: function() {
+	render() {
 		var masterbarClass,
 			masterbarClassObject = {
-				toolbar: true,
-				masterbar: true,
-				'slide-out-up': true,
-				'wpcom-header': true
+				masterbar: true
 			};
 
 		if ( this.props.user ) {
@@ -150,5 +146,4 @@ module.exports = React.createClass( {
 			</header>
 		);
 	}
-
 } );
