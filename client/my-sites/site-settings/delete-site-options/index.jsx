@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 
 		dialogButtons = [
 			{ action: 'dismiss', label: this.translate( 'Dismiss' ) },
-			<a className="button is-primary" href={ 'https://wordpress.com/my-upgrades' }>{
+			<a className="button is-primary" href={ '/purchases' }>{
 				this.translate( 'Manage Upgrades', { context: 'button label' } )
 			}</a>
 		];
