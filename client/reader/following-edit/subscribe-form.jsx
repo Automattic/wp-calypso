@@ -3,7 +3,8 @@
 // External dependencies
 const React = require( 'react' ),
 	url = require( 'url' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/utility/noop' ),
+	last = require( 'lodash/array/last' );
 
 // Internal dependencies
 const Search = require( 'components/search' ),
@@ -56,7 +57,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 	handleKeyDown: function( event ) {
 		// Use Enter to submit
-		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength  && this.state.isWellFormedFeedUrl ) {
+		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength && this.state.isWellFormedFeedUrl ) {
 			event.preventDefault();
 			this.handleFollowToggle();
 		}
@@ -98,11 +99,17 @@ var FollowingEditSubscribeForm = React.createClass( {
 	},
 
 	isWellFormedFeedUrl: function( parsedUrl ) {
-		if ( parsedUrl.hostname && parsedUrl.hostname.indexOf( '.' ) !== -1 ) {
-			return true;
+		if ( ! parsedUrl.hostname ) {
+			return false;
 		}
 
-		return false;
+		// Check for a valid-looking TLD
+		const lastHostnameSegment = last( parsedUrl.hostname.split( '.' ) );
+		if ( ! lastHostnameSegment || lastHostnameSegment.length < 2 ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	render: function() {
