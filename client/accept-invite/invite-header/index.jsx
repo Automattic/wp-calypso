@@ -16,15 +16,90 @@ import Gravatar from 'components/gravatar';
 export default React.createClass( {
 	displayName: 'InviteHeader',
 
-	getInvitationVerb() {
-		switch ( get( this.props, 'invite.meta' ) ) {
-			case 'viewer':
-			case 'follower':
-				return this.translate( 'view' );
+	getInviterName() {
+		return get(
+			this.props,
+			'inviter.name',
+			this.translate( 'User', { context: 'Placeholder text while loading an invitation.' } )
+		);
+	},
+
+	getInvitedYouText() {
+		let text = '';
+
+		const inviterName = (
+			<strong className="invite-header__inviter-name">
+				{ this.getInviterName() }
+			</strong>
+		);
+
+		switch ( get( this.props, 'invite.meta.role' ) ) {
+			case 'administrator':
+				text = this.translate(
+					'{{inviterName/}} invited you to manage:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
 				break;
+			case 'editor':
+				text = this.translate(
+					'{{inviterName/}} invited you to edit:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break;
+			case 'author':
+				text = this.translate(
+					'{{inviterName/}} invited you to be an author on:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break;
+			case 'contributor':
+				text = this.translate(
+					'{{inviterName/}} invited you to contribute to:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break;
+			case 'subscriber':
+				text = this.translate(
+					'{{inviterName/}} invited you to subscribe to:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break;
+			case 'follower':
+				text = this.translate(
+					'{{inviterName/}} invited you to follow:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break
 			default:
-				return this.translate( 'contribute to' );
+				text = this.translate(
+					'{{inviterName/}} invited you to join:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break
 		}
+
+		return text;
 	},
 
 	render() {
@@ -35,21 +110,7 @@ export default React.createClass( {
 					<div className="invite-header__inviter-info">
 						<Gravatar user={ this.props.inviter } size={ 32 } />
 						<p className="invite-header__invited-you-text">
-							{
-								this.translate( '{{strong}}%(user)s{{/strong}} invited you to %(verb)s:', {
-									args: {
-										user: get(
-											this.props,
-											'inviter.name',
-											this.translate( 'User', { context: 'Placeholder text while loading an invitation.' } )
-										),
-										verb: this.getInvitationVerb()
-									},
-									components: {
-										strong: <strong />
-									}
-								} )
-							}
+							{ this.getInvitedYouText() }
 						</p>
 					</div>
 				</CompactCard>
