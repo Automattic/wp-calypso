@@ -26,7 +26,7 @@ import ValidationErrorList from 'notices/validation-error-list';
 import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
 import paths from 'me/purchases/paths';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -55,6 +55,8 @@ const EditCardDetails = React.createClass( {
 	],
 
 	componentWillReceiveProps( nextProps ) {
+		recordPageView( 'edit_card_details', this.props, nextProps );
+
 		// Updates the form once with the stored credit card data as soon as they are available
 		if ( nextProps.card && ( ! this.props.card || ( nextProps.card.id !== this.props.card.id ) ) ) {
 			this.setState( {
@@ -77,6 +79,8 @@ const EditCardDetails = React.createClass( {
 	},
 
 	componentWillMount() {
+		recordPageView( 'edit_card_details', this.props );
+
 		const options = {
 			validatorFunction: this.validate,
 			onNewState: this.setFormState
