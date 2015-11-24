@@ -106,6 +106,10 @@ function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
+function isPayPalExpressEnabled( cart ) {
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' ) >= 0;
+}
+
 module.exports = {
 	emptyCart: emptyCart,
 	applyCoupon: applyCoupon,
@@ -115,5 +119,6 @@ module.exports = {
 	isFree: isFree,
 	fillInAllCartItemAttributes: fillInAllCartItemAttributes,
 	fillInSingleCartItemAttributes: fillInSingleCartItemAttributes,
-	getRefundPolicy: getRefundPolicy
+	getRefundPolicy: getRefundPolicy,
+	isPayPalExpressEnabled: isPayPalExpressEnabled
 };
