@@ -11,7 +11,7 @@ function fetchDocsEndpoint( endpoint, params, callback ) {
 			if ( res.ok ) {
 				callback( null, ( res.body || res.text ) ); // this conditional is to capture both JSON and text/html responses
 			} else {
-				callback( "Error invoking /devdocs/" + endpoint + ": " + error.text, null );
+				callback( 'Error invoking /devdocs/' + endpoint + ': ' + res.text, null );
 			}
 		});
 }
