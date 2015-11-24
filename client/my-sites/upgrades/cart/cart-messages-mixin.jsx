@@ -2,8 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	assign = require('lodash/object/assign' );
+	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
  * Internal dependencies
@@ -33,6 +32,17 @@ module.exports = {
 		);
 	},
 
+	_getBlockedPurchaseErrorMessage: function() {
+		return this.translate(
+			"Purchases are currently disabled. Please {{a}}contact us{{/a}} to re-enable purchases.",
+			{
+				components: {
+					a: <a href={ 'https://wordpress.com/error-report/?url=purchases@' + this.props.selectedSite.slug } />
+				}
+			}
+		);
+	},
+
 	_getPrettyErrorMessages: function( messages ) {
 		if ( ! messages ) {
 			return [];
@@ -40,7 +50,9 @@ module.exports = {
 
 		return messages.map( function( error ) {
 			if ( error.code === 'chargeback' ) {
-				return assign( {}, error, { message: this._getChargebackErrorMessage() } );
+				return Object.assign( error, { message: this._getChargebackErrorMessage() } );
+			} else if ( error.code === 'blocked' ) {
+				return Object.assign( error, { message: this._getBlockedPurchaseErrorMessage() } );
 			} else {
 				return error;
 			}
