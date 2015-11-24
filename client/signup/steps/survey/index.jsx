@@ -29,7 +29,7 @@ export default React.createClass( {
 
 	renderStepTwoVertical( vertical ) {
 		return (
-			<Card className="survey-step__vertical" href="#" onClick={ this.handleNextStep.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ this.handleNextStep.bind( null, vertical ) }>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
@@ -38,7 +38,7 @@ export default React.createClass( {
 	renderStepOneVertical( vertical ) {
 		const icon = vertical.icon || 'user';
 		return (
-			<Card className="survey-step__vertical" href="#" onClick={ this.showStepTwo.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ this.showStepTwo.bind( null, vertical ) }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
