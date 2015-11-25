@@ -11,12 +11,20 @@ import EditPaymentMethodCreditCard from './credit-card';
 import HeaderCake from 'components/header-cake';
 import { isPaidWithCreditCard, isPaidWithPaypal } from 'lib/purchases';
 import Main from 'components/main';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
+import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const EditPaymentMethod = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
+	},
+
+	componentWillMount() {
+		recordPageView( 'edit_payment_method', this.props );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		recordPageView( 'edit_payment_method', this.props, nextProps );
 	},
 
 	render() {

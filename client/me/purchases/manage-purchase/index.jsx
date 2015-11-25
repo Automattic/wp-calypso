@@ -45,7 +45,7 @@ import {
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
 } from 'lib/purchases';
-import { getPurchase, goToList, isDataLoading } from '../utils';
+import { getPurchase, goToList, isDataLoading, recordPageView } from '../utils';
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
@@ -53,6 +53,14 @@ const ManagePurchase = React.createClass( {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object,
 		destinationType: React.PropTypes.string
+	},
+
+	componentWillMount() {
+		recordPageView( 'manage', this.props );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		recordPageView( 'manage', this.props, nextProps );
 	},
 
 	isDataFetchingAfterRenewal() {
