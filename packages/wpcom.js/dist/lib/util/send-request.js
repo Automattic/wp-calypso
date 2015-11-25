@@ -1,3 +1,4 @@
+var _Promise = require('babel-runtime/core-js/promise')['default'];
 
 /**
  * Module dependencies
@@ -81,7 +82,7 @@ module.exports = function (params, query, body, fn) {
   }
 
   // but if not, return a Promise
-  return new Promise(function (resolve, reject) {
+  return new _Promise(function (resolve, reject) {
     _this.request(params, function (err, res) {
       debug_res(res);
       err ? reject(err) : resolve(res);

@@ -1,3 +1,4 @@
+var _Promise = require('babel-runtime/core-js/promise')['default'];
 
 /**
  * Module dependencies.
@@ -123,13 +124,13 @@ Post.prototype.add = function (query, body, fn) {
     if ('function' === typeof fn) {
       fn(null, data);
     } else {
-      return Promise.resolve(data);
+      return _Promise.resolve(data);
     }
   })['catch'](function (err) {
     if ('function' === typeof fn) {
       fn(err);
     } else {
-      return Promise.reject(err);
+      return _Promise.reject(err);
     }
   });
 };

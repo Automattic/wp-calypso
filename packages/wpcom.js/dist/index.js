@@ -1,3 +1,5 @@
+var _Promise = require('babel-runtime/core-js/promise')['default'];
+
 /**
  * Module dependencies.
  */
@@ -137,7 +139,7 @@ WPCOM.prototype.sendRequest = function (params, query, body, fn) {
   return sendRequest.call(this, params, query, body, fn);
 };
 
-if (!Promise.prototype.timeout) {
+if (!_Promise.prototype.timeout) {
   /**
       * Returns a new promise with a deadline
       *
@@ -148,7 +150,7 @@ if (!Promise.prototype.timeout) {
       * @param {number} delay how many ms to wait
       * @returns {Promise}
       */
-  Promise.prototype.timeout = function () {
+  _Promise.prototype.timeout = function () {
     var _this = this;
 
     var delay = arguments.length <= 0 || arguments[0] === undefined ? DEFAULT_ASYNC_TIMEOUT : arguments[0];
@@ -157,7 +159,7 @@ if (!Promise.prototype.timeout) {
         timer = undefined,
         timeout = undefined;
 
-    timeout = new Promise(function (resolve, reject) {
+    timeout = new _Promise(function (resolve, reject) {
       timer = setTimeout(function () {
         reject(new Error('Action timed out while waiting for response.'));
       }, delay);
@@ -168,7 +170,7 @@ if (!Promise.prototype.timeout) {
       return _this;
     };
 
-    return Promise.race([this.then(cancelTimeout)['catch'](cancelTimeout), timeout]);
+    return _Promise.race([this.then(cancelTimeout)['catch'](cancelTimeout), timeout]);
   };
 }
 
