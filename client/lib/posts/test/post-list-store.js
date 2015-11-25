@@ -6,18 +6,17 @@ require( 'lib/react-test-env-setup' )();
  */
 var rewire = require( 'rewire' ),
 	assert = require( 'chai' ).assert,
-	includes = require( 'lodash/collection/includes' ),
 	Dispatcher = require( 'dispatcher' );
 
 describe( 'post-list-store', function() {
-	var PostListStoreFactory, defaultPostListStore;
+	var postListStoreFactory, defaultPostListStore;
 	before( function() {
-		PostListStoreFactory = rewire( '../post-list-store-factory' );
+		postListStoreFactory = rewire( '../post-list-store-factory' );
 	} );
 
 	beforeEach( function() {
-		PostListStoreFactory.__set__( '_postListStores', {} );
-		defaultPostListStore = PostListStoreFactory();
+		postListStoreFactory.__set__( '_postListStores', {} );
+		defaultPostListStore = postListStoreFactory();
 	} );
 
 	afterEach( function() {
@@ -43,7 +42,7 @@ describe( 'post-list-store', function() {
 			assert.instanceOf( defaultPostListStore.get(), Object );
 		} );
 
-		it( 'should return the correct default values', function(){
+		it( 'should return the correct default values', function() {
 			var postList = defaultPostListStore.get();
 			assert.instanceOf( postList.postIds, Array );
 			assert.equal( postList.postIds.length, 0 );
