@@ -7,7 +7,8 @@ var expect = require( 'chai' ).expect,
 	Dispatcher = require( 'dispatcher' );
 
 var CommentStore = require( '../comment-store' ),
-	FeedPostStoreActionTypes = require( 'lib/feed-post-store/constants' ).action;
+	FeedPostStoreActionTypes = require( 'lib/feed-post-store/constants' ).action,
+	CommentStates = require( 'lib/comment-store/constants' ).state;
 
 // Non-existent site ID
 const siteId = 91234567890;
@@ -117,5 +118,56 @@ describe( 'comment-store', function() {
 		expect( comments ).to.be.ok;
 		expect( comments[ 1 ][ 0 ].content ).to.eq( '+1. I agree!' );
 		expect( comments[ 1 ] ).to.have.lengthOf( 1 );
+	} );
+
+	it( 'should add a pending comment', function() {
+		Dispatcher.handleServerAction( {
+			type: 'ADD_COMMENT',
+			args: {
+				siteId: siteId,
+				postId: 124,
+				commentText: 'First!',
+				parentCommentId: 0,
+				commentPlaceholderId: 0
+			}
+		} );
+
+		const comments = CommentStore.getCommentsForPost( siteId, 124 );
+		expect( comments ).to.be.ok;
+		expect( comments[ 0 ][ 0 ].content ).to.eq( 'First!' );
+		expect( comments[ 0 ][ 0 ].state ).to.eq( CommentStates.PENDING );
+	} );
+
+	it( 'should confirm a pending comment', function() {
+		Dispatcher.handleServerAction( {
+			type: 'ADD_COMMENT',
+			args: {
+				siteId: siteId,
+				postId: 124,
+				commentText: 'First!',
+				parentCommentId: 0,
+				commentPlaceholderId: 0
+			}
+		} );
+
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_ADD_COMMENT',
+			args: {
+				siteId: siteId,
+				postId: 124,
+				commentPlaceholderId: 0
+			},
+			data: {
+				content: 'First!',
+				parent: {
+					ID: 0
+				}
+			}
+		} );
+
+		const comments = CommentStore.getCommentsForPost( siteId, 124 );
+		expect( comments ).to.be.ok;
+		expect( comments[ 0 ][ 0 ].content ).to.eq( 'First!' );
+		expect( comments[ 0 ][ 0 ].state ).to.eq( CommentStates.COMPLETE );
 	} );
 } );
