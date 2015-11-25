@@ -53,6 +53,7 @@ var SearchCard = require( 'components/search-card' ),
 	Version = require( 'components/version/docs/example' ),
 	BulkSelect = require( 'components/bulk-select/docs/example' ),
 	ExternalLink = require( 'components/external-link/docs/example' ),
+	FeatureGate = require( 'components/feature-example/docs/example' ),
 	Collection,
 	FilterSummary,
 	Hider;
@@ -207,6 +208,7 @@ module.exports = React.createClass( {
 					<Count />
 					<Version />
 					<ExternalLink />
+					<FeatureGate />
 					<DatePicker />
 					<Spinners />
 					<Theme />
