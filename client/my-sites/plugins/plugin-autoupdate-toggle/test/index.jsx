@@ -56,12 +56,6 @@ describe( 'PluginAutoupdateToggle', function() {
 		expect( pluginAutoupdateToggle.length ).to.equal( 1 );
 	} );
 
-	it( 'should not render the component if the plugin is not from .org', function() {
-		var rendered = TestUtils.renderIntoDocument( <PluginAutoupdateToggle { ...fixtures } wporg={ false } /> ),
-			pluginAutoupdateToggle = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'plugin-action' );
-		expect( pluginAutoupdateToggle.length ).to.equal( 0 );
-	} );
-
 	it( 'should register an event when the subcomponent action is executed', function() {
 		var rendered = TestUtils.renderIntoDocument( <PluginAutoupdateToggle { ...fixtures } /> ),
 			pluginAutoupdateToggle = React.findDOMNode( rendered );
