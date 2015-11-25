@@ -91,11 +91,6 @@ export default {
 						i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' )
 					);
 					break
-				case 'disallow_file_edit':
-					reasons.push(
-						i18n.translate( 'File edits are explicitly disabled by a site administrator.' )
-					);
-					break;
 				case 'disallow_file_mods':
 					reasons.push(
 						i18n.translate( 'File modifications are explicitly disabled by a site administrator.' )
