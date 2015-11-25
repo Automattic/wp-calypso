@@ -120,7 +120,7 @@ var EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<EditorSharingContainer site={ this.props.site } currentUserID={ currentUser.ID } />
+			<EditorSharingContainer currentUserID={ currentUser.ID } />
 		);
 	},
 
