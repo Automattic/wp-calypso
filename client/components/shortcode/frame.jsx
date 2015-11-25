@@ -75,7 +75,14 @@ export default React.createClass( {
 		body: PropTypes.string,
 		scripts: PropTypes.object,
 		style: PropTypes.object,
+		onLoad: PropTypes.func,
 		className: PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			onLoad: () => {}
+		}
 	},
 
 	getInitialState: function() {
@@ -104,10 +111,13 @@ export default React.createClass( {
 		} );
 	},
 
-	setHtml( event ) {
+	onFrameLoad( event ) {
+		// Transmit message to assign frame markup
 		event.target.contentWindow.postMessage( JSON.stringify( {
 			content: this.state.html
 		} ), '*' );
+
+		this.props.onLoad( event );
 	},
 
 	render() {
@@ -125,11 +135,11 @@ export default React.createClass( {
 		return (
 			<ResizableIframe
 				key={ key }
+				{ ...omit( this.props, 'body', 'scripts', 'style' ) }
 				src="https://wpcomwidgets.com/render/"
-				onLoad={ this.setHtml }
+				onLoad={ this.onFrameLoad }
 				frameBorder="0"
 				sandbox="allow-scripts"
-				{ ...omit( this.props, 'body', 'scripts', 'style' ) }
 				className={ classes } />
 		);
 	}

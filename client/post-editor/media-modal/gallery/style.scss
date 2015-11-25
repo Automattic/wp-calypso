@@ -136,22 +136,69 @@ input.editor-media-modal-gallery__caption[type="text"] {
 }
 
 .editor-media-modal-gallery__preview-wrapper {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
 	box-sizing: border-box;
 	overflow-y: auto;
 	padding: 16px;
+}
 
-	@include breakpoint( ">660px" ) {
-		position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
+.editor-media-modal-gallery__preview-shortcode {
+	&,
+	& .shortcode-frame {
+		width: 100%;
+		height: 100%;
 	}
 }
 
-.editor-media-modal-gallery__preview-iframe {
-	width: 100%;
-	height: 100%;
+.editor-media-modal-gallery__preview-shortcode {
+	&.is-loading {
+		animation: loading-fade 0.8s ease-in-out infinite;
+	}
+
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+			left: 50%;
+		display: block;
+		width: 90%;
+		margin-left: -45%;
+		transition: 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+		opacity: 0;
+
+		@include breakpoint( ">660px" ) {
+			width: 75%;
+			margin-left: -37.5%;
+		}
+	}
+
+	&::before {
+		top: 16px;
+		height: 130px;
+		background: linear-gradient(
+			to right,
+			lighten( $gray, 25% ),
+			lighten( $gray, 25% ) 40%,
+			transparent 40%,
+			transparent 42%,
+			lighten( $gray, 20% ) 42%
+		);
+	}
+
+	&::after {
+		top: calc( 146px + 2% );
+		height: 240px;
+		background: lighten( $gray, 10% );
+	}
+
+	&.is-loading::before,
+	&.is-loading::after {
+		opacity: 1;
+	}
 }
 
 .editor-media-modal-gallery__fields .for-setting-type {
