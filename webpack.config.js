@@ -116,6 +116,7 @@ if ( AUTOOPEN === 'true' ) {
 
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
+	webpackConfig.plugins.push( new OpenCalypsoInBrowser() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
 		'webpack-dev-server/client?http://calypso.localhost:' + PORT,
 		'webpack/hot/only-dev-server',
