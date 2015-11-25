@@ -1,0 +1,2 @@
+export const SET_SELECTED_SITE = 'SET_SELECTED_SITE';
+export const RECEIVE_SITE = 'RECEIVE_SITE';
