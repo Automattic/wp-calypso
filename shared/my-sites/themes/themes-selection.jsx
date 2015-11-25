@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Action from 'lib/themes/actions';
+import Action from 'lib/themes/flux-actions';
 import Helper from 'lib/themes/helpers';
 import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';

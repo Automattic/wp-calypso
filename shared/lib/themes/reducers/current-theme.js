@@ -8,14 +8,14 @@ import { fromJS } from 'immutable';
  */
 import ThemeConstants from 'lib/themes/constants';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	isActivating: false,
 	hasActivated: false,
 	currentThemes: {}
 } );
 
-const reducer = ( state = initialState, payload ) => {
-	const { action } = payload;
+export const reducer = ( state = initialState, payload ) => {
+	const { action = payload } = payload;
 
 	switch ( action.type ) {
 		case ThemeConstants.RECEIVE_CURRENT_THEME:
@@ -36,4 +36,6 @@ const reducer = ( state = initialState, payload ) => {
 	return state;
 };
 
-export { initialState, reducer };
+export function getCurrentTheme( state, siteId ) {
+	return state.get( 'currentThemes' ).get( siteId );
+}

@@ -8,7 +8,7 @@ import assign from 'lodash/object/assign';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import Action from 'lib/themes/actions';
+import Action from 'lib/themes/flux-actions';
 import Helper from 'lib/themes/helpers';
 
 export default function getButtonOptions( site, theme, setSelectedTheme, togglePreview, showAll = false ) {

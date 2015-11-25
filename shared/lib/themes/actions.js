@@ -1,99 +1,90 @@
 /**
  * External dependencies
  */
-var page = require( 'page' ),
-	defer = require( 'lodash/function/defer' ),
-	debug = require( 'debug' )( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
+import page from 'page';
+import defer from 'lodash/function/defer';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	analytics = require( 'analytics' ),
-	ThemesStore = require( './stores/themes' ),
-	ThemesListStore = require( './stores/themes-list' ),
-	ThemeConstants = require( './constants' ),
-	ThemeHelpers = require( './helpers' ),
-	CurrentThemeStore = require( './stores/current-theme' ),
-	LastEventStore = require( './stores/themes-last-event' ),
-	ThemeConstants = require( './constants' ),
-	ThemesLastQueryStore = require( './stores/themes-last-query' );
+import ThemeConstants from 'lib/themes/constants';
+import ThemeHelpers from './helpers';
+import { getCurrentTheme } from './reducers/current-theme';
+import { getThemeById } from './reducers/themes';
+import { getQueryParams } from './reducers/themes-list';
+import { hasSiteChanged, hasParams } from './reducers/themes-last-query';
+import wpcom from 'lib/wp';
 
-var ThemesActions = {
-	fetch: function( site ) {
-		const queryParams = ThemesListStore.getQueryParams();
+export function fetchThemes( site ) {
+	return ( dispatch, getState ) => {
+		const queryParams = getQueryParams( getState().themes.themesList );
 		const startTime = new Date().getTime();
-		const callback = function( error, data ) {
+		const callback = ( error, data ) => {
 			debug( 'Received themes data', data );
 			if ( error ) {
-				this.receiveServerError( error );
+				dispatch( receiveServerError( error ) );
 			} else {
 				const responseTime = ( new Date().getTime() ) - startTime;
-				this.receiveThemes( data, site, queryParams, responseTime );
+				dispatch( receiveThemes( data, site, queryParams, responseTime ) );
 			}
-		}.bind( this );
+		};
 
 		debug( 'Query params', queryParams );
 		wpcom.undocumented().themes( site, queryParams, callback );
-	},
+	}
+}
 
-	fetchJetpack: function( site ) {
-		if ( hasSiteChanged() ) {
-			return this.fetch( site );
+/*
+ * On Jetpack sites, we're not querying themes using the REST API, but fetch all of the installed
+ * themes, and filter them within Calypso.
+ */
+export function fetchJetpackThemes( site ) {
+	return ( dispatch, getState ) => {
+		const themesLastQueryState = getState().themes.themesLastQuery;
+		if ( hasSiteChanged( themesLastQueryState ) || ! hasParams( themesLastQueryState ) ) {
+			return dispatch( fetchThemes( site ) );
 		}
 
-		Dispatcher.handleViewAction( {
+		dispatch( {
 			type: ThemeConstants.SEARCH_THEMES,
 		} );
-	},
+	}
+}
 
-	fetchNextPage: function( site ) {
-		Dispatcher.handleViewAction( {
-			type: ThemeConstants.INCREMENT_THEMES_PAGE,
-			site: site
-		} );
+export function fetchNextPage( site ) {
+	return dispatch => {
+		dispatch( incrementThemesPage( site ) );
 
-		this[ site.jetpack ? 'fetchJetpack' : 'fetch' ]( site );
-	},
-
-	receiveThemes: function( data, site, queryParams, responseTime ) {
-		Dispatcher.handleServerAction( {
-			type: ThemeConstants.RECEIVE_THEMES,
-			siteId: site.ID,
-			isJetpack: !! site.jetpack,
-			themes: data.themes,
-			found: data.found,
-			queryParams: queryParams,
-			responseTime: responseTime
-		} );
-
-		if ( queryParams.search && queryParams.page === 1 ) {
-			const { name, properties } = LastEventStore.getSearch();
-			analytics.tracks.recordEvent( name, properties );
+		if ( site.jetpack ) {
+			dispatch( fetchJetpackThemes( site ) );
+		} else {
+			dispatch( fetchThemes( site ) );
 		}
-	},
+	}
+}
 
-	receiveServerError: function( error ) {
-		debug( 'Server error: ', error );
-		Dispatcher.handleServerAction( {
-			type: ThemeConstants.RECEIVE_THEMES_SERVER_ERROR,
-			error: error
-		} );
-	},
+export function query( params ) {
+	return {
+		type: ThemeConstants.QUERY_THEMES,
+		params: params
+	};
+}
 
-	query: function( params ) {
-		Dispatcher.handleViewAction( {
-			type: ThemeConstants.QUERY_THEMES,
-			params: params
-		} );
-	},
+export function incrementThemesPage( site ) {
+	return {
+		type: ThemeConstants.INCREMENT_THEMES_PAGE,
+		site: site
+	}
+}
 
-	fetchCurrentTheme: function( site ) {
-		var callback = function( error, data ) {
+export function fetchCurrentTheme( site ) {
+	return dispatch => {
+		const callback = ( error, data ) => {
 			debug( 'Received current theme', data );
 			if ( ! error ) {
-				Dispatcher.handleServerAction( {
+				dispatch( {
 					type: ThemeConstants.RECEIVE_CURRENT_THEME,
 					site: site,
 					themeId: data.id,
@@ -102,108 +93,146 @@ var ThemesActions = {
 			}
 		};
 		wpcom.undocumented().activeTheme( site.ID, callback );
-	},
+	};
+}
 
-	preview: function( theme, site ) {
-		const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
+export function receiveServerError( error ) {
+	return {
+		type: ThemeConstants.RECEIVE_THEMES_SERVER_ERROR,
+		error: error
+	};
+}
 
-		Dispatcher.handleViewAction( {
-			type: ThemeConstants.PREVIEW_THEME,
-			site: site
-		} );
+export function receiveThemes( data, site, queryParams, responseTime ) {
+	let meta = {};
 
-		ThemeHelpers.navigateTo( previewUrl, site.jetpack );
-	},
-
-	activate: function( theme, site, source = 'unknown' ) {
-		var callback = function( err ) {
-			if ( err ) {
-				this.receiveServerError( err );
-			} else {
-				this.activated( theme, site, source );
+	if ( queryParams.search && queryParams.page === 1 ) {
+		meta = {
+			analytics: {
+				type: 'calypso_themeshowcase_search',
+				payload: {
+					search_term: queryParams.search || null,
+					tier: queryParams.tier,
+					response_time_in_ms: responseTime,
+					result_count: data.found,
+					results_first_page: data.themes.map( theme => theme.id )
+				}
 			}
-		}.bind( this );
+		}
+	}
 
-		Dispatcher.handleViewAction( {
+	return {
+		type: ThemeConstants.RECEIVE_THEMES,
+		siteId: site.ID,
+		isJetpack: !! site.jetpack,
+		themes: data.themes,
+		found: data.found,
+		queryParams: queryParams,
+		meta
+	};
+}
+
+export function activate( theme, site, source = 'unknown' ) {
+	return dispatch => {
+		const callback = err => {
+			if ( err ) {
+				dispatch( receiveServerError( err ) );
+			} else {
+				dispatch( activated( theme, site, source ) );
+			}
+		};
+
+		dispatch( {
 			type: ThemeConstants.ACTIVATE_THEME,
 			theme: theme,
 			site: site
 		} );
 
 		wpcom.undocumented().activateTheme( theme, site.ID, callback );
-	},
+	}
+}
 
-	activated: function( theme, site, source = 'unknown', purchased = false ) {
-		const previousTheme = CurrentThemeStore.getCurrentTheme( site.ID );
+export function activated( theme, site, source = 'unknown', purchased = false ) {
+	return ( dispatch, getState ) => {
+		const previousTheme = getCurrentTheme( getState().themes.currentTheme, site.ID );
+		const queryParams = getState().themes.themesList.get( 'query' );
 
 		if ( typeof theme !== 'object' ) {
-			theme = ThemesStore.getById( theme );
+			theme = getThemeById( getState().themes.themes, theme );
 		}
 
-		defer( function() {
-			Dispatcher.handleViewAction( {
-				type: ThemeConstants.ACTIVATED_THEME,
-				theme,
-				site,
-				previousTheme,
-				source,
-				purchased
-			} );
+		defer( () => dispatch( {
+			type: ThemeConstants.ACTIVATED_THEME,
+			theme,
+			site,
+			meta: {
+				analytics: {
+					type: 'calypso_themeshowcase_theme_activate',
+					payload: {
+						theme: theme.id,
+						previous_theme: previousTheme.id,
+						source: source,
+						purchased: purchased,
+						search_term: queryParams.get( 'search' ) || null
+					}
+				}
+			}
+		} ) );
+	}
+};
 
-			const { name, properties } = LastEventStore.getActivate();
-			analytics.tracks.recordEvent( name, properties );
-		} );
-	},
+export function clearActivated() {
+	return {
+		type: ThemeConstants.CLEAR_ACTIVATED_THEME
+	};
+};
 
-	clearActivated: function() {
-		Dispatcher.handleViewAction( {
-			type: ThemeConstants.CLEAR_ACTIVATED_THEME
-		} );
-	},
+// Might be obsolete, since in theme-options.js, `hasUrl === true`
+export function details( theme, site ) {
+	return dispatch => {
+		const detailsUrl = ThemeHelpers.getDetailsUrl( theme, site );
 
-	purchase: function( theme, site, source = 'unknown' ) {
-		var CartActions = require( 'lib/upgrades/actions' ),
-			themeItem = require( 'lib/cart-values/cart-items' ).themeItem;
-
-		CartActions.addItem( themeItem( theme.id, source ) );
-
-		defer( function() {
-			page( '/checkout/' + site.slug );
-
-			Dispatcher.handleViewAction( {
-				type: ThemeConstants.PURCHASE_THEME,
-				id: theme.id,
-				site: site
-			} );
-		} );
-	},
-
-	details: function( theme, site ) {
-		var detailsUrl = ThemeHelpers.getDetailsUrl( theme, site );
-
-		Dispatcher.handleViewAction( {
+		dispatch( {
 			type: ThemeConstants.THEME_DETAILS,
 			theme: theme
 		} );
 
 		ThemeHelpers.navigateTo( detailsUrl, site.jetpack );
-	},
+	}
+};
 
-	support: function( theme, site ) {
-		var supportUrl = ThemeHelpers.getSupportUrl( theme, site );
+// Might be obsolete, since in theme-options.js, `hasUrl === true`
+export function support( theme, site ) {
+	return dispatch => {
+		const supportUrl = ThemeHelpers.getSupportUrl( theme, site );
 
-		Dispatcher.handleViewAction( {
+		dispatch( {
 			type: ThemeConstants.THEME_SUPPORT,
 			theme: theme
 		} );
 
 		ThemeHelpers.navigateTo( supportUrl, site.jetpack );
-	},
+	}
+};
 
-	customize: function( theme, site ) {
-		var customizeUrl = ThemeHelpers.getCustomizeUrl( theme, site );
+export function preview( theme, site ) {
+	return dispatch => {
+		const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
 
-		Dispatcher.handleViewAction( {
+		dispatch( {
+			type: ThemeConstants.PREVIEW_THEME,
+			site: site
+		} );
+
+		ThemeHelpers.navigateTo( previewUrl, site.jetpack );
+	}
+}
+
+export function customize( theme, site ) {
+	return dispatch => {
+		const customizeUrl = ThemeHelpers.getCustomizeUrl( theme, site );
+
+		dispatch( {
 			type: ThemeConstants.THEME_CUSTOMIZE,
 			site: site.id
 		} );
@@ -212,9 +241,21 @@ var ThemesActions = {
 	}
 };
 
-function hasSiteChanged() {
-	return ThemesLastQueryStore.hasSiteChanged() ||
-			! ThemesLastQueryStore.hasParams();
-}
+export function purchase( theme, site, source = 'unknown' ) {
+	const CartActions = require( 'lib/upgrades/actions' );
+	const themeItem = require( 'lib/cart-values/cart-items' ).themeItem;
 
-module.exports = ThemesActions;
+	return dispatch => {
+		CartActions.addItem( themeItem( theme.id, source ) );
+
+		defer( () => {
+			page( '/checkout/' + site.slug );
+
+			dispatch( {
+				type: ThemeConstants.PURCHASE_THEME,
+				id: theme.id,
+				site: site
+			} );
+		} );
+	}
+}
