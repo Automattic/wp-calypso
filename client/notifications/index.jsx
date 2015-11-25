@@ -125,11 +125,15 @@ var Notifications = React.createClass({
 	},
 
 	postAuth: function() {
-		if ( config.isEnabled( 'oauth' ) && oAuthToken.getToken() !== false ) {
-			this.postMessage( {
-				action: 'setAuthToken',
-				token: oAuthToken.getToken()
-			} );
+		if ( config.isEnabled( 'oauth' ) ) {
+			const token = oAuthToken.getToken();
+
+			if ( token !== false ) {
+				this.postMessage( {
+					action: 'setAuthToken',
+					token: token
+				} );
+			}
 		}
 	},
 
