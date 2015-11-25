@@ -1,12 +1,11 @@
 /**
  * Like methods
  *
- * @param {String} pid post id
- * @param {String} sid site id
- * @param {WPCOM} wpcom
- * @api public
+ * @param {String} pid - post id
+ * @param {String} sid - site id
+ * @param {WPCOM} wpcom - wpcom instance
+ * @return {Null} null
  */
-
 function Like(pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`site id` is not correctly defined');
@@ -28,11 +27,9 @@ function Like(pid, sid, wpcom) {
 /**
  * Get your Like status for a Post
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
  */
-
 Like.prototype.mine = Like.prototype.state = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
   return this.wpcom.req.get(path, query, fn);
@@ -41,11 +38,10 @@ Like.prototype.mine = Like.prototype.state = function (query, fn) {
 /**
  * Like a post
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Like.prototype.add = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
   return this.wpcom.req.put(path, query, null, fn);
@@ -54,11 +50,9 @@ Like.prototype.add = function (query, fn) {
 /**
  * Remove your Like from a Post
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
  */
-
 Like.prototype.del = Like.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
   return this.wpcom.req.del(path, query, fn);
@@ -67,5 +61,4 @@ Like.prototype.del = Like.prototype['delete'] = function (query, fn) {
 /**
  * Expose `Like` module
  */
-
 module.exports = Like;

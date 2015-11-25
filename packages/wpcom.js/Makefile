@@ -6,6 +6,8 @@ THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 # BIN directory
 BIN := $(THIS_DIR)/node_modules/.bin
 
+JS_FILES := $(shell find . -type f \( -name '*.js' \) -and \( -path './lib/*' \) -and -not \( -path './node_modules/*' \) -and -not \( -path './dist/*' \) )
+
 # applications
 NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
@@ -60,6 +62,11 @@ node_modules:
 	@NODE_ENV= $(NPM) install
 	@touch node_modules
 
+lint: node_modules/eslint node_modules/babel-eslint
+	@$(BIN)/eslint $(JS_FILES)
+
+eslint: lint
+
 example-server:
 	cd examples/server/; $(NPM) install
 	$(NODE) examples/server/index.js
@@ -88,4 +95,4 @@ commit-dist: clean standalone babelify
 publish: clean standalone
 	$(NPM) publish
 
-.PHONY: standalone clean distclean babelify example-server test test-all publish node_modules
+.PHONY: standalone clean distclean babelify example-server test test-all publish node_modules lint eslint

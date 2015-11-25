@@ -1,91 +1,81 @@
-
 /**
  * Module dependencies
  */
-
-var util = require('./util');
-var assert = require('assert');
-
-/**
- * Testing data
- */
-
-var fixture = require('./fixture');
+var util = require( './util' );
+var assert = require( 'assert' );
 
 /**
  * me
  */
+describe( 'wpcom.me', function() {
+	// Global instances
+	var wpcom = util.wpcom();
+	var me = wpcom.me();
 
-describe('wpcom.me', function(){
-  // Global instances
-  var wpcom = util.wpcom();
-  var me = wpcom.me();
+	describe( 'wpcom.me.get', function() {
+		it( 'should require user information object', done => {
+			me.get()
+				.then( data => {
+					// testing object
+					assert.ok( data );
+					assert.equal( 'object', typeof data );
 
-  describe('wpcom.me.get', function(){
-    it('should require user information object', done => {
-      me.get()
-        .then(me => {
-          // testing object
-          assert.ok(me);
-          assert.equal('object', typeof me);
+					// testing user data
+					assert.equal( 'number', typeof data.ID );
 
-          // testing user data
-          assert.equal('number', typeof me.ID);
+					done();
+				} )
+				.catch( done );
+		} );
 
-          done();
-        })
-        .catch(done);
-    });
+		it( 'should require user passing query parameter', done => {
+			me.get( { context: 'info' } )
+				.then( data => {
+					// testing object
+					assert.ok( me );
+					assert.equal( 'object', typeof data );
 
-    it('should require user passing query parameter', done => {
-      me.get({ context: 'info' })
-        .then(me => {
-          // testing object
-          assert.ok(me);
-          assert.equal('object', typeof me);
+					// testing user data
+					assert.equal( 'number', typeof data.ID );
 
-          // testing user data
-          assert.equal('number', typeof me.ID);
+					done();
+				} )
+				.catch( done );
+		} );
+	} );
 
-          done();
-        })
-        .catch(done);
-    });
-  });
+	describe( 'wpcom.me.sites', function() {
+		it( 'should require user sites object', done => {
+			me.sites()
+				.then( () => done() )
+				.catch( done );
+		} );
+	} );
 
-  describe('wpcom.me.sites', function(){
-    it('should require user sites object', done => {
-      me.sites()
-        .then(() => done())
-        .catch(done);
-    });
-  });
+	describe( 'wpcom.me.likes', function() {
+		it( 'should require user likes', done => {
+			me.likes()
+				.then( data => {
+					assert.equal( 'number', typeof data.found );
+					assert.equal( 'object', typeof data.likes );
+					assert.ok( data.likes instanceof Array );
 
-  describe('wpcom.me.likes', function(){
-    it('should require user likes', done => {
-      me.likes()
-        .then(data => {
-          assert.equal('number', typeof data.found);
-          assert.equal('object', typeof data.likes);
-          assert.ok(data.likes instanceof Array);
+					done();
+				} )
+				.catch( done );
+		} );
+	} );
 
-          done();
-        })
-        .catch(done);
-    });
-  });
+	describe( 'wpcom.me.groups', function() {
+		it( 'should require groups', done => {
+			me.groups()
+				.then( data => {
+					assert.equal( 'object', typeof data.groups );
+					assert.ok( data.groups instanceof Array );
 
-  describe('wpcom.me.groups', function(){
-    it('should require groups', done => {
-      me.groups()
-        .then(data => {
-          assert.equal('object', typeof data.groups);
-          assert.ok(data.groups instanceof Array);
-
-          done();
-        })
-        .catch(done);
-    });
-  });
-
-});
+					done();
+				} )
+				.catch( done );
+		} );
+	} );
+} );

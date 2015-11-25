@@ -1,50 +1,45 @@
-
 /**
  * Module dependencies
  */
-
-var WPCOM = require('../');
+var wpcomFactory = require( '../' );
+var config;
 
 try {
-  var config = require('./config');
-} catch (ex) {
-  var config = {};
+	config = require( './config' );
+} catch ( ex ) {
+	config = {};
 }
 
 /**
  * Detect client/server side
  */
-
-var is_client_side = 'undefined' !== typeof window;
+const is_client_side = 'undefined' !== typeof window;
 
 /**
  * Config vars
  */
-
-var token = process.env.TOKEN || config.token;
-var site = process.env.SITE || config.site;
-
-/**
- * Testing data
- */
-
-var fixture = require('./fixture');
+const token = process.env.TOKEN || config.token;
+const site = process.env.SITE || config.site;
 
 module.exports = {
-  wpcom: wpcom,
-  wpcom_public: function() { return WPCOM(); },
-  site: function () { return site; }
+	wpcom: wpcom,
+	wpcom_public: function() {
+		return wpcomFactory();
+	},
+	site: function() {
+		return site;
+	}
 };
 
 function wpcom() {
-  if (is_client_side) {
-    var proxy = require('../node_modules/wpcom-proxy-request');
-    var _wpcom = WPCOM(proxy);
+	if ( is_client_side ) {
+		let proxy = require( '../node_modules/wpcom-proxy-request' );
+		let _wpcom = wpcomFactory( proxy );
 
-    _wpcom.request({ metaAPI: { accessAllUsersBlogs: true }})
-      .then( () => console.log('proxy now running in "access all user\'s blogs" mode') );
-    return _wpcom;
-  } else {
-    return WPCOM(token);
-  }
+		_wpcom.request( { metaAPI: { accessAllUsersBlogs: true } } )
+			.then( () => console.log( 'proxy now running in "access all user\'s blogs" mode' ) );
+		return _wpcom;
+	} else {
+		return wpcomFactory( token );
+	}
 }

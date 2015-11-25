@@ -1,9 +1,7 @@
-
 /**
  * Module dependencies.
  */
-
-var CommentLike = require('./site.comment.like');
+var commentLike = require('./site.comment.like');
 
 /**
  * Comment methods
@@ -11,10 +9,9 @@ var CommentLike = require('./site.comment.like');
  * @param {String} [cid] comment id
  * @param {String} [pid] post id
  * @param {String} sid site id
- * @param {WPCOM} wpcom
- * @api public
+ * @param {WPCOM} wpcom - wpcom instance
+ * @return {Null} null
  */
-
 function Comment(cid, pid, sid, wpcom) {
   if (!sid) {
     throw new Error('`site id` is not correctly defined');
@@ -33,11 +30,10 @@ function Comment(cid, pid, sid, wpcom) {
 /**
  * Return a single Comment
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.get = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid;
   return this.wpcom.req.get(path, query, fn);
@@ -46,11 +42,10 @@ Comment.prototype.get = function (query, fn) {
 /**
  * Return recent comments for a post
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.replies = function (query, fn) {
   var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
   return this.wpcom.req.get(path, query, fn);
@@ -59,12 +54,11 @@ Comment.prototype.replies = function (query, fn) {
 /**
  * Create a comment on a post
  *
- * @param {Object} [query]
- * @param {String|Object} body
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {String|Object} body - body parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.add = function (query, body, fn) {
   if (undefined === fn) {
     if (undefined === body) {
@@ -86,12 +80,11 @@ Comment.prototype.add = function (query, body, fn) {
 /**
  * Edit a comment
  *
- * @param {Object} [query]
- * @param {String|Object} body
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {String|Object} body - body parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.update = function (query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
@@ -108,12 +101,11 @@ Comment.prototype.update = function (query, body, fn) {
 /**
  * Create a Comment as a reply to another Comment
  *
- * @param {Object} [query]
- * @param {String|Object} body
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {String|Object} body - body parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.reply = function (query, body, fn) {
   if ('function' === typeof body) {
     fn = body;
@@ -130,34 +122,31 @@ Comment.prototype.reply = function (query, body, fn) {
 /**
  * Delete a comment
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.del = Comment.prototype['delete'] = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
   return this.wpcom.req.del(path, query, fn);
 };
 
 /**
- * Create a `CommentLike` instance
+ * Create a `commentLike` instance
  *
- * @api public
+ * @return {CommentLink} CommentLink instance
  */
-
 Comment.prototype.like = function () {
-  return CommentLike(this._cid, this._sid, this.wpcom);
+  return commentLike(this._cid, this._sid, this.wpcom);
 };
 
 /**
  * Get comment likes list
  *
- * @param {Object} [query]
- * @param {Function} fn
- * @api public
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
  */
-
 Comment.prototype.likesList = function (query, fn) {
   var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
   return this.wpcom.req.get(path, query, fn);
@@ -166,5 +155,4 @@ Comment.prototype.likesList = function (query, fn) {
 /**
  * Expose `Comment` module
  */
-
 module.exports = Comment;
