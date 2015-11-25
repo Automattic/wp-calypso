@@ -7,12 +7,12 @@ const PostCommentContent = React.createClass( {
 
 	propTypes: {
 		content: PropTypes.string.isRequired,
-		state: PropTypes.string.isRequired,
+		state: PropTypes.string,
 	},
 
 	render() {
 		// Don't trust comment content unless it was provided by the API
-		if ( this.props.state !== CommentConstants.state.COMPLETE ) {
+		if ( this.props.state === CommentConstants.state.PENDING ) {
 			return <div className="comment__content">{ this.props.content }</div>;
 		}
 
