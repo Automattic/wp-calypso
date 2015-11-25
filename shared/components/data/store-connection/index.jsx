@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+import React from 'react';
+import isEqual from 'lodash/lang/isEqual';
 
-var StoreConnection = React.createClass( {
+const StoreConnection = React.createClass( {
 	propTypes: {
 		component: React.PropTypes.func,
 		getStateFromStores: React.PropTypes.func.isRequired,
 		stores: React.PropTypes.array.isRequired
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.props.getStateFromStores( this.props );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.addStoreListeners( this.props.stores );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props, nextProps ) ) {
 			this.removeStoreListeners( this.props.stores );
 			this.addStoreListeners( nextProps.stores );
@@ -27,34 +27,35 @@ var StoreConnection = React.createClass( {
 		}
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.removeStoreListeners( this.props.stores );
 	},
 
-	addStoreListeners: function( stores ) {
+	addStoreListeners( stores ) {
 		stores.forEach( function( store ) {
 			store.on( 'change', this.handleStoresChanged );
 		}, this );
 	},
 
-	removeStoreListeners: function( stores ) {
+	removeStoreListeners( stores ) {
 		stores.forEach( function( store ) {
 			store.off( 'change', this.handleStoresChanged );
 		}, this );
 	},
 
-	handleStoresChanged: function() {
+	handleStoresChanged() {
 		this.setState( this.props.getStateFromStores( this.props ) );
 	},
 
-	render: function() {
+	render() {
 		if ( this.props.component ) {
 			return React.createElement( this.props.component, this.state );
 		}
 
 		const child = React.Children.only( this.props.children );
+
 		return React.cloneElement( child, this.state );
 	}
 } );
 
-module.exports = StoreConnection;
+export default StoreConnection;
