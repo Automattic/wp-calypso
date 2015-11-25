@@ -2,13 +2,13 @@
  * External dependencies
  */
 var assign = require( 'lodash/object/assign' ),
-	matches = require( 'lodash/utility/matches' ),
 	reject = require( 'lodash/collection/reject' );
 
 /**
 * Internal dependencies
 */
 var config = require( 'config' ),
+	stepConfig = require( './steps' ),
 	user = require( 'lib/user' )(),
 	abtest = require( 'lib/abtest' ).abtest;
 
@@ -140,7 +140,9 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, { steps: reject( flow.steps, matches( 'user' ) ) } );
+	return assign( {}, flow, {
+		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken )
+	} );
 }
 
 module.exports = {
