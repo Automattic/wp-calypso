@@ -434,7 +434,7 @@ const shouldFlop = true;
 
 ### Function names
 
-The first word of a variable name should be a verb (not a noun) to avoid confusion with variables.
+The first word of a function name should be a verb (not a noun) to avoid confusion with variables.
 
 ```js
 // bad
