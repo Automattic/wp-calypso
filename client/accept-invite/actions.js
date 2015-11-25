@@ -13,8 +13,10 @@ export function createAccount( userData, callback ) {
 	);
 }
 
-export function acceptInvite( invite, bearerToken, callback ) {
-	wpcom.loadToken( bearerToken );
+export function acceptInvite( invite, callback, bearerToken ) {
+	if ( bearerToken ) {
+		wpcom.loadToken( bearerToken );
+	}
 	return wpcom.undocumented().acceptInvite(
 		invite.blog_id,
 		invite.invite_slug,

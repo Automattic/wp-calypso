@@ -13,6 +13,7 @@ import Button from 'components/button';
 import config from 'config';
 import userModule from 'lib/user';
 import InviteFormHeader from '../invite-form-header';
+import { acceptInvite } from '../actions';
 
 const user = userModule();
 
@@ -42,10 +43,10 @@ export default React.createClass( {
 						}
 					</div>
 					<div className="logged-in-accept__button-bar">
-						<Button>
+						<Button href={ window.location.origin + '?invite_declined' }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
-						<Button primary>
+						<Button primary onClick={ () => acceptInvite( this.props.invite ) } href={ this.props.redirectTo } >
 							{ this.translate( 'Join', { context: 'button' } ) }
 						</Button>
 					</div>
