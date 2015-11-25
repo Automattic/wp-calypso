@@ -9,9 +9,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className={ classnames( this.props.className, 'main' ) } role="main">
+			<main className={ classnames( this.props.className, 'main' ) } role="main">
 				{ this.props.children }
-			</div>
+			</main>
 		);
 	}
 } );
