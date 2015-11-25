@@ -1,0 +1,43 @@
+.survey-step__section-wrapper {
+	margin: 0 auto 2em;
+	width: 500px;
+}
+
+.survey-step__label {
+	vertical-align: top;
+	display: inline-block;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.survey-step__title {
+	display: block;
+	width: 100%;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 600;
+	height: 50px;
+}
+
+.survey-step__title .survey-step__label {
+	width: 100%;
+	text-align: center;
+	line-height: 18px;
+	color: darken( $gray, 20% );
+}
+
+.survey-step__vertical {
+	margin-bottom: 0;
+}
+
+.survey-step__vertical__icon {
+	vertical-align: bottom;
+	margin-top: -2px;
+	margin-right: 16px;
+	color: lighten( $gray, 10% );
+}
+
+.survey-step__vertical:hover .survey-step__vertical__icon {
+	color: $gray;
+}
