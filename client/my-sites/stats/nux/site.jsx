@@ -11,9 +11,9 @@ var React = require( 'react' ),
 var observe = require( 'lib/mixins/data-observe' ),
 	StatsNavigation = require( '../stats-navigation' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	ChartTabs = require( '../module-chart-tabs' ),
+	ChartTabs = require( '../modules/module-chart-tabs' ),
 	nuxData = require( './data.js' ),
-	Countries = require( '../module-countries' ),
+	Countries = require( '../modules/module-countries' ),
 	analytics = require( 'analytics' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' );
 

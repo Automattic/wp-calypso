@@ -9,9 +9,9 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	SummaryChart = require( './module-summary-chart' ),
-	PostMonths = require( './module-post-months' ),
-	PostWeeks = require( './module-post-weeks' ),
+	SummaryChart = require( '../modules/module-summary-chart' ),
+	PostMonths = require( '../modules/module-post-months' ),
+	PostWeeks = require( '../modules/module-post-weeks' ),
 	Emojify = require( 'components/emojify' ),
 	HeaderCake = require( 'components/header-cake' );
 
