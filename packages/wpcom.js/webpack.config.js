@@ -1,25 +1,34 @@
 module.exports = {
 	entry: __dirname + '/index.js',
+
 	node: {
-		fs: "empty"
+		fs: 'empty'
 	},
+
 	output: {
 		path: __dirname + '/dist',
 		filename: 'wpcom.js',
 		libraryTarget: 'var',
 		library: 'WPCOM'
 	},
+
 	module: {
 		loaders: [
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader'
+				loader: 'babel-loader',
+				query: {
+					cacheDirectory: true,
+					optional: [ 'runtime' ]
+				}
 			}
 		]
 	},
+
 	resolve: {
-		extensions: ['', '.js']
+		extensions: [ '', '.js' ]
 	},
+
 	devtool: 'sourcemap'
 };

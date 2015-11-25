@@ -20,7 +20,7 @@ describe('wpcom.site.category', function() {
   // Create a testing_category before to start tests
   var testing_category;
   before(done => {
-    fixture.category.name += Math.random() * 1000000 | 0;
+    fixture.category.name += String( Math.random() * 1000000 | 0 );
 
     site.category().add(fixture.category)
       .then( category => {
