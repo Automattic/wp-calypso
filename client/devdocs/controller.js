@@ -73,7 +73,7 @@ var devdocs = {
 			React.createElement( SingleDocComponent, {
 				path: context.params.path,
 				term: context.query.term,
-				sectionId: context.hash
+				sectionId: Object.keys( context.hash )[0]
 			} ),
 			document.getElementById( 'primary' )
 		);
