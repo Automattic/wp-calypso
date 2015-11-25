@@ -1,7 +1,8 @@
 var React = require( 'react' );
 
 var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	discoverHelper = require( 'reader/discover/helper' );
 
 var FeedEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -19,11 +20,12 @@ var FeedEmptyContent = React.createClass( {
 	},
 
 	render: function() {
-		var action = (
+		var action = discoverHelper.isEnabled()
+		? (
 			<a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ),
+				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null,
 			secondaryAction = (
 				<a
 					className="empty-content__action button"
