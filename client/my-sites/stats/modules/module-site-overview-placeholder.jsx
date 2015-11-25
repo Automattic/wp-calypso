@@ -26,6 +26,19 @@ module.exports = React.createClass( {
 
 		return (
 			<Card className="stats-module is-loading">
+
+				<div className="module-header">
+					<h3 className="module-header-title">
+						<a href="#" className="module-header__link">
+							{ icon }
+							<span className="module-header__right-icon">
+								<Gridicon icon="stats" />
+							</span>
+							<span>{ this.translate( 'Loading Stats' ) }</span>
+						</a>
+					</h3>
+				</div>
+
 				<ul className="module-tabs">
 					<li className='module-tab is-views is-loading'>
 						<a href='#'><Gridicon icon="visible" size={ 18 } /><span className="label">{ this.translate( 'Views' ) }</span> <span className="value">&ndash;</span></a>

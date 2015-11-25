@@ -18,8 +18,7 @@ var toggle = require( '../mixin-toggle' ),
 	DownloadCsv = require( '../download-csv' ),
 	DatePicker = require( '../modules/module-date-picker' ),
 	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
-	SectionHeader = require( 'components/section-header' );
+	Gridicon = require( 'components/gridicon' );
 
 
 module.exports = React.createClass( {
@@ -106,33 +105,40 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div>
-				<SectionHeader label={ headerLink } />
-				<Card className={ classes }>
-					<div className={ this.props.className }>
-						<div className="module-content">
-							<div className="stats-async-metabox-wrapper">
-								<ul className="module-content-list module-content-list-legend">
-									<li className="module-content-list-item">
-										<span className="module-content-list-item-wrapper">
-											<span className="module-content-list-item-right">
-												<span className="module-content-list-item-value">{ this.props.moduleStrings.value }</span>
-											</span>
-											<span className="module-content-list-item-label">{ this.props.moduleStrings.item }</span>
-										</span>
-									</li>
-								</ul>
-								<div className="module-placeholder is-void"></div>
-								{ statsList }
-							</div>
-							{ this.props.summary ?
-								<DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
-							: null }
-						</div>
-						{ viewSummary }
+			<Card className={ classes }>
+				<div className={ this.props.className }>
+					<div className="module-header">
+						{ moduleHeaderTitle }
+						<ul className="module-header-actions">
+							<li className="module-header-action toggle-info"><a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) } onClick={ this.toggleInfo } ><Gridicon icon={ infoIcon } /></a></li>
+							{ moduleToggle }
+						</ul>
 					</div>
-				</Card>
-			</div>
+					<div className="module-content">
+						<InfoPanel module={ this.props.path } />
+						{ ( noData && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.props.moduleStrings.empty } /> : null }
+						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
+						<div className="stats-async-metabox-wrapper">
+							<ul className="module-content-list module-content-list-legend">
+								<li className="module-content-list-item">
+									<span className="module-content-list-item-wrapper">
+										<span className="module-content-list-item-right">
+											<span className="module-content-list-item-value">{ this.props.moduleStrings.value }</span>
+										</span>
+										<span className="module-content-list-item-label">{ this.props.moduleStrings.item }</span>
+									</span>
+								</li>
+							</ul>
+							<div className="module-placeholder is-void"></div>
+							{ statsList }
+						</div>
+						{ this.props.summary ?
+							<DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
+						: null }
+					</div>
+					{ viewSummary }
+				</div>
+			</Card>
 		);
 	}
 } );
