@@ -17,6 +17,7 @@ var config = require( './server/config' ),
  * Internal variables
  */
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
+	AUTOOPEN = process.env.AUTOOPEN || 'false',
 	PORT = process.env.PORT || 3000,
 	jsLoader,
 	webpackConfig;
@@ -109,9 +110,12 @@ jsLoader = {
 	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
 };
 
+if ( AUTOOPEN === 'true' ) {
+	webpackConfig.plugins.push( new OpenCalypsoInBrowser() );
+}
+
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.plugins.push( new OpenCalypsoInBrowser() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
 		'webpack-dev-server/client?http://calypso.localhost:' + PORT,
 		'webpack/hot/only-dev-server',
