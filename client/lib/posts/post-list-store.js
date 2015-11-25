@@ -10,7 +10,7 @@ import difference from 'lodash/array/difference';
 import last from 'lodash/array/last';
 import max from 'lodash/collection/max';
 import { EventEmitter } from 'events/';
-import some from 'lodash/collection/some'
+import some from 'lodash/collection/some';
 
 /**
  * Internal dependencies
