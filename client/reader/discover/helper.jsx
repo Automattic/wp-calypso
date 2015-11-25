@@ -5,7 +5,18 @@ var find = require( 'lodash/collection/find' ),
 	get = require( 'lodash/object/get' ),
 	url = require( 'url' );
 
+/**
+ * Internal Dependencies
+ */
+var config = require( 'config' ),
+	userUtils = require( 'lib/user/utils' );
+
 module.exports = {
+	isEnabled: function() {
+		return config.isEnabled( 'reader/discover' ) &&
+			userUtils.getLocaleSlug() === 'en';
+	},
+
 	isDiscoverPost: function( post ) {
 		return !! post.discover_metadata;
 	},

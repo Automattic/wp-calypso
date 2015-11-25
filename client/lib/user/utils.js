@@ -43,6 +43,10 @@ var userUtils = {
 
 		// Forward user to WordPress.com to be logged out
 		location.href = logoutUrl;
+	},
+
+	getLocaleSlug: function() {
+		return user.get().localeSlug;
 	}
 };
 

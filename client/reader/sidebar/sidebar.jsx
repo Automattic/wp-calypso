@@ -25,7 +25,8 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
-	config = require( 'config' );
+	config = require( 'config' ),
+	discoverHelper = require( 'reader/discover/helper' );
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
@@ -283,7 +284,7 @@ module.exports = React.createClass( {
 						{ this.renderTeams() }
 
 						{
-							config.isEnabled( 'reader/discover' )
+							discoverHelper.isEnabled()
 							? (
 									<li className={ this.itemLinkClass( '/discover', { 'sidebar-streams__discover': true } ) }>
 										<a href="/discover">
