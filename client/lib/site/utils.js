@@ -102,7 +102,10 @@ export default {
 	},
 
 	canUpdateFiles( site ) {
-		if ( site && ! site.hasMinimumJetpackVersion ) {
+		if ( ! site ) {
+			return false;
+		}
+		if ( ! site.hasMinimumJetpackVersion ) {
 			return false;
 		}
 
