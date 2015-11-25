@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react/addons';
 import CommentConstants from 'lib/comment-store/constants';
 
 const PostCommentContent = React.createClass( {
