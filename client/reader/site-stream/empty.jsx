@@ -1,7 +1,6 @@
 var React = require( 'react' );
 
 var EmptyContent = require( 'components/empty-content' ),
-	ExternalLink = require( 'components/external-link' ),
 	stats = require( 'reader/stats' );
 
 var SiteEmptyContent = React.createClass( {
