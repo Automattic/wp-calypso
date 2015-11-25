@@ -5,9 +5,11 @@ var config = require( 'config' );
 
 function warn() {
 	if ( config( 'env' ) !== 'production' ) {
-		try{
+		try {
 			window.console.warn.apply( window.console, arguments );
-		} catch( e ) {}
+		} catch ( e ) {
+			// Squelch
+		}
 	}
 }
 
