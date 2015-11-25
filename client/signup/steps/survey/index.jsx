@@ -23,6 +23,18 @@ const debug = debugFactory( 'calypso:steps:survey' );
 export default React.createClass( {
 	displayName: 'SurveyStep',
 
+	propTypes: {
+		isOneStep: React.PropTypes.bool,
+		surveySiteType: React.PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			surveySiteType: 'site',
+			isOneStep: false
+		}
+	},
+
 	getInitialState() {
 		return {
 			stepOne: null,
@@ -57,8 +69,9 @@ export default React.createClass( {
 
 	renderStepOneVertical( vertical ) {
 		const icon = vertical.icon || 'user';
+		const stepOneClickHandler = this.props.isOneStep ? this.handleNextStep.bind( null, vertical ) : this.showStepTwo.bind( null, vertical );
 		return (
-			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ this.showStepTwo.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
@@ -112,8 +125,13 @@ export default React.createClass( {
 	},
 
 	handleNextStep( vertical ) {
+		const { value, label } = vertical;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( vertical ) } );
+		if ( this.state.stepOne ) {
+			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( { value, label } ) } );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', { category: JSON.stringify( { value, label } ) } );
+		}
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		this.props.goToNextStep();
 	}
