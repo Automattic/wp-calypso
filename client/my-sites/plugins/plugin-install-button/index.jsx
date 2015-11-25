@@ -42,6 +42,13 @@ module.exports = React.createClass( {
 	},
 
 	renderEmbedButton: function() {
+		if ( this.props.selectedSite.unreachable ) {
+			return (
+				<div className="plugin-install-button__install embed has-warning">
+					<span className="plugin-install-button__warning">{ this.translate( 'Site unreachable' ) }</span>
+				</div>
+			);
+		}
 		if ( ! this.props.selectedSite.canUpdateFiles ) {
 			return (
 				<div className="plugin-install-button__install embed has-warning">
@@ -54,13 +61,6 @@ module.exports = React.createClass( {
 				<div className="plugin-install-button__install embed has-warning">
 					<span className="plugin-install-button__warning">{ this.translate( 'Jetpack 3.7 is required' ) }</span>
 					<a onclick={ this.updateJetpackAction } href={ this.props.selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' } className="plugin-install-button__link">{ this.translate( 'update', { context: 'verb, update plugin button label' } ) }</a>
-				</div>
-			);
-		}
-		if ( this.props.selectedSite.unreachable ) {
-			return (
-				<div className="plugin-install-button__install embed has-warning">
-					<span className="plugin-install-button__warning">{ this.translate( 'Site unreachable' ) }</span>
 				</div>
 			);
 		}
