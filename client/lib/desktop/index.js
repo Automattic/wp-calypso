@@ -141,6 +141,10 @@ var Desktop = {
 	onCookieAuthComplete: function() {
 		var iframe = document.querySelector( '#wpnt-notes-iframe2' );
 		iframe.src = iframe.src;
+	},
+
+	print: function( title, html ) {
+		ipc.send( 'print', title, html );
 	}
 };
 
