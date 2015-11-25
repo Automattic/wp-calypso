@@ -9,7 +9,7 @@ const StoreConnection = React.createClass( {
 		component: React.PropTypes.func,
 		getStateFromStores: React.PropTypes.func.isRequired,
 		isDataLoading: React.PropTypes.func,
-		placeholderComponent: React.PropTypes.func,
+		loadingPlaceholder: React.PropTypes.func,
 		stores: React.PropTypes.array.isRequired
 	},
 
@@ -50,7 +50,7 @@ const StoreConnection = React.createClass( {
 	},
 
 	isDataLoading() {
-		if ( ! this.props.placeholderComponent || ! this.props.isDataLoading ) {
+		if ( ! this.props.loadingPlaceholder || ! this.props.isDataLoading ) {
 			return false;
 		}
 
@@ -59,7 +59,7 @@ const StoreConnection = React.createClass( {
 
 	render() {
 		if ( this.isDataLoading() ) {
-			return React.createElement( this.props.placeholderComponent );
+			return React.createElement( this.props.loadingPlaceholder );
 		}
 
 		if ( this.props.component ) {

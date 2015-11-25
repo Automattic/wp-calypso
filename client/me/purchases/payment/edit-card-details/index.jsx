@@ -54,17 +54,6 @@ const EditCardDetails = React.createClass( {
 		'postalCode'
 	],
 
-	componentWillReceiveProps( nextProps ) {
-		recordPageView( 'edit_card_details', this.props, nextProps );
-
-		// Updates the form once with the stored credit card data as soon as they are available
-		if ( nextProps.card && ( ! this.props.card || ( nextProps.card.id !== this.props.card.id ) ) ) {
-			this.setState( {
-				form: formState.initializeFields( this.state.form, this.mergeCard( nextProps.card ) )
-			} );
-		}
-	},
-
 	/**
 	 * Merges the specified card object returned by the StoredCards store into a new object with only properties that
 	 * should be used to prefill the credit card form, and with keys matching the corresponding field names.
@@ -73,28 +62,23 @@ const EditCardDetails = React.createClass( {
 	 * @param fields
 	 */
 	mergeCard( card, fields: {} ) {
+		const { name } = card;
+
 		return extend( {}, fields, {
-			name: card.name
+			name
 		} );
 	},
 
 	componentWillMount() {
 		recordPageView( 'edit_card_details', this.props );
 
-		const options = {
-			validatorFunction: this.validate,
-			onNewState: this.setFormState
-		};
+		const fields = this.mergeCard( this.props.card, formState.createNullFieldValues( this.fieldNames ) );
 
-		if ( this.props.card ) {
-			const fields = formState.createNullFieldValues( this.fieldNames );
-
-			options.initialState = formState.createInitialFormState( this.mergeCard( this.props.card, fields ) );
-		} else {
-			options.fieldNames = this.fieldNames;
-		}
-
-		this.formStateController = formState.Controller( options );
+		this.formStateController = formState.Controller( {
+			initialFields: fields,
+			onNewState: this.setFormState,
+			validatorFunction: this.validate
+		} );
 
 		this.setState( { form: this.formStateController.getInitialState() } );
 	},

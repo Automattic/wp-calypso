@@ -130,6 +130,7 @@ export default {
 				cardId={ context.params.cardId }
 				component={ EditCardDetails }
 				purchaseId={ context.params.purchaseId }
+				loadingPlaceholder={ NoSitesMessage }
 				sites={ sites } />
 		);
 	},

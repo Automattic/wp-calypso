@@ -30,11 +30,20 @@ function getStateFromStores( props ) {
 	};
 }
 
+function isDataLoading( state ) {
+	return (
+		! state.card ||
+		! state.selectedPurchase.hasLoadedFromServer ||
+		! state.selectedSite
+	);
+}
+
 const EditCardDetailsData = React.createClass( {
 	propTypes: {
 		cardId: React.PropTypes.string.isRequired,
 		component: React.PropTypes.func.isRequired,
 		purchaseId: React.PropTypes.string.isRequired,
+		loadingPlaceholder: React.PropTypes.func.isRequired,
 		sites: React.PropTypes.object.isRequired
 	},
 
@@ -51,6 +60,8 @@ const EditCardDetailsData = React.createClass( {
 				cardId={ this.props.cardId }
 				component={ this.props.component }
 				getStateFromStores={ getStateFromStores }
+				isDataLoading={ isDataLoading }
+				loadingPlaceholder={ this.props.loadingPlaceholder }
 				purchaseId={ this.props.purchaseId }
 				selectedSite={ this.props.sites.getSelectedSite() }
 				stores={ stores } />
