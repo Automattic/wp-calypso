@@ -104,6 +104,7 @@
 		margin: 0;
 		padding: 0 20%;
 		position: absolute;
+		z-index: 100100; /* Same as the other TinyMCE "panels" */
 		transform: translateX( -100vw );
 		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
 
