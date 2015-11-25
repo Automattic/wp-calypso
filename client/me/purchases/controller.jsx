@@ -12,6 +12,7 @@ import CancelPurchase from './cancel-purchase';
 import CancelPrivateRegistration from './cancel-private-registration';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
+import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
 import EditPaymentMethod from './payment/edit-payment-method';
 import i18n from 'lib/mixins/i18n';
 import Main from 'components/main';
@@ -130,7 +131,7 @@ export default {
 				cardId={ context.params.cardId }
 				component={ EditCardDetails }
 				purchaseId={ context.params.purchaseId }
-				loadingPlaceholder={ NoSitesMessage }
+				loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
 				sites={ sites } />
 		);
 	},
