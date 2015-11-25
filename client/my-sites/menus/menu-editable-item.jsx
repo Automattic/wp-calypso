@@ -302,19 +302,21 @@ var MenuEditableItem = React.createClass( {
 			},
 			{
 				key: 'move',
-				label: this.translate( 'Move', { textOnly: true } ),
+        className: 'noticon noticon-fullscreen',
+        linkTitle: this.translate( 'Move' ),
 				showIfNew: false,
 				onClick: this.onMoveButtonClick
 			},
 			{
 				key: 'cancel',
-				label: this.translate( 'Cancel', { textOnly: true } ),
+				linkTitle: this.translate( 'Cancel' ),
+        className: 'noticon noticon-close',
 				showIfNew: true,
 				onClick: this.onCancelButtonClick
 			},
 			{
 				key: 'ok',
-				className: 'button is-primary',
+				className: 'button is-primary noticon',
 				label: this.isNew() ?
 						this.translate( 'Add Item' ) :
 						this.translate( 'OK' ),
