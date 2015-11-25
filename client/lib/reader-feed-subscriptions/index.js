@@ -146,8 +146,7 @@ var FeedSubscriptionStore = {
 		newSubscriptions = Immutable.List( subscriptionsWithState ); // eslint-disable-line new-cap
 
 		// Is it the last page?
-		if ( data.number < perPage ) {
-			// TODO: check to see if this is really the last page based on the count coming from the API
+		if ( data.number === 0 ) {
 			isLastPage = true;
 		}
 
