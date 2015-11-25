@@ -48,6 +48,7 @@ var SearchCard = require( 'components/search-card' ),
 	FoldableCard = require( 'components/foldable-card/docs/example' ),
 	SectionHeader = require( 'components/section-header/docs/example' ),
 	Flag = require( 'components/flag/docs/example' ),
+	PaymentLogo = require( 'components/payment-logo/docs/example' ),
 	Count = require( 'components/count/docs/example' ),
 	Version = require( 'components/version/docs/example' ),
 	BulkSelect = require( 'components/bulk-select/docs/example' ),
@@ -214,6 +215,7 @@ module.exports = React.createClass( {
 					<TimezoneDropdown />
 					<FoldableCard />
 					<Flag />
+					<PaymentLogo />
 					<BulkSelect />
 					<SectionHeader />
 					<SectionNav />
