@@ -12,6 +12,7 @@ var	FormButton = require( 'components/forms/form-button' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
+	config = require( 'config' ),
 	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
@@ -62,29 +63,35 @@ module.exports = React.createClass( {
 
 	onPrint: function( event ) {
 		event.preventDefault();
-		if ( this.openPopup() ) {
+
+		if ( config.isEnabled( 'desktop' ) ) {
+			require( 'lib/desktop' ).print( this.translate( 'Backup verification codes' ), this.getBackupCodeHTML( this.props.backupCodes ) );
+		} else if ( this.openPopup() ) {
 			this.doPopup( this.props.backupCodes );
 		}
 	},
 
-	doPopup: function( codes ) {
-		var datePrinted = this.moment().format( 'MMM DD, YYYY @ h:mm a' );
-		var row;
+	getBackupCodeHTML: function( codes ) {
+		const datePrinted = this.moment().format( 'MMM DD, YYYY @ h:mm a' );
+		let row;
+		let html = '<html><head><title>';
 
-		this.popup.document.open( 'text/html' );
-		this.popup.document.write( '<html><body style="font-family:sans-serif">' );
-		this.popup.document.write( '<div style="padding:10px; border:1px dashed black; display:inline-block">' );
-		this.popup.document.write(
+		html += this.translate( 'Backup verification codes' );
+		html += '</title></head>';
+		html += '<body style="font-family:sans-serif">';
+
+		html += '<div style="padding:10px; border:1px dashed black; display:inline-block">';
+		html += (
 			'<p style="margin-top:0"><strong>' +
 			this.translate( 'Backup verification codes' ) +
 			'</strong></p>'
 		);
 
-		this.popup.document.write( '<table style="border-spacing:30px 5px">' );
-		this.popup.document.write( '<tbody>' );
+		html += '<table style="border-spacing:30px 5px">';
+		html += '<tbody>';
 
 		for ( row = 0; row < 5; row++ ) {
-			this.popup.document.write(
+			html += (
 				'<tr>' +
 				'<td>' + ( row + 1 ) + '. ' +
 				'<strong>' + codes[ row * 2 ] + '</strong>' +
@@ -96,9 +103,9 @@ module.exports = React.createClass( {
 			);
 		}
 
-		this.popup.document.write( '</tbody></table>' );
+		html += '</tbody></table>';
 
-		this.popup.document.write(
+		html += (
 			'<p style="margin-bottom:0">' +
 			this.translate(
 				'Printed: %(datePrinted)s',
@@ -111,8 +118,13 @@ module.exports = React.createClass( {
 			'</p>'
 		);
 
-		this.popup.document.write( '</div></body></html>' );
+		html += '</div></body></html>';
+		return html;
+	},
 
+	doPopup: function( codes ) {
+		this.popup.document.open( 'text/html' );
+		this.popup.document.write( this.getBackupCodeHTML( codes ) );
 		this.popup.document.close();
 		this.popup.print();
 
