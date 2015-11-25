@@ -3,8 +3,7 @@
 // External dependencies
 const React = require( 'react' ),
 	url = require( 'url' ),
-	noop = require( 'lodash/utility/noop' ),
-	last = require( 'lodash/array/last' );
+	noop = require( 'lodash/utility/noop' );
 
 // Internal dependencies
 const Search = require( 'components/search' ),
@@ -104,8 +103,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 		}
 
 		// Check for a valid-looking TLD
-		const lastHostnameSegment = last( parsedUrl.hostname.split( '.' ) );
-		if ( ! lastHostnameSegment || lastHostnameSegment.length < 2 ) {
+		if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
 			return false;
 		}
 
