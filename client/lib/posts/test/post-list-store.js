@@ -23,11 +23,11 @@ var DEFAULT_POST_LIST_ID = 'default';
 
 function dispatchReceivePostsPage( id, postListStoreId, data ) {
 	var mockData = {
-			found: 1,
-			posts: [ {
-				global_ID: 777
-			} ]
-		};
+		found: 1,
+		posts: [ {
+			global_ID: 777
+		} ]
+	};
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_POSTS_PAGE',
 		id: id,
