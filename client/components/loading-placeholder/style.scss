@@ -1,0 +1,14 @@
+.loading-placeholder {
+	button, input, select {
+		@include placeholder(23%);
+		cursor: default;
+		pointer-events: none;
+	}
+}
+
+.loading-placeholder__header {
+	.header-cake__title {
+		@include placeholder(23%);
+		width: 60%;
+	}
+}
