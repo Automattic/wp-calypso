@@ -19,7 +19,10 @@ export default React.createClass( {
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
 		gaEventCategory: React.PropTypes.string,
-		popoverName: React.PropTypes.string
+		popoverName: React.PropTypes.string,
+		ignoreContext: React.PropTypes.shape( {
+			getDOMNode: React.PropTypes.function
+		} ),
 	},
 
 	getDefaultProps() {
@@ -36,11 +39,12 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<span onClick={ this._onClick } ref="infoPopover" className={ classNames( 'info-popover', { 'is_active': this.state.showPopover }, this.props.className ) }>
+			<span onClick={ this._onClick } ref="infoPopover" className={ classNames( 'info-popover', { is_active: this.state.showPopover }, this.props.className ) }>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<Popover
 					isVisible={ this.state.showPopover }
 					context={ this.refs && this.refs.infoPopover }
+					ignoreContext={ this.props.ignoreContext }
 					position={ this.props.position }
 					onClose={ this._onClose }
 					className={ classNames( 'popover', 'info-popover__tooltip', this.props.className ) }>
@@ -67,5 +71,4 @@ export default React.createClass( {
 			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
 		}
 	}
-
 } );

@@ -46,3 +46,5 @@ render: function() {
 * `action`: (callback) what should be executed once the user fires the action.
 * `inProgress`: (bool) whether the action is in the middle of being performed.
 * `htmlFor`: (string) htmlFor is used for creating the for attribute on the label.
+* `disabledInfo`: ( string ) text that gets displayed in a infoPopover explaining why the action is disabled.
+
