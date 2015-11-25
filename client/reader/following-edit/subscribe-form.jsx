@@ -56,7 +56,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 	handleKeyDown: function( event ) {
 		// Use Enter to submit
-		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength  && this.state.isWellFormedFeedUrl ) {
+		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength && this.state.isWellFormedFeedUrl ) {
 			event.preventDefault();
 			this.handleFollowToggle();
 		}
@@ -98,11 +98,16 @@ var FollowingEditSubscribeForm = React.createClass( {
 	},
 
 	isWellFormedFeedUrl: function( parsedUrl ) {
-		if ( parsedUrl.hostname && parsedUrl.hostname.indexOf( '.' ) !== -1 ) {
-			return true;
+		if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
+			return false;
 		}
 
-		return false;
+		// Check for a valid-looking TLD
+		if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	render: function() {
