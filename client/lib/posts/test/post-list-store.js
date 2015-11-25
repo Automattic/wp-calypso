@@ -8,6 +8,43 @@ var rewire = require( 'rewire' ),
 	assert = require( 'chai' ).assert,
 	Dispatcher = require( 'dispatcher' );
 
+/**
+ * Mock Data
+ */
+var TWO_POST_PAYLOAD = {
+	found: 2,
+	posts: [ {
+		global_ID: 778
+	}, {
+		global_ID: 779
+	} ]
+};
+var DEFAULT_POST_LIST_ID = 'default';
+
+function dispatchReceivePostsPage( id, postListStoreId, data ) {
+	var mockData = {
+			found: 1,
+			posts: [ {
+				global_ID: 777
+			} ]
+		};
+	Dispatcher.handleServerAction( {
+		type: 'RECEIVE_POSTS_PAGE',
+		id: id,
+		postListStoreId: postListStoreId,
+		data: data || mockData,
+		error: null
+	} );
+}
+
+function dispatchQueryPosts( postListStoreId, options ) {
+	Dispatcher.handleViewAction( {
+		type: 'QUERY_POSTS',
+		options: options,
+		postListStoreId: postListStoreId
+	} );
+}
+
 describe( 'post-list-store', function() {
 	var postListStoreFactory, defaultPostListStore;
 	before( function() {
@@ -27,7 +64,7 @@ describe( 'post-list-store', function() {
 
 	describe( 'postListStoreId', function() {
 		it( 'should set the default postListStoreId', function() {
-			assert.equal( defaultPostListStore.id, 'default' );
+			assert.equal( defaultPostListStore.id, DEFAULT_POST_LIST_ID );
 		} );
 	} );
 
@@ -112,6 +149,93 @@ describe( 'post-list-store', function() {
 	describe( '#getUpdatesParams', function() {
 		it( 'should return an object of params', function() {
 			assert.instanceOf( defaultPostListStore.getUpdatesParams(), Object );
+		} );
+	} );
+
+	describe( 'RECEIVE_POSTS_PAGE', function() {
+		it( 'should add post ids for matching postListStore', function() {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.equal( defaultPostListStore.getAll().length, 1 );
+		} );
+
+		it( 'should add additional post ids for matching postListStore', function() {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.equal( defaultPostListStore.getAll().length, 1 );
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, TWO_POST_PAYLOAD );
+			assert.equal( defaultPostListStore.getAll().length, 3 );
+		} );
+
+		it( 'should add only unique post.global_IDs postListStore', function() {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.equal( defaultPostListStore.getAll().length, 1 );
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.equal( defaultPostListStore.getAll().length, 1 );
+		} );
+
+		it( 'should not update if cached store id does not match', function() {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.equal( defaultPostListStore.getAll().length, 1 );
+			dispatchReceivePostsPage( 999, defaultPostListStore.id );
+			assert.equal( defaultPostListStore.getAll().length, 1 );
+		} );
+
+		it( 'should not add post ids if postListStore does not match', function() {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), 'some-other-post-list-store' );
+			assert.equal( defaultPostListStore.getAll().length, 0 );
+		} );
+
+		it( 'should set isLastPage true if no next page handle returned', function() {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.isTrue( defaultPostListStore.isLastPage() );
+		} );
+	} );
+
+	describe( 'QUERY_POSTS', function() {
+		it( 'should not change cached list if query does not change', function() {
+			var currentCacheId = defaultPostListStore.getID();
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
+			assert.equal( currentCacheId, defaultPostListStore.getID() );
+		} );
+
+		it( 'should change the active query and id when query options change', function() {
+			var currentCacheId = defaultPostListStore.getID();
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { type: 'page' } );
+			assert.notEqual( currentCacheId, defaultPostListStore.getID() );
+		} );
+
+		it( 'should set site_visibility if no siteID is present', function() {
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { type: 'page' } );
+			assert.equal( defaultPostListStore.getNextPageParams().site_visibility, 'visible' );
+		} );
+
+		it( 'should set query options passed in', function() {
+			var params;
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {
+				type: 'page',
+				order: 'ASC'
+			} );
+			params = defaultPostListStore.getNextPageParams();
+			assert.equal( params.type, 'page' );
+			assert.equal( params.order, 'ASC' );
+		} );
+
+		it( 'should remove null query options passed in', function() {
+			var params;
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {
+				type: 'page',
+				order: 'ASC',
+				search: null
+			} );
+			params = defaultPostListStore.getNextPageParams();
+			assert.isUndefined( params.search );
+		} );
+
+		it( 'should not set query options on a different postListStore instance', function() {
+			var params;
+			dispatchQueryPosts( 'some-other-post-list-store', { type: 'page' } );
+			params = defaultPostListStore.getNextPageParams();
+			assert.equal( params.type, 'post' );
+			assert.equal( params.order, 'DESC' );
 		} );
 	} );
 } );
