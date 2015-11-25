@@ -23,15 +23,11 @@ export default React.createClass( {
 	handleSubmit() {
 		const { lastKey, imageResultsByKey } = DSSImageStore.get();
 		const dssImage = imageResultsByKey[ lastKey ] ? imageResultsByKey[ lastKey ] : undefined;
-		const eventProps = {
-			theme: this.props.themeRepoSlug,
-			headstart: true,
-			images: dssImage ? JSON.stringify( dssImage ) : undefined,
-			searchterms: Object.keys( imageResultsByKey ).join( ',' ),
-			selectedterm: lastKey
-		};
 
-		analytics.tracks.recordEvent( 'calypso_signup_theme_select', eventProps );
+		analytics.tracks.recordEvent( 'calypso_dss_select_theme', {
+			theme: this.props.themeRepoSlug,
+			search_term: lastKey
+		} );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, null, {
 			theme: this.props.themeRepoSlug,
