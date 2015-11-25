@@ -7,6 +7,11 @@
 		height: 320px;
 		overflow: hidden;
 
+		@media (max-width: 748px) {
+			height: 220px;
+			margin-bottom: 4px;
+		}
+
 		@media (min-width: 748px) and (max-width: 1200px) {
 			width: calc( 50% - 12px );
 			margin-right: 24px;
