@@ -62,10 +62,8 @@ const EditCardDetails = React.createClass( {
 	 * @param fields
 	 */
 	mergeCard( card, fields: {} ) {
-		const { name } = card;
-
 		return extend( {}, fields, {
-			name
+			name: card.name
 		} );
 	},
 
