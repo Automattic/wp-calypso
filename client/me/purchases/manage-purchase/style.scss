@@ -179,13 +179,6 @@
 		text-align: right;
 	}
 
-	&.is-placeholder {
-		@include placeholder( 23% );
-
-		display: block;
-		height: 25px;
-	}
-
 	a {
 		display: block;
 		font-size: 12px;

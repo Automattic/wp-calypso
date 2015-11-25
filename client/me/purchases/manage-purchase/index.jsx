@@ -68,6 +68,10 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderNotices() {
+		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
+			return null;
+		}
+
 		return this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
 	},
 
@@ -75,7 +79,7 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 		let noticeStatus = 'is-info';
 
-		if ( isDataLoading( this.props ) || ! isExpiring( purchase ) || this.isDataFetchingAfterRenewal() ) {
+		if ( ! isExpiring( purchase ) ) {
 			return null;
 		}
 
@@ -104,10 +108,6 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderCreditCardExpiringNotice() {
-		if ( isDataLoading( this.props ) ) {
-			return null;
-		}
-
 		const purchase = getPurchase( this.props ),
 			{ domain, id, payment: { creditCard } } = purchase;
 
@@ -280,7 +280,7 @@ const ManagePurchase = React.createClass( {
 	renderPaymentInfo() {
 		const purchase = getPurchase( this.props );
 
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
 			return <span className="manage-purchase__detail" />;
 		}
 
@@ -311,22 +311,23 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPaymentDetails() {
-		const purchase = getPurchase( this.props );
+		const purchase = getPurchase( this.props ),
+			isLoading = isDataLoading( this.props ) || this.isDataFetchingAfterRenewal();
 
-		if ( ! isDataLoading( this.props ) && isOneTimePurchase( purchase ) ) {
+		if ( ! isLoading && isOneTimePurchase( purchase ) ) {
 			return null;
 		}
 
 		let paymentDetails = (
 			<span>
 				<em className="manage-purchase__detail-label">
-					{ isDataLoading( this.props ) ? null : this.translate( 'Payment method' ) }
+					{ isLoading ? null : this.translate( 'Payment method' ) }
 				</em>
 				{ this.renderPaymentInfo() }
 			</span>
 		);
 
-		if ( isDataLoading( this.props ) || ! showEditPaymentDetails( purchase ) ) {
+		if ( isLoading || ! showEditPaymentDetails( purchase ) ) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -348,7 +349,7 @@ const ManagePurchase = React.createClass( {
 	renderRenewButton() {
 		const purchase = getPurchase( this.props );
 
-		if ( ! isRenewable( purchase ) || isExpired( purchase ) || isExpiring( purchase ) || this.isDataFetchingAfterRenewal() ) {
+		if ( ! isRenewable( purchase ) || isExpired( purchase ) || isExpiring( purchase ) ) {
 			return null;
 		}
 
@@ -383,7 +384,7 @@ const ManagePurchase = React.createClass( {
 	renderRenewsOrExpiresOnLabel() {
 		const purchase = getPurchase( this.props );
 
-		if ( ! this.isDataFetchingAfterRenewal() && ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) ) {
+		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
 			return this.translate( 'Expires on' );
 		}
 
@@ -396,10 +397,6 @@ const ManagePurchase = React.createClass( {
 
 	renderRenewsOrExpiresOn() {
 		const purchase = getPurchase( this.props );
-
-		if ( this.isDataFetchingAfterRenewal() ) {
-			return null;
-		}
 
 		if ( isRenewing( purchase ) ) {
 			return this.moment( purchase.renewDate ).format( 'LL' );
@@ -501,7 +498,7 @@ const ManagePurchase = React.createClass( {
 			cancelPurchaseNavItem,
 			cancelPrivateRegistrationNavItem;
 
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
 			classes = 'manage-purchase__info is-placeholder';
 			editPaymentMethodNavItem = <VerticalNavItem isPlaceholder />;
 			cancelPurchaseNavItem = <VerticalNavItem isPlaceholder />;
@@ -518,17 +515,13 @@ const ManagePurchase = React.createClass( {
 			productLink = this.renderProductLink();
 			price = this.renderPrice();
 			renewsOrExpiresOnLabel = this.renderRenewsOrExpiresOnLabel();
-			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
 			renewButton = this.renderRenewButton();
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
 			cancelPrivateRegistrationNavItem = this.renderCancelPrivateRegistration();
+			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
 		}
-
-		const renewsOrExpiresOnClasses = classNames( 'manage-purchase__detail', {
-			'is-placeholder': this.isDataFetchingAfterRenewal()
-		} );
 
 		return (
 			<div>
@@ -551,7 +544,7 @@ const ManagePurchase = React.createClass( {
 						</li>
 						<li>
 							<em className="manage-purchase__detail-label">{ renewsOrExpiresOnLabel }</em>
-							<span className={ renewsOrExpiresOnClasses }>
+							<span className="manage-purchase__detail">
 								{ renewsOrExpiresOn }
 							</span>
 						</li>
