@@ -12,7 +12,8 @@ var Gravatar = require( 'components/gravatar' ),
 	PostTime = require( 'reader/post-time' ),
 	PostCommentForm = require( './form' ),
 	CommentLikeButtonContainer = require( './comment-likes' ),
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	PostCommentContent = require( './post-comment-content' );
 
 var PostComment = React.createClass( {
 
@@ -146,12 +147,11 @@ var PostComment = React.createClass( {
 					</small>
 				</div>
 
-				{ comment.status && comment.status === 'unapproved' ?
-					<p className="comment__moderation">{ this.translate( 'Your comment is awaiting moderation.' ) }</p>
+				{ comment.status && comment.status === 'unapproved'
+					? <p className="comment__moderation">{ this.translate( 'Your comment is awaiting moderation.' ) }</p>
 					: null }
 
-				<div className="comment__content" dangerouslySetInnerHTML={{ __html: comment.content }}>
-				</div>
+				<PostCommentContent content={ comment.content } state={ comment.state } />
 
 				{ this.renderCommentActions( comment ) }
 				{ this.renderCommentForm() }
