@@ -13,7 +13,7 @@ var LikedStream = React.createClass( {
 			this.props.setPageTitle( title );
 		}
 		return (
-			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true } />
+			<FollowingStream { ...this.props } containerClass={ "my-likes" } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true } />
 		);
 	}
 
