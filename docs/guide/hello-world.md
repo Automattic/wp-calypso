@@ -94,7 +94,7 @@ export default () => {
 
 ### 4. Register section
 
-Now it's time to configure our section. Open `client/my-sites/sections.js` and add the following code:
+Now it's time to configure our section. Open `client/sections.js` and add the following code:
 
 ```javascript
 if ( config.isEnabled( 'hello-world' ) ) {
