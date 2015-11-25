@@ -185,6 +185,7 @@ module.exports = React.createClass( {
 			content_css: CONTENT_CSS.join( ',' ),
 			language: user.get() ? user.get().localeSlug : 'en',
 			language_url: DUMMY_LANG_URL,
+			directionality: user.isRTL() ? 'rtl' : 'ltr',
 			formats: {
 				alignleft: [
 					{
