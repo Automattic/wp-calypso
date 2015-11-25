@@ -4,6 +4,7 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
+	open = require( 'open' ),
 	path = require( 'path' );
 
 /**
@@ -16,9 +17,22 @@ var config = require( './server/config' ),
  * Internal variables
  */
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
+	AUTOOPEN = process.env.AUTOOPEN || 'false',
 	PORT = process.env.PORT || 3000,
 	jsLoader,
 	webpackConfig;
+
+function OpenCalypsoInBrowser() {
+	this.isFirstBuild = true;
+}
+OpenCalypsoInBrowser.prototype.apply = function( compiler ) {
+	compiler.plugin( 'done', function() {
+		if ( this.isFirstBuild ) {
+			open( 'http://calypso.localhost:3000' );
+			this.isFirstBuild = false;
+		}
+	}.bind( this ) );
+};
 
 webpackConfig = {
 	cache: true,
@@ -95,6 +109,10 @@ jsLoader = {
 	exclude: /node_modules/,
 	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
 };
+
+if ( AUTOOPEN === 'true' ) {
+	webpackConfig.plugins.push( new OpenCalypsoInBrowser() );
+}
 
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
