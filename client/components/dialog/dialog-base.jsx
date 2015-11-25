@@ -5,7 +5,7 @@ var React = require( 'react' ),
 	clickOutside = require( 'click-outside' ),
 	closest = require( 'component-closest' ),
 	noop = require( 'lodash/utility/noop' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -60,17 +60,17 @@ var DialogBase = React.createClass( {
 			contentClassName = baseClassName + '__content';
 
 		if ( this.props.additionalClassNames ) {
-			dialogClassName = joinClasses( this.props.additionalClassNames, dialogClassName );
+			dialogClassName = classnames( this.props.additionalClassNames, dialogClassName );
 		}
 
 		if ( this.props.isFullScreen ) {
-			backdropClassName = joinClasses( 'is-full-screen', backdropClassName );
+			backdropClassName = classnames( 'is-full-screen', backdropClassName );
 		}
 
 		return (
 			<div className={ backdropClassName } ref="backdrop">
 				<Card className={ dialogClassName } role="dialog" ref="dialog">
-					<div className={ joinClasses( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
+					<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
 						{ this.props.children }
 					</div>
 					{ this._renderButtonsBar() }

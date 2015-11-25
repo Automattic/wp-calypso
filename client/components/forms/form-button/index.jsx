@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	classNames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' ),
 	isEmpty = require( 'lodash/lang/isEmpty' );
@@ -37,7 +37,7 @@ module.exports = React.createClass( {
 			<Button
 				{ ...omit( this.props, 'className' ) }
 				primary={ this.props.isPrimary }
-				className={ joinClasses( this.props.className, buttonClasses ) }>
+				className={ classnames( this.props.className, buttonClasses ) }>
 				{ isEmpty( this.props.children ) ? this.getDefaultButtonAction() : this.props.children }
 			</Button>
 		);

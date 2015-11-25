@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies

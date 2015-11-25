@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal Dependencies
@@ -26,7 +26,7 @@ module.exports = React.createClass( {
 	render: function() {
 		const selected = this.props.selected ? 'selected' : null;
 		return (
-			<li className={ joinClasses( this.props.className, selected, 'me-sidebar-item' ) } >
+			<li className={ classnames( this.props.className, selected, 'me-sidebar-item' ) } >
 				<a href={ this.props.href } onClick={ this.onClick } target={ 'true' === this.props.external ? '_blank' : null }>
 					<Gridicon icon={ this.props.icon } size={ 24 } className="me-sidebar-item__gridicon" />
 					<span className="menu-link-text">{ this.props.label }</span>

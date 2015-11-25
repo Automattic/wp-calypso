@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 module.exports = React.createClass( {
 
@@ -35,7 +35,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className={ joinClasses( this.props.className, 'progress-bar' ) }>
+			<div className={ classnames( this.props.className, 'progress-bar' ) }>
 				{ this.renderBar() }
 			</div>
 		);

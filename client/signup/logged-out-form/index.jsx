@@ -4,7 +4,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ module.exports = React.createClass( {
 		var classes = classNames( { 'logged-out-form': true, } );
 
 		return (
-			<div className={ joinClasses( this.props.className, classes ) } >
+			<div className={ classnames( this.props.className, classes ) } >
 				<Card>
 					<form onSubmit={ this.props.onSubmit } noValidate={ true }>
 						{ this.props.formHeader &&

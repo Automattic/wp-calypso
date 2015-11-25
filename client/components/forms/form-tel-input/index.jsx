@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' ),
 	classNames = require( 'classnames' );
 
@@ -28,7 +28,7 @@ module.exports = React.createClass( {
 				{ ...otherProps }
 				type={ 'tel' }
 				pattern={ '[0-9]*'}
-				className={ joinClasses( this.props.className, classes ) } />
+				className={ classnames( this.props.className, classes ) } />
 		);
 	}
 } );

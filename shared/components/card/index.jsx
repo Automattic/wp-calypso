@@ -3,7 +3,7 @@
  */
 var React = require( 'react/addons' ),
 	assign = require( 'lodash/object/assign' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ module.exports = React.createClass( {
 	render: function() {
 		var element = this.props.tagName || 'div',
 			linkClassName = this.props.href ? 'is-card-link' : null,
-			props = assign( {}, this.props, { className: joinClasses( this.props.className, 'card', linkClassName ) } ),
+			props = assign( {}, this.props, { className: classnames( this.props.className, 'card', linkClassName ) } ),
 			linkIndicator = null;
 
 		if ( this.props.href ) {

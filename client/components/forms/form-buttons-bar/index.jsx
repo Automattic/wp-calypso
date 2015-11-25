@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' );
 
 module.exports = React.createClass( {
@@ -13,7 +13,7 @@ module.exports = React.createClass( {
 		return (
 			<div
 				{ ...omit( this.props, 'className' ) }
-				className={ joinClasses( this.props.className, 'form-buttons-bar' ) } >
+				className={ classnames( this.props.className, 'form-buttons-bar' ) } >
 				{ this.props.children }
 			</div>
 		);

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' );
 
 module.exports = React.createClass( {
@@ -13,7 +13,7 @@ module.exports = React.createClass( {
 		var otherProps = omit( this.props, [ 'className', 'type' ] );
 
 		return (
-			<input { ...otherProps } type="checkbox" className={ joinClasses( this.props.className, 'form-checkbox' ) } />
+			<input { ...otherProps } type="checkbox" className={ classnames( this.props.className, 'form-checkbox' ) } />
 		);
 	}
 } );

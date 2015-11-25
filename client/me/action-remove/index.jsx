@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' ),
 	classNames = require( 'classnames' );
 
@@ -26,7 +26,7 @@ module.exports = React.createClass( {
 			<button
 				title={ this.translate( 'Remove', { textOnly: true } ) }
 				{ ...omit( this.props, 'className' ) }
-				className={ joinClasses( this.props.className, buttonClasses ) } >
+				className={ classnames( this.props.className, buttonClasses ) } >
 				{ this.props.children }
 			</button>
 		);

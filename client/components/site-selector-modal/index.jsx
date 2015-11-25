@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -69,7 +69,7 @@ var SiteSelectorModal = React.createClass( {
 				{ action: 'back', label: this.translate( 'Back' ) },
 				mainLink
 			],
-			classNames = joinClasses( 'site-selector-modal', this.props.className );
+			classNames = classnames( 'site-selector-modal', this.props.className );
 
 		return (
 			<Dialog className={ classNames }

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' );
 
 /**
@@ -56,16 +56,16 @@ module.exports = React.createClass( {
 
 		// The class determines the nature of a notice
 		// and its status.
-		noticeClass = joinClasses( 'notice', this.props.status );
+		noticeClass = classnames( 'notice', this.props.status );
 
 		if ( this.props.isCompact ) {
-			noticeClass = joinClasses( noticeClass, 'is-compact' );
+			noticeClass = classnames( noticeClass, 'is-compact' );
 		}
 
 		// By default, a dismiss button is rendered to
 		// allow the user to hide the notice
 		if ( this.props.showDismiss ) {
-			noticeClass = joinClasses( noticeClass, 'is-dismissable' );
+			noticeClass = classnames( noticeClass, 'is-dismissable' );
 			dismiss = (
 				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onClick } >
 					<Gridicon icon="cross" size={ 24 } />
@@ -75,7 +75,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className={ joinClasses( this.props.className, noticeClass ) }>
+			<div className={ classnames( this.props.className, noticeClass ) }>
 				{ this.renderChildren() }
 				{ dismiss }
 			</div>
