@@ -388,7 +388,7 @@ ul.module-header-actions {
 	ul,
 	ol,
 	p {
-		padding: 24px;
+		margin: 1em 24px;
 	}
 
 	// Representation of what the published status looks like within a list of posts and pages
@@ -452,8 +452,7 @@ ul.module-header-actions {
 
 // Filter Select
 .select-dropdown__wrapper {
-
-	padding: 12px 0 0 24px;
+	margin: 1em 20px;
 
 	.select-dropdown__container {
 		position: relative;
@@ -483,6 +482,7 @@ ul.module-header-actions {
 
 ul.module-tabs {
 	@include clear-fix;
+	border-top: 1px solid $gray-light;
 	list-style: none;
 	background: $white;
 	margin: 0;
@@ -734,7 +734,7 @@ ul.module-tabs {
 
 // Module Content List Item
 
-.module-content	-list-item {
+.module-content-list-item {
 	// Smaller font-size for narrower, two-column modules
 	font-size: 14px;
 	line-height: 40px;
@@ -1265,6 +1265,7 @@ ul.module-content-list-item-action-submenu {
 // (a legend for the data displayed)
 
 ul.module-content-list-legend {
+	margin-top: .5em;
 	margin-bottom: 0;
 }
 
