@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import shuffle from 'lodash/collection/shuffle';
+import find from 'lodash/collection/find';
 
 /**
  * Internal dependencies
@@ -23,8 +25,26 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			stepOne: null
+			stepOne: null,
+			verticalList: shuffle( verticals.get() )
 		}
+	},
+
+	/**
+	 * Shuffle an array of verticals, but put the General vertical last.
+	 *
+	 * @param {Array} elements - the array of vertical elements to shuffle.
+	 * @returns {Array} the shuffled array of elements.
+	*/
+	shuffleVerticals( elements ) {
+		const newVerticals = shuffle( elements );
+		const general = find( newVerticals, vertical => vertical.isGeneral );
+		newVerticals.splice( newVerticals.indexOf( general ), 1 );
+		if ( general ) {
+			newVerticals.push( general );
+		}
+		debug( 'shuffling elements', elements, 'becomes', newVerticals );
+		return newVerticals;
 	},
 
 	renderStepTwoVertical( vertical ) {
@@ -50,7 +70,7 @@ export default React.createClass( {
 			return (
 				<div>
 					<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
-					{ this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) }
+					{ this.shuffleVerticals( this.state.stepOne.stepTwo ).map( this.renderStepTwoVertical ) }
 				</div>
 			);
 		}
@@ -59,13 +79,12 @@ export default React.createClass( {
 				<CompactCard className="survey-step__title">
 					<label className="survey-step__label">{ this.translate( 'What is your website about?' ) }</label>
 				</CompactCard>
-				{ verticals.get().map( this.renderStepOneVertical ) }
+				{ this.state.verticalList.map( this.renderStepOneVertical ) }
 			</div>
 		);
 	},
 
 	render() {
-		debug( this.props.stepSectionName );
 		return (
 			<div className="survey-step__section-wrapper">
 				<StepWrapper
