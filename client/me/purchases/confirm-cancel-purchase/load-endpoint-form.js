@@ -89,8 +89,9 @@ function getFormData( { form, selectedPurchase, selectedSite } ) {
 	return inputs;
 }
 
-function initializeDomainCancelForm( { form } ) {
-	const domainCancelReason = form.querySelector( '#domain_cancel_reason' ),
+function initializeDomainCancelForm( options ) {
+	const { form } = options,
+		domainCancelReason = form.querySelector( '#domain_cancel_reason' ),
 		confirmCheckbox = form.querySelector( '#confirm' ),
 		submitButton = form.querySelector( 'input[type=submit]' );
 
@@ -132,6 +133,9 @@ function showDomainReasonDetail( { form, selectValue } ) {
 			break;
 		case 'transfer':
 			selected = '#div_transfer';
+			break;
+		case 'misspelled':
+			selected = '#div_misspelled';
 			break;
 		case 'expectations':
 		case 'wanted_free':

@@ -65,10 +65,7 @@ const ConfirmCancelPurchase = React.createClass( {
 
 	handleSubmit( error, response ) {
 		if ( error ) {
-			notices.error( this.translate(
-				'There was a problem canceling this purchase. ' +
-				'Please try again later or contact support.'
-			) );
+			notices.error( error.message );
 			return;
 		}
 
