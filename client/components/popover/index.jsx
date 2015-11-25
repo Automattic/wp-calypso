@@ -30,7 +30,8 @@ var Popover = React.createClass( {
 	propTypes: {
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
-		position: React.PropTypes.string
+		position: React.PropTypes.string,
+		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
 	},
 
 	getDefaultProps: function() {
@@ -117,7 +118,14 @@ var Popover = React.createClass( {
 		this._clickOutsideTimeout = setTimeout( function() {
 			this._unbindClickOutside = clickOutside( this._container, function( event ) {
 				const contextNode = React.findDOMNode( this.props.context );
-				if ( contextNode && contextNode.contains && ! contextNode.contains( event.target ) ) {
+				let shouldClose = ( contextNode && contextNode.contains && ! contextNode.contains( event.target ) );
+
+				if ( this.props.ignoreContext && shouldClose ) {
+					const ignoreContext = React.findDOMNode( this.props.ignoreContext );
+					shouldClose = shouldClose && ( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
+				}
+
+				if ( shouldClose ) {
 					this._close( event );
 				}
 			}.bind( this ) );
