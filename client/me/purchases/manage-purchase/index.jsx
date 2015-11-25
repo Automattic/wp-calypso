@@ -60,6 +60,10 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderNotices() {
+		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
+			return null;
+		}
+
 		return this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
 	},
 
@@ -67,7 +71,7 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 		let noticeStatus = 'is-info';
 
-		if ( isDataLoading( this.props ) || ! isExpiring( purchase ) ) {
+		if ( ! isExpiring( purchase ) ) {
 			return null;
 		}
 
@@ -96,10 +100,6 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderCreditCardExpiringNotice() {
-		if ( isDataLoading( this.props ) ) {
-			return null;
-		}
-
 		const purchase = getPurchase( this.props ),
 			{ domain, id, payment: { creditCard } } = purchase;
 
