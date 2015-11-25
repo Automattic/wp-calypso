@@ -124,3 +124,41 @@ describe( 'utils.getValidPath - currentFlowName === defaultFlowName', function()
 	} );
 } );
 
+describe( 'utils.getValueFromProgressStore', function() {
+	const testStore = [ { stepName: 'empty' }, { stepName: 'site', site: 'calypso' } ];
+	const config = {
+		stepName: 'site',
+		fieldName: 'site',
+		signupProgressStore: testStore
+	};
+
+	it( 'should return the value of the field if it exists', function() {
+		assert.equal( utils.getValueFromProgressStore( config ), 'calypso' );
+	} );
+
+	it( 'should return null if the field is not present', function() {
+		delete testStore[1].site;
+		assert.equal( utils.getValueFromProgressStore( config ), null );
+	} );
+} );
+
+describe( 'utils.mergeFormWithValue', function() {
+	const config = {
+		fieldName: 'username',
+		fieldValue: 'calypso'
+	};
+
+	it( 'should return the form with the field added if the field doesn\'t have a value', function() {
+		const form = { username: {} };
+		config.form = form;
+		assert.deepEqual( utils.mergeFormWithValue( config ), {
+			username: { value: 'calypso' }
+		} );
+	} );
+
+	it( 'should return the form unchanged if there is already a value in the form', function() {
+		const form = { username: { value: 'wordpress' } };
+		config.form = form;
+		assert.equal( utils.mergeFormWithValue( config ), form );
+	} );
+} );
