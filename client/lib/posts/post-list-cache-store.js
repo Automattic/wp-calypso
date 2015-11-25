@@ -100,7 +100,7 @@ var PostsListCache = {
 
 PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action,
-		PostListStore = require( './post-list-store' );
+		PostListStore = require( './post-list-store-factory' )();
 
 	Dispatcher.waitFor( [ PostListStore.dispatchToken ] );
 
