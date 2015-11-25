@@ -62,6 +62,19 @@ export default React.createClass( {
 		);
 	},
 
+	getRedirectTo() {
+		const redirectTo = window.location.origin,
+			{ invite } = this.state.invite;
+		switch ( invite.meta.role ) {
+			case 'viewer':
+			case 'follower':
+				return redirectTo;
+				break;
+			default:
+				return redirectTo + '/posts/' + invite.blog_id;
+		}
+	},
+
 	renderForm() {
 		if ( ! this.state.invite ) {
 			debug( 'Not rendering form - Invite not set' );
@@ -69,8 +82,8 @@ export default React.createClass( {
 		}
 		debug( 'Rendering invite' );
 		return user.get()
-			? <LoggedInAccept { ...this.state.invite } />
-			: <LoggedOutInvite { ...this.state.invite } />;
+			? <LoggedInAccept { ...this.state.invite } redirectTo={ this.getRedirectTo() } />
+		: <LoggedOutInvite { ...this.state.invite } redirectTo={ this.getRedirectTo() } />;
 	},
 
 	renderError() {

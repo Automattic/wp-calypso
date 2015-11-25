@@ -37,8 +37,8 @@ export default React.createClass( {
 				bearerToken &&
 				acceptInvite(
 					this.props.invite,
-					bearerToken,
-					( acceptInviteError ) => this.setState( { acceptInviteError, userData, bearerToken } )
+					( acceptInviteError ) => this.setState( { acceptInviteError, userData, bearerToken } ),
+					bearerToken
 				)
 		);
 	},
@@ -49,26 +49,13 @@ export default React.createClass( {
 		);
 	},
 
-	getRedirectTo() {
-		const redirectTo = window.location.origin,
-			{ invite } = this.props;
-		switch ( invite.meta.role ) {
-			case 'viewer':
-			case 'follower':
-				return redirectTo;
-				break;
-			default:
-				return redirectTo + '/posts/' + invite.blog_id;
-		}
-	},
-
 	loginUser() {
 		const { userData, bearerToken } = this.state;
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ this.getRedirectTo() }
+				redirectTo={ this.props.redirectTo }
 			/>
 		)
 	},
