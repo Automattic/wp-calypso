@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
+import get from 'lodash/object/get';
 
 /**
  * Internal dependencies
