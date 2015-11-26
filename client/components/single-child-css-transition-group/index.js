@@ -1,7 +1,5 @@
 var React = require( 'react' );
 
-var assign = require( 'react/lib/Object.assign' );
-
 var ReactTransitionGroup = React.createFactory(
 	require( 'react/lib/ReactTransitionGroup' )
 );
@@ -47,7 +45,7 @@ var SingleChildCSSTransitionGroup = React.createClass( {
 
 	render: function() {
 		return ReactTransitionGroup( // eslint-disable-line
-			assign( {}, this.props, {
+			Object.assign( {}, this.props, {
 				childFactory: this._wrapChild
 			} )
 		);
