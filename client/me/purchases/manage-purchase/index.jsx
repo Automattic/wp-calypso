@@ -285,7 +285,11 @@ const ManagePurchase = React.createClass( {
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return this.translate( 'Included with plan' );
+			return (
+				<span className="manage-purchase__detail">
+					{ this.translate( 'Included with plan' ) }
+				</span>
+			);
 		}
 
 		if ( hasPaymentMethod( purchase ) ) {
@@ -296,7 +300,7 @@ const ManagePurchase = React.createClass( {
 			}
 
 			return (
-				<span className="manage-purchase__payment-info">
+				<span className="manage-purchase__detail">
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
 				</span>
