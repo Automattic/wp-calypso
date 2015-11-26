@@ -92,35 +92,33 @@ function getFormData( { form, selectedPurchase, selectedSite } ) {
 function initializeDomainCancelForm( options ) {
 	const { form } = options,
 		domainCancelReason = form.querySelector( '#domain_cancel_reason' ),
-		confirmCheckbox = form.querySelector( '#confirm' ),
-		submitButton = form.querySelector( 'input[type=submit]' );
+		reasonsDiv = form.querySelector( '#domain_cancel_reasons' );
 
-	submitButton.disabled = ! form.querySelector( '#confirm' ).checked;
+	domainCancelReason.addEventListener( 'change', ( event ) => {
+		showDomainCancelReasonDetail( reasonsDiv, event.target.value );
+	} );
+
+	toArray( reasonsDiv.children ).forEach( ( div ) => {
+		const confirmCheckbox = div.querySelector( 'input[type=checkbox]' ),
+			submitButton = div.querySelector( 'input[type=submit]' );
+
+		if ( confirmCheckbox && submitButton ) {
+			submitButton.disabled = ! confirmCheckbox.checked;
+
+			confirmCheckbox.addEventListener( 'click', ( event ) => {
+				submitButton.disabled = ! event.target.checked;
+			} );
+		}
+	} );
 
 	form.addEventListener( 'submit', ( event ) => {
 		event.preventDefault();
 
-		if ( ! form.querySelector( '#confirm' ).checked ) {
-			return;
-		}
-
 		submitForm( options );
-	} );
-
-	domainCancelReason.addEventListener( 'change', ( event ) => {
-		showDomainReasonDetail( {
-			form,
-			selectValue: event.target.value
-		} );
-	} );
-
-	confirmCheckbox.addEventListener( 'click', ( event ) => {
-		submitButton.disabled = ! event.target.checked;
 	} );
 }
 
-function showDomainReasonDetail( { form, selectValue } ) {
-	const reasonsDiv = form.querySelector( '#domain_cancel_reasons' );
+function showDomainCancelReasonDetail( reasonsDiv, selectValue ) {
 	toArray( reasonsDiv.children ).forEach( ( div ) => div.className = 'hidden' );
 
 	let selected;
