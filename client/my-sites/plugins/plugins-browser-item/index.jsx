@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
