@@ -37,7 +37,7 @@ module.exports = {
 			"Purchases are currently disabled. Please {{a}}contact us{{/a}} to re-enable purchases.",
 			{
 				components: {
-					a: <a href={ 'https://wordpress.com/error-report/?url=purchases@' + this.props.selectedSite.slug } />
+					a: <a href={ 'https://wordpress.com/error-report/?url=payment@' + this.props.selectedSite.slug } />
 				}
 			}
 		);
