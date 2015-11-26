@@ -21,7 +21,8 @@ import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {
 		return {
-			disabled: false
+			disabled: false,
+			cancelling: false
 		};
 	},
 
@@ -33,14 +34,22 @@ const CancelPrivateRegistration = React.createClass( {
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	},
 
-	cancel() {
+	cancel( event ) {
+		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
+		event.target.blur();
+
 		const { domain, id } = this.props.selectedPurchase.data;
 
 		this.setState( {
-			disabled: true
+			disabled: true,
+			cancelling: true
 		} );
 
 		cancelPrivateRegistration( id, canceledSuccessfully => {
+			this.setState( {
+				cancelling: false,
+				disabled: false
+			} );
 			if ( canceledSuccessfully ) {
 				page( paths.managePurchaseDestination( domain, id, 'canceled-private-registration' ) );
 			}
@@ -87,7 +96,10 @@ const CancelPrivateRegistration = React.createClass( {
 				onClick={ this.cancel }
 				className="cancel-private-registration__cancel-button"
 				disabled={ this.state.disabled }>
-				{ this.translate( 'Cancel Private Registration' ) }
+				{
+					this.state.cancelling
+						? this.translate( 'Processing…' )
+						: this.translate( 'Cancel Private Registration' ) }
 			</Button>
 		);
 	},
