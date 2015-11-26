@@ -2,7 +2,7 @@
  * External Dependencies
  */
 var trim = require( 'lodash/string/trim' ),
-	warning = require( 'react/lib/warning' );
+	warn = require( 'lib/warn' );
 
 /**
  * Internal Dependencies
@@ -11,7 +11,7 @@ var decode = require( './decode-entities' );
 
 function decodeEntities( text ) {
 	if ( text === undefined || text === false || text === null ) {
-		warning( false, 'Don\'t call `decodeEntities` with an `undefined`, `false`, or `null` value.' );
+		warn( 'Don\'t call `decodeEntities` with an `undefined`, `false`, or `null` value.' );
 		return text;
 	}
 
