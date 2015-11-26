@@ -325,13 +325,13 @@ module.exports = React.createClass( {
 			spacerClassName = 'infinite-list__spacer',
 			i;
 
-		if ( lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
+		if ( this.state && lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
 			debug( 'resetting lastRenderedIndex, currently at %s, %d items', lastRenderedIndex, this.props.items.length );
 			lastRenderedIndex = Math.min( this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(), this.props.items.length - 1 );
 			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
 		}
 
-		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
+		debug( 'rendering %d to %d', firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
 			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );

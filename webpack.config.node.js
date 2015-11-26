@@ -92,6 +92,7 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin( /^lib\/cart-values/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/upgrades/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/wp/, 'lodash/utility/noop' ),
+		new webpack.NormalModuleReplacementPlugin( /^lib\/scroll-to/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /detect-history-navigation/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /section-nav/, 'components/empty' ),
 	],
