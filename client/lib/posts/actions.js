@@ -94,12 +94,6 @@ function normalizeApiAttributes( attributes ) {
 		delete attributes.categories;
 	}
 
-	// The API doesn't like false/null, which wpcom-xhr-request sends when removing the featured_image.
-	// Force the value to an empty string instead.
-	if ( attributes.hasOwnProperty( 'featured_image' ) && !attributes.featured_image ) {
-		attributes.featured_image = '';
-	}
-
 	return attributes;
 }
 
