@@ -28,3 +28,4 @@ render: function() {
 * `site`: a site object.
 * `notices`: a notices object.
 * `wporg`: whether the plugin is from .org or not
+* `isMock`: a boolean indicating if the toggle should not launch any real action when interacted

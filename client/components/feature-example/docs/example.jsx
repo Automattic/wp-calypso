@@ -14,22 +14,21 @@ module.exports = React.createClass( {
 
 	getContent: function() {
 		const plugins = [ {
-				slug: 'akismet',
-				name: 'Akismet',
-				wporg: true,
-				icon: '//ps.w.org/akismet/assets/icon-256x256.png'
-			}, {
-				slug: 'wp-super-cache',
-				name: 'WP Super Cache',
-				wporg: true,
-				icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png'
-			}, {
-				slug: 'jetpack',
-				name: 'Jetpack by WordPress.com',
-				wporg: true,
-				icon: '//ps.w.org/jetpack/assets/icon-256x256.png'
-			}
-		];
+			slug: 'akismet',
+			name: 'Akismet',
+			wporg: true,
+			icon: '//ps.w.org/akismet/assets/icon-256x256.png'
+		}, {
+			slug: 'wp-super-cache',
+			name: 'WP Super Cache',
+			wporg: true,
+			icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png'
+		}, {
+			slug: 'jetpack',
+			name: 'Jetpack by WordPress.com',
+			wporg: true,
+			icon: '//ps.w.org/jetpack/assets/icon-256x256.png'
+		} ];
 		const selectedSite = {
 			slug: 'no-slug',
 			canUpdateFiles: true,
