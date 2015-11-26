@@ -13,14 +13,14 @@ var notices = require( 'notices' ),
 
 module.exports = {
 	componentDidMount: function() {
-		CartStore.on( 'change', this._displayCartMessages );
+		CartStore.on( 'change', this.displayCartMessages );
 	},
 
 	componentWillUnmount: function() {
-		CartStore.off( 'change', this._displayCartMessages );
+		CartStore.off( 'change', this.displayCartMessages );
 	},
 
-	_getChargebackErrorMessage: function() {
+	getChargebackErrorMessage: function() {
 		return this.translate(
 			"{{strong}}Warning:{{/strong}} One or more transactions linked to this site were refunded due to a contested charge. This may have happened because of a chargeback by the credit card holder or a PayPal investigation. Each contested charge carries a fine. To resolve the issue and re-enable posting, please {{a}}pay for the chargeback fine{{/a}}.",
 			{
@@ -32,7 +32,7 @@ module.exports = {
 		);
 	},
 
-	_getBlockedPurchaseErrorMessage: function() {
+	getBlockedPurchaseErrorMessage: function() {
 		return this.translate(
 			"Purchases are currently disabled. Please {{a}}contact us{{/a}} to re-enable purchases.",
 			{
@@ -43,28 +43,28 @@ module.exports = {
 		);
 	},
 
-	_getPrettyErrorMessages: function( messages ) {
+	getPrettyErrorMessages: function( messages ) {
 		if ( ! messages ) {
 			return [];
 		}
 
 		return messages.map( function( error ) {
 			if ( error.code === 'chargeback' ) {
-				return Object.assign( error, { message: this._getChargebackErrorMessage() } );
+				return Object.assign( error, { message: this.getChargebackErrorMessage() } );
 			} else if ( error.code === 'blocked' ) {
-				return Object.assign( error, { message: this._getBlockedPurchaseErrorMessage() } );
+				return Object.assign( error, { message: this.getBlockedPurchaseErrorMessage() } );
 			} else {
 				return error;
 			}
 		}, this );
 	},
 
-	_displayCartMessages: function() {
+	displayCartMessages: function() {
 		var newCart = this.props.cart,
 			previousCart = ( this.state ) ? this.state.previousCart : null,
 			messages = getNewMessages( previousCart, newCart );
 
-		messages.errors = this._getPrettyErrorMessages( messages.errors );
+		messages.errors = this.getPrettyErrorMessages( messages.errors );
 
 		this.setState( { previousCart: newCart } );
 
