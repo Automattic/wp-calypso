@@ -441,15 +441,16 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<div className="manage-purchase__remove-information">
-				<em>{ this.translate(
-					'Looking to remove this purchase? Please {{a}}contact support{{/a}} to remove %(purchaseName) from your account.',
+			<div className="manage-purchase__remove-box">
+				<em className="manage-purchase__remove-text">{ this.translate(
+					'{{strong}}Looking to remove this purchase?{{/strong}} Please {{a}}contact support{{/a}} to remove %(purchaseName)s from your account.',
 					{
 						args: {
 							purchaseName: getName( purchase )
 						},
 						components: {
-							a: <a href={ contactSupportUrl } target="_blank" />
+							a: <a href={ contactSupportUrl } target="_blank" />,
+							strong: <strong />
 						}
 					}
 				) }</em>
