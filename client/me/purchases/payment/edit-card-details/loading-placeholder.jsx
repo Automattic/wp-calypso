@@ -16,7 +16,7 @@ import LoadingPlaceholder from 'components/loading-placeholder';
 const EditCardDetailsLoadingPlaceholder = React.createClass( {
 	render() {
 		return (
-			<LoadingPlaceholder>
+			<LoadingPlaceholder title={ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }>
 				<Card className="edit-card-details__content">
 					<div className="credit-card-form">
 						<div className="credit-card-form__field">
