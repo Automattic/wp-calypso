@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 var MenuItem = React.createClass( {
 	getDefaultProps: function() {
@@ -16,7 +16,7 @@ var MenuItem = React.createClass( {
 	render: function() {
 		var onMouseOver = this.props.focusOnHover ? this._onMouseOver : null;
 		return (
-			<button className={ joinClasses( 'popover__menu-item', this.props.className ) }
+			<button className={ classnames( 'popover__menu-item', this.props.className ) }
 					role="menuitem"
 					disabled={ this.props.disabled }
 					onClick={ this.props.onClick }

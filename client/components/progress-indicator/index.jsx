@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	classNames = require( 'classnames' );
 
 module.exports = React.createClass( {
@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ joinClasses( this.props.className, classes ) }>
+			<div className={ classnames( this.props.className, classes ) }>
 				<div className="progress-indicator__half" />
 				<div className="progress-indicator__half is-latter" />
 				{ last }

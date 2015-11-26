@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 var PostExcerpt = React.createClass( {
 
@@ -21,7 +21,7 @@ var PostExcerpt = React.createClass( {
 		textClass = textClass.join( ' ' );
 
 		return (
-			<div className={ joinClasses( this.props.className, 'post-excerpt' ) }>
+			<div className={ classnames( this.props.className, 'post-excerpt' ) }>
 				<p className={ textClass }>{ text }</p>
 			</div>
 		);

@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	isEmpty = require( 'lodash/lang/isEmpty' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:vip:logs' );
 
 /**
@@ -67,10 +67,10 @@ module.exports = React.createClass( {
 			}
 
 			return (
-				<tr key={ i } className={ joinClasses( 'vip-logs__log', 'vip-logs__log-' + log.type ) }>
+				<tr key={ i } className={ classnames( 'vip-logs__log', 'vip-logs__log-' + log.type ) }>
 					<td className="vip-logs__date"> { this.formatDate( log.timestamp ) }</td>
 					<td className="vip-logs__log">
-						<span className={ joinClasses( 'vip-logs__log-prefix', 'vip-logs__log-prefix-' + log.type ) }>{ prefix }</span>
+						<span className={ classnames( 'vip-logs__log-prefix', 'vip-logs__log-prefix-' + log.type ) }>{ prefix }</span>
 						{ log.log }
 					</td>
 				</tr>

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' );
 
 module.exports = React.createClass( {
@@ -11,7 +11,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<textarea { ...omit( this.props, 'className' ) } className={ joinClasses( this.props.className, 'form-textarea' ) } >
+			<textarea { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-textarea' ) } >
 				{ this.props.children }
 			</textarea>
 		);

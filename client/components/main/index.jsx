@@ -2,14 +2,14 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 module.exports = React.createClass( {
 	displayName: 'Main',
 
 	render: function() {
 		return (
-			<div className={ joinClasses( this.props.className, 'main' ) } role="main">
+			<div className={ classnames( this.props.className, 'main' ) } role="main">
 				{ this.props.children }
 			</div>
 		);
