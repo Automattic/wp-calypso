@@ -1,4 +1,9 @@
 
+4.8.2 / 2015-11-26
+==================
+
+ * add babel-runtime so that es6 features requiring a pollyfill work
+
 4.8.1 / 2015-11-20
 ==================
 
