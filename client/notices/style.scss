@@ -245,8 +245,8 @@
 		}
 
 		@include breakpoint( "<480px" ) {
-			top: 0;
-			left: 0;
+			top: 16px;
+			width: calc( 100% - 16px );
 		}
 	}
 }
