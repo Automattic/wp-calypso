@@ -663,6 +663,40 @@ export default React.createClass( {
 		return navItems;
 	},
 
+	getMockPluginItems() {
+		const plugins = [ {
+			slug: 'akismet',
+			name: 'Akismet',
+			wporg: true,
+			icon: '//ps.w.org/akismet/assets/icon-256x256.png'
+		}, {
+			slug: 'wp-super-cache',
+			name: 'WP Super Cache',
+			wporg: true,
+			icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png'
+		}, {
+			slug: 'jetpack',
+			name: 'Jetpack by WordPress.com',
+			wporg: true,
+			icon: '//ps.w.org/jetpack/assets/icon-256x256.png'
+		} ];
+		const selectedSite = {
+			slug: 'no-slug',
+			canUpdateFiles: true,
+			name: 'Not a real site'
+		}
+
+		return plugins.map( plugin => {
+			return <PluginItem
+				key={ 'plugin-item-mock-' + plugin.slug }
+				plugin={ plugin }
+				sites={ [] }
+				selectedSite={ selectedSite }
+				progress={ [] }
+				isMock={ true } />
+		} );
+	},
+
 	render() {
 		if ( this.state.accessError ) {
 			return (
@@ -691,7 +725,7 @@ export default React.createClass( {
 						site={ this.props.site }
 						actionURL={ selectedSite.getRemoteManagementURL() }
 						illustration= '/calypso/images/drake/drake-jetpack.svg'
-					/>
+						featureExample={ this.getMockPluginItems() } />
 				</Main>
 			);
 		}

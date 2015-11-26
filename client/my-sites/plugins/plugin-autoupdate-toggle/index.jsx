@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 	},
 
 	toggleAutoupdates: function() {
-		if( this.props.isMock ) {
+		if ( this.props.isMock ) {
 			return;
 		}
 

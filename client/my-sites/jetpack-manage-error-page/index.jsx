@@ -9,14 +9,11 @@ import merge from 'lodash/object/merge'
  */
 import analytics from 'analytics'
 import EmptyContent from 'components/empty-content'
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item'
 import FeatureExample from 'components/feature-example'
 
 module.exports = React.createClass( {
 
 	displayName: 'JetpackManageErrorPage',
-
-	mockedPlugins: 0,
 
 	mixins: [ 'pluginsData' ],
 
@@ -67,53 +64,20 @@ module.exports = React.createClass( {
 		return merge( defaults[ this.props.template ] || defaults.default, this.props );
 	},
 
-	getMockPluginItems: function() {
-		const plugins = [ {
-			slug: 'akismet',
-			name: 'Akismet',
-			wporg: true,
-			icon: '//ps.w.org/akismet/assets/icon-256x256.png'
-		}, {
-			slug: 'wp-super-cache',
-			name: 'WP Super Cache',
-			wporg: true,
-			icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png'
-		}, {
-			slug: 'jetpack',
-			name: 'Jetpack by WordPress.com',
-			wporg: true,
-			icon: '//ps.w.org/jetpack/assets/icon-256x256.png'
-		} ];
-		const selectedSite = {
-			slug: 'no-slug',
-			canUpdateFiles: true,
-			name: 'Not a real site'
-		}
-
-		return plugins.map( plugin => {
-			return <PluginItem
-				key={ 'plugin-item-mock-' + this.mockedPlugins ++ }
-				plugin={ plugin }
-				sites={ [] }
-				selectedSite={ selectedSite }
-				progress={ [] }
-				isMock={ true } />
-		} );
-	},
-
 	render() {
 		const settings = this.getSettings();
 		if ( this.actionCallbacks[ this.props.template ] ) {
 			settings.actionCallback = this[ this.actionCallbacks[ this.props.template ] ];
 		}
 		const emptyContent = React.createElement( EmptyContent, settings );
+		const featureExample = this.props.featureExample
+			? <FeatureExample>{ this.props.featureExample }</FeatureExample>
+			: null;
 
 		return (
 			<div>
 				{ emptyContent }
-				<FeatureExample>
-					{ this.getMockPluginItems() }
-				</FeatureExample>
+				{ featureExample }
 			</div>
 		)
 	}
