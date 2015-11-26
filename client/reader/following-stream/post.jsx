@@ -35,6 +35,7 @@ var Card = require( 'components/card' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
 	FollowingEditHelper = require( 'reader/following-edit/helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
+	urlHelper = require( 'reader/url-helper' ),
 	stats = require( 'reader/stats' ),
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	PostPermalink = require( 'reader/post-permalink' ),
@@ -280,12 +281,9 @@ var Post = React.createClass( {
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
-		const post = this.props.post;
-		if ( post.feed_ID ) {
-			page.show( '/read/blog/feed/' + post.feed_ID );
-		} else {
-			page.show( '/read/blog/id/' + post.site_ID );
-		}
+
+		const url = urlHelper.getStreamUrlFromPost( this.props.post );
+		page.show( url );
 		event.preventDefault();
 	},
 

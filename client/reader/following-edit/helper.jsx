@@ -1,3 +1,5 @@
+import urlHelper from 'reader/url-helper';
+
 module.exports = {
 	formatUrlForDisplay: function( url ) {
 		if ( ! url ) {
@@ -28,9 +30,9 @@ module.exports = {
 		}
 
 		if ( siteData ) {
-			return '/read/blog/id/' + siteData.get( 'ID' );
+			return urlHelper.getSiteUrl( siteData.get( 'ID' ) );
 		}
 
-		return '/read/blog/feed/' + feedData.feed_ID;
+		return urlHelper.getFeedUrl( feedData.feed_ID );
 	}
 };
