@@ -15,9 +15,20 @@
 		z-index: -1;
 		background: linear-gradient( to right, fade-out( lighten( $gray, 20% ), 1 ) 0%, lighten( $gray, 20% ) 20%, lighten( $gray, 20% ) 80%, fade-out( lighten( $gray, 20% ), 1 ) 100% );
 	}
+
+	// Allow room for the side-bar
+	@include breakpoint( ">660px" ) {
+		margin-left: 273px;
+
+		.translator-invitation__primary-content {
+			margin-left: 24px;
+		}
+	}
+
 	.close-button {
 		padding: 6px;
 	}
+
 	.gridicons-globe {
 		// copied from noticons styling
 		background-color: lighten( $gray, 30% );
