@@ -25,11 +25,12 @@ function _recordPageView( context, analyticsPageTitle ) {
 }
 
 function _getLayoutTitle( context ) {
+	var title = sites.getSelectedSite().jetpack ? 'AdControl' : 'WordAds';
 	switch ( context.params.section ) {
 		case 'earnings':
-			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: 'WordAds' } } );
+			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: title } } );
 		case 'settings':
-			return i18n.translate( '%(wordads)s Settings', { args: { wordads: 'WordAds' } } );
+			return i18n.translate( '%(wordads)s Settings', { args: { wordads: title } } );
 	}
 }
 
