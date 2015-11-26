@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import keyMirror from 'react/lib/keyMirror';
+import keyMirror from 'key-mirror';
 
 const actionTypes = keyMirror( {
 	SET_TITLE: null,
