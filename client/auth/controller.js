@@ -16,7 +16,6 @@ module.exports = {
 		if ( OAuthToken.getToken() ) {
 			page( '/' );
 		} else {
-			
 			React.render(
 				React.createElement( LoginComponent, {} ),
 				document.getElementById( 'primary' )

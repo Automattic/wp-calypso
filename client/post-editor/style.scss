@@ -1,7 +1,9 @@
-.is-section-post .wp-primary {
+.is-section-post .wp-content {
 	// We don't need the space for a sidebar
 	margin-left: 0;
 	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
 
 	// Lets go full width on smaller screens
 	@include breakpoint( "<660px" ) {

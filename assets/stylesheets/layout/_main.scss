@@ -248,7 +248,7 @@ $sidebar-width-min: 228px;
 	box-sizing: border-box;
 	overflow: hidden;
 
-	.sidebar-off & {
+	.has-no-sidebar & {
 		padding-left: 32px;
 	}
 }
@@ -259,7 +259,7 @@ $sidebar-width-min: 228px;
 		padding: 24px;
 		padding-left: ( $sidebar-width-min + 24px );
 
-		.sidebar-off & {
+		.has-no-sidebar & {
 			padding-left: 24px;
 		}
 	}
@@ -271,7 +271,7 @@ $sidebar-width-min: 228px;
 		margin-left: 0;
 		padding: 8px;
 
-		.sidebar-off & {
+		.has-no-sidebar & {
 			padding-left: 8px;
 		}
 

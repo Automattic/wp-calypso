@@ -95,7 +95,7 @@ module.exports = React.createClass( {
 			} );
 
 		if ( this.state.noSidebar ) {
-			sectionClass += ' sidebar-off';
+			sectionClass += ' has-no-sidebar';
 		}
 
 		return (
