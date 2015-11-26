@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var analyticsMixin = require( 'lib/mixins/analytics' ),
 	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
+	config = require( 'config' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	getIncludedDomain = cartItems.getIncludedDomain,
 	isCredits = require( 'lib/products-values' ).isCredits,
@@ -132,6 +133,10 @@ module.exports = React.createClass( {
 	},
 
 	domainVolumeSelection: function() {
+		if ( ! config.isEnabled( 'upgrades/cart/multi-year-domain' ) ) {
+			return null;
+		}
+
 		if ( this.isBundlePlanApplied() || this.props.cartItem.free_trial || ! isDomainRegistration( this.props.cartItem ) ) {
 			return null;
 		}
