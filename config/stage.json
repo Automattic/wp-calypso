@@ -19,6 +19,7 @@
 		"post-editor/pages": true,
 		"editor-drafts": true,
 		"manage/ads": true,
+		"manage/ads/jetpack": true,
 		"manage/customize": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
