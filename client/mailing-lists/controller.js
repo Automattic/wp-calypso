@@ -11,10 +11,9 @@ import MainComponent from './main';
 
 export default {
 	unsubscribe( context ) {
-		
 		// We don't need the sidebar here.
 		context.layout.setState( {
-			section: 'mailing-lists',
+			section: 'me',
 			noSidebar: true }
 		);
 
