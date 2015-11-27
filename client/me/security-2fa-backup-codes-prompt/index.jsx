@@ -11,7 +11,7 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'analytics' );
 

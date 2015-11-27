@@ -8,7 +8,7 @@ var React = require( 'react/addons' );
  */
 var PeopleLog = require( 'lib/people/log-store' ),
 	PeopleActions = require( 'lib/people/actions' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	i18n = require( 'lib/mixins/i18n' );
 
 let isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;

@@ -9,7 +9,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var HeaderCake = require( 'components/header-cake' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	ActionPanel = require( 'my-sites/site-settings/action-panel' ),
 	ActionPanelTitle = require( 'my-sites/site-settings/action-panel/title' ),
 	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),

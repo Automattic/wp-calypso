@@ -9,7 +9,7 @@ const React = require( 'react' ),
  */
 const CompactCard = require( 'components/card/compact' ),
 	ContactDisplay = require( './contact-display' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	paths = require( 'my-sites/upgrades/paths' ),
 	SectionHeader = require( 'components/section-header' );
 

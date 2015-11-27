@@ -6,7 +6,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import EditorMediaModalGalleryEdit from './edit';

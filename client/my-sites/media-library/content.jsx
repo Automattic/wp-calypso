@@ -13,7 +13,7 @@ var React = require( 'react/addons' ),
 /**
  * Internal dependencies
  */
-var SimpleNotice = require( 'notices/simple-notice' ),
+var SimpleNotice = require( 'components/notice' ),
 	MediaListData = require( 'components/data/media-list-data' ),
 	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
 	MediaActions = require( 'lib/media/actions' ),

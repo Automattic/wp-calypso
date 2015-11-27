@@ -11,7 +11,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import Gridicon from 'components/gridicon';
 
 export default React.createClass( {

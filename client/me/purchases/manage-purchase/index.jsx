@@ -21,7 +21,7 @@ import NoticeArrowLink from 'notices/arrow-link';
 import { oldShowcaseUrl } from 'lib/themes/helpers';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import titles from 'me/purchases/titles';
 import VerticalNavItem from 'components/vertical-nav/item';
 import * as upgradesActions from 'lib/upgrades/actions';

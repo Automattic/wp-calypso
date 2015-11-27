@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var FormButton = require( 'components/forms/form-button' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	analytics = require( 'analytics' );
 
 var views = keyMirror( {

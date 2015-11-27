@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Button from 'components/button';
 import notices from 'notices';
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import { enablePrivacyProtection } from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 

@@ -7,7 +7,7 @@ var React = require( 'react' );
 * Internal dependencies
 */
 var NoticeArrowLink = require( 'notices/arrow-link' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	Notice = require( 'notices/notice' );
 
 var Notices = React.createClass( {

@@ -10,7 +10,7 @@ import intersection from 'lodash/array/intersection';
  * Internal Dependencies
  **/
 
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
 

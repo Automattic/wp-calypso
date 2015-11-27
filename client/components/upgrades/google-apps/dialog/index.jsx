@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var cartValues = require( 'lib/cart-values' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	ValidationErrorList = require( 'notices/validation-error-list' ),
 	cartItems = cartValues.cartItems,
 	GoogleAppsUsers = require( './users' ),

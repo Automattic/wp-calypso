@@ -15,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import { isRefundable } from 'lib/purchases';
 import Main from 'components/main';
 import paths from '../paths';
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import titles from 'me/purchases/titles';
 import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 

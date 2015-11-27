@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import { getSelectedDomain } from 'lib/domains';
 
 const TransferProhibitedNotice = React.createClass( {

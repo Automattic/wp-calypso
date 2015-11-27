@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var i18n = require( 'lib/mixins/i18n' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
 	LocaleSuggestionStore = require( 'lib/locale-suggestions' ),
-	SimpleNotice = require( 'notices/simple-notice' );
+	SimpleNotice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 	displayName: 'LocaleSuggestions',

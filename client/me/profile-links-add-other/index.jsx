@@ -10,7 +10,7 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormButton = require( 'components/forms/form-button' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	SimpleNotice = require( 'notices/simple-notice' );
+	SimpleNotice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 

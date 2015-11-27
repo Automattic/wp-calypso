@@ -8,7 +8,7 @@ import React from 'react';
  */
 import IcannVerification from 'my-sites/upgrades/domain-management/components/icann-verification';
 import { getSelectedDomain } from 'lib/domains';
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 
 let IcannVerificationNotice = React.createClass( {
 	propTypes: {

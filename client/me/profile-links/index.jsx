@@ -13,7 +13,7 @@ var ProfileLink = require( 'me/profile-link' ),
 	ProfileLinksAddOther = require( 'me/profile-links-add-other' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' );
 
 module.exports = React.createClass( {

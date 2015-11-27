@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SimpleNotice = require( 'notices/simple-notice' ),
+var SimpleNotice = require( 'components/notice' ),
 	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),

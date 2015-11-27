@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var DeleteSiteStore = require( 'lib/sites-list/delete-site-store' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	SitesListActions = require( 'lib/sites-list/actions' );
 
 module.exports = React.createClass( {

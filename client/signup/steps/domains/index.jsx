@@ -15,7 +15,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	MapDomain = require( 'components/domains/map-domain' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	signupUtils = require( 'signup/utils' );
 
 module.exports = React.createClass( {

@@ -12,7 +12,7 @@ import domainConstants from 'lib/domains/constants';
 const domainTypes = domainConstants.type;
 
 const TestUtils = React.addons.TestUtils;
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 
 chai.use( sinonChai );
 

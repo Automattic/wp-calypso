@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var PostActions = require( 'lib/posts/actions' ),
 	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	SimpleNotice = require( 'components/notice' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
 

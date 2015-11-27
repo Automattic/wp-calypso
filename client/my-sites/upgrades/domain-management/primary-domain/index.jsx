@@ -7,7 +7,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Main from 'components/main';
 import Card from 'components/card/compact';
 import Header from 'my-sites/upgrades/domain-management/components/header';
-import SimpleNotice from 'notices/simple-notice';
+import SimpleNotice from 'components/notice';
 import paths from 'my-sites/upgrades/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
