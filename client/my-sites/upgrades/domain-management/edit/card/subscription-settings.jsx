@@ -12,7 +12,6 @@ const SubscriptionSettings = React.createClass( {
 		return (
 			<a className="domain-details-card__subscription-settings-button button"
 				href="/purchases"
-				target="_blank"
 				onClick={ this.props.onClick }>
 				{ this.translate( 'Payment Settings' ) }
 			</a>

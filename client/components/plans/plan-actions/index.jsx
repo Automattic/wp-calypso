@@ -183,7 +183,7 @@ module.exports = React.createClass( {
 		var link = '/purchases/' + this.props.site.domain + '/' + this.props.siteSpecificPlansDetails.id;
 		if ( this.planHasCost() ) {
 			return (
-				<a href={ link } rel="external" className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
+				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);
 		}
 	},
