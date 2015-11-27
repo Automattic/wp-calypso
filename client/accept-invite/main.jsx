@@ -63,16 +63,16 @@ export default React.createClass( {
 	},
 
 	getRedirectTo() {
-		const redirectTo = window.location.origin,
-			{ invite } = this.state.invite;
+		const { invite } = this.state.invite;
+		let redirectTo = window.location.origin;
 		switch ( invite.meta.role ) {
 			case 'viewer':
 			case 'follower':
-				return redirectTo;
 				break;
 			default:
-				return redirectTo + '/posts/' + invite.blog_id;
+				redirectTo += '/posts/' + invite.blog_id;
 		}
+		return redirectTo += '?invite_accepted=' + invite.blog_id;
 	},
 
 	renderForm() {
