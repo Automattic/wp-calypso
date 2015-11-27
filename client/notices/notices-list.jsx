@@ -77,18 +77,13 @@ export default React.createClass( {
 	},
 
 	render() {
-		var noticesRaw = this.props.notices[ this.props.id ] || [],
-			noticesList = noticesRaw.map( function( notice, index ) {
+		const noticesRaw = this.props.notices[ this.props.id ] || [];
+		const noticesList = noticesRaw.map( function( notice, index ) {
 				return (
 					<Notice
 						key={ 'notice-' + index }
-						type={ notice.type }
 						status={ notice.status }
 						text={ notice.text }
-						duration={ notice.duration }
-						button={ notice.button }
-						href={ notice.href }
-						container={ notice.container }
 						isCompact={ notice.isCompact }
 						onClick={ this.removeNotice.bind( this, notice ) }
 						showDismiss={ notice.showDismiss }
@@ -105,7 +100,9 @@ export default React.createClass( {
 					<DeleteSiteNotices />
 					{ noticesList }
 				</div>
-				{ this.state.pinned && ! this.props.forcePinned ? <div className="notices-list__whitespace"/> : null }
+				{ this.state.pinned && ! this.props.forcePinned
+					? <div className="notices-list__whitespace" />
+					: null }
 			</div>
 		);
 	}
