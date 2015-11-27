@@ -73,7 +73,7 @@
 
 	.button.action-button {
 		color: lighten( $gray, 10 );
-		padding: 0 8px;
+		padding: 0;
 		line-height: 32px;
 		text-align: center;
 		cursor: pointer;
@@ -103,7 +103,7 @@
 		&:before {
 			@include noticon( '\f430', 32px );
 			top: 1px;
-			left: -6px;
+			left: 0;
 			margin-right: 0;
 		}
 	}
