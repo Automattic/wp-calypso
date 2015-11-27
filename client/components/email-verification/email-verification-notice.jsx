@@ -131,7 +131,7 @@ module.exports = React.createClass( {
 			</div> );
 		}
 
-		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } className={ 'is-email-verification' } />;
+		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } />;
 	},
 
 	verifiedNotice: function() {

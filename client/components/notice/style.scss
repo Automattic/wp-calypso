@@ -62,12 +62,6 @@
 			}
 		}
 	}
-
-	// Email Verification Notice
-	&.is-email-verification {
-		background: $white;
-		box-shadow: 0 0 0 1px lighten( $gray, 20 );
-	}
 }
 
 .notice__text {
