@@ -56,6 +56,15 @@ function hasPrivateRegistration( purchase ) {
 	return purchase.hasPrivateRegistration;
 }
 
+/**
+ * Checks if a purchase can be cancelled.
+ * Returns true for purchases that aren't expired
+ * Also returns true for purchases whether or not they are after the refund period.
+ * Purchases included with a plan can't be cancelled.
+ *
+ * @param {Object} purchase
+ * @return {boolean}
+ */
 function isCancelable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
@@ -101,10 +110,27 @@ function isRedeemable( purchase ) {
 	return purchase.isRedeemable;
 }
 
+/**
+ * Checks if a purchase can be canceled and refunded.
+ * Purchases usually can be refunded up to 30 days after purchase.
+ * Domains and domain mappings can be refunded up to 48 hours.
+ * Purchases included with plan can't be refunded.
+ *
+ * @param {Object} purchase
+ * @return {boolean}
+ */
 function isRefundable( purchase ) {
 	return purchase.isRefundable;
 }
 
+/**
+ * Checks if an expired purchase can be removed from a user account.
+ * Only domains and domain mappings can be removed.
+ * Purchases included with plan can't be removed.
+ *
+ * @param {Object} purchase
+ * @return {boolean}
+ */
 function isRemovable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
