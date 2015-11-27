@@ -283,12 +283,12 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
-			return <span className="manage-purchase__detail" />;
+			return <span className="manage-purchase__content manage-purchase__detail" />;
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return (
-				<span className="manage-purchase__detail">
+				<span className="manage-purchase__content manage-purchase__detail">
 					{ this.translate( 'Included with plan' ) }
 				</span>
 			);
@@ -302,7 +302,7 @@ const ManagePurchase = React.createClass( {
 			}
 
 			return (
-				<span className="manage-purchase__detail">
+				<span className="manage-purchase__content manage-purchase__detail">
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
 				</span>
@@ -310,7 +310,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<span className="manage-purchase__detail">
+			<span className="manage-purchase__content manage-purchase__detail">
 				{ this.translate( 'None' ) }
 			</span>
 		);
@@ -326,7 +326,7 @@ const ManagePurchase = React.createClass( {
 
 		let paymentDetails = (
 			<span>
-				<em className="manage-purchase__detail-label">
+				<em className="manage-purchase__content manage-purchase__detail-label">
 					{ isLoading ? null : this.translate( 'Payment method' ) }
 				</em>
 				{ this.renderPaymentInfo() }
@@ -443,7 +443,7 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<div className="manage-purchase__remove-box">
-				<em className="manage-purchase__remove-text">{ this.translate(
+				<em className="manage-purchase__content manage-purchase__remove-text">{ this.translate(
 					'{{strong}}Looking to remove this purchase?{{/strong}} Please {{a}}contact support{{/a}} to remove %(purchaseName)s from your account.',
 					{
 						args: {
@@ -561,24 +561,24 @@ const ManagePurchase = React.createClass( {
 			<div>
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
-						<strong className="manage-purchase__title">{ purchaseTitleText }</strong>
-						<span className="manage-purchase__subtitle">
+						<strong className="manage-purchase__content manage-purchase__title">{ purchaseTitleText }</strong>
+						<span className="manage-purchase__content manage-purchase__subtitle">
 							{ purchaseTypeText } { purchaseTypeSeparator } { siteName ? siteName : siteDomain }
 						</span>
-						<span className="manage-purchase__settings-link">
+						<span className="manage-purchase__content manage-purchase__settings-link">
 							{ productLink }
 						</span>
 					</header>
 					<ul className="manage-purchase__meta">
 						<li>
-							<em className="manage-purchase__detail-label">
+							<em className="manage-purchase__content manage-purchase__detail-label">
 								{ isDataLoading( this.props ) ? null : this.translate( 'Price' ) }
 							</em>
-							<span className="manage-purchase__detail">{ price }</span>
+							<span className="manage-purchase__content manage-purchase__detail">{ price }</span>
 						</li>
 						<li>
-							<em className="manage-purchase__detail-label">{ renewsOrExpiresOnLabel }</em>
-							<span className="manage-purchase__detail">
+							<em className="manage-purchase__content manage-purchase__detail-label">{ renewsOrExpiresOnLabel }</em>
+							<span className="manage-purchase__content manage-purchase__detail">
 								{ renewsOrExpiresOn }
 							</span>
 						</li>
