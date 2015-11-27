@@ -16,13 +16,15 @@ var  Masterbar = require( './masterbar' ),
 var ThemesLoggedOutLayout = React.createClass( {
 	getInitialState: function() {
 		return {
-			section: undefined
+			section: this.props.section,
+			primary: this.props.primary,
+			tertiary: this.props.tertiary
 		};
 	},
 
 
 	render: function() {
-		var sectionClass = 'wp' + ( this.state.section || this.props.section ? ' is-section-' + this.state.section || this.props.section : '' );
+		var sectionClass = 'wp' + ( this.state.section ? ' is-section-' + this.state.section : '' );
 
 		return (
 						<div className={ sectionClass }>
@@ -30,12 +32,12 @@ var ThemesLoggedOutLayout = React.createClass( {
 							<div id="content" className="wp-content">
 								<div id="primary" className="wp-primary wp-section">
 									<Main className="themes">
-									{ this.props.primary }
+									{ this.state.primary }
 									</Main>
 								</div>
 							</div>
 							<div id="tertiary" className="wp-overlay fade-background">
-								{ this.props.tertiary }
+								{ this.state.tertiary }
 							</div>
 						</div>
 		);

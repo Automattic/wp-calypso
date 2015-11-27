@@ -17,12 +17,13 @@ const routing = {
 		{ value: '/design/:site_id', enableLoggedOut: false },
 		{ value: '/design/type/:tier/:site_id', enableLoggedOut: false },
 		{ value: '/design/type/:tier', enableLoggedOut: true },
-		{ value: '/design', enableLoggedOut: false },
+		{ value: '/design', enableLoggedOut: true },
 	],
 	middlewares: [
 		{ value: controller.navigation, enableLoggedOut: false },
 		{ value: controller.siteSelection, enableLoggedOut: false },
-		{ value: themesController.themes, enableLoggedOut: true },
+		{ value: themesController.themes, enableLoggedOut: false },
+		{ value: themesController.themesLoggedOut, enableLoggedOut: true }
 	]
 };
 

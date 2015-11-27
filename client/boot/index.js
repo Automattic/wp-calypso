@@ -11,7 +11,6 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	partialRight = require( 'lodash/function/partialRight' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' );
 
 /**
@@ -172,28 +171,14 @@ function boot() {
 	} else {
 		if ( config.isEnabled( 'oauth' ) ) {
 			LoggedOutLayout = require( 'layout/logged-out-oauth' );
-		} else {
+		} else if ( startsWith( window.location.pathname, '/design' ) ) {
 			LoggedOutLayout = require( 'layout/themes-logged-out' );
+		} else {
+			LoggedOutLayout = require( 'layout/logged-out' );
 		}
-
-		const themesLoggedOutLayoutComponent = require( 'layout/themes-logged-out' );
-		const themesComponent = require( 'my-sites/themes/themes-selection' );
-		const	getButtonOptions = require( 'my-sites/themes/theme-options' );
-		const themesLoggedOutLayout = React.createFactory( themesLoggedOutLayoutComponent );
-		const themes = React.createFactory( themesComponent );
-
 		layout = React.render(
-			React.createElement( LoggedOutLayout, {
-					section: 'themes',
-					primary: themes( {
-						getOptions: partialRight( getButtonOptions, () => {}, () => {} ),
-						sites: false,
-						setSelectedTheme: () => {},
-						togglePreview: () => {},
-					} ),
-					secondary: null,
-					tertiary: null
-				} ), document.getElementById( 'wpcom' )
+			React.createElement( LoggedOutLayout ),
+			document.getElementById( 'wpcom' )
 		);
 	}
 
