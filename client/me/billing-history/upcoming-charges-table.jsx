@@ -22,7 +22,7 @@ module.exports = React.createClass( {
 					return (
 						<div className="transaction-links">
 							<a href={ link }>
-								{ this.translate( 'Manage Upgrade' ) }
+								{ this.translate( 'Manage Purchase' ) }
 							</a>
 						</div>
 					);

@@ -65,7 +65,7 @@ var NAV_ITEMS = {
 
 	'My Upgrades': {
 		paths: [ '/purchases' ],
-		label: i18n.translate( 'My Upgrades' ),
+		label: i18n.translate( 'Manage Purchases' ),
 		external: true
 	}
 };
