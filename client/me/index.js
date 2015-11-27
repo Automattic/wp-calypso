@@ -65,6 +65,13 @@ export default function() {
 			controller.purchases.noSitesMessage,
 			controller.purchases.list
 		);
+
+		page(
+			paths.purchases.listNotice(),
+			controller.sidebar,
+			controller.purchases.noSitesMessage,
+			controller.purchases.list
+		);
 	}
 
 	if ( config.isEnabled( 'upgrades/purchases/manage' ) ) {

@@ -17,13 +17,17 @@ import userFactory from 'lib/user';
 const stores = [ PurchasesStore ],
 	user = userFactory();
 
-function getStateFromStores() {
-	return { purchases: PurchasesStore.getByUser( user.get().ID ) };
+function getStateFromStores( props ) {
+	return {
+		noticeType: props.noticeType,
+		purchases: PurchasesStore.getByUser( user.get().ID )
+	};
 }
 
 const PurchasesData = React.createClass( {
 	propTypes: {
-		component: React.PropTypes.func.isRequired
+		component: React.PropTypes.func.isRequired,
+		noticeType: React.PropTypes.string
 	},
 
 	componentDidMount() {
@@ -34,6 +38,7 @@ const PurchasesData = React.createClass( {
 		return (
 			<StoreConnection
 				component={ this.props.component }
+				noticeType={ this.props.noticeType }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores } />
 		);
