@@ -6,7 +6,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import SimpleNotice from 'components/notice';
+import Notice from 'components/notice';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import EditorMediaModalGalleryEdit from './edit';
@@ -90,9 +90,9 @@ export default React.createClass( {
 		return (
 			<div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
-					<SimpleNotice status="is-warning" onClick={ this.props.onDismissInvalidItemDropped } isCompact>
+					<Notice status="is-warning" onClick={ this.props.onDismissInvalidItemDropped } isCompact>
 						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
-					</SimpleNotice>
+					</Notice>
 				) }
 				<div className="editor-media-modal-gallery__preview-wrapper">
 					{ this.renderPreview() }

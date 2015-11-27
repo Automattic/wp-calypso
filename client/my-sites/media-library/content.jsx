@@ -13,7 +13,7 @@ var React = require( 'react/addons' ),
 /**
  * Internal dependencies
  */
-var SimpleNotice = require( 'components/notice' ),
+var Notice = require( 'components/notice' ),
 	MediaListData = require( 'components/data/media-list-data' ),
 	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
 	MediaActions = require( 'lib/media/actions' ),
@@ -148,9 +148,9 @@ module.exports = React.createClass( {
 			}
 
 			return (
-				<SimpleNotice status="is-error" onClick={ onDismiss }>
+				<Notice status="is-error" onClick={ onDismiss }>
 					{ message }
-				</SimpleNotice>
+				</Notice>
 			);
 		} );
 

@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var PostActions = require( 'lib/posts/actions' ),
 	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
 
@@ -113,9 +113,9 @@ module.exports = React.createClass( {
 
 		if ( this.state.error ) {
 			error = (
-				<SimpleNotice status="is-error" onClick={ this.resetError } isCompact>
+				<Notice status="is-error" onClick={ this.resetError } isCompact>
 					{ this.translate( 'We couldn\'t find your current location.', { context: 'Post editor geolocation' } ) }
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 

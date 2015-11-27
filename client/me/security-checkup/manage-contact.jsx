@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var FormButton = require( 'components/forms/form-button' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	analytics = require( 'analytics' );
 
 var views = keyMirror( {
@@ -96,14 +96,14 @@ module.exports = React.createClass( {
 			onClick = showDismiss ? this.dismissNotice : null;
 
 			notice = (
-				<SimpleNotice
+				<Notice
 					status={ isError ? 'is-error' : 'is-success' }
 					isCompact={ true }
 					onClick={ onClick }
 					showDismiss={ showDismiss }
 					>
 					{ lastNotice.message }
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 		return notice;

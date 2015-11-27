@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var i18n = require( 'lib/mixins/i18n' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
 	LocaleSuggestionStore = require( 'lib/locale-suggestions' ),
-	SimpleNotice = require( 'components/notice' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 	displayName: 'LocaleSuggestions',
@@ -102,9 +102,9 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="locale-suggestions">
-				<SimpleNotice status="is-info" showDismiss={ true } onClick={ this.dismiss }>
+				<Notice status="is-info" showDismiss={ true } onClick={ this.dismiss }>
 					<div className="locale-suggestions__list">{ localeMarkup }</div>
-				</SimpleNotice>
+				</Notice>
 			</div>
 		);
 	}

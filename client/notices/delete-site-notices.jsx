@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var DeleteSiteStore = require( 'lib/sites-list/delete-site-store' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	SitesListActions = require( 'lib/sites-list/actions' );
 
 module.exports = React.createClass( {
@@ -41,30 +41,30 @@ module.exports = React.createClass( {
 		switch( status ) {
 			case 'deleting':
 				content =
-				<SimpleNotice status='is-success' showDismiss={ false }>{
+				<Notice status='is-success' showDismiss={ false }>{
 					this.translate( '{{strong}}%(siteDomain)s{{/strong}} is being deleted.', {
 						components: { strong: <strong /> },
 						args: { siteDomain: site.domain }
 					} )
-				}</SimpleNotice>;
+				}</Notice>;
 				break;
 			case 'deleted':
 				content =
-				<SimpleNotice status='is-success' showDismiss={ true } onClick={ this._clearDeleted }>{
+				<Notice status='is-success' showDismiss={ true } onClick={ this._clearDeleted }>{
 					this.translate( '{{strong}}%(siteDomain)s{{/strong}} has been deleted.', {
 						components: { strong: <strong /> },
 						args: { siteDomain: site.domain }
 					} )
-				}</SimpleNotice>;
+				}</Notice>;
 				break;
 			case 'error':
 				content =
-				<SimpleNotice status='is-error' showDismiss={ true } onClick={ this._clearDeleted }>{
+				<Notice status='is-error' showDismiss={ true } onClick={ this._clearDeleted }>{
 					this.translate( 'There was an error deleting {{strong}}%(siteDomain)s{{/strong}}.', {
 						components: { strong: <strong /> },
 						args: { siteDomain: site.domain }
 					} )
-				}</SimpleNotice>;
+				}</Notice>;
 				break;
 		}
 

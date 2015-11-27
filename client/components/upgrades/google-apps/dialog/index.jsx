@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var cartValues = require( 'lib/cart-values' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	ValidationErrorList = require( 'notices/validation-error-list' ),
 	cartItems = cartValues.cartItems,
 	GoogleAppsUsers = require( './users' ),
@@ -53,9 +53,9 @@ var GoogleAppsDialog = React.createClass( {
 	validationErrors: function() {
 		if ( this.state.validationErrors ) {
 			return (
-				<SimpleNotice onClick={ this.removeValidationErrors } status="is-error">
+				<Notice onClick={ this.removeValidationErrors } status="is-error">
 					<ValidationErrorList messages={ this.state.validationErrors } />
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 	},

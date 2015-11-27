@@ -12,7 +12,7 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'analytics' );
@@ -300,7 +300,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
+			<Notice
 				isCompact
 				status={ this.state.lastErrorType }
 				onClick={ this.clearLastError }

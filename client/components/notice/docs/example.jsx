@@ -7,7 +7,7 @@ var React = require( 'react' );
 * Internal dependencies
 */
 var NoticeArrowLink = require( 'notices/arrow-link' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	Notice = require( 'notices/notice' );
 
 var Notices = React.createClass( {
@@ -34,7 +34,7 @@ var Notices = React.createClass( {
 				<Notice status="is-success" text="I'm an `is-success` notice." isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-error" text="I'm an `is-error` notice." isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-warning" text="I'm an `is-warning` notice." isCompact={ this.state.compactNotices ? true : null } />
-				<SimpleNotice
+				<Notice
 					status="is-success"
 					isCompact={ this.state.compactNotices ? true : null }
 					showDismiss={ false }
@@ -42,7 +42,7 @@ var Notices = React.createClass( {
 					<NoticeArrowLink href="#">
 						{ "Preview" }
 					</NoticeArrowLink>
-				</SimpleNotice>
+				</Notice>
 			</div>
 		);
 	},

@@ -9,7 +9,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var HeaderCake = require( 'components/header-cake' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	ActionPanel = require( 'my-sites/site-settings/action-panel' ),
 	ActionPanelTitle = require( 'my-sites/site-settings/action-panel/title' ),
 	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),
@@ -108,7 +108,7 @@ module.exports = React.createClass( {
 				<ActionPanel>
 					<ActionPanelTitle>{ strings.deleteSite }</ActionPanelTitle>
 					<ActionPanelBody>
-						<SimpleNotice status="is-warning" showDismiss={ false }>
+						<Notice status="is-warning" showDismiss={ false }>
 							{ this.translate( '{{strong}}%(domain)s{{/strong}} will be unavailable in the future.', {
 								components: {
 									strong: <strong />
@@ -117,7 +117,7 @@ module.exports = React.createClass( {
 									domain: site.domain
 								}
 							} ) }
-						</SimpleNotice>
+						</Notice>
 						<ActionPanelFigure>
 							<h3 className="delete-site__content-list-header">{ this.translate( 'These items will be deleted' ) }</h3>
 							<ul className="delete-site__content-list">

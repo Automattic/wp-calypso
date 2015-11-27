@@ -12,7 +12,7 @@ var	FormButton = require( 'components/forms/form-button' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	SimpleNotice = require( 'components/notice' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 
@@ -228,7 +228,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
+			<Notice
 				isCompact
 				status="is-error"
 				onClick={ this.clearLastError }

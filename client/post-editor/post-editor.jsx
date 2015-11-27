@@ -24,7 +24,7 @@ var actions = require( 'lib/posts/actions' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	Gridicon = require( 'components/gridicon' ),
 	NoticeArrowLink = require( 'notices/arrow-link' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
@@ -245,14 +245,14 @@ var PostEditor = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
+			<Notice
 				status={ 'is-' + this.state.notice.type }
 				showDismiss={ this.state.notice.type === 'success' ? false : true }
 				onClick={ this.onNoticeClick }
 				className="post-editor__notice"
 				text={ this.state.notice.text }>
 				{ arrowLink }
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

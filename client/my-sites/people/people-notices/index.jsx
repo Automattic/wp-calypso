@@ -8,7 +8,7 @@ var React = require( 'react/addons' );
  */
 var PeopleLog = require( 'lib/people/log-store' ),
 	PeopleActions = require( 'lib/people/actions' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	i18n = require( 'lib/mixins/i18n' );
 
 let isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
@@ -111,9 +111,9 @@ module.exports = React.createClass( {
 			message = this.inProgressMessage();
 			if ( message ) {
 				notice = (
-					<SimpleNotice showDismiss={ false } className="people-notice">
+					<Notice showDismiss={ false } className="people-notice">
 						{ message }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		}
@@ -121,18 +121,18 @@ module.exports = React.createClass( {
 			message = this.errorMessage();
 			if ( message ) {
 				notice = (
-					<SimpleNotice status="is-error" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.errors ) }>
+					<Notice status="is-error" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.errors ) }>
 						{ message }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		} else if ( logNotices.completed.length > 0 ) {
 			message = this.successMessage();
 			if ( message ) {
 				notice = (
-					<SimpleNotice status="is-success" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.completed ) }>
+					<Notice status="is-success" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.completed ) }>
 						{ message }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		}

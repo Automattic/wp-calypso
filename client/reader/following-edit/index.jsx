@@ -16,7 +16,7 @@ const Main = require( 'components/main' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	SubscriptionPlaceholder = require( './placeholder' ),
 	SubscriptionListItem = require( './list-item' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	stats = require( 'reader/stats' ),
 	Search = require( 'components/search' ),
 	URLSearch = require( 'lib/mixins/url-search' ),
@@ -261,7 +261,7 @@ var FollowingEdit = React.createClass( {
 
 		const url = this.state.lastError.URL;
 
-		return ( <SimpleNotice
+		return ( <Notice
 					status="is-error"
 					isCompact={ true }
 					showDismiss={ true }
@@ -270,7 +270,7 @@ var FollowingEdit = React.createClass( {
 						components: { strong: <strong /> },
 						args: { url: url } } )
 					}
-					</SimpleNotice>
+					</Notice>
 		);
 	},
 
@@ -289,13 +289,13 @@ var FollowingEdit = React.createClass( {
 			errorMessage = this.translate( "You're already subscribed to that site." );
 		}
 
-		return ( <SimpleNotice
+		return ( <Notice
 					status="is-error"
 					isCompact={ true }
 					showDismiss={ true }
 					onClick={ this.dismissError }>
 					{ errorMessage }
-				</SimpleNotice>
+				</Notice>
 		);
 	},
 

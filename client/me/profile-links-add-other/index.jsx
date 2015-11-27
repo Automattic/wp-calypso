@@ -10,7 +10,7 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormButton = require( 'components/forms/form-button' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	SimpleNotice = require( 'components/notice' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 
@@ -114,7 +114,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
+			<Notice
 				className="profile-links-add-other__error"
 				isCompact
 				status="is-error"

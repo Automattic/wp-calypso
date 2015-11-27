@@ -15,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import { isRefundable } from 'lib/purchases';
 import Main from 'components/main';
 import paths from '../paths';
-import SimpleNotice from 'components/notice';
+import Notice from 'components/notice';
 import titles from 'me/purchases/titles';
 import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
@@ -110,7 +110,7 @@ const CancelPrivateRegistration = React.createClass( {
 		const purchase = this.props.selectedPurchase.data;
 
 		if ( purchase.error ) {
-			return <SimpleNotice status='is-error' showDismiss={ false }>{ purchase.error }</SimpleNotice>;
+			return <Notice status='is-error' showDismiss={ false }>{ purchase.error }</Notice>;
 		}
 
 		return null;

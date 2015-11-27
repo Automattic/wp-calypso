@@ -20,7 +20,7 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	paths = require( 'my-sites/upgrades/paths' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	ValidationErrorList = require( 'notices/validation-error-list' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ hasGoogleApps, getGoogleAppsSupportedDomains } = require( 'lib/domains' ),
@@ -68,9 +68,9 @@ const AddEmailAddressesCard = React.createClass( {
 	validationErrors: function() {
 		if ( this.state.validationErrors ) {
 			return (
-				<SimpleNotice onClick={ this.removeValidationErrors } status="is-error">
+				<Notice onClick={ this.removeValidationErrors } status="is-error">
 					<ValidationErrorList messages={ this.state.validationErrors } />
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 	},

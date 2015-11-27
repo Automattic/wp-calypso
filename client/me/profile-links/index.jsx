@@ -13,7 +13,7 @@ var ProfileLink = require( 'me/profile-link' ),
 	ProfileLinksAddOther = require( 'me/profile-links-add-other' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' );
 
 module.exports = React.createClass( {
@@ -108,12 +108,12 @@ module.exports = React.createClass( {
 		}
 
 		return (
-				<SimpleNotice className="profile-links__error"
+				<Notice className="profile-links__error"
 					isCompact={ true }
 					status="is-error"
 					onClick={ this.clearLastError }>
 					{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
-				</SimpleNotice>
+				</Notice>
 		);
 	},
 

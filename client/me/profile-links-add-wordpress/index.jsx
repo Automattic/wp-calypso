@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var config = require( 'config' ),
 	FormButton = require( 'components/forms/form-button' ),
-	SimpleNotice = require( 'components/notice' ),
+	Notice = require( 'components/notice' ),
 	Site = require( 'my-sites/site' ),
 	sites = require( 'lib/sites-list' )(),
 	eventRecorder = require( 'me/event-recorder' );
@@ -115,13 +115,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
+			<Notice
 				className="profile-links-add-wordpress__error"
 				isCompact={ true }
 				status="is-error"
 				onClick={ this.clearLastError }>
 				{ this.state.lastError }
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

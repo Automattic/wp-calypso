@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SimpleNotice = require( 'components/notice' ),
+var Notice = require( 'components/notice' ),
 	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 		);
 
 		return (
-			<SimpleNotice
+			<Notice
 				isCompact
 				showDismiss={ false }
 				status="is-error"
