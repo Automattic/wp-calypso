@@ -60,7 +60,7 @@ module.exports = React.createClass( {
 			} );
 		}
 
-		if ( this.props.selectedSite.options.unmapped_url !== this.props.selectedSite.options.main_network_site ) {
+		if ( ! utils.isMainNetworkSite( this.props.selectedSite ) ) {
 			return this.translate( 'Only the main site on a multi-site installation can install plugins.', {
 				args: { site: this.props.selectedSite.title }
 			} );
@@ -90,7 +90,7 @@ module.exports = React.createClass( {
 				<ExternalLink
 					key="external-link"
 					onClick={
-						analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix disabled autoupdates' )
+						analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix disabled plugin installs' )
 					}
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 					>
@@ -107,15 +107,35 @@ module.exports = React.createClass( {
 		this.refs.infoPopover._onClick( event );
 	},
 
-	renderDisabledNotice: function() {
-		if ( this.props.selectedSite.unreachable ) {
-			return (
-				<div className={ classNames( { 'plugin-install-button__install': true, embed: this.props.isEmbed } ) }>
-					<span className="plugin-install-button__warning">{ this.translate( 'Site unreachable' ) }</span>
-				</div>
-			);
-		}
+	renderUnreachableNotice: function() {
+		return (
+			<div className={ classNames( { 'plugin-install-button__install': true, embed: this.props.isEmbed } ) }>
+				<span onClick={ this.togglePopover } ref="disabledInfoLabel" className="plugin-install-button__warning">{ this.translate( 'Site unreachable' ) }</span>
+				<InfoPopover
+						position="bottom left"
+						popoverName={ 'Plugin Action Disabled Install' }
+						gaEventCategory="Plugins"
+						ref="infoPopover"
+						ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+						>
+						<div>
+							<p>{ this.translate( '%(site)s is unresponsive.', { args: { site: this.props.selectedSite.title } } ) }</p>
+							<ExternalLink
+								key='external-link'
+								onClick={
+									analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix disabled plugin installs unresponsive site.' )
+								}
+								href={ 'http://jetpack.me/support/debug/?url=' + this.props.selectedSite.URL }
+								>
+								{ this.translate( 'Debug site!' ) }
+							</ExternalLink>
+						</div>
+					</InfoPopover>
+			</div>
+		);
+	},
 
+	renderDisabledNotice: function() {
 		if ( ! this.props.selectedSite.canUpdateFiles ) {
 			if ( ! this.props.selectedSite.hasMinimumJetpackVersion ) {
 				return (
@@ -170,6 +190,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		if ( this.props.selectedSite.unreachable ) {
+			return this.renderUnreachableNotice();
+		}
 		if ( ! this.props.selectedSite.canUpdateFiles ) {
 			return this.renderDisabledNotice();
 		}
