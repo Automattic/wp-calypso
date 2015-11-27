@@ -10,7 +10,7 @@ import AccordionSection from 'components/accordion/section';
 import PostSelector from 'my-sites/post-selector';
 import postActions from 'lib/posts/actions';
 import FormLabel from 'components/forms/form-label';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormToggle from 'components/forms/form-toggle/compact';
 
 export default React.createClass( {
 	displayName: 'EditorPageParent',
@@ -44,9 +44,15 @@ export default React.createClass( {
 				<FormLabel>
 					<span className="editor-page-parent__label-text">{ this.translate( 'Parent Page' ) }</span>
 				</FormLabel>
-				<FormLabel>
-					<FormCheckbox ref="topLevel" checked={ ! this.props.parent } onChange={ this.updatePageParent } />
-					{ this.translate( 'Top level page', { context: 'Categories: New category being created is top level i.e. has no parent' } ) }
+				<FormLabel className="editor-page-parent__top-level">
+					<span className="editor-page-parent__top-level-label">
+						{ this.translate( 'Top level page', { context: 'Editor: Page being edited is top level i.e. has no parent' } ) }
+					</span>
+					<FormToggle
+						checked={ ! this.props.parent }
+						onChange={ this.updatePageParent }
+						aria-label={ this.translate( 'Toggle to set page as top level' ) }
+					/>
 				</FormLabel>
 				<PostSelector
 					type="page"
