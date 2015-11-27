@@ -143,7 +143,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<FormSettingExplanation>{ infotext }</FormSettingExplanation>
+			<FormSettingExplanation className={ visibility }>{ infotext }</FormSettingExplanation>
 		);
 	},
 
