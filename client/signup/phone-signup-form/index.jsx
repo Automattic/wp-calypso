@@ -8,7 +8,7 @@ var React = require( 'react' ),
  */
 var wpcom = require( 'lib/wp' ),
 	notices = require( 'notices' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	FormPhoneInput = require( 'components/forms/form-phone-input' ),
 	FormButton = require( 'components/forms/form-button' ),

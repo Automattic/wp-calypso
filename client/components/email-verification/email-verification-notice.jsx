@@ -10,7 +10,6 @@ var React = require( 'react' ),
  */
 var notices = require( 'notices' ),
 	sites = require( 'lib/sites-list' )(),
-	Notice = require( 'notices/notice' ),
 	Notice = require( 'components/notice' ),
 	emailVerification = require( 'components/email-verification' );
 

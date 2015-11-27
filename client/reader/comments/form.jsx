@@ -6,7 +6,7 @@ var React = require( 'react' ),
 var Gravatar = require( 'components/gravatar' ),
 	User = require( 'lib/user' )().get(),
 	CommentActions = require( 'lib/comment-store/actions' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	stats = require( 'reader/stats' );
 
 var PostCommentForm = React.createClass( {

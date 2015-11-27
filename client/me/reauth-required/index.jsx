@@ -16,7 +16,7 @@ var Dialog = require( 'components/dialog' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	userUtilities = require( 'lib/user/utils' );
 

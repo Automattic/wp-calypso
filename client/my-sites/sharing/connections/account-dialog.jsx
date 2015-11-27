@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var Dialog = require( 'components/dialog' ),
 	AccountDialogAccount = require( './account-dialog-account' ),
-	Notice = require( 'notices/notice' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 	displayName: 'AccountDialog',

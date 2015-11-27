@@ -12,7 +12,7 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import AuthStore from 'lib/oauth-store';
 import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
