@@ -434,7 +434,7 @@ const ManagePurchase = React.createClass( {
 
 	renderRemovePurchaseInformation() {
 		const purchase = getPurchase( this.props ),
-			contactSupportUrl = 'https://support.wordpress.com/';
+			contactSupportUrl = 'https://support.wordpress.com/contact/';
 
 		if ( ! isRemovable( purchase ) ) {
 			return null;
