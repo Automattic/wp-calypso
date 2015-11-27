@@ -9,7 +9,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+import { isDomainMapping, isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
 
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
@@ -106,11 +106,14 @@ function isRefundable( purchase ) {
 }
 
 function isRemovable( purchase ) {
-	if (  isIncludedWithPlan( purchase ) ) {
+	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
 
-	return ( isExpired( purchase ) && purchase.isCancelable );
+	return (
+		( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) &&
+		isExpired( purchase )
+	);
 }
 
 function isRenewable( purchase ) {
