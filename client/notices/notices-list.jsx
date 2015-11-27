@@ -8,7 +8,8 @@ var React = require( 'react' ),
 /**
  * Internal Dependencies
  */
-var Notice = require( './notice' ),
+var Notice = require( 'components/notice' ),
+	notices = require( 'notices' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	DeleteSiteNotices = require( './delete-site-notices' );
 
@@ -67,14 +68,29 @@ module.exports = React.createClass( {
 		this.setState( { pinned: window.scrollY > 0 } );
 	},
 
+	removeNotice: function( notice ) {
+		if ( notice ) {
+			notices.removeNotice( notice );
+		}
+	},
+
 	render: function() {
 		var noticesRaw = this.props.notices[ this.props.id ] || [],
 			noticesList = noticesRaw.map( function( notice, index ) {
 				return (
-					<Notice key={ 'notice-' + index } type={ notice.type } status={ notice.status } text={ notice.text }
-					duration={ notice.duration } button={ notice.button } href={ notice.href } raw={ notice }
-					container={ notice.container } arrow={ notice.arrow }
-					isCompact={ notice.isCompact } onClick={ notice.onClick } showDismiss={ notice.showDismiss } />
+					<Notice
+						key={ 'notice-' + index }
+						type={ notice.type }
+						status={ notice.status }
+						text={ notice.text }
+						duration={ notice.duration }
+						button={ notice.button }
+						href={ notice.href }
+						container={ notice.container }
+						isCompact={ notice.isCompact }
+						onClick={ this.removeNotice.bind( this, notice ) }
+						showDismiss={ notice.showDismiss }
+					/>
 				);
 			}, this );
 
