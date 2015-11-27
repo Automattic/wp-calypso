@@ -77,7 +77,7 @@ TransactionFlow.prototype._pushStep = function( options ) {
 	};
 
 	this.push( Object.assign( defaults, options ) );
-}
+};
 
 TransactionFlow.prototype._paymentHandlers = {
 	'WPCOM_Billing_MoneyPress_Stored': function() {
