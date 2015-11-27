@@ -1,4 +1,4 @@
-const data = require( 'config/reader' )( {
+const data = require( '../../config/reader' )( {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
 	secrets: true
 } );
