@@ -3,27 +3,9 @@
 	max-width: 720px;
 	z-index: 20;
 
-	// Some screens (like /sites) don't have a sidebar.
-	// @todo: This kinda sucks. I think the full-width class
-	// should be moved to .wp-primary, and we can just remove
-	// the margin, instead of overriding it here. -shaun
-	&.is-full {
-		margin-left: -272px;
-		max-width: calc( 100% + 272px );
-
-		// Tablets
-		@include breakpoint( "<960px" ) {
-			margin-left: -224px;
-		}
-
-		@include breakpoint( "<660px" ) {
-			margin-left: 0;
-			max-width: 100%;
-		}
-	}
-
 	// Themes is a great example of using all this new space ;)
-	&.themes {
+	&.themes,
+	&.sites {
 		max-width: 100%;
 	}
 

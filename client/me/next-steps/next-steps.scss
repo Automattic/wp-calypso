@@ -1,19 +1,5 @@
-.next-steps.is-single-page {
-	box-sizing: border-box;
-	margin: 0 0 0 -227px;
-	max-width: inherit;
-
-	.next-steps__intro,
-	.next-steps__steps,
-	.next-steps__outro {
-		max-width: 640px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 0;
-	}
+.has-no-sidebar .next-steps {
+	max-width: 640px;
 }
 
 .next-steps__title {

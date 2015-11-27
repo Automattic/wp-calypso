@@ -200,6 +200,7 @@ module.exports = {
 			basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
+		context.layout.setState( { noSidebar: true } );
 
 		if ( ! lastTransaction ) {
 			page.redirect( '/plans' );

@@ -50,7 +50,10 @@ var devdocs = {
 				false );
 		}
 
-		context.layout.setState( { section: 'devdocs' } );
+		context.layout.setState( {
+			section: 'devdocs',
+			noSidebar: true
+		} );
 
 		React.render(
 			React.createElement( DocsComponent, {

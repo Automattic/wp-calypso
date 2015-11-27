@@ -11,6 +11,12 @@ import MainComponent from './main';
 
 export default {
 	unsubscribe( context ) {
+		// We don't need the sidebar here.
+		context.layout.setState( {
+			section: 'me',
+			noSidebar: true }
+		);
+
 		React.render(
 			React.createElement( MainComponent, {
 				email: context.query.email,

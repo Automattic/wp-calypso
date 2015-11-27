@@ -251,7 +251,10 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 * so section needs to be set explicitly and #secondary cleaned up
 		 */
-		context.layout.setState( { section: 'sites' } );
+		context.layout.setState( {
+			section: 'sites',
+			noSidebar: true
+		} );
 		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );
 
