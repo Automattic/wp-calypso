@@ -77,7 +77,7 @@ TransactionFlow.prototype._pushStep = function( options ) {
 	};
 
 	this.push( Object.assign( defaults, options ) );
-}
+};
 
 TransactionFlow.prototype._paymentHandlers = {
 	'WPCOM_Billing_MoneyPress_Stored': function() {
@@ -90,7 +90,9 @@ TransactionFlow.prototype._paymentHandlers = {
 	},
 
 	'WPCOM_Billing_MoneyPress_Paygate': function() {
-		var validation = validateCardDetails( this._initialData.payment.newCardDetails );
+		const { newCardDetails } = this._initialData.payment,
+			validation = validateCardDetails( newCardDetails );
+
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
 				name: 'input-validation',
@@ -103,10 +105,16 @@ TransactionFlow.prototype._paymentHandlers = {
 
 		this._pushStep( { name: 'input-validation', first: true } );
 		debug( 'submitting transaction with new card' );
+
 		this._createPaygateToken( function( paygateToken ) {
+			const { name, country, 'postal-code': zip } = newCardDetails;
+
 			this._submitWithPayment( {
 				payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
-				payment_key: paygateToken
+				payment_key: paygateToken,
+				name,
+				zip,
+				country
 			} );
 		}.bind( this ) );
 	},
