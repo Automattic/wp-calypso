@@ -21,6 +21,7 @@
 		"editor-drafts": true,
 
 		"manage/ads": true,
+		"manage/ads/jetpack": true,
 		"manage/stats": true,
 		"manage/stats/insights": true,
 		"manage/jetpack": true,
