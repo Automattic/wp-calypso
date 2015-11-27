@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
@@ -41,21 +40,8 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.canSelectPlan( this.props.plan ) ) {
-			if ( config.isEnabled( 'upgrades/checkout' ) ) {
-				return this.getInternalButtons();
-			}
-			return this.getAtlasButtons();
+			return this.getInternalButtons();
 		}
-	},
-
-	getAtlasButtons: function() {
-		var checkoutURL = 'https://wordpress.com/checkout/' + this.props.site.ID + '/' + this.props.plan.product_id;
-
-		return (
-			<div>
-				<a href={ checkoutURL } className="button is-primary plan-actions__upgrade-button">{ this.translate( 'Upgrade', { context: 'Store action' } ) }</a>
-			</div>
-		);
 	},
 
 	getInternalButtons: function() {
