@@ -4,6 +4,11 @@
 	font-size: 11px;
 	text-transform: uppercase;
 
+	&[disabled] {
+		cursor: not-allowed;
+		color: lighten( $gray, 10% );
+	}
+
 	.count {
 		margin-left: 8px;
 	}
