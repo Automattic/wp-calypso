@@ -33,13 +33,13 @@ var NAV_ITEMS = {
 	Plans: {
 		paths: [ '/plans' ],
 		label: i18n.translate( 'Plans' ),
-		external: false
+		allSitesPath: false
 	},
 
 	Email: {
 		paths: [ upgradesPaths.domainManagementEmail() ],
 		label: i18n.translate( 'Email' ),
-		external: false
+		allSitesPath: false
 	},
 
 	Domains: {
@@ -48,25 +48,19 @@ var NAV_ITEMS = {
 			'/domains/add'
 		],
 		label: i18n.translate( 'Domains' ),
-		external: false
+		allSitesPath: false
 	},
 
 	'Add a Domain': {
 		paths: [ '/domains/add' ],
 		label: i18n.translate( 'Add a Domain' ),
-		external: false
+		allSitesPath: false
 	},
 
-	'My Domains': {
-		paths: [ '/my-domains' ],
-		label: i18n.translate( 'My Domains' ),
-		external: true
-	},
-
-	'My Upgrades': {
+	'My Purchases': {
 		paths: [ '/purchases' ],
 		label: i18n.translate( 'Manage Purchases' ),
-		external: true
+		allSitesPath: true
 	}
 };
 
@@ -123,14 +117,12 @@ var UpgradesNavigation = React.createClass( {
 		var items;
 
 		if ( this.props.selectedSite.jetpack ) {
-			items = [ 'Plans', 'My Upgrades' ];
-		} else if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-			items = [ 'Plans', 'Domains', 'Email', 'My Upgrades' ];
+			items = [ 'Plans', 'My Purchases' ];
+		} else {
+			items = [ 'Plans', 'Domains', 'Email', 'My Purchases' ];
 			if ( config.isEnabled( 'upgrades/purchases/list' ) ) {
 				items = [ 'Plans', 'Domains', 'Email' ];
 			}
-		} else {
-			items = [ 'Plans', 'Add a Domain', 'My Domains', 'My Upgrades' ];
 		}
 
 		return items.map( propertyOf( NAV_ITEMS ) );
@@ -151,21 +143,21 @@ var UpgradesNavigation = React.createClass( {
 	},
 
 	navItem: function( itemData ) {
-		var { paths, external, label } = itemData,
+		var { paths, allSitesPath, label } = itemData,
 			slug = this.props.selectedSite ? this.props.selectedSite.slug : null,
 			selectedNavItem = this.getSelectedNavItem(),
 			primaryPath = paths[ 0 ],
 			fullPath;
 
-		if ( external ) {
-			fullPath = `https://wordpress.com${primaryPath}`;
+		if ( allSitesPath ) {
+			fullPath = primaryPath;
 		} else {
 			fullPath = slug ? `${ primaryPath }/${ slug }` : primaryPath;
 		}
 
 		return (
 			<NavItem path={ fullPath }
-					isExternalLink={ external }
+					isExternalLink={ false }
 					key={ fullPath }
 					selected={ selectedNavItem && ( selectedNavItem.label === label ) }>
 				{ label }
