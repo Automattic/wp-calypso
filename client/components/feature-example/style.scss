@@ -1,5 +1,5 @@
 .feature-example {
-	height: 300px;
+	height: 400px;
 	margin-top: 36px;
 	position: relative;
 	overflow: hidden;
@@ -8,7 +8,7 @@
 .feature-example__gradient {
 	position: absolute;
 		top: 0;
-	height: 300px;
+	height: 100%;
 	width: 100%;
 	background: linear-gradient( to bottom, rgba(243, 246, 248, 0.4), rgba( 243, 246, 248, 1) );
 }

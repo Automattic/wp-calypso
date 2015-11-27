@@ -66,9 +66,9 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-meta__actions">
-				<PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } />
-				<PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } wporg={ this.props.plugin.wporg } />
-				<PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } />
+				<PluginActivateToggle { ...this.props } site={ this.props.selectedSite } />
+				<PluginAutoupdateToggle { ...this.props } site={ this.props.selectedSite } wporg={ this.props.plugin.wporg } />
+				<PluginRemoveButton { ...this.props } site={ this.props.selectedSite } />
 				{ this.renderSettingsLink() }
 			</div>
 		);
