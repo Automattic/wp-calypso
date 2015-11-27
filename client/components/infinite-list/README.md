@@ -33,7 +33,7 @@ If you need to track when user scrolls to another page, do it in `fetchNextPage`
 
 ## Example Usage
 
-```
+```jsx
 
 var Listing = React.createClass( {
 	...
