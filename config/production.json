@@ -53,7 +53,6 @@
 		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"post-editor/pages": true,
-		"editor-drafts": true,
 		"help": false,
 		"upgrades/checkout": true,
 		"upgrades/domain-management/contacts-privacy": true,

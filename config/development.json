@@ -43,7 +43,6 @@
 		"post-editor/pages": true,
 		"post-editor-github-link": false,
 		"post-editor/post-type-switch": false,
-		"editor-drafts": true,
 
 		"manage/media": true,
 		"manage/posts": true,
