@@ -9,6 +9,7 @@ import React from 'react';
 import analytics from 'analytics';
 import ConfirmCancelPurchase from './confirm-cancel-purchase';
 import CancelPurchase from './cancel-purchase';
+import CancelPurchasePlaceholder from './cancel-purchase-placeholder';
 import CancelPrivateRegistration from './cancel-private-registration';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
@@ -25,6 +26,7 @@ import PurchasesList from './list';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 import userFactory from 'lib/user';
+import { isDataLoading } from './utils';
 
 const sites = sitesFactory();
 const user = userFactory();
@@ -69,6 +71,8 @@ export default {
 		renderPage(
 			<ManagePurchaseData
 				component={ CancelPurchase }
+				isDataLoading={ isDataLoading }
+				loadingPlaceholder={ CancelPurchasePlaceholder }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);

@@ -59,7 +59,7 @@ const StoreConnection = React.createClass( {
 
 	render() {
 		if ( this.isDataLoading() ) {
-			return React.createElement( this.props.loadingPlaceholder );
+			return React.createElement( this.props.loadingPlaceholder, this.state );
 		}
 
 		if ( this.props.component ) {
