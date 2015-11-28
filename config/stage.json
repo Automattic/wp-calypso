@@ -56,7 +56,6 @@
 		"me/account": true,
 		"help": false,
 		"me/notifications": true,
-		"me/notifications-control-panel": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-management/contacts-privacy": true,
 		"upgrades/domain-management/email": true,
