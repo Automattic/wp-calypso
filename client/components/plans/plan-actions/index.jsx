@@ -12,7 +12,8 @@ var analytics = require( 'analytics' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	cartItems = require( 'lib/cart-values' ).cartItems;
+	cartItems = require( 'lib/cart-values' ).cartItems,
+	puchasesPaths = require( 'me/purchases/paths' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanActions',
@@ -180,7 +181,7 @@ module.exports = React.createClass( {
 	},
 
 	managePlanButton: function() {
-		var link = '/purchases/' + this.props.site.domain + '/' + this.props.siteSpecificPlansDetails.id;
+		var link = puchasesPaths.managePurchase( this.props.site.domain, this.props.siteSpecificPlansDetails.id );
 		if ( this.planHasCost() ) {
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>

@@ -6,7 +6,8 @@ var React = require( 'react' );
 /**
  * Internal Dependencies
  */
-var	TransactionsTable = require( './transactions-table' );
+var	purchasesPaths = require( 'me/purchases/paths' ),
+	TransactionsTable = require( './transactions-table' );
 
 module.exports = React.createClass( {
 
@@ -18,10 +19,9 @@ module.exports = React.createClass( {
 				{ ...this.props }
 				initialFilter={ { date: { newest: 20 } } }
 				description={ function( { domain, id } = transaction ) {
-					const link = '/purchases/' + domain + '/' + id
 					return (
 						<div className="transaction-links">
-							<a href={ link }>
+							<a href={ purchasesPaths.managePurchase( domain, id ) }>
 								{ this.translate( 'Manage Purchase' ) }
 							</a>
 						</div>

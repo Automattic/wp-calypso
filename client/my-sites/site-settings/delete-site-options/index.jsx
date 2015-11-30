@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var CompactCard = require( 'components/card/compact' ),
+	purchasesPaths = require( 'me/purchases/paths' ),
 	PurchasesStore = require( 'lib/purchases/store' ),
 	UpgradesActions = require( 'lib/upgrades/actions' ),
 	pollers = require( 'lib/data-poller' ),
@@ -79,7 +80,7 @@ module.exports = React.createClass( {
 
 		dialogButtons = [
 			{ action: 'dismiss', label: this.translate( 'Dismiss' ) },
-			<a className="button is-primary" href={ '/purchases' }>{
+			<a className="button is-primary" href={ purchasesPaths.list() }>{
 				this.translate( 'Manage Purchases', { context: 'button label' } )
 			}</a>
 		];

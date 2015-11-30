@@ -24,6 +24,7 @@ var SectionNav = require( 'components/section-nav' ),
 	viewport = require( 'lib/viewport' ),
 	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	PopoverCart = require( 'my-sites/upgrades/cart/popover-cart' ),
+	purchasesPaths = require( 'me/purchases/paths' ),
 	i18n = require( 'lib/mixins/i18n' );
 
 // The first path acts as the primary path that the button will link to. The
@@ -58,7 +59,7 @@ var NAV_ITEMS = {
 	},
 
 	'My Purchases': {
-		paths: [ '/purchases' ],
+		paths: [ purchasesPaths.list() ],
 		label: i18n.translate( 'Manage Purchases' ),
 		allSitesPath: true
 	}

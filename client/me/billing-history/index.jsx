@@ -18,7 +18,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	PurchasesHeader = require( '../purchases/list/header' ),
 	BillingHistoryTable = require( './billing-history-table' ),
 	UpcomingChargesTable = require( './upcoming-charges-table' ),
-	SectionHeader = require( 'components/section-header' );
+	SectionHeader = require( 'components/section-header' ),
+	puchasesPaths = require( 'me/purchases/paths' );
 
 module.exports = React.createClass( {
 	displayName: 'BillingHistory',
@@ -55,13 +56,12 @@ module.exports = React.createClass( {
 						<p>
 							{
 								this.translate(
-									'A complete history of all billing transactions for your WordPress.com account. If you are looking to add or cancel a plan go to {{link}}Manage Purchases{{/link}}.',
-									{
-										components: {
-											link: <a href="/purchases" onClick={ this.recordClickEvent( 'Manage Purchases Link on Billing History' ) }/>
-										}
+									'A complete history of all billing transactions for your WordPress.com account. If you are looking to add or cancel a plan go to {{link}}Manage Purchases{{/link}}.', {
+									components: {
+										link: <a href={ puchasesPaths.list() }
+											onClick={ this.recordClickEvent( 'Manage Purchases Link on Billing History' ) } />
 									}
-								)
+								} )
 							}
 						</p>
 					</div>
