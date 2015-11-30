@@ -12,7 +12,7 @@ const verticals = [
 		{ value: 'a8c.17', label: translate( 'Sports & Recreation' ) },
 	] },
 
-	{ value: 'a8c.3', label: translate( 'Business & Services' ), icon: 'bookmark', stepTwo: [
+	{ value: 'a8c.3', label: translate( 'Business & Services' ), icon: 'briefcase', stepTwo: [
 		{ value: 'a8c.3', label: translate( 'General Business & Services' ), isGeneral: true },
 		{ value: 'a8c.3.0.1', label: translate( 'Finance & Law' ) },
 		{ value: 'a8c.3.0.2', label: translate( 'Consulting & Coaching' ) },
@@ -36,7 +36,7 @@ const verticals = [
 		{ value: 'a8c.16', label: translate( 'Pets' ) },
 	] },
 
-	{ value: 'a8c.5', label: translate( 'Education & Organizations' ), icon: 'clipboard', stepTwo: [
+	{ value: 'a8c.5', label: translate( 'Education & Organizations' ), icon: 'institution', stepTwo: [
 		{ value: 'a8c.5', label: translate( 'General Education & Organizations' ), isGeneral: true },
 		{ value: 'a8c.3.0.6', label: translate( 'Communities & Associations' ) },
 		{ value: 'a8c.3.0.5', label: translate( 'Non-Profit' ) },
@@ -57,7 +57,7 @@ const verticals = [
 		{ value: 'a8c.7.32', label: translate( 'Nutrition' ) },
 	] },
 
-	{ value: 'a8c.1.1', label: translate( 'Writing & Books' ), icon: 'create', stepTwo: [
+	{ value: 'a8c.1.1', label: translate( 'Writing & Books' ), icon: 'book', stepTwo: [
 		{ value: 'a8c.1.1', label: translate( 'General Writing & Books' ), isGeneral: true },
 		{ value: 'a8c.1.1.1', label: translate( 'Book Reviews & Clubs' ) },
 		{ value: 'a8c.1.4', label: translate( 'Humor' ) },
