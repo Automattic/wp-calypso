@@ -9,10 +9,10 @@ var React = require( 'react' ),
  */
 var ProfileLink = require( 'me/profile-link' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ProfileLinksAddWordPress = require( 'me/profile-links-add-wordpress' ),
-	ProfileLinksAddOther = require( 'me/profile-links-add-other' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
+	ProfileLinkCreators = require( 'me/profile-links/creators' ),
+	AddProfileLinksButtons = require( 'me/profile-links/add-buttons' ),
+	SectionHeader = require( 'components/section-header' ),
+	Card = require( 'components/card' ),
 	SimpleNotice = require( 'notices/simple-notice' ),
 	eventRecorder = require( 'me/event-recorder' );
 
@@ -89,19 +89,6 @@ module.exports = React.createClass( {
 		this.props.userProfileLinks.deleteProfileLinkBySlug( profileLink.link_slug, this.onRemoveLinkResponse );
 	},
 
-	renderFormVisibilityControls: function() {
-		return (
-			<FormButtonsBar>
-				<FormButton onClick={ this.recordClickEvent( 'Add Other Site Button', this.showAddOther ) } isPrimary={ false } >
-					{ this.translate( 'Add Other Site' ) }
-				</FormButton>
-				<FormButton onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.showAddWordPress ) } isPrimary={ false } >
-					{ this.translate( 'Add a WordPress Site' ) }
-				</FormButton>
-			</FormButtonsBar>
-		);
-	},
-
 	possiblyRenderError: function() {
 		if ( ! this.state.lastError ) {
 			return null;
@@ -145,29 +132,27 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
-		// If userProfileLinks has not initialized, let's render some placeholder content
-		if ( ! this.props.userProfileLinks.initialized ) {
-			return (
-				<div className="profile-links">
-					{ _times( 2, function( index ) {
-						return (
-							<ProfileLink
-								title="Loading Profile Links"
-								url="http://wordpress.com"
-								slug="A placeholder profile link"
-								isPlaceholder
-								key={ index }
-							/>
-						);
-					} ) }
-				</div>
-			);
-		}
-
-		// If userProfileLinks has been initialized, then attempt to render profile links.
+	renderPlaceholder: function() {
 		return (
-			<div className="profile-links">
+			<div>
+				{ _times( 2, function( index ) {
+					return (
+						<ProfileLink
+							title="Loading Profile Links"
+							url="http://wordpress.com"
+							slug="A placeholder profile link"
+							isPlaceholder
+							key={ index }
+						/>
+					);
+				} ) }
+			</div>
+		);
+	},
+
+	renderLinks: function() {
+		return (
+			<div>
 				{ this.possiblyRenderError() }
 
 				{
@@ -175,33 +160,39 @@ module.exports = React.createClass( {
 					? this.renderProfileLinks()
 					: this.renderNoProfileLinks()
 				}
+			</div>
+		);
+	},
 
-				{
-					'wordpress' === this.state.showingForm
-					? (
-						<ProfileLinksAddWordPress
-							userProfileLinks={ this.props.userProfileLinks }
-							onSuccess={ this.hideForms }
-							onCancel={ this.hideForms }
-						/>
-					)
-					: null
-				}
+	render: function() {
+		return(
+			<div>
+				<SectionHeader label={ this.translate( 'Profile Links' ) }>
+					<AddProfileLinksButtons
+						userProfileLinks={ this.props.userProfileLinks }
+						showingForm={ this.state.showingForm }
+						onShowAddOther={ this.showAddOther }
+						onShowAddWordPress={ this.showAddWordPress } />
+				</SectionHeader>
+				<Card>
+					<ProfileLinkCreators
+						userProfileLinks={ this.props.userProfileLinks }
+						showingForm={ this.state.showingForm }
+						hideForms={ this.hideForms } />
 
-				{
-					'other' === this.state.showingForm
-					? (
-						<ProfileLinksAddOther
-							userProfileLinks={ this.props.userProfileLinks }
-							onSuccess={ this.hideForms }
-							onCancel={ this.hideForms }
-						/>
-					)
-					: null
-				}
+					<p>
+						{ this.translate( 'Manage which sites appear in your profile.' ) }
+					</p>
 
-				{ ! this.state.showingForm ? this.renderFormVisibilityControls() : null }
-		</div>
+					<div className="profile-links">
+						{
+							! this.props.userProfileLinks.initialized
+							? this.renderPlaceholder()
+							: this.renderLinks()
+						}
+					</div>
+				</Card>
+			</div>
 		);
 	}
 } );
