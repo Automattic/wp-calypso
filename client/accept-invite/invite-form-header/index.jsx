@@ -95,7 +95,7 @@ export default React.createClass( {
 				break;
 			case 'follower':
 				title = this.translate(
-					'Sign up to start following {{siteLink/}} in the WordPress.com reader.', {
+					'Sign up to start following {{siteLink/}} in the WordPress.com Reader.', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
@@ -161,7 +161,7 @@ export default React.createClass( {
 				break;
 			case 'subscriber':
 				title = this.translate(
-					'Would you like to start following {{siteLink/}} in the WordPress.com reader?', {
+					'Would you like to start following {{siteLink/}} in the WordPress.com Reader?', {
 						components: {
 							siteLink: this.getSiteLink()
 						}
