@@ -37,7 +37,7 @@ Include `dist/wpcom.js`.
 <script>
 	var wpcom = WPCOM( '<your-token>' );
 	var blog = wpcom.site( 'your-blog.wordpress.com' );
-	blog.posts( { number: 8 } )
+	blog.postsList( { number: 8 } )
 		.then( list => { ... } )
 		.catch( error => { ... } );
 </script>
@@ -86,7 +86,7 @@ You can omit the API token for operations that don't require permissions:
 // List the last 8 posts on a site
 var wpcom = require( 'wpcom' )();
 var blog = wpcom.site( 'your-blog.wordpress.com' );
-blog.posts( { number: 8 } )
+blog.postsList( { number: 8 } )
 	.then( list => { ... } )
 	.catch( error => { ... } );
 ```
