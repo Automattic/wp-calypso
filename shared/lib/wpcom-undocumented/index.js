@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-var wpcomFactory = require( 'wpcom-unpublished' ),
-	inherits = require( 'inherits' ),
-	assign = require( 'lodash/object/assign' ),
-	debug = require( 'debug' )( 'calypso:wpcom-undocumented' );
+import wpcomFactory from 'wpcom-unpublished';
+import inherits from 'inherits';
+import assign from 'lodash/object/assign';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var Undocumented = require( './lib/undocumented' );
+import Undocumented from './lib/undocumented';
+
+const debug = debugFactory( 'calypso:wpcom-undocumented' );
 
 /**
- * Add special methods to WPCOM class
+ * Class inherited from `WPCOMUnpublished` class and adds
+ * specific methods useful for wp-calypso.
  *
  * @param {String} [token] - oauth token
  * @param {Function} [reqHandler] - request handler
@@ -54,7 +57,7 @@ inherits( WPCOMUndocumented, wpcomFactory );
  *
  * @return {Undocumented} Undocumented instance
  */
-wpcomFactory.prototype.undocumented = function() {
+WPCOMUndocumented.prototype.undocumented = function() {
 	return new Undocumented( this );
 };
 
@@ -73,11 +76,11 @@ wpcomFactory.prototype.loadToken = function( token ) {
  *
  * @return {String} oauth token
  */
-wpcomFactory.prototype.isTokenLoaded = function() {
+WPCOMUndocumented.prototype.isTokenLoaded = function() {
 	return this._token !== undefined;
 };
 
 /**
  * Expose `WPCOMUndocumented`
  */
-module.exports = WPCOMUndocumented;
+export default WPCOMUndocumented;
