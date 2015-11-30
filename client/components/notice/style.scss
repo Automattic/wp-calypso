@@ -7,7 +7,6 @@
 	background: $gray-light;
 	box-sizing: border-box;
 	font-size: 14px;
-	line-height: 1.4285;
 	animation: appear .3s ease-in-out;
 
 	@include breakpoint( ">660px" ) {
@@ -67,6 +66,7 @@
 .notice__text {
 	flex-grow: 1;
 	flex-basis: 100px;
+	font-size: 15px;
 	padding: 11px 24px;
 
 	& > span,
@@ -204,8 +204,8 @@
 	cursor: pointer;
 	display: flex;
 		align-items: center;
+	font-size: 15px;
 	font-weight: 400;
-	line-height: 1.2;
 	margin-left: auto; // forces the element to the right;
 	padding: 13px 10px 13px 16px;
 	text-decoration: none;
