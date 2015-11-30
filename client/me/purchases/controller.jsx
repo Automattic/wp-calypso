@@ -173,7 +173,8 @@ export default {
 		renderPage(
 			<PurchasesData
 				component={ PurchasesList }
-				noticeType={ context.params.noticeType } />
+				noticeType={ context.params.noticeType }
+				sites={ sites } />
 		);
 	},
 

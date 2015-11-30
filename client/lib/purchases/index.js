@@ -15,7 +15,7 @@ import { isDomainMapping, isDomainRegistration, isTheme, isPlan } from 'lib/prod
  * Returns an array of sites objects, each of which contains an array of purchases.
  *
  * @param {array} purchases An array of purchase objects.
- * @param {SitesList} sites SitesList instance
+ * @param {array} sites An array of site objects
  * @return {array} An array of sites with purchases attached.
  */
 function getPurchasesBySite( purchases, sites ) {

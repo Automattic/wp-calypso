@@ -14,9 +14,6 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import Notice from 'components/notice';
 import PurchasesHeader from './header';
 import PurchasesSite from './site';
-import sitesFactory from 'lib/sites-list';
-
-const sites = sitesFactory();
 
 const PurchasesList = React.createClass( {
 	renderNotice() {
@@ -58,19 +55,27 @@ const PurchasesList = React.createClass( {
 		);
 	},
 
+	isDataLoading() {
+		if ( this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
+			return true;
+		}
+
+		if ( ! this.props.sites.initialized ) {
+			return true;
+		}
+
+		return false;
+	},
+
 	render() {
 		let content;
 
-		if ( ! this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
-			return null;
-		}
-
-		if ( this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
+		if ( this.isDataLoading() ) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
 		if ( this.props.purchases.hasLoadedFromServer && this.props.purchases.data.length ) {
-			content = getPurchasesBySite( this.props.purchases.data, sites ).map(
+			content = getPurchasesBySite( this.props.purchases.data, this.props.sites ).map(
 				site => (
 					<PurchasesSite
 						key={ site.id }
