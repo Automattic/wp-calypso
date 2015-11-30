@@ -8,6 +8,7 @@ import React from 'react';
  */
 import analytics from 'analytics';
 import ConfirmCancelPurchase from './confirm-cancel-purchase';
+import ConfirmCancelPurchaseLoadingPlaceholder from './confirm-cancel-purchase/loading-placeholder';
 import CancelPurchase from './cancel-purchase';
 import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';
 import CancelPrivateRegistration from './cancel-private-registration';
@@ -113,6 +114,8 @@ export default {
 		renderPage(
 			<ManagePurchaseData
 				component={ ConfirmCancelPurchase }
+				isDataLoading={ isDataLoading }
+				loadingPlaceholder={ ConfirmCancelPurchaseLoadingPlaceholder }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);
