@@ -348,7 +348,7 @@ module.exports = function() {
 		}
 	} );
 
-	app.get( '/design', function( req, res ) {
+	app.get( '/design/type?/:tier?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
@@ -357,24 +357,14 @@ module.exports = function() {
 			i18n.initialize();
 
 			const themesLoggedOutLayoutComponent = require( 'layout/themes-logged-out' ),
-				themesComponent = require( 'my-sites/themes/themes-selection' ),
-				getButtonOptions = require( 'my-sites/themes/theme-options' ),
 				themesLoggedOutLayout = React.createFactory( themesLoggedOutLayoutComponent ),
-				themes = React.createFactory( themesComponent ),
 				context = getDefaultContext( req ),
 				props = {
 					section: 'themes',
-					primary: themes( {
-						getOptions: getButtonOptions.bind( null, () => {} ),
-						sites: false,
-						togglePreview: () => {},
-						setSelectedTheme: () => {},
-					} ),
-					secondary: null,
-					tertiary: null
+					tier: req.params.tier || 'all',
 				};
 
-			context.layout = React.renderToString( themesLoggedOutLayout( assign( context, props ) ) );
+			context.layout = React.renderToString( themesLoggedOutLayout( props ) );
 
 			res.render( 'index.jade', context );
 		}

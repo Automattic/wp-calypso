@@ -1,49 +1,53 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	partialRight = require( 'lodash/function/partialRight' );
+import React from 'react';
+import partialRight from 'lodash/function/partialRight';
 
 /**
  * Internal dependencies
  */
-var  Masterbar = require( './masterbar' ),
-//	NoticesList = require( 'notices/notices-list' ),
-//	notices = require( 'notices' ),
-//	title = require( 'lib/screen-title' ),
-	Main = require( 'components/main' ),
-	sanitize = require( 'sanitize' );
+import Masterbar from './masterbar';
+//import NoticesList from 'notices/notices-list';
+//import notices from 'notices';
+//import title from 'lib/screen-title';
+import Main from 'components/main';
+import themesComponent from 'my-sites/themes/themes-selection';
+import getButtonOptions from 'my-sites/themes/theme-options';
 
-var ThemesLoggedOutLayout = React.createClass( {
+const themesFactory = React.createFactory( themesComponent );
 
-	// TODO: Solution that allows rendering full layout appropriate to current route
-	getDefaultProps: function() {
-		const themesComponent = require( 'my-sites/themes/themes-selection' );
-		const getButtonOptions = require( 'my-sites/themes/theme-options' );
-		const themes = React.createFactory( themesComponent );
+const ThemesLoggedOutLayout = React.createClass( {
 
+	getDefaultProps() {
 		return {
 			section: 'themes',
-			primary: themes( {
-				getOptions: partialRight( getButtonOptions, () => {}, () => {} ),
-				sites: false,
-				setSelectedTheme: () => {},
-				togglePreview: () => {},
-				secondary: null,
-				tertiary: null
-			} )
-		};
+		}
 	},
 
-	render: function() {
-		var sectionClass = 'wp' + ( this.props.section ? ' is-section-' + this.props.section : '' );
+	themesProps: {
+		getOptions: partialRight( getButtonOptions, () => {}, () => {} ),
+		sites: false,
+		setSelectedTheme: () => {},
+		togglePreview: () => {},
+	},
+
+	getTier() {
+		const tier = typeof( window ) !== 'undefined' && window.location.pathname.match( /^\/design\/type\/(free|premium|all)\/?/ );
+		if ( tier ) {
+			return { tier: tier[1] };
+		}
+	},
+
+	render() {
+		const sectionClass = 'wp' + ( this.props.section ? ' is-section-' + this.props.section : '' );
 		return (
 						<div className={ sectionClass }>
 							<Masterbar />
 							<div id="content" className="wp-content">
 								<div id="primary" className="wp-primary wp-section">
 									<Main className="themes">
-									{ this.props.primary }
+									{ themesFactory( Object.assign( {}, this.themesProps, this.getTier(), this.props ) ) }
 									</Main>
 								</div>
 							</div>
@@ -55,4 +59,4 @@ var ThemesLoggedOutLayout = React.createClass( {
 	}
 } );
 
-module.exports = ThemesLoggedOutLayout;
+export default ThemesLoggedOutLayout;
