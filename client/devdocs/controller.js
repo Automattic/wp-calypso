@@ -51,8 +51,7 @@ var devdocs = {
 		}
 
 		context.layout.setState( {
-			section: 'devdocs',
-			noSidebar: true
+			section: 'devdocs'
 		} );
 
 		React.render(
