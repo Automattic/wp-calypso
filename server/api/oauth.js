@@ -9,12 +9,14 @@ var req = require( 'superagent' ),
   */
 var config = require( 'config' );
 
-const oauth = {
-	client_id: config( 'desktop_oauth_client_id' ),
-	client_secret: config( 'desktop_oauth_client_secret' ),
-	wpcom_supports_2fa: true,
-	grant_type: 'password'
-};
+function oauth() {
+	return {
+		client_id: config( 'desktop_oauth_client_id' ),
+		client_secret: config( 'desktop_oauth_client_secret' ),
+		wpcom_supports_2fa: true,
+		grant_type: 'password'
+	}
+}
 
 /*
  * Proxies an oauth login request to the WP API
@@ -25,7 +27,7 @@ function proxyOAuth( request, response ) {
 	var data = Object.assign( {}, {
 		username: request.body.username,
 		password: request.body.password
-	}, oauth );
+	}, oauth() );
 
 	if ( request.body.auth_code ) {
 		// Pass along the one-time password
@@ -78,7 +80,7 @@ function sms( request, response ) {
 		username: request.body.username,
 		password: request.body.password,
 		wpcom_resend_otp: true
-	}, oauth );
+	}, oauth() );
 
 	req.post( config( 'desktop_oauth_token_endpoint' ) )
 		.type( 'form' )
