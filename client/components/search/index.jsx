@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debounce = require( 'lodash/function/debounce' ),
-	noop = () => {};
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
+import debounce from 'lodash/function/debounce';
+import noop from 'lodash/utility/noop';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	Spinner = require( 'components/spinner' ),
-	Gridicon = require( 'components/gridicon' );
-
+import analytics from 'analytics';
+import Spinner from 'components/spinner';
+import Gridicon from 'components/gridicon';
+import { isMobile } from 'lib/viewport';
 /**
  * Internal variables
  */
@@ -192,6 +192,11 @@ module.exports = React.createClass( {
 	},
 
 	keyUp: function( event ) {
+		if ( event.which === 13 && isMobile() ) {
+			//dismiss soft keyboards
+			this.blur();
+		}
+
 		if ( ! this.props.pinned ) {
 			return;
 		}
