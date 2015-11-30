@@ -1,4 +1,4 @@
-global.localStorage = require( 'localStorage' ) // DO NOT MERGE
+require( 'lib/local-storage' )( global );
 
 /**
  * External dependencies.
