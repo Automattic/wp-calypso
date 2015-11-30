@@ -36,7 +36,10 @@ export default {
 			document.getElementById( 'secondary' )
 		);
 
-		context.layout.setState( { section: 'me' } );
+		context.layout.setState( {
+			section: 'me',
+			noSidebar: false
+		} );
 
 		next();
 	},

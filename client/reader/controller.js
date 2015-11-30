@@ -82,7 +82,10 @@ module.exports = {
 	sidebar: function( context, next ) {
 		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
-		context.layout.setState( { section: 'reader' } );
+		context.layout.setState( {
+			section: 'reader',
+			noSidebar: false
+		} );
 
 		React.render(
 			React.createElement( ReaderSidebarComponent, { path: context.path } ),

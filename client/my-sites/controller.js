@@ -24,7 +24,10 @@ var user = require( 'lib/user' )(),
  * the site selector list and the sidebar section items
  */
 function renderNavigation( context, allSitesPath, siteBasePath ) {
-	context.layout.setState( { section: 'sites' } );
+	context.layout.setState( {
+		section: 'sites',
+		noSidebar: false
+	} );
 
 	// Render the My Sites navigation in #secondary
 	React.render(
