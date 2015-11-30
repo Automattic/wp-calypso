@@ -13,7 +13,7 @@ import LoadingPlaceholder from 'components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
-const CancelPurchasePlaceholder = React.createClass( {
+const CancelPurchaseLoadingPlaceholder = React.createClass( {
 	propTypes: {
 		purchaseId: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
@@ -23,19 +23,19 @@ const CancelPurchasePlaceholder = React.createClass( {
 		return (
 			<LoadingPlaceholder
 				title={ titles.cancelPurchase }
-				path={ managePurchase( this.props.selectedSite.slug, this.props.purchaseId ) }>
-				<Card className="cancel-purchase-placeholder__card">
-					<h2 className="cancel-purchase-placeholder__header" />
-					<div className="cancel-purchase-placeholder__subheader" />
-					<div className="cancel-purchase-placeholder__reason" />
-					<div className="cancel-purchase-placeholder__reason" />
+				path={ managePurchase( this.props.selectedSite.domain, this.props.purchaseId ) }>
+				<Card className="cancel-purchase-loading-placeholder__card">
+					<h2 className="cancel-purchase-loading-placeholder__header" />
+					<div className="cancel-purchase-loading-placeholder__subheader" />
+					<div className="cancel-purchase-loading-placeholder__reason" />
+					<div className="cancel-purchase-loading-placeholder__reason" />
 				</Card>
 				<CompactCard>
-					<Button className="cancel-purchase-placeholder__cancel-button" />
+					<Button className="cancel-purchase-loading-placeholder__cancel-button" />
 				</CompactCard>
 			</LoadingPlaceholder>
 		);
 	}
 } );
 
-export default CancelPurchasePlaceholder;
+export default CancelPurchaseLoadingPlaceholder;

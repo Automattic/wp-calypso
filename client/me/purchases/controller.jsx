@@ -9,7 +9,7 @@ import React from 'react';
 import analytics from 'analytics';
 import ConfirmCancelPurchase from './confirm-cancel-purchase';
 import CancelPurchase from './cancel-purchase';
-import CancelPurchasePlaceholder from './cancel-purchase-placeholder';
+import CancelPurchaseLoadingPlaceholder from './cancel-purchase/loading-placeholder';
 import CancelPrivateRegistration from './cancel-private-registration';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
@@ -72,7 +72,7 @@ export default {
 			<ManagePurchaseData
 				component={ CancelPurchase }
 				isDataLoading={ isDataLoading }
-				loadingPlaceholder={ CancelPurchasePlaceholder }
+				loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);
