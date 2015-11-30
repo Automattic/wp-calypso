@@ -15,7 +15,7 @@ const LoadingPlaceholder = React.createClass( {
 	propTypes: {
 		className: React.PropTypes.string,
 		path: React.PropTypes.string,
-		title: React.PropTypes.string.required
+		title: React.PropTypes.string.isRequired
 	},
 
 	goBack() {

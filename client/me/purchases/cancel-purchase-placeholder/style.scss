@@ -1,0 +1,32 @@
+.cancel-purchase-placeholder__cancel-button {
+	width: 30%;
+}
+
+.cancel-purchase-placeholder__header,
+.cancel-purchase-placeholder__subheader,
+.cancel-purchase-placeholder__reason {
+	@include placeholder( 23% );
+}
+
+.cancel-purchase-placeholder__header {
+	height: 36px;
+	margin-bottom: 15px;
+	width: 70%;
+}
+
+.cancel-purchase-placeholder__reason {
+	height: 12px;
+	margin-bottom: 5px;
+	width: 60%;
+}
+
+.cancel-purchase-placeholder__card {
+	margin: 0;
+}
+
+.cancel-purchase-placeholder__subheader {
+	height: 24px;
+	margin-bottom: 10px;
+	width: 50%;
+}
+
