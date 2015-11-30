@@ -7,8 +7,7 @@ var React = require( 'react' );
 * Internal dependencies
 */
 var NoticeArrowLink = require( 'notices/arrow-link' ),
-	Notice = require( 'components/notice' ),
-	Notice = require( 'notices/notice' );
+	Notice = require( 'components/notice' );
 
 var Notices = React.createClass( {
 	mixins: [ React.addons.PureRenderMixin ],
