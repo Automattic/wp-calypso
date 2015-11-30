@@ -290,10 +290,7 @@
 
 		.wp-content {
 			background: $white;
-
-			@include breakpoint( "<960px" ) {
-				padding: 0;
-			}
+			padding: 0;
 		}
 
 		.settings-done {
