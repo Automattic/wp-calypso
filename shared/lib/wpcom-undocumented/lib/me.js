@@ -184,6 +184,15 @@ UndocumentedMe.prototype.storedCardDelete = function( card, callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
+UndocumentedMe.prototype.backupCodes = function( callback ) {
+	var args = {
+		apiVersion: '1.1',
+		path: '/me/two-step/backup-codes/new'
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
 UndocumentedMe.prototype.blockSite = function( site, callback ) {
 	var args = {
 		path: '/me/block/sites/' + encodeURIComponent( site ) + '/new',

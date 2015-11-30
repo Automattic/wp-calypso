@@ -25,10 +25,31 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
+		twoStepAuthorization.backupCodes( this.onRequestComplete );
 	},
 
 	componentWillUnmount: function() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
+	},
+
+	getInitialState: function() {
+		return {
+			backupCodes: [],
+			lastError: false
+		};
+	},
+
+	onRequestComplete: function( error, data ) {
+		if ( error ) {
+			this.setState( {
+				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' ),
+			} );
+			return;
+		}
+
+		this.setState( {
+			backupCodes: data.codes,
+		} );
 	},
 
 	onFinished: function() {
@@ -37,7 +58,7 @@ module.exports = React.createClass( {
 
 	possiblyRenderError: function() {
 		var errorMessage;
-		if ( twoStepAuthorization.getBackupCodes().length ) {
+		if ( ! this.state.lastError ) {
 			return;
 		}
 
@@ -66,16 +87,13 @@ module.exports = React.createClass( {
 	},
 
 	renderList: function() {
-		var backupCodes = twoStepAuthorization.getBackupCodes();
-
-		// This shouldn't happen. If we've enabled 2fa, there should be backup codes.
-		if ( ! backupCodes.length ) {
-			return;
+		if ( this.state.lastError ) {
+			return null;
 		}
 
 		return (
 			<Security2faBackupCodesList
-				backupCodes={ backupCodes }
+				backupCodes={ this.state.backupCodes }
 				onNextStep={ this.onFinished }
 				showList
 			/>

@@ -26,7 +26,6 @@ function TwoStepAuthorization() {
 	this.initialized = false;
 	this.indvalidCode = false;
 	this.smsResendThrottled = false;
-	this.backupCodes = false;
 	this.bumpMCStat = function( eventAction ) {
 		analytics.mc.bumpStat( '2fa', eventAction );
 	};
@@ -79,10 +78,6 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 			this.data.two_step_authorization_expires_soon = false;
 			this.invalidCode = false;
 
-			if ( 'enable-two-step' === args.action && data.backup_codes ) {
-				this.backupCodes = data.backup_codes;
-			}
-
 			if ( args.action ) {
 				this.bumpMCStat( 'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful' );
 			} else {
@@ -134,10 +129,20 @@ TwoStepAuthorization.prototype.sendSMSCode = function( callback ) {
 };
 
 /*
- * Returns an array of backup codes.
+ * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
  */
-TwoStepAuthorization.prototype.getBackupCodes = function() {
-	return this.backupCodes ? this.backupCodes : [];
+TwoStepAuthorization.prototype.backupCodes = function( callback ) {
+	wpcom.me().backupCodes( function( error, data ) {
+		if ( error ) {
+			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
+		} else {
+			this.bumpMCStat( 'new-backup-codes-success' );
+		}
+
+		if ( callback ) {
+			callback( error, data );
+		}
+	}.bind( this ) );
 };
 
 /*
