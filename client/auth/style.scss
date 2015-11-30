@@ -39,7 +39,7 @@ html.is-desktop {
 	.notice.is-info {
 		color: $gray-light;
 		padding: 0;
-		margin: 20px 0 0 0;
+		margin: 20px auto 0 auto;
 	}
 
 	.notice.is-info .notice__text {
@@ -95,7 +95,7 @@ html.is-desktop {
 		margin-bottom: 1px;
 	}
 
-		.form-fieldset input[type="number"] {
+	.form-fieldset input[type="number"] {
 		text-align: center;
 	}
 
