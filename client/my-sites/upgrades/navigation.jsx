@@ -158,7 +158,6 @@ var UpgradesNavigation = React.createClass( {
 
 		return (
 			<NavItem path={ fullPath }
-					isExternalLink={ false }
 					key={ fullPath }
 					selected={ selectedNavItem && ( selectedNavItem.label === label ) }>
 				{ label }
