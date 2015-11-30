@@ -7,11 +7,19 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt' );
+var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' ),
+	Card = require( 'components/card' ),
+	eventRecorder = require( 'me/event-recorder' ),
+	twoStepAuthorization = require( 'lib/two-step-authorization' ),
+	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' );
 
 module.exports = React.createClass( {
 
 	displayName: 'Security2faBackupCodes',
+
+	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -27,37 +35,46 @@ module.exports = React.createClass( {
 		return {
 			printed: printed,
 			verified: printed,
-			showPrompt: ! printed
+			showPrompt: ! printed,
+			backupCodes: []
 		};
 	},
 
 	onGenerate: function() {
-		this.setState(
-			{
-				verified: false,
-				showPrompt: true
-			}
-		);
+		this.setState( {
+			verified: false,
+			showPrompt: true
+		} );
+
+		twoStepAuthorization.backupCodes( this.onRequestComplete );
+	},
+
+	onRequestComplete: function( error, data ) {
+		if ( error ) {
+			this.setState( {
+				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' )
+			} );
+			return;
+		}
+
+		this.setState( {
+			backupCodes: data.codes
+		} );
 	},
 
 	onNextStep: function() {
-		this.setState(
-			{
-				printed: true,
-				verified: false,
-				showPrompt: true
-			}
-		);
+		this.setState( {
+			backupCodes: [],
+			printed: true,
+		} );
 	},
 
 	onVerified: function() {
-		this.setState(
-			{
-				printed: true,
-				verified: true,
-				showPrompt: false
-			}
-		);
+		this.setState( {
+			printed: true,
+			verified: true,
+			showPrompt: false
+		} );
 	},
 
 	renderStatus: function() {
@@ -78,7 +95,7 @@ module.exports = React.createClass( {
 		if ( ! this.state.verified ) {
 			return (
 				this.translate(
-					'{{verify}}Backup Codes have just been printed, but need to be verified. ' +
+					'{{verify}}New backup Codes have just been generated, but need to be verified. ' +
 					'Please enter one of them below for verification.{{/verify}}',
 					{
 						components: {
@@ -102,22 +119,46 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderList: function() {
+		if ( ! this.state.backupCodes || ! this.state.backupCodes.length ) {
+			return;
+		}
+
+		return (
+			<Security2faBackupCodesList
+				backupCodes={ this.state.backupCodes }
+				onNextStep={ this.onNextStep }
+				userSettings={ this.props.userSettings }
+				showList
+			/>
+		);
+	},
+
 	render: function() {
 		return (
-			<div>
-				<p>
-					{
-						this.translate(
-							'Backup codes let you access your account if your phone is ' +
-							'lost, stolen, or if you run it through the washing ' +
-							'machine and the bag of rice trick doesn\'t work.'
-						)
-					}
-				</p>
+			<div className="security-2fa-backup-codes">
+				<SectionHeader label={ this.translate( 'Backup Codes' ) }>
+					<Button compact onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }>
+						{ this.translate( 'Generate New Backup Codes' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
+					<p>
+						{
+							this.translate(
+								'Backup codes let you access your account if your phone is ' +
+								'lost, stolen, or if you run it through the washing ' +
+								'machine and the bag of rice trick doesn\'t work.'
+							)
+						}
+					</p>
 
-				<p className="security-2fa-backup-codes__status">{ this.renderStatus() }</p>
+					<p className="security-2fa-backup-codes__status">{ this.renderStatus() }</p>
 
-				{ this.state.showPrompt ? <Security2faBackupCodesPrompt onSuccess={ this.onVerified }/> : null }
+					{ this.state.showPrompt ? <Security2faBackupCodesPrompt onSuccess={ this.onVerified }/> : null }
+
+					{ this.renderList() }
+				</Card>
 			</div>
 		);
 	}
