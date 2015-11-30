@@ -11,6 +11,7 @@ import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import LoadingPlaceholder from 'components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
+import titles from 'me/purchases/titles';
 
 const CancelPurchasePlaceholder = React.createClass( {
 	propTypes: {
@@ -21,7 +22,7 @@ const CancelPurchasePlaceholder = React.createClass( {
 	render() {
 		return (
 			<LoadingPlaceholder
-				title={ this.translate( 'Cancel Purchase' ) }
+				title={ titles.cancelPurchase }
 				path={ managePurchase( this.props.selectedSite.slug, this.props.purchaseId ) }>
 				<Card className="cancel-purchase-placeholder__card">
 					<h2 className="cancel-purchase-placeholder__header" />

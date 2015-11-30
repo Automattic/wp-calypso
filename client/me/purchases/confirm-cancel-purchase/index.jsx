@@ -15,6 +15,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
+import titles from 'me/purchases/titles';
 import { getPurchase, goToManagePurchase, recordPageView } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
@@ -86,7 +87,9 @@ const ConfirmCancelPurchase = React.createClass( {
 	render() {
 		return (
 			<Main className="cancel-confirm">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>{ this.translate( 'Confirm Cancellation' ) }</HeaderCake>
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+					{ titles.confirmCancelPurchase }
+				</HeaderCake>
 				{ this.renderCard() }
 			</Main>
 		);

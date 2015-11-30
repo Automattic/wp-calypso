@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import page from 'page';
 import classNames from 'classnames';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
@@ -11,20 +11,20 @@ import classNames from 'classnames';
 import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import { cartItems } from 'lib/cart-values';
+import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import NoticeArrowLink from 'notices/arrow-link';
+import { oldShowcaseUrl } from 'lib/themes/helpers';
+import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import SimpleNotice from 'notices/simple-notice';
+import titles from 'me/purchases/titles';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from '../paths';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
-import { oldShowcaseUrl } from 'lib/themes/helpers';
 import {
 	creditCardExpiresBeforeSubscription,
 	getName,
@@ -47,6 +47,7 @@ import {
 	showEditPaymentDetails
 } from 'lib/purchases';
 import { getPurchase, goToList, isDataLoading, recordPageView } from '../utils';
+import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
@@ -606,7 +607,9 @@ const ManagePurchase = React.createClass( {
 			<span>
 				{ this.renderPathNotice() }
 				<Main className="manage-purchase">
-					<HeaderCake onClick={ goToList }>{ this.translate( 'Manage Purchase' ) }</HeaderCake>
+					<HeaderCake onClick={ goToList }>
+						{ titles.managePurchase }
+					</HeaderCake>
 					{ this.renderNotices() }
 					{ this.renderPurchaseDetail() }
 				</Main>

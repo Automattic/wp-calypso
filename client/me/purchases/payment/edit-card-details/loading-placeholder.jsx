@@ -12,11 +12,12 @@ import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
 import LoadingPlaceholder from 'components/loading-placeholder';
+import titles from 'me/purchases/titles';
 
 const EditCardDetailsLoadingPlaceholder = React.createClass( {
 	render() {
 		return (
-			<LoadingPlaceholder title={ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }>
+			<LoadingPlaceholder title={ titles.editCardDetails }>
 				<Card className="edit-card-details__content">
 					<div className="credit-card-form">
 						<div className="credit-card-form__field">

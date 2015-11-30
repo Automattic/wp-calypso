@@ -16,6 +16,7 @@ import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import paths from '../paths';
+import titles from 'me/purchases/titles';
 import { getName, isCancelable } from 'lib/purchases';
 import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
@@ -55,7 +56,7 @@ const CancelPurchase = React.createClass( {
 		return (
 			<Main className="cancel-purchase">
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Cancel Purchase' ) }
+					{ titles.cancelPurchase }
 				</HeaderCake>
 
 				<Card className="cancel-purchase__card">

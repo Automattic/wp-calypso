@@ -9,13 +9,14 @@ import React from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import paths from '../paths';
-import { isRefundable } from 'lib/purchases';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
+import Card from 'components/card';
+import HeaderCake from 'components/header-cake';
+import { isRefundable } from 'lib/purchases';
+import Main from 'components/main';
+import paths from '../paths';
 import SimpleNotice from 'notices/simple-notice';
+import titles from 'me/purchases/titles';
 import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
 const CancelPrivateRegistration = React.createClass( {
@@ -144,7 +145,7 @@ const CancelPrivateRegistration = React.createClass( {
 
 			<Main className="manage-purchase__detail">
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Cancel Private Registration' ) }
+					{ titles.cancelPrivateRegistration }
 				</HeaderCake>
 				{ notice }
 				<Card className={ classes }>
