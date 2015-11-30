@@ -35,9 +35,9 @@ function middleware( app ) {
 			process.nextTick( function() {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
-					console.info( chalk.blue( 'READY! You can load http://calypso.localhost:3000/ now. Have fun!' ) );
+					console.info( chalk.cyan( '\nReady! You can load http://calypso.localhost:3000/ now. Have fun!' ) );
 				} else {
-					console.info( chalk.blue( 'READY! All assets are re-compiled. Have fun!' ) );
+					console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
 				}
 			} );
 		} );
@@ -48,7 +48,7 @@ function middleware( app ) {
 			return next();
 		}
 
-		console.info( 'Compiling assets... Wait until you see READY! and then try http://calypso.localhost:3000/ again.' );
+		console.info( 'Compiling assets... Wait until you see Ready! and then try http://calypso.localhost:3000/ again.' );
 
 		// a special message for newcomers, because seeing a blank page is confusing
 		if ( request.url === '/' ) {

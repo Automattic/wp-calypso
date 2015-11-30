@@ -2,7 +2,8 @@
  * External dependencies.
  */
 var boot = require( 'boot' ),
-	http = require( 'http' );
+	http = require( 'http' ),
+	chalk = require( 'chalk' );
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ var start = Date.now(),
 	hotReloader;
 
 console.log( '%s booted in %dms - port: %s', pkg.name, ( Date.now() ) - start, port );
+console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
 server = http.createServer( app );
 server.listen( port );
 

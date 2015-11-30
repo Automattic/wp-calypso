@@ -41,10 +41,18 @@ export NODE_PATH := server:shared:.
 
 .DEFAULT_GOAL := install
 
+welcome:
+	@echo "\033[36m    ___ __ _| |_   _ _ __  ___  ___       "
+	@echo "\033[36m  / __/ _\\\` | | | | | '_ \/ __|/ _ \\\  "
+	@echo "\033[36m  | (_| (_| | | |_| | |_) \__ \ (_) |     "
+	@echo "\033[36m   \___\__,_|_|\__, | .__/|___/\___/      "
+	@echo "\033[36m               |___/|_|                   "
+	@echo "\033[m"
+
 install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
-run: githooks-commit install build
+run: welcome githooks-commit install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
 # a helper rule to ensure that a specific module is installed,
