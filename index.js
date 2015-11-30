@@ -16,7 +16,7 @@ var start = Date.now(),
 	server,
 	hotReloader;
 
-console.log( '%s booted in %dms - port: %s', pkg.name, ( Date.now() ) - start, port );
+console.log( '%s booted in %dms - http://calypso.localhost:%s', pkg.name, ( Date.now() ) - start, port );
 server = http.createServer( app );
 server.listen( port );
 
