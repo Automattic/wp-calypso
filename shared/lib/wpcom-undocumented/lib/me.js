@@ -1,13 +1,14 @@
 /**
  * Module dependencies.
  */
-var debug = require( 'debug' )( 'calypso:wpcom-undocumented:me' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 
 /**
  * Create an UndocumentedMe instance
  *
- * @param {WPCOM} wpcom
- * @api public
+ * @param {WPCOM} wpcom - WPCOMUndocumented instance
+ * @return {NUll} null
  */
 function UndocumentedMe( wpcom ) {
 	debug( 'UndocumentedMe' );

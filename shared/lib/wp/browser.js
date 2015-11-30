@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:wp' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:wp' );
 
 /**
  * Internal dependencies
  */
-var WPCOM = require( 'lib/wpcom-undocumented' ),
-	config = require( 'config' );
+import wpcomUndocumented from 'lib/wpcom-undocumented';
+import config from 'config';
 
-var wpcom;
+let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
-	let oAuthToken = require( 'lib/oauth-token' );
-
-	wpcom = WPCOM( oAuthToken.getToken(), require( 'lib/wpcom-xhr-wrapper' ) );
+	wpcom = wpcomUndocumented(
+		require( 'lib/oauth-token' ),
+		require( 'lib/wpcom-xhr-wrapper' )
+	);
 } else {
 	// Set proxy request handler
-	wpcom = WPCOM( require( 'wpcom-proxy-request' ) );
+	wpcom = wpcomUndocumented( require( 'wpcom-proxy-request' ) );
 
-	//Upgrade to "access all users blogs" mode
+	// Upgrade to "access all users blogs" mode
 	wpcom.request( {
 		metaAPI: { accessAllUsersBlogs: true }
 	}, function( error ) {
