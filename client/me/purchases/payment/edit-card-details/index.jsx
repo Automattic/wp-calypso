@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
 import extend from 'lodash/object/assign';
 import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
@@ -12,6 +12,7 @@ import analytics from 'analytics';
 import camelCase from 'lodash/string/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'components/upgrades/credit-card-form';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
@@ -21,11 +22,11 @@ import kebabCase from 'lodash/string/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/object/mapKeys';
 import notices from 'notices';
+import paths from 'me/purchases/paths';
+import titles from 'me/purchases/titles';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
-import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
-import paths from 'me/purchases/paths';
 import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
@@ -215,7 +216,7 @@ const EditCardDetails = React.createClass( {
 		return (
 			<Main className="edit-card-details">
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }
+					{ titles.editCardDetails }
 				</HeaderCake>
 
 				<form onSubmit={ this.onSubmit }>
