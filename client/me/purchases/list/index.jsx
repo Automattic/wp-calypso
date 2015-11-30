@@ -75,7 +75,7 @@ const PurchasesList = React.createClass( {
 		}
 
 		if ( this.props.purchases.hasLoadedFromServer && this.props.purchases.data.length ) {
-			content = getPurchasesBySite( this.props.purchases.data, this.props.sites ).map(
+			content = getPurchasesBySite( this.props.purchases.data, this.props.sites.get() ).map(
 				site => (
 					<PurchasesSite
 						key={ site.id }

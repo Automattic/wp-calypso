@@ -28,7 +28,7 @@ function getPurchasesBySite( purchases, sites ) {
 				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
-				slug: sites.getSite( currentValue.siteId ).slug,
+				slug: find( sites, { ID: currentValue.siteId } ).slug,
 				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
 				purchases: [ currentValue ]
 			} );
