@@ -25,8 +25,9 @@ const verticals = [
 		{ value: 'a8c.3.0.4', label: translate( 'Communications' ) },
 	] },
 
-	{ value: 'a8c.6', label: translate( 'Family, Home, & Lifestyle' ), icon: 'house', stepTwo: [
-		{ value: 'a8c.6', label: translate( 'Family & Parenting' ), isGeneral: true },
+	{ value: 'a8c.9', label: translate( 'Family, Home, & Lifestyle' ), icon: 'house', stepTwo: [
+		{ value: 'a8c.9', label: translate( 'General Family, Home, & Lifestyle' ), isGeneral: true },
+		{ value: 'a8c.6', label: translate( 'Family & Parenting' ) },
 		{ value: 'a8c.14.7', label: translate( 'Events & Weddings' ) },
 		{ value: 'a8c.10', label: translate( 'Home & Garden' ) },
 		{ value: 'a8c.8', label: translate( 'Food & Drink' ) },
@@ -48,12 +49,11 @@ const verticals = [
 
 	{ value: 'a8c.7', label: translate( 'Health & Wellness' ), icon: 'heart', stepTwo: [
 		{ value: 'a8c.7', label: translate( 'General Health & Wellness' ), isGeneral: true },
-		{ value: 'a8c.7.18', label: translate( 'Depression' ) },
-		{ value: 'a8c.7.42', label: translate( 'Substance Abuse' ) },
+		{ value: 'a8c.7.37.1', label: translate( 'Mental Health' ) },
 		{ value: 'a8c.7.1.1', label: translate( 'Exercise / Weight Loss' ) },
 		{ value: 'a8c.7.31', label: translate( 'Men\'s Health' ) },
 		{ value: 'a8c.7.45', label: translate( 'Women\'s Health' ) },
-		{ value: 'a8c.7.37', label: translate( 'Psychology/Psychiatry' ) },
+		{ value: 'a8c.7.37', label: translate( 'Psychology / Psychiatry' ) },
 		{ value: 'a8c.7.32', label: translate( 'Nutrition' ) },
 	] },
 
