@@ -55,27 +55,6 @@ var controller = {
 			} ),
 			document.getElementById( 'primary' )
 		);
-	},
-
-	themesLoggedOut: function( context ) {
-		const themesComponent = require( 'my-sites/themes/themes-selection' );
-		const getButtonOptions = require( 'my-sites/themes/theme-options' );
-		const themes = React.createFactory( themesComponent );
-
-		const themesProps = {
-			section: 'themes',
-			primary: themes( {
-				getOptions: partialRight( getButtonOptions, () => {}, () => {} ),
-				sites: false,
-				setSelectedTheme: () => {},
-				togglePreview: () => {},
-				secondary: null,
-				tertiary: null
-			})
-		};
-
-		// TODO: use a layout store instead of setting the state
-		context.layout.setState( themesProps );
 	}
 };
 

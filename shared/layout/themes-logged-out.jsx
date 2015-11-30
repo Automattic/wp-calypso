@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	partialRight = require( 'lodash/function/partialRight' );
 
 /**
  * Internal dependencies
@@ -14,30 +15,40 @@ var  Masterbar = require( './masterbar' ),
 	sanitize = require( 'sanitize' );
 
 var ThemesLoggedOutLayout = React.createClass( {
-	getInitialState: function() {
+
+	// TODO: Solution that allows rendering full layout appropriate to current route
+	getDefaultProps: function() {
+		const themesComponent = require( 'my-sites/themes/themes-selection' );
+		const getButtonOptions = require( 'my-sites/themes/theme-options' );
+		const themes = React.createFactory( themesComponent );
+
 		return {
-			section: this.props.section,
-			primary: this.props.primary,
-			tertiary: this.props.tertiary
+			section: 'themes',
+			primary: themes( {
+				getOptions: partialRight( getButtonOptions, () => {}, () => {} ),
+				sites: false,
+				setSelectedTheme: () => {},
+				togglePreview: () => {},
+				secondary: null,
+				tertiary: null
+			} )
 		};
 	},
 
-
 	render: function() {
-		var sectionClass = 'wp' + ( this.state.section ? ' is-section-' + this.state.section : '' );
-
+		var sectionClass = 'wp' + ( this.props.section ? ' is-section-' + this.props.section : '' );
 		return (
 						<div className={ sectionClass }>
 							<Masterbar />
 							<div id="content" className="wp-content">
 								<div id="primary" className="wp-primary wp-section">
 									<Main className="themes">
-									{ this.state.primary }
+									{ this.props.primary }
 									</Main>
 								</div>
 							</div>
 							<div id="tertiary" className="wp-overlay fade-background">
-								{ this.state.tertiary }
+								{ this.props.tertiary }
 							</div>
 						</div>
 		);

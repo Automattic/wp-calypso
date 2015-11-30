@@ -23,7 +23,7 @@ const routing = {
 		{ value: controller.navigation, enableLoggedOut: false },
 		{ value: controller.siteSelection, enableLoggedOut: false },
 		{ value: themesController.themes, enableLoggedOut: false },
-		{ value: themesController.themesLoggedOut, enableLoggedOut: true }
+		{ value: () => {}, enableLoggedOut: true }
 	]
 };
 
