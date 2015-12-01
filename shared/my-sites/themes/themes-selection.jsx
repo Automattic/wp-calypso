@@ -42,7 +42,8 @@ const ThemesSelection = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			tier: this.props.tier || config.isEnabled( 'premium-themes' ) ? 'all' : 'free'
+			tier: this.props.tier || config.isEnabled( 'premium-themes' ) ? 'all' : 'free',
+			search: this.props.search
 		};
 	},
 
@@ -76,7 +77,7 @@ const ThemesSelection = React.createClass( {
 		const url = `/design/type/${tier}${siteId}`;
 		this.setState( { tier } );
 		Helper.trackClick( 'search bar filter', tier );
-		page( buildUrl( url, this.props.search ) );
+		page( buildUrl( url, this.state.search ) );
 	},
 
 	onScreenshotClick( theme, resultsRank ) {
@@ -95,8 +96,11 @@ const ThemesSelection = React.createClass( {
 		const searchCard = (
 			<ThemesSearchCard
 				site={ site }
-				onSearch={ this.doSearch }
-				search={ this.props.search }
+				onSearch={ ( search ) => {
+					this.doSearch();
+					this.setState( { search } ) }
+				}
+				search={ this.state.search }
 				tier={ this.state.tier }
 				select={ this.onTierSelect } /> );
 
@@ -115,7 +119,7 @@ const ThemesSelection = React.createClass( {
 				<ThemesData
 						site={ site }
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
-						search={ this.props.search }
+						search={ this.state.search }
 						tier={ this.state.tier }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
