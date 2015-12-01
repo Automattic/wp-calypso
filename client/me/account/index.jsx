@@ -198,6 +198,36 @@ module.exports = React.createClass( {
 		}.bind( this ) );
 	},
 
+	renderHolidaySnow() {
+		let today = this.moment(),
+			thisYear = today.year();
+
+		// Now, let's get the start and end date for the holiday snow feature.
+		// Note that the isBetween() method does not seem to be inclusive, so we use
+		// 11-30 and 1-5 for the cut-off dates.
+		let startDate = this.moment( '2015-11-30' ).year( thisYear ),
+			endDate = this.moment( '2015-01-05' ).year( thisYear + 1 );
+
+		if ( ! today.isBetween( startDate, endDate, 'day' ) ) {
+			return;
+		}
+
+		return (
+			<FormFieldset>
+				<FormLegend>{ this.translate( 'Holiday Snow' ) }</FormLegend>
+				<FormLabel>
+					<FormCheckbox
+						checkedLink={ this.valueLink( 'holidaysnow' ) }
+						disabled={ this.getDisabledState() }
+						id="holidaysnow"
+						name="holidaysnow"
+						onClick={ this.recordCheckboxEvent( 'Holiday Snow' ) } />
+					<span>{ this.translate( 'Show snowfall on WordPress.com sites.' ) }</span>
+				</FormLabel>
+			</FormFieldset>
+		);
+	},
+
 	renderJoinDate: function() {
 		var dateMoment = i18n.moment( user.get().date );
 
@@ -380,6 +410,8 @@ module.exports = React.createClass( {
 						<span>{ this.translate( 'Show the feedback and progress sidebar after posting.' ) }</span>
 					</FormLabel>
 				</FormFieldset>
+
+				{ this.renderHolidaySnow() }
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
