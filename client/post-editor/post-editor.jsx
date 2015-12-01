@@ -238,7 +238,7 @@ var PostEditor = React.createClass( {
 
 		if ( this.state.notice.link ) {
 			arrowLink = (
-				<NoticeAction href={ this.state.notice.link }>
+				<NoticeAction href={ this.state.notice.link } external={ true }>
 					{ this.state.notice.action }
 				</NoticeAction>
 			);

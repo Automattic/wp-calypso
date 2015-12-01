@@ -13,15 +13,20 @@ export default React.createClass( {
 
 	propTypes: {
 		href: React.PropTypes.string,
-		target: React.PropTypes.string,
-		onClick: React.PropTypes.func
+		onClick: React.PropTypes.func,
+		external: false
 	},
 
 	render() {
 		return (
-			<a className="notice__action" { ...this.props }>
+			<a
+				className="notice__action"
+				href={ this.props.href }
+				onClick={ this.props.onClick }
+				target={ this.props.external && '_blank' }
+			>
 				<span>{ this.props.children }</span>
-				<Gridicon icon="arrow-right" size={ 24 } />
+				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }
 			</a>
 		);
 	}
