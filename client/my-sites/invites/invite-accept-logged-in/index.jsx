@@ -19,7 +19,7 @@ const user = userModule();
 
 export default React.createClass( {
 
-	displayName: 'LoggedInAccept',
+	displayName: 'InviteAcceptLoggedIn',
 
 	render() {
 		let userObject = user.get(),
@@ -29,12 +29,12 @@ export default React.createClass( {
 			<div className={ classNames( 'logged-in-accept', this.props.className ) } >
 				<Card>
 					<InviteFormHeader { ...this.props } user={ user.get() } />
-					<div className="logged-in-accept__join-as">
+					<div className="invite-accept-logged-in__join-as">
 						<Gravatar user={ userObject } size={ 72 } />
 						{
 							this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 								components: {
-									usernameWrap: <span className="logged-in-accept__join-as-username" />
+									usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
 								},
 								args: {
 									username: userObject && userObject.display_name
@@ -42,7 +42,7 @@ export default React.createClass( {
 							} )
 						}
 					</div>
-					<div className="logged-in-accept__button-bar">
+					<div className="invite-accept-logged-in__button-bar">
 						<Button href={ window.location.origin + '?invite_declined' }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>

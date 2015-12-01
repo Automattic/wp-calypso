@@ -9,8 +9,8 @@ import classNames from 'classnames';
  * Internal Dependencies
  */
 import InviteHeader from 'my-sites/invites/invite-header';
-import LoggedInAccept from './logged-in';
-import LoggedOutInvite from './logged-out';
+import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
+import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
 import userModule from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
@@ -19,12 +19,12 @@ import EmptyContent from 'components/empty-content';
 /**
  * Module variables
  */
-const debug = new Debug( 'calypso:accept-invite' );
+const debug = new Debug( 'calypso:invite-accept' );
 const user = userModule();
 
 export default React.createClass( {
 
-	displayName: 'AcceptInvite',
+	displayName: 'InviteAccept',
 
 	getInitialState() {
 		return {
@@ -82,8 +82,8 @@ export default React.createClass( {
 		}
 		debug( 'Rendering invite' );
 		return user.get()
-			? <LoggedInAccept { ...this.state.invite } redirectTo={ this.getRedirectTo() } />
-		: <LoggedOutInvite { ...this.state.invite } redirectTo={ this.getRedirectTo() } />;
+			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectTo() } />
+			: <LoggedOut { ...this.state.invite } redirectTo={ this.getRedirectTo() } />;
 	},
 
 	renderError() {
@@ -98,7 +98,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		let classes = classNames( 'accept-invite', { 'is-error': !! this.state.error } );
+		let classes = classNames( 'invite-accept', { 'is-error': !! this.state.error } );
 		return (
 			<div className={ classes }>
 				{ ! this.state.error && <InviteHeader { ...this.state.invite } /> }
