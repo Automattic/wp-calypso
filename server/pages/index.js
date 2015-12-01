@@ -4,12 +4,16 @@ var express = require( 'express' ),
 	qs = require( 'qs' ),
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' );
+	assign = require( 'lodash/object/assign' ),
+	debug = require( 'debug' )( 'calypso:pages' ),
+	React = require( 'react' ),
+	ReactInjection = require( 'react/lib/ReactInjection' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' );
+	sections = require( '../../client/sections' ),
+	i18n = require( 'lib/mixins/i18n' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -344,12 +348,25 @@ module.exports = function() {
 		}
 	} );
 
-	app.get( '/design', function( req, res ) {
+	app.get( '/design/type?/:tier?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
-			renderLoggedOutRoute( req, res );
+			ReactInjection.Class.injectMixin( i18n.mixin );
+			i18n.initialize();
+
+			const themesLoggedOutLayoutComponent = require( 'layout/themes-logged-out' ),
+				themesLoggedOutLayout = React.createFactory( themesLoggedOutLayoutComponent ),
+				context = getDefaultContext( req ),
+				props = {
+					section: 'themes',
+					tier: req.params.tier || 'all',
+				};
+
+			context.layout = React.renderToString( themesLoggedOutLayout( props ) );
+
+			res.render( 'index.jade', context );
 		}
 	} );
 

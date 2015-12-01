@@ -68,7 +68,7 @@ var SelectDropdown = React.createClass( {
 		return initialState;
 	},
 
-	componentWillMount: function() {
+	componentDidMount: function() {
 		this.id = _instance;
 		_instance++;
 	},

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	classNames = require( 'classnames' ),
 	debounce = require( 'lodash/function/debounce' ),
 	noop = () => {};
@@ -60,12 +60,17 @@ module.exports = React.createClass( {
 		};
 	},
 
-	componentWillMount: function() {
+	componentDidMount: function() {
 		this.id = _instance;
 		_instance++;
 		this.onSearch = this.props.delaySearch
 			? debounce( this.props.onSearch, SEARCH_DEBOUNCE_MS )
 			: this.props.onSearch;
+		this.onSearch = ( this.props.delaySearch ) ? debounce( this.props.onSearch, SEARCH_DEBOUNCE_MS ) : this.props.onSearch;
+
+		if ( this.props.autoFocus ) {
+			this.focus();
+		}
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -112,12 +117,6 @@ module.exports = React.createClass( {
 			this.props.onSearch( this.state.keyword );
 		}
 		this.props.onSearchChange( this.state.keyword );
-	},
-
-	componentDidMount: function() {
-		if ( this.props.autoFocus ) {
-			this.focus();
-		}
 	},
 
 	focus: function() {

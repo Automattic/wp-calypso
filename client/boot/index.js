@@ -173,6 +173,8 @@ function boot() {
 
 		if ( config.isEnabled( 'oauth' ) ) {
 			LoggedOutLayout = require( 'layout/logged-out-oauth' );
+		} else if ( startsWith( window.location.pathname, '/design' ) ) {
+			LoggedOutLayout = require( 'layout/themes-logged-out' );
 		} else {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}

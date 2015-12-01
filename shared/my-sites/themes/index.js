@@ -22,7 +22,8 @@ const routing = {
 	middlewares: [
 		{ value: controller.navigation, enableLoggedOut: false },
 		{ value: controller.siteSelection, enableLoggedOut: false },
-		{ value: themesController.themes, enableLoggedOut: true },
+		{ value: themesController.themes, enableLoggedOut: false },
+		{ value: () => {}, enableLoggedOut: true }
 	]
 };
 

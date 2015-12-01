@@ -87,7 +87,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		var site = this.props.sites.getSelectedSite();
+		var site = this.props.sites && this.props.sites.getSelectedSite();
 		return (
 			<div className="themes__selection">
 				<StickyPanel>

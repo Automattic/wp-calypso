@@ -1,3 +1,5 @@
+require( 'lib/local-storage' )( global );
+
 /**
  * External dependencies.
  */
