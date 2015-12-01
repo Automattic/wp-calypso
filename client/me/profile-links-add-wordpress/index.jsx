@@ -11,9 +11,8 @@ var config = require( 'config' ),
 	Notice = require( 'components/notice' ),
 	Site = require( 'my-sites/site' ),
 	sites = require( 'lib/sites-list' )(),
-	eventRecorder = require( 'me/event-recorder' ),
-	Card = require( 'components/card' );
-
+	eventRecorder = require( 'me/event-recorder' );
+	
 module.exports = React.createClass( {
 
 	displayName: 'ProfileLinksAddWordPress',
@@ -220,9 +219,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<Card>
+			<div>
 				{ 0 === sites.getPublic().length ? this.renderInvitationForm() : this.renderAddableSitesForm() }
-			</Card>
+			</div>
 		);
 	}
 } );
