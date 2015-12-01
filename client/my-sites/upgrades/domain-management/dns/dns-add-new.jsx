@@ -62,7 +62,7 @@ const DnsAddNew = React.createClass( {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues ) );
+				onComplete( null, validateAllFields( fieldValues, this.props.selectedDomainName ) );
 			}
 		}	);
 
