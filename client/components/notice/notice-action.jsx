@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var	Gridicon = require( 'components/gridicon' );
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'NoticeAction',
 
 	propTypes: {
@@ -17,15 +17,12 @@ module.exports = React.createClass( {
 		onClick: React.PropTypes.func
 	},
 
-	render: function() {
+	render() {
 		return (
-			<a
-				className="notice__notice-action"
-				{ ...this.props }>
+			<a className="notice__action" { ...this.props }>
 				<span>{ this.props.children }</span>
 				<Gridicon icon="arrow-right" size={ 24 } />
 			</a>
 		);
 	}
-
 } );

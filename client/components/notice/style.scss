@@ -189,7 +189,7 @@
 		padding: 9px 16px;
 	}
 
-	a.notice__notice-action .gridicon {
+	a.notice__action .gridicon {
 		width: 18px;
 		height: 18px;
 	}
@@ -197,7 +197,7 @@
 
 // ArrowLink sub-component
 // specificity for general `a` elements within notice is too great
-.notice a.notice__notice-action {
+.notice a.notice__action {
 	background: rgba( 0, 0, 0, 0.2 );
 	box-sizing: border-box;
 	color: $white;
