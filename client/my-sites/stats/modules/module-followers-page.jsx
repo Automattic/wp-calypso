@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var StatsList = require( './stats-list' ),
 	SelectDropdown = require( 'components/select-dropdown' ),
-	toggle = require( './mixin-toggle' ),
+	toggle = require( '../mixin-toggle' ),
 	skeleton = require( './mixin-skeleton' ),
 	ErrorPanel = require( './modules/module-error' ),
 	Pagination = require( './pagination' ),

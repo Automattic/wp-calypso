@@ -9,7 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
+var toggle = require( '../mixin-toggle' ),
 	skeleton = require( './mixin-skeleton' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( './modules/module-error' ),

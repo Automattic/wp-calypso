@@ -8,7 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
+var toggle = require( '../mixin-toggle' ),
 	SelectDropdown = require( 'components/select-dropdown' ),
 	StatsList = require( './stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
