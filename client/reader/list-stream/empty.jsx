@@ -1,7 +1,8 @@
 var React = require( 'react' );
 
 var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	discoverHelper = require( 'reader/discover/helper' );
 
 var ListEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -23,10 +24,11 @@ var ListEmptyContent = React.createClass( {
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> ),
-			secondaryAction = ( <a
+			secondaryAction = discoverHelper.isEnabled()
+			? ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
+				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null;
 
 		return ( <EmptyContent
 			title={ this.translate( 'No recent posts…' ) }
