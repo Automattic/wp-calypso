@@ -123,7 +123,7 @@ var Pages = React.createClass({
 			return <NoResults
 				image="/calypso/images/pages/illustration-pages.svg"
 				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
+					this.translate( 'No pages match your search for {{searchTerm/}}.', {
 						components: {
 							searchTerm: <em>{ this.props.search }</em>
 						}
