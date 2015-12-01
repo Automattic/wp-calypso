@@ -17,11 +17,15 @@ var FreeTrialConfirmationBox = React.createClass( {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.translate( 'Your new site awaits' ) }</h6>
+					<h6>
+					{
+						this.translate( 'Get started with %(productName)s', { args: { productName: this.props.cart.products[0].product_name } } )
+					}
+					</h6>
 
 					<span>
 					{
-						this.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over. We\'ll send you a reminder before the end of the trial, so look for our emails.' )
+						this.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.' )
 					}
 					</span>
 				</div>

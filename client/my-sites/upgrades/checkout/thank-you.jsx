@@ -353,25 +353,25 @@ BusinessPlanDetails = React.createClass( {
 
 				<PurchaseDetail
 					additionalClass="ecommerce"
-					title={ this.translate( 'eCommerce' ) }
+					title={ this.translate( 'Add eCommerce' ) }
 					description={ this.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
-					buttonText={ this.translate( 'Set up eCommerce' ) }
+					buttonText={ this.translate( 'Set Up eCommerce' ) }
 					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/admin.php?page=business-plugins' ) } />
 
 				{ ! showGetFreeDomainTip ?
 					<PurchaseDetail
 						additionalClass="live-chat"
-						title={ this.translate( 'Start a live chat' ) }
+						title={ this.translate( 'Start a Live Chat' ) }
 						description={ this.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
-						buttonText={ this.translate( 'Talk to an operator' ) }
+						buttonText={ this.translate( 'Talk to an Operator' ) }
 						onButtonClick={ goToExternalPage( '//support.wordpress.com/live-chat/' ) } /> :
 					null }
 
 				<PurchaseDetail
 					additionalClass="unlimited-premium-themes"
-					title={ this.translate( 'Browse themes' ) }
+					title={ this.translate( 'Browse Themes' ) }
 					description={ this.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
-					buttonText={ this.translate( 'Change your theme' ) }
+					buttonText={ this.translate( 'Find a New Theme' ) }
 					onButtonClick={ goToExternalPage( '/themes/' + this.props.selectedSite.slug ) } />
 			</ul>
 		);
