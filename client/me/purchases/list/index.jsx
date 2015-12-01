@@ -11,9 +11,9 @@ import EmptyContent from 'components/empty-content';
 import { getPurchasesBySite } from 'lib/purchases';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
+import Notice from 'components/notice';
 import PurchasesHeader from './header';
 import PurchasesSite from './site';
-import SimpleNotice from 'notices/simple-notice';
 
 const PurchasesList = React.createClass( {
 	renderNotice() {
@@ -49,9 +49,9 @@ const PurchasesList = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice showDismiss={ false } status={ status }>
+			<Notice showDismiss={ false } status={ status }>
 				{ message }
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 
