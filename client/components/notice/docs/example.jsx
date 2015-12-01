@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
 * Internal dependencies
 */
-var NoticeArrowLink = require( 'notices/arrow-link' ),
+var NoticeAction = require( 'components/notice/notice-action' ),
 	Notice = require( 'components/notice' );
 
 var Notices = React.createClass( {
@@ -38,9 +38,9 @@ var Notices = React.createClass( {
 					isCompact={ this.state.compactNotices ? true : null }
 					showDismiss={ false }
 					text={ "I'm an `is-success` notice with an arrow link." }>
-					<NoticeArrowLink href="#">
+					<NoticeAction href="#">
 						{ "Preview" }
-					</NoticeArrowLink>
+					</NoticeAction>
 				</Notice>
 			</div>
 		);
