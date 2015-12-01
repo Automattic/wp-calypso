@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 		sites: React.PropTypes.object.isRequired
 	},
 
-	mixins: [ observe( 'productsList', 'sites' ) ],
+	mixins: [ observe( 'productsList' ) ],
 
 	componentWillMount: function() {
 		if ( this.props.sites.getSelectedSite() ) {

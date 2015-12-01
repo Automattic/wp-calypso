@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import DomainsStore from 'lib/domains/store';
-import observe from 'lib/mixins/data-observe';
 import StoreConnection from 'components/data/store-connection';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import { fetchDomains, fetchWapiDomainInfo } from 'lib/upgrades/actions';
@@ -38,8 +37,6 @@ const TransferData = React.createClass( {
 		selectedDomainName: React.PropTypes.string.isRequired,
 		sites: React.PropTypes.object.isRequired
 	},
-
-	mixins: [ observe( 'sites' ) ],
 
 	componentWillMount() {
 		this.loadDomains();
