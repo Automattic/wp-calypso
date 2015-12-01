@@ -37,7 +37,7 @@ function validateField( { name, value, type } ) {
 }
 
 function isValidName( name ) {
-	return /^([\da-z-]+\.)+[\da-z-]+$/i.test( name );
+	return /^([\da-z-_]+\.)+[\da-z-_]+$/i.test( name );
 }
 
 function isValidData( data, type ) {
