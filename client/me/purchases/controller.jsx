@@ -163,7 +163,7 @@ export default {
 		);
 	},
 
-	list() {
+	list( context ) {
 		setTitle();
 
 		recordPageView(
@@ -172,7 +172,8 @@ export default {
 
 		renderPage(
 			<PurchasesData
-				component={ PurchasesList } />
+				component={ PurchasesList }
+				noticeType={ context.params.noticeType } />
 		);
 	},
 
