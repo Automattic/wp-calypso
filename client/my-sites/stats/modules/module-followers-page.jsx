@@ -8,7 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var StatsList = require( './stats-list' ),
+var StatsList = require( '../stats-list' ),
 	SelectDropdown = require( 'components/select-dropdown' ),
 	toggle = require( '../mixin-toggle' ),
 	skeleton = require( './mixin-skeleton' ),

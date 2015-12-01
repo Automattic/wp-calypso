@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var toggle = require( '../mixin-toggle' ),
 	Geochart = require( './geochart' ),
-	StatsList = require( './stats-list' ),
+	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( './modules/module-error' ),
 	skeleton = require( './mixin-skeleton' ),
