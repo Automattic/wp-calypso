@@ -30,6 +30,7 @@ const ThemesLoggedOutLayout = React.createClass( {
 		sites: false,
 		setSelectedTheme: () => {},
 		togglePreview: () => {},
+		loggedIn: false,
 	},
 
 	getTier() {

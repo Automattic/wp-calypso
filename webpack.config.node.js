@@ -86,6 +86,7 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin( /^components\/sites-popover/, 'components/empty' ),
 		new webpack.NormalModuleReplacementPlugin( /^components\/gravatar/, 'components/empty' ),
 		new webpack.NormalModuleReplacementPlugin( /^components\/site-stats-sticky-link/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/sticky-panel/, 'components/empty' ),
 		new webpack.NormalModuleReplacementPlugin( /^notifications$/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/layout-focus$/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^components\/popover/, 'components/empty' ),

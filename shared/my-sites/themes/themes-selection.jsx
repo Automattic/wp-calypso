@@ -32,7 +32,12 @@ const ThemesSelection = React.createClass( {
 		search: PropTypes.string,
 		setSelectedTheme: PropTypes.func.isRequired,
 		togglePreview: PropTypes.func.isRequired,
-		getOptions: PropTypes.func.isRequired
+		getOptions: PropTypes.func.isRequired,
+		loggedIn: PropTypes.bool,
+	},
+
+	getDefaultProps: function() {
+		return { loggedIn: true };
 	},
 
 	getInitialState: function() {
@@ -86,18 +91,27 @@ const ThemesSelection = React.createClass( {
 		}
 	},
 
+	renderSearch( loggedIn, site ) {
+		const searchCard = (
+			<ThemesSearchCard
+				site={ site }
+				onSearch={ this.doSearch }
+				search={ this.props.search }
+				tier={ this.state.tier }
+				select={ this.onTierSelect } /> );
+
+		if ( loggedIn ) {
+			return( <StickyPanel>{ searchCard }</StickyPanel> );
+		}
+		return ( searchCard );
+	},
+
 	render() {
 		var site = this.props.sites && this.props.sites.getSelectedSite();
+
 		return (
 			<div className="themes__selection">
-				<StickyPanel>
-					<ThemesSearchCard
-							site={ site }
-							onSearch={ this.doSearch }
-							search={ this.props.search }
-							tier={ this.state.tier }
-							select={ this.onTierSelect } />
-				</StickyPanel>
+				{ this.renderSearch( this.props.loggedIn, site ) }
 				<ThemesData
 						site={ site }
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
