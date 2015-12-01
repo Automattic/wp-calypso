@@ -161,7 +161,7 @@ module.exports = React.createClass( {
 				<SectionHeader label={ this.translate( 'Backup Codes' ) }>
 					<Button
 						compact
-						disabled={ this.state.generatingCodes || this.state.backupCodes.length }
+						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
 						onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }
 					>
 						{ this.translate( 'Generate New Backup Codes' ) }
