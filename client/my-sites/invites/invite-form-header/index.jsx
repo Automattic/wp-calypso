@@ -4,16 +4,6 @@
 import React from 'react';
 import get from 'lodash/object/get';
 
-/**
- * Internal dependencies
- */
-import userModule from 'lib/user';
-
-/**
- * Module variables
- */
-const user = userModule();
-
 export default React.createClass( {
 	displayName: 'InviteFormHeader',
 
@@ -249,7 +239,7 @@ export default React.createClass( {
 		return (
 			<div className="invite-form-header">
 				<h3 className="invite-form-header__title">
-					{ user.get() ? this.getLoggedInTitleForInvite() : this.getLoggedOutTitleForInvite() }
+					{ this.props.user ? this.getLoggedInTitleForInvite() : this.getLoggedOutTitleForInvite() }
 				</h3>
 				{ roleExplanation &&
 					<p className="invite-form-header__explanation">

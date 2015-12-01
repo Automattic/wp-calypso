@@ -6,12 +6,7 @@
 // stylesheet order does not matter.
 // ==========================================================================
 
-@import 'accept-invite/invite-form-header/style';
-@import 'accept-invite/invite-header/style';
-@import 'accept-invite/logged-in-accept/style';
-@import 'accept-invite/style';
 @import 'auth/style';
-@import 'accept-invite/logged-out-invite/style';
 @import 'components/accordion/style';
 @import 'components/add-new-button/style';
 @import 'components/author-selector/style';
@@ -177,6 +172,11 @@
 @import 'my-sites/draft/style';
 @import 'my-sites/drafts/style';
 @import 'my-sites/exporter/style';
+@import 'my-sites/invites/invite-form-header/style';
+@import 'my-sites/invites/invite-header/style';
+@import 'my-sites/invites/invite-accept/logged-in/style';
+@import 'my-sites/invites/invite-accept/logged-out/style';
+@import 'my-sites/invites/invite-accept/style';
 @import 'my-sites/media-library/style';
 @import 'my-sites/no-results/style';
 @import 'my-sites/pages/style';

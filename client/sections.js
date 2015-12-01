@@ -176,7 +176,7 @@ if ( config.isEnabled( 'accept-invite' ) ) {
 	sections.push( {
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
-		module: 'accept-invite',
+		module: 'my-sites/invites',
 		enableLoggedOut: true
 	} );
 }

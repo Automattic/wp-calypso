@@ -7,8 +7,8 @@ import React from 'react'
  * Internal dependencies
  */
 import Notice from 'components/notice'
-import { dismissInviteAccepted, dismissInviteDeclined } from 'accept-invite/actions'
-import store from 'accept-invite/invite-message/store'
+import { dismissInviteAccepted, dismissInviteDeclined } from 'lib/invites/actions'
+import store from 'lib/invites/stores/invite-accepted'
 
 export default React.createClass( {
 

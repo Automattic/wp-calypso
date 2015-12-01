@@ -8,8 +8,8 @@ import get from 'lodash/object/get'
  * Internal dependencies
  */
 import SignupForm from 'components/signup-form'
-import InviteFormHeader from '../invite-form-header'
-import { createAccount, acceptInvite } from '../actions'
+import InviteFormHeader from 'my-sites/invites/invite-form-header'
+import { createAccount, acceptInvite } from 'lib/invites/actions'
 import WpcomLoginForm from 'signup/wpcom-login-form'
 import config from 'config'
 

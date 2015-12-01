@@ -12,8 +12,8 @@ import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import config from 'config';
 import userModule from 'lib/user';
-import InviteFormHeader from '../invite-form-header';
-import { acceptInvite } from '../actions';
+import InviteFormHeader from 'my-sites/invites/invite-form-header';
+import { acceptInvite } from 'lib/invites/actions';
 
 const user = userModule();
 
@@ -28,7 +28,7 @@ export default React.createClass( {
 		return (
 			<div className={ classNames( 'logged-in-accept', this.props.className ) } >
 				<Card>
-					<InviteFormHeader { ...this.props } />
+					<InviteFormHeader { ...this.props } user={ user.get() } />
 					<div className="logged-in-accept__join-as">
 						<Gravatar user={ userObject } size={ 72 } />
 						{
