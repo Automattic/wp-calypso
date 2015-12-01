@@ -19,7 +19,7 @@ function loadEndpointForm( selectedPurchase, onSuccess ) {
 			throw new Error( error );
 		}
 
-		onSuccess( response.html );
+		onSuccess( response.html, initializeForm );
 	} );
 }
 
@@ -139,7 +139,4 @@ function showDomainCancelReasonDetail( reasonsDiv, selectValue ) {
 	}
 }
 
-export default {
-	loadEndpointForm,
-	initializeForm
-};
+export default loadEndpointForm;

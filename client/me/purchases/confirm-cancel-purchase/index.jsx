@@ -11,7 +11,7 @@ import analytics from 'analytics';
 import Card from 'components/card';
 import ConfirmCancelPurchaseLoadingPlaceholder from './loading-placeholder';
 import HeaderCake from 'components/header-cake';
-import { initializeForm, loadEndpointForm } from './load-endpoint-form';
+import loadEndpointForm from './load-endpoint-form';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
@@ -26,7 +26,7 @@ const ConfirmCancelPurchase = React.createClass( {
 
 	getInitialState() {
 		return {
-			html: null
+			isFormLoaded: false
 		};
 	},
 
@@ -35,24 +35,20 @@ const ConfirmCancelPurchase = React.createClass( {
 		recordPageView( 'confirm_cancel_purchase', this.props );
 	},
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( ! prevState.html && this.state.html ) {
-			const container = React.findDOMNode( this.refs.root );
-
-			container.innerHTML = this.state.html;
-			initializeForm( {
-				form: container.querySelector( 'form' ),
-				onSubmit: this.handleSubmit,
-				selectedPurchase: getPurchase( this.props ),
-				selectedSite: this.props.selectedSite
-			} );
-		}
-	},
-
 	loadEndpointForm() {
-		loadEndpointForm( getPurchase( this.props ), ( html ) => {
-			this.setState( {
-				html
+		const purchase = getPurchase( this.props );
+
+		loadEndpointForm( purchase, ( html, initializeForm ) => {
+			this.setState( { isFormLoaded: true }, () => {
+				const container = React.findDOMNode( this.refs.root );
+
+				container.innerHTML = html;
+				initializeForm( {
+					form: container.querySelector( 'form' ),
+					onSubmit: this.handleSubmit,
+					selectedPurchase: purchase,
+					selectedSite: this.props.selectedSite
+				} );
 			} );
 		} );
 	},
@@ -74,7 +70,7 @@ const ConfirmCancelPurchase = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.state.html ) {
+		if ( ! this.state.isFormLoaded ) {
 			return <ConfirmCancelPurchaseLoadingPlaceholder
 				purchaseId={ this.props.purchaseId }
 				selectedSite={ this.props.selectedSite } />;
