@@ -16,13 +16,14 @@ var formBase = require( './form-base' ),
 	FormLegend = require( 'components/forms/form-legend' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	FormButton = require( 'components/forms/form-button' ),
-	SettingsCardFooter = require( './settings-card-footer' );
+	SettingsCardFooter = require( './settings-card-footer' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackProtect',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};

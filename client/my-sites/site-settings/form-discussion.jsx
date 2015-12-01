@@ -8,13 +8,14 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var formBase = require( './form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' );
+	protectForm = require( 'lib/mixins/protect-form' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormDiscussion',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	discussionAttributes: [
 		'default_pingback_flag',

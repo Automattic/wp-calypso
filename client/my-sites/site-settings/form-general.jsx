@@ -16,13 +16,14 @@ var Card = require( 'components/card' ),
 	config = require( 'config' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	notices = require( 'notices' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormGeneral',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings;
