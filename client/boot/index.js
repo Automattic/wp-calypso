@@ -176,6 +176,7 @@ function boot() {
 		} else {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
+
 		layout = React.render(
 			React.createElement( LoggedOutLayout ),
 			document.getElementById( 'wpcom' )
