@@ -119,7 +119,7 @@ const CancelPurchaseProductInformation = React.createClass( {
 				} ) }
 				<br />
 
-				<a href={ domainManagementEdit( this.props.selectedSite.domain, domainName ) }>{ this.translate( 'Manage Domains' ) }</a>
+				<a href={ domainManagementEdit( this.props.selectedSite.slug, domainName ) }>{ this.translate( 'Manage Domains' ) }</a>
 			</p>
 		);
 	},

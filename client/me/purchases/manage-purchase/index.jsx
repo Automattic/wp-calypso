@@ -215,7 +215,7 @@ const ManagePurchase = React.createClass( {
 			upgradesActions.addItem( redemptionItem );
 		}
 
-		page( '/checkout/' + this.props.selectedSite.domain );
+		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
 	renderPrice() {
@@ -254,7 +254,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
-			url = domainManagementEdit( selectedSite.domain, purchase.meta );
+			url = domainManagementEdit( selectedSite.slug, purchase.meta );
 			text = this.translate( 'Domain Settings' );
 		}
 
@@ -414,7 +414,7 @@ const ManagePurchase = React.createClass( {
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			const attachedPlanUrl = paths.managePurchase(
-				this.props.selectedSite.domain,
+				this.props.domain,
 				purchase.attachedToPurchaseId
 			);
 
