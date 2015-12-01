@@ -9,10 +9,10 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( '../mixin-toggle' ),
-	skeleton = require( '../mixin-skeleton' ),
+var toggle = require( './mixin-toggle' ),
+	skeleton = require( './mixin-skeleton' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( './module-error' ),
+	ErrorPanel = require( './modules/module-error' ),
 	InfoPanel = require( './info-panel' ),
 	StatsList = require( '../stats-list' ),
 	DownloadCsv = require( './download-csv' ),

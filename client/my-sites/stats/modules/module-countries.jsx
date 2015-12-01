@@ -14,8 +14,8 @@ var toggle = require( '../mixin-toggle' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( './module-error' ),
 	skeleton = require( '../mixin-skeleton' ),
-	DownloadCsv = require( './download-csv' ),
-	DatePicker = require( './modules/module-date-picker' ),
+	DownloadCsv = require( '../download-csv' ),
+	DatePicker = require( './module-date-picker' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
 

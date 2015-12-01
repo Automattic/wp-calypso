@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var observe = require( 'lib/mixins/data-observe' ),
 	ElementChart = require( 'components/chart' ),
-	StatTab = require( './modules/module-tab' ),
+	StatTab = require( './module-tab' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' );
 
