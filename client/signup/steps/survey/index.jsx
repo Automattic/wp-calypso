@@ -65,10 +65,12 @@ export default React.createClass( {
 				</div>
 			);
 		}
+		const blogLabel = this.translate( 'What is your blog about?' );
+		const siteLabel = this.translate( 'What is your website about?' );
 		return (
 			<div>
 				<CompactCard className="survey-step__title">
-					<label className="survey-step__label">{ this.translate( 'What is your website about?' ) }</label>
+					<label className="survey-step__label">{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
 				</CompactCard>
 				{ this.state.verticalList.map( this.renderStepOneVertical ) }
 			</div>
@@ -76,13 +78,15 @@ export default React.createClass( {
 	},
 
 	render() {
+		const blogHeaderText = this.translate( 'Create your blog today!' );
+		const siteHeaderText = this.translate( 'Create your site today!' );
 		return (
 			<div className="survey-step__section-wrapper">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.translate( 'Create your site today!' ) }
+					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.renderOptionList() } />
