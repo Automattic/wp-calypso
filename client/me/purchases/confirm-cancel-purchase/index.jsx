@@ -16,7 +16,7 @@ import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
-import { getPurchase, goToManagePurchase, recordPageView } from '../utils';
+import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
@@ -82,7 +82,7 @@ const ConfirmCancelPurchase = React.createClass( {
 
 		return (
 			<Main className="cancel-confirm">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+				<HeaderCake onClick={ goToCancelPurchase.bind( null, this.props ) }>
 					{ titles.confirmCancelPurchase }
 				</HeaderCake>
 				<Card>

@@ -13,6 +13,12 @@ function getPurchase( props ) {
 	return props.selectedPurchase.data;
 }
 
+function goToCancelPurchase( props ) {
+	const { domain, id } = getPurchase( props );
+
+	page( paths.cancelPurchase( domain, id ) );
+}
+
 function goToList() {
 	page( paths.list() );
 }
@@ -50,6 +56,7 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 }
 
 export {
+	goToCancelPurchase,
 	getPurchase,
 	goToList,
 	goToEditCardDetails,
