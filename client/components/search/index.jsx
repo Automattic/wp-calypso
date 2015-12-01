@@ -94,7 +94,7 @@ module.exports = React.createClass( {
 			this.focus();
 		}
 
-		if ( this.state.keyword === prevState.keyword ) {
+		if ( this.state.keyword === prevState.keyword && prevProps.initialValue === this.props.initialValue ) {
 			return;
 		}
 		// if there's a keyword change: trigger search
