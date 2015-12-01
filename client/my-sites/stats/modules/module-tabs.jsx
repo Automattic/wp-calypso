@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 
-var StatTab = require( './modules/module-tab' );
+var StatTab = require( './module-tab' );
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleTabs',
