@@ -648,18 +648,7 @@
 }
 
 #habla_window_div #habla_closebutton_a {
-
-	&:before {
-		display: inline-block;
-		width: 16px;
-		height: 16px;
-		font: 16px/1 Noticons;
-		content: '\f405';
-	}
-}
-
-#habla_window_div #habla_closebutton_a:hover {
-	background-color: rgba(255, 255, 255, 0.15);
+	display: none;
 }
 
 #habla_window_div #habla_popout_a {
