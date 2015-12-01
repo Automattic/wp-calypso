@@ -36,12 +36,14 @@ module.exports = React.createClass( {
 			printed: printed,
 			verified: printed,
 			showPrompt: ! printed,
-			backupCodes: []
+			backupCodes: [],
+			generatingCodes: false
 		};
 	},
 
 	onGenerate: function() {
 		this.setState( {
+			generatingCodes: true,
 			verified: false,
 			showPrompt: true
 		} );
@@ -58,7 +60,8 @@ module.exports = React.createClass( {
 		}
 
 		this.setState( {
-			backupCodes: data.codes
+			backupCodes: data.codes,
+			generatingCodes: false
 		} );
 	},
 
@@ -120,10 +123,6 @@ module.exports = React.createClass( {
 	},
 
 	renderList: function() {
-		if ( ! this.state.backupCodes || ! this.state.backupCodes.length ) {
-			return;
-		}
-
 		return (
 			<Security2faBackupCodesList
 				backupCodes={ this.state.backupCodes }
@@ -134,30 +133,46 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderPrompt: function() {
+		return (
+			<div>
+				<p>
+					{
+						this.translate(
+							'Backup codes let you access your account if your phone is ' +
+							'lost, stolen, or if you run it through the washing ' +
+							'machine and the bag of rice trick doesn\'t work.'
+						)
+					}
+				</p>
+
+				<p className="security-2fa-backup-codes__status">{ this.renderStatus() }</p>
+
+				{ this.state.showPrompt &&
+					<Security2faBackupCodesPrompt onSuccess={ this.onVerified } />
+				}
+			</div>
+		);
+	},
+
 	render: function() {
 		return (
 			<div className="security-2fa-backup-codes">
 				<SectionHeader label={ this.translate( 'Backup Codes' ) }>
-					<Button compact onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }>
+					<Button
+						compact
+						disabled={ this.state.generatingCodes || this.state.backupCodes.length }
+						onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }
+					>
 						{ this.translate( 'Generate New Backup Codes' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
-					<p>
-						{
-							this.translate(
-								'Backup codes let you access your account if your phone is ' +
-								'lost, stolen, or if you run it through the washing ' +
-								'machine and the bag of rice trick doesn\'t work.'
-							)
-						}
-					</p>
-
-					<p className="security-2fa-backup-codes__status">{ this.renderStatus() }</p>
-
-					{ this.state.showPrompt ? <Security2faBackupCodesPrompt onSuccess={ this.onVerified }/> : null }
-
-					{ this.renderList() }
+					{
+						this.state.generatingCodes || this.state.backupCodes.length
+						? this.renderList()
+						: this.renderPrompt()
+					}
 				</Card>
 			</div>
 		);
