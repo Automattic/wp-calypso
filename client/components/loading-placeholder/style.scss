@@ -5,3 +5,7 @@
 		pointer-events: none;
 	}
 }
+
+.loading-placeholder__content {
+	@include placeholder(23%);
+}

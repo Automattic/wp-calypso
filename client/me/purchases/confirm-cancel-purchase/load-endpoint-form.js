@@ -11,23 +11,15 @@ import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
-function loadEndpointForm( options ) {
-	const { selectedPurchase, selectedSite, container, onSubmit } = options,
-		{ id, productId } = selectedPurchase;
+function loadEndpointForm( selectedPurchase, onSuccess ) {
+	const { id, productId } = selectedPurchase;
 
 	wpcom.getCancellationPageHTML( id, productId, ( error, response ) => {
 		if ( error ) {
 			throw new Error( error );
 		}
 
-		container.innerHTML = response.html;
-
-		initializeForm( {
-			form: container.querySelector( 'form' ),
-			onSubmit,
-			selectedPurchase,
-			selectedSite
-		} );
+		onSuccess( response.html, initializeForm );
 	} );
 }
 

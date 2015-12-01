@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  **/
-import isEqual from 'lodash/lang/isEqual';
 import page from 'page';
 import React from 'react';
 
@@ -10,13 +9,14 @@ import React from 'react';
  */
 import analytics from 'analytics';
 import Card from 'components/card';
-import loadEndpointForm from './load-endpoint-form';
+import ConfirmCancelPurchaseLoadingPlaceholder from './loading-placeholder';
 import HeaderCake from 'components/header-cake';
+import loadEndpointForm from './load-endpoint-form';
 import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
-import { getPurchase, goToManagePurchase, recordPageView } from '../utils';
+import { getPurchase, goToCancelPurchase, recordPageView } from '../utils';
 
 const ConfirmCancelPurchase = React.createClass( {
 	propTypes: {
@@ -24,43 +24,36 @@ const ConfirmCancelPurchase = React.createClass( {
 		selectedSite: React.PropTypes.object
 	},
 
+	getInitialState() {
+		return {
+			isFormLoaded: false
+		};
+	},
+
 	componentWillMount() {
+		this.loadEndpointForm();
 		recordPageView( 'confirm_cancel_purchase', this.props );
 	},
 
-	componentWillReceiveProps( nextProps ) {
-		recordPageView( 'confirm_cancel_purchase', this.props, nextProps );
-	},
+	loadEndpointForm() {
+		const purchase = getPurchase( this.props );
 
-	componentDidMount() {
-		if ( ! this.props.selectedPurchase.hasLoadedFromServer || ! this.props.selectedSite ) {
-			return;
-		}
+		loadEndpointForm( purchase, ( html, initializeForm ) => {
+			if ( ! this.isMounted() ) {
+				return;
+			}
 
-		this.resetEndpointForm();
-	},
+			this.setState( { isFormLoaded: true }, () => {
+				const container = React.findDOMNode( this.refs.root );
 
-	componentDidUpdate( prevProps ) {
-		if ( ! this.props.selectedPurchase.hasLoadedFromServer ) {
-			return;
-		}
-
-		if ( isEqual( prevProps.selectedPurchase.data, this.props.selectedPurchase.data ) &&
-				( prevProps.selectedSite.ID === this.props.selectedSite.ID ) ) {
-			return;
-		}
-
-		this.resetEndpointForm();
-	},
-
-	resetEndpointForm() {
-		const { selectedSite, selectedPurchase } = this.props;
-
-		loadEndpointForm( {
-			container: React.findDOMNode( this.refs.root ),
-			selectedSite,
-			selectedPurchase: selectedPurchase.data,
-			onSubmit: this.handleSubmit
+				container.innerHTML = html;
+				initializeForm( {
+					form: container.querySelector( 'form' ),
+					onSubmit: this.handleSubmit,
+					selectedPurchase: purchase,
+					selectedSite: this.props.selectedSite
+				} );
+			} );
 		} );
 	},
 
@@ -80,17 +73,21 @@ const ConfirmCancelPurchase = React.createClass( {
 		page.redirect( paths.list() );
 	},
 
-	renderCard() {
-		return <Card><div ref="root">{ this.translate( 'Loading…' ) }</div></Card>;
-	},
-
 	render() {
+		if ( ! this.state.isFormLoaded ) {
+			return <ConfirmCancelPurchaseLoadingPlaceholder
+				purchaseId={ this.props.purchaseId }
+				selectedSite={ this.props.selectedSite } />;
+		}
+
 		return (
 			<Main className="cancel-confirm">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+				<HeaderCake onClick={ goToCancelPurchase.bind( null, this.props ) }>
 					{ titles.confirmCancelPurchase }
 				</HeaderCake>
-				{ this.renderCard() }
+				<Card>
+					<div ref="root"></div>
+				</Card>
 			</Main>
 		);
 	}
