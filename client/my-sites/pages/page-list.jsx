@@ -26,7 +26,6 @@ var PageList = React.createClass( {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
 		sites: React.PropTypes.object,
-		statusSlug: React.PropTypes.string,
 		siteID: React.PropTypes.any
 	},
 
@@ -60,7 +59,6 @@ var Pages = React.createClass({
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
 		sites: React.PropTypes.object.isRequired,
-		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
 	},
 
@@ -137,10 +135,19 @@ var Pages = React.createClass({
 				newPageLink = selectedSite ? '//wordpress.com/page/' + selectedSite.ID + '/new' : '//wordpress.com/page';
 			}
 
-			switch( this.props.statusSlug ) {
+			const status = this.props.status || 'published';
+			switch ( status ) {
 				case 'drafts':
 					attributes = {
 						title: this.translate( 'You don\'t have any drafts.' ),
+						line: this.translate( 'Would you like to create one?' ),
+						action: this.translate( 'Start a Page' ),
+						actionURL: newPageLink
+					};
+					break;
+				case 'scheduled':
+					attributes = {
+						title: this.translate( 'You don\'t have any scheduled pages yet.' ),
 						line: this.translate( 'Would you like to create one?' ),
 						action: this.translate( 'Start a Page' ),
 						actionURL: newPageLink
