@@ -2,8 +2,7 @@
  * External Dependencies
  */
 var React = require( 'react' ),
-	titlecase = require( 'to-title-case' ),
-	partialRight = require( 'lodash/function/partialRight' );
+	titlecase = require( 'to-title-case' );
 
 /**
  * Internal Dependencies
@@ -57,7 +56,5 @@ var controller = {
 		);
 	}
 };
-
-
 
 module.exports = controller;
