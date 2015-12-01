@@ -8,11 +8,11 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import InviteHeader from './invite-header';
-import LoggedInAccept from './logged-in-accept';
-import LoggedOutInvite from './logged-out-invite';
+import InviteHeader from 'my-sites/invites/invite-header';
+import LoggedInAccept from './logged-in';
+import LoggedOutInvite from './logged-out';
 import userModule from 'lib/user';
-import InvitesActions from 'lib/invites/actions';
+import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
 
@@ -34,7 +34,7 @@ export default React.createClass( {
 	},
 
 	componentWillMount() {
-		InvitesActions.fetchInvite( this.props.site_id, this.props.invitation_key );
+		fetchInvite( this.props.site_id, this.props.invitation_key );
 		InvitesStore.on( 'change', this.refreshInvite );
 	},
 

@@ -30,7 +30,6 @@ var config = require( 'config' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'nux-welcome' ),
-	inviteActions = require( 'accept-invite/actions' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
@@ -42,6 +41,8 @@ var config = require( 'config' ),
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
+
+import { displayInviteAccepted } from 'lib/invites/actions';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -233,7 +234,7 @@ function boot() {
 		}
 
 		if ( context.query.invite_accepted ) {
-			inviteActions.displayInviteAccepted( parseInt( context.query.invite_accepted ) );
+			displayInviteAccepted( parseInt( context.query.invite_accepted ) );
 			page( context.pathname );
 		}
 

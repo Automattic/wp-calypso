@@ -51,7 +51,7 @@ describe( 'List Invites Store', function() {
 	};
 
 	beforeEach( function() {
-		ListInvitesStore = require( 'lib/invites/stores/list-invites' );
+		ListInvitesStore = require( 'lib/invites/stores/invites-list' );
 	} );
 
 	describe( 'Listing invites', function() {
