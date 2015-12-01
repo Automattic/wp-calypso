@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-const includes = require( 'lodash/collection/includes' ),
-	mapValues = require( 'lodash/object/mapValues' );
+import includes from 'lodash/collection/includes';
+import mapValues from 'lodash/object/mapValues';
+import clone from 'lodash/lang/clone';
 
 function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -37,7 +38,7 @@ function validateField( { name, value, type } ) {
 }
 
 function isValidName( name ) {
-	return /^([\da-z-]+\.)+[\da-z-]+$/i.test( name );
+	return /^([\da-z-_]+\.)+[\da-z-_]+$/i.test( name );
 }
 
 function isValidData( data, type ) {
@@ -55,7 +56,7 @@ function isValidData( data, type ) {
 }
 
 function getNormalizedData( fieldValues, selectedDomainName ) {
-	var data = fieldValues;
+	const data = clone( fieldValues );
 
 	data.data = getFieldWithDot( data.data );
 
@@ -77,11 +78,17 @@ function removeTrailingDomain( domain, trailing ) {
 }
 
 function getFieldWithDot( field ) {
+	if ( ! typeof field === 'string' ) {
+		return null;
+	}
+
 	// something that looks like domain but doesn't end with a dot
-	return ( typeof field === 'string' && field.match( /^([a-z0-9-]+\.)+\.?[a-z]+$/i ) ) ? field + '.' : field;
+	const pattern = /^([a-z0-9-]+\.)+\.?[a-z]+$/i;
+
+	return field.match( pattern ) ? field + '.' : field;
 }
 
-module.exports = {
+export {
 	validateAllFields,
 	getNormalizedData
 };
