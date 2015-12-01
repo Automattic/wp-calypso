@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import { requestCode, resetCode } from 'lib/auth-code-request-store/actions'
-import { default as Store, requestState } from 'lib/auth-code-request-store'
-import Notice from 'notices/simple-notice'
+import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
+import { default as Store, requestState } from 'lib/auth-code-request-store';
+import Notice from 'components/notice';
 
 export default React.createClass( {
 
