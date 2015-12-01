@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var StatsList = require( '../stats-list' ),
-	skeleton = require( './mixin-skeleton' ),
+	skeleton = require( '../mixin-skeleton' ),
 	Card = require( 'components/card' );
 
 
