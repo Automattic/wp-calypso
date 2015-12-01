@@ -26,18 +26,6 @@ var SiteStatsStickyLink = React.createClass( {
 		siteStatsStickyTabStore.off( 'change', this.handleStatsStickyTabChange );
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
-		if (
-			nextState.url !== this.state.url ||
-			nextProps.onClick !== this.props.onClick ||
-			nextProps.title !== this.props.title
-		) {
-			return true;
-		}
-
-		return false;
-	},
-
 	handleStatsStickyTabChange: function() {
 		var url = siteStatsStickyTabStore.getUrl();
 

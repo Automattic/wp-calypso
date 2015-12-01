@@ -9,17 +9,11 @@ var assign = require( 'lodash/object/assign' ),
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	user = require( 'lib/user' )(),
-	abtest = require( 'lib/abtest' ).abtest;
+	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
 	if ( dependencies.cartItem || dependencies.domainItem ) {
 		return '/checkout/' + dependencies.siteSlug;
-	}
-
-	/* NUX Trampoline A/B */
-	if ( 'landing-main' === abtest( 'nuxTrampoline' ) ) {
-		return 'https://' + dependencies.siteSlug + '/?landing';
 	}
 
 	return '/me/next?welcome';

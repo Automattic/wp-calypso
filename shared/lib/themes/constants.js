@@ -2,7 +2,7 @@
  * External dependencies
  */
 var assign = require( 'lodash/object/assign' ),
-	keyMirror = require( 'react/lib/keyMirror' );
+	keyMirror = require( 'key-mirror' );
 
 module.exports = assign( keyMirror( {
 

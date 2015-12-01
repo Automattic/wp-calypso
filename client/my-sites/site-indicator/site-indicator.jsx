@@ -236,13 +236,13 @@ module.exports = React.createClass( {
 		return (
 			<div className={ indicatorClass }>
 				<button className="site-indicator__button" onClick={ this.toggleExpand } />
-				{ this.state.expand ?
-					<div className="site-indicator__message">
+				{ this.state.expand
+					? <div className="site-indicator__message">
 						<div className={ textClass }>
 							{ this.getText() }
 						</div>
 					</div>
-				: null }
+					: null }
 			</div>
 		);
 	}

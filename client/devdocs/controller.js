@@ -50,7 +50,10 @@ var devdocs = {
 				false );
 		}
 
-		context.layout.setState( { section: 'devdocs' } );
+		context.layout.setState( {
+			section: 'devdocs',
+			noSidebar: false
+		} );
 
 		React.render(
 			React.createElement( DocsComponent, {
@@ -67,7 +70,10 @@ var devdocs = {
 	 * Controller for single developer document
 	 */
 	singleDoc: function( context ) {
-		context.layout.setState( { section: 'devdocs' } );
+		context.layout.setState( {
+			section: 'devdocs',
+			noSidebar: false
+		} );
 
 		React.render(
 			React.createElement( SingleDocComponent, {
@@ -83,7 +89,10 @@ var devdocs = {
 	 * Design specs and docs for Calypso
 	 */
 	design: function( context ) {
-		context.layout.setState( { section: 'devdocs' } );
+		context.layout.setState( {
+			section: 'devdocs',
+			noSidebar: false
+		} );
 
 		React.render(
 			React.createElement( DesignAssetsComponent, {
@@ -103,7 +112,10 @@ var devdocs = {
 	},
 
 	pleaseLogIn: function( context ) {
-		context.layout.setState( { section: 'devdocs-start' } );
+		context.layout.setState( {
+			section: 'devdocs-start',
+			noSidebar: true
+		} );
 
 		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
@@ -123,7 +135,10 @@ var devdocs = {
 
 	// Welcome screen
 	welcome: function( context ) {
-		context.layout.setState( { section: 'devdocs' } );
+		context.layout.setState( {
+			section: 'devdocs',
+			noSidebar: false
+		} );
 
 		React.render(
 			React.createElement( DevWelcome, {} ),

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var keyMirror = require( 'react/lib/keyMirror' );
+var keyMirror = require( 'key-mirror' );
 
 /**
  * Internal dependencies

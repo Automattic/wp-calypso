@@ -13,9 +13,12 @@
 	.notice__text {
 		flex-grow: 1;
 		flex-basis: 100px;
-		max-width: 680px; // For line-length sanity
-
 		padding: 11px 24px;
+
+		& > span,
+		& > div {
+			max-width: 680px;
+		}
 
 		@include breakpoint( ">660px" ) {
 			padding: 13px 48px;
@@ -78,14 +81,7 @@
 	// Email Verification Notice
 	&.is-email-verification {
 		background: $white;
-		margin-left: 273px;
-		margin-bottom: 0;
 		box-shadow: 0 0 0 1px lighten( $gray, 20 );
-
-		// The signup screens don't have the sidebar
-		.is-section-signup & {
-			margin-left: 0;
-		}
 	}
 }
 
@@ -232,29 +228,25 @@
 }
 
 .notices-list {
-	@include breakpoint( ">660px" ) {
-		margin-left: 273px;
-	}
-
-	.notice {
-		margin-bottom: 0;
-	}
+	overflow: hidden;
 
 	&.is-pinned {
-		width: 100%;
-			min-width: 320px;
-			max-width: 960px;
+		width: calc( 100% - 272px - 32px - 32px );
 		z-index: 180;
 		position: fixed;
-			top: 47px;
+			top: 47px + 32px;
 
 		.notice {
 			z-index: 180;
 		}
 
-		@include breakpoint( "<480px" ) {
-			top: 0;
-			left: 0;
+		@include breakpoint( "<960px" ) {
+			width: calc( 100% - 228px - 24px - 24px );
+		}
+
+		@include breakpoint( "<660px" ) {
+			top: 16px;
+			width: calc( 100% - 16px );
 		}
 	}
 }

@@ -3,7 +3,7 @@
  */
 var React = require( 'react/addons' ),
 	isEmpty = require( 'lodash/lang/isEmpty' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	omit = require( 'lodash/object/omit' );
 
@@ -29,7 +29,7 @@ module.exports = React.createClass( {
 		return (
 			<select
 				{ ...omit( this.props, 'className' ) }
-				className={ joinClasses( this.props.className, 'form-country-select' ) }
+				className={ classnames( this.props.className, 'form-country-select' ) }
 				onChange={ this.props.onChange }
 			>
 				{ options.map( function( option ) {

@@ -13,6 +13,7 @@ var wpcom = require( 'lib/wp' ),
 	notices = require( 'notices' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	versionCompare = require( 'lib/version-compare' ),
+	SiteUtils = require( 'lib/site/utils' ),
 	config = require( 'config' );
 
 inherits( JetpackSite, Site );
@@ -31,7 +32,7 @@ JetpackSite.prototype.updateComputedAttributes = function() {
 	// unmapped_url is more likely to equal main_network_site because they should both be set to siteurl option
 	// is_multi_network checks to see that a site is not part of a multi network
 	// Since there is no primary network we disable updates for that case
-	this.canUpdateFiles = this.hasMinimumJetpackVersion && this.options.unmapped_url === this.options.main_network_site && ! this.options.is_multi_network && ! this.options.file_mod_disabled;
+	this.canUpdateFiles = SiteUtils.canUpdateFiles( this );
 	this.hasJetpackMenus = versionCompare( this.options.jetpack_version, '3.5-alpha' ) >= 0;
 	this.hasJetpackThemes = versionCompare( this.options.jetpack_version, '3.7-beta' ) >= 0;
 };
@@ -63,7 +64,7 @@ JetpackSite.prototype.fetchAvailableUpdates = function() {
 			debug( 'error fetching Updates data from api', error );
 			// 403 is returned when the user does not have manage capabilities.
 			if ( 403 !== error.statusCode && ! ( this.update instanceof Object ) ) {
-				this.set( { update: 'error' } );
+				this.set( { update: 'error', unreachable: true } );
 			}
 			return;
 		}

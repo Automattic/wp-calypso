@@ -9,19 +9,21 @@ import React from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import paths from '../paths';
-import { isRefundable } from 'lib/purchases';
 import { cancelPrivateRegistration } from 'lib/upgrades/actions';
+import Card from 'components/card';
+import HeaderCake from 'components/header-cake';
+import { isRefundable } from 'lib/purchases';
+import Main from 'components/main';
+import paths from '../paths';
 import SimpleNotice from 'notices/simple-notice';
+import titles from 'me/purchases/titles';
 import { goToManagePurchase, isDataLoading, recordPageView } from '../utils';
 
 const CancelPrivateRegistration = React.createClass( {
 	getInitialState() {
 		return {
-			disabled: false
+			disabled: false,
+			cancelling: false
 		};
 	},
 
@@ -33,15 +35,24 @@ const CancelPrivateRegistration = React.createClass( {
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	},
 
-	cancel() {
+	cancel( event ) {
+		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
+		event.target.blur();
+
 		const { domain, id } = this.props.selectedPurchase.data;
 
 		this.setState( {
-			disabled: true
+			disabled: true,
+			cancelling: true
 		} );
 
-		cancelPrivateRegistration( id, canceledSuccessfully => {
-			if ( canceledSuccessfully ) {
+		cancelPrivateRegistration( id, success => {
+			this.setState( {
+				cancelling: false,
+				disabled: false
+			} );
+
+			if ( success ) {
 				page( paths.managePurchaseDestination( domain, id, 'canceled-private-registration' ) );
 			}
 		} );
@@ -87,7 +98,10 @@ const CancelPrivateRegistration = React.createClass( {
 				onClick={ this.cancel }
 				className="cancel-private-registration__cancel-button"
 				disabled={ this.state.disabled }>
-				{ this.translate( 'Cancel Private Registration' ) }
+				{
+					this.state.cancelling
+						? this.translate( 'Processing…' )
+						: this.translate( 'Cancel Private Registration' ) }
 			</Button>
 		);
 	},
@@ -132,7 +146,7 @@ const CancelPrivateRegistration = React.createClass( {
 
 			<Main className="manage-purchase__detail">
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Cancel Private Registration' ) }
+					{ titles.cancelPrivateRegistration }
 				</HeaderCake>
 				{ notice }
 				<Card className={ classes }>

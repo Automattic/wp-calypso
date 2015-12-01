@@ -59,7 +59,8 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			section: false,
-			isLoading: false
+			isLoading: false,
+			noSidebar: false
 		};
 	},
 
@@ -92,6 +93,10 @@ module.exports = React.createClass( {
 				layout__loader: true,
 				'is-active': this.state.isLoading
 			} );
+
+		if ( this.state.noSidebar ) {
+			sectionClass += ' has-no-sidebar';
+		}
 
 		return (
 			<div className={ sectionClass }>

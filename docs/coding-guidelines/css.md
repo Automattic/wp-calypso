@@ -162,7 +162,7 @@ If you are adding a new Sass file to `assets/stylesheets` you will need to refer
 
 ### Nesting
 
-* DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifyer`, and alike.
+* DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifier`, and alike.
 * DO attempt to keep nesting to 2 levels deep at most.
 * DO list items inside a selector in the following order (not all will necessarily be present):
     1. `@extend`(s).

@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
 import extend from 'lodash/object/assign';
 import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
@@ -12,6 +12,7 @@ import analytics from 'analytics';
 import camelCase from 'lodash/string/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'components/upgrades/credit-card-form';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
@@ -21,11 +22,11 @@ import kebabCase from 'lodash/string/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/object/mapKeys';
 import notices from 'notices';
+import paths from 'me/purchases/paths';
+import titles from 'me/purchases/titles';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
-import { createPaygateToken } from 'lib/store-transactions';
 import wpcomFactory from 'lib/wp';
-import paths from 'me/purchases/paths';
 import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const wpcom = wpcomFactory.undocumented();
@@ -54,17 +55,6 @@ const EditCardDetails = React.createClass( {
 		'postalCode'
 	],
 
-	componentWillReceiveProps( nextProps ) {
-		recordPageView( 'edit_card_details', this.props, nextProps );
-
-		// Updates the form once with the stored credit card data as soon as they are available
-		if ( nextProps.card && ( ! this.props.card || ( nextProps.card.id !== this.props.card.id ) ) ) {
-			this.setState( {
-				form: formState.initializeFields( this.state.form, this.mergeCard( nextProps.card ) )
-			} );
-		}
-	},
-
 	/**
 	 * Merges the specified card object returned by the StoredCards store into a new object with only properties that
 	 * should be used to prefill the credit card form, and with keys matching the corresponding field names.
@@ -81,20 +71,13 @@ const EditCardDetails = React.createClass( {
 	componentWillMount() {
 		recordPageView( 'edit_card_details', this.props );
 
-		const options = {
-			validatorFunction: this.validate,
-			onNewState: this.setFormState
-		};
+		const fields = this.mergeCard( this.props.card, formState.createNullFieldValues( this.fieldNames ) );
 
-		if ( this.props.card ) {
-			const fields = formState.createNullFieldValues( this.fieldNames );
-
-			options.initialState = formState.createInitialFormState( this.mergeCard( this.props.card, fields ) );
-		} else {
-			options.fieldNames = this.fieldNames;
-		}
-
-		this.formStateController = formState.Controller( options );
+		this.formStateController = formState.Controller( {
+			initialFields: fields,
+			onNewState: this.setFormState,
+			validatorFunction: this.validate
+		} );
 
 		this.setState( { form: this.formStateController.getInitialState() } );
 	},
@@ -233,7 +216,7 @@ const EditCardDetails = React.createClass( {
 		return (
 			<Main className="edit-card-details">
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }
+					{ titles.editCardDetails }
 				</HeaderCake>
 
 				<form onSubmit={ this.onSubmit }>

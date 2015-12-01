@@ -1,5 +1,5 @@
 // External Dependencies
-var keyMirror = require( 'react/lib/keyMirror' );
+var keyMirror = require( 'key-mirror' );
 
 module.exports.MAX_TAGS = 1000;
 module.exports.MAX_TAGS_SUGGESTIONS = 20;

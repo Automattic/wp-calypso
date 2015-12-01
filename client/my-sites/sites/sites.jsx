@@ -10,6 +10,7 @@ var React = require( 'react' ),
 var SiteCard = require( './site-card' ),
 	SearchCard = require( 'components/search-card' ),
 	Gridicon = require( 'components/gridicon' ),
+	Main = require( 'components/main' ),
 	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	config = require( 'config' );
@@ -195,16 +196,16 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="main main-column sites is-full" role="main">
+			<Main className="sites">
 				<h2 className="sites__select-heading">{ siteSelectionHeaderText }</h2>
 				{ this.getSiteCount() > 1 ?
 					<SearchCard onSearch={ this.doSearch } analyticsGroup="Sites" />
 					: null
 				}
-				<div id="my-sites" className="sites-grid">
+				<div className="sites__grid">
 					{ sites.length !== 0 ? sitesMarkup : this.noSitesRender() }
 				</div>
-			</div>
+			</Main>
 		);
 	},
 

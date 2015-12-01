@@ -237,35 +237,42 @@ html.iframed {
 
 /* =General Layout
 ----------------------------------------------- */
+$sidebar-width-max: 272px;
+$sidebar-width-min: 228px;
+
 .wp-content {
 	@include clear-fix;
 	position: relative;
-	width: 100%;
-	margin: 47px auto 0;
+	margin: 47px 0 0 0;
+	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow: hidden;
-}
 
-.wp-primary {
-	padding: 32px;
-	margin-left: 272px;
+	.has-no-sidebar & {
+		padding-left: 32px;
+	}
 }
 
 // Tablets
 @include breakpoint( "<960px" ) {
-	.wp-primary {
-		margin-left: 224px;
+	.wp-content {
+		padding: 24px;
+		padding-left: ( $sidebar-width-min + 24px );
+
+		.has-no-sidebar & {
+			padding-left: 24px;
+		}
 	}
 }
 
 // Mobile (Full Width)
 @include breakpoint( "<660px" ) {
-	.wp-primary {
+	.wp-content {
 		margin-left: 0;
 		padding: 8px;
 
-		.focus-sidebar & {
-			transform: translateX( 100vw );
+		.has-no-sidebar & {
+			padding-left: 8px;
 		}
 
 		.focus-sidebar.is-section-post & {

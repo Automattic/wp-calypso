@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import shuffle from 'lodash/collection/shuffle';
+import find from 'lodash/collection/find';
 
 /**
  * Internal dependencies
@@ -21,10 +23,40 @@ const debug = debugFactory( 'calypso:steps:survey' );
 export default React.createClass( {
 	displayName: 'SurveyStep',
 
+	propTypes: {
+		isOneStep: React.PropTypes.bool,
+		surveySiteType: React.PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			surveySiteType: 'site',
+			isOneStep: false
+		}
+	},
+
 	getInitialState() {
 		return {
-			stepOne: null
+			stepOne: null,
+			verticalList: shuffle( verticals.get() )
 		}
+	},
+
+	/**
+	 * Shuffle an array of verticals, but put the General vertical last.
+	 *
+	 * @param {Array} elements - the array of vertical elements to shuffle.
+	 * @returns {Array} the shuffled array of elements.
+	*/
+	shuffleVerticals( elements ) {
+		const newVerticals = shuffle( elements );
+		const general = find( newVerticals, vertical => vertical.isGeneral );
+		newVerticals.splice( newVerticals.indexOf( general ), 1 );
+		if ( general ) {
+			newVerticals.push( general );
+		}
+		debug( 'shuffling elements', elements, 'becomes', newVerticals );
+		return newVerticals;
 	},
 
 	renderStepTwoVertical( vertical ) {
@@ -37,8 +69,9 @@ export default React.createClass( {
 
 	renderStepOneVertical( vertical ) {
 		const icon = vertical.icon || 'user';
+		const stepOneClickHandler = this.props.isOneStep ? this.handleNextStep.bind( null, vertical ) : this.showStepTwo.bind( null, vertical );
 		return (
-			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ this.showStepTwo.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
@@ -50,7 +83,7 @@ export default React.createClass( {
 			return (
 				<div>
 					<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
-					{ this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) }
+					{ this.shuffleVerticals( this.state.stepOne.stepTwo ).map( this.renderStepTwoVertical ) }
 				</div>
 			);
 		}
@@ -59,13 +92,12 @@ export default React.createClass( {
 				<CompactCard className="survey-step__title">
 					<label className="survey-step__label">{ this.translate( 'What is your website about?' ) }</label>
 				</CompactCard>
-				{ verticals.get().map( this.renderStepOneVertical ) }
+				{ this.state.verticalList.map( this.renderStepOneVertical ) }
 			</div>
 		);
 	},
 
 	render() {
-		debug( this.props.stepSectionName );
 		return (
 			<div className="survey-step__section-wrapper">
 				<StepWrapper
@@ -93,8 +125,13 @@ export default React.createClass( {
 	},
 
 	handleNextStep( vertical ) {
+		const { value, label } = vertical;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( vertical ) } );
+		if ( this.state.stepOne ) {
+			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( { value, label } ) } );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', { category: JSON.stringify( { value, label } ) } );
+		}
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		this.props.goToNextStep();
 	}

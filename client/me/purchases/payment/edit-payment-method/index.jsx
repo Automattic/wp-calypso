@@ -11,6 +11,7 @@ import EditPaymentMethodCreditCard from './credit-card';
 import HeaderCake from 'components/header-cake';
 import { isPaidWithCreditCard, isPaidWithPaypal } from 'lib/purchases';
 import Main from 'components/main';
+import titles from 'me/purchases/titles';
 import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 
 const EditPaymentMethod = React.createClass( {
@@ -41,7 +42,7 @@ const EditPaymentMethod = React.createClass( {
 		return (
 			<Main className="edit-payment-method">
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Edit Payment Method' ) }
+					{ titles.editPaymentMethod }
 				</HeaderCake>
 
 				<h2>

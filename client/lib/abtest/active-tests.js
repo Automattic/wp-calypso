@@ -37,15 +37,6 @@ module.exports = {
 		},
 		defaultVariation: 'originalA'
 	},
-	nuxTrampoline: {
-		datestamp: '20151113',
-		variations: {
-			main: 10,
-			'landing-main': 10,
-			notTested: 80
-		},
-		defaultVariation: 'main'
-	},
 	businessPluginsNudge: {
 		datestamp: '20151119',
 		variations: {

@@ -1,35 +1,43 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	_some = require( 'lodash/collection/some' );
+import React from 'react/addons'
+import classNames from 'classnames'
+import i18n from 'lib/mixins/i18n'
+import _some from 'lodash/collection/some'
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
-	PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' ),
-	PluginsActions = require( 'lib/plugins/actions' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
-	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
-	safeProtocolUrl = require( 'lib/safe-protocol-url' ),
-	config = require( 'config' ),
-	Notice = require( 'notices/notice' ),
-	PluginVersion = require( 'my-sites/plugins/plugin-version' ),
-	PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' ),
-	PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' );
+import analytics from 'analytics'
+import Card from 'components/card'
+import Gridicon from 'components/gridicon'
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon'
+import PluginsActions from 'lib/plugins/actions'
+import PluginsLog from 'lib/plugins/log-store'
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle'
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle'
+import safeProtocolUrl from 'lib/safe-protocol-url'
+import config from 'config'
+import Notice from 'notices/notice'
+import PluginVersion from 'my-sites/plugins/plugin-version'
+import PluginInstallButton from 'my-sites/plugins/plugin-install-button'
+import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button'
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
 
 	displayName: 'PluginMeta',
 
-	displayBanner: function() {
+	propTypes: {
+		siteURL: React.PropTypes.string,
+		sites: React.PropTypes.array,
+		notices: React.PropTypes.object,
+		plugin: React.PropTypes.object.isRequired,
+		isPlaceholder: React.PropTypes.bool
+	},
+
+	displayBanner() {
 		if ( this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
 			return <div className="plugin-meta__banner">
 						<img className="plugin-meta__banner-image" src={ this.props.plugin.banners.high || this.props.plugin.banners.low }/>
@@ -37,8 +45,8 @@ module.exports = React.createClass( {
 		}
 	},
 
-	renderActions: function() {
-		var site = this.props.sites && this.props.sites[ 0 ] ? this.props.sites[ 0 ] : false;
+	renderActions() {
+		const site = this.props.sites && this.props.sites[ 0 ] ? this.props.sites[ 0 ] : false;
 
 		/*
 		 * Do not show actions if we are not on a single site view or
@@ -66,7 +74,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderSettingsLink: function() {
+	renderSettingsLink() {
 		if ( ! this.props.plugin ||
 				! this.props.plugin.wp_admin_settings_page_url ||
 				! this.props.plugin.active ||
@@ -84,8 +92,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<a
-				className="plugin-meta__settings-link"
+			<a className="plugin-meta__settings-link"
 				href={ this.props.plugin.wp_admin_settings_page_url }
 				target="_blank">
 				{ this.translate( 'Setup' ) }
@@ -94,7 +101,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderName: function() {
+	renderName() {
 		if ( ! this.props.plugin || ! this.props.plugin.name ) {
 			return;
 		}
@@ -104,7 +111,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderAuthorUrl: function() {
+	renderAuthorUrl() {
 		if ( ! this.props.plugin || ! ( this.props.plugin.author_url && this.props.plugin.author_name ) ) {
 			return;
 		}
@@ -116,21 +123,21 @@ module.exports = React.createClass( {
 		);
 	},
 
-	isInstalledOnSite: function( site ) {
+	isInstalledOnSite( site ) {
 		return ( this.props.sites &&
-			this.props.sites.some( function( iteratorSite ) {
+			this.props.sites.some( iteratorSite => {
 				return site.slug === iteratorSite.slug;
 			} )
 		);
 	},
 
-	getInstallButton: function() {
+	getInstallButton() {
 		if ( this.hasInstallButton() && config.isEnabled( 'manage/plugins/browser' ) ) {
 			return <PluginInstallButton { ...this.props } />;
 		}
 	},
 
-	isOutOfDate: function() {
+	isOutOfDate() {
 		if ( this.props.plugin.last_updated ) {
 			let lastUpdated = this.moment( this.props.plugin.last_updated, 'YYYY-MM-DD' );
 			return this.moment().diff( lastUpdated, 'years' ) >= this.OUT_OF_DATE_YEARS;
@@ -138,8 +145,8 @@ module.exports = React.createClass( {
 		return false;
 	},
 
-	getVersionWarning: function() {
-		var newVersion = this.getAvailableNewVersion();
+	getVersionWarning() {
+		const newVersion = this.getAvailableNewVersion();
 		if ( this.isOutOfDate() && ! newVersion ) {
 			return <Notice
 				className="plugin-meta__version-notice"
@@ -155,8 +162,8 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getUpdateWarning: function() {
-		var newVersion = this.getAvailableNewVersion();
+	getUpdateWarning() {
+		const newVersion = this.getAvailableNewVersion();
 		if ( newVersion ) {
 			return <Notice
 				className="plugin-meta__version-notice"
@@ -168,9 +175,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	isVersionCompatible: function() {
-		var siteVersion;
-
+	isVersionCompatible() {
 		if ( ! this.props.selectedSite ) {
 			return true;
 		}
@@ -184,13 +189,13 @@ module.exports = React.createClass( {
 			return false;
 		}
 
-		siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
-		return _some( this.props.plugin.compatibility, function( compatibleVersion ) {
+		const siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
+		return _some( this.props.plugin.compatibility, compatibleVersion => {
 			return compatibleVersion.indexOf( siteVersion ) === 0;
 		} );
 	},
 
-	hasInstallButton: function() {
+	hasInstallButton() {
 		if ( this.props.selectedSite ) {
 			return ! this.isInstalledOnSite( this.props.selectedSite ) &&
 				this.props.selectedSite.canUpdateFiles &&
@@ -199,7 +204,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getAvailableNewVersion: function() {
+	getAvailableNewVersion() {
 		if ( ! this.props.selectedSite || ! this.props.sites[ 0 ] ) {
 			return;
 		}
@@ -213,7 +218,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	handlePluginUpdates: function( event ) {
+	handlePluginUpdates( event ) {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
@@ -225,8 +230,8 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	render: function() {
-		var cardClasses = classNames( 'plugin-meta__information', {
+	render() {
+		const cardClasses = classNames( 'plugin-meta__information', {
 			'has-button': this.hasInstallButton(),
 			'has-site': !! this.props.selectedSite,
 			'is-placeholder': !! this.props.isPlaceholder

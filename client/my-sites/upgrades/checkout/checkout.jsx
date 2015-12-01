@@ -32,9 +32,20 @@ module.exports = React.createClass( {
 			return;
 		}
 
+		if ( this.props.cart.hasLoadedFromServer ) {
+			this.trackPageView();
+		}
+
 		window.scrollTo( 0, 0 );
-		analytics.tracks.recordEvent( 'calypso_checkout_page_view', { saved_cards: this.props.cards.get().length } );
+
 		upgradesActions.resetTransaction();
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
+			// if the cart hadn't loaded when this mounted, record the page view when it loads
+			this.trackPageView( nextProps );
+		}
 	},
 
 	componentDidUpdate: function() {
@@ -50,6 +61,15 @@ module.exports = React.createClass( {
 			this.redirectIfEmptyCart();
 			this.setState( { previousCart: nextCart } );
 		}
+	},
+
+	trackPageView: function( props ) {
+		props = props || this.props;
+
+		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
+			saved_cards: props.cards.get().length,
+			is_renewal: cartItems.hasRenewalItem( props.cart )
+		} );
 	},
 
 	redirectIfEmptyCart: function() {

@@ -13,7 +13,7 @@ var FormLabel = require( 'components/forms/form-label' ),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	CountrySelect = require( 'components/forms/form-country-select' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	phoneValidation = require( 'lib/phone-validation' );
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
@@ -68,7 +68,7 @@ module.exports = React.createClass( {
 			};
 
 		return (
-			<div className={ joinClasses( this.props.className, 'form-phone-input' ) }>
+			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-fieldset__country">
 					<FormLabel htmlFor="country_code">{ this.translate( 'Country Code', { context: 'The country code for the phone for the user.' } ) }</FormLabel>
 					<CountrySelect

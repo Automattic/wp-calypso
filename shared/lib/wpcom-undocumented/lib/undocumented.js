@@ -1736,7 +1736,8 @@ Undocumented.prototype.cancelPrivateRegistration = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );
 
 	this.wpcom.req.post( {
-		path: `/upgrades/${purchaseId}/cancel-privacy-protection`
+		path: `/upgrades/${purchaseId}/cancel-privacy-protection`,
+		apiVersion: '1.1'
 	}, fn );
 };
 

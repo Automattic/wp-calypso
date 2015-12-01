@@ -36,7 +36,10 @@ export default {
 			document.getElementById( 'secondary' )
 		);
 
-		context.layout.setState( { section: 'me' } );
+		context.layout.setState( {
+			section: 'me',
+			noSidebar: false
+		} );
 
 		next();
 	},
@@ -299,6 +302,7 @@ export default {
 
 		if ( isWelcome ) {
 			React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+			context.layout.setState( { noSidebar: true } );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );

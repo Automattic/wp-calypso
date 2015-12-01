@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -81,7 +81,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className={ joinClasses( this.props.className, alertClass ) }>
+			<div className={ classnames( this.props.className, alertClass ) }>
 				{ text }
 				{ dismiss }
 			</div>

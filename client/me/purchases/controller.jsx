@@ -9,11 +9,12 @@ import React from 'react';
 import analytics from 'analytics';
 import ConfirmCancelPurchase from './confirm-cancel-purchase';
 import CancelPurchase from './cancel-purchase';
+import CancelPurchasePlaceholder from './cancel-purchase-placeholder';
 import CancelPrivateRegistration from './cancel-private-registration';
 import EditCardDetails from './payment/edit-card-details';
 import EditCardDetailsData from 'components/data/purchases/edit-card-details';
+import EditCardDetailsLoadingPlaceholder from './payment/edit-card-details/loading-placeholder';
 import EditPaymentMethod from './payment/edit-payment-method';
-import i18n from 'lib/mixins/i18n';
 import Main from 'components/main';
 import ManagePurchaseData from 'components/data/purchases/manage-purchase';
 import ManagePurchase from './manage-purchase';
@@ -23,7 +24,9 @@ import PurchasesData from 'components/data/purchases';
 import PurchasesList from './list';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
+import titles from './titles';
 import userFactory from 'lib/user';
+import { isDataLoading } from './utils';
 
 const sites = sitesFactory();
 const user = userFactory();
@@ -48,14 +51,14 @@ function renderPage( component ) {
 
 function setTitle( ...title ) {
 	titleActions.setTitle(
-		concatTitle( i18n.translate( 'Purchases' ), ...title )
+		concatTitle( titles.purchases, ...title )
 	);
 }
 
 export default {
 	cancelPurchase( context ) {
 		setTitle(
-			i18n.translate( 'Cancel Purchase' )
+			titles.cancelPurchase
 		);
 
 		recordPageView(
@@ -68,6 +71,8 @@ export default {
 		renderPage(
 			<ManagePurchaseData
 				component={ CancelPurchase }
+				isDataLoading={ isDataLoading }
+				loadingPlaceholder={ CancelPurchasePlaceholder }
 				purchaseId={ context.params.purchaseId }
 				sites={ sites } />
 		);
@@ -75,7 +80,7 @@ export default {
 
 	cancelPrivateRegistration( context ) {
 		setTitle(
-			i18n.translate( 'Cancel Private Registration' )
+			titles.cancelPrivateRegistration
 		);
 
 		recordPageView(
@@ -95,7 +100,7 @@ export default {
 
 	confirmCancelPurchase( context ) {
 		setTitle(
-			i18n.translate( 'Confirm Cancel Purchase' )
+			titles.confirmCancelPurchase
 		);
 
 		recordPageView(
@@ -115,7 +120,7 @@ export default {
 
 	editCardDetails( context ) {
 		setTitle(
-			i18n.translate( 'Edit Card Details' )
+			titles.editCardDetails
 		);
 
 		recordPageView(
@@ -130,13 +135,14 @@ export default {
 				cardId={ context.params.cardId }
 				component={ EditCardDetails }
 				purchaseId={ context.params.purchaseId }
+				loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
 				sites={ sites } />
 		);
 	},
 
 	editPaymentMethod( context ) {
 		setTitle(
-			i18n.translate( 'Edit Payment Method' )
+			titles.editPaymentMethod
 		);
 
 		recordPageView(
@@ -169,7 +175,7 @@ export default {
 
 	managePurchase( context ) {
 		setTitle(
-			i18n.translate( 'Manage Purchase' )
+			titles.managePurchase
 		);
 
 		analytics.pageView.record(

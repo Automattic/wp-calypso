@@ -169,6 +169,8 @@ function boot() {
 			translatorInvitation: translatorInvitation
 		} ), document.getElementById( 'wpcom' ) );
 	} else {
+		analytics.setSuperProps( superProps );
+
 		if ( config.isEnabled( 'oauth' ) ) {
 			LoggedOutLayout = require( 'layout/logged-out-oauth' );
 		} else {

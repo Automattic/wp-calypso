@@ -7,7 +7,8 @@ require( 'lib/react-test-env-setup' )();
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' );
+	sinonChai = require( 'sinon-chai' ),
+	rewire = require( 'rewire' );
 
 chai.use( sinonChai );
 
@@ -15,8 +16,14 @@ chai.use( sinonChai );
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	PostActions = require( '../actions' ),
-	PostEditStore = require( '../post-edit-store' );
+	PostEditStore = require( '../post-edit-store' ),
+	PostsStore = require( '../posts-store' ),
+	wpcom = require( 'lib/wp' );
+
+/**
+ * Internal dependencies (rewire)
+ */
+var PostActions = rewire( '../actions' );
 
 describe( 'PostActions', function() {
 	var sandbox;
@@ -198,6 +205,48 @@ describe( 'PostActions', function() {
 				expect( spy.getCall( 0 ).args[ 1 ] ).to.eql( PostEditStore.get() );
 				done();
 			}, 0 );
+		} );
+
+		it( 'should normalize attributes and call the API', function( done ) {
+			const normalizeOriginal = PostActions.__get__( 'normalizeApiAttributes' );
+			const normalizeSpy = sandbox.spy( normalizeOriginal );
+			PostActions.__set__( 'normalizeApiAttributes', normalizeSpy );
+
+			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
+
+			const changedAttributes = {
+				ID: 777,
+				site_ID: 123,
+				author: {
+					ID: 3
+				},
+				title: 'OMG Unicorns',
+				categories: [ 199, 200 ]
+			};
+			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
+
+			sandbox.stub( wpcom, 'site' ).returns( {
+				post: function() {
+					return {
+						add: function( query, changedAttributes, callback ) {
+							callback( null, {} );
+						}
+					};
+				}
+			} );
+
+			PostActions.saveEdited( null, function( error, post ) {
+				PostActions.__set__( 'normalizeApiAttributes', normalizeOriginal );
+				expect( normalizeSpy ).to.have.been.calledWith( changedAttributes );
+				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
+					ID: 777,
+					site_ID: 123,
+					author: 3,
+					title: 'OMG Unicorns',
+					categories_by_id: [ '199', '200' ]
+				} );
+				done();
+			} );
 		} );
 	} );
 } );

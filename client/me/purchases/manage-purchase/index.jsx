@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import page from 'page';
 import classNames from 'classnames';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
@@ -11,20 +11,20 @@ import classNames from 'classnames';
 import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import { cartItems } from 'lib/cart-values';
+import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import NoticeArrowLink from 'notices/arrow-link';
+import { oldShowcaseUrl } from 'lib/themes/helpers';
+import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import SimpleNotice from 'notices/simple-notice';
+import titles from 'me/purchases/titles';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from '../paths';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
-import { oldShowcaseUrl } from 'lib/themes/helpers';
 import {
 	creditCardExpiresBeforeSubscription,
 	getName,
@@ -36,6 +36,7 @@ import {
 	isPaidWithCreditCard,
 	isRedeemable,
 	isRefundable,
+	isRemovable,
 	isRenewable,
 	isRenewing,
 	isIncludedWithPlan,
@@ -46,6 +47,7 @@ import {
 	showEditPaymentDetails
 } from 'lib/purchases';
 import { getPurchase, goToList, isDataLoading, recordPageView } from '../utils';
+import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
@@ -281,12 +283,12 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
-			return <span className="manage-purchase__detail" />;
+			return <span className="manage-purchase__content manage-purchase__detail" />;
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return (
-				<span className="manage-purchase__detail">
+				<span className="manage-purchase__content manage-purchase__detail">
 					{ this.translate( 'Included with plan' ) }
 				</span>
 			);
@@ -300,7 +302,7 @@ const ManagePurchase = React.createClass( {
 			}
 
 			return (
-				<span className="manage-purchase__detail">
+				<span className="manage-purchase__content manage-purchase__detail">
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
 				</span>
@@ -308,7 +310,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<span className="manage-purchase__detail">
+			<span className="manage-purchase__content manage-purchase__detail">
 				{ this.translate( 'None' ) }
 			</span>
 		);
@@ -324,7 +326,7 @@ const ManagePurchase = React.createClass( {
 
 		let paymentDetails = (
 			<span>
-				<em className="manage-purchase__detail-label">
+				<em className="manage-purchase__content manage-purchase__detail-label">
 					{ isLoading ? null : this.translate( 'Payment method' ) }
 				</em>
 				{ this.renderPaymentInfo() }
@@ -431,6 +433,32 @@ const ManagePurchase = React.createClass( {
 		}
 	},
 
+	renderRemovePurchaseInformation() {
+		const purchase = getPurchase( this.props ),
+			contactSupportUrl = 'https://support.wordpress.com/contact/';
+
+		if ( ! isRemovable( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<div className="manage-purchase__remove-box">
+				<em className="manage-purchase__content manage-purchase__remove-text">{ this.translate(
+					'{{strong}}Looking to remove this purchase?{{/strong}} Please {{a}}contact support{{/a}} to remove %(purchaseName)s from your account.',
+					{
+						args: {
+							purchaseName: getName( purchase )
+						},
+						components: {
+							a: <a href={ contactSupportUrl } target="_blank" />,
+							strong: <strong />
+						}
+					}
+				) }</em>
+			</div>
+		);
+	},
+
 	renderEditPaymentMethodNavItem() {
 		const purchase = getPurchase( this.props ),
 			{ domain, id, payment } = purchase;
@@ -450,7 +478,7 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props ),
 			{ domain, id } = purchase;
 
-		if ( isExpired( purchase ) || ! isCancelable( purchase ) ) {
+		if ( ! isCancelable( purchase ) ) {
 			return null;
 		}
 
@@ -496,6 +524,7 @@ const ManagePurchase = React.createClass( {
 			price,
 			renewsOrExpiresOnLabel,
 			renewsOrExpiresOn,
+			removePurchaseInformation,
 			renewButton,
 			expiredRenewNotice,
 			editPaymentMethodNavItem,
@@ -519,41 +548,43 @@ const ManagePurchase = React.createClass( {
 			productLink = this.renderProductLink();
 			price = this.renderPrice();
 			renewsOrExpiresOnLabel = this.renderRenewsOrExpiresOnLabel();
+			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
+			removePurchaseInformation = this.renderRemovePurchaseInformation();
 			renewButton = this.renderRenewButton();
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
 			cancelPrivateRegistrationNavItem = this.renderCancelPrivateRegistration();
-			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
 		}
 
 		return (
 			<div>
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
-						<strong className="manage-purchase__title">{ purchaseTitleText }</strong>
-						<span className="manage-purchase__subtitle">
+						<strong className="manage-purchase__content manage-purchase__title">{ purchaseTitleText }</strong>
+						<span className="manage-purchase__content manage-purchase__subtitle">
 							{ purchaseTypeText } { purchaseTypeSeparator } { siteName ? siteName : siteDomain }
 						</span>
-						<span className="manage-purchase__settings-link">
+						<span className="manage-purchase__content manage-purchase__settings-link">
 							{ productLink }
 						</span>
 					</header>
 					<ul className="manage-purchase__meta">
 						<li>
-							<em className="manage-purchase__detail-label">
+							<em className="manage-purchase__content manage-purchase__detail-label">
 								{ isDataLoading( this.props ) ? null : this.translate( 'Price' ) }
 							</em>
-							<span className="manage-purchase__detail">{ price }</span>
+							<span className="manage-purchase__content manage-purchase__detail">{ price }</span>
 						</li>
 						<li>
-							<em className="manage-purchase__detail-label">{ renewsOrExpiresOnLabel }</em>
-							<span className="manage-purchase__detail">
+							<em className="manage-purchase__content manage-purchase__detail-label">{ renewsOrExpiresOnLabel }</em>
+							<span className="manage-purchase__content manage-purchase__detail">
 								{ renewsOrExpiresOn }
 							</span>
 						</li>
 						{ this.renderPaymentDetails() }
 					</ul>
+					{ removePurchaseInformation }
 					{ renewButton }
 				</Card>
 
@@ -576,7 +607,9 @@ const ManagePurchase = React.createClass( {
 			<span>
 				{ this.renderPathNotice() }
 				<Main className="manage-purchase">
-					<HeaderCake onClick={ goToList }>{ this.translate( 'Manage Purchase' ) }</HeaderCake>
+					<HeaderCake onClick={ goToList }>
+						{ titles.managePurchase }
+					</HeaderCake>
 					{ this.renderNotices() }
 					{ this.renderPurchaseDetail() }
 				</Main>

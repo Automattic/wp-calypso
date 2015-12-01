@@ -59,7 +59,7 @@ var EditorFeaturedImage = React.createClass( {
 
 	removeImage: function() {
 		PostActions.edit( {
-			featured_image: null
+			featured_image: ''
 		} );
 
 		stats.recordStat( 'featured_image_removed' );

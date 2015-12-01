@@ -1,26 +1,31 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	i18n = require( 'lib/mixins/i18n' );
+import React from 'react/addons'
+import i18n from 'lib/mixins/i18n'
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
-	Rating = require( 'components/rating' ),
-	PluginVersion = require( 'my-sites/plugins/plugin-version' ),
-	PluginRatings = require( 'my-sites/plugins/plugin-ratings/' ),
-	SectionHeader = require( 'components/section-header' ),
-	analytics = require( 'analytics' );
+import Card from 'components/card'
+import Gridicon from 'components/gridicon'
+import Rating from 'components/rating'
+import PluginVersion from 'my-sites/plugins/plugin-version'
+import PluginRatings from 'my-sites/plugins/plugin-ratings/'
+import SectionHeader from 'components/section-header'
+import analytics from 'analytics'
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
 
 	displayName: 'PluginInformation',
 
-	getDefaultProps: function() {
+	propTypes: {
+		plugin: React.PropTypes.object.isRequired,
+		isPlaceholder: React.PropTypes.bool
+	},
+
+	getDefaultProps() {
 		return {
 			plugin: {
 				rating: 0,
@@ -28,7 +33,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	renderHomepageLink: function() {
+	renderHomepageLink() {
 		if ( ! this.props.plugin || ! this.props.plugin.plugin_url ) {
 			return;
 		}
@@ -52,7 +57,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderWporgLink: function() {
+	renderWporgLink() {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
@@ -70,7 +75,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderWPCOMPluginSupportLink: function() {
+	renderWPCOMPluginSupportLink() {
 		if ( ! this.props.plugin || ! this.props.plugin.support_URL ) {
 			return;
 		}
@@ -87,7 +92,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderStarRating: function() {
+	renderStarRating() {
 		return (
 			<div>
 				<div className="plugin-information__rating-stars"><Rating rating={ this.props.plugin.rating } /></div>
@@ -101,16 +106,16 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderLastUpdated: function() {
+	renderLastUpdated() {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
 			let dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
 			return <div className="plugin-information__last-updated">{ this.translate( 'Latest release %(dateFromNow)s', { args: { dateFromNow: dateFromNow } } ) }</div>;
 		}
 	},
 
-	renderLimits: function() {
-		var limits = this.getCompatibilityLimits(),
-			versionView;
+	renderLimits() {
+		const limits = this.getCompatibilityLimits();
+		let versionView;
 
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion !== limits.maxVersion ) {
 			versionView = <div className="plugin-information__version-limit">
@@ -131,11 +136,11 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderRatingsDetail: function() {
+	renderRatingsDetail() {
 		return <PluginRatings plugin={ this.props.plugin } />;
 	},
 
-	getCompatibilityLimits: function() {
+	getCompatibilityLimits() {
 		if ( this.props.plugin.compatibility && this.props.plugin.compatibility.length ) {
 			return {
 				maxVersion: this.props.plugin.compatibility[ this.props.plugin.compatibility .length - 1 ],
@@ -145,7 +150,7 @@ module.exports = React.createClass( {
 		return {};
 	},
 
-	renderPlaceholder: function() {
+	renderPlaceholder() {
 		return (
 			<div className="plugin-information is-placeholder">
 				<SectionHeader text={ this.translate( 'Plugin Information' ) } />
@@ -170,7 +175,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderWpcom: function() {
+	renderWpcom() {
 		return (
 			<div className="plugin-information">
 				<SectionHeader label={ this.translate( 'Plugin Information' ) } />
@@ -184,7 +189,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderWporg: function() {
+	renderWporg() {
 		return (
 			<div className="plugin-information">
 				<SectionHeader label={ this.translate( 'Plugin Information' ) } />
@@ -209,7 +214,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}

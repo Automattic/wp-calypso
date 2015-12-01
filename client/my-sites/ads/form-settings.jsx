@@ -135,7 +135,7 @@ module.exports = React.createClass( {
 			name: '',
 			optimized_ads: false,
 			paypal: '',
-			show_to_logged_in: this.props.site.jetpack ? 'yes' : 'pause',
+			show_to_logged_in: 'yes',
 			state: '',
 			taxid_last4: '',
 			tos: 'signed',

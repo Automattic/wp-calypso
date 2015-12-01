@@ -15,6 +15,7 @@ export default {
 		titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
 
 		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.layout.setState( { noSidebar: true } );
 
 		React.render(
 			React.createElement( Main, context.params ),
