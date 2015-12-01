@@ -6,3 +6,9 @@
 	position: fixed;
 	z-index: 20;
 }
+
+@media (max-width: 960px) {
+	.sticky-panel.is-sticky .sticky-panel__content {
+		margin-top: 8px;
+	}
+}
