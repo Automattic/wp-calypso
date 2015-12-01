@@ -58,13 +58,15 @@ module.exports = React.createClass( {
 	},
 
 	renderThemesList: function() {
-		var themes = this.props.themes.map( function( t ) {
-			return {
-				id: ThemeHelper.getSlugFromName( t ),
-				name: t,
-				screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + ThemeHelper.getSlugFromName( t ) + '/screenshot.png?w=660'
-			}
-		} );
+		var actionLabel = this.translate( 'Pick' ),
+			themes = this.props.themes.map( function( theme ) {
+				return {
+					id: ThemeHelper.getSlugFromName( theme ),
+					name: theme,
+					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + ThemeHelper.getSlugFromName( theme ) + '/screenshot.png?w=660',
+					actionLabel: actionLabel
+				}
+			} );
 		return (
 			<ThemesList
 				getButtonOptions= { noop }
