@@ -18,7 +18,7 @@ export default React.createClass( {
 			status: 'is-info',
 			showDismiss: true,
 			className: '',
-			onClick: noop
+			onDismissClick: noop
 		};
 	},
 
@@ -67,7 +67,7 @@ export default React.createClass( {
 		if ( this.props.showDismiss ) {
 			noticeClass = classnames( noticeClass, 'is-dismissable' );
 			dismiss = (
-				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onClick } >
+				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onDismissClick } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
