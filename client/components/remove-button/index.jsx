@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/object/assign';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
 import Gridicon from 'components/gridicon';
@@ -27,18 +26,13 @@ export default React.createClass( {
 		};
 	},
 
-	getIconAssignments(){
-
-	},
-
 	render() {
-		const element = 'button';
 		const buttonIcons = {
-			'remove': 		'cross',
-			'trash': 			'trash',
-			'disconnect':	'link-break',
-			'deactivate':	'cross',
-			'delete':			'trash',
+			remove: 'cross',
+			trash: 'trash',
+			disconnect: 'link-break',
+			deactivate: 'cross',
+			delete: 'trash',
 		};
 		const buttonClasses = classNames( this.props.className, {
 			'button-remove': true,
@@ -46,15 +40,9 @@ export default React.createClass( {
 			'is-scary': this.props.scary
 		} );
 
-		if( this.props.compact ){
-			var iconSize = 12;
-		} else {
-			var iconSize = 24;
-		}
-
 		return(
 			<button onClick={ this.props.onClick } disabled={ this.props.disabled } className={ buttonClasses }>
-				<Gridicon icon={ buttonIcons[this.props.icon] } size={ iconSize } />
+				<Gridicon icon={ buttonIcons[this.props.icon] } size={ this.props.compact ? 12 : 24 } />
 				{ this.props.children }
 			</button>
 		);
