@@ -41,7 +41,8 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
 import PlanNudge from 'components/plans/plan-nudge'
 import FeatureExample from 'components/feature-example'
 import SectionHeader from 'components/section-header'
-import SectionHeaderButton from 'components/section-header/button'
+import ButtonGroup from 'components/button-group'
+import Button from 'components/button'
 
 /**
  * Module variables
@@ -434,7 +435,7 @@ export default React.createClass( {
 		} );
 
 		headerMarkup = (
-			<SectionHeader label={ header }>
+			<SectionHeader label={ header } className="plugins__section-actions">
 				{ disableManage ? null : this.getCurrentActionButtons() }
 			</SectionHeader>
 		);
@@ -506,49 +507,59 @@ export default React.createClass( {
 
 	getCurrentActionButtons() {
 		let buttons = [];
+		let updateButtons = [];
+		let activateButtons = [];
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 
 		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected( 'updates' ) ) { // needs updates
-			buttons.push( <SectionHeaderButton onClick={ this.updateSelected }>{ this.translate( 'Update' ) }</SectionHeaderButton> );
-		}
-
-		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected ) {  // needs remove
-			buttons.push( <SectionHeaderButton onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</SectionHeaderButton> );
+			updateButtons.push( <Button compact onClick={ this.updateSelected }>{ this.translate( 'Update' ) }</Button> );
 		}
 
 		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected() ) { // needs autoupdates
-			buttons.push( <SectionHeaderButton onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</SectionHeaderButton> );
-			buttons.push( <SectionHeaderButton onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Manually update' ) }</SectionHeaderButton> );
+			updateButtons.push( <Button compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+			updateButtons.push( <Button compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Manually update' ) }</Button> );
+		}
+
+		buttons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
+
+		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected ) {  // needs remove
+			buttons.push( <ButtonGroup><Button compact onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
 		}
 
 		if ( this.areSelected( 'inactive' ) ) { // needs activate button
-			buttons.push( <SectionHeaderButton onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</SectionHeaderButton> )
+			activateButtons.push( <Button compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
 		}
 
 		if ( this.areSelected( 'active' ) ) {
 			let deactivateButton = isJetpackSelected
-				? <SectionHeaderButton onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</SectionHeaderButton>
-				: <SectionHeaderButton onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</SectionHeaderButton>;
-			buttons.push( deactivateButton )
+				? <Button compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
+				: <Button compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
+			activateButtons.push( deactivateButton )
 		}
+
+		buttons.push( <ButtonGroup>{ activateButtons }</ButtonGroup> );
 
 		if ( this.props && this.props.filter === 'updates' ) {
 			buttons.push(
-				<SectionHeaderButton onClick={ this.updateAllPlugins } >
-					{ this.translate( 'Update All', { context: 'button label' } ) }
-				</SectionHeaderButton>
+				<ButtonGroup>
+					<Button compact onClick={ this.updateAllPlugins } >
+						{ this.translate( 'Update All', { context: 'button label' } ) }
+					</Button>
+				</ButtonGroup>
 			);
 		}
 
 		buttons.push(
-			<SectionHeaderButton onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>
-					{
-						this.state.bulkManagement ?
-						this.translate( 'Done', { context: 'button label' } ) :
-						this.translate( 'Bulk Edit', { context: 'button label' } )
-					}
-			</SectionHeaderButton>
+			<ButtonGroup>
+				<Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>
+						{
+							this.state.bulkManagement
+							? this.translate( 'Done', { context: 'button label' } )
+							: this.translate( 'Bulk Edit', { context: 'button label' } )
+						}
+				</Button>
+			</ButtonGroup>
 		);
 		return buttons;
 	},
@@ -649,16 +660,15 @@ export default React.createClass( {
 					illustration={ emptyContentData.illustration }
 					actionURL={ emptyContentData.actionURL }
 					action={ emptyContentData.action } />
-			);;
-		} else {
-			return (
-				<div className="plugins__lists">
-					{ this.renderPluginList( this.getWpcomPlugins(), this.translate( 'WordPress.com Plugins' ), true ) }
-					{ this.renderPluginList( this.getJetpackPlugins(), this.translate( 'Jetpack Plugins' ) ) }
-					{ ! this.state.plugins && this.placeholders() }
-				</div>
 			);
 		}
+		return (
+			<div className="plugins__lists">
+				{ this.renderPluginList( this.getWpcomPlugins(), this.translate( 'WordPress.com Plugins' ), true ) }
+				{ this.renderPluginList( this.getJetpackPlugins(), this.translate( 'Jetpack Plugins' ) ) }
+				{ ! this.state.plugins && this.placeholders() }
+			</div>
+		);
 	},
 
 	getMockPluginItems() {
