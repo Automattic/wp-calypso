@@ -124,8 +124,10 @@ module.exports = React.createClass( {
 			this.setState( {
 				isSubmitting: false,
 				confirmation: {
-					title: this.translate( "We're on it!" ),
-					message: this.translate( "We've received your message, and you'll hear back from one of our Happiness Engineers shortly." )
+					title: this.translate( 'We\'re on it!' ),
+					message: this.translate(
+						'We\'ve received your message, and you\'ll hear back from ' +
+						'one of our Happiness Engineers shortly.' )
 				}
 			} );
 		} );
@@ -149,7 +151,15 @@ module.exports = React.createClass( {
 				isSubmitting: false,
 				confirmation: {
 					title: this.translate( 'Got it!' ),
-					message: this.translate( 'Your message has been submitted to our {{a}}community forums{{/a}}', { components: { a: <a href={ data.topic_URL } /> } } )
+					message: this.translate(
+						'Your message has been submitted to our ' +
+						'{{a}}community forums{{/a}}',
+						{
+							components: {
+								a: <a href={ data.topic_URL } />
+							}
+						}
+					)
 				}
 			} );
 		} );
@@ -258,7 +268,12 @@ module.exports = React.createClass( {
 
 	getPublicForumsForm: function() {
 		const { isSubmitting } = this.state;
-		const formDescription = this.translate( 'Post a new question in our {{strong}}public forums{{/strong}}, where it may be answered by helpful community members, by submitting the form below. {{strong}}Please do not{{/strong}} provide financial or contact information when submitting this form.',
+		const formDescription = this.translate(
+			'Post a new question in our {{strong}}public forums{{/strong}}, ' +
+			'where it may be answered by helpful community members, ' +
+			'by submitting the form below. ' +
+			'{{strong}}Please do not{{/strong}} provide financial or ' +
+			'contact information when submitting this form.',
 			{
 				components: {
 					strong: <strong />
