@@ -11,7 +11,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
@@ -68,7 +68,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<SimpleNotice className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
+			<Notice className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
 				{ this.translate( 'There is an issue connecting to %s. {{button}}Reconnect {{icon/}}{{/button}}', {
 					args: connection.label,
 					components: {
@@ -83,7 +83,7 @@ export default React.createClass( {
 						)
 					}
 				} ) }
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

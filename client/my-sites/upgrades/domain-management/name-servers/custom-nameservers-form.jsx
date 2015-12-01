@@ -15,7 +15,7 @@ import FormFooter from 'my-sites/upgrades/domain-management/components/form-foot
 import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
 import analyticsMixin from 'lib/mixins/analytics';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 
 const MIN_NAMESERVER_LENGTH = 2,
 	MAX_NAMESERVER_LENGTH = 4;
@@ -38,7 +38,7 @@ const CustomNameserversForm = React.createClass( {
 		const nameServersSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/';
 
 		return (
-			<SimpleNotice
+			<Notice
 				status="is-warning"
 				showDismiss={ false }>
 				{ this.translate(
@@ -51,7 +51,7 @@ const CustomNameserversForm = React.createClass( {
 						onClick={ this.handleLearnMoreClick }>
 					{ this.translate( 'Learn more.' ) }
 				</a>
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

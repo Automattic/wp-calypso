@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classnames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' );
+import React from 'react/addons';
+import classnames from 'classnames';
+import noop from 'lodash/utility/noop';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
-	displayName: 'SimpleNotice',
+export default React.createClass( {
+	displayName: 'Notice',
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			status: 'is-info',
 			showDismiss: true,
@@ -34,7 +34,7 @@ module.exports = React.createClass( {
 		className: React.PropTypes.string
 	},
 
-	renderChildren: function() {
+	renderChildren() {
 		let content;
 
 		if ( typeof this.props.children === 'string' ) {
@@ -51,12 +51,12 @@ module.exports = React.createClass( {
 		return content;
 	},
 
-	render: function() {
-		var noticeClass, dismiss;
+	render() {
+		let dismiss;
 
 		// The class determines the nature of a notice
 		// and its status.
-		noticeClass = classnames( 'notice', this.props.status );
+		let noticeClass = classnames( 'notice', this.props.status );
 
 		if ( this.props.isCompact ) {
 			noticeClass = classnames( noticeClass, 'is-compact' );
@@ -81,5 +81,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-
 } );

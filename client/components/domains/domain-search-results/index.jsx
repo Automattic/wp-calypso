@@ -6,7 +6,7 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	times = require( 'lodash/utility/times' ),
 	contains = require( 'lodash/collection/contains' ),
-	SimpleNotice = require( 'notices/simple-notice' );
+	Notice = require( 'components/notice' );
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ var DomainSearchResults = React.createClass( {
 		if ( availableDomain ) {
 			// should use real notice component or custom class
 			availabilityElement = (
-				<SimpleNotice
+				<Notice
 					className="domain-search-results__domain-availability-copy"
 					status="is-success"
 					showDismiss={ false }>
@@ -46,7 +46,7 @@ var DomainSearchResults = React.createClass( {
 							{ args: { domain: lastDomainSearched } }
 						)
 					}
-				</SimpleNotice>
+				</Notice>
 			);
 
 			domainSuggestionElement = (
@@ -71,12 +71,12 @@ var DomainSearchResults = React.createClass( {
 
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
-					<SimpleNotice
+					<Notice
 						className="domain-search-results__domain-availability-copy"
 						status="is-warning"
 						showDismiss={ false }>
 						{ domainUnavailableMessage} { mappingOffer }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		}

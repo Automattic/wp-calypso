@@ -12,7 +12,7 @@ import domainConstants from 'lib/domains/constants';
 const domainTypes = domainConstants.type;
 
 const TestUtils = React.addons.TestUtils;
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 
 chai.use( sinonChai );
 
@@ -23,12 +23,12 @@ describe( 'DomainWarnings', () => {
 		i18n.translate = identity;
 		DomainWarnings = require( '../' );
 		DomainWarnings.prototype.__reactAutoBindMap.translate = identity;
-		SimpleNotice.prototype.__reactAutoBindMap.translate = identity;
+		Notice.prototype.__reactAutoBindMap.translate = identity;
 	} );
 
 	afterEach( () => {
 		delete DomainWarnings.prototype.__reactAutoBindMap.translate;
-		delete SimpleNotice.prototype.__reactAutoBindMap.translate;
+		delete Notice.prototype.__reactAutoBindMap.translate;
 		i18n.translate = translateFn;
 	} );
 

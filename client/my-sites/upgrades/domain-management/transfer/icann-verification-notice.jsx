@@ -8,7 +8,7 @@ import React from 'react';
  */
 import IcannVerification from 'my-sites/upgrades/domain-management/components/icann-verification';
 import { getSelectedDomain } from 'lib/domains';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 
 let IcannVerificationNotice = React.createClass( {
 	propTypes: {
@@ -26,7 +26,7 @@ let IcannVerificationNotice = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice className="icann-verification"
+			<Notice className="icann-verification"
 					showDismiss={ false }
 					status={ null }>
 				<p>
@@ -38,7 +38,7 @@ let IcannVerificationNotice = React.createClass( {
 
 				<IcannVerification.Button submitting={ this.props.submitting }
 					onClick={ this.props.handleSubmit } />
-			</SimpleNotice>
+			</Notice>
 		);
 	}
 } );

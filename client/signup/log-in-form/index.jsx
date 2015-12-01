@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var wpcom = require( 'lib/wp' ),
 	notices = require( 'notices' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),

@@ -7,7 +7,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Main from 'components/main';
 import Card from 'components/card/compact';
 import Header from 'my-sites/upgrades/domain-management/components/header';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import paths from 'my-sites/upgrades/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
@@ -71,7 +71,7 @@ const PrimaryDomain = React.createClass( {
 	},
 	errors() {
 		if ( this.state.errorMessage ) {
-			return <SimpleNotice status="is-error">{ this.state.errorMessage }</SimpleNotice>;
+			return <Notice status="is-error">{ this.state.errorMessage }</Notice>;
 		}
 	},
 	render() {
@@ -100,7 +100,7 @@ const PrimaryDomain = React.createClass( {
 						</div>
 					</section>
 
-					<SimpleNotice
+					<Notice
 						showDismiss={ false }
 						className="primary-domain-notice">
 						{ this.translate( 'The primary domain for this site is currently %(oldDomainName)s. If you update the primary domain, all other domains will redirect to %(newDomainName)s.', {
@@ -109,7 +109,7 @@ const PrimaryDomain = React.createClass( {
 								newDomainName: this.props.selectedDomainName
 							}
 						} ) }
-					</SimpleNotice>
+					</Notice>
 
 					<section className="primary-domain-actions">
 						<button

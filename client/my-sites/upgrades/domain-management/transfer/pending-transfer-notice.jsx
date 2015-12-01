@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Button from 'components/button';
 import notices from 'notices';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import { acceptTransfer, declineTransfer } from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 
@@ -32,7 +32,7 @@ const PendingTransferNotice = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice showDismiss={ false } status={ null }>
+			<Notice showDismiss={ false } status={ null }>
 				<p>
 					{ this.translate(
 						'This domain may currently be pending transfer. If you have ' +
@@ -51,7 +51,7 @@ const PendingTransferNotice = React.createClass( {
 						disabled={ this.state.submitting }>
 					{ this.translate( 'Decline Transfer' ) }
 				</Button>
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

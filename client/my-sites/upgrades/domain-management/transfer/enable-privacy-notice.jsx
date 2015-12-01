@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Button from 'components/button';
 import notices from 'notices';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import { enablePrivacyProtection } from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 
@@ -31,7 +31,7 @@ const EnablePrivacyNotice = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice showDismiss={ false } status={ null }>
+			<Notice showDismiss={ false } status={ null }>
 				<p>
 					{ this.translate(
 						'Although you have purchased Private Registration for this ' +
@@ -52,7 +52,7 @@ const EnablePrivacyNotice = React.createClass( {
 						disabled={ this.state.submitting }>
 					{ this.translate( 'Enable Private Registration' ) }
 				</Button>
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

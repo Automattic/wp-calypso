@@ -11,7 +11,8 @@ var React = require( 'react/addons' ),
  */
 var CompactCard = require( 'components/card/compact' ),
 	Gridicon = require( 'components/gridicon' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
+	NoticeAction = require( 'notices/arrow-link' ),
 	SiteIcon = require( 'components/site-icon' ),
 	PostRelativeTimeStatus = require( 'my-sites/post-relative-time-status' ),
 	PopoverMenu = require( 'components/popover/menu' ),
@@ -214,14 +215,19 @@ module.exports = React.createClass( {
 
 	showStatusChange: function() {
 		if ( this.props.post.status === 'publish' ) {
-			return <Notice isCompact
+			return (
+					<Notice isCompact = { true }
 						status="is-success"
 						text={ 'Post successfully published.' }
 						button={ 'View' }
-						href={ this.props.post.URL }
-						showDismiss={ false } />;
+						showDismiss={ false }>
+						<NoticeAction href={ this.props.post.URL }>
+							{ 'View' }
+						</NoticeAction>
+					</Notice>
+					);
 		} else if ( this.state.hasError ) {
-			return <Notice isCompact
+			return <Notice isCompact = { true }
 						status="is-error"
 						text={ 'There was a problem.' }
 						showDismiss={ false } />;

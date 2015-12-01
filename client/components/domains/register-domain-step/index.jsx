@@ -17,7 +17,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ).undocumented(),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	{ getFixedDomainSearch, canRegister } = require( 'lib/domains' ),
 	SearchCard = require( 'components/search-card' ),
 	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),

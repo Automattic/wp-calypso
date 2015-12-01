@@ -1,18 +1,21 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:notices' );
+import React from 'react';
+import classNames from 'classnames';
+import debugModule from 'debug';
 
 /**
  * Internal Dependencies
  */
-var Notice = require( './notice' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	DeleteSiteNotices = require( './delete-site-notices' );
+import Notice from 'components/notice';
+import notices from 'notices';
+import observe from 'lib/mixins/data-observe';
+import DeleteSiteNotices from './delete-site-notices';
 
-module.exports = React.createClass( {
+const debug = debugModule( 'calypso:notices' );
+
+export default React.createClass( {
 
 	displayName: 'NoticesList',
 
@@ -27,11 +30,11 @@ module.exports = React.createClass( {
 		forcePinned: React.PropTypes.bool
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return { pinned: this.props.forcePinned };
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			id: 'overlay-notices',
 			notices: Object.freeze( [] ),
@@ -39,17 +42,17 @@ module.exports = React.createClass( {
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting Notices React component.' );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		if ( ! this.props.forcePinned ) {
 			window.addEventListener( 'scroll', this.updatePinnedState );
 		}
 	},
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( this.props.forcePinned && ! prevProps.forcePinned ) {
 			window.removeEventListener( 'scroll', this.updatePinnedState );
 			this.setState( { pinned: true } );
@@ -59,22 +62,32 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.updatePinnedState );
 	},
 
-	updatePinnedState: function() {
+	updatePinnedState() {
 		this.setState( { pinned: window.scrollY > 0 } );
 	},
 
-	render: function() {
-		var noticesRaw = this.props.notices[ this.props.id ] || [],
-			noticesList = noticesRaw.map( function( notice, index ) {
+	removeNotice( notice ) {
+		if ( notice ) {
+			notices.removeNotice( notice );
+		}
+	},
+
+	render() {
+		const noticesRaw = this.props.notices[ this.props.id ] || [];
+		const noticesList = noticesRaw.map( function( notice, index ) {
 				return (
-					<Notice key={ 'notice-' + index } type={ notice.type } status={ notice.status } text={ notice.text }
-					duration={ notice.duration } button={ notice.button } href={ notice.href } raw={ notice }
-					container={ notice.container } arrow={ notice.arrow }
-					isCompact={ notice.isCompact } onClick={ notice.onClick } showDismiss={ notice.showDismiss } />
+					<Notice
+						key={ 'notice-' + index }
+						status={ notice.status }
+						text={ notice.text }
+						isCompact={ notice.isCompact }
+						onClick={ this.removeNotice.bind( this, notice ) }
+						showDismiss={ notice.showDismiss }
+					/>
 				);
 			}, this );
 
@@ -87,9 +100,10 @@ module.exports = React.createClass( {
 					<DeleteSiteNotices />
 					{ noticesList }
 				</div>
-				{ this.state.pinned && ! this.props.forcePinned ? <div className="notices-list__whitespace"/> : null }
+				{ this.state.pinned && ! this.props.forcePinned
+					? <div className="notices-list__whitespace" />
+					: null }
 			</div>
 		);
 	}
-
 } );

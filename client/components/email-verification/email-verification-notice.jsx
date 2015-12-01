@@ -10,8 +10,7 @@ var React = require( 'react' ),
  */
 var notices = require( 'notices' ),
 	sites = require( 'lib/sites-list' )(),
-	Notice = require( 'notices/notice' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
 	emailVerification = require( 'components/email-verification' );
 
 module.exports = React.createClass( {
@@ -132,7 +131,7 @@ module.exports = React.createClass( {
 			</div> );
 		}
 
-		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } className={ 'is-email-verification' } />;
+		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } />;
 	},
 
 	verifiedNotice: function() {
@@ -140,7 +139,7 @@ module.exports = React.createClass( {
 			this.translate( "You've successfully verified your email address." ) :
 			this.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." );
 
-		return <SimpleNotice status="is-success" onClick={ this.dismissNotice }>{ noticeText }</SimpleNotice>;
+		return <Notice status="is-success" onClick={ this.dismissNotice }>{ noticeText }</Notice>;
 	},
 
 	render: function() {

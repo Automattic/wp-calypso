@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import { getSelectedDomain } from 'lib/domains';
 
 const TransferProhibitedNotice = React.createClass( {
@@ -23,7 +23,7 @@ const TransferProhibitedNotice = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice showDismiss={ false } status="is-error">
+			<Notice showDismiss={ false } status="is-error">
 				<p>
 					{ this.translate(
 						'Please note that due to the Internet Corporation for Assigned ' +
@@ -32,7 +32,7 @@ const TransferProhibitedNotice = React.createClass( {
 						'initial registration, or the first 60 days after a transfer.'
 					) }
 				</p>
-			</SimpleNotice>
+			</Notice>
 		);
 	}
 } );

@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var Notice = require( 'notices/notice' ),
+var Notice = require( 'components/notice' ),
 	notices = require( 'notices' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 

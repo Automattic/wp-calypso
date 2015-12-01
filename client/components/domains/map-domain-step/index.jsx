@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var cartItems = require( 'lib/cart-values' ).cartItems,
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	{ getFixedDomainSearch, canMap, canRegister } = require( 'lib/domains' ),
 	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainProductPrice = require( 'components/domains/domain-product-price' ),

@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Button from 'components/button';
 import notices from 'notices';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
 import { enableDomainLocking } from 'lib/upgrades/actions';
 
 const EnableDomainLockingNotice = React.createClass( {
@@ -27,7 +27,7 @@ const EnableDomainLockingNotice = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice showDismiss={ false } status={ null }>
+			<Notice showDismiss={ false } status={ null }>
 				<p>
 					{ this.translate(
 						'This domain is currently {{strong}}unlocked{{/strong}}. If you ' +
@@ -42,7 +42,7 @@ const EnableDomainLockingNotice = React.createClass( {
 						disabled={ this.state.submitting }>
 					{ this.translate( 'Enable Domain Locking' ) }
 				</Button>
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 

@@ -15,7 +15,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	MapDomain = require( 'components/domains/map-domain' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
 	signupUtils = require( 'signup/utils' );
 
 module.exports = React.createClass( {
@@ -199,9 +199,9 @@ module.exports = React.createClass( {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains-step__section-wrapper">
-					<SimpleNotice status='is-error' showDismiss={ false }>
+					<Notice status='is-error' showDismiss={ false }>
 						{ this.props.step.errors.message }
-					</SimpleNotice>
+					</Notice>
 					{ content }
 				</div>
 			);

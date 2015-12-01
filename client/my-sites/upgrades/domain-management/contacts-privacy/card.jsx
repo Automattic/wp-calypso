@@ -9,7 +9,7 @@ const React = require( 'react' ),
  */
 const CompactCard = require( 'components/card/compact' ),
 	ContactDisplay = require( './contact-display' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
 	paths = require( 'my-sites/upgrades/paths' ),
 	SectionHeader = require( 'components/section-header' );
 
@@ -54,7 +54,7 @@ const ContactsPrivacyCard = React.createClass( {
 	getNotice() {
 		if ( this.props.privacyProtectionEnabled ) {
 			return (
-				<SimpleNotice status={ 'is-success' } showDismiss={ false }>
+				<Notice status={ 'is-success' } showDismiss={ false }>
 					{ this.translate(
 						'{{strong1}}Privacy Protection{{/strong1}} is turned on for this domain. ' +
 						'Your contact information is {{strong2}}private{{/strong2}}. ',
@@ -65,12 +65,12 @@ const ContactsPrivacyCard = React.createClass( {
 							}
 						}
 					) }
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 
 		return (
-			<SimpleNotice status={ 'is-warning' } showDismiss={ false }>
+			<Notice status={ 'is-warning' } showDismiss={ false }>
 				{ this.translate(
 					'{{strong1}}Privacy Protection{{/strong1}} is turned off for this domain. ' +
 					'Your contact information is {{strong2}}public{{/strong2}}. ' +
@@ -83,7 +83,7 @@ const ContactsPrivacyCard = React.createClass( {
 						}
 					}
 				) }
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 
