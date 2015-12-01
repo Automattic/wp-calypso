@@ -15,7 +15,7 @@ import config from 'config'
 
 export default React.createClass( {
 
-	displayName: 'LoggedOutInviteSignupForm',
+	displayName: 'InviteAcceptLoggedOut',
 
 	getInitialState() {
 		return { error: false, bearerToken: false, userData: false, submitting: false };
