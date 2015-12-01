@@ -39,6 +39,10 @@ const ConfirmCancelPurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		loadEndpointForm( purchase, ( html, initializeForm ) => {
+			if ( ! this.isMounted() ) {
+				return;
+			}
+
 			this.setState( { isFormLoaded: true }, () => {
 				const container = React.findDOMNode( this.refs.root );
 
