@@ -24,8 +24,11 @@
 	text-align: center;
 	width: 100%;
 
-	&.is-primary {
-		margin-bottom: .5em;
+	&.expiry-space-trials-enabled {
+		margin-bottom: 0.5em;
+	}
+	&.expiry-space-trials-disabled{
+		margin-bottom: -0.1em;
 	}
 }
 

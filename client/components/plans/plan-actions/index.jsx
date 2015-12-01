@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var analytics = require( 'analytics' ),
 	productsValues = require( 'lib/products-values' ),
+	config = require( 'config' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
@@ -50,15 +51,21 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		const canStartTrial = this.props.siteSpecificPlansDetails.can_start_trial;
+		const canStartTrial = config.isEnabled( 'upgrades/free-trials' ) ? this.props.siteSpecificPlansDetails.can_start_trial : false;
 
 		return canStartTrial ? this.newPlanActions() : this.upgradeActions();
 	},
 
 	upgradeActions: function() {
+		var classes = classNames( {
+			'button': true,
+			'is-primary': true,
+			'plan-actions__upgrade-button': true,
+			'expiry-space-trials-disabled': true
+		} );
 		return (
 			<div>
-				<button className='button is-primary plan-actions__upgrade-button'
+				<button className={ classes }
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
 					{ this.translate( 'Upgrade Now' ) }
 				</button>
@@ -156,9 +163,15 @@ module.exports = React.createClass( {
 			</div>;
 		}
 
+		var classes = classNames( {
+			'button': true,
+			'is-primary': true,
+			'plan-actions__upgrade-button': true,
+			'expiry-space-trials-enabled': true
+		} );
 		return (
 			<div>
-				<button className="button is-primary plan-actions__upgrade-button"
+				<button className={ classes }
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</button>
@@ -199,10 +212,12 @@ module.exports = React.createClass( {
 	},
 
 	freePlanExpiration: function() {
-		if ( ! this.planHasCost() ) {
-			return (
-				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
-			);
+		if ( config.isEnabled( 'upgrades/free-trials' ) ) {
+			if ( ! this.planHasCost() ) {
+				return (
+					<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
+				);
+			}
 		}
 	},
 
