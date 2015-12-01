@@ -404,17 +404,9 @@ const ManagePurchase = React.createClass( {
 	renderRenewsOrExpiresOn() {
 		const purchase = getPurchase( this.props );
 
-		if ( isRenewing( purchase ) ) {
-			return this.moment( purchase.renewDate ).format( 'LL' );
-		}
-
-		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
-			return this.moment( purchase.expiryDate ).format( 'LL' );
-		}
-
 		if ( isIncludedWithPlan( purchase ) ) {
 			const attachedPlanUrl = paths.managePurchase(
-				this.props.domain,
+				this.props.selectedSite.slug,
 				purchase.attachedToPurchaseId
 			);
 
@@ -426,6 +418,14 @@ const ManagePurchase = React.createClass( {
 					</a>
 				</span>
 			);
+		}
+
+		if ( isRenewing( purchase ) ) {
+			return this.moment( purchase.renewDate ).format( 'LL' );
+		}
+
+		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
+			return this.moment( purchase.expiryDate ).format( 'LL' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
