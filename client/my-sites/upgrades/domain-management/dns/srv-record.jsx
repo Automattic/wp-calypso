@@ -43,7 +43,7 @@ const SrvRecord = React.createClass( {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Value', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
 					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError="true" /> : null }
 					<FormTextInput
 						name="name"
