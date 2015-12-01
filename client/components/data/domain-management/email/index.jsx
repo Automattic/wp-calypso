@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 		user: React.PropTypes.object.isRequired
 	},
 
-	mixins: [ observe( 'productsList', 'sites' ) ],
+	mixins: [ observe( 'productsList' ) ],
 
 	componentWillMount() {
 		this.loadDomains();
