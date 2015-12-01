@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import shuffle from 'lodash/collection/shuffle';
+import find from 'lodash/collection/find';
 import { translate } from 'lib/mixins/i18n';
 
 const verticals = [
@@ -68,8 +73,29 @@ const verticals = [
 	] },
 ];
 
+/**
+ * Shuffle a multi-dimensional array of verticals, but put the General vertical last.
+ *
+ * @param {Array} elements - the array of vertical elements to shuffle.
+ * @returns {Array} the shuffled array of elements.
+ */
+function shuffleVerticals( elements ) {
+	const newVerticals = shuffle( elements ).map( ( vertical ) => {
+		if ( vertical.stepTwo ) {
+			return Object.assign( {}, vertical, { stepTwo: shuffleVerticals( vertical.stepTwo ) } );
+		}
+		return vertical;
+	} );
+	const general = find( newVerticals, vertical => vertical.isGeneral );
+	if ( general ) {
+		newVerticals.splice( newVerticals.indexOf( general ), 1 );
+		newVerticals.push( general );
+	}
+	return newVerticals;
+};
+
 export default {
 	get() {
-		return verticals;
+		return shuffleVerticals( verticals );
 	}
 }

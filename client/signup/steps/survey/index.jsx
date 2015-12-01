@@ -2,9 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import debugFactory from 'debug';
-import shuffle from 'lodash/collection/shuffle';
-import find from 'lodash/collection/find';
 
 /**
  * Internal dependencies
@@ -17,8 +14,6 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
-
-const debug = debugFactory( 'calypso:steps:survey' );
 
 export default React.createClass( {
 	displayName: 'SurveyStep',
@@ -38,25 +33,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			stepOne: null,
-			verticalList: shuffle( verticals.get() )
+			verticalList: verticals.get()
 		}
-	},
-
-	/**
-	 * Shuffle an array of verticals, but put the General vertical last.
-	 *
-	 * @param {Array} elements - the array of vertical elements to shuffle.
-	 * @returns {Array} the shuffled array of elements.
-	*/
-	shuffleVerticals( elements ) {
-		const newVerticals = shuffle( elements );
-		const general = find( newVerticals, vertical => vertical.isGeneral );
-		newVerticals.splice( newVerticals.indexOf( general ), 1 );
-		if ( general ) {
-			newVerticals.push( general );
-		}
-		debug( 'shuffling elements', elements, 'becomes', newVerticals );
-		return newVerticals;
 	},
 
 	renderStepTwoVertical( vertical ) {
@@ -83,7 +61,7 @@ export default React.createClass( {
 			return (
 				<div>
 					<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne.label }</BackButton>
-					{ this.shuffleVerticals( this.state.stepOne.stepTwo ).map( this.renderStepTwoVertical ) }
+					{ this.state.stepOne.stepTwo.map( this.renderStepTwoVertical ) }
 				</div>
 			);
 		}
