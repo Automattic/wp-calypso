@@ -189,7 +189,7 @@ module.exports = {
 										components: {
 											action: <NoticeAction
 												href={ translateArg.wp_admin_settings_page_url }
-												target="_blank" />
+												external={ true } />
 										},
 										context: 'Success message when activating a plugin with a link to the plugin settings.'
 									} );
