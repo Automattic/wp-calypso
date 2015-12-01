@@ -20,7 +20,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<a
-				className="notice__arrow-link"
+				className="notice__notice-action"
 				{ ...this.props }>
 				<span>{ this.props.children }</span>
 				<Gridicon icon="arrow-right" size={ 24 } />
