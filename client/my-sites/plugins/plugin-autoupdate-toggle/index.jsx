@@ -68,7 +68,7 @@ module.exports = React.createClass( {
 			} );
 		}
 
-		if ( this.props.site.options.unmapped_url !== this.props.site.options.main_network_site ) {
+		if ( ! utils.isMainNetworkSite( this.props.site ) ) {
 			return this.translate( 'Only the main site on a multi-site installation can enable autoupdates for plugins.', {
 				args: { site: this.props.site.title }
 			} );
