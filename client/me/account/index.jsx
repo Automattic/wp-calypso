@@ -381,6 +381,19 @@ module.exports = React.createClass( {
 					</FormLabel>
 				</FormFieldset>
 
+				<FormFieldset>
+					<FormLegend>{ this.translate( 'Holiday Snow' ) }</FormLegend>
+					<FormLabel>
+						<FormCheckbox
+							checkedLink={ this.valueLink( 'holidaysnow' ) }
+							disabled={ this.getDisabledState() }
+							id="holidaysnow"
+							name="holidaysnow"
+							onClick={ this.recordCheckboxEvent( 'Holiday Snow' ) } />
+						<span>{ this.translate( 'Show snowfall on WordPress.com sites.' ) }</span>
+					</FormLabel>
+				</FormFieldset>
+
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
 					disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() }
