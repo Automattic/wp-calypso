@@ -41,6 +41,34 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
+		it( 'CanUpdateFiles should return false when passed a multi site when unmapped_url and main_network_site are not equal.', function() {
+			const site = {
+				hasMinimumJetpackVersion: true,
+				is_multisite: true,
+				options: {
+					unmapped_url: 'someurl',
+					main_network_site: 'someurl-different',
+					is_multi_network: false,
+					file_mod_disabled: false
+				}
+			}
+			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
+		} );
+
+		it( 'CanUpdateFiles should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', function() {
+			const site = {
+				hasMinimumJetpackVersion: true,
+				is_multisite: false,
+				options: {
+					unmapped_url: 'someurl',
+					main_network_site: 'someurl-different',
+					is_multi_network: false,
+					file_mod_disabled: false
+				}
+			}
+			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
+		} );
+
 		it( 'CanUpdateFiles should return true when passed a site data has all the right settings permissions to be able to update files.', function() {
 			const site = {
 				hasMinimumJetpackVersion: true,
