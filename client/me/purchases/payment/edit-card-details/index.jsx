@@ -162,9 +162,9 @@ const EditCardDetails = React.createClass( {
 					persistent: true
 				} );
 
-				const { domain, id } = getPurchase( this.props );
+				const { id } = getPurchase( this.props );
 
-				page( paths.managePurchase( domain, id ) );
+				page( paths.managePurchase( this.props.selectedSite.slug, id ) );
 			} );
 		} );
 	},

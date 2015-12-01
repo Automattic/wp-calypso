@@ -39,7 +39,7 @@ const CancelPrivateRegistration = React.createClass( {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
-		const { domain, id } = this.props.selectedPurchase.data;
+		const { id } = this.props.selectedPurchase.data;
 
 		this.setState( {
 			disabled: true,
@@ -53,7 +53,7 @@ const CancelPrivateRegistration = React.createClass( {
 			} );
 
 			if ( success ) {
-				page( paths.managePurchaseDestination( domain, id, 'canceled-private-registration' ) );
+				page( paths.managePurchaseDestination( this.props.selectedSite.slug, id, 'canceled-private-registration' ) );
 			}
 		} );
 	},

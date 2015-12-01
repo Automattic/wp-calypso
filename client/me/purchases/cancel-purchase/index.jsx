@@ -70,49 +70,49 @@ const CancelPurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 
 		return (
-			<Main className="cancel-purchase">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ titles.cancelPurchase }
-				</HeaderCake>
+				<Main className="cancel-purchase">
+					<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+						{ titles.cancelPurchase }
+					</HeaderCake>
 
-				<Card className="cancel-purchase__card">
-					<h2>
-						{ this.translate( 'Cancel %(purchaseName)s', {
-							args: {
-								purchaseName: getName( purchase )
-							}
-						} ) }
-					</h2>
+					<Card className="cancel-purchase__card">
+						<h2>
+							{ this.translate( 'Cancel %(purchaseName)s', {
+									args: {
+											purchaseName: getName( purchase )
+											}
+									} ) }
+						</h2>
 
-					<div className="cancel-purchase__info">
-						<CancelPurchaseSupportBox purchase={ purchase } />
+						<div className="cancel-purchase__info">
+							<CancelPurchaseSupportBox purchase={ purchase } />
 
-						<div className="cancel-purchase__content">
-							<div className="cancel-purchase__section">
-								<strong className="cancel-purchase__section-header">{ this.translate( 'What am I canceling?' ) }</strong>
+							<div className="cancel-purchase__content">
+								<div className="cancel-purchase__section">
+									<strong className="cancel-purchase__section-header">{ this.translate( 'What am I canceling?' ) }</strong>
 
-								<CancelPurchaseProductInformation
-									purchase={ purchase }
-									selectedSite={ this.props.selectedSite } />
-							</div>
+									<CancelPurchaseProductInformation
+											purchase={ purchase }
+											selectedSite={ this.props.selectedSite } />
+								</div>
 
-							<hr />
+								<hr />
 
-							<div className="cancel-purchase__section">
-								<strong className="cancel-purchase__section-header">{ this.translate( 'Do I get a refund?' ) }</strong>
+								<div className="cancel-purchase__section">
+									<strong className="cancel-purchase__section-header">{ this.translate( 'Do I get a refund?' ) }</strong>
 
-								<CancelPurchaseRefundInformation
-									purchase={ purchase } />
+									<CancelPurchaseRefundInformation
+											purchase={ purchase } />
+								</div>
 							</div>
 						</div>
-					</div>
-				</Card>
+					</Card>
 
-				<CompactCard className="cancel-purchase__footer">
-					<CancelPurchaseButton
-						purchase={ purchase } />
-				</CompactCard>
-			</Main>
+					<CompactCard className="cancel-purchase__footer">
+						<CancelPurchaseButton
+								purchase={ purchase } />
+					</CompactCard>
+				</Main>
 		);
 	}
 } );
