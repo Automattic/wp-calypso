@@ -71,7 +71,8 @@
 			}
 		}
 
-		.sidebar-menu__list {
+		.sidebar-menu__list,
+		.sidebar-menu__empty {
 			height: 0;
 			overflow: hidden;
 		}
@@ -101,9 +102,11 @@
 				transform: translateX( 0 );
 			}
 
-			.sidebar-menu__list {
+			.sidebar-menu__list,
+			.sidebar-menu__empty {
 				height: auto;
-				padding: 8px 0;
+				padding-top: 8px;
+				padding-bottom: 8px;
 			}
 
 			.sidebar-menu__item {
@@ -125,7 +128,8 @@
 
 	.sidebar-menu__empty,
 	.sidebar-menu__empty:hover {
-		padding: 0 32px 0 55px;
+		padding-right: 32px;
+		padding-left: 55px;
 		font-size: 13px;
 		color: $gray-dark;
 		background-color: transparent !important; // needs to be more specific
