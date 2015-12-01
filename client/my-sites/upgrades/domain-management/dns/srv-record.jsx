@@ -21,7 +21,8 @@ const SrvRecord = React.createClass( {
 			aux: 10,
 			weight: 10,
 			target: '',
-			port: ''
+			port: '',
+			protocol: 'tcp'
 		}
 	},
 
@@ -65,7 +66,9 @@ const SrvRecord = React.createClass( {
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Protocol', { context: 'Dns Record' } ) }</FormLabel>
 
-					<FormSelect onChange={ this.props.onChange( 'protocol' ) } value={ protocol }>
+					<FormSelect name="protocol"
+							onChange={ this.props.onChange( 'protocol' ) }
+							value={ protocol }>
 						{ options }
 					</FormSelect>
 				</FormFieldset>
