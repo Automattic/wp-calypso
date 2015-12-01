@@ -227,46 +227,39 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getKayakoTicketForm: function() {
-		const { isSubmitting, olark } = this.state;
+	getKayakoFormProperties: function() {
+		const { isSubmitting } = this.state;
 
-		if ( olark.details.isConversing ) {
-			// Hide the olark widget in the bottom right corner.
-			olarkActions.hideBox();
+		return {
+			onSubmit: this.submitKayakoTicket,
+			buttonLabel: isSubmitting ? this.translate( 'Submitting support ticket' ) : this.translate( 'Submit support ticket' ),
+			showHowCanWeHelpField: true,
+			showHowYouFeelField: true,
+			showSubjectField: true,
+			showSiteField: sites.get().length > 1,
+			siteList: sites,
+			siteFilter: this.siteFilter,
+			disabled: isSubmitting
 		}
-
-		return (
-			<HelpContactForm
-				onSubmit={ this.submitKayakoTicket }
-				buttonLabel={ isSubmitting ? this.translate( 'Submitting support ticket' ) : this.translate( 'Submit support ticket' ) }
-				showHowCanWeHelpField={ true }
-				showHowYouFeelField={ true }
-				showSubjectField={ true }
-				showSiteField={ sites.get().length > 1 }
-				siteList={ sites }
-				siteFilter={ this.siteFilter }
-				disabled={ isSubmitting }/>
-		);
 	},
 
-	getChatForm: function() {
-		return (
-			<HelpContactForm
-				onSubmit={ this.startChat }
-				buttonLabel={ this.translate( 'Chat with us' ) }
-				showHowCanWeHelpField={ true }
-				showHowYouFeelField={ true }
-				showSiteField={ sites.get().length > 1 }
-				siteList={ sites }
-				siteFilter={ this.siteFilter }/>
-		);
+	getChatFormProperties: function() {
+		return {
+			onSubmit: this.startChat,
+			buttonLabel: this.translate( 'Chat with us' ),
+			showHowCanWeHelpField: true,
+			showHowYouFeelField: true,
+			showSiteField: sites.get().length > 1,
+			siteList: sites,
+			siteFilter: this.siteFilter
+		};
 	},
 
 	siteFilter: function( site ) {
 		return site.visible && ! site.jetpack;
 	},
 
-	getPublicForumsForm: function() {
+	getPublicForumsFormProperties: function() {
 		const { isSubmitting } = this.state;
 		const formDescription = this.translate(
 			'Post a new question in our {{strong}}public forums{{/strong}}, ' +
@@ -281,14 +274,13 @@ module.exports = React.createClass( {
 			}
 		);
 
-		return (
-			<HelpContactForm
-				onSubmit={ this.submitSupportForumsTopic }
-				formDescription={ formDescription }
-				buttonLabel={ isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ) }
-				showSubjectField={ true }
-				disabled={ isSubmitting }/>
-		);
+		return {
+			onSubmit: this.submitSupportForumsTopic,
+			formDescription: formDescription,
+			buttonLabel: isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ),
+			showSubjectField: true,
+			disabled: isSubmitting
+		};
 	},
 
 	/**
@@ -296,6 +288,7 @@ module.exports = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
+		var contactFormProps;
 		const { olark, confirmation, sitesInitialized } = this.state;
 
 		if ( confirmation ) {
@@ -311,14 +304,17 @@ module.exports = React.createClass( {
 		}
 
 		if ( olark.isUserEligible && olark.isOperatorAvailable ) {
-			return this.getChatForm();
+			contactFormProps = this.getChatFormProperties();
+		} else if ( olark.isUserEligible || olark.details.isConversing ) {
+			contactFormProps = this.getKayakoFormProperties();
+		} else {
+			contactFormProps = this.getPublicForumsFormProperties();
 		}
 
-		if ( olark.isUserEligible || olark.details.isConversing ) {
-			return this.getKayakoTicketForm();
-		}
+		// Hide the olark widget in the bottom right corner.
+		olarkActions.hideBox();
 
-		return this.getPublicForumsForm();
+		return <HelpContactForm { ...contactFormProps } />;
 	},
 
 	render: function() {
