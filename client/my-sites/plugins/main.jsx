@@ -251,7 +251,7 @@ export default React.createClass( {
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
 	},
 
-	deactiveAndDisconnectSelected: function() {
+	deactiveAndDisconnectSelected() {
 		var waitForDeactivate = false;
 
 		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
@@ -528,9 +528,9 @@ export default React.createClass( {
 			needsAutoUpdates = ! hasWpcomPlugins && sitesCanUpdateFiles && this.areSelected(),
 			needsActivateLink = this.areSelected( 'inactive' ),
 			needsDeactivateLink = this.areSelected( 'active' ),
-			deactivateLink = isJetpackSelected ?
-				<a onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</a> :
-				<a onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</a>;
+			deactivateLink = isJetpackSelected
+			? <a onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</a>
+			: <a onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</a>;
 
 		return (
 			<div className={ bulkActionOptionsClasses }>
@@ -633,7 +633,7 @@ export default React.createClass( {
 		return some( this.props.sites.getSelectedOrAllWithPlugins(), site => site && site.jetpack && site.canUpdateFiles );
 	},
 
-	updateAllPlugins: function() {
+	updateAllPlugins() {
 		PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
 		this.state.plugins.forEach( plugin => {
 			plugin.sites.forEach( site => PluginsActions.updatePlugin( site, site.plugin ) );
@@ -641,7 +641,7 @@ export default React.createClass( {
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	},
 
-	getNavItems() {
+	renderNavItems() {
 		let navItems = [];
 
 		if ( this.props && this.props.filter === 'updates' ) {
@@ -654,9 +654,9 @@ export default React.createClass( {
 
 		navItems.push( <NavItem onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>
 				{
-					this.state.bulkManagement ?
-					this.translate( 'Done', { context: 'button label' } ) :
-					this.translate( 'Manage', { context: 'button label' } )
+					this.state.bulkManagement
+					? this.translate( 'Done', { context: 'button label' } )
+					: this.translate( 'Manage', { context: 'button label' } )
 				}
 			</NavItem>
 		);
@@ -704,7 +704,7 @@ export default React.createClass( {
 			toolbarSelect = this.toolbarSelect();
 			manageLink = (
 				<NavSegmented>
-					{ this.getNavItems() }
+					{ this.renderNavItems() }
 				</NavSegmented>
 			);
 		}
