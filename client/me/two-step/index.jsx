@@ -18,8 +18,7 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	Security2faSetup = require( 'me/security-2fa-setup' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	SecuritySectionNav = require( 'me/security-section-nav' ),
-	Main = require( 'components/main' ),
-	SectionHeader = require( 'components/section-header' );
+	Main = require( 'components/main' );
 
 module.exports = React.createClass( {
 
@@ -49,12 +48,10 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! this.state.initialized ) {
-			this.setState(
-				{
-					initialized: true,
-					doingSetup: ! this.props.userSettings.isTwoStepEnabled()
-				}
-			);
+			this.setState( {
+				initialized: true,
+				doingSetup: ! this.props.userSettings.isTwoStepEnabled()
+			} );
 			return;
 		}
 
@@ -137,12 +134,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Backup Codes' ) } />
-				<Card className="me-security-backup-codes">
-					<Security2faBackupCodes userSettings={ this.props.userSettings } />
-				</Card>
-			</div>
+			<Security2faBackupCodes userSettings={ this.props.userSettings } />
 		);
 	},
 
