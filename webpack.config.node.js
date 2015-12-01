@@ -82,6 +82,7 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin( /^lib\/user/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^analytics$/, 'lodash/utility/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^post-editor/, 'components/empty' ),
+		new webpack.NormalModuleReplacementPlugin( /^components\/count/, 'components/empty' ),
 		new webpack.NormalModuleReplacementPlugin( /^components\/sites-popover/, 'components/empty' ),
 		new webpack.NormalModuleReplacementPlugin( /^components\/gravatar/, 'components/empty' ),
 		new webpack.NormalModuleReplacementPlugin( /^components\/site-stats-sticky-link/, 'components/empty' ),
