@@ -156,25 +156,23 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="help-contact-form">
-				{ formDescription ? (
-					<p>{ formDescription }</p>
-				) : null }
+				{ formDescription && ( <p>{ formDescription }</p> ) }
 
-				{ showHowCanWeHelpField ? (
+				{ showHowCanWeHelpField && (
 					<div>
 						<FormLabel>{ this.translate( 'How can we help?' ) }</FormLabel>
 						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
 					</div>
-				) : null }
+				) }
 
-				{ showHowYouFeelField ? (
+				{ showHowYouFeelField && (
 					<div>
 						<FormLabel>{ this.translate( 'Mind sharing how you feel?' ) }</FormLabel>
 						{ this.renderFormSelection( 'howYouFeel', howYouFeelOptions ) }
 					</div>
-				) : null }
+				) }
 
-				{ showSiteField ? (
+				{ showSiteField && (
 					<div>
 						<FormLabel>{ this.translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SelectSite
@@ -184,14 +182,14 @@ module.exports = React.createClass( {
 							value={ this.state.site.ID }
 							onChange={ this.setSite } />
 					</div>
-				) : null }
+				) }
 
-				{ showSubjectField ? (
+				{ showSubjectField && (
 					<div className="help-contact-form__subject">
 						<FormLabel>{ this.translate( 'Subject' ) }</FormLabel>
 						<FormTextInput valueLink={ this.linkState( 'subject' ) } />
 					</div>
-				) : null }
+				) }
 
 				<FormLabel>{ this.translate( 'What are you trying to do?' ) }</FormLabel>
 				<FormTextarea valueLink={ this.linkState( 'message' ) } placeholder={ this.translate( 'Please be descriptive' ) }></FormTextarea>
