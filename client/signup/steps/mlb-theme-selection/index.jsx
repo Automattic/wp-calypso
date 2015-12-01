@@ -1,11 +1,13 @@
 var React = require( 'react' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	MlbThemeThumbnail = require( './mlb-theme-thumbnail' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies
  */
-var StepWrapper = require( 'signup/step-wrapper' );
+var StepWrapper = require( 'signup/step-wrapper' ),
+	analytics = require( 'analytics' ),
+	SignupActions = require( 'lib/signup/actions' ),
+	ThemesList = require( 'components/themes-list' );
 
 module.exports = React.createClass( {
 	displayName: 'MlbThemeSelection',
@@ -47,7 +49,6 @@ module.exports = React.createClass( {
 				nationals: 'Washington Nationals'
 			}
 		};
-		props.themes_ = Object.keys( props.teams );
 		return props;
 	},
 
@@ -62,34 +63,62 @@ module.exports = React.createClass( {
 		this.setState( { team: event.target.value } );
 	},
 
+	getThumbnailUrl: function( team, variation ) {
+		var url = 'https://i1.wp.com/s0.wp.com/wp-content/themes/vip/partner-' +
+			team + '-' + variation.toLowerCase() + '/screenshot.png?w=660';
+		if ( team !== 'mlb' ) {
+			url = 'https://signup.wordpress.com/wp-content/mu-plugins/signup-variants/mlblogs/images/themes/' +
+				variation.toLowerCase() + '/' + team + '.jpg';
+		}
+		return url;
+	},
+
+	handleSubmit: function( theme ) {
+		var variation = theme.name,
+			themeSlug = 'partner-mlb-' + variation.toLowerCase();
+
+		analytics.tracks.recordEvent( 'calypso_mlb_signup_theme_select', { theme: themeSlug, team: this.state.team } );
+		SignupActions.submitSignupStep( {
+			stepName: this.props.stepName,
+			processingMessage: this.translate( 'Adding your theme' ),
+			themeSlug
+		} );
+
+		this.props.goToNextStep();
+	},
+
 	renderThemes: function() {
+		var actionLabel = this.translate( 'Pick' ),
+			themes = this.props.variations.map( ( variation ) => {
+				return {
+					id: variation.toLowerCase(),
+					name: variation,
+					screenshot: this.getThumbnailUrl( this.state.team, variation ),
+					actionLabel: actionLabel
+				};
+			} );
 		return (
 			<div>
-				<div>
-					<label htmlFor="team-field">{ this.translate( 'Your team' ) }</label>
-					<select onChange={ this.handleTeamSelect } name="team-field">
-						{ Object.keys( this.props.teams ).map( ( key ) => {
-							let team = this.props.teams[ key ];
-							return <option key={ key } value={ key }>{ team }</option>;
-						}.bind( this ) ) }
-					</select>
+				<div className="mlb-theme-selection__team-select-container">
+					<fieldset className="form-fieldset">
+						<select onChange={ this.handleTeamSelect } name="team-field">
+							<option key="mlb" value="mlb">{ this.translate( 'Choose your team…' ) }</option>
+							{ Object.keys( this.props.teams ).map( ( key ) => {
+								let team = this.props.teams[ key ];
+								return <option key={ key } value={ key }>{ team }</option>;
+							}.bind( this ) ) }
+						</select>
+					</fieldset>
 				</div>
-				<h3>{ this.translate( 'Theme' ) }</h3>
-				<div>
-					{ this.props.variations.map( function( variation ) {
-						return (
-							<MlbThemeThumbnail
-								key={ variation }
-								variation={ variation }
-								team={ this.state.team }
-								{ ...this.props } />
-						);
-					}.bind( this ) ) }
-				</div>
-				<div className="mlb-themes__terms">
-					<h2>{ this.translate( 'MLB.com/blogs Rules') } </h2>
+				<ThemesList
+					getButtonOptions= { noop }
+					onScreenshotClick= { this.handleSubmit }
+					onMoreButtonClick= { noop }
+					{ ...this.props }
+					themes= { themes } />
+				<div className="mlb-theme-selection__terms">
 					<p>
-						{ this.translate( 'By selecting a theme or clicking Skip, you understand that activating an MLB.com/blogs account indicates your acceptance of the {{a}}Terms of Use{{/a}}', {
+						{ this.translate( 'By selecting a theme or clicking Skip, you understand that activating an MLB.com/blogs account indicates your acceptance of the {{a}}Terms of Use{{/a}}.', {
 							components: {
 								a: <a href="http://mlb.mlb.com/mlb/official_info/about_mlb_com/terms_of_use.jsp" target="_blank" />
 							}

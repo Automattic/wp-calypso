@@ -1,7 +1,29 @@
-.mlb-themes__terms h2 {
-	font-size: 120%;
+.mlb-theme-selection__terms p {
+	text-align: center;
+	color: #87a6bc;
+	font-size: 11px;
 }
 
-.mlb-themes__terms p {
-	font-size: 80%;
+.mlb-theme-selection__team-select-container {
+	display: flex;
+	flex: row wrap;
+}
+
+.mlb-theme-selection__team-select-container fieldset {
+	width: 220px;
+	padding: 1px;
+	flex-grow: 1;
+	flex-shrink: 0;
+}
+
+.mlb-theme-selection__team-select-container::before,
+.mlb-theme-selection__team-select-container::after {
+	content: " ";
+	display: block;
+	width: 230px;
+	flex-grow: 1;
+}
+
+.mlb-theme-selection__team-select-container select {
+	width: 100%;
 }
