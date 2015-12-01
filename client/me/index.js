@@ -108,12 +108,8 @@ export default function() {
 		page( '/me/find-friends', controller.findFriendsRedirect );
 	}
 
-	if ( config.isEnabled( 'me/notifications-control-panel' ) ) {
-		page( '/me/notifications', controller.sidebar, controller.notifications );
-		page( '/me/notifications/comments', controller.sidebar, controller.comments );
-		page( '/me/notifications/updates', controller.sidebar, controller.updates );
-		page( '/me/notifications/subscriptions', controller.sidebar, controller.notificationSubscriptions );
-	} else {
-		page( '/me/notifications', controller.sidebar, controller.notificationSubscriptions );
-	}
+	page( '/me/notifications', controller.sidebar, controller.notifications );
+	page( '/me/notifications/comments', controller.sidebar, controller.comments );
+	page( '/me/notifications/updates', controller.sidebar, controller.updates );
+	page( '/me/notifications/subscriptions', controller.sidebar, controller.notificationSubscriptions );
 };

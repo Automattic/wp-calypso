@@ -79,7 +79,6 @@
 		"me/billing-history": true,
 		"me/security": true,
 		"me/notifications": true,
-		"me/notifications-control-panel": false,
 		"me/next-steps": true,
 		"me/credit-cards": true,
 		"me/find-friends": false,

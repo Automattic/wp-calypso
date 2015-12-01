@@ -92,7 +92,6 @@
 		"me/security": true,
 		"me/security/checkup": true,
 		"me/notifications": true,
-		"me/notifications-control-panel": true,
 		"me/next-steps": false,
 		"me/credit-cards": false,
 		"me/find-friends": false,

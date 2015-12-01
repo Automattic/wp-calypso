@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import protectForm from 'lib/mixins/protect-form';
 import formBase from 'me/form-base';
@@ -44,53 +43,16 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderNotificationsControlPanel() {
-		return (
-			<div>
-				<FormSectionHeading className="is-primary">
-					{ this.translate( 'Notification Emails' ) }
-				</FormSectionHeading>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( '"Like" Comments' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'comment_like_notification' ) }
-							disabled={ this.getDisabledState() }
-							id="comment_like_notification"
-							name="comment_like_notification"
-							onClick={ this.recordCheckboxEvent( 'Comment Like Notifications' ) } />
-							{ this.translate( 'Email me when someone Likes one of my comments.' ) }
-					</FormLabel>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Mentions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'mentions_notification' ) }
-							disabled={ this.getDisabledState() }
-							id="mentions_notification"
-							name="mentions_notification"
-							onClick={ this.recordCheckboxEvent( 'Mention Notifications' ) } />
-							{ this.translate( 'Email me when someone mentions my username.' ) }
-					</FormLabel>
-				</FormFieldset>
-			</div>
-		);
-	},
-
 	render() {
 		return (
 			<Main className="notifications">
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				{ config.isEnabled( 'me/notifications-control-panel' ) ? <Navigation path={ this.props.path } /> : null }
+				<Navigation path={ this.props.path } />
 
 				<Card className="me-notification-settings">
 					<form id="notification-settings" onChange={ this.markChanged } onSubmit={ this.submitForm } >
-						{ config.isEnabled( 'me/notifications-control-panel' ) ? null : this.renderNotificationsControlPanel() }
 						<FormSectionHeading>{ this.translate( 'Subscriptions Delivery' ) }</FormSectionHeading>
 						<p>
 							{ this.translate( '{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
