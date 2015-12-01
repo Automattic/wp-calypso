@@ -105,12 +105,6 @@
 	width: 30%;
 }
 
-.cancel-purchase-loading-placeholder__header,
-.cancel-purchase-loading-placeholder__subheader,
-.cancel-purchase-loading-placeholder__reason {
-	@include placeholder( 23% );
-}
-
 .cancel-purchase-loading-placeholder__header {
 	height: 36px;
 	margin-bottom: 15px;

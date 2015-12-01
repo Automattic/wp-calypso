@@ -59,12 +59,6 @@
 	width: 30%;
 }
 
-.confirm-cancel-purchase-loading-placeholder__header,
-.confirm-cancel-purchase-loading-placeholder__subheader,
-.confirm-cancel-purchase-loading-placeholder__reason {
-	@include placeholder( 23% );
-}
-
 .confirm-cancel-purchase-loading-placeholder__header {
 	height: 36px;
 	margin-bottom: 15px;

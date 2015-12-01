@@ -25,10 +25,10 @@ const CancelPurchaseLoadingPlaceholder = React.createClass( {
 				title={ titles.cancelPurchase }
 				path={ managePurchase( this.props.selectedSite.domain, this.props.purchaseId ) }>
 				<Card className="cancel-purchase-loading-placeholder__card">
-					<h2 className="cancel-purchase-loading-placeholder__header" />
-					<div className="cancel-purchase-loading-placeholder__subheader" />
-					<div className="cancel-purchase-loading-placeholder__reason" />
-					<div className="cancel-purchase-loading-placeholder__reason" />
+					<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
 				</Card>
 				<CompactCard>
 					<Button className="cancel-purchase-loading-placeholder__cancel-button" />
