@@ -74,10 +74,6 @@
 
 	&:nth-child( 3n ) {
 		margin-right: 0;
-
-		@include breakpoint( "<480px" ) {
-			margin: 0;
-		}
 	}
 
 	&.has-update {
