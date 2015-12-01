@@ -105,7 +105,7 @@ module.exports = React.createClass( {
 						onKeyPress={ this.recordEventOnce.bind( this, 'typedAnalyticsKey', 'Typed In Analytics Key Field' ) }
 					/>
 					<p className="settings-explanation"><a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
-						this.translate( 'Where to find my code?' )
+						this.translate( 'Where can I find my Tracking ID?' )
 					}
 					</a></p>
 				</fieldset>
