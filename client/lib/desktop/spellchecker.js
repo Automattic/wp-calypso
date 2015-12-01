@@ -2,8 +2,8 @@ import { webFrame, remote } from 'electron'
 
 const spellchecker = remote.require( 'spellchecker' );
 
-export default function init() {
-	webFrame.setSpellCheckProvider( 'en-US', true, {
+export default function init( locale ) {
+	webFrame.setSpellCheckProvider( locale, true, {
 		spellCheck: function( text ) {
 			return ! spellchecker.isMisspelled( text );
 		}
