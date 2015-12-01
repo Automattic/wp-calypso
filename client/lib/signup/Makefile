@@ -7,6 +7,6 @@ REPORTER ?= spec
 UI ?= bdd
 
 test:
-	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers $(COMPILERS) --reporter $(REPORTER) --ui $(UI)
+	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers $(COMPILERS) --reporter $(REPORTER) --ui $(UI) --timeout 5000
 
 .PHONY: test
