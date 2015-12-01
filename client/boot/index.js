@@ -30,6 +30,7 @@ var config = require( 'config' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'nux-welcome' ),
+	inviteActions = require( 'accept-invite/actions' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
@@ -229,6 +230,11 @@ function boot() {
 			nuxWelcome.setWelcome( viewport.isDesktop() );
 		} else {
 			nuxWelcome.clearTempWelcome();
+		}
+
+		if ( context.query.invite_accepted ) {
+			inviteActions.displayInviteAccepted( parseInt( context.query.invite_accepted ) );
+			page( context.pathname );
 		}
 
 		// Bump general stat tracking overall Newdash usage
