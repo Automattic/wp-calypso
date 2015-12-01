@@ -12,10 +12,10 @@ var toggle = require( './mixin-toggle' ),
 	Geochart = require( './geochart' ),
 	StatsList = require( './stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( './module-error' ),
+	ErrorPanel = require( './modules/module-error' ),
 	skeleton = require( './mixin-skeleton' ),
 	DownloadCsv = require( './download-csv' ),
-	DatePicker = require( './module-date-picker' ),
+	DatePicker = require( './modules/module-date-picker' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
 

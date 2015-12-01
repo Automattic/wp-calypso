@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	Followers = require( './module-followers-page.jsx' ),
+	Followers = require( './modules/module-followers-page.jsx' ),
 	HeaderCake = require( 'components/header-cake' ),
 	analytics = require( 'analytics' );
 
