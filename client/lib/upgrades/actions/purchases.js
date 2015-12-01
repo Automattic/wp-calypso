@@ -88,7 +88,7 @@ function fetchSitePurchases( siteId ) {
 		siteId
 	} );
 
-	wpcom.siteUpgrades( siteId, ( error, data ) => {
+	wpcom.sitePurchases( siteId, ( error, data ) => {
 		debug( error, data );
 
 		if ( error ) {
@@ -100,7 +100,7 @@ function fetchSitePurchases( siteId ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: purchasesAssembler.createPurchasesArray( data.upgrades )
+				purchases: purchasesAssembler.createPurchasesArray( data )
 			} );
 		}
 	} );

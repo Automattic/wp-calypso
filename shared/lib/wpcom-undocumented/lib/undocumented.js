@@ -1643,9 +1643,9 @@ Undocumented.prototype.changeTheme = function( siteSlug, data, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.siteUpgrades = function( siteId, fn ) {
-	debug( '/site/:site_id/upgrades' );
-	this.wpcom.req.get( { path: '/sites/' + siteId + '/upgrades' }, fn );
+Undocumented.prototype.sitePurchases = function( siteId, fn ) {
+	debug( '/site/:site_id/purchases' );
+	this.wpcom.req.get( { path: '/sites/' + siteId + '/purchases' }, fn );
 };
 
 Undocumented.prototype.googleAppsListAll = function( domainName, fn ) {
