@@ -108,6 +108,7 @@
     "blanket": "1.1.6",
     "chai": "2.0.0",
     "chai-immutable": "^1.4.0",
+    "enzyme": "1.1.0",
     "esformatter": "0.7.3",
     "esformatter-braces": "1.2.1",
     "esformatter-collapse-objects-a8c": "0.1.0",
