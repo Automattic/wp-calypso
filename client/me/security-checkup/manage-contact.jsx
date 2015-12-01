@@ -99,7 +99,7 @@ module.exports = React.createClass( {
 				<Notice
 					status={ isError ? 'is-error' : 'is-success' }
 					isCompact={ true }
-					onClick={ onClick }
+					onDismissClick={ onClick }
 					showDismiss={ showDismiss }
 					>
 					{ lastNotice.message }

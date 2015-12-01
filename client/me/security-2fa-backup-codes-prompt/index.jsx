@@ -114,7 +114,7 @@ module.exports = React.createClass( {
 			<Notice
 				isCompact
 				status="is-error"
-				onClick={ this.clearLastError }
+				onDismissClick={ this.clearLastError }
 				text={ this.state.lastError }
 			/>
 		);

@@ -68,7 +68,7 @@ const AddEmailAddressesCard = React.createClass( {
 	validationErrors: function() {
 		if ( this.state.validationErrors ) {
 			return (
-				<Notice onClick={ this.removeValidationErrors } status="is-error">
+				<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
 					<ValidationErrorList messages={ this.state.validationErrors } />
 				</Notice>
 			);

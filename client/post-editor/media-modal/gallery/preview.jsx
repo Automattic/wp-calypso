@@ -90,7 +90,7 @@ export default React.createClass( {
 		return (
 			<div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
-					<Notice status="is-warning" onClick={ this.props.onDismissInvalidItemDropped } isCompact>
+					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
 						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
 					</Notice>
 				) }
