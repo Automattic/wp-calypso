@@ -9,7 +9,7 @@ var React = require( 'react' );
 var	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
-	displayName: 'NoticeArrowAction',
+	displayName: 'NoticeAction',
 
 	propTypes: {
 		href: React.PropTypes.string,
