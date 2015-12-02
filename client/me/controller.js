@@ -274,7 +274,7 @@ export default {
 		titleActions.setTitle( i18n.translate( 'Billing History', { textOnly: true } ) );
 
 		React.render(
-			React.createElement( BillingHistoryComponent, { billingData: billingData } ),
+			React.createElement( BillingHistoryComponent, { billingData: billingData, sites: sites } ),
 			document.getElementById( 'primary' )
 		);
 

@@ -24,6 +24,7 @@ var SectionNav = require( 'components/section-nav' ),
 	viewport = require( 'lib/viewport' ),
 	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	PopoverCart = require( 'my-sites/upgrades/cart/popover-cart' ),
+	purchasesPaths = require( 'me/purchases/paths' ),
 	i18n = require( 'lib/mixins/i18n' );
 
 // The first path acts as the primary path that the button will link to. The
@@ -33,13 +34,13 @@ var NAV_ITEMS = {
 	Plans: {
 		paths: [ '/plans' ],
 		label: i18n.translate( 'Plans' ),
-		external: false
+		allSitesPath: false
 	},
 
 	Email: {
 		paths: [ upgradesPaths.domainManagementEmail() ],
 		label: i18n.translate( 'Email' ),
-		external: false
+		allSitesPath: false
 	},
 
 	Domains: {
@@ -48,25 +49,19 @@ var NAV_ITEMS = {
 			'/domains/add'
 		],
 		label: i18n.translate( 'Domains' ),
-		external: false
+		allSitesPath: false
 	},
 
 	'Add a Domain': {
 		paths: [ '/domains/add' ],
 		label: i18n.translate( 'Add a Domain' ),
-		external: false
+		allSitesPath: false
 	},
 
-	'My Domains': {
-		paths: [ '/my-domains' ],
-		label: i18n.translate( 'My Domains' ),
-		external: true
-	},
-
-	'My Upgrades': {
-		paths: [ '/my-upgrades' ],
-		label: i18n.translate( 'My Upgrades' ),
-		external: true
+	'My Purchases': {
+		paths: [ purchasesPaths.list() ],
+		label: i18n.translate( 'Manage Purchases' ),
+		allSitesPath: true
 	}
 };
 
@@ -123,14 +118,9 @@ var UpgradesNavigation = React.createClass( {
 		var items;
 
 		if ( this.props.selectedSite.jetpack ) {
-			items = [ 'Plans', 'My Upgrades' ];
-		} else if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-			items = [ 'Plans', 'Domains', 'Email', 'My Upgrades' ];
-			if ( config.isEnabled( 'upgrades/purchases/list' ) ) {
-				items = [ 'Plans', 'Domains', 'Email' ];
-			}
+			items = [ 'Plans', 'My Purchases' ];
 		} else {
-			items = [ 'Plans', 'Add a Domain', 'My Domains', 'My Upgrades' ];
+			items = [ 'Plans', 'Domains', 'Email', 'My Purchases' ];
 		}
 
 		return items.map( propertyOf( NAV_ITEMS ) );
@@ -151,21 +141,20 @@ var UpgradesNavigation = React.createClass( {
 	},
 
 	navItem: function( itemData ) {
-		var { paths, external, label } = itemData,
+		var { paths, allSitesPath, label } = itemData,
 			slug = this.props.selectedSite ? this.props.selectedSite.slug : null,
 			selectedNavItem = this.getSelectedNavItem(),
 			primaryPath = paths[ 0 ],
 			fullPath;
 
-		if ( external ) {
-			fullPath = `https://wordpress.com${primaryPath}`;
+		if ( allSitesPath ) {
+			fullPath = primaryPath;
 		} else {
 			fullPath = slug ? `${ primaryPath }/${ slug }` : primaryPath;
 		}
 
 		return (
 			<NavItem path={ fullPath }
-					isExternalLink={ external }
 					key={ fullPath }
 					selected={ selectedNavItem && ( selectedNavItem.label === label ) }>
 				{ label }

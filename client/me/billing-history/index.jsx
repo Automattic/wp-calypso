@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	Card = require( 'components/card' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	config = require( 'config' ),
@@ -18,12 +17,13 @@ var observe = require( 'lib/mixins/data-observe' ),
 	PurchasesHeader = require( '../purchases/list/header' ),
 	BillingHistoryTable = require( './billing-history-table' ),
 	UpcomingChargesTable = require( './upcoming-charges-table' ),
-	SectionHeader = require( 'components/section-header' );
+	SectionHeader = require( 'components/section-header' ),
+	puchasesPaths = require( 'me/purchases/paths' );
 
 module.exports = React.createClass( {
 	displayName: 'BillingHistory',
 
-	mixins: [ observe( 'billingData' ), eventRecorder ],
+	mixins: [ observe( 'billingData', 'sites' ), eventRecorder ],
 
 	componentWillMount: function() {
 		classes( document.body ).add( 'billing-history-page' );
@@ -55,10 +55,10 @@ module.exports = React.createClass( {
 						<p>
 							{
 								this.translate(
-									'A complete history of all billing transactions for your WordPress.com account. If you are looking to add or cancel a plan go to {{link}}My Upgrades{{/link}}.',
-									{
+									'A complete history of all billing transactions for your WordPress.com account. If you are looking to add or cancel a plan go to {{link}}Manage Purchases{{/link}}.', {
 										components: {
-											link: <a href="//wordpress.com/my-upgrades/" rel="external" onClick={ this.recordClickEvent( 'My Upgrades Link on Billing History' ) }/>
+											link: <a href={ puchasesPaths.list() }
+												onClick={ this.recordClickEvent( 'Manage Purchases Link on Billing History' ) } />
 										}
 									}
 								)
@@ -71,7 +71,7 @@ module.exports = React.createClass( {
 
 				<SectionHeader label={ this.translate( 'Upcoming Charges' ) } />
 				<Card id="upcoming-charges">
-					<UpcomingChargesTable transactions={ data.upcomingCharges } />
+					<UpcomingChargesTable sites={ this.props.sites } transactions={ data.upcomingCharges } />
 				</Card>
 
 				{ this.renderManageCards() }
