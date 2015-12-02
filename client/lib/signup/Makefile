@@ -2,7 +2,7 @@ NODE_BIN := $(shell npm bin)
 MOCHA ?= $(NODE_BIN)/mocha
 BASE_DIR := $(NODE_BIN)/../..
 NODE_PATH := test:$(BASE_DIR)/client:$(BASE_DIR)/shared
-COMPILERS ?= jsx:babel/register-without-polyfill
+COMPILERS ?= jsx:babel/register
 REPORTER ?= spec
 UI ?= bdd
 

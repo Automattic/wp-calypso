@@ -7,9 +7,9 @@ NODE_PATH := test:$(BASE_DIR)/client:$(BASE_DIR)/shared
 
 # In order to simply stub modules, add test to the NODE_PATH
 test:
-	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers js:babel/register-without-polyfill --reporter $(REPORTER)
+	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers js:babel/register --reporter $(REPORTER)
 
 integration:
-	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers js:babel/register-without-polyfill --reporter $(REPORTER) test/integration
+	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers js:babel/register --reporter $(REPORTER) test/integration
 
 .PHONY: test integration
