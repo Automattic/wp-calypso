@@ -276,7 +276,7 @@ export default React.createClass( {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
 					<FormLabel htmlFor="email">{ this.translate( 'Your email address' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ true }
+						autoFocus={ ! this.props.email }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
@@ -294,6 +294,7 @@ export default React.createClass( {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
 					<FormLabel htmlFor="username">{ this.translate( 'Choose a username' ) }</FormLabel>
 					<FormTextInput
+						autoFocus={ ! ! this.props.email }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
