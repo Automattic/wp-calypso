@@ -1,4 +1,5 @@
 import stepActions from 'lib/signup/step-actions';
+import { abtest } from 'lib/abtest';
 
 module.exports = {
 	themes: {
@@ -45,6 +46,7 @@ module.exports = {
 		stepName: 'survey-blog',
 		props: {
 			surveySiteType: 'blog',
+			isOneStep: abtest( 'verticalSurvey' ) === 'oneStep'
 		},
 		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
@@ -53,6 +55,7 @@ module.exports = {
 		stepName: 'survey-site',
 		props: {
 			surveySiteType: 'site',
+			isOneStep: abtest( 'verticalSurvey' ) === 'oneStep'
 		},
 		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},

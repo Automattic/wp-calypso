@@ -16,6 +16,15 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
+	verticalSurvey: {
+		datestamp: '20151201',
+		variations: {
+			noSurvey: 12,
+			oneStep: 44,
+			twoStep: 44
+		},
+		defaultVariation: 'noSurvey'
+	},
 	translatorInvitation: {
 		datestamp: '20150910',
 		variations: {
