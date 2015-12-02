@@ -16,6 +16,7 @@ import EmailForwardingDetails from './email-forwarding-details';
 import paths from 'my-sites/upgrades/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
+import { isBusiness } from 'lib/products-values';
 
 const EmailForwarding = React.createClass( {
 	propTypes: {
@@ -25,6 +26,14 @@ const EmailForwarding = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
+	},
+
+	maxForwards() {
+		if ( isBusiness( this.props.selectedSite.plan ) ) {
+			return 500;
+		}
+
+		return 5;
 	},
 
 	render() {
@@ -51,7 +60,8 @@ const EmailForwarding = React.createClass( {
 					<EmailForwardingAddNew
 						emailForwarding={ this.props.emailForwarding }
 						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite } />
+						selectedSite={ this.props.selectedSite }
+						maxForwards={ this.maxForwards() } />
 				</Card>
 			</Main>
 		);

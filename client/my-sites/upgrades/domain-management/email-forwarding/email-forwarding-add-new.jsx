@@ -38,7 +38,7 @@ const EmailForwardingAddNew = React.createClass( {
 	},
 
 	hasReachedLimit() {
-		return this.props.emailForwarding.list.length >= 5;
+		return this.props.emailForwarding.list.length >= this.props.maxForwards;
 	},
 
 	onAddEmailForward( event ) {
@@ -160,7 +160,8 @@ const EmailForwardingAddNew = React.createClass( {
 		return (
 			<form className="email-forwarding__add-new">
 				<EmailForwardingLimit
-					emailForwarding={ this.props.emailForwarding } />
+					emailForwarding={ this.props.emailForwarding }
+					maxForwards={ this.props.maxForwards } />
 
 				{ this.formFields() }
 
