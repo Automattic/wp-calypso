@@ -2,25 +2,28 @@
  * External dependencies
  */
 const includes = require( 'lodash/collection/includes' ),
-	mapValues = require( 'lodash/object/mapValues' );
+	mapValues = require( 'lodash/object/mapValues' ),
+	endsWith = require( 'lodash/string/endsWith' );
 
-function validateAllFields( fieldValues ) {
+function validateAllFields( fieldValues, selectedDomainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			name: fieldName,
 			value: value,
-			type: fieldValues.type
+			type: fieldValues.type,
+			selectedDomainName
 		} );
 
 		return isValid ? [] : [ 'Invalid' ];
 	} );
 }
 
-function validateField( { name, value, type } ) {
+function validateField( { name, value, type, selectedDomainName } ) {
 	switch ( name ) {
 		case 'name':
+			return isValidName( value, type, selectedDomainName );
 		case 'target':
-			return isValidName( value );
+			return isValidDomainName( value );
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
@@ -36,8 +39,27 @@ function validateField( { name, value, type } ) {
 	}
 }
 
-function isValidName( name ) {
+function isValidDomainName( name ) {
 	return /^([\da-z-]+\.)+[\da-z-]+$/i.test( name );
+}
+
+function isValidName( name, type, selectedDomainName ) {
+	switch ( type ) {
+		case 'CNAME':
+			return (
+				isValidCname( name, selectedDomainName ) &&
+				isValidDomainName( name )
+			);
+		default:
+			return isValidDomainName( name );
+	}
+}
+
+function isValidCname( name, selectedDomainName ) {
+	return (
+		name !== selectedDomainName &&
+		endsWith( name, selectedDomainName )
+	);
 }
 
 function isValidData( data, type ) {
@@ -48,7 +70,7 @@ function isValidData( data, type ) {
 			return data.match( /^[a-f0-9\:]+$/i );
 		case 'CNAME':
 		case 'MX':
-			return isValidName( data );
+			return isValidDomainName( data );
 		case 'TXT':
 			return data.length < 256;
 	}

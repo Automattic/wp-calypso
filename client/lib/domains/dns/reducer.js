@@ -3,6 +3,7 @@
  */
 import filter from 'lodash/collection/filter';
 import React from 'react/addons';
+import escapeRegExp from 'lodash/string/escapeRegExp';
 
 /**
  * Internal dependencies
@@ -18,11 +19,14 @@ function updateDomainState( state, domainName, dns ) {
 }
 
 function addDns( state, domainName, record ) {
-	const command = {
-		[ domainName ]: { records: { $push: [ record ] } }
-	};
+	const domainSuffix = new RegExp( '\\.' + escapeRegExp( domainName ) + '\\.$' ),
+		newRecord = Object.assign( {}, record, {
+			name: record.name.replace( domainSuffix, '' )
+		} );
 
-	return React.addons.update( state, command );
+	return React.addons.update( state, {
+		[ domainName ]: { records: { $push: [ newRecord ] } }
+	} );
 }
 
 function deleteDns( state, domainName, record ) {
