@@ -206,6 +206,15 @@ module.exports = function() {
 			upgradesController.domainSearch
 		);
 
+		page( '/domains/add/suggestion/:suggestion/:domain',
+			adTracking.retarget,
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( '/domains/add' ),
+			controller.jetPackWarning,
+			upgradesController.domainSearch
+		);
+
 		page( '/domains/add/:registerDomain/google-apps/:domain',
 			adTracking.retarget,
 			controller.siteSelection,

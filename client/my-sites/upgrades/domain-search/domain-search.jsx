@@ -23,7 +23,8 @@ module.exports = React.createClass( {
 	propTypes: {
 		sites: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
-		basePath: React.PropTypes.string.isRequired
+		basePath: React.PropTypes.string.isRequired,
+		context: React.PropTypes.object.isRequired,
 	},
 
 	getInitialState: function() {
@@ -80,6 +81,7 @@ module.exports = React.createClass( {
 
 					<RegisterDomainStep
 						path={ this.props.context.path }
+						suggestion={ this.props.context.params.suggestion }
 						onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 						cart={ this.props.cart }
 						selectedSite={ selectedSite }

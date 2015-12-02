@@ -40,7 +40,8 @@ var RegisterDomainStep = React.createClass( {
 		onDomainsAvailabilityChange: React.PropTypes.func,
 		products: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
-		basePath: React.PropTypes.string.isRequired
+		basePath: React.PropTypes.string.isRequired,
+		suggestion: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -51,14 +52,16 @@ var RegisterDomainStep = React.createClass( {
 	},
 
 	getInitialState: function() {
+		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
+
 		return {
 			clickedExampleSuggestion: false,
-			lastQuery: null,
+			lastQuery: suggestion,
 			searchResults: null,
 			defaultSuggestions: null,
 			lastDomainSearched: null,
 			lastDomainError: null,
-			loadingResults: false,
+			loadingResults: Boolean( suggestion ),
 			notice: null
 		};
 	},
