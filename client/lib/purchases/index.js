@@ -24,11 +24,16 @@ function getPurchasesBySite( purchases, sites ) {
 		if ( site ) {
 			site.purchases = site.purchases.concat( currentValue );
 		} else {
+			const siteObject = find( sites, { ID: currentValue.siteId } );
+
 			result = result.concat( {
 				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
-				slug: find( sites, { ID: currentValue.siteId } ).slug,
+				/* if the purchase is attached to a deleted site,
+				 * there will be no site with this ID in `sites`, so
+				 * we fall back on the domain. */
+				slug: siteObject ? siteObject.slug : currentValue.domain,
 				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
 				purchases: [ currentValue ]
 			} );
