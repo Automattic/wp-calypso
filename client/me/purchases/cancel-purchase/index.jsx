@@ -18,40 +18,68 @@ import Main from 'components/main';
 import paths from '../paths';
 import titles from 'me/purchases/titles';
 import { getName, isCancelable } from 'lib/purchases';
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from '../utils';
+import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
 
 const CancelPurchase = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object
+		selectedSite: React.PropTypes.object.isRequired
+	},
+
+	getInitialState() {
+		return {
+			isRedirecting: false
+		};
 	},
 
 	componentWillMount() {
-		recordPageView( 'cancel_purchase', this.props );
+		if ( this.isDataValid( this.props ) ) {
+			recordPageView( 'cancel_purchase', this.props );
+		} else {
+			this.redirect( this.props );
+		}
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		recordPageView( 'cancel_purchase', this.props, nextProps );
+		if ( this.isDataValid( nextProps ) ) {
+			recordPageView( 'cancel_purchase', this.props, nextProps );
+		} else {
+			this.redirect( nextProps );
+		}
 	},
 
-	componentDidMount() {
-		this.ensurePageCanLoad();
+	isDataValid( props ) {
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
+
+		return ( selectedSite && purchase && isCancelable( purchase ) );
 	},
 
-	componentDidUpdate() {
-		this.ensurePageCanLoad();
+	redirect( props ) {
+		if ( this.state.isRedirecting ) {
+			return;
+		}
+
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
+		let redirectPath = paths.list();
+
+		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
+			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
+		}
+
+		this.setState( {
+			isRedirecting: true
+		} );
+		page.redirect( redirectPath );
 	},
 
 	render() {
-		const purchase = getPurchase( this.props );
-
-		if ( isDataLoading( this.props ) || ! purchase ) {
-			return (
-				<Main className="cancel-purchase">
-					{ this.translate( 'Loading…' ) }
-				</Main>
-			);
+		if ( this.state.isRedirecting ) {
+			return null;
 		}
+
+		const purchase = getPurchase( this.props );
 
 		return (
 			<Main className="cancel-purchase">
@@ -98,24 +126,6 @@ const CancelPurchase = React.createClass( {
 				</CompactCard>
 			</Main>
 		);
-	},
-
-	ensurePageCanLoad() {
-		if ( isDataLoading( this.props ) ) {
-			return;
-		}
-
-		const purchase = getPurchase( this.props );
-
-		if ( purchase ) {
-			const { domain, id } = purchase;
-
-			if ( ! isCancelable( purchase ) ) {
-				page.redirect( paths.managePurchase( domain, id ) );
-			}
-		} else {
-			page.redirect( paths.list() );
-		}
 	}
 } );
 
