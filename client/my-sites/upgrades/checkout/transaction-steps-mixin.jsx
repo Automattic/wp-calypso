@@ -87,9 +87,7 @@ var TransactionStepsMixin = {
 
 		switch ( step.name ) {
 			case 'input-validation':
-				if ( cartItems.hasFreeTrial( cart ) ) {
-					break;
-				} else {
+				if ( ! cartItems.hasFreeTrial( cart ) ) {
 					notices.info( isFree( cart ) ? this.translate( 'Submitting' ) : this.translate( 'Submitting payment' ) );
 				}
 				break;

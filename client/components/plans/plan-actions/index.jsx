@@ -201,12 +201,10 @@ module.exports = React.createClass( {
 	},
 
 	freePlanExpiration: function() {
-		if ( config.isEnabled( 'upgrades/free-trials' ) ) {
-			if ( ! this.planHasCost() ) {
-				return (
-					<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
-				);
-			}
+		if ( config.isEnabled( 'upgrades/free-trials' ) && ! this.planHasCost() ) {
+			return (
+				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
+			);
 		}
 	},
 
