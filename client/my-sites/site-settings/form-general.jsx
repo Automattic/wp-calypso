@@ -45,6 +45,10 @@ module.exports = React.createClass( {
 				settings.jetpack_relatedposts_show_headline = site.settings.jetpack_relatedposts_show_headline;
 				settings.jetpack_relatedposts_show_thumbnails = site.settings.jetpack_relatedposts_show_thumbnails;
 			}
+
+			if ( site.settings.holidaysnow ) {
+				settings.holidaysnow = site.settings.holidaysnow;
+			}
 		}
 
 		return settings;
@@ -70,7 +74,8 @@ module.exports = React.createClass( {
 			jetpack_relatedposts_enabled: false,
 			jetpack_relatedposts_show_headline: false,
 			jetpack_relatedposts_show_thumbnails: false,
-			jetpack_sync_non_public_post_stati: false
+			jetpack_sync_non_public_post_stati: false,
+			holidaysnow: false
 		} );
 	},
 
@@ -113,20 +118,24 @@ module.exports = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-			customAddress = <a
-								href={ '/domains/add/' + site.slug  }
-								className="button"
-								onClick={ this.trackUpgradeClick }>{ this.translate( 'Add a custom address', { context: 'Site address, domain' } ) }
-							</a>;
+			customAddress = (
+				<a
+					href={ '/domains/add/' + site.slug }
+					className="button"
+					onClick={ this.trackUpgradeClick }
+				>
+					{ this.translate( 'Add a custom address', { context: 'Site address, domain' } ) }
+				</a>
+			);
 
 			addressDescription =
 				<p className="settings-explanation">
 					{
 						this.translate( 'Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}}, {{mapDomainLink}}map{{/mapDomainLink}} a domain you already own, or {{redirectLink}}redirect{{/redirectLink}} this site.', {
 							components: {
-								domainSearchLink: <a href={ '/domains/add/' + site.slug  } onClick={ this.trackUpgradeClick } />,
-								mapDomainLink: <a href={ '/domains/add/mapping/' + site.slug  } onClick={ this.trackUpgradeClick } />,
-								redirectLink: <a href={ '/domains/add/site-redirect/' + site.slug  } onClick={ this.trackUpgradeClick } />
+								domainSearchLink: <a href={ '/domains/add/' + site.slug } onClick={ this.trackUpgradeClick } />,
+								mapDomainLink: <a href={ '/domains/add/mapping/' + site.slug } onClick={ this.trackUpgradeClick } />,
+								redirectLink: <a href={ '/domains/add/site-redirect/' + site.slug } onClick={ this.trackUpgradeClick } />
 							}
 						} )
 					}
@@ -184,24 +193,7 @@ module.exports = React.createClass( {
 	},
 
 	visibilityOptions: function() {
-		var site = this.props.site,
-			privateSiteOption;
-
-		if ( ! this.props.site.jetpack ) {
-			privateSiteOption =
-				<label>
-					<input
-						type="radio"
-						name="blog_public"
-						value="-1"
-						checked={ - 1 === parseInt( this.state.blog_public, 10 ) }
-						onChange={ this.handleRadio }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) }
-					/>
-					<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
-				</label>;
-		}
+		var site = this.props.site;
 
 		return (
 			<fieldset>
@@ -237,7 +229,7 @@ module.exports = React.createClass( {
 					</p>
 				</label>
 
-				{ ! site.jetpack ?
+				{ ! site.jetpack &&
 					<label>
 						<input
 							type="radio"
@@ -250,14 +242,13 @@ module.exports = React.createClass( {
 						/>
 						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
 					</label>
-				: null }
+				}
 
 			</fieldset>
 		);
 	},
 
 	relatedPostsOptions: function() {
-
 		if ( ! this.state.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -312,7 +303,6 @@ module.exports = React.createClass( {
 				</ul>
 			</fieldset>
 		);
-
 	},
 
 	syncNonPublicPostTypes: function() {
@@ -346,7 +336,7 @@ module.exports = React.createClass( {
 				<p>{
 					this.translate( 'You can also {{manageLink}}manage the monitor settings{{/manageLink}} and {{migrateLink}}migrate followers{{/migrateLink}}.', {
 						components: {
-							manageLink: <a href={ '../security/' + site.slug  } />,
+							manageLink: <a href={ '../security/' + site.slug } />,
 							migrateLink: <a href={ 'https://wordpress.com/manage/' + site.ID } />
 						}
 					} )
@@ -387,7 +377,36 @@ module.exports = React.createClass( {
 				</ul>
 			</fieldset>
 		);
+	},
 
+	holidaySnowOption: function() {
+		// Note that years and months below are zero indexed
+		let site = this.props.site,
+			today = this.moment(),
+			startDate = this.moment( { year: today.year(), month: 11, day: 1 } ),
+			endDate = this.moment( { year: today.year(), month: 0, day: 4 } );
+
+		if ( site.jetpack && site.versionCompare( '4.0', '<' ) ) {
+			return null;
+		}
+
+		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
+			return null;
+		}
+
+		return (
+			<fieldset>
+				<legend>{ this.translate( 'Holiday Snow' ) }</legend>
+				<ul>
+					<li>
+						<label>
+							<input name="holidaysnow" type="checkbox" checkedLink={ this.linkState( 'holidaysnow' ) }/>
+							<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
+						</label>
+					</li>
+				</ul>
+			</fieldset>
+		);
 	},
 
 	render: function() {
@@ -453,6 +472,7 @@ module.exports = React.createClass( {
 					<form onChange={ this.markChanged }>
 						{ this.jetpackOptions() }
 						{ this.jetpackDisconnectOption() }
+						{ this.holidaySnowOption() }
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
