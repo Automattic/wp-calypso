@@ -12,7 +12,7 @@ var PayButton = require( './pay-button' ),
 	TermsOfService = require( './terms-of-service' ),
 	PaymentBox = require( './payment-box' ),
 	analytics = require( 'analytics' ),
-	cartItems = require( 'lib/cart-values' ).cartItems;
+	cartValues = require( 'lib/cart-values' );
 
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
@@ -44,7 +44,7 @@ var CreditCardPaymentBox = React.createClass( {
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />
 
-					{ ! cartItems.hasFreeTrial( cart ) ?
+					{ cartValues.isPayPalExpressEnabled( cart ) ?
 						<a className="credit-card-payment-box__switch-link" href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
 					: null }
 				</div>
