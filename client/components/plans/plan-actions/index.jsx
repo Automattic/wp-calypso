@@ -27,10 +27,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isInSignup ) {
-			if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
-				return this.signUpActions();
-			}
-			return this.newPlanActions();
+			return this.signUpActions();
 		}
 
 		if ( this.siteHasThisPlan() ) {
