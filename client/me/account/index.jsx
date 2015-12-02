@@ -199,16 +199,12 @@ module.exports = React.createClass( {
 	},
 
 	renderHolidaySnow() {
+		// Note that years and months below are zero indexed
 		let today = this.moment(),
-			thisYear = today.year();
+			startDate = this.moment( { year: today.year(), month: 11, day: 1 } ),
+			endDate = this.moment( { year: today.year(), month: 0, day: 4 } );
 
-		// Now, let's get the start and end date for the holiday snow feature.
-		// Note that the isBetween() method does not seem to be inclusive, so we use
-		// 11-30 and 1-5 for the cut-off dates.
-		let startDate = this.moment( '2015-11-30' ).year( thisYear ),
-			endDate = this.moment( '2015-01-05' ).year( thisYear + 1 );
-
-		if ( ! today.isBetween( startDate, endDate, 'day' ) ) {
+		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
 			return;
 		}
 
