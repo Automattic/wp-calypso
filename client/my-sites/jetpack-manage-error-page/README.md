@@ -42,6 +42,11 @@ To display a page that will prompt the user to opt-in to Jetpack manage:
 
 As stated above, this component renders an `emptyContent` component by default. For example:
 
+
+### Feature Example
+If you initialize the component with a property `featureExample` containing jsx, it will be added in the bottom of the Jetpack Manage Error Page as an example of what the user could be viewing if there weren't any access errors.
+
+
 ```
 JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 

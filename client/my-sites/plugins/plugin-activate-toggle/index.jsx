@@ -17,11 +17,16 @@ module.exports = React.createClass( {
 	displayName: 'PluginActivateToggle',
 
 	propTypes: {
+		isMock: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		plugin: React.PropTypes.object.isRequired,
 	},
 
 	toggleActivation: function() {
+		if ( this.props.isMock ) {
+			return;
+		}
+
 		PluginsActions.togglePluginActivation( this.props.site, this.props.plugin );
 		PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
 

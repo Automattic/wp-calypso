@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	merge = require( 'lodash/object/merge' );
+import React from 'react/addons'
+import merge from 'lodash/object/merge'
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	EmptyContent = require( 'components/empty-content' );
+import analytics from 'analytics'
+import EmptyContent from 'components/empty-content'
+import FeatureExample from 'components/feature-example'
 
 module.exports = React.createClass( {
 
@@ -21,35 +22,35 @@ module.exports = React.createClass( {
 		optInManage: 'actionCallbackActivate'
 	},
 
-	actionCallbackActivate: function() {
+	actionCallbackActivate() {
 		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.site ? this.props.site.ID : null );
 	},
 
-	actionCallbackUpdate: function() {
+	actionCallbackUpdate() {
 		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.site ? this.props.site.ID : null );
 	},
 
-	getSettings: function() {
-		var version = this.props.version || '3.4', defaults;
-		defaults = {
+	getSettings() {
+		const version = this.props.version || '3.4';
+		const defaults = {
 			updateJetpack: {
 				title: this.translate( 'Your version of Jetpack is out of date.' ),
 				line: this.translate( 'Jetpack %(version)s or higher is required to see this page.', { args: { version: version } } ),
 				action: this.translate( 'Update Jetpack' ),
 				illustration: null,
-				actionURL: ( this.props.site && this.props.site.jetpack ) ?
-				'../../plugins/jetpack/' + this.props.site.slug :
-					false,
+				actionURL: ( this.props.site && this.props.site.jetpack )
+					? '../../plugins/jetpack/' + this.props.site.slug
+					: false,
 				version: version
 			},
 			optInManage: {
-				line: this.translate( 'Remote management is required to see this page.' ),
-				title: null,
+				title: this.translate( 'Looking to manage this site\'s plugins?' ),
+				line: this.translate( 'We need you to enable the Manage feature in the Jetpack plugin on your remote site' ),
 				illustration: null,
-				action: this.translate( 'Turn on remote management' ),
-				actionURL: ( this.props.site && this.props.site.jetpack ) ?
-					this.props.site.getRemoteManagementURL() :
-					false,
+				action: this.translate( 'Enable Jetpack Manage' ),
+				actionURL: ( this.props.site && this.props.site.jetpack )
+					? this.props.site.getRemoteManagementURL() + '&section=plugins'
+					: false,
 				actionTarget: '_blank'
 			},
 			noDomainsOnJetpack: {
@@ -63,12 +64,22 @@ module.exports = React.createClass( {
 		return merge( defaults[ this.props.template ] || defaults.default, this.props );
 	},
 
-	render: function() {
-		var settings = this.getSettings();
+	render() {
+		const settings = this.getSettings();
 		if ( this.actionCallbacks[ this.props.template ] ) {
 			settings.actionCallback = this[ this.actionCallbacks[ this.props.template ] ];
 		}
-		return React.createElement( EmptyContent, settings );
+		const emptyContent = React.createElement( EmptyContent, settings );
+		const featureExample = this.props.featureExample
+			? <FeatureExample>{ this.props.featureExample }</FeatureExample>
+			: null;
+
+		return (
+			<div>
+				{ emptyContent }
+				{ featureExample }
+			</div>
+		)
 	}
 
 } );

@@ -26,3 +26,4 @@ render: function() {
 * `plugin`: a plugin object.
 * `site`: a site object.
 * `notices`: a notices object.
+* `isMock`: a boolean indicating if the toggle should not launch any real action when interacted
