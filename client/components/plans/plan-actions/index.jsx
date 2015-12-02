@@ -59,7 +59,7 @@ module.exports = React.createClass( {
 	upgradeActions: function() {
 		return (
 			<div>
-				<button className="button is-primary plan-actions__upgrade-button expiry-space-trials-disabled"
+				<button className="button is-primary plan-actions__upgrade-button"
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
 					{ this.translate( 'Upgrade Now' ) }
 				</button>
@@ -159,7 +159,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<button className="button is-primary plan-actions__upgrade-button expiry-space-trials-enabled"
+				<button className="button is-primary plan-actions__upgrade-button"
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</button>

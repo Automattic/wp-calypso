@@ -23,22 +23,20 @@
 	display: block;
 	text-align: center;
 	width: 100%;
-
-	&.expiry-space-trials-enabled {
-		margin-bottom: 0.5em;
-	}
-	&.expiry-space-trials-disabled{
-		margin-bottom: -0.1em;
-	}
 }
 
 .plan-actions__trial-period {
 	text-align: center;
 	line-height: 16px;
 	display: block;
-	padding: 5px 10px;
+	padding: 5px 10px 0 5px;
 	color: $gray-dark;
 	opacity: .8;
+}
+
+.plan-actions__plan-expiration,
+.plan-actions__trial-period {
+	height: 40px;
 }
 
 .plan-actions.is-placeholder {
@@ -121,14 +119,6 @@
 		&:before {
 			margin-left: -5px;
 			padding-right: 1px;
-		}
-	}
-}
-
-@mixin plans-in-three-columns() {
-	.plan-actions__current {
-		.plan-actions__plan-expiration {
-			padding-bottom: 27px;
 		}
 	}
 }
