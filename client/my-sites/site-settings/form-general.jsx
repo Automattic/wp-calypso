@@ -188,24 +188,7 @@ module.exports = React.createClass( {
 	},
 
 	visibilityOptions: function() {
-		var site = this.props.site,
-			privateSiteOption;
-
-		if ( ! this.props.site.jetpack ) {
-			privateSiteOption =
-				<label>
-					<input
-						type="radio"
-						name="blog_public"
-						value="-1"
-						checked={ - 1 === parseInt( this.state.blog_public, 10 ) }
-						onChange={ this.handleRadio }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) }
-					/>
-					<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
-				</label>;
-		}
+		var site = this.props.site;
 
 		return (
 			<fieldset>
