@@ -1,7 +1,7 @@
 var React = require( 'react' );
 
 var stats = require( 'reader/stats' ),
-	urlHelper = require( 'reader/url-helper' );
+	readerRoute = require( 'reader/route' );
 
 var SiteLink = React.createClass( {
 
@@ -11,7 +11,7 @@ var SiteLink = React.createClass( {
 	},
 
 	render: function() {
-		var link = urlHelper.getStreamUrlFromPost( this.props.post );
+		var link = readerRoute.getStreamUrlFromPost( this.props.post );
 
 		return (
 			<a { ...this.props } href={ link } onClick={ this.recordClick }>{ this.props.children }</a>

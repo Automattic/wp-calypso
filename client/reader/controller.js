@@ -20,7 +20,7 @@ var i18n = require( 'lib/mixins/i18n' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	urlHelper = require( 'reader/url-helper' );
+	readerRoute = require( 'reader/route' );
 
 // This is a tri-state.
 // null == nothing instantiated, nothing pending
@@ -74,9 +74,9 @@ module.exports = {
 	redirects: function( context, next ) {
 		let redirect;
 		if ( context.params.blog_id ) {
-			redirect = urlHelper.getPrettySiteUrl( context.params.blog_id );
+			redirect = readerRoute.getPrettySiteUrl( context.params.blog_id );
 		} else if ( context.params.feed_id ) {
-			redirect = urlHelper.getPrettyFeedUrl( context.params.feed_id );
+			redirect = readerRoute.getPrettyFeedUrl( context.params.feed_id );
 		}
 
 		if ( redirect ) {

@@ -10,11 +10,11 @@ const PRETTY_SITE_URLS = {
 }
 
 export function getPrettySiteUrl( siteID ) {
-	return PRETTY_SITE_URLS[ siteID ] || false;
+	return PRETTY_SITE_URLS[ siteID ];
 }
 
 export function getPrettyFeedUrl( feedID ) {
-	return PRETTY_FEED_URLS[ feedID ] || false;
+	return PRETTY_FEED_URLS[ feedID ];
 }
 
 export function getSiteUrl( siteID ) {

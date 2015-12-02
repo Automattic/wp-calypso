@@ -35,7 +35,7 @@ var Card = require( 'components/card' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
 	FollowingEditHelper = require( 'reader/following-edit/helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
-	urlHelper = require( 'reader/url-helper' ),
+	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	PostPermalink = require( 'reader/post-permalink' ),
@@ -282,7 +282,7 @@ var Post = React.createClass( {
 			return;
 		}
 
-		const url = urlHelper.getStreamUrlFromPost( this.props.post );
+		const url = readerRoute.getStreamUrlFromPost( this.props.post );
 		page.show( url );
 		event.preventDefault();
 	},
