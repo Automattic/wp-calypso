@@ -1,5 +1,7 @@
 var debug = require( 'debug' )( 'calyso:reader:post-time' ),
-	React = require( 'react/addons' ),
+	React = require( 'react/addons' );
+
+const smartSetState = require( 'lib/react-smart-set-state' ),
 	ticker = require( 'lib/ticker' ),
 	humanDate = require( 'lib/human-date' );
 
@@ -24,9 +26,11 @@ var PostTime = React.createClass( {
 		ticker.off( 'tick', this._update );
 	},
 
+	smartSetState: smartSetState,
+
 	_update: function( date ) {
 		date = date || this.props.date;
-		this.setState( { ago: humanDate( date ) } );
+		this.smartSetState( { ago: humanDate( date ) } );
 	},
 
 	render: function() {
