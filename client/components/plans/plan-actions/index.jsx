@@ -222,7 +222,7 @@ module.exports = React.createClass( {
 				strong: <strong />,
 				link: <a href='#'
 					className="plan-actions__trial-upgrade-now"
-					onClick={ this.recordUpgradeTrialNowClick.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
+					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
 			},
 			hint;
 
