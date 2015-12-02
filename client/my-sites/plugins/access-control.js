@@ -1,7 +1,13 @@
 /**
+ * External Dependencies
+ */
+var React = require( 'react' );
+
+/**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
+ var PluginItem = require( 'my-sites/plugins/plugin-item/plugin-item' ),
+	sites = require( 'lib/sites-list' )(),
 	i18n = require( 'lib/mixins/i18n' ),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
@@ -16,6 +22,41 @@ function hasErrorCondition( site, type ) {
 		notRightsToManagePlugins: sites.initialized && ! sites.canManageSelectedOrAll()
 	};
 	return errorConditions[ type ];
+}
+
+function getMockBusinessPluginItems() {
+	const plugins = [ {
+		slug: 'ecwid',
+		name: 'Ecwid',
+		wpcom: true,
+		icon: '/calypso/images/upgrades/plugins/ecwid.png'
+	}, {
+		slug: 'gumroad',
+		name: 'Gumroad',
+		wpcom: true,
+		icon: '/calypso/images/upgrades/plugins/gumroad.png'
+	}, {
+		slug: 'shopify',
+		name: 'Shopify',
+		wpcom: true,
+		icon: '/calypso/images/upgrades/plugins/gumroad.png'
+	} ];
+	const selectedSite = {
+		slug: 'no-slug',
+		canUpdateFiles: true,
+		name: 'Not a real site'
+	}
+
+	return plugins.map( plugin => {
+		return React.createElement( PluginItem, {
+			key: 'plugin-item-mock-' + plugin.slug,
+			plugin: plugin,
+			sites: [],
+			selectedSite: selectedSite,
+			progress: [],
+			isMock: true }
+		);
+	} );
 }
 
 function hasRestrictedAccess( site ) {
@@ -56,7 +97,8 @@ function hasRestrictedAccess( site ) {
 			illustration: '/calypso/images/drake/drake-whoops.svg',
 			actionCallback: function() {
 				analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
-			}
+			},
+			featureExample: getMockBusinessPluginItems()
 		};
 	}
 

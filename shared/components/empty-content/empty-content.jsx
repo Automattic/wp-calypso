@@ -5,6 +5,11 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:components:emptyContent' ),
 	classNames = require( 'classnames' );
 
+/**
+ * Internal dependencies
+ */
+var FeatureExample = require( 'components/feature-example' );
+
 module.exports = React.createClass( {
 
 	displayName: 'EmptyContent',
@@ -27,7 +32,8 @@ module.exports = React.createClass( {
 		secondaryActionURL: React.PropTypes.string,
 		secondaryActionCallback: React.PropTypes.func,
 		className: React.PropTypes.string,
-		isCompact: React.PropTypes.bool
+		isCompact: React.PropTypes.bool,
+		featureExample: React.PropTypes.element
 	},
 
 	componentDidMount: function() {
@@ -81,7 +87,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var action, secondaryAction, illustration;
+		var action, secondaryAction, illustration, featureExample;
 
 		if ( this.props.action ) {
 			action = this.primaryAction();
@@ -95,25 +101,31 @@ module.exports = React.createClass( {
 			illustration = <img src={ this.props.illustration } width={ this.props.illustrationWidth } className="empty-content__illustration" />;
 		}
 
+		if ( this.props.featureExample ) {
+			featureExample = <FeatureExample>{ this.props.featureExample }</FeatureExample>;
+		}
+
 		return (
 			<div className={ classNames( 'empty-content', this.props.className, { 'is-compact': this.props.isCompact } ) }>
 				{ illustration }
 
 				{
-					this.props.title ?
-					<h2 className="empty-content__title">{ this.props.title }</h2> :
-					null
+					this.props.title
+					? <h2 className="empty-content__title">{ this.props.title }</h2>
+					: null
 				}
 
 				{
-					this.props.line ?
-					<h3 className="empty-content__line">{ this.props.line }</h3> :
-					null
+					this.props.line
+					? <h3 className="empty-content__line">{ this.props.line }</h3>
+					: null
 				}
 
 				{ action }
 
 				{ secondaryAction }
+
+				{ featureExample }
 			</div>
 		);
 	}

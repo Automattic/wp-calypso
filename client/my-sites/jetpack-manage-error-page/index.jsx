@@ -69,15 +69,12 @@ module.exports = React.createClass( {
 		if ( this.actionCallbacks[ this.props.template ] ) {
 			settings.actionCallback = this[ this.actionCallbacks[ this.props.template ] ];
 		}
+		settings.featureExample = this.props.featureExample;
 		const emptyContent = React.createElement( EmptyContent, settings );
-		const featureExample = this.props.featureExample
-			? <FeatureExample>{ this.props.featureExample }</FeatureExample>
-			: null;
 
 		return (
 			<div>
 				{ emptyContent }
-				{ featureExample }
 			</div>
 		)
 	}
