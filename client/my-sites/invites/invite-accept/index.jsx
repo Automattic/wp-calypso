@@ -20,7 +20,7 @@ import EmptyContent from 'components/empty-content';
  * Module variables
  */
 const debug = new Debug( 'calypso:invite-accept' );
-const user = userModule();
+const user = userModule().get();
 
 export default React.createClass( {
 
@@ -81,9 +81,9 @@ export default React.createClass( {
 			return null;
 		}
 		debug( 'Rendering invite' );
-		return user.get()
-			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectTo() } />
 			: <LoggedOut { ...this.state.invite } redirectTo={ this.getRedirectTo() } />;
+		return user
+			? <LoggedIn { ...this.state.invite } user={ user } />
 	},
 
 	renderError() {
