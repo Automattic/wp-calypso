@@ -237,6 +237,10 @@ FullPostDialog = React.createClass( {
 		this.props.onClose( action );
 	},
 
+	handleClickOutside: function( event ) {
+		event.preventDefault();
+	},
+
 	render: function() {
 		var post = this.props.post,
 			site = this.props.site,
@@ -293,6 +297,7 @@ FullPostDialog = React.createClass( {
 				buttons={ buttons }
 				baseClassName="detail-page"
 				onClose={ this.handleClose }
+				onClickOutside= { this.handleClickOutside}
 				onClosed={ this.props.onClosed } >
 				<FullPostView
 					ref="fullPost"
