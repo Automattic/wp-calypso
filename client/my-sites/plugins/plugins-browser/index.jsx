@@ -224,7 +224,7 @@ module.exports = React.createClass( {
 					template="optInManage"
 					site={ this.props.site }
 					actionURL={ selectedSite.getRemoteManagementURL() }
-					illustration= '/calypso/images/drake/drake-jetpack.svg'
+					illustration= '/calypso/images/jetpack/jetpack-manage.svg'
 					featureExample={ this.getMockPluginItems() } />
 			</MainComponent>
 		);
