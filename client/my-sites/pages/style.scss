@@ -91,13 +91,13 @@
 	text-align: left;
 }
 
-.page__trash-item.popover__menu-item {
+.page__delete-item.popover__menu-item {
 	&:hover,
 	&:focus {
 		background-color: $alert-red;
 		border: 0;
 		box-shadow: none;
-		color: white;
+		color: $white;
 	}
 }
 
@@ -107,4 +107,3 @@
 		display: inline;
 	}
 }
-
