@@ -45,6 +45,10 @@ module.exports = React.createClass( {
 				settings.jetpack_relatedposts_show_headline = site.settings.jetpack_relatedposts_show_headline;
 				settings.jetpack_relatedposts_show_thumbnails = site.settings.jetpack_relatedposts_show_thumbnails;
 			}
+
+			if ( site.settings.holidaysnow ) {
+				settings.holidaysnow = site.settings.holidaysnow;
+			}
 		}
 
 		return settings;
@@ -70,7 +74,8 @@ module.exports = React.createClass( {
 			jetpack_relatedposts_enabled: false,
 			jetpack_relatedposts_show_headline: false,
 			jetpack_relatedposts_show_thumbnails: false,
-			jetpack_sync_non_public_post_stati: false
+			jetpack_sync_non_public_post_stati: false,
+			holidaysnow: false
 		} );
 	},
 
@@ -374,6 +379,36 @@ module.exports = React.createClass( {
 		);
 	},
 
+	holidaySnowOption: function() {
+		// Note that years and months below are zero indexed
+		let site = this.props.site,
+			today = this.moment(),
+			startDate = this.moment( { year: today.year(), month: 11, day: 1 } ),
+			endDate = this.moment( { year: today.year(), month: 0, day: 4 } );
+
+		if ( site.jetpack && site.versionCompare( '4.0', '<' ) ) {
+			return null;
+		}
+
+		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
+			return null;
+		}
+
+		return (
+			<fieldset>
+				<legend>{ this.translate( 'Holiday Snow' ) }</legend>
+				<ul>
+					<li>
+						<label>
+							<input name="holidaysnow" type="checkbox" checkedLink={ this.linkState( 'holidaysnow' ) }/>
+							<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
+						</label>
+					</li>
+				</ul>
+			</fieldset>
+		);
+	},
+
 	render: function() {
 		var site = this.props.site;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
@@ -437,6 +472,7 @@ module.exports = React.createClass( {
 					<form onChange={ this.markChanged }>
 						{ this.jetpackOptions() }
 						{ this.jetpackDisconnectOption() }
+						{ this.holidaySnowOption() }
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
