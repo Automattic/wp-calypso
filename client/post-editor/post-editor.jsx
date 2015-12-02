@@ -313,6 +313,7 @@ var PostEditor = React.createClass( {
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
 								siteID={ site ? site.ID : null }
+								selectedId={ this.state.post.ID }
 							/>
 						: <div>
 							<EditorGroundControl
