@@ -138,7 +138,7 @@ function loadDevModulesAndBoot() {
 }
 
 function renderLayout( context, next ) {
-	let layout, layoutSection;
+	let layoutSection;
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
@@ -147,50 +147,6 @@ function renderLayout( context, next ) {
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
-		context.layout = React.render( React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} ), document.getElementById( 'wpcom' ) );
-	} else {
-		analytics.setSuperProps( superProps );
-
-		if ( config.isEnabled( 'oauth' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-oauth' );
-		} else {
-			LoggedOutLayout = require( 'layout/logged-out' );
-		}
-
-		context.layout = React.render(
-			React.createElement( LoggedOutLayout ),
-			document.getElementById( 'wpcom' )
-		);
-	}
-
-	debug( 'Main layout rendered.' );
-	//
-	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
-	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
-		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
-		layoutFocus.set( layoutSection );
-		window.history.replaceState( null, document.title, window.location.pathname );
-	}
-
-	return next();
-}
-
-function renderLayoutSingle( context, next ) {
-	if ( user.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( user, superProps );
-
-		console.log( 'rendering single', context.primary );
-		// Create layout instance with current user prop
-		Layout = require( 'layout/layout-single' );
 		context.layout = React.render( React.createElement( Layout, {
 			primary: context.primary,
 			secondary: context.secondary,
@@ -211,12 +167,22 @@ function renderLayoutSingle( context, next ) {
 		}
 
 		context.layout = React.render(
-			React.createElement( LoggedOutLayout ),
-			document.getElementById( 'wpcom' )
-		);
+			React.createElement( LoggedOutLayout, {
+				primary: context.primary,
+				secondary: context.secondary,
+				tertiary: context.tertiary,
+			} ), document.getElementById( 'wpcom' ) );
 	}
 
 	debug( 'Main layout rendered.' );
+	//
+	// If `?sb` or `?sp` are present on the path set the focus of layout
+	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
+	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
+		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
+		layoutFocus.set( layoutSection );
+		window.history.replaceState( null, document.title, window.location.pathname );
+	}
 
 	return next();
 }
@@ -370,7 +336,7 @@ function boot() {
 		page( '*', function( context, next ) {
 			if ( context.layoutLast ) {
 				console.log( 'context in end route', context.primary );
-				return renderLayoutSingle( context, next );
+				return renderLayout( context, next );
 			}
 			return next();
 		} );
@@ -391,7 +357,7 @@ function boot() {
 	if ( config.isEnabled( 'desktop' ) ) {
 		require( 'lib/desktop' ).init();
 	}
-	
+
 
 	detectHistoryNavigation.start();
 	page.start();
