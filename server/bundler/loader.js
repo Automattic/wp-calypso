@@ -31,7 +31,7 @@ function getSectionsModule( sections ) {
 		'	get: function() {',
 		'		return ' + JSON.stringify( sections ) + ';',
 		'	},',
-		'	load: function() {',
+		'	load: function( callback ) {',
 		'		' + sectionLoaders,
 		'	}',
 		'};'
@@ -78,6 +78,7 @@ function splitTemplate( path, module, chunkName ) {
 		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
 		'			require( ' + JSON.stringify( module ) + ' )();',
 		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
+		'			callback();',
 		'		}',
 		'		layoutFocus.next();',
 		'		next();',

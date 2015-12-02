@@ -80,46 +80,44 @@ function init() {
 	} );
 }
 
-function setUpContext( layout ) {
+function setUpContext( context, next ) {
 	var reduxStore = createReduxStore();
 
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
-	page( '*', function( context, next ) {
-		var parsed = url.parse( location.href, true );
+	var parsed = url.parse( location.href, true );
 
-		context.layout = layout;
-		context.reduxStore = reduxStore;
+	context.reduxStore = reduxStore;
 
-		// Break routing and do full page load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
-			window.location.href = context.path;
-			return;
-		}
+	// Break routing and do full page load for logout link in /me
+	if ( context.pathname === '/wp-login.php' ) {
+		window.location.href = context.path;
+		return;
+	}
 
-		// set `context.query`
-		// debugger
-		const querystringStart = context.canonicalPath.indexOf( '?' );
-		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
-		} else {
-			context.query = {};
-		}
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
+	// set `context.query`
+	// debugger
+	const querystringStart = context.canonicalPath.indexOf( '?' );
+	if ( querystringStart !== -1 ) {
+		context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
+	} else {
+		context.query = {};
+	}
+	context.prevPath = parsed.path === context.path ? false : parsed.path;
 
-		// set `context.hash` (we have to parse manually)
-		if ( parsed.hash && parsed.hash.length > 1 ) {
-			try {
-				context.hash = qs.parse( parsed.hash.substring( 1 ) );
-			} catch ( e ) {
-				debug( 'failed to query-string parse `location.hash`', e );
-				context.hash = {};
-			}
-		} else {
+	// set `context.hash` (we have to parse manually)
+	if ( parsed.hash && parsed.hash.length > 1 ) {
+		try {
+			context.hash = qs.parse( parsed.hash.substring( 1 ) );
+		} catch ( e ) {
+			debug( 'failed to query-string parse `location.hash`', e );
 			context.hash = {};
 		}
-		next();
-	} );
+	} else {
+		context.hash = {};
+	}
+
+	next();
 }
 
 function loadDevModulesAndBoot() {
@@ -139,22 +137,8 @@ function loadDevModulesAndBoot() {
 	boot();
 }
 
-function boot() {
-	var layoutSection, layout, validSections = [];
-
-	init();
-
-	// When the user is bootstrapped, we also bootstrap the
-	// locale strings
-	if ( ! config( 'wpcom_user_bootstrap' ) ) {
-		i18n.setLocaleSlug( user.get().localeSlug );
-	}
-	// Set the locale for the current user
-	user.on( 'change', function() {
-		i18n.setLocaleSlug( user.get().localeSlug );
-	} );
-
-	translatorJumpstart.init();
+function renderLayout( context, next ) {
+	let layout, layoutSection;
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
@@ -163,7 +147,7 @@ function boot() {
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
-		layout = React.render( React.createElement( Layout, {
+		context.layout = React.render( React.createElement( Layout, {
 			user: user,
 			sites: sites,
 			focus: layoutFocus,
@@ -179,14 +163,14 @@ function boot() {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
 
-		layout = React.render(
+		context.layout = React.render(
 			React.createElement( LoggedOutLayout ),
 			document.getElementById( 'wpcom' )
 		);
 	}
 
 	debug( 'Main layout rendered.' );
-
+	//
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
 	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
@@ -195,7 +179,80 @@ function boot() {
 		window.history.replaceState( null, document.title, window.location.pathname );
 	}
 
-	setUpContext( layout );
+	return next();
+}
+
+function renderLayoutSingle( context, next ) {
+	if ( user.get() ) {
+		// When logged in the analytics module requires user and superProps objects
+		// Inject these here
+		analytics.initialize( user, superProps );
+
+		console.log( 'rendering single', context.primary );
+		// Create layout instance with current user prop
+		Layout = require( 'layout/layout-single' );
+		context.layout = React.render( React.createElement( Layout, {
+			primary: context.primary,
+			secondary: context.secondary,
+			tertiary: context.tertiary,
+			user: user,
+			sites: sites,
+			focus: layoutFocus,
+			nuxWelcome: nuxWelcome,
+			translatorInvitation: translatorInvitation
+		} ), document.getElementById( 'wpcom' ) );
+	} else {
+		analytics.setSuperProps( superProps );
+
+		if ( config.isEnabled( 'oauth' ) ) {
+			LoggedOutLayout = require( 'layout/logged-out-oauth' );
+		} else {
+			LoggedOutLayout = require( 'layout/logged-out' );
+		}
+
+		context.layout = React.render(
+			React.createElement( LoggedOutLayout ),
+			document.getElementById( 'wpcom' )
+		);
+	}
+
+	debug( 'Main layout rendered.' );
+
+	return next();
+}
+
+function boot() {
+	var validSections = [];
+
+	init();
+
+	// When the user is bootstrapped, we also bootstrap the
+	// locale strings
+	if ( ! config( 'wpcom_user_bootstrap' ) ) {
+		i18n.setLocaleSlug( user.get().localeSlug );
+	}
+	// Set the locale for the current user
+	user.on( 'change', function() {
+		i18n.setLocaleSlug( user.get().localeSlug );
+	} );
+
+	translatorJumpstart.init();
+
+	page( '*', function( context, next ) {
+		var path = context.pathname;
+
+		// Bypass this global handler for legacy routes
+		// to avoid bumping stats and changing focus to the content
+		if ( /^\/design/.test( path ) ) {
+			context.layoutLast = true;
+			context.layout = { setState: () => {} };
+			next();
+		} else {
+			renderLayout( context, next );
+		}
+	} );
+
+	page( '*', setUpContext );
 
 	page( '*', require( 'lib/route/normalize' ) );
 
@@ -233,6 +290,8 @@ function boot() {
 			nuxWelcome.clearTempWelcome();
 		}
 
+		console.log( context)
+
 		if ( context.query.invite_accepted ) {
 			displayInviteAccepted( parseInt( context.query.invite_accepted ) );
 			page( context.pathname );
@@ -265,8 +324,6 @@ function boot() {
 		page( '*', require( 'auth/controller' ).checkToken );
 	}
 
-	// Load the application modules for the various sections and features
-	sections.load();
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
@@ -308,6 +365,17 @@ function boot() {
 
 	require( 'my-sites' )();
 
+	// Load the application modules for the various sections and features
+	sections.load( function() {
+		page( '*', function( context, next ) {
+			if ( context.layoutLast ) {
+				console.log( 'context in end route', context.primary );
+				return renderLayoutSingle( context, next );
+			}
+			return next();
+		} );
+	} );
+
 	if ( config.isEnabled( 'olark' ) ) {
 		require( 'lib/olark' );
 	}
@@ -323,6 +391,7 @@ function boot() {
 	if ( config.isEnabled( 'desktop' ) ) {
 		require( 'lib/desktop' ).init();
 	}
+	
 
 	detectHistoryNavigation.start();
 	page.start();

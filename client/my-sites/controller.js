@@ -29,18 +29,21 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 		noSidebar: false
 	} );
 
-	// Render the My Sites navigation in #secondary
-	React.render(
-		React.createElement( NavigationComponent, {
-			layoutFocus: layoutFocus,
-			path: context.path,
-			allSitesPath: allSitesPath,
-			siteBasePath: siteBasePath,
-			user: user,
-			sites: sites
-		} ),
-		document.getElementById( 'secondary' )
+	const navigation = (
+		<NavigationComponent layoutFocus={ layoutFocus }
+			path={ context.path }
+			allSitesPath={ allSitesPath }
+			siteBasePath={ siteBasePath }
+			user={ user }
+			sites={ sites }
+		/>
 	);
+
+	if ( context.layoutLast ) {
+		context.secondary = navigation;
+	} else {
+		React.render( navigation, document.getElementById( 'secondary' ) );
+	}
 }
 
 function renderEmptySites() {
