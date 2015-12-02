@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	Card = require( 'components/card' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	config = require( 'config' ),
@@ -57,11 +56,12 @@ module.exports = React.createClass( {
 							{
 								this.translate(
 									'A complete history of all billing transactions for your WordPress.com account. If you are looking to add or cancel a plan go to {{link}}Manage Purchases{{/link}}.', {
-									components: {
-										link: <a href={ puchasesPaths.list() }
-											onClick={ this.recordClickEvent( 'Manage Purchases Link on Billing History' ) } />
+										components: {
+											link: <a href={ puchasesPaths.list() }
+												onClick={ this.recordClickEvent( 'Manage Purchases Link on Billing History' ) } />
+										}
 									}
-								} )
+								)
 							}
 						</p>
 					</div>
