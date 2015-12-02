@@ -1,18 +1,19 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
+const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/string/trim' ),
 	startsWith = require( 'lodash/string/startsWith' ),
-	moment = require( 'moment' );
+	moment = require( 'moment' ),
+	ReduxProvider = require( 'react-redux' ).Provider;
 
 /**
  * Internal Dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
+const i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
 	pageNotifier = require( 'lib/route/page-notifier' ),
 	analytics = require( 'analytics' ),
@@ -130,7 +131,9 @@ module.exports = {
 		context.store.dispatch( setSection( 'reader' ) );
 
 		ReactDom.render(
-			React.createElement( ReaderSidebarComponent, { path: context.path } ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( ReaderSidebarComponent, { path: context.path } )
+			),
 			document.getElementById( 'secondary' )
 		);
 

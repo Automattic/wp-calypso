@@ -3,8 +3,8 @@
  */
 import React from 'react';
 
-const SidebarHeading = ( { children } ) => (
-	<h2 className="sidebar__heading">{ children }</h2>
+const SidebarHeading = ( { children, onClick } ) => (
+	<h2 className="sidebar__heading" onClick={ onClick }>{ children }</h2>
 );
 
 export default SidebarHeading;
