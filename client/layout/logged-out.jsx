@@ -27,10 +27,16 @@ module.exports = React.createClass( {
 				<Masterbar />
 				<div id="content" className="wp-content">
 					<NoticesList id="notices" notices={ notices.list } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+					<div id="primary" className="wp-primary wp-section">
+						{ this.props.primary }
+					</div>
+					<div id="secondary" className="wp-secondary">
+						{ this.props.secondary }
+					</div>
 				</div>
-				<div id="tertiary" className="wp-overlay fade-background" />
+				<div id="tertiary">
+					{ this.props.tertiary }
+				</div>
 			</div>
 		);
 	}
