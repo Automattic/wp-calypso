@@ -26,15 +26,17 @@ module.exports = React.createClass( {
 				transactions={ transactions }
 				initialFilter={ { date: { newest: 20 } } }
 				description={ function( transaction ) {
-					var siteSlug = this.props.sites.getSite( Number( transaction.blog_id ) ).slug;
+					var site = this.props.sites.getSite( Number( transaction.blog_id ) );
 
-					return (
-						<div className="transaction-links">
-							<a href={ purchasesPaths.managePurchase( siteSlug, transaction.id ) }>
-								{ this.translate( 'Manage Purchase' ) }
-							</a>
-						</div>
-					);
+					if ( site ) {
+						return (
+							<div className="transaction-links">
+								<a href={ purchasesPaths.managePurchase( site.slug, transaction.id ) }>
+									{ this.translate( 'Manage Purchase' ) }
+								</a>
+							</div>
+						);
+					}
 				}.bind( this ) }
 			/>
 		);
