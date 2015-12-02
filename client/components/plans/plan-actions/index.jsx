@@ -57,15 +57,9 @@ module.exports = React.createClass( {
 	},
 
 	upgradeActions: function() {
-		var classes = classNames( {
-			'button': true,
-			'is-primary': true,
-			'plan-actions__upgrade-button': true,
-			'expiry-space-trials-disabled': true
-		} );
 		return (
 			<div>
-				<button className={ classes }
+				<button className="button is-primary plan-actions__upgrade-button expiry-space-trials-disabled"
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
 					{ this.translate( 'Upgrade Now' ) }
 				</button>
@@ -163,25 +157,20 @@ module.exports = React.createClass( {
 			</div>;
 		}
 
-		var classes = classNames( {
-			'button': true,
-			'is-primary': true,
-			'plan-actions__upgrade-button': true,
-			'expiry-space-trials-enabled': true
-		} );
 		return (
 			<div>
-				<button className={ classes }
+				<button className="button is-primary plan-actions__upgrade-button expiry-space-trials-enabled"
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</button>
 
 				<small className="plan-actions__trial-period">
-					{ this.translate( 'Try it free for 14 days, no credit card needed, or', { context: 'Store action' } ) }&nbsp;
-					<a href='#'
-						onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) }>
-						{ this.translate( 'upgrade now', { context: 'Store action' } ) }
-					</a>.
+					{ this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
+						context: 'Store action',
+						components: {
+							a: <a href="#"
+								onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
+						} } ) }
 				</small>
 			</div>
 		);
