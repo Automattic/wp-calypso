@@ -6,3 +6,5 @@ npm-debug.log
 .DS_Store
 .idea
 /dist/test
+/webapp/webapp-bundle*
+/webapp/tests/testing-bundle*

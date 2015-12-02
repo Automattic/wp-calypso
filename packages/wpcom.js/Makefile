@@ -6,7 +6,13 @@ THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 # BIN directory
 BIN := $(THIS_DIR)/node_modules/.bin
 
-JS_FILES := $(shell find . -type f \( -name '*.js' \) -and \( -path './lib/*' \) -and -not \( -path './node_modules/*' \) -and -not \( -path './dist/*' \) )
+# Testing WEB APP port
+TESTAPP_DIR := webapp/tests
+TESTAPP_PORT := 3001
+
+# Files
+JS_FILES := $(wildcard index.js lib/*.js test/*.js)
+JS_TESTING_FILES := $(wildcard test/test*.js)
 
 # applications
 NODE ?= node
@@ -95,4 +101,42 @@ commit-dist: clean standalone babelify
 publish: clean standalone
 	$(NPM) publish
 
-.PHONY: standalone clean distclean babelify example-server test test-all publish node_modules lint eslint
+# testing client app
+test-app: babelify dist/test/testing-source.js
+	mkdir -p webapp/tests
+	cp test/fixture.json dist/test/
+	cp test/config.json dist/test/
+	cp test/util.js dist/test/
+	cp ./node_modules/mocha/mocha.js $(TESTAPP_DIR)
+	cp ./node_modules/mocha/mocha.css $(TESTAPP_DIR)
+	@$(WEBPACK) -p --config ./webpack.tests.config.js
+
+run-test-app: babelify test-app
+	cd $(TESTAPP_DIR); serve -p $(TESTAPP_PORT)
+
+dist/test/testing-source.js: ${JS_TESTING_FILES}
+	mkdir -p dist/test/
+	cat > $@ $^
+
+webapp:
+	@$(WEBPACK) -p --config webapp/webpack.config.js
+
+deploy:
+	mkdir -p tmp/
+	rm -rf tmp/*
+	mkdir -p tmp/tests
+	cp webapp/index.html tmp/
+	cp webapp/style.css tmp/
+	cp webapp/webapp-bundle.js tmp/
+	cp $(TESTAPP_DIR)/index.html tmp/tests
+	cp $(TESTAPP_DIR)/mocha.css tmp/tests
+	cp $(TESTAPP_DIR)/mocha.js tmp/tests
+	cp $(TESTAPP_DIR)/testing-bundle.js tmp/tests
+	git checkout gh-pages
+	cp -rf tmp/* .
+	git add ./ -v
+	git commit -m "built"
+	git push origin gh-pages
+	git checkout -
+
+.PHONY: standalone clean distclean babelify example-server test test-all publish node_modules lint eslint webapp

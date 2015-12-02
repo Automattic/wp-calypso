@@ -16,7 +16,7 @@ function falseAssertion( done ) {
 }
 
 describe( 'wpcom', function() {
-	var wpcom = util.wpcom_public();
+	var wpcom = util.wpcomPublic();
 
 	describe( 'wpcom.promises', function() {
 		it( 'should fail when slower than timeout', done => {
