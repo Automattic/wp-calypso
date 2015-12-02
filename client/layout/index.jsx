@@ -25,6 +25,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	PollerPool = require( 'lib/data-poller' ),
+	SupportUser = require( 'components/support-user' ),
 	KeyboardShortcutsMenu,
 	Layout;
 
@@ -95,6 +96,7 @@ Layout = React.createClass( {
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+				<SupportUser />
 				<MasterbarLoggedIn user={ this.props.user } section={ this.props.section } sites={ this.props.sites } />
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } /></div>
 				<div id="content" className="wp-content">
