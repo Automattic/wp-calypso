@@ -40,7 +40,7 @@ export default React.createClass( {
 						}
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
-						<Button href={ window.location.origin + '?invite_declined' }>
+						<Button onClick={ this.props.decline }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ () => acceptInvite( this.props.invite ) } href={ this.props.redirectTo } >

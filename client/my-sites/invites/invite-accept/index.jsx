@@ -4,6 +4,7 @@
 import React from 'react';
 import Debug from 'debug';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -12,7 +13,7 @@ import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
 import userModule from 'lib/user';
-import { fetchInvite } from 'lib/invites/actions';
+import { fetchInvite, displayInviteDeclined } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
 
@@ -62,17 +63,21 @@ export default React.createClass( {
 		);
 	},
 
-	getRedirectTo() {
+	getRedirectAfterAccept() {
 		const { invite } = this.state.invite;
-		let redirectTo = window.location.origin;
 		switch ( invite.meta.role ) {
 			case 'viewer':
 			case 'follower':
+				return '/';
 				break;
 			default:
-				redirectTo += '/posts/' + invite.blog_id;
+				return '/posts/' + invite.blog_id;
 		}
-		return redirectTo += '?invite_accepted=' + invite.blog_id;
+	},
+
+	decline() {
+		page( '/' );
+		displayInviteDeclined();
 	},
 
 	renderForm() {
@@ -81,9 +86,9 @@ export default React.createClass( {
 			return null;
 		}
 		debug( 'Rendering invite' );
-			: <LoggedOut { ...this.state.invite } redirectTo={ this.getRedirectTo() } />;
 		return user
-			? <LoggedIn { ...this.state.invite } user={ user } />
+			? <LoggedIn { ...this.state.invite } decline={ this.decline } user={ user } />
+			: <LoggedOut { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } />;
 	},
 
 	renderError() {
