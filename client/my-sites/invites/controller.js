@@ -17,7 +17,10 @@ export function acceptInvite( context ) {
 	context.layout.setState( { noSidebar: true } );
 
 	React.render(
-		React.createElement( InviteAccept, context.params ),
+		React.createElement(
+			InviteAccept,
+			context.params
+		),
 		document.getElementById( 'primary' )
 	);
 }

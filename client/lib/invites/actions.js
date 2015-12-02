@@ -63,8 +63,7 @@ export function acceptInvite( invite, callback, bearerToken ) {
 		wpcom.loadToken( bearerToken );
 	}
 	return wpcom.undocumented().acceptInvite(
-		invite.blog_id,
-		invite.invite_slug,
+		invite,
 		callback
 	);
 }
