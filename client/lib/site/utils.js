@@ -109,7 +109,7 @@ export default {
 			return false;
 		}
 
-		if ( site.options && site.options.unmapped_url !== site.options.main_network_site ) {
+		if ( ! this.isMainNetworkSite( site ) ) {
 			return false;
 		}
 
@@ -122,5 +122,28 @@ export default {
 		}
 
 		return true;
+	},
+
+	isMainNetworkSite( site ) {
+		if ( ! site ) {
+			return false;
+		}
+
+		if ( site.options && site.options.is_multi_network ) {
+			return false;
+		}
+
+		if ( site.is_multisite === false ) {
+			return true;
+		}
+
+		if ( site.is_multisite ) {
+			// Compare unmapped_url with the main_network_site to see if is the main network site.
+			return ! ( site.options &&
+				site.options.unmapped_url.replace( /^https?:\/\//, '' ) !== site.options.main_network_site.replace( /^https?:\/\//, '' )
+			);
+		}
+
+		return false;
 	}
 };
