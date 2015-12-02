@@ -154,8 +154,16 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
+function getCurrentFlowNameFromTest() {
+	if ( 'dss' === abtest( 'dss' ) ) {
+		return 'dss;'
+	}
+
+	return 'main';
+}
+
 module.exports = {
-	currentFlowName: 'main',
+	currentFlowName: getCurrentFlowNameFromTest(),
 
 	defaultFlowName: 'main',
 
