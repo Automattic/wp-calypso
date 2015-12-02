@@ -223,7 +223,7 @@ module.exports = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					site={ this.props.site }
-					actionURL={ selectedSite.getRemoteManagementURL() }
+					actionURL={ selectedSite.getRemoteManagementURL() + '&section=plugins' }
 					illustration= '/calypso/images/jetpack/jetpack-manage.svg'
 					featureExample={ this.getMockPluginItems() } />
 			</MainComponent>
