@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	classNames = require( 'classnames' ),
 	store = require( 'store' );
 
 /**
@@ -68,23 +67,40 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	thankYouHeader: function() {
-		var freeTrial;
-
 		if ( this.cartHasFreeTrial() ) {
-			freeTrial = cartItems.findFreeTrial( this.props.lastTransaction.cart );
-
 			return (
 				<h1>
 					{
-						this.translate( 'Thank you for trying %(productName)s!', {
-							args: { productName: freeTrial.product_name }
-						} )
+						this.translate( 'Your 14 day free trial starts today!' )
 					}
 				</h1>
 			);
-		} else {
-			return <h1>{ this.translate( 'Thank you for your purchase!' ) }</h1>;
 		}
+		return <h1>{ this.translate( 'Thank you for your purchase!' ) }</h1>
+	},
+	thankYouSubHeader: function() {
+		var productName = this.getSingleProductName(),
+			headerText;
+
+		if ( this.cartHasFreeTrial() && productName ) {
+			headerText = this.translate( 'We hope you enjoy %(productName)s. What\'s next? Take it for a spin!', {
+				args: {
+					productName: productName
+				}
+			} );
+		} else if ( productName ) {
+			headerText = this.translate( 'You will receive an email confirmation shortly for your purchase of ' +
+				"%(productName)s. What's next?", {
+					args: {
+						productName: productName
+					}
+				}
+			);
+		} else {
+			headerText = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
+		}
+
+		return <h2>{ headerText }</h2>
 	},
 	getSingleProductName() {
 		var products;
@@ -97,27 +113,13 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	render: function() {
-		var productName = this.getSingleProductName(),
-			emailConfirmationNotice;
-
-		if ( productName ) {
-			emailConfirmationNotice = this.translate( 'You will receive an email confirmation shortly for your purchase of ' +
-				"%(productName)s. What's next?", {
-				args: {
-					productName: productName
-				}
-			} );
-		} else {
-			emailConfirmationNotice = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
-		}
-
 		return (
 			<Main className="checkout-thank-you">
 				<Card>
 					<div className="thank-you-message">
 						<span className="receipt-icon"></span>
 						{ this.thankYouHeader() }
-						<h2>{ emailConfirmationNotice }</h2>
+						{ this.thankYouSubHeader() }
 					</div>
 					{ this.productRelatedMessages() }
 				</Card>
@@ -153,7 +155,6 @@ var CheckoutThankYou = React.createClass( {
 		if ( this.cartHasFreeTrial() ) {
 			return (
 				<div className="try-out-message">
-					{ this.takeItForASpin() }
 					<p>
 						{ this.translate( 'You have %(days)d days to try out all of the WordPress.com Premium features:', {
 							args: { days: 14 },
@@ -170,7 +171,6 @@ var CheckoutThankYou = React.createClass( {
 		if ( this.cartHasFreeTrial() ) {
 			return (
 				<div className="try-out-message">
-					{ this.takeItForASpin() }
 					<p>
 						{ this.translate( 'You have %(days)d days to try out all of the WordPress.com Business features:', {
 							args: { days: 14 },
@@ -186,18 +186,13 @@ var CheckoutThankYou = React.createClass( {
 	productRelatedMessages: function() {
 		var cart = this.props.lastTransaction.cart,
 			selectedSite = this.props.lastTransaction.selectedSite,
-			freeTrialMessage,
 			componentClass,
 			domain;
 
 		if ( cartItems.hasProduct( cart, 'value_bundle' ) ) {
 			componentClass = PremiumPlanDetails;
-
-			freeTrialMessage = this.premiumFreeTrialMessage();
 		} else if ( cartItems.hasProduct( cart, 'business-bundle' ) ) {
 			componentClass = BusinessPlanDetails;
-
-			freeTrialMessage = this.businessFreeTrialMessage();
 		} else if ( cartItems.hasProduct( cart, 'jetpack_premium' ) ) {
 			componentClass = JetpackPremiumPlanDetails;
 		} else if ( cartItems.hasProduct( cart, 'jetpack_business' ) ) {
@@ -226,7 +221,6 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<div>
-				{ freeTrialMessage }
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
 					isFreeTrial: this.cartHasFreeTrial(),
@@ -275,13 +269,23 @@ PremiumPlanDetails = React.createClass( {
 
 		return (
 			<ul className="purchase-details-list">
-				{ showGetFreeDomainTip ?
-					<PurchaseDetail
+				{ showGetFreeDomainTip
+				? <PurchaseDetail
 						additionalClass="get-free-domain"
 						title={ this.translate( 'Get a free domain' ) }
 						description={ this.translate( 'WordPress.com Premium includes a free domain for your site.' ) }
 						buttonText={ this.translate( 'Add Free Domain' ) }
 						onButtonClick={ goToExternalPage( '/domains/add/' + this.props.selectedSite.slug ) } />
+					: null
+				}
+
+				{ ! showGetFreeDomainTip
+				? <PurchaseDetail
+						additionalClass="ads-have-been-removed"
+						title={ this.translate( 'Ads have been removed!' ) }
+						description={ this.translate( 'WordPress.com ads will not show up on your blog.' ) }
+						buttonText={ this.translate( 'View Your Site' ) }
+						onButtonClick={ goToExternalPage( this.props.selectedSite.URL ) } />
 					: null
 				}
 
@@ -298,16 +302,6 @@ PremiumPlanDetails = React.createClass( {
 					description={ this.translate( "Uploading videos to your blog couldn't be easier." ) }
 					buttonText={ this.translate( 'Start Using VideoPress' ) }
 					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/media-new.php' ) } />
-
-				{ ! showGetFreeDomainTip ?
-					<PurchaseDetail
-						additionalClass="ads-have-been-removed"
-						title={ this.translate( 'Ads have been removed!' ) }
-						description={ this.translate( 'WordPress.com ads will not show up on your blog.' ) }
-						buttonText={ this.translate( 'View My Site' ) }
-						onButtonClick={ goToExternalPage( this.props.selectedSite.URL ) } />
-					: null
-				}
 			</ul>
 		);
 	}
@@ -341,8 +335,8 @@ BusinessPlanDetails = React.createClass( {
 
 		return (
 			<ul className="purchase-details-list">
-				{ showGetFreeDomainTip ?
-					<PurchaseDetail
+				{ showGetFreeDomainTip
+				? <PurchaseDetail
 						additionalClass="get-free-domain"
 						title={ this.translate( 'Get a free domain' ) }
 						description={ this.translate( 'WordPress.com Business includes a free domain for your site.' ) }
@@ -352,25 +346,26 @@ BusinessPlanDetails = React.createClass( {
 
 				<PurchaseDetail
 					additionalClass="ecommerce"
-					title={ this.translate( 'eCommerce' ) }
+					title={ this.translate( 'Add eCommerce' ) }
 					description={ this.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
-					buttonText={ this.translate( 'Set up eCommerce' ) }
+					buttonText={ this.translate( 'Set Up eCommerce' ) }
 					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/admin.php?page=business-plugins' ) } />
 
-				{ ! showGetFreeDomainTip ?
-					<PurchaseDetail
+				{ ! showGetFreeDomainTip
+				? <PurchaseDetail
 						additionalClass="live-chat"
-						title={ this.translate( 'Start a live chat' ) }
+						title={ this.translate( 'Start a Live Chat' ) }
 						description={ this.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
-						buttonText={ this.translate( 'Talk to an operator' ) }
-						onButtonClick={ goToExternalPage( '//support.wordpress.com/live-chat/' ) } /> :
-					null }
+						buttonText={ this.translate( 'Talk to an Operator' ) }
+						onButtonClick={ goToExternalPage( '//support.wordpress.com/live-chat/' ) } />
+					: null
+				}
 
 				<PurchaseDetail
 					additionalClass="unlimited-premium-themes"
-					title={ this.translate( 'Browse themes' ) }
+					title={ this.translate( 'Browse Themes' ) }
 					description={ this.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
-					buttonText={ this.translate( 'Change your theme' ) }
+					buttonText={ this.translate( 'Find a New Theme' ) }
 					onButtonClick={ goToExternalPage( '/themes/' + this.props.selectedSite.slug ) } />
 			</ul>
 		);

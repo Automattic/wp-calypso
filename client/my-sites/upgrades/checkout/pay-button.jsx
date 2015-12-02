@@ -8,6 +8,7 @@ var React = require( 'react' );
  */
 var cartValues = require( 'lib/cart-values' ),
 	cartItems = cartValues.cartItems,
+	hasFreeTrial = cartItems.hasFreeTrial,
 	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
 	SubscriptionText = require( './subscription-text' );
 
@@ -112,9 +113,15 @@ var PayButton = React.createClass( {
 	},
 
 	completing: function() {
+		var text;
+		if ( hasFreeTrial( this.props.cart ) ) {
+			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } )
+		} else {
+			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } )
+		}
 		return {
 			disabled: true,
-			text: this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } )
+			text: text
 		};
 	},
 
