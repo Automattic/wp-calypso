@@ -20,7 +20,10 @@ Use this to set the initial value of the field (_not the placeholder, which is d
 `/posts?s=keyword`
 
 ### delaySearch (optional) boolean ( default false )
-Use this prop to delay the `onSearch` callback until after the user has stopped typing. If `delaySearch` is false there is no delay between keyup and the `onSearch` callback. If the filtering is done asynchronously (i.e., via ajax request) `delaySearch` should be true to avoid a request on each keypress.
+Use this prop to delay the `onSearch` callback until after the user has stopped typing. If `delaySearch` is false there is no delay between keyup and the `onSearch` callback. If the filtering is done asynchronously (i.e., via ajax request) `delaySearch` should be true to avoid a request on each keypress. The default delay is 300ms but can be customized using `delayTimeout`.
+
+### delayTimeout (optional) number ( default 300 )
+If `delaySearch` is true, this prop can be used to control the number of milliseconds used to determine when the user has stopped typing. It's a good idea to leave this at its default value unless there's a specific reason to change the timeout (e.g., a very expensive search may benefit from a longer timeout).
 
 ### pinned (optional)
 Whether to display the search input from collapsed by default and pinned to the right of its container. If not set, the search input will show as already expanded.

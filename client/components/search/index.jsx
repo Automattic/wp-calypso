@@ -28,6 +28,7 @@ module.exports = React.createClass( {
 		placeholder: React.PropTypes.string,
 		pinned: React.PropTypes.bool,
 		delaySearch: React.PropTypes.bool,
+		delayTimeout: React.PropTypes.number,
 		onSearch: React.PropTypes.func.isRequired,
 		onSearchChange: React.PropTypes.func,
 		onSearchClose: React.PropTypes.func,
@@ -50,6 +51,7 @@ module.exports = React.createClass( {
 		return {
 			pinned: false,
 			delaySearch: false,
+			delayTimeout: SEARCH_DEBOUNCE_MS,
 			autoFocus: false,
 			disabled: false,
 			onSearchChange: noop,
@@ -64,7 +66,7 @@ module.exports = React.createClass( {
 		this.id = _instance;
 		_instance++;
 		this.onSearch = this.props.delaySearch
-			? debounce( this.props.onSearch, SEARCH_DEBOUNCE_MS )
+			? debounce( this.props.onSearch, this.props.delayTimeout )
 			: this.props.onSearch;
 	},
 
@@ -74,7 +76,7 @@ module.exports = React.createClass( {
 			nextProps.delaySearch !== this.props.delaySearch
 		) {
 			this.onSearch = this.props.delaySearch
-				? debounce( this.props.onSearch, SEARCH_DEBOUNCE_MS )
+				? debounce( this.props.onSearch, this.props.delayTimeout )
 				: this.props.onSearch;
 		}
 	},
