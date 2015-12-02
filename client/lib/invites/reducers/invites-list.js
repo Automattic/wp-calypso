@@ -24,7 +24,7 @@ const reducer = ( state = initialState, payload ) => {
 	const { action } = payload;
 	switch ( action.type ) {
 		case ActionTypes.FETCH_INVITES:
-			return state.setIn( [ 'fetchingInvites', actions.siteId ], true );
+			return state.setIn( [ 'fetchingInvites', action.siteId ], true );
 		case ActionTypes.RECEIVE_INVITES:
 			return state
 				.setIn( [ 'fetchingInvites', action.siteId ], false )
