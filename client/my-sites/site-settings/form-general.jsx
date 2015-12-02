@@ -113,20 +113,24 @@ module.exports = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-			customAddress = <a
-								href={ '/domains/add/' + site.slug  }
-								className="button"
-								onClick={ this.trackUpgradeClick }>{ this.translate( 'Add a custom address', { context: 'Site address, domain' } ) }
-							</a>;
+			customAddress = (
+				<a
+					href={ '/domains/add/' + site.slug }
+					className="button"
+					onClick={ this.trackUpgradeClick }
+				>
+					{ this.translate( 'Add a custom address', { context: 'Site address, domain' } ) }
+				</a>
+			);
 
 			addressDescription =
 				<p className="settings-explanation">
 					{
 						this.translate( 'Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}}, {{mapDomainLink}}map{{/mapDomainLink}} a domain you already own, or {{redirectLink}}redirect{{/redirectLink}} this site.', {
 							components: {
-								domainSearchLink: <a href={ '/domains/add/' + site.slug  } onClick={ this.trackUpgradeClick } />,
-								mapDomainLink: <a href={ '/domains/add/mapping/' + site.slug  } onClick={ this.trackUpgradeClick } />,
-								redirectLink: <a href={ '/domains/add/site-redirect/' + site.slug  } onClick={ this.trackUpgradeClick } />
+								domainSearchLink: <a href={ '/domains/add/' + site.slug } onClick={ this.trackUpgradeClick } />,
+								mapDomainLink: <a href={ '/domains/add/mapping/' + site.slug } onClick={ this.trackUpgradeClick } />,
+								redirectLink: <a href={ '/domains/add/site-redirect/' + site.slug } onClick={ this.trackUpgradeClick } />
 							}
 						} )
 					}
@@ -237,7 +241,7 @@ module.exports = React.createClass( {
 					</p>
 				</label>
 
-				{ ! site.jetpack ?
+				{ ! site.jetpack &&
 					<label>
 						<input
 							type="radio"
@@ -250,14 +254,13 @@ module.exports = React.createClass( {
 						/>
 						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
 					</label>
-				: null }
+				}
 
 			</fieldset>
 		);
 	},
 
 	relatedPostsOptions: function() {
-
 		if ( ! this.state.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -312,7 +315,6 @@ module.exports = React.createClass( {
 				</ul>
 			</fieldset>
 		);
-
 	},
 
 	syncNonPublicPostTypes: function() {
@@ -346,7 +348,7 @@ module.exports = React.createClass( {
 				<p>{
 					this.translate( 'You can also {{manageLink}}manage the monitor settings{{/manageLink}} and {{migrateLink}}migrate followers{{/migrateLink}}.', {
 						components: {
-							manageLink: <a href={ '../security/' + site.slug  } />,
+							manageLink: <a href={ '../security/' + site.slug } />,
 							migrateLink: <a href={ 'https://wordpress.com/manage/' + site.ID } />
 						}
 					} )
@@ -387,7 +389,6 @@ module.exports = React.createClass( {
 				</ul>
 			</fieldset>
 		);
-
 	},
 
 	render: function() {
