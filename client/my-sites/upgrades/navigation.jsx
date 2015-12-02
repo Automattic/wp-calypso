@@ -121,9 +121,6 @@ var UpgradesNavigation = React.createClass( {
 			items = [ 'Plans', 'My Purchases' ];
 		} else {
 			items = [ 'Plans', 'Domains', 'Email', 'My Purchases' ];
-			if ( config.isEnabled( 'upgrades/purchases/list' ) ) {
-				items = [ 'Plans', 'Domains', 'Email' ];
-			}
 		}
 
 		return items.map( propertyOf( NAV_ITEMS ) );
