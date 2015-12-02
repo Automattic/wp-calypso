@@ -82,44 +82,40 @@ function init() {
 	} );
 }
 
-function setUpContext( layout, reduxStore ) {
+function setUpContext( context, next ) {
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
-	page( '*', function( context, next ) {
-		var parsed = url.parse( location.href, true );
+	var parsed = url.parse( location.href, true );
 
-		context.layout = layout;
-		context.store = reduxStore;
+	// Break routing and do full page load for logout link in /me
+	if ( context.pathname === '/wp-login.php' ) {
+		window.location.href = context.path;
+		return;
+	}
 
-		// Break routing and do full page load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
-			window.location.href = context.path;
-			return;
-		}
+	// set `context.query`
+	// debugger
+	const querystringStart = context.canonicalPath.indexOf( '?' );
+	if ( querystringStart !== -1 ) {
+		context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
+	} else {
+		context.query = {};
+	}
+	context.prevPath = parsed.path === context.path ? false : parsed.path;
 
-		// set `context.query`
-		// debugger
-		const querystringStart = context.canonicalPath.indexOf( '?' );
-		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
-		} else {
-			context.query = {};
-		}
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-
-		// set `context.hash` (we have to parse manually)
-		if ( parsed.hash && parsed.hash.length > 1 ) {
-			try {
-				context.hash = qs.parse( parsed.hash.substring( 1 ) );
-			} catch ( e ) {
-				debug( 'failed to query-string parse `location.hash`', e );
-				context.hash = {};
-			}
-		} else {
+	// set `context.hash` (we have to parse manually)
+	if ( parsed.hash && parsed.hash.length > 1 ) {
+		try {
+			context.hash = qs.parse( parsed.hash.substring( 1 ) );
+		} catch ( e ) {
+			debug( 'failed to query-string parse `location.hash`', e );
 			context.hash = {};
 		}
-		next();
-	} );
+	} else {
+		context.hash = {};
+	}
+
+	next();
 }
 
 function loadDevModulesAndBoot() {
@@ -139,8 +135,86 @@ function loadDevModulesAndBoot() {
 	boot();
 }
 
+function setUpReduxStore( context, next ) {
+	context.store = createReduxStore();
+
+	if ( user.get() ) {
+		// Set current user in Redux store
+		context.store.dispatch( receiveUser( user.get() ) );
+		context.store.dispatch( setCurrentUserId( user.get().ID ) );
+	}
+
+	next();
+}
+
+function renderLayout( context, next ) {
+	let layoutSection, layoutElement;
+
+	if ( user.get() ) {
+		// When logged in the analytics module requires user and superProps objects
+		// Inject these here
+		analytics.initialize( user, superProps );
+
+		// Create layout instance with current user prop
+		Layout = require( 'layout' );
+		layoutElement = React.createElement( Layout, {
+			primary: context.primary,
+			secondary: context.secondary,
+			tertiary: context.tertiary,
+			user: user,
+			sites: sites,
+			focus: layoutFocus,
+			nuxWelcome: nuxWelcome,
+			translatorInvitation: translatorInvitation
+		} );
+	} else {
+		analytics.setSuperProps( superProps );
+
+		if ( config.isEnabled( 'oauth' ) ) {
+			LoggedOutLayout = require( 'layout/logged-out-oauth' );
+		} else if ( startsWith( window.location.pathname, '/design' ) ) {
+			LoggedOutLayout = require( 'layout/logged-out-design' );
+		} else {
+			LoggedOutLayout = require( 'layout/logged-out' );
+		}
+
+		layoutElement = React.createElement( LoggedOutLayout, {
+			primary: context.primary,
+			secondary: context.secondary,
+			tertiary: context.tertiary,
+		} );
+	}
+
+	if ( config.isEnabled( 'perfmon' ) ) {
+		// Record time spent watching slowly-flashing divs
+		perfmon();
+	}
+
+	if ( config.isEnabled( 'network-connection' ) ) {
+		require( 'lib/network-connection' ).init( context.store );
+	}
+
+	context.layout = renderWithReduxStore(
+		layoutElement,
+		document.getElementById( 'wpcom' ),
+		context.store
+	);
+
+	debug( 'Main layout rendered.' );
+	//
+	// If `?sb` or `?sp` are present on the path set the focus of layout
+	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
+	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
+		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
+		layoutFocus.set( layoutSection );
+		window.history.replaceState( null, document.title, window.location.pathname );
+	}
+
+	return next();
+}
+
 function boot() {
-	var layoutSection, layout, layoutElement, reduxStore, validSections = [];
+	var validSections = [];
 
 	init();
 
@@ -161,67 +235,21 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	reduxStore = createReduxStore();
+	page( '*', setUpReduxStore );
 
-	if ( user.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( user, superProps );
+	page( '*', function( context, next ) {
+		var path = context.pathname;
 
-		// Set current user in Redux store
-		reduxStore.dispatch( receiveUser( user.get() ) );
-		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		Layout = require( 'layout' );
-
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
-		} );
-	} else {
-		analytics.setSuperProps( superProps );
-
-		if ( config.isEnabled( 'oauth' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-oauth' );
-		} else if ( startsWith( window.location.pathname, '/design' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-design' );
+		if ( /^\/design/.test( path ) ) {
+			context.layoutLast = true;
+			context.layout = { setState: () => {} };
+			next();
 		} else {
-			LoggedOutLayout = require( 'layout/logged-out' );
+			renderLayout( context, next );
 		}
+	} );
 
-		layoutElement = React.createElement( LoggedOutLayout );
-	}
-
-	if ( config.isEnabled( 'perfmon' ) ) {
-		// Record time spent watching slowly-flashing divs
-		perfmon();
-	}
-
-	if ( config.isEnabled( 'network-connection' ) ) {
-		require( 'lib/network-connection' ).init( reduxStore );
-	}
-
-	layout = renderWithReduxStore(
-		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
-	);
-
-	debug( 'Main layout rendered.' );
-
-	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
-	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
-		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
-		layoutFocus.set( layoutSection );
-		window.history.replaceState( null, document.title, window.location.pathname );
-	}
-
-	setUpContext( layout, reduxStore );
+	page( '*', setUpContext );
 	page( '*', require( 'lib/route/normalize' ) );
 
 	// warn against navigating from changed, unsaved forms
@@ -258,6 +286,8 @@ function boot() {
 			nuxWelcome.clearTempWelcome();
 		}
 
+		console.log( context )
+
 		// Bump general stat tracking overall Newdash usage
 		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
 
@@ -281,9 +311,6 @@ function boot() {
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', require( 'auth/controller' ).checkToken );
 	}
-
-	// Load the application modules for the various sections and features
-	sections.load();
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
@@ -334,6 +361,17 @@ function boot() {
 	// clear notices
 	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
+
+	// Load the application modules for the various sections and features
+	sections.load( function() {
+		page( '*', function( context, next ) {
+			if ( context.layoutLast ) {
+				console.log( 'context in end route', context.primary );
+				return renderLayout( context, next );
+			}
+			return next();
+		} );
+	} );
 
 	if ( config.isEnabled( 'olark' ) ) {
 		require( 'lib/olark' );

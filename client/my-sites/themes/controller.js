@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+var React = require( 'react' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
 	titlecase = require( 'to-title-case' );
 
@@ -19,7 +18,7 @@ var ThemesComponent = require( 'my-sites/themes/main' ),
 
 var controller = {
 
-	themes: function( context ) {
+	themes: function( context, next ) {
 		const { tier, site_id } = context.params;
 		const user = getCurrentUser( context.store.getState() );
 		const title = buildTitle(
@@ -42,7 +41,7 @@ var controller = {
 		}
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
-		ReactDom.render(
+		context.layout =
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( Head, { title, tier: tier || 'all' },
 					React.createElement( ThemesComponent, {
@@ -58,9 +57,8 @@ var controller = {
 						)
 					} )
 				)
-			),
-			document.getElementById( 'primary' )
-		);
+			);
+		next();
 	}
 };
 
