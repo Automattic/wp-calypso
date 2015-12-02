@@ -122,6 +122,9 @@ module.exports = React.createClass( {
 		if ( this.props.autoFocus ) {
 			this.focus();
 		}
+		if ( this.props.initialValue ) {
+			this.onSearch( this.props.initialValue );
+		}
 	},
 
 	focus: function() {
