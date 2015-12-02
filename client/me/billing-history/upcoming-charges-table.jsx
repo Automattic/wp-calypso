@@ -14,19 +14,28 @@ module.exports = React.createClass( {
 	displayName: 'UpcomingChargesTable',
 
 	render: function() {
+		var transactions = null;
+
+		if ( this.props.sites.initialized ) {
+			// `TransactionsTable` will render a loading state until the transactions are present
+			transactions = this.props.transactions;
+		}
+
 		return (
 			<TransactionsTable
-				{ ...this.props }
+				transactions={ transactions }
 				initialFilter={ { date: { newest: 20 } } }
-				description={ function( { domain, id } = transaction ) {
+				description={ function( transaction ) {
+					var siteSlug = this.props.sites.getSite( Number( transaction.blog_id ) ).slug;
+
 					return (
 						<div className="transaction-links">
-							<a href={ purchasesPaths.managePurchase( domain, id ) }>
+							<a href={ purchasesPaths.managePurchase( siteSlug, transaction.id ) }>
 								{ this.translate( 'Manage Purchase' ) }
 							</a>
 						</div>
 					);
-				} }
+				}.bind( this ) }
 			/>
 		);
 	}

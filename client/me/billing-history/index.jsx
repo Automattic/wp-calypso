@@ -24,7 +24,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 module.exports = React.createClass( {
 	displayName: 'BillingHistory',
 
-	mixins: [ observe( 'billingData' ), eventRecorder ],
+	mixins: [ observe( 'billingData', 'sites' ), eventRecorder ],
 
 	componentWillMount: function() {
 		classes( document.body ).add( 'billing-history-page' );
@@ -71,7 +71,7 @@ module.exports = React.createClass( {
 
 				<SectionHeader label={ this.translate( 'Upcoming Charges' ) } />
 				<Card id="upcoming-charges">
-					<UpcomingChargesTable transactions={ data.upcomingCharges } />
+					<UpcomingChargesTable sites={ this.props.sites } transactions={ data.upcomingCharges } />
 				</Card>
 
 				{ this.renderManageCards() }

@@ -51,6 +51,10 @@ var TransactionsTable = React.createClass( {
 	filterTransactions: function( filter ) {
 		var newFilter, newTransactions;
 
+		if ( ! this.props.transactions ) {
+			return;
+		}
+
 		if ( filter.search ) {
 			// In this case the user is typing in the search box. We remove any other
 			// filter parameters besides the text we're searching for.
