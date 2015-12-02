@@ -49,7 +49,14 @@
 }
 
 .reader-post-byline__tag .gridicon {
-		color: #C8D7E1;
+		color: lighten( $gray, 20% );
 		position: relative;
 			top: 4px;
+}
+
+.reader-post-byline__date-link .gridicon {
+	color: inherit;
+	position: relative;
+	top: 2px;
+	margin-left: 2px;
 }

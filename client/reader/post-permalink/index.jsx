@@ -4,7 +4,8 @@
 var React = require( 'react' );
 
 // Internal Dependencies
-var stats = require( 'reader/stats' );
+var ExternalLink = require( 'components/external-link' ),
+	stats = require( 'reader/stats' );
 
 var PostPermalink = React.createClass( {
 
@@ -25,9 +26,9 @@ var PostPermalink = React.createClass( {
 
 		return (
 			<li className="post-permalink" onClick={ this.recordClick }>
-				<a href={ this.props.postUrl } rel="external" target="_blank">
+				<ExternalLink href={ this.props.postUrl } rel="external" target="_blank">
 					{ this.translate( 'Visit', { comment: 'Visit the post on the original site' } ) }
-				</a>
+				</ExternalLink>
 			</li>
 		);
 	}

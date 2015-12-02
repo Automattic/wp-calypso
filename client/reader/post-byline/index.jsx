@@ -6,7 +6,8 @@ var React = require( 'react' );
 /**
  * Internal Dependencies
  */
-var Gravatar = require( 'components/gravatar' ),
+var ExternalLink = require( 'components/external-link' ),
+	Gravatar = require( 'components/gravatar' ),
 	Gridicon = require( 'components/gridicon' ),
 	PostTime = require( 'reader/post-time' ),
 	utils = require( 'reader/utils' ),
@@ -44,10 +45,10 @@ var PostByline = React.createClass( {
 		}
 
 		return (
-			<a href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
+			<ExternalLink href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
 				{ gravatar }
 				{ authorName }
-			</a>
+			</ExternalLink>
 		);
 	},
 
@@ -72,7 +73,7 @@ var PostByline = React.createClass( {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } /></a>
+						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">
