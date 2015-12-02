@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -13,13 +14,21 @@ import Button from 'components/button';
 import config from 'config';
 import userModule from 'lib/user';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { acceptInvite } from 'lib/invites/actions';
+import { acceptInvite, displayInviteAccepted } from 'lib/invites/actions';
 
 const user = userModule();
 
 export default React.createClass( {
 
 	displayName: 'InviteAcceptLoggedIn',
+
+	acceptInvite() {
+		const { invite } = this.props;
+		acceptInvite( invite, () => {
+			page( this.props.redirectTo );
+			displayInviteAccepted( invite.blog_id );
+		} );
+	},
 
 	render() {
 		let userObject = user.get(),
@@ -46,7 +55,7 @@ export default React.createClass( {
 						<Button href={ window.location.origin + '?invite_declined' }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
-						<Button primary onClick={ () => acceptInvite( this.props.invite ) } href={ this.props.redirectTo } >
+						<Button primary onClick={ this.acceptInvite }>
 							{ this.translate( 'Join', { context: 'button' } ) }
 						</Button>
 					</div>
