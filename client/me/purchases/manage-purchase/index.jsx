@@ -17,7 +17,7 @@ import { googleAppsSettingsUrl } from 'lib/google-apps';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import NoticeArrowLink from 'notices/arrow-link';
+import NoticeAction from 'components/notice/notice-action';
 import { oldShowcaseUrl } from 'lib/themes/helpers';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
@@ -102,9 +102,9 @@ const ManagePurchase = React.createClass( {
 						}
 					}
 				) }>
-				<NoticeArrowLink onClick={ this.handleRenew }>
+				<NoticeAction onClick={ this.handleRenew }>
 					{ this.translate( 'Renew Now' ) }
-				</NoticeArrowLink>
+				</NoticeAction>
 			</Notice>
 		);
 	},
@@ -380,9 +380,9 @@ const ManagePurchase = React.createClass( {
 				showDismiss={ false }
 				status="is-error"
 				text={ this.translate( 'This purchase has expired and is no longer in use.' ) }>
-				<NoticeArrowLink onClick={ this.handleRenew }>
+				<NoticeAction onClick={ this.handleRenew }>
 					{ this.translate( 'Renew Now' ) }
-				</NoticeArrowLink>
+				</NoticeAction>
 			</Notice>
 		);
 	},

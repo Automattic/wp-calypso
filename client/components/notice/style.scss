@@ -189,7 +189,7 @@
 		padding: 9px 16px;
 	}
 
-	a.notice__arrow-link .gridicon {
+	a.notice__action .gridicon {
 		width: 18px;
 		height: 18px;
 	}
@@ -197,7 +197,7 @@
 
 // ArrowLink sub-component
 // specificity for general `a` elements within notice is too great
-.notice a.notice__arrow-link {
+.notice a.notice__action {
 	background: rgba( 0, 0, 0, 0.2 );
 	box-sizing: border-box;
 	color: $white;
@@ -207,12 +207,13 @@
 	font-size: 15px;
 	font-weight: 400;
 	margin-left: auto; // forces the element to the right;
-	padding: 13px 10px 13px 16px;
+	padding: 13px 16px;
 	text-decoration: none;
 	white-space: nowrap;
 
 	.gridicon {
 		margin-left: 8px;
+		opacity: 0.7;
 	}
 
 	&:hover,

@@ -23,7 +23,7 @@ var actions = require( 'lib/posts/actions' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	Gridicon = require( 'components/gridicon' ),
-	NoticeArrowLink = require( 'notices/arrow-link' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
@@ -238,9 +238,9 @@ var PostEditor = React.createClass( {
 
 		if ( this.state.notice.link ) {
 			arrowLink = (
-				<NoticeArrowLink href={ this.state.notice.link }>
+				<NoticeAction href={ this.state.notice.link } external={ true }>
 					{ this.state.notice.action }
-				</NoticeArrowLink>
+				</NoticeAction>
 			);
 		}
 

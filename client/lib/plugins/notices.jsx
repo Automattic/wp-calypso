@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var notices = require( 'notices' ),
-	NoticeArrowAction = require( 'notices/arrow-link' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	PluginsUtil = require( 'lib/plugins/utils' ),
@@ -187,9 +187,9 @@ module.exports = {
 									'{{action}}Setup{{/action}}', {
 										args: translateArg,
 										components: {
-											action: <NoticeArrowAction
+											action: <NoticeAction
 												href={ translateArg.wp_admin_settings_page_url }
-												target="_blank" />
+												external={ true } />
 										},
 										context: 'Success message when activating a plugin with a link to the plugin settings.'
 									} );
