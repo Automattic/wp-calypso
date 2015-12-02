@@ -49,7 +49,7 @@ module.exports = React.createClass( {
 				illustration: null,
 				action: this.translate( 'Enable Jetpack Manage' ),
 				actionURL: ( this.props.site && this.props.site.jetpack )
-					? this.props.site.getRemoteManagementURL()
+					? this.props.site.getRemoteManagementURL() + '&section=plugins'
 					: false,
 				actionTarget: '_blank'
 			},

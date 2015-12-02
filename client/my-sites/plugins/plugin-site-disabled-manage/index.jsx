@@ -17,7 +17,7 @@ module.exports = React.createClass( {
 		const message = this.props.isNetwork ?
 				this.translate( 'Network management disabled' ) :
 				this.translate( 'Management disabled' ),
-			url = this.props.site.getRemoteManagementURL();
+			url = this.props.site.getRemoteManagementURL() + '&section=plugins';
 
 		if ( this.props.plugin.slug === 'jetpack' ) {
 			return (
