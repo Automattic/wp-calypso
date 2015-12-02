@@ -44,11 +44,22 @@ function isValidDomainName( name ) {
 }
 
 function isValidName( name, type, selectedDomainName ) {
-	if ( type === 'CNAME' && ! endsWith( name, selectedDomainName ) ) {
-		return false;
+	switch ( type ) {
+		case 'CNAME':
+			return (
+				isValidCname( name, selectedDomainName ) &&
+				isValidDomainName( name )
+			);
+		default:
+			return isValidDomainName( name );
 	}
+}
 
-	return isValidDomainName( name );
+function isValidCname( name, selectedDomainName ) {
+	return (
+		name !== selectedDomainName &&
+		endsWith( name, selectedDomainName )
+	);
 }
 
 function isValidData( data, type ) {
