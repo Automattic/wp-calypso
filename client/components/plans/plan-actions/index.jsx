@@ -181,8 +181,9 @@ module.exports = React.createClass( {
 	},
 
 	managePlanButton: function() {
-		var link = puchasesPaths.managePurchase( this.props.site.domain, this.props.siteSpecificPlansDetails.id );
+		var link;
 		if ( this.planHasCost() ) {
+			link = puchasesPaths.managePurchase( this.props.site.slug, this.props.siteSpecificPlansDetails.id );
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);
