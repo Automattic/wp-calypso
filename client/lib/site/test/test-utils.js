@@ -69,9 +69,38 @@ describe( 'Site Utils', function() {
 			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
 		} );
 
+		it( 'CanUpdateFiles should return true when passed a site data with that has different protocolls for unmapped_url and main_network_site.', function() {
+			const site = {
+				hasMinimumJetpackVersion: true,
+				is_multisite: true,
+				options: {
+					unmapped_url: 'http://someurl',
+					main_network_site: 'https://someurl',
+					is_multi_network: false,
+					file_mod_disabled: false
+				}
+			}
+			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
+		} );
+
+		it( 'CanUpdateFiles should return false when passed a site data with that has compares ftp to http protocolls for unmapped_url and main_network_site.', function() {
+			const site = {
+				hasMinimumJetpackVersion: true,
+				is_multisite: true,
+				options: {
+					unmapped_url: 'http://someurl',
+					main_network_site: 'ftp://someurl',
+					is_multi_network: false,
+					file_mod_disabled: false
+				}
+			}
+			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
+		} );
+
 		it( 'CanUpdateFiles should return true when passed a site data has all the right settings permissions to be able to update files.', function() {
 			const site = {
 				hasMinimumJetpackVersion: true,
+				is_multisite: true,
 				options: {
 					unmapped_url: 'someurl',
 					main_network_site: 'someurl',

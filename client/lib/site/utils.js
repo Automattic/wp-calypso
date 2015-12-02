@@ -109,7 +109,7 @@ export default {
 			return false;
 		}
 
-		if ( site.is_multisite && ( site.options && site.options.unmapped_url !== site.options.main_network_site ) ) {
+		if ( site.is_multisite && ( site.options && site.options.unmapped_url.replace( /^https?:\/\//, '' ) !== site.options.main_network_site.replace( /^https?:\/\//, '' ) ) ) {
 			return false;
 		}
 
