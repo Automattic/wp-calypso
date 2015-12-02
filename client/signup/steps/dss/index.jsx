@@ -14,6 +14,7 @@ import StepWrapper from 'signup/step-wrapper';
 import ThemeHelper from 'lib/themes/helpers';
 import DynamicScreenshotsActions from 'lib/dss/actions';
 import DSSImageStore from 'lib/dss/image-store';
+import ImagePreloader from 'components/image-preloader';
 
 const debug = debugFactory( 'calypso:dss' );
 
@@ -38,6 +39,36 @@ export default React.createClass( {
 		};
 	},
 
+	getInitialState() {
+		return {
+			isLoading: false,
+			renderComplete: false,
+			dssImage: null
+		};
+	},
+
+	componentWillMount() {
+		DSSImageStore.on( 'change', this.updateScreenshot );
+	},
+
+	componentWillUnmount() {
+		DSSImageStore.off( 'change', this.updateScreenshot );
+	},
+
+	updateScreenshot() {
+		const { isLoading, lastKey, imageResultsByKey } = DSSImageStore.get();
+		if ( ! imageResultsByKey[ lastKey ] ) {
+			return this.setState( Object.assign( {}, this.getInitialState(), { isLoading } ) );
+		}
+		const dssImage = imageResultsByKey[ lastKey ];
+		this.setState( { isLoading, dssImage } );
+	},
+
+	dssImageLoaded() {
+		debug( 'image preloading complete' );
+		this.setState( { renderComplete: true } );
+	},
+
 	handleSearch( searchString ) {
 		debug( 'processing search for', searchString );
 		if ( ! searchString ) {
@@ -48,6 +79,18 @@ export default React.createClass( {
 			return DynamicScreenshotsActions.updateScreenshotsFor( searchString );
 		}
 		DynamicScreenshotsActions.fetchDSSImageFor( searchString );
+	},
+
+	renderImageLoader() {
+		debug( 'preloading image', this.state.dssImage.url );
+		const placeholder = <div>…</div>;
+		return (
+			<ImagePreloader
+				className="dss-theme-selection__image-preloader"
+				onLoad={ this.dssImageLoaded }
+				src={ this.state.dssImage.url }
+				placeholder={ placeholder } />
+		);
 	},
 
 	renderContent() {
@@ -71,6 +114,7 @@ export default React.createClass( {
 									themeName={ theme }
 									themeSlug={ ThemeHelper.getSlugFromName( theme ) }
 									themeRepoSlug={ 'pub/' + ThemeHelper.getSlugFromName( theme ) }
+									renderComplete={ this.state.renderComplete }
 									{ ...this.props }/>;
 							} ) }
 						</div>
@@ -84,6 +128,7 @@ export default React.createClass( {
 						}
 					} ) }
 				</p>
+				{ this.state.dssImage ? this.renderImageLoader() : '' }
 			</div>
 		);
 	},

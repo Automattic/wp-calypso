@@ -33,7 +33,8 @@ export default React.createClass( {
 	propTypes: {
 		screenshotUrl: React.PropTypes.string.isRequired,
 		themeRepoSlug: React.PropTypes.string.isRequired,
-		themeSlug: React.PropTypes.string.isRequired
+		themeSlug: React.PropTypes.string.isRequired,
+		renderComplete: React.PropTypes.bool
 	},
 
 	getInitialState() {
@@ -41,7 +42,6 @@ export default React.createClass( {
 			isLoading: false,
 			markup: '',
 			styles: '',
-			renderComplete: false,
 			dssImage: null
 		};
 	},
@@ -76,23 +76,20 @@ export default React.createClass( {
 		const dssImage = imageResultsByKey[ lastKey ];
 		debug( 'replacing images in ' + this.props.themeRepoSlug + ' screenshot with', dssImage.url );
 		const { markup, styles } = this.getMarkupAndStyles();
-		// Give styles time to render. Note this only happens on first markup
-		// render. Subsequent changes don't flicker unstyled markup.
-		setTimeout( () => this.setState( { renderComplete: true } ), 250 );
 		return this.setState( { dssImage, markup, styles, isLoading } );
 	},
 
 	render() {
 		const containerClassNames = classnames( 'dss-screenshot', {
 			'is-loading': this.state.isLoading,
-			'is-preview-ready': this.state.markup && this.state.styles && this.state.renderComplete
+			'is-preview-ready': this.state.markup && this.state.styles && this.props.renderComplete
 		} );
 
 		if ( this.state.markup && this.state.styles ) {
 			return (
 				<div className={ containerClassNames }>
 					<div className="dss-screenshot__original">
-						<img src={ this.props.screenshotUrl } alt={ this.translate( 'Loading...' ) } />
+						<img src={ this.props.screenshotUrl } alt={ this.translate( 'Loading…' ) } />
 					</div>
 					<div className="dss-screenshot__dynamic">
 						<style dangerouslySetInnerHTML={{ __html: this.state.styles }} />
@@ -107,7 +104,7 @@ export default React.createClass( {
 		return (
 			<div className={ containerClassNames }>
 				<div className="dss-screenshot__original">
-					<img src={ this.props.screenshotUrl } alt={ this.translate( 'Loading...' ) } />
+					<img src={ this.props.screenshotUrl } alt={ this.translate( 'Loading…' ) } />
 				</div>
 			</div>
 		);
