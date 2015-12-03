@@ -12,7 +12,7 @@ var config = require( 'config' ),
 	Site = require( 'my-sites/site' ),
 	sites = require( 'lib/sites-list' )(),
 	eventRecorder = require( 'me/event-recorder' );
-	
+
 module.exports = React.createClass( {
 
 	displayName: 'ProfileLinksAddWordPress',
