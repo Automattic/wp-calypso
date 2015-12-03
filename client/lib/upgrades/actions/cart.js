@@ -35,7 +35,7 @@ function addPrivacyToAllDomains() {
 
 function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS
+		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE
 	} );
 }
 
