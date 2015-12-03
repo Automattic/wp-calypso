@@ -99,7 +99,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			reset();
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
+		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
 			if ( ! cartItems.hasDomainRegistration( CartStore.get() ) && hasDomainDetails( TransactionStore.get() ) ) {

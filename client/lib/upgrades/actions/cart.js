@@ -53,7 +53,7 @@ function addItem( cartItem ) {
 
 function removeItem( cartItem ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_CART_ITEM,
+		type: ActionTypes.CART_ITEM_REMOVE,
 		cartItem
 	} );
 }
