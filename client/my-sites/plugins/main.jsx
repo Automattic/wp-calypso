@@ -512,20 +512,6 @@ export default React.createClass( {
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 
-		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected( 'updates' ) ) { // needs updates
-			updateButtons.push( <Button compact onClick={ this.updateSelected }>{ this.translate( 'Update' ) }</Button> );
-		}
-
-		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected() ) { // needs autoupdates
-			updateButtons.push( <Button compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
-			updateButtons.push( <Button compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Manually update' ) }</Button> );
-		}
-
-		buttons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
-
-		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected ) {  // needs remove
-			buttons.push( <ButtonGroup><Button compact onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
-		}
 
 		if ( this.areSelected( 'inactive' ) ) { // needs activate button
 			activateButtons.push( <Button compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
@@ -539,6 +525,19 @@ export default React.createClass( {
 		}
 
 		buttons.push( <ButtonGroup>{ activateButtons }</ButtonGroup> );
+
+		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected() ) { // needs autoupdates
+			updateButtons.push( <Button compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+			updateButtons.push( <Button compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
+		}
+
+		buttons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
+
+		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected ) {  // needs remove
+			buttons.push( <ButtonGroup><Button compact onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
+		}
+
+		debugger;
 
 		if ( this.props && this.props.filter === 'updates' ) {
 			buttons.push(
