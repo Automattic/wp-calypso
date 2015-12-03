@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -17,6 +18,16 @@ import { acceptInvite } from 'lib/invites/actions';
 export default React.createClass( {
 
 	displayName: 'InviteAcceptLoggedIn',
+
+	getInitialState() {
+		return { submitting: false }
+	},
+
+	accept() {
+		this.setState( { submitting: true } );
+		page( this.props.redirectTo );
+		acceptInvite( this.props.invite );
+	},
 
 	render() {
 		const { user } = this.props,
@@ -40,11 +51,11 @@ export default React.createClass( {
 						}
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
-						<Button onClick={ this.props.decline }>
+						<Button onClick={ this.props.decline } disabled={ this.state.submitting }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
-						<Button primary onClick={ () => acceptInvite( this.props.invite ) } href={ this.props.redirectTo } >
-							{ this.translate( 'Join', { context: 'button' } ) }
+						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
+							{ this.state.submitting ? this.translate( 'Joining…', { context: 'button' } ) : this.translate( 'Join', { context: 'button' } ) }
 						</Button>
 					</div>
 				</Card>
