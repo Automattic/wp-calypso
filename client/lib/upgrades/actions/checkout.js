@@ -7,7 +7,7 @@ import storeTransactions from 'lib/store-transactions';
 
 function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.SET_TRANSACTION_DOMAIN_DETAILS,
+		type: ActionTypes.TRANSACTION_DOMAIN_DETAILS_SET,
 		domainDetails
 	} );
 }

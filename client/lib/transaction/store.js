@@ -76,7 +76,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.SET_TRANSACTION_DOMAIN_DETAILS:
+		case UpgradesActionTypes.TRANSACTION_DOMAIN_DETAILS_SET:
 			setDomainDetails( action.domainDetails );
 			break;
 
