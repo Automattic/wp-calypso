@@ -45,12 +45,15 @@ function validateField( { name, value, type, selectedDomainName } ) {
  * and more loosely defined domain names for other records.
  */
 function isValidDomainName( name, type ) {
+	if ( name.length > 253 ) {
+		return false;
+	}
 	switch ( type ) {
 		case 'A':
 		case 'AAAA':
 			return /^([a-z0-9]([a-z0-9\-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9\-]*[a-z0-9])?\.[a-z]{2,63}$/i.test( name );
 		default:
-			return /^([a-z0-9-_]+\.)*[a-z0-9-]+\.[a-z]{2,63}$/i.test( name );
+			return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
 	}
 }
 
