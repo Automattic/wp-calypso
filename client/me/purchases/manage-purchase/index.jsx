@@ -53,7 +53,10 @@ const ManagePurchase = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		selectedPurchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired,
 		destinationType: React.PropTypes.string
 	},
 
