@@ -50,7 +50,7 @@ function reducer( state, payload ) {
 			}
 			break;
 
-		case ActionTypes.ADD_DNS:
+		case ActionTypes.DNS_ADD_COMPLETED:
 			if ( ! action.error ) {
 				state = addDns( state, action.domainName, action.record );
 			}

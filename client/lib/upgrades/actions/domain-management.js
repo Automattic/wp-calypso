@@ -210,7 +210,7 @@ function fetchDns( domainName ) {
 function addDns( domainName, record, onComplete ) {
 	wpcom.addDns( domainName, record, ( error ) => {
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.ADD_DNS,
+			type: ActionTypes.DNS_ADD_COMPLETED,
 			domainName,
 			record,
 			error
