@@ -282,7 +282,7 @@ function resendIcannVerification( domainName, onComplete ) {
 	wpcom.resendIcannVerification( domainName, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.RESEND_ICANN_VERIFICATION,
+				type: ActionTypes.ICANN_VERIFICATION_RESEND_COMPLETED,
 				domainName
 			} );
 		}
