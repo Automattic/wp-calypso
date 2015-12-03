@@ -16,7 +16,6 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	Main = require( 'components/main' ),
 	Menu = require( './menu' ),
-	Lock = require( 'lib/mixins/lock' ),
 	MenuSaveButton = require( './menus-save-button' ),
 	EmptyContent = require( 'components/empty-content' ),
 	LoadingPlaceholder = require( './loading-placeholder' ),
@@ -237,7 +236,6 @@ var Menus = React.createClass( {
 						selectedMenu={ selectedMenu }
 						selectedLocation={ selectedLocation }
 						siteMenus={ this.props.siteMenus }
-						itemsLock={ new Lock() }
 						setBusy={ this.setBusy }
 						confirmDiscard={ this.confirmDiscard.bind( null, 'menu' ) } />;
 		}
