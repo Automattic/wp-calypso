@@ -30,6 +30,8 @@ function setSite( attributes ) {
 		attributes.state = State.COMPLETE;
 	}
 
+	attributes.has_featured = !!attributes.meta.links.featured;
+
 	attributes = omit( attributes, [ 'meta', '_headers' ] );
 
 	if ( attributes.URL ) {

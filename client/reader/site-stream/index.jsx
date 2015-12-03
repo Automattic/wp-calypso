@@ -1,12 +1,15 @@
 var React = require( 'react' );
 
 var FeedHeader = require( 'reader/feed-header' ),
+	FeedFeatured = require( './featured' ),
 	EmptyContent = require( './empty' ),
 	FollowingStream = require( 'reader/following-stream' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
-	FeedError = require( 'reader/feed-error' );
+	FeedError = require( 'reader/feed-error' ),
+	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
+	feedStreamFactory = require( 'lib/feed-stream-store' );
 
 var SiteStream = React.createClass( {
 
@@ -71,7 +74,9 @@ var SiteStream = React.createClass( {
 	render: function() {
 		var site = this.state.site,
 			title = this.state.title,
-			emptyContent = ( <EmptyContent /> );
+			emptyContent = ( <EmptyContent /> ),
+			featuredStore = null,
+			featuredContent = null;
 
 		if ( ! title ) {
 			title = this.translate( 'Loading Site' );
@@ -85,9 +90,16 @@ var SiteStream = React.createClass( {
 			return <FeedError listName={ title } />;
 		}
 
+		if ( site && site.get( 'has_featured' ) ) {
+			featuredStore = feedStreamFactory( 'featured:' + site.get( 'ID' ) );
+			setTimeout( () => FeedStreamStoreActions.fetchNextPage( featuredStore.id ), 0 ); // timeout to prevent invariant violations
+			featuredContent = ( <FeedFeatured store={ featuredStore } /> );
+		}
+
 		return (
 			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent }>
 				<FeedHeader site={ this.state.site } />
+				{ featuredContent }
 			</FollowingStream>
 
 		);
