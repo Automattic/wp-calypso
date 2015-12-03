@@ -673,7 +673,7 @@ describe( 'post-normalizer', function() {
 	} );
 
 	describe( 'content.contentEmbeds', function() {
-		it( 'detects plain iframes', function( done ) {
+		it( 'detects whitelisted iframes and alters the sandbox', function( done ) {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>'
@@ -689,6 +689,21 @@ describe( 'post-normalizer', function() {
 					assert.isNull( embed.type );
 					assert.strictEqual( embed.aspectRatio, 2 );
 
+					done( err );
+				}
+			);
+		} );
+		it( 'detects trusted iframes and removes the sandbox', function( done ) {
+			normalizer(
+				{
+					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+					var embed;
+					assert.lengthOf( normalized.content_embeds, 1 );
+
+					embed = normalized.content_embeds[ 0 ];
+					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>' );
 					done( err );
 				}
 			);

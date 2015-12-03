@@ -609,6 +609,11 @@ normalizePost.content = {
 			'spotify.com'
 		];
 
+		// hosts that we trust that don't work in a sandboxed iframe
+		const iframeNoSandbox = [
+			'spotify.com'
+		]
+
 		embeds = filter( embeds, function( iframe ) {
 			const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
 			return some( iframeWhitelist, function( accepted ) {
@@ -628,8 +633,17 @@ normalizePost.content = {
 				width, height,
 				matches;
 
-			// we allow featured iframes to use a free-er sandbox
-			iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
+			const iframeHost = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+			const trustedHost = some( iframeNoSandbox, function( accepted ) {
+				return endsWith( '.' + iframeHost, '.' + accepted );
+			} );
+
+			if ( trustedHost ) {
+				iframe.removeAttribute( 'sandbox' );
+			} else {
+				// we allow featured iframes to use a free-er sandbox
+				iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
+			}
 
 			if ( iframe.width && iframe.height ) {
 				width = Number( iframe.width );
