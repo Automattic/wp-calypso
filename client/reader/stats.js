@@ -1,4 +1,4 @@
-import { mc, ga } from 'analytics';
+import { mc, ga, tracks } from 'analytics';
 
 export function recordAction( action ) {
 	mc.bumpStat( 'reader_actions', action );
@@ -53,8 +53,14 @@ function getLocation() {
 
 export function recordFollow() {
 	mc.bumpStat( 'reader_follows', getLocation() );
+	tracks.recordEvent( 'calypso_reader_site_followed' );
 }
 
 export function recordUnfollow() {
 	mc.bumpStat( 'reader_unfollows', getLocation() );
+	tracks.recordEvent( 'calypso_reader_site_unfollowed' );
+}
+
+export function recordTrack( eventName, eventProperties ) {
+	tracks.recordEvent( eventName, eventProperties );
 }

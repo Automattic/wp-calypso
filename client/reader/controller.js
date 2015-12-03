@@ -44,6 +44,7 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 	debug( 'scroll [%s], [%s], [%s], [%d]', path, title, category, pageNum );
 
 	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', pageNum );
+	analytics.tracks.recordEvent( 'calypso_reader_infinite_scroll_performed' );
 	analytics.pageView.record( path, title );
 	analytics.mc.bumpStat( {
 		newdash_pageviews: 'scroll',
@@ -137,6 +138,7 @@ module.exports = {
 		ensureStoreLoading( feedStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		analytics.tracks.recordEvent( 'calypso_reader_blog_preview' );
 
 		React.render(
 			React.createElement( FeedStream, {
@@ -169,6 +171,7 @@ module.exports = {
 		ensureStoreLoading( feedStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		analytics.tracks.recordEvent( 'calypso_reader_blog_preview' );
 
 		React.render(
 			React.createElement( SiteStream, {
@@ -282,6 +285,7 @@ module.exports = {
 		ensureStoreLoading( tagStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		analytics.tracks.recordEvent( 'calypso_reader_tag_loaded' );
 
 		React.render(
 			React.createElement( TagStream, {
@@ -313,6 +317,7 @@ module.exports = {
 		ensureStoreLoading( listStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		analytics.tracks.recordEvent( 'calypso_reader_list_loaded' );
 
 		React.render(
 			React.createElement( ListStream, {
@@ -521,6 +526,7 @@ module.exports = {
 		ensureStoreLoading( feedStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		analytics.tracks.recordEvent( 'calypso_reader_discover_viewed' );
 
 		React.render(
 			React.createElement( SiteStream, {
