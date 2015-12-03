@@ -26,7 +26,7 @@
 		color: $gray-dark;
 	}
 	&:active {
-		border-width: 2px 1px 1px;
+		border-width: 0px;
 	}
 	&:visited {
 		color: $gray-dark;
@@ -38,12 +38,8 @@
 		cursor: default;
 
 		&:active {
-			border-width: 1px 1px 2px;
+			border-width: 0;
 		}
-	}
-	&:focus {
-		border-color: $blue-medium;
-		box-shadow: 0 0 0 2px $blue-light;
 	}
 	&.hidden {
 		display: none;
@@ -83,13 +79,6 @@
 	&[disabled] {
 		color: lighten( $alert-red, 30% );
 	}
-	&:hover,
-	&:focus {
-		border-color: $alert-red;
-	}
-	&:focus {
-		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
-	}
 }
 
 .button.is-primary.is-scary,
@@ -98,10 +87,6 @@
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
-	&:hover,
-	&:focus {
-		border-color: darken( $alert-red, 30% );
-	}
 	&[disabled] {
 		background: lighten( $alert-red, 20% );
 		border-color: tint( $alert-red, 30% );
