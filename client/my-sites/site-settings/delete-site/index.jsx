@@ -186,10 +186,14 @@ module.exports = React.createClass( {
 	},
 
 	_deleteSite: function() {
-		var site = this.state.site;
-		SiteListActions.deleteSite( site );
-		window.scrollTo( 0, 0 );
-		page( '/stats' );
+		this.setState( { showDialog: false } );
+
+		SiteListActions.deleteSite( this.state.site, function( success ) {
+			if ( success ) {
+				window.scrollTo( 0, 0 );
+				page( '/stats' );
+			}
+		}.bind( this ) );
 	},
 
 	_updateSite: function() {
