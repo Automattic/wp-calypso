@@ -87,7 +87,7 @@ export default React.createClass( {
 		}
 		debug( 'Rendering invite' );
 		return user
-			? <LoggedIn { ...this.state.invite } decline={ this.decline } user={ user } />
+			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ user } />
 			: <LoggedOut { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } />;
 	},
 
