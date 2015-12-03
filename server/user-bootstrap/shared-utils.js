@@ -6,8 +6,13 @@ var assign = require( 'lodash/object/assign' );
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	languages = config( 'languages' );
+import config from 'config';
+import { decodeEntities } from 'lib/formatting';
+
+/**
+ * Module variables
+ */
+const languages = config( 'languages' );
 
 function getLanguage( slug ) {
 	var len = languages.length,
@@ -52,7 +57,7 @@ module.exports = {
 			];
 
 		allowedKeys.forEach( function( key ) {
-			user[ key ] = obj[ key ];
+			user[ key ] = decodeEntities( obj[ key ] );
 		} );
 
 		return assign( user, this.getComputedAttributes( obj ) );
