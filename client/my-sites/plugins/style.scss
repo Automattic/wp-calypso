@@ -5,9 +5,26 @@
 .plugins__section-actions {
 	.section-header__actions {
 		height: 24px;
+		flex-grow: 1;
+		display: flex;
+		justify-content: space-between;
 	}
 
 	.button-group {
 		margin-left: 8px;
 	}
+}
+
+.plugins__action-buttons {
+	flex-grow: 1;
+}
+
+.plugins__mode-buttons {
+	flex-grow: 1;
+	text-align: right;
+}
+
+
+.plugins__section-actions-close {
+	cursor: pointer;
 }

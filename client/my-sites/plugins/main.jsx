@@ -43,6 +43,7 @@ import FeatureExample from 'components/feature-example'
 import SectionHeader from 'components/section-header'
 import ButtonGroup from 'components/button-group'
 import Button from 'components/button'
+import Gridicon from 'components/gridicon'
 
 /**
  * Module variables
@@ -434,6 +435,10 @@ export default React.createClass( {
 			'is-bulk-editing': this.state.bulkManagement && ! disableManage
 		} );
 
+		if( this.state.bulkManagement ) {
+			header = null;
+		}
+
 		headerMarkup = (
 			<SectionHeader label={ header } className="plugins__section-actions">
 				{ disableManage ? null : this.getCurrentActionButtons() }
@@ -507,6 +512,8 @@ export default React.createClass( {
 
 	getCurrentActionButtons() {
 		let buttons = [];
+		let rightSideButtons = [];
+		let leftSideButtons = [];
 		let updateButtons = [];
 		let activateButtons = [];
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
@@ -514,52 +521,57 @@ export default React.createClass( {
 
 
 		if ( this.areSelected( 'inactive' ) ) { // needs activate button
-			activateButtons.push( <Button compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
+			leftSideButtons.push( <Button compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
 		}
 
 		if ( this.areSelected( 'active' ) ) {
 			let deactivateButton = isJetpackSelected
 				? <Button compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
 				: <Button compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
-			activateButtons.push( deactivateButton )
+			leftSideButtons.push( deactivateButton )
 		}
-
-		buttons.push( <ButtonGroup>{ activateButtons }</ButtonGroup> );
 
 		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected() ) { // needs autoupdates
 			updateButtons.push( <Button compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
 			updateButtons.push( <Button compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
 		}
 
-		buttons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
+		leftSideButtons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
 
 		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected ) {  // needs remove
-			buttons.push( <ButtonGroup><Button compact onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
+			leftSideButtons.push( <ButtonGroup><Button compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
 		}
 
-		debugger;
+		if( ! this.state.bulkManagement ) {
 
-		if ( this.props && this.props.filter === 'updates' ) {
-			buttons.push(
+			if ( 0 < this.state.pluginUpdateCount ) {
+				rightSideButtons.push(
+					<ButtonGroup>
+						<Button compact primary onClick={ this.updateAllPlugins } >
+							{ this.translate( 'Update All', { context: 'button label' } ) }
+						</Button>
+					</ButtonGroup>
+				);
+			}
+
+			rightSideButtons.push(
+				<ButtonGroup><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Bulk Edit', { context: 'button label' } ) }</Button></ButtonGroup>
+			);
+
+		} else {
+			rightSideButtons.push(
 				<ButtonGroup>
-					<Button compact onClick={ this.updateAllPlugins } >
-						{ this.translate( 'Update All', { context: 'button label' } ) }
-					</Button>
+					<button className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
+						<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
+						<Gridicon icon="cross" />
+					</button>
 				</ButtonGroup>
 			);
 		}
 
-		buttons.push(
-			<ButtonGroup>
-				<Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>
-						{
-							this.state.bulkManagement
-							? this.translate( 'Done', { context: 'button label' } )
-							: this.translate( 'Bulk Edit', { context: 'button label' } )
-						}
-				</Button>
-			</ButtonGroup>
-		);
+		buttons.push( <span className="plugins__action-buttons">{ leftSideButtons }</span> );
+		buttons.push( <span className="plugins__mode-buttons">{ rightSideButtons }</span> );
+
 		return buttons;
 	},
 
