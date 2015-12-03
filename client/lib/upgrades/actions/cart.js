@@ -16,7 +16,7 @@ import 'lib/cart/store';
 
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.OPEN_CART_POPUP,
+		type: ActionTypes.CART_POPUP_OPEN,
 		options: options || {}
 	} );
 }
