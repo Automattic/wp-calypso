@@ -77,7 +77,6 @@ function readerPageView( blogId, blogUrl, postId, isPrivate ) {
 		params.priv = 1;
 	}
 	analytics.mc.bumpStatWithPageView( params );
-	analytics.tracks.recordEvent( 'calypso_reader_article_opened' );
 }
 
 /**
@@ -380,6 +379,8 @@ FullPostContainer = React.createClass( {
 			readerPageView( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
 			this.hasSentPageView = true;
 		}
+
+		analytics.tracks.recordEvent( 'calypso_reader_article_opened' );
 	},
 
 	// Add change listeners to stores
