@@ -46,7 +46,7 @@ import {
 	showCreditCardExpiringWarning,
 	showEditPaymentDetails
 } from 'lib/purchases';
-import { getPurchase, goToList, isDataLoading, recordPageView } from '../utils';
+import { getPurchase, getSelectedSite, goToList, isDataLoading, recordPageView } from '../utils';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
 const ManagePurchase = React.createClass( {
@@ -58,15 +58,31 @@ const ManagePurchase = React.createClass( {
 	},
 
 	componentWillMount() {
+		if ( ! this.isDataValid() ) {
+			return page.redirect( paths.list() );
+		}
+
 		recordPageView( 'manage', this.props );
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
+			return page.redirect( paths.list() );
+		}
+
 		recordPageView( 'manage', this.props, nextProps );
 	},
 
 	isDataFetchingAfterRenewal() {
 		return 'thank-you' === this.props.destinationType && this.props.selectedPurchase.isFetching;
+	},
+
+	isDataValid( props = this.props ) {
+		if ( isDataLoading( props ) ) {
+			return true;
+		}
+
+		return getSelectedSite( props ) && getPurchase( props );
 	},
 
 	renderNotices() {
@@ -598,8 +614,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	render() {
-		if ( this.props.selectedPurchase.hasLoadedFromServer && ! getPurchase( this.props ) ) {
-			// TODO: redirect to purchases list
+		if ( ! this.isDataValid() ) {
 			return null;
 		}
 
