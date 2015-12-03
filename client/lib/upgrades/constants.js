@@ -3,7 +3,7 @@ const keyMirror = require( 'key-mirror' );
 module.exports.action = keyMirror( {
 	ADD_DNS: null,
 	ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS: null,
-	APPLY_CART_COUPON: null,
+	CART_COUPON_APPLY: null,
 	CART_ITEM_ADD: null,
 	CART_ITEM_REMOVE: null,
 	CLOSE_CART_POPUP: null,

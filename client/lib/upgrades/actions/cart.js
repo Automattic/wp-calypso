@@ -74,7 +74,7 @@ function removeDomainFromCart( domainSuggestion ) {
 
 function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.APPLY_CART_COUPON,
+		type: ActionTypes.CART_COUPON_APPLY,
 		coupon
 	} );
 }

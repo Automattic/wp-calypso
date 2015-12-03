@@ -122,7 +122,7 @@ CartStore.dispatchToken = Dispatcher.register( function( payload ) {
 			update( cartItems.add( cartItem ) );
 			break;
 
-		case UpgradesActionTypes.APPLY_CART_COUPON:
+		case UpgradesActionTypes.CART_COUPON_APPLY:
 			update( applyCoupon( action.coupon ) );
 			break;
 
