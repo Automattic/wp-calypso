@@ -23,7 +23,7 @@ function openCartPopup( options ) {
 
 function closeCartPopup() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CLOSE_CART_POPUP
+		type: ActionTypes.CART_POPUP_CLOSE
 	} );
 }
 

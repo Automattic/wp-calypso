@@ -86,7 +86,7 @@ var UpgradesNavigation = React.createClass( {
 		this.dispatchToken = Dispatcher.register( function( payload ) {
 			if ( payload.action.type === upgradesActionTypes.OPEN_CART_POPUP ) {
 				this.setState( { cartVisible: true, cartShowKeepSearching: payload.action.options.showKeepSearching } );
-			} else if ( payload.action.type === upgradesActionTypes.CLOSE_CART_POPUP ) {
+			} else if ( payload.action.type === upgradesActionTypes.CART_POPUP_CLOSE ) {
 				this.setState( { cartVisible: false } );
 			}
 		}.bind( this ) );
