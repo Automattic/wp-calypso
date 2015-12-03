@@ -26,12 +26,6 @@ const CancelPurchase = React.createClass( {
 		selectedSite: React.PropTypes.object.isRequired
 	},
 
-	getInitialState() {
-		return {
-			isRedirecting: false
-		};
-	},
-
 	componentWillMount() {
 		if ( this.isDataValid( this.props ) ) {
 			recordPageView( 'cancel_purchase', this.props );
@@ -43,7 +37,8 @@ const CancelPurchase = React.createClass( {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid( nextProps ) ) {
 			recordPageView( 'cancel_purchase', this.props, nextProps );
-		} else {
+		} else if ( this.isDataValid( this.props ) && ! this.isDataValid( nextProps ) ) {
+			// only redirect for invalid data once
 			this.redirect( nextProps );
 		}
 	},
@@ -56,10 +51,6 @@ const CancelPurchase = React.createClass( {
 	},
 
 	redirect( props ) {
-		if ( this.state.isRedirecting ) {
-			return;
-		}
-
 		const purchase = getPurchase( props ),
 			selectedSite = getSelectedSite( props );
 		let redirectPath = paths.list();
@@ -68,14 +59,11 @@ const CancelPurchase = React.createClass( {
 			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
 		}
 
-		this.setState( {
-			isRedirecting: true
-		} );
 		page.redirect( redirectPath );
 	},
 
 	render() {
-		if ( this.state.isRedirecting ) {
+		if ( ! this.isDataValid( this.props ) ) {
 			return null;
 		}
 
