@@ -15,18 +15,25 @@ import { isDomainMapping, isDomainRegistration, isTheme, isPlan } from 'lib/prod
  * Returns an array of sites objects, each of which contains an array of purchases.
  *
  * @param {array} purchases An array of purchase objects.
+ * @param {array} sites An array of site objects
  * @return {array} An array of sites with purchases attached.
  */
-function getPurchasesBySite( purchases ) {
+function getPurchasesBySite( purchases, sites ) {
 	return purchases.reduce( ( result, currentValue ) => {
 		const site = find( result, { id: currentValue.siteId } );
 		if ( site ) {
 			site.purchases = site.purchases.concat( currentValue );
 		} else {
+			const siteObject = find( sites, { ID: currentValue.siteId } );
+
 			result = result.concat( {
 				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
+				/* if the purchase is attached to a deleted site,
+				 * there will be no site with this ID in `sites`, so
+				 * we fall back on the domain. */
+				slug: siteObject ? siteObject.slug : currentValue.domain,
 				title: currentValue.siteName ? currentValue.siteName : currentValue.domain,
 				purchases: [ currentValue ]
 			} );

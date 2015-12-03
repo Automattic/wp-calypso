@@ -55,24 +55,32 @@ const PurchasesList = React.createClass( {
 		);
 	},
 
+	isDataLoading() {
+		if ( this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
+			return true;
+		}
+
+		if ( ! this.props.sites.initialized ) {
+			return true;
+		}
+
+		return false;
+	},
+
 	render() {
 		let content;
 
-		if ( ! this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
-			return null;
-		}
-
-		if ( this.props.purchases.isFetching && ! this.props.purchases.hasLoadedFromServer ) {
+		if ( this.isDataLoading() ) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
 		if ( this.props.purchases.hasLoadedFromServer && this.props.purchases.data.length ) {
-			content = getPurchasesBySite( this.props.purchases.data ).map(
+			content = getPurchasesBySite( this.props.purchases.data, this.props.sites.get() ).map(
 				site => (
 					<PurchasesSite
 						key={ site.id }
 						name={ site.title }
-						domain={ site.domain }
+						slug={ site.slug }
 						purchases={ site.purchases } />
 				)
 			);

@@ -23,7 +23,7 @@ import {
 
 const PurchaseItem = React.createClass( {
 	propTypes: {
-		domain: React.PropTypes.string,
+		slug: React.PropTypes.string,
 		purchase: React.PropTypes.object,
 		isPlaceholder: React.PropTypes.bool
 	},
@@ -131,7 +131,7 @@ const PurchaseItem = React.createClass( {
 
 		if ( ! isPlaceholder ) {
 			props = {
-				href: paths.managePurchase( this.props.domain, this.props.purchase.id ),
+				href: paths.managePurchase( this.props.slug, this.props.purchase.id ),
 				onClick: this.scrollToTop
 			};
 		}

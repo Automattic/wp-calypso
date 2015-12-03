@@ -12,7 +12,7 @@ import PurchaseItem from '../item';
 
 const PurchasesSite = React.createClass( {
 	propTypes: {
-		domain: React.PropTypes.string,
+		slug: React.PropTypes.string,
 		name: React.PropTypes.string,
 		purchases: React.PropTypes.array,
 		isPlaceholder: React.PropTypes.bool
@@ -39,7 +39,7 @@ const PurchasesSite = React.createClass( {
 					this.props.purchases.map( purchase => (
 						<PurchaseItem
 							key={ purchase.id }
-							domain={ this.props.domain }
+							slug={ this.props.slug }
 							purchase={ purchase } />
 						)
 					)
