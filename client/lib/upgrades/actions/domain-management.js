@@ -293,7 +293,7 @@ function resendIcannVerification( domainName, onComplete ) {
 
 function fetchGoogleAppsUsers( domainName ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_GOOGLE_APPS_USERS,
+		type: ActionTypes.GOOGLE_APPS_USERS_FETCH,
 		domainName
 	} );
 
@@ -304,7 +304,7 @@ function fetchGoogleAppsUsers( domainName ) {
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_GOOGLE_APPS_USERS,
+			type: ActionTypes.GOOGLE_APPS_USERS_FETCH_COMPLETED,
 			domainName,
 			users: googleAppsUsersAssembler.createDomainObject( data )
 		} );
