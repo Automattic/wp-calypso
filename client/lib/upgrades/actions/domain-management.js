@@ -459,7 +459,7 @@ function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED,
+			type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
 			siteId,
 			domainName
 		} );
