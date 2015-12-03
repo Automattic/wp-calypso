@@ -108,7 +108,7 @@ module.exports = React.createClass( {
 	},
 
 	getDomainExpirationNotices: function() {
-		let domainStore = this.state.domainsStore.getForSite( this.getSelectedSite().ID ),
+		let domainStore = this.state.domainsStore.getBySite( this.getSelectedSite().ID ),
 			domains = domainStore && domainStore.list || [];
 		return (
 			<DomainWarnings

@@ -21,7 +21,7 @@ function getStateFromStores( props ) {
 	return {
 		cart: CartStore.get(),
 		context: props.context,
-		domains: ( props.selectedSite ? DomainsStore.getForSite( props.selectedSite.ID ) : null ),
+		domains: ( props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null ),
 		products: props.products,
 		selectedSite: props.selectedSite
 	};

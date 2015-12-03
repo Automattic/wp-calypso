@@ -48,7 +48,7 @@ The child component should receive processed props defined during the render:
 
 As well as:
 
-* `domains` - a list of domains, it's the result of a call to `DomainsStore.getForSite` for the current site
+* `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
 * `whois` - WHOIS contact information, it's the result of a call to `WhoisStore.getByDomainName` for the current domain  
 
 It's updated whenever `DomainsStore`, `WhoisStore`, `productsList` or `sites` changes.

@@ -94,7 +94,7 @@ function reducer( state, payload ) {
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			domainData = getSelectedDomain( {
-				domains: getForSite( state, action.siteId ),
+				domains: getBySite( state, action.siteId ),
 				selectedDomainName: action.domainName
 			} );
 			privateDomain = ( ! action.disablePrivacy ) && domainData.privateDomain;
@@ -108,12 +108,12 @@ function reducer( state, payload ) {
 	}
 }
 
-function getForSite( state, siteId ) {
+function getBySite( state, siteId ) {
 	return state[ siteId ];
 }
 
 export {
-	getForSite,
+	getBySite,
 	initialState,
 	reducer
 };
