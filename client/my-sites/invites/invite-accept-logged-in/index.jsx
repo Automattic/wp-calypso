@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -12,11 +13,19 @@ import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import config from 'config';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { acceptInvite } from 'lib/invites/actions';
+import { acceptInvite, displayInviteAccepted } from 'lib/invites/actions';
 
 export default React.createClass( {
 
 	displayName: 'InviteAcceptLoggedIn',
+
+	acceptInvite() {
+		const { invite } = this.props;
+		acceptInvite( invite, () => {
+			page( this.props.redirectTo );
+			displayInviteAccepted( invite.blog_id );
+		} );
+	},
 
 	render() {
 		const { user } = this.props,
@@ -43,7 +52,7 @@ export default React.createClass( {
 						<Button onClick={ this.props.decline }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
-						<Button primary onClick={ () => acceptInvite( this.props.invite ) } href={ this.props.redirectTo } >
+						<Button primary onClick={ this.acceptInvite }>
 							{ this.translate( 'Join', { context: 'button' } ) }
 						</Button>
 					</div>
