@@ -13,7 +13,8 @@ var FollowingStream = require( 'reader/following-stream' ),
 	ReaderLists = require( 'lib/reader-lists/lists' ),
 	ReaderListActions = require( 'lib/reader-lists/actions' ),
 	ReaderListSubscriptions = require( 'lib/reader-lists/subscriptions' ),
-	StreamHeader = require( 'reader/stream-header' );
+	StreamHeader = require( 'reader/stream-header' ),
+	stats = require( 'reader/stats' );
 
 var FeedStream = React.createClass( {
 
@@ -73,6 +74,9 @@ var FeedStream = React.createClass( {
 	toggleFollowing: function( isFollowing ) {
 		var list = ReaderLists.get( this.props.list.owner, this.props.list.slug );
 		ReaderListActions[ isFollowing ? 'follow' : 'unfollow' ]( list.owner, list.slug );
+		stats.recordAction( isFollowing ? 'followed_list' : 'unfollowed_list' );
+		stats.recordGaEvent( isFollowing ? 'Clicked Follow List' : 'Clicked Unfollow List', this.props.list.owner + ':' + this.props.list.slug );
+		stats.recordTrack( isFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed' );
 	},
 
 	render: function() {
