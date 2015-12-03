@@ -19,7 +19,7 @@ The following public methods are available:
 
 This fetches the corresponding list of states from the server. The list is cached in the store upon retrieval.
 
-### `getForCountry( countryCode )`
+### `getByCountry( countryCode )`
 
 This retrieves the list of states as a set of key and value pairs. The list is loaded from the store and then fetched once from the server to update any stale data.
 
