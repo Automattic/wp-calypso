@@ -25,12 +25,14 @@ var DraftList = React.createClass( {
 		siteID: React.PropTypes.any,
 		trackScrollPage: React.PropTypes.func,
 		onTitleClick: React.PropTypes.func,
-		showAllActionsMenu: React.PropTypes.bool
+		showAllActionsMenu: React.PropTypes.bool,
+		selectedId: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
 		return {
-			showAllActionsMenu: true
+			showAllActionsMenu: true,
+			selectedId: false
 		}
 	},
 
@@ -46,6 +48,7 @@ var DraftList = React.createClass( {
 				<Drafts
 					{ ...omit( this.props, 'children' ) }
 					status="draft"
+					selectedId={ this.props.selectedId }
 				/>
 			</PostListFetcher>
 		);
@@ -67,7 +70,8 @@ var Drafts = React.createClass( {
 		postImages: React.PropTypes.object.isRequired,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
-		showAllActionsMenu: React.PropTypes.bool
+		showAllActionsMenu: React.PropTypes.bool,
+		selectedId: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
@@ -78,7 +82,8 @@ var Drafts = React.createClass( {
 			postImages: {},
 			posts: [],
 			trackScrollPage: function() {},
-			showAllActionsMenu: true
+			showAllActionsMenu: true,
+			selectedId: false
 		};
 	},
 
@@ -117,6 +122,7 @@ var Drafts = React.createClass( {
 						postImages={ this.props.postImages[ post.global_ID ] }
 						sites={ this.props.sites }
 						showAllActions={ this.props.showAllActionsMenu && hasTouch() }
+						selected={ this.props.selectedId === post.ID }
 					/>
 				);
 			}, this );

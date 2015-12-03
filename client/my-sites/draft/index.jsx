@@ -34,13 +34,15 @@ module.exports = React.createClass( {
 		isPlaceholder: React.PropTypes.bool,
 		sites: React.PropTypes.object,
 		onTitleClick: React.PropTypes.func,
-		postImages: React.PropTypes.object
+		postImages: React.PropTypes.object,
+		selected: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			showAllActions: false,
-			onTitleClick: noop
+			onTitleClick: noop,
+			selected: false
 		};
 	},
 
@@ -159,7 +161,8 @@ module.exports = React.createClass( {
 				'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
 				'is-placeholder': this.props.isPlaceholder,
 				'is-restoring': this.state.isRestoring,
-				'is-touch': hasTouch()
+				'is-touch': hasTouch(),
+				'is-selected': this.props.selected
 			}
 		];
 

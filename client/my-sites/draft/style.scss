@@ -274,6 +274,11 @@
 	}
 }
 
+.draft.is-selected {
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% ), inset -4px 0 0 $blue-medium;
+}
+
 .draft__pending-label {
 	background: $alert-yellow;
 	border-radius: 2px;
