@@ -10,6 +10,7 @@ import Card from 'components/card';
 import page from 'page';
 import PostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
+import stats from 'reader/stats';
 
 export default React.createClass( {
 	displayName: 'FeedFeatured',
@@ -40,6 +41,8 @@ export default React.createClass( {
 	},
 
 	handleClick( post ) {
+		stats.recordAction( 'clicked_featured_post' );
+		stats.recordGaEvent( 'Clicked Featured Post' );
 		page( '/read/post/id/' + post.site_ID + '/' + post.ID );
 	},
 
