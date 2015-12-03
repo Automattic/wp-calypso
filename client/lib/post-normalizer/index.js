@@ -604,7 +604,8 @@ normalizePost.content = {
 			'videopress.com',
 			'vimeo.com',
 			'cloudup.com',
-			'soundcloud.com'
+			'soundcloud.com',
+			'8tracks.com'
 		];
 
 		embeds = filter( embeds, function( iframe ) {
