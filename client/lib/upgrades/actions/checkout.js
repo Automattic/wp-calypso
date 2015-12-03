@@ -38,7 +38,7 @@ function submitTransaction( { cart, transaction } ) {
 
 	steps.on( 'data', ( step ) => {
 		Dispatcher.handleViewAction( {
-			type: ActionTypes.TRANSACTION_STEP,
+			type: ActionTypes.TRANSACTION_STEP_SET,
 			step
 		} );
 	} );

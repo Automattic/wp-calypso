@@ -91,7 +91,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			} );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_STEP:
+		case UpgradesActionTypes.TRANSACTION_STEP_SET:
 			setStep( action.step );
 			break;
 
