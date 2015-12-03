@@ -1763,6 +1763,13 @@ Undocumented.prototype.getOlarkConfiguration = function( fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.submitSupportForumsTopic = function( subject, message, fn ) {
+	this.wpcom.req.post( {
+		path: '/help/forums/support/topics/new',
+		body: { subject, message }
+	}, fn );
+};
+
 /**
  * Expose `Undocumented` module
  */
