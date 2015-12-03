@@ -9,12 +9,13 @@ var React = require( 'react' ),
  */
 var ProfileLink = require( 'me/profile-link' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ProfileLinkCreators = require( 'me/profile-links/creators' ),
 	AddProfileLinksButtons = require( 'me/profile-links/add-buttons' ),
 	SectionHeader = require( 'components/section-header' ),
 	Card = require( 'components/card' ),
 	Notice = require( 'components/notice' ),
-	eventRecorder = require( 'me/event-recorder' );
+	eventRecorder = require( 'me/event-recorder' ),
+	ProfileLinksAddWordPress = require( 'me/profile-links-add-wordpress' ),
+	ProfileLinksAddOther = require( 'me/profile-links-add-other' );
 
 module.exports = React.createClass( {
 
@@ -174,11 +175,21 @@ module.exports = React.createClass( {
 	},
 
 	renderForm() {
+		if ( 'wordpress' === this.state.showingForm ) {
+			return (
+				<ProfileLinksAddWordPress
+					userProfileLinks={ this.props.userProfileLinks }
+					onSuccess={ this.hideForms }
+					onCancel={ this.hideForms }
+				/>
+			);
+		}
+
 		return (
-			<ProfileLinkCreators
+			<ProfileLinksAddOther
 				userProfileLinks={ this.props.userProfileLinks }
-				showingForm={ this.state.showingForm }
-				hideForms={ this.hideForms }
+				onSuccess={ this.hideForms }
+				onCancel={ this.hideForms }
 			/>
 		);
 	},
