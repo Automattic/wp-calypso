@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' );
+import assign from 'lodash/object/assign';
+import contains from 'lodash/collection/contains';
 
 /**
  * Internal dependencies
@@ -54,11 +55,17 @@ module.exports = {
 				'logout_URL',
 				'primary_blog_url',
 				'meta',
+			],
+			decodeWhitelist = [
+				'display_name',
+				'description',
+				'user_URL'
 			];
 
 		allowedKeys.forEach( function( key ) {
-			// Decode if value is not falsey
-			user[ key ] = obj[ key ] ? decodeEntities( obj[ key ] ) : obj[ key ];
+			user[ key ] = obj[ key ] && contains( decodeWhitelist, key )
+				? decodeEntities( obj[ key ] )
+				: obj[ key ];
 		} );
 
 		return assign( user, this.getComputedAttributes( obj ) );
