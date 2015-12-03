@@ -1,4 +1,4 @@
-.profile-links {
+.profile-links__list {
 	margin: 0;
 	list-style: none;
 }
@@ -17,4 +17,8 @@
 	.profile-links button {
 		margin-bottom: 10px;
 	}
+}
+
+.button.add-buttons__add-wp-site{
+	margin-left: 8px;
 }

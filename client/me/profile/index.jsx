@@ -10,7 +10,6 @@ var React = require( 'react' ),
 var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	formBase = require( 'me/form-base' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -124,13 +123,8 @@ module.exports = React.createClass( {
 					</form>
 				</Card>
 
-				<Card>
-					<FormSectionHeading>{ this.translate( 'Profile Links' ) }</FormSectionHeading>
-					<p>
-						{ this.translate( 'Manage which sites appear in your profile.' ) }
-					</p>
-					<ProfileLinks userProfileLinks={ userProfileLinks } />
-				</Card>
+				<ProfileLinks userProfileLinks={ userProfileLinks } />
+
 			</Main>
 		);
 	}
