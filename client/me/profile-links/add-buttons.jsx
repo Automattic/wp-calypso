@@ -3,7 +3,7 @@
  */
  var React = require( 'react' );
 
-// internal dependencies
+// Internal dependencies
 var Button = require( 'components/button' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	eventRecorder = require( 'me/event-recorder' ),
@@ -15,17 +15,22 @@ module.exports = React.createClass( {
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
+	propTypes: {
+		showingForm: React.PropTypes.bool
+	},
+
 	getDefaultProps: function() {
 		return{
 			showingForm: false
 		};
 	},
 
-	renderButtons: function() {
+	render: function() {
 		return(
 			<div>
 				<Button
 					compact
+					disabled={ this.props.showingForm }
 					onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
 				>
 					<Gridicon icon="plus-small" size={ 12 } />
@@ -34,6 +39,7 @@ module.exports = React.createClass( {
 
 				<Button
 					compact
+					disabled={ this.props.showingForm }
 					primary
 					className="add-buttons__add-wp-site"
 					onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) }
@@ -41,18 +47,6 @@ module.exports = React.createClass( {
 					<Gridicon icon="plus-small" size={ 12 } />
 					{ this.translate( 'Add WordPress Site' ) }
 				</Button>
-			</div>
-		);
-	},
-
-	render: function() {
-		return(
-			<div>
-				{
-					! this.props.showingForm
-					? this.renderButtons()
-					: null
-				}
 			</div>
 		);
 	}

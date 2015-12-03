@@ -170,7 +170,7 @@ module.exports = React.createClass( {
 				<SectionHeader label={ this.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
 						userProfileLinks={ this.props.userProfileLinks }
-						showingForm={ this.state.showingForm }
+						showingForm={ !! this.state.showingForm }
 						onShowAddOther={ this.showAddOther }
 						onShowAddWordPress={ this.showAddWordPress } />
 				</SectionHeader>
