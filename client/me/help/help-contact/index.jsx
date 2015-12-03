@@ -227,69 +227,15 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getKayakoFormProperties: function() {
-		const { isSubmitting } = this.state;
-
-		return {
-			onSubmit: this.submitKayakoTicket,
-			buttonLabel: isSubmitting ? this.translate( 'Submitting support ticket' ) : this.translate( 'Submit support ticket' ),
-			showHowCanWeHelpField: true,
-			showHowYouFeelField: true,
-			showSubjectField: true,
-			showSiteField: sites.get().length > 1,
-			siteList: sites,
-			siteFilter: this.siteFilter,
-			disabled: isSubmitting
-		}
-	},
-
-	getChatFormProperties: function() {
-		return {
-			onSubmit: this.startChat,
-			buttonLabel: this.translate( 'Chat with us' ),
-			showHowCanWeHelpField: true,
-			showHowYouFeelField: true,
-			showSiteField: sites.get().length > 1,
-			siteList: sites,
-			siteFilter: this.siteFilter
-		};
-	},
-
-	siteFilter: function( site ) {
-		return site.visible && ! site.jetpack;
-	},
-
-	getPublicForumsFormProperties: function() {
-		const { isSubmitting } = this.state;
-		const formDescription = this.translate(
-			'Post a new question in our {{strong}}public forums{{/strong}}, ' +
-			'where it may be answered by helpful community members, ' +
-			'by submitting the form below. ' +
-			'{{strong}}Please do not{{/strong}} provide financial or ' +
-			'contact information when submitting this form.',
-			{
-				components: {
-					strong: <strong />
-				}
-			}
-		);
-
-		return {
-			onSubmit: this.submitSupportForumsTopic,
-			formDescription: formDescription,
-			buttonLabel: isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ),
-			showSubjectField: true,
-			disabled: isSubmitting
-		};
-	},
-
 	/**
 	 * Get the view for the contact page. This could either be the olark chat widget if a chat is in progress or a contact form.
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		var contactFormProps;
-		const { olark, confirmation, sitesInitialized } = this.state;
+		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
+		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
+		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
+		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -303,13 +249,40 @@ module.exports = React.createClass( {
 			return <OlarkChatbox />;
 		}
 
-		if ( olark.isUserEligible && olark.isOperatorAvailable ) {
-			contactFormProps = this.getChatFormProperties();
-		} else if ( olark.isUserEligible || olark.details.isConversing ) {
-			contactFormProps = this.getKayakoFormProperties();
-		} else {
-			contactFormProps = this.getPublicForumsFormProperties();
-		}
+		const contactFormProps = Object.assign(
+			{
+				disabled: isSubmitting,
+				showSubjectField: showKayakoVariation || showForumsVariation,
+				showHowCanWeHelpField: showKayakoVariation || showChatVariation,
+				showHowYouFeelField: showKayakoVariation || showChatVariation,
+				showSiteField: ( showKayakoVariation || showChatVariation ) && ( sites.get().length > 1 ),
+				siteList: sites,
+				siteFilter: site => ( site.visible && ! site.jetpack )
+			},
+			showChatVariation && {
+				onSubmit: this.startChat,
+				buttonLabel: this.translate( 'Chat with us' )
+			},
+			showKayakoVariation && {
+				onSubmit: this.submitKayakoTicket,
+				buttonLabel: isSubmitting ? this.translate( 'Submitting support ticket' ) : this.translate( 'Submit support ticket' )
+			},
+			showForumsVariation && {
+				onSubmit: this.submitSupportForumsTopic,
+				buttonLabel: isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ),
+				formDescription: this.translate(
+					'Post a new question in our {{strong}}public forums{{/strong}}, ' +
+					'where it may be answered by helpful community members, ' +
+					'by submitting the form below. ' +
+					'{{strong}}Please do not{{/strong}} provide financial or ' +
+					'contact information when submitting this form.',
+					{
+						components: {
+							strong: <strong />
+						}
+					} )
+			}
+		);
 
 		// Hide the olark widget in the bottom right corner.
 		olarkActions.hideBox();
