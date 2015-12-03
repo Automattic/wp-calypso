@@ -46,7 +46,7 @@ function submitTransaction( { cart, transaction } ) {
 
 function resetTransaction() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.RESET_TRANSACTION
+		type: ActionTypes.TRANSACTION_RESET
 	} );
 }
 

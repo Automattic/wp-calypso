@@ -95,7 +95,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			setStep( action.step );
 			break;
 
-		case UpgradesActionTypes.RESET_TRANSACTION:
+		case UpgradesActionTypes.TRANSACTION_RESET:
 			reset();
 			break;
 
