@@ -222,7 +222,7 @@ function addDns( domainName, record, onComplete ) {
 
 function deleteDns( domainName, record, onComplete ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.DELETING_DNS,
+		type: ActionTypes.DNS_DELETE,
 		domainName,
 		record
 	} );

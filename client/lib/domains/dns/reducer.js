@@ -44,7 +44,7 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.DELETING_DNS:
+		case ActionTypes.DNS_DELETE:
 			if ( ! action.error ) {
 				state = deleteDns( state, action.domainName, action.record );
 			}
