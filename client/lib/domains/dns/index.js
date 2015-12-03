@@ -61,6 +61,11 @@ function isValidName( name, type, selectedDomainName ) {
 				isValidCname( name, selectedDomainName ) &&
 				isValidDomainName( name, type )
 			);
+		case 'SRV':
+			return (
+				name === '' ||
+				isValidDomainName( name, type )
+			);
 		default:
 			return isValidDomainName( name, type );
 	}
