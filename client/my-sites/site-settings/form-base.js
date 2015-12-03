@@ -62,6 +62,11 @@ module.exports = {
 
 	},
 
+	recordClickEventAndStop: function( recordObject, clickEvent ) {
+		this.recordEvent( recordObject );
+		clickEvent.preventDefault();
+	},
+
 	recordEvent: function( eventAction ) {
 		analytics.ga.recordEvent( 'Site Settings', eventAction );
 	},
