@@ -518,32 +518,9 @@ export default React.createClass( {
 		let activateButtons = [];
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
-
-
-		if ( this.areSelected( 'inactive' ) ) { // needs activate button
-			leftSideButtons.push( <Button compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
-		}
-
-		if ( this.areSelected( 'active' ) ) {
-			let deactivateButton = isJetpackSelected
-				? <Button compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
-				: <Button compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
-			leftSideButtons.push( deactivateButton )
-		}
-
-		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && this.areSelected() ) { // needs autoupdates
-			updateButtons.push( <Button compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
-			updateButtons.push( <Button compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
-		}
-
-		leftSideButtons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
-
-		if ( ! hasWpcomPlugins && this.canUpdatePlugins() && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected ) {  // needs remove
-			leftSideButtons.push( <ButtonGroup><Button compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
-		}
+		const needsRemoveButton = this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 
 		if( ! this.state.bulkManagement ) {
-
 			if ( 0 < this.state.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup>
@@ -557,8 +534,22 @@ export default React.createClass( {
 			rightSideButtons.push(
 				<ButtonGroup><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Bulk Edit', { context: 'button label' } ) }</Button></ButtonGroup>
 			);
-
 		} else {
+			activateButtons.push( <Button disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
+			let deactivateButton = isJetpackSelected
+				? <Button disabled={ ! this.areSelected( 'active' )  } compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
+				: <Button disabled={ ! this.areSelected( 'active' )  } compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
+			activateButtons.push( deactivateButton )
+
+			updateButtons.push( <Button disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+			updateButtons.push( <Button disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
+
+			leftSideButtons.push( <ButtonGroup>{ activateButtons }</ButtonGroup> );
+			leftSideButtons.push( <ButtonGroup>{ updateButtons }</ButtonGroup> );
+
+
+			leftSideButtons.push( <ButtonGroup><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
+
 			rightSideButtons.push(
 				<ButtonGroup>
 					<button className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
