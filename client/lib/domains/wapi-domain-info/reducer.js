@@ -47,7 +47,7 @@ function reducer( state, payload ) {
 				needsUpdate: true
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED:
+		case UpgradesActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked: true,

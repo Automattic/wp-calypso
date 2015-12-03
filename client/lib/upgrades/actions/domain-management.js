@@ -443,7 +443,7 @@ function enableDomainLocking( domainName, onComplete ) {
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED,
+			type: ActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED,
 			domainName
 		} );
 
