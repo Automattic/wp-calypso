@@ -25,8 +25,7 @@ export default React.createClass( {
 
 	accept() {
 		this.setState( { submitting: true } );
-		page( this.props.redirectTo );
-		acceptInvite( this.props.invite );
+		acceptInvite( this.props.invite, () => page( this.props.redirectTo ) );
 	},
 
 	render() {
