@@ -104,9 +104,9 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderProfileLinks: function() {
+	renderProfileLinksList: function() {
 		return (
-			<ul className="profile-links">
+			<ul className="profile-links__list">
 				{ this.props.userProfileLinks.getProfileLinks().map( function( profileLink ) {
 					return (
 						<ProfileLink
@@ -132,9 +132,9 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderPlaceholder: function() {
+	renderPlaceholders: function() {
 		return (
-			<div>
+			<ul className="profile-links__list">
 				{ _times( 2, function( index ) {
 					return (
 						<ProfileLink
@@ -146,21 +146,40 @@ module.exports = React.createClass( {
 						/>
 					);
 				} ) }
+			</ul>
+		);
+	},
+
+	renderProfileLinks() {
+		let links,
+			initialized = this.props.userProfileLinks.initialized,
+			countLinks = this.props.userProfileLinks.getProfileLinks().length;
+
+		if ( ! initialized ) {
+			links = this.renderPlaceholders();
+		} else {
+			links = countLinks > 0 ? this.renderProfileLinksList() : this.renderNoProfileLinks();
+		}
+
+		return (
+			<div>
+				<p>
+					{ this.translate( 'Manage which sites appear in your profile.' ) }
+				</p>
+
+				{ this.possiblyRenderError() }
+				{ links }
 			</div>
 		);
 	},
 
-	renderLinks: function() {
+	renderForm() {
 		return (
-			<div>
-				{ this.possiblyRenderError() }
-
-				{
-					this.props.userProfileLinks.getProfileLinks().length > 0
-					? this.renderProfileLinks()
-					: this.renderNoProfileLinks()
-				}
-			</div>
+			<ProfileLinkCreators
+				userProfileLinks={ this.props.userProfileLinks }
+				showingForm={ this.state.showingForm }
+				hideForms={ this.hideForms }
+			/>
 		);
 	},
 
@@ -175,22 +194,7 @@ module.exports = React.createClass( {
 						onShowAddWordPress={ this.showAddWordPress } />
 				</SectionHeader>
 				<Card>
-					<ProfileLinkCreators
-						userProfileLinks={ this.props.userProfileLinks }
-						showingForm={ this.state.showingForm }
-						hideForms={ this.hideForms } />
-
-					<p>
-						{ this.translate( 'Manage which sites appear in your profile.' ) }
-					</p>
-
-					<div className="profile-links">
-						{
-							! this.props.userProfileLinks.initialized
-							? this.renderPlaceholder()
-							: this.renderLinks()
-						}
-					</div>
+					{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }
 				</Card>
 			</div>
 		);
