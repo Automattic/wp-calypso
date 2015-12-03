@@ -2,12 +2,12 @@ const keyMirror = require( 'key-mirror' );
 
 module.exports.action = keyMirror( {
 	ADD_DNS: null,
-	ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS: null,
 	CART_COUPON_APPLY: null,
 	CART_ITEM_ADD: null,
 	CART_ITEM_REMOVE: null,
 	CART_POPUP_CLOSE: null,
 	CART_POPUP_OPEN: null,
+	CART_PRIVACY_PROTECTION_ADD: null,
 	DELETING_DNS: null,
 	DOMAIN_ENABLE_LOCKING_COMPLETED: null,
 	DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED: null,

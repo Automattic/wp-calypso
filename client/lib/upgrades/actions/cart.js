@@ -29,7 +29,7 @@ function closeCartPopup() {
 
 function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS
+		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD
 	} );
 }
 

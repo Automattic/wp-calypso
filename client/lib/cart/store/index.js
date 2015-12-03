@@ -110,7 +110,7 @@ CartStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS:
+		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
