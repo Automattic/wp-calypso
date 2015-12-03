@@ -14,7 +14,13 @@ export default React.createClass( {
 	propTypes: {
 		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		external: false
+		external: React.PropTypes.bool
+	},
+
+	getDefaultProps() {
+		return {
+			external: false
+		};
 	},
 
 	render() {
