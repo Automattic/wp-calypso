@@ -14,7 +14,7 @@ function setDomainDetails( domainDetails ) {
 
 function setPayment( payment ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.SET_TRANSACTION_PAYMENT,
+		type: ActionTypes.TRANSACTION_PAYMENT_SET,
 		payment
 	} );
 }

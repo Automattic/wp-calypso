@@ -80,7 +80,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			setDomainDetails( action.domainDetails );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_PAYMENT:
+		case UpgradesActionTypes.TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
 			break;
 
