@@ -56,11 +56,10 @@ module.exports = {
 
 		renderPage(
 			<DomainManagementData
+				component={ DomainManagement.List }
 				context={ context }
 				productsList={ productsList }
-				sites={ sites }>
-				<DomainManagement.List />
-			</DomainManagementData>
+				sites={ sites } />
 		);
 	},
 
@@ -77,13 +76,11 @@ module.exports = {
 
 		renderPage(
 			<DomainManagementData
+				component={ DomainManagement.Edit }
 				context={ context }
 				productsList={ productsList }
-				sites={ sites }>
-				<DomainManagement.Edit
-					selectedSite={ sites.getSelectedSite() }
-					selectedDomainName={ context.params.domain } />
-			</DomainManagementData>
+				selectedDomainName={ context.params.domain }
+				sites={ sites } />
 		);
 	},
 
@@ -263,14 +260,11 @@ module.exports = {
 
 		renderPage(
 			<DomainManagementData
+				component={ DomainManagement.AddGoogleApps }
 				context={ context }
 				productsList={ productsList }
-				sites={ sites }>
-				<DomainManagement.AddGoogleApps
-					productsList={ productsList }
-					selectedSite={ sites.getSelectedSite() }
-					selectedDomainName={ context.params.domain } />
-			</DomainManagementData>
+				selectedDomainName={ context.params.domain }
+				sites={ sites } />
 		);
 	},
 

@@ -23,6 +23,7 @@ function getStateFromStores( props ) {
 		context: props.context,
 		domains: ( props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null ),
 		products: props.products,
+		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite
 	};
 }
@@ -33,6 +34,7 @@ module.exports = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
+		selectedDomainName: React.PropTypes.string,
 		sites: React.PropTypes.object.isRequired
 	},
 
@@ -57,13 +59,13 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<StoreConnection
+				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				products={ this.props.productsList.get() }
+				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.sites.getSelectedSite() }
-				context={ this.props.context }>
-				{ this.props.children }
-			</StoreConnection>
+				context={ this.props.context } />
 		);
 	}
 } );

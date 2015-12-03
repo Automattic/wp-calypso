@@ -80,9 +80,7 @@ module.exports = React.createClass( {
 				products={ this.props.productsList.get() }
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.sites.getSelectedSite() }
-				context={ this.props.context }>
-				{ this.props.children }
-			</StoreConnection>
+				context={ this.props.context } />
 		);
 	}
 } );
