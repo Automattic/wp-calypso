@@ -52,6 +52,9 @@ export default React.createClass( {
 					themeSlug={ this.props.themeSlug }
 					themeRepoSlug={ this.props.themeRepoSlug }
 					screenshotUrl={ this.getThumbnailUrl() }
+					isLoading={ this.props.isLoading }
+					dssImage={ this.props.dssImage }
+					markupAndStyles={ this.props.markupAndStyles }
 					renderComplete={ this.props.renderComplete }
 				/>
 				<span className="dss-theme-thumbnail__name">{ this.props.themeName }</span>
