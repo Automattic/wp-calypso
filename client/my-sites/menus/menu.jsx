@@ -21,7 +21,7 @@ var protectForm = require( 'lib/mixins/protect-form' ),
  */
 var Menu = React.createClass( {
 
-	mixins: [ protectForm.mixin, observe( 'itemsLock' ) ],
+	mixins: [ protectForm.mixin ],
 
 	MOUSE_DRAG_STEP_PIXELS: 16,
 
@@ -29,7 +29,8 @@ var Menu = React.createClass( {
 		return {
 			moveState: {},
 			addState: {},
-			confirmDeleteItem: null
+			confirmDeleteItem: null,
+			editItemId: null
 		};
 	},
 
@@ -190,11 +191,16 @@ var Menu = React.createClass( {
 		this.setState( { confirmDeleteItem: id } );
 	},
 
-	renderAddTip: function() {
-		var isNotEditing = this.props.itemsLock.isLocked &&
-				! this.props.itemsLock.isLocked();
+	setEditItem: function( itemId ) {
+		this.setState( { editItemId: itemId } );
+	},
 
-		return isNotEditing ?
+	getEditItem: function() {
+		return this.state.editItemId;
+	},
+
+	renderAddTip: function() {
+		return ! this.getEditItem() ?
 			<div className="menus__add-item-footer-label">
 				{ this.translate( 'Add new item' ) }
 			</div> : null;
@@ -215,7 +221,8 @@ var Menu = React.createClass( {
 
 			menuItemList = (
 				<MenuItemList items={ this.props.selectedMenu.items }
-						lock={ this.props.itemsLock }
+						setEditItem={ this.setEditItem }
+						getEditItem={ this.getEditItem }
 						moveState={ this.state.moveState }
 						doMoveItem={ this.doMoveItem }
 						addState={ this.state.addState }

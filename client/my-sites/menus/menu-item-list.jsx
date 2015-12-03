@@ -50,7 +50,8 @@ var MenuItemList = React.createClass( {
 							item={ menuItem }
 							items={ menuItem.items }
 							depth={ this.props.depth + 1 }
-							lock={ this.props.lock }
+							getEditItem={ this.props.getEditItem }
+							setEditItem={ this.props.setEditItem }
 							moveState={ this.props.moveState }
 							doMoveItem={ this.props.doMoveItem }
 							addState={ this.props.addState }
@@ -100,22 +101,18 @@ var MenuItem = React.createClass( {
 		};
 	},
 
-	componentWillUnmount: function() {
-		this.props.lock.unlock( this, { silent: true } );
-	},
-
 	edit: function() {
-		this.props.lock.lock( this );
+		this.props.setEditItem( this.props.item.id );
 	},
 
 	cancelCurrentOperation: function() {
-		this.props.lock.unlock( this );
+		this.props.setEditItem( null );
 		this.props.doMoveItem( 'cancel' );
 		this.props.doAddItem( 'cancel' );
 	},
 
 	startMoveItem: function() {
-		this.props.lock.unlock( this );
+		this.props.setEditItem( null );
 		this.props.doMoveItem( 'setSource', this.props.item.id );
 	},
 
@@ -141,7 +138,7 @@ var MenuItem = React.createClass( {
 	},
 
 	isEditing: function() {
-		return this.props.lock.hasLock( this );
+		return this.props.getEditItem() === this.props.item.id;
 	},
 
 	addNewItemInProgress: function() {
@@ -149,7 +146,7 @@ var MenuItem = React.createClass( {
 	},
 
 	canEdit: function() {
-		return ! this.props.lock.mustWait( this ) &&
+		return ! this.props.getEditItem() &&
 			! this.props.moveState.moving &&
 			! this.addNewItemInProgress() &&
 			! this.props.confirmDeleteItem;
@@ -380,7 +377,8 @@ var MenuItem = React.createClass( {
 					depth={ this.props.depth }
 					menuData={ this.props.menuData }
 					items={ this.props.items }
-					lock={ this.props.lock }
+					setEditItem={ this.props.setEditItem }
+					getEditItem={ this.props.getEditItem }
 					moveState={ this.props.moveState }
 					doMoveItem={ this.props.doMoveItem }
 					addState={ this.props.addState }
