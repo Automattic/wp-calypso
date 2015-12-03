@@ -374,7 +374,7 @@ export default React.createClass( {
 			<div>
 				{ this.getNotice() }
 				{ this.termsOfServiceLink() }
-				<FormButton className="signup-form__submit">
+				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }
 				</FormButton>
 			</div>
