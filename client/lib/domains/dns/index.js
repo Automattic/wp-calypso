@@ -75,10 +75,7 @@ function isValidName( name, type, selectedDomainName ) {
 }
 
 function isValidCname( name, selectedDomainName ) {
-	return (
-		name !== selectedDomainName &&
-		endsWith( name, selectedDomainName )
-	);
+	return endsWith( name, '.' + selectedDomainName );
 }
 
 function isValidData( data, type ) {
