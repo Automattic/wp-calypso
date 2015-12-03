@@ -84,7 +84,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			setPayment( action.payment );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_NEW_CREDIT_CARD_DETAILS:
+		case UpgradesActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
 				maskedDetails: action.maskedDetails

@@ -23,7 +23,7 @@ function setNewCreditCardDetails( options ) {
 	const { rawDetails, maskedDetails } = options;
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.SET_TRANSACTION_NEW_CREDIT_CARD_DETAILS,
+		type: ActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 		rawDetails,
 		maskedDetails
 	} );
