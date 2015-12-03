@@ -55,14 +55,14 @@ function reducer( state, payload ) {
 				state = addDns( state, action.domainName, action.record );
 			}
 			break;
-		case ActionTypes.FETCH_DNS:
+		case ActionTypes.DNS_FETCH:
 			if ( ! state[ action.domainName ] ) {
 				state = updateDomainState( state, action.domainName, {
 					hasLoadedFromServer: false
 				} );
 			}
 			break;
-		case ActionTypes.RECEIVE_DNS:
+		case ActionTypes.DNS_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				hasLoadedFromServer: true

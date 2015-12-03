@@ -193,13 +193,13 @@ function updateWhois( domainName, contactInformation, onComplete ) {
 
 function fetchDns( domainName ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_DNS,
+		type: ActionTypes.DNS_FETCH,
 		domainName
 	} );
 
 	wpcom.fetchDns( domainName, ( error, data ) => {
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_DNS,
+			type: ActionTypes.DNS_FETCH_COMPLETED,
 			records: data && data.records,
 			domainName,
 			error
