@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -15,15 +16,19 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			section: undefined
+			section: undefined,
+			noSidebar: false
 		};
 	},
 
 	render: function() {
-		var sectionClass = 'wp' + ( this.state.section ? ' is-section-' + this.state.section : '' );
+		var sectionClass = this.state.section ? ' is-section-' + this.state.section : '',
+			classes = classNames( 'wp', sectionClass, {
+				'has-no-sidebar': this.state.noSidebar
+			} );
 
 		return (
-			<div className={ sectionClass }>
+			<div className={ classes }>
 				<Masterbar />
 				<div id="content" className="wp-content">
 					<NoticesList id="notices" notices={ notices.list } />
