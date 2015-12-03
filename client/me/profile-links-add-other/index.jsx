@@ -10,8 +10,7 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormButton = require( 'components/forms/form-button' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	Notice = require( 'components/notice' ),
-	Card = require( 'components/card' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 
@@ -127,7 +126,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<Card>
+			<div>
 				<form className="profile-links-add-other" onSubmit={ this.onSubmit }>
 					<p>
 						{ this.translate( 'Please enter the URL and description of the site you want to add to your profile.' ) }
@@ -162,7 +161,7 @@ module.exports = React.createClass( {
 						</FormButton>
 					</FormFieldset>
 				</form>
-			</Card>
+			</div>
 		);
 	}
 } );
