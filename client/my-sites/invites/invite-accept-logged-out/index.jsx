@@ -55,7 +55,7 @@ export default React.createClass( {
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ this.props.redirectTo }
+				redirectTo={ window.location.origin + this.props.redirectTo + '?invite_accepted=' + this.props.invite.blog_id }
 			/>
 		)
 	},
