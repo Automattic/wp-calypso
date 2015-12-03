@@ -57,7 +57,8 @@ module.exports = {
 			];
 
 		allowedKeys.forEach( function( key ) {
-			user[ key ] = decodeEntities( obj[ key ] );
+			// Decode if value is not falsey
+			user[ key ] = obj[ key ] ? decodeEntities( obj[ key ] ) : obj[ key ];
 		} );
 
 		return assign( user, this.getComputedAttributes( obj ) );
