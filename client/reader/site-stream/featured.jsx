@@ -65,9 +65,9 @@ export default React.createClass( {
 						<div
 							key={ post.ID }
 							className="reader__featured-post"
-							onClick={ this.handleClick.bind( this, post ) }
-							style={ style }>
-							<h2>{ post.title }</h2>
+							onClick={ this.handleClick.bind( this, post ) }>
+							<div className="reader__featured-post-image" style={ style }></div>
+							<h2 className="reader__featured-post-title">{ post.title }</h2>
 						</div>
 					);
 			}
@@ -80,10 +80,10 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card>
+			<Card className="reader__featured-card">
 				<div className="reader__featured-header">
 					<div className="reader__featured-title">{ this.translate( 'Featured' ) }</div>
-					<div className="reader__featured-description">{ this.translate( 'Stories interviews, and more from the editors at WordPress.com.' ) }</div>
+					<div className="reader__featured-description">{ this.translate( 'Stories, interviews, and more from the editors at WordPress.com.' ) }</div>
 				</div>
 
 				<div className="reader__featured-posts">

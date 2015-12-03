@@ -1,0 +1,73 @@
+// Featured Posts Area
+
+.reader__featured-card {
+	padding: 16px 24px 0;
+	margin-bottom: 24px;
+}
+
+.reader__featured-header {
+	margin-bottom: 16px;
+}
+
+.reader__featured-title {
+	color: $gray-dark;
+	display: block;
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.reader__featured-description {
+	font-size: 13px;
+	color: $gray;
+}
+
+.reader__featured-posts {
+	position: relative;
+	left: -24px;
+	width: calc( 100% + 48px );
+	background-color: $gray-dark;
+
+	// Break into 3 columns on larger screens
+	@include breakpoint( ">960px" ) {
+		display: flex;
+	}
+}
+
+.reader__featured-post {
+	position: relative;
+	min-height: 52px;
+	padding: 32px 24px;
+	background-color: $gray-dark;
+	transition: all 0.1s ease-in-out;
+	cursor: pointer;
+	
+	// Break into 3 columns on larger screens
+	@include breakpoint( ">960px" ) {
+		flex: 1;
+		min-height: 152px;
+
+		&:hover {
+			background-color: darken( $gray, 30% );
+		}
+	}
+}
+
+.reader__featured-post-image {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-size: cover;
+	background-position: center;
+	opacity: 0.3;
+}
+
+.reader__featured-post-title {
+	position: relative;
+	font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
+	font-weight: 700;
+	font-size: 18px;
+	color: $white;
+	z-index: 1;
+}
