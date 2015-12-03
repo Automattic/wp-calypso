@@ -82,8 +82,8 @@ export default React.createClass( {
 		return (
 			<Card className="reader__featured-card">
 				<div className="reader__featured-header">
-					<div className="reader__featured-title">{ this.translate( 'Featured' ) }</div>
-					<div className="reader__featured-description">{ this.translate( 'Stories, interviews, and more from the editors at WordPress.com.' ) }</div>
+					<div className="reader__featured-title">{ this.translate( 'Highlights' ) }</div>
+					<div className="reader__featured-description">{ this.translate( 'What we’re reading this week.' ) }</div>
 				</div>
 
 				<div className="reader__featured-posts">
