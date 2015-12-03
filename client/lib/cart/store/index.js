@@ -118,7 +118,7 @@ CartStore.dispatchToken = Dispatcher.register( function( payload ) {
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.ADD_CART_ITEM:
+		case UpgradesActionTypes.CART_ITEM_ADD:
 			update( cartItems.add( cartItem ) );
 			break;
 

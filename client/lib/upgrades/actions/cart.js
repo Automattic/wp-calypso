@@ -46,7 +46,7 @@ function addItem( cartItem ) {
 		newCartItem = assign( {}, cartItem, { extra } );
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_CART_ITEM,
+		type: ActionTypes.CART_ITEM_ADD,
 		cartItem: newCartItem
 	} );
 }
