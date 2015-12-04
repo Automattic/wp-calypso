@@ -1,0 +1,786 @@
+// Module Content List
+
+.module-content-list {
+	padding: 0;
+	margin: 0 0 .5em;
+	list-style-type: none;
+
+	.stats-module.is-loading &,
+	.stats-module.has-no-data &,
+	.stats-module.is-showing-error & {
+		display: none;
+	}
+
+	.stats-module.is-loading &-legend {
+		display: block;
+	}
+}
+
+// Module Content List Item
+
+.module-content-list-item {
+	// Smaller font-size for narrower, two-column modules
+	font-size: 14px;
+	line-height: 40px;
+
+	// List item height shorter on 2-column modules
+	@include breakpoint( ">960px" ) {
+		.module-list & {
+			font-size: 12px;
+			line-height: 28px;
+		}
+	}
+
+	border-top: 1px solid $transparent;
+
+	// Increase touch targets on mobile
+	@include breakpoint( "<480px" ) {
+		line-height: 48px;
+		border-top: 1px solid $gray-light;
+
+		&:first-child {
+			border-top-color: $transparent;
+		}
+
+		// Darken color for sublists
+		.module-content-list-sublist & {
+			border-top-color: $gray-light;
+		}
+	}
+
+	&.disabled {
+		.module-content-list-item-label,
+		.module-content-list-item-value {
+			opacity: .15;
+			transition: opacity .3s ease .15s;
+		}
+
+		.module-content-list-item-right {
+			&:before {
+				display: none;
+			}
+		}
+
+		.module-content-list-item-actions {
+			cursor: pointer;
+			opacity: 1;
+			transition: opacity .3s ease .15s;
+			position: relative;
+			right: -20px;
+		}
+	}
+}
+
+// Module Content List Item Wrapper
+// (wrapper element, what's actually hovered for each list item)
+
+.module-content-list-item-wrapper {
+	@extend %mobile-interface-element;
+	background: $white; // Default non-active color
+	display: block;
+	line-height: inherit;
+	clear: both; // To make sure no rows overlap no matter the circumstances
+	padding: 0 24px;
+
+	span {
+		font-size: 14px;
+		// Always let child elements inherit line heights
+		line-height: inherit;
+	}
+
+	@include breakpoint( ">960px" ) {
+
+		.module-list & {
+			line-height: 28px;
+
+			span {
+				font-size: 12px;
+				// Always let child elements inherit line heights
+				line-height: inherit;
+			}
+		}
+	}
+
+	// Post was published within the selected period
+	// 1: Move so far out left that only half the icon is showing to reduce footprint
+	.module-content-list-item.published & {
+		box-shadow: inset 4px 0 0 $orange-jazzy;
+	}
+
+}
+
+// Module Content List Item Hover
+
+@include breakpoint( ">480px" ) {
+	.module-content-list-item-link .module-content-list-item-wrapper:hover {
+
+		&,
+		.module-content-list-item-right {
+			background-color: $gray-light;
+		}
+
+		.module-content-list-item-right::before {
+			background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+		}
+
+		// Display hidden actions
+		.module-content-list-item-action-hidden {
+			display: inline-block;
+		}
+	}
+}
+
+// Module Content List Item Focus
+// Active on non-links as well so you can easily go to them and digest information
+
+.module-content-list-item .module-content-list-item-wrapper:focus {
+
+	&,
+	.module-content-list-item-right {
+		background-color: $gray-light;
+	}
+
+	.module-content-list-item-right::before {
+		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+	}
+
+	// Display hidden actions
+	.module-content-list-item-action-hidden {
+		display: inline-block;
+	}
+}
+
+// Highlight toggle icon if item has a sublist
+
+@include breakpoint( ">480px" ) {
+	.module-content-list > .module-content-list-item-toggle > .module-content-list-item-wrapper:hover .module-content-list-item-label::before {
+		color: $link-highlight;
+	}
+}
+
+.module-content-list > .module-content-list-item-toggle > .module-content-list-item-wrapper:focus .module-content-list-item-label::before {
+	color: $link-highlight;
+}
+
+// Module Content List Item Label
+// 1: To create the illusion that text is fading out (break up even long chunks of text)
+// 2: ### always has to be the line-height -- could we sync up with a variable?
+
+.module-content-list-item-label {
+	display: block;
+	overflow: hidden;
+	word-break: break-all; // 1
+	height: 40px; // 2
+
+	// List item height shorter on 2-column modules
+	@include breakpoint( ">960px" ) {
+		.module-list & {
+			height: 28px;
+		}
+	}
+
+	@include breakpoint( "<480px" )	 {
+		height: 48px; // ### see ^
+	}
+
+	// Icons
+	.icon,
+	.gridicon {
+		margin-right: 8px;
+	}
+
+	.icon {
+		$icon-size: 24px;
+
+		position: relative;
+		display: inline-block;
+		width: $icon-size;
+		height: $icon-size;
+		overflow: hidden;
+		vertical-align: middle;
+		min-width: 24px;
+		line-height: inherit;
+
+		img {
+			display: block;
+			background: $white;
+			position: relative;
+		}
+
+		// Hide for user avatars
+		.followers &,
+		.top-authors &,
+		.authorviews & {
+			background: none;
+
+			&::before {
+				content: none;
+			}
+		}
+	}
+
+	.gridicon {
+		vertical-align: middle;
+	}
+
+	// Icons smaller on 2col
+	@include breakpoint( ">960px" ) {
+		.module-list & .icon {
+			font-size: 20px;
+			line-height: 1.3;
+		}
+
+		.module-list & .gridicon {
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	.avatar {
+		width: 24px;
+		height: 24px;
+	}
+
+	.avatar-user {
+		border-radius: 12px
+	}
+
+	.user-selectable & {
+		-webkit-user-select: text;
+		-khtml-user-select: text;
+		-moz-user-select: text;
+		-ms-user-select: text;
+		user-select: text;
+	}
+
+	// Label sections: For when multiple data points are displayed in one expandable list item
+	.module-content-list-item-label-section {
+		margin-right: 11px;
+		padding-right: 12px;
+		border-right: 1px solid $gray-light;
+
+		&:last-child {
+			margin: 0;
+			padding: 0;
+			border: none;
+		}
+	}
+}
+
+// Module Content List Item Right column
+
+.module-content-list-item-right {
+	position: relative;
+	float: right;
+	background: $white;
+	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
+
+
+	@include breakpoint( ">960px" ) {
+		.module-list & {
+			height: 28px;
+		}
+	}
+
+	@include breakpoint( "<480px" )	{
+		height: 48px;
+	}
+
+	// Fade out value if long
+	&::before {
+		@include stats-fade-text($white);
+	}
+}
+
+// Module Content List Item Value
+// 1: Makes secondary actions aligned up to values of '99,999' or a string like '99 hours'
+.module-content-list-item-value {
+	display: inline-block;
+	text-align: right;
+	min-width: 44px; // 1
+
+	.followers & {
+		min-width: 60px; // 1
+	}
+}
+
+// Module Content List Item Actions (in right column)
+// Actions list
+ul.module-content-list-item-actions {
+	display: inline-block;
+	margin: 0 .5em 0 0;
+
+	// ### guess we need to abstract this to a mixin since its repeated now
+	// ### this should be fixed but refraining since we're going to use
+	// the popover and select UI patterns more closely in the future
+	&.collapsed {
+		@include dropdown-menu;
+
+		background: $gray-light;
+		display: none;
+		z-index: 3;
+		margin: 0;
+		top: 30px;
+		right: auto;
+		left: -172px; // module-content-list-item-right is relative, so this is min-width 220px - action width 48px = 172
+
+		.module-content-list-item-right.is-expanded & {
+			display: inline-block;
+		}
+
+		&::after {
+			border-bottom-color: $gray-light;
+			right: 18px; // Logically this should be 24px but thanks to the borders (?) 18px is actually centered
+			left: auto;
+		}
+
+		.module-content-list-item-action-wrapper,
+		ul.module-content-list-item-action-submenu {
+			display: block;
+			text-align: left;
+		}
+
+		// If displayed in a sublist or otherwise expanded item, swap background color
+		.module-content-list-item-toggle.is-expanded & {
+			background-color: $white;
+
+			&::after {
+				border-bottom-color: $white;
+			}
+		}
+	}
+
+	@include breakpoint( "<480px" )	{
+		@include dropdown-menu;
+
+		background: $gray-light;
+		display: none;
+		z-index: 2;
+		margin: 0;
+		top: 46px;
+		right: auto;
+		left: -172px; // module-content-list-item-right is relative, so this is min-width 220px - action width 48px = 172
+
+		.module-content-list-item-right.is-expanded & {
+			display: inline-block;
+		}
+
+		&::after {
+			border-bottom-color: $gray-light;
+			right: 18px; // Logically this should be 24px but thanks to the borders (?) 18px is actually centered
+			left: auto;
+		}
+
+		.module-content-list-item-action-wrapper,
+		ul.module-content-list-item-action-submenu {
+			display: block;
+			text-align: left;
+		}
+
+		// If displayed in a sublist or otherwise expanded item, swap background color
+		.module-content-list-item-toggle.is-expanded & {
+			background-color: $white;
+
+			&::after {
+				border-bottom-color: $white;
+			}
+		}
+	}
+}
+
+// Actions toggle
+// (a toggle that's only shown on smaller screen sizes)
+// 1: ### Showing/hiding should not be handled by CSS
+
+.module-content-list-item-actions-toggle {
+	display: none;
+	min-width: 24px;
+	padding: 0 12px;
+	height: 40px;
+	line-height: inherit;
+
+	@include breakpoint( ">960px" ) {
+		.module-list & {
+			height: 28px;
+		}
+	}
+
+	.gridicon {
+		vertical-align: middle;
+	}
+
+	@include breakpoint( "<480px" ) {
+		display: inline-block;
+		height: 48px;
+	}
+
+	// 1
+	&.show {
+		display: inline-block;
+		height: 30px;
+	}
+}
+
+// Actions Menu
+// (Used for links that should be hidden even on desktop)
+ul.module-content-list-item-action-submenu {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+
+	@include breakpoint( ">480px" ) {
+
+		@include dropdown-menu;
+
+		display: none;
+		z-index: 2;
+		margin: 0;
+		top: 32px;
+		right: -20px;
+
+		.module-content-list-item-action.hidden-action.is-expanded & {
+			display: inline-block;
+		}
+
+		&::after {
+			right: 24px;
+			left: auto;
+		}
+
+		.module-content-list-item-action-wrapper {
+			display: block;
+			text-align: left;
+		}
+	}
+}
+
+// Action
+.module-content-list-item-action {
+	display: inline-block;
+	margin: 0 1em 0 0;
+
+	// So that 'View' label is moved more to the right since icon has been dropped
+	@include breakpoint( ">960px" ) {
+		.module-list & {
+			margin: 0;
+		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin-right: 0;
+	}
+
+	// Action wrapper, what's actually selected
+	.module-content-list-item-action-wrapper {
+		@extend %mobile-interface-element;
+		display: inline-block;
+		text-align: center;
+		margin: 0;
+		line-height: inherit;
+
+		@include breakpoint( "<480px" ) {
+			min-width: 24px;
+			padding: 0 12px;
+
+			&.toggle {
+				display: none;
+			}
+		}
+
+		.module-content-list-item-action-label.unfollow {
+			display: none;
+		}
+
+		// Hide 'View' label next to icon on 2-column modules
+		@include breakpoint( ">960px" ) {
+			.module-list & span.module-content-list-item-action-label-view {
+				display: none;
+			}
+		}
+	}
+
+	// Color follow action when already following
+	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label {
+		color: $alert-green;
+	}
+
+	// Display hidden label and change icon for Unfollow action
+	.module-content-list-item-action-wrapper.following:focus,
+	.module-content-list-item-action-wrapper.following:hover {
+
+		.module-content-list-item-action-label {
+			display: none;
+			color: $link-highlight;
+		}
+
+		.module-content-list-item-action-label.unfollow {
+			display: inline-block;
+		}
+	}
+
+	// Icon settings
+	// 1: Optically align a bit better
+	.gridicon {
+		vertical-align: middle;
+		margin-right: 4px;
+		margin-top: -2px; // 1
+	}
+
+	// Color spam action red
+	.module-content-list-item-action-wrapper.spam {
+		color: $alert-red;
+
+		// Hover state
+		@include breakpoint( ">480px" ) {
+			&:hover {
+				color: tint($alert-red, 30%);
+			}
+		}
+
+		// Focus state
+		&:focus {
+			color: tint($alert-red, 30%);
+		}
+	}
+}
+
+
+// Module Content List style: Legend
+// (a legend for the data displayed)
+
+ul.module-content-list-legend {
+	margin-top: .5em;
+	margin-bottom: 0;
+}
+
+.module-content-list-legend .module-content-list-item .module-content-list-item-value,
+.module-content-list-legend .module-content-list-item .module-content-list-item-label {
+	@extend %placeholder;
+
+	color: $gray;
+	font-weight: bold;
+
+	// Limit width when loading for placeholders to take less visual space
+	.stats-module.is-loading & {
+		max-width: 60px;
+	}
+}
+
+// Display full action labels in header to use them as legends for the list's actions
+.module-content-list-legend .module-content-list-item .module-content-list-item-action .module-content-list-item-action-label {
+	@include breakpoint( "<480px" ) {
+		display: inline;
+	}
+}
+
+//  Module Content List Item style: Disabled
+// (there's absolutely no data or bad error)
+// ### Do :empty for value to input N/A? Or placeholder content in general?
+
+.module-content-list > .module-content-list-item-disabled {
+	cursor: default;
+
+	.module-content-list-item-value,
+	.module-content-list-item-label {
+		color: $gray;
+	}
+}
+
+
+// Module Content List Item style: Large
+// (a larger display of a list item, currently only used for the Authors module)
+
+.module-content-list > .module-content-list-item-large {
+
+	> .module-content-list-item-wrapper {
+		line-height: 48px;
+		@include breakpoint( ">960px" ) {
+			.module-list & {
+				line-height: 28px;
+			}
+		}
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-label {
+		height: 48px;
+		@include breakpoint( ">960px" ) {
+			.module-list & {
+				height: 28px;
+			}
+		}
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-label .avatar {
+		font-size: 32px;
+		margin-right: 10px;
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-label .icon {
+		font-size: 32px;
+		line-height: 32px;
+		width: 32px;
+		height: 32px;
+		@include breakpoint( ">960px" ) {
+			.module-list & {
+				width: 24px;
+				height: 24px;
+			}
+		}
+	}
+
+	@include breakpoint( ">960px" ) {
+		.module-list & > .module-content-list-item-wrapper .module-content-list-item-label .icon {
+			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
+		}
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-label .avatar {
+		width: 32px;
+		height: 32px;
+		@include breakpoint( ">960px" ) {
+			.module-list & {
+				width: 24px;
+				height: 24px;
+			}
+		}
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-label .avatar-user {
+		border-radius: 16px;
+	}
+}
+
+// Module Content List Item style: Link
+// (this item has a main action or links somewhere)
+
+.module-content-list > .module-content-list-item-link {
+	cursor: pointer;
+
+	&.disabled {
+		cursor: default;
+	}
+
+	// Change colors to highlight label when row is highlighted
+	.module-content-list-item-label {
+		color: $blue-wordpress;
+	}
+
+	// Highlight main action (usually what's indicated in the label)
+
+	@include breakpoint( ">480px" ) {
+		.module-content-list-item-wrapper:hover .module-content-list-item-label {
+			color: $link-highlight;
+		}
+	}
+
+	.module-content-list-item-wrapper:focus .module-content-list-item-label {
+		color: $link-highlight;
+	}
+}
+
+// Module Content List Item style: Toggle
+// (this item's main action is to show an enclosed sublist or something else)
+
+.module-content-list > .module-content-list-item-toggle {
+	position: relative;
+
+	// Toggle icon
+	> .module-content-list-item-wrapper .module-content-list-item-label .gridicons-chevron-down {
+		vertical-align: middle;
+		transition: .2s transform ease-out;
+		transform: translate3d(0,0,0);
+	}
+}
+
+// Active (sublist is showing)
+.module-content-list-item-toggle.is-expanded {
+	border-top-color: $gray-light;
+
+	> .module-content-list {
+		display: block;
+	}
+
+	// Lock in hover states to show that the list item is now selected (active)
+	&,
+	> .module-content-list-item-wrapper,
+	> .module-content-list-item-wrapper .module-content-list-item-right {
+		background: $gray-light;
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-value {
+		color: $gray;
+	}
+
+	> .module-content-list-item-wrapper .module-content-list-item-right::before {
+		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+	}
+
+	// Rotate toggle icon
+	> .module-content-list-item-wrapper .module-content-list-item-label .gridicons-chevron-down {
+		transform: rotate(180deg);
+	}
+
+	// Hide the top border of an active sub-list
+	> .module-content-list-item {
+		border-top-color: $transparent;
+	}
+
+	// Hover changes
+	@include breakpoint( ">480px" ) {
+		> .module-content-list-item-wrapper:hover {
+
+			// Change background and gradient color
+			&,
+			.module-content-list-item-right {
+				background-color: $white;
+			}
+
+			span.module-content-list-item-right::before {
+				background-image: linear-gradient(to right, $transparent 0%, $white 90%);
+			}
+		}
+	}
+}
+
+// Module Content List: Sublist
+// (modified content list fit for sublists to be displayed inside other lists)
+
+.module-content-list-sublist {
+	display: none;
+	padding: 4px 0;
+
+	// Add more padding for third level nested lists
+	.module-content-list-sublist .module-content-list-item-wrapper {
+		padding-left: 56px;
+	}
+}
+
+.module-content-list-sublist .module-content-list-item {
+
+	// Change background and gradient color
+	> .module-content-list-item-wrapper .module-content-list-item-right,
+	> .module-content-list-item-wrapper {
+		background: $gray-light; // Default non-active color
+ 	}
+
+ 	.module-content-list-item-right::before {
+		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+	}
+
+	// Hover changes
+	@include breakpoint( ">480px" ) {
+		&-link .module-content-list-item-wrapper:hover,
+		&-normal .module-content-list-item-wrapper:hover {
+
+			// Change background and gradient color
+			&,
+			.module-content-list-item-right {
+				background-color: $white;
+			}
+
+			span.module-content-list-item-right::before {
+				background-image: linear-gradient(to right, $transparent 0%, $white 90%);
+			}
+		}
+	}
+}
