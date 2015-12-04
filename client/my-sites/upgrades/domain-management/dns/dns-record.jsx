@@ -87,11 +87,17 @@ var DnsRecord = React.createClass( {
 	render: function() {
 		return (
 			<li>
-				<label>{ this.props.dnsRecord.type }</label>
-				{ ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type ?
-					<button className="remove" onClick={ this.deleteDns }>{ this.translate( 'Delete' ) }</button> : null }
-				<strong>{ this.getName() }</strong>
-				<em>{ this.handledBy() }</em>
+				<div className="dns__list-type">
+					<label>{ this.props.dnsRecord.type }</label>
+				</div>
+				<div className="dns__list-info">
+					<strong>{ this.getName() }</strong>
+					<em>{ this.handledBy() }</em>
+				</div>
+				<div className="dns__list-remove">
+					{ ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type ?
+						<button className="remove" onClick={ this.deleteDns }>{ this.translate( 'Delete' ) }</button> : null }
+				</div>
 			</li>
 		);
 	}
