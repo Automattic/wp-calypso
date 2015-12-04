@@ -6,7 +6,8 @@ var Dispatcher = require( 'dispatcher' );
 /**
  * Internal Dependencies
  */
-var User = require( './user' ),
+import { action as InvitesActionTypes } from 'lib/invites/constants';
+let User = require( './user' ),
 	_user = false;
 
 module.exports = function() {
@@ -25,6 +26,9 @@ User.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'RECEIVE_DELETED_SITE':
 			_user.fetch();
 			break;
+		case InvitesActionTypes.INVITE_ACCEPTED:
+			incrementSiteCount();
+			break;
 	}
 } );
 
@@ -33,6 +37,15 @@ function decrementSiteCount() {
 		attributes = {
 			visible_site_count: data.visible_site_count - 1,
 			site_count: data.site_count - 1
+		};
+	_user.set( attributes );
+}
+
+function incrementSiteCount() {
+	const data = _user.get(),
+		attributes = {
+			visible_site_count: data.visible_site_count + 1,
+			site_count: data.site_count + 1
 		};
 	_user.set( attributes );
 }
