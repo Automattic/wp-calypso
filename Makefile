@@ -56,7 +56,7 @@ install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
 run: welcome githooks-commit install build
-	@$(NODEMON) --watch build build/bundle-$(CALYPSO_ENV).js
+	@$(NODEMON) --watch server --watch shared  --exec "CALYPSO_ENV=$(CALYPSO_ENV) $(SERVER_BUILD_COMMAND); $(NODE)" build/bundle-$(CALYPSO_ENV).js
 
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
@@ -120,14 +120,11 @@ builddir:
 build-server: install builddir
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(SERVER_BUILD_COMMAND)
 
-build-and-watch-server: install builddir
-	@CALYPSO_ENV=$(CALYPSO_ENV) $(SERVER_BUILD_COMMAND) --watch &
-
 build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: build-and-watch-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: install builddir $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 
 build-wpcalypso: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 	@$(BUNDLER)
