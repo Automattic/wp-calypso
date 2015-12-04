@@ -190,8 +190,7 @@ module.exports = React.createClass( {
 
 		SiteListActions.deleteSite( this.state.site, function( success ) {
 			if ( success ) {
-				window.scrollTo( 0, 0 );
-				page( '/stats' );
+				page.redirect( '/stats' );
 			}
 		}.bind( this ) );
 	},
