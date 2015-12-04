@@ -44,6 +44,11 @@ module.exports = React.createClass( {
 	getSelectedText: function() {
 		var text = '',
 			found = find( this.props.tabs, function( tab ) {
+
+				if ( this.props.path === '/me/security?updated=password' ) {
+					this.props.path = '/me/security';
+				}
+
 				return this.props.path === tab.path;
 			}, this );
 
