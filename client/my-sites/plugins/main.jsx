@@ -810,9 +810,18 @@ export default React.createClass( {
 							if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
 								return null;
 							}
-							const count = 'updates' === filterItem.id && this.state.pluginUpdateCount;
+
+							let attr = {
+								key: filterItem.id,
+								path:filterItem.path,
+								selected: filterItem.id === this.props.filter,
+							}
+
+							if ( 'updates' === filterItem.id ) {
+								attr.count = this.state.pluginUpdateCount;
+							}
 							return (
-								<NavItem key={ filterItem.id } path={ filterItem.path } selected={ filterItem.id === this.props.filter } count={ count } >
+								<NavItem { ...attr } >
 									{ filterItem.title }
 								</NavItem>
 							);
