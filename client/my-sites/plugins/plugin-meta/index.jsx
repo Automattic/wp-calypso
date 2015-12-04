@@ -170,7 +170,7 @@ export default React.createClass( {
 				text={ i18n.translate( 'A new version is available.' ) }
 				status="is-warning"
 				button={ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersion } } ) }
-				onDismissClick={ this.handlePluginUpdates }
+				onClick={ this.handlePluginUpdates }
 				showDismiss={ false } />;
 		}
 	},
