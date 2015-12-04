@@ -53,16 +53,16 @@
 
 // Center themes, regardless of how many columns.
 .dss-theme-selection__screenshots__themes {
-       margin: 0 auto;
-       width: 300px;
+	margin: 0 auto;
+	width: 300px;
 
-       @include breakpoint( ">660px" ) {
-               width: 640px;
-       }
+	@include breakpoint( ">660px" ) {
+		width: 640px;
+	}
 
-       @include breakpoint( ">960px" ) {
-               width: 960px;
-       }
+	@include breakpoint( ">960px" ) {
+		width: 960px;
+	}
 }
 
 // Show the original screenshot image when the screenshot markup is loading.
