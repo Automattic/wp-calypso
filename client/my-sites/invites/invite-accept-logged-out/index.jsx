@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react'
-import get from 'lodash/object/get'
 
 /**
  * Internal dependencies
@@ -36,7 +35,7 @@ export default React.createClass( {
 			( error, bearerToken ) =>
 				bearerToken &&
 				acceptInvite(
-					this.props.invite,
+					this.props,
 					( acceptInviteError ) => this.setState( { acceptInviteError, userData, bearerToken } ),
 					bearerToken
 				)
@@ -55,7 +54,7 @@ export default React.createClass( {
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ window.location.origin + this.props.redirectTo + '?invite_accepted=' + this.props.invite.blog_id }
+				redirectTo={ window.location.origin + this.props.redirectTo + '?invite_accepted=' + this.props.site.ID }
 			/>
 		)
 	},
@@ -63,12 +62,12 @@ export default React.createClass( {
 	subscribeUserByEmailOnly() {
 		this.setState( { submitting: true } );
 		acceptInvite(
-			this.props.invite,
+			this.props,
 			( error ) => {
 				if ( error ) {
 					this.setState( { error } );
 				} else {
-					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( this.props.invite.meta.sent_to ) + '&key=' + this.props.invite.authKey;
+					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( this.props.sent_to ) + '&key=' + this.props.authKey;
 				}
 			}
 		);
@@ -87,7 +86,7 @@ export default React.createClass( {
 	},
 
 	renderEmailOnlySubscriptionLink() {
-		if ( this.props.invite.meta.role !== 'follower' || ! this.props.invite.activationKey ) {
+		if ( this.props.role !== 'follower' || ! this.props.activationKey ) {
 			return null;
 		}
 
@@ -110,7 +109,7 @@ export default React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
-					email={ get( this.props, 'invite.meta.sent_to' ) }
+					email={ this.props.sent_to }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>

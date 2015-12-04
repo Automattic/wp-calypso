@@ -33,7 +33,7 @@ export default React.createClass( {
 			</strong>
 		);
 
-		const role = get( this.props, 'invite.meta.role' );
+		const { role } = this.props;
 
 		switch ( role ) {
 			case 'administrator':
@@ -108,7 +108,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		let classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.invite } );
+		let classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
+
 		return(
 			<div className={ classes }>
 				<CompactCard className="invite-header__inviter">
@@ -121,9 +122,9 @@ export default React.createClass( {
 				</CompactCard>
 				<CompactCard className="invite-header__site">
 					{
-						this.props.blog_details
-						? <Site site={ this.props.blog_details } />
-						: <SitePlaceholder />
+						this.props.site
+							? <Site site={ this.props.site } />
+							: <SitePlaceholder />
 					}
 				</CompactCard>
 			</div>

@@ -35,7 +35,7 @@ export default React.createClass( {
 	},
 
 	componentWillMount() {
-		fetchInvite( this.props.site_id, this.props.invitation_key );
+		fetchInvite( this.props.siteId, this.props.inviteKey );
 		InvitesStore.on( 'change', this.refreshInvite );
 	},
 
@@ -44,17 +44,21 @@ export default React.createClass( {
 	},
 
 	refreshInvite() {
-		const invite = InvitesStore.getInvite( this.props.site_id, this.props.invitation_key );
-		const error = InvitesStore.getInviteError( this.props.site_id, this.props.invitation_key );
+		const invite = InvitesStore.getInvite( this.props.siteId, this.props.inviteKey );
+		const error = InvitesStore.getInviteError( this.props.siteId, this.props.inviteKey );
 
 		if ( invite ) {
 			// add subscription-related keys to the invite
-			Object.assign( invite.invite, {
-				activationKey: this.props.activation_key,
-				authKey: this.props.auth_key
+			Object.assign( invite, {
+				activationKey: this.props.activationKey,
+				authKey: this.props.authKey
 			} );
 		}
 		this.setState( { invite, error } );
+	},
+
+	refreshRedirectPath() {
+		this.setState( { redirectPath: this.getRedirectAfterAccept() } );
 	},
 
 	getErrorTitle() {
@@ -72,14 +76,14 @@ export default React.createClass( {
 	},
 
 	getRedirectAfterAccept() {
-		const { invite } = this.state.invite;
-		switch ( invite.meta.role ) {
+		const { invite } = this.state
+		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
 				return '/';
 				break;
 			default:
-				return '/posts/' + invite.blog_id;
+				return '/posts/' + this.props.siteId;
 		}
 	},
 

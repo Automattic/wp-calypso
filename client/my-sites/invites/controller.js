@@ -19,7 +19,12 @@ export function acceptInvite( context ) {
 	React.render(
 		React.createElement(
 			InviteAccept,
-			context.params
+			{
+				siteId: context.params.site_id,
+				inviteKey: context.params.invitation_key,
+				activationKey: context.params.activation_key,
+				authKey: context.params.auth_key
+			}
 		),
 		document.getElementById( 'primary' )
 	);
