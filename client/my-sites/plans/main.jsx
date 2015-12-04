@@ -11,7 +11,8 @@ var analytics = require( 'analytics' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
+	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 	displayName: 'Plans',
@@ -42,7 +43,12 @@ module.exports = React.createClass( {
 			url += '/' + selectedSite.slug;
 		}
 
-		return <a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>{ this.translate( 'Compare Plans' ) }</a>;
+		return (
+			<a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>
+				<Gridicon icon="clipboard" size="18" />
+				{ this.translate( 'Compare Plans' ) }
+			</a>
+		);
 	},
 
 	sidebarNavigation: function() {

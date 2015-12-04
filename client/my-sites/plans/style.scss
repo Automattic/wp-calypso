@@ -6,11 +6,9 @@
 		margin: 20px 0 0 0;
 		text-align: center;
 
-		&:before {
-			@include noticon( '\f425', 16px );
-			color: $blue-medium;
+		.gridicon {
+			margin: -2px 3px 0 0;
 			vertical-align: middle;
-			margin: -2px 5px 0 0;
 		}
 	}
 }
