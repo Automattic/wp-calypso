@@ -44,14 +44,14 @@ export default React.createClass( {
 	},
 
 	refreshInvite() {
-		const invite = InvitesStore.getInvite( this.props.site_id, this.props.invitation_key );
-		const error = InvitesStore.getInviteError( this.props.site_id, this.props.invitation_key );
+		const invite = InvitesStore.getInvite( this.props.siteId, this.props.inviteKey );
+		const error = InvitesStore.getInviteError( this.props.siteId, this.props.inviteKey );
 
 		if ( invite ) {
 			// add subscription-related keys to the invite
-			Object.assign( invite.invite, {
-				activationKey: this.props.activation_key,
-				authKey: this.props.auth_key
+			Object.assign( invite, {
+				activationKey: this.props.activationKey,
+				authKey: this.props.authKey
 			} );
 		}
 		this.setState( { invite, error } );
