@@ -89,7 +89,7 @@ module.exports = React.createClass({
 					</NavTabs>
 					<Search
 						pinned={ true }
-						siteID = { this.props.siteID }
+						siteID={ this.props.siteID }
 						onSearch={ this.doSearch }
 						initialValue={ this.props.search }
 						placeholder={ searchPlaceholder }
