@@ -9,6 +9,7 @@ import get from 'lodash/object/get'
  */
 import { createReducerStore } from 'lib/store';
 import { action as ActionTypes } from 'lib/dss/constants';
+import analytics from 'analytics';
 
 const debug = debugFactory( 'calypso:dss:image-store' );
 const initialState = {
@@ -38,10 +39,16 @@ export default createReducerStore( ( state, { action } ) => {
 			if ( images.length < 1 ) {
 				// TODO: notify the user of the error
 				debug( 'error getting dynamic-screenshots images', action );
+
+				analytics.tracks.recordEvent( 'calypso_dss_fetch_error', { searchterm: action.searchTerm } );
+
 				return Object.assign( {}, state, { isLoading: false } );
 			}
 			debug( 'saving image results for', action.searchTerm );
 			const imageResultsByKey = Object.assign( {}, state.imageResultsByKey, { [ action.searchTerm ]: images[0] } );
+
+			analytics.tracks.recordEvent( 'calypso_dss_fetch_images', Object.assign( {}, { searchterm: action.searchTerm }, imageResultsByKey[ action.searchTerm ] ) );
+
 			return Object.assign( {}, state, { isLoading: false, lastKey: action.searchTerm, imageResultsByKey } );
 	}
 	return state;
