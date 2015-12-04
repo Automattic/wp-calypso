@@ -1,35 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import Card from 'components/card';
+import HeaderCakeBack from './back';
 
-module.exports = React.createClass( {
+export default React.createClass( {
+
 	displayName: 'HeaderCake',
 
 	propTypes: {
-		onClick: React.PropTypes.func.isRequired,
-		onTitleClick: React.PropTypes.func,
-		backText: React.PropTypes.oneOfType( [
-			React.PropTypes.element,
-			React.PropTypes.string
-		] )
+		onClick: PropTypes.func.isRequired,
+		onTitleClick: PropTypes.func,
+		backText: PropTypes.string
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			isCompact: false
 		};
 	},
 
-	render: function() {
-		var classes = classNames(
+	render() {
+		const backText = this.props.backText || this.translate( 'Back' );
+		const classes = classNames(
 			'header-cake',
 			this.props.className,
 			{
@@ -40,16 +39,16 @@ module.exports = React.createClass( {
 		return (
 			<Card className={ classes }>
 				<div className="header-cake__corner">
-					<a className="header-cake__back" onClick={ this.props.onClick }>
-						<Gridicon icon="chevron-left" size={ 16 } />
-						<span className="header-cake__back-text">{ this.props.backText || this.translate( 'Back' ) }</span>
-					</a>
+					<HeaderCakeBack text={ backText } onClick={ this.props.onClick } />
 				</div>
-				<span className="header-cake__title" onClick={ this.props.onTitleClick }>
+				<div className="header-cake__title" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
-				</span>
-				<div className="header-cake__corner" />
+				</div>
+				<div className="header-cake__corner is-spacer">
+					<HeaderCakeBack text={ backText } />
+				</div>
 			</Card>
 		);
 	}
+
 } );

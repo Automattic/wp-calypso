@@ -7,36 +7,33 @@
 
 .header-cake.card {
 	display: flex;
-	align-items: stretch;
-	justify-content: center;
+	align-items: center;
 	font-size: 14px;
 	line-height: 18px;
-	padding: 16px;
+	padding: 0;
 
 	@include breakpoint( "<660px" ) {
 		margin-top: 10px;
 	}
 }
 
-.header-cake__title {
-	color: darken( $gray, 20% );
-	text-align: center;
-	word-break: break-word;
-	flex: 2 1;
-}
-
 .header-cake__corner {
-	display: flex;
-	flex: 1 0;
+	flex: none;
+	display: block;
+	max-width: 33.333%;
+
+	&.is-spacer {
+		opacity: 0;
+	}
 }
 
 .header-cake__back {
-	flex: 1 0;
 	display: block;
-	margin: -16px;
-	margin-right: 0;
-	padding: 15px 16px 16px;
+	padding: 16px;
 	color: darken( $gray, 20% );
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	cursor: pointer;
 
 	.gridicon {
@@ -44,10 +41,25 @@
 		vertical-align: middle;
 		opacity: 0.6;
 	}
+
+	.header-cake__corner.is-spacer & {
+		cursor: default;
+	}
 }
 
 .header-cake__back-text {
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
+}
+
+.header-cake__title {
+	flex: 1 1 auto;
+	padding: 16px 0;
+	color: darken( $gray, 20% );
+	text-align: center;
+	word-break: break-word;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

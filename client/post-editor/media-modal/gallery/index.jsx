@@ -12,7 +12,6 @@ import isEqual from 'lodash/lang/isEqual';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import BackToLibrary from '../back-to-library';
 import MediaStore from 'lib/media/store';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
@@ -132,7 +131,7 @@ export default React.createClass( {
 				<EditorMediaModalGalleryDropZone
 					site={ site }
 					onInvalidItemAdded={ () => this.setState( { invalidItemDropped: true } ) } />
-				<HeaderCake onClick={ this.returnToList } backText={ <BackToLibrary /> } />
+				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) } />
 				<div className="editor-media-modal-gallery__content editor-media-modal__content">
 					<EditorMediaModalGalleryPreview
 						site={ site }

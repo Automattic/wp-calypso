@@ -10,7 +10,6 @@ var React = require( 'react' ),
 var DetailItem = require( './detail-item' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	HeaderCake = require( 'components/header-cake' ),
-	BackToLibrary = require( '../back-to-library' ),
 	EditorMediaModalDetailTitle = require( './detail-title' ),
 	preloadImage = require( '../preload-image' ),
 	ModalViews = require( '../constants' ).Views;
@@ -65,7 +64,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ this.returnToList } backText={ <BackToLibrary /> }>
+				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) }>
 					<EditorMediaModalDetailTitle
 						site={ this.props.site }
 						item={ items[ this.props.selectedIndex ] } />
