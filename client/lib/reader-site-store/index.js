@@ -2,7 +2,8 @@
 
 // External Dependencies
 var Immutable = require( 'immutable' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/object/omit' ),
+	has = require( 'lodash/object/has' );
 
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),
@@ -30,9 +31,7 @@ function setSite( attributes ) {
 		attributes.state = State.COMPLETE;
 	}
 
-	if ( attributes.meta && attributes.meta.links ) {
-		attributes.has_featured = !!attributes.meta.links.featured;
-	}
+	attributes.has_featured = has( attributes, 'meta.links.featured' );
 
 	attributes = omit( attributes, [ 'meta', '_headers' ] );
 
