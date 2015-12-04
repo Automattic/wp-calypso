@@ -8,6 +8,7 @@ const InviteMessageStore = createReducerStore( ( state, payload ) => {
 	const { action } = payload;
 	let newState = Object.assign( {}, state );
 	switch ( action.type ) {
+		case ActionTypes.INVITE_ACCEPTED:
 		case ActionTypes.DISPLAY_INVITE_ACCEPTED_NOTICE:
 			newState.accepted = true;
 			newState.siteId = action.siteId;
