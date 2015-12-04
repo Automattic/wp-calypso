@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react'
-import get from 'lodash/object/get'
 
 /**
  * Internal dependencies
@@ -110,7 +109,7 @@ export default React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
-					email={ get( this.props, 'invite.meta.sent_to' ) }
+					email={ this.props.sent_to }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>

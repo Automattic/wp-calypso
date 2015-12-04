@@ -2,34 +2,20 @@
  * External dependencies
  */
 import React from 'react';
-import get from 'lodash/object/get';
 
 export default React.createClass( {
 	displayName: 'InviteFormHeader',
 
-	getRole() {
-		return get( this.props, 'invite.meta.role' );
-	},
-
-	getSiteName() {
-		return get( this.props, 'blog_details.title' );
-	},
-
-	getSiteDomain() {
-		return get( this.props, 'blog_details.domain' );
-	},
-
 	getSiteLink() {
-		const siteName = this.getSiteName();
-		const siteDomain = this.getSiteDomain();
+		const { site } = this.props;
 
-		if ( ! siteName || ! siteDomain ) {
+		if ( ! site ) {
 			return null;
 		}
 
 		return (
-			<a href={ siteDomain } className="invite-header__site-link">
-				{ siteName }
+			<a href={ site.domain } className="invite-header__site-link">
+				{ site.title }
 			</a>
 		);
 	},
@@ -37,7 +23,9 @@ export default React.createClass( {
 	getLoggedOutTitleForInvite() {
 		let title = '';
 
-		switch ( this.getRole() ) {
+		const { role } = this.props;
+
+		switch ( role ) {
 			case 'administrator':
 				title = this.translate(
 					'Sign up to start managing {{siteLink/}}.', {
@@ -96,7 +84,7 @@ export default React.createClass( {
 				title = this.translate(
 					'Sign up to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}.', {
 						args: {
-							siteRole: this.getRole()
+							siteRole: role
 						},
 						components: {
 							siteLink: this.getSiteLink(),
@@ -112,7 +100,9 @@ export default React.createClass( {
 	getLoggedInTitleForInvite() {
 		let title = '';
 
-		switch ( this.getRole() ) {
+		const { role } = this.props;
+
+		switch ( role ) {
 			case 'administrator':
 				title = this.translate(
 					'Would you like to start managing {{siteLink/}}?', {
@@ -171,7 +161,7 @@ export default React.createClass( {
 				title = this.translate(
 					'Would you like to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}?', {
 						args: {
-							siteRole: this.getRole()
+							siteRole: role
 						},
 						components: {
 							siteLink: this.getSiteLink(),
@@ -186,7 +176,8 @@ export default React.createClass( {
 
 	getExplanationForInvite() {
 		let explanation = '';
-		switch ( this.getRole() ) {
+
+		switch ( this.props.role ) {
 			case 'administrator':
 				explanation = this.translate(
 					'As an administrator, you will be able to manage all aspects of %(siteName)s.', {

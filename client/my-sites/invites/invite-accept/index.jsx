@@ -35,7 +35,7 @@ export default React.createClass( {
 	},
 
 	componentWillMount() {
-		fetchInvite( this.props.site_id, this.props.invitation_key );
+		fetchInvite( this.props.siteId, this.props.inviteKey );
 		InvitesStore.on( 'change', this.refreshInvite );
 	},
 
@@ -57,6 +57,10 @@ export default React.createClass( {
 		this.setState( { invite, error } );
 	},
 
+	refreshRedirectPath() {
+		this.setState( { redirectPath: this.getRedirectAfterAccept() } );
+	},
+
 	getErrorTitle() {
 		return this.translate(
 			'Oops, your invite is not valid',
@@ -72,14 +76,14 @@ export default React.createClass( {
 	},
 
 	getRedirectAfterAccept() {
-		const { invite } = this.state.invite;
-		switch ( invite.meta.role ) {
+		const { invite } = this.state
+		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
 				return '/';
 				break;
 			default:
-				return '/posts/' + invite.blog_id;
+				return '/posts/' + this.props.siteId;
 		}
 	},
 
