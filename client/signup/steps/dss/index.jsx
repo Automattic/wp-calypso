@@ -89,10 +89,13 @@ export default React.createClass( {
 	},
 
 	handleSearch( searchString ) {
-		debug( 'processing search for', searchString );
 		if ( ! searchString ) {
 			return DynamicScreenshotsActions.resetScreenshots();
 		}
+		if ( searchString.length < 3 ) {
+			return;
+		}
+		debug( 'processing search for', searchString );
 		const { imageResultsByKey } = DSSImageStore.get();
 		if ( imageResultsByKey[ searchString ] ) {
 			return DynamicScreenshotsActions.updateScreenshotsFor( searchString );
