@@ -3,6 +3,11 @@
  */
 var React = require( 'react' );
 
+/**
+ * Internal dependencies
+ */
+import RemoveButton from "components/remove-button";
+
 var DnsRecord = React.createClass( {
 	propTypes: {
 		deleteDns: React.PropTypes.func.isRequired,
@@ -96,7 +101,7 @@ var DnsRecord = React.createClass( {
 				</div>
 				<div className="dns__list-remove">
 					{ ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type ?
-						<button className="remove" onClick={ this.deleteDns }>{ this.translate( 'Delete' ) }</button> : null }
+						<RemoveButton icon="trash" onClick={ this.deleteDns } /> : null }
 				</div>
 			</li>
 		);
