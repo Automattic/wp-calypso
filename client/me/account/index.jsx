@@ -33,7 +33,7 @@ var LanguageSelector = require( 'components/forms/language-selector' ),
 	ReauthRequired = require( 'me/reauth-required' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	user = require( 'lib/user' )(),
-	Notice = require( 'components/notice' ),
+	Notice = require( 'notices/notice' ),
 	notices = require( 'notices' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	eventRecorder = require( 'me/event-recorder' ),
@@ -252,6 +252,7 @@ module.exports = React.createClass( {
 				isCompact={ true }
 				onClick={ this.cancelEmailChange }
 				showDismiss={ false }
+				status="is-info"
 				text={
 					this.translate( 'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.', {
 						args: {
