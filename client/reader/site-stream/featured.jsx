@@ -41,8 +41,10 @@ export default React.createClass( {
 	},
 
 	handleClick( post ) {
+		stats.recordTrack( 'calypso_reader_clicked_featured_post', { blog_id: post.site_ID, post_id: post.ID } )
 		stats.recordAction( 'clicked_featured_post' );
 		stats.recordGaEvent( 'Clicked Featured Post' );
+
 		page( '/read/post/id/' + post.site_ID + '/' + post.ID );
 	},
 
