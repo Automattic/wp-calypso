@@ -129,11 +129,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<li className={ this.itemLinkClass( '/ads', 'ads' ) }>
-				<a onClick={ this.onNavigate } href={ adsLink }>
-					<span className="menu-link-text">{ site.jetpack ? 'AdControl' : 'WordAds' }</span>
-				</a>
-			</li>
+			<SidebarMenuItem
+				label={ site.jetpack ? 'AdControl' : 'WordAds' }
+				className={ this.itemLinkClass( '/ads', 'ads' ) }
+				link={ adsLink }
+				onNavigate={ this.onNavigate }
+				icon={ 'speaker' }
+			/>
 		);
 	},
 
