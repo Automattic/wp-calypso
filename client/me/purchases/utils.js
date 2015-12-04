@@ -19,7 +19,7 @@ function getSelectedSite( props ) {
 
 function goToCancelPurchase( props ) {
 	const { id } = getPurchase( props ),
-		{ slug } = props.selectedSite;
+		{ slug } = getSelectedSite( props );
 
 	page( paths.cancelPurchase( slug, id ) );
 }
@@ -30,14 +30,14 @@ function goToList() {
 
 function goToEditCardDetails( props ) {
 	const { id, payment: { creditCard } } = getPurchase( props ),
-		{ slug } = props.selectedSite;
+		{ slug } = getSelectedSite( props );
 
 	page( paths.editCardDetails( slug, id, creditCard.id ) );
 }
 
 function goToManagePurchase( props ) {
 	const { id } = getPurchase( props ),
-		{ slug } = props.selectedSite;
+		{ slug } = getSelectedSite( props );
 
 	page( paths.managePurchase( slug, id ) );
 }
