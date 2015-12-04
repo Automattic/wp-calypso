@@ -34,6 +34,7 @@ var LanguageSelector = require( 'components/forms/language-selector' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	user = require( 'lib/user' )(),
 	Notice = require( 'components/notice' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	notices = require( 'notices' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	eventRecorder = require( 'me/event-recorder' ),
@@ -248,17 +249,20 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				button={ this.translate( 'Cancel' ) }
 				isCompact={ true }
-				onClick={ this.cancelEmailChange }
 				showDismiss={ false }
+				status="is-info"
 				text={
 					this.translate( 'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.', {
 						args: {
 							email: this.props.userSettings.getSetting( 'new_user_email' )
 						}
 					} )
-				} />
+				}>
+				<NoticeAction onClick={ this.cancelEmailChange }>
+					{ this.translate( 'Cancel' ) }
+				</NoticeAction>
+			</Notice>
 		);
 	},
 
