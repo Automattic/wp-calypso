@@ -24,3 +24,4 @@ render: function() {
 * `siteURL` : (string) The URL of the selected site. Used to determine if this is a single or all sites view.
 * `sites` : (array) An array of the sites that current plugin is installed on.
 * `isPlaceholder`: (boolean) Whether the component is being rendered in placeholder mode
+* `isMock`: a boolean indicating if the toggle should not launch any real action when interacted
