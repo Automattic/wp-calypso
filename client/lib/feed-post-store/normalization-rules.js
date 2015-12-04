@@ -12,7 +12,7 @@ var postNormalizer = require( 'lib/post-normalizer' ),
 /**
  * Module vars
  */
-var READER_CONTENT_WIDTH = 653, // 68% of our 960 fixed width. Might need to bump if / when we go fluid.
+const READER_CONTENT_WIDTH = 720,
 	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
 	ONE_LINER_THRESHOLD = ( 20 * 10 ); // roughly 10 lines of words
 

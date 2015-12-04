@@ -52,6 +52,8 @@ function stripAutoPlays( query ) {
 const DEFAULT_PHOTON_QUALITY = 80, // 80 was chosen after some heuristic testing as the best blend of size and quality
 	READING_WORDS_PER_SECOND = 250 / 60; // Longreads says that people can read 250 words per minute. We want the rate in words per second.
 
+const imageScaleFactor = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1;
+
 /**
  * Asynchronously normalizes an object shaped like a post. Works on a copy of the post and does not mutate the original post.
  * @param  {object} post A post shaped object, generally returned by the API
@@ -107,7 +109,7 @@ function maxWidthPhotonishURL( imageURL, width ) {
 	} );
 
 	sizeParam = isGravatar ? 's' : 'w';
-	parsedURL.query[ sizeParam ] = width;
+	parsedURL.query[ sizeParam ] = width * imageScaleFactor;
 
 	if ( ! isGravatar ) {
 		// gravatar doesn't support these, only photon / files.wordpress
