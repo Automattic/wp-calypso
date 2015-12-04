@@ -30,6 +30,7 @@ module.exports = React.createClass( {
 					ref="disabledInfoLabel"
 					onClick={ this.handleAction }
 					htmlFor={ this.props.htmlFor }
+					key="renderDisabledInfoLabel"
 					>
 					{ this.props.label }
 				</label>
@@ -39,9 +40,9 @@ module.exports = React.createClass( {
 	},
 
 	renderDisabledInfo: function() {
-		return (
-			<div className="plugin-action__disabled-info">
-				<InfoPopover
+		return [ <InfoPopover
+					key="renderDisabledInfoPopOver"
+					className="plugin-action__disabled-info"
 					position="bottom left"
 					popoverName={ 'Plugin Action Disabled' + this.props.label }
 					gaEventCategory="Plugins"
@@ -49,10 +50,7 @@ module.exports = React.createClass( {
 					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
 					>
 					{ this.props.disabledInfo }
-				</InfoPopover>
-				{ this.renderLabel() }
-			</div>
-		);
+				</InfoPopover>, this.renderLabel() ];
 	},
 
 	renderToggle: function() {
