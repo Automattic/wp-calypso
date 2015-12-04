@@ -15,6 +15,8 @@ import stats from 'reader/stats';
 export default React.createClass( {
 	displayName: 'FeedFeatured',
 
+	mixins: [ React.addons.PureRenderMixin ],
+
 	getInitialState() {
 		return this.getStateFromStores();
 	},
