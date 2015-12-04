@@ -2,38 +2,36 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	classnames = require( 'classnames' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+var LoggedoutFormContainer = require( 'components/logged-out-form-container' ),
+	LoggedoutFormContainerFooter = require( 'components/logged-out-form-container/footer' ),
+	LoggedoutFormContainerForm = require( 'components/logged-out-form-container/form' );
 
 module.exports = React.createClass( {
 	displayName: 'LoggedOutForm',
 
 	render: function() {
-		var classes = classNames( { 'logged-out-form': true, } );
-
 		return (
-			<div className={ classnames( this.props.className, classes ) } >
-				<Card>
-					<form onSubmit={ this.props.onSubmit } noValidate={ true }>
-						{ this.props.formHeader &&
-							<header className="logged-out-form__header">
-								{ this.props.formHeader }
-							</header>
-						}
-						{ this.props.formFields }
-						<footer className="logged-out-form__footer">
-							{ this.props.formFooter }
-						</footer>
-					</form>
-				</Card>
+			<LoggedoutFormContainer>
+				<LoggedoutFormContainerForm onSubmit={ this.props.onSubmit } noValidate={ true }>
+					{ this.props.formHeader &&
+						<header className="logged-out-form__header">
+							{ this.props.formHeader }
+						</header>
+					}
+					{ this.props.formFields }
+				</LoggedoutFormContainerForm>
+
+				<LoggedoutFormContainerFooter>
+					{ this.props.formFooter }
+				</LoggedoutFormContainerFooter>
+
 				{ this.props.footerLink }
-			</div>
+			</LoggedoutFormContainer>
 		);
 	}
 } );

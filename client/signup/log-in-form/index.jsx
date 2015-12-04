@@ -15,7 +15,8 @@ var wpcom = require( 'lib/wp' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	WpcomLoginForm = require( 'signup/wpcom-login-form' ),
-	LoggedOutForm = require( 'signup/logged-out-form' );
+	LoggedOutForm = require( 'signup/logged-out-form' ),
+	LoggedOutFormContainerLink = require( 'components/logged-out-form-container/footer-link' );
 
 module.exports = React.createClass( {
 	displayName: 'LoginForm',
@@ -238,7 +239,11 @@ module.exports = React.createClass( {
 	footerLink: function() {
 		var startUrl = this.props.locale ? '/start/' + this.props.locale : '/start';
 
-		return <a href={ startUrl } className="logged-out-form__link">{ this.translate( 'New to WordPress.com? Sign up now.' ) }</a>;
+		return (
+			<LoggedOutFormContainerLink href={ startUrl }>
+				{ this.translate( 'New to WordPress.com? Sign up now.' ) }
+			</LoggedOutFormContainerLink>
+		);
 	},
 
 	render: function() {

@@ -1,31 +1,32 @@
 /**
  * External dependencies
  */
-import React from 'react'
-import map from 'lodash/collection/map'
-import forEach from 'lodash/collection/forEach'
-import first from 'lodash/array/first'
-import includes from 'lodash/collection/includes'
-import keys from 'lodash/object/keys'
-import debugModule from 'debug'
+import React from 'react';
+import map from 'lodash/collection/map';
+import forEach from 'lodash/collection/forEach';
+import first from 'lodash/array/first';
+import includes from 'lodash/collection/includes';
+import keys from 'lodash/object/keys';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp'
-import config from 'config'
-import analytics from 'analytics'
-import ValidationFieldset from 'signup/validation-fieldset'
-import FormLabel from 'components/forms/form-label'
-import FormPasswordInput from 'components/forms/form-password-input'
-import FormSettingExplanation from 'components/forms/form-setting-explanation'
-import FormTextInput from 'components/forms/form-text-input'
-import FormButton from 'components/forms/form-button'
-import notices from 'notices'
-import Notice from 'components/notice'
-import LoggedOutForm from 'signup/logged-out-form'
-import formState from 'lib/form-state'
-import i18n from 'lib/mixins/i18n'
+import wpcom from 'lib/wp';
+import config from 'config';
+import analytics from 'analytics';
+import ValidationFieldset from 'signup/validation-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import FormButton from 'components/forms/form-button';
+import notices from 'notices';
+import Notice from 'components/notice';
+import LoggedOutForm from 'signup/logged-out-form';
+import formState from 'lib/form-state';
+import i18n from 'lib/mixins/i18n';
+import LoggedOutFormContainerLink from 'components/logged-out-form-container/footer-link';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -398,11 +399,16 @@ export default React.createClass( {
 		if ( this.props.positionInFlow !== 0 ) {
 			return;
 		}
+
 		let logInUrl = this.localizeUrlWithSubdomain( config( 'login_url' ) );
 		if ( config.isEnabled( 'login' ) ) {
 			logInUrl = this.localizeUrlWithLastSlug( '/log-in' );
 		}
-		return <a href={ logInUrl } className="logged-out-form__link">{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }</a>;
+		return (
+			<LoggedOutFormContainerLink href={ logInUrl }>
+				{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+			</LoggedOutFormContainerLink>
+		);
 	},
 
 	render() {

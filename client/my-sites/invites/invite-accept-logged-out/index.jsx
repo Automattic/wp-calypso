@@ -12,6 +12,7 @@ import InviteFormHeader from 'my-sites/invites/invite-form-header'
 import { createAccount, acceptInvite } from 'lib/invites/actions'
 import WpcomLoginForm from 'signup/wpcom-login-form'
 import config from 'config'
+import LoggedOutFormContainerLink from 'components/logged-out-form-container/footer-link';
 
 export default React.createClass( {
 
@@ -78,9 +79,9 @@ export default React.createClass( {
 		let logInUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
 			<div>
-				<a href={ logInUrl } className="logged-out-form__link">
+				<LoggedOutFormContainerLink href={ logInUrl }>
 					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
-				</a>
+				</LoggedOutFormContainerLink>
 				{ this.renderEmailOnlySubscriptionLink() }
 			</div>
 		);
@@ -92,9 +93,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<a onClick={ this.subscribeUserByEmailOnly } className="logged-out-form__link">
+			<LoggedOutFormContainerLink onClick={ this.subscribeUserByEmailOnly }>
 				{ this.translate( 'Follow by email subscription only.' ) }
-			</a>
+			</LoggedOutFormContainerLink>
 		);
 	},
 
