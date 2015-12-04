@@ -15,7 +15,10 @@ var wpcom = require( 'lib/wp' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	WpcomLoginForm = require( 'signup/wpcom-login-form' ),
-	LoggedOutForm = require( 'signup/logged-out-form' );
+	LoggedOutForm = require( 'components/logged-out-form' ),
+	LoggedOutFormFooter = require( 'components/logged-out-form/footer' ),
+	LoggedOutFormLinks = require( 'components/logged-out-form/links' ),
+	LoggedOutFormLinkItem = require( 'components/logged-out-form/link-item' );
 
 module.exports = React.createClass( {
 	displayName: 'LoginForm',
@@ -238,22 +241,24 @@ module.exports = React.createClass( {
 	footerLink: function() {
 		var startUrl = this.props.locale ? '/start/' + this.props.locale : '/start';
 
-		return <a href={ startUrl } className="logged-out-form__link">{ this.translate( 'New to WordPress.com? Sign up now.' ) }</a>;
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href={ startUrl }>
+					{ this.translate( 'New to WordPress.com? Sign up now.' ) }
+				</LoggedOutFormLinkItem>
+			</LoggedOutFormLinks>
+		);
 	},
 
 	render: function() {
 		return (
-			<LoggedOutForm
-				className='log-in-form'
-				headerText={ this.translate( 'Welcome Back :)' ) }
-				subHeaderText={ this.translate( 'Enter your email to log in without a password.' ) }
-				formFields={ this.formFields() }
-				formFooter={ this.formFooter() }
-				footerLink={ this.footerLink() }
-				locale={ this.props.locale }
-				onSubmit={ this.onSubmit }
-				path={ this.props.path }
-				wpcomLogin={ this.wpcomLogin } />
+			<LoggedOutForm className="log-in-form" onSubmit={ this.onSubmit } noValidate>
+				{ this.formFields() }
+
+				<LoggedOutFormFooter>
+					{ this.formFooter() }
+				</LoggedOutFormFooter>
+			</LoggedOutForm>
 		);
 	}
 } );

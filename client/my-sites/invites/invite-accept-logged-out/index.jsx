@@ -13,6 +13,8 @@ import WpcomLoginForm from 'signup/wpcom-login-form'
 import config from 'config'
 import wpcom from 'lib/wp'
 import store from 'store'
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 
 export default React.createClass( {
 
@@ -85,12 +87,12 @@ export default React.createClass( {
 	renderFooterLink() {
 		let logInUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
-			<div>
-				<a href={ logInUrl } className="logged-out-form__link">
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href={ logInUrl }>
 					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
-				</a>
+				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
-			</div>
+			</LoggedOutFormLinks>
 		);
 	},
 
@@ -100,9 +102,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<a onClick={ this.subscribeUserByEmailOnly } className="logged-out-form__link">
+			<LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
 				{ this.translate( 'Follow by email subscription only.' ) }
-			</a>
+			</LoggedOutFormLinkItem>
 		);
 	},
 
