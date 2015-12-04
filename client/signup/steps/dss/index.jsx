@@ -51,13 +51,13 @@ export default React.createClass( {
 
 	componentWillMount() {
 		ThemePreviewStore.on( 'change', this.updateMarkup );
-		DSSImageStore.on( 'change', this.updateScreenshot );
+		DSSImageStore.on( 'change', this.updateScreenshots );
 		this.loadThemePreviews();
 	},
 
 	componentWillUnmount() {
 		ThemePreviewStore.off( 'change', this.updateMarkup );
-		DSSImageStore.off( 'change', this.updateScreenshot );
+		DSSImageStore.off( 'change', this.updateScreenshots );
 	},
 
 	componentWillReceiveProps() {
@@ -73,13 +73,14 @@ export default React.createClass( {
 		this.setState( { markupAndStyles: ThemePreviewStore.get() } );
 	},
 
-	updateScreenshot() {
+	updateScreenshots() {
 		const { isLoading, lastKey, imageResultsByKey } = DSSImageStore.get();
+		// If there is no search currently happening or no results for a current search...
 		if ( ! imageResultsByKey[ lastKey ] ) {
 			return this.setState( { isLoading, renderComplete: false, dssImage: null } );
 		}
 		const dssImage = imageResultsByKey[ lastKey ];
-		this.setState( { isLoading, dssImage } );
+		this.setState( { isLoading, dssImage, renderComplete: false } );
 	},
 
 	dssImageLoaded() {
@@ -88,10 +89,13 @@ export default React.createClass( {
 	},
 
 	handleSearch( searchString ) {
-		debug( 'processing search for', searchString );
 		if ( ! searchString ) {
 			return DynamicScreenshotsActions.resetScreenshots();
 		}
+		if ( searchString.length < 3 ) {
+			return;
+		}
+		debug( 'processing search for', searchString );
 		const { imageResultsByKey } = DSSImageStore.get();
 		if ( imageResultsByKey[ searchString ] ) {
 			return DynamicScreenshotsActions.updateScreenshotsFor( searchString );
@@ -100,6 +104,9 @@ export default React.createClass( {
 	},
 
 	renderImageLoader() {
+		if ( this.state.renderComplete ) {
+			return '';
+		}
 		debug( 'preloading image', this.state.dssImage.url );
 		const placeholder = <div>…</div>;
 		return (
@@ -119,6 +126,7 @@ export default React.createClass( {
 					<SearchCard id="dss-theme-selection__search__field"
 						autoFocus={ true }
 						delaySearch={ true }
+						delayTimeout={ 450 }
 						placeholder={ this.translate( 'e.g., games' ) }
 						onSearch={ this.handleSearch }
 					/>

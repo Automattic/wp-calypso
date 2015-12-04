@@ -30,6 +30,18 @@ export default React.createClass( {
 		renderComplete: React.PropTypes.bool
 	},
 
+	shouldShowLoadingIndicator() {
+		// If the store is waiting on results, show loading.
+		if ( this.props.isLoading ) {
+			return true;
+		}
+		// If the image is preloading, show loading.
+		if ( this.props.dssImage && ! this.props.renderComplete ) {
+			return true;
+		}
+		return false;
+	},
+
 	getAdditionalStyles( imageUrl ) {
 		return `#theme-${this.props.themeSlug} .hero.with-featured-image{background-image:url(${imageUrl});}`;
 	},
@@ -49,8 +61,8 @@ export default React.createClass( {
 	render() {
 		const { markup, styles } = this.props.markupAndStyles || { markup: null, styles: null };
 		const containerClassNames = classnames( 'dss-screenshot', {
-			'is-loading': this.props.isLoading,
-			'is-preview-ready': markup && styles && this.props.renderComplete
+			'is-loading': this.shouldShowLoadingIndicator(), // show the white overlay
+			'is-preview-ready': markup && styles && this.props.dssImage // show the dynamic screenshot
 		} );
 
 		if ( markup && styles ) {
