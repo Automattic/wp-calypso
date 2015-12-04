@@ -126,6 +126,7 @@ export default React.createClass( {
 					<SearchCard id="dss-theme-selection__search__field"
 						autoFocus={ true }
 						delaySearch={ true }
+						delayTimeout={ 450 }
 						placeholder={ this.translate( 'e.g., games' ) }
 						onSearch={ this.handleSearch }
 					/>
