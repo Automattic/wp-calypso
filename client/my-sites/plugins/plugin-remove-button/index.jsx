@@ -1,45 +1,43 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' );
+import React from 'react';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	accept = require( 'lib/accept' ),
-	Gridicon = require( 'components/gridicon' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' ),
-	PluginsActions = require( 'lib/plugins/actions' ),
-	ExternalLink = require( 'components/external-link' ),
-	analytics = require( 'analytics' ),
-	utils = require( 'lib/site/utils' );
+import analytics from 'analytics';
+import accept from 'lib/accept';
+import Gridicon from 'components/gridicon';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
+import PluginsActions from 'lib/plugins/actions';
+import ExternalLink from 'components/external-link';
+import utils from 'lib/site/utils';
 
 module.exports = React.createClass( {
 
 	displayName: 'PluginRemoveButton',
 
-	removeAction: function() {
-		accept(
-			this.translate( 'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}', {
-				components: {
-					em: <em />,
-					br: <br />,
-					strong: <strong />
-				},
-				args: {
-					pluginName: this.props.plugin.name,
-					siteName: this.props.site.title
-				}
-			} ),
+	removeAction() {
+		accept( this.translate( 'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}', {
+			components: {
+				em: <em />,
+				br: <br />,
+				strong: <strong />
+			},
+			args: {
+				pluginName: this.props.plugin.name,
+				siteName: this.props.site.title
+			}
+		} ),
 			this.processRemovalConfirmation,
 			this.translate( 'Remove' )
 		);
 	},
 
-	processRemovalConfirmation: function( accepted ) {
+	processRemovalConfirmation( accepted ) {
 		if ( accepted ) {
 			PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
 			PluginsActions.removePlugin( this.props.site, this.props.plugin );
@@ -60,7 +58,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getDisabledInfo: function() {
+	getDisabledInfo() {
 		if ( ! this.props.site ) { // we don't have enough info
 			return null;
 		}
@@ -87,7 +85,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
-			let reasons = utils.getSiteFileModDisableReason( this.props.site );
+			const reasons = utils.getSiteFileModDisableReason( this.props.site );
 			let html = [];
 
 			if ( reasons.length > 1 ) {
@@ -100,20 +98,17 @@ module.exports = React.createClass( {
 				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
 			} else {
 				html.push(
-					<p key="reason-shell">{
-						this.translate( '%(pluginName)s cannot be removed. %(reason)s', {
-							args: { pluginName: this.props.plugin.name, reason: reasons[0] }
-						} )
-					}</p> );
+					<p key="reason-shell">
+						{ this.translate( '%(pluginName)s cannot be removed. %(reason)s', { args: { pluginName: this.props.plugin.name, reason: reasons[0] } } ) }
+					</p>
+				);
 			}
 			html.push(
 				<ExternalLink
 					key="external-link"
-					onClick={
-						analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix diabled plugin removal.' )
-					}
+					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked How do I fix diabled plugin removal.' ) }
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
-					>
+				>
 					{ this.translate( 'How do I fix this?' ) }
 				</ExternalLink>
 			);
@@ -123,14 +118,16 @@ module.exports = React.createClass( {
 		return null;
 	},
 
-	renderButton: function() {
-		var inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [ 'REMOVE_PLUGIN' ] ),
-			getDisabledInfo = this.getDisabledInfo(),
-			label = getDisabledInfo
-				? this.translate( 'Removal Disabled', {
-					context: 'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" '
-				} )
-				: this.translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } );
+	renderButton() {
+		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
+			'REMOVE_PLUGIN'
+		] );
+		const getDisabledInfo = this.getDisabledInfo();
+		const label = getDisabledInfo
+			? this.translate( 'Removal Disabled', {
+				context: 'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" '
+			} )
+			: this.translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } );
 		if ( inProgress ) {
 			return (
 				<span className="plugin-action plugin-remove-button__remove">
@@ -140,20 +137,20 @@ module.exports = React.createClass( {
 		}
 		return (
 			<PluginAction
-					label={ label }
-					htmlFor={ 'remove-plugin-' + this.props.site.ID }
-					action={ this.removeAction }
-					disabledInfo={ getDisabledInfo }
-					className="plugin-remove-button__remove-link"
-					>
-						<a onClick={ this.removeAction } >
-							<Gridicon icon="trash" size={ 18 } />
-						</a>
-				</PluginAction>
+				label={ label }
+				htmlFor={ 'remove-plugin-' + this.props.site.ID }
+				action={ this.removeAction }
+				disabledInfo={ getDisabledInfo }
+				className="plugin-remove-button__remove-link"
+			>
+				<a onClick={ this.removeAction } >
+					<Gridicon icon="trash" size={ 18 } />
+				</a>;
+			</PluginAction>
 		);
 	},
 
-	render: function() {
+	render() {
 		if ( ! this.props.site.jetpack ) {
 			return null;
 		}
