@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react'
 
 /**
  * Internal dependencies
  */
-var pluginsAccessControl = require( 'my-sites/plugins/access-control' ),
-	EmptyContent = require( 'components/empty-content' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	Search = require( 'components/search' ),
-	SearchCard = require( 'components/search-card' ),
-	SectionNav = require( 'components/section-nav' ),
-	MainComponent = require( 'components/main' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	PluginsList = require( 'my-sites/plugins/plugins-browser-list' ),
-	PluginsListStore = require( 'lib/plugins/wporg-data/list-store' ),
-	PluginsActions = require( 'lib/plugins/wporg-data/actions' ),
-	EmptyContent = require( 'components/empty-content' ),
-	URLSearch = require( 'lib/mixins/url-search' ),
-	infiniteScroll = require( 'lib/mixins/infinite-scroll' );
+import pluginsAccessControl from 'my-sites/plugins/access-control'
+import SidebarNavigation from 'my-sites/sidebar-navigation'
+import Search from 'components/search'
+import SearchCard from 'components/search-card'
+import SectionNav from 'components/section-nav'
+import MainComponent from 'components/main'
+import NavTabs from 'components/section-nav/tabs'
+import NavItem from 'components/section-nav/item'
+import PluginsList from 'my-sites/plugins/plugins-browser-list'
+import PluginsListStore from 'lib/plugins/wporg-data/list-store'
+import PluginsActions from 'lib/plugins/wporg-data/actions'
+import EmptyContent from 'components/empty-content'
+import URLSearch from 'lib/mixins/url-search'
+import infiniteScroll from 'lib/mixins/infinite-scroll'
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
 
 module.exports = React.createClass( {
 
@@ -31,29 +31,29 @@ module.exports = React.createClass( {
 
 	mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
 
-	componentDidMount: function() {
+	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
 		this.props.sites.on( 'change', this.refreshLists );
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getPluginsLists( this.props.search );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		PluginsListStore.removeListener( 'change', this.refreshLists );
 		this.props.sites.removeListener( 'change', this.refreshLists );
 	},
 
-	componentWillReceiveProps: function( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		this.refreshLists( newProps.search );
 	},
 
-	refreshLists: function( search ) {
+	refreshLists( search ) {
 		this.setState( this.getPluginsLists( search || this.props.search ) );
 	},
 
-	fetchNextPagePlugins: function() {
+	fetchNextPagePlugins() {
 		var doSearch = true;
 
 		if ( this.state.fullLists.search && this.state.fullLists.search.fetching ) {
@@ -71,10 +71,10 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getPluginsLists: function( search ) {
+	getPluginsLists( search ) {
 		var shortLists = {},
 			fullLists = {};
-		this.visibleCategories.forEach( function( category ) {
+		this.visibleCategories.forEach( category => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
@@ -86,15 +86,15 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getPluginsShortList: function( listName ) {
+	getPluginsShortList( listName ) {
 		return this.state.shortLists[ listName ] ? this.state.shortLists[ listName ].list : [];
 	},
 
-	getPluginsFullList: function( listName ) {
+	getPluginsFullList( listName ) {
 		return this.state.fullLists[ listName ] ? this.state.fullLists[ listName ].list : [];
 	},
 
-	getPluginBrowserContent: function() {
+	getPluginBrowserContent() {
 		if ( this.props.search ) {
 			return this.getSearchListView( this.props.search );
 		}
@@ -104,7 +104,7 @@ module.exports = React.createClass( {
 		return this.getShortListsView();
 	},
 
-	translateCategory: function( category ) {
+	translateCategory( category ) {
 		switch ( category ) {
 			case 'new':
 				return this.translate( 'new', { context: 'Category description for the plugin browser.' } );
@@ -115,14 +115,14 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getFullListView: function( category ) {
+	getFullListView( category ) {
 		var isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
 		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
 			return <PluginsList plugins={ this.getPluginsFullList( category ) } listName={ category } title={ this.translateCategory( category ) } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 	},
 
-	getSearchListView: function( searchTerm ) {
+	getSearchListView( searchTerm ) {
 		var isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
 			return <PluginsList plugins={ this.getPluginsFullList( 'search' ) } listName={ searchTerm } title={ searchTerm } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
@@ -133,7 +133,7 @@ module.exports = React.createClass( {
 			illustration={ '/calypso/images/drake/drake-404.svg' } />;
 	},
 
-	getPluginSingleListView: function( category ) {
+	getPluginSingleListView( category ) {
 		return <PluginsList
 			plugins={ this.getPluginsShortList( category ) }
 			listName={ category }
@@ -145,7 +145,7 @@ module.exports = React.createClass( {
 			currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 	},
 
-	getShortListsView: function() {
+	getShortListsView() {
 		return (
 			<span>
 				{ this.getPluginSingleListView( 'featured' ) }
@@ -155,7 +155,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	getSearchBox: function( pinned ) {
+	getSearchBox( pinned ) {
 		if ( pinned ) {
 			return (
 				<Search
@@ -164,8 +164,7 @@ module.exports = React.createClass( {
 					initialValue={ this.props.search }
 					placeholder={ this.translate( 'Search Plugins' ) }
 					delaySearch={ true }
-					analyticsGroup="PluginsBrowser"
-				/>
+					analyticsGroup="PluginsBrowser" />
 			);
 		}
 
@@ -175,12 +174,11 @@ module.exports = React.createClass( {
 				initialValue={ this.props.search }
 				placeholder={ this.translate( 'Search Plugins' ) }
 				delaySearch={ true }
-				analyticsGroup="PluginsBrowser"
-			/>
+				analyticsGroup="PluginsBrowser" />
 		);
 	},
 
-	getNavigationBar: function() {
+	getNavigationBar() {
 		var site = this.props.site ? '/' + this.props.site : '';
 		return <SectionNav selectedText={ this.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
 			<NavTabs label="Category" >
@@ -193,7 +191,7 @@ module.exports = React.createClass( {
 		</SectionNav>;
 	},
 
-	getPageHeaderView: function() {
+	getPageHeaderView() {
 		if ( this.props.category ) {
 			return this.getNavigationBar();
 		}
@@ -204,9 +202,40 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	getMockPluginItems: function() {
+		return <PluginsList
+			plugins={ this.getPluginsShortList( 'popular' ) }
+			listName={ 'Plugins' }
+			title={ this.translate( 'Popular Plugins' ) }
+			size={ 12 } />;
+	},
+
+	renderAccessError( selectedSite ) {
 		if ( this.state.accessError ) {
-			return <MainComponent><EmptyContent { ...this.state.accessError } /></MainComponent>;
+			return (
+				<MainComponent><SidebarNavigation /><EmptyContent { ...this.state.accessError } /></MainComponent>
+			);
+		}
+
+		return (
+			<MainComponent>
+				<SidebarNavigation />
+				<JetpackManageErrorPage
+					template="optInManage"
+					site={ this.props.site }
+					actionURL={ selectedSite.getRemoteManagementURL() + '&section=plugins' }
+					illustration= '/calypso/images/jetpack/jetpack-manage.svg'
+					featureExample={ this.getMockPluginItems() } />
+			</MainComponent>
+		);
+	},
+
+	render() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		if ( this.state.accessError ||
+				( selectedSite && selectedSite.modulesFetched && ! selectedSite.canManage() )
+			) {
+			return this.renderAccessError( selectedSite );
 		}
 
 		return (

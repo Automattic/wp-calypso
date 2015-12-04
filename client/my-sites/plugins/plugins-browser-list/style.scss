@@ -2,6 +2,10 @@
 	margin: 24px 0;
 	background: $white;
 	box-shadow: 0 1px 2px lighten( $gray, 30% );
+
+	.feature-example & {
+		margin: 0 0;
+	}
 }
 
 .plugins-browser-list__header {
