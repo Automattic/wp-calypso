@@ -109,6 +109,7 @@ export default React.createClass( {
 	handleNextStep( vertical ) {
 		const { value, label } = vertical;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
+		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', { category: JSON.stringify( { value, label } ) } );
 		if ( this.state.stepOne ) {
 			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', { category: JSON.stringify( { value, label } ) } );
 		} else {
