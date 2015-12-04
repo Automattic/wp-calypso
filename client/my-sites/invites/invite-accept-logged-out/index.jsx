@@ -54,7 +54,7 @@ export default React.createClass( {
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ window.location.origin + this.props.redirectTo + '?invite_accepted=' + this.props.site.ID }
+				redirectTo={ window.location.href }
 			/>
 		)
 	},
@@ -67,7 +67,7 @@ export default React.createClass( {
 				if ( error ) {
 					this.setState( { error } );
 				} else {
-					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( this.props.sent_to ) + '&key=' + this.props.authKey;
+					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( this.props.sentTo ) + '&key=' + this.props.authKey;
 				}
 			}
 		);
@@ -109,7 +109,7 @@ export default React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
-					email={ this.props.sent_to }
+					email={ this.props.sentTo }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>
