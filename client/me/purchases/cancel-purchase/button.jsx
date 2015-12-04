@@ -15,7 +15,8 @@ import paths from 'me/purchases/paths';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
-		purchase: React.PropTypes.object.isRequired
+		purchase: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.object.isRequired
 	},
 
 	getInitialState() {
@@ -25,9 +26,10 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	goToCancelConfirmation() {
-		const { domain, id } = this.props.purchase;
+		const { id } = this.props.purchase,
+			{ slug } = this.props.selectedSite;
 
-		page( paths.confirmCancelPurchase( domain, id ) );
+		page( paths.confirmCancelPurchase( slug, id ) );
 	},
 
 	cancelPurchase() {

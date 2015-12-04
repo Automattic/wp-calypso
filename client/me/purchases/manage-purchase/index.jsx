@@ -132,7 +132,7 @@ const ManagePurchase = React.createClass( {
 
 	renderCreditCardExpiringNotice() {
 		const purchase = getPurchase( this.props ),
-			{ domain, id, payment: { creditCard } } = purchase;
+			{ id, payment: { creditCard } } = purchase;
 
 		if ( isExpired( purchase ) || isOneTimePurchase( purchase ) || isIncludedWithPlan( purchase ) ) {
 			return null;
@@ -153,7 +153,7 @@ const ManagePurchase = React.createClass( {
 									cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' )
 								},
 								components: {
-									a: <a href={ paths.editCardDetails( domain, id, creditCard.id ) } />
+									a: <a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } />
 								}
 							}
 						)
@@ -236,7 +236,7 @@ const ManagePurchase = React.createClass( {
 			upgradesActions.addItem( redemptionItem );
 		}
 
-		page( '/checkout/' + this.props.selectedSite.domain );
+		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
 	renderPrice() {
@@ -275,7 +275,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
-			url = domainManagementEdit( selectedSite.domain, purchase.meta );
+			url = domainManagementEdit( selectedSite.slug, purchase.meta );
 			text = this.translate( 'Domain Settings' );
 		}
 
@@ -362,11 +362,11 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
-		const { domain, id, payment: { creditCard } } = purchase;
+		const { id, payment: { creditCard } } = purchase;
 
 		return (
 			<li>
-				<a href={ paths.editCardDetails( domain, id, creditCard.id ) }>
+				<a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) }>
 					{ paymentDetails }
 				</a>
 			</li>
@@ -425,17 +425,9 @@ const ManagePurchase = React.createClass( {
 	renderRenewsOrExpiresOn() {
 		const purchase = getPurchase( this.props );
 
-		if ( isRenewing( purchase ) ) {
-			return this.moment( purchase.renewDate ).format( 'LL' );
-		}
-
-		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
-			return this.moment( purchase.expiryDate ).format( 'LL' );
-		}
-
 		if ( isIncludedWithPlan( purchase ) ) {
 			const attachedPlanUrl = paths.managePurchase(
-				this.props.selectedSite.domain,
+				this.props.selectedSite.slug,
 				purchase.attachedToPurchaseId
 			);
 
@@ -447,6 +439,14 @@ const ManagePurchase = React.createClass( {
 					</a>
 				</span>
 			);
+		}
+
+		if ( isRenewing( purchase ) ) {
+			return this.moment( purchase.renewDate ).format( 'LL' );
+		}
+
+		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
+			return this.moment( purchase.expiryDate ).format( 'LL' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
@@ -482,11 +482,11 @@ const ManagePurchase = React.createClass( {
 
 	renderEditPaymentMethodNavItem() {
 		const purchase = getPurchase( this.props ),
-			{ domain, id, payment } = purchase;
+			{ id, payment } = purchase;
 
 		if ( showEditPaymentDetails( purchase ) ) {
 			return (
-				<VerticalNavItem path={ paths.editCardDetails( domain, id, payment.creditCard.id ) }>
+				<VerticalNavItem path={ paths.editCardDetails( this.props.selectedSite.slug, id, payment.creditCard.id ) }>
 					{ this.translate( 'Edit Payment Method' ) }
 				</VerticalNavItem>
 			);
@@ -497,7 +497,7 @@ const ManagePurchase = React.createClass( {
 
 	renderCancelPurchaseNavItem() {
 		const purchase = getPurchase( this.props ),
-			{ domain, id } = purchase;
+			{ id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
 			return null;
@@ -508,7 +508,7 @@ const ManagePurchase = React.createClass( {
 		};
 
 		return (
-			<VerticalNavItem path={ paths.cancelPurchase( domain, id ) }>
+			<VerticalNavItem path={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
 				{
 					isRefundable( purchase )
 					? this.translate( 'Cancel and Refund %(purchaseName)s', translateArgs )
@@ -520,14 +520,14 @@ const ManagePurchase = React.createClass( {
 
 	renderCancelPrivateRegistration() {
 		const purchase = getPurchase( this.props ),
-			{ domain, id } = purchase;
+			{ id } = purchase;
 
 		if ( isExpired( purchase ) || ! hasPrivateRegistration( purchase ) ) {
 			return null;
 		}
 
 		return (
-			<VerticalNavItem path={ paths.cancelPrivateRegistration( domain, id ) }>
+			<VerticalNavItem path={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
 				{ this.translate( 'Cancel Private Registration' ) }
 			</VerticalNavItem>
 		);

@@ -18,9 +18,10 @@ function getSelectedSite( props ) {
 }
 
 function goToCancelPurchase( props ) {
-	const { domain, id } = getPurchase( props );
+	const { id } = getPurchase( props ),
+		{ slug } = getSelectedSite( props );
 
-	page( paths.cancelPurchase( domain, id ) );
+	page( paths.cancelPurchase( slug, id ) );
 }
 
 function goToList() {
@@ -28,15 +29,17 @@ function goToList() {
 }
 
 function goToEditCardDetails( props ) {
-	const { domain, id, payment: { creditCard } } = getPurchase( props );
+	const { id, payment: { creditCard } } = getPurchase( props ),
+		{ slug } = getSelectedSite( props );
 
-	page( paths.editCardDetails( domain, id, creditCard.id ) );
+	page( paths.editCardDetails( slug, id, creditCard.id ) );
 }
 
 function goToManagePurchase( props ) {
-	const { domain, id } = getPurchase( props );
+	const { id } = getPurchase( props ),
+		{ slug } = getSelectedSite( props );
 
-	page( paths.managePurchase( domain, id ) );
+	page( paths.managePurchase( slug, id ) );
 }
 
 function isDataLoading( props ) {
