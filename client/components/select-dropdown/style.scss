@@ -162,6 +162,14 @@
 		color: $white;
 	}
 
+	&.is-disabled {
+		background-color: $white;
+		color: $gray;
+		cursor: default;
+		opacity: .5;
+	}
+
+
 	.notouch & {
 		// Make sure :visited links stay blue
 		&:hover {
