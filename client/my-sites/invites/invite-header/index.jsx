@@ -123,8 +123,8 @@ export default React.createClass( {
 				<CompactCard className="invite-header__site">
 					{
 						this.props.site
-						? <Site site={ this.props.site } />
-						: <SitePlaceholder />
+							? <Site site={ this.props.site } />
+							: <SitePlaceholder />
 					}
 				</CompactCard>
 			</div>
