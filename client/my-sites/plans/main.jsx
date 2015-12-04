@@ -45,7 +45,7 @@ module.exports = React.createClass( {
 
 		return (
 			<a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>
-				<Gridicon icon="clipboard" size="16" />
+				<Gridicon icon="clipboard" size="18" />
 				{ this.translate( 'Compare Plans' ) }
 			</a>
 		);
