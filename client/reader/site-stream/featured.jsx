@@ -40,6 +40,12 @@ export default React.createClass( {
 		PostStore.off( 'change', this.updateState );
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.store !== this.props.store ) {
+			this.updateState();
+		}
+	},
+
 	handleClick( post ) {
 		stats.recordTrack( 'calypso_reader_clicked_featured_post', { blog_id: post.site_ID, post_id: post.ID } )
 		stats.recordAction( 'clicked_featured_post' );
