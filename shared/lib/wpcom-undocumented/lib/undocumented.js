@@ -291,7 +291,7 @@ Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
 
 Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
-	this.wpcom.req.get( '/sites/' + invite.blog_id + '/invites/' + invite.invite_slug + '/accept', {
+	this.wpcom.req.get( '/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept', {
 		activate: invite.activationKey
 	}, fn );
 };
