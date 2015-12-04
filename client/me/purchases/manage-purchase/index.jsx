@@ -62,7 +62,8 @@ const ManagePurchase = React.createClass( {
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			return page.redirect( paths.list() );
+			page.redirect( paths.list() );
+			return;
 		}
 
 		recordPageView( 'manage', this.props );
@@ -70,7 +71,8 @@ const ManagePurchase = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			return page.redirect( paths.list() );
+			page.redirect( paths.list() );
+			return;
 		}
 
 		recordPageView( 'manage', this.props, nextProps );
