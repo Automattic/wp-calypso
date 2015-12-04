@@ -33,7 +33,8 @@ var LanguageSelector = require( 'components/forms/language-selector' ),
 	ReauthRequired = require( 'me/reauth-required' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	user = require( 'lib/user' )(),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	notices = require( 'notices' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	eventRecorder = require( 'me/event-recorder' ),
@@ -248,9 +249,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				button={ this.translate( 'Cancel' ) }
 				isCompact={ true }
-				onClick={ this.cancelEmailChange }
 				showDismiss={ false }
 				status="is-info"
 				text={
@@ -259,7 +258,11 @@ module.exports = React.createClass( {
 							email: this.props.userSettings.getSetting( 'new_user_email' )
 						}
 					} )
-				} />
+				}>
+				<NoticeAction onClick={ this.cancelEmailChange }>
+					{ this.translate( 'Cancel' ) }
+				</NoticeAction>
+			</Notice>
 		);
 	},
 
