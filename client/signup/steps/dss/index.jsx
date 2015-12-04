@@ -104,9 +104,10 @@ export default React.createClass( {
 	},
 
 	renderImageLoader() {
-		if ( ! this.state.renderComplete ) {
-			debug( 'preloading image', this.state.dssImage.url );
+		if ( this.state.renderComplete ) {
+			return '';
 		}
+		debug( 'preloading image', this.state.dssImage.url );
 		const placeholder = <div>…</div>;
 		return (
 			<ImagePreloader
