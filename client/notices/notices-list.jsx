@@ -9,6 +9,7 @@ import debugModule from 'debug';
  * Internal Dependencies
  */
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import DeleteSiteNotices from './delete-site-notices';
@@ -87,7 +88,15 @@ export default React.createClass( {
 						isCompact={ notice.isCompact }
 						onClick={ this.removeNotice.bind( this, notice ) }
 						showDismiss={ notice.showDismiss }
-					/>
+					>
+						{ notice.button &&
+							<NoticeAction
+								href={ notice.href }
+								onClick={ notice.onClick }
+							>
+								{ notice.button }
+							</NoticeAction> }
+						</Notice>
 				);
 			}, this );
 
