@@ -14,6 +14,7 @@ import StepWrapper from 'signup/step-wrapper';
 import ThemeHelper from 'lib/themes/helpers';
 import DynamicScreenshotsActions from 'lib/dss/actions';
 import DSSImageStore from 'lib/dss/image-store';
+import ThemePreviewStore from 'lib/dss/preview-store';
 import ImagePreloader from 'components/image-preloader';
 
 const debug = debugFactory( 'calypso:dss' );
@@ -43,22 +44,39 @@ export default React.createClass( {
 		return {
 			isLoading: false,
 			renderComplete: false,
+			markupAndStyles: {},
 			dssImage: null
 		};
 	},
 
 	componentWillMount() {
+		ThemePreviewStore.on( 'change', this.updateMarkup );
 		DSSImageStore.on( 'change', this.updateScreenshot );
+		this.loadThemePreviews();
 	},
 
 	componentWillUnmount() {
+		ThemePreviewStore.off( 'change', this.updateMarkup );
 		DSSImageStore.off( 'change', this.updateScreenshot );
+	},
+
+	componentWillReceiveProps() {
+		this.loadThemePreviews();
+	},
+
+	loadThemePreviews() {
+		debug( 'loading theme previews for these themes', this.props.themes );
+		this.props.themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + ThemeHelper.getSlugFromName( theme ) ) );
+	},
+
+	updateMarkup() {
+		this.setState( { markupAndStyles: ThemePreviewStore.get() } );
 	},
 
 	updateScreenshot() {
 		const { isLoading, lastKey, imageResultsByKey } = DSSImageStore.get();
 		if ( ! imageResultsByKey[ lastKey ] ) {
-			return this.setState( Object.assign( {}, this.getInitialState(), { isLoading } ) );
+			return this.setState( { isLoading, renderComplete: false, dssImage: null } );
 		}
 		const dssImage = imageResultsByKey[ lastKey ];
 		this.setState( { isLoading, dssImage } );
@@ -114,6 +132,9 @@ export default React.createClass( {
 									themeName={ theme }
 									themeSlug={ ThemeHelper.getSlugFromName( theme ) }
 									themeRepoSlug={ 'pub/' + ThemeHelper.getSlugFromName( theme ) }
+									isLoading={ this.state.isLoading }
+									dssImage={ this.state.dssImage }
+									markupAndStyles={ this.state.markupAndStyles[ 'pub/' + ThemeHelper.getSlugFromName( theme ) ] }
 									renderComplete={ this.state.renderComplete }
 									{ ...this.props }/>;
 							} ) }
