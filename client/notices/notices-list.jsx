@@ -100,9 +100,6 @@ export default React.createClass( {
 				);
 			}, this );
 
-		if ( ! noticesRaw.length ) {
-			return null;
-		}
 		return (
 			<div>
 				<div id={ this.props.id } className={ classNames( 'notices-list', { 'is-pinned': this.state.pinned } ) }>

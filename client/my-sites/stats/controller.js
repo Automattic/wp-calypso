@@ -235,6 +235,8 @@ module.exports = {
 			statSummaryList,
 			summarySites;
 
+		window.scrollTo( 0, 0 );
+
 		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
 
 		activeFilter = filters().filter( function( filter ) {

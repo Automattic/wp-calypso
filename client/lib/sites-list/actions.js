@@ -47,20 +47,34 @@ var SitesListActions = {
 		}
 	},
 
-	deleteSite: function( site ) {
+	deleteSite: function( site, onComplete ) {
 		Dispatcher.handleViewAction( {
 			type: 'DELETE_SITE',
 			site: site
 		} );
 
 		debug( 'Deleting site', site );
-		wpcom.deleteSite( site.ID, SitesListActions.receiveDeletedSite );
+
+		wpcom.deleteSite( site.ID, function( error ) {
+			if ( error ) {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_DELETED_SITE_ERROR',
+					error: error
+				} );
+			} else {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_DELETED_SITE',
+					site: site
+				} );
+			}
+
+			onComplete( ! error );
+		} );
 	},
 
 	receiveDeletedSite: function( error, data ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_DELETED_SITE',
-			error: error,
 			site: data
 		} );
 	},

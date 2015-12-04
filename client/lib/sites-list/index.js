@@ -13,7 +13,7 @@ module.exports = function() {
 			var action = payload.action;
 			switch ( action.type ) {
 				case 'DISCONNECT_SITE':
-				case 'DELETE_SITE':
+				case 'RECEIVE_DELETED_SITE':
 					_sites.removeSite( action.site );
 					break;
 

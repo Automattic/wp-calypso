@@ -39,8 +39,11 @@ DeletedSiteStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'DELETE_SITE':
 			storeDeletedSite( action.site );
 			break;
-		case 'RECEIVE_DELETED_SITE':
+		case 'RECEIVE_DELETED_SITE_ERROR':
 			handleDeleteSiteResponse( action.error );
+			break;
+		case 'RECEIVE_DELETED_SITE':
+			handleDeleteSiteResponse();
 			break;
 		case 'CLEAR_DELETED_SITE':
 			clearDeletedSite();
