@@ -58,13 +58,25 @@ export function createAccount( userData, callback ) {
 	);
 }
 
-export function acceptInvite( invite, callback, bearerToken ) {
+export function acceptInvite( invite, bearerToken ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.INVITE_ACCEPTED,
+		invite
+	} );
 	if ( bearerToken ) {
 		wpcom.loadToken( bearerToken );
 	}
-	return wpcom.undocumented().acceptInvite(
-		invite,
-		callback
+	wpcom.undocumented().acceptInvite(
+		invite.site.ID,
+		invite.inviteKey,
+		( error, data ) => {
+			Dispatcher.handleViewAction( {
+				type: error ? ActionTypes.INVITE_ACCEPTED_ERROR : ActionTypes.INVITE_ACCEPTED_SUCCESFUL,
+				error,
+				invite,
+				data
+			} );
+		}
 	);
 }
 
