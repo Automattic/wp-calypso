@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Gravatar = require( 'components/gravatar' ),
-	formatting = require( 'lib/formatting' ),
 	eventRecorder = require( 'me/event-recorder' );
 
 module.exports = React.createClass( {
@@ -41,7 +40,7 @@ module.exports = React.createClass( {
 					</span>
 				</a>
 
-				<h2 className="profile-gravatar__user-display-name">{ formatting.decodeEntities( this.props.user.display_name ) }</h2>
+				<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
 
 				<div className="profile-gravatar__user-secondary-info">
 					<a href={ profileURL }>@{ this.props.user.username }</a>

@@ -1,13 +1,19 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' );
+import assign from 'lodash/object/assign';
+import contains from 'lodash/collection/contains';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	languages = config( 'languages' );
+import config from 'config';
+import { decodeEntities } from 'lib/formatting';
+
+/**
+ * Module variables
+ */
+const languages = config( 'languages' );
 
 function getLanguage( slug ) {
 	var len = languages.length,
@@ -49,10 +55,17 @@ module.exports = {
 				'logout_URL',
 				'primary_blog_url',
 				'meta',
+			],
+			decodeWhitelist = [
+				'display_name',
+				'description',
+				'user_URL'
 			];
 
 		allowedKeys.forEach( function( key ) {
-			user[ key ] = obj[ key ];
+			user[ key ] = obj[ key ] && contains( decodeWhitelist, key )
+				? decodeEntities( obj[ key ] )
+				: obj[ key ];
 		} );
 
 		return assign( user, this.getComputedAttributes( obj ) );
