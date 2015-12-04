@@ -62,7 +62,7 @@ export default React.createClass( {
 		const { markup, styles } = this.props.markupAndStyles || { markup: null, styles: null };
 		const containerClassNames = classnames( 'dss-screenshot', {
 			'is-loading': this.shouldShowLoadingIndicator(), // show the white overlay
-			'is-preview-ready': markup && styles && this.props.renderComplete // show the dynamic screenshot
+			'is-preview-ready': markup && styles && this.props.dssImage // show the dynamic screenshot
 		} );
 
 		if ( markup && styles ) {
