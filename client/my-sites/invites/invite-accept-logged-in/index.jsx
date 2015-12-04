@@ -55,7 +55,10 @@ export default React.createClass( {
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
-							{ this.state.submitting ? this.translate( 'Joining…', { context: 'button' } ) : this.translate( 'Join', { context: 'button' } ) }
+							{ this.state.submitting
+								? this.translate( 'Joining…', { context: 'button' } )
+								: this.translate( 'Join', { context: 'button' } )
+							}
 						</Button>
 					</div>
 				</Card>
