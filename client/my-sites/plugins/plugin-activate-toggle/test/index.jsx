@@ -7,6 +7,7 @@ var chai = require( 'chai' ),
 	React = require( 'react' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
+	noop = require( 'lodash/utility/noop' ),
 	TestUtils = require( 'react-addons-test-utils' );
 
 /**
@@ -30,6 +31,9 @@ describe( 'PluginActivateToggle', function() {
 		mockery.registerMock( 'analytics', analyticsMock );
 		mockery.registerMock( 'my-sites/plugins/plugin-action/plugin-action', mockedPluginAction );
 		mockery.registerMock( 'lib/plugins/actions', mockedActions );
+		mockery.registerMock( 'component-classes', function() {
+			return { add: noop, toggle: noop, remove: noop }
+		} );
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
 		mockery.enable( {
