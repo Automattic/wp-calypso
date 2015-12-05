@@ -158,7 +158,7 @@ function isRenewing( purchase ) {
 }
 
 function isPaidWithCreditCard( purchase ) {
-	return 'credit_card' === purchase.payment.type;
+	return 'credit_card' === purchase.payment.type && hasCreditCardData( purchase );
 }
 
 function hasCreditCardData( purchase ) {

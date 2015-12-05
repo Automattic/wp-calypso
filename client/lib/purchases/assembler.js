@@ -8,7 +8,6 @@ import merge from 'lodash/object/merge';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { isPaidWithCreditCard } from 'lib/purchases';
 import sortProducts from 'lib/products-values/sort';
 
 function createPurchaseObject( purchase ) {
@@ -57,7 +56,7 @@ function createPurchaseObject( purchase ) {
 		userId: Number( purchase.user_id )
 	};
 
-	if ( isPaidWithCreditCard( object ) ) {
+	if ( 'credit_card' === purchase.payment_type ) {
 		return merge( {}, object, {
 			payment: {
 				creditCard: {
