@@ -646,13 +646,14 @@ export default React.createClass( {
 
 		if ( this.props && this.props.filter === 'updates' ) {
 			navItems.push(
-				<NavItem onClick={ this.updateAllPlugins } >
+				<NavItem onClick={ this.updateAllPlugins } key="updatesKeyItem" >
 					{ this.translate( 'Update All', { context: 'button label' } ) }
 				</NavItem>
 			);
 		}
 
-		navItems.push( <NavItem onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>
+		navItems.push(
+			<NavItem onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement } key="bulkManage" >
 				{
 					this.state.bulkManagement
 					? this.translate( 'Done', { context: 'button label' } )
@@ -723,7 +724,7 @@ export default React.createClass( {
 					<JetpackManageErrorPage
 						template="optInManage"
 						site={ this.props.site }
-						actionURL={ selectedSite.getRemoteManagementURL() +  '&section=plugins' }
+						actionURL={ selectedSite.getRemoteManagementURL() + '&section=plugins' }
 						illustration= '/calypso/images/jetpack/jetpack-manage.svg'
 						featureExample={ this.getMockPluginItems() } />
 				</Main>
@@ -810,9 +811,18 @@ export default React.createClass( {
 							if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
 								return null;
 							}
-							const count = 'updates' === filterItem.id && this.state.pluginUpdateCount;
+
+							let attr = {
+								key: filterItem.id,
+								path: filterItem.path,
+								selected: filterItem.id === this.props.filter,
+							}
+
+							if ( 'updates' === filterItem.id ) {
+								attr.count = this.state.pluginUpdateCount;
+							}
 							return (
-								<NavItem key={ filterItem.id } path={ filterItem.path } selected={ filterItem.id === this.props.filter } count={ count } >
+								<NavItem { ...attr } >
 									{ filterItem.title }
 								</NavItem>
 							);
