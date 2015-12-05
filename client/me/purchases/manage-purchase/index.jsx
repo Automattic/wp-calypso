@@ -14,7 +14,6 @@ import Card from 'components/card';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
-import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import NoticeAction from 'components/notice/notice-action';
@@ -291,8 +290,8 @@ const ManagePurchase = React.createClass( {
 
 		if ( url && text ) {
 			return (
-				<a href={ url } target="_blank">
-					{ text } <Gridicon size={ 14 } icon="external" />
+				<a href={ url }>
+					{ text }
 				</a>
 			);
 		}
