@@ -91,10 +91,6 @@
 		"upgrades/domain-management/transfer": true,
 		"upgrades/domain-search": true,
 		"upgrades/free-trials": true,
-		"upgrades/purchases/cancel": true,
-		"upgrades/purchases/list": true,
-		"upgrades/purchases/manage": true,
-		"upgrades/purchases/payment": true,
 
 		"manage/customize": true,
 

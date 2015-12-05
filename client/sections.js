@@ -11,7 +11,7 @@ sections = [
 	},
 	{
 		name: 'me',
-		paths: [ '/me' ],
+		paths: [ '/me', '/purchases' ],
 		module: 'me'
 	},
 	{
@@ -158,17 +158,6 @@ if ( config.isEnabled( 'help' ) ) {
 		name: 'help',
 		paths: [ '/help' ],
 		module: 'me/help'
-	} );
-}
-
-if ( config.isEnabled( 'upgrades/purchases/cancel' ) ||
-	config.isEnabled( 'upgrades/purchases/list' ) ||
-	config.isEnabled( 'upgrades/purchases/payment' ) ||
-	config.isEnabled( 'upgrades/purchases/manage' ) ) {
-	sections.push( {
-		name: 'me',
-		paths: [ '/purchases' ],
-		module: 'me'
 	} );
 }
 

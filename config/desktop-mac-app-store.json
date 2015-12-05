@@ -73,10 +73,6 @@
 		"upgrades/domain-management/site-redirect": false,
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": false,
-		"upgrades/purchases/cancel": false,
-		"upgrades/purchases/list": false,
-		"upgrades/purchases/manage": false,
-		"upgrades/purchases/payment": false,
 
 		"muse": true,
 		"muse_for_touch_devices": false,

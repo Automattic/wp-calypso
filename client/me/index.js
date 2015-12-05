@@ -26,69 +26,61 @@ export default function() {
 		page( '/me/billing/:transaction_id', controller.sidebar, controller.billingHistory );
 	}
 
-	if ( config.isEnabled( 'upgrades/purchases/cancel' ) ) {
-		page(
-			paths.purchases.cancelPurchase(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.cancelPurchase
-		);
+	page(
+		paths.purchases.cancelPurchase(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.cancelPurchase
+	);
 
-		page(
-			paths.purchases.cancelPrivateRegistration(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.cancelPrivateRegistration
-		);
+	page(
+		paths.purchases.cancelPrivateRegistration(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.cancelPrivateRegistration
+	);
 
-		page(
-			paths.purchases.confirmCancelPurchase(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.confirmCancelPurchase
-		);
-	}
+	page(
+		paths.purchases.confirmCancelPurchase(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.confirmCancelPurchase
+	);
 
-	if ( config.isEnabled( 'upgrades/purchases/payment' ) ) {
-		page(
-			paths.purchases.editCardDetails(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.editCardDetails
-		);
-	}
+	page(
+		paths.purchases.editCardDetails(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.editCardDetails
+	);
 
-	if ( config.isEnabled( 'upgrades/purchases/list' ) ) {
-		page(
-			paths.purchases.list(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.list
-		);
+	page(
+		paths.purchases.list(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.list
+	);
 
-		page(
-			paths.purchases.listNotice(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.list
-		);
-	}
+	page(
+		paths.purchases.listNotice(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.list
+	);
 
-	if ( config.isEnabled( 'upgrades/purchases/manage' ) ) {
-		page(
-			paths.purchases.managePurchase(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.managePurchase
-		);
+	page(
+		paths.purchases.managePurchase(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.managePurchase
+	);
 
-		page(
-			paths.purchases.managePurchaseDestination(),
-			controller.sidebar,
-			controller.purchases.noSitesMessage,
-			controller.purchases.managePurchase
-		);
-	}
+	page(
+		paths.purchases.managePurchaseDestination(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.managePurchase
+	);
 
 	if ( config.isEnabled( 'me/next-steps' ) ) {
 		page( '/me/next/:welcome?', controller.sidebar, controller.nextStepsWelcomeRedirect, controller.nextSteps );
