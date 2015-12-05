@@ -41,10 +41,15 @@ module.exports = React.createClass( {
 		};
 	},
 
+	getFilteredPath: function() {
+		var paramIndex = this.props.path.indexOf( '?' );
+		return ( paramIndex < 0 ) ? this.props.path : this.props.path.substring( 0, paramIndex );
+	},
+
 	getSelectedText: function() {
 		var text = '',
 			found = find( this.props.tabs, function( tab ) {
-				return this.props.path === tab.path;
+				return this.getFilteredPath() === tab.path;
 			}, this );
 
 		if ( 'undefined' !== typeof found ) {
@@ -68,7 +73,7 @@ module.exports = React.createClass( {
 								key={ tab.path }
 								onClick={ this.onClick }
 								path={ tab.path }
-								selected={ tab.path === this.props.path }
+								selected={ tab.path === this.getFilteredPath() }
 							>
 								{ tab.title }
 							</NavItem>
