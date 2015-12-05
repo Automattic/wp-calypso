@@ -199,4 +199,8 @@ if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
 	} );
 }
 
+if ( config( 'plugins' ) ) {
+	sections = sections.concat( config( 'plugins' ) );
+}
+
 module.exports = sections;
