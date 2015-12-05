@@ -1,26 +1,29 @@
 /**
  * External dependencies
  */
-var WPCOM = require( 'wpcom-unpublished' ),
-	inherits = require( 'inherits' ),
-	assign = require( 'lodash/object/assign' ),
-	debug = require( 'debug' )( 'calypso:wpcom-undocumented' );
+import wpcomFactory from 'wpcom-unpublished';
+import inherits from 'inherits';
+import assign from 'lodash/object/assign';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var Undocumented = require( './lib/undocumented' );
+import Undocumented from './lib/undocumented';
+
+const debug = debugFactory( 'calypso:wpcom-undocumented' );
 
 /**
- * Add special methods to WPCOM class
+ * Class inherited from `WPCOMUnpublished` class and adds
+ * specific methods useful for wp-calypso.
  *
- * @param {String} [token]
- * @param {Function} [reqHandler]
- * @api public
+ * @param {String} [token] - oauth token
+ * @param {Function} [reqHandler] - request handler
+ * @return {NUll} null
  */
-function WPCOMPlus( token, reqHandler ) {
-	if ( ! ( this instanceof WPCOMPlus ) ) {
-		return new WPCOMPlus( token, reqHandler );
+function WPCOMUndocumented( token, reqHandler ) {
+	if ( ! ( this instanceof WPCOMUndocumented ) ) {
+		return new WPCOMUndocumented( token, reqHandler );
 	}
 
 	if ( 'function' === typeof token ) {
@@ -30,25 +33,31 @@ function WPCOMPlus( token, reqHandler ) {
 		this.loadToken( token );
 	}
 
-	WPCOM.call( this, token, function( params, fn ) {
+	wpcomFactory.call( this, token, function( params, fn ) {
 		if ( this.isTokenLoaded() ) {
-			// authToken is used in wpcom-xhr-request, which is used for the signup flow in the REST Proxy
-			params = assign( {}, params, { authToken: this._token, token: this._token } );
+			// authToken is used in wpcom-xhr-request,
+			// which is used for the signup flow in the REST Proxy
+			params = assign(
+				{},
+				params,
+				{ authToken: this._token, token: this._token }
+			);
 		}
 
 		return reqHandler( params, fn );
 	} );
+
 	debug( 'Extending wpcom with undocumented endpoints.' );
 }
 
-inherits( WPCOMPlus, WPCOM );
+inherits( WPCOMUndocumented, wpcomFactory );
 
 /**
  * Get `Undocumented` object instance
  *
- * @api public
+ * @return {Undocumented} Undocumented instance
  */
-WPCOM.prototype.undocumented = function() {
+WPCOMUndocumented.prototype.undocumented = function() {
 	return new Undocumented( this );
 };
 
@@ -56,20 +65,22 @@ WPCOM.prototype.undocumented = function() {
  * Add a token to this instance of WPCOM.
  * When loaded, the token is applied to the param object of each subsequent request.
  *
- * @param {String} [token]
+ * @param {String} [token] - oauth token
  */
-WPCOM.prototype.loadToken = function( token ) {
+wpcomFactory.prototype.loadToken = function( token ) {
 	this._token = token;
 };
 
 /**
  * Returns a boolean representing whether or not the token has been loaded.
+ *
+ * @return {String} oauth token
  */
-WPCOM.prototype.isTokenLoaded = function() {
+WPCOMUndocumented.prototype.isTokenLoaded = function() {
 	return this._token !== undefined;
 };
 
 /**
- * Expose `WPCOMPlus`
+ * Expose `WPCOMUndocumented`
  */
-module.exports = WPCOMPlus;
+export default WPCOMUndocumented;

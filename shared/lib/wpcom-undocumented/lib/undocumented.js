@@ -25,7 +25,7 @@ var Site = require( './site' ),
  * so that they will be successful. This is not a sufficent measure
  * against spam as these keys are exposed publicly
  *
- * @param { object } query Add client_id and client_secret to the query.
+ * @param { object } query - Add client_id and client_secret to the query.
  */
 function restrictByOauthKeys( query ) {
 	query.client_id = config( 'wpcom_signup_id' );
@@ -35,9 +35,8 @@ function restrictByOauthKeys( query ) {
 /**
  * Create an `Undocumented` instance
  *
- * @param {WPCOM} wpcom The request handler
- * @api public
- * @returns {Undocumented} An instance of Undocumented
+ * @param {WPCOM} wpcom - The request handler
+ * @returns {Undocumented} - An instance of Undocumented
  */
 function Undocumented( wpcom ) {
 	if ( ! ( this instanceof Undocumented ) ) {
