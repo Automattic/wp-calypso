@@ -9,6 +9,7 @@ import times from 'lodash/utility/times';
  * Internal dependencies
  */
 import PurchaseItem from '../item';
+import SectionHeader from 'components/section-header';
 
 const PurchasesSite = React.createClass( {
 	propTypes: {
@@ -28,11 +29,7 @@ const PurchasesSite = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<div className="purchases-site__header">
-					<div className="purchases-site__header-text">
-						{ isPlaceholder ? this.translate( 'Loading…' ) : this.props.name }
-					</div>
-				</div>
+				<SectionHeader label={ isPlaceholder ? this.translate( 'Loading…' ) : this.props.name } />
 				{
 					isPlaceholder ?
 					this.placeholders() :
