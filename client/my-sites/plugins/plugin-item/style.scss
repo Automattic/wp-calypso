@@ -49,7 +49,9 @@
 
 // Checkbox for multiselect purposes
 .plugin-item__checkbox[type=checkbox] {
-	margin-top: 0;
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
 
 	&:after { // Making tap area larger
 		content: '';
