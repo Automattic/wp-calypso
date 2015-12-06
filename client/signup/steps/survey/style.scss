@@ -1,6 +1,6 @@
 .survey-step__section-wrapper {
 	margin: 0 auto 2em;
-	width: 500px;
+	max-width: 500px;
 }
 
 .survey-step__label {
@@ -17,7 +17,6 @@
 	margin-bottom: 0;
 	font-size: 14px;
 	font-weight: 600;
-	height: 50px;
 }
 
 .survey-step__vertical .survey-step__label {
