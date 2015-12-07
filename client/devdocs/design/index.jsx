@@ -182,7 +182,6 @@ module.exports = React.createClass( {
 					<Typography />
 					<Notices />
 					<Buttons />
-					<RemoveButtons />
 					<ButtonGroups />
 					<AddNewButtons />
 					<CommentButtons />
