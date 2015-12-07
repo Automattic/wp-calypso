@@ -30,7 +30,7 @@ module.exports = React.createClass( {
 				</div>
 				<div className="help__support-link">
 					<h2 className="help__support-link-title">
-						<ExternalLink icon={ true } href="https://dailypost.wordpress.com/" target="__blank">{ this.translate( 'The daily post' ) }</ExternalLink>
+						<ExternalLink icon={ true } href="https://dailypost.wordpress.com/" target="__blank">{ this.translate( 'The Daily Post' ) }</ExternalLink>
 					</h2>
 					<p className="help__support-link-content">{ this.translate( 'Get daily tips for your blog and connect with others to share your journey.' ) }</p>
 				</div>
