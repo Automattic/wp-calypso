@@ -55,7 +55,7 @@ module.exports = {
 		defaultVariation: 'drake'
 	},
 	dss: {
-		datestamp: '20151203',
+		datestamp: '20151207',
 		variations: {
 			main: 15,
 			dss: 15,
