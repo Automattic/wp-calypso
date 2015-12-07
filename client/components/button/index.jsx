@@ -17,14 +17,16 @@ export default React.createClass( {
 		scary: React.PropTypes.bool,
 		type: React.PropTypes.string,
 		href: React.PropTypes.string,
-		onClick: React.PropTypes.func
+		onClick: React.PropTypes.func,
+		borderless: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			disabled: false,
 			type: 'button',
-			onClick: noop
+			onClick: noop,
+			borderless: false
 		};
 	},
 
@@ -34,7 +36,8 @@ export default React.createClass( {
 			button: true,
 			'is-compact': this.props.compact,
 			'is-primary': this.props.primary,
-			'is-scary': this.props.scary
+			'is-scary': this.props.scary,
+			'is-borderless': this.props.borderless
 		} );
 
 		const props = assign( {}, this.props, {

@@ -14,7 +14,6 @@ var SearchCard = require( 'components/search-card' ),
 	Typography = require( 'components/typography/docs/example' ),
 	Notices = require( 'components/notice/docs/example' ),
 	Buttons = require( 'components/button/docs/example' ),
-	RemoveButtons = require( 'components/remove-button/docs/example' ),
 	ButtonGroups = require( 'components/button-group/docs/example' ),
 	AddNewButtons = require( 'components/add-new-button/docs/example' ),
 	CommentButtons = require( 'components/comment-button/docs/example' ),
@@ -182,7 +181,6 @@ module.exports = React.createClass( {
 					<Typography />
 					<Notices />
 					<Buttons />
-					<RemoveButtons />
 					<ButtonGroups />
 					<AddNewButtons />
 					<CommentButtons />
