@@ -3,7 +3,7 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External Dependencies
  */
-var	sinon = require( 'sinon' ),
+const	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
