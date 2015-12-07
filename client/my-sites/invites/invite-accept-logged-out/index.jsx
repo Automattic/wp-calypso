@@ -11,6 +11,8 @@ import InviteFormHeader from 'my-sites/invites/invite-form-header'
 import { createAccount, acceptInvite } from 'lib/invites/actions'
 import WpcomLoginForm from 'signup/wpcom-login-form'
 import config from 'config'
+import wpcom from 'lib/wp'
+import store from 'store'
 
 export default React.createClass( {
 
@@ -21,7 +23,7 @@ export default React.createClass( {
 	},
 
 	getRedirectToAfterLoginUrl() {
-		return '/accept-invite';
+		return window.location.href;
 	},
 
 	submitButtonText() {
@@ -32,13 +34,20 @@ export default React.createClass( {
 		this.setState( { submitting: true } );
 		createAccount(
 			userData,
-			( error, bearerToken ) =>
-				bearerToken &&
-				acceptInvite(
-					this.props,
-					( acceptInviteError ) => this.setState( { acceptInviteError, userData, bearerToken } ),
-					bearerToken
-				)
+			( error, bearerToken ) => {
+				if ( bearerToken ) {
+					wpcom.loadToken( bearerToken );
+					wpcom.undocumented().acceptInvite(
+						this.props,
+						( acceptError ) => {
+							if ( ! acceptError ) {
+								store.set( 'invite_accepted', this.props );
+								this.setState( { acceptError, userData, bearerToken } );
+							}
+						}
+					);
+				}
+			}
 		);
 	},
 
