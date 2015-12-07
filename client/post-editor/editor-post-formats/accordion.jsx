@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	pick = require( 'lodash/object/pick' ),
 	find = require( 'lodash/collection/find' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
  * Internal dependencies
@@ -61,7 +62,7 @@ module.exports = React.createClass( {
 			'is-loading': ! this.props.post || ! this.props.postFormats
 		} );
 
-		if ( ! this.props.postFormats || this.props.postFormats.length <= 1 ) {
+		if ( isEmpty( this.props.postFormats ) ) {
 			return null;
 		}
 
