@@ -108,6 +108,21 @@ function getStoreForSite( storeId ) {
 	} );
 }
 
+function getStoreForFeatured( storeId ) {
+	var siteId = storeId.split( ':' )[ 1 ],
+		fetcher = function( query, callback ) {
+			wpcomUndoc.readSiteFeatured( siteId, callback );
+		};
+
+	return new FeedStream( {
+		id: storeId,
+		fetcher: fetcher,
+		keyMaker: siteKeyMaker,
+		onGapFetch: limitSiteParams,
+		onUpdateFetch: limitSiteParams
+	} );
+}
+
 function feedStoreFactory( storeId ) {
 	var store = FeedStreamCache.get( storeId );
 
@@ -146,6 +161,8 @@ function feedStoreFactory( storeId ) {
 		store = getStoreForList( storeId );
 	} else if ( storeId.indexOf( 'site:' ) === 0 ) {
 		store = getStoreForSite( storeId );
+	} else if ( storeId.indexOf( 'featured:' ) === 0 ) {
+		store = getStoreForFeatured( storeId );
 	} else {
 		throw new Error( 'Unknown feed store ID' );
 	}

@@ -1148,6 +1148,11 @@ Undocumented.prototype.readSite = function( query, fn ) {
 	this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
 };
 
+Undocumented.prototype.readSiteFeatured = function( siteId, fn ) {
+	debug( '/read/sites/:site/featured' );
+	this.wpcom.req.get( '/read/sites/' + siteId + '/featured', null, fn );
+};
+
 Undocumented.prototype.readSitePosts = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site/posts' );
