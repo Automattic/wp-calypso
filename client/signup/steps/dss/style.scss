@@ -115,10 +115,15 @@
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 	box-sizing: border-box;
 	position: relative;
+	left: -14px;
 	transition: all 0.2s ease-in-out 0s;
 	cursor: pointer;
 	margin: 20px 0;
 	width: 300px;
+
+	@include breakpoint( ">480px" ) {
+		left: 0;
+	}
 
 	@include breakpoint( ">660px" ) {
 		float: left;
