@@ -92,15 +92,16 @@ export default React.createClass( {
 		if ( ! searchString ) {
 			return DynamicScreenshotsActions.resetScreenshots();
 		}
-		if ( searchString.length < 3 ) {
+		const normalizedSearchString = searchString.toLowerCase().trim();
+		if ( normalizedSearchString.length < 3 ) {
 			return;
 		}
-		debug( 'processing search for', searchString );
+		debug( 'processing search for', normalizedSearchString );
 		const { imageResultsByKey } = DSSImageStore.get();
-		if ( imageResultsByKey[ searchString ] ) {
-			return DynamicScreenshotsActions.updateScreenshotsFor( searchString );
+		if ( imageResultsByKey[ normalizedSearchString ] ) {
+			return DynamicScreenshotsActions.updateScreenshotsFor( normalizedSearchString );
 		}
-		DynamicScreenshotsActions.fetchDSSImageFor( searchString );
+		DynamicScreenshotsActions.fetchDSSImageFor( normalizedSearchString );
 	},
 
 	renderImageLoader() {
