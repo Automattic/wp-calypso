@@ -10,8 +10,8 @@ var React = require( 'react' ),
 var analytics = require( 'analytics' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	Button = require( 'components/button' ),
+	Gridicon = require( 'components/gridicon' ),
 	InfoPopover = require( 'components/info-popover' ),
-	AddNewButton = require( 'components/add-new-button' ),
 	ExternalLink = require( 'components/external-link' ),
 	utils = require( 'lib/site/utils' );
 
@@ -174,7 +174,9 @@ module.exports = React.createClass( {
 				<span className="plugin-install-button__install embed">
 					{ this.props.isInstalling
 						? <span className="plugin-install-button__installing">{ label }</span>
-						: <AddNewButton onClick={ this.installAction } icon="plugins" >{ label }</AddNewButton>
+						: <Button compact={ true } onClick={ this.installAction } >
+							<Gridicon key="plus-icon" icon="plus-small" size={ 11 } /><Gridicon icon="plugins" size={ 18 } /> { this.translate( 'Install' ) }
+						</Button>
 					}
 				</span>
 			);
