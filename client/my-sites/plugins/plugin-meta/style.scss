@@ -53,8 +53,12 @@
 	font-weight: 600;
 	line-height: 32px;
 	white-space: pre;
-	text-overflow: ellipsis;
 	overflow: hidden;
+	position: relative;
+
+	&:after {
+		@include long-content-fade( $size: 20% );
+	}
 
 	@include breakpoint( '>480px' ) {
 		font-size: 24px;
