@@ -181,6 +181,51 @@ button {
 	}
 }
 
+.button.is-borderless {
+	border: none;
+	color: darken( $gray, 10% );
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	.gridicon {
+		width: auto;
+		height: auto;
+		top: 6px;
+	}
+
+	&[disabled],
+	&:disabled {
+		color: lighten( $gray, 30% );
+		background: $white;
+		cursor: default;
+
+		&:active {
+			border-width: 0;
+		}
+	}
+	&.is-scary {
+		color: $alert-red;
+
+		&[disabled] {
+			color: lighten( $alert-red, 30% );
+		}
+	}
+
+	&.is-compact {
+		.gridicon {
+			width: 18px;
+			height: 18px;
+			top: 5px;
+		}
+	}
+}
+
 // ==========================================================================
 // Resets
 // ==========================================================================
