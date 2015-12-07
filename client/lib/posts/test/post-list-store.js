@@ -101,8 +101,14 @@ describe( 'post-list-store', () => {
 
 		it( 'should globally increment ids across all stores', () => {
 			const anotherPostListStore = postListStoreFactory( 'post-lists-nom' );
-			dispatchQueryPosts( defaultPostListStore.id );
-			dispatchQueryPosts( anotherPostListStore.id );
+			dispatchQueryPosts( defaultPostListStore.id, {
+				type: 'page',
+				order: 'ASC'
+			} );
+			dispatchQueryPosts( anotherPostListStore.id, {
+				type: 'page',
+				order: 'ASC'
+			} );
 			assert.equal( defaultPostListStore.getID() + 1, anotherPostListStore.getID() );
 		} );
 	} );
