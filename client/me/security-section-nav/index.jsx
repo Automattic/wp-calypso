@@ -18,27 +18,30 @@ module.exports = React.createClass( {
 		path: React.PropTypes.string.isRequired
 	},
 
-	getDefaultProps: function() {
-		return {
-			tabs: [
-				{
-					title: i18n.translate( 'Password', { textOnly: true } ),
-					path: '/me/security',
-				},
-				{
-					title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
-					path: '/me/security/two-step',
-				},
-				{
-					title: i18n.translate( 'Connected Applications', { textOnly: true } ),
-					path: '/me/security/connected-applications',
-				},
-				config.isEnabled( 'me/security/checkup' ) ? {
-					title: i18n.translate( 'Checkup', { textOnly: true } ),
-					path: '/me/security/checkup',
-				} : false
-			]
-		};
+	getNavtabs: function() {
+		var tabs = [
+			{
+				title: i18n.translate( 'Password', { textOnly: true } ),
+				path: '/me/security',
+			},
+			{
+				title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
+				path: '/me/security/two-step',
+			},
+			{
+				title: i18n.translate( 'Connected Applications', { textOnly: true } ),
+				path: '/me/security/connected-applications',
+			}
+		];
+
+		if ( config.isEnabled( 'me/security/checkup' ) ) {
+			tabs.push( {
+				title: i18n.translate( 'Checkup', { textOnly: true } ),
+				path: '/me/security/checkup',
+			} );
+		}
+
+		return tabs;
 	},
 
 	getFilteredPath: function() {
@@ -48,7 +51,7 @@ module.exports = React.createClass( {
 
 	getSelectedText: function() {
 		var text = '',
-			found = find( this.props.tabs, function( tab ) {
+			found = find( this.getNavtabs(), function( tab ) {
 				return this.getFilteredPath() === tab.path;
 			}, this );
 
@@ -67,7 +70,7 @@ module.exports = React.createClass( {
 		return (
 			<SectionNav selectedText={ this.getSelectedText() }>
 				<NavTabs>
-					{ this.props.tabs.map( function( tab ) {
+					{ this.getNavtabs().map( function( tab ) {
 						return (
 							<NavItem
 								key={ tab.path }
