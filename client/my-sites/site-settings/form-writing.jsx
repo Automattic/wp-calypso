@@ -9,13 +9,14 @@ var React = require( 'react' );
 var formBase = require( './form-base' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	config = require( 'config' ),
-	PressThisLink = require( './press-this-link' );
+	PressThisLink = require( './press-this-link' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormWriting',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var writingAttributes = [

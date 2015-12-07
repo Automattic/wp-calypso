@@ -16,14 +16,14 @@ var config = require( 'config' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	formBase = require( './form-base' ),
 	SettingsCardFooter = require( './settings-card-footer' ),
-	notices = require( 'notices' );
-
+	notices = require( 'notices' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackMonitor',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};

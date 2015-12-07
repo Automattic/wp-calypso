@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+var debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
+	omit = require( 'lodash/object/omit' );
 
 /**
  * Internal dependencies
@@ -43,7 +44,14 @@ module.exports = {
 		}
 
 		if ( nextProps.site.settings ) {
-			return this.setState( this.getSettingsFromSite( nextProps.site ) );
+			let newState = this.getSettingsFromSite( nextProps.site );
+			//for dirtyFields, see lib/mixins/dirty-linked-state
+			if ( this.state.dirtyFields ) {
+				//If we have any fields that the user has updated,
+				//do not wipe out those fields from the poll update.
+				newState = omit( newState, this.state.dirtyFields );
+			}
+			return this.setState( newState );
 		}
 
 		/**
@@ -132,10 +140,11 @@ module.exports = {
 		notices.clearNotices( 'notices' );
 
 		this.setState( { submittingForm: true } );
-		site.saveSettings( this.state, function( error ) {
+
+		site.saveSettings( omit( this.state, 'dirtyFields' ), function( error ) {
 			if ( error ) {
 				// handle error case here
-				switch( error.error ) {
+				switch ( error.error ) {
 					case 'invalid_ip':
 						notices.error( this.translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
 						break;
@@ -146,7 +155,9 @@ module.exports = {
 			} else {
 				notices.success( this.translate( 'Settings saved successfully!' ) );
 				this.markSaved();
-				this.setState( { submittingForm: false } );
+				//for dirtyFields, see lib/mixins/dirty-linked-state
+				this.setState( { submittingForm: false, dirtyFields: [] } );
+
 				site.fetchSettings();
 			}
 		}.bind( this ) );

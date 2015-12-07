@@ -20,13 +20,14 @@ var formBase = require( 'my-sites/site-settings/form-base' ),
 	SettingsCardFooter = require( 'my-sites/site-settings/settings-card-footer' ),
 	ProgressIndicator = require( 'components/progress-indicator' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	notices = require( 'notices' );
+	notices = require( 'notices' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackScan',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	settingsTimer: false,
 
