@@ -9,6 +9,7 @@ import React from 'react'
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
 import Gridicon from 'components/gridicon'
 import SectionHeader from 'components/section-header'
+import SectionHeaderButton from 'components/section-header/button'
 
 export default React.createClass( {
 
@@ -65,12 +66,9 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className="plugins-browser-list">
-				<div className="plugins-browser-list__header">
-					<h2 className="plugins-browser-list__title">
-						{ this.props.title }
-					</h2>
+				<SectionHeader label={ this.props.title }>
 					{ this.getLink() }
-				</div>
+				</SectionHeader>
 				<div className="plugins-browser-list__elements">
 					{ this.getViews() }
 				</div>
