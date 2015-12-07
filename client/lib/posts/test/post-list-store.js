@@ -165,6 +165,26 @@ describe( 'post-list-store', () => {
 		} );
 	} );
 
+	describe( '#hasRecentError', () => {
+		it( 'should return false if there are no errors', () => {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
+			assert.isFalse( defaultPostListStore.hasRecentError() );
+		} );
+
+		it( 'should return true if recent payload had error', () => {
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_POSTS_PAGE',
+				id: defaultPostListStore.getID(),
+				postListStoreId: defaultPostListStore.id,
+				data: null,
+				error: {
+					omg: 'error!'
+				}
+			} );
+			assert.isTrue( defaultPostListStore.hasRecentError() );
+		} );
+	} );
+
 	describe( 'RECEIVE_POSTS_PAGE', () => {
 		it( 'should add post ids for matching postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
