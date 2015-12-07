@@ -5,11 +5,6 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:components:emptyContent' ),
 	classNames = require( 'classnames' );
 
-/**
- * Internal dependencies
- */
-var FeatureExample = require( 'components/feature-example' );
-
 module.exports = React.createClass( {
 
 	displayName: 'EmptyContent',
@@ -32,8 +27,7 @@ module.exports = React.createClass( {
 		secondaryActionURL: React.PropTypes.string,
 		secondaryActionCallback: React.PropTypes.func,
 		className: React.PropTypes.string,
-		isCompact: React.PropTypes.bool,
-		featureExample: React.PropTypes.element
+		isCompact: React.PropTypes.bool
 	},
 
 	componentDidMount: function() {
@@ -87,7 +81,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var action, secondaryAction, illustration, featureExample;
+		var action, secondaryAction, illustration;
 
 		if ( this.props.action ) {
 			action = this.primaryAction();
@@ -99,10 +93,6 @@ module.exports = React.createClass( {
 
 		if ( this.props.illustration ) {
 			illustration = <img src={ this.props.illustration } width={ this.props.illustrationWidth } className="empty-content__illustration" />;
-		}
-
-		if ( this.props.featureExample ) {
-			featureExample = <FeatureExample>{ this.props.featureExample }</FeatureExample>;
 		}
 
 		return (
@@ -124,8 +114,6 @@ module.exports = React.createClass( {
 				{ action }
 
 				{ secondaryAction }
-
-				{ featureExample }
 			</div>
 		);
 	}

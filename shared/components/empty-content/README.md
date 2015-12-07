@@ -43,7 +43,6 @@ render: function() {
 * <strong>actionURL</strong> — (optional) `href` value for the primary action button.
 * <strong>actionCallback</strong> — (optional) `onClick` value for the primary action button.
 * <strong>actionTarget</strong> - (optional) If ommitted, no target attribute is specified.
-* <strong>featureExample</strong> - (optional) If you initialize the component with this property, containing jsx, it will be added in the bottom of the Empty Content component as an example of what the user could be viewing if there were any content.
 
 The component also supports a secondary action. This should be used sparingly.
 

@@ -40,6 +40,7 @@ import PluginsDataStore from 'lib/plugins/wporg-data/store'
 import PluginNotices from 'lib/plugins/notices'
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
 import PlanNudge from 'components/plans/plan-nudge'
+import FeatureExample from 'components/feature-example'
 
 /**
  * Module variables
@@ -703,6 +704,7 @@ export default React.createClass( {
 			return (
 				<Main>
 					<EmptyContent { ...this.state.accessError } />
+					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
 				</Main>
 			);
 		}
