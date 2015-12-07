@@ -10,7 +10,9 @@ import Card from 'components/card';
 import page from 'page';
 import PostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
-import stats from 'reader/stats';
+
+// HACK: using import does not export recordTrack
+var stats = require( 'reader/stats' );
 
 export default React.createClass( {
 	displayName: 'FeedFeatured',
