@@ -23,8 +23,7 @@ const MyComponent = React.createClass( {
 				productsList={ productsList }
 				selectedDomainName={ selectedDomainName }
 				context={ context }
-				sites={ sites }
-				user={ user.get() } />
+				sites={ sites } />
 		);
 	}
 } );
@@ -39,7 +38,6 @@ The component expects to receive all listed props:
 * `productsList` - a collection of all the products users can have on WordPress.com
 * `selectedDomainName` - the domain name currently selected 
 * `sites` - a list of user sites 
-* `user` - a current user object 
 
 The child component should receive processed props defined during the render:
 
