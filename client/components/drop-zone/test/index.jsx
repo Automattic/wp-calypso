@@ -20,9 +20,14 @@ describe( 'DropZone', function() {
 	before( function() {
 		DropZone.type.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 		container = document.getElementById( 'container' );
+		window.MutationObserver = sinon.stub().returns( {
+			observe: sinon.stub(),
+			disconnect: sinon.stub()
+		} );
 	} );
 
 	after( function() {
+		delete window.MutationObserver;
 		delete DropZone.type.prototype.__reactAutoBindMap.translate;
 	} );
 
@@ -85,6 +90,36 @@ describe( 'DropZone', function() {
 
 		expect( tree.state.isDraggingOverDocument ).to.be.ok;
 		expect( tree.state.isDraggingOverElement ).to.not.be.ok;
+	} );
+
+	it( 'should start observing the body for mutations when dragging over', function( done ) {
+		var tree = React.render( React.createElement( DropZone ), container ),
+			dragEnterEvent = new window.MouseEvent();
+
+		dragEnterEvent.initMouseEvent( 'dragenter', true, true );
+		window.dispatchEvent( dragEnterEvent );
+
+		process.nextTick( function() {
+			expect( tree.observer ).to.be.ok;
+			done();
+		} );
+	} );
+
+	it( 'should stop observing the body for mutations upon drag ending', function( done ) {
+		var tree = React.render( React.createElement( DropZone ), container ),
+			dragEnterEvent = new window.MouseEvent(),
+			dragLeaveEvent = new window.MouseEvent();
+
+		dragEnterEvent.initMouseEvent( 'dragenter', true, true );
+		window.dispatchEvent( dragEnterEvent );
+
+		dragLeaveEvent.initMouseEvent( 'dragleave', true, true );
+		window.dispatchEvent( dragLeaveEvent );
+
+		process.nextTick( function() {
+			expect( tree.observer ).to.be.undefined;
+			done();
+		} );
 	} );
 
 	it( 'should not highlight if onVerifyValidTransfer returns false', function() {

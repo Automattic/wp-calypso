@@ -49,11 +49,49 @@ module.exports = React.createClass( {
 		window.addEventListener( 'dragleave', this.toggleDraggingOverDocument );
 	},
 
+	componentDidUpdate: function( prevProps, prevState ) {
+		if ( prevState.isDraggingOverDocument !== this.state.isDraggingOverDocument ) {
+			this.toggleMutationObserver();
+		}
+	},
+
 	componentWillUnmount: function() {
 		window.removeEventListener( 'dragover', this.preventDefault );
 		window.removeEventListener( 'drop', this.onDrop );
 		window.removeEventListener( 'dragenter', this.toggleDraggingOverDocument );
 		window.removeEventListener( 'dragleave', this.toggleDraggingOverDocument );
+		this.disconnectMutationObserver();
+	},
+
+	toggleMutationObserver: function() {
+		this.disconnectMutationObserver();
+
+		if ( this.state.isDraggingOverDocument ) {
+			this.observer = new window.MutationObserver( this.detectNodeRemoval );
+			this.observer.observe( document.body, {
+				childList: true,
+				subtree: true
+			} );
+		}
+	},
+
+	disconnectMutationObserver: function() {
+		if ( ! this.observer ) {
+			return;
+		}
+
+		this.observer.disconnect();
+		delete this.observer;
+	},
+
+	detectNodeRemoval: function( mutations ) {
+		mutations.forEach( ( mutation ) => {
+			if ( ! mutation.removedNodes.length ) {
+				return;
+			}
+
+			this.dragEnterNodes = without( this.dragEnterNodes, Array.from( mutation.removedNodes ) );
+		} );
 	},
 
 	toggleDraggingOverDocument: function( event ) {
