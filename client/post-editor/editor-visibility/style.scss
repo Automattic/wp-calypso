@@ -28,6 +28,10 @@
 
 	.form-text-input {
 		font-size: 13px;
+
+		&.is-info-open {
+			margin-top: 8px;
+		}
 	}
 
 	.form-input-validation {

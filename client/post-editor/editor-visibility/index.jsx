@@ -256,6 +256,7 @@ module.exports = React.createClass( {
 					value={ value }
 					isError={ isError }
 					ref="postPassword"
+					className={ this.state.showVisibilityInfotips ? 'is-info-open' : null }
 					placeholder={ this.translate( 'Create password', { context: 'Editor: Create password for post' } ) }
 				/>
 
