@@ -43,6 +43,7 @@
 	font-size: 13px;
 	font-family: $serif;
 	resize: vertical;
+	-webkit-appearance: none;
 }
 
 .editor-drawer .editor-delete-post::before {
