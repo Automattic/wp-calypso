@@ -7,9 +7,9 @@ import React from 'react'
  * Internal dependencies
  */
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
+import Card from 'components/card'
 import Gridicon from 'components/gridicon'
 import SectionHeader from 'components/section-header'
-import SectionHeaderButton from 'components/section-header/button'
 
 export default React.createClass( {
 
@@ -69,9 +69,9 @@ export default React.createClass( {
 				<SectionHeader label={ this.props.title }>
 					{ this.getLink() }
 				</SectionHeader>
-				<div className="plugins-browser-list__elements">
+				<Card className="plugins-browser-list__elements">
 					{ this.getViews() }
-				</div>
+				</Card>
 			</div>
 		);
 	}
