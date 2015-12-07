@@ -145,7 +145,7 @@ module.exports = React.createClass( {
 			>
 				<a onClick={ this.removeAction } >
 					<Gridicon icon="trash" size={ 18 } />
-				</a>;
+				</a>
 			</PluginAction>
 		);
 	},
