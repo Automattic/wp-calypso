@@ -402,6 +402,12 @@ body.newdash div.wordpress-com-extension-promo {
 		left: 289px;
 	z-index: z-index( 'root', '.environment-badge' );
 	backface-visibility: hidden;
+	transition: opacity 0.1s ease-in-out;
+
+	.detail-page-active & {
+		opacity: 0;
+		pointer-events: none;
+	}
 
 	.bug-report {
 		position: relative;
