@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	handleClickTitle( event ) {
@@ -13,12 +14,12 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<nav className="wpcom-sections">
-				<ul className="sections-menu">
-					<li className="wpcom-title">
+			<nav className="masterbar__sections">
+				<ul className="masterbar__sections-menu">
+					<li className="masterbar__item wpcom-title">
 						<a href="/" onClick={ this.handleClickTitle }>
-							<span className="noticon noticon-wordpress"></span>
-							<span className="section-label">WordPress<span className="tld">.com</span></span>
+							<Gridicon icon="my-sites" size={ 24 } />
+							<span className="masterbar__label">WordPress<span className="tld">.com</span></span>
 						</a>
 					</li>
 				</ul>
