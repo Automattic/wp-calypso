@@ -3,18 +3,16 @@
  */
 import assign from 'lodash/object/assign';
 import find from 'lodash/collection/find';
-import where from 'lodash/collection/where';
 
 /**
  * Internal Dependencies
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
-import { createReducerStore } from 'lib/store';
 
 /**
  * Constants
  */
-const INITIAL_STATE = {
+const initialState = {
 	data: [],
 	error: null,
 	isFetching: false,
@@ -32,7 +30,7 @@ function updatePurchaseById( state, id, properties ) {
 	} );
 }
 
-const PurchasesStore = createReducerStore( ( state, payload ) => {
+const reducer = ( state, payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
@@ -72,20 +70,9 @@ const PurchasesStore = createReducerStore( ( state, payload ) => {
 		default:
 			return state;
 	}
-}, INITIAL_STATE );
+};
 
-assign( PurchasesStore, {
-	getBySite( siteId ) {
-		return assign( {}, this.get(), { data: where( this.get().data, { siteId } ) } );
-	},
-
-	getByUser( userId ) {
-		return assign( {}, this.get(), { data: where( this.get().data, { userId } ) } );
-	},
-
-	getByPurchaseId( id ) {
-		return assign( {}, this.get(), { data: find( this.get().data, { id } ) } );
-	}
-} );
-
-export default PurchasesStore;
+export {
+	initialState,
+	reducer
+};
