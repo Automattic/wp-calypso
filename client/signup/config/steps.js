@@ -101,7 +101,6 @@ module.exports = {
 			headerText: i18n.translate( 'Create an account for Jetpack' ),
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
-		dependencies: [ 'jetpackRedirect' ],
-		providesDependencies: [ 'bearer_token', 'username', 'jetpackRedirect' ]
+		providesDependencies: [ 'bearer_token', 'username' ]
 	}
 };

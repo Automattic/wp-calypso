@@ -97,7 +97,7 @@ module.exports = {
 		SignupCart.addToCart( siteSlug, cartItem, callback );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName } ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
 		return wpcom.undocumented().usersNew( assign(
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
@@ -105,7 +105,7 @@ module.exports = {
 				signup_flow_name: flowName,
 				nux_q_site_type: dependencies.surveySiteType,
 				nux_q_question_primary: dependencies.surveyQuestion,
-				jetpack_redirect: dependencies.jetpackRedirect
+				jetpack_redirect: queryArgs.jetpackRedirect
 			}
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,

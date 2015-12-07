@@ -31,10 +31,10 @@ export default React.createClass( {
 
 	submitForm( form, userData, analyticsData ) {
 		let flowName = this.props.flowName,
-			dependencies = {};
+			queryArgs = {};
 
 		if ( this.props.queryObject && this.props.queryObject.jetpack_redirect ) {
-			dependencies.jetpackRedirect = this.props.queryObject.jetpack_redirect;
+			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {
@@ -48,10 +48,9 @@ export default React.createClass( {
 			flowName,
 			userData,
 			stepName: this.props.stepName,
-			form: formWithoutPassword
-		}, null,
-			dependencies
-		);
+			form: formWithoutPassword,
+			queryArgs
+		} );
 
 		this.props.goToNextStep();
 	},
