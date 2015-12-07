@@ -112,6 +112,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		if ( ! this.props.site.jetpack ) {
+			return null;
+		}
+
 		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
 				'ENABLE_AUTOUPDATE_PLUGIN',
 				'DISABLE_AUTOUPDATE_PLUGIN'
