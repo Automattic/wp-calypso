@@ -39,10 +39,10 @@
 	color: darken( $gray, 20% );
 	cursor: pointer;
 
-	.noticon {
-		margin-top: 1px;
+	.gridicon {
+		display: inline-block;
+		vertical-align: middle;
 		opacity: 0.6;
-		transform: rotate( -90deg );
 	}
 }
 

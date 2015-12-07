@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+var Card = require( 'components/card' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 	displayName: 'HeaderCake',
@@ -40,7 +41,7 @@ module.exports = React.createClass( {
 			<Card className={ classes }>
 				<div className="header-cake__corner">
 					<a className="header-cake__back" onClick={ this.props.onClick }>
-						<span className="noticon noticon-collapse" />
+						<Gridicon icon="chevron-left" size={ 16 } />
 						<span className="header-cake__back-text">{ this.props.backText || this.translate( 'Back' ) }</span>
 					</a>
 				</div>
