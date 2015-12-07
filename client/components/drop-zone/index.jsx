@@ -153,6 +153,11 @@ module.exports = React.createClass( {
 
 		rect = this.refs.zone.getBoundingClientRect();
 
+		/// make sure the rect is a valid rect
+		if ( rect.bottom === rect.top || rect.left === rect.right ) {
+			return false;
+		}
+
 		return x >= rect.left && x <= rect.right &&
 			y >= rect.top && y <= rect.bottom;
 	},

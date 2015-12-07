@@ -16,7 +16,7 @@ module.exports = function( markup, features ) {
 	features = assign( {}, defaultFeatures, features );
 
 	global.document = jsdom( markup );
-	global.window = document.parentWindow;
+	global.window = document.defaultView;
 	global.navigator = window.navigator;
 	global.Element = window.Element;
 
