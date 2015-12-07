@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react'
 
 /**
  * Internal dependencies
  */
-var PluginBrowserItem = require( 'my-sites/plugins/plugins-browser-item' ),
-	Gridicon = require( 'components/gridicon' );
+import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
+import Gridicon from 'components/gridicon'
+import SectionHeader from 'components/section-header'
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginsBrowserList',
 
 	_DEFAULT_PLACEHOLDER_NUMBER: 6,
 
-	getPluginsViewList: function() {
-		var pluginsViewsList,
-			emptyCounter = 0;
+	getPluginsViewList() {
+		let emptyCounter = 0;
 
-		pluginsViewsList = this.props.plugins.map( function( plugin, n ) {
+		let pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
 			return <PluginBrowserItem site={ this.props.site } key={ plugin.slug + n } plugin={ plugin } currentSites={ this.props.currentSites } />;
-		}, this );
+		} );
 
 		if ( this.props.showPlaceholders ) {
 			pluginsViewsList = pluginsViewsList.concat( this.getPlaceholdersViews() );
@@ -39,13 +39,13 @@ module.exports = React.createClass( {
 		return pluginsViewsList;
 	},
 
-	getPlaceholdersViews: function() {
-		return Array.apply( null, Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER ) ).map( function( item, i ) {
+	getPlaceholdersViews() {
+		return Array.apply( null, Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER ) ).map( ( item, i ) => {
 			return <PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />;
 		} );
 	},
 
-	getViews: function() {
+	getViews() {
 		if ( this.props.plugins.length ) {
 			return this.getPluginsViewList();
 		} else if ( this.props.showPlaceholders ) {
@@ -53,7 +53,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getLink: function() {
+	getLink() {
 		if ( this.props.expandedListLink ) {
 			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
 				{ this.translate( 'See All' ) }
@@ -62,7 +62,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="plugins-browser-list">
 				<div className="plugins-browser-list__header">
