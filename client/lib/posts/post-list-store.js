@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:posts-list' );
+import debugModule from 'debug';
 import clone from 'lodash/lang/clone';
 import assign from 'lodash/object/assign';
 import transform from 'lodash/object/transform';
@@ -34,9 +33,11 @@ const _defaultQuery = {
 	perPage: 20
 };
 
+const debug = debugModule( 'calypso:posts-list' );
+
 let _nextId = 0;
 
-module.exports = function( id ) {
+export default function( id ) {
 	if ( ! id ) {
 		throw new Error( 'must supply a post-list-store id' );
 	}
