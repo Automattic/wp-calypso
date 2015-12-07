@@ -16,6 +16,7 @@ var CompactCard = require( 'components/card/compact' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
 	Count = require( 'components/count' ),
 	Notice = require( 'components/notice' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
 	analytics = require( 'analytics' );
 
@@ -209,11 +210,13 @@ module.exports = React.createClass( {
 						status='is-error'
 						showDismiss={ false }
 						text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
-						button={ PluginNotices.getErrorButton( error ) }
-						href={ PluginNotices.getErrorHref( error ) }
-						raw={ { onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, [ error ] ) } }
 						inline={ true }
-						key={ 'notice-' + errorCounter } />
+						key={ 'notice-' + errorCounter }
+						>
+						<NoticeAction href={ PluginNotices.getErrorHref( error ) }>
+							{ PluginNotices.getErrorButton( error ) }
+						</NoticeAction>
+					</Notice>
 				);
 				errorCounter++;
 			}, this );
