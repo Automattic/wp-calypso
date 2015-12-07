@@ -96,7 +96,11 @@ module.exports = React.createClass( {
 			this.focus();
 		}
 
-		if ( this.state.keyword === prevState.keyword ) {
+		if (
+			this.state.keyword === prevState.keyword &&
+			this.props.initialValue === prevProps.initialValue &&
+			this.props.siteID === prevProps.siteID
+		) {
 			return;
 		}
 		// if there's a keyword change: trigger search
@@ -119,6 +123,9 @@ module.exports = React.createClass( {
 	componentDidMount: function() {
 		if ( this.props.autoFocus ) {
 			this.focus();
+		}
+		if ( this.props.initialValue ) {
+			this.onSearch( this.props.initialValue );
 		}
 	},
 
