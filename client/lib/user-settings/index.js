@@ -15,19 +15,20 @@ var Emitter = require( 'lib/mixins/emitter' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	user = require( 'lib/user' )();
 
-/**
+/*
  * Decodes entities in those specific user settings properties
  * that the REST API returns already HTML-encoded
  */
 function decodeUserSettingsEntities( data ) {
 	let decodedValues = {
-			display_name: data.display_name && decodeEntities( data.display_name ),
-			description: data.description && decodeEntities( data.description ),
-			user_URL: data.user_URL && decodeEntities( data.user_URL )
+		display_name: data.display_name && decodeEntities( data.display_name ),
+		description: data.description && decodeEntities( data.description ),
+		user_URL: data.user_URL && decodeEntities( data.user_URL )
 	};
 
 	return assign( {}, data, decodedValues );
 }
+
 /**
  * Initialize UserSettings with defaults
  */
