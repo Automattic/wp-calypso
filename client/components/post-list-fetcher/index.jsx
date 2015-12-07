@@ -59,7 +59,8 @@ function getPostsState() {
 		postImages: PostContentImagesStore.getAll(),
 		page: PostListStore.getPage(),
 		lastPage: PostListStore.isLastPage(),
-		loading: PostListStore.isFetchingNextPage()
+		loading: PostListStore.isFetchingNextPage(),
+		hasRecentError: PostListStore.hasRecentError()
 	};
 }
 

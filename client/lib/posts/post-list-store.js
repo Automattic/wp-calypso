@@ -3,6 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:posts-list' ),
 	clone = require( 'lodash/lang/clone' ),
+	some = require( 'lodash/collection/some' ),
 	assign = require( 'lodash/object/assign' ),
 	transform = require( 'lodash/object/transform' ),
 	difference = require( 'lodash/array/difference' ),
@@ -135,6 +136,7 @@ function receivePage( id, error, data ) {
 
 	if ( error ) {
 		debug( 'Error fetching PostsList from api:', error );
+		error.timestamp = Date.now();
 		_activeList.errors.push( error );
 		PostListStore.emit( 'change' );
 		return;
@@ -260,6 +262,16 @@ PostListStore = {
 
 	isFetchingNextPage: function() {
 		return _activeList.isFetchingNextPage;
+	},
+
+	// Have we received an error recently?
+	hasRecentError: function() {
+		const recentTimeIntervalSeconds = 30;
+		const dateNow = Date.now();
+
+		return some( _activeList.errors, function( error ) {
+			return ( dateNow - error.timestamp ) < ( recentTimeIntervalSeconds * 1000 );
+		} );
 	},
 
 	getNextPageParams: function() {
