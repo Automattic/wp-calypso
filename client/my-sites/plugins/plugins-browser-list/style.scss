@@ -17,7 +17,7 @@
 .button.plugins-browser-list__select-all,
 .plugins-browser-list__title {
 	display: inline-block;
-	padding: 6px 16px 7px;
+	padding: 6px 0px 7px;
 	color: $gray;
 	font-size: 11px;
 	line-height: 1.6;
@@ -38,7 +38,6 @@
 
 .button.plugins-browser-list__select-all {
 	float: right;
-	padding-right: 16px;
 }
 
 .plugins-browser-list__elements {
