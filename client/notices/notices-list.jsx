@@ -86,7 +86,7 @@ export default React.createClass( {
 						status={ notice.status }
 						text={ notice.text }
 						isCompact={ notice.isCompact }
-						onClick={ this.removeNotice.bind( this, notice ) }
+						onDismissClick={ this.removeNotice.bind( this, notice ) }
 						showDismiss={ notice.showDismiss }
 					>
 						{ notice.button &&

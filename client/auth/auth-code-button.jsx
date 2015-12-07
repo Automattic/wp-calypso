@@ -58,7 +58,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice showDismiss={ showDismiss } status={ noticeStatus } onClick={ resetCode } >
+			<Notice showDismiss={ showDismiss } status={ noticeStatus } onDismissClick={ resetCode } >
 				{ message }
 			</Notice>
 		);

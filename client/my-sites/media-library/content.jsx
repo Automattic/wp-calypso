@@ -148,7 +148,7 @@ module.exports = React.createClass( {
 			}
 
 			return (
-				<Notice status="is-error" onClick={ onDismiss }>
+				<Notice status="is-error" onDismissClick={ onDismiss }>
 					{ message }
 				</Notice>
 			);

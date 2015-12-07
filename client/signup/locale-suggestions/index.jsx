@@ -102,7 +102,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="locale-suggestions">
-				<Notice status="is-info" showDismiss={ true } onClick={ this.dismiss }>
+				<Notice status="is-info" showDismiss={ true } onDismissClick={ this.dismiss }>
 					<div className="locale-suggestions__list">{ localeMarkup }</div>
 				</Notice>
 			</div>

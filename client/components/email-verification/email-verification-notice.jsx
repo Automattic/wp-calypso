@@ -139,7 +139,7 @@ module.exports = React.createClass( {
 			this.translate( "You've successfully verified your email address." ) :
 			this.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." );
 
-		return <Notice status="is-success" onClick={ this.dismissNotice }>{ noticeText }</Notice>;
+		return <Notice status="is-success" onDismissClick={ this.dismissNotice }>{ noticeText }</Notice>;
 	},
 
 	render: function() {

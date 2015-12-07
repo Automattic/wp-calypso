@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 				break;
 			case 'deleted':
 				content =
-				<Notice status='is-success' showDismiss={ true } onClick={ this._clearDeleted }>{
+				<Notice status='is-success' showDismiss={ true } onDismissClick={ this._clearDeleted }>{
 					this.translate( '{{strong}}%(siteDomain)s{{/strong}} has been deleted.', {
 						components: { strong: <strong /> },
 						args: { siteDomain: site.domain }
@@ -59,7 +59,7 @@ module.exports = React.createClass( {
 				break;
 			case 'error':
 				content =
-				<Notice status='is-error' showDismiss={ true } onClick={ this._clearDeleted }>{
+				<Notice status='is-error' showDismiss={ true } onDismissClick={ this._clearDeleted }>{
 					this.translate( 'There was an error deleting {{strong}}%(siteDomain)s{{/strong}}.', {
 						components: { strong: <strong /> },
 						args: { siteDomain: site.domain }

@@ -248,7 +248,7 @@ var PostEditor = React.createClass( {
 			<Notice
 				status={ 'is-' + this.state.notice.type }
 				showDismiss={ this.state.notice.type === 'success' ? false : true }
-				onClick={ this.onNoticeClick }
+				onDismissClick={ this.onNoticeClick }
 				className="post-editor__notice"
 				text={ this.state.notice.text }>
 				{ arrowLink }

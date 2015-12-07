@@ -113,7 +113,7 @@ module.exports = React.createClass( {
 
 		if ( this.state.error ) {
 			error = (
-				<Notice status="is-error" onClick={ this.resetError } isCompact>
+				<Notice status="is-error" onDismissClick={ this.resetError } isCompact>
 					{ this.translate( 'We couldn\'t find your current location.', { context: 'Post editor geolocation' } ) }
 				</Notice>
 			);

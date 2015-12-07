@@ -121,7 +121,7 @@ module.exports = React.createClass( {
 			message = this.errorMessage();
 			if ( message ) {
 				notice = (
-					<Notice status="is-error" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.errors ) }>
+					<Notice status="is-error" className="people-notice" onDismissClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.errors ) }>
 						{ message }
 					</Notice>
 				);
@@ -130,7 +130,7 @@ module.exports = React.createClass( {
 			message = this.successMessage();
 			if ( message ) {
 				notice = (
-					<Notice status="is-success" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.completed ) }>
+					<Notice status="is-success" className="people-notice" onDismissClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.completed ) }>
 						{ message }
 					</Notice>
 				);

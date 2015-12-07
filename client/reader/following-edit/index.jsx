@@ -265,7 +265,7 @@ var FollowingEdit = React.createClass( {
 					status="is-error"
 					isCompact={ true }
 					showDismiss={ true }
-					onClick={ this.dismissError }>
+					onDismissClick={ this.dismissError }>
 					{ this.translate( 'Sorry - there was a problem unfollowing {{strong}}%(url)s{{/strong}}.', {
 						components: { strong: <strong /> },
 						args: { url: url } } )
@@ -293,7 +293,7 @@ var FollowingEdit = React.createClass( {
 					status="is-error"
 					isCompact={ true }
 					showDismiss={ true }
-					onClick={ this.dismissError }>
+					onDismissClick={ this.dismissError }>
 					{ errorMessage }
 				</Notice>
 		);
