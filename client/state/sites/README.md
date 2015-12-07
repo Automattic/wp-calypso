@@ -14,7 +14,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Sets the currently selected site, by site ID.
 
 ```js
-import { setSelectedSite } from 'lib/sites/actions';
+import { setSelectedSite } from 'state/sites/actions';
 
 dispatch( setSelectedSite( 2916284 ) );
 ```
@@ -24,7 +24,7 @@ dispatch( setSelectedSite( 2916284 ) );
 Adds a site object to the set of known sites.
 
 ```js
-import { receiveSite } from 'lib/sites/actions';
+import { receiveSite } from 'state/sites/actions';
 
 dispatch( receiveSite( { ID: 2916284, name: 'WordPress.com Example Blog' } ) );
 ```
@@ -50,7 +50,7 @@ Selectors are intended to assist in extracting data from the global state tree f
 Returns the currently selected site object.
 
 ```js
-import { getSelectedSite } from 'lib/sites/selectors';
+import { getSelectedSite } from 'state/sites/selectors';
 
 const selectedSite = getSelectedSite( store.getState() );
 ```
