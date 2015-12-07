@@ -6,33 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SET_SELECTED_SITE,
-	RECEIVE_SITE
-} from '../action-types';
-import {
-	selected,
-	byId
-} from '../reducers';
+import { RECEIVE_SITE } from '../action-types';
+import { byId } from '../reducers';
 
 describe( 'reducers', () => {
-	describe( '#selected()', () => {
-		it( 'should default to null', () => {
-			const state = selected( undefined, {} );
-
-			expect( state ).to.be.null;
-		} );
-
-		it( 'should set the selected site ID', () => {
-			const state = selected( null, {
-				type: SET_SELECTED_SITE,
-				siteId: 2916284
-			} );
-
-			expect( state ).to.equal( 2916284 );
-		} );
-	} );
-
 	describe( '#byId()', () => {
 		it( 'should default to an empty object', () => {
 			const state = byId( undefined, {} );

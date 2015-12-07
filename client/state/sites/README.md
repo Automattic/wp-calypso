@@ -1,23 +1,13 @@
 Sites
 =====
 
-A module for managing site data, including the sites themselves and related behaviors, most common of which is the currently selected site.
+A module for managing site data.
 
-__Note:__ This module does not yet have complete feature parity with [`sites-list`](../../../client/lib/sites-list). Refer to the set of actions and reducers below to determine whether your needs are satisfied. If not, consider adding support to the module, or use `sites-list` instead.
+__Note:__ This module does not yet have complete feature parity with [`sites-list`](../../lib/sites-list). Refer to the set of actions and reducers below to determine whether your needs are satisfied. If not, consider adding support to the module, or use `sites-list` instead.
 
 ## Actions
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
-
-### `setSelectedSite( siteId: Number )`
-
-Sets the currently selected site, by site ID.
-
-```js
-import { setSelectedSite } from 'state/sites/actions';
-
-dispatch( setSelectedSite( 2916284 ) );
-```
 
 ### `receiveSite( site: Object )`
 
@@ -31,26 +21,8 @@ dispatch( receiveSite( { ID: 2916284, name: 'WordPress.com Example Blog' } ) );
 
 ## Reducers
 
-The Sites reducers add the following keys to the global state tree, under `sites`:
-
-#### `selected`
-
-The currently selected site, or `null` if no site is selected.
+The included reducers add the following keys to the global state tree, under `sites`:
 
 #### `byId`
 
 All known sites, indexed by site ID.
-
-## Selectors
-
-Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
-
-#### `getSelectedSite( state: Object )`
-
-Returns the currently selected site object.
-
-```js
-import { getSelectedSite } from 'state/sites/selectors';
-
-const selectedSite = getSelectedSite( store.getState() );
-```

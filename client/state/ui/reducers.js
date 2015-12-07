@@ -6,21 +6,19 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from './action-types';
+import { SET_SELECTED_SITE } from './action-types';
 
 /**
- * Tracks all known site objects, indexed by site ID.
+ * Tracks the currently selected site ID.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function byId( state = {}, action ) {
+export function selectedSite( state = null, action ) {
 	switch ( action.type ) {
-		case RECEIVE_SITE:
-			state = Object.assign( {}, state, {
-				[ action.site.ID ]: action.site
-			} );
+		case SET_SELECTED_SITE:
+			state = action.siteId;
 			break;
 	}
 
@@ -28,5 +26,5 @@ export function byId( state = {}, action ) {
 }
 
 export default combineReducers( {
-	byId
+	selectedSite
 } );

@@ -1,0 +1,1 @@
+export const SET_SELECTED_SITE = 'SET_SELECTED_SITE';

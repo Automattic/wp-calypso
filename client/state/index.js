@@ -9,13 +9,15 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
  */
 import sharing from './sharing/reducers';
 import sites from './sites/reducers';
+import ui from './ui/reducers';
 
 /**
  * Module variables
  */
 const reducer = combineReducers( {
 	sharing,
-	sites
+	sites,
+	ui
 } );
 
 export function createReduxStore() {

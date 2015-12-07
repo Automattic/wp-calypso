@@ -5,11 +5,9 @@
  * @return {Object}        Selected site
  */
 export function getSelectedSite( state ) {
-	const { selected, byId } = state.sites;
-
-	if ( ! selected ) {
+	if ( ! state.ui.selectedSite ) {
 		return null;
 	}
 
-	return byId[ selected ];
+	return state.sites.byId[ state.ui.selectedSite ];
 }
