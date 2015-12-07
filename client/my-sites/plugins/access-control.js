@@ -23,7 +23,15 @@ function hasRestrictedAccess( site ) {
 
 	site = site || sites.getSelectedSite();
 
-	if ( hasErrorCondition( site, 'notMinimumJetpackVersion' ) ) {
+	// Display a 404 to users that don't have the rights to manage plugins
+	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) ) {
+		pluginPageError = {
+			title: i18n.translate( 'Not Available' ),
+			line: i18n.translate( 'The page you requested could not be found' ),
+			illustration: '/calypso/images/drake/drake-404.svg',
+			fullWidth: true
+		};
+	} else if ( hasErrorCondition( site, 'notMinimumJetpackVersion' ) ) {
 		notices.warning(
 			i18n.translate( 'Jetpack %(version)s is required to take full advantage of plugin management in %(site)s.', {
 				args: {
@@ -37,17 +45,6 @@ function hasRestrictedAccess( site ) {
 				dismissID: 'allSitesNotOnMinJetpackVersion' + config( 'jetpack_min_version' ) + '-' + site.ID
 			}
 		);
-	}
-
-	// Display a 404 to users that don't have the rights to manage plugins
-	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) &&
-			! pluginPageError ) {
-		pluginPageError = {
-			title: i18n.translate( 'Not Available' ),
-			line: i18n.translate( 'The page you requested could not be found' ),
-			illustration: '/calypso/images/drake/drake-404.svg',
-			fullWidth: true
-		};
 	}
 
 	if ( abtest( 'businessPluginsNudge' ) === 'drake' && hasErrorCondition( site, 'noBusinessPlan' ) ) {
