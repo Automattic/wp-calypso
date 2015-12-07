@@ -47,6 +47,7 @@ module.exports = React.createClass( {
 		window.addEventListener( 'drop', this.onDrop );
 		window.addEventListener( 'dragenter', this.toggleDraggingOverDocument );
 		window.addEventListener( 'dragleave', this.toggleDraggingOverDocument );
+		window.addEventListener( 'mouseup', this.resetDragState );
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
@@ -60,7 +61,16 @@ module.exports = React.createClass( {
 		window.removeEventListener( 'drop', this.onDrop );
 		window.removeEventListener( 'dragenter', this.toggleDraggingOverDocument );
 		window.removeEventListener( 'dragleave', this.toggleDraggingOverDocument );
+		window.removeEventListener( 'mouseup', this.resetDragState );
 		this.disconnectMutationObserver();
+	},
+
+	resetDragState: function() {
+		if ( ! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) ) {
+			return;
+		}
+
+		this.setState( this.getInitialState() );
 	},
 
 	toggleMutationObserver: function() {
