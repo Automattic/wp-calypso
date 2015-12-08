@@ -16,6 +16,7 @@ const initialState = {};
 
 function updateSiteState( state, siteId, attributes ) {
 	return React.addons.update( state, {
+		// TODO: remove boilerplate around siteId part of updated state
 		[ siteId ]: {
 			$apply: ( value ) => Object.assign( {}, value, attributes )
 		}
