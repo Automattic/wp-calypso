@@ -11,10 +11,6 @@ We're transitioning to a more `redux`-like architecture, so our Flux `./stores` 
 
 Manages data concerning each site's currently selected theme.
 
-### theme-last-event
-
-Tracks last searched terms and activated theme, for analytics purposes.
-
 ### themes-last-query
 
 Tracks the last themes query.
