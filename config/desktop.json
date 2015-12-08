@@ -84,11 +84,7 @@
 		"upgrades/domain-management/name-servers": true,
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": false,
-		"upgrades/domain-search": true,
-		"upgrades/purchases/cancel": true,
-		"upgrades/purchases/list": true,
-		"upgrades/purchases/manage": true,
-		"upgrades/purchases/payment": true
+		"upgrades/domain-search": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",

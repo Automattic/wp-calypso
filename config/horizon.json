@@ -61,10 +61,6 @@
 		"reader/recommendations": true,
 
 		"upgrades/checkout": true,
-		"upgrades/purchases/cancel": true,
-		"upgrades/purchases/list": true,
-		"upgrades/purchases/manage": true,
-		"upgrades/purchases/payment": true,
 
 		"notifications2beta": true,
 		"muse": true,

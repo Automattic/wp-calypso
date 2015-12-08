@@ -86,20 +86,12 @@ module.exports = React.createClass( {
 								icon="cog"
 							/>
 
-							{ config.isEnabled( 'upgrades/purchases/list' )
-								? <MenuItem
-									selected={ selected === 'billing' }
-									href="/purchases"
-									label={ this.translate( 'Manage Purchases' ) }
-									icon="credit-card"
-								/>
-								: <MenuItem
-									selected={ selected === 'billing' }
-									href={ config.isEnabled( 'me/billing-history' ) ? '/me/billing' : '//wordpress.com/me/billing' }
-									label={ this.translate( 'Billing History' ) }
-									icon="credit-card"
-								/>
-							}
+							<MenuItem
+								selected={ selected === 'billing' }
+								href="/purchases"
+								label={ this.translate( 'Manage Purchases' ) }
+								icon="credit-card"
+							/>
 
 							<MenuItem
 								selected={ selected === 'security' }
