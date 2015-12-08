@@ -8,21 +8,10 @@ import { expect } from 'chai';
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
 import Dispatcher from 'dispatcher';
+import { DOMAIN_NAME, EMAIL, EMAIL_FORWARDS, FORWARD_ADDRESS, MAILBOX_NAME } from './data';
 import EmailForwardingStore from './../store';
 
 describe( 'Domains Email Forwarding Store', () => {
-	const DOMAIN_NAME = 'dummy.com',
-		MAILBOX_NAME = 'dummy',
-		EMAIL = 'dummy@dummy.com',
-		FORWARD_ADDRESS = 'foo@foo.com',
-		EMAIL_FORWARDS = [ {
-			active: true,
-			domain: DOMAIN_NAME,
-			email: EMAIL,
-			forward_address: FORWARD_ADDRESS,
-			mailbox: MAILBOX_NAME
-		} ];
-
 	it( 'should be an object', () => {
 		expect( EmailForwardingStore ).to.be.an( 'object' );
 	} );
