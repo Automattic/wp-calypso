@@ -81,7 +81,7 @@ describe( '#fetchConnections()', () => {
 			const action = spy.getCall( 1 ).args[ 0 ];
 			expect( action.type ).to.equal( FAIL_PUBLICIZE_CONNECTIONS_REQUEST );
 			expect( action.siteId ).to.equal( 77203074 );
-			expect( action.error.message ).to.equal( 'Forbidden' );
+			expect( action.error.message ).to.equal( 'An active access token must be used to access publicize connections.' );
 
 			done();
 		} ).catch( done );
