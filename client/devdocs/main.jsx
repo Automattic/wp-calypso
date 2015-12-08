@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var DocService = require( './service' ),
+	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
 	SearchCard = require( 'components/search-card' );
 
@@ -114,13 +115,15 @@ module.exports = React.createClass( {
 		searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
 		return searchResults.map( function( result ) {
 			return (
-				<div className="devdocs__result" key={ result.path }>
-					<header>
-						<h1><a href={ '/devdocs/' + result.path + '?term=' + encodeURIComponent( this.state.term ) }>{ result.title }</a></h1>
-						<h2>{ result.path }</h2>
+				<Card compact className="devdocs__result" key={ result.path }>
+					<header className="devdocs__result-header">
+						<h1 className="devdocs__result-title">
+							<a className="devdocs__result-link" href={ '/devdocs/' + result.path + '?term=' + encodeURIComponent( this.state.term ) }>{ result.title }</a>
+						</h1>
+						<h2 className="devdocs__result-path">{ result.path }</h2>
 					</header>
 					{ this.snippet( result ) }
-				</div>
+				</Card>
 			);
 		}, this );
 	},

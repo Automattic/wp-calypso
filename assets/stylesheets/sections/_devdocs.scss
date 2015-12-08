@@ -24,34 +24,30 @@
 	padding: 24px;
 }
 
-.devdocs__result {
-	@extend %container;
+.devdocs__result.card {
+	padding: 16px 0;
+}
 
-	margin: 0.5em 0;
-	padding: 10px 0;
+.devdocs__result-header {
+	overflow: hidden;
+	padding: 0 18px;
+}
 
-	header {
-		overflow: hidden;
-		padding: 0 18px;
-		h1 {
-			clear: none;
-			float: left;
-		}
-		h1 a {
-			&:hover {
-				color: $blue-medium;
-			}
-			font-size: 18px;
-			color: $gray-dark;
-		}
-		h2 {
-			font-size: ( 12 / 15 ) * 1em;
-			clear: none;
-			color: $gray;
-			float: right;
-			margin: 8px 0 0;
-		}
-	}
+.devdocs__result-title {
+	clear: none;
+	float: left;
+}
+
+.devdocs__result-link {
+	font-size: 18px;
+}
+
+.devdocs__result-path {
+	font-size: ( 12 / 15 ) * 1em;
+	clear: none;
+	color: $gray;
+	float: right;
+	margin: 8px 0 0;
 }
 
 .devdocs__result-snippet {
