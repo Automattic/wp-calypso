@@ -1,4 +1,5 @@
-# UI
+UI State
+========
 
 A module for managing user interface state.
 
