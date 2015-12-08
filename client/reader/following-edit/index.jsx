@@ -312,6 +312,10 @@ var FollowingEdit = React.createClass( {
 		this.setState( {
 			isAddingOpen: ! this.state.isAddingOpen
 		} );
+
+		if ( ! this.state.isAddingOpen ) {
+			this.refs['feed-search'].focus();
+		}
 	},
 
 	render: function() {
@@ -365,12 +369,12 @@ var FollowingEdit = React.createClass( {
 					</SectionHeaderButton>
 				</SectionHeader>
 
-				{ this.state.isAddingOpen &&
-					<FollowingEditSubscribeForm
-						onSearch={ this.handleNewSubscriptionSearch }
-						onSearchClose={ this.handleNewSubscriptionSearchClose }
-						onFollow={ this.handleFollow }
-						initialSearchString={ this.props.initialFollowUrl } /> }
+				<FollowingEditSubscribeForm
+					onSearch={ this.handleNewSubscriptionSearch }
+					onSearchClose={ this.handleNewSubscriptionSearchClose }
+					onFollow={ this.handleFollow }
+					initialSearchString={ this.props.initialFollowUrl }
+					ref="feed-search" />
 
 				<Search
 					key="existingFeedSearch"

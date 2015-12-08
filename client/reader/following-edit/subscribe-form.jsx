@@ -39,6 +39,10 @@ var FollowingEditSubscribeForm = React.createClass( {
 		this.verifySearchString( this.props.initialSearchString );
 	},
 
+	focus: function() {
+		this.refs.followingEditSubscriptionSearch.focus();
+	},
+
 	handleFollowToggle: function() {
 		FeedSubscriptionActions.follow( this.state.searchString, true );
 		this.setState( { previousSearchString: this.state.searchString } );
