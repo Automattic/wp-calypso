@@ -45,6 +45,8 @@
 	}
 
 	.is-adding & {
+		pointer-events: none;
+
 		.section-header__actions {
 			transform: translateX( -30px );
 		}
@@ -93,7 +95,6 @@
 
 // Add to Following
 .following-edit__subscribe-form {
-	overflow: hidden;
 	position: absolute;
 		top: 0;
 		right: 0;
@@ -101,13 +102,14 @@
 	opacity: 0;
 	pointer-events: none;
 	transition: all 0.15s ease-in-out;
-	
+
 	.search {
 		margin-bottom: 0;
 	}
 
 	.search__input[type="search"] {
 		height: 50px;
+		border: 1px solid transparent;
 
 		&:focus {
 			border-color: $blue-wordpress;
@@ -128,12 +130,11 @@
 	}
 
 	.noticon-close-alt {
-		top: -4px;
+		top: -2px;
 		right: -2px;
 		color: $gray;
 	}
 
-	.search__input[type="search"],
 	.gridicons-add-outline,
 	.noticon-close-alt {
 		transform: translateX( 30px );
@@ -142,12 +143,50 @@
 
 	.is-adding & {
 		opacity: 1;
-		//pointer-events: auto;
+		pointer-events: auto;
 
-		.search__input[type="search"],
 		.gridicons-add-outline,
 		.noticon-close-alt {
 			transform: translateX( 0 );
+		}
+	}
+
+	.card.is-search-result {
+		position: absolute;
+		width: 100%;
+		top: 68px;
+		z-index: 35;
+
+		.gridicon__follow {
+			fill: lighten( $gray, 20% );
+		}
+
+		.follow-button {
+			cursor: default;
+			color: lighten( $gray, 20% );
+		}
+
+		&.is-valid {
+			.gridicon__follow {
+				fill: $blue-medium;
+			}
+
+			.follow-button {
+				cursor: pointer;
+			}
+
+			.follow-button__label {
+				color: $blue-medium;
+			}
+
+			.following-edit__list-title {
+				margin-top: 8px;
+				margin-bottom: 11px;
+			}
+		}
+
+		.reader-list-item__icon .noticon {
+			display: block;
 		}
 	}
 }
@@ -168,17 +207,34 @@
 }
 
 
-// Followed Sites
+// Search Results Placeholder
+.subscribe-form__blank {
+	position: absolute;
+		top: 68px;
+	width: 100%;
+	height: 75px;
+	box-sizing: border-box;
+	padding: 26px 32px 0 32px;
+	text-align: center;
+	color: darken( $gray, 10 );
+	background: lighten( $gray, 30 );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20 ), .5 );
+}
+
+
+// Followed Sites and Search Transitions
 .followed-sites-list,
 .following-edit__existing-feed-search {
-	transition: all 0.1s ease-in-out;
+	transition: all 0.2s ease-in-out;
 
 	.is-adding & {
 		opacity: 0.3;
+		transform: translateY( 85px );
 	}
 }
 
 
+// Followed Site Cards
 .following-edit .reader-list-item__card {
 
 	&.is-placeholder {
@@ -214,48 +270,6 @@
 	.reader-list-item__icon {
 		top: 14px;
 		left: 40px;
-	}
-
-	&.is-search-result {
-		.gridicon__follow {
-			fill: lighten( $gray, 20% );
-		}
-
-		.follow-button {
-			cursor: default;
-			color: lighten( $gray, 20% );
-		}
-
-		&.is-valid {
-			.gridicon__follow {
-				fill: #12b0df;
-			}
-
-			.follow-button {
-				cursor: pointer;
-			}
-
-			.follow-button__label {
-				color: #12b0df;
-			}
-
-			.following-edit__list-title {
-				margin-top: 8px;
-				margin-bottom: 11px;
-			}
-		}
-
-		.reader-list-item__icon .noticon {
-			display: block;
-		}
-
-		border-radius: 5px;
-		box-shadow: 0 0 0 2px #78dcfa;
-		position: absolute;
-		width: 100%;
-		top: 44px;
-		border: 1px solid #0087be;
-		z-index: z-index( '.following-edit', '.following-edit .reader-list-item__card.is-search-result' );
 	}
 }
 

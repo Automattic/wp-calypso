@@ -251,6 +251,8 @@ var FollowingEdit = React.createClass( {
 	},
 
 	handleNewSubscriptionSearchClose: function() {
+		this.toggleAddSite();
+
 		if ( this.state.lastError && this.state.lastError.errorType === FeedSubscriptionErrorTypes.UNABLE_TO_FOLLOW ) {
 			this.setState( { isAttemptingFollow: false } );
 			FeedSubscriptionActions.dismissError( this.state.lastError );
@@ -258,6 +260,7 @@ var FollowingEdit = React.createClass( {
 	},
 
 	handleFollow: function() {
+		this.toggleAddSite();
 		this.setState( { isAttemptingFollow: true } );
 	},
 
@@ -310,6 +313,10 @@ var FollowingEdit = React.createClass( {
 		this.setState( {
 			isAddingOpen: ! this.state.isAddingOpen
 		} );
+
+		if ( ! this.state.isAddingOpen ) {
+			document.getElementById( 'search-component-1' ).focus();
+		}
 	},
 
 	render: function() {
