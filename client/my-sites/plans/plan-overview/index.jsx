@@ -14,7 +14,8 @@ import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
 const PlanOverview = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object,
+		cart: React.PropTypes.object.isRequired,
+		plan: React.PropTypes.object.isRequired,
 		path: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -32,7 +33,7 @@ const PlanOverview = React.createClass( {
 					path={ this.props.path }
 					selectedSite={ this.props.selectedSite } />
 
-				<PlanStatus />
+				<PlanStatus plan={ this.props.plan } />
 
 				<PlanFeatures />
 			</Main>

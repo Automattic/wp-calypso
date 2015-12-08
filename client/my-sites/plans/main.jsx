@@ -55,15 +55,15 @@ module.exports = React.createClass( {
 	render: function() {
 		var classNames = 'main main-column ',
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
-				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain );
-
-		var currentPlan = this.props.siteSpecificPlansDetailsList.getCurrentPlan( this.props.sites.getSelectedSite().domain );
+				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain ),
+			currentPlan = this.props.siteSpecificPlansDetailsList.getCurrentPlan( this.props.sites.getSelectedSite().domain );
 
 		if ( currentPlan.free_trial ) {
 			return (
 				<PlanOverview
 					path={ this.props.context.path }
 					cart={ this.props.cart }
+					plan={ currentPlan }
 					selectedSite={ this.props.sites.getSelectedSite() } />
 			);
 		}
