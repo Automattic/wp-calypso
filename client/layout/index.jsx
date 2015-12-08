@@ -11,6 +11,7 @@ var React = require( 'react' ),
  */
 var Masterbar = require( './masterbar' ),
 	observe = require( 'lib/mixins/data-observe' ),
+	GlobalNotices = require( 'notices/global-notices' ),
 	NoticesList = require( 'notices/notices-list' ),
 	notices = require( 'notices' ),
 	translator = require( 'lib/translator-jumpstart' ),
@@ -111,6 +112,7 @@ module.exports = React.createClass( {
 					<InviteMessage sites={ this.props.sites }/>
 					<EmailVerificationNotice user={ this.props.user } />
 					<NoticesList id="notices" notices={ notices.list } forcePinned={ 'post' === this.state.section } />
+					<GlobalNotices id="notices" />
 					<TranslatorInvitation isVisible={ showInvitation } />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />

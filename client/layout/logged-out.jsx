@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var Masterbar = require( './masterbar' ),
 	NoticesList = require( 'notices/notices-list' ),
+	GlobalNotices = require( 'notices/global-notices' ),
 	notices = require( 'notices' );
 
 module.exports = React.createClass( {
@@ -32,6 +33,7 @@ module.exports = React.createClass( {
 				<Masterbar />
 				<div id="content" className="wp-content">
 					<NoticesList id="notices" notices={ notices.list } />
+					<GlobalNotices id="notices" />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />
 				</div>

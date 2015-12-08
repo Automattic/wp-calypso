@@ -9,6 +9,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var Toolbar = require( './toolbar' ),
+	GlobalNotices = require( 'notices/global-notices' ),
 	NoticesList = require( 'notices/notices-list' ),
 	notices = require( 'notices' ),
 	page = require( 'page' ),
@@ -101,6 +102,7 @@ module.exports = React.createClass({
 
 				<div className="wp-content" ref="overlayInnerContent">
 					<NoticesList id="overlay-notices" notices={ notices.list }/>
+					<GlobalNotices id="overlay-notices" />
 					{ this.props.children }
 				</div>
 			</section>
