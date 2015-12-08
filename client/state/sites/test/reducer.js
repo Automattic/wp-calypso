@@ -7,9 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { RECEIVE_SITE } from '../action-types';
-import { items } from '../reducers';
+import { items } from '../reducer';
 
-describe( 'reducers', () => {
+describe( 'reducer', () => {
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );

@@ -15,7 +15,7 @@ import {
 	fetchingConnections,
 	connections,
 	connectionsBySiteId
-} from '../reducers';
+} from '../reducer';
 
 describe( '#fetchingConnections()', () => {
 	it( 'should set fetching to true for fetching action', () => {

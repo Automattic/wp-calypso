@@ -7,9 +7,9 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import sharing from './sharing/reducers';
-import sites from './sites/reducers';
-import ui from './ui/reducers';
+import sharing from './sharing/reducer';
+import sites from './sites/reducer';
+import ui from './ui/reducer';
 
 /**
  * Module variables

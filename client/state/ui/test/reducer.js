@@ -7,9 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { SET_SELECTED_SITE } from '../action-types';
-import { selectedSite } from '../reducers';
+import { selectedSite } from '../reducer';
 
-describe( 'reducers', () => {
+describe( 'reducer', () => {
 	describe( '#selectedSite()', () => {
 		it( 'should default to null', () => {
 			const state = selectedSite( undefined, {} );
