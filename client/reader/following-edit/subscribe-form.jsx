@@ -111,7 +111,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 	},
 
 	blankSearch: function() {
-		return ( <div className="subscribe-form__blank">{ this.translate( "Follow any site by adding it's URL above." ) }</div> );
+		return ( <div className="subscribe-form__blank">{ this.translate( 'Follow any site by adding its URL above.' ) }</div> );
 	},
 
 	render: function() {
@@ -147,7 +147,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 					ref="followingEditSubscriptionSearch"
 					onKeyDown={ this.handleKeyDown }
 					disableAutocorrect={ true }
-					autoFocus={ false }
+					autoFocus={ true }
 					initialValue={ this.props.initialSearchString }
 					forceCloseButton={ true }
 				/>

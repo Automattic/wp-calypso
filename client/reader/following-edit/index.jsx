@@ -4,8 +4,7 @@ const React = require( 'react' ),
 	trimLeft = require( 'lodash/string/trimLeft' ),
 	Immutable = require( 'immutable' ),
 	debounce = require( 'lodash/function/debounce' ),
-	classnames = require( 'classnames' ),
-	assign = require( 'lodash/object/assign' );
+	classnames = require( 'classnames' );
 
 // Internal dependencies
 const Main = require( 'components/main' ),
@@ -45,7 +44,7 @@ var FollowingEdit = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return assign( {
+		return Object.assign( {
 			isAddingOpen: false
 		}, this.getStateFromStores() );
 	},
@@ -313,10 +312,6 @@ var FollowingEdit = React.createClass( {
 		this.setState( {
 			isAddingOpen: ! this.state.isAddingOpen
 		} );
-
-		if ( ! this.state.isAddingOpen ) {
-			document.getElementById( 'search-component-1' ).focus();
-		}
 	},
 
 	render: function() {
@@ -346,7 +341,7 @@ var FollowingEdit = React.createClass( {
 			searchPlaceholder = this.translate( 'Search' );
 		}
 
-		var containerClasses = classnames( {
+		const containerClasses = classnames( {
 			'is-adding': this.state.isAddingOpen
 		}, 'following-edit' );
 
@@ -370,11 +365,12 @@ var FollowingEdit = React.createClass( {
 					</SectionHeaderButton>
 				</SectionHeader>
 
-				<FollowingEditSubscribeForm
-					onSearch={ this.handleNewSubscriptionSearch }
-					onSearchClose={ this.handleNewSubscriptionSearchClose }
-					onFollow={ this.handleFollow }
-					initialSearchString={ this.props.initialFollowUrl } />
+				{ this.state.isAddingOpen &&
+					<FollowingEditSubscribeForm
+						onSearch={ this.handleNewSubscriptionSearch }
+						onSearchClose={ this.handleNewSubscriptionSearchClose }
+						onFollow={ this.handleFollow }
+						initialSearchString={ this.props.initialFollowUrl } /> }
 
 				<Search
 					key="existingFeedSearch"
