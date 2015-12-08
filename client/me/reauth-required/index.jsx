@@ -97,6 +97,10 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	preValidateAuthCode: function() {
+		return this.state.code.length && this.state.code.length > 5;
+	},
+
 	renderSendSMSButton: function() {
 		var button;
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
@@ -204,7 +208,10 @@ module.exports = React.createClass( {
 					{ this.renderSMSResendThrottled() }
 
 					<FormButtonsBar>
-						<FormButton disabled={ this.state.validatingCode } onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) } >
+						<FormButton
+							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+							onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) }
+						>
 							{ this.translate( 'Verify' ) }
 						</FormButton>
 
