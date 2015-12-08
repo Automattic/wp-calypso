@@ -9,6 +9,7 @@ var React = require( 'react/addons' );
 var analytics = require( 'analytics' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
+	PlanOverview = require( './plan-overview' ),
 	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
@@ -55,6 +56,17 @@ module.exports = React.createClass( {
 		var classNames = 'main main-column ',
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
 				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain );
+
+		var currentPlan = this.props.siteSpecificPlansDetailsList.getCurrentPlan( this.props.sites.getSelectedSite().domain );
+
+		if ( currentPlan.free_trial ) {
+			return (
+				<PlanOverview
+					path={ this.props.context.path }
+					cart={ this.props.cart }
+					selectedSite={ this.props.sites.getSelectedSite() } />
+			);
+		}
 
 		return (
 			<div className={ classNames } role="main">
