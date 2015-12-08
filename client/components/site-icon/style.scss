@@ -15,7 +15,7 @@
 		.noticon {
 			color: $white;
 			text-align: center;
-			z-index: 0;
+			z-index: z-index( 'root', '.site-icon.is-blank .noticon' );
 		}
 	}
 }

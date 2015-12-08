@@ -36,7 +36,7 @@
 		position: absolute;
 			top: -5px;
 			right: 0;
-		z-index: 1;
+		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
 		padding-right: 0;
 
 		@include breakpoint( "<480px" ) {

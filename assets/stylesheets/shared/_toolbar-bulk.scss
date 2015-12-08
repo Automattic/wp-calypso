@@ -14,7 +14,7 @@
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 	0 1px 2px lighten( $gray, 30 );
 	transition: margin .15s ease-in-out;
-	z-index: 2; // so menus appear above items
+	z-index: z-index( 'root', '.toolbar-bulk' ); // so menus appear above items
 
 	a {
 		cursor: pointer;
@@ -42,7 +42,7 @@
 	color: $gray;
 	line-height: 1.5;
 	cursor: pointer;
-	z-index: 30;
+	z-index: z-index( '.toolbar-bulk', '.toolbar-bulk__toggle' );
 }
 
 // Bulk options
@@ -63,7 +63,7 @@
 	float: left;
 	position: relative;
 	border-right: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-	z-index: 1;
+	z-index: z-index( '.toolbar-bulk', '.toolbar-bulk__check-all' );
 	display: flex;
 	align-items: center;
 
@@ -90,12 +90,11 @@
 	position: absolute;
 	top: 100%;
 	left: 0;
-	z-index: 1;
 	border: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 	border-left: 0;
 	background: #fff;
 	line-height: 1.5;
-	z-index: 1;
+	z-index: z-index( '.toolbar-bulk', '.toolbar-bulk__selection-options' );
 
 	.toolbar-bulk__selection-options-toggle:checked ~ & {
 		display: block;
@@ -221,7 +220,7 @@
 		width: 100%;
 		background: #fff;
 		border: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-		z-index: 1;
+		z-index: z-index( '.toolbar-bulk', '.toolbar-bulk__more-actions' );
 
 		&:before {
 			content: '';

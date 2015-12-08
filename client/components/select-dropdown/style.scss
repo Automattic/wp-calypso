@@ -14,12 +14,12 @@
 	max-width: 100%;
 
 	.select-dropdown.is-open & {
-		z-index: 170; // below the masterbar
+		z-index: z-index( 'root', '.select-dropdown.is-open .select-dropdown__container' );
 	}
 
 	.accessible-focus &:focus,
 	.accessible-focus .select-dropdown.is-open & {
-		z-index: 170; // below the masterbar
+		z-index: z-index( 'root', '.accessible-focus .select-dropdown.is-open .select-dropdown__container' );
 		box-shadow: 0 0 0 2px $blue-light;
 		.select-dropdown__header {
 			border-color: $blue-wordpress;

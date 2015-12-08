@@ -21,7 +21,7 @@
 	.plan-discount-message {
 		position: absolute;
 			top: -19px;
-		z-index: 1;
+		z-index: z-index( 'root', '.plan-discount-message' );
 	}
 
 	.plans-compare {

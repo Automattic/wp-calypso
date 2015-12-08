@@ -40,7 +40,7 @@
 	background: $gray;
 	color: $white;
 	position: relative;
-	z-index: 1;
+	z-index: z-index( 'root', '.reader-list-gap__button' );
 
 	&:hover {
 		color: rgba( $white, 0.8 );

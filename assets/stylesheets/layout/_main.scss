@@ -24,7 +24,7 @@
 		left: 50%;
 		top: 0;
 	width: 60px;
-	z-index: 200;
+	z-index: z-index( 'root', '.layout__loader' );
 
 	// set a delay threshold for opacity changes
 	// prevents showing loader on fast connections
@@ -405,7 +405,7 @@ body.newdash div.wordpress-com-extension-promo {
 	position: fixed;
 		bottom: 16px;
 		left: 16px;
-	z-index: 999;
+	z-index: z-index( 'root', '.environment-badge' );
 	backface-visibility: hidden;
 
 	.bug-report {
@@ -419,7 +419,7 @@ body.newdash div.wordpress-com-extension-promo {
 		color: $gray-dark;
 		text-decoration: none;
 		text-align: center;
-		z-index: 1000;
+		z-index: z-index( '.environment-badge', '.environment-badge .bug-report' );
 		transition: border-radius 0.2s ease-out;
 		&:before {
 			@include noticon( '\f50a', 14px );
@@ -444,7 +444,7 @@ body.newdash div.wordpress-com-extension-promo {
 				right: 0;
 				top: 0;
 				bottom: 0;
-			z-index: -1;
+			z-index: z-index( '.environment-badge', '.environment-badge .environment::before' );
 			background-color: $white;
 			border: solid 1px $gray-dark;
 		}

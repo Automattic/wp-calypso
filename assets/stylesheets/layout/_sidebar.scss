@@ -190,7 +190,7 @@
 				top: 13px;
 				right: 8px;
 				left: auto;
-			z-index: 1;
+			z-index: z-index( 'icon-parent', '.sidebar-menu .gridicon.gridicons-external' );
 			height: 18px;
 
 			@include breakpoint( "<660px" ) {
@@ -203,7 +203,7 @@
 		position: absolute;
 			top: 15px;
 			right: 19px;
-		z-index: 1;
+		z-index: z-index( 'icon-parent', '.sidebar-menu .noticon-external' );
 		color: $gray;
 
 		@include breakpoint( "<660px" ) {

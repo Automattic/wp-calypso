@@ -112,7 +112,7 @@
 		width: 100%;
 		top: 44px;
 		border: 1px solid #0087be;
-		z-index: 35;
+		z-index: z-index( '.following-edit', '.following-edit .reader-list-item__card.is-search-result' );
 	}
 }
 
@@ -143,7 +143,7 @@
 		top: 7px;
 		left: 6px;
 		fill: #12b0df;
-		z-index: 40;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
 	}
 
 	.noticon-close-alt {
@@ -255,7 +255,7 @@
 .following-edit-sort-controls {
 	position: absolute;
 		right: -1px;
-	z-index: 30;
+	z-index: z-index( '.following-edit', '.following-edit-sort-controls' );
 	background-color: $gray-light;
 	padding: 13px 8px 0 16px;
 	box-shadow: inset 0px 0px 0px 1px lighten( $gray, 20% );

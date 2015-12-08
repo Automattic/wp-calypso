@@ -6,7 +6,7 @@
 	margin: 0 auto;
 	height: 0;
 	overflow: hidden;
-	z-index: 100200; // Above TinyMCE dialogs
+	z-index: z-index( 'root', '.web-preview' ); // Above TinyMCE dialogs
 	opacity: 0;
 	transition: 0s 0.2s height, 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
 }

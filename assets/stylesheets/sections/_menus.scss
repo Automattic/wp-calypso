@@ -264,7 +264,7 @@
 	font-size: 13px;
 	cursor: default;
 	position: relative;
-	z-index: 2;
+	z-index: z-index( 'root', '.menus__menu-item' );
 
 	.menu-item-name {
 		flex: 1 1 auto;
@@ -406,7 +406,7 @@
 	&.is-lander {
 		background: lighten( $gray-light, 2% );
 		border-left: 1px solid lighten( $gray, 30% );
-		z-index: 1;
+		z-index: z-index( 'root', '.menus__menu-item.is-lander' );
 
 		&:hover {
 			background: $blue-medium;
@@ -571,7 +571,7 @@
 		border-color: rgba(255, 255, 255, 0);
 		border-bottom-color: #ffffff;
 		border-width: 9px;
-		z-index: 2;
+		z-index: z-index( 'root', '.menus__menu-item-open:before' );
 	}
 
 	.editable-item-content {

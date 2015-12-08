@@ -8,7 +8,7 @@
 	padding: 6px 18px 6px 34px;
 	border-radius: 24px;
 	color: white;
-	z-index: 2;
+	z-index: z-index( 'root', '.reader-update-notice' );
 	margin: 0;
 	box-sizing: border-box;
 	opacity: 0;

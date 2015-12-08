@@ -4,7 +4,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-	z-index: 1000;
+	z-index: z-index( 'root', '.drop-zone' );
 	visibility: hidden;
 	opacity: 0;
 	transition: 0.3s opacity, 0.3s background-color, 0s visibility 0.3s;
@@ -31,7 +31,7 @@
 		top: 50%;
 		left: 0;
 		right: 0;
-	z-index: 1010;
+	z-index: z-index( 'root', '.drop-zone__content' );
 	transform: translateY( -50% );
 	width: 100%;
 	font-size: 24px;

@@ -7,7 +7,7 @@
 	height: 51px;
 	position: relative;
 	// places search above filters
-	z-index: 22;
+	z-index: z-index( 'root', '.search' );
 
 	@include breakpoint( "<660px" ) {
 		width: 50px;
@@ -18,7 +18,7 @@
 			top: 50%;
 		margin-top: -12px;
 		width: 60px;
-		z-index: 20;
+		z-index: z-index( '.search', '.search .search-open__icon' );
 		color: $blue-wordpress;
 		cursor: pointer;
 
@@ -44,7 +44,7 @@
 		margin-top: -12px;
 		width: 60px;
 		cursor: pointer;
-		z-index: 20;
+		z-index: z-index( '.search', '.search .search-close__icon' );
 		color: darken( $gray, 30% );
 		display: none;
 		opacity: 0;
@@ -85,7 +85,7 @@
 		top: 0;
 		right: 0;
 	// matching dropdown-selector
-	z-index: 170;
+	z-index: z-index( 'root', '.search.is-pinned' );
 
 	.search-open__icon {
 		right: 0;
@@ -99,7 +99,7 @@
 .search__input[type="search"] {
 	display: none;
 	position: absolute;
-	z-index: 10;
+	z-index: z-index( '.search', '.search__input' );
 	top: 0;
 	padding: 0 50px 0 60px;
 	border: none;
@@ -167,7 +167,7 @@
 
 .search.is-searching .spinner {
 	display: block;
-	z-index: 20;
+	z-index: z-index( '.search', '.search.is-searching .spinner' );
 }
 
 @include breakpoint( "<660px" ) {

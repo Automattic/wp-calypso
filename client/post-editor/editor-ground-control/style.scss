@@ -27,7 +27,7 @@
 
 .editor-ground-control.is-sticky .sticky-panel__content {
 	padding-bottom: 0;
-	z-index: 180;
+	z-index: z-index( 'root', '.editor-ground-control.is-sticky .sticky-panel__content' );
 }
 
 .editor-ground-control .sticky-panel__shadow {

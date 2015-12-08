@@ -10,7 +10,7 @@
 	.plugins & {
 		color: $blue-wordpress;
 		margin: -49px 40px 0 0;
-		z-index: 21;
+		z-index: z-index( '.toolbar-bulk', '.plugins .toolbar-bulk__toggle' );
 
 		@include breakpoint( '>660px' ) {
 			margin: -39px 84px 0 0;

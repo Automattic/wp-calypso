@@ -10,7 +10,7 @@
 		bottom: 0;
 		left: 0;
 	background-color: rgba( $white, 0.75 );
-	z-index: 10;
+	z-index: z-index( 'root', '.editor-featured-image__preview.is-transient::after' );
 }
 
 .editor-featured-image__preview .spinner {
@@ -23,7 +23,7 @@
 
 .editor-featured-image__preview .spinner,
 .editor-featured-image .editor-drawer-well__remove {
-	z-index: 20;
+	z-index: z-index( 'root', '.editor-featured-image .editor-drawer-well__remove' );
 }
 
 .editor-featured-image__preview .spinner {

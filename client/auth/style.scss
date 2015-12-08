@@ -57,7 +57,7 @@ html.is-desktop {
 
 		.form-fieldset input {
 		position: relative;
-		z-index: 1;
+		z-index: z-index( 'root', '.auth__form .form-fieldset input' );
 	}
 
 	.form-fieldset input[type="text"],
@@ -66,7 +66,7 @@ html.is-desktop {
 	}
 
 	.form-fieldset input:focus {
-		z-index: 2;
+		z-index: z-index( 'root', '.auth__form .form-fieldset input:focus' );
 	}
 
 	.form-password-input {
@@ -100,7 +100,7 @@ html.is-desktop {
 	}
 
 	.form-password-input__toggle-visibility {
-		z-index: 4;
+		z-index: z-index( 'root', '.auth__form .form-password-input__toggle-visibility' );
 		.gridicon {
 			position: static;
 		}
@@ -117,7 +117,7 @@ html.is-desktop {
 
 	.gridicon {
 		position: absolute;
-		z-index: 3;
+		z-index: z-index( 'root', '.auth__input-wrapper .gridicon' );
 		left: 8px;
 		top: 7px;
 		fill: $gray;

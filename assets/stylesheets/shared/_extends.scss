@@ -84,7 +84,7 @@
 		bottom: 35%;
 		left: 0;
 		right: 0;
-		z-index: 2;
+		z-index: z-index( 'root', '.stats-module.is-loading .module-header-title::after' );
 	}
 }
 

@@ -280,7 +280,7 @@ ul.module-header-actions {
 		display: inline-block;
 		text-align: center;
 		position: relative; // 2
-		z-index: 2; // 2
+		z-index: z-index( 'root', 'ul.module-header-actions .module-header-action-link' ); // 2
 		color: $gray;
 
 		.stats-module.is-loading & {
@@ -757,7 +757,7 @@ ul.module-tabs {
 	tbody th:first-child {
 		background: $white;
 		position: absolute;
-		z-index: 2;
+		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 
 		// Disable fixed legend for mobile
 		@include breakpoint( "<480px" ) {
@@ -837,7 +837,7 @@ ul.module-tabs {
 			top: 0;
 			bottom: 16px; // 1
 			left: 0;
-		z-index: 1;
+		z-index: z-index( 'root', '.module-content-table::after' );
 		width: 20px;
 		background-image: linear-gradient(to left, $transparent 0%, $white 90%);
 	}

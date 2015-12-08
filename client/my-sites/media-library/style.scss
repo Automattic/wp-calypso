@@ -84,7 +84,7 @@
 	position: absolute;
 		top: 8px;
 		right: 8px;
-	z-index: 20;
+	z-index: z-index( '.media-library__list-item', '.media-library__list-item-edit' );
 	padding: 2px 6px 3px;
 	transition: 0.2s opacity;
 	opacity: 0;

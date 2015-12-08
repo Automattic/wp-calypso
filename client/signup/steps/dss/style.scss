@@ -47,7 +47,7 @@
 		opacity: 0.6;
 		position: absolute;
 		width: 100%;
-		z-index: 10000;
+		z-index: z-index( 'root', '.dss-screenshot.is-loading .dss-screenshot__original:before' );
 	}
 }
 

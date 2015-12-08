@@ -7,7 +7,7 @@
 	background: $blue-wordpress;
 	padding: 4px;
 	font-size: 16px;
-	z-index: 99;
+	z-index: z-index( 'root', '#translator-launcher' );
 
 	a {
 		color: $white;
@@ -53,7 +53,7 @@ body {
 		padding: 0;
 		text-align: inherit;
 		border-color: lighten( $gray, 20% );
-		z-index: 100300; // Appear above dialog
+		z-index: z-index( 'root', 'body .webui-popover' ); // Appear above dialog
 
 		.webui-popover-title {
 			background-color: lighten( $gray, 20% );

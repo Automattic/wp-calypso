@@ -12,7 +12,7 @@
 			right: 0;
 		height: 1px;
 		margin-top: 35px;
-		z-index: -1;
+		z-index: z-index( 'root', '.NuxWelcome:before' );
 		background: linear-gradient(to right, fade-out(lighten( $gray, 20% ), 1) 0%, lighten( $gray, 20% ) 20%, lighten( $gray, 20% ) 80%, fade-out(lighten( $gray, 20% ), 1) 100%);
 	}
 	&:after {

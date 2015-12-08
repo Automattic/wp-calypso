@@ -3,12 +3,12 @@
 
 	&.is-pinned {
 		width: calc( 100% - 272px - 32px - 32px );
-		z-index: 180;
+		z-index: z-index( 'root', '.notices-list.is-pinned' );
 		position: fixed;
 			top: 47px + 32px;
 
 		.notice {
-			z-index: 180;
+			z-index: z-index( 'root', '.notices-list.is-pinned .notice' );
 		}
 
 		@include breakpoint( "<960px" ) {

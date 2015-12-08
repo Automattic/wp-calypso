@@ -43,7 +43,7 @@
 }
 
 .author-selector__popover.popover {
-	z-index: 100;
+	z-index: z-index( 'root', '.author-selector__popover.popover' );
 }
 
 .author-selector__popover {

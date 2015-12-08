@@ -75,7 +75,7 @@ $theme-info-height: 54px;
 
 	.is-actionable & {
 		position: absolute;
-		z-index: 1;
+		z-index: z-index( 'root', '.is-actionable .theme__active-focus' );
 		top: 0;
 		right: 0;
 		bottom: 54px;
@@ -177,7 +177,7 @@ $theme-info-height: 54px;
 		}
 
 		.accessible-focus &:focus {
-			z-index: 1;
+			z-index: z-index( 'root', '.accessible-focus .theme__more-button button:focus' );
 			outline: solid 3px $blue-light;
 		}
 	}

@@ -375,7 +375,7 @@ div.mce-inline-toolbar-grp {
 		left: auto;
 		right: auto;
 	user-select: none;
-	z-index: 100100; /* Same as the other TinyMCE "panels" */
+	z-index: z-index( 'root', 'div.mce-inline-toolbar-grp' ); /* Same as the other TinyMCE "panels" */
 	max-width: 98%;
 }
 
@@ -1178,7 +1178,7 @@ i.mce-i-wp_code:before {
 
 .wp-editor-tools {
 	position: relative;
-	z-index: 1;
+	z-index: z-index( 'root', '.wp-editor-tools' );
 }
 
 .wp-editor-tools:after {
@@ -1430,7 +1430,7 @@ i.mce-i-wp_code:before {
 	padding: 2px;
 	position: absolute;
 	display: none;
-	z-index: 100020;
+	z-index: z-index( 'root', '#wp_editbtns' );
 }
 
 #wp_editimgbtn,
@@ -1458,7 +1458,7 @@ i.mce-i-wp_code:before {
  * =Overlay Styles
 -------------------------------------------------------------- */
 .fullscreen-overlay {
-	z-index: 100005;
+	z-index: z-index( 'root', '.fullscreen-overlay' );
 	display: none;
 	position: fixed;
 	top: 0;
@@ -1474,7 +1474,7 @@ i.mce-i-wp_code:before {
 }
 
 .fullscreen-fader {
-	z-index: 200000;
+	z-index: z-index( 'root', '.fullscreen-fader' );
 }
 
 .wp-fullscreen-active .fullscreen-fader,
@@ -1487,7 +1487,7 @@ i.mce-i-wp_code:before {
 
 #wp-fullscreen-body,
 .mce-fullscreen {
-	z-index: 100010;
+	z-index: z-index( 'root', '#wp-fullscreen-body' );
 }
 
 #wp-fullscreen-body {
@@ -1502,7 +1502,7 @@ i.mce-i-wp_code:before {
 	right: 0;
 	bottom: 30px;
 	top: 60px;
-	z-index: 100015;
+	z-index: z-index( 'root', '.wp-fullscreen-wrap' );
 }
 
 .wp-fullscreen-wrap .wp-editor-container,
@@ -1525,7 +1525,7 @@ i.mce-i-wp_code:before {
 	right: 0;
 	bottom: 0;
 	height: 30px;
-	z-index: 100020;
+	z-index: z-index( 'root', '#wp-fullscreen-statusbar' );
 	background: #fff;
 	transition: height 0.2s;
 }
@@ -1576,7 +1576,7 @@ i.mce-i-wp_code:before {
 	right: 0;
 	top: 0;
 	width: 100%;
-	z-index: 100020;
+	z-index: z-index( 'root', '#fullscreen-topbar' );
 	transition: opacity 0.4s;
 }
 
@@ -1672,11 +1672,11 @@ i.mce-i-wp_code:before {
 /* =Thickbox Adjustments
 -------------------------------------------------------------- */
 .wp-fullscreen-active #TB_overlay {
-	z-index: 100050;
+	z-index: z-index( 'root', '.wp-fullscreen-active #TB_overlay' );
 }
 
 .wp-fullscreen-active #TB_window {
-	z-index: 100051;
+	z-index: z-index( 'root', '.wp-fullscreen-active #TB_window' );
 }
 
 /* Colors */

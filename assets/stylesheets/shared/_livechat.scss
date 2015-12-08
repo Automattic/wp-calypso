@@ -340,7 +340,7 @@
 
 #habla_window_div.habla_window_div_base {
 	display:block!important;
-	z-index:99999999;
+	z-index: z-index( 'root', '#habla_window_div.habla_window_div_base' );
 }
 
 #habla_window_div #olark-callout-bubble,

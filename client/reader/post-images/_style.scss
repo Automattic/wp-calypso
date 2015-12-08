@@ -80,7 +80,7 @@
 		left: 0;
 	padding: 24px;
 	background: transparent;
-	z-index: 200;
+	z-index: z-index( 'root', '.reader-post-images__full-list' );
 	overflow-y: hidden;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
