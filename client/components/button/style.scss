@@ -145,44 +145,6 @@ button {
 	}
 }
 
-// ==========================================================================
-// Deprecated styles
-//
-// `button.is-destructive` and ``.button.is-dangerous` are also deprecated
-// ==========================================================================
-
-.button.is-link {
-	background: transparent;
-	border: none;
-	border-radius: 0;
-	padding: 0;
-	color: $blue-medium;
-	font-weight: 400;
-	font-size: inherit;
-	line-height: 1.65;
-
-	&:hover,
-	&:focus,
-	&:active {
-		color: $link-highlight;
-		box-shadow: none;
-	}
-}
-
-// Positions and resets font styles of noticons applied to buttons
-.button.noticon {
-	line-height: inherit;
-
-	&:before {
-		display: inline-block;
-		vertical-align: middle;
-		margin-top: -2px;
-		font-size: 16px;
-		font-style: normal;
-		font-weight: normal;
-	}
-}
-
 .button.is-borderless {
 	border: none;
 	color: darken( $gray, 10% );
@@ -265,4 +227,40 @@ button {
 	border-style: solid none;
 	border-color: transparent;
 	padding: 0
+}
+
+// ==========================================================================
+// Deprecated styles
+// ==========================================================================
+
+.button.is-link {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	padding: 0;
+	color: $blue-medium;
+	font-weight: 400;
+	font-size: inherit;
+	line-height: 1.65;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $link-highlight;
+		box-shadow: none;
+	}
+}
+
+// Positions and resets font styles of noticons applied to buttons
+.button.noticon {
+	line-height: inherit;
+
+	&:before {
+		display: inline-block;
+		vertical-align: middle;
+		margin-top: -2px;
+		font-size: 16px;
+		font-style: normal;
+		font-weight: normal;
+	}
 }
