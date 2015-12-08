@@ -29,8 +29,7 @@ describe( 'Domains: Email Forwarding Reducer', () => {
 
 		expect( result ).to.be.eql( {
 			[ DOMAIN_NAME ]: {
-				list: EMAIL_FORWARDS,
-				needsUpdate: true
+				list: EMAIL_FORWARDS
 			}
 		} );
 	} );

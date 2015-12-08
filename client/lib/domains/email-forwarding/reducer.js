@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import findIndex from 'lodash/array/findIndex';
 import React from 'react/addons';
 import sortBy from 'lodash/collection/sortBy';
 
@@ -43,11 +44,15 @@ function updateDomainState( state, domainName, data ) {
  * @return {Object} New state
  */
 function deleteTemporaryMailbox( state, domainName, mailbox ) {
+	const index = findIndex( state[ domainName ].list, { mailbox } );
+
+	if ( index === -1 ) {
+		return state;
+	}
+
 	const command = {
 		[ domainName ]: {
-			list: {
-				$apply: list => list.filter( item => item.mailbox !== mailbox )
-			},
+			list: { $splice: [ [ index, 1 ] ] },
 			needsUpdate: { $set: true }
 		}
 	};
