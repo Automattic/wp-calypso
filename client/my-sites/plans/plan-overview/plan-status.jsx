@@ -21,8 +21,8 @@ const PlanStatus = React.createClass( {
 				</span>
 				<h1 className="plan-status__plan">
 					{
-						this.translate( '%(productName)s Free Trial', {
-							args: { productName: this.props.plan.product_name }
+						this.translate( '%(planName)s Free Trial', {
+							args: { planName: this.props.plan.productName }
 						} )
 					}
 				</h1>

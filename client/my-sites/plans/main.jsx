@@ -13,7 +13,8 @@ var analytics = require( 'analytics' ),
 	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	createSiteSpecificPlanObject = require( 'lib/site-specific-plans-details-list/assembler' ).createSiteSpecificPlanObject;
 
 module.exports = React.createClass( {
 	displayName: 'Plans',
@@ -56,9 +57,13 @@ module.exports = React.createClass( {
 		var classNames = 'main main-column ',
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
 				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain ),
-			currentPlan = this.props.siteSpecificPlansDetailsList.getCurrentPlan( this.props.sites.getSelectedSite().domain );
+			currentPlan = createSiteSpecificPlanObject(
+				this.props.siteSpecificPlansDetailsList.getCurrentPlan(
+					this.props.sites.getSelectedSite().domain
+				)
+			);
 
-		if ( currentPlan.free_trial ) {
+		if ( currentPlan.freeTrial ) {
 			return (
 				<PlanOverview
 					path={ this.props.context.path }
