@@ -36,7 +36,9 @@ export default React.createClass( {
 				aria-label={ this.translate( 'View all drafts' ) }
 			>
 				<span>{ this.translate( 'Drafts' ) }</span>
-				{ this.props.count && this.props.count > 0 && <Count count={ this.props.count } /> }
+				{ this.props.count ?
+					<Count count={ this.props.count } />
+				: null }
 			</button>
 		);
 	}
