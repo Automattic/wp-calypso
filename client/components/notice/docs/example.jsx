@@ -28,7 +28,10 @@ var Notices = React.createClass( {
 					<a className="design-assets__toggle button" onClick={ this.toggleNotices }>{ toggleNoticesText }</a>
 				</h2>
 
-				<Notice text="I'm a notice with no status." isCompact={ this.state.compactNotices ? true : null } />
+				<Notice
+					text="I'm a notice with no status."
+					showDismiss={ false }
+					isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-info" text="I'm an `is-info` notice." isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-success" text="I'm an `is-success` notice." isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-error" text="I'm an `is-error` notice." isCompact={ this.state.compactNotices ? true : null } />

@@ -11,55 +11,34 @@
 
 	@include breakpoint( ">660px" ) {
 		font-size: inherit;
-
-		&::before {
-			@extend %noticon;
-			content: '\f456';
-			position: absolute;
-				top: 26px;
-				left: 20px;
-			margin: -12px 0px 0 -8px;
-			font-size: 24px;
-			line-height: 1;
-		}
 	}
 
 	// Success!
 	&.is-success {
 		background: $alert-green;
-
-		@include breakpoint( ">660px" ) {
-			&:before {
-				content: '\f418';
-			}
-		}
 	}
 
 	// Warning
 	&.is-warning {
 		background: $alert-yellow;
-
-		&:before {
-		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
 		background: $alert-red;
-
-		&:before {
-		}
 	}
 
-	// Information
+	// General notice
 	&.is-info {
 		background: $blue-wordpress;
+	}
+}
 
-		@include breakpoint( ">660px" ) {
-			&:before {
-				content: '\f455';
-			}
-		}
+.notice__icon {
+	padding: 13px 0 13px 16px;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
 	}
 }
 
@@ -75,7 +54,7 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		padding: 13px 48px;
+		padding: 13px;
 	}
 }
 
