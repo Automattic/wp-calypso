@@ -57,7 +57,7 @@ run: welcome githooks-commit install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
 node-version:
-	@$(BIN)/check-node-version
+	@NPM_GLOBAL_ROOT=$(shell $(NPM) -g root) $(BIN)/check-node-version
 
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
