@@ -28,6 +28,10 @@
 
 	.form-text-input {
 		font-size: 13px;
+
+		&.is-info-open {
+			margin-top: 8px;
+		}
 	}
 
 	.form-input-validation {
@@ -36,6 +40,10 @@
 
 	.form-setting-explanation {
 		margin: -4px 0 8px 24px;
+
+		&.password {
+			margin-bottom: 0;
+		}
 	}
 
 	.gridicon {
