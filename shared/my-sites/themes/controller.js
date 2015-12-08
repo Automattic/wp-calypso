@@ -17,7 +17,7 @@ var ThemesComponent = require( 'my-sites/themes/main' ),
 
 var controller = {
 
-	themes: function( context ) {
+	themes: function( context, next ) {
 		var basePath = route.sectionify( context.path ),
 			analyticsPageTitle = 'Themes',
 			{ tier, site_id } = context.params;
@@ -38,22 +38,24 @@ var controller = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 
-		React.render(
-			React.createElement( ThemesComponent, {
-				key: site_id,
-				siteId: site_id,
-				sites: sites,
-				tier: tier,
-				search: context.query.s,
-				trackScrollPage: trackScrollPage.bind(
+		context.primary =	 (
+			<ThemesComponent key={ site_id }
+				siteId={ site_id }
+				sites={ sites }
+				tier={ tier }
+				search={ context.query.s }
+				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
 					analyticsPageTitle,
 					'Themes'
-				)
-			} ),
-			document.getElementById( 'primary' )
+				) }
+			/>
 		);
+
+	 console.log( 'themes says', context.primary );
+
+	 next();
 	}
 };
 
