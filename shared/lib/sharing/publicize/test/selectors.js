@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getConnectionsBySiteId,
+	getConnectionsBySiteIdAvailableToCurrentUser,
 	hasFetchedConnections,
 	isFetchingConnections
 } from '../selectors';
@@ -44,6 +45,43 @@ describe( '#getConnectionsBySiteId()', () => {
 		expect( connections ).to.eql( [
 			{ ID: 1, site_ID: 2916284 },
 			{ ID: 2, site_ID: 2916284 }
+		] );
+	} );
+} );
+
+describe( '#getConnectionsBySiteIdAvailableToCurrentUser()', () => {
+	it( 'should return an empty array for a site which has not yet been fetched', () => {
+		const connections = getConnectionsBySiteIdAvailableToCurrentUser( {
+			sharing: {
+				publicize: {
+					connectionsBySiteId: {},
+					connections: {}
+				}
+			}
+		}, 2916284, 26957695 );
+
+		expect( connections ).to.eql( [] );
+	} );
+
+	it( 'should return an array of connection objects received for the site that are available to the current user', () => {
+		const connections = getConnectionsBySiteIdAvailableToCurrentUser( {
+			sharing: {
+				publicize: {
+					connectionsBySiteId: {
+						2916284: [ 1, 2, 3 ]
+					},
+					connections: {
+						1: { ID: 1, site_ID: 2916284, shared: true },
+						2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
+						3: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 18342963 }
+					}
+				}
+			}
+		}, 2916284, 26957695 );
+
+		expect( connections ).to.eql( [
+			{ ID: 1, site_ID: 2916284, shared: true },
+			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 }
 		] );
 	} );
 } );
