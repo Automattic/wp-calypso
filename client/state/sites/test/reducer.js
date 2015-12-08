@@ -28,20 +28,11 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return a new instance of the state object', () => {
-			const original = {};
-			const state = items( original, {
-				type: RECEIVE_SITE,
-				site: { ID: 2916284, name: 'WordPress.com Example Blog' }
-			} );
-
-			expect( state ).to.not.equal( original );
-		} );
-
 		it( 'should accumulate sites', () => {
-			const state = items( {
+			const original = Object.freeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
-			}, {
+			} );
+			const state = items( original, {
 				type: RECEIVE_SITE,
 				site: { ID: 77203074, name: 'Just You Wait' }
 			} );
@@ -53,9 +44,10 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should override previous site of same ID', () => {
-			const state = items( {
+			const original = Object.freeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
-			}, {
+			} );
+			const state = items( original, {
 				type: RECEIVE_SITE,
 				site: { ID: 2916284, name: 'Just You Wait' }
 			} );
