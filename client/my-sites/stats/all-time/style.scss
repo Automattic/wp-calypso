@@ -107,13 +107,14 @@
 	}
 
 	@include breakpoint( "<480px" ) {
-		width: auto;
 		clear: none;
-		float: right;
-		margin-right: 24px;
-		text-align: right;
-		font-size: 16px;
 		display: inline-table; // fixes "Best" section moving down the next line when resizing screen
+		float: right;
+		font-size: 16px;
+		margin-right: 24px;
+		padding: 0;
+		text-align: right;
+		width: auto;
 	}
 }
 
