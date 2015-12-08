@@ -22,12 +22,12 @@ var Token = React.createClass( {
 	render: function() {
 		return (
 			<span className="token-field__token" tabIndex="-1">
-				<span className="token-field__token-text">
-					{ this.props.valueTransform( this.props.value ) }
-				</span>
 				<span
 					className="token-field__remove-token noticon noticon-close-alt"
 					onClick={ this._onClickRemove } />
+				<span className="token-field__token-text">
+					{ this.props.valueTransform( this.props.value ) }
+				</span>
 			</span>
 		);
 	},
