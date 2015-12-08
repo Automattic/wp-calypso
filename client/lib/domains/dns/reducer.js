@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import findIndex from 'lodash/array/findIndex';
 import escapeRegExp from 'lodash/string/escapeRegExp';
+import findIndex from 'lodash/array/findIndex';
+import isUndefined from 'lodash/lang/isUndefined';
 import React from 'react/addons';
 
 /**
@@ -31,7 +32,8 @@ function addDns( state, domainName, record ) {
 
 function deleteDns( state, domainName, record ) {
 	const { id, data, name, type } = record,
-		index = findIndex( state[ domainName ].records, { id, data, name, type } );
+		matchingFields = isUndefined( id ) ? { data, name, type } : { id, data, name, type },
+		index = findIndex( state[ domainName ].records, matchingFields );
 
 	if ( index === -1 ) {
 		return state;

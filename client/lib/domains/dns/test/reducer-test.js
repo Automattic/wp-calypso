@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import pick from 'lodash/object/pick';
 
 /**
  * Internal dependencies
@@ -41,6 +42,26 @@ describe( 'Domains: DNS reducer', () => {
 					type: ActionTypes.DNS_DELETE,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT
+				}
+			};
+
+		const result = reducer( state, payload );
+
+		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [] } } );
+	} );
+
+	it( 'should return state without record (having no id) passed in the delete action', () => {
+		const RECORD_TXT_WITHOUT_ID = pick( RECORD_TXT, [ 'data', 'name', 'type' ] ),
+			state = {
+				[ DOMAIN_NAME ]: {
+					records: [ RECORD_TXT_WITHOUT_ID ]
+				}
+			},
+			payload = {
+				action: {
+					type: ActionTypes.DNS_DELETE,
+					domainName: DOMAIN_NAME,
+					record: RECORD_TXT_WITHOUT_ID
 				}
 			};
 
