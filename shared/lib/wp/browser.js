@@ -13,13 +13,14 @@ import config from 'config';
 let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
-	wpcom = wpcomUndocumented(
-		require( 'lib/oauth-token' ),
-		require( 'lib/wpcom-xhr-wrapper' )
-	);
+	const oauthToken = require( 'lib/oauth-token' ),
+		requestHandler = require( 'lib/wpcom-xhr-wrapper' );
+
+	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
 } else {
-	// Set proxy request handler
-	wpcom = wpcomUndocumented( require( 'wpcom-proxy-request' ) );
+	const requestHandler = require( 'wpcom-proxy-request' );
+
+	wpcom = wpcomUndocumented( requestHandler );
 
 	// Upgrade to "access all users blogs" mode
 	wpcom.request( {
