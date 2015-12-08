@@ -115,6 +115,10 @@ var EditorDrawer = React.createClass( {
 
 	renderSharing: function() {
 		const currentUser = user.get();
+		if ( ! currentUser ) {
+			return null;
+		}
+
 		return (
 			<EditorSharingContainer site={ this.props.site } currentUserID={ currentUser.ID } />
 		);
