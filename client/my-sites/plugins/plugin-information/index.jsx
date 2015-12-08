@@ -9,6 +9,7 @@ import i18n from 'lib/mixins/i18n';
  */
 
 import Gridicon from 'components/gridicon';
+import ExternalLink from 'components/external-link';
 import Rating from 'components/rating';
 import PluginVersion from 'my-sites/plugins/plugin-version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
@@ -43,16 +44,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
-				<a
-					className="plugin-information__external-link"
-					target="_blank"
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
-					href={ this.props.plugin.plugin_url }
-				>
-					<Gridicon size={ 12 } icon="external" />{ this.translate( 'Plugin homepage' ) }
-				</a>
-			</div>
+			<ExternalLink
+				icon={ true }
+				href={ this.props.plugin.plugin_url }
+				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
+				className="plugin-information__external-link"
+			>
+				{ this.translate( 'Plugin homepage' ) }
+			</ExternalLink>
 		);
 	},
 
@@ -61,16 +60,14 @@ export default React.createClass( {
 			return;
 		}
 		return (
-			<div>
-				<a
-					className="plugin-information__external-link"
-					target="_blank"
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug ) }
-					href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
-				>
-					<Gridicon size={ 12 } icon="external" />{ this.translate( 'WordPress.org Plugin page' ) }
-				</a>
-			</div>
+			<ExternalLink
+				icon={ true }
+				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
+				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug ) }
+				className="plugin-information__external-link"
+			>
+				{ this.translate( 'WordPress.org Plugin page' ) }
+			</ExternalLink>
 		);
 	},
 
@@ -80,14 +77,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<a
-				className="plugin-information__external-link"
-				target="_blank"
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
+			<ExternalLink
+				icon={ true }
 				href={ this.props.plugin.support_URL }
+				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
+				className="plugin-information__external-link"
 			>
-				<Gridicon size={ 12 } icon="external" />{ this.translate( 'Learn More' ) }
-			</a>
+				{ this.translate( 'Learn More' ) }
+			</ExternalLink>
 		);
 	},
 

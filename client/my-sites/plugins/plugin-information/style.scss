@@ -1,13 +1,13 @@
 $plugin-information-rating-size: 160px;
 .plugin-information__wrapper {
 	@include breakpoint( '>480px' ) {
-		margin-left: $plugin-information-rating-size + 24;
+		margin-right: $plugin-information-rating-size + 24;
 	}
 }
 
 .plugin-information__version-info {
 	@include breakpoint( '>480px' ) {
-		float: right;
+		float: left;
 		width: 100%;
 	}
 }
@@ -25,9 +25,9 @@ $plugin-information-rating-size: 160px;
 
 .plugin-information__rating-info {
 	@include breakpoint( '>480px' ) {
-		float: left;
+		float: right;
 		width: $plugin-information-rating-size;
-		margin-left: -1 * $plugin-information-rating-size - 24;
+		margin-right: -1 * $plugin-information-rating-size - 24;
 	}
 
 	@include breakpoint( '<480px' ) {
@@ -78,14 +78,8 @@ $plugin-information-rating-size: 160px;
 }
 
 .plugin-information__external-link {
-	font-size: 11px;
-
-	.gridicons-external {
-		color: lighten( $gray, 10% );
-		margin-right: 8px;
-		top: 2px;
-		position: relative;
-	}
+	display: block;
+	margin-top: 16px;
 }
 .plugin-information .plugin-version {
 	font-size: 11px;
