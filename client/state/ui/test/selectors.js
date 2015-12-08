@@ -23,7 +23,7 @@ describe( 'selectors', () => {
 		it( 'should return the object for the selected site', () => {
 			const selected = getSelectedSite( {
 				sites: {
-					byId: {
+					items: {
 						2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 					}
 				},

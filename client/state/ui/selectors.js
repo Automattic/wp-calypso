@@ -9,5 +9,5 @@ export function getSelectedSite( state ) {
 		return null;
 	}
 
-	return state.sites.byId[ state.ui.selectedSite ];
+	return state.sites.items[ state.ui.selectedSite ];
 }
