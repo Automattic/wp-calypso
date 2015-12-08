@@ -7,6 +7,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import MasterbarItem from './masterbar-item';
+import MasterbarItemNew from './masterbar-item-new';
+
+import Gravatar from 'components/gravatar';
+import layoutFocus from 'lib/layout-focus';
+import config from 'config';
+import paths from 'lib/paths';
+
 import MasterbarLoggedOutMenu from './masterbar-logged-out-menu';
 import MasterbarSectionsMenu from './masterbar-sections-menu';
 import Notifications from 'notifications';
@@ -35,6 +43,23 @@ export default React.createClass( {
 			showNotes: false,   // whether we show the notifications panel
 			newNote: newNote    // if we have a new unseen note
 		};
+	},
+
+	clickMySites() {
+		layoutFocus.setNext( 'sidebar' );
+	},
+
+	clickReader() {
+		layoutFocus.setNext( 'content' );
+	},
+
+	checkIsActive( section ) {
+		return !! ( section === this.props.section && ! this.props.showNotes );
+	},
+
+	getNewPostPath() {
+		var currentSite = this.props.sites.getSelectedSite() || this.props.user.get().primarySiteSlug;
+		return paths.newPost( currentSite );
 	},
 
 	getNotificationLinkDomNode() {
@@ -110,6 +135,15 @@ export default React.createClass( {
 		} );
 	},
 
+	wordpressIcon() {
+		// WP icon replacement for "horizon" environment
+		if ( config( 'hostname' ) === 'horizon.wordpress.com' ) {
+			return 'my-sites-horizon';
+		}
+
+		return 'my-sites';
+	},
+
 	renderMenu() {
 		if ( this.props.user ) {
 			return (
@@ -147,13 +181,42 @@ export default React.createClass( {
 
 		masterbarClass = classNames( masterbarClassObject );
 
-		return (
-			<header id="header" className={ masterbarClass }>
-				<div className="masterbar__navigation" role="navigation">
-					{ this.renderMenu() }
-				</div>
-				{ this.renderNotifications() }
-			</header>
-		);
+		if ( this.props.user ) { // Logged in
+			return (
+				<header id="header" className={ masterbarClass }>
+					<MasterbarItem url="/stats" icon={ this.wordpressIcon() } onClick={ this.clickMySites } isActive={ this.checkIsActive( 'sites' ) }>
+						{ this.props.user.get().visible_site_count > 1
+							? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+							: this.translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+						}
+					</MasterbarItem>
+					<MasterbarItem url="/" icon="reader" onClick={ this.clickReader } isActive={ this.checkIsActive( 'reader' ) }>
+						{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</MasterbarItem>
+
+					<MasterbarItemNew sites={ this.props.sites } user={ this.props.user } isActive={ this.checkIsActive( 'post' ) } className="masterbar__item-new">
+						{ this.translate( 'New Post' ) }
+					</MasterbarItemNew>
+					<MasterbarItem url="/me" icon="user-circle" isActive={ this.checkIsActive( 'me' ) } className="masterbar__item-me">
+						<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
+						<span className="masterbar__item-me-label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+					</MasterbarItem>
+					<MasterbarItem url="/notifications" icon="bell" isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
+						{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</MasterbarItem>
+
+					{ this.renderNotifications() }
+				</header>
+			);
+
+		} else { // Logged out
+			return (
+				<header id="header" className={ masterbarClass }>
+					<MasterbarItem url="/" icon="my-sites" className="masterbar__item-logo">
+						WordPress<span className="tld">.com</span>
+					</MasterbarItem>
+				</header>
+			);
+		}
 	}
 } );

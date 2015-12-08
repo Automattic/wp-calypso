@@ -6,6 +6,142 @@ $autobar-height: 20px;
 	background: $blue-wordpress;
 	border-bottom: 1px solid darken( $blue-wordpress, 4% );
 	color: $white;
+	font-size: 16px;
+	display: flex;
+	height: $masterbar-height;
+	margin: 0;
+	position: absolute;
+		left: 0;
+		top: 0;
+	width: 100%;
+	z-index: 180;
+	-webkit-font-smoothing: subpixel-antialiased;
+
+	@include breakpoint( ">660px" ) {
+		position: fixed;
+		backface-visibility: hidden;
+	}
+}
+
+.masterbar__item {
+	flex: 0 1 auto;
+	display: flex;
+		align-items: center;
+	position: relative;
+	color: $white;
+	font-size: 14px;
+	height: $masterbar-height;
+	line-height: $masterbar-height;
+	padding: 0 15px;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all 150ms ease-in;
+
+	.masterbar__item-content {
+		color: $white;
+		padding: 0 6px;
+	}
+
+	&:hover,
+	&:focus {
+		background: $blue-medium;
+		background: rgba( 255, 255, 255, 0.15 );
+		color: $white;
+		outline: 0;
+	}
+
+	&.is-active {
+		background: $blue-dark;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex: 1 1 auto;
+
+		.gridicon {
+			margin: 0 auto;
+		}
+
+		.masterbar__item-content {
+			display: none;
+		}
+	}
+}
+
+.masterbar__item-logo {
+	font-size: 17px;
+	font-weight: 300;
+
+	.tld {
+		color: rgba(255, 255, 255, 0.6);
+	}
+}
+
+.masterbar__item-new {
+	background: $white;
+	border-radius: 3px;
+	color: $blue-wordpress;
+	height: 36px;
+	margin: 5px;
+
+
+	.masterbar__item-content {
+		display: none;
+	}
+
+	&:hover,
+	&:focus {
+		background: $gray-light;
+		color: $blue-wordpress;
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin-left: auto;
+	}
+}
+
+.masterbar__item-me {
+	.gravatar {
+		position: absolute;
+    left: 16px;
+    top: 12px;
+
+		border: 2px solid $white;
+	}
+
+	.masterbar__item-content {
+		padding: 0;
+	}
+
+	.masterbar__item-me-label {
+		display: none;
+	}
+}
+
+.masterbar__item-notifications {
+
+	.masterbar__item-content {
+		display: none;
+	}
+}
+
+
+
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+/****************************************************************************************************/
+
+
+.off {
+.masterbar {
+	background: $blue-wordpress;
+	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	color: $white;
 	font-size: 0.9em;
 	height: $masterbar-height;
 	margin: 0;
@@ -332,4 +468,5 @@ $autobar-height: 20px;
 		margin: -15px 0px 15px 8px;
 		padding-left: 0;
 	}
+}
 }
