@@ -40,6 +40,10 @@
 .section-header.following-edit-header {
 	margin-bottom: 24px;
 
+	@include breakpoint( "<480px" ) {
+		margin-bottom: 8px;
+	}
+
 	.section-header__actions {
 		transition: all 0.15s ease-in-out;
 	}
@@ -103,6 +107,10 @@
 	pointer-events: none;
 	transition: all 0.15s ease-in-out;
 
+	@include breakpoint( "<480px" ) {
+		top: 62px;
+	}
+
 	.search {
 		margin-bottom: 0;
 	}
@@ -153,9 +161,13 @@
 
 	.card.is-search-result {
 		position: absolute;
+			top: 68px;
 		width: 100%;
-		top: 68px;
 		z-index: 35;
+
+		@include breakpoint( "<480px" ) {
+			top: 59px;
+		}
 
 		.gridicon__follow {
 			fill: lighten( $gray, 20% );
@@ -219,6 +231,11 @@
 	color: darken( $gray, 10 );
 	background: lighten( $gray, 30 );
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20 ), .5 );
+
+	@include breakpoint( "<480px" ) {
+		padding: 16px 42px 0 42px;
+		top: 59px;
+	}
 }
 
 

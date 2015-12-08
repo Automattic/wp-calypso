@@ -366,7 +366,7 @@ var FollowingEdit = React.createClass( {
 					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
 
 					<SectionHeaderButton onClick={ this.toggleAddSite }>
-						{ this.translate( 'Add Site' ) }
+						{ this.translate( 'Add' ) }
 					</SectionHeaderButton>
 				</SectionHeader>
 
