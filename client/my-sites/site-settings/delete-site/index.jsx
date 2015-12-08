@@ -15,8 +15,10 @@ var HeaderCake = require( 'components/header-cake' ),
 	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),
 	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
 	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
+	Button = require( 'components/button' ),
 	Dialog = require( 'components/dialog' ),
 	config = require( 'config' ),
+	Gridicon = require ( 'components/gridicon' ),
 	SiteListActions = require( 'lib/sites-list/actions' );
 
 module.exports = React.createClass( {
@@ -51,17 +53,17 @@ module.exports = React.createClass( {
 			deleteButtons, strings;
 
 		deleteButtons = [
-			<button
-				className="button"
+			<Button
 				onClick={ this._closeDialog }>{
 					this.translate( 'Cancel' )
-			}</button>,
-			<button
-				className="button is-destructive"
+			}</Button>,
+			<Button
+				primary
+				scary
 				disabled={ deleteDisabled }
 				onClick={ this._deleteSite }>{
 					this.translate( 'Delete this Site' )
-			}</button>
+			}</Button>
 		];
 
 		strings = {
@@ -94,15 +96,13 @@ module.exports = React.createClass( {
 						}</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<a
-							className="button"
+						<Button
 							disabled={ ! this.state.site }
 							onClick={ this._checkSiteLoaded }
 							href={ exportLink }
 							target={ exportTarget }>
 							{ strings.exportContent }
-							<span className="noticon noticon-external settings-action-panel__footer-button-icon"></span>
-						</a>
+						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
 				<ActionPanel>
@@ -144,13 +144,13 @@ module.exports = React.createClass( {
 						<p><a className="settings-action-panel__body-text-link" href="https://en.support.wordpress.com/contact" target="_blank">{ strings.contactSupport }</a></p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<button
-							className="button is-dangerous"
+						<Button
+							scary
 							disabled={ ! this.state.site }
 							onClick={ this._showDialog }>
-							<span className="noticon noticon-trash settings-action-panel__footer-button-icon"></span>
+							<Gridicon icon="trash" />
 							{ strings.deleteSite }
-						</button>
+						</Button>
 					</ActionPanelFooter>
 
 					<Dialog isVisible={ this.state.showDialog } buttons={ deleteButtons } className="delete-site__confirm-dialog">

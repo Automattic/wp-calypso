@@ -100,7 +100,8 @@ button {
 		border-color: $blue-dark;
 		color: $white;
 	}
-	&[disabled] {
+	&[disabled],
+	&:disabled {
 		background: tint( $blue-light, 50% );
 		border-color: tint( $blue-wordpress, 55% );
 		color: $white;
@@ -111,13 +112,9 @@ button {
 }
 
 // Scary buttons
-.button.is-scary,
-.button.is-dangerous {
+.button.is-scary {
 	color: $alert-red;
 
-	&[disabled] {
-		color: lighten( $alert-red, 30% );
-	}
 	&:hover,
 	&:focus {
 		border-color: $alert-red;
@@ -125,19 +122,24 @@ button {
 	&:focus {
 		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
 	}
+	&[disabled],
+	&:disabled {
+		color: lighten( $alert-red, 30% );
+		border-color: lighten( $gray, 30% );
+	}
 }
 
-.button.is-primary.is-scary,
-.button.is-destructive {
+.button.is-primary.is-scary {
 	background: $alert-red;
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: darken( $alert-red, 30% );
+		border-color: darken( $alert-red, 40% );
 	}
-	&[disabled] {
+	&[disabled],
+	&:disabled {
 		background: lighten( $alert-red, 20% );
 		border-color: tint( $alert-red, 30% );
 	}
@@ -211,6 +213,11 @@ button {
 	}
 	&.is-scary {
 		color: $alert-red;
+
+		&:hover,
+		&:focus {
+			color: darken( $alert-red, 20% );
+		}
 
 		&[disabled] {
 			color: lighten( $alert-red, 30% );
