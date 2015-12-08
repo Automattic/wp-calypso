@@ -72,12 +72,7 @@ a.settings-action-panel__body-text-link {
 	}
 }
 
-.settings-action-panel__footer-button-icon {
-	vertical-align: top;
-	margin: 3px 4px 0 0;
-	color: $gray;
-
-	&:last-child {
-		margin: 3px 0 0 4px;
-	}
+.settings-action-panel__export-button .gridicon,
+.settings-action-panel__support-button .gridicon {
+	margin-left: 8px;
 }

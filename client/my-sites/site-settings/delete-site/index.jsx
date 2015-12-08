@@ -97,11 +97,13 @@ module.exports = React.createClass( {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						<Button
+							className="settings-action-panel__export-button"
 							disabled={ ! this.state.site }
 							onClick={ this._checkSiteLoaded }
 							href={ exportLink }
 							target={ exportTarget }>
 							{ strings.exportContent }
+							<Gridicon icon="external" />
 						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
