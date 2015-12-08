@@ -40,7 +40,8 @@ module.exports = React.createClass( {
 		onKeyDown: React.PropTypes.func,
 		disableAutocorrect: React.PropTypes.bool,
 		onBlur: React.PropTypes.func,
-		searching: React.PropTypes.bool
+		searching: React.PropTypes.bool,
+		forceCloseButton: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -60,7 +61,8 @@ module.exports = React.createClass( {
 			onSearchClose: noop,
 			onKeyDown: noop,
 			disableAutocorrect: false,
-			searching: false
+			searching: false,
+			forceCloseButton: false
 		};
 	},
 
@@ -275,7 +277,7 @@ module.exports = React.createClass( {
 					aria-hidden={ ! isOpenUnpinnedOrQueried }
 					autoCapitalize="none"
 					{...autocorrect } />
-				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
+				{ ( this.props.forceCloseButton || searchValue || this.state.isOpen ) ? this.closeButton() : null }
 			</div>
 		);
 	},
