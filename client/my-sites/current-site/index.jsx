@@ -12,7 +12,8 @@ var React = require( 'react/addons' ),
 var AllSites = require( 'my-sites/all-sites' ),
 	AddNewButton = require( 'components/add-new-button' ),
 	Card = require( 'components/card' ),
-	SiteNotice = require( 'notices/site-notice' ),
+	Notice = require( 'components/notice' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	Site = require( 'my-sites/site' ),
 	Gridicon = require( 'components/gridicon' ),
@@ -98,12 +99,17 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SiteNotice status="is-info">
-				{ this.translate( 'The site redirects to {{a}}%(url)s{{/a}}', {
+			<Notice
+				showDismiss={ false }
+				isCompact={ true }
+				text={ this.translate( 'The site redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
-					components: { a: <a href={ href }/> }
-				} ) }
-			</SiteNotice>
+					components: { a: <a href={ site.URL }/> }
+				} ) }>
+				<NoticeAction href={ href }>
+					{ this.translate( 'Edit' ) }
+				</NoticeAction>
+			</Notice>
 		);
 	},
 
