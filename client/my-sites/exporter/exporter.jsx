@@ -16,14 +16,16 @@ export default React.createClass( {
 	propTypes: {
 		startExport: PropTypes.func.isRequired,
 		setPostType: PropTypes.func.isRequired,
+		setAdvancedSetting: PropTypes.func.isRequired,
 
 		shouldShowProgress: PropTypes.bool.isRequired,
+		advancedSettings: PropTypes.object.isRequired,
 		postType: PropTypes.string
 	},
 
 	render: function() {
-		const { setPostType, startExport } = this.props;
-		const { postType, shouldShowProgress } = this.props;
+		const { setPostType, startExport, setAdvancedSetting } = this.props;
+		const { postType, advancedSettings, shouldShowProgress, options } = this.props;
 
 		const exportButton = (
 			<SpinnerButton
@@ -53,10 +55,13 @@ export default React.createClass( {
 					expandedSummary={ exportButton }
 					>
 					<AdvancedSettings
+						{ ...advancedSettings }
 						postType={ postType }
 						shouldShowProgress={ shouldShowProgress }
 						onSelectPostType={ setPostType }
 						onClickExport={ startExport }
+						onChangeSetting={ setAdvancedSetting }
+						options={ options }
 					/>
 				</FoldableCard>
 			</div>

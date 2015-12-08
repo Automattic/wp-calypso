@@ -34,20 +34,35 @@ export default React.createClass( {
 			pages: this.translate( 'Pages' ),
 			feedback: this.translate( 'Feedback' )
 		};
+		const defaultLabels = {
+			author: 'All Authors',
+			status: 'All Statuses',
+			startDate: 'Start Date…',
+			endDate: 'End Date…',
+			category: 'All Categories'
+		}
+		let buildMenu = ( contentType, setting, optionList ) => {
+			return {
+				value: this.props[ contentType ][ setting ],
+				options: this.props.options[ contentType ][ optionList ],
+				defaultLabel: defaultLabels[ setting ],
+				onChange: ( e ) => this.props.onChangeSetting( contentType, setting, e.target.value )
+			};
+		};
 
 		const menus = {
 			posts: [
-				{ value: 0, options: [ this.translate( 'All Authors' ) ] },
-				{ value: 0, options: [ this.translate( 'All Statuses' ) ] },
-				{ value: 0, options: [ this.translate( 'Starting Date…' ) ] },
-				{ value: 0, options: [ this.translate( 'Ending Date…' ) ] },
-				{ value: 0, options: [ this.translate( 'All Categories' ) ] }
+				buildMenu( 'posts', 'author', 'authors' ),
+				buildMenu( 'posts', 'status', 'statuses' ),
+				buildMenu( 'posts', 'startDate', 'dates' ),
+				buildMenu( 'posts', 'endDate', 'dates' ),
+				buildMenu( 'posts', 'category', 'categories' )
 			],
 			pages: [
-				{ value: 0, options: [ this.translate( 'All Authors' ) ] },
-				{ value: 0, options: [ this.translate( 'All Statuses' ) ] },
-				{ value: 0, options: [ this.translate( 'Starting Date…' ) ] },
-				{ value: 0, options: [ this.translate( 'Ending Date…' ) ] }
+				buildMenu( 'pages', 'author', 'authors' ),
+				buildMenu( 'pages', 'status', 'statuses' ),
+				buildMenu( 'pages', 'startDate', 'dates' ),
+				buildMenu( 'pages', 'endDate', 'dates' ),
 			],
 			feedback: []
 		};
@@ -76,8 +91,7 @@ export default React.createClass( {
 					<OptionFieldset { ...buildOptionProps( 'posts' ) } />
 					<OptionFieldset { ...buildOptionProps( 'pages' ) } />
 					<OptionFieldset { ...buildOptionProps( 'feedback' ) }
-						description={ this.translate( 'Survey results etc.' ) }
-					/>
+						description={ this.translate( 'Survey results etc.' ) }/>
 				</div>
 				<SpinnerButton
 					className="exporter__export-button"

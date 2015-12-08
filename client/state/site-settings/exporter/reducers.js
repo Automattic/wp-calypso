@@ -9,6 +9,9 @@ import Immutable from 'immutable';
  */
 import {
 	SET_EXPORT_POST_TYPE,
+	SET_EXPORTER_ADVANCED_SETTING,
+	FETCH_EXPORTER_ADVANCED_SETTINGS,
+	RECEIVE_EXPORTER_ADVANCED_SETTINGS,
 	REQUEST_START_EXPORT,
 	REPLY_START_EXPORT,
 	FAIL_EXPORT,
@@ -19,7 +22,17 @@ import { States } from './constants';
 
 const initialUIState = Immutable.fromJS( {
 	exportingState: States.READY,
-	postType: null
+	postType: null,
+	advancedSettings: {
+		'posts': {},
+		'pages': {},
+		'feedback': {}
+	}
+} );
+
+const initialDataState = Immutable.fromJS( {
+	siteId: null,
+	advancedSettings: null
 } );
 
 /**
@@ -33,6 +46,10 @@ export function ui( state = initialUIState, action ) {
 	switch ( action.type ) {
 		case SET_EXPORT_POST_TYPE:
 			return state.set( 'postType', action.postType );
+
+		case SET_EXPORTER_ADVANCED_SETTING:
+			const { section, setting, value } = action;
+			return state.setIn( [ 'advancedSettings', section, setting ], value );
 
 		case REQUEST_START_EXPORT:
 			return state.set( 'exportingState', States.STARTING );
@@ -48,6 +65,21 @@ export function ui( state = initialUIState, action ) {
 	return state;
 }
 
+export function data( state = initialDataState, action ) {
+	switch ( action.type ) {
+		case FETCH_EXPORTER_ADVANCED_SETTINGS:
+			return state;
+
+		case RECEIVE_EXPORTER_ADVANCED_SETTINGS:
+			return state
+				.set( 'siteId', action.siteId )
+				.set( 'advancedSettings', Immutable.fromJS( action.data ) );
+	}
+
+	return state;
+}
+
 export default combineReducers( {
-	ui
+	ui,
+	data
 } );
