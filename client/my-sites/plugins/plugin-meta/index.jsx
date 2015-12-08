@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react/addons'
-import classNames from 'classnames'
-import i18n from 'lib/mixins/i18n'
-import _some from 'lodash/collection/some'
+import React from 'react/addons';
+import classNames from 'classnames';
+import i18n from 'lib/mixins/i18n';
+import _some from 'lodash/collection/some';
 
 /**
  * Internal dependencies
  */
+<<<<<<< HEAD
 import analytics from 'analytics'
 import Card from 'components/card'
 import Gridicon from 'components/gridicon'
@@ -24,6 +25,23 @@ import NoticeAction from 'components/notice/notice-action';
 import PluginVersion from 'my-sites/plugins/plugin-version'
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button'
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button'
+=======
+import analytics from 'analytics';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import config from 'config';
+import Notice from 'notices/notice';
+import PluginVersion from 'my-sites/plugins/plugin-version';
+import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginInformation from 'my-sites/plugins/plugin-information';
+>>>>>>> 5012847... Plugin: Update information box
 
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -257,7 +275,7 @@ export default React.createClass( {
 						</div>
 						{ this.renderActions() }
 					</div>
-
+					<PluginInformation plugin={ this.props.plugin } isPlaceholder={ this.props.isPlaceholder } />
 				</Card>
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }

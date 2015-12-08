@@ -18,7 +18,6 @@ import analytics from 'analytics';
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';
 import HeaderCake from 'components/header-cake';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
-import PluginInformation from 'my-sites/plugins/plugin-information';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginsDataStore from 'lib/plugins/wporg-data/store';
@@ -239,7 +238,6 @@ export default React.createClass( {
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ this.props.sites.getSelectedSite() } />
-					<PluginInformation isPlaceholder />
 				</div>
 			</MainComponent>
 		);
@@ -251,7 +249,7 @@ export default React.createClass( {
 			canUpdateFiles: true,
 			name: 'Not a real site',
 			options: {
-				'software_version': 1
+				software_version: 1
 			}
 		}
 		return (
@@ -329,7 +327,6 @@ export default React.createClass( {
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
 						isInstalling={ installInProgress } />
-					<PluginInformation plugin={ this.state.plugin } />
 					<PluginSections plugin={ this.state.plugin } />
 					{ this.renderSitesList() }
 				</div>

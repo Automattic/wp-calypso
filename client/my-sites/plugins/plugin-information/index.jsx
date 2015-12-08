@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react/addons'
-import i18n from 'lib/mixins/i18n'
+import React from 'react/addons';
+import i18n from 'lib/mixins/i18n';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card'
-import Gridicon from 'components/gridicon'
-import Rating from 'components/rating'
-import PluginVersion from 'my-sites/plugins/plugin-version'
-import PluginRatings from 'my-sites/plugins/plugin-ratings/'
-import SectionHeader from 'components/section-header'
-import analytics from 'analytics'
+
+import Gridicon from 'components/gridicon';
+import Rating from 'components/rating';
+import PluginVersion from 'my-sites/plugins/plugin-version';
+import PluginRatings from 'my-sites/plugins/plugin-ratings/';
+import analytics from 'analytics';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
@@ -153,8 +152,6 @@ export default React.createClass( {
 	renderPlaceholder() {
 		return (
 			<div className="plugin-information is-placeholder">
-				<SectionHeader text={ this.translate( 'Plugin Information' ) } />
-				<Card>
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
 							{ this.renderLastUpdated() }
@@ -170,7 +167,6 @@ export default React.createClass( {
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
-				</Card>
 			</div>
 		);
 	},
@@ -178,13 +174,10 @@ export default React.createClass( {
 	renderWpcom() {
 		return (
 			<div className="plugin-information">
-				<SectionHeader label={ this.translate( 'Plugin Information' ) } />
-				<Card>
 					<p className="plugin-information__description">
 						{ this.props.plugin.description }
 					</p>
 					{ this.renderWPCOMPluginSupportLink() }
-				</Card>
 			</div>
 		);
 	},
@@ -192,8 +185,6 @@ export default React.createClass( {
 	renderWporg() {
 		return (
 			<div className="plugin-information">
-				<SectionHeader label={ this.translate( 'Plugin Information' ) } />
-				<Card>
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
 							{ this.renderLastUpdated() }
@@ -209,7 +200,6 @@ export default React.createClass( {
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
-				</Card>
 			</div>
 		);
 	},
