@@ -37,56 +37,31 @@
 }
 
 
-// Add to Following
-.following-edit__subscribe-form {
-	.search {
-		margin-bottom: 0;
+.section-header.following-edit-header {
+	margin-bottom: 24px;
+
+	.section-header__actions {
+		transition: all 0.15s ease-in-out;
 	}
 
-	.search__input[type="search"] {
-		height: 38px;
-		padding-left: 33px;
-		border: 1px solid #c8d7e1;
-
-		&:focus {
-			border-color: #0087be;
- 			box-shadow: 0 0 0 2px #78dcfa;
+	.is-adding & {
+		.section-header__actions {
+			transform: translateX( -30px );
 		}
-	}
-
-	position: relative;
-
-	.noticon {
-		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-		top: 7px;
-		left: 6px;
-		fill: #12b0df;
-		z-index: 40;
-	}
-
-	.noticon-close-alt {
-		top: -12px;
-		right: -8px;
-		color: $gray;
 	}
 }
 
 
-// Search Followed Sites
-.following-edit__existing-feed-search {
-	margin-bottom: 0;
-	margin-left: -1px;
+// More Options
+.following-edit__more-options {
+	float: left;
+	margin-right: 16px;
 
-	.search__input[type="search"] {
-		box-shadow: inset 0 0 0 1px lighten( $gray, 20% );
-	}
-
-	.noticon-close-alt {
-		right: 191px;
+	.gridicon {
+		fill: $gray;
+		position: relative;
+			top: 2px;
+		cursor: pointer;
 	}
 }
 
@@ -106,6 +81,7 @@
 		padding-top: 2px;
 		padding-bottom: 2px;
 		padding-left: 10px;
+		margin: 0;
 
 		&:hover {
 			border-color: #a8bece;
@@ -113,6 +89,95 @@
 		}
 	}
 }
+
+
+// Add to Following
+.following-edit__subscribe-form {
+	overflow: hidden;
+	position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.15s ease-in-out;
+	
+	.search {
+		margin-bottom: 0;
+	}
+
+	.search__input[type="search"] {
+		height: 50px;
+
+		&:focus {
+			border-color: $blue-wordpress;
+			box-shadow: 0 0 0 2px $blue-light;
+		}
+	}
+
+	.noticon {
+		display: none;
+	}
+
+	.gridicons-add-outline {
+		position: absolute;
+			top: 13px;
+			left: 18px;
+		fill: $blue-medium;
+		z-index: 23; // Higher than <Search>'s z-index: 22;
+	}
+
+	.noticon-close-alt {
+		top: -4px;
+		right: -2px;
+		color: $gray;
+	}
+
+	.search__input[type="search"],
+	.gridicons-add-outline,
+	.noticon-close-alt {
+		transform: translateX( 30px );
+		transition: all 0.15s ease-in-out;
+	}
+
+	.is-adding & {
+		opacity: 1;
+		//pointer-events: auto;
+
+		.search__input[type="search"],
+		.gridicons-add-outline,
+		.noticon-close-alt {
+			transform: translateX( 0 );
+		}
+	}
+}
+
+
+// Search Followed Sites
+.following-edit__existing-feed-search {
+	margin-bottom: 0;
+
+	.search__input[type="search"] {
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+	}
+
+	.noticon-close-alt {
+		right: 191px;
+	}
+}
+
+
+// Followed Sites
+.followed-sites-list,
+.following-edit__existing-feed-search {
+	transition: all 0.1s ease-in-out;
+
+	.is-adding & {
+		opacity: 0.3;
+	}
+}
+
 
 .following-edit .reader-list-item__card {
 

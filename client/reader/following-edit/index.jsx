@@ -3,7 +3,9 @@ const React = require( 'react' ),
 	times = require( 'lodash/utility/times' ),
 	trimLeft = require( 'lodash/string/trimLeft' ),
 	Immutable = require( 'immutable' ),
-	debounce = require( 'lodash/function/debounce' );
+	debounce = require( 'lodash/function/debounce' ),
+	classnames = require( 'classnames' ),
+	assign = require( 'lodash/object/assign' );
 
 // Internal dependencies
 const Main = require( 'components/main' ),
@@ -28,7 +30,8 @@ const Main = require( 'components/main' ),
 	FollowingEditSortControls = require( './sort-controls' ),
 	FollowingEditHelper = require( 'reader/following-edit/helper' ),
 	SectionHeader = require( 'components/section-header' ),
-	SectionHeaderButton = require( 'components/section-header/button' );
+	SectionHeaderButton = require( 'components/section-header/button' ),
+	Gridicon = require( 'components/gridicon' );
 
 const initialLoadFeedCount = 20;
 
@@ -42,7 +45,9 @@ var FollowingEdit = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return this.getStateFromStores();
+		return assign( {
+			isAddingOpen: false
+		}, this.getStateFromStores() );
 	},
 
 	getDefaultProps: function() {
@@ -301,6 +306,12 @@ var FollowingEdit = React.createClass( {
 		);
 	},
 
+	toggleAddSite: function() {
+		this.setState( {
+			isAddingOpen: ! this.state.isAddingOpen
+		} );
+	},
+
 	render: function() {
 		let subscriptions = this.state.subscriptions,
 			subscriptionsToDisplay = [],
@@ -328,20 +339,26 @@ var FollowingEdit = React.createClass( {
 			searchPlaceholder = this.translate( 'Search' );
 		}
 
+		var containerClasses = classnames( {
+			'is-adding': this.state.isAddingOpen
+		}, 'following-edit' );
+
 		return (
-			<Main className="following-edit">
+			<Main className={ containerClasses }>
 				<MobileBackToSidebar>
 					<h1>{ this.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
 
-				<SectionHeader label={ this.translate( 'Sites' ) } count={ 2 }>
+				<SectionHeader className="following-edit-header" label={ this.translate( 'Sites' ) } count={ 2 }>
+					<div className="following-edit__more-options">
+						<Gridicon icon="ellipsis" />
+					</div>
+
 					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
 
-					<SectionHeaderButton onClick={ function() {
-						console.log( 'Clicked Add button' );
-					} }>
+					<SectionHeaderButton onClick={ this.toggleAddSite }>
 						{ this.translate( 'Add Site' ) }
 					</SectionHeaderButton>
 				</SectionHeader>
@@ -361,7 +378,8 @@ var FollowingEdit = React.createClass( {
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search ?
 					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
-				<InfiniteList role="main"
+
+				<InfiniteList role="main" className="followed-sites-list"
 					items={ subscriptionsToDisplay }
 					lastPage={ this.state.isLastPage }
 					fetchingNextPage={ this.state.isLoading }
