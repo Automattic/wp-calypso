@@ -4,6 +4,7 @@ var FeedHeader = require( 'reader/feed-header' ),
 	FeedFeatured = require( './featured' ),
 	EmptyContent = require( './empty' ),
 	FollowingStream = require( 'reader/following-stream' ),
+	HeaderCake = require( 'components/header-cake' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
@@ -12,6 +13,10 @@ var FeedHeader = require( 'reader/feed-header' ),
 	feedStreamFactory = require( 'lib/feed-stream-store' );
 
 var SiteStream = React.createClass( {
+
+	getDefaultProps: function() {
+		return { showBack: true };
+	},
 
 	getInitialState: function() {
 		return {
@@ -71,6 +76,12 @@ var SiteStream = React.createClass( {
 		}
 	},
 
+	goBack: function() {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
+		}
+	},
+
 	render: function() {
 		var site = this.state.site,
 			title = this.state.title,
@@ -98,6 +109,7 @@ var SiteStream = React.createClass( {
 
 		return (
 			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent }>
+				{ this.props.showBack ? <HeaderCake isCompact={ false } onClick={ this.goBack } /> : null }
 				<FeedHeader site={ this.state.site } />
 				{ featuredContent }
 			</FollowingStream>

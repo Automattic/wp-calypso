@@ -8,10 +8,15 @@ var EmptyContent = require( './empty' ),
 	FeedStoreActions = require( 'lib/feed-store/actions' ),
 	FeedStoreState = require( 'lib/feed-store/constants' ).state,
 	FeedError = require( 'reader/feed-error' ),
+	HeaderCake = require( 'components/header-cake' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state;
 
 var FeedStream = React.createClass( {
+
+	getDefaultProps: function() {
+		return { showBack: true };
+	},
 
 	getInitialState: function() {
 		var feed = this.getFeed(),
@@ -126,6 +131,12 @@ var FeedStream = React.createClass( {
 		}
 	},
 
+	goBack: function() {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
+		}
+	},
+
 	render: function() {
 		var feed = FeedStore.get( this.props.feedId ),
 			emptyContent = ( <EmptyContent /> );
@@ -140,6 +151,7 @@ var FeedStream = React.createClass( {
 
 		return (
 			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } >
+				{ this.props.showBack ? <HeaderCake isCompact={ false } onClick={ this.goBack } /> : null }
 				<FeedHeader feed={ feed } site={ this.state.site } />
 			</FollowingStream>
 		);
