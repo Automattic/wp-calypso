@@ -24,7 +24,7 @@ export default React.createClass( {
 	},
 
 	updatePageParent( item ) {
-		const parentId = item ? item.ID : null;
+		const parentId = item && item.ID ? item.ID : null;
 		postActions.edit( {
 			parent: parentId
 		} );
