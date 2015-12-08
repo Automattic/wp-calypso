@@ -358,7 +358,7 @@ var FollowingEdit = React.createClass( {
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
 
-				<SectionHeader className="following-edit-header" label={ this.translate( 'Sites' ) } count={ 2 }>
+				<SectionHeader className="following-edit-header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
 					<div className="following-edit__more-options">
 						<Gridicon icon="ellipsis" />
 					</div>

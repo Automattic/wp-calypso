@@ -68,6 +68,10 @@
 		position: relative;
 			top: 2px;
 		cursor: pointer;
+
+		&:hover {
+			fill: $blue-medium;
+		}
 	}
 }
 
