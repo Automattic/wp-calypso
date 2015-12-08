@@ -36,6 +36,84 @@
 	}
 }
 
+
+// Add to Following
+.following-edit__subscribe-form {
+	.search {
+		margin-bottom: 0;
+	}
+
+	.search__input[type="search"] {
+		height: 38px;
+		padding-left: 33px;
+		border: 1px solid #c8d7e1;
+
+		&:focus {
+			border-color: #0087be;
+ 			box-shadow: 0 0 0 2px #78dcfa;
+		}
+	}
+
+	position: relative;
+
+	.noticon {
+		display: none;
+	}
+
+	.gridicons-add-outline {
+		position: absolute;
+		top: 7px;
+		left: 6px;
+		fill: #12b0df;
+		z-index: 40;
+	}
+
+	.noticon-close-alt {
+		top: -12px;
+		right: -8px;
+		color: $gray;
+	}
+}
+
+
+// Search Followed Sites
+.following-edit__existing-feed-search {
+	margin-bottom: 0;
+	margin-left: -1px;
+
+	.search__input[type="search"] {
+		box-shadow: inset 0 0 0 1px lighten( $gray, 20% );
+	}
+
+	.noticon-close-alt {
+		right: 191px;
+	}
+}
+
+
+// Sort Controls
+.following-edit-sort-controls {
+	float: left;
+	margin-right: 8px;
+
+	label {
+		display: none;
+	}
+
+	select {
+		font-size: 12px;
+		color: $gray;
+		padding-top: 2px;
+		padding-bottom: 2px;
+		padding-left: 10px;
+
+		&:hover {
+			border-color: #a8bece;
+			color: #2e4453;
+		}
+	}
+}
+
 .following-edit .reader-list-item__card {
 
 	&.is-placeholder {
@@ -115,46 +193,6 @@
 		z-index: z-index( '.following-edit', '.following-edit .reader-list-item__card.is-search-result' );
 	}
 }
-
-
-// Add to Following
-.following-edit__subscribe-form {
-	.search {
-		margin-bottom: 0;
-	}
-
-	.search__input[type="search"] {
-		height: 38px;
-		padding-left: 33px;
-		border: 1px solid #c8d7e1;
-
-		&:focus {
-			border-color: #0087be;
-			box-shadow: 0 0 0 2px #78dcfa;
-		}
-	}
-
-	position: relative;
-
-	.search-open__icon {
-		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-		top: 7px;
-		left: 6px;
-		fill: #12b0df;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
-	}
-
-	.search-close__icon {
-		top: 20px;
-		right: -8px;
-		color: $gray;
-	}
-}
-
 
 .following-edit-navigation {
 	min-height: 25px;
@@ -239,46 +277,6 @@
 
 .following-edit__notification-settings-error {
 	margin-top: 12px;
-}
-
-.following-edit__existing-feed-search {
-	margin-bottom: 0;
-	margin-left: -1px;
-
-	.search__input[type="search"] {
-		box-shadow: inset 0 0 0 1px lighten( $gray, 20% );
-	}
-
-	.noticon-close-alt {
-		right: 191px;
-	}
-}
-
-.following-edit-sort-controls {
-	position: absolute;
-		right: -1px;
-	z-index: z-index( '.following-edit', '.following-edit-sort-controls' );
-	background-color: $gray-light;
-	padding: 13px 8px 0 16px;
-	box-shadow: inset 0px 0px 0px 1px lighten( $gray, 20% );
-	min-height: 51px;
-	box-sizing: border-box;
-
-	label {
-		vertical-align: middle;
-		color: $gray;
-		display: inline-block;
-		font-size: 13px;
-		font-weight: 600;
-		margin-top: -1px;
-		margin-right: 6px;
-	}
-
-	select {
-		vertical-align: middle;
-		min-width: 100px;
-		display: inline;
-	}
 }
 
 @include breakpoint( ">660px" ) {

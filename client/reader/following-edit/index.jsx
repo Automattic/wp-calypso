@@ -337,7 +337,8 @@ var FollowingEdit = React.createClass( {
 				{ this.renderUnfollowError() }
 
 				<SectionHeader label={ this.translate( 'Sites' ) } count={ 2 }>
-					<SectionHeaderButton>Sort By</SectionHeaderButton>
+					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+
 					<SectionHeaderButton onClick={ function() {
 						console.log( 'Clicked Add button' );
 					} }>
@@ -350,7 +351,7 @@ var FollowingEdit = React.createClass( {
 					onSearchClose={ this.handleNewSubscriptionSearchClose }
 					onFollow={ this.handleFollow }
 					initialSearchString={ this.props.initialFollowUrl } />
-				<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+
 				<Search
 					key="existingFeedSearch"
 					autoFocus={ false }
