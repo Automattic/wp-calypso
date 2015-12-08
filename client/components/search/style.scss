@@ -15,7 +15,8 @@
 
 	.search-open__icon {
 		position: absolute;
-			top: 14px;
+			top: 50%;
+		margin-top: -12px;
 		width: 60px;
 		z-index: 20;
 		color: $blue-wordpress;
@@ -38,8 +39,9 @@
 	.search-close__icon {
 		position: absolute;
 			bottom: 0;
-			top: 14px;
+			top: 50%;
 			right: 0;
+		margin-top: -12px;
 		width: 60px;
 		cursor: pointer;
 		z-index: 20;
