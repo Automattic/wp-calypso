@@ -152,10 +152,16 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var codePlaceholder = '123456';
+		var codePlaceholder = this.translate( 'e.g. 123456', {
+			context: '6 digit two factor code placeholder.',
+			textOnly: true
+		} );
 
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			codePlaceholder = '1234567';
+			codePlaceholder = this.translate( 'e.g. 1234567', {
+				context: '7 digit two factor code placeholder.',
+				textOnly: true
+			} );
 		}
 
 		return (
