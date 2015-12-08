@@ -29,7 +29,7 @@ function cancelPurchase( purchaseId, onComplete ) {
 
 function cancelPrivateRegistration( purchaseId, onComplete ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL,
+		type: ActionTypes.PRIVACY_PROTECTION_CANCEL,
 		purchaseId
 	} );
 
@@ -40,12 +40,12 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 
 		if ( success ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_COMPLETED,
+				type: ActionTypes.PRIVACY_PROTECTION_CANCEL_COMPLETED,
 				purchase: purchasesAssembler.createPurchaseObject( data.upgrade )
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_FAILED,
+				type: ActionTypes.PRIVACY_PROTECTION_CANCEL_FAILED,
 				purchaseId,
 				error: error.message || i18n.translate( 'There was a problem canceling this private registration. Please try again later or contact support.' )
 			} );

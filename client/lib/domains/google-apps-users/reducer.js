@@ -29,7 +29,7 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.RECEIVE_GOOGLE_APPS_USERS:
+		case ActionTypes.GOOGLE_APPS_USERS_FETCH_COMPLETED:
 			state = updateState( state, action.domainName, {
 				hasLoadedFromServer: true,
 				value: action.users

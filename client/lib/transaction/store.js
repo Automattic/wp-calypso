@@ -76,30 +76,30 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.SET_TRANSACTION_DOMAIN_DETAILS:
+		case UpgradesActionTypes.TRANSACTION_DOMAIN_DETAILS_SET:
 			setDomainDetails( action.domainDetails );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_PAYMENT:
+		case UpgradesActionTypes.TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_NEW_CREDIT_CARD_DETAILS:
+		case UpgradesActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
 				maskedDetails: action.maskedDetails
 			} );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_STEP:
+		case UpgradesActionTypes.TRANSACTION_STEP_SET:
 			setStep( action.step );
 			break;
 
-		case UpgradesActionTypes.RESET_TRANSACTION:
+		case UpgradesActionTypes.TRANSACTION_RESET:
 			reset();
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
+		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
 			if ( ! cartItems.hasDomainRegistration( CartStore.get() ) && hasDomainDetails( TransactionStore.get() ) ) {

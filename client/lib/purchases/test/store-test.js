@@ -64,7 +64,7 @@ describe( 'Purchases Store', () => {
 
 	it( 'should return an object with original purchase when cancelation of private registration is triggered', () => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL,
+			type: actionTypes.PRIVACY_PROTECTION_CANCEL,
 			purchaseId: 2
 		} );
 
@@ -80,7 +80,7 @@ describe( 'Purchases Store', () => {
 
 	it( 'should return an object with original purchase and error message when cancelation of private registration failed', () => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_FAILED,
+			type: actionTypes.PRIVACY_PROTECTION_CANCEL_FAILED,
 			error: 'Unable to fetch stored cards',
 			purchaseId: 2
 		} );
@@ -98,7 +98,7 @@ describe( 'Purchases Store', () => {
 
 	it( 'should return an object with updated purchase when cancelation of private registration completed', () => {
 		Dispatcher.handleServerAction( {
-			type: actionTypes.PURCHASES_PRIVATE_REGISTRATION_CANCEL_COMPLETED,
+			type: actionTypes.PRIVACY_PROTECTION_CANCEL_COMPLETED,
 			purchase: {
 				amount: 2200,
 				error: null,

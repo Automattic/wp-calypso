@@ -193,13 +193,13 @@ function updateWhois( domainName, contactInformation, onComplete ) {
 
 function fetchDns( domainName ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_DNS,
+		type: ActionTypes.DNS_FETCH,
 		domainName
 	} );
 
 	wpcom.fetchDns( domainName, ( error, data ) => {
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_DNS,
+			type: ActionTypes.DNS_FETCH_COMPLETED,
 			records: data && data.records,
 			domainName,
 			error
@@ -210,7 +210,7 @@ function fetchDns( domainName ) {
 function addDns( domainName, record, onComplete ) {
 	wpcom.addDns( domainName, record, ( error ) => {
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.ADD_DNS,
+			type: ActionTypes.DNS_ADD_COMPLETED,
 			domainName,
 			record,
 			error
@@ -222,7 +222,7 @@ function addDns( domainName, record, onComplete ) {
 
 function deleteDns( domainName, record, onComplete ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.DELETING_DNS,
+		type: ActionTypes.DNS_DELETE,
 		domainName,
 		record
 	} );
@@ -282,7 +282,7 @@ function resendIcannVerification( domainName, onComplete ) {
 	wpcom.resendIcannVerification( domainName, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.RESEND_ICANN_VERIFICATION,
+				type: ActionTypes.ICANN_VERIFICATION_RESEND_COMPLETED,
 				domainName
 			} );
 		}
@@ -293,7 +293,7 @@ function resendIcannVerification( domainName, onComplete ) {
 
 function fetchGoogleAppsUsers( domainName ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_GOOGLE_APPS_USERS,
+		type: ActionTypes.GOOGLE_APPS_USERS_FETCH,
 		domainName
 	} );
 
@@ -304,7 +304,7 @@ function fetchGoogleAppsUsers( domainName ) {
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_GOOGLE_APPS_USERS,
+			type: ActionTypes.GOOGLE_APPS_USERS_FETCH_COMPLETED,
 			domainName,
 			users: googleAppsUsersAssembler.createDomainObject( data )
 		} );
@@ -443,7 +443,7 @@ function enableDomainLocking( domainName, onComplete ) {
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED,
+			type: ActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED,
 			domainName
 		} );
 
@@ -459,7 +459,7 @@ function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED,
+			type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
 			siteId,
 			domainName
 		} );

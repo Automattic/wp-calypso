@@ -110,23 +110,23 @@ CartStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS:
+		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS:
+		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_REMOVE:
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.ADD_CART_ITEM:
+		case UpgradesActionTypes.CART_ITEM_ADD:
 			update( cartItems.add( cartItem ) );
 			break;
 
-		case UpgradesActionTypes.APPLY_CART_COUPON:
+		case UpgradesActionTypes.CART_COUPON_APPLY:
 			update( applyCoupon( action.coupon ) );
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
+		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			update( cartItems.removeItemAndDependencies( cartItem, CartStore.get() ) );
 			break;
 	}

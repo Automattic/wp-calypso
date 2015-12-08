@@ -16,26 +16,26 @@ import 'lib/cart/store';
 
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.OPEN_CART_POPUP,
+		type: ActionTypes.CART_POPUP_OPEN,
 		options: options || {}
 	} );
 }
 
 function closeCartPopup() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CLOSE_CART_POPUP
+		type: ActionTypes.CART_POPUP_CLOSE
 	} );
 }
 
 function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS
+		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD
 	} );
 }
 
 function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS
+		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE
 	} );
 }
 
@@ -46,14 +46,14 @@ function addItem( cartItem ) {
 		newCartItem = assign( {}, cartItem, { extra } );
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_CART_ITEM,
+		type: ActionTypes.CART_ITEM_ADD,
 		cartItem: newCartItem
 	} );
 }
 
 function removeItem( cartItem ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_CART_ITEM,
+		type: ActionTypes.CART_ITEM_REMOVE,
 		cartItem
 	} );
 }
@@ -74,7 +74,7 @@ function removeDomainFromCart( domainSuggestion ) {
 
 function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.APPLY_CART_COUPON,
+		type: ActionTypes.CART_COUPON_APPLY,
 		coupon
 	} );
 }

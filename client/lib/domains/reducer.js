@@ -87,7 +87,7 @@ function reducer( state, payload ) {
 				settingPrimaryDomain: false
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED:
+		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.siteId, action.domainName, {
 				privateDomain: true
 			} );

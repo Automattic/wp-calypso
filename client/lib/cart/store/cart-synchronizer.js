@@ -80,7 +80,7 @@ CartSynchronizer.prototype.handleDispatch = function( payload ) {
 	var action = payload.action,
 		step;
 
-	if ( action.type !== upgradesActionTypes.TRANSACTION_STEP ) {
+	if ( action.type !== upgradesActionTypes.TRANSACTION_STEP_SET ) {
 		return;
 	}
 

@@ -47,7 +47,7 @@ function reducer( state, payload ) {
 				needsUpdate: true
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED:
+		case UpgradesActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked: true,
@@ -55,7 +55,7 @@ function reducer( state, payload ) {
 				} )
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED:
+		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					pendingTransfer: false
