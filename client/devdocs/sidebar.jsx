@@ -47,6 +47,12 @@ export default React.createClass( {
 						</a>
 					</li>
 					<li className="devdocs__navigation-item">
+						<Gridicon icon="heading" />
+						<a className="devdocs__sidebar-item" href="/devdocs/design/typography">
+							Typography
+						</a>
+					</li>
+					<li className="devdocs__navigation-item">
 						<Gridicon icon="types" />
 						<a className="devdocs__sidebar-item" href="/devdocs/docs/icons.md">
 							Icons

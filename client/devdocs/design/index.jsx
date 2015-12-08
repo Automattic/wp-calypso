@@ -11,7 +11,6 @@ var React = require( 'react' ),
  */
 var SearchCard = require( 'components/search-card' ),
 	SearchDemo = require( 'components/search/docs/example' ),
-	Typography = require( 'components/typography/docs/example' ),
 	Notices = require( 'components/notice/docs/example' ),
 	Buttons = require( 'components/button/docs/example' ),
 	ButtonGroups = require( 'components/button-group/docs/example' ),
@@ -178,7 +177,6 @@ module.exports = React.createClass( {
 					</SearchCard>
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
-					<Typography />
 					<Notices />
 					<Buttons />
 					<ButtonGroups />
