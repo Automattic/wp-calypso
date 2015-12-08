@@ -10,6 +10,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import sharing from './sharing/reducer';
 import sites from './sites/reducer';
 import ui from './ui/reducer';
+import notices from './notices/reducers';
 
 /**
  * Module variables
@@ -17,7 +18,8 @@ import ui from './ui/reducer';
 const reducer = combineReducers( {
 	sharing,
 	sites,
-	ui
+	ui,
+    notices
 } );
 
 export function createReduxStore() {
