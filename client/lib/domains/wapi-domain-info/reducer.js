@@ -65,7 +65,7 @@ function reducer( state, payload ) {
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			const { data } = state[ action.domainName ],
 				domainData = getSelectedDomain( {
-					domains: DomainsStore.getForSite( action.siteId ),
+					domains: DomainsStore.getBySite( action.siteId ),
 					selectedDomainName: action.domainName
 				} ),
 				locked = ( ! action.unlock ) && data.locked,

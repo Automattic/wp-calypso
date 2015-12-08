@@ -18,13 +18,13 @@ It is modelled as a [Flux](https://facebook.github.io/flux/docs/overview.html) s
 
 ## Usage
 
-The store is a singleton object which offers `get` and `getForSite` methods to retrieve data:
+The store is a singleton object which offers `get` and `getBySite` methods to retrieve data:
 
 ```js
 import DomainsStore from 'lib/domains/store';
 
 DomainsStore.get()
-DomainsStore.getForSite( 'example.wordpress.com' )
+DomainsStore.getBySite( 'example.wordpress.com' )
 ```
 
 To interact with the store, use the actions made available in [`domain-management.js`](../../upgrades/actions/domain-management.js):

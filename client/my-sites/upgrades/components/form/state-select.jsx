@@ -31,7 +31,7 @@ module.exports = React.createClass( {
 				focus: this.state.focus,
 				invalid: this.props.invalid
 			} ),
-			statesList = this.props.statesList.getForCountry( this.props.countryCode ),
+			statesList = this.props.statesList.getByCountry( this.props.countryCode ),
 			options = [];
 
 		if ( isEmpty( statesList ) ) {

@@ -82,7 +82,7 @@ StatesList.prototype.fetchForCountry = function( countryCode ) {
  * @param {string} countryCode - country code
  * @returns {object} the list of states
  */
-StatesList.prototype.getForCountry = function( countryCode ) {
+StatesList.prototype.getByCountry = function( countryCode ) {
 	var data;
 
 	if ( ! this.data ) {

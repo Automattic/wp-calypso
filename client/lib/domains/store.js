@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { createReducerStore } from 'lib/store';
-import { getForSite, initialState, reducer } from './reducer';
+import { getBySite, initialState, reducer } from './reducer';
 
 const DomainsStore = createReducerStore( reducer, initialState );
 
-DomainsStore.getForSite = siteId => getForSite( DomainsStore.get(), siteId );
+DomainsStore.getBySite = siteId => getBySite( DomainsStore.get(), siteId );
 
 export default DomainsStore;

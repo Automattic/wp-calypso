@@ -52,7 +52,7 @@ The child component should receive processed props defined during the render:
 As well as:
 
 * `cart` - products added to the cart, it's the result of a call to `CartStore.get`  
-* `domains` - a list of domains, it's the result of a call to `DomainsStore.getForSite` for the current site
+* `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
 * `googleAppsUsers` - Google Apps users, it's the result of a call to `GoogleAppsUsersStore.getByDomainName` for the current domain
 
 It's updated whenever `CartStore`, `DomainsStore`, `GoogleAppsUsersStore`, `productsList` or `sites` changes.
