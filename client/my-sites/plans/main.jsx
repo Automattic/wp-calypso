@@ -51,10 +51,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	sidebarNavigation: function() {
-		return <SidebarNavigation />;
-	},
-
 	render: function() {
 		var classNames = 'main main-column ',
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
@@ -62,9 +58,14 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classNames } role="main">
-				{ this.sidebarNavigation() }
+				<SidebarNavigation />
+
 				<div id="plans" className="plans has-sidebar">
-					{ this.sectionNavigation() }
+					<UpgradesNavigation
+						path={ this.props.context.path }
+						cart={ this.props.cart }
+						selectedSite={ this.props.sites.getSelectedSite() } />
+
 					<PlanList
 						sites={ this.props.sites }
 						plans={ this.props.plans.get() }
@@ -75,15 +76,6 @@ module.exports = React.createClass( {
 					{ ! hasJpphpBundle && this.comparePlansLink() }
 				</div>
 			</div>
-		);
-	},
-
-	sectionNavigation: function() {
-		return (
-			<UpgradesNavigation
-				path={ this.props.context.path }
-				cart={ this.props.cart }
-				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
 } );
