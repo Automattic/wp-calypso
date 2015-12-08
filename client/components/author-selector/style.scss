@@ -53,8 +53,8 @@
 		height: 43px;
 		margin-bottom: 0;
 
-		.is-open .noticon-search {
-			color: $gray;
+		&.is-open .gridicon {
+			top: 12px;
 		}
 
 		.search__input[type="search"] {
