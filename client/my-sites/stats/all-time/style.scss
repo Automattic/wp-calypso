@@ -106,6 +106,10 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 
+	&.is-low {
+		color: $gray;
+	}
+
 	@include breakpoint( "<480px" ) {
 		clear: none;
 		display: inline-table; // fixes "Best" section moving down the next line when resizing screen
