@@ -770,7 +770,8 @@ describe( 'post-normalizer', function() {
 				'http://example.com?src=http://youtube.com',
 				'http://example.com?src=http://YouTube.com',
 				'http://foobar.youtube.com.example.com/',
-				'http://foobaryoutube.com/'
+				'http://foobaryoutube.com/',
+				'https://notspotify.com/'
 			];
 			const badContent = badSrcs.map( ( src ) => ( '<iframe src="' + src + '"></iframe>' ) ).join( '\n' );
 			normalizer(
