@@ -2,7 +2,7 @@
 .sidebar,
 .secondary-cart { // This selects the sidebar on /checkout
 	overflow: auto;
-	padding: 0;
+	padding: 0 0 40px 0;
 	background: lighten( $gray, 30% );
 	position: fixed;
 		top: 47px;
@@ -35,6 +35,51 @@
 
 		.focus-sites & {
 			transform: translateX( 100vw );
+		}
+	}
+}
+
+.scroll-indicator {
+	display: none;
+}
+
+// Fade Overlay
+.is-scrollable {
+	.scroll-indicator {
+		display: block;
+		pointer-events: none;
+		z-index: 2;
+		position: fixed;
+			bottom: 8px;
+			left: 0;
+		height: 24px;
+		text-align: center;
+		width: $sidebar-width-max;
+		transition: all 0.15s ease-in-out;
+
+		.gridicon {
+			fill: $gray;
+		}
+	}
+
+	&:after {
+		pointer-events: none;
+		z-index: 1;
+		position: fixed;
+			bottom: 0;
+			left: 0;
+		display: block;
+		content: '';
+		height: 56px;
+		width: $sidebar-width-max;
+		background: linear-gradient( to bottom, rgba( lighten( $gray, 30% ), 0 ) 0%, rgba( lighten( $gray, 30% ), 1 ) 70% );
+		transition: all 0.15s ease-in-out;
+	}
+
+	&.is-scrolled {
+		.scroll-indicator,
+		&:after {
+			opacity: 0;
 		}
 	}
 }
