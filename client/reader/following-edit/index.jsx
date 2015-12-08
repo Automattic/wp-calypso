@@ -26,7 +26,9 @@ const Main = require( 'components/main' ),
 	smartSetState = require( 'lib/react-smart-set-state' ),
 	escapeRegexp = require( 'escape-string-regexp' ),
 	FollowingEditSortControls = require( './sort-controls' ),
-	FollowingEditHelper = require( 'reader/following-edit/helper' );
+	FollowingEditHelper = require( 'reader/following-edit/helper' ),
+	SectionHeader = require( 'components/section-header' ),
+	SectionHeaderButton = require( 'components/section-header/button' );
 
 const initialLoadFeedCount = 20;
 
@@ -333,6 +335,16 @@ var FollowingEdit = React.createClass( {
 				</MobileBackToSidebar>
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
+
+				<SectionHeader label={ this.translate( 'Sites' ) } count={ 2 }>
+					<SectionHeaderButton>Sort By</SectionHeaderButton>
+					<SectionHeaderButton onClick={ function() {
+						console.log( 'Clicked Add button' );
+					} }>
+						{ this.translate( 'Add Site' ) }
+					</SectionHeaderButton>
+				</SectionHeader>
+
 				<FollowingEditSubscribeForm
 					onSearch={ this.handleNewSubscriptionSearch }
 					onSearchClose={ this.handleNewSubscriptionSearchClose }
