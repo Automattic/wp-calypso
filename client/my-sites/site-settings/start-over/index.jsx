@@ -13,7 +13,9 @@ var HeaderCake = require( 'components/header-cake' ),
 	ActionPanelTitle = require( 'my-sites/site-settings/action-panel/title' ),
 	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),
 	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
-	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' );
+	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
+	Button = require ( 'components/button' ),
+	Gridicon = require ( 'components/gridicon' );
 
 module.exports = React.createClass( {
 
@@ -57,7 +59,13 @@ module.exports = React.createClass( {
 						}</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<a className="button" href="https://en.support.wordpress.com/contact" target="_blank">{ strings.contactSupport }<span className="noticon noticon-external settings-action-panel__footer-button-icon"></span></a>
+						<Button
+							className="settings-action-panel__support-button"
+							href="https://en.support.wordpress.com/contact"
+							target="_blank">
+							{ strings.contactSupport }
+							<Gridicon icon="external" />
+						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
 			</div>
