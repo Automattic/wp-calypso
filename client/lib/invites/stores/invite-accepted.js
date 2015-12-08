@@ -11,11 +11,11 @@ const InviteMessageStore = createReducerStore( ( state, payload ) => {
 		case ActionTypes.INVITE_ACCEPTED:
 		case ActionTypes.DISPLAY_INVITE_ACCEPTED_NOTICE:
 			newState.accepted = true;
-			newState.siteId = parseInt( action.invite.site.ID );
+			newState.siteId = parseInt( action.invite.site.ID, 10 );
 			return newState;
 		case ActionTypes.DISPLAY_INVITE_DECLINED_NOTICE:
 			newState.declined = true;
-			newState.siteId = parseInt( action.siteId );
+			newState.siteId = parseInt( action.siteId, 10 );
 			return newState;
 		case ActionTypes.DISMISS_INVITE_ACCEPTED_NOTICE:
 		case ActionTypes.DISMISS_INVITE_DECLINED_NOTICE:

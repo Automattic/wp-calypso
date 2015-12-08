@@ -30,7 +30,7 @@ export default React.createClass( {
 		}
 		const { accepted, declined, siteId } = this.state;
 		if ( accepted ) {
-			const site = this.props.sites.getSite( parseInt( siteId ) );
+			const site = this.props.sites.getSite( parseInt( siteId, 10 ) );
 			if ( ! site ) {
 				return null;
 			}
