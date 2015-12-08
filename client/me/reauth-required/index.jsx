@@ -156,6 +156,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Dialog
+				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
@@ -177,11 +178,13 @@ module.exports = React.createClass( {
 					<FormFieldset>
 						<FormLabel htmlFor="code">{ this.translate( 'Verification Code' ) }</FormLabel>
 						<FormTelInput
+							autoFocus={ true }
 							id="code"
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							placeholder={ codePlaceholder }
 							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
+							ref="code"
 							valueLink={ this.linkState( 'code' ) } />
 
 						{ this.renderFailedValidationMsg() }
