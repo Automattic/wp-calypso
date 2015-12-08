@@ -79,9 +79,7 @@ function init() {
 	} );
 }
 
-function setUpContext( layout ) {
-	var reduxStore = createReduxStore();
-
+function setUpContext( layout, reduxStore ) {
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
 	page( '*', function( context, next ) {
@@ -139,7 +137,7 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
-	var layoutSection, layout, validSections = [];
+	var layoutSection, layout, reduxStore, validSections = [];
 
 	init();
 
@@ -154,6 +152,8 @@ function boot() {
 	} );
 
 	translatorJumpstart.init();
+
+	reduxStore = createReduxStore();
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
