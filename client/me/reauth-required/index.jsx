@@ -97,6 +97,10 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	preValidateAuthCode: function() {
+		return this.state.code.length && this.state.code.length > 5;
+	},
+
 	renderSendSMSButton: function() {
 		var button;
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
@@ -148,14 +152,21 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var codePlaceholder = '123456';
+		var codePlaceholder = this.translate( 'e.g. 123456', {
+			context: '6 digit two factor code placeholder.',
+			textOnly: true
+		} );
 
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			codePlaceholder = '1234567';
+			codePlaceholder = this.translate( 'e.g. 1234567', {
+				context: '7 digit two factor code placeholder.',
+				textOnly: true
+			} );
 		}
 
 		return (
 			<Dialog
+				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
@@ -177,11 +188,13 @@ module.exports = React.createClass( {
 					<FormFieldset>
 						<FormLabel htmlFor="code">{ this.translate( 'Verification Code' ) }</FormLabel>
 						<FormTelInput
+							autoFocus={ true }
 							id="code"
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							placeholder={ codePlaceholder }
 							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
+							ref="code"
 							valueLink={ this.linkState( 'code' ) } />
 
 						{ this.renderFailedValidationMsg() }
@@ -201,7 +214,10 @@ module.exports = React.createClass( {
 					{ this.renderSMSResendThrottled() }
 
 					<FormButtonsBar>
-						<FormButton disabled={ this.state.validatingCode } onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) } >
+						<FormButton
+							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+							onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) }
+						>
 							{ this.translate( 'Verify' ) }
 						</FormButton>
 
