@@ -145,6 +145,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 					disableAutocorrect={ true }
 					autoFocus={ true }
 					initialValue={ this.props.initialSearchString }
+					forceCloseButton={ true }
 				/>
 				{ searchResult }
 			</div>
