@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/collection/filter';
-import React from 'react/addons';
+import findIndex from 'lodash/array/findIndex';
 import escapeRegExp from 'lodash/string/escapeRegExp';
+import React from 'react/addons';
 
 /**
  * Internal dependencies
@@ -30,12 +30,16 @@ function addDns( state, domainName, record ) {
 }
 
 function deleteDns( state, domainName, record ) {
-	const command = {},
-		records = filter( state[ domainName ].records, function( item ) {
-			return record.id !== item.id || record.name !== item.name || record.data !== item.data || record.type !== item.type;
-		} );
+	const { id, data, name, type } = record,
+		index = findIndex( state[ domainName ].records, { id, data, name, type } );
 
-	command[ domainName ] = { records: { $set: records } };
+	if ( index === -1 ) {
+		return state;
+	}
+
+	const command = {
+		[ domainName ]: { records: { $splice: [ [ index, 1 ] ] } }
+	};
 
 	return React.addons.update( state, command );
 }

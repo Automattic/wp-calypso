@@ -27,7 +27,7 @@ describe( 'Domains: DNS reducer', () => {
 
 		const result = reducer( state, payload );
 
-		expect( result ).to.be.eql( state );
+		expect( result ).to.be.equal( state );
 	} );
 
 	it( 'should return state without record passed in the delete action', () => {
