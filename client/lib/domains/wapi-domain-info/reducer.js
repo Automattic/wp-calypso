@@ -7,6 +7,7 @@ import React from 'react/addons';
  * Internal dependencies
  */
 import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
+// TODO: remove dependency
 import DomainsStore from 'lib/domains/store';
 import { getSelectedDomain } from 'lib/domains';
 
