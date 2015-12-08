@@ -31,6 +31,7 @@ export default React.createClass( {
 			React.PropTypes.string,
 			React.PropTypes.object
 		] ),
+		icon: React.PropTypes.string,
 		className: React.PropTypes.string
 	},
 
@@ -100,7 +101,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classnames( this.props.className, noticeClass ) }>
-				<Gridicon className="notice__icon" icon={ this.getIcon() } size={ 24 } />
+				<Gridicon className="notice__icon" icon={ this.props.icon || this.getIcon() } size={ 24 } />
 				{ this.renderChildren() }
 				{ dismiss }
 			</div>

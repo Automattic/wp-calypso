@@ -32,10 +32,18 @@ var Notices = React.createClass( {
 					text="I'm a notice with no status."
 					showDismiss={ false }
 					isCompact={ this.state.compactNotices ? true : null } />
-				<Notice status="is-info" text="I'm an `is-info` notice." isCompact={ this.state.compactNotices ? true : null } />
+				<Notice
+					status="is-info"
+					text="I'm an `is-info` notice with custom icon."
+					icon="heart"
+					isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-success" text="I'm an `is-success` notice." isCompact={ this.state.compactNotices ? true : null } />
 				<Notice status="is-error" text="I'm an `is-error` notice." isCompact={ this.state.compactNotices ? true : null } />
-				<Notice status="is-warning" text="I'm an `is-warning` notice." isCompact={ this.state.compactNotices ? true : null } />
+				<Notice
+					status="is-warning"
+					icon="mention"
+					text="I'm an `is-warning` notice with custom icon."
+					isCompact={ this.state.compactNotices ? true : null } />
 				<Notice
 					status="is-warning"
 					isCompact={ this.state.compactNotices ? true : null }
