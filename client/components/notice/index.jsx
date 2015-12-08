@@ -31,6 +31,7 @@ export default React.createClass( {
 			React.PropTypes.string,
 			React.PropTypes.object
 		] ),
+		icon: React.PropTypes.string,
 		className: React.PropTypes.string
 	},
 
@@ -49,6 +50,30 @@ export default React.createClass( {
 		}
 
 		return content;
+	},
+
+	getIcon() {
+		let icon;
+
+		switch ( this.props.status ) {
+			case 'is-info':
+				icon = 'info';
+				break;
+			case 'is-success':
+				icon = 'checkmark';
+				break;
+			case 'is-error':
+				icon = 'notice';
+				break;
+			case 'is-warning':
+				icon = 'notice';
+				break;
+			default:
+				icon = 'info';
+				break;
+		}
+
+		return icon;
 	},
 
 	render() {
@@ -76,6 +101,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classnames( this.props.className, noticeClass ) }>
+				<Gridicon className="notice__icon" icon={ this.props.icon || this.getIcon() } size={ 24 } />
 				{ this.renderChildren() }
 				{ dismiss }
 			</div>
