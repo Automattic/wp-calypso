@@ -7,6 +7,7 @@ var React = require( 'react/addons' );
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	config = require( 'config' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -63,7 +64,7 @@ module.exports = React.createClass( {
 		if ( this.props.siteSpecificPlansDetailsList.hasLoadedFromServer( selectedSiteDomain ) ) {
 			currentPlan = createSiteSpecificPlanObject( this.props.siteSpecificPlansDetailsList.getCurrentPlan( selectedSiteDomain ) );
 
-			if ( currentPlan.freeTrial ) {
+			if ( config.isEnabled( 'upgrades/free-trials' ) && currentPlan.freeTrial ) {
 				return (
 					<PlanOverview
 						path={ this.props.context.path }
