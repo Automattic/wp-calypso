@@ -289,16 +289,11 @@ $sidebar-width-min: 228px;
 }
 
 .wpcom-sidebar,
-.site-selector,
+.wp-secondary .site-selector,
 .current-site,
 .sidebar-menu {
 	transform: translateX( 0 );
 	transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
-}
-
-.site-selector {
-	opacity: 0;
-	pointer-events: none;
 }
 
 .focus-sites {
@@ -307,7 +302,7 @@ $sidebar-width-min: 228px;
 		pointer-events: none;
 	}
 
-	.site-selector {
+	.wp-secondary .site-selector {
 		opacity: 1;
 		transform: translateX( 272px );
 		pointer-events: auto;

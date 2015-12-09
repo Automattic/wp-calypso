@@ -3,14 +3,10 @@
  * @component `selector`
  */
 .site-selector {
-	background: lighten( $gray, 30% );
-	border-right: 1px solid lighten( $gray, 25% );
-	position: fixed;
-		top: 47px;
-		bottom: 0;
-		left: -272px;
-	width: 272px;
-	overflow: hidden;
+	overflow: visible;
+	position: static;
+	pointer-events: auto;
+	border: none;
 	z-index: z-index( 'root', '.site-selector' );
 
 	&.is-large .search  {
@@ -83,7 +79,7 @@
 	width: auto;
 	height: auto;
 	padding: 8px;
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid lighten( $gray, 30% );
 
 	.search__input[type="search"] {
 		position: relative;
