@@ -6,19 +6,40 @@
 	display: flex;
 	align-items: center;
 
+	.button {
+		position: relative;
+
+		.gridicons-plus-small {
+			position: absolute;
+			top: 9px;
+			left: 0px;
+			margin-left: 4px;
+			height: 12px;
+			width: 12px;
+		}
+		&:active .gridicons-plus-small {
+			top: 9.5px;
+		}
+	}
+	.gridicon {
+		margin-left: 4px;
+		margin-right: 4px;
+	}
+
+	.gridicons-plus-small {
+		position: absolute;
+		top: 9px;
+		left: 0px;
+		margin-left: 4px;
+		height: 12px;
+		width: 12px;
+	}
+
 	&.embed {
+			color: $gray;
 			height: 100%;
 			position: initial;
 			margin-right: 16px;
-
-			button {
-				display: flex;
-				color: $blue-medium;
-				&:hover {
-					color: $link-highlight;
-				}
-			}
-
 		}
 
 	@include breakpoint( "<480px" ) {
