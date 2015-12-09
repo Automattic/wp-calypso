@@ -1,11 +1,11 @@
 .profile-link {
 	margin-bottom: 15px;
 	position: relative;
-	padding-left: 60px;
+	padding-left: 62px;
 	height: 50px;
 
 	&.is-placeholder {
-		.profile-link__image,
+		.profile-link__image-link,
 		.profile-link__title,
 		.profile-link__url,
 		.profile-link__remove {
@@ -15,7 +15,8 @@
 		}
 
 		.profile-link__title {
-			height: 15px;
+			height: 18px;
+			margin-bottom: 2px;
 		}
 
 		.profile-link__url {
@@ -32,13 +33,14 @@
 	}
 }
 
-.profile-link__image {
+.profile-link__image-link {
 	display: block;
-	height: 50px;
+	height: 32px;
 	width: 50px;
 	position: absolute;
 	top: 0;
 	left: 0;
+	border: 1px solid lighten( $gray, 30% );
 }
 
 .profile-link__link {
@@ -46,12 +48,13 @@
 }
 
 .profile-link__title {
-	display: block;
-	font-size: 15px;
+	float: left;
+	font-size: 13px;
+	line-height: 1.4;
 	text-decoration: underline;
-	font-weight: bold;
 	overflow: hidden;
 	white-space: nowrap;
+	text-decoration: none;
 
 	&:after {
 		@include long-content-fade( $size: 45% );
@@ -59,7 +62,10 @@
 }
 
 .profile-link__url {
-	display: block;
-	font-size: 12px;
+	font-size: 11px;
+	font-style: italic;
+	line-height: 1.4;
 	color: $gray;
+	float: left;
+	clear: left;
 }

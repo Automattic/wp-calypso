@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var ActionRemove = require( 'me/action-remove' ),
+	safeProtocolUrl = require( 'lib/safe-protocol-url' ),
 	eventRecorder = require( 'me/event-recorder' );
 
 module.exports = React.createClass( {
@@ -47,22 +48,28 @@ module.exports = React.createClass( {
 				'profile-link': true,
 				'is-placeholder': this.props.isPlaceholder
 			} ),
-			imageSrc = '//s1.wp.com/mshots/v1/' + encodeURIComponent( this.props.url ) + '?w=' + this.props.imageSize,
-			linkHref = this.props.isPlaceholder ? null : this.props.url;
+			imageSrc = '//s1.wp.com/mshots/v1/' + encodeURIComponent( this.props.url ) + '?w=' + this.props.imageSize + '&h=64',
+			linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
 
 		return (
 			<li className={ classes }>
 				{
 					this.props.isPlaceholder
-					? <div className="profile-link__image" />
-					: <img className="profile-link__image" src={ imageSrc } />
+					? <div className="profile-link__image-link" />
+					: <a
+						href={ linkHref }
+						className="profile-link__image-link" target="_blank"
+						onClick={ this.recordClickEvent( 'Profile Links Site Images Link' ) }
+					>
+						<img className="profile-link__image" src={ imageSrc } />
+					</a>
 				}
 				<a href={ linkHref } target="_blank" onClick={ this.recordClickEvent( 'Profile Links Site Link' ) }>
 					<span className="profile-link__title">
 						{ this.props.title }
 					</span>
 					<span className="profile-link__url">
-						{ this.props.url }
+						{ this.props.url.replace( /^https?:\/\//, '' ) }
 					</span>
 				</a>
 
