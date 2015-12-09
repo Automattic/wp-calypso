@@ -55,22 +55,23 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var classNames = 'main main-column ',
+			selectedSiteDomain = this.props.sites.getSelectedSite().domain,
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
-				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain ),
-			currentPlan = createSiteSpecificPlanObject(
-				this.props.siteSpecificPlansDetailsList.getCurrentPlan(
-					this.props.sites.getSelectedSite().domain
-				)
-			);
+				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( selectedSiteDomain ),
+			currentPlan;
 
-		if ( currentPlan.freeTrial ) {
-			return (
-				<PlanOverview
-					path={ this.props.context.path }
-					cart={ this.props.cart }
-					plan={ currentPlan }
-					selectedSite={ this.props.sites.getSelectedSite() } />
-			);
+		if ( this.props.siteSpecificPlansDetailsList.hasLoadedFromServer( selectedSiteDomain ) ) {
+			currentPlan = createSiteSpecificPlanObject( this.props.siteSpecificPlansDetailsList.getCurrentPlan( selectedSiteDomain ) );
+
+			if ( currentPlan.freeTrial ) {
+				return (
+					<PlanOverview
+						path={ this.props.context.path }
+						cart={ this.props.cart }
+						plan={ currentPlan }
+						selectedSite={ this.props.sites.getSelectedSite() } />
+				);
+			}
 		}
 
 		return (
