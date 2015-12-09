@@ -83,6 +83,7 @@ export default React.createClass( {
 					</h4>
 					<div>
 						{ this.translate( 'WordPress.com has many powerful plugins already built in and free to use. Additional ecommerce plugins (Shopify, Ecwid, Gumroad) are available with WordPress.com Business.') }
+						{ ' ' }
 						<a href="http://support.wordpress.com/plugins/" target="_blank">
 							{ this.translate( 'Learn more about plugins.') }
 						</a>
