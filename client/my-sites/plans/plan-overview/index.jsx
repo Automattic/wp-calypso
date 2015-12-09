@@ -7,8 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Main from 'components/main';
-import PlanFeatures from './plan-features';
-import PlanStatus from './plan-status';
+import PlanFeatures from 'my-sites/plans/plan-overview/plan-features';
+import PlanStatus from 'my-sites/plans/plan-overview/plan-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
