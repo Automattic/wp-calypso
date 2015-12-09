@@ -184,8 +184,8 @@ module.exports = React.createClass( {
 			<a
 				className="security-2fa-enable__toggle"
 				onClick={ function( event ) {
-					analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
 					this.toggleMethod( event );
+					analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
 				}.bind( this ) }
 			/>
 		);
