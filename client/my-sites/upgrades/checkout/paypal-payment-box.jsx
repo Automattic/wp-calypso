@@ -158,9 +158,8 @@ module.exports = React.createClass( {
 						</button>
 						<SubscriptionText cart={ this.props.cart } />
 					</div>
-
-					{ false &&
-						<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>{ this.translate( 'or use a credit card', { context: 'Upgrades: PayPal checkout screen', comment: '"Checkout with PayPal -- or use a credit card"' } ) }</a> }
+					
+					<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>{ this.translate( 'or use a credit card', { context: 'Upgrades: PayPal checkout screen', comment: '"Checkout with PayPal -- or use a credit card"' } ) }</a>
 				</div>
 			</form>
 		);

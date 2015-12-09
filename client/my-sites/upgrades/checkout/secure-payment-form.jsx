@@ -51,8 +51,7 @@ var SecurePaymentForm = React.createClass( {
 			return this.state.userSelectedPaymentBox;
 		} else {
 			// Default state
-			//return 'credit-card';
-			return 'paypal';
+			return 'credit-card';
 		}
 	},
 
