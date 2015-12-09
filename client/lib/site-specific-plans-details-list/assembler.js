@@ -18,7 +18,8 @@ function createSiteSpecificPlanObject( plan ) {
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,
 		subscribedMoment: moment( plan.subscribed_date ),
-		userFacingExpiry: plan.user_facing_expiry
+		userFacingExpiry: plan.user_facing_expiry,
+		userFacingExpiryMoment: moment( plan.user_facing_expiry )
 	}
 }
 

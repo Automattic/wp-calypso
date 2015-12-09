@@ -15,6 +15,21 @@ const PlanStatus = React.createClass( {
 		plan: React.PropTypes.object.isRequired
 	},
 
+	renderProgressBar() {
+		const { subscribedMoment, userFacingExpiryMoment } = this.props.plan,
+			subscribedDayMoment = subscribedMoment.set( { hour: 0, minute: 0, second: 0, millisecond: 0 } ),
+			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
+			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedDayMoment, 'days' ),
+			todayMoment = this.moment().set( { hour: 0, minute: 0, second: 0, millisecond: 0 } ),
+			timeUntilExpiryInDays = userFacingExpiryMoment.diff( todayMoment, 'days' );
+
+		return (
+			<ProgressBar
+				value={ trialPeriodInDays - timeUntilExpiryInDays }
+				total={ trialPeriodInDays } />
+		);
+	},
+
 	render() {
 		return (
 			<span>
@@ -34,13 +49,13 @@ const PlanStatus = React.createClass( {
 					<span className="plan-status__time-until-expiry">
 						{
 							this.translate( '%(timeUntilExpiry)s remaining', {
-								args: { timeUntilExpiry: this.props.plan.expiryMoment.toNow( true ) },
+								args: { timeUntilExpiry: this.props.plan.userFacingExpiryMoment.toNow( true ) },
 								context: 'The amount of time until the trial plan expires, e.g. "5 days remaining"'
 							} )
 						}
 					</span>
+					{ this.renderProgressBar() }
 				</CompactCard>
-				{ this.props.plan.subscribedMoment.format( 'LL' ) }
 			</span>
 		);
 	}
