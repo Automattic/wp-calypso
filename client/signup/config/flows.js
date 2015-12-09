@@ -9,7 +9,6 @@ var assign = require( 'lodash/object/assign' ),
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	abtest = require( 'lib/abtest' ).abtest,
 	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
@@ -63,20 +62,6 @@ const flows = {
 		destination: '/me/next/welcome',
 		description: 'This flow is used to test the site step.',
 		lastModified: '2015-09-22'
-	},
-
-	'vert-blog': {
-		steps: abtest( 'verticalSurvey' ) === 'noSurvey' ? [ 'themes', 'domains', 'plans', 'user' ] : [ 'survey-blog', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getCheckoutDestination,
-		description: 'Categorizing blog signups for Verticals Survey',
-		lastModified: null
-	},
-
-	'vert-site': {
-		steps: abtest( 'verticalSurvey' ) === 'noSurvey' ? [ 'themes', 'domains', 'plans', 'user' ] : [ 'survey-site', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getCheckoutDestination,
-		description: 'Categorizing site signups for Verticals Survey',
-		lastModified: null
 	},
 
 	headstart: {
