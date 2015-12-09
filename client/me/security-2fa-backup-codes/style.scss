@@ -8,7 +8,7 @@
 
 .security-2fa-backup-codes__status-not-verified {
 	text-transform: uppercase;
-	color: red;
+	color: $alert-red;
 	font-weight: bold;
 }
 
@@ -19,6 +19,6 @@
 
 .security-2fa-backup-codes__status-verified {
 	text-transform: uppercase;
-	color: green;
+	color: $alert-green;
 	font-weight: bold;
 }
