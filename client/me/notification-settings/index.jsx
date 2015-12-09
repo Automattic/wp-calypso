@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import notices from 'notices';
+import { success, error } from 'state/notices';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -43,11 +43,11 @@ export default React.createClass( {
 		const state = store.getStateFor( 'blogs' );
 
 		if ( state.error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			success( this.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
