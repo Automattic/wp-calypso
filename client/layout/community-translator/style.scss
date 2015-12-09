@@ -20,7 +20,7 @@
 	}
 	.gridicons-globe {
 		// copied from noticons styling
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-light;
 		color: $gray;
 		height: 22px;
 		margin-left: -11px;
