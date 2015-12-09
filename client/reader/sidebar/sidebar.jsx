@@ -275,7 +275,7 @@ module.exports = React.createClass( {
 
 		return (
 			<ScrollableContainer>
-				<ul id="wp-sidebar" className={ sidebarClasses } onClick={ this.handleClick } ref="sidebar">
+				<ul className={ sidebarClasses } onClick={ this.handleClick } ref="sidebar">
 					<li className="sidebar-menu sidebar-streams">
 						<h2 className="sidebar-heading">{ this.translate( 'Streams' ) }</h2>
 						<ul>
