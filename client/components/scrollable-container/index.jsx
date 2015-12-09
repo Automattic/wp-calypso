@@ -17,7 +17,7 @@ import smartSetState from 'lib/react-smart-set-state';
 	getInitialState: function() {
 		return {
 			isScrollable: false,
-			isScrolled: false
+			isScrolledToBottom: false
 		}
 	},
 
@@ -25,22 +25,18 @@ import smartSetState from 'lib/react-smart-set-state';
 		window.addEventListener( 'resize', this.checkScrollable );
 		this.checkScrollable();
 
-		React.findDOMNode( this.refs[ 'sidebar-container' ] ).addEventListener( 'scroll', this.checkScrolled );
-		this.checkScrolled();
-
-		console.log( 'componentDidMount' );
+		React.findDOMNode( this.refs[ 'scrollable-content' ] ).addEventListener( 'scroll', this.checkScrolledToBottom );
+		this.checkScrolledToBottom();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'resize', this.checkScrollable );
-		React.findDOMNode( this.refs[ 'sidebar-container' ] ).removeEventListener( 'scroll', this.checkScrolled );
+		React.findDOMNode( this.refs[ 'scrollable-content' ] ).removeEventListener( 'scroll', this.checkScrolledToBottom );
 	},
 
 	componentDidUpdate: function() {
 		this.checkScrollable();
-		this.checkScrolled();
-
-		console.log( 'componentDidUpdate' );
+		this.checkScrolledToBottom();
 	},
 
 	/**
@@ -49,10 +45,10 @@ import smartSetState from 'lib/react-smart-set-state';
 	 */
 	checkScrollable: function() {
 		var windowHeight = window.innerHeight,
-			sidebar = React.findDOMNode( this.refs[ 'sidebar-container' ] ),
-			sidebarHeight = sidebar.scrollHeight;
+			content = React.findDOMNode( this.refs[ 'scrollable-content' ] ),
+			contentHeight = content.scrollHeight;
 
-		if ( sidebarHeight > ( windowHeight ) ) {
+		if ( contentHeight > ( windowHeight ) ) {
 			this.smartSetState( { isScrollable: true } );
 		} else {
 			this.smartSetState( { isScrollable: false } );
@@ -63,24 +59,24 @@ import smartSetState from 'lib/react-smart-set-state';
 	 * Check to see if the div is scrolled to it's bottom.
 	 * This is used to hide/show the chevron Gridicon as needed.
 	 */
-	checkScrolled: function() {
-		var sidebar = React.findDOMNode( this.refs[ 'sidebar-container' ] ),
-			isAtBottom = ( sidebar.scrollTop === ( sidebar.scrollHeight - sidebar.offsetHeight ) );
+	checkScrolledToBottom: function() {
+		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] ),
+			isAtBottom = ( content.scrollTop === ( content.scrollHeight - content.offsetHeight ) );
 
 		if ( isAtBottom ) {
-			this.smartSetState( { isScrolled: true } );
+			this.smartSetState( { isScrolledToBottom: true } );
 		} else {
-			this.smartSetState( { isScrolled: false } );
+			this.smartSetState( { isScrolledToBottom: false } );
 		}
 	},
 
 	render() {
 		let containerClasses,
-			child = React.cloneElement( React.Children.only( this.props.children ), { ref: 'sidebar-container' } );
+			child = React.cloneElement( React.Children.only( this.props.children ), { ref: 'scrollable-content' } );
 
 		containerClasses = classnames( {
 			'is-scrollable': this.state.isScrollable,
-			'is-scrolled': this.state.isScrolled
+			'is-scrolled-to-bottom': this.state.isScrolledToBottom
 		}, this.props.className, 'scrollable-container' );
 
 		return (
