@@ -123,7 +123,7 @@ module.exports = {
 			if ( postID ) {
 				actions.startEditingExisting( site, postID );
 				titleActions.setTitle( titleStrings.edit, { siteID: site.ID } );
-				analytics.ga.recordPageView( '/' + postType + '/:blogid/:postid', titleStrings.ga + ' > Edit' );
+				analytics.pageView.record( '/' + postType + '/:blogid/:postid', titleStrings.ga + ' > Edit' );
 			} else {
 				let postOptions = { type: postType };
 
@@ -139,7 +139,7 @@ module.exports = {
 
 				actions.startEditingNew( site, postOptions );
 				titleActions.setTitle( titleStrings.new, { siteID: site.ID } );
-				analytics.ga.recordPageView( '/' + postType, titleStrings.ga + ' > New' );
+				analytics.pageView.record( '/' + postType, titleStrings.ga + ' > New' );
 			}
 		}
 
