@@ -150,3 +150,12 @@
 		top: 45%;
 		left: 50%;
 }
+
+.web-preview__loading-message {
+	color: $gray;
+	font-size: 18px;
+	font-weight: 300;
+	text-align: center;
+	display: block;
+	margin: 48px 0;
+}

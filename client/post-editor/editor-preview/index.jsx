@@ -86,6 +86,7 @@ const EditorPreview = React.createClass( {
 				defaultViewportDevice="tablet"
 				onClose={ this.props.onClose }
 				previewUrl={ this.state.iframeUrl }
+				loadingMessage="Beep beep boop…"
 			/>
 		);
 	}

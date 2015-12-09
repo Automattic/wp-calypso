@@ -34,7 +34,9 @@ const WebPreview = React.createClass( {
 		// Elements to render on the right side of the toolbar
 		children: React.PropTypes.node,
 		// Called when the preview is closed, either via the 'X' button or the escape key
-		onClose: React.PropTypes.func
+		onClose: React.PropTypes.func,
+		// Optional loading message to display during loading
+		loadingMessage: React.PropTypes.string
 	},
 
 	mixins: [ React.addons.PureRenderMixin ],
@@ -156,7 +158,16 @@ const WebPreview = React.createClass( {
 						showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
 					/>
 					<div className="web-preview__placeholder">
-						{ ! this.state.loaded && <Spinner /> }
+						{ ! this.state.loaded &&
+							<div>
+								<Spinner />
+								{ this.props.loadingMessage &&
+									<span className="web-preview__loading-message">
+										{ this.props.loadingMessage }
+									</span>
+								}
+							</div>
+						}
 						{ this.shouldRenderIframe() &&
 							<iframe
 								className="web-preview__frame"
