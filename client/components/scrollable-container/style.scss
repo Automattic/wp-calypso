@@ -23,7 +23,7 @@
 		}
 
 		.gridicon {
-			fill: $gray;
+			fill: lighten( $gray, 10 );
 		}
 	}
 

@@ -27,16 +27,21 @@ import smartSetState from 'lib/react-smart-set-state';
 
 		React.findDOMNode( this.refs[ 'scrollable-content' ] ).addEventListener( 'scroll', this.checkScrolledToBottom );
 		this.checkScrolledToBottom();
+
+		this.scrollLock();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'resize', this.checkScrollable );
 		React.findDOMNode( this.refs[ 'scrollable-content' ] ).removeEventListener( 'scroll', this.checkScrolledToBottom );
+
+		this.scrollRelease();
 	},
 
 	componentDidUpdate: function() {
 		this.checkScrollable();
 		this.checkScrolledToBottom();
+		this.scrollLock();
 	},
 
 	/**
@@ -69,6 +74,45 @@ import smartSetState from 'lib/react-smart-set-state';
 			this.smartSetState( { isScrolledToBottom: false } );
 		}
 	},
+
+    scrollLock: function () {
+		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] );
+		if ( content ) {
+			content.addEventListener( 'wheel', this.onScrollHandler );
+		}
+    },
+
+	scrollRelease: function () {
+		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] );
+		if ( content ) {
+			content.removeEventListener( 'wheel', this.onScrollHandler );
+		}
+	},
+
+    cancelScrollEvent: function ( event ) {
+		event.stopImmediatePropagation();
+		event.preventDefault();
+		event.returnValue = false;
+		return false;
+    },
+
+    onScrollHandler: function ( event ) {
+		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] );
+		var scrollTop = content.scrollTop;
+		var scrollHeight = content.scrollHeight;
+		var height = content.clientHeight;
+		var wheelDelta = event.deltaY;
+		var isDeltaPositive = wheelDelta > 0;
+
+		if ( isDeltaPositive && wheelDelta > scrollHeight - height - scrollTop ) {
+			content.scrollTop = scrollHeight;
+			return this.cancelScrollEvent( event );
+		}
+		else if ( ! isDeltaPositive && -wheelDelta > scrollTop ) {
+			content.scrollTop = 0;
+			return this.cancelScrollEvent( event );
+		}
+    },
 
 	render() {
 		let containerClasses,
