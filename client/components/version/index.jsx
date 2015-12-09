@@ -13,7 +13,7 @@ export default React.createClass( {
 	displayName: 'Version',
 
 	propTypes: {
-		version: React.PropTypes.number.isRequired,
+		version: React.PropTypes.string.isRequired,
 		icon: React.PropTypes.string
 	},
 

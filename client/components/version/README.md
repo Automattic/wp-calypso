@@ -24,7 +24,7 @@ The following props can be passed to the Version component:
 ### `version`
 
 <table>
-	<tr><td>Type</td><td>Number</td></tr>
+	<tr><td>Type</td><td>String</td></tr>
 	<tr><td>Required</td><td>Yes</td></tr>
 </table>
 
