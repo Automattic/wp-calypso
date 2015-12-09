@@ -157,7 +157,7 @@ module.exports = React.createClass( {
 
 		if ( this.props.showAllSites && ! this.state.search && allSitesPath ) {
 			// default posts links to /posts/my when possible and /posts when not
-			postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
+			const postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
 			allSitesPath = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 			// There is currently no "all sites" version of the insights page

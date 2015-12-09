@@ -32,25 +32,22 @@
 }
 
 .sites-dropdown .site-selector {
-	border-top: 1px solid lighten( $gray, 20% );
 	padding: 0;
 	position: static;
 	max-height: 30vh;
 	overflow-y: auto;
 
 	&.is-large {
-		margin-top: 64px;
-		border-top: 1px solid lighten( $gray, 30 );
+		margin-top: 50px;
 	}
 }
 
 .sites-dropdown .site-selector .search {
 	position: absolute;
-		top: 69px;
-		left: 16px;
-		right: 16px;
-	margin: 16px 0;
-	background-color: $white;
+		top: 67px;
+		left: 0;
+		right: 0;
+	margin: 0;
 }
 
 .sites-dropdown .site-selector .search input {
