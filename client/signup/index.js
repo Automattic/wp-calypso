@@ -19,6 +19,7 @@ module.exports = function() {
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		adTracking.retarget,
 		controller.saveRefParameter,
+		controller.saveQueryObject,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
 		controller.start

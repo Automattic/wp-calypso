@@ -30,7 +30,12 @@ export default React.createClass( {
 	},
 
 	submitForm( form, userData, analyticsData ) {
-		let flowName = this.props.flowName;
+		let flowName = this.props.flowName,
+			queryArgs = {};
+
+		if ( this.props.queryObject && this.props.queryObject.jetpack_redirect ) {
+			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
+		}
 
 		const formWithoutPassword = Object.assign( {}, form, {
 			password: Object.assign( {}, form.password, { value: '' } )
@@ -43,7 +48,8 @@ export default React.createClass( {
 			flowName,
 			userData,
 			stepName: this.props.stepName,
-			form: formWithoutPassword
+			form: formWithoutPassword,
+			queryArgs
 		} );
 
 		this.props.goToNextStep();
@@ -106,6 +112,8 @@ export default React.createClass( {
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
+				headerText={ this.props.headerText }
+				subHeaderText={ this.props.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.translate( 'Create your account.' ) }
 				signupProgressStore={ this.props.signupProgressStore }

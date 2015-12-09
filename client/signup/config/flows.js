@@ -140,8 +140,12 @@ const flows = {
 		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
 		lastModified: '2015-11-23'
-	}
+	},
 
+	'jetpack': {
+		steps: [ 'jetpack-user' ],
+		destination: '/'
+	}
 };
 
 function removeUserStepFromFlow( flow ) {

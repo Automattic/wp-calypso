@@ -23,4 +23,5 @@ module.exports = {
 	'survey-user': EmailSignupComponent,
 	'domains-with-theme': DomainsStepComponent,
 	'theme-dss': DSSStepComponent,
+	'jetpack-user': EmailSignupComponent
 };

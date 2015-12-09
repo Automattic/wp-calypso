@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import qs from 'qs';
+import isEmpty from 'lodash/lang/isEmpty';
 
 /**
  * Internal Dependencies
@@ -27,7 +28,7 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 /**
  * Module variables
  */
-let refParameter;
+let refParameter, queryObject;
 
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
@@ -51,6 +52,14 @@ export default {
 	saveRefParameter( context, next ) {
 		if ( context.query.ref ) {
 			refParameter = context.query.ref;
+		}
+
+		next();
+	},
+
+	saveQueryObject( context, next ) {
+		if ( ! isEmpty( context.query ) ) {
+			queryObject = context.query;
 		}
 
 		next();
@@ -86,6 +95,7 @@ export default {
 			React.createElement( SignupComponent, {
 				path: context.path,
 				refParameter,
+				queryObject,
 				locale: utils.getLocale( context.params ),
 				flowName: flowName,
 				stepName: stepName,
