@@ -13,7 +13,8 @@ var MenuItem = require( './sidebar-item' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	FormButton = require( 'components/forms/form-button' ),
-	userUtilities = require( 'lib/user/utils' );
+	userUtilities = require( 'lib/user/utils' ),
+	ScrollableContainer = require( 'components/scrollable-container' );
 
 module.exports = React.createClass( {
 
@@ -55,7 +56,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="me-sidebar__menu">
+			<ScrollableContainer>
 				<ul className="wpcom-sidebar sidebar">
 
 					<ProfileGravatar user={ this.props.user.get() } />
@@ -123,7 +124,7 @@ module.exports = React.createClass( {
 						</ul>
 					</li>
 				</ul>
-			</div>
+			</ScrollableContainer>
 		);
 	},
 
