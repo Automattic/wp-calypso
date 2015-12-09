@@ -11,6 +11,7 @@ import debugModule from 'debug';
 import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
+import Spinner from 'components/spinner';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -34,8 +35,8 @@ const WebPreview = React.createClass( {
 		children: React.PropTypes.node,
 		// Called when the preview is closed, either via the 'X' button or the escape key
 		onClose: React.PropTypes.func,
-		// Loading message to display along with placeholder
-		loadingMessage: React.PropTypes.string,
+		// Optional loading message to display during loading
+		loadingMessage: React.PropTypes.string
 	},
 
 	mixins: [ React.addons.PureRenderMixin ],
@@ -44,8 +45,7 @@ const WebPreview = React.createClass( {
 		return {
 			showExternal: true,
 			showDeviceSwitcher: true,
-			previewUrl: 'about:blank',
-			loadingMessage: ''
+			previewUrl: 'about:blank'
 		}
 	},
 
@@ -158,7 +158,16 @@ const WebPreview = React.createClass( {
 						showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
 					/>
 					<div className="web-preview__placeholder">
-						{ ! this.state.loaded && this.props.loadingMessage }
+						{ ! this.state.loaded &&
+							<div>
+								<Spinner />
+								{ this.props.loadingMessage &&
+									<span className="web-preview__loading-message">
+										{ this.props.loadingMessage }
+									</span>
+								}
+							</div>
+						}
 						{ this.shouldRenderIframe() &&
 							<iframe
 								className="web-preview__frame"

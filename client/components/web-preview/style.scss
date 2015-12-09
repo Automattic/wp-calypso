@@ -46,11 +46,16 @@
 	.is-phone & {
 		width: 460px;
 	}
+}
 
+.web-preview.is-computer .web-preview__content,
+.web-preview.is-tablet .web-preview__content,
+.web-preview.is-phone .web-preview__content {
 	@include breakpoint( "<660px" ) {
 		left: 0;
 		right: 0;
 		top: 0;
+		width: 100%;
 	}
 }
 
@@ -117,6 +122,10 @@
 	&.is-active {
 		color: $gray-dark;
 	}
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .web-preview__toolbar-tray {
@@ -140,38 +149,26 @@
 }
 
 .web-preview__placeholder {
-	animation: loading-fade 0.8s ease-in-out infinite;
 	width: 100%;
 	height: 100%;
+}
 
-	line-height: 160px;
-	font-size: 16px;
-	color: $white;
-	text-align: center;
+.web-preview .spinner {
+	margin-left: -10px;
+	position: absolute;
+		top: 45%;
+		left: 50%;
 
-	background:
-		linear-gradient(to bottom, lighten( $gray, 20% ) 160px, transparent 160px, transparent),
-		linear-gradient(to bottom, lighten( $gray, 20% ) 40px, lighten( $gray, 20% ) ),
-		linear-gradient(to bottom, lighten( $gray, 20% ) 40px, lighten( $gray, 20% ) ),
-		linear-gradient(to bottom, lighten( $gray, 20% ) 40px, lighten( $gray, 20% ) ),
-		linear-gradient(to bottom, lighten( $gray, 20% ) 40px, lighten( $gray, 20% ) );
-
-	background-position:
-		0% 0%,
-		20px 200px,
-		20px 268px,
-		20px 316px,
-		20px 366px;
-	background-size:
-		100% 100%,
-		200px 48px,
-		82% 26px,
-		87% 26px,
-		55% 26px;
-
-	background-repeat: no-repeat;
-
-	.is-loaded & {
-		animation: none;
+	@include breakpoint( "<660px" ) {
+		top: 20%;
 	}
+}
+
+.web-preview__loading-message {
+	color: $gray;
+	font-size: 18px;
+	font-weight: 300;
+	text-align: center;
+	display: block;
+	margin: 48px 0;
 }
