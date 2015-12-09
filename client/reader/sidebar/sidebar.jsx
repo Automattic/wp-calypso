@@ -27,7 +27,8 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
-	discoverHelper = require( 'reader/discover/helper' );
+	discoverHelper = require( 'reader/discover/helper' ),
+	ScrollableContainer = require( 'components/scrollable-container' );
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
@@ -80,30 +81,6 @@ module.exports = React.createClass( {
 		ReaderLists.on( 'change', this.updateState );
 		ReaderLists.on( 'create', this.highlightNewList );
 		ReaderTeams.on( 'change', this.updateState );
-		window.addEventListener( 'resize', this.checkSidebarScrollable );
-	},
-
-	checkSidebarScrollable: function() {
-		var windowHeight = window.innerHeight,
-			sidebar = React.findDOMNode( this.refs.sidebar ),
-			sidebarHeight = sidebar.scrollHeight;
-
-		if ( sidebarHeight > ( windowHeight ) ) {
-			this.setState( { isSidebarScrollable: true } );
-		} else {
-			this.setState( { isSidebarScrollable: false } );
-		}
-	},
-
-	checkSidebarScrolled: function() {
-		var sidebar = React.findDOMNode( this.refs.sidebar ),
-			isAtBottom = ( sidebar.scrollTop === ( sidebar.scrollHeight - sidebar.offsetHeight ) );
-
-		if ( isAtBottom ) {
-			this.setState( { isSidebarScrolled: true } );
-		} else {
-			this.setState( { isSidebarScrolled: false } );
-		}
 	},
 
 	componentWillUnmount: function() {
@@ -112,15 +89,10 @@ module.exports = React.createClass( {
 		ReaderLists.off( 'change', this.updateState );
 		ReaderLists.off( 'create', this.highlightNewList );
 		ReaderTeams.off( 'change', this.updateState );
-
-		window.removeEventListener( 'resize', this.adjustOverflowOverlay );
 	},
 
 	getInitialState: function() {
-		return assign( {
-			isSidebarScrollable: false,
-			isSidebarScrolled: false
-		}, this.getStateFromStores() );
+		return this.getStateFromStores();
 	},
 
 	getStateFromStores: function() {
@@ -141,7 +113,6 @@ module.exports = React.createClass( {
 
 	updateState: function() {
 		this.setState( this.getStateFromStores() );
-		this.checkSidebarScrollable();
 	},
 
 	followTag: function( event ) {
@@ -300,16 +271,11 @@ module.exports = React.createClass( {
 	render: function() {
 		let followingEditLink = this.getFollowingEditLink();
 
-		var containerClasses = classnames( {
-			'is-scrollable': this.state.isSidebarScrollable,
-			'is-scrolled': this.state.isSidebarScrolled
-		}, 'wp-sidebar-container' );
-
 		var sidebarClasses = classnames( 'wpcom-sidebar', 'sidebar', 'reader-sidebar' );
 
 		return (
-			<div className={ containerClasses }>
-				<ul id="wp-sidebar" className={ sidebarClasses } onClick={ this.handleClick } onScroll={ this.checkSidebarScrolled } ref="sidebar">
+			<ScrollableContainer>
+				<ul id="wp-sidebar" className={ sidebarClasses } onClick={ this.handleClick } ref="sidebar">
 					<li className="sidebar-menu sidebar-streams">
 						<h2 className="sidebar-heading">{ this.translate( 'Streams' ) }</h2>
 						<ul>
@@ -381,9 +347,7 @@ module.exports = React.createClass( {
 						</ul>
 					</li>
 				</ul>
-
-				<div className="scroll-indicator"><Gridicon icon="chevron-down" /></div>
-			</div>
+			</ScrollableContainer>
 		);
 	}
 } );
