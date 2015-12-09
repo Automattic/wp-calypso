@@ -24,4 +24,4 @@ Take a look at [our merge checklist](merge-checklist.md) for a list of things to
 The Code Review Mindset
 -----------------------
 
-Code reviews can be uncomfortable for both the author of the changes and also the reviewer. To make the process less painful, both the author and reviewer need to maintain a positive mindet. We're all working together to try to make Calypso and the WordPress user experience awesome.
+Code reviews can be uncomfortable for both the author of the changes and also the reviewer. To make the process less painful, both the author and reviewer need to maintain a positive mindset. We're all working together to try to make Calypso and the WordPress user experience awesome.
