@@ -20,7 +20,8 @@ var config = require( 'config' ),
 	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
 	SidebarMenuItem = require( './sidebar-menu-item' ),
 	AdsUtils = require( 'lib/ads/utils' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	ScrollableContainer = require( 'components/scrollable-container' );
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -629,64 +630,66 @@ module.exports = React.createClass( {
 			vip = !! this.vip();
 
 		return (
-			<ul className="wpcom-sidebar sidebar">
-				<CurrentSite sites={ this.props.sites } siteCount={ this.props.user.get().visible_site_count } />
+			<ScrollableContainer>
+				<ul className="wpcom-sidebar sidebar">
+					<CurrentSite sites={ this.props.sites } siteCount={ this.props.user.get().visible_site_count } />
 
-				<li className="sidebar-menu">
-					<ul>
-						{ this.homepage() }
-						{ this.stats() }
-						{ this.ads() }
-						{ this.plan() }
-					</ul>
-				</li>
+					<li className="sidebar-menu">
+						<ul>
+							{ this.homepage() }
+							{ this.stats() }
+							{ this.ads() }
+							{ this.plan() }
+						</ul>
+					</li>
 
-				{ vip ?
-				<li className="sidebar-menu wordpress-utilities">
-					<h2 className="sidebar-heading">VIP</h2>
-					<ul>
-						{ this.vip() }
-						{ this.vipDeploys() }
-						{ this.vipBilling() }
-						{ this.vipSupport() }
-						{ this.vipBackups() }
-						{ this.vipLogs() }
-					</ul>
-				</li>
-				: null }
+					{ vip ?
+					<li className="sidebar-menu wordpress-utilities">
+						<h2 className="sidebar-heading">VIP</h2>
+						<ul>
+							{ this.vip() }
+							{ this.vipDeploys() }
+							{ this.vipBilling() }
+							{ this.vipSupport() }
+							{ this.vipBackups() }
+							{ this.vipLogs() }
+						</ul>
+					</li>
+					: null }
 
-				{ publish ?
-				<li className="sidebar-menu wordpress-content">
-					<h2 className="sidebar-heading">{ this.translate( 'Publish' ) }</h2>
-					{ this.publish() }
-				</li>
-				: null }
+					{ publish ?
+					<li className="sidebar-menu wordpress-content">
+						<h2 className="sidebar-heading">{ this.translate( 'Publish' ) }</h2>
+						{ this.publish() }
+					</li>
+					: null }
 
-				{ appearance ?
-				<li className="sidebar-menu wordpress-appearance">
-					<h2 className="sidebar-heading">{ this.translate( 'Personalize' ) }</h2>
-					<ul>
-						{ this.themes() }
-						{ this.menus() }
-					</ul>
-				</li>
-				: null }
+					{ appearance ?
+					<li className="sidebar-menu wordpress-appearance">
+						<h2 className="sidebar-heading">{ this.translate( 'Personalize' ) }</h2>
+						<ul>
+							{ this.themes() }
+							{ this.menus() }
+						</ul>
+					</li>
+					: null }
 
-				{ configuration ?
-				<li className="sidebar-menu wordpress-utilities">
-					<h2 className="sidebar-heading">{ this.translate( 'Configure' ) }</h2>
-					<ul>
-						{ this.sharing() }
-						{ this.users() }
-						{ this.plugins() }
-						{ this.upgrades() }
-						{ this.siteSettings() }
-						{ this.wpAdmin() }
-					</ul>
-				</li>
-				: null }
+					{ configuration ?
+					<li className="sidebar-menu wordpress-utilities">
+						<h2 className="sidebar-heading">{ this.translate( 'Configure' ) }</h2>
+						<ul>
+							{ this.sharing() }
+							{ this.users() }
+							{ this.plugins() }
+							{ this.upgrades() }
+							{ this.siteSettings() }
+							{ this.wpAdmin() }
+						</ul>
+					</li>
+					: null }
 
-			</ul>
+				</ul>
+			</ScrollableContainer>
 		);
 	}
 } );
