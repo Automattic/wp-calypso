@@ -24,6 +24,7 @@ var SearchCard = require( 'components/search-card' ),
 	SegmentedControl = require( 'components/segmented-control/docs/example' ),
 	Cards = require( 'components/card/docs/example' ),
 	Sites = require( 'lib/sites-list/docs/example' ),
+	SitesDropdown = require( 'components/sites-dropdown/docs/example' ),
 	TokenFields = require( 'components/token-field/docs/example' ),
 	CountedTextareas = require( 'components/forms/counted-textarea/docs/example' ),
 	ProgressBar = require( 'components/progress-bar/docs/example' ),
@@ -190,6 +191,7 @@ module.exports = React.createClass( {
 					<SegmentedControl />
 					<Cards />
 					<Sites />
+					<SitesDropdown />
 					<TokenFields />
 					<CountedTextareas />
 					<ProgressBar />
