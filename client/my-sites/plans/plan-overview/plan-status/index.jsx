@@ -23,11 +23,12 @@ const PlanStatus = React.createClass( {
 			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
 			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedDayMoment, 'days' ),
 			todayMoment = this.moment().set( timeConfig ),
-			timeUntilExpiryInDays = userFacingExpiryMoment.diff( todayMoment, 'days' );
+			timeUntilExpiryInDays = userFacingExpiryMoment.diff( todayMoment, 'days' ),
+			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (
 			<ProgressBar
-				value={ trialPeriodInDays - timeUntilExpiryInDays }
+				value={ progress }
 				total={ trialPeriodInDays } />
 		);
 	},
