@@ -4,22 +4,66 @@ $plugin-information-rating-size: 160px;
 		margin-right: $plugin-information-rating-size + 24;
 	}
 }
+.plugin-information {
+	border-top: 1px solid #E9EFF3;
+	margin-top: 16px;
+	padding-top: 16px;
+	position: relative;
+	overflow: hidden;
+}
 
-.plugin-information__version-info {
+.plugin-information__version-shell {
+	margin-bottom: 16px;
+	text-align: left;
 	@include breakpoint( '>480px' ) {
 		float: left;
 		width: 100%;
+		position: relative;
+		overflow: hidden;
 	}
 }
 
-.plugin-information__last-updated {
-	font-size: 16px;
+.plugin-information__version-info {
+	font-size: 11px;
+	color: $gray;
+	text-transform: uppercase;
+	float: left;
+}
 
-	@include breakpoint( '<480px' ) {
-		display: inline-block;
-		color: $gray;
-		font-size: 11px;
-		text-transform: uppercase;
+.plugin-information__version-info .version {
+	@include breakpoint( '>480px' ) {
+		min-width: 150px;
+		margin-right: 8px;
+		float: left;
+	}
+}
+
+.plugin-information__last-updated,
+.plugin-information__versions {
+	@include breakpoint( '>480px' ) {
+		line-height: 18px;
+		min-width: 200px;
+		float: left;
+	}
+}
+.plugin-information__last-updated .gridicons-sync {
+	vertical-align: text-bottom;
+	color: $alert-yellow;
+	margin-left: 8px;
+}
+
+.plugin-information__versions {
+	.gridicons-my-sites {
+		float: left;
+		margin-right: 4px;
+	}
+	.gridicons-cross-small {
+		vertical-align: bottom;
+		color: $alert-red;
+	}
+	.gridicons-checkmark {
+		vertical-align: text-bottom;
+		color: $alert-green;
 	}
 }
 
@@ -39,39 +83,9 @@ $plugin-information-rating-size: 160px;
 	}
 }
 
-.plugin-information__rating-text {
-	@include breakpoint( '<480px' ) {
-		display: inline;
-	}
-}
-
-.plugin-information__rating-stars {
-	font-size: 24px;
-
-	@include breakpoint( '<480px' ) {
-		display: inline-block;
-		margin-right: 8px;
-		font-size: 16px;
-	}
-}
-
-.plugin-information__versions {
-	margin-top: 16px;
-}
-
-.plugin-information__version-limit {
-	margin-bottom: 4px;
-
-	&:before {
-		@include noticon( '\f418', 20px );
-		line-height: 14px;
-		color: $alert-green;
-	}
-}
-
 .plugin-information__links {
 	margin-top: 14px;
-
+	clear: left;
 	@include breakpoint( '>480px' ) {
 		float: left;
 	}
@@ -81,25 +95,11 @@ $plugin-information-rating-size: 160px;
 	display: block;
 	margin-top: 16px;
 }
-.plugin-information .plugin-version {
-	font-size: 11px;
-}
-.plugin-information__rating-text,
-.plugin-information__version-limit {
-	color: $gray;
-	font-size: 11px;
-	text-transform: uppercase;
-	white-space: pre;
-	text-overflow: ellipsis;
-	overflow: hidden;
-}
 
 .plugin-information.is-placeholder {
-	.plugin-information__description,
-	.plugin-information__version-info,
-	.plugin-information__last-updated,
-	.plugin-information__rating-text,
-	.plugin-card-header__text {
+	.plugin-information__version-shell,
+	.plugin-information__external-link,
+	.version {
 		@include placeholder();
 	}
 

@@ -8,11 +8,11 @@ import i18n from 'lib/mixins/i18n';
  * Internal dependencies
  */
 
-import Gridicon from 'components/gridicon';
 import ExternalLink from 'components/external-link';
-import Rating from 'components/rating';
-import PluginVersion from 'my-sites/plugins/plugin-version';
+import Gridicon from 'components/gridicon';
+import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
+import versionCompare from 'lib/version-compare';
 import analytics from 'analytics';
 
 export default React.createClass( {
@@ -88,41 +88,56 @@ export default React.createClass( {
 		);
 	},
 
-	renderStarRating() {
-		return (
-			<div>
-				<div className="plugin-information__rating-stars"><Rating rating={ this.props.plugin.rating } /></div>
-				<div className="plugin-information__rating-text">
-					{ this.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
-						count: this.props.plugin.num_ratings,
-						args: { ratingsNumber: this.props.plugin.num_ratings }
-					} ) }
-				</div>
-			</div>
-		);
-	},
-
 	renderLastUpdated() {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
-			let dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
-			return <div className="plugin-information__last-updated">{ this.translate( 'Latest release %(dateFromNow)s', { args: { dateFromNow: dateFromNow } } ) }</div>;
+			const dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
+			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
+
+			return <div className="plugin-information__last-updated">
+				{ this.translate( 'Released %(dateFromNow)s', { args: { dateFromNow } } ) }
+				{ syncIcon }
+			</div>;
 		}
+	},
+
+	renderSiteVersion() {
+		return this.props.siteVersion
+			? <Version version={ this.props.siteVersion } icon="my-sites" className="plugin-information__version" />
+			: null;
 	},
 
 	renderLimits() {
 		const limits = this.getCompatibilityLimits();
 		let versionView;
-
+		let versionCheck = null;
+		if ( this.props.siteVersion && limits.maxVersion ) {
+			if ( versionCompare( this.props.siteVersion, limits.maxVersion, '<=' ) ) {
+				versionCheck = <Gridicon icon="checkmark" size={ 18 } />;
+			} else {
+				versionCheck = <Gridicon icon="cross-small" size={ 18 } />;
+			}
+		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion !== limits.maxVersion ) {
 			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( 'Compatible with WordPress version %(minVersion)s to %(maxVersion)s',
-					{ args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion } }
+				{ this.translate( '{{wpIcon/}}  Compatible with %(minVersion)s to %(maxVersion)s {{versionCheck/}}',
+					{
+						args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
+						components: {
+							wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+							versionCheck
+						}
+					}
 				) }
 			</div>;
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion === limits.maxVersion ) {
 			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( 'Compatible with WordPress version %(maxVersion)s', { args: { maxVersion: limits.maxVersion } } ) }
+				{ this.translate( '{{icon/}} Compatible with %(maxVersion)s',
+					{
+						args: { maxVersion: limits.maxVersion },
+						components: { wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } /> }
+					}
+				) }
 			</div>;
 		}
 		return (
@@ -130,10 +145,6 @@ export default React.createClass( {
 				{ versionView }
 			</div>
 		);
-	},
-
-	renderRatingsDetail() {
-		return <PluginRatings plugin={ this.props.plugin } />;
 	},
 
 	getCompatibilityLimits() {
@@ -151,13 +162,26 @@ export default React.createClass( {
 			<div className="plugin-information is-placeholder">
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
-							{ this.renderLastUpdated() }
-							<PluginVersion plugin={ this.props.plugin } />
-							{ this.renderLimits() }
+							<div className="plugin-information__version-shell">
+								{ this.props.pluginVersion
+									? <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
+									: null
+								}
+								{ this.renderLastUpdated() }
+							</div>
+							<div className="plugin-information__version-shell">
+								{ this.renderSiteVersion() }
+								{ this.renderLimits() }
+							</div>
 						</div>
 						<div className="plugin-information__rating-info">
-							{ this.renderStarRating() }
-							{ this.renderRatingsDetail() }
+							<PluginRatings
+								rating={ this.props.plugin.rating }
+								ratings={ this.props.plugin.ratings }
+								downloaded={ this.props.plugin.downloaded }
+								numRatings={ this.props.plugin.num_ratings }
+								slug={ this.props.plugin.slug }
+								placeholder={ true } />
 						</div>
 						<div className="plugin-information__links">
 							{ this.renderWporgLink() }
@@ -184,13 +208,22 @@ export default React.createClass( {
 			<div className="plugin-information">
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
-							{ this.renderLastUpdated() }
-							<PluginVersion plugin={ this.props.plugin } />
-							{ this.renderLimits() }
+							<div className="plugin-information__version-shell">
+								<Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
+								{ this.renderLastUpdated() }
+							</div>
+							<div className="plugin-information__version-shell">
+								{ this.renderSiteVersion() }
+								{ this.renderLimits() }
+							</div>
 						</div>
 						<div className="plugin-information__rating-info">
-							{ this.renderStarRating() }
-							{ this.renderRatingsDetail() }
+							<PluginRatings
+								rating={ this.props.plugin.rating }
+								ratings={ this.props.plugin.ratings }
+								downloaded={ this.props.plugin.downloaded }
+								numRatings={ this.props.plugin.num_ratings }
+								slug={ this.props.plugin.slug } />
 						</div>
 						<div className="plugin-information__links">
 							{ this.renderWporgLink() }

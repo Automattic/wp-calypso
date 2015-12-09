@@ -9,26 +9,11 @@ import _some from 'lodash/collection/some';
 /**
  * Internal dependencies
  */
-<<<<<<< HEAD
-import analytics from 'analytics'
-import Card from 'components/card'
-import Gridicon from 'components/gridicon'
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon'
-import PluginsActions from 'lib/plugins/actions'
-import PluginsLog from 'lib/plugins/log-store'
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle'
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle'
-import safeProtocolUrl from 'lib/safe-protocol-url'
-import config from 'config'
-import Notice from 'components/notice'
-import NoticeAction from 'components/notice/notice-action';
-import PluginVersion from 'my-sites/plugins/plugin-version'
-import PluginInstallButton from 'my-sites/plugins/plugin-install-button'
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button'
-=======
 import analytics from 'analytics';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import NoticeAction from 'components/notice/notice-action';
+import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
@@ -36,12 +21,9 @@ import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
-import Notice from 'notices/notice';
-import PluginVersion from 'my-sites/plugins/plugin-version';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
->>>>>>> 5012847... Plugin: Update information box
 
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -57,7 +39,7 @@ export default React.createClass( {
 	},
 
 	displayBanner() {
-		if ( this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
+		if ( this.props.plugin && this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
 			return <div className="plugin-meta__banner">
 						<img className="plugin-meta__banner-image" src={ this.props.plugin.banners.high || this.props.plugin.banners.low }/>
 					</div>;
@@ -134,12 +116,13 @@ export default React.createClass( {
 		if ( ! this.props.plugin || ! ( this.props.plugin.author_url && this.props.plugin.author_name ) ) {
 			return;
 		}
+		const linkToAuthor = <a className="plugin-meta__author" href={ safeProtocolUrl( this.props.plugin.author_url ) }>{ this.props.plugin.author_name }</a>;
 
-		return (
-			<a className="plugin-meta__author" href={ safeProtocolUrl( this.props.plugin.author_url ) }>
-				{ this.props.plugin.author_name }
-			</a>
-		);
+		return this.translate( 'By {{linkToAuthor/}}', {
+			components: {
+				linkToAuthor
+			}
+		} );
 	},
 
 	isInstalledOnSite( site ) {
@@ -157,7 +140,7 @@ export default React.createClass( {
 	},
 
 	isOutOfDate() {
-		if ( this.props.plugin.last_updated ) {
+		if ( this.props.plugin && this.props.plugin.last_updated ) {
 			let lastUpdated = this.moment( this.props.plugin.last_updated, 'YYYY-MM-DD' );
 			return this.moment().diff( lastUpdated, 'years' ) >= this.OUT_OF_DATE_YEARS;
 		}
@@ -186,10 +169,11 @@ export default React.createClass( {
 		if ( newVersion ) {
 			return (
 				<Notice
-					className="plugin-meta__version-notice"
-					text={ i18n.translate( 'A new version is available.' ) }
 					status="is-warning"
-					showDismiss={ false } >
+					className="plugin-meta__version-notice"
+					showDismiss={ false }
+					icon="sync"
+					text={ i18n.translate( 'A new version is available.' ) }>
 					<NoticeAction onClick={ this.handlePluginUpdates }>
 						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersion } } ) }
 					</NoticeAction>
@@ -258,6 +242,7 @@ export default React.createClass( {
 			'has-site': !! this.props.selectedSite,
 			'is-placeholder': !! this.props.isPlaceholder
 		} );
+
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
 
 		return (
@@ -266,16 +251,22 @@ export default React.createClass( {
 					{ this.displayBanner() }
 					<div className={ cardClasses } >
 						<div className="plugin-meta__detail">
-							<PluginIcon image={ this.props.plugin.icon } isPlaceholder={ this.props.isPlaceholder } />
+							<PluginIcon image={ this.props.plugin && this.props.plugin.icon } isPlaceholder={ this.props.isPlaceholder } />
 							{ this.renderName() }
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
-								<PluginVersion plugin={ plugin } site={ this.props.selectedSite } notices={ this.props.notices } />
 							</div>
 						</div>
 						{ this.renderActions() }
 					</div>
-					<PluginInformation plugin={ this.props.plugin } isPlaceholder={ this.props.isPlaceholder } />
+					<PluginInformation
+						plugin={ this.props.plugin }
+						isPlaceholder={ this.props.isPlaceholder }
+						site={ this.props.selectedSite }
+						pluginVersion={ plugin && plugin.version }
+						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
+						hasUpdate={ this.getAvailableNewVersion() } />
+
 				</Card>
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }

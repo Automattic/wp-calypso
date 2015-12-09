@@ -1,9 +1,36 @@
-.plugin-ratings {
-	margin-top: 12px;
+.plugin-ratings.is-placeholder {
+	.plugin-ratings__rating-text {
+		@include placeholder();
+	}
+
+	.rating {
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+
+.plugin-ratings__rating-stars {
+	font-size: 24px;
+
+	@include breakpoint( '<480px' ) {
+		display: inline-block;
+		margin-right: 8px;
+		font-size: 16px;
+	}
 }
 
 .plugin-ratings__rating-tier {
 	line-height: 18px;
+}
+
+.plugin-ratings__rating-text {
+	font-size: 11px;
+	color: $gray;
+	text-transform: uppercase;
+	margin-bottom: 16px;
+
+	@include breakpoint( '<480px' ) {
+		display: inline;
+	}
 }
 
 .plugin-ratings__rating-container {

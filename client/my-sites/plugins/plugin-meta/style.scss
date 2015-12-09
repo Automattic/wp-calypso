@@ -67,6 +67,7 @@
 	}
 
 	.is-placeholder & {
+		width: 200px;
 		@include placeholder();
 	}
 }
@@ -93,18 +94,19 @@
 }
 
 .plugin-meta__meta {
-	font-size: 11px;
 	color: $gray;
 	white-space: pre;
 	text-overflow: ellipsis;
+	float: left;
 
-	a, a:visited {
-		color: $gray;
+	.is-placeholder & {
+		width: 120px;
+		@include placeholder();
 	}
+}
 
-	@include breakpoint( '>480px' ) {
-		text-transform: uppercase;
-	}
+.is-placeholder .plugin-meta__author {
+	color: transparent !important;
 }
 
 .plugin-meta__actions {
