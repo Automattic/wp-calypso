@@ -19,7 +19,7 @@ function createSiteSpecificPlanObject( plan ) {
 		subscribedDate: plan.subscribed_date,
 		subscribedMoment: moment( plan.subscribed_date ),
 		userFacingExpiry: plan.user_facing_expiry,
-		userFacingExpiryMoment: moment( plan.user_facing_expiry )
+		userFacingExpiryMoment: moment( plan.user_facing_expiry ).add( { day: 1 } )
 	}
 }
 
