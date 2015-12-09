@@ -1698,6 +1698,20 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
 };
 
 /**
+ * Get the available advanced settings for customizing an export
+ *
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.getExportAdvancedSettings = function( siteId, fn ) {
+	debug( `/sites/${ siteId }/exports/new` );
+
+	this.wpcom.req.post( {
+		path: `/sites/${ siteId }/exports/new`
+	}, fn );
+};
+
+/**
  * GET help links
  *
  * @param {string} searchQuery User input for help search
