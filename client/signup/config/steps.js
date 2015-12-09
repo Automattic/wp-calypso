@@ -1,5 +1,12 @@
+/**
+ * External dependencies
+ */
+import { current } from 'page';
+
+/**
+* Internal dependencies
+*/
 import stepActions from 'lib/signup/step-actions';
-import { abtest } from 'lib/abtest';
 import i18n from 'lib/mixins/i18n';
 
 module.exports = {
@@ -33,6 +40,22 @@ module.exports = {
 
 	test: {
 		stepName: 'test',
+	},
+
+	'survey-user': {
+		stepName: 'survey-user',
+		apiRequestFunction: stepActions.createAccount,
+		dependencies: [ 'surveySiteType', 'surveyQuestion' ],
+		providesToken: true,
+		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	survey: {
+		stepName: 'survey',
+		props: {
+			surveySiteType: ( '/start/vert-blog' === current ) ? 'blog' : 'site'
+		},
+		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
 
 	plans: {

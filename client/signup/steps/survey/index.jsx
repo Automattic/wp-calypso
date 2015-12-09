@@ -14,6 +14,11 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
+import { getABTestVariation } from 'lib/abtest';
+
+function isSurveyOneStep() {
+	return 'oneStep' === getABTestVariation( 'verticalSurvey' );
+}
 
 export default React.createClass( {
 	displayName: 'SurveyStep',
@@ -26,7 +31,7 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			surveySiteType: 'site',
-			isOneStep: false
+			isOneStep: isSurveyOneStep()
 		}
 	},
 

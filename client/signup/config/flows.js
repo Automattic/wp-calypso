@@ -66,6 +66,13 @@ const flows = {
 		lastModified: '2015-09-22'
 	},
 
+	verticals: {
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getCheckoutDestination,
+		description: 'Categorizing blog signups for Verticals Survey',
+		lastModified: '2015-12-10'
+	},
+
 	headstart: {
 		steps: [ 'theme-headstart', 'domains-with-theme', 'plans', 'user' ],
 		destination: getCheckoutDestination,
@@ -146,6 +153,11 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function getCurrentFlowNameFromTest( currentURL ) {
+	// Assign the user to the verticals survey test if appropriate.
+	if ( '/start/vert-blog' === currentURL || '/start/vert-site' === currentURL ) {
+		return ( 'noSurvey' === abtest( 'verticalSurvey' ) ) ? 'main' : 'verticals';
+	}
+
 	// Only consider users from the general /start path.
 	if ( '/start/en?ref=homepage' === currentURL && 'dss' === abtest( 'dss' ) ) {
 		return 'dss';
