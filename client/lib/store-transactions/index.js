@@ -221,6 +221,7 @@ function getPaygateParameters( cardDetails ) {
 		number: cardDetails.number,
 		cvc: cardDetails.cvv,
 		zip: cardDetails['postal-code'],
+		country: cardDetails.country,
 		exp_month: cardDetails['expiration-date'].substring( 0, 2 ),
 		exp_year: '20' + cardDetails['expiration-date'].substring( 3, 5 )
 	};
