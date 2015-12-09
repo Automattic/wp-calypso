@@ -1,31 +1,20 @@
-.security-2fa-enable__inner {
-	@include clear-fix;
-	display: flex;
-	margin-bottom: 20px;
-}
-
 .security-2fa-enable .security-2fa-enable__cancel {
 	float: left;
 	margin-left: 0;
 }
 
-.security-2fa-enable__first {
-	flex: 1;
-	margin-right: 20px;
+.security-2fa-enable__code-block {
+	margin-bottom: 16px;
 }
 
-.security-2fa-enable__first-label {
-	font-weight: bold;
-	margin-bottom: 0;
-}
+.security-2fa-enable__qr-code {
+	height: 150px;
+	width: 150px;
+	margin: 0 auto;
 
-.security-2fa-enable__next {
-	flex: 2;
-}
-
-.security-2fa-enable__next-label {
-	font-weight: bold;
-	margin-bottom: 0;
+	&.is-placeholder {
+		@include placeholder( 23% );
+	}
 }
 
 .security-2fa-enable__app-options {
@@ -42,8 +31,14 @@
 
 .security-2fa-enable__toggle {
 	cursor: pointer;
+	display: block;
 }
 
 .security-2fa-enable .notice {
 	margin: 5px 0 0 0;
+}
+
+.security-2fa-enable__buttons-bar {
+	@include clear-fix;
+	margin-top: 16px;
 }

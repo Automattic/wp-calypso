@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-enable' ),
-	QRCode = require( 'qrcode.react' );
+	QRCode = require( 'qrcode.react' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -178,22 +179,58 @@ module.exports = React.createClass( {
 		}
 	},
 
-	renderQRCode: function() {
+	getToggleLink: function() {
 		return (
-			<div>
-				<p>
-					{ this.translate( 'Scan this QR code with your mobile app:' ) }
+			<a
+				className="security-2fa-enable__toggle"
+				onClick={ function( event ) {
+					this.toggleMethod( event );
+					analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
+				}.bind( this ) }
+			/>
+		);
+	},
+
+	renderQRCode: function() {
+		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+			'is-placeholder': ! this.state.otpAuthUri
+		} );
+
+		return (
+			<div className="security-2fa-enable__qr-code-block">
+				<p className="security-2fa-enable__qr-instruction">
+					{
+						this.translate(
+							"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the barcode?{{/toggleMethodLink}}", {
+								components: {
+									toggleMethodLink: this.getToggleLink()
+								}
+							}
+						)
+					}
 				</p>
-				{ this.state.otpAuthUri ? <QRCode value={ this.state.otpAuthUri } size={ 150 } /> : null }
+				<div className={ qrClasses }>
+					{ this.state.otpAuthUri &&
+						<QRCode value={ this.state.otpAuthUri } size={ 150 } />
+					}
+				</div>
 			</div>
 		);
 	},
 
 	renderTimeCode: function() {
 		return (
-			<div>
-				<p>
-					{ this.translate( 'Enter this time code into your mobile app:' ) }
+			<div className="security-2fa-enable__time-code-block">
+				<p className="security-2fa-enable__time-instruction">
+					{
+						this.translate(
+							'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the barcode?{{/toggleMethodLink}}', {
+								components: {
+									toggleMethodLink: this.getToggleLink()
+								}
+							}
+						)
+					}
 				</p>
 				<p className="security-2fa-enable__time-code">
 					{ this.state.timeCode }
@@ -208,11 +245,8 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="security-2fa-enable__first">
-				<p className="security-2fa-enable__first-label">
-					{ this.translate( 'First', { context: 'The first thing we want the user to do for Two-Step setup.' } ) }
-				</p>
-				{ ( 'scan' === this.state.method ) ? this.renderQRCode() : this.renderTimeCode() }
+			<div className="security-2fa-enable__code-block">
+				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
 			</div>
 		);
 	},
@@ -226,11 +260,7 @@ module.exports = React.createClass( {
 
 		return (
 			<p>
-				{
-					'scan' === this.state.method
-					? this.translate( 'Enter the code your app gives you after scanning:' )
-					: this.translate( 'Enter the code your app gives you after entering the time code:' )
-				}
+				{ this.translate( 'Then enter the six digit code provided by the app:' ) }
 			</p>
 		);
 	},
@@ -275,17 +305,6 @@ module.exports = React.createClass( {
 						)
 					}
 				</p>
-				<p>
-					<a
-						className="security-2fa-enable__toggle"
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
-							this.toggleMethod( event );
-						}.bind( this ) }
-					>
-						{ 'scan' === this.state.method ? this.translate( "Can't scan the barcode?" ) : this.translate( 'Prefer to scan the barcode?' ) }
-					</a>
-				</p>
 			</div>
 		);
 	},
@@ -312,15 +331,6 @@ module.exports = React.createClass( {
 	renderInputBlock: function() {
 		return (
 			<div className="security-2fa-enable__next">
-				{
-					'sms' !== this.state.method
-					? (
-						<p className="security-2fa-enable__next-label">
-							{ this.translate( 'Next', { context: 'The next thing we want the user to do for Two-Step setup.' } ) }
-						</p>
-					)
-					: null
-				}
 				{ this.renderInputHelp() }
 				<FormTextInput
 					autoComplete="off"
@@ -355,7 +365,7 @@ module.exports = React.createClass( {
 
 	renderButtons: function() {
 		return (
-			<div>
+			<div className="security-2fa-enable__buttons-bar">
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
