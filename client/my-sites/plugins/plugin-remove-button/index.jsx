@@ -125,9 +125,9 @@ module.exports = React.createClass( {
 		const getDisabledInfo = this.getDisabledInfo();
 		const label = getDisabledInfo
 			? this.translate( 'Removal Disabled', {
-				context: 'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" '
+				comment: 'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" '
 			} )
-			: this.translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } );
+			: this.translate( 'Remove', { context: 'verb', comment: 'Presented to user as a label for a button.' } );
 		if ( inProgress ) {
 			return (
 				<span className="plugin-action plugin-remove-button__remove">
