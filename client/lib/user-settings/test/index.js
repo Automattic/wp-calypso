@@ -15,16 +15,16 @@ describe( 'User Settings', function() {
 
 	it( 'should consider overridden settings as saved', function( done ) {
 		userSettings.updateSetting( 'test', true );
-		userSettings.updateSetting( 'surprise_me', true );
+		userSettings.updateSetting( 'lang_id', true );
 		assert.equal( true, userSettings.unsavedSettings.test );
-		assert.equal( true, userSettings.unsavedSettings.surprise_me );
+		assert.equal( true, userSettings.unsavedSettings.lang_id );
 
 		userSettings.saveSettings( assertCorrectSettingIsRemoved,
 			{ test: true } );
 
 		function assertCorrectSettingIsRemoved() {
 			assert.isUndefined( userSettings.unsavedSettings.test );
-			assert.equal( true, userSettings.unsavedSettings.surprise_me );
+			assert.equal( true, userSettings.unsavedSettings.lang_id );
 			done();
 		}
 	} );
