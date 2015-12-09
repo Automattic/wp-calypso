@@ -43,7 +43,7 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			search: '',
-			selected: this.props.selected
+			selected: this.props.selected || sites.getPrimary().slug
 		};
 	},
 
@@ -56,7 +56,7 @@ export default React.createClass( {
 			selected: siteSlug,
 			open: false
 		} );
- 	},
+	},
 
 	render() {
 		return (
@@ -73,10 +73,11 @@ export default React.createClass( {
 				{ this.state.open &&
 					<SiteSelector
 						sites={ sites }
-						indicator={ false }
 						autoFocus={ true }
 						onClose={ this.props.onClose }
 						onSiteSelect={ this.selectSite }
+						selected={ this.state.selected }
+						hideSelected={ true }
 					/>
 				}
 			</div>
