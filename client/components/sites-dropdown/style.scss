@@ -70,6 +70,24 @@
 			}
 		}
 	}
+
+	// Highlight selected site
+	&.is-selected,
+	.notouch &.is-selected:hover {
+		background-color: $gray-light;
+
+		.site__title {
+			color: $gray-dark;
+		}
+
+		.site__domain {
+			color: $gray;
+		}
+
+		&.is-private .site__title::before {
+			color: $gray;
+		}
+	}
 }
 
 .sites-dropdown .site-selector .site:not(.is-selected) .site-icon__img {

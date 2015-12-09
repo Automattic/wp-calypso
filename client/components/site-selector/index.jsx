@@ -25,7 +25,9 @@ module.exports = React.createClass( {
 		showAllSites: React.PropTypes.bool,
 		indicator: React.PropTypes.bool,
 		autoFocus: React.PropTypes.bool,
-		onClose: React.PropTypes.func
+		onClose: React.PropTypes.func,
+		selected: React.PropTypes.string,
+		hideSelected: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -34,6 +36,8 @@ module.exports = React.createClass( {
 			showAllSites: false,
 			siteBasePath: false,
 			indicator: false,
+			hideSelected: false,
+			selected: null,
 			onClose: noop
 		};
 	},
@@ -125,6 +129,10 @@ module.exports = React.createClass( {
 		}
 	},
 
+	isSelected: function( site ) {
+		return this.props.sites.selected === site.domain || this.props.selected === site.slug;
+	},
+
 	renderSiteElements: function() {
 		var allSitesPath = this.props.allSitesPath,
 			sites, siteElements;
@@ -143,6 +151,12 @@ module.exports = React.createClass( {
 				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
 			}
 
+			const isSelected = this.isSelected( site );
+
+			if ( isSelected && this.props.hideSelected ) {
+				return;
+			}
+
 			return (
 				<Site
 					site={ site }
@@ -150,7 +164,7 @@ module.exports = React.createClass( {
 					key={ 'site-' + site.ID }
 					indicator={ this.props.indicator }
 					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
-					isSelected={ this.props.sites.selected === site.domain }
+					isSelected={ isSelected }
 				/>
 			);
 		}, this );
