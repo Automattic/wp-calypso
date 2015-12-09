@@ -46,11 +46,16 @@
 	.is-phone & {
 		width: 460px;
 	}
+}
 
+.web-preview.is-computer .web-preview__content,
+.web-preview.is-tablet .web-preview__content,
+.web-preview.is-phone .web-preview__content {
 	@include breakpoint( "<660px" ) {
 		left: 0;
 		right: 0;
 		top: 0;
+		width: 100%;
 	}
 }
 
@@ -117,6 +122,10 @@
 	&.is-active {
 		color: $gray-dark;
 	}
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .web-preview__toolbar-tray {
@@ -149,6 +158,10 @@
 	position: absolute;
 		top: 45%;
 		left: 50%;
+
+	@include breakpoint( "<660px" ) {
+		top: 20%;
+	}
 }
 
 .web-preview__loading-message {
