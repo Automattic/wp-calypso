@@ -87,7 +87,7 @@ function setUpContext( layout ) {
 		var parsed = url.parse( location.href, true );
 
 		context.layout = layout;
-		context.reduxStore = reduxStore;
+		context.store = reduxStore;
 
 		// Break routing and do full page load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
