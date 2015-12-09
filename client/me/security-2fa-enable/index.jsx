@@ -12,11 +12,12 @@ var React = require( 'react' ),
 var FormButton = require( 'components/forms/form-button' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormTelInput = require( 'components/forms/form-tel-input' ),
 	Notice = require( 'components/notice' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
@@ -332,12 +333,12 @@ module.exports = React.createClass( {
 		return (
 			<div className="security-2fa-enable__next">
 				{ this.renderInputHelp() }
-				<FormTextInput
+				<FormTelInput
 					autoComplete="off"
+					autoFocus
 					disabled={ this.state.submittingForm }
 					name="verification-code"
-					placeholder="123456"
-					type="text"
+					placeholder={ 'sms' === this.state.method ? constants.sevenDigit2faPlaceholder : constants.sixDigit2faPlaceholder }
 					valueLink={ this.linkState( 'verificationCode' ) }
 					onFocus={ function() {
 						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );

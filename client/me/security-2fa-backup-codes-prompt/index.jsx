@@ -10,10 +10,11 @@ var React = require( 'react' ),
 var FormButton = require( 'components/forms/form-button' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormTelInput = require( 'components/forms/form-tel-input' ),
 	Notice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
@@ -125,12 +126,11 @@ module.exports = React.createClass( {
 			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
 					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code' ) }</FormLabel>
-					<FormTextInput
+					<FormTelInput
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
-						type="text"
 						autoComplete="off"
-						placeholder="12345678"
+						placeholder={ constants.eightDigitBackupCodePlaceholder }
 						valueLink={ this.linkState( 'backupCodeEntry' ) }
 						onFocus={ function() {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input' );
