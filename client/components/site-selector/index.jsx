@@ -38,7 +38,8 @@ module.exports = React.createClass( {
 			indicator: false,
 			hideSelected: false,
 			selected: null,
-			onClose: noop
+			onClose: noop,
+			onSiteSelect: noop
 		};
 	},
 
@@ -127,6 +128,8 @@ module.exports = React.createClass( {
 		if ( siteBasePath.match( /^\/domains\/manage\// ) ) {
 			siteBasePath = '/domains/manage';
 		}
+
+		return siteBasePath;
 	},
 
 	isSelected: function( site ) {
