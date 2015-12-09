@@ -38,8 +38,13 @@ export default React.createClass( {
 	},
 
 	renderStepTwoVertical( vertical ) {
+		const stepTwoClickHandler = ( event ) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.handleNextStep( vertical );
+		}
 		return (
-			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ this.handleNextStep.bind( null, vertical ) }>
+			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ stepTwoClickHandler }>
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
@@ -47,7 +52,15 @@ export default React.createClass( {
 
 	renderStepOneVertical( vertical ) {
 		const icon = vertical.icon || 'user';
-		const stepOneClickHandler = this.props.isOneStep ? this.handleNextStep.bind( null, vertical ) : this.showStepTwo.bind( null, vertical );
+		const stepOneClickHandler = ( event ) => {
+			event.preventDefault();
+			event.stopPropagation();
+			if ( this.props.isOneStep ) {
+				this.handleNextStep( vertical )
+				return;
+			}
+			this.showStepTwo( vertical );
+		}
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
