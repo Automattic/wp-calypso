@@ -13,7 +13,8 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
 	Notice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
@@ -129,7 +130,7 @@ module.exports = React.createClass( {
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
 						autoComplete="off"
-						placeholder="12345678"
+						placeholder={ constants.eightDigitBackupCodePlaceholder }
 						valueLink={ this.linkState( 'backupCodeEntry' ) }
 						onFocus={ function() {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input' );

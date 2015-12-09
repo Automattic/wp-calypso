@@ -18,7 +18,8 @@ var Dialog = require( 'components/dialog' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	Notice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	userUtilities = require( 'lib/user/utils' );
+	userUtilities = require( 'lib/user/utils' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
@@ -152,17 +153,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var codePlaceholder = this.translate( 'e.g. 123456', {
-			context: '6 digit two factor code placeholder.',
-			textOnly: true
-		} );
-
-		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			codePlaceholder = this.translate( 'e.g. 1234567', {
-				context: '7 digit two factor code placeholder.',
-				textOnly: true
-			} );
-		}
+		var codePlaceholder = this.props.twoStepAuthorization.isTwoStepSMSEnabled()
+			? constants.sevenDigit2faPlaceholder
+			: constants.sixDigit2faPlaceholder;
 
 		return (
 			<Dialog

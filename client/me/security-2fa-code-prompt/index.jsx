@@ -14,7 +14,8 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
 	Notice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
@@ -193,14 +194,20 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		var codePlaceholder = twoStepAuthorization.isTwoStepSMSEnabled()
+			? constants.sevenDigit2faPlaceholder
+			: constants.sixDigit2faPlaceholder;
+
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
 					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
 					<FormTelInput
+						autoFocus
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
 						name="verification-code"
+						placeholder={ codePlaceholder }
 						autoComplete="off"
 						valueLink={ this.linkState( 'verificationCode' ) }
 						onFocus={ function() {
