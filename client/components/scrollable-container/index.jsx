@@ -25,18 +25,22 @@ import smartSetState from 'lib/react-smart-set-state';
 		window.addEventListener( 'resize', this.checkScrollable );
 		this.checkScrollable();
 
-		document.getElementById( 'wp-sidebar' ).addEventListener( 'scroll', this.checkScrolled );
+		React.findDOMNode( this.refs[ 'sidebar-container' ] ).addEventListener( 'scroll', this.checkScrolled );
 		this.checkScrolled();
+
+		console.log( 'componentDidMount' );
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'resize', this.checkScrollable );
-		document.getElementById( 'wp-sidebar' ).removeEventListener( 'scroll', this.checkScrolled );
+		React.findDOMNode( this.refs[ 'sidebar-container' ] ).removeEventListener( 'scroll', this.checkScrolled );
 	},
 
 	componentDidUpdate: function() {
 		this.checkScrollable();
 		this.checkScrolled();
+
+		console.log( 'componentDidUpdate' );
 	},
 
 	/**
@@ -45,7 +49,7 @@ import smartSetState from 'lib/react-smart-set-state';
 	 */
 	checkScrollable: function() {
 		var windowHeight = window.innerHeight,
-			sidebar = document.getElementById( 'wp-sidebar' ),
+			sidebar = React.findDOMNode( this.refs[ 'sidebar-container' ] ),
 			sidebarHeight = sidebar.scrollHeight;
 
 		if ( sidebarHeight > ( windowHeight ) ) {
@@ -60,7 +64,7 @@ import smartSetState from 'lib/react-smart-set-state';
 	 * This is used to hide/show the chevron Gridicon as needed.
 	 */
 	checkScrolled: function() {
-		var sidebar = document.getElementById( 'wp-sidebar' ),
+		var sidebar = React.findDOMNode( this.refs[ 'sidebar-container' ] ),
 			isAtBottom = ( sidebar.scrollTop === ( sidebar.scrollHeight - sidebar.offsetHeight ) );
 
 		if ( isAtBottom ) {
@@ -71,7 +75,8 @@ import smartSetState from 'lib/react-smart-set-state';
 	},
 
 	render() {
-		let containerClasses;
+		let containerClasses,
+			child = React.cloneElement( React.Children.only( this.props.children ), { ref: 'sidebar-container' } );
 
 		containerClasses = classnames( {
 			'is-scrollable': this.state.isScrollable,
@@ -80,7 +85,7 @@ import smartSetState from 'lib/react-smart-set-state';
 
 		return (
 			<div className={ containerClasses }>
-				{ this.props.children }
+				{ child }
 
 				<div className="scroll-indicator"><Gridicon icon="chevron-down" /></div>
 			</div>
