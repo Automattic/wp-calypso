@@ -11,7 +11,7 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormTelInput = require( 'components/forms/form-tel-input' ),
 	Notice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'analytics' );
@@ -197,11 +197,10 @@ module.exports = React.createClass( {
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
 					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
-					<FormTextInput
+					<FormTelInput
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
 						name="verification-code"
-						type="text"
 						autoComplete="off"
 						valueLink={ this.linkState( 'verificationCode' ) }
 						onFocus={ function() {
