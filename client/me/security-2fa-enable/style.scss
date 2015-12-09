@@ -11,6 +11,10 @@
 	height: 150px;
 	width: 150px;
 	margin: 0 auto;
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+	}
 }
 
 .security-2fa-enable__app-options {

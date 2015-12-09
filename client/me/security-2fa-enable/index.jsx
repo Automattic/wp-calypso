@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-enable' ),
-	QRCode = require( 'qrcode.react' );
+	QRCode = require( 'qrcode.react' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -191,6 +192,10 @@ module.exports = React.createClass( {
 	},
 
 	renderQRCode: function() {
+		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+			'is-placeholder': ! this.state.otpAuthUri
+		} );
+
 		return (
 			<div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
@@ -204,7 +209,7 @@ module.exports = React.createClass( {
 						)
 					}
 				</p>
-				<div className="security-2fa-enable__qr-code">
+				<div className={ qrClasses }>
 					{ this.state.otpAuthUri &&
 						<QRCode value={ this.state.otpAuthUri } size={ 150 } />
 					}
