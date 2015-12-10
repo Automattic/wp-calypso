@@ -8,7 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
- var StatsListItem = require( './stats-list-item' );
+var StatsListItem = require( './stats-list-item' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsList',

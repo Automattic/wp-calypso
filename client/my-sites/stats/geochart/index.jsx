@@ -8,7 +8,7 @@ var React = require( 'react/addons' ),
 /**
  * Internal dependencies
  */
- var analytics = require( 'analytics' );
+var analytics = require( 'analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsGeochart',
