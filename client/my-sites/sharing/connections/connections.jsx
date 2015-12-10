@@ -117,8 +117,6 @@ module.exports = React.createClass( {
 			<div>
 				<SharingServicesGroup
 					services={ where( services, { type: 'publicize' } ) }
-					title={ this.translate( 'Publicize', { context: 'Sharing: Connections' } ) }
-					description={ this.translate( 'Connect social media services to automatically share new posts.' ) }
 					{ ...commonGroupProps } />
 				<SharingServicesGroup
 					services={ where( services, { type: 'other' } ) }

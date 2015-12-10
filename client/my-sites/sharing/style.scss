@@ -200,7 +200,7 @@ $color-print: #f8f8f8;
 .sharing-service {
 	//@extend %container;
 	box-shadow: 0 0 0 1px rgba( lighten( $gray, 20% ), 0.5 ), 0 1px 2px lighten( $gray, 30% );
-	margin-bottom: 16px;
+	margin-bottom: 1px;
 	padding: 0;
 
 	&:hover {
@@ -218,8 +218,8 @@ $color-print: #f8f8f8;
 
 .sharing-service-action {
 	position: absolute;
-		right: 16px;
-		top: 22px;
+		right: 56px;
+		top: 26px;
 
 	@include breakpoint( "<660px" ) {
 		right: 10px;
@@ -292,7 +292,7 @@ $color-print: #f8f8f8;
 	float: left;
 	height: 42px;
 	padding-top: 10px;
-	margin: 0 15px 0 32px;
+	margin: 0 15px 0 0;
 	text-align: center;
 	width: 50px;
 	border-radius: 4px;
@@ -369,7 +369,7 @@ $color-print: #f8f8f8;
 
 .sharing-service__content-toggle {
 	position: absolute;
-		left: 12px;
+		right: 16px;
 		top: 30px;
 	font-size: 22px;
 	color: #aeb8be;
