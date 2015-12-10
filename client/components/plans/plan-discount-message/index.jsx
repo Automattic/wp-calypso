@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
- var productsValues = require( 'lib/products-values' );
+var productsValues = require( 'lib/products-values' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanDiscountMessage',
