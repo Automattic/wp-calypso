@@ -38,64 +38,64 @@
 		}
 	}
 
-  &.active {
-	background: $white;
-	a {
-	  color: $blue-wordpress;
+	&.active {
+		background: $white;
+		a {
+			color: $blue-wordpress;
+		}
 	}
-  }
 }
 
 //Overwriting the popup defaults
 body {
-  .webui-popover {
-	border-radius: 2px;
-	padding: 0;
-	text-align: inherit;
-	border-color: lighten( $gray, 20% );
-	z-index: 100300; // Appear above dialog
+	.webui-popover {
+		border-radius: 2px;
+		padding: 0;
+		text-align: inherit;
+		border-color: lighten( $gray, 20% );
+		z-index: 100300; // Appear above dialog
 
-	.webui-popover-title {
-	  background-color: lighten( $gray, 20% );
-	  border-color: lighten( $gray, 30% );
-	  border-radius: 1px 1px 0 0;
-	}
-
-	&.top,
-	&.top-right,
-	&.top-left {
-	  .arrow {
-		border-top-color: lighten( $gray, 20% );
-	  }
-	}
-
-	&.right,
-	&.right-top,
-	&.right-bottom {
-	  .arrow {
-		border-right-color: lighten( $gray, 20% );
-	  }
-	}
-
-	&.left,
-	&.left-top,
-	&.left-bottom {
-	  .arrow {
-		border-left-color: lighten( $gray, 20% );
-	  }
-	}
-
-	&.bottom,
-	&.bottom-right,
-	&.bottom-left {
-	  .arrow {
-		border-bottom-color: lighten( $gray, 20% );
-		&:after {
-		  border-bottom-color: lighten( $gray, 20% );
+		.webui-popover-title {
+			background-color: lighten( $gray, 20% );
+			border-color: lighten( $gray, 30% );
+			border-radius: 1px 1px 0 0;
 		}
-	  }
+
+		&.top,
+		&.top-right,
+		&.top-left {
+			.arrow {
+				border-top-color: lighten( $gray, 20% );
+			}
+		}
+
+		&.right,
+		&.right-top,
+		&.right-bottom {
+			.arrow {
+				border-right-color: lighten( $gray, 20% );
+			}
+		}
+
+		&.left,
+		&.left-top,
+		&.left-bottom {
+			.arrow {
+				border-left-color: lighten( $gray, 20% );
+			}
+		}
+
+		&.bottom,
+		&.bottom-right,
+		&.bottom-left {
+			.arrow {
+				border-bottom-color: lighten( $gray, 20% );
+				&:after {
+					border-bottom-color: lighten( $gray, 20% );
+				}
+			}
+		}
 	}
-  }
 }
 
 .translator-modal {

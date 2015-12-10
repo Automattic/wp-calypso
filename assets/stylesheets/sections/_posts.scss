@@ -332,11 +332,11 @@
 
 /* RTL */
 .rtl .posts__list {
-  //smaller font, let's use Tahoma
+	//smaller font, let's use Tahoma
 	.post__quote {
 		font-family: $sans-rtl;
 	}
-  //we can use the default sans for titles
+	//we can use the default sans for titles
 	.post__title {
 		font-family: $sans;
 	}

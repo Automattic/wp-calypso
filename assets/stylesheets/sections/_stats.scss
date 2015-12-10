@@ -691,18 +691,18 @@ ul.module-tabs {
 		}
 	}
 
- 	&.is-enabled {
- 		background: $gray-light;
+	&.is-enabled {
+		background: $gray-light;
 
- 		&,
- 		li {
+		&,
+		li {
 			border-color: $gray-light;
- 		}
+		}
 
- 		a {
- 			background: $gray-light;
- 		}
- 	}
+		a {
+			background: $gray-light;
+		}
+	}
 }
 
 // Module Content
@@ -928,9 +928,9 @@ ul.module-tabs {
 	from {
 		opacity: 1;
 	}
-    to {
-    	opacity: 0;
-    }
+	to {
+		opacity: 0;
+	}
 }
 
 .stats-poll__message {
