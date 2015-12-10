@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import { success, error } from 'state/notices';
+import { success, error } from 'state/notices/actions';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -16,8 +16,9 @@ import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
+import { connect } from 'react-redux';
 
-export default React.createClass( {
+const NotificationSettings = React.createClass( {
 	displayName: 'NotificationSettings',
 
 	mixins: [ observe( 'sites', 'devices' ) ],
@@ -43,11 +44,11 @@ export default React.createClass( {
 		const state = store.getStateFor( 'blogs' );
 
 		if ( state.error ) {
-			error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			success( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
@@ -74,3 +75,16 @@ export default React.createClass( {
 	}
 } );
 
+export default connect(
+	() => {
+		return {}
+	},
+	( dispatch ) => { return {
+		successNotice: ( text, options ) => {
+			dispatch( success( text + ':)', options ) );
+		},
+		errorNotice: ( text, options ) => {
+			dispatch( error( text + ':)', options ) );
+		}
+	} }
+)( NotificationSettings );

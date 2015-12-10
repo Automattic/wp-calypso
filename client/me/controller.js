@@ -18,6 +18,7 @@ import purchasesController from './purchases/controller';
 import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
+import { Provider } from 'react-redux';
 
 const ANALYTICS_PAGE_TITLE = 'Me',
 	devices = devicesFactory(),
@@ -192,15 +193,17 @@ export default {
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
 		React.render(
-			React.createElement( NotificationsComponent,
-				{
-					user: user,
-					userSettings: userSettings,
-					blogs: sites,
-					devices: devices,
-					path: context.path
-				}
-			),
+			React.createElement( Provider, { store: context.reduxStore }, () => {
+				return React.createElement( NotificationsComponent,
+					{
+						user: user,
+						userSettings: userSettings,
+						blogs: sites,
+						devices: devices,
+						path: context.path
+					}
+				)
+			} ),
 			document.getElementById( 'primary' )
 		);
 	},
