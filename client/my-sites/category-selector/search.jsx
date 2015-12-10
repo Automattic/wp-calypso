@@ -20,7 +20,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<div className="category-selector__search">
-				<Gridicon icon="search" size={ 16 } />
+				<Gridicon icon="search" size={ 18 } />
 				<input type="search"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }

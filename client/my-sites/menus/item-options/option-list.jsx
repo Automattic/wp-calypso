@@ -31,7 +31,7 @@ var Search = React.createClass( {
 	render: function() {
 		return (
 			<div className="search-container">
-				<Gridicon icon="search" size={ 16 } />
+				<Gridicon icon="search" size={ 18 } />
 				<input type="search" className="search-box"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }

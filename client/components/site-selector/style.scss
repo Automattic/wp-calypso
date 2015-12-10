@@ -117,18 +117,19 @@
 		width: auto;
 		position: absolute;
 			left: 18px;
-		margin-top: -8px;
-		width: 16px;
-		height: 16px;
+			top: 50%;
+		margin-top: -9px;
+		width: 18px;
+		height: 18px;
 	}
 
 	&.is-open {
 		.search-close__icon {
 			color: $gray;
 			right: 16px;
-			margin-top: -8px;
-			width: 16px;
-			height: 16px;
+			margin-top: -9px;
+			width: 18px;
+			height: 18px;
 		}
 	}
 }
