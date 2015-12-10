@@ -92,7 +92,7 @@
     "walk": "2.3.4",
     "webpack": "1.12.6",
     "webpack-dev-middleware": "1.2.0",
-    "wpcom-unpublished": "1.0.7",
+    "wpcom-unpublished": "1.0.8",
     "wpcom-proxy-request": "1.0.5",
     "wpcom-xhr-request": "0.3.3",
     "xgettext-js": "0.2.0"
