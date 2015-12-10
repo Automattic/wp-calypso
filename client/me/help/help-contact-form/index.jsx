@@ -86,6 +86,7 @@ module.exports = React.createClass( {
 				key: option.value,
 				selected: option.value === this.state[ selectionName ],
 				value: option.value,
+				title: option.label,
 				onClick: () => {
 					this.setState( { [ selectionName ]: option.value } )
 				}
