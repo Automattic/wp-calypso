@@ -12,9 +12,8 @@ import { connect } from 'react-redux';
 import Notice from 'components/notice';
 const debug = debugModule( 'calypso:global-notices' );
 
-var NoticesList =  React.createClass( {
+const GlobalNotices = React.createClass( {
 
-	displayName: 'GlobalNotices',
 	propTypes: {
 		id: React.PropTypes.string,
 		forcePinned: React.PropTypes.bool
@@ -81,4 +80,4 @@ export default connect(
 			notices: state.notices.items
 		};
 	}
-)( NoticesList );
+)( GlobalNotices );
