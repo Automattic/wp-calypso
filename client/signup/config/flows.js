@@ -147,7 +147,7 @@ function removeUserStepFromFlow( flow ) {
 
 function getCurrentFlowNameFromTest( currentURL ) {
 	// Only consider users from the general /start path.
-	if ( '/start' === currentURL && 'dss' === abtest( 'dss' ) ) {
+	if ( '/start/en?ref=homepage' === currentURL && 'dss' === abtest( 'dss' ) ) {
 		return 'dss';
 	}
 
