@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' );
+import React from 'react/addons';
+import classNames from 'classnames';
 
 module.exports = React.createClass( {
 
 	displayName: 'FormInputValidation',
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return { isError: false };
 	},
 
-	render: function() {
-		var classes = classNames( {
+	render() {
+		const classes = classNames( {
 			'form-input-validation': true,
 			'is-error': this.props.isError
 		} );
