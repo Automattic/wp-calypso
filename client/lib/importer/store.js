@@ -15,8 +15,14 @@ import { createReducerStore } from 'lib/store';
  */
 const initialState = {
 	count: 0,
-	importers: new Immutable.Map
+	importers: new Immutable.Map,
+	api: {
+		isFetching: false,
+		retryCount: 0
+	}
 };
+
+const increment = a => a + 1;
 
 const ImporterStore = createReducerStore( function( state, payload ) {
 	let { action } = payload,
@@ -30,6 +36,22 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 			newState = Immutable.fromJS( action.newState );
 			newState = Immutable.is( state, newState ) ? state : newState;
+			break;
+
+		case actionTypes.API_REQUEST:
+			newState = state.setIn( [ 'api', 'isFetching' ], true );
+			break;
+
+		case actionTypes.API_FAILURE:
+			newState = state
+				.setIn( [ 'api', 'isFetching' ], false )
+				.updateIn( [ 'api', 'retryCount' ], increment );
+			break;
+
+		case actionTypes.API_SUCCESS:
+			newState = state
+				.setIn( [ 'api', 'isFetching' ], false )
+				.setIn( [ 'api', 'retryCount' ], 0 );
 			break;
 
 		case actionTypes.CANCEL_IMPORT:
@@ -66,6 +88,11 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					return author.set( 'mappedTo', action.targetAuthor );
 				} )
 			) );
+			break;
+
+		case actionTypes.RECEIVE_IMPORT_STATUS:
+			newState = state
+				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 
 		case actionTypes.SET_UPLOAD_PROGRESS:
