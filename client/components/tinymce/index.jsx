@@ -169,8 +169,8 @@ module.exports = React.createClass( {
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 
+			window.addEventListener( 'scroll', this.onScrollPinTools );
 			if ( ! viewport.isMobile() ) {
-				window.addEventListener( 'scroll', this.onScrollPinTools );
 				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
 			}
 		}.bind( this );
