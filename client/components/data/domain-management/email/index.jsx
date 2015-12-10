@@ -11,7 +11,10 @@ var StoreConnection = require( 'components/data/store-connection' ),
 	GoogleAppsUsersStore = require( 'lib/domains/google-apps-users/store' ),
 	CartStore = require( 'lib/cart/store' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	userFactory = require( 'lib/user' );
+
+const user = userFactory();
 
 var stores = [
 	DomainsStore,
@@ -34,7 +37,7 @@ function getStateFromStores( props ) {
 		googleAppsUsers: GoogleAppsUsersStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
-		user: props.user
+		user: user.get()
 	};
 }
 
@@ -46,8 +49,7 @@ module.exports = React.createClass( {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired,
-		user: React.PropTypes.object.isRequired
+		sites: React.PropTypes.object.isRequired
 	},
 
 	mixins: [ observe( 'productsList' ) ],
@@ -79,10 +81,7 @@ module.exports = React.createClass( {
 				products={ this.props.productsList.get() }
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.sites.getSelectedSite() }
-				context={ this.props.context }
-				user={ this.props.user }>
-				{ this.props.children }
-			</StoreConnection>
+				context={ this.props.context } />
 		);
 	}
 } );

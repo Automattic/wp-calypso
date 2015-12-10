@@ -40,9 +40,7 @@ module.exports = React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }>
-				{ this.props.children }
-			</StoreConnection>
+				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
 } );
