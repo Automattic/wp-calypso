@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	debug = require( 'debug' )( 'calypso:me:account' ),
+	emailValidator = require( 'email-validator' ),
 	_debounce = require( 'lodash/function/debounce' ),
 	_map = require( 'lodash/collection/map' ),
 	_size = require( 'lodash/collection/size' ),
@@ -21,6 +22,7 @@ var LanguageSelector = require( 'components/forms/language-selector' ),
 	config = require( 'config' ),
 	Card = require( 'components/card' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormTextValidation = require( 'components/forms/form-input-validation' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -89,6 +91,10 @@ module.exports = React.createClass( {
 		var username = this.props.userSettings.getSetting( 'user_login' );
 		debug( 'Validating username ' + username );
 		this.props.username.validate( username );
+	},
+
+	hadFormError: function() {
+		return this.state.emailValidationError;
 	},
 
 	communityTranslator: function() {
@@ -246,14 +252,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderEmailValueLink: function() {
-		let valueLink = this.valueLink( 'user_email' );
-		if ( this.hasPendingEmailChange() ) {
-			valueLink.value = this.props.userSettings.getSetting( 'new_user_email' );
-		}
-		return valueLink;
-	},
-
 	hasPendingEmailChange: function() {
 		return this.props.userSettings.isPendingEmailChange();
 	},
@@ -348,8 +346,50 @@ module.exports = React.createClass( {
 				name="primary_site_ID"
 				onFocus={ this.recordFocusEvent( 'Primary Site Field' ) }
 				sites={ sites }
-				valueLink={ this.valueLink( 'primary_site_ID' ) }
-			/>
+				valueLink={ this.valueLink( 'primary_site_ID' ) } />
+		);
+	},
+
+	updateEmailAddress: function() {
+		return {
+			value: this.hasPendingEmailChange()
+				? this.props.userSettings.getSetting( 'new_user_email' )
+				: this.props.userSettings.getSetting( 'user_email' ),
+			requestChange: function( value ) {
+				if ( '' === value ) {
+					this.setState( { emailValidationError: 'empty' } );
+				} else if ( ! emailValidator.validate( value ) ) {
+					this.setState( { emailValidationError: 'invalid' } );
+				} else {
+					this.setState( { emailValidationError: false } );
+				}
+				this.props.userSettings.updateSetting( 'user_email', value );
+			}.bind( this )
+		};
+	},
+
+	renderEmailValidation: function() {
+		if ( ! this.props.userSettings.isSettingUnsaved( 'user_email' ) ) {
+			return null;
+		}
+
+		if ( ! this.state.emailValidationError ) {
+			return null;
+		}
+		let notice;
+		switch ( this.state.emailValidationError ) {
+			case 'invalid':
+				notice = this.translate( '%(email)s is not a valid email address.', {
+					args: { email: this.props.userSettings.getSetting( 'user_email' ) }
+				} );
+				break;
+			case 'empty':
+				notice = this.translate( 'Email address can not be empty.' );
+				break;
+		}
+
+		return (
+			<FormTextValidation isError={ true } text={ notice } />
 		);
 	},
 
@@ -365,8 +405,11 @@ module.exports = React.createClass( {
 						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
 						id="email"
 						name="email"
+						isError={ !! this.state.emailValidationError }
 						onFocus={ this.recordFocusEvent( 'Email Address Field' ) }
-						valueLink={ this.renderEmailValueLink() } />
+						valueLink={ this.updateEmailAddress() }
+						valueKey="user_email" />
+					{ this.renderEmailValidation() }
 					{ this.renderPendingEmailChange() }
 					<FormSettingExplanation>{ this.translate( 'Will not be publicly displayed' ) }</FormSettingExplanation>
 				</FormFieldset>
@@ -405,7 +448,7 @@ module.exports = React.createClass( {
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
-					disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() }
+					disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() || !! this.hadFormError() }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) } >
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Account Settings' ) }
 				</FormButton>
