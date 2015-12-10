@@ -31,7 +31,7 @@ function normalizeInvite( data ) {
 		date: data.invite.invite_date,
 		role: decodeEntities( data.invite.meta.role ),
 		sentTo: decodeEntities( data.invite.meta.sent_to ),
-		site: filterObjectProperties( Object.assign( data.blog_details, { ID: parseInt( data.invite.blog_id ), URL: data.blog_details.domain } ) ),
+		site: Object.assign( filterObjectProperties( data.blog_details ), { ID: parseInt( data.invite.blog_id, 10 ), URL: data.blog_details.domain } ),
 		inviter: filterObjectProperties( data.inviter )
 	}
 }

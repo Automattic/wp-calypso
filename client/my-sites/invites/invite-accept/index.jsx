@@ -16,6 +16,8 @@ import userModule from 'lib/user';
 import { fetchInvite, displayInviteDeclined } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
+import store from 'store';
+import { displayInviteAccepted } from 'lib/invites/actions';
 
 /**
  * Module variables
@@ -35,6 +37,12 @@ export default React.createClass( {
 	},
 
 	componentWillMount() {
+		const acceptedInvite = store.get( 'invite_accepted' );
+		if ( acceptedInvite && acceptedInvite.inviteKey === this.props.inviteKey ) {
+			displayInviteAccepted( acceptedInvite );
+			page( this.getRedirectAfterAccept( acceptedInvite ) );
+			return;
+		}
 		fetchInvite( this.props.siteId, this.props.inviteKey );
 		InvitesStore.on( 'change', this.refreshInvite );
 	},
@@ -75,8 +83,7 @@ export default React.createClass( {
 		);
 	},
 
-	getRedirectAfterAccept() {
-		const { invite } = this.state
+	getRedirectAfterAccept( invite = this.state ) {
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
@@ -100,7 +107,7 @@ export default React.createClass( {
 		debug( 'Rendering invite' );
 		return user
 			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ user } />
-			: <LoggedOut { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } />;
+			: <LoggedOut { ...this.state.invite } decline={ this.decline } />;
 	},
 
 	renderError() {

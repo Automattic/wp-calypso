@@ -25,7 +25,8 @@ export default React.createClass( {
 
 	accept() {
 		this.setState( { submitting: true } );
-		acceptInvite( this.props, () => page( this.props.redirectTo ) );
+		acceptInvite( this.props );
+		page( this.props.redirectTo );
 	},
 
 	render() {
@@ -54,7 +55,10 @@ export default React.createClass( {
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
-							{ this.state.submitting ? this.translate( 'Joining…', { context: 'button' } ) : this.translate( 'Join', { context: 'button' } ) }
+							{ this.state.submitting
+								? this.translate( 'Joining…', { context: 'button' } )
+								: this.translate( 'Join', { context: 'button' } )
+							}
 						</Button>
 					</div>
 				</Card>
