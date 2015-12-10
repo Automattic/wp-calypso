@@ -43,7 +43,6 @@ require( './plugins/calypso-alert/plugin' )();
 const formatting = require( 'lib/formatting' ),
 	user = require( 'lib/user' )(),
 	i18n = require( './i18n' ),
-	hasTouch = require( 'lib/touch-detect' ).hasTouch,
 	viewport = require( 'lib/viewport' );
 
 /**
@@ -170,8 +169,8 @@ module.exports = React.createClass( {
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 
-			if ( ! hasTouch() ) {
-				window.addEventListener( 'scroll', this.onScrollPinTools );
+			window.addEventListener( 'scroll', this.onScrollPinTools );
+			if ( ! viewport.isMobile() ) {
 				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
 			}
 		}.bind( this );
