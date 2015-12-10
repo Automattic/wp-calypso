@@ -51,12 +51,14 @@ const PlanStatusProgress = React.createClass( {
 	render() {
 		return (
 			<CompactCard>
-				<div className="plan-status__time-until-expiry">
-					{ this.renderDaysRemaining() }
-				</div>
-				
 				<div className="plan-status__progress">
-					{ this.renderProgressBar() }
+					<div className="plan-status__time-until-expiry">
+						{ this.renderDaysRemaining() }
+					</div>
+
+					<div className="plan-status__progress-bar">
+						{ this.renderProgressBar() }
+					</div>
 				</div>
 			</CompactCard>
 		);

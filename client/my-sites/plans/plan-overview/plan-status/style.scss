@@ -42,15 +42,21 @@
 	font-weight: 700;
 }
 
-.plan-status__time-until-expiry {
-	box-sizing: border-box;
-	float: left;
-	font-weight: 700;
-	padding-right: 20px;
-	text-align: center;
-	width: 180px;
+.plan-status__progress {
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: -24px;
 }
 
-.plan-status__progress {
-	margin-left: 180px;
+.plan-status__progress-bar,
+.plan-status__time-until-expiry {
+	margin-left: 24px;
+}
+
+.plan-status__progress-bar {
+	flex: 1 0 6em;
+}
+
+.plan-status__time-until-expiry {
+	font-weight: 700;
 }
