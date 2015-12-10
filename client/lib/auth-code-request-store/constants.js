@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import keyMirror from 'react/lib/keyMirror';
+import keyMirror from 'key-mirror';
 
 export const actions = keyMirror( {
 	// Sending a request for an SMS auth code

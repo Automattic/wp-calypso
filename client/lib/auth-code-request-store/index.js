@@ -1,6 +1,6 @@
 import { createReducerStore } from 'lib/store'
 import { actions as ActionTypes } from './constants'
-import keyMirror from 'react/lib/keyMirror';
+import keyMirror from 'key-mirror';
 
 export const requestState = keyMirror( {
 	READY: null,
