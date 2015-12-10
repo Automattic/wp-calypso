@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE } from '../action-types';
+import { SET_SELECTED_SITE } from 'state/action-types';
 import { setSelectedSite } from '../actions';
 
 describe( 'actions', () => {

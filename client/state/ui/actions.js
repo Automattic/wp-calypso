@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE } from './action-types';
+import { SET_SELECTED_SITE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a site has been set

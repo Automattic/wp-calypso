@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE } from './action-types';
+import { SET_SELECTED_SITE } from 'state/action-types';
 
 /**
  * Tracks the currently selected site ID.

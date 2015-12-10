@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from './action-types';
+import { RECEIVE_SITE } from 'state/action-types';
 
 /**
  * Tracks all known site objects, indexed by site ID.

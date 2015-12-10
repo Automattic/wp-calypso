@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from './action-types';
+import { RECEIVE_SITE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a site object has

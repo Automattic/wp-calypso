@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from '../action-types';
+import { RECEIVE_SITE } from 'state/action-types';
 import { items } from '../reducer';
 
 describe( 'reducer', () => {
