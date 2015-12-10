@@ -4,9 +4,9 @@
 var req = require( 'superagent' ),
 	bodyParser = require( 'body-parser' );
 
- /**
-  * Internal dependencies
-  */
+/**
+ * Internal dependencies
+ */
 var config = require( 'config' );
 
 function oauth() {
