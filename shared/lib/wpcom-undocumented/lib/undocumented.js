@@ -1675,9 +1675,7 @@ Undocumented.prototype.deleteEmailFollower = function( siteId, followerId, email
 Undocumented.prototype.fetchImporterState = function( siteId ) {
 	debug( `/sites/${ siteId }/importer/` );
 
-	return this.wpcom.req.get( Object.assign( {},
-		{ path: `/sites/${ siteId }/imports/` }
-	) );
+	return this.wpcom.req.get( { path: `/sites/${ siteId }/imports/` } );
 };
 
 Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
