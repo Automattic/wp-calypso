@@ -545,7 +545,7 @@ function wpEditImage( editor ) {
 				}
 			} );
 		}
-    } );
+	} );
 
 	editor.on( 'BeforeExecCommand', function( event ) {
 		var node, p, DL, align, replacement,
