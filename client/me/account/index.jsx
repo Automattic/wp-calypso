@@ -45,7 +45,13 @@ module.exports = React.createClass( {
 
 	displayName: 'Account',
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings', 'username' ), eventRecorder ],
+	mixins: [
+		formBase,
+		React.addons.LinkedStateMixin,
+		protectForm.mixin,
+		observe( 'userSettings', 'username' ),
+		eventRecorder
+	],
 
 	componentWillMount: function() {
 		// Clear any username changes that were previously made
@@ -70,13 +76,9 @@ module.exports = React.createClass( {
 
 			this.props.userSettings.updateSetting( 'language', value );
 			if ( value !== originalLanguage ) {
-				this.setState( {
-					redirect: '/me/account'
-				} );
+				this.setState( { redirect: '/me/account' } );
 			} else {
-				this.setState( {
-					redirect: false
-				} );
+				this.setState( { redirect: false } );
 			}
 		}.bind( this );
 
@@ -120,9 +122,7 @@ module.exports = React.createClass( {
 
 	getOptoutText: function( website ) {
 		return this.translate( '%(website)s opt-out', {
-			args: {
-				website: website
-			},
+			args: { website: website },
 			context: 'A website address, formatted to look like "Website.com"'
 		} );
 	},
@@ -180,13 +180,9 @@ module.exports = React.createClass( {
 		var username = this.props.userSettings.getSetting( 'user_login' ),
 			action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
-		this.setState( {
-			submittingForm: true
-		} );
+		this.setState( { submittingForm: true } );
 		this.props.username.change( username, action, function( error ) {
-			this.setState( {
-				submittingForm: false
-			} );
+			this.setState( { submittingForm: false } );
 			if ( error ) {
 				notices.error( this.props.username.getValidationFailureMessage() );
 			} else {
@@ -202,8 +198,16 @@ module.exports = React.createClass( {
 	renderHolidaySnow() {
 		// Note that years and months below are zero indexed
 		let today = this.moment(),
-			startDate = this.moment( { year: today.year(), month: 11, day: 1 } ),
-			endDate = this.moment( { year: today.year(), month: 0, day: 4 } );
+			startDate = this.moment( {
+				year: today.year(),
+				month: 11,
+				day: 1
+			} ),
+			endDate = this.moment( {
+				year: today.year(),
+				month: 0,
+				day: 4
+			} );
 
 		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
 			return;
