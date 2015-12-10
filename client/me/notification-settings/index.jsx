@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import { success, error } from 'state/notices/actions';
+import { noticesMapDispatchToProps } from 'state/notices/actions'
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -48,7 +48,7 @@ const NotificationSettings = React.createClass( {
 		}
 
 		if ( state.status === 'success' ) {
-			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.translate( 'Settings saved successfully!' ), { duration: 3000 } );
 		}
 
 		this.setState( state );
@@ -79,12 +79,5 @@ export default connect(
 	() => {
 		return {}
 	},
-	( dispatch ) => { return {
-		successNotice: ( text, options ) => {
-			dispatch( success( text, options ) );
-		},
-		errorNotice: ( text, options ) => {
-			dispatch( error( text, options ) );
-		}
-	} }
+	noticesMapDispatchToProps
 )( NotificationSettings );

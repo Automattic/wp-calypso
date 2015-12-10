@@ -5,6 +5,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	classes = require( 'component-classes' ),
@@ -137,7 +138,7 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
-	var layoutSection, layout, reduxStore, validSections = [];
+	var layoutSection, layout, layoutComponentCreator, reduxStore, validSections = [];
 
 	init();
 
@@ -162,13 +163,14 @@ function boot() {
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
-		layout = ReactDom.render( React.createElement( Layout, {
+
+		layoutComponentCreator = () => React.createElement( Layout, {
 			user: user,
 			sites: sites,
 			focus: layoutFocus,
 			nuxWelcome: nuxWelcome,
 			translatorInvitation: translatorInvitation
-		} ), document.getElementById( 'wpcom' ) );
+		} );
 	} else {
 		analytics.setSuperProps( superProps );
 
@@ -178,11 +180,13 @@ function boot() {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
 
-		layout = ReactDom.render(
-			React.createElement( LoggedOutLayout ),
-			document.getElementById( 'wpcom' )
-		);
+		layoutComponentCreator = () => React.createElement( LoggedOutLayout );
 	}
+
+	layout = ReactDom.render(
+		React.createElement( ReduxProvider, { store: reduxStore }, layoutComponentCreator ),
+		document.getElementById( 'wpcom' )
+	);
 
 	debug( 'Main layout rendered.' );
 
@@ -194,7 +198,7 @@ function boot() {
 		window.history.replaceState( null, document.title, window.location.pathname );
 	}
 
-	setUpContext( layout );
+	setUpContext( layout, reduxStore );
 
 	page( '*', require( 'lib/route/normalize' ) );
 
