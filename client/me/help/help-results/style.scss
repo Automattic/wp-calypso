@@ -22,8 +22,18 @@
 }
 
 .help-result {
+	position: relative;
+
+	.gridicons-external {
+		position: absolute;
+		z-index: 1;
+		top: 16px;
+		right: 24px;
+	}
+
 	&:hover {
 		background-color: $blue-medium;
+		.gridicons-external,
 		.help-result__title,
 		.help-result__description {
 			color: $white;
