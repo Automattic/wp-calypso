@@ -24,6 +24,11 @@ var Cards = React.createClass( {
 
 				<SectionHeader label="Team" count={ 10 }>
 					<Button
+						compact
+						primary>
+						{ this.translate( 'Primary Action' ) }
+					</Button>
+					<Button
 						compact>
 						{ this.translate( 'Manage' ) }
 					</Button>
