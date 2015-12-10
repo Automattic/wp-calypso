@@ -44,6 +44,23 @@ describe( 'wpcom.me', function() {
 		} );
 	} );
 
+	describe( 'wpcom.me.billingHistory', function() {
+		it( 'should require billing history', function( done ) {
+			me.billingHistory( function( err, data ) {
+				if ( err ) throw err;
+
+				assert.ok( data );
+				assert.equal( 'object', typeof data.billing_history );
+				assert.ok( data.billing_history instanceof Array );
+
+				assert.equal( 'object', typeof data.upcoming_charges );
+				assert.ok( data.upcoming_charges instanceof Array );
+
+				done();
+			} );
+		} );
+	} );
+
 	describe( 'wpcom.me.sites', function() {
 		it( 'should require user sites object', done => {
 			me.sites()
@@ -73,6 +90,30 @@ describe( 'wpcom.me', function() {
 					assert.equal( 'object', typeof data.groups );
 					assert.ok( data.groups instanceof Array );
 
+					done();
+				} )
+				.catch( done );
+		} );
+	} );
+
+	describe( 'wpcom.me.keyringConnections', function() {
+		it( 'should get current user\' keyring connections', done => {
+			me.keyringConnections()
+				.then( data => {
+					assert.ok( data );
+					assert.ok( data.connections instanceof Array );
+					done();
+				} )
+				.catch( done );
+		} );
+	} );
+
+	describe( 'wpcom.me.publicizeConnections', function() {
+		it( 'should get current user\' publicize connections', done => {
+			me.publicizeConnections()
+				.then( data => {
+					assert.ok( data );
+					assert.ok( data.connections instanceof Array );
 					done();
 				} )
 				.catch( done );

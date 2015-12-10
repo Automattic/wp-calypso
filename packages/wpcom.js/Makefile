@@ -12,7 +12,7 @@ TESTAPP_PORT := 3001
 
 # Files
 JS_FILES := $(wildcard index.js lib/*.js test/*.js)
-JS_TESTING_FILES := $(wildcard test/test*.js)
+JS_TESTING_FILES := $(wildcard test/test*.js test-whitelist/test*.js)
 
 # applications
 NODE ?= node

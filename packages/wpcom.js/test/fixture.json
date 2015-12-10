@@ -44,5 +44,15 @@
         "description": "Testing media file added from a URL"
       }
     ]
-  }
+  },
+  "profile-links": [
+    {
+      "title": "WordPress blog",
+      "value": "en.blog.wordpress.com"
+    },
+    {
+      "title": "WordPress blog in Spanish",
+      "value": "es.blog.wordpress.com"
+    }
+  ]
 }

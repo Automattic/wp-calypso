@@ -62,8 +62,6 @@ module.exports = {
 function wpcom() {
 	let _wpcom;
 	if ( isClientSide ) {
-		window.wpcom = _wpcom;
-
 		reqHandler = qryString.handler || 'wpcom-proxy-request';
 
 		if ( 'wpcom-proxy-request' === reqHandler ) {
@@ -81,6 +79,8 @@ function wpcom() {
 			let oauthToken = JSON.parse( localStorage.wp_oauth ).access_token;
 			_wpcom = wpcomFactory( oauthToken );
 		}
+		// expose wpcom just for testing
+		window.wpcom = _wpcom;
 	} else {
 		_wpcom = wpcomFactory( process.env.TOKEN || config.token );
 	}
