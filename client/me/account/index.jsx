@@ -242,8 +242,20 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderEmailValueLink: function() {
+		let valueLink = this.valueLink( 'user_email' );
+		if ( this.hasPendingEmailChange() ) {
+			valueLink.value = this.props.userSettings.getSetting( 'new_user_email' );
+		}
+		return valueLink;
+	},
+
+	hasPendingEmailChange: function() {
+		return this.props.userSettings.isPendingEmailChange();
+	},
+
 	renderPendingEmailChange: function() {
-		if ( ! this.props.userSettings.isPendingEmailChange() ) {
+		if ( ! this.hasPendingEmailChange() ) {
 			return null;
 		}
 
@@ -346,11 +358,11 @@ module.exports = React.createClass( {
 				<FormFieldset>
 					<FormLabel htmlFor="email">{ this.translate( 'Email Address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() }
+						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
 						id="email"
 						name="email"
 						onFocus={ this.recordFocusEvent( 'Email Address Field' ) }
-						valueLink={ this.valueLink( 'user_email' ) } />
+						valueLink={ this.renderEmailValueLink() } />
 					{ this.renderPendingEmailChange() }
 					<FormSettingExplanation>{ this.translate( 'Will not be publicly displayed' ) }</FormSettingExplanation>
 				</FormFieldset>
