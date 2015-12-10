@@ -6,7 +6,7 @@ module.exports = {
 					settings: function( callback ) {
 						callback( false, {
 							test: false,
-							surprise_me: false
+							lang_id: false
 						} );
 					},
 					saveSettings: function( settings, callback ) {

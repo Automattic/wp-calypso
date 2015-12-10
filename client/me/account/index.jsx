@@ -385,32 +385,6 @@ module.exports = React.createClass( {
 
 				{ this.communityTranslator() }
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Fun' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'surprise_me' ) }
-							disabled={ this.getDisabledState() }
-							id="surprise_me"
-							name="surprise_me"
-							onClick={ this.recordCheckboxEvent( 'Fun Mode' ) } />
-						<span>{ this.translate( 'Surprise Me. (Fun mode.)' ) }</span>
-					</FormLabel>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Instant Post Feedback' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'post_post_flag' ) }
-							disabled={ this.getDisabledState() }
-							id="post_post_flag"
-							name="post_post_flag"
-							onClick={ this.recordCheckboxEvent( 'Instant Post Feedback' ) } />
-						<span>{ this.translate( 'Show the feedback and progress sidebar after posting.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
-
 				{ this.renderHolidaySnow() }
 
 				<FormButton
