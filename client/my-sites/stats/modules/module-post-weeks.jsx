@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	toggle = require( './mixin-toggle' ),
+	toggle = require( '../mixin-toggle' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
 
@@ -176,4 +176,3 @@ module.exports = React.createClass( {
 		);
 	}
 } );
-
