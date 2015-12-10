@@ -19,7 +19,7 @@ const reducer = combineReducers( {
 	sharing,
 	sites,
 	ui,
-    notices
+	notices
 } );
 
 export function createReduxStore() {
