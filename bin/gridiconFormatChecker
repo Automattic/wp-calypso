@@ -1,28 +1,33 @@
 #!/usr/bin/env node
 
 var fs = require( 'fs' );
-var readline = require( 'readline' );
 var validIconSizes = [ 12, 18, 24, 36, 48, 54, 72 ];
 
-var file = process.argv[ 2 ];
+var filename = process.argv[ 2 ];
 
-function checkGridicons( filename ) {
-	var lineNumber = 0,
-		result = '';
-	readline.createInterface( {
-		input: fs.createReadStream( filename ),
-		terminal: false
-	} ).on( 'line', function( line ) {
-		var gridIconProps, onlyAttrs, size, isNonStandard = false;
+fs.readFile( filename, 'utf8', function ( err, data ) {
+	var result = '',
+		splittedCode,
+		lineNumber = 1;
+	if ( err ) {
+		console.log(err);
+		process.exit( 1 );
+	}
+	data = data.toLowerCase();
+	splittedCode = data.split( '<gridicon' );
 
-		if ( line.indexOf( '<Gridicon' ) >= 0 ) {
-			gridIconProps = line.split( '<Gridicon' )[ 1 ];
-			if ( gridIconProps ) {
-				onlyAttrs = gridIconProps.split( '>' )[ 0 ].split( ' ' ).join( '' );
-				isNonStandard = onlyAttrs.indexOf( 'nonStandard' ) >= 0;
-				if ( onlyAttrs.indexOf( 'size={' ) >= 0 ) {
-					size = onlyAttrs.split( 'size={' )[ 1 ].split( '}' )[ 0 ];
+	if ( splittedCode.length > 1 ) {
+		// There are gridicon instances in this file.
+		splittedCode.forEach( function( chunk ) {
+			var gridiconAttrs, isNonStandard, size;
+			if( chunk ) {
+				// we discard all the code after the tag closing... we are only interested in the props of the gridicon.
+				gridiconAttrs = chunk.split( '>' )[ 0 ];
+				isNonStandard = gridiconAttrs.indexOf( 'nonstandard' ) >= 0;
+				if ( gridiconAttrs.indexOf( 'size={' ) >= 0 ) {
+					size = gridiconAttrs.split( 'size={' )[ 1 ].split( '}' )[ 0 ];
 					if ( !isNaN( size ) ) {
+						// We only can check if the size is standard if it is a number. If not (variables), we have no way of knowing if it's fine or not
 						if( !isNonStandard && validIconSizes.indexOf( +size ) < 0 ) {
 							result += '\033[31mNon-standard gridicon size ( ' + size + 'px ) detected in ' + filename + ' line ' + lineNumber + '\n';
 						}
@@ -31,18 +36,16 @@ function checkGridicons( filename ) {
 						}
 					}
 				}
+				lineNumber += chunk.split('\n').length - 1;
 			}
-		}
-		lineNumber++;
-	} ).on( 'close', function() {
-		if ( result !== '' ) {
-			console.error( result );
-			console.log( '\033[mValid gridiconsizes are ' + validIconSizes.join( 'px, ' ) + 'px\n' );
-			process.exit( 1 );
-		} else {
-			process.exit( 0 );
-		}
-	} );
-}
+		} );
+	}
 
-checkGridicons( file );
+	if ( result !== '' ) {
+		console.error( result );
+		console.log( '\033[m=== Valid gridiconsizes are ' + validIconSizes.join( 'px, ' ) + 'px ===\n' );
+		process.exit( 1 );
+	} else {
+		process.exit( 0 );
+	}
+} );
