@@ -28,7 +28,7 @@ const LostPassword = React.createClass( {
 					{ this.translate( 'Lost your password?' ) }
 				</a>
 			</p>
-        );
+		);
 	}
 } );
 
