@@ -35,7 +35,7 @@ export default React.createClass( {
 				return null;
 			}
 			return (
-				<Notice status="is-success" onClick={ dismissInviteAccepted }>
+				<Notice status="is-success" onDismissClick={ dismissInviteAccepted }>
 					<h3 className="invite-message__title">{ this.translate( 'You\'re now a user of: %(site)s', { args: { site: site.slug } } ) }</h3>
 					<p className="invite-message__intro">
 						{ this.translate( 'This is your site dashboard where you can write posts and control your site. ' ) }
