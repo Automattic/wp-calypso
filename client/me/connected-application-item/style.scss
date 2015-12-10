@@ -53,7 +53,7 @@
 .connected-application-item__content-toggle {
 	position: absolute;
 		top: 24px;
-		left: 16px;
+		right: 16px;
 	margin-top: 4px;
 	font-size: 16px;
 	color: $gray;
@@ -79,21 +79,8 @@
 
 .connected-application-item__disconnect{
 	position: absolute;
-		top: 16px;
-		right: 16px;
-	font-size: 14px;
-	line-height: 40px;
-	color: $alert-red;
-	margin-left: 20px;
-	background: $white;
-
-	&:hover {
-		color: lighten( $alert-red, 10% );
-	}
-
-	&:after {
-		@include stats-fade-text( $white );
-	}
+		top: 22px;
+		right: 56px;
 }
 
 .connected-application-item__content {
