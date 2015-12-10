@@ -1,4 +1,15 @@
 
+4.8.3 / 2015-12-10
+==================
+
+ * add methods:
+ *  - me.billingHistory
+ *  - me.connectedAppication
+ *  - me.keyringConnection
+ *  - me.publicizeConnection
+ *  - me.settins.password
+ *  - me.towStep
+
 4.8.2 / 2015-11-26
 ==================
 
