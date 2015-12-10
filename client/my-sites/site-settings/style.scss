@@ -69,6 +69,9 @@
 		font-style: italic;
 		font-weight: 400;
 		color: $gray;
+		&.is-indented {
+			margin-left: 24px;
+		}
 	}
 
 	p.settings-alert {
