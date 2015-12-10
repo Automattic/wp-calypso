@@ -7,5 +7,5 @@ import pkg from '../package';
 /**
  * Expose globals
  */
-window.WPCOM= wpcomFactory;
+window.WPCOM = wpcomFactory;
 window.pkg = pkg;
