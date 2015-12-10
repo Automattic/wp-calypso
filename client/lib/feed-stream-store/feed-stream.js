@@ -380,8 +380,8 @@ assign( FeedStream.prototype, {
 	},
 
 	/**
- 	 * Process a new page of data and concatenate to the end of the list
- 	**/
+	 * Process a new page of data and concatenate to the end of the list
+	 **/
 	receivePage: function( id, error, data ) {
 		var posts, postKeys;
 

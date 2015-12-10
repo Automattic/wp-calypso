@@ -33,6 +33,6 @@ const reducer = ( state = initialState, payload ) => {
 			return state.setIn( [ 'errors', action.siteId ], action.error );
 	}
 	return state;
- }
+}
 
 export { initialState, reducer };

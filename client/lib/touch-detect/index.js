@@ -12,7 +12,7 @@ module.exports = {
 	 * @see https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 	 *
 	 * @returns {Boolean} whether touch screen is available
-   */
+	 */
 	hasTouch: function() {
 		/* global DocumentTouch:true */
 		return ( ( 'ontouchstart' in window ) || window.DocumentTouch && document instanceof DocumentTouch );
