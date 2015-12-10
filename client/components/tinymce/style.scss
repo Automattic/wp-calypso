@@ -164,7 +164,7 @@
 	margin-top: 0px;
 
 	-webkit-font-smoothing: auto;
-    -moz-osx-font-smoothing: auto;
+	-moz-osx-font-smoothing: auto;
 
 	@include breakpoint( ">660px" ) {
 		border-right: 1px solid lighten( $gray, 30% );
@@ -201,7 +201,7 @@
 @import 'plugins/advanced/style';
 
 /*------------------------------------------------------------------------------
- TinyMCE and Quicklinks toolbars
+	TinyMCE and Quicklinks toolbars
 ------------------------------------------------------------------------------*/
 
 /* TinyMCE widgets/containers */
@@ -692,8 +692,8 @@ div.mce-path {
 }
 
 .post-editor .mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
-    background-image: none;
-    border-right-color: lighten( $gray, 30% );
+	background-image: none;
+	border-right-color: lighten( $gray, 30% );
 
 	@include breakpoint( "<660px" ) {
 		border-right-color: $white;
@@ -934,7 +934,7 @@ div.mce-menu .mce-menu-item-sep,
 }
 
 .mce-btn-small .mce-ico {
-    font-family: "tinymce-small", Arial, sans-serif;
+	font-family: "tinymce-small", Arial, sans-serif;
 }
 
 .mce-toolbar .mce-ico {
@@ -1631,19 +1631,19 @@ i.mce-i-wp_code:before {
 }
 
 #wp-fullscreen-buttons .mce-btn button {
-    margin: 0;
-    outline: 0 none;
-    border: 0 none;
-    white-space: nowrap;
-    width: auto;
-    background: none;
+	margin: 0;
+	outline: 0 none;
+	border: 0 none;
+	white-space: nowrap;
+	width: auto;
+	background: none;
 	color: #32373c;
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 20px;
-    overflow: visible;
-    text-align: center;
-    box-sizing: border-box;
+	cursor: pointer;
+	font-size: 18px;
+	line-height: 20px;
+	overflow: visible;
+	text-align: center;
+	box-sizing: border-box;
 }
 
 .wp-html-mode #wp-fullscreen-buttons div {
@@ -1836,7 +1836,7 @@ i.mce-i-wp_code:before {
 }
 
 /*------------------------------------------------------------------------------
- wp-link
+	wp-link
 ------------------------------------------------------------------------------*/
 
 div.wp-link-preview {
@@ -1888,13 +1888,13 @@ div.wp-link-preview a {
 
 html:lang(he-il) .rtl .wp-switch-editor,
 html:lang(he-il) .rtl .quicktags-toolbar input  {
- 	font-family: Arial, sans-serif;
+	font-family: Arial, sans-serif;
 }
 
 /* HiDPI */
 @media print,
-  (-webkit-min-device-pixel-ratio: 1.25),
-  (min-resolution: 120dpi) {
+(-webkit-min-device-pixel-ratio: 1.25),
+(min-resolution: 120dpi) {
 	.wp-media-buttons .add_media span.wp-media-buttons-icon,
 	#wp-fullscreen-buttons #wp_fs_image span.mce_image {
 		background: none;
