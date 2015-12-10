@@ -43,6 +43,7 @@ var SearchCard = require( 'components/search-card' ),
 	InputChrono = require( 'components/input-chrono/docs/example' ),
 	TimezoneDropdown = require( 'components/timezone-dropdown/docs/example' ),
 	ClipboardButtons = require( 'components/forms/clipboard-button/docs/example' ),
+	ClipboardButtonInput = require( 'components/clipboard-button-input/docs/example' ),
 	HeaderCake = require( 'components/header-cake' ),
 	InfoPopover = require( 'components/info-popover/docs/example' ),
 	FoldableCard = require( 'components/foldable-card/docs/example' ),
@@ -204,6 +205,7 @@ module.exports = React.createClass( {
 					<DropZones />
 					<FormFields searchKeywords="input textbox textarea radio"/>
 					<ClipboardButtons />
+					<ClipboardButtonInput />
 					<Rating />
 					<Count />
 					<Version />
