@@ -12,9 +12,11 @@ import EmptyContent from 'components/empty-content';
 import GhostImporter from 'my-sites/importer/importer-ghost';
 import { setState as setImporterState } from 'lib/importer/actions';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
+import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
+import { fetchState } from 'lib/importer/actions';
 import { appStates, importerTypes } from 'lib/importer/constants';
 import config from 'config';
 
@@ -185,6 +187,10 @@ export default React.createClass( {
 		setImporterState( newState );
 	},
 
+	updateFromAPI: function() {
+		fetchState( this.props.site.ID );
+	},
+
 	updateState: function() {
 		this.setState( getImporterState() );
 	},
@@ -205,6 +211,7 @@ export default React.createClass( {
 
 		return (
 			<div className="section-import">
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 				{ this.renderCustomPropControls() }
 				<CompactCard>
 					<header>
