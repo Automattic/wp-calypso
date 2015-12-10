@@ -110,7 +110,7 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 
 	debug( 'Saving settings: ' + JSON.stringify( settings ) );
 
-	wpcom.me().saveSettings( settings, function( error, data ) {
+	wpcom.me().settings().update( settings, function( error, data ) {
 		if ( ! error ) {
 			this.settings = decodeUserSettingsEntities( merge( this.settings, data ) );
 
@@ -136,7 +136,7 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 };
 
 UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
-	wpcom.me().saveSettings( { user_email_change_pending: false }, function( error, data ) {
+	wpcom.me().settings().update( { user_email_change_pending: false }, function( error, data ) {
 		if ( ! error ) {
 			this.settings = merge( this.settings, data );
 			this.emit( 'change' );
