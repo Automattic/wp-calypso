@@ -193,7 +193,7 @@ export default {
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
 		React.render(
-			React.createElement( Provider, { store: context.reduxStore }, () => {
+			React.createElement( Provider, { store: context.store }, () => {
 				return React.createElement( NotificationsComponent,
 					{
 						user: user,
