@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:site-specific-plans-details-list' ),
+	find = require( 'lodash/collection/find' ),
 	store = require( 'store' );
 
 /**
@@ -55,6 +56,10 @@ SiteSpecificPlansDetailsList.prototype.get = function( siteDomain, planId ) {
 
 SiteSpecificPlansDetailsList.prototype.hasJpphpBundle = function( siteDomain ) {
 	return this.get( siteDomain, 'host-bundle' ).current_plan;
+};
+
+SiteSpecificPlansDetailsList.prototype.getCurrentPlan = function( siteDomain ) {
+	return find( this.data[ siteDomain ], { current_plan: true } );
 };
 
 /**

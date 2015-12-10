@@ -7,12 +7,15 @@ var React = require( 'react/addons' );
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	config = require( 'config' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
+	PlanOverview = require( './plan-overview' ),
 	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	createSiteSpecificPlanObject = require( 'lib/site-specific-plans-details-list/assembler' ).createSiteSpecificPlanObject;
 
 module.exports = React.createClass( {
 	displayName: 'Plans',
@@ -51,20 +54,37 @@ module.exports = React.createClass( {
 		);
 	},
 
-	sidebarNavigation: function() {
-		return <SidebarNavigation />;
-	},
-
 	render: function() {
 		var classNames = 'main main-column ',
+			selectedSiteDomain = this.props.sites.getSelectedSite().domain,
 			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
-				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain );
+				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( selectedSiteDomain ),
+			currentPlan;
+
+		if ( this.props.siteSpecificPlansDetailsList.hasLoadedFromServer( selectedSiteDomain ) ) {
+			currentPlan = createSiteSpecificPlanObject( this.props.siteSpecificPlansDetailsList.getCurrentPlan( selectedSiteDomain ) );
+
+			if ( config.isEnabled( 'upgrades/free-trials' ) && currentPlan.freeTrial ) {
+				return (
+					<PlanOverview
+						path={ this.props.context.path }
+						cart={ this.props.cart }
+						plan={ currentPlan }
+						selectedSite={ this.props.sites.getSelectedSite() } />
+				);
+			}
+		}
 
 		return (
 			<div className={ classNames } role="main">
-				{ this.sidebarNavigation() }
+				<SidebarNavigation />
+
 				<div id="plans" className="plans has-sidebar">
-					{ this.sectionNavigation() }
+					<UpgradesNavigation
+						path={ this.props.context.path }
+						cart={ this.props.cart }
+						selectedSite={ this.props.sites.getSelectedSite() } />
+
 					<PlanList
 						sites={ this.props.sites }
 						plans={ this.props.plans.get() }
@@ -75,15 +95,6 @@ module.exports = React.createClass( {
 					{ ! hasJpphpBundle && this.comparePlansLink() }
 				</div>
 			</div>
-		);
-	},
-
-	sectionNavigation: function() {
-		return (
-			<UpgradesNavigation
-				path={ this.props.context.path }
-				cart={ this.props.cart }
-				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
 } );
