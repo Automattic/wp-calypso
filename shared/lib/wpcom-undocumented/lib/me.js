@@ -41,16 +41,6 @@ UndocumentedMe.prototype.purchases = function( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
 };
 
-UndocumentedMe.prototype.saveSettings = function( settings, callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/settings',
-		body: settings
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.getConnectedApplications = function( callback ) {
 	var args = {
 		apiVersion: '1.1',
