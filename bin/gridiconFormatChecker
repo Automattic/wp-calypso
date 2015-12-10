@@ -13,16 +13,22 @@ function checkGridicons( filename ) {
 		input: fs.createReadStream( filename ),
 		terminal: false
 	} ).on( 'line', function( line ) {
-		var gridIconProps, onlyAttrs, size;
+		var gridIconProps, onlyAttrs, size, isNonStandard = false;
 
 		if ( line.indexOf( '<Gridicon' ) >= 0 ) {
 			gridIconProps = line.split( '<Gridicon' )[ 1 ];
 			if ( gridIconProps ) {
 				onlyAttrs = gridIconProps.split( '>' )[ 0 ].split( ' ' ).join( '' );
+				isNonStandard = onlyAttrs.indexOf( 'nonStandard' ) >= 0;
 				if ( onlyAttrs.indexOf( 'size={' ) >= 0 ) {
 					size = onlyAttrs.split( 'size={' )[ 1 ].split( '}' )[ 0 ];
-					if ( !isNaN( size ) && validIconSizes.indexOf( +size ) < 0 ) {
-						result += '\033[31mNon-standard gridicon size ( ' + size + 'px ) detected in ' + filename + ' line ' + lineNumber + '\n';
+					if ( !isNaN( size ) ) {
+						if( !isNonStandard && validIconSizes.indexOf( +size ) < 0 ) {
+							result += '\033[31mNon-standard gridicon size ( ' + size + 'px ) detected in ' + filename + ' line ' + lineNumber + '\n';
+						}
+						if( isNonStandard && validIconSizes.indexOf( +size ) >= 0 ) {
+							result += '\033[33mStandard size gridicon ( ' + size + 'px ) marked as non-standard... are you sure that is ok? in ' + filename + ' line ' + lineNumber + '\n';
+						}
 					}
 				}
 			}
