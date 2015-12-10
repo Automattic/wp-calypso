@@ -22,8 +22,8 @@ const reducer = combineReducers( {
     notices
 } );
 
-const store = applyMiddleware(
-	thunkMiddleware
-)( createStore )( reducer );
-
-export default store;
+export function createReduxStore() {
+	return applyMiddleware(
+		thunkMiddleware
+	)( createStore )( reducer );
+};

@@ -38,7 +38,7 @@ var config = require( 'config' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
-	reduxStore = require( 'state' ),
+	createReduxStore = require( 'state' ).createReduxStore,
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
@@ -79,7 +79,7 @@ function init() {
 	} );
 }
 
-function setUpContext( layout ) {
+function setUpContext( layout, reduxStore ) {
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
 	page( '*', function( context, next ) {
@@ -137,7 +137,7 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
-	var layoutSection, layout, validSections = [];
+	var layoutSection, layout, reduxStore, validSections = [];
 
 	init();
 
@@ -152,7 +152,7 @@ function boot() {
 	} );
 
 	translatorJumpstart.init();
-	window.redux = reduxStore;
+	reduxStore = createReduxStore();
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
