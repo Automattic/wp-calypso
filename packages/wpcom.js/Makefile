@@ -121,7 +121,7 @@ dist/test/testing-source.js: ${JS_TESTING_FILES}
 webapp:
 	@$(WEBPACK) -p --config webapp/webpack.config.js
 
-deploy:
+deploy: test-app webapp
 	mkdir -p tmp/
 	rm -rf tmp/*
 	mkdir -p tmp/tests
