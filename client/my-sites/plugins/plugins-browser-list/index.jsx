@@ -17,7 +17,7 @@ export default React.createClass( {
 
 	_DEFAULT_PLACEHOLDER_NUMBER: 6,
 
-	getPluginsViewList() {
+	renderPluginsViewList() {
 		let emptyCounter = 0;
 
 		let pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
@@ -25,7 +25,7 @@ export default React.createClass( {
 		} );
 
 		if ( this.props.showPlaceholders ) {
-			pluginsViewsList = pluginsViewsList.concat( this.getPlaceholdersViews() );
+			pluginsViewsList = pluginsViewsList.concat( this.renderPlaceholdersViews() );
 		}
 
 		// We need to complete the list with empty elements to keep the grid drawn.
@@ -40,21 +40,21 @@ export default React.createClass( {
 		return pluginsViewsList;
 	},
 
-	getPlaceholdersViews() {
+	renderPlaceholdersViews() {
 		return Array.apply( null, Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER ) ).map( ( item, i ) => {
 			return <PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />;
 		} );
 	},
 
-	getViews() {
+	renderViews() {
 		if ( this.props.plugins.length ) {
-			return this.getPluginsViewList();
+			return this.renderPluginsViewList();
 		} else if ( this.props.showPlaceholders ) {
-			return this.getPlaceholdersViews();
+			return this.renderPlaceholdersViews();
 		}
 	},
 
-	getLink() {
+	renderLink() {
 		if ( this.props.expandedListLink ) {
 			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
 				{ this.translate( 'See All' ) }
@@ -67,10 +67,10 @@ export default React.createClass( {
 		return (
 			<div className="plugins-browser-list">
 				<SectionHeader label={ this.props.title }>
-					{ this.getLink() }
+					{ this.renderLink() }
 				</SectionHeader>
 				<Card className="plugins-browser-list__elements">
-					{ this.getViews() }
+					{ this.renderViews() }
 				</Card>
 			</div>
 		);
