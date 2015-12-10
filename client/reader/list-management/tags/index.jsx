@@ -12,13 +12,16 @@ import Icon from 'reader/list-item/icon';
 import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
-import SiteIcon from 'components/site-icon';
-import FollowButton from 'components/follow-button';
-import ReaderListsStore from 'lib/reader-lists/subscriptions';
+import Gridicon from 'components/gridicon';
+import ListStore from 'lib/reader-lists/lists';
+import ReaderListsActions from 'lib/reader-lists/actions';
 import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 import { fetchMoreTags } from 'lib/reader-lists-tags/actions';
+import smartSetState from 'lib/react-smart-set-state';
 
-const debug = debugModule( 'calypso:reader:list-management' );
+const debug = debugModule( 'calypso:reader:list-management' ); // eslint-disable-line
+
+let listFetchAttempted = false;
 
 const ListManagementTags = React.createClass( {
 	propTypes: {
@@ -28,75 +31,75 @@ const ListManagementTags = React.createClass( {
 		} )
 	},
 
+	smartSetState: smartSetState,
+
 	getInitialState() {
+		return this.getStateFromStores();
+	},
+
+	getStateFromStores() {
 		// Grab the list ID from the list store
-		//const list = ReaderListsStore.findByOwnerAndSlug( this.props.owner, this.props.slug );
-		const list = {
-			ID: 117361 // bluefuton/abcde
+		const list = ListStore.get( this.props.list.owner, this.props.list.slug );
+		if ( ! list && listFetchAttempted ) {
+			ReaderListsActions.fetchSubscriptions();
+			listFetchAttempted = true;
 		}
+
+		// Fetch tags, but only if we have the list information
 		let tags = null;
+		let isLastPage = false;
+		let currentPage = 0;
 		if ( list && list.ID ) {
 			tags = this.getTags( list.ID );
+			isLastPage = ReaderListsTagsStore.isLastPage( list.ID );
+			currentPage = ReaderListsTagsStore.getCurrentPage( list.ID );
 		}
-		let fetching = false;
-		if ( ! tags || tags.length === 0 ) {
-			fetchMoreTags( this.props.list.owner, this.props.list.slug );
-			fetching = true;
-		}
+
 		return {
 			list,
 			tags,
-			fetching,
-			page: 1
+			isLastPage,
+			currentPage,
+			isFetchingTags: ReaderListsTagsStore.isFetching(),
+			lastError: ReaderListsTagsStore.getLastError(),
 		};
 	},
 
 	getTags( listId ) {
-		const tags = ReaderListsTagsStore.get( listId );
-		return tags;
+		return ReaderListsTagsStore.getTagsForList( listId );
 	},
 
 	update() {
-		this.setState( { tags: this.getTags() } );
+		this.smartSetState( this.getStateFromStores() );
 	},
 
 	componentDidMount() {
-		ReaderListsStore.on( 'change', this.update );
+		ListStore.on( 'change', this.update );
 		ReaderListsTagsStore.on( 'change', this.update );
-		ReaderListsTagsStore.on( 'change', this.stopFetching );
 	},
 
 	componentWillUnmount() {
-		ReaderListsStore.off( 'change', this.update );
+		ListStore.off( 'change', this.update );
 		ReaderListsTagsStore.off( 'change', this.update );
-		ReaderListsTagsStore.off( 'change', this.stopFetching );
 	},
 
 	loadMore( options ) {
-		//fetchMore(); // in store actions
-		this.setState( { fetching: true } );
-		// if ( options.triggeredByScroll ) {
-		// 	this.props.trackScrollPage( RecommendedSites.getPage() );
-		// }
-	},
-
-	stopFetching() {
-		this.setState( {
-			fetching: false,
-			page: this.state.page + 1
-		} );
+		fetchMoreTags( this.props.list.owner, this.props.list.slug, this.state.currentPage + 1 );
+		if ( options.triggeredByScroll ) {
+			this.props.trackScrollPage( this.state.currentPage );
+		}
 	},
 
 	renderPlaceholders() {
 		const placeholders = [],
-			number = this.state.tags.length ? 2 : 10;
+			number = 2;
 
 		times( number, ( i ) => {
 			placeholders.push(
 				<ListItem className="is-placeholder" key={'list-placeholder-' + i}>
-					<Icon><SiteIcon size={48} /></Icon>
+					<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
 					<Title>Loading</Title>
-					<Description>Loading the results...</Description>
+					<Description></Description>
 				</ListItem>
 			);
 		} );
@@ -108,9 +111,9 @@ const ListManagementTags = React.createClass( {
 		return 'list-tag-' + item.ID;
 	},
 
-	trackSiteClick() {
-		stats.recordAction( 'click_site_on_list_following' );
-		stats.recordGaEvent( 'Clicked Site on List Following' );
+	trackTagClick() {
+		stats.recordAction( 'click_tag_on_list_management' );
+		stats.recordGaEvent( 'Clicked Tag on List Management' );
 	},
 
 	renderItem( tag ) {
@@ -118,35 +121,51 @@ const ListManagementTags = React.createClass( {
 
 		return (
 			<ListItem key={ itemKey } ref={ itemKey }>
-				<Icon>tag icon</Icon>
+				<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
 				<Title>
-					<a href={'/tags/'} onclick={ this.trackSiteClick }>{ tag.slug }</a>
+					<a href={ '/tag/' + tag.slug } onclick={ this.trackTagClick }>{ tag.slug }</a>
 				</Title>
-				<Description>desc</Description>
+				<Description></Description>
 				<Actions>
 				</Actions>
 			</ListItem>
 		);
 	},
 
-	render() {
+	renderTagList() {
 		if ( ! this.state.tags ) {
-			return ( <p>No tags yet!</p> );
+			return null;
 		}
 
 		return (
-			<Main className="list-management-tags">
-				<Navigation selected="tags" list={ this.props.list } />
-				<InfiniteList
+			<InfiniteList
 					items={ this.state.tags }
-					fetchingNextPage={ this.state.fetching }
-					lastPage={ true }
+					fetchingNextPage={ this.state.isFetchingTags }
+					lastPage={ this.state.isLastPage }
 					guessedItemHeight={ 300 }
 					fetchNextPage={ this.loadMore }
 					getItemRef={ this.getItemRef }
 					renderItem={ this.renderItem }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
 				/>
+		);
+	},
+
+	render() {
+		let message = null;
+		if ( ! this.state.list ) {
+			message = ( <p> {this.translate( 'Loading list information…' ) } </p> );
+		}
+
+		if ( this.state.list && this.state.tags.length === 0 && this.state.isLastPage ) {
+			message = ( <p> {this.translate( 'This list does not have any tags yet.' ) } </p> );
+		}
+
+		return (
+			<Main className="list-management-tags">
+				<Navigation selected="tags" list={ this.props.list } />
+				{ message }
+				{ this.renderTagList() }
 			</Main>
 			);
 	}

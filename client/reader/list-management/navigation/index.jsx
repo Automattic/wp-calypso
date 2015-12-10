@@ -28,7 +28,6 @@ const ListManagementNavigation = React.createClass( {
 					<NavItem path={ `${baseListUrl}/feeds` } selected={current === 'feeds'}>{ this.translate( 'Feeds' )}</NavItem>
 					<NavItem path={ `${baseListUrl}/tags` } selected={current === 'tags'}>{ this.translate( 'Tags' )}</NavItem>
 					<NavItem path={ `${baseListUrl}/edit` } selected={current === 'description-edit'}>{ this.translate( 'Description' )}</NavItem>
-					<NavItem path={ `${baseListUrl}/followers` } selected={current === 'followers'}>{ this.translate( 'Followers' )}</NavItem>
 				</NavTabs>
 			</SectionNav>
 			);

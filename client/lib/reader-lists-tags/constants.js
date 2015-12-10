@@ -1,2 +1,7 @@
-export const ACTION_RECEIVE_READER_LIST_TAGS = 'receive_reader_list_tags';
-export const ACTION_RECEIVE_READER_LIST_TAGS_ERROR = 'receive_reader_list_tags_error';
+// External Dependencies
+const keyMirror = require( 'key-mirror' );
+
+module.exports.action = keyMirror( {
+	ACTION_RECEIVE_READER_LIST_TAGS: null,
+	ACTION_FETCH_NEXT_READER_LIST_TAGS_PAGE: null
+} );

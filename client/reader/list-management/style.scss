@@ -1,0 +1,12 @@
+.list-management-tags {
+	.reader-list-item__icon {
+		.gridicon {
+			top: 0;
+		}
+	}
+
+	.reader-list-item__title, .reader-list-item__card.is-placeholder .reader-list-item__title {
+		margin-top: 8px;
+		margin-bottom: 8px;
+	}
+}

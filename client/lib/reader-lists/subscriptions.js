@@ -12,7 +12,8 @@ var emitter = require( 'lib/mixins/emitter' ),
 
 var lists = null,
 	errors = [],
-	ReaderListStore;
+	ReaderListStore,
+	isFetching = false;
 
 function mapApiToId( list ) {
 	return {
@@ -37,11 +38,11 @@ ReaderListStore = {
 	},
 
 	findByOwnerAndSlug: function( owner, slug ) {
-		return find( lists, { owner, slug } );
+		return find( lists, { owner: owner, slug: slug } );
 	},
 
 	isSubscribed: function( owner, slug ) {
-		return !! this.findByOwnerAndSlug( owner, slug);
+		return !! this.findByOwnerAndSlug( owner, slug );
 	},
 
 	receiveLists: function( newLists ) {
@@ -79,6 +80,15 @@ ReaderListStore = {
 	receiveCreateReaderList: function( newList ) {
 		newList = ReaderListStore.followList( newList );
 		ReaderListStore.emit( 'create', newList );
+	},
+
+	isFetching: function() {
+		return isFetching;
+	},
+
+	setIsFetching: function( val ) {
+		isFetching = val;
+		ReaderListStore.emitChange();
 	}
 };
 
