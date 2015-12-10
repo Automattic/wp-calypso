@@ -36,9 +36,9 @@ var SiteSelectorModal = React.createClass( {
 
 	getInitialState: function() {
 		return ( {
-			site: sitesList.getPrimary().jetpack ?
-				sitesList.get().filter( this.props.filter )[0] :
-				sitesList.getPrimary()
+			site: sitesList.getPrimary().jetpack
+				? sitesList.get().filter( this.props.filter )[0]
+				: sitesList.getPrimary()
 		} );
 	},
 
@@ -58,9 +58,9 @@ var SiteSelectorModal = React.createClass( {
 	getMainLink: function() {
 		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
-		return url ?
-			<a href={ url } className="button is-primary">{ this.props.mainActionLabel }</a> :
-			{ action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
+		return url
+			? <a href={ url } className="button is-primary">{ this.props.mainActionLabel }</a>
+			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
 	},
 
 	render: function() {
