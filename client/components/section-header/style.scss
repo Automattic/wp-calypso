@@ -33,17 +33,15 @@
 	@include clear-fix;
 }
 
-.section-header__label,
-.section-header__button {
+.section-header__label {
 	color: $gray;
 	font-size: 11px;
 	text-transform: uppercase;
 }
 
-.section-header__button {
-	background: none;
+.section-header .button {
+	float: left;
 	margin-right: 8px;
-	padding: 2px 8px;
 
 	&:last-child {
 		margin-right: 0;
