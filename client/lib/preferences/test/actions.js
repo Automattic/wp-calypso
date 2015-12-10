@@ -42,8 +42,12 @@ describe( 'PreferencesActions', function() {
 				return {
 					me: function() {
 						return {
-							settings: getSettings,
-							saveSettings: postSettings
+							settings: function() {
+								return {
+									get: getSettings,
+									update: postSettings
+								}
+							}
 						};
 					}
 				};
