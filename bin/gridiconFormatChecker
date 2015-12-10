@@ -23,7 +23,7 @@ fs.readFile( filename, 'utf8', function ( err, data ) {
 			if( chunk ) {
 				// we discard all the code after the tag closing... we are only interested in the props of the gridicon.
 				gridiconAttrs = chunk.split( '>' )[ 0 ];
-				isNonStandard = gridiconAttrs.indexOf( 'nonstandard' ) >= 0;
+				isNonStandard = gridiconAttrs.indexOf( 'nonstandardsize' ) >= 0;
 				if ( gridiconAttrs.indexOf( 'size={' ) >= 0 ) {
 					size = gridiconAttrs.split( 'size={' )[ 1 ].split( '}' )[ 0 ];
 					if ( !isNaN( size ) ) {
