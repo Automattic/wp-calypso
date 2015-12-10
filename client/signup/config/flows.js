@@ -2,14 +2,16 @@
  * External dependencies
  */
 var assign = require( 'lodash/object/assign' ),
-	reject = require( 'lodash/collection/reject' );
+	reject = require( 'lodash/collection/reject' ),
+	page = require( 'page' );
 
 /**
 * Internal dependencies
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	abtest = require( 'lib/abtest' ).abtest;
 
 function getCheckoutDestination( dependencies ) {
 	if ( dependencies.cartItem || dependencies.domainItem ) {
@@ -143,8 +145,17 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
+function getCurrentFlowNameFromTest( currentURL ) {
+	// Only consider users from the general /start path.
+	if ( '/start' === currentURL && 'dss' === abtest( 'dss' ) ) {
+		return 'dss';
+	}
+
+	return 'main';
+}
+
 module.exports = {
-	currentFlowName: 'main',
+	currentFlowName: getCurrentFlowNameFromTest( page.current ),
 
 	defaultFlowName: 'main',
 
