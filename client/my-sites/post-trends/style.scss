@@ -161,10 +161,10 @@
 }
 
 @include breakpoint( ">960px" ) {
-    .post-trends__scroll-left,
-    .post-trends__scroll-right {
-    	display: none;
-    }
+	.post-trends__scroll-left,
+	.post-trends__scroll-right {
+		display: none;
+	}
 }
 
 @include breakpoint( "<960px" ) {
