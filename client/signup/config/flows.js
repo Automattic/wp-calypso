@@ -10,12 +10,18 @@ var assign = require( 'lodash/object/assign' ),
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	user = require( 'lib/user' )(),
-	abtest = require( 'lib/abtest' ).abtest;
+	abtest = require( 'lib/abtest' ).abtest,
+	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
+	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
 	if ( dependencies.cartItem || dependencies.domainItem ) {
 		return '/checkout/' + dependencies.siteSlug;
+	}
+
+	/* NUX Trampoline A/B */
+	if ( 'trampoline' === getABTestVariation( 'nuxTrampoline' ) ) {
+		return 'https://' + dependencies.siteSlug;
 	}
 
 	return '/me/next?welcome';

@@ -62,5 +62,14 @@ module.exports = {
 			notTested: 70
 		},
 		defaultVariation: 'main'
+	},
+	nuxTrampoline: {
+		datestamp: '20151210',
+		variations: {
+			main: 25,
+			trampoline: 25,
+			notTested: 50
+		},
+		defaultVariation: 'main'
 	}
 };
