@@ -77,7 +77,7 @@ PreferencesActions.set = function( key, value ) {
 	mergePreferencesToLocalStorage( preferences );
 
 	_pendingUpdates++;
-	wpcom.me().saveSettings( JSON.stringify( settings ), function( error, data ) {
+	wpcom.me().settings().update( JSON.stringify( settings ), function( error, data ) {
 		if ( --_pendingUpdates ) {
 			return;
 		}
