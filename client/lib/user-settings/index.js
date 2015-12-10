@@ -32,7 +32,7 @@ function decodeUserSettingsEntities( data ) {
 /**
  * Initialize UserSettings with defaults
  *
- * @return {Null} null
+ * @return {Undefined} undefined
  */
 function UserSettings() {
 	if ( ! ( this instanceof UserSettings ) ) {

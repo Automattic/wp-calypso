@@ -46,7 +46,7 @@ describe( 'PreferencesActions', function() {
 								return {
 									get: getSettings,
 									update: postSettings
-								}
+								};
 							}
 						};
 					}

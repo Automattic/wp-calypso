@@ -3,16 +3,20 @@ module.exports = {
 		return {
 			me: function() {
 				return {
-					settings: function( callback ) {
-						callback( false, {
-							test: false,
-							lang_id: false
-						} );
-					},
-					saveSettings: function( settings, callback ) {
-						setTimeout( function() {
-							callback( null, settings );
-						} );
+					settings: function() {
+						return {
+							get: function( callback ) {
+								callback( false, {
+									test: false,
+									lang_id: false
+								} );
+							},
+							update: function( settings, callback ) {
+								setTimeout( function() {
+									callback( null, settings );
+								} );
+							}
+						};
 					}
 				};
 			}
