@@ -61,25 +61,28 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className={ classNames( 'sites-dropdown', { 'is-open': this.state.open } ) }>
-				<div
-					className="sites-dropdown__selected"
-					onClick={ () => this.setState( { open: ! this.state.open } ) }
-				>
-					<Site
-						site={ this.getSelectedSite() }
-					/>
-					<Gridicon icon={ this.state.open ? 'chevron-up' : 'chevron-down' } />
+				<div className="sites-dropdown__wrapper">
+					<div
+						className="sites-dropdown__selected"
+						onClick={ () => this.setState( { open: ! this.state.open } ) }
+					>
+						<Site
+							site={ this.getSelectedSite() }
+							indicator={ false }
+						/>
+						<Gridicon icon="chevron-down" />
+					</div>
+					{ this.state.open &&
+						<SiteSelector
+							sites={ sites }
+							autoFocus={ true }
+							onClose={ this.props.onClose }
+							onSiteSelect={ this.selectSite }
+							selected={ this.state.selected }
+							hideSelected={ true }
+						/>
+					}
 				</div>
-				{ this.state.open &&
-					<SiteSelector
-						sites={ sites }
-						autoFocus={ true }
-						onClose={ this.props.onClose }
-						onSiteSelect={ this.selectSite }
-						selected={ this.state.selected }
-						hideSelected={ true }
-					/>
-				}
 			</div>
 		);
 	}
