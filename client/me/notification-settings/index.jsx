@@ -81,10 +81,10 @@ export default connect(
 	},
 	( dispatch ) => { return {
 		successNotice: ( text, options ) => {
-			dispatch( success( text + ':)', options ) );
+			dispatch( success( text, options ) );
 		},
 		errorNotice: ( text, options ) => {
-			dispatch( error( text + ':)', options ) );
+			dispatch( error( text, options ) );
 		}
 	} }
 )( NotificationSettings );
