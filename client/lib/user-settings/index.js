@@ -73,7 +73,7 @@ UserSettings.prototype.fetchSettings = function() {
 
 	this.fetchingSettings = true;
 	debug( 'Fetching user settings' );
-	wpcom.me().settings( function( error, data ) {
+	wpcom.me().settings().get( function( error, data ) {
 		if ( ! error ) {
 			this.settings = decodeUserSettingsEntities ( data );
 			this.initialized = true;
