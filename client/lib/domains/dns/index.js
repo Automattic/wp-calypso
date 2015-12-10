@@ -23,7 +23,7 @@ function validateField( { name, value, type, selectedDomainName } ) {
 		case 'name':
 			return isValidName( value, type, selectedDomainName );
 		case 'target':
-			return isValidDomainName( value );
+			return isValidDomainName( value, type );
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
@@ -39,8 +39,22 @@ function validateField( { name, value, type, selectedDomainName } ) {
 	}
 }
 
-function isValidDomainName( name ) {
-	return /^([\da-z-]+\.)+[\da-z-]+$/i.test( name );
+/*
+ * As per RFC 2181, there's actually only one restriction for DNS records - length.
+ * But to keep things sane, we only allow host names for A/AAAA records (RFC 952 and RFC 1123)
+ * and more loosely defined domain names for other records.
+ */
+function isValidDomainName( name, type ) {
+	if ( name.length > 253 ) {
+		return false;
+	}
+	switch ( type ) {
+		case 'A':
+		case 'AAAA':
+			return /^([a-z0-9]([a-z0-9\-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9\-]*[a-z0-9])?\.[a-z]{2,63}$/i.test( name );
+		default:
+			return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
+	}
 }
 
 function isValidName( name, type, selectedDomainName ) {
@@ -48,18 +62,20 @@ function isValidName( name, type, selectedDomainName ) {
 		case 'CNAME':
 			return (
 				isValidCname( name, selectedDomainName ) &&
-				isValidDomainName( name )
+				isValidDomainName( name, type )
+			);
+		case 'SRV':
+			return (
+				name === '' ||
+				isValidDomainName( name, type )
 			);
 		default:
-			return isValidDomainName( name );
+			return isValidDomainName( name, type );
 	}
 }
 
 function isValidCname( name, selectedDomainName ) {
-	return (
-		name !== selectedDomainName &&
-		endsWith( name, selectedDomainName )
-	);
+	return endsWith( name, '.' + selectedDomainName );
 }
 
 function isValidData( data, type ) {
@@ -70,7 +86,7 @@ function isValidData( data, type ) {
 			return data.match( /^[a-f0-9\:]+$/i );
 		case 'CNAME':
 		case 'MX':
-			return isValidDomainName( data );
+			return isValidDomainName( data, type );
 		case 'TXT':
 			return data.length < 256;
 	}
@@ -100,7 +116,7 @@ function removeTrailingDomain( domain, trailing ) {
 
 function getFieldWithDot( field ) {
 	// something that looks like domain but doesn't end with a dot
-	return ( typeof field === 'string' && field.match( /^([a-z0-9-]+\.)+\.?[a-z]+$/i ) ) ? field + '.' : field;
+	return ( typeof field === 'string' && field.match( /^([a-z0-9-_]+\.)+\.?[a-z]+$/i ) ) ? field + '.' : field;
 }
 
 module.exports = {
