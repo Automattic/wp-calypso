@@ -15,7 +15,7 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isPage } from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 
- const debug = _debug( 'calypso:post-editor:editor-tags' );
+const debug = _debug( 'calypso:post-editor:editor-tags' );
 
 module.exports = React.createClass( {
 	displayName: 'EditorTags',
