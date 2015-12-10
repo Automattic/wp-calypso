@@ -29,6 +29,7 @@ require( './plugins/wpcom-autoresize/plugin.js' )();
 require( './plugins/wpcom-help/plugin.js' )();
 require( './plugins/wpcom-charmap/plugin.js' )();
 require( './plugins/wpcom-view/plugin.js' )();
+require( './plugins/wpcom-sourcecode/plugin' ).default();
 require( './plugins/wpeditimage/plugin.js' )();
 require( './plugins/wplink/plugin.js' )();
 require( './plugins/media/plugin' )();
@@ -97,7 +98,8 @@ const PLUGINS = [
 	'wpcom/editorbuttonanalytics',
 	'wpcom/calypsoalert',
 	'wpcom/tabindex',
-	'wpcom/contactform'
+	'wpcom/contactform',
+	'wpcom/sourcecode',
 ];
 
 const CONTENT_CSS = [
