@@ -4,6 +4,11 @@
 import React from 'react/addons';
 import classNames from 'classnames';
 
+/**
+ * Interal dependencies
+ */
+import Gridicon from 'components/gridicon';
+
 module.exports = React.createClass( {
 
 	displayName: 'FormInputValidation',
@@ -18,9 +23,11 @@ module.exports = React.createClass( {
 			'is-error': this.props.isError
 		} );
 
+		const icon = this.props.isError ? 'notice-outline' : 'checkmark';
+
 		return (
 			<div className={ classes }>
-				<span>{ this.props.text }</span>
+				<span><Gridicon size={ 24 } icon={ icon } /> { this.props.text }</span>
 			</div>
 		);
 	}
