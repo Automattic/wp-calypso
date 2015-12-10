@@ -42,6 +42,7 @@ import smartSetState from 'lib/react-smart-set-state';
 		this.checkScrollable();
 		this.checkScrolledToBottom();
 		this.scrollLock();
+		console.log( React.findDOMNode( this.refs[ 'scrollable-content' ] ).offsetWidth - React.findDOMNode( this.refs[ 'scrollable-content' ] ).clientWidth );
 	},
 
 	/**
@@ -51,9 +52,14 @@ import smartSetState from 'lib/react-smart-set-state';
 	checkScrollable: function() {
 		var windowHeight = window.innerHeight,
 			content = React.findDOMNode( this.refs[ 'scrollable-content' ] ),
-			contentHeight = content.scrollHeight;
+			contentHeight = content.scrollHeight,
+			scrollbarWidth = content.offsetWidth - content.clientWidth,
+			isScrollbarVisible = false;
 
-		if ( contentHeight > ( windowHeight ) ) {
+		if ( scrollbarWidth > 1 )
+			isScrollbarVisible = true;
+
+		if ( ( contentHeight > ( windowHeight ) ) && !isScrollbarVisible ) {
 			this.smartSetState( { isScrollable: true } );
 		} else {
 			this.smartSetState( { isScrollable: false } );
