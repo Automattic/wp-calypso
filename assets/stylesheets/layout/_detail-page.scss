@@ -87,7 +87,8 @@
 			color: $gray;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: $blue-medium;
 		}
 
