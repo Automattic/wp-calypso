@@ -174,6 +174,18 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
+		describe( 'wpcom.site.postTypesList', function() {
+			it( 'should get post types list of the site', function( done ) {
+				site.postTypesList()
+					.then( data => {
+						assert.ok( data.found >= 1 );
+						assert.ok( data.post_types instanceof Array );
+						done();
+					} )
+					.catch( done );
+			} );
+		} );
+
 		describe( 'wpcom.site.tagsList', function() {
 			it( 'should request tags list', done => {
 				site.tagsList()
