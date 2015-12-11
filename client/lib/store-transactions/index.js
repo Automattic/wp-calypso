@@ -136,7 +136,7 @@ TransactionFlow.prototype._paymentHandlers = {
 TransactionFlow.prototype._createPaygateToken = function( callback ) {
 	this._pushStep({ name: 'submitting-payment-key-request' });
 
-	createPaygateToken( this._initialData.payment.newCardDetails, function( error, paygateToken ) {
+	createPaygateToken( 'new_purchase', this._initialData.payment.newCardDetails, function( error, paygateToken ) {
 		if ( error ) {
 			return this._pushStep({
 				name: 'received-payment-key-response',
@@ -178,8 +178,8 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	}.bind( this ) );
 };
 
-function createPaygateToken( cardDetails, callback ) {
-	wpcom.paygateConfiguration( function ( error, configuration ) {
+function createPaygateToken( requestType, cardDetails, callback ) {
+	wpcom.paygateConfiguration( { request_type: requestType }, function ( error, configuration ) {
 		if ( error ) {
 			callback( error );
 			return;
