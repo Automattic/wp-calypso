@@ -3,6 +3,12 @@
  */
 var React = require( 'react' );
 
+/**
+ * Internal dependencies
+ */
+var Gridicon = require( 'components/gridicon' );
+
+
 module.exports = React.createClass( {
 	displayName: 'CategorySelectorSearch',
 
@@ -14,7 +20,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<div className="category-selector__search">
-				<div className="noticon noticon-search" />
+				<Gridicon icon="search" size={ 18 } />
 				<input type="search"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }

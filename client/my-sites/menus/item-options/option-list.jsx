@@ -11,7 +11,8 @@ var React = require( 'react' ),
  */
 var MenuPanelBackButton = require( '../menu-panel-back-button' ),
 		EmptyPlaceholder = require( './empty-placeholder' ),
-		LoadingPlaceholder = require( './loading-placeholder' );
+		LoadingPlaceholder = require( './loading-placeholder' ),
+		Gridicon = require( 'components/gridicon' );
 /**
  * Constants
  */
@@ -30,7 +31,7 @@ var Search = React.createClass( {
 	render: function() {
 		return (
 			<div className="search-container">
-				<div className="noticon noticon-search" />
+				<Gridicon icon="search" size={ 18 } />
 				<input type="search" className="search-box"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }

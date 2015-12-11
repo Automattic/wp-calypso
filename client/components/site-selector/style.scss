@@ -109,7 +109,7 @@
 		}
 	}
 
-	.noticon-search {
+	.search-open__icon {
 		background-color: transparent;
 		border-left: none;
 		color: $gray;
@@ -117,24 +117,19 @@
 		width: auto;
 		position: absolute;
 			left: 18px;
-			top: 7px;
-
-		&::before {
-			font-size: 16px;
-		}
+			top: 50%;
+		margin-top: -9px;
+		width: 18px;
+		height: 18px;
 	}
 
 	&.is-open {
-		.noticon-close-alt {
+		.search-close__icon {
 			color: $gray;
-			height: 36px;
-			width: 34px;
-			top: 9px;
-			right: 9px;
-
-			&:before {
-				font-size: 12px;
-			}
+			right: 16px;
+			margin-top: -9px;
+			width: 18px;
+			height: 18px;
 		}
 	}
 }

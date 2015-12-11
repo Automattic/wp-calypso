@@ -13,10 +13,10 @@
 		width: 50px;
 	}
 
-	.noticon-search {
+	.search-open__icon {
 		position: absolute;
-			top: 0;
-			bottom: 0;
+			top: 50%;
+		margin-top: -12px;
 		width: 60px;
 		z-index: 20;
 		color: $blue-wordpress;
@@ -26,35 +26,26 @@
 			outline: dotted 1px $blue-wordpress;
 		}
 
-		&::before {
-			position: absolute;
-				left: 0;
-				right: 0;
-				top: 50%;
-			margin-top: -12px;
-			font-size: 24px;
-			text-align: center;
-		}
-
 		@include breakpoint( "<660px" ) {
 			width: 50px;
 		}
 
 	}
 
-	.noticon-search:hover {
-		color: $gray-dark;
+	.search-open__icon:hover {
+		color: darken( $gray, 30% );
 	}
 
-	.noticon-close-alt {
+	.search-close__icon {
 		position: absolute;
 			bottom: 0;
-			top: 0;
+			top: 50%;
 			right: 0;
+		margin-top: -12px;
 		width: 60px;
 		cursor: pointer;
 		z-index: 20;
-		color: $gray-dark;
+		color: darken( $gray, 30% );
 		display: none;
 		opacity: 0;
 		transition: opacity .2s ease-in;
@@ -96,7 +87,7 @@
 	// matching dropdown-selector
 	z-index: 170;
 
-	.noticon-search {
+	.search-open__icon {
 		right: 0;
 	}
 
@@ -112,7 +103,7 @@
 	top: 0;
 	padding: 0 50px 0 60px;
 	border: none;
-	background: #fff;
+	background: $white;
 	height: 51px;
 	appearance: none;
 	box-sizing: border-box;
@@ -139,17 +130,17 @@
 	margin-right: 0 !important;
 	width: 100%;
 
-	.noticon-search {
-		color: $gray-dark;
+	.search-open__icon {
+		color: darken( $gray, 30% );
 		left: 0;
 	}
 
-	.noticon-close-alt {
+	.search-close__icon {
 		display: inline-block;
 	}
 
 	.search__input,
-	.noticon-close-alt {
+	.search-close__icon{
 		opacity: 1;
 	}
 
@@ -170,7 +161,7 @@
 	}
 }
 
-.search.is-searching .noticon-search {
+.search.is-searching .search-open__icon {
 	display: none;
 }
 

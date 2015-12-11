@@ -10,7 +10,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	Spinner = require( 'components/spinner' );
+	Spinner = require( 'components/spinner' ),
+	Gridicon = require( 'components/gridicon' );
 
 /**
  * Internal variables
@@ -246,7 +247,6 @@ module.exports = React.createClass( {
 				<Spinner />
 				<div
 					ref="openIcon"
-					className="noticon noticon-search"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon
@@ -254,7 +254,9 @@ module.exports = React.createClass( {
 						: null
 					}
 					aria-controls={ 'search-component-' + this.id }
-					aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }/>
+					aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }>
+				<Gridicon icon="search" className="search-open__icon"/>
+				</div>
 				<input
 					type="search"
 					id={ 'search-component-' + this.id }
@@ -280,12 +282,13 @@ module.exports = React.createClass( {
 	closeButton: function() {
 		return (
 			<span
-				className="noticon noticon-close-alt"
 				onTouchTap={ this.closeSearch }
 				tabIndex="0"
 				onKeyDown={ this._keyListener.bind( this, 'closeSearch' ) }
 				aria-controls={ 'search-component-' + this.id }
-				aria-label={ this.translate( 'Close Search', { context: 'button label' } ) }/>
+				aria-label={ this.translate( 'Close Search', { context: 'button label' } ) }>
+			<Gridicon icon="cross" className="search-close__icon"/>
+			</span>
 		);
 	},
 
