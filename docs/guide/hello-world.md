@@ -114,7 +114,7 @@ Restart the server doing:
 
 * `make run`
 
-We are ready to load http://calypso.localhost:3000/hello-world! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
+We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world)! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
 
 ----
 
