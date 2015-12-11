@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
+import { plans } from './plans/reducer';
 import { RECEIVE_SITE } from 'state/action-types';
 
 /**
@@ -28,5 +29,6 @@ export function items( state = {}, action ) {
 }
 
 export default combineReducers( {
-	items
+	items,
+	plans
 } );
