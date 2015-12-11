@@ -189,6 +189,16 @@
 	top: 60px;
 }
 
+.plugin-item__meta.has-update {
+	@include breakpoint( "<480px" ) {
+		& ~ .plugin-item__meta.is-warning .noticon {
+			margin-right: 30px !important;
+		}
+	}
+}
+
+// Plugin actions and Count
+.plugin-item__count,
 .plugin-item__actions {
 	padding: 16px;
 	flex-grow: 1;
@@ -204,7 +214,12 @@
 		padding-left: 24px;
 	}
 }
-
+.plugin-item__count {
+	font-size: 11px;
+	text-transform: uppercase;
+	color: $gray;
+}
+.plugin-item  .plugin-item__count,
 .plugin-item .plugin-item__actions {
 	display: none;
 

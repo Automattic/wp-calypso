@@ -14,6 +14,7 @@ var CompactCard = require( 'components/card/compact' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
+	Count = require( 'components/count' ),
 	Notice = require( 'notices/notice' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
 	analytics = require( 'analytics' );
@@ -132,14 +133,21 @@ module.exports = React.createClass( {
 			showDismiss={ false } />;
 	},
 
-	renderActions: function() {
+	renderActionsOrCount: function() {
 		if ( this.props.selectedSite ) {
 			return <div className="plugin-item__actions">
 				<PluginActivateToggle isMock={ this.props.isMock } plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } />
 				<PluginAutoupdateToggle isMock={ this.props.isMock } plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } wporg={ !! this.props.plugin.wporg } />
 			</div>;
 		}
-		return null;
+		return <div className="plugin-item__count">{
+			this.translate( 'Site {{count/}}', 'Sites {{count/}}',
+				{
+					count: this.props.sites.length,
+					components: { count: <Count count={ this.props.sites.length } /> }
+				}
+			)
+		}</div>;
 	},
 
 	render: function() {
@@ -243,7 +251,7 @@ module.exports = React.createClass( {
 					{ pluginTitle }
 					{ this.pluginMeta( plugin ) }
 				</a>
-				{ this.renderActions() }
+				{ this.renderActionsOrCount() }
 			</CompactCard>
 		);
 	}
