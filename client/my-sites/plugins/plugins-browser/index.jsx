@@ -21,6 +21,7 @@ import EmptyContent from 'components/empty-content'
 import URLSearch from 'lib/mixins/url-search'
 import infiniteScroll from 'lib/mixins/infinite-scroll'
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
+import FeatureExample from 'components/feature-example'
 
 module.exports = React.createClass( {
 
@@ -213,7 +214,11 @@ module.exports = React.createClass( {
 	renderAccessError( selectedSite ) {
 		if ( this.state.accessError ) {
 			return (
-				<MainComponent><SidebarNavigation /><EmptyContent { ...this.state.accessError } /></MainComponent>
+				<MainComponent>
+					<SidebarNavigation />
+					<EmptyContent { ...this.state.accessError } />
+					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
+				</MainComponent>
 			);
 		}
 
