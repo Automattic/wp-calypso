@@ -158,6 +158,7 @@
 	vertical-align: middle;
 }
 
+.mce-toolbar .mce-wpcom-button.mce-contact-form button,
 .mce-toolbar .mce-wpcom-button.mce-media button {
 	height: 38px;
 	padding: 0 8px;
@@ -178,21 +179,25 @@
 	font-size: 13px;
 }
 
+.mce-toolbar .mce-wpcom-button.mce-contact-form:hover span,
 .mce-toolbar .mce-wpcom-button.mce-media:hover span {
 	color: $gray-dark;
 }
 
+.mce-toolbar .mce-wpcom-button.mce-contact-form svg,
 .mce-toolbar .mce-wpcom-button.mce-media svg {
 	fill: darken( $gray, 20% );
 	width: 20px;
 	margin-right: 4px;
 }
 
+.mce-toolbar .mce-wpcom-button.mce-contact-form:hover svg,
 .mce-toolbar .mce-wpcom-button.mce-media:hover svg {
 	fill: $gray-dark;
 }
 
 // Position media button at the beginning of the toolbar
+.mce-toolbar .mce-wpcom-button.mce-btn.mce-contact-form,
 .mce-toolbar .mce-wpcom-button.mce-btn.mce-media {
 	margin: 0;
 	border: 0;
