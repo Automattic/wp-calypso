@@ -73,8 +73,9 @@
 		text-transform: uppercase;
 
 		.count {
-			position: absolute;
-				top: 5px;
+			border-width: 0;
+			margin-left: 0;
+			line-height: 1;
 		}
 	}
 
