@@ -28,10 +28,12 @@ const PlanStatus = React.createClass( {
 			<div className="plan-status">
 				<CompactCard className="plan-status__info">
 					<div className={ iconClasses } />
+
 					<div className="plan-status__header">
 						<span className="plan-status__text">
 							{ this.translate( 'Your Current Plan:' ) }
 						</span>
+
 						<h1 className="plan-status__plan">
 							{
 								this.translate( '%(planName)s Free Trial', {

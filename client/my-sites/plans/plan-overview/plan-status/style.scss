@@ -3,19 +3,34 @@
 }
 
 .plan-status__info {
+	align-content: space-between;
 	align-items: center;
 	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include breakpoint( ">480px" ) {
+		flex-direction: row;
+	}
+
+	&:after {
+		display: none;
+	}
 }
 
 .plan-status__header {
-	margin-left: 20px;
+	flex-grow: 1;
+	
+	@include breakpoint( ">480px" ) {
+		margin-left: 20px;
+	}
 }
 
 .plan-status__icon {
 	background-position: center;
 	background-repeat: no-repeat;
 	height: 50px;
-	width: 50px;
+	min-width: 50px;
 
 	&.is-premium {
 		background-image: url( '/calypso/images/plans/plan-trial-premium.svg' );
@@ -23,6 +38,10 @@
 
 	&.is-business {
 		background-image: url( '/calypso/images/plans/plan-trial-business.svg' );
+	}
+
+	@include breakpoint( "<480px" ) {
+		display: none;
 	}
 }
 
