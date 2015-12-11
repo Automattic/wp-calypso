@@ -46,8 +46,8 @@ html.is-desktop {
 		padding: 0;
 	}
 
-	.notice.is-info:before {
-		content: none;
+	.notice.is-info .notice__icon {
+		display: none;
 	}
 }
 
