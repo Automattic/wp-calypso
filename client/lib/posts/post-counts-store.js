@@ -11,7 +11,7 @@ var sum = require( 'lodash/math/sum' ),
  * Internal dependencies
  */
 var emitter = require( 'lib/mixins/emitter' ),
-	PostListStore = require( './post-list-store' ),
+	PostListStore = require( './post-list-store-factory' )(),
 	PostsStore = require( './posts-store' ),
 	sites = require( 'lib/sites-list' )(),
 	postUtils = require( 'lib/posts/utils' ),

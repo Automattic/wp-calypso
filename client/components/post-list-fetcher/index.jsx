@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var PostListStore = require( 'lib/posts/post-list-store' ),
+var postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
 	PostContentImagesStore = require( 'lib/posts/post-content-images-store' ),
 	Dispatcher = require( 'dispatcher' ),
 	actions = require( 'lib/posts/actions' ),
@@ -14,11 +14,12 @@ var PostListStore = require( 'lib/posts/post-list-store' ),
 
 var PostListFetcher;
 
-function dispatchQueryActions( query ) {
-	actions.queryPosts( query );
+function dispatchQueryActions( postListStoreId, query ) {
+	var postListStore = postListStoreFactory( postListStoreId );
+	actions.queryPosts( query, postListStoreId );
 
-	if ( PostListStore.getPage() === 0 ) {
-		actions.fetchNextPage();
+	if ( postListStore.getPage() === 0 ) {
+		actions.fetchNextPage( postListStoreId );
 	}
 }
 
@@ -45,22 +46,23 @@ function queryPosts( props ) {
 	// Not ideal nor a best practice
 	if ( Dispatcher.isDispatching() ) {
 		setTimeout( function() {
-			dispatchQueryActions( query );
+			dispatchQueryActions( props.postListStoreId, query );
 		}, 0 );
 	} else {
-		dispatchQueryActions( query );
+		dispatchQueryActions( props.postListStoreId, query );
 	}
 }
 
-function getPostsState() {
+function getPostsState( postListStoreId ) {
+	var postListStore = postListStoreFactory( postListStoreId );
 	return {
-		listId: PostListStore.getID(),
-		posts: PostListStore.getAll(),
+		listId: postListStore.getID(),
+		posts: postListStore.getAll(),
 		postImages: PostContentImagesStore.getAll(),
-		page: PostListStore.getPage(),
-		lastPage: PostListStore.isLastPage(),
-		loading: PostListStore.isFetchingNextPage(),
-		hasRecentError: PostListStore.hasRecentError()
+		page: postListStore.getPage(),
+		lastPage: postListStore.isLastPage(),
+		loading: postListStore.isFetchingNextPage(),
+		hasRecentError: postListStore.hasRecentError()
 	};
 }
 
@@ -79,7 +81,8 @@ function shouldQueryPosts( props, nextProps ) {
 		props.number !== nextProps.number ||
 		props.before !== nextProps.before ||
 		props.after !== nextProps.after ||
-		props.siteID !== nextProps.siteID;
+		props.siteID !== nextProps.siteID ||
+		props.postListStoreId !== nextProps.postListStoreId;
 }
 
 PostListFetcher = React.createClass( {
@@ -100,18 +103,21 @@ PostListFetcher = React.createClass( {
 		order: React.PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
 		number: React.PropTypes.number,
 		before: React.PropTypes.string,
-		after: React.PropTypes.string
+		after: React.PropTypes.string,
+		postListStoreId: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
 		return {
 			orderBy: 'date',
-			order: 'DESC'
+			order: 'DESC',
+			postListStoreId: 'default'
 		};
 	},
 
 	componentWillMount: function() {
-		PostListStore.on( 'change', this.onPostsChange );
+		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		postListStore.on( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
 			PostContentImagesStore.on( 'change', this.onPostsChange );
 		}
@@ -119,12 +125,14 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this._poller = pollers.add( PostListStore, actions.fetchUpdated, { interval: 60000, leading: false } );
+		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000, leading: false } );
 	},
 
 	componentWillUnmount: function() {
+		var postListStore = postListStoreFactory( this.props.postListStoreId );
 		pollers.remove( this._poller );
-		PostListStore.off( 'change', this.onPostsChange );
+		postListStore.off( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
 			PostContentImagesStore.off( 'change', this.onPostsChange );
 		}
@@ -144,7 +152,7 @@ PostListFetcher = React.createClass( {
 	},
 
 	onPostsChange: function() {
-		this.setState( getPostsState( this.props ) );
+		this.setState( getPostsState( this.props.postListStoreId ) );
 	},
 
 	render: function() {

@@ -14,7 +14,7 @@ var debug = require( 'debug' )( 'calypso:posts' ),
 var wpcom = require( 'lib/wp' ),
 	PostsStore = require( './posts-store' ),
 	PostEditStore = require( './post-edit-store' ),
-	PostListStore = require( './post-list-store' ),
+	postListStoreFactory = require( './post-list-store-factory' ),
 	PreferencesStore = require( 'lib/preferences/store' ),
 	sites = require( 'lib/sites-list' )(),
 	utils = require( './utils' ),
@@ -423,10 +423,11 @@ PostActions = {
 		postHandle.restore( PostActions.receiveUpdate.bind( null, callback ) );
 	},
 
-	queryPosts: function( options ) {
+	queryPosts: function( options, postListStoreId = 'default' ) {
 		Dispatcher.handleViewAction( {
 			type: 'QUERY_POSTS',
-			options: options
+			options: options,
+			postListStoreId: postListStoreId
 		} );
 	},
 
@@ -435,69 +436,77 @@ PostActions = {
 	*
 	* @api public
 	*/
-	fetchNextPage: function() {
-		var params, id, siteID;
+	fetchNextPage: function( postListStoreId = 'default' ) {
+		var params, id, siteID, postListStore;
 
-		if ( PostListStore.isLastPage() ) {
+		postListStore = postListStoreFactory( postListStoreId );
+
+		if ( postListStore.isLastPage() ) {
 			return;
 		}
 
 		Dispatcher.handleViewAction( {
-			type: 'FETCH_NEXT_POSTS_PAGE'
+			type: 'FETCH_NEXT_POSTS_PAGE',
+			postListStoreId: postListStoreId
 		} );
 
-		id = PostListStore.getID();
-		params = PostListStore.getNextPageParams();
-		siteID = PostListStore.getSiteID();
+		id = postListStore.getID();
+		params = postListStore.getNextPageParams();
+		siteID = postListStore.getSiteID();
 
 		if ( siteID ) {
 			wpcom
 				.site( siteID )
-				.postsList( params, PostActions.receivePage.bind( null, id ) );
+				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		} else {
 			wpcom
 				.me()
-				.postsList( params, PostActions.receivePage.bind( null, id ) );
+				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		}
 	},
 
-	receivePage: function( id, error, data ) {
+	receivePage: function( id, postListStoreId, error, data ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POSTS_PAGE',
 			id: id,
+			postListStoreId: postListStoreId,
 			error: error,
 			data: data
 		} );
 	},
 
-	fetchUpdated: function() {
-		var id, params, siteID;
+	fetchUpdated: function( postListStoreId = 'default' ) {
+		var id, params, siteID, postListStore;
+
+		postListStore = postListStoreFactory( postListStoreId );
 
 		Dispatcher.handleViewAction( {
-			type: 'FETCH_UPDATED_POSTS'
+			type: 'FETCH_UPDATED_POSTS',
+			postListStoreId: postListStoreId
 		} );
 
-		id = PostListStore.getID();
-		params = PostListStore.getUpdatesParams();
-		siteID = PostListStore.getSiteID();
+		id = postListStore.getID();
+		params = postListStore.getUpdatesParams();
+		siteID = postListStore.getSiteID();
 
 		if ( siteID ) {
 			debug( 'Fetching posts that have been updated for %s since %s %o', siteID, params.modified_after, params );
 			wpcom
 				.site( siteID )
-				.postsList( params, PostActions.receiveUpdated.bind( null, id ) );
+				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		} else {
 			debug( 'Fetching posts that have been updated since %s %o', params.modified_after, params );
 			wpcom
 				.me()
-				.postsList( params, PostActions.receiveUpdated.bind( null, id ) );
+				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		}
 	},
 
-	receiveUpdated: function( id, error, data ) {
+	receiveUpdated: function( id, postListStoreId, error, data ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_UPDATED_POSTS',
 			id: id,
+			postListStoreId: postListStoreId,
 			error: error,
 			data: data
 		} );
