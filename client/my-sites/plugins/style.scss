@@ -4,10 +4,14 @@
 
 .plugins__section-actions {
 	.section-header__actions {
-		height: 24px;
 		flex-grow: 1;
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+	}
+
+	.bulk-select {
+		margin-right: 16px;
 	}
 
 	&.is-bulk-editing .section-header__label {
@@ -20,8 +24,9 @@
 }
 
 .plugins__action-buttons {
+	align-items: center;
+	display: flex;
 	flex-grow: 1;
-	display: inline-block;
 
 	@include breakpoint( "<960px" ) {
 		display: none;
@@ -29,6 +34,8 @@
 }
 
 .plugins__mode-buttons {
+	display: flex;
+		justify-content: flex-end;
 	flex-grow: 1;
 	text-align: right;
 }
@@ -36,20 +43,12 @@
 
 .plugins__section-actions-close {
 	cursor: pointer;
+	display: flex;
+		align-items: center;
 }
 
 .plugins__actions_dropdown {
 	display: none;
-	position: relative;
-		top: -11px;
-
-	.select-dropdown__header {
-		border: 0;
-	}
-
-	.select-dropdown__header {
-		line-height: 26px;
-	}
 
 	@include breakpoint( "<960px" ) {
 		display: inline-block;
