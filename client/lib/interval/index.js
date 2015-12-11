@@ -46,8 +46,6 @@ export default React.createClass( {
 	} ),
 
 	componentDidMount() {
-		this.props.onTick();
-
 		this.start();
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange, false );
@@ -86,7 +84,7 @@ export default React.createClass( {
 		if ( this.state.id ) {
 			remove( this.state.id );
 		}
-		this.setState( { id: add( period, onTick ) } );
+		this.setState( { id: add( period, onTick ) }, onTick );
 	},
 
 	stop() {
