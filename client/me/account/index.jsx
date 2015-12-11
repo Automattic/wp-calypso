@@ -1,47 +1,56 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	debug = require( 'debug' )( 'calypso:me:account' ),
-	emailValidator = require( 'email-validator' ),
-	_debounce = require( 'lodash/function/debounce' ),
-	_map = require( 'lodash/collection/map' ),
-	_size = require( 'lodash/collection/size' ),
-	ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import React from 'react';
+import i18n from 'lib/mixins/i18n';
+import Debug from 'debug';
+import emailValidator from 'email-validator';
+import _debounce from 'lodash/function/debounce';
+import _map from 'lodash/collection/map';
+import _size from 'lodash/collection/size';
+const ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 /**
  * Internal dependencies
  */
-var LanguageSelector = require( 'components/forms/language-selector' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	sites = require( 'lib/sites-list' )(),
-	formBase = require( 'me/form-base' ),
-	SelectSite = require( 'me/select-site' ),
-	config = require( 'config' ),
-	Card = require( 'components/card' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormTextValidation = require( 'components/forms/form-input-validation' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormLegend = require( 'components/forms/form-legend' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	ReauthRequired = require( 'me/reauth-required' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	user = require( 'lib/user' )(),
-	Notice = require( 'components/notice' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
-	notices = require( 'notices' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	Main = require( 'components/main' ),
-	SectionHeader = require( 'components/section-header' );
+import LanguageSelector from 'components/forms/language-selector';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import protectForm from 'lib/mixins/protect-form';
+import formBase from 'me/form-base';
+import SelectSite from 'me/select-site';
+import config from 'config';
+import Card from 'components/card';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextValidation from 'components/forms/form-input-validation';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormRadio from 'components/forms/form-radio';
+import ReauthRequired from 'me/reauth-required';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import notices from 'notices';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+
+import _sites from 'lib/sites-list';
+import _user from 'lib/user';
+
+const sites = _sites();
+const user = _user();
+
+/**
+ * Debug instance
+ */
+let debug = new Debug( 'calypso:me:account' );
 
 module.exports = React.createClass( {
 
@@ -55,26 +64,26 @@ module.exports = React.createClass( {
 		eventRecorder
 	],
 
-	componentWillMount: function() {
+	componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' component is mounted.' );
 		this.debouncedUsernameValidate = _debounce( this.validateUsername, 600 );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 	},
 
-	updateLanguage: function() {
-		var valueLink = this.valueLink( 'language' );
+	updateLanguage() {
+		let valueLink = this.valueLink( 'language' );
 
-		valueLink.requestChange = function( value ) {
-			var originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+		valueLink.requestChange = ( value ) => {
+			const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
 
 			this.props.userSettings.updateSetting( 'language', value );
 			if ( value !== originalLanguage ) {
@@ -82,22 +91,22 @@ module.exports = React.createClass( {
 			} else {
 				this.setState( { redirect: false } );
 			}
-		}.bind( this );
+		};
 
 		return valueLink;
 	},
 
-	validateUsername: function() {
-		var username = this.props.userSettings.getSetting( 'user_login' );
+	validateUsername() {
+		const username = this.props.userSettings.getSetting( 'user_login' );
 		debug( 'Validating username ' + username );
 		this.props.username.validate( username );
 	},
 
-	hadFormError: function() {
-		return this.state.emailValidationError;
+	hasEmailValidationError() {
+		return !! this.state.emailValidationError;
 	},
 
-	communityTranslator: function() {
+	communityTranslator() {
 		if ( config.isEnabled( 'community-translator' ) ) {
 			return (
 				<FormFieldset>
@@ -126,15 +135,15 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getOptoutText: function( website ) {
+	getOptoutText( website ) {
 		return this.translate( '%(website)s opt-out', {
 			args: { website: website },
 			context: 'A website address, formatted to look like "Website.com"'
 		} );
 	},
 
-	cancelEmailChange: function() {
-		this.props.userSettings.cancelPendingEmailChange( function( error, response ) {
+	cancelEmailChange() {
+		this.props.userSettings.cancelPendingEmailChange( ( error, response ) => {
 			if ( error ) {
 				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
 				notices.error( this.translate( 'There was a problem canceling the email change. Please, try again.' ) );
@@ -142,14 +151,13 @@ module.exports = React.createClass( {
 				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
 				notices.success( this.translate( 'The email change has been successfully canceled.' ) );
 			}
-		}.bind( this )
-		);
+		} );
 	},
 
-	handleRadioChange: function( event ) {
-		var name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
+	handleRadioChange( event ) {
+		const name = event.currentTarget.name;
+		const value = event.currentTarget.value;
+		let updateObj = {};
 
 		updateObj[ name ] = value;
 
@@ -162,13 +170,13 @@ module.exports = React.createClass( {
 	 *
 	 * @param {object} event Event from onChange of user_login input
 	 */
-	handleUsernameChange: function( event ) {
+	handleUsernameChange( event ) {
 		this.debouncedUsernameValidate();
 		this.props.userSettings.updateSetting( 'user_login', event.currentTarget.value );
 		this.setState( { usernameAction: null } );
 	},
 
-	cancelUsernameChange: function() {
+	cancelUsernameChange() {
 		this.setState( {
 			userLoginConfirm: null,
 			usernameAction: null
@@ -182,12 +190,12 @@ module.exports = React.createClass( {
 		}
 	},
 
-	submitUsernameForm: function() {
-		var username = this.props.userSettings.getSetting( 'user_login' ),
-			action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
+	submitUsernameForm() {
+		const username = this.props.userSettings.getSetting( 'user_login' );
+		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, function( error ) {
+		this.props.username.change( username, action, ( error ) => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
 				notices.error( this.props.username.getValidationFailureMessage() );
@@ -198,22 +206,22 @@ module.exports = React.createClass( {
 				// @TODO: Do not require reload here.
 				location.reload();
 			}
-		}.bind( this ) );
+		} );
 	},
 
 	renderHolidaySnow() {
 		// Note that years and months below are zero indexed
-		let today = this.moment(),
-			startDate = this.moment( {
-				year: today.year(),
-				month: 11,
-				day: 1
-			} ),
-			endDate = this.moment( {
-				year: today.year(),
-				month: 0,
-				day: 4
-			} );
+		const today = this.moment();
+		const startDate = this.moment( {
+			year: today.year(),
+			month: 11,
+			day: 1
+		} );
+		const endDate = this.moment( {
+			year: today.year(),
+			month: 0,
+			day: 4
+		} );
 
 		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
 			return;
@@ -235,8 +243,8 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderJoinDate: function() {
-		var dateMoment = i18n.moment( user.get().date );
+	renderJoinDate() {
+		const dateMoment = i18n.moment( user.get().date );
 
 		return (
 			<span>
@@ -252,11 +260,11 @@ module.exports = React.createClass( {
 		);
 	},
 
-	hasPendingEmailChange: function() {
+	hasPendingEmailChange() {
 		return this.props.userSettings.isPendingEmailChange();
 	},
 
-	renderPendingEmailChange: function() {
+	renderPendingEmailChange() {
 		if ( ! this.hasPendingEmailChange() ) {
 			return null;
 		}
@@ -280,7 +288,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderUsernameValidation: function() {
+	renderUsernameValidation() {
 		if ( ! this.props.userSettings.isSettingUnsaved( 'user_login' ) ) {
 			return null;
 		}
@@ -308,10 +316,12 @@ module.exports = React.createClass( {
 		}
 	},
 
-	renderUsernameConfirmNotice: function() {
-		var usernameMatch = this.props.userSettings.getSetting( 'user_login' ) === this.state.userLoginConfirm,
-			status = usernameMatch ? 'is-success' : 'is-error',
-			text = usernameMatch ? this.translate( 'Thanks for confirming your new username!' ) : this.translate( 'Please re-enter your new username to confirm it.' );
+	renderUsernameConfirmNotice() {
+		const usernameMatch = this.props.userSettings.getSetting( 'user_login' ) === this.state.userLoginConfirm;
+		const status = usernameMatch ? 'is-success' : 'is-error';
+		const text = usernameMatch
+			? this.translate( 'Thanks for confirming your new username!' )
+			: this.translate( 'Please re-enter your new username to confirm it.' );
 
 		if ( ! this.props.username.isUsernameValid() ) {
 			return null;
@@ -326,7 +336,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderPrimarySite: function() {
+	renderPrimarySite() {
 		if ( ! user.get().visible_site_count ) {
 			return (
 				<a
@@ -350,12 +360,12 @@ module.exports = React.createClass( {
 		);
 	},
 
-	updateEmailAddress: function() {
+	updateEmailAddress() {
 		return {
 			value: this.hasPendingEmailChange()
 				? this.props.userSettings.getSetting( 'new_user_email' )
 				: this.props.userSettings.getSetting( 'user_email' ),
-			requestChange: function( value ) {
+			requestChange: ( value ) => {
 				if ( '' === value ) {
 					this.setState( { emailValidationError: 'empty' } );
 				} else if ( ! emailValidator.validate( value ) ) {
@@ -364,11 +374,11 @@ module.exports = React.createClass( {
 					this.setState( { emailValidationError: false } );
 				}
 				this.props.userSettings.updateSetting( 'user_email', value );
-			}.bind( this )
+			}
 		};
 	},
 
-	renderEmailValidation: function() {
+	renderEmailValidation() {
 		if ( ! this.props.userSettings.isSettingUnsaved( 'user_email' ) ) {
 			return null;
 		}
@@ -396,7 +406,7 @@ module.exports = React.createClass( {
 	/*
 	 * These form fields are displayed when there is not a username change in progress.
 	 */
-	renderAccountFields: function() {
+	renderAccountFields() {
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
@@ -448,7 +458,7 @@ module.exports = React.createClass( {
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
-					disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() || !! this.hadFormError() }
+					disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() || this.hasEmailValidationError() }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) } >
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Account Settings' ) }
 				</FormButton>
@@ -456,8 +466,8 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderBlogActionFields: function() {
-		var actions = this.props.username.getAllowedActions();
+	renderBlogActionFields() {
+		const actions = this.props.username.getAllowedActions();
 
 		/*
 		 * If there are no actions or if there is only one action,
@@ -494,7 +504,7 @@ module.exports = React.createClass( {
 	/*
 	 * These form fields are displayed when a username change is in progress.
 	 */
-	renderUsernameFields: function() {
+	renderUsernameFields() {
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
@@ -570,9 +580,9 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		// Is a username change in progress?
-		var renderUsernameForm = this.props.userSettings.isSettingUnsaved( 'user_login' );
+		const renderUsernameForm = this.props.userSettings.isSettingUnsaved( 'user_login' );
 
 		return (
 			<Main className="account">
