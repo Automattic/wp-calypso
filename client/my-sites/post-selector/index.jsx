@@ -25,7 +25,8 @@ export default React.createClass( {
 		selected: PropTypes.number,
 		excludeTree: PropTypes.number,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
-		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] )
+		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
+		postListStoreId: PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -35,7 +36,8 @@ export default React.createClass( {
 			multiple: false,
 			onChange: noop,
 			orderBy: 'title',
-			order: 'ASC'
+			order: 'ASC',
+			postListStoreId: 'post-selector'
 		};
 	},
 
@@ -61,6 +63,7 @@ export default React.createClass( {
 				excludeTree={ this.props.excludeTree }
 				orderBy={ this.props.orderBy }
 				order={ this.props.order }
+				postListStoreId={ this.props.postListStoreId }
 			>
 				<Selector
 					{ ...omit( this.props, 'children' ) }
