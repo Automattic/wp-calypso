@@ -8,26 +8,28 @@ import {
 
 import { uniqueId } from 'lodash';
 
-function newNotice( status, text, options ) {
-    return {
-        noticeId: uniqueId(),
-        type: NEW_NOTICE,
-        status: status,
-        text: text
-    };
+function newNotice( status, text, options = {} ) {
+	return {
+		noticeId: uniqueId(),
+		duration: options.duration,
+		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
+		type: NEW_NOTICE,
+		status: status,
+		text: text
+	};
 }
 
 export function success( text, options ) {
-    return newNotice( 'is-success', text, options );
+	return newNotice( 'is-success', text, options );
 }
 
 export function error( text, options ) {
-    return newNotice( 'is-error', text, options );
+	return newNotice( 'is-error', text, options );
 }
 
 export function removeNotice( noticeId ) {
-    return {
-        noticeId: noticeId,
-        type: REMOVE_NOTICE
-    };
+	return {
+		noticeId: noticeId,
+		type: REMOVE_NOTICE
+	};
 }
