@@ -31,7 +31,6 @@ render: function() {
 	);
 }
 
-
 ```
 
 ## Properties

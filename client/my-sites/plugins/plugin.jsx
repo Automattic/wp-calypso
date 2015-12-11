@@ -29,6 +29,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginSections from 'my-sites/plugins/plugin-sections';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import EmptyContent from 'components/empty-content';
+import FeatureExample from 'components/feature-example'
 
 /**
  * Module variables
@@ -286,7 +287,12 @@ export default React.createClass( {
 		}
 
 		if ( this.state.accessError ) {
-			return <MainComponent><EmptyContent { ...this.state.accessError } /></MainComponent>;
+			return (
+				<MainComponent>
+					<EmptyContent { ...this.state.accessError } />
+					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
+				</MainComponent>
+			);
 		}
 
 		if ( this.state.isFetching ) {

@@ -1,16 +1,24 @@
 /**
+ * External Dependencies
+ */
+import React from 'react'
+
+/**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	i18n = require( 'lib/mixins/i18n' ),
-	config = require( 'config' ),
-	analytics = require( 'analytics' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	notices = require( 'notices' ),
-	abtest = require( 'lib/abtest' ).abtest;
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item'
+import sitesList from 'lib/sites-list'
+import i18n from 'lib/mixins/i18n'
+import config from 'config'
+import analytics from 'analytics'
+import { isBusiness } from 'lib/products-values'
+import notices from 'notices'
+import { abtest } from 'lib/abtest'
 
-function hasErrorCondition( site, type ) {
-	var errorConditions = {
+let sites = sitesList();
+
+const hasErrorCondition = ( site, type ) => {
+	const errorConditions = {
 		noBusinessPlan: site && ! site.jetpack && ! isBusiness( site.plan ),
 		notMinimumJetpackVersion: site && ! site.hasMinimumJetpackVersion && site.jetpack,
 		notRightsToManagePlugins: sites.initialized && ! sites.canManageSelectedOrAll()
@@ -18,8 +26,43 @@ function hasErrorCondition( site, type ) {
 	return errorConditions[ type ];
 }
 
-function hasRestrictedAccess( site ) {
-	var pluginPageError;
+const getMockBusinessPluginItems = () => {
+	const plugins = [ {
+		slug: 'ecwid',
+		name: 'Ecwid',
+		wpcom: true,
+		icon: '/calypso/images/upgrades/plugins/ecwid.png'
+	}, {
+		slug: 'gumroad',
+		name: 'Gumroad',
+		wpcom: true,
+		icon: '/calypso/images/upgrades/plugins/gumroad.png'
+	}, {
+		slug: 'shopify',
+		name: 'Shopify',
+		wpcom: true,
+		icon: '/calypso/images/upgrades/plugins/shopify-store.png'
+	} ];
+	const selectedSite = {
+		slug: 'no-slug',
+		canUpdateFiles: true,
+		name: 'Not a real site'
+	}
+
+	return plugins.map( plugin => {
+		return React.createElement( PluginItem, {
+			key: 'plugin-item-mock-' + plugin.slug,
+			plugin: plugin,
+			sites: [],
+			selectedSite: selectedSite,
+			progress: [],
+			isMock: true }
+		);
+	} );
+}
+
+const hasRestrictedAccess = ( site ) => {
+	let pluginPageError;
 
 	site = site || sites.getSelectedSite();
 
@@ -54,13 +97,14 @@ function hasRestrictedAccess( site ) {
 			action: i18n.translate( 'Upgrade Now' ),
 			actionURL: '/plans/' + site.slug,
 			illustration: '/calypso/images/drake/drake-whoops.svg',
-			actionCallback: function() {
+			actionCallback: () => {
 				analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
-			}
+			},
+			featureExample: getMockBusinessPluginItems()
 		};
 	}
 
 	return pluginPageError;
 }
 
-module.exports = { hasRestrictedAccess: hasRestrictedAccess };
+export default { hasRestrictedAccess };
