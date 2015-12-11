@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	assign = require( 'lodash/object/assign' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' );
@@ -35,7 +36,7 @@ var LoadingError = React.createClass( {
 		show: function( chunkName ) {
 			console.error( 'Chunk %s could not be loaded', chunkName );
 			analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-			React.render(
+			ReactDom.render(
 				React.createElement( LoadingError, {} ),
 				document.getElementById( 'primary' )
 			);

@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	page = require( 'page' );
 
 /**
@@ -63,7 +64,7 @@ module.exports = {
 			}
 		}
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SiteSettingsComponent, {
 				context: context,
 				sites: sites,
@@ -85,7 +86,7 @@ module.exports = {
 	},
 
 	importSite: function( context ) {
-		React.render(
+		ReactDom.render(
 			React.createElement( SiteSettingsComponent, {
 				context: context,
 				sites: sites,
@@ -97,7 +98,7 @@ module.exports = {
 	},
 
 	exportSite: function( context ) {
-		React.render(
+		ReactDom.render(
 			React.createElement( SiteSettingsComponent, {
 				context: context,
 				sites: sites,
@@ -124,7 +125,7 @@ module.exports = {
 			} );
 		}
 
-		React.render(
+		ReactDom.render(
 			React.createElement( DeleteSite, {
 				context: context,
 				sites: sites,
@@ -150,7 +151,7 @@ module.exports = {
 			} );
 		}
 
-		React.render(
+		ReactDom.render(
 			React.createElement( StartOver, {
 				context: context,
 				sites: sites,

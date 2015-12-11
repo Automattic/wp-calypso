@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	throttle = require( 'lodash/function/throttle' ),
 	debounce = require( 'lodash/function/debounce' ),
 	debug = require( 'debug' )( 'calypso:menus:option-list' ); // eslint-disable-line no-unused-vars
@@ -71,7 +72,7 @@ var OptionList = React.createClass( {
 	},
 
 	checkScrollPosition: throttle( function() {
-		var node = React.findDOMNode( this );
+		var node = ReactDom.findDOMNode( this );
 
 		if ( node.scrollTop + node.clientHeight >= node.scrollHeight ) {
 			this.props.onScroll();

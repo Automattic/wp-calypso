@@ -67,7 +67,7 @@ Example test from `client/components/Accordion`
 ```javascript
 var tree = TestUtils.renderIntoDocument( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-TestUtils.Simulate.touchTap( React.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
+TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
 
 function finishTest( isExpanded ) {
 	expect( isExpanded ).to.be.ok;

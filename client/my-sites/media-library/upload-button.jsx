@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	noop = require( 'lodash/utility/noop' ),
 	classNames = require( 'classnames' );
 
@@ -33,7 +34,7 @@ module.exports = React.createClass( {
 			MediaActions.add( this.props.site.ID, event.target.files );
 		}
 
-		React.findDOMNode( this.refs.form ).reset();
+		ReactDom.findDOMNode( this.refs.form ).reset();
 		this.props.onAddMedia();
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
 	},

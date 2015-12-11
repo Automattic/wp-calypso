@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' );
 
 var RenderVisualizerMixin = {
 		UPDATE_RENDER_LOG_POSITION_TIMEOUT_MS: 500,
@@ -148,7 +148,7 @@ var RenderVisualizerMixin = {
 		},
 
 		updateRenderLogPosition: function() {
-			var parentNode = React.findDOMNode(this),
+			var parentNode = ReactDom.findDOMNode(this),
 				parentNodeRect = parentNode && parentNode.getBoundingClientRect();
 
 			if ( this.renderLogContainer && parentNodeRect ) {
@@ -219,7 +219,7 @@ var RenderVisualizerMixin = {
 		},
 
 		highlightChange: function( change ) {
-			var parentNode = React.findDOMNode(this),
+			var parentNode = ReactDom.findDOMNode(this),
 				ANIMATION_DURATION = 500,
 				self = this;
 

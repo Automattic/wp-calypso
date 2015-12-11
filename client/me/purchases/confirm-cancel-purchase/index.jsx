@@ -2,6 +2,7 @@
  * External Dependencies
  **/
 import page from 'page';
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -44,7 +45,7 @@ const ConfirmCancelPurchase = React.createClass( {
 			}
 
 			this.setState( { isFormLoaded: true }, () => {
-				const container = React.findDOMNode( this.refs.root );
+				const container = ReactDom.findDOMNode( this.refs.root );
 
 				container.innerHTML = html;
 				initializeForm( {

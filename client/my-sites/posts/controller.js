@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	qs = require( 'querystring' ),
 	url = require( 'url' ),
@@ -81,7 +82,7 @@ module.exports = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Posts, {
 				context: context,
 				siteID: siteID,

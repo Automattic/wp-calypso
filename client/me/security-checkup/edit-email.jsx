@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	emailValidator = require( 'email-validator' );
 
 /**
@@ -101,7 +102,7 @@ module.exports = React.createClass( {
 	},
 
 	focusInput: function() {
-		React.findDOMNode( this.refs.email ).focus();
+		ReactDom.findDOMNode( this.refs.email ).focus();
 	},
 
 	isSavable: function() {

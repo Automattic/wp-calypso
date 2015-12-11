@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -25,7 +26,7 @@ module.exports = React.createClass( {
 	},
 
 	setupInputModeHandlers: function() {
-		var inputElement = React.findDOMNode( this.refs.input );
+		var inputElement = ReactDom.findDOMNode( this.refs.input );
 
 		if ( this.props.inputMode === 'numeric' ) {
 			// This forces mobile browsers to use a numeric keyboard. We have to
@@ -56,7 +57,7 @@ module.exports = React.createClass( {
 
 	autofocusInput() {
 		if ( this.props.autofocus ) {
-			React.findDOMNode( this.refs.input ).focus();
+			ReactDom.findDOMNode( this.refs.input ).focus();
 		}
 	},
 

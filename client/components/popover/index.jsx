@@ -2,6 +2,7 @@
  * External dependencies
  */
 var clickOutside = require( 'click-outside' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	omit = require( 'lodash/object/omit' ),
 	Tip = require( 'component-tip' );
@@ -56,7 +57,7 @@ var Popover = React.createClass( {
 			this._unbindClickOutside = null;
 		}
 		this._tip.remove();
-		React.unmountComponentAtNode( this._container );
+		ReactDom.unmountComponentAtNode( this._container );
 		this._container = null;
 	},
 
@@ -72,13 +73,13 @@ var Popover = React.createClass( {
 		}
 
 		if ( this.props.isVisible && this.props.context ) {
-			React.render(
+			ReactDom.render(
 				<Content { ...omit( this.props, 'className' ) } onClose={ this._close } />,
 				this._container
 			);
 
 			if ( ! prevProps.isVisible ) {
-				const contextNode = React.findDOMNode( this.props.context );
+				const contextNode = ReactDom.findDOMNode( this.props.context );
 				if ( contextNode.nodeType !== Node.ELEMENT_NODE || contextNode.nodeName.toLowerCase() === 'svg' ) {
 					warn(
 						'Popover is attached to a %s element (nodeType %d).  '
@@ -98,7 +99,7 @@ var Popover = React.createClass( {
 				this._setupClickOutside();
 			}
 		} else {
-			React.unmountComponentAtNode( this._container );
+			ReactDom.unmountComponentAtNode( this._container );
 			this._tip.hide();
 
 			if ( this._unbindClickOutside ) {
@@ -117,11 +118,11 @@ var Popover = React.createClass( {
 		// click to show the tip and the tip will never be shown
 		this._clickOutsideTimeout = setTimeout( function() {
 			this._unbindClickOutside = clickOutside( this._container, function( event ) {
-				const contextNode = React.findDOMNode( this.props.context );
+				const contextNode = ReactDom.findDOMNode( this.props.context );
 				let shouldClose = ( contextNode && contextNode.contains && ! contextNode.contains( event.target ) );
 
 				if ( this.props.ignoreContext && shouldClose ) {
-					const ignoreContext = React.findDOMNode( this.props.ignoreContext );
+					const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
 					shouldClose = shouldClose && ( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
 				}
 

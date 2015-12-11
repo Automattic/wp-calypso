@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDomServer from 'react-dom/server';
 import React, { PropTypes } from 'react/addons';
 import omit from 'lodash/object/omit';
 import isEqual from 'lodash/lang/isEqual';
@@ -44,7 +45,7 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 		} );
 	} );
 
-	return React.renderToStaticMarkup(
+	return ReactDomServer.renderToStaticMarkup(
 		<html>
 			<head>
 				{ React.addons.createFragment( fragment.styles ) }

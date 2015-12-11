@@ -1,4 +1,4 @@
-var React = require( 'react/addons' );
+var ReactDom = require( 'react-dom' );
 
 /**
  * Provides focus and blur support to input component.
@@ -11,7 +11,7 @@ module.exports = function( name ) {
 	return {
 		componentDidMount: function() {
 			if ( this.props.initialFocus && this.refs[ name ] ) {
-				React.findDOMNode( this.refs[ name ] ).focus();
+				ReactDom.findDOMNode( this.refs[ name ] ).focus();
 			}
 		},
 

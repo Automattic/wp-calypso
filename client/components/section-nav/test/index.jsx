@@ -1,5 +1,6 @@
 var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	mockery = require( 'mockery' ),
 	TestUtils = React.addons.TestUtils,
@@ -81,7 +82,7 @@ describe( 'section-nav', function() {
 			}, ( <p>placeholder</p> ) );
 			var tree = TestUtils.renderIntoDocument( elem );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( React.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
+			TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
 			assert( tree.state.mobileOpen );
 		} );
 
@@ -94,11 +95,11 @@ describe( 'section-nav', function() {
 			var tree = TestUtils.renderIntoDocument( elem );
 
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( React.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
+			TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
 			assert( tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( React.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
+			TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( React.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
+			TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' ) ) );
 			assert( tree.state.mobileOpen );
 
 			assert( spy.calledTwice );

@@ -4,6 +4,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	TestUtils = React.addons.TestUtils;
 
@@ -76,14 +77,14 @@ describe( 'TokenField', function() {
 	}
 
 	beforeEach( function() {
-		wrapper = React.render( <TokenFieldWrapper />, document.body );
-		tokenFieldNode = React.findDOMNode( wrapper.refs.tokenField );
+		wrapper = ReactDom.render( <TokenFieldWrapper />, document.body );
+		tokenFieldNode = ReactDom.findDOMNode( wrapper.refs.tokenField );
 		textInputNode = tokenFieldNode.querySelector( '.token-field__input' );
 		TestUtils.Simulate.focus( textInputNode );
 	} );
 
 	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	describe( 'displaying tokens', function() {

@@ -174,7 +174,7 @@ helloWorld() {
 	const Main = require( 'my-sites/hello-world/main' );
 
 	// Render hello world...
-	React.render(
+	ReactDom.render(
 		React.createElement( Main ),
 		document.getElementById( 'primary' )
 	);

@@ -5,6 +5,7 @@ require( 'lib/react-test-env-setup' )();
  */
 var chai = require( 'chai' ),
 	expect = chai.expect,
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	sinon = require( 'sinon' ),
 	mockery = require( 'mockery' ),
@@ -51,7 +52,7 @@ describe( 'SingleDoc', function () {
 			it( 'should render html with marked text', function () {
 				this.rendered.setState( { body: this.fetchResponse } );
 				this.rendered.render();
-				var html = React.findDOMNode( this.rendered.refs.body ).innerHTML;
+				var html = ReactDom.findDOMNode( this.rendered.refs.body ).innerHTML;
 				expect( html ).to.equal( '<div><p>something <mark>hello</mark></p></div>' );
 			} );
 		} );

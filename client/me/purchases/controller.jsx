@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -44,7 +45,7 @@ function recordPageView( path, ...title ) {
 }
 
 function renderPage( component ) {
-	React.render(
+	ReactDom.render(
 		component,
 		document.getElementById( 'primary' )
 	);

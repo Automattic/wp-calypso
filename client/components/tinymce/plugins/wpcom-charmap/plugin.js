@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -18,7 +19,7 @@ function wpcomCharMapPlugin( editor ) {
 	} );
 
 	editor.on( 'remove', function() {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
@@ -30,7 +31,7 @@ function wpcomCharMapPlugin( editor ) {
 		}
 
 		function render( visibility = 'show' ) {
-			React.render(
+			ReactDom.render(
 				React.createElement( CharMap, {
 					showDialog: visibility === 'show',
 					onClose: onClose,

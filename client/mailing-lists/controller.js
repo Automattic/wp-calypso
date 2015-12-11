@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import omit from 'lodash/object/omit';
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -17,7 +18,7 @@ export default {
 			noSidebar: true }
 		);
 
-		React.render(
+		ReactDom.render(
 			React.createElement( MainComponent, {
 				email: context.query.email,
 				category: context.query.category,

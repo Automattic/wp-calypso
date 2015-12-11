@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
 	url = require( 'url' );
@@ -34,7 +35,7 @@ var CrossPost = React.createClass( {
 	},
 
 	handleCardClick: function( event ) {
-		var rootNode = React.findDOMNode( this );
+		var rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
 			setTimeout( function() {

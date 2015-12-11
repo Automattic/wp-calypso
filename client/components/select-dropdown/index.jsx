@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	findWhere = require( 'lodash/collection/findWhere' ),
 	filter = require( 'lodash/collection/filter' ),
 	findIndex = require( 'lodash/array/findIndex' ),
@@ -331,7 +332,7 @@ var SelectDropdown = React.createClass( {
 	},
 
 	handleOutsideClick: function( event ) {
-		if ( ! React.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
+		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
 			this.closeDropdown();
 		}
 	},
