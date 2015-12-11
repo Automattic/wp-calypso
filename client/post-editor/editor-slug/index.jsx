@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react/addons';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
@@ -51,7 +52,7 @@ export default React.createClass( {
 				this.props.onEscEnter();
 
 				if ( this.props.isEditable ) {
-					React.findDOMNode( this.refs.slugField ).blur();
+					ReactDom.findDOMNode( this.refs.slugField ).blur();
 				}
 			} );
 		}
@@ -69,7 +70,7 @@ export default React.createClass( {
 
 	focusSlug() {
 		if ( this.props.isEditable ) {
-			React.findDOMNode( this.refs.slugField ).focus();
+			ReactDom.findDOMNode( this.refs.slugField ).focus();
 		}
 	},
 

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	qs = require( 'qs' ),
 	debounce = require( 'lodash/function/debounce' ),
 	page = require( 'page' ),
@@ -25,7 +26,7 @@ var devdocs = {
 	 * so #secondary needs to be cleaned up
 	 */
 	sidebar: function( context, next ) {
-		React.render(
+		ReactDom.render(
 			React.createElement( Sidebar, {} ),
 			document.getElementById( 'secondary' )
 		);
@@ -56,7 +57,7 @@ var devdocs = {
 			noSidebar: false
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( DocsComponent, {
 				term: context.query.term,
 				// we debounce with wait time of 0, so that the search doesn’t happen
@@ -76,7 +77,7 @@ var devdocs = {
 			noSidebar: false
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SingleDocComponent, {
 				path: context.params.path,
 				term: context.query.term,
@@ -93,7 +94,7 @@ var devdocs = {
 			noSidebar: false
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( DesignAssetsComponent, {
 				component: context.params.component
 			} ),
@@ -107,7 +108,7 @@ var devdocs = {
 			noSidebar: false
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Typography, {
 				component: context.params.component
 			} ),
@@ -116,7 +117,7 @@ var devdocs = {
 	},
 
 	formStateExamples: function( context ) {
-		React.render(
+		ReactDom.render(
 			React.createElement( FormStateExamplesComponent, {
 				component: context.params.component
 			} ),
@@ -130,9 +131,9 @@ var devdocs = {
 			noSidebar: true
 		} );
 
-		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( EmptyContent, {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
@@ -153,7 +154,7 @@ var devdocs = {
 			noSidebar: false
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( DevWelcome, {} ),
 			document.getElementById( 'primary' )
 		);

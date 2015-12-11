@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	noop = require( 'lodash/utility/noop' ),
 	debug = require( 'debug' )( 'calypso:dialog' );
 
@@ -47,7 +48,7 @@ var Dialog = React.createClass( {
 	componentWillUnmount: function() {
 		debug( 'unmounting' );
 		if ( this._container ) {
-			React.unmountComponentAtNode( this._container );
+			ReactDom.unmountComponentAtNode( this._container );
 			this._container.parentNode.removeChild( this._container );
 			this._container = null;
 		}
@@ -57,7 +58,7 @@ var Dialog = React.createClass( {
 		var dialogComponent = this.props.isVisible ? <DialogBase { ...this.props } key="dialog" onDialogClose={ this.onDialogClose } /> : null,
 			transitionName = this.props.baseClassName || 'dialog';
 
-		React.render(
+		ReactDom.render(
 			<SingleChildCSSTransitionGroup
 				transitionName={ transitionName }
 				component="div"

@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
@@ -28,7 +29,7 @@ module.exports = {
 			site.fetchSettings();
 		}
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Sharing, {
 				path: context.path,
 				contentComponent: context.contentComponent

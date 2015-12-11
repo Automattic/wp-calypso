@@ -5,6 +5,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var assert = require( 'assert' ),
+	ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' );
 
 /**
@@ -146,7 +147,7 @@ describe( 'I18n', function() {
 					} ),
 					instance = <span>{ translatedComponent }</span>;
 
-				assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+				assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 			} );
 		} );
 	} );

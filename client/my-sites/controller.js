@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
@@ -30,7 +31,7 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 	} );
 
 	// Render the My Sites navigation in #secondary
-	React.render(
+	ReactDom.render(
 		React.createElement( NavigationComponent, {
 			layoutFocus: layoutFocus,
 			path: context.path,
@@ -46,9 +47,9 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 function renderEmptySites() {
 	var NoSitesMessage = require( 'components/empty-content/no-sites-message' );
 
-	React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
-	React.render(
+	ReactDom.render(
 		React.createElement( NoSitesMessage ),
 		document.getElementById( 'primary' )
 	);
@@ -59,9 +60,9 @@ function renderNoVisibleSites() {
 		currentUser = user.get(),
 		hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 
-	React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
-	React.render(
+	ReactDom.render(
 		React.createElement( EmptyContentComponent, {
 			title: i18n.translate( 'You have %(hidden)d hidden WordPress site.', 'You have %(hidden)d hidden WordPress sites.', {
 				count: hiddenSites,
@@ -216,7 +217,7 @@ module.exports = {
 	},
 
 	removeOverlay: function( context, next ) {
-		React.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
 		next();
 	},
 
@@ -227,7 +228,7 @@ module.exports = {
 			selectedSite = sites.getSelectedSite();
 
 		if ( selectedSite && selectedSite.jetpack ) {
-			React.render( (
+			ReactDom.render( (
 				<Main>
 					<JetpackManageErrorPage template="noDomainsOnJetpack" site={ sites.getSelectedSite() }/>
 				</Main>
@@ -258,7 +259,7 @@ module.exports = {
 			section: 'sites',
 			noSidebar: true
 		} );
-		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );
 
 		// This path sets the URL to be visited once a site is selected
@@ -266,7 +267,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SitesComponent, {
 				sites: sites,
 				path: context.path,

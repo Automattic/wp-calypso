@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	debounce = require( 'lodash/function/debounce' ),
 	assign = require( 'lodash/object/assign' ),
 	debug = require( 'debug' )( 'calypso:editor-media-modal' );
@@ -103,7 +104,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		React.findDOMNode( event.target ).scrollIntoView();
+		ReactDom.findDOMNode( event.target ).scrollIntoView();
 	},
 
 	renderImageAltText: function() {

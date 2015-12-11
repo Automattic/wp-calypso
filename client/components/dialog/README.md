@@ -54,7 +54,7 @@ var MyComponent = React.createClass( {
 	}
 } );
 
-React.render(
+ReactDom.render(
 	<MyComponent />,
 	document.getElementById( 'content' )
 );

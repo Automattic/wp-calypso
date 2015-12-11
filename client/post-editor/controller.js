@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	ReactDomServer = require( 'react-dom/server' ),
+	React = require( 'react' ),
 	page = require( 'page' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
 	startsWith = require( 'lodash/string/startsWith' ),
@@ -36,8 +38,8 @@ function determinePostType( context ) {
 function renderEditor( context, postType ) {
 	context.layout.setState( { section: 'post' } );
 
-	React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	React.render(
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	ReactDom.render(
 		React.createElement( ReduxProvider, { store: context.store }, () => {
 			return React.createElement( PreferencesData, null,
 				React.createElement( PostEditor, {
@@ -82,7 +84,7 @@ function maybeRedirect( context, postType, site ) {
 }
 
 function getPressThisContent( text, url, title ) {
-	return React.renderToStaticMarkup(
+	return ReactDomServer.renderToStaticMarkup(
 		<p>
 			{ text ? <blockquote>{ text }</blockquote> : null }
 			via <a href={ url }>{ title }</a>.

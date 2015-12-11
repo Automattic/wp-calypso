@@ -4,6 +4,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 import { expect } from 'chai';
+import ReactDom from 'react-dom';
 import React from 'react/addons';
 
 /**
@@ -32,13 +33,13 @@ describe( 'Dirty Linked State Mixin', function() {
 	} );
 	var form, fooInput, barInput;
 	beforeEach( function() {
-		form = React.render( <DirtyLinkedForm />, document.body );
-		fooInput = React.findDOMNode( form ).querySelector( '.foo' );
-		barInput = React.findDOMNode( form ).querySelector( '.bar' );
+		form = ReactDom.render( <DirtyLinkedForm />, document.body );
+		fooInput = ReactDom.findDOMNode( form ).querySelector( '.foo' );
+		barInput = ReactDom.findDOMNode( form ).querySelector( '.bar' );
 	} );
 
 	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	it( 'initially has default state', function( ) {

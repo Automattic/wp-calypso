@@ -4,6 +4,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
@@ -40,12 +41,12 @@ describe( 'RootChild', function() {
 	} );
 
 	afterEach( function() {
-		React.unmountComponentAtNode( container );
+		ReactDom.unmountComponentAtNode( container );
 	} );
 
 	describe( 'rendering', function() {
 		it( 'should render any children as descendents of body', function() {
-			var tree = React.render( React.createElement( Greeting ), container );
+			var tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild
 				.getDOMNode()
@@ -60,7 +61,7 @@ describe( 'RootChild', function() {
 		} );
 
 		it( 'accepts props to be added to a wrapper element', function() {
-			var tree = React.render( React.createElement( Greeting, {
+			var tree = ReactDom.render( React.createElement( Greeting, {
 				rootChildProps: { className: 'wrapper' }
 			} ), container );
 
@@ -79,7 +80,7 @@ describe( 'RootChild', function() {
 		} );
 
 		it( 'should update the children if parent is re-rendered', function() {
-			var tree = React.render( React.createElement( Greeting ), container );
+			var tree = ReactDom.render( React.createElement( Greeting ), container );
 			tree.setProps( { toWhom: 'Universe' } );
 
 			expect( tree.refs.rootChild
@@ -91,8 +92,8 @@ describe( 'RootChild', function() {
 
 	describe( 'unmounting', function() {
 		it( 'should destroy the root child when the component is unmounted', function() {
-			React.render( React.createElement( Greeting ), container );
-			React.unmountComponentAtNode( container );
+			ReactDom.render( React.createElement( Greeting ), container );
+			ReactDom.unmountComponentAtNode( container );
 
 			expect( [].slice.call(
 				document.body.querySelectorAll( '*' )

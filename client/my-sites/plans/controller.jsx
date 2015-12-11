@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	defer = require( 'lodash/function/defer' );
 
@@ -48,7 +49,7 @@ module.exports = {
 		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
 
-			React.render(
+			ReactDom.render(
 				React.createElement( MainComponent, null,
 					React.createElement( EmptyContentComponent, {
 						title: i18n.translate( 'Plans are not available for Jetpack sites yet.' ),
@@ -76,7 +77,7 @@ module.exports = {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		React.render(
+		ReactDom.render(
 			<CartData>
 				<Plans sites={ sites }
 					onSelectPlan={ onSelectPlan }
@@ -116,7 +117,7 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
-		React.render(
+		ReactDom.render(
 			<Main className="plans has-sidebar">
 				<CartData>
 					<PlansCompare sites={ sites }
@@ -135,7 +136,7 @@ module.exports = {
 		var CartData = require( 'components/data/cart' ),
 			PlansSelect = require( 'my-sites/plans/plans-select' );
 
-		React.render(
+		ReactDom.render(
 			<CartData>
 				<PlansSelect context={ context } sites={ sites } plans={ plans } />
 			</CartData>,

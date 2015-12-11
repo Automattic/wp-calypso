@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	throttle = require( 'lodash/function/throttle' ),
 	raf = require( 'raf' ),
 	classNames = require( 'classnames' );
@@ -25,7 +26,7 @@ module.exports = React.createClass( {
 	componentDidMount: function() {
 		// Determine and cache vertical threshold from rendered element's
 		// offset relative the document
-		this.threshold = React.findDOMNode( this ).offsetTop;
+		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
@@ -45,8 +46,8 @@ module.exports = React.createClass( {
 
 	onWindowResize: function() {
 		this.setState( {
-			spacerHeight: this.state.isSticky ? React.findDOMNode( this ).clientHeight : 0,
-			blockWidth: this.state.isSticky ? React.findDOMNode( this ).clientWidth : 0
+			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
+			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
 		} );
 	},
 
@@ -60,8 +61,8 @@ module.exports = React.createClass( {
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
 				isSticky: isSticky,
-				spacerHeight: isSticky ? React.findDOMNode( this ).clientHeight : 0,
-				blockWidth: isSticky ? React.findDOMNode( this ).clientWidth : 0
+				spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
+				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
 			} );
 		}
 	},

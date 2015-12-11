@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	without = require( 'lodash/array/without' ),
 	includes = require( 'lodash/collection/includes' ),
 	classNames = require( 'classnames' ),
@@ -166,7 +167,7 @@ module.exports = React.createClass( {
 			isDraggingOverElement: false
 		} );
 
-		if ( ! this.props.fullScreen && ! React.findDOMNode( this.refs.zone ).contains( event.target ) ) {
+		if ( ! this.props.fullScreen && ! ReactDom.findDOMNode( this.refs.zone ).contains( event.target ) ) {
 			return;
 		}
 

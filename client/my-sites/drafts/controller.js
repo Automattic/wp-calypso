@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -19,7 +20,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Drafts', { textOnly: true } ), { siteID: siteID } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Drafts, {
 				siteID: siteID,
 				sites: sites,

@@ -3,6 +3,8 @@
  */
 import tinymce from 'tinymce/tinymce';
 import i18n from 'lib/mixins/i18n';
+import ReactDom from 'react-dom';
+import ReactDomServer from 'react-dom/server';
 import React from 'react';
 
 /**
@@ -21,7 +23,7 @@ const contactForm = editor => {
 	} );
 
 	editor.on( 'remove', () => {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
@@ -33,7 +35,7 @@ const contactForm = editor => {
 		};
 
 		function renderModal( visibility = 'show' ) {
-			React.render(
+			ReactDom.render(
 				React.createElement( ContactFormDialog, {
 					showDialog: visibility === 'show',
 					onClose,
@@ -53,7 +55,7 @@ const contactForm = editor => {
 		title: i18n.translate( 'Add Contact Form' ),
 		cmd: 'WP_ContactForm',
 		onPostRender() {
-			this.innerHtml( React.renderToStaticMarkup(
+			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation">
 					<Gridicon icon="grid" size={ 20 } />
 				</button>

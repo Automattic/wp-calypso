@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -34,7 +35,7 @@ var controller = {
 		titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
 
 		function renderJetpackUpgradeMessage() {
-			React.render(
+			ReactDom.render(
 				React.createElement( MainComponent, null,
 					React.createElement( JetpackManageErrorPage, {
 						template: 'updateJetpack',
@@ -63,7 +64,7 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( MenusComponent, {
 				siteMenus: siteMenus,
 				itemTypes: itemTypes,

@@ -4,6 +4,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var assert = require( 'assert' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	TestUtils = React.addons.TestUtils;
 
@@ -19,7 +20,7 @@ describe( 'MultiCheckbox', function() {
 	];
 
 	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	describe( 'rendering', function() {

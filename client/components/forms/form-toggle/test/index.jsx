@@ -2,6 +2,7 @@
  * External dependencies
  */
 var assert = require( 'assert' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	TestUtils = React.addons.TestUtils,
 	unique = require( 'lodash/array/uniq' );
@@ -28,7 +29,7 @@ describe( 'CompactFormToggle', function() {
 
 describe( 'FormToggle', function() {
 	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	describe( 'rendering', function() {

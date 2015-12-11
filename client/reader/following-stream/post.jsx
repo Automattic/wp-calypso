@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	assign = require( 'lodash/object/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
@@ -61,11 +62,11 @@ var Post = React.createClass( {
 	},
 
 	getMaxFeaturedWidthSize: function() {
-		return React.findDOMNode( this ).offsetWidth;
+		return ReactDom.findDOMNode( this ).offsetWidth;
 	},
 
 	shouldApplyIsLong: function() {
-		var node = React.findDOMNode( this.refs.siteName );
+		var node = ReactDom.findDOMNode( this.refs.siteName );
 		// give the clientWidth a 2 pixel buffer. IE is often off by at least one.
 		return !! ( node && node.scrollWidth > ( node.offsetWidth + 2 ) );
 	},
@@ -201,9 +202,9 @@ var Post = React.createClass( {
 	updateFeatureSize: function() {
 		var node;
 		if ( this.refs.featuredImage ) {
-			node = React.findDOMNode( this.refs.featuredImage );
+			node = ReactDom.findDOMNode( this.refs.featuredImage );
 		} else if ( this.refs.featuredEmbed ) {
-			node = React.findDOMNode( this.refs.featuredEmbed ).querySelector( 'iframe' );
+			node = ReactDom.findDOMNode( this.refs.featuredEmbed ).querySelector( 'iframe' );
 		}
 
 		if ( node ) {
@@ -212,7 +213,7 @@ var Post = React.createClass( {
 	},
 
 	checkSiteNameForOverflow: function() {
-		var headerNode = React.findDOMNode( this.refs.siteName );
+		var headerNode = ReactDom.findDOMNode( this.refs.siteName );
 		if ( ! headerNode ) {
 			return;
 		}
@@ -220,7 +221,7 @@ var Post = React.createClass( {
 	},
 
 	handleCardClick: function( event ) {
-		var rootNode = React.findDOMNode( this ),
+		var rootNode = ReactDom.findDOMNode( this ),
 			post = this.props.post,
 			isDiscoverPost = this.state.isDiscoverPost,
 			postUrl = isDiscoverPost ? post.discover_metadata.permalink : post.URL,
@@ -274,7 +275,7 @@ var Post = React.createClass( {
 	},
 
 	_parseEmoji: function() {
-		twemoji.parse( React.findDOMNode( this ) );
+		twemoji.parse( ReactDom.findDOMNode( this ) );
 	},
 
 	pickSite: function( event ) {

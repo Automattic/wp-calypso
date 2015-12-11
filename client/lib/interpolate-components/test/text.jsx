@@ -2,6 +2,7 @@
  * External dependencies
  */
 var assert = require( 'assert' ),
+	ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' );
 
 /**
@@ -47,7 +48,7 @@ describe( 'interpolate-components', function() {
 				} ),
 				instance = <span>{ translatedComponent }</span>;
 
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should allow whitespace in the component placeholder', function() {
 			var expectedResultString = '<span><span>test</span><input><span>test</span></span>',
@@ -59,7 +60,7 @@ describe( 'interpolate-components', function() {
 				} ),
 				instance = <span>{ translatedComponent }</span>;
 
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should not add extra span nodes if component is at end of string', function() {
 			var expectedResultString = '<span><span>test</span><input></span>',
@@ -71,7 +72,7 @@ describe( 'interpolate-components', function() {
 				} ),
 				instance = <span>{ translatedComponent }</span>;
 
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should not throw when component node is null', function() {
 			assert.doesNotThrow( function() {
@@ -199,7 +200,7 @@ describe( 'interpolate-components', function() {
 				} ),
 				instance = <span>{ translatedComponent }</span>;
 
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should handle multiple wrapping components', function() {
 			var expectedResultString = '<span><span>test </span><a href="#">link content</a><span> </span><em>link content2</em><span> test</span></span>',
@@ -211,7 +212,7 @@ describe( 'interpolate-components', function() {
 					}
 				} ),
 				instance = <span>{ translatedComponent }</span>;
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should handle nested wrapping components', function() {
 			var expectedResultString = '<span><span>test </span><a href="#"><span>link content </span><em>emphasis</em></a><span> test</span></span>',
@@ -223,7 +224,7 @@ describe( 'interpolate-components', function() {
 					}
 				} ),
 				instance = <span>{ translatedComponent }</span>;
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should work with custom components', function() {
 			var expectedResultString = '<span><span>here is: </span><span class="special"><span>baba </span><span class="special"><span>Hey!</span><span>willie</span></span></span></span>',
@@ -235,7 +236,7 @@ describe( 'interpolate-components', function() {
 					}
 				} ),
 				instance = <span>{ translatedComponent }</span>;
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should allow repeated component tokens', function() {
 			var expectedResultString = '<span><a href="#">baba</a><a href="#">dyado</a></span>',
@@ -246,7 +247,7 @@ describe( 'interpolate-components', function() {
 					}
 				} ),
 				instance = <span>{ translatedComponent }</span>;
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should allow wrapping repeated components', function() {
 			var expectedResultString = '<span><div><span>baba</span><div>dyado</div></div></span>',
@@ -257,7 +258,7 @@ describe( 'interpolate-components', function() {
 					}
 				} ),
 				instance = <span>{ translatedComponent }</span>;
-			assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 	} );
 } );

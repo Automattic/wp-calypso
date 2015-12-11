@@ -11,7 +11,7 @@ This module provides a consistent rendering component for empty content cases in
 var EmptyContentComponent = require( 'components/empty-content' );
 
 // Render the component
-React.render(
+ReactDom.render(
 	EmptyContentComponent({
 		title: "You don't have any content yet.",
 		line: 'Would you like to create some?'
@@ -54,7 +54,7 @@ The component also supports a secondary action. This should be used sparingly.
 ### Example: Sites
 
 ```
-React.render(
+ReactDom.render(
 	EmptyContentComponent({
 		title: "You don't have any WordPress sites yet.",
 		line: 'Would you like to start one?',

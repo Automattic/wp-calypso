@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:olark:chatbox' );
 
 /**
@@ -90,7 +91,7 @@ module.exports = React.createClass( {
 		this.expandChatbox();
 
 		// Change the parent of the widget to our DOM node and save a refrence to it
-		this.olarkDOMNode = React.findDOMNode( this ).appendChild( olarkWidget );
+		this.olarkDOMNode = ReactDom.findDOMNode( this ).appendChild( olarkWidget );
 
 		debug( 'bind the olark chat widget' );
 	},

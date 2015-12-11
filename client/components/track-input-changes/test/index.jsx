@@ -4,6 +4,7 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react/addons';
 import chai from 'chai';
 import sinon from 'sinon';
@@ -47,7 +48,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		for ( var spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
-		tree = React.render(
+		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
 				<DummyInput
 					onChange={ spies.onChange}
@@ -102,7 +103,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 	} );
 
 	it( 'should throw if multiple child elements', function() {
-		expect( () => React.render(
+		expect( () => ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
 				<DummyInput
 					onChange={ spies.onChange}
