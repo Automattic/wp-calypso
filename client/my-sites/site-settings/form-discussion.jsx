@@ -179,7 +179,7 @@ module.exports = React.createClass( {
 								name="thread_comments_depth"
 								valueLink={ this.linkState( 'thread_comments_depth' ) }
 								disabled={ this.state.fetchingSettings }
-								onClick={ this.recordEvent.bind( this, 'Selected Comment Nesting Level' ) }
+								onClick={ this.recordClickEventAndStop.bind( this, 'Selected Comment Nesting Level' ) }
 								>
 									<option value="2">2</option>
 									<option value="3">3</option>
@@ -224,7 +224,7 @@ module.exports = React.createClass( {
 								name="default_comments_page"
 								valueLink={ this.linkState( 'default_comments_page' ) }
 								disabled={ this.state.fetchingSettings }
-								onClick={ this.recordEvent.bind( this, 'Selected Comment Page Display Default' ) }
+								onClick={ this.recordClickEventAndStop.bind( this, 'Selected Comment Page Display Default' ) }
 								>
 									<option value="newest">{ this.translate( 'last' ) }</option>
 									<option value="oldest">{ this.translate( 'first' ) }</option>
