@@ -20,9 +20,10 @@
 
 .plan-status__header {
 	flex-grow: 1;
-	
+
 	@include breakpoint( ">480px" ) {
 		margin-left: 20px;
+		margin-right: 20px;
 	}
 }
 
@@ -56,6 +57,15 @@
 	font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
 	font-size: 24px;
 	font-weight: 700;
+}
+
+.plan-status__button {
+	flex-shrink: 0;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: 15px;
+		width: 100%;
+	}
 }
 
 .plan-status__progress {
