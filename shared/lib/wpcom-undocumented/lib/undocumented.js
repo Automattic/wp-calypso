@@ -925,10 +925,10 @@ Undocumented.prototype.updateCreditCard = function( params, fn ) {
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.paygateConfiguration = function( fn ) {
+Undocumented.prototype.paygateConfiguration = function( data, fn ) {
 	debug( '/me/paygate-configuration query' );
 
-	this.wpcom.req.get( '/me/paygate-configuration', fn );
+	this.wpcom.req.get( '/me/paygate-configuration', data, fn );
 };
 
 /**
