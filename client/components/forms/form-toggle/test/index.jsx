@@ -13,6 +13,15 @@ var assert = require( 'assert' ),
 var FormToggle = require( 'components/forms/form-toggle' ),
 	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
 
+/**
+ * Module variables
+ */
+var Wrapper = React.createClass( {
+	render: function() {
+		return <div>{this.props.children}</div>;
+	}
+} );
+
 require( 'lib/react-test-env-setup' )();
 
 describe( 'CompactFormToggle', function() {
@@ -89,11 +98,11 @@ describe( 'FormToggle', function() {
 
 		it( 'should create unique ids for each toggle', function() {
 			var toggles = TestUtils.renderIntoDocument(
-					<div>
+					<Wrapper>
 						<FormToggle checked={ false } />
 						<FormToggle checked={ false } />
 						<FormToggle checked={ false } />
-					</div>
+					</Wrapper>
 				),
 				toggleInputs = TestUtils.scryRenderedDOMComponentsWithClass( toggles, 'form-toggle' ),
 				ids = toggleInputs.map( function( input ) {

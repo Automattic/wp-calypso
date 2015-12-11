@@ -73,7 +73,7 @@ describe( 'markup', function() {
 			} );
 
 			expect( value.type ).to.equal( 'dl' );
-			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal( '<dl class="wp-caption" style="width:276px;"><dt class="wp-caption-dt"><img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"></dt><dd class="wp-caption-dd">Logo</dd></dl>' );
+			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal( '<dl class="wp-caption" style="width:276px;"><dt class="wp-caption-dt"><img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/></dt><dd class="wp-caption-dd">Logo</dd></dl>' );
 		} );
 
 		it( 'should accept a non-captioned image, returning null', function() {
@@ -111,7 +111,7 @@ describe( 'markup', function() {
 					thumbnails: {}
 				} );
 
-				expect( value ).to.equal( '<img src="blob:http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71" class="alignnone size-full wp-image-media-4">' );
+				expect( value ).to.equal( '<img src="blob:http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71" class="alignnone size-full wp-image-media-4"/>' );
 			} );
 
 			it( 'should return an img element for an image', function() {
@@ -123,7 +123,7 @@ describe( 'markup', function() {
 					width: 276
 				} );
 
-				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1">' );
+				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/>' );
 			} );
 
 			it( 'should respect the max width for a site size', function() {
@@ -147,7 +147,7 @@ describe( 'markup', function() {
 
 				sites.getSelectedSite.restore();
 
-				expect( value ).to.equal( '<img src="http://example.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1">' );
+				expect( value ).to.equal( '<img src="http://example.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should respect the max height for a site size', function() {
@@ -171,7 +171,7 @@ describe( 'markup', function() {
 
 				sites.getSelectedSite.restore();
 
-				expect( value ).to.equal( '<img src="http://example.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1">' );
+				expect( value ).to.equal( '<img src="http://example.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should include a resize parameter if forceResize option passed', function() {
@@ -183,7 +183,7 @@ describe( 'markup', function() {
 					width: 276
 				}, { forceResize: true } );
 
-				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=276" alt="Automattic" width="276" class="alignnone size-full wp-image-1">' );
+				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=276" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/>' );
 			} );
 
 			it( 'should avoid XSS because React', function() {
@@ -194,7 +194,7 @@ describe( 'markup', function() {
 					width: 276
 				} );
 
-				expect( value ).to.equal( '<img src="&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;" width="276" class="alignnone size-full wp-image-1">' );
+				expect( value ).to.equal( '<img src="&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;" width="276" class="alignnone size-full wp-image-1"/>' );
 			} );
 
 			it( 'should attempt to find the site\'s thumbnail width if a size is specified', function() {
@@ -219,7 +219,7 @@ describe( 'markup', function() {
 
 				sites.getSelectedSite.restore();
 
-				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=200" alt="Automattic" width="200" class="alignnone size-large wp-image-1">' );
+				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=200" alt="Automattic" width="200" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should attempt to find the media\'s own thumbnail width if a size is specified', function() {
@@ -242,7 +242,7 @@ describe( 'markup', function() {
 
 				sites.getSelectedSite.restore();
 
-				expect( value ).to.equal( '<img src="http://example.com/wp-content/uploads/2015/05/logo11w-1024x1024.png" alt="WordPress" width="1024" class="alignnone size-large wp-image-1">' );
+				expect( value ).to.equal( '<img src="http://example.com/wp-content/uploads/2015/05/logo11w-1024x1024.png" alt="WordPress" width="1024" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should wrap a captioned image in a caption shortcode', function() {
@@ -255,7 +255,7 @@ describe( 'markup', function() {
 					width: 276
 				} );
 
-				expect( value ).to.equal( '[caption id="attachment_1" width="276"]<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"> Logo[/caption]' );
+				expect( value ).to.equal( '[caption id="attachment_1" width="276"]<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/> Logo[/caption]' );
 			} );
 
 			it( 'should calculate the height when specifying a size', function() {
@@ -268,7 +268,7 @@ describe( 'markup', function() {
 					height: 300
 				}, { size: 'large' } );
 
-				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=1024" alt="Automattic" width="1024" height="111" class="alignnone size-large wp-image-1">' );
+				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=1024" alt="Automattic" width="1024" height="111" class="alignnone size-large wp-image-1"/>' );
 			} );
 		} );
 

@@ -15,11 +15,20 @@ var expect = require( 'chai' ).expect,
  */
 var DropZone = require( '../' );
 
+/**
+ * Module variables
+ */
+var Wrapper = React.createClass( {
+	render: function() {
+		return <div>{this.props.children}</div>;
+	}
+} );
+
 describe( 'DropZone', function() {
 	var container, sandbox;
 
 	before( function() {
-		DropZone.type.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
+		DropZone.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 		container = document.getElementById( 'container' );
 		window.MutationObserver = sinon.stub().returns( {
 			observe: sinon.stub(),
@@ -29,7 +38,7 @@ describe( 'DropZone', function() {
 
 	after( function() {
 		delete window.MutationObserver;
-		delete DropZone.type.prototype.__reactAutoBindMap.translate;
+		delete DropZone.prototype.__reactAutoBindMap.translate;
 	} );
 
 	beforeEach( function() {
@@ -143,7 +152,7 @@ describe( 'DropZone', function() {
 	it( 'should further highlight the drop zone when dragging over the element', function() {
 		var tree, dragEnterEvent;
 
-		sandbox.stub( DropZone.type.prototype.__reactAutoBindMap, 'isWithinZoneBounds' ).returns( true );
+		sandbox.stub( DropZone.prototype.__reactAutoBindMap, 'isWithinZoneBounds' ).returns( true );
 
 		tree = ReactDom.render( React.createElement( DropZone ), container );
 
@@ -223,8 +232,9 @@ describe( 'DropZone', function() {
 	} );
 
 	it( 'should allow more than one rendered DropZone on a page', function() {
-			React.DOM.div(
 		var tree = ReactDom.render(
+			React.createElement(
+				Wrapper,
 				null,
 				React.createElement( DropZone ),
 				React.createElement( DropZone )
