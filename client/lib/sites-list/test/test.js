@@ -101,4 +101,40 @@ describe( 'SitesList', function() {
 		} );
 	} );
 
+	describe( 'withSelectedFirst', function() {
+		it( 'should return empty array when given empty array', function() {
+			var sitesList = SitesList();
+			assert.deepEqual( [], sitesList.withSelectedFirst( [] ) );
+		} );
+		it( 'should return an equal array if there is no selected element', function() {
+			var sitesList = SitesList();
+			sitesList.selected = null;
+			assert.deepEqual( original, sitesList.withSelectedFirst( original ) );
+		} );
+		it( 'should keep the first element if it is selected', function() {
+			var sitesList = SitesList();
+			sitesList.initialize( original.slice() );
+			sitesList.selected = original[0].ID;
+			assert.deepEqual( original, sitesList.withSelectedFirst( original ) );
+		} );
+		it( 'should move the selected site to the front', function() {
+			var sitesList = SitesList(),
+				sites = [ {ID: 1}, {ID: 2}, {ID: 3} ];
+			sitesList.initialize( sites.slice() );
+			sitesList.selected = 2;
+			assert.deepEqual( [ {ID: 2}, {ID: 1}, {ID: 3}], sitesList.withSelectedFirst( sites ) );
+		} );
+		it( 'should not mutate original array', function() {
+			var sitesList = SitesList(),
+				sites = [ {ID: 1}, {ID: 2}, {ID: 3} ],
+				originalSites = sites.slice(),
+				after;
+			sitesList.initialize( sites.slice() );
+			sitesList.selected = 2;
+			sitesList.withSelectedFirst( sites );
+			after = assert.deepEqual( originalSites, sites );
+			assert( after !== sites );
+		} );
+	} );
+
 } );
