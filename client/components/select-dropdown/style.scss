@@ -4,6 +4,10 @@
 
 .select-dropdown {
 	height: 43px;
+
+	&.is-compact {
+		height: 28px;
+	}
 }
 
 .select-dropdown__container {

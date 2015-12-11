@@ -606,7 +606,7 @@ export default React.createClass( {
 
 			options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
 			options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
-			actions.push( <SelectDropdown className="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
+			actions.push( <SelectDropdown compact className="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
 		}
 		return actions;
 	},
