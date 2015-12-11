@@ -17,7 +17,6 @@
 		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"post-editor/pages": true,
-		"editor-drafts": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/customize": true,
