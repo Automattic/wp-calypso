@@ -40,14 +40,14 @@ function renderEditor( context, postType ) {
 
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store }, () => {
-			return React.createElement( PreferencesData, null,
+		React.createElement( ReduxProvider, { store: context.store },
+			React.createElement( PreferencesData, null,
 				React.createElement( PostEditor, {
 					sites: sites,
 					type: postType
 				} )
 			)
-		} ),
+		),
 		document.getElementById( 'primary' )
 	);
 }
