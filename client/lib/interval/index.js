@@ -46,6 +46,8 @@ export default React.createClass( {
 	} ),
 
 	componentDidMount() {
+		this.props.onTick();
+
 		this.start();
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange, false );
