@@ -86,14 +86,14 @@ describe( 'Interval', function() {
 			wrapper.setProps( { period: EVERY_MINUTE } );
 
 			this.clock.tick( 1000 );
-			assert( 2 === o.counter );
+			assert( 3 === o.counter );
 
 			this.clock.tick( 1000 * 60 );
-			assert( 3 === o.counter );
+			assert( 4 === o.counter );
 
 			wrapper.setProps( { onTick: noop } );
 			this.clock.tick( 1000 * 60 );
-			assert( 3 === o.counter );
+			assert( 4 === o.counter );
 		} );
 
 		it( 'Adds the action when mounted', function() {
