@@ -282,10 +282,10 @@ function hasOnlyRenewalItems( cart ) {
  * Creates a new shopping cart item for a plan.
  *
  * @param {Object} productSlug - the unique string that identifies the product
- * @param {boolean} isFreeTrial - specifies if this is a free trial or not
+ * @param {boolean} isFreeTrial - optionally specifies if this is a free trial or not
  * @returns {Object} the new item as `CartItemValue` object
  */
-function planItem( productSlug, isFreeTrial ) {
+function planItem( productSlug, isFreeTrial = false ) {
 	return {
 		product_slug: productSlug,
 		free_trial: isFreeTrial
@@ -684,6 +684,7 @@ module.exports = {
 	hasProduct,
 	hasRenewalItem,
 	noAdsItem,
+	planItem,
 	premiumPlan,
 	remove,
 	removeItemAndDependencies,
