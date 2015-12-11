@@ -85,6 +85,50 @@ var SelectDropdownDemo = React.createClass( {
 						Trashed
 					</DropdownItem>
 				</SelectDropdown>
+
+				<h3 style={ { marginTop: 20 } }>Compact</h3>
+				<SelectDropdown
+					compact
+					onSelect={ this.onDropdownSelect }
+					selectedText={ this.state.childSelected }
+					selectedCount={ this.state.selectedCount }
+				>
+					<DropdownItem
+						count={ 10 }
+						selected={ this.state.childSelected === 'Published' }
+						onClick={ this.selectItem.bind( this, 'Published', 10 ) }
+					>
+						Published
+					</DropdownItem>
+
+					<DropdownItem
+						count={ 4 }
+						selected={ this.state.childSelected === 'Scheduled' }
+						onClick={ this.selectItem.bind( this, 'Scheduled', 4 ) }
+					>
+						Scheduled
+					</DropdownItem>
+
+					<DropdownItem
+						selected={ this.state.childSelected === 'Drafts' }
+						onClick={ this.selectItem.bind( this, 'Drafts', null ) }
+					>
+						Drafts
+					</DropdownItem>
+
+					<DropdownSeparator />
+
+					<DropdownItem
+						count={ 3 }
+						selected={ this.state.childSelected === 'Trashed' }
+						onClick={ this.selectItem.bind( this, 'Trashed', 3 ) }
+					>
+						Trashed
+					</DropdownItem>
+				</SelectDropdown>
+
+				<div className="padding" style={ { display: 'block', height: '200px' } } />
+
 			</div>
 		);
 	},

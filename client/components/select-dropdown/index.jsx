@@ -156,6 +156,7 @@ var SelectDropdown = React.createClass( {
 	render: function() {
 		const dropdownClasses = {
 			'select-dropdown': true,
+			'is-compact': this.props.compact,
 			'is-open': this.state.isOpen
 		};
 
