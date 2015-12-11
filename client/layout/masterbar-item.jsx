@@ -10,11 +10,6 @@ import noop from 'lodash/utility/noop';
  */
 import Gridicon from 'components/gridicon';
 
-import MasterbarLoggedOutMenu from './masterbar-logged-out-menu';
-import MasterbarSectionsMenu from './masterbar-sections-menu';
-import Notifications from 'notifications';
-import store from 'store';
-
 export default React.createClass( {
 	displayName: 'MasterbarItem',
 
