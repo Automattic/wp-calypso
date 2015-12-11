@@ -9,7 +9,7 @@ const React = require( 'react' ),
  */
 const analyticsMixin = require( 'lib/mixins/analytics' ),
 	paths = require( 'my-sites/upgrades/paths' ),
-	SectionHeaderButton = require( 'components/section-header/button' );
+	Button = require( 'components/button' );
 
 const PrimaryDomainButton = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -41,11 +41,12 @@ const PrimaryDomainButton = React.createClass( {
 			}
 
 			return (
-				<SectionHeaderButton
+				<Button
+					compact
 					className="domain-details-card__make-primary-button"
 					onClick={ this.handleClick }>
 					{ label }
-				</SectionHeaderButton>
+				</Button>
 			);
 		}
 
