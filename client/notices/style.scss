@@ -27,30 +27,3 @@
 	width: 100%;
 	display: block;
 }
-
-.site-notice {
-	display: block;
-	line-height: 1.8;
-	overflow: hidden;
-	padding: 8px 18px 8px 18px;
-	text-overflow: ellipsis;
-	color: $white;
-
-	a {
-		color: rgba( $white, 0.85 );
-		text-decoration: underline;
-		font-weight: 600;
-	}
-
-	&.is-info {
-		background-color: $blue-wordpress;
-	}
-
-	&.is-warning {
-		background-color: $alert-yellow;
-	}
-
-	&.is-error {
-		background-color: $alert-red;
-	}
-}
