@@ -29,7 +29,7 @@ const Main = require( 'components/main' ),
 	FollowingEditSortControls = require( './sort-controls' ),
 	FollowingEditHelper = require( 'reader/following-edit/helper' ),
 	SectionHeader = require( 'components/section-header' ),
-	SectionHeaderButton = require( 'components/section-header/button' ),
+	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' );
 
 const initialLoadFeedCount = 20;
@@ -364,9 +364,9 @@ var FollowingEdit = React.createClass( {
 
 					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
 
-					<SectionHeaderButton onClick={ this.toggleAddSite }>
+					<Button compact onClick={ this.toggleAddSite }>
 						{ this.translate( 'Add' ) }
-					</SectionHeaderButton>
+					</Button>
 				</SectionHeader>
 
 				<FollowingEditSubscribeForm
