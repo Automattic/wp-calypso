@@ -23,6 +23,12 @@ import store from 'store';
 export default React.createClass( {
 	displayName: 'Masterbar',
 
+	propTypes: {
+		user: React.PropTypes.object,
+		section: React.PropTypes.string,
+		sites: React.PropTypes.object,
+	},
+
 	getInitialState() {
 		var newNote = false,
 			user;
