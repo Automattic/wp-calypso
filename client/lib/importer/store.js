@@ -17,6 +17,7 @@ const initialState = {
 	count: 0,
 	importers: new Immutable.Map,
 	api: {
+		isHydrated: false,
 		isFetching: false,
 		retryCount: 0
 	}
@@ -92,6 +93,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 		case actionTypes.RECEIVE_IMPORT_STATUS:
 			newState = state
+				.setIn( [ 'api', 'isHydrated' ], true )
 				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 

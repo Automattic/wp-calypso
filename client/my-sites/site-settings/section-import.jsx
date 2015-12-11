@@ -59,7 +59,7 @@ export default React.createClass( {
 	},
 
 	getInitialState: function() {
-		return { importers: [] };
+		return getImporterState();
 	},
 
 	getSiteTitle: function() {
@@ -74,6 +74,8 @@ export default React.createClass( {
 	 * @returns {Array<Object>} ImportStatus objects
 	 */
 	getStatusFor: function( type ) {
+		const { api: { isHydrated }, importers } = this.state;
+		const { site } = this.props;
 		var disabledTypes, status;
 
 		disabledTypes = [
@@ -82,19 +84,20 @@ export default React.createClass( {
 			importerTypes.SQUARESPACE
 		];
 
-		if ( includes( disabledTypes, type ) ) {
+		if ( ! isHydrated || includes( disabledTypes, type ) ) {
 			return [ { importerState: appStates.DISABLED, type } ];
 		}
 
-		status = Object.keys( this.state.importers )
-			.map( key => this.state.importers[ key ] )
-			.filter( item => ( type === item.type ) );
+		status = Object.keys( importers )
+			.map( id => importers[ id ] )
+			.filter( importer => site.ID === importer.site.ID )
+			.filter( importer => type === importer.type );
 
 		if ( 0 === status.length ) {
-			status.push( { importerState: appStates.INACTIVE, type } );
+			return [ { importerState: appStates.INACTIVE, type } ];
 		}
 
-		return status.map( item => Object.assign( {}, item, { site: this.props.site } ) );
+		return status.map( item => Object.assign( {}, item, { site } ) );
 	},
 
 	renderImporters: function() {
