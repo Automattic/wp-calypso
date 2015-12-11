@@ -5,7 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
-import { removeNotice } from 'state/notices/actions'
+import noticeActionCreators from 'state/notices/actionCreators'
 
 /**
  * Internal Dependencies
@@ -83,9 +83,5 @@ export default connect(
 			notices: state.notices.items
 		};
 	},
-	( dispatch ) => { return {
-		removeNotice: ( noticeId ) => {
-			dispatch( removeNotice( noticeId ) );
-		}
-	} }
+	noticeActionCreators
 )( GlobalNotices );

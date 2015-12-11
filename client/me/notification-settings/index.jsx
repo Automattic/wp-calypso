@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import { success, error, removeNotice } from 'state/notices/actions';
+import noticeActionCreators from 'state/notices/actionCreators'
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -79,18 +79,5 @@ export default connect(
 	() => {
 		return {}
 	},
-	( dispatch ) => { return {
-		successNotice: ( text, options ) => {
-			var action = success( text, options );
-			if ( action.duration > 0 ) {
-				setTimeout( () => {
-					dispatch( removeNotice( action.noticeId ) );
-				}, action.duration );
-			}
-			dispatch( action );
-		},
-		errorNotice: ( text, options ) => {
-			dispatch( error( text, options ) );
-		}
-	} }
+	noticeActionCreators
 )( NotificationSettings );

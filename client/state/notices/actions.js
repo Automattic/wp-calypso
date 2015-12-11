@@ -8,7 +8,7 @@ import {
 
 import { uniqueId } from 'lodash';
 
-function newNotice( status, text, options = {} ) {
+export function createNoticeAction( status, text, options = {} ) {
 	return {
 		noticeId: uniqueId(),
 		duration: options.duration,
@@ -19,15 +19,7 @@ function newNotice( status, text, options = {} ) {
 	};
 }
 
-export function success( text, options ) {
-	return newNotice( 'is-success', text, options );
-}
-
-export function error( text, options ) {
-	return newNotice( 'is-error', text, options );
-}
-
-export function removeNotice( noticeId ) {
+export function removeNoticeAction( noticeId ) {
 	return {
 		noticeId: noticeId,
 		type: REMOVE_NOTICE
