@@ -2,6 +2,8 @@
 	margin-bottom: 16px;
 }
 
+
+
 .plugins__section-actions {
 	.section-header__actions {
 		flex-grow: 1;
@@ -12,6 +14,12 @@
 
 	.bulk-select {
 		margin-right: 16px;
+	}
+
+	&.is-placeholder {
+		.section-header__label span {
+			@include placeholder(23%);
+		}
 	}
 
 	&.is-bulk-editing .section-header__label {
