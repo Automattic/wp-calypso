@@ -398,9 +398,12 @@ export default React.createClass( {
 		return ( this.props.sites.selected || this.props.sites.get().length === 1 ) ? '/' + this.props.sites.selected : '';
 	},
 
-	placeholders() {
+	renderPlaceholders() {
 		const placeholderCount = 16;
-		return [ ... Array( placeholderCount ).keys() ].map( i => <PluginItem key={ 'placeholder-' + i } /> );
+		return [
+			<SectionHeader label="Jetpack Plugins" className="plugins__section-actions is-placeholder" />,
+			[ ... Array( placeholderCount ).keys() ].map( i => <PluginItem key={ 'placeholder-' + i } /> )
+		];
 	},
 
 	formatPlugins( plugins, disableManage ) {
@@ -710,7 +713,7 @@ export default React.createClass( {
 			<div className="plugins__lists">
 				{ this.renderPluginList( this.getWpcomPlugins(), this.translate( 'WordPress.com Plugins' ) ) }
 				{ this.renderPluginList( this.getJetpackPlugins(), this.translate( 'Jetpack Plugins' ) ) }
-				{ ! this.state.plugins && this.placeholders() }
+				{ ! this.state.plugins && this.renderPlaceholders() }
 			</div>
 		);
 	},
