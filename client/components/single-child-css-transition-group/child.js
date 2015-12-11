@@ -1,6 +1,6 @@
 var React = require( 'react' );
 
-var CSSCore = require( 'react/lib/CSSCore' );
+var CSSCore = require( 'fbjs/lib/CSSCore' );
 var ReactTransitionEvents = require( 'react/lib/ReactTransitionEvents' );
 
 var onlyChild = require( 'react/lib/onlyChild' );
