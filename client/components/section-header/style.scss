@@ -10,9 +10,12 @@
 }
 
 .section-header__label {
+	display: flex;
+		align-items: center;
 	flex-grow: 1;
 	line-height: 28px;
 	position: relative;
+
 
 	&:before {
 		@include long-content-fade( $color : $white );
@@ -33,13 +36,12 @@
 .section-header__label,
 .section-header__button {
 	color: $gray;
-	font-size: 12px;
+	font-size: 11px;
 	text-transform: uppercase;
 }
 
 .section-header__button {
 	background: none;
-	float: let;
 	margin-right: 8px;
 	padding: 2px 8px;
 
