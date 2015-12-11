@@ -111,14 +111,14 @@ function isPayPalExpressEnabled( cart ) {
 }
 
 module.exports = {
-	applyCoupon: applyCoupon,
-	cartItems: cartItems,
-	fillInAllCartItemAttributes: fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes: fillInSingleCartItemAttributes,
-	getNewMessages: getNewMessages,
-	getRefundPolicy: getRefundPolicy,
-	isFree: isFree,
-	isPaidForFullyInCredits: isPaidForFullyInCredits,
-	isPayPalExpressEnabled: isPayPalExpressEnabled,
-	emptyCart: emptyCart
+	applyCoupon,
+	cartItems,
+	fillInAllCartItemAttributes,
+	fillInSingleCartItemAttributes,
+	getNewMessages,
+	getRefundPolicy,
+	isFree,
+	isPaidForFullyInCredits,
+	isPayPalExpressEnabled,
+	emptyCart
 };
