@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 	},
 
 	renderElements() {
-		return this.state.elements.map( (element, index) => {
+		return this.state.elements.map( ( element, index ) => {
 			const onClick = function() {
 				element.selected = ! element.selected;
 				this.forceUpdate();
@@ -57,7 +57,9 @@ module.exports = React.createClass( {
 					<a href="/devdocs/design/bulk-selects">BulkSelects</a>
 				</h2>
 				<Card>
-					<BulkSelect totalElements={ this.state.elements.length } selectedElements={ this.getSelectedElementsNumber() } onToggle={ this.handleToggleAll } />
+					<div>
+						<BulkSelect totalElements={ this.state.elements.length } selectedElements={ this.getSelectedElementsNumber() } onToggle={ this.handleToggleAll } />
+					</div>
 					{ this.renderElements() }
 				</Card>
 			</div>

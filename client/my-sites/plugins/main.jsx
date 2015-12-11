@@ -46,6 +46,7 @@ import Gridicon from 'components/gridicon'
 import SelectDropdown from 'components/select-dropdown'
 import DropdownItem from 'components/select-dropdown/item'
 import DropdownSeparator from 'components/select-dropdown/separator'
+import BulkSelect from 'components/bulk-select';
 
 /**
  * Module variables
@@ -448,6 +449,7 @@ export default React.createClass( {
 
 		headerMarkup = (
 			<SectionHeader label={ header } className={ headerClasses }>
+				{ disableManage || ! this.state.bulkManagement ? null : <BulkSelect totalElements={ this.state.plugins.length } selectedElements={ this.getSelected().length } onToggle={ this.unselectOrSelectAll } /> }
 				{ disableManage ? null : this.getCurrentActionDropdown() }
 				{ disableManage ? null : this.getCurrentActionButtons() }
 			</SectionHeader>
@@ -585,7 +587,7 @@ export default React.createClass( {
 		const needsRemoveButton = !! this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 
 		if ( this.state.bulkManagement ) {
-			options.push( <DropdownItem key="plugin__actions_title" selected={ true } value="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
+			options.push( <DropdownItem key="plugin__actions_title" selected={ true } v1alue="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
 			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
 
 			options.push( <DropdownItem key="plugin__actions_activate" disabled={ ! this.areSelected( 'inactive' ) } onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</DropdownItem> );
@@ -601,7 +603,6 @@ export default React.createClass( {
 
 			options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
 			options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
-
 			actions.push( <SelectDropdown className="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
 		}
 		return actions;
