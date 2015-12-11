@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	connect = require( 'react-redux' ).connect;
+	connect = require( 'react-redux' ).connect,
+	find = require( 'lodash/collection/find' );
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ var analytics = require( 'analytics' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Gridicon = require( 'components/gridicon' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	createSitePlanObject = require( 'state/sites/plans/assembler' ).createSitePlanObject,
 	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId;
 
 var Plans = React.createClass( {
@@ -27,6 +27,10 @@ var Plans = React.createClass( {
 
 	getInitialState: function() {
 		return { openPlan: '' };
+	},
+
+	componentDidMount: function() {
+		this.props.fetchSitePlans( this.props.sites.getSelectedSite().ID );
 	},
 
 	openPlan: function( planId ) {
@@ -64,10 +68,10 @@ var Plans = React.createClass( {
 				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( selectedSiteDomain ),
 			currentPlan;
 
-		if ( this.props.siteSpecificPlansDetailsList.hasLoadedFromServer( selectedSiteDomain ) ) {
-			currentPlan = createSitePlanObject( this.props.siteSpecificPlansDetailsList.getCurrentPlan( selectedSiteDomain ) );
+		if ( config.isEnabled( 'upgrades/free-trials' ) && this.props.sitePlans.hasLoadedFromServer ) {
+			currentPlan = find( this.props.sitePlans.data, { currentPlan: true } );
 
-			if ( config.isEnabled( 'upgrades/free-trials' ) && currentPlan.freeTrial ) {
+			if ( currentPlan.freeTrial ) {
 				return (
 					<PlanOverview
 						path={ this.props.context.path }
@@ -105,12 +109,15 @@ var Plans = React.createClass( {
 
 module.exports = connect(
 	( state, props ) => {
-		if ( ! props.sites.getSelectedSite() ) {
-			return {};
-		}
-
 		return {
 			sitePlans: getPlansBySiteId( state, props.sites.getSelectedSite().ID )
+		};
+	},
+	( dispatch ) => {
+		return {
+			fetchSitePlans( siteId ) {
+				dispatch( fetchSitePlans( siteId ) );
+			}
 		};
 	}
 )( Plans );
