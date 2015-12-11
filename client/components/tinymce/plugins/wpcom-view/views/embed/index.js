@@ -99,9 +99,9 @@ export default class EmbedViewManager extends EventEmitter {
 		}
 
 		const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
-		let match;
-		while ( ( match = rxLink.exec( content ) ) ) {
-			const url = match[ 2 ];
+		let currentMatch;
+		while ( ( currentMatch = rxLink.exec( content ) ) ) {
+			const url = currentMatch[ 2 ];
 
 			// Disregard URL if it's not a supported embed pattern for the site
 			const isMatchingPattern = list.embeds.some( ( pattern ) => pattern.test( url ) );
@@ -118,7 +118,7 @@ export default class EmbedViewManager extends EventEmitter {
 			}
 
 			return {
-				index: match.index + match[ 1 ].length,
+				index: currentMatch.index + currentMatch[ 1 ].length,
 				content: url
 			};
 		}

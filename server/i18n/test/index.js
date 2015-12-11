@@ -3,7 +3,7 @@
  */
 var assert = require( 'assert' ),
 	path = require( 'path' ),
-	babel = require( 'babel' ),
+	babel = require( 'babel-core' ),
 	fs = require( 'fs' );
 
 /**

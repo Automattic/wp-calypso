@@ -45,13 +45,13 @@ export default React.createClass( {
 				<Header
 					{ ...{ blog, settings, disableToggle } }
 					onToggle={ () => this.setState( { isExpanded: ! isExpanded } ) } />
-				{ () => {
+				{ ( () => {
 					if ( isExpanded || disableToggle ) {
 						return <SettingsForm
 							{ ...{ sourceId, devices, settings, hasUnsavedChanges, isApplyAllVisible: ! disableToggle, onToggle, onSave, onSaveToAll } }
 							settingKeys={ [ 'new_comment', 'comment_like', 'post_like', 'follow', 'achievement', 'mentions' ] } />;
 					}
-				}() }
+				} )() }
 			</Card>
 		);
 	}

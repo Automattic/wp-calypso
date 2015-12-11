@@ -79,7 +79,7 @@ export default React.createClass( {
 						settingKeys={ this.props.settingKeys }
 						settings={ this.props.settings.get( streams.EMAIL ) }
 						onToggle={ this.props.onToggle } />
-					{ () => {
+					{ ( () => {
 						if ( this.props.devices && this.props.devices.initialized && this.props.devices.get().length > 0 ) {
 							return <Stream
 								key={ streams.DEVICES }
@@ -89,7 +89,7 @@ export default React.createClass( {
 								settings={ this.props.settings.get( streams.DEVICES ) }
 								onToggle={ this.props.onToggle } />
 						}
-					}() }
+					} )() }
 					<Stream
 						key={ 'selected-stream' }
 						className={ 'selected-stream' }
