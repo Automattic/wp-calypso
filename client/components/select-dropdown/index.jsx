@@ -112,7 +112,7 @@ var SelectDropdown = React.createClass( {
 					ref: ( child.type === DropdownItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: function( event ) {
-						this.refs.dropdownContainer.getDOMNode().focus();
+						this.refs.dropdownContainer.focus();
 						if ( typeof child.props.onClick === 'function' ) {
 							child.props.onClick( event );
 						}
@@ -248,7 +248,7 @@ var SelectDropdown = React.createClass( {
 			selected: option.value
 		} );
 
-		this.refs.dropdownContainer.getDOMNode().focus();
+		this.refs.dropdownContainer.focus();
 	},
 
 	navigateItem: function( event ) {
@@ -274,7 +274,7 @@ var SelectDropdown = React.createClass( {
 			case 27: // escape
 				event.preventDefault();
 				this.closeDropdown();
-				this.refs.dropdownContainer.getDOMNode().focus();
+				this.refs.dropdownContainer.focus();
 				break;
 		}
 	},
@@ -327,7 +327,7 @@ var SelectDropdown = React.createClass( {
 			return;
 		}
 
-		this.refs[ 'item-' + newIndex ].refs.itemLink.getDOMNode().focus();
+		ReactDom.findDOMNode( this.refs[ 'item-' + newIndex ].refs.itemLink ).focus();
 		this.focused = newIndex;
 	},
 

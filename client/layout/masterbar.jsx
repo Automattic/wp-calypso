@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 	},
 
 	getNotificationLinkDomNode: function() {
-		return this.refs.masterbar.refs.notificationLink.getDOMNode();
+		return this.refs.masterbar.refs.notificationLink;
 	},
 
 	toggleNotesFrame: function( event ) {

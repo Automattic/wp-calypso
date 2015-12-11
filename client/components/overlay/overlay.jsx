@@ -80,7 +80,7 @@ module.exports = React.createClass({
 	},
 
 	handleClickWithinOverlay: function( event ) {
-		if ( ! this.refs.overlayInnerContent.getDOMNode().contains( event.target ) ) {
+		if ( ! this.refs.overlayInnerContent.contains( event.target ) ) {
 			this.closeOverlay();
 		}
 	},

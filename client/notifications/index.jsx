@@ -70,7 +70,7 @@ var Notifications = React.createClass({
 		var frameNode;
 		if ( this.props.visible && ! prevProps.visible ) {
 			// showing the panel, focus so we can use shortcuts
-			frameNode = this.refs.widgetFrame.getDOMNode();
+			frameNode = this.refs.widgetFrame;
 			if ( frameNode ) {
 				frameNode.contentWindow.focus();
 			}
@@ -185,7 +185,7 @@ var Notifications = React.createClass({
 		iframeMessage = assign( {}, iframeMessage, message );
 
 		if ( this.refs.widgetFrame && this.state.iframeLoaded ) {
-			var widgetWindow = this.refs.widgetFrame.getDOMNode().contentWindow;
+			var widgetWindow = this.refs.widgetFrame.contentWindow;
 			widgetWindow.postMessage( JSON.stringify( iframeMessage ), widgetDomain );
 		} else {
 			// save only the latest message to send when iframe is loaded

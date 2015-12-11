@@ -28,7 +28,7 @@ var PostCommentForm = React.createClass( {
 	componentDidMount: function() {
 		// If it's a reply, give the input focus
 		if ( this.props.parentCommentID > 0 ) {
-			this.refs.commentText.getDOMNode().focus();
+			this.refs.commentText.focus();
 		}
 	},
 
@@ -80,7 +80,7 @@ var PostCommentForm = React.createClass( {
 	},
 
 	resetCommentText: function() {
-		var commentTextNode = this.refs.commentText.getDOMNode();
+		var commentTextNode = this.refs.commentText;
 		commentTextNode.value = '';
 		this.setState( { isButtonActive: false } );
 		this.toggleButtonVisibility( false );
@@ -96,12 +96,12 @@ var PostCommentForm = React.createClass( {
 			return;
 		}
 
-		return this.refs.commentText.getDOMNode().value.trim();
+		return this.refs.commentText.value.trim();
 	},
 
 	submit: function() {
 		var post = this.props.post,
-			commentTextNode = this.refs.commentText.getDOMNode(),
+			commentTextNode = this.refs.commentText,
 			commentText = commentTextNode.value.trim();
 
 		if ( ! commentText ) {

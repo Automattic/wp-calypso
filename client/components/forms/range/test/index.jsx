@@ -48,6 +48,6 @@ describe( 'Range', function() {
 		var range = TestUtils.renderIntoDocument( <FormRange value={ 8 } showValueLabel={ true } readOnly={ true } /> ),
 			label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
 
-		expect( label.getDOMNode().textContent ).to.equal( '8' );
+		expect( label.textContent ).to.equal( '8' );
 	} );
 } );

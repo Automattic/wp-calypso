@@ -49,12 +49,10 @@ describe( 'RootChild', function() {
 			var tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild
-				.getDOMNode()
 				.parentNode.className
 			).to.equal( 'parent' );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.parentNode
 				.parentNode
 			).to.eql( document.body );
@@ -66,13 +64,11 @@ describe( 'RootChild', function() {
 			} ), container );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.parentNode
 				.className )
 			.to.equal( 'wrapper' );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.parentNode
 				.parentNode
 				.parentNode
@@ -84,7 +80,6 @@ describe( 'RootChild', function() {
 			tree.setProps( { toWhom: 'Universe' } );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.textContent
 			).to.equal( 'Hello Universe!' );
 		} );

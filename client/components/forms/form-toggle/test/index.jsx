@@ -31,7 +31,7 @@ describe( 'CompactFormToggle', function() {
 				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
 
 			assert( 0 < toggleInput.length, 'a form toggle was rendered' );
-			assert( toggleInput[ 0 ].getDOMNode().className.indexOf( 'is-compact' ) >= 0, 'is-compact class exists' );
+			assert( toggleInput[ 0 ].className.indexOf( 'is-compact' ) >= 0, 'is-compact class exists' );
 		} );
 	} );
 } );
@@ -68,7 +68,7 @@ describe( 'FormToggle', function() {
 					toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
 
 				assert( 0 < toggleInput.length, 'a form toggle was rendered' );
-				assert( bool === toggleInput[ 0 ].getDOMNode().checked, 'form toggle checked equals boolean' );
+				assert( bool === toggleInput[ 0 ].checked, 'form toggle checked equals boolean' );
 			} );
 		} );
 
@@ -77,7 +77,7 @@ describe( 'FormToggle', function() {
 				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
 
 			assert( 0 < toggleInput.length, 'a form toggle was rendered' );
-			assert( false === toggleInput[ 0 ].getDOMNode().disabled, 'form toggle disabled equals boolean' );
+			assert( false === toggleInput[ 0 ].disabled, 'form toggle disabled equals boolean' );
 		} );
 
 		it( 'should be disabled when disabled is true', function() {
@@ -85,7 +85,7 @@ describe( 'FormToggle', function() {
 				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
 
 			assert( 0 < toggleInput.length, 'a form toggle was rendered' );
-			assert( true === toggleInput[ 0 ].getDOMNode().disabled, 'form toggle disabled equals boolean' );
+			assert( true === toggleInput[ 0 ].disabled, 'form toggle disabled equals boolean' );
 		} );
 
 		it( 'should have a label whose htmlFor matches the checkbox id', function() {
@@ -93,7 +93,7 @@ describe( 'FormToggle', function() {
 				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle__switch' ),
 				toggleLabel = TestUtils.scryRenderedDOMComponentsWithTag( toggle, 'label' );
 
-			assert( toggleInput[ 0 ].getDOMNode().id === toggleLabel[ 0 ].getDOMNode().htmlFor );
+			assert( toggleInput[ 0 ].id === toggleLabel[ 0 ].htmlFor );
 		} );
 
 		it( 'should create unique ids for each toggle', function() {
@@ -106,7 +106,7 @@ describe( 'FormToggle', function() {
 				),
 				toggleInputs = TestUtils.scryRenderedDOMComponentsWithClass( toggles, 'form-toggle' ),
 				ids = toggleInputs.map( function( input ) {
-					return input.getDOMNode().id;
+					return input.id;
 				} );
 
 			return ids.length === unique( ids ).length;

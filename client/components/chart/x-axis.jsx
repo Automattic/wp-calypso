@@ -54,7 +54,7 @@ module.exports = React.createClass( {
 				labelWidth,
 				divisor;
 
-			node = this.getDOMNode();
+			node = this.refs.axis;
 
 			if ( nextProps && ! ( nextProps instanceof Event ) ) {
 				props = nextProps;
@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 		}, this );
 
 		return (
-			<div className="chart__x-axis">{ labels }</div>
+			<div ref="axis" className="chart__x-axis">{ labels }</div>
 		);
 	}
 } );

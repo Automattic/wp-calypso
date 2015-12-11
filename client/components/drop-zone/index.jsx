@@ -151,7 +151,7 @@ module.exports = React.createClass( {
 			return false;
 		}
 
-		rect = this.refs.zone.getDOMNode().getBoundingClientRect();
+		rect = this.refs.zone.getBoundingClientRect();
 
 		return x >= rect.left && x <= rect.right &&
 			y >= rect.top && y <= rect.bottom;
