@@ -2,12 +2,14 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	NEW_NOTICE
+	NEW_NOTICE,
+    REMOVE_NOTICE
 } from './action-types';
 
 /**
@@ -21,6 +23,9 @@ export function items( state = [], action ) {
 	switch ( action.type ) {
 		case NEW_NOTICE:
 			state = [ action, ...state ];
+			break;
+		case REMOVE_NOTICE:
+			state = filter( state, ( notice ) => ( notice.noticeId !== action.noticeId ) );
 			break;
 	}
 

@@ -5,6 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
+import { removeNotice } from 'state/notices/actions'
 
 /**
  * Internal Dependencies
@@ -53,6 +54,8 @@ const GlobalNotices = React.createClass( {
 					<Notice
 						key={ 'notice-' + index }
 						status={ notice.status }
+						showDismiss={ notice.showDismiss }
+						onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
 						text={ notice.text }>
 					</Notice>
 				);
@@ -79,5 +82,10 @@ export default connect(
 		return {
 			notices: state.notices.items
 		};
-	}
+	},
+	( dispatch ) => { return {
+		removeNotice: ( noticeId ) => {
+			dispatch( removeNotice( noticeId ) );
+		}
+	} }
 )( GlobalNotices );
