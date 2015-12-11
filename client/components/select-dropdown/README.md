@@ -167,6 +167,10 @@ var options = [
 
 Optional string representing the initial selected option's `value`. Default will be the first option's `value`.
 
+`compact`
+
+Optional boolean indicating the dropdown will be rendered in compact mode
+
 `onSelect`
 
 Optional callback that will be run whenever a new selection has been clicked.

@@ -54,9 +54,29 @@
 			right: 13px;
 			top: 12px;
 
+		.is-compact & {
+			right: 4px;
+			top: 4px;
+		}
+
 		display: block;
 		line-height: 18px;
 		color: rgba( $gray, 0.5 );
+	}
+
+
+	.is-compact & {
+		padding: 7px;
+		color: darken( $gray, 10% );
+		font-size: 11px;
+		line-height: 1;
+		text-transform: uppercase;
+
+		.count {
+			border-width: 0;
+			margin-left: 0;
+			line-height: 1;
+		}
 	}
 
 	.select-dropdown.is-open & {
@@ -71,7 +91,6 @@
 
 	.count {
 		margin-left: 8px;
-		opacity: 0.5;
 	}
 }
 
@@ -171,7 +190,6 @@
 	justify-content: space-between;
 
 	.count {
-		opacity: 0.5;
 		color: inherit;
 		border-color: inherit;
 	}

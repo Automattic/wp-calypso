@@ -18,7 +18,8 @@ var SelectDropdownDemo = React.createClass( {
 	getInitialState: function() {
 		return {
 			childSelected: 'Published',
-			selectedCount: 10
+			selectedCount: 10,
+			compactButtons: false
 		};
 	},
 
@@ -34,20 +35,30 @@ var SelectDropdownDemo = React.createClass( {
 		};
 	},
 
+	toggleButtons: function() {
+		this.setState( { compactButtons: ! this.state.compactButtons } );
+	},
+
 	render: function() {
+		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
+
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/design/select-dropdown">Select Dropdown</a>
 				</h2>
 
+				<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
+
 				<h3>items passed as options prop</h3>
 				<SelectDropdown
+					compact={ this.state.compactButtons }
 					options={ this.props.options }
 					onSelect={ this.onDropdownSelect } />
 
 				<h3 style={ { marginTop: 20 } }>items passed as children</h3>
 				<SelectDropdown
+					compact={ this.state.compactButtons }
 					onSelect={ this.onDropdownSelect }
 					selectedText={ this.state.childSelected }
 					selectedCount={ this.state.selectedCount }
@@ -85,6 +96,9 @@ var SelectDropdownDemo = React.createClass( {
 						Trashed
 					</DropdownItem>
 				</SelectDropdown>
+
+				<div className="padding" style={ { display: 'block', height: '200px' } } />
+
 			</div>
 		);
 	},
