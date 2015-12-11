@@ -4,6 +4,7 @@
 	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
+
 	.plugins-list &.is-compact:last-child {
 		margin-bottom: 0;
 	}
@@ -17,6 +18,11 @@
 
 	@include breakpoint( '<480px' ) {
 		flex-wrap: wrap;
+	}
+
+	&.disabled {
+		opacity: 0.5;
+		background: $gray-light;
 	}
 }
 
@@ -36,11 +42,6 @@
 	@include breakpoint( '>660px' ) {
 		padding: 24px;
 	}
-}
-
-.plugin-item__disabled {
-	opacity: 0.5;
-	background: $gray-light;
 }
 
 // Checkbox for multiselect purposes

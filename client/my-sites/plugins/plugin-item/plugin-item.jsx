@@ -134,26 +134,27 @@ module.exports = React.createClass( {
 	},
 
 	renderActions: function() {
-		return <div className="plugin-item__actions">
-			<PluginActivateToggle
-				isMock={ this.props.isMock }
-				plugin={ this.props.plugin }
-				site={ this.props.selectedSite }
-				notices={ this.props.notices } />
-			<PluginAutoupdateToggle
-				isMock={ this.props.isMock }
-				plugin={ this.props.plugin }
-				site={ this.props.selectedSite }
-				notices={ this.props.notices }
-				wporg={ !! this.props.plugin.wporg } />
-		</div>;
+		return (
+			<div className="plugin-item__actions">
+				<PluginActivateToggle
+					isMock={ this.props.isMock }
+					plugin={ this.props.plugin }
+					site={ this.props.selectedSite }
+					notices={ this.props.notices } />
+				<PluginAutoupdateToggle
+					isMock={ this.props.isMock }
+					plugin={ this.props.plugin }
+					site={ this.props.selectedSite }
+					notices={ this.props.notices }
+					wporg={ !! this.props.plugin.wporg } />
+			</div>
+		);
 	},
 
 	renderCount: function() {
 		return (
-			<div className="plugin-item__count">{ this.translate( 'Site {{count/}}', 'Sites {{count/}}',
+			<div className="plugin-item__count">{ this.translate( 'Sites {{count/}}',
 				{
-					count: this.props.sites.length,
 					components: {
 						count: <Count count={ this.props.sites.length } />
 					}
@@ -251,6 +252,7 @@ module.exports = React.createClass( {
 							{ pluginTitle }
 							{ this.pluginMeta( plugin ) }
 						</span>
+						{ this.props.selectedSite ? null : this.renderCount() }
 					</CompactCard>
 					<div>
 					{ this.state.clicked ? this.getNoManageWarning() : null }
