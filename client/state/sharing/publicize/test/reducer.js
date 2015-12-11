@@ -10,12 +10,12 @@ import {
 	FETCH_PUBLICIZE_CONNECTIONS,
 	RECEIVE_PUBLICIZE_CONNECTIONS,
 	FAIL_PUBLICIZE_CONNECTIONS_REQUEST
-} from '../../action-types';
+} from 'state/action-types';
 import {
 	fetchingConnections,
 	connections,
 	connectionsBySiteId
-} from '../reducers';
+} from '../reducer';
 
 describe( '#fetchingConnections()', () => {
 	it( 'should set fetching to true for fetching action', () => {

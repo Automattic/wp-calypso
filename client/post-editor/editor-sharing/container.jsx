@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PostEditStore from 'lib/posts/post-edit-store';
-import { fetchConnections } from 'lib/sharing/publicize/actions';
-import { getConnectionsBySiteIdAvailableToCurrentUser, hasFetchedConnections } from 'lib/sharing/publicize/selectors';
+import { fetchConnections } from 'state/sharing/publicize/actions';
+import { getConnectionsBySiteIdAvailableToCurrentUser, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import EditorSharingAccordion from './accordion';
 
 class EditorSharingContainer extends Component {

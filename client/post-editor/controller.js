@@ -38,7 +38,7 @@ function renderEditor( context, postType ) {
 
 	React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	React.render(
-		React.createElement( ReduxProvider, { store: context.reduxStore }, () => {
+		React.createElement( ReduxProvider, { store: context.store }, () => {
 			return React.createElement( PreferencesData, null,
 				React.createElement( PostEditor, {
 					sites: sites,

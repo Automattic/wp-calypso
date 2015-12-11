@@ -16,7 +16,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Triggers a network request to retrieve Publicize connections for the specified site ID from the WordPress.com REST API.
 
 ```js
-import { fetchConnections } from 'lib/sharing/publicize/actions';
+import { fetchConnections } from 'state/sharing/publicize/actions';
 
 dispatch( fetchConnections( 2916284 ) );
 ```
@@ -46,7 +46,7 @@ Selectors are intended to assist in extracting data from the global state tree f
 Returns an array of known connections for the given site ID.
 
 ```js
-import { getConnectionsBySiteId } from 'lib/sharing/publicize/selectors';
+import { getConnectionsBySiteId } from 'state/sharing/publicize/selectors';
 
 const connections = getConnectionsBySiteId( store.getState(), 2916284 );
 ```
@@ -56,7 +56,7 @@ const connections = getConnectionsBySiteId( store.getState(), 2916284 );
 Returns true if connections have been fetched for the given site ID.
 
 ```js
-import { hasFetchedConnections } from 'lib/sharing/publicize/selectors';
+import { hasFetchedConnections } from 'state/sharing/publicize/selectors';
 
 const connections = hasFetchedConnections( store.getState(), 2916284 );
 ```
@@ -66,7 +66,7 @@ const connections = hasFetchedConnections( store.getState(), 2916284 );
 Returns true if connections are currently fetching for the given site ID.
 
 ```js
-import { isFetchingConnections } from 'lib/sharing/publicize/selectors';
+import { isFetchingConnections } from 'state/sharing/publicize/selectors';
 
 const connections = isFetchingConnections( store.getState(), 2916284 );
 ```

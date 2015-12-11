@@ -6,7 +6,7 @@ import {
 	FETCH_PUBLICIZE_CONNECTIONS,
 	RECEIVE_PUBLICIZE_CONNECTIONS,
 	FAIL_PUBLICIZE_CONNECTIONS_REQUEST
-} from '../action-types';
+} from 'state/action-types';
 
 /**
  * Triggers a network request to fetch Publicize connections for the specified

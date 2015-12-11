@@ -1174,7 +1174,7 @@ Permission kindly granted by Ben Congleton, of Olark.
 ```
 
 ### https://github.com/rackt/redux/
-#### shared/lib/create-redux-store
+#### client/state
 ```text
 The MIT License (MIT)
 
@@ -1188,7 +1188,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ```
 
 ### https://github.com/gaearon/redux-thunk
-#### shared/lib/create-redux-store
+#### client/state
 ```text
 The MIT License (MIT)
 
