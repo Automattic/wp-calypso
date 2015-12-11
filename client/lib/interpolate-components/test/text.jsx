@@ -39,7 +39,7 @@ describe( 'interpolate-components', function() {
 
 	describe( 'with default container', function() {
 		it( 'should return a react object with a span container', function() {
-			var expectedResultString = '<span><span>test</span><input><span>test</span></span>',
+			var expectedResultString = '<span><span>test</span><input/><span>test</span></span>',
 				translatedComponent = interpolateComponents( {
 					translation: 'test{{input/}}test',
 					components: {
@@ -51,7 +51,7 @@ describe( 'interpolate-components', function() {
 			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should allow whitespace in the component placeholder', function() {
-			var expectedResultString = '<span><span>test</span><input><span>test</span></span>',
+			var expectedResultString = '<span><span>test</span><input/><span>test</span></span>',
 				translatedComponent = interpolateComponents( {
 					translation: 'test{{ input /}}test',
 					components: {
@@ -63,7 +63,7 @@ describe( 'interpolate-components', function() {
 			assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 		} );
 		it( 'should not add extra span nodes if component is at end of string', function() {
-			var expectedResultString = '<span><span>test</span><input></span>',
+			var expectedResultString = '<span><span>test</span><input/></span>',
 				translatedComponent = interpolateComponents( {
 					translation: 'test{{ input /}}',
 					components: {
