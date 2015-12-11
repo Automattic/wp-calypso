@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import debugModule from 'debug';
 
 /**
@@ -12,7 +11,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
-import DeleteSiteNotices from './delete-site-notices';
+import DeleteSiteNotices from 'notices/delete-site-notices';
 
 const debug = debugModule( 'calypso:notices' );
 
@@ -104,14 +103,9 @@ export default React.createClass( {
 			return null;
 		}
 		return (
-			<div>
-				<div id={ this.props.id } className={ classNames( 'notices-list', { 'is-pinned': this.state.pinned } ) }>
-					<DeleteSiteNotices />
-					{ noticesList }
-				</div>
-				{ this.state.pinned && ! this.props.forcePinned
-					? <div className="notices-list__whitespace" />
-					: null }
+			<div id={ this.props.id } className="global-notices">
+				<DeleteSiteNotices />
+				{ noticesList }
 			</div>
 		);
 	}

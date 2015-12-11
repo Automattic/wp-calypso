@@ -9,7 +9,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var Toolbar = require( './toolbar' ),
-	NoticesList = require( 'notices/notices-list' ),
+	NoticesList = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
 	page = require( 'page' ),
 	TitleData = require( 'components/data/screen-title' );
