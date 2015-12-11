@@ -33,7 +33,9 @@ const PlanOverview = React.createClass( {
 					path={ this.props.path }
 					selectedSite={ this.props.selectedSite } />
 
-				<PlanStatus plan={ this.props.plan } />
+				<PlanStatus
+					plan={ this.props.plan }
+					selectedSite={ this.props.selectedSite } />
 
 				<PlanFeatures />
 			</Main>
