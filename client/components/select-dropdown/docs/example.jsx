@@ -18,7 +18,8 @@ var SelectDropdownDemo = React.createClass( {
 	getInitialState: function() {
 		return {
 			childSelected: 'Published',
-			selectedCount: 10
+			selectedCount: 10,
+			compactButtons: false
 		};
 	},
 
@@ -34,61 +35,30 @@ var SelectDropdownDemo = React.createClass( {
 		};
 	},
 
+	toggleButtons: function() {
+		this.setState( { compactButtons: ! this.state.compactButtons } );
+	},
+
 	render: function() {
+		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
+
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/design/select-dropdown">Select Dropdown</a>
 				</h2>
 
+				<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
+
 				<h3>items passed as options prop</h3>
 				<SelectDropdown
+					compact={ this.state.compactButtons }
 					options={ this.props.options }
 					onSelect={ this.onDropdownSelect } />
 
 				<h3 style={ { marginTop: 20 } }>items passed as children</h3>
 				<SelectDropdown
-					onSelect={ this.onDropdownSelect }
-					selectedText={ this.state.childSelected }
-					selectedCount={ this.state.selectedCount }
-				>
-					<DropdownItem
-						count={ 10 }
-						selected={ this.state.childSelected === 'Published' }
-						onClick={ this.selectItem.bind( this, 'Published', 10 ) }
-					>
-						Published
-					</DropdownItem>
-
-					<DropdownItem
-						count={ 4 }
-						selected={ this.state.childSelected === 'Scheduled' }
-						onClick={ this.selectItem.bind( this, 'Scheduled', 4 ) }
-					>
-						Scheduled
-					</DropdownItem>
-
-					<DropdownItem
-						selected={ this.state.childSelected === 'Drafts' }
-						onClick={ this.selectItem.bind( this, 'Drafts', null ) }
-					>
-						Drafts
-					</DropdownItem>
-
-					<DropdownSeparator />
-
-					<DropdownItem
-						count={ 3 }
-						selected={ this.state.childSelected === 'Trashed' }
-						onClick={ this.selectItem.bind( this, 'Trashed', 3 ) }
-					>
-						Trashed
-					</DropdownItem>
-				</SelectDropdown>
-
-				<h3 style={ { marginTop: 20 } }>Compact</h3>
-				<SelectDropdown
-					compact
+					compact={ this.state.compactButtons }
 					onSelect={ this.onDropdownSelect }
 					selectedText={ this.state.childSelected }
 					selectedCount={ this.state.selectedCount }
