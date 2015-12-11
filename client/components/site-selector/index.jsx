@@ -27,7 +27,8 @@ module.exports = React.createClass( {
 		autoFocus: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		selected: React.PropTypes.string,
-		hideSelected: React.PropTypes.bool
+		hideSelected: React.PropTypes.bool,
+		filter: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
@@ -144,6 +145,10 @@ module.exports = React.createClass( {
 			sites = this.props.sites.search( this.state.search );
 		} else {
 			sites = this.props.sites.getVisible();
+		}
+
+		if ( this.props.filter ) {
+			sites = sites.filter( this.props.filter );
 		}
 
 		// Render sites
