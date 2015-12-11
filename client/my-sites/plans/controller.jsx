@@ -4,6 +4,7 @@
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
 	defer = require( 'lodash/function/defer' );
 
 /**
@@ -78,13 +79,15 @@ module.exports = {
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		ReactDom.render(
-			<CartData>
-				<Plans sites={ sites }
-					onSelectPlan={ onSelectPlan }
-					plans={ plans }
-					siteSpecificPlansDetailsList={ siteSpecificPlansDetailsList }
-					context={ context } />
-			</CartData>,
+			<ReduxProvider store={ context.store }>
+				<CartData>
+					<Plans sites={ sites }
+						onSelectPlan={ onSelectPlan }
+						plans={ plans }
+						siteSpecificPlansDetailsList={ siteSpecificPlansDetailsList }
+						context={ context } />
+				</CartData>
+			</ReduxProvider>,
 			document.getElementById( 'primary' )
 		);
 	},

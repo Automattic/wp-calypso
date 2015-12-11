@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react/addons' ),
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -15,9 +16,11 @@ var analytics = require( 'analytics' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Gridicon = require( 'components/gridicon' ),
-	createSiteSpecificPlanObject = require( 'lib/site-specific-plans-details-list/assembler' ).createSiteSpecificPlanObject;
+	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
+	createSitePlanObject = require( 'state/sites/plans/assembler' ).createSitePlanObject,
+	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId;
 
-module.exports = React.createClass( {
+var Plans = React.createClass( {
 	displayName: 'Plans',
 
 	mixins: [ siteSpecificPlansDetailsMixin, observe( 'sites', 'plans', 'siteSpecificPlansDetailsList' ) ],
@@ -62,7 +65,7 @@ module.exports = React.createClass( {
 			currentPlan;
 
 		if ( this.props.siteSpecificPlansDetailsList.hasLoadedFromServer( selectedSiteDomain ) ) {
-			currentPlan = createSiteSpecificPlanObject( this.props.siteSpecificPlansDetailsList.getCurrentPlan( selectedSiteDomain ) );
+			currentPlan = createSitePlanObject( this.props.siteSpecificPlansDetailsList.getCurrentPlan( selectedSiteDomain ) );
 
 			if ( config.isEnabled( 'upgrades/free-trials' ) && currentPlan.freeTrial ) {
 				return (
@@ -99,3 +102,15 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = connect(
+	( state, props ) => {
+		if ( ! props.sites.getSelectedSite() ) {
+			return {};
+		}
+
+		return {
+			sitePlans: getPlansBySiteId( state, props.sites.getSelectedSite().ID )
+		};
+	}
+)( Plans );
