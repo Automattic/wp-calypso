@@ -144,7 +144,7 @@ const CancelPrivateRegistration = React.createClass( {
 
 		return (
 
-			<Main className="manage-purchase__detail">
+			<Main>
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ titles.cancelPrivateRegistration }
 				</HeaderCake>
