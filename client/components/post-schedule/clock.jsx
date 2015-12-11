@@ -65,8 +65,8 @@ class PostScheduleClock extends Component {
 
 	getTimeValues() {
 		var modifiers = {},
-			hour = checkTimeValue( this.refs.timeHourRef.getDOMNode().value ),
-			minute = checkTimeValue( this.refs.timeMinuteRef.getDOMNode().value );
+			hour = checkTimeValue( this.refs.timeHourRef.value ),
+			minute = checkTimeValue( this.refs.timeMinuteRef.value );
 
 		if ( false !== hour && hour <= 24 ) {
 			modifiers.hour = Number( hour );

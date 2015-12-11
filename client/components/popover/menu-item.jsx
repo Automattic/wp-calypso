@@ -27,8 +27,8 @@ var MenuItem = React.createClass( {
 		);
 	},
 
-	_onMouseOver: function() {
-		this.getDOMNode().focus();
+	_onMouseOver: function( event ) {
+		event.target.focus();
 	}
 } );
 

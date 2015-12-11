@@ -20,12 +20,12 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		if ( this.shouldNormalizeChange() ) {
-			this.refs.range.getDOMNode().addEventListener( 'change', this.onChange );
+			this.refs.range.addEventListener( 'change', this.onChange );
 		}
 	},
 
 	componentWillUnmount: function() {
-		this.refs.range.getDOMNode().removeEventListener( 'change', this.onChange );
+		this.refs.range.removeEventListener( 'change', this.onChange );
 	},
 
 	shouldNormalizeChange: function() {

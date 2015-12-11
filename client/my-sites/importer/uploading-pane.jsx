@@ -87,7 +87,7 @@ export default React.createClass( {
 	},
 
 	initiateFromForm: function( event ) {
-		let fileSelector = this.refs.fileSelector.getDOMNode();
+		let fileSelector = this.refs.fileSelector;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -103,7 +103,7 @@ export default React.createClass( {
 	},
 
 	openFileSelector: function() {
-		let fileSelector = this.refs.fileSelector.getDOMNode();
+		let fileSelector = this.refs.fileSelector;
 
 		fileSelector.click();
 	},

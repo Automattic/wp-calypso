@@ -3,6 +3,7 @@ setup();
 
 import moment from 'moment';
 import sinonChai from 'sinon-chai';
+import ReactDom from 'react-dom';
 import React from 'react/addons';
 import chai from 'chai';
 import identity from 'lodash/utility/identity';
@@ -39,7 +40,7 @@ describe( 'DomainWarnings', () => {
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings domain={ domain } /> );
 
-		chai.expect( component.getDOMNode() ).to.be.a( 'null' )
+		chai.expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' )
 	} );
 
 	it( 'should render new warning notice if the domain is new', () => {
@@ -53,7 +54,7 @@ describe( 'DomainWarnings', () => {
 		};
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-		chai.expect( component.getDOMNode().textContent ).to.contain( 'We are setting up %(domainName)s for you' );
+		chai.expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
 	} );
 
 	it( 'should render the highest priority notice when there are others', () => {
@@ -68,7 +69,7 @@ describe( 'DomainWarnings', () => {
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		chai.expect( component.getDOMNode().textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
+		chai.expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
 	} );
 
 	it( 'should render the multi version of the component if more than two domains match the same rule', () => {
@@ -82,7 +83,7 @@ describe( 'DomainWarnings', () => {
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		chai.expect( component.getDOMNode().textContent ).to.contain( 'We are setting up your new domains for you' );
+		chai.expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
 	} );
 
 	describe( 'Mutations', () => {

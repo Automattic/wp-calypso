@@ -50,7 +50,7 @@ describe( 'FormPhoneInput', function() {
 			var phoneComponent = ReactDom.render( <FormPhoneInput countriesList={ mockCountriesList } />, document.body ),
 				select = TestUtils.findRenderedDOMComponentWithTag( phoneComponent, 'select' );
 
-			TestUtils.Simulate.change( select.getDOMNode(), {
+			TestUtils.Simulate.change( select, {
 				target: {
 					value: countries[ 1 ].code
 				}

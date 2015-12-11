@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	where = require( 'lodash/collection/where' ),
 	isEqual = require( 'lodash/lang/isEqual' ),
 	classNames = require( 'classnames' );
@@ -80,7 +81,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		if ( ! this.refs.iframe ) {
 			return;
 		}
-		preview = this.refs.iframe.getDOMNode();
+		preview = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Parse the JSON message data
 		data = JSON.parse( event.data );
@@ -127,11 +128,11 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		if ( 'official' === this.props.style ) {
 			// To show the more preview when rendering official style buttons,
 			// we request that the frame emit a show message with the offset
-			this.refs.iframe.getDOMNode().contentWindow.postMessage( 'more-show', '*' );
+			ReactDom.findDOMNode( this.refs.iframe ).contentWindow.postMessage( 'more-show', '*' );
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button
-			moreButton = this.refs.moreButton.getDOMNode();
+			moreButton = ReactDom.findDOMNode( this.refs.moreButton );
 			offset = {
 				top: moreButton.offsetTop + moreButton.clientHeight,
 				left: moreButton.offsetLeft

@@ -127,7 +127,7 @@ export default React.createClass( {
 	},
 
 	advanceCustomPropsState: function( delta ) {
-		var stateSelector = this.refs.customPropsState.getDOMNode(),
+		var stateSelector = this.refs.customPropsState,
 			nextIndex, totalStates;
 
 		totalStates = mockData.componentStates.length;
@@ -184,7 +184,7 @@ export default React.createClass( {
 	},
 
 	setCustomProps: function() {
-		var selectedState = this.refs.customPropsState.getDOMNode().value,
+		var selectedState = this.refs.customPropsState.value,
 			newState = Object.assign( {}, { customPropsStateIndex: selectedState }, mockData.componentStates[ selectedState ].payload );
 
 		setImporterState( newState );

@@ -30,7 +30,7 @@ module.exports = React.createClass( {
 
 	componentDidUpdate: function() {
 		if ( this.refs.content ) {
-			const node = this.refs.content.getDOMNode();
+			const node = this.refs.content;
 
 			if ( node && node.offsetHeight ) {
 				descriptionHeight = node.offsetHeight;

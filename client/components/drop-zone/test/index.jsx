@@ -53,7 +53,7 @@ describe( 'DropZone', function() {
 	it( 'should render as a child of its container by default', function() {
 		var tree = ReactDom.render( React.createElement( DropZone ), container );
 
-		expect( tree.refs.zone.getDOMNode().parentNode.id ).to.equal( 'container' );
+		expect( tree.refs.zone.parentNode.id ).to.equal( 'container' );
 	} );
 
 	it( 'should accept a fullScreen prop to be rendered at the root', function() {
@@ -61,8 +61,8 @@ describe( 'DropZone', function() {
 			fullScreen: true
 		} ), container );
 
-		expect( tree.refs.zone.getDOMNode().parentNode.id ).to.not.equal( 'container' );
-		expect( tree.refs.zone.getDOMNode().parentNode.parentNode ).to.eql( document.body );
+		expect( tree.refs.zone.parentNode.id ).to.not.equal( 'container' );
+		expect( tree.refs.zone.parentNode.parentNode ).to.eql( document.body );
 	} );
 
 	it( 'should render default content if none is provided', function() {
@@ -71,14 +71,14 @@ describe( 'DropZone', function() {
 
 		TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-icon' );
 		TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-text' );
-		expect( content.getDOMNode().textContent ).to.equal( 'Drop files to upload' );
+		expect( content.textContent ).to.equal( 'Drop files to upload' );
 	} );
 
 	it( 'should accept children to override the default content', function() {
 		var tree = ReactDom.render( React.createElement( DropZone, null, 'Hello World' ), container ),
 			content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
 
-		expect( content.getDOMNode().textContent ).to.equal( 'Hello World' );
+		expect( content.textContent ).to.equal( 'Hello World' );
 	} );
 
 	it( 'should accept an icon to override the default icon', function() {
@@ -88,7 +88,7 @@ describe( 'DropZone', function() {
 
 		icon = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-icon' );
 
-		expect( icon.getDOMNode().className ).to.contain( 'hello-world' );
+		expect( icon.className ).to.contain( 'hello-world' );
 	} );
 
 	it( 'should highlight the drop zone when dragging over the body', function() {
