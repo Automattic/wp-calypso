@@ -761,9 +761,9 @@ ul.module-content-list-legend {
 	> .module-content-list-item-wrapper .module-content-list-item-right,
 	> .module-content-list-item-wrapper {
 		background: $gray-light; // Default non-active color
- 	}
+	}
 
- 	.module-content-list-item-right::before {
+	.module-content-list-item-right::before {
 		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
 	}
 

@@ -181,7 +181,7 @@ function updateCountsWhenPostChanges( post, original ) {
 	PostCountsStore.emit( 'change' );
 }
 
- /*
+/*
  * Update post counts when a post is created
  *
  * @param {Object} post - current post state

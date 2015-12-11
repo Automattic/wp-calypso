@@ -47,10 +47,10 @@ module.exports = React.createClass({
 	},
 
 	/**
- 	 * When overlay is going to be unmounted remove the `overlay-open`
+	 * When overlay is going to be unmounted remove the `overlay-open`
 	 * class from the document html element to animate it out
 	 * and remove `overlay-is-front` when the animation has completed
- 	 */
+	 */
 	componentWillUnmount: function() {
 		debug( 'Unmounting overlay component.' );
 		classes( document.documentElement ).remove( 'overlay-open' ).remove( 'animate' );

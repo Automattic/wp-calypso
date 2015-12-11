@@ -8,8 +8,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MediaLibrary = require( 'my-sites/media-library' ),
-    SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-    observe = require( 'lib/mixins/data-observe' );
+	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+	observe = require( 'lib/mixins/data-observe' );
 
 module.exports = React.createClass( {
 	displayName: 'Media',

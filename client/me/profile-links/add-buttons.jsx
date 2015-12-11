@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
- var React = require( 'react' );
+var React = require( 'react' );
 
 // Internal dependencies
 var Button = require( 'components/button' ),

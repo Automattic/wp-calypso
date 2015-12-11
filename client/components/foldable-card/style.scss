@@ -80,7 +80,7 @@ button.foldable-card__action {
 	display: flex;
 	align-items: center;
 	flex: 1 1;
-    justify-content: flex-end;
+	justify-content: flex-end;
 }
 
 .foldable-card__expand {
@@ -135,12 +135,12 @@ button.foldable-card__action {
 	.foldable-card.has-expanded-summary & {
 		transition: none;
 		flex: 2;
-		text-align: right;	
+		text-align: right;
 	}
 
 	@include breakpoint( "<480px" ) {
 		display: none;
- 	}
+	}
 }
 
 
