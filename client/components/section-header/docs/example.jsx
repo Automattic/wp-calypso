@@ -23,26 +23,24 @@ var Cards = React.createClass( {
 				</h2>
 
 				<SectionHeader label="Team" count={ 10 }>
-					<Button
-						compact
-						primary>
-						{ this.translate( 'Primary Action' ) }
+					<Button compact primary>
+						Primary Action
 					</Button>
-					<Button
-						compact>
-						{ this.translate( 'Manage' ) }
+					<Button compact>
+						Manage
 					</Button>
 					<Button
 						compact
 						onClick={ function() {
 							alert( 'Clicked add button' );
-						} }>
-						{ this.translate( 'Add' ) }
+						} }
+					>
+						Add
 					</Button>
 				</SectionHeader>
 
 				<Card>
-					{ this.translate( 'Content Here' ) }
+					Content Here
 				</Card>
 			</div>
 		);

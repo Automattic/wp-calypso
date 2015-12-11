@@ -13,16 +13,16 @@ var SectionHeader = require( 'components/section-header' ),
 render: function() {
 	return (
 		<SectionHeader label={ this.translate( 'Team' ) }>
-			<Button
-				compact>
+			<Button compact>
 				Manage
 			</Button>
 			<Button
 				compact
 				onClick={ function() {
 					console.log( 'Clicked Add button' );
-				} }>
-				{ this.translate( 'Add' ) }
+				} }
+			>
+				Add
 			</Button>
 		</SectionHeader>
 	);
