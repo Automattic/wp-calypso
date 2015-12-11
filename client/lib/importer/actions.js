@@ -39,7 +39,7 @@ export function fetchState( siteId ) {
 
 			Dispatcher.handleViewAction( {
 				type: actionTypes.RECEIVE_IMPORT_STATUS,
-				siteId, importerStatus
+				importerStatus
 			} );
 		} )
 		.catch( () => Dispatcher.handleViewAction( {

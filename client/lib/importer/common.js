@@ -51,14 +51,15 @@ function replaceUserInfoWithIds( customData ) {
 }
 
 export function fromApi( state ) {
-	const { importId: importerId, importStatus, type, progress, customData } = state;
+	const { importId: importerId, importStatus, type, progress, customData, siteId } = state;
 
 	return {
 		importerId,
 		importerState: apiToAppState( importStatus ),
 		type: `importer-type-${ type }`,
 		progress: fromJS( progress ),
-		customData: fromJS( generateSourceAuthorIds( customData ) )
+		customData: fromJS( generateSourceAuthorIds( customData ) ),
+		site: { ID: siteId }
 	};
 }
 
