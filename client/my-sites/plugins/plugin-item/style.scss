@@ -209,16 +209,25 @@
 		flex-grow: 0;
 		text-align: right;
 	}
+
 	@include breakpoint( '>660px' ) {
 		padding-right: 24px;
 		padding-left: 24px;
 	}
 }
+
 .plugin-item__count {
 	font-size: 11px;
-	text-transform: uppercase;
+	line-height: 18px;
 	color: $gray;
+	text-transform: uppercase;
 }
+
+.plugin-item__count .count {
+	margin-left: 8px;
+	float: right;
+}
+
 .plugin-item  .plugin-item__count,
 .plugin-item .plugin-item__actions {
 	display: none;
