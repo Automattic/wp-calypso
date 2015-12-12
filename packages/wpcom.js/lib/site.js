@@ -6,6 +6,7 @@ var Category = require( './site.category' );
 var Tag = require( './site.tag' );
 var Media = require( './site.media' );
 var Comment = require( './site.comment' );
+var SiteWordAds = require( './site.wordads' );
 var Follow = require( './site.follow' );
 var debug = require( 'debug' )( 'wpcom:site' );
 
@@ -348,6 +349,22 @@ Site.prototype.statsPostViews = function( postId, query, fn ) {
 	}
 
 	return this.wpcom.req.get( path, query, fn );
+};
+
+/**
+ * Return a `SiteWordAds` instance.
+ *
+ * *Example:*
+ *    // Create a SiteWordAds instance
+ *
+ *    var wordAds = wpcom
+ *      .site( 'my-blog.wordpress.com' )
+ *      .wordAds();
+ *
+ * @return {SiteWordAds} SiteWordAds instance
+ */
+Site.prototype.wordAds = function() {
+	return new SiteWordAds( this._id, this.wpcom );
 };
 
 /**

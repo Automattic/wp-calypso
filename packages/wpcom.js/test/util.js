@@ -27,6 +27,8 @@ const env = isClientSide && (
 		? 'production'
 		: 'development';
 
+console.log( `environmen: %o`, env );
+
 const config = configFactory[ env ];
 
 if ( isClientSide ) {
@@ -35,7 +37,7 @@ if ( isClientSide ) {
 
 	qryString = qs.parse( document.location.search.replace( /^\?/, '' ) );
 	reqHandler = qryString.handler || 'wpcom-proxy-request';
-	console.log( `reqHandler -> %o`, reqHandler );
+	console.log( `reqHandler: %o`, reqHandler );
 
 	if (
 		'wpcom-xhr-request' === reqHandler ||
@@ -56,6 +58,9 @@ module.exports = {
 	},
 	site: function() {
 		return fixture.site || process.env.SITE;
+	},
+	wordAds: function() {
+		return config.wordads;
 	}
 };
 
