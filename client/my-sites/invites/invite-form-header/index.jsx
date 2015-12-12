@@ -20,6 +20,12 @@ export default React.createClass( {
 		);
 	},
 
+	getSiteName() {
+		const { site } = this.props;
+
+		return site.title || '';
+	},
+
 	getLoggedOutTitleForInvite() {
 		let title = '';
 
