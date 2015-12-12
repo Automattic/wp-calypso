@@ -68,6 +68,10 @@ module.exports = React.createClass( {
 	},
 
 	upgradeActions: function() {
+		if ( isFreePlan( this.props.plan ) ) {
+			return this.freePlanButton();
+		}
+
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
