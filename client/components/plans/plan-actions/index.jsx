@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isInSignup ) {
-			return this.signUpActions();
+			return config.isEnabled( 'upgrades/free-trials' ) ? this.newPlanActions() : this.upgradeActions();
 		}
 
 		if ( this.siteHasThisPlan() ) {
@@ -144,26 +144,6 @@ module.exports = React.createClass( {
 
 		return (
 			<div onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) } className={ classes } />
-		);
-	},
-
-	signUpActions: function() {
-		if ( isFreePlan( this.props.plan ) ) {
-			return <div>
-				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
-					{ this.translate( 'Select Free Plan' ) }
-				</button>
-			</div>;
-		}
-
-		return (
-			<div>
-				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
-						{ this.translate( 'Upgrade Now', { context: 'Store action' } ) }
-				</button>
-			</div>
 		);
 	},
 
