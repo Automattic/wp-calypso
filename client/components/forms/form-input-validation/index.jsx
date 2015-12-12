@@ -13,6 +13,12 @@ module.exports = React.createClass( {
 
 	displayName: 'FormInputValidation',
 
+	propTypes: {
+		isError: React.PropTypes.bool,
+		text: React.PropTypes.string,
+		icon: React.PropTypes.string
+	},
+
 	getDefaultProps() {
 		return { isError: false };
 	},
@@ -27,7 +33,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<span><Gridicon size={ 24 } icon={ icon } /> { this.props.text }</span>
+				<span><Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } /> { this.props.text }</span>
 			</div>
 		);
 	}
