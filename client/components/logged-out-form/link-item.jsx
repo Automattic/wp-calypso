@@ -5,10 +5,14 @@ import React from 'react';
 import classnames from 'classnames';
 import omit from 'lodash/object/omit';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'LoggedOutFormLinkItem',
 
-	render: function() {
+	propTypes: {
+		className: React.PropTypes.string
+	},
+
+	render() {
 		return (
 			<a
 				{ ...omit( this.props, 'classNames' ) }

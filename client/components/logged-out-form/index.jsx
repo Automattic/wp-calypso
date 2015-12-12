@@ -10,10 +10,15 @@ import omit from 'lodash/object/omit';
  */
 import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'LoggedOutForm',
 
-	render: function() {
+	propTypes: {
+		children: React.PropTypes.node.isRequired,
+		className: React.PropTypes.string
+	},
+
+	render() {
 		return (
 			<Card className={ classnames( 'logged-out-form', this.props.className ) } >
 				<form { ...omit( this.props, 'className' ) }>

@@ -9,10 +9,15 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'LoggedOutFormFooter',
 
-	render: function() {
+	propTypes: {
+		children: React.PropTypes.node.isRequired,
+		className: React.PropTypes.string
+	},
+
+	render() {
 		return (
 			<Card className={ classnames( 'logged-out-form__footer', this.props.className ) } >
 				{ this.props.children }
