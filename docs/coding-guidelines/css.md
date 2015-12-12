@@ -176,7 +176,7 @@ Example of the above:
 .parent {
     @extend %awesomeness;
     border: 1px solid;
-    z-index: 5;
+    font-size: 2em;
     @include moar-awesome( true );
 
     &::before {
@@ -278,3 +278,118 @@ selector {
 }
 ```
 - DO [remove trailing whitespace](trailing-whitespace.md)
+
+## Z-Index
+
+When adding z-indexes use our scss z-index function. This means you'll need to
+add another entry to the `$z-layers` variable in
+`assets/stylesheets/shared/functions/_z-index.scss`.
+
+Because browsers support a hierarchy of stacking contexts rather than a single
+global one, we use a tree with two levels of keys. The first is the name of the
+parent stacking context, and the latter is the selector for the stacking 
+context you've just created.  We keep each level of the tree sorted by z-index 
+so we can quickly compare z-index values within a given stacking context.
+
+An element creates a new stacking context when any of the following are true:
+
+1. It's the root element (`html`)
+2. Has a position other than `static`, with a `z-index` value
+3. Has one of the following CSS properties: (`transform`, `opacity` < 1,
+   `mix-blend-mode`, `filter`)
+4. Has `position: fixed`
+5. Has `isolation: isolate`
+6. Has `-webkit-overflow-scrolling: touch`
+
+So, to add a new z-index:
+
+1. You'll want to make sure the element actually creates a stacking context
+2. Look up its parent stacking context
+3. Put the new rule in the `$z-layers` tree, using the selector of the parent 
+   stacking context as the initial key and the element's full CSS selector as 
+   the final key.
+
+You can run this handy
+[gist](https://gist.github.com/gwwar/2f661deec7b99a1a418b) in the console to
+find the stacking contexts of both the element and its parent.
+
+As a simple example, imagine that we have a page with the following markup:
+
+```html
+<div class="masterbar"></div>
+<div class="modal">
+  <div class="modal__icon"></div>
+  <div class="modal__content"></div>
+  <div class="modal__header"></div>
+</div>
+```
+
+With CSS of:
+```css
+div {
+    position: relative;
+}
+.masterbar {
+    z-index: 2;
+}
+.modal {
+    z-index: 1;
+}
+.modal__icon {
+    z-index: 100;
+}
+.modal__content {
+   z-index: 300;
+}
+.modal__header {
+   z-index: 200;
+}
+```
+
+Each `div` in this case creates a stacking context, with the render order
+summarized as:
+
+```
+1.0 .modal
+1.100 .modal__icon
+1.200 .modal__header
+1.300 .modal__content
+2.0 .masterbar
+```
+
+In this case icon, header, and content can never be rendered above the
+masterbar because it is contained within the modal stacking context, which has
+a lower value than the masterbar.
+
+With this in mind our `$z-layers` might look like the following, with z-index
+values sorted from lowest to highest within a stacking context:
+
+```scss
+$z-layers: (
+    'root': (
+        '.modal': 1,
+        '.masterbar': 2
+    ),
+    '.modal': (
+        '.modal__icon': 100,
+        '.modal__header': 200,
+        '.modal__content': 300
+    )
+);
+```
+
+```scss
+.modal__icon {
+    z-index: z-index( '.modal', '.modal__icon' ); // returns 100
+}
+```
+
+While we can support a map with more than 2 layers, there isn't much benefit to doing
+this. Stacking of children are completely resolved within their parent context. So in 
+our example the stacking of `.modal__icon`, `.modal__header`, and `.modal__content` are
+completely resolved within `.modal`. Once this is done the entire `.modal` element is 
+passed for stacking in the root element, with it's sibling `.masterbar`.
+
+For further reading on stacking contexts see:
+- [https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+- [Appendix E. Elaborate description of Stacking Contexts](http://www.w3.org/TR/CSS2/zindex.html)

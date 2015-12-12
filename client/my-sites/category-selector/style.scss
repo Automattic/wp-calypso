@@ -96,7 +96,7 @@
 }
 
 .category-selector__add-category-info {
-	z-index: 100201;
+	z-index: z-index( 'root', '.category-selector__add-category-info' );
 
 	.gridicon {
 		position: relative;

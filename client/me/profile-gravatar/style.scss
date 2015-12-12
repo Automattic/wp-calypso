@@ -43,13 +43,13 @@
 		left: 43px;
 		position: absolute;
 		top: 5px;
-		z-index: 0;
+		z-index: z-index( '.profile-gravatar__edit-label-wrap', '.profile-gravatar__edit-label-wrap:after' );
 	}
 
 	.profile-gravatar__edit-label {
 		position: relative;
 		top: 10px;
-		z-index: 1000;
+		z-index: z-index( '.profile-gravatar__edit-label-wrap', '.profile-gravatar__edit-label' );
 	}
 }
 

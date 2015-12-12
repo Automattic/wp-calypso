@@ -2,7 +2,7 @@
 
 .module-overlay {
 	position: absolute;
-	z-index: 1000;
+	z-index: z-index( 'root', '.module-overlay' );
 	height: 100%;
 	// to hide module's default border
 	width: 101%;

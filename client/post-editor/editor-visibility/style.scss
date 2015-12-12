@@ -69,6 +69,6 @@
 .popover {
 	&.editor-visibility__popover {
 		/* applying a lower z-index to ensure it is layered behind the masterbar */
-		z-index: 179;
+		z-index: z-index( 'root', '.popover.editor-visibility__popover' );
 	}
 }

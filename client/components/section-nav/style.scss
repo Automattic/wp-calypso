@@ -343,11 +343,11 @@
 // -------- Nav Tabs - dropdowns --------
 .section-nav-tabs__dropdown {
 	position: relative;
-	z-index: 3;
+	z-index: z-index( 'section-nav-tabs__dropdown-parent', '.section-nav-tabs__dropdown' );
 	width: 100%;
 
 	&.is-open {
-		z-index: 4;
+		z-index: z-index( 'section-nav-tabs__dropdown-parent', '.section-nav-tabs__dropdown.is-open' );
 	}
 
 	.select-dropdown__container {

@@ -574,7 +574,7 @@ $color-print: #f8f8f8;
 
 .sharing-buttons-preview-buttons__more {
 	position: absolute;
-	z-index: 1000;
+	z-index: z-index( 'root', '.sharing-buttons-preview-buttons__more' );
 	max-width: 400px;
 	margin-top: -4px;
 	padding-top: 12px;

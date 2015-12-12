@@ -26,7 +26,7 @@
 	position: absolute;
 		top: -28px;
 		right: 15px;
-	z-index: 100;
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-gallery__preview-toggle' );
 	width: 200px;
 
 	@include breakpoint( ">660px" ) {

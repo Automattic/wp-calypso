@@ -1,6 +1,6 @@
 .detail-page__backdrop {
 	padding: 1px; // this fixes a strange rendering bug at the bottom of the full post card in safari and chrome -shaun
-	z-index: 190; // above the masterbar
+	z-index: z-index( 'root', '.detail-page__backdrop' ); // above the masterbar
 	box-sizing: border-box;
 	margin: 0;
 	position: fixed;
@@ -59,7 +59,7 @@
 		left: 0;
 		right: 0;
 	margin: 0;
-	z-index: 200; // above the masterbar
+	z-index: z-index( '.detail-page__backdrop', '.detail-page__action-buttons');
 	list-style: none;
 	text-align: right;
 	padding: 7px 6px;

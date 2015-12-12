@@ -3,7 +3,7 @@
 	margin: 0;
 	overflow-y: scroll;
 	padding: 0;
-	z-index: 9999;
+	z-index: z-index( 'root', '.main.customize.is-iframe' );
 	-webkit-overflow-scrolling: touch;
 
 	@include breakpoint( "<660px" ) {
@@ -60,7 +60,7 @@
 	position: fixed;
 		top: 0px;
 	width: 100%;
-	z-index: 999;
+	z-index: z-index( 'root', '.customizer-loading-panel__muse-status' );
 }
 
 .customizer-loading-panel__status-message {
@@ -124,7 +124,7 @@
 		right: 0px;
 	text-align: center;
 	width:100%;
-	z-index: 999;
+	z-index: z-index( 'root', '.customizer-loading-panel__placeholder-change-theme' );
 
 	.customizer-loading-panel__placeholder-change-theme-button {
 		border: 1px solid #ccc;

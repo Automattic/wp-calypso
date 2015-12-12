@@ -31,7 +31,7 @@
 	.gridicons-checkmark-circle {
 		fill: $alert-green;
 		position: absolute;
-		z-index: 1;
+		z-index: z-index( 'root', '.plan .gridicons-checkmark-circle' );
 		left: 30px;
 		top: 6px;
 	}

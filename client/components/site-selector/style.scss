@@ -11,7 +11,7 @@
 		left: -272px;
 	width: 272px;
 	overflow: hidden;
-	z-index: 10;
+	z-index: z-index( 'root', '.site-selector' );
 
 	&.is-large .search  {
 		display: block;

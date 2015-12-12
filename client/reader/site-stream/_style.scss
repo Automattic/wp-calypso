@@ -69,5 +69,5 @@
 	font-weight: 700;
 	font-size: 18px;
 	color: $white;
-	z-index: 1;
+	z-index: z-index( 'root', '.reader__featured-post-title' );
 }

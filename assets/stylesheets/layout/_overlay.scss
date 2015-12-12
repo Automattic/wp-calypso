@@ -13,7 +13,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-	z-index: 9999;
+	z-index: z-index( 'root', '.wp-overlay' );
 	height: 100%;
 	overflow: scroll;
 	-webkit-overflow-scrolling: touch;

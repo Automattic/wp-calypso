@@ -31,7 +31,7 @@
 }
 
 .editor-media-modal .section-nav {
-	z-index: 10;
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .section-nav' );
 	padding: 0 16px;
 
 	@include breakpoint( ">660px" ) {
@@ -128,7 +128,7 @@
 }
 
 .editor-media-modal .notice {
-	z-index: 10;
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .notice' );
 	margin-top: -4px;
 }
 

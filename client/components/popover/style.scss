@@ -10,7 +10,7 @@
 .popover {
 	font-size: 11px;
 	padding: 10px;
-	z-index: 1000;
+	z-index: z-index( 'root', '.popover' );
 	position: absolute;
 	/* default offset for edge-cases: https://github.com/component/tip/pull/12 */
 	top: 0;
@@ -34,7 +34,7 @@
 		line-height: 0;
 		position: absolute;
 		width: 0;
-		z-index: 1;
+		z-index: z-index( '.popover', '.popover .tip-arrow' );
 	}
 
 	&.fade {
@@ -122,7 +122,7 @@
 	}
 
 	&.is-dialog-visible {
-		z-index: 100300; /* Above .dialog */
+		z-index: z-index( 'root', 'popover.is-dialog-visible' ); /* Above .dialog */
 	}
 }
 

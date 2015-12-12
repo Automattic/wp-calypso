@@ -1,7 +1,7 @@
 .main {
 	margin: auto;
 	max-width: 720px;
-	z-index: 20;
+	z-index: z-index( 'root', '.main' );
 
 	// Themes is a great example of using all this new space ;)
 	&.themes,
