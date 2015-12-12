@@ -134,7 +134,7 @@
 
 	position: relative;
 
-	.noticon {
+	.search-open__icon {
 		display: none;
 	}
 
@@ -146,8 +146,8 @@
 		z-index: 40;
 	}
 
-	.noticon-close-alt {
-		top: -12px;
+	.search-close__icon {
+		top: 20px;
 		right: -8px;
 		color: $gray;
 	}
