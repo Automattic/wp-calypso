@@ -56,6 +56,17 @@ module.exports = React.createClass( {
 		return canStartTrial ? this.newPlanActions() : this.upgradeActions();
 	},
 
+	freePlanButton: function() {
+		return (
+			<div>
+				<button className="button is-primary plan-actions__upgrade-button"
+					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
+					{ this.translate( 'Select Free Plan' ) }
+				</button>
+			</div>
+		);
+	},
+
 	upgradeActions: function() {
 		return (
 			<div>
@@ -149,12 +160,7 @@ module.exports = React.createClass( {
 
 	newPlanActions: function() {
 		if ( isFreePlan( this.props.plan ) ) {
-			return <div>
-				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
-					{ this.translate( 'Select Free Plan' ) }
-				</button>
-			</div>;
+			return this.freePlanButton();
 		}
 
 		return (
