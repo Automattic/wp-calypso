@@ -14,14 +14,14 @@ import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 import Gridicon from 'components/gridicon';
 import ListStore from 'lib/reader-lists/lists';
+import ReaderListsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsActions from 'lib/reader-lists/actions';
 import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 import { fetchMoreTags } from 'lib/reader-lists-tags/actions';
 import smartSetState from 'lib/react-smart-set-state';
+import ListManagementError from '../error';
 
 const debug = debugModule( 'calypso:reader:list-management' ); // eslint-disable-line
-
-let listFetchAttempted = false;
 
 const ListManagementTags = React.createClass( {
 	propTypes: {
@@ -40,9 +40,8 @@ const ListManagementTags = React.createClass( {
 	getStateFromStores() {
 		// Grab the list ID from the list store
 		const list = ListStore.get( this.props.list.owner, this.props.list.slug );
-		if ( ! list && listFetchAttempted ) {
-			ReaderListsActions.fetchSubscriptions();
-			listFetchAttempted = true;
+		if ( ! list && ! ReaderListsStore.isFetching() ) {
+			ReaderListsActions.fetchList( this.props.list.owner, this.props.list.slug );
 		}
 
 		// Fetch tags, but only if we have the list information
@@ -61,7 +60,7 @@ const ListManagementTags = React.createClass( {
 			isLastPage,
 			currentPage,
 			isFetchingTags: ReaderListsTagsStore.isFetching(),
-			lastError: ReaderListsTagsStore.getLastError(),
+			lastListError: ListStore.getLastError(),
 		};
 	},
 
@@ -152,6 +151,10 @@ const ListManagementTags = React.createClass( {
 	},
 
 	render() {
+		if ( ! this.state.list && this.state.lastListError ) {
+			return ( <ListManagementError /> );
+		}
+
 		let message = null;
 		if ( ! this.state.list ) {
 			message = ( <p> {this.translate( 'Loading list information…' ) } </p> );

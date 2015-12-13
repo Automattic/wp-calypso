@@ -100,12 +100,14 @@ var ReaderListActions = {
 		}
 
 		fetchingLists[ key ] = true;
+		ReaderListsStore.setIsFetching( true );
 
 		wpcom.undocumented().readList( {
 			owner: owner,
 			slug: slug
 		}, function( error, data ) {
 			delete fetchingLists[ key ];
+			ReaderListsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_READER_LIST',

@@ -1,9 +1,10 @@
 var decodeEntities = require( 'lib/formatting' ).decodeEntities,
 	dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/lang/isEqual' ),
+	last = require( 'lodash/array/last' );
 
-var lists = {}, ListStore;
+var lists = {}, errors = [], ListStore;
 
 function keyForList( owner, slug ) {
 	return owner + '-' + slug;
@@ -16,6 +17,10 @@ function getListURL( list ) {
 ListStore = {
 	get( owner, slug ) {
 		return lists[ keyForList( owner, slug ) ];
+	},
+
+	getLastError() {
+		return last( errors );
 	}
 };
 
@@ -53,7 +58,12 @@ function markPending( owner, slug ) {
 ListStore.dispatchToken = dispatcher.register( function( payload ) {
 	const action = payload.action;
 
-	if ( ! action || action.error ) {
+	if ( ! action ) {
+		return;
+	}
+
+	if ( action.error ) {
+		errors.push( action.error );
 		return;
 	}
 
