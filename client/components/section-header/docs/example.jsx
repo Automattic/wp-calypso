@@ -7,9 +7,8 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' );
-
+	Button = require( 'components/button' );
+	
 var Cards = React.createClass( {
 	displayName: 'SectionHeader',
 
@@ -38,10 +37,6 @@ var Cards = React.createClass( {
 						Add
 					</Button>
 				</SectionHeader>
-
-				<Card>
-					Content Here
-				</Card>
 			</div>
 		);
 	}
