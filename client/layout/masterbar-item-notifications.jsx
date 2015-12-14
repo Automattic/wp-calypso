@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import classNames from 'classnames';
 
 /**
@@ -21,9 +22,23 @@ export default React.createClass( {
 	},
 
 	getInitialState() {
+		var newNote = false,
+			user;
+
+		if ( this.props.user ) {
+			user = this.props.user.get();
+		}
+
+		// User object should be loaded by now, but
+		// if it isn't just wait until the notifications
+		// finish their initial load to set `newNote`
+		if ( user && user.has_unseen_notes ) {
+			newNote = true;
+		}
+
 		return {
 			isShowingPopover: false,
-			newNote: 0,
+			newNote: newNote,
 			animationState: 0,
 		};
 	},
@@ -62,7 +77,7 @@ export default React.createClass( {
 	},
 
 	getNotificationLinkDomNode() {
-		return this.refs.notificationLink.getDOMNode();
+		return ReactDom.findDOMNode( this.refs.notificationLink );
 	},
 
 	/**

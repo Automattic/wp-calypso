@@ -31,20 +31,6 @@ export default React.createClass( {
 	},
 
 	getInitialState() {
-		var newNote = false,
-			user;
-
-		if ( this.props.user ) {
-			user = this.props.user.get();
-		}
-
-		// User object should be loaded by now, but
-		// if it isn't just wait until the notifications
-		// finish their initial load to set `newNote`
-		if ( user && user.has_unseen_notes ) {
-			newNote = true;
-		}
-
 		return {
 			animationState: -1, // used to make the notification icon blink
 			showNotes: false,   // whether we show the notifications panel
