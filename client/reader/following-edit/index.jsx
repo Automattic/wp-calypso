@@ -357,7 +357,7 @@ var FollowingEdit = React.createClass( {
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
 
-				<SectionHeader className="following-edit-header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
+				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
 					<div className="following-edit__more-options">
 						<Gridicon icon="ellipsis" />
 					</div>
@@ -386,7 +386,7 @@ var FollowingEdit = React.createClass( {
 				{ subscriptionsToDisplay.length === 0 && this.props.search ?
 					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
 
-				<InfiniteList role="main" className="followed-sites-list"
+				<InfiniteList className="following-edit__sites"
 					items={ subscriptionsToDisplay }
 					lastPage={ this.state.isLastPage }
 					fetchingNextPage={ this.state.isLoading }
