@@ -12,12 +12,6 @@ import omit from 'lodash/object/omit';
 import { fetchCurrentTheme } from 'lib/themes/actions';
 import { getCurrentTheme } from 'lib/themes/selectors';
 
-function getState( state, { site } ) {
-	return {
-		currentTheme: getCurrentTheme( state, site.ID )
-	};
-}
-
 /**
  * Fetches the currently active theme of the supplied site
  * and passes it to the supplied child component.
@@ -61,7 +55,9 @@ const CurrentThemeData = React.createClass( {
 export default connect(
 	( state, props ) => Object.assign( {},
 		props,
-		getState( state, props )
+		{
+			currentTheme: getCurrentTheme( state, props.site.ID )
+		}
 	),
 	bindActionCreators.bind( null, { fetchCurrentTheme } )
 )( CurrentThemeData );

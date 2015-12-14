@@ -10,14 +10,6 @@ import omit from 'lodash/object/omit';
  */
 import { isActivating, hasActivated, getCurrentTheme } from 'lib/themes/selectors';
 
-function getState( state, { siteId } ) {
-	return {
-		isActivating: isActivating( state ),
-		hasActivated: hasActivated( state ),
-		currentTheme: getCurrentTheme( state, siteId )
-	};
-}
-
 /**
  * Passes the activating state of themes to the supplied child component.
  */
@@ -41,6 +33,10 @@ const ActivatingThemeData = React.createClass( {
 export default connect(
 	( state, props ) => Object.assign( {},
 		props,
-		getState( state, props )
+		{
+			isActivating: isActivating( state ),
+			hasActivated: hasActivated( state ),
+			currentTheme: getCurrentTheme( state, props.siteId )
+		}
 	)
 )( ActivatingThemeData );

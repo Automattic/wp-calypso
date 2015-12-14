@@ -20,18 +20,6 @@ import {
 	isFetchingNextPage
 } from 'lib/themes/selectors';
 
-function getState( state, { search } ) {
-	return {
-		themes: getFilteredThemes( state, search ),
-		lastPage: isLastPage( state ),
-		loading: isFetchingNextPage( state ),
-		lastQuery: {
-			hasSiteChanged: hasSiteChanged( state ),
-			isJetpack: isJetpack( state )
-		}
-	};
-}
-
 const ThemesListFetcher = React.createClass( {
 	propTypes: {
 		children: React.PropTypes.element.isRequired,
@@ -127,7 +115,15 @@ const ThemesListFetcher = React.createClass( {
 export default connect(
 	( state, props ) => Object.assign( {},
 		props,
-		getState( state, props )
+		{
+			themes: getFilteredThemes( state, props.search ),
+			lastPage: isLastPage( state ),
+			loading: isFetchingNextPage( state ),
+			lastQuery: {
+				hasSiteChanged: hasSiteChanged( state ),
+				isJetpack: isJetpack( state )
+			}
+		}
 	),
 	bindActionCreators.bind( null, { query, fetchNextPage } )
 )( ThemesListFetcher );
