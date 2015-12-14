@@ -8,10 +8,9 @@ import assign from 'lodash/object/assign';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import Action from 'lib/themes/flux-actions';
 import Helper from 'lib/themes/helpers';
 
-export default function getButtonOptions( site, theme, setSelectedTheme, togglePreview, showAll = false ) {
+export default function getButtonOptions( site, theme, actions, setSelectedTheme, togglePreview, showAll = false ) {
 	return rawOptions( site, theme )
 		.filter( option => showAll || ! option.hideIf )
 		.map( appendUrl )
@@ -44,9 +43,9 @@ export default function getButtonOptions( site, theme, setSelectedTheme, toggleP
 			action = togglePreview.bind( null, theme );
 		} else if ( site ) {
 			if ( name === 'customize' ) {
-				action = Action.customize.bind( Action, theme, site, 'showcase' );
+				action = actions.customize.bind( actions, theme, site, 'showcase' );
 			} else {
-				action = Action[ name ].bind( Action, theme, site, 'showcase' );
+				action = actions[ name ].bind( actions, theme, site, 'showcase' );
 			}
 		} else {
 			action = setSelectedTheme.bind( null, name, theme );

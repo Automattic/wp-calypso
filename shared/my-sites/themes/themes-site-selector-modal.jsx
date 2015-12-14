@@ -12,7 +12,6 @@ import partial from 'lodash/function/partial';
  */
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
-import Action from 'lib/themes/flux-actions';
 import Helper from 'lib/themes/helpers';
 
 const ThemesSiteSelectorModal = React.createClass( {
@@ -20,6 +19,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		selectedAction: PropTypes.string.isRequired,
 		selectedTheme: PropTypes.object.isRequired,
 		onHide: PropTypes.func,
+		actions: PropTypes.object,
 		getOptions: PropTypes.func
 	},
 
@@ -31,7 +31,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		defer( () => {
 			Helper.trackClick( 'site selector', action );
 			page( '/design/' + site.slug );
-			Action[ action ]( theme, site );
+			this.props.actions[ action ]( theme, site );
 		} );
 	},
 

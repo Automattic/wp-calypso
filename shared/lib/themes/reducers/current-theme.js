@@ -14,9 +14,7 @@ export const initialState = fromJS( {
 	currentThemes: {}
 } );
 
-export const reducer = ( state = initialState, payload ) => {
-	const { action = payload } = payload;
-
+export const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case ThemeConstants.RECEIVE_CURRENT_THEME:
 			return state.setIn( [ 'currentThemes', action.site.ID ], {

@@ -30,12 +30,6 @@ Contains a global list of themes queried so far.
 Redux actions. Note that async actions require the
 [redux-thunk][thunk] middleware. Examples can be found inside.
 
-### flux-actions
-
-Flux wrapper around the Redux actions. Uses Redux's
-[`bindActionCreators`][bind] along with our own `combineStores()`
-for wrapping. Also applies the [thunk] and [analytics] middlewares.
-
 ## Middlewares
 
 ### middlewares

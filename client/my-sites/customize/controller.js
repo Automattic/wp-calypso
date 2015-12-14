@@ -30,7 +30,8 @@ module.exports = {
 				domain: context.params.domain || '',
 				sites: sites,
 				prevPath: context.prevPath || '',
-				query: Qs.parse( context.querystring )
+				query: Qs.parse( context.querystring ),
+				dispatchRedux: context.store.dispatch
 			} ),
 			document.getElementById( 'primary' )
 		);

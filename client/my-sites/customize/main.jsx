@@ -28,7 +28,8 @@ module.exports = React.createClass( {
 	propTypes: {
 		domain: React.PropTypes.string.isRequired,
 		sites: React.PropTypes.object.isRequired,
-		prevPath: React.PropTypes.string
+		prevPath: React.PropTypes.string,
+		dispatchRedux: React.PropTypes.func.isRequired
 	},
 
 	getDefaultProps: function() {
@@ -258,7 +259,7 @@ module.exports = React.createClass( {
 					break;
 				case 'activated':
 					themeSlug = message.theme.stylesheet.split( '/' )[1];
-					Actions.activated( themeSlug, site );
+					Actions.activated( themeSlug, site, this.props.dispatchRedux );
 					break;
 				case 'purchased':
 					themeSlug = message.theme.stylesheet.split( '/' )[1];

@@ -1,49 +1,46 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
+import omit from 'lodash/object/omit';
 
 /**
  * Internal dependencies
  */
-var CurrentThemeStore = require( 'lib/themes/stores/current-theme' );
+import { isActivating, hasActivated, getCurrentTheme } from 'lib/themes/selectors';
 
-function getState( props ) {
+function getState( state, { siteId } ) {
 	return {
-		isActivating: CurrentThemeStore.isActivating(),
-		hasActivated: CurrentThemeStore.hasActivated(),
-		currentTheme: CurrentThemeStore.getCurrentTheme( props.siteId )
+		isActivating: isActivating( state ),
+		hasActivated: hasActivated( state ),
+		currentTheme: getCurrentTheme( state, siteId )
 	};
 }
 
 /**
  * Passes the activating state of themes to the supplied child component.
  */
-var ActivatingThemeData = React.createClass( {
+const ActivatingThemeData = React.createClass( {
 
 	propTypes: {
+		isActivating: React.PropTypes.bool.isRequired,
+		hasActivated: React.PropTypes.bool.isRequired,
+		currentTheme: React.PropTypes.shape( {
+			name: React.PropTypes.string,
+			id: React.PropTypes.string
+		} ),
 		children: React.PropTypes.element.isRequired
 	},
 
-	getInitialState: function() {
-		return getState( this.props );
-	},
-
-	componentWillMount: function() {
-		CurrentThemeStore.on( 'change', this.onActivatingTheme );
-	},
-
-	componentWillUnmount: function() {
-		CurrentThemeStore.off( 'change', this.onActivatingTheme );
-	},
-
-	onActivatingTheme: function() {
-		this.setState( getState( this.props ) );
-	},
-
-	render: function() {
-		return React.cloneElement( this.props.children, this.state );
+	render() {
+		return React.cloneElement( this.props.children, omit( this.props, 'children' ) );
 	}
 } );
 
-module.exports = ActivatingThemeData;
+export default connect(
+	( state, props ) => Object.assign( {},
+		props,
+		getState( state, props )
+	)
+)( ActivatingThemeData );
