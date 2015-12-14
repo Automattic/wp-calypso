@@ -75,3 +75,7 @@
 		color: lighten( $alert-red, 30% );
 	}
 }
+
+.plugins__plugin-list-state {
+	white-space: nowrap;
+}
