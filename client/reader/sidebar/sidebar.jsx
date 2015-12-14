@@ -4,7 +4,7 @@
 const assign = require( 'lodash/object/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
-	debug = require( 'debug' )( 'calypso:reader:sidebar' ),
+	endsWith = require( 'lodash/string/endsWith' ),
 	map = require( 'lodash/collection/map' ),
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
@@ -31,10 +31,6 @@ const layoutFocus = require( 'lib/layout-focus' ),
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
-
-	componentWillMount: function() {
-		debug( 'Mounting the reader sidebar React component.' );
-	},
 
 	itemLinkClass: function( path, additionalClasses ) {
 		var basePathLowerCase = this.props.path.split( '?' )[0].replace( /\/edit$/, '' ).toLowerCase(),
@@ -192,15 +188,19 @@ module.exports = React.createClass( {
 			}
 
 			const listManagementUrls = [
-				listRelativeUrl + '/followers',
+				listRelativeUrl + '/tags',
 				listRelativeUrl + '/edit',
-				listRelativeUrl + '/description/edit',
+				listRelativeUrl + '/feeds',
 			];
 
+			const isCurrentList = this.pathStartsWithOneOf( [ listRelativeUrl ] ) && endsWith( this.props.path.toLowerCase(), list.slug.toLowerCase() );
+			const isActionButtonSelected = this.pathStartsWithOneOf( listManagementUrls );
+
 			const classes = classnames(
-				this.itemLinkClassStartsWithOneOf( [ listRelativeUrl ], { 'sidebar-dynamic-menu__list has-buttons': true } ),
 				{
-					'is-action-button-selected': this.pathStartsWithOneOf( listManagementUrls )
+					'sidebar-dynamic-menu__list has-buttons': true,
+					selected: isCurrentList || isActionButtonSelected,
+					'is-action-button-selected': isActionButtonSelected
 				}
 			);
 
