@@ -51,7 +51,7 @@ const PlanStatus = React.createClass( {
 						<h1 className="plan-status__plan">
 							{
 								this.translate( '%(planName)s Free Trial', {
-									args: { planName: this.props.plan.productName }
+									args: { planName: plan.productName }
 								} )
 							}
 						</h1>
@@ -64,7 +64,7 @@ const PlanStatus = React.createClass( {
 					</Button>
 				</CompactCard>
 
-				<PlanStatusProgress plan={ this.props.plan } />
+				<PlanStatusProgress plan={ plan } />
 			</div>
 		);
 	}
