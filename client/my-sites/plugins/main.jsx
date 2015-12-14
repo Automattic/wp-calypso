@@ -616,7 +616,8 @@ export default React.createClass( {
 			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
 				textOnly: true,
 				args: { siteName: selectedSite.title },
-				components: { span: <span className="plugins__plugin-list-state" /> }
+				components: { span: <span className="plugins__plugin-list-state" /> },
+				comment: 'The span tags prevents single words from showing on a single line.'
 			} );
 		} else {
 			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
