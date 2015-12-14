@@ -44,6 +44,25 @@ Me.prototype.billingHistory = function( query, fn ) {
 };
 
 /**
+ * Get a list of posts of from the user's blogs
+ *
+ * *Example:*
+ *    // Get posts list
+ *    wpcom
+ *    .me()
+ *    .postsList( function( err, data ) {
+ *      // posts list data object
+ *    } );
+ *
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
+ */
+Me.prototype.postsList = function( query, fn ) {
+	return this.wpcom.req.get( '/me/posts', query, fn );
+};
+
+/**
  * A list of the current user's sites
  *
  * @param {Object} [query] - query object parameter
