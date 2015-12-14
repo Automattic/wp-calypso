@@ -15,7 +15,22 @@ This issue can sometimes occur on OSX. It is caused by build system trying to op
 ```
 sudo ulimit -n 16384
 ```
-This will bump your limit to 16384 files. There is also more permanent solution described here: http://docs.basho.com/riak/latest/ops/tuning/open-files-limit/#Mac-OS-X
+
+This will bump your limit to 16384 files. There is also a more permanent solution described here: http://docs.basho.com/riak/latest/ops/tuning/open-files-limit/#Mac-OS-X
+
+Depending on your version of OS X (10.10.4 Yosemite), you may also encounter the following error:
+
+```
+-bash: ulimit: open files: cannot modify limit: Invalid argument
+```
+
+If that's the case, you can work around this by running
+
+```
+sudo launchctl limit maxfiles 65536
+```
+
+This command will temporarily (until your next system reboot) change the maximum number of files you're allowed to set with commands like `ulimit`. After running this command, try running the `ulimit` command again.
 
 ### Run as administrator
 Sometimes, usually during the first build, you can see a message similar to `Please try running again as an administrator`. 
