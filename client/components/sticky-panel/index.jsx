@@ -72,7 +72,7 @@ module.exports = React.createClass( {
 		if ( this.state.isSticky ) {
 			// Offset to account for Master Bar by finding body visual top
 			// relative the current scroll position
-			offset = document.getElementById( 'primary' ).getBoundingClientRect().top;
+			offset = document.getElementById( 'content' ).getBoundingClientRect().top;
 
 			return {
 				top: offset + window.pageYOffset,
