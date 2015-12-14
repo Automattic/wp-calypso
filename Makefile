@@ -14,6 +14,7 @@ NODE_BIN := $(THIS_DIR)/node_modules/.bin
 
 # applications
 NODE ?= node
+NODEMON ?= $(NODE_BIN)/nodemon
 NPM ?= $(NODE) $(shell which npm)
 BUNDLER ?= $(BIN)/bundler
 SASS ?= $(NODE_BIN)/node-sass --include-path 'client:shared'
@@ -35,6 +36,8 @@ CLIENT_CONFIG_FILE := client/config/index.js
 NODE_ENV ?= development
 CALYPSO_ENV ?= $(NODE_ENV)
 
+SERVER_BUILD_COMMAND ?= $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
+
 export NODE_ENV := $(NODE_ENV)
 export CALYPSO_ENV := $(CALYPSO_ENV)
 export NODE_PATH := server:shared:.
@@ -54,7 +57,7 @@ install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
 run: welcome githooks-commit install build
-	@$(NODE) build/bundle-$(CALYPSO_ENV).js
+	@$(NODEMON) --watch server --watch shared  --exec "CALYPSO_ENV=$(CALYPSO_ENV) $(SERVER_BUILD_COMMAND); $(NODE)" build/bundle-$(CALYPSO_ENV).js
 
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
@@ -116,15 +119,17 @@ public/editor.css: node_modules $(SASS_FILES)
 server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
 
-build-server: install
+builddir:
 	@mkdir -p build
-	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
+
+build-server: install builddir
+	@CALYPSO_ENV=$(CALYPSO_ENV) $(SERVER_BUILD_COMMAND)
 
 build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: install builddir $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 
 build-wpcalypso: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 	@$(BUNDLER)
