@@ -3,22 +3,35 @@
 }
 
 .plan-status__info {
+	align-content: space-between;
 	align-items: center;
 	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include breakpoint( ">480px" ) {
+		flex-direction: row;
+	}
+
+	&:after {
+		display: none;
+	}
 }
 
 .plan-status__header {
-	float: left;
-	margin-left: 20px;
-	width: 80%;
+	flex-grow: 1;
+
+	@include breakpoint( ">480px" ) {
+		margin-left: 20px;
+		margin-right: 20px;
+	}
 }
 
 .plan-status__icon {
 	background-position: center;
 	background-repeat: no-repeat;
-	float: left;
 	height: 50px;
-	width: 50px;
+	min-width: 50px;
 
 	&.is-premium {
 		background-image: url( '/calypso/images/plans/plan-trial-premium.svg' );
@@ -26,6 +39,10 @@
 
 	&.is-business {
 		background-image: url( '/calypso/images/plans/plan-trial-business.svg' );
+	}
+
+	@include breakpoint( "<480px" ) {
+		display: none;
 	}
 }
 
@@ -42,15 +59,30 @@
 	font-weight: 700;
 }
 
-.plan-status__time-until-expiry {
-	box-sizing: border-box;
-	float: left;
-	font-weight: 700;
-	padding-right: 20px;
-	text-align: center;
-	width: 180px;
+.plan-status__button {
+	flex-shrink: 0;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: 15px;
+		width: 100%;
+	}
 }
 
 .plan-status__progress {
-	margin-left: 180px;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: -24px;
+}
+
+.plan-status__progress-bar,
+.plan-status__time-until-expiry {
+	margin-left: 24px;
+}
+
+.plan-status__progress-bar {
+	flex: 1 0 6em;
+}
+
+.plan-status__time-until-expiry {
+	font-weight: 700;
 }

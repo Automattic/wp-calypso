@@ -3,49 +3,32 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
+import PlanStatusProgress from './progress';
 import ProgressBar from 'components/progress-bar';
 import { isPremium, isBusiness } from 'lib/products-values';
+import * as upgradesActions from 'lib/upgrades/actions';
 
 const PlanStatus = React.createClass( {
 	propTypes: {
-		plan: React.PropTypes.object.isRequired
+		plan: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired
 	},
 
-	getDaysUntilExpiry() {
-		const { userFacingExpiryMoment } = this.props.plan;
+	purchasePlan() {
+		upgradesActions.addItem( cartItems.planItem( this.props.plan.productSlug ) );
 
-		return userFacingExpiryMoment.diff( this.moment(), 'days' );
-	},
-
-	renderProgressBar() {
-		const { subscribedMoment, userFacingExpiryMoment } = this.props.plan,
-			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
-			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedMoment, 'days' ),
-			timeUntilExpiryInDays = this.getDaysUntilExpiry(),
-			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
-
-		return (
-			<ProgressBar
-				value={ progress }
-				total={ trialPeriodInDays } />
-		);
-	},
-
-	renderDaysRemaining() {
-		return this.translate(
-			'%(daysUntilExpiry)s day remaining',
-			'%(daysUntilExpiry)s days remaining',
-			{
-				args: { daysUntilExpiry: this.getDaysUntilExpiry() },
-				count: this.getDaysUntilExpiry(),
-				context: 'The amount of time until the trial plan expires, e.g. "5 days remaining"'
-			}
-		);
+		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
 	render() {
@@ -59,10 +42,12 @@ const PlanStatus = React.createClass( {
 			<div className="plan-status">
 				<CompactCard className="plan-status__info">
 					<div className={ iconClasses } />
+
 					<div className="plan-status__header">
 						<span className="plan-status__text">
 							{ this.translate( 'Your Current Plan:' ) }
 						</span>
+
 						<h1 className="plan-status__plan">
 							{
 								this.translate( '%(planName)s Free Trial', {
@@ -71,15 +56,15 @@ const PlanStatus = React.createClass( {
 							}
 						</h1>
 					</div>
+
+					<Button
+						className="plan-status__button"
+						onClick={ this.purchasePlan }>
+						{ this.translate( 'Purchase Now' ) }
+					</Button>
 				</CompactCard>
-				<CompactCard>
-					<div className="plan-status__time-until-expiry">
-						{ this.renderDaysRemaining() }
-					</div>
-					<div className="plan-status__progress">
-						{ this.renderProgressBar() }
-					</div>
-				</CompactCard>
+
+				<PlanStatusProgress plan={ this.props.plan } />
 			</div>
 		);
 	}

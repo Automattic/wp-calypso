@@ -2,35 +2,35 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	where = require( 'lodash/collection/where' ),
-	some = require( 'lodash/collection/some' ),
 	every = require( 'lodash/collection/every' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	flow = require( 'lodash/function/flow' ),
-	reject = require( 'lodash/collection/reject' ),
 	extend = require( 'lodash/object/assign' ),
+	flow = require( 'lodash/function/flow' ),
+	isEqual = require( 'lodash/lang/isEqual' ),
 	merge = require( 'lodash/object/merge' ),
-	rest = require( 'lodash/array/rest' );
+	reject = require( 'lodash/collection/reject' ),
+	rest = require( 'lodash/array/rest' ),
+	some = require( 'lodash/collection/some' ),
+	where = require( 'lodash/collection/where' );
 
 /**
  * Internal dependencies
  */
 var productsValues = require( 'lib/products-values' ),
 	formatProduct = productsValues.formatProduct,
-	isPlan = productsValues.isPlan,
-	isGoogleApps = productsValues.isGoogleApps,
-	isDomainProduct = productsValues.isDomainProduct,
-	isSiteRedirect = productsValues.isSiteRedirect,
-	isDependentProduct = productsValues.isDependentProduct,
-	isDomainRegistration = productsValues.isDomainRegistration,
-	isNoAds = productsValues.isNoAds,
 	isCustomDesign = productsValues.isCustomDesign,
+	isDependentProduct = productsValues.isDependentProduct,
+	isDomainProduct = productsValues.isDomainProduct,
 	isDomainRedemption = productsValues.isDomainRedemption,
-	isVideoPress = productsValues.isVideoPress,
+	isDomainRegistration = productsValues.isDomainRegistration,
+	isGoogleApps = productsValues.isGoogleApps,
+	isNoAds = productsValues.isNoAds,
+	isPlan = productsValues.isPlan,
+	isPrivateRegistration = productsValues.isPrivateRegistration,
+	isSiteRedirect = productsValues.isSiteRedirect,
+	isSpaceUpgrade = productsValues.isSpaceUpgrade,
 	isUnlimitedSpace = productsValues.isUnlimitedSpace,
 	isUnlimitedThemes = productsValues.isUnlimitedThemes,
-	isSpaceUpgrade = productsValues.isSpaceUpgrade,
-	isPrivateRegistration = productsValues.isPrivateRegistration,
+	isVideoPress = productsValues.isVideoPress,
 	sortProducts = require( 'lib/products-values/sort' );
 
 /**
@@ -282,10 +282,10 @@ function hasOnlyRenewalItems( cart ) {
  * Creates a new shopping cart item for a plan.
  *
  * @param {Object} productSlug - the unique string that identifies the product
- * @param {boolean} isFreeTrial - specifies if this is a free trial or not
+ * @param {boolean} isFreeTrial - optionally specifies if this is a free trial or not
  * @returns {Object} the new item as `CartItemValue` object
  */
-function planItem( productSlug, isFreeTrial ) {
+function planItem( productSlug, isFreeTrial = false ) {
 	return {
 		product_slug: productSlug,
 		free_trial: isFreeTrial
@@ -648,50 +648,51 @@ function getIncludedDomain( cartItem ) {
 }
 
 module.exports = {
-	add: add,
-	addPrivacyToAllDomains: addPrivacyToAllDomains,
-	businessPlan: businessPlan,
-	domainMapping: domainMapping,
-	domainPrivacyProtection: domainPrivacyProtection,
-	domainRedemption,
-	googleApps: googleApps,
-	googleAppsExtraLicenses: googleAppsExtraLicenses,
-	domainRegistration: domainRegistration,
-	findFreeTrial: findFreeTrial,
-	getAll: getAll,
-	getAllSorted: getAllSorted,
-	getDomainMappings: getDomainMappings,
-	getDomainRegistrations: getDomainRegistrations,
-	getGoogleApps: getGoogleApps,
-	getIncludedDomain,
-	getRenewalItems,
-	getRenewalItemFromCartItem,
-	getRenewalItemFromProduct: getRenewalItemFromProduct,
-	getItemForPlan: getItemForPlan,
-	getSiteRedirects: getSiteRedirects,
-	hasDomainMapping: hasDomainMapping,
-	hasDomainRegistration: hasDomainRegistration,
-	hasDomainInCart: hasDomainInCart,
-	hasDomainCredit: hasDomainCredit,
-	hasFreeTrial: hasFreeTrial,
-	hasPlan: hasPlan,
-	hasNlTld: hasNlTld,
-	getDomainRegistrationTld: getDomainRegistrationTld,
-	hasOnlyFreeTrial: hasOnlyFreeTrial,
-	hasOnlyProductsOf: hasOnlyProductsOf,
-	hasOnlyRenewalItems,
-	hasProduct: hasProduct,
-	hasRenewalItem,
-	premiumPlan: premiumPlan,
-	remove: remove,
-	removeItemAndDependencies: removeItemAndDependencies,
-	removePrivacyFromAllDomains: removePrivacyFromAllDomains,
-	siteRedirect: siteRedirect,
-	themeItem: themeItem,
+	add,
+	addPrivacyToAllDomains,
+	businessPlan,
 	customDesignItem,
+	domainMapping,
+	domainPrivacyProtection,
+	domainRedemption,
+	domainRegistration,
+	findFreeTrial,
+	getAll,
+	getAllSorted,
+	getDomainMappings,
+	getDomainRegistrations,
+	getDomainRegistrationTld,
+	getGoogleApps,
+	getIncludedDomain,
+	getItemForPlan,
+	getRenewalItemFromCartItem,
+	getRenewalItemFromProduct,
+	getRenewalItems,
+	getSiteRedirects,
+	googleApps,
+	googleAppsExtraLicenses,
+	hasDomainCredit,
+	hasDomainInCart,
+	hasDomainMapping,
+	hasDomainRegistration,
+	hasFreeTrial,
+	hasNlTld,
+	hasOnlyFreeTrial,
+	hasOnlyProductsOf,
+	hasOnlyRenewalItems,
+	hasPlan,
+	hasProduct,
+	hasRenewalItem,
 	noAdsItem,
-	videoPressItem,
+	planItem,
+	premiumPlan,
+	remove,
+	removeItemAndDependencies,
+	removePrivacyFromAllDomains,
+	siteRedirect,
+	spaceUpgradeItem,
+	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
-	spaceUpgradeItem
+	videoPressItem
 };
