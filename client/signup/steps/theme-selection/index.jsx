@@ -64,9 +64,13 @@ module.exports = React.createClass( {
 		this.props.goToNextStep();
 	},
 
+	getThemes() {
+		return this.props.signupDependencies.themes || this.props.themes;
+	},
+
 	renderThemesList: function() {
 		var actionLabel = this.translate( 'Pick' ),
-			themes = this.props.themes.map( function( theme ) {
+			themes = this.getThemes().map( function( theme ) {
 				return {
 					id: theme.slug,
 					name: theme.name,
