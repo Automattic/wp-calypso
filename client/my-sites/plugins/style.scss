@@ -2,9 +2,9 @@
 	margin-bottom: 16px;
 }
 
+.plugins__section-actions.section-header.card {
+	padding-right: 16px;
 
-
-.plugins__section-actions {
 	.section-header__actions {
 		flex-grow: 1;
 		display: flex;
@@ -53,6 +53,11 @@
 	cursor: pointer;
 	display: flex;
 		align-items: center;
+
+	&:focus {
+		border-color: $blue-medium;
+		box-shadow: 0 0 0 2px $blue-light;
+	}
 }
 
 .plugins__actions_dropdown {

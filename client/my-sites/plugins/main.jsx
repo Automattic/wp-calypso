@@ -1,51 +1,51 @@
 /**
  * External dependencies
  */
-import React from 'react/addons'
-import debugModule from 'debug'
-import titleCase from 'to-title-case'
-import classNames from 'classnames'
-import some from 'lodash/collection/some'
-import find from 'lodash/collection/find'
-import filter from 'lodash/collection/filter'
-import reject from 'lodash/collection/reject'
-import assign from 'lodash/object/assign'
-import property from 'lodash/utility/property'
-import isEmpty from 'lodash/lang/isEmpty'
+import React from 'react/addons';
+import debugModule from 'debug';
+import titleCase from 'to-title-case';
+import classNames from 'classnames';
+import some from 'lodash/collection/some';
+import find from 'lodash/collection/find';
+import filter from 'lodash/collection/filter';
+import reject from 'lodash/collection/reject';
+import assign from 'lodash/object/assign';
+import property from 'lodash/utility/property';
+import isEmpty from 'lodash/lang/isEmpty';
 
 /**
  * Internal dependencies
  */
-import acceptDialog from 'lib/accept'
-import analytics from 'analytics'
-import { abtest } from 'lib/abtest'
-import Main from 'components/main'
-import SidebarNavigation from 'my-sites/sidebar-navigation'
-import pluginsAccessControl from 'my-sites/plugins/access-control'
-import { isBusiness } from 'lib/products-values'
-import PluginItem from './plugin-item/plugin-item'
-import SectionNav from 'components/section-nav'
-import NavTabs from 'components/section-nav/tabs'
-import NavItem from 'components/section-nav/item'
-import Search from 'components/search'
-import URLSearch from 'lib/mixins/url-search'
-import EmptyContent from 'components/empty-content'
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog'
-import PluginsActions from 'lib/plugins/actions'
-import PluginsLog from 'lib/plugins/log-store'
-import PluginsStore from 'lib/plugins/store'
-import PluginsDataStore from 'lib/plugins/wporg-data/store'
-import PluginNotices from 'lib/plugins/notices'
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
-import PlanNudge from 'components/plans/plan-nudge'
-import FeatureExample from 'components/feature-example'
-import SectionHeader from 'components/section-header'
-import ButtonGroup from 'components/button-group'
-import Button from 'components/button'
-import Gridicon from 'components/gridicon'
-import SelectDropdown from 'components/select-dropdown'
-import DropdownItem from 'components/select-dropdown/item'
-import DropdownSeparator from 'components/select-dropdown/separator'
+import acceptDialog from 'lib/accept';
+import analytics from 'analytics';
+import { abtest } from 'lib/abtest';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import pluginsAccessControl from 'my-sites/plugins/access-control';
+import { isBusiness } from 'lib/products-values';
+import PluginItem from './plugin-item/plugin-item';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
+import URLSearch from 'lib/mixins/url-search';
+import EmptyContent from 'components/empty-content';
+import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginsStore from 'lib/plugins/store';
+import PluginsDataStore from 'lib/plugins/wporg-data/store';
+import PluginNotices from 'lib/plugins/notices';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PlanNudge from 'components/plans/plan-nudge';
+import FeatureExample from 'components/feature-example';
+import SectionHeader from 'components/section-header';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 
 /**
@@ -401,7 +401,7 @@ export default React.createClass( {
 	renderPlaceholders() {
 		const placeholderCount = 16;
 		return [
-			<SectionHeader label="Jetpack Plugins" className="plugins__section-actions is-placeholder" />,
+			<SectionHeader key="plugins__section-placeholder" label="Jetpack Plugins" className="plugins__section-actions is-placeholder" />,
 			[ ... Array( placeholderCount ).keys() ].map( i => <PluginItem key={ 'placeholder-' + i } /> )
 		];
 	},
@@ -433,6 +433,7 @@ export default React.createClass( {
 
 	renderPluginList( plugins, header, disableManage ) {
 		let headerMarkup;
+		const slug = header.replace( / /g, '' );
 
 		if ( isEmpty( plugins ) ) {
 			return;
@@ -451,15 +452,15 @@ export default React.createClass( {
 		}
 
 		headerMarkup = (
-			<SectionHeader label={ header } className={ headerClasses }>
-				{ disableManage || ! this.state.bulkManagement ? null : <BulkSelect totalElements={ this.state.plugins.length } selectedElements={ this.getSelected().length } onToggle={ this.unselectOrSelectAll } /> }
+			<SectionHeader label={ header } className={ headerClasses } key={ 'plugins__section-header-' + slug } >
+				{ disableManage || ! this.state.bulkManagement ? null : <BulkSelect key="plugins__bulk-select" totalElements={ this.state.plugins.length } selectedElements={ this.getSelected().length } onToggle={ this.unselectOrSelectAll } /> }
 				{ disableManage ? null : this.getCurrentActionDropdown() }
 				{ disableManage ? null : this.getCurrentActionButtons() }
 			</SectionHeader>
 		);
 
 		return (
-			<span>
+			<span key={ 'plugins__header-' + slug }>
 				{ headerMarkup }
 				<div className={ itemListClasses }>{ this.formatPlugins( plugins, disableManage ) }</div>
 			</span>
@@ -529,8 +530,6 @@ export default React.createClass( {
 		let leftSideButtons = [];
 		let updateButtons = [];
 		let activateButtons = [];
-		let GroupComponent = ButtonGroup;
-		let ButtonComponent = Button;
 
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
@@ -539,44 +538,42 @@ export default React.createClass( {
 		if ( ! this.state.bulkManagement ) {
 			if ( 0 < this.state.pluginUpdateCount ) {
 				rightSideButtons.push(
-					<GroupComponent>
-						<ButtonComponent compact primary onClick={ this.updateAllPlugins } >
+					<ButtonGroup key="plugins__buttons-update-all">
+						<Button compact primary onClick={ this.updateAllPlugins } >
 							{ this.translate( 'Update All', { context: 'button label' } ) }
-						</ButtonComponent>
-					</GroupComponent>
+						</Button>
+					</ButtonGroup>
 				);
 			}
 
 			rightSideButtons.push(
-				<GroupComponent><ButtonComponent compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Bulk Edit', { context: 'button label' } ) }</ButtonComponent></GroupComponent>
+				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Bulk Edit', { context: 'button label' } ) }</Button></ButtonGroup>
 			);
 		} else {
-			activateButtons.push( <ButtonComponent disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</ButtonComponent> )
+			activateButtons.push( <Button key="plugins__buttons-activate" disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
 			let deactivateButton = isJetpackSelected
-				? <ButtonComponent disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</ButtonComponent>
-				: <ButtonComponent disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</ButtonComponent>;
+				? <Button key="plugins__buttons-deactivate" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
+				: <Button key="plugins__buttons-disable" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
 			activateButtons.push( deactivateButton )
 
-			updateButtons.push( <ButtonComponent disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</ButtonComponent> );
-			updateButtons.push( <ButtonComponent disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</ButtonComponent> );
+			updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+			updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
 
-			leftSideButtons.push( <GroupComponent>{ activateButtons }</GroupComponent> );
-			leftSideButtons.push( <GroupComponent>{ updateButtons }</GroupComponent> );
+			leftSideButtons.push( <ButtonGroup key="plugins__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
+			leftSideButtons.push( <ButtonGroup key="plugins__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
 
-			leftSideButtons.push( <GroupComponent><ButtonComponent disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</ButtonComponent></GroupComponent> );
+			leftSideButtons.push( <ButtonGroup key="plugins__buttons-remove-button"><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
 
 			rightSideButtons.push(
-				<GroupComponent>
-					<button className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
-						<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
-						<Gridicon icon="cross" />
-					</button>
-				</GroupComponent>
+				<button key="plugins__buttons-close-button" className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
+					<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
+					<Gridicon icon="cross" />
+				</button>
 			);
 		}
 
-		buttons.push( <span className="plugins__action-buttons">{ leftSideButtons }</span> );
-		buttons.push( <span className="plugins__mode-buttons">{ rightSideButtons }</span> );
+		buttons.push( <span key="plugins__buttons-action-buttons" className="plugins__action-buttons">{ leftSideButtons }</span> );
+		buttons.push( <span key="plugins__buttons-global-buttons" className="plugins__mode-buttons">{ rightSideButtons }</span> );
 
 		return buttons;
 	},
@@ -606,7 +603,7 @@ export default React.createClass( {
 
 			options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
 			options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
-			actions.push( <SelectDropdown compact className="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
+			actions.push( <SelectDropdown compact className="plugins__actions_dropdown" key="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
 		}
 		return actions;
 	},
@@ -696,7 +693,7 @@ export default React.createClass( {
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	},
 
-	getPluginsContent() {
+	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
 
 		if ( isEmpty( plugins ) && ( this.props.search || 'inactive' === this.props.filter || 'updates' === this.props.filter ) ) {
@@ -828,7 +825,7 @@ export default React.createClass( {
 						placeholder={ this.getSearchPlaceholder() }
 					/>
 				</SectionNav>
-				{ this.getPluginsContent() }
+				{ this.renderPluginsContent() }
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
 			</Main>
 		);
