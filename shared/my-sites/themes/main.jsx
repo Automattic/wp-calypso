@@ -3,7 +3,8 @@
  */
 var React = require( 'react/addons' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
-	partialRight = require( 'lodash/function/partialRight' );
+	partialRight = require( 'lodash/function/partialRight' ),
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -25,15 +26,15 @@ var Main = require( 'components/main' ),
 	ThemesSiteSelectorModal = require( './themes-site-selector-modal' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
-	getButtonOptions = require( './theme-options' );
+	getButtonOptions = require( './theme-options' ),
+	ThemeSelectors = require( 'lib/themes/selectors' );
 
 var Themes = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
 
 	propTypes: {
 		siteId: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired,
-		store: React.PropTypes.object.isRequired
+		sites: React.PropTypes.object.isRequired
 	},
 
 	getInitialState: function() {
@@ -59,7 +60,7 @@ var Themes = React.createClass( {
 			<ActivatingTheme siteId={ this.props.sites.getSelectedSite().ID } >
 				<ThanksModal
 					site={ this.props.sites.getSelectedSite() }
-					clearActivated={ bindActionCreators( Action.clearActivated, this.props.store.dispatch ) } />
+					clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
 			</ActivatingTheme>
 		);
 	},
@@ -71,7 +72,7 @@ var Themes = React.createClass( {
 	togglePreview: function( theme ) {
 		const site = this.props.sites.getSelectedSite();
 		if ( site.jetpack ) {
-			this.props.store.dispatch( Action.customize( theme, site ) );
+			this.props.dispatch( Action.customize( theme, site ) );
 		} else {
 			const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
 			this.setState( { showPreview: ! this.state.showPreview, previewUrl: previewUrl, previewingTheme: theme } );
@@ -102,7 +103,7 @@ var Themes = React.createClass( {
 		var site = this.props.sites.getSelectedSite(),
 			isJetpack = site.jetpack,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			dispatch = this.props.store.dispatch;
+			dispatch = this.props.dispatch;
 
 		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
@@ -147,7 +148,8 @@ var Themes = React.createClass( {
 						trackScrollPage={ this.props.trackScrollPage }
 						tier={ this.props.tier }
 						customize={ bindActionCreators( Action.customize, dispatch ) }
-						getState={ this.props.store.getState } />
+						queryParams={ this.props.queryParams }
+						themesList={ this.props.themesList } />
 				}
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal selectedAction={ this.state.selectedAction }
 					selectedTheme={ this.state.selectedTheme }
@@ -166,4 +168,12 @@ var Themes = React.createClass( {
 	}
 } );
 
-module.exports = Themes;
+export default connect(
+	( state, props ) => Object.assign( {},
+		props,
+		{
+			queryParams: ThemeSelectors.getQueryParams( state ),
+			themesList: ThemeSelectors.getThemesList( state )
+		}
+	)
+)( Themes );
