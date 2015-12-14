@@ -108,6 +108,10 @@ Boolean representing the selected visual state. `selected={ true }` creates a bl
 
 Optional URL to navigate to when option is clicked.
 
+`title`
+
+Optional title to show when hovering over segmented control options. Default will be the child content of the item.
+
 `onClick`
 
 Optional callback that will be applied when a `ControlItem` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.
