@@ -49,7 +49,7 @@ PreferencesActions.fetch = function() {
 		} );
 	}
 
-	wpcom.me().settings( function( error, data ) {
+	wpcom.me().settings().get( function( error, data ) {
 		if ( ! error && data ) {
 			mergePreferencesToLocalStorage( data[ PreferencesConstants.USER_SETTING_KEY ] );
 		}
@@ -77,7 +77,7 @@ PreferencesActions.set = function( key, value ) {
 	mergePreferencesToLocalStorage( preferences );
 
 	_pendingUpdates++;
-	wpcom.me().saveSettings( JSON.stringify( settings ), function( error, data ) {
+	wpcom.me().settings().update( JSON.stringify( settings ), function( error, data ) {
 		if ( --_pendingUpdates ) {
 			return;
 		}

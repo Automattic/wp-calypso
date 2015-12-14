@@ -1,6 +1,8 @@
 /**
  * Module dependencies.
  */
+import Me from 'wpcom-unpublished/dist/lib/me';
+import inherits from 'inherits';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 
@@ -18,6 +20,11 @@ function UndocumentedMe( wpcom ) {
 	this.wpcom = wpcom;
 }
 
+/**
+ * Inherits from Me class
+ */
+inherits( UndocumentedMe, Me );
+
 UndocumentedMe.prototype.billingHistory = function( callback ) {
 	return this.wpcom.req.get( '/me/billing-history', callback );
 };
@@ -32,23 +39,6 @@ UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callb
 
 UndocumentedMe.prototype.purchases = function( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
-};
-
-UndocumentedMe.prototype.settings = function( callback ) {
-	return this.wpcom.req.get( {
-		apiVersion: '1.1',
-		path: '/me/settings'
-	}, callback );
-};
-
-UndocumentedMe.prototype.saveSettings = function( settings, callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/me/settings',
-		body: settings
-	};
-
-	return this.wpcom.req.post( args, callback );
 };
 
 UndocumentedMe.prototype.getConnectedApplications = function( callback ) {

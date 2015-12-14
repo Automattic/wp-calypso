@@ -11,7 +11,7 @@ var debug = require( 'debug' )( 'calypso:user:settings' ),
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
+var emitterClass = require( 'lib/mixins/emitter' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	user = require( 'lib/user' )();
 
@@ -31,6 +31,8 @@ function decodeUserSettingsEntities( data ) {
 
 /**
  * Initialize UserSettings with defaults
+ *
+ * @return {Undefined} undefined
  */
 function UserSettings() {
 	if ( ! ( this instanceof UserSettings ) ) {
@@ -44,10 +46,12 @@ function UserSettings() {
 	this.unsavedSettings = {};
 }
 
-Emitter( UserSettings.prototype );
+emitterClass( UserSettings.prototype );
 
 /**
  * Returns a boolean signifying whether there are settings or not
+ *
+ * @return {Boolean} true is the user has settings object
  */
 UserSettings.prototype.hasSettings = function() {
 	return !! this.settings;
@@ -55,6 +59,8 @@ UserSettings.prototype.hasSettings = function() {
 
 /**
  * Get user settings. If not already initialized, then fetch settings
+ *
+ * @return {Object} user setting object
  */
 UserSettings.prototype.getSettings = function() {
 	if ( ! this.settings ) {
@@ -73,9 +79,9 @@ UserSettings.prototype.fetchSettings = function() {
 
 	this.fetchingSettings = true;
 	debug( 'Fetching user settings' );
-	wpcom.me().settings( function( error, data ) {
+	wpcom.me().settings().get( function( error, data ) {
 		if ( ! error ) {
-			this.settings = decodeUserSettingsEntities ( data );
+			this.settings = decodeUserSettingsEntities( data );
 			this.initialized = true;
 			this.emit( 'change' );
 		}
@@ -83,15 +89,19 @@ UserSettings.prototype.fetchSettings = function() {
 		this.fetchingSettings = false;
 
 		debug( 'Settings successfully retrieved' );
-
 	}.bind( this ) );
 };
 
 /**
  * Post settings to WordPress.com API at /me/settings endpoint
+ *
+ * @param {Function} callback - callback function
+ * @param {Object} settingsOverride - default settings object
+ * @return {Null} null
  */
 UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 	var settings = settingsOverride ? settingsOverride : this.unsavedSettings;
+
 	if ( isEmpty( settings ) ) {
 		debug( 'There are no settings to save.' );
 		callback( null );
@@ -99,7 +109,8 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 	}
 
 	debug( 'Saving settings: ' + JSON.stringify( settings ) );
-	wpcom.me().saveSettings( settings, function( error, data ) {
+
+	wpcom.me().settings().update( settings, function( error, data ) {
 		if ( ! error ) {
 			this.settings = decodeUserSettingsEntities( merge( this.settings, data ) );
 
@@ -125,7 +136,7 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 };
 
 UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
-	wpcom.me().saveSettings( { user_email_change_pending: false }, function( error, data ) {
+	wpcom.me().settings().update( { user_email_change_pending: false }, function( error, data ) {
 		if ( ! error ) {
 			this.settings = merge( this.settings, data );
 			this.emit( 'change' );
@@ -138,6 +149,9 @@ UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
 
 /**
  * Given a settingName, returns that original setting if it exists or null
+ *
+ * @param {String} settingName - setting name
+ * @return {*} setting key value
  */
 UserSettings.prototype.getOriginalSetting = function( settingName ) {
 	var setting = null;
@@ -150,6 +164,8 @@ UserSettings.prototype.getOriginalSetting = function( settingName ) {
 
 /**
  * Is two-step enabled for the current user?
+ *
+ * @return {Boolean} return true if two-step is enabled
  */
 UserSettings.prototype.isTwoStepEnabled = function() {
 	return this.settings ? this.settings.two_step_enabled : false;
@@ -157,6 +173,8 @@ UserSettings.prototype.isTwoStepEnabled = function() {
 
 /**
  * Is two-step sms enabled for the current user?
+ *
+ * @return {Boolean} return true if two-step sms is enabled
  */
 UserSettings.prototype.isTwoStepSMSEnabled = function() {
 	return this.settings ? this.settings.two_step_sms_enabled : false;
@@ -164,6 +182,8 @@ UserSettings.prototype.isTwoStepSMSEnabled = function() {
 
 /**
  * Returns true if there is a pending email change, false if not.
+ *
+ * @return {Boolean} pending email state
  */
 UserSettings.prototype.isPendingEmailChange = function() {
 	if ( this.settings ) {
@@ -175,13 +195,18 @@ UserSettings.prototype.isPendingEmailChange = function() {
 
 /**
  * Given a settingName, returns that setting if it exists or null
+ *
+ * @param {String}  settingName - setting name
+ * @return {*} setting name value
  */
 UserSettings.prototype.getSetting = function( settingName ) {
 	var setting = null;
 
 	// If we haven't fetched settings, or if the setting doesn't exist return null
 	if ( this.settings && 'undefined' !== typeof this.settings[ settingName ] ) {
-		setting = ( 'undefined' !== typeof this.unsavedSettings[ settingName ] ) ? this.unsavedSettings[ settingName ] : this.settings[ settingName ];
+		setting = ( 'undefined' !== typeof this.unsavedSettings[ settingName ] )
+			? this.unsavedSettings[ settingName ]
+			: this.settings[ settingName ];
 	}
 
 	return setting;
@@ -190,10 +215,13 @@ UserSettings.prototype.getSetting = function( settingName ) {
 /**
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
+ *
+ * @param {String} settingName - setting name
+ * @param {*} value - setting value
+ * @return {Boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
 	if ( this.settings && 'undefined' !== typeof this.settings[ settingName ] ) {
-
 		this.unsavedSettings[ settingName ] = value;
 
 		/*
@@ -201,8 +229,11 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
 		 */
-		if ( this.settings[ settingName ] === this.unsavedSettings[ settingName ] && 'user_login' !== settingName ) {
-			debug( 'Removing ' + settingName + ' from changed settings.'  );
+		if (
+			this.settings[ settingName ] === this.unsavedSettings[ settingName ] &&
+			'user_login' !== settingName
+		) {
+			debug( 'Removing ' + settingName + ' from changed settings.' );
 			delete this.unsavedSettings[ settingName ];
 		}
 
