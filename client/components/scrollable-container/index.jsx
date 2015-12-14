@@ -8,9 +8,9 @@ import smartSetState from 'lib/react-smart-set-state';
 /**
  * Internal dependencies
  */
- import Gridicon from 'components/gridicon';
+import Gridicon from 'components/gridicon';
 
- export default React.createClass( {
+export default React.createClass( {
 	displayName: 'ScrollableContainer',
 	smartSetState: smartSetState,
 
@@ -81,12 +81,12 @@ import smartSetState from 'lib/react-smart-set-state';
 		}
 	},
 
-    scrollLock: function () {
+	scrollLock: function () {
 		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] );
 		if ( content ) {
 			content.addEventListener( 'wheel', this.onScrollHandler );
 		}
-    },
+	},
 
 	scrollRelease: function () {
 		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] );
@@ -95,14 +95,14 @@ import smartSetState from 'lib/react-smart-set-state';
 		}
 	},
 
-    cancelScrollEvent: function ( event ) {
+	cancelScrollEvent: function ( event ) {
 		event.stopImmediatePropagation();
 		event.preventDefault();
 		event.returnValue = false;
 		return false;
-    },
+	},
 
-    onScrollHandler: function ( event ) {
+	onScrollHandler: function ( event ) {
 		var content = React.findDOMNode( this.refs[ 'scrollable-content' ] );
 		var scrollTop = content.scrollTop;
 		var scrollHeight = content.scrollHeight;
@@ -118,7 +118,7 @@ import smartSetState from 'lib/react-smart-set-state';
 			content.scrollTop = 0;
 			return this.cancelScrollEvent( event );
 		}
-    },
+	},
 
 	render() {
 		let containerClasses,
