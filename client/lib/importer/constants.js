@@ -23,6 +23,8 @@ export const actionTypes = Object.freeze( {
 	API_FAILURE: 'importer-api-failure',
 	API_SUCCESS: 'importer-api-success',
 
+	RECEIVE_IMPORT_STATUS: 'importer-receive-import-status',
+
 	CANCEL_IMPORT: 'importer-cancel',
 	FAIL_UPLOAD: 'importer-fail-upload',
 	FINISH_UPLOAD: 'importer-finish-upload',
