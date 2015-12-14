@@ -146,10 +146,14 @@ var PublishMenu = React.createClass( {
 			link = menuItem.link + this.props.siteSuffix;
 		}
 
+		let preload;
+
 		if ( menuItem.name === 'post' ) {
 			icon = 'posts';
+			preload = 'posts-pages';
 		} else if ( menuItem.name === 'page' ) {
 			icon = 'pages';
+			preload = 'posts-pages';
 		} else if ( menuItem.name === 'jetpack-portfolio' ) {
 			icon = 'folder';
 		} else if ( menuItem.name === 'jetpack-testimonial' ) {
@@ -166,6 +170,7 @@ var PublishMenu = React.createClass( {
 				buttonLink={ menuItem.buttonLink }
 				onNavigate={ this.props.onNavigate }
 				icon={ icon }
+				preload={ preload }
 			/>
 		);
 	},
