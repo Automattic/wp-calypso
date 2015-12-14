@@ -19,7 +19,7 @@ const Main = require( 'components/main' ),
 	SubscriptionListItem = require( './list-item' ),
 	Notice = require( 'components/notice' ),
 	stats = require( 'reader/stats' ),
-	Search = require( 'components/search' ),
+	SearchCard = require( 'components/search-card' ),
 	URLSearch = require( 'lib/mixins/url-search' ),
 	FollowingEditSubscribeForm = require( './subscribe-form' ),
 	FeedSubscriptionErrorTypes = require( 'lib/reader-feed-subscriptions/constants' ).error,
@@ -376,9 +376,9 @@ var FollowingEdit = React.createClass( {
 					initialSearchString={ this.props.initialFollowUrl }
 					ref="feed-search" />
 
-				<Search
+				<SearchCard
 					key="existingFeedSearch"
-					autoFocus={ false }
+					autoFocus={ true }
 					additionalClasses="following-edit__existing-feed-search"
 					placeholder={ searchPlaceholder }
 					onSearch={ this.doSearch } initialValue={ this.props.search } delaySearch={ true } ref="url-search" />
