@@ -60,14 +60,22 @@ describe( 'Interval', function() {
 			assert( id + 2 === add( EVERY_MINUTE, noop ) );
 		} );
 
-		it( 'Runs onTick()', function() {
+		it( 'Runs onTick() immediately', function() {
 			const o = { counter: 0 };
 			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
 
-			assert( 0 === o.counter );
+			assert( 1 === o.counter );
+		} );
+
+		it( 'Runs onTick() on the intervals', function() {
+			const o = { counter: 0 };
+			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
+
+			assert( 1 === o.counter );
 
 			this.clock.tick( 1000 );
-			assert( 1 === o.counter );
+
+			assert( 2 === o.counter );
 		} );
 
 		it( 'Changes the callback on prop changes', function() {
@@ -78,14 +86,14 @@ describe( 'Interval', function() {
 			wrapper.setProps( { period: EVERY_MINUTE } );
 
 			this.clock.tick( 1000 );
-			assert( 1 === o.counter );
+			assert( 3 === o.counter );
 
 			this.clock.tick( 1000 * 60 );
-			assert( 2 === o.counter );
+			assert( 4 === o.counter );
 
 			wrapper.setProps( { onTick: noop } );
 			this.clock.tick( 1000 * 60 );
-			assert( 2 === o.counter );
+			assert( 4 === o.counter );
 		} );
 
 		it( 'Adds the action when mounted', function() {
@@ -98,7 +106,7 @@ describe( 'Interval', function() {
 			wrapper.setProps( { children: <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> } );
 
 			this.clock.tick( 1000 );
-			assert( 1 === o.counter );
+			assert( 2 === o.counter );
 		} );
 
 		it( 'Removes the action when unMounted', function() {
@@ -106,12 +114,12 @@ describe( 'Interval', function() {
 			const wrapper = mount( <div><Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval></div> );
 
 			this.clock.tick( 1000 );
-			assert( 1 === o.counter );
+			assert( 2 === o.counter );
 
 			wrapper.setProps( { children: null } );
 
 			this.clock.tick( 1000 );
-			assert( 1 === o.counter );
+			assert( 2 === o.counter );
 		} );
 	} );
 } );

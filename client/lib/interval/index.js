@@ -84,7 +84,7 @@ export default React.createClass( {
 		if ( this.state.id ) {
 			remove( this.state.id );
 		}
-		this.setState( { id: add( period, onTick ) } );
+		this.setState( { id: add( period, onTick ) }, onTick );
 	},
 
 	stop() {
