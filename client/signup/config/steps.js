@@ -25,6 +25,11 @@ module.exports = {
 		providesDependencies: [ 'theme', 'images' ]
 	},
 
+	'design-type': {
+		stepName: 'design-type',
+		providesDependencies: [ 'themes' ]
+	},
+
 	site: {
 		stepName: 'site',
 		apiRequestFunction: stepActions.createSite,
