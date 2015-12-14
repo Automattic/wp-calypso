@@ -2,15 +2,16 @@
 	margin-bottom: 30px;
 }
 
-.plan-status__info {
+.plan-status__info,
+.plan-features__feature {
 	align-content: space-between;
-	align-items: center;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 
 	@include breakpoint( ">480px" ) {
 		flex-direction: row;
+		align-items: center;
 	}
 
 	&:after {
@@ -59,7 +60,8 @@
 	font-weight: 700;
 }
 
-.plan-status__button {
+.plan-status__button,
+.plan-features__feature-button {
 	flex-shrink: 0;
 
 	@include breakpoint( "<480px" ) {
@@ -85,4 +87,14 @@
 
 .plan-status__time-until-expiry {
 	font-weight: 700;
+}
+
+.plan-features__feature-description {
+	em {
+		font-style: normal;
+	}
+
+	strong {
+		display: block;
+	}
 }

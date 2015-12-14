@@ -37,7 +37,8 @@ const PlanOverview = React.createClass( {
 					plan={ this.props.plan }
 					selectedSite={ this.props.selectedSite } />
 
-				<PlanFeatures />
+				<PlanFeatures
+					selectedSite={ this.props.selectedSite } />
 			</Main>
 		);
 	}
