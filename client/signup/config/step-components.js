@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 var UserSignupComponent = require( 'signup/steps/user' ),
-	SiteCreationComponent = require( 'signup/steps/site-creation' ),
+	SiteComponent = require( 'signup/steps/site' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
 	DomainsStepComponent = require( 'signup/steps/domains' ),
@@ -14,7 +14,7 @@ var UserSignupComponent = require( 'signup/steps/user' ),
 module.exports = {
 	themes: ThemeSelectionComponent,
 	'theme-headstart': ThemeSelectionComponent,
-	site: SiteCreationComponent,
+	site: SiteComponent,
 	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	plans: PlansStepComponent,
