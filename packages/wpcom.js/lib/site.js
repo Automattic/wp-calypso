@@ -231,6 +231,32 @@ Site.prototype.tag = function( slug ) {
 };
 
 /**
+ * Get number of posts in the post type groups by post status
+ *
+ * *Example:*
+ *   // Get number post of pages
+ *    wpcom
+ *    .site( 'my-blog.wordpress.com' )
+ *    .postCounts( 'page', function( err, data ) {
+ *      // `counts` data object
+ *    } );
+ *
+ * @param {String} type - post type
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
+ */
+Site.prototype.postCounts = function( type = 'post', query, fn ) {
+	if ( 'function' === typeof query ) {
+		fn = query;
+		query = {};
+	}
+
+	let path = '/sites/' + this._id + '/post-counts/' + type;
+	return this.wpcom.req.get( path, query, fn );
+};
+
+/**
  * Get a rendered shortcode for a site.
  *
  * Note: The current user must have publishing access.

@@ -89,6 +89,36 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
+		describe( 'wpcom.site.postCounts', function() {
+			it( 'should get post counts with `post` type', function( done ) {
+				site.postCounts( 'post', function( err, data ) {
+					if ( err ) throw err;
+
+					assert.ok( 1 <= data.counts.all.draft );
+					assert.ok( 1 <= data.counts.mine.draft );
+					done();
+				} );
+			} );
+
+			it( 'should get post counts with `page` status', function( done ) {
+				site.postCounts( 'page', function( err, data ) {
+					if ( err ) throw err;
+
+					assert.ok( 1 <= data.counts.all.draft );
+					assert.ok( 1 <= data.counts.mine.draft );
+					done();
+				} );
+			} );
+
+			it( 'should return 404 by unknown type', function( done ) {
+				var rnd = String( Math.random() ).substr( 2 );
+				site.postCounts( rnd, function( err ) {
+					assert.ok( 'Unknown post type requested', err.message );
+					done();
+				} );
+			} );
+		} );
+
 		describe( 'wpcom.site.usersList', function() {
 			it( 'should request users list', done => {
 				site.usersList()
