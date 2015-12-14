@@ -175,6 +175,13 @@ module.exports = React.createClass( {
 		);
 	},
 
+	onItemClick: function( event ) {
+		if ( this.props.isSelectable ) {
+			event.preventDefault();
+			this.props.onClick( this );
+		}
+	},
+
 	render: function() {
 		var pluginTitle,
 			plugin = this.props.plugin,
@@ -228,32 +235,6 @@ module.exports = React.createClass( {
 				);
 				errorCounter++;
 			}, this );
-			return (
-				<div>
-					<CompactCard className={ pluginItemClasses }>
-						<input
-							className="plugin-item__checkbox"
-							id={ plugin.slug }
-							type="checkbox"
-							onClick={ this.props.onClick }
-							checked={ this.props.isSelected }
-							readOnly={ true }
-						/>
-						<label className="plugin-item__label" htmlFor={ plugin.slug }>
-							<span className="screen-reader-text">
-								{ this.translate( 'Toggle selection of %(plugin)s', { args: { plugin: plugin.name } } ) }
-							</span>
-						</label>
-						<div className="plugin-item__info">
-							{ pluginTitle }
-							{ this.pluginMeta( plugin ) }
-						</div>
-					</CompactCard>
-					<div className="plugin-item__error-notices">
-						{ errorNotices }
-					</div>
-				</div>
-			);
 		}
 		if ( this.props.hasAllNoManageSites ) {
 			return (
@@ -275,14 +256,26 @@ module.exports = React.createClass( {
 			);
 		}
 		return (
-			<CompactCard className="plugin-item">
-				<a href={ this.props.pluginLink } className="plugin-item__link">
-					<PluginIcon image={ plugin.icon }/>
-					{ pluginTitle }
-					{ this.pluginMeta( plugin ) }
-				</a>
-				{ this.props.selectedSite ? this.renderActions() : this.renderCount() }
-			</CompactCard>
+			<div>
+				<CompactCard className="plugin-item">
+					{ ! this.props.isSelectable
+						? null
+						: <input className="plugin-item__checkbox"
+								id={ plugin.slug }
+								type="checkbox"
+								onClick={ this.props.onClick }
+								checked={ this.props.isSelected }
+								readOnly={ true } />
+					}
+					<a href={ this.props.pluginLink } onClick={ this.onItemClick } className="plugin-item__link">
+						<PluginIcon image={ plugin.icon }/>
+						{ pluginTitle }
+						{ this.pluginMeta( plugin ) }
+					</a>
+					{ this.props.selectedSite ? this.renderActions() : this.renderCount() }
+				</CompactCard>
+				{ errorNotices }
+			</div>
 		);
 	}
 
