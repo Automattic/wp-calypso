@@ -49,6 +49,26 @@ const PlanFeatures = React.createClass( {
 					button={ { label: this.translate( 'Setup Analytics' ), onClick: this.goToGoogleAnalytics } }
 					description={ this.translate( 'Connect your Google Analytics account.' ) }
 					heading={ this.translate( 'Google Analytics Integration' ) } />
+
+				<PlanFeature
+					description={ this.translate( 'You have access to dozens of our best themes available.' ) }
+					heading={ this.translate( 'Unlimited Premium Themes' ) } />
+
+				<PlanFeature
+					description={ this.translate( 'WordPress.com ads will not display on your site.' ) }
+					heading={ this.translate( 'No Ads' ) } />
+
+				<PlanFeature
+					description={ this.translate( 'You can upload unlimited photos, videos, or music.' ) }
+					heading={ this.translate( 'Storage Space' ) } />
+
+				<PlanFeature
+					description={ this.translate( 'You can upload and hosts videos on your site without advertising.' ) }
+					heading={ this.translate( 'VideoPress' ) } />
+
+				<PlanFeature
+					description={ this.translate( 'You can live chat with our happiness engineers anytime you need.' ) }
+					heading={ this.translate( 'Support' ) } />
 			</div>
 		);
 	}
