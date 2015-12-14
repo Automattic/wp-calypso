@@ -132,8 +132,7 @@ function getDefaultContext( request ) {
 		jsFile: 'build',
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
-		devDocsURL: '/devdocs',
-		branchName: getCurrentBranchName()
+		devDocsURL: '/devdocs'
 	};
 
 	context.app = {
@@ -168,6 +167,7 @@ function getDefaultContext( request ) {
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
+		context.branchName = getCurrentBranchName();
 	}
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
