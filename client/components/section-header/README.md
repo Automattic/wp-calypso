@@ -14,7 +14,7 @@ render: function() {
 	return (
 		<SectionHeader label={ this.translate( 'Team' ) }>
 			<Button compact>
-				this.translate( 'Manage' ) }
+				{ this.translate( 'Manage' ) }
 			</Button>
 			<Button
 				compact
