@@ -151,9 +151,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 					ref="followingEditSubscriptionSearch"
 					onKeyDown={ this.handleKeyDown }
 					disableAutocorrect={ true }
-					autoFocus={ true }
 					initialValue={ this.props.initialSearchString }
-					isOpen={ true }
 				/>
 				{ searchResult }
 			</div>
