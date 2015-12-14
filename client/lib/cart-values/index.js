@@ -24,6 +24,18 @@ function applyCoupon( coupon ) {
 	};
 }
 
+function canRemoveFromCart( cart, cartItem ) {
+	if ( productsValues.isCredits( cartItem ) ) {
+		return false;
+	}
+
+	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivateRegistration( cartItem ) ) {
+		return false;
+	}
+
+	return true;
+}
+
 /**
  * Compare two different cart objects and get the messages of newest one
  *
@@ -112,13 +124,14 @@ function isPayPalExpressEnabled( cart ) {
 
 module.exports = {
 	applyCoupon,
+	canRemoveFromCart,
 	cartItems,
+	emptyCart,
 	fillInAllCartItemAttributes,
 	fillInSingleCartItemAttributes,
 	getNewMessages,
 	getRefundPolicy,
 	isFree,
 	isPaidForFullyInCredits,
-	isPayPalExpressEnabled,
-	emptyCart
+	isPayPalExpressEnabled
 };

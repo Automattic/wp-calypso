@@ -244,16 +244,7 @@ function isSpaceUpgrade( product ) {
 		'100gb_space_upgrade' === product.product_slug;
 }
 
-function canRemoveFromCart( product ) {
-	if ( isPrivateRegistration( product ) || isCredits( product ) ) {
-		return false;
-	}
-
-	return true;
-}
-
 module.exports = {
-	canRemoveFromCart,
 	formatProduct,
 	isFreePlan: isFreePlan,
 	isPremium: isPremium,

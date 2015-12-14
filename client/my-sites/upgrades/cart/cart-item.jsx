@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	canRemoveFromCart = require( 'lib/products-values' ).canRemoveFromCart,
+	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	getIncludedDomain = cartItems.getIncludedDomain,
 	isCredits = require( 'lib/products-values' ).isCredits,
@@ -158,7 +158,7 @@ module.exports = React.createClass( {
 	},
 
 	removeButton: function() {
-		if ( canRemoveFromCart( this.props.cartItem ) ) {
+		if ( canRemoveFromCart( this.props.cart, this.props.cartItem ) ) {
 			return <button className="remove-item noticon noticon-close" onClick={ this.removeFromCart }></button>;
 		}
 	}
