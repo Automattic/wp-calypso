@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-const React = require( 'react' ),
+const ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	autosize = require( 'autosize' ),
 	forEach = require( 'lodash/collection/forEach' ),
@@ -260,7 +261,7 @@ module.exports = React.createClass( {
 
 		} );
 
-		autosize( React.findDOMNode( this.refs.text ) );
+		autosize( ReactDom.findDOMNode( this.refs.text ) );
 	},
 
 	componentWillUnmount: function() {
@@ -273,11 +274,11 @@ module.exports = React.createClass( {
 		window.removeEventListener( 'scroll', this.onScrollPinTools );
 		tinymce.remove( this._editor );
 		this._editor = null;
-		autosize.destroy( React.findDOMNode( this.refs.text ) );
+		autosize.destroy( ReactDom.findDOMNode( this.refs.text ) );
 	},
 
 	doAutosizeUpdate: function() {
-		autosize.update( React.findDOMNode( this.refs.text ) );
+		autosize.update( ReactDom.findDOMNode( this.refs.text ) );
 	},
 
 	bindEditorEvents: function( prevProps ) {
@@ -362,7 +363,7 @@ module.exports = React.createClass( {
 
 	focusEditor: function() {
 		if ( this.props.mode === 'html' ) {
-			const textNode = React.findDOMNode( this.refs.text );
+			const textNode = ReactDom.findDOMNode( this.refs.text );
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
 			textNode.setSelectionRange( 0, 0 );

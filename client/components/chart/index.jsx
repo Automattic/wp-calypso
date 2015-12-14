@@ -61,7 +61,7 @@ module.exports = React.createClass( {
 
 	resize: function() {
 		if ( this.isMounted() ) {
-			var node = this.getDOMNode(),
+			var node = this.refs.chart,
 				width = node.clientWidth - 82,
 				maxBars;
 
@@ -141,7 +141,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className='chart'>
+			<div ref="chart" className='chart'>
 				<div className="chart__y-axis-markers">
 					<div className="chart__y-axis-marker is-hundred"></div>
 					<div className="chart__y-axis-marker is-fifty"></div>

@@ -126,7 +126,7 @@ var TokenField = React.createClass( {
 	},
 
 	_onBlur: function( event ) {
-		var stillActive = this.getDOMNode().contains( event.relatedTarget );
+		var stillActive = event.target.contains( event.relatedTarget );
 
 		if ( stillActive ) {
 			debug( '_onBlur but component still active; not doing anything' );
@@ -176,7 +176,7 @@ var TokenField = React.createClass( {
 	},
 
 	_onClick: function( event ) {
-		var inputContainer = this.refs.tokensAndInput.getDOMNode();
+		var inputContainer = this.refs.tokensAndInput;
 		if ( event.target === inputContainer || inputContainer.contains( event.target ) ) {
 			debug( '_onClick activating component' );
 			this.setState( {

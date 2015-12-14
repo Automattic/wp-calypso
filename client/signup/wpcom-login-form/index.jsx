@@ -14,7 +14,7 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		debug( 'submit form' );
-		this.refs.wpcomLoginForm.getDOMNode().submit();
+		this.refs.wpcomLoginForm.submit();
 	},
 
 	action: function() {

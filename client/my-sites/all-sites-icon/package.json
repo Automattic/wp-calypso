@@ -2,8 +2,5 @@
   "name": "all sites icon",
   "version": "0.0.0",
   "private": true,
-  "main": "index.jsx",
-  "dependencies": {
-    "react": "0.12.1"
-  }
+  "main": "index.jsx"
 }

@@ -11,7 +11,7 @@ This is desirable since implementations are inconsistent or non-existant.
 var Emojify = require( 'components/emojify' ),
 	textToEmojify = 'This will be converted 🙈🙉🙊';
 
-React.render( <div><p>This text will be unaffected</p><Emojify size="72">{ textToEmojify }</Emojify></div> );
+ReactDom.render( <div><p>This text will be unaffected</p><Emojify size="72">{ textToEmojify }</Emojify></div> );
 
 ```
 

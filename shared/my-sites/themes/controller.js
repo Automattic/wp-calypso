@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	titlecase = require( 'to-title-case' );
 
 /**
@@ -38,7 +39,7 @@ var controller = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( ThemesComponent, {
 				key: site_id,
 				siteId: site_id,

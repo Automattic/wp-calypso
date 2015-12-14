@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import page from 'page';
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -28,7 +29,7 @@ const productsList = new ProductsList(),
 	sites = new SitesList();
 
 const renderPage = function( component ) {
-	React.render(
+	ReactDom.render(
 		component,
 		document.getElementById( 'primary' )
 	);

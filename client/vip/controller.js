@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	page = require( 'page' ),
 	qs = require( 'querystring' );
 
@@ -26,7 +27,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP', { textOnly: true } ), { siteID: siteUrl } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( vipdashboard, {
 				context: context,
 				sites: sites,
@@ -44,7 +45,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Deploys', { textOnly: true } ), { siteID: siteUrl } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( vipdeploys, {
 				context: context,
 				sites: sites,
@@ -62,7 +63,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Billing', { textOnly: true } ), { siteID: siteUrl } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( vipbilling, {
 				context: context,
 				sites: sites,
@@ -80,7 +81,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Support', { textOnly: true } ), { siteID: siteUrl } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( vipsupport, {
 				context: context,
 				sites: sites,
@@ -98,7 +99,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Backups', { textOnly: true } ), { siteID: siteUrl } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( vipbackups, {
 				context: context,
 				sites: sites,
@@ -118,7 +119,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Logs', { textOnly: true } ), { siteID: siteUrl } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( viplogs, {
 				context: context,
 				search: search,

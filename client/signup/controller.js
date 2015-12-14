@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import qs from 'qs';
@@ -81,7 +82,7 @@ export default {
 
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
-		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
@@ -91,7 +92,7 @@ export default {
 			noSidebar: true
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SignupComponent, {
 				path: context.path,
 				refParameter,
@@ -114,7 +115,7 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( PhoneSignupComponent, {
 				path: context.path,
 				countriesList: countriesList,
@@ -132,7 +133,7 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Log in to your WordPress.com account' ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( LogInComponent, {
 				path: context.path,
 				locale: context.params.lang

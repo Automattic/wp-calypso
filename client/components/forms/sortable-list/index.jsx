@@ -105,9 +105,9 @@ module.exports = React.createClass( {
 	},
 
 	getCursorElementIndex: function( event ) {
-		var cursorCompare = this.compareCursorVerticalToElement( this.refs.list.getDOMNode(), event ),
+		var cursorCompare = this.compareCursorVerticalToElement( this.refs.list, event ),
 			adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex ),
-			shadowRect = this.refs[ 'wrap-shadow-' + this.state.activeIndex ].getDOMNode().getBoundingClientRect(),
+			shadowRect = this.refs[ 'wrap-shadow-' + this.state.activeIndex ].getBoundingClientRect(),
 			index;
 
 		index = findIndex( this.props.children, function( child, i ) {
@@ -127,9 +127,9 @@ module.exports = React.createClass( {
 			// same vertical, and only if the element is on the same line as
 			// the active item's shadow element
 			if ( 'horizontal' === this.props.direction ) {
-				if ( 1 === cursorCompare && this.refs[ 'wrap-' + i ].getDOMNode().getBoundingClientRect().top >= shadowRect.top ) {
+				if ( 1 === cursorCompare && this.refs[ 'wrap-' + i ].getBoundingClientRect().top >= shadowRect.top ) {
 					permittedVertical = 'bottom';
-				} else if ( -1 === cursorCompare && this.refs[ 'wrap-' + i ].getDOMNode().getBoundingClientRect().bottom <= shadowRect.bottom ) {
+				} else if ( -1 === cursorCompare && this.refs[ 'wrap-' + i ].getBoundingClientRect().bottom <= shadowRect.bottom ) {
 					permittedVertical = 'top';
 				}
 			}
@@ -138,7 +138,7 @@ module.exports = React.createClass( {
 				// If the item which is currently before the active item is
 				// suddenly after, return this item's index
 				isBeyond = this.isCursorBeyondElementThreshold(
-					this.refs[ 'wrap-' + i ].getDOMNode(),
+					this.refs[ 'wrap-' + i ],
 					'horizontal' === this.props.direction ? 'left' : 'top',
 					permittedVertical,
 					event
@@ -147,7 +147,7 @@ module.exports = React.createClass( {
 				// If the item which is currently after the active item is
 				// suddenly before, return this item's index
 				isBeyond = isBeyond || this.isCursorBeyondElementThreshold(
-					this.refs[ 'wrap-' + i ].getDOMNode(),
+					this.refs[ 'wrap-' + i ],
 					'horizontal' === this.props.direction ? 'right' : 'bottom',
 					permittedVertical,
 					event
@@ -220,7 +220,7 @@ module.exports = React.createClass( {
 		}
 
 		this.setState( {
-			position: this.getPositionForCursorElement( this.refs[ 'wrap-' + this.state.activeIndex ].getDOMNode().firstChild, event ),
+			position: this.getPositionForCursorElement( this.refs[ 'wrap-' + this.state.activeIndex ].firstChild, event ),
 			activeOrder: activeOrder
 		} );
 	},

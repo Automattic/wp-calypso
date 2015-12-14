@@ -4,6 +4,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	TestUtils = React.addons.TestUtils;
 
@@ -14,7 +15,7 @@ var FormRange = require( '../' );
 
 describe( 'Range', function() {
 	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	it( 'should render beginning content if passed a `minContent` prop', function() {
@@ -47,6 +48,6 @@ describe( 'Range', function() {
 		var range = TestUtils.renderIntoDocument( <FormRange value={ 8 } showValueLabel={ true } readOnly={ true } /> ),
 			label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
 
-		expect( label.getDOMNode().textContent ).to.equal( '8' );
+		expect( label.textContent ).to.equal( '8' );
 	} );
 } );

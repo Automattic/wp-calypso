@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
 import { Container } from 'flux/utils';
 
@@ -43,8 +44,8 @@ class EmbedView extends Component {
 			return;
 		}
 
-		const view = React.findDOMNode( this.refs.view );
-		const iframe = React.findDOMNode( this.refs.iframe );
+		const view = ReactDom.findDOMNode( this.refs.view );
+		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 		if ( ! iframe.contentDocument ) {
 			return;
 		}
@@ -72,7 +73,7 @@ class EmbedView extends Component {
 			return;
 		}
 
-		const iframe = React.findDOMNode( this.refs.iframe );
+		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 		if ( ! iframe.contentDocument ) {
 			return;
 		}

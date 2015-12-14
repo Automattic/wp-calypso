@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/string/trim' );
@@ -53,7 +54,7 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 }
 
 function removeFullPostDialog() {
-	React.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
+	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
 	__fullPostInstance = null;
 }
 
@@ -88,7 +89,7 @@ module.exports = {
 			noSidebar: false
 		} );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( ReaderSidebarComponent, { path: context.path } ),
 			document.getElementById( 'secondary' )
 		);
@@ -109,7 +110,7 @@ module.exports = {
 
 		pageTitleSetter()( i18n.translate( 'Following' ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( FollowingComponent, {
 				key: 'following',
 				listName: i18n.translate( 'Followed Sites' ),
@@ -140,7 +141,7 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_blog_preview' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
 				store: feedStore,
@@ -173,7 +174,7 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_blog_preview' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
 				store: feedStore,
@@ -208,7 +209,7 @@ module.exports = {
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state of
 		// __fullPostInstance before making another
-		__fullPostInstance = React.render(
+		__fullPostInstance = ReactDom.render(
 			React.createElement( FullPostDialog, {
 				feedId: feedId,
 				postId: postId,
@@ -245,7 +246,7 @@ module.exports = {
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state of
 		// __fullPostInstance before making another
-		__fullPostInstance = React.render(
+		__fullPostInstance = ReactDom.render(
 			React.createElement( FullPostDialog, {
 				blogId: blogId,
 				postId: postId,
@@ -287,7 +288,7 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_tag_loaded' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( TagStream, {
 				key: 'tag-' + encodedTag,
 				store: tagStore,
@@ -319,7 +320,7 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_list_loaded' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( ListStream, {
 				key: 'tag-' + context.params.user + '-' + context.params.list,
 				store: listStore,
@@ -354,7 +355,7 @@ module.exports = {
 
 		pageTitleSetter( context )( 'Automattic' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( FollowingComponent, {
 				key: 'read-a8c',
 				listName: 'Automattic',
@@ -384,7 +385,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( LikedPostsStream, {
 				key: 'liked',
 				store: likedPostsStore,
@@ -413,7 +414,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( FollowingEdit, {
 				key: 'following-edit',
 				initialFollowUrl: context.query.follow,
@@ -430,7 +431,7 @@ module.exports = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
-		React.render(
+		ReactDom.render(
 			React.createElement( RecommendedForYou, {
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -457,7 +458,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( listManagementContents, {
 				key: 'list-management-contents',
 				list: {
@@ -479,7 +480,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( listManagementDescriptionEdit, {
 				key: 'list-management-description-edit',
 				list: {
@@ -501,7 +502,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( listManagementFollowers, {
 				key: 'list-management-followers',
 				list: {
@@ -528,7 +529,7 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_discover_viewed' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SiteStream, {
 				key: 'site-' + blogId,
 				store: feedStore,

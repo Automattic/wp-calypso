@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	assign = require( 'lodash/object/assign' ),
 	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
@@ -98,7 +99,7 @@ FullPostView = React.createClass( {
 		if ( ! this.isMounted() ) {
 			return;
 		}
-		let commentListNode = React.findDOMNode( this.refs.commentList );
+		let commentListNode = ReactDom.findDOMNode( this.refs.commentList );
 		if ( commentListNode ) {
 			commentListNode.scrollIntoView( { behavior: 'smooth' } );
 		}
@@ -184,7 +185,7 @@ FullPostView = React.createClass( {
 	},
 
 	_parseEmoji: function() {
-		twemoji.parse( React.findDOMNode( this.refs.article ) );
+		twemoji.parse( ReactDom.findDOMNode( this.refs.article ) );
 	}
 
 } );

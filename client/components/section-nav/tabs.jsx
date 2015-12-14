@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	debounce = require( 'lodash/function/debounce' ),
 	classNames = require( 'classnames' );
 
@@ -100,7 +101,7 @@ var NavTabs = React.createClass( {
 			if ( ! child ) {
 				return;
 			}
-			let tabWidth = this.refs[ 'tab-' + index ].getDOMNode().offsetWidth;
+			let tabWidth = ReactDom.findDOMNode( this.refs[ 'tab-' + index ] ).offsetWidth;
 			totalWidth += tabWidth;
 		}.bind( this ) );
 
@@ -139,7 +140,7 @@ var NavTabs = React.createClass( {
 				return;
 			}
 
-			navGroupWidth = this.refs.navGroup.getDOMNode().offsetWidth;
+			navGroupWidth = this.refs.navGroup.offsetWidth;
 
 			if ( ! this.tabsWidth ) {
 				this.getTabWidths();

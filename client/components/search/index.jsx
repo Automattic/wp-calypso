@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	debounce = require( 'lodash/function/debounce' ),
 	noop = () => {};
@@ -125,15 +126,15 @@ module.exports = React.createClass( {
 	},
 
 	focus: function() {
-		React.findDOMNode( this.refs.searchInput ).focus();
+		ReactDom.findDOMNode( this.refs.searchInput ).focus();
 	},
 
 	blur: function() {
-		React.findDOMNode( this.refs.searchInput ).blur();
+		ReactDom.findDOMNode( this.refs.searchInput ).blur();
 	},
 
 	getCurrentSearchValue: function() {
-		return React.findDOMNode( this.refs.searchInput ).value;
+		return ReactDom.findDOMNode( this.refs.searchInput ).value;
 	},
 
 	clear: function() {
@@ -171,7 +172,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		input = React.findDOMNode( this.refs.searchInput );
+		input = ReactDom.findDOMNode( this.refs.searchInput );
 
 		this.setState( {
 			keyword: '',
@@ -182,7 +183,7 @@ module.exports = React.createClass( {
 		input.blur();
 
 		if ( this.props.pinned ) {
-			React.findDOMNode( this.refs.openIcon ).focus();
+			ReactDom.findDOMNode( this.refs.openIcon ).focus();
 		}
 
 		this.props.onSearchClose();
@@ -207,7 +208,7 @@ module.exports = React.createClass( {
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	onFocus: function() {
-		var input = React.findDOMNode( this.refs.searchInput ),
+		var input = ReactDom.findDOMNode( this.refs.searchInput ),
 			setValue = input.value;
 
 		if ( setValue ) {

@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	Qs = require( 'qs' );
 
 /**
@@ -24,7 +25,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Customizer', { textOnly: true } ), { siteID: siteID } );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( CustomizeComponent, {
 				domain: context.params.domain || '',
 				sites: sites,

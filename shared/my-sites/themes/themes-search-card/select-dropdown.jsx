@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' );
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ var ThemesSelectDropdown = React.createClass( {
 		// We want the dropdown's "main" button (the toggler) to be as wide as
 		// the longest of its options, so we look at the hidden container of
 		// those options.
-		const hiddenList = React.findDOMNode( this ).querySelector( 'ul' );
+		const hiddenList = ReactDom.findDOMNode( this ).querySelector( 'ul' );
 		const maxWidth = hiddenList.getBoundingClientRect().width;
 		return ( maxWidth + WIDTH_CORRECTION ) + 'px';
 	},

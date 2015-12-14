@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import debounce from 'lodash/function/debounce';
@@ -87,7 +88,7 @@ export default React.createClass( {
 
 	componentDidMount() {
 		this.checkScrollPosition = throttle( function() {
-			const node = React.findDOMNode( this );
+			const node = ReactDom.findDOMNode( this );
 
 			if ( ( node.scrollTop + node.clientHeight ) >= node.scrollHeight ) {
 				this.maybeFetchNextPage();

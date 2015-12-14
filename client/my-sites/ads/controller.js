@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	page = require( 'page' );
 
 /**
@@ -61,7 +62,7 @@ module.exports = {
 
 		_recordPageView( context, layoutTitle );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Ads, {
 				site: site,
 				section: context.params.section,

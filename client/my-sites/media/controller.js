@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	qs = require( 'querystring' );
 
 /**
@@ -33,7 +34,7 @@ module.exports = {
 		} );
 
 		// Render
-		React.render(
+		ReactDom.render(
 			React.createElement( MediaComponent, {
 				sites: sites,
 				filter: filter,

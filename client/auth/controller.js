@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 import startsWith from 'lodash/string/startsWith';
 import page from 'page';
@@ -16,7 +17,7 @@ module.exports = {
 		if ( OAuthToken.getToken() ) {
 			page( '/' );
 		} else {
-			React.render(
+			ReactDom.render(
 				React.createElement( LoginComponent, {} ),
 				document.getElementById( 'primary' )
 			);

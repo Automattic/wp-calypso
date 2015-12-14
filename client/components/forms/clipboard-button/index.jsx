@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	Clipboard = require( 'clipboard' ),
 	omit = require( 'lodash/object/omit' ),
 	noop = require( 'lodash/utility/noop' ),
@@ -28,7 +29,7 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var button = React.findDOMNode( this.refs.button );
+		var button = ReactDom.findDOMNode( this.refs.button );
 		this.clipboard = new Clipboard( button, {
 			text: () => this.props.text
 		} );

@@ -4,6 +4,7 @@
 var debug = require( 'debug' )( 'calypso:infinite-list' ),
 	omit = require( 'lodash/object/omit' ),
 	raf = require( 'raf' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' );
 
@@ -270,7 +271,7 @@ module.exports = React.createClass( {
 
 	boundsForRef: function( ref ) {
 		if ( ref in this.refs ) {
-			return this.refs[ ref ].getDOMNode().getBoundingClientRect();
+			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
 		return null;
 	},
@@ -283,7 +284,7 @@ module.exports = React.createClass( {
 	 * @returns {Array}
 	 */
 	getVisibleItemIndexes: function( options ) {
-		var container = React.findDOMNode( this ),
+		var container = ReactDom.findDOMNode( this ),
 			visibleItemIndexes = [],
 			firstIndex = this.state.firstRenderedIndex,
 			lastIndex = this.state.lastRenderedIndex,

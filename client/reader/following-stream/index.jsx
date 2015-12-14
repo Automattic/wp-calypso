@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	noop = require( 'lodash/utility/noop' ),
 	times = require( 'lodash/utility/times' );
 
@@ -106,7 +107,7 @@ module.exports = React.createClass( {
 			documentElement,
 			windowTop,
 			scrollY;
-		selectedNode = React.findDOMNode( this ).querySelector( '.is-selected' );
+		selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
 		if ( selectedNode ) {
 			documentElement = document.documentElement;
 			selectedNode.focus();

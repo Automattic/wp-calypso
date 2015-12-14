@@ -73,12 +73,8 @@ describe( '#passToChildren()', function() {
 		renderer.render( <PassThrough>{ null }<div /></PassThrough> );
 		result = renderer.getRenderOutput();
 
-		React.Children.forEach( result.props.children, function( child, i ) {
-			switch ( i ) {
-				case 0: expect( child ).to.be.null; break;
-				case 1: expect( child.props ).to.eql( DUMMY_PROPS ); break;
-			}
-		} );
+		expect( React.Children.count( result.props.children ) ).to.equal( 1 );
+		expect( React.Children.toArray( result.props.children )[ 0 ].props ).to.eql( DUMMY_PROPS );
 	} );
 
 	it( 'should preserve props passed to the children', function() {

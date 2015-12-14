@@ -1,6 +1,7 @@
+var ReactDom = require( 'react-dom' );
 var React = require( 'react' );
 
-var CSSCore = require( 'react/lib/CSSCore' );
+var CSSCore = require( 'fbjs/lib/CSSCore' );
 var ReactTransitionEvents = require( 'react/lib/ReactTransitionEvents' );
 
 var onlyChild = require( 'react/lib/onlyChild' );
@@ -15,7 +16,7 @@ var NO_EVENT_TIMEOUT = 2000;
 var SingleChildCSSTransitionGroupChild = React.createClass( {
 
 	transition: function( animationType, finishCallback ) {
-		var node = this.getDOMNode();
+		var node = ReactDom.findDOMNode( this );
 		var className = this.props.name + '-' + animationType;
 		var activeClassName = className + '-active';
 		var noEventTimeout = null;
@@ -69,7 +70,7 @@ var SingleChildCSSTransitionGroupChild = React.createClass( {
 	flushClassNameQueue: function() {
 		if ( this.isMounted() ) {
 			this.classNameQueue.forEach(
-				CSSCore.addClass.bind( CSSCore, this.getDOMNode() )
+				CSSCore.addClass.bind( CSSCore, ReactDom.findDOMNode( this ) )
 			);
 		}
 		this.classNameQueue.length = 0;

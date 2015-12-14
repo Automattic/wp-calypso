@@ -29,7 +29,7 @@ module.exports = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		var canvas = this.refs.canvas.getDOMNode(),
+		var canvas = this.refs.canvas,
 			ctx = canvas.getContext( '2d' );
 
 		ctx.clearRect( 0, 0, this.props.width, this.props.height );
@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 	},
 
 	drawArcs: function() {
-		var canvas = this.refs.canvas.getDOMNode(),
+		var canvas = this.refs.canvas,
 			x = ( this.props.width / 2 ),
 			y = ( this.props.height / 2 ),
 			ctx = canvas.getContext( '2d' ),

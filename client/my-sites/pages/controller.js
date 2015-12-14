@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	qs = require( 'querystring' );
 
 /**
@@ -43,7 +44,7 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Pages, {
 				context: context,
 				siteID: siteID,

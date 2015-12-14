@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
 
 /**
@@ -43,12 +44,12 @@ class GalleryView extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			wrapper: React.findDOMNode( this.refs.view )
+			wrapper: ReactDom.findDOMNode( this.refs.view )
 		} );
 
 		if ( window.MutationObserver ) {
 			this.observer = new MutationObserver( this.props.onResize );
-			this.observer.observe( React.findDOMNode( this.refs.view ), {
+			this.observer.observe( ReactDom.findDOMNode( this.refs.view ), {
 				attributes: true,
 				childList: true,
 				subtree: true

@@ -30,8 +30,8 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var node = this.refs.wrapper.getDOMNode(),
-			yearNode = this.refs.year.getDOMNode(),
+		var node = this.refs.wrapper,
+			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
 
@@ -51,8 +51,8 @@ module.exports = React.createClass( {
 
 	resize: function() {
 		var scrollProps = {},
-			node = this.refs.wrapper.getDOMNode(),
-			yearNode = this.refs.year.getDOMNode(),
+			node = this.refs.wrapper,
+			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
 			left = parseInt( yearNode.style.left, 10 );
@@ -68,8 +68,8 @@ module.exports = React.createClass( {
 	},
 
 	scroll: function( direction ) {
-		var node = this.refs.wrapper.getDOMNode(),
-			yearNode = this.refs.year.getDOMNode(),
+		var node = this.refs.wrapper,
+			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
 			left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );

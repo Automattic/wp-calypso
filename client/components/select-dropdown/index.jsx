@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	findWhere = require( 'lodash/collection/findWhere' ),
 	filter = require( 'lodash/collection/filter' ),
 	findIndex = require( 'lodash/array/findIndex' ),
@@ -111,7 +112,7 @@ var SelectDropdown = React.createClass( {
 					ref: ( child.type === DropdownItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: function( event ) {
-						this.refs.dropdownContainer.getDOMNode().focus();
+						this.refs.dropdownContainer.focus();
 						if ( typeof child.props.onClick === 'function' ) {
 							child.props.onClick( event );
 						}
@@ -247,7 +248,7 @@ var SelectDropdown = React.createClass( {
 			selected: option.value
 		} );
 
-		this.refs.dropdownContainer.getDOMNode().focus();
+		this.refs.dropdownContainer.focus();
 	},
 
 	navigateItem: function( event ) {
@@ -273,7 +274,7 @@ var SelectDropdown = React.createClass( {
 			case 27: // escape
 				event.preventDefault();
 				this.closeDropdown();
-				this.refs.dropdownContainer.getDOMNode().focus();
+				this.refs.dropdownContainer.focus();
 				break;
 		}
 	},
@@ -326,12 +327,12 @@ var SelectDropdown = React.createClass( {
 			return;
 		}
 
-		this.refs[ 'item-' + newIndex ].refs.itemLink.getDOMNode().focus();
+		ReactDom.findDOMNode( this.refs[ 'item-' + newIndex ].refs.itemLink ).focus();
 		this.focused = newIndex;
 	},
 
 	handleOutsideClick: function( event ) {
-		if ( ! React.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
+		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
 			this.closeDropdown();
 		}
 	},
