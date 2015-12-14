@@ -16,6 +16,7 @@ var analytics = require( 'analytics' ),
 	Main = require( 'components/main' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
+	setSection = require( 'state/ui/actions' ).setSection,
 	productsList = require( 'lib/products-list' )();
 
 module.exports = {
@@ -200,7 +201,7 @@ module.exports = {
 			basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
-		context.layout.setState( { noSidebar: true } );
+		context.layout.dispatch( setSection( null, { hasSidebar: false } ) );
 
 		if ( ! lastTransaction ) {
 			page.redirect( '/plans' );

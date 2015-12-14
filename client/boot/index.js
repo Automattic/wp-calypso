@@ -138,7 +138,7 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
-	var layoutSection, layout, layoutComponentCreator, reduxStore, validSections = [];
+	var layoutSection, layout, layoutElement, reduxStore, validSections = [];
 
 	init();
 
@@ -164,7 +164,7 @@ function boot() {
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
 
-		layoutComponentCreator = () => React.createElement( Layout, {
+		layoutElement = React.createElement( Layout, {
 			user: user,
 			sites: sites,
 			focus: layoutFocus,
@@ -180,11 +180,11 @@ function boot() {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
 
-		layoutComponentCreator = () => React.createElement( LoggedOutLayout );
+		layoutElement = React.createElement( LoggedOutLayout );
 	}
 
 	layout = ReactDom.render(
-		React.createElement( ReduxProvider, { store: reduxStore }, layoutComponentCreator ),
+		React.createElement( ReduxProvider, { store: reduxStore }, layoutElement ),
 		document.getElementById( 'wpcom' )
 	);
 
@@ -199,7 +199,6 @@ function boot() {
 	}
 
 	setUpContext( layout, reduxStore );
-
 	page( '*', require( 'lib/route/normalize' ) );
 
 	// warn against navigating from changed, unsaved forms

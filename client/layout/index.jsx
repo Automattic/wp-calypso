@@ -11,8 +11,7 @@ var React = require( 'react' ),
  */
 var Masterbar = require( 'layout/masterbar' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	GlobalNotices = require( 'notices/global-notices' ),
-	NoticesList = require( 'notices/notices-list' ),
+	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
 	translator = require( 'lib/translator-jumpstart' ),
 	TranslatorInvitation = require( './community-translator/invitation' ),
@@ -23,16 +22,18 @@ var Masterbar = require( 'layout/masterbar' ),
 	InviteMessage = require( 'my-sites/invites/invite-message' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
+	connect = require( 'react-redux' ).connect,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	PollerPool = require( 'lib/data-poller' ),
-	KeyboardShortcutsMenu;
+	KeyboardShortcutsMenu,
+	Layout;
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
 }
 
-module.exports = React.createClass( {
+Layout = React.createClass( {
 	displayName: 'Layout',
 
 	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
@@ -40,8 +41,8 @@ module.exports = React.createClass( {
 	_sitesPoller: null,
 
 	componentWillUpdate: function( nextProps, nextState ) {
-		if ( this.state.section !== nextState.section ) {
-			if ( nextState.section === 'sites' ) {
+		if ( this.props.section !== nextProps.section ) {
+			if ( nextProps.section === 'sites' ) {
 				setTimeout( function() {
 					if ( ! this.isMounted() || this._sitesPoller ) {
 						return;
@@ -56,14 +57,6 @@ module.exports = React.createClass( {
 
 	componentWillUnmount: function() {
 		this.removeSitesPoller();
-	},
-
-	getInitialState: function() {
-		return {
-			section: false,
-			isLoading: false,
-			noSidebar: false
-		};
 	},
 
 	removeSitesPoller: function() {
@@ -84,35 +77,34 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var sectionClass = 'wp layout is-section-' + this.state.section + ' focus-' + this.props.focus.getCurrent(),
+		var sectionClass = 'wp layout is-section-' + this.props.section + ' focus-' + this.props.focus.getCurrent(),
 			showWelcome = this.props.nuxWelcome.getWelcome(),
 			newestSite = this.newestSite(),
 			translatorInvitation = this.props.translatorInvitation,
 			showInvitation = ! showWelcome &&
 				translatorInvitation.isPending() &&
-				translatorInvitation.isValidSection( this.state.section ),
+				translatorInvitation.isValidSection( this.props.section ),
 			loadingClass = classnames( {
 				layout__loader: true,
-				'is-active': this.state.isLoading
+				'is-active': this.props.isLoading
 			} );
 
-		if ( this.state.noSidebar ) {
+		if ( ! this.props.hasSidebar ) {
 			sectionClass += ' has-no-sidebar';
 		}
 
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<Masterbar user={ this.props.user } section={ this.state.section } sites={ this.props.sites }/>
-				<div className={ loadingClass } ><PulsingDot active={ this.state.isLoading } /></div>
+				<Masterbar user={ this.props.user } section={ this.props.section } sites={ this.props.sites }/>
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } /></div>
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
 						<WelcomeMessage welcomeSite={ newestSite } />
 					</Welcome>
 					<InviteMessage sites={ this.props.sites }/>
 					<EmailVerificationNotice user={ this.props.user } />
-					<NoticesList id="notices" notices={ notices.list } forcePinned={ 'post' === this.state.section } />
-					<GlobalNotices id="notices" />
+					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
 					<TranslatorInvitation isVisible={ showInvitation } />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />
@@ -125,3 +117,13 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			isLoading: state.ui.isLoading,
+			section: state.ui.section,
+			hasSidebar: state.ui.hasSidebar
+		};
+	}
+)( Layout );

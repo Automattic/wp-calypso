@@ -6,6 +6,7 @@ var ReactDom = require( 'react-dom' ),
 	qs = require( 'qs' ),
 	debounce = require( 'lodash/function/debounce' ),
 	page = require( 'page' ),
+	setSection = require( 'state/ui/actions' ).setSection,
 	EmptyContent = require( 'components/empty-content' );
 
 /**
@@ -52,10 +53,7 @@ var devdocs = {
 				false );
 		}
 
-		context.layout.setState( {
-			section: 'devdocs',
-			noSidebar: false
-		} );
+		context.store.dispatch( setSection( 'devdocs' ) );
 
 		ReactDom.render(
 			React.createElement( DocsComponent, {
@@ -72,10 +70,7 @@ var devdocs = {
 	 * Controller for single developer document
 	 */
 	singleDoc: function( context ) {
-		context.layout.setState( {
-			section: 'devdocs',
-			noSidebar: false
-		} );
+		context.store.dispatch( setSection( 'devdocs' ) );
 
 		ReactDom.render(
 			React.createElement( SingleDocComponent, {
@@ -89,10 +84,7 @@ var devdocs = {
 
 	// UI components
 	design: function( context ) {
-		context.layout.setState( {
-			section: 'devdocs',
-			noSidebar: false
-		} );
+		context.store.dispatch( setSection( 'devdocs' ) );
 
 		ReactDom.render(
 			React.createElement( DesignAssetsComponent, {
@@ -103,10 +95,7 @@ var devdocs = {
 	},
 
 	typography: function( context ) {
-		context.layout.setState( {
-			section: 'devdocs',
-			noSidebar: false
-		} );
+		context.store.dispatch( setSection( 'devdocs' ) );
 
 		ReactDom.render(
 			React.createElement( Typography, {
@@ -126,10 +115,9 @@ var devdocs = {
 	},
 
 	pleaseLogIn: function( context ) {
-		context.layout.setState( {
-			section: 'devdocs-start',
-			noSidebar: true
-		} );
+		context.store.dispatch( setSection( 'devdocs-start', {
+			hasSidebar: false
+		} ) );
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
@@ -149,10 +137,7 @@ var devdocs = {
 
 	// Welcome screen
 	welcome: function( context ) {
-		context.layout.setState( {
-			section: 'devdocs',
-			noSidebar: false
-		} );
+		context.store.dispatch( setSection( 'devdocs' ) );
 
 		ReactDom.render(
 			React.createElement( DevWelcome, {} ),

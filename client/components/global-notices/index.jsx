@@ -12,11 +12,14 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
-import DeleteSiteNotices from './delete-site-notices';
+import DeleteSiteNotices from 'notices/delete-site-notices';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { removeNotice } from 'state/notices/actions'
 
 const debug = debugModule( 'calypso:notices' );
 
-export default React.createClass( {
+const NoticesList = React.createClass( {
 
 	displayName: 'NoticesList',
 
@@ -79,7 +82,7 @@ export default React.createClass( {
 
 	render() {
 		const noticesRaw = this.props.notices[ this.props.id ] || [];
-		const noticesList = noticesRaw.map( function( notice, index ) {
+		let noticesList = noticesRaw.map( function( notice, index ) {
 				return (
 					<Notice
 						key={ 'notice-' + index }
@@ -100,7 +103,22 @@ export default React.createClass( {
 				);
 			}, this );
 
-		if ( ! noticesRaw.length ) {
+		//This is an interrim solution for displaying both notices from redux stroe
+		//and from the old component. When all notices will be moved to redux store, this components
+		//needs to be updated.
+		noticesList = noticesList.concat( this.props.storeNotices.map( function( notice, index ) {
+			return (
+				<Notice
+					key={ 'notice-' + index }
+					status={ notice.status }
+					showDismiss={ notice.showDismiss }
+					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
+					text={ notice.text }>
+				</Notice>
+			);
+		}, this ) );
+
+		if ( ! noticesList.length ) {
 			return null;
 		}
 		return (
@@ -116,3 +134,12 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	state => {
+		return {
+			storeNotices: state.notices.items
+		};
+	},
+	dispatch => bindActionCreators( { removeNotice }, dispatch )
+)( NoticesList );

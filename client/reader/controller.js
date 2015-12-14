@@ -20,6 +20,7 @@ var i18n = require( 'lib/mixins/i18n' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	titleActions = require( 'lib/screen-title/actions' ),
+	setSection = require( 'state/ui/actions' ).setSection,
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
 	readerRoute = require( 'reader/route' );
 
@@ -100,10 +101,7 @@ module.exports = {
 	sidebar: function( context, next ) {
 		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
-		context.layout.setState( {
-			section: 'reader',
-			noSidebar: false
-		} );
+		context.store.dispatch( setSection( 'reader' ) );
 
 		ReactDom.render(
 			React.createElement( ReaderSidebarComponent, { path: context.path } ),
