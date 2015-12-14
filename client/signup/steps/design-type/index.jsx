@@ -65,6 +65,9 @@ export default React.createClass( {
 
 	handleNextStep( designType ) {
 		const themes = getThemes( designType );
+
+		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { themes } );
 		this.props.goToNextStep();
 	}
