@@ -1,16 +1,24 @@
 /**
  * External dependencies
  */
-var find = require( 'lodash/collection/find' );
+import find from 'lodash/collection/find';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' );
+import config from 'config';
 
-var i18nUtils = {
+const localeRegex = /^[A-Z]{2}$/i;
+const localeWithRegionRegex = /^[A-Z]{2}-[A-Z]{2}$/i;
+
+const i18nUtils = {
 	getLanguage: function( langSlug ) {
-		return find( config( 'languages' ), { langSlug: langSlug } );
+		let language;
+		if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
+			language = find( config( 'languages' ), { langSlug: langSlug } ) ||
+				find( config( 'languages' ), { langSlug: langSlug.substring( 0, 2 ) } );
+		}
+		return language;
 	},
 
 	setUpLocale: function( parameters ) {
@@ -42,4 +50,4 @@ var i18nUtils = {
 		} );
 	}
 };
-module.exports = i18nUtils;
+export default i18nUtils;
