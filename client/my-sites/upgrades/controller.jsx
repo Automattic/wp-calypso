@@ -172,6 +172,8 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
+		context.layout.setState( { noSidebar: false } );
+
 		React.render(
 			(
 				<CheckoutData>
