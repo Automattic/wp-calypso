@@ -246,6 +246,8 @@ module.exports = {
 
 		if ( cartItems.hasOnlyProductsOf( cart, 'premium_theme' ) ) {
 			const { meta, extra: { source } } = cartAllItems[ 0 ];
+			// TODO: When this section is migrated to Redux altogether,
+			// use react-redux to `connect()` components and `dispatch()` actions.
 			context.store.dispatch( activated( meta, selectedSite, source, true ) );
 			page.redirect( '/design/' + selectedSite.slug );
 			return;
