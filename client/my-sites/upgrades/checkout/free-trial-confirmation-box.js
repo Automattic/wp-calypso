@@ -3,23 +3,25 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	find = require( 'lodash/collection/find' );
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
+var isPlan = require( 'lib/products-values' ).isPlan,
+	PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
-var FreeTrialConfirmationBox = React.createClass( {
-	content: function() {
+const FreeTrialConfirmationBox = React.createClass( {
+	content() {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
 					{
-						this.translate( 'Get started with %(productName)s', { args: { productName: this.props.cart.products[0].product_name } } )
+						this.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
 					}
 					</h6>
 
@@ -40,8 +42,14 @@ var FreeTrialConfirmationBox = React.createClass( {
 		);
 	},
 
-	render: function() {
-		var classSet = classNames( {
+	getProductName() {
+		const planProduct = find( this.props.cart.products, isPlan );
+
+		return ( planProduct && planProduct.product_name ) || '';
+	},
+
+	render() {
+		const classSet = classNames( {
 			'credits-payment-box': true,
 			selected: this.props.selected === true
 		} );
