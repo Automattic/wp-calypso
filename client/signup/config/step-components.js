@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-var EmailSignupComponent = require( 'signup/steps/email-signup-form' ),
+var UserSignupComponent = require( 'signup/steps/user' ),
 	SiteCreationComponent = require( 'signup/steps/site-creation' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
@@ -15,14 +15,14 @@ module.exports = {
 	themes: ThemeSelectionComponent,
 	'theme-headstart': ThemeSelectionComponent,
 	site: SiteCreationComponent,
-	user: EmailSignupComponent,
+	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	plans: PlansStepComponent,
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
-	'survey-user': EmailSignupComponent,
+	'survey-user': UserSignupComponent,
 	'domains-with-theme': DomainsStepComponent,
 	'theme-dss': DSSStepComponent,
 	'design-type': DesignTypeComponent,
-	'jetpack-user': EmailSignupComponent
+	'jetpack-user': UserSignupComponent
 };
