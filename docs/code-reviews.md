@@ -14,7 +14,7 @@ A good code review should catch:
 4. Problematic HTML and CSS at our scale.
 5. Unnecessary copy and paste.
 6. Code that doesn't adhere to our guidelines.
-7. Inconsistencies with other code in the codebase
+7. Inconsistencies with other code in the codebase.
 8. Bugs.
 
 Code reviews are also a great way for us to learn from each other in a distributed environment. Feel free to share techniques that you have picked up that make code simpler and more readable. At the end of the day, Calypso is our code, not the code of a set of individuals glued together.
