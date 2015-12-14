@@ -25,19 +25,19 @@ export default React.createClass( {
 		className: React.PropTypes.string
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			isShowingPopover: false
 		};
 	},
 
-	setPostButtonContext: function( component ) {
+	setPostButtonContext( component ) {
 		this.setState( {
 			postButtonContext: component
 		} );
 	},
 
-	toggleSitesPopover: function( isShowingPopover ) {
+	toggleSitesPopover( isShowingPopover ) {
 		if ( isShowingPopover === undefined ) {
 			isShowingPopover = ! this.state.isShowingPopover;
 		}
@@ -49,8 +49,8 @@ export default React.createClass( {
 		} ), 0 );
 	},
 
-	onClick: function( event ) {
-		var visibleSiteCount = this.props.user.get().visible_site_count;
+	onClick( event ) {
+		const visibleSiteCount = this.props.user.get().visible_site_count;
 
 		// if multi-site and editor enabled, show site-selector
 		if ( visibleSiteCount > 1 && config.isEnabled( 'post-editor' ) ) {
@@ -60,15 +60,15 @@ export default React.createClass( {
 		}
 	},
 
-	preload: function() {
+	preload() {
 		if ( ! this._preloaded && config.isEnabled( 'post-editor' ) ) {
 			this._preloaded = true;
 			// preload the post editor chunk
-			require.ensure( [ 'post-editor' ], function() {}, 'post-editor' );
+			require.ensure( [ 'post-editor' ], () => {}, 'post-editor' );
 		}
 	},
 
-	getPopoverPosition: function() {
+	getPopoverPosition() {
 		if ( viewport.isMobile() ) {
 			return 'bottom';
 		}
@@ -80,11 +80,11 @@ export default React.createClass( {
 		return 'bottom left';
 	},
 
-	render: function() {
-		var classes = classNames( this.props.className );
-		var tooltip = this.translate( 'Create a New Post', { textOnly: true } );
-		var currentSite = this.props.sites.getSelectedSite() || this.props.user.get().primarySiteSlug;
-		var newPostPath = paths.newPost( currentSite );
+	render() {
+		const classes = classNames( this.props.className );
+		const tooltip = this.translate( 'Create a New Post', { textOnly: true } );
+		const currentSite = this.props.sites.getSelectedSite() || this.props.user.get().primarySiteSlug;
+		const newPostPath = paths.newPost( currentSite );
 
 		return (
 			<MasterbarItem ref={ this.setPostButtonContext } url={ newPostPath } icon="create" onClick={ this.onClick } isActive={ this.props.isActive } tooltip={ tooltip } className={ classes }>

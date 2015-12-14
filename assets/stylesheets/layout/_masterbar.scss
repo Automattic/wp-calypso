@@ -14,7 +14,7 @@ $autobar-height: 20px;
 		left: 0;
 		top: 0;
 	width: 100%;
-	z-index: 180;
+	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	@include breakpoint( ">660px" ) {
@@ -102,8 +102,8 @@ $autobar-height: 20px;
 .masterbar__item-me {
 	.gravatar {
 		position: absolute;
-    	left: 16px;
-    	top: 12px;
+		left: 16px;
+		top: 12px;
 		width: 18px;
 		height: 18px;
 

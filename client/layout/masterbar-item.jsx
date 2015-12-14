@@ -22,7 +22,7 @@ export default React.createClass( {
 		isActive: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			icon: '',
 			onClick: noop
@@ -30,7 +30,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		var itemClasses = classNames( 'masterbar__item', this.props.className, {
+		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 		} );
 

@@ -22,8 +22,8 @@ export default React.createClass( {
 	},
 
 	getInitialState() {
-		var newNote = false,
-			user;
+		let newNote = false;
+		let	user;
 
 		if ( this.props.user ) {
 			user = this.props.user.get();
@@ -44,8 +44,8 @@ export default React.createClass( {
 	},
 
 	checkToggleNotes( event, forceToggle ) {
-		var target = event ? event.target : false;
-		var notificationNode = this.getNotificationLinkDomNode();
+		const target = event ? event.target : false;
+		const notificationNode = this.getNotificationLinkDomNode();
 
 		if ( notificationNode.contains( target ) ) {
 			return;
@@ -116,7 +116,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		var classes = classNames( this.props.className, {
+		const classes = classNames( this.props.className, {
 			'is-active': this.state.isShowingPopover,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,

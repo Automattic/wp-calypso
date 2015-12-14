@@ -14,12 +14,6 @@ import MasterbarItemNotifications from './masterbar-item-notifications';
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
 import config from 'config';
-import paths from 'lib/paths';
-
-import MasterbarLoggedOutMenu from './masterbar-logged-out-menu';
-import MasterbarSectionsMenu from './masterbar-sections-menu';
-import Notifications from 'notifications';
-import store from 'store';
 
 export default React.createClass( {
 	displayName: 'Masterbar',
@@ -59,16 +53,15 @@ export default React.createClass( {
 	},
 
 	render() {
-		var masterbarClass,
-			masterbarClassObject = {
+		const	masterbarClassObject = {
 				masterbar: true
-			};
+		};
 
 		if ( this.props.user ) {
 			masterbarClassObject.collapsible = true;
 		}
 
-		masterbarClass = classNames( masterbarClassObject );
+		const masterbarClass = classNames( masterbarClassObject );
 
 		if ( this.props.user ) { // Logged in
 			return (
@@ -90,9 +83,6 @@ export default React.createClass( {
 						<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 						<span className="masterbar__item-me-label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 					</MasterbarItem>
-					{/*<MasterbarItem url="/notifications" icon="bell" isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
-						{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-					</MasterbarItem>*/}
 					<MasterbarItemNotifications user={ this.props.user } isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
 						<span className="masterbar__item-notifications-label">{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 					</MasterbarItemNotifications>
