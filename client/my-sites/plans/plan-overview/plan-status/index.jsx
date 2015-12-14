@@ -28,7 +28,7 @@ const PlanStatus = React.createClass( {
 	purchasePlan() {
 		upgradesActions.addItem( cartItems.planItem( this.props.plan.productSlug ) );
 
-		page( '/checkout/' + this.props.selectedSite.slug );
+		page( `/checkout/${ this.props.selectedSite.slug }` );
 	},
 
 	render() {
