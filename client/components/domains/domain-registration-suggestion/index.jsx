@@ -8,7 +8,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	cartItems = require( 'lib/cart-values/cart-items' );
+	cartItems = require( 'lib/cart-values/cart-items' ),
+	DomainSuggestionFlag = require( 'components/domains/domain-suggestion-flag' );
 
 var DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
@@ -35,7 +36,12 @@ var DomainRegistrationSuggestion = React.createClass( {
 		var suggestion = this.props.suggestion ? this.props.suggestion : {},
 			domainName = suggestion.domain_name ? suggestion.domain_name : this.translate( 'Loading\u2026' ),
 			isAdded = !! ( this.props.cart && cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ),
-			buttonClasses;
+			buttonClasses,
+			domainFlag = null;
+
+		if ( suggestion.domain_name ) {
+			domainFlag = <DomainSuggestionFlag domain={ suggestion.domain_name }/>
+		}
 
 		if ( isAdded ) {
 			buttonClasses = 'added';
@@ -53,7 +59,10 @@ var DomainRegistrationSuggestion = React.createClass( {
 					isAdded={ isAdded }
 					cart={ this.props.cart }
 					onButtonClick={ this.props.onButtonClick }>
-				<h3>{ domainName }</h3>
+				<h3>
+					{ domainName }
+					{ domainFlag }
+				</h3>
 			</DomainSuggestion>
 		);
 	}

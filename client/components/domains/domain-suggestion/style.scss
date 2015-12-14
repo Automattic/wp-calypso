@@ -31,6 +31,11 @@
 		margin: 8px 0 0 0;
 	}
 
+	.flag {
+		margin-left: 5px;
+		vertical-align: middle;
+	}
+
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 30% );
