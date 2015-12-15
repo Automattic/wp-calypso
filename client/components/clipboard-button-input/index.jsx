@@ -16,12 +16,14 @@ export default React.createClass( {
 
 	propTypes: {
 		value: PropTypes.string,
+		disabled: PropTypes.bool,
 		className: PropTypes.string
 	},
 
 	getInitialState() {
 		return {
-			isCopied: false
+			isCopied: false,
+			disabled: false
 		};
 	},
 
@@ -49,7 +51,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { value, className } = this.props;
+		const { value, className, disabled } = this.props;
 		const classes = classnames( 'clipboard-button-input', className );
 
 		return (
@@ -62,6 +64,7 @@ export default React.createClass( {
 				<ClipboardButton
 					text={ value }
 					onCopy={ this.showConfirmation }
+					disabled={ disabled }
 					compact>
 					{ this.state.isCopied
 						? this.translate( 'Copied!' )
