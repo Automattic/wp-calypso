@@ -143,6 +143,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 			<div className="following-edit__subscribe-form">
 				<Gridicon icon="add-outline" onClick={ this.handleFollowIconClick } />
 				<Search
+					forceCloseButton={ true }
 					key="newSubscriptionSearch"
 					onSearch={ this.handleSearch }
 					onSearchClose={ this.handleSearchClose }
