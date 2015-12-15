@@ -1,0 +1,28 @@
+.design-type__list {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.design-type__choice {
+	padding: 0;
+	margin: 0 10px 20px 10px;
+	width: 230px;
+	flex-grow: 1;
+	transition: all 100ms ease-in-out;
+
+	a, img {
+		display: block;
+	}
+
+	h2 {
+		color: #000;
+		padding-left: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+		font-weight: bold;
+		line-height: 54px;
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
+}

@@ -135,6 +135,13 @@ const flows = {
 		lastModified: '2015-11-13'
 	},
 
+	'layout': {
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		destination: getCheckoutDestination,
+		description: 'Theme trifurcation flow',
+		lastModified: '2015-12-14'
+	},
+
 	developer: {
 		steps: [ 'themes', 'site', 'user' ],
 		destination: '/devdocs/welcome',
