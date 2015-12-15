@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import classNames from 'classnames';
 import i18n from 'lib/mixins/i18n';
 import _some from 'lodash/collection/some';
@@ -14,6 +14,7 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
+import Gridicon from 'components/gridicon';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
@@ -47,13 +48,7 @@ export default React.createClass( {
 	},
 
 	renderActions() {
-		const site = this.props.sites && this.props.sites[ 0 ] ? this.props.sites[ 0 ] : false;
-
-		/*
-		 * Do not show actions if we are not on a single site view or
-		 * if the plugin is not installed on any sites
-		 */
-		if ( ( ! this.props.siteUrl || ! site ) && this.isInstalledOnSite( this.props.selectedSite ) ) {
+		if ( ! this.props.selectedSite ) {
 			return;
 		}
 
@@ -97,7 +92,7 @@ export default React.createClass( {
 				href={ this.props.plugin.wp_admin_settings_page_url }
 				target="_blank">
 				{ this.translate( 'Setup' ) }
-				<Gridicon size={ 14 } icon="external" />
+				<Gridicon size={ 18 } icon="external" />
 			</a>
 		);
 	},

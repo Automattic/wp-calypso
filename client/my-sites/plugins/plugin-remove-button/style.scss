@@ -11,7 +11,10 @@
 	margin-top: 0;
 	padding: 16px;
 }
-.plugin-remove-button__remove-link {
+.plugin-remove-button__remove-icon {
+	display: block;
+	margin-top: -1px;
+
 	.gridicons-trash {
 		color: $gray;
 		cursor: pointer;
@@ -19,5 +22,4 @@
 			color: $alert-red;
 		}
 	}
-
 }

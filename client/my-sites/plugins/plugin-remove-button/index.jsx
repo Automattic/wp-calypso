@@ -143,7 +143,7 @@ module.exports = React.createClass( {
 				disabledInfo={ getDisabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ this.removeAction } >
+				<a onClick={ this.removeAction } className="plugin-remove-button__remove-icon" >
 					<Gridicon icon="trash" size={ 18 } />
 				</a>
 			</PluginAction>

@@ -12,40 +12,58 @@ $plugin-information-rating-size: 160px;
 	overflow: hidden;
 }
 
+plugin-information__description {
+	margin-bottom: 0;
+}
+
 .plugin-information__version-shell {
-	margin-bottom: 16px;
 	text-align: left;
-	@include breakpoint( '>480px' ) {
-		float: left;
-		width: 100%;
-		position: relative;
-		overflow: hidden;
-	}
+	position: relative;
+	overflow: hidden;
+}
+
+.plugin-information__version-shell .version{
+	float: left;
+	width: 50%;
+	padding-bottom: 8px;
+}
+
+.plugin-information__last-updated {
+	line-height: 18px;
+	padding-bottom: 8px;
 }
 
 .plugin-information__version-info {
 	font-size: 11px;
 	color: $gray;
 	text-transform: uppercase;
-	float: left;
+	width: 100%;
+
+	@include breakpoint( '>480px' ) {
+		float: left;
+	}
+}
+
+.plugin-information__version-info.is-singlesite {
+	display: table;
+
+	.plugin-information__version-shell {
+		display: table-row;
+	}
+
+	.plugin-information__last-updated,
+	.plugin-information__versions,
+	.version {
+		display: table-cell;
+		float: none;
+		padding-bottom: 8px;
+	}
 }
 
 .plugin-information__version-info .version {
-	@include breakpoint( '>480px' ) {
-		min-width: 150px;
-		margin-right: 8px;
-		float: left;
-	}
+	padding-right: 8px;
 }
 
-.plugin-information__last-updated,
-.plugin-information__versions {
-	@include breakpoint( '>480px' ) {
-		line-height: 18px;
-		min-width: 200px;
-		float: left;
-	}
-}
 .plugin-information__last-updated .gridicons-sync {
 	vertical-align: text-bottom;
 	color: $alert-yellow;
@@ -83,8 +101,11 @@ $plugin-information-rating-size: 160px;
 	}
 }
 
+.plugin-information__version-limit-state {
+	white-space: nowrap;
+}
+
 .plugin-information__links {
-	margin-top: 14px;
 	clear: left;
 	@include breakpoint( '>480px' ) {
 		float: left;

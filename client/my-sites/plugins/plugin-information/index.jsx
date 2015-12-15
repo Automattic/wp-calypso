@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import i18n from 'lib/mixins/i18n';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -108,8 +109,9 @@ export default React.createClass( {
 
 	renderLimits() {
 		const limits = this.getCompatibilityLimits();
-		let versionView;
+		let versionView = null;
 		let versionCheck = null;
+
 		if ( this.props.siteVersion && limits.maxVersion ) {
 			if ( versionCompare( this.props.siteVersion, limits.maxVersion, '<=' ) ) {
 				versionCheck = <Gridicon icon="checkmark" size={ 18 } />;
@@ -118,12 +120,13 @@ export default React.createClass( {
 			}
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion !== limits.maxVersion ) {
-			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( '{{wpIcon/}}  Compatible with %(minVersion)s to %(maxVersion)s {{versionCheck/}}',
+			versionView = <div className="plugin-information__version-limit" >
+				{ this.translate( '{{wpIcon/}}  Compatible with %(minVersion)s to {{span}} %(maxVersion)s {{versionCheck/}}{{/span}}',
 					{
 						args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
 						components: {
 							wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+							span: <span className="plugin-information__version-limit-state" />,
 							versionCheck
 						}
 					}
@@ -195,24 +198,30 @@ export default React.createClass( {
 	renderWpcom() {
 		return (
 			<div className="plugin-information">
-					<p className="plugin-information__description">
-						{ this.props.plugin.description }
-					</p>
+				<p className="plugin-information__description">
+					{ this.props.plugin.description }
+				</p>
+				<div className="plugin-information__links">
 					{ this.renderWPCOMPluginSupportLink() }
-			</div>
+				</div>
+		</div>
 		);
 	},
 
 	renderWporg() {
+		const classes = classNames( {
+			'plugin-information__version-info': true,
+			'is-singlesite': !! this.props.siteVersion
+		} );
 		return (
 			<div className="plugin-information">
 					<div className="plugin-information__wrapper">
-						<div className="plugin-information__version-info">
+						<div className={ classes }>
 							<div className="plugin-information__version-shell">
 								<Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
 								{ this.renderLastUpdated() }
 							</div>
-							<div className="plugin-information__version-shell">
+							<div className="plugin-information__version-shell plugin-information__site-version-shell">
 								{ this.renderSiteVersion() }
 								{ this.renderLimits() }
 							</div>
