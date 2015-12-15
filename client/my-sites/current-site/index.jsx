@@ -189,7 +189,15 @@ module.exports = React.createClass( {
 							{ this.translate( 'Switch Site' ) }
 						</span>
 				}
-				{ this.props.sites.selected ? <Site site={ site }/> : <AllSites sites={ this.props.sites }/> }
+				{ this.props.sites.selected ?
+					<Site
+						site={ site }
+						homeLink={ true }
+						externalLink={ true }
+					/>
+				:
+					<AllSites sites={ this.props.sites }/>
+				}
 				{ this.getSiteNotices( site ) }
 			</Card>
 		);
