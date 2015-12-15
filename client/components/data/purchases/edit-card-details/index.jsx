@@ -32,7 +32,7 @@ function getStateFromStores( props ) {
 
 function isDataLoading( state ) {
 	return (
-		! state.card ||
+		state.card.isFetching ||
 		! state.selectedPurchase.hasLoadedFromServer ||
 		! state.selectedSite
 	);

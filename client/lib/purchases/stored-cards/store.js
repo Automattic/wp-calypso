@@ -14,7 +14,7 @@ const StoredCardsStore = createReducerStore( reducer, getInitialState() );
 
 assign( StoredCardsStore, {
 	getByCardId( cardId ) {
-		return find( this.get().list, { id: cardId } );
+		return assign( {}, this.get(), { data: find( this.get().list, { id: cardId } ) } );
 	}
 } );
 
