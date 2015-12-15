@@ -2,7 +2,7 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+	React = require( 'react/addons' ),
 	filter = require( 'lodash/collection/filter' ),
 	map = require( 'lodash/collection/map' ),
 	classNames = require( 'classnames' );

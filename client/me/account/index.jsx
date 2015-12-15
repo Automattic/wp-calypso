@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React from 'react/addons';
 import i18n from 'lib/mixins/i18n';
 import Debug from 'debug';
 import emailValidator from 'email-validator';

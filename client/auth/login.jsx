@@ -2,7 +2,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React from 'react/addons';
 
 /**
  * Internal dependencies

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
 	_debounce = require( 'lodash/function/debounce' ),
 	_first = require( 'lodash/array/first' ),

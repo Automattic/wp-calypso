@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	notices = require( 'notices' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' );
 
