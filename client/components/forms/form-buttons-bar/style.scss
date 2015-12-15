@@ -2,6 +2,7 @@
 	@include clear-fix;
 
 	@include breakpoint( '<480px' ) {
+		align-items: flex-end;
 		display: flex;
 		flex-direction: column-reverse;
 
