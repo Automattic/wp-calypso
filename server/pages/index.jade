@@ -49,14 +49,14 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			.wpcom-site__logo.noticon.noticon-wordpress
 		if badge
 			div.environment-badge
-				span(class=['environment', 'is-' + badge])=badge
 				if branchName && branchName !== 'master'
-					span(class=['environment', 'branch-name'])=branchName
+					span(class=['environment', 'is-branch-name'])=branchName
+				span(class=['environment', 'is-' + badge])=badge
 				if devDocs
 					span(class=['environment', 'is-docs'])
-						a(href=devDocsURL title='DevDocs') docs
+						a(href=devDocsURL title='DevDocs') Developer Docs
 				span(class=['environment', 'is-bug-report'])
-					a(href=feedbackURL, title='Report an issue', target='_blank') bug?
+					a(href=feedbackURL, title='Report an issue', target='_blank') Found a bug?
 
 		script.
 			(function() {

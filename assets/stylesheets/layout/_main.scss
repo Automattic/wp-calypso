@@ -397,25 +397,64 @@ body.newdash div.wordpress-com-extension-promo {
 }
 
 .environment-badge {
-	opacity: 0.4;
+	//opacity: 0.4;
 	position: fixed;
-		top: 47px + 12;
-		right: 12px;
+		top: 11px;
+		right: 210px;
 	backface-visibility: hidden;
 	height: 28px;
 	z-index: z-index( 'root', '.environment-badge' );
 	transition: all 0.15s ease-in-out;
-	transition-delay: 0.25s;
+	//transition-delay: 0.25s;
+
+	.detail-page-open & {
+		opacity: 0;
+		transform: translateX( -30px );
+		pointer-events: none;
+	}
 
 	.environment {
 		float: right;
-		clear: both;
 		box-sizing: border-box;
 		position: relative;
 		z-index: 1000;
 		font-size: 12px;
 		font-weight: bold;
 		transition: all 0.1s ease-in-out;
+
+		&:nth-child( 3 ) a {
+			margin-top: 11px;
+		}
+
+		&:last-child a {
+			border-bottom-right-radius: 3px;
+			border-bottom-left-radius: 3px;
+		}
+	}
+
+	.is-branch-name {
+		opacity: 0.4;
+		border-radius: 3px;
+		padding: 4px 12px 3px 8px;
+		box-shadow: inset 0 0 0 1px rgba( black, 0.1 );
+		background: $white;
+		cursor: default;
+		clear: none;
+		background: $gray-dark;
+		color: $white;
+		font-weight: normal;
+		float: left;
+		position: relative;
+			right: -4px;
+		max-width: 340px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		transition: all 0.15s ease-in-out;
+
+		@include breakpoint( "<960px" ) {
+			max-width: 181px;
+		}
 	}
 
 	.is-staging,
@@ -425,7 +464,7 @@ body.newdash div.wordpress-com-extension-promo {
 	.is-feedback {
 		border-radius: 3px;
 		padding: 4px 8px 3px 8px;
-		box-shadow: inset 0 0 0 1px rgba( black, 0.1 );
+		box-shadow: inset 0 0 0 1px rgba( black, 0.2 );
 		background: $white;
 		cursor: default;
 	}
@@ -435,7 +474,8 @@ body.newdash div.wordpress-com-extension-promo {
 	}
 	
 	.is-wpcalypso {
-		background: #B1EED0;
+		background: $alert-green;
+		color: $white;
 	}
 	
 	.is-dev {
@@ -445,35 +485,35 @@ body.newdash div.wordpress-com-extension-promo {
 	
 	.is-horizon,
 	.is-feedback {
-		background: $blue-light;
+		background: $blue-dark;
+		color: $white;
 	}
 
 	.is-docs,
 	.is-bug-report {
+		clear: both;
 		opacity: 0;
+		min-width: 80%;
 		pointer-events: none;
-		min-width: 100%;
 		transition: all 0.15s ease-in-out;
 		transition-delay: 0.25s;
 
 		a {
 			display: block;
-			padding: 4px 8px;
-			margin-top: 6px;
+			padding: 8px 12px;
 			background: $white;
-			border-radius: 3px;
-			box-shadow: inset 0 0 0 1px rgba( $gray, 0.2 );
+			border-left: 1px solid lighten( $gray, 20% );
+			border-right: 1px solid lighten( $gray, 20% );
+			border-bottom: 1px solid lighten( $gray, 20% );
 		}
 	}
 
 	&:hover {
-		opacity: 1;
+		//opacity: 1;
 		width: auto;
 		overflow: visible;
 
-		.environment {
-		}
-
+		.is-branch-name,
 		.is-docs,
 		.is-bug-report {
 			opacity: 1;
@@ -482,7 +522,7 @@ body.newdash div.wordpress-com-extension-promo {
 	}
 }
 
-@include breakpoint( "<960px" ) {
+@include breakpoint( "<660px" ) {
 	// Don't show environment badge on smaller screens. It just gets in the way.
 	.environment-badge {
 		display: none;
