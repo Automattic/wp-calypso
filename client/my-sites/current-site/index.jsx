@@ -3,7 +3,6 @@
  */
 var React = require( 'react/addons' ),
 	debug = require( 'debug' )( 'calypso:my-sites:current-site' ),
-	analytics = require( 'analytics' ),
 	url = require( 'url' );
 
 /**
@@ -11,6 +10,7 @@ var React = require( 'react/addons' ),
  */
 var AllSites = require( 'my-sites/all-sites' ),
 	AddNewButton = require( 'components/add-new-button' ),
+	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	Notice = require( 'components/notice' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -149,6 +149,10 @@ module.exports = React.createClass( {
 		);
 	},
 
+	trackHomepageClick: function() {
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
+	},
+
 	render: function() {
 		var site,
 			hasOneSite = this.props.siteCount === 1;
@@ -189,7 +193,14 @@ module.exports = React.createClass( {
 							{ this.translate( 'Switch Site' ) }
 						</span>
 				}
-				{ this.props.sites.selected ? <Site site={ site }/> : <AllSites sites={ this.props.sites }/> }
+				{ this.props.sites.selected
+					? <Site
+						site={ site }
+						href={ site.URL }
+						externalLink={ true }
+						onSelect={ this.trackHomepageClick } />
+					: <AllSites sites={ this.props.sites } />
+				}
 				{ this.getSiteNotices( site ) }
 			</Card>
 		);
