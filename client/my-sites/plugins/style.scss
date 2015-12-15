@@ -3,7 +3,7 @@
 }
 
 .plugins__section-actions.section-header.card {
-	padding-right: 16px;
+	padding-right: 8px;
 
 	.section-header__actions {
 		flex-grow: 1;
@@ -29,6 +29,10 @@
 	.button-group {
 		margin-left: 8px;
 	}
+
+	@include breakpoint( '>660px' ) {
+		padding-right: 16px;
+	}
 }
 
 .plugins__action-buttons {
@@ -50,6 +54,7 @@
 
 
 .plugins__section-actions-close {
+	color: darken( $gray, 30% );
 	cursor: pointer;
 	display: flex;
 		align-items: center;
