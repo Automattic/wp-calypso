@@ -6,10 +6,10 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { reducer as themes } from './themes';
-import { reducer as themesList } from './themes-list';
-import { reducer as themesLastQuery } from './themes-last-query';
-import { reducer as currentTheme } from './current-theme';
+import themes from './themes';
+import themesList from './themes-list';
+import themesLastQuery from './themes-last-query';
+import currentTheme from './current-theme';
 
 export default combineReducers( {
 	themes,

@@ -1,11 +1,9 @@
 Theme Data
 ==========
 
-Contains stores and action creators for themes, and the theme showcase.
+Contains reducers and action creators for themes, and the theme showcase.
 
-## Stores
-
-We're transitioning to a more `redux`-like architecture, so our Flux `./stores` are created from `./reducers`, using our own `createReducerStore()`.
+## Reducers
 
 ### current-theme
 
