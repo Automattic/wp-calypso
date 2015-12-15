@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import debugModule from 'debug';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
@@ -47,6 +47,7 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
+import AddNewButton from 'components/add-new-button';
 
 /**
  * Module variables
@@ -223,6 +224,10 @@ export default React.createClass( {
 			PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
 			this.recordEvent( 'Clicked Manage Done' );
 		}
+	},
+
+	goToBrowser() {
+		this.recordEvent( 'Clicked Add New Plugins' );
 	},
 
 	togglePluginSelection( plugin ) {
@@ -539,6 +544,8 @@ export default React.createClass( {
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
+		const selectedSite = this.props.sites.getSelectedSite();
+		const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
 		if ( ! this.state.bulkManagement ) {
 			if ( 0 < this.state.pluginUpdateCount ) {
@@ -554,6 +561,10 @@ export default React.createClass( {
 			rightSideButtons.push(
 				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Edit All', { context: 'button label' } ) }</Button></ButtonGroup>
 			);
+			rightSideButtons.push(
+				<ButtonGroup key="plugins__buttons-browser"><Button compact href={ browserUrl } onClick={ this.goToBrowser } className="plugins__browser-button"><Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } /></Button></ButtonGroup>
+			);
+
 		} else {
 			activateButtons.push( <Button key="plugins__buttons-activate" disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
 			let deactivateButton = isJetpackSelected
