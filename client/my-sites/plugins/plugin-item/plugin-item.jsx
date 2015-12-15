@@ -189,11 +189,25 @@ module.exports = React.createClass( {
 			numberOfWarningIcons = 0,
 			errorNotices = [],
 			errorCounter = 0;
-		const pluginItemClasses = classNames( 'plugin-item', { disabled: this.props.hasAllNoManageSites } );
 
 		if ( ! this.props.plugin ) {
 			return this.renderPlaceholder();
-		}
+
+
+		errors.forEach( function( error ) {
+			errorNotices.push(
+				<Notice
+					type='message'
+					status='is-error'
+					text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
+					button={ PluginNotices.getErrorButton( error ) }
+					href={ PluginNotices.getErrorHref( error ) }
+					raw={ { onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, [ error ] ) } }
+					inline={ true }
+					key={ 'notice-' + errorCounter } />
+			);
+			errorCounter++;
+		}, this );
 
 		if ( this.props.hasNoManageSite ) {
 			numberOfWarningIcons++;
@@ -207,36 +221,12 @@ module.exports = React.createClass( {
 			<div className="plugin-item__title" data-warnings={ numberOfWarningIcons }>
 				{ plugin.name }
 			</div>
-			);
+		);
 
-		if ( this.props.isSelectable ) {
-			errors.forEach( function( error ) {
-				let action = null;
-
-				if ( PluginNotices.getErrorButton( error ) ) {
-					action = (
-						<NoticeAction href={ PluginNotices.getErrorHref( error ) }>
-							{ PluginNotices.getErrorButton( error ) }
-						</NoticeAction>
-					);
-				}
-
-				errorNotices.push(
-					<Notice
-						type='message'
-						status='is-error'
-						showDismiss={ false }
-						text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
-						inline={ true }
-						key={ 'notice-' + errorCounter }
-						>
-						{ action }
-					</Notice>
-				);
-				errorCounter++;
-			}, this );
-		}
 		if ( this.props.hasAllNoManageSites ) {
+			const pluginItemClasses = classNames( 'plugin-item', {
+				disabled: this.props.hasAllNoManageSites,
+			} );
 			return (
 				<div className="plugin-item__wrapper">
 					<CompactCard className={ pluginItemClasses }

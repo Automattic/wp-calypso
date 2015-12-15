@@ -10,6 +10,10 @@
 		}
 	}
 
+	& ~ .notice.is-error {
+		margin-bottom: 0;
+	}
+
 	input {
 		margin-right: 8px;
 	}
