@@ -1,31 +1,35 @@
 /**
  * External dependencies
  */
-import React from 'react'
-import map from 'lodash/collection/map'
-import forEach from 'lodash/collection/forEach'
-import first from 'lodash/array/first'
-import includes from 'lodash/collection/includes'
-import keys from 'lodash/object/keys'
-import debugModule from 'debug'
+import React from 'react';
+import map from 'lodash/collection/map';
+import forEach from 'lodash/collection/forEach';
+import first from 'lodash/array/first';
+import includes from 'lodash/collection/includes';
+import keys from 'lodash/object/keys';
+import debugModule from 'debug';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp'
-import config from 'config'
-import analytics from 'analytics'
-import ValidationFieldset from 'signup/validation-fieldset'
-import FormLabel from 'components/forms/form-label'
-import FormPasswordInput from 'components/forms/form-password-input'
-import FormSettingExplanation from 'components/forms/form-setting-explanation'
-import FormTextInput from 'components/forms/form-text-input'
-import FormButton from 'components/forms/form-button'
-import notices from 'notices'
-import Notice from 'components/notice'
-import LoggedOutForm from 'signup/logged-out-form'
-import formState from 'lib/form-state'
-import i18n from 'lib/mixins/i18n'
+import wpcom from 'lib/wp';
+import config from 'config';
+import analytics from 'analytics';
+import ValidationFieldset from 'signup/validation-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import FormButton from 'components/forms/form-button';
+import notices from 'notices';
+import Notice from 'components/notice';
+import LoggedOutForm from 'components/logged-out-form';
+import formState from 'lib/form-state';
+import i18n from 'lib/mixins/i18n';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -371,13 +375,13 @@ export default React.createClass( {
 
 	formFooter() {
 		return (
-			<div>
+			<LoggedOutFormFooter>
 				{ this.getNotice() }
 				{ this.termsOfServiceLink() }
 				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }
 				</FormButton>
-			</div>
+			</LoggedOutFormFooter>
 		);
 	},
 
@@ -398,25 +402,35 @@ export default React.createClass( {
 		if ( this.props.positionInFlow !== 0 ) {
 			return;
 		}
+
 		let logInUrl = this.localizeUrlWithSubdomain( config( 'login_url' ) );
 		if ( config.isEnabled( 'login' ) ) {
 			logInUrl = this.localizeUrlWithLastSlug( '/log-in' );
 		}
-		return <a href={ logInUrl } className="logged-out-form__link">{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }</a>;
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href={ logInUrl }>
+					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+				</LoggedOutFormLinkItem>
+			</LoggedOutFormLinks>
+		);
 	},
 
 	render() {
 		return (
-			<LoggedOutForm
-				className='signup-form'
-				formFields={ this.formFields() }
-				formFooter={ this.props.formFooter || this.formFooter() }
-				formHeader={ this.props.formHeader }
-				footerLink={ this.props.footerLink || this.footerLink() }
-				locale={ this.props.locale }
-				onSubmit={ this.handleSubmit }
-				path={ this.props.path } />
+			<div className={ classNames( 'signup-form', this.props.className ) }>
+				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
+					{ this.props.formHeader &&
+						<header className="signup-form__header">
+							{ this.props.formHeader }
+						</header>
+					}
+					{ this.formFields() }
+					{ this.props.formFooter || this.formFooter() }
+				</LoggedOutForm>
+
+				{ this.props.footerLink || this.footerLink() }
+			</div>
 		);
 	}
-
 } );
