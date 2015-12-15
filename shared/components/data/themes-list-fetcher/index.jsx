@@ -4,6 +4,7 @@
 import React from 'react';
 import omit from 'lodash/object/omit';
 import once from 'lodash/function/once';
+import filter from 'lodash/collection/filter';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -12,13 +13,9 @@ import { connect } from 'react-redux';
  */
 import Constants from 'lib/themes/constants';
 import { query, fetchNextPage } from 'lib/themes/actions';
-import {
-	getFilteredThemes,
-	hasSiteChanged,
-	isJetpack,
-	isLastPage,
-	isFetchingNextPage
-} from 'lib/themes/selectors';
+import { hasSiteChanged, isJetpack } from 'lib/themes/selectors/themes-last-query';
+import { isLastPage, isFetchingNextPage, getThemesList } from 'lib/themes/selectors/themes-list';
+import { getThemeById } from 'lib/themes/selectors/themes';
 
 const ThemesListFetcher = React.createClass( {
 	propTypes: {
@@ -117,6 +114,31 @@ const ThemesListFetcher = React.createClass( {
 	}
 
 } );
+
+function getFilteredThemes( state, search ) {
+	const allThemes = getThemesList( state )
+		.map( getThemeById.bind( null, state ) );
+
+	if ( ! isJetpack( state ) || ! search ) {
+		return allThemes;
+	}
+
+	return filter( allThemes, theme => matches( theme, search ) );
+}
+
+function matches( theme, rawSearch ) {
+	const search = rawSearch.toLowerCase().trim();
+
+	return [ 'name', 'tags', 'description', 'author' ].some( field => (
+		theme[ field ] && join( theme[ field ] )
+			.toLowerCase().replace( '-', ' ' )
+			.indexOf( search ) >= 0
+	) );
+}
+
+function join( value ) {
+	return Array.isArray( value ) ? value.join( ' ' ) : value;
+}
 
 export default connect(
 	( state, props ) => Object.assign( {},

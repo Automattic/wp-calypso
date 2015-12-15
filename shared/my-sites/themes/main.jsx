@@ -27,7 +27,7 @@ var Main = require( 'components/main' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
 	getButtonOptions = require( './theme-options' ),
-	ThemeSelectors = require( 'lib/themes/selectors' );
+	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' );
 
 var Themes = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -172,8 +172,8 @@ export default connect(
 	( state, props ) => Object.assign( {},
 		props,
 		{
-			queryParams: ThemeSelectors.getQueryParams( state ),
-			themesList: ThemeSelectors.getThemesList( state )
+			queryParams: ThemesListSelectors.getQueryParams( state ),
+			themesList: ThemesListSelectors.getThemesList( state )
 		}
 	)
 )( Themes );

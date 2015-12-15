@@ -8,7 +8,11 @@ import omit from 'lodash/object/omit';
 /**
  * Internal dependencies
  */
-import { isActivating, hasActivated, getCurrentTheme } from 'lib/themes/selectors';
+import {
+	isActivating,
+	hasActivated,
+	getCurrentTheme
+} from 'lib/themes/selectors/current-theme';
 
 /**
  * Passes the activating state of themes to the supplied child component.
