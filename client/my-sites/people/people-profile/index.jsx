@@ -11,6 +11,8 @@ var React = require( 'react/addons' ),
 var Gravatar = require( 'components/gravatar' );
 
 module.exports = React.createClass( {
+	displayName: 'PeopleProfile',
+
 	mixins: [ React.addons.PureRenderMixin ],
 
 	getRole: function() {
