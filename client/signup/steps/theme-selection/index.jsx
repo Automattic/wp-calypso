@@ -16,7 +16,10 @@ module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
 
 	propTypes: {
-		themes: React.PropTypes.array,
+		themes: React.PropTypes.arrayOf( React.PropTypes.shape( {
+			name: React.PropTypes.string.isRequired,
+			slug: React.PropTypes.string.isRequired
+		} ) ),
 		useHeadstart: React.PropTypes.bool,
 	},
 
