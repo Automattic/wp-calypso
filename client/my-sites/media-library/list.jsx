@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	clone = require( 'lodash/lang/clone' ),
 	noop = require( 'lodash/utility/noop' ),
 	filter = require( 'lodash/collection/filter' ),
@@ -63,7 +64,7 @@ module.exports = React.createClass( {
 		}
 
 		this.setState( {
-			listContext: React.findDOMNode( component )
+			listContext: ReactDom.findDOMNode( component )
 		} );
 	},
 

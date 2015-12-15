@@ -5,6 +5,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var assert = require( 'assert' ),
+	ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' );
 
 /**
@@ -134,7 +135,7 @@ describe( 'I18n', function() {
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and compoment interpolation together', function() {
 				var input = React.DOM.input(),
-					expectedResultString = '<span><span>foo </span><input><span> bar</span></span>',
+					expectedResultString = '<span><span>foo </span><input/><span> bar</span></span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
 						components: {
@@ -146,7 +147,7 @@ describe( 'I18n', function() {
 					} ),
 					instance = <span>{ translatedComponent }</span>;
 
-				assert.equal( expectedResultString, stripReactAttributes( React.renderToString( instance ) ) );
+				assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToString( instance ) ) );
 			} );
 		} );
 	} );

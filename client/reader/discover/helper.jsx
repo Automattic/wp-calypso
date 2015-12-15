@@ -9,7 +9,8 @@ var find = require( 'lodash/collection/find' ),
  * Internal Dependencies
  */
 var config = require( 'config' ),
-	userUtils = require( 'lib/user/utils' );
+	userUtils = require( 'lib/user/utils' ),
+	readerRoute = require( 'reader/route' );
 
 module.exports = {
 	isEnabled: function() {
@@ -38,7 +39,7 @@ module.exports = {
 		// If we have a blog ID, we want to send them to the site detail page
 		const blogId = get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' );
 		if ( blogId ) {
-			return `/read/blog/id/${blogId}`;
+			return readerRoute.getSiteUrl( blogId );
 		}
 
 		return post.discover_metadata.permalink;

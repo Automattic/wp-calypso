@@ -6,6 +6,7 @@ require( 'lib/react-test-env-setup' )( '<html><body><div id="container"></div></
 var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
 	mockery = require( 'mockery' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' );
 
 var EmptyComponent = React.createClass( {
@@ -48,7 +49,7 @@ describe( 'Theme', function() {
 	} );
 
 	afterEach( function() {
-		React.unmountComponentAtNode( this.container );
+		ReactDom.unmountComponentAtNode( this.container );
 	} );
 
 	describe( 'rendering', function() {
@@ -56,12 +57,12 @@ describe( 'Theme', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
 
-				this.theme = React.render(
+				this.theme = ReactDom.render(
 					React.createElement( this.Theme, this.props ),
 					this.container
 				);
 
-				this.themeNode = React.findDOMNode( this.theme );
+				this.themeNode = ReactDom.findDOMNode( this.theme );
 			} );
 
 			it( 'should render a <div> with a className of "theme"', function() {
@@ -101,12 +102,12 @@ describe( 'Theme', function() {
 			beforeEach( function() {
 				this.props.buttonContents = [];
 
-				this.theme = React.render(
+				this.theme = ReactDom.render(
 					React.createElement( this.Theme, this.props ),
 					this.container
 				);
 
-				this.themeNode = React.findDOMNode( this.theme );
+				this.themeNode = ReactDom.findDOMNode( this.theme );
 			} );
 
 			it( 'should not render a More button', function() {
@@ -119,12 +120,12 @@ describe( 'Theme', function() {
 
 	context( 'when isPlaceholder is set to true', function() {
 		beforeEach( function() {
-			this.theme = React.render(
+			this.theme = ReactDom.render(
 				React.createElement( this.Theme, { id: 'placeholder-1', name: 'Loading', isPlaceholder: true } ),
 				this.container
 			);
 
-			this.themeNode = React.findDOMNode( this.theme );
+			this.themeNode = ReactDom.findDOMNode( this.theme );
 		} );
 
 		it( 'should render a <div> with an is-placeholder class', function() {
@@ -136,12 +137,12 @@ describe( 'Theme', function() {
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
 			this.props.price = '$50';
-			this.theme = React.render(
+			this.theme = ReactDom.render(
 				React.createElement( this.Theme, this.props ),
 				this.container
 			);
 
-			this.themeNode = React.findDOMNode( this.theme );
+			this.themeNode = ReactDom.findDOMNode( this.theme );
 		} );
 
 		it( 'should show a price', function() {

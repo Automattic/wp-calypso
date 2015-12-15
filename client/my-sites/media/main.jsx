@@ -26,7 +26,7 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		this.setState( {
-			containerWidth: this.refs.container.getDOMNode().clientWidth
+			containerWidth: this.refs.container.clientWidth
 		} );
 	},
 

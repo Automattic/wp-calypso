@@ -1,16 +1,20 @@
 .bulk-select {
-	position: relative;
+	display: inline-block;
+}
+
+.bulk-select__container {
+	cursor: pointer;
 	display: flex;
 		align-items: center;
-	cursor: pointer;
+	position: relative;
 
 	.gridicon {
-		width: 16px;
-		height: 16px;
 		color: $blue-medium;
+		height: 16px;
 		position: absolute;
 			left: 0px;
 			top: 0px;
+		width: 16px;
 	}
 
 	> .count {
@@ -19,10 +23,10 @@
 }
 
 input[type=checkbox].bulk-select__box {
+	appearance: none;
 	height: 16px;
 	margin: 0;
+	min-width: 16px;
 	padding: 0;
 	width: 16px;
-	min-width: 16px;
-	appearance: none;
 }

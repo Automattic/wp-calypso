@@ -3,6 +3,7 @@
  */
 var chai = require( 'chai' ),
 	expect = chai.expect,
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
@@ -45,7 +46,7 @@ describe( 'PluginActivateToggle', function() {
 	} );
 
 	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 		mockedActions.togglePluginActivation.reset();
 		analyticsMock.ga.recordEvent.reset();
 	} );
@@ -59,7 +60,7 @@ describe( 'PluginActivateToggle', function() {
 
 	it( 'should register an event when the subcomponent action is executed', function() {
 		var rendered = TestUtils.renderIntoDocument( <PluginActivateToggle { ...fixtures } /> ),
-			pluginActionToggle = React.findDOMNode( rendered );
+			pluginActionToggle = ReactDom.findDOMNode( rendered );
 
 		TestUtils.Simulate.click( pluginActionToggle );
 
@@ -69,7 +70,7 @@ describe( 'PluginActivateToggle', function() {
 
 	it( 'should call an action when the subcomponent action is executed', function() {
 		var rendered = TestUtils.renderIntoDocument( <PluginActivateToggle { ...fixtures } /> ),
-			pluginActionToggle = React.findDOMNode( rendered );
+			pluginActionToggle = ReactDom.findDOMNode( rendered );
 
 		TestUtils.Simulate.click( pluginActionToggle );
 

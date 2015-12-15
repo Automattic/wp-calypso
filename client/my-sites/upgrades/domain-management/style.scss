@@ -901,6 +901,8 @@ ul.dns__list {
 
 	li {
 		border-top: 1px solid $gray-light;
+		display: flex;
+		justify-content: space-between;
 		overflow: auto;
 		padding: 10px 0;
 		position: relative;
@@ -915,12 +917,11 @@ ul.dns__list {
 			background: #87a6bc;
 			border-radius: 2px;
 			color: $white;
-			float: left;
+			display: block;
 			font-size: 12px;
 			margin: 0 10px 0 0;
 			padding: 10px 5px;
 			text-align: center;
-			width: 60px;
 		}
 
 		strong {
@@ -928,16 +929,19 @@ ul.dns__list {
 			font-weight: normal;
 		}
 	}
-	.remove {
-		background-color: #87a6bc;
-		border-radius: 2px;
-		color: #FFF;
-		cursor: pointer;
-		display: inline-block;
-		float: right;
-		font-size: 9px;
-		padding: 3px 8px;
-		text-transform: uppercase;
+
+	.dns__list-type {
+		min-width: 60px;
+	}
+
+	.dns__list-info {
+		width: 100%;
+		word-break: break-all;
+	}
+
+	.dns__list-remove {
+		text-align: right;
+		width: 100px;
 	}
 }
 

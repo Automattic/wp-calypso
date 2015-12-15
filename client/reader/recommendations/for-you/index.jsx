@@ -17,6 +17,8 @@ import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
 import { recordFollow, recordUnfollow } from 'reader/stats';
+import { getSiteUrl } from 'reader/route';
+
 
 const RecommendedForYou = React.createClass( {
 
@@ -110,12 +112,14 @@ const RecommendedForYou = React.createClass( {
 	renderItem( rec ) {
 		const site = rec.site && rec.site.toJS(),
 			itemKey = this.getItemRef( rec ),
-			title = site.name || ( site.URL && url.parse( site.URL ).hostname );
+			title = site.name || ( site.URL && url.parse( site.URL ).hostname ),
+			siteUrl = getSiteUrl( site.ID );
+
 		return (
 			<ListItem key={ itemKey } ref={ itemKey }>
 				<Icon><SiteIcon site={ site } size={ 48 } /></Icon>
 				<Title>
-					<a href={'/read/blog/id/' + site.ID} onclick={ this.trackSiteClick }>{ title }</a>
+					<a href={ siteUrl } onclick={ this.trackSiteClick }>{ title }</a>
 				</Title>
 				<Description>{ rec.reason }</Description>
 				<Actions>

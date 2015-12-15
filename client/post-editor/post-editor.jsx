@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	debug = require( 'debug' )( 'calypso:post-editor' ),
 	page = require( 'page' ),
 	classnames = require( 'classnames' ),
@@ -512,7 +513,7 @@ var PostEditor = React.createClass( {
 	onEditorFocus: function() {
 		// Fire a click when the editor is focused so that any global handlers have an opportunity to do their thing.
 		// In particular, this ensures that open popovers are closed when a user clicks into the editor.
-		React.findDOMNode( this.refs.editor ).click();
+		ReactDom.findDOMNode( this.refs.editor ).click();
 	},
 
 	saveRawContent: function() {

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEqual = require( 'lodash/lang/isEqual' ),
 	debounce = require( 'lodash/function/debounce' ),
@@ -78,7 +79,7 @@ module.exports = React.createClass( {
 				this.props.categories &&
 				nextSelectedIds.length === ( this.state.selectedIds.length + 1 ) &&
 				nextProps.categories.length === ( this.props.categories.length + 1 ) ) {
-			React.findDOMNode( this.refs.wrapper ).scrollTop = 0;
+			ReactDom.findDOMNode( this.refs.wrapper ).scrollTop = 0;
 		}
 
 		if ( ! isEqual( nextSelectedIds, this.state.selectedIds ) ) {
@@ -102,7 +103,7 @@ module.exports = React.createClass( {
 	},
 
 	checkScrollPosition: throttle( function() {
-		var node = React.findDOMNode( this );
+		var node = ReactDom.findDOMNode( this );
 
 		if ( node.scrollTop + node.clientHeight >= node.scrollHeight ) {
 			this.maybeFetchNextPage();

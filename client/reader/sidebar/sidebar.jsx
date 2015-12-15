@@ -8,6 +8,7 @@ const assign = require( 'lodash/object/assign' ),
 	map = require( 'lodash/collection/map' ),
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' );
@@ -116,7 +117,7 @@ module.exports = React.createClass( {
 	followTag: function( event ) {
 		var tag, subscription;
 		event.preventDefault();
-		tag = React.findDOMNode( this.refs.addTagInput ).value;
+		tag = ReactDom.findDOMNode( this.refs.addTagInput ).value;
 		subscription = Tags.getSubscription( TagActions.slugify( tag ) );
 		if ( subscription ) {
 			this.highlightNewTag( subscription );
@@ -141,7 +142,7 @@ module.exports = React.createClass( {
 	highlightNewList: function( list ) {
 		list = ListStore.get( list.owner, list.slug );
 		window.location.href = url.resolve( 'https://wordpress.com', url.resolve( list.URL, 'edit' ) );
-		React.findDOMNode( this.refs.addListInput ).value = '';
+		ReactDom.findDOMNode( this.refs.addListInput ).value = '';
 	},
 
 	highlightNewTag: function( tag ) {
@@ -149,7 +150,7 @@ module.exports = React.createClass( {
 			page( '/tag/' + tag.slug );
 			window.scrollTo( 0, 0 );
 		} );
-		React.findDOMNode( this.refs.addTagInput ).value = '';
+		ReactDom.findDOMNode( this.refs.addTagInput ).value = '';
 	},
 
 	createList: function( event ) {
@@ -158,7 +159,7 @@ module.exports = React.createClass( {
 		stats.recordAction( 'add_list' );
 		stats.recordGaEvent( 'Clicked Create List' );
 
-		ReaderListActions.create( React.findDOMNode( this.refs.addListInput ).value );
+		ReaderListActions.create( ReactDom.findDOMNode( this.refs.addListInput ).value );
 	},
 
 	handleCreateListKeyDown: function( event ) {

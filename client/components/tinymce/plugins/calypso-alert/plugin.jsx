@@ -2,6 +2,7 @@
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -28,7 +29,7 @@ function calypsoAlert( editor ) {
 			}
 
 			function render( visibility = 'show' ) {
-				React.render(
+				ReactDom.render(
 					<Alert
 						isVisible={ visibility === 'show' }
 						onClose={ onClose }
@@ -43,7 +44,7 @@ function calypsoAlert( editor ) {
 	} );
 
 	editor.on( 'remove', function() {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );

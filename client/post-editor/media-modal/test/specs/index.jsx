@@ -4,7 +4,8 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
@@ -64,7 +65,7 @@ describe( 'EditorMediaModal', function() {
 
 	beforeEach( function() {
 		sandbox.reset();
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	after( function() {
@@ -77,7 +78,7 @@ describe( 'EditorMediaModal', function() {
 		var media = DUMMY_MEDIA.slice( 0, 1 ),
 			tree;
 
-		tree = React.render(
+		tree = ReactDom.render(
 			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ media } />,
 			document.body
 		);
@@ -91,7 +92,7 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should prompt to delete multiple items from the list view', function( done ) {
-		var tree = React.render(
+		var tree = ReactDom.render(
 			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />,
 			document.body
 		);
@@ -108,7 +109,7 @@ describe( 'EditorMediaModal', function() {
 		var media = DUMMY_MEDIA[ 0 ],
 			tree;
 
-		tree = React.render(
+		tree = ReactDom.render(
 			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ [ media ] } />,
 			document.body
 		);
@@ -123,7 +124,7 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should prompt to delete a single item from the detail view, even when multiple selected', function( done ) {
-		var tree = React.render(
+		var tree = ReactDom.render(
 			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />,
 			document.body
 		);
@@ -138,7 +139,7 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should return to the list view after deleting the only item in detail view', function( done ) {
-		var tree = React.render(
+		var tree = ReactDom.render(
 			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) } />,
 			document.body
 		);
@@ -152,7 +153,7 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should revert to an earlier media item when the last item is deleted from detail view', function( done ) {
-		var tree = React.render(
+		var tree = ReactDom.render(
 			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />,
 			document.body
 		);

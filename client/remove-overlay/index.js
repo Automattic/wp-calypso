@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	page = require( 'page' );
 
 /**
@@ -20,7 +21,7 @@ function removeOverlay( context, next ) {
 
 	// After animations finish, unmount the overlay and clean up the classes.
 	setTimeout( function() {
-		React.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
 		classes( document.documentElement ).remove( 'overlay-is-front' );
 	}, 400 );
 

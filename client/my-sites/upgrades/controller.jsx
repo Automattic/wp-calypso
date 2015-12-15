@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
@@ -50,7 +51,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
 
-		React.render(
+		ReactDom.render(
 			(
 				<CartData>
 					<DomainSearch
@@ -75,7 +76,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
-		React.render(
+		ReactDom.render(
 			(
 				<CartData>
 					<SiteRedirect
@@ -98,7 +99,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
 
-		React.render(
+		ReactDom.render(
 			(
 				<Main>
 					<CartData>
@@ -141,7 +142,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Google Apps' );
 
-		React.render(
+		ReactDom.render(
 			(
 				<Main>
 					<CartData>
@@ -172,7 +173,7 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
-		React.render(
+		ReactDom.render(
 			(
 				<CheckoutData>
 					<Checkout
@@ -184,7 +185,7 @@ module.exports = {
 			document.getElementById( 'primary' )
 		);
 
-		React.render(
+		ReactDom.render(
 			(
 				<CartData>
 					<SecondaryCart selectedSite={ sites.getSelectedSite() } />
@@ -210,7 +211,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( CheckoutThankYouComponent, {
 				lastTransaction: lastTransaction,
 				productsList: productsList
@@ -218,7 +219,7 @@ module.exports = {
 			document.getElementById( 'primary' )
 		);
 
-		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
 		CheckoutThankYouComponent.setLastTransaction( null );
 	},

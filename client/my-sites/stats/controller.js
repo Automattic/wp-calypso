@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	store = require( 'store' ),
 	page = require( 'page' ),
 	querystring = require( 'querystring' );
@@ -198,7 +199,7 @@ module.exports = {
 			StatsComponent = NuxInsights;
 		}
 
-		React.render(
+		ReactDom.render(
 			React.createElement( StatsComponent, {
 				site: site,
 				followList: followList,
@@ -275,7 +276,7 @@ module.exports = {
 
 			recordVisitDate();
 
-			React.render(
+			ReactDom.render(
 				React.createElement( StatsComponent, {
 					period: activeFilter.period,
 					sites: sites,
@@ -483,7 +484,7 @@ module.exports = {
 				siteComponent = NuxSite;
 			}
 
-			React.render(
+			ReactDom.render(
 				React.createElement( siteComponent, {
 					date: date,
 					charts: charts,
@@ -622,7 +623,7 @@ module.exports = {
 				analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) + ' > ' + titlecase( context.params.module )
 			);
 
-			React.render(
+			ReactDom.render(
 				React.createElement( StatsSummaryComponent, {
 					date: date,
 					context: context,
@@ -670,7 +671,7 @@ module.exports = {
 
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site', analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
 
-			React.render(
+			ReactDom.render(
 				React.createElement( StatsPostComponent, {
 					siteId: siteId,
 					postId: postId,
@@ -737,7 +738,7 @@ module.exports = {
 				analyticsPageTitle + ' > Followers > ' + titlecase( followType )
 			);
 
-			React.render(
+			ReactDom.render(
 				React.createElement( FollowsComponent, {
 					path: context.path,
 					sites: sites,

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 import includes from 'lodash/collection/includes';
 import page from 'page';
@@ -28,7 +29,7 @@ export default {
 	sidebar( context, next ) {
 		const SidebarComponent = require( 'me/sidebar' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( SidebarComponent, {
 				user,
 				context: context
@@ -52,7 +53,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( ProfileComponent,
 				{
 					userSettings: userSettings,
@@ -82,7 +83,7 @@ export default {
 			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Settings' );
 		}
 
-		React.render(
+		ReactDom.render(
 			React.createElement( AccountComponent,
 				{
 					userSettings: userSettings,
@@ -110,7 +111,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Password' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( PasswordComponent,
 				{
 					userSettings: userSettings,
@@ -131,7 +132,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( TwoStepComponent,
 				{
 					userSettings: userSettings,
@@ -152,7 +153,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( ConnectedAppsComponent,
 				{
 					userSettings: userSettings,
@@ -172,7 +173,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Security Checkup' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( CheckupComponent,
 				{
 					userSettings: userSettings,
@@ -191,7 +192,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( NotificationsComponent,
 				{
 					user: user,
@@ -213,7 +214,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( CommentSettingsComponent,
 				{
 					user: user,
@@ -233,7 +234,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( WPcomSettingsComponent,
 				{
 					user: user,
@@ -253,7 +254,7 @@ export default {
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( NotificationSubscriptions,
 				{
 					userSettings: userSettings,
@@ -273,7 +274,7 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Billing History', { textOnly: true } ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( BillingHistoryComponent, { billingData: billingData, sites: sites } ),
 			document.getElementById( 'primary' )
 		);
@@ -281,7 +282,7 @@ export default {
 		if ( transactionId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
-			React.render(
+			ReactDom.render(
 				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
 				document.getElementById( 'tertiary' )
 			);
@@ -301,14 +302,14 @@ export default {
 		titleActions.setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) );
 
 		if ( isWelcome ) {
-			React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 			context.layout.setState( { noSidebar: true } );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
 		analytics.pageView.record( analyticsBasePath, ANALYTICS_PAGE_TITLE + ' > Next' );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( NextSteps, {
 				path: context.path,
 				isWelcome: isWelcome,

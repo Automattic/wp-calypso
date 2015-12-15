@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	debug = require( 'debug' )( 'calypso:menus:menu' ); // eslint-disable-line no-unused-vars
 
 /**
@@ -75,7 +76,7 @@ var TemporaryInput = React.createClass({
 	},
 
 	componentDidMount: function() {
-		var node = React.findDOMNode( this.refs.input );
+		var node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		try {
 			node.setSelectionRange( 0, 999 );

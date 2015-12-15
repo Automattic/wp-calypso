@@ -24,6 +24,7 @@ var SearchCard = require( 'components/search-card' ),
 	SegmentedControl = require( 'components/segmented-control/docs/example' ),
 	Cards = require( 'components/card/docs/example' ),
 	Sites = require( 'lib/sites-list/docs/example' ),
+	SitesDropdown = require( 'components/sites-dropdown/docs/example' ),
 	TokenFields = require( 'components/token-field/docs/example' ),
 	CountedTextareas = require( 'components/forms/counted-textarea/docs/example' ),
 	ProgressBar = require( 'components/progress-bar/docs/example' ),
@@ -42,6 +43,7 @@ var SearchCard = require( 'components/search-card' ),
 	InputChrono = require( 'components/input-chrono/docs/example' ),
 	TimezoneDropdown = require( 'components/timezone-dropdown/docs/example' ),
 	ClipboardButtons = require( 'components/forms/clipboard-button/docs/example' ),
+	ClipboardButtonInput = require( 'components/clipboard-button-input/docs/example' ),
 	HeaderCake = require( 'components/header-cake' ),
 	InfoPopover = require( 'components/info-popover/docs/example' ),
 	FoldableCard = require( 'components/foldable-card/docs/example' ),
@@ -190,6 +192,7 @@ module.exports = React.createClass( {
 					<SegmentedControl />
 					<Cards />
 					<Sites />
+					<SitesDropdown />
 					<TokenFields />
 					<CountedTextareas />
 					<ProgressBar />
@@ -202,6 +205,7 @@ module.exports = React.createClass( {
 					<DropZones />
 					<FormFields searchKeywords="input textbox textarea radio"/>
 					<ClipboardButtons />
+					<ClipboardButtonInput />
 					<Rating />
 					<Count />
 					<Version />

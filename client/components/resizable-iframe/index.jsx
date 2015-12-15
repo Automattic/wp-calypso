@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -56,7 +57,7 @@ export default React.createClass( {
 	},
 
 	getFrameBody: function() {
-		return React.findDOMNode( this.refs.iframe ).contentDocument.body;
+		return ReactDom.findDOMNode( this.refs.iframe ).contentDocument.body;
 	},
 
 	maybeConnect: function() {
@@ -114,7 +115,7 @@ export default React.createClass( {
 	},
 
 	checkMessageForResize: function( event ) {
-		const iframe = React.findDOMNode( this.refs.iframe );
+		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Attempt to parse the message data as JSON if passed as string
 		let data = event.data || {};

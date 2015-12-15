@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/collection/some' ),
@@ -161,7 +162,7 @@ function boot() {
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
-		layout = React.render( React.createElement( Layout, {
+		layout = ReactDom.render( React.createElement( Layout, {
 			user: user,
 			sites: sites,
 			focus: layoutFocus,
@@ -177,7 +178,7 @@ function boot() {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
 
-		layout = React.render(
+		layout = ReactDom.render(
 			React.createElement( LoggedOutLayout ),
 			document.getElementById( 'wpcom' )
 		);

@@ -225,7 +225,7 @@ module.exports = React.createClass( {
 						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) }
 					/>
 					<span>{ this.translate( 'Discourage search engines from indexing this site' ) }</span>
-					<p className="settings-explanation inside-list">
+					<p className="settings-explanation inside-list is-indented">
 						{ this.translate( 'Note: This option does not block access to your site — it is up to search engines to honor your request.' ) }
 					</p>
 				</label>
@@ -311,38 +311,19 @@ module.exports = React.createClass( {
 			return null;
 		}
 		return (
-			<ul id="settings-jetpack" className="settings-jetpack">
-				<li>
-					<label>
-						<input name="jetpack_sync_non_public_post_stati" type="checkbox" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
-						<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
-						<p className="settings-explanation">{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }</p>
-					</label>
-				</li>
-			</ul>
-		);
-	},
-
-	jetpackOptions: function() {
-		var site = this.props.site;
-
-		if ( ! site.jetpack ) {
-			return null;
-		}
-
-		return (
-			<fieldset>
-				<legend>{ this.translate( 'Jetpack Status' ) }</legend>
-				{ this.syncNonPublicPostTypes() }
-				<p>{
-					this.translate( 'You can also {{manageLink}}manage the monitor settings{{/manageLink}} and {{migrateLink}}migrate followers{{/migrateLink}}.', {
-						components: {
-							manageLink: <a href={ '../security/' + site.slug } />,
-							migrateLink: <a href={ 'https://wordpress.com/manage/' + site.ID } />
-						}
-					} )
-				}</p>
-			</fieldset>
+			<Card className="is-compact">
+				<form onChange={ this.markChanged }>
+					<ul id="settings-jetpack" className="settings-jetpack">
+						<li>
+							<label>
+								<input name="jetpack_sync_non_public_post_stati" type="checkbox" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
+								<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
+								<p className="settings-explanation is-indented">{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }</p>
+							</label>
+						</li>
+					</ul>
+				</form>
+			</Card>	
 		);
 	},
 
@@ -358,26 +339,11 @@ module.exports = React.createClass( {
 			context: 'Jetpack: Action user takes to disconnect Jetpack site from .com link in general site settings'
 		} );
 
-		return (
-			<fieldset>
-				<legend>{ this.translate( 'Jetpack Connection' ) }</legend>
-				<ul id="settings-jetpack-connection" className="settings-jetpack">
-					<li>
-						<label>
-							<DisconnectJetpackButton
-								site={ site }
-								text= { disconnectText }
-								redirect= "/stats"
-								linkDisplay={ false }
-							/>
-							<p className="settings-explanation inside-list">
-								{ this.translate( 'This action cannot be undone. You will need to reconnect manually from your site dashboard.' ) }
-							</p>
-						</label>
-					</li>
-				</ul>
-			</fieldset>
-		);
+		return <DisconnectJetpackButton
+				site={ site }
+				text= { disconnectText }
+				redirect= "/stats"
+				linkDisplay={ false } />;
 	},
 
 	holidaySnowOption: function() {
@@ -435,6 +401,7 @@ module.exports = React.createClass( {
 					<form onChange={ this.markChanged }>
 						{ this.siteOptions() }
 						{ this.languageOptions() }
+						{ this.holidaySnowOption() }
 					</form>
 				</Card>
 				<SectionHeader label={ this.translate( 'Address and visibility' ) }>
@@ -456,7 +423,34 @@ module.exports = React.createClass( {
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
-				<SectionHeader label={ this.translate( 'Other' ) }>
+				{ this.props.site.jetpack
+					? <div>
+						<SectionHeader label={ this.translate( 'Jetpack' ) }>
+							{ this.jetpackDisconnectOption() }
+							<Button
+								compact={ true }
+								onClick={ this.submitForm }
+								primary={ true }
+								type="submit"
+								disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+									{ this.state.submittingForm
+										? this.translate( 'Saving…' )
+										: this.translate( 'Save Settings' )
+									}
+							</Button>
+						</SectionHeader>
+
+						{ this.syncNonPublicPostTypes() }
+
+						<Card href={ '../security/' + site.slug } className="is-compact">
+							{ this.translate( 'View Jetpack Monitor Settings' ) }
+						</Card>
+						<Card href={ 'https://wordpress.com/manage/' + site.ID } className="is-compact">
+							{ this.translate( 'Migrate followers from another WordPress.com blog' ) }
+						</Card>
+					</div>
+					: null }
+				<SectionHeader className="after-compact" label={ this.translate( 'Related Posts' ) }>
 					<Button
 						compact={ true }
 						onClick={ this.submitForm }
@@ -471,9 +465,6 @@ module.exports = React.createClass( {
 				</SectionHeader>
 				<Card>
 					<form onChange={ this.markChanged }>
-						{ this.jetpackOptions() }
-						{ this.jetpackDisconnectOption() }
-						{ this.holidaySnowOption() }
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>

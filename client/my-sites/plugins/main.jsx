@@ -1,46 +1,52 @@
 /**
  * External dependencies
  */
-import React from 'react/addons'
-import debugModule from 'debug'
-import titleCase from 'to-title-case'
-import classNames from 'classnames'
-import some from 'lodash/collection/some'
-import find from 'lodash/collection/find'
-import filter from 'lodash/collection/filter'
-import reject from 'lodash/collection/reject'
-import assign from 'lodash/object/assign'
-import property from 'lodash/utility/property'
-import isEmpty from 'lodash/lang/isEmpty'
+import React from 'react/addons';
+import debugModule from 'debug';
+import titleCase from 'to-title-case';
+import classNames from 'classnames';
+import some from 'lodash/collection/some';
+import find from 'lodash/collection/find';
+import filter from 'lodash/collection/filter';
+import reject from 'lodash/collection/reject';
+import assign from 'lodash/object/assign';
+import property from 'lodash/utility/property';
+import isEmpty from 'lodash/lang/isEmpty';
 
 /**
  * Internal dependencies
  */
-import acceptDialog from 'lib/accept'
-import analytics from 'analytics'
-import config from 'config'
-import { abtest } from 'lib/abtest'
-import Main from 'components/main'
-import SidebarNavigation from 'my-sites/sidebar-navigation'
-import pluginsAccessControl from 'my-sites/plugins/access-control'
-import { isBusiness } from 'lib/products-values'
-import PluginItem from './plugin-item/plugin-item'
-import SectionNav from 'components/section-nav'
-import NavTabs from 'components/section-nav/tabs'
-import NavItem from 'components/section-nav/item'
-import NavSegmented from 'components/section-nav/segmented'
-import Search from 'components/search'
-import URLSearch from 'lib/mixins/url-search'
-import EmptyContent from 'components/empty-content'
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog'
-import PluginsActions from 'lib/plugins/actions'
-import PluginsLog from 'lib/plugins/log-store'
-import PluginsStore from 'lib/plugins/store'
-import PluginsDataStore from 'lib/plugins/wporg-data/store'
-import PluginNotices from 'lib/plugins/notices'
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page'
-import PlanNudge from 'components/plans/plan-nudge'
-import FeatureExample from 'components/feature-example'
+import acceptDialog from 'lib/accept';
+import analytics from 'analytics';
+import { abtest } from 'lib/abtest';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import pluginsAccessControl from 'my-sites/plugins/access-control';
+import { isBusiness } from 'lib/products-values';
+import PluginItem from './plugin-item/plugin-item';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
+import URLSearch from 'lib/mixins/url-search';
+import EmptyContent from 'components/empty-content';
+import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginsStore from 'lib/plugins/store';
+import PluginsDataStore from 'lib/plugins/wporg-data/store';
+import PluginNotices from 'lib/plugins/notices';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PlanNudge from 'components/plans/plan-nudge';
+import FeatureExample from 'components/feature-example';
+import SectionHeader from 'components/section-header';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownSeparator from 'components/select-dropdown/separator';
+import BulkSelect from 'components/bulk-select';
 
 /**
  * Module variables
@@ -127,11 +133,11 @@ export default React.createClass( {
 		} );
 	},
 
-	jetpackPlugins() {
+	getJetpackPlugins() {
 		return reject( this.state.plugins, property( 'wpcom' ) );
 	},
 
-	wpcomPlugins() {
+	getWpcomPlugins() {
 		return filter( this.state.plugins, property( 'wpcom' ) );
 	},
 
@@ -142,7 +148,8 @@ export default React.createClass( {
 		return {
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			plugins: this.getPluginsFromStore( nextProps, sites ),
-			pluginUpdateCount: pluginUpdate && pluginUpdate.length
+			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
+			selectedAction: 'Actions'
 		};
 	},
 
@@ -213,7 +220,7 @@ export default React.createClass( {
 		}
 	},
 
-	pluginChecked( plugin ) {
+	togglePluginSelection( plugin ) {
 		PluginsActions.togglePluginSelection( plugin );
 		analytics.ga.recordEvent( 'Plugins', 'Clicked to ' + plugin.selected ? 'Deselect' : 'Select' + 'Single Plugin', 'Plugin Name', plugin.slug );
 	},
@@ -391,12 +398,15 @@ export default React.createClass( {
 		return ( this.props.sites.selected || this.props.sites.get().length === 1 ) ? '/' + this.props.sites.selected : '';
 	},
 
-	placeholders() {
+	renderPlaceholders() {
 		const placeholderCount = 16;
-		return [ ... Array( placeholderCount ).keys() ].map( i => <PluginItem key={ 'placeholder-' + i } /> );
+		return [
+			<SectionHeader key="plugins__section-placeholder" label="Jetpack Plugins" className="plugins__section-actions is-placeholder" />,
+			[ ... Array( placeholderCount ).keys() ].map( i => <PluginItem key={ 'placeholder-' + i } /> )
+		];
 	},
 
-	formatPlugins( plugins ) {
+	formatPlugins( plugins, disableManage ) {
 		const manageableSites = this.props.sites.getSelectedOrAllJetpackCanManage();
 
 		return plugins.map( plugin => {
@@ -408,8 +418,8 @@ export default React.createClass( {
 					plugin={ plugin }
 					sites={ plugin.sites }
 					isSelected={ plugin.selected }
-					isSelectable={ this.state.bulkManagement }
-					onClick={ this.pluginChecked.bind( this, plugin ) }
+					isSelectable={ this.state.bulkManagement && ! disableManage }
+					onClick={ this.togglePluginSelection.bind( this, plugin ) }
 					pluginLink={ this.props.path + '/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() }
 					progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
 					errors={
@@ -421,26 +431,38 @@ export default React.createClass( {
 		} );
 	},
 
-	pluginList( plugins, header ) {
+	renderPluginList( plugins, header, disableManage ) {
 		let headerMarkup;
+		const slug = header.replace( / /g, '' );
 
 		if ( isEmpty( plugins ) ) {
 			return;
 		}
 
 		const itemListClasses = classNames( 'list-cards-compact', 'plugins__list', {
-			'is-bulk-editing': this.state.bulkManagement
+			'is-bulk-editing': this.state.bulkManagement && ! disableManage
 		} );
 
-		if ( this.props.sites.getSelectedOrAllWithPlugins().length > 1 ) {
-			// only show the headers in the All Sites view
-			headerMarkup = <div className='plugins__list-header'>{ header }</div>;
+		const headerClasses = classNames( 'plugins__section-actions', {
+			'is-bulk-editing': this.state.bulkManagement && ! disableManage
+		} );
+
+		if ( this.state.bulkManagement ) {
+			header = null;
 		}
 
+		headerMarkup = (
+			<SectionHeader label={ header } className={ headerClasses } key={ 'plugins__section-header-' + slug } >
+				{ disableManage || ! this.state.bulkManagement ? null : <BulkSelect key="plugins__bulk-select" totalElements={ this.state.plugins.length } selectedElements={ this.getSelected().length } onToggle={ this.unselectOrSelectAll } /> }
+				{ disableManage ? null : this.getCurrentActionDropdown() }
+				{ disableManage ? null : this.getCurrentActionButtons() }
+			</SectionHeader>
+		);
+
 		return (
-			<span>
+			<span key={ 'plugins__header-' + slug }>
 				{ headerMarkup }
-				<div className={ itemListClasses }>{ this.formatPlugins( plugins ) }</div>
+				<div className={ itemListClasses }>{ this.formatPlugins( plugins, disableManage ) }</div>
 			</span>
 		);
 	},
@@ -502,59 +524,88 @@ export default React.createClass( {
 			.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
 	},
 
-	renderBulkAutupdateActionGroup() {
-		return (
-			<div className="toolbar-bulk__action-group">
-				<a onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</a>
-				<a className="toolbar-bulk__more-actions noticon noticon-expand">
-					<span className="screen-reader-text">{ this.translate( 'More options' ) }</span>
-				</a>
-				<div className="toolbar-bulk__more-actions">
-					<a onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Manually update' ) }</a>
-				</div>
-			</div>
-		);
-	},
+	getCurrentActionButtons() {
+		let buttons = [];
+		let rightSideButtons = [];
+		let leftSideButtons = [];
+		let updateButtons = [];
+		let activateButtons = [];
 
-	toolbarBulkAction() {
-		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) ),
-			bulkActionOptionsClasses = classNames( {
-				'toolbar-bulk__action-options': true,
-				hidden: ! this.areSelected()
-			} ),
-			isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug ),
-			sitesCanUpdateFiles = this.canUpdatePlugins(),
-			needsUpdateLink = ! hasWpcomPlugins && sitesCanUpdateFiles && this.areSelected( 'updates' ),
-			needsRemoveLink = ! hasWpcomPlugins && sitesCanUpdateFiles && config.isEnabled( 'manage/plugins/browser' ) && ! isJetpackSelected,
-			needsAutoUpdates = ! hasWpcomPlugins && sitesCanUpdateFiles && this.areSelected(),
-			needsActivateLink = this.areSelected( 'inactive' ),
-			needsDeactivateLink = this.areSelected( 'active' ),
-			deactivateLink = isJetpackSelected
-			? <a onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</a>
-			: <a onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</a>;
+		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
+		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
+		const needsRemoveButton = this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 
-		return (
-			<div className={ bulkActionOptionsClasses }>
-				<div className="toolbar-bulk__action-group">
-					{ needsActivateLink && <a onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</a> }
-					{ needsDeactivateLink && deactivateLink }
-					{ needsRemoveLink && <a onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</a> }
-					{ needsUpdateLink && <a onClick={ this.updateSelected }>{ this.translate( 'Update' ) }</a> }
-				</div>
-				{ needsAutoUpdates && this.renderBulkAutupdateActionGroup() }
-			</div>
-		);
-	},
+		if ( ! this.state.bulkManagement ) {
+			if ( 0 < this.state.pluginUpdateCount ) {
+				rightSideButtons.push(
+					<ButtonGroup key="plugins__buttons-update-all">
+						<Button compact primary onClick={ this.updateAllPlugins } >
+							{ this.translate( 'Update All', { context: 'button label' } ) }
+						</Button>
+					</ButtonGroup>
+				);
+			}
 
-	toolbarSelect() {
-		if ( this.props.sites.canUpdateFiles() ) {
-			return (
-				<div className="toolbar-bulk__selection-options" role="menu">
-					<a className="toolbar-bulk__selection-item" role="menu-item" onClick={ this.setPluginFilter.bind( this, 'all' ) }>{ this.translate( 'All' ) }</a>
-					<a className="toolbar-bulk__selection-item" role="menu-item" onClick={ this.setPluginFilter.bind( this, 'updates' ) }>{ this.translate( 'Update available' ) }</a>
-				</div>
+			rightSideButtons.push(
+				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Bulk Edit', { context: 'button label' } ) }</Button></ButtonGroup>
+			);
+		} else {
+			activateButtons.push( <Button key="plugins__buttons-activate" disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
+			let deactivateButton = isJetpackSelected
+				? <Button key="plugins__buttons-deactivate" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
+				: <Button key="plugins__buttons-disable" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
+			activateButtons.push( deactivateButton )
+
+			updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+			updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
+
+			leftSideButtons.push( <ButtonGroup key="plugins__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
+			leftSideButtons.push( <ButtonGroup key="plugins__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
+
+			leftSideButtons.push( <ButtonGroup key="plugins__buttons-remove-button"><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
+
+			rightSideButtons.push(
+				<button key="plugins__buttons-close-button" className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
+					<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
+					<Gridicon icon="cross" />
+				</button>
 			);
 		}
+
+		buttons.push( <span key="plugins__buttons-action-buttons" className="plugins__action-buttons">{ leftSideButtons }</span> );
+		buttons.push( <span key="plugins__buttons-global-buttons" className="plugins__mode-buttons">{ rightSideButtons }</span> );
+
+		return buttons;
+	},
+
+	getCurrentActionDropdown() {
+		let options = [];
+		let actions = [];
+
+		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
+		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
+		const needsRemoveButton = !! this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
+
+		if ( this.state.bulkManagement ) {
+			options.push( <DropdownItem key="plugin__actions_title" selected={ true } v1alue="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
+			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
+
+			options.push( <DropdownItem key="plugin__actions_activate" disabled={ ! this.areSelected( 'inactive' ) } onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</DropdownItem> );
+
+			let deactivateAction = isJetpackSelected
+				? <DropdownItem key="plugin__actions_disconnect" disabled={ ! this.areSelected( 'active' ) } onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</DropdownItem>
+				: <DropdownItem key="plugin__actions_deactivate" disabled={ ! this.areSelected( 'active' ) } onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</DropdownItem>;
+			options.push( deactivateAction );
+
+			options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
+			options.push( <DropdownItem key="plugin__actions_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</DropdownItem> );
+			options.push( <DropdownItem key="plugin__actions_disable_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</DropdownItem> );
+
+			options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
+			options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
+			actions.push( <SelectDropdown compact className="plugins__actions_dropdown" key="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
+		}
+		return actions;
 	},
 
 	getEmptyContentUpdateData() {
@@ -562,9 +613,11 @@ export default React.createClass( {
 			selectedSite = this.props.sites.getSelectedSite();
 
 		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are up to date.', {
+			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
 				textOnly: true,
-				args: { siteName: selectedSite.title }
+				args: { siteName: selectedSite.title },
+				components: { span: <span className="plugins__plugin-list-state" /> },
+				comment: 'The span tags prevents single words from showing on a single line.'
 			} );
 		} else {
 			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
@@ -642,27 +695,26 @@ export default React.createClass( {
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	},
 
-	renderNavItems() {
-		let navItems = [];
+	renderPluginsContent() {
+		const plugins = this.state.plugins || [];
 
-		if ( this.props && this.props.filter === 'updates' ) {
-			navItems.push(
-				<NavItem onClick={ this.updateAllPlugins } key="updatesKeyItem" >
-					{ this.translate( 'Update All', { context: 'button label' } ) }
-				</NavItem>
+		if ( isEmpty( plugins ) && ( this.props.search || 'inactive' === this.props.filter || 'updates' === this.props.filter ) ) {
+			let emptyContentData = this.getEmptyContentData();
+			return (
+				<EmptyContent
+					title={ emptyContentData.title }
+					illustration={ emptyContentData.illustration }
+					actionURL={ emptyContentData.actionURL }
+					action={ emptyContentData.action } />
 			);
 		}
-
-		navItems.push(
-			<NavItem onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement } key="bulkManage" >
-				{
-					this.state.bulkManagement
-					? this.translate( 'Done', { context: 'button label' } )
-					: this.translate( 'Manage', { context: 'button label' } )
-				}
-			</NavItem>
+		return (
+			<div className="plugins__lists">
+				{ this.renderPluginList( this.getWpcomPlugins(), this.translate( 'WordPress.com Plugins' ) ) }
+				{ this.renderPluginList( this.getJetpackPlugins(), this.translate( 'Jetpack Plugins' ) ) }
+				{ ! this.state.plugins && this.renderPlaceholders() }
+			</div>
 		);
-		return navItems;
 	},
 
 	getMockPluginItems() {
@@ -733,71 +785,6 @@ export default React.createClass( {
 			);
 		}
 
-		const plugins = this.state.plugins || [];
-		let pluginsContent, toolbarSelect, toolbarBulkAction, manageLink;
-
-		if ( ! isEmpty( plugins ) ) {
-			toolbarBulkAction = this.toolbarBulkAction();
-			toolbarSelect = this.toolbarSelect();
-			manageLink = (
-				<NavSegmented>
-					{ this.renderNavItems() }
-				</NavSegmented>
-			);
-		}
-
-		if ( isEmpty( plugins ) && ( this.props.search || 'inactive' === this.props.filter || 'updates' === this.props.filter ) ) {
-			let emptyContentData = this.getEmptyContentData();
-			pluginsContent = (
-				<EmptyContent
-					title={ emptyContentData.title }
-					illustration={ emptyContentData.illustration }
-					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action }
-				/>
-			);
-		} else {
-			const checkedPluginsCount = this.getSelected().length,
-				bulkActionsClasses = classNames( {
-					'toolbar-bulk__actions': true,
-					'some-selected': checkedPluginsCount > 0,
-					'all-selected': ! isEmpty( plugins ) && checkedPluginsCount === plugins.length
-				} ),
-				manageClasses = classNames( {
-					'toolbar-bulk': true,
-					'is-bulk-editing': this.state.bulkManagement,
-					'is-all-sites': this.props.sites.getSelectedOrAllWithPlugins().length > 1
-				} );
-
-			pluginsContent = (
-				<div className="plugins__lists">
-					<div className={ manageClasses }>
-						<div className={ bulkActionsClasses }>
-							<div className="toolbar-bulk__check-all" role="button">
-								<a onClick={ this.unselectOrSelectAll } className="checkbox-tristate" role="checkbox">
-									<span className="screen-reader-text">{ this.translate( 'Check all' ) }</span>
-								</a>
-								<input className="toolbar-bulk__selection-options-toggle" type="checkbox" id="bulk-selection-options" onChange={ this.changeSelectionOptionsState } checked={ this.state.selectionOptionsOpen } />
-								<label className="toolbar-bulk__selection-options-label noticon noticon-expand" htmlFor="bulk-selection-options">
-									<span className="screen-reader-text">{ this.translate( 'View selection options' ) }</span>
-								</label>
-								{ toolbarSelect }
-							</div>
-							<input className="toolbar-bulk__action-options-toggle" type="checkbox" id="actions-menu-toggle" />
-							<label className="toolbar-bulk__action-options-label" htmlFor="actions-menu-toggle">
-								<span className="screen-reader-text">{ this.translate( 'Select' ) }</span>{ this.translate( 'Actions' ) }
-								<span className="noticon noticon-expand"></span>
-							</label>
-							{ toolbarBulkAction }
-						</div>
-					</div>
-					{ this.pluginList( this.wpcomPlugins(), this.translate( 'WordPress.com Plugins' ) ) }
-					{ this.pluginList( this.jetpackPlugins(), this.translate( 'Jetpack Plugins' ) ) }
-					{ ! this.state.plugins && this.placeholders() }
-				</div>
-			);
-		}
-
 		const containerClass = classNames( {
 			'main-column': true,
 			plugins: true,
@@ -831,8 +818,6 @@ export default React.createClass( {
 						} ) }
 					</NavTabs>
 
-					{ manageLink }
-
 					<Search
 						pinned
 						onSearch={ this.doSearch }
@@ -842,7 +827,7 @@ export default React.createClass( {
 						placeholder={ this.getSearchPlaceholder() }
 					/>
 				</SectionNav>
-				{ pluginsContent }
+				{ this.renderPluginsContent() }
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
 			</Main>
 		);

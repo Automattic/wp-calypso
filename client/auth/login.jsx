@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -51,7 +52,7 @@ module.exports = React.createClass( {
 
 	componentDidUpdate() {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
-			this.refs.auth_code.getDOMNode().focus();
+			ReactDom.findDOMNode( this.refs.auth_code ).focus();
 		}
 	},
 

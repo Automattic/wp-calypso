@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
+const ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	tinymce = require( 'tinymce/tinymce' );
 
 /**
@@ -19,7 +20,7 @@ function wpcomHelpPlugin( editor ) {
 	} );
 
 	editor.on( 'remove', function() {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
@@ -31,7 +32,7 @@ function wpcomHelpPlugin( editor ) {
 		}
 
 		function render( visibility = 'show' ) {
-			React.render(
+			ReactDom.render(
 				React.createElement( HelpModal, {
 					showDialog: visibility === 'show' ? true : false,
 					onClose: onClose,

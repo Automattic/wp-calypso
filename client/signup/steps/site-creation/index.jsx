@@ -13,13 +13,14 @@ var wpcom = require( 'lib/wp' ),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	formState = require( 'lib/form-state' ),
-	LoggedOutForm = require( 'signup/logged-out-form' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ValidationFieldset = require( 'signup/validation-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
-	StepWrapper = require( 'signup/step-wrapper' );
+	StepWrapper = require( 'signup/step-wrapper' ),
+	LoggedOutForm = require( 'components/logged-out-form' ),
+	LoggedOutFormFooter = require( 'components/logged-out-form/footer' );
 
 /**
  * Constants
@@ -265,12 +266,13 @@ module.exports = React.createClass( {
 
 	renderSiteForm: function() {
 		return (
-			<LoggedOutForm
-				path={ this.props.path }
-				formFields={ this.formFields() }
-				formFooter={ this.formFooter() }
-				locale={ this.props.locale }
-				onSubmit={ this.handleSubmit } />
+			<LoggedOutForm onSubmit={ this.handleSubmit } noValidate >
+				{ this.formFields() }
+
+				<LoggedOutFormFooter>
+					{ this.formFooter() }
+				</LoggedOutFormFooter>
+			</LoggedOutForm>
 		);
 	},
 

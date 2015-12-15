@@ -30,7 +30,7 @@ module.exports = React.createClass( {
 		if ( this.isMounted() ) {
 			debug( 'this should only be called once ' );
 			this.visualizationsLoaded = true;
-			this.visualization = new window.google.visualization.GeoChart( this.getDOMNode() );
+			this.visualization = new window.google.visualization.GeoChart( this.refs.chart );
 			window.google.visualization.events.addListener( this.visualization, 'regionClick', this.recordEvent );
 
 			this.drawData();
@@ -48,7 +48,7 @@ module.exports = React.createClass( {
 
 		if( this.props.data.length > 1 ) {
 			var data = window.google.visualization.arrayToDataTable( this.props.data ),
-				node = this.getDOMNode(),
+				node = this.refs.chart,
 				width = node.clientWidth,
 				options = {
 					width: 100 + '%',
@@ -86,7 +86,7 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var domNode = this.getDOMNode(),
+		var domNode = this.refs.chart,
 			script = document.createElement( 'script' );
 
 		script.src = 'https://www.google.com/jsapi';
@@ -128,6 +128,6 @@ module.exports = React.createClass( {
 	render: function() {
 		// TODO determine best course of action on responsiveness - or lack thereof - in the map visualization
 
-		return ( <div className="stats-geochart" /> );
+		return ( <div ref="chart" className="stats-geochart" /> );
 	}
 } );

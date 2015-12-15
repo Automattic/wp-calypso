@@ -38,6 +38,10 @@
 		border-bottom-right-radius: 4px;
 	}
 
+	.section-header & .button {
+		margin-right: 0;
+	}
+
 	&.example {
 		margin-bottom: 16px;
 		display: inline-block;

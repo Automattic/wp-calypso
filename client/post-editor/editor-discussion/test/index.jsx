@@ -4,7 +4,8 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react/addons' ),
 	TestUtils = React.addons.TestUtils,
 	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
@@ -52,7 +53,7 @@ describe( 'EditorDiscussion', function() {
 	} );
 
 	beforeEach( function() {
-		React.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
 	after( function() {
@@ -137,7 +138,7 @@ describe( 'EditorDiscussion', function() {
 				<EditorDiscussion post={ post } site={ DUMMY_SITE } />
 			);
 
-			checkbox = React.findDOMNode( tree ).querySelector( '[name=ping_status]' );
+			checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
 			TestUtils.Simulate.change( checkbox, {
 				target: {
 					name: 'comment_status',
@@ -160,7 +161,7 @@ describe( 'EditorDiscussion', function() {
 				<EditorDiscussion post={ post } site={ DUMMY_SITE } />
 			);
 
-			checkbox = React.findDOMNode( tree ).querySelector( '[name=ping_status]' );
+			checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
 			TestUtils.Simulate.change( checkbox, {
 				target: {
 					name: 'ping_status',

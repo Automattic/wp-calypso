@@ -8,7 +8,7 @@ const wpcom = require( 'lib/wp' ).undocumented();
  * Internal dependencies
  */
 import { actionTypes } from './constants';
-import { toApi } from './common';
+import { fromApi, toApi } from './common';
 
 export function cancelImport( importerId ) {
 	Dispatcher.handleViewAction( {
@@ -23,6 +23,28 @@ export function failUpload( importerId, error ) {
 		importerId,
 		error
 	} );
+}
+
+export function fetchState( siteId ) {
+	Dispatcher.handleViewAction( {
+		type: actionTypes.API_REQUEST
+	} );
+
+	wpcom.fetchImporterState( siteId )
+		.then( importer => fromApi( importer ) )
+		.then( importerStatus => {
+			Dispatcher.handleViewAction( {
+				type: actionTypes.API_SUCCESS
+			} );
+
+			Dispatcher.handleViewAction( {
+				type: actionTypes.RECEIVE_IMPORT_STATUS,
+				importerStatus
+			} );
+		} )
+		.catch( () => Dispatcher.handleViewAction( {
+			type: actionTypes.API_FAILURE
+		} ) );
 }
 
 export function finishUpload( importerId, importerStatus ) {

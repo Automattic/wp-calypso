@@ -23,6 +23,7 @@ var TokenInput = React.createClass( {
 	render: function() {
 		return (
 			<input
+				ref="input"
 				type="text"
 				value={ this.props.value }
 			 	size={ this.props.value.length + 1 }
@@ -35,12 +36,12 @@ var TokenInput = React.createClass( {
 
 	focus: function() {
 		if ( this.isMounted() ) {
-			this.getDOMNode().focus();
+			this.refs.input.focus();
 		}
 	},
 
 	hasFocus: function() {
-		return this.isMounted() && this.getDOMNode() === document.activeElement;
+		return this.isMounted() && this.refs.input === document.activeElement;
 	},
 
 	_onChange: function( event ) {

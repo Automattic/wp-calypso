@@ -14,16 +14,6 @@ $sites-popover-width: 300px;
 }
 
 .sites-popover .site-selector {
-	overflow: visible;
-	position: static;
-		top: auto;
-		left: auto;
-		bottom: auto;
-	width: auto;
-	opacity: 1;
-	pointer-events: auto;
-	border: none;
-	background: transparent;
 
 	&.is-large {
 		padding-top: 50px;

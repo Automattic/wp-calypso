@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	page = require( 'page' ),
 	qs = require( 'querystring' ),
 	some = require( 'lodash/collection/some' ),
@@ -63,7 +64,7 @@ function renderSinglePlugin( context, siteUrl, isWpcomPlugin ) {
 	window.scrollTo( 0, 0 );
 
 	// Render single plugin component
-	React.render(
+	ReactDom.render(
 		React.createElement( PluginComponent, {
 			path: context.path,
 			prevPath: lastPluginsListVisited || context.prevPath,
@@ -97,7 +98,7 @@ function renderPluginList( context, basePath, siteUrl ) {
 	titleActions.setTitle( i18n.translate( 'Plugins', { textOnly: true } ), { siteID: siteUrl } );
 
 	// Render multiple plugins component
-	React.render(
+	ReactDom.render(
 		React.createElement( PluginListComponent, {
 			path: basePath,
 			context: context,
@@ -138,7 +139,7 @@ function renderPluginsBrowser( context, siteUrl ) {
 	analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
 	analytics.pageView.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
 
-	React.render(
+	ReactDom.render(
 		React.createElement( PluginBrowser, {
 			site: site ? site.slug : null,
 			path: context.path,

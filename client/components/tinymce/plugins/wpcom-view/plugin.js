@@ -12,6 +12,7 @@
  */
 var tinymce = require( 'tinymce/tinymce' ),
 	debounce = require( 'lodash/function/debounce' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
@@ -88,7 +89,7 @@ function wpview( editor ) {
 
 			type = $view.attr( 'data-wpview-type' );
 
-			React.render(
+			ReactDom.render(
 				React.createElement( views.components[ type ], {
 					content: getText( view ),
 					siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
@@ -165,7 +166,7 @@ function wpview( editor ) {
 	function removeView( view ) {
 		editor.undoManager.transact( function() {
 			handleEnter( view );
-			React.unmountComponentAtNode( $( view ).find( '.wpview-body' )[0] );
+			ReactDom.unmountComponentAtNode( $( view ).find( '.wpview-body' )[0] );
 			editor.dom.remove( view );
 			editor.focus();
 		} );
@@ -279,7 +280,7 @@ function wpview( editor ) {
 
 		if ( ! event.selection ) {
 			$( '.wpview-wrap .wpview-body' ).each( function( i, viewBody ) {
-				React.unmountComponentAtNode( viewBody );
+				ReactDom.unmountComponentAtNode( viewBody );
 			} );
 		}
 

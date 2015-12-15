@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:author-selector' ),
 	trim = require( 'lodash/string/trim' );
 
@@ -130,7 +131,7 @@ SwitcherShell = React.createClass( {
 
 	_setListContext: function( infiniteListInstance ) {
 		this.setState( {
-			listContext: React.findDOMNode( infiniteListInstance )
+			listContext: ReactDom.findDOMNode( infiniteListInstance )
 		} );
 	},
 
@@ -156,7 +157,7 @@ SwitcherShell = React.createClass( {
 	},
 
 	_onClose: function( event ) {
-		var toggleElement = React.findDOMNode( this.refs[ 'author-selector-toggle' ] );
+		var toggleElement = ReactDom.findDOMNode( this.refs[ 'author-selector-toggle' ] );
 
 		if ( event && toggleElement.contains( event.target ) ) {
 			// let _toggleShowAuthor() handle this case

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
 
-		React.render(
+		ReactDom.render(
 			React.createElement( Help ),
 			document.getElementById( 'primary' )
 		);
@@ -24,7 +25,7 @@ module.exports = {
 	contact: function() {
 		var ContactComponent = require( './help-contact' );
 
-		React.render(
+		ReactDom.render(
 			<ContactComponent />,
 			document.getElementById( 'primary' )
 		);

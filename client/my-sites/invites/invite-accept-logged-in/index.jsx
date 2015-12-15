@@ -14,6 +14,8 @@ import Button from 'components/button';
 import config from 'config';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 
 export default React.createClass( {
 
@@ -34,7 +36,7 @@ export default React.createClass( {
 			signInLink = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 
 		return (
-			<div className={ classNames( 'logged-in-accept', this.props.className ) } >
+			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
 				<Card>
 					<InviteFormHeader { ...this.props } />
 					<div className="invite-accept-logged-in__join-as">
@@ -62,9 +64,12 @@ export default React.createClass( {
 						</Button>
 					</div>
 				</Card>
-				<a className="logged-in-accept__sign-in" href={ signInLink }>
-					{ this.translate( 'Sign in as a different user' ) }
-				</a>
+
+				<LoggedOutFormLinks>
+					<LoggedOutFormLinkItem href={ signInLink }>
+						{ this.translate( 'Sign in as a different user' ) }
+					</LoggedOutFormLinkItem>
+				</LoggedOutFormLinks>
 			</div>
 		);
 	}

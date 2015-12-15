@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	clickOutside = require( 'click-outside' ),
 	closest = require( 'component-closest' ),
 	noop = require( 'lodash/utility/noop' ),
@@ -34,10 +35,10 @@ var DialogBase = React.createClass( {
 		this._focusTimeout = setTimeout( function() {
 			this._focusTimeout = false;
 			if ( this.props.autoFocus ) {
-				React.findDOMNode( this.refs.content ).focus();
+				ReactDom.findDOMNode( this.refs.content ).focus();
 			}
 
-			this._unbindClickHandler = clickOutside( React.findDOMNode( this.refs.dialog ), this._onBackgroundClick );
+			this._unbindClickHandler = clickOutside( ReactDom.findDOMNode( this.refs.dialog ), this._onBackgroundClick );
 		}.bind( this ), 10 );
 	},
 
@@ -129,7 +130,7 @@ var DialogBase = React.createClass( {
 		// any dialogs below.
 		var isBackdropOrLowerStackingContext = (
 			! this.refs ||
-			React.findDOMNode( this.refs.backdrop ).contains( event.target ) || // Clicked on this dialog's backdrop
+			ReactDom.findDOMNode( this.refs.backdrop ).contains( event.target ) || // Clicked on this dialog's backdrop
 			! closest( event.target, '.dialog__backdrop', true ) // Clicked offscreen, but not from another dialog
 		);
 

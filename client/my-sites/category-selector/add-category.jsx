@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -85,7 +86,7 @@ module.exports = React.createClass( {
 	},
 
 	getSelectedValues: function() {
-		var categoryName = React.findDOMNode( this.refs.categoryName ).value.trim(),
+		var categoryName = ReactDom.findDOMNode( this.refs.categoryName ).value.trim(),
 			parent = this.state.selectedParent.length ? this.state.selectedParent[ 0 ] : 0;
 
 		return {

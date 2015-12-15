@@ -7,8 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' );
+	Button = require( 'components/button' );
 
 var Cards = React.createClass( {
 	displayName: 'SectionHeader',
@@ -22,12 +21,12 @@ var Cards = React.createClass( {
 					<a href="/devdocs/design/section-header">Section Header</a>
 				</h2>
 
-				<SectionHeader label="Team" count={ 10 }>
+				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
-						Primary Action
+						{ this.translate( 'Primary Action' ) }
 					</Button>
 					<Button compact>
-						Manage
+						{ this.translate( 'Manage' ) }
 					</Button>
 					<Button
 						compact
@@ -35,13 +34,9 @@ var Cards = React.createClass( {
 							alert( 'Clicked add button' );
 						} }
 					>
-						Add
+						{ this.translate( 'Add' ) }
 					</Button>
 				</SectionHeader>
-
-				<Card>
-					Content Here
-				</Card>
 			</div>
 		);
 	}

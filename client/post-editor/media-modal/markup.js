@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDomServer = require( 'react-dom/server' ),
+	React = require( 'react' ),
 	assign = require( 'lodash/object/assign' ),
 	classNames = require( 'classnames' );
 
@@ -58,7 +59,7 @@ Markup = {
 			title: media.title
 		}, media.title );
 
-		return React.renderToStaticMarkup( element );
+		return ReactDomServer.renderToStaticMarkup( element );
 	},
 
 	/**
@@ -153,7 +154,7 @@ Markup = {
 				className: classNames( 'align' + options.align, 'size-' + options.size, 'wp-image-' + media.ID )
 			} );
 
-			let markup = React.renderToStaticMarkup( img );
+			let markup = ReactDomServer.renderToStaticMarkup( img );
 			if ( media.caption && width ) {
 				markup = Shortcode.stringify( {
 					tag: 'caption',

@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import PostEditStore from 'lib/posts/post-edit-store';
 import { fetchConnections } from 'state/sharing/publicize/actions';
 import { getConnectionsBySiteIdAvailableToCurrentUser, hasFetchedConnections } from 'state/sharing/publicize/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import EditorSharingAccordion from './accordion';
 
 class EditorSharingContainer extends Component {
@@ -88,10 +89,12 @@ EditorSharingContainer.propTypes = {
 };
 
 export default connect(
-	( state, props ) => {
+	( state, ownProps ) => {
+		const site = getSelectedSite( state );
 		return {
-			hasFetchedConnections: props.site && hasFetchedConnections( state, props.site.ID ),
-			connections: props.site ? getConnectionsBySiteIdAvailableToCurrentUser( state, props.site.ID, props.currentUserID ) : null
+			hasFetchedConnections: site && hasFetchedConnections( state, site.ID ),
+			connections: site ? getConnectionsBySiteIdAvailableToCurrentUser( state, site.ID, ownProps.currentUserID ) : null,
+			site
 		};
 	}
 )( EditorSharingContainer );

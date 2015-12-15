@@ -141,7 +141,7 @@ const EditCardDetails = React.createClass( {
 			{ product_slug: getPurchase( this.props ).productSlug }
 		);
 
-		createPaygateToken( cardDetails, ( paygateError, token ) => {
+		createPaygateToken( 'card_update', cardDetails, ( paygateError, token ) => {
 			if ( paygateError ) {
 				notices.error( paygateError.message );
 				return;

@@ -4,6 +4,10 @@
 
 .select-dropdown {
 	height: 43px;
+
+	&.is-compact {
+		height: 28px;
+	}
 }
 
 .select-dropdown__container {
@@ -160,6 +164,13 @@
 	&.is-selected {
 		background-color: $blue-medium;
 		color: $white;
+	}
+
+	&.is-disabled {
+		background-color: $white;
+		color: $gray;
+		cursor: default;
+		opacity: .5;
 	}
 
 	.notouch & {

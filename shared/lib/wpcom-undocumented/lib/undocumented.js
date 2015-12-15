@@ -925,10 +925,10 @@ Undocumented.prototype.updateCreditCard = function( params, fn ) {
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.paygateConfiguration = function( fn ) {
+Undocumented.prototype.paygateConfiguration = function( data, fn ) {
 	debug( '/me/paygate-configuration query' );
 
-	this.wpcom.req.get( '/me/paygate-configuration', fn );
+	this.wpcom.req.get( '/me/paygate-configuration', data, fn );
 };
 
 /**
@@ -1670,6 +1670,12 @@ Undocumented.prototype.deleteEmailFollower = function( siteId, followerId, email
 		path: '/sites/%s/follower/%d/delete',
 		body: { email: email }
 	}, fn );
+};
+
+Undocumented.prototype.fetchImporterState = function( siteId ) {
+	debug( `/sites/${ siteId }/importer/` );
+
+	return this.wpcom.req.get( { path: `/sites/${ siteId }/imports/` } );
 };
 
 Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {

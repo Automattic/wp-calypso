@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 module.exports = React.createClass( {
 	displayName: 'RootChild',
@@ -21,7 +22,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		React.unmountComponentAtNode( this.container );
+		ReactDom.unmountComponentAtNode( this.container );
 		document.body.removeChild( this.container );
 		delete this.container;
 	},
@@ -37,7 +38,7 @@ module.exports = React.createClass( {
 			content = this.props.children;
 		}
 
-		React.render( content, this.container );
+		ReactDom.render( content, this.container );
 	},
 
 	render: function() {

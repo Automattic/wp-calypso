@@ -94,7 +94,7 @@ var ThemesSearchCard = React.createClass( {
 						onSearch={ this.props.onSearch }
 						initialValue={ this.props.search }
 						ref="url-search"
-						placeholder={ this.translate( 'Search themes...' ) }
+						placeholder={ this.translate( 'Search themes…' ) }
 						analyticsGroup="Themes"
 						delaySearch={ true }
 					/>

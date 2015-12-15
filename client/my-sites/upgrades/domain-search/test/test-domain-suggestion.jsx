@@ -5,6 +5,7 @@ require( 'lib/react-test-env-setup' )();
  */
 var	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react/addons' ),
 	TestUtils = React.addons.TestUtils,
 	chai = require( 'chai' );
@@ -40,7 +41,7 @@ describe( 'Domain Suggestion', function() {
 				suggestionComponent = TestUtils.renderIntoDocument(
 					<DomainSuggestion isAdded={false} buttonLabel={buttonLabel} />
 				);
-			chai.expect( React.findDOMNode( suggestionComponent.refs.button ).textContent ).to.equal( buttonLabel );
+			chai.expect( ReactDom.findDOMNode( suggestionComponent.refs.button ).textContent ).to.equal( buttonLabel );
 		} );
 	} );
 } );

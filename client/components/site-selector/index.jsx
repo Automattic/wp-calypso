@@ -25,15 +25,21 @@ module.exports = React.createClass( {
 		showAllSites: React.PropTypes.bool,
 		indicator: React.PropTypes.bool,
 		autoFocus: React.PropTypes.bool,
-		onClose: React.PropTypes.func
+		onClose: React.PropTypes.func,
+		selected: React.PropTypes.string,
+		hideSelected: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			showAddNewSite: false,
 			showAllSites: false,
+			siteBasePath: false,
 			indicator: false,
-			onClose: noop
+			hideSelected: false,
+			selected: null,
+			onClose: noop,
+			onSiteSelect: noop
 		};
 	},
 
@@ -51,12 +57,13 @@ module.exports = React.createClass( {
 		this.setState( { search: terms } );
 	},
 
-	onSiteSelect: function( event ) {
+	onSiteSelect: function( siteSlug, event ) {
 		this.closeSelector();
+		this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
 		// ignore mouse events as the default page() click event will handle navigation
-		if ( event.type !== 'mouseup' ) {
+		if ( this.props.siteBasePath && event.type !== 'mouseup' ) {
 			page( event.currentTarget.pathname );
 		}
 	},
@@ -106,9 +113,32 @@ module.exports = React.createClass( {
 		);
 	},
 
+	getSiteBasePath: function( site ) {
+		var siteBasePath = this.props.siteBasePath,
+			postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+
+		// Default posts to /posts/my when possible and /posts when not
+		siteBasePath = siteBasePath.replace( /^\/posts\b(\/my)?/, postsBase );
+
+		// Default stats to /stats/slug when on a 3rd level post/page summary
+		if ( siteBasePath.match( /^\/stats\/(post|page)\// ) ) {
+			siteBasePath = '/stats';
+		}
+
+		if ( siteBasePath.match( /^\/domains\/manage\// ) ) {
+			siteBasePath = '/domains/manage';
+		}
+
+		return siteBasePath;
+	},
+
+	isSelected: function( site ) {
+		return this.props.sites.selected === site.domain || this.props.selected === site.slug;
+	},
+
 	renderSiteElements: function() {
 		var allSitesPath = this.props.allSitesPath,
-			sites, postsBase, siteElements;
+			sites, siteElements;
 
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
@@ -118,36 +148,33 @@ module.exports = React.createClass( {
 
 		// Render sites
 		siteElements = sites.map( function( site ) {
-			var siteBasePath = this.props.siteBasePath;
-			postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+			var siteHref;
 
-			// Default posts to /posts/my when possible and /posts when not
-			siteBasePath = siteBasePath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// Default stats to /stats/slug when on a 3rd level post/page summary
-			if ( siteBasePath.match( /^\/stats\/(post|page)\// ) ) {
-				siteBasePath = '/stats';
+			if ( this.props.siteBasePath ) {
+				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
 			}
 
-			if ( siteBasePath.match( /^\/domains\/manage\// ) ) {
-				siteBasePath = '/domains/manage';
+			const isSelected = this.isSelected( site );
+
+			if ( isSelected && this.props.hideSelected ) {
+				return;
 			}
 
 			return (
 				<Site
 					site={ site }
-					href={ siteBasePath + '/' + site.slug }
+					href={ this.props.siteBasePath ? siteHref : null }
 					key={ 'site-' + site.ID }
 					indicator={ this.props.indicator }
-					onSelect={ this.onSiteSelect }
-					isSelected={ this.props.sites.selected === site.domain }
+					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+					isSelected={ isSelected }
 				/>
 			);
 		}, this );
 
 		if ( this.props.showAllSites && ! this.state.search && allSitesPath ) {
 			// default posts links to /posts/my when possible and /posts when not
-			postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
+			const postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
 			allSitesPath = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 			// There is currently no "all sites" version of the insights page

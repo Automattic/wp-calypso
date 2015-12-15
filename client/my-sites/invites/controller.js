@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 
 /**
@@ -13,10 +14,10 @@ import InviteAccept from 'my-sites/invites/invite-accept';
 export function acceptInvite( context ) {
 	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
 
-	React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	context.layout.setState( { noSidebar: true } );
 
-	React.render(
+	ReactDom.render(
 		React.createElement(
 			InviteAccept,
 			{
