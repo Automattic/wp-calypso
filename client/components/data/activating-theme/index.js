@@ -21,9 +21,7 @@ const ActivatingThemeData = React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.element.isRequired,
-		// The following props aren't part of this module's public interface,
-		// since they are provided by the `connect()` call that is wrapped around
-		// `ActivatingThemeData` before it is exported.
+		// Connected props
 		isActivating: React.PropTypes.bool.isRequired,
 		hasActivated: React.PropTypes.bool.isRequired,
 		currentTheme: React.PropTypes.shape( {
