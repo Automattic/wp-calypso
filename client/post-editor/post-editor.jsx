@@ -367,7 +367,7 @@ var PostEditor = React.createClass( {
 								{ this.state.post && isPage ?
 									<EditorPageSlug
 										slug={ this.state.post.slug }
-										path={ site.URL + '/' }
+										path={ this.state.post.URL ? utils.getPagePath( this.state.post ) : site.URL + '/' }
 									/> :
 									null
 								}

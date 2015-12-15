@@ -59,6 +59,22 @@ describe( 'PostUtils', function() {
 		} );
 	} );
 
+	describe( '#getPagePath', function() {
+		it( 'should return undefined when no post is supplied', function() {
+			assert( postUtils.getPagePath() === undefined );
+		} );
+
+		it( 'should return post.URL without slug when page is published', function() {
+			var path = postUtils.getPagePath( { status: 'publish', URL: 'http://zo.mg/a/permalink/' } );
+			assert( path === 'http://zo.mg/a/' );
+		} );
+
+		it( 'should use permalink_URL when not published and present', function() {
+			var path = postUtils.getPagePath( { status: 'draft', other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' } } );
+			assert( path === 'http://zo.mg/a/permalink/' );
+		} );
+	} );
+
 	describe( '#getFeaturedImageId()', function() {
 		it( 'should return undefined when no post is specified', function() {
 			assert( postUtils.getFeaturedImageId() === undefined );
