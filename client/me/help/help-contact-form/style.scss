@@ -19,14 +19,6 @@
 	}
 }
 
-.help-contact-form__site-selection {
-	width: 100%;
-
-	@include breakpoint( ">960px" ) {
-		width: auto;
-	}
-}
-
 .help-contact-form__selection {
 	.select-dropdown__container {
 		// Make the dropdown span the width of the page

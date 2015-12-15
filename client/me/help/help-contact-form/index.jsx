@@ -14,7 +14,13 @@ import DropdownItem from 'components/select-dropdown/item';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
-import SelectSite from 'me/select-site';
+import SitesDropdown from 'components/sites-dropdown';
+import siteList from 'lib/sites-list';
+
+/**
+ * Module variables
+ */
+const sites = siteList();
 
 module.exports = React.createClass( {
 	displayName: 'HelpContactForm',
@@ -50,20 +56,19 @@ module.exports = React.createClass( {
 	 * @return {Object} An object representing our initial state
 	 */
 	getInitialState: function() {
-		const { showSiteField, siteList } = this.props;
+		const site = sites.getLastSelectedSite() || sites.getPrimary();
 
 		return {
 			howCanWeHelp: 'gettingStarted',
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			site: showSiteField ? siteList.getLastSelectedSite() || siteList.getPrimary() : null
+			siteSlug: site ? site.slug : null
 		};
 	},
 
-	setSite: function( event ) {
-		const site = this.props.siteList.getSite( parseInt( event.target.value, 10 ) );
-		this.setState( { site: site } );
+	setSite: function( siteSlug ) {
+		this.setState( { siteSlug } );
 	},
 
 	/**
@@ -153,7 +158,7 @@ module.exports = React.createClass( {
 				{ value: 'panicked', label: this.translate( 'Panicked' ) }
 			];
 
-		const { formDescription, buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField, showSiteField, siteList, siteFilter } = this.props;
+		const { formDescription, buttonLabel, showHowCanWeHelpField, showHowYouFeelField, showSubjectField, showSiteField } = this.props;
 
 		return (
 			<div className="help-contact-form">
@@ -174,14 +179,11 @@ module.exports = React.createClass( {
 				) }
 
 				{ showSiteField && (
-					<div>
+					<div className="help-contact-form__site-selection">
 						<FormLabel>{ this.translate( 'Which site do you need help with?' ) }</FormLabel>
-						<SelectSite
-							className="help-contact-form__site-selection"
-							sites={ siteList }
-							filter={ siteFilter }
-							value={ this.state.site.ID }
-							onChange={ this.setSite } />
+						<SitesDropdown
+							selected={ this.state.siteSlug }
+							onSiteSelect={ this.setSite } />
 					</div>
 				) }
 
