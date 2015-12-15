@@ -19,6 +19,7 @@ import olarkApi from 'lib/olark-api';
 import notices from 'notices';
 import olarkEvents from 'lib/olark-events';
 import olarkActions from 'lib/olark-store/actions';
+import i18n from 'lib/mixins/i18n';
 
 /**
  * Module variables
@@ -264,7 +265,7 @@ const olark = {
 		}
 
 		olarkApi( 'api.chat.onOperatorsAway', function() {
-			olarkApi( 'api.chat.sendNotificationToVisitor', { body: "Oops, our operators have all stepped away for a moment. If you don't hear back from us shortly, please try again later. Thanks!" } );
+			olarkApi( 'api.chat.sendNotificationToVisitor', { body: i18n.translate( "Oops, our operators have all stepped away for a moment. If you don't hear back from us shortly, please try again later. Thanks!" ) } );
 		} );
 
 		store.set( this.operatorsAvailableKey, true );
@@ -278,7 +279,7 @@ const olark = {
 		}
 
 		olarkApi( 'api.chat.onOperatorsAvailable', function() {
-			olarkApi( 'api.chat.sendNotificationToVisitor', { body: "Hey, we're back. If you don't hear from us shortly, please try your question once more. Thanks!" } );
+			olarkApi( 'api.chat.sendNotificationToVisitor', { body: i18n.translate( "Hey, we're back. If you don't hear from us shortly, please try your question once more. Thanks!" ) } );
 		} );
 
 		store.set( this.operatorsAvailableKey, false );
