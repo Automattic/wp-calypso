@@ -156,11 +156,11 @@ module.exports = React.createClass( {
 		if ( ! this.props.sites.initialized ) {
 			return (
 				<Card className="current-site is-loading">
-					<div className="site">
 					{ hasOneSite
 						? this.addNewWordPressButton()
-						: <span className="current-site__switch-sites" />
+						: <span className="current-site__switch-sites">&nbsp;</span>
 					}
+					<div className="site">
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
