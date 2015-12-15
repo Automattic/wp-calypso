@@ -109,7 +109,7 @@ FullPostView = React.createClass( {
 	scrollToComments: function() {
 		if ( ! this.isMounted() ) {
 			return;
-		}
+		}              
 		let commentListNode = ReactDom.findDOMNode( this.refs.commentList );
 		if ( commentListNode ) {
 			this.commentAnchor = true;
