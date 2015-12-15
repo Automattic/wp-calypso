@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 				{
 					sites.map( function( site ) {
 						return (
-							<option value={ site.ID } key={ site.ID }>{ site.name }</option>
+							<option value={ site.ID } key={ site.ID }>{ site.title }</option>
 						);
 					} )
 				}
