@@ -13,6 +13,7 @@ var ReactDom = require( 'react-dom' ),
 var analytics = require( 'analytics' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	MediaActions = require( 'lib/media/actions' ),
+	ClipboardButtonInput = require( 'components/clipboard-button-input' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	TrackInputChanges = require( 'components/track-input-changes' ),
@@ -134,6 +135,9 @@ module.exports = React.createClass( {
 					<TrackInputChanges onNewValue={ this.bumpStat.bind( this, 'description' ) }>
 						<FormTextInput name="description" value={ this.getItemValue( 'description' ) } onChange={ this.onChange } />
 					</TrackInputChanges>
+				</EditorMediaModalFieldset>
+				<EditorMediaModalFieldset legend={ this.translate( 'URL' ) }>
+					<ClipboardButtonInput value={ MediaUtils.url( this.props.item ) } />
 				</EditorMediaModalFieldset>
 			</div>
 		);
