@@ -29,8 +29,12 @@ module.exports = React.createClass( {
 	},
 
 	scrollIntoView: function() {
-		var node = ReactDom.findDOMNode( this );
-		node.parentNode.scrollTop = node.offsetTop;
+		var node = ReactDom.findDOMNode( this ),
+			parentScrollTop = node.offsetTop;
+		if ( node.previousSibling ) {
+			parentScrollTop -= node.previousSibling.offsetHeight / 2;
+		}
+		node.parentNode.scrollTop = parentScrollTop;
 	},
 
 	getDefaultProps: function() {
