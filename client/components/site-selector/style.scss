@@ -109,6 +109,7 @@
 .site-selector__sites {
 	max-height: calc( 100% - 89px );
 	overflow-y: auto;
+	position: relative; // for calculation of offsetTop in <Site>
 }
 
 .site-selector__no-results {

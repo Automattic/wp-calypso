@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site' ),
+	ReactDom = require( 'react-dom' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' );
 
@@ -17,7 +17,20 @@ module.exports = React.createClass( {
 	displayName: 'Site',
 
 	componentDidMount: function() {
-		debug( 'The Site component is mounted.' );
+		if ( this.props.isSelected ) {
+			this.scrollIntoView();
+		}
+	},
+
+	componentDidUpdate: function( prevProps, prevState ) {
+		if ( this.props.isSelected && ! prevProps.isSelected ) {
+			this.scrollIntoView();
+		}
+	},
+
+	scrollIntoView: function() {
+		var node = ReactDom.findDOMNode( this );
+		node.parentNode.scrollTop = node.offsetTop;
 	},
 
 	getDefaultProps: function() {

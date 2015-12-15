@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Popover = require( 'components/popover' ),
-	sitesList = require( 'lib/sites-list' )(),
 	hasTouch = require( 'lib/touch-detect' ).hasTouch,
 	SiteSelector = require( 'components/site-selector' );
 
@@ -16,6 +15,7 @@ module.exports = React.createClass( {
 	displayName: 'SitesPopover',
 
 	propTypes: {
+		sites: React.PropTypes.object,
 		context: React.PropTypes.object,
 		visible: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
@@ -62,7 +62,7 @@ module.exports = React.createClass( {
 				className="popover sites-popover">
 				{ this.state.popoverVisible ?
 					<SiteSelector
-						sites={ sitesList }
+						sites={ this.props.sites }
 						siteBasePath="/post"
 						showAddNewSite={ false }
 						indicator={ false }
