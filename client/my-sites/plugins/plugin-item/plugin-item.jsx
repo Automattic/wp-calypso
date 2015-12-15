@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	uniq = require( 'lodash/array/uniq' ),
 	i18n = require( 'lib/mixins/i18n' );
@@ -139,12 +139,12 @@ module.exports = React.createClass( {
 		return (
 			<div className="plugin-item__actions">
 				<PluginActivateToggle
-					isMock={ this.props.isMock }
+					isMock={ this.props.isMock || this.props.isSelectable }
 					plugin={ this.props.plugin }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices } />
 				<PluginAutoupdateToggle
-					isMock={ this.props.isMock }
+					isMock={ this.props.isMock || this.props.isSelectable }
 					plugin={ this.props.plugin }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices }
