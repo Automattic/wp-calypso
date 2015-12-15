@@ -12,6 +12,7 @@ import reject from 'lodash/collection/reject';
 import assign from 'lodash/object/assign';
 import property from 'lodash/utility/property';
 import isEmpty from 'lodash/lang/isEmpty';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -47,7 +48,6 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
-import AddNewButton from 'components/add-new-button';
 
 /**
  * Module variables
@@ -528,6 +528,20 @@ export default React.createClass( {
 		}
 	},
 
+	canAddNewPlugins() {
+		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
+			let selectedSite = this.props.sites.getSelectedSite();
+			if ( selectedSite ) {
+				return !! selectedSite.jetpack;
+			}
+
+			return this.props.sites.get().some( function( site ) {
+				return site.jetpack;
+			} );
+		}
+		return false;
+	},
+
 	canUpdatePlugins() {
 		return this.state.plugins
 			.filter( plugin => plugin.selected )
@@ -544,9 +558,6 @@ export default React.createClass( {
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
-		const selectedSite = this.props.sites.getSelectedSite();
-		const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
-
 		if ( ! this.state.bulkManagement ) {
 			if ( 0 < this.state.pluginUpdateCount ) {
 				rightSideButtons.push(
@@ -557,14 +568,17 @@ export default React.createClass( {
 					</ButtonGroup>
 				);
 			}
-
 			rightSideButtons.push(
 				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Edit All', { context: 'button label' } ) }</Button></ButtonGroup>
 			);
-			rightSideButtons.push(
-				<ButtonGroup key="plugins__buttons-browser"><Button compact href={ browserUrl } onClick={ this.goToBrowser } className="plugins__browser-button"><Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } /></Button></ButtonGroup>
-			);
+			if ( this.canAddNewPlugins() ) {
+				const selectedSite = this.props.sites.getSelectedSite();
+				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
+				rightSideButtons.push(
+					<ButtonGroup key="plugins__buttons-browser"><Button compact href={ browserUrl } onClick={ this.goToBrowser } className="plugins__browser-button"><Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } /></Button></ButtonGroup>
+				);
+			}
 		} else {
 			activateButtons.push( <Button key="plugins__buttons-activate" disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
 			let deactivateButton = isJetpackSelected
