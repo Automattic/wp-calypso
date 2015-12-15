@@ -87,12 +87,23 @@ FullPostView = React.createClass( {
 
 	mixins: [ React.addons.PureRenderMixin ],
 
+	commentAnchor: false,
+
 	componentDidMount: function() {
 		this._parseEmoji();
+		this.commentsUpdated();
 	},
 
 	componentDidUpdate: function() {
 		this._parseEmoji();
+	},
+
+	// if comments updated and we have not scrolled to the anchor yet, thens croll
+	commentsUpdated: function() {
+		var hash = window.location.hash.substr(1);
+		if (this.refs.commentList && hash.indexOf( 'comments' ) > -1 && !this.commentAnchor) {
+			this.scrollToComments();
+		}
 	},
 
 	scrollToComments: function() {
@@ -101,6 +112,7 @@ FullPostView = React.createClass( {
 		}
 		let commentListNode = ReactDom.findDOMNode( this.refs.commentList );
 		if ( commentListNode ) {
+			this.commentAnchor = true;
 			commentListNode.scrollIntoView( { behavior: 'smooth' } );
 		}
 	},
@@ -171,7 +183,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ isDiscoverPost ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
-					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } /> : null }
+					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } commentsUpdated={ this.commentsUpdated } /> : null }
 				</article>
 			</div>
 		);
