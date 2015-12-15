@@ -16,13 +16,16 @@ import { isActivating, hasActivated, getCurrentTheme } from 'lib/themes/selector
 const ActivatingThemeData = React.createClass( {
 
 	propTypes: {
+		children: React.PropTypes.element.isRequired,
+		// The following props aren't part of this module's public interface,
+		// since they are provided by the `connect()` call that is wrapped around
+		// `ActivatingThemeData` before it is exported.
 		isActivating: React.PropTypes.bool.isRequired,
 		hasActivated: React.PropTypes.bool.isRequired,
 		currentTheme: React.PropTypes.shape( {
 			name: React.PropTypes.string,
 			id: React.PropTypes.string
-		} ),
-		children: React.PropTypes.element.isRequired
+		} )
 	},
 
 	render() {

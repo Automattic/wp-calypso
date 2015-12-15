@@ -19,16 +19,19 @@ import { getCurrentTheme } from 'lib/themes/selectors';
 const CurrentThemeData = React.createClass( {
 
 	propTypes: {
+		children: React.PropTypes.element.isRequired,
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
+		// The following props aren't part of this module's public interface,
+		// since they are provided by the `connect()` call that is wrapped around
+		// `CurrentThemeData` before it is exported.
 		currentTheme: React.PropTypes.shape( {
 			name: React.PropTypes.string,
 			id: React.PropTypes.string
 		} ),
-		fetchCurrentTheme: React.PropTypes.func.isRequired,
-		children: React.PropTypes.element.isRequired,
+		fetchCurrentTheme: React.PropTypes.func.isRequired
 	},
 
 	componentDidMount() {

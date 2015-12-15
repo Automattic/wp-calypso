@@ -32,7 +32,9 @@ const ThemesListFetcher = React.createClass( {
 		tier: React.PropTypes.string,
 		onRealScroll: React.PropTypes.func,
 		onLastPage: React.PropTypes.func,
-
+		// The following props aren't part of this module's public interface,
+		// since they are provided by the `connect()` call that is wrapped around
+		// `ThemesListFetcher` before it is exported.
 		themes: React.PropTypes.array.isRequired,
 		lastPage: React.PropTypes.bool.isRequired,
 		loading: React.PropTypes.bool.isRequired,
