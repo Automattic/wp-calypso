@@ -134,7 +134,8 @@ module.exports = React.createClass( {
 	},
 
 	isSelected: function( site ) {
-		return this.props.sites.selected === site.domain || this.props.selected === site.slug;
+		var selectedSite = this.props.selected || this.props.sites.selected;
+		return selectedSite === site.domain || selectedSite === site.slug;
 	},
 
 	renderSiteElements: function() {
