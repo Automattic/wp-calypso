@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { SET_SELECTED_SITE } from 'state/action-types';
+import page from './page/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -26,5 +27,6 @@ export function selectedSite( state = null, action ) {
 }
 
 export default combineReducers( {
+	page,
 	selectedSite
 } );
