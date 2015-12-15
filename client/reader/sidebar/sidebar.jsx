@@ -252,25 +252,7 @@ module.exports = React.createClass( {
 		}, this );
 	},
 
-	getFollowingEditLink: function() {
-		var followingEditUrl = '/following/edit',
-			followingEditRel;
-
-		// If Calypso following/edit isn't yet enabled, use the Atlas version
-		if ( ! config.isEnabled( 'reader/following-edit' ) ) {
-			followingEditUrl = 'https://wordpress.com'.concat( followingEditUrl );
-			followingEditRel = 'external';
-		}
-
-		return {
-			url: followingEditUrl,
-			rel: followingEditRel
-		};
-	},
-
 	render: function() {
-		let followingEditLink = this.getFollowingEditLink();
-
 		return (
 			<ul className="wpcom-sidebar sidebar reader-sidebar" onClick={ this.handleClick }>
 				<li className="sidebar-menu sidebar-streams">
@@ -281,7 +263,7 @@ module.exports = React.createClass( {
 								<Gridicon icon="checkmark-circle" size={ 24 } />
 								<span className="menu-link-text">{ this.translate( 'Followed Sites' ) }</span>
 							</a>
-							<a href={ followingEditLink.url } rel={ followingEditLink.rel } className="add-new">{ this.translate( 'Manage' ) }</a>
+							<a href="/following/edit" className="add-new">{ this.translate( 'Manage' ) }</a>
 						</li>
 
 						{ this.renderTeams() }
