@@ -86,16 +86,16 @@ export default function wpcomSupport( wpcom ) {
 		},
 		req: {
 			del: function( ...args ) {
-				return del.apply( wpcom, extendRequest( 'del', args ) );
+				return del( ...extendRequest( 'del', args ) );
 			},
 			get: function( ...args ) {
-				return get.apply( wpcom, extendRequest( 'get', args ) );
+				return get( ...extendRequest( 'get', args ) );
 			},
 			post: function( ...args ) {
-				return post.apply( wpcom, extendRequest( 'post', args ) );
+				return post( ...extendRequest( 'post', args ) );
 			},
 			put: function( ...args ) {
-				return put.apply( wpcom, extendRequest( 'put', args ) );
+				return put( ...extendRequest( 'put', args ) );
 			}
 		}
 	} );
