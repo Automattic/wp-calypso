@@ -17,7 +17,10 @@ var Card = require( 'components/card' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	notices = require( 'notices' ),
 	analytics = require( 'analytics' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
+	Button = require( 'components/button' ),
+	Gridicon = require( 'components/gridicon' ),
+	FormInput = require( 'components/forms/form-text-input' );
 
 module.exports = React.createClass( {
 
@@ -82,30 +85,33 @@ module.exports = React.createClass( {
 
 	siteOptions: function() {
 		return (
-			<fieldset>
-				<label htmlFor="blogname">{ this.translate( 'Site Title' ) }</label>
-				<input
-					name="blogname"
-					id="blogname"
-					type="text"
-					valueLink={ this.linkState( 'blogname' ) }
-					disabled={ this.state.fetchingSettings }
-					onClick={ this.recordEvent.bind( this, 'Clicked Site Title Field' ) }
-					onKeyPress={ this.recordEventOnce.bind( this, 'typedTitle', 'Typed in Site Title Field' ) }
-				/>
-				<p className="settings-explanation">{ this.translate( 'In a few words, explain what this site is about.' ) }</p>
-
-				<label htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</label>
-				<input
-					name="blogdescription"
-					type="text"
-					id="blogdescription"
-					valueLink={ this.linkState( 'blogdescription' ) }
-					disabled={ this.state.fetchingSettings }
-					onClick={ this.recordEvent.bind( this, 'Clicked Site Site Tagline Field' ) }
-					onKeyPress={ this.recordEventOnce.bind( this, 'typedTagline', 'Typed in Site Site Tagline Field' ) }
-				/>
-			</fieldset>
+			<div>
+				<fieldset>
+					<label htmlFor="blogname">{ this.translate( 'Site Title' ) }</label>
+					<FormInput
+						name="blogname"
+						id="blogname"
+						type="text"
+						valueLink={ this.linkState( 'blogname' ) }
+						disabled={ this.state.fetchingSettings }
+						onClick={ this.recordEvent.bind( this, 'Clicked Site Title Field' ) }
+						onKeyPress={ this.recordEventOnce.bind( this, 'typedTitle', 'Typed in Site Title Field' ) }
+					/>
+				</fieldset>
+				<fieldset>
+					<label htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</label>
+					<FormInput
+						name="blogdescription"
+						type="text"
+						id="blogdescription"
+						valueLink={ this.linkState( 'blogdescription' ) }
+						disabled={ this.state.fetchingSettings }
+						onClick={ this.recordEvent.bind( this, 'Clicked Site Site Tagline Field' ) }
+						onKeyPress={ this.recordEventOnce.bind( this, 'typedTagline', 'Typed in Site Site Tagline Field' ) }
+					/>
+					<p className="settings-explanation">{ this.translate( 'In a few words, explain what this site is about.' ) }</p>
+				</fieldset>
+			</div>
 		);
 	},
 
@@ -120,13 +126,13 @@ module.exports = React.createClass( {
 
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 			customAddress = (
-				<a
+				<Button
 					href={ '/domains/add/' + site.slug }
-					className="button"
 					onClick={ this.trackUpgradeClick }
+					
 				>
-					{ this.translate( 'Add a custom address', { context: 'Site address, domain' } ) }
-				</a>
+					<Gridicon icon="plus" /> { this.translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
+				</Button>
 			);
 
 			addressDescription =
@@ -144,7 +150,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<fieldset>
+			<fieldset className="site-settings__blog-address-container">
 				<label htmlFor="blogaddress">{ this.translate( 'Site Address' ) }</label>
 
 				<div className="blogaddress-settings">
@@ -198,9 +204,6 @@ module.exports = React.createClass( {
 
 		return (
 			<fieldset>
-
-				<legend>{ this.translate( 'Site Visibility' ) }</legend>
-
 				<label>
 					<input
 						type="radio"
@@ -256,7 +259,6 @@ module.exports = React.createClass( {
 
 		return (
 			<fieldset>
-				<legend>{ this.translate( 'Related Posts' ) }</legend>
 				<ul id="settings-reading-relatedposts">
 					<li>
 						<label>
@@ -323,7 +325,7 @@ module.exports = React.createClass( {
 						</li>
 					</ul>
 				</form>
-			</Card>	
+			</Card>
 		);
 	},
 
@@ -389,6 +391,7 @@ module.exports = React.createClass( {
 						compact={ true }
 						onClick={ this.submitForm }
 						primary={ true }
+
 						type="submit"
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 							{ this.state.submittingForm
@@ -400,15 +403,17 @@ module.exports = React.createClass( {
 				<Card>
 					<form onChange={ this.markChanged }>
 						{ this.siteOptions() }
+						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
-				<SectionHeader label={ this.translate( 'Address and visibility' ) }>
+				<SectionHeader label={ this.translate( 'Visibility' ) }>
 					<Button
 						compact={ true }
 						onClick={ this.submitForm }
 						primary={ true }
+
 						type="submit"
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 							{ this.state.submittingForm
@@ -419,7 +424,7 @@ module.exports = React.createClass( {
 				</SectionHeader>
 				<Card>
 					<form onChange={ this.markChanged }>
-						{ this.blogAddress() }
+
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
@@ -427,17 +432,21 @@ module.exports = React.createClass( {
 					? <div>
 						<SectionHeader label={ this.translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
-							<Button
-								compact={ true }
+							{ config.isEnabled( 'manage/option_sync_non_public_post_stati' )
+							  ? <Button
+							  	compact={ true }
 								onClick={ this.submitForm }
 								primary={ true }
 								type="submit"
+
 								disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 									{ this.state.submittingForm
 										? this.translate( 'Saving…' )
 										: this.translate( 'Save Settings' )
 									}
-							</Button>
+								</Button>
+						 	 : null
+						 	}
 						</SectionHeader>
 
 						{ this.syncNonPublicPostTypes() }
@@ -455,6 +464,7 @@ module.exports = React.createClass( {
 						compact={ true }
 						onClick={ this.submitForm }
 						primary={ true }
+
 						type="submit"
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 							{ this.state.submittingForm
