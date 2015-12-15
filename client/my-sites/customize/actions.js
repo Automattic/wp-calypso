@@ -10,7 +10,6 @@ var Dispatcher = require( 'dispatcher' ),
 	page = require( 'page' ),
 	wpcom = require( 'lib/wp' ),
 	CartActions = require( 'lib/upgrades/actions' ),
-	activated = require( 'lib/themes/actions' ).activated,
 	ThemeHelper = require( 'lib/themes/helpers' ),
 	themeItem = require( 'lib/cart-values/cart-items' ).themeItem;
 
@@ -41,12 +40,12 @@ var CustomizeActions = {
 		} );
 	},
 
-	activated: function( id, site, dispatch ) {
+	activated: function( id, site, themeActivated ) {
 		ThemeHelper.trackClick( 'customizer', 'activate' );
 
 		page( '/design/' + site.slug );
 
-		dispatch( activated( id, site, 'customizer' ) );
+		themeActivated( id, site, 'customizer' );
 
 		Dispatcher.handleViewAction( {
 			type: 'ACTIVATED_THEME_WITH_CUSTOMIZER',

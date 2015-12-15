@@ -3,6 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
 	Qs = require( 'qs' );
 
 /**
@@ -26,13 +27,14 @@ module.exports = {
 		titleActions.setTitle( i18n.translate( 'Customizer', { textOnly: true } ), { siteID: siteID } );
 
 		ReactDom.render(
-			React.createElement( CustomizeComponent, {
-				domain: context.params.domain || '',
-				sites: sites,
-				prevPath: context.prevPath || '',
-				query: Qs.parse( context.querystring ),
-				dispatchRedux: context.store.dispatch
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( CustomizeComponent, {
+					domain: context.params.domain || '',
+					sites: sites,
+					prevPath: context.prevPath || '',
+					query: Qs.parse( context.querystring )
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	}
