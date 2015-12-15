@@ -323,10 +323,17 @@ module.exports = React.createClass( {
 	},
 
 	showFullPost: function( post, options ) {
+		options = options || {};
+		var hashtag = '';
+		if (options['comments']) {
+			hashtag += '#comments';
+		}
 		var method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
+			page[ method ]( '/read/post/feed/' + post.feed_ID + '/' + post.feed_item_ID + hashtag );
 			page[ method ]( '/read/post/feed/' + post.feed_ID + '/' + post.feed_item_ID );
 		} else {
+			page[ method ]( '/read/post/id/' + post.site_ID + '/' + post.ID + hashtag );
 			page[ method ]( '/read/post/id/' + post.site_ID + '/' + post.ID );
 		}
 	},
