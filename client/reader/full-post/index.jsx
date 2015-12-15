@@ -91,7 +91,7 @@ FullPostView = React.createClass( {
 
 	componentDidMount: function() {
 		this._parseEmoji();
-		this.commentsUpdated(); // if comments have already loaded before 
+		this.commentsUpdated();
 	},
 
 	componentDidUpdate: function() {
