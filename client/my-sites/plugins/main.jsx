@@ -226,7 +226,7 @@ export default React.createClass( {
 		}
 	},
 
-	goToBrowser() {
+	onBrowserLinkClick() {
 		this.recordEvent( 'Clicked Add New Plugins' );
 	},
 
@@ -535,9 +535,7 @@ export default React.createClass( {
 				return !! selectedSite.jetpack;
 			}
 
-			return this.props.sites.get().some( function( site ) {
-				return site.jetpack;
-			} );
+			return this.props.sites.getJetpack().length > 0;
 		}
 		return false;
 	},
@@ -576,7 +574,7 @@ export default React.createClass( {
 				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
 				rightSideButtons.push(
-					<ButtonGroup key="plugins__buttons-browser"><Button compact href={ browserUrl } onClick={ this.goToBrowser } className="plugins__browser-button"><Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } /></Button></ButtonGroup>
+					<ButtonGroup key="plugins__buttons-browser"><Button compact href={ browserUrl } onClick={ this.onBrowserLinkClick } className="plugins__browser-button"><Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } /></Button></ButtonGroup>
 				);
 			}
 		} else {
