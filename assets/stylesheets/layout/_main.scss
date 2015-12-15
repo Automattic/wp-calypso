@@ -454,7 +454,7 @@ body.newdash div.wordpress-com-extension-promo {
 		pointer-events: none;
 		min-width: 100%;
 		transition: all 0.15s ease-in-out;
-		transition-delay: 0.5s;
+		transition-delay: 0.25s;
 
 		a {
 			display: block;
@@ -462,6 +462,7 @@ body.newdash div.wordpress-com-extension-promo {
 			margin-top: 6px;
 			background: $white;
 			border-radius: 3px;
+			box-shadow: inset 0 0 0 1px rgba( $gray, 0.2 );
 		}
 	}
 
@@ -477,10 +478,6 @@ body.newdash div.wordpress-com-extension-promo {
 		.is-bug-report {
 			opacity: 1;
 			pointer-events: auto;
-			
-			a {
-				box-shadow: 0 1px 2px rgba( darken( $gray, 30 ), 0.4 );
-			}
 		}
 	}
 }
