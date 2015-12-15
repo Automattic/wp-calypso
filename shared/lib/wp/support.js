@@ -1,6 +1,20 @@
 export default function wpcomSupport( wpcom ) {
 	let supportUser = '';
 	let supportToken = '';
+	let tokenErrorCallback;
+
+	// Error names returned by the server
+	const ERROR_INVALID_SUPPORT_TOKEN = 'invalid_support_token';
+	const ERROR_INCORRECT_SUPPORT_PASSWORD = 'incorrect_password'
+
+	/**
+	 * Return the index of the callback in the request arguments
+	 */
+	const getCallbackIndex = function( args ) {
+		return args.findIndex( ( arg ) => {
+			return 'function' === typeof arg;
+		} );
+	}
 
 	/**
 	 * Request parameters are as follows:
@@ -18,9 +32,7 @@ export default function wpcomSupport( wpcom ) {
 		let fnIndex, queryIndex;
 
 		// Find the index of the callback in the arguments
-		fnIndex = args.findIndex( function( e ) {
-			return 'function' === typeof e;
-		} );
+		fnIndex = getCallbackIndex( args );
 
 		// Set queryIndex based on the request type and fnIndex
 		if ( req === 'post' || req === 'put' ) {
@@ -42,6 +54,26 @@ export default function wpcomSupport( wpcom ) {
 	}
 
 	/**
+	 * Intercept any token errors in the response callback.
+	 */
+	const interceptResponse = function ( responseCallback ) {
+		return ( ...args ) => {
+			const error = args[ 0 ],
+				response = args[ 1 ];
+
+			if ( error && error.error === ERROR_INVALID_SUPPORT_TOKEN ) {
+				if ( tokenErrorCallback ) {
+					tokenErrorCallback( error );
+				}
+			}
+
+			if ( responseCallback ) {
+				responseCallback( ...args );
+			}
+		}
+	}
+
+	/**
 	 * Mutate the query parameter of the request by adding values for
 	 * support_user and _support_token to the query parameter.
 	 */
@@ -56,6 +88,17 @@ export default function wpcomSupport( wpcom ) {
 		} else {
 			args.splice( 1, 0, addSupportData( {} ) );
 		}
+
+		let callbackIndex = getCallbackIndex( args );
+		if ( callbackIndex ) {
+			// Wrap the callback to intercept any token errors
+			args[ callbackIndex ] = interceptResponse( args[ callbackIndex ] );
+		} else {
+			// No response callback was provided, so we add one to the end of the
+			// arguments, purely to handle the token errors
+			args.push( interceptResponse( null ) );
+		}
+
 		return args;
 	}
 
@@ -65,16 +108,26 @@ export default function wpcomSupport( wpcom ) {
 	const put = wpcom.req.put.bind( wpcom.req );
 
 	return Object.assign( wpcom, {
-		changeUser: function( username, password, fn ) {
+		changeUser: function( username, password, fn, fnTokenError ) {
 			var args = {
 				apiVersion: '1.1',
 				path: '/internal/support/' + username + '/grant'
 			};
 
+			tokenErrorCallback = ( ...args ) => {
+				wpcom.restoreUser();
+
+				fnTokenError( ...args );
+			}
+
 			return wpcom.req.post( args, { password: password }, function( error, response ) {
 				if ( ! error ) {
 					supportUser = response.username;
 					supportToken = response.token;
+				}
+
+				if ( error && error.error === ERROR_INCORRECT_SUPPORT_PASSWORD ) {
+					fnTokenError( error );
 				}
 
 				fn( error, response );

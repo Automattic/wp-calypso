@@ -36,7 +36,8 @@ module.exports = React.createClass( {
 		return {
 			supportUser: null,
 			isSupportUser: false,
-			showDialog: false
+			showDialog: false,
+			errorMessage: null
 		};
 	},
 
@@ -58,18 +59,33 @@ module.exports = React.createClass( {
 		this.setState( { showDialog: false } );
 	},
 
+	onTokenError: function( error ) {
+		this.setState( {
+				supportUser: null,
+				supportPassword: null,
+				isSupportUser: false,
+				showDialog: true,
+				errorMessage: error.message
+		} );
+	},
+
 	onChangeUser: function( e ) {
 		e.preventDefault();
 
 		if ( this.state.supportUser && this.state.supportPassword ) {
 			let user = new User();
 			user.clear();
-			user.changeUser( this.state.supportUser, this.state.supportPassword );
+			user.changeUser(
+				this.state.supportUser,
+				this.state.supportPassword,
+				( error ) => this.onTokenError( error )
+			);
 			this.setState( { isSupportUser: true } );
 			this.setState( { supportPassword: null } );
 		}
 
 		this.setState( { showDialog: false } );
+		this.setState( { errorMessage: null } );
 	},
 
 	onRestoreUser: function( e ) {
@@ -80,7 +96,8 @@ module.exports = React.createClass( {
 				supportUser: null,
 				supportPassword: null,
 				isSupportUser: false,
-				showDialog: false
+				showDialog: false,
+				errorMessage: null
 			} );
 			window.location.reload.bind( window.location );
 		}
@@ -129,11 +146,11 @@ module.exports = React.createClass( {
 	render: function() {
 		if ( this.state.isSupportUser ) {
 		return (
-			<Dialog 
+			<Dialog
 				isVisible={ this.state.showDialog }
 				onClose={ this.closeDialog }
 				buttons={ this.getButtonsRestoreUser() }
-				additionalClassNames="support-user__dialog" 
+				additionalClassNames="support-user__dialog"
 			>
 				<div className="support-user__people-profile">
 					<div className="support-user__gravatar">
@@ -152,13 +169,16 @@ module.exports = React.createClass( {
 		);
 		} else {
 		return (
-			<Dialog 
-				isVisible={ this.state.showDialog } 
+			<Dialog
+				isVisible={ this.state.showDialog }
 				onClose={ this.closeDialog }
 				buttons={ this.getButtonsSupportUser() }
-				additionalClassNames="support-user__dialog" 
+				additionalClassNames="support-user__dialog"
 			>
 				<h2 className="support-user__heading">Support user</h2>
+				{ this.state.errorMessage &&
+					<h3 className="support-user__error">{ this.state.errorMessage }</h3>
+				}
 				<FormFieldset>
 					<FormLabel>
 						<span>Username</span>
