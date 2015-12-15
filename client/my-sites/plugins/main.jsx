@@ -613,9 +613,11 @@ export default React.createClass( {
 			selectedSite = this.props.sites.getSelectedSite();
 
 		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are up to date.', {
+			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
 				textOnly: true,
-				args: { siteName: selectedSite.title }
+				args: { siteName: selectedSite.title },
+				components: { span: <span className="plugins__plugin-list-state" /> },
+				comment: 'The span tags prevents single words from showing on a single line.'
 			} );
 		} else {
 			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
