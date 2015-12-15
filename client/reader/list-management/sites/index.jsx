@@ -8,7 +8,7 @@ import Navigation from 'reader/list-management/navigation';
 
 //const debug = debugModule( 'calypso:reader:list-management' );
 
-const ListManagementFeeds = React.createClass( {
+const ListManagementSites = React.createClass( {
 	propTypes: {
 		list: React.PropTypes.shape( {
 			owner: React.PropTypes.string.isRequired,
@@ -19,11 +19,11 @@ const ListManagementFeeds = React.createClass( {
 	render() {
 		return (
 			<Main className="list-management-feeds">
-				<Navigation selected="feeds" list={ this.props.list } />
-				<h2>{ this.translate( 'List Feeds' ) } - { this.props.list.slug }</h2>
+				<Navigation selected="sites" list={ this.props.list } />
+				<h2>{ this.translate( 'List Sites' ) } - { this.props.list.slug }</h2>
 			</Main>
 			);
 	}
 } );
 
-export default ListManagementFeeds;
+export default ListManagementSites;
