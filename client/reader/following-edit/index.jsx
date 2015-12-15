@@ -381,7 +381,10 @@ var FollowingEdit = React.createClass( {
 					autoFocus={ true }
 					additionalClasses="following-edit__existing-feed-search"
 					placeholder={ searchPlaceholder }
-					onSearch={ this.doSearch } initialValue={ this.props.search } delaySearch={ true } ref="url-search" />
+					onSearch={ this.doSearch }
+					initialValue={ this.props.search }
+					delaySearch={ true }
+					ref="url-search" />
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search ?
 					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :

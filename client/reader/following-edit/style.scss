@@ -1,6 +1,12 @@
 .following-edit {
 	position: relative;
 
+	&.is-adding {
+		.search-card {
+			display: none;
+		}
+	}
+
 	ul {
 		list-style-type: none;
 		margin: 0;
@@ -129,7 +135,7 @@
 		}
 	}
 
-	.noticon {
+	.search-open__icon {
 		display: none;
 	}
 
@@ -141,14 +147,7 @@
 		z-index: 23; // Higher than <Search>'s z-index: 22;
 	}
 
-	.noticon-close-alt {
-		top: -2px;
-		right: -2px;
-		color: $gray;
-	}
-
-	.gridicons-add-outline,
-	.noticon-close-alt {
+	.gridicons-add-outline {
 		transform: translateX( 30px );
 		transition: all 0.15s ease-in-out;
 	}
@@ -157,8 +156,7 @@
 		opacity: 1;
 		pointer-events: auto;
 
-		.gridicons-add-outline,
-		.noticon-close-alt {
+		.gridicons-add-outline {
 			transform: translateX( 0 );
 		}
 	}
@@ -199,10 +197,6 @@
 				margin-top: 8px;
 				margin-bottom: 11px;
 			}
-		}
-
-		.reader-list-item__icon .noticon {
-			display: block;
 		}
 	}
 }
@@ -369,6 +363,7 @@
 .following-edit__notification-settings-error {
 	margin-top: 12px;
 }
+
 
 @include breakpoint( ">660px" ) {
 	.following-edit {
