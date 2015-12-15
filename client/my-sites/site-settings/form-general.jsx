@@ -311,15 +311,19 @@ module.exports = React.createClass( {
 			return null;
 		}
 		return (
-			<ul id="settings-jetpack" className="settings-jetpack">
-				<li>
-					<label>
-						<input name="jetpack_sync_non_public_post_stati" type="checkbox" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
-						<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
-						<p className="settings-explanation is-indented">{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }</p>
-					</label>
-				</li>
-			</ul>
+			<Card className="is-compact">
+				<form onChange={ this.markChanged }>
+					<ul id="settings-jetpack" className="settings-jetpack">
+						<li>
+							<label>
+								<input name="jetpack_sync_non_public_post_stati" type="checkbox" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
+								<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
+								<p className="settings-explanation is-indented">{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }</p>
+							</label>
+						</li>
+					</ul>
+				</form>
+			</Card>	
 		);
 	},
 
@@ -435,11 +439,9 @@ module.exports = React.createClass( {
 									}
 							</Button>
 						</SectionHeader>
-						<Card className="is-compact">
-							<form onChange={ this.markChanged }>
-								{ this.syncNonPublicPostTypes() }
-							</form>
-						</Card>
+
+						{ this.syncNonPublicPostTypes() }
+
 						<Card href={ '../security/' + site.slug } className="is-compact">
 							{ this.translate( 'View Jetpack Monitor Settings' ) }
 						</Card>
