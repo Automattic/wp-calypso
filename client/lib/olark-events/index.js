@@ -69,16 +69,16 @@ var OlarkEventEmitter = {
 		boundEvents[ event ] = true;
 
 		// Listen to the olark api event
-		olarkApi( event, () => this.olarkEventListener( event ) );
+		olarkApi( event, ( ...args ) => this.olarkEventListener( event, ...args ) );
 	},
 
 	/**
 	 * Our generic callback that proxies the event fired by olark to our listeners. This method should not be called directly
 	 * @param  {string} event The olark api event
 	 */
-	olarkEventListener: function( event, ...eventArguments ) {
+	olarkEventListener: function( event, ...args ) {
 		debug( 'Olark event: %s', event );
-		this.emit( event, eventArguments );
+		this.emit( event, ...args );
 	}
 };
 
