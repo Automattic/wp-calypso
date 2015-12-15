@@ -84,7 +84,6 @@ module.exports = {
 		stepName: 'theme-dss',
 		props: {
 			useHeadstart: true,
-			themes: [ 'Sela', 'Goran', 'Twenty Fifteen', 'Sequential', 'Colinear', 'Edin' ]
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme', 'images' ]

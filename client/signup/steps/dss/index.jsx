@@ -7,11 +7,10 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import ThemeThumbnail from './theme-thumbnail';
+import DssThemeThumbnail from './theme-thumbnail';
 import FormLabel from 'components/forms/form-label';
 import SearchCard from 'components/search-card';
 import StepWrapper from 'signup/step-wrapper';
-import ThemeHelper from 'lib/themes/helpers';
 import DynamicScreenshotsActions from 'lib/dss/actions';
 import DSSImageStore from 'lib/dss/image-store';
 import ThemePreviewStore from 'lib/dss/preview-store';
@@ -22,18 +21,20 @@ const debug = debugFactory( 'calypso:dss' );
 export default React.createClass( {
 	displayName: 'DssThemeSelection',
 
+	propTypes: {
+		themes: React.PropTypes.array,
+		useHeadstart: React.PropTypes.bool,
+	},
+
 	getDefaultProps() {
 		return {
 			themes: [
-				'Boardwalk',
-				'Cubic',
-				'Edin',
-				'Cols',
-				'Minnow',
-				'Sequential',
-				'Penscratch',
-				'Intergalactic',
-				'Eighties'
+				{ name: 'Sela', slug: 'sela' },
+				{ name: 'Goran', slug: 'goran' },
+				{ name: 'Twenty Fifteen', slug: 'twentyfifteen' },
+				{ name: 'Sequential', slug: 'sequential' },
+				{ name: 'Colinear', slug: 'colinear' },
+				{ name: 'Edin', slug: 'edin' },
 			],
 
 			useHeadstart: false
@@ -66,7 +67,7 @@ export default React.createClass( {
 
 	loadThemePreviews() {
 		debug( 'loading theme previews for these themes', this.props.themes );
-		this.props.themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + ThemeHelper.getSlugFromName( theme ) ) );
+		this.props.themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + theme.slug ) );
 	},
 
 	updateMarkup() {
@@ -136,14 +137,14 @@ export default React.createClass( {
 					<div className="dss-theme-selection__screenshots__pin">
 						<div className="dss-theme-selection__screenshots__themes">
 							{ this.props.themes.map( ( theme ) => {
-								return <ThemeThumbnail
-									key={ theme }
-									themeName={ theme }
-									themeSlug={ ThemeHelper.getSlugFromName( theme ) }
-									themeRepoSlug={ 'pub/' + ThemeHelper.getSlugFromName( theme ) }
+								return <DssThemeThumbnail
+									key={ theme.name }
+									themeName={ theme.name }
+									themeSlug={ theme.slug }
+									themeRepoSlug={ 'pub/' + theme.slug }
 									isLoading={ this.state.isLoading }
 									dssImage={ this.state.dssImage }
-									markupAndStyles={ this.state.markupAndStyles[ 'pub/' + ThemeHelper.getSlugFromName( theme ) ] }
+									markupAndStyles={ this.state.markupAndStyles[ 'pub/' + theme.slug ] }
 									renderComplete={ this.state.renderComplete }
 									{ ...this.props }/>;
 							} ) }

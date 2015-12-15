@@ -67,11 +67,6 @@ var ThemesHelpers = {
 		return startsWith( theme.stylesheet, 'premium/' );
 	},
 
-	getSlugFromName: function( name ) {
-		var theme = name.replace( /\s+/g, '' );
-		return theme.toLowerCase();
-	},
-
 	trackClick: function( componentName, eventName, verb = 'click' ) {
 		const stat = `${componentName} ${eventName} ${verb}`;
 		analytics.ga.recordEvent( 'Themes', titlecase( stat ) );

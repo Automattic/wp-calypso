@@ -10,24 +10,28 @@ var React = require( 'react' ),
 var analytics = require( 'analytics' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ThemesList = require( 'components/themes-list' ),
-	ThemeHelper = require( 'lib/themes/helpers' ),
 	StepWrapper = require( 'signup/step-wrapper' );
 
 module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
 
+	propTypes: {
+		themes: React.PropTypes.array,
+		useHeadstart: React.PropTypes.bool,
+	},
+
 	getDefaultProps: function() {
 		return {
 			themes: [
-				'Boardwalk',
-				'Cubic',
-				'Edin',
-				'Cols',
-				'Minnow',
-				'Sequential',
-				'Penscratch',
-				'Intergalactic',
-				'Eighties'
+				{ name: 'Boardwalk', slug: 'boardwalk' },
+				{ name: 'Cubic', slug: 'cubic' },
+				{ name: 'Edin', slug: 'edin' },
+				{ name: 'Cols', slug: 'cols' },
+				{ name: 'Minnow', slug: 'minnow' },
+				{ name: 'Sequential', slug: 'sequential' },
+				{ name: 'Penscratch', slug: 'penscratch' },
+				{ name: 'Intergalactic', slug: 'intergalactic' },
+				{ name: 'Eighties', slug: 'eighties' },
 			],
 
 			useHeadstart: false
@@ -61,9 +65,9 @@ module.exports = React.createClass( {
 		var actionLabel = this.translate( 'Pick' ),
 			themes = this.props.themes.map( function( theme ) {
 				return {
-					id: ThemeHelper.getSlugFromName( theme ),
-					name: theme,
-					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + ThemeHelper.getSlugFromName( theme ) + '/screenshot.png?w=660',
+					id: theme.slug,
+					name: theme.name,
+					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660',
 					actionLabel: actionLabel
 				}
 			} );
