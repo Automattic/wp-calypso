@@ -8,7 +8,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var Dialog = require( 'components/dialog' ),
-	SelectSite = require( 'me/select-site' ),
+	SitesDropdown = require( 'components/sites-dropdown' ),
 	sitesList = require( 'lib/sites-list' )();
 
 /**
@@ -42,8 +42,8 @@ var SiteSelectorModal = React.createClass( {
 		} );
 	},
 
-	setSite: function( event ) {
-		var site = sitesList.getSite( parseInt( event.target.value ) );
+	setSite: function( slug ) {
+		var site = sitesList.getSite( slug );
 		this.setState( { site: site } );
 	},
 
@@ -79,12 +79,10 @@ var SiteSelectorModal = React.createClass( {
 				<div className="site-selector-modal__content">
 					{ this.props.children }
 				</div>
-				<SelectSite className="site-selector-modal__dropdown"
-					sites={ sitesList }
-					value={ this.state.site && this.state.site.ID }
-					onChange={ this.setSite }
+				<SitesDropdown
+					onSiteSelect={ this.setSite }
+					selected={ this.state.site.slug }
 					filter={ this.props.filter } />
-
 			</Dialog>
 		);
 	}
