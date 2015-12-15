@@ -36,6 +36,10 @@ const ThemesListFetcher = React.createClass( {
 		themes: React.PropTypes.array.isRequired,
 		lastPage: React.PropTypes.bool.isRequired,
 		loading: React.PropTypes.bool.isRequired,
+		lastQuery: React.PropTypes.shape( {
+			hasSiteChanged: React.PropTypes.bool.isRequired,
+			isJetpack: React.PropTypes.bool.isRequired
+		} ).isRequired,
 		query: React.PropTypes.func.isRequired,
 		fetchNextPage: React.PropTypes.func.isRequired,
 	},
