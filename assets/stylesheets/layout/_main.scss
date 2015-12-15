@@ -476,6 +476,11 @@ body.newdash div.wordpress-com-extension-promo {
 				background-color: $blue-light;
 			}
 		}
+		&.branch-name {
+			text-transform: inherit;
+			background-color: #272727;
+			color: #F1F1F1;
+		}
 	}
 
 	.notouch & {
