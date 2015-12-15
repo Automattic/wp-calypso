@@ -39,8 +39,14 @@ export default React.createClass( {
 		layoutFocus.setNext( 'content' );
 	},
 
+	clickNotifications() {
+		this.setState( {
+			showNotes: ! this.state.showNotes
+		} );
+	},
+
 	checkIsActive( section ) {
-		return !! ( section === this.props.section && ! this.props.showNotes );
+		return !! ( section === this.props.section && ! this.state.showNotes );
 	},
 
 	wordpressIcon() {
@@ -83,7 +89,7 @@ export default React.createClass( {
 						<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 						<span className="masterbar__item-me-label">{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 					</MasterbarItem>
-					<MasterbarItemNotifications user={ this.props.user } isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
+					<MasterbarItemNotifications user={ this.props.user } onClick={ this.clickNotifications } isActive={ this.checkIsActive( 'notifications' ) } className="masterbar__item-notifications">
 						<span className="masterbar__item-notifications-label">{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 					</MasterbarItemNotifications>
 				</header>

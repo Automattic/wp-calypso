@@ -18,12 +18,13 @@ export default React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		onClick: React.PropTypes.function,
 	},
 
 	getInitialState() {
 		let newNote = false;
-		let	user;
+		let user;
 
 		if ( this.props.user ) {
 			user = this.props.user.get();
@@ -64,6 +65,8 @@ export default React.createClass( {
 		this.setState( {
 			isShowingPopover: ! this.state.isShowingPopover
 		}, () => {
+			this.props.onClick( this.state.isShowingPopover );
+
 			if ( this.state.isShowingPopover ) {
 				this.setNotesIndicator( 0 );
 			}

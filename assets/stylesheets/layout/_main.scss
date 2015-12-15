@@ -16,14 +16,13 @@
 }
 
 .layout__loader {
-	background: $blue-wordpress;
 	border-bottom: 1px solid darken( $blue-wordpress, 4% );
 	height: 46px;
-	margin-left: -30px;
+	margin-left: -10%;
 	position: absolute;
 		left: 50%;
 		top: 0;
-	width: 60px;
+	width: 20%;
 	z-index: z-index( 'root', '.layout__loader' );
 
 	// set a delay threshold for opacity changes
@@ -32,6 +31,10 @@
 	opacity: 0;
 	transition: opacity 0.1s linear;
 	transition-delay: 0.4s;
+
+	@include breakpoint( "<480px" ) {
+		background: $blue-wordpress;
+	}
 }
 
 .layout__loader.is-active {
