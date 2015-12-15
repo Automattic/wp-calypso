@@ -11,6 +11,7 @@ $sites-popover-width: 300px;
 .sites-popover .tip-inner {
 	position: relative;
 	text-align: left;
+	overflow: hidden;
 }
 
 .sites-popover .site-selector {
@@ -64,11 +65,6 @@ $sites-popover-width: 300px;
 			.site__title:before {
 				color: white;
 			}
-		}
-
-		&:last-child {
-			border-bottom-right-radius: 2px;
-			border-bottom-left-radius: 2px;
 		}
 	}
 }
