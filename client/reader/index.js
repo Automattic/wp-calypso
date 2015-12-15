@@ -35,13 +35,13 @@ module.exports = function() {
 
 		page( '/', saveLastRoute, controller.removePost, controller.sidebar, controller.following );
 
-		page( '/read/blog/feed/:feed_id', saveLastRoute, controller.removePost, controller.sidebar, controller.feedListing );
+		page( '/read/blog/feed/:feed_id', saveLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.feedListing );
 		page.exit( '/read/blog/feed/:feed_id', controller.resetTitle );
 
 		page( '/read/post/feed/:feed/:post', setLastRoute, controller.feedPost );
 		page.exit( '/read/post/feed/:feed/:post', controller.resetTitle, controller.removePost );
 
-		page( '/read/blog/id/:blog_id', saveLastRoute, controller.removePost, controller.sidebar, controller.blogListing );
+		page( '/read/blog/id/:blog_id', saveLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.blogListing );
 		page( '/read/post/id/:blog/:post', setLastRoute, controller.blogPost );
 		page.exit( '/read/post/id/:blog/:post', controller.resetTitle, controller.removePost );
 

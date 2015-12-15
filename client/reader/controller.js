@@ -20,7 +20,8 @@ var i18n = require( 'lib/mixins/i18n' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	titleActions = require( 'lib/screen-title/actions' ),
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' );
+	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
+	readerRoute = require( 'reader/route' );
 
 // This is a tri-state.
 // null == nothing instantiated, nothing pending
@@ -72,6 +73,21 @@ function pageTitleSetter() {
 }
 
 module.exports = {
+	redirects: function( context, next ) {
+		let redirect;
+		if ( context.params.blog_id ) {
+			redirect = readerRoute.getPrettySiteUrl( context.params.blog_id );
+		} else if ( context.params.feed_id ) {
+			redirect = readerRoute.getPrettyFeedUrl( context.params.feed_id );
+		}
+
+		if ( redirect ) {
+			return page.redirect( redirect );
+		}
+
+		next();
+	},
+
 	loadSubscriptions: function( context, next ) {
 		// these three are included to ensure that the stores required have been loaded and can accept actions
 		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ), // eslint-disable-line no-unused-vars
