@@ -69,7 +69,7 @@ var OlarkEventEmitter = {
 		boundEvents[ event ] = true;
 
 		// Listen to the olark api event
-		olarkApi( event, () => this.olarkEventListener( event ) );
+		olarkApi( event, ( ...eventArguments ) => this.olarkEventListener( event, ...eventArguments ) );
 	},
 
 	/**
@@ -78,7 +78,7 @@ var OlarkEventEmitter = {
 	 */
 	olarkEventListener: function( event, ...eventArguments ) {
 		debug( 'Olark event: %s', event );
-		this.emit( event, eventArguments );
+		this.emit( event, ...eventArguments );
 	}
 };
 
