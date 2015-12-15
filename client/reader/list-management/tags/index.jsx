@@ -90,11 +90,10 @@ const ListManagementTags = React.createClass( {
 	},
 
 	renderPlaceholders() {
-		const placeholders = [],
-			number = 2;
+		const number = 2;
 
-		times( number, ( i ) => {
-			placeholders.push(
+		return times( number, ( i ) => {
+			return (
 				<ListItem className="is-placeholder" key={'list-placeholder-' + i}>
 					<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
 					<Title>Loading</Title>
@@ -102,8 +101,6 @@ const ListManagementTags = React.createClass( {
 				</ListItem>
 			);
 		} );
-
-		return placeholders;
 	},
 
 	getItemRef( item ) {
