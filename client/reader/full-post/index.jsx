@@ -109,7 +109,7 @@ FullPostView = React.createClass( {
 		if ( ! this.isMounted() ) {
 			return;
 		}              
-		let commentListNode = React.findDOMNode( this.refs.commentList );
+		let commentListNode = ReactDom.findDOMNode( this.refs.commentList );
 		if ( commentListNode ) {
 			this.commentAnchor = true;
 			commentListNode.scrollIntoView( { behavior: 'smooth' } );
