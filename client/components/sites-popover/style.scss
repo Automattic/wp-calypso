@@ -14,7 +14,6 @@ $sites-popover-width: 300px;
 }
 
 .sites-popover .site-selector {
-
 	&.is-large {
 		padding-top: 50px;
 	}
@@ -38,18 +37,18 @@ $sites-popover-width: 300px;
 
 .sites-popover .site-selector .site {
 	&.is-selected {
-		background: $white;
+		background-color: $gray;
 
 		.site__title {
-			color: $gray-dark;
+			color: $white;
 
 			&::before {
-				color: $gray;
+				color: $white;
 			}
 		}
 
 		.site__domain {
-			color: $gray;
+			color: $white;
 		}
 	}
 
