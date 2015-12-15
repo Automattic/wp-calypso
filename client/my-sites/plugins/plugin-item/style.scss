@@ -1,7 +1,3 @@
-// ==========================================================================
-// PluginItem
-// ==========================================================================
-
 .plugin-item.card {
 	padding: 0;
 
@@ -174,19 +170,6 @@
 			content: ' ';
 		}
 	}
-	.noticon {
-		margin-right: 2px;
-		vertical-align: middle;
-
-		@include breakpoint( '<480px' ) {
-			position: absolute;
-			top: 50%;
-			right: 16px;
-			margin-top: -12px;
-			color: $alert-yellow;
-			font-size: 24px;
-		}
-	}
 
 	.plugin-item__meta ~ & {
 		margin-left: 8px;
@@ -206,16 +189,6 @@
 	top: 60px;
 }
 
-
-.plugin-item__meta.has-update {
-	@include breakpoint( "<480px" ) {
-		& ~ .plugin-item__meta.is-warning .noticon {
-			margin-right: 30px !important;
-		}
-	}
-}
-
-// Plugin actions
 .plugin-item__actions {
 	padding: 16px;
 	flex-grow: 1;
