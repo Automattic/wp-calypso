@@ -40,7 +40,6 @@ module.exports = {
 			CartData = require( 'components/data/cart' ),
 			MainComponent = require( 'components/main' ),
 			EmptyContentComponent = require( 'components/empty-content' ),
-			siteSpecificPlansDetailsList = require( 'lib/site-specific-plans-details-list' )(),
 			site = sites.getSelectedSite(),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
@@ -82,9 +81,9 @@ module.exports = {
 			<ReduxProvider store={ context.store }>
 				<CartData>
 					<Plans sites={ sites }
+						selectedSite={ site }
 						onSelectPlan={ onSelectPlan }
 						plans={ plans }
-						siteSpecificPlansDetailsList={ siteSpecificPlansDetailsList }
 						context={ context } />
 				</CartData>
 			</ReduxProvider>,

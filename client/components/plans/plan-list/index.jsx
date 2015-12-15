@@ -2,14 +2,16 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	times = require( 'lodash/utility/times' );
+	times = require( 'lodash/utility/times' ),
+	find = require( 'lodash/collection/find' );
 
 /**
  * Internal dependencies
  */
 var Plan = require( 'components/plans/plan' ),
 	Card = require( 'components/card' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	abtest = require( 'lib/abtest' ).abtest,
+	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle;
 
 module.exports = React.createClass( {
 	displayName: 'PlanList',
@@ -26,7 +28,22 @@ module.exports = React.createClass( {
 		var plans = this.props.plans,
 			showJetpackPlans = false,
 			site,
-			plansList;
+			plansList,
+			currentPlan;
+
+		if ( ! this.props.sitePlans.hasLoadedFromServer ) {
+			plansList = times( 3, function( n ) {
+				return (
+					<Plan placeholder={ true }
+						isInSignup={ this.props.isInSignup }
+						key={ 'plan-' + n } />
+				);
+			}, this );
+
+			return (
+				<div className="plans-list">{ plansList }</div>
+			);
+		}
 
 		if ( this.props.sites ) {
 			site = this.props.sites.getSelectedSite();
@@ -36,7 +53,8 @@ module.exports = React.createClass( {
 		// check if this site was registered via the JPPHP "Jetpack Start" program
 		// if so, we want to display a message that this plan is managed via the hosting partner
 
-		if ( this.props.siteSpecificPlansDetailsList && this.props.siteSpecificPlansDetailsList.hasJpphpBundle( site.domain )  ) {
+		currentPlan = find( this.props.sitePlans.data, { currentPlan: true } );
+		if ( isJpphpBundle( currentPlan ) ) {
 			return (
 				<Card>
 					<p>
@@ -59,7 +77,7 @@ module.exports = React.createClass( {
 				return (
 					<Plan
 						plan={ plan }
-						siteSpecificPlansDetailsList={ this.props.siteSpecificPlansDetailsList }
+						sitePlans={ this.props.sitePlans }
 						comparePlansUrl={ this.props.comparePlansUrl }
 						isInSignup={ this.props.isInSignup }
 						key={ plan.product_id }

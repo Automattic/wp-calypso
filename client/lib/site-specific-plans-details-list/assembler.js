@@ -5,6 +5,7 @@ import moment from 'moment';
 
 function createSiteSpecificPlanObject( plan ) {
 	return {
+		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		expiry: plan.expiry,
 		expiryMoment: moment( plan.expiry ).startOf( 'day' ),

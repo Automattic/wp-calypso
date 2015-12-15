@@ -28,12 +28,12 @@ module.exports = React.createClass( {
 	},
 
 	planHasDiscount: function() {
-		return this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.raw_discount > 0;
+		return this.props.sitePlan && this.props.sitePlan.rawDiscount > 0;
 	},
 
 	planDiscountMessage: function() {
 		var message = this.translate( 'Get %(discount)s off your first year', {
-			args: { discount: this.props.siteSpecificPlansDetails.formatted_discount }
+			args: { discount: this.props.sitePlan.formattedDiscount }
 		} );
 
 		return (

@@ -97,12 +97,12 @@ module.exports = React.createClass( {
 		return classNames( classObject );
 	},
 
-	getSiteSpecificPlanDetails: function() {
+	getSitePlan: function() {
 		if ( this.isPlaceholder() || ! this.props.site ) {
 			return;
 		}
 
-		return this.props.siteSpecificPlansDetailsList.get( this.props.site.domain, this.getProductId() );
+		return find( this.props.sitePlans.data, { productId: this.getProductId() } );
 	},
 
 	getPlanDiscountMessage: function() {
@@ -113,7 +113,7 @@ module.exports = React.createClass( {
 		return (
 			<PlanDiscountMessage
 				plan={ this.props.plan }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
 				showMostPopularMessage={ true }/>
 		);
@@ -155,7 +155,7 @@ module.exports = React.createClass( {
 			<PlanPrice
 				plan={ this.props.plan }
 				isPlaceholder={ this.isPlaceholder() }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site } />
 		);
 	},
@@ -166,7 +166,7 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				isInSignup={ this.props.isInSignup }
 				onSelectPlan={ this.props.onSelectPlan }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
 				cart={ this.props.cart }
 				enableFreeTrials={ this.props.enableFreeTrials }
@@ -180,7 +180,7 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				isInSignup={ this.props.isInSignup }
 				onSelectPlan={ this.props.onSelectPlan }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
 				cart={ this.props.cart }
 				enableFreeTrials={ this.props.enableFreeTrials }

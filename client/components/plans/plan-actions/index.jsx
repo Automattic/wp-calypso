@@ -149,7 +149,7 @@ module.exports = React.createClass( {
 			return false;
 		}
 
-		const siteCanOfferTrial = this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.can_start_trial;
+		const siteCanOfferTrial = this.props.sitePlan && this.props.sitePlan.canStartTrial;
 
 		if ( ! this.props.isInSignup && ! siteCanOfferTrial ) {
 			return false;
@@ -219,7 +219,7 @@ module.exports = React.createClass( {
 	managePlanButton: function() {
 		var link;
 		if ( this.planHasCost() ) {
-			link = puchasesPaths.managePurchase( this.props.site.slug, this.props.siteSpecificPlansDetails.id );
+			link = puchasesPaths.managePurchase( this.props.site.slug, this.props.sitePlan.id );
 			return (
 				<a href={ link } className="button plan-actions__upgrade-button">{ this.translate( 'Manage Plan', { context: 'Link to current plan from /plans/' } ) }</a>
 			);
@@ -240,7 +240,7 @@ module.exports = React.createClass( {
 
 	getTrialPlanHint: function() {
 		var remainingDays = this.moment(
-				this.props.siteSpecificPlansDetails.expiry
+				this.props.sitePlan.expiry
 			).diff( this.moment(), 'days' ),
 			translationComponents = {
 				strong: <strong />,
@@ -273,7 +273,7 @@ module.exports = React.createClass( {
 	},
 
 	getCurrentPlanHint: function() {
-		if ( ! this.props.siteSpecificPlansDetails ) {
+		if ( ! this.props.sitePlan ) {
 			return;
 		}
 
@@ -295,7 +295,7 @@ module.exports = React.createClass( {
 	},
 
 	isPlanOnTrial: function() {
-		return this.props.siteSpecificPlansDetails.free_trial;
+		return this.props.sitePlan.freeTrial;
 	},
 
 	placeholder: function() {

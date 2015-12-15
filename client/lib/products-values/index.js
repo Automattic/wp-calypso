@@ -250,6 +250,7 @@ module.exports = {
 	isPremium: isPremium,
 	isBusiness: isBusiness,
 	isEnterprise: isEnterprise,
+	isJpphpBundle: isJpphpBundle,
 	isPlan: isPlan,
 	isPrivateRegistration,
 	isDomainProduct: isDomainProduct,
