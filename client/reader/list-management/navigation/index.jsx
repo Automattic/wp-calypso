@@ -5,7 +5,7 @@ import NavItem from 'components/section-nav/item';
 
 const ListManagementNavigation = React.createClass( {
 	propTypes: {
-		selected: React.PropTypes.oneOf( [ 'feeds', 'tags', 'description-edit', 'followers' ] ).isRequired,
+		selected: React.PropTypes.oneOf( [ 'sites', 'tags', 'description-edit', 'followers' ] ).isRequired,
 		list: React.PropTypes.shape( {
 			owner: React.PropTypes.string.isRequired,
 			slug: React.PropTypes.string.isRequired
@@ -17,8 +17,7 @@ const ListManagementNavigation = React.createClass( {
 		const sectionNames = {
 			sites: this.translate( 'Sites' ),
 			tags: this.translate( 'Tags' ),
-			'description-edit': this.translate( 'List Description' ),
-			followers: this.translate( 'List Followers' )
+			'description-edit': this.translate( 'List Description' )
 		};
 		const baseListUrl = `/read/list/${this.props.list.owner}/${this.props.list.slug}`;
 
