@@ -41,12 +41,13 @@ module.exports = React.createClass( {
 		disableAutocorrect: React.PropTypes.bool,
 		onBlur: React.PropTypes.func,
 		searching: React.PropTypes.bool,
-		forceCloseButton: React.PropTypes.bool
+		isOpen: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
 		return {
-			keyword: this.props.initialValue || ''
+			keyword: this.props.initialValue || '',
+			isOpen: this.props.isOpen || false
 		};
 	},
 
@@ -62,7 +63,7 @@ module.exports = React.createClass( {
 			onKeyDown: noop,
 			disableAutocorrect: false,
 			searching: false,
-			forceCloseButton: false
+			isOpen: false
 		};
 	},
 
@@ -178,7 +179,7 @@ module.exports = React.createClass( {
 
 		this.setState( {
 			keyword: '',
-			isOpen: false
+			isOpen: this.props.isOpen || false
 		} );
 
 		input.value = ''; // will not trigger onChange
@@ -277,7 +278,7 @@ module.exports = React.createClass( {
 					aria-hidden={ ! isOpenUnpinnedOrQueried }
 					autoCapitalize="none"
 					{...autocorrect } />
-				{ ( this.props.forceCloseButton || searchValue || this.state.isOpen ) ? this.closeButton() : null }
+				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
 			</div>
 		);
 	},
