@@ -40,6 +40,10 @@ var CustomizeActions = {
 		} );
 	},
 
+	// TODO: Once this entire module is converted to Redux,
+	// `themeActivated` shouldn't be passed as an argument anymore,
+	// but directly imported and dispatch()ed from inside `activated()`,
+	// which needs to be turned into a Redux thunk.
 	activated: function( id, site, themeActivated ) {
 		ThemeHelper.trackClick( 'customizer', 'activate' );
 
