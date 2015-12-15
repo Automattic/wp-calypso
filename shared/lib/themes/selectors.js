@@ -4,7 +4,7 @@
 import filter from 'lodash/collection/filter';
 
 export function isJetpack( state ) {
-	return state.themes.themesLastQuery.get( 'isJetpack' );
+	return !! state.themes.themesLastQuery.get( 'isJetpack' );
 }
 
 export function getParams( state ) {
