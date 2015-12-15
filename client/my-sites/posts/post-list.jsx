@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
 	debounce = require( 'lodash/function/debounce' ),
 	omit = require( 'lodash/object/omit' );
@@ -25,7 +26,7 @@ var GUESSED_POST_HEIGHT = 250;
 
 var PostList = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		context: React.PropTypes.object,

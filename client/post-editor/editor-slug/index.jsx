@@ -2,7 +2,8 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
 
@@ -17,7 +18,7 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 export default React.createClass( {
 	displayName: 'PostEditorSlug',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		path: PropTypes.string,

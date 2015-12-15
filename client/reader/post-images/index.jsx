@@ -2,7 +2,8 @@
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	resizeImageUrl = require( 'lib/resize-image-url' ),
 	classes = require( 'component-classes' ),
 	domScrollIntoView = require( 'dom-scroll-into-view' ),
@@ -163,7 +164,7 @@ var PostImages = React.createClass( {
 
 var PostImageThumbList = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		var images = this.props.postImages,

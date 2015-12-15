@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import AccordionSection from 'components/accordion/section';
 
 /**
@@ -15,7 +16,7 @@ import FormToggle from 'components/forms/form-toggle/compact';
 export default React.createClass( {
 	displayName: 'EditorPageParent',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		siteId: PropTypes.number,

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 import debugModule from 'debug';
 
@@ -39,7 +40,7 @@ const WebPreview = React.createClass( {
 		loadingMessage: React.PropTypes.string
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import Notice from 'components/notice';
 export default React.createClass( {
 	displayName: 'SiteSettingsImporterError',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		description: PropTypes.string.isRequired,

@@ -1,7 +1,8 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
 * Internal dependencies
@@ -10,7 +11,7 @@ var NoticeAction = require( 'components/notice/notice-action' ),
 	Notice = require( 'components/notice' );
 
 var Notices = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {

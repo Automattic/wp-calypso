@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 module.exports = React.createClass( {
 
 	displayName: 'PostRelativeTime',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,

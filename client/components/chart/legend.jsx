@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	PureRenderMixin = React.addons.PureRenderMixin,
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:module-chart:legend' );
 
 /**
@@ -63,14 +63,14 @@ var Legend = React.createClass( {
 			var colorClass = legendColors[ index ],
 				checked = ( -1 !== this.props.activeCharts.indexOf( legendItem ) ),
 				tab;
-				 
+
 			tab = this.props.tabs.filter( function( tab ) {
 				return tab.attr === legendItem;
 			} ).shift();
 
 			return <LegendItem key={ index } className={ colorClass } label={ tab.label } attr={ tab.attr } changeHandler={ this.onFilterChange } checked={ checked } />;
 		}, this );
-		
+
 
 		return (
 			<div className="chart__legend">

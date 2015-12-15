@@ -2,7 +2,8 @@
  * External dependencies
  */
 var map = require( 'lodash/collection/map' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	scrollIntoView = require( 'dom-scroll-into-view' );
 
@@ -26,7 +27,7 @@ var SuggestionsList = React.createClass( {
 		};
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentDidUpdate: function( prevProps ) {
 		var node;

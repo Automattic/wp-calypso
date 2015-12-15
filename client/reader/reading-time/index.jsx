@@ -1,8 +1,12 @@
-var React = require( 'react/addons' );
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 var ReadingTime = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		var words = this.props.words || 0,

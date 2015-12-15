@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react/addons' );
+const React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ const Card = require( 'components/card' ),
 module.exports = React.createClass( {
 	displayName: 'DeleteUser',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		isMultisite: React.PropTypes.bool.isRequired,

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 
 /**
@@ -15,7 +16,7 @@ import MappingPane from './author-mapping-pane';
 export default React.createClass( {
 	displayName: 'SiteSettingsImportingPane',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		importerStatus: PropTypes.shape( {

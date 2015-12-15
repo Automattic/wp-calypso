@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import page from 'page';
 import classNames from 'classnames';
 
@@ -22,7 +23,7 @@ export default React.createClass( {
 
 	displayName: 'EditorPostType',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return {

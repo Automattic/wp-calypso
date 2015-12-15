@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import isEmpty from 'lodash/lang/isEmpty';
 
 /**
@@ -18,7 +19,7 @@ import analytics from 'analytics';
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentDidMount: function() {
 		HelpSearchStore.on( 'change', this.refreshHelpLinks );

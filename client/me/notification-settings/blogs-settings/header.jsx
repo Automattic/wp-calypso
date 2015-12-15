@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
 import zip from 'lodash/array/zip';
 import includes from 'lodash/collection/includes';
@@ -15,7 +16,7 @@ import SiteInfo from 'my-sites/site';
 export default React.createClass( {
 	displayName: 'BlogSettingsHeader',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		blog: PropTypes.object.isRequired,

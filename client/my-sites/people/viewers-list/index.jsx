@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ let Viewers = React.createClass( {
 		};
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder"/>;
@@ -159,7 +160,7 @@ let Viewers = React.createClass( {
 module.exports = React.createClass( {
 	displayName: 'ViewersList',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		return (

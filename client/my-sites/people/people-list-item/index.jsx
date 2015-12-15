@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react/addons' ),
+const React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' );
 
@@ -17,7 +18,7 @@ export default React.createClass( {
 
 	displayName: 'PeopleListItem',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	navigateToUser() {
 		window.scrollTo( 0, 0 );

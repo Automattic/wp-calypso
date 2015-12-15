@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
 
 /**
@@ -13,7 +14,7 @@ import { getLabelForStream } from './locales'
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormStreamSelector',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		devices: PropTypes.object,

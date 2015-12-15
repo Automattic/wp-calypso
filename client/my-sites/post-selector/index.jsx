@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import omit from 'lodash/object/omit';
 import noop from 'lodash/utility/noop';
 
@@ -14,7 +15,7 @@ import PostListFetcher from 'components/post-list-fetcher';
 export default React.createClass( {
 	displayName: 'PostSelector',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		type: PropTypes.string,

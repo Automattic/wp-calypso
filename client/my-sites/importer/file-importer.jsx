@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import includes from 'lodash/collection/includes';
 
@@ -35,7 +36,7 @@ const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
 export default React.createClass( {
 	displayName: 'FileImporter',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		importerData: PropTypes.shape( {

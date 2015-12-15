@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal Dependencies
@@ -13,7 +14,7 @@ import SiteStoreActions from 'lib/reader-site-store/actions';
 
 const SiteAndAuthorIcon = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,

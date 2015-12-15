@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
 import includes from 'lodash/collection/includes';
@@ -18,7 +19,7 @@ import ProgressBar from 'components/progress-bar';
 export default React.createClass( {
 	displayName: 'SiteSettingsUploadingPane',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),

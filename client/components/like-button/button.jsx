@@ -1,7 +1,8 @@
 /**
  * Exeternal Dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classnames = require( 'classnames' );
 
 /**
@@ -11,7 +12,7 @@ var LikeIcons = require( './icons' );
 
 var LikeButton = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		liked: React.PropTypes.bool,

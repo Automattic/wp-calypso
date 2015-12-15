@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import user from 'lib/user';
 export default React.createClass( {
 	displayName: 'ImporterAuthorMapping',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		hasSingleAuthor: PropTypes.bool.isRequired,

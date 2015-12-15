@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	forEach = require( 'lodash/collection/forEach' );
 
 /**
@@ -19,7 +20,7 @@ var SectionNav = require( 'components/section-nav' ),
 var SectionNavigation = React.createClass( {
 	displayName: 'SectionNav',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {

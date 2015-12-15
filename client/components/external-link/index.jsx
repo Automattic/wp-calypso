@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 import assign from 'lodash/object/assign';
 
@@ -14,7 +15,7 @@ export default React.createClass( {
 
 	displayName: 'ExternalLink',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		className: React.PropTypes.string,

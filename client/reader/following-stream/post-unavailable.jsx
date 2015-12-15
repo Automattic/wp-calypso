@@ -1,11 +1,18 @@
-var React = require( 'react/addons' ),
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	config = require( 'config' );
 
+/**
+ * Internal dependencies
+ */
 var Card = require( 'components/card' );
 
 var PostUnavailable = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentWillMount: function() {
 		this.errors = {

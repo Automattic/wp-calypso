@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import reject from 'lodash/collection/reject';
 
 /**
@@ -14,7 +15,7 @@ import Gridicon from 'components/gridicon';
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryRemoveButton',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		siteId: PropTypes.number,

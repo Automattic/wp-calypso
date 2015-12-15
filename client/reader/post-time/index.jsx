@@ -1,13 +1,20 @@
+/**
+ * External dependencies
+ */
 var debug = require( 'debug' )( 'calyso:reader:post-time' ),
-	React = require( 'react/addons' );
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
+/**
+ * Internal dependencies
+ */
 const smartSetState = require( 'lib/react-smart-set-state' ),
 	ticker = require( 'lib/ticker' ),
 	humanDate = require( 'lib/human-date' );
 
 var PostTime = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentWillMount: function() {
 		this._update();

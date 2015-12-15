@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/object/omit' ),
 	noop = require( 'lodash/utility/noop' );
 
@@ -21,7 +22,7 @@ var LikeButtonContainer = React.createClass( {
 		onLikeToggle: React.PropTypes.func
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps: function() {
 		return {
