@@ -1,12 +1,6 @@
 .following-edit {
 	position: relative;
 
-	&.is-adding {
-		.search-card {
-			display: none;
-		}
-	}
-
 	ul {
 		list-style-type: none;
 		margin: 0;
@@ -230,13 +224,15 @@
 
 // Followed Sites and Search Transitions
 .following-edit__sites,
-.following-edit__existing-feed-search {
+.following-edit .search-card {
 	transition: all 0.2s ease-in-out;
+}
 
-	.is-adding & {
-		opacity: 0.3;
-		transform: translateY( 85px );
-	}
+.is-adding .following-edit__sites,
+.following-edit.is-adding .search-card {
+	opacity: 0.3;
+	transform: translateY( 85px );
+	pointer-events: none;
 }
 
 
