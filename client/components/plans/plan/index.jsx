@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	find = require( 'lodash/collection/find' );
 
 /**
  * Internal dependencies
@@ -73,12 +74,12 @@ module.exports = React.createClass( {
 		return this.props.placeholder;
 	},
 
-	getProductId: function() {
+	getProductSlug: function() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
 
-		return this.props.plan.product_id;
+		return this.props.plan.product_slug;
 	},
 
 	getClassNames: function() {
@@ -102,7 +103,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		return find( this.props.sitePlans.data, { productId: this.getProductId() } );
+		return find( this.props.sitePlans.data, { productSlug: this.getProductSlug() } );
 	},
 
 	getPlanDiscountMessage: function() {
@@ -121,7 +122,7 @@ module.exports = React.createClass( {
 
 	getBadge: function() {
 		if ( this.props.site ) {
-			if ( this.props.site.plan.product_id === this.getProductId() ) {
+			if ( this.props.site.plan.product_slug === this.getProductSlug() ) {
 				return (
 					<Gridicon icon="checkmark-circle" />
 				);
@@ -191,7 +192,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<Card className={ this.getClassNames() } key={ this.getProductId() } onClick={ this.showDetails }>
+			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
 				<PlanHeader onClick={ this.showDetails } text={ this.getProductName() } isPlaceholder={ this.isPlaceholder() }>
 					{ this.getBadge() }

@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
 	classNames = require( 'classnames' ),
 	times = require( 'lodash/utility/times' );
@@ -14,18 +15,24 @@ var observe = require( 'lib/mixins/data-observe' ),
 	PlanFeatures = require( 'components/plans/plan-features' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
 	PlanFeatureCell = require( 'components/plans/plan-feature-cell' ),
-	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
 	analytics = require( 'analytics' ),
 	HeaderCake = require( 'components/header-cake' ),
+	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
+	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
 	Card = require( 'components/card' );
 
-module.exports = React.createClass( {
+var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
 
 	mixins: [
-		siteSpecificPlansDetailsMixin,
-		observe( 'sites', 'siteSpecificPlansDetailsList', 'features', 'plans' )
+		observe( 'sites', 'features', 'plans' )
 	],
+
+	componentWillReceiveProps: function( nextProps ) {
+		if ( this.props.selectedSite.ID !== nextProps.selectedSite.ID ) {
+			this.props.fetchSitePlans( nextProps.selectedSite.ID );
+		}
+	},
 
 	getDefaultProps: function() {
 		return {
@@ -37,6 +44,8 @@ module.exports = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_plans_compare', {
 			isInSignup: this.props.isInSignup
 		} );
+
+		this.props.fetchSitePlans( this.props.selectedSite.ID );
 	},
 
 	recordViewAllPlansClick: function() {
@@ -80,7 +89,7 @@ module.exports = React.createClass( {
 					site={ site }
 					cart={ this.props.cart }
 					features={ featuresList }
-					siteSpecificPlansDetailsList={ this.props.siteSpecificPlansDetailsList } />
+					sitePlans={ this.props.sitePlans } />
 			);
 		}, this );
 	},
@@ -96,7 +105,7 @@ module.exports = React.createClass( {
 			return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 		} );
 
-		if ( this.props.features.hasLoadedFromServer() ) {
+		if ( this.props.features.hasLoadedFromServer() && this.props.sitePlans.hasLoadedFromServer ) {
 			// Remove features not supported by any plan
 			featuresList = featuresList.filter( function( feature ) {
 				var keepFeature = false;
@@ -168,5 +177,19 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-
 } );
+
+module.exports = connect(
+	( state, props ) => {
+		return {
+			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
+		};
+	},
+	( dispatch ) => {
+		return {
+			fetchSitePlans( siteId ) {
+				dispatch( fetchSitePlans( siteId ) );
+			}
+		};
+	}
+)( PlansCompare );

@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	find = require( 'lodash/collection/find' );
 
 /**
  * Internal dependencies
@@ -33,8 +34,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var features, classes,
-			siteSpecificPlansDetails = this.props.siteSpecificPlansDetailsList ?
-				this.props.siteSpecificPlansDetailsList.get( this.props.site.domain, this.props.plan.product_id ) :
+			sitePlan = this.props.sitePlans.hasLoadedFromServer ?
+				find( this.props.sitePlans.data, { productSlug: this.props.plan.product_slug } ) :
 				undefined;
 
 		features = this.props.features.map( function( feature ) {
@@ -53,18 +54,18 @@ module.exports = React.createClass( {
 				{ features }
 				<PlanPrice
 					plan={ this.props.plan }
-					siteSpecificPlansDetails={ siteSpecificPlansDetails }
+					sitePlan={ sitePlan }
 					site={ this.props.site } />
 				<PlanActions
 					onSelectPlan={ this.props.onSelectPlan }
 					isInSignup={ this.props.isInSignup }
 					plan={ this.props.plan }
 					site={ this.props.site }
-					siteSpecificPlansDetails={ siteSpecificPlansDetails }
+					sitePlan={ sitePlan }
 					cart={ this.props.cart } />
 				<PlanDiscountMessage
 					plan={ this.props.plan }
-					siteSpecificPlansDetails={ siteSpecificPlansDetails }
+					sitePlan={ sitePlan }
 					site={ this.props.site } />
 			</div>
 		);

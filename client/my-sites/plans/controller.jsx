@@ -95,7 +95,6 @@ module.exports = {
 		var PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
 			CartData = require( 'components/data/cart' ),
-			siteSpecificPlansDetailsList = require( 'lib/site-specific-plans-details-list' )(),
 			features = require( 'lib/features-list' )(),
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
@@ -121,14 +120,16 @@ module.exports = {
 
 		ReactDom.render(
 			<Main className="plans has-sidebar">
-				<CartData>
-					<PlansCompare sites={ sites }
-						onSelectPlan={ onSelectPlan }
-						plans={ plans }
-						features={ features }
-						siteSpecificPlansDetailsList={ siteSpecificPlansDetailsList }
-						productsList={ productsList } />
-				</CartData>
+				<ReduxProvider store={ context.store }>
+					<CartData>
+						<PlansCompare sites={ sites }
+							selectedSite={ site }
+							onSelectPlan={ onSelectPlan }
+							plans={ plans }
+							features={ features }
+							productsList={ productsList } />
+					</CartData>
+				</ReduxProvider>
 			</Main>,
 			document.getElementById( 'primary' )
 		);
