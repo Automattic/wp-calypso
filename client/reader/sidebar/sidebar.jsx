@@ -4,14 +4,14 @@
 const assign = require( 'lodash/object/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
-	endsWith = require( 'lodash/string/endsWith' ),
 	map = require( 'lodash/collection/map' ),
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
-	url = require( 'url' );
+	url = require( 'url' ),
+	last = require( 'lodash/array/last' );
 
 /**
  * Internal Dependencies
@@ -190,10 +190,11 @@ module.exports = React.createClass( {
 			const listManagementUrls = [
 				listRelativeUrl + '/tags',
 				listRelativeUrl + '/edit',
-				listRelativeUrl + '/feeds',
+				listRelativeUrl + '/sites',
 			];
 
-			const isCurrentList = this.pathStartsWithOneOf( [ listRelativeUrl ] ) && endsWith( this.props.path.toLowerCase(), list.slug.toLowerCase() );
+			const lastPathSegment = last( this.props.path.split( '/' ) );
+			const isCurrentList = lastPathSegment && lastPathSegment.toLowerCase() === list.slug.toLowerCase();
 			const isActionButtonSelected = this.pathStartsWithOneOf( listManagementUrls );
 
 			const classes = classnames(
