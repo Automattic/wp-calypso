@@ -26,8 +26,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			animationState: -1, // used to make the notification icon blink
-			showNotes: false,   // whether we show the notifications panel
+			showNotifications: false,   // whether we show the notifications panel
 		};
 	},
 
@@ -41,12 +40,12 @@ export default React.createClass( {
 
 	clickNotifications() {
 		this.setState( {
-			showNotes: ! this.state.showNotes
+			showNotifications: ! this.state.showNotifications
 		} );
 	},
 
 	checkIsActive( section ) {
-		return !! ( section === this.props.section && ! this.state.showNotes );
+		return !! ( section === this.props.section && ! this.state.showNotifications );
 	},
 
 	wordpressIcon() {
@@ -59,19 +58,13 @@ export default React.createClass( {
 	},
 
 	render() {
-		const	masterbarClassObject = {
-				masterbar: true
-		};
-
-		if ( this.props.user ) {
-			masterbarClassObject.collapsible = true;
-		}
-
-		const masterbarClass = classNames( masterbarClassObject );
+		const	classes = classNames( 'masterbar', {
+			collapsible: !! this.props.user,
+		} );
 
 		if ( this.props.user ) { // Logged in
 			return (
-				<header id="header" className={ masterbarClass }>
+				<header id="header" className={ classes }>
 					<MasterbarItem url="/stats" icon={ this.wordpressIcon() } onClick={ this.clickMySites } isActive={ this.checkIsActive( 'sites' ) }>
 						{ this.props.user.get().visible_site_count > 1
 							? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -98,7 +91,7 @@ export default React.createClass( {
 
 		// Logged out
 		return (
-			<header id="header" className={ masterbarClass }>
+			<header id="header" className={ classes }>
 				<MasterbarItem url="/" icon="my-sites" className="masterbar__item-logo">
 					WordPress<span className="tld">.com</span>
 				</MasterbarItem>
