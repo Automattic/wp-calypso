@@ -111,7 +111,7 @@ var EditUserForm = React.createClass( {
 
 		this.props.markSaved();
 
-		// Since we store 'roles' in state as a string, but user objects expext
+		// Since we store 'roles' in state as a string, but user objects expect
 		// roles to be an array, if we've updated the user's role, we need to
 		// place the role in an array before updating the user.
 		UsersActions.updateUser(
