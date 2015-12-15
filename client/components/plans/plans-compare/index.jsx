@@ -29,7 +29,7 @@ var PlansCompare = React.createClass( {
 	],
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.selectedSite.ID !== nextProps.selectedSite.ID ) {
+		if ( ! this.props.isInSignup && this.props.selectedSite.ID !== nextProps.selectedSite.ID ) {
 			this.props.fetchSitePlans( nextProps.selectedSite.ID );
 		}
 	},
@@ -45,7 +45,9 @@ var PlansCompare = React.createClass( {
 			isInSignup: this.props.isInSignup
 		} );
 
-		this.props.fetchSitePlans( this.props.selectedSite.ID );
+		if ( ! this.props.isInSignup ) {
+			this.props.fetchSitePlans( this.props.selectedSite.ID );
+		}
 	},
 
 	recordViewAllPlansClick: function() {
@@ -105,7 +107,9 @@ var PlansCompare = React.createClass( {
 			return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 		} );
 
-		if ( this.props.features.hasLoadedFromServer() && this.props.sitePlans.hasLoadedFromServer ) {
+		if ( this.props.features.hasLoadedFromServer() && (
+			this.props.isInSignup || this.props.sitePlans.hasLoadedFromServer )
+			) {
 			// Remove features not supported by any plan
 			featuresList = featuresList.filter( function( feature ) {
 				var keepFeature = false;
@@ -181,6 +185,10 @@ var PlansCompare = React.createClass( {
 
 module.exports = connect(
 	( state, props ) => {
+		if ( ! props.selectedSite ) {
+			return { sitePlans: null };
+		}
+
 		return {
 			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
 		};

@@ -34,7 +34,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var features, classes,
-			sitePlan = this.props.sitePlans.hasLoadedFromServer ?
+			sitePlan = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ?
 				find( this.props.sitePlans.data, { productSlug: this.props.plan.product_slug } ) :
 				undefined;
 
