@@ -39,6 +39,7 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	createReduxStore = require( 'state' ).createReduxStore,
+	resetPageState = require( 'state/ui/page/actions' ).resetPageState,
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
@@ -234,6 +235,8 @@ function boot() {
 
 		// Bump general stat tracking overall Newdash usage
 		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
+
+		context.store.dispatch( resetPageState() );
 
 		next();
 	} );
