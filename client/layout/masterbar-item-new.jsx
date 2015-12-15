@@ -37,11 +37,7 @@ export default React.createClass( {
 		} );
 	},
 
-	toggleSitesPopover( isShowingPopover ) {
-		if ( isShowingPopover === undefined ) {
-			isShowingPopover = ! this.state.isShowingPopover;
-		}
-
+	toggleSitesPopover( isShowingPopover = ! this.state.isShowingPopover ) {
 		// Setting state in the context of a touchTap event (i.e. SitePicker
 		// Site onSelect) prevents link navigation from proceeding
 		setTimeout( this.setState.bind( this, {
@@ -60,7 +56,7 @@ export default React.createClass( {
 		}
 	},
 
-	preload() {
+	onPreload() {
 		if ( ! this._preloaded && config.isEnabled( 'post-editor' ) ) {
 			this._preloaded = true;
 			// preload the post editor chunk
@@ -87,7 +83,7 @@ export default React.createClass( {
 		const newPostPath = paths.newPost( currentSite );
 
 		return (
-			<MasterbarItem ref={ this.setPostButtonContext } url={ newPostPath } icon="create" onClick={ this.onClick } isActive={ this.props.isActive } tooltip={ tooltip } className={ classes }>
+			<MasterbarItem ref={ this.setPostButtonContext } url={ newPostPath } icon="create" onClick={ this.onClick } onPreload={ this.onPreload } isActive={ this.props.isActive } tooltip={ tooltip } className={ classes }>
 				{ this.props.children }
 
 				<SitesPopover

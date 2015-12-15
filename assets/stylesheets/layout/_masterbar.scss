@@ -10,7 +10,7 @@ $autobar-height: 20px;
 	display: flex;
 	height: $masterbar-height;
 	margin: 0;
-	position: absolute;
+	position: fixed;
 		left: 0;
 		top: 0;
 	width: 100%;
@@ -18,7 +18,6 @@ $autobar-height: 20px;
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	@include breakpoint( ">660px" ) {
-		position: fixed;
 		backface-visibility: hidden;
 	}
 }

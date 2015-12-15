@@ -16,30 +16,18 @@ export default React.createClass( {
 	displayName: 'MasterbarItemNotifications',
 
 	propTypes: {
-		user: React.PropTypes.object,
+		user: React.PropTypes.object.isRequired,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
-		onClick: React.PropTypes.function,
+		onClick: React.PropTypes.func,
 	},
 
 	getInitialState() {
-		let newNote = false;
-		let user;
-
-		if ( this.props.user ) {
-			user = this.props.user.get();
-		}
-
-		// User object should be loaded by now, but
-		// if it isn't just wait until the notifications
-		// finish their initial load to set `newNote`
-		if ( user && user.has_unseen_notes ) {
-			newNote = true;
-		}
+		let user = this.props.user.get();
 
 		return {
 			isShowingPopover: false,
-			newNote: newNote,
+			newNote: user && user.has_unseen_notes,
 			animationState: 0,
 		};
 	},
@@ -94,12 +82,6 @@ export default React.createClass( {
 	setNotesIndicator( currentUnseenCount ) {
 		let existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
-
-		// Having no record of previously unseen notes is
-		// functionally equal to having a record of none
-		if ( null === existingUnseenCount ) {
-			existingUnseenCount = 0;
-		}
 
 		if ( 0 === currentUnseenCount ) {
 			// If we don't have new notes at load-time, remove the `-1` "init" status

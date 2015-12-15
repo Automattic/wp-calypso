@@ -16,6 +16,7 @@ export default React.createClass( {
 	propTypes: {
 		url: React.PropTypes.string,
 		onClick: React.PropTypes.func,
+		onPreload: React.PropTypes.func,
 		tooltip: React.PropTypes.string,
 		icon: React.PropTypes.string,
 		className: React.PropTypes.string,
@@ -35,7 +36,7 @@ export default React.createClass( {
 		} );
 
 		return (
-			<a href={ this.props.url } onClick={ this.props.onClick } title={ this.props.tooltip } className={ itemClasses }>
+			<a href={ this.props.url } onClick={ this.props.onClick } title={ this.props.tooltip } className={ itemClasses } onTouchStart={ this.props.onPreload } onMouseEnter={ this.props.onPreload }>
 				{ !! this.props.icon &&
 					<Gridicon icon={ this.props.icon } size={ 24 } />
 				}
