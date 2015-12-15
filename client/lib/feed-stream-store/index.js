@@ -112,7 +112,7 @@ function getStoreForSite( storeId ) {
 function getStoreForFeatured( storeId ) {
 	var siteId = storeId.split( ':' )[ 1 ],
 		fetcher = function( query, callback ) {
-			wpcomUndoc.readSiteFeatured( siteId, callback );
+			wpcomUndoc.readSiteFeatured( siteId, query, callback );
 		};
 
 	return new FeedStream( {
