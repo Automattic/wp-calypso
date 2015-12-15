@@ -9,7 +9,7 @@
 	transform: translateY( -50% );
 	overflow: visible;
 
-	&::before {
+	&:not( :disabled )::before {
 		@include long-content-fade( $size: 16px );
 		right: calc( 100% + 1px );
 	}
