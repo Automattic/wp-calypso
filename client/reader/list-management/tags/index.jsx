@@ -20,6 +20,7 @@ import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 import { fetchMoreTags } from 'lib/reader-lists-tags/actions';
 import smartSetState from 'lib/react-smart-set-state';
 import ListManagementError from '../error';
+import EmptyContent from 'components/empty-content';
 
 const debug = debugModule( 'calypso:reader:list-management' ); // eslint-disable-line
 
@@ -133,6 +134,14 @@ const ListManagementTags = React.createClass( {
 			return null;
 		}
 
+		if ( this.state.list && this.state.tags.length === 0 && this.state.isLastPage ) {
+			return ( <EmptyContent
+						title={ this.translate( 'This list does not have any tags yet.' ) }
+						illustration={ '/calypso/images/drake/drake-404.svg' }
+						illustrationWidth={ 500 }
+					/> );
+		}
+
 		return (
 			<InfiniteList
 					items={ this.state.tags }
@@ -155,10 +164,6 @@ const ListManagementTags = React.createClass( {
 		let message = null;
 		if ( ! this.state.list ) {
 			message = ( <p> {this.translate( 'Loading list information…' ) } </p> );
-		}
-
-		if ( this.state.list && this.state.tags.length === 0 && this.state.isLastPage ) {
-			message = ( <p> {this.translate( 'This list does not have any tags yet.' ) } </p> );
 		}
 
 		return (
