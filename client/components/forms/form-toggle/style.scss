@@ -76,6 +76,7 @@
 	&:disabled:hover {
 		+ .form-toggle__label .form-toggle__switch {
 			background: lighten( $gray, 30% );
+			cursor: default;
 		}
 	}
 }
