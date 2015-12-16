@@ -1,10 +1,6 @@
-$plugin-information-rating-size: 160px;
-.plugin-information__wrapper {
-	@include breakpoint( '>480px' ) {
-		margin-right: $plugin-information-rating-size + 24;
-	}
-}
 .plugin-information {
+	display: flex;
+	flex-wrap: wrap;
 	border-top: 1px solid #E9EFF3;
 	margin-top: 16px;
 	padding-top: 16px;
@@ -12,25 +8,36 @@ $plugin-information-rating-size: 160px;
 	overflow: hidden;
 }
 
-plugin-information__description {
+.plugin-information__description {
 	margin-bottom: 0;
 }
 
+.plugin-information__wrapper {
+	flex-grow: 1;
+
+	@include breakpoint( '>480px' ) {
+
+	}
+}
+
 .plugin-information__version-shell {
-	text-align: left;
-	position: relative;
-	overflow: hidden;
+	@include clear-fix;
 }
 
 .plugin-information__version-shell .version{
 	float: left;
-	width: 50%;
-	padding-bottom: 8px;
+	margin: 0 16px 8px 0;
 }
 
 .plugin-information__last-updated {
 	line-height: 18px;
-	padding-bottom: 8px;
+	margin-bottom: 8px;
+}
+
+.plugin-information__last-updated .gridicons-sync {
+	vertical-align: text-bottom;
+	color: $alert-yellow;
+	margin-left: 8px;
 }
 
 .plugin-information__version-info {
@@ -45,59 +52,49 @@ plugin-information__description {
 }
 
 .plugin-information__version-info.is-singlesite {
-	display: table;
+	// display: table;
 
 	.plugin-information__version-shell {
-		display: table-row;
 	}
 
 	.plugin-information__last-updated,
 	.plugin-information__versions,
 	.version {
-		display: table-cell;
-		float: none;
-		padding-bottom: 8px;
+		float: left;
+		margin-bottom: 8px;
 	}
 }
 
-.plugin-information__version-info .version {
-	padding-right: 8px;
-}
-
-.plugin-information__last-updated .gridicons-sync {
-	vertical-align: text-bottom;
-	color: $alert-yellow;
-	margin-left: 8px;
-}
-
 .plugin-information__versions {
+	line-height: 18px;
+	white-space: nowrap;
+
 	.gridicons-my-sites {
 		float: left;
 		margin-right: 4px;
 	}
+
 	.gridicons-cross-small {
-		vertical-align: bottom;
+		float: right;
+		margin-left: 4px;
 		color: $alert-red;
 	}
+
 	.gridicons-checkmark {
-		vertical-align: text-bottom;
+		float: right;
+		margin-left: 4px;
 		color: $alert-green;
 	}
 }
 
-.plugin-information__rating-info {
+.plugin-information .plugin-ratings {
+	flex-grow: 1;
+	margin-top: 16px;
+
 	@include breakpoint( '>480px' ) {
-		float: right;
-		width: $plugin-information-rating-size;
-		margin-right: -1 * $plugin-information-rating-size - 24;
-	}
-
-	@include breakpoint( '<480px' ) {
-		margin-top: 16px;
-
-		& .gridicon {
-			font-size: 12px;
-		}
+		flex-grow: 0;
+		width: 160px;
+		margin-top: 0;
 	}
 }
 
@@ -107,6 +104,7 @@ plugin-information__description {
 
 .plugin-information__links {
 	clear: left;
+
 	@include breakpoint( '>480px' ) {
 		float: left;
 	}
@@ -118,6 +116,7 @@ plugin-information__description {
 }
 
 .plugin-information.is-placeholder {
+
 	.plugin-information__version-shell,
 	.plugin-information__external-link,
 	.version {

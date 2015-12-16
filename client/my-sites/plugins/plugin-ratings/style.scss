@@ -14,7 +14,6 @@
 	@include breakpoint( '<480px' ) {
 		display: inline-block;
 		margin-right: 8px;
-		font-size: 16px;
 	}
 }
 
@@ -30,6 +29,8 @@
 
 	@include breakpoint( '<480px' ) {
 		display: inline;
+		line-height: 24px;
+    vertical-align: top;
 	}
 }
 

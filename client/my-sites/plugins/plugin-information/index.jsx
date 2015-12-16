@@ -177,20 +177,19 @@ export default React.createClass( {
 								{ this.renderLimits() }
 							</div>
 						</div>
-						<div className="plugin-information__rating-info">
-							<PluginRatings
-								rating={ this.props.plugin.rating }
-								ratings={ this.props.plugin.ratings }
-								downloaded={ this.props.plugin.downloaded }
-								numRatings={ this.props.plugin.num_ratings }
-								slug={ this.props.plugin.slug }
-								placeholder={ true } />
-						</div>
 						<div className="plugin-information__links">
 							{ this.renderWporgLink() }
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
+					<PluginRatings
+						rating={ this.props.plugin.rating }
+						ratings={ this.props.plugin.ratings }
+						downloaded={ this.props.plugin.downloaded }
+						numRatings={ this.props.plugin.num_ratings }
+						slug={ this.props.plugin.slug }
+						placeholder={ true }
+					/>
 			</div>
 		);
 	},
@@ -226,19 +225,18 @@ export default React.createClass( {
 								{ this.renderLimits() }
 							</div>
 						</div>
-						<div className="plugin-information__rating-info">
-							<PluginRatings
-								rating={ this.props.plugin.rating }
-								ratings={ this.props.plugin.ratings }
-								downloaded={ this.props.plugin.downloaded }
-								numRatings={ this.props.plugin.num_ratings }
-								slug={ this.props.plugin.slug } />
-						</div>
 						<div className="plugin-information__links">
 							{ this.renderWporgLink() }
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
+					<PluginRatings
+						rating={ this.props.plugin.rating }
+						ratings={ this.props.plugin.ratings }
+						downloaded={ this.props.plugin.downloaded }
+						numRatings={ this.props.plugin.num_ratings }
+						slug={ this.props.plugin.slug }
+					/>
 			</div>
 		);
 	},
