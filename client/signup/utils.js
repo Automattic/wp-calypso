@@ -4,7 +4,8 @@
 var isEmpty = require( 'lodash/lang/isEmpty' ),
 	find = require( 'lodash/collection/find' ),
 	indexOf = require( 'lodash/array/indexOf' ),
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/object/pick' ),
+	merge = require( 'lodash/object/merge' );
 
 /**
  * Internal dependencies
@@ -12,7 +13,8 @@ var isEmpty = require( 'lodash/lang/isEmpty' ),
 var i18nUtils = require( 'lib/i18n-utils' ),
 	steps = require( 'signup/config/steps' ),
 	flows = require( 'signup/config/flows' ),
-	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName;
+	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName,
+	formState = require( 'lib/form-state' );
 
 function getFlowName( parameters ) {
 	var currentFlowName = flows.currentFlowName;
@@ -93,6 +95,23 @@ function getNextStepName( flowName, currentStepName ) {
 	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
 }
 
+function getValueFromProgressStore( { signupProgressStore, stepName, fieldName } ) {
+	const siteStepProgress = find(
+		signupProgressStore,
+		step => step.stepName === stepName
+	);
+	return siteStepProgress ? siteStepProgress[fieldName] : null;
+}
+
+function mergeFormWithValue( { form, fieldName, fieldValue} ) {
+	if ( ! formState.getFieldValue( form, fieldName ) ) {
+		return merge( form, {
+			[fieldName]: { value: fieldValue }
+		} );
+	}
+	return form;
+}
+
 module.exports = {
 	getFlowName: getFlowName,
 	getStepName: getStepName,
@@ -101,5 +120,7 @@ module.exports = {
 	getStepUrl: getStepUrl,
 	getValidPath: getValidPath,
 	getPreviousStepName: getPreviousStepName,
-	getNextStepName: getNextStepName
+	getNextStepName: getNextStepName,
+	getValueFromProgressStore: getValueFromProgressStore,
+	mergeFormWithValue: mergeFormWithValue
 };

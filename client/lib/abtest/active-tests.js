@@ -80,5 +80,13 @@ module.exports = {
 			notTested: 20
 		},
 		defaultVariation: 'main'
+	},
+	autoFillUsernameSignup: {
+		datestamp: '20151201',
+		variations: {
+			autoFill: 50,
+			dontAutoFill: 50
+		},
+		defaultVariation: 'dontAutoFill'
 	}
 };

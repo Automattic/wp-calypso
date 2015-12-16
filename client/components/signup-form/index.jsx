@@ -30,6 +30,8 @@ import i18n from 'lib/mixins/i18n';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import { abtest } from 'lib/abtest';
+import { getValueFromProgressStore, mergeFormWithValue } from 'signup/utils';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -66,6 +68,27 @@ export default React.createClass( {
 		};
 	},
 
+	autoFillUsername( form ) {
+		const siteName = getValueFromProgressStore( {
+			stepName: 'site',
+			fieldName: 'site',
+			signupProgressStore: this.props.signupProgressStore
+		} );
+		let domainName = getValueFromProgressStore( {
+			stepName: 'domains',
+			fieldName: 'siteUrl',
+			signupProgressStore: this.props.signupProgressStore
+		} );
+		if ( domainName ) {
+			domainName = domainName.split( '.' )[ 0 ];
+		}
+		return mergeFormWithValue( {
+			form,
+			fieldName: 'username',
+			fieldValue: siteName || domainName || null
+		} );
+	},
+
 	componentWillMount() {
 		debug( 'Mounting the SignupForm React component.' );
 		this.formStateController = new formState.Controller( {
@@ -78,7 +101,11 @@ export default React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: this.props.step ? this.props.step.form : undefined
 		} );
-		this.setState( { form: this.formStateController.getInitialState() } );
+		let initialState = this.formStateController.getInitialState();
+		if ( this.props.signupProgressStore && abtest( 'autoFillUsernameSignup' ) === 'autoFill' ) {
+			initialState = this.autoFillUsername( initialState );
+		}
+		this.setState( { form: initialState } );
 	},
 
 	componentDidMount() {
