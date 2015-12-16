@@ -38,6 +38,7 @@ export default React.createClass( {
 		return (
 			<div className="design-type__list">
 				{ this.getChoices().map( this.renderChoice ) }
+				<div className="design-type__choice is-spacergif" />
 			</div>
 		);
 	},
