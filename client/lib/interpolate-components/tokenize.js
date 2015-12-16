@@ -1,4 +1,3 @@
-
 function identifyToken( item ) {
 	// {{/example}}
 	if ( item.match( /^\{\{\// ) ) {
@@ -27,7 +26,7 @@ function identifyToken( item ) {
 	};
 }
 
-module.exports = function( translation ) {
-	var tokenStrings = translation.split( /(\{\{\/?\s*\w+\s*\/?\}\})/g ); // split to components and strings
+module.exports = function( mixedString ) {
+	const tokenStrings = mixedString.split( /(\{\{\/?\s*\w+\s*\/?\}\})/g ); // split to components and strings
 	return tokenStrings.map( identifyToken );
 };

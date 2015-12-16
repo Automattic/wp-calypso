@@ -70,6 +70,7 @@
     "qs": "4.0.0",
     "raf": "2.0.4",
     "react": "0.14.3",
+    "react-addons-create-fragment": "0.14.3",
     "react-day-picker": "1.1.0",
     "react-dom": "0.14.3",
     "react-redux": "3.1.0",

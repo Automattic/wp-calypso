@@ -1,15 +1,15 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
 
 /**
  * Internal Dependencies
  */
-var warn = require( 'lib/warn' ),
-	tokenize = require( './tokenize.js' );
+import tokenize from './tokenize';
 
-var currentTranslation;
+let currentMixedString;
 
 function getCloseIndex( openIndex, tokens ) {
 	var openToken = tokens[ openIndex ],
@@ -47,11 +47,11 @@ function buildChildren( tokens, components ) {
 		}
 		// component node should at least be set
 		if ( ! components.hasOwnProperty( token.value ) || typeof components[ token.value ] === 'undefined' ) {
-			throw new Error( 'Invalid translation, missing component node: `' + token.value + '`' );
+			throw new Error( 'Invalid interpolation, missing component node: `' + token.value + '`' );
 		}
 		// should be either ReactElement or null (both type "object"), all other types deprecated
 		if ( typeof components[ token.value ] !== 'object' ) {
-			warn( 'Invalid translation, component node must be a ReactElement or null: `' + token.value + '`', '\n> ' + currentTranslation );
+			throw new Error( 'Invalid interpolation, component node must be a ReactElement or null: `' + token.value + '`', '\n> ' + currentMixedString );
 		}
 		// we should never see a componentClose token in this loop
 		if ( token.type === 'componentClose' ) {
@@ -85,46 +85,47 @@ function buildChildren( tokens, components ) {
 		return children[ 0 ];
 	}
 
-	children.forEach( function( child, index ) {
+	children.forEach( ( child, index ) => {
 		if ( child ) {
-			childrenObject[ 'translation-child-' + index ] = child;
+			childrenObject[ `interpolation-child-${index}` ] = child;
 		}
 	} );
 
-	return React.addons.createFragment( childrenObject );
+	return createFragment( childrenObject );
 }
 
-module.exports = function interpolate( options ) {
-	var translation = options.translation,
-		components = options.components,
-		throwErrors = options.throwErrors,
-		tokens;
+function interpolate( options ) {
+	const { mixedString, components, throwErrors } = options;
 
-	currentTranslation = translation;
+	currentMixedString = mixedString;
 
 	if ( ! components ) {
-		return translation;
+		return mixedString;
 	}
 
 	if ( typeof components !== 'object' ) {
-		warn( 'Translation Error: components argument must be an object', translation, components );
-		return translation;
+		if ( throwErrors ) {
+			throw new Error( 'Interpolation Error: components argument must be an object', mixedString, components );
+		}
+		return mixedString;
 	}
 
-	tokens = tokenize( translation );
+	let tokens = tokenize( mixedString );
 
 	try {
 		return buildChildren( tokens, components );
 	} catch( error ) {
 		// don't mess around in production, just return what we can
 		if ( ! throwErrors ) {
-			return translation;
+			return mixedString;
 		}
 		// in pre-production environments we should make errors very visible
 		if ( window && window.console && window.console.error ) {
-			window.console.error( '\nTranslation Error: ', interpolate.caller.caller, '\n> ' + translation );
+			window.console.error( '\nInterpolation Error: ', interpolate.caller.caller, '\n> ' + mixedString );
 		}
 
 		throw error;
 	}
 };
+
+export default interpolate;
