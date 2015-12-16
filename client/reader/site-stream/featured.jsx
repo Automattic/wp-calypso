@@ -3,14 +3,16 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import get from 'lodash/object/get';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card';
 import page from 'page';
-import PostStore from 'lib/feed-post-store';
+import FeedPostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
+import DiscoverHelper from 'reader/discover/helper';
 import * as stats from 'reader/stats';
 
 export default React.createClass( {
@@ -24,8 +26,35 @@ export default React.createClass( {
 
 	getStateFromStores( store ) {
 		store = store || this.props.store;
+
+		let postKeys = store.get();
+		let posts = postKeys.map( postKey => {
+			let post = FeedPostStore.get( postKey );
+			if ( ! post || post._state === 'minimal' ) {
+				FeedPostStoreActions.fetchPost( postKey );
+				post._state = 'pending';
+			}
+
+			let isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post ),
+				isDiscoverSitePick = post && isDiscoverPost && DiscoverHelper.isDiscoverSitePick( post ),
+				originalPost;
+
+			if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
+				originalPost = FeedPostStore.get( {
+					blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
+					postId: post.discover_metadata.featured_post_wpcom_data.post_id
+				} );
+			}
+
+			return {
+				post,
+				originalPost,
+				isDiscoverPost
+			}
+		} );
+
 		return {
-			posts: store.get()
+			posts: posts
 		};
 	},
 
@@ -35,12 +64,12 @@ export default React.createClass( {
 
 	componentDidMount() {
 		this.props.store.on( 'change', this.updateState );
-		PostStore.on( 'change', this.updateState );
+		FeedPostStore.on( 'change', this.updateState );
 	},
 
 	componentWillUnmount() {
 		this.props.store.off( 'change', this.updateState );
-		PostStore.off( 'change', this.updateState );
+		FeedPostStore.off( 'change', this.updateState );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -49,22 +78,26 @@ export default React.createClass( {
 		}
 	},
 
-	handleClick( post ) {
+	handleClick( postData ) {
+		let post = postData.post;
 		stats.recordTrack( 'calypso_reader_clicked_featured_post', { blog_id: post.site_ID, post_id: post.ID } )
 		stats.recordAction( 'clicked_featured_post' );
 		stats.recordGaEvent( 'Clicked Featured Post' );
 
-		page( '/read/post/id/' + post.site_ID + '/' + post.ID );
+		let url;
+		if ( postData.isDiscoverPost ) {
+			url = '/read/post/id/' + postData.originalPost.site_ID + '/' + postData.originalPost.ID;
+		} else {
+			url = '/read/post/id/' + post.site_ID + '/' + post.ID;
+		}
+
+		page( url );
 	},
 
 	renderPosts() {
-		return this.state.posts.map( postKey => {
-			let post = PostStore.get( postKey );
-			let postState = post._state;
-			if ( ! post || postState === 'minimal' ) {
-				FeedPostStoreActions.fetchPost( postKey );
-				postState = 'pending';
-			}
+		return this.state.posts.map( postData => {
+			let post = postData.post,
+				postState = post._state;
 
 			switch ( postState ) {
 				case 'pending':
@@ -79,7 +112,7 @@ export default React.createClass( {
 						<div
 							key={ post.ID }
 							className="reader__featured-post"
-							onClick={ this.handleClick.bind( this, post ) }>
+							onClick={ this.handleClick.bind( this, postData ) }>
 							<div className="reader__featured-post-image" style={ style }></div>
 							<h2 className="reader__featured-post-title">{ post.title }</h2>
 						</div>
