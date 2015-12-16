@@ -23,6 +23,10 @@
 	margin: 0;
 	position: relative;
 	width: 300px;
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+	}
 }
 
 .sites-dropdown.is-open .sites-dropdown__wrapper {

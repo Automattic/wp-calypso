@@ -12,12 +12,6 @@
 	&.is-large .search  {
 		display: block;
 	}
-
-	@include breakpoint( "<660px" ) {
-		width: 100vw;
-		left: -100vw;
-		-webkit-overflow-scrolling: touch;
-	}
 }
 
 // Styles for Site elements within the Selector

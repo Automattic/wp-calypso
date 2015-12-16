@@ -302,4 +302,10 @@
 	.search {
 		border-bottom: 1px solid lighten( $gray, 20% );
 	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100vw;
+		left: -100vw;
+		-webkit-overflow-scrolling: touch;
+	}
 }
