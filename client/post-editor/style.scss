@@ -325,7 +325,7 @@
 
 // featured image
 .editor .editor-featured-image {
-	background: $gray-light;
+	box-shadow: 0 -1px 0 lighten( $gray, 20% ), 0 1px 0 lighten( $gray, 20% );
 	margin: -26px -48px 24px;
 	overflow: hidden;
 
