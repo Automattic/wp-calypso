@@ -39,7 +39,10 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		margin-bottom: 9px;
+		position: relative;
+		width: auto;
+		top: 4px;
+
 	}
 }
 
