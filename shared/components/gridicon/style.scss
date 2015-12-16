@@ -1,7 +1,7 @@
 .gridicon {
 	fill: currentColor;
 
-	&.needs-offset{
-		transform: translate( .5px, .5px );
+	&.needs-offset g {
+		transform: translate( 1px, 1px );	/* translates to .5px because it's in a child element */
 	}
 }
