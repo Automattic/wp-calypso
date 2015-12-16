@@ -1,5 +1,6 @@
 .editor-title {
 	position: relative;
+	top: 2px;
 
 	&:not( .is-focused ):not( .is-loading )::after {
 		@include long-content-fade( $color: $white );
