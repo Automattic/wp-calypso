@@ -40,6 +40,23 @@ export default React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( isMobile() ) {
+			return;
+		}
+
+		// If next post is new, or the next site is different, focus title
+		if ( nextProps.isNew && ! this.props.isNew ||
+			( nextProps.isNew && ( this.props.site && nextProps.site ) && ( this.props.site.ID !== nextProps.site.ID ) )
+		) {
+			this.setState( {
+				isFocused: true
+			}, () => {
+				React.findDOMNode( this.refs.titleInput ).focus();
+			} )
+		}
+	},
+
 	onChange( event ) {
 		const { post, onChange } = this.props;
 
@@ -104,6 +121,7 @@ export default React.createClass( {
 						autoFocus={ isNew && ! isMobile() }
 						value={ post ? post.title : '' }
 						aria-label={ this.translate( 'Edit title' ) }
+						ref="titleInput"
 					/>
 				</TrackInputChanges>
 			</div>
