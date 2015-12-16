@@ -8,6 +8,7 @@ import React from 'react';
  */
 import PlanFeature from './feature'
 import SectionHeader from 'components/section-header';
+import { isBusiness } from 'lib/products-values';
 
 const PlanFeatures = React.createClass( {
 	propTypes: {
@@ -17,16 +18,9 @@ const PlanFeatures = React.createClass( {
 		] ).isRequired
 	},
 
-	render() {
+	renderBusinessFeatures() {
 		return (
-			<div>
-				<SectionHeader label={ this.translate( "Your Site's Features" ) } />
-
-				<PlanFeature
-					button={ { label: this.translate( 'Customize' ), href: `/customize/${ this.props.selectedSite.slug }` } }
-					description={ this.translate( "Change your theme's fonts, colors, and CSS for a unique look." ) }
-					heading={ this.translate( 'Custom Design' ) } />
-
+			<span>
 				<PlanFeature
 					button={ { label: this.translate( 'Setup eCommerce' ), href: `/plugins/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Shopify, Ecwid, or Gumroad account to your WordPress.com site.' ) }
@@ -40,6 +34,21 @@ const PlanFeatures = React.createClass( {
 				<PlanFeature
 					description={ this.translate( 'You have access to dozens of our best themes available.' ) }
 					heading={ this.translate( 'Unlimited Premium Themes' ) } />
+			</span>
+		);
+	},
+
+	render() {
+		return (
+			<div>
+				<SectionHeader label={ this.translate( "Your Site's Features" ) } />
+
+				<PlanFeature
+					button={ { label: this.translate( 'Customize' ), href: `/customize/${ this.props.selectedSite.slug }` } }
+					description={ this.translate( "Change your theme's fonts, colors, and CSS for a unique look." ) }
+					heading={ this.translate( 'Custom Design' ) } />
+
+				{ isBusiness( this.props.selectedSite.plan ) ? this.renderBusinessFeatures() : null }
 
 				<PlanFeature
 					description={ this.translate( 'WordPress.com ads will not display on your site.' ) }
