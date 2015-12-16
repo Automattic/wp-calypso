@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 
 const PlanFeature = React.createClass( {
 	propTypes: {
@@ -32,7 +30,7 @@ const PlanFeature = React.createClass( {
 				{ this.props.button &&
 					<Button
 						className="plan-features__feature-button"
-						onClick={ this.props.button.onClick }
+						href={ this.props.button.href }
 						primary>
 						{ this.props.button.label }
 					</Button>

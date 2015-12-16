@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -18,35 +17,23 @@ const PlanFeatures = React.createClass( {
 		] ).isRequired
 	},
 
-	goToCustomizer() {
-		page( `/customize/${ this.props.selectedSite.slug }` );
-	},
-
-	goToGoogleAnalytics() {
-		page( `/settings/analytics/${ this.props.selectedSite.slug }` );
-	},
-
-	goToPlugins() {
-		page( `/plugins/${ this.props.selectedSite.slug }` );
-	},
-
 	render() {
 		return (
 			<div>
 				<SectionHeader label={ this.translate( "Your Site's Features" ) } />
 
 				<PlanFeature
-					button={ { label: this.translate( 'Customize' ), onClick: this.goToCustomizer } }
+					button={ { label: this.translate( 'Customize' ), href: `/customize/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( "Change your theme's fonts, colors, and CSS for a unique look." ) }
 					heading={ this.translate( 'Custom Design' ) } />
 
 				<PlanFeature
-					button={ { label: this.translate( 'Setup eCommerce' ), onClick: this.goToPlugins } }
+					button={ { label: this.translate( 'Setup eCommerce' ), href: `/plugins/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Shopify, Ecwid, or Gumroad account to your WordPress.com site.' ) }
 					heading={ this.translate( 'eCommerce Integration' ) } />
 
 				<PlanFeature
-					button={ { label: this.translate( 'Setup Analytics' ), onClick: this.goToGoogleAnalytics } }
+					button={ { label: this.translate( 'Setup Analytics' ), href: `/settings/analytics/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Google Analytics account.' ) }
 					heading={ this.translate( 'Google Analytics Integration' ) } />
 
