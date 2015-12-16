@@ -547,7 +547,7 @@ export default React.createClass( {
 			}
 
 			rightSideButtons.push(
-				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Bulk Edit', { context: 'button label' } ) }</Button></ButtonGroup>
+				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Edit All', { context: 'button label' } ) }</Button></ButtonGroup>
 			);
 		} else {
 			activateButtons.push( <Button key="plugins__buttons-activate" disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
