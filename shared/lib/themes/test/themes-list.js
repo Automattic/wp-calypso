@@ -1,5 +1,4 @@
 import { assert } from 'chai';
-
 import { createStore } from 'redux';
 
 import ThemeConstants from '../constants';
