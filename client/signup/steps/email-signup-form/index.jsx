@@ -12,6 +12,7 @@ import SignupForm from 'components/signup-form'
 import signupUtils from 'signup/utils'
 import SignupActions from 'lib/signup/actions'
 import { abtest } from 'lib/abtest'
+import { getABTestVariation } from 'lib/abtest';
 
 export default React.createClass( {
 
@@ -45,7 +46,10 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_user_step_submit', analyticsData );
 
 		// run and record before creating user, only for free and in main flow
-		if ( ! this.props.signupDependencies.cartItem && this.props.flowName === 'main' ) {
+		if ( ! this.props.signupDependencies.cartItem &&
+			this.props.flowName === 'main' &&
+			getABTestVariation( 'dss' ) !== 'main' &&
+			getABTestVariation( 'triforce' ) !== 'main' ) {
 			abtest( 'nuxTrampoline' );
 		}
 
