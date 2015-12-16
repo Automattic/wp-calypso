@@ -43,8 +43,12 @@
 .plan-status__plan {
 	line-height: 26px;
 	font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
-	font-size: 24px;
+	font-size: 18px;
 	font-weight: 700;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+	}
 }
 
 .plan-status__button {
@@ -68,4 +72,8 @@
 
 .plan-status__time-until-expiry {
 	font-weight: 700;
+
+	@include breakpoint( "<480px" ) {
+		font-size: 14px;
+	}
 }
