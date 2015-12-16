@@ -20,7 +20,7 @@ describe( 'Domains: DNS reducer', () => {
 			},
 			payload = {
 				action: {
-					type: ActionTypes.DNS_DELETE,
+					type: ActionTypes.DNS_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT
 				}
@@ -39,7 +39,7 @@ describe( 'Domains: DNS reducer', () => {
 			},
 			payload = {
 				action: {
-					type: ActionTypes.DNS_DELETE,
+					type: ActionTypes.DNS_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT
 				}
@@ -59,7 +59,7 @@ describe( 'Domains: DNS reducer', () => {
 			},
 			payload = {
 				action: {
-					type: ActionTypes.DNS_DELETE,
+					type: ActionTypes.DNS_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
 					record: RECORD_TXT_WITHOUT_ID
 				}

@@ -209,25 +209,30 @@ function fetchDns( domainName ) {
 
 function addDns( domainName, record, onComplete ) {
 	wpcom.addDns( domainName, record, ( error ) => {
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.DNS_ADD_COMPLETED,
-			domainName,
-			record,
-			error
-		} );
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_ADD_COMPLETED,
+				domainName,
+				record,
+			} );
+		}
 
 		onComplete( error );
 	} );
 }
 
 function deleteDns( domainName, record, onComplete ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DNS_DELETE,
-		domainName,
-		record
-	} );
+	wpcom.deleteDns( domainName, record, ( error ) => {
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_DELETE_COMPLETED,
+				domainName,
+				record,
+			} );
+		}
 
-	wpcom.deleteDns( domainName, record, onComplete );
+		onComplete( error );
+	} );
 }
 
 function fetchNameservers( domainName ) {
