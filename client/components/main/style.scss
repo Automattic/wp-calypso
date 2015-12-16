@@ -1,7 +1,8 @@
 .main {
 	margin: auto;
-	max-width: 720px;
+	max-width: 100%;
 	z-index: z-index( 'root', '.main' );
+	padding-top: 48px;
 
 	// Themes is a great example of using all this new space ;)
 	&.themes,
