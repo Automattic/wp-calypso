@@ -47,4 +47,5 @@ render: function() {
 * `inProgress`: (bool) whether the action is in the middle of being performed.
 * `htmlFor`: (string) htmlFor is used for creating the for attribute on the label.
 * `disabledInfo`: ( string ) text that gets displayed in a infoPopover explaining why the action is disabled.
+* `disabled`: ( bool ) whether the toggle is disabled (grayed out and non interactive) or not
 

@@ -23,7 +23,7 @@ module.exports = React.createClass( {
 	},
 
 	toggleActivation: function() {
-		if ( this.props.isMock ) {
+		if ( this.props.isMock || this.props.disabled ) {
 			return;
 		}
 
@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 					htmlFor={ 'disconnect-jetpack-' + this.props.site.ID }
 					>
 					<DisconnectJetpackButton
-						disabled={ ! this.props.plugin }
+						disabled={ this.props.disabled || ! this.props.plugin }
 						site={ this.props.site }
 						redirect="/plugins/jetpack"
 						/>
@@ -73,6 +73,7 @@ module.exports = React.createClass( {
 		}
 		return (
 			<PluginAction
+				disabled={ this.props.disabled }
 				className="plugin-activate-toggle"
 				label={ this.translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }

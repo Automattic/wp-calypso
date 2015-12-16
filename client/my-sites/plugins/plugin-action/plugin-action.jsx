@@ -90,7 +90,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className={ classNames( 'plugin-action', this.props.className ) }>
+			<div className={ classNames( 'plugin-action', { 'is-disabled': this.props.disabled }, this.props.className ) }>
 				{ this.renderInner() }
 			</div>
 		);

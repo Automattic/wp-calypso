@@ -30,6 +30,10 @@
 	vertical-align: top;
 	text-transform: uppercase;
 	cursor: pointer;
+
+	.is-disabled & {
+		color: lighten( $gray, 30% );
+	}
 }
 
 .plugin-action .form-toggle__label .form-toggle__switch {

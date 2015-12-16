@@ -139,13 +139,15 @@ module.exports = React.createClass( {
 		return (
 			<div className="plugin-item__actions">
 				<PluginActivateToggle
-					isMock={ this.props.isMock || this.props.isSelectable }
+					isMock={ this.props.isMock }
 					plugin={ this.props.plugin }
+					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices } />
 				<PluginAutoupdateToggle
-					isMock={ this.props.isMock || this.props.isSelectable }
+					isMock={ this.props.isMock }
 					plugin={ this.props.plugin }
+					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices }
 					wporg={ !! this.props.plugin.wporg } />
@@ -192,7 +194,7 @@ module.exports = React.createClass( {
 
 		if ( ! this.props.plugin ) {
 			return this.renderPlaceholder();
-
+		}
 
 		errors.forEach( function( error ) {
 			errorNotices.push(
@@ -221,7 +223,7 @@ module.exports = React.createClass( {
 			<div className="plugin-item__title" data-warnings={ numberOfWarningIcons }>
 				{ plugin.name }
 			</div>
-		);
+			);
 
 		if ( this.props.hasAllNoManageSites ) {
 			const pluginItemClasses = classNames( 'plugin-item', {
