@@ -1680,14 +1680,14 @@ Undocumented.prototype.fetchImporterState = function( siteId ) {
 
 Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
+	const formData = Object
+		.keys( importerStatus )
+		.map( key => [ key, JSON.stringify( importerStatus[ key ] ) ] );
 
-	// Don't actually send the request until fully coordinated
-	// with the API to make sure all the ducks line up :)
-	// also to make sure we are polling the API for updates before starting one
-	//this.wpcom.req.post( Object.assign( {},
-	//	{ path: `/sites/${ siteId }/imports/${ importerStatus.importId }` },
-	//	{ importerStatus }
-	//) );
+	return this.wpcom.req.post( {
+		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
+		formData
+	} );
 };
 
 Undocumented.prototype.uploadExportFile = function( siteId, params ) {
