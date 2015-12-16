@@ -1,5 +1,4 @@
-var React = require( 'react' ),
-	toTitleCase = require( 'to-title-case' );
+var React = require( 'react' );
 
 var FollowingStream = require( 'reader/following-stream' ),
 	EmptyContent = require( './empty' ),
@@ -50,8 +49,8 @@ var FeedStream = React.createClass( {
 			ReaderTagActions.fetchTag( this.props.tag );
 			return this.translate( 'Loading Tag' );
 		}
-		// this crazy statement deals with strings that fail toTitleCase, like Japanese
-		return toTitleCase( tag.title || tag.slug ) || tag.title;
+
+		return tag.title || tag.slug;
 	},
 
 	isSubscribed: function() {
