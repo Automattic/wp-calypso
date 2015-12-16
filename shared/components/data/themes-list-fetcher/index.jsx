@@ -1,44 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
-	once = require( 'lodash/function/once' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+import React from 'react';
+import omit from 'lodash/object/omit';
+import once from 'lodash/function/once';
+import filter from 'lodash/collection/filter';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var ThemesStore = require( 'lib/themes/stores/themes' ),
-	ThemesListStore = require( 'lib/themes/stores/themes-list' ),
-	Actions = require( 'lib/themes/flux-actions' ),
-	Constants = require( 'lib/themes/constants' );
+import Constants from 'lib/themes/constants';
+import { query, fetchNextPage } from 'lib/themes/actions';
+import { hasSiteChanged, isJetpack } from 'lib/themes/selectors/themes-last-query';
+import { isLastPage, isFetchingNextPage, getThemesList } from 'lib/themes/selectors/themes-list';
+import { getThemeById } from 'lib/themes/selectors/themes';
 
-function queryThemes( props ) {
-	Actions.query( {
-		search: props.search,
-		tier: props.tier,
-		page: 0,
-		perPage: Constants.PER_PAGE
-	} );
-
-	Actions.fetchNextPage( props.site );
-}
-
-function getThemesInList() {
-	return ThemesListStore.getThemesList().map( ThemesStore.getById );
-}
-
-function getThemesState() {
-	return {
-		themes: getThemesInList(),
-		lastPage: ThemesListStore.isLastPage(),
-		loading: ThemesListStore.isFetchingNextPage(),
-		search: ThemesListStore.getQueryParams().search
-	};
-}
-
-let ThemesListFetcher = React.createClass( {
+const ThemesListFetcher = React.createClass( {
 	propTypes: {
 		children: React.PropTypes.element.isRequired,
 		site: React.PropTypes.oneOfType( [
@@ -49,76 +28,128 @@ let ThemesListFetcher = React.createClass( {
 		search: React.PropTypes.string,
 		tier: React.PropTypes.string,
 		onRealScroll: React.PropTypes.func,
-		onLastPage: React.PropTypes.func
-	},
-
-	getInitialState: function() {
-		return Object.assign( getThemesState(), { loading: true } );
+		onLastPage: React.PropTypes.func,
+		// Connected props
+		themes: React.PropTypes.array.isRequired,
+		lastPage: React.PropTypes.bool.isRequired,
+		loading: React.PropTypes.bool.isRequired,
+		lastQuery: React.PropTypes.shape( {
+			hasSiteChanged: React.PropTypes.bool.isRequired,
+			isJetpack: React.PropTypes.bool.isRequired
+		} ).isRequired,
+		query: React.PropTypes.func.isRequired,
+		fetchNextPage: React.PropTypes.func.isRequired,
 	},
 
 	componentDidMount: function() {
-		ThemesListStore.on( 'change', this.onThemesChange );
-		if ( this.props.site || this.props.isMultisite ) {
-			this.queryThemes( this.props );
-		}
-	},
-
-	componentWillUnmount: function() {
-		ThemesListStore.off( 'change', this.onThemesChange );
+		this.refresh( this.props );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		const ignoreProps = [ 'children', 'onLastPage', 'site' ];
-
-		if ( isEqual(
-			omit( this.props, ignoreProps ),
-			omit( nextProps, ignoreProps ) ) ) {
-			return;
+		if (
+				nextProps.tier !== this.props.tier || (
+					nextProps.search !== this.props.search && (
+						! nextProps.lastQuery.isJetpack ||
+						nextProps.lastQuery.hasSiteChanged
+						)
+					)
+			) {
+			this.refresh( nextProps );
 		}
+	},
 
-		if ( nextProps.site || nextProps.isMultisite ) {
-			this.queryThemes( nextProps );
+	refresh: function( props ) {
+		if ( this.props.site || this.props.isMultisite ) {
+			this.queryThemes( props );
 		}
 	},
 
 	queryThemes: function( props ) {
-		const { onLastPage } = this.props;
+		const {
+			onLastPage,
+			site,
+			search,
+			tier,
+		} = props;
+
 		this.onLastPage = onLastPage ? once( onLastPage ) : null;
-		queryThemes( props );
-	},
 
-	onThemesChange: function() {
-		this.setState( getThemesState() );
+		this.props.query( {
+			search,
+			tier,
+			page: 0,
+			perPage: Constants.PER_PAGE,
+		} );
 
-		const { page } = ThemesListStore.getQueryParams();
-		const { loading, lastPage } = this.state;
-
-		if ( page > 1 && ! loading && lastPage ) {
-			this.onLastPage && this.onLastPage();
-		}
+		this.props.fetchNextPage( site );
 	},
 
 	fetchNextPage: function( options ) {
 		// FIXME: While this function is passed on by `ThemesList` to `InfiniteList`,
 		// which has a `shouldLoadNextPage()` check (in scroll-helper.js), we can't
 		// rely on that; fetching would break without the following check.
-		if ( this.state.loading || this.state.lastPage ) {
+		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
 
+		const {
+			site = false,
+			onRealScroll = () => null,
+		} = this.props;
+
 		if ( options.triggeredByScroll ) {
-			this.props.onRealScroll && this.props.onRealScroll();
+			onRealScroll();
 		}
 
-		Actions.fetchNextPage( this.props.site );
+		this.props.fetchNextPage( site );
 	},
 
 	render: function() {
-		var childrenProps = Object.assign( { fetchNextPage: this.fetchNextPage }, this.state );
-		// Clone the child element along and pass along state (containing data from the store)
-		return React.cloneElement( this.props.children, childrenProps );
+		const props = omit( this.props, 'children' );
+		return React.cloneElement( this.props.children, Object.assign( {}, props, {
+			fetchNextPage: this.fetchNextPage
+		} ) );
 	}
 
 } );
 
-module.exports = ThemesListFetcher;
+function getFilteredThemes( state, search ) {
+	const allThemes = getThemesList( state )
+		.map( getThemeById.bind( null, state ) );
+
+	if ( ! isJetpack( state ) || ! search ) {
+		return allThemes;
+	}
+
+	return filter( allThemes, theme => matches( theme, search ) );
+}
+
+function matches( theme, rawSearch ) {
+	const search = rawSearch.toLowerCase().trim();
+
+	return [ 'name', 'tags', 'description', 'author' ].some( field => (
+		theme[ field ] && join( theme[ field ] )
+			.toLowerCase().replace( '-', ' ' )
+			.indexOf( search ) >= 0
+	) );
+}
+
+function join( value ) {
+	return Array.isArray( value ) ? value.join( ' ' ) : value;
+}
+
+export default connect(
+	( state, props ) => Object.assign( {},
+		props,
+		{
+			themes: getFilteredThemes( state, props.search ),
+			lastPage: isLastPage( state ),
+			loading: isFetchingNextPage( state ),
+			lastQuery: {
+				hasSiteChanged: hasSiteChanged( state ),
+				isJetpack: isJetpack( state )
+			}
+		}
+	),
+	bindActionCreators.bind( null, { query, fetchNextPage } )
+)( ThemesListFetcher );

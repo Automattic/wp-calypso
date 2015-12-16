@@ -26,9 +26,7 @@ function setActiveTheme( themeId, themes ) {
 		.setIn( [ themeId, 'active' ], true );
 }
 
-export const reducer = ( state = initialState, payload ) => {
-	const { action = payload } = payload;
-
+export const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case ThemeConstants.RECEIVE_THEMES:
 			const isNewSite = action.isJetpack && ( action.siteId !== state.get( 'currentSiteId' ) );

@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	partialRight = require( 'lodash/function/partialRight' );
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	partialRight = require( 'lodash/function/partialRight' ),
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -10,7 +12,7 @@ var React = require( 'react/addons' ),
 var Main = require( 'components/main' ),
 	CurrentThemeData = require( 'components/data/current-theme' ),
 	ActivatingTheme = require( 'components/data/activating-theme' ),
-	Action = require( 'lib/themes/flux-actions' ),
+	Action = require( 'lib/themes/actions' ),
 	WebPreview = require( 'components/web-preview' ),
 	Button = require( 'components/button' ),
 	CurrentTheme = require( 'my-sites/themes/current-theme' ),
@@ -24,7 +26,8 @@ var Main = require( 'components/main' ),
 	ThemesSiteSelectorModal = require( './themes-site-selector-modal' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
-	getButtonOptions = require( './theme-options' );
+	getButtonOptions = require( './theme-options' ),
+	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' );
 
 var Themes = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -55,7 +58,9 @@ var Themes = React.createClass( {
 	renderThankYou: function() {
 		return (
 			<ActivatingTheme siteId={ this.props.sites.getSelectedSite().ID } >
-				<ThanksModal site={ this.props.sites.getSelectedSite() } />
+				<ThanksModal
+					site={ this.props.sites.getSelectedSite() }
+					clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
 			</ActivatingTheme>
 		);
 	},
@@ -67,7 +72,7 @@ var Themes = React.createClass( {
 	togglePreview: function( theme ) {
 		const site = this.props.sites.getSelectedSite();
 		if ( site.jetpack ) {
-			Action.customize( theme, site );
+			this.props.dispatch( Action.customize( theme, site ) );
 		} else {
 			const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
 			this.setState( { showPreview: ! this.state.showPreview, previewUrl: previewUrl, previewingTheme: theme } );
@@ -97,7 +102,8 @@ var Themes = React.createClass( {
 	render: function() {
 		var site = this.props.sites.getSelectedSite(),
 			isJetpack = site.jetpack,
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
+			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
+			dispatch = this.props.dispatch;
 
 		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
@@ -121,7 +127,7 @@ var Themes = React.createClass( {
 						<Button primary onClick={ this.setState.bind( this, { showPreview: false },
 							() => {
 								if ( site ) {
-									Action.customize( this.state.previewingTheme, site )
+									dispatch( Action.customize( this.state.previewingTheme, site ) );
 								} else {
 									this.setSelectedTheme( 'customize', this.state.previewingTheme );
 								}
@@ -138,17 +144,36 @@ var Themes = React.createClass( {
 						sites={ this.props.sites }
 						setSelectedTheme={ this.setSelectedTheme }
 						togglePreview={ this.togglePreview }
-						getOptions={ partialRight( getButtonOptions, this.setSelectedTheme, this.togglePreview ) }
+						getOptions={ partialRight( getButtonOptions, bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
-						tier={ this.props.tier } />
+						tier={ this.props.tier }
+						customize={ bindActionCreators( Action.customize, dispatch ) }
+						queryParams={ this.props.queryParams }
+						themesList={ this.props.themesList } />
 				}
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal selectedAction={ this.state.selectedAction }
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.setSelectedTheme.bind( null, null, null ) }
-					getOptions={ partialRight( getButtonOptions, this.setSelectedTheme, this.togglePreview, true ) } /> }
+					actions={ bindActionCreators( Action, dispatch ) }
+					getOptions={ partialRight(
+						getButtonOptions,
+						bindActionCreators( Action, dispatch ),
+						this.setSelectedTheme,
+						this.togglePreview,
+						true
+					) }
+				/> }
 			</Main>
 		);
 	}
 } );
 
-module.exports = Themes;
+export default connect(
+	( state, props ) => Object.assign( {},
+		props,
+		{
+			queryParams: ThemesListSelectors.getQueryParams( state ),
+			themesList: ThemesListSelectors.getThemesList( state )
+		}
+	)
+)( Themes );

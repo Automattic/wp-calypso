@@ -1,65 +1,64 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import omit from 'lodash/object/omit';
 
 /**
  * Internal dependencies
  */
-var CurrentThemeStore = require( 'lib/themes/stores/current-theme' ),
-	Actions = require( 'lib/themes/flux-actions' );
+import { fetchCurrentTheme } from 'lib/themes/actions';
+import { getCurrentTheme } from 'lib/themes/selectors/current-theme';
 
 /**
  * Fetches the currently active theme of the supplied site
  * and passes it to the supplied child component.
  */
-var CurrentThemeData = React.createClass( {
+const CurrentThemeData = React.createClass( {
 
 	propTypes: {
+		children: React.PropTypes.element.isRequired,
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		children: React.PropTypes.element.isRequired
+		// Connected props
+		currentTheme: React.PropTypes.shape( {
+			name: React.PropTypes.string,
+			id: React.PropTypes.string
+		} ),
+		fetchCurrentTheme: React.PropTypes.func.isRequired
 	},
 
-	getInitialState: function() {
-		return {
-			currentTheme: CurrentThemeStore.getCurrentTheme( this.props.site.ID )
-		};
+	componentDidMount() {
+		this.refresh( this.props );
 	},
 
-	componentWillMount: function() {
-		CurrentThemeStore.on( 'change', this.onCurrentThemeChange );
-
-		if ( ! this.state.currentTheme && this.props.site ) {
-			Actions.fetchCurrentTheme( this.props.site );
-		}
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.state.currentTheme ) {
-			return;
-		}
-
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && nextProps.site !== this.props.site ) {
-			Actions.fetchCurrentTheme( nextProps.site );
+			this.refresh( nextProps );
 		}
 	},
 
-	componentWillUnmount: function() {
-		CurrentThemeStore.off( 'change', this.onCurrentThemeChange );
+	refresh( props ) {
+		if ( ! this.props.currentTheme && props.site ) {
+			this.props.fetchCurrentTheme( props.site );
+		}
 	},
 
-	onCurrentThemeChange: function() {
-		this.setState( {
-			currentTheme: CurrentThemeStore.getCurrentTheme( this.props.site.ID )
-		} );
-	},
-
-	render: function() {
-		return React.cloneElement( this.props.children, this.state );
+	render() {
+		return React.cloneElement( this.props.children, omit( this.props, 'children' ) );
 	}
 } );
 
-module.exports = CurrentThemeData;
+export default connect(
+	( state, props ) => Object.assign( {},
+		props,
+		{
+			currentTheme: getCurrentTheme( state, props.site.ID )
+		}
+	),
+	bindActionCreators.bind( null, { fetchCurrentTheme } )
+)( CurrentThemeData );
