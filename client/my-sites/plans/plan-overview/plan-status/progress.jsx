@@ -8,6 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import { getDaysUntilUserFacingExpiry } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 
 const PlanStatusProgress = React.createClass( {
@@ -15,17 +16,11 @@ const PlanStatusProgress = React.createClass( {
 		plan: React.PropTypes.object.isRequired
 	},
 
-	getDaysUntilExpiry() {
-		const { userFacingExpiryMoment } = this.props.plan;
-
-		return userFacingExpiryMoment.diff( this.moment(), 'days' );
-	},
-
 	renderProgressBar() {
-		const { subscribedMoment, userFacingExpiryMoment } = this.props.plan,
+		const { plan, plan: { subscribedMoment, userFacingExpiryMoment } } = this.props,
 			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
 			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedMoment, 'days' ),
-			timeUntilExpiryInDays = this.getDaysUntilExpiry(),
+			timeUntilExpiryInDays = getDaysUntilUserFacingExpiry( plan ),
 			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (
@@ -36,12 +31,14 @@ const PlanStatusProgress = React.createClass( {
 	},
 
 	renderDaysRemaining() {
+		const { plan } = this.props;
+
 		return this.translate(
-			'%(daysUntilExpiry)s day remaining',
-			'%(daysUntilExpiry)s days remaining',
+			'%(daysUntilExpiry)d day remaining',
+			'%(daysUntilExpiry)d days remaining',
 			{
-				args: { daysUntilExpiry: this.getDaysUntilExpiry() },
-				count: this.getDaysUntilExpiry(),
+				args: { daysUntilExpiry: getDaysUntilUserFacingExpiry( plan ) },
+				count: getDaysUntilUserFacingExpiry( plan ),
 				context: 'The amount of time until the trial plan expires, e.g. "5 days remaining"'
 			}
 		);
@@ -49,7 +46,7 @@ const PlanStatusProgress = React.createClass( {
 
 	render() {
 		const classes = classNames( 'plan-status__progress', {
-			'is-expiring': this.getDaysUntilExpiry() < 6
+			'is-expiring': getDaysUntilUserFacingExpiry( this.props.plan ) < 6
 		} );
 
 		return (
