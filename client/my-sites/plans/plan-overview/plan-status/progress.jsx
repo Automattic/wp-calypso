@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
 import ProgressBar from 'components/progress-bar';
-import { isPremium, isBusiness } from 'lib/products-values';
 
 const PlanStatusProgress = React.createClass( {
 	propTypes: {
@@ -49,10 +48,14 @@ const PlanStatusProgress = React.createClass( {
 	},
 
 	render() {
+		const classes = classNames( 'plan-status__progress', {
+			'is-expiring': this.getDaysUntilExpiry() < 6
+		} );
+
 		return (
 			<CompactCard>
-				<div className="plan-status__progress">
-					<div className="plan-status__time-until-expiry">
+				<div className={ classes }>
+					<div className="plan-status__progress-time-until-expiry">
 						{ this.renderDaysRemaining() }
 					</div>
 
