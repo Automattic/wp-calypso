@@ -530,11 +530,7 @@ export default React.createClass( {
 
 	canAddNewPlugins() {
 		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			const selectedSite = this.props.sites.getSelectedSite();
-			if ( selectedSite ) {
-				return !! selectedSite.jetpack;
-			}
-			return this.props.sites.getJetpack().length > 0;
+			return this.hasJetpackSelectedSites();
 		}
 		return false;
 	},
@@ -543,6 +539,14 @@ export default React.createClass( {
 		return this.state.plugins
 			.filter( plugin => plugin.selected )
 			.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
+	},
+
+	hasJetpackSelectedSites() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		if ( selectedSite ) {
+			return !! selectedSite.jetpack;
+		}
+		return this.props.sites.getJetpack().length > 0;
 	},
 
 	getCurrentActionButtons( isWpCom ) {
@@ -582,14 +586,15 @@ export default React.createClass( {
 				? <Button key="plugins__buttons-deactivate" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
 				: <Button key="plugins__buttons-disable" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
 			activateButtons.push( deactivateButton )
-
-			updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
-			updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
-
 			leftSideButtons.push( <ButtonGroup key="plugins__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
-			leftSideButtons.push( <ButtonGroup key="plugins__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
 
-			leftSideButtons.push( <ButtonGroup key="plugins__buttons-remove-button"><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
+			if ( this.hasJetpackSelectedSites() ) {
+				updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+				updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
+
+				leftSideButtons.push( <ButtonGroup key="plugins__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
+				leftSideButtons.push( <ButtonGroup key="plugins__buttons-remove-button"><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
+			}
 
 			rightSideButtons.push(
 				<button key="plugins__buttons-close-button" className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
@@ -624,12 +629,15 @@ export default React.createClass( {
 				: <DropdownItem key="plugin__actions_deactivate" disabled={ ! this.areSelected( 'active' ) } onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</DropdownItem>;
 			options.push( deactivateAction );
 
-			options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
-			options.push( <DropdownItem key="plugin__actions_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</DropdownItem> );
-			options.push( <DropdownItem key="plugin__actions_disable_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</DropdownItem> );
+			if ( this.hasJetpackSelectedSites() ) {
+				options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
+				options.push( <DropdownItem key="plugin__actions_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</DropdownItem> );
+				options.push( <DropdownItem key="plugin__actions_disable_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</DropdownItem> );
 
-			options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
-			options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
+				options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
+				options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
+			}
+
 			actions.push( <SelectDropdown compact className="plugins__actions_dropdown" key="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
 		}
 		return actions;
