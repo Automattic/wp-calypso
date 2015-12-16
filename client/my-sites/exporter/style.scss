@@ -16,7 +16,7 @@
 	background-color: $gray-light;
 }
 
-.exporter__advanced-options-title {
+.exporter__advanced-settings-title {
 	margin-bottom: 1em;
 
 	font-size: 22px;
@@ -24,7 +24,7 @@
 	color: $gray-dark;
 }
 
-.exporter__advanced-options-row {
+.exporter__advanced-settings-row {
 	@include breakpoint( ">960px" ) {
 		display: flex;
 		flex-wrap: wrap;

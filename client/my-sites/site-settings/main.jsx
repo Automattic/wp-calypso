@@ -74,7 +74,7 @@ module.exports = React.createClass( {
 			security: <SiteSecurity site={ site } />,
 			analytics: <AnalyticsSettings site={ site } />,
 			'import': <ImportSettings site={ site } />,
-			'export': <ExportSettings site={ site } />
+			'export': <ExportSettings site={ site } store={ this.props.context.store } />
 		};
 	},
 

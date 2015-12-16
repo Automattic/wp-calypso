@@ -18,7 +18,7 @@ import OptionFieldset from 'my-sites/exporter/option-fieldset';
  * and Date.
  */
 export default React.createClass( {
-	displayName: 'AdvancedOptions',
+	displayName: 'AdvancedSettings',
 
 	propTypes: {
 		// Event handlers
@@ -47,15 +47,15 @@ export default React.createClass( {
 			posts: [
 				{ value: 0, options: [ this.translate( 'All Authors' ) ] },
 				{ value: 0, options: [ this.translate( 'All Statuses' ) ] },
-				{ value: 0, options: [ this.translate( 'Starting Date...' ) ] },
-				{ value: 0, options: [ this.translate( 'Ending Date...' ) ] },
+				{ value: 0, options: [ this.translate( 'Starting Date…' ) ] },
+				{ value: 0, options: [ this.translate( 'Ending Date…' ) ] },
 				{ value: 0, options: [ this.translate( 'All Categories' ) ] }
 			],
 			pages: [
 				{ value: 0, options: [ this.translate( 'All Authors' ) ] },
 				{ value: 0, options: [ this.translate( 'All Statuses' ) ] },
-				{ value: 0, options: [ this.translate( 'Starting Date...' ) ] },
-				{ value: 0, options: [ this.translate( 'Ending Date...' ) ] }
+				{ value: 0, options: [ this.translate( 'Starting Date…' ) ] },
+				{ value: 0, options: [ this.translate( 'Ending Date…' ) ] }
 			],
 			feedback: []
 		};
@@ -69,7 +69,7 @@ export default React.createClass( {
 
 		return (
 			<CompactCard className="exporter__more-info">
-				<h1 className="exporter__advanced-options-title">
+				<h1 className="exporter__advanced-settings-title">
 					{ this.translate( 'Select Content to Export' ) }
 				</h1>
 				<p>
@@ -80,7 +80,7 @@ export default React.createClass( {
 						'After making your selection you can download your ' +
 						'content in an .xml file.' ) }
 				</p>
-				<div className="exporter__advanced-options-row">
+				<div className="exporter__advanced-settings-row">
 					<OptionFieldset { ...buildOptionProps( 'posts' ) } />
 					<OptionFieldset { ...buildOptionProps( 'pages' ) } />
 					<OptionFieldset { ...buildOptionProps( 'feedback' ) }
