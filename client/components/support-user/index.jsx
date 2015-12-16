@@ -67,7 +67,6 @@ module.exports = React.createClass( {
 
 	onTokenError: function( error ) {
 		this.setState( {
-				supportUser: null,
 				supportPassword: null,
 				isSupportUser: false,
 				showDialog: true,
