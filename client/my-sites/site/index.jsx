@@ -10,6 +10,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var SiteIcon = require( 'components/site-icon' ),
+	Gridicon = require( 'components/gridicon' ),
 	SiteIndicator = require( 'my-sites/site-indicator' );
 
 module.exports = React.createClass( {
@@ -34,7 +35,9 @@ module.exports = React.createClass( {
 			indicator: true,
 
 			// Mark as selected or not
-			isSelected: false
+			isSelected: false,
+
+			homeLink: false
 		};
 	},
 
@@ -70,7 +73,7 @@ module.exports = React.createClass( {
 		return (
 			<div className={ siteClass }>
 				<a className="site__content"
-					href={ this.props.href }
+					href={ this.props.homeLink ? site.URL : this.props.href }
 					target={ this.props.externalLink && '_blank' }
 					onTouchTap={ this.onSelect }
 					onMouseEnter={ this.props.onMouseEnter }
@@ -82,6 +85,11 @@ module.exports = React.createClass( {
 						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">{ site.domain }</div>
 					</div>
+					{ this.props.homeLink &&
+						<span className="site__home">
+							<Gridicon icon="house" size={ 12 } />
+						</span>
+					}
 				</a>
 				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>

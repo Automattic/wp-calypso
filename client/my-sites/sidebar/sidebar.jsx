@@ -439,27 +439,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	homepage: function() {
-		var site = this.getSelectedSite();
-
-		if ( ! this.isSingle() ) {
-			return null;
-		}
-
-		return (
-			<li className={ this.itemLinkClass( '/homepage', 'homepage' ) }>
-				<a onClick={ this.trackHomepageClick } href={ site.URL }>
-					<Gridicon icon="house" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'View Site' ) }</span>
-				</a>
-			</li>
-		);
-	},
-
-	trackHomepageClick: function() {
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
-	},
-
 	wpAdmin: function() {
 		var site = this.getSelectedSite(),
 			currentUser = this.props.user.get();
@@ -634,7 +613,6 @@ module.exports = React.createClass( {
 
 				<li className="sidebar-menu">
 					<ul>
-						{ this.homepage() }
 						{ this.stats() }
 						{ this.ads() }
 						{ this.plan() }
