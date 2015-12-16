@@ -153,24 +153,57 @@
 
 // Compact notices
 .notice.is-compact {
-	margin-bottom: 8px;
-	font-size: 14px;
+	border-radius: 2px;
+	color: $white;
+	display: inline-flex;
+	min-height: 20px;
+	margin: 8px;
+	padding: 0;
+	text-decoration: none;
 
 	.notice__text {
-		padding: 11px 24px 11px 16px;
+		font-size: 12px;
+		padding: 8px;
+		line-height: 1;
 	}
 
 	.notice__icon {
-		display: none;
+		align-self: center;
+		padding: 0 0 0 8px;
+		width: 14px;
+		height: 14px;
+		vertical-align: middle;
 	}
 
 	.notice__dismiss {
-		padding: 9px 16px;
+		display: none;
 	}
 
-	a.notice__action .gridicon {
-		width: 18px;
-		height: 18px;
+	a.notice__action {
+		background: transparent;
+		display: inline-block;
+		font-size: 11px;
+		font-weight: 600;
+		align-self: center;
+		margin-left: 16px;
+		padding: 0 8px;
+		text-decoration: underline;
+		text-transform: uppercase;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: transparent;
+			text-decoration: none;
+		}
+
+		.gridicon {
+			margin-left: 8px;
+			width: 14px;
+			height: 14px;
+			vertical-align: sub;
+			opacity: 1;
+		}
 	}
 }
 
@@ -199,9 +232,4 @@
 	&:focus {
 		background: rgba( 255, 255, 255, 0.2 );
 	}
-}
-
-// For site notices
-.current-site.card .notice.is-compact {
-	margin-bottom: 0px
 }
