@@ -102,7 +102,7 @@ module.exports = React.createClass( {
 			<Notice
 				showDismiss={ false }
 				isCompact={ true }
-				text={ this.translate( 'The site redirects to {{a}}%(url)s{{/a}}', {
+				text={ this.translate( 'Redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
 					components: { a: <a href={ site.URL }/> }
 				} ) }>

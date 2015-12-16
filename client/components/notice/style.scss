@@ -155,19 +155,20 @@
 .notice.is-compact {
 	border-radius: 2px;
 	color: $white;
-	display: inline-block;
-	line-height: 20px;
-	margin: 0;
+	display: inline-flex;
+	min-height: 20px;
+	margin: 8px;
 	padding: 0;
 	text-decoration: none;
 
 	.notice__text {
 		font-size: 12px;
-		padding: 2px 8px;
-		line-height: 24px;
+		padding: 8px;
+		line-height: 1;
 	}
 
 	.notice__icon {
+		align-self: center;
 		padding: 0 0 0 8px;
 		width: 14px;
 		height: 14px;
@@ -183,7 +184,7 @@
 		display: inline-block;
 		font-size: 11px;
 		font-weight: 600;
-		line-height: 20px;
+		align-self: center;
 		margin-left: 16px;
 		padding: 0 8px;
 		text-decoration: underline;
