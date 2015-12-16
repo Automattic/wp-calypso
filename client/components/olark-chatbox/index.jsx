@@ -105,8 +105,14 @@ module.exports = React.createClass( {
 			return;
 		}
 
+		const conversationDiv = document.getElementById( 'habla_conversation_div' );
+		const scrollTop = conversationDiv.scrollTop;
+
 		// Return the olark widget to its original DOM node
 		this.originalDOMParent.appendChild( this.olarkDOMNode );
+
+		// The conversation scroll position gets lost when changing the dom parent so lets set it to what it was before.
+		conversationDiv.scrollTop = scrollTop;
 
 		debug( 'release the olark chat widget' );
 	},
