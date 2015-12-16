@@ -1,27 +1,33 @@
-@mixin plan-overview-button {
-	flex-shrink: 0;
-	margin-left: 15px;
-	min-width: 150px;
-	text-align: center;
+.plan-overview {
+	.plan-feature__button,
+	.plan-status__button {
+		flex-shrink: 0;
+		margin-left: 15px;
+		min-width: 150px;
+		text-align: center;
 
-	@include breakpoint( "<480px" ) {
-		margin: 15px 0 0 0;
-		width: 100%;
+		@include breakpoint( "<480px" ) {
+			margin: 15px 0 0 0;
+			width: 100%;
+		}
 	}
 }
 
-@mixin plan-overview-row {
-	align-content: space-between;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+.plan-overview {
+	.plan-feature,
+	.plan-status__info {
+		align-content: space-between;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 
-	@include breakpoint( ">480px" ) {
-		flex-direction: row;
-		align-items: center;
-	}
+		@include breakpoint( ">480px" ) {
+			flex-direction: row;
+			align-items: center;
+		}
 
-	&:after {
-		display: none;
+		&:after {
+			display: none;
+		}
 	}
 }

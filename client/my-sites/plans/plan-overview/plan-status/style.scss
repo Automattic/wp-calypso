@@ -47,10 +47,6 @@
 	}
 }
 
-.plan-status__button {
-	@include plan-overview-button();
-}
-
 .plan-status__progress {
 	display: flex;
 	flex-wrap: wrap;
