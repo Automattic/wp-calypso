@@ -362,7 +362,7 @@ mixin = {
 		// interpolate any components
 		if ( options.components ) {
 			translation = interpolateComponents( {
-				translation: translation,
+				mixedString: translation,
 				components: options.components,
 				throwErrors: ( config( 'env' ) !== 'production' )
 			} );
@@ -401,4 +401,3 @@ i18nState.on( 'change', function() {
 } );
 
 module.exports = exportMethods;
-
