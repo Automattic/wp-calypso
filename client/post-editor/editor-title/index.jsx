@@ -53,7 +53,7 @@ export default React.createClass( {
 			this.setState( {
 				isFocused: true
 			}, () => {
-				ReactDOM.findDOMNode( this.refs.titleInput ).focus();
+				this.refs.titleInput.focus();
 			} )
 		}
 	},

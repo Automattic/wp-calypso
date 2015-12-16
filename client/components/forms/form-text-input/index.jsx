@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' ),
-	classNames = require( 'classnames' );
+import React from 'react/addons';
+import classNames from 'classnames';
+import omit from 'lodash/object/omit';
+import ReactDom from 'react-dom';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormTextInput',
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			isError: false,
 			isValid: false,
@@ -19,25 +19,31 @@ module.exports = React.createClass( {
 		};
 	},
 
-	render: function() {
-		var otherProps = omit( this.props, [ 'className', 'type' ] ),
-			classes = classNames( {
-				'form-text-input': true,
-				'is-error': this.props.isError,
-				'is-valid': this.props.isValid
-			} );
+	focus() {
+		ReactDom.findDOMNode( this.refs.textField ).focus();
+	},
+
+	render() {
+		const otherProps = omit( this.props, [ 'className', 'type', 'ref' ] );
+		const { className, type, selectOnFocus } = this.props;
+		const classes = classNames( {
+			'form-text-input': true,
+			'is-error': this.props.isError,
+			'is-valid': this.props.isValid
+		} );
 
 		return (
 			<input
 				{ ...otherProps }
-				type={ this.props.type }
-				className={ classnames( this.props.className, classes ) }
-				onClick={ this.props.selectOnFocus ? this.selectOnFocus : null }
-				/>
+				ref="textField"
+				type={ type }
+				className={ classNames( className, classes ) }
+				onClick={ selectOnFocus ? this.selectOnFocus : null }
+			/>
 		);
 	},
 
-	selectOnFocus: function( event ) {
+	selectOnFocus( event ) {
 		event.target.select();
 	}
 
