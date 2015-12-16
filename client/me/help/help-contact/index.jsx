@@ -257,7 +257,19 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! ( olark.isOlarkReady && sitesInitialized ) ) {
-			return <div className="help-contact__placeholder" />;
+
+			return (
+				<div className="help-contact__placeholder">
+					<h4 className="help-contact__header">Loading contact form</h4>
+					<div className="help-contact__textarea" />
+
+					<h4 className="help-contact__header">Loading contact form</h4>
+					<div className="help-contact__textarea" />
+
+					<h4 className="help-contact__header">Loading contact form</h4>
+					<div className="help-contact__textarea" />
+				</div>
+			);
 		}
 
 		if ( olark.details.isConversing && olark.isOperatorAvailable ) {
