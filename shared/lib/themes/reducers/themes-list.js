@@ -21,7 +21,7 @@ const defaultQueryState = fromJS( {
 	isFetchingNextPage: false
 } );
 
-export const initialState = query( fromJS( {
+const initialState = query( fromJS( {
 	list: [],
 	nextId: 0,
 	query: {},
@@ -54,7 +54,7 @@ function isActionForLastPage( list, action ) {
 		action.themes.length === 0;
 }
 
-export const reducer = ( state = initialState, action ) => {
+export default ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case ThemeConstants.QUERY_THEMES:
 			return query( state, action.params );

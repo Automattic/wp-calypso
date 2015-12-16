@@ -9,7 +9,7 @@ import transform from 'lodash/object/transform';
  */
 import ThemeConstants from 'lib/themes/constants';
 
-export const initialState = fromJS( {
+const initialState = fromJS( {
 	themes: {},
 	currentSiteId: 0
 } );
@@ -26,7 +26,7 @@ function setActiveTheme( themeId, themes ) {
 		.setIn( [ themeId, 'active' ], true );
 }
 
-export const reducer = ( state = initialState, action ) => {
+export default( state = initialState, action ) => {
 	switch ( action.type ) {
 		case ThemeConstants.RECEIVE_THEMES:
 			const isNewSite = action.isJetpack && ( action.siteId !== state.get( 'currentSiteId' ) );
@@ -40,8 +40,3 @@ export const reducer = ( state = initialState, action ) => {
 	}
 	return state;
 };
-
-export function getThemeById( state, id ) {
-	const theme = state.getIn( [ 'themes', id ] );
-	return theme ? theme.toJS() : undefined;
-}
