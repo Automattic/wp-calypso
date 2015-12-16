@@ -156,14 +156,16 @@
 	border-radius: 2px;
 	color: $white;
 	display: inline-flex;
+	flex-wrap: nowrap;
 	min-height: 20px;
 	margin: 8px;
 	padding: 0;
 	text-decoration: none;
+	text-transform: none;
 
 	.notice__text {
 		font-size: 12px;
-		padding: 8px;
+		padding: 6px 8px;
 		line-height: 1;
 	}
 
