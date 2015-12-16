@@ -7,14 +7,19 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
+var analytics = require( 'analytics' ),
+	i18n = require( 'lib/mixins/i18n' ),
+	route = require( 'lib/route' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
 module.exports = {
-	help: function() {
-		var Help = require( './main' );
+	help: function( context ) {
+		var Help = require( './main' ),
+			basePath = route.sectionify( context.path );
 
 		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
+
+		analytics.pageView.record( basePath, 'Help' );
 
 		ReactDom.render(
 			React.createElement( Help ),
@@ -22,8 +27,11 @@ module.exports = {
 		);
 	},
 
-	contact: function() {
-		var ContactComponent = require( './help-contact' );
+	contact: function( context ) {
+		var ContactComponent = require( './help-contact' ),
+			basePath = route.sectionify( context.path );
+
+		analytics.pageView.record( basePath, 'Help > Contact' );
 
 		ReactDom.render(
 			<ContactComponent />,

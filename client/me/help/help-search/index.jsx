@@ -13,6 +13,7 @@ import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
+import analytics from 'analytics';
 
 module.exports = React.createClass( {
 	displayName: 'HelpSearch',
@@ -40,6 +41,7 @@ module.exports = React.createClass( {
 
 	onSearch: function( searchQuery ) {
 		this.setState( { helpLinks: [], searchQuery: searchQuery } );
+		analytics.tracks.recordEvent( 'calypso_help_search', { query: searchQuery } );
 		HelpSearchActions.fetch( searchQuery );
 	},
 

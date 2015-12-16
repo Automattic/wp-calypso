@@ -19,6 +19,7 @@ import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import siteList from 'lib/sites-list';
+import analytics from 'analytics';
 
 /**
  * Module variables
@@ -96,6 +97,8 @@ module.exports = React.createClass( {
 
 		notifications.forEach( olarkActions.sendNotificationToOperator );
 
+		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin' );
+
 		this.sendMessageToOperator( message );
 	},
 
@@ -130,6 +133,9 @@ module.exports = React.createClass( {
 						'one of our Happiness Engineers shortly.' )
 				}
 			} );
+
+			analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'kayako' } );
+
 		} );
 	},
 
@@ -162,6 +168,8 @@ module.exports = React.createClass( {
 					)
 				}
 			} );
+
+			analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
 		} );
 	},
 
@@ -203,6 +211,16 @@ module.exports = React.createClass( {
 	},
 
 	onOperatorsAway: function() {
+		const { isOlarkReady, isUserEligible, details } = this.state.olark;
+		const showChatVariation = isUserEligible && details.isOperatorAvailable;
+		const showKayakoVariation = ! showChatVariation && ( details.isConversing || isUserEligible );
+		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
+
+		if ( ! details.isConversing ) {
+			analytics.tracks.recordEvent( 'calypso_help_offline_form_display', {
+				form_type: showKayakoVariation ? 'kayako' : 'forum'
+			} );
+		}
 		this.showOperatorAvailabilityNotice( false );
 	},
 
