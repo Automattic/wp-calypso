@@ -82,7 +82,7 @@ module.exports = {
 		defaultVariation: 'main'
 	},
 	autoFillUsernameSignup: {
-		datestamp: '20151201',
+		datestamp: '20151216',
 		variations: {
 			autoFill: 50,
 			dontAutoFill: 50
