@@ -87,7 +87,7 @@ module.exports = React.createClass( {
 					</div>
 					{ this.props.homeLink &&
 						<span className="site__home">
-							<Gridicon icon="house" size={ 18 } />
+							<Gridicon icon="house" size={ 12 } />
 						</span>
 					}
 				</a>

@@ -10,6 +10,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var AllSites = require( 'my-sites/all-sites' ),
+	analytics = require( 'analytics' ),
 	AddNewButton = require( 'components/add-new-button' ),
 	Card = require( 'components/card' ),
 	Notice = require( 'components/notice' ),
@@ -149,6 +150,10 @@ module.exports = React.createClass( {
 		);
 	},
 
+	trackHomepageClick: function() {
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
+	},
+
 	render: function() {
 		var site,
 			hasOneSite = this.props.siteCount === 1;
@@ -189,14 +194,13 @@ module.exports = React.createClass( {
 							{ this.translate( 'Switch Site' ) }
 						</span>
 				}
-				{ this.props.sites.selected ?
-					<Site
+				{ this.props.sites.selected
+					? <Site
 						site={ site }
 						homeLink={ true }
 						externalLink={ true }
-					/>
-				:
-					<AllSites sites={ this.props.sites }/>
+						onSelect={ this.trackHomepageClick } />
+					: <AllSites sites={ this.props.sites } />
 				}
 				{ this.getSiteNotices( site ) }
 			</Card>
