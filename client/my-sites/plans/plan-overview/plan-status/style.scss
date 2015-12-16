@@ -63,10 +63,12 @@
 .plan-status__button,
 .plan-features__feature-button {
 	flex-shrink: 0;
+	margin-left: 15px;
+	min-width: 150px;
+	text-align: center;
 
 	@include breakpoint( "<480px" ) {
-		margin-top: 15px;
-		text-align: center;
+		margin: 15px 0 0 0;
 		width: 100%;
 	}
 }
