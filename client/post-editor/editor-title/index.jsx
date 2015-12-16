@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/object/omit';
-import ReactDOM from 'react-dom';
 
 /**
  * Internal dependencies
