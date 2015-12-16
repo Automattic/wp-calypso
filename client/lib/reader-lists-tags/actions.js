@@ -5,7 +5,6 @@ import wpcom from 'lib/wp';
 // Internal dependencies
 import { requestInflight, requestTracker } from 'lib/inflight';
 import { action } from './constants';
-import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 
 const TAGS_PER_PAGE = 10;
 
@@ -14,7 +13,7 @@ export function fetchMoreTags( listOwner, listSlug, page ) {
 		return;
 	}
 
-	ReaderListsTagsStore.setIsFetching( true );
+	Dispatcher.handleViewAction( { type: action.ACTION_FETCH_READER_LIST_TAGS } );
 
 	const args = {
 		owner: listOwner,
@@ -36,6 +35,7 @@ export function fetchMoreTags( listOwner, listSlug, page ) {
 				data: data
 			} );
 		}
-		ReaderListsTagsStore.setIsFetching( false );
+
+		Dispatcher.handleViewAction( { type: action.ACTION_FETCH_READER_LIST_TAGS_COMPLETE } );
 	} ) );
 }
