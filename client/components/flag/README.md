@@ -13,7 +13,19 @@ import Flag from 'components/flag';
 ## Required props
 
 * `type` – String that determines which type of flag is displayed. Currently accepts:
-   * is-success
-   * is-warning
-   * is-error
-* `icon` – String for the desired the noticon class (i.e. "noticon-lock").
+    * is-success
+    * is-warning
+    * is-error
+
+## Optional props
+
+* `icon` - Noticon icon class name. Examples:
+    * noticon-warning
+    * noticon-lock
+    * noticon-checkmark
+    * ...
+    
+* `className` - Class name. Currently accepts:
+    * is-success
+    * is-warning
+    * is-error
