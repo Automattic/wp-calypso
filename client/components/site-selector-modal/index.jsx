@@ -9,6 +9,7 @@ var React = require( 'react/addons' ),
  * Internal dependencies
  */
 var Dialog = require( 'components/dialog' ),
+	Button = require( 'components/button' ),
 	SitesDropdown = require( 'components/sites-dropdown' ),
 	sitesList = require( 'lib/sites-list' )();
 
@@ -67,7 +68,7 @@ var SiteSelectorModal = React.createClass( {
 		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
 		return url
-			? <a href={ url } className="button is-primary">{ this.props.mainActionLabel }</a>
+			? <Button primary href={ url }>{ this.props.mainActionLabel }</Button>
 			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
 	},
 
