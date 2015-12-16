@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Flag = require( 'components/flag' );
+import Notice from 'components/notice';
 
 const DomainSuggestionFlag = React.createClass( {
 	propTypes: {
@@ -20,10 +20,11 @@ const DomainSuggestionFlag = React.createClass( {
 				return this.props.domain.endsWith( tld );
 			}, this ) ) {
 			return (
-				<Flag
-					type="is-success">
+				<Notice
+					isCompact
+					status="is-success">
 					{ this.translate( 'New', {context: 'Domain suggestion flag'} ) }
-				</Flag>
+				</Notice>
 			);
 		}
 

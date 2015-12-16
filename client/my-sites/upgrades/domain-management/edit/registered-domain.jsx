@@ -10,7 +10,7 @@ import React from 'react';
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
 import config from 'config';
-import Flag from 'components/flag';
+import Notice from 'components/notice';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import Header from './card/header';
 import paths from 'my-sites/upgrades/paths';
@@ -43,25 +43,27 @@ const RegisteredDomain = React.createClass( {
 	getPrivacyProtection() {
 		if ( this.props.domain.hasPrivacyProtection ) {
 			return (
-				<Flag
-					type="is-success"
-					icon="noticon-lock">
+				<Notice
+					isCompact
+					status="is-success"
+					icon="lock">
 					{ this.translate( 'On', {
 						context: 'An icon label when Privacy Protection is enabled.'
 					} ) }
-				</Flag>
+				</Notice>
 			);
 		}
 
 		return (
-			<Flag
-				type="is-warning"
-				icon="noticon-warning"
+			<Notice
+				isCompact
+				status="is-warning"
+				icon="notice"
 				onClick={ this.goToPrivacyProtection }>
 				{ this.translate( 'None', {
 					context: 'An icon label when Privacy Protection is disabled.'
 				} ) }
-			</Flag>
+			</Notice>
 		);
 	},
 

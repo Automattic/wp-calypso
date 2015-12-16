@@ -156,19 +156,23 @@
 	border-radius: 2px;
 	color: $white;
 	display: inline-flex;
+	flex-wrap: nowrap;
 	min-height: 20px;
-	margin: 8px;
+	margin: 0;
 	padding: 0;
 	text-decoration: none;
+	text-transform: none;
+	vertical-align: middle;
 
 	.notice__text {
 		font-size: 12px;
-		padding: 8px;
+		padding: 6px 8px;
 		line-height: 1;
 	}
 
 	.notice__icon {
 		align-self: center;
+		flex-shrink: 0;
 		padding: 0 0 0 8px;
 		width: 14px;
 		height: 14px;

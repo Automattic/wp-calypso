@@ -31,9 +31,12 @@
 		margin: 8px 0 0 0;
 	}
 
-	.flag {
-		margin-left: 5px;
-		vertical-align: middle;
+	.notice.is-compact {
+		margin: 0 0 0 8px;
+	}
+
+	.notice__icon {
+		display: none;
 	}
 
 	.is-placeholder & {

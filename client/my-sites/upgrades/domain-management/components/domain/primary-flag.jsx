@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Flag from 'components/flag';
+import Notice from 'components/notice';
 
 const DomainPrimaryFlag = React.createClass( {
 	propTypes: {
@@ -16,12 +16,7 @@ const DomainPrimaryFlag = React.createClass( {
 	render() {
 		if ( this.props.domain.isPrimary ) {
 			return (
-				<Flag
-					className="is-primary"
-					type="is-success"
-					icon="noticon-checkmark">
-					{ this.translate( 'Primary Domain' ) }
-				</Flag>
+				<Notice isCompact status="is-success">{ this.translate( 'Primary Domain' ) }</Notice>
 			);
 		}
 
