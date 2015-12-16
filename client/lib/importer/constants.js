@@ -1,4 +1,5 @@
 export const appStates = Object.freeze( {
+	DEFUNCT: 'importer-defunct',
 	DISABLED: 'importer-disabled',
 	IMPORT_FAILURE: 'importer-import-failure',
 	IMPORT_SUCCESS: 'importer-import-success',

@@ -92,8 +92,13 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 
 		case actionTypes.RECEIVE_IMPORT_STATUS:
+			newState = state.setIn( [ 'api', 'isHydrated' ], true );
+
+			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
+				break;
+			}
+
 			newState = state
-				.setIn( [ 'api', 'isHydrated' ], true )
 				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 
