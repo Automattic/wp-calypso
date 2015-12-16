@@ -73,6 +73,7 @@ module.exports = React.createClass( {
 		PollerPool.remove( this._sitesPoller );
 		this._sitesPoller = null;
 	},
+
 	closeWelcome: function() {
 		this.props.nuxWelcome.closeWelcome();
 		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );

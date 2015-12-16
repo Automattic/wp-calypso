@@ -2,7 +2,7 @@
 .sidebar,
 .secondary-cart { // This selects the sidebar on /checkout
 	overflow: auto;
-	padding: 0;
+	padding: 0 0 40px 0;
 	background: lighten( $gray, 30% );
 	position: fixed;
 		top: 47px;
