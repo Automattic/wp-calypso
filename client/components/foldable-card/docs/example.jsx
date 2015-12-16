@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 				<p>
 					<FoldableCard
 						header="This is a foldable card with a custom action icon"
-						actionButtonIcon="arrow-down"
+						icon="arrow-down"
 						>
 						These are its contents
 					</FoldableCard>
