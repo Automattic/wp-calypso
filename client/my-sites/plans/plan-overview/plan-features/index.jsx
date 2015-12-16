@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PlanFeature from './feature'
+import PlanFeature from '../plan-feature'
 import SectionHeader from 'components/section-header';
 import { isBusiness } from 'lib/products-values';
 

@@ -9,35 +9,32 @@ import React from 'react';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 
-const PlanFeature = React.createClass( {
-	propTypes: {
-		button: React.PropTypes.shape( {
-			label: React.PropTypes.string.isRequired,
-			onClick: React.PropTypes.func.isRequired
-		} ),
-		description: React.PropTypes.string.isRequired,
-		heading: React.PropTypes.string.isRequired
-	},
+const PlanFeature = ( { button, description, heading } ) => {
+	return (
+		<CompactCard className="plan-feature">
+			<div className="plan-feature__description">
+				<strong>{ heading }</strong>
+				<em>{ description }</em>
+			</div>
+			{ button &&
+				<Button
+					className="plan-feature__button"
+					href={ button.href }
+					primary>
+					{ button.label }
+				</Button>
+			}
+		</CompactCard>
+	);
+};
 
-	render() {
-		return (
-			<CompactCard className="plan-feature">
-				<div className="plan-feature__description">
-					<strong>{ this.props.heading }</strong>
-					<em>{ this.props.description }</em>
-				</div>
-
-				{ this.props.button &&
-					<Button
-						className="plan-feature__button"
-						href={ this.props.button.href }
-						primary>
-						{ this.props.button.label }
-					</Button>
-				}
-			</CompactCard>
-		);
-	}
-} );
+PlanFeature.propTypes = {
+	button: React.PropTypes.shape( {
+		label: React.PropTypes.string.isRequired,
+		href: React.PropTypes.string
+	} ),
+	description: React.PropTypes.string.isRequired,
+	heading: React.PropTypes.string.isRequired
+};
 
 export default PlanFeature;
