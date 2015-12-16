@@ -110,7 +110,12 @@ export default React.createClass( {
 
 	getPluginsFromStore( nextProps, sites ) {
 		const props = nextProps || this.props;
-		let	plugins = PluginsStore.getPlugins( sites, props.filter );
+		let	plugins = null;
+		if ( ! props.sites.selected ) {
+			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
+		} else {
+			plugins = PluginsStore.getPlugins( sites, props.filter );
+		}
 
 		if ( ! plugins ) {
 			return plugins;
