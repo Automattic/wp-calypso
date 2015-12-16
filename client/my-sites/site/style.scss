@@ -60,6 +60,10 @@
 	padding: 16px;
 	position: relative;
 	width: 100%;
+
+	&:focus {
+		outline: none;
+	}
 }
 
 // Adjusts the SiteIcon component for use
@@ -123,6 +127,7 @@
 	overflow: initial;
 	opacity: 0;
 	transition: opacity 0.2s;
+	transform: translate3d(0, 0, 0);
 
 	.gridicon {
 		line-height: 28px;
