@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' );
 
@@ -29,7 +28,7 @@ module.exports = React.createClass( {
 	},
 
 	scrollIntoView: function() {
-		var node = ReactDom.findDOMNode( this ),
+		var node = this.refs.site,
 			parentScrollTop = node.offsetTop;
 		if ( node.previousSibling ) {
 			parentScrollTop -= node.previousSibling.offsetHeight / 2;
@@ -97,7 +96,7 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ siteClass }>
+			<div className={ siteClass } ref="site">
 				<a className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					target={ this.props.externalLink && '_blank' }
