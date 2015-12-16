@@ -26,3 +26,7 @@ The included reducers add the following keys to the global state tree, under `si
 #### `items`
 
 All known sites, indexed by site ID.
+
+### `plans`
+
+The available plans for a given site, indexed by site ID. See [this README](./plans/README.md) for more information.

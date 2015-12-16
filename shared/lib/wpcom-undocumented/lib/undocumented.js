@@ -562,7 +562,7 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 	// the site domain could be for a jetpack site installed in
 	// a subdirectory.  encode any forward slash present before making
 	// the request
-	siteDomain = siteDomain.replace( '/', '%2F' );
+	siteDomain = encodeURIComponent( siteDomain );
 
 	this._sendRequestWithLocale( {
 		path: '/sites/' + siteDomain + '/plans',
