@@ -50,16 +50,11 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.DNS_DELETE:
-			if ( ! action.error ) {
-				state = deleteDns( state, action.domainName, action.record );
-			}
-			break;
-
 		case ActionTypes.DNS_ADD_COMPLETED:
-			if ( ! action.error ) {
-				state = addDns( state, action.domainName, action.record );
-			}
+			state = addDns( state, action.domainName, action.record );
+			break;
+		case ActionTypes.DNS_DELETE_COMPLETED:
+			state = deleteDns( state, action.domainName, action.record );
 			break;
 		case ActionTypes.DNS_FETCH:
 			if ( ! state[ action.domainName ] ) {
