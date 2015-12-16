@@ -1,12 +1,12 @@
-.plan-features__feature {
+.plan-feature {
 	@include plan-overview-row();
 }
 
-.plan-features__feature-button {
+.plan-feature__button {
 	@include plan-overview-button();
 }
 
-.plan-features__feature-description {
+.plan-feature__description {
 	em {
 		font-style: normal;
 	}

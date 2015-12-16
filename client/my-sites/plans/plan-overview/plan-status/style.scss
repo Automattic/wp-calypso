@@ -2,10 +2,6 @@
 	margin-bottom: 30px;
 }
 
-.plan-status__info {
-	@include plan-overview-row();
-}
-
 .plan-status__header {
 	flex-grow: 1;
 

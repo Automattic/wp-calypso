@@ -21,15 +21,15 @@ const PlanFeature = React.createClass( {
 
 	render() {
 		return (
-			<CompactCard className="plan-features__feature">
-				<div className="plan-features__feature-description">
+			<CompactCard className="plan-feature">
+				<div className="plan-feature__description">
 					<strong>{ this.props.heading }</strong>
 					<em>{ this.props.description }</em>
 				</div>
 
 				{ this.props.button &&
 					<Button
-						className="plan-features__feature-button"
+						className="plan-feature__button"
 						href={ this.props.button.href }
 						primary>
 						{ this.props.button.label }
