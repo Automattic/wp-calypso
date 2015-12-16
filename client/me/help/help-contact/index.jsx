@@ -135,7 +135,6 @@ module.exports = React.createClass( {
 			} );
 
 			analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'kayako' } );
-
 		} );
 	},
 
@@ -211,16 +210,14 @@ module.exports = React.createClass( {
 	},
 
 	onOperatorsAway: function() {
-		const { isOlarkReady, isUserEligible, details } = this.state.olark;
-		const showChatVariation = isUserEligible && details.isOperatorAvailable;
-		const showKayakoVariation = ! showChatVariation && ( details.isConversing || isUserEligible );
-		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
+		const { details } = this.state.olark;
 
 		if ( ! details.isConversing ) {
 			analytics.tracks.recordEvent( 'calypso_help_offline_form_display', {
-				form_type: showKayakoVariation ? 'kayako' : 'forum'
+				form_type: 'kayako'
 			} );
 		}
+
 		this.showOperatorAvailabilityNotice( false );
 	},
 
