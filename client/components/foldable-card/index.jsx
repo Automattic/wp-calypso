@@ -17,6 +17,7 @@ var FoldableCard = React.createClass( {
 	propTypes: {
 		actionButton: React.PropTypes.element,
 		actionButtonExpanded: React.PropTypes.element,
+		actionButtonIcon: React.PropTypes.string,
 		cardKey: React.PropTypes.string,
 		compact: React.PropTypes.bool,
 		disabled: React.PropTypes.bool,
@@ -36,6 +37,7 @@ var FoldableCard = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			actionButtonIcon: 'chevron-down',
 			onOpen: noop,
 			onClose: noop,
 			cardKey: '',
@@ -87,7 +89,7 @@ var FoldableCard = React.createClass( {
 			return (
 				<button disabled={ this.props.disabled } className="foldable-card__action foldable-card__expand" onClick={ clickAction }>
 					<span className="screen-reader-text">{ this.translate( 'More' ) }</span>
-					<Gridicon icon="chevron-down" size={ iconSize } />
+					<Gridicon icon={ this.props.actionButtonIcon } size={ iconSize } />
 				</button>
 			);
 		}
