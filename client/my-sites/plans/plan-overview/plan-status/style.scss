@@ -2,21 +2,8 @@
 	margin-bottom: 30px;
 }
 
-.plan-status__info,
-.plan-features__feature {
-	align-content: space-between;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-
-	@include breakpoint( ">480px" ) {
-		flex-direction: row;
-		align-items: center;
-	}
-
-	&:after {
-		display: none;
-	}
+.plan-status__info {
+	@include plan-overview-row();
 }
 
 .plan-status__header {
@@ -60,17 +47,8 @@
 	font-weight: 700;
 }
 
-.plan-status__button,
-.plan-features__feature-button {
-	flex-shrink: 0;
-	margin-left: 15px;
-	min-width: 150px;
-	text-align: center;
-
-	@include breakpoint( "<480px" ) {
-		margin: 15px 0 0 0;
-		width: 100%;
-	}
+.plan-status__button {
+	@include plan-overview-button();
 }
 
 .plan-status__progress {
