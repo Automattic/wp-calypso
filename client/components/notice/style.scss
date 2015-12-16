@@ -156,7 +156,7 @@
 	border-radius: 2px;
 	color: $white;
 	display: inline-block;
-	line-height: 24px;
+	line-height: 20px;
 	margin: 0;
 	padding: 0;
 	text-decoration: none;
@@ -169,8 +169,8 @@
 
 	.notice__icon {
 		padding: 0 0 0 8px;
-		width: 18px;
-		height: 18px;
+		width: 14px;
+		height: 14px;
 		vertical-align: middle;
 	}
 
@@ -198,9 +198,10 @@
 
 		.gridicon {
 			margin-left: 8px;
-			width: 18px;
-			height: 18px;
-			vertical-align: top;
+			width: 14px;
+			height: 14px;
+			vertical-align: sub;
+			opacity: 1;
 		}
 	}
 }
