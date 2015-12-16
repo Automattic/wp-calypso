@@ -25,4 +25,11 @@
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
 	}
+
+	&.is-spacergif {
+		height: 0;
+		width: 230px;
+		margin: 0 10px;
+		padding: 0;
+	}
 }
