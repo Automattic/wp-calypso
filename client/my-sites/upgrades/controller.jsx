@@ -115,8 +115,7 @@ module.exports = {
 
 	googleAppsWithRegistration: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			GoogleApps = require( 'components/upgrades/google-apps' ),
-			basePath = route.sectionify( context.path );
+			GoogleApps = require( 'components/upgrades/google-apps' );
 
 		titleActions.setTitle(
 			i18n.translate( 'Register %(domain)s', {
@@ -140,7 +139,7 @@ module.exports = {
 			page( '/checkout/' + sites.getSelectedSite().slug );
 		};
 
-		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Google Apps' );
+		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
 
 		ReactDom.render(
 			(
