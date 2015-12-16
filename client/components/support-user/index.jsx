@@ -35,13 +35,19 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			supportUser: null,
+			supportPassword: null,
 			isSupportUser: false,
 			showDialog: false,
-			errorMessage: null
+			errorMessage: null,
+			user: null
 		};
 	},
 
 	isEnabled: function() {
+		if ( this.state.isSupportUser ) {
+			return true;
+		}
+
 		if ( ! userSettings.hasSettings() ) {
 			userSettings.fetchSettings();
 			return false;
@@ -65,15 +71,19 @@ module.exports = React.createClass( {
 				supportPassword: null,
 				isSupportUser: false,
 				showDialog: true,
-				errorMessage: error.message
+				errorMessage: error.message,
+				user: null
 		} );
 	},
 
 	onChangeUser: function( e ) {
 		e.preventDefault();
 
+		let user = new User();
+		let myUser = Object.assign( {}, user.data );
+		this.setState( { user: myUser } );
+
 		if ( this.state.supportUser && this.state.supportPassword ) {
-			let user = new User();
 			user.clear();
 			user.changeUser(
 				this.state.supportUser,
@@ -89,7 +99,9 @@ module.exports = React.createClass( {
 	},
 
 	onRestoreUser: function( e ) {
-		if ( this.state.isSupportUser && this.state.restoreUser ) {
+		e.preventDefault();
+
+		if ( this.state.isSupportUser ) {
 			let user = new User();
 			user.clear().fetch();
 			this.setState( {
@@ -97,7 +109,8 @@ module.exports = React.createClass( {
 				supportPassword: null,
 				isSupportUser: false,
 				showDialog: false,
-				errorMessage: null
+				errorMessage: null,
+				user: null
 			} );
 			window.location.reload.bind( window.location );
 		}
@@ -152,19 +165,21 @@ module.exports = React.createClass( {
 				buttons={ this.getButtonsRestoreUser() }
 				additionalClassNames="support-user__dialog"
 			>
+				<FormFieldset>
 				<div className="support-user__people-profile">
 					<div className="support-user__gravatar">
-						<img className="gravatar" src="https://0.gravatar.com/avatar/3c063e69ebd9a94b87a36749505b5561?s=96&d=mm&r=G" />
+						<Gravatar user={ this.state.user } size={ 96 } />
 					</div>
 					<div className="support-user__detail">
 						<div className="support-user__username">
-							Eduardo Villuendas
+							{ this.state.user.display_name }
 						</div>
 						<div className="support-user__login">
-							<span>@evilluendas</span>
+							<span>@{ this.state.user.username }</span>
 						</div>
 					</div>
 				</div>
+				</FormFieldset>
 			</Dialog>
 		);
 		} else {
