@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/object/omit';
+import ReactDOM from 'react-dom';
 
 /**
  * Internal dependencies
@@ -52,7 +53,7 @@ export default React.createClass( {
 			this.setState( {
 				isFocused: true
 			}, () => {
-				React.findDOMNode( this.refs.titleInput ).focus();
+				ReactDOM.findDOMNode( this.refs.titleInput ).focus();
 			} )
 		}
 	},
