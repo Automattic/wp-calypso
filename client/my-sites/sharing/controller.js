@@ -25,7 +25,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Sharing', { textOnly: true } ), { siteID: siteUrl } );
 
-		if ( site && ! site.settings ) {
+		if ( site && ! site.settings && site.user_can_manage ) {
 			site.fetchSettings();
 		}
 
