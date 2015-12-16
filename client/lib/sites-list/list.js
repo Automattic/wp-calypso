@@ -459,7 +459,7 @@ SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 		return site.jetpack &&
 			site.capabilities &&
 			site.capabilities.manage_options &&
-			( ! site.modules || site.canManage() );
+			site.canManage();
 	} );
 };
 

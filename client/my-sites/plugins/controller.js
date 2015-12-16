@@ -182,15 +182,6 @@ controller = {
 		renderPluginsBrowser( context, siteUrl );
 	},
 
-	jetpackManageActive: function( context, next ) {
-		sites.getSelectedOrAll().forEach( function( site ) {
-			if ( site.jetpack ) {
-				site.fetchModules();
-			}
-		} );
-		next();
-	},
-
 	jetpackCanUpdate: function( filter, context, next ) {
 		let redirectToPlugins = false,
 			selectedSites = sites.getSelectedOrAllWithPlugins();

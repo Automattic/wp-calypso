@@ -35,7 +35,7 @@ module.exports = React.createClass( {
 			);
 		}
 
-		if ( site.modulesFetched && ! site.canManage() ) {
+		if ( ! site.canManage() ) {
 			return (
 				<JetpackManageErrorPage
 					template="optInManage"
