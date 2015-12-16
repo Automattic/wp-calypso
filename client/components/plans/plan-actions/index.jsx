@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isInSignup ) {
-			return this.signUpActions();
+			return config.isEnabled( 'upgrades/free-trials' ) ? this.freeTrialActions() : this.upgradeActions();
 		}
 
 		if ( this.siteHasThisPlan() ) {
@@ -53,10 +53,25 @@ module.exports = React.createClass( {
 
 		const canStartTrial = config.isEnabled( 'upgrades/free-trials' ) ? this.props.siteSpecificPlansDetails.can_start_trial : false;
 
-		return canStartTrial ? this.newPlanActions() : this.upgradeActions();
+		return canStartTrial ? this.freeTrialActions() : this.upgradeActions();
+	},
+
+	freePlanButton: function() {
+		return (
+			<div>
+				<button className="button is-primary plan-actions__upgrade-button"
+					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
+					{ this.translate( 'Select Free Plan' ) }
+				</button>
+			</div>
+		);
 	},
 
 	upgradeActions: function() {
+		if ( isFreePlan( this.props.plan ) ) {
+			return this.freePlanButton();
+		}
+
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
@@ -147,34 +162,9 @@ module.exports = React.createClass( {
 		);
 	},
 
-	signUpActions: function() {
+	freeTrialActions: function() {
 		if ( isFreePlan( this.props.plan ) ) {
-			return <div>
-				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
-					{ this.translate( 'Select Free Plan' ) }
-				</button>
-			</div>;
-		}
-
-		return (
-			<div>
-				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
-						{ this.translate( 'Upgrade Now', { context: 'Store action' } ) }
-				</button>
-			</div>
-		);
-	},
-
-	newPlanActions: function() {
-		if ( isFreePlan( this.props.plan ) ) {
-			return <div>
-				<button className="button is-primary plan-actions__upgrade-button"
-					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
-					{ this.translate( 'Select Free Plan' ) }
-				</button>
-			</div>;
+			return this.freePlanButton();
 		}
 
 		return (
