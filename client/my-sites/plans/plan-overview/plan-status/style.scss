@@ -66,6 +66,7 @@
 
 	@include breakpoint( "<480px" ) {
 		margin-top: 15px;
+		text-align: center;
 		width: 100%;
 	}
 }
@@ -87,14 +88,4 @@
 
 .plan-status__time-until-expiry {
 	font-weight: 700;
-}
-
-.plan-features__feature-description {
-	em {
-		font-style: normal;
-	}
-
-	strong {
-		display: block;
-	}
 }
