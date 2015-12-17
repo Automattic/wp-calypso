@@ -303,7 +303,7 @@ export default React.createClass( {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
-		if ( selectedSite && ! selectedSite.canManage() ) {
+		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
 			return (
 				<MainComponent>
 					<JetpackManageErrorPage
