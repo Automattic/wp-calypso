@@ -99,7 +99,7 @@ export default React.createClass( {
 					disabled={ !this.props.postType }
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ true }
-					onClick={ this.props.onClickExport }
+					onClick={ () => this.props.onClickExport( this.props.postType ) }
 					text={ this.translate( 'Export Selected Content' ) }
 					loadingText={ this.translate( 'Exporting…' ) } />
 			</div>

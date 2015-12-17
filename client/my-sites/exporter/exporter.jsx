@@ -38,7 +38,7 @@ export default React.createClass( {
 				className="exporter__export-button"
 				loading={ shouldShowProgress }
 				isPrimary={ true }
-				onClick={ startExport }
+				onClick={ () => startExport() }
 				text={ this.translate( 'Export All' ) }
 				loadingText={ this.translate( 'Exporting…' ) } />
 		);

@@ -77,7 +77,6 @@ export function ensureHasSettings() {
 				dispatch( fetchExportSettings( selectedSite.ID ) );
 			}
 		}
-
 	}
 }
 
@@ -118,21 +117,38 @@ export function receiveExportSettings( siteId, data ) {
 /**
  * Sends a request to the server to start an export.
  *
- * @param {number}    siteId            The ID of the site to export
- * @param {number}    advancedSettings  Advanced settings for the site
+ * @param {string}      postType        The type of post to export, or undefined
  * @return {Function}                   Action thunk
  */
-export function startExport( siteId ) {
+export function startExport( postType ) {
+	// Setting startExport on an event handler passes the event object to
+	// the action creator's first parameter, causing confusing errors. This
+	// assertion will help avoid making this mistake.
+	if ( postType && typeof postType !== 'string' ) {
+		throw new Error(
+			'Expected postType parameter of startExport action creator to ' +
+			'be a string, got ' + ( typeof postType ) + '. Did you pass the action ' +
+			'creator directly to an event handler? Wrap it to make first param blank: ' +
+			'onClick={ ( event ) => startExport() }'
+		);
+	}
+
 	return ( dispatch, getState ) => {
-		const advancedSettings = prepareExportRequest( getState() );
+		const state = getState();
+		const advancedSettings = prepareExportRequest( state, postType );
+		const site = getSelectedSite( state );
+
+		if ( ! site ) {
+			return;
+		}
 
 		dispatch( {
 			type: REQUEST_START_EXPORT,
-			siteId: siteId,
-			advancedSettings: advancedSettings
+			siteId: site.ID,
+			advancedSettings
 		} );
 
-		wpcomUndocumented.startExport( siteId, advancedSettings, ( startError, startResponse ) => {
+		wpcomUndocumented.startExport( site.ID, advancedSettings, ( startError, startResponse ) => {
 			debug( startError, startResponse );
 			if ( startError ) {
 				dispatch( failExport( ERROR_START_EXPORT ) );
@@ -144,7 +160,7 @@ export function startExport( siteId ) {
 			// Poll for completion of the export
 			let poll = ( timeout ) => {
 				setTimeout( () => {
-					wpcomUndocumented.getExport( siteId, 0, ( pollError, pollResponse ) => {
+					wpcomUndocumented.getExport( site.ID, 0, ( pollError, pollResponse ) => {
 						debug( pollError, pollResponse );
 						if ( pollError ) {
 							dispatch( failExport( ERROR_POLLING ) );
