@@ -117,22 +117,11 @@
 		position: absolute;
 			top: 9px;
 			left: 16px;
-		transition: all 0.2s cubic-bezier(0.680, -0.550, 0.265, 1.550);
 
 		@include breakpoint( "<660px" ) {
 				top: 15px;
 			height: 24px;
 			width: 24px;
-		}
-	}
-
-	.focus-sites & {
-		background-color: $gray;
-		color: $white;
-
-		.gridicon {
-			fill: $white;
-			transform: rotate( 180deg );
 		}
 	}
 }
