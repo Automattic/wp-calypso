@@ -117,10 +117,17 @@
 
 .plugin-information.is-placeholder {
 
-	.plugin-information__version-shell,
+	.plugin-information__last-updated,
+	.plugin-information__version-limit,
 	.plugin-information__external-link,
 	.version {
 		@include placeholder();
+	}
+
+	.plugin-information__version-limit,
+	.plugin-information__last-updated {
+		width: 99%;
+		margin-top:8px;
 	}
 
 	.rating {
