@@ -61,6 +61,11 @@ module.exports = React.createClass( {
 		var site = this.props.site,
 			siteClass;
 
+		if ( ! site ) {
+			// we could move the placeholder state here
+			return null;
+		}
+
 		siteClass = classNames( {
 			'site': true,
 			'is-jetpack': site.jetpack,
