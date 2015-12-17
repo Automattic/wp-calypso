@@ -204,6 +204,16 @@ module.exports = React.createClass( {
 
 		if ( this.props.isSelectable ) {
 			errors.forEach( function( error ) {
+				let action = null;
+
+				if ( PluginNotices.getErrorButton( error ) ) {
+					action = (
+						<NoticeAction href={ PluginNotices.getErrorHref( error ) }>
+							{ PluginNotices.getErrorButton( error ) }
+						</NoticeAction>
+					);
+				}
+
 				errorNotices.push(
 					<Notice
 						type='message'
@@ -213,9 +223,7 @@ module.exports = React.createClass( {
 						inline={ true }
 						key={ 'notice-' + errorCounter }
 						>
-						<NoticeAction href={ PluginNotices.getErrorHref( error ) }>
-							{ PluginNotices.getErrorButton( error ) }
-						</NoticeAction>
+						{ action }
 					</Notice>
 				);
 				errorCounter++;
