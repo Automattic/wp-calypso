@@ -34,7 +34,7 @@ export default React.createClass( {
 		} )
 	},
 
-	componentWillMount: function() {
+	componentDidMount: function() {
 		ImporterStore.on( 'change', this.updateState );
 	},
 
