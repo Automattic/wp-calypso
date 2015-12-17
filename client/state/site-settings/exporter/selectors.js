@@ -101,7 +101,7 @@ export function prepareExportRequest( state ) {
  * @return {boolean}         true if activity is in progress
  */
 export function shouldShowProgress( state ) {
-	const exportingState = state.siteSettings.exporter.ui.get( 'exportingState' );
+	const exportingState = getUIState( state ).exportingState;
 
 	return ( exportingState === States.STARTING || exportingState === States.EXPORTING );
 }
@@ -114,4 +114,8 @@ export function shouldShowProgress( state ) {
  */
 export function getUIState( state ) {
 	return state.siteSettings.exporter.ui.toJS();
+}
+
+export function getDataState( state ) {
+	return state.siteSettings.exporter.data.toJS();
 }

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'lodash';
 
@@ -23,19 +24,32 @@ import {
 	setPostType,
 	setAdvancedSetting,
 	startExport,
-	fetchExportSettings
+	ensureHasSettings
 } from 'state/site-settings/exporter/actions';
 
-/**
- * Module Variables
- */
-var lastSiteId = null;
+import { getSelectedSite } from 'state/ui/selectors';
 
-function mapStateToProps( state, ownProps ) {
+class ExporterContainer extends Component {
+
+	componentDidMount() {
+		this.props.ensureHasSettings();
+	}
+
+	componentWillReceiveProps() {
+		this.props.ensureHasSettings();
+	}
+
+	render() {
+		return <Exporter { ...this.props } />
+	}
+}
+
+function mapStateToProps( state ) {
 	const uiState = getUIState( state );
+	const selectedSite = getSelectedSite( state );
 
 	return {
-		site: ownProps.site,
+		siteId: selectedSite && selectedSite.ID,
 		postType: uiState.postType,
 		advancedSettings: uiState.advancedSettings,
 		shouldShowProgress: shouldShowProgress( state ),
@@ -55,19 +69,13 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-function mapDispatchToProps( dispatch, ownProps ) {
-	// This is working but not very nice, it should be called inside the component
-	// mapDispatchToProps should be a pure map with no side-effects
-	if ( lastSiteId !== ownProps.site.ID ) {
-		lastSiteId = ownProps.site.ID;
-		fetchExportSettings( ownProps.site.ID )( dispatch );
-	}
-
+function mapDispatchToProps( dispatch ) {
 	return {
 		setPostType: compose( dispatch, setPostType ),
 		setAdvancedSetting: compose( dispatch, setAdvancedSetting ),
-		startExport: () => dispatch( startExport( ownProps.site.ID ) )
+		startExport: compose( dispatch, startExport ),
+		ensureHasSettings: compose( dispatch, ensureHasSettings )
 	};
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( Exporter );
+export default connect( mapStateToProps, mapDispatchToProps )( ExporterContainer );

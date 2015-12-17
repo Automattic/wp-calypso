@@ -6,7 +6,8 @@ import wpcom from 'lib/wp';
 import debugModule from 'debug';
 import i18n from 'lib/mixins/i18n';
 
-import { prepareExportRequest } from './selectors';
+import { prepareExportRequest, getDataState } from './selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugModule( 'calypso:exporter' );
 const wpcomUndocumented = wpcom.undocumented();
@@ -56,6 +57,28 @@ export function setAdvancedSetting( section, setting, value ) {
 		setting,
 		value
 	};
+}
+
+/**
+ * Ensure that we are fetching or have fetched the available export
+ * settings for the current site.
+ *
+ * @param  {int}      siteId  The ID of the site for which to retrieve export settings
+ * @return {Function}         Action thunk
+ */
+export function ensureHasSettings() {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const selectedSite = getSelectedSite( state );
+		const currentDataSiteId = getDataState( state ).forSiteId;
+
+		if ( selectedSite ) {
+			if ( selectedSite.ID !== currentDataSiteId ) {
+				dispatch( fetchExportSettings( selectedSite.ID ) );
+			}
+		}
+
+	}
 }
 
 /**

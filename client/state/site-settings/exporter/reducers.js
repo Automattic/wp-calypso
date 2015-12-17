@@ -31,7 +31,7 @@ const initialUIState = Immutable.fromJS( {
 } );
 
 const initialDataState = Immutable.fromJS( {
-	siteId: null,
+	forSiteId: null,
 	advancedSettings: null
 } );
 
@@ -68,11 +68,13 @@ export function ui( state = initialUIState, action ) {
 export function data( state = initialDataState, action ) {
 	switch ( action.type ) {
 		case FETCH_EXPORTER_ADVANCED_SETTINGS:
-			return state;
+			return state
+				.set( 'forSiteId', action.siteId )
+				.set( 'advancedSettings', null );
 
 		case RECEIVE_EXPORTER_ADVANCED_SETTINGS:
 			return state
-				.set( 'siteId', action.siteId )
+				.set( 'forSiteId', action.siteId )
 				.set( 'advancedSettings', Immutable.fromJS( action.data ) );
 	}
 
