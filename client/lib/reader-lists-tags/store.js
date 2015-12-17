@@ -1,22 +1,26 @@
 // Reader Lists Tag Subscription Store
 
 // External dependencies
-import { OrderedSet, fromJS } from 'immutable';
-import debugModule from 'debug'; //eslint-disable-line no-unused-vars
+import { List, Map, fromJS } from 'immutable';
+import debugModule from 'debug';
 
 // Internal dependencies
 import { action as actionTypes } from 'lib/reader-lists-tags/constants';
 import { createReducerStore } from 'lib/store';
 
-const debug = debugModule( 'calypso:reader-lists-tags' );
+const debug = debugModule( 'calypso:reader-lists-tags' ); //eslint-disable-line no-unused-vars
 
 const initialState = {
-	tags: OrderedSet(), // eslint-disable-line new-cap
+	tags: Map(), // eslint-disable-line new-cap
 	errors: [],
 	currentPage: {},
 	isLastPage: {},
 	isFetching: false
 };
+
+function getListTags( state, listId ) {
+	return state.get( 'tags' ).get( parseInt( listId ), List() ); // eslint-disable-line new-cap
+}
 
 function receiveTags( state, data ) {
 	// Is it the last page?
@@ -28,13 +32,8 @@ function receiveTags( state, data ) {
 	// Add new tags from response
 	let tags = state.get( 'tags' );
 	if ( data && data.tags ) {
-		// Add list_ID to each tag
-		const newTags = data.tags.map( function( tag ) {
-			tag.list_ID = data.list_ID;
-			return tag;
-		} );
-
-		tags = tags.union( fromJS( newTags ) );
+		const existingTags = getListTags( state, data.list_ID );
+		tags = tags.setIn( [ data.list_ID ], existingTags.concat( fromJS( data.tags ) ) );
 	}
 
 	// Set the current page
@@ -65,9 +64,7 @@ const ReaderListsTagsStore = createReducerStore( ( state, payload ) => {
 
 ReaderListsTagsStore.getTagsForList = function( listId ) {
 	const state = ReaderListsTagsStore.get();
-	return state.get( 'tags' ).filter( function( tag ) {
-		return tag.get( 'list_ID' ) === parseInt( listId );
-	} );
+	return getListTags( state, listId );
 };
 
 ReaderListsTagsStore.isFetching = function() {

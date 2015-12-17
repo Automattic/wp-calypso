@@ -12,6 +12,11 @@ describe( 'Reader Lists Tags Store', function() {
 			slug: 'bananas',
 			name: 'bananas'
 		};
+		const foundTagTwo = {
+			ID: 130331,
+			slug: 'feijoas',
+			name: 'feijoas'
+		};
 
 		Dispatcher.handleServerAction( {
 			type: action.ACTION_RECEIVE_READER_LIST_TAGS,
@@ -19,13 +24,32 @@ describe( 'Reader Lists Tags Store', function() {
 				tags: [
 					foundTag
 				],
-				list_ID: listId
+				list_ID: listId,
+				number: 1,
+				page: 1
 			}
 		} );
 
-		const tagsForList = store.getTagsForList( listId ).toArray();
+		let tagsForList = store.getTagsForList( listId ).toArray();
 		expect( tagsForList ).to.have.length( 1 );
 		expect( tagsForList[0].toJS() ).to.eql( foundTag );
+
+		// Receive a second page
+		Dispatcher.handleServerAction( {
+			type: action.ACTION_RECEIVE_READER_LIST_TAGS,
+			data: {
+				tags: [
+					foundTagTwo
+				],
+				list_ID: listId,
+				number: 1,
+				page: 2
+			}
+		} );
+
+		tagsForList = store.getTagsForList( listId ).toArray();
+		expect( tagsForList ).to.have.length( 2 );
+		expect( tagsForList[1].toJS() ).to.eql( foundTagTwo );
 	} );
 
 	it( 'returns the current page for the specified list', function() {
