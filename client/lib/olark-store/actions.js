@@ -58,6 +58,10 @@ const olarkActions = {
 		olarkApi( 'api.chat.sendNotificationToOperator', { body } );
 	},
 
+	sendNotificationToVisitor( body ) {
+		olarkApi( 'api.chat.sendNotificationToVisitor', { body } );
+	},
+
 	expandBox() {
 		olarkApi( 'api.box.expand' );
 	},

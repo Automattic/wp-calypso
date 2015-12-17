@@ -150,6 +150,16 @@ const olark = {
 
 		updateDetailsEvents.forEach( event => olarkEvents.on( event, olarkActions.updateDetails ) );
 
+		olarkEvents.on( 'api.chat.onCommandFromOperator', ( event ) => {
+			if ( event.command.name === 'end' ) {
+				const { email } = user.get();
+				olarkActions.sendNotificationToVisitor( i18n.translate(
+					"Your live chat has ended. We'll send a transcript to %(email)s.",
+					{ args: { email } }
+				) );
+			}
+		} );
+
 		debug( 'Olark code loaded, beginning configuration' );
 
 		this.setOlarkOptions( userData, wpcomOlarkConfig );
