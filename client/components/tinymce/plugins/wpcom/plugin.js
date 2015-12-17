@@ -315,7 +315,7 @@ function wpcomPlugin( editor ) {
 			m: 'WP_Medialib',
 			t: 'WP_More',
 			d: 'Strikethrough',
-			h: 'WP_Help',
+			h: 'Wpcom_Help',
 			p: 'WP_Page',
 			x: 'WP_Code'
 		}, function( command, key ) {
