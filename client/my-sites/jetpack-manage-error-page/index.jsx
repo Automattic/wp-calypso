@@ -40,7 +40,7 @@ module.exports = React.createClass( {
 				illustration: null,
 				actionURL: ( this.props.site && this.props.site.jetpack )
 					? '../../plugins/jetpack/' + this.props.site.slug
-					: false,
+					: undefined,
 				version: version
 			},
 			optInManage: {
@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 				action: this.translate( 'Enable Jetpack Manage' ),
 				actionURL: ( this.props.site && this.props.site.jetpack )
 					? this.props.site.getRemoteManagementURL() + ( this.props.section ? '&section=' + this.props.section : '' )
-					: false,
+					: undefined,
 				actionTarget: '_blank'
 			},
 			noDomainsOnJetpack: {

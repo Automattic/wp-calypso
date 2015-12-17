@@ -259,7 +259,7 @@ export default React.createClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						notices={ [] }
+						notices={ {} }
 						plugin={ this.state.plugin }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
@@ -309,7 +309,7 @@ export default React.createClass( {
 					<JetpackManageErrorPage
 						template="optInManage"
 						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						site={ this.props.site }
+						site={ this.props.sites.getSelectedSite() }
 						section='plugins'
 						featureExample={ this.getMockPlugin() } />
 				</MainComponent>
