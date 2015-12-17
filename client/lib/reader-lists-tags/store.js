@@ -2,10 +2,13 @@
 
 // External dependencies
 import { OrderedSet, fromJS } from 'immutable';
+import debugModule from 'debug'; //eslint-disable-line no-unused-vars
 
 // Internal dependencies
 import { action as actionTypes } from 'lib/reader-lists-tags/constants';
 import { createReducerStore } from 'lib/store';
+
+const debug = debugModule( 'calypso:reader-lists-tags' );
 
 const initialState = {
 	tags: OrderedSet(), // eslint-disable-line new-cap
@@ -64,7 +67,7 @@ ReaderListsTagsStore.getTagsForList = function( listId ) {
 	const state = ReaderListsTagsStore.get();
 	return state.get( 'tags' ).filter( function( tag ) {
 		return tag.get( 'list_ID' ) === parseInt( listId );
-	} ).toJS();
+	} );
 };
 
 ReaderListsTagsStore.isFetching = function() {
@@ -74,19 +77,17 @@ ReaderListsTagsStore.isFetching = function() {
 
 ReaderListsTagsStore.getLastError = function() {
 	const state = ReaderListsTagsStore.get();
-	return state.has( 'errors' ) ? state.get( 'errors' ).last().toJS() : null;
+	return state.has( 'errors' ) ? state.get( 'errors' ).last() : null;
 };
 
 ReaderListsTagsStore.isLastPage = function( listId ) {
 	const state = ReaderListsTagsStore.get();
-	const isLastPage = state.get( 'isLastPage' ).toJS();
-	return isLastPage[ listId ] ? isLastPage[ listId ] : false;
+	return state.get( 'isLastPage' ).get( parseInt( listId ), false );
 };
 
 ReaderListsTagsStore.getCurrentPage = function( listId ) {
 	const state = ReaderListsTagsStore.get();
-	const currentPage = state.get( 'currentPage' ).toJS();
-	return currentPage[ listId ] ? currentPage[ listId ] : 0;
+	return state.get( 'currentPage' ).get( parseInt( listId ), 0 );
 };
 
 module.exports = ReaderListsTagsStore;

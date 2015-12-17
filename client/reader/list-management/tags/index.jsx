@@ -105,7 +105,7 @@ const ListManagementTags = React.createClass( {
 	},
 
 	getItemRef( item ) {
-		return 'list-tag-' + item.ID;
+		return 'list-tag-' + item.get( 'ID' );
 	},
 
 	trackTagClick() {
@@ -120,7 +120,7 @@ const ListManagementTags = React.createClass( {
 			<ListItem key={ itemKey } ref={ itemKey }>
 				<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
 				<Title>
-					<a href={ '/tag/' + tag.slug } onclick={ this.trackTagClick }>{ tag.slug }</a>
+					<a href={ '/tag/' + tag.get( 'slug' ) } onclick={ this.trackTagClick }>{ tag.get( 'slug' ) }</a>
 				</Title>
 				<Description></Description>
 				<Actions>
@@ -144,7 +144,7 @@ const ListManagementTags = React.createClass( {
 
 		return (
 			<InfiniteList
-					items={ this.state.tags }
+					items={ this.state.tags.toArray() }
 					fetchingNextPage={ this.state.isFetchingTags }
 					lastPage={ this.state.isLastPage }
 					guessedItemHeight={ 300 }
