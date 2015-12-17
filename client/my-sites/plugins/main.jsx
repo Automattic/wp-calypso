@@ -812,7 +812,7 @@ export default React.createClass( {
 						template="optInManage"
 						site={ this.props.sites.getSelectedSite() }
 						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						section='plugins'
+						section="plugins"
 						featureExample={ this.getMockPluginItems() } />
 				</Main>
 			);

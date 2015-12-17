@@ -234,7 +234,7 @@ var Menus = React.createClass( {
 		}
 
 		if ( ! data.menus || ! data.locations || ! data.hasDefaultMenu ||
-				! this.props.itemTypes.fetched || this.state.isBusy ) {
+			! this.props.itemTypes.fetched || this.state.isBusy ) {
 			return <LoadingPlaceholder />;
 		}
 
