@@ -14,6 +14,7 @@ var CompactCard = require( 'components/card/compact' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
+	Count = require( 'components/count' ),
 	Notice = require( 'notices/notice' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
 	analytics = require( 'analytics' );
@@ -55,33 +56,33 @@ module.exports = React.createClass( {
 		switch ( log && log.action ) {
 
 			case 'UPDATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'updating', { context: 'plugin' } ) :
-					i18n.translate( 'updating on %(count)s site', 'updating on %(count)s sites', translationArgs ) );
+				message = ( this.props.selectedSite
+					? i18n.translate( 'updating', { context: 'plugin' } )
+					: i18n.translate( 'updating on %(count)s site', 'updating on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'ACTIVATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'activating', { context: 'plugin' } ) :
-					i18n.translate( 'activating on %(count)s site', 'activating on %(count)s sites', translationArgs ) );
+				message = ( this.props.selectedSite
+					? i18n.translate( 'activating', { context: 'plugin' } )
+					: i18n.translate( 'activating on %(count)s site', 'activating on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'DEACTIVATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'deactivating', { context: 'plugin' } ) :
-					i18n.translate( 'deactivating on %(count)s site', 'deactivating on %(count)s sites', translationArgs ) );
+				message = ( this.props.selectedSite
+					? i18n.translate( 'deactivating', { context: 'plugin' } )
+					: i18n.translate( 'deactivating on %(count)s site', 'deactivating on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'enabling autoupdates' ) :
-					i18n.translate( 'enabling autoupdates on %(count)s site', 'enabling autoupdates on %(count)s sites', translationArgs ) );
+				message = ( this.props.selectedSite
+					? i18n.translate( 'enabling autoupdates' )
+					: i18n.translate( 'enabling autoupdates on %(count)s site', 'enabling autoupdates on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'disabling autoupdates' ) :
-					i18n.translate( 'disabling autoupdates on %(count)s site', 'disabling autoupdates on %(count)s sites', translationArgs ) );
+				message = ( this.props.selectedSite
+					? i18n.translate( 'disabling autoupdates' )
+					: i18n.translate( 'disabling autoupdates on %(count)s site', 'disabling autoupdates on %(count)s sites', translationArgs ) );
 				break;
 		}
 		return message;
@@ -133,13 +134,43 @@ module.exports = React.createClass( {
 	},
 
 	renderActions: function() {
-		if ( this.props.selectedSite ) {
-			return <div className="plugin-item__actions">
-				<PluginActivateToggle isMock={ this.props.isMock } plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } />
-				<PluginAutoupdateToggle isMock={ this.props.isMock } plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } wporg={ !! this.props.plugin.wporg } />
-			</div>;
-		}
-		return null;
+		return (
+			<div className="plugin-item__actions">
+				<PluginActivateToggle
+					isMock={ this.props.isMock }
+					plugin={ this.props.plugin }
+					site={ this.props.selectedSite }
+					notices={ this.props.notices } />
+				<PluginAutoupdateToggle
+					isMock={ this.props.isMock }
+					plugin={ this.props.plugin }
+					site={ this.props.selectedSite }
+					notices={ this.props.notices }
+					wporg={ !! this.props.plugin.wporg } />
+			</div>
+		);
+	},
+
+	renderCount: function() {
+		return (
+			<div className="plugin-item__count">{ this.translate( 'Sites {{count/}}',
+				{
+					components: {
+						count: <Count count={ this.props.sites.length } />
+					}
+				} )
+			}</div>
+		);
+	},
+
+	renderPlaceholder: function() {
+		return (
+			<CompactCard className="plugin-item is-placeholder ">
+				<PluginIcon isPlaceholder={ true } />
+				<div className="plugin-item__title is-placeholder"></div>
+				<div className="plugin-item__meta is-placeholder"></div>
+			</CompactCard>
+		);
 	},
 
 	render: function() {
@@ -149,18 +180,10 @@ module.exports = React.createClass( {
 			numberOfWarningIcons = 0,
 			errorNotices = [],
 			errorCounter = 0,
-			pluginItemClasses = classNames( 'plugin-item', {
-				disabled: this.props.hasAllNoManageSites,
-				'is-placeholder': ! plugin
-			} );
-		if ( ! plugin ) {
-			return (
-				<CompactCard className={ pluginItemClasses }>
-					<PluginIcon isPlaceholder={ true } />
-					<div className="plugin-item__title is-placeholder"></div>
-					<div className="plugin-item__meta is-placeholder"></div>
-				</CompactCard>
-			);
+			pluginItemClasses = classNames( 'plugin-item', { disabled: this.props.hasAllNoManageSites } );
+
+		if ( ! this.props.plugin ) {
+			return this.renderPlaceholder();
 		}
 
 		if ( this.props.hasNoManageSite ) {
@@ -229,6 +252,7 @@ module.exports = React.createClass( {
 							{ pluginTitle }
 							{ this.pluginMeta( plugin ) }
 						</span>
+						{ this.props.selectedSite ? null : this.renderCount() }
 					</CompactCard>
 					<div>
 					{ this.state.clicked ? this.getNoManageWarning() : null }
@@ -243,7 +267,7 @@ module.exports = React.createClass( {
 					{ pluginTitle }
 					{ this.pluginMeta( plugin ) }
 				</a>
-				{ this.renderActions() }
+				{ this.props.selectedSite ? this.renderActions() : this.renderCount() }
 			</CompactCard>
 		);
 	}
