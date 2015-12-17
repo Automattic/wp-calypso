@@ -86,7 +86,8 @@ module.exports = React.createClass( {
 	},
 
 	startChat: function( contactForm ) {
-		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
+		const { message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
+		const site = sites.getSite( siteSlug );
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
 		const notifications = [
@@ -103,12 +104,14 @@ module.exports = React.createClass( {
 	},
 
 	submitKayakoTicket: function( contactForm ) {
-		const { subject, message, howCanWeHelp, howYouFeel } = contactForm;
+		const { subject, message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
 		const { locale } = this.state.olark;
+		const site = sites.getSite( siteSlug );
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
-			'How I feel: ' + howYouFeel
+			'How I feel: ' + howYouFeel,
+			'Site I need help with: ' + ( site ? site.URL : 'N/A' )
 		];
 
 		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
@@ -270,9 +273,7 @@ module.exports = React.createClass( {
 				showSubjectField: showKayakoVariation || showForumsVariation,
 				showHowCanWeHelpField: showKayakoVariation || showChatVariation,
 				showHowYouFeelField: showKayakoVariation || showChatVariation,
-				showSiteField: ( showKayakoVariation || showChatVariation ) && ( sites.get().length > 1 ),
-				siteList: sites,
-				siteFilter: site => ( site.visible && ! site.jetpack )
+				showSiteField: ( showKayakoVariation || showChatVariation ) && ( sites.get().length > 1 )
 			},
 			showChatVariation && {
 				onSubmit: this.startChat,
