@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import endsWith from 'lodash/string/endsWith';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ const DomainSuggestionFlag = React.createClass( {
 		let newTLDs = ['.live'];
 
 		if ( newTLDs.some( function( tld ) {
-				return this.props.domain.endsWith( tld );
+				return endsWith( this.props.domain, tld );
 			}, this ) ) {
 			return (
 				<Notice

@@ -3,7 +3,8 @@
  */
 var debug = require( 'debug' )( 'calypso:users:store' ),
 	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/collection/find' ),
+	endsWith = require( 'lodash/string/endsWith' );
 
 /**
  * Internal dependencies
@@ -87,7 +88,7 @@ function updateUser( siteId, id, user ) {
 
 function decrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
 			_totalUsersByNamespace[ namespace ]--;
 			_usersFetchedByNamespace[ namespace ]--;
 		}
@@ -96,7 +97,7 @@ function decrementPaginationData( siteId, userId ) {
 
 function incrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
 			_totalUsersByNamespace[ namespace ]++;
 			_usersFetchedByNamespace[ namespace ]++;
 		}
@@ -113,7 +114,7 @@ function deleteUserFromSite( siteId, userId ) {
 
 function deleteUserFromNamespaces( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
 			delete _userIDsByNamespace[ namespace ][ userId ];
 		}
 	} );
