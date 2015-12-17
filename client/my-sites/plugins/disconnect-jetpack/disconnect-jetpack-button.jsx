@@ -44,6 +44,7 @@ export default React.createClass( {
 			id: `disconnect-jetpack-${ site.ID }`,
 			className: buttonClasses,
 			compact: true,
+			disabled: this.props.disabled,
 			scary: true,
 			onClick: ( event ) => {
 				event.preventDefault();
