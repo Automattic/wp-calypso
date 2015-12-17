@@ -43,27 +43,30 @@ const RegisteredDomain = React.createClass( {
 	getPrivacyProtection() {
 		if ( this.props.domain.hasPrivacyProtection ) {
 			return (
-				<Notice
-					isCompact
-					status="is-success"
-					icon="lock">
-					{ this.translate( 'On', {
-						context: 'An icon label when Privacy Protection is enabled.'
-					} ) }
-				</Notice>
+				<a href="#" onClick={ this.goToPrivacyProtection }>
+					<Notice
+						isCompact
+						status="is-success"
+						icon="lock">
+						{ this.translate( 'On', {
+							context: 'An icon label when Privacy Protection is enabled.'
+						} ) }
+					</Notice>
+				</a>
 			);
 		}
 
 		return (
-			<Notice
-				isCompact
-				status="is-warning"
-				icon="notice"
-				onClick={ this.goToPrivacyProtection }>
-				{ this.translate( 'None', {
-					context: 'An icon label when Privacy Protection is disabled.'
-				} ) }
-			</Notice>
+			<a href="#" onClick={ this.goToPrivacyProtection }>
+				<Notice
+					isCompact
+					status="is-warning"
+					icon="notice">
+					{ this.translate( 'None', {
+						context: 'An icon label when Privacy Protection is disabled.'
+					} ) }
+				</Notice>
+			</a>
 		);
 	},
 
