@@ -97,8 +97,6 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		this.props.site.fetchModules();
-
 		// Refresh the list of connections so that the user is given the latest
 		// possible state.  Also prevents a possible infinite loading state due
 		// to connections previously returning a 400 error

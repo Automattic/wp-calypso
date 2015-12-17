@@ -238,7 +238,7 @@ module.exports = React.createClass( {
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
 		if ( this.state.accessError ||
-				( selectedSite && selectedSite.modulesFetched && ! selectedSite.canManage() )
+				( selectedSite && ! selectedSite.canManage() )
 			) {
 			return this.renderAccessError( selectedSite );
 		}

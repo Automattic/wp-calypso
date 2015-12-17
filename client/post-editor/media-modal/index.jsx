@@ -63,11 +63,6 @@ module.exports = React.createClass( {
 			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
 		}
 
-		if ( nextProps.site && nextProps.site.jetpack && ! nextProps.site.modulesFetched &&
-				( ! this.props.site || this.props.site.ID !== nextProps.site.ID ) ) {
-			nextProps.site.fetchModules();
-		}
-
 		if ( ! nextProps.visible || this.props.visible === nextProps.visible ) {
 			return;
 		}
@@ -76,11 +71,6 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var site = this.props.site;
-		if ( site && site.jetpack && ! site.modulesFetched ) {
-			site.fetchModules();
-		}
-
 		debug( '%s component mounted.', this.constructor.name );
 
 		this.statsTracking = {};
@@ -304,7 +294,7 @@ module.exports = React.createClass( {
 				action: 'confirm',
 				label: this.translate( 'Continue' ),
 				isPrimary: true,
-				disabled: isDisabled || ! this.props.site || ( this.props.site.jetpack && ! this.props.site.modulesFetched ),
+				disabled: isDisabled || ! this.props.site,
 				onClick: this.setView.bind( this, ModalViews.GALLERY )
 			} );
 		} else {

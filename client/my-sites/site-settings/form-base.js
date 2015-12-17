@@ -121,7 +121,7 @@ module.exports = {
 						error,
 						this.props.site.isModuleActive( module ) ? 'deactivateModule' : 'activateModule',
 						{},
-						this.props.site.getModule( module )
+						module
 					);
 				} else {
 					if( 'protect' === module ) {

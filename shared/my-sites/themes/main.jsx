@@ -109,7 +109,7 @@ var Themes = React.createClass( {
 			return <JetpackUpgradeMessage site={ site } />;
 		}
 
-		if ( isJetpack && jetpackEnabled && site.modulesFetched && ! site.canManage() ) {
+		if ( isJetpack && jetpackEnabled && ! site.canManage() ) {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 

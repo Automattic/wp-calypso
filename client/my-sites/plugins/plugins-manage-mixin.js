@@ -7,11 +7,7 @@ module.exports = {
 		if ( ! selectedSite ) {
 			return true;
 		}
-		if ( ! selectedSite || ! selectedSite.modulesFetched ) {
-			return true;
-		}
-		if ( ! selectedSite.getModule( 'manage' ) ||
-				! selectedSite.getModule( 'manage' ).active ) {
+		if ( ! selectedSite.isModuleActive( 'manage' ) ) {
 			return false;
 		}
 		return true;

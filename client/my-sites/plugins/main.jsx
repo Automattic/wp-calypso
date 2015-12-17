@@ -805,9 +805,7 @@ export default React.createClass( {
 			);
 		}
 
-		if ( selectedSite &&
-				selectedSite.modulesFetched &&
-				! selectedSite.canManage() ) {
+		if ( selectedSite && ! selectedSite.canManage() ) {
 			return (
 				<Main>
 					<JetpackManageErrorPage

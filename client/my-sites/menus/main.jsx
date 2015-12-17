@@ -220,7 +220,7 @@ var Menus = React.createClass( {
 			site = this.props.site,
 			menu;
 
-		if ( site && site.jetpack && site.modulesFetched && ! site.canManage() ) {
+		if ( site && site.jetpack && ! site.canManage() ) {
 			return this.renderJetpackManageDisabledMessage( site );
 		}
 
