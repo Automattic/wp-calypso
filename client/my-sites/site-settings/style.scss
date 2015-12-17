@@ -94,12 +94,10 @@
 		}
 
 		.button {
-			margin: 8px 0 0 0;
-			text-align: center;
 			width: 100%;
+			margin-left: 16px;
 
 			@include breakpoint( ">660px" ) {
-				margin: 0 0 0 16px;
 				width: 45%;
 			}
 		}
@@ -217,4 +215,11 @@
 		opacity: .6;
 	}
 
+}
+
+.site-settings__blog-address-container {
+	margin: 0 -24px;
+	padding: 24px 24px 16px 24px;
+	border: 1px lighten( $gray, 30% ) solid;
+	border-width: 1px 0;
 }
