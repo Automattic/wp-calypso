@@ -12,10 +12,12 @@ const DomainManagementHeader = React.createClass( {
 	render() {
 		return (
 			<HeaderCake className="domain-management-header" onClick={ this.props.onClick }>
-				{ this.domainName() }
-				<span className="domain-management-header__children">
-					{ this.props.children }
-				</span>
+				<div className="domain-management-header__children">
+					{ this.domainName() }
+					<span className="domain-management-header__title">
+						{ this.props.children }
+					</span>
+				</div>
 			</HeaderCake>
 		);
 	},
