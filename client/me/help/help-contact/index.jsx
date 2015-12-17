@@ -24,10 +24,6 @@ import analytics from 'analytics';
 /**
  * Module variables
  */
-const noticeOptions = {
-	duration: 10000,
-	showDismiss: false
-};
 const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 
@@ -37,7 +33,7 @@ module.exports = React.createClass( {
 	componentDidMount: function() {
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
-		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
+		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 
 		sites.on( 'change', this.onSitesChanged );
 
@@ -55,7 +51,7 @@ module.exports = React.createClass( {
 
 		olarkStore.removeListener( 'change', this.updateOlarkState );
 		olarkEvents.off( 'api.chat.onOperatorsAway', this.onOperatorsAway );
-		olarkEvents.off( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
+		olarkEvents.off( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
@@ -69,6 +65,7 @@ module.exports = React.createClass( {
 			olark: olarkStore.get(),
 			isSubmitting: false,
 			confirmation: null,
+			isChatEnded: false,
 			sitesInitialized: sites.initialized
 		};
 	},
@@ -208,10 +205,6 @@ module.exports = React.createClass( {
 		widgetInput.onkeydown( { keyCode: KEY_ENTER } );
 	},
 
-	onOperatorsAvailable: function() {
-		this.showOperatorAvailabilityNotice( true );
-	},
-
 	onOperatorsAway: function() {
 		const { details } = this.state.olark;
 
@@ -220,28 +213,11 @@ module.exports = React.createClass( {
 				form_type: 'kayako'
 			} );
 		}
-
-		this.showOperatorAvailabilityNotice( false );
 	},
 
-	showOperatorAvailabilityNotice: function( isAvailable ) {
-		const { isOlarkReady, isUserEligible, details } = this.state.olark;
-
-		// We check isOlarkReady because the operator availability events fire before the ready event to indicate if operators are available.
-		// Here we only care if the availability has changed while we were viewing the contact form
-		if ( ! isOlarkReady ) {
-			return;
-		}
-
-		if ( ! ( isUserEligible || details.isConversing ) ) {
-			// If the user is not currently chatting or the user is not eligible to chat then no need to show the notice
-			return;
-		}
-
-		if ( isAvailable ) {
-			notices.success( this.translate( 'Our Happiness Engineers have returned, chat with us.' ), noticeOptions );
-		} else {
-			notices.warning( this.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ), noticeOptions );
+	onCommandFromOperator: function( event ) {
+		if ( event.command.name === 'end' ) {
+			this.setState( { isChatEnded: true } );
 		}
 	},
 
@@ -250,7 +226,7 @@ module.exports = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
+		const { olark, confirmation, sitesInitialized, isSubmitting, isChatEnded } = this.state;
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
@@ -263,7 +239,7 @@ module.exports = React.createClass( {
 			return <div className="help-contact__placeholder" />;
 		}
 
-		if ( olark.details.isConversing && olark.isOperatorAvailable ) {
+		if ( isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable ) ) {
 			return <OlarkChatbox />;
 		}
 

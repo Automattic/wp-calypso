@@ -11,6 +11,7 @@ const initialState = {
 	isOperatorAvailable: false,
 	isOlarkReady: false,
 	isUserEligible: false,
+	isOlarkExpanded: false,
 	locale: 'en',
 	details: {}
 };
@@ -34,6 +35,9 @@ const olarkStore = createReducerStore( function( state, payload ) {
 			break;
 		case ActionTypes.OLARK_OPERATORS_AVAILABLE:
 			stateChanges = { isOperatorAvailable: true };
+			break;
+		case ActionTypes.OLARK_SET_EXPANDED:
+			stateChanges = { isOlarkExpanded: action.isOlarkExpanded };
 			break;
 		case ActionTypes.OLARK_DETAILS:
 			stateChanges = { details: action.details };
