@@ -2,12 +2,20 @@
 	margin-bottom: 30px;
 }
 
+// the nesting here is necessary to override the styles in the `PlanOverview` stylesheet
+.plan-overview .plan-status__button.button {
+	@include breakpoint( "<960px" ) {
+		margin-left: 0;
+		min-width: 0;
+	}
+}
+
 .plan-status__header {
 	flex-grow: 1;
 
 	@include breakpoint( ">480px" ) {
 		margin-left: 20px;
-		margin-right: 20px;
+		margin-right: 10px;
 	}
 }
 
@@ -42,7 +50,7 @@
 	font-size: 18px;
 	font-weight: 700;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( ">960px" ) {
 		font-size: 24px;
 	}
 }
