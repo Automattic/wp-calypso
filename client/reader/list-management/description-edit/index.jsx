@@ -5,6 +5,14 @@ import React from 'react';
 // Internal dependencies
 import Main from 'components/main';
 import Navigation from 'reader/list-management/navigation';
+import Card from 'components/card';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 //const debug = debugModule( 'calypso:reader:list-management' );
 
@@ -20,7 +28,28 @@ const ListManagementDescriptionEdit = React.createClass( {
 		return (
 			<Main className="list-management-description-edit">
 				<Navigation selected="description-edit" list={ this.props.list } />
-				<h2>{ this.translate( 'Manage List Description' ) } - { this.props.list.slug }</h2>
+				<Card>
+					<FormFieldset>
+						<FormLabel htmlFor="list-title">Title</FormLabel>
+						<FormTextInput
+							autoCapitalize="off"
+							autoComplete="on"
+							autoCorrect="off"
+							id="list-title"
+							name="list-title"
+							//className="is-error"
+							placeholder=""
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="list-description">Description</FormLabel>
+						<FormTextarea name="list-description" id="list-description" placeholder=""></FormTextarea>
+					</FormFieldset>
+
+					<FormButtonsBar>
+						<FormButton>{ this.translate( 'Save Changes' ) }</FormButton>
+					</FormButtonsBar>
+				</Card>
 			</Main>
 			);
 	}
