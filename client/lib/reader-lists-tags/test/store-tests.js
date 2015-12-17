@@ -23,8 +23,9 @@ describe( 'Reader Lists Tags Store', function() {
 			}
 		} );
 
-		expect( store.getTagsForList( listId ) ).to.have.length( 1 );
-		expect( store.getTagsForList( listId )[0] ).to.eql( foundTag );
+		const tagsForList = store.getTagsForList( listId ).toArray();
+		expect( tagsForList ).to.have.length( 1 );
+		expect( tagsForList[0].toJS() ).to.eql( foundTag );
 	} );
 
 	it( 'returns the current page for the specified list', function() {
