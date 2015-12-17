@@ -8,8 +8,17 @@
 	.plugins-list &.is-compact:last-child {
 		margin-bottom: 0;
 	}
-}
 
+	.notice.is-info {
+		.notice__text {
+			text-transform: capitalize;
+		}
+
+		.notice__icon {
+			display: none;
+		}
+	}
+}
 
 .plugin-item {
 	position: relative;
@@ -83,15 +92,15 @@
 
 // Plugin title
 .plugin-item__title {
-	display: block;
-	margin-top: 2px;
 	color: $gray-dark;
+	display: block;
 	font-size: 14px;
 	font-weight: 600;
-	white-space: pre;
+	line-height: 32px;
+	overflow: hidden;
 	text-align: left;
 	text-overflow: ellipsis;
-	overflow: hidden;
+	white-space: pre;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 24px;
@@ -123,71 +132,6 @@
 			margin-top: -6px;
 		}
 	}
-}
-
-// Last updated, version, whatever
-.plugin-item__meta {
-	display: block;
-	font-size: 11px;
-	color: $gray;
-	white-space: pre;
-	text-align: left;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	@include breakpoint( '>480px' ) {
-		text-transform: uppercase;
-	}
-	&.has-update {
-		display: inline-block;
-
-		@include breakpoint( '>480px' ) {
-			padding: 2px 6px 2px 2px;
-			border-radius: 2px;
-			background: $alert-yellow;
-			color: $white;
-		}
-	}
-	&.is-warning {
-		@include breakpoint( '>480px' ) {
-			display: inline-block;
-			margin-top: -3px;
-			padding: 2px 6px 2px 2px;
-			border-radius: 2px;
-			background: $alert-red;
-			color: $white;
-		}
-	}
-	&.is-placeholder {
-		margin-top: 4px;
-		width: 40%;
-		background-color: lighten( $gray, 30% );
-		animation: loading-fade 1.6s ease-in-out infinite;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: 5px;
-		}
-		&:before {
-			content: ' ';
-		}
-	}
-
-	.plugin-item__meta ~ & {
-		margin-left: 8px;
-	}
-}
-
-.plugin-item__meta-text {
-	vertical-align: middle;
-
-	 @include breakpoint( "<480px" ) {
-		display: none;
-	}
-}
-
-.plugin-item__meta_manage {
-	left: 5px;
-	top: 60px;
 }
 
 .plugin-item__meta.has-update {
@@ -236,4 +180,11 @@
 	@include breakpoint( '>480px' ) {
 		display: block;
 	}
+}
+
+.plugin-item__last_updated {
+	color: $gray;
+	font-size: 12px;
+	line-height: 1;
+	padding: 6px 0;
 }
