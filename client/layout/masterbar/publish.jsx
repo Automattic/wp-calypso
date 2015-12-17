@@ -7,7 +7,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import MasterbarItem from './masterbar-item';
+import MasterbarItem from './item';
 import config from 'config';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
@@ -83,9 +83,17 @@ export default React.createClass( {
 		const newPostPath = paths.newPost( currentSite );
 
 		return (
-			<MasterbarItem ref={ this.setPostButtonContext } url={ newPostPath } icon="create" onClick={ this.onClick } onPreload={ this.onPreload } isActive={ this.props.isActive } tooltip={ tooltip } className={ classes }>
+			<MasterbarItem
+				ref={ this.setPostButtonContext }
+				url={ newPostPath }
+				icon="create"
+				onClick={ this.onClick }
+				onPreload={ this.onPreload }
+				isActive={ this.props.isActive }
+				tooltip={ tooltip }
+				className={ classes }
+			>
 				{ this.props.children }
-
 				<SitesPopover
 					visible={ this.state.isShowingPopover }
 					context={ this.state.postButtonContext }

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import MasterbarItem from './masterbar-item';
+import MasterbarItem from './item';
 import Notifications from 'notifications';
 import store from 'store';
 
@@ -108,10 +108,17 @@ export default React.createClass( {
 		} );
 
 		return (
-			<MasterbarItem ref="notificationLink" url="/notifications" icon="bell" onClick={ this.toggleNotesFrame } isActive={ this.props.isActive } tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) } className={ classes }>
+			<MasterbarItem
+				ref="notificationLink"
+				url="/notifications"
+				icon="bell"
+				onClick={ this.toggleNotesFrame }
+				isActive={ this.props.isActive }
+				tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) }
+				className={ classes }
+			>
 				{ this.props.children }
-				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }></span>
-
+				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) } />
 				<Notifications
 					visible={ this.state.isShowingPopover }
 					checkToggle={ this.checkToggleNotes }

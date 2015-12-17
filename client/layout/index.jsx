@@ -9,7 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Masterbar = require( './masterbar' ),
+var Masterbar = require( 'layout/masterbar' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	NoticesList = require( 'notices/notices-list' ),
 	notices = require( 'notices' ),
