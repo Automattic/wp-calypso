@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	get = require( 'lodash/object/get' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -63,6 +64,11 @@ module.exports = React.createClass( {
 
 			// Omit if service is settings-oriented and user cannot manage
 			if ( 'eventbrite' === service.name && ! site.user_can_manage ) {
+				return false;
+			}
+
+			// Omit if Publicize service and user cannot publish
+			if ( 'publicize' === service.type && ! get( site, 'capabilities.publish_posts' ) ) {
 				return false;
 			}
 
