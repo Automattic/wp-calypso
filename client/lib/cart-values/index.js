@@ -118,6 +118,10 @@ function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
+function isCreditCardPaymentsEnabled( cart ) {
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_MoneyPress_Paygate' ) >= 0;
+}
+
 function isPayPalExpressEnabled( cart ) {
 	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' ) >= 0;
 }
@@ -133,5 +137,6 @@ module.exports = {
 	getRefundPolicy,
 	isFree,
 	isPaidForFullyInCredits,
-	isPayPalExpressEnabled
+	isPayPalExpressEnabled,
+	isCreditCardPaymentsEnabled
 };

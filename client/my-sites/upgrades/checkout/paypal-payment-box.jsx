@@ -9,7 +9,7 @@ var assign = require( 'lodash/object/assign' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
+	cartValues = require( 'lib/cart-values' ),
 	CheckoutThankYou = require( './thank-you' ),
 	CountrySelect = require( 'my-sites/upgrades/components/form/country-select' ),
 	Input = require( 'my-sites/upgrades/components/form/input' ),
@@ -114,7 +114,7 @@ module.exports = React.createClass( {
 	},
 
 	renderButtonText: function() {
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
+		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return this.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
 				context: 'Pay button on /checkout'
@@ -158,8 +158,14 @@ module.exports = React.createClass( {
 						</button>
 						<SubscriptionText cart={ this.props.cart } />
 					</div>
-					
-					<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>{ this.translate( 'or use a credit card', { context: 'Upgrades: PayPal checkout screen', comment: '"Checkout with PayPal -- or use a credit card"' } ) }</a>
+
+					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) &&
+						<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>
+							{ this.translate( 'or use a credit card', {
+								context: 'Upgrades: PayPal checkout screen',
+								comment: 'Checkout with PayPal -- or use a credit card'
+							} ) }
+						</a> }
 				</div>
 			</form>
 		);
