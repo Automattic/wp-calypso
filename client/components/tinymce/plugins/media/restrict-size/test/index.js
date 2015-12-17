@@ -17,14 +17,15 @@ describe( 'restrictSize', () => {
 	} );
 
 	describe( '#getMaxWidth()', () => {
-		let getMaxWidth, matchMedia;
+		let getMaxWidth, matchMedia, devicePixelRatio;
 		before( () => {
 			getMaxWidth = restrictSize.__get__( 'getMaxWidth' );
 			matchMedia = window.matchMedia;
+			devicePixelRatio = window.devicePixelRatio;
 		} );
 
 		afterEach( () => {
-			delete window.devicePixelRatio;
+			window.devicePixelRatio = devicePixelRatio;
 			window.matchMedia = matchMedia;
 		} );
 
@@ -35,12 +36,14 @@ describe( 'restrictSize', () => {
 		} );
 
 		it( 'should return twice the base if the device resolution matches the retina media query', () => {
+			window.devicePixelRatio = undefined;
 			window.matchMedia = () => ( { matches: true } );
 
 			expect( getMaxWidth() ).to.equal( 1118 );
 		} );
 
 		it( 'should return the base max width if the device is not retina-capable', () => {
+			window.devicePixelRatio = undefined;
 			expect( getMaxWidth() ).to.equal( 559 );
 		} );
 	} );

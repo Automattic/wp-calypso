@@ -56,14 +56,17 @@ install: node_modules
 run: welcome githooks-commit install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
+node-version:
+	@NPM_GLOBAL_ROOT=
+
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
-node_modules/%:
+node_modules/%: | node-version
 	@$(NPM) install $(notdir $@)
 
 # ensures that the `node_modules` directory is installed and up-to-date with
 # the dependencies listed in the "package.json" file.
-node_modules: package.json
+node_modules: package.json | node-version
 	@$(NPM) prune
 	@$(NPM) install
 	@touch node_modules
@@ -161,5 +164,5 @@ githooks-push:
 FORCE:
 
 .PHONY: build build-development build-server
-.PHONY: run install test clean distclean translate route
+.PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push
