@@ -48,6 +48,9 @@ function mapStateToProps( state ) {
 	const uiState = getUIState( state );
 	const selectedSite = getSelectedSite( state );
 
+	const START_OF_MONTH = false;
+	const END_OF_MONTH = true;
+
 	return {
 		siteId: selectedSite && selectedSite.ID,
 		postType: uiState.postType,
@@ -58,13 +61,15 @@ function mapStateToProps( state ) {
 			posts: {
 				authors: getAuthorOptions( state, 'post' ),
 				statuses: getStatusOptions( state, 'post' ),
-				dates: getDateOptions( state, 'post' ),
+				startDates: getDateOptions( state, 'post', START_OF_MONTH ),
+				endDates: getDateOptions( state, 'post', END_OF_MONTH ),
 				categories: getCategoryOptions( state, 'post' )
 			},
 			pages: {
 				authors: getAuthorOptions( state, 'page' ),
 				statuses: getStatusOptions( state, 'page' ),
-				dates: getDateOptions( state, 'page' )
+				startDates: getDateOptions( state, 'page', START_OF_MONTH ),
+				endDates: getDateOptions( state, 'page', END_OF_MONTH )
 			}
 		}
 	};

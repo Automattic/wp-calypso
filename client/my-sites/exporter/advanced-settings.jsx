@@ -54,15 +54,15 @@ export default React.createClass( {
 			posts: [
 				buildMenu( 'posts', 'author', 'authors' ),
 				buildMenu( 'posts', 'status', 'statuses' ),
-				buildMenu( 'posts', 'startDate', 'dates' ),
-				buildMenu( 'posts', 'endDate', 'dates' ),
+				buildMenu( 'posts', 'startDate', 'startDates' ),
+				buildMenu( 'posts', 'endDate', 'endDates' ),
 				buildMenu( 'posts', 'category', 'categories' )
 			],
 			pages: [
 				buildMenu( 'pages', 'author', 'authors' ),
 				buildMenu( 'pages', 'status', 'statuses' ),
-				buildMenu( 'pages', 'startDate', 'dates' ),
-				buildMenu( 'pages', 'endDate', 'dates' ),
+				buildMenu( 'pages', 'startDate', 'startDates' ),
+				buildMenu( 'pages', 'endDate', 'endDates' ),
 			],
 			feedback: []
 		};

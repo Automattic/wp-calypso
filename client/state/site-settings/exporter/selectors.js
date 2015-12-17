@@ -3,6 +3,8 @@
  */
 import i18n from 'lib/mixins/i18n';
 
+import moment from 'moment';
+
 import { States } from './constants.js';
 
 function mapOptions( state, section, name, mapFunc ) {
@@ -24,21 +26,33 @@ export function getStatusOptions( state, section ) {
 	} ) );
 }
 
-export function getDateOptions( state, section ) {
-	const months = [ 'N/A', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-		'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
-
+export function getDateOptions( state, section, endOfMonth ) {
 	return mapOptions( state, section, 'export_date_options', ( date ) => {
-		if ( parseInt( date.get( 'month' ) ) === 0 || parseInt( date.get( 'year' ) ) === 0 ) {
+		const year = parseInt( date.get( 'year' ) );
+		// API months start at 1 (Jan = 1)
+		const month = parseInt( date.get( 'month' ) );
+		// JS months start at 0 (Jan = 0)
+		const jsMonth = month - 1;
+
+		if ( month === 0 || year === 0 ) {
 			return {
 				value: '0',
 				label: i18n.translate( 'Unknown' )
 			}
 		}
 
+		let time = moment( { year: year, month: jsMonth, day: 1 } );
+
+		if ( endOfMonth ) {
+			time = time.endOf( 'month' );
+		}
+
 		return {
-			value: `${ date.get( 'year' ) }-${ date.get( 'month' ) }`,
-			label: `${ months[ date.get( 'month' ) ] } ${ date.get( 'year' ) }`
+			// eg: 2015-06-30
+			value: time.format( 'YYYY-MM-DD' ),
+
+			// eg: Dec 2015
+			label: time.format( 'MMM YYYY' )
 		}
 	} );
 }
