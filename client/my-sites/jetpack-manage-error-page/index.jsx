@@ -44,12 +44,12 @@ module.exports = React.createClass( {
 				version: version
 			},
 			optInManage: {
-				title: this.translate( 'Looking to manage this site\'s plugins?' ),
+				title: this.translate( 'Looking to manage this site\'s from WordPress.com?' ),
 				line: this.translate( 'We need you to enable the Manage feature in the Jetpack plugin on your remote site' ),
-				illustration: null,
+				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
 				action: this.translate( 'Enable Jetpack Manage' ),
 				actionURL: ( this.props.site && this.props.site.jetpack )
-					? this.props.site.getRemoteManagementURL() + '&section=plugins'
+					? this.props.site.getRemoteManagementURL() + ( this.props.section ? '&section=' + this.props.section : '' )
 					: false,
 				actionTarget: '_blank'
 			},

@@ -308,9 +308,9 @@ export default React.createClass( {
 				<MainComponent>
 					<JetpackManageErrorPage
 						template="optInManage"
+						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
 						site={ this.props.site }
-						actionURL={ selectedSite.getRemoteManagementURL() + '&section=plugings' }
-						illustration= '/calypso/images/jetpack/jetpack-manage.svg'
+						section='plugins'
 						featureExample={ this.getMockPlugin() } />
 				</MainComponent>
 			);

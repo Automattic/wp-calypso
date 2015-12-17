@@ -202,9 +202,9 @@ var Menus = React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
+					title={ this.translate( 'Looking to manage this site\'s menus?' ) }
 					site={ site }
-					actionURL={ site.getRemoteManagementURL() }
-					illustration="/calypso/images/drake/drake-jetpack.svg"
+					section='menus'
 					secondaryAction={ this.translate( 'Open Classic Menu Editor' ) }
 					secondaryActionURL={ site.options.admin_url + 'nav-menus.php' }
 					secondaryActionTarget="_blank"

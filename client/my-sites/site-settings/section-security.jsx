@@ -39,6 +39,8 @@ module.exports = React.createClass( {
 			return (
 				<JetpackManageErrorPage
 					template="optInManage"
+					title= { this.translate( 'Looking to manage this site\'s security settings?' ) }
+					section="security-settings"
 					site={ site }
 				/>
 			);
