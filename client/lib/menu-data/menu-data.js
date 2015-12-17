@@ -287,7 +287,7 @@ MenuData.prototype.isValidMenu = function( menu ) {
 MenuData.prototype.getPrimaryLocation = function( ) {
 	var primaryLocation;
 
-	if ( ! this.data.locations ) {
+	if ( ! this.data.locations || ! this.data.locations[0] ) {
 		return false;
 	}
 
