@@ -359,8 +359,8 @@ const FollowingEdit = React.createClass( {
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
 					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
 
-					<Button compact onClick={ this.toggleAddSite }>
-						{ this.translate( 'Add' ) }
+					<Button compact primary onClick={ this.toggleAddSite }>
+						{ this.translate( 'Follow Site' ) }
 					</Button>
 				</SectionHeader>
 
