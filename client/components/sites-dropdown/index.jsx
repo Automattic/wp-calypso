@@ -27,8 +27,6 @@ export default React.createClass( {
 			React.PropTypes.string
 		] ),
 		showAllSites: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		autoFocus: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		onSiteSelect: React.PropTypes.func,
 		filter: React.PropTypes.func
@@ -37,7 +35,6 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			showAllSites: false,
-			indicator: false,
 			onClose: noop,
 			onSiteSelect: noop
 		};
