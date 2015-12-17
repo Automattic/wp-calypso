@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			keyword: this.props.initialValue || '',
-			isOpen: this.props.isOpen || false
+			isOpen: !! this.props.isOpen
 		};
 	},
 

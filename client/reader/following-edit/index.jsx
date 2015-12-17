@@ -1,39 +1,39 @@
 // External dependencies
-const React = require( 'react' ),
-	times = require( 'lodash/utility/times' ),
-	trimLeft = require( 'lodash/string/trimLeft' ),
-	Immutable = require( 'immutable' ),
-	debounce = require( 'lodash/function/debounce' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import times from 'lodash/utility/times';
+import trimLeft from 'lodash/string/trimLeft';
+import Immutable from 'immutable';
+import debounce from 'lodash/function/debounce';
+import classnames from 'classnames';
 
 // Internal dependencies
-const Main = require( 'components/main' ),
-	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	FeedStore = require( 'lib/feed-store' ),
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	EmptyContent = require( 'components/empty-content' ),
-	NoResults = require( 'my-sites/no-results' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	SubscriptionPlaceholder = require( './placeholder' ),
-	SubscriptionListItem = require( './list-item' ),
-	Notice = require( 'components/notice' ),
-	stats = require( 'reader/stats' ),
-	SearchCard = require( 'components/search-card' ),
-	URLSearch = require( 'lib/mixins/url-search' ),
-	FollowingEditSubscribeForm = require( './subscribe-form' ),
-	FeedSubscriptionErrorTypes = require( 'lib/reader-feed-subscriptions/constants' ).error,
-	MobileBackToSidebar = require( 'components/mobile-back-to-sidebar' ),
-	smartSetState = require( 'lib/react-smart-set-state' ),
-	escapeRegexp = require( 'escape-string-regexp' ),
-	FollowingEditSortControls = require( './sort-controls' ),
-	FollowingEditHelper = require( 'reader/following-edit/helper' ),
-	SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' );
+import Main from 'components/main';
+import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
+import SiteStore from 'lib/reader-site-store';
+import FeedStore from 'lib/feed-store';
+import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
+import EmptyContent from 'components/empty-content';
+import NoResults from 'my-sites/no-results';
+import InfiniteList from 'components/infinite-list';
+import SubscriptionPlaceholder from './placeholder';
+import SubscriptionListItem from './list-item';
+import Notice from 'components/notice';
+import SearchCard from 'components/search-card';
+import URLSearch from 'lib/mixins/url-search';
+import FollowingEditSubscribeForm from './subscribe-form';
+import { error as FeedSubscriptionErrorTypes } from 'lib/reader-feed-subscriptions/constants';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import smartSetState from 'lib/react-smart-set-state';
+import escapeRegexp from 'escape-string-regexp';
+import FollowingEditSortControls from './sort-controls';
+import FollowingEditHelper from 'reader/following-edit/helper';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+const stats = require( 'reader/stats' );
 
 const initialLoadFeedCount = 20;
 
-var FollowingEdit = React.createClass( {
+const FollowingEdit = React.createClass( {
 
 	mixins: [ URLSearch ],
 
