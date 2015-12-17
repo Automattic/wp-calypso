@@ -39,6 +39,8 @@
 	}
 	&:hover {
 		background: lighten( $gray, 20% );
+
+
 	}
 	.accessible-focus &:focus{
 		box-shadow: 0 0 0 2px $blue-medium;
@@ -72,9 +74,9 @@
 			background: $blue-light;
 		}
 	}
-	&:disabled,
-	&:disabled:hover {
-		+ .form-toggle__label .form-toggle__switch {
+	&:disabled {
+		+ label.form-toggle__label span.form-toggle__switch:hover,
+		+ label.form-toggle__label span.form-toggle__switch {
 			background: lighten( $gray, 30% );
 			cursor: default;
 		}
