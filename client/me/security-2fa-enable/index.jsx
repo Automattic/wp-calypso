@@ -17,7 +17,8 @@ var FormButton = require( 'components/forms/form-button' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'analytics' ),
-	constants = require( 'me/constants' );
+	constants = require( 'me/constants' ),
+	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
 
 module.exports = React.createClass( {
 
@@ -366,7 +367,7 @@ module.exports = React.createClass( {
 
 	renderButtons: function() {
 		return (
-			<div className="security-2fa-enable__buttons-bar">
+			<FormButtonsBar className="security-2fa-enable__buttons-bar">
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
@@ -415,7 +416,7 @@ module.exports = React.createClass( {
 					)
 
 				}
-			</div>
+			</FormButtonsBar>
 		);
 	},
 
