@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	canRemoveFromCart = require( 'lib/products-values' ).canRemoveFromCart,
+	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	getIncludedDomain = cartItems.getIncludedDomain,
 	isCredits = require( 'lib/products-values' ).isCredits,
@@ -56,18 +56,10 @@ module.exports = React.createClass( {
 	},
 
 	getFreeTrialPrice: function() {
-		var freeTrialText, renewalPrice;
+		var freeTrialText;
 
 		freeTrialText = this.translate( 'Free %(days)s Day Trial', {
 			args: { days: '14' }
-		} );
-
-		renewalPrice = this.translate( '(%(cost)s %(currency)s/%(billingPeriod)s)', {
-			args: {
-				cost: this.props.cartItem.orig_cost,
-				currency: this.props.cartItem.currency,
-				billingPeriod: 'year'
-			}
 		} );
 
 		return (
@@ -158,7 +150,7 @@ module.exports = React.createClass( {
 	},
 
 	removeButton: function() {
-		if ( canRemoveFromCart( this.props.cartItem ) ) {
+		if ( canRemoveFromCart( this.props.cart, this.props.cartItem ) ) {
 			return <button className="remove-item noticon noticon-close" onClick={ this.removeFromCart }></button>;
 		}
 	}
