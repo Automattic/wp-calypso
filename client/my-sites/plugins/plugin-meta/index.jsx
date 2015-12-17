@@ -14,7 +14,6 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
-import Gridicon from 'components/gridicon';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';

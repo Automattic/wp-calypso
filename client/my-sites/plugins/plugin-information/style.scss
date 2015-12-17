@@ -117,11 +117,15 @@
 
 .plugin-information.is-placeholder {
 
-	.plugin-information__last-updated,
-	.plugin-information__version-limit,
-	.plugin-information__external-link,
-	.version {
+	.plugin-information__wrapper {
 		@include placeholder();
+		@include breakpoint( '>480px' ) {
+			margin-right: 16px;
+		}
+	}
+	.plugin-information__external-link,
+	.version{
+		color: transparent;
 	}
 
 	.plugin-information__version-limit,

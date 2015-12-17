@@ -220,7 +220,7 @@ export default React.createClass( {
 								<Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
 								{ this.renderLastUpdated() }
 							</div>
-							<div className="plugin-information__version-shell plugin-information__site-version-shell">
+							<div className="plugin-information__version-shell">
 								{ this.renderSiteVersion() }
 								{ this.renderLimits() }
 							</div>
