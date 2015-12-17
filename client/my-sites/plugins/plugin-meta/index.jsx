@@ -19,7 +19,8 @@ import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle'
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle'
 import safeProtocolUrl from 'lib/safe-protocol-url'
 import config from 'config'
-import Notice from 'notices/notice'
+import Notice from 'components/notice'
+import NoticeAction from 'components/notice/notice-action';
 import PluginVersion from 'my-sites/plugins/plugin-version'
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button'
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button'
@@ -165,13 +166,17 @@ export default React.createClass( {
 	getUpdateWarning() {
 		const newVersion = this.getAvailableNewVersion();
 		if ( newVersion ) {
-			return <Notice
-				className="plugin-meta__version-notice"
-				text={ i18n.translate( 'A new version is available.' ) }
-				status="is-warning"
-				button={ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersion } } ) }
-				onClick={ this.handlePluginUpdates }
-				showDismiss={ false } />;
+			return (
+				<Notice
+					className="plugin-meta__version-notice"
+					text={ i18n.translate( 'A new version is available.' ) }
+					status="is-warning"
+					showDismiss={ false } >
+					<NoticeAction onClick={ this.handlePluginUpdates }>
+						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersion } } ) }
+					</NoticeAction>
+				</Notice>
+			);
 		}
 	},
 
