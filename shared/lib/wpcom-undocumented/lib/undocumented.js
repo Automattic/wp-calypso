@@ -1116,6 +1116,17 @@ Undocumented.prototype.readListsNew = function( title, fn ) {
 	this.wpcom.req.post( '/read/lists/new', { apiVersion: '1.2' }, { title: title }, fn );
 };
 
+Undocumented.prototype.readListsUpdate = function( query, fn ) {
+	var params = omit( query, [ 'owner', 'slug' ] );
+	debug( '/read/lists/:list/update' );
+	this.wpcom.req.post(
+		'/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/update',
+		{ apiVersion: '1.2' },
+		params,
+		fn
+	);
+};
+
 Undocumented.prototype.followList = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list/:list/follow' );

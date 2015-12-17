@@ -1,11 +1,17 @@
+// External dependencies
+import Dispatcher from 'dispatcher';
+import wpcom from 'lib/wp';
+import debugModule from 'debug';
+
 // Internal Dependencies
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	ReaderListsStore = require( 'lib/reader-lists/subscriptions' );
+import ReaderListsStore from 'lib/reader-lists/subscriptions';
+import { action as actionTypes } from './constants';
+
+const debug = debugModule( 'calypso:reader:list-management' );
 
 var fetchingLists = {};
 
-var ReaderListActions = {
+const ReaderListActions = {
 
 	fetchSubscriptions: function() {
 		if ( ReaderListsStore.isFetching() ) {
@@ -130,6 +136,29 @@ var ReaderListActions = {
 		wpcom.undocumented().readListsNew( title, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_CREATE_READER_LIST',
+				data: data,
+				error: error
+			} );
+		} );
+	},
+
+	update: function( owner, slug, title, description ) {
+		if ( ! owner || ! slug || ! title ) {
+			return;
+		}
+
+		const params = { owner, slug, title, description };
+
+		debug( params );
+
+		Dispatcher.handleViewAction( {
+			type: actionTypes.ACTION_UPDATE_READER_LIST,
+			data: params
+		} );
+
+		wpcom.undocumented().readListsUpdate( params, function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: actionTypes.ACTION_RECEIVE_UPDATE_READER_LIST,
 				data: data,
 				error: error
 			} );
