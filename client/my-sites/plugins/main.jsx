@@ -588,7 +588,7 @@ export default React.createClass( {
 			activateButtons.push( deactivateButton )
 			leftSideButtons.push( <ButtonGroup key="plugins__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
-			if ( this.hasJetpackSelectedSites() ) {
+			if ( this.hasJetpackSelectedSites() && ! isWpCom ) {
 				updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
 				updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
 
