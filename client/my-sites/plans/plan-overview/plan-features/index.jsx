@@ -32,6 +32,7 @@ const PlanFeatures = React.createClass( {
 					heading={ this.translate( 'Google Analytics Integration' ) } />
 
 				<PlanFeature
+					button={ { label: this.translate( 'View Themes' ), href: `/design/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'You have access to dozens of our best themes available.' ) }
 					heading={ this.translate( 'Unlimited Premium Themes' ) } />
 			</span>
