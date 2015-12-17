@@ -86,7 +86,7 @@ JetpackSite.prototype.isMainNetworkSite = function() {
 };
 
 JetpackSite.prototype.isModuleActive = function( moduleId ) {
-	return this.modules && this.modules.includes( moduleId );
+	return this.modules && this.modules.indexOf( moduleId ) > -1;
 };
 
 JetpackSite.prototype.verifyModulesActive = function( moduleIds, callback ) {
