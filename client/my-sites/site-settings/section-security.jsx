@@ -60,8 +60,9 @@ module.exports = React.createClass( {
 			<div>
 				<JetpackProtect site={ site } />
 				{
-					config.isEnabled( 'settings/security/scan' ) ?
-						<JetpackScan site={ site } /> : ''
+					config.isEnabled( 'settings/security/scan' )
+						? <JetpackScan site={ site } />
+						: ''
 				}
 				<JetpackMonitor site={ site } />
 			</div>

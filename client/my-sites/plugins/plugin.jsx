@@ -85,9 +85,9 @@ export default React.createClass( {
 		}
 
 		const allSites = uniq( props.sites.getSelectedOrAllWithPlugins() ),
-			sites = props.isWpcomPlugin ?
-				reject( allSites, property( 'jetpack' ) ) :
-				filter( allSites, property( 'jetpack' ) ),
+			sites = props.isWpcomPlugin
+				? reject( allSites, property( 'jetpack' ) )
+				: filter( allSites, property( 'jetpack' ) ),
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
 
 		let plugin = Object.assign( {

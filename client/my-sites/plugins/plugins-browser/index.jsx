@@ -211,7 +211,7 @@ module.exports = React.createClass( {
 			size={ 12 } />;
 	},
 
-	renderAccessError( selectedSite ) {
+	renderAccessError() {
 		if ( this.state.accessError ) {
 			return (
 				<MainComponent>

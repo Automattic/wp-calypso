@@ -31,7 +31,7 @@ export default React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
-					title={ this.translate( 'Looking to manage this site\'s themes?'  ) }
+					title={ this.translate( 'Looking to manage this site\'s themes?' ) }
 					site={ this.props.site }
 					section='themes'
 					secondaryAction={ this.translate( 'Open Site Theme Browser' ) }
