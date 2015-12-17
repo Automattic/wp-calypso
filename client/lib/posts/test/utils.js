@@ -27,6 +27,38 @@ describe( 'PostUtils', function() {
 		} );
 	} );
 
+	describe( '#isPrivate', function() {
+		it( 'should return undefined when no post is supplied', function() {
+			assert( postUtils.isPrivate() === undefined );
+		} );
+
+		it( 'should return true when post.status is private', function() {
+			assert( postUtils.isPrivate( { status: 'private' } ) );
+		} );
+
+		it( 'should return false when post.status is not private', function() {
+			assert( ! postUtils.isPrivate( { status: 'draft' } ) );
+		} );
+	} );
+
+	describe( '#isPublished', function() {
+		it( 'should return undefined when no post is supplied', function() {
+			assert( postUtils.isPublished() === undefined );
+		} );
+
+		it( 'should return true when post.status is private', function() {
+			assert( postUtils.isPublished( { status: 'private' } ) );
+		} );
+
+		it( 'should return true when post.status is publish', function() {
+			assert( postUtils.isPublished( { status: 'publish' } ) );
+		} );
+
+		it( 'should return false when post.status is not publish or private', function() {
+			assert( ! postUtils.isPublished( { status: 'draft' } ) );
+		} );
+	} );
+
 	describe( '#removeSlug', function() {
 		it( 'should return undefined when no path is supplied', function() {
 			assert( postUtils.removeSlug() === undefined );

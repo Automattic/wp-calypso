@@ -690,7 +690,7 @@ var PostEditor = React.createClass( {
 	},
 
 	onSaveDraftSuccess: function() {
-		if ( this.state.post.status === 'publish' || this.state.post.status === 'private' ) {
+		if ( utils.isPublished( this.state.post ) ) {
 			this.onSaveSuccess(
 				this.getMessage( 'updated' ),
 				this.getMessage( 'view' ),
@@ -702,13 +702,10 @@ var PostEditor = React.createClass( {
 	},
 
 	onPublish: function() {
-		var currentUser = user.get(),
-			edits = {
-				status: 'publish'
-			};
+		var edits = { status: 'publish' };
 
 		// determine if this is a private publish
-		if ( this.state.post && this.state.post.status === 'private' ) {
+		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
 		}
 
@@ -737,7 +734,7 @@ var PostEditor = React.createClass( {
 	},
 
 	onPublishSuccess: function() {
-		const publishedMessage = 'private' === utils.getVisibility( this.state.savedPost ) ?
+		const publishedMessage = utils.isPrivate( this.state.savedPost ) ?
 			this.getMessage( 'publishedPrivately' ) :
 			this.getMessage( 'published' );
 
