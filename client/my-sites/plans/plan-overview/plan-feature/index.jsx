@@ -12,9 +12,9 @@ import CompactCard from 'components/card/compact';
 const PlanFeature = ( { button, description, heading } ) => {
 	return (
 		<CompactCard className="plan-feature">
-			<div className="plan-feature__description">
-				<strong>{ heading }</strong>
-				<em>{ description }</em>
+			<div>
+				<strong className="plan-feature__heading">{ heading }</strong>
+				<span>{ description }</span>
 			</div>
 			{ button &&
 				<Button
