@@ -95,6 +95,20 @@ export function prepareExportRequest( state ) {
 }
 
 /**
+ * Indicates that the available options in the advanced settings section
+ * are being loaded
+ *
+ * @param  {Object} state    Global state tree
+ * @return {boolean}         true if activity is in progress
+ */
+export function isLoadingOptions( state ) {
+	const dataState = getDataState( state );
+
+	// The options are being loaded if a site ID has been set but the options are null
+	return !!( dataState.forSiteId && ! dataState.advancedSettings );
+}
+
+/**
  * Indicates whether an export activity is in progress.
  *
  * @param  {Object} state    Global state tree

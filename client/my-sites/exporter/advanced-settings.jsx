@@ -68,6 +68,7 @@ export default React.createClass( {
 		};
 
 		const buildOptionProps = key => ( {
+			isLoadingOptions: this.props.isLoadingOptions,
 			legend: legends[ key ],
 			isEnabled: this.props.postType === key,
 			menus: menus[ key ],

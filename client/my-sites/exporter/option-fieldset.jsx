@@ -36,6 +36,29 @@ module.exports = React.createClass( {
 		};
 	},
 
+	renderMenu( menu, key ) {
+		if ( this.props.isLoadingOptions ) {
+			return (
+				<div key={ key } className="exporter__placeholder-text">
+					Loading options...
+				</div>
+			);
+		}
+
+		return (
+			<Select
+				key={ key }
+				disabled={ !this.props.isEnabled }
+				onChange={ menu.onChange }
+			>
+				<option value={ 0 } key="defaultOption">{ menu.defaultLabel }</option>
+				{ menu.options.map( ( option ) => (
+					<option value={ option.value } key={ option.value }>{ option.label }</option>
+				) ) }
+			</Select>
+		);
+	},
+
 	render() {
 		return (
 			<div className="exporter__option-fieldset">
@@ -54,18 +77,9 @@ module.exports = React.createClass( {
 				}
 
 				<div className="exporter__option-fieldset-fields">
-					{ this.props.menus.map( ( menu, menuIndex ) => (
-						<Select
-							key={ menuIndex }
-							disabled={ !this.props.isEnabled }
-							onChange={ menu.onChange }
-						>
-							<option value={ 0 } key="defaultOption">{ menu.defaultLabel }</option>
-							{ menu.options.map( ( option ) => (
-								<option value={ option.value } key={ option.value }>{ option.label }</option>
-							) ) }
-						</Select>
-					) ) }
+					{ this.props.menus.map( ( menu, menuIndex ) => {
+						return this.renderMenu( menu, menuIndex );
+					} ) }
 				</div>
 
 			</div>

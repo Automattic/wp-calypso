@@ -16,7 +16,7 @@ import {
 	getStatusOptions,
 	getDateOptions,
 	getCategoryOptions,
-	prepareExportRequest,
+	isLoadingOptions,
 	shouldShowProgress,
 } from 'state/site-settings/exporter/selectors';
 
@@ -52,6 +52,7 @@ function mapStateToProps( state ) {
 		siteId: selectedSite && selectedSite.ID,
 		postType: uiState.postType,
 		advancedSettings: uiState.advancedSettings,
+		isLoadingOptions: isLoadingOptions( state ),
 		shouldShowProgress: shouldShowProgress( state ),
 		options: {
 			posts: {
