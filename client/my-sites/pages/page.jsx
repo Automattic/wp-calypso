@@ -195,14 +195,14 @@ module.exports = React.createClass( {
 			return (
 				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
 					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Send to Trash' ) }
+					{ this.translate( 'Trash' ) }
 				</PopoverMenuItem>
 			);
 		} else {
 			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusDelete }>
+				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
 					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Delete permanently' ) }
+					{ this.translate( 'Delete' ) }
 				</PopoverMenuItem>
 			);
 		}
