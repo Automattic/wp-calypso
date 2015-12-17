@@ -33,7 +33,7 @@ export default React.createClass( {
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s themes?' ) }
 					site={ this.props.site }
-					section='themes'
+					section="themes"
 					secondaryAction={ this.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }
 					secondaryActionTarget="_blank"

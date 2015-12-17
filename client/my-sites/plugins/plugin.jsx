@@ -309,8 +309,8 @@ export default React.createClass( {
 					<JetpackManageErrorPage
 						template="optInManage"
 						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						site={ this.props.sites.getSelectedSite() }
-						section='plugins'
+						site={ selectedSite }
+						section="plugins"
 						featureExample={ this.getMockPlugin() } />
 				</MainComponent>
 			);

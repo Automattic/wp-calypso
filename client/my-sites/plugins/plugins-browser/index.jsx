@@ -229,7 +229,7 @@ module.exports = React.createClass( {
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
 					site={ this.props.site }
-					section='plugins'
+					section="plugins"
 					illustration= '/calypso/images/jetpack/jetpack-manage.svg'
 					featureExample={ this.getMockPluginItems() } />
 			</MainComponent>
