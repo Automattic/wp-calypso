@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/object/omit';
-import ReactDom from 'react-dom';
 
 export default React.createClass( {
 
@@ -20,7 +19,7 @@ export default React.createClass( {
 	},
 
 	focus() {
-		ReactDom.findDOMNode( this.refs.textField ).focus();
+		this.refs.textField.focus();
 	},
 
 	render() {
