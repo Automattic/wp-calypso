@@ -31,6 +31,7 @@ render: function() {
 ##### Optional props
 * `actionButton`: a component to substitute the regular expand button
 * `actionButtonExpanded`: a component to substitute the regular expand button when the card is expanded. If not provided, we use `actionButton`
+* `icon`: a string to set the Gridicon slug for the regular expand button. Defaults to `chevron-down`. Only applies when the `actionButton` or `actionButtonExpanded` props are not set.
 * `cardKey`: a unique identifier for the card that can be used to help track its state outside the component (for example, to record which cards are open).
 * `compact`: a boolean indicating if the foldable card is compact
 * `disabled`: boolean indicating if the component it's not interactive
