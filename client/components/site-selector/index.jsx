@@ -185,7 +185,7 @@ module.exports = React.createClass( {
 					key="selector-all-sites"
 					sites={ this.props.sites }
 					href={ allSitesPath }
-					onSelect={ this.closeSelector }
+					onSelect={ this.onSiteSelect.bind( this, null ) }
 					isSelected={ ! this.props.sites.selected }
 				/>
 			);
