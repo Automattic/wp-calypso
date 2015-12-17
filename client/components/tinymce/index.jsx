@@ -24,21 +24,39 @@ require( 'tinymce/plugins/textcolor/plugin.js' );
 require( './plugins/wptextpattern/plugin.js' );
 
 // TinyMCE plugins that we've forked or written ourselves
-require( './plugins/wpcom/plugin.js' )();
-require( './plugins/wpcom-autoresize/plugin.js' )();
-require( './plugins/wpcom-help/plugin.js' )();
-require( './plugins/wpcom-charmap/plugin.js' )();
-require( './plugins/wpcom-view/plugin.js' )();
-require( './plugins/wpcom-sourcecode/plugin' ).default();
-require( './plugins/wpeditimage/plugin.js' )();
-require( './plugins/wplink/plugin.js' )();
-require( './plugins/media/plugin' )();
-require( './plugins/advanced/plugin' )();
-require( './plugins/wpcom-tabindex/plugin' )();
-require( './plugins/touch-scroll-toolbar/plugin' )();
-require( './plugins/editor-button-analytics/plugin' )();
-require( './plugins/calypso-alert/plugin' )();
-require( './plugins/contact-form/plugin' )();
+import wpcomPlugin from './plugins/wpcom/plugin.js';
+import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
+import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
+import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
+import wpcomViewPlugin from './plugins/wpcom-view/plugin.js';
+import wpcomSourcecode from './plugins/wpcom-sourcecode/plugin';
+import wpeditimagePlugin from './plugins/wpeditimage/plugin.js';
+import wplinkPlugin from './plugins/wplink/plugin.js';
+import mediaPlugin from './plugins/media/plugin';
+import advancedPlugin from './plugins/advanced/plugin';
+import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
+import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
+import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
+import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
+import contactFormPlugin from './plugins/contact-form/plugin';
+
+[
+	wpcomPlugin,
+	wpcomAutoresizePlugin,
+	wpcomHelpPlugin,
+	wpcomCharmapPlugin,
+	wpcomViewPlugin,
+	wpcomSourcecode,
+	wpeditimagePlugin,
+	wplinkPlugin,
+	mediaPlugin,
+	advancedPlugin,
+	wpcomTabindexPlugin,
+	touchScrollToolbarPlugin,
+	editorButtonAnalyticsPlugin,
+	calypsoAlertPlugin,
+	contactFormPlugin
+].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
  * Internal Dependencies
