@@ -83,7 +83,7 @@ export default React.createClass( {
 		);
 	},
 
-	getRedirectAfterAccept( invite = this.state ) {
+	getRedirectAfterAccept( invite = this.state.invite ) {
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
