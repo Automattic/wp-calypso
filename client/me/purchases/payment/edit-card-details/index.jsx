@@ -71,7 +71,10 @@ const EditCardDetails = React.createClass( {
 	componentWillMount() {
 		recordPageView( 'edit_card_details', this.props );
 
-		const fields = this.mergeCard( this.props.card, formState.createNullFieldValues( this.fieldNames ) );
+		let fields = formState.createNullFieldValues( this.fieldNames );
+		if ( this.props.card.data ) {
+			fields = this.mergeCard( this.props.card.data, fields );
+		}
 
 		this.formStateController = formState.Controller( {
 			initialFields: fields,

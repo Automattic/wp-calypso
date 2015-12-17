@@ -66,7 +66,7 @@ describe( 'Stored Cards Store', () => {
 	} );
 
 	it( 'should return an object with a card for a specific id', () => {
-		expect( StoredCardsStore.getByCardId( 12345 ) ).to.be.eql( {
+		expect( StoredCardsStore.getByCardId( 12345 ).data ).to.be.eql( {
 			id: 12345,
 			expiry: '2016-11-30',
 			number: 2596,
