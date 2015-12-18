@@ -12,7 +12,7 @@ module.exports = React.createClass( {
 			src: React.PropTypes.string,
 			alt: React.PropTypes.string
 		} ),
-		label: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element, React.PropTypes.object ] ),
+		label: React.PropTypes.node,
 		single: React.PropTypes.bool
 	},
 
