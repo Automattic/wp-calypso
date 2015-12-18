@@ -31,7 +31,7 @@ const PlanFeature = ( { button, description, heading } ) => {
 PlanFeature.propTypes = {
 	button: React.PropTypes.shape( {
 		label: React.PropTypes.string.isRequired,
-		href: React.PropTypes.string
+		href: React.PropTypes.string.isRequired
 	} ),
 	description: React.PropTypes.string.isRequired,
 	heading: React.PropTypes.string.isRequired
