@@ -1,7 +1,7 @@
 Utils
 ========
 
-A module for those little helpers that need to interact woth the store.
+A module for those little helpers that need to interact with the store.
 
 # Actions
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
