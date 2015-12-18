@@ -42,8 +42,13 @@ const RegisteredDomain = React.createClass( {
 
 	getPrivacyProtection() {
 		if ( this.props.domain.hasPrivacyProtection ) {
+			const path = paths.domainManagementContactsPrivacy(
+				this.props.selectedSite.domain,
+				this.props.domain.name
+			);
+
 			return (
-				<a href="#" onClick={ this.goToPrivacyProtection }>
+				<a href={ path }>
 					<Notice
 						isCompact
 						status="is-success"
