@@ -26,8 +26,7 @@
 		"eol-last": 1,
 		"indent": [ 1, "tab", { "SwitchCase": 1 } ],
 		"key-spacing": 1,
-		// Most common is "Emitter", should be improved
-		"new-cap": 1,
+		"new-cap": [ 1, { "capIsNew": false, "newIsCap": true } ],
 		"no-cond-assign": 2,
 		"no-else-return": 1,
 		"no-empty": 1,
@@ -44,7 +43,7 @@
 		"no-shadow": 1,
 		"no-spaced-func": 1,
 		"no-trailing-spaces": 1,
-		"no-undef": 1,
+		"no-undef": 2,
 		"no-underscore-dangle": 0,
 		// Allows Chai `expect` expressions
 		"no-unused-expressions": 0,
@@ -52,8 +51,14 @@
 		// Teach eslint about React+JSX
 		"react/jsx-uses-react": 1,
 		"react/jsx-uses-vars": 1,
-		"react/jsx-no-undef": 1,
-		"react/react-in-jsx-scope": 1,
+		"react/jsx-no-undef": 2,
+		"react/react-in-jsx-scope": 2,
+		"react/no-did-mount-set-state": 1,
+		"react/no-did-update-set-state": 1,
+		"jsx-quotes": [ 1, "prefer-double" ],
+		"react/jsx-no-bind": 1,
+		"react/jsx-curly-spacing": [ 1, "always" ],
+		"react/jsx-closing-bracket-location": [ 1, "tag-aligned" ],
 		// Allows function use before declaration
 		"no-use-before-define": [ 2, "nofunc" ],
 		// We split external, internal, module variables
