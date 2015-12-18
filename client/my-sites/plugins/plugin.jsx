@@ -85,9 +85,9 @@ export default React.createClass( {
 		}
 
 		const allSites = uniq( props.sites.getSelectedOrAllWithPlugins() ),
-			sites = props.isWpcomPlugin ?
-				reject( allSites, property( 'jetpack' ) ) :
-				filter( allSites, property( 'jetpack' ) ),
+			sites = props.isWpcomPlugin
+				? reject( allSites, property( 'jetpack' ) )
+				: filter( allSites, property( 'jetpack' ) ),
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
 
 		let plugin = Object.assign( {
@@ -259,7 +259,7 @@ export default React.createClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						notices={ [] }
+						notices={ {} }
 						plugin={ this.state.plugin }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
@@ -308,9 +308,9 @@ export default React.createClass( {
 				<MainComponent>
 					<JetpackManageErrorPage
 						template="optInManage"
-						site={ this.props.site }
-						actionURL={ selectedSite.getRemoteManagementURL() + '&section=plugings' }
-						illustration= '/calypso/images/jetpack/jetpack-manage.svg'
+						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+						site={ selectedSite }
+						section="plugins"
 						featureExample={ this.getMockPlugin() } />
 				</MainComponent>
 			);

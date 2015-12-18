@@ -31,9 +31,9 @@ export default React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
+					title={ this.translate( 'Looking to manage this site\'s themes?' ) }
 					site={ this.props.site }
-					actionURL={ this.props.site.getRemoteManagementURL() }
-					illustration="/calypso/images/drake/drake-jetpack.svg"
+					section="themes"
 					secondaryAction={ this.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }
 					secondaryActionTarget="_blank"
