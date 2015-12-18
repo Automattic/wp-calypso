@@ -130,28 +130,28 @@ PluginsActions = {
 
 	fetchSitePlugins: function( site ) {
 		if ( ! site.user_can_manage || ( ! site.jetpack && ! isBusiness( site.plan ) ) ) {
-			defer( ( ) => {
-			Dispatcher.handleViewAction( {
-				type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
-				action: 'RECEIVE_PLUGINS',
-				site: site
-			} );
+			defer( () => {
+				Dispatcher.handleViewAction( {
+					type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
+					action: 'RECEIVE_PLUGINS',
+					site: site
+				} );
 			} );
 			return;
 		}
 		const endpoint = site.jetpack ? wpcom.plugins : wpcom.wpcomPlugins;
 
 		endpoint.call( wpcom, site.ID, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_PLUGINS',
-			action: 'RECEIVE_PLUGINS',
-			site: site,
-			data: data,
-			error: error
-		} );
-		if ( ! error ) {
-			processAutoupdates( site, data.plugins );
-		}
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_PLUGINS',
+				action: 'RECEIVE_PLUGINS',
+				site: site,
+				data: data,
+				error: error
+			} );
+			if ( ! error ) {
+				processAutoupdates( site, data.plugins );
+			}
 		} );
 	},
 
