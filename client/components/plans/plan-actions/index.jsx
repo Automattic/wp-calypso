@@ -27,11 +27,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isInSignup ) {
-			if ( this.props.flowName === 'free-trial' && config.isEnabled( 'upgrades/free-trials' ) ) {
-				return this.freeTrialActions();
-			}
-
-			return this.upgradeActions();
+			return this.shouldOfferFreeTrial() ? this.freeTrialActions() : this.upgradeActions();
 		}
 
 		if ( this.siteHasThisPlan() ) {
@@ -55,9 +51,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		const canStartTrial = config.isEnabled( 'upgrades/free-trials' ) ? this.props.siteSpecificPlansDetails.can_start_trial : false;
-
-		return canStartTrial ? this.freeTrialActions() : this.upgradeActions();
+		return this.shouldOfferFreeTrial() ? this.freeTrialActions() : this.upgradeActions();
 	},
 
 	freePlanButton: function() {
@@ -152,9 +146,11 @@ module.exports = React.createClass( {
 				return false;
 			}
 
-			if ( this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.can_start_trial ) {
-				return true;
+			if ( this.props.siteSpecificPlansDetails && ! this.props.siteSpecificPlansDetails.can_start_trial ) {
+				return false;
 			}
+
+			return true;
 		}
 		return false;
 	},
