@@ -108,8 +108,10 @@ describe( 'PreferencesActions', function() {
 			expect( Dispatcher.handleServerAction ).to.not.have.been.called;
 			process.nextTick( function() {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledOnce;
-				expect( store.set ).to.have.been.calledWith( PreferencesConstants.LOCALSTORAGE_KEY, {} );
-
+				expect( store.set ).to.have.been.calledWith(
+					PreferencesConstants.LOCALSTORAGE_KEY,
+					DUMMY_PERSISTED_PREFERENCES
+				);
 				done();
 			} );
 		} );
