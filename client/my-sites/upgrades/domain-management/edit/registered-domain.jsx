@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 
 /**
@@ -61,8 +60,13 @@ const RegisteredDomain = React.createClass( {
 			);
 		}
 
+		const path = paths.domainManagementPrivacyProtection(
+			this.props.selectedSite.domain,
+			this.props.domain.name
+		);
+
 		return (
-			<a href="#" onClick={ this.goToPrivacyProtection }>
+			<a href={ path } onClick={ this.recordEvent( 'noneClick', this.props.domain ) }>
 				<Notice
 					isCompact
 					status="is-warning"
@@ -197,12 +201,6 @@ const RegisteredDomain = React.createClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-
-	goToPrivacyProtection() {
-		this.recordEvent( 'noneClick', this.props.domain );
-
-		page( paths.domainManagementPrivacyProtection( this.props.selectedSite.domain, this.props.domain.name ) );
 	}
 } );
 
