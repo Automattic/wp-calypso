@@ -20,7 +20,7 @@ const PlanFeatures = React.createClass( {
 
 	renderBusinessFeatures() {
 		return (
-			<span>
+			<div>
 				<PlanFeature
 					button={ { label: this.translate( 'Setup eCommerce' ), href: `/plugins/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Shopify, Ecwid, or Gumroad account to your WordPress.com site.' ) }
@@ -35,7 +35,7 @@ const PlanFeatures = React.createClass( {
 					button={ { label: this.translate( 'View Themes' ), href: `/design/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'You have access to dozens of our best themes available.' ) }
 					heading={ this.translate( 'Unlimited Premium Themes' ) } />
-			</span>
+			</div>
 		);
 	},
 
@@ -49,7 +49,7 @@ const PlanFeatures = React.createClass( {
 					description={ this.translate( "Change your theme's fonts, colors, and CSS for a unique look." ) }
 					heading={ this.translate( 'Custom Design' ) } />
 
-				{ isBusiness( this.props.selectedSite.plan ) ? this.renderBusinessFeatures() : null }
+				{ isBusiness( this.props.selectedSite.plan ) && this.renderBusinessFeatures() }
 
 				<PlanFeature
 					description={ this.translate( 'WordPress.com ads will not display on your site.' ) }
