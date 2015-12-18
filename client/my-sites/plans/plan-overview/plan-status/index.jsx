@@ -11,8 +11,8 @@ import page from 'page';
 import Button from 'components/button';
 import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
+import { getDaysUntilUserFacingExpiry } from 'lib/plans';
 import PlanStatusProgress from './progress';
-import ProgressBar from 'components/progress-bar';
 import { isPremium, isBusiness } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
 
@@ -58,6 +58,7 @@ const PlanStatus = React.createClass( {
 					</div>
 
 					<Button
+						primary={ getDaysUntilUserFacingExpiry( this.props.plan ) < 6 }
 						className="plan-status__button"
 						onClick={ this.purchasePlan }>
 						{ this.translate( 'Purchase Now' ) }
