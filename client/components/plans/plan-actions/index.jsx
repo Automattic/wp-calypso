@@ -146,6 +146,19 @@ module.exports = React.createClass( {
 		return true;
 	},
 
+	shouldOfferFreeTrial: function() {
+		if ( config.isEnabled( 'upgrades/free-trials' ) ) {
+			if ( this.props.isInSignup && this.props.flowName !== 'free-trial' ) {
+				return false;
+			}
+
+			if ( this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.can_start_trial ) {
+				return true;
+			}
+		}
+		return false;
+	},
+
 	getImageButton: function() {
 		const classes = classNames( 'plan-actions__illustration', this.props.plan.product_slug );
 
@@ -162,7 +175,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) } className={ classes } />
+			<div onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: this.shouldOfferFreeTrial() } ), 'button' ) } className={ classes } />
 		);
 	},
 
