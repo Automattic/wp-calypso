@@ -346,17 +346,17 @@ var FollowingEdit = React.createClass( {
 					placeholder={ searchPlaceholder }
 					onSearch={ this.doSearch } initialValue={ this.props.search } delaySearch={ true } ref="url-search" />
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
-				{ subscriptionsToDisplay.length === 0 && this.props.search ?
-					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
-				<InfiniteList role="main"
-					items={ subscriptionsToDisplay }
-					lastPage={ this.state.isLastPage }
-					fetchingNextPage={ this.state.isLoading }
-					guessedItemHeight={ 75 }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef= { this.getSubscriptionRef }
-					renderItem={ this.renderSubscription }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
+				{ subscriptionsToDisplay.length === 0 && this.props.search
+					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
+					: <InfiniteList role="main"
+						items={ subscriptionsToDisplay }
+						lastPage={ this.state.isLastPage }
+						fetchingNextPage={ this.state.isLoading }
+						guessedItemHeight={ 75 }
+						fetchNextPage={ this.fetchNextPage }
+						getItemRef= { this.getSubscriptionRef }
+						renderItem={ this.renderSubscription }
+						renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
 				}
 			</Main>
 		);

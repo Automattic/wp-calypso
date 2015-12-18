@@ -19,7 +19,6 @@ import SiteStore from 'lib/reader-site-store';
 import { recordFollow, recordUnfollow, recordAction, recordGaEvent } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 
-
 const RecommendedForYou = React.createClass( {
 
 	getInitialState() {
