@@ -135,7 +135,7 @@ const flows = {
 		lastModified: '2015-11-13'
 	},
 
-	'layout': {
+	layout: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getCheckoutDestination,
 		description: 'Theme trifurcation flow',
@@ -149,7 +149,7 @@ const flows = {
 		lastModified: '2015-11-23'
 	},
 
-	'jetpack': {
+	jetpack: {
 		steps: [ 'jetpack-user' ],
 		destination: '/'
 	},
