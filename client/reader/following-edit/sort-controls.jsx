@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import debugModule from 'debug';
 import noop from 'lodash/utility/noop';
 
 /**
@@ -33,7 +32,12 @@ const FollowingEditSortControls = React.createClass( {
 		return (
 			<div className="following-edit-sort-controls">
 				<label htmlFor="sort-control-select">{ this.translate( 'Sort by' ) }</label>
-				<select id="sort-control-select" ref="sortControlSelect" className="is-compact" onChange={ this.handleSelectChange } value={ sortOrder }>
+				<select
+					id="sort-control-select"
+					ref="sortControlSelect"
+					className="is-compact"
+					onChange={ this.handleSelectChange }
+					value={ sortOrder }>
 					<option value="date-followed">{ this.translate( 'Date followed' ) }</option>
 					<option value="alpha">{ this.translate( 'Alphabetical' ) }</option>
 				</select>

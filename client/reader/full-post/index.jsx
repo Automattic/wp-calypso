@@ -158,10 +158,11 @@ FullPostView = React.createClass( {
 
 					<PostErrors post={ post } />
 
-					{ hasFeaturedImage ?
-						<div className="full-post__featured-image test">
-							<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ this.props.post.canonical_image.width } />
-						</div> : null }
+					{ hasFeaturedImage
+						? <div className="full-post__featured-image test">
+								<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ this.props.post.canonical_image.width } />
+							</div>
+						: null }
 
 					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
 
@@ -258,9 +259,9 @@ FullPostDialog = React.createClass( {
 
 		siteName = utils.siteNameFromSiteAndPost( site, post );
 
-		siteLink = this.props.suppressSiteNameLink ?
-			siteName :
-			( <SiteLink post={ post }>{ siteName }</SiteLink> );
+		siteLink = this.props.suppressSiteNameLink
+			? siteName
+			: ( <SiteLink post={ post }>{ siteName }</SiteLink> );
 
 		if ( post && ! post._state ) {
 			shouldShowComments = PostCommentHelper.shouldShowComments( post );

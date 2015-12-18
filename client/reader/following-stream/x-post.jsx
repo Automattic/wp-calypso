@@ -113,8 +113,9 @@ var CrossPost = React.createClass( {
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
 					{ index + 2 < array.length ? <span>, </span> : null }
-					{ index + 2 === array.length ?
-						<span> { this.translate( 'and', { comment: 'last conjuction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> : null }
+					{ index + 2 === array.length
+						? <span> { this.translate( 'and', { comment: 'last conjuction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span>
+						: null }
 				</span>
 			);
 		} );

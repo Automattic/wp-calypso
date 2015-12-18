@@ -64,21 +64,27 @@ var PostByline = React.createClass( {
 
 		return (
 			<ul className="reader-post-byline">
-			{ post.author && post.author.name ?
-				<li className="reader-post-byline__author">
-					{ this.renderAuthorName() }
-				</li> : null }
-			{ post.date && post.URL ?
-				<li className="reader-post-byline__date">
-					<a className="reader-post-byline__date-link"
-						onClick={ this.recordDateClick }
-						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
-				</li> : null }
-			{ primaryTag ?
-				<li className="reader-post-byline__tag">
-					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" size={ 16 } /> { primaryTag.name }</a>
-				</li> : null }
+			{ post.author && post.author.name
+				? <li className="reader-post-byline__author">
+						{ this.renderAuthorName() }
+					</li>
+				: null
+			}
+			{ post.date && post.URL
+				? <li className="reader-post-byline__date">
+						<a className="reader-post-byline__date-link"
+							onClick={ this.recordDateClick }
+							href={ post.URL }
+							target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" size={ 14 } nonStandardSize /> : null }</a>
+					</li>
+				: null
+			}
+			{ primaryTag
+				? <li className="reader-post-byline__tag">
+						<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" size={ 16 } nonStandardSize /> { primaryTag.name }</a>
+					</li>
+				: null
+			}
 			</ul>
 		);
 	}

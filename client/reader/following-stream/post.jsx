@@ -28,7 +28,6 @@ var Card = require( 'components/card' ),
 	PostErrors = require( 'reader/post-errors' ),
 	PostExcerpt = require( 'components/post-excerpt' ),
 	Site = require( 'my-sites/site' ),
-	SiteLink = require( 'reader/site-link' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	Share = require( 'reader/share' ),
@@ -185,16 +184,19 @@ var Post = React.createClass( {
 			featuredSize = this.getFeaturedSize( this.featuredAspect, maxWidth );
 		}
 
-		return useFeaturedEmbed ?
-			<div ref="featuredEmbed" className="reader__post-featured-video" key="featuredVideo" dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } /> :
-			<div className="reader__post-featured-image" onClick={ this.handlePermalinkClick }>
-				{ featuredSize ?
-					<img className="reader__post-featured-image-image"
-						ref="featuredImage"
-						src={ featuredImage }
-						style={ featuredSize }
-						/> :
-					<img className="reader__post-featured-image-image" src={ featuredImage } />
+		return useFeaturedEmbed
+			? <div
+					ref="featuredEmbed"
+					className="reader__post-featured-video"
+					key="featuredVideo"
+					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />
+			: <div className="reader__post-featured-image" onClick={ this.handlePermalinkClick }>
+				{ featuredSize
+					? <img className="reader__post-featured-image-image"
+							ref="featuredImage"
+							src={ featuredImage }
+							style={ featuredSize } />
+					: <img className="reader__post-featured-image-image" src={ featuredImage } />
 				}
 			</div>;
 	},
@@ -223,8 +225,6 @@ var Post = React.createClass( {
 	handleCardClick: function( event ) {
 		var rootNode = ReactDom.findDOMNode( this ),
 			post = this.props.post,
-			isDiscoverPost = this.state.isDiscoverPost,
-			postUrl = isDiscoverPost ? post.discover_metadata.permalink : post.URL,
 			postToOpen = post;
 
 		// if the click has modifier or was not primary, ignore it
@@ -312,8 +312,6 @@ var Post = React.createClass( {
 				'ignore-click': true,
 				'should-scroll': true
 			},
-			siteNameClasses = classnames( { 'reader__site-name': true } ),
-			siteLink,
 			isDiscoverPost = this.state.isDiscoverPost,
 			isDiscoverSitePick = this.state.isDiscoverSitePick,
 			discoverSiteUrl,
@@ -331,10 +329,6 @@ var Post = React.createClass( {
 		}
 
 		siteTitleClasses = classnames( siteTitleClasses );
-
-		siteLink = this.props.suppressSiteNameLink ?
-			siteName :
-			( <SiteLink className={ siteTitleClasses } post={ post }>{ siteName }</SiteLink> );
 
 		forOwn( DISPLAY_TYPES, function( value, key ) {
 			if ( post.display_type && ( post.display_type & value ) ) { // bitwise intentional
@@ -386,27 +380,31 @@ var Post = React.createClass( {
 
 				<PostByline post={ post } site={ this.props.site } />
 
-				{ shouldUseFullExcerpt ?
-					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }} ></div> :
-					<PostExcerpt text={ post.excerpt } />
+				{ shouldUseFullExcerpt
+					? <div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }} ></div>
+					: <PostExcerpt text={ post.excerpt } />
 				}
 
-				{ shouldShowExcerptOnly ?
-					<PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
+				{ shouldShowExcerptOnly
+					? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+					: null
+				}
 
-				{ ! shouldShowExcerptOnly ?
-					<PostImages postImages={ post.content_images || [] } /> : null }
+				{ ! shouldShowExcerptOnly
+					? <PostImages postImages={ post.content_images || [] } />
+					: null
+				}
 
 				{ ( isDiscoverPost && ! isDiscoverSitePick ) ? <DiscoverPostAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 				{ ( isDiscoverSitePick ) ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } /> : null }
 
-				{ this.props.xPostedTo ?
-					<div className="reader__x-post-to">
-						<Gridicon icon="arrow-right" size={ 24 } />
-						<span className="reader__x-post-label">{ this.translate( 'cross-posted to' ) } </span>
-						{ xPostedToContent }
-					</div> :
-					null
+				{ this.props.xPostedTo
+					? <div className="reader__x-post-to">
+							<Gridicon icon="arrow-right" size={ 24 } />
+							<span className="reader__x-post-label">{ this.translate( 'cross-posted to' ) } </span>
+							{ xPostedToContent }
+						</div>
+					: null
 				}
 
 				<ul className="reader__post-footer">

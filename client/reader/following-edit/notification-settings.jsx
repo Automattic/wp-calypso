@@ -149,12 +149,13 @@ var FollowingEditNotificationSettings = React.createClass( {
 						<span className="following-edit__form-toggle-status">{ isPostEmailActive ? 'on' : 'off' }</span>
 						<FormToggle id="following-edit__form-toggle-post-emails" onChange={ this.handlePostEmailToggle } checked={ isPostEmailActive } disabled={ false } />
 					</span>
-					{ isPostEmailActive ?
-						<SegmentedControl compact={ true }>
-							<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_INSTANTLY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_INSTANTLY ) } key={ 'delivery-frequency-instant' }>{ this.translate( 'Instant' ) }</ControlItem>
-							<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_DAILY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_DAILY ) } key={ 'delivery-frequency-daily' }>{ this.translate( 'Daily' ) }</ControlItem>
-							<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_WEEKLY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_WEEKLY ) } key={ 'delivery-frequency-weekly' }>{ this.translate( 'Weekly' ) }</ControlItem>
-						</SegmentedControl> : null }
+					{ isPostEmailActive
+						? <SegmentedControl compact={ true }>
+								<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_INSTANTLY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_INSTANTLY ) } key={ 'delivery-frequency-instant' }>{ this.translate( 'Instant' ) }</ControlItem>
+								<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_DAILY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_DAILY ) } key={ 'delivery-frequency-daily' }>{ this.translate( 'Daily' ) }</ControlItem>
+								<ControlItem selected={ emailDeliveryFrequency === DELIVERY_FREQUENCY_WEEKLY } onClick={ this.handleEmailFrequencyClick.bind( this, DELIVERY_FREQUENCY_WEEKLY ) } key={ 'delivery-frequency-weekly' }>{ this.translate( 'Weekly' ) }</ControlItem>
+							</SegmentedControl>
+						: null }
 					{ this.renderPostEmailError() }
 				</Card>
 

@@ -28,26 +28,32 @@ var StreamHeader = React.createClass( {
 
 		return (
 			<Card className={ classes } >
-				{ this.props.icon ?
-				<span className="stream-header__icon">
-					{ this.props.icon }
-				</span> : null }
+				{ this.props.icon
+					? <span className="stream-header__icon">
+						{ this.props.icon }
+					</span>
+					: null
+				}
 
 				<h1 className="stream-header__title">{ this.props.title }</h1>
 				{ this.props.description ? <p className="stream-header__description">{ this.props.description }</p> : null }
 
-				{ this.props.showFollow ?
-					<div className="stream-header__follow">
-						<FollowButton iconSize={ 24 } following={ this.props.following } onFollowToggle={ this.props.onFollowToggle } />
-				</div> : null }
+				{ this.props.showFollow
+					? <div className="stream-header__follow">
+								<FollowButton iconSize={ 24 } following={ this.props.following } onFollowToggle={ this.props.onFollowToggle } />
+						</div>
+					: null
+				}
 
-				{ this.props.showEdit && this.props.editUrl ?
-				<div className="stream-header__edit">
-					<a href={ this.props.editUrl } rel={ isExternal( this.props.editUrl ) ? 'external' : '' }>
-						<span className="stream-header__action-icon"><Gridicon icon="cog" size={ 24 } /></span>
-						<span className="stream-header__action-label">{ this.translate( 'Edit' ) }</span>
-					</a>
-				</div> : null }
+				{ this.props.showEdit && this.props.editUrl
+					? <div className="stream-header__edit">
+							<a href={ this.props.editUrl } rel={ isExternal( this.props.editUrl ) ? 'external' : '' }>
+								<span className="stream-header__action-icon"><Gridicon icon="cog" size={ 24 } /></span>
+								<span className="stream-header__action-label">{ this.translate( 'Edit' ) }</span>
+							</a>
+						</div>
+					: null
+				}
 			</Card>
 		);
 	}
