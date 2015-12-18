@@ -188,7 +188,7 @@ const Signup = React.createClass( {
 	},
 
 	firstUnsubmittedStepName() {
-		const signupProgress = signupProgressStore.get(),
+		const signupProgress = SignupProgressStore.get(),
 			currentSteps = flows.getFlow( this.props.flowName ).steps,
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
