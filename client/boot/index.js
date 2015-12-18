@@ -79,9 +79,7 @@ function init() {
 	} );
 }
 
-function setUpContext( layout ) {
-	var reduxStore = createReduxStore();
-
+function setUpContext( layout, reduxStore ) {
 	// Pass the layout so that it is available to all page handlers
 	// and add query and hash objects onto context object
 	page( '*', function( context, next ) {
@@ -140,6 +138,7 @@ function loadDevModulesAndBoot() {
 
 function boot() {
 	var layoutSection, layout, validSections = [];
+	var reduxStore = createReduxStore();
 
 	init();
 
@@ -163,6 +162,7 @@ function boot() {
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
 		layout = ReactDom.render( React.createElement( Layout, {
+			store: reduxStore,
 			user: user,
 			sites: sites,
 			focus: layoutFocus,
@@ -194,7 +194,7 @@ function boot() {
 		window.history.replaceState( null, document.title, window.location.pathname );
 	}
 
-	setUpContext( layout );
+	setUpContext( layout, reduxStore );
 
 	page( '*', require( 'lib/route/normalize' ) );
 
