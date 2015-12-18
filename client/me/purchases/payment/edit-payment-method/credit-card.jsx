@@ -92,7 +92,7 @@ const EditPaymentMethodCreditCard = React.createClass( {
 				</strong>
 				<em>
 					{ this.translate( 'Expires %(date)s', {
-						args: { date: payment.creditCard.expiryDate },
+						args: { date: creditCard.expiryDate },
 						context: 'date is of the form MM/YY'
 					} ) }
 				</em>

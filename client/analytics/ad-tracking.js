@@ -160,8 +160,8 @@ function recordPurchase( product ) {
 	} );
 
 	// record the purchase w/ Bing if a tracking ID is present
-	if ( TRACKING_IDS[ type ].bing ) {
-		window.uetq = new UET( {
+	if ( TRACKING_IDS[ type ].bing && typeof UET !== 'undefined' ) {
+		window.uetq = new UET( { // eslint-disable-line no-undef
 			ti: TRACKING_IDS[ type ].bing,
 			o: window.uetq
 		} );

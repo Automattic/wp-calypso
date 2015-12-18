@@ -98,7 +98,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should not dispatch an empty local store', function() {
+		it( 'should not dispatch an empty local store', function( done ) {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( undefined );
 
@@ -108,8 +108,10 @@ describe( 'PreferencesActions', function() {
 			expect( Dispatcher.handleServerAction ).to.not.have.been.called;
 			process.nextTick( function() {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledOnce;
-				expect( store.set ).to.have.been.calledWith( PreferencesConstants.LOCALSTORAGE_KEY, {} );
-
+				expect( store.set ).to.have.been.calledWith(
+					PreferencesConstants.LOCALSTORAGE_KEY,
+					DUMMY_PERSISTED_PREFERENCES
+				);
 				done();
 			} );
 		} );
