@@ -33,6 +33,11 @@
 
 	.is-disabled & {
 		color: lighten( $gray, 30% );
+		cursor: default;
+	}
+
+	.has-disabled-info & {
+		cursor: pointer;
 	}
 }
 

@@ -49,6 +49,10 @@
 
 .form-toggle__label {
 	cursor: pointer;
+
+	.is-disabled & {
+		cursor: default;
+	}
 }
 
 .form-toggle {
