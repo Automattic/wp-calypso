@@ -16,7 +16,7 @@ import FollowButton from 'components/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
-import { recordFollow, recordUnfollow } from 'reader/stats';
+import { recordFollow, recordUnfollow, recordAction, recordGaEvent } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 
 
@@ -105,8 +105,8 @@ const RecommendedForYou = React.createClass( {
 	},
 
 	trackSiteClick() {
-		stats.recordAction( 'click_site_on_recommended_for_you' );
-		stats.recordGaEvent( 'Clicked Site on Recommended For You' );
+		recordAction( 'click_site_on_recommended_for_you' );
+		recordGaEvent( 'Clicked Site on Recommended For You' );
 	},
 
 	renderItem( rec ) {
