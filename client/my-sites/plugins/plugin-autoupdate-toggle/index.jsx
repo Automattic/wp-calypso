@@ -74,8 +74,8 @@ module.exports = React.createClass( {
 			} );
 		}
 
-		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
-			let reasons = utils.getSiteFileModDisableReason( this.props.site );
+		if ( ! this.props.site.canAutoupdateFiles && this.props.site.options.file_mod_disabled ) {
+			let reasons = utils.getSiteFileModDisableReason( this.props.site, 'autoupdateFiles' );
 			let html = [];
 
 			if ( reasons.length > 1 ) {

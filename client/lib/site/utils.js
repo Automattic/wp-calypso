@@ -64,38 +64,48 @@ export default {
 		}
 	},
 
-	getSiteFileModDisableReason( site ) {
+	getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 		if ( ! site || ! site.options || ! site.options.file_mod_disabled ) {
 			return;
 		}
 		let reasons = [];
 		for ( let clue of site.options.file_mod_disabled ) {
-			switch ( clue ) {
-				case 'is_version_controlled':
-					reasons.push(
-						i18n.translate( 'This site\'s files are under version control.' )
-					);
-					break;
-				case 'has_no_file_system_write_access':
-					reasons.push(
-						i18n.translate( 'The file permissions on this host prevent editing files.' )
-					);
-					break;
-				case 'automatic_updater_disabled':
-					reasons.push(
-						i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' )
-					);
-					break;
-				case 'wp_auto_update_core_disabled':
-					reasons.push(
-						i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' )
-					);
-					break
-				case 'disallow_file_mods':
-					reasons.push(
-						i18n.translate( 'File modifications are explicitly disabled by a site administrator.' )
-					);
-					break;
+			if ( action === 'modifyFiles'
+				|| action === 'autoupdateFiles'
+				|| action === 'autoupdateCore' ) {
+				switch ( clue ) {
+					case 'has_no_file_system_write_access':
+						reasons.push(
+							i18n.translate( 'The file permissions on this host prevent editing files.' )
+						);
+						break;
+					case 'disallow_file_mods':
+						reasons.push(
+							i18n.translate( 'File modifications are explicitly disabled by a site administrator.' )
+						);
+						break;
+				}
+			}
+
+			if ( action === 'autoupdateFiles'
+				|| action === 'autoupdateCore' ) {
+				switch ( clue ) {
+					case 'automatic_updater_disabled':
+						reasons.push(
+							i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' )
+						);
+						break;
+				}
+			}
+
+			if ( action === 'autoupdateCore' ) {
+				switch ( clue ) {
+					case 'wp_auto_update_core_disabled':
+						reasons.push(
+							i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' )
+						);
+						break;
+				}
 			}
 		}
 		return reasons;
@@ -113,14 +123,43 @@ export default {
 			return false;
 		}
 
-		if ( site.options.is_multi_network ) {
+		const options = site.options;
+
+		if ( options.is_multi_network ) {
 			return false;
 		}
 
-		if ( site.options.file_mod_disabled ) {
+		if ( options.file_mod_disabled
+			&& ( options.file_mod_disabled.includes( 'disallow_file_mods' )
+				|| options.file_mod_disabled.includes( 'has_no_file_system_write_access' ) )
+		) {
 			return false;
 		}
 
+		return true;
+	},
+
+	canAutoupdateFiles( site ) {
+		if ( ! this.canUpdateFiles( site ) ) {
+			return false;
+		}
+
+		if ( site.options.file_mod_disabled
+			&& site.options.file_mod_disabled.includes( 'automatic_updater_disabled' ) ) {
+			return false;
+		}
+		return true;
+	},
+
+	canAutoupdateCore( site ) {
+		if ( ! this.canAutoupdateFiles( site ) ) {
+			return false;
+		}
+
+		if ( site.options.file_mod_disabled
+			&& site.options.file_mod_disabled.includes( 'automatic_updater_disabled' ) ) {
+			return false;
+		}
 		return true;
 	},
 
