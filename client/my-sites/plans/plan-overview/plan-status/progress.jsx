@@ -21,15 +21,14 @@ const PlanStatusProgress = React.createClass( {
 			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
 			trialPeriodInDays = getCurrentTrialPeriodInDays( plan ),
 			timeUntilExpiryInDays = isInGracePeriod( plan )
-				? getDaysUntilExpiry( plan )
+				? Math.max( getDaysUntilExpiry( plan ), 0 )
 				: getDaysUntilUserFacingExpiry( plan ),
 			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (
 			<ProgressBar
 				value={ progress }
-				total={ trialPeriodInDays }
-			/>
+				total={ trialPeriodInDays } />
 		);
 	},
 
@@ -37,6 +36,10 @@ const PlanStatusProgress = React.createClass( {
 		const { plan } = this.props;
 
 		if ( isInGracePeriod( plan ) ) {
+			if ( getDaysUntilExpiry( plan ) <= 0 ) {
+				return this.translate( 'Plan features will be removed momentarily' );
+			}
+
 			return this.translate(
 				'Plan features will be removed in %(daysUntilExpiry)s day',
 				'Plan features will be removed in %(daysUntilExpiry)s days',
