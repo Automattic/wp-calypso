@@ -98,7 +98,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should not dispatch an empty local store', function() {
+		it( 'should not dispatch an empty local store', function( done ) {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( undefined );
 
