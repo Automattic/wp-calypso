@@ -205,7 +205,7 @@ module.exports = {
 			var site = sites.getSite( siteFragment );
 			if ( ! site ) {
 				sites.once( 'change', checkSiteShouldFetch );
-			} else if ( site.jetpack ) {
+			} else if ( site.jetpack && site.user_can_manage ) {
 				site.fetchSettings();
 			}
 		}
