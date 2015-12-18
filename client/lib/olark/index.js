@@ -18,6 +18,7 @@ import { isBusiness, isEnterprise } from 'lib/products-values';
 import olarkApi from 'lib/olark-api';
 import notices from 'notices';
 import olarkEvents from 'lib/olark-events';
+import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
 import i18n from 'lib/mixins/i18n';
 
@@ -140,6 +141,13 @@ const olark = {
 				'api.chat.onMessageToVisitor',
 				'api.chat.onMessageToOperator',
 				'api.chat.onCommandFromOperator'
+			],
+			olarkExpandedEvents = [
+				'api.box.onShow',
+				'api.box.onExpand',
+				'api.box.onHide',
+				'api.box.onShrink',
+				'api.chat.onMessageToVisitor'
 			];
 
 		olarkEvents.initialize();
@@ -148,9 +156,23 @@ const olark = {
 		olarkEvents.on( 'api.chat.onOperatorsAway', olarkActions.setOperatorsAway );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', olarkActions.setOperatorsAvailable );
 
-		updateDetailsEvents.forEach( event => olarkEvents.on( event, olarkActions.updateDetails ) );
+		olarkExpandedEvents.forEach( this.hookExpansionEventToStoreSync.bind( this ) );
+
+		updateDetailsEvents.forEach( eventName => olarkEvents.on( eventName, olarkActions.updateDetails ) );
 
 		debug( 'Olark code loaded, beginning configuration' );
+
+		olarkEvents.on( 'api.chat.onCommandFromOperator', ( event ) => {
+			if ( event.command.name === 'end' ) {
+				olarkActions.sendNotificationToVisitor( i18n.translate(
+					"Your live chat has ended. We'll send a transcript to %(email)s.",
+					{ args: { email: userData.email } }
+				) );
+			}
+		} );
+
+		olarkEvents.on( 'api.chat.onOperatorsAway', this.showAvailabilityNotice );
+		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.showAvailabilityNotice );
 
 		this.setOlarkOptions( userData, wpcomOlarkConfig );
 		this.updateLivechatActiveCookie();
@@ -161,6 +183,36 @@ const olark = {
 			olarkApi( 'api.visitor.getDetails', ( details ) => details.isConversing ? this.showChatBox() : olarkActions.hideBox() );
 		} else {
 			this.showChatBox();
+		}
+	},
+
+	syncStoreWithExpandedState() {
+		// We query the dom here because there is no other 100% accurate way to figure this out. Olark does not
+		// provide initial events for api.box.onExpand when the api.box.show event is fired.
+		const isOlarkExpanded = !! document.querySelector( '.olrk-state-expanded' );
+		if ( isOlarkExpanded !== olarkStore.get().isOlarkExpanded ) {
+			olarkActions.setExpanded( isOlarkExpanded );
+		}
+	},
+
+	hookExpansionEventToStoreSync( eventName ) {
+		olarkEvents.on( eventName, this.syncStoreWithExpandedState );
+	},
+
+	showAvailabilityNotice() {
+		const noticeOptions = { showDismiss: true };
+		const { isOperatorAvailable, isUserEligible, isOlarkExpanded, isOlarkReady } = olarkStore.get();
+		const onEligibleContactForm = isUserEligible && window.location.pathname === '/help/contact';
+		const showNotice = isOlarkReady && ( isOlarkExpanded || onEligibleContactForm );
+
+		if ( ! showNotice ) {
+			return;
+		}
+
+		if ( isOperatorAvailable ) {
+			notices.success( i18n.translate( 'Our Happiness Engineers have returned, chat with us.' ), noticeOptions );
+		} else {
+			notices.warning( i18n.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ), noticeOptions );
 		}
 	},
 
@@ -264,10 +316,6 @@ const olark = {
 			return;
 		}
 
-		olarkApi( 'api.chat.onOperatorsAway', function() {
-			olarkApi( 'api.chat.sendNotificationToVisitor', { body: i18n.translate( "Oops, our operators have all stepped away for a moment. If you don't hear back from us shortly, please try again later. Thanks!" ) } );
-		} );
-
 		store.set( this.operatorsAvailableKey, true );
 	},
 
@@ -277,10 +325,6 @@ const olark = {
 		if ( true !== store.get( this.operatorsAvailableKey ) || false === this.conversationStarted ) {
 			return;
 		}
-
-		olarkApi( 'api.chat.onOperatorsAvailable', function() {
-			olarkApi( 'api.chat.sendNotificationToVisitor', { body: i18n.translate( "Hey, we're back. If you don't hear from us shortly, please try your question once more. Thanks!" ) } );
-		} );
 
 		store.set( this.operatorsAvailableKey, false );
 	},
