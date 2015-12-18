@@ -20,6 +20,7 @@ export default React.createClass( {
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
 		onClick: React.PropTypes.func,
+		tooltip: React.PropTypes.string,
 	},
 
 	getInitialState() {
@@ -114,7 +115,7 @@ export default React.createClass( {
 				icon="bell"
 				onClick={ this.toggleNotesFrame }
 				isActive={ this.props.isActive }
-				tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) }
+				tooltip={ this.props.tooltip }
 				className={ classes }
 			>
 				{ this.props.children }

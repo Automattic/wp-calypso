@@ -70,6 +70,7 @@ export default React.createClass( {
 						icon={ this.wordpressIcon() }
 						onClick={ this.clickMySites }
 						isActive={ this.isActive( 'sites' ) }
+						tooltip={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
 					>
 						{ this.props.user.get().visible_site_count > 1
 							? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -81,6 +82,7 @@ export default React.createClass( {
 						icon="reader"
 						onClick={ this.clickReader }
 						isActive={ this.isActive( 'reader' ) }
+						tooltip={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
 					>
 						{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</Item>
@@ -90,6 +92,7 @@ export default React.createClass( {
 						user={ this.props.user }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
+						tooltip={ this.translate( 'Create a New Post', { textOnly: true } ) }
 					>
 						{ this.translate( 'New Post' ) }
 					</Publish>
@@ -98,6 +101,7 @@ export default React.createClass( {
 						icon="user-circle"
 						isActive={ this.isActive( 'me' ) }
 						className="masterbar__item-me"
+						tooltip={ this.translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }
 					>
 						<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 						<span className="masterbar__item-me-label">
@@ -109,6 +113,7 @@ export default React.createClass( {
 						onClick={ this.clickNotifications }
 						isActive={ this.isActive( 'notifications' ) }
 						className="masterbar__item-notifications"
+						tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) }
 					>
 						<span className="masterbar__item-notifications-label">{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
 					</Notifications>

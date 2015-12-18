@@ -22,7 +22,8 @@ export default React.createClass( {
 		user: React.PropTypes.object,
 		sites: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		tooltip: React.PropTypes.string,
 	},
 
 	getInitialState() {
@@ -78,7 +79,6 @@ export default React.createClass( {
 
 	render() {
 		const classes = classNames( this.props.className );
-		const tooltip = this.translate( 'Create a New Post', { textOnly: true } );
 		const currentSite = this.props.sites.getSelectedSite() || this.props.user.get().primarySiteSlug;
 		const newPostPath = paths.newPost( currentSite );
 
@@ -90,7 +90,7 @@ export default React.createClass( {
 				onClick={ this.onClick }
 				onPreload={ this.onPreload }
 				isActive={ this.props.isActive }
-				tooltip={ tooltip }
+				tooltip={ this.props.tooltip }
 				className={ classes }
 			>
 				{ this.props.children }
