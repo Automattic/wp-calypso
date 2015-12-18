@@ -7,6 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
 
 const CustomNameserversRow = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'nameServers' ) ],
@@ -28,7 +30,11 @@ const CustomNameserversRow = React.createClass( {
 		if ( ! this.props.nameserver ) {
 			return null;
 		}
-		return <label className="remove" onClick={ this.handleRemove }>{ this.translate( 'Remove' ) }</label>
+		return (
+			<Button borderless compact onClick={ this.handleRemove }>
+				<Gridicon icon="trash" />
+			</Button>
+		);
 	},
 
 	render() {

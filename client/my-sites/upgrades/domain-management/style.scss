@@ -846,28 +846,17 @@ ul.email-forwarding__list {
 .name-servers {
 	.custom-nameservers-row {
 		margin-top: 10px;
-	}
 
-	.remove,
-	.add {
-		border-radius: 2px;
-		color: #FFF;
-		cursor: pointer;
-		display: inline-block;
-		font-size: 9px;
-		padding: 3px 8px;
-		position: absolute;
-		margin-top: 11px;
-		margin-right: 34px;
-		text-transform: uppercase;
-		right: 0px;
-	}
+		.button {
+			position: absolute;
+				right: 0;
+			margin-top: 8px;
+			margin-right: 32px;
 
-	.add {
-		background: $alert-green;
-	}
-	.remove {
-		background: $alert-red;
+			@include breakpoint( '<480px' ) {
+				margin-right: 24px;
+			}
+		}
 	}
 
 	.notice {
