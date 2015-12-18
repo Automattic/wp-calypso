@@ -20,7 +20,6 @@ const PlanFeature = ( { button, description, heading } ) => {
 				<Button
 					className="plan-feature__button"
 					href={ button.href }
-					secondary
 					compact>
 					{ button.label }
 				</Button>
