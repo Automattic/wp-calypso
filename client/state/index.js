@@ -16,6 +16,7 @@ import siteSettings from './site-settings/reducer'
 import themes from 'lib/themes/reducers';
 import users from './users/reducer';
 import ui from './ui/reducer';
+import utils from './utils/reducer';
 
 /**
  * Module variables
@@ -28,6 +29,7 @@ const reducer = combineReducers( {
 	siteSettings,
 	themes,
 	users,
+	utils,
 	ui
 } );
 

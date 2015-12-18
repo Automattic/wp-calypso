@@ -27,4 +27,10 @@ export const SET_EXPORT_POST_TYPE = 'SET_EXPORT_POST_TYPE';
 export const SET_ROUTE = 'SET_ROUTE';
 export const SET_SECTION = 'SET_SECTION';
 export const SET_SELECTED_SITE = 'SET_SELECTED_SITE';
+<<<<<<< HEAD
 export const USER_RECEIVE = 'USER_RECEIVE';
+=======
+export const TOGGLE_EXPORTER_ADVANCED_SETTINGS = 'TOGGLE_EXPORTER_ADVANCED_SETTINGS';
+export const TOGGLE_EXPORTER_SECTION = 'TOGGLE_EXPORTER_SECTION';
+export const UTILS_UNIQUEID_INCREMENT = 'UTILS_UNIQUEID_INCREMENT';
+>>>>>>> Redux: Add utils actions and store-based uniqueId replacement
