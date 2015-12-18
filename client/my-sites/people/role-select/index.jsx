@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
+	debugFactory = require( 'debug' ),
 	omit = require( 'lodash/object/omit' ),
 	titleCase = require( 'to-title-case' );
 
@@ -10,6 +11,8 @@ var RolesStore = require( 'lib/site-roles/store' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSelect = require( 'components/forms/form-select' );
+
+var debug = debugFactory( 'calypso:role-select' );
 
 /**
  * Internal dependencies
