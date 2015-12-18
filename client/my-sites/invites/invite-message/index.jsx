@@ -53,7 +53,7 @@ export default React.createClass( {
 		}
 		if ( declined ) {
 			return (
-				<Notice status="is-info" onClick={ dismissInviteDeclined }>
+				<Notice status="is-info" onDismissClick={ dismissInviteDeclined }>
 					<h3>
 						{ this.translate( 'You declined to join.' ) }
 					</h3>
