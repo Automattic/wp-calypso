@@ -2,19 +2,11 @@
 	margin-bottom: 30px;
 }
 
-.plan-status__info {
-	align-content: space-between;
-	align-items: center;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-
-	@include breakpoint( ">480px" ) {
-		flex-direction: row;
-	}
-
-	&:after {
-		display: none;
+// the nesting here is necessary to override the styles in the `PlanOverview` stylesheet
+.plan-overview .plan-status__button.button {
+	@include breakpoint( "<960px" ) {
+		margin-left: 0;
+		min-width: 0;
 	}
 }
 
@@ -23,7 +15,7 @@
 
 	@include breakpoint( ">480px" ) {
 		margin-left: 20px;
-		margin-right: 20px;
+		margin-right: 10px;
 	}
 }
 
@@ -55,16 +47,11 @@
 .plan-status__plan {
 	line-height: 26px;
 	font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
-	font-size: 24px;
+	font-size: 18px;
 	font-weight: 700;
-}
 
-.plan-status__button {
-	flex-shrink: 0;
-
-	@include breakpoint( "<480px" ) {
-		margin-top: 15px;
-		width: 100%;
+	@include breakpoint( ">960px" ) {
+		font-size: 24px;
 	}
 }
 
@@ -85,4 +72,8 @@
 
 .plan-status__time-until-expiry {
 	font-weight: 700;
+
+	@include breakpoint( "<480px" ) {
+		font-size: 14px;
+	}
 }

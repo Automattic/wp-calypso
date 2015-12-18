@@ -1,0 +1,36 @@
+.plan-overview {
+	.plan-feature__button,
+	.plan-status__button {
+		flex-shrink: 0;
+		min-width: 160px;
+		text-align: center;
+
+		@include breakpoint( "<480px" ) {
+			margin-top: 15px;
+			width: 100%;
+		}
+
+		@include breakpoint( ">480px" ) {
+			margin-left: 15px;
+		}
+	}
+}
+
+.plan-overview {
+	.plan-feature,
+	.plan-status__info {
+		align-content: space-between;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		@include breakpoint( ">480px" ) {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		&:after {
+			display: none;
+		}
+	}
+}

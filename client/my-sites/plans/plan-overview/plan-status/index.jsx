@@ -28,7 +28,7 @@ const PlanStatus = React.createClass( {
 	purchasePlan() {
 		upgradesActions.addItem( cartItems.planItem( this.props.plan.productSlug ) );
 
-		page( '/checkout/' + this.props.selectedSite.slug );
+		page( `/checkout/${ this.props.selectedSite.slug }` );
 	},
 
 	render() {
@@ -51,7 +51,7 @@ const PlanStatus = React.createClass( {
 						<h1 className="plan-status__plan">
 							{
 								this.translate( '%(planName)s Free Trial', {
-									args: { planName: this.props.plan.productName }
+									args: { planName: plan.productName }
 								} )
 							}
 						</h1>
@@ -64,7 +64,7 @@ const PlanStatus = React.createClass( {
 					</Button>
 				</CompactCard>
 
-				<PlanStatusProgress plan={ this.props.plan } />
+				<PlanStatusProgress plan={ plan } />
 			</div>
 		);
 	}
