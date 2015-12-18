@@ -40,12 +40,14 @@ module.exports = React.createClass( {
 		onKeyDown: React.PropTypes.func,
 		disableAutocorrect: React.PropTypes.bool,
 		onBlur: React.PropTypes.func,
-		searching: React.PropTypes.bool
+		searching: React.PropTypes.bool,
+		isOpen: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
 		return {
-			keyword: this.props.initialValue || ''
+			keyword: this.props.initialValue || '',
+			isOpen: !! this.props.isOpen
 		};
 	},
 
@@ -60,7 +62,8 @@ module.exports = React.createClass( {
 			onSearchClose: noop,
 			onKeyDown: noop,
 			disableAutocorrect: false,
-			searching: false
+			searching: false,
+			isOpen: false
 		};
 	},
 
@@ -176,7 +179,7 @@ module.exports = React.createClass( {
 
 		this.setState( {
 			keyword: '',
-			isOpen: false
+			isOpen: this.props.isOpen || false
 		} );
 
 		input.value = ''; // will not trigger onChange

@@ -36,6 +36,207 @@
 	}
 }
 
+
+.section-header.following-edit__header {
+	margin-bottom: 24px;
+
+	@include breakpoint( "<480px" ) {
+		margin-bottom: 8px;
+	}
+
+	.section-header__actions {
+		transition: all 0.15s ease-in-out;
+	}
+
+	.is-adding & {
+		pointer-events: none;
+
+		.section-header__actions {
+			transform: translateX( -30px );
+		}
+	}
+}
+
+
+// More Options
+.following-edit__more-options {
+	float: left;
+	margin-right: 16px;
+
+	.gridicon {
+		fill: $gray;
+		position: relative;
+			top: 2px;
+		cursor: pointer;
+
+		&:hover {
+			fill: $blue-medium;
+		}
+	}
+}
+
+
+// Sort Controls
+.following-edit__sort-controls {
+	float: left;
+	margin-right: 8px;
+
+	label {
+		display: none;
+	}
+
+	select {
+		font-size: 12px;
+		color: $gray;
+		padding-top: 2px;
+		padding-bottom: 2px;
+		padding-left: 10px;
+		margin: 0;
+
+		&:hover {
+			border-color: #a8bece;
+			color: #2e4453;
+		}
+	}
+}
+
+
+// Add to Following
+.following-edit__subscribe-form {
+	position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.15s ease-in-out;
+
+	@include breakpoint( "<480px" ) {
+		top: 62px;
+	}
+
+	.search {
+		margin-bottom: 0;
+	}
+
+	.search__input[type="search"] {
+		height: 50px;
+		border: 1px solid transparent;
+
+		&:focus {
+			border-color: $blue-wordpress;
+			box-shadow: 0 0 0 2px $blue-light;
+		}
+	}
+
+	.search-open__icon {
+		display: none;
+	}
+
+	.gridicons-add-outline {
+		position: absolute;
+			top: 13px;
+			left: 18px;
+		fill: $blue-medium;
+		z-index: 23; // Higher than <Search>'s z-index: 22;
+	}
+
+	.gridicons-add-outline {
+		transform: translateX( 30px );
+		transition: all 0.15s ease-in-out;
+	}
+
+	.is-adding & {
+		opacity: 1;
+		pointer-events: auto;
+
+		.gridicons-add-outline {
+			transform: translateX( 0 ) rotate( 180deg );
+		}
+	}
+
+	.card.is-search-result {
+		position: absolute;
+			top: 68px;
+		width: 100%;
+		z-index: 35;
+
+		@include breakpoint( "<480px" ) {
+			top: 59px;
+		}
+
+		.gridicon__follow {
+			fill: lighten( $gray, 20% );
+		}
+
+		.follow-button {
+			cursor: default;
+			color: lighten( $gray, 20% );
+		}
+
+		&.is-valid {
+			.gridicon__follow {
+				fill: $blue-medium;
+			}
+
+			.follow-button {
+				cursor: pointer;
+			}
+
+			.follow-button__label {
+				color: $blue-medium;
+			}
+
+			.following-edit__list-title {
+				margin-top: 8px;
+				margin-bottom: 11px;
+			}
+		}
+	}
+}
+
+
+// Search Followed Sites
+.following-edit .search-card {
+	margin-bottom: 1px;
+}
+
+
+// Search Results Placeholder
+.following-edit__subscribe-form-blank {
+	position: absolute;
+		top: 68px;
+	width: 100%;
+	height: 75px;
+	box-sizing: border-box;
+	padding: 26px 32px 0 32px;
+	text-align: center;
+	color: darken( $gray, 10 );
+	background: lighten( $gray, 30 );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20 ), .5 );
+
+	@include breakpoint( "<480px" ) {
+		padding: 16px 42px 0 42px;
+		top: 59px;
+	}
+}
+
+
+// Followed Sites and Search Transitions
+.following-edit__sites,
+.following-edit .search-card {
+	transition: all 0.2s ease-in-out;
+}
+
+.is-adding .following-edit__sites,
+.following-edit.is-adding .search-card {
+	opacity: 0.3;
+	transform: translateY( 85px );
+	pointer-events: none;
+}
+
+
+// Followed Site Cards
 .following-edit .reader-list-item__card {
 
 	&.is-placeholder {
@@ -72,87 +273,7 @@
 		top: 14px;
 		left: 40px;
 	}
-
-	&.is-search-result {
-		.gridicon__follow {
-			fill: lighten( $gray, 20% );
-		}
-
-		.follow-button {
-			cursor: default;
-			color: lighten( $gray, 20% );
-		}
-
-		&.is-valid {
-			.gridicon__follow {
-				fill: #12b0df;
-			}
-
-			.follow-button {
-				cursor: pointer;
-			}
-
-			.follow-button__label {
-				color: #12b0df;
-			}
-
-			.following-edit__list-title {
-				margin-top: 8px;
-				margin-bottom: 11px;
-			}
-		}
-
-		.reader-list-item__icon .noticon {
-			display: block;
-		}
-
-		border-radius: 5px;
-		box-shadow: 0 0 0 2px #78dcfa;
-		position: absolute;
-		width: 100%;
-		top: 44px;
-		border: 1px solid #0087be;
-		z-index: z-index( '.following-edit', '.following-edit .reader-list-item__card.is-search-result' );
-	}
 }
-
-.following-edit__subscribe-form {
-	.search {
-		margin-bottom: 0;
-	}
-
-	.search__input[type="search"] {
-		height: 38px;
-		padding-left: 33px;
-		border: 1px solid #c8d7e1;
-
-		&:focus {
-			border-color: #0087be;
-			box-shadow: 0 0 0 2px #78dcfa;
-		}
-	}
-
-	position: relative;
-
-	.search-open__icon {
-		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-		top: 7px;
-		left: 6px;
-		fill: #12b0df;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
-	}
-
-	.search-close__icon {
-		top: 20px;
-		right: -8px;
-		color: $gray;
-	}
-}
-
 
 .following-edit-navigation {
 	min-height: 25px;
@@ -239,45 +360,6 @@
 	margin-top: 12px;
 }
 
-.following-edit__existing-feed-search {
-	margin-bottom: 0;
-	margin-left: -1px;
-
-	.search__input[type="search"] {
-		box-shadow: inset 0 0 0 1px lighten( $gray, 20% );
-	}
-
-	.noticon-close-alt {
-		right: 191px;
-	}
-}
-
-.following-edit-sort-controls {
-	position: absolute;
-		right: -1px;
-	z-index: z-index( '.following-edit', '.following-edit-sort-controls' );
-	background-color: $gray-light;
-	padding: 13px 8px 0 16px;
-	box-shadow: inset 0px 0px 0px 1px lighten( $gray, 20% );
-	min-height: 51px;
-	box-sizing: border-box;
-
-	label {
-		vertical-align: middle;
-		color: $gray;
-		display: inline-block;
-		font-size: 13px;
-		font-weight: 600;
-		margin-top: -1px;
-		margin-right: 6px;
-	}
-
-	select {
-		vertical-align: middle;
-		min-width: 100px;
-		display: inline;
-	}
-}
 
 @include breakpoint( ">660px" ) {
 	.following-edit {
