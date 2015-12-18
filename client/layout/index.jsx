@@ -120,10 +120,7 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		return {
-			isLoading: state.ui.isLoading,
-			section: state.ui.section,
-			hasSidebar: state.ui.hasSidebar
-		};
+		const { isLoading, section, hasSidebar } = state.ui;
+		return { isLoading, section, hasSidebar };
 	}
 )( Layout );

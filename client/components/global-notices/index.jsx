@@ -103,8 +103,8 @@ const NoticesList = React.createClass( {
 				);
 			}, this );
 
-		//This is an interrim solution for displaying both notices from redux stroe
-		//and from the old component. When all notices will be moved to redux store, this components
+		//This is an interim solution for displaying both notices from redux store
+		//and from the old component. When all notices are moved to redux store, this component
 		//needs to be updated.
 		noticesList = noticesList.concat( this.props.storeNotices.map( function( notice, index ) {
 			return (
