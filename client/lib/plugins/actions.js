@@ -403,6 +403,9 @@ PluginsActions = {
 	},
 
 	enableAutoUpdatesPlugin: function( site, plugin ) {
+		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+			return;
+		}
 		Dispatcher.handleViewAction( {
 			type: 'ENABLE_AUTOUPDATE_PLUGIN',
 			action: 'ENABLE_AUTOUPDATE_PLUGIN',
@@ -428,6 +431,9 @@ PluginsActions = {
 	},
 
 	disableAutoUpdatesPlugin: function( site, plugin ) {
+		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+			return;
+		}
 		Dispatcher.handleViewAction( {
 			type: 'DISABLE_AUTOUPDATE_PLUGIN',
 			action: 'DISABLE_AUTOUPDATE_PLUGIN',

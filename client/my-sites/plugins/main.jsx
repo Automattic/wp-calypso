@@ -541,6 +541,12 @@ export default React.createClass( {
 			.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
 	},
 
+	canAutoupdatePlugins() {
+		return this.state.plugins
+			.filter( plugin => plugin.selected )
+			.some( plugin => plugin.sites.some( site => site.canAutoupdateFiles ) );
+	},
+
 	hasJetpackSelectedSites() {
 		const selectedSite = this.props.sites.getSelectedSite();
 		if ( selectedSite ) {
@@ -589,8 +595,8 @@ export default React.createClass( {
 			leftSideButtons.push( <ButtonGroup key="plugins__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
 			if ( this.hasJetpackSelectedSites() && ! isWpCom ) {
-				updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
-				updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
+				updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canAutoupdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
+				updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canAutoupdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
 
 				leftSideButtons.push( <ButtonGroup key="plugins__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
 				leftSideButtons.push( <ButtonGroup key="plugins__buttons-remove-button"><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
