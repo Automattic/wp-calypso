@@ -69,6 +69,12 @@
 			background-color: $alert-red;
 		}
 	}
+
+	&.is-in-grace-period {
+		.progress-bar__progress {
+			background-color: $alert-yellow;
+		}
+	}
 }
 
 .plan-status__progress-bar,
