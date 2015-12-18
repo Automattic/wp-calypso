@@ -15,7 +15,8 @@ var FormButton = require( 'components/forms/form-button' ),
 	Notice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'analytics' ),
-	constants = require( 'me/constants' );
+	constants = require( 'me/constants' ),
+	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
 
 module.exports = React.createClass( {
 
@@ -230,51 +231,52 @@ module.exports = React.createClass( {
 					}
 					{ this.possiblyRenderError() }
 				</FormFieldset>
+				<FormButtonsBar className="security-2fa-code-prompt__buttons-bar">
+					<FormButton
+						className="security-2fa-code-prompt__verify-code"
+						disabled={ this.getFormDisabled() }
+						onClick={ function() {
+							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
+						} }
+					>
+						{ this.getSubmitButtonLabel() }
+					</FormButton>
 
-				<FormButton
-					className="security-2fa-code-prompt__verify-code"
-					disabled={ this.getFormDisabled() }
-					onClick={ function() {
-						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
-					} }
-				>
-					{ this.getSubmitButtonLabel() }
-				</FormButton>
+					{
+						this.props.showSMSButton
+						? (
+							<FormButton
+								className="security-2fa-code-prompt__send-code"
+								disabled={ ! this.state.codeRequestsAllowed }
+								isPrimary={ false }
+								onClick={ function( event ) {
+									analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
+									this.onRequestCode( event );
+								}.bind( this ) }
+							>
+								{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
+							</FormButton>
+						)
+						: null
+					}
 
-				{
-					this.props.showSMSButton
-					? (
-						<FormButton
-							className="security-2fa-code-prompt__send-code"
-							disabled={ ! this.state.codeRequestsAllowed }
-							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
-								this.onRequestCode( event );
-							}.bind( this ) }
-						>
-							{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
-						</FormButton>
-					)
-					: null
-				}
-
-				{
-					this.props.showCancelButton
-					? (
-						<FormButton
-							className="security-2fa-code-prompt__cancel"
-							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
-								this.onCancel( event );
-							}.bind( this ) }
-						>
-							{ this.translate( 'Cancel' ) }
-						</FormButton>
-					)
-					: null
-				}
+					{
+						this.props.showCancelButton
+						? (
+							<FormButton
+								className="security-2fa-code-prompt__cancel"
+								isPrimary={ false }
+								onClick={ function( event ) {
+									analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
+									this.onCancel( event );
+								}.bind( this ) }
+							>
+								{ this.translate( 'Cancel' ) }
+							</FormButton>
+						)
+						: null
+					}
+				</FormButtonsBar>
 			</form>
 		);
 	}
