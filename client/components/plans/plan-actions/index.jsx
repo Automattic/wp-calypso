@@ -27,7 +27,11 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isInSignup ) {
-			return config.isEnabled( 'upgrades/free-trials' ) ? this.freeTrialActions() : this.upgradeActions();
+			if ( this.props.flowName === 'free-trial' && config.isEnabled( 'upgrades/free-trials' ) ) {
+				return this.freeTrialActions();
+			}
+
+			return this.upgradeActions();
 		}
 
 		if ( this.siteHasThisPlan() ) {

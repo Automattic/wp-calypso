@@ -86,6 +86,7 @@ module.exports = React.createClass( {
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
+					flowName={ this.props.flowName }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
 				<a
