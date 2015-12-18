@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	get = require( 'lodash/object/get' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -43,18 +44,36 @@ module.exports = React.createClass( {
 	},
 
 	getEligibleServices: function() {
-		// Currently, we only filter services by Jetpack support. If the site
-		// isn't a Jetpack site, we can be assured all services are supported.
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return this.props.services;
+		const { site, services } = this.props;
+
+		if ( ! site ) {
+			return services;
 		}
 
-		return this.props.services.filter( function( service ) {
-			// Omit the service if it doesn't support Jetpack or if the
-			// required Jetpack module is not currently active
-			return service.jetpack_support && ( ! service.jetpack_module_required ||
-				this.props.site.isModuleActive( service.jetpack_module_required ) );
-		}, this );
+		return services.filter( function( service ) {
+			// Omit if the site is Jetpack and service doesn't support Jetpack
+			if ( site.jetpack && ! service.jetpack_support ) {
+				return false;
+			}
+
+			// Omit if Jetpack module not activated
+			if ( site.jetpack && service.jetpack_module_required &&
+					! site.isModuleActive( service.jetpack_module_required ) ) {
+				return false;
+			}
+
+			// Omit if service is settings-oriented and user cannot manage
+			if ( 'eventbrite' === service.name && ! site.user_can_manage ) {
+				return false;
+			}
+
+			// Omit if Publicize service and user cannot publish
+			if ( 'publicize' === service.type && ! get( site, 'capabilities.publish_posts' ) ) {
+				return false;
+			}
+
+			return true;
+		} );
 	},
 
 	renderService: function( service ) {
