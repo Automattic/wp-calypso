@@ -52,6 +52,8 @@
 		// Teach eslint about React+JSX
 		"react/jsx-uses-react": 1,
 		"react/jsx-uses-vars": 1,
+		"react/jsx-no-undef": 1,
+		"react/react-in-jsx-scope": 1,
 		// Allows function use before declaration
 		"no-use-before-define": [ 2, "nofunc" ],
 		// We split external, internal, module variables
