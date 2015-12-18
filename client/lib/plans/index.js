@@ -3,6 +3,16 @@
  */
 import moment from 'moment';
 
+export function getCurrentTrialPeriodInDays( plan ) {
+	const { expiryMoment, subscribedMoment, userFacingExpiryMoment } = plan;
+
+	if ( isInGracePeriod( plan ) ) {
+		return expiryMoment.diff( userFacingExpiryMoment, 'days' );
+	}
+
+	return userFacingExpiryMoment.diff( subscribedMoment, 'days' );
+}
+
 export function getDaysUntilUserFacingExpiry( plan ) {
 	const { userFacingExpiryMoment } = plan;
 

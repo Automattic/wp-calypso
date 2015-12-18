@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import { getDaysUntilExpiry, getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
+import { getCurrentTrialPeriodInDays, getDaysUntilExpiry, getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 
 const PlanStatusProgress = React.createClass( {
@@ -17,10 +17,12 @@ const PlanStatusProgress = React.createClass( {
 	},
 
 	renderProgressBar() {
-		const { plan, plan: { subscribedMoment, userFacingExpiryMoment } } = this.props,
+		const { plan } = this.props,
 			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
-			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedMoment, 'days' ),
-			timeUntilExpiryInDays = getDaysUntilUserFacingExpiry( plan ),
+			trialPeriodInDays = getCurrentTrialPeriodInDays( plan ),
+			timeUntilExpiryInDays = isInGracePeriod( plan )
+				? getDaysUntilExpiry( plan )
+				: getDaysUntilUserFacingExpiry( plan ),
 			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (
