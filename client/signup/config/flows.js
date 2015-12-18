@@ -152,6 +152,13 @@ const flows = {
 	'jetpack': {
 		steps: [ 'jetpack-user' ],
 		destination: '/'
+	},
+
+	'free-trial': {
+		steps: [ 'themes', 'site', 'plans', 'user' ],
+		destination: getCheckoutDestination,
+		description: 'Signup flow for free trials',
+		lastModified: '2015-12-18'
 	}
 };
 
