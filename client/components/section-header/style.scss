@@ -28,6 +28,8 @@
 
 .section-header__actions {
 	flex-grow: 0;
+	position: relative;
+
 	@include clear-fix;
 }
 
