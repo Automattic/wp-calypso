@@ -4,8 +4,6 @@ import times from 'lodash/utility/times';
 import debugModule from 'debug';
 
 // Internal dependencies
-import Main from 'components/main';
-import Navigation from 'reader/list-management/navigation';
 import InfiniteList from 'components/infinite-list';
 import ListItem from 'reader/list-item';
 import Icon from 'reader/list-item/icon';
@@ -14,8 +12,6 @@ import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 import Gridicon from 'components/gridicon';
 import ListStore from 'lib/reader-lists/lists';
-import ReaderListsStore from 'lib/reader-lists/subscriptions';
-import ReaderListsActions from 'lib/reader-lists/actions';
 import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 import { fetchMoreTags } from 'lib/reader-lists-tags/actions';
 import smartSetState from 'lib/react-smart-set-state';
@@ -40,13 +36,8 @@ const ListManagementTags = React.createClass( {
 	},
 
 	getStateFromStores() {
-		// Grab the list ID from the list store
-		const list = ListStore.get( this.props.list.owner, this.props.list.slug );
-		if ( ! list && ! ReaderListsStore.isFetching() ) {
-			ReaderListsActions.fetchList( this.props.list.owner, this.props.list.slug );
-		}
-
 		// Fetch tags, but only if we have the list information
+		const list = this.props.list;
 		let tags = null;
 		let isLastPage = false;
 		let currentPage = 0;
@@ -57,7 +48,6 @@ const ListManagementTags = React.createClass( {
 		}
 
 		return {
-			list,
 			tags,
 			isLastPage,
 			currentPage,
@@ -158,22 +148,21 @@ const ListManagementTags = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.state.list && this.state.lastListError ) {
+		if ( ! this.props.list && this.state.lastListError ) {
 			return ( <ListManagementError /> );
 		}
 
 		let message = null;
-		if ( ! this.state.list ) {
+		if ( ! this.props.list ) {
 			message = ( <p> {this.translate( 'Loading list information…' ) } </p> );
 		}
 
 		return (
-			<Main className="list-management-tags">
-				<Navigation selected="tags" list={ this.props.list } />
+			<div>
 				{ message }
 				{ this.renderTagList() }
-			</Main>
-			);
+			</div>
+		);
 	}
 } );
 
