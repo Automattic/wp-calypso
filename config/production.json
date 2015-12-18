@@ -66,6 +66,7 @@
 		"olark": true,
 		"olark_use_wpcom_configuration": false,
 		"community-translator": true,
+		"devdocs": true,
 		"reader": true,
 		"reader/teams": true,
 		"reader/lists": true,
