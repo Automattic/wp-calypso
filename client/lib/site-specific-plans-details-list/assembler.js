@@ -7,7 +7,7 @@ function createSiteSpecificPlanObject( plan ) {
 	return {
 		currentPlan: Boolean( plan.current_plan ),
 		expiry: plan.expiry,
-		expiryMoment: moment( plan.expiry ),
+		expiryMoment: moment( plan.expiry ).startOf( 'day' ),
 		formattedDiscount: plan.formatted_discount,
 		formattedPrice: plan.formatted_price,
 		freeTrial: Boolean( plan.free_trial ),
@@ -17,10 +17,9 @@ function createSiteSpecificPlanObject( plan ) {
 		rawDiscount: plan.raw_discount,
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,
-		subscribedMoment: moment( plan.subscribed_date ),
+		subscribedMoment: moment( plan.subscribed_date ).startOf( 'day' ),
 		userFacingExpiry: plan.user_facing_expiry,
-		// we add a day to the user facing expiry so that it isn't expired on the last day
-		userFacingExpiryMoment: moment( plan.user_facing_expiry ).add( { day: 1 } )
+		userFacingExpiryMoment: moment( plan.user_facing_expiry ).startOf( 'day' )
 	}
 }
 

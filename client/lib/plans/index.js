@@ -6,13 +6,13 @@ import moment from 'moment';
 export function getDaysUntilUserFacingExpiry( plan ) {
 	const { userFacingExpiryMoment } = plan;
 
-	return userFacingExpiryMoment.diff( moment(), 'days' );
+	return userFacingExpiryMoment.diff( moment().startOf( 'day' ), 'days' );
 };
 
 export function getDaysUntilExpiry( plan ) {
 	const { expiryMoment } = plan;
 
-	return expiryMoment.diff( moment(), 'days' );
+	return expiryMoment.diff( moment().startOf( 'day' ), 'days' );
 };
 
 export function isInGracePeriod( plan ) {
