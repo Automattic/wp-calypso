@@ -6,15 +6,17 @@ var assert = require( 'chai' ).assert,
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' );
 
-var MockMoreButton = React.createClass( {
-	render: function() {
-		return <div/>;
-	}
-} );
+function mockComponent( displayName ) {
+	return React.createClass( {
+		displayName,
+		render: () => { return <div/> }
+	} );
+};
 
 describe( 'ThemesList', function() {
 	before( function() {
-		mockery.registerMock( './more-button', MockMoreButton);
+		mockery.registerMock( './more-button', mockComponent() );
+		mockery.registerMock( 'components/infinite-list', mockComponent( 'InfiniteList' ) );
 
 		mockery.enable( {
 			warnOnReplace: false,
