@@ -64,41 +64,32 @@ export default {
 		}
 	},
 
-	getSiteFileModDisableReason( site ) {
+	getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 		if ( ! site || ! site.options || ! site.options.file_mod_disabled ) {
 			return;
 		}
-		let reasons = [];
-		for ( let clue of site.options.file_mod_disabled ) {
-			switch ( clue ) {
-				case 'is_version_controlled':
-					reasons.push(
-						i18n.translate( 'This site\'s files are under version control.' )
-					);
-					break;
-				case 'has_no_file_system_write_access':
-					reasons.push(
-						i18n.translate( 'The file permissions on this host prevent editing files.' )
-					);
-					break;
-				case 'automatic_updater_disabled':
-					reasons.push(
-						i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' )
-					);
-					break;
-				case 'wp_auto_update_core_disabled':
-					reasons.push(
-						i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' )
-					);
-					break
-				case 'disallow_file_mods':
-					reasons.push(
-						i18n.translate( 'File modifications are explicitly disabled by a site administrator.' )
-					);
-					break;
+
+		return site.options.file_mod_disabled.map( ( clue ) => {
+			if ( action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore' ) {
+				if ( clue === 'has_no_file_system_write_access' ) {
+					return i18n.translate( 'The file permissions on this host prevent editing files.' );
+				}
+				if ( clue === 'disallow_file_mods' ) {
+					return i18n.translate( 'File modifications are explicitly disabled by a site administrator.' );
+				}
 			}
-		}
-		return reasons;
+
+			if ( ( action === 'autoupdateFiles' || action === 'autoupdateCore' ) &&
+				clue === 'automatic_updater_disabled' ) {
+				return i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
+			}
+
+			if ( action === 'autoupdateCore' &&
+				clue === 'wp_auto_update_core_disabled' ) {
+				return i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' );
+			}
+			return null;
+		} ).filter( reason => reason );
 	},
 
 	canUpdateFiles( site ) {
@@ -113,14 +104,42 @@ export default {
 			return false;
 		}
 
-		if ( site.options.is_multi_network ) {
+		const options = site.options;
+
+		if ( options.is_multi_network ) {
 			return false;
 		}
 
-		if ( site.options.file_mod_disabled ) {
+		if ( options.file_mod_disabled &&
+			( -1 < options.file_mod_disabled.indexOf( 'disallow_file_mods' ) ||
+			-1 < options.file_mod_disabled.indexOf( 'has_no_file_system_write_access' ) ) ) {
 			return false;
 		}
 
+		return true;
+	},
+
+	canAutoupdateFiles( site ) {
+		if ( ! this.canUpdateFiles( site ) ) {
+			return false;
+		}
+
+		if ( site.options.file_mod_disabled &&
+			-1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' ) ) {
+			return false;
+		}
+		return true;
+	},
+
+	canAutoupdateCore( site ) {
+		if ( ! this.canAutoupdateFiles( site ) ) {
+			return false;
+		}
+
+		if ( site.options.file_mod_disabled &&
+			-1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' ) ) {
+			return false;
+		}
 		return true;
 	},
 

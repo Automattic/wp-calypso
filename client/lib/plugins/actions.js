@@ -82,7 +82,7 @@ function recordEvent( eventType, plugin, site, error ) {
 }
 
 function processAutoupdates( site, plugins ) {
-	if ( site.canUpdateFiles && site.jetpack && site.canManage() && site.user_can_manage ) {
+	if ( site.canAutoupdateFiles && site.jetpack && site.canManage() && site.user_can_manage ) {
 		plugins.forEach( function( plugin ) {
 			if ( plugin.update && plugin.autoupdate ) {
 				autoupdatePlugin( site, plugin );
@@ -390,6 +390,10 @@ PluginsActions = {
 	},
 
 	togglePluginActivation: function( site, plugin ) {
+		if ( ! site.user_can_manage ) {
+			return;
+		}
+
 		debug( 'togglePluginActivation', site, plugin );
 		if ( ! plugin.active ) {
 			PluginsActions.activatePlugin( site, plugin );
@@ -399,6 +403,9 @@ PluginsActions = {
 	},
 
 	enableAutoUpdatesPlugin: function( site, plugin ) {
+		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+			return;
+		}
 		Dispatcher.handleViewAction( {
 			type: 'ENABLE_AUTOUPDATE_PLUGIN',
 			action: 'ENABLE_AUTOUPDATE_PLUGIN',
@@ -424,6 +431,9 @@ PluginsActions = {
 	},
 
 	disableAutoUpdatesPlugin: function( site, plugin ) {
+		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+			return;
+		}
 		Dispatcher.handleViewAction( {
 			type: 'DISABLE_AUTOUPDATE_PLUGIN',
 			action: 'DISABLE_AUTOUPDATE_PLUGIN',
@@ -446,6 +456,9 @@ PluginsActions = {
 	},
 
 	togglePluginAutoUpdate: function( site, plugin ) {
+		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+			return;
+		}
 		if ( ! plugin.autoupdate ) {
 			PluginsActions.enableAutoUpdatesPlugin( site, plugin );
 		} else {

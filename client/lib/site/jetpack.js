@@ -36,6 +36,7 @@ JetpackSite.prototype.updateComputedAttributes = function() {
 	// is_multi_network checks to see that a site is not part of a multi network
 	// Since there is no primary network we disable updates for that case
 	this.canUpdateFiles = SiteUtils.canUpdateFiles( this );
+	this.canAutoupdateFiles = SiteUtils.canAutoupdateFiles( this );
 	this.hasJetpackMenus = versionCompare( this.options.jetpack_version, '3.5-alpha' ) >= 0;
 	this.hasJetpackThemes = versionCompare( this.options.jetpack_version, '3.7-beta' ) >= 0;
 };
