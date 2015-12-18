@@ -390,7 +390,7 @@ PluginsActions = {
 	},
 
 	togglePluginActivation: function( site, plugin ) {
-		if ( ! site.canAutoupdateFiles || ! site.user_can_manage ) {
+		if ( ! site.user_can_manage ) {
 			return;
 		}
 
@@ -450,6 +450,9 @@ PluginsActions = {
 	},
 
 	togglePluginAutoUpdate: function( site, plugin ) {
+		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+			return;
+		}
 		if ( ! plugin.autoupdate ) {
 			PluginsActions.enableAutoUpdatesPlugin( site, plugin );
 		} else {
