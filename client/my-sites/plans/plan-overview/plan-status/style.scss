@@ -24,6 +24,7 @@
 	background-repeat: no-repeat;
 	height: 50px;
 	min-width: 50px;
+	position: relative;
 
 	&.is-premium {
 		background-image: url( '/calypso/images/plans/plan-trial-premium.svg' );
@@ -35,6 +36,13 @@
 
 	@include breakpoint( "<480px" ) {
 		display: none;
+	}
+
+	.gridicon {
+		fill: $alert-red;
+		position: absolute;
+			bottom: -7px;
+			right: -7px;
 	}
 }
 
