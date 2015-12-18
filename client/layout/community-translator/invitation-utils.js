@@ -20,6 +20,7 @@ var translator = require( 'lib/translator-jumpstart' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	preferencesStore = require( 'lib/preferences/store' ),
 	preferencesActions = require( 'lib/preferences/actions' ),
+	notices = require( 'notices' ),
 	abModule = require( 'lib/abtest' ),
 	tracks = require( 'analytics' ).tracks;
 
