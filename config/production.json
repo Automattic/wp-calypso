@@ -12,6 +12,7 @@
 	"features": {
 		"code-splitting": true,
 		"manage/ads": true,
+		"manage/ads/jetpack": true,
 		"manage/customize": true,
 		"manage/jetpack": true,
 		"manage/menus": true,
