@@ -130,8 +130,8 @@ export default {
 		}
 
 		if ( options.file_mod_disabled
-			&& ( options.file_mod_disabled.includes( 'disallow_file_mods' )
-				|| options.file_mod_disabled.includes( 'has_no_file_system_write_access' ) )
+			&& ( -1 < options.file_mod_disabled.indexOf( 'disallow_file_mods' )
+				|| -1 < options.file_mod_disabled.indexOf( 'has_no_file_system_write_access' ) )
 		) {
 			return false;
 		}
@@ -145,7 +145,7 @@ export default {
 		}
 
 		if ( site.options.file_mod_disabled
-			&& site.options.file_mod_disabled.includes( 'automatic_updater_disabled' ) ) {
+			&& -1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' ) ) {
 			return false;
 		}
 		return true;
@@ -157,7 +157,7 @@ export default {
 		}
 
 		if ( site.options.file_mod_disabled
-			&& site.options.file_mod_disabled.includes( 'automatic_updater_disabled' ) ) {
+			&& -1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' ) ) {
 			return false;
 		}
 		return true;
