@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react/addons'
-import i18n from 'lib/mixins/i18n'
+import React from 'react';
+import i18n from 'lib/mixins/i18n';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card'
-import Gridicon from 'components/gridicon'
-import Rating from 'components/rating'
-import PluginVersion from 'my-sites/plugins/plugin-version'
-import PluginRatings from 'my-sites/plugins/plugin-ratings/'
-import SectionHeader from 'components/section-header'
-import analytics from 'analytics'
+
+import ExternalLink from 'components/external-link';
+import Gridicon from 'components/gridicon';
+import Version from 'components/version';
+import PluginRatings from 'my-sites/plugins/plugin-ratings/';
+import versionCompare from 'lib/version-compare';
+import analytics from 'analytics';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
@@ -44,16 +45,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
-				<a
-					className="plugin-information__external-link"
-					target="_blank"
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
-					href={ this.props.plugin.plugin_url }
-				>
-					<Gridicon size={ 12 } icon="external" />{ this.translate( 'Plugin homepage' ) }
-				</a>
-			</div>
+			<ExternalLink
+				icon={ true }
+				href={ this.props.plugin.plugin_url }
+				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
+				className="plugin-information__external-link"
+			>
+				{ this.translate( 'Plugin homepage' ) }
+			</ExternalLink>
 		);
 	},
 
@@ -62,16 +61,14 @@ export default React.createClass( {
 			return;
 		}
 		return (
-			<div>
-				<a
-					className="plugin-information__external-link"
-					target="_blank"
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug ) }
-					href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
-				>
-					<Gridicon size={ 12 } icon="external" />{ this.translate( 'WordPress.org Plugin page' ) }
-				</a>
-			</div>
+			<ExternalLink
+				icon={ true }
+				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
+				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug ) }
+				className="plugin-information__external-link"
+			>
+				{ this.translate( 'WordPress.org Plugin page' ) }
+			</ExternalLink>
 		);
 	},
 
@@ -81,52 +78,69 @@ export default React.createClass( {
 		}
 
 		return (
-			<a
-				className="plugin-information__external-link"
-				target="_blank"
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
+			<ExternalLink
+				icon={ true }
 				href={ this.props.plugin.support_URL }
+				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
+				className="plugin-information__external-link"
 			>
-				<Gridicon size={ 12 } icon="external" />{ this.translate( 'Learn More' ) }
-			</a>
-		);
-	},
-
-	renderStarRating() {
-		return (
-			<div>
-				<div className="plugin-information__rating-stars"><Rating rating={ this.props.plugin.rating } /></div>
-				<div className="plugin-information__rating-text">
-					{ this.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
-						count: this.props.plugin.num_ratings,
-						args: { ratingsNumber: this.props.plugin.num_ratings }
-					} ) }
-				</div>
-			</div>
+				{ this.translate( 'Learn More' ) }
+			</ExternalLink>
 		);
 	},
 
 	renderLastUpdated() {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
-			let dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
-			return <div className="plugin-information__last-updated">{ this.translate( 'Latest release %(dateFromNow)s', { args: { dateFromNow: dateFromNow } } ) }</div>;
+			const dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
+			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
+
+			return <div className="plugin-information__last-updated">
+				{ this.translate( 'Released %(dateFromNow)s', { args: { dateFromNow } } ) }
+				{ syncIcon }
+			</div>;
 		}
+	},
+
+	renderSiteVersion() {
+		return this.props.siteVersion
+			? <Version version={ this.props.siteVersion } icon="my-sites" className="plugin-information__version" />
+			: null;
 	},
 
 	renderLimits() {
 		const limits = this.getCompatibilityLimits();
-		let versionView;
+		let versionView = null;
+		let versionCheck = null;
 
+		if ( this.props.siteVersion && limits.maxVersion ) {
+			if ( versionCompare( this.props.siteVersion, limits.maxVersion, '<=' ) ) {
+				versionCheck = <Gridicon icon="checkmark" size={ 18 } />;
+			} else {
+				versionCheck = <Gridicon icon="cross-small" size={ 18 } />;
+			}
+		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion !== limits.maxVersion ) {
-			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( 'Compatible with WordPress version %(minVersion)s to %(maxVersion)s',
-					{ args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion } }
+			versionView = <div className="plugin-information__version-limit" >
+				{ this.translate( '{{wpIcon/}}  Compatible with %(minVersion)s to {{span}} %(maxVersion)s {{versionCheck/}}{{/span}}',
+					{
+						args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
+						components: {
+							wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+							span: <span className="plugin-information__version-limit-state" />,
+							versionCheck
+						}
+					}
 				) }
 			</div>;
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion === limits.maxVersion ) {
 			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( 'Compatible with WordPress version %(maxVersion)s', { args: { maxVersion: limits.maxVersion } } ) }
+				{ this.translate( '{{icon/}} Compatible with %(maxVersion)s',
+					{
+						args: { maxVersion: limits.maxVersion },
+						components: { wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } /> }
+					}
+				) }
 			</div>;
 		}
 		return (
@@ -134,10 +148,6 @@ export default React.createClass( {
 				{ versionView }
 			</div>
 		);
-	},
-
-	renderRatingsDetail() {
-		return <PluginRatings plugin={ this.props.plugin } />;
 	},
 
 	getCompatibilityLimits() {
@@ -153,24 +163,33 @@ export default React.createClass( {
 	renderPlaceholder() {
 		return (
 			<div className="plugin-information is-placeholder">
-				<SectionHeader text={ this.translate( 'Plugin Information' ) } />
-				<Card>
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
-							{ this.renderLastUpdated() }
-							<PluginVersion plugin={ this.props.plugin } />
-							{ this.renderLimits() }
-						</div>
-						<div className="plugin-information__rating-info">
-							{ this.renderStarRating() }
-							{ this.renderRatingsDetail() }
+							<div className="plugin-information__version-shell">
+								{ this.props.pluginVersion
+									? <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
+									: null
+								}
+								{ this.renderLastUpdated() }
+							</div>
+							<div className="plugin-information__version-shell">
+								{ this.renderSiteVersion() }
+								{ this.renderLimits() }
+							</div>
 						</div>
 						<div className="plugin-information__links">
 							{ this.renderWporgLink() }
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
-				</Card>
+					<PluginRatings
+						rating={ this.props.plugin.rating }
+						ratings={ this.props.plugin.ratings }
+						downloaded={ this.props.plugin.downloaded }
+						numRatings={ this.props.plugin.num_ratings }
+						slug={ this.props.plugin.slug }
+						placeholder={ true }
+					/>
 			</div>
 		);
 	},
@@ -178,38 +197,46 @@ export default React.createClass( {
 	renderWpcom() {
 		return (
 			<div className="plugin-information">
-				<SectionHeader label={ this.translate( 'Plugin Information' ) } />
-				<Card>
-					<p className="plugin-information__description">
-						{ this.props.plugin.description }
-					</p>
+				<p className="plugin-information__description">
+					{ this.props.plugin.description }
+				</p>
+				<div className="plugin-information__links">
 					{ this.renderWPCOMPluginSupportLink() }
-				</Card>
-			</div>
+				</div>
+		</div>
 		);
 	},
 
 	renderWporg() {
+		const classes = classNames( {
+			'plugin-information__version-info': true,
+			'is-singlesite': !! this.props.siteVersion
+		} );
 		return (
 			<div className="plugin-information">
-				<SectionHeader label={ this.translate( 'Plugin Information' ) } />
-				<Card>
 					<div className="plugin-information__wrapper">
-						<div className="plugin-information__version-info">
-							{ this.renderLastUpdated() }
-							<PluginVersion plugin={ this.props.plugin } />
-							{ this.renderLimits() }
-						</div>
-						<div className="plugin-information__rating-info">
-							{ this.renderStarRating() }
-							{ this.renderRatingsDetail() }
+						<div className={ classes }>
+							<div className="plugin-information__version-shell">
+								<Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
+								{ this.renderLastUpdated() }
+							</div>
+							<div className="plugin-information__version-shell">
+								{ this.renderSiteVersion() }
+								{ this.renderLimits() }
+							</div>
 						</div>
 						<div className="plugin-information__links">
 							{ this.renderWporgLink() }
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
-				</Card>
+					<PluginRatings
+						rating={ this.props.plugin.rating }
+						ratings={ this.props.plugin.ratings }
+						downloaded={ this.props.plugin.downloaded }
+						numRatings={ this.props.plugin.num_ratings }
+						slug={ this.props.plugin.slug }
+					/>
 			</div>
 		);
 	},
