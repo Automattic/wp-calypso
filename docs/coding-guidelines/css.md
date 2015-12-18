@@ -99,7 +99,7 @@ The structure of files will be changing as we move remaining section-specific co
 
 ## Media Queries
 
-We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins provided in `_.mixins.scss` that have default break points for `960px`, `660px`, and `480px`. Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
+We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins provided in `_.mixins.scss` that have default break points for `1040px`, `960px`, `660px`, and `480px`. Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
 
 Bad:
 ```scss
@@ -144,7 +144,7 @@ Good:
 
 The value passed to this mixin is actually a string rather than a pixel value. Accepted values are:
 
-`<480px`, `<660px`, `<960px`, `>480px`, `>660px`, `>960px`, `480px-660px`, `660px-960px`, `480px-960px`.
+`<480px`, `<660px`, `<960px`, `<1040px`, `>480px`, `>660px`, `>960px`, `>1040px`, `480px-660px`, `480px-960px`, `480px-1040px`, `660px-960px`, `660px-1040px`, `960px-1040px`.
 
 If you provide any other value to the mixin it will fail and give you a warning in the output from `make run`.
 
