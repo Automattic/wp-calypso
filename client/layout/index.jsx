@@ -6,6 +6,8 @@ var React = require( 'react' ),
 	property = require( 'lodash/utility/property' ),
 	sortBy = require( 'lodash/collection/sortBy' );
 
+import { Provider } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -99,7 +101,7 @@ module.exports = React.createClass( {
 			sectionClass += ' has-no-sidebar';
 		}
 
-		return (
+		const layout = (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<Masterbar user={ this.props.user } section={ this.state.section } sites={ this.props.sites }/>
@@ -120,6 +122,12 @@ module.exports = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 			</div>
+		);
+
+		return (
+			<Provider store={ this.props.store }>
+				{ layout }
+			</Provider>
 		);
 	}
 } );
