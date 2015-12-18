@@ -12,7 +12,7 @@ import page from 'page';
 import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import userModule from 'lib/user';
+import user from 'lib/user';
 import { fetchInvite, displayInviteDeclined } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
@@ -23,7 +23,7 @@ import { displayInviteAccepted } from 'lib/invites/actions';
  * Module variables
  */
 const debug = new Debug( 'calypso:invite-accept' );
-const user = userModule().get();
+const userModule = user();
 
 export default React.createClass( {
 
@@ -32,7 +32,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			invite: false,
-			error: false
+			error: false,
+			user: userModule.get()
 		}
 	},
 
@@ -44,11 +45,17 @@ export default React.createClass( {
 			return;
 		}
 		fetchInvite( this.props.siteId, this.props.inviteKey );
+		userModule.on( 'change', this.refreshUser );
 		InvitesStore.on( 'change', this.refreshInvite );
 	},
 
 	componentWillUnmount() {
 		InvitesStore.off( 'change', this.refreshInvite );
+		userModule.on( 'change', this.refreshUser );
+	},
+
+	refreshUser() {
+		this.setState( { user: userModule.get() } );
 	},
 
 	refreshInvite() {
@@ -105,8 +112,8 @@ export default React.createClass( {
 			return null;
 		}
 		debug( 'Rendering invite' );
-		return user
-			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ user } />
+		return this.state.user
+			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ this.state.user } />
 			: <LoggedOut { ...this.state.invite } decline={ this.decline } />;
 	},
 
