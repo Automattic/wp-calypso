@@ -22,14 +22,17 @@ const CustomNameserversRow = React.createClass( {
 
 	handleRemove( event ) {
 		event.preventDefault();
+
 		this.recordEvent( 'removeClick', this.props.selectedDomainName );
+
 		this.props.onRemove( this.props.index );
 	},
 
-	removeLabel() {
+	renderRemoveIcon() {
 		if ( ! this.props.nameserver ) {
 			return null;
 		}
+
 		return (
 			<Button borderless compact onClick={ this.handleRemove }>
 				<Gridicon icon="trash" />
@@ -40,14 +43,15 @@ const CustomNameserversRow = React.createClass( {
 	render() {
 		return (
 			<div className="custom-nameservers-row">
-					<fieldset>
-						{ this.removeLabel() }
-						<input type="text"
-							placeholder={ this.props.placeholder }
-							onChange={ this.handleChange }
-							onFocus={ this.handleFocus }
-							value={ this.props.nameserver } />
-					</fieldset>
+				<fieldset>
+					<input type="text"
+						placeholder={ this.props.placeholder }
+						onChange={ this.handleChange }
+						onFocus={ this.handleFocus }
+						value={ this.props.nameserver } />
+
+					{ this.renderRemoveIcon() }
+				</fieldset>
 			</div>
 		);
 	},
