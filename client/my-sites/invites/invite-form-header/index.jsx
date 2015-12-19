@@ -14,7 +14,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<a href={ site.domain } className="invite-header__site-link">
+			<a href={ site.URL } className="invite-header__site-link">
 				{ site.title }
 			</a>
 		);
