@@ -23,7 +23,8 @@ var MediaSerialization = require( 'lib/media-serialization' ),
  * Module variables
  */
 var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i;
+	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
+	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
 var LinkDialog = React.createClass( {
 
@@ -35,6 +36,16 @@ var LinkDialog = React.createClass( {
 		var editor = this.props.editor;
 
 		return editor.dom.getParent( editor.selection.getNode(), 'a' );
+	},
+
+	getCorrectedUrl() {
+		const url = this.state.url.trim();
+
+		if ( ! REGEXP_STANDALONE_URL.test( url ) ) {
+			return 'http://' + url;
+		}
+
+		return url;
 	},
 
 	updateEditor: function() {
@@ -55,7 +66,7 @@ var LinkDialog = React.createClass( {
 		link = this.getLink();
 		linkText = this.state.linkText;
 		attrs = {
-			href: this.state.url,
+			href: this.getCorrectedUrl(),
 			target: this.state.newWindow ? '_blank' : ''
 		};
 
