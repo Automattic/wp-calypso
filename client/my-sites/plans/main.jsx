@@ -67,6 +67,13 @@ var Plans = React.createClass( {
 		);
 	},
 
+	renderTrialCopy: function() {
+		if ( ! this.props.sitePlans.hasLoadedFromServer || ! config.isEnabled( 'upgrades/free-trials' ) ) {
+			return null;
+		}
+		return <div className="plans__trial-copy">{ this.translate( 'Try WordPress.com Premium or Business free for 14 days, no credit card required' ) }</div>;
+	},
+
 	render: function() {
 		var classNames = 'main main-column ',
 			hasJpphpBundle,
@@ -98,6 +105,8 @@ var Plans = React.createClass( {
 						path={ this.props.context.path }
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite } />
+
+					{ this.renderTrialCopy() }
 
 					<PlanList
 						sites={ this.props.sites }
