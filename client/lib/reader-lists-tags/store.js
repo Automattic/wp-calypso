@@ -17,9 +17,10 @@ const initialState = {
 	isLastPage: {},
 	isFetching: false
 };
+const defaultTagList = List();
 
 function getListTags( state, listId ) {
-	return state.get( 'tags' ).get( parseInt( listId ), List() ); // eslint-disable-line new-cap
+	return state.get( 'tags' ).get( parseInt( listId ), defaultTagList ); // eslint-disable-line new-cap
 }
 
 function receiveTags( state, data ) {
