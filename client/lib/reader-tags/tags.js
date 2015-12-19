@@ -1,4 +1,6 @@
 var forOwn = require( 'lodash/object/forOwn' );
+var has = require( 'lodash/object/has' );
+var isArray = require( 'lodash/lang/isArray' );
 
 var decodeEntities = require( 'lib/formatting' ).decodeEntities,
 	dispatcher = require( 'dispatcher' ),
@@ -18,7 +20,7 @@ function receiveTags( newTags ) {
 	forOwn( newTags, ( sub ) => {
 		sub.URL = '/tag/' + sub.slug + '/';
 		sub.title = decodeEntities( sub.title );
-		sub.slug = sub.slug.toLowerCase();
+		sub.slug = sub.slug ? sub.slug.toLowerCase() : '';
 		tags[ sub.slug ] = sub;
 	} );
 	TagStore.emit( 'change' );

@@ -73,7 +73,7 @@ var FeedStream = React.createClass( {
 
 	render: function() {
 		var tag = ReaderTags.get( this.props.tag ),
-			emptyContent = ( <EmptyContent /> );
+			emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title );

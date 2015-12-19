@@ -286,6 +286,10 @@
 	@include breakpoint( "<480px" ) {
 		margin-top: -72px;
 	}
+
+	.empty-content__illustration {
+		min-height: 100px;
+	}
 }
 
 .is-section-reader .empty-content__action {
