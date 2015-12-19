@@ -411,11 +411,13 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			body;
+			header, body;
 
-		if ( hasNoPosts ) {
+		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
+			header = null;
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
+			header = this.props.children;
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
 			className="reader__content"
@@ -438,7 +440,7 @@ module.exports = React.createClass( {
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
-				{ this.props.children }
+				{ header }
 
 				{ body }
 
