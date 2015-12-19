@@ -1796,6 +1796,13 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, fn
 	}, fn );
 };
 
+Undocumented.prototype.jsError = function( error, fn ) {
+	this.wpcom.req.post( {
+		path: '/js-error',
+		body: { error }
+	}, fn );
+};
+
 /**
  * Expose `Undocumented` module
  */
