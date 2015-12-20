@@ -1128,6 +1128,20 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 	this.wpcom.req.post( '/read/list/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/unfollow', params, fn );
 };
 
+Undocumented.prototype.readListTags = function( query, fn ) {
+	var params = omit( query, [ 'owner', 'slug' ] );
+	debug( '/read/lists/:owner/:list/tags' );
+	params.apiVersion = '1.2';
+	this.wpcom.req.get( '/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/tags', params, fn );
+};
+
+Undocumented.prototype.readListFeeds = function( query, fn ) {
+	var params = omit( query, [ 'owner', 'slug' ] );
+	debug( '/read/lists/:owner/:list/feeds' );
+	params.apiVersion = '1.2';
+	this.wpcom.req.get( '/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/feeds', params, fn );
+};
+
 Undocumented.prototype.followReaderFeed = function( query, fn ) {
 	this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
 };

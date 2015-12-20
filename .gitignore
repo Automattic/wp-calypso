@@ -6,7 +6,7 @@
 .idea
 *.iml
 *.iws
-tags
+/tags
 node_modules
 /npm-debug.log*
 *.sw?

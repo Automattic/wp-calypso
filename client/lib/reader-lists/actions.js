@@ -1,21 +1,21 @@
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' );
+	wpcom = require( 'lib/wp' ),
+	ReaderListsStore = require( 'lib/reader-lists/subscriptions' );
 
-var fetchingSubscriptions = false,
-	fetchingLists = {};
+var fetchingLists = {};
 
 var ReaderListActions = {
 
 	fetchSubscriptions: function() {
-		if ( fetchingSubscriptions ) {
+		if ( ReaderListsStore.isFetching() ) {
 			return;
 		}
 
-		fetchingSubscriptions = true;
+		ReaderListsStore.setIsFetching( true );
 
 		wpcom.undocumented().readLists( function( error, data ) {
-			fetchingSubscriptions = false;
+			ReaderListsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_READER_LISTS',
@@ -100,12 +100,14 @@ var ReaderListActions = {
 		}
 
 		fetchingLists[ key ] = true;
+		ReaderListsStore.setIsFetching( true );
 
 		wpcom.undocumented().readList( {
 			owner: owner,
 			slug: slug
 		}, function( error, data ) {
 			delete fetchingLists[ key ];
+			ReaderListsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_READER_LIST',
