@@ -117,7 +117,7 @@ function setUpContext( layout, reduxStore ) {
 				context.hash = {};
 			}
 		} else {
-			context.hash = {};
+			contextz.hash = {};
 		}
 		next();
 	} );
