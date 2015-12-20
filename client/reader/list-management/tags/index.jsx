@@ -23,6 +23,7 @@ import ListManagementError from '../error';
 import EmptyContent from 'components/empty-content';
 
 const debug = debugModule( 'calypso:reader:list-management' ); // eslint-disable-line
+const stats = require( 'reader/stats' );
 
 const ListManagementTags = React.createClass( {
 	propTypes: {
