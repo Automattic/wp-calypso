@@ -10,6 +10,5 @@ const wpcom = wpcomLib.undocumented();
 
 export default ( error ) => {
 	// POST to the API
-	alert( error );
-	wpcom.jsError( error );
+	wpcom.jsError( error + ' ' + navigator.userAgent );
 };
