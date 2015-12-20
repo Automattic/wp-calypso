@@ -93,7 +93,7 @@ module.exports = React.createClass( {
 					href={ this.comparePlansUrl() }
 					className='plans-step__compare-plans-link'
 					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
-						<Gridicon icon="clipboard" size="18" />
+						<Gridicon icon="clipboard" size={ 18 } />
 						{ this.translate( 'Compare Plans' ) }
 				</a>
 			</div>
