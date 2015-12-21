@@ -53,6 +53,10 @@ module.exports = React.createClass( {
 	},
 
 	onSelect: function( event ) {
+		if ( this.props.homeLink ) {
+			return;
+		}
+
 		this.props.onSelect( event );
 		event.preventDefault();
 	},
