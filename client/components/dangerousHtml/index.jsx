@@ -3,9 +3,15 @@ import ReactDom from 'react-dom';
 
 export default React.createClass( {
 	propTypes: {
-		tag: React.PropTypes.string.isRequired,
 		html: React.PropTypes.string.isRequired,
+		tag: React.PropTypes.string,
 		className: React.PropTypes.string,
+	},
+
+	getDefaultProps() {
+		return {
+			tag: 'div'
+		}
 	},
 
 	componentDidMount() {

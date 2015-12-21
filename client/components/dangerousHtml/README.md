@@ -16,6 +16,6 @@ to fix any invalid markup and prevents it from breaking the renderer.
 
 ## Props
 
-* `tag`: (Required) The tagname to use when creating the element (e.g.: `div`).
+* `tag`: The tagname to use when creating the element (defaults to `div`).
 * `html`: (Required) The raw HTML string to inject as a child of the tag.
 * `className`: Adds classes to the component.
