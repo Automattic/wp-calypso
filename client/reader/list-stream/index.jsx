@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	shallowEqual = require( 'shallowequal' ),
+	shallowEqual = require( 'react-pure-render/shallowEqual' ),
 	config = require( 'config' );
 
 /**

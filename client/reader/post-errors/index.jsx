@@ -1,6 +1,6 @@
 // External dependencies
 var React = require( 'react' ),
-	shallowEqual = require( 'shallowequal' ),
+	shallowEqual = require( 'react-pure-render/shallowEqual' ),
 	debug = require( 'debug' )( 'calypso:reader:post-options-error' ); //eslint-disable-line no-unused-vars
 
 // Internal dependencies
