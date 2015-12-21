@@ -171,14 +171,6 @@ export default React.createClass( {
 		return this.state.plugins.filter( this.filterSelection.selected );
 	},
 
-	areSelected( filterSelection ) {
-		const selectedFilter = filterSelection ? filterSelection : 'selected';
-		if ( ! this.state.plugins ) {
-			return false;
-		}
-		return this.state.plugins.some( this.filterSelection[ selectedFilter ] );
-	},
-
 	recordEvent( eventAction, includeSelectedPlugins ) {
 		eventAction += ( this.props.site ? '' : ' on Multisite' );
 
@@ -188,10 +180,6 @@ export default React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Plugins', eventAction );
 		}
-	},
-
-	changeSelectionOptionsState() {
-		this.setState( { selectionOptionsOpen: ! this.state.selectionOptionsOpen } );
 	},
 
 	matchSearchTerms( search, plugin ) {
@@ -223,16 +211,6 @@ export default React.createClass( {
 	togglePluginSelection( plugin ) {
 		PluginsActions.togglePluginSelection( plugin );
 		analytics.ga.recordEvent( 'Plugins', 'Clicked to ' + plugin.selected ? 'Deselect' : 'Select' + 'Single Plugin', 'Plugin Name', plugin.slug );
-	},
-
-	unselectOrSelectAll() {
-		if ( this.areSelected() ) {
-			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'none' );
-			this.recordEvent( 'Clicked to Uncheck All Plugins' );
-			return;
-		}
-		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'all' );
-		this.recordEvent( 'Clicked to Check All Plugins' );
 	},
 
 	doActionOverSelected( actionName, action ) {
@@ -446,12 +424,10 @@ export default React.createClass( {
 			<span key={ 'plugins__header-' + slug }>
 				<PluginsListHeader label={ header }
 					isWpCom={ isWpCom }
-					bulkManagement={ this.state.bulkManagement }
+					isBulkManagementActive={ this.state.bulkManagement }
 					sites={ this.props.sites }
 					plugins={ this.state.plugins }
 					selected={ this.getSelected() }
-					onToggle={ this.unselectOrSelectAll }
-					areSelected={ this.areSelected }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateAllPlugins={ this.updateAllPlugins }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
@@ -461,7 +437,10 @@ export default React.createClass( {
 					setAutoupdateSelected={ this.setAutoupdateSelected }
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
 					removePluginNotice={ this.removePluginNotice }
-					/>
+					haveActiveSelected={ this.state.plugins.some( this.filterSelection.active ) }
+					haveInactiveSelected={ this.state.plugins.some( this.filterSelection.inactive ) }
+					haveUpdatesSelected={ this.state.plugins.some( this.filterSelection.updates ) }
+					haveSelected={ this.state.plugins.some( this.filterSelection.selected ) } />
 				<div className={ itemListClasses }>{ this.formatPlugins( plugins ) }</div>
 			</span>
 		);

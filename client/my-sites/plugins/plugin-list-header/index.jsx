@@ -18,9 +18,9 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
+import PluginsActions from 'lib/plugins/actions';
 
 export default React.createClass( {
-
 	displayName: 'Plugins-list-header',
 
 	propTypes: {
@@ -57,6 +57,16 @@ export default React.createClass( {
 		return this.props.sites.getJetpack().length > 0;
 	},
 
+	unselectOrSelectAll() {
+		if ( this.props.haveSelected ) {
+			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'none' );
+			analytics.ga.recordEvent( 'Plugins', 'Clicked to Uncheck All Plugins' );
+			return;
+		}
+		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'all' );
+		analytics.ga.recordEvent( 'Plugins', 'Clicked to Check All Plugins' );
+	},
+
 	renderCurrentActionButtons( isWpCom ) {
 		let buttons = [];
 		let rightSideButtons = [];
@@ -67,7 +77,7 @@ export default React.createClass( {
 		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
 		const isJetpackSelected = this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
-		if ( ! this.props.bulkManagement ) {
+		if ( ! this.props.isBulkManagementActive ) {
 			if ( ! isWpCom && 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
@@ -89,10 +99,10 @@ export default React.createClass( {
 				);
 			}
 		} else {
-			activateButtons.push( <Button key="plugin-list-header__buttons-activate" disabled={ ! this.props.areSelected( 'inactive' ) } compact onClick={ this.props.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
+			activateButtons.push( <Button key="plugin-list-header__buttons-activate" disabled={ ! this.props.haveInactiveSelected } compact onClick={ this.props.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
 			let deactivateButton = isJetpackSelected
-				? <Button key="plugin-list-header__buttons-deactivate" disabled={ ! this.props.areSelected( 'active' ) } compact onClick={ this.props.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
-				: <Button key="plugin-list-header__buttons-disable" disabled={ ! this.props.areSelected( 'active' ) } compact onClick={ this.props.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
+				? <Button key="plugin-list-header__buttons-deactivate" disabled={ ! this.props.haveActiveSelected } compact onClick={ this.props.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
+				: <Button key="plugin-list-header__buttons-disable" disabled={ ! this.props.haveActiveSelected } compact onClick={ this.props.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
 			activateButtons.push( deactivateButton )
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
@@ -126,15 +136,15 @@ export default React.createClass( {
 		const isJetpackSelected = this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = !! this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 
-		if ( this.props.bulkManagement ) {
+		if ( this.props.isBulkManagementActive ) {
 			options.push( <DropdownItem key="plugin__actions_title" selected={ true } value="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
 			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
 
-			options.push( <DropdownItem key="plugin__actions_activate" disabled={ ! this.props.areSelected( 'inactive' ) } onClick={ this.props.activateSelected }>{ this.translate( 'Activate' ) }</DropdownItem> );
+			options.push( <DropdownItem key="plugin__actions_activate" disabled={ ! this.props.haveInactiveSelected } onClick={ this.props.activateSelected }>{ this.translate( 'Activate' ) }</DropdownItem> );
 
 			let deactivateAction = isJetpackSelected
-				? <DropdownItem key="plugin__actions_disconnect" disabled={ ! this.props.areSelected( 'active' ) } onClick={ this.props.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</DropdownItem>
-				: <DropdownItem key="plugin__actions_deactivate" disabled={ ! this.props.areSelected( 'active' ) } onClick={ this.props.deactivateSelected }>{ this.translate( 'Deactivate' ) }</DropdownItem>;
+				? <DropdownItem key="plugin__actions_disconnect" disabled={ ! this.props.haveActiveSelected } onClick={ this.props.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</DropdownItem>
+				: <DropdownItem key="plugin__actions_deactivate" disabled={ ! this.props.haveActiveSelected } onClick={ this.props.deactivateSelected }>{ this.translate( 'Deactivate' ) }</DropdownItem>;
 			options.push( deactivateAction );
 
 			if ( this.hasJetpackSelectedSites() ) {
@@ -152,16 +162,16 @@ export default React.createClass( {
 	},
 
 	render() {
-		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.bulkManagement } );
+		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.isBulkManagementActive } );
 		return (
 			<SectionHeader label={ this.props.label } className={ sectionClasses }>
 				{
-					! this.props.bulkManagement
+					! this.props.isBulkManagementActive
 						? null
 						: <BulkSelect key="plugin-list-header__bulk-select"
 							totalElements={ this.props.plugins.length }
 							selectedElements={ this.props.selected.length }
-							onToggle={ this.props.onToggle } />
+							onToggle={ this.unselectOrSelectAll } />
 				}
 				{ this.renderCurrentActionDropdown() }
 				{ this.renderCurrentActionButtons( this.props.isWpCom ) }
