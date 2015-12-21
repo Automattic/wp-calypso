@@ -182,24 +182,9 @@ const RequestTransferCode = React.createClass( {
 		} );
 	},
 
-	displayRequestTransferCodeResponseNotice( error ) {
-		if ( error ) {
-			notices.error(
-				this.translate(
-					'An error occurred while trying to send the Domain Transfer code. ' +
-					'Please try again or {{a}}Contact Support{{/a}} if you continue ' +
-					'to have trouble.',
-					{
-						components: {
-							a: (
-								<a href="https://support.wordpress.com/contact/"
-									target="_blank" />
-							)
-						}
-					}
-				)
-			);
-
+	displayRequestTransferCodeResponseNotice( responseError ) {
+		if ( responseError ) {
+			this.displayResponseError( responseError );
 			return;
 		}
 
@@ -216,6 +201,53 @@ const RequestTransferCode = React.createClass( {
 					"An email has been sent to the Domain Registrant's contact email " +
 					"address containing the Domain Transfer Code. If you don't " +
 					'receive the email shortly, please check your spam folder.'
+				)
+			);
+		}
+	},
+
+	displayResponseError( responseError ) {
+		const errorMessages = {
+			unlock_domain_and_disable_private_reg_failed: this.translate(
+				"The domain could not be unlocked. " +
+				"Additionally, Private Registration could not be disabled. " +
+				"The transfer will most likely fail due to these errors."
+			),
+			unlock_domain_failed: this.translate(
+				"The domain could not be unlocked. " +
+				"The transfer will most likely fail due to this error."
+			),
+			disable_private_reg_failed: this.translate(
+				"Private Registration could not be disabled. " +
+				"The transfer will most likely fail due to this error."
+			),
+		};
+
+		if ( responseError.error && Object.keys( errorMessages ).indexOf( responseError.error ) !== -1 ) {
+			notices.error(
+				this.translate(
+					'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
+					'Please {{a}}Contact Support{{/a}}.',
+					{
+						args: errorMessages[ responseError.error ],
+						components: {
+							strong: <strong />,
+							a: <a href="https://support.wordpress.com/contact/" target="_blank" />,
+						}
+					}
+				)
+			);
+		} else {
+			notices.error(
+				this.translate(
+					'An error occurred while trying to send the Domain Transfer code. ' +
+					'Please try again or {{a}}Contact Support{{/a}} if you continue ' +
+					'to have trouble.',
+					{
+						components: {
+							a: <a href="https://support.wordpress.com/contact/" target="_blank" />,
+						}
+					}
 				)
 			);
 		}
