@@ -23,7 +23,11 @@ export default React.createClass( {
 
 	propTypes: {
 		plugin: React.PropTypes.object.isRequired,
-		isPlaceholder: React.PropTypes.bool
+		isPlaceholder: React.PropTypes.bool,
+		hasUpdate: React.PropTypes.bool,
+		pluginVersion: React.PropTypes.string,
+		siteVersion: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool] ),
+		isWpcomPlugin: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -161,8 +165,9 @@ export default React.createClass( {
 	},
 
 	renderPlaceholder() {
+		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true, 'is-wpcom-plugin': this.props.isWpcomPlugin } );
 		return (
-			<div className="plugin-information is-placeholder">
+			<div className={ classes } >
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
 							<div className="plugin-information__version-shell">
@@ -182,14 +187,14 @@ export default React.createClass( {
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
+					{ ! this.props.isWpcomPlugin &&
 					<PluginRatings
 						rating={ this.props.plugin.rating }
 						ratings={ this.props.plugin.ratings }
 						downloaded={ this.props.plugin.downloaded }
 						numRatings={ this.props.plugin.num_ratings }
 						slug={ this.props.plugin.slug }
-						placeholder={ true }
-					/>
+						placeholder={ true } /> }
 			</div>
 		);
 	},
@@ -235,8 +240,7 @@ export default React.createClass( {
 						ratings={ this.props.plugin.ratings }
 						downloaded={ this.props.plugin.downloaded }
 						numRatings={ this.props.plugin.num_ratings }
-						slug={ this.props.plugin.slug }
-					/>
+						slug={ this.props.plugin.slug } />
 			</div>
 		);
 	},
