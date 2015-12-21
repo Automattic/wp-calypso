@@ -53,7 +53,7 @@ export default React.createClass( {
 	componentWillMount() {
 		ThemePreviewStore.on( 'change', this.updateMarkup );
 		DSSImageStore.on( 'change', this.updateScreenshots );
-		this.loadThemePreviews();
+		this.loadThemePreviews( this.props.themes );
 	},
 
 	componentWillUnmount() {
@@ -61,13 +61,15 @@ export default React.createClass( {
 		DSSImageStore.off( 'change', this.updateScreenshots );
 	},
 
-	componentWillReceiveProps() {
-		this.loadThemePreviews();
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.themes !== this.props.themes ) {
+			this.loadThemePreviews( nextProps.themes );
+		}
 	},
 
-	loadThemePreviews() {
-		debug( 'loading theme previews for these themes', this.props.themes );
-		this.props.themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + theme.slug ) );
+	loadThemePreviews( themes ) {
+		debug( 'loading theme previews for these themes', themes );
+		themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + theme.slug ) );
 	},
 
 	updateMarkup() {
