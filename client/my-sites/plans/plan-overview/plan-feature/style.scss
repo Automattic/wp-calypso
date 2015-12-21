@@ -1,3 +1,7 @@
 .plan-feature__heading {
 	display: block;
+
+	&.will-be-removed {
+		font-weight: normal;
+	}
 }
