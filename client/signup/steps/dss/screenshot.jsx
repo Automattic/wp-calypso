@@ -4,7 +4,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import DangerousHtml from 'components/danger';
+import DangerousHtml from 'components/dangerous-html';
 
 function replaceMarkupWithImage( markup, imageUrl ) {
 	return markup.replace( /(<img [^>]+)src=['"][^'"]+['"]([^>]*>)/g, ( ...imgMatches ) => {
@@ -76,7 +76,7 @@ export default React.createClass( {
 					<div className="dss-screenshot__dynamic">
 						<style dangerouslySetInnerHTML={ this.getPreviewStyles() } />
 						<style dangerouslySetInnerHTML={ this.getPreviewAdditionalStyles() } />
-						<DangerousHtml tag="div" className="dss-screenshot__markup" html={ this.getPreviewMarkup() } />
+						<DangerousHtml tag="div" className="dss-screenshot__markup" dangerousHtml={ this.getPreviewMarkup() } />
 					</div>
 				</div>
 			);
