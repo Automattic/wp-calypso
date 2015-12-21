@@ -4,6 +4,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import DangerousHtml from 'components/danger';
+
 function replaceMarkupWithImage( markup, imageUrl ) {
 	return markup.replace( /(<img [^>]+)src=['"][^'"]+['"]([^>]*>)/g, ( ...imgMatches ) => {
 		if ( imgMatches.length < 3 ) {
@@ -55,7 +57,7 @@ export default React.createClass( {
 	},
 
 	getPreviewMarkup() {
-		return { __html: this.props.dssImage ? replaceMarkupWithImage( this.props.markupAndStyles.markup, this.props.dssImage.url ) : this.props.markupAndStyles.markup };
+		return this.props.dssImage ? replaceMarkupWithImage( this.props.markupAndStyles.markup, this.props.dssImage.url ) : this.props.markupAndStyles.markup;
 	},
 
 	render() {
@@ -74,7 +76,7 @@ export default React.createClass( {
 					<div className="dss-screenshot__dynamic">
 						<style dangerouslySetInnerHTML={ this.getPreviewStyles() } />
 						<style dangerouslySetInnerHTML={ this.getPreviewAdditionalStyles() } />
-						<div className="dss-screenshot__markup" dangerouslySetInnerHTML={ this.getPreviewMarkup() } />
+						<DangerousHtml tag="div" className="dss-screenshot__markup" html={ this.getPreviewMarkup() } />
 					</div>
 				</div>
 			);

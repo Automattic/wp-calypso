@@ -74,6 +74,7 @@ export default React.createClass( {
 	},
 
 	updateMarkup() {
+		debug( 'updating markup and styles' );
 		this.setState( { markupAndStyles: ThemePreviewStore.get() } );
 	},
 
@@ -124,9 +125,10 @@ export default React.createClass( {
 	},
 
 	renderTheme( theme ) {
+		debug( 'rendering theme', theme.slug );
 		return (
 			<DssThemeThumbnail
-				key={ theme.name }
+				key={ theme.slug }
 				themeName={ theme.name }
 				themeSlug={ theme.slug }
 				themeRepoSlug={ 'pub/' + theme.slug }
