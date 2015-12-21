@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isInSignup ) {
-			return config.isEnabled( 'upgrades/free-trials' ) ? this.freeTrialActions() : this.upgradeActions();
+			return this.shouldOfferFreeTrial() ? this.freeTrialActions() : this.upgradeActions();
 		}
 
 		if ( this.siteHasThisPlan() ) {
@@ -51,9 +51,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		const canStartTrial = config.isEnabled( 'upgrades/free-trials' ) ? this.props.siteSpecificPlansDetails.can_start_trial : false;
-
-		return canStartTrial ? this.freeTrialActions() : this.upgradeActions();
+		return this.shouldOfferFreeTrial() ? this.freeTrialActions() : this.upgradeActions();
 	},
 
 	freePlanButton: function() {
@@ -142,6 +140,24 @@ module.exports = React.createClass( {
 		return true;
 	},
 
+	shouldOfferFreeTrial: function() {
+		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
+			return false;
+		}
+
+		if ( ! this.props.enableFreeTrials ) {
+			return false;
+		}
+
+		const siteCanOfferTrial = this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.can_start_trial;
+
+		if ( ! this.props.isInSignup && ! siteCanOfferTrial ) {
+			return false;
+		}
+
+		return true;
+	},
+
 	getImageButton: function() {
 		const classes = classNames( 'plan-actions__illustration', this.props.plan.product_slug );
 
@@ -158,7 +174,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) } className={ classes } />
+			<div onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: this.shouldOfferFreeTrial() } ), 'button' ) } className={ classes } />
 		);
 	},
 

@@ -89,6 +89,7 @@ module.exports = React.createClass( {
 						sites={ this.props.sites }
 						plans={ this.props.plans.get() }
 						siteSpecificPlansDetailsList={ this.props.siteSpecificPlansDetailsList }
+						enableFreeTrials={ true }
 						onOpen={ this.openPlan }
 						onSelectPlan={ this.props.onSelectPlan }
 						cart={ this.props.cart } />
