@@ -1,6 +1,5 @@
 // External dependencies
 import React from 'react';
-import ReactDom from 'react-dom';
 import debugModule from 'debug';
 
 // Internal dependencies
@@ -17,6 +16,9 @@ import ReaderListsActions from 'lib/reader-lists/actions';
 const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementDescriptionEdit = React.createClass( {
+
+	mixins: [ React.addons.LinkedStateMixin ],
+
 	propTypes: {
 		list: React.PropTypes.shape( {
 			owner: React.PropTypes.string.isRequired,
@@ -24,14 +26,28 @@ const ListManagementDescriptionEdit = React.createClass( {
 		} )
 	},
 
-	handleFormSubmit() {
-		debug( 'handleFormSubmit' );
+	getInitialState() {
+		return {
+			title: '',
+			description: '',
+		};
+	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.list ) {
+			this.setState( {
+				title: nextProps.list.title,
+				description: nextProps.list.description
+			} );
+		}
+	},
+
+	handleFormSubmit() {
 		ReaderListsActions.update(
 			this.props.list.owner,
 			this.props.list.slug,
-			ReactDom.findDOMNode( this.refs.listTitle ).value,
-			ReactDom.findDOMNode( this.refs.listDescription ).value
+			this.state.title,
+			this.state.description
 		);
 	},
 
@@ -53,11 +69,16 @@ const ListManagementDescriptionEdit = React.createClass( {
 						ref="listTitle"
 						//className="is-error"
 						placeholder=""
-					/>
+						valueLink={ this.linkState( 'title' ) } />
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="list-description">Description</FormLabel>
-					<FormTextarea ref="listDescription" name="list-description" id="list-description" placeholder=""></FormTextarea>
+					<FormTextarea
+						ref="listDescription"
+						name="list-description"
+						id="list-description"
+						placeholder=""
+						valueLink={ this.linkState( 'description' ) }></FormTextarea>
 				</FormFieldset>
 
 				<FormButtonsBar>
