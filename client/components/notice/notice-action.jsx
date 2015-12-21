@@ -24,13 +24,18 @@ export default React.createClass( {
 	},
 
 	render() {
+		const attributes = {
+			className: 'notice__action',
+			href: this.props.href,
+			onClick: this.props.onClick
+		};
+
+		if ( this.props.external ) {
+			attributes.target = '_blank';
+		}
+
 		return (
-			<a
-				className="notice__action"
-				href={ this.props.href }
-				onClick={ this.props.onClick }
-				target={ this.props.external && '_blank' }
-			>
+			<a {...attributes} >
 				<span>{ this.props.children }</span>
 				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }
 			</a>
