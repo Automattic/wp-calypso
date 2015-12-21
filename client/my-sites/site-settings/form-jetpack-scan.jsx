@@ -21,7 +21,9 @@ var formBase = require( 'my-sites/site-settings/form-base' ),
 	ProgressIndicator = require( 'components/progress-indicator' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	notices = require( 'notices' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 
@@ -139,14 +141,6 @@ module.exports = React.createClass( {
 			<div>
 				<p>{ this.translate( 'Scan your WordPress site for known security threats.' ) }</p>
 				<p>{ this.translate( 'By allowing Jetpack Scan to access your site via SSH, you enable us to scan your server for security threats. As soon as we encounter potentially malicious code, we will alert you by email.' ) }</p>
-				<SettingsCardFooter>
-					<FormButton
-						onClick={ this.toggleScan }
-						disabled={ this.disableForm() }
-					>
-						{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Scan' ) }
-					</FormButton>
-				</SettingsCardFooter>
 			</div>
 		);
 	},
@@ -241,30 +235,6 @@ module.exports = React.createClass( {
 			return this.success();
 		}
 
-		if ( this.state.credentialsPending ) {
-			footerContents = (
-				<SettingsCardFooter>
-					<ProgressIndicator key="update-progress" status="processing" className="site-settings__progress-indicator" />
-					{ this.translate( 'Testing connection. This may take a few minutes.' ) }
-				</SettingsCardFooter>
-			);
-		} else {
-			footerContents = (
-				<SettingsCardFooter>
-					<FormButton className="button is-primary" disabled={ this.disableForm() }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-					</FormButton>
-					<FormButton
-						disabled={ this.disableForm() }
-						className="jetpack-scan__deactivate is-link"
-						isPrimary={ false }
-						onClick={ this.toggleScan }>
-						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-					</FormButton>
-				</SettingsCardFooter>
-			);
-		}
-
 		return (
 			<form id="jetpack-scan-settings" onChange={ this.markChanged } onSubmit={ this.onSubmit }>
 				<p>{ this.translate(
@@ -350,6 +320,7 @@ module.exports = React.createClass( {
 		} else {
 			this.recordEvent.bind( this, 'Clicked enable Jetpack Scan button' );
 			enable = true;
+			this.setState( { needsCreds: true } );
 		}
 
 		if ( this.state.needsCreds ) {
@@ -472,15 +443,100 @@ module.exports = React.createClass( {
 		return this.state.fetchingSettings || this.state.submittingForm || this.props.site.fetchingModules || this.state.togglingModule || this.state.fetchingSsh || ( this.state.enabled && this.state.credentialsPending );
 	},
 
+	showActivateButton: function() {
+		if( ! this.state.enabled ){
+			return(
+				<Button
+					compact
+					primary
+					disabled={ this.disableForm() }
+					onClick={ this.toggleScan }
+					>
+					{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Scan' ) }
+				</Button>
+			);
+		}
+	},
+
+	showDeactivateButtons: function() {
+		if( this.state.enabled && this.state.credentialsValid && ! this.state.editing ){
+			return(
+				<div>
+					<Button
+						compact
+						disabled={ this.disableForm() }
+						onClick={ this.editSettings }
+						className="jetpack-protect__edit-settings"
+						>
+						{ this.translate( 'Edit Settings' ) }
+					</Button>
+
+					<Button
+						compact
+						disabled={ this.disableForm() }
+						className='jetpack-scan__deactivate'
+						onClick={ this.toggleScan }
+						>
+						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
+					</Button>
+				</div>
+			);
+		}
+	},
+
+	showSaveSettingsButtons: function() {
+		if ( ! this.state.credentialsPending && this.state.enabled ) {
+			return(
+				<div>
+					<Button
+						primary
+						compact
+						disabled={ this.disableForm() }
+						onClick={ this.onSubmit }
+						>
+						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+					</Button>
+					<Button
+						className='jetpack-scan__deactivate'
+						compact
+						disabled={ this.disableForm() }
+						onClick={ this.toggleScan }
+						>
+						{ this.translate( 'Cancel' ) }
+					</Button>
+				</div>
+			);
+		}
+	},
+
+	showLoadingIndicator: function() {
+		if( this.state.credentialsPending ){
+			return(
+				<div>
+					<ProgressIndicator key="update-progress" status="processing" className="site-settings__progress-indicator" />
+				</div>
+			);
+		}
+
+	},
+
 	render: function() {
 		return (
-			<Card className="jetpack-protect-settings">
-				<FormSectionHeading>{ this.translate( 'Jetpack Scan' ) }</FormSectionHeading>
-				{ this.sshConnectionError() }
-				{ this.sshCredentialsForm() }
-				{ this.publicKeyDialog() }
-				{ this.prompt() }
-			</Card>
+			<div>
+				<SectionHeader label={ this.translate( 'Jetpack Scan' ) }>
+					{ this.showActivateButton() }
+					{ this.showDeactivateButtons() }
+					{ this.showSaveSettingsButtons() }
+					{ this.showLoadingIndicator() }
+				</SectionHeader>
+				<Card className="jetpack-protect-settings">
+					{ this.sshConnectionError() }
+					{ this.sshCredentialsForm() }
+					{ this.publicKeyDialog() }
+					{ this.prompt() }
+				</Card>
+			</div>
+
 		);
 	}
 } );

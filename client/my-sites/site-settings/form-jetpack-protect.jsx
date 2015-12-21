@@ -17,7 +17,9 @@ var formBase = require( './form-base' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	FormButton = require( 'components/forms/form-button' ),
 	SettingsCardFooter = require( './settings-card-footer' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' );
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 
@@ -64,14 +66,6 @@ module.exports = React.createClass( {
 						"When you activate Jetpack Protect, we'll automatically prevent malicious attempts to log into your site, but allow you to ensure you can always log in."
 					) }
 				</p>
-				<SettingsCardFooter>
-					<FormButton
-						onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }
-						disabled={ this.disableForm() }
-					>
-						{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Protect' ) }
-					</FormButton>
-				</SettingsCardFooter>
 			</div>
 		);
 	},
@@ -110,18 +104,6 @@ module.exports = React.createClass( {
 				<FormSettingExplanation>
 						{ this.translate( 'IPv4 and IPv6 are acceptable. To specify a range, enter the low value and high value separated by a dash.' ) }
 				</FormSettingExplanation>
-				<SettingsCardFooter>
-					<FormButton disabled={ this.disableForm() }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-					</FormButton>
-					<FormButton
-						disabled={ this.disableForm() }
-						className="jetpack-protect__deactivate is-link"
-						isPrimary={ false }
-						onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }>
-						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-					</FormButton>
-				</SettingsCardFooter>
 			</form>
 		);
 	},
@@ -136,17 +118,60 @@ module.exports = React.createClass( {
 		return this.state.fetchingSettings || this.state.submittingForm || this.props.site.fetchingModules || this.state.togglingModule;
 	},
 
+	deactivateFormButtons: function() {
+		return(
+			<div>
+				<Button
+					compact
+					disabled={ this.disableForm() }
+					className="jetpack-protect__deactivate"
+					onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }
+					>
+					{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
+				</Button>
+				<Button
+					disabled={ this.disableForm() }
+					compact
+					primary
+					onClick={ this.submitForm }
+					>
+					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+				</Button>
+			</div>
+		);
+	},
+
+	activateFormButtons: function() {
+		return(
+			<Button
+				onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }
+				disabled={ this.disableForm() }
+				primary
+				compact
+				>
+				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Protect' ) }
+			</Button>
+		);
+	},
+
 	render: function() {
 		return (
-			<Card className="jetpack-protect-settings">
-				<FormSectionHeading>{ this.translate( 'Jetpack Protect' ) }</FormSectionHeading>
-				{
-					( this.state.enabled ) ?
-					this.settings() :
-					this.prompt()
-				}
-			</Card>
+			<div>
+				<SectionHeader label={ this.translate( 'Jetpack Protect' ) }>
+					{ this.state.enabled
+						? this.deactivateFormButtons()
+						: this.activateFormButtons()
+
+					}
+				</SectionHeader>
+				<Card className="jetpack-protect-settings">
+					{
+						( this.state.enabled ) ?
+						this.settings() :
+						this.prompt()
+					}
+				</Card>
+			</div>
 		);
 	}
 } );
-

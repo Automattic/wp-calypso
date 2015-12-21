@@ -20,9 +20,7 @@ module.exports = React.createClass({
 	render: function() {
 
 		return (
-			<Card className="discussion-settings">
-				<DiscussionForm site={ this.props.site } />
-			</Card>
+			<DiscussionForm site={ this.props.site } />
 		);
 
 	}

@@ -216,7 +216,19 @@
 
 }
 
-.site-settings__blog-address-container {
+.jetpack-protect__deactivate,
+.jetpack-protect__edit-settings,
+.jetpack-scan__deactivate,
+.jetpack-monitor__deactivate,
+.disconnect-jetpack-button,
+.jetpack-protect__edit-settings,
+.jetpack-scan__deactivate,
+.jetpack-monitor__deactivate,
+.disconnect-jetpack-button {
+	margin-right: 8px;
+}
+
+.has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px 24px;
 	border: 1px lighten( $gray, 30% ) solid;
