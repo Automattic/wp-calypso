@@ -27,17 +27,23 @@ const ListManagement = React.createClass( {
 	smartSetState: smartSetState,
 
 	getInitialState() {
-		return this.getStateFromStores();
+		return this.getStateFromStores( this.props );
 	},
 
-	getStateFromStores() {
+	getStateFromStores( props ) {
 		// Grab the list ID from the list store
-		const listDetails = ListStore.get( this.props.list.owner, this.props.list.slug );
-		if ( ! listDetails && ! ReaderListsStore.isFetching() ) {
-			ReaderListsActions.fetchList( this.props.list.owner, this.props.list.slug );
+		const listDetails = ListStore.get( props.list.owner, props.list.slug );
+		const shouldFetchList = ! listDetails || ( listDetails.owner !== props.list.owner && listDetails.slug !== props.list.slug );
+		if ( shouldFetchList && ! ReaderListsStore.isFetching() ) {
+			ReaderListsActions.fetchList( props.list.owner, props.list.slug );
 		}
-
 		return { listDetails };
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.list ) {
+			this.setState( this.getStateFromStores( nextProps ) );
+		}
 	},
 
 	componentDidMount() {
@@ -49,7 +55,7 @@ const ListManagement = React.createClass( {
 	},
 
 	update() {
-		this.smartSetState( this.getStateFromStores() );
+		this.setState( this.getStateFromStores( this.props ) );
 	},
 
 	renderTabContent() {

@@ -125,7 +125,7 @@ const ListManagementTags = React.createClass( {
 			return null;
 		}
 
-		if ( this.props.list && this.state.tags.length === 0 && this.state.isLastPage ) {
+		if ( this.props.list && this.state.tags.size === 0 && this.state.isLastPage ) {
 			return ( <EmptyContent
 						title={ this.translate( 'This list does not have any tags yet.' ) }
 						illustration={ '/calypso/images/drake/drake-404.svg' }
