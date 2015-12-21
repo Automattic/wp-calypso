@@ -122,6 +122,21 @@ export default React.createClass( {
 		);
 	},
 
+	renderTheme( theme ) {
+		return (
+			<DssThemeThumbnail
+				key={ theme.name }
+				themeName={ theme.name }
+				themeSlug={ theme.slug }
+				themeRepoSlug={ 'pub/' + theme.slug }
+				isLoading={ this.state.isLoading }
+				dssImage={ this.state.dssImage }
+				markupAndStyles={ this.state.markupAndStyles[ 'pub/' + theme.slug ] }
+				renderComplete={ this.state.renderComplete }
+				{ ...this.props }/>
+		);
+	},
+
 	renderContent() {
 		return (
 			<div>
@@ -132,24 +147,12 @@ export default React.createClass( {
 						delaySearch={ true }
 						delayTimeout={ 450 }
 						placeholder={ this.translate( 'e.g., games' ) }
-						onSearch={ this.handleSearch }
-					/>
+						onSearch={ this.handleSearch } />
 				</div>
 				<div className="dss-theme-selection__screenshots">
 					<div className="dss-theme-selection__screenshots__pin">
 						<div className="dss-theme-selection__screenshots__themes">
-							{ this.props.themes.map( ( theme ) => {
-								return <DssThemeThumbnail
-									key={ theme.name }
-									themeName={ theme.name }
-									themeSlug={ theme.slug }
-									themeRepoSlug={ 'pub/' + theme.slug }
-									isLoading={ this.state.isLoading }
-									dssImage={ this.state.dssImage }
-									markupAndStyles={ this.state.markupAndStyles[ 'pub/' + theme.slug ] }
-									renderComplete={ this.state.renderComplete }
-									{ ...this.props }/>;
-							} ) }
+							{ this.props.themes.map( this.renderTheme ) }
 						</div>
 					</div>
 				</div>
