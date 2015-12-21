@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-enable' ),
 	QRCode = require( 'qrcode.react' ),
 	classNames = require( 'classnames' );

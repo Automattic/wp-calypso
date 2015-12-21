@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React from 'react/addons';
 import reject from 'lodash/collection/reject';
 import constant from 'lodash/utility/constant';
 import every from 'lodash/collection/every';

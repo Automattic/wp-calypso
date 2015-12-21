@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	noop = require( 'lodash/utility/noop' ),
 	first = require( 'lodash/array/first' ),
 	where = require( 'lodash/collection/where' );

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+	React = require( 'react/addons' ),
 	emailValidator = require( 'email-validator' );
 
 /**
