@@ -1,11 +1,14 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import ReactDom from 'react-dom';
+import omit from 'lodash/object/omit';
 
 export default React.createClass( {
 	propTypes: {
 		html: React.PropTypes.string.isRequired,
 		tag: React.PropTypes.string,
-		className: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -26,9 +29,6 @@ export default React.createClass( {
 
 	render() {
 		var tag = this.props.tag;
-		var props = {
-			className: this.props.className
-		};
-		return React.createElement( tag, props );
+		return React.createElement( tag, omit( this.props, 'tag', 'html' ) );
 	}
 } );

@@ -18,4 +18,5 @@ to fix any invalid markup and prevents it from breaking the renderer.
 
 * `tag`: The tagname to use when creating the element (defaults to `div`).
 * `html`: (Required) The raw HTML string to inject as a child of the tag.
-* `className`: Adds classes to the component.
+
+Other props will be passed along directly to the new element.
