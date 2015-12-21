@@ -323,11 +323,10 @@ var MenuEditableItem = React.createClass( {
 			},
 			{
 				key: 'ok',
-				className: 'button is-primary',
+				className: 'is-primary',
 				label: this.isNew() ?
 					this.translate( 'Add Item', { textOnly: true } ) :
 					this.translate( 'OK', { textOnly: true } ),
-				className: 'is-primary',
 				showIfNew: true,
 				onClick: this.save
 			}
