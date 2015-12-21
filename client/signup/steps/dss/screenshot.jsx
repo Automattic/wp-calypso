@@ -4,6 +4,9 @@
 import React from 'react';
 import classnames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
 import DangerousHtml from 'components/dangerous-html';
 
 function replaceMarkupWithImage( markup, imageUrl ) {
