@@ -141,18 +141,19 @@ module.exports = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		if ( config.isEnabled( 'upgrades/free-trials' ) ) {
-			if ( this.props.isInSignup && this.props.flowName !== 'free-trial' ) {
-				return false;
-			}
-
-			if ( this.props.siteSpecificPlansDetails && ! this.props.siteSpecificPlansDetails.can_start_trial ) {
-				return false;
-			}
-
-			return true;
+		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
+			return false;
 		}
-		return false;
+
+		if ( this.props.isInSignup && this.props.flowName !== 'free-trial' ) {
+			return false;
+		}
+
+		if ( this.props.siteSpecificPlansDetails && ! this.props.siteSpecificPlansDetails.can_start_trial ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	getImageButton: function() {
