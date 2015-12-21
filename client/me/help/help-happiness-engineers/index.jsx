@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ var HappinessEngineersStore = require( 'lib/happiness-engineers/store' ),
 module.exports = React.createClass( {
 	displayName: 'HelpHappinessEngineers',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentDidMount: function() {
 		HappinessEngineersStore.on( 'change', this.refreshHappinessEngineers );

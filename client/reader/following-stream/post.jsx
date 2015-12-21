@@ -2,7 +2,8 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	assign = require( 'lodash/object/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
@@ -49,7 +50,7 @@ var Card = require( 'components/card' ),
 
 var Post = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin, ObserveWindowSizeMixin ],
+	mixins: [ PureRenderMixin, ObserveWindowSizeMixin ],
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,

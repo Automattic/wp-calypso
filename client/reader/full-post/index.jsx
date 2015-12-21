@@ -2,7 +2,8 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	assign = require( 'lodash/object/assign' ),
 	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
@@ -85,7 +86,7 @@ function readerPageView( blogId, blogUrl, postId, isPrivate ) {
  */
 FullPostView = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentDidMount: function() {
 		this._parseEmoji();
@@ -203,7 +204,7 @@ FullPostView = React.createClass( {
  */
 FullPostDialog = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentWillMount: function() {
 		classes( document.documentElement ).add( 'detail-page-active' );
@@ -331,7 +332,7 @@ function getSite( siteId ) {
 
 FullPostContainer = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return assign( { isVisible: false }, this.getStateFromStores() );

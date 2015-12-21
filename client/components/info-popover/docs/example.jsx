@@ -1,7 +1,8 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
 * Internal dependencies
@@ -11,7 +12,7 @@ var InfoPopover = require( 'components/info-popover' );
 var InfoPopoverExample = React.createClass( {
 	displayName: 'InfoPopover',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {

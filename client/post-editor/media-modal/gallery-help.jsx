@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import Button from 'components/button';
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryHelp',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		onDismiss: PropTypes.func

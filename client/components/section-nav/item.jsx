@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -14,7 +15,7 @@ var Count = require( 'components/count' );
  */
 var NavItem = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		itemType: React.PropTypes.string,

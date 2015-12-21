@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import Slug from 'post-editor/editor-slug';
 export default React.createClass( {
 	displayName: 'EditorMoreOptionsSlug',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		slug: PropTypes.string,

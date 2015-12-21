@@ -1,8 +1,13 @@
-// External dependencies
-const React = require( 'react/addons' ),
+/**
+ * External dependencies
+ */
+const React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	noop = require( 'lodash/utility/noop' );
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 const Icon = require( 'reader/list-item/icon' ),
 	Title = require( 'reader/list-item/title' ),
 	Description = require( 'reader/list-item/description' ),
@@ -28,7 +33,7 @@ var SubscriptionListItem = React.createClass( {
 		openCards: React.PropTypes.object
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return {

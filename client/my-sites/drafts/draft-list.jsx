@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/object/omit' );
 
 /**
@@ -17,7 +18,7 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 
 var DraftList = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		search: React.PropTypes.string,

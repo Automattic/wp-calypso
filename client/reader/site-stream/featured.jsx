@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal Dependencies
@@ -15,7 +16,7 @@ import * as stats from 'reader/stats';
 export default React.createClass( {
 	displayName: 'FeedFeatured',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
 		return this.getStateFromStores();

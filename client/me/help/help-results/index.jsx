@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import HelpResult from './item';
 module.exports = React.createClass( {
 	displayName: 'HelpResults',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		if ( ! this.props.helpLinks.length ) {

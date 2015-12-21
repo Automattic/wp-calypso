@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import isNaN from 'lodash/lang/isNaN';
 
 /**
@@ -14,7 +15,7 @@ import { recordEvent, recordStat } from 'lib/posts/stats';
 export default React.createClass( {
 	displayName: 'EditorPageOrder',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		menuOrder: PropTypes.oneOfType( [

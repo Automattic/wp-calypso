@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import pick from 'lodash/object/pick';
 
 /**
@@ -13,7 +14,7 @@ import Gridicon from 'components/gridicon';
 export default React.createClass( {
 	displayName: 'PostEditorPageSlug',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		path: PropTypes.string,

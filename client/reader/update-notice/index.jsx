@@ -1,15 +1,19 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	noop = require( 'lodash/utility/noop' ),
 	classnames = require( 'classnames' );
 
+/**
+ * Internal dependencies
+ */
 var titleActions = require( 'lib/screen-title/actions' ),
 	Gridicon = require( 'components/gridicon' );
 
 var UpdateNotice = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		count: React.PropTypes.number.isRequired,

@@ -1,10 +1,17 @@
-var React = require( 'react/addons' );
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
+/**
+ * Internal dependencies
+ */
 var Card = require( 'components/card' );
 
 var PostPlaceholder = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		return (

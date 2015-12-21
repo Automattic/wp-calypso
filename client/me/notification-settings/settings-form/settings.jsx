@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
 
 /**
@@ -23,7 +24,7 @@ const streams = {
 export default React.createClass( {
 	displayName: 'NotificationSettingsForm',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		blogId: PropTypes.oneOfType( [

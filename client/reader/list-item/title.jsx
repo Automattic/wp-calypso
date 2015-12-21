@@ -1,8 +1,12 @@
-import React from 'react/addons';
+/**
+ * External dependencies
+ */
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import noop from 'lodash/utility/noop';
 
 const ListItemTitle = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return { onClick: noop };

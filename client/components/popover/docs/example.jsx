@@ -1,7 +1,8 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
 * Internal dependencies
@@ -11,7 +12,7 @@ var Popover = require( 'components/popover' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' );
 
 var Popovers = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {

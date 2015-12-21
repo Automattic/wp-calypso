@@ -2,7 +2,8 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
 	url = require( 'url' );
@@ -15,7 +16,7 @@ var Card = require( 'components/card' ),
 
 var CrossPost = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,

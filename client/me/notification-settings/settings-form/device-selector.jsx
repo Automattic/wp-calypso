@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import FormSelect from 'components/forms/form-select';
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormDeviceSelector',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		devices: PropTypes.object.isRequired,

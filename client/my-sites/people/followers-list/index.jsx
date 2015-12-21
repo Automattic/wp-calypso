@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/object/omit' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:followers-list' );
 
@@ -36,7 +37,7 @@ let Followers = React.createClass( {
 		};
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder"/>;
@@ -211,7 +212,7 @@ let Followers = React.createClass( {
 module.exports = React.createClass( {
 	displayName: 'FollowersList',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		let DataComponent;

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ export default React.createClass( {
 
 	displayName: 'Version',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		return (

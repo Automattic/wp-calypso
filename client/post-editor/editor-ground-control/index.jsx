@@ -2,7 +2,8 @@
  * External dependencies
  */
 var noop = require( 'lodash/utility/noop' ),
-	React = require( 'react/addons' );
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -46,7 +47,7 @@ module.exports = React.createClass( {
 		type: React.PropTypes.string
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps: function() {
 		return {

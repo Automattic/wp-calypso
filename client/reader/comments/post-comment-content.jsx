@@ -1,9 +1,17 @@
-import React, { PropTypes } from 'react/addons';
+/**
+ * External dependencies
+ */
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+
+/**
+ * Internal dependencies
+ */
 import CommentConstants from 'lib/comment-store/constants';
 
 const PostCommentContent = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		content: PropTypes.string.isRequired,

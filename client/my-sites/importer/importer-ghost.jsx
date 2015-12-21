@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ const importerData = {
 export default React.createClass( {
 	displayName: 'ImporterGhost',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		importerData.description = this.translate( 'Import posts and tags from a Ghost export file.' );

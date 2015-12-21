@@ -1,14 +1,19 @@
-// External dependencies
-var React = require( 'react/addons' );
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 var analytics = require( 'analytics' ),
 	SiteBlockActions = require( 'lib/reader-site-blocks/actions' ),
 	Card = require( 'components/card' );
 
 var PostBlocked = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	unblock: function() {
 		analytics.mc.bumpStat( 'reader_actions', 'unblocked_blog' );

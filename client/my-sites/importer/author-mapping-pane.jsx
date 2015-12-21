@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import AuthorMapping from './author-mapping-item';
 export default React.createClass( {
 	displayName: 'ImporterMappingPane',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		hasSingleAuthor: PropTypes.bool.isRequired,

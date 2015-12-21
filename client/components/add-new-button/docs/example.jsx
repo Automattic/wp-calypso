@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ var AddNewButton = require( 'components/add-new-button' );
 var AddNewButtons = React.createClass( {
 	displayName: 'AddNewButton',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
 		return (

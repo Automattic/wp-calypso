@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' );
 
@@ -17,7 +18,7 @@ var Card = require( 'components/card' ),
  * Component
  */
 var Theme = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		// Theme ID (theme-slug)

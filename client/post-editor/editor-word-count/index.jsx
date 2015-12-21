@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ const user = userModule();
 export default React.createClass( {
 	displayName: 'EditorWordCount',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
 		return {

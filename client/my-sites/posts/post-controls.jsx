@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	url = require( 'url' );
 
 /**
@@ -15,7 +16,7 @@ var config = require( 'config' ),
 module.exports = React.createClass( {
 	displayName: 'PostControls',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,

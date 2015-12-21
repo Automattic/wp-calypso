@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ var suggestions = [
 var TokenFields = React.createClass( {
 	displayName: 'TokenFields',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {

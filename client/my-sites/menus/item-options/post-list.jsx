@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:menus:post-list' ),
 	omit = require( 'lodash/object/omit' );
 
@@ -17,7 +18,7 @@ var	Posts = require( './posts' ),
  */
 var PostList = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {
