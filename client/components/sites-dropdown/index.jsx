@@ -27,16 +27,14 @@ export default React.createClass( {
 			React.PropTypes.string
 		] ),
 		showAllSites: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		autoFocus: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
-		onSiteSelect: React.PropTypes.func
+		onSiteSelect: React.PropTypes.func,
+		filter: React.PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
 			showAllSites: false,
-			indicator: false,
 			onClose: noop,
 			onSiteSelect: noop
 		};
@@ -45,7 +43,6 @@ export default React.createClass( {
 	getInitialState() {
 		const primary = sites.getPrimary();
 		return {
-			search: '',
 			selected: this.props.selected || primary && primary.slug
 		};
 	},
@@ -84,6 +81,7 @@ export default React.createClass( {
 							onSiteSelect={ this.selectSite }
 							selected={ this.state.selected }
 							hideSelected={ true }
+							filter={ this.props.filter }
 						/>
 					}
 				</div>

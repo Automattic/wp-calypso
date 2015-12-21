@@ -16,3 +16,14 @@ render() {
 	);
 }
 ```
+
+#### Props
+
+(All optional)
+* `selected` (`number|string`) — Index or slug of the initial selection
+* `showAllSites` (`bool`) — `true` to display the _All My Sites_ option
+* `onClose` (`function`) — called on site selection
+* `onSiteSelect` (`function`) - called with the site `slug` on site selection
+* `filter` (`function`) - If present, passed to `sites.filter()` to display a subset of sites. Return `true` to display a site.
+
+
