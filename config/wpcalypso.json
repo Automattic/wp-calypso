@@ -95,6 +95,7 @@
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
 		"ad-tracking": false,
+		"accept-invite": true,
 		"mailing-lists/unsubscribe": true
 	},
 	"siftscience_key": "e00e878351",
