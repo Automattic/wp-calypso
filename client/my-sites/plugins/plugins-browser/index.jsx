@@ -14,6 +14,7 @@ import SectionNav from 'components/section-nav'
 import MainComponent from 'components/main'
 import NavTabs from 'components/section-nav/tabs'
 import NavItem from 'components/section-nav/item'
+import NoResults from 'my-sites/no-results'
 import PluginsList from 'my-sites/plugins/plugins-browser-list'
 import PluginsListStore from 'lib/plugins/wporg-data/list-store'
 import PluginsActions from 'lib/plugins/wporg-data/actions'
@@ -128,10 +129,10 @@ module.exports = React.createClass( {
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
 			return <PluginsList plugins={ this.getPluginsFullList( 'search' ) } listName={ searchTerm } title={ searchTerm } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
-		return <EmptyContent
-			title={ this.translate( 'Nothing to see here!' ) }
-			line={ this.translate( 'We could\'t find any plugin with that text' ) }
-			illustration={ '/calypso/images/drake/drake-404.svg' } />;
+		return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+			textOnly: true,
+			components: { searchTerm: <em>{ searchTerm }</em> }
+		} ) } />
 	},
 
 	getPluginSingleListView( category ) {
