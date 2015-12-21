@@ -47,14 +47,13 @@ export default React.createClass( {
 		if ( this.props.plugin.plugin_url.search( this._WPORG_PLUGINS_URL + this.props.plugin.slug ) !== -1 ) {
 			return;
 		}
-
+		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ this.props.plugin.plugin_url }
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
-				className="plugin-information__external-link"
-			>
+				onClick={ recordEvent }
+				className="plugin-information__external-link" >
 				{ this.translate( 'Plugin homepage' ) }
 			</ExternalLink>
 		);
@@ -64,13 +63,13 @@ export default React.createClass( {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
+		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug );
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug ) }
-				className="plugin-information__external-link"
-			>
+				onClick={ recordEvent }
+				className="plugin-information__external-link" >
 				{ this.translate( 'WordPress.org Plugin page' ) }
 			</ExternalLink>
 		);
@@ -80,14 +79,14 @@ export default React.createClass( {
 		if ( ! this.props.plugin || ! this.props.plugin.support_URL ) {
 			return;
 		}
+		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
 
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ this.props.plugin.support_URL }
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
-				className="plugin-information__external-link"
-			>
+				onClick={ recordEvent }
+				className="plugin-information__external-link" >
 				{ this.translate( 'Learn More' ) }
 			</ExternalLink>
 		);
