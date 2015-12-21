@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 
 /**
@@ -42,28 +41,41 @@ const RegisteredDomain = React.createClass( {
 
 	getPrivacyProtection() {
 		if ( this.props.domain.hasPrivacyProtection ) {
+			const path = paths.domainManagementContactsPrivacy(
+				this.props.selectedSite.domain,
+				this.props.domain.name
+			);
+
 			return (
-				<Notice
-					isCompact
-					status="is-success"
-					icon="lock">
-					{ this.translate( 'On', {
-						context: 'An icon label when Privacy Protection is enabled.'
-					} ) }
-				</Notice>
+				<a href={ path }>
+					<Notice
+						isCompact
+						status="is-success"
+						icon="lock">
+						{ this.translate( 'On', {
+							context: 'An icon label when Privacy Protection is enabled.'
+						} ) }
+					</Notice>
+				</a>
 			);
 		}
 
+		const path = paths.domainManagementPrivacyProtection(
+			this.props.selectedSite.domain,
+			this.props.domain.name
+		);
+
 		return (
-			<Notice
-				isCompact
-				status="is-warning"
-				icon="notice"
-				onClick={ this.goToPrivacyProtection }>
-				{ this.translate( 'None', {
-					context: 'An icon label when Privacy Protection is disabled.'
-				} ) }
-			</Notice>
+			<a href={ path } onClick={ this.recordEvent( 'noneClick', this.props.domain ) }>
+				<Notice
+					isCompact
+					status="is-warning"
+					icon="notice">
+					{ this.translate( 'None', {
+						context: 'An icon label when Privacy Protection is disabled.'
+					} ) }
+				</Notice>
+			</a>
 		);
 	},
 
@@ -189,12 +201,6 @@ const RegisteredDomain = React.createClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-
-	goToPrivacyProtection() {
-		this.recordEvent( 'noneClick', this.props.domain );
-
-		page( paths.domainManagementPrivacyProtection( this.props.selectedSite.domain, this.props.domain.name ) );
 	}
 } );
 
