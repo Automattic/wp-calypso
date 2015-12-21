@@ -58,7 +58,7 @@ module.exports = React.createClass( {
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
-		containerClass: React.PropTypes.string
+		className: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -66,7 +66,7 @@ module.exports = React.createClass( {
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
 			onShowUpdates: noop,
-			containerClass: 'following'
+			className: 'following'
 		};
 	},
 
@@ -413,8 +413,8 @@ module.exports = React.createClass( {
 			body,
 			containerClass = 'following';
 
-		if ( this.props.containerClass ) {
-			containerClass = this.props.containerClass;
+		if ( this.props.className ) {
+			containerClass = this.props.className;
 		}
 
 		if ( hasNoPosts ) {

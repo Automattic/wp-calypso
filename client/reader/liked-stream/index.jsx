@@ -15,7 +15,7 @@ const LikedStream = React.createClass( {
 			this.props.setPageTitle( title );
 		}
 		return (
-			<FollowingStream { ...this.props } containerClass={ "my-likes__posts" } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true } />
+			<FollowingStream { ...this.props } className={ "my-likes__posts" } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true } />
 		);
 	}
 
