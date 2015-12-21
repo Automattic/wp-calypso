@@ -2,7 +2,7 @@
 * External dependencies
 */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' );
+	React = require( 'react' );
 
 /**
 * Internal dependencies
@@ -58,7 +58,7 @@ var PopoverMenu = React.createClass( {
 			onClick = child.props.onClick.bind( null, boundOnClose );
 		}
 
-		return React.addons.cloneWithProps( child, {
+		return React.cloneElement( child, {
 			onClick: onClick
 		} );
 	},
