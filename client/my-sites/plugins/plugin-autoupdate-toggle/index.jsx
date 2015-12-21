@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 	},
 
 	toggleAutoupdates: function() {
-		if ( this.props.isMock ) {
+		if ( this.props.isMock || this.props.disabled ) {
 			return;
 		}
 
@@ -131,6 +131,7 @@ module.exports = React.createClass( {
 
 		return (
 			<PluginAction
+				disabled={ this.props.disabled }
 				label={ label }
 				status={ this.props.plugin.autoupdate }
 				action={ this.toggleAutoupdates }

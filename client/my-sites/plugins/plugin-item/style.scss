@@ -1,6 +1,18 @@
 .plugin-item.card {
 	padding: 0;
 
+	.is-bulk-editing & {
+		padding-left: 24px;
+	}
+
+	& ~ .notice.is-error {
+		margin-bottom: 0;
+	}
+
+	input {
+		margin-right: 8px;
+	}
+
 	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
@@ -37,7 +49,6 @@
 
 .plugin-item__link,
 .plugin-item__disabled,
-.is-bulk-editing .plugin-item,
 .plugin-item.is-placeholder {
 	display: block;
 	flex-grow: 1;
@@ -51,6 +62,17 @@
 	@include breakpoint( '>660px' ) {
 		padding: 24px;
 	}
+}
+
+.plugin-item__link {
+	.is-bulk-editing & {
+		padding-left: 40px;
+	}
+}
+
+.plugin-item__disabled {
+	opacity: 0.5;
+	background: $gray-light;
 }
 
 // Checkbox for multiselect purposes

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	uniq = require( 'lodash/array/uniq' ),
 	i18n = require( 'lib/mixins/i18n' );
@@ -141,11 +141,13 @@ module.exports = React.createClass( {
 				<PluginActivateToggle
 					isMock={ this.props.isMock }
 					plugin={ this.props.plugin }
+					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices } />
 				<PluginAutoupdateToggle
 					isMock={ this.props.isMock }
 					plugin={ this.props.plugin }
+					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices }
 					wporg={ !! this.props.plugin.wporg } />
@@ -175,6 +177,13 @@ module.exports = React.createClass( {
 		);
 	},
 
+	onItemClick: function( event ) {
+		if ( this.props.isSelectable ) {
+			event.preventDefault();
+			this.props.onClick( this );
+		}
+	},
+
 	render: function() {
 		var pluginTitle,
 			plugin = this.props.plugin,
@@ -182,11 +191,25 @@ module.exports = React.createClass( {
 			numberOfWarningIcons = 0,
 			errorNotices = [],
 			errorCounter = 0;
-		const pluginItemClasses = classNames( 'plugin-item', { disabled: this.props.hasAllNoManageSites } );
 
 		if ( ! this.props.plugin ) {
 			return this.renderPlaceholder();
 		}
+
+		errors.forEach( function( error ) {
+			errorNotices.push(
+				<Notice
+					type='message'
+					status='is-error'
+					text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
+					button={ PluginNotices.getErrorButton( error ) }
+					href={ PluginNotices.getErrorHref( error ) }
+					raw={ { onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, [ error ] ) } }
+					inline={ true }
+					key={ 'notice-' + errorCounter } />
+			);
+			errorCounter++;
+		}, this );
 
 		if ( this.props.hasNoManageSite ) {
 			numberOfWarningIcons++;
@@ -202,60 +225,10 @@ module.exports = React.createClass( {
 			</div>
 			);
 
-		if ( this.props.isSelectable ) {
-			errors.forEach( function( error ) {
-				let action = null;
-
-				if ( PluginNotices.getErrorButton( error ) ) {
-					action = (
-						<NoticeAction href={ PluginNotices.getErrorHref( error ) }>
-							{ PluginNotices.getErrorButton( error ) }
-						</NoticeAction>
-					);
-				}
-
-				errorNotices.push(
-					<Notice
-						type='message'
-						status='is-error'
-						showDismiss={ false }
-						text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
-						inline={ true }
-						key={ 'notice-' + errorCounter }
-						>
-						{ action }
-					</Notice>
-				);
-				errorCounter++;
-			}, this );
-			return (
-				<div>
-					<CompactCard className={ pluginItemClasses }>
-						<input
-							className="plugin-item__checkbox"
-							id={ plugin.slug }
-							type="checkbox"
-							onClick={ this.props.onClick }
-							checked={ this.props.isSelected }
-							readOnly={ true }
-						/>
-						<label className="plugin-item__label" htmlFor={ plugin.slug }>
-							<span className="screen-reader-text">
-								{ this.translate( 'Toggle selection of %(plugin)s', { args: { plugin: plugin.name } } ) }
-							</span>
-						</label>
-						<div className="plugin-item__info">
-							{ pluginTitle }
-							{ this.pluginMeta( plugin ) }
-						</div>
-					</CompactCard>
-					<div className="plugin-item__error-notices">
-						{ errorNotices }
-					</div>
-				</div>
-			);
-		}
 		if ( this.props.hasAllNoManageSites ) {
+			const pluginItemClasses = classNames( 'plugin-item', {
+				disabled: this.props.hasAllNoManageSites,
+			} );
 			return (
 				<div className="plugin-item__wrapper">
 					<CompactCard className={ pluginItemClasses }
@@ -275,14 +248,26 @@ module.exports = React.createClass( {
 			);
 		}
 		return (
-			<CompactCard className="plugin-item">
-				<a href={ this.props.pluginLink } className="plugin-item__link">
-					<PluginIcon image={ plugin.icon }/>
-					{ pluginTitle }
-					{ this.pluginMeta( plugin ) }
-				</a>
-				{ this.props.selectedSite ? this.renderActions() : this.renderCount() }
-			</CompactCard>
+			<div>
+				<CompactCard className="plugin-item">
+					{ ! this.props.isSelectable
+						? null
+						: <input className="plugin-item__checkbox"
+								id={ plugin.slug }
+								type="checkbox"
+								onClick={ this.props.onClick }
+								checked={ this.props.isSelected }
+								readOnly={ true } />
+					}
+					<a href={ this.props.pluginLink } onClick={ this.onItemClick } className="plugin-item__link">
+						<PluginIcon image={ plugin.icon }/>
+						{ pluginTitle }
+						{ this.pluginMeta( plugin ) }
+					</a>
+					{ this.props.selectedSite ? this.renderActions() : this.renderCount() }
+				</CompactCard>
+				{ errorNotices }
+			</div>
 		);
 	}
 

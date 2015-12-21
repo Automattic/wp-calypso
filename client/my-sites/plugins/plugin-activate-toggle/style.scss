@@ -2,6 +2,12 @@
 	font-size: 11px;
 	color: $alert-red;
 	text-transform: uppercase;
+
+	&:disabled,
+	&:disabled:hover {
+		color: lighten( $gray, 30% );
+		cursor: default;
+	}
 }
 
 .plugin-activate-toggle .plugin-action__children {
