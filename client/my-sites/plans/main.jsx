@@ -2,8 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/collection/find' );
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ var analytics = require( 'analytics' ),
 	Gridicon = require( 'components/gridicon' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
+	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle;
 
 var Plans = React.createClass( {
@@ -73,7 +73,7 @@ var Plans = React.createClass( {
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
-			currentPlan = find( this.props.sitePlans.data, { currentPlan: true } );
+			currentPlan = getCurrentPlan( this.props.sitePlans.data );
 			hasJpphpBundle = isJpphpBundle( currentPlan );
 		}
 

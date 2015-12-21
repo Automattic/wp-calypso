@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
+import find from 'lodash/collection/find';
 import moment from 'moment';
+
+export function getCurrentPlan( plans ) {
+	return find( plans, { currentPlan: true } );
+}
 
 export function getCurrentTrialPeriodInDays( plan ) {
 	const { expiryMoment, subscribedMoment, userFacingExpiryMoment } = plan;

@@ -2,8 +2,7 @@
  * External dependencies
  */
 var React = require( 'react/addons' ),
-	times = require( 'lodash/utility/times' ),
-	find = require( 'lodash/collection/find' );
+	times = require( 'lodash/utility/times' );
 
 /**
  * Internal dependencies
@@ -11,7 +10,8 @@ var React = require( 'react/addons' ),
 var Plan = require( 'components/plans/plan' ),
 	Card = require( 'components/card' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle;
+	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
+	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan;
 
 module.exports = React.createClass( {
 	displayName: 'PlanList',
@@ -37,7 +37,7 @@ module.exports = React.createClass( {
 				return (
 					<Plan placeholder={ true }
 						isInSignup={ this.props.isInSignup }
-						key={ 'plan-' + n } />
+						key={ `plan-${ n }` } />
 				);
 			}, this );
 
@@ -54,7 +54,7 @@ module.exports = React.createClass( {
 		if ( ! this.props.isInSignup ) {
 			// check if this site was registered via the JPPHP "Jetpack Start" program
 			// if so, we want to display a message that this plan is managed via the hosting partner
-			currentPlan = find( this.props.sitePlans.data, { currentPlan: true } );
+			currentPlan = getCurrentPlan( this.props.sitePlans.data );
 			if ( isJpphpBundle( currentPlan ) ) {
 				return (
 					<Card>
@@ -96,7 +96,7 @@ module.exports = React.createClass( {
 				return (
 					<Plan placeholder={ true }
 						isInSignup={ this.props.isInSignup }
-						key={ 'plan-' + n } />
+						key={ `plan-${ n }` } />
 				);
 			}, this );
 		}
