@@ -46,7 +46,8 @@ export default React.createClass( {
 			isLoading: false,
 			renderComplete: false,
 			markupAndStyles: {},
-			dssImage: null
+			dssImage: null,
+			lastSearchTerm: '',
 		};
 	},
 
@@ -80,10 +81,10 @@ export default React.createClass( {
 		const { isLoading, lastKey, imageResultsByKey } = DSSImageStore.get();
 		// If there is no search currently happening or no results for a current search...
 		if ( ! imageResultsByKey[ lastKey ] ) {
-			return this.setState( { isLoading, renderComplete: false, dssImage: null } );
+			return this.setState( { isLoading, renderComplete: false, dssImage: null, lastSearchTerm: lastKey } );
 		}
 		const dssImage = imageResultsByKey[ lastKey ];
-		this.setState( { isLoading, dssImage, renderComplete: false } );
+		this.setState( { isLoading, dssImage, renderComplete: false, lastSearchTerm: lastKey } );
 	},
 
 	dssImageLoaded() {
@@ -131,6 +132,7 @@ export default React.createClass( {
 				themeRepoSlug={ 'pub/' + theme.slug }
 				isLoading={ this.state.isLoading }
 				dssImage={ this.state.dssImage }
+				lastSearchTerm={ this.state.lastSearchTerm }
 				markupAndStyles={ this.state.markupAndStyles[ 'pub/' + theme.slug ] }
 				renderComplete={ this.state.renderComplete }
 				{ ...this.props }/>
