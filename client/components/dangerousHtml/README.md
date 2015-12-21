@@ -14,9 +14,12 @@ API's `innerHTML` to inject the HTML into the tag rather than using
 `dangerouslySetInnerHTML`. Using JavaScript to set the HTML causes the browser
 to fix any invalid markup and prevents it from breaking the renderer.
 
+**Warning**: This is still just as risky as using `dangerouslySetInnerHTML`
+directly. Please avoid this component if at all possible.
+
 ## Props
 
 * `tag`: The tagname to use when creating the element (defaults to `div`).
-* `html`: (Required) The raw HTML string to inject as a child of the tag.
+* `dangerousHtml`: (Required) The raw HTML string to inject as a child of the tag.
 
 Other props will be passed along directly to the new element.

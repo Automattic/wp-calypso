@@ -7,28 +7,33 @@ import omit from 'lodash/object/omit';
 
 export default React.createClass( {
 	propTypes: {
-		html: React.PropTypes.string.isRequired,
+		dangerousHtml: React.PropTypes.string.isRequired,
 		tag: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
+			dangerousHtml: '',
 			tag: 'div'
 		}
 	},
 
 	componentDidMount() {
-		ReactDom.findDOMNode( this ).innerHTML = this.props.html;
+		this.updateHtml();
 	},
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.html !== this.props.html ) {
-			this.componentDidMount();
+		if ( prevProps.dangerousHtml !== this.props.dangerousHtml ) {
+			this.updateHtml();
 		}
+	},
+
+	updateHtml() {
+		ReactDom.findDOMNode( this ).innerHTML = this.props.dangerousHtml;
 	},
 
 	render() {
 		var tag = this.props.tag;
-		return React.createElement( tag, omit( this.props, 'tag', 'html' ) );
+		return React.createElement( tag, omit( this.props, 'tag', 'dangerousHtml' ) );
 	}
 } );
