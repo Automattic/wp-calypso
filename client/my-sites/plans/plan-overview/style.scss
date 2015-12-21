@@ -2,7 +2,6 @@
 	.plan-feature__button,
 	.plan-status__button {
 		flex-shrink: 0;
-		min-width: 160px;
 		text-align: center;
 
 		@include breakpoint( "<480px" ) {
@@ -11,7 +10,7 @@
 		}
 
 		@include breakpoint( ">480px" ) {
-			margin-left: 15px;
+			margin-left: 30px;
 		}
 	}
 }

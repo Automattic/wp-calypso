@@ -60,7 +60,8 @@ const PlanStatus = React.createClass( {
 					<Button
 						primary={ getDaysUntilUserFacingExpiry( this.props.plan ) < 6 }
 						className="plan-status__button"
-						onClick={ this.purchasePlan }>
+						onClick={ this.purchasePlan }
+						primary>
 						{ this.translate( 'Purchase Now' ) }
 					</Button>
 				</CompactCard>
