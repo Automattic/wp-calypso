@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Masterbar = require( './masterbar' ),
+var Masterbar = require( 'layout/masterbar' ),
 	NoticesList = require( 'notices/notices-list' ),
 	notices = require( 'notices' );
 

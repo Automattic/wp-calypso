@@ -1,0 +1,197 @@
+$masterbar-height: 46px;
+$autobar-height: 20px;
+
+// The WordPress.com Masterbar
+.masterbar {
+	background: $blue-wordpress;
+	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	color: $white;
+	font-size: 16px;
+	display: flex;
+	height: $masterbar-height;
+	margin: 0;
+	position: fixed;
+		left: 0;
+		top: 0;
+	width: 100%;
+	z-index: z-index( 'root', '.masterbar' );
+	-webkit-font-smoothing: subpixel-antialiased;
+
+	@include breakpoint( ">660px" ) {
+		backface-visibility: hidden;
+	}
+}
+
+.masterbar__item {
+	flex: 0 1 auto;
+	display: flex;
+		align-items: center;
+	position: relative;
+	color: $white;
+	font-size: 14px;
+	height: $masterbar-height;
+	line-height: $masterbar-height;
+	padding: 0 15px;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all 150ms ease-in;
+
+	&:visited {
+		color: $white;
+	}
+
+	.masterbar__item-content {
+		color: $white;
+		padding: 0 0 0 6px;
+	}
+
+	&:hover,
+	&:focus {
+		background: $blue-medium;
+		background: rgba( 255, 255, 255, 0.15 );
+		color: $white;
+		outline: 0;
+	}
+
+	&.is-active {
+		background: $blue-dark;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex: 1 1 auto;
+
+		.gridicon {
+			margin: 0 auto;
+		}
+
+		.masterbar__item-content {
+			display: none;
+		}
+	}
+}
+
+.masterbar__item-logo {
+	font-size: 17px;
+	font-weight: 300;
+
+	.tld {
+		color: rgba(255, 255, 255, 0.6);
+	}
+}
+
+.masterbar__item-new {
+	background: $white;
+	border-radius: 3px;
+	color: $blue-wordpress;
+	height: 36px;
+	margin: 5px 8px;
+
+	&.is-active {
+		color: $white;
+	}
+
+	.masterbar__item-content {
+		display: none;
+	}
+
+	&:hover,
+	&:focus {
+		background: $gray-light;
+		color: $blue-wordpress;
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin-left: auto;
+	}
+}
+
+.masterbar__item-me {
+	.gravatar {
+		position: absolute;
+		left: 16px;
+		top: 12px;
+		width: 18px;
+		height: 18px;
+
+		border: 2px solid $white;
+	}
+
+	.masterbar__item-content {
+		padding: 0;
+	}
+
+	.masterbar__item-me-label {
+		display: none;
+	}
+}
+
+.masterbar__item-notifications {
+	margin-right: 12px;
+
+	@include breakpoint( "<480px" ) {
+		margin-right: 0;
+	}
+
+	.masterbar__item-content {
+		padding: 0;
+
+		@include breakpoint( "<480px" ) {
+			display: block;
+		}
+	}
+
+	.masterbar__item-notifications-label {
+		display: none;
+	}
+
+	.masterbar__notifications-bubble {
+		border: solid 2px $blue-wordpress;
+		border-radius: 50%;
+		display: none;
+		font-size: 8px;
+		height: 8px;
+		letter-spacing: 0;
+		line-height: 12px;
+		margin: 0 0 0 -12px;
+		padding: 0;
+		position: absolute;
+			top: 9px;
+			left: 50%;
+		width: 8px;
+		z-index: 99999;
+
+		// Animation
+		transform: translateZ(0);
+		animation: bubble-unread-indication .5s linear both;
+		transition: all 150ms ease-in;
+	}
+
+	&:hover .masterbar__notifications-bubble {
+		border-color: #1a98ca;
+	}
+
+	&.is-active .masterbar__notifications-bubble {
+		border-color: $blue-dark;
+	}
+
+	&.has-unread .masterbar__notifications-bubble {
+		display: block;
+		background: $orange-jazzy;
+	}
+
+	&.is-initial-load .masterbar__notifications-bubble {
+		animation: none;
+	}
+}
+
+@keyframes bubble-unread-indication {
+	30% {
+		transform: scale(1.5);
+	}
+	60% {
+		transform: scale(.85);
+	}
+	80% {
+		transform: scale(1.1);
+	}
+}
