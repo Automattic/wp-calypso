@@ -86,7 +86,7 @@ const ListManagementTags = React.createClass( {
 
 		return times( number, ( i ) => {
 			return (
-				<ListItem className="is-placeholder" key={'list-placeholder-' + i}>
+				<ListItem className="is-placeholder" key={ 'list-placeholder-' + i }>
 					<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
 					<Title>Loading</Title>
 					<Description></Description>
@@ -125,12 +125,11 @@ const ListManagementTags = React.createClass( {
 			return null;
 		}
 
-		if ( this.state.list && this.state.tags.size === 0 && this.state.isLastPage ) {
+		if ( this.props.list && this.state.tags.length === 0 && this.state.isLastPage ) {
 			return ( <EmptyContent
 						title={ this.translate( 'This list does not have any tags yet.' ) }
 						illustration={ '/calypso/images/drake/drake-404.svg' }
-						illustrationWidth={ 500 }
-					/> );
+						illustrationWidth={ 500 } /> );
 		}
 
 		return (
@@ -142,8 +141,7 @@ const ListManagementTags = React.createClass( {
 					fetchNextPage={ this.loadMore }
 					getItemRef={ this.getItemRef }
 					renderItem={ this.renderItem }
-					renderLoadingPlaceholders={ this.renderPlaceholders }
-				/>
+					renderLoadingPlaceholders={ this.renderPlaceholders } />
 		);
 	},
 
@@ -152,14 +150,8 @@ const ListManagementTags = React.createClass( {
 			return ( <ListManagementError /> );
 		}
 
-		let message = null;
-		if ( ! this.props.list ) {
-			message = ( <p> {this.translate( 'Loading list information…' ) } </p> );
-		}
-
 		return (
 			<div>
-				{ message }
 				{ this.renderTagList() }
 			</div>
 		);
