@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 		}
 
 		src = GOOGLE_MAPS_BASE_URL + qs.stringify( {
-			center: this.props.coordinates.join( ',' ),
+			markers: this.props.coordinates.join( ',' ),
 			zoom: 8,
 			size: '400x300'
 		} );
