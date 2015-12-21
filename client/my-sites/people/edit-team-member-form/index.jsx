@@ -3,7 +3,6 @@
  */
 var React = require( 'react/addons' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:edit-team-member-form' ),
-	page = require( 'page' ),
 	omit = require( 'lodash/object/omit' ),
 	assign = require( 'lodash/object/assign' ),
 	filter = require( 'lodash/collection/filter' ),
