@@ -169,7 +169,7 @@ module.exports = React.createClass( {
 				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
 				site={ this.props.site }
 				cart={ this.props.cart }
-				flowName={ this.props.flowName }
+				enableFreeTrials={ this.props.enableFreeTrials }
 				isPlaceholder={ this.isPlaceholder() }/>
 		);
 	},
@@ -183,7 +183,7 @@ module.exports = React.createClass( {
 				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
 				site={ this.props.site }
 				cart={ this.props.cart }
-				flowName={ this.props.flowName }
+				enableFreeTrials={ this.props.enableFreeTrials }
 				isPlaceholder={ this.isPlaceholder() }
 				isImageButton />
 		);

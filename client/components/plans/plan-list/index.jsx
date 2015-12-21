@@ -67,7 +67,7 @@ module.exports = React.createClass( {
 						onOpen={ this.openPlan }
 						onSelectPlan={ this.props.onSelectPlan }
 						site={ site }
-						flowName={ this.props.flowName }
+						enableFreeTrials={ this.props.enableFreeTrials }
 						cart={ this.props.cart } />
 				);
 			}, this );

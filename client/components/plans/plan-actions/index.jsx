@@ -145,11 +145,13 @@ module.exports = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.isInSignup && this.props.flowName !== 'free-trial' ) {
+		if ( ! this.props.enableFreeTrials ) {
 			return false;
 		}
 
-		if ( this.props.siteSpecificPlansDetails && ! this.props.siteSpecificPlansDetails.can_start_trial ) {
+		const siteCanOfferTrial = this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.can_start_trial;
+
+		if ( ! this.props.isInSignup && ! siteCanOfferTrial ) {
 			return false;
 		}
 
