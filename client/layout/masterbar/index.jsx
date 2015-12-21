@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Item from './item';
+import StatsItem from './stats-item';
 import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
@@ -65,8 +66,7 @@ export default React.createClass( {
 		if ( this.props.user ) { // Logged in
 			return (
 				<header id="header" className={ classes }>
-					<Item
-						url="/stats"
+					<StatsItem
 						icon={ this.wordpressIcon() }
 						onClick={ this.clickMySites }
 						isActive={ this.isActive( 'sites' ) }
@@ -76,7 +76,7 @@ export default React.createClass( {
 							? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 							: this.translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 						}
-					</Item>
+					</StatsItem>
 					<Item
 						url="/"
 						icon="reader"
