@@ -2,7 +2,7 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	filter = require( 'lodash/collection/filter' ),
 	map = require( 'lodash/collection/map' ),
 	classNames = require( 'classnames' );
@@ -95,7 +95,7 @@ var SegmentedControl = React.createClass( {
 		if ( this.props.children ) {
 			// add keys and refs to children
 			return React.Children.map( this.props.children, function( child, index ) {
-				var newChild = React.addons.cloneWithProps( child, {
+				var newChild = React.cloneElement( child, {
 					ref: ( child.type === ControlItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: function( event ) {
