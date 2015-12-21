@@ -12,10 +12,16 @@
 	&.account,
 	&.next-steps,
 	&.help,
-	&.following,
 	&.customize {
 		max-width: 100%;
 		padding-top: 0px;
+	}
+
+	&.following{
+		max-width: 720px;
+		padding-top: 0;
+		margin-left: 0;
+		margin-right: auto;
 	}
 
 	@include breakpoint( "<960px" ) {
