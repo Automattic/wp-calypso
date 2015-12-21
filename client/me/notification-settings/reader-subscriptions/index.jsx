@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
@@ -28,7 +29,7 @@ import Main from 'components/main';
 module.exports = React.createClass( {
 	displayName: 'NotificationSubscriptions',
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
 
 	getDeliveryHourLabel( hour ) {
 		return this.translate(

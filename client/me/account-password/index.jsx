@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
 	_debounce = require( 'lodash/function/debounce' ),
 	_first = require( 'lodash/array/first' ),
@@ -28,7 +29,7 @@ module.exports = React.createClass( {
 
 	displayName: 'AccountPassword',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
 
 	componentDidMount: function() {
 		this.debouncedPasswordValidate = _debounce( this.validatePassword, 300 );

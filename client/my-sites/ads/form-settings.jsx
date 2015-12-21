@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	notices = require( 'notices' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' );
 
@@ -29,7 +30,7 @@ module.exports = React.createClass( {
 
 	displayName: 'AdsFormSettings',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin ],
+	mixins: [ LinkedStateMixin, protectForm.mixin ],
 
 	propTypes: {
 		site: React.PropTypes.object.isRequired,

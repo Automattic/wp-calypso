@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
 	page = require( 'page' );
 
@@ -25,7 +26,7 @@ module.exports = React.createClass( {
 
 	displayName: 'DeleteSite',
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	mixins: [ LinkedStateMixin ],
 
 	getInitialState: function() {
 		return {

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' );
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ module.exports = React.createClass( {
 
 	displayName: 'ProfileLinksAddOther',
 
-	mixins: [ React.addons.LinkedStateMixin, eventRecorder ],
+	mixins: [ LinkedStateMixin, eventRecorder ],
 
 	getInitialState: function() {
 		return {

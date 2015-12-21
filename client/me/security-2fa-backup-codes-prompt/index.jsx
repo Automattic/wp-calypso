@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );
 
 /**
@@ -20,7 +21,7 @@ module.exports = React.createClass( {
 
 	displayName: 'Security2faBackupCodesPrompt',
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
 		onPrintAgain: React.PropTypes.func,
