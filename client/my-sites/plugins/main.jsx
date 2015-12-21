@@ -28,6 +28,7 @@ import PluginItem from './plugin-item/plugin-item';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
@@ -697,24 +698,16 @@ export default React.createClass( {
 	getEmptyContentData() {
 		let emptyContentData = { illustration: '/calypso/images/drake/drake-empty-results.svg', };
 
-		if ( this.props.search ) {
-			emptyContentData.title = this.translate( 'No plugins match your search for {{searchTerm/}}.', {
-				textOnly: true,
-				components: { searchTerm: <em>{ this.props.search }</em> }
-			} );
-		} else {
-			switch ( this.props.filter ) {
-				case 'inactive':
-					emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
-					break;
-				case 'updates':
-					emptyContentData = this.getEmptyContentUpdateData();
-					break;
-				default:
-					emptyContentData.title = this.translate( 'No plugins match that filter.', { textOnly: true } );
-			}
+		switch ( this.props.filter ) {
+			case 'inactive':
+				emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
+				break;
+			case 'updates':
+				emptyContentData = this.getEmptyContentUpdateData();
+				break;
+			default:
+				emptyContentData.title = this.translate( 'No plugins match that filter.', { textOnly: true } );
 		}
-
 		return emptyContentData;
 	},
 
@@ -739,15 +732,23 @@ export default React.createClass( {
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
 
-		if ( isEmpty( plugins ) && ( this.props.search || 'inactive' === this.props.filter || 'updates' === this.props.filter ) ) {
-			let emptyContentData = this.getEmptyContentData();
-			return (
-				<EmptyContent
+		if ( isEmpty( plugins ) ) {
+			if ( this.props.search ) {
+				return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+					textOnly: true,
+					components: { searchTerm: <em>{ this.props.search }</em> }
+				} ) } />
+			}
+
+			if ( 'inactive' === this.props.filter || 'updates' === this.props.filter ) {
+				let emptyContentData = this.getEmptyContentData();
+				return ( <EmptyContent
 					title={ emptyContentData.title }
 					illustration={ emptyContentData.illustration }
 					actionURL={ emptyContentData.actionURL }
 					action={ emptyContentData.action } />
-			);
+				);
+			}
 		}
 		return (
 			<div className="plugins__lists">
