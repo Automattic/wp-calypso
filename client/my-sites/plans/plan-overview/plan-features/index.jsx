@@ -22,6 +22,11 @@ const PlanFeatures = React.createClass( {
 		return (
 			<div>
 				<PlanFeature
+					button={ { label: this.translate( 'View Themes' ), href: `/design/${ this.props.selectedSite.slug }` } }
+					description={ this.translate( 'You have access to dozens of our best themes available.' ) }
+					heading={ this.translate( 'Unlimited Premium Themes' ) } />
+
+				<PlanFeature
 					button={ { label: this.translate( 'Set up eCommerce' ), href: `/plugins/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Shopify, Ecwid, or Gumroad account to your WordPress.com site.' ) }
 					heading={ this.translate( 'eCommerce Integration' ) } />
@@ -30,11 +35,6 @@ const PlanFeatures = React.createClass( {
 					button={ { label: this.translate( 'Set up Analytics' ), href: `/settings/analytics/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Google Analytics account.' ) }
 					heading={ this.translate( 'Google Analytics Integration' ) } />
-
-				<PlanFeature
-					button={ { label: this.translate( 'View Themes' ), href: `/design/${ this.props.selectedSite.slug }` } }
-					description={ this.translate( 'You have access to dozens of our best themes available.' ) }
-					heading={ this.translate( 'Unlimited Premium Themes' ) } />
 			</div>
 		);
 	},
