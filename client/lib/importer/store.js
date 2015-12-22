@@ -98,7 +98,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				break;
 			}
 
-			newState = state
+			newState = newState
 				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 
