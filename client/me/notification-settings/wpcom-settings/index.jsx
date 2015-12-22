@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -21,6 +23,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
+import { successNotice } from 'state/notices/actions';
 
 /**
  * Module variables
@@ -31,7 +34,7 @@ const options = {
 	community: 'community'
 };
 
-export default React.createClass( {
+const WPCOMNotifications = React.createClass( {
 	displayName: 'WPCOMNotifications',
 
 	getInitialState() {
@@ -57,7 +60,7 @@ export default React.createClass( {
 		}
 
 		if ( state.status === 'success' ) {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
@@ -128,3 +131,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( WPCOMNotifications );
