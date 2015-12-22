@@ -46,14 +46,15 @@ export default React.createClass( {
 			isLoading: false,
 			renderComplete: false,
 			markupAndStyles: {},
-			dssImage: null
+			dssImage: null,
+			lastSearchTerm: '',
 		};
 	},
 
 	componentWillMount() {
 		ThemePreviewStore.on( 'change', this.updateMarkup );
 		DSSImageStore.on( 'change', this.updateScreenshots );
-		this.loadThemePreviews();
+		this.loadThemePreviews( this.props.themes );
 	},
 
 	componentWillUnmount() {
@@ -61,13 +62,15 @@ export default React.createClass( {
 		DSSImageStore.off( 'change', this.updateScreenshots );
 	},
 
-	componentWillReceiveProps() {
-		this.loadThemePreviews();
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.themes !== this.props.themes ) {
+			this.loadThemePreviews( nextProps.themes );
+		}
 	},
 
-	loadThemePreviews() {
-		debug( 'loading theme previews for these themes', this.props.themes );
-		this.props.themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + theme.slug ) );
+	loadThemePreviews( themes ) {
+		debug( 'loading theme previews for these themes', themes );
+		themes.map( theme => DynamicScreenshotsActions.fetchThemePreview( 'pub/' + theme.slug ) );
 	},
 
 	updateMarkup() {
@@ -78,10 +81,10 @@ export default React.createClass( {
 		const { isLoading, lastKey, imageResultsByKey } = DSSImageStore.get();
 		// If there is no search currently happening or no results for a current search...
 		if ( ! imageResultsByKey[ lastKey ] ) {
-			return this.setState( { isLoading, renderComplete: false, dssImage: null } );
+			return this.setState( { isLoading, renderComplete: false, dssImage: null, lastSearchTerm: lastKey } );
 		}
 		const dssImage = imageResultsByKey[ lastKey ];
-		this.setState( { isLoading, dssImage, renderComplete: false } );
+		this.setState( { isLoading, dssImage, renderComplete: false, lastSearchTerm: lastKey } );
 	},
 
 	dssImageLoaded() {
@@ -120,6 +123,22 @@ export default React.createClass( {
 		);
 	},
 
+	renderTheme( theme ) {
+		return (
+			<DssThemeThumbnail
+				key={ theme.name }
+				themeName={ theme.name }
+				themeSlug={ theme.slug }
+				themeRepoSlug={ 'pub/' + theme.slug }
+				isLoading={ this.state.isLoading }
+				dssImage={ this.state.dssImage }
+				lastSearchTerm={ this.state.lastSearchTerm }
+				markupAndStyles={ this.state.markupAndStyles[ 'pub/' + theme.slug ] }
+				renderComplete={ this.state.renderComplete }
+				{ ...this.props }/>
+		);
+	},
+
 	renderContent() {
 		return (
 			<div>
@@ -130,24 +149,12 @@ export default React.createClass( {
 						delaySearch={ true }
 						delayTimeout={ 450 }
 						placeholder={ this.translate( 'e.g., games' ) }
-						onSearch={ this.handleSearch }
-					/>
+						onSearch={ this.handleSearch } />
 				</div>
 				<div className="dss-theme-selection__screenshots">
 					<div className="dss-theme-selection__screenshots__pin">
 						<div className="dss-theme-selection__screenshots__themes">
-							{ this.props.themes.map( ( theme ) => {
-								return <DssThemeThumbnail
-									key={ theme.name }
-									themeName={ theme.name }
-									themeSlug={ theme.slug }
-									themeRepoSlug={ 'pub/' + theme.slug }
-									isLoading={ this.state.isLoading }
-									dssImage={ this.state.dssImage }
-									markupAndStyles={ this.state.markupAndStyles[ 'pub/' + theme.slug ] }
-									renderComplete={ this.state.renderComplete }
-									{ ...this.props }/>;
-							} ) }
+							{ this.props.themes.map( this.renderTheme ) }
 						</div>
 					</div>
 				</div>
