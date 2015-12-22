@@ -24,6 +24,7 @@
 	background-repeat: no-repeat;
 	height: 50px;
 	min-width: 50px;
+	position: relative;
 
 	&.is-premium {
 		background-image: url( '/calypso/images/plans/plan-trial-premium.svg' );
@@ -35,6 +36,13 @@
 
 	@include breakpoint( "<480px" ) {
 		display: none;
+	}
+
+	.gridicon {
+		fill: $alert-red;
+		position: absolute;
+			bottom: -7px;
+			right: -7px;
 	}
 }
 
@@ -51,7 +59,7 @@
 	font-weight: 700;
 
 	@include breakpoint( ">960px" ) {
-		font-size: 24px;
+		font-size: 21px;
 	}
 }
 
@@ -67,6 +75,12 @@
 
 		.progress-bar__progress {
 			background-color: $alert-red;
+		}
+	}
+
+	&.is-in-grace-period {
+		.progress-bar__progress {
+			background-color: $alert-yellow;
 		}
 	}
 }

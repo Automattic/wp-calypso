@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import { getDaysUntilUserFacingExpiry } from 'lib/plans';
+import { getCurrentTrialPeriodInDays, getDaysUntilExpiry, getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 
 const PlanStatusProgress = React.createClass( {
@@ -16,11 +16,29 @@ const PlanStatusProgress = React.createClass( {
 		plan: React.PropTypes.object.isRequired
 	},
 
+	/*
+	 *          |------------------------trialPeriodInDays (17 days)-------------------|
+	 *     plan.subscribedDate (datetime)       plan.userFacingExpiry (day)       plan.expiry (day)
+	 *          |-----------------------------------------|----gracePeriod (3 days)----|
+	 *          |                                         |                            |
+	 * -> Today before user facing expiry:
+	 *                  today
+	 *          |         |-----timeUntilExpiryInDays-----|                            |
+	 * -> Today is in grace period:
+	 *                                                       today
+	 *          |                                         |    |-timeUntilExpiryInDays-|
+	 * -> Today is after trial period in days:
+	 *                                                                                     today
+	 *          |                                         |                            |
+	 *     timeUntilExpiryInDays = 0
+	 */
 	renderProgressBar() {
-		const { plan, plan: { subscribedMoment, userFacingExpiryMoment } } = this.props,
-			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
-			trialPeriodInDays = userFacingExpiryMoment.diff( subscribedMoment, 'days' ),
-			timeUntilExpiryInDays = getDaysUntilUserFacingExpiry( plan ),
+		const { plan } = this.props,
+			trialPeriodInDays = getCurrentTrialPeriodInDays( plan ),
+			timeUntilExpiryInDays = isInGracePeriod( plan )
+				? Math.max( getDaysUntilExpiry( plan ), 0 )
+				: getDaysUntilUserFacingExpiry( plan ),
+			// set minimum progress to 0.5 to show that the trial started immediately
 			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (
@@ -32,6 +50,22 @@ const PlanStatusProgress = React.createClass( {
 
 	renderDaysRemaining() {
 		const { plan } = this.props;
+
+		if ( isInGracePeriod( plan ) ) {
+			if ( getDaysUntilExpiry( plan ) <= 0 ) {
+				return this.translate( 'Plan features will be removed momentarily' );
+			}
+
+			return this.translate(
+				'Plan features will be removed in %(daysUntilExpiry)s day',
+				'Plan features will be removed in %(daysUntilExpiry)s days',
+				{
+					args: { daysUntilExpiry: getDaysUntilExpiry( plan ) },
+					count: getDaysUntilExpiry( plan ),
+					context: "The amount of time until the trial plan is removed from the user's account."
+				}
+			);
+		}
 
 		return this.translate(
 			'%(daysUntilExpiry)d day remaining',
@@ -45,9 +79,11 @@ const PlanStatusProgress = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'plan-status__progress', {
-			'is-expiring': getDaysUntilUserFacingExpiry( this.props.plan ) < 6
-		} );
+		const { plan } = this.props,
+			classes = classNames( 'plan-status__progress', {
+				'is-expiring': getDaysUntilUserFacingExpiry( plan ) < 6 && ! isInGracePeriod( plan ),
+				'is-in-grace-period': isInGracePeriod( plan )
+			} );
 
 		return (
 			<CompactCard>
