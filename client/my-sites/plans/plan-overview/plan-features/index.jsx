@@ -6,7 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PlanFeature from '../plan-feature'
+import PlanFeature from '../plan-feature';
+import PlanProgress from '../plan-progress';
 import SectionHeader from 'components/section-header';
 import { isBusiness } from 'lib/products-values';
 import { isInGracePeriod } from 'lib/plans';
@@ -52,7 +53,8 @@ const PlanFeatures = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( "Your Site's Features" ) } />
+				{ ! willBeRemoved && <SectionHeader label={ this.translate( "Your Site's Features" ) } /> }
+				{ willBeRemoved && <PlanProgress plan={ this.props.plan } /> }
 
 				<PlanFeature
 					button={ { label: this.translate( 'Customize' ), href: `/customize/${ this.props.selectedSite.slug }` } }
