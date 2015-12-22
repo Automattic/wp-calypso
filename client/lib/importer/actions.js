@@ -10,10 +10,11 @@ const wpcom = require( 'lib/wp' ).undocumented();
 import { actionTypes } from './constants';
 import { fromApi, toApi } from './common';
 
-export function cancelImport( importerId ) {
+export function cancelImport( siteId, importerId ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.CANCEL_IMPORT,
-		importerId
+		importerId,
+		siteId
 	} );
 }
 
@@ -95,7 +96,7 @@ export function setUploadProgress( importerId, data ) {
 }
 
 export function startImport( siteId, importerType ) {
-	// Dev-only: this will come from an API call
+	// Use a fake ID until the server returns the real one
 	let importerId = `${ Math.round( Math.random() * 10000 ) }`;
 
 	Dispatcher.handleViewAction( {

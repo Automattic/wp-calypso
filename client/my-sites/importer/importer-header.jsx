@@ -44,8 +44,7 @@ export default React.createClass( {
 	},
 
 	controlButtonClicked: function() {
-		const { id: importerId, importerState, type } = this.props.importerStatus;
-		const { ID: siteId } = this.props.site;
+		const { importerStatus: { importerId, importerState, type }, site: { ID: siteId } } = this.props;
 
 		if ( includes( [ ...cancelStates, ...stopStates ], importerState ) ) {
 			cancelImport( importerId );
