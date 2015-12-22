@@ -4,19 +4,6 @@
 import React from 'react';
 import classnames from 'classnames';
 
-function replaceMarkupWithImage( markup, imageUrl ) {
-	return markup.replace( /(<img [^>]+)src=['"][^'"]+['"]([^>]*>)/g, ( ...imgMatches ) => {
-		if ( imgMatches.length < 3 ) {
-			return imgMatches[0];
-		}
-		const [ original, start, end ] = imgMatches;
-		if ( ! ( start + end ).match( /wp-post-image/ ) ) {
-			return original;
-		}
-		return `${start}src="${imageUrl}"${end}`;
-	} );
-}
-
 export default React.createClass( {
 	displayName: 'DssScreenshot',
 
@@ -42,6 +29,19 @@ export default React.createClass( {
 		return false;
 	},
 
+	replaceMarkupWithImage( markup, imageUrl ) {
+		return markup.replace( /(\r\n|\n|\r)/gm, '' ).replace( /(<img [^>]+)src=['"][^'"]+['"]([^>]*>)/g, ( ...imgMatches ) => {
+			if ( imgMatches.length < 3 ) {
+				return imgMatches[0];
+			}
+			const [ original, start, end ] = imgMatches;
+			if ( ! ( start + end ).match( /wp-post-image/ ) ) {
+				return original;
+			}
+			return `${start}src="${imageUrl}"${end}`;
+		} );
+	},
+
 	getAdditionalStyles( imageUrl ) {
 		return `#theme-${this.props.themeSlug} .hero.with-featured-image{background-image:url(${imageUrl});}`;
 	},
@@ -55,7 +55,7 @@ export default React.createClass( {
 	},
 
 	getPreviewMarkup() {
-		return { __html: this.props.dssImage ? replaceMarkupWithImage( this.props.markupAndStyles.markup, this.props.dssImage.url ) : this.props.markupAndStyles.markup };
+		return { __html: this.props.dssImage ? this.replaceMarkupWithImage( this.props.markupAndStyles.markup, this.props.dssImage.url ) : this.props.markupAndStyles.markup };
 	},
 
 	render() {
