@@ -12,7 +12,6 @@ import reject from 'lodash/collection/reject';
 import assign from 'lodash/object/assign';
 import property from 'lodash/utility/property';
 import isEmpty from 'lodash/lang/isEmpty';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -42,13 +41,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PlanNudge from 'components/plans/plan-nudge';
 import FeatureExample from 'components/feature-example';
 import SectionHeader from 'components/section-header';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
-import BulkSelect from 'components/bulk-select';
+import PluginsListHeader from './plugin-list-header';
 
 /**
  * Module variables
@@ -178,14 +171,6 @@ export default React.createClass( {
 		return this.state.plugins.filter( this.filterSelection.selected );
 	},
 
-	areSelected( filterSelection ) {
-		const selectedFilter = filterSelection ? filterSelection : 'selected';
-		if ( ! this.state.plugins ) {
-			return false;
-		}
-		return this.state.plugins.some( this.filterSelection[ selectedFilter ] );
-	},
-
 	recordEvent( eventAction, includeSelectedPlugins ) {
 		eventAction += ( this.props.site ? '' : ' on Multisite' );
 
@@ -195,10 +180,6 @@ export default React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Plugins', eventAction );
 		}
-	},
-
-	changeSelectionOptionsState() {
-		this.setState( { selectionOptionsOpen: ! this.state.selectionOptionsOpen } );
 	},
 
 	matchSearchTerms( search, plugin ) {
@@ -227,23 +208,9 @@ export default React.createClass( {
 		}
 	},
 
-	onBrowserLinkClick() {
-		this.recordEvent( 'Clicked Add New Plugins' );
-	},
-
 	togglePluginSelection( plugin ) {
 		PluginsActions.togglePluginSelection( plugin );
 		analytics.ga.recordEvent( 'Plugins', 'Clicked to ' + plugin.selected ? 'Deselect' : 'Select' + 'Single Plugin', 'Plugin Name', plugin.slug );
-	},
-
-	unselectOrSelectAll() {
-		if ( this.areSelected() ) {
-			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'none' );
-			this.recordEvent( 'Clicked to Uncheck All Plugins' );
-			return;
-		}
-		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'all' );
-		this.recordEvent( 'Clicked to Check All Plugins' );
 	},
 
 	doActionOverSelected( actionName, action ) {
@@ -422,6 +389,7 @@ export default React.createClass( {
 
 		return plugins.map( plugin => {
 			const hasAllNoManageSites = ! plugin.wpcom && plugin.sites.every( pluginSite => manageableSites.every( site => site.slug !== pluginSite.slug ) );
+			const selectThisPlugin = this.togglePluginSelection.bind( this, plugin );
 			return (
 				<PluginItem
 					key={ plugin.slug }
@@ -430,7 +398,7 @@ export default React.createClass( {
 					sites={ plugin.sites }
 					isSelected={ plugin.selected }
 					isSelectable={ this.state.bulkManagement }
-					onClick={ this.togglePluginSelection.bind( this, plugin ) }
+					onClick={ selectThisPlugin }
 					pluginLink={ this.props.path + '/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() }
 					progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
 					errors={
@@ -443,7 +411,6 @@ export default React.createClass( {
 	},
 
 	renderPluginList( plugins, header, isWpCom ) {
-		let headerMarkup;
 		const slug = header.replace( / /g, '' );
 
 		if ( isEmpty( plugins ) ) {
@@ -454,25 +421,25 @@ export default React.createClass( {
 			'is-bulk-editing': this.state.bulkManagement
 		} );
 
-		const headerClasses = classNames( 'plugins__section-actions', {
-			'is-bulk-editing': this.state.bulkManagement
-		} );
-
-		if ( this.state.bulkManagement ) {
-			header = null;
-		}
-
-		headerMarkup = (
-			<SectionHeader label={ header } className={ headerClasses } key={ 'plugins__section-header-' + slug } >
-				{ ! this.state.bulkManagement ? null : <BulkSelect key="plugins__bulk-select" totalElements={ this.state.plugins.length } selectedElements={ this.getSelected().length } onToggle={ this.unselectOrSelectAll } /> }
-				{ this.getCurrentActionDropdown() }
-				{ this.getCurrentActionButtons( isWpCom ) }
-			</SectionHeader>
-		);
-
 		return (
 			<span key={ 'plugins__header-' + slug }>
-				{ headerMarkup }
+				<PluginsListHeader label={ header }
+					isWpCom={ isWpCom }
+					isBulkManagementActive={ !! this.state.bulkManagement }
+					sites={ this.props.sites }
+					plugins={ this.state.plugins }
+					selected={ this.getSelected() }
+					toggleBulkManagement={ this.toggleBulkManagement }
+					updateAllPlugins={ this.updateAllPlugins }
+					pluginUpdateCount={ this.state.pluginUpdateCount }
+					activateSelected={ this.activateSelected }
+					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
+					deactivateSelected={ this.deactivateSelected }
+					setAutoupdateSelected={ this.setAutoupdateSelected }
+					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
+					removePluginNotice={ this.removePluginNotice }
+					haveActiveSelected={ this.state.plugins.some( this.filterSelection.active ) }
+					haveInactiveSelected={ this.state.plugins.some( this.filterSelection.inactive ) } />
 				<div className={ itemListClasses }>{ this.formatPlugins( plugins ) }</div>
 			</span>
 		);
@@ -527,127 +494,6 @@ export default React.createClass( {
 			case 'all':
 				return this.translate( 'Search All…', { textOnly: true } );
 		}
-	},
-
-	canAddNewPlugins() {
-		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			return this.hasJetpackSelectedSites();
-		}
-		return false;
-	},
-
-	canUpdatePlugins() {
-		return this.state.plugins
-			.filter( plugin => plugin.selected )
-			.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
-	},
-
-	canAutoupdatePlugins() {
-		return this.state.plugins
-			.filter( plugin => plugin.selected )
-			.some( plugin => plugin.sites.some( site => site.canAutoupdateFiles ) );
-	},
-
-	hasJetpackSelectedSites() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		if ( selectedSite ) {
-			return !! selectedSite.jetpack;
-		}
-		return this.props.sites.getJetpack().length > 0;
-	},
-
-	getCurrentActionButtons( isWpCom ) {
-		let buttons = [];
-		let rightSideButtons = [];
-		let leftSideButtons = [];
-		let updateButtons = [];
-		let activateButtons = [];
-
-		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
-		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
-		const needsRemoveButton = this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
-		if ( ! this.state.bulkManagement ) {
-			if ( ! isWpCom && 0 < this.state.pluginUpdateCount ) {
-				rightSideButtons.push(
-					<ButtonGroup key="plugins__buttons-update-all">
-						<Button compact primary onClick={ this.updateAllPlugins } >
-							{ this.translate( 'Update All', { context: 'button label' } ) }
-						</Button>
-					</ButtonGroup>
-				);
-			}
-			rightSideButtons.push(
-				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Edit All', { context: 'button label' } ) }</Button></ButtonGroup>
-			);
-			if ( ! isWpCom && this.canAddNewPlugins() ) {
-				const selectedSite = this.props.sites.getSelectedSite();
-				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
-
-				rightSideButtons.push(
-					<ButtonGroup key="plugins__buttons-browser"><Button compact href={ browserUrl } onClick={ this.onBrowserLinkClick } className="plugins__browser-button"><Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } /></Button></ButtonGroup>
-				);
-			}
-		} else {
-			activateButtons.push( <Button key="plugins__buttons-activate" disabled={ ! this.areSelected( 'inactive' ) } compact onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</Button> )
-			let deactivateButton = isJetpackSelected
-				? <Button key="plugins__buttons-deactivate" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</Button>
-				: <Button key="plugins__buttons-disable" disabled={ ! this.areSelected( 'active' ) } compact onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</Button>;
-			activateButtons.push( deactivateButton )
-			leftSideButtons.push( <ButtonGroup key="plugins__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
-
-			if ( this.hasJetpackSelectedSites() && ! isWpCom ) {
-				updateButtons.push( <Button key="plugins__buttons-autoupdate-on" disabled={ hasWpcomPlugins || ! this.canAutoupdatePlugins() } compact onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</Button> );
-				updateButtons.push( <Button key="plugins__buttons-autoupdate-off" disabled={ hasWpcomPlugins || ! this.canAutoupdatePlugins() } compact onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</Button> );
-
-				leftSideButtons.push( <ButtonGroup key="plugins__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
-				leftSideButtons.push( <ButtonGroup key="plugins__buttons-remove-button"><Button disabled={ ! needsRemoveButton } compact scary onClick={ this.removePluginNotice }>{ this.translate( 'Remove' ) }</Button></ButtonGroup> );
-			}
-
-			rightSideButtons.push(
-				<button key="plugins__buttons-close-button" className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
-					<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
-					<Gridicon icon="cross" />
-				</button>
-			);
-		}
-
-		buttons.push( <span key="plugins__buttons-action-buttons" className="plugins__action-buttons">{ leftSideButtons }</span> );
-		buttons.push( <span key="plugins__buttons-global-buttons" className="plugins__mode-buttons">{ rightSideButtons }</span> );
-
-		return buttons;
-	},
-
-	getCurrentActionDropdown() {
-		let options = [];
-		let actions = [];
-
-		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
-		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
-		const needsRemoveButton = !! this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
-
-		if ( this.state.bulkManagement ) {
-			options.push( <DropdownItem key="plugin__actions_title" selected={ true } v1alue="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
-			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
-
-			options.push( <DropdownItem key="plugin__actions_activate" disabled={ ! this.areSelected( 'inactive' ) } onClick={ this.activateSelected }>{ this.translate( 'Activate' ) }</DropdownItem> );
-
-			let deactivateAction = isJetpackSelected
-				? <DropdownItem key="plugin__actions_disconnect" disabled={ ! this.areSelected( 'active' ) } onClick={ this.deactiveAndDisconnectSelected }>{ this.translate( 'Disconnect' ) }</DropdownItem>
-				: <DropdownItem key="plugin__actions_deactivate" disabled={ ! this.areSelected( 'active' ) } onClick={ this.deactivateSelected }>{ this.translate( 'Deactivate' ) }</DropdownItem>;
-			options.push( deactivateAction );
-
-			if ( this.hasJetpackSelectedSites() ) {
-				options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
-				options.push( <DropdownItem key="plugin__actions_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.setAutoupdateSelected }>{ this.translate( 'Autoupdate' ) }</DropdownItem> );
-				options.push( <DropdownItem key="plugin__actions_disable_autoupdate" disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() } onClick={ this.unsetAutoupdateSelected }>{ this.translate( 'Disable Autoupdates' ) }</DropdownItem> );
-
-				options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
-				options.push( <DropdownItem key="plugin__actions_remove" className="plugins__actions_remove_item" disabled={ ! needsRemoveButton } onClick={ this.removePluginNotice } >{ this.translate( 'Remove' ) }</DropdownItem> );
-			}
-
-			actions.push( <SelectDropdown compact className="plugins__actions_dropdown" key="plugins__actions_dropdown" selectedText="Actions">{ options }</SelectDropdown> );
-		}
-		return actions;
 	},
 
 	getEmptyContentUpdateData() {
@@ -864,8 +710,7 @@ export default React.createClass( {
 						initialValue={ this.props.search }
 						ref="url-search"
 						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() }
-					/>
+						placeholder={ this.getSearchPlaceholder() } />
 				</SectionNav>
 				{ this.renderPluginsContent() }
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
