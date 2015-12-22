@@ -116,12 +116,11 @@ function interpolate( options ) {
 	try {
 		return buildChildren( tokens, components );
 	} catch ( error ) {
-		// Returns what we can in environments that shouldn't throw errors
-		if ( ! throwErrors ) {
-			return mixedString;
+		if ( throwErrors ) {
+			throw new Error( `Interpolation Error: unable to process \`${ mixedString }\` because of error \`${ error.message }\`` );
 		}
 
-		throw new Error( `Interpolation Error: unable to process \`${ mixedString }\` because of error \`${ error.message }\`` );
+		return mixedString;
 	}
 };
 
