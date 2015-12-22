@@ -59,33 +59,37 @@ module.exports = React.createClass( {
 			case 'UPDATE_PLUGIN':
 				message = ( this.props.selectedSite
 					? i18n.translate( 'Updating', { context: 'plugin' } )
-					: i18n.translate( 'Updating on %(count)s site', 'updating on %(count)s sites', translationArgs ) );
+					: i18n.translate( 'Updating on %(count)s site', 'Updating on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'ACTIVATE_PLUGIN':
 				message = ( this.props.selectedSite
 					? i18n.translate( 'Activating', { context: 'plugin' } )
-					: i18n.translate( 'Activating on %(count)s site', 'activating on %(count)s sites', translationArgs ) );
+					: i18n.translate( 'Activating on %(count)s site', 'Activating on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'DEACTIVATE_PLUGIN':
 				message = ( this.props.selectedSite
 					? i18n.translate( 'Deactivating', { context: 'plugin' } )
-					: i18n.translate( 'Deactivating on %(count)s site', 'deactivating on %(count)s sites', translationArgs ) );
+					: i18n.translate( 'Deactivating on %(count)s site', 'Deactivating on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				message = ( this.props.selectedSite
 					? i18n.translate( 'Enabling autoupdates' )
-					: i18n.translate( 'Enabling autoupdates on %(count)s site', 'enabling autoupdates on %(count)s sites', translationArgs ) );
+					: i18n.translate( 'Enabling autoupdates on %(count)s site', 'Enabling autoupdates on %(count)s sites', translationArgs ) );
 				break;
 
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				message = ( this.props.selectedSite
 					? i18n.translate( 'Disabling autoupdates' )
-					: i18n.translate( 'Disabling autoupdates on %(count)s site', 'disabling autoupdates on %(count)s sites', translationArgs ) );
+					: i18n.translate( 'Disabling autoupdates on %(count)s site', 'Disabling autoupdates on %(count)s sites', translationArgs ) );
 
 				break;
+			case 'REMOVE_PLUGIN':
+				message = ( this.props.selectedSite
+					? i18n.translate( 'Removing plugin' )
+					: i18n.translate( 'Removing plugin on %(count)s site', 'Removing plugin on %(count)s sites', translationArgs ) );
 		}
 		return message;
 	},
