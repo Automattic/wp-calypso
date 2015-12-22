@@ -257,7 +257,7 @@ function mediaButton( editor ) {
 		onPostRender: function() {
 			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation" tabIndex="-1">
-					<Gridicon icon="image-multiple" size={ 20 } />
+					<Gridicon icon="image-multiple" size={ 20 } nonStandardSize />
 				</button>
 			) );
 		},
@@ -456,6 +456,10 @@ function mediaButton( editor ) {
 		onclick: function() {
 			resize( 1 );
 		}
+	} );
+
+	editor.addCommand( 'WP_Medialib', () => {
+		renderModal( { visible: true } );
 	} );
 
 	editor.addCommand( 'wpcomEditGallery', function( content ) {
