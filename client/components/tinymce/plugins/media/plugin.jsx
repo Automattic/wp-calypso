@@ -257,7 +257,7 @@ function mediaButton( editor ) {
 		onPostRender: function() {
 			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation" tabIndex="-1">
-					<Gridicon icon="image-multiple" size={ 20 } />
+					<Gridicon icon="image-multiple" size={ 20 } nonStandardSize />
 				</button>
 			) );
 		},
