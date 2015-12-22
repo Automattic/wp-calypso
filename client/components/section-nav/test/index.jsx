@@ -16,7 +16,7 @@ require( 'lib/react-test-env-setup' )( '<html><body><script></script><div id="co
 require( 'react-tap-event-plugin' )();
 
 function createComponent( component, props, children ) {
-	var shallowRenderer = React.addons.TestUtils.createRenderer();
+	var shallowRenderer = TestUtils.createRenderer();
 	shallowRenderer.render(
 		React.createElement( component, props, children )
 	);
