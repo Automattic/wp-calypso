@@ -62,7 +62,7 @@ export default React.createClass( {
 	mixins: [ URLSearch, PluginNotices ],
 
 	getInitialState() {
-		return this.getPluginsState( this.props );
+		return Object.assign( {}, this.getPluginsState( this.props ), { bulkManagement: [] } );
 	},
 
 	filterSelection: {
@@ -149,7 +149,7 @@ export default React.createClass( {
 	},
 
 	getPluginsState( nextProps ) {
-		const sites = this.state && this.state.bulkManagement ? this.props.sites.getSelectedOrAllWithPlugins() : this.props.sites.getSelectedOrAll(),
+		const sites = this.state && this.state.bulkManagement.length ? this.props.sites.getSelectedOrAllWithPlugins() : this.props.sites.getSelectedOrAll(),
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 
 		return {
@@ -208,17 +208,25 @@ export default React.createClass( {
 		);
 	},
 
-	toggleBulkManagement() {
-		const bulkManagement = ! this.state.bulkManagement,
-			sites = bulkManagement ? this.props.sites.getSelectedOrAllWithPlugins() : this.props.sites.getSelectedOrAll();
+	toggleBulkManagement( section ) {
+		let bulkManagement = this.state.bulkManagement;
+		const foundIndex = bulkManagement.indexOf( section );
 
+		if ( foundIndex === -1 ) {
+			bulkManagement.push( section );
+		} else {
+			bulkManagement.splice( foundIndex, 1 );
+		}
+
+		const sites = bulkManagement ? this.props.sites.getSelectedOrAllWithPlugins() : this.props.sites.getSelectedOrAll();
+		console.log( bulkManagement );
 		this.setState( {
 			plugins: this.getPluginsFromStore( this.props, sites ),
 			bulkManagement: bulkManagement,
 			filter: 'all'
 		} );
 
-		if ( bulkManagement ) {
+		if ( bulkManagement.length ) {
 			this.recordEvent( 'Clicked Manage' );
 		} else {
 			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAll(), 'none' );
@@ -237,12 +245,23 @@ export default React.createClass( {
 	},
 
 	unselectOrSelectAll() {
+		const sites = this.props.sites.getSelectedOrAllWithPlugins().filter( site => this.state.bulkManagement.some( section => {
+			if ( section === 'jetpack' ) {
+				return site[ section ];
+			}
+
+			if ( section === 'wpcom' ) {
+				return ! site.jetpack;
+			}
+			return false;
+		} ) );
+
 		if ( this.areSelected() ) {
-			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'none' );
+			PluginsActions.selectPlugins( sites, 'none' );
 			this.recordEvent( 'Clicked to Uncheck All Plugins' );
 			return;
 		}
-		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'all' );
+		PluginsActions.selectPlugins( sites, 'all' );
 		this.recordEvent( 'Clicked to Check All Plugins' );
 	},
 
@@ -417,11 +436,11 @@ export default React.createClass( {
 		];
 	},
 
-	formatPlugins( plugins ) {
+	formatPlugins( plugins, isSelectable ) {
 		const manageableSites = this.props.sites.getSelectedOrAllJetpackCanManage();
-
 		return plugins.map( plugin => {
 			const hasAllNoManageSites = ! plugin.wpcom && plugin.sites.every( pluginSite => manageableSites.every( site => site.slug !== pluginSite.slug ) );
+			const togglePluginSelection = this.togglePluginSelection.bind( this, plugin );
 			return (
 				<PluginItem
 					key={ plugin.slug }
@@ -429,8 +448,8 @@ export default React.createClass( {
 					plugin={ plugin }
 					sites={ plugin.sites }
 					isSelected={ plugin.selected }
-					isSelectable={ this.state.bulkManagement }
-					onClick={ this.togglePluginSelection.bind( this, plugin ) }
+					isSelectable={ isSelectable }
+					onClick={ togglePluginSelection }
 					pluginLink={ this.props.path + '/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() }
 					progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
 					errors={
@@ -445,27 +464,33 @@ export default React.createClass( {
 	renderPluginList( plugins, header, isWpCom ) {
 		let headerMarkup;
 		const slug = header.replace( / /g, '' );
+		const inBulkEditMode = this.state.bulkManagement.indexOf( isWpCom ? 'wpcom' : 'jetpack' ) !== -1 ? true : false;
 
 		if ( isEmpty( plugins ) ) {
 			return;
 		}
 
 		const itemListClasses = classNames( 'list-cards-compact', 'plugins__list', {
-			'is-bulk-editing': this.state.bulkManagement
+			'is-bulk-editing': inBulkEditMode
 		} );
 
 		const headerClasses = classNames( 'plugins__section-actions', {
-			'is-bulk-editing': this.state.bulkManagement
+			'is-bulk-editing': inBulkEditMode
 		} );
 
-		if ( this.state.bulkManagement ) {
+		if ( inBulkEditMode ) {
 			header = null;
 		}
 
 		headerMarkup = (
 			<SectionHeader label={ header } className={ headerClasses } key={ 'plugins__section-header-' + slug } >
-				{ ! this.state.bulkManagement ? null : <BulkSelect key="plugins__bulk-select" totalElements={ this.state.plugins.length } selectedElements={ this.getSelected().length } onToggle={ this.unselectOrSelectAll } /> }
-				{ this.getCurrentActionDropdown() }
+				{ inBulkEditMode && <BulkSelect
+						key="plugins__bulk-select"
+						totalElements={ this.state.plugins.length }
+						selectedElements={ this.getSelected().length }
+						onToggle={ this.unselectOrSelectAll } />
+				}
+				{ this.getCurrentActionDropdown( isWpCom ) }
 				{ this.getCurrentActionButtons( isWpCom ) }
 			</SectionHeader>
 		);
@@ -473,7 +498,7 @@ export default React.createClass( {
 		return (
 			<span key={ 'plugins__header-' + slug }>
 				{ headerMarkup }
-				<div className={ itemListClasses }>{ this.formatPlugins( plugins ) }</div>
+				<div className={ itemListClasses }>{ this.formatPlugins( plugins, inBulkEditMode ) }</div>
 			</span>
 		);
 	},
@@ -563,10 +588,12 @@ export default React.createClass( {
 		let updateButtons = [];
 		let activateButtons = [];
 
+		const inBulkEditMode = this.state.bulkManagement.indexOf( isWpCom ? 'wpcom' : 'jetpack' ) !== -1 ? true : false;
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
-		if ( ! this.state.bulkManagement ) {
+		const toggleBulkManagement = this.toggleBulkManagement.bind( this, isWpCom ? 'wpcom' : 'jetpack' );
+		if ( ! inBulkEditMode ) {
 			if ( ! isWpCom && 0 < this.state.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugins__buttons-update-all">
@@ -576,8 +603,9 @@ export default React.createClass( {
 					</ButtonGroup>
 				);
 			}
+
 			rightSideButtons.push(
-				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ this.toggleBulkManagement } selected={ this.state.bulkManagement }>{ this.translate( 'Edit All', { context: 'button label' } ) }</Button></ButtonGroup>
+				<ButtonGroup key="plugins__buttons-bulk-management"><Button compact onClick={ toggleBulkManagement } selected={ inBulkEditMode }>{ this.translate( 'Edit All', { context: 'button label' } ) }</Button></ButtonGroup>
 			);
 			if ( ! isWpCom && this.canAddNewPlugins() ) {
 				const selectedSite = this.props.sites.getSelectedSite();
@@ -604,7 +632,7 @@ export default React.createClass( {
 			}
 
 			rightSideButtons.push(
-				<button key="plugins__buttons-close-button" className="plugins__section-actions-close" onClick={ this.toggleBulkManagement }>
+				<button key="plugins__buttons-close-button" className="plugins__section-actions-close" onClick={ toggleBulkManagement }>
 					<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
 					<Gridicon icon="cross" />
 				</button>
@@ -617,15 +645,16 @@ export default React.createClass( {
 		return buttons;
 	},
 
-	getCurrentActionDropdown() {
+	getCurrentActionDropdown( isWpCom ) {
 		let options = [];
 		let actions = [];
 
 		const hasWpcomPlugins = this.getSelected().some( property( 'wpcom' ) );
 		const isJetpackSelected = this.state.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = !! this.getSelected().length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
+		const inBulkEditMode = this.state.bulkManagement.indexOf( isWpCom ? 'wpcom' : 'jetpack' ) !== -1 ? true : false;
 
-		if ( this.state.bulkManagement ) {
+		if ( inBulkEditMode ) {
 			options.push( <DropdownItem key="plugin__actions_title" selected={ true } v1alue="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
 			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
 
@@ -783,13 +812,15 @@ export default React.createClass( {
 		}
 
 		return plugins.map( plugin => {
-			return <PluginItem
-				key={ 'plugin-item-mock-' + plugin.slug }
-				plugin={ plugin }
-				sites={ [] }
-				selectedSite={ selectedSite }
-				progress={ [] }
-				isMock={ true } />
+			return (
+				<PluginItem
+					key={ 'plugin-item-mock-' + plugin.slug }
+					plugin={ plugin }
+					sites={ [] }
+					selectedSite={ selectedSite }
+					progress={ [] }
+					isMock={ true } />
+			);
 		} );
 	},
 
@@ -857,15 +888,13 @@ export default React.createClass( {
 							);
 						} ) }
 					</NavTabs>
-
 					<Search
 						pinned
 						onSearch={ this.doSearch }
 						initialValue={ this.props.search }
 						ref="url-search"
 						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() }
-					/>
+						placeholder={ this.getSearchPlaceholder() } />
 				</SectionNav>
 				{ this.renderPluginsContent() }
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
