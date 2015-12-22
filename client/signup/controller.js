@@ -19,6 +19,7 @@ import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
 import titleActions from 'lib/screen-title/actions';
+import { setSection } from 'state/ui/actions';
 const user = userModule();
 
 /**
@@ -87,10 +88,9 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		context.layout.setState( {
-			section: 'signup',
-			noSidebar: true
-		} );
+		context.store.dispatch( setSection( 'signup', {
+			hasSidebar: false
+		} ) );
 
 		ReactDom.render(
 			React.createElement( SignupComponent, {

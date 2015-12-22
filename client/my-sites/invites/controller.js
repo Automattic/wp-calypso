@@ -10,12 +10,13 @@ import React from 'react';
 import i18n from 'lib/mixins/i18n';
 import titleActions from 'lib/screen-title/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
+import { setSection } from 'state/ui/actions';
 
 export function acceptInvite( context ) {
 	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
 
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	context.layout.setState( { noSidebar: true } );
+	context.layout.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	ReactDom.render(
 		React.createElement(
