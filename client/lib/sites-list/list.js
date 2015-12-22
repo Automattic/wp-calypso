@@ -5,7 +5,8 @@ var debug = require( 'debug' )( 'calypso:sites-list' ),
 	store = require( 'store' ),
 	assign = require( 'lodash/object/assign' ),
 	find = require( 'lodash/collection/find' ),
-	some = require( 'lodash/collection/some' );
+	some = require( 'lodash/collection/some' ),
+	unique = require( 'lodash/array/uniq' );
 
 /**
  * Internal dependencies
@@ -464,11 +465,16 @@ SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 };
 
 SitesList.prototype.getSelectedOrAllWithPlugins = function() {
-	return this.getSelectedOrAll().concat(
+	return unique( this.getSelectedOrAll().concat(
 		this.getSelectedOrAll().filter( function( site ) {
 			return isBusiness( site.plan );
-		} )
-	);
+		} ) ), 'ID' );
+};
+
+SitesList.prototype.getSelectedOrWPComBusiness = function() {
+	return this.getSelectedOrAll().filter( function( site ) {
+		return isBusiness( site.plan );
+	} );
 };
 
 SitesList.prototype.hasSiteWithPlugins = function() {
