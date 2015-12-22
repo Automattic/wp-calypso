@@ -57,6 +57,7 @@
 		"manage/export": true,
 		"manage/security": true,
 		"manage/option_sync_non_public_post_stati": true,
+		"manage/option_skip_version_control_check": true,
 
 		"manage/stats": true,
 		"manage/stats/insights": true,

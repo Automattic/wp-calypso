@@ -44,6 +44,13 @@ module.exports = React.createClass( {
 			settings.jetpack_relatedposts_allowed = site.settings.jetpack_relatedposts_allowed;
 			settings.jetpack_sync_non_public_post_stati = site.settings.jetpack_sync_non_public_post_stati;
 
+			if ( site.settings.jetpack_skip_version_control_check ) {
+				settings.jetpack_skip_version_control_check_plugins = site.settings.jetpack_skip_version_control_check.plugins;
+				settings.jetpack_skip_version_control_check_themes = site.settings.jetpack_skip_version_control_check.themes;
+				settings.jetpack_skip_version_control_check_core = site.settings.jetpack_skip_version_control_check.core;
+				settings.jetpack_skip_version_control_check_translations = site.settings.jetpack_skip_version_control_check.translations;
+			}
+
 			if ( settings.jetpack_relatedposts_allowed ) {
 				settings.jetpack_relatedposts_enabled = ( site.settings.jetpack_relatedposts_enabled ) ? 1 : 0;
 				settings.jetpack_relatedposts_show_headline = site.settings.jetpack_relatedposts_show_headline;
@@ -79,6 +86,10 @@ module.exports = React.createClass( {
 			jetpack_relatedposts_show_headline: false,
 			jetpack_relatedposts_show_thumbnails: false,
 			jetpack_sync_non_public_post_stati: false,
+			jetpack_skip_version_control_check_plugins: false,
+			jetpack_skip_version_control_check_themes: false,
+			jetpack_skip_version_control_check_core: false,
+			jetpack_skip_version_control_check_translations: false,
 			holidaysnow: false
 		} );
 	},
@@ -129,7 +140,7 @@ module.exports = React.createClass( {
 				<Button
 					href={ '/domains/add/' + site.slug }
 					onClick={ this.trackUpgradeClick }
-					
+
 				>
 					<Gridicon icon="plus" /> { this.translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
 				</Button>
@@ -309,7 +320,7 @@ module.exports = React.createClass( {
 	},
 
 	syncNonPublicPostTypes: function() {
-		if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ) {
+		if ( ! config.isEnabled( 'manage/option_skip_version_control_check' ) ) {
 			return null;
 		}
 		return (
@@ -321,6 +332,28 @@ module.exports = React.createClass( {
 								<input name="jetpack_sync_non_public_post_stati" type="checkbox" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
 								<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
 								<p className="settings-explanation is-indented">{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }</p>
+							</label>
+						</li>
+					</ul>
+				</form>
+			</Card>
+		);
+	},
+
+	skipsVersionControlCheck: function() {
+		if ( ! config.isEnabled( 'manage/option_skip_version_control_check' ) ) {
+			return null;
+		}
+		console.log( this.state );
+		return (
+			<Card className="is-compact">
+				<form onChange={ this.markChanged }>
+					<ul id="settings-jetpack" className="settings-jetpack">
+						<li>
+							<label>
+								<input name="jetpack_skip_version_control_check" type="checkbox" checkedLink={ this.linkState( 'jetpack_skip_version_control_check' ) }/>
+								<span>{ this.translate( 'Skip the version control check on sites that have version control enabled ' ) }</span>
+
 							</label>
 						</li>
 					</ul>
@@ -450,6 +483,8 @@ module.exports = React.createClass( {
 						</SectionHeader>
 
 						{ this.syncNonPublicPostTypes() }
+
+						{ this.skipsVersionControlCheck() }
 
 						<Card href={ '../security/' + site.slug } className="is-compact">
 							{ this.translate( 'View Jetpack Monitor Settings' ) }
