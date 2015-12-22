@@ -41,22 +41,19 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const emptyTableText = this.translate(
+			'You do not currently have any upgrades. ' +
+			'To see what upgrades we offer visit our {{link}}Plans page{{/link}}.', {
+				components: { link: <a href="/plans" /> }
+			}
+		);
 		return (
 			<TransactionsTable
 				{ ...this.props }
 				initialFilter={ { date: { newest: 5 } } }
 				header
-				description={ function( transaction ) {
-					return (
-						<div className="transaction-links">
-							<a className="view-receipt" href={ '/me/billing/' + transaction.id } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
-								{ this.translate( 'View Receipt' ) }
-							</a>
-							{ this.renderEmailAction( transaction.id ) }
-						</div>
-					);
-				}.bind( this ) }
-				/>
+				emptyTableText={ emptyTableText }
+				transactionRenderer={ this.renderTransaction } />
 		);
 	},
 
@@ -73,5 +70,14 @@ module.exports = React.createClass( {
 		}
 
 		return action;
+	},
+
+	renderTransaction: function( transaction ) {
+		<div className="transaction-links">
+			<a className="view-receipt" href={ '/me/billing/' + transaction.id } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
+				{ this.translate( 'View Receipt' ) }
+			</a>
+			{ this.renderEmailAction( transaction.id ) }
+		</div>
 	}
 } );

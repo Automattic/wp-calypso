@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
 
 /**
  * Internal Dependencies
@@ -13,8 +13,20 @@ module.exports = React.createClass( {
 
 	displayName: 'UpcomingChargesTable',
 
+	propTypes: {
+		sites: PropTypes.shape( {
+			getSite: PropTypes.func.isRequired
+		} ).isRequired
+	},
+
 	render: function() {
 		var transactions = null;
+		const emptyTableText = this.translate(
+			'The upgrades on your account will not renew automatically. ' +
+			'To manage your upgrades or enable Auto Renew visit {{link}}My Upgrades{{/link}}.', {
+				components: { link: <a href="/purchases" /> }
+			}
+		);
 
 		if ( this.props.sites.initialized ) {
 			// `TransactionsTable` will render a loading state until the transactions are present
@@ -25,20 +37,24 @@ module.exports = React.createClass( {
 			<TransactionsTable
 				transactions={ transactions }
 				initialFilter={ { date: { newest: 20 } } }
-				description={ function( transaction ) {
-					var site = this.props.sites.getSite( Number( transaction.blog_id ) );
+				emptyTableText={ emptyTableText }
+				transactionRenderer={ this.renderTransaction } />
+		);
+	},
 
-					if ( site ) {
-						return (
-							<div className="transaction-links">
-								<a href={ purchasesPaths.managePurchase( site.slug, transaction.id ) }>
-									{ this.translate( 'Manage Purchase' ) }
-								</a>
-							</div>
-						);
-					}
-				}.bind( this ) }
-			/>
+	renderTransaction: function( transaction ) {
+		var site = this.props.sites.getSite( Number( transaction.blog_id ) );
+
+		if ( ! site ) {
+			return null;
+		}
+
+		return (
+			<div className="transaction-links">
+				<a href={ purchasesPaths.managePurchase( site.slug, transaction.id ) }>
+					{ this.translate( 'Manage Purchase' ) }
+				</a>
+			</div>
 		);
 	}
 } );

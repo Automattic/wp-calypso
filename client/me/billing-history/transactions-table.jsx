@@ -131,10 +131,12 @@ var TransactionsTable = React.createClass( {
 					<td className="no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
 				</tr>
 			);
-		} else if ( isEmpty( this.state.transactions ) ) {
+		}
+
+		if ( isEmpty( this.state.transactions ) ) {
 			return (
 				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.translate( 'No matching receipts found' ) }</td>
+					<td className="no-results-cell" colSpan="3">{ this.props.emptyTableText }</td>
 				</tr>
 			);
 		}
@@ -149,7 +151,7 @@ var TransactionsTable = React.createClass( {
 						<div className="trans-wrap">
 							<div className="service-description">
 								<div className="service-name">{ this.serviceName( transaction ) }</div>
-								{ this.props.description.call( this, transaction ) }
+								{ this.props.transactionRenderer.call( this, transaction ) }
 							</div>
 						</div>
 					</td>
