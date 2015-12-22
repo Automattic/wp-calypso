@@ -7,6 +7,7 @@ var React = require( 'react/addons' );
  * Internal dependencies
  */
 var CreditCardPaymentBox = require( './credit-card-payment-box' ),
+	EmptyContent = require( 'components/empty-content' ),
 	FreeTrialConfirmationBox = require( './free-trial-confirmation-box' ),
 	PayPalPaymentBox = require( './paypal-payment-box' ),
 	CreditsPaymentBox = require( './credits-payment-box' ),
@@ -49,9 +50,12 @@ var SecurePaymentForm = React.createClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else {
-			// Default state
+		} else if ( cartValues.isCreditCardPaymentsEnabled( cart ) ) {
 			return 'credit-card';
+		} else if ( cartValues.isPayPalExpressEnabled( cart ) ) {
+			return 'paypal';
+		} else {
+			return null;
 		}
 	},
 
@@ -74,6 +78,17 @@ var SecurePaymentForm = React.createClass( {
 	},
 
 	render: function() {
+		if ( this.state.visiblePaymentBox === null ) {
+			return (
+				<EmptyContent
+					illustration='/calypso/images/drake/drake-500.svg'
+					title={ this.translate( 'Checkout is not available' ) }
+					line={ this.translate( "We're hard at work on the issue. Please check back shortly." ) }
+					action={ this.translate( 'Back to Plans' ) }
+					actionURL={ '/plans/' + this.props.selectedSite.slug } />
+			);
+		}
+
 		return (
 			<div className="secure-payment-form">
 				<CreditsPaymentBox
@@ -161,12 +176,11 @@ var SecurePaymentForm = React.createClass( {
 				// We do nothing here because PayPal transactions don't go through the
 				// `store-transactions` module.
 				break;
-
-			default:
-				throw new Error( 'Not implemented' );
 		}
 
-		upgradesActions.setPayment( newPayment );
+		if ( newPayment ) {
+			upgradesActions.setPayment( newPayment );
+		}
 	},
 
 	selectPaymentBox: function( paymentBox ) {
