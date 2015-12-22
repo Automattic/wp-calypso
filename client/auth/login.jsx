@@ -2,7 +2,8 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react/addons';
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
@@ -36,7 +37,7 @@ const LostPassword = React.createClass( {
 module.exports = React.createClass( {
 	displayName: 'Auth',
 
-	mixins: [ React.addons.LinkedStateMixin, eventRecorder ],
+	mixins: [ LinkedStateMixin, eventRecorder ],
 
 	componentDidMount: function() {
 		AuthStore.on( 'change', this.refreshData );

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:profile' );
 
 /**
@@ -28,7 +29,7 @@ module.exports = React.createClass( {
 
 	displayName: 'Profile',
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' component is mounted.' );

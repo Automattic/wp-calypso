@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:edit-team-member-form' ),
 	omit = require( 'lodash/object/omit' ),
@@ -38,7 +39,7 @@ var Main = require( 'components/main' ),
 var EditUserForm = React.createClass( {
 	displayName: 'EditUserForm',
 
-	mixins: [ React.addons.LinkedStateMixin, PureRenderMixin ],
+	mixins: [ LinkedStateMixin, PureRenderMixin ],
 
 	getInitialState: function() {
 		return this.getStateObject( this.props );

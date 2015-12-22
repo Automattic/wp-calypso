@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:application-passwords' );
 
 /**
@@ -27,7 +28,7 @@ module.exports = React.createClass( {
 
 	displayName: 'ApplicationPasswords',
 
-	mixins: [ observe( 'appPasswordsData' ), React.addons.LinkedStateMixin, eventRecorder ],
+	mixins: [ observe( 'appPasswordsData' ), LinkedStateMixin, eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.displayName + ' React component is mounted.' );
@@ -177,7 +178,7 @@ module.exports = React.createClass( {
 			<div>
 				<SectionHeader label={ this.translate( 'Application Passwords' ) }>
 					<Button compact onClick={ this.recordClickEvent( 'Create Application Password Button', this.toggleNewPassword ) }>
-						<Gridicon icon="plus-small" size={ 16 } />
+						<Gridicon icon="plus-small" size={ 16 } nonStandardSize />
 						{ this.translate( 'Add New Application Password' ) }
 					</Button>
 				</SectionHeader>

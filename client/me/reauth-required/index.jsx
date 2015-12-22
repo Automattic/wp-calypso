@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:reauth-required' );
 
 /**
@@ -25,7 +26,7 @@ module.exports = React.createClass( {
 
 	displayName: 'ReauthRequired',
 
-	mixins: [ React.addons.LinkedStateMixin, observe( 'twoStepAuthorization' ), eventRecorder ],
+	mixins: [ LinkedStateMixin, observe( 'twoStepAuthorization' ), eventRecorder ],
 
 	getInitialState: function() {
 		return {

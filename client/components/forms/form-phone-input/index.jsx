@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	noop = require( 'lodash/utility/noop' ),
 	first = require( 'lodash/array/first' ),
 	where = require( 'lodash/collection/where' );
@@ -21,7 +22,7 @@ var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 module.exports = React.createClass( {
 	displayName: 'FormPhoneInput',
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
 		initialCountryCode: React.PropTypes.string,

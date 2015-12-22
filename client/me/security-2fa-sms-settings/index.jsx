@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-sms-settings' ),
 	observe = require( 'lib/mixins/data-observe' );
 
@@ -31,7 +32,7 @@ module.exports = React.createClass( {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	},
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ) ],
+	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ) ],
 
 	propTypes: {
 		onCancel: React.PropTypes.func.isRequired,
