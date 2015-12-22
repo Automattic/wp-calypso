@@ -21,7 +21,7 @@ export default React.createClass( {
 	},
 
 	hasUpdate() {
-		return this.props.site.update && ! this.hasError() && this.props.site.update.total > 0;
+		return this.props.site.updates && ! this.hasError() && this.props.site.updates.total > 0;
 	},
 
 	hasError() {
@@ -29,7 +29,7 @@ export default React.createClass( {
 		if ( site.unreachable ) {
 			return true;
 		}
-		if ( site.hasMinimumJetpackVersion && site.update === 'error' ) {
+		if ( site.hasMinimumJetpackVersion && site.updates === 'error' ) {
 			return true;
 		}
 		return false;
@@ -66,7 +66,7 @@ export default React.createClass( {
 	},
 
 	updatesAvailable() {
-		if ( config.isEnabled( 'jetpack_core_inline_update' ) && this.props.site.update.wordpress && this.props.site.update.wp_update_version ) {
+		if ( config.isEnabled( 'jetpack_core_inline_update' ) && this.props.site.updates.wordpress && this.props.site.updates.wp_update_version ) {
 			return (
 				<span>
 					{
@@ -75,7 +75,7 @@ export default React.createClass( {
 								link: <button className="button is-link" onClick={ this.handleUpdate } />
 							},
 							args: {
-								version: this.props.site.update.wp_update_version
+								version: this.props.site.updates.wp_update_version
 							}
 						} )
 					}
@@ -83,13 +83,13 @@ export default React.createClass( {
 			);
 		}
 
-		if ( this.props.site.update.plugins === this.props.site.update.total && this.props.site.canUpdateFiles ) {
+		if ( this.props.site.updates.plugins === this.props.site.updates.total && this.props.site.canUpdateFiles ) {
 			return (
 				<span>
 					<a
 						onClick={ this.handlePluginsUpdate }
 						href={ '/plugins/updates/' + this.props.site.slug } >
-						{ this.translate( 'There is a plugin update available.', 'There are plugin updates available.', { count: this.props.site.update.total } ) }
+						{ this.translate( 'There is a plugin update available.', 'There are plugin updates available.', { count: this.props.site.updates.total } ) }
 					</a>
 				</span>
 			);
@@ -97,9 +97,9 @@ export default React.createClass( {
 		return (
 			<span>
 				<a
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Site-Indicator', 'Clicked updates available link to wp-admin updates', 'Total Updates', this.props.site.update && this.props.site.update.total ) }
+					onClick={ analytics.ga.recordEvent.bind( analytics, 'Site-Indicator', 'Clicked updates available link to wp-admin updates', 'Total Updates', this.props.site.updates && this.props.site.updates.total ) }
 					href={ this.props.site.options.admin_url + 'update-core.php' } >
-					{ this.translate( 'There is an update available.', 'There are updates available.', { count: this.props.site.update.total } ) }
+					{ this.translate( 'There is an update available.', 'There are updates available.', { count: this.props.site.updates.total } ) }
 				</a>
 			</span>
 		);
@@ -126,7 +126,7 @@ export default React.createClass( {
 
 	handlePluginsUpdate() {
 		window.scrollTo( 0, 0 );
-		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.update && this.props.site.update.total );
+		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.updates && this.props.site.updates.total );
 	},
 
 	handleUpdate() {

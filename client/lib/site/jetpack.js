@@ -67,12 +67,12 @@ JetpackSite.prototype.fetchAvailableUpdates = function() {
 		if ( error ) {
 			debug( 'error fetching Updates data from api', error );
 			// 403 is returned when the user does not have manage capabilities.
-			if ( 403 !== error.statusCode && ! ( this.update instanceof Object ) ) {
-				this.set( { update: 'error', unreachable: true } );
+			if ( 403 !== error.statusCode && ! ( this.updates instanceof Object ) ) {
+				this.set( { updates: 'error', unreachable: true } );
 			}
 			return;
 		}
-		this.set( { update: data } );
+		this.set( { updates: data } );
 	}.bind( this ) );
 };
 
@@ -192,8 +192,8 @@ JetpackSite.prototype.updateWordPress = function( onError, onSuccess ) {
 		}
 
 		// Decrease count
-		this.update.wordpress--;
-		this.update.total--;
+		this.updates.wordpress--;
+		this.updates.total--;
 
 		this.emit( 'change' );
 	}.bind( this ) );
