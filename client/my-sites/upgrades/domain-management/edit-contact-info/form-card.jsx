@@ -4,7 +4,9 @@
 const React = require( 'react' ),
 	endsWith = require( 'lodash/string/endsWith' ),
 	omit = require( 'lodash/object/omit' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -22,7 +24,8 @@ const Card = require( 'components/card' ),
 	paths = require( 'my-sites/upgrades/paths' ),
 	statesList = require( 'lib/states-list' ).forDomainRegistrations(),
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+	wpcom = require( 'lib/wp' ).undocumented(),
+	successNotice = require( 'state/notices/actions' ).successNotice;
 
 const EditContactInfoFormCard = React.createClass( {
 	propTypes: {
@@ -275,7 +278,7 @@ const EditContactInfoFormCard = React.createClass( {
 			upgradesActions.updateWhois( this.props.selectedDomainName, formState.getAllFieldValues( this.state.form ), ( error, data ) => {
 				this.setState( { formSubmitting: false } );
 				if ( data && data.success ) {
-					notices.success( this.translate( 'The contact info has been updated. There may be a short delay before the changes show up in the public records.' ) );
+					this.props.successNotice( this.translate( 'The contact info has been updated. There may be a short delay before the changes show up in the public records.' ) );
 				} else if ( error && error.message ) {
 					notices.error( error.message );
 				} else {
@@ -286,4 +289,7 @@ const EditContactInfoFormCard = React.createClass( {
 	}
 } );
 
-module.exports = EditContactInfoFormCard;
+module.exports =  connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( EditContactInfoFormCard );

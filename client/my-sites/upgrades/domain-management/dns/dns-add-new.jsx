@@ -6,6 +6,8 @@ import classnames from 'classnames';
 import includes from 'lodash/collection/includes';
 import assign from 'lodash/object/assign';
 import find from 'lodash/collection/find';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -24,6 +26,7 @@ import formState from 'lib/form-state';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
+import { successNotice } from 'state/notices/actions';
 
 const DnsAddNew = React.createClass( {
 	propTypes: {

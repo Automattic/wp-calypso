@@ -2,13 +2,15 @@
  * External dependencies
  */
 import React from 'react';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
 import DnsRecord from './dns-record';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { successNotice } from 'state/notices/actions';
 
 const DnsList = React.createClass( {
 	propTypes: {
@@ -27,7 +29,7 @@ const DnsList = React.createClass( {
 
 				upgradesActions.fetchDns( this.props.selectedDomainName );
 			} else {
-				notices.success( this.translate( 'The DNS record has been deleted.' ) );
+				this.props.successNotice( this.translate( 'The DNS record has been deleted.' ) );
 			}
 		} );
 	},
@@ -50,4 +52,7 @@ const DnsList = React.createClass( {
 	}
 } );
 
-export default DnsList;
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( DnsList );

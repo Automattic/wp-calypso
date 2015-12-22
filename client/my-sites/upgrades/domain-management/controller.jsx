@@ -4,6 +4,7 @@
 import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
+import { Provider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -29,9 +30,9 @@ import titleActions from 'lib/screen-title/actions';
 const productsList = new ProductsList(),
 	sites = new SitesList();
 
-const renderPage = function( component ) {
+const renderPage = function( component, context ) {
 	ReactDom.render(
-		component,
+		React.createElement( Provider, { store: context.store }, component ),
 		document.getElementById( 'primary' )
 	);
 };
@@ -84,6 +85,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -104,6 +106,7 @@ module.exports = {
 				context={ context }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -125,6 +128,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -146,6 +150,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -188,6 +193,7 @@ module.exports = {
 				component={ DomainManagement.EmailForwarding }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -207,6 +213,7 @@ module.exports = {
 				component={ DomainManagement.Dns }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 	domainManagementNameServers( context ) {
@@ -225,6 +232,7 @@ module.exports = {
 				component={ DomainManagement.NameServers }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -246,6 +254,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -267,6 +276,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -286,6 +296,7 @@ module.exports = {
 				component={ DomainManagement.SiteRedirect }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	},
 
@@ -304,6 +315,7 @@ module.exports = {
 				component={ DomainManagement.Transfer }
 				selectedDomainName={ context.params.domain }
 				sites={ sites } />
+			, context
 		);
 	}
 };

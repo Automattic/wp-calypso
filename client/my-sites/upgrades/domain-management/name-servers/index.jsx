@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import page from 'page';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -20,6 +22,8 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
 import isEmpty from 'lodash/lang/isEmpty';
+import { successNotice } from 'state/notices/actions'
+
 
 const NameServers = React.createClass( {
 	propTypes: {
@@ -119,7 +123,7 @@ const NameServers = React.createClass( {
 			if ( error ) {
 				notices.error( error.message );
 			} else {
-				notices.success( this.translate( 'Yay, the nameservers have been successfully updated!' ) );
+				this.props.successNotice( this.translate( 'Yay, the nameservers have been successfully updated!' ) );
 			}
 
 			this.setState( { formSubmitting: false } );
@@ -195,4 +199,8 @@ const NameServers = React.createClass( {
 	}
 } );
 
-export default NameServers;
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( NameServers );
+
