@@ -3,19 +3,19 @@
  */
 import debugFactory from 'debug';
 import get from 'lodash/object/get'
-import cheerio from 'cheerio';
 
 /**
  * Internal dependencies
  */
 import { createReducerStore } from 'lib/store';
 import { action as ActionTypes } from 'lib/dss/constants';
+import createElementFromString from 'lib/media-serialization/create-element-from-string';
 
 const debug = debugFactory( 'calypso:dss:preview-store' );
 const initialState = {};
 
 function cleanMarkup( markup ) {
-	return cheerio.load( markup ).html();
+	return createElementFromString( markup ).innerHTML;
 }
 
 export default createReducerStore( ( state, { action } ) => {
