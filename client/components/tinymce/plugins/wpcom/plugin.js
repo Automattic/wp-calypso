@@ -149,7 +149,7 @@ function wpcomPlugin( editor ) {
 
 	editor.addButton( 'wp_help', {
 		tooltip: 'Keyboard Shortcuts',
-		cmd: 'Wpcom_Help'
+		cmd: 'WP_Help'
 	} );
 
 	editor.addButton( 'wp_charmap', {
@@ -315,7 +315,7 @@ function wpcomPlugin( editor ) {
 			m: 'WP_Medialib',
 			t: 'WP_More',
 			d: 'Strikethrough',
-			h: 'Wpcom_Help',
+			h: 'WP_Help',
 			p: 'WP_Page',
 			x: 'WP_Code'
 		}, function( command, key ) {

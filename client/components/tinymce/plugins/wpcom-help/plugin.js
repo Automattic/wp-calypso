@@ -25,7 +25,7 @@ function wpcomHelpPlugin( editor ) {
 		node = null;
 	} );
 
-	editor.addCommand( 'Wpcom_Help', function() {
+	editor.addCommand( 'WP_Help', function() {
 		function onClose() {
 			editor.focus();
 			render( 'hide' );
