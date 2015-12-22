@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var notices = require( 'notices' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	PluginsUtil = require( 'lib/plugins/utils' ),
@@ -88,6 +87,8 @@ module.exports = {
 				showDismiss = ! ( sampleLog.plugin.wp_admin_settings_page_url && 'ACTIVATE_PLUGIN' === sampleLog.action );
 
 			notices.success( this.getMessage( logNotices.completed, this.successMessage ), {
+				button: this.getSuccessButton( logNotices.completed ),
+				href: this.getSuccessHref( logNotices.completed ),
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.completed ),
 				showDismiss
 			} );
@@ -182,18 +183,6 @@ module.exports = {
 			case 'ACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						if ( translateArg.wp_admin_settings_page_url ) {
-							return i18n.translate( 'Successfully activated %(plugin)s on %(site)s. ' +
-									'{{action}}Setup{{/action}}', {
-										args: translateArg,
-										components: {
-											action: <NoticeAction
-												href={ translateArg.wp_admin_settings_page_url }
-												external={ true } />
-										},
-										context: 'Success message when activating a plugin with a link to the plugin settings.'
-									} );
-						}
 						return i18n.translate( 'Successfully activated %(plugin)s on %(site)s.', { args: translateArg } );
 					case '1 site n plugins':
 						return i18n.translate( 'Successfully activated %(numberOfPlugins)d plugins on %(site)s.', {
@@ -670,5 +659,32 @@ module.exports = {
 			remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=manage';
 		}
 		return remoteManagementUrl;
+	},
+
+	getSuccessButton: function( log ) {
+		if ( log.length > 1 ) {
+			return null;
+		}
+		log = log.length ? log[ 0 ] : log;
+
+		if ( log.action !== 'ACTIVATE_PLUGIN' ||
+			! log.plugin.wp_admin_settings_page_url ) {
+			return null;
+		}
+
+		return i18n.translate( 'Setup' );
+	},
+
+	getSuccessHref: function( log ) {
+		if ( log.length > 1 ) {
+			return null;
+		}
+		log = log.length ? log[ 0 ] : log;
+
+		if ( log.action !== 'ACTIVATE_PLUGIN' &&
+			! log.plugin.wp_admin_settings_page_url ) {
+			return null;
+		}
+		return log.plugin.wp_admin_settings_page_url;
 	}
 };
