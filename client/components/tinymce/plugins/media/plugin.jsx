@@ -458,6 +458,10 @@ function mediaButton( editor ) {
 		}
 	} );
 
+	editor.addCommand( 'WP_Medialib', () => {
+		renderModal( { visible: true } );
+	} );
+
 	editor.addCommand( 'wpcomEditGallery', function( content ) {
 		const site = sites.getSelectedSite();
 		if ( ! site ) {
