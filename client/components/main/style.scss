@@ -2,11 +2,18 @@
 	margin: auto;
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
+	padding-top: 48px;
 
 	// Themes is a great example of using all this new space ;)
 	&.themes,
 	&.sites {
 		max-width: 100%;
+		padding-top: 0;
+	}
+
+	&.plugins,
+	&.menus {
+		padding-top: 0;
 	}
 
 	// The customizer is full-width
