@@ -4,14 +4,14 @@
 const assign = require( 'lodash/object/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
-	debug = require( 'debug' )( 'calypso:reader:sidebar' ),
 	map = require( 'lodash/collection/map' ),
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
-	url = require( 'url' );
+	url = require( 'url' ),
+	last = require( 'lodash/array/last' );
 
 /**
  * Internal Dependencies
@@ -31,10 +31,6 @@ const layoutFocus = require( 'lib/layout-focus' ),
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
-
-	componentWillMount: function() {
-		debug( 'Mounting the reader sidebar React component.' );
-	},
 
 	itemLinkClass: function( path, additionalClasses ) {
 		var basePathLowerCase = this.props.path.split( '?' )[0].replace( /\/edit$/, '' ).toLowerCase(),
@@ -192,15 +188,20 @@ module.exports = React.createClass( {
 			}
 
 			const listManagementUrls = [
-				listRelativeUrl + '/followers',
+				listRelativeUrl + '/tags',
 				listRelativeUrl + '/edit',
-				listRelativeUrl + '/description/edit',
+				listRelativeUrl + '/sites',
 			];
 
+			const lastPathSegment = last( this.props.path.split( '/' ) );
+			const isCurrentList = lastPathSegment && lastPathSegment.toLowerCase() === list.slug.toLowerCase();
+			const isActionButtonSelected = this.pathStartsWithOneOf( listManagementUrls );
+
 			const classes = classnames(
-				this.itemLinkClassStartsWithOneOf( [ listRelativeUrl ], { 'sidebar-dynamic-menu__list has-buttons': true } ),
 				{
-					'is-action-button-selected': this.pathStartsWithOneOf( listManagementUrls )
+					'sidebar-dynamic-menu__list has-buttons': true,
+					selected: isCurrentList || isActionButtonSelected,
+					'is-action-button-selected': isActionButtonSelected
 				}
 			);
 
@@ -251,25 +252,7 @@ module.exports = React.createClass( {
 		}, this );
 	},
 
-	getFollowingEditLink: function() {
-		var followingEditUrl = '/following/edit',
-			followingEditRel;
-
-		// If Calypso following/edit isn't yet enabled, use the Atlas version
-		if ( ! config.isEnabled( 'reader/following-edit' ) ) {
-			followingEditUrl = 'https://wordpress.com'.concat( followingEditUrl );
-			followingEditRel = 'external';
-		}
-
-		return {
-			url: followingEditUrl,
-			rel: followingEditRel
-		};
-	},
-
 	render: function() {
-		let followingEditLink = this.getFollowingEditLink();
-
 		return (
 			<ul className="wpcom-sidebar sidebar reader-sidebar" onClick={ this.handleClick }>
 				<li className="sidebar-menu sidebar-streams">
@@ -280,7 +263,7 @@ module.exports = React.createClass( {
 								<Gridicon icon="checkmark-circle" size={ 24 } />
 								<span className="menu-link-text">{ this.translate( 'Followed Sites' ) }</span>
 							</a>
-							<a href={ followingEditLink.url } rel={ followingEditLink.rel } className="add-new">{ this.translate( 'Manage' ) }</a>
+							<a href="/following/edit" className="add-new">{ this.translate( 'Manage' ) }</a>
 						</li>
 
 						{ this.renderTeams() }
