@@ -27,7 +27,7 @@ module.exports = {
 			siteID = route.getSiteFragment( context.path ),
 			author = ( context.params.author === 'my' ) ? user.get().ID : null,
 			statusSlug = ( author ) ? context.params.status : context.params.author,
-			search = qs.parse( context.querystring ).s,
+			search = context.query.s,
 			basePath = route.sectionify( context.path ),
 			analyticsPageTitle = 'Blog Posts',
 			baseAnalyticsPath;

@@ -3,8 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	Qs = require( 'qs' );
+	ReduxProvider = require( 'react-redux' ).Provider;
 
 /**
  * Internal Dependencies
@@ -32,7 +31,7 @@ module.exports = {
 					domain: context.params.domain || '',
 					sites: sites,
 					prevPath: context.prevPath || '',
-					query: Qs.parse( context.querystring )
+					query: context.query
 				} )
 			),
 			document.getElementById( 'primary' )

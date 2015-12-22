@@ -4,8 +4,7 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
-	page = require( 'page' ),
-	querystring = require( 'querystring' );
+	page = require( 'page' );
 
 /**
  * Internal Dependencies
@@ -231,7 +230,7 @@ module.exports = {
 				];
 			},
 			activeFilter = false,
-			queryOptions = querystring.parse( context.querystring ),
+			queryOptions = context.query,
 			basePath = route.sectionify( context.path ),
 			statSummaryList,
 			summarySites;
@@ -293,7 +292,7 @@ module.exports = {
 		var currentSite,
 			siteId = context.params.site_id,
 			siteFragment = route.getSiteFragment( context.path ),
-			queryOptions = querystring.parse( context.querystring ),
+			queryOptions = context.query,
 			FollowList = require( 'lib/follow-list' ),
 			SiteStatsComponent = require( 'my-sites/stats/site' ),
 			NuxSite = require( 'my-sites/stats/nux/site' ),
@@ -523,7 +522,7 @@ module.exports = {
 		var site,
 			siteId = context.params.site_id,
 			siteFragment = route.getSiteFragment( context.path ),
-			queryOptions = querystring.parse( context.querystring ),
+			queryOptions = context.query,
 			StatsList = require( 'lib/stats/stats-list' ),
 			FollowList = require( 'lib/follow-list' ),
 			StatsSummaryComponent = require( 'my-sites/stats/summary' ),
