@@ -18,7 +18,7 @@ const createSitePlanObject = ( plan ) => {
 		rawDiscount: plan.raw_discount,
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,
-		subscribedMoment: moment( plan.subscribed_date ).startOf( 'day' ),
+		subscribedDayMoment: moment( plan.subscribed_date ).startOf( 'day' ),
 		userFacingExpiry: plan.user_facing_expiry,
 		userFacingExpiryMoment: moment( plan.user_facing_expiry ).startOf( 'day' )
 	};
