@@ -22,3 +22,4 @@ render: function() {
 * `onSelect (func)` - A function to handle the event callback when clicking/tapping on the site.
 * `href (string)` - A URL to add to the anchor.
 * `isSelected (bool)` - Whether the site should be marked as selected.
+* `homeLink (bool)` - Whether the site should behave as a link to the site home URL
