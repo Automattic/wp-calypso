@@ -37,7 +37,7 @@ export default React.createClass( {
 		const target = event ? event.target : false;
 		const notificationNode = this.getNotificationLinkDomNode();
 
-		if ( notificationNode.contains( target ) ) {
+		if ( target && notificationNode.contains( target ) ) {
 			return;
 		}
 
