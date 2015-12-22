@@ -83,8 +83,8 @@ module.exports = React.createClass( {
 		if ( this.state.emailSent ) {
 			user = this.props.user.get();
 			noticeText = this.translate(
-				'We sent another confirmation email to {{email /}}',
-				{ components: { email: user.email } }
+				'We sent another confirmation email to %(email)s',
+				{ args: { email: user.email } }
 			);
 			notices.success( noticeText );
 		}
