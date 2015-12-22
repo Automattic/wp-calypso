@@ -14,7 +14,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import { getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
 import Notice from 'components/notice';
-import PlanStatusProgress from './progress';
+import PlanProgress from '../plan-progress';
 import { isPremium, isBusiness } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
 
@@ -99,7 +99,7 @@ const PlanStatus = React.createClass( {
 					</Button>
 				</CompactCard>
 
-				<PlanStatusProgress plan={ plan } />
+				<PlanProgress plan={ plan } />
 			</div>
 		);
 	}
