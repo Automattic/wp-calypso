@@ -389,6 +389,7 @@ export default React.createClass( {
 
 		return plugins.map( plugin => {
 			const hasAllNoManageSites = ! plugin.wpcom && plugin.sites.every( pluginSite => manageableSites.every( site => site.slug !== pluginSite.slug ) );
+			const selectThisPlugin = this.togglePluginSelection.bind( this, plugin );
 			return (
 				<PluginItem
 					key={ plugin.slug }
@@ -397,7 +398,7 @@ export default React.createClass( {
 					sites={ plugin.sites }
 					isSelected={ plugin.selected }
 					isSelectable={ this.state.bulkManagement }
-					onClick={ this.togglePluginSelection.bind( this, plugin ) }
+					onClick={ selectThisPlugin }
 					pluginLink={ this.props.path + '/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() }
 					progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
 					errors={
@@ -424,7 +425,7 @@ export default React.createClass( {
 			<span key={ 'plugins__header-' + slug }>
 				<PluginsListHeader label={ header }
 					isWpCom={ isWpCom }
-					isBulkManagementActive={ this.state.bulkManagement }
+					isBulkManagementActive={ !! this.state.bulkManagement }
 					sites={ this.props.sites }
 					plugins={ this.state.plugins }
 					selected={ this.getSelected() }
@@ -438,9 +439,7 @@ export default React.createClass( {
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
 					removePluginNotice={ this.removePluginNotice }
 					haveActiveSelected={ this.state.plugins.some( this.filterSelection.active ) }
-					haveInactiveSelected={ this.state.plugins.some( this.filterSelection.inactive ) }
-					haveUpdatesSelected={ this.state.plugins.some( this.filterSelection.updates ) }
-					haveSelected={ this.state.plugins.some( this.filterSelection.selected ) } />
+					haveInactiveSelected={ this.state.plugins.some( this.filterSelection.inactive ) } />
 				<div className={ itemListClasses }>{ this.formatPlugins( plugins ) }</div>
 			</span>
 		);
@@ -711,8 +710,7 @@ export default React.createClass( {
 						initialValue={ this.props.search }
 						ref="url-search"
 						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() }
-					/>
+						placeholder={ this.getSearchPlaceholder() } />
 				</SectionNav>
 				{ this.renderPluginsContent() }
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
