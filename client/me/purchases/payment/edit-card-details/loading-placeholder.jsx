@@ -11,7 +11,7 @@ import CompactCard from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
-import LoadingPlaceholder from 'components/loading-placeholder';
+import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import titles from 'me/purchases/titles';
 
 const EditCardDetailsLoadingPlaceholder = React.createClass( {

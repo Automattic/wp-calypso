@@ -9,7 +9,7 @@ import React from 'react';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import LoadingPlaceholder from 'components/loading-placeholder';
+import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { cancelPurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
