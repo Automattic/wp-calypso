@@ -105,8 +105,9 @@ function interpolate( options ) {
 
 	if ( typeof components !== 'object' ) {
 		if ( throwErrors ) {
-			throw new Error( 'Interpolation Error: components argument must be an object', mixedString, components );
+			throw new Error( `Interpolation Error: unable to process \`${ mixedString }\` because components is not an object` );
 		}
+
 		return mixedString;
 	}
 
