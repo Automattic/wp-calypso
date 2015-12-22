@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:menus:save-button' ); // eslint-disable-line no-unused-vars
 

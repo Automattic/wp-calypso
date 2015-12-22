@@ -2,7 +2,7 @@
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	noop = require( 'lodash/utility/noop' ),
 	debug = require( 'debug' )( 'calypso:dialog' );
 

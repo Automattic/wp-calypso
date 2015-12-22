@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	find = require( 'lodash/collection/find' );
 
 module.exports = React.createClass( {

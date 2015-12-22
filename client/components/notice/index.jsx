@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/utility/noop';
 

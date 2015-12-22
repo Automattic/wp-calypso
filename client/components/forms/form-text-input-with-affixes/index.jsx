@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import classNames from  'classnames';
 import omit from 'lodash/object/omit';
 

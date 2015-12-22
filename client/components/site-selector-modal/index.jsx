@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	includes = require( 'lodash/collection/includes' );
 

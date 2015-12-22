@@ -1,8 +1,12 @@
-// External dependencies
-var React = require( 'react/addons' ),
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 var DiscoverHelper = require( './helper' );
 
 var arrowGridicon = ( <svg className="gridicon gridicon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11H6.414l6.293-6.293-1.414-1.414L2.586 12l8.707 8.707 1.414-1.414L6.414 13H20"/></svg> );

@@ -1,8 +1,12 @@
-// External dependencies
-var React = require( 'react/addons' ),
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 var DiscoverHelper = require( './helper' );
 
 var DiscoverSiteAttribution = React.createClass( {

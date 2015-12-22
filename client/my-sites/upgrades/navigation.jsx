@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	Dispatcher = require( 'dispatcher' ),
 	find = require( 'lodash/collection/find' ),

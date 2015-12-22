@@ -2,7 +2,7 @@
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:menus:menu' ); // eslint-disable-line no-unused-vars
 
 /**

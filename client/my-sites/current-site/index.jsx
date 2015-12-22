@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:current-site' ),
 	analytics = require( 'analytics' ),
 	url = require( 'url' );

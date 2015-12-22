@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 var SelectDropdownSeparator = React.createClass( {
 

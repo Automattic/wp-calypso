@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	noop = require( 'lodash/utility/noop' ),
 	classNames = require( 'classnames' );
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/lang/isEmpty' ),
 	observe = require( 'lib/mixins/data-observe' );

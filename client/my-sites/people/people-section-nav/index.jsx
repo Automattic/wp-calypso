@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	config = require( 'config' ),
 	findWhere = require( 'lodash/collection/findWhere' ),
 	includes = require( 'lodash/collection/includes' );

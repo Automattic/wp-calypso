@@ -81,7 +81,7 @@ Returns an array of sites that have a particular plugin.
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies

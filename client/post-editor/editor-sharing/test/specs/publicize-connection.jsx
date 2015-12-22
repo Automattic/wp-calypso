@@ -5,7 +5,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	expect = require( 'chai' ).expect;
 
 /**

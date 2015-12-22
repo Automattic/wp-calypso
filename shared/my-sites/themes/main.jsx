@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	partialRight = require( 'lodash/function/partialRight' ),
 	connect = require( 'react-redux' ).connect;

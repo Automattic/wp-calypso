@@ -11,7 +11,7 @@ function stripReactAttributes( string ) {
  */
 var assert = require( 'assert' ),
 	ReactDomServer = require( 'react-dom/server' ),
-	React = require( 'react/addons' );
+	React = require( 'react' );
 
 /**
  * Internal dependencies

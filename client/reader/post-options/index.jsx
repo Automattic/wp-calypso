@@ -1,9 +1,13 @@
-/** External dependencies */
-var React = require( 'react/addons' ),
+/**
+ * External dependencies
+ */
+var React = require( 'react' ),
 	noop = require( 'lodash/utility/noop' ),
 	page = require( 'page' );
 
-/** Internal dependencies */
+/**
+ * Internal dependencies
+ */
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions/index' ),
