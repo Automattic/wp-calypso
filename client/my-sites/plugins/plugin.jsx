@@ -36,6 +36,8 @@ import FeatureExample from 'components/feature-example'
  */
 const debug = debugModule( 'calypso:my-sites:plugin' );
 
+let _currentPageTitle = null;
+
 export default React.createClass( {
 
 	displayName: 'Plugin',
@@ -50,6 +52,7 @@ export default React.createClass( {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsDataStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
+		this.updatePageTitle();
 	},
 
 	getInitialState() {
@@ -61,6 +64,9 @@ export default React.createClass( {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsDataStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
+		if ( this.pluginRefreshTimeout ) {
+			clearTimeout( this.pluginRefreshTimeout );
+		}
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -114,11 +120,19 @@ export default React.createClass( {
 
 	refreshSitesAndPlugins( nextProps ) {
 		this.setState( this.getSitesPlugin( nextProps ) );
-
 		// setTimeout to avoid React dispatch conflicts.
-		setTimeout( () => {
+		this.updatePageTitle();
+	},
+
+	updatePageTitle() {
+		const pageTitle = this.state.plugin ? this.state.plugin.name : this.props.pluginSlug;
+		if ( _currentPageTitle === pageTitle ) {
+			return;
+		}
+		_currentPageTitle = pageTitle;
+		this.pluginRefreshTimeout = setTimeout( () => {
 			this.props.onPluginRefresh( this.translate( '%(pluginName)s Plugin', {
-				args: { pluginName: this.state.plugin ? this.state.plugin.name : this.props.pluginSlug },
+				args: { pluginName: _currentPageTitle },
 				textOnly: true,
 				context: 'Page title: Plugin detail'
 			} ) );
