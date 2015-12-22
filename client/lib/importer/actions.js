@@ -94,14 +94,15 @@ export function setUploadProgress( importerId, data ) {
 	} );
 }
 
-export function startImport( importerType ) {
+export function startImport( siteId, importerType ) {
 	// Dev-only: this will come from an API call
 	let importerId = `${ Math.round( Math.random() * 10000 ) }`;
 
 	Dispatcher.handleViewAction( {
 		type: actionTypes.START_IMPORT,
 		importerId,
-		importerType
+		importerType,
+		siteId
 	} );
 }
 
