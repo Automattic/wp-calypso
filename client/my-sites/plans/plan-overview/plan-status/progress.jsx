@@ -16,13 +16,29 @@ const PlanStatusProgress = React.createClass( {
 		plan: React.PropTypes.object.isRequired
 	},
 
+	/*
+	 *          |------------------------trialPeriodInDays (17 days)-------------------|
+	 *     plan.subscribedDate (datetime)       plan.userFacingExpiry (day)       plan.expiry (day)
+	 *          |-----------------------------------------|----gracePeriod (3 days)----|
+	 *          |                                         |                            |
+	 * -> Today before user facing expiry:
+	 *                  today
+	 *          |         |-----timeUntilExpiryInDays-----|                            |
+	 * -> Today is in grace period:
+	 *                                                       today
+	 *          |                                         |    |-timeUntilExpiryInDays-|
+	 * -> Today is after trial period in days:
+	 *                                                                                     today
+	 *          |                                         |                            |
+	 *     timeUntilExpiryInDays = 0
+	 */
 	renderProgressBar() {
 		const { plan } = this.props,
-			// we strip the hour/minute/second/millisecond data here from `subscribed_date` to match `expiry`
 			trialPeriodInDays = getCurrentTrialPeriodInDays( plan ),
 			timeUntilExpiryInDays = isInGracePeriod( plan )
 				? Math.max( getDaysUntilExpiry( plan ), 0 )
 				: getDaysUntilUserFacingExpiry( plan ),
+			// set minimum progress to 0.5 to show that the trial started immediately
 			progress = Math.max( 0.5, trialPeriodInDays - timeUntilExpiryInDays );
 
 		return (

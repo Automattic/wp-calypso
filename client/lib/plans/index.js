@@ -11,7 +11,7 @@ export function getCurrentTrialPeriodInDays( plan ) {
 	}
 
 	return userFacingExpiryMoment.diff( subscribedMoment, 'days' );
-}
+};
 
 export function getDaysUntilUserFacingExpiry( plan ) {
 	const { userFacingExpiryMoment } = plan;
