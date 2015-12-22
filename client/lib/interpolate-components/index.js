@@ -114,17 +114,13 @@ function interpolate( options ) {
 
 	try {
 		return buildChildren( tokens, components );
-	} catch( error ) {
-		// don't mess around in production, just return what we can
+	} catch ( error ) {
+		// Returns what we can in environments that shouldn't throw errors
 		if ( ! throwErrors ) {
 			return mixedString;
 		}
-		// in pre-production environments we should make errors very visible
-		if ( window && window.console && window.console.error ) {
-			window.console.error( '\nInterpolation Error: ', interpolate.caller.caller, '\n> ' + mixedString );
-		}
 
-		throw error;
+		throw new Error( `Interpolation Error: unable to process \`${ mixedString }\` because of error \`${ error.message }\`` );
 	}
 };
 
