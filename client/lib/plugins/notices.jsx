@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	groupBy = require( 'lodash/collection/groupBy' );
+var groupBy = require( 'lodash/collection/groupBy' );
 
 /**
  * Internal dependencies
@@ -80,9 +79,9 @@ module.exports = {
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.errors )
 			} );
 		} else if ( logNotices.completed.length > 0 ) {
-			const sampleLog = logNotices.completed[ 0 ].status === 'inProgress' ?
-				logNotices.completed[ 0 ] :
-				logNotices.completed[ logNotices.completed.length - 1 ],
+			const sampleLog = logNotices.completed[ 0 ].status === 'inProgress'
+				? logNotices.completed[ 0 ]
+				: logNotices.completed[ logNotices.completed.length - 1 ],
 				// the dismiss button would overlap the link to the settings page when activating
 				showDismiss = ! ( sampleLog.plugin.wp_admin_settings_page_url && 'ACTIVATE_PLUGIN' === sampleLog.action );
 
