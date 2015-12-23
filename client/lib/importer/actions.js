@@ -7,13 +7,33 @@ const wpcom = require( 'lib/wp' ).undocumented();
 /**
  * Internal dependencies
  */
-import { actionTypes } from './constants';
+import { actionTypes, appStates } from './constants';
 import { fromApi, toApi } from './common';
 
+const ID_GENERATOR_PREFIX = 'local-generated-id-';
+
+const cancelOrder = ( siteId, importerId ) => toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
+const apiStart = () => Dispatcher.handleViewAction( { type: actionTypes.API_REQUEST } );
 const apiSuccess = data => {
+	Dispatcher.handleViewAction( { type: actionTypes.API_SUCCESS } );
+
+	return data;
+};
+const apiFailure = data => {
+	Dispatcher.handleViewAction( { type: actionTypes.API_FAILURE } );
+
+	return data;
+};
+const asArray = a => [].concat( a );
+
+const apiSuccess = data => {
+	apiSuccess();
+
 	Dispatcher.handleViewAction( {
 		type: actionTypes.API_SUCCESS
+		importerStatus
 	} );
+}
 
 	return data;
 };
@@ -24,6 +44,17 @@ export function cancelImport( siteId, importerId ) {
 		importerId,
 		siteId
 	} );
+
+	if ( importerId.includes( ID_GENERATOR_PREFIX ) ) {
+		return;
+	}
+
+	apiStart();
+	wpcom
+		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
+		.then( importer => fromApi( importer ) )
+		.then( apiUpdateImporter )
+		.catch( apiFailure );
 }
 
 export function failUpload( importerId, error ) {
@@ -35,12 +66,11 @@ export function failUpload( importerId, error ) {
 }
 
 export function fetchState( siteId ) {
-	Dispatcher.handleViewAction( {
-		type: actionTypes.API_REQUEST
-	} );
+	apiStart();
 
 	return wpcom.fetchImporterState( siteId )
 		.then( apiSuccess )
+		.then( asArray )
 		.then( importers => importers.map( fromApi ) )
 		.then( importers => importers.map( importerStatus => {
 			Dispatcher.handleViewAction( {
@@ -48,9 +78,7 @@ export function fetchState( siteId ) {
 				importerStatus
 			} );
 		} ) )
-		.catch( () => Dispatcher.handleViewAction( {
-			type: actionTypes.API_FAILURE
-		} ) );
+		.catch( apiFailure );
 }
 
 export function finishUpload( importerId, importerStatus ) {
@@ -103,7 +131,7 @@ export function setUploadProgress( importerId, data ) {
 
 export function startImport( siteId, importerType ) {
 	// Use a fake ID until the server returns the real one
-	let importerId = `${ Math.round( Math.random() * 10000 ) }`;
+	let importerId = `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`;
 
 	Dispatcher.handleViewAction( {
 		type: actionTypes.START_IMPORT,
@@ -125,7 +153,7 @@ export function startImporting( importerStatus ) {
 }
 
 export function startUpload( importerStatus, file ) {
-	let { id: importerId, site: { ID: siteId } } = importerStatus;
+	let { importerId, site: { ID: siteId } } = importerStatus;
 
 	Dispatcher.handleViewAction( {
 		type: actionTypes.START_UPLOAD,
