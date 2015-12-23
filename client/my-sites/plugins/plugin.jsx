@@ -258,7 +258,6 @@ export default React.createClass( {
 		}
 		return (
 			<MainComponent>
-				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
