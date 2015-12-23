@@ -16,7 +16,7 @@ export function acceptInvite( context ) {
 	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
 
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	context.layout.dispatch( setSection( null, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	ReactDom.render(
 		React.createElement(
