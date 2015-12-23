@@ -88,6 +88,12 @@ function setUpContext( layout, reduxStore ) {
 
 		context.layout = layout;
 		context.store = reduxStore;
+		context.render = ( reactElement, domContainerNode ) => {
+			return ReactDom.render(
+				React.createElement( ReduxProvider, { store: reduxStore }, reactElement ),
+				domContainerNode
+			);
+		};
 
 		// Break routing and do full page load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
