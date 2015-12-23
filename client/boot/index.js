@@ -13,6 +13,7 @@ var ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	injectTapEventPlugin = require( 'react-tap-event-plugin' );
 
 /**
@@ -40,6 +41,7 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	createReduxStore = require( 'state' ).createReduxStore,
+	catchJsErrors = require( 'lib/catch-js-errors' ),
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
@@ -48,6 +50,10 @@ function init() {
 	var i18nLocaleStringsObject = null;
 
 	debug( 'Starting Calypso. Let\'s do this.' );
+
+	if ( abtest( 'catchJsErrors' ) === 'catchJsErrors' ) {
+		window.onerror = catchJsErrors;
+	}
 
 	// Initialize i18n
 	if ( window.i18nLocaleStrings ) {
