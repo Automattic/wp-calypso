@@ -13,6 +13,7 @@ var ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	injectTapEventPlugin = require( 'react-tap-event-plugin' );
 
 /**
@@ -50,7 +51,9 @@ function init() {
 
 	debug( 'Starting Calypso. Let\'s do this.' );
 
-	window.onerror = catchJsErrors;
+	if ( abtest( 'catchJsErrors' ) === 'catchJsErrors' ) {
+		window.onerror = catchJsErrors;
+	}
 
 	// Initialize i18n
 	if ( window.i18nLocaleStrings ) {
@@ -117,7 +120,7 @@ function setUpContext( layout, reduxStore ) {
 				context.hash = {};
 			}
 		} else {
-			contextz.hash = {};
+			context.hash = {};
 		}
 		next();
 	} );

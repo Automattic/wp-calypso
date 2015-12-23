@@ -79,5 +79,13 @@ module.exports = {
 			dontAutoFill: 50
 		},
 		defaultVariation: 'dontAutoFill'
+	},
+	catchJsErrors: {
+		datestamp: '20151223',
+		variations: {
+			original: 99,
+			catchJsErrors: 1
+		},
+		defaultVariation: 'original'
 	}
 };
