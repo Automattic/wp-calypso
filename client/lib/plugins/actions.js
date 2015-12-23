@@ -466,6 +466,14 @@ PluginsActions = {
 		}
 	},
 
+	removePluginUpdateInfo: function( site, plugin ) {
+		Dispatcher.handleViewAction( {
+			type: 'REMOVE_PLUGINS_UPDATE_INFO',
+			site: site,
+			plugin: plugin
+		} );
+	},
+
 	resetQueue: function() {
 		_actionsQueueBySite = {};
 	}
