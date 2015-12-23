@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:stats:action-page' );
 

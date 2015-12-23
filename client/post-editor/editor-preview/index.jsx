@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const React = require( 'react/addons' ),
+const React = require( 'react' ),
 	url = require( 'url' );
 
 /**

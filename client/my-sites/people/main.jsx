@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	omit = require( 'lodash/object/omit' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:main' );
 

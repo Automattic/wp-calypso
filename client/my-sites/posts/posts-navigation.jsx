@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import Debug from 'debug';
 
 /**

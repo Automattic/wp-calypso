@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	uniq = require( 'lodash/array/uniq' ),
 	pluck = require( 'lodash/collection/pluck' ),
 	range = require( 'lodash/utility/range' ),

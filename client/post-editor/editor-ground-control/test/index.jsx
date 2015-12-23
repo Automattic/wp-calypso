@@ -7,7 +7,7 @@ require( 'lib/react-test-env-setup' )();
 var chai = require( 'chai' ),
 	moment = require( 'moment' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	mockery = require( 'mockery' );

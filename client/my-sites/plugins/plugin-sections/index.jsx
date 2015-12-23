@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	titleCase = require( 'to-title-case' ),
 	find = require( 'lodash/collection/find' ),
 	filter = require( 'lodash/collection/filter' ),

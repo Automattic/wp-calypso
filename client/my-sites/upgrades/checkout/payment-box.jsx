@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	Card = require( 'components/card' ),
 	classNames = require( 'classnames' );
 

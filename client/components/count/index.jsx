@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {

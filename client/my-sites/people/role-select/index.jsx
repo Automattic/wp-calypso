@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	debugFactory = require( 'debug' ),
 	omit = require( 'lodash/object/omit' ),
 	titleCase = require( 'to-title-case' );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	isEqual = require( 'lodash/lang/isEqual' ),
 	debug = require( 'debug' )( 'calypso:menus:categories-options' );
 

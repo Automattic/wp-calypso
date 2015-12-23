@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	Gridicon = require( 'components/gridicon' ),
 	classNames = require( 'classnames' ),
 	omit = require( 'lodash/object/omit' );
