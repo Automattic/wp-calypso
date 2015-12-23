@@ -16,7 +16,6 @@ var CompactCard = require( 'components/card/compact' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
 	Count = require( 'components/count' ),
 	Notice = require( 'components/notice' ),
-	NoticeAction = require( 'components/notice/notice-action' ),
 	PluginNotices = require( 'lib/plugins/notices' ),
 	analytics = require( 'analytics' );
 
@@ -88,8 +87,8 @@ module.exports = React.createClass( {
 				break;
 			case 'REMOVE_PLUGIN':
 				message = ( this.props.selectedSite
-					? i18n.translate( 'Removing plugin' )
-					: i18n.translate( 'Removing plugin on %(count)s site', 'Removing plugin on %(count)s sites', translationArgs ) );
+					? i18n.translate( 'Removing' )
+					: i18n.translate( 'Removing from %(count)s site', 'Removing from %(count)s sites', translationArgs ) );
 		}
 		return message;
 	},
@@ -203,8 +202,8 @@ module.exports = React.createClass( {
 		errors.forEach( function( error ) {
 			errorNotices.push(
 				<Notice
-					type='message'
-					status='is-error'
+					type="message"
+					status="is-error"
 					text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
 					button={ PluginNotices.getErrorButton( error ) }
 					href={ PluginNotices.getErrorHref( error ) }
@@ -236,8 +235,7 @@ module.exports = React.createClass( {
 			return (
 				<div className="plugin-item__wrapper">
 					<CompactCard className={ pluginItemClasses }
-						onClick={ this.clickNoManageItem }
-					>
+						onClick={ this.clickNoManageItem }>
 						<span className="plugin-item__disabled">
 							<PluginIcon image={ plugin.icon }/>
 							{ pluginTitle }
