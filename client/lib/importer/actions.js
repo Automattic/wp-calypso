@@ -26,6 +26,7 @@ const apiFailure = data => {
 
 	return data;
 };
+
 const asArray = a => [].concat( a );
 
 function receiveImporterStatus( importerStatus ) {
