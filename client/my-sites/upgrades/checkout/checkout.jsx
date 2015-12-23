@@ -27,6 +27,10 @@ module.exports = React.createClass( {
 		return { previousCart: null };
 	},
 
+	componentWillMount: function() {
+		upgradesActions.resetTransaction();
+	},
+
 	componentDidMount: function() {
 		if ( this.redirectIfEmptyCart() ) {
 			return;
@@ -41,8 +45,6 @@ module.exports = React.createClass( {
 		}
 
 		window.scrollTo( 0, 0 );
-
-		upgradesActions.resetTransaction();
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
