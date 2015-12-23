@@ -14,7 +14,7 @@ import SignupActions from 'lib/signup/actions';
 
 export default React.createClass( {
 
-	displayName: 'EmailSignupForm',
+	displayName: 'User',
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.step && 'invalid' === nextProps.step.status ) {

@@ -643,6 +643,7 @@ export default React.createClass( {
 		if ( this.state.accessError ) {
 			return (
 				<Main>
+					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
 				</Main>
@@ -653,6 +654,7 @@ export default React.createClass( {
 		if ( abtest( 'businessPluginsNudge' ) === 'nudge' && selectedSite && ! selectedSite.jetpack && ! isBusiness( selectedSite.plan ) ) {
 			return (
 				<Main>
+					<SidebarNavigation />
 					<PlanNudge currentProductId={ selectedSite.plan.product_id } selectedSiteSlug={ selectedSite.slug } />
 				</Main>
 			);
@@ -661,6 +663,7 @@ export default React.createClass( {
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
 			return (
 				<Main>
+					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
 						site={ this.props.sites.getSelectedSite() }

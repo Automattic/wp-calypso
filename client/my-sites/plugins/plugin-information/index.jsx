@@ -23,7 +23,11 @@ export default React.createClass( {
 
 	propTypes: {
 		plugin: React.PropTypes.object.isRequired,
-		isPlaceholder: React.PropTypes.bool
+		isPlaceholder: React.PropTypes.bool,
+		hasUpdate: React.PropTypes.bool,
+		pluginVersion: React.PropTypes.string,
+		siteVersion: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool] ),
+		isWpcomPlugin: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -43,14 +47,13 @@ export default React.createClass( {
 		if ( this.props.plugin.plugin_url.search( this._WPORG_PLUGINS_URL + this.props.plugin.slug ) !== -1 ) {
 			return;
 		}
-
+		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ this.props.plugin.plugin_url }
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
-				className="plugin-information__external-link"
-			>
+				onClick={ recordEvent }
+				className="plugin-information__external-link" >
 				{ this.translate( 'Plugin homepage' ) }
 			</ExternalLink>
 		);
@@ -60,13 +63,13 @@ export default React.createClass( {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
+		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug );
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug ) }
-				className="plugin-information__external-link"
-			>
+				onClick={ recordEvent }
+				className="plugin-information__external-link" >
 				{ this.translate( 'WordPress.org Plugin page' ) }
 			</ExternalLink>
 		);
@@ -76,14 +79,14 @@ export default React.createClass( {
 		if ( ! this.props.plugin || ! this.props.plugin.support_URL ) {
 			return;
 		}
+		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
 
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ this.props.plugin.support_URL }
-				onClick={ analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug ) }
-				className="plugin-information__external-link"
-			>
+				onClick={ recordEvent }
+				className="plugin-information__external-link" >
 				{ this.translate( 'Learn More' ) }
 			</ExternalLink>
 		);
@@ -161,8 +164,9 @@ export default React.createClass( {
 	},
 
 	renderPlaceholder() {
+		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true, 'is-wpcom-plugin': this.props.isWpcomPlugin } );
 		return (
-			<div className="plugin-information is-placeholder">
+			<div className={ classes } >
 					<div className="plugin-information__wrapper">
 						<div className="plugin-information__version-info">
 							<div className="plugin-information__version-shell">
@@ -182,14 +186,14 @@ export default React.createClass( {
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
+					{ ! this.props.isWpcomPlugin &&
 					<PluginRatings
 						rating={ this.props.plugin.rating }
 						ratings={ this.props.plugin.ratings }
 						downloaded={ this.props.plugin.downloaded }
 						numRatings={ this.props.plugin.num_ratings }
 						slug={ this.props.plugin.slug }
-						placeholder={ true }
-					/>
+						placeholder={ true } /> }
 			</div>
 		);
 	},
@@ -235,8 +239,7 @@ export default React.createClass( {
 						ratings={ this.props.plugin.ratings }
 						downloaded={ this.props.plugin.downloaded }
 						numRatings={ this.props.plugin.num_ratings }
-						slug={ this.props.plugin.slug }
-					/>
+						slug={ this.props.plugin.slug } />
 			</div>
 		);
 	},
