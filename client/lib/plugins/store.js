@@ -27,6 +27,7 @@ var Dispatcher = require( 'dispatcher' ),
  * Constants
  */
 var _CACHE_TIME_TO_LIVE = 10 * 1000, // 10 sec
+	// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
 	_UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000,
 	_STORAGE_LIST_NAME = 'CachedPluginsBySite';
 

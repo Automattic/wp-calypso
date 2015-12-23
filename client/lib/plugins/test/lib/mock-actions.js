@@ -62,6 +62,13 @@ module.exports = {
 		error: null
 	},
 
+	clearPluginUpdate: {
+		type: 'REMOVE_PLUGINS_UPDATE_INFO',
+		action: 'REMOVE_PLUGINS_UPDATE_INFO',
+		site: site,
+		plugin: plugins[ 2 ]
+	},
+
 	updatedPluginError: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
 		action: 'UPDATE_PLUGIN',
