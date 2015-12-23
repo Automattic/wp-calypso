@@ -63,15 +63,6 @@ module.exports = {
 		},
 		defaultVariation: 'main'
 	},
-	nuxTrampoline: {
-		datestamp: '20151210',
-		variations: {
-			main: 25,
-			trampoline: 25,
-			notTested: 50
-		},
-		defaultVariation: 'main'
-	},
 	triforce: {
 		datestamp: '20151216',
 		variations: {

@@ -19,11 +19,6 @@ function getCheckoutDestination( dependencies ) {
 		return '/checkout/' + dependencies.siteSlug;
 	}
 
-	/* NUX Trampoline A/B */
-	if ( 'trampoline' === getABTestVariation( 'nuxTrampoline' ) ) {
-		return 'https://' + dependencies.siteSlug;
-	}
-
 	return '/me/next?welcome';
 }
 
