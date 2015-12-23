@@ -184,7 +184,7 @@ var PlansCompare = React.createClass( {
 } );
 
 module.exports = connect(
-	( state, props ) => {
+	function mapStateToProps( state, props ) {
 		if ( ! props.selectedSite ) {
 			return { sitePlans: null };
 		}
@@ -193,7 +193,7 @@ module.exports = connect(
 			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
 		};
 	},
-	( dispatch ) => {
+	function mapDispatchToProps( dispatch ) {
 		return {
 			fetchSitePlans( siteId ) {
 				dispatch( fetchSitePlans( siteId ) );

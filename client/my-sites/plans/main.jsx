@@ -115,12 +115,12 @@ var Plans = React.createClass( {
 } );
 
 module.exports = connect(
-	( state, props ) => {
+	function mapStateToProps( state, props ) {
 		return {
 			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
 		};
 	},
-	( dispatch ) => {
+	function mapDispatchToProps( dispatch ) {
 		return {
 			fetchSitePlans( siteId ) {
 				dispatch( fetchSitePlans( siteId ) );
