@@ -254,6 +254,7 @@ export default React.createClass( {
 						{ this.renderActions() }
 					</div>
 					<PluginInformation
+						isWpcomPlugin={ this.props.isWpcomPlugin }
 						plugin={ this.props.plugin }
 						isPlaceholder={ this.props.isPlaceholder }
 						site={ this.props.selectedSite }

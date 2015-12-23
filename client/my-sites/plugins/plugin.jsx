@@ -236,6 +236,7 @@ export default React.createClass( {
 					{ this.displayHeader() }
 					<PluginMeta
 						isPlaceholder
+						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
 						plugin={ this.state.plugin }
 						siteUrl={ this.props.siteUrl }
@@ -262,6 +263,7 @@ export default React.createClass( {
 					{ this.displayHeader() }
 					<PluginMeta
 						notices={ {} }
+						isWpcomPlugin={ this.props.isWpcomPlugin }
 						plugin={ this.state.plugin }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
@@ -328,6 +330,7 @@ export default React.createClass( {
 				<div className={ classes }>
 					{ this.displayHeader() }
 					<PluginMeta
+						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
 						plugin={ this.state.plugin }
 						siteUrl={ this.props.siteUrl }
