@@ -11,7 +11,7 @@ import CompactCard from 'components/card/compact';
 import { getCurrentTrialPeriodInDays, getDaysUntilExpiry, getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 
-const PlanStatusProgress = React.createClass( {
+const PlanProgress = React.createClass( {
 	propTypes: {
 		plan: React.PropTypes.object.isRequired
 	},
@@ -80,7 +80,7 @@ const PlanStatusProgress = React.createClass( {
 
 	render() {
 		const { plan } = this.props,
-			classes = classNames( 'plan-status__progress', {
+			classes = classNames( 'plan-progress', {
 				'is-expiring': getDaysUntilUserFacingExpiry( plan ) < 6 && ! isInGracePeriod( plan ),
 				'is-in-grace-period': isInGracePeriod( plan )
 			} );
@@ -88,11 +88,11 @@ const PlanStatusProgress = React.createClass( {
 		return (
 			<CompactCard>
 				<div className={ classes }>
-					<div className="plan-status__progress-time-until-expiry">
+					<div className="plan-progress__time-until-expiry">
 						{ this.renderDaysRemaining() }
 					</div>
 
-					<div className="plan-status__progress-bar">
+					<div className="plan-progress__bar">
 						{ this.renderProgressBar() }
 					</div>
 				</div>
@@ -101,4 +101,4 @@ const PlanStatusProgress = React.createClass( {
 	}
 } );
 
-export default PlanStatusProgress;
+export default PlanProgress;

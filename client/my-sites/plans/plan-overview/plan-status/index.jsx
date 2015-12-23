@@ -14,7 +14,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import { getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
 import Notice from 'components/notice';
-import PlanStatusProgress from './progress';
+import PlanProgress from '../plan-progress';
 import { isPremium, isBusiness } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
 
@@ -93,13 +93,12 @@ const PlanStatus = React.createClass( {
 						primary={ getDaysUntilUserFacingExpiry( this.props.plan ) < 6 }
 						className="plan-status__button"
 						onClick={ this.purchasePlan }
-						primary
-					>
+						primary>
 						{ this.translate( 'Purchase Now' ) }
 					</Button>
 				</CompactCard>
 
-				<PlanStatusProgress plan={ plan } />
+				{ ! isInGracePeriod( plan ) && <PlanProgress plan={ plan } /> }
 			</div>
 		);
 	}
