@@ -253,7 +253,7 @@ export default React.createClass( {
 			canUpdateFiles: true,
 			name: 'Not a real site',
 			options: {
-				software_version: 1
+				software_version: '1'
 			}
 		}
 		return (

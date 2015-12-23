@@ -216,12 +216,13 @@ export default React.createClass( {
 			'plugin-information__version-info': true,
 			'is-singlesite': !! this.props.siteVersion
 		} );
+
 		return (
 			<div className="plugin-information">
 					<div className="plugin-information__wrapper">
 						<div className={ classes }>
 							<div className="plugin-information__version-shell">
-								<Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
+								{ this.props.pluginVersion && <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" /> }
 								{ this.renderLastUpdated() }
 							</div>
 							<div className="plugin-information__version-shell">
