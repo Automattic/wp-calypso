@@ -50,9 +50,9 @@ export default React.createClass( {
 			<CompactCard
 				{ ...omit( this.props, 'className' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
+				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.user.login + '/' + this.props.site.slug }
-				onClick={ canLinkToProfile && this.navigateToUser }
-			>
+				onClick={ canLinkToProfile && this.navigateToUser }>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile user={ this.props.user } />
 				</div>
