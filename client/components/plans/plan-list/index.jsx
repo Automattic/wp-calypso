@@ -9,7 +9,9 @@ var React = require( 'react/addons' ),
  */
 var Plan = require( 'components/plans/plan' ),
 	Card = require( 'components/card' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	abtest = require( 'lib/abtest' ).abtest,
+	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
+	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan;
 
 module.exports = React.createClass( {
 	displayName: 'PlanList',
@@ -25,29 +27,47 @@ module.exports = React.createClass( {
 	render: function() {
 		var plans = this.props.plans,
 			showJetpackPlans = false,
+			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			site,
-			plansList;
+			plansList,
+			currentPlan;
+
+		if ( plans.length === 0 || isLoadingSitePlans ) {
+			plansList = times( 3, function( n ) {
+				return (
+					<Plan placeholder={ true }
+						isInSignup={ this.props.isInSignup }
+						key={ `plan-${ n }` } />
+				);
+			}, this );
+
+			return (
+				<div className="plans-list">{ plansList }</div>
+			);
+		}
 
 		if ( this.props.sites ) {
 			site = this.props.sites.getSelectedSite();
 			showJetpackPlans = site && site.jetpack;
 		}
 
-		// check if this site was registered via the JPPHP "Jetpack Start" program
-		// if so, we want to display a message that this plan is managed via the hosting partner
-
-		if ( this.props.siteSpecificPlansDetailsList && this.props.siteSpecificPlansDetailsList.hasJpphpBundle( site.domain )  ) {
-			return (
-				<Card>
-					<p>
-						{
-							this.translate( 'This plan is managed by your web host. ' +
-								'Please log into your host\'s control panel to manage subscription ' +
-								'and billing information.' )
-						}
-					</p>
-				</Card>
-			);
+		if ( ! this.props.isInSignup ) {
+			// check if this site was registered via the JPPHP "Jetpack Start" program
+			// if so, we want to display a message that this plan is managed via the hosting partner
+			currentPlan = getCurrentPlan( this.props.sitePlans.data );
+			if ( isJpphpBundle( currentPlan ) ) {
+				return (
+					<Card>
+						<p>
+							{
+								this.translate( 'This plan is managed by your web host. ' +
+									'Please log into your host\'s control panel to manage subscription ' +
+									'and billing information.' )
+							}
+						</p>
+					</Card>
+				);
+			}
 		}
 
 		if ( plans.length > 0 ) {
@@ -59,7 +79,7 @@ module.exports = React.createClass( {
 				return (
 					<Plan
 						plan={ plan }
-						siteSpecificPlansDetailsList={ this.props.siteSpecificPlansDetailsList }
+						sitePlans={ this.props.sitePlans }
 						comparePlansUrl={ this.props.comparePlansUrl }
 						isInSignup={ this.props.isInSignup }
 						key={ plan.product_id }
@@ -76,7 +96,7 @@ module.exports = React.createClass( {
 				return (
 					<Plan placeholder={ true }
 						isInSignup={ this.props.isInSignup }
-						key={ 'plan-' + n } />
+						key={ `plan-${ n }` } />
 				);
 			}, this );
 		}

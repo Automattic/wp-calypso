@@ -41,7 +41,7 @@ state.sites.plans = {
 			rawDiscount: Number,
 			rawPrice: Number,
 			subscribedDate: String,
-			subscribedMoment: Moment,
+			subscribedDayMoment: Moment,
 			userFacingExpiry: String,
 			userFacingExpiryMoment: Moment
 		},

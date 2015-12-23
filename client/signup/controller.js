@@ -3,6 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import qs from 'qs';
 import isEmpty from 'lodash/lang/isEmpty';
@@ -93,15 +94,17 @@ export default {
 		} ) );
 
 		ReactDom.render(
-			React.createElement( SignupComponent, {
-				path: context.path,
-				refParameter,
-				queryObject,
-				locale: utils.getLocale( context.params ),
-				flowName: flowName,
-				stepName: stepName,
-				stepSectionName: stepSectionName
-			} ),
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( SignupComponent, {
+					path: context.path,
+					refParameter,
+					queryObject,
+					locale: utils.getLocale( context.params ),
+					flowName: flowName,
+					stepName: stepName,
+					stepSectionName: stepSectionName
+				} )
+			),
 			document.getElementById( 'primary' )
 		);
 	},

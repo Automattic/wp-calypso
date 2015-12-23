@@ -19,9 +19,9 @@ module.exports = React.createClass( {
 
 	getPrice: function() {
 		var standardPrice = this.getFormattedPrice( this.props.plan ),
-			discountedPrice = this.getFormattedPrice( this.props.siteSpecificPlansDetails );
+			discountedPrice = this.getFormattedPrice( this.props.sitePlan );
 
-		if ( this.props.siteSpecificPlansDetails && this.props.siteSpecificPlansDetails.raw_discount > 0 ) {
+		if ( this.props.sitePlan && this.props.sitePlan.rawDiscount > 0 ) {
 			return ( <span><span className="plan-price__discounted">{ standardPrice }</span> { discountedPrice }</span> );
 		}
 
@@ -29,8 +29,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-	    const { plan, siteSpecificPlansDetails: details } = this.props;
-	    const hasDiscount = details && details.raw_discount > 0;
+	    const { plan, sitePlan: details } = this.props;
+	    const hasDiscount = details && details.rawDiscount > 0;
 
 	    if ( this.props.isPlaceholder ) {
 			return <div className="plan-price is-placeholder" />;

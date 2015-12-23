@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	find = require( 'lodash/collection/find' );
 
 /**
  * Internal dependencies
@@ -73,12 +74,12 @@ module.exports = React.createClass( {
 		return this.props.placeholder;
 	},
 
-	getProductId: function() {
+	getProductSlug: function() {
 		if ( this.isPlaceholder() ) {
 			return;
 		}
 
-		return this.props.plan.product_id;
+		return this.props.plan.product_slug;
 	},
 
 	getClassNames: function() {
@@ -97,12 +98,12 @@ module.exports = React.createClass( {
 		return classNames( classObject );
 	},
 
-	getSiteSpecificPlanDetails: function() {
+	getSitePlan: function() {
 		if ( this.isPlaceholder() || ! this.props.site ) {
 			return;
 		}
 
-		return this.props.siteSpecificPlansDetailsList.get( this.props.site.domain, this.getProductId() );
+		return find( this.props.sitePlans.data, { productSlug: this.getProductSlug() } );
 	},
 
 	getPlanDiscountMessage: function() {
@@ -113,7 +114,7 @@ module.exports = React.createClass( {
 		return (
 			<PlanDiscountMessage
 				plan={ this.props.plan }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
 				showMostPopularMessage={ true }/>
 		);
@@ -121,7 +122,7 @@ module.exports = React.createClass( {
 
 	getBadge: function() {
 		if ( this.props.site ) {
-			if ( this.props.site.plan.product_id === this.getProductId() ) {
+			if ( this.props.site.plan.product_slug === this.getProductSlug() ) {
 				return (
 					<Gridicon icon="checkmark-circle" />
 				);
@@ -155,7 +156,7 @@ module.exports = React.createClass( {
 			<PlanPrice
 				plan={ this.props.plan }
 				isPlaceholder={ this.isPlaceholder() }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site } />
 		);
 	},
@@ -166,7 +167,7 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				isInSignup={ this.props.isInSignup }
 				onSelectPlan={ this.props.onSelectPlan }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
 				cart={ this.props.cart }
 				enableFreeTrials={ this.props.enableFreeTrials }
@@ -180,7 +181,7 @@ module.exports = React.createClass( {
 				plan={ this.props.plan }
 				isInSignup={ this.props.isInSignup }
 				onSelectPlan={ this.props.onSelectPlan }
-				siteSpecificPlansDetails={ this.getSiteSpecificPlanDetails() }
+				sitePlan={ this.getSitePlan() }
 				site={ this.props.site }
 				cart={ this.props.cart }
 				enableFreeTrials={ this.props.enableFreeTrials }
@@ -191,7 +192,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<Card className={ this.getClassNames() } key={ this.getProductId() } onClick={ this.showDetails }>
+			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
 				<PlanHeader onClick={ this.showDetails } text={ this.getProductName() } isPlaceholder={ this.isPlaceholder() }>
 					{ this.getBadge() }
