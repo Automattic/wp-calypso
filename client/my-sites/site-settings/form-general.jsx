@@ -20,7 +20,12 @@ var Card = require( 'components/card' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
-	FormInput = require( 'components/forms/form-text-input' );
+	FormInput = require( 'components/forms/form-text-input' ),
+	FormFieldset = require( 'components/forms/form-fieldset' ),
+	FormLabel = require( 'components/forms/form-label' ),
+	FormRadio = require( 'components/forms/form-radio' ),
+	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
 
 module.exports = React.createClass( {
 
@@ -86,8 +91,8 @@ module.exports = React.createClass( {
 	siteOptions: function() {
 		return (
 			<div>
-				<fieldset>
-					<label htmlFor="blogname">{ this.translate( 'Site Title' ) }</label>
+				<FormFieldset>
+					<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
 					<FormInput
 						name="blogname"
 						id="blogname"
@@ -95,11 +100,10 @@ module.exports = React.createClass( {
 						valueLink={ this.linkState( 'blogname' ) }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.recordEvent.bind( this, 'Clicked Site Title Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedTitle', 'Typed in Site Title Field' ) }
-					/>
-				</fieldset>
-				<fieldset>
-					<label htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</label>
+						onKeyPress={ this.recordEventOnce.bind( this, 'typedTitle', 'Typed in Site Title Field' ) } />
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
 					<FormInput
 						name="blogdescription"
 						type="text"
@@ -107,10 +111,11 @@ module.exports = React.createClass( {
 						valueLink={ this.linkState( 'blogdescription' ) }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.recordEvent.bind( this, 'Clicked Site Site Tagline Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedTagline', 'Typed in Site Site Tagline Field' ) }
-					/>
-					<p className="settings-explanation">{ this.translate( 'In a few words, explain what this site is about.' ) }</p>
-				</fieldset>
+						onKeyPress={ this.recordEventOnce.bind( this, 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+					<FormSettingExplanation>
+						{ this.translate( 'In a few words, explain what this site is about.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
 			</div>
 		);
 	},
@@ -126,17 +131,13 @@ module.exports = React.createClass( {
 
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 			customAddress = (
-				<Button
-					href={ '/domains/add/' + site.slug }
-					onClick={ this.trackUpgradeClick }
-					
-				>
+				<Button href={ '/domains/add/' + site.slug } onClick={ this.trackUpgradeClick }>
 					<Gridicon icon="plus" /> { this.translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
 				</Button>
 			);
 
 			addressDescription =
-				<p className="settings-explanation">
+				<FormSettingExplanation>
 					{
 						this.translate( 'Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}}, {{mapDomainLink}}map{{/mapDomainLink}} a domain you already own, or {{redirectLink}}redirect{{/redirectLink}} this site.', {
 							components: {
@@ -146,27 +147,23 @@ module.exports = React.createClass( {
 							}
 						} )
 					}
-				</p>;
+				</FormSettingExplanation>;
 		}
 
 		return (
-			<fieldset className="site-settings__blog-address-container">
-				<label htmlFor="blogaddress">{ this.translate( 'Site Address' ) }</label>
-
+			<FormFieldset className="site-settings__blog-address-container">
+				<FormLabel htmlFor="blogaddress">{ this.translate( 'Site Address' ) }</FormLabel>
 				<div className="blogaddress-settings">
-					<input
+					<FormInput
 						name="blogaddress"
 						type="text"
 						id="blogaddress"
 						value={ this.props.site.domain }
-						disabled="disabled"
-					/>
-
+						disabled="disabled" />
 					{ customAddress }
 				</div>
-
 				{ addressDescription }
-			</fieldset>
+			</FormFieldset>
 		);
 	},
 
@@ -179,23 +176,22 @@ module.exports = React.createClass( {
 			return null;
 		}
 		return (
-			<fieldset>
-				<label htmlFor="lang_id">{ this.translate( 'Language' ) }</label>
+			<FormFieldset>
+				<FormLabel htmlFor="lang_id">{ this.translate( 'Language' ) }</FormLabel>
 				<LanguageSelector
 					name="lang_id"
 					id="lang_id"
 					languages={ config( 'languages' ) }
 					valueLink={ this.linkState( 'lang_id' ) }
 					disabled={ this.state.fetchingSettings }
-					onClick={ this.recordEvent.bind( this, 'Clicked Language Field' ) }
-				/>
-				<p className="settings-explanation">
+					onClick={ this.recordEvent.bind( this, 'Clicked Language Field' ) } />
+				<FormSettingExplanation>
 					{ this.translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
 						{ this.translate( 'You can also modify the interface language in your profile.' ) }
 					</a>
-				</p>
-			</fieldset>
+				</FormSettingExplanation>
+			</FormFieldset>
 		);
 	},
 
@@ -203,52 +199,46 @@ module.exports = React.createClass( {
 		var site = this.props.site;
 
 		return (
-			<fieldset>
-				<label>
-					<input
-						type="radio"
+			<FormFieldset>
+				<FormLabel>
+					<FormRadio
 						name="blog_public"
 						value="1"
 						checked={ 1 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) }
-					/>
+						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Allow search engines to index this site' ) }</span>
-				</label>
+				</FormLabel>
 
-				<label>
-					<input
-						type="radio"
+				<FormLabel>
+					<FormRadio
 						name="blog_public"
 						value="0"
 						checked={ 0 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) }
-					/>
+						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Discourage search engines from indexing this site' ) }</span>
-					<p className="settings-explanation inside-list is-indented">
+					<FormSettingExplanation className="inside-list is-indented">
 						{ this.translate( 'Note: This option does not block access to your site — it is up to search engines to honor your request.' ) }
-					</p>
-				</label>
+					</FormSettingExplanation>
+				</FormLabel>
 
 				{ ! site.jetpack &&
-					<label>
-						<input
-							type="radio"
+					<FormLabel>
+						<FormRadio
 							name="blog_public"
 							value="-1"
 							checked={ - 1 === parseInt( this.state.blog_public, 10 ) }
 							onChange={ this.handleRadio }
 							disabled={ this.state.fetchingSettings }
-							onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) }
-						/>
+							onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
 						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
-					</label>
+					</FormLabel>
 				}
 
-			</fieldset>
+			</FormFieldset>
 		);
 	},
 
@@ -258,53 +248,49 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<fieldset>
+			<FormFieldset>
 				<ul id="settings-reading-relatedposts">
 					<li>
-						<label>
-							<input
-								type="radio"
+						<FormLabel>
+							<FormRadio
 								name="jetpack_relatedposts_enabled"
 								value="0"
 								className="tog"
 								checked={ 0 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) }
-							/>
+								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Hide related content after posts' ) }</span>
-						</label>
+						</FormLabel>
 					</li>
 					<li>
-						<label>
-							<input
-								type="radio"
+						<FormLabel>
+							<FormRadio
 								name="jetpack_relatedposts_enabled"
 								value="1"
 								className="tog"
 								checked={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) }
-							/>
+								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Show related content after posts' ) }</span>
-						</label>
+						</FormLabel>
 						<ul id="settings-reading-relatedposts-customize" className={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
 							<li>
-								<label>
-									<input name="jetpack_relatedposts_show_headline" type="checkbox" checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) }/>
+								<FormLabel>
+									<FormCheckbox name="jetpack_relatedposts_show_headline" checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) }/>
 									<span>{ this.translate( 'Show a "Related" header to more clearly separate the related section from posts' ) }</span>
-								</label>
+								</FormLabel>
 							</li>
 							<li>
-								<label>
-									<input name="jetpack_relatedposts_show_thumbnails" type="checkbox" checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) }/>
+								<FormLabel>
+									<FormCheckbox name="jetpack_relatedposts_show_thumbnails" checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) }/>
 									<span>{ this.translate( 'Use a large and visually striking layout' ) }</span>
-								</label>
+								</FormLabel>
 							</li>
 						</ul>
 						<RelatedContentPreview enabled={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) } showHeadline={ this.state.jetpack_relatedposts_show_headline } showThumbnails={ this.state.jetpack_relatedposts_show_thumbnails } />
 					</li>
 				</ul>
-			</fieldset>
+			</FormFieldset>
 		);
 	},
 
@@ -317,11 +303,13 @@ module.exports = React.createClass( {
 				<form onChange={ this.markChanged }>
 					<ul id="settings-jetpack" className="settings-jetpack">
 						<li>
-							<label>
-								<input name="jetpack_sync_non_public_post_stati" type="checkbox" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
+							<FormLabel>
+								<FormCheckbox name="jetpack_sync_non_public_post_stati" checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }/>
 								<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
-								<p className="settings-explanation is-indented">{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }</p>
-							</label>
+								<FormSettingExplanation className="is-indented">
+									{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
+								</FormSettingExplanation>
+							</FormLabel>
 						</li>
 					</ul>
 				</form>
@@ -364,17 +352,17 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<fieldset>
+			<FormFieldset>
 				<legend>{ this.translate( 'Holiday Snow' ) }</legend>
 				<ul>
 					<li>
-						<label>
-							<input name="holidaysnow" type="checkbox" checkedLink={ this.linkState( 'holidaysnow' ) }/>
+						<FormLabel>
+							<FormCheckbox name="holidaysnow" checkedLink={ this.linkState( 'holidaysnow' ) }/>
 							<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
-						</label>
+						</FormLabel>
 					</li>
 				</ul>
-			</fieldset>
+			</FormFieldset>
 		);
 	},
 
@@ -433,20 +421,19 @@ module.exports = React.createClass( {
 						<SectionHeader label={ this.translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
 							{ config.isEnabled( 'manage/option_sync_non_public_post_stati' )
-							  ? <Button
-							  	compact={ true }
-								onClick={ this.submitForm }
-								primary={ true }
-								type="submit"
-
-								disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+								? <Button
+									compact={ true }
+									onClick={ this.submitForm }
+									primary={ true }
+									type="submit"
+									disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 									{ this.state.submittingForm
 										? this.translate( 'Saving…' )
 										: this.translate( 'Save Settings' )
 									}
-								</Button>
-						 	 : null
-						 	}
+									</Button>
+								: null
+							}
 						</SectionHeader>
 
 						{ this.syncNonPublicPostTypes() }
