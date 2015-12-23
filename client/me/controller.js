@@ -281,7 +281,7 @@ export default {
 		if ( transactionId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
-			ReactDom.render(
+			context.render(
 				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
 				document.getElementById( 'tertiary' )
 			);
