@@ -167,11 +167,6 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function getCurrentFlowNameFromTest( currentURL ) {
-	// Assign the user to the verticals survey test if appropriate.
-	if ( '/start/vert-blog' === currentURL || '/start/vert-site' === currentURL ) {
-		return ( 'noSurvey' === abtest( 'verticalSurvey' ) ) ? 'main' : 'verticals';
-	}
-
 	// Consider remaining homepage users for the Triforce AB test.
 	if ( '/start/en?ref=homepage' === currentURL && 'triforce' === abtest( 'triforce' ) ) {
 		return 'layout';
