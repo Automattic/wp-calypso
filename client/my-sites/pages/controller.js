@@ -2,8 +2,7 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	qs = require( 'querystring' );
+	React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -22,7 +21,7 @@ var controller = {
 		var Pages = require( 'my-sites/pages/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			status = context.params.status,
-			search = qs.parse( context.querystring ).s,
+			search = context.query.s,
 			basePath = route.sectionify( context.path ),
 			analyticsPageTitle = 'Pages',
 			baseAnalyticsPath;

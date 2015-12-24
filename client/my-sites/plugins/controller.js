@@ -4,7 +4,6 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
-	qs = require( 'querystring' ),
 	some = require( 'lodash/collection/some' ),
 	capitalize = require( 'lodash/string/capitalize' );
 
@@ -88,7 +87,7 @@ function getPathWithoutSiteSlug( context, site ) {
 }
 
 function renderPluginList( context, basePath, siteUrl ) {
-	var search = qs.parse( context.querystring ).s,
+	var search = context.query.s,
 		site = sites.getSelectedSite(),
 		analyticsPageTitle;
 
@@ -120,7 +119,7 @@ function renderPluginList( context, basePath, siteUrl ) {
 function renderPluginsBrowser( context, siteUrl ) {
 	var site = sites.getSelectedSite(),
 		category = context.params.category,
-		searchTerm = qs.parse( context.querystring ).s,
+		searchTerm = context.query.s,
 		analyticsPageTitle;
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );

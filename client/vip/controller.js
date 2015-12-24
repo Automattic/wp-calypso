@@ -3,8 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	page = require( 'page' ),
-	qs = require( 'querystring' );
+	page = require( 'page' );
 
 /**
  * Internal Dependencies
@@ -111,7 +110,7 @@ module.exports = {
 	},
 
 	logs: function( context ) {
-		var search = qs.parse( context.querystring ).s,
+		var search = context.query.s,
 			siteUrl = route.getSiteFragment( context.path ),
 			site = sites.getSelectedSite(),
 			status = context.params.status,

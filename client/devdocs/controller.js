@@ -40,7 +40,7 @@ var devdocs = {
 	 */
 	devdocs: function( context ) {
 		function onSearchChange( searchTerm ) {
-			var query = qs.parse( context.querystring );
+			var query = context.query;
 			if ( searchTerm ) {
 				query.term = searchTerm;
 			} else {

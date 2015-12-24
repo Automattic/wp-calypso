@@ -2,8 +2,7 @@
  * External Dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	qs = require( 'querystring' );
+	React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -19,7 +18,7 @@ module.exports = {
 	media: function( context ) {
 		var MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
-			search = qs.parse( context.querystring ).s,
+			search = context.query.s,
 			baseAnalyticsPath = route.sectionify( context.path );
 
 		// Analytics

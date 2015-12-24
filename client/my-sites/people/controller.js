@@ -13,7 +13,6 @@ import i18n from 'lib/mixins/i18n';
 import sitesList from 'lib/sites-list';
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import qs from 'querystring';
 import layoutFocus from 'lib/layout-focus';
 import analytics from 'analytics';
 import titlecase from 'to-title-case';
@@ -61,7 +60,7 @@ function renderPeopleList( filter, context ) {
 			sites: sites,
 			peopleLog: PeopleLogStore,
 			filter: filter,
-			search: qs.parse( context.querystring ).s
+			search: context.query.s
 		} ),
 		document.getElementById( 'primary' )
 	);
