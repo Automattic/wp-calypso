@@ -14,10 +14,9 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import BackButton from 'components/header-cake';
 import Gridicon from 'components/gridicon';
-import { getABTestVariation } from 'lib/abtest';
 
 function isSurveyOneStep() {
-	return 'oneStep' === getABTestVariation( 'verticalSurvey' );
+	return false;
 }
 
 export default React.createClass( {
