@@ -11,7 +11,6 @@ var assign = require( 'lodash/object/assign' ),
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
@@ -173,13 +172,8 @@ function getCurrentFlowNameFromTest( currentURL ) {
 		return ( 'noSurvey' === abtest( 'verticalSurvey' ) ) ? 'main' : 'verticals';
 	}
 
-	// Only consider users from the WordPress.com homepage for the DSS test.
-	if ( '/start/en?ref=homepage' === currentURL && 'dss' === abtest( 'dss' ) ) {
-		return 'dss';
-	}
-
 	// Consider remaining homepage users for the Triforce AB test.
-	if ( '/start/en?ref=homepage' === currentURL && 'main' !== getABTestVariation( 'dss' ) && 'triforce' === abtest( 'triforce' ) ) {
+	if ( '/start/en?ref=homepage' === currentURL && 'triforce' === abtest( 'triforce' ) ) {
 		return 'layout';
 	}
 
