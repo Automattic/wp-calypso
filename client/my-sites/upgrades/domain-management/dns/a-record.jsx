@@ -40,7 +40,7 @@ const ARecord = React.createClass( {
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError="true" /> : null }
+					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="name"
 						onChange={ onChange( 'name' ) }
@@ -50,7 +50,7 @@ const ARecord = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Points To' ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError="true" /> : null }
+					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
 						onChange={ onChange( 'data' ) }

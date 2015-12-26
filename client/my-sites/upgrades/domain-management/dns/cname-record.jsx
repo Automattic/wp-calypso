@@ -35,7 +35,7 @@ const CnameRecord = React.createClass( {
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Host', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError="true" /> : null }
+					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="name"
 						onChange={ this.props.onChange( 'name' ) }
@@ -45,7 +45,7 @@ const CnameRecord = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Alias Of' ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError="true" /> : null }
+					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
 						onChange={ this.props.onChange( 'data' ) }
