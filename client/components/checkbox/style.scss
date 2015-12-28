@@ -1,0 +1,51 @@
+.checkbox {
+	cursor: pointer;
+	display: block;
+	margin-bottom: 5px;
+	position: relative;
+	user-select: none;
+}
+
+.checkbox input[type="checkbox"] {
+	@include hide-content-accessibly;
+	border: 0;
+	margin: -1px;
+	padding: 0;
+}
+
+.checkbox .gridicon {
+	fill: $blue-medium;
+	left: 10px; // half width of box plus 1px of border
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1;
+}
+
+.checkbox:after {
+	background-color: $white;
+	border-radius: 1px;
+	border: 1px solid #c8d7e1;
+	content: '';
+	display: block;
+	height: 18px;
+	left: 0;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+}
+
+.checkbox:not(.is-disabled):hover:after {
+	border-color: #a8bece;
+}
+
+.checkbox.is-focused:after {
+	border-color: #0087be;
+	box-shadow: 0 0 0 2px #78dcfa;
+}
+
+.checkbox.is-disabled {
+	opacity: 0.8;
+	cursor: not-allowed;
+}
