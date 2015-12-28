@@ -40,7 +40,7 @@ Layout = React.createClass( {
 
 	_sitesPoller: null,
 
-	componentWillUpdate: function( nextProps, nextState ) {
+	componentWillUpdate: function( nextProps ) {
 		if ( this.props.section !== nextProps.section ) {
 			if ( nextProps.section === 'sites' ) {
 				setTimeout( function() {
