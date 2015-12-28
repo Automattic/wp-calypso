@@ -12,7 +12,7 @@ const Masterbar = ( { children } ) => (
 Masterbar.displayName = 'Masterbar';
 
 Masterbar.propTypes = {
-	children: React.PropTypes.element
+	children: React.PropTypes.node.isRequired
 };
 
 export default Masterbar;
