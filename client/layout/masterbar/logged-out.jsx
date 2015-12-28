@@ -10,7 +10,7 @@ import Masterbar from './masterbar';
 import Item from './item';
 
 export default () => (
-	<Masterbar collapsible={ false } >
+	<Masterbar>
 		<Item url="/" icon="my-sites" className="masterbar__item-logo">
 			WordPress<span className="tld">.com</span>
 		</Item>

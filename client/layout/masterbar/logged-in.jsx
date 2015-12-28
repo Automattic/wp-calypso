@@ -60,7 +60,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<Masterbar collapsible={ true } >
+			<Masterbar>
 				<StatsItem
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
