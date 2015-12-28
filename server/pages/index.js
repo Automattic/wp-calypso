@@ -146,7 +146,7 @@ function getDefaultContext( request ) {
 	if ( CALYPSO_ENV === 'wpcalypso' ) {
 		context.badge = CALYPSO_ENV;
 		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
@@ -158,14 +158,14 @@ function getDefaultContext( request ) {
 
 	if ( CALYPSO_ENV === 'stage' ) {
 		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
 	if ( CALYPSO_ENV === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
 	}
