@@ -5,12 +5,12 @@ echo "\nBy contributing to this project, you license the materials you contribut
 echo "\nRunning tests ...\n"
 make test
 if [ $? -ne 0 ]; then
-    echo "\n\n\033[41mPUSH NOT ALLOWED:\033[0m The tests are broken! Please fix them and try again.\n"
-    echo "(If you want to push anyway, you can repeat the command using --no-verify to skip this check)\n"
+    printf "\n\n\033[41mPUSH NOT ALLOWED:\033[0m The tests are broken! Please fix them and try again.\n\n"
+    printf "(If you want to push anyway, you can repeat the command using --no-verify to skip this check)\n\n"
     exit 1
 fi
 
-echo "\n\n\033[42mPUSH READY TO GO\033[0m\n"
+printf "\n\n\033[42mPUSH READY TO GO\033[0m\n\n"
 
 current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
 if [ 'master' = $current_branch ]
@@ -24,4 +24,3 @@ then
     exit 1 # push will not execute
 fi
 exit 0
-
