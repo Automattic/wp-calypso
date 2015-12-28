@@ -5,7 +5,6 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
 	some = require( 'lodash/collection/some' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	classes = require( 'component-classes' ),
@@ -40,6 +39,7 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	createReduxStore = require( 'state' ).createReduxStore,
+	ReactHelpers = require('lib/react-helpers'),
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
@@ -183,9 +183,10 @@ function boot() {
 		layoutElement = React.createElement( LoggedOutLayout );
 	}
 
-	layout = ReactDom.render(
-		React.createElement( ReduxProvider, { store: reduxStore }, layoutElement ),
-		document.getElementById( 'wpcom' )
+	layout = ReactHelpers.renderWithReduxStore(
+		layoutElement,
+		document.getElementById( 'wpcom' ),
+		reduxStore
 	);
 
 	debug( 'Main layout rendered.' );
