@@ -367,14 +367,14 @@ describe( 'Plugins Store', function() {
 	describe( 'Update Plugin', function() {
 		var HelloDolly = {};
 
-		describe( 'Updateing Plugin', function() {
+		describe( 'Updating Plugin', function() {
 			beforeEach( function() {
 				Dispatcher.handleViewAction( actions.updatePlugin );
 				HelloDolly = PluginsStore.getSitePlugin( site, 'hello-dolly' );
 			} );
 
-			it( 'update = null', function() {
-				assert.isNull( HelloDolly.update );
+			it( 'doesn\'t remove update when lauched', function() {
+				assert.isNotNull( HelloDolly.update );
 			} );
 		} );
 
@@ -384,8 +384,8 @@ describe( 'Plugins Store', function() {
 				HelloDolly = PluginsStore.getSitePlugin( site, 'hello-dolly' );
 			} );
 
-			it( 'should set update = null', function() {
-				assert.isNull( HelloDolly.update );
+			it( 'should set lastUpdated', function() {
+				assert.isNotNull( HelloDolly.update.lastUpdated );
 			} );
 
 			it( 'should update the plugin data', function() {
@@ -394,6 +394,17 @@ describe( 'Plugins Store', function() {
 				assert.equal( HelloDolly.description, updatePluginData.description );
 				assert.equal( HelloDolly.author_url, updatePluginData.author_url );
 				assert.equal( HelloDolly.name, updatePluginData.name );
+			} );
+		} );
+
+		describe( 'Remove Plugin Update Info', function() {
+			beforeEach( function() {
+				Dispatcher.handleViewAction( actions.clearPluginUpdate );
+				HelloDolly = PluginsStore.getSitePlugin( site, 'hello-dolly' );
+			} );
+
+			it( 'should remove lastUpdated', function() {
+				assert.isNull( HelloDolly.update );
 			} );
 		} );
 

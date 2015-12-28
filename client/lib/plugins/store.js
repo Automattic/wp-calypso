@@ -27,7 +27,10 @@ var Dispatcher = require( 'dispatcher' ),
  * Constants
  */
 var _CACHE_TIME_TO_LIVE = 10 * 1000, // 10 sec
+	// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
+	_UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000,
 	_STORAGE_LIST_NAME = 'CachedPluginsBySite';
+
 // Stores the plugins of each site.
 var _fetching = {},
 	_pluginsBySite = {},
@@ -353,6 +356,10 @@ PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case 'AUTOUPDATE_PLUGIN':
 		case 'UPDATE_PLUGIN':
+			PluginsStore.emitChange();
+			break;
+
+		case 'REMOVE_PLUGINS_UPDATE_INFO':
 			update( action.site, action.plugin.slug, { update: null } );
 			PluginsStore.emitChange();
 			break;
@@ -365,8 +372,12 @@ PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
 				// still needs to be updated
 				update( action.site, action.plugin.slug, { update: action.plugin.update } );
 			} else {
-				update( action.site, action.plugin.slug, action.data );
+				update( action.site,
+					action.plugin.slug,
+					Object.assign( { update: { recentlyUpdated: true } }, action.data )
+				);
 				sitesList.onUpdatedPlugin( action.site );
+				setTimeout( PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ), _UPDATED_PLUGIN_INFO_TIME_TO_LIVE );
 			}
 			PluginsStore.emitChange();
 			break;

@@ -93,6 +93,31 @@ module.exports = React.createClass( {
 		return message;
 	},
 
+	renderUpdateFlag: function() {
+		const recentlyUpdated = this.props.sites.some( function( site ) {
+			return site.plugin &&
+				site.plugin.update &&
+				site.plugin.update.recentlyUpdated
+		} );
+
+		if ( recentlyUpdated ) {
+			return (
+				<Notice isCompact
+					icon="checkmark"
+					status="is-success"
+					inline={ true }
+					text={ this.translate( 'Updated' ) } />
+			);
+		}
+		return (
+			<Notice isCompact
+				icon="sync"
+				status="is-warning"
+				inline={ true }
+				text={ this.translate( 'A newer version is available' ) } />
+		);
+	},
+
 	pluginMeta: function( pluginData ) {
 		if ( this.props.progress.length ) {
 			return (
@@ -100,13 +125,7 @@ module.exports = React.createClass( {
 			);
 		}
 		if ( this.hasUpdate() ) {
-			return (
-				<Notice isCompact
-					icon="sync"
-					status="is-warning"
-					inline={ true }
-					text={ this.translate( 'A newer version is available' ) } />
-			);
+			return this.renderUpdateFlag();
 		}
 
 		if ( pluginData.wpcom ) {
