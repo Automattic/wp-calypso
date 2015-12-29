@@ -78,6 +78,6 @@ export function refreshSitePlans( siteId ) {
 			siteId
 		} );
 
-		return fetchSitePlans( siteId );
+		dispatch( fetchSitePlans( siteId ) );
 	}
 }
