@@ -7,7 +7,8 @@ var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
 	mockery = require( 'mockery' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' );
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' );
 
 var EmptyComponent = React.createClass( {
 	render: function() {
@@ -80,7 +81,7 @@ describe( 'Theme', function() {
 
 			it( 'should call onScreenshotClick() on click on screenshot', function() {
 				var imgNode = this.themeNode.getElementsByTagName( 'img' )[0];
-				React.addons.TestUtils.Simulate.click( imgNode );
+				TestUtils.Simulate.click( imgNode );
 				assert( this.props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
 			} );
 
@@ -93,7 +94,7 @@ describe( 'Theme', function() {
 
 				assert( more.length === 1, 'More button container not found' );
 				assert( more[0].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
-				React.addons.TestUtils.Simulate.click( more[0].getElementsByTagName( 'button' )[0] );
+				TestUtils.Simulate.click( more[0].getElementsByTagName( 'button' )[0] );
 				assert( this.togglePopoverStub.calledOnce, 'More button press does not trigger state toggle' );
 			} );
 		} );

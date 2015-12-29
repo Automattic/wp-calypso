@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import update from 'react-addons-update';
 
 /**
  * Internal dependencies
@@ -10,13 +10,13 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 import { createStoredCardsArray } from './assembler.js';
 
 function updateState( state, data ) {
-	return React.addons.update( state, {
+	return update( state, {
 		$merge: data
 	} );
 }
 
 function deleteCard( state, card ) {
-	return React.addons.update( state, {
+	return update( state, {
 		isDeleting: { $set: false },
 		list: {
 			$apply: list => list.filter( item => item.id !== card.id )

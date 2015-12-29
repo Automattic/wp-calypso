@@ -5,7 +5,8 @@ require( 'lib/react-test-env-setup' )();
  */
 import { expect } from 'chai';
 import ReactDom from 'react-dom';
-import React from 'react/addons';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import React from 'react/addons';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 
 describe( 'Dirty Linked State Mixin', function() {
-	const TestUtils = React.addons.TestUtils;
 	const DirtyLinkedForm = React.createClass( {
 		mixins: [ dirtyLinkedState ],
 		getInitialState() {

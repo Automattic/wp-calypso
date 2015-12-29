@@ -2,7 +2,8 @@
  * External dependencies
  */
 var assert = require( 'chai' ).assert,
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' );
 
@@ -59,7 +60,7 @@ describe( 'ThemesList', function() {
 
 	describe( 'rendering', function() {
 		beforeEach( function() {
-			var shallowRenderer = React.addons.TestUtils.createRenderer();
+			var shallowRenderer = TestUtils.createRenderer();
 
 			shallowRenderer.render( this.themesList );
 			this.themesListElement = shallowRenderer.getRenderOutput();
@@ -77,7 +78,7 @@ describe( 'ThemesList', function() {
 
 		context( 'when no themes are found', function() {
 			beforeEach( function() {
-				var shallowRenderer = React.addons.TestUtils.createRenderer();
+				var shallowRenderer = TestUtils.createRenderer();
 				this.props.themes = [];
 				this.themesList = React.createElement( this.ThemesList, this.props );
 

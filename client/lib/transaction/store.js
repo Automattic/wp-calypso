@@ -4,7 +4,7 @@
 var cloneDeep = require( 'lodash/lang/cloneDeep' ),
 	mergeDeep = require( 'lodash/object/merge' ),
 	extend = require( 'lodash/object/assign' ),
-	React = require( 'react/addons' );
+	update = require( 'react-addons-update' );
 
 /**
  * Internal dependencies
@@ -64,7 +64,7 @@ function setNewCreditCardDetails( options ) {
 		return;
 	}
 
-	var newTransaction = React.addons.update( _transaction, {
+	var newTransaction = update( _transaction, {
 		payment: { newCardDetails: { $merge: options.rawDetails } },
 		newCardFormFields: { $merge: options.maskedDetails }
 	} );
