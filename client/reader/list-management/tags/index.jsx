@@ -11,7 +11,7 @@ import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 import Gridicon from 'components/gridicon';
-import ListStore from 'lib/reader-lists/lists';
+import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 import { fetchMoreTags } from 'lib/reader-lists-tags/actions';
 import smartSetState from 'lib/react-smart-set-state';
@@ -52,7 +52,7 @@ const ListManagementTags = React.createClass( {
 			isLastPage,
 			currentPage,
 			isFetchingTags: ReaderListsTagsStore.isFetching(),
-			lastListError: ListStore.getLastError(),
+			lastListError: ReaderListsStore.getLastError(),
 		};
 	},
 
@@ -65,12 +65,12 @@ const ListManagementTags = React.createClass( {
 	},
 
 	componentDidMount() {
-		ListStore.on( 'change', this.update );
+		ReaderListsStore.on( 'change', this.update );
 		ReaderListsTagsStore.on( 'change', this.update );
 	},
 
 	componentWillUnmount() {
-		ListStore.off( 'change', this.update );
+		ReaderListsStore.off( 'change', this.update );
 		ReaderListsTagsStore.off( 'change', this.update );
 	},
 

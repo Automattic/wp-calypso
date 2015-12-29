@@ -12,12 +12,16 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import ReaderListsActions from 'lib/reader-lists/actions';
+import ReaderListsStore from 'lib/reader-lists/lists';
+import smartSetState from 'lib/react-smart-set-state';
+import Notice from 'components/notice';
 
 const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementDescriptionEdit = React.createClass( {
 
 	mixins: [ React.addons.LinkedStateMixin ],
+	smartSetState: smartSetState,
 
 	propTypes: {
 		list: React.PropTypes.shape( {
@@ -27,10 +31,33 @@ const ListManagementDescriptionEdit = React.createClass( {
 	},
 
 	getInitialState() {
-		return {
+		return Object.assign( {
 			title: '',
 			description: '',
-		};
+		}, this.getStateFromStores() );
+	},
+
+	getStateFromStores() {
+		// Fetch tags, but only if we have the list information
+		const list = this.props.list;
+		const currentState = {};
+		if ( list && list.ID ) {
+			currentState.lastListError = ReaderListsStore.getLastError(),
+			currentState.isUpdated = ReaderListsStore.isUpdated( list.ID );
+		}
+		return currentState;
+	},
+
+	update() {
+		this.smartSetState( this.getStateFromStores() );
+	},
+
+	componentDidMount() {
+		ReaderListsStore.on( 'change', this.update );
+	},
+
+	componentWillUnmount() {
+		ReaderListsStore.off( 'change', this.update );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -43,6 +70,10 @@ const ListManagementDescriptionEdit = React.createClass( {
 	},
 
 	handleFormSubmit() {
+		ReaderListsActions.dismissNotice(
+			this.props.list.ID
+		);
+
 		ReaderListsActions.update(
 			this.props.list.owner,
 			this.props.list.slug,
@@ -51,40 +82,55 @@ const ListManagementDescriptionEdit = React.createClass( {
 		);
 	},
 
+	handleDismissNotice() {
+		ReaderListsActions.dismissNotice(
+			this.props.list.ID
+		);
+	},
+
 	render() {
 		if ( ! this.props.list ) {
 			return null;
 		}
 
-		return (
-			<Card>
-				<FormFieldset>
-					<FormLabel htmlFor="list-title">Title</FormLabel>
-					<FormTextInput
-						autoCapitalize="off"
-						autoComplete="on"
-						autoCorrect="off"
-						id="list-title"
-						name="list-title"
-						ref="listTitle"
-						//className="is-error"
-						placeholder=""
-						valueLink={ this.linkState( 'title' ) } />
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="list-description">Description</FormLabel>
-					<FormTextarea
-						ref="listDescription"
-						name="list-description"
-						id="list-description"
-						placeholder=""
-						valueLink={ this.linkState( 'description' ) }></FormTextarea>
-				</FormFieldset>
+		let notice = null;
+		if ( this.state.isUpdated ) {
+			notice = <Notice status="is-success" text={ this.translate( 'List details saved successfully.' ) } onDismissClick={ this.handleDismissNotice } />;
+		}
 
-				<FormButtonsBar>
-					<FormButton onClick={ this.handleFormSubmit }>{ this.translate( 'Save Changes' ) }</FormButton>
-				</FormButtonsBar>
-			</Card>
+		return (
+			<div className="list-management-description-edit">
+				{ notice }
+				<Card>
+					<FormFieldset>
+						<FormLabel htmlFor="list-title">Title</FormLabel>
+						<FormTextInput
+							autoCapitalize="off"
+							autoComplete="on"
+							autoCorrect="off"
+							id="list-title"
+							name="list-title"
+							ref="listTitle"
+							required
+							//className="is-error"
+							placeholder=""
+							valueLink={ this.linkState( 'title' ) } />
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="list-description">Description</FormLabel>
+						<FormTextarea
+							ref="listDescription"
+							name="list-description"
+							id="list-description"
+							placeholder=""
+							valueLink={ this.linkState( 'description' ) }></FormTextarea>
+					</FormFieldset>
+
+					<FormButtonsBar>
+						<FormButton onClick={ this.handleFormSubmit }>{ this.translate( 'Save Changes' ) }</FormButton>
+					</FormButtonsBar>
+				</Card>
+			</div>
 		);
 	}
 } );

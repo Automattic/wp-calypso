@@ -152,18 +152,29 @@ const ReaderListActions = {
 		debug( params );
 
 		Dispatcher.handleViewAction( {
-			type: actionTypes.ACTION_UPDATE_READER_LIST,
+			type: actionTypes.UPDATE_READER_LIST,
 			data: params
 		} );
 
 		wpcom.undocumented().readListsUpdate( params, function( error, data ) {
 			Dispatcher.handleServerAction( {
-				type: actionTypes.ACTION_RECEIVE_UPDATE_READER_LIST,
+				type: actionTypes.RECEIVE_UPDATE_READER_LIST,
 				data: data,
 				error: error
 			} );
 		} );
-	}
+	},
+
+	dismissNotice: function( listId ) {
+		if ( ! listId ) {
+			return;
+		}
+
+		Dispatcher.handleViewAction( {
+			type: actionTypes.DISMISS_READER_LIST_NOTICE,
+			listId: listId
+		} );
+	},
 };
 
 module.exports = ReaderListActions;

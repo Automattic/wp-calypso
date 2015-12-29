@@ -1,10 +1,11 @@
-var decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	last = require( 'lodash/array/last' );
+// External dependencies
+import { decodeEntities } from 'lib/formatting';
+import dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import isEqual from 'lodash/lang/isEqual';
+import last from 'lodash/array/last';
 
-var lists = {}, errors = [], ListStore;
+var lists = {}, errors = [], updatedLists = {}, ListStore;
 
 function keyForList( owner, slug ) {
 	return owner + '-' + slug;
@@ -21,13 +22,17 @@ ListStore = {
 
 	getLastError() {
 		return last( errors );
+	},
+
+	isUpdated( listId ) {
+		return !! updatedLists[ listId ];
 	}
 };
 
 emitter( ListStore );
 
 function receiveList( newList ) {
-	var existing = ListStore.get( newList.owner, newList.slug );
+	const existing = ListStore.get( newList.owner, newList.slug );
 
 	newList.URL = getListURL( newList );
 	newList.title = decodeEntities( newList.title );
@@ -36,6 +41,11 @@ function receiveList( newList ) {
 		lists[ keyForList( newList.owner, newList.slug ) ] = newList;
 		ListStore.emit( 'change' );
 	}
+}
+
+function markUpdatedList( newList ) {
+	updatedLists[ newList.ID ] = true;
+	ListStore.emit( 'change' );
 }
 
 function markPending( owner, slug ) {
@@ -53,6 +63,11 @@ function markPending( owner, slug ) {
 		lists[ key ] = list;
 		ListStore.emit( 'change' );
 	}
+}
+
+function clearUpdatedLists() {
+	updatedLists = {};
+	ListStore.emit( 'change' );
 }
 
 ListStore.dispatchToken = dispatcher.register( function( payload ) {
@@ -79,13 +94,18 @@ ListStore.dispatchToken = dispatcher.register( function( payload ) {
 			}
 			break;
 		case 'RECEIVE_CREATE_READER_LIST':
+		case 'RECEIVE_UPDATE_READER_LIST':
 			receiveList( action.data );
+			markUpdatedList( action.data );
 			break;
 		case 'FOLLOW_LIST':
 			markPending( action.data.owner, action.data.slug );
 			break;
 		case 'RECEIVE_FOLLOW_LIST':
 			receiveList( action.data );
+			break;
+		case 'DISMISS_READER_LIST_NOTICE':
+			clearUpdatedLists();
 			break;
 	}
 } );
