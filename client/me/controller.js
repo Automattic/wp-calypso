@@ -19,7 +19,7 @@ import purchasesController from './purchases/controller';
 import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
-import ReactHelpers from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 
 const ANALYTICS_PAGE_TITLE = 'Me',
@@ -31,7 +31,7 @@ export default {
 	sidebar( context, next ) {
 		const SidebarComponent = require( 'me/sidebar' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( SidebarComponent, {
 				user,
 				context: context
@@ -53,7 +53,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( ProfileComponent,
 				{
 					userSettings: userSettings,
@@ -84,7 +84,7 @@ export default {
 			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Settings' );
 		}
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( AccountComponent,
 				{
 					userSettings: userSettings,
@@ -113,7 +113,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Password' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( PasswordComponent,
 				{
 					userSettings: userSettings,
@@ -135,7 +135,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( TwoStepComponent,
 				{
 					userSettings: userSettings,
@@ -157,7 +157,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( ConnectedAppsComponent,
 				{
 					userSettings: userSettings,
@@ -178,7 +178,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Security Checkup' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( CheckupComponent,
 				{
 					userSettings: userSettings,
@@ -198,7 +198,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( NotificationsComponent, {
 				user: user,
 				userSettings: userSettings,
@@ -219,7 +219,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( CommentSettingsComponent,
 				{
 					user: user,
@@ -240,7 +240,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( WPcomSettingsComponent,
 				{
 					user: user,
@@ -261,7 +261,7 @@ export default {
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( NotificationSubscriptions,
 				{
 					userSettings: userSettings,
@@ -282,7 +282,7 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Billing History', { textOnly: true } ) );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( BillingHistoryComponent, { billingData: billingData, sites: sites } ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -291,7 +291,7 @@ export default {
 		if ( transactionId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
-			ReactHelpers.renderWithReduxStore(
+			renderWithReduxStore(
 				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
 				document.getElementById( 'tertiary' ),
 				context.store
@@ -319,7 +319,7 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
 		analytics.pageView.record( analyticsBasePath, ANALYTICS_PAGE_TITLE + ' > Next' );
 
-		ReactHelpers.renderWithReduxStore(
+		renderWithReduxStore(
 			React.createElement( NextSteps, {
 				path: context.path,
 				isWelcome: isWelcome,
