@@ -33,7 +33,7 @@ export function plans( state = {}, action ) {
 				} )
 			} );
 		case REMOVE_SITE_PLANS:
-			return omit(state, action.siteId);
+			return omit( state, action.siteId );
 	}
 
 	return state;
