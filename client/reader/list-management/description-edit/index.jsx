@@ -34,39 +34,30 @@ const ListManagementDescriptionEdit = React.createClass( {
 		return Object.assign( {
 			title: '',
 			description: '',
-		}, this.getStateFromStores() );
+		}, this.getStateFromStores( this.props ) );
 	},
 
-	getStateFromStores() {
-		// Fetch tags, but only if we have the list information
-		const list = this.props.list;
+	getStateFromStores( props ) {
+		const list = props.list;
 		const currentState = {};
 		if ( list && list.ID ) {
+			currentState.ID = list.ID;
+			currentState.title = list.title,
+			currentState.description = list.description;
 			currentState.lastListError = ReaderListsStore.getLastError(),
 			currentState.isUpdated = ReaderListsStore.isUpdated( list.ID );
 		}
 		return currentState;
 	},
 
-	update() {
-		this.smartSetState( this.getStateFromStores() );
-	},
-
-	componentDidMount() {
-		ReaderListsStore.on( 'change', this.update );
-	},
-
-	componentWillUnmount() {
-		ReaderListsStore.off( 'change', this.update );
-	},
-
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.list ) {
-			this.setState( {
-				title: nextProps.list.title,
-				description: nextProps.list.description
-			} );
+		if ( nextProps.list && nextProps.list.ID !== this.state.ID ) {
+			ReaderListsActions.dismissNotice(
+				this.state.ID
+			);
 		}
+
+		this.smartSetState( this.getStateFromStores( nextProps ) );
 	},
 
 	handleFormSubmit() {
