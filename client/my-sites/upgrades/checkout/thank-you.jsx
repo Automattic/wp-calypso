@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	store = require( 'store' );
 
 /**
@@ -14,6 +15,7 @@ var config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
+	updateSitePlans = require( 'state/sites/plans/actions' ).updateSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
@@ -63,6 +65,9 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		var selectedSite = this.props.lastTransaction.selectedSite;
+		this.props.updateSitePlans( selectedSite.ID );
+
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
 
@@ -632,4 +637,15 @@ PurchaseDetail = React.createClass( {
 	}
 } );
 
-module.exports = CheckoutThankYou;
+module.exports = connect(
+	function mapStateToProps( state, props ) {
+		return {};
+	},
+	function mapDispatchToProps( dispatch ) {
+		return {
+			updateSitePlans( siteId ) {
+				dispatch( updateSitePlans( siteId ) );
+			}
+		};
+	}
+)( CheckoutThankYou );

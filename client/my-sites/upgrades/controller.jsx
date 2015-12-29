@@ -17,7 +17,8 @@ var analytics = require( 'analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
-	productsList = require( 'lib/products-list' )();
+	productsList = require( 'lib/products-list' )(),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 module.exports = {
 
@@ -211,12 +212,13 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( CheckoutThankYouComponent, {
 				lastTransaction: lastTransaction,
 				productsList: productsList
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );

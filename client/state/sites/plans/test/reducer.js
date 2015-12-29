@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { FETCH_SITE_PLANS } from 'state/action-types';
+import { FETCH_SITE_PLANS, REMOVE_SITE_PLANS } from 'state/action-types';
 import { initialSiteState, plans } from '../reducer';
 
 describe( 'reducer', () => {
@@ -55,6 +55,21 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				11111111: Object.assign( {}, initialSiteState, { isFetching: true } )
+			} );
+		} );
+
+		it( 'should remove plans for a given site ID', () => {
+			const original = Object.freeze( {
+					11111111: initialSiteState,
+					22222222: initialSiteState
+				} ),
+				state = plans( original, {
+					type: REMOVE_SITE_PLANS,
+					siteId: 11111111
+				} );
+
+			expect( state ).to.eql( {
+				22222222: initialSiteState
 			} );
 		} );
 	} );

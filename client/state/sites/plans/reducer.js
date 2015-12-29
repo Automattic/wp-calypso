@@ -3,8 +3,10 @@
  */
 import {
 	FETCH_SITE_PLANS,
-	FETCH_SITE_PLANS_COMPLETED
+	FETCH_SITE_PLANS_COMPLETED,
+	REMOVE_SITE_PLANS
 } from './action-types';
+import omit from 'lodash/object/omit';
 
 export const initialSiteState = {
 	error: null,
@@ -30,6 +32,8 @@ export function plans( state = {}, action ) {
 					data: action.plans
 				} )
 			} );
+		case REMOVE_SITE_PLANS:
+			return omit(state, action.siteId);
 	}
 
 	return state;
