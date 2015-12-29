@@ -10,6 +10,8 @@ var React = require( 'react' ),
 var analytics = require( 'analytics' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ThemesList = require( 'components/themes-list' ),
+	WebPreview = require( 'components/web-preview' ),
+	Button = require( 'components/button' ),
 	StepWrapper = require( 'signup/step-wrapper' );
 
 module.exports = React.createClass( {
@@ -41,7 +43,45 @@ module.exports = React.createClass( {
 		};
 	},
 
-	handleScreenshotClick: function( theme ) {
+	getInitialState() {
+		return {
+			showPreview: false,
+			previewingTheme: null,
+			previewUrl: null,
+		}
+	},
+
+	handlePreviewButtonClick( theme ) {
+		this.setState( { showPreview: false }, () => {
+			this.handleChooseTheme( theme );
+		} );
+	},
+
+	closePreview() {
+		this.setState( { showPreview: false } );
+	},
+
+	renderThemePreview() {
+		if ( ! this.state.showPreview ) {
+			return;
+		}
+		return (
+			<WebPreview showPreview={ this.state.showPreview }
+				onClose={ this.closePreview }
+				previewUrl={ this.state.previewUrl } >
+				<Button primary onClick={ this.handlePreviewButtonClick } >{ this.translate( 'Choose this design' ) }</Button>
+			</WebPreview>
+		);
+	},
+
+	handleScreenshotClick( theme ) {
+		if ( true ) {
+			return this.setState( { showPreview: true, previewingTheme: theme } );
+		}
+		this.handleChooseTheme( theme );
+	},
+
+	handleChooseTheme( theme ) {
 		var themeSlug = theme.id;
 
 		if ( true === this.props.useHeadstart && themeSlug ) {
@@ -79,12 +119,15 @@ module.exports = React.createClass( {
 				}
 			} );
 		return (
-			<ThemesList
-				getButtonOptions= { noop }
-				onScreenshotClick= { this.handleScreenshotClick }
-				onMoreButtonClick= { noop }
-				{ ...this.props }
-				themes= { themes } />
+			<div>
+				{ this.renderThemePreview() }
+				<ThemesList
+					getButtonOptions= { noop }
+					onScreenshotClick= { this.handleScreenshotClick }
+					onMoreButtonClick= { noop }
+					{ ...this.props }
+					themes= { themes } />
+			</div>
 		);
 	},
 
