@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
+	Dispatcher = require( 'dispatcher' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
@@ -67,6 +68,11 @@ var CheckoutThankYou = React.createClass( {
 	componentDidMount: function() {
 		var selectedSite = this.props.lastTransaction.selectedSite;
 		this.props.updateSitePlans( selectedSite.ID );
+
+		// refresh the list of sites to update the `site.plan` property.
+		Dispatcher.handleServerAction( {
+			type: 'FETCH_SITES'
+		} );
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
