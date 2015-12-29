@@ -70,7 +70,7 @@ var CheckoutThankYou = React.createClass( {
 		this.props.refreshSitePlans( selectedSite.ID );
 
 		// refresh the list of sites to update the `site.plan` property.
-		Dispatcher.handleServerAction( {
+		Dispatcher.handleViewAction( {
 			type: 'FETCH_SITES'
 		} );
 
