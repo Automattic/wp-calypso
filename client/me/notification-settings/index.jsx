@@ -49,7 +49,7 @@ const NotificationSettings = React.createClass( {
 		}
 
 		if ( state.status === 'success' ) {
-			this.props.successNotice( this.translate( 'Settings saved successfully!' ), { duration: 3000 } );
+			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
