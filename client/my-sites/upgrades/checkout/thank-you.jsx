@@ -16,7 +16,7 @@ var config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
-	updateSitePlans = require( 'state/sites/plans/actions' ).updateSitePlans,
+	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
@@ -67,7 +67,7 @@ var CheckoutThankYou = React.createClass( {
 
 	componentDidMount: function() {
 		var selectedSite = this.props.lastTransaction.selectedSite;
-		this.props.updateSitePlans( selectedSite.ID );
+		this.props.refreshSitePlans( selectedSite.ID );
 
 		// refresh the list of sites to update the `site.plan` property.
 		Dispatcher.handleServerAction( {
@@ -649,8 +649,8 @@ module.exports = connect(
 	},
 	function mapDispatchToProps( dispatch ) {
 		return {
-			updateSitePlans( siteId ) {
-				dispatch( updateSitePlans( siteId ) );
+			refreshSitePlans( siteId ) {
+				dispatch( refreshSitePlans( siteId ) );
 			}
 		};
 	}

@@ -71,7 +71,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  * @param  {Object} siteId ID of the concerned site
  * @return {Object}        Action object
  */
-export function updateSitePlans( siteId ) {
+export function refreshSitePlans( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: REMOVE_SITE_PLANS,
