@@ -21,7 +21,8 @@ module.exports = React.createClass( {
 	propTypes: {
 		themes: React.PropTypes.arrayOf( React.PropTypes.shape( {
 			name: React.PropTypes.string.isRequired,
-			slug: React.PropTypes.string.isRequired
+			slug: React.PropTypes.string.isRequired,
+			demo_uri: React.PropTypes.string,
 		} ) ),
 		useHeadstart: React.PropTypes.bool,
 	},
@@ -52,9 +53,10 @@ module.exports = React.createClass( {
 		}
 	},
 
-	handlePreviewButtonClick( theme ) {
+	handlePreviewButtonClick() {
 		this.setState( { showPreview: false }, () => {
-			this.handleChooseTheme( theme );
+			analytics.tracks.recordEvent( 'calypso_signup_theme_select_preview_view', { theme: this.state.previewingTheme.id } );
+			this.handleChooseTheme( this.state.previewingTheme );
 		} );
 	},
 
@@ -76,9 +78,10 @@ module.exports = React.createClass( {
 	},
 
 	handleScreenshotClick( theme ) {
+		// TODO: abtest this
 		if ( true ) {
 			const previewUrl = ThemeHelpers.getPreviewUrl( theme );
-			return this.setState( { showPreview: true, previewingTheme: theme, previewUrl: previewUrl, } );
+			return this.setState( { showPreview: true, previewUrl: previewUrl, previewingTheme: theme } );
 		}
 		this.handleChooseTheme( theme );
 	},
@@ -110,17 +113,27 @@ module.exports = React.createClass( {
 		return this.props.signupDependencies.themes || this.props.themes;
 	},
 
+	getDemoUri( theme ) {
+		if ( theme.demo_uri ) {
+			return theme.demo_uri;
+		}
+
+		return `https://${ theme.slug.replace( '-', '' ) }demo.wordpress.com`;
+	},
+
 	renderThemesList: function() {
-		var actionLabel = this.translate( 'Pick' ),
-			themes = this.getThemes().map( function( theme ) {
+		// TODO: use Preview for abtest
+		const actionLabel = this.translate( 'Pick' ),
+			themes = this.getThemes().map( ( theme ) => {
 				return {
 					id: theme.slug,
 					name: theme.name,
 					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660',
 					actionLabel: actionLabel,
-					demo_uri: theme.demo_uri
+					demo_uri: this.getDemoUri( theme )
 				}
 			} );
+
 		return (
 			<div>
 				{ this.renderThemePreview() }
