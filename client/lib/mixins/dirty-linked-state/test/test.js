@@ -25,8 +25,8 @@ describe( 'Dirty Linked State Mixin', function() {
 		render() {
 			return (
 				<form>
-					<input type="text" className='foo' valueLink={ this.linkState( 'foo' ) } />
-					<input type="text" className='bar' valueLink={ this.linkState( 'bar' ) } />
+					<input type="text" className="foo" valueLink={ this.linkState( 'foo' ) } />
+					<input type="text" className="bar" valueLink={ this.linkState( 'bar' ) } />
 				</form>
 			);
 		}
