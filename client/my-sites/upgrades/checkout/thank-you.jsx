@@ -644,9 +644,7 @@ PurchaseDetail = React.createClass( {
 } );
 
 module.exports = connect(
-	function mapStateToProps( state, props ) {
-		return {};
-	},
+	undefined,
 	function mapDispatchToProps( dispatch ) {
 		return {
 			refreshSitePlans( siteId ) {
