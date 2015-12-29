@@ -12,6 +12,7 @@ var analytics = require( 'analytics' ),
 	ThemesList = require( 'components/themes-list' ),
 	WebPreview = require( 'components/web-preview' ),
 	Button = require( 'components/button' ),
+	ThemeHelpers = require( 'lib/themes/helpers' ),
 	StepWrapper = require( 'signup/step-wrapper' );
 
 module.exports = React.createClass( {
@@ -28,15 +29,15 @@ module.exports = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			themes: [
-				{ name: 'Boardwalk', slug: 'boardwalk' },
-				{ name: 'Cubic', slug: 'cubic' },
-				{ name: 'Edin', slug: 'edin' },
-				{ name: 'Cols', slug: 'cols' },
-				{ name: 'Minnow', slug: 'minnow' },
-				{ name: 'Sequential', slug: 'sequential' },
-				{ name: 'Penscratch', slug: 'penscratch' },
-				{ name: 'Intergalactic', slug: 'intergalactic' },
-				{ name: 'Eighties', slug: 'eighties' },
+				{ name: 'Boardwalk', slug: 'boardwalk', demo_uri: 'https://boardwalkdemo.wordpress.com' },
+				{ name: 'Cubic', slug: 'cubic', demo_uri: 'https://cubicdemo.wordpress.com' },
+				{ name: 'Edin', slug: 'edin', demo_uri: 'https://edindemo.wordpress.com' },
+				{ name: 'Cols', slug: 'cols', demo_uri: 'https://colsdemo.wordpress.com' },
+				{ name: 'Minnow', slug: 'minnow', demo_uri: 'https://minnowdemo.wordpress.com' },
+				{ name: 'Sequential', slug: 'sequential', demo_uri: 'https://sequentialdemo.wordpress.com' },
+				{ name: 'Penscratch', slug: 'penscratch', demo_uri: 'https://penscratchdemo.wordpress.com' },
+				{ name: 'Intergalactic', slug: 'intergalactic', demo_uri: 'https://intergalacticdemo.wordpress.com' },
+				{ name: 'Eighties', slug: 'eighties', demo_uri: 'https://eightiesdemo.wordpress.com' },
 			],
 
 			useHeadstart: false
@@ -76,7 +77,8 @@ module.exports = React.createClass( {
 
 	handleScreenshotClick( theme ) {
 		if ( true ) {
-			return this.setState( { showPreview: true, previewingTheme: theme } );
+			const previewUrl = ThemeHelpers.getPreviewUrl( theme );
+			return this.setState( { showPreview: true, previewingTheme: theme, previewUrl: previewUrl, } );
 		}
 		this.handleChooseTheme( theme );
 	},
@@ -115,7 +117,8 @@ module.exports = React.createClass( {
 					id: theme.slug,
 					name: theme.name,
 					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660',
-					actionLabel: actionLabel
+					actionLabel: actionLabel,
+					demo_uri: theme.demo_uri
 				}
 			} );
 		return (
