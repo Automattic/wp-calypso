@@ -38,7 +38,7 @@ const MxRecord = React.createClass( {
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Host', { context: 'MX Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError="true" /> : null }
+					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="name"
 						onChange={ this.props.onChange( 'name' ) }
@@ -48,7 +48,7 @@ const MxRecord = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Handled by', { context: 'MX Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError="true" /> : null }
+					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
 						onChange={ this.props.onChange( 'data' ) }
@@ -58,7 +58,7 @@ const MxRecord = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Priority', { context: 'MX Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'aux' ) ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError="true" /> : null }
+					{ ! isValid( 'aux' ) ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="aux"
 						onChange={ this.props.onChange( 'aux' ) }

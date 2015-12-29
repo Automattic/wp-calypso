@@ -38,7 +38,7 @@ const TxtRecord = React.createClass( {
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record TXT' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError="true" /> : null }
+					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="name"
 						onChange={ this.props.onChange( 'name' ) }
@@ -54,7 +54,7 @@ const TxtRecord = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Text', { context: 'Dns Record TXT' } ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError="true" /> : null }
+					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError={ true } /> : null }
 					<FormTextarea
 						name="data"
 						onChange={ this.props.onChange( 'data' ) }
