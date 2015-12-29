@@ -9,7 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Masterbar = require( 'layout/masterbar' ),
+var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
@@ -40,7 +40,7 @@ Layout = React.createClass( {
 
 	_sitesPoller: null,
 
-	componentWillUpdate: function( nextProps, nextState ) {
+	componentWillUpdate: function( nextProps ) {
 		if ( this.props.section !== nextProps.section ) {
 			if ( nextProps.section === 'sites' ) {
 				setTimeout( function() {
@@ -96,7 +96,7 @@ Layout = React.createClass( {
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<Masterbar user={ this.props.user } section={ this.props.section } sites={ this.props.sites }/>
+				<MasterbarLoggedIn user={ this.props.user } section={ this.props.section } sites={ this.props.sites } />
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } /></div>
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
