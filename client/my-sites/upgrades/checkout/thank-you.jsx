@@ -66,13 +66,23 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var selectedSite = this.props.lastTransaction.selectedSite;
-		this.props.refreshSitePlans( selectedSite.ID );
+		var lastTransaction = this.props.lastTransaction,
+			selectedSite;
 
-		// refresh the list of sites to update the `site.plan` property.
-		Dispatcher.handleViewAction( {
-			type: 'FETCH_SITES'
-		} );
+		if ( lastTransaction ) {
+			selectedSite = lastTransaction.selectedSite;
+
+			// Refresh selected site plans if the user just purchased a plan
+			if ( cartItems.hasPlan( lastTransaction.cart ) ) {
+				this.props.refreshSitePlans( selectedSite.ID );
+			}
+
+			// Refresh the list of sites to update the `site.plan` property
+			// needed to display the plan name on the right of the `Plans` menu item
+			Dispatcher.handleViewAction( {
+				type: 'FETCH_SITES'
+			} );
+		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
