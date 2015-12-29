@@ -32,7 +32,6 @@ module.exports = function() {
 					break;
 				case InvitesActionTypes.INVITE_ACCEPTED_SUCCESS:
 				case 'RECEIVE_DISCONNECTED_SITE':
-				case 'RECEIVE_DELETED_SITE':
 				case 'FETCH_SITES':
 					_sites.fetch(); // refetch the sites from .com
 					break;
