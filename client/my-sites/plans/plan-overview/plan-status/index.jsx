@@ -90,7 +90,6 @@ const PlanStatus = React.createClass( {
 					</div>
 
 					<Button
-						primary={ getDaysUntilUserFacingExpiry( this.props.plan ) < 6 }
 						className="plan-status__button"
 						onClick={ this.purchasePlan }
 						primary>
