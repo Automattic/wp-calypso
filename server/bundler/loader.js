@@ -18,7 +18,7 @@ function getSectionsModule( sections ) {
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
-			loadSection += singleEnsure( section.name );
+			loadSection += ensureTemplate( section.name );
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section.module, section.name );
 			} );
@@ -100,14 +100,12 @@ function requireTemplate( module ) {
 	return 'require( ' + JSON.stringify( module ) + ' )();\n';
 }
 
-function singleEnsure( chunkName ) {
-	var result = [
+function ensureTemplate( chunkName ) {
+	return [
 		'case ' + JSON.stringify( chunkName ) + ':',
 		'	return require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' );',
-		'	break;\n'
-	];
-
-	return result.join( '\n' );
+		'	break;'
+	].join( '\n' );
 }
 
 module.exports = function( content ) {
