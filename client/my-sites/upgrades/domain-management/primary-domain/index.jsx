@@ -88,9 +88,8 @@ const PrimaryDomain = React.createClass( {
 				{ this.errors() }
 
 				<SectionHeader
-					label={ this.translate( 'Make {{em}}%(domainName)s{{/em}} the Primary Domain', {
-						args: { domainName: this.props.selectedDomainName },
-						components: { em: <em /> }
+					label={ this.translate( 'Make %(domainName)s the Primary Domain', {
+						args: { domainName: this.props.selectedDomainName }
 					} ) } />
 
 				<Card className="primary-domain-card">
