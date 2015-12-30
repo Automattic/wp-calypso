@@ -178,7 +178,8 @@ const SinglePlugin = React.createClass( {
 	pluginExists( pluginSlug ) {
 		// if the plugin info is still being fetched, we default to true
 		if ( ! WporgPluginsSelectors.isFetching( this.props.wporgPlugins, pluginSlug ) ) {
-			if ( WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, pluginSlug ) ) {
+			const plugin = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, pluginSlug );
+			if ( plugin && plugin.fetched ) {
 				return true;
 			}
 			const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];

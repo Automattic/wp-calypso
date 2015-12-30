@@ -1,0 +1,26 @@
+var fetchPluginInformationCalls = 0,
+	lastRequestParams = null;
+
+module.exports = {
+	deactivatedCallbacks: false,
+	reset: function() {
+		fetchPluginInformationCalls = 0;
+		this.deactivatedCallbacks = false;
+		lastRequestParams = null;
+	},
+	getActivity: function() {
+		return {
+			fetchPluginInformation: fetchPluginInformationCalls,
+			lastRequestParams: lastRequestParams
+		};
+	},
+	fetchPluginInformation: function( pluginSlug, callback ) {
+		fetchPluginInformationCalls++;
+		lastRequestParams = pluginSlug;
+		if ( ! this.deactivatedCallbacks ) {
+			callback( null, {
+				slug: pluginSlug
+			} );
+		}
+	}
+};

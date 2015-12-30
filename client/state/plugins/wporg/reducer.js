@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-import React from 'react/addons';
-
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
 		state,
@@ -18,7 +12,9 @@ function reducer( state = {}, action ) {
 			return updatePluginState( state, pluginSlug, { isFetching: true } );
 
 		case 'RECEIVE_WPORG_PLUGIN_DATA':
-			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false }, action.data ) );
+			if ( action.data ) {
+				return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: true }, action.data ) );
+			}
 
 		default:
 			return state;
