@@ -337,7 +337,7 @@ const FollowingEdit = React.createClass( {
 		}
 
 		if ( this.state.windowWidth && this.state.windowWidth > 960 ) {
-			searchPlaceholder = this.translate( 'Search your followed feeds' );
+			searchPlaceholder = this.translate( 'Search your followed sites' );
 		} else {
 			searchPlaceholder = this.translate( 'Search' );
 		}
