@@ -4,10 +4,10 @@
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+	React = require( 'react/addons' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
-	TestUtils = require( 'react-addons-test-utils' );
+	TestUtils = React.addons.TestUtils;
 
 /**
  * Mocks & fixtures
@@ -76,3 +76,4 @@ describe( 'PluginAutoupdateToggle', function() {
 		expect( mockedActions.togglePluginAutoUpdate.called ).to.equal( true );
 	} );
 } );
+

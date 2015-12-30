@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' ),
+var React = require( 'react/addons' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	extend = require( 'lodash/object/extend' );
 
@@ -17,7 +17,7 @@ function emptyCart( siteID ) {
 
 function applyCoupon( coupon ) {
 	return function( cart ) {
-		return update( cart, {
+		return React.addons.update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false }
 		} );
@@ -78,7 +78,7 @@ function isFree( cart ) {
 }
 
 function fillInAllCartItemAttributes( cart, products ) {
-	return update( cart, {
+	return React.addons.update( cart, {
 		products: {
 			$apply: function( items ) {
 				return items.map( function( cartItem ) {

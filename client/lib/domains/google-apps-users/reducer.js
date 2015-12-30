@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import update from 'react-addons-update';
+import React from 'react/addons';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 function updateState( state, domainName, users ) {
 	const command = state[ domainName ] ? '$merge' : '$set';
 
-	return update( state, {
+	return React.addons.update( state, {
 		[ domainName ]: {
 			[ command ]: users
 		}

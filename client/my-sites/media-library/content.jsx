@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
+var React = require( 'react/addons' ),
 	noop = require( 'lodash/utility/noop' ),
 	first = require( 'lodash/array/first' ),
 	values = require( 'lodash/object/values' ),
@@ -155,7 +154,7 @@ module.exports = React.createClass( {
 			);
 		} );
 
-		return createFragment( notices );
+		return React.addons.createFragment( notices );
 	},
 
 	renderMediaList: function() {

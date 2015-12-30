@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import update from 'react-addons-update';
+import React from 'react/addons';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 function updateStateForSite( state, siteId, data ) {
 	const command = state[ siteId ] ? '$merge' : '$set';
 
-	return update( state, {
+	return React.addons.update( state, {
 		[ siteId ]: {
 			[ command ]: data
 		}

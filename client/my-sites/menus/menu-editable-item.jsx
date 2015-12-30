@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	update = require( 'react-addons-update' ),
+var React = require( 'react/addons' ),
 	cloneDeep = require( 'lodash/lang/cloneDeep' ),
 	find = require( 'lodash/collection/find' ),
 	debug = require( 'debug' )( 'calypso:menus:editable-item' ); // eslint-disable-line no-unused-vars
@@ -102,7 +101,7 @@ var MenuEditableItem = React.createClass( {
 			this.setState( { firedTitleChangeGAEvent: true } );
 		}
 
-		this.setState( update( this.state, {
+		this.setState( React.addons.update( this.state, {
 			item: { name: { $set: event.target.value } },
 			userChangedName: { $set: true }
 		} ) );
@@ -114,7 +113,7 @@ var MenuEditableItem = React.createClass( {
 			this.setState( { firedUrlChangeGAEvent : true } );
 		}
 
-		this.setState( update( this.state, {
+		this.setState( React.addons.update( this.state, {
 			item: {
 				url: { $set: event.target.value },
 				type: { $set: this.state.itemType.name },
@@ -126,7 +125,7 @@ var MenuEditableItem = React.createClass( {
 	toggleUrlTarget: function() {
 		analytics.ga.recordEvent( 'Menus', 'Set link target' );
 
-		this.setState( update( this.state, {
+		this.setState( React.addons.update( this.state, {
 			item: {
 				link_target: { $set: ! this.state.item.link_target ? '_blank' : '' }
 			}
@@ -156,7 +155,7 @@ var MenuEditableItem = React.createClass( {
 
 	setItemContent: function( content ) {
 		analytics.ga.recordEvent( 'Menus', 'Selected Menu Item' );
-		this.setState( update( this.state, {
+		this.setState( React.addons.update( this.state, {
 			item: {
 				content_id: { $set: content.ID },
 				name: { $apply: this.getItemName.bind( null, content ) },

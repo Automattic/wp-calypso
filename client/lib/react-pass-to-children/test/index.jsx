@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
+var React = require( 'react/addons' ),
+	TestUtils = React.addons.TestUtils,
 	assign = require( 'lodash/object/assign' ),
 	expect = require( 'chai' ).expect;
 

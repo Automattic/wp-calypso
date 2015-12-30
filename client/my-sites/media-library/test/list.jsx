@@ -6,8 +6,8 @@ require( 'lib/react-test-env-setup' )();
  */
 var expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
+	React = require( 'react/addons' ),
+	TestUtils = React.addons.TestUtils,
 	toArray = require( 'lodash/lang/toArray' ),
 	mockery = require( 'mockery' );
 

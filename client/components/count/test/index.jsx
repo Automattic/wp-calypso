@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var React = require( 'react/addons' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = require( 'react-addons-test-utils' ),
+	TestUtils = React.addons.TestUtils,
 	expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' );
 

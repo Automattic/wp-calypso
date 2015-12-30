@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	update = require( 'react-addons-update' ),
+const React = require( 'react/addons' ),
 	groupBy = require( 'lodash/collection/groupBy' ),
 	mapValues = require( 'lodash/object/mapValues' ),
 	map = require( 'lodash/collection/map' ),
@@ -98,7 +97,7 @@ const AddEmailAddressesCard = React.createClass( {
 	setDomainFieldsToFirstDomainName() {
 		const firstDomainName = this.getFirstDomainName(),
 			nextFieldsets = this.state.fieldsets.map( ( fieldset ) => {
-				return update( fieldset, {
+				return React.addons.update( fieldset, {
 					domain: { value: { $set: firstDomainName } }
 				} );
 			} );
@@ -174,7 +173,7 @@ const AddEmailAddressesCard = React.createClass( {
 			this.recordEvent( 'domainChange', newValue, index );
 		}
 
-		this.setState( update( this.state, command ) );
+		this.setState( React.addons.update( this.state, command ) );
 	},
 
 	handleFieldFocus( fieldName, index ) {

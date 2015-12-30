@@ -16,7 +16,7 @@ var isEmpty = require( 'lodash/lang/isEmpty' ),
 	isUndefined = require( 'lodash/lang/isUndefined' ),
 	camelCase = require( 'lodash/string/camelCase' ),
 	constant = require( 'lodash/utility/constant' ),
-	update = require( 'react-addons-update' );
+	React = require( 'react/addons' );
 
 function Controller( options ) {
 	var debounceWait;
@@ -177,7 +177,7 @@ function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
 		}
 	};
 
-	return update( formState, command );
+	return React.addons.update( formState, command );
 }
 
 function changeFieldValues( formState, fieldValues ) {

@@ -4,13 +4,16 @@ setup();
 import moment from 'moment';
 import sinonChai from 'sinon-chai';
 import ReactDom from 'react-dom';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import React from 'react/addons';
 import chai from 'chai';
 import identity from 'lodash/utility/identity';
 import i18n from 'lib/mixins/i18n';
+import domainConstants from 'lib/domains/constants';
+
+const domainTypes = domainConstants.type;
+
+const TestUtils = React.addons.TestUtils;
 import Notice from 'components/notice';
-import { type as domainTypes } from 'lib/domains/constants';
 
 chai.use( sinonChai );
 

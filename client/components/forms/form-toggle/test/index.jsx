@@ -3,8 +3,8 @@
  */
 var assert = require( 'assert' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
+	React = require( 'react/addons' ),
+	TestUtils = React.addons.TestUtils,
 	unique = require( 'lodash/array/uniq' );
 
 /**
