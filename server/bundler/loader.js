@@ -46,13 +46,9 @@ function getSectionsModule( sections ) {
 }
 
 function getRequires( sections ) {
-	var content = '';
-
-	sections.forEach( function( section ) {
-		content += requireTemplate( section.module );
-	} );
-
-	return content;
+	return sections.map( function( section ) {
+		return requireTemplate( section.module );
+	} ).join( '' );
 }
 
 function splitTemplate( path, module, chunkName ) {
