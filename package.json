@@ -1,0 +1,24 @@
+{
+  "name": "testarmada-magellan-mocha-plugin",
+  "version": "1.0.0",
+  "description": "Magellan plugin to provide Mocha support",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TestArmada/magellan-mocha-plugin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TestArmada/magellan-mocha-plugin/issues"
+  },
+  "homepage": "https://github.com/TestArmada/magellan-mocha-plugin#readme",
+  "dependencies": {
+    "acorn": "^2.6.4",
+    "cli-color": "^1.1.0",
+    "lodash": "^3.10.1"
+  }
+}
