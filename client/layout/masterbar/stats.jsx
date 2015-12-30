@@ -10,7 +10,7 @@ import Item from './item';
 import siteStatsStickyTabStore from 'lib/site-stats-sticky-tab/store';
 
 export default React.createClass( {
-	displayName: 'MasterbarStatsItem',
+	displayName: 'MasterbarStats',
 
 	propTypes: {
 		children: PropTypes.node

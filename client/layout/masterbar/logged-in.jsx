@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Masterbar from './masterbar';
 import Item from './item';
-import StatsItem from './stats-item';
+import Stats from './stats';
 import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
@@ -61,7 +61,7 @@ export default React.createClass( {
 	render() {
 		return (
 			<Masterbar>
-				<StatsItem
+				<Stats
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
@@ -71,7 +71,7 @@ export default React.createClass( {
 						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 						: this.translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					}
-				</StatsItem>
+				</Stats>
 				<Item
 					url="/"
 					icon="reader"
