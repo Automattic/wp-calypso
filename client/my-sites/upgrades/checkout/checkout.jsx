@@ -34,6 +34,10 @@ module.exports = React.createClass( {
 
 		if ( this.props.cart.hasLoadedFromServer ) {
 			this.trackPageView();
+
+			if ( this.props.planName ) {
+				this.addPlanToCart();
+			}
 		}
 
 		window.scrollTo( 0, 0 );
@@ -45,6 +49,10 @@ module.exports = React.createClass( {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			// if the cart hadn't loaded when this mounted, record the page view when it loads
 			this.trackPageView( nextProps );
+
+			if ( this.props.planName ) {
+				this.addPlanToCart();
+			}
 		}
 	},
 
@@ -72,9 +80,21 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	addPlanToCart: function() {
+		var planSlug = this.props.plans.getSlugFromPath( this.props.planName ),
+			planItem = cartItems.getItemForPlan( { product_slug: planSlug }, { isFreeTrial: false } );
+
+		upgradesActions.addItem( planItem );
+	},
+
 	redirectIfEmptyCart: function() {
 		var redirectTo = '/plans/',
 			renewalItem;
+
+		if ( ! this.state.previousCart && this.props.planName ) {
+			// the plan hasn't been added to the cart yet
+			return false;
+		}
 
 		if ( ! this.props.cart.hasLoadedFromServer || ! isEmpty( cartItems.getAll( this.props.cart ) ) ) {
 			return false;

@@ -135,16 +135,9 @@ module.exports = {
 		);
 	},
 
-	plansSelect: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			PlansSelect = require( 'my-sites/plans/plans-select' );
-
-		ReactDom.render(
-			<CartData>
-				<PlansSelect context={ context } sites={ sites } plans={ plans } />
-			</CartData>,
-			document.getElementById( 'primary' )
-		);
+	redirectToCheckout: function( context ) {
+		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
+		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
 	},
 
 	handlePlanSelect,

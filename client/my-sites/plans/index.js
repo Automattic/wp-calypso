@@ -39,7 +39,7 @@ module.exports = function() {
 			'/plans/select/:plan/:domain',
 			adTracking.retarget,
 			controller.siteSelection,
-			plansController.plansSelect
+			plansController.redirectToCheckout
 		);
 
 		page(
