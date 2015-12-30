@@ -51,11 +51,11 @@ const ListManagementDescriptionEdit = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.list && nextProps.list.ID !== this.state.ID ) {
-			ReaderListsActions.dismissNotice(
-				this.state.ID
-			);
-		}
+		// if ( nextProps.list && nextProps.list.ID !== this.state.ID ) {
+		// 	ReaderListsActions.dismissNotice(
+		// 		this.state.ID
+		// 	);
+		// }
 
 		this.smartSetState( this.getStateFromStores( nextProps ) );
 	},

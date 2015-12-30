@@ -3,7 +3,7 @@ import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 import debugModule from 'debug';
 
-// Internal Dependencies
+// Internal dependencies
 import ReaderListsStore from 'lib/reader-lists/subscriptions';
 import { action as actionTypes } from './constants';
 

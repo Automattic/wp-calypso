@@ -5,6 +5,9 @@ import emitter from 'lib/mixins/emitter';
 import isEqual from 'lodash/lang/isEqual';
 import last from 'lodash/array/last';
 
+// Internal dependencies
+import { action as actionTypes } from './constants';
+
 var lists = {}, errors = [], updatedLists = {}, ListStore;
 
 function keyForList( owner, slug ) {
@@ -83,28 +86,31 @@ ListStore.dispatchToken = dispatcher.register( function( payload ) {
 	}
 
 	switch ( action.type ) {
-		case 'RECEIVE_READER_LIST':
+		case actionTypes.RECEIVE_READER_LIST:
 			if ( action.data && action.data.list ) {
 				receiveList( action.data.list );
 			}
 			break;
-		case 'RECEIVE_READER_LISTS':
+		case actionTypes.RECEIVE_READER_LISTS:
 			if ( action.data && action.data.lists ) {
 				action.data.lists.forEach( receiveList );
 			}
 			break;
-		case 'RECEIVE_CREATE_READER_LIST':
-		case 'RECEIVE_UPDATE_READER_LIST':
+		case actionTypes.UPDATE_READER_LIST:
+			receiveList( action.data );
+			break;
+		case actionTypes.RECEIVE_CREATE_READER_LIST:
+		case actionTypes.RECEIVE_UPDATE_READER_LIST:
 			receiveList( action.data );
 			markUpdatedList( action.data );
 			break;
-		case 'FOLLOW_LIST':
+		case actionTypes.FOLLOW_LIST:
 			markPending( action.data.owner, action.data.slug );
 			break;
-		case 'RECEIVE_FOLLOW_LIST':
+		case actionTypes.RECEIVE_FOLLOW_LIST:
 			receiveList( action.data );
 			break;
-		case 'DISMISS_READER_LIST_NOTICE':
+		case actionTypes.DISMISS_READER_LIST_NOTICE:
 			clearUpdatedLists();
 			break;
 	}
