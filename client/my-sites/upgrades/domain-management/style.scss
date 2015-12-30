@@ -49,20 +49,10 @@
 	white-space: nowrap;
 }
 
-.domain-management-list-item.card {
-	padding: 0;
-	@include clear-fix;
-}
-
 .domain-management-list-item__link {
 	cursor: pointer;
 	display: block;
-	padding: 16px;
 	overflow: hidden;
-
-	@include breakpoint( ">660px" ) {
-		padding: 24px;
-	}
 
 	&:after {
 		@include noticon( '\f431', 25px );
@@ -76,7 +66,7 @@
 		transform: rotate( -90deg );
 
 		@include breakpoint( ">660px" ) {
-			line-height: 103px;
+			line-height: 83px;
 		}
 	}
 }
@@ -92,7 +82,7 @@
 	max-width: 70%;
 
 	@include breakpoint( ">480px" ) {
-		font-size: 24px;
+		font-size: 18px;
 		font-weight: 700;
 		font-family: $serif;
 		max-width: none;
