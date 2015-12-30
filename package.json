@@ -1,6 +1,6 @@
 {
   "name": "testarmada-magellan-mocha-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Magellan plugin to provide Mocha support",
   "main": "index.js",
   "scripts": {
