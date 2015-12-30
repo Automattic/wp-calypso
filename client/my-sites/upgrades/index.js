@@ -284,7 +284,7 @@ module.exports = function() {
 		);
 
 		page(
-			'/checkout/:domain',
+			'/checkout/:domain/:plan_name?',
 			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.checkout

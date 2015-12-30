@@ -17,6 +17,7 @@ var analytics = require( 'analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
+	plansList = require( 'lib/plans-list' )(),
 	productsList = require( 'lib/products-list' )(),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
@@ -179,6 +180,8 @@ module.exports = {
 				<CheckoutData>
 					<Checkout
 						cards={ storedCards }
+						planName={ context.params.plan_name }
+						plans={ plansList }
 						productsList={ productsList }
 						sites={ sites } />
 				</CheckoutData>

@@ -10,6 +10,7 @@ Supported routes:
 /plans/:site_domain
 /plans/compare
 /plans/compare/:site_domain
+/plans/select/:site/:plan - deprecated, use /checkout/:site/:plan
 ```
 
 ### plans.jsx
