@@ -3,8 +3,8 @@
  */
 var assert = require( 'assert' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
-	TestUtils = React.addons.TestUtils;
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' );
 
 /**
  * Internal dependencies

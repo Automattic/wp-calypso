@@ -5,7 +5,8 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react/addons';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils'
 import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
@@ -19,7 +20,6 @@ var TrackInputChanges = require( '../' );
  * Module variables
  */
 const expect = chai.use( sinonChai ).expect;
-const TestUtils = React.addons.TestUtils;
 
 const spies = {
 	onNewValue: null,

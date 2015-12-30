@@ -5,8 +5,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	React = require( 'react/addons' ),
-	TestUtils = React.addons.TestUtils,
+	TestUtils = require( 'react-addons-test-utils' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' );
 

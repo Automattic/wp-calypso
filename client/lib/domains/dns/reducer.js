@@ -4,7 +4,7 @@
 import escapeRegExp from 'lodash/string/escapeRegExp';
 import findIndex from 'lodash/array/findIndex';
 import isUndefined from 'lodash/lang/isUndefined';
-import React from 'react/addons';
+import update from 'react-addons-update';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ function updateDomainState( state, domainName, dns ) {
 		[ domainName ]: { $set: dns }
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function addDns( state, domainName, record ) {
@@ -25,7 +25,7 @@ function addDns( state, domainName, record ) {
 			name: record.name.replace( domainSuffix, '' )
 		} );
 
-	return React.addons.update( state, {
+	return update( state, {
 		[ domainName ]: { records: { $push: [ newRecord ] } }
 	} );
 }
@@ -43,7 +43,7 @@ function deleteDns( state, domainName, record ) {
 		[ domainName ]: { records: { $splice: [ [ index, 1 ] ] } }
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {
