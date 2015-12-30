@@ -63,8 +63,8 @@ function getRouteHandlers( sections ) {
 	return sections.map( function( section ) {
 		return section.paths.map( function( path ) {
 			return pageTemplate( path, section.module, section.name );
-		} )
-	} ).reduce( function( acc, section ) { return acc.concat( section ); }, [] );
+		} ).join( '\n' );
+	} ).join( '\n' );
 }
 
 function pageTemplate( path, module, chunkName ) {
