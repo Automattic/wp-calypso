@@ -41,8 +41,7 @@ export default React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		plugins: React.PropTypes.array.isRequired,
 		selected: React.PropTypes.array.isRequired,
-		isWpCom: React.PropTypes.bool,
-		pluginUpdateCount: React.PropTypes.number
+		isWpCom: React.PropTypes.bool
 	},
 
 	onBrowserLinkClick() {
