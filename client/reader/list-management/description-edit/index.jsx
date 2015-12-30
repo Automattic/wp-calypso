@@ -8,7 +8,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-//import FormInputValidation from 'components/forms/form-input-validation';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import ReaderListsActions from 'lib/reader-lists/actions';
@@ -89,6 +89,8 @@ const ListManagementDescriptionEdit = React.createClass( {
 			notice = <Notice status="is-success" text={ this.translate( 'List details saved successfully.' ) } onDismissClick={ this.handleDismissNotice } />;
 		}
 
+		const isTitleMissing = ! this.state.title || this.state.title.length < 1;
+
 		return (
 			<div className="list-management-description-edit">
 				{ notice }
@@ -103,9 +105,10 @@ const ListManagementDescriptionEdit = React.createClass( {
 							name="list-title"
 							ref="listTitle"
 							required
-							//className="is-error"
+							className={ isTitleMissing ? 'is-error' : '' }
 							placeholder=""
 							valueLink={ this.linkState( 'title' ) } />
+						{ isTitleMissing ? <FormInputValidation isError text={ this.translate( 'Title is a required field.' ) } /> : '' }
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="list-description">Description</FormLabel>
@@ -118,7 +121,7 @@ const ListManagementDescriptionEdit = React.createClass( {
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton onClick={ this.handleFormSubmit }>{ this.translate( 'Save Changes' ) }</FormButton>
+						<FormButton disabled={ isTitleMissing } onClick={ this.handleFormSubmit }>{ this.translate( 'Save Changes' ) }</FormButton>
 					</FormButtonsBar>
 				</Card>
 			</div>
