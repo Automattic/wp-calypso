@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
+var React = require( 'react/addons' ),
+	ReactCSSTransitionGroup = React.addons.CSSTransitionGroup,
 	find = require( 'lodash/collection/find' ),
 	debug = require( 'debug' )( 'calypso:menus:menu-items-list' ); // eslint-disable-line no-unused-vars
 

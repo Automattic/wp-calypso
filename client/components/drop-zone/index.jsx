@@ -2,8 +2,7 @@
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
+	React = require( 'react/addons' ),
 	without = require( 'lodash/array/without' ),
 	includes = require( 'lodash/collection/includes' ),
 	classNames = require( 'classnames' ),
@@ -197,7 +196,7 @@ module.exports = React.createClass( {
 		if ( this.props.children ) {
 			content = this.props.children;
 		} else {
-			content = createFragment( {
+			content = React.addons.createFragment( {
 				icon: <span className={ classNames( 'drop-zone__content-icon', this.props.icon ) } />,
 				text: (
 					<span className="drop-zone__content-text">

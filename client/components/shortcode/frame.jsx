@@ -2,8 +2,7 @@
  * External dependencies
  */
 import ReactDomServer from 'react-dom/server';
-import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
+import React, { PropTypes } from 'react/addons';
 import omit from 'lodash/object/omit';
 import isEqual from 'lodash/lang/isEqual';
 import classNames from 'classnames';
@@ -40,7 +39,7 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 			);
 		}
 
-		return createFragment( {
+		return React.addons.createFragment( {
 			extra: extra,
 			script: <script src={ script.src } />
 		} );
@@ -49,7 +48,7 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 	return ReactDomServer.renderToStaticMarkup(
 		<html>
 			<head>
-				{ createFragment( fragment.styles ) }
+				{ React.addons.createFragment( fragment.styles ) }
 				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />
 			</head>
 			<body style={ { margin: 0 } }>
@@ -64,7 +63,7 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 						}, true );
 					} );
 				` } } />
-				{ createFragment( fragment.scripts ) }
+				{ React.addons.createFragment( fragment.scripts ) }
 			</body>
 		</html>
 	);

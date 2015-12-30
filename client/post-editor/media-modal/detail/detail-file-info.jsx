@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
+var React = require( 'react/addons' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -30,7 +29,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'dimensions':
-				value = createFragment( {
+				value = React.addons.createFragment( {
 					width: <abbr title={ this.translate( 'Width in pixels' ) }>{ this.props.item.width }</abbr>,
 					separator: ' ✕ ',
 					height: <abbr title={ this.translate( 'Height in pixels' ) }>{ this.props.item.height }</abbr>

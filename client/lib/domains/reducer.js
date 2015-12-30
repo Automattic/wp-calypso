@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import update from 'react-addons-update';
+import React from 'react/addons';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:lib:domains:store' );
 const initialState = {};
 
 function updateSiteState( state, siteId, attributes ) {
-	return update( state, {
+	return React.addons.update( state, {
 		[ siteId ]: {
 			$apply: ( value ) => Object.assign( {}, value, attributes )
 		}
@@ -23,7 +23,7 @@ function updateSiteState( state, siteId, attributes ) {
 }
 
 function updateDomainState( state, siteId, domainName, attributes ) {
-	return update( state, {
+	return React.addons.update( state, {
 		[ siteId ]: {
 			list: {
 				$apply: domains => domains.map( ( domain ) => {

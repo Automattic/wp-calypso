@@ -6,10 +6,10 @@ require( 'lib/react-test-env-setup' )();
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+	React = require( 'react/addons' ),
 	sinon = require( 'sinon' ),
 	mockery = require( 'mockery' ),
-	TestUtils = require( 'react-addons-test-utils' );
+	TestUtils = React.addons.TestUtils;
 
 describe( 'SingleDoc', function () {
 
@@ -60,3 +60,4 @@ describe( 'SingleDoc', function () {
 	} );
 
 } );
+

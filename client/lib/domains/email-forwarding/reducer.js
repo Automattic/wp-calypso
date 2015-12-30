@@ -2,7 +2,7 @@
  * External dependencies
  */
 import findIndex from 'lodash/array/findIndex';
-import update from 'react-addons-update';
+import React from 'react/addons';
 import sortBy from 'lodash/collection/sortBy';
 
 /**
@@ -32,7 +32,7 @@ function updateDomainState( state, domainName, data ) {
 		}
 	};
 
-	return update( state, command );
+	return React.addons.update( state, command );
 }
 
 /**
@@ -57,7 +57,7 @@ function deleteTemporaryMailbox( state, domainName, mailbox ) {
 		}
 	};
 
-	return update( state, command );
+	return React.addons.update( state, command );
 }
 
 /**
@@ -78,7 +78,7 @@ function addTemporaryMailbox( state, domainName, mailboxData ) {
 		}
 	};
 
-	return update( state, command );
+	return React.addons.update( state, command );
 }
 
 function reducer( state, payload ) {

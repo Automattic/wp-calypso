@@ -4,9 +4,8 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 const chai = require( 'chai' ),
-	React = require( 'react' ),
+	React = require( 'react/addons' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = require( 'react-addons-test-utils' ),
 	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	mockery = require( 'mockery' );
@@ -18,7 +17,8 @@ const i18n = require( 'lib/mixins/i18n' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	SitesList = require( 'lib/sites-list/list' );
 
-const expect = chai.expect;
+const expect = chai.expect,
+	TestUtils = React.addons.TestUtils;
 
 const MOCK_COMPONENT = React.createClass( {
 	render: function() {

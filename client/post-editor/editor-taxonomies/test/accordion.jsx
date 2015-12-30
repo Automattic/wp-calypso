@@ -5,11 +5,11 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+	React = require( 'react/addons' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	mockery = require( 'mockery' ),
 	expect = require( 'chai' ).expect,
-	TestUtils = require( 'react-addons-test-utils' );
+	TestUtils = React.addons.TestUtils;
 
 /**
  * Internal dependencies

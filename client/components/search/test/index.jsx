@@ -3,11 +3,13 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import chai from 'chai';
+import React from 'react/addons';
 import sinon from 'sinon';
 import mockery from 'mockery';
+
+const expect = chai.expect,
+	TestUtils = React.addons.TestUtils;
 
 const EMPTY_COMPONENT = React.createClass( {
 	render: function() {

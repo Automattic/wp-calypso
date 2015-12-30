@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import update from 'react-addons-update';
+import React from 'react/addons';
 import reject from 'lodash/collection/reject';
 import constant from 'lodash/utility/constant';
 import every from 'lodash/collection/every';
@@ -22,7 +22,7 @@ function isWpcomDefaults( nameservers ) {
 }
 
 function change( nameservers, index, changed ) {
-	return update( nameservers, { [ index ]: { $set: changed } } );
+	return React.addons.update( nameservers, { [ index ]: { $set: changed } } );
 }
 
 function remove( nameservers, removedIndex ) {
