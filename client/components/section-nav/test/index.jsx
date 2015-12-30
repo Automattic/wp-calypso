@@ -1,9 +1,9 @@
 var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	mockery = require( 'mockery' ),
-	TestUtils = React.addons.TestUtils,
+	TestUtils = require( 'react-addons-test-utils' ),
 	SectionNav;
 
 var EMPTY_COMPONENT = React.createClass( {

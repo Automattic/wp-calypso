@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import update from 'react-addons-update';
 
 /**
  * Internal dependencies
@@ -29,7 +29,7 @@ function updateState( state, domainName, data ) {
 		}
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {

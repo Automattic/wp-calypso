@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import createFragment from 'react-addons-create-fragment';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
 
@@ -61,7 +62,7 @@ export default React.createClass( {
 			);
 		}
 
-		return React.addons.createFragment( fragments );
+		return createFragment( fragments );
 	},
 
 	render() {
