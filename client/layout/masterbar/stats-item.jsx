@@ -16,21 +16,21 @@ export default React.createClass( {
 		children: PropTypes.node
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			url: siteStatsStickyTabStore.getUrl()
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		siteStatsStickyTabStore.on( 'change', this.handleStatsStickyTabChange );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		siteStatsStickyTabStore.off( 'change', this.handleStatsStickyTabChange );
 	},
 
-	handleStatsStickyTabChange: function() {
+	handleStatsStickyTabChange() {
 		var url = siteStatsStickyTabStore.getUrl();
 
 		if ( url !== this.state.url ) {
@@ -40,7 +40,7 @@ export default React.createClass( {
 		}
 	},
 
-	render: function() {
+	render() {
 		return (
 			<Item { ...this.props } url={ this.state.url }>
 				{ this.props.children }
