@@ -98,7 +98,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				break;
 			}
 
-			newState = newState
+			newState = state
 				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 
@@ -109,16 +109,15 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 
 		case actionTypes.START_IMPORT:
-			const newImporter = Immutable.fromJS( {
+			let newImporter = Immutable.fromJS( {
 				id: action.importerId,
 				type: action.importerType,
-				importerState: appStates.READY_FOR_UPLOAD,
-				site: { ID: action.siteId }
+				importerState: appStates.READY_FOR_UPLOAD
 			} );
 
 			newState = state
 				.update( 'count', count => count + 1 )
-				.setIn( [ 'importers', action.importerId ], newImporter );
+				.setIn( [ 'importers', action.importerId ], Immutable.fromJS( newImporter ) );
 			break;
 
 		case actionTypes.START_IMPORTING:

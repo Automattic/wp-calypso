@@ -63,7 +63,6 @@ export default React.createClass( {
 
 	render: function() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
-		const site = this.props.site;
 		const state = this.props.importerStatus,
 			isEnabled = ( appStates.DISABLED !== state.importerState ),
 			cardClasses = classNames( 'importer__shell', {
@@ -73,7 +72,7 @@ export default React.createClass( {
 
 		return (
 			<Card className={ cardClasses }>
-				<ImporterHeader importerStatus={ state } {...{ icon, title, description, isEnabled, site } } />
+				<ImporterHeader importerStatus={ state } icon={ icon } title={ title } description={ description } isEnabled={ isEnabled } />
 				{ state.errorData &&
 					<ErrorPane type={ state.errorData.type } description={ state.errorData.description } />
 				}
