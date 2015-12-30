@@ -15,6 +15,7 @@ import wpcom from 'lib/wp';
 import {
 	FETCH_SITE_PLANS,
 	FETCH_SITE_PLANS_COMPLETED,
+	REMOVE_SITE_PLANS
 } from './action-types';
 
 /**
@@ -61,4 +62,22 @@ export function fetchSitePlansCompleted( siteId, plans ) {
 		siteId,
 		plans: map( plans, createSitePlanObject )
 	};
+}
+
+/**
+ * Returns an action object to be used in updating an object containing
+ * the plans for the given site.
+ *
+ * @param  {Object} siteId ID of the concerned site
+ * @return {Object}        Action object
+ */
+export function refreshSitePlans( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: REMOVE_SITE_PLANS,
+			siteId
+		} );
+
+		dispatch( fetchSitePlans( siteId ) );
+	}
 }

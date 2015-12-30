@@ -2,18 +2,21 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	store = require( 'store' );
 
 /**
  * Internal dependencies
  */
 var config = require( 'config' ),
+	Dispatcher = require( 'dispatcher' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
+	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
@@ -63,6 +66,24 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		var lastTransaction = this.props.lastTransaction,
+			selectedSite;
+
+		if ( lastTransaction ) {
+			selectedSite = lastTransaction.selectedSite;
+
+			// Refresh selected site plans if the user just purchased a plan
+			if ( cartItems.hasPlan( lastTransaction.cart ) ) {
+				this.props.refreshSitePlans( selectedSite.ID );
+			}
+
+			// Refresh the list of sites to update the `site.plan` property
+			// needed to display the plan name on the right of the `Plans` menu item
+			Dispatcher.handleViewAction( {
+				type: 'FETCH_SITES'
+			} );
+		}
+
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
 
@@ -632,4 +653,13 @@ PurchaseDetail = React.createClass( {
 	}
 } );
 
-module.exports = CheckoutThankYou;
+module.exports = connect(
+	undefined,
+	function mapDispatchToProps( dispatch ) {
+		return {
+			refreshSitePlans( siteId ) {
+				dispatch( refreshSitePlans( siteId ) );
+			}
+		};
+	}
+)( CheckoutThankYou );
