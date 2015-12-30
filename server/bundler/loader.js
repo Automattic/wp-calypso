@@ -3,8 +3,8 @@ var config = require( 'config' ),
 
 function getSectionsModule( sections ) {
 	var dependencies = '',
-		loadSection = '',
-		sectionLoaders = '';
+		preloadFunctionBody = '',
+		loadFunctionBody = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		dependencies = [
@@ -17,17 +17,10 @@ function getSectionsModule( sections ) {
 			'var _loadedSections = {};'
 		].join( '\n' );
 
-		loadSection = sections.map( function( section ) {
-			return ensureTemplate( section.name );
-		} ).join( ' ' );
-
-		sectionLoaders = sections.map( function( section ) {
-			return section.paths.map( function( path ) {
-				return splitTemplate( path, section.module, section.name );
-			} )
-		} ).reduce( function( acc, section ) { return acc.concat( section ); }, [] );
+		preloadFunctionBody = getPreloadSwitch( sections );
+		loadFunctionBody = getRouteHandlers( sections );
 	} else {
-		sectionLoaders = getRequires( sections );
+		loadFunctionBody = getRequires( sections );
 	}
 
 	return [
@@ -37,15 +30,27 @@ function getSectionsModule( sections ) {
 		'		return ' + JSON.stringify( sections ) + ';',
 		'	},',
 		'	load: function() {',
-		'		' + sectionLoaders,
+		'		' + loadFunctionBody,
 		'	},',
 		'	preload: function( section ) {',
-		'		switch ( section ) {',
-		'		' + loadSection,
-		'		}',
+		'		' + preloadFunctionBody,
 		'	}',
 		'};'
 	].join( '\n' );
+}
+
+function getPreloadSwitch( sections ) {
+	return [
+		'switch ( section ) {',
+			cases( sections ),
+		'}'
+	].join( '\n' );
+
+	function cases( sections ) {
+		return sections.map( function( section ) {
+			return ensureCaseTemplate( section.name );
+		} ).join( '' );
+	}
 }
 
 function getRequires( sections ) {
@@ -54,7 +59,15 @@ function getRequires( sections ) {
 	} ).join( '' );
 }
 
-function splitTemplate( path, module, chunkName ) {
+function getRouteHandlers( sections ) {
+	return sections.map( function( section ) {
+		return section.paths.map( function( path ) {
+			return pageTemplate( path, section.module, section.name );
+		} )
+	} ).reduce( function( acc, section ) { return acc.concat( section ); }, [] );
+}
+
+function pageTemplate( path, module, chunkName ) {
 	var regex, result;
 	if ( path === '/' ) {
 		path = JSON.stringify( path );
@@ -63,7 +76,7 @@ function splitTemplate( path, module, chunkName ) {
 		path = '/' + utils.regExpToString( regex.toString().slice( 1, -1 ) ) + '/';
 	}
 
-	result = [
+	return [
 		'page( ' + path + ', function( context, next ) {',
 		'	if ( _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
 		'		layoutFocus.next();',
@@ -90,20 +103,18 @@ function splitTemplate( path, module, chunkName ) {
 		'		next();',
 		'	}, ' + JSON.stringify( chunkName ) + ' );',
 		'} );\n'
-	];
-
-	return result.join( '\n' );
+	].join( '\n' );
 }
 
 function requireTemplate( module ) {
 	return 'require( ' + JSON.stringify( module ) + ' )();\n';
 }
 
-function ensureTemplate( chunkName ) {
+function ensureCaseTemplate( chunkName ) {
 	return [
 		'case ' + JSON.stringify( chunkName ) + ':',
 		'	return require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' );',
-		'	break;'
+		'	break;\n'
 	].join( '\n' );
 }
 
