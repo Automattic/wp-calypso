@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa:setup' );
+	debug = require( 'debug' )( 'calypso:me:security:2fa:setup' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -11,9 +13,10 @@ var notices = require( 'notices' ),
 	Security2faEnable = require( 'me/security-2fa-enable' ),
 	Security2faSetupBackupCodes = require( 'me/security-2fa-setup-backup-codes' ),
 	Security2faSMSSettings = require( 'me/security-2fa-sms-settings' ),
-	Security2faInitialSetup = require( 'me/security-2fa-initial-setup' );
+	Security2faInitialSetup = require( 'me/security-2fa-initial-setup' ),
+	successNotice = require( 'state/notices/actions' ).successNotice;
 
-module.exports = React.createClass( {
+const Security2faSetup = React.createClass( {
 
 	displayName: 'Security2faSetup',
 
@@ -49,7 +52,7 @@ module.exports = React.createClass( {
 	},
 
 	onFinished: function() {
-		notices.success( this.translate( 'Successfully enabled Two-Step Authentication.' ) );
+		this.props.successNotice( this.translate( 'Successfully enabled Two-Step Authentication.' ) );
 		this.props.onFinished();
 	},
 
@@ -118,3 +121,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( Security2faSetup );

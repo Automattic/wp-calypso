@@ -10,6 +10,8 @@ import emailValidator from 'email-validator';
 import _debounce from 'lodash/function/debounce';
 import _map from 'lodash/collection/map';
 import _size from 'lodash/collection/size';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -41,6 +43,7 @@ import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import SitesDropdown from 'components/sites-dropdown';
+import { successNotice } from 'state/notices/actions';
 
 import _sites from 'lib/sites-list';
 import _user from 'lib/user';
@@ -53,7 +56,7 @@ const user = _user();
  */
 let debug = new Debug( 'calypso:me:account' );
 
-module.exports = React.createClass( {
+const Account = React.createClass( {
 
 	displayName: 'Account',
 
@@ -150,7 +153,7 @@ module.exports = React.createClass( {
 				notices.error( this.translate( 'There was a problem canceling the email change. Please, try again.' ) );
 			} else {
 				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
-				notices.success( this.translate( 'The email change has been successfully canceled.' ) );
+				this.props.successNotice( this.translate( 'The email change has been successfully canceled.' ) );
 			}
 		} );
 	},
@@ -628,3 +631,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( Account );

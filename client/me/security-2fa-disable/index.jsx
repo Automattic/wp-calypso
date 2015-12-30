@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-disable' );
+	debug = require( 'debug' )( 'calypso:me:security:2fa-disable' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -12,9 +14,10 @@ var FormButton = require( 'components/forms/form-button' ),
 	notices = require( 'notices' ),
 	Security2faStatus = require( 'me/security-2fa-status' ),
 	Security2faCodePrompt = require( 'me/security-2fa-code-prompt' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	successNotice = require( 'state/notices/actions' ).successNotice;
 
-module.exports = React.createClass( {
+const Security2faDisable = React.createClass( {
 
 	displayName: 'Security2faDisable',
 
@@ -46,7 +49,7 @@ module.exports = React.createClass( {
 
 	onCodePromptSuccess: function() {
 		this.setState( { showingCodePrompt: false } );
-		notices.success( this.translate( 'Successfully disabled Two-Step Authentication.' ) );
+		this.props.successNotice( this.translate( 'Successfully disabled Two-Step Authentication.' ) );
 		this.props.onFinished();
 	},
 
@@ -160,3 +163,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( Security2faDisable );
