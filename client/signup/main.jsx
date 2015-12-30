@@ -4,7 +4,7 @@
 import debugModule from 'debug';
 const debug = debugModule( 'calypso:signup' );
 import React from 'react';
-import TimeoutTransitionGroup from 'timeout-transition-group';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import page from 'page';
 import startsWith from 'lodash/string/startsWith';
 import sortBy from 'lodash/collection/sortBy';
@@ -328,13 +328,13 @@ const Signup = React.createClass( {
 						positionInFlow={ this.positionInFlow() }
 						flowName={ this.props.flowName } />
 				}
-				<TimeoutTransitionGroup
+				<ReactCSSTransitionGroup
 					className="signup__steps"
 					transitionName="signup__step"
-					enterTimeout={ 500 }
-					leaveTimeout={ 300 }>
+					transitionEnterTimeout={ 500 }
+					transitionLeaveTimeout={ 300 }>
 					{ this.currentStep() }
-				</TimeoutTransitionGroup>
+				</ReactCSSTransitionGroup>
 				{ this.loginForm() }
 			</span>
 		);
