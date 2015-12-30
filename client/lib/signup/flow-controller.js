@@ -5,7 +5,6 @@ var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-di
 	store = require( 'store' ),
 	assign = require( 'lodash/object/assign' ),
 	defer = require( 'lodash/function/defer' ),
-	keys = require( 'lodash/object/keys' ),
 	difference = require( 'lodash/array/difference' ),
 	every = require( 'lodash/collection/every' ),
 	isEmpty = require( 'lodash/lang/isEmpty' ),

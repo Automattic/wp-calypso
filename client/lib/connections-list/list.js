@@ -6,7 +6,6 @@ var debug = require( 'debug' )( 'calypso:connections-list' ),
 	find = require( 'lodash/collection/find' ),
 	pluck = require( 'lodash/collection/pluck' ),
 	filter = require( 'lodash/collection/filter' ),
-	reject = require( 'lodash/collection/reject' ),
 	findIndex = require( 'lodash/array/findIndex' ),
 	reject = require( 'lodash/collection/reject' );
 
@@ -484,7 +483,7 @@ ConnectionsList.prototype.fetchkeyringConnections = function() {
 		wpcom.undocumented().mekeyringConnections( function( error, data ) {
 			this.fetchingKeyring = false;
 			this.updateInitialized();
-			
+
 			if ( error ) {
 				debug( 'error fetching ConnectionsList Keyring connections from api', error );
 				return;
