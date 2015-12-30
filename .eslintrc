@@ -28,6 +28,7 @@
 		"key-spacing": 1,
 		"new-cap": [ 1, { "capIsNew": false, "newIsCap": true } ],
 		"no-cond-assign": 2,
+		"no-dupe-keys": 2,
 		"no-else-return": 1,
 		"no-empty": 1,
 		// Flux stores use switch case fallthrough
