@@ -13,16 +13,19 @@ function getSectionsModule( sections ) {
 			"\tReact = require( 'react' ),",
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tclasses = require( 'component-classes' );",
-			'\n',
+			'',
 			'var _loadedSections = {};'
 		].join( '\n' );
 
-		sections.forEach( function( section ) {
-			loadSection += ensureTemplate( section.name );
-			section.paths.forEach( function( path ) {
-				sectionLoaders += splitTemplate( path, section.module, section.name );
-			} );
-		} );
+		loadSection = sections.map( function( section ) {
+			return ensureTemplate( section.name );
+		} ).join( ' ' );
+
+		sectionLoaders = sections.map( function( section ) {
+			return section.paths.map( function( path ) {
+				return splitTemplate( path, section.module, section.name );
+			} )
+		} ).reduce( function( acc, section ) { return acc.concat( section ); }, [] );
 	} else {
 		sectionLoaders = getRequires( sections );
 	}
