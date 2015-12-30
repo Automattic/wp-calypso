@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var update = require( 'react-addons-update' ),
 	every = require( 'lodash/collection/every' ),
 	extend = require( 'lodash/object/assign' ),
 	flow = require( 'lodash/function/flow' ),
@@ -54,10 +54,10 @@ function add( newCartItem ) {
 
 	return function( cart ) {
 		if ( cartItemShouldReplaceCart( newCartItem, cart ) ) {
-			return React.addons.update( cart, { products: { $set: [ newCartItem ] } } );
+			return update( cart, { products: { $set: [ newCartItem ] } } );
 		}
 
-		return React.addons.update( cart, { products: { $apply: appendItem } } );
+		return update( cart, { products: { $apply: appendItem } } );
 	};
 }
 
@@ -101,7 +101,7 @@ function remove( cartItemToRemove ) {
 	}
 
 	return function( cart ) {
-		return React.addons.update( cart, { products: { $apply: rejectItem } } );
+		return update( cart, { products: { $apply: rejectItem } } );
 	};
 }
 

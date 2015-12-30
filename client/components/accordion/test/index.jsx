@@ -6,8 +6,8 @@ require( 'lib/react-test-env-setup' )();
  */
 var expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
-	TestUtils = React.addons.TestUtils;
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' );
 
 require( 'react-tap-event-plugin' )();
 

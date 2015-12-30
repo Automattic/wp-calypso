@@ -6,8 +6,8 @@ require( 'lib/react-test-env-setup' )( '<html><body><div id="container"></div></
  */
 var expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
-	TestUtils = React.addons.TestUtils,
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' ),
 	sinon = require( 'sinon' );
 
 /**
@@ -20,7 +20,7 @@ var DropZone = require( '../' );
  */
 var Wrapper = React.createClass( {
 	render: function() {
-		return <div>{this.props.children}</div>;
+		return <div>{ this.props.children }</div>;
 	}
 } );
 

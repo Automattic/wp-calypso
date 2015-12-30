@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import i18n from 'lib/mixins/i18n';
 import Debug from 'debug';
@@ -9,7 +10,6 @@ import emailValidator from 'email-validator';
 import _debounce from 'lodash/function/debounce';
 import _map from 'lodash/collection/map';
 import _size from 'lodash/collection/size';
-const ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 /**
  * Internal dependencies

@@ -6,12 +6,12 @@ require( 'lib/react-test-env-setup' )();
  */
 
 const ReactDom = require( 'react-dom' ),
-	React = require( 'react/addons' ),
+	React = require( 'react' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = React.addons.TestUtils;
+	TestUtils = require( 'react-addons-test-utils' );
 
 /**
  * Internal dependencies

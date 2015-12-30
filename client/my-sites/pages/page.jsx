@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	ReactCSSTransitionGroup = React.addons.CSSTransitionGroup,
+var React = require( 'react' ),
+	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
 	page = require( 'page' );
 
 /**
