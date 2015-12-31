@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	reject = require( 'lodash/collection/reject' ),
 	classNames = require( 'classnames' );
 
@@ -14,8 +15,10 @@ var CartBody = require( './cart-body' ),
 	Popover = require( 'components/popover' ),
 	CartEmpty = require( './cart-empty' ),
 	CartPlanAd = require( './cart-plan-ad' ),
+	CartTrialAd = require( './cart-trial-ad' ),
 	isCredits = require( 'lib/products-values' ).isCredits,
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId;
 
 var PopoverCart = React.createClass( {
 	propTypes: {
@@ -108,6 +111,7 @@ var PopoverCart = React.createClass( {
 
 		return (
 			<div>
+				<CartTrialAd cart={ this.props.cart } sitePlans={ this.props.sitePlans } selectedSite={ this.props.selectedSite } />
 				<CartPlanAd cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
 
 				<CartBody
@@ -140,4 +144,10 @@ var PopoverCart = React.createClass( {
 	}
 } );
 
-module.exports = PopoverCart;
+module.exports = connect(
+	( state, props ) => {
+		return {
+			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
+		};
+	}
+)( PopoverCart );
