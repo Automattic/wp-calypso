@@ -2,7 +2,22 @@
  * External dependencies
  */
 import find from 'lodash/collection/find';
+import page from 'page';
 import moment from 'moment';
+
+/**
+ * Internal dependencies
+ */
+import { addItem } from 'lib/upgrades/actions';
+import { cartItems } from 'lib/cart-values';
+
+export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite, event ) {
+	event.preventDefault();
+
+	addItem( cartItems.planItem( getCurrentPlan( sitePlans.data ).productSlug ) );
+
+	page( `/checkout/${ selectedSite.slug }` );
+}
 
 export function getCurrentPlan( plans ) {
 	return find( plans, { currentPlan: true } );

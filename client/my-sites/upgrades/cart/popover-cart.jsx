@@ -111,8 +111,14 @@ var PopoverCart = React.createClass( {
 
 		return (
 			<div>
-				<CartTrialAd cart={ this.props.cart } sitePlans={ this.props.sitePlans } selectedSite={ this.props.selectedSite } />
-				<CartPlanAd cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
+				<CartTrialAd
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans } />
+
+				<CartPlanAd
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite } />
 
 				<CartBody
 					collapse={ true }

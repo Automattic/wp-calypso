@@ -1,26 +1,16 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { getCurrentPlan, getDaysSinceTrialStarted } from 'lib/plans';
+import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDaysSinceTrialStarted } from 'lib/plans';
 import i18n from 'lib/mixins/i18n';
-import { addItem } from 'lib/upgrades/actions';
 
 const CartTrialAd = ( { cart, sitePlans, selectedSite } ) => {
-	function addToCartAndRedirect( event ) {
-		event.preventDefault();
-
-		addItem( cartItems.planItem( getCurrentPlan( sitePlans.data ).productSlug ) );
-
-		page( `/checkout/${ selectedSite.slug }` );
-	}
-
 	const isDataLoading = ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer,
 		currentPlan = getCurrentPlan( sitePlans.data );
 
@@ -48,7 +38,11 @@ const CartTrialAd = ( { cart, sitePlans, selectedSite } ) => {
 				i18n.translate( 'Get this domain for free when you upgrade.' )
 			}
 			{ ' ' }
-			<a href="#" onClick={ addToCartAndRedirect }>{ i18n.translate( 'Upgrade Now' ) }</a>
+			<a
+				href="#"
+				onClick={ addCurrentPlanToCartAndRedirect.bind( null, sitePlans, selectedSite ) }>
+					{ i18n.translate( 'Upgrade Now' ) }
+			</a>
 		</div>
 	);
 };
