@@ -676,6 +676,19 @@ normalizePost.content = {
 		callback();
 	},
 
+	disableAutoPlayOnMedia: function disableAutoPlayOnMedia( post, callback ) {
+		if ( ! post.__contentDOM ) {
+			throw new Error( 'this transform must be used as part of withContentDOM' );
+		}
+
+		let mediaElements = toArray( post.__contentDOM.querySelectorAll( 'audio, video' ) );
+		mediaElements.forEach( function( mediaElement ) {
+			mediaElement.autoplay = false;
+		} );
+
+		callback();
+	},
+
 	disableAutoPlayOnEmbeds: function disableAutoPlayOnEmbeds( post, callback ) {
 		if ( ! post.__contentDOM ) {
 			throw new Error( 'this transform must be used as part of withContentDOM' );
