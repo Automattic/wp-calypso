@@ -37,13 +37,12 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import SitesDropdown from 'components/sites-dropdown';
-import { successNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 import _sites from 'lib/sites-list';
 import _user from 'lib/user';
@@ -150,7 +149,7 @@ const Account = React.createClass( {
 		this.props.userSettings.cancelPendingEmailChange( ( error, response ) => {
 			if ( error ) {
 				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
-				notices.error( this.translate( 'There was a problem canceling the email change. Please, try again.' ) );
+				this.props.errorNotice( this.translate( 'There was a problem canceling the email change. Please, try again.' ) );
 			} else {
 				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
 				this.props.successNotice( this.translate( 'The email change has been successfully canceled.' ) );
@@ -202,7 +201,7 @@ const Account = React.createClass( {
 		this.props.username.change( username, action, ( error ) => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
-				notices.error( this.props.username.getValidationFailureMessage() );
+				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
 			} else {
 				this.markSaved();
 
@@ -634,5 +633,5 @@ const Account = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( Account );

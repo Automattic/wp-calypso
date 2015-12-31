@@ -12,9 +12,9 @@ var React = require( 'react' ),
  */
 var TransactionsTable = require( './transactions-table' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	notices = require( 'notices' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
-	successNotice = require( 'state/notices/actions' ).successNotice;
+	successNotice = require( 'state/notices/actions' ).successNotice,
+	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
 const BillingHistoryTable = React.createClass( {
 	displayName: 'BillingHistoryTable',
@@ -36,7 +36,7 @@ const BillingHistoryTable = React.createClass( {
 			if ( data && data.success ) {
 				this.props.successNotice( this.translate( 'Your receipt was sent by email successfully.' ) );
 			} else {
-				notices.error( this.translate( 'There was a problem sending your receipt. Please try again later or contact support.' ) );
+				this.props.errorNotice( this.translate( 'There was a problem sending your receipt. Please try again later or contact support.' ) );
 			}
 
 			this.setState( { receiptsEmailing: without( this.state.receiptsEmailing, receiptId ) } );
@@ -89,5 +89,5 @@ const BillingHistoryTable = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( BillingHistoryTable );

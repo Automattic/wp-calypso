@@ -9,7 +9,6 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import Main from 'components/main';
-import notices from 'notices';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -23,7 +22,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
-import { successNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 /**
  * Module variables
@@ -56,7 +55,7 @@ const WPCOMNotifications = React.createClass( {
 		const state = store.getStateFor( 'wpcom' );
 
 		if ( state.error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
@@ -134,5 +133,5 @@ const WPCOMNotifications = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( WPCOMNotifications );

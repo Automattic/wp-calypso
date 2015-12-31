@@ -9,8 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	Security2faEnable = require( 'me/security-2fa-enable' ),
+var Security2faEnable = require( 'me/security-2fa-enable' ),
 	Security2faSetupBackupCodes = require( 'me/security-2fa-setup-backup-codes' ),
 	Security2faSMSSettings = require( 'me/security-2fa-sms-settings' ),
 	Security2faInitialSetup = require( 'me/security-2fa-initial-setup' ),

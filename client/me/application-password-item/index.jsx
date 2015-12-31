@@ -2,16 +2,18 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:application-password-item' );
+	debug = require( 'debug' )( 'calypso:application-password-item' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	ActionRemove = require( 'me/action-remove' ),
-	eventRecorder = require( 'me/event-recorder' );
+var ActionRemove = require( 'me/action-remove' ),
+	eventRecorder = require( 'me/event-recorder' ),
+	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-module.exports = React.createClass( {
+const ApplicationPasswordsItem = React.createClass( {
 
 	displayName: 'ApplicationPasswordsItem',
 
@@ -37,7 +39,7 @@ module.exports = React.createClass( {
 		this.props.appPasswordsData.revoke( parseInt( this.props.password.ID, 10 ), function( error ) {
 			if ( error && 'unknown_application_password' !== error.error ) {
 				this.setState( { removingPassword: false } );
-				notices.error( this.translate( 'The application password was not successfully deleted. Please try again.' ) );
+				this.props.errorNotice( this.translate( 'The application password was not successfully deleted. Please try again.' ) );
 			}
 		}.bind( this ) );
 	},
@@ -64,3 +66,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { errorNotice }, dispatch )
+)( ApplicationPasswordsItem );

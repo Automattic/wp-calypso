@@ -11,8 +11,8 @@ var React = require( 'react' ),
  */
 var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
 	wpcom = require( 'lib/wp' ),
-	notices = require( 'notices' ),
-	successNotice = require( 'state/notices/actions' ).successNotice;
+	successNotice = require( 'state/notices/actions' ).successNotice,
+	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
 const CreditCardDelete = React.createClass( {
 
@@ -34,7 +34,7 @@ const CreditCardDelete = React.createClass( {
 	handleDeleteCard: function( error, response ) {
 		if ( error && error.error ) {
 			debug( error.error, error.message );
-			notices.error( error.message );
+			this.props.errorNotice( error.message );
 			this.setState( {
 				deleting: false
 			} );
@@ -75,5 +75,5 @@ const CreditCardDelete = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( CreditCardDelete );

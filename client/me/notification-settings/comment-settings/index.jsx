@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import notices from 'notices';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -19,7 +18,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import SettingsForm from 'me/notification-settings/settings-form';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
-import { successNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 const NotificationCommentsSettings = React.createClass( {
 	displayName: 'NotificationCommentsSettings',
@@ -46,7 +45,7 @@ const NotificationCommentsSettings = React.createClass( {
 		const state = store.getStateFor( 'other' );
 
 		if ( state.error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
@@ -93,5 +92,5 @@ const NotificationCommentsSettings = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
 )( NotificationCommentsSettings );
