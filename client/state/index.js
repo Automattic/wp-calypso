@@ -2,7 +2,7 @@
  * External dependencies
  */
 import thunkMiddleware from 'redux-thunk';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 
 /**
  * Internal dependencies
@@ -27,9 +27,19 @@ const reducer = combineReducers( {
 	ui
 } );
 
+var createStoreWithMiddleware = applyMiddleware(
+	thunkMiddleware,
+	analyticsMiddleware
+);
+
 export function createReduxStore() {
-	return applyMiddleware(
-		thunkMiddleware,
-		analyticsMiddleware
-	)( createStore )( reducer );
+	if (
+		typeof window === 'object' &&
+		window.app &&
+		window.app.isDebug &&
+		window.devToolsExtension
+	) {
+		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
+	}
+	return createStoreWithMiddleware( createStore )( reducer );
 };
