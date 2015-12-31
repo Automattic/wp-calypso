@@ -18,6 +18,7 @@ var CartBody = require( './cart-body' ),
 	CartTrialAd = require( './cart-trial-ad' ),
 	isCredits = require( 'lib/products-values' ).isCredits,
 	Gridicon = require( 'components/gridicon' ),
+	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId;
 
 var PopoverCart = React.createClass( {
@@ -33,6 +34,10 @@ var PopoverCart = React.createClass( {
 		pinned: React.PropTypes.bool.isRequired,
 		showKeepSearching: React.PropTypes.bool.isRequired,
 		onKeepSearchingClick: React.PropTypes.func.isRequired
+	},
+
+	componentDidMount: function() {
+		this.props.fetchSitePlans( this.props.selectedSite.ID );
 	},
 
 	itemCount: function() {
@@ -151,9 +156,14 @@ var PopoverCart = React.createClass( {
 } );
 
 module.exports = connect(
-	( state, props ) => {
+	function( state, props ) {
+		return { sitePlans: getPlansBySiteId( state, props.selectedSite.ID ) };
+	},
+	function( dispatch ) {
 		return {
-			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
+			fetchSitePlans( siteId ) {
+				dispatch( fetchSitePlans( siteId ) );
+			}
 		};
 	}
 )( PopoverCart );
