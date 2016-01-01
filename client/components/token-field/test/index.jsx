@@ -255,6 +255,12 @@ describe( 'TokenField', function() {
 			expect( textInputNode.value ).to.equal( 'baz' );
 		} );
 
+		it( 'should trim token values when adding', function() {
+			setText( '  baz  ' );
+			sendKey( keyCodes.enter );
+			expect( wrapper.state.tokens ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
+		} );
+
 		function testOnBlur( initialText, selectSuggestion, expectedSuggestion, expectedTokens, done ) {
 			setText( initialText );
 			if ( selectSuggestion ) {
