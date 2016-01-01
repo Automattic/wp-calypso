@@ -30,7 +30,7 @@ var keyCodes = {
 };
 
 describe( 'TokenField', function() {
-	var wrapper, tokenFieldNode, textInputNode;
+	var reactContainer, wrapper, tokenFieldNode, textInputNode;
 
 	function setText( text ) {
 		TestUtils.Simulate.change( textInputNode, { target: { value: text } } );
@@ -76,15 +76,20 @@ describe( 'TokenField', function() {
 		return selectedSuggestions[0] || null;
 	}
 
+	before( function() {
+		reactContainer = document.createElement( 'div' );
+		document.body.appendChild( reactContainer );
+	} );
+
 	beforeEach( function() {
-		wrapper = ReactDom.render( <TokenFieldWrapper />, document.body );
+		wrapper = ReactDom.render( <TokenFieldWrapper />, reactContainer );
 		tokenFieldNode = ReactDom.findDOMNode( wrapper.refs.tokenField );
 		textInputNode = tokenFieldNode.querySelector( '.token-field__input' );
 		TestUtils.Simulate.focus( textInputNode );
 	} );
 
 	afterEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( reactContainer );
 	} );
 
 	describe( 'displaying tokens', function() {
