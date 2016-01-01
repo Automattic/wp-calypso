@@ -8,7 +8,7 @@ var React = require( 'react' ),
 var Token = React.createClass( {
 	propTypes: {
 		value: React.PropTypes.string.isRequired,
-		valueTransform: React.PropTypes.func.isRequired,
+		displayTransform: React.PropTypes.func.isRequired,
 		onClickRemove: React.PropTypes.func
 	},
 
@@ -24,7 +24,7 @@ var Token = React.createClass( {
 		return (
 			<span className="token-field__token" tabIndex="-1">
 				<span className="token-field__token-text">
-					{ this.props.valueTransform( this.props.value ) }
+					{ this.props.displayTransform( this.props.value ) }
 				</span>
 				<span
 					className="token-field__remove-token noticon noticon-close-alt"

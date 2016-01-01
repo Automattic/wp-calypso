@@ -78,7 +78,7 @@ module.exports = React.createClass( {
 				</span>
 				<TokenField
 					value={ this.getPostTags() }
-					valueTransform={ unescapeAndFormatSpaces }
+					displayTransform={ unescapeAndFormatSpaces }
 					suggestions={ tagNames }
 					onChange={ this.onTagsChange }
 					maxSuggestions={ TermsConstants.MAX_TAGS_SUGGESTIONS }

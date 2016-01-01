@@ -19,7 +19,7 @@ The `value` property is handled in a manner similar to controlled form component
 ### Properties
 
 - `value` - An array of strings to display as tokens in the field
-- `valueTransform` - Function to call to transform tokens for display.  This is
+- `displayTransform` - Function to call to transform tokens for display.  This is
   used to decode HTML entities embedded in tags - otherwise entities like `&`
   in tag names are double-encoded like `&amp;` (once by the REST API and once
   by React).

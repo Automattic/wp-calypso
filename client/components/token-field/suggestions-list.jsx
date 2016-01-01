@@ -11,7 +11,7 @@ var SuggestionsList = React.createClass( {
 	propTypes: {
 		isExpanded: React.PropTypes.bool,
 		match: React.PropTypes.string,
-		valueTransform: React.PropTypes.func.isRequired,
+		displayTransform: React.PropTypes.func.isRequired,
 		onSelect: React.PropTypes.func,
 		suggestions: React.PropTypes.array,
 		selectedIndex: React.PropTypes.number
@@ -49,14 +49,14 @@ var SuggestionsList = React.createClass( {
 	},
 
 	_computeSuggestionMatch: function( suggestion ) {
-		var match = this.props.valueTransform( this.props.match || '' ).toLocaleLowerCase(),
+		var match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
 			indexOfMatch;
 
 		if ( match.length === 0 ) {
 			return null;
 		}
 
-		suggestion = this.props.valueTransform( suggestion );
+		suggestion = this.props.displayTransform( suggestion );
 		indexOfMatch = suggestion.toLocaleLowerCase().indexOf( match );
 
 		return {
@@ -105,7 +105,7 @@ var SuggestionsList = React.createClass( {
 							{ match.suggestionAfterMatch }
 						</span>
 					:
-						this.props.valueTransform( suggestion )
+						this.props.displayTransform( suggestion )
 					}
 				</li>
 			);
