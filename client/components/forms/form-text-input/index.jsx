@@ -23,9 +23,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const otherProps = omit( this.props, [ 'className', 'type', 'ref' ] );
 		const { className, type, selectOnFocus } = this.props;
-		const classes = classNames( {
+		const classes = classNames( className, {
 			'form-text-input': true,
 			'is-error': this.props.isError,
 			'is-valid': this.props.isValid
@@ -33,10 +32,10 @@ export default React.createClass( {
 
 		return (
 			<input
-				{ ...otherProps }
+				{ ...this.props }
 				ref="textField"
 				type={ type }
-				className={ classNames( className, classes ) }
+				className={ classes }
 				onClick={ selectOnFocus ? this.selectOnFocus : null }
 			/>
 		);

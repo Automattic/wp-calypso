@@ -53,7 +53,7 @@ export default React.createClass( {
 				isFocused: true
 			}, () => {
 				this.refs.titleInput.focus();
-			} )
+			} );
 		}
 	},
 
