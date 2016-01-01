@@ -226,7 +226,8 @@ var Post = React.createClass( {
 			post = this.props.post,
 			isDiscoverPost = this.state.isDiscoverPost,
 			postUrl = isDiscoverPost ? post.discover_metadata.permalink : post.URL,
-			postToOpen = post;
+			postToOpen = post,
+			postOptions = {};
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
@@ -258,10 +259,15 @@ var Post = React.createClass( {
 			postToOpen = this.state.originalPost;
 		}
 
+		// if the user clicked the comments button.
+		if ( closest( event.target, '.comment-button', true, rootNode ) ) {
+			postOptions['comments'] = true;
+		}
+
 		// programattic ignore
 		if ( ! event.defaultPrevented ) { // some child handled it
 			event.preventDefault();
-			this.props.handleClick( postToOpen );
+			this.props.handleClick( postToOpen, postOptions );
 		}
 	},
 
