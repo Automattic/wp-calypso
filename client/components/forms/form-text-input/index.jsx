@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import omit from 'lodash/object/omit';
 
 export default React.createClass( {
 
@@ -36,8 +35,7 @@ export default React.createClass( {
 				ref="textField"
 				type={ type }
 				className={ classes }
-				onClick={ selectOnFocus ? this.selectOnFocus : null }
-			/>
+				onClick={ selectOnFocus ? this.selectOnFocus : null } />
 		);
 	},
 

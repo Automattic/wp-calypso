@@ -108,8 +108,8 @@ export default React.createClass( {
 					<EditorPermalink
 						slug={ post.slug }
 						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
-						isEditable={ isPermalinkEditable }
-					/> }
+						isEditable={ isPermalinkEditable } />
+				}
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
 					<FormTextInput
 						{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
@@ -121,8 +121,7 @@ export default React.createClass( {
 						autoFocus={ isNew && ! isMobile() }
 						value={ post ? post.title : '' }
 						aria-label={ this.translate( 'Edit title' ) }
-						ref="titleInput"
-					/>
+						ref="titleInput" />
 				</TrackInputChanges>
 			</div>
 		);
