@@ -84,6 +84,7 @@ module.exports = React.createClass( {
 				<a className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					target={ this.props.externalLink && '_blank' }
+					title={ this.props.homeLink ? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } ) : site.title }
 					onTouchTap={ this.onSelect }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
