@@ -5,3 +5,12 @@
 		transform: translate( 1px, 1px );	/* translates to .5px because it's in a child element */
 	}
 }
+
+/*rtl:ignore*/
+.rtl {
+	.gridicons-external,
+	.gridicons-cart {
+		transform: matrix(-1, 0, 0, 1, 0, 0); // reflect
+	}
+}
+
