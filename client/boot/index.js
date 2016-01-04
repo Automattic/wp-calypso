@@ -175,6 +175,8 @@ function boot() {
 
 		if ( config.isEnabled( 'oauth' ) ) {
 			LoggedOutLayout = require( 'layout/logged-out-oauth' );
+		} else if ( startsWith( window.location.pathname, '/design' ) ) {
+			LoggedOutLayout = require( 'layout/logged-out-design' );
 		} else {
 			LoggedOutLayout = require( 'layout/logged-out' );
 		}
