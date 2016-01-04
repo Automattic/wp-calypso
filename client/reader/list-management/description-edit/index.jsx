@@ -64,12 +64,14 @@ const ListManagementDescriptionEdit = React.createClass( {
 			this.props.list.ID
 		);
 
-		ReaderListsActions.update(
-			this.props.list.owner,
-			this.props.list.slug,
-			this.state.title,
-			this.state.description
-		);
+		const params = {
+			owner: this.props.list.owner,
+			slug: this.props.list.slug,
+			title: this.state.title,
+			description: this.state.description
+		};
+
+		ReaderListsActions.update( params );
 	},
 
 	handleDismissNotice() {

@@ -126,7 +126,7 @@ const ReaderListActions = {
 
 	create: function( title ) {
 		if ( ! title ) {
-			return;
+			throw new Error( 'List title is required' );
 		}
 
 		Dispatcher.handleViewAction( {
@@ -143,12 +143,10 @@ const ReaderListActions = {
 		} );
 	},
 
-	update: function( owner, slug, title, description ) {
-		if ( ! owner || ! slug || ! title ) {
-			return;
+	update: function( params ) {
+		if ( ! params.owner || ! params.slug || ! params.title ) {
+			throw new Error( 'List owner, slug and title are required' );
 		}
-
-		const params = { owner, slug, title, description };
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.UPDATE_READER_LIST,
@@ -166,7 +164,7 @@ const ReaderListActions = {
 
 	dismissNotice: function( listId ) {
 		if ( ! listId ) {
-			return;
+			throw new Error( 'List ID is required' );
 		}
 
 		Dispatcher.handleViewAction( {
