@@ -25,7 +25,7 @@ const ReaderListActions = {
 			ReaderListsSubscriptionsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_READER_LISTS',
+				type: actionTypes.RECEIVE_READER_LISTS,
 				data: data,
 				error: error
 			} );
@@ -36,14 +36,14 @@ const ReaderListActions = {
 		var query = { owner, slug };
 
 		Dispatcher.handleViewAction( {
-			type: 'FOLLOW_LIST',
+			type: actionTypes.FOLLOW_LIST,
 			data: query
 		} );
 
 		wpcom.undocumented().followList( query, function( error, data ) {
 			if ( error || ! ( data && data.following ) ) {
 				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_FOLLOW_LIST_ERROR',
+					type: actionTypes.RECEIVE_FOLLOW_LIST_ERROR,
 					data: {
 						owner: query.owner,
 						slug: query.slug,
@@ -55,7 +55,7 @@ const ReaderListActions = {
 			}
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_FOLLOW_LIST',
+				type: actionTypes.RECEIVE_FOLLOW_LIST,
 				data: {
 					owner: query.owner,
 					slug: query.slug,
@@ -70,14 +70,14 @@ const ReaderListActions = {
 		var query = { owner, slug };
 
 		Dispatcher.handleViewAction( {
-			type: 'UNFOLLOW_LIST',
+			type: actionTypes.UNFOLLOW_LIST,
 			data: query
 		} );
 
 		wpcom.undocumented().unfollowList( query, function( error, data ) {
 			if ( error || ( data && data.following ) ) {
 				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_UNFOLLOW_LIST_ERROR',
+					type: actionTypes.RECEIVE_UNFOLLOW_LIST_ERROR,
 					data: {
 						owner: query.owner,
 						slug: query.slug,
@@ -89,7 +89,7 @@ const ReaderListActions = {
 			}
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_UNFOLLOW_LIST',
+				type: actionTypes.RECEIVE_UNFOLLOW_LIST,
 				data: {
 					owner: query.owner,
 					slug: query.slug,
@@ -117,7 +117,7 @@ const ReaderListActions = {
 			ReaderListsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_READER_LIST',
+				type: actionTypes.RECEIVE_READER_LIST,
 				data: data,
 				error: error
 			} );
@@ -130,13 +130,13 @@ const ReaderListActions = {
 		}
 
 		Dispatcher.handleViewAction( {
-			type: 'CREATE_READER_LIST',
+			type: actionTypes.CREATE_READER_LIST,
 			data: { title: title }
 		} );
 
 		wpcom.undocumented().readListsNew( title, function( error, data ) {
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_CREATE_READER_LIST',
+				type: actionTypes.RECEIVE_CREATE_READER_LIST,
 				data: data,
 				error: error
 			} );
