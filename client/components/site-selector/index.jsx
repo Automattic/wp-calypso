@@ -73,36 +73,6 @@ module.exports = React.createClass( {
 		this.refs.siteSearch.blur();
 	},
 
-	visibleCount: function() {
-		return this.props.sites.selected ? 1 : this.getCount();
-	},
-
-	// more complex translation logic here
-	getTranslations: function() {
-		var output = {},
-			visibleCount = this.visibleCount();
-
-		if ( ! this.props.sites.selected ) {
-			output.selectedSites = this.translate( 'All sites' );
-		} else {
-			output.selectedSites = this.translate( '%(numberSelected)s site selected', '%(numberSelected)s sites selected', {
-				count: visibleCount,
-				args: {
-					numberSelected: visibleCount
-				}
-			} );
-		}
-
-		output.totalSites = this.translate( '%(numberTotal)s site', 'All %(numberTotal)s Sites', {
-			count: this.getCount(),
-			args: {
-				numberTotal: this.getCount()
-			}
-		} );
-
-		return output;
-	},
-
 	addNewSite: function() {
 		return (
 			<AddNewButton
