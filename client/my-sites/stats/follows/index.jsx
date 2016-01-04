@@ -44,24 +44,19 @@ module.exports = React.createClass( {
 		page( '/stats/follows/' + filter + '/' + site.slug );
 	},
 
-
 	render: function() {
-		debug( 'Rendering stats follows' );
-
 		var site = this.props.sites.getSelectedSite();
 
 		return (
-			<div className="main main-column" role="main">
-				<div id="my-stats-content" className={ "follows-detail follows-detail-" + this.props.followType }>
+			<div className='main main-column' role='main'>
+				<div id='my-stats-content' className={ 'follows-detail follows-detail-' + this.props.followType }>
 
 					<HeaderCake onClick={ this.goBack }>
 						{ this.translate( 'Followers' ) }
 					</HeaderCake>
-
 					<Followers path={ this.props.followType + '-follow-summary' } site={ site } followersList={ this.props.followersList } followType={ this.props.followType } followList={ this.props.followList } page={ this.props.page } perPage={ this.props.perPage } pageClick={ this.paginationHandler } changeFilter={ this.changeFilter } />
 				</div>
 			</div>
 		);
 	}
-
 } );
