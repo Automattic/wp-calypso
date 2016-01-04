@@ -5,7 +5,8 @@ var express = require( 'express' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' );
+	debug = require( 'debug' )( 'calypso:pages' ),
+	React = require( 'react' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
@@ -359,7 +360,13 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
-			renderLoggedOutRoute( req, res );
+			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
+				LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign ),
+				context = getDefaultContext( req );
+
+			context.layout = React.renderToString( LayoutLoggedOutDesignFactory() );
+
+			res.render( 'index.jade', context );
 		}
 	} );
 

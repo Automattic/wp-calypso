@@ -46,8 +46,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style.css'])
 
 	body(class=isRTL ? 'rtl' : '')
-		#wpcom.wpcom-site
-			.wpcom-site__logo.noticon.noticon-wordpress
+		if layout
+			#wpcom.wpcom-site!= layout
+		else
+			#wpcom.wpcom-site
+				.wpcom-site__logo.noticon.noticon-wordpress
 		if badge
 			div.environment-badge
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
