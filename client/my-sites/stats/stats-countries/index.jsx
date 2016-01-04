@@ -2,9 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module-countries' );
-
+	classNames = require( 'classnames' );
 /**
  * Internal dependencies
  */
@@ -39,12 +37,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering stats countries module' );
-
 		var countries,
 			moduleExpand,
 			mapData = [ [ this.translate( 'Country' ).toString(),
-			              this.translate( 'Views' ).toString() ] ],
+				this.translate( 'Views' ).toString() ] ],
 			data = this.data(),
 			hasError = this.props.dataList.isError(),
 			noData = this.props.dataList.isEmpty(),
@@ -56,18 +52,18 @@ module.exports = React.createClass( {
 			moduleToggle,
 			classes;
 
-			classes = [
-				'stats-module',
-				'is-countries',
-				{
-					'is-expanded': this.state.showModule,
-					'summary': this.props.summary,
-					'is-loading': this.props.dataList.isLoading(),
-					'is-showing-info': this.state.showInfo,
-					'has-no-data': noData,
-					'is-showing-error': hasError || noData
-				}
-			];
+		classes = [
+			'stats-module',
+			'is-countries',
+			{
+				'is-expanded': this.state.showModule,
+				summary: this.props.summary,
+				'is-loading': this.props.dataList.isLoading(),
+				'is-showing-info': this.state.showInfo,
+				'has-no-data': noData,
+				'is-showing-error': hasError || noData
+			}
+		];
 
 		// Loop countries and build array for geochart
 		data.forEach( function( country ) {
@@ -76,11 +72,10 @@ module.exports = React.createClass( {
 
 		summaryPageLink = '/stats/' + this.props.period.period + '/countryviews/' + this.props.site.slug + '?startDate=' + this.props.date;
 
-
 		if ( ! this.props.summary ) {
 			moduleExpand = (
 				<div key="other" className="module-expand">
-					<a href='#'>{ this.translate( 'View All' ) }<span className="right"></span></a>
+					<a href="#">{ this.translate( 'View All' ) }<span className="right"></span></a>
 				</div>
 			);
 		}
@@ -99,7 +94,7 @@ module.exports = React.createClass( {
 
 			if ( this.props.dataList.response.viewAll ) {
 				viewSummary = (
-					<div key='view-all' className='module-expand'>
+					<div key="view-all" className="module-expand">
 						<a href={ summaryPageLink }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
 					</div>
 				);
@@ -133,7 +128,7 @@ module.exports = React.createClass( {
 								<li><a href="http://en.support.wordpress.com/stats/#views-by-country" target="_blank"><Gridicon icon="info-outline" /> { this.translate( 'About Countries' ) }</a></li>
 							</ul>
 						</div>
-						{ ( noData  && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No countries recorded' ) } /> : null }
+						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ this.translate( 'No countries recorded' ) } /> : null }
 
 						{ geochart }
 						<div className="module-placeholder module-placeholder-block"></div>
@@ -151,9 +146,9 @@ module.exports = React.createClass( {
 							<div className="module-placeholder is-void"></div>
 							{ countries }
 						</div>
-						{ this.props.summary ?
-							<DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
-						 : null }
+						{ this.props.summary
+							? <DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
+							: null }
 						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
 					</div>
 					{ viewSummary }
