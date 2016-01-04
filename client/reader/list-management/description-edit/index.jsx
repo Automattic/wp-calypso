@@ -1,5 +1,6 @@
 // External dependencies
 import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugModule from 'debug';
 
 // Internal dependencies
@@ -20,7 +21,7 @@ const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementDescriptionEdit = React.createClass( {
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	mixins: [ LinkedStateMixin ],
 	smartSetState: smartSetState,
 
 	propTypes: {
