@@ -27,7 +27,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const backText = this.props.backText || this.translate( 'Back' );
+		const { backText } = this.props;
 		const classes = classNames(
 			'header-cake',
 			this.props.className,
@@ -38,15 +38,11 @@ export default React.createClass( {
 
 		return (
 			<Card className={ classes }>
-				<div className="header-cake__corner">
-					<HeaderCakeBack text={ backText } onClick={ this.props.onClick } />
-				</div>
+				<HeaderCakeBack text={ backText } onClick={ this.props.onClick } />
 				<div className="header-cake__title" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
 				</div>
-				<div className="header-cake__corner is-spacer">
-					<HeaderCakeBack text={ backText } />
-				</div>
+				<HeaderCakeBack text={ backText } spacer />
 			</Card>
 		);
 	}

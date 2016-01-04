@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -26,25 +27,29 @@ export default React.createClass( {
 	propTypes: {
 		onClick: PropTypes.func,
 		href: PropTypes.string,
-		text: PropTypes.string
+		text: PropTypes.string,
+		spacer: PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
-			text: 'Back'
-		}
+			spacer: false
+		};
 	},
 
 	render() {
-		const { text, href, onClick } = this.props;
-		const hideText = window.innerWidth <= HIDE_BACK_CRITERIA.windowWidth && text.length >= HIDE_BACK_CRITERIA.characterLength;
+		const { text = this.translate( 'Back' ), href, onClick, spacer } = this.props;
+		const windowWidth = window.innerWidth;
+		const hideText = windowWidth <= HIDE_BACK_CRITERIA.windowWidth && text.length >= HIDE_BACK_CRITERIA.characterLength || windowWidth <= 300;
+		const linkClasses = classNames( {
+			'header-cake__back': true,
+			'is-spacer': spacer
+		} );
 
 		return (
-			<a className="header-cake__back" href={ href } onClick={ onClick }>
+			<a className={ linkClasses } href={ href } onClick={ onClick }>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ hideText ?
-					null
-				: <span className="header-cake__back-text">{ text }</span> }
+				{ ! hideText && <span className="header-cake__back-text">{ text }</span> }
 			</a>
 		);
 	},

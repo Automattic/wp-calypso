@@ -12,23 +12,19 @@
 	line-height: 18px;
 	padding: 0;
 
+	&::after {
+		display: none;
+	}
+
 	@include breakpoint( "<660px" ) {
 		margin-top: 10px;
 	}
 }
 
-.header-cake__corner {
+.header-cake__back {
 	flex: none;
 	display: block;
 	max-width: 33.333%;
-
-	&.is-spacer {
-		opacity: 0;
-	}
-}
-
-.header-cake__back {
-	display: block;
 	padding: 16px;
 	color: darken( $gray, 20% );
 	white-space: nowrap;
@@ -42,7 +38,8 @@
 		opacity: 0.6;
 	}
 
-	.header-cake__corner.is-spacer & {
+	&.is-spacer {
+		opacity: 0;
 		cursor: default;
 	}
 }
