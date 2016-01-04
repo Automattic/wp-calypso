@@ -20,12 +20,13 @@ class EditorSharingContainer extends Component {
 		// Set state
 		this.state = this.getState();
 
-		// Trigger connection fetch
-		this.ensureHasConnections();
-
 		// Bind legacy store update handler
 		this.boundUpdateState = this.updateState.bind( this );
 		PostEditStore.on( 'change', this.boundUpdateState );
+	}
+
+	componentDidMount() {
+		this.ensureHasConnections();
 	}
 
 	componentDidUpdate() {
