@@ -18,7 +18,7 @@ var start = Date.now(),
 	server,
 	hotReloader;
 
-console.log( chalk.yellow('%s booted in %dms - http://%s:%s'), pkg.name, ( Date.now() ) - start, host, port );
+console.log( chalk.yellow( '%s booted in %dms - http://%s:%s' ), pkg.name, ( Date.now() ) - start, host, port );
 console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
 server = http.createServer( app );
 server.listen( port );
