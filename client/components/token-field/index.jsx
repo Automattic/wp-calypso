@@ -138,7 +138,11 @@ var TokenField = React.createClass( {
 	},
 
 	_onBlur: function( event ) {
-		var stillActive = this.refs.main.contains( event.relatedTarget );
+		var blurSource = event.relatedTarget ||
+			event.nativeEvent.explicitOriginalTarget || // FF
+			document.activeElement; // IE11
+
+		var stillActive = this.refs.main.contains( blurSource );
 
 		if ( stillActive ) {
 			debug( '_onBlur but component still active; not doing anything' );
