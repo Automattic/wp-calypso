@@ -13,7 +13,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	ChartTabs = require( '../stats-chart-tabs' ),
 	nuxData = require( './data.js' ),
-	Countries = require( '../module-countries' ),
+	Countries = require( '../stats-countries' ),
 	analytics = require( 'analytics' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' );
 
