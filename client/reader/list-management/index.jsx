@@ -9,7 +9,6 @@ import ListManagementSites from './sites';
 import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsActions from 'lib/reader-lists/actions';
-import smartSetState from 'lib/react-smart-set-state';
 import Main from 'components/main';
 import Navigation from 'reader/list-management/navigation';
 
@@ -23,8 +22,6 @@ const ListManagement = React.createClass( {
 		} ),
 		tab: React.PropTypes.oneOf( [ 'sites', 'tags', 'description-edit' ] ).isRequired,
 	},
-
-	smartSetState: smartSetState,
 
 	getInitialState() {
 		return this.getStateFromStores( this.props );

@@ -194,7 +194,7 @@ module.exports = React.createClass( {
 			];
 
 			const lastPathSegment = last( this.props.path.split( '/' ) );
-			const isCurrentList = lastPathSegment && lastPathSegment.toLowerCase() === list.slug.toLowerCase();
+			const isCurrentList = lastPathSegment && lastPathSegment.toLowerCase() === list.slug.toLowerCase() && this.pathStartsWithOneOf( [ listRelativeUrl ] );
 			const isActionButtonSelected = this.pathStartsWithOneOf( listManagementUrls );
 
 			const classes = classnames(
