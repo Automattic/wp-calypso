@@ -29,21 +29,23 @@ export default React.createClass( {
 
 		let postKeys = store.get();
 		let posts = postKeys.map( postKey => {
-			let post = FeedPostStore.get( postKey );
+			let post = FeedPostStore.get( postKey ),
+				originalPost,
+				isDiscoverPost;
+
 			if ( ! post || post._state === 'minimal' ) {
 				FeedPostStoreActions.fetchPost( postKey );
-				post._state = 'pending';
-			}
+			} else {
+				isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post );
 
-			let isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post ),
-				isDiscoverSitePick = post && isDiscoverPost && DiscoverHelper.isDiscoverSitePick( post ),
-				originalPost;
+				let isDiscoverSitePick = post && isDiscoverPost && DiscoverHelper.isDiscoverSitePick( post );
 
-			if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
-				originalPost = FeedPostStore.get( {
-					blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
-					postId: post.discover_metadata.featured_post_wpcom_data.post_id
-				} );
+				if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
+					originalPost = FeedPostStore.get( {
+						blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
+						postId: post.discover_metadata.featured_post_wpcom_data.post_id
+					} );
+				}
 			}
 
 			return {
@@ -54,7 +56,7 @@ export default React.createClass( {
 		} );
 
 		return {
-			posts: posts
+			posts
 		};
 	},
 
@@ -100,6 +102,7 @@ export default React.createClass( {
 				postState = post._state;
 
 			switch ( postState ) {
+				case 'minimal':
 				case 'pending':
 				case 'error':
 					break;
