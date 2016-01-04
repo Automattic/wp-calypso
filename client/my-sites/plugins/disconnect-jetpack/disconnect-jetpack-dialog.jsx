@@ -34,20 +34,15 @@ module.exports = React.createClass( {
 		}
 	},
 
-	jetpackSiteRemain: function( site ) {
-		return site.capabilities && site.capabilities.manage_options && site.ID !== this.props.site.ID;
-	},
-
 	disconnectJetpack: function() {
-		var jetpackSites = sites.getJetpack(),
-			selectedSite = sites.getSelectedSite();
+		var selectedSite = sites.getSelectedSite();
 
 		// remove any error and completed notices
 		SitesListActions.removeSitesNotices( [ { status: 'error' }, { status: 'completed' } ] );
 
 		if ( this.props.site ) {
 			SitesListActions.disconnect( this.props.site );
-			if ( selectedSite === this.props.site && this.props.redirect && jetpackSites.some( this.jetpackSiteRemain ) ) {
+			if ( selectedSite === this.props.site && this.props.redirect ) {
 				page.redirect( this.props.redirect );
 				return;
 			}
