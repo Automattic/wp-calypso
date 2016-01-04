@@ -108,8 +108,8 @@ var PlansCompare = React.createClass( {
 		} );
 
 		if ( this.props.features.hasLoadedFromServer() && (
-			this.props.isInSignup || this.props.sitePlans.hasLoadedFromServer )
-			) {
+			this.props.isInSignup || ! this.props.selectedSite || ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) )
+		) {
 			// Remove features not supported by any plan
 			featuresList = featuresList.filter( function( feature ) {
 				var keepFeature = false;
