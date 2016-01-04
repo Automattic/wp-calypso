@@ -630,9 +630,9 @@ function wpcomPlugin( editor ) {
 			if ( activeToolbar ) {
 				activeToolbar.hide();
 
-				if ( event.type === 'hide' ) {
+				if ( event.type === 'hide' || event.type === 'blur' ) {
 					activeToolbar = false;
-				} else if ( event.type === 'resize' || event.type === 'scroll' ) {
+				} else if ( event.type === 'resizewindow' || event.type === 'scroll' ) {
 					clearTimeout( timeout );
 
 					timeout = setTimeout( function() {
