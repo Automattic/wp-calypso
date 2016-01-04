@@ -19,6 +19,7 @@ var route = require( 'lib/route' ),
 	PluginComponent = require( './plugin' ),
 	PluginBrowser = require( './plugins-browser' ),
 	titleActions = require( 'lib/screen-title/actions' ),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	allowedCategoryNames = [ 'new', 'popular', 'featured' ];
 
 /**
@@ -70,19 +71,19 @@ function renderSinglePlugin( context, siteUrl, isWpcomPlugin ) {
 	window.scrollTo( 0, 0 );
 
 	// Render single plugin component
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PluginComponent, {
 			path: context.path,
 			prevPath: lastPluginsListVisited || context.prevPath,
 			prevQuerystring: lastPluginsQuerystring,
 			sites: sites,
-			store: context.store,
 			pluginSlug: pluginSlug,
 			siteUrl: siteUrl,
 			isWpcomPlugin: isWpcomPlugin,
 			onPluginRefresh: title => titleActions.setTitle( title )
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -103,17 +104,16 @@ function renderPluginList( context, basePath, siteUrl ) {
 	lastPluginsQuerystring = context.querystring;
 	titleActions.setTitle( i18n.translate( 'Plugins', { textOnly: true } ), { siteID: siteUrl } );
 
-	// Render multiple plugins component
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PluginListComponent, {
 			path: basePath,
 			context: context,
-			store: context.store,
 			filter: context.params.pluginFilter,
 			sites: sites,
 			search: search
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 
 	if ( search ) {
