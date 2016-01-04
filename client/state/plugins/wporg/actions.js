@@ -1,31 +1,32 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:wporg-data:actions' );
+const debug = require( 'debug' )( 'calypso:wporg-data:actions' );
 
 /**
  * Internal dependencies
  */
-var wporg = require( 'lib/wporg' ),
-	debounce = require( 'lodash/function/debounce' ),
-	utils = require( 'lib/plugins/utils' );
+import wporg from 'lib/wporg';
+import debounce from 'lodash/function/debounce';
+import utils from 'lib/plugins/utils';
+import { RECEIVE_WPORG_PLUGIN_DATA } from 'state/action-types';
 
 /**
  * Constants
  */
-var _LIST_DEFAULT_SIZE = 24,
+const _LIST_DEFAULT_SIZE = 24,
 	_DEFAULT_FIRST_PAGE = 0;
 
 /**
  *  Local variables;
  */
-var _fetching = {},
+let _fetching = {},
 	_fetchingLists = {},
 	_currentSearchTerm = null,
 	_lastFetchedPagePerCategory = {},
 	_totalPagesPerCategory = {};
 
-var PluginsDataActions = {
+export default {
 	fetchPluginData: function( pluginSlug ) {
 		return ( dispatch ) => {
 			if ( _fetching[ pluginSlug ] ) {
@@ -38,7 +39,7 @@ var PluginsDataActions = {
 				_fetching[ pluginSlug ] = null;
 				debug( 'plugin details fetched from .org', pluginSlug, error, data );
 				dispatch( {
-					type: 'RECEIVE_WPORG_PLUGIN_DATA',
+					type: RECEIVE_WPORG_PLUGIN_DATA,
 					pluginSlug: pluginSlug,
 					data: data ? utils.normalizePluginData( { detailsFetched: Date.now() }, data ) : null,
 					error: error
@@ -47,5 +48,3 @@ var PluginsDataActions = {
 		}
 	}
 };
-
-module.exports = PluginsDataActions;
