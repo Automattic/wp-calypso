@@ -206,6 +206,16 @@ var Menus = React.createClass( {
 	},
 
 	renderJetpackManageDisabledMessage: function( site ) {
+		const data = this.props.siteMenus.get();
+		let featureExample;
+
+
+		if ( data.menus && data.locations &&
+			data.hasDefaultMenu && this.props.itemTypes.fetched ) {
+			featureExample = this.renderMenus();
+		}
+
+
 		return (
 			<Main className="manage-menus">
 				<SidebarNavigation />
@@ -217,21 +227,18 @@ var Menus = React.createClass( {
 					secondaryAction={ this.translate( 'Open Classic Menu Editor' ) }
 					secondaryActionURL={ site.options.admin_url + 'nav-menus.php' }
 					secondaryActionTarget="_blank"
+					featureExample={ featureExample }
 				/>
 			</Main>
 		);
 	},
 
-	render: function() {
+	renderMenus: function() {
 		var selectedLocation = this.getSelectedLocation(),
 			selectedMenu = this.getSelectedMenu(),
 			data = this.props.siteMenus.get(),
-			site = this.props.site,
 			menu;
 
-		if ( site && site.jetpack && ! site.canManage() ) {
-			return this.renderJetpackManageDisabledMessage( site );
-		}
 
 		if ( ! data.menus || ! data.locations || ! data.hasDefaultMenu ||
 			! this.props.itemTypes.fetched || this.state.isBusy ) {
@@ -250,8 +257,7 @@ var Menus = React.createClass( {
 		}
 
 		return (
-			<Main className="manage-menus">
-				<SidebarNavigation />
+			<div>
 				<div className="menus__pickers">
 					<LocationPicker
 						locations={ data.locations }
@@ -267,8 +273,23 @@ var Menus = React.createClass( {
 						confirmDiscard={ this.confirmDiscard.bind( null, 'menu' ) } />
 				</div>
 				{ selectedMenu ? menu : this.renderEmptyContent() }
+			</div>
+		);
+	},
+
+	render: function() {
+		var site = this.props.site;
+		if ( site && site.jetpack && ! site.canManage() ) {
+			return this.renderJetpackManageDisabledMessage( site );
+		}
+
+		return (
+			<Main className="manage-menus">
+				<SidebarNavigation />
+				{ this.renderMenus() }
 			</Main>
 		);
+
 	}
 } );
 
