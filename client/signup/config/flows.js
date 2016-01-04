@@ -2,15 +2,13 @@
  * External dependencies
  */
 var assign = require( 'lodash/object/assign' ),
-	reject = require( 'lodash/collection/reject' ),
-	page = require( 'page' );
+	reject = require( 'lodash/collection/reject' );
 
 /**
 * Internal dependencies
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	abtest = require( 'lib/abtest' ).abtest,
 	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
@@ -166,17 +164,13 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-function getCurrentFlowNameFromTest( currentURL ) {
-	// Consider remaining homepage users for the Triforce AB test.
-	if ( '/start/en?ref=homepage' === currentURL && 'triforce' === abtest( 'triforce' ) ) {
-		return 'layout';
-	}
-
+function getCurrentFlowNameFromTest() {
+	// No tests currently running
 	return 'main';
 }
 
 module.exports = {
-	currentFlowName: getCurrentFlowNameFromTest( page.current ),
+	currentFlowName: getCurrentFlowNameFromTest(),
 
 	defaultFlowName: 'main',
 
