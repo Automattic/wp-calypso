@@ -36,7 +36,7 @@ const EmailForwardingItem = React.createClass( {
 	render: function() {
 		return (
 			<li>
-				<Button disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
+				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
 					<Gridicon icon="trash" />
 				</Button>
 				<span>{ this.translate( '{{strong1}}%(email)s{{/strong1}} {{em}}forwards to{{/em}} {{strong2}}%(forwardTo)s{{/strong2}}',
