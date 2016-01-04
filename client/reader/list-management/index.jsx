@@ -6,8 +6,8 @@ import debugModule from 'debug';
 import ListManagementDescriptionEdit from './description-edit';
 import ListManagementTags from './tags';
 import ListManagementSites from './sites';
-import ListStore from 'lib/reader-lists/lists';
-import ReaderListsStore from 'lib/reader-lists/subscriptions';
+import ReaderListsStore from 'lib/reader-lists/lists';
+import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsActions from 'lib/reader-lists/actions';
 import smartSetState from 'lib/react-smart-set-state';
 import Main from 'components/main';
@@ -32,9 +32,9 @@ const ListManagement = React.createClass( {
 
 	getStateFromStores( props ) {
 		// Grab the list ID from the list store
-		const listDetails = ListStore.get( props.list.owner, props.list.slug );
+		const listDetails = ReaderListsStore.get( props.list.owner, props.list.slug );
 		const shouldFetchList = ! listDetails || ( listDetails.owner !== props.list.owner && listDetails.slug !== props.list.slug );
-		if ( shouldFetchList && ! ReaderListsStore.isFetching() ) {
+		if ( shouldFetchList && ! ReaderListsSubscriptionsStore.isFetching() ) {
 			ReaderListsActions.fetchList( props.list.owner, props.list.slug );
 		}
 		return { listDetails };
@@ -47,11 +47,11 @@ const ListManagement = React.createClass( {
 	},
 
 	componentDidMount() {
-		ListStore.on( 'change', this.update );
+		ReaderListsStore.on( 'change', this.update );
 	},
 
 	componentWillUnmount() {
-		ListStore.off( 'change', this.update );
+		ReaderListsStore.off( 'change', this.update );
 	},
 
 	update() {

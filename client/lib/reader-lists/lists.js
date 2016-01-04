@@ -8,7 +8,7 @@ import last from 'lodash/array/last';
 // Internal dependencies
 import { action as actionTypes } from './constants';
 
-var lists = {}, errors = [], updatedLists = {}, ListStore;
+var lists = {}, errors = [], updatedLists = {}, isFetching = false, ListStore;
 
 function keyForList( owner, slug ) {
 	return owner + '-' + slug;
@@ -29,6 +29,15 @@ ListStore = {
 
 	isUpdated( listId ) {
 		return !! updatedLists[ listId ];
+	},
+
+	isFetching() {
+		return isFetching;
+	},
+
+	setIsFetching( val ) {
+		isFetching = val;
+		ListStore.emit( 'change' );
 	}
 };
 

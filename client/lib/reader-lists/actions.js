@@ -4,7 +4,8 @@ import wpcom from 'lib/wp';
 import debugModule from 'debug';
 
 // Internal dependencies
-import ReaderListsStore from 'lib/reader-lists/subscriptions';
+import ReaderListsStore from 'lib/reader-lists/lists';
+import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import { action as actionTypes } from './constants';
 
 const debug = debugModule( 'calypso:reader:list-management' );
@@ -14,14 +15,14 @@ var fetchingLists = {};
 const ReaderListActions = {
 
 	fetchSubscriptions: function() {
-		if ( ReaderListsStore.isFetching() ) {
+		if ( ReaderListsSubscriptionsStore.isFetching() ) {
 			return;
 		}
 
-		ReaderListsStore.setIsFetching( true );
+		ReaderListsSubscriptionsStore.setIsFetching( true );
 
 		wpcom.undocumented().readLists( function( error, data ) {
-			ReaderListsStore.setIsFetching( false );
+			ReaderListsSubscriptionsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_READER_LISTS',
@@ -148,8 +149,6 @@ const ReaderListActions = {
 		}
 
 		const params = { owner, slug, title, description };
-
-		debug( params );
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.UPDATE_READER_LIST,
