@@ -16,7 +16,8 @@ const CartTrialAd = ( { cart, sitePlans, selectedSite } ) => {
 
 	if ( isDataLoading ||
 		! currentPlan.freeTrial ||
-		cartItems.getDomainRegistrations( cart ).length !== 1 ) {
+		cartItems.getDomainRegistrations( cart ).length !== 1 ||
+		cartItems.hasPlan( cart ) ) {
 		// we return `<noscript />` here because we can't return null in a stateless component
 		// see https://github.com/facebook/react/issues/5355#issuecomment-152949327
 		return <noscript />;
