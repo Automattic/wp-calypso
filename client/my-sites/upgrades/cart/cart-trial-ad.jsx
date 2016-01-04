@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDaysSinceTrialStarted } from 'lib/plans';
+import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDayOfTrial } from 'lib/plans';
 import i18n from 'lib/mixins/i18n';
 
 const CartTrialAd = ( { cart, sitePlans, selectedSite } ) => {
@@ -28,7 +28,7 @@ const CartTrialAd = ( { cart, sitePlans, selectedSite } ) => {
 				i18n.translate( 'You are currently on day %(days)d of your {{strong}}%(planName)s trial{{/strong}}.', {
 					components: { strong: <strong /> },
 					args: {
-						days: getDaysSinceTrialStarted( currentPlan ),
+						days: getDayOfTrial( currentPlan ),
 						planName: currentPlan.productName
 					}
 				} )

@@ -33,10 +33,11 @@ export function getCurrentTrialPeriodInDays( plan ) {
 	return userFacingExpiryMoment.diff( subscribedDayMoment, 'days' );
 };
 
-export function getDaysSinceTrialStarted( plan ) {
+export function getDayOfTrial( plan ) {
 	const { subscribedDayMoment } = plan;
 
-	return moment().startOf( 'day' ).diff( subscribedDayMoment, 'days' );
+	// we return the difference plus one day so that the first day is day 1 instead of day 0
+	return moment().startOf( 'day' ).diff( subscribedDayMoment, 'days' ) + 1;
 };
 
 export function getDaysUntilUserFacingExpiry( plan ) {

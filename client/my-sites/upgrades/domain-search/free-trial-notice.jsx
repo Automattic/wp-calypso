@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDaysSinceTrialStarted } from 'lib/plans';
+import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDayOfTrial } from 'lib/plans';
 import i18n from 'lib/mixins/i18n';
 import Notice from 'components/notice';
 
@@ -25,7 +25,7 @@ const FreeTrialNotice = ( { cart, selectedSite, sitePlans } ) => {
 			{
 				i18n.translate( 'You are currently on day %(day)d of your %(planName)s trial.', {
 					args: {
-						day: getDaysSinceTrialStarted( currentPlan ),
+						day: getDayOfTrial( currentPlan ),
 						planName: currentPlan.productName
 					}
 				} )
