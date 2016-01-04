@@ -153,6 +153,10 @@ module.exports = React.createClass( {
 		onTogglePin: React.PropTypes.func
 	},
 
+	contextTypes: {
+		store: React.PropTypes.object
+	},
+
 	getDefaultProps: function() {
 		return {
 			mode: 'tinymce',
@@ -256,6 +260,7 @@ module.exports = React.createClass( {
 			entity_encoding: 'raw',
 			keep_styles: false,
 			wpeditimage_html5_captions: true,
+			redux_store: this.context.store,
 
 			// Limit the preview styles in the menu/toolbar
 			preview_styles: 'font-family font-size font-weight font-style text-decoration text-transform',

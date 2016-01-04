@@ -65,6 +65,10 @@
 		color: darken( $gray, 20% );
 	}
 
+	.mce-toolbar .mce-btn .gridicon {
+		fill: darken( $gray, 20% );
+	}
+
 	.mce-colorbutton .mce-preview {
 		background-color: $gray-dark;
 	}
@@ -93,6 +97,11 @@
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .mce-ico {
 		color: $gray-dark;
+	}
+
+	.mce-toolbar .mce-btn-group .mce-btn:hover .gridicon,
+	.mce-toolbar .mce-btn-group .mce-btn:focus .gridicon {
+		fill: $gray-dark;
 	}
 }
 

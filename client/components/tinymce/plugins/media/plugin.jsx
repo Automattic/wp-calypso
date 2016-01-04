@@ -32,6 +32,7 @@ var sites = require( 'lib/sites-list' )(),
 	notices = require( 'notices' ),
 	TinyMCEDropZone = require( './drop-zone' ),
 	restrictSize = require( './restrict-size' ),
+	advanced = require( './advanced' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' );
 
@@ -647,6 +648,7 @@ function mediaButton( editor ) {
 	} );
 
 	restrictSize( editor );
+	advanced( editor );
 }
 
 module.exports = function() {

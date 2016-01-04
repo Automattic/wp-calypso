@@ -11,6 +11,7 @@ import {
 	SET_SECTION,
 	CURRENT_USER_ID_SET
 } from 'state/action-types';
+import editor from './editor/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -72,5 +73,6 @@ export default combineReducers( {
 	isLoading,
 	hasSidebar,
 	selectedSiteId,
-	currentUserId
+	currentUserId,
+	editor
 } );
