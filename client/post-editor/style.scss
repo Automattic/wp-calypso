@@ -9,6 +9,18 @@
 	@include breakpoint( "<660px" ) {
 		padding: 0;
 	}
+
+	> .notice {
+		margin: 0 32px 64px;
+
+		@include breakpoint( "<1040px" ) {
+			margin: 0 24px 56px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin: 8px 8px 0;
+		}
+	}
 }
 
 .post-editor {
