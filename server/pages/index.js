@@ -6,7 +6,8 @@ var express = require( 'express' ),
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
-	React = require( 'react' );
+	React = require( 'react' ),
+	ReactDomServer = require( 'react-dom/server' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
@@ -364,7 +365,7 @@ module.exports = function() {
 				LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign ),
 				context = getDefaultContext( req );
 
-			context.layout = React.renderToString( LayoutLoggedOutDesignFactory() );
+			context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
 
 			res.render( 'index.jade', context );
 		}
