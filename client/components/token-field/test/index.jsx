@@ -175,6 +175,11 @@ describe( 'TokenField', function() {
 			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandEscaped );
 		} );
 
+		it( 'should match suggestions even with trailing spaces', function() {
+			setText( '  at  ' );
+			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.at );
+		} );
+
 		it( 'should manage the selected suggestion based on both keyboard and mouse events', function( done ) {
 			var hoverSuggestion;
 			setText( 't' );
