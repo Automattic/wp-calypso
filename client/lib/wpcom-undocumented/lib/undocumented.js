@@ -1174,8 +1174,9 @@ Undocumented.prototype.readSite = function( query, fn ) {
 };
 
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
+	var params = omit( query, [ 'before', 'after' ] );
 	debug( '/read/sites/:site/featured' );
-	this.wpcom.req.get( '/read/sites/' + siteId + '/featured', query, fn );
+	this.wpcom.req.get( '/read/sites/' + siteId + '/featured', params, fn );
 };
 
 Undocumented.prototype.readSitePosts = function( query, fn ) {
