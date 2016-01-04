@@ -34,6 +34,7 @@ module.exports = React.createClass( {
 	componentDidMount: function() {
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
+		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 
 		sites.on( 'change', this.onSitesChanged );
@@ -52,6 +53,7 @@ module.exports = React.createClass( {
 
 		olarkStore.removeListener( 'change', this.updateOlarkState );
 		olarkEvents.off( 'api.chat.onOperatorsAway', this.onOperatorsAway );
+		olarkEvents.off( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.off( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 
 		if ( details.isConversing && ! isOperatorAvailable ) {
@@ -217,6 +219,7 @@ module.exports = React.createClass( {
 	},
 
 	onOperatorsAway: function() {
+		const IS_UNAVAILABLE = false;
 		const { details } = this.state.olark;
 
 		if ( ! details.isConversing ) {
@@ -227,6 +230,28 @@ module.exports = React.createClass( {
 
 		//Autofill the subject field since we will be showing it now that operators have went away.
 		this.autofillSubject();
+
+		this.showAvailabilityNotice( IS_UNAVAILABLE );
+	},
+
+	onOperatorsAvailable: function() {
+		const IS_AVAILABLE = true;
+
+		this.showAvailabilityNotice( IS_AVAILABLE );
+	},
+
+	showAvailabilityNotice( isAvailable ) {
+		const { isUserEligible, isOlarkReady } = this.state.olark;
+
+		if ( ! isOlarkReady || ! isUserEligible ) {
+			return;
+		}
+
+		if ( isAvailable ) {
+			notices.success( this.translate( 'Our Happiness Engineers have returned, chat with us.' ) );
+		} else {
+			notices.warning( this.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ) );
+		}
 	},
 
 	/**
@@ -265,7 +290,6 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! ( olark.isOlarkReady && sitesInitialized ) ) {
-
 			return (
 				<div className="help-contact__placeholder">
 					<h4 className="help-contact__header">Loading contact form</h4>
