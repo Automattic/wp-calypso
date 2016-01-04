@@ -105,8 +105,9 @@ function interpolate( options ) {
 
 	if ( typeof components !== 'object' ) {
 		if ( throwErrors ) {
-			throw new Error( 'Interpolation Error: components argument must be an object', mixedString, components );
+			throw new Error( `Interpolation Error: unable to process \`${ mixedString }\` because components is not an object` );
 		}
+
 		return mixedString;
 	}
 
@@ -114,17 +115,12 @@ function interpolate( options ) {
 
 	try {
 		return buildChildren( tokens, components );
-	} catch( error ) {
-		// don't mess around in production, just return what we can
-		if ( ! throwErrors ) {
-			return mixedString;
-		}
-		// in pre-production environments we should make errors very visible
-		if ( window && window.console && window.console.error ) {
-			window.console.error( '\nInterpolation Error: ', interpolate.caller.caller, '\n> ' + mixedString );
+	} catch ( error ) {
+		if ( throwErrors ) {
+			throw new Error( `Interpolation Error: unable to process \`${ mixedString }\` because of error \`${ error.message }\`` );
 		}
 
-		throw error;
+		return mixedString;
 	}
 };
 
