@@ -4,7 +4,7 @@
   "description": "Magellan plugin to provide Mocha support",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,9 @@
     "acorn": "^2.6.4",
     "cli-color": "^1.1.0",
     "lodash": "^3.10.1"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.2.4"
   }
 }
