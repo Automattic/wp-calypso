@@ -56,7 +56,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 				span(class=['environment', 'is-' + badge])=badge
 				if branchName && branchName !== 'master'
-					span(class=['environment', 'branch-name'])=branchName
+					span(class=['environment', 'branch-name'], title='Commit ' + commitChecksum)=branchName
 				if devDocs
 					span(class=['environment', 'is-docs'])
 						a(href=devDocsURL title='DevDocs') docs
