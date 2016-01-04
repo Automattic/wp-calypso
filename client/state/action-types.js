@@ -22,3 +22,5 @@ export const SET_EXPORT_POST_TYPE = 'SET_EXPORT_POST_TYPE';
 export const SET_ROUTE = 'SET_ROUTE';
 export const SET_SECTION = 'SET_SECTION';
 export const SET_SELECTED_SITE = 'SET_SELECTED_SITE';
+export const USER_RECEIVE = 'USER_RECEIVE';
+export const USER_SET_CURRENT = 'USER_SET_CURRENT';
