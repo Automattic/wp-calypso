@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
+
 /**
  * Internal dependencies
  */
@@ -18,7 +19,7 @@ var toggle = require( '../mixin-toggle' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
-	displayName: 'StatModuleCountries',
+	displayName: 'StatCountries',
 
 	mixins: [ toggle( 'Countries' ), skeleton( 'data' ), observe( 'dataList' ) ],
 
@@ -38,9 +39,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var countries,
-			moduleExpand,
 			mapData = [ [ this.translate( 'Country' ).toString(),
-				this.translate( 'Views' ).toString() ] ],
+			this.translate( 'Views' ).toString() ] ],
 			data = this.data(),
 			hasError = this.props.dataList.isError(),
 			noData = this.props.dataList.isEmpty(),
@@ -73,14 +73,6 @@ module.exports = React.createClass( {
 		summaryPageLink = '/stats/' + this.props.period.period + '/countryviews/' + this.props.site.slug + '?startDate=' + this.props.date;
 
 		if ( ! this.props.summary ) {
-			moduleExpand = (
-				<div key="other" className="module-expand">
-					<a href="#">{ this.translate( 'View All' ) }<span className="right"></span></a>
-				</div>
-			);
-		}
-
-		if ( !this.props.summary ) {
 			moduleHeaderTitle = (
 				<h4 className="module-header-title"><a href={ summaryPageLink }>{ this.translate( 'Countries' ) }</a></h4>
 			);
