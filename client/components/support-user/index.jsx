@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ import Gravatar from 'components/gravatar';
 module.exports = React.createClass( {
 	displayName: 'SupportUser',
 
-	mixins: [ observe( 'userSettings' ), React.addons.LinkedStateMixin ],
+	mixins: [ observe( 'userSettings' ), LinkedStateMixin ],
 
 	componentDidMount: function() {
 		KeyboardShortcuts.on( 'open-support-user', this.toggleShowDialog );
