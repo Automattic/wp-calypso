@@ -9,6 +9,10 @@
 		color: lighten( $gray, 10% );
 	}
 
+	&:not( [disabled] ):hover {
+		color: $blue-medium;
+	}
+
 	.count {
 		margin-left: 8px;
 	}

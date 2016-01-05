@@ -13,12 +13,8 @@
 
 .mce-tinymce > .mce-container-body {
 	&:after {
-		margin: 1px -48px;
+		margin-top: 1px;
 		transition: width 0.2s;
-
-		@include breakpoint( "<480px" ) {
-			margin: 1px -16px;
-		}
 
 		@include breakpoint( "<660px" ) {
 			@include long-content-fade();
@@ -43,13 +39,8 @@
 		border-color: lighten( $gray, 20% );
 		border-style: solid;
 		border-width: 1px 0;
-		margin: 0 -48px;
 		padding: 0;
 		overflow-x: auto;
-
-		@include breakpoint( "<480px" ) {
-			margin: 0 -16px;
-		}
 	}
 
 	.mce-toolbar .mce-ico {
@@ -480,15 +471,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 	margin: 0;
 }
 
-.mce-tinymce .mce-stack-layout-item.mce-first .mce-flow-layout {
-	@include breakpoint( ">960px" ) {
-		padding-right: 36px;
-	}
-}
-
 .mce-tinymce .mce-stack-layout-item.mce-last {
-	padding-right: 8px;
-
 	@include breakpoint( ">960px" ) {
 		border-top: 1px solid lighten( $gray, 30% );
 	}
@@ -563,6 +546,16 @@ div.mce-path {
 
 	@include breakpoint( "<480px" ) {
 		margin: 0;
+	}
+}
+
+.mce-toolbar-grp:not( .mce-inline-toolbar-grp ).is-pinned {
+	position: fixed;
+		top: 46px;
+		left: ( $sidebar-width-min + 1 );
+
+	@include breakpoint( ">960px" ) {
+		left: ( $sidebar-width-max + 1 );
 	}
 }
 
@@ -1372,9 +1365,13 @@ i.mce-i-wp_code:before {
 	margin: 2px;
 }
 
+.mce-toolbar-grp .mce-container-body {
+	position: relative;
+}
+
 .mce-tinymce .mce-btn-group .mce-btn.mce-last {
 	position: absolute;
-		right: 16px;
+		right: 0;
 
 	@include breakpoint( "<960px" ) {
 		position: relative;

@@ -91,7 +91,7 @@ export default React.createClass( {
 							<Tooltip
 								context={ this.refs && this.refs.viewLink }
 								isVisible={ this.state.viewLinkTooltip }
-								position="bottom"
+								position="bottom left"
 							>
 								{ this.props.type === 'page' ?
 									this.translate( 'View page' ) :

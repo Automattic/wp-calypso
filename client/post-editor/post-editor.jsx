@@ -286,6 +286,68 @@ var PostEditor = React.createClass( {
 		return (
 			<div className="post-editor">
 				<div className="post-editor__inner">
+					<div className="post-editor__content">
+						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
+						<div className="editor">
+							<EditorActionBar
+								isNew={ this.state.isNew }
+								onTrashingPost={ this.onTrashingPost }
+								onPrivatePublish={ this.onPublish }
+								post={ this.state.post }
+								savedPost={ this.state.savedPost }
+								site={ site }
+								type={ this.props.type }
+							/>
+							<FeaturedImage
+								site={ site }
+								post={ this.state.post }
+								maxWidth={ 1462 } />
+							{ this.renderNotice() }
+							<div className={ headerClass }>
+								<EditorTitleContainer
+									onChange={ this.debouncedAutosave }
+									tabIndex={ 1 } />
+								{ this.state.post && isPage ?
+									<EditorPageSlug
+										slug={ this.state.post.slug }
+										path={ this.state.post.URL ? utils.getPagePath( this.state.post ) : site.URL + '/' }
+									/> :
+									null
+								}
+								<SegmentedControl className="editor__switch-mode" compact={ true }>
+									<SegmentedControlItem selected={ mode === 'tinymce' } onClick={ this.switchEditorMode.bind( this, 'tinymce' ) }>
+										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
+									</SegmentedControlItem>
+									<SegmentedControlItem selected={ mode === 'html' } onClick={ this.switchEditorMode.bind( this, 'html' ) }>
+										HTML
+									</SegmentedControlItem>
+								</SegmentedControl>
+							</div>
+							<hr className="editor__header-divider" />
+							<TinyMCE
+								ref="editor"
+								mode={ mode }
+								tabIndex={ 2 }
+								isNew={ this.state.isNew }
+								onSetContent={ this.debouncedSaveRawContent }
+								onChange={ this.onEditorContentChange }
+								onKeyUp={ this.debouncedSaveRawContent }
+								onFocus={ this.onEditorFocus }
+								onTextEditorChange={ this.onEditorContentChange }
+								onTogglePin={ this.onTogglePin } />
+						</div>
+						<EditorWordCount />
+						{ this.iframePreviewEnabled() ?
+							<EditorPreview
+								showPreview={ this.state.showPreview }
+								onClose={ this.onPreviewClose }
+								isSaving={ this.state.isSaving || this.state.isAutosaving }
+								isLoading={ this.state.isLoading }
+								previewUrl={ this.state.previewUrl }
+
+							/>
+						: null }
+					</div>
 					<div className="post-editor__sidebar">
 						<div className="post-editor__sidebar-header">
 							{ this.state.showDrafts ?
@@ -341,69 +403,6 @@ var PostEditor = React.createClass( {
 							/>
 
 						</div> }
-					</div>
-					<div className="post-editor__content">
-						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
-						<div className="editor">
-							<EditorActionBar
-								isNew={ this.state.isNew }
-								onTrashingPost={ this.onTrashingPost }
-								onPrivatePublish={ this.onPublish }
-								post={ this.state.post }
-								savedPost={ this.state.savedPost }
-								site={ site }
-								type={ this.props.type }
-							/>
-							<div className={ headerClass }>
-								{ this.renderNotice() }
-								<FeaturedImage
-									site={ site }
-									post={ this.state.post }
-									maxWidth={ 1462 } />
-								<EditorTitleContainer
-									onChange={ this.debouncedAutosave }
-									tabIndex={ 1 } />
-								{ this.state.post && isPage ?
-									<EditorPageSlug
-										slug={ this.state.post.slug }
-										path={ this.state.post.URL ? utils.getPagePath( this.state.post ) : site.URL + '/' }
-									/> :
-									null
-								}
-								<SegmentedControl className="editor__switch-mode" compact={ true }>
-									<SegmentedControlItem selected={ mode === 'tinymce' } onClick={ this.switchEditorMode.bind( this, 'tinymce' ) }>
-										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
-									</SegmentedControlItem>
-									<SegmentedControlItem selected={ mode === 'html' } onClick={ this.switchEditorMode.bind( this, 'html' ) }>
-										HTML
-									</SegmentedControlItem>
-								</SegmentedControl>
-							</div>
-							<TinyMCE
-								ref="editor"
-								mode={ mode }
-								tabIndex={ 2 }
-								isNew={ this.state.isNew }
-								onSetContent={ this.debouncedSaveRawContent }
-								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.debouncedSaveRawContent }
-								onFocus={ this.onEditorFocus }
-								onTextEditorChange={ this.onEditorContentChange }
-								onTogglePin={ this.onTogglePin } />
-						</div>
-						<div className="post-editor__word-count-wrapper">
-							<EditorWordCount />
-						</div>
-						{ this.iframePreviewEnabled() ?
-							<EditorPreview
-								showPreview={ this.state.showPreview }
-								onClose={ this.onPreviewClose }
-								isSaving={ this.state.isSaving || this.state.isAutosaving }
-								isLoading={ this.state.isLoading }
-								previewUrl={ this.state.previewUrl }
-
-							/>
-						: null }
 					</div>
 				</div>
 				{ isTrashed ?

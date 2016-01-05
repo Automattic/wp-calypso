@@ -87,7 +87,7 @@ export default React.createClass( {
 				<Tooltip
 					context={ this.refs && this.refs.deletePostTooltip }
 					isVisible={ this.state.tooltip }
-					position="bottom"
+					position="bottom left"
 				>
 					{ tooltipText }
 				</Tooltip>

@@ -9,7 +9,6 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import PostEditStore from 'lib/posts/post-edit-store';
 import userModule from 'lib/user';
-import Count from 'components/count';
 import textUtils from 'lib/text-utils';
 
 /**
@@ -65,15 +64,19 @@ export default React.createClass( {
 				return null;
 		}
 
+		const wordCount = textUtils.countWords( this.state.rawContent );
+
 		return (
 			<div className="editor-word-count">
-				{ this.translate( 'Word Count' ) }
-				<Count count={ this.getCount() } />
+				{ this.translate(
+					'%d word',
+					'%d words',
+					{
+						count: wordCount,
+						args: [ wordCount ]
+					}
+				) }
 			</div>
 		);
-	},
-
-	getCount() {
-		return textUtils.countWords( this.state.rawContent );
 	}
 } );

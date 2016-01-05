@@ -131,7 +131,7 @@ module.exports = React.createClass( {
 			</div> );
 		}
 
-		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } />;
+		return <Notice text={ noticeText } status={ noticeStatus } showDismiss={ false } className="email-verification-notice" />;
 	},
 
 	verifiedNotice: function() {
@@ -139,7 +139,11 @@ module.exports = React.createClass( {
 			this.translate( "You've successfully verified your email address." ) :
 			this.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." );
 
-		return <Notice status="is-success" onDismissClick={ this.dismissNotice }>{ noticeText }</Notice>;
+		return (
+			<Notice status="is-success" onDismissClick={ this.dismissNotice } className="email-verification-notice">
+				{ noticeText }
+			</Notice>
+		);
 	},
 
 	render: function() {

@@ -1,48 +1,7 @@
 .editor-ground-control {
-	.site__content {
-		transition: all 0.15s cubic-bezier( 0.770, 0.000, 0.175, 1.000 );
-	}
-}
-
-.editor-ground-control .sticky-panel__content {
-	width: 269px;
-	padding: 16px 0 24px;
-
-	@include breakpoint( "<960px" ) {
-		width: 100%;
-	}
-
-	&::before {
-		// Cause content visible in gap above Ground Control to be obscured by
-		// emulating body background, extending beyond shadow of accordions
-		content: '';
-		position: absolute;
-			top: 0;
-			right: -1px;
-			left: -1px;
-		height: 16px;
-		background-color: $gray-light;
-	}
-}
-
-.editor-ground-control.is-sticky .sticky-panel__content {
-	padding-bottom: 0;
-	z-index: z-index( 'root', '.editor-ground-control.is-sticky .sticky-panel__content' );
-}
-
-.editor-ground-control .sticky-panel__shadow {
-	margin-top: -24px;
-}
-
-.editor-ground-control .card {
 	padding: 16px;
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
-}
-
-.editor-ground-control.is-sticky .card {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 2px 4px lighten( $gray, 20% );
 }
 
 .editor-ground-control .site {
@@ -117,32 +76,6 @@
 	border-bottom: 1px solid lighten( $gray, 30% );
 	margin: 0 -16px 16px;
 	padding: 16px;
-}
-
-// Collapse site component
-.editor-ground-control.is-sticky {
-	.site__content {
-		padding: 0;
-	}
-	.site-icon {
-		border: none;
-	}
-	.site__info {
-		display: flex;
-	}
-	.site__title {
-		align-items: center;
-		display: block;
-		font-size: 13px;
-		padding-top: 7px;
-		padding-right: 7px;
-	}
-	.site__domain {
-		display: none;
-	}
-	.site.is-private .site__title::before {
-		margin-bottom: 0;
-	}
 }
 
 .editor-ground-control__view-site-tooltip {
