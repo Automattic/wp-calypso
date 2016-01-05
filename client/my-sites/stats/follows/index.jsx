@@ -1,25 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	page = require( 'page' ),
-	debug = require( 'debug' )( 'calypso:stats:follows' );
+import React, { PropTypes } from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	Followers = require( '../module-followers-page.jsx' ),
-	HeaderCake = require( 'components/header-cake' ),
-	analytics = require( 'analytics' );
+import observe from 'lib/mixins/data-observe';
+import Followers from '../module-followers-page.jsx';
+import HeaderCake from 'components/header-cake';
+import analytics from 'analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsFollows',
 
 	mixins: [ observe( 'sites', 'site', 'followersList' ) ],
 
+	propTypes: {
+		domain: PropTypes.string,
+		followType: PropTypes.string,
+		followList: PropTypes.object,
+		follwersList: PropTypes.object,
+		page: PropTypes.number,
+		perPage: PropTypes.number,
+		sites: PropTypes.object
+	},
+
 	goBack: function() {
-		var pathParts = this.props.path.split( '/' );
+		const pathParts = this.props.path.split( '/' );
 		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
 	},
 
@@ -28,7 +37,7 @@ module.exports = React.createClass( {
 	},
 
 	paginationHandler: function( pageNum ) {
-		var path = '/stats/follows/' + this.props.followType + '/';
+		let path = '/stats/follows/' + this.props.followType + '/';
 		if ( pageNum > 1 ) {
 			path += pageNum + '/';
 		}
@@ -38,23 +47,32 @@ module.exports = React.createClass( {
 	},
 
 	changeFilter: function( selection ) {
-		var site = this.props.sites.getSelectedSite(),
-			filter = selection.value;
+		const site = this.props.sites.getSelectedSite();
+		const filter = selection.value;
 
 		page( '/stats/follows/' + filter + '/' + site.slug );
 	},
 
 	render: function() {
-		var site = this.props.sites.getSelectedSite();
+		const site = this.props.sites.getSelectedSite();
 
 		return (
-			<div className='main main-column' role='main'>
-				<div id='my-stats-content' className={ 'follows-detail follows-detail-' + this.props.followType }>
+			<div className="main main-column" role="main">
+				<div id="my-stats-content" className={ 'follows-detail follows-detail-' + this.props.followType }>
 
 					<HeaderCake onClick={ this.goBack }>
 						{ this.translate( 'Followers' ) }
 					</HeaderCake>
-					<Followers path={ this.props.followType + '-follow-summary' } site={ site } followersList={ this.props.followersList } followType={ this.props.followType } followList={ this.props.followList } page={ this.props.page } perPage={ this.props.perPage } pageClick={ this.paginationHandler } changeFilter={ this.changeFilter } />
+					<Followers
+						path={ this.props.followType + '-follow-summary' }
+						site={ site }
+						followersList={ this.props.followersList }
+						followType={ this.props.followType }
+						followList={ this.props.followList }
+						page={ this.props.page }
+						perPage={ this.props.perPage }
+						pageClick={ this.paginationHandler }
+						changeFilter={ this.changeFilter } />
 				</div>
 			</div>
 		);
