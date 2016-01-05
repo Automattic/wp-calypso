@@ -8,12 +8,12 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
+var toggle = require( '../mixin-toggle' ),
 	SelectDropdown = require( 'components/select-dropdown' ),
-	StatsList = require( './stats-list' ),
+	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( './module-error' ),
-	skeleton = require( './mixin-skeleton' ),
+	ErrorPanel = require( '../module-error' ),
+	skeleton = require( '../mixin-skeleton' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
@@ -155,7 +155,7 @@ module.exports = React.createClass( {
 					</li>
 				);
 			}
-			
+
 			if ( this.props.commentFollowersList.response.data && this.props.commentFollowersList.response.data.total ) {
 				commentFollowURL = '/stats/follows/comment/' + this.props.site.slug;
 				commentFollowers = (
