@@ -71,7 +71,10 @@ var Plans = React.createClass( {
 		if ( ! this.props.sitePlans.hasLoadedFromServer || ! config.isEnabled( 'upgrades/free-trials' ) ) {
 			return null;
 		}
-		return <div className="plans__trial-copy">{ this.translate( 'Try WordPress.com Premium or Business free for 14 days, no credit card required' ) }</div>;
+
+		return <div className="plans__trial-copy"><span className="plans__trial-copy-text">{ this.translate( 'Try WordPress.com Premium or Business free for 14 days, no credit card{{nbsp/}}required', {
+				components: { nbsp: <span>&nbsp;</span> }
+		} ) }</span></div>;
 	},
 
 	render: function() {

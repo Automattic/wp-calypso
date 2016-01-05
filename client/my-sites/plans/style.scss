@@ -16,15 +16,29 @@
 .plans__trial-copy{
 	position: relative;
 	text-align: center;
+	color: $gray;
+	margin-bottom: 12px;
 
 	&:after,
 	&:before{
 		content: '';
 	    position: absolute;
-	    top: 50%;
-	    left: 0;
-	    right: 0;
-	    z-index: -1;
+	    	top: 50%;
+	    	left: 0;
+	    	right: 0;
+	    	z-index: -1;
 	    border-bottom: solid 1px #d9e3ea;
 	}
 }
+
+.plans__trial-copy-text{
+	background-color: $gray-light;
+	margin: 0 8%;
+	padding: 0 6px;
+	display: inline-block;
+	font-style:italic;
+
+
+}
+
+	
