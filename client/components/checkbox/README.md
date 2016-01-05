@@ -10,23 +10,23 @@ Refer to the following code snippet for a typical usage example:
 ```jsx
 <Checkbox
 	checked={ this.state.showSubtitles }
-	onChange={ this._toggleShowSubtitles }>
+	onChange={ this.toggleShowSubtitles }>
 	Show subtitles
 </Checkbox>
 ```
 
-## Props
+One thing to notice is the implementation differs from the HTML specification in the sense we ignore the `value` attribute and instead we use the inner content of the component.
 
-Props not listed below will be passed automatically to the rendered range input element.
+## Props
 
 ### `checked` (`boolean`)
 
-A boolean indicating whether the checkbox should be checked or not, then the checkmark Gridicon is shown.
+Whether the checkbox should be checked or not.
 
 ### `disabled` (`boolean`)
 
-A boolean indicating whether the checkbox should be disabled or not.
+Whether the checkbox should be disabled or not.
 
 ### `onChange` (`function`)
 
-An optional function to communicate the state change.
+An optional function called when the state changes.
