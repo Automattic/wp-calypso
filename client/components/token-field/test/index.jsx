@@ -270,6 +270,7 @@ describe( 'TokenField', function() {
 				expect( wrapper.refs.tokenField.state.isActive ).to.equal( isActive );
 			}
 
+			document.activeElement = document.body;
 			TestUtils.Simulate.blur( textInputNode );
 			setTimeout( function() {
 				// After blur, need to wait for TokenField#_blurTimeoutID

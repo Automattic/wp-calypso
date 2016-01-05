@@ -69,8 +69,18 @@ var TokenField = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes } tabIndex="-1" onKeyDown={ this._onKeyDown } onBlur={ this._onBlur } onFocus={ this._onFocus }>
-				<div ref="tokensAndInput" className="token-field__input-container" onClick={ this._onClick } tabIndex="-1">
+			<div ref="main"
+				className={ classes }
+				tabIndex="-1"
+				onKeyDown={ this._onKeyDown }
+				onBlur={ this._onBlur }
+				onFocus={ this._onFocus }
+			>
+				<div ref="tokensAndInput"
+					className="token-field__input-container"
+					onClick={ this._onClick }
+					tabIndex="-1"
+				>
 					{ this._renderTokensAndInput() }
 				</div>
 				<SuggestionsList
@@ -81,7 +91,8 @@ var TokenField = React.createClass( {
 					scrollIntoView={ this.state.selectedSuggestionScroll }
 					isExpanded={ this.state.isActive }
 					onHover={ this._onSuggestionHovered }
-					onSelect={ this._onSuggestionSelected } />
+					onSelect={ this._onSuggestionSelected }
+				/>
 			</div>
 		);
 	},
@@ -127,7 +138,11 @@ var TokenField = React.createClass( {
 	},
 
 	_onBlur: function( event ) {
-		var stillActive = event.target.contains( event.relatedTarget );
+		var blurSource = event.relatedTarget ||
+			event.nativeEvent.explicitOriginalTarget || // FF
+			document.activeElement; // IE11
+
+		var stillActive = this.refs.main.contains( blurSource );
 
 		if ( stillActive ) {
 			debug( '_onBlur but component still active; not doing anything' );
