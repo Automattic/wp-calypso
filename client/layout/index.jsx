@@ -19,7 +19,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
-	InviteMessage = require( 'my-sites/invites/invite-message' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
@@ -102,7 +101,6 @@ Layout = React.createClass( {
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
 						<WelcomeMessage welcomeSite={ newestSite } />
 					</Welcome>
-					<InviteMessage sites={ this.props.sites }/>
 					<EmailVerificationNotice user={ this.props.user } />
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
 					<TranslatorInvitation isVisible={ showInvitation } />

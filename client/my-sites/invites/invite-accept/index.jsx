@@ -40,8 +40,8 @@ export default React.createClass( {
 	componentWillMount() {
 		const acceptedInvite = store.get( 'invite_accepted' );
 		if ( acceptedInvite && acceptedInvite.inviteKey === this.props.inviteKey ) {
-			displayInviteAccepted( acceptedInvite );
 			page( this.getRedirectAfterAccept( acceptedInvite ) );
+			displayInviteAccepted( acceptedInvite );
 			return;
 		}
 		fetchInvite( this.props.siteId, this.props.inviteKey );
@@ -123,8 +123,7 @@ export default React.createClass( {
 			<EmptyContent
 				title={ this.getErrorTitle() }
 				line={ this.getErrorMessage() }
-				illustration={ '/calypso/images/drake/drake-whoops.svg' }
-			/>
+				illustration={ '/calypso/images/drake/drake-whoops.svg' } />
 		);
 	},
 

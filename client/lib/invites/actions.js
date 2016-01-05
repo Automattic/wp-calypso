@@ -61,13 +61,14 @@ export function createAccount( userData, callback ) {
 export function acceptInvite( invite ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.INVITE_ACCEPTED,
-		invite
+		invite,
+		displayOnNextPage: true
 	} );
 	wpcom.undocumented().acceptInvite(
 		invite,
 		( error, data ) => {
 			Dispatcher.handleViewAction( {
-				type: error ? ActionTypes.INVITE_ACCEPTED_ERROR : ActionTypes.INVITE_ACCEPTED_SUCCESFUL,
+				type: error ? ActionTypes.INVITE_ACCEPTED_ERROR : ActionTypes.INVITE_ACCEPTED_SUCCESS,
 				error,
 				invite,
 				data
@@ -83,20 +84,8 @@ export function displayInviteAccepted( invite ) {
 	} );
 }
 
-export function dismissInviteAccepted() {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DISMISS_INVITE_ACCEPTED_NOTICE
-	} );
-}
-
 export function displayInviteDeclined() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.DISPLAY_INVITE_DECLINED_NOTICE
-	} );
-}
-
-export function dismissInviteDeclined() {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DISMISS_INVITE_DECLINED_NOTICE
 	} );
 }
