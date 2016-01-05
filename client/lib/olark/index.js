@@ -171,9 +171,6 @@ const olark = {
 			}
 		} );
 
-		olarkEvents.on( 'api.chat.onOperatorsAway', this.showAvailabilityNotice );
-		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.showAvailabilityNotice );
-
 		this.setOlarkOptions( userData, wpcomOlarkConfig );
 		this.updateLivechatActiveCookie();
 		this.bindBeginConversationEvent( userData, siteUrl );
@@ -197,23 +194,6 @@ const olark = {
 
 	hookExpansionEventToStoreSync( eventName ) {
 		olarkEvents.on( eventName, this.syncStoreWithExpandedState );
-	},
-
-	showAvailabilityNotice() {
-		const noticeOptions = { showDismiss: true };
-		const { isOperatorAvailable, isUserEligible, isOlarkExpanded, isOlarkReady } = olarkStore.get();
-		const onEligibleContactForm = isUserEligible && window.location.pathname === '/help/contact';
-		const showNotice = isOlarkReady && ( isOlarkExpanded || onEligibleContactForm );
-
-		if ( ! showNotice ) {
-			return;
-		}
-
-		if ( isOperatorAvailable ) {
-			notices.success( i18n.translate( 'Our Happiness Engineers have returned, chat with us.' ), noticeOptions );
-		} else {
-			notices.warning( i18n.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ), noticeOptions );
-		}
 	},
 
 	setOlarkOptions( userData, wpcomOlarkConfig = {} ) {
