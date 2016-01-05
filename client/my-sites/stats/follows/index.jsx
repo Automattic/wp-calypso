@@ -18,7 +18,6 @@ export default React.createClass( {
 	mixins: [ observe( 'sites', 'site', 'followersList' ) ],
 
 	propTypes: {
-		domain: PropTypes.string,
 		followType: PropTypes.string,
 		followList: PropTypes.object,
 		follwersList: PropTypes.object,
@@ -27,50 +26,51 @@ export default React.createClass( {
 		sites: PropTypes.object
 	},
 
-	goBack: function() {
-		const pathParts = this.props.path.split( '/' );
-		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
+	goBack() {
+		const site = this.props.sites.getSelectedSite();
+		page( '/stats/insights/' + site.slug );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	},
 
-	paginationHandler: function( pageNum ) {
+	paginationHandler( pageNum ) {
+		const site = this.props.sites.getSelectedSite();
 		let path = '/stats/follows/' + this.props.followType + '/';
 		if ( pageNum > 1 ) {
 			path += pageNum + '/';
 		}
-		path += this.props.domain;
+		path += site.slug;
 		analytics.ga.recordEvent( 'Stats', 'Used Pagination on Followers Page', pageNum );
 		page( path );
 	},
 
-	changeFilter: function( selection ) {
+	changeFilter( selection ) {
 		const site = this.props.sites.getSelectedSite();
 		const filter = selection.value;
 
 		page( '/stats/follows/' + filter + '/' + site.slug );
 	},
 
-	render: function() {
-		const site = this.props.sites.getSelectedSite();
+	render() {
+		const { followType, followersList, followList, perPage, sites } = this.props;
+		const site = sites.getSelectedSite();
 
 		return (
 			<div className="main main-column" role="main">
-				<div id="my-stats-content" className={ 'follows-detail follows-detail-' + this.props.followType }>
-
+				<div id="my-stats-content" className={ 'follows-detail follows-detail-' + followType }>
 					<HeaderCake onClick={ this.goBack }>
 						{ this.translate( 'Followers' ) }
 					</HeaderCake>
 					<Followers
-						path={ this.props.followType + '-follow-summary' }
+						path={ followType + '-follow-summary' }
 						site={ site }
-						followersList={ this.props.followersList }
-						followType={ this.props.followType }
-						followList={ this.props.followList }
+						followersList={ followersList }
+						followType={ followType }
+						followList={ followList }
 						page={ this.props.page }
-						perPage={ this.props.perPage }
+						perPage={ perPage }
 						pageClick={ this.paginationHandler }
 						changeFilter={ this.changeFilter } />
 				</div>
