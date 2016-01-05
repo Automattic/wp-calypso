@@ -37,4 +37,8 @@ if ( config.isEnabled( 'oauth' ) ) {
 /**
  * Expose `wpcom`
  */
-module.exports = wpcomSupport( wpcom );
+if ( config.isEnabled( 'support-user' ) ) {
+	module.exports = wpcomSupport( wpcom );
+} else {
+	module.exports = wpcom;
+}
