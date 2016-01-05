@@ -18,7 +18,7 @@ import { SET_SELECTED_SITE, SET_SECTION } from 'state/action-types';
 export function selectedSite( state = null, action ) {
 	switch ( action.type ) {
 		case SET_SELECTED_SITE:
-			state = action.siteId;
+			state = action.siteId || null;
 			break;
 	}
 

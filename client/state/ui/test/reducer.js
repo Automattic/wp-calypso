@@ -25,5 +25,14 @@ describe( 'reducer', () => {
 
 			expect( state ).to.equal( 2916284 );
 		} );
+
+		it( 'should set to null if siteId is undefined', () => {
+			const state = selectedSite( null, {
+				type: SET_SELECTED_SITE,
+				siteId: undefined
+			} );
+
+			expect( state ).to.be.null;
+		} );
 	} );
 } );

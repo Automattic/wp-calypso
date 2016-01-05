@@ -139,7 +139,9 @@ module.exports = {
 
 		// If there's a valid site from the url path
 		// set site visibility to just that site on the picker
-		if ( ! sites.select( siteID ) ) {
+		if ( sites.select( siteID ) ) {
+			onSelectedSiteAvailable();
+		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
 			if ( sites.fetched || ! sites.fetching ) {
@@ -148,14 +150,12 @@ module.exports = {
 			// Otherwise, check when sites has loaded
 			sites.once( 'change', function() {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				if ( ! sites.select( siteID ) ) {
+				if ( sites.select( siteID ) ) {
+					onSelectedSiteAvailable();
+				} else {
 					page.redirect( allSitesPath );
 				}
-
-				onSelectedSiteAvailable();
 			} );
-		} else {
-			onSelectedSiteAvailable();
 		}
 
 		next();
