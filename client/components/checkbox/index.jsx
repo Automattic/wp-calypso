@@ -18,27 +18,20 @@ export default React.createClass( {
 		onChange: PropTypes.func
 	},
 
+	getInitialState() {
+		return {
+			focused: false
+		}
+	},
+
 	getDefaultProps() {
 		return {
 			disabled: false
 		};
 	},
 
-	getInitialState() {
-		const { checked } = this.props;
-
-		return {
-			checked: checked
-		}
-	},
-
 	handleChange( e ) {
-		const checked = e.target.checked;
 		const { onChange } = this.props;
-
-		this.setState( {
-			checked: checked
-		} )
 
 		onChange && onChange( e, this.state.checked );
 	},
@@ -56,8 +49,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { checked, focused } = this.state;
-		const { className, children, disabled } = this.props;
+		const { focused } = this.state;
+		const { className, children, checked, disabled } = this.props;
 		const classes = classNames( className, 'checkbox', {
 			'is-focused': focused,
 			'is-disabled': disabled
