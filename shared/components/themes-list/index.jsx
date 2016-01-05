@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import times from 'lodash/utility/times';
 
 /**
@@ -15,7 +16,7 @@ import PER_PAGE from 'lib/themes/constants';
 import { isDesktop, isWithinBreakpoint } from 'lib/viewport';
 import Debug from 'debug';
 
-const debug = new Debug( 'Calypso:themes:themes-list' );
+const debug = new Debug( 'calypso:themes:themes-list' );
 
 /**
  * Component
@@ -44,27 +45,38 @@ var ThemesList = React.createClass( {
 		};
 	},
 
+	getInitialState: function() {
+		return { numColumns: 3 }
+	},
+
+	componentDidMount: function() {
+		this.setState( { numColumns: this.getNumColumns() } );
+
+		window.addEventListener( 'resize', this.onWindowResize );
+	},
+
+	componentWillUnmount: function() {
+		window.removeEventListener( 'resize', this.onWindowResize );
+	},
+
+	onWindowResize: function() {
+		const numColumns = this.getNumColumns();
+		if ( numColumns !== this.state.numColumns ) {
+			this.setState( { numColumns } );
+		}
+	},
+
 	getThemeRef: function( theme ) {
 		return 'theme-' + theme.id;
 	},
 
 	getNumColumns: function() {
-		const ThemeListWidth = window.innerWidth - this.getSidebarWidth();
-		const themeWidth = 250;
+		const componentWidth = this.refs.themesList.clientWidth;
+		const themeWidth = 240;
 
-		const numColumns = Math.floor( ThemeListWidth / themeWidth ) || 1;
+		const numColumns = Math.floor( componentWidth / themeWidth ) || 1;
 		debug( 'numColumns: ', numColumns );
 		return numColumns;
-	},
-
-	getSidebarWidth: function() {
-		if ( isWithinBreakpoint( '<660px' ) ) {
-			return 0;
-		}
-		if ( isDesktop() ) {
-			return 300;
-		}
-		return 250;
 	},
 
 	renderTheme: function( theme, index ) {
@@ -87,7 +99,7 @@ var ThemesList = React.createClass( {
 
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems: function() {
-		return times( this.getNumColumns(), function( i ) {
+		return times( this.state.numColumns, function( i ) {
 			return <div className="themes-list--spacer" key={ 'themes-list--spacer-' + i } />;
 		} );
 	},
@@ -100,11 +112,7 @@ var ThemesList = React.createClass( {
 				/>;
 	},
 
-	render: function() {
-		if ( ! this.props.loading && this.props.themes.length === 0 ) {
-			return this.renderEmpty();
-		}
-
+	renderList: function() {
 		return (
 			<InfiniteList
 				key={ 'list' + this.props.search }
@@ -118,8 +126,17 @@ var ThemesList = React.createClass( {
 				renderItem={ this.renderTheme }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				renderTrailingItems={ this.renderTrailingItems }
-				itemsPerRow={ this.getNumColumns() }
+				itemsPerRow={ this.state.numColumns }
 			/>
+		);
+	},
+
+	render: function() {
+		const empty = ! this.props.loading && this.props.themes.length === 0;
+		return (
+			<div ref='themesList'>
+				{ empty ? this.renderEmpty() : this.renderList() }
+			</div>
 		);
 	}
 } );
