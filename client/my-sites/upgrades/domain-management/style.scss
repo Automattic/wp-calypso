@@ -53,22 +53,6 @@
 	cursor: pointer;
 	display: block;
 	overflow: hidden;
-
-	&:after {
-		@include noticon( '\f431', 25px );
-		color: $gray;
-		display: block;
-		height: auto;
-		line-height: 72px;
-		position: absolute;
-			right: 16px;
-			top: 0;
-		transform: rotate( -90deg );
-
-		@include breakpoint( ">660px" ) {
-			line-height: 83px;
-		}
-	}
 }
 
 .domain-management-list-item__title {
