@@ -20,11 +20,11 @@ export default React.createClass( {
 		module: PropTypes.string
 	},
 
-	recordEvent: function() {
+	recordEvent() {
 		analytics.ga.recordEvent( 'Stats', 'Clicked More Panel Information Help Link', titlecase( this.props.module ) );
 	},
 
-	render: function() {
+	render() {
 		const infoPanelClass = 'module-content-text module-content-text-info';
 		let infoView;
 
