@@ -153,7 +153,9 @@ module.exports = {
 		ensureStoreLoading( feedStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_blog_preview' );
+		analytics.tracks.recordEvent( 'calypso_reader_blog_preview', {
+			feed_id: context.params.feed_id
+		} );
 
 		ReactDom.render(
 			React.createElement( FeedStream, {
@@ -186,7 +188,9 @@ module.exports = {
 		ensureStoreLoading( feedStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_blog_preview' );
+		analytics.tracks.recordEvent( 'calypso_reader_blog_preview', {
+			blog_id: context.params.blog_id
+		} );
 
 		ReactDom.render(
 			React.createElement( SiteStream, {
@@ -300,7 +304,9 @@ module.exports = {
 		ensureStoreLoading( tagStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_tag_loaded' );
+		analytics.tracks.recordEvent( 'calypso_reader_tag_loaded', {
+			tag: tagSlug
+		} );
 
 		ReactDom.render(
 			React.createElement( TagStream, {
@@ -332,7 +338,10 @@ module.exports = {
 		ensureStoreLoading( listStore );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_list_loaded' );
+		analytics.tracks.recordEvent( 'calypso_reader_list_loaded', {
+			list_owner: context.params.user,
+			list_slug: context.params.list
+		} );
 
 		ReactDom.render(
 			React.createElement( ListStream, {

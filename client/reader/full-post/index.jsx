@@ -159,16 +159,17 @@ FullPostView = React.createClass( {
 
 					<PostErrors post={ post } />
 
-					{ hasFeaturedImage ?
-						<div className="full-post__featured-image test">
-							<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ this.props.post.canonical_image.width } />
-						</div> : null }
+					{ hasFeaturedImage
+						? <div className="full-post__featured-image test">
+								<img src={ this.props.post.canonical_image.uri } height={ this.props.post.canonical_image.height } width={ 	this.props.post.canonical_image.width } />
+							</div>
+						: null }
 
 					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
 
 					<PostByline post={ post } site={ site } icon={ true }/>
 
-					<div className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: postContent }}></div>
+					<div className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: postContent } }></div>
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ isDiscoverPost ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
@@ -259,9 +260,9 @@ FullPostDialog = React.createClass( {
 
 		siteName = utils.siteNameFromSiteAndPost( site, post );
 
-		siteLink = this.props.suppressSiteNameLink ?
-			siteName :
-			( <SiteLink post={ post }>{ siteName }</SiteLink> );
+		siteLink = this.props.suppressSiteNameLink
+			? siteName
+			: ( <SiteLink post={ post }>{ siteName }</SiteLink> );
 
 		if ( post && ! post._state ) {
 			shouldShowComments = PostCommentHelper.shouldShowComments( post );
@@ -300,14 +301,13 @@ FullPostDialog = React.createClass( {
 				buttons={ buttons }
 				baseClassName="detail-page"
 				onClose={ this.handleClose }
-				onClickOutside= { this.handleClickOutside}
+				onClickOutside= { this.handleClickOutside }
 				onClosed={ this.props.onClosed } >
 				<FullPostView
 					ref="fullPost"
 					post={ this.props.post }
 					site={ this.props.site }
-					shouldShowComments={ shouldShowComments }
-				/>
+					shouldShowComments={ shouldShowComments } />
 			</Dialog>
 		);
 	}
@@ -381,13 +381,23 @@ FullPostContainer = React.createClass( {
 
 		if ( ! this.hasSentPageView &&
 				post &&
-				site && site.get( 'state' ) === SiteState.COMPLETE &&
-				( site.get( 'is_private' ) || isNotAdmin ) ) {
-			readerPageView( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
+				site && site.get( 'state' ) === SiteState.COMPLETE ) {
+			if ( site.get( 'is_private' ) || isNotAdmin ) {
+				readerPageView( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
+			}
 			this.hasSentPageView = true;
 		}
 
-		analytics.tracks.recordEvent( 'calypso_reader_article_opened' );
+		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
+			analytics.tracks.recordEvent( 'calypso_reader_article_opened', {
+				blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
+				post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
+				feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
+				feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
+				is_jetpack: post.is_jetpack
+			} );
+			this.hasLoaded = true;
+		}
 	},
 
 	// Add change listeners to stores
@@ -397,13 +407,14 @@ FullPostContainer = React.createClass( {
 		SiteStore.on( 'change', this._onChange );
 
 		this.hasSentPageView = false;
+		this.hasLoaded = false;
 
 		this.attemptToSendPageView();
 
 		// This is a trick to make the dialog animations happy. We have to initially render the dialog
 		// as hidden, then set it to visible to trigger the animation.
 		process.nextTick( function() {
-			this.setState( { isVisible: true } );
+			this.setState( { isVisible: true } ); //eslint-disable-line react/no-did-mount-set-state
 		}.bind( this ) );
 	},
 
@@ -416,6 +427,7 @@ FullPostContainer = React.createClass( {
 			prevProps.feedId !== this.props.feedId ||
 			prevProps.blogId !== this.props.blogId ) {
 			this.hasSentPageView = false;
+			this.hasLoaded = false;
 			this.attemptToSendPageView();
 		}
 	},
