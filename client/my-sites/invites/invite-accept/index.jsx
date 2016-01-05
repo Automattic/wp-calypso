@@ -123,8 +123,7 @@ export default React.createClass( {
 			<EmptyContent
 				title={ this.getErrorTitle() }
 				line={ this.getErrorMessage() }
-				illustration={ '/calypso/images/drake/drake-whoops.svg' }
-			/>
+				illustration={ '/calypso/images/drake/drake-whoops.svg' } />
 		);
 	},
 
