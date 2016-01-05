@@ -13,7 +13,6 @@ import EmptyContent from 'components/empty-content';
 import InfiniteList from 'components/infinite-list';
 import { THEME_COMPONENT_HEIGHT as ITEM_HEIGHT } from 'lib/themes/constants';
 import PER_PAGE from 'lib/themes/constants';
-import { isDesktop, isWithinBreakpoint } from 'lib/viewport';
 import Debug from 'debug';
 
 const debug = new Debug( 'calypso:themes:themes-list' );
