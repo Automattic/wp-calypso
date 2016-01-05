@@ -1,17 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	times = require( 'lodash/utility/times' );
+import React from 'react';
+import times from 'lodash/utility/times';
 
 /**
  * Internal dependencies
  */
-var Theme = require( 'components/theme' ),
-	EmptyContent = require( 'components/empty-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	ITEM_HEIGHT = require( 'lib/themes/constants' ).THEME_COMPONENT_HEIGHT,
-	PER_PAGE = require( 'lib/themes/constants' ).PER_PAGE;
+import Theme from 'components/theme';
+import EmptyContent from 'components/empty-content';
+import InfiniteList from 'components/infinite-list';
+import { THEME_COMPONENT_HEIGHT as ITEM_HEIGHT } from 'lib/themes/constants';
+import PER_PAGE from 'lib/themes/constants';
+import { isDesktop, isWithinBreakpoint } from 'lib/viewport';
+import Debug from 'debug';
+
+const debug = new Debug( 'Calypso:themes:themes-list' );
 
 /**
  * Component
@@ -44,6 +48,25 @@ var ThemesList = React.createClass( {
 		return 'theme-' + theme.id;
 	},
 
+	getNumColumns: function() {
+		const ThemeListWidth = window.innerWidth - this.getSidebarWidth();
+		const themeWidth = 250;
+
+		const numColumns = Math.floor( ThemeListWidth / themeWidth ) || 1;
+		debug( 'numColumns: ', numColumns );
+		return numColumns;
+	},
+
+	getSidebarWidth: function() {
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			return 0;
+		}
+		if ( isDesktop() ) {
+			return 300;
+		}
+		return 250;
+	},
+
 	renderTheme: function( theme, index ) {
 		var key = this.getThemeRef( theme );
 		return <Theme ref={ key }
@@ -64,8 +87,7 @@ var ThemesList = React.createClass( {
 
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems: function() {
-		const NUM_SPACERS = 8; // gives enough spacers for a theoretical 9 column layout
-		return times( NUM_SPACERS, function( i ) {
+		return times( this.getNumColumns(), function( i ) {
 			return <div className="themes-list--spacer" key={ 'themes-list--spacer-' + i } />;
 		} );
 	},
@@ -96,7 +118,7 @@ var ThemesList = React.createClass( {
 				renderItem={ this.renderTheme }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				renderTrailingItems={ this.renderTrailingItems }
-				itemsPerRow={ 2 }
+				itemsPerRow={ this.getNumColumns() }
 			/>
 		);
 	}
