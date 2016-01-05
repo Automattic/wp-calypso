@@ -353,6 +353,17 @@ describe( 'TokenField', function() {
 			}, 50 ); // 50ms is a fast click
 		} );
 
+		it( 'should not lose focus when a suggestion is clicked', function( done ) {
+			// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
+			TestUtils.Simulate.blur( textInputNode, {
+				relatedTarget: tokenFieldNode.querySelector( '.token-field__suggestion' )
+			} );
+			setTimeout( function() {
+				expect( wrapper.refs.tokenField.state.isActive ).to.equal( true );
+				done();
+			}, 10 ); // wait for setState call
+		} );
+
 		it( 'should add tokens in the middle of the current tokens', function() {
 			sendKey( keyCodes.leftArrow );
 			setText( 'baz' );
