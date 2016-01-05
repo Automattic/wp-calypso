@@ -8,7 +8,7 @@ import get from 'lodash/object/get'
 const InviteNotices = {};
 
 InviteNotices.dispatchToken = Dispatcher.register( ( payload ) => {
-	const { type, invite } = payload.action;
+	const { type, invite, displayOnNextPage } = payload.action;
 	switch ( type ) {
 		case ActionTypes.INVITE_ACCEPTED:
 		case ActionTypes.DISPLAY_INVITE_ACCEPTED_NOTICE:
@@ -21,7 +21,8 @@ InviteNotices.dispatchToken = Dispatcher.register( ( payload ) => {
 					),
 					{
 						button: i18n.translate( 'Visit Site' ),
-						href: get( invite, 'site.URL' )
+						href: get( invite, 'site.URL' ),
+						displayOnNextPage
 					}
 				);
 			} else {
@@ -45,7 +46,10 @@ InviteNotices.dispatchToken = Dispatcher.register( ( payload ) => {
 								}
 							</p>
 						</div>
-					)
+					),
+					{
+						displayOnNextPage
+					}
 				)
 			}
 			break;
