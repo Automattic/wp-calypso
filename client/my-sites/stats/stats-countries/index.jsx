@@ -39,8 +39,12 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var countries,
-			mapData = [ [ this.translate( 'Country' ).toString(),
-			this.translate( 'Views' ).toString() ] ],
+			mapData = [
+				[
+					this.translate( 'Country' ).toString(),
+					this.translate( 'Views' ).toString()
+				]
+			],
 			data = this.data(),
 			hasError = this.props.dataList.isError(),
 			noData = this.props.dataList.isEmpty(),
