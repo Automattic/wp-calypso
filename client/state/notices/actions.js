@@ -3,7 +3,8 @@
  */
 import {
 	NEW_NOTICE,
-	REMOVE_NOTICE
+	REMOVE_NOTICE,
+	SET_ROUTE
 } from 'state/action-types';
 
 import { uniqueId } from 'lodash';
@@ -21,6 +22,8 @@ function createNotice( status, text, options = {} ) {
 			noticeId: uniqueId(),
 			duration: options.duration,
 			showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
+			isPersistent: options.isPersistent || false,
+			displayOnNextPage: options.displayOnNextPage || false,
 			status: status,
 			text: text
 		};
@@ -36,6 +39,13 @@ function createNotice( status, text, options = {} ) {
 			notice: notice
 		} );
 	}
+}
+
+export function setRoute( path ) {
+	return {
+		type: SET_ROUTE,
+		path: path
+	};
 }
 
 export const successNotice = createNotice.bind( null, 'is-success' );
