@@ -8,6 +8,7 @@ import Debug from 'debug';
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 import { action as ActionTypes } from 'lib/invites/constants';
+import analytics from 'analytics';
 
 /**
  * Module variables
@@ -45,6 +46,10 @@ export function fetchInvite( siteId, inviteKey ) {
 			type: error ? ActionTypes.RECEIVE_INVITE_ERROR : ActionTypes.RECEIVE_INVITE,
 			siteId, inviteKey, data, error
 		} );
+
+		if ( error ) {
+			analytics.tracks.recordEvent( 'calypso_invite_validation_failure' );
+		}
 	} );
 }
 
@@ -54,6 +59,12 @@ export function createAccount( userData, callback ) {
 		( error, response ) => {
 			const bearerToken = response && response.bearer_token;
 			callback( error, bearerToken );
+
+			if ( error ) {
+				analytics.tracks.recordEvent( 'calypso_invite_account_creation_failed' );
+			} else {
+				analytics.tracks.recordEvent( 'calypso_invite_account_created' );
+			}
 		}
 	);
 }
@@ -73,6 +84,12 @@ export function acceptInvite( invite ) {
 				invite,
 				data
 			} );
+
+			if ( error ) {
+				analytics.tracks.recordEvent( 'calypso_invite_accept_failed' );
+			} else {
+				analytics.tracks.recordEvent( 'calypso_invite_accepted' );
+			}
 		}
 	);
 }
