@@ -60,7 +60,6 @@
 		"jsx-quotes": [ 1, "prefer-double" ],
 		"react/jsx-no-bind": 1,
 		"react/jsx-curly-spacing": [ 1, "always" ],
-		"react/jsx-closing-bracket-location": [ 1, "after-props" ],
 		// Allows function use before declaration
 		"no-use-before-define": [ 2, "nofunc" ],
 		// We split external, internal, module variables
