@@ -31,6 +31,7 @@ var config = require( 'config' ),
 	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
+	errorReporting = require( 'lib/error-reporting' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
 	sections = require( 'sections' ),
@@ -160,6 +161,7 @@ function boot() {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
 		analytics.initialize( user, superProps );
+		errorReporting.setUser( user );
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
