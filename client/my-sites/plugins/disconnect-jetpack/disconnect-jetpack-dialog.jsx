@@ -34,19 +34,15 @@ module.exports = React.createClass( {
 		}
 	},
 
-	jetpackSiteRemain: function( site ) {
-		return site.capabilities && site.capabilities.manage_options && site.ID !== this.props.site.ID;
-	},
-
 	disconnectJetpack: function() {
-		var jetpackSites = sites.getJetpack();
+		var selectedSite = sites.getSelectedSite();
 
 		// remove any error and completed notices
 		SitesListActions.removeSitesNotices( [ { status: 'error' }, { status: 'completed' } ] );
 
 		if ( this.props.site ) {
 			SitesListActions.disconnect( this.props.site );
-			if ( this.props.redirect && jetpackSites.some( this.jetpackSiteRemain ) ) {
+			if ( selectedSite === this.props.site && this.props.redirect ) {
 				page.redirect( this.props.redirect );
 				return;
 			}
@@ -55,7 +51,9 @@ module.exports = React.createClass( {
 				SitesListActions.disconnect( site );
 			} );
 		}
-		page.redirect( '/sites' );
+		if ( selectedSite === this.props.site ) {
+			page.redirect( '/sites' );
+		}
 	},
 
 	render: function() {
@@ -90,8 +88,7 @@ module.exports = React.createClass( {
 				isVisible={ this.state.showJetpackDisconnectDialog }
 				buttons={ deactivationButtons }
 				onClose={ this.close }
-				transitionLeave={ false }
-			>
+				transitionLeave={ false }>
 				<h1>{ this.translate( 'Disconnect Jetpack' ) }</h1>
 				<p>{ moreInfo }</p>
 			</Dialog>
