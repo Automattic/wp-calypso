@@ -11,9 +11,7 @@ import moment from 'moment';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 
-export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite, event ) {
-	event.preventDefault();
-
+export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
 	addItem( cartItems.planItem( getCurrentPlan( sitePlans.data ).productSlug ) );
 
 	page( `/checkout/${ selectedSite.slug }` );

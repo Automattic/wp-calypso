@@ -10,38 +10,56 @@ import { addCurrentPlanToCartAndRedirect, getCurrentPlan, getDayOfTrial } from '
 import i18n from 'lib/mixins/i18n';
 import Notice from 'components/notice';
 
-const FreeTrialNotice = ( { cart, selectedSite, sitePlans } ) => {
-	const isDataLoading = ! cart.hasLoadedFromServer || ! sitePlans.hasLoadedFromServer,
-		currentPlan = getCurrentPlan( sitePlans.data );
+const FreeTrialNotice = React.createClass( {
+	propTypes: {
+		cart: React.PropTypes.object.isRequired,
+		sitePlans: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired
+	},
 
-	if ( isDataLoading || ! currentPlan.freeTrial ) {
-		return <noscript />;
+	addPlanAndRedirect( event ) {
+		event.preventDefault();
+
+		addCurrentPlanToCartAndRedirect( this.props.sitePlans, this.props.selectedSite );
+	},
+
+	render() {
+		const { cart, sitePlans } = this.props,
+			isDataLoading = ! cart.hasLoadedFromServer || ! sitePlans.hasLoadedFromServer,
+			currentPlan = getCurrentPlan( sitePlans.data );
+
+		if ( isDataLoading || ! currentPlan.freeTrial ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				status="is-info"
+				showDismiss={ false }>
+				{
+					i18n.translate( 'You are currently on day %(day)d of your %(planName)s trial.', {
+						args: {
+							day: getDayOfTrial( currentPlan ),
+							planName: currentPlan.productName
+						}
+					} )
+				}
+				{ ' ' }
+				{
+					i18n.translate( 'Get a free domain when you {{a}}upgrade{{/a}}.', {
+						components: {
+							a: <a
+								href="#"
+								onClick={ this.addPlanAndRedirect } />
+						}
+					} )
+				}
+			</Notice>
+		);
 	}
-
-	return (
-		<Notice
-			status="is-info"
-			showDismiss={ false }>
-			{
-				i18n.translate( 'You are currently on day %(day)d of your %(planName)s trial.', {
-					args: {
-						day: getDayOfTrial( currentPlan ),
-						planName: currentPlan.productName
-					}
-				} )
-			}
-			{ ' ' }
-			{
-				i18n.translate( 'Get a free domain when you {{a}}upgrade{{/a}}.', {
-					components: {
-						a: <a
-							href="#"
-							onClick={ addCurrentPlanToCartAndRedirect.bind( null, sitePlans, selectedSite ) } />
-					}
-				} )
-			}
-		</Notice>
-	);
-};
+} );
 
 export default FreeTrialNotice;
