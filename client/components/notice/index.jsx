@@ -29,7 +29,8 @@ export default React.createClass( {
 		isCompact: React.PropTypes.bool,
 		text: React.PropTypes.oneOfType( [
 			React.PropTypes.string,
-			React.PropTypes.object
+			React.PropTypes.object,
+			React.PropTypes.array
 		] ),
 		icon: React.PropTypes.string,
 		className: React.PropTypes.string
