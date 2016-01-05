@@ -5,6 +5,11 @@ THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 empty:=
 space:=$(empty) $(empty)
 THIS_DIR:= $(subst $(space),\$(space),$(THIS_DIR))
+ifeq ($(OS),Windows_NT)
+SEPARATOR := ;
+else
+SEPARATOR := :
+endif
 
 # BIN
 BIN := $(THIS_DIR)/bin
@@ -14,7 +19,7 @@ NODE_BIN := $(THIS_DIR)/node_modules/.bin
 
 # applications
 NODE ?= node
-NPM ?= $(NODE) $(shell which npm)
+NPM ?= npm
 BUNDLER ?= $(BIN)/bundler
 SASS ?= $(NODE_BIN)/node-sass --include-path 'client'
 RTLCSS ?= $(NODE_BIN)/rtlcss
@@ -58,7 +63,12 @@ CALYPSO_ENV ?= $(NODE_ENV)
 
 export NODE_ENV := $(NODE_ENV)
 export CALYPSO_ENV := $(CALYPSO_ENV)
-export NODE_PATH := server:client:.
+export NODE_PATH := server$(SEPARATOR)client$(SEPARATOR).
+ifeq ($(OS),Windows_NT)
+export NPM_GLOBAL_ROOT := $(shell $(NPM) -g root)
+else
+export NPM_GLOBAL_ROOT := $(shell $(NPM) -g root)/npm/node_modules
+endif
 
 .DEFAULT_GOAL := install
 
@@ -78,7 +88,7 @@ run: welcome githooks-commit install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
 node-version:
-	@NPM_GLOBAL_ROOT=$(shell $(NPM) -g root) $(BIN)/check-node-version
+	@$(BIN)/check-node-version
 
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
@@ -119,8 +129,11 @@ mixedindentlint: node_modules/mixedindentlint
 	@$(RECORD_ENV) $@
 
 # generate the client-side `config` js file
-$(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json client/config/regenerate.js
+$(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json client/config/regenerate.js client/lib/user/shared-utils.js
 	@$(NODE) client/config/regenerate.js > $@
+
+client/lib/user/shared-utils.js: server/user-bootstrap/shared-utils.js
+	@ln -s $(realpath $<) $@
 
 public/style.css: node_modules $(SASS_FILES)
 	@$(SASS) assets/stylesheets/style.scss $@

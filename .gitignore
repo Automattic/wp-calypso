@@ -20,6 +20,8 @@ env-config.sh
 
 /build
 
+/client/lib/user/shared-utils.js
+
 /public/*.js
 /public/style*.css
 /public/style*.css.map
