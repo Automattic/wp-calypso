@@ -16,7 +16,7 @@ var TransactionsTable = require( './transactions-table' ),
 	successNotice = require( 'state/notices/actions' ).successNotice,
 	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-const BillingHistoryTable = React.createClass( {
+export const BillingHistoryTable = React.createClass( {
 	displayName: 'BillingHistoryTable',
 
 	mixins: [ eventRecorder ],

@@ -24,10 +24,9 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	notices = require( 'notices' ),
 	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-const AccountPassword = React.createClass( {
+export const AccountPassword = React.createClass( {
 
 	displayName: 'AccountPassword',
 

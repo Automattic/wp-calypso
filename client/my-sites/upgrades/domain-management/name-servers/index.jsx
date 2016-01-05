@@ -25,7 +25,7 @@ import isEmpty from 'lodash/lang/isEmpty';
 import { successNotice } from 'state/notices/actions'
 
 
-const NameServers = React.createClass( {
+export const NameServers = React.createClass( {
 	propTypes: {
 		domains: React.PropTypes.object.isRequired,
 		nameservers: React.PropTypes.object.isRequired,

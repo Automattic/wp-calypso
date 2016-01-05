@@ -21,7 +21,7 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { successNotice } from 'state/notices/actions';
 
 
-const EmailForwardingAddNew = React.createClass( {
+export const EmailForwardingAddNew = React.createClass( {
 	propTypes: {
 		initialShowForm: React.PropTypes.bool
 	},

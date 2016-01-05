@@ -27,7 +27,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	classNames = require( 'classnames' ),
 	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-const ApplicationPasswords = React.createClass( {
+export const ApplicationPasswords = React.createClass( {
 
 	displayName: 'ApplicationPasswords',
 

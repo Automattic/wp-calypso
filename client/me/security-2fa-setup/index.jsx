@@ -15,7 +15,7 @@ var Security2faEnable = require( 'me/security-2fa-enable' ),
 	Security2faInitialSetup = require( 'me/security-2fa-initial-setup' ),
 	successNotice = require( 'state/notices/actions' ).successNotice;
 
-const Security2faSetup = React.createClass( {
+export const Security2faSetup = React.createClass( {
 
 	displayName: 'Security2faSetup',
 

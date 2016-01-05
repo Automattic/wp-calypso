@@ -55,7 +55,7 @@ const user = _user();
  */
 let debug = new Debug( 'calypso:me:account' );
 
-const Account = React.createClass( {
+export const Account = React.createClass( {
 
 	displayName: 'Account',
 

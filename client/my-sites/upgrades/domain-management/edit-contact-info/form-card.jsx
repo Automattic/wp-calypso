@@ -27,7 +27,7 @@ const Card = require( 'components/card' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	successNotice = require( 'state/notices/actions' ).successNotice;
 
-const EditContactInfoFormCard = React.createClass( {
+export const EditContactInfoFormCard = React.createClass( {
 	propTypes: {
 		contactInformation: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,

@@ -28,7 +28,7 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
 import { successNotice } from 'state/notices/actions';
 
-const DnsAddNew = React.createClass( {
+export const DnsAddNew = React.createClass( {
 	propTypes: {
 		selectedDomainName: React.PropTypes.string.isRequired
 	},

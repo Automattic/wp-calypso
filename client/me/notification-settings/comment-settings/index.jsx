@@ -20,7 +20,7 @@ import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-const NotificationCommentsSettings = React.createClass( {
+export const NotificationCommentsSettings = React.createClass( {
 	displayName: 'NotificationCommentsSettings',
 
 	mixins: [ observe( 'devices' ) ],

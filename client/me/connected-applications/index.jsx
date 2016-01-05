@@ -20,7 +20,7 @@ var ConnectedAppItem = require( 'me/connected-application-item' ),
 	Main = require( 'components/main' ),
 	successNotice = require( 'state/notices/actions' ).successNotice;
 
-const ConnectedApplications = React.createClass( {
+export const ConnectedApplications = React.createClass( {
 
 	displayName: 'ConnectedApplications',
 

@@ -12,11 +12,10 @@ import Button from 'components/button';
 import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import FoldableCard from 'components/foldable-card';
-import notices from 'notices';
 import { getPurchase } from 'me/purchases/utils';
 import { successNotice } from 'state/notices/actions';
 
-const EditPaymentMethodPaypal = React.createClass( {
+export const EditPaymentMethodPaypal = React.createClass( {
 	propTypes: {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired
