@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,6 +13,8 @@ import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'StatsInfoPanel',
+
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		module: PropTypes.string
