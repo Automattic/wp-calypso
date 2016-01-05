@@ -54,7 +54,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<DomainSearch
@@ -64,7 +64,8 @@ module.exports = {
 						productsList={ productsList } />
 				</CartData>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

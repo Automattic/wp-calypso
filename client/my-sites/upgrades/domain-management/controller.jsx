@@ -19,6 +19,7 @@ import NameserversData from 'components/data/domain-management/nameservers';
 import paths from 'my-sites/upgrades/paths';
 import PrimaryDomainData from 'components/data/domain-management/primary-domain';
 import ProductsList from 'lib/products-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import SitesList from 'lib/sites-list';
 import TransferData from 'components/data/domain-management/transfer';
@@ -54,12 +55,14 @@ module.exports = {
 			'Domain Management'
 		);
 
-		renderPage(
+		renderWithReduxStore(
 			<DomainManagementData
 				component={ DomainManagement.List }
 				context={ context }
 				productsList={ productsList }
-				sites={ sites } />
+				sites={ sites } />,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -157,13 +160,15 @@ module.exports = {
 			'Domain Management › Email'
 		);
 
-		renderPage(
+		renderWithReduxStore(
 			<EmailData
 				component={ DomainManagement.Email }
 				productsList={ productsList }
 				selectedDomainName={ context.params.domain }
 				context={ context }
-				sites={ sites } />
+				sites={ sites } />,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
