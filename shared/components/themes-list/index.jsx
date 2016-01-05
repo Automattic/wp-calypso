@@ -134,7 +134,7 @@ var ThemesList = React.createClass( {
 	render: function() {
 		const empty = ! this.props.loading && this.props.themes.length === 0;
 		return (
-			<div ref='themesList'>
+			<div ref="themesList">
 				{ empty ? this.renderEmpty() : this.renderList() }
 			</div>
 		);
