@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classes = require( 'component-classes' );
+	classes = require( 'component-classes' ),
+	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
  * Internal dependencies
@@ -33,16 +34,9 @@ module.exports = React.createClass( {
 		classes( document.body ).remove( 'billing-history-page' );
 	},
 
-	renderManageCards: function() {
-		if ( config.isEnabled( 'me/credit-cards' ) ) {
-			return (
-				<CreditCards cards={ storedCards } />
-			);
-		}
-	},
-
 	render: function() {
 		var data = this.props.billingData.get();
+		const hasBillingHistory = ! isEmpty( data.billingHistory );
 
 		return (
 
@@ -69,12 +63,16 @@ module.exports = React.createClass( {
 					<BillingHistoryTable transactions={ data.billingHistory } />
 				</Card>
 
-				<SectionHeader label={ this.translate( 'Upcoming Charges' ) } />
-				<Card id="upcoming-charges">
-					<UpcomingChargesTable sites={ this.props.sites } transactions={ data.upcomingCharges } />
-				</Card>
+				{ hasBillingHistory &&
+					<div>
+						<SectionHeader label={ this.translate( 'Upcoming Charges' ) } />
+						<Card id="upcoming-charges">
+							<UpcomingChargesTable sites={ this.props.sites } transactions={ data.upcomingCharges } />
+						</Card>
+					</div> }
 
-				{ this.renderManageCards() }
+				{ config.isEnabled( 'me/credit-cards' ) &&
+					<CreditCards cards={ storedCards } /> }
 
 			</div>
 		);
