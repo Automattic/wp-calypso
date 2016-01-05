@@ -10,11 +10,14 @@ import CompactCard from 'components/card/compact';
 import DomainPrimaryFlag from 'my-sites/upgrades/domain-management/components/domain/primary-flag';
 import { type as domainTypes } from 'lib/domains/constants';
 
+var Gridicon = require( 'components/gridicon' );
+
 const ListItem = React.createClass( {
 	render() {
 		return (
 			<CompactCard className="domain-management-list-item">
 				<div className="domain-management-list-item__link" onClick={ this.props.onClick }>
+					<Gridicon className='card__link-indicator' icon='chevron-right' />
 					<div className="domain-management-list-item__title">
 						{ this.props.domain.name }
 					</div>
