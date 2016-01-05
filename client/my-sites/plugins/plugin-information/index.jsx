@@ -138,7 +138,7 @@ export default React.createClass( {
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion === limits.maxVersion ) {
 			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( '{{icon/}} Compatible with %(maxVersion)s',
+				{ this.translate( '{{wpIcon/}} Compatible with %(maxVersion)s',
 					{
 						args: { maxVersion: limits.maxVersion },
 						components: { wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } /> }
