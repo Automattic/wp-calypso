@@ -257,9 +257,6 @@ function boot() {
 		next();
 	} );
 
-	// clear notices
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 	page( '*', function( context, next ) {
 		context.store.dispatch( setRouteAction( context.pathname ) );
 		next();
@@ -312,6 +309,10 @@ function boot() {
 	} );
 
 	require( 'my-sites' )();
+
+	// clear notices
+	//TODO: remove this one when notices are reduxified - it is for old notices
+	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
 		require( 'lib/olark' );
