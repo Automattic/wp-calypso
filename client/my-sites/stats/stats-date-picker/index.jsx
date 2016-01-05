@@ -1,22 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:stats:module-date-picker' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 
-module.exports = React.createClass({
+export default React.createClass( {
 	displayName: 'StatsModuleDatePicker',
+
+	propTypes: {
+		period: React.PropTypes.string,
+		date: React.PropTypes.string,
+		summary: React.PropTypes.string
+	},
 
 	// This is going to need some i18n love
 	dateForDisplay: function() {
-		var date = this.moment( this.props.date ),
-			formattedDate = '';
+		let date = this.moment( this.props.date );
+		let formattedDate = '';
 
-		switch( this.props.period ) {
+		switch ( this.props.period ) {
 			case 'week':
 				formattedDate = this.translate(
 					'%(startDate)s - %(endDate)s',
@@ -48,14 +53,10 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-		debug( 'Rendering stats date picker' );
+		const date = this.dateForDisplay();
+		const period = ( <span className="period"><span className="date">{ date }</span></span> );
 
-		var date = this.dateForDisplay(),
-			period = ( <span className="period"><span className="date">{ date }</span></span> ),
-			sectionTitle,
-			dateDisplay;
-
-		sectionTitle = this.translate( 'Stats for {{period/}}', {
+		const sectionTitle = this.translate( 'Stats for {{period/}}', {
 			components: {
 				period: period
 			},
@@ -63,13 +64,13 @@ module.exports = React.createClass({
 			comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
 		} );
 
-		if ( this.props.summary ) {
-			dateDisplay = (
-				<h4 className="module-header-title" key="header-title">{ sectionTitle }</h4> );
-		} else {
-			dateDisplay = ( <h3 className="stats-section-title">{ sectionTitle }</h3> );
-		}
-
-		return dateDisplay;
+		return(
+			<div>
+				{ this.props.summary
+					? ( <h4 className="module-header-title" key="header-title">{ sectionTitle }</h4> )
+					: ( <h3 className="stats-section-title">{ sectionTitle }</h3> )
+				}
+			</div>
+		);
 	}
-});
+} );

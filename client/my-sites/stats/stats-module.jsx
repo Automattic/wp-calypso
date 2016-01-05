@@ -16,7 +16,7 @@ var toggle = require( './mixin-toggle' ),
 	InfoPanel = require( './info-panel' ),
 	StatsList = require( './stats-list' ),
 	DownloadCsv = require( './download-csv' ),
-	DatePicker = require( './module-date-picker' ),
+	DatePicker = require( './stats-date-picker' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
 
@@ -45,9 +45,9 @@ module.exports = React.createClass( {
 
 	viewAllHandler: function( event ) {
 		var summaryPageLink = '/stats/' + this.props.period.period + '/' + this.props.path + '/' + this.props.site.slug + '?startDate=' + this.props.date;
-		
+
 		event.preventDefault();
-		
+
 		if ( this.props.beforeNavigate ) {
 			this.props.beforeNavigate();
 		}
