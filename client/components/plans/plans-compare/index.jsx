@@ -168,9 +168,9 @@ var PlansCompare = React.createClass( {
 		return (
 			<div className={ this.props.className }>
 				{
-					this.props.isInSignup ?
-					null :
-					<SidebarNavigation />
+					this.props.isInSignup
+					? null
+					: <SidebarNavigation />
 				}
 				<HeaderCake onClick={ this.goBack }>
 					{ this.translate( 'Compare Plans' ) }
