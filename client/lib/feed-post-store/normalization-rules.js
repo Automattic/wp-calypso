@@ -29,6 +29,7 @@ var fastPostNormalizationRules = [
 			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),
 			postNormalizer.content.makeEmbedsSecure,
 			postNormalizer.content.disableAutoPlayOnEmbeds,
+			postNormalizer.content.disableAutoPlayOnMedia,
 			postNormalizer.content.detectEmbeds,
 			postNormalizer.content.wordCountAndReadingTime
 		] ),

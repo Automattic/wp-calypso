@@ -280,6 +280,34 @@ describe( 'post-normalizer', function() {
 		} );
 	} );
 
+	describe( 'content.disableAutoPlayOnMediaShortcodes', function() {
+		it( 'should strip autoplay attributes from video', function( done ) {
+			normalizer(
+				{
+					content: '<video autoplay="1"></video>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnMedia ] ) ],
+				function( err, normalized ) {
+					assert.deepEqual( normalized, { content: '<video></video>' } );
+					done( err );
+				}
+			)
+		} );
+
+		it( 'should strip autoplay attributes from audio', function( done ) {
+			normalizer(
+				{
+					content: '<audio autoplay="1"></audio>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnMedia ] ) ],
+				function( err, normalized ) {
+					assert.deepEqual( normalized, { content: '<audio></audio>' } );
+					done( err );
+				}
+			)
+		} );
+	} );
+
 	describe( 'the content normalizer (withContentDOM)', function() {
 		it( 'should not call nested transforms if content is blank', function( done ) {
 			var post = {
