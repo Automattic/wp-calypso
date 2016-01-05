@@ -16,6 +16,7 @@ import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import analytics from 'analytics';
 
 export default React.createClass( {
 
@@ -28,7 +29,19 @@ export default React.createClass( {
 	accept() {
 		this.setState( { submitting: true } );
 		acceptInvite( this.props );
+		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 		page( this.props.redirectTo );
+	},
+
+	decline() {
+		if ( this.props.decline && 'function' === typeof this.props.decline ) {
+			this.props.decline();
+			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
+		}
+	},
+
+	signInLink() {
+		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
 	},
 
 	render() {
@@ -53,7 +66,7 @@ export default React.createClass( {
 						}
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
-						<Button onClick={ this.props.decline } disabled={ this.state.submitting }>
+						<Button onClick={ this.decline } disabled={ this.state.submitting }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
@@ -66,7 +79,7 @@ export default React.createClass( {
 				</Card>
 
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ signInLink }>
+					<LoggedOutFormLinkItem onClick={ this.signInLink } href={ signInLink }>
 						{ this.translate( 'Sign in as a different user' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>

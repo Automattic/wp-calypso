@@ -15,6 +15,7 @@ import wpcom from 'lib/wp'
 import store from 'store'
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import analytics from 'analytics';
 
 export default React.createClass( {
 
@@ -30,6 +31,10 @@ export default React.createClass( {
 
 	submitButtonText() {
 		return this.translate( 'Sign Up & Join' );
+	},
+
+	clickSignInLink() {
+		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 	},
 
 	submitForm( form, userData ) {
@@ -65,8 +70,7 @@ export default React.createClass( {
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ window.location.href }
-			/>
+				redirectTo={ window.location.href } />
 		)
 	},
 
@@ -82,13 +86,14 @@ export default React.createClass( {
 				}
 			}
 		);
+		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
 	},
 
 	renderFooterLink() {
 		let logInUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ logInUrl }>
+				<LoggedOutFormLinkItem onClick={ this.clickSignInLink } href={ logInUrl }>
 					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
@@ -120,8 +125,7 @@ export default React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
-					email={ this.props.sentTo }
-				/>
+					email={ this.props.sentTo } />
 				{ this.state.userData && this.loginUser() }
 			</div>
 		)

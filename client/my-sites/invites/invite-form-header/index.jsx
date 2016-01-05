@@ -3,8 +3,17 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import analytics from 'analytics';
+
 export default React.createClass( {
 	displayName: 'InviteFormHeader',
+
+	clickedSiteLink() {
+		analytics.tracks.recordEvent( 'calypso_invite_accept_form_header_site_link_click' );
+	},
 
 	getSiteLink() {
 		const { site } = this.props;
@@ -14,7 +23,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<a href={ site.URL } className="invite-header__site-link">
+			<a href={ site.URL } onClick={ this.clickedSiteLink } className="invite-header__site-link">
 				{ site.title }
 			</a>
 		);
