@@ -19,7 +19,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	HeaderCake = require( 'components/header-cake' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
-	Card = require( 'components/card' );
+	Card = require( 'components/card' ),
+	featuresListUtils = require( 'lib/features-list/utils' );
 
 var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
@@ -74,7 +75,7 @@ var PlansCompare = React.createClass( {
 		return featuresList.map( function( feature ) {
 			return (
 				<PlanFeatureCell key={ feature.product_slug } title={ feature.description }>
-					{ feature.title }
+					{ feature.title } { featuresListUtils.featureNotPartOfTrial( feature ) ? '*' : '' }
 				</PlanFeatureCell>
 			);
 		} );
@@ -94,6 +95,14 @@ var PlansCompare = React.createClass( {
 					sitePlans={ this.props.sitePlans } />
 			);
 		}, this );
+	},
+
+	freeTrialExceptionMessage: function( featuresList ) {
+		if ( featuresListUtils.featureListHasAFreeTrialException( featuresList ) ) {
+			return <div className="plans-compare__free-trial-exception-message">{ this.translate( '* Not included during the free trial period' ) }</div>;
+		}
+
+		return null;
 	},
 
 	comparisonTable: function() {
@@ -128,6 +137,7 @@ var PlansCompare = React.createClass( {
 						{ this.featureNames( featuresList ) }
 					</div>
 					{ this.featureColumns( site, plans, featuresList ) }
+					{ this.freeTrialExceptionMessage( featuresList ) }
 				</div>
 			);
 		}
