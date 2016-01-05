@@ -56,6 +56,13 @@ function isFreePlan( product ) {
 	return product.product_slug === 'free_plan';
 }
 
+function isFreeTrial( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return Boolean( product.free_trial );
+}
+
 function isPremium( product ) {
 	var premiumProducts = [ 'value_bundle', 'jetpack_premium' ];
 
@@ -247,6 +254,7 @@ function isSpaceUpgrade( product ) {
 module.exports = {
 	formatProduct,
 	isFreePlan: isFreePlan,
+	isFreeTrial,
 	isPremium: isPremium,
 	isBusiness: isBusiness,
 	isEnterprise: isEnterprise,

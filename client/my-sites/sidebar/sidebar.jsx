@@ -308,12 +308,18 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		const planLink = '/plans' + this.siteSuffix(),
-			planName = ( this.isSingle() ) ? site.plan.product_name_short : '';
+		const planLink = '/plans' + this.siteSuffix();
 
 		let linkClass = 'upgrades-nudge';
+
 		if ( productsValues.isPlan( site.plan ) ) {
 			linkClass += ' is-paid-plan';
+		}
+
+		let planName = site.plan.product_name_short;
+
+		if ( productsValues.isFreeTrial( site.plan ) ) {
+			planName = this.translate( 'Trial' );
 		}
 
 		return (
