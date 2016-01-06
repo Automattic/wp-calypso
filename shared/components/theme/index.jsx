@@ -78,12 +78,12 @@ var Theme = React.createClass( {
 
 	renderHover: function() {
 		var actionLabel = this.translate( 'Preview', {
-			context: 'appears on hovering a single theme thumbnail, opens the theme demo site preview'
+			comment: 'appears on hovering a single theme thumbnail, opens the theme demo site preview'
 		} );
 
 		if ( this.props.active ) {
 			actionLabel = this.translate( 'Customize', {
-				context: 'appears on hovering the active single theme thumbnail, opens the customizer'
+				comment: 'appears on hovering the active single theme thumbnail, opens the customizer'
 			} );
 		} else {
 			actionLabel = this.props.actionLabel || actionLabel;
