@@ -11,8 +11,7 @@ var React = require( 'react' ),
  */
 var Card = require( 'components/card' ),
 	ThemeMoreButton = require( './more-button' ),
-	Gridicon = require( 'components/gridicon' ),
-	isExternal = require( 'lib/url' ).isExternal;
+	Gridicon = require( 'components/gridicon' );
 
 /**
  * Component
