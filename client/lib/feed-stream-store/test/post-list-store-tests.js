@@ -29,7 +29,6 @@ describe( 'FeedPostList', function() {
 	} );
 
 
-
 	it( 'should require an id, a fetcher, a keyMaker', function() {
 		expect( function() {
 			return new PostListStore();
@@ -80,6 +79,8 @@ describe( 'FeedPostList', function() {
 		} );
 
 		it( 'should receive updates', function() {
+			let feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
+			feedPostStoreStub.returns( { date: '1999-12-31T23:58:00' } );
 			store.receiveUpdates( 'test', null, {
 				date_range: {
 					before: '1999-12-31T23:59:59',
@@ -88,6 +89,7 @@ describe( 'FeedPostList', function() {
 				posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 2, ID: 2 } ]
 			} );
 			expect( store.getUpdateCount() ).to.equal( 2 );
+			FeedPostStore.get.restore();
 		} );
 
 		it( 'should treat each set of updates as definitive', function() {
@@ -142,6 +144,8 @@ describe( 'FeedPostList', function() {
 					}
 				]
 			};
+			let feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
+			feedPostStoreStub.returns( { date: '1999-12-31T23:58:00' } );
 			store.receiveUpdates( 'test', null, firstSet );
 			expect( store.getUpdateCount() ).to.equal( 3 );
 
@@ -152,6 +156,7 @@ describe( 'FeedPostList', function() {
 			// new updates, overlapping
 			store.receiveUpdates( 'test', null, secondSet );
 			expect( store.getUpdateCount() ).to.equal( 4 );
+			FeedPostStore.get.restore();
 		} );
 	} );
 
