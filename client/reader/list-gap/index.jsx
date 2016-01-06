@@ -42,7 +42,7 @@ var Gap = React.createClass( {
 		stats.recordAction( 'fill_gap' );
 		stats.recordGaEvent( 'Clicked Fill Gap' );
 		stats.recordTrack( 'calypso_reader_filled_gap', {
-			stream_id: this.props.store.id
+			stream: this.props.store.id
 		} );
 	}
 
