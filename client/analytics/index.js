@@ -2,7 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:analytics' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/object/assign' ),
+	omit = require( 'lodash/object/omit' ),
+	isUndefined = require( 'lodash/lang/isUndefined' );
 
 /**
  * Internal dependencies
@@ -15,8 +17,8 @@ var config = require( 'config' ),
 // Load tracking scripts
 window._tkq = window._tkq || [];
 window.ga = window.ga || function() {
-		( window.ga.q = window.ga.q || [] ).push( arguments );
-	};
+	( window.ga.q = window.ga.q || [] ).push( arguments );
+};
 window.ga.l = +new Date();
 
 loadScript( '//stats.wp.com/w.js?48' );
@@ -101,7 +103,7 @@ var analytics = {
 
 			eventProperties = eventProperties || {};
 
-			debug( 'Record event "%s" called with props %s', eventName, JSON.stringify( eventProperties ) );
+			debug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
 				debug( '- Event name must be prefixed by "calypso_"' );
@@ -111,8 +113,14 @@ var analytics = {
 			if ( _superProps ) {
 				superProperties = _superProps.getAll();
 				debug( '- Super Props: %o', superProperties );
-				eventProperties = assign( eventProperties, superProperties );
+				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
+
+			// Remove properties that have an undefined value
+			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
+			eventProperties = omit( eventProperties, isUndefined );
+
+			debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 		},
