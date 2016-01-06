@@ -2,10 +2,6 @@
 import React from 'react';
 //import debugModule from 'debug';
 
-// Internal dependencies
-import Main from 'components/main';
-import Navigation from 'reader/list-management/navigation';
-
 //const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementSites = React.createClass( {
@@ -17,11 +13,14 @@ const ListManagementSites = React.createClass( {
 	},
 
 	render() {
+		if ( ! this.props.list ) {
+			return null;
+		}
+
 		return (
-			<Main className="list-management-feeds">
-				<Navigation selected="sites" list={ this.props.list } />
+			<div>
 				<h2>{ this.translate( 'List Sites' ) } - { this.props.list.slug }</h2>
-			</Main>
+			</div>
 			);
 	}
 } );

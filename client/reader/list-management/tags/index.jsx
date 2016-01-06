@@ -4,8 +4,6 @@ import times from 'lodash/utility/times';
 import debugModule from 'debug';
 
 // Internal dependencies
-import Main from 'components/main';
-import Navigation from 'reader/list-management/navigation';
 import InfiniteList from 'components/infinite-list';
 import ListItem from 'reader/list-item';
 import Icon from 'reader/list-item/icon';
@@ -13,9 +11,7 @@ import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 import Gridicon from 'components/gridicon';
-import ListStore from 'lib/reader-lists/lists';
-import ReaderListsStore from 'lib/reader-lists/subscriptions';
-import ReaderListsActions from 'lib/reader-lists/actions';
+import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsTagsStore from 'lib/reader-lists-tags/store';
 import { fetchMoreTags } from 'lib/reader-lists-tags/actions';
 import smartSetState from 'lib/react-smart-set-state';
@@ -40,13 +36,8 @@ const ListManagementTags = React.createClass( {
 	},
 
 	getStateFromStores() {
-		// Grab the list ID from the list store
-		const list = ListStore.get( this.props.list.owner, this.props.list.slug );
-		if ( ! list && ! ReaderListsStore.isFetching() ) {
-			ReaderListsActions.fetchList( this.props.list.owner, this.props.list.slug );
-		}
-
 		// Fetch tags, but only if we have the list information
+		const list = this.props.list;
 		let tags = null;
 		let isLastPage = false;
 		let currentPage = 0;
@@ -57,12 +48,11 @@ const ListManagementTags = React.createClass( {
 		}
 
 		return {
-			list,
 			tags,
 			isLastPage,
 			currentPage,
 			isFetchingTags: ReaderListsTagsStore.isFetching(),
-			lastListError: ListStore.getLastError(),
+			lastListError: ReaderListsStore.getLastError(),
 		};
 	},
 
@@ -75,12 +65,12 @@ const ListManagementTags = React.createClass( {
 	},
 
 	componentDidMount() {
-		ListStore.on( 'change', this.update );
+		ReaderListsStore.on( 'change', this.update );
 		ReaderListsTagsStore.on( 'change', this.update );
 	},
 
 	componentWillUnmount() {
-		ListStore.off( 'change', this.update );
+		ReaderListsStore.off( 'change', this.update );
 		ReaderListsTagsStore.off( 'change', this.update );
 	},
 
@@ -96,7 +86,7 @@ const ListManagementTags = React.createClass( {
 
 		return times( number, ( i ) => {
 			return (
-				<ListItem className="is-placeholder" key={'list-placeholder-' + i}>
+				<ListItem className="is-placeholder" key={ 'list-placeholder-' + i }>
 					<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
 					<Title>Loading</Title>
 					<Description></Description>
@@ -135,12 +125,11 @@ const ListManagementTags = React.createClass( {
 			return null;
 		}
 
-		if ( this.state.list && this.state.tags.size === 0 && this.state.isLastPage ) {
+		if ( this.props.list && this.state.tags.size === 0 && this.state.isLastPage ) {
 			return ( <EmptyContent
 						title={ this.translate( 'This list does not have any tags yet.' ) }
 						illustration={ '/calypso/images/drake/drake-404.svg' }
-						illustrationWidth={ 500 }
-					/> );
+						illustrationWidth={ 500 } /> );
 		}
 
 		return (
@@ -152,28 +141,20 @@ const ListManagementTags = React.createClass( {
 					fetchNextPage={ this.loadMore }
 					getItemRef={ this.getItemRef }
 					renderItem={ this.renderItem }
-					renderLoadingPlaceholders={ this.renderPlaceholders }
-				/>
+					renderLoadingPlaceholders={ this.renderPlaceholders } />
 		);
 	},
 
 	render() {
-		if ( ! this.state.list && this.state.lastListError ) {
+		if ( ! this.props.list && this.state.lastListError ) {
 			return ( <ListManagementError /> );
 		}
 
-		let message = null;
-		if ( ! this.state.list ) {
-			message = ( <p> {this.translate( 'Loading list information…' ) } </p> );
-		}
-
 		return (
-			<Main className="list-management-tags">
-				<Navigation selected="tags" list={ this.props.list } />
-				{ message }
+			<div>
 				{ this.renderTagList() }
-			</Main>
-			);
+			</div>
+		);
 	}
 } );
 

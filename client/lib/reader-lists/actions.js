@@ -1,24 +1,31 @@
-// Internal Dependencies
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	ReaderListsStore = require( 'lib/reader-lists/subscriptions' );
+// External dependencies
+import Dispatcher from 'dispatcher';
+import wpcom from 'lib/wp';
+import debugModule from 'debug';
+
+// Internal dependencies
+import ReaderListsStore from 'lib/reader-lists/lists';
+import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
+import { action as actionTypes } from './constants';
+
+const debug = debugModule( 'calypso:reader:list-management' );
 
 var fetchingLists = {};
 
-var ReaderListActions = {
+const ReaderListActions = {
 
 	fetchSubscriptions: function() {
-		if ( ReaderListsStore.isFetching() ) {
+		if ( ReaderListsSubscriptionsStore.isFetching() ) {
 			return;
 		}
 
-		ReaderListsStore.setIsFetching( true );
+		ReaderListsSubscriptionsStore.setIsFetching( true );
 
 		wpcom.undocumented().readLists( function( error, data ) {
-			ReaderListsStore.setIsFetching( false );
+			ReaderListsSubscriptionsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_READER_LISTS',
+				type: actionTypes.RECEIVE_READER_LISTS,
 				data: data,
 				error: error
 			} );
@@ -29,14 +36,14 @@ var ReaderListActions = {
 		var query = { owner, slug };
 
 		Dispatcher.handleViewAction( {
-			type: 'FOLLOW_LIST',
+			type: actionTypes.FOLLOW_LIST,
 			data: query
 		} );
 
 		wpcom.undocumented().followList( query, function( error, data ) {
 			if ( error || ! ( data && data.following ) ) {
 				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_FOLLOW_LIST_ERROR',
+					type: actionTypes.RECEIVE_FOLLOW_LIST_ERROR,
 					data: {
 						owner: query.owner,
 						slug: query.slug,
@@ -48,7 +55,7 @@ var ReaderListActions = {
 			}
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_FOLLOW_LIST',
+				type: actionTypes.RECEIVE_FOLLOW_LIST,
 				data: {
 					owner: query.owner,
 					slug: query.slug,
@@ -63,14 +70,14 @@ var ReaderListActions = {
 		var query = { owner, slug };
 
 		Dispatcher.handleViewAction( {
-			type: 'UNFOLLOW_LIST',
+			type: actionTypes.UNFOLLOW_LIST,
 			data: query
 		} );
 
 		wpcom.undocumented().unfollowList( query, function( error, data ) {
 			if ( error || ( data && data.following ) ) {
 				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_UNFOLLOW_LIST_ERROR',
+					type: actionTypes.RECEIVE_UNFOLLOW_LIST_ERROR,
 					data: {
 						owner: query.owner,
 						slug: query.slug,
@@ -82,7 +89,7 @@ var ReaderListActions = {
 			}
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_UNFOLLOW_LIST',
+				type: actionTypes.RECEIVE_UNFOLLOW_LIST,
 				data: {
 					owner: query.owner,
 					slug: query.slug,
@@ -110,7 +117,7 @@ var ReaderListActions = {
 			ReaderListsStore.setIsFetching( false );
 
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_READER_LIST',
+				type: actionTypes.RECEIVE_READER_LIST,
 				data: data,
 				error: error
 			} );
@@ -119,22 +126,52 @@ var ReaderListActions = {
 
 	create: function( title ) {
 		if ( ! title ) {
-			return;
+			throw new Error( 'List title is required' );
 		}
 
 		Dispatcher.handleViewAction( {
-			type: 'CREATE_READER_LIST',
+			type: actionTypes.CREATE_READER_LIST,
 			data: { title: title }
 		} );
 
 		wpcom.undocumented().readListsNew( title, function( error, data ) {
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_CREATE_READER_LIST',
+				type: actionTypes.RECEIVE_CREATE_READER_LIST,
 				data: data,
 				error: error
 			} );
 		} );
-	}
+	},
+
+	update: function( params ) {
+		if ( ! params.owner || ! params.slug || ! params.title ) {
+			throw new Error( 'List owner, slug and title are required' );
+		}
+
+		Dispatcher.handleViewAction( {
+			type: actionTypes.UPDATE_READER_LIST,
+			data: params
+		} );
+
+		wpcom.undocumented().readListsUpdate( params, function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: actionTypes.RECEIVE_UPDATE_READER_LIST,
+				data: data,
+				error: error
+			} );
+		} );
+	},
+
+	dismissNotice: function( listId ) {
+		if ( ! listId ) {
+			throw new Error( 'List ID is required' );
+		}
+
+		Dispatcher.handleViewAction( {
+			type: actionTypes.DISMISS_READER_LIST_NOTICE,
+			listId: listId
+		} );
+	},
 };
 
 module.exports = ReaderListActions;

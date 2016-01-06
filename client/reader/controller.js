@@ -463,7 +463,7 @@ module.exports = {
 	},
 
 	listManagementSites: function( context ) {
-		var listManagementSites = require( 'reader/list-management/sites' ),
+		const listManagement = require( 'reader/list-management' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
 			mcKey = 'list_sites';
@@ -473,19 +473,20 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagementSites, {
+			React.createElement( listManagement, {
 				key: 'list-management-sites',
 				list: {
 					owner: context.params.user,
 					slug: context.params.list
-				}
+				},
+				tab: 'sites'
 			} ),
 			document.getElementById( 'primary' )
 		);
 	},
 
 	listManagementTags: function( context ) {
-		var listManagementTags = require( 'reader/list-management/tags' ),
+		const listManagement = require( 'reader/list-management' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
 			mcKey = 'list_tags';
@@ -495,19 +496,20 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagementTags, {
+			React.createElement( listManagement, {
 				key: 'list-management-tags',
 				list: {
 					owner: context.params.user,
 					slug: context.params.list
-				}
+				},
+				tab: 'tags'
 			} ),
 			document.getElementById( 'primary' )
 		);
 	},
 
 	listManagementDescriptionEdit: function( context ) {
-		var listManagementDescriptionEdit = require( 'reader/list-management/description-edit' ),
+		const listManagement = require( 'reader/list-management' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List Description',
 			mcKey = 'list_edit';
@@ -517,34 +519,13 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		ReactDom.render(
-			React.createElement( listManagementDescriptionEdit, {
+			React.createElement( listManagement, {
 				key: 'list-management-description-edit',
 				list: {
 					owner: context.params.user,
 					slug: context.params.list
-				}
-			} ),
-			document.getElementById( 'primary' )
-		);
-	},
-
-	listManagementFollowers: function( context ) {
-		var listManagementFollowers = require( 'reader/list-management/followers' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > List Followers',
-			mcKey = 'list_followers';
-
-		pageTitleSetter( context )( i18n.translate( 'List Followers' ) );
-
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-
-		ReactDom.render(
-			React.createElement( listManagementFollowers, {
-				key: 'list-management-followers',
-				list: {
-					owner: context.params.user,
-					slug: context.params.list
-				}
+				},
+				tab: 'description-edit'
 			} ),
 			document.getElementById( 'primary' )
 		);

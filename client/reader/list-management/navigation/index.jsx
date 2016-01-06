@@ -13,6 +13,10 @@ const ListManagementNavigation = React.createClass( {
 	},
 
 	render() {
+		if ( ! this.props.list ) {
+			return null;
+		}
+
 		const current = this.props.selected;
 		const sectionNames = {
 			sites: this.translate( 'Sites' ),
