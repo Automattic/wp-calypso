@@ -18,6 +18,10 @@ var PopoverMenu = require( 'components/popover/menu' ),
  */
 var ThemeMoreButton = React.createClass( {
 	propTypes: {
+		// Theme ID (theme-slug)
+		id: React.PropTypes.string.isRequired,
+		// Index of theme in results list
+		index: React.PropTypes.number.isRequired,
 		// Options to populate the popover menu with
 		options: React.PropTypes.arrayOf(
 			React.PropTypes.shape( {
@@ -36,7 +40,7 @@ var ThemeMoreButton = React.createClass( {
 
 	togglePopover: function() {
 		this.setState( { showPopover: ! this.state.showPopover } );
-		! this.state.showPopover && this.props.onClick();
+		! this.state.showPopover && this.props.onClick( this.props.id, this.props.index );
 	},
 
 	closePopover: function( action ) {

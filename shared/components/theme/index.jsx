@@ -139,6 +139,7 @@ var Theme = React.createClass( {
 							<span className="price">{ this.translate( 'Purchased' ) }</span>
 						}
 						{ this.props.buttonContents.length ? <ThemeMoreButton id={ this.props.id }
+							index={ this.props.index }
 							onClick={ this.props.onMoreButtonClick }
 							price={ this.props.price }
 							purchased={ this.props.purchased }
