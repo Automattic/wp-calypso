@@ -1,19 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	isUndefined = require( 'lodash/lang/isUndefined' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanPrice',
 
-	getFormattedPrice: function( planDetails ) {
-		if ( planDetails ) {
-			if ( planDetails.raw_price === 0 ) {
+	getFormattedPrice: function( plan ) {
+		var rawPrice, formattedPrice;
+
+		if ( plan ) {
+			// the properties of a plan object from sites-list is snake_case
+			// the properties of a plan object from the global state are camelCase
+			rawPrice = isUndefined( plan.rawPrice ) ? plan.raw_price : plan.rawPrice;
+			formattedPrice = isUndefined( plan.formattedPrice ) ? plan.formatted_price : plan.formattedPrice;
+
+			if ( rawPrice === 0 ) {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
-			return planDetails.formatted_price;
+			return formattedPrice;
 		}
+
 		return this.translate( 'Loading' );
 	},
 
