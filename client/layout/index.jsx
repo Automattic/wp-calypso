@@ -101,7 +101,11 @@ Layout = React.createClass( {
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ config.isEnabled( 'support-user' ) ? <SupportUser /> : null }
-				<MasterbarLoggedIn user={ this.props.user } section={ this.props.section } sites={ this.props.sites } />
+				<MasterbarLoggedIn
+					user={ this.props.user }
+					section={ this.props.section }
+					sites={ this.props.sites }
+					isSupportUser={ config.isEnabled( 'support-user' ) && this.props.isSupportUser } />
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } /></div>
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
@@ -125,6 +129,8 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar } = state.ui;
-		return { isLoading, section, hasSidebar };
+		const isSupportUser = state.support.isSupportUser;
+
+		return { isLoading, section, hasSidebar, isSupportUser };
 	}
 )( Layout );

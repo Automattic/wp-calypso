@@ -13,6 +13,7 @@ import posts from './posts/reducer';
 import sharing from './sharing/reducer';
 import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer'
+import support from './support/reducer';
 import themes from 'lib/themes/reducers';
 import users from './users/reducer';
 import ui from './ui/reducer';
@@ -26,6 +27,7 @@ const reducer = combineReducers( {
 	sharing,
 	sites,
 	siteSettings,
+	support,
 	themes,
 	users,
 	ui

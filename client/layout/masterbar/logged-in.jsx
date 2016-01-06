@@ -60,7 +60,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<Masterbar>
+			<Masterbar className={ this.props.isSupportUser ? 'masterbar__support-user' : null }>
 				<Stats
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }

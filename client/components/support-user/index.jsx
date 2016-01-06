@@ -5,6 +5,8 @@ import React from 'react';
 import classNames from 'classnames';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -20,7 +22,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
+import { activateSupportUser, deactivateSupportUser } from 'state/support/actions';
+
+const SupportUser = React.createClass( {
 	displayName: 'SupportUser',
 
 	mixins: [ observe( 'userSettings' ), LinkedStateMixin ],
@@ -74,6 +78,7 @@ module.exports = React.createClass( {
 				errorMessage: error.message,
 				user: null
 		} );
+		this.props.deactivateSupportUser();
 	},
 
 	onChangeUser: function( e ) {
@@ -92,6 +97,7 @@ module.exports = React.createClass( {
 			);
 			this.setState( { isSupportUser: true } );
 			this.setState( { supportPassword: null } );
+			this.props.activateSupportUser();
 		}
 
 		this.setState( { showDialog: false } );
@@ -112,6 +118,7 @@ module.exports = React.createClass( {
 				errorMessage: null,
 				user: null
 			} );
+			this.props.deactivateSupportUser();
 			window.location.reload.bind( window.location );
 		}
 	},
@@ -217,3 +224,8 @@ module.exports = React.createClass( {
 		); }
 	}
 } );
+
+export default connect(
+	null,
+	{ activateSupportUser, deactivateSupportUser }
+)( SupportUser );

@@ -188,6 +188,14 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__support-user {
+	background-color: $orange-jazzy;
+	
+	.masterbar__item.is-active {
+		background-color: darken( $orange-jazzy, 10% );
+	}
+}
+
 @keyframes bubble-unread-indication {
 	30% {
 		transform: scale(1.5);
