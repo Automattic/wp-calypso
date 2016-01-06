@@ -22,7 +22,7 @@ function getNextPageParams( store ) {
 	} else {
 		// only fetch four items for the initial page
 		// speeds up the initial fetch a fair bit
-		params.before = '2015-12-01T00:00:00Z';
+		params.number = 4;
 	}
 
 	return params;
