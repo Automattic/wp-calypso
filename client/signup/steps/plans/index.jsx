@@ -115,15 +115,14 @@ module.exports = React.createClass( {
 			);
 		} else {
 			subHeaderText = this.translate(
-				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.',
-				{ 
+				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.', {
 					components: { a: <a
 						href={ this.comparePlansUrl() }
 						onClick={ this.handleComparePlansLinkClick.bind( null, 'header' ) } /> }
 				}
 			);
-
 		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
