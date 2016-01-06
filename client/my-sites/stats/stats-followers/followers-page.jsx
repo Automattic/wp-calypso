@@ -8,18 +8,18 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var StatsList = require( './stats-list' ),
+var StatsList = require( '../stats-list' ),
 	SelectDropdown = require( 'components/select-dropdown' ),
-	toggle = require( './mixin-toggle' ),
-	skeleton = require( './mixin-skeleton' ),
-	ErrorPanel = require( './stats-error' ),
-	Pagination = require( './pagination' ),
+	toggle = require( '../mixin-toggle' ),
+	skeleton = require( '../mixin-skeleton' ),
+	ErrorPanel = require( '../stats-error' ),
+	Pagination = require( '../pagination' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
-	displayName: 'StatModuleFollowersPage',
+	displayName: 'StatsFollowersPage',
 
 	mixins: [ toggle( 'FollowersPage' ), skeleton( 'data' ) ],
 
