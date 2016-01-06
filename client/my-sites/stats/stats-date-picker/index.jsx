@@ -8,7 +8,7 @@ import React from 'react';
  */
 
 export default React.createClass( {
-	displayName: 'StatsModuleDatePicker',
+	displayName: 'StatsDatePicker',
 
 	propTypes: {
 		period: React.PropTypes.string,
