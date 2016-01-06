@@ -79,6 +79,10 @@ var Themes = React.createClass( {
 		}
 	},
 
+	hideSiteSelectorModal: function() {
+		this.setSelectedTheme( null, null );
+	},
+
 	isThemeOrActionSet: function() {
 		return this.state.selectedTheme || this.state.selectedAction;
 	},
@@ -153,7 +157,7 @@ var Themes = React.createClass( {
 				}
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal selectedAction={ this.state.selectedAction }
 					selectedTheme={ this.state.selectedTheme }
-					onHide={ this.setSelectedTheme.bind( null, null, null ) }
+					onHide={ this.hideSiteSelectorModal }
 					actions={ bindActionCreators( Action, dispatch ) }
 					getOptions={ partialRight(
 						getButtonOptions,
