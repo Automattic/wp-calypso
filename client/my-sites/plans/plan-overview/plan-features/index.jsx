@@ -81,7 +81,13 @@ const PlanFeatures = React.createClass( {
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
-					description={ this.translate( 'You can live chat with our happiness engineers anytime you need.' ) }
+					description={
+						isBusiness( this.props.selectedSite.plan )
+						?
+							this.translate( 'You can live chat with our Happiness Engineers anytime you need.' )
+						:
+							this.translate( 'You can contact our Happiness Engineers anytime you need.' )
+					}
 					heading={ this.translate( 'Support' ) }
 					willBeRemoved={ willBeRemoved } />
 			</div>
