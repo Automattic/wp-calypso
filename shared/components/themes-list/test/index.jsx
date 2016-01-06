@@ -17,7 +17,6 @@ function mockComponent( displayName ) {
 describe( 'ThemesList', function() {
 	before( function() {
 		mockery.registerMock( './more-button', mockComponent() );
-		mockery.registerMock( 'components/infinite-list', mockComponent( 'InfiniteList' ) );
 
 		mockery.enable( {
 			warnOnReplace: false,
@@ -46,7 +45,8 @@ describe( 'ThemesList', function() {
 			],
 			lastPage: true,
 			loading: false,
-			fetchNextPage: function() {},
+			fetchNextPage: () => {},
+			getButtonOptions: () => {},
 		};
 
 		this.themesList = React.createElement( this.ThemesList, this.props );
@@ -66,14 +66,9 @@ describe( 'ThemesList', function() {
 			this.themesListElement = shallowRenderer.getRenderOutput();
 		} );
 
-		it( 'should render an InfiniteList with a className of "themes-list"', function() {
+		it( 'should render a div with a className of "themes-list"', function() {
 			assert( this.themesListElement, 'element does not exist' );
-			assert( this.themesListElement.type.displayName === 'InfiniteList', 'element type does not equal "InfiniteList"' );
 			assert( this.themesListElement.props.className === 'themes-list', 'className does not equal "themes-list"' );
-		} );
-
-		it( 'should have an item for each theme', function() {
-			assert( this.themesListElement.props.items.length === this.props.themes.length, 'items count is different from themes count' );
 		} );
 
 		context( 'when no themes are found', function() {
