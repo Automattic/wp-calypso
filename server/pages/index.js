@@ -12,7 +12,10 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' );
+	sections = require( '../../client/sections' ),
+	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+
+var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -361,9 +364,7 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
-			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
-				LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign ),
-				context = getDefaultContext( req );
+			const context = getDefaultContext( req );
 
 			try {
 				context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
