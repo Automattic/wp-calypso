@@ -10,8 +10,8 @@ import assign from 'lodash/object/assign';
 import i18n from 'lib/mixins/i18n';
 import Helper from 'lib/themes/helpers';
 
-export default function getButtonOptions( site, theme, actions, setSelectedTheme, togglePreview, showAll = false ) {
-	return rawOptions( site, theme )
+export default function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview, showAll = false ) {
+	return rawOptions( site, theme, isLoggedOut )
 		.filter( option => showAll || ! option.isHidden )
 		.map( appendUrl )
 		.map( appendAction );
@@ -64,7 +64,7 @@ export default function getButtonOptions( site, theme, actions, setSelectedTheme
 	}
 };
 
-function rawOptions( site, theme ) {
+function rawOptions( site, theme, isLoggedOut ) {
 	return [
 		{
 			name: 'preview',
@@ -89,14 +89,14 @@ function rawOptions( site, theme ) {
 				comment: 'label for selecting a site for which to purchase a theme'
 			} ),
 			hasAction: true,
-			isHidden: theme.active || theme.purchased || ! theme.price
+			isHidden: isLoggedOut || theme.active || theme.purchased || ! theme.price
 		},
 		{
 			name: 'activate',
 			label: i18n.translate( 'Activate' ),
 			header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 			hasAction: true,
-			isHidden: theme.active || ( theme.price && ! theme.purchased )
+			isHidden: isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
 		},
 		{
 			name: 'customize',
