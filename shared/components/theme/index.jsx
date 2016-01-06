@@ -96,7 +96,7 @@ var Theme = React.createClass( {
 	},
 
 	render: function() {
-		var themeClass = classNames( 'theme', {
+		const themeClass = classNames( 'theme', {
 			'is-active': this.props.active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
 		} );
