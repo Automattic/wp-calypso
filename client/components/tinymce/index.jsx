@@ -320,9 +320,7 @@ module.exports = React.createClass( {
 	},
 
 	onScrollPinTools: function() {
-		const editor = this._editor,
-			$ = editor.$;
-
+		const editor = this._editor;
 		if ( ! editor || this.props.mode === 'html' ) {
 			return;
 		}
@@ -340,7 +338,7 @@ module.exports = React.createClass( {
 		}
 
 		this._pinned = newPinned;
-		$( '.mce-toolbar-grp:not(.mce-inline-toolbar-grp)', container ).first().toggleClass( 'is-pinned', newPinned );
+		editor.dom.toggleClass( editor.getContainer(), 'is-pinned', newPinned );
 		if ( this.props.onTogglePin ) {
 			this.props.onTogglePin( newPinned ? 'pin' : 'unpin' );
 		}

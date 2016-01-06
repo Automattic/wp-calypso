@@ -11,24 +11,42 @@
 	}
 }
 
-.mce-tinymce > .mce-container-body {
-	&:after {
-		margin-top: 1px;
-		transition: width 0.2s;
+.mce-tinymce {
+	& > .mce-container-body {
+		&:after {
+			margin-top: 1px;
+			transition: width 0.2s;
 
-		@include breakpoint( "<660px" ) {
-			@include long-content-fade();
-			height: 44px;
+			@include breakpoint( "<660px" ) {
+				@include long-content-fade();
+				height: 44px;
+			}
+
+			@include breakpoint( "660px-960px" ) {
+				@include long-content-fade();
+				height: 36px;
+			}
 		}
 
-		@include breakpoint( "660px-960px" ) {
-			@include long-content-fade();
-			height: 36px;
+		&.is-scrolled-full:after {
+			width: 0;
 		}
 	}
 
-	&.is-scrolled-full:after {
-		width: 0;
+	&.is-pinned > .mce-container-body {
+		& > .mce-toolbar-grp,
+		&:after {
+			position: fixed;
+				top: 47px;
+		}
+
+		& > .mce-toolbar-grp {
+			left: ( $sidebar-width-min + 1 );
+
+			@include breakpoint( ">960px" ) {
+				left: ( $sidebar-width-max + 1 );
+			}
+		}
 	}
 }
 
@@ -546,16 +564,6 @@ div.mce-path {
 
 	@include breakpoint( "<480px" ) {
 		margin: 0;
-	}
-}
-
-.mce-toolbar-grp:not( .mce-inline-toolbar-grp ).is-pinned {
-	position: fixed;
-		top: 46px;
-		left: ( $sidebar-width-min + 1 );
-
-	@include breakpoint( ">960px" ) {
-		left: ( $sidebar-width-max + 1 );
 	}
 }
 
