@@ -44,13 +44,5 @@ module.exports = {
 			nudge: 50
 		},
 		defaultVariation: 'drake'
-	},
-	autoFillUsernameSignup: {
-		datestamp: '20151216',
-		variations: {
-			autoFill: 50,
-			dontAutoFill: 50
-		},
-		defaultVariation: 'dontAutoFill'
 	}
 };

@@ -30,7 +30,6 @@ import i18n from 'lib/mixins/i18n';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { abtest } from 'lib/abtest';
 import { getValueFromProgressStore, mergeFormWithValue } from 'signup/utils';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
@@ -40,7 +39,7 @@ let usernamesSearched = [],
 	timesUsernameValidationFailed = 0,
 	timesPasswordValidationFailed = 0;
 
-let resetAnalyticsData = () => {
+const resetAnalyticsData = () => {
 	usernamesSearched = [];
 	timesUsernameValidationFailed = 0;
 	timesPasswordValidationFailed = 0;
@@ -102,7 +101,7 @@ export default React.createClass( {
 			initialState: this.props.step ? this.props.step.form : undefined
 		} );
 		let initialState = this.formStateController.getInitialState();
-		if ( this.props.signupProgressStore && abtest( 'autoFillUsernameSignup' ) === 'autoFill' ) {
+		if ( this.props.signupProgressStore ) {
 			initialState = this.autoFillUsername( initialState );
 		}
 		this.setState( { form: initialState } );
