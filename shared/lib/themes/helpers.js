@@ -9,6 +9,13 @@ var analytics = require( 'analytics' ),
 var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
 
+	getSignupUrl( theme ) {
+		// TODO:
+		// * Possibly add a `source` parameter
+		// * Can we point to Calypso NUX (/start) and pass it the theme id?
+		return '//signup.wordpress.com/signup/?source=calypso_showcase&theme=' + theme.id;
+	},
+
 	getPreviewUrl( theme, site ) {
 		if ( site && site.jetpack ) {
 			return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );

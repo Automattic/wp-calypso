@@ -67,6 +67,12 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 function rawOptions( site, theme, isLoggedOut ) {
 	return [
 		{
+			name: 'signup',
+			label: i18n.translate( 'Start a Blog' ),
+			hasUrl: true,
+			isHidden: ! isLoggedOut
+		},
+		{
 			name: 'preview',
 			label: i18n.translate( 'Preview', {
 				context: 'verb'
