@@ -76,13 +76,14 @@ export const AccountPassword = React.createClass( {
 	},
 
 	submitForm: function( event ) {
+		const { userSettings: { saveSettings }, errorNotice: showErrorNotice } = this.props;
 		event.preventDefault();
 
 		this.setState( {
 			savingPassword: true
 		} );
 
-		this.props.userSettings.saveSettings(
+		saveSettings(
 			function( error, response ) {
 				this.setState( { savingPassword: false } );
 				this.markSaved();
@@ -91,7 +92,7 @@ export const AccountPassword = React.createClass( {
 					debug( 'Error saving password: ' + JSON.stringify( error ) );
 
 					// handle error case here
-					this.props.errorNotice( this.translate( 'There was a problem saving your password. Please, try again.' ) );
+					showErrorNotice( this.translate( 'There was a problem saving your password. Please, try again.' ) );
 					this.setState( { submittingForm: false } );
 				} else {
 					debug( 'Password saved successfully' + JSON.stringify( response ) );
