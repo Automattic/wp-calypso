@@ -355,9 +355,6 @@ ul.module-header-actions {
 	// Hidden info box (help)
 	// 1: 'inline-block' to get around margin collapse issue, cleaner than 1px top padding
 	// 2: Temporary for the welcome guide, don't show info boxes while modules are loading even if the welcome message is still open
-	.error & {
-		display: block;
-	}
 
 	// Hidden info box
 	&-info {
@@ -373,15 +370,6 @@ ul.module-header-actions {
 
 		.stats-module.is-loading.is-showing-info & {
 			display: none; // 2
-		}
-	}
-
-	// Error messages
-	&.is-error {
-		color: $gray;
-
-		.stats-module.is-showing-error & {
-			display: inline-block;
 		}
 	}
 

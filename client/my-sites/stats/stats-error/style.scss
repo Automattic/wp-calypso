@@ -1,0 +1,14 @@
+.module-content-text {
+	.error & {
+		display: block;
+	}
+
+	// Error messages
+	&.is-error {
+		color: $gray;
+
+		.stats-module.is-showing-error & {
+			display: inline-block;
+		}
+	}
+}
