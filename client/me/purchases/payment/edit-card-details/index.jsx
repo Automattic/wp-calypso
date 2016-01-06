@@ -235,7 +235,7 @@ const EditCardDetails = React.createClass( {
 						<em>{ this.translate( 'All fields required' ) }</em>
 
 						<FormButton type="submit">
-							{ this.translate( 'Update Card', { context: 'Button label', comment: 'Credit card' } ) }
+							{ this.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } ) }
 						</FormButton>
 					</CompactCard>
 				</form>

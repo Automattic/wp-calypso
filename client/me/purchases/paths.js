@@ -26,7 +26,11 @@ function cancelPrivateRegistration( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
 }
 
-function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
+function editCardDetails( siteName, purchaseId ) {
+	return editPaymentMethod( siteName, purchaseId ) + `/edit`;
+}
+
+function editCardDetailsWithCard( siteName, purchaseId, cardId = ':cardId' ) {
 	return editPaymentMethod( siteName, purchaseId ) + `/edit/${ cardId }`;
 }
 
@@ -39,6 +43,7 @@ export default {
 	confirmCancelPurchase,
 	cancelPrivateRegistration,
 	editCardDetails,
+	editCardDetailsWithCard,
 	editPaymentMethod,
 	list,
 	listNotice,

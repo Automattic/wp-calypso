@@ -55,6 +55,13 @@ export default function() {
 	);
 
 	page(
+		paths.purchases.editCardDetailsWithCard(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.editCardDetails
+	);
+
+	page(
 		paths.purchases.list(),
 		controller.sidebar,
 		controller.purchases.noSitesMessage,

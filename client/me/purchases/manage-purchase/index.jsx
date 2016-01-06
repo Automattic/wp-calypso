@@ -43,7 +43,8 @@ import {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	showEditPaymentDetails
+	showEditPaymentDetails,
+	showEditPaymentDetailsOption,
 } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToList, isDataLoading, recordPageView } from '../utils';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
@@ -483,9 +484,14 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props ),
 			{ id, payment } = purchase;
 
-		if ( showEditPaymentDetails( purchase ) ) {
+		let path = paths.editCardDetails( this.props.selectedSite.slug, id );
+		if ( payment.creditCard && payment.creditCard.id ) {
+			path = paths.editCardDetailsWithCard( this.props.selectedSite.slug, id, payment.creditCard.id );
+		}
+
+		if ( showEditPaymentDetailsOption( purchase ) ) {
 			return (
-				<VerticalNavItem path={ paths.editCardDetails( this.props.selectedSite.slug, id, payment.creditCard.id ) }>
+				<VerticalNavItem path={ path }>
 					{ this.translate( 'Edit Payment Method' ) }
 				</VerticalNavItem>
 			);

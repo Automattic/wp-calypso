@@ -213,7 +213,11 @@ function showCreditCardExpiringWarning( purchase ) {
 }
 
 function showEditPaymentDetails( purchase ) {
-	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase ) && isPaidWithCreditCard( purchase );
+	return showEditPaymentDetailsOption( purchase ) && isPaidWithCreditCard( purchase );
+}
+
+function showEditPaymentDetailsOption( purchase ) {
+	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
 }
 
 export {
@@ -238,5 +242,6 @@ export {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	showEditPaymentDetails
+	showEditPaymentDetails,
+	showEditPaymentDetailsOption,
 }
