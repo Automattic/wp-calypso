@@ -91,7 +91,7 @@ module.exports = React.createClass( {
 					onSelectPlan={ this.onSelectPlan } />
 				<a
 					href={ this.comparePlansUrl() }
-					className='plans-step__compare-plans-link'
+					className="plans-step__compare-plans-link"
 					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
 						<Gridicon icon="clipboard" size={ 18 } />
 						{ this.translate( 'Compare Plans' ) }
@@ -137,9 +137,9 @@ module.exports = React.createClass( {
 	render: function() {
 		return <div className="plans plans-step has-no-sidebar">
 			{
-				'compare' === this.props.stepSectionName ?
-				this.plansCompare() :
-				this.plansSelection()
+				'compare' === this.props.stepSectionName
+				? this.plansCompare()
+				: this.plansSelection()
 			}
 		</div>;
 	}
