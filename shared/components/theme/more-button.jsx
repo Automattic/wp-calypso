@@ -48,6 +48,10 @@ var ThemeMoreButton = React.createClass( {
 		isFunction( action ) && action();
 	},
 
+	focus: function( event ) {
+		event.target.focus();
+	},
+
 	render: function() {
 		var classes = classNames(
 			'theme__more-button',
@@ -73,9 +77,7 @@ var ThemeMoreButton = React.createClass( {
 						if ( option.url ) {
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
-									onMouseOver={ event => {
-										event.target.focus();
-									} }
+									onMouseOver={ this.focus }
 									key={ option.label }
 									href={ option.url }
 									target={ isOutsideCalypso( option.url ) ? '_blank' : null }>
@@ -88,7 +90,7 @@ var ThemeMoreButton = React.createClass( {
 								{ option.label }
 							</PopoverMenuItem>
 						);
-					} ) }
+					}, this ) }
 
 				</PopoverMenu>
 			</span>
