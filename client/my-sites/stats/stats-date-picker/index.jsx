@@ -1,25 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import React, { PropTypes } from 'react';
 
 export default React.createClass( {
 	displayName: 'StatsDatePicker',
 
 	propTypes: {
-		period: React.PropTypes.string,
-		date: React.PropTypes.string,
-		summary: React.PropTypes.bool
+		period: PropTypes.string.isRequired,
+		date: PropTypes.object.isRequired,
+		summary: PropTypes.bool
 	},
 
-	// This is going to need some i18n love
 	dateForDisplay() {
-		let date = this.moment( this.props.date );
-		let formattedDate = '';
+		const date = this.moment( this.props.date );
+		let formattedDate;
 
 		switch ( this.props.period ) {
 			case 'week':
@@ -53,10 +48,11 @@ export default React.createClass( {
 	},
 
 	render() {
-		const period = ( <span className="period"><span className="date">{ this.dateForDisplay() }</span></span> );
 		const sectionTitle = this.translate( 'Stats for {{period/}}', {
 			components: {
-				period: period
+				period: <span className="period">
+							<span className="date">{ this.dateForDisplay() }</span>
+						</span>
 			},
 			context: 'Stats: Main stats page heading',
 			comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
@@ -65,8 +61,8 @@ export default React.createClass( {
 		return(
 			<div>
 				{ this.props.summary
-					? ( <h4 className="module-header-title" key="header-title">{ sectionTitle }</h4> )
-					: ( <h3 className="stats-section-title">{ sectionTitle }</h3> )
+					? <h4 className="module-header-title" key="header-title">{ sectionTitle }</h4>
+					: <h3 className="stats-section-title">{ sectionTitle }</h3>
 				}
 			</div>
 		);
