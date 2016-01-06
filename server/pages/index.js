@@ -365,7 +365,13 @@ module.exports = function() {
 				LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign ),
 				context = getDefaultContext( req );
 
-			context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
+			try {
+				context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
+			} catch ( ex ) {
+				if ( config( 'env' ) === 'development' ) {
+					throw ex;
+				}
+			}
 
 			res.render( 'index.jade', context );
 		}
