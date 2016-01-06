@@ -441,7 +441,7 @@ assign( FeedStream.prototype, {
 			postKeys = this.filterNewPosts( data.posts );
 			if ( postKeys.length > 0 ) {
 				this.pendingPostKeys = postKeys;
-				this.pendingDateAfter = moment( data.date_range.after );
+				this.pendingDateAfter = moment( FeedPostStore.get( postKeys[ postKeys.length - 1 ] ).date );
 				this.emit( 'change' );
 			}
 		}

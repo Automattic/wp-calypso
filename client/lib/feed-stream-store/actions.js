@@ -22,7 +22,7 @@ function getNextPageParams( store ) {
 	} else {
 		// only fetch four items for the initial page
 		// speeds up the initial fetch a fair bit
-		params.number = 4;
+		params.before = '2015-12-01T00:00:00Z';
 	}
 
 	return params;
@@ -58,6 +58,8 @@ FeedStreamActions = {
 		//
 		// This also lets other stores that are interested in posts pick them up. Handling it internally to the post store
 		// would rob them of that chance.
+		//
+		// TODO add a new action that receives an array of posts, so we can batch up this change and only emit once
 		if ( ! error && data && data.posts ) {
 			forEach( data.posts, function( post ) {
 				if ( post && get( post, 'meta.data.discover_original_post' ) ) {
@@ -66,7 +68,9 @@ FeedStreamActions = {
 						blogId: post.meta.data.discover_original_post.site_ID,
 						postId: post.meta.data.discover_original_post.ID
 					} );
-				} else if ( post && get( post, 'meta.data.post' ) ) {
+				}
+
+				if ( post && get( post, 'meta.data.post' ) ) {
 					FeedPostStoreActions.receivePost( null, post.meta.data.post, {
 						feedId: post.feed_ID,
 						postId: post.ID
