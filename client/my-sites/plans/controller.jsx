@@ -123,6 +123,7 @@ module.exports = {
 				<ReduxProvider store={ context.store }>
 					<CartData>
 						<PlansCompare sites={ sites }
+							enableFreeTrials={ true }
 							selectedSite={ site }
 							onSelectPlan={ onSelectPlan }
 							plans={ plans }

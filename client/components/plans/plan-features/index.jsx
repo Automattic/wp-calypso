@@ -57,6 +57,7 @@ module.exports = React.createClass( {
 					sitePlan={ sitePlan }
 					site={ this.props.site } />
 				<PlanActions
+					enableFreeTrials={ this.props.enableFreeTrials }
 					onSelectPlan={ this.props.onSelectPlan }
 					isInSignup={ this.props.isInSignup }
 					plan={ this.props.plan }

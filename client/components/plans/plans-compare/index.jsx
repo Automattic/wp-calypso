@@ -86,6 +86,7 @@ var PlansCompare = React.createClass( {
 		return plans.map( function( plan ) {
 			return (
 				<PlanFeatures
+					enableFreeTrials={ this.props.enableFreeTrials }
 					onSelectPlan={ this.props.onSelectPlan }
 					isInSignup={ this.props.isInSignup }
 					key={ plan.product_id }
