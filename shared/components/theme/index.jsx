@@ -114,12 +114,12 @@ var Theme = React.createClass( {
 				<div className="theme__content">
 					{ this.renderHover() }
 					<a href={ this.props.screenshotClickUrl }>
-						{ this.props.screenshot ?
-							<img className="theme__img"
+						{ this.props.screenshot
+							? <img className="theme__img"
 								src={ this.props.screenshot + '?w=' + screenshotWidth }
 								onClick={ this.props.onScreenshotClick }
-								id={ screenshotID }/> :
-							<div className="theme__no-screenshot" >
+								id={ screenshotID }/>
+							: <div className="theme__no-screenshot" >
 								<Gridicon icon="themes" size={ 48 } />
 							</div>
 						}
