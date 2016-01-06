@@ -80,13 +80,17 @@ module.exports = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
 	},
 
+	isFreeTrialFlow: function() {
+		return 'free-trial' === this.props.flowName;
+	},
+
 	plansList: function() {
 		return (
 			<div>
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
-					enableFreeTrials={ 'free-trial' === this.props.flowName }
+					enableFreeTrials={ this.isFreeTrialFlow() }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
 				<a
@@ -126,6 +130,7 @@ module.exports = React.createClass( {
 	plansCompare: function() {
 		return <PlansCompare
 			className="plans-step__compare"
+			enableFreeTrials={ this.isFreeTrialFlow() }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
 			backUrl={ this.props.path.replace( '/compare', '' ) }

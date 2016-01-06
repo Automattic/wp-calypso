@@ -108,7 +108,7 @@ var PlansCompare = React.createClass( {
 			return false;
 		}
 
-		if ( canStartTrial || hasTrial ) {
+		if ( canStartTrial || hasTrial || this.props.enableFreeTrials ) {
 			return true;
 		}
 
