@@ -47,6 +47,7 @@ var Theme = React.createClass( {
 				action: React.PropTypes.func,
 			} )
 		),
+		// Index of theme in results list
 		index: React.PropTypes.number,
 		// Label to show on screenshot hover.
 		actionLabel: React.PropTypes.string
