@@ -13,11 +13,11 @@ export default React.createClass( {
 	propTypes: {
 		period: React.PropTypes.string,
 		date: React.PropTypes.string,
-		summary: React.PropTypes.string
+		summary: React.PropTypes.bool
 	},
 
 	// This is going to need some i18n love
-	dateForDisplay: function() {
+	dateForDisplay() {
 		let date = this.moment( this.props.date );
 		let formattedDate = '';
 
@@ -52,10 +52,8 @@ export default React.createClass( {
 		return formattedDate;
 	},
 
-	render: function() {
-		const date = this.dateForDisplay();
-		const period = ( <span className="period"><span className="date">{ date }</span></span> );
-
+	render() {
+		const period = ( <span className="period"><span className="date">{ this.dateForDisplay() }</span></span> );
 		const sectionTitle = this.translate( 'Stats for {{period/}}', {
 			components: {
 				period: period

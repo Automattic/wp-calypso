@@ -12,6 +12,7 @@ var page = require( 'page' ),
  */
 var StatsNavigation = require( './stats-navigation' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+	DatePicker = require( './stats-date-picker' ),
 	Comments = require( './stats-comments' ),
 	Countries = require( './stats-countries' ),
 	DatePicker = require( './stats-date-picker' ),
