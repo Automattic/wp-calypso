@@ -12,7 +12,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	HeaderCake = require( 'components/header-cake' ),
 	StatsModule = require( './stats-module' ),
 	StatsStrings = require( './stats-strings' )(),
-	Countries = require( './module-countries' ),
+	Countries = require( './stats-countries' ),
 	SummaryChart = require( './module-summary-chart' ),
 	VideoPlayDetails = require( './module-video-details' );
 

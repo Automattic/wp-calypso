@@ -852,22 +852,6 @@ ul.module-tabs {
 
 // Module specific tweaks
 
-// Countries
-.countryviews {
-
-	&.is-block {
-		display: none;
-	}
-
-	.stats-module.is-loading & .summary .module-placeholder.is-block {
-		display: block;
-	}
-
-	.module-content-list-item-label .icon img {
-		background-color: $gray-light;
-	}
-}
-
 // Show block placeholder on the summary page only
 .stats-module.is-loading.summary .module-placeholder.is-block {
 	display: block;
