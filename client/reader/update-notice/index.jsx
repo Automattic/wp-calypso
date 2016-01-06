@@ -10,7 +10,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var titleActions = require( 'lib/screen-title/actions' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	viewport = require( 'lib/viewport' );
 
 var UpdateNotice = React.createClass( {
 	mixins: [ PureRenderMixin ],
@@ -24,8 +25,20 @@ var UpdateNotice = React.createClass( {
 		return { onClick: noop };
 	},
 
+	getInitialState: function() {
+		return {
+			isAtTop: false
+		}
+	},
+
 	componentDidMount: function() {
 		this.setCount();
+		this.threshold = React.findDOMNode( this ).offsetTop;
+		window.addEventListener( 'scroll', this.onWindowScroll );
+	},
+
+	componentWillUnmount: function() {
+		window.removeEventListener( 'scroll', this.onWindowScroll );
 	},
 
 	componentDidUpdate: function() {
@@ -40,10 +53,17 @@ var UpdateNotice = React.createClass( {
 		return this.props.count >= 40 ? '40+' : ( '' + this.props.count );
 	},
 
+	onWindowScroll: function() {
+		if ( viewport.isMobile() ) {
+			return this.setState( { isAtTop: window.pageYOffset > this.threshold } );
+		}
+	},
+
 	render: function() {
 		var counterClasses = classnames( {
 			'reader-update-notice': true,
-			'is-active': this.props.count > 0
+			'is-active': this.props.count > 0,
+			'is-at-top': this.state.isAtTop
 		} );
 
 		return (
