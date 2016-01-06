@@ -11,6 +11,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
+	config = require( 'config' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	PlanFeatures = require( 'components/plans/plan-features' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
@@ -75,10 +76,10 @@ var PlansCompare = React.createClass( {
 		return featuresList.map( function( feature ) {
 			return (
 				<PlanFeatureCell key={ feature.product_slug } title={ feature.description }>
-					{ feature.title } { featuresListUtils.featureNotPartOfTrial( feature ) ? '*' : '' }
+					{ feature.title } { this.freeTrialExceptionMarker( feature ) }
 				</PlanFeatureCell>
 			);
-		} );
+		}, this );
 	},
 
 	featureColumns: function( site, plans, featuresList ) {
@@ -97,8 +98,33 @@ var PlansCompare = React.createClass( {
 		}, this );
 	},
 
+	showFreeTrialException: function() {
+		const hasTrial = this.props.sites ? this.props.sites.getSelectedSite().plan.free_trial : false,
+			canStartTrial = this.props.sitePlans ? this.props.sitePlans.data.some( function( plan ) {
+				return plan.canStartTrial;
+			} ) : false;
+
+		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
+			return false;
+		}
+
+		if ( canStartTrial || hasTrial ) {
+			return true;
+		}
+
+		return false;
+	},
+
+	freeTrialExceptionMarker: function( feature ) {
+		if ( this.showFreeTrialException() && featuresListUtils.featureNotPartOfTrial( feature ) ) {
+			return '*';
+		}
+
+		return null;
+	},
+
 	freeTrialExceptionMessage: function( featuresList ) {
-		if ( featuresListUtils.featureListHasAFreeTrialException( featuresList ) ) {
+		if ( this.showFreeTrialException() && featuresListUtils.featureListHasAFreeTrialException( featuresList ) ) {
 			return <div className="plans-compare__free-trial-exception-message">{ this.translate( '* Not included during the free trial period' ) }</div>;
 		}
 
