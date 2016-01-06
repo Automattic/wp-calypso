@@ -33,7 +33,7 @@ var Main = require( 'components/main' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' ),
-	FormToggle = require( 'components/forms/form-toggle' );
+	Gridicon = require( 'components/gridicon' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -415,9 +415,14 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			body;
+			body,
+			contentClasses,
+			viewToggleClass = classnames( {
+				'view-toggle': true,
+				'is-inbox': this.state.viewInbox,
+			} );
 
-		var contentClasses = classnames( {
+		contentClasses = classnames( {
 			'reader__content': true,
 			'is-condensed': this.state.viewInbox,
 		} );
@@ -447,15 +452,9 @@ module.exports = React.createClass( {
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
-				<div className="view-toggle">
-					<FormToggle
-						checked={ this.state.viewInbox }
-						//toggling={ this.props.toggling }
-						//disabled={ this.props.disabled }
-						onChange={ this.handleView }
-						id={ 'view-toggle__inbox' }
-					/>
-					<span className="view-toggle__label">Condensed View</span>
+				<div className={ viewToggleClass } onClick={ this.handleView }>
+					<Gridicon icon="align-justify" className="view-toggle__inbox" />
+					<Gridicon icon="align-image-center" className="view-toggle__card" />
 				</div>
 
 				{ this.props.children }

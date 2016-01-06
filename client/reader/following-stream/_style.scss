@@ -264,13 +264,31 @@
 
 // Condensed View
 .view-toggle {
-	text-align: right;
-	padding: 0 16px 16px 0;
+	position: fixed;
+		top: 50px;
+		left: 236px;
+	z-index: 1;
+	height: 34px;
+	width: 34px;
+	box-sizing: border-box;
+	border-radius: 3px;
+	cursor: pointer;
 
-	.view-toggle__label {
-		color: darken( $gray, 30 );
-		margin-left: 8px;
-		font-size: 13px;
+	@include breakpoint( "<960px" ) {
+		left: 192px;
+	}
+
+	.gridicon {
+		fill: $gray;
+		padding: 5px;
+		position: absolute;
+			top: 0;
+			left: 0;
+		transition: all 0.15s ease-in-out;
+	}
+
+	.view-toggle__inbox {
+		opacity: 0;
 	}
 
 	&:after {
@@ -278,14 +296,28 @@
 		display: table;
 		clear: both;
 	}
+
+	&:hover {
+		background: rgba( $gray-dark, 0.05 );
+	}
+
+	&.is-inbox {
+		.gridicon {
+			fill: darken( $gray, 20 );
+		}
+
+		.view-toggle__inbox {
+			opacity: 1;
+		}
+
+		.view-toggle__card {
+			opacity: 0;
+		}
+	}
 }
 
 .is-condensed {
-	margin: 0 -32px;
-
-	@include breakpoint( "<660px" ) {
-		margin: -8px;
-	}
+	margin: 0;
 
 	// Hide a bunch of stuff
 	.site__domain,
@@ -298,7 +330,7 @@
 	.reader__card {
 		padding: 16px 24px;
 		overflow: hidden;
-		margin-bottom: 0;
+		margin-bottom: 1px;
 
 		@include breakpoint( "<660px" ) {
 			padding: 16px;
@@ -315,20 +347,6 @@
 			background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 50%);
 		    visibility: visible;
     		height: 30px;
-		}
-
-		&:hover {
-			box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
-				0 1px 2px lighten( $gray, 30% ),
-				inset 0 1px 0 0 $gray,
-				inset 0 -1px 0 0 $gray;
-		}
-
-		&.is-selected {
-			box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
-				0 1px 2px lighten( $gray, 30% ),
-				inset 0 -1px 0 0 $gray,
-				inset 0 3px 0 0 $blue-wordpress;
 		}
 
 		.follow-button {
@@ -382,12 +400,6 @@
 		box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
 			0 1px 2px lighten( $gray, 30% );
 
-		&:hover {
-			box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5),
-				0 1px 2px lighten( $gray, 30% ),
-				inset 6px 0 0 lighten( $gray, 30 );
-		}
-
 		&:after {
 			display: none;
 		}
@@ -410,6 +422,8 @@
 		.reader__full-post-content {
 			font-size: 14px;
 			color: darken( $gray, 20 );
+			max-height: 22px;
+			overflow: hidden;
 		}
 	}
 
