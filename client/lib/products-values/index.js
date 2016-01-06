@@ -56,6 +56,13 @@ function isFreePlan( product ) {
 	return product.product_slug === 'free_plan';
 }
 
+function isFreeTrial( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return Boolean( product.free_trial );
+}
+
 function isPremium( product ) {
 	var premiumProducts = [ 'value_bundle', 'jetpack_premium' ];
 
@@ -246,28 +253,29 @@ function isSpaceUpgrade( product ) {
 
 module.exports = {
 	formatProduct,
-	isFreePlan: isFreePlan,
-	isPremium: isPremium,
-	isBusiness: isBusiness,
-	isEnterprise: isEnterprise,
-	isJpphpBundle: isJpphpBundle,
-	isPlan: isPlan,
-	isPrivateRegistration,
-	isDomainProduct: isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration: isDomainRegistration,
-	isDomainMapping: isDomainMapping,
-	isSiteRedirect,
-	isCredits: isCredits,
-	getDomainProductRanking: getDomainProductRanking,
-	isDependentProduct: isDependentProduct,
-	isGoogleApps: isGoogleApps,
-	isTheme,
+	getDomainProductRanking,
+	isBusiness,
+	isCredits,
 	isCustomDesign,
+	isDependentProduct,
+	isDomainMapping,
+	isDomainProduct,
+	isDomainRedemption,
+	isDomainRegistration,
+	isEnterprise,
+	isFreePlan,
+	isFreeTrial,
+	isGoogleApps,
+	isJpphpBundle,
 	isNoAds,
-	isVideoPress,
+	isPlan,
+	isPremium,
+	isPrivateRegistration,
+	isSiteRedirect,
+	isSpaceUpgrade,
+	isTheme,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
-	isSpaceUpgrade,
-	whitelistAttributes: whitelistAttributes
+	isVideoPress,
+	whitelistAttributes
 };
