@@ -72,6 +72,7 @@
 		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"post-editor/pages": true,
+		"post-editor/wpvideo-view": true,
 		"press-this": true,
 		"reader": true,
 		"reader/activities": true,
