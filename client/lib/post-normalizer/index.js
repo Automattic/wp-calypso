@@ -15,8 +15,9 @@ var assign = require( 'lodash/object/assign' ),
 	map = require( 'lodash/collection/map' ),
 	max = require( 'lodash/collection/max' ),
 	pick = require( 'lodash/object/pick' ),
-	startsWith = require( 'lodash/string/startsWith' ),
 	some = require( 'lodash/collection/some' ),
+	srcset = require( 'srcset' ),
+	startsWith = require( 'lodash/string/startsWith' ),
 	toArray = require( 'lodash/lang/toArray' ),
 	uniq = require( 'lodash/array/uniq' ),
 	url = require( 'url' );
@@ -193,8 +194,8 @@ function removeUnsafeAttributes( node ) {
 const excludedContentImageUrlParts = [ 'gravatar.com' ];
 function isCandidateForContentImage( imageUrl ) {
 	return ! imageShouldBeRemovedFromContent( imageUrl ) && every( excludedContentImageUrlParts, function( part ) {
-			return imageUrl && imageUrl.toLowerCase().indexOf( part ) === -1;
-		} );
+		return imageUrl && imageUrl.toLowerCase().indexOf( part ) === -1;
+	} );
 }
 
 const bannedUrlParts = [
@@ -494,9 +495,10 @@ normalizePost.content = {
 
 			// push everything, including tracking pixels, over to a safe URL
 			forEach( images, function( image ) {
-				var imgSource = image.getAttribute( 'src' ),
-					hostName = url.parse( imgSource, false, true ).hostname,
-					safeSource;
+				let imgSource = image.getAttribute( 'src' ),
+					hostName = url.parse( imgSource, false, true ).hostname;
+
+				let safeSource;
 				// if imgSource is relative, prepend post domain so it isn't relative to calypso
 				if ( ! hostName ) {
 					imgSource = url.resolve( post.URL, imgSource );
@@ -509,6 +511,7 @@ normalizePost.content = {
 					// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
 					// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
 					image.setAttribute( 'src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' );
+					image.removeAttribute( 'srcset' );
 					return;
 				}
 
@@ -518,6 +521,17 @@ normalizePost.content = {
 				}
 
 				image.setAttribute( 'src', safeSource );
+
+				if ( image.hasAttribute( 'srcset' ) ) {
+					const imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) ).map( imgSrc => {
+						if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
+							imgSrc.url = url.resolve( post.URL, imgSrc.url );
+						}
+						imgSrc.url = safeImageURL( imgSrc.url );
+						return imgSrc;
+					} );
+					image.setAttribute( 'srcset', srcset.stringify( imgSrcSet ) );
+				}
 
 				if ( isCandidateForContentImage( imgSource ) ) {
 					content_images.push( {
