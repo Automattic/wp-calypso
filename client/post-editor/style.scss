@@ -82,7 +82,7 @@
 	max-width: 100%;
 	margin: 0 auto;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( ">960px" ) {
 		width: 700px;
 	}
 }
