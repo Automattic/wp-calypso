@@ -42,6 +42,7 @@ var config = require( 'config' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	createReduxStore = require( 'state' ).createReduxStore,
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	reduxFluxSync = require( 'lib/redux-flux-sync' ),
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
@@ -157,6 +158,7 @@ function boot() {
 	translatorJumpstart.init();
 
 	reduxStore = createReduxStore();
+	reduxFluxSync( reduxStore );
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
