@@ -41,6 +41,7 @@
 		"manage/menus-jetpack": true,
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
+		"manage/themes/logged-out": true,
 		"premium-themes": true,
 		"press-this": true,
 		"manage/sharing": true,
