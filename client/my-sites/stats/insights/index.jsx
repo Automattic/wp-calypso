@@ -1,30 +1,30 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	store = require( 'store' );
+import React from 'react';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var StatsNavigation = require( '../stats-navigation' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	AllTime = require( 'my-sites/stats/all-time/' ),
-	Comments = require( '../stats-comments' ),
-	Followers = require( '../module-followers' ),
-	PostTrends = require( 'my-sites/post-trends' ),
-	SiteOverview = require( '../overview' ),
-	SiteOverviewPlaceholder = require( 'my-sites/stats/module-site-overview-placeholder' ),
-	StatsModule = require( '../stats-module' ),
-	statsStrings = require( '../stats-strings' ),
-	MostPopular = require( 'my-sites/stats/most-popular' ),
-	PostPerformance = require( '../post-performance' ),
-	analytics = require( 'analytics' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	touchDetect = require( 'lib/touch-detect' ),
-	Card = require( 'components/card' );
+import StatsNavigation from '../stats-navigation';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import AllTime from 'my-sites/stats/all-time/';
+import Comments from '../stats-comments';
+import Followers from '../module-followers';
+import PostTrends from 'my-sites/post-trends';
+import SiteOverview from '../overview';
+import SiteOverviewPlaceholder from 'my-sites/stats/module-site-overview-placeholder';
+import StatsModule from '../stats-module';
+import statsStrings from '../stats-strings';
+import MostPopular from 'my-sites/stats/most-popular';
+import PostPerformance from '../post-performance';
+import analytics from 'analytics';
+import observe from 'lib/mixins/data-observe';
+import touchDetect from 'lib/touch-detect';
+import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsInsights',
 
 	mixins: [ observe( 'summaryData' ) ],
@@ -37,33 +37,32 @@ module.exports = React.createClass( {
 		summaryDate: React.PropTypes.string
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return { surveyAnswered: false };
 	},
 
-	surveyYes: function() {
+	surveyYes() {
 		this.setState( { surveyAnswered: true } );
 		store.set( 'StatsInsightsSurvey', true );
 		analytics.tracks.recordEvent( 'calypso_insights_survey_taken', { insights_survey_response: 'yes' } );
 	},
 
-	surveyNo: function() {
+	surveyNo() {
 		this.setState( { surveyAnswered: true } );
 		store.set( 'StatsInsightsSurvey', true );
 		analytics.tracks.recordEvent( 'calypso_insights_survey_taken', { insights_survey_response: 'no' } );
 	},
 
-	render: function() {
-		var site = this.props.site,
-			summaryData,
-			moduleStrings = statsStrings(),
-			overview = ( <SiteOverviewPlaceholder insights={ true } /> ),
-			postTrends = null,
-			survey = null,
-			tagsList = null;
+	render() {
+		const site = this.props.site,
+			moduleStrings = statsStrings();
+
+		let postTrends = null,
+			tagsList = null,
+			overview = ( <SiteOverviewPlaceholder insights={ true } /> );
 
 		if ( site ) {
-			summaryData = this.props.statSummaryList.get( site.ID, this.props.summaryDate );
+			let summaryData = this.props.statSummaryList.get( site.ID, this.props.summaryDate );
 			if ( summaryData ) {
 				overview = ( <SiteOverview site={ site } summaryData={ summaryData } path={ '/stats/day' } insights={ true } /> );
 			}
@@ -78,7 +77,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( store.enabled && ! store.get( 'StatsInsightsSurvey' ) ) {
-			survey = (
+			let survey = (
 				<Card className="stats-poll">
 					<span className="stats-poll__message">Did you find this page useful?</span>
 					<button className="button stats-poll__button" onClick={ this.surveyYes }>Yes</button>
@@ -86,7 +85,7 @@ module.exports = React.createClass( {
 				</Card>
 			);
 		} else if ( this.state.surveyAnswered ) {
-			survey = (
+			let survey = (
 				<Card className="stats-poll is-gone">
 					Thanks for your feedback!
 				</Card>
@@ -99,15 +98,10 @@ module.exports = React.createClass( {
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
 					{ postTrends }
-
 					<PostPerformance site={ this.props.site } />
-
 					{ overview }
-
 					<AllTime allTimeList={ this.props.allTimeList } />
-
 					<MostPopular insightsList={ this.props.insightsList } />
-
 					<div className="stats-nonperiodic has-recent">
 						<h3 className="stats-section-title">{ this.translate( 'Other Recent Stats', { context: 'Heading for non periodic site stats' } ) }</h3>
 						<div className="module-list">
