@@ -112,8 +112,8 @@ function getChunk( path ) {
 
 function getCurrentBranchName() {
 	try {
-		return execSync('git rev-parse --abbrev-ref HEAD');
-	} catch(err) {
+		return execSync( 'git rev-parse --abbrev-ref HEAD' );
+	} catch ( err ) {
 		return undefined;
 	}
 }
