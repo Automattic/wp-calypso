@@ -3,6 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	assign = require( 'lodash/object/assign' ),
 	noop = require( 'lodash/utility/noop' ),
 	times = require( 'lodash/utility/times' );
 
@@ -75,7 +76,7 @@ module.exports = React.createClass( {
 		//return this.getStateFromStores();
 		return assign(
 			this.getStateFromStores(), {
-			viewInbox: true
+			viewInbox: false
 		} );
 	},
 
