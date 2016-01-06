@@ -65,8 +65,10 @@ var FeedStream = React.createClass( {
 		var tag = ReaderTags.get( this.props.tag );
 		ReaderTagActions[ isFollowing ? 'follow' : 'unfollow' ]( tag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
-		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag );
-		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed' );
+		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag.slug );
+		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed', {
+			tag: tag.slug
+		} );
 	},
 
 	render: function() {

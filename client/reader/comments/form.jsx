@@ -117,7 +117,11 @@ var PostCommentForm = React.createClass( {
 
 		stats.recordAction( 'posted_comment' );
 		stats.recordGaEvent( 'Clicked Post Comment Button' );
-		stats.recordTrack( 'calypso_reader_article_commented_on' );
+		stats.recordTrack( 'calypso_reader_article_commented_on', {
+			blog_id: post.site_ID,
+			post_id: post.ID,
+			parent_post_id: this.props.parentCommentID > 0 ? this.props.parentCommentID : undefined
+		} );
 
 		this.resetCommentText();
 

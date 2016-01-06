@@ -76,7 +76,10 @@ var FeedStream = React.createClass( {
 		ReaderListActions[ isFollowing ? 'follow' : 'unfollow' ]( list.owner, list.slug );
 		stats.recordAction( isFollowing ? 'followed_list' : 'unfollowed_list' );
 		stats.recordGaEvent( isFollowing ? 'Clicked Follow List' : 'Clicked Unfollow List', this.props.list.owner + ':' + this.props.list.slug );
-		stats.recordTrack( isFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed' );
+		stats.recordTrack( isFollowing ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
+			list_owner: list.owner,
+			list_slug: list.slug
+		} );
 	},
 
 	render: function() {
