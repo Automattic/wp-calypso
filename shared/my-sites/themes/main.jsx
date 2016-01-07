@@ -122,9 +122,13 @@ var Themes = React.createClass( {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 
-		const webPreviewButtonText = this.translate( 'Try & Customize', {
-			context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-		} );
+		const webPreviewButtonText = this.isLoggedOut()
+			? this.translate( 'Choose this design', {
+				comment: 'when signing up for a WordPress.com account with a selected theme'
+			} )
+			: this.translate( 'Try & Customize', {
+				context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
+			} );
 
 		return (
 			<Main className="themes">
@@ -135,7 +139,9 @@ var Themes = React.createClass( {
 						previewUrl={ this.state.previewUrl } >
 						<Button primary onClick={ this.setState.bind( this, { showPreview: false },
 							() => {
-								if ( site ) {
+								if ( this.isLoggedOut() ) {
+									dispatch( Action.signup( this.state.previewingTheme ) );
+								} else if ( site ) {
 									dispatch( Action.customize( this.state.previewingTheme, site ) );
 								} else {
 									this.setSelectedTheme( 'customize', this.state.previewingTheme );
