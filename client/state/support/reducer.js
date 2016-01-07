@@ -15,6 +15,18 @@ function isSupportUser( state = false, action ) {
 	return state;
 }
 
+function userData( state = {}, action ) {
+	switch ( action.type ) {
+		case ACTIVATE_SUPPORT_USER:
+			return action.userData;
+		case DEACTIVATE_SUPPORT_USER:
+			return null;
+	}
+	
+	return state;
+}
+
 export default combineReducers( {
-	isSupportUser
+	isSupportUser,
+	userData
 } );

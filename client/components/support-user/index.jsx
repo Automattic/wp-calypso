@@ -54,36 +54,36 @@ const SupportUser = React.createClass( {
 		}
 	},
 
-	closeDialog: function() {
+	onCloseDialog: function() {
 		this.setState( { showDialog: false } );
 	},
 
 	onTokenError: function( error ) {
 		this.setState( {
 				showDialog: true,
-				errorMessage: error.message,
-				user: null
+				errorMessage: error.message
 		} );
 		this.props.deactivateSupportUser();
 	},
 
 	onChangeUser: function( supportUser, supportPassword ) {
-		let user = new User();
-		let myUser = Object.assign( {}, user.data );
-		this.setState( { user: myUser } );
-
 		if ( supportUser && supportPassword ) {
+			let user = new User();
+			let userData = Object.assign( {}, user.data );
+			
 			user.clear();
 			user.changeUser(
 				supportUser,
 				supportPassword,
 				( error ) => this.onTokenError( error )
 			);
-			this.props.activateSupportUser();
+			this.props.activateSupportUser( userData );
 		}
 
-		this.setState( { showDialog: false } );
-		this.setState( { errorMessage: null } );
+		this.setState( {
+			showDialog: false,
+			errorMessage: null
+		} );
 	},
 
 	onRestoreUser: function( e ) {
@@ -91,15 +91,18 @@ const SupportUser = React.createClass( {
 
 		if ( this.props.isSupportUser ) {
 			let user = new User();
-			user.clear().fetch();
-			this.setState( {
-				showDialog: false,
-				errorMessage: null,
-				user: null
-			} );
+			
+			user.clear()
+			user.restoreUser();
 			this.props.deactivateSupportUser();
+			
 			window.location.reload.bind( window.location );
 		}
+			
+		this.setState( {
+			showDialog: false,
+			errorMessage: null
+		} );
 	},
 
 	render: function() {
@@ -107,10 +110,10 @@ const SupportUser = React.createClass( {
 			<SupportUserDialog
 				isVisible={ this.state.showDialog }
 				errorMessage={ this.state.errorMessage }
-				user={ this.state.user }
+				user={ this.props.userData }
 				isLoggedIn={ this.props.isSupportUser }
 				
-				onCloseDialog={ this.closeDialog }
+				onCloseDialog={ this.onCloseDialog }
 				onChangeUser={ this.onChangeUser }
 				onRestoreUser={ this.onRestoreUser }
 			/>
@@ -120,7 +123,8 @@ const SupportUser = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
-		isSupportUser: state.support.isSupportUser
+		isSupportUser: state.support.isSupportUser,
+		userData: state.support.userData
 	}
 }
 

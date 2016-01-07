@@ -42,7 +42,7 @@ const SupportUserDialog = React.createClass( {
 			<FormButton
 				key="cancel"
 				isPrimary={ false }
-				onClick={ this.props.closeDialog }>
+				onClick={ this.props.onCloseDialog }>
 					Cancel
 			</FormButton>
 		];
@@ -62,7 +62,7 @@ const SupportUserDialog = React.createClass( {
 			<FormButton
 				key="cancel"
 				isPrimary={ false }
-				onClick={ this.props.closeDialog }>
+				onClick={ this.props.onCloseDialog }>
 					Cancel
 			</FormButton>
 		];
@@ -88,10 +88,10 @@ const SupportUserDialog = React.createClass( {
 					</div>
 					<div className="support-user__detail">
 						<div className="support-user__username">
-							{ this.props.user.display_name }
+							{ this.props.user && this.props.user.display_name }
 						</div>
 						<div className="support-user__login">
-							<span>@{ this.props.user.username }</span>
+							<span>@{ this.props.user && this.props.user.username }</span>
 						</div>
 					</div>
 				</div>

@@ -250,6 +250,12 @@ User.prototype.changeUser = function( username, password, tokenErrorCallback ) {
 	}
 };
 
+User.prototype.restoreUser = function() {
+	if ( config.isEnabled( 'support-user' ) ) {
+		wpcom.restoreUser();
+	}
+}
+
 /**
  * Expose `User`
  */

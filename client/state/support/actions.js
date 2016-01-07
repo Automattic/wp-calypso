@@ -8,10 +8,10 @@ import { ACTIVATE_SUPPORT_USER, DEACTIVATE_SUPPORT_USER } from 'state/action-typ
  *
  * @return {Object}      Action object
  */
-export function activateSupportUser() {
-	console.log( 'activateSupportUser' );
+export function activateSupportUser( userData ) {
 	return {
-		type: ACTIVATE_SUPPORT_USER
+		type: ACTIVATE_SUPPORT_USER,
+		userData
 	};
 }
 
@@ -21,7 +21,6 @@ export function activateSupportUser() {
  * @return {Object}      Action object
  */
 export function deactivateSupportUser() {
-	console.log( 'deactivateSupportUser' );
 	return {
 		type: DEACTIVATE_SUPPORT_USER
 	};
