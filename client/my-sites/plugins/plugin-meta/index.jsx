@@ -11,7 +11,6 @@ import _some from 'lodash/collection/some';
  */
 import analytics from 'analytics';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
@@ -23,6 +22,7 @@ import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginSettingsLink from 'my-sites/plugins/plugin-settings-link';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 
 export default React.createClass( {
@@ -87,14 +87,7 @@ export default React.createClass( {
 			return;
 		}
 
-		return (
-			<a className="plugin-meta__settings-link"
-				href={ this.props.plugin.wp_admin_settings_page_url }
-				target="_blank">
-				{ this.translate( 'Setup' ) }
-				<Gridicon size={ 18 } icon="external" />
-			</a>
-		);
+		return <PluginSettingsLink linkUrl={ this.props.plugin.wp_admin_settings_page_url } />;
 	},
 
 	renderName() {
