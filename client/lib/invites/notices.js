@@ -32,7 +32,9 @@ function displayNotice( invite, displayOnNextPage ) {
 						} ) }
 					</h3>
 					<p className="invite-message__intro">
-						{ i18n.translate( 'This is your site dashboard where you can write posts and control your site. ' ) }
+						{ i18n.translate( 'This is your site dashboard where you will be able to manage all aspects of %(site)s', {
+							args: { site: get( invite, 'site.title' ) }
+						} ) }
 					</p>
 					<p className="invite-message__intro">
 						{
@@ -55,7 +57,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						} ) }
 					</h3>
 					<p className="invite-message__intro">
-						{ i18n.translate( 'This is your site dashboard where you can write posts and control your site. ' ) }
+						{ i18n.translate( 'This is your site dashboard where you can publish and manage your own posts and the posts of others, as well as upload media.' ) }
 					</p>
 					<p className="invite-message__intro">
 						{
@@ -78,7 +80,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						} ) }
 					</h3>
 					<p className="invite-message__intro">
-						{ i18n.translate( 'This is your site dashboard where you can write posts. ' ) }
+						{ i18n.translate( 'This is your site dashboard where you can publish and edit your own posts as well as upload media.' ) }
 					</p>
 					<p className="invite-message__intro">
 						{
@@ -101,7 +103,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						} ) }
 					</h3>
 					<p className="invite-message__intro">
-						{ i18n.translate( 'This is your site dashboard where you can write posts. ' ) }
+						{ i18n.translate( 'This is your site dashboard where you can write and manage your own posts.' ) }
 					</p>
 					<p className="invite-message__intro">
 						{
