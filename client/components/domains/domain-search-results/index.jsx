@@ -59,13 +59,13 @@ var DomainSearchResults = React.createClass( {
 				);
 		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
 			if ( this.props.products.domain_map && this.props.lastDomainError.code === 'not_available_but_mappable' ) {
-				mappingOffer = this.translate( 'Is it yours? {{a}}Map it{{/a}} for %(cost)s.', {
-					args: { cost: this.props.products.domain_map.cost_display },
-					components: { a: <a href="#" onClick={ this.addMappingAndRedirect } /> }
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
+					args: { domain: lastDomainSearched, cost: this.props.products.domain_map.cost_display },
+					components: { a: <a href="#" onClick={ this.addMappingAndRedirect } />, small: <small /> }
 				} );
 			}
 
-			const domainUnavailableMessage = this.translate( 'Aww \u2014 %(domain)s is not available.', {
+			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', {
 				args: { domain: lastDomainSearched }
 			} );
 
