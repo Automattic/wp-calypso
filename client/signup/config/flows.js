@@ -71,13 +71,6 @@ const flows = {
 		lastModified: '2015-12-10'
 	},
 
-	headstart: {
-		steps: [ 'theme-headstart', 'domains-with-theme', 'plans', 'user' ],
-		destination: getCheckoutDestination,
-		description: 'Show users their site after signup, with prepopulated content',
-		lastModified: '2015-10-01'
-	},
-
 	'delta-discover': {
 		steps: [ 'user' ],
 		destination: '/',
