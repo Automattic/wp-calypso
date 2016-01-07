@@ -132,7 +132,7 @@ module.exports = React.createClass( {
 			label: this.props.tabLabel + label
 		};
 
-		tabs = <StatTab key="char-tab" { ...tabOptions } />;
+		tabs = <StatTab key="chart-tab" { ...tabOptions } />;
 
 		return ( <ul className="module-tabs is-expanded">{ tabs }</ul> );
 	},
@@ -152,7 +152,7 @@ module.exports = React.createClass( {
 		return (
 			<Card className={ classNames.apply( null, classes ) }>
 				<div className="module-chart module-placeholder is-void is-chart"></div>
-				<ElementChart key='chart'
+				<ElementChart key="chart"
 					loading={ this.props.dataList.isLoading() }
 					data={ this.buildChartData() }
 					barClick={ this.barClick } />
