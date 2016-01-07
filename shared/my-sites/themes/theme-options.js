@@ -68,7 +68,7 @@ function rawOptions( site, theme, isLoggedOut ) {
 	return [
 		{
 			name: 'signup',
-			label: i18n.translate( 'Start a Blog' ),
+			label: i18n.translate( 'Choose this design' ),
 			hasUrl: true,
 			isHidden: ! isLoggedOut
 		},
