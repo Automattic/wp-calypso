@@ -73,11 +73,13 @@ module.exports = React.createClass( {
 	},
 
 	renderTransaction: function( transaction ) {
-		<div className="transaction-links">
-			<a className="view-receipt" href={ '/me/billing/' + transaction.id } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
-				{ this.translate( 'View Receipt' ) }
-			</a>
-			{ this.renderEmailAction( transaction.id ) }
-		</div>
+		return (
+			<div className="transaction-links">
+				<a className="view-receipt" href={ '/me/billing/' + transaction.id } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
+					{ this.translate( 'View Receipt' ) }
+				</a>
+				{ this.renderEmailAction( transaction.id ) }
+			</div>
+		);
 	}
 } );
