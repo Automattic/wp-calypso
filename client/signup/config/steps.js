@@ -68,14 +68,6 @@ module.exports = {
 		delayApiRequestUntilComplete: true
 	},
 
-	'domains-with-theme': {
-		stepName: 'domains-with-theme',
-		apiRequestFunction: stepActions.addDomainItemsToCart,
-		providesDependencies: [ 'siteSlug', 'domainItem' ],
-		dependencies: [ 'theme', 'images' ],
-		delayApiRequestUntilComplete: true
-	},
-
 	'jetpack-user': {
 		stepName: 'jetpack-user',
 		apiRequestFunction: stepActions.createAccount,
