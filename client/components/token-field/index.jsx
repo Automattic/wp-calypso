@@ -25,7 +25,8 @@ var TokenField = React.createClass( {
 		suggestions: React.PropTypes.array,
 		maxSuggestions: React.PropTypes.number,
 		value: React.PropTypes.array,
-		valueTransform: React.PropTypes.func,
+		displayTransform: React.PropTypes.func,
+		saveTransform: React.PropTypes.func,
 		onChange: React.PropTypes.func
 	},
 
@@ -34,7 +35,10 @@ var TokenField = React.createClass( {
 			suggestions: Object.freeze( [] ),
 			maxSuggestions: 100,
 			value: Object.freeze( [] ),
-			valueTransform: identity,
+			displayTransform: identity,
+			saveTransform: function( token ) {
+				return token.trim();
+			},
 			onChange: function() {}
 		};
 	},
@@ -84,8 +88,8 @@ var TokenField = React.createClass( {
 					{ this._renderTokensAndInput() }
 				</div>
 				<SuggestionsList
-					match={ this.state.incompleteTokenValue }
-					valueTransform={ this.props.valueTransform }
+					match={ this.props.saveTransform( this.state.incompleteTokenValue ) }
+					displayTransform={ this.props.displayTransform }
 					suggestions={ this._getMatchingSuggestions() }
 					selectedIndex={ this.state.selectedSuggestionIndex }
 					scrollIntoView={ this.state.selectedSuggestionScroll }
@@ -110,7 +114,7 @@ var TokenField = React.createClass( {
 			<Token
 				key={ 'token-' + token }
 				value={ token }
-				valueTransform={ this.props.valueTransform }
+				displayTransform={ this.props.displayTransform }
 				onClickRemove={ this._onTokenClickRemove }
 			/>
 		);
@@ -284,7 +288,7 @@ var TokenField = React.createClass( {
 
 	_getMatchingSuggestions: function() {
 		var suggestions = this.props.suggestions,
-			match = this.state.incompleteTokenValue,
+			match = this.props.saveTransform( this.state.incompleteTokenValue ),
 			startsWithMatch = [],
 			containsMatch = [];
 
@@ -434,6 +438,8 @@ var TokenField = React.createClass( {
 
 	_addNewToken: function( token ) {
 		var newValue;
+
+		token = this.props.saveTransform( token );
 
 		if ( ! contains( this.props.value, token ) ) {
 			newValue = clone( this.props.value );

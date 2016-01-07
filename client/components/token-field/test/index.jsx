@@ -30,7 +30,7 @@ var keyCodes = {
 };
 
 describe( 'TokenField', function() {
-	var wrapper, tokenFieldNode, textInputNode;
+	var reactContainer, wrapper, tokenFieldNode, textInputNode;
 
 	function setText( text ) {
 		TestUtils.Simulate.change( textInputNode, { target: { value: text } } );
@@ -76,15 +76,20 @@ describe( 'TokenField', function() {
 		return selectedSuggestions[0] || null;
 	}
 
+	before( function() {
+		reactContainer = document.createElement( 'div' );
+		document.body.appendChild( reactContainer );
+	} );
+
 	beforeEach( function() {
-		wrapper = ReactDom.render( <TokenFieldWrapper />, document.body );
+		wrapper = ReactDom.render( <TokenFieldWrapper />, reactContainer );
 		tokenFieldNode = ReactDom.findDOMNode( wrapper.refs.tokenField );
 		textInputNode = tokenFieldNode.querySelector( '.token-field__input' );
 		TestUtils.Simulate.focus( textInputNode );
 	} );
 
 	afterEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
+		ReactDom.unmountComponentAtNode( reactContainer );
 	} );
 
 	describe( 'displaying tokens', function() {
@@ -168,6 +173,11 @@ describe( 'TokenField', function() {
 				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
 			} );
 			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandEscaped );
+		} );
+
+		it( 'should match suggestions even with trailing spaces', function() {
+			setText( '  at  ' );
+			expect( getSuggestionsHTML() ).to.deep.equal( fixtures.matchingSuggestions.at );
 		} );
 
 		it( 'should manage the selected suggestion based on both keyboard and mouse events', function( done ) {
@@ -255,6 +265,12 @@ describe( 'TokenField', function() {
 			expect( textInputNode.value ).to.equal( 'baz' );
 		} );
 
+		it( 'should trim token values when adding', function() {
+			setText( '  baz  ' );
+			sendKey( keyCodes.enter );
+			expect( wrapper.state.tokens ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
+		} );
+
 		function testOnBlur( initialText, selectSuggestion, expectedSuggestion, expectedTokens, done ) {
 			setText( initialText );
 			if ( selectSuggestion ) {
@@ -335,6 +351,17 @@ describe( 'TokenField', function() {
 				expect( wrapper.refs.tokenField.state.isActive ).to.equal( true );
 				done();
 			}, 50 ); // 50ms is a fast click
+		} );
+
+		it( 'should not lose focus when a suggestion is clicked', function( done ) {
+			// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
+			TestUtils.Simulate.blur( textInputNode, {
+				relatedTarget: tokenFieldNode.querySelector( '.token-field__suggestion' )
+			} );
+			setTimeout( function() {
+				expect( wrapper.refs.tokenField.state.isActive ).to.equal( true );
+				done();
+			}, 10 ); // wait for setState call
 		} );
 
 		it( 'should add tokens in the middle of the current tokens', function() {

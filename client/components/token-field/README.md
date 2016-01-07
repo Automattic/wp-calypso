@@ -18,14 +18,22 @@ The `value` property is handled in a manner similar to controlled form component
 
 ### Properties
 
-- `value` - An array of strings to display as tokens in the field
-- `valueTransform` - Function to call to transform tokens for display.  This is
-  used to decode HTML entities embedded in tags - otherwise entities like `&`
-  in tag names are double-encoded like `&amp;` (once by the REST API and once
-  by React).
-- `onChange` - Function to call when the tokens have changed. An array of new tokens is passed to the callback
-- `suggestions` - An array of strings to present to the user as suggested tokens
-- `maxSuggestions` - The maximum number of suggestions to display at a time
+- `value` - An array of strings to display as tokens in the field.
+- `displayTransform` - Function to call to transform tokens for display.  (In
+  the editor, this is needed to decode HTML entities embedded in tags -
+  otherwise entities like `&` in tag names are double-encoded like `&amp;`,
+  once by the REST API and once by React).
+- `saveTransform` - Function to call to transform tokens for saving.  The
+  default is to trim the token value.  This function is also applied when
+  matching suggestions against the current value so that matching works
+  correctly with leading or trailing spaces.  (In the editor, this is needed to
+  remove leading and trailing spaces from tag names, like wp-admin does.
+  Otherwise the REST API won't save them.)
+- `onChange` - Function to call when the tokens have changed. An array of new
+  tokens is passed to the callback.
+- `suggestions` - An array of strings to present to the user as suggested
+  tokens.
+- `maxSuggestions` - The maximum number of suggestions to display at a time.
 
 ### Example
 

@@ -28,7 +28,7 @@ var TokenFieldWrapper = React.createClass( {
 			<TokenField
 				suggestions={ this.state.tokenSuggestions }
 				value={ this.state.tokens }
-				valueTransform={ unescapeAndFormatSpaces }
+				displayTransform={ unescapeAndFormatSpaces }
 				onChange={ this._onTokensChange }
 				ref="tokenField" />
 		);
