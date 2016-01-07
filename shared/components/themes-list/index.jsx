@@ -55,7 +55,7 @@ var ThemesList = React.createClass( {
 			key={ 'theme-' + theme.id }
 			buttonContents={ this.props.getButtonOptions( theme ) }
 			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme ) }
-			onScreenshotClick={ this.props.onScreenshotClick && this.props.onScreenshotClick.bind( null, theme, index ) }
+			onScreenshotClick={ this.props.onScreenshotClick }
 			onMoreButtonClick={ this.props.onMoreButtonClick }
 			index={ index }
 			{ ...theme } />;

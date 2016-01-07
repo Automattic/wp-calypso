@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/utility/noop' ),
+	pick = require( 'lodash/object/pick' );
 
 /**
  * Internal dependencies
@@ -62,6 +63,11 @@ var Theme = React.createClass( {
 		} );
 	},
 
+	onScreenshotClick: function() {
+		const theme = [ 'author', 'author_uri', 'demo_uri', 'id', 'name', 'screenshot', 'stylesheet' ];
+		this.props.onScreenshotClick( pick( this.props, theme ), this.props.index );
+	},
+
 	renderPlaceholder: function() {
 		return (
 			<Card className="theme is-placeholder">
@@ -86,7 +92,7 @@ var Theme = React.createClass( {
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a className="theme__active-focus"
-					onClick={ this.props.onScreenshotClick }>
+					onClick={ this.onScreenshotClick }>
 					<span>
 						{ actionLabel }
 					</span>
@@ -118,7 +124,7 @@ var Theme = React.createClass( {
 						{ this.props.screenshot
 							? <img className="theme__img"
 								src={ this.props.screenshot + '?w=' + screenshotWidth }
-								onClick={ this.props.onScreenshotClick }
+								onClick={ this.onScreenshotClick }
 								id={ screenshotID }/>
 							: <div className="theme__no-screenshot" >
 								<Gridicon icon="themes" size={ 48 } />
