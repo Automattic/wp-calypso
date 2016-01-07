@@ -70,16 +70,24 @@ module.exports = React.createClass( {
 	},
 
 	upgradeActions: function() {
+		var label;
+
 		if ( isFreePlan( this.props.plan ) ) {
 			return this.freePlanButton();
 		}
 
+		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
+			label = this.translate( 'Purchase Now' );
+		} else {
+			label = this.translate( 'Upgrade Now' );
+		}
+
 		return (
 			<div>
-				<button className="button is-primary plan-actions__upgrade-button"
+				<button
+					className="button is-primary plan-actions__upgrade-button"
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
-
-					{ this.props.sitePlan.freeTrial ? this.translate( 'Purchase Now' ) : this.translate( 'Upgrade Now' ) }
+					{ label }
 				</button>
 			</div>
 		);
