@@ -60,14 +60,13 @@ var messages = {
 			var site = this.props.sites.getSelectedSite();
 
 			if ( ! site ) {
-				return i18n.translate( 'Post published!', { textOnly: true } );
+				return i18n.translate( 'Post published!' );
 			}
 
 			return i18n.translate( 'Post published on {{siteLink/}}!', {
 				components: {
 					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 				},
-				textOnly: true,
 				comment: 'Editor: Message displayed when a post is published, with a link to the site it was published on.'
 			} );
 		},
@@ -75,14 +74,13 @@ var messages = {
 			var site = this.props.sites.getSelectedSite();
 
 			if ( ! site ) {
-				return i18n.translate( 'Post privately published!', { textOnly: true } );
+				return i18n.translate( 'Post privately published!' );
 			}
 
 			return i18n.translate( 'Post privately published on {{siteLink/}}!', {
 				components: {
 					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 				},
-				textOnly: true,
 				comment: 'Editor: Message displayed when a post is published privately, with a link to the site it was published on.'
 			} );
 		},
@@ -96,14 +94,13 @@ var messages = {
 			var site = this.props.sites.getSelectedSite();
 
 			if ( ! site ) {
-				return i18n.translate( 'Post updated!', { textOnly: true } );
+				return i18n.translate( 'Post updated!' );
 			}
 
 			return i18n.translate( 'Post updated on {{siteLink/}}!', {
 				components: {
 					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 				},
-				textOnly: true,
 				comment: 'Editor: Message displayed when a post is updated, with a link to the site it was updated on.'
 			} );
 		}
@@ -119,14 +116,13 @@ var messages = {
 			var site = this.props.sites.getSelectedSite();
 
 			if ( ! site ) {
-				return i18n.translate( 'Page published!', { textOnly: true } );
+				return i18n.translate( 'Page published!' );
 			}
 
 			return i18n.translate( 'Page published on {{siteLink/}}!', {
 				components: {
 					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 				},
-				textOnly: true,
 				comment: 'Editor: Message displayed when a page is published, with a link to the site it was published on.'
 			} );
 		},
@@ -134,14 +130,13 @@ var messages = {
 			var site = this.props.sites.getSelectedSite();
 
 			if ( ! site ) {
-				return i18n.translate( 'Page privately published!', { textOnly: true } );
+				return i18n.translate( 'Page privately published!' );
 			}
 
 			return i18n.translate( 'Page privately published on {{siteLink/}}!', {
 				components: {
 					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 				},
-				textOnly: true,
 				comment: 'Editor: Message displayed when a page is published privately, with a link to the site it was published on.'
 			} );
 		},
@@ -155,14 +150,13 @@ var messages = {
 			var site = this.props.sites.getSelectedSite();
 
 			if ( ! site ) {
-				return i18n.translate( 'Page updated!', { textOnly: true } );
+				return i18n.translate( 'Page updated!' );
 			}
 
 			return i18n.translate( 'Page updated on {{siteLink/}}!', {
 				components: {
 					siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 				},
-				textOnly: true,
 				comment: 'Editor: Message displayed when a page is updated, with a link to the site it was updated on.'
 			} );
 		}
