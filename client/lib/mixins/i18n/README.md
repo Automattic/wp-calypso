@@ -103,7 +103,7 @@ this.translate( 'My %s has 3 corners', {
 
 Because React tracks DOM nodes in the virtual DOM for rendering purposes, you cannot use string substitution with html markup as you might in a php scenario, because we don't render arbitrary html into the page, we are creating a virtual DOM in React.
 
-Instead we use the [interpolate-components module](../../lib/interpolate-components) to inject components into the string using a component token as a placeholder in the string and a components object, similar to how string substitution works. The result of the `translate()` method can then be inserted as a child into another React component. Component tokens are strings (containing letters, numbers, or underscores only) wrapped inside double-curly braces and have an opening, closing, and self-closing syntax, similar to html.
+Instead we use [interpolate-components](https://github.com/Automattic/interpolate-components) to inject components into the string using a component token as a placeholder in the string and a components object, similar to how string substitution works. The result of the `translate()` method can then be inserted as a child into another React component. Component tokens are strings (containing letters, numbers, or underscores only) wrapped inside double-curly braces and have an opening, closing, and self-closing syntax, similar to html.
 
 **NOTE: Always use a JSX element for passing components. Otherwise you will need to [wrap your React classes with `createFactory`](http://facebook.github.io/react/blog/2014/10/14/introducing-react-elements.html). Any wrapped content inside opening/closing component tokens will be inserted/replaced as the children of that component in the output. Component tokens must be unique.**:
 
@@ -122,7 +122,7 @@ var example2 = this.translate( 'I feel {{em}}very{{/em}} strongly about this.', 
         }
     } );
 
-// components can nest 
+// components can nest
 var example3 = this.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to see examples.', {
         components: {
             a: <a href="#" />,
@@ -147,7 +147,7 @@ var numHats = howManyHats(), // returns integer
     content = this.translate(
     	'My hat has three corners.',
     	'My hats have three corners.',
-    	{ 
+    	{
             count: numHats
         }
     );
