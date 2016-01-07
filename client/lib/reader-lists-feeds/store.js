@@ -1,7 +1,7 @@
 // Reader Lists Feed Subscription Store
 
 // External dependencies
-import { List, Map, fromJS } from 'immutable';
+import { List, fromJS } from 'immutable';
 import debugModule from 'debug';
 
 // Internal dependencies
@@ -11,7 +11,7 @@ import { createReducerStore } from 'lib/store';
 const debug = debugModule( 'calypso:reader-lists-feeds' ); //eslint-disable-line no-unused-vars
 
 const initialState = {
-	feeds: Map(), // eslint-disable-line new-cap
+	feeds: {},
 	errors: [],
 	currentPage: {},
 	isLastPage: {},
@@ -80,12 +80,12 @@ ReaderListsFeedsStore.getLastError = function() {
 
 ReaderListsFeedsStore.isLastPage = function( listId ) {
 	const state = ReaderListsFeedsStore.get();
-	return state.get( 'isLastPage' ).get( parseInt( listId ), false );
+	return state.get( 'isLastPage' ).get( +listId, false );
 };
 
 ReaderListsFeedsStore.getCurrentPage = function( listId ) {
 	const state = ReaderListsFeedsStore.get();
-	return state.get( 'currentPage' ).get( parseInt( listId ), 0 );
+	return state.get( 'currentPage' ).get( +listId, 0 );
 };
 
-module.exports = ReaderListsFeedsStore;
+export default ReaderListsFeedsStore;
