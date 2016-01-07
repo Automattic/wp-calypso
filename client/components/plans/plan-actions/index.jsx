@@ -282,7 +282,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		if ( this.isPlanOnTrial() ) {
+		if ( this.props.sitePlan.freeTrial ) {
 			return this.getTrialPlanHint();
 		}
 
@@ -297,10 +297,6 @@ module.exports = React.createClass( {
 
 	planHasCost: function() {
 		return this.props.plan.cost > 0;
-	},
-
-	isPlanOnTrial: function() {
-		return this.props.sitePlan.freeTrial;
 	},
 
 	placeholder: function() {
@@ -332,5 +328,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-
 } );
