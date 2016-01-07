@@ -43,11 +43,17 @@ import {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	showEditPaymentDetails,
-	showEditPaymentDetailsOption,
 } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToList, isDataLoading, recordPageView } from '../utils';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
+
+function showPaymentDetails( purchase ) {
+	return canEditPaymentDetails( purchase ) && isPaidWithCreditCard( purchase );
+}
+
+function canEditPaymentDetails( purchase ) {
+	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
+}
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
@@ -354,7 +360,7 @@ const ManagePurchase = React.createClass( {
 			</span>
 		);
 
-		if ( isLoading || ! showEditPaymentDetails( purchase ) ) {
+		if ( isLoading || ! showPaymentDetails( purchase ) ) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -489,7 +495,7 @@ const ManagePurchase = React.createClass( {
 			path = paths.editCardDetailsWithCard( this.props.selectedSite.slug, id, payment.creditCard.id );
 		}
 
-		if ( showEditPaymentDetailsOption( purchase ) ) {
+		if ( canEditPaymentDetails( purchase ) ) {
 			return (
 				<VerticalNavItem path={ path }>
 					{ this.translate( 'Edit Payment Method' ) }
