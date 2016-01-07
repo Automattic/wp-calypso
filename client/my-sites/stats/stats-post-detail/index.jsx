@@ -9,8 +9,8 @@ import page from 'page';
  */
 import observe from 'lib/mixins/data-observe';
 import SummaryChart from '../module-summary-chart';
-import PostMonths from './detail-months';
-import PostWeeks from './detail-weeks';
+import PostMonths from '../stats-detail-months';
+import PostWeeks from '../stats-detail-weeks';
 import Emojify from 'components/emojify';
 import HeaderCake from 'components/header-cake';
 
@@ -80,7 +80,7 @@ export default React.createClass( {
 						title={ this.translate( 'Average per Day' ) }
 						total={ this.translate( 'Overall' ) }
 						postViewsList={ this.props.postViewsList } />
-					
+
 					<PostWeeks postViewsList={ this.props.postViewsList } />
 				</div>
 			</div>
