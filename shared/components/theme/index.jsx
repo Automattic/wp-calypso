@@ -11,8 +11,7 @@ var React = require( 'react' ),
  */
 var Card = require( 'components/card' ),
 	ThemeMoreButton = require( './more-button' ),
-	Gridicon = require( 'components/gridicon' ),
-	isExternal = require( 'lib/url' ).isExternal;
+	Gridicon = require( 'components/gridicon' );
 
 /**
  * Component
@@ -48,6 +47,7 @@ var Theme = React.createClass( {
 				action: React.PropTypes.func,
 			} )
 		),
+		// Index of theme in results list
 		index: React.PropTypes.number,
 		// Label to show on screenshot hover.
 		actionLabel: React.PropTypes.string
@@ -96,7 +96,7 @@ var Theme = React.createClass( {
 	},
 
 	render: function() {
-		var themeClass = classNames( 'theme', {
+		const themeClass = classNames( 'theme', {
 			'is-active': this.props.active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
 		} );
@@ -115,12 +115,12 @@ var Theme = React.createClass( {
 				<div className="theme__content">
 					{ this.renderHover() }
 					<a href={ this.props.screenshotClickUrl }>
-						{ this.props.screenshot ?
-							<img className="theme__img"
+						{ this.props.screenshot
+							? <img className="theme__img"
 								src={ this.props.screenshot + '?w=' + screenshotWidth }
 								onClick={ this.props.onScreenshotClick }
-								id={ screenshotID }/> :
-							<div className="theme__no-screenshot" >
+								id={ screenshotID }/>
+							: <div className="theme__no-screenshot" >
 								<Gridicon icon="themes" size={ 48 } />
 							</div>
 						}
@@ -139,6 +139,7 @@ var Theme = React.createClass( {
 							<span className="price">{ this.translate( 'Purchased' ) }</span>
 						}
 						{ this.props.buttonContents.length ? <ThemeMoreButton id={ this.props.id }
+							index={ this.props.index }
 							onClick={ this.props.onMoreButtonClick }
 							price={ this.props.price }
 							purchased={ this.props.purchased }

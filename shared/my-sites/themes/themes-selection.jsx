@@ -50,7 +50,7 @@ const ThemesSelection = React.createClass( {
 		const { queryParams, themesList } = this.props;
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: queryParams.search,
-			theme: theme.id,
+			theme: theme,
 			results_rank: resultsRank + 1,
 			results: themesList,
 			page_number: queryParams.page

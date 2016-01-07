@@ -18,6 +18,10 @@ var PopoverMenu = require( 'components/popover/menu' ),
  */
 var ThemeMoreButton = React.createClass( {
 	propTypes: {
+		// Theme ID (theme-slug)
+		id: React.PropTypes.string.isRequired,
+		// Index of theme in results list
+		index: React.PropTypes.number.isRequired,
 		// Options to populate the popover menu with
 		options: React.PropTypes.arrayOf(
 			React.PropTypes.shape( {
@@ -36,12 +40,16 @@ var ThemeMoreButton = React.createClass( {
 
 	togglePopover: function() {
 		this.setState( { showPopover: ! this.state.showPopover } );
-		! this.state.showPopover && this.props.onClick();
+		! this.state.showPopover && this.props.onClick( this.props.id, this.props.index );
 	},
 
 	closePopover: function( action ) {
 		this.setState( { showPopover: false } );
 		isFunction( action ) && action();
+	},
+
+	focus: function( event ) {
+		event.target.focus();
 	},
 
 	render: function() {
@@ -69,9 +77,7 @@ var ThemeMoreButton = React.createClass( {
 						if ( option.url ) {
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
-									onMouseOver={ event => {
-										event.target.focus();
-									} }
+									onMouseOver={ this.focus }
 									key={ option.label }
 									href={ option.url }
 									target={ isOutsideCalypso( option.url ) ? '_blank' : null }>
@@ -84,7 +90,7 @@ var ThemeMoreButton = React.createClass( {
 								{ option.label }
 							</PopoverMenuItem>
 						);
-					} ) }
+					}, this ) }
 
 				</PopoverMenu>
 			</span>
