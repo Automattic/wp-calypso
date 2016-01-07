@@ -5,7 +5,8 @@ var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
 	classNames = require( 'classnames' ),
-	times = require( 'lodash/utility/times' );
+	times = require( 'lodash/utility/times' ),
+	property = require( 'lodash/utility/property' );
 
 /**
  * Internal dependencies
@@ -100,16 +101,15 @@ var PlansCompare = React.createClass( {
 	},
 
 	showFreeTrialException: function() {
-		const hasTrial = this.props.sites ? this.props.sites.getSelectedSite().plan.free_trial : false,
-			canStartTrial = this.props.sitePlans ? this.props.sitePlans.data.some( function( plan ) {
-				return plan.canStartTrial;
-			} ) : false;
+		const canStartTrial = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
+				? this.props.sitePlans.data.some( property( 'canStartTrial' ) )
+				: false;
 
 		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
 			return false;
 		}
 
-		if ( canStartTrial || hasTrial || this.props.enableFreeTrials ) {
+		if ( canStartTrial || this.props.enableFreeTrials ) {
 			return true;
 		}
 
@@ -125,7 +125,7 @@ var PlansCompare = React.createClass( {
 	},
 
 	freeTrialExceptionMessage: function( featuresList ) {
-		if ( this.showFreeTrialException() && featuresListUtils.featureListHasAFreeTrialException( featuresList ) ) {
+		if ( this.showFreeTrialException() && featuresList.some( featuresListUtils.featureNotPartOfTrial ) ) {
 			return <div className="plans-compare__free-trial-exception-message">{ this.translate( '* Not included during the free trial period' ) }</div>;
 		}
 
