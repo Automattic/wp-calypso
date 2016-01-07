@@ -302,10 +302,6 @@
 	}
 
 	&.is-inbox {
-		.gridicon {
-			fill: darken( $gray, 20 );
-		}
-
 		.view-toggle__inbox {
 			opacity: 1;
 		}
