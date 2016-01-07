@@ -5,6 +5,7 @@ import React from 'react';
 import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
+import store from 'store';
 
 /**
  * Internal Dependencies
@@ -16,7 +17,6 @@ import user from 'lib/user';
 import { fetchInvite, displayInviteDeclined } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
-import store from 'store';
 import { displayInviteAccepted } from 'lib/invites/actions';
 
 /**
@@ -40,6 +40,7 @@ export default React.createClass( {
 	componentWillMount() {
 		const acceptedInvite = store.get( 'invite_accepted' );
 		if ( acceptedInvite && acceptedInvite.inviteKey === this.props.inviteKey ) {
+			store.remove( 'invite_accepted' );
 			page( this.getRedirectAfterAccept( acceptedInvite ) );
 			displayInviteAccepted( acceptedInvite );
 			return;
