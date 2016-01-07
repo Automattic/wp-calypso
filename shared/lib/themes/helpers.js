@@ -10,9 +10,7 @@ var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
 
 	getSignupUrl( theme ) {
-		// TODO:
-		// * Possibly add a `source` parameter
-		// * Can we point to Calypso NUX (/start) and pass it the theme id?
+		// TODO: Point to Calypso NUX (/start), passing it the theme id.
 		return '//signup.wordpress.com/signup/?source=calypso_showcase&theme=' + theme.id;
 	},
 
