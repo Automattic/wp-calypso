@@ -313,18 +313,17 @@
 }
 
 .is-condensed {
-	margin: 0;
 
 	// Hide a bunch of stuff
 	.site__domain,
-	.reader-post-byline,
 	.reader__post-featured-video,
-	.reader-post-images {
+	.reader-post-images,
+	.post-excerpt-link {
 		display: none;
 	}
 
 	.reader__card {
-		padding: 16px 24px;
+		padding: 16px 24px 16px 64px;
 		overflow: hidden;
 		margin-bottom: 1px;
 
@@ -346,7 +345,7 @@
 		}
 
 		.follow-button {
-			top: -18px;
+			display: none;
 		}
 	}
 
@@ -418,13 +417,12 @@
 		.reader__full-post-content {
 			font-size: 14px;
 			color: darken( $gray, 20 );
-			max-height: 22px;
-			overflow: hidden;
 		}
 	}
 
 	.reader__post-header {
 		margin: 0;
+		left: -48px;
 
 		&:after {
 			display: none;
@@ -432,12 +430,12 @@
 	}
 
 	.site {
-		margin: 0 0 8px 0;
+		margin: 0 0 4px 0;
 
 		.site__content {
 			display: block;
 			overflow: visible;
-			padding-left: 24px;
+			padding-left: 48px;
 
 			.site-icon {
 				margin: 0;
@@ -445,16 +443,6 @@
 					top: 0;
 					left: 0;
 				z-index: 2; // "Above" the featured image
-
-				// Overriding some inline styles from the <Site> component
-				height: 16px !important;
-				width: 16px !important;
-				line-height: 16px !important;
-
-				img {
-					height: 16px;
-					width: 16px;
-				}
 			}
 
 			.site__title {
@@ -474,7 +462,20 @@
 		margin: 0 0 2px 0;
 		font-size: 18px;
 	}
-	
+
+	.reader__card.card .reader-post-byline {
+		margin: 0;
+
+		.gravatar {
+			display: none;
+		}
+
+		li,
+		li a {
+			color: lighten( $gray, 10 );
+		}
+	}
+
 	.reader__post-header {
 		margin-bottom: 0;
 	}
@@ -482,14 +483,8 @@
 	.post-excerpt {
 		.post-excerpt__text {
 			font-size: 14px;
-			white-space: nowrap;
 			color: darken( $gray, 20 );
-			line-height: 1;
-			display: inline;
-
-			&.is-long:after {
-				display: none;
-			}
+			line-height: 1.8;
 		}
 	}
 

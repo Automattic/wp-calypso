@@ -76,7 +76,7 @@ module.exports = React.createClass( {
 		//return this.getStateFromStores();
 		return assign(
 			this.getStateFromStores(), {
-			viewInbox: false
+			viewInbox: true
 		} );
 	},
 
