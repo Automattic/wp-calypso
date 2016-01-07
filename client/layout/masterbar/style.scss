@@ -86,18 +86,22 @@ $autobar-height: 20px;
 	height: 36px;
 	margin: 5px 8px;
 
-	&.is-active {
-		color: $white;
+	&:visited {
+		color: $blue-wordpress;
 	}
 
-	.masterbar__item-content {
-		display: none;
+	&.is-active {
+		color: $white;
 	}
 
 	&:hover,
 	&:focus {
 		background: $gray-light;
 		color: $blue-wordpress;
+	}
+
+	.masterbar__item-content {
+		display: none;
 	}
 
 	@include breakpoint( ">480px" ) {
