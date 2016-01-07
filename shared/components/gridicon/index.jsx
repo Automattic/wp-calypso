@@ -9,12 +9,13 @@ OR if you're looking to change now SVGs get output, you'll need to edit strings 
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-		classNames = require( 'classnames' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
+	classNames = require( 'classnames' );
 
 var Gridicon = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps: function() {
 		return {
