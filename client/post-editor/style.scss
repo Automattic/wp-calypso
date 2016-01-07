@@ -91,7 +91,7 @@
 .editor .mce-edit-area {
 	padding: 0 16px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( ">1040px" ) {
 		padding: 0;
 	}
 }
@@ -249,6 +249,10 @@ a.post-editor__close {
 	}
 
 	@include breakpoint( ">960px" ) {
+		right: 32px;
+	}
+
+	@include breakpoint( ">1040px" ) {
 		right: 0;
 	}
 }
