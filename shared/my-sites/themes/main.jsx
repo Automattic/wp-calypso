@@ -92,6 +92,10 @@ var Themes = React.createClass( {
 		return ! this.props.siteId; // Not the same as `! site` !
 	},
 
+	isLoggedOut: function() {
+		return ! user.get();
+	},
+
 	renderJetpackMessage: function() {
 		var site = this.props.sites.getSelectedSite();
 		return (
@@ -149,7 +153,7 @@ var Themes = React.createClass( {
 						sites={ this.props.sites }
 						setSelectedTheme={ this.setSelectedTheme }
 						togglePreview={ this.togglePreview }
-						getOptions={ partialRight( getButtonOptions, ! user.get(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
+						getOptions={ partialRight( getButtonOptions, this.isLoggedOut(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
 						tier={ this.props.tier }
 						customize={ bindActionCreators( Action.customize, dispatch ) }
@@ -162,7 +166,7 @@ var Themes = React.createClass( {
 					actions={ bindActionCreators( Action, dispatch ) }
 					getOptions={ partialRight(
 						getButtonOptions,
-						! user.get(),
+						this.isLoggedOut(),
 						bindActionCreators( Action, dispatch ),
 						this.setSelectedTheme,
 						this.togglePreview,
