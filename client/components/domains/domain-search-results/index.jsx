@@ -65,7 +65,7 @@ var DomainSearchResults = React.createClass( {
 				} );
 			}
 
-			const domainUnavailableMessage = this.translate( ' %(domain)s is taken.', {
+			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', {
 				args: { domain: lastDomainSearched }
 			} );
 
