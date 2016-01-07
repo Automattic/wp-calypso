@@ -16,15 +16,6 @@ module.exports = {
 		dependencies: [ 'siteSlug' ]
 	},
 
-	'theme-headstart': {
-		stepName: 'theme-headstart',
-		props: {
-			useHeadstart: true
-		},
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'theme', 'images' ]
-	},
-
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'themes' ]

@@ -12,7 +12,6 @@ var UserSignupComponent = require( 'signup/steps/user' ),
 
 module.exports = {
 	themes: ThemeSelectionComponent,
-	'theme-headstart': ThemeSelectionComponent,
 	site: SiteComponent,
 	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
