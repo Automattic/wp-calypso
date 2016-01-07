@@ -59,15 +59,15 @@ export default React.createClass( {
 					</HeaderCake>
 
 					<SummaryChart
-						key='chart'
+						key="chart"
 						loading={ this.props.postViewsList.isLoading() }
 						dataList={ this.props.postViewsList }
 						barClick={ this.props.barClick }
 						activeKey="period"
-						dataKey='value'
-						labelKey='period'
+						dataKey="value"
+						labelKey="period"
 						labelClass="visible"
-						tabLabel={ this.translate( 'Views' )} />
+						tabLabel={ this.translate( 'Views' ) } />
 
 					<PostMonths
 						dataKey="years"
