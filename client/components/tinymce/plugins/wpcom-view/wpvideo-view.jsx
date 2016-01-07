@@ -9,7 +9,7 @@ import React from 'react';
 import shortcodeUtils from 'lib/shortcode';
 import Shortcode from 'components/shortcode';
 
-var WpVideoView = React.createClass( {
+const WpVideoView = React.createClass( {
 
 	statics: {
 		match( content ) {
