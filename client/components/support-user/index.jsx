@@ -2,9 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
-
 import { connect } from 'react-redux';
 
 /**
@@ -13,21 +10,15 @@ import { connect } from 'react-redux';
 import observe from 'lib/mixins/data-observe';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
-import Dialog from 'components/dialog';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import Gravatar from 'components/gravatar';
+import SupportUserDialog from './dialog';
 
 import { activateSupportUser, deactivateSupportUser } from 'state/support/actions';
 
 const SupportUser = React.createClass( {
 	displayName: 'SupportUser',
 
-	mixins: [ observe( 'userSettings' ), LinkedStateMixin ],
+	mixins: [ observe( 'userSettings' ) ],
 
 	componentDidMount: function() {
 		KeyboardShortcuts.on( 'open-support-user', this.toggleShowDialog );
@@ -39,9 +30,6 @@ const SupportUser = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			supportUser: null,
-			supportPassword: null,
-			isSupportUser: false,
 			showDialog: false,
 			errorMessage: null,
 			user: null
@@ -49,7 +37,7 @@ const SupportUser = React.createClass( {
 	},
 
 	isEnabled: function() {
-		if ( this.state.isSupportUser ) {
+		if ( this.props.isSupportUser ) {
 			return true;
 		}
 
@@ -72,8 +60,6 @@ const SupportUser = React.createClass( {
 
 	onTokenError: function( error ) {
 		this.setState( {
-				supportPassword: null,
-				isSupportUser: false,
 				showDialog: true,
 				errorMessage: error.message,
 				user: null
@@ -81,22 +67,18 @@ const SupportUser = React.createClass( {
 		this.props.deactivateSupportUser();
 	},
 
-	onChangeUser: function( e ) {
-		e.preventDefault();
-
+	onChangeUser: function( supportUser, supportPassword ) {
 		let user = new User();
 		let myUser = Object.assign( {}, user.data );
 		this.setState( { user: myUser } );
 
-		if ( this.state.supportUser && this.state.supportPassword ) {
+		if ( supportUser && supportPassword ) {
 			user.clear();
 			user.changeUser(
-				this.state.supportUser,
-				this.state.supportPassword,
+				supportUser,
+				supportPassword,
 				( error ) => this.onTokenError( error )
 			);
-			this.setState( { isSupportUser: true } );
-			this.setState( { supportPassword: null } );
 			this.props.activateSupportUser();
 		}
 
@@ -107,13 +89,10 @@ const SupportUser = React.createClass( {
 	onRestoreUser: function( e ) {
 		e.preventDefault();
 
-		if ( this.state.isSupportUser ) {
+		if ( this.props.isSupportUser ) {
 			let user = new User();
 			user.clear().fetch();
 			this.setState( {
-				supportUser: null,
-				supportPassword: null,
-				isSupportUser: false,
 				showDialog: false,
 				errorMessage: null,
 				user: null
@@ -123,109 +102,29 @@ const SupportUser = React.createClass( {
 		}
 	},
 
-	getButtonsSupportUser: function() {
-		var buttons;
-
-		buttons = [
-			<FormButton
-				key="supportuser"
-				onClick={ this.onChangeUser }>
-					Change user
-			</FormButton>,
-			<FormButton
-				key="cancel"
-				isPrimary={ false }
-				onClick={ this.closeDialog }>
-					Cancel
-			</FormButton>
-		];
-
-		return buttons;
-	},
-
-	getButtonsRestoreUser: function() {
-		var buttons;
-
-		buttons = [
-			<FormButton
-				key="restoreuser"
-				onClick={ this.onRestoreUser }>
-					Restore user
-			</FormButton>,
-			<FormButton
-				key="cancel"
-				isPrimary={ false }
-				onClick={ this.closeDialog }>
-					Cancel
-			</FormButton>
-		];
-
-		return buttons;
-	},
-
 	render: function() {
-		if ( this.state.isSupportUser ) {
 		return (
-			<Dialog
+			<SupportUserDialog
 				isVisible={ this.state.showDialog }
-				onClose={ this.closeDialog }
-				buttons={ this.getButtonsRestoreUser() }
-				additionalClassNames="support-user__dialog"
-			>
-				<FormFieldset>
-				<div className="support-user__people-profile">
-					<div className="support-user__gravatar">
-						<Gravatar user={ this.state.user } size={ 96 } />
-					</div>
-					<div className="support-user__detail">
-						<div className="support-user__username">
-							{ this.state.user.display_name }
-						</div>
-						<div className="support-user__login">
-							<span>@{ this.state.user.username }</span>
-						</div>
-					</div>
-				</div>
-				</FormFieldset>
-			</Dialog>
+				errorMessage={ this.state.errorMessage }
+				user={ this.state.user }
+				isLoggedIn={ this.props.isSupportUser }
+				
+				onCloseDialog={ this.closeDialog }
+				onChangeUser={ this.onChangeUser }
+				onRestoreUser={ this.onRestoreUser }
+			/>
 		);
-		} else {
-		return (
-			<Dialog
-				isVisible={ this.state.showDialog }
-				onClose={ this.closeDialog }
-				buttons={ this.getButtonsSupportUser() }
-				additionalClassNames="support-user__dialog"
-			>
-				<h2 className="support-user__heading">Support user</h2>
-				{ this.state.errorMessage &&
-					<h3 className="support-user__error">{ this.state.errorMessage }</h3>
-				}
-				<FormFieldset>
-					<FormLabel>
-						<span>Username</span>
-						<FormTextInput
-							name="supportUser"
-							id="supportUser"
-							valueLink={ this.linkState( 'supportUser' ) }
-						/>
-					</FormLabel>
-
-					<FormLabel>
-						<span>User support password</span>
-						<FormPasswordInput
-							name="supportPassword"
-							id="supportPassword"
-							valueLink={ this.linkState( 'supportPassword' ) }
-						/>
-					</FormLabel>
-				</FormFieldset>
-			</Dialog>
-		); }
 	}
 } );
 
+const mapStateToProps = ( state ) => {
+	return {
+		isSupportUser: state.support.isSupportUser
+	}
+}
+
 export default connect(
-	null,
+	mapStateToProps,
 	{ activateSupportUser, deactivateSupportUser }
 )( SupportUser );
