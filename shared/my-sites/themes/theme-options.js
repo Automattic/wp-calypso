@@ -68,7 +68,9 @@ function rawOptions( site, theme, isLoggedOut ) {
 	return [
 		{
 			name: 'signup',
-			label: i18n.translate( 'Choose this design' ),
+			label: i18n.translate( 'Choose this design', {
+				comment: 'when signing up for a WordPress.com account with a selected theme'
+			} ),
 			hasUrl: true,
 			isHidden: ! isLoggedOut
 		},
