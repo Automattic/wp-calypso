@@ -85,15 +85,6 @@ module.exports = {
 		delayApiRequestUntilComplete: true
 	},
 
-	'theme-dss': {
-		stepName: 'theme-dss',
-		props: {
-			useHeadstart: true,
-		},
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'theme', 'images' ]
-	},
-
 	'jetpack-user': {
 		stepName: 'jetpack-user',
 		apiRequestFunction: stepActions.createAccount,

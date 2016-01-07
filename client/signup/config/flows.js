@@ -120,13 +120,6 @@ const flows = {
 		lastModified: '2015-11-05'
 	},
 
-	dss: {
-		steps: [ 'theme-dss', 'domains-with-theme', 'plans', 'user' ],
-		destination: getCheckoutDestination,
-		description: 'Dynamic Screenshots and Headstart flow',
-		lastModified: '2015-11-13'
-	},
-
 	layout: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getCheckoutDestination,
