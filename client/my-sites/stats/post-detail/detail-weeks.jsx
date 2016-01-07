@@ -1,45 +1,49 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:post' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	toggle = require( '../mixin-toggle' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import observe from 'lib/mixins/data-observe';
+import toggle from '../mixin-toggle';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
-	displayName: 'StatsPostWeeks',
+export default React.createClass( {
+	displayName: 'StatsPostDetailWeeks',
 
-	mixins: [ toggle( 'PostWeek' ), observe( 'site', 'postViewsList' ) ],
+	mixins: [
+		toggle( 'PostWeek' ),
+		observe( 'site', 'postViewsList' )
+	],
 
-	getInitialState: function() {
+	propTypes: {
+		postViewsList: PropTypes.element
+	},
+
+	getInitialState() {
 		return {
 			noData: this.props.postViewsList.isEmpty()
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			noData: nextProps.postViewsList.isEmpty()
 		} );
 	},
 
-	render: function() {
-		var data = this.props.postViewsList.response,
-			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
-			tableHeader,
+	render() {
+		const data = this.props.postViewsList.response;
+		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
+		let tableHeader,
 			tableRows,
 			tableBody,
 			highest,
 			classes;
-
-		debug( 'Rendering module post weeks' );
 
 		classes = [
 			'stats-module',
@@ -56,23 +60,23 @@ module.exports = React.createClass( {
 			highest = data.highest_week_average;
 			tableHeader = (
 				<thead>
-						<tr className="top">
-							<th>{ this.translate( 'Mon' ) }</th>
-							<th>{ this.translate( 'Tue' ) }</th>
-							<th>{ this.translate( 'Wed' ) }</th>
-							<th>{ this.translate( 'Thu' ) }</th>
-							<th>{ this.translate( 'Fri' ) }</th>
-							<th>{ this.translate( 'Sat' ) }</th>
-							<th>{ this.translate( 'Sun' ) }</th>
-							<th>{ this.translate( 'Total' ) }</th>
-							<th>{ this.translate( 'Average' ) }</th>
-							<th>{ this.translate( 'Change', { context: 'Stats: noun - change over a period in weekly numbers' } ) }</th>
-						</tr>
-					</thead>
+					<tr className="top">
+						<th>{ this.translate( 'Mon' ) }</th>
+						<th>{ this.translate( 'Tue' ) }</th>
+						<th>{ this.translate( 'Wed' ) }</th>
+						<th>{ this.translate( 'Thu' ) }</th>
+						<th>{ this.translate( 'Fri' ) }</th>
+						<th>{ this.translate( 'Sat' ) }</th>
+						<th>{ this.translate( 'Sun' ) }</th>
+						<th>{ this.translate( 'Total' ) }</th>
+						<th>{ this.translate( 'Average' ) }</th>
+						<th>{ this.translate( 'Change', { context: 'Stats: noun - change over a period in weekly numbers' } ) }</th>
+					</tr>
+				</thead>
 				);
 
 			tableRows = data.weeks.map( function( e, i ) {
-				var j,
+				let j,
 					dayCells,
 					cells = [],
 					changeClass,
@@ -86,16 +90,16 @@ module.exports = React.createClass( {
 				}
 
 				dayCells = e.days.map( function( e ) {
-					var day = this.moment( e.day, 'YYYY-MM-DD' ),
+					let day = this.moment( e.day, 'YYYY-MM-DD' ),
 						cellClass = classNames( {
 							'highest-count': 0 !== highest && e.count === highest
 						} );
 
 					return (
 						<td key={ e.day } className={ cellClass }>
-								<span className="date">{ day.format( 'MMM D' ) }</span>
-								<span className="value">{ this.numberFormat( e.count ) }</span>
-							</td>
+							<span className="date">{ day.format( 'MMM D' ) }</span>
+							<span className="value">{ this.numberFormat( e.count ) }</span>
+						</td>
 					);
 				}, this );
 
@@ -144,7 +148,12 @@ module.exports = React.createClass( {
 					<h4 className="module-header-title">{ this.translate( 'Recent Weeks' ) }</h4>
 					<ul className="module-header-actions">
 						<li className="module-header-action toggle-info">
-							<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
+							<a href="#"
+								className="module-header-action-link"
+								aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) }
+								title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) }
+								onClick={ this.toggleInfo } >
+
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
