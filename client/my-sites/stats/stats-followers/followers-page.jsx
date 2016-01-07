@@ -1,81 +1,76 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module-followers-page' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var StatsList = require( '../stats-list' ),
-	SelectDropdown = require( 'components/select-dropdown' ),
-	toggle = require( '../mixin-toggle' ),
-	skeleton = require( '../mixin-skeleton' ),
-	ErrorPanel = require( '../stats-error' ),
-	Pagination = require( '../pagination' ),
-	analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import StatsList from '../stats-list';
+import SelectDropdown from 'components/select-dropdown';
+import toggle from '../mixin-toggle';
+import skeleton from '../mixin-skeleton';
+import ErrorPanel from '../stats-error';
+import Pagination from '../pagination';
+import analytics from 'analytics';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsFollowersPage',
 
 	mixins: [ toggle( 'FollowersPage' ), skeleton( 'data' ) ],
 
-	data: function( nextProps ) {
-		var props = nextProps || this.props;
+	data( nextProps ) {
+		const props = nextProps || this.props;
 		return props.followersList.response.data;
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			activeFilter: 'wpcom-followers',
 			noData: this.props.followersList.isEmpty( 'subscribers' )
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			noData: nextProps.followersList.isEmpty( 'subscribers' )
 		} );
 	},
 
-	filterSelect: function() {
-		var selectFilter,
-			options = [
-				{
-					value: 'wpcom',
-					label: this.translate( 'WordPress.com Followers' )
-				},
-				{
-					value: 'email',
-					label: this.translate( 'Email Followers' )
-				}
-			];
+	filterSelect() {
+		const options = [
+			{
+				value: 'wpcom',
+				label: this.translate( 'WordPress.com Followers' )
+			},
+			{
+				value: 'email',
+				label: this.translate( 'Email Followers' )
+			}
+		];
 
 		if ( 'comment' !== this.props.followType ) {
-			selectFilter = (
+			return (
 				<div className="select-dropdown__wrapper">
 					<SelectDropdown options={ options } onSelect={ this.props.changeFilter } />
 				</div>
 			);
 		}
-
-		return selectFilter;
 	},
 
-	recordDownloadClick: function() {
+	recordDownloadClick() {
 		analytics.ga.recordEvent( 'Stats', 'Clicked Download Email Followers CSV link' );
 	},
 
-	render: function() {
-		debug( 'Rendering stats followers page' );
+	render() {
+		const data = this.data();
+		const hasError = this.props.followersList.isError();
+		const noData = this.props.followersList.isEmpty( 'subscribers' );
 
-		var data = this.data(),
-			hasError = this.props.followersList.isError(),
-			noData = this.props.followersList.isEmpty( 'subscribers' ),
-			followers,
+		let followers,
 			moduleHeaderTitle,
 			labelLegend,
 			valueLegend,
@@ -103,17 +98,17 @@ module.exports = React.createClass( {
 		];
 
 		switch ( this.props.followType ) {
-		case 'comment':
-			itemType = this.translate( 'Comments' );
-			break;
+			case 'comment':
+				itemType = this.translate( 'Comments' );
+				break;
 
-		case 'email':
-			itemType = this.translate( 'Email' );
-			break;
+			case 'email':
+				itemType = this.translate( 'Email' );
+				break;
 
-		case 'wpcom':
-			itemType = this.translate( 'WordPress.com' );
-			break;
+			case 'wpcom':
+				itemType = this.translate( 'WordPress.com' );
+				break;
 		}
 
 		if ( data.total ) {
@@ -145,13 +140,13 @@ module.exports = React.createClass( {
 		pagination = <Pagination page={ this.props.page } perPage={ this.props.perPage } total={ data.total } pageClick={ this.props.pageClick } />;
 
 		if ( data && data.posts ) {
-			followers = <StatsList data={ data.posts } moduleName='Followers' />;
+			followers = <StatsList data={ data.posts } moduleName="Followers" />;
 			labelLegend = this.translate( 'Post', {
 				context: 'noun'
 			} );
 			valueLegend = this.translate( 'Followers' );
 		} else if ( data && data.subscribers ) {
-			followers = <StatsList data={ data.subscribers } followList={ this.props.followList } moduleName='Followers' />;
+			followers = <StatsList data={ data.subscribers } followList={ this.props.followList } moduleName="Followers" />;
 			labelLegend = this.translate( 'Follower' );
 			valueLegend = this.translate( 'Since' );
 		}
