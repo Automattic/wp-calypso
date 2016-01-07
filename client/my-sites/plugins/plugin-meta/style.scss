@@ -64,6 +64,7 @@
 
 .plugin-meta__detail {
 	position: relative;
+	width: 100%;
 	flex-grow: 1;
 
 	@include breakpoint( '>480px' ) {
