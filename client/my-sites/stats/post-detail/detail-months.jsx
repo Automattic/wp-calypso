@@ -8,7 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
+var toggle = require( '../mixin-toggle' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );

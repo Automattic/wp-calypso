@@ -644,7 +644,7 @@ module.exports = {
 		var site,
 			siteId = context.params.site_id,
 			postId = parseInt( context.params.post_id, 10 ),
-			StatsPostComponent = require( 'my-sites/stats/post' ),
+			StatsPostComponent = require( 'my-sites/stats/post-detail' ),
 			StatsList = require( 'lib/stats/stats-list' ),
 			pathParts = context.path.split( '/' ),
 			postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page',

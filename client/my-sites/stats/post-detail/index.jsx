@@ -2,16 +2,15 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	page = require( 'page' ),
-	debug = require( 'debug' )( 'calypso:stats:post' );
+	page = require( 'page' );
 
 /**
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
-	SummaryChart = require( './module-summary-chart' ),
-	PostMonths = require( './module-post-months' ),
-	PostWeeks = require( './module-post-weeks' ),
+	SummaryChart = require( '../module-summary-chart' ),
+	PostMonths = require( './detail-months' ),
+	PostWeeks = require( './detail-weeks' ),
 	Emojify = require( 'components/emojify' ),
 	HeaderCake = require( 'components/header-cake' );
 
@@ -33,8 +32,6 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var title = '';
-
-		debug( 'Rendering stats/post.jsx', this.props );
 
 		if ( this.props.postViewsList.response.post && this.props.postViewsList.response.post.post_title ) {
 			title = this.translate( 'Stats for %(posttitle)s', {
