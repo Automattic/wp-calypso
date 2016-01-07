@@ -491,7 +491,7 @@ const ManagePurchase = React.createClass( {
 			{ id, payment } = purchase;
 
 		let path = paths.editCardDetails( this.props.selectedSite.slug, id );
-		if ( payment.creditCard && payment.creditCard.id ) {
+		if ( isPaidWithCreditCard( purchase ) ) {
 			path = paths.editCardDetailsWithCard( this.props.selectedSite.slug, id, payment.creditCard.id );
 		}
 
