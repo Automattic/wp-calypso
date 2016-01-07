@@ -8,8 +8,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	productsValues = require( 'lib/products-values' ),
-	config = require( 'config' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
+		if ( abtest( 'freeTrials' ) === 'notOffered' ) {
 			return false;
 		}
 
@@ -240,7 +240,7 @@ module.exports = React.createClass( {
 	},
 
 	freePlanExpiration: function() {
-		if ( config.isEnabled( 'upgrades/free-trials' ) && ! this.planHasCost() ) {
+		if ( ! this.planHasCost() ) {
 			return (
 				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
 			);

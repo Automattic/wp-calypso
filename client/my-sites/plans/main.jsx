@@ -9,7 +9,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	config = require( 'config' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -123,9 +122,7 @@ var Plans = React.createClass( {
 			hasJpphpBundle = isJpphpBundle( currentPlan );
 		}
 
-		if ( config.isEnabled( 'upgrades/free-trials' ) &&
-			this.props.sitePlans.hasLoadedFromServer &&
-			currentPlan.freeTrial ) {
+		if ( this.props.sitePlans.hasLoadedFromServer && currentPlan.freeTrial ) {
 			return (
 				<PlanOverview
 					path={ this.props.context.path }
