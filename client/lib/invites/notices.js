@@ -43,7 +43,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						}
 					</p>
 				</div>,
-				{ displayOnNextPage	}
+				{ displayOnNextPage }
 			);
 			break;
 		case 'editor':
@@ -66,7 +66,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						}
 					</p>
 				</div>,
-				{ displayOnNextPage	}
+				{ displayOnNextPage }
 			);
 			break;
 		case 'author':
@@ -89,7 +89,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						}
 					</p>
 				</div>,
-				{ displayOnNextPage	}
+				{ displayOnNextPage }
 			);
 			break;
 		case 'contributor':
@@ -112,7 +112,7 @@ function displayNotice( invite, displayOnNextPage ) {
 						}
 					</p>
 				</div>,
-				{ displayOnNextPage	}
+				{ displayOnNextPage }
 			);
 			break;
 		case 'subscriber':
@@ -120,7 +120,7 @@ function displayNotice( invite, displayOnNextPage ) {
 				i18n.translate( 'You\'re now a Subscriber of: %(site)s', {
 					args: { site: get( invite, 'site.title' ) }
 				} ),
-				{ displayOnNextPage	}
+				{ displayOnNextPage }
 			);
 			break;
 	}
