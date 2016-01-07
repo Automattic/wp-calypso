@@ -50,7 +50,7 @@ export default React.createClass( {
 
 	render() {
 		const { focused } = this.state;
-		const { className, children, checked, disabled } = this.props;
+		const { className, children, checked, disabled, id, name } = this.props;
 		const classes = classNames( className, 'checkbox', {
 			'is-focused': focused,
 			'is-disabled': disabled
@@ -59,6 +59,8 @@ export default React.createClass( {
 		return (
 			<label className={ classes } >
 				<input type="checkbox"
+					id = { id }
+					name = { name }
 					checked = { checked }
 					disabled = { disabled }
 					onChange = { this.handleChange }
