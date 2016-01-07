@@ -89,16 +89,16 @@ export default React.createClass( {
 					}
 				}
 
-				dayCells = e.days.map( function( e ) {
-					let day = this.moment( e.day, 'YYYY-MM-DD' ),
+				dayCells = e.days.map( function( event ) {
+					let day = this.moment( event.day, 'YYYY-MM-DD' ),
 						cellClass = classNames( {
-							'highest-count': 0 !== highest && e.count === highest
+							'highest-count': 0 !== highest && event.count === highest
 						} );
 
 					return (
 						<td key={ e.day } className={ cellClass }>
 							<span className="date">{ day.format( 'MMM D' ) }</span>
-							<span className="value">{ this.numberFormat( e.count ) }</span>
+							<span className="value">{ this.numberFormat( event.count ) }</span>
 						</td>
 					);
 				}, this );
