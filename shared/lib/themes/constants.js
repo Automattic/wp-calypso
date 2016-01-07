@@ -17,6 +17,7 @@ module.exports = assign( keyMirror( {
 	ACTIVATE_THEME: null,
 	ACTIVATED_THEME: null,
 	CLEAR_ACTIVATED_THEME: null,
+	SIGNUP_WITH_THEME: null,
 	THEME_DETAILS: null,
 	THEME_SUPPORT: null,
 	THEME_CUSTOMIZE: null
