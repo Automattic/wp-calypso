@@ -6,7 +6,6 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-
 import StatTab from './tab';
 
 export default React.createClass( {

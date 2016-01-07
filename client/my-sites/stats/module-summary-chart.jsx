@@ -132,7 +132,7 @@ module.exports = React.createClass( {
 			label: this.props.tabLabel + label
 		};
 
-		tabs = <StatTab key={ tabOptions.attr } { ...tabOptions } />;
+		tabs = <StatTab key="char-tab" { ...tabOptions } />;
 
 		return ( <ul className="module-tabs is-expanded">{ tabs }</ul> );
 	},
