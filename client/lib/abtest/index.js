@@ -125,6 +125,12 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		return false;
 	}
 
+	//limit the test to new users
+	if ( this.hasRegisteredBeforeTestBegan() ) {
+		debug( '%s: User was registered before the test began', this.experimentId );
+		return false;
+	}
+
 	return true;
 };
 
@@ -155,6 +161,10 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 		return ( previousExperimentId !== this.experimentId ) && ( previousName === this.name );
 	}, this );
 };
+
+ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
+	return user.get() && i18n.moment( user.get().date ).isBefore( this.startDate );
+}
 
 ABTest.prototype.getSavedVariation = function() {
 	return getSavedVariations()[ this.experimentId ] || null;
