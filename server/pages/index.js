@@ -10,6 +10,7 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
+	errorReporter = require( '../../shared/lib/error-reporting/' ),
 	sections = require( '../../client/sections' );
 
 var HASH_LENGTH = 10,
@@ -124,6 +125,7 @@ function getDefaultContext( request ) {
 		urls: generateStaticUrls( request ),
 		user: false,
 		env: CALYPSO_ENV,
+		errorReporter: errorReporter.installErrorReporter( CALYPSO_ENV ),
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
