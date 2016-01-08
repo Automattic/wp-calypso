@@ -64,7 +64,8 @@ const PlanStatus = React.createClass( {
 		const { plan } = this.props,
 			iconClasses = classNames( 'plan-status__icon', {
 				'is-premium': isPremium( plan ),
-				'is-business': isBusiness( plan )
+				'is-business': isBusiness( plan ),
+				'is-expired': isInGracePeriod( plan )
 			} );
 
 		return (
