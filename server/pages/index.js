@@ -115,7 +115,15 @@ function getChunk( path ) {
 
 function getCurrentBranchName() {
 	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' );
+		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
+	} catch ( err ) {
+		return undefined;
+	}
+}
+
+function getCurrentCommitShortChecksum() {
+	try {
+		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
@@ -173,6 +181,7 @@ function getDefaultContext( request ) {
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
+		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
