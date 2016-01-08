@@ -37,7 +37,6 @@ module.exports = React.createClass( {
 	render: function() {
 		var bestDay = null,
 			statTabs = [ 'posts', 'views', 'visitors', 'best' ],
-			data = this.props.allTimeList.data,
 			classSets = {},
 			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
 			valueClass,
