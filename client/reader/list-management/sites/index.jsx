@@ -5,18 +5,14 @@ import debugModule from 'debug';
 
 // Internal dependencies
 import InfiniteList from 'components/infinite-list';
-import ListItem from 'reader/list-item';
-import Icon from 'reader/list-item/icon';
-import Title from 'reader/list-item/title';
-import Description from 'reader/list-item/description';
-import Actions from 'reader/list-item/actions';
-import Gridicon from 'components/gridicon';
 import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsItemsStore from 'lib/reader-lists-items/store';
 import { fetchMoreItems } from 'lib/reader-lists-items/actions';
 import smartSetState from 'lib/react-smart-set-state';
 import ListManagementError from '../error';
 import EmptyContent from 'components/empty-content';
+import ListManagementSitesListItem from './list-item';
+import Placeholder from 'reader/following-edit/placeholder';
 
 const debug = debugModule( 'calypso:reader:list-management' ); // eslint-disable-line
 const stats = require( 'reader/stats' );
@@ -90,11 +86,7 @@ const ListManagementSites = React.createClass( {
 
 		return times( number, ( i ) => {
 			return (
-				<ListItem className="is-placeholder" key={ 'list-placeholder-' + i }>
-					<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
-					<Title>Loading</Title>
-					<Description></Description>
-				</ListItem>
+				<Placeholder key={ 'list-placeholder-' + i } />
 			);
 		} );
 	},
@@ -111,18 +103,8 @@ const ListManagementSites = React.createClass( {
 	renderItem( item ) {
 		const itemKey = this.getItemRef( item );
 
-		debug( item );
-
 		return (
-			<ListItem key={ itemKey } ref={ itemKey }>
-				<Icon><Gridicon icon="tag" size={ 48 } /></Icon>
-				<Title>
-					list item { item.get( 'ID' ) }
-				</Title>
-				<Description></Description>
-				<Actions>
-				</Actions>
-			</ListItem>
+			<ListManagementSitesListItem key={ itemKey } listItem={ item } />
 		);
 	},
 

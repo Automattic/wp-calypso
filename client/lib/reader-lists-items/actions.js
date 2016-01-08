@@ -19,7 +19,9 @@ export function fetchMoreItems( listOwner, listSlug, page ) {
 		owner: listOwner,
 		slug: listSlug,
 		page: page,
-		number: PER_PAGE
+		number: PER_PAGE,
+		item_types: 'feed,site',
+		meta: 'feed,site'
 	};
 
 	wpcom.undocumented().readListItems( args, requestTracker( action.ACTION_RECEIVE_READER_LIST_ITEMS, function( error, data ) {
