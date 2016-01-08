@@ -141,7 +141,11 @@ var PlansCompare = React.createClass( {
 
 	freeTrialExceptionMessage: function( featuresList ) {
 		if ( this.showFreeTrialException() && featuresList.some( featuresListUtils.featureNotPartOfTrial ) ) {
-			return <div className="plans-compare__free-trial-exception-message">{ this.translate( '* Not included during the free trial period' ) }</div>;
+			return (
+				<div className="plans-compare__free-trial-exception-message">
+					{ this.translate( '* Not included during the free trial period' ) }
+				</div>
+			);
 		}
 
 		return null;
