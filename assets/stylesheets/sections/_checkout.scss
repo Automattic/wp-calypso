@@ -762,6 +762,10 @@
 	text-align: center;
 	width: 100%;
 
+	&.main {
+		max-width: 960px;
+	}
+
 	.thank-you-message {
 		padding-bottom: 20px;
 
