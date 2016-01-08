@@ -41,7 +41,7 @@ sudo make run
 
 ### Other build problems - try to clean the build
 Sometimes, especially while switching branches, previous build leaves some artifacts in your directory.
-This can cause problems with the next build. Simply re-runnning `make run` doesen't always clean it up.
+This can cause problems with the next build. Simply re-runnning `make run` doesn't always clean it up.
 To clean up directory, just run:
 ```
 make distclean
