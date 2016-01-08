@@ -15,7 +15,7 @@ import MainComponent from 'components/main'
 import NavTabs from 'components/section-nav/tabs'
 import NavItem from 'components/section-nav/item'
 import NoResults from 'my-sites/no-results'
-import PluginsList from 'my-sites/plugins/plugins-browser-list'
+import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list'
 import PluginsListStore from 'lib/plugins/wporg-data/list-store'
 import PluginsActions from 'lib/plugins/wporg-data/actions'
 import EmptyContent from 'components/empty-content'
@@ -120,14 +120,14 @@ module.exports = React.createClass( {
 	getFullListView( category ) {
 		var isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
 		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
-			return <PluginsList plugins={ this.getPluginsFullList( category ) } listName={ category } title={ this.translateCategory( category ) } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
+			return <PluginsBrowserList plugins={ this.getPluginsFullList( category ) } listName={ category } title={ this.translateCategory( category ) } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 	},
 
 	getSearchListView( searchTerm ) {
 		var isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
-			return <PluginsList plugins={ this.getPluginsFullList( 'search' ) } listName={ searchTerm } title={ searchTerm } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
+			return <PluginsBrowserList plugins={ this.getPluginsFullList( 'search' ) } listName={ searchTerm } title={ searchTerm } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 		return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
 			textOnly: true,
@@ -136,7 +136,7 @@ module.exports = React.createClass( {
 	},
 
 	getPluginSingleListView( category ) {
-		return <PluginsList
+		return <PluginsBrowserList
 			plugins={ this.getPluginsShortList( category ) }
 			listName={ category }
 			title={ this.translateCategory( category ) }
@@ -205,7 +205,7 @@ module.exports = React.createClass( {
 	},
 
 	getMockPluginItems: function() {
-		return <PluginsList
+		return <PluginsBrowserList
 			plugins={ this.getPluginsShortList( 'popular' ) }
 			listName={ 'Plugins' }
 			title={ this.translate( 'Popular Plugins' ) }
@@ -231,7 +231,7 @@ module.exports = React.createClass( {
 					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
 					site={ this.props.site }
 					section="plugins"
-					illustration= '/calypso/images/jetpack/jetpack-manage.svg'
+					illustration="/calypso/images/jetpack/jetpack-manage.svg"
 					featureExample={ this.getMockPluginItems() } />
 			</MainComponent>
 		);
