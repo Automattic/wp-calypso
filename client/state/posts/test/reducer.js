@@ -17,43 +17,43 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index posts by ID', () => {
+		it( 'should index posts by global ID', () => {
 			const state = items( null, {
 				type: POST_RECEIVE,
-				post: { ID: 841, title: 'Hello World' }
+				post: { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 
 			expect( state ).to.eql( {
-				841: { ID: 841, title: 'Hello World' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 		} );
 
 		it( 'should accumulate posts', () => {
 			const original = Object.freeze( {
-				841: { ID: 841, title: 'Hello World' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, {
 				type: POST_RECEIVE,
-				post: { ID: 413, title: 'Ribs & Chicken' }
+				post: { ID: 413, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
 			} );
 
 			expect( state ).to.eql( {
-				841: { ID: 841, title: 'Hello World' },
-				413: { ID: 413, title: 'Ribs & Chicken' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+				'6c831c187ffef321eb43a67761a525a3': { ID: 413, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
 			} );
 		} );
 
 		it( 'should override previous post of same ID', () => {
 			const original = Object.freeze( {
-				841: { ID: 841, title: 'Hello World' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, {
 				type: POST_RECEIVE,
-				post: { ID: 841, title: 'Ribs & Chicken' }
+				post: { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
 			} );
 
 			expect( state ).to.eql( {
-				841: { ID: 841, title: 'Ribs & Chicken' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
 			} );
 		} );
 	} );

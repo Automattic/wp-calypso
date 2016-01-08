@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import { POST_RECEIVE } from 'state/action-types';
 
 /**
- * Tracks all known post objects, indexed by post ID.
+ * Tracks all known post objects, indexed by post global ID.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -19,7 +19,7 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_RECEIVE:
 			state = Object.assign( {}, state, {
-				[ action.post.ID ]: action.post
+				[ action.post.global_ID ]: action.post
 			} );
 			break;
 	}
