@@ -4,7 +4,9 @@
 
 // -------- Main Component --------
 .section-nav {
-	position: relative;
+	position: fixed;
+	top: 48px;
+	z-index: 100000;
 	width: 100%;
 	padding: 0;
 	margin: 0 0 17px 0;
@@ -37,7 +39,10 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		margin-bottom: 9px;
+		position: relative;
+		width: auto;
+		top: 4px;
+
 	}
 }
 

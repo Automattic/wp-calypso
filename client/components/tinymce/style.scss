@@ -496,6 +496,8 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 
 .mce-tinymce .mce-edit-area.mce-stack-layout-item.mce-last {
 	border-top: 0;
+	max-width: 720px;
+	margin: 0 auto;
 }
 
 .mce-toolbar-grp .mce-stack-layout-item {

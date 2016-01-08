@@ -1,22 +1,37 @@
 .main {
 	margin: auto;
-	max-width: 720px;
+	max-width: 100%;
 	z-index: z-index( 'root', '.main' );
+	padding-top: 51px;
 
 	// Themes is a great example of using all this new space ;)
 	&.themes,
-	&.sites {
-		max-width: 100%;
-	}
-
-	// The customizer is full-width
+	&.sites,
+	&.manage-menus,
+	&.profile,
+	&.account,
+	&.next-steps,
+	&.help,
 	&.customize {
 		max-width: 100%;
+		padding-top: 0px;
+	}
+
+	&.following{
+		max-width: 720px;
+		padding-top: 0;
+		margin-left: 0;
+		margin-right: auto;
+	}
+
+	@include breakpoint( "<960px" ) {
+		padding-top: 52px;
 	}
 
 	@include breakpoint( "<660px" ) {
 		backface-visibility: hidden;
 		perspective: 1000;
+		padding-top: 0px;
 	}
 }
 
