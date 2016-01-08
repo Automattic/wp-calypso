@@ -26,4 +26,3 @@ render: function() {
 * `sites` : (array) An array of the sites that current plugin is installed on.
 * `isPlaceholder`: (boolean) Whether the component is being rendered in placeholder mode
 * `isMock`: a boolean indicating if the toggle should not launch any real action when interacted
-
