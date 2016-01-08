@@ -508,14 +508,17 @@ ul.module-tabs {
 			text-align: left;
 		}
 
+		a {
+			color: $gray-dark;
+		}
+
 		a,
 		.no-link {
-			@extend %mobile-interface-element;
+			@extend %mobile-link-element;
 			@include clear-fix;
 			padding: 5px 0 10px;
 			display: block;
 			background: $white;
-			color: $gray-dark;
 
 			@include breakpoint( "<480px" ) {
 				line-height: 24px;
@@ -615,6 +618,7 @@ ul.module-tabs {
 		}
 
 		// Low state ('disabled')
+		.is-low,
 		&.is-low a .value {
 			color: $gray;
 		}
