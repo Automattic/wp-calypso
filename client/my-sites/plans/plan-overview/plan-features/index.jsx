@@ -76,7 +76,7 @@ const PlanFeatures = React.createClass( {
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
-					description={ this.translate( 'You can upload and hosts videos on your site without advertising.' ) }
+					description={ this.translate( 'You can upload and host videos on your site without advertising.' ) }
 					heading={ this.translate( 'VideoPress' ) }
 					willBeRemoved={ willBeRemoved } />
 
