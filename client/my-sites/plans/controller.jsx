@@ -19,7 +19,7 @@ var sites = require( 'lib/sites-list' )(),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
-function handlePlanSelect( cartItem, siteSlug ) {
+function handlePlanSelect( cartItem ) {
 	upgradesActions.addItem( cartItem );
 
 	// FIXME: @rads: The `defer` is necessary here to prevent an error with
@@ -123,6 +123,7 @@ module.exports = {
 				<ReduxProvider store={ context.store }>
 					<CartData>
 						<PlansCompare sites={ sites }
+							enableFreeTrials
 							selectedSite={ site }
 							onSelectPlan={ onSelectPlan }
 							plans={ plans }

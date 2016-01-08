@@ -5,12 +5,14 @@ var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
 	classNames = require( 'classnames' ),
-	times = require( 'lodash/utility/times' );
+	times = require( 'lodash/utility/times' ),
+	property = require( 'lodash/utility/property' );
 
 /**
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
+	config = require( 'config' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	PlanFeatures = require( 'components/plans/plan-features' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
@@ -19,7 +21,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	HeaderCake = require( 'components/header-cake' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
-	Card = require( 'components/card' );
+	Card = require( 'components/card' ),
+	featuresListUtils = require( 'lib/features-list/utils' );
 
 var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
@@ -74,16 +77,17 @@ var PlansCompare = React.createClass( {
 		return featuresList.map( function( feature ) {
 			return (
 				<PlanFeatureCell key={ feature.product_slug } title={ feature.description }>
-					{ feature.title }
+					{ feature.title } { this.freeTrialExceptionMarker( feature ) }
 				</PlanFeatureCell>
 			);
-		} );
+		}, this );
 	},
 
 	featureColumns: function( site, plans, featuresList ) {
 		return plans.map( function( plan ) {
 			return (
 				<PlanFeatures
+					enableFreeTrials={ this.props.enableFreeTrials }
 					onSelectPlan={ this.props.onSelectPlan }
 					isInSignup={ this.props.isInSignup }
 					key={ plan.product_id }
@@ -94,6 +98,57 @@ var PlansCompare = React.createClass( {
 					sitePlans={ this.props.sitePlans } />
 			);
 		}, this );
+	},
+
+	showFreeTrialException: function() {
+		const hasTrial = this.props.sites
+				? this.props.sites.getSelectedSite().plan.free_trial
+				: false,
+			canStartTrial = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
+				? this.props.sitePlans.data.some( property( 'canStartTrial' ) )
+				: false;
+
+		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
+			return false;
+		}
+
+		// always show if the user is currently in trial
+		if ( hasTrial ) {
+			return true;
+		}
+
+		// show if the site is eligible for a trial (it never had a free trial before)
+		// and free trial is enabled for this component
+		if ( canStartTrial && this.props.enableFreeTrials ) {
+			return true;
+		}
+
+		// show if we are in signup and free trial is enabled for this component
+		if ( this.props.isInSignup && this.props.enableFreeTrials ) {
+			return true;
+		}
+
+		return false;
+	},
+
+	freeTrialExceptionMarker: function( feature ) {
+		if ( this.showFreeTrialException() && featuresListUtils.featureNotPartOfTrial( feature ) ) {
+			return '*';
+		}
+
+		return null;
+	},
+
+	freeTrialExceptionMessage: function( featuresList ) {
+		if ( this.showFreeTrialException() && featuresList.some( featuresListUtils.featureNotPartOfTrial ) ) {
+			return (
+				<div className="plans-compare__free-trial-exception-message">
+					{ this.translate( '* Not included during the free trial period' ) }
+				</div>
+			);
+		}
+
+		return null;
 	},
 
 	comparisonTable: function() {
@@ -128,6 +183,7 @@ var PlansCompare = React.createClass( {
 						{ this.featureNames( featuresList ) }
 					</div>
 					{ this.featureColumns( site, plans, featuresList ) }
+					{ this.freeTrialExceptionMessage( featuresList ) }
 				</div>
 			);
 		}
@@ -168,9 +224,9 @@ var PlansCompare = React.createClass( {
 		return (
 			<div className={ this.props.className }>
 				{
-					this.props.isInSignup ?
-					null :
-					<SidebarNavigation />
+					this.props.isInSignup
+					? null
+					: <SidebarNavigation />
 				}
 				<HeaderCake onClick={ this.goBack }>
 					{ this.translate( 'Compare Plans' ) }
