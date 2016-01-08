@@ -30,7 +30,7 @@ module.exports = {
 		allowAnyLocale: true
 	},
 	plansPageBusinessAATest: {
-		datestamp: '20151221',
+		datestamp: '20160108',
 		variations: {
 			originalA: 50,
 			originalB: 50
