@@ -5,12 +5,17 @@ var express = require( 'express' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' );
+	debug = require( 'debug' )( 'calypso:pages' ),
+	React = require( 'react' ),
+	ReactDomServer = require( 'react-dom/server' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' );
+	sections = require( '../../client/sections' ),
+	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+
+var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -110,8 +115,8 @@ function getChunk( path ) {
 
 function getCurrentBranchName() {
 	try {
-		return execSync('git rev-parse --abbrev-ref HEAD');
-	} catch(err) {
+		return execSync( 'git rev-parse --abbrev-ref HEAD' );
+	} catch ( err ) {
 		return undefined;
 	}
 }
@@ -359,7 +364,17 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
-			renderLoggedOutRoute( req, res );
+			const context = getDefaultContext( req );
+
+			try {
+				context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
+			} catch ( ex ) {
+				if ( config( 'env' ) === 'development' ) {
+					throw ex;
+				}
+			}
+
+			res.render( 'index.jade', context );
 		}
 	} );
 
