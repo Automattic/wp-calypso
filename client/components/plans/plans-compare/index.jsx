@@ -101,7 +101,10 @@ var PlansCompare = React.createClass( {
 	},
 
 	showFreeTrialException: function() {
-		const canStartTrial = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
+		const hasTrial = this.props.sites
+				? this.props.sites.getSelectedSite().plan.free_trial
+				: false,
+			canStartTrial = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
 				? this.props.sitePlans.data.some( property( 'canStartTrial' ) )
 				: false;
 
@@ -109,7 +112,19 @@ var PlansCompare = React.createClass( {
 			return false;
 		}
 
-		if ( canStartTrial || this.props.enableFreeTrials ) {
+		// always show if the user is currently in trial
+		if ( hasTrial ) {
+			return true;
+		}
+
+		// show if the site is eligible for a trial (it never had a free trial before)
+		// and free trial is enabled for this component
+		if ( canStartTrial && this.props.enableFreeTrials ) {
+			return true;
+		}
+
+		// show if we are in signup and free trial is enabled for this component
+		if ( this.props.isInSignup && this.props.enableFreeTrials ) {
 			return true;
 		}
 
