@@ -11,6 +11,8 @@
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"mc_analytics_enabled": false,
+	"boom_analytics_enabled": false,
+	"boom_analytics_key": "development",
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
@@ -137,7 +139,7 @@
 		"ad-tracking": false,
 
 		"accept-invite": true,
-
+		"perfmon": false,
 		"mailing-lists/unsubscribe": true
 	},
 	"muse_supported_themes": [
