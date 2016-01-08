@@ -2,11 +2,15 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import indexBy from 'lodash/collection/indexBy';
 
 /**
  * Internal dependencies
  */
-import { POST_RECEIVE } from 'state/action-types';
+import {
+	POST_RECEIVE,
+	POSTS_RECEIVE,
+} from 'state/action-types';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -22,6 +26,14 @@ export function items( state = {}, action ) {
 				[ action.post.global_ID ]: action.post
 			} );
 			break;
+
+		case POSTS_RECEIVE:
+			state = Object.assign( {}, state, indexBy( action.posts, 'global_ID' ) );
+			break;
+	}
+
+	return state;
+}
 	}
 
 	return state;
