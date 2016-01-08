@@ -31,6 +31,10 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.siteHasThisPlan() ) {
+			if ( this.props.sitePlan.freeTrial ) {
+				return this.upgradeActions();
+			}
+
 			return (
 				<div className="plan-actions__action-details">
 					<div className="plan-actions__current">
@@ -66,15 +70,24 @@ module.exports = React.createClass( {
 	},
 
 	upgradeActions: function() {
+		var label;
+
 		if ( isFreePlan( this.props.plan ) ) {
 			return this.freePlanButton();
 		}
 
+		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
+			label = this.translate( 'Purchase Now' );
+		} else {
+			label = this.translate( 'Upgrade Now' );
+		}
+
 		return (
 			<div>
-				<button className="button is-primary plan-actions__upgrade-button"
+				<button
+					className="button is-primary plan-actions__upgrade-button"
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
-					{ this.translate( 'Upgrade Now' ) }
+					{ label }
 				</button>
 			</div>
 		);
@@ -277,7 +290,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		if ( this.isPlanOnTrial() ) {
+		if ( this.props.sitePlan.freeTrial ) {
 			return this.getTrialPlanHint();
 		}
 
@@ -292,10 +305,6 @@ module.exports = React.createClass( {
 
 	planHasCost: function() {
 		return this.props.plan.cost > 0;
-	},
-
-	isPlanOnTrial: function() {
-		return this.props.sitePlan.freeTrial;
 	},
 
 	placeholder: function() {
@@ -327,5 +336,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-
 } );
