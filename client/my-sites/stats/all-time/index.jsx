@@ -26,7 +26,7 @@ module.exports = React.createClass( {
 		if ( value || value === 0 ) {
 			return this.numberFormat( value );
 		}
-		// If no value present, return en-dash
+		// If no value return en-dash
 		return String.fromCharCode( 8211 );
 	},
 
