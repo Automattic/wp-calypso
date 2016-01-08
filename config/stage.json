@@ -81,6 +81,7 @@
 		"reader/discover": true,
 		"reader/recommendations": true,
 		"ad-tracking": false,
+		"perfmon": true,
 		"mailing-lists/unsubscribe": true
 	},
 	"siftscience_key": "e00e878351",
