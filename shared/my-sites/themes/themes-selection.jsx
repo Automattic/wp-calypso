@@ -70,9 +70,10 @@ const ThemesSelection = React.createClass( {
 	onTierSelect( { value: tier } ) {
 		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
 		const url = `/design/type/${tier}${siteId}`;
-		this.setState( { tier } );
-		Helper.trackClick( 'search bar filter', tier );
-		page( buildUrl( url, this.props.search ) );
+		this.setState( { tier }, () => {
+			Helper.trackClick( 'search bar filter', tier );
+			page( buildUrl( url, this.props.search ) );
+		} );
 	},
 
 	onScreenshotClick( theme, resultsRank ) {
