@@ -238,13 +238,16 @@ User.prototype.set = function( attributes ) {
 	return changed;
 };
 
-User.prototype.changeUser = function( username, password, tokenErrorCallback ) {
+User.prototype.changeUser = function( username, password, callback, fnTokenError ) {
 	if ( config.isEnabled( 'support-user' ) ) {
-		wpcom.changeUser( username, password, function( error ) {
-			if ( ! error ) {
+		wpcom.changeUser( username, password, ( error ) => {
+			if ( error ) {
+				callback( error );
+			} else {
+				this.once( 'change', () => callback() );
 				this.fetch();
 			}
-		}.bind( this ), tokenErrorCallback );
+		}, fnTokenError );
 	} else {
 		return false;
 	}

@@ -36,11 +36,13 @@ const SupportUserDialog = React.createClass( {
 		buttons = [
 			<FormButton
 				key="supportuser"
+				disabled={ this.props.isBusy }
 				onClick={ this.onChangeUser }>
-					Change user
+					{ this.props.isBusy ? 'Switching...' : 'Change user' }
 			</FormButton>,
 			<FormButton
 				key="cancel"
+				type="button"
 				isPrimary={ false }
 				onClick={ this.props.onCloseDialog }>
 					Cancel
@@ -56,11 +58,13 @@ const SupportUserDialog = React.createClass( {
 		buttons = [
 			<FormButton
 				key="restoreuser"
+				disabled={ this.props.isBusy }
 				onClick={ this.props.onRestoreUser }>
 					Restore user
 			</FormButton>,
 			<FormButton
 				key="cancel"
+				type="button"
 				isPrimary={ false }
 				onClick={ this.props.onCloseDialog }>
 					Cancel

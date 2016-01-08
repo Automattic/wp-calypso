@@ -108,7 +108,7 @@ export default function wpcomSupport( wpcom ) {
 	const put = wpcom.req.put.bind( wpcom.req );
 
 	return Object.assign( wpcom, {
-		changeUser: function( username, password, fn, fnTokenError ) {
+		changeUser: function( username, password, callback, fnTokenError ) {
 			var args = {
 				apiVersion: '1.1',
 				path: '/internal/support/' + username + '/grant'
@@ -126,11 +126,7 @@ export default function wpcomSupport( wpcom ) {
 					supportToken = response.token;
 				}
 
-				if ( error && error.error === ERROR_INCORRECT_SUPPORT_PASSWORD ) {
-					fnTokenError( error );
-				}
-
-				fn( error, response );
+				callback( error, response );
 			} );
 		},
 		restoreUser: function() {

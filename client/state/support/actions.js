@@ -10,10 +10,13 @@ import {
 
 import User from 'lib/user';
 
-export function toggleSupportUserDialog( showAction ) {
+/**
+ * Toggles the visibility of the support user dialog
+ * @return {object} The action object
+ */
+export function toggleSupportUserDialog() {
 	return {
-		type: TOGGLE_SUPPORT_USER_DIALOG,
-		showAction
+		type: TOGGLE_SUPPORT_USER_DIALOG
 	};
 }
 
@@ -32,17 +35,24 @@ export function toggleSupportUserDialog( showAction ) {
  		} );
 
  		if ( supportUser && supportPassword ) {
- 			let user = new User();
- 			let userData = Object.assign( {}, user.data );
+			let user = new User();
 
  			user.clear();
  			user.changeUser(
  				supportUser,
  				supportPassword,
- 				( error ) => dispatch( deactivateSupportUser( error.message ) )
+ 				( error ) => {
+ 					if ( error ) {
+	 					dispatch( deactivateSupportUser( error.message ) );
+ 					} else {
+			 			let userData = Object.assign( {}, user.data );
+			 			dispatch( activateSupportUser( userData ) );
+ 					}
+ 				},
+ 				( tokenError ) => {
+ 					dispatch( deactivateSupportUser( tokenError.message ) );
+ 				}
  			);
-
- 			dispatch( activateSupportUser( userData ) );
  		}
  	}
  }

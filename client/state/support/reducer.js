@@ -64,9 +64,28 @@ function errorMessage( state = null, action ) {
 	return state;
 }
 
+/**
+ * True if currently in transition between normal and support user
+ * @param  {Boolean} state
+ * @param  {object}  action
+ * @return {Boolean}
+ */
+function isTransitioning( state = false, action ) {
+	switch ( action.type ) {
+		case FETCH_SUPPORT_USER_TOKEN:
+			return true;
+		case ACTIVATE_SUPPORT_USER:
+		case DEACTIVATE_SUPPORT_USER:
+			return false;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	isSupportUser,
 	userData,
 	showDialog,
-	errorMessage
+	errorMessage,
+	isTransitioning
 } );

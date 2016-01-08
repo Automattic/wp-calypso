@@ -56,6 +56,7 @@ const SupportUser = React.createClass( {
 		return (
 			<SupportUserDialog
 				isVisible={ this.props.showDialog }
+				isBusy={ this.props.isTransitioning }
 				errorMessage={ this.props.errorMessage }
 				user={ this.props.userData }
 				isLoggedIn={ this.props.isSupportUser }
@@ -71,6 +72,7 @@ const SupportUser = React.createClass( {
 const mapStateToProps = ( state ) => {
 	return {
 		isSupportUser: state.support.isSupportUser,
+		isTransitioning: state.support.isTransitioning,
 		userData: state.support.userData,
 		showDialog: state.support.showDialog,
 		errorMessage: state.support.errorMessage
