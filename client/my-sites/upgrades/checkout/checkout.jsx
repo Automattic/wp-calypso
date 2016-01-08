@@ -130,9 +130,13 @@ module.exports = React.createClass( {
 
 	getCheckoutCompleteRedirectPath: function() {
 		var renewalItem;
+
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
+
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
+		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
+			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
 		return '/checkout/thank-you';
