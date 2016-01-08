@@ -85,8 +85,8 @@ var Gridicon = React.createClass( {
 			'gridicons-user-circle'
 		];
 
-		if( iconNeedsOffset.indexOf( icon ) >= 0 ){
-			return( size % 18 === 0 );
+		if ( iconNeedsOffset.indexOf( icon ) >= 0 ) {
+			return ( size % 18 === 0 );
 		} else {
 			return false;
 		}
@@ -104,8 +104,8 @@ var Gridicon = React.createClass( {
 			'gridicons-strikethrough'
 		];
 
-		if( iconNeedsOffsetX.indexOf( icon ) >= 0 ){
-			return( size % 18 === 0 );
+		if ( iconNeedsOffsetX.indexOf( icon ) >= 0 ) {
+			return ( size % 18 === 0 );
 		} else {
 			return false;
 		}
@@ -131,8 +131,8 @@ var Gridicon = React.createClass( {
 			'gridicons-video-camera'
 		];
 
-		if( iconNeedsOffsetY.indexOf( icon ) >= 0 ){
-			return( size % 18 === 0 );
+		if ( iconNeedsOffsetY.indexOf( icon ) >= 0 ) {
+			return ( size % 18 === 0 );
 		} else {
 			return false;
 		}
@@ -140,21 +140,16 @@ var Gridicon = React.createClass( {
 
 	render: function() {
 		var icon = 'gridicons-' + this.props.icon,
-				svg,
-				needsOffset = this.needsOffset( icon, this.props.size ),
-				needsOffsetX = this.needsOffsetX( icon, this.props.size ),
-				needsOffsetY = this.needsOffsetY( icon, this.props.size );
+			needsOffset = this.needsOffset( icon, this.props.size ),
+			needsOffsetX = this.needsOffsetX( icon, this.props.size ),
+			needsOffsetY = this.needsOffsetY( icon, this.props.size ),
+			svg, iconClass;
 
-				var iconClass = classNames(
-					this.props.className,
-					icon,
-					'gridicon',
-					{
-						'needs-offset': needsOffset,
-						'needs-offset-x': needsOffsetX,
-						'needs-offset-y': needsOffsetY,
-					}
-				);
+		iconClass = classNames( 'gridicon', icon, this.props.className, {
+			'needs-offset': needsOffset,
+			'needs-offset-x': needsOffsetX,
+			'needs-offset-y': needsOffsetY,
+		} );
 
 		switch ( icon ) {
 			default:
@@ -598,10 +593,10 @@ var Gridicon = React.createClass( {
 			case 'gridicons-visible':
 				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M12 6C5.188 6 1 12 1 12s4.188 6 11 6 11-6 11-6-4.188-6-11-6zm0 10c-3.943 0-6.926-2.484-8.38-4 1.04-1.085 2.863-2.657 5.255-3.47C8.335 9.214 8 10.064 8 11c0 2.21 1.79 4 4 4s4-1.79 4-4c0-.937-.335-1.787-.875-2.47 2.393.813 4.216 2.386 5.254 3.47-1.456 1.518-4.438 4-8.38 4z"/></g></svg>;
 				break;
-        }
+		}
 
-        return ( svg );
-  }
+		return ( svg );
+	}
 } );
 
 module.exports = Gridicon;
