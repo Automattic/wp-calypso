@@ -95,6 +95,7 @@ export default React.createClass( {
 			>
 				{ this.props.children }
 				<SitesPopover
+					sites={ this.props.sites }
 					visible={ this.state.isShowingPopover }
 					context={ this.state.postButtonContext }
 					onClose={ this.toggleSitesPopover.bind( this, false ) }

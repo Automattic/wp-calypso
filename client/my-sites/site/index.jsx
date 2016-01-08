@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' );
 
@@ -17,7 +16,24 @@ module.exports = React.createClass( {
 	displayName: 'Site',
 
 	componentDidMount: function() {
-		debug( 'The Site component is mounted.' );
+		if ( this.props.isSelected ) {
+			this.scrollIntoView();
+		}
+	},
+
+	componentDidUpdate: function( prevProps, prevState ) {
+		if ( this.props.isSelected && ! prevProps.isSelected ) {
+			this.scrollIntoView();
+		}
+	},
+
+	scrollIntoView: function() {
+		var node = this.refs.site,
+			parentScrollTop = node.offsetTop;
+		if ( node.previousSibling ) {
+			parentScrollTop -= node.previousSibling.offsetHeight / 2;
+		}
+		node.parentNode.scrollTop = parentScrollTop;
 	},
 
 	getDefaultProps: function() {
@@ -80,7 +96,7 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ siteClass }>
+			<div className={ siteClass } ref="site">
 				<a className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					target={ this.props.externalLink && '_blank' }

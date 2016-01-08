@@ -21,6 +21,7 @@ module.exports = React.createClass( {
 	displayName: 'SiteSelector',
 
 	propTypes: {
+		sites: React.PropTypes.object,
 		showAddNewSite: React.PropTypes.bool,
 		showAllSites: React.PropTypes.bool,
 		indicator: React.PropTypes.bool,
@@ -33,6 +34,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			sites: {},
 			showAddNewSite: false,
 			showAllSites: false,
 			siteBasePath: false,
@@ -73,36 +75,6 @@ module.exports = React.createClass( {
 		this.refs.siteSearch.blur();
 	},
 
-	visibleCount: function() {
-		return this.props.sites.selected ? 1 : this.getCount();
-	},
-
-	// more complex translation logic here
-	getTranslations: function() {
-		var output = {},
-			visibleCount = this.visibleCount();
-
-		if ( ! this.props.sites.selected ) {
-			output.selectedSites = this.translate( 'All sites' );
-		} else {
-			output.selectedSites = this.translate( '%(numberSelected)s site selected', '%(numberSelected)s sites selected', {
-				count: visibleCount,
-				args: {
-					numberSelected: visibleCount
-				}
-			} );
-		}
-
-		output.totalSites = this.translate( '%(numberTotal)s site', 'All %(numberTotal)s Sites', {
-			count: this.getCount(),
-			args: {
-				numberTotal: this.getCount()
-			}
-		} );
-
-		return output;
-	},
-
 	addNewSite: function() {
 		return (
 			<AddNewButton
@@ -134,7 +106,8 @@ module.exports = React.createClass( {
 	},
 
 	isSelected: function( site ) {
-		return this.props.sites.selected === site.domain || this.props.selected === site.slug;
+		var selectedSite = this.props.selected || this.props.sites.selected;
+		return selectedSite === site.domain || selectedSite === site.slug;
 	},
 
 	renderSiteElements: function() {
