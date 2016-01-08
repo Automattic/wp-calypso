@@ -11,7 +11,7 @@ OR if you're looking to change now SVGs get output, you'll need to edit strings 
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-		classNames = require( 'classnames' );
+	classNames = require( 'classnames' );
 
 var Gridicon = React.createClass( {
 
@@ -35,31 +35,27 @@ var Gridicon = React.createClass( {
 		var iconNeedsOffset = [
 			'gridicons-add-outline',
 			'gridicons-add',
-			'gridicons-align-center',
 			'gridicons-align-image-center',
 			'gridicons-align-image-left',
 			'gridicons-align-image-none',
 			'gridicons-align-image-right',
-			'gridicons-align-justify',
-			'gridicons-align-left',
-			'gridicons-align-right',
-			'gridicons-arrow-down',
-			'gridicons-arrow-left',
-			'gridicons-arrow-right',
-			'gridicons-arrow-up',
 			'gridicons-attachment',
 			'gridicons-backspace',
 			'gridicons-bold',
 			'gridicons-bookmark-outline',
 			'gridicons-bookmark',
 			'gridicons-calendar',
-			'gridicons-clear-formatting',
+			'gridicons-cart',
 			'gridicons-create',
 			'gridicons-custom-post-type',
-			'gridicons-flag',
+			'gridicons-external',
 			'gridicons-folder',
 			'gridicons-heading',
-			'gridicons-house',
+			'gridicons-help-outline',
+			'gridicons-help',
+			'gridicons-history',
+			'gridicons-info-outline',
+			'gridicons-info',
 			'gridicons-italic',
 			'gridicons-layout-blocks',
 			'gridicons-link-break',
@@ -68,27 +64,75 @@ var Gridicon = React.createClass( {
 			'gridicons-list-ordered',
 			'gridicons-list-unordered',
 			'gridicons-menus',
-			'gridicons-minus-small',
 			'gridicons-minus',
+			'gridicons-my-sites',
+			'gridicons-notice-outline',
+			'gridicons-notice',
 			'gridicons-plus-small',
 			'gridicons-plus',
+			'gridicons-popout',
 			'gridicons-posts',
-			'gridicons-reader',
 			'gridicons-scheduled',
 			'gridicons-share-ios',
-			'gridicons-sign-out',
 			'gridicons-star-outline',
 			'gridicons-star',
-			'gridicons-stats-alt',
 			'gridicons-stats',
+			'gridicons-status',
+			'gridicons-thumbs-up',
 			'gridicons-textcolor',
+			'gridicons-time',
 			'gridicons-trophy',
+			'gridicons-user-circle'
+		];
+
+		if ( iconNeedsOffset.indexOf( icon ) >= 0 ) {
+			return ( size % 18 === 0 );
+		} else {
+			return false;
+		}
+	},
+
+	needsOffsetX: function( icon, size ) {
+		var iconNeedsOffsetX = [
+			'gridicons-arrow-down',
+			'gridicons-arrow-up',
+			'gridicons-comment',
+			'gridicons-clear-formatting',
+			'gridicons-flag',
+			'gridicons-menu',
+			'gridicons-reader',
+			'gridicons-strikethrough'
+		];
+
+		if ( iconNeedsOffsetX.indexOf( icon ) >= 0 ) {
+			return ( size % 18 === 0 );
+		} else {
+			return false;
+		}
+	},
+
+	needsOffsetY: function( icon, size ) {
+		var iconNeedsOffsetY = [
+			'gridicons-align-center',
+			'gridicons-align-justify',
+			'gridicons-align-left',
+			'gridicons-align-right',
+			'gridicons-arrow-left',
+			'gridicons-arrow-right',
+			'gridicons-house',
+			'gridicons-indent-left',
+			'gridicons-indent-right',
+			'gridicons-minus-small',
+			'gridicons-print',
+			'gridicons-sign-out',
+			'gridicons-stats-alt',
+			'gridicons-trash',
 			'gridicons-underline',
 			'gridicons-video-camera'
-		 ];
+		];
 
-		if( iconNeedsOffset.indexOf( icon ) >= 0 ){
-			return( size % 18 === 0);
+		if ( iconNeedsOffsetY.indexOf( icon ) >= 0 ) {
+			return ( size % 18 === 0 );
 		} else {
 			return false;
 		}
@@ -96,15 +140,16 @@ var Gridicon = React.createClass( {
 
 	render: function() {
 		var icon = 'gridicons-' + this.props.icon,
-				svg,
-				needsOffset = this.needsOffset( icon, this.props.size );
+			needsOffset = this.needsOffset( icon, this.props.size ),
+			needsOffsetX = this.needsOffsetX( icon, this.props.size ),
+			needsOffsetY = this.needsOffsetY( icon, this.props.size ),
+			svg, iconClass;
 
-				var iconClass = classNames(
-					this.props.className,
-					icon,
-					'gridicon',
-					{ 'needs-offset': needsOffset }
-				);
+		iconClass = classNames( 'gridicon', icon, this.props.className, {
+			'needs-offset': needsOffset,
+			'needs-offset-x': needsOffsetX,
+			'needs-offset-y': needsOffsetY,
+		} );
 
 		switch ( icon ) {
 			default:
@@ -548,10 +593,10 @@ var Gridicon = React.createClass( {
 			case 'gridicons-visible':
 				svg = <svg className={ iconClass } height={ this.props.size } width={ this.props.size } onClick={ this.props.onClick } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M12 6C5.188 6 1 12 1 12s4.188 6 11 6 11-6 11-6-4.188-6-11-6zm0 10c-3.943 0-6.926-2.484-8.38-4 1.04-1.085 2.863-2.657 5.255-3.47C8.335 9.214 8 10.064 8 11c0 2.21 1.79 4 4 4s4-1.79 4-4c0-.937-.335-1.787-.875-2.47 2.393.813 4.216 2.386 5.254 3.47-1.456 1.518-4.438 4-8.38 4z"/></g></svg>;
 				break;
-        }
+		}
 
-        return ( svg );
-  }
+		return ( svg );
+	}
 } );
 
 module.exports = Gridicon;
