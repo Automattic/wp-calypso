@@ -6,7 +6,7 @@
 	align-content: flex-start;
 	align-items: stretch;
 	margin-bottom: 24px;
-	padding: 12px 16px;
+	padding: 12px 12px 8px;
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 16px;
