@@ -25,6 +25,9 @@ export const actionTypes = Object.freeze( {
 	API_FAILURE: 'importer-api-failure',
 	API_SUCCESS: 'importer-api-success',
 
+	LOCK_IMPORT: 'importer-lock-import',
+	UNLOCK_IMPORT: 'importer-unlock-import',
+
 	RECEIVE_IMPORT_STATUS: 'importer-receive-import-status',
 
 	CANCEL_IMPORT: 'importer-cancel',
