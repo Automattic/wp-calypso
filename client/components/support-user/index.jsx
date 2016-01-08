@@ -3,17 +3,23 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserDialog from './dialog';
 
-import { activateSupportUser, deactivateSupportUser } from 'state/support/actions';
+import { 
+	activateSupportUser, 
+	deactivateSupportUser,
+	fetchSupportUserToken,
+	restoreSupportUser,
+	toggleSupportUserDialog
+} from 'state/support/actions';
 
 const SupportUser = React.createClass( {
 	displayName: 'SupportUser',
@@ -26,14 +32,6 @@ const SupportUser = React.createClass( {
 
 	componentWillUnmount: function() {
 		KeyboardShortcuts.off( 'open-support-user', this.toggleShowDialog );
-	},
-
-	getInitialState: function() {
-		return {
-			showDialog: false,
-			errorMessage: null,
-			user: null
-		};
 	},
 
 	isEnabled: function() {
@@ -50,72 +48,21 @@ const SupportUser = React.createClass( {
 
 	toggleShowDialog: function() {
 		if ( this.isEnabled() ) {
-			this.setState( { showDialog: ! this.state.showDialog  } );
+			this.props.toggleSupportUserDialog();
 		}
-	},
-
-	onCloseDialog: function() {
-		this.setState( { showDialog: false } );
-	},
-
-	onTokenError: function( error ) {
-		this.setState( {
-				showDialog: true,
-				errorMessage: error.message
-		} );
-		this.props.deactivateSupportUser();
-	},
-
-	onChangeUser: function( supportUser, supportPassword ) {
-		if ( supportUser && supportPassword ) {
-			let user = new User();
-			let userData = Object.assign( {}, user.data );
-			
-			user.clear();
-			user.changeUser(
-				supportUser,
-				supportPassword,
-				( error ) => this.onTokenError( error )
-			);
-			this.props.activateSupportUser( userData );
-		}
-
-		this.setState( {
-			showDialog: false,
-			errorMessage: null
-		} );
-	},
-
-	onRestoreUser: function( e ) {
-		e.preventDefault();
-
-		if ( this.props.isSupportUser ) {
-			let user = new User();
-			
-			user.clear()
-			user.restoreUser();
-			this.props.deactivateSupportUser();
-			
-			window.location.reload.bind( window.location );
-		}
-			
-		this.setState( {
-			showDialog: false,
-			errorMessage: null
-		} );
 	},
 
 	render: function() {
 		return (
 			<SupportUserDialog
-				isVisible={ this.state.showDialog }
-				errorMessage={ this.state.errorMessage }
+				isVisible={ this.props.showDialog }
+				errorMessage={ this.props.errorMessage }
 				user={ this.props.userData }
 				isLoggedIn={ this.props.isSupportUser }
 				
-				onCloseDialog={ this.onCloseDialog }
-				onChangeUser={ this.onChangeUser }
-				onRestoreUser={ this.onRestoreUser }
+				onCloseDialog={ this.props.toggleSupportUserDialog }
+				onChangeUser={ this.props.fetchSupportUserToken }
+				onRestoreUser={ this.props.restoreSupportUser }
 			/>
 		);
 	}
@@ -124,11 +71,20 @@ const SupportUser = React.createClass( {
 const mapStateToProps = ( state ) => {
 	return {
 		isSupportUser: state.support.isSupportUser,
-		userData: state.support.userData
+		userData: state.support.userData,
+		showDialog: state.support.showDialog,
+		errorMessage: state.support.errorMessage
 	}
 }
 
-export default connect(
-	mapStateToProps,
-	{ activateSupportUser, deactivateSupportUser }
-)( SupportUser );
+const mapDispatchToProps = ( dispatch ) => {
+	return {
+		activateSupportUser: compose( dispatch, activateSupportUser ),
+		deactivateSupportUser: compose( dispatch, deactivateSupportUser ),
+		fetchSupportUserToken: compose( dispatch, fetchSupportUserToken ),
+		restoreSupportUser: compose( dispatch, restoreSupportUser ),
+		toggleSupportUserDialog: compose( dispatch, toggleSupportUserDialog ),
+	}
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( SupportUser );
