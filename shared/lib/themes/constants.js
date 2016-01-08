@@ -25,6 +25,5 @@ module.exports = assign( keyMirror( {
 
 	// Misc. shared values
 	PER_PAGE: 20,
-	THEME_COMPONENT_HEIGHT: 300
 
 } );

@@ -11,7 +11,6 @@ var React = require( 'react' ),
 var Theme = require( 'components/theme' ),
 	EmptyContent = require( 'components/empty-content' ),
 	InfiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	ITEM_HEIGHT = require( 'lib/themes/constants' ).THEME_COMPONENT_HEIGHT,
 	PER_PAGE = require( 'lib/themes/constants' ).PER_PAGE;
 
 /**
