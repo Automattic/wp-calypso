@@ -11,6 +11,7 @@ var plugin = {
     group: require("./lib/group_filter"),
     test: require("./lib/single_test_filter")
   },
+  help: require("./lib/help"),
   settings: require("./lib/settings"),
   TestRun: require("./lib/test_run")
 };
