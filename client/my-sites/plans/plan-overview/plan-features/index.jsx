@@ -71,7 +71,11 @@ const PlanFeatures = React.createClass( {
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
-					description={ this.translate( 'You can upload unlimited photos, videos, or music.' ) }
+					description={
+						isBusiness( this.props.selectedSite.plan )
+						? this.translate( 'You can upload unlimited photos, videos, or music.' )
+						: this.translate( 'You can upload up to 10GB of photos, videos, or music.' )
+					}
 					heading={ this.translate( 'Storage Space' ) }
 					willBeRemoved={ willBeRemoved } />
 
