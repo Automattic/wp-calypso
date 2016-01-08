@@ -27,7 +27,8 @@ var Main = require( 'components/main' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
 	getButtonOptions = require( './theme-options' ),
-	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' );
+	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' ),
+	user = require( 'lib/user' )();
 
 var Themes = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -79,12 +80,20 @@ var Themes = React.createClass( {
 		}
 	},
 
+	hideSiteSelectorModal: function() {
+		this.setSelectedTheme( null, null );
+	},
+
 	isThemeOrActionSet: function() {
 		return this.state.selectedTheme || this.state.selectedAction;
 	},
 
 	isMultisite: function() {
 		return ! this.props.siteId; // Not the same as `! site` !
+	},
+
+	isLoggedOut: function() {
+		return ! user.get();
 	},
 
 	renderJetpackMessage: function() {
@@ -113,9 +122,13 @@ var Themes = React.createClass( {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 
-		const webPreviewButtonText = this.translate( 'Try & Customize', {
-			context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-		} );
+		const webPreviewButtonText = this.isLoggedOut()
+			? this.translate( 'Choose this design', {
+				comment: 'when signing up for a WordPress.com account with a selected theme'
+			} )
+			: this.translate( 'Try & Customize', {
+				context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
+			} );
 
 		return (
 			<Main className="themes">
@@ -126,7 +139,9 @@ var Themes = React.createClass( {
 						previewUrl={ this.state.previewUrl } >
 						<Button primary onClick={ this.setState.bind( this, { showPreview: false },
 							() => {
-								if ( site ) {
+								if ( this.isLoggedOut() ) {
+									dispatch( Action.signup( this.state.previewingTheme ) );
+								} else if ( site ) {
 									dispatch( Action.customize( this.state.previewingTheme, site ) );
 								} else {
 									this.setSelectedTheme( 'customize', this.state.previewingTheme );
@@ -144,7 +159,7 @@ var Themes = React.createClass( {
 						sites={ this.props.sites }
 						setSelectedTheme={ this.setSelectedTheme }
 						togglePreview={ this.togglePreview }
-						getOptions={ partialRight( getButtonOptions, bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
+						getOptions={ partialRight( getButtonOptions, this.isLoggedOut(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
 						tier={ this.props.tier }
 						customize={ bindActionCreators( Action.customize, dispatch ) }
@@ -153,10 +168,11 @@ var Themes = React.createClass( {
 				}
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal selectedAction={ this.state.selectedAction }
 					selectedTheme={ this.state.selectedTheme }
-					onHide={ this.setSelectedTheme.bind( null, null, null ) }
+					onHide={ this.hideSiteSelectorModal }
 					actions={ bindActionCreators( Action, dispatch ) }
 					getOptions={ partialRight(
 						getButtonOptions,
+						this.isLoggedOut(),
 						bindActionCreators( Action, dispatch ),
 						this.setSelectedTheme,
 						this.togglePreview,

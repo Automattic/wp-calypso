@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import partial from 'lodash/function/partial';
+import partialRight from 'lodash/function/partialRight';
 import page from 'page';
 
 /**
@@ -109,7 +109,7 @@ const ThemesSelection = React.createClass( {
 					<ThemesList getButtonOptions={ this.props.getOptions.bind( null, site ) }
 						onMoreButtonClick={ this.onMoreButtonClick }
 						onScreenshotClick={ this.onScreenshotClick }
-						getScreenshotUrl={ site ? partial( Helper.getPreviewUrl, partial.placeholder, site ) : null } />
+						getScreenshotUrl={ site ? partialRight( Helper.getPreviewUrl, site ) : null } />
 				</ThemesData>
 			</div>
 		);

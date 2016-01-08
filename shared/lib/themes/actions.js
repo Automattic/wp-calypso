@@ -168,6 +168,21 @@ export function clearActivated() {
 	};
 };
 
+export function signup( theme ) {
+	return dispatch => {
+		const signupUrl = ThemeHelpers.getSignupUrl( theme );
+
+		dispatch( {
+			type: ThemeConstants.SIGNUP_WITH_THEME,
+			theme
+		} );
+
+		// `ThemeHelpers.navigateTo` uses `page()` here, which messes with `pushState`,
+		// which we don't want here, since we're navigating away from Calypso.
+		window.location = signupUrl;
+	}
+}
+
 // Might be obsolete, since in theme-options.js, `hasUrl === true`
 export function details( theme, site ) {
 	return dispatch => {

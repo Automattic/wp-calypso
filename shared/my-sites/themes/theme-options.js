@@ -10,9 +10,9 @@ import assign from 'lodash/object/assign';
 import i18n from 'lib/mixins/i18n';
 import Helper from 'lib/themes/helpers';
 
-export default function getButtonOptions( site, theme, actions, setSelectedTheme, togglePreview, showAll = false ) {
-	return rawOptions( site, theme )
-		.filter( option => showAll || ! option.hideIf )
+export default function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview, showAll = false ) {
+	return rawOptions( site, theme, isLoggedOut )
+		.filter( option => showAll || ! option.isHidden )
 		.map( appendUrl )
 		.map( appendAction );
 
@@ -64,8 +64,16 @@ export default function getButtonOptions( site, theme, actions, setSelectedTheme
 	}
 };
 
-function rawOptions( site, theme ) {
+function rawOptions( site, theme, isLoggedOut ) {
 	return [
+		{
+			name: 'signup',
+			label: i18n.translate( 'Choose this design', {
+				comment: 'when signing up for a WordPress.com account with a selected theme'
+			} ),
+			hasUrl: true,
+			isHidden: ! isLoggedOut
+		},
 		{
 			name: 'preview',
 			label: i18n.translate( 'Preview', {
@@ -77,7 +85,7 @@ function rawOptions( site, theme ) {
 			} ),
 			hasAction: true,
 			hasUrl: false,
-			hideIf: theme.active
+			isHidden: theme.active
 		},
 		{
 			name: 'purchase',
@@ -89,21 +97,21 @@ function rawOptions( site, theme ) {
 				comment: 'label for selecting a site for which to purchase a theme'
 			} ),
 			hasAction: true,
-			hideIf: theme.active || theme.purchased || ! theme.price
+			isHidden: isLoggedOut || theme.active || theme.purchased || ! theme.price
 		},
 		{
 			name: 'activate',
 			label: i18n.translate( 'Activate' ),
 			header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 			hasAction: true,
-			hideIf: theme.active || ( theme.price && ! theme.purchased )
+			isHidden: isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
 		},
 		{
 			name: 'customize',
 			label: i18n.translate( 'Customize' ),
 			header: i18n.translate( 'Customize on:', { comment: 'label for selecting a site for which to customize a theme' } ),
 			hasAction: true,
-			hideIf: ! theme.active || ( site && ! site.isCustomizable() )
+			isHidden: ! theme.active || ( site && ! site.isCustomizable() )
 		},
 		{
 			separator: true
@@ -117,7 +125,7 @@ function rawOptions( site, theme ) {
 			name: 'support',
 			label: i18n.translate( 'Support' ),
 			hasUrl: true,
-			hideIf: site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+			isHidden: site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 		},
 	];
 }

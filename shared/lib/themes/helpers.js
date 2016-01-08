@@ -9,6 +9,11 @@ var analytics = require( 'analytics' ),
 var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
 
+	getSignupUrl( theme ) {
+		// TODO: Point to Calypso NUX (/start), passing it the theme id.
+		return '//signup.wordpress.com/signup/?source=calypso_showcase&theme=' + theme.id;
+	},
+
 	getPreviewUrl( theme, site ) {
 		if ( site && site.jetpack ) {
 			return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
