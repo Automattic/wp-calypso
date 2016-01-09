@@ -2,14 +2,15 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import PlanFeatures from 'my-sites/plans/plan-overview/plan-features';
-import PlanOverviewNotice from './notice.jsx';
 import PlanStatus from 'my-sites/plans/plan-overview/plan-status';
+import Notice from 'components/notice';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 
@@ -25,12 +26,29 @@ const PlanOverview = React.createClass( {
 		] ).isRequired
 	},
 
+	redirectToDefault() {
+		page.redirect( `/plans/${ this.props.selectedSite.slug }` );
+	},
+
+	renderNotice() {
+		if ( 'thank-you' === this.props.destinationType ) {
+			return (
+				<Notice onDismissClick={ this.redirectToDefault } status="is-success">
+					{
+						this.translate( 'Hooray, you just started your 14 day free trial of %(planName)s. Enjoy!', {
+							args: { planName: this.props.plan.productName }
+						} )
+					}
+				</Notice>
+			);
+		}
+	},
+
 	render() {
 		return (
 			<div>
-				<PlanOverviewNotice
-					destinationType={ this.props.destinationType }
-					plan={ this.props.plan } />
+
+				{ this.renderNotice() }
 
 				<Main className="plan-overview">
 					<SidebarNavigation />
