@@ -153,12 +153,12 @@ var analytics = {
 	statsd: {
 		recordTiming: function( pageUrl, eventType, duration, triggerName ) {
 			// ignore triggerName for now, it has no obvious place in statsd
-			if ( config( 'mc_analytics_enabled' ) ) {
-				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/\.|\/|:/g, '_').substr(1);
+			if ( config( 'boom_analytics_enabled' ) ) {
+				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
 
 				var json = JSON.stringify({
 					beacons:[
-						'calypso.' + config( 'env' ) + '.' + featureSlug + '.' + eventType.replace('-', '_') + ':' + duration + '|ms'
+						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' + eventType.replace('-', '_') + ':' + duration + '|ms'
 					]
 				});
 

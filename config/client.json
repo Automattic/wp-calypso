@@ -11,6 +11,8 @@
   "wpcom_signup_id",
   "wpcom_signup_key",
   "mc_analytics_enabled",
+  "boom_analytics_enabled",
+  "boom_analytics_key",
   "google_analytics_enabled",
   "google_analytics_key",
   "google_adwords_conversion_id",
