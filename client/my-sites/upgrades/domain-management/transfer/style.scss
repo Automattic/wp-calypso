@@ -14,4 +14,8 @@
 
 .transfer__action-button {
 	float: right;
+	margin-right: 10px;
+	&:first-of-type {
+		margin-right: 0;
+	}
 }
