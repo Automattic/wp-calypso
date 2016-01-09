@@ -110,7 +110,7 @@ var analytics = {
 
 	timing: {
 		record: function( eventType, duration, triggerName ) {
-			var urlPath = mostRecentUrlPath || document.location.pathname;
+			var urlPath = mostRecentUrlPath || 'unknown';
 			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
 		}
