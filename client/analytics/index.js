@@ -56,6 +56,16 @@ function buildQuerystringNoPrefix( group, name ) {
 	return uriComponent;
 }
 
+// we use this variable to track URL paths submitted to analytics.pageView.record
+// so that analytics.pageLoading.record can re-use the urlPath parameter.
+// this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
+var mostRecentUrlPath = null;
+
+window.addEventListener('popstate', function() {
+	// throw away our URL value if the user used the back/forward buttons
+	mostRecentUrlPath = null;
+});
+
 var analytics = {
 
 	initialize: function( user, superProps ) {
@@ -92,8 +102,17 @@ var analytics = {
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
 		record: function( urlPath, pageTitle ) {
+			mostRecentUrlPath = urlPath;
 			analytics.tracks.recordPageView( urlPath );
 			analytics.ga.recordPageView( urlPath, pageTitle );
+		}
+	},
+
+	timing: {
+		record: function( eventType, duration, triggerName ) {
+			var urlPath = mostRecentUrlPath || document.location.pathname;
+			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
+			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
 		}
 	},
 
@@ -129,6 +148,23 @@ var analytics = {
 			analytics.tracks.recordEvent( 'calypso_page_view', {
 				'path': urlPath
 			} );
+		}
+	},
+
+	statsd: {
+		recordTiming: function( pageUrl, eventType, duration, triggerName ) {
+			// ignore triggerName for now, it has no obvious place in statsd
+			if ( config( 'boom_analytics_enabled' ) ) {
+				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
+
+				var json = JSON.stringify({
+					beacons:[
+						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' + eventType.replace('-', '_') + ':' + duration + '|ms'
+					]
+				});
+
+				new Image().src = 'https://pixel.wp.com/boom.gif?v=calypso&u=' + encodeURIComponent(pageUrl) + '&json=' + encodeURIComponent(json);
+			}
 		}
 	},
 
@@ -185,6 +221,16 @@ var analytics = {
 			if ( config( 'google_analytics_enabled' ) ) {
 				window.ga( 'send', 'event', category, action, label, value );
 			}
+		},
+
+		recordTiming: function( urlPath, eventType, duration, triggerName ) {
+			analytics.ga.initialize();
+		
+			debug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
+
+			if ( config( 'google_analytics_enabled' ) ) {
+				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName);
+			}	
 		}
 	},
 
