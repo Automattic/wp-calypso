@@ -154,7 +154,7 @@ module.exports = {
 		}
 
 		if ( changed ) {
-			list.emit( 'changed' );
+			list.emit( 'change' );
 		}
 		next();
 	},
