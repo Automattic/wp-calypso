@@ -84,8 +84,7 @@
 		"network-connection": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
-		"ad-tracking": false,
-		"perfmon": true
+		"ad-tracking": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",

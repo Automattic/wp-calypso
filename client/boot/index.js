@@ -25,7 +25,6 @@ var config = require( 'config' ),
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	perfmon = require( 'lib/perfmon' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
 	layoutFocus = require( 'lib/layout-focus' ),
@@ -183,11 +182,6 @@ function boot() {
 		}
 
 		layoutElement = React.createElement( LoggedOutLayout );
-	}
-
-	if ( config.isEnabled( 'perfmon' ) ) {
-		// Record time spent watching slowly-flashing divs
-		perfmon();
 	}
 
 	layout = renderWithReduxStore(
