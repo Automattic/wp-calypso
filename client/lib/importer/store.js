@@ -114,9 +114,13 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 
 		case actionTypes.SET_UPLOAD_PROGRESS:
-			newState = state.setIn( [ 'importers', action.importerId, 'percentComplete' ],
-				action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100
-			);
+			newState = state.update( 'importers', importers => importers.map( importer => {
+				if ( action.importerId !== importer.get( 'importerId' ) ) {
+					return importer;
+				}
+
+				return importer.set( 'percentComplete', action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100 );
+			} ) );
 			break;
 
 		case actionTypes.START_IMPORT:
@@ -140,7 +144,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case actionTypes.START_UPLOAD:
 			newState = state
 				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOADING )
-				.setIn( [ 'importers', action.importerId, 'filename' ], action.filename );
+				.setIn( [ 'importers', action.importerId, 'filename' ], action.filename )
+				.setIn( [ 'importers', action.importerId, 'uploadAborter' ], action.uploadAborter );
 			break;
 
 		default:

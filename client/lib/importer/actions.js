@@ -2,6 +2,7 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
+import noop from 'lodash/utility/noop';
 const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
@@ -26,19 +27,18 @@ const apiFailure = data => {
 };
 const asArray = a => [].concat( a );
 
-const apiSuccess = data => {
+function apiUpdateImporter( importerStatus ) {
 	apiSuccess();
 
 	Dispatcher.handleViewAction( {
-		type: actionTypes.API_SUCCESS
+		type: actionTypes.RECEIVE_IMPORT_STATUS,
 		importerStatus
 	} );
 }
 
-	return data;
-};
+export function cancelImport( siteId, importerId, uploadAborter = noop ) {
+	uploadAborter();
 
-export function cancelImport( siteId, importerId ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.CANCEL_IMPORT,
 		importerId,
@@ -155,13 +155,7 @@ export function startImporting( importerStatus ) {
 export function startUpload( importerStatus, file ) {
 	let { importerId, site: { ID: siteId } } = importerStatus;
 
-	Dispatcher.handleViewAction( {
-		type: actionTypes.START_UPLOAD,
-		filename: file.name,
-		importerId
-	} );
-
-	wpcom.uploadExportFile( siteId, {
+	const uploader = wpcom.uploadExportFile( siteId, {
 		importStatus: toApi( importerStatus ),
 		file,
 
@@ -180,6 +174,13 @@ export function startUpload( importerStatus, file ) {
 			} );
 		},
 
-		onabort: () => cancelImport( importerId )
+		onabort: () => cancelImport( siteId, importerId )
+	} );
+
+	Dispatcher.handleViewAction( {
+		type: actionTypes.START_UPLOAD,
+		filename: file.name,
+		importerId,
+		uploadAborter: uploader.abort.bind( uploader )
 	} );
 }
