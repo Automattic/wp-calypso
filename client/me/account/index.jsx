@@ -485,14 +485,13 @@ module.exports = React.createClass( {
 					// message is translated in the API
 					_map( actions, function( message, key ) {
 						return (
-							<FormLabel>
+							<FormLabel key={ key }>
 								<FormRadio
 									name="usernameAction"
 									onChange={ this.handleRadioChange }
 									onClick={ this.recordRadioEvent( 'Username Change Blog Action' ) }
 									value={ key }
-									checked={ key === this.state.usernameAction }
-									key={ key } />
+									checked={ key === this.state.usernameAction } />
 								<span>{ message }</span>
 							</FormLabel>
 						);
