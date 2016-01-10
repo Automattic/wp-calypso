@@ -19,6 +19,10 @@ const PLACEHOLDER_CLASSES = [
 	'is-loading'
 ];
 
+const EXCLUDE_PLACEHOLDER_CLASSES = [
+	'editor-drawer-well__placeholder' // used in featured image in editor
+];
+
 const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map(function(clazz) { return `[class*='${clazz}']`; }).join(', ');
 const OBSERVE_ROOT = document.getElementById('wpcom');
 
@@ -101,9 +105,13 @@ function checkForVisiblePlaceholders( trigger ) {
 
 function isPlaceholder( node ) {
 	var className = node.className;
-	return className && className.indexOf && PLACEHOLDER_CLASSES.some( function( clazz ) { 
-		return (className.indexOf( clazz ) >= 0); 
-	} );
+	return className && className.indexOf 
+		&& PLACEHOLDER_CLASSES.some( function( clazz ) { 
+			return (className.indexOf( clazz ) >= 0); 
+		} )
+		&& !EXCLUDE_PLACEHOLDER_CLASSES.some( function( clazz ) {
+			return (className.indexOf( clazz ) >= 0); 
+		} );
 }
 
 // adapted from http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
