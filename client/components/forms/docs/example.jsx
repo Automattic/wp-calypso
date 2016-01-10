@@ -98,7 +98,8 @@ var FormFields = React.createClass( {
 							id="username"
 							name="username"
 							disabled
-							placeholder="Placeholder text..." />
+							placeholder="Placeholder text..."
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -116,7 +117,8 @@ var FormFields = React.createClass( {
 							id="text_valid"
 							name="text_valid"
 							className="is-valid"
-							placeholder="Placeholder text..."/>
+							placeholder="Placeholder text..."
+						/>
 						<FormInputValidation text="Your text can be saved." />
 					</FormFieldset>
 
@@ -129,7 +131,8 @@ var FormFields = React.createClass( {
 							id="text_invalid"
 							name="text_invalid"
 							className="is-error"
-							placeholder="Placeholder text..." />
+							placeholder="Placeholder text..."
+						/>
 						<FormInputValidation isError text="Your text is too short." />
 					</FormFieldset>
 
@@ -139,7 +142,8 @@ var FormFields = React.createClass( {
 							id="text_with_affixes"
 							placeholder="Placeholder text..."
 							prefix="Prefix"
-							suffix="Suffix" />
+							suffix="Suffix"
+							/>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -162,19 +166,23 @@ var FormFields = React.createClass( {
 					<FormLegend>Form Toggle</FormLegend>
 					<FormToggle
 						checked={ this.state.toggled }
-						onChange={ this.handleToggle } />
+						onChange={ this.handleToggle }
+					/>
 					<br />
 					<FormToggle
 						checked={ false }
-						disabled={ true } />
+						disabled={ true }
+					/>
 					<br />
 					<CompactFormToggle
 						checked={ this.state.compactToggled }
-						onChange={ this.handleCompactToggle } />
+						onChange={ this.handleCompactToggle }
+					/>
 					<br />
 					<CompactFormToggle
 						checked={ false }
-						disabled={ true } />
+						disabled={ true }
+					/>
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
@@ -217,7 +225,8 @@ var FormFields = React.createClass( {
 						<FormPhoneInput
 							initialCountryCode="US"
 							initialPhoneNumber="877-273-3049"
-							countriesList={ countriesList } />
+							countriesList={ countriesList }
+							/>
 					</FormFieldset>
 
 					<FormFieldset>

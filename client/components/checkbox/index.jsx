@@ -3,6 +3,7 @@
 */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import noop from 'lodash/utility/noop';
 
 /**
 * Interal dependencies
@@ -13,6 +14,8 @@ export default React.createClass( {
 	displayName: 'Checkbox',
 
 	propTypes: {
+		id: React.PropTypes.string,
+		name: React.PropTypes.string,
 		checked: PropTypes.bool.isRequired,
 		disabled: PropTypes.bool,
 		onChange: PropTypes.func
@@ -26,23 +29,23 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			disabled: false
+			disabled: false,
+			onChange: noop
 		};
 	},
 
-	handleChange( e ) {
-		const { onChange } = this.props;
-
-		onChange && onChange( e, this.state.checked );
+	change() {
+		const { checked, onChange } = this.props;
+		onChange( ! checked );
 	},
 
-	handleFocus() {
+	focus() {
 		this.setState( {
 			focused: true
 		} )
 	},
 
-	handleBlur() {
+	blur() {
 		this.setState( {
 			focused: false
 		} )
@@ -59,13 +62,13 @@ export default React.createClass( {
 		return (
 			<label className={ classes } >
 				<input type="checkbox"
-					id = { id }
-					name = { name }
-					checked = { checked }
-					disabled = { disabled }
-					onChange = { this.handleChange }
-					onFocus = { this.handleFocus }
-					onBlur = { this.handleBlur } />
+					id={ id }
+					name={ name }
+					checked={ checked }
+					disabled={ disabled }
+					onChange={ this.change }
+					onFocus={ this.focus }
+					onBlur={ this.blur } />
 				{ children }
 				{ checked && <Gridicon icon="checkmark" size={ 18 } /> }
 			</label>
