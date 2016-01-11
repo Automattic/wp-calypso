@@ -10,7 +10,7 @@ var React = require( 'react' ),
 
 var ElementChart = require( 'components/chart' ),
 	Legend = require( 'components/chart/legend' ),
-	StatTabs = require( '../module-tabs' ),
+	StatTabs = require( '../stats-tabs' ),
 	analytics = require( 'analytics' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	Card = require( 'components/card' );
