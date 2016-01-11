@@ -323,7 +323,7 @@ module.exports = React.createClass( {
 				<Tooltip
 					context={ this.refs && this.refs.setVisibility }
 					isVisible={ this.state.tooltip && ! this.state.showPopover }
-					position="bottom"
+					position="bottom left"
 				>
 					{ this.translate( 'Edit visibility', { context: 'Editor: Tooltip shown on icon to change the post\'s visibility.' } ) }
 				</Tooltip>

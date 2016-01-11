@@ -266,7 +266,11 @@ module.exports = React.createClass( {
 			menubar: false,
 			indent: false,
 
-			autoresize_min_height: document.documentElement.clientHeight,
+			// Try to find a suitable minimum size based on the viewport height
+			// minus the surrounding editor chrome to avoid scrollbars. In the
+			// future, we should calculate from the rendered editor bounds.
+			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
+
 			toolbar1: toolbar1.join(),
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
@@ -316,9 +320,7 @@ module.exports = React.createClass( {
 	},
 
 	onScrollPinTools: function() {
-		const editor = this._editor,
-			$ = editor.$;
-
+		const editor = this._editor;
 		if ( ! editor || this.props.mode === 'html' ) {
 			return;
 		}
@@ -326,38 +328,19 @@ module.exports = React.createClass( {
 		const container = editor.getContainer();
 		const rect = container.getBoundingClientRect();
 
-		if ( rect.top < 46 && ! this._pinned && viewport.isWithinBreakpoint( '>660px' ) ) {
-			this._pinned = true;
-			const toolbar = $( '.mce-toolbar-grp:not(.mce-inline-toolbar-grp)', container ).first();
-			const toolbarComputedStyle = window.getComputedStyle( toolbar[ 0 ] );
-			const toolbarWidth = toolbar[ 0 ].parentNode.clientWidth - parseInt( toolbarComputedStyle.marginLeft, 10 ) - parseInt( toolbarComputedStyle.marginRight, 10 );
+		let newPinned;
+		if ( ! this._pinned && rect.top < 46 && viewport.isWithinBreakpoint( '>660px' ) ) {
+			newPinned = true;
+		} else if ( this._pinned && window.pageYOffset < 164 ) {
+			newPinned = false;
+		} else {
+			return;
+		}
 
-			toolbar.css( {
-				boxSizing: 'border-box',
-				position: 'fixed',
-				top: '46px',
-				left: 'auto',
-				right: 'auto',
-				width: toolbarWidth + 'px',
-				'z-index': 20
-			} );
-
-			if ( this.props.onTogglePin ) {
-				this.props.onTogglePin( 'pin' );
-			}
-		} else if ( window.pageYOffset < 164 && this._pinned ) {
-			this._pinned = false;
-			$( '.mce-toolbar-grp:not(.mce-inline-toolbar-grp)', container ).first().css( {
-				position: 'absolute',
-				top: 0,
-				left: 0,
-				right: 0,
-				width: 'auto',
-				'z-index': 'auto'
-			} );
-			if ( this.props.onTogglePin ) {
-				this.props.onTogglePin( 'unpin' );
-			}
+		this._pinned = newPinned;
+		editor.dom.toggleClass( editor.getContainer(), 'is-pinned', newPinned );
+		if ( this.props.onTogglePin ) {
+			this.props.onTogglePin( newPinned ? 'pin' : 'unpin' );
 		}
 	},
 

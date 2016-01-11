@@ -5,11 +5,11 @@
 	justify-content: flex-start;
 	align-content: flex-start;
 	align-items: stretch;
-	margin: -48px -48px 24px;
-	padding: 12px 16px;
+	margin-bottom: 24px;
+	padding: 12px 12px 8px;
 
 	@include breakpoint( "<660px" ) {
-		margin: -24px -16px 16px;
+		margin-bottom: 16px;
 	}
 }
 

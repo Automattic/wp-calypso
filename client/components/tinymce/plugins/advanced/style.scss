@@ -29,24 +29,10 @@
 .mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
 	position: absolute;
 		top: 3px;
-		right: 16px;
-
-		&:hover {
-			border-color: $white;
-			background: $white;
-		}
 }
 
-// active
-
 .mce-toolbar .mce-btn-group .mce-btn.mce-active.mce-advanced {
-	background: $white;
-	border-color: $white;
-
-	&:hover {
-		border-color: $white;
-		background: $white;
-	}
+	border: none;
 }
 
 .mce-toolbar .mce-active.mce-advanced button {

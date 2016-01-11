@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -105,9 +106,13 @@ var EditorFeaturedImage = React.createClass( {
 	},
 
 	render: function() {
+		const classes = classnames( 'editor-featured-image', {
+			'is-assigned': !! PostUtils.getFeaturedImageId( this.props.post )
+		} );
+
 		if ( this.props.editable ) {
 			return (
-				<AccordionSection className="editor-featured-image">
+				<AccordionSection className={ classes }>
 					{ this.renderMediaModal() }
 					<EditorDrawerWell
 						icon="image"
@@ -121,7 +126,7 @@ var EditorFeaturedImage = React.createClass( {
 		}
 
 		return (
-			<div className="editor-featured-image">
+			<div className={ classes }>
 				{ this.renderCurrentImage() }
 			</div>
 		);

@@ -277,10 +277,6 @@ $sidebar-width-min: 228px;
 		.has-no-sidebar & {
 			padding-left: 8px;
 		}
-
-		.focus-sidebar.is-section-post & {
-			transform: translateX( 0 );
-		}
 	}
 }
 
