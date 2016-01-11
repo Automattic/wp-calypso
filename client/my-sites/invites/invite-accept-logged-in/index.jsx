@@ -29,6 +29,7 @@ export default React.createClass( {
 	accept() {
 		this.setState( { submitting: true } );
 		acceptInvite( this.props );
+		this.props.acceptedNotice();
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 		page( this.props.redirectTo );
 	},
