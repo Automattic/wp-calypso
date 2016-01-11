@@ -8,6 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import analytics from 'analytics';
@@ -201,6 +202,20 @@ export default React.createClass( {
 		return null;
 	},
 
+	getIcon() {
+		if ( this.hasUpdate() ) {
+			return 'sync';
+		}
+
+		if ( this.hasWarning() ) {
+			return 'notice';
+		}
+
+		if ( this.hasError() ) {
+			return 'notice';
+		}
+	},
+
 	render() {
 		var indicatorClass, textClass, progressStatus;
 
@@ -235,7 +250,11 @@ export default React.createClass( {
 
 		return (
 			<div className={ indicatorClass }>
-				<button className="site-indicator__button" onClick={ this.toggleExpand } />
+				<button className="site-indicator__button" onClick={ this.toggleExpand }>
+					{ this.state.expand ?
+						<Gridicon icon="cross" size={ 18 } />
+					: <Gridicon icon={ this.getIcon() } size={ 16 } /> }
+				</button>
 				{ this.state.expand
 					? <div className="site-indicator__message">
 						<div className={ textClass }>
