@@ -268,47 +268,45 @@
 }
 
 
-// Condensed View
+// List View
 .view-toggle {
-	position: absolute;
-		top: -2px;
-		left: -12px;
-	z-index: 1;
-	height: 34px;
-	width: 34px;
-	box-sizing: border-box;
-	border-radius: 3px;
-	cursor: pointer;
+	position: relative;
+	line-height: 24px;
+	font-size: 14px;
+	color: $gray;
 
-	@include breakpoint( "<960px" ) {
-		left: 192px;
+	&:hover {
+		color: darken( $gray, 30 );
+		cursor: pointer;
+
+		.gridicon {
+			fill: darken( $gray, 30 );
+		}
 	}
 
 	.gridicon {
-		fill: $gray;
-		padding: 5px;
 		position: absolute;
 			top: 0;
 			left: 0;
-		transition: all 0.15s ease-in-out;
+		fill: $gray;
 	}
 
-	.view-toggle__inbox {
+	.view-toggle__card,
+	.view-toggle__list {
+		position: absolute;
+			top: 2px;
+			right: -8px;
+		min-width: 70px;
+		padding-left: 28px;
+		transition: all 0.05s ease-in-out;
+	}
+
+	.view-toggle__list {
 		opacity: 0;
 	}
 
-	&:after {
-		content: "";
-		display: table;
-		clear: both;
-	}
-
-	&:hover {
-		background: rgba( $gray-dark, 0.05 );
-	}
-
-	&.is-inbox {
-		.view-toggle__inbox {
+	&.is-list {
+		.view-toggle__list {
 			opacity: 1;
 		}
 
@@ -318,7 +316,7 @@
 	}
 }
 
-.is-condensed {
+.is-list {
 
 	// Hide a bunch of stuff
 	.site__domain,

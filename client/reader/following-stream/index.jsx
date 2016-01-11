@@ -35,6 +35,7 @@ var Main = require( 'components/main' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' ),
 	Gridicon = require( 'components/gridicon' ),
+	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' );
 
 const GUESSED_POST_HEIGHT = 600,
@@ -62,7 +63,7 @@ module.exports = React.createClass( {
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
-		viewInbox: React.PropTypes.bool
+		viewList: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -77,12 +78,12 @@ module.exports = React.createClass( {
 		//return this.getStateFromStores();
 		return assign(
 			this.getStateFromStores(), {
-			viewInbox: true
+			viewList: true
 		} );
 	},
 
 	handleView: function() {
-		this.setState( { viewInbox: ! this.state.viewInbox } );
+		this.setState( { viewList: ! this.state.viewList } );
 	},
 
 	getStateFromStores: function( store ) {
@@ -421,12 +422,12 @@ module.exports = React.createClass( {
 			contentClasses,
 			viewToggleClass = classnames( {
 				'view-toggle': true,
-				'is-inbox': this.state.viewInbox,
+				'is-list': this.state.viewList,
 			} );
 
 		contentClasses = classnames( {
 			'reader__content': true,
-			'is-condensed': this.state.viewInbox,
+			'is-list': this.state.viewList,
 		} );
 
 		if ( hasNoPosts ) {
@@ -458,8 +459,14 @@ module.exports = React.createClass( {
 
 				<SectionHeader label={ this.translate( "Latest Posts" ) } className={ "section-header__following-stream" }>
 					<div className={ viewToggleClass } onClick={ this.handleView }>
-						<Gridicon icon="align-justify" className="view-toggle__inbox" />
-						<Gridicon icon="align-image-center" className="view-toggle__card" />
+						<div className="view-toggle__card">
+							<Gridicon icon="align-image-center" />
+							<span className="view-toggle__label">Card View</span>
+						</div>
+						<div className="view-toggle__list">
+							<Gridicon icon="align-justify" />
+							<span className="view-toggle__label">List View</span>
+						</div>
 					</div>
 				</SectionHeader>
 
