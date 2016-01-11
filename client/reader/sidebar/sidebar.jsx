@@ -26,6 +26,7 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	Sidebar = require( 'layout/sidebar' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
@@ -264,7 +265,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
-				<li className="sidebar-menu sidebar-streams">
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Streams' ) }</SidebarHeading>
 					<ul>
 						<li className={ this.itemLinkClass( '/', { 'sidebar-streams__following': true } ) }>
@@ -312,9 +313,8 @@ module.exports = React.createClass( {
 							</a>
 						</li>
 					</ul>
-				</li>
-
-				<li className="sidebar-menu sidebar-dynamic-menu">
+				</SidebarMenu>
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Lists' ) }</SidebarHeading>
 					<ul>
 						{ this.renderLists() }
@@ -323,9 +323,8 @@ module.exports = React.createClass( {
 							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'New List' ) } ref="addListInput" onKeyDown={ this.handleCreateListKeyDown } />
 						</li>
 					</ul>
-				</li>
-
-				<li className="sidebar-menu sidebar-dynamic-menu">
+				</SidebarMenu>
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Tags' ) }</SidebarHeading>
 					<ul>
 						{ this.renderTags() }
@@ -333,7 +332,7 @@ module.exports = React.createClass( {
 							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'Follow a Tag' ) } ref="addTagInput" onKeyDown={ this.handleFollowTagKeyDown } />
 						</li>
 					</ul>
-				</li>
+				</SidebarMenu>
 			</Sidebar>
 		);
 	}

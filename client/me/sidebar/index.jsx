@@ -10,6 +10,7 @@ var React = require( 'react' ),
 var MenuItem = require( './sidebar-item' ),
 	Sidebar = require( 'layout/sidebar' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
@@ -67,7 +68,7 @@ module.exports = React.createClass( {
 				>
 					{ this.translate( 'Sign Out' ) }
 				</FormButton>
-				<li className="sidebar-menu me-profile">
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
 					<ul>
 						<MenuItem
@@ -106,8 +107,8 @@ module.exports = React.createClass( {
 						/>
 
 					</ul>
-				</li>
-				<li className="sidebar-menu me-extras">
+				</SidebarMenu>
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Special' ) }</SidebarHeading>
 					<ul>
 						{ this.renderNextStepsItem( selected ) }
@@ -119,7 +120,7 @@ module.exports = React.createClass( {
 							icon="help-outline"
 						/>
 					</ul>
-				</li>
+				</SidebarMenu>
 			</Sidebar>
 		);
 	},

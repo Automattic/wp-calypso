@@ -23,6 +23,7 @@ var config = require( 'config' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	Gridicon = require( 'components/gridicon' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
@@ -624,18 +625,20 @@ module.exports = React.createClass( {
 
 		return (
 			<Sidebar>
-				<CurrentSite sites={ this.props.sites } siteCount={ this.props.user.get().visible_site_count } />
-
-				<li className="sidebar-menu">
+				<CurrentSite
+					sites={ this.props.sites }
+					siteCount={ this.props.user.get().visible_site_count }
+				/>
+				<SidebarMenu>
 					<ul>
 						{ this.stats() }
 						{ this.ads() }
 						{ this.plan() }
 					</ul>
-				</li>
+				</SidebarMenu>
 
 				{ vip ?
-				<li className="sidebar-menu wordpress-utilities">
+				<SidebarMenu>
 					<SidebarHeading>VIP</SidebarHeading>
 					<ul>
 						{ this.vip() }
@@ -645,28 +648,28 @@ module.exports = React.createClass( {
 						{ this.vipBackups() }
 						{ this.vipLogs() }
 					</ul>
-				</li>
+				</SidebarMenu>
 				: null }
 
 				{ publish ?
-				<li className="sidebar-menu wordpress-content">
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
 					{ this.publish() }
-				</li>
+				</SidebarMenu>
 				: null }
 
 				{ appearance ?
-				<li className="sidebar-menu wordpress-appearance">
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Personalize' ) }</SidebarHeading>
 					<ul>
 						{ this.themes() }
 						{ this.menus() }
 					</ul>
-				</li>
+				</SidebarMenu>
 				: null }
 
 				{ configuration ?
-				<li className="sidebar-menu wordpress-utilities">
+				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Configure' ) }</SidebarHeading>
 					<ul>
 						{ this.sharing() }
@@ -676,7 +679,7 @@ module.exports = React.createClass( {
 						{ this.siteSettings() }
 						{ this.wpAdmin() }
 					</ul>
-				</li>
+				</SidebarMenu>
 				: null }
 			</Sidebar>
 		);
