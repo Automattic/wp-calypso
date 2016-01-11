@@ -10,7 +10,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var AllSites = require( 'my-sites/all-sites' ),
-	AddNewButton = require( 'components/add-new-button' ),
+	Button = require( 'components/button' ),
+	Gridicon = require( 'components/gridicon' ),
 	Site = require( 'my-sites/site' ),
 	SitePlaceholder = require( 'my-sites/site/placeholder' ),
 	Search = require( 'components/search' ),
@@ -77,12 +78,11 @@ module.exports = React.createClass( {
 
 	addNewSite: function() {
 		return (
-			<AddNewButton
-				isCompact={ true }
-				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-			>
-				{ this.translate( 'Add New WordPress' ) }
-			</AddNewButton>
+			<span className="site-selector__add-new-site">
+				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
+					<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
+				</Button>
+			</span>
 		);
 	},
 
