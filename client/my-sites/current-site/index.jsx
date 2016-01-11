@@ -3,7 +3,6 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:current-site' ),
-	analytics = require( 'analytics' ),
 	url = require( 'url' );
 
 /**
@@ -11,7 +10,7 @@ var React = require( 'react' ),
  */
 var AllSites = require( 'my-sites/all-sites' ),
 	analytics = require( 'analytics' ),
-	AddNewButton = require( 'components/add-new-button' ),
+	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
 	Notice = require( 'components/notice' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
@@ -119,7 +118,7 @@ module.exports = React.createClass( {
 			domains = domainStore && domainStore.list || [];
 		return (
 			<DomainWarnings
-				selectedSite={this.getSelectedSite()}
+				selectedSite={ this.getSelectedSite() }
 				domains={ domains }
 				ruleWhiteList={ [ 'expiredDomains', 'expiringDomains' ] } />
 		);
@@ -140,13 +139,14 @@ module.exports = React.createClass( {
 
 	addNewWordPressButton: function() {
 		return (
-			<AddNewButton
-				isCompact={ true }
-				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-				onClick={ this.focusContent }
-			>
-				{ this.translate( 'Add New WordPress' ) }
-			</AddNewButton>
+			<span className="current-site__add-new-site">
+				<Button compact borderless
+					href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+					onClick={ this.focusContent }
+				>
+					<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
+				</Button>
+			</span>
 		);
 	},
 
