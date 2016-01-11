@@ -36,19 +36,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var bestDay = null,
-			statTabs = [ 'posts', 'views', 'visitors', 'best' ],
 			classSets = {},
 			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
 			valueClass,
 			bestViews,
 			classes;
-
-		statTabs.forEach( function( tabName ) {
-			var tabClassOptions = {};
-			tabClassOptions[ 'module-tab' ] = true;
-			tabClassOptions[ 'is-' + tabName ] = true;
-			classSets[ tabName ] = classNames( tabClassOptions );
-		} );
 
 		if ( this.props.allTimeList.response['best-views'] && this.props.allTimeList.response['best-views'].day ) {
 			bestDay = this.moment( this.props.allTimeList.response['best-views'].day ).format( 'LL' );
@@ -107,28 +99,28 @@ module.exports = React.createClass( {
 					</div>
 
 				<ul className="module-tabs">
-					<li className={ classSets.posts }>
+					<li className="module-tab">
 						<span className="no-link">
 							<Gridicon icon="posts" size={ 18 } />
 							<span className="label">{ this.translate( 'Posts' ) }</span>
 							<span className={ classNames( valueClass, { 'is-low': this.isLow( this.props.allTimeList.response.posts ) } ) }>{ this.ensureValue( this.props.allTimeList.response.posts ) }</span>
 						</span>
 					</li>
-					<li className={ classSets.views }>
+					<li className="module-tab">
 						<span className="no-link">
 							<Gridicon icon="visible" size={ 18 } />
 							<span className="label">{ this.translate( 'Views' ) }</span>
 							<span className={ classNames( valueClass, { 'is-low': this.isLow( this.props.allTimeList.response.views ) } ) }>{ this.ensureValue( this.props.allTimeList.response.views ) }</span>
 						</span>
 					</li>
-					<li className={ classSets.visitors }>
+					<li className="module-tab">
 						<span className="no-link">
 							<Gridicon icon="user" size={ 18 } />
 							<span className="label">{ this.translate( 'Visitors' ) }</span>
 							<span className={ classNames( valueClass, { 'is-low': this.isLow( this.props.allTimeList.response.visitors ) } ) }>{ this.ensureValue( this.props.allTimeList.response.visitors ) }</span>
 						</span>
 					</li>
-					<li className={ classSets.best }>
+					<li className="module-tab is-best">
 						<span className="no-link">
 							<Gridicon icon="trophy" size={ 18 } />
 							<span className="label">{ this.translate( 'Best Views Ever' ) }</span>
