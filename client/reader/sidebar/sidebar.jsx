@@ -23,6 +23,7 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	ReaderListsStore = require( 'lib/reader-lists/lists' ),
 	ReaderListActions = require( 'lib/reader-lists/actions' ),
 	ReaderTeams = require( 'lib/reader-teams' ),
+	Sidebar = require( 'layout/sidebar' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
@@ -261,7 +262,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<ul className="wpcom-sidebar sidebar reader-sidebar" onClick={ this.handleClick }>
+			<Sidebar onClick={ this.handleClick }>
 				<li className="sidebar-menu sidebar-streams">
 					<h2 className="sidebar-heading">{ this.translate( 'Streams' ) }</h2>
 					<ul>
@@ -332,7 +333,7 @@ module.exports = React.createClass( {
 						</li>
 					</ul>
 				</li>
-			</ul>
+			</Sidebar>
 		);
 	}
 } );

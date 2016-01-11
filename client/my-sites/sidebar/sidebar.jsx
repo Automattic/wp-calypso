@@ -13,6 +13,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
+	Sidebar = require( 'layout/sidebar' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	PublishMenu = require( './publish-menu' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' ),
@@ -621,7 +622,7 @@ module.exports = React.createClass( {
 			vip = !! this.vip();
 
 		return (
-			<ul className="wpcom-sidebar sidebar">
+			<Sidebar>
 				<CurrentSite sites={ this.props.sites } siteCount={ this.props.user.get().visible_site_count } />
 
 				<li className="sidebar-menu">
@@ -676,8 +677,7 @@ module.exports = React.createClass( {
 					</ul>
 				</li>
 				: null }
-
-			</ul>
+			</Sidebar>
 		);
 	}
 } );
