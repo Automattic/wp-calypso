@@ -157,6 +157,11 @@ var analytics = {
 			if ( config( 'boom_analytics_enabled' ) ) {
 				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
 
+				// prevent explosion of read list metrics
+				if ( featureSlug.startsWith('read_list') ) {
+					featureSlug = 'read_list';
+				}
+
 				var json = JSON.stringify({
 					beacons:[
 						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' + eventType.replace('-', '_') + ':' + duration + '|ms'
