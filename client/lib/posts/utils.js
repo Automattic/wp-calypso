@@ -68,6 +68,10 @@ var utils = {
 		return post && ( post.status === 'publish' || post.status === 'private' );
 	},
 
+	isPrivate: function( post ) {
+		return post && ( 'private' === post.status );
+	},
+
 	getEditedTime: function( post ) {
 		if ( ! post ) {
 			return;
