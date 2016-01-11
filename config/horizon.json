@@ -83,7 +83,7 @@
 		"login": false,
 		"network-connection": true,
 		"settings/security/monitor": true,
-		"settings/security/scan": true,
+		"settings/security/scan": false,
 		"ad-tracking": false,
 		"perfmon": true
 	},
