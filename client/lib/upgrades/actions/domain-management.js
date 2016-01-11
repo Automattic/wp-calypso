@@ -4,6 +4,7 @@
 import { action as ActionTypes } from '../constants';
 import { isInitialized as isDomainInitialized } from 'lib/domains';
 import Dispatcher from 'dispatcher';
+import DnsStore from 'lib/domains/dns/store';
 import domainsAssembler from 'lib/domains/assembler';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
@@ -192,28 +193,50 @@ function updateWhois( domainName, contactInformation, onComplete ) {
 }
 
 function fetchDns( domainName ) {
+	const dns = DnsStore.getByDomainName( domainName );
+
+	if ( dns.isFetching || dns.hasLoadedFromServer ) {
+		return;
+	}
+
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.DNS_FETCH,
 		domainName
 	} );
 
 	wpcom.fetchDns( domainName, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.DNS_FETCH_COMPLETED,
-			records: data && data.records,
-			domainName,
-			error
-		} );
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_FETCH_COMPLETED,
+				records: data && data.records,
+				domainName
+			} );
+		} else {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_FETCH_FAILED,
+				domainName
+			} );
+		}
 	} );
 }
 
 function addDns( domainName, record, onComplete ) {
+	Dispatcher.handleServerAction( {
+		type: ActionTypes.DNS_ADD,
+		domainName
+	} );
+
 	wpcom.addDns( domainName, record, ( error ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DNS_ADD_COMPLETED,
 				domainName,
-				record,
+				record
+			} );
+		} else {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_ADD_FAILED,
+				domainName
 			} );
 		}
 

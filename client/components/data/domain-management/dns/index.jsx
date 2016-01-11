@@ -52,11 +52,7 @@ module.exports = React.createClass( {
 	},
 
 	loadDns() {
-		const dns = DnsStore.getByDomainName( this.props.selectedDomainName );
-
-		if ( ! dns ) {
-			upgradesActions.fetchDns( this.props.selectedDomainName );
-		}
+		upgradesActions.fetchDns( this.props.selectedDomainName );
 	},
 
 	render() {

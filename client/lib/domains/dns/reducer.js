@@ -13,7 +13,9 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 
 function updateDomainState( state, domainName, dns ) {
 	const command = {
-		[ domainName ]: { $set: dns }
+		[ domainName ]: {
+			$set: Object.assign( {}, state[ domainName ] || getInitialStateForDomain(), dns )
+		}
 	};
 
 	return update( state, command );
@@ -26,7 +28,10 @@ function addDns( state, domainName, record ) {
 		} );
 
 	return update( state, {
-		[ domainName ]: { records: { $push: [ newRecord ] } }
+		[ domainName ]: {
+			records: { $push: [ newRecord ] },
+			isSubmittingForm: { $set: false }
+		}
 	} );
 }
 
@@ -72,12 +77,48 @@ function findDnsIndex( records, { id, data, name, type } ) {
 	return findIndex( records, matchingFields );
 }
 
+function getInitialStateForDomain() {
+	return {
+		isFetching: false,
+		hasLoadedFromServer: false,
+		isSubmittingForm: false,
+		records: null
+	};
+}
+
 function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
+		case ActionTypes.DNS_FETCH:
+			state = updateDomainState( state, action.domainName, {
+				isFetching: true
+			} );
+			break;
+		case ActionTypes.DNS_FETCH_COMPLETED:
+			state = updateDomainState( state, action.domainName, {
+				records: action.records,
+				isFetching: false,
+				hasLoadedFromServer: true
+			} );
+			break;
+		case ActionTypes.DNS_FETCH_FAILED:
+			state = updateDomainState( state, action.domainName, {
+				isFetching: false
+			} );
+			break;
+		case ActionTypes.DNS_ADD:
+			state = updateDomainState( state, action.domainName, {
+				isSubmittingForm: true
+			} );
+			break;
 		case ActionTypes.DNS_ADD_COMPLETED:
 			state = addDns( state, action.domainName, action.record );
+			break;
+		case ActionTypes.DNS_ADD_FAILED:
+			state = updateDomainState( state, action.domainName, {
+				isSubmittingForm: false
+			} );
 			break;
 		case ActionTypes.DNS_DELETE:
 			state = markDnsForDeletion( state, action.domainName, action.record, {
@@ -92,24 +133,12 @@ function reducer( state, payload ) {
 				isBeingDeleted: false
 			} );
 			break;
-		case ActionTypes.DNS_FETCH:
-			if ( ! state[ action.domainName ] ) {
-				state = updateDomainState( state, action.domainName, {
-					hasLoadedFromServer: false
-				} );
-			}
-			break;
-		case ActionTypes.DNS_FETCH_COMPLETED:
-			state = updateDomainState( state, action.domainName, {
-				records: action.records,
-				hasLoadedFromServer: true
-			} );
-			break;
 	}
 
 	return state;
 }
 
 export {
+	getInitialStateForDomain,
 	reducer
 };
