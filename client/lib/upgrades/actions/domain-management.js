@@ -222,14 +222,20 @@ function addDns( domainName, record, onComplete ) {
 }
 
 function deleteDns( domainName, record, onComplete ) {
+	Dispatcher.handleServerAction( {
+		type: ActionTypes.DNS_DELETE,
+		domainName,
+		record,
+	} );
+
 	wpcom.deleteDns( domainName, record, ( error ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_DELETE_COMPLETED,
-				domainName,
-				record,
-			} );
-		}
+		const type = ! error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
+
+		Dispatcher.handleServerAction( {
+			type,
+			domainName,
+			record,
+		} );
 
 		onComplete( error );
 	} );

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -87,12 +88,16 @@ var DnsRecord = React.createClass( {
 	},
 
 	deleteDns: function() {
+		if ( this.props.dnsRecord.isBeingDeleted ) {
+			return;
+		}
 		this.props.deleteDns( this.props.dnsRecord );
 	},
 
 	render: function() {
+		const classes = classNames( { 'is-disabled': this.props.dnsRecord.isBeingDeleted } );
 		return (
-			<li>
+			<li className={ classes }>
 				<div className="dns__list-type">
 					<label>{ this.props.dnsRecord.type }</label>
 				</div>
