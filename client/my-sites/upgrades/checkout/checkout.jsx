@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var isEqual = require( 'lodash/lang/isEqual' ),
+var Dispatcher = require( 'dispatcher' ),
 	isEmpty = require( 'lodash/lang/isEmpty' ),
+	isEqual = require( 'lodash/lang/isEqual' ),
 	page = require( 'page' ),
 	React = require( 'react' );
 
@@ -14,6 +15,7 @@ var analytics = require( 'analytics' ),
 	DomainDetailsForm = require( './domain-details-form' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
 	observe = require( 'lib/mixins/data-observe' ),
+	planActions = require( 'state/sites/plans/actions' ),
 	purchasePaths = require( 'me/purchases/paths' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
@@ -120,11 +122,13 @@ module.exports = React.createClass( {
 
 			if ( cartItems.hasRenewalItem( this.state.previousCart ) ) {
 				renewalItem = cartItems.getRenewalItems( this.state.previousCart )[ 0 ];
+
 				redirectTo = purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 			}
 		}
 
 		page.redirect( redirectTo );
+
 		return true;
 	},
 
@@ -136,6 +140,12 @@ module.exports = React.createClass( {
 
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
+			planActions.clearSitePlans();
+
+			Dispatcher.handleServerAction( {
+				type: 'FETCH_SITES'
+			} );
+
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
