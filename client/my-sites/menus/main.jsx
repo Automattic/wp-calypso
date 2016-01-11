@@ -209,12 +209,10 @@ var Menus = React.createClass( {
 		const data = this.props.siteMenus.get();
 		let featureExample;
 
-
 		if ( data.menus && data.locations &&
 			data.hasDefaultMenu && this.props.itemTypes.fetched ) {
 			featureExample = this.renderMenus();
 		}
-
 
 		return (
 			<Main className="manage-menus">
@@ -238,7 +236,6 @@ var Menus = React.createClass( {
 			selectedMenu = this.getSelectedMenu(),
 			data = this.props.siteMenus.get(),
 			menu;
-
 
 		if ( ! data.menus || ! data.locations || ! data.hasDefaultMenu ||
 			! this.props.itemTypes.fetched || this.state.isBusy ) {
@@ -289,7 +286,6 @@ var Menus = React.createClass( {
 				{ this.renderMenus() }
 			</Main>
 		);
-
 	}
 } );
 
