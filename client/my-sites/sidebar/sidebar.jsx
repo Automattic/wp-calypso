@@ -20,9 +20,8 @@ var config = require( 'config' ),
 	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
 	SidebarMenuItem = require( './sidebar-menu-item' ),
 	AdsUtils = require( 'lib/ads/utils' ),
-	Gridicon = require( 'components/gridicon' );
-
-var abtest = require( 'lib/abtest' ).abtest;
+	Gridicon = require( 'components/gridicon' ),
+	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -256,8 +255,8 @@ module.exports = React.createClass( {
 			target = null,
 			domainsLink = '/domains' + this.siteSuffix(),
 			addDomainLink = '/domains/add' + this.siteSuffix(),
-			addDomainButton;
-			
+			addDomainButton = '';
+
 		if ( ! site ) {
 			return null;
 		}
@@ -284,8 +283,6 @@ module.exports = React.createClass( {
 
 		if ( abtest( 'domainsAddButton' ) === 'button' ) {
 			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new">{ this.translate( 'Add' ) }</a>;
-		} else {
-			addDomainButton = '';
 		}
 
 		return (
