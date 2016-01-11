@@ -130,6 +130,7 @@ var Plans = React.createClass( {
 				<PlanOverview
 					path={ this.props.context.path }
 					cart={ this.props.cart }
+					destinationType={ this.props.context.params.destinationType }
 					plan={ currentPlan }
 					selectedSite={ this.props.selectedSite } />
 			);

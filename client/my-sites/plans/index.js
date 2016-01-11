@@ -43,7 +43,7 @@ module.exports = function() {
 		);
 
 		page(
-			'/plans/:domain',
+			'/plans/:domain/:destinationType?',
 			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
