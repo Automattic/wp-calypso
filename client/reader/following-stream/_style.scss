@@ -262,11 +262,17 @@
 }
 
 
+// Section Header
+.wp-primary .section-header__following-stream {
+	margin-bottom: 16px;
+}
+
+
 // Condensed View
 .view-toggle {
-	position: fixed;
-		top: 50px;
-		left: 236px;
+	position: absolute;
+		top: -2px;
+		left: -12px;
 	z-index: 1;
 	height: 34px;
 	width: 34px;

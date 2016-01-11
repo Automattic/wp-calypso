@@ -34,7 +34,8 @@ var Main = require( 'components/main' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
 	XPostHelper = require( 'reader/xpost-helper' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	SectionHeader = require( 'components/section-header' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -453,10 +454,12 @@ module.exports = React.createClass( {
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
-				<div className={ viewToggleClass } onClick={ this.handleView }>
-					<Gridicon icon="align-justify" className="view-toggle__inbox" />
-					<Gridicon icon="align-image-center" className="view-toggle__card" />
-				</div>
+				<SectionHeader label={ this.translate( 'Following' ) } className={ "section-header__following-stream" }>
+					<div className={ viewToggleClass } onClick={ this.handleView }>
+						<Gridicon icon="align-justify" className="view-toggle__inbox" />
+						<Gridicon icon="align-image-center" className="view-toggle__card" />
+					</div>
+				</SectionHeader>
 
 				{ this.props.children }
 
