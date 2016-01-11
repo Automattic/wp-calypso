@@ -16,12 +16,12 @@ export default React.createClass( {
 	displayName: 'StatsPostDetailMonths',
 
 	propTypes: {
-		postViewsList: PropTypes.element
+		postViewsList: PropTypes.object
 	},
 
 	mixins: [
 		toggle( 'PostMonth' ),
-		observe( 'site', 'postViewsList' )
+		observe( 'postViewsList' )
 	],
 
 	getInitialState() {
@@ -37,27 +37,20 @@ export default React.createClass( {
 	},
 
 	render() {
-		const data = this.props.postViewsList.response;
-		const title = this.props.title;
-		const total = this.props.total;
-		const dataKey = this.props.dataKey;
-		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
-		let tableHeader,
-			tableRows,
-			tableBody,
-			highest,
-			classes;
+		const { title, total, dataKey, postViewsList } = this.props;
+		const { showInfo, noData } = this.state;
+		const data = postViewsList.response;
+		const infoIcon = showInfo ? 'info' : 'info-outline';
+		const classes = {
+			'is-loading': this.props.postViewsList.isLoading(),
+			'is-showing-info': showInfo,
+			'has-no-data': noData
+		};
 
-		classes = [
-			'stats-module',
-			'is-expanded',
-			'is-post-months',
-			{
-				'is-loading': this.props.postViewsList.isLoading(),
-				'is-showing-info': this.state.showInfo,
-				'has-no-data': this.state.noData
-			}
-		];
+		let tableHeader;
+		let tableRows;
+		let tableBody;
+		let highest;
 
 		if ( data && data[ dataKey ] ) {
 			tableHeader = (
@@ -84,18 +77,15 @@ export default React.createClass( {
 			highest = 'years' === dataKey ? data.highest_month : data.highest_day_average;
 
 			tableRows = Object.keys( data[ dataKey ] ).map( function( i ) {
-				let j,
-					cellClass,
-					year = data[ dataKey ][ i ],
-					cells = [],
-					hasData;
+				const year = data[ dataKey ][ i ];
+				const cells = [];
 
 				cells.push( <th key={ 'header' + i }>{ i }</th> );
 
-				for ( j = 1; j <= 12; j++ ) {
-					hasData = ( year.months[ j ] || 0 === year.months[ j ] );
+				for ( let j = 1; j <= 12; j++ ) {
+					const hasData = ( year.months[ j ] || 0 === year.months[ j ] );
 
-					cellClass = classNames(
+					const cellClass = classNames(
 						{
 							'highest-count': ( 0 !== highest ) && ( year.months[ j ] === highest ),
 							'has-no-data': ! hasData
@@ -121,7 +111,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card className={ classNames.apply( null, classes ) }>
+			<Card className={ classNames( 'stats-module', 'is-expanded', 'is-post-months', classes ) }>
 				<div className="module-header">
 					<h4 className="module-header-title">{ title }</h4>
 					<ul className="module-header-actions">
@@ -133,7 +123,7 @@ export default React.createClass( {
 								title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
 								onClick={ this.toggleInfo } >
 
-								<Gridicon icon={ infoIcon } />
+								{ infoIcon ? <Gridicon icon={ infoIcon } /> : null }
 							</a>
 						</li>
 					</ul>
