@@ -158,10 +158,14 @@ var analytics = {
 				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
 
 				// prevent explosion of read list metrics
-				if ( featureSlug.startsWith('read_list') ) {
+				// this is a hack - ultimately we want to report this URLs in a more generic way to 
+				// google analytics
+				if ( featureSlug.startsWith( 'read_list' ) ) {
 					featureSlug = 'read_list';
-				} else if ( featureSlug.startsWith('tag_') ) {
+				} else if ( featureSlug.startsWith( 'tag_' ) ) {
 					featureSlug = 'tag__id';
+				} else if ( document.location.pathname.startsWith( '/plugins/browse' ) ) {
+					featureSlug = 'plugins_browse__site';
 				}
 
 				var json = JSON.stringify({
