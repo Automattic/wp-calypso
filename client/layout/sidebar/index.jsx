@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'Sidebar',
@@ -13,7 +14,7 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<ul className="sidebar" onClick={ this.props.onClick }>
+			<ul className={ classNames( 'sidebar', this.props.className ) } onClick={ this.props.onClick }>
 				{ this.props.children }
 			</ul>
 		);
