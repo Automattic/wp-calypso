@@ -11,7 +11,6 @@ import observe from 'lib/mixins/data-observe';
 import SummaryChart from '../module-summary-chart';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
-import Emojify from 'components/emojify';
 import HeaderCake from 'components/header-cake';
 
 export default React.createClass( {
@@ -21,12 +20,12 @@ export default React.createClass( {
 
 	propTypes: {
 		path: PropTypes.string,
-		postViewsList: PropTypes.element
+		postViewsList: PropTypes.object
 	},
 
 	goBack() {
-		const pathParts = this.props.path.split( '/' ),
-			defaultBack = '/stats/' + pathParts[ pathParts.length - 1 ];
+		const pathParts = this.props.path.split( '/' );
+		const defaultBack = '/stats/' + pathParts[ pathParts.length - 1 ];
 
 		page( this.props.context.prevPath || defaultBack );
 	},
@@ -36,7 +35,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		let title = '';
+		let title;
 
 		if ( this.props.postViewsList.response.post && this.props.postViewsList.response.post.post_title ) {
 			title = this.translate( 'Stats for %(posttitle)s', {
@@ -53,36 +52,34 @@ export default React.createClass( {
 
 		return (
 			<div className="main main-column" role="main">
-				<div id="my-stats-content">
-					<HeaderCake onClick={ this.goBack }>
-						<Emojify>{ title }</Emojify>
-					</HeaderCake>
+				<HeaderCake onClick={ this.goBack }>
+					{ title }
+				</HeaderCake>
 
-					<SummaryChart
-						key="chart"
-						loading={ this.props.postViewsList.isLoading() }
-						dataList={ this.props.postViewsList }
-						barClick={ this.props.barClick }
-						activeKey="period"
-						dataKey="value"
-						labelKey="period"
-						labelClass="visible"
-						tabLabel={ this.translate( 'Views' ) } />
+				<SummaryChart
+					key="chart"
+					loading={ this.props.postViewsList.isLoading() }
+					dataList={ this.props.postViewsList }
+					barClick={ this.props.barClick }
+					activeKey="period"
+					dataKey="value"
+					labelKey="period"
+					labelClass="visible"
+					tabLabel={ this.translate( 'Views' ) } />
 
-					<PostMonths
-						dataKey="years"
-						title={ this.translate( 'Months and Years' ) }
-						total={ this.translate( 'Total' ) }
-						postViewsList={ this.props.postViewsList } />
+				<PostMonths
+					dataKey="years"
+					title={ this.translate( 'Months and Years' ) }
+					total={ this.translate( 'Total' ) }
+					postViewsList={ this.props.postViewsList } />
 
-					<PostMonths
-						dataKey="averages"
-						title={ this.translate( 'Average per Day' ) }
-						total={ this.translate( 'Overall' ) }
-						postViewsList={ this.props.postViewsList } />
+				<PostMonths
+					dataKey="averages"
+					title={ this.translate( 'Average per Day' ) }
+					total={ this.translate( 'Overall' ) }
+					postViewsList={ this.props.postViewsList } />
 
-					<PostWeeks postViewsList={ this.props.postViewsList } />
-				</div>
+				<PostWeeks postViewsList={ this.props.postViewsList } />
 			</div>
 		);
 	}
