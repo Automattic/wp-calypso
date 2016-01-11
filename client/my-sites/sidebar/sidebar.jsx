@@ -253,11 +253,9 @@ module.exports = React.createClass( {
 
 	upgrades: function() {
 		var site = this.getSelectedSite(),
-			upgradesLink = '/plans' + this.siteSuffix(),
 			target = null,
-			upgradesLink = '/domains' + this.siteSuffix(),
-			addDomainLink = '/domains' + '/add' + this.siteSuffix(),
-			addDomainTarget = '_self',
+			domainsLink = '/domains' + this.siteSuffix(),
+			addDomainLink = '/domains/add' + this.siteSuffix(),
 			addDomainButton;
 			
 		if ( ! site ) {
@@ -285,14 +283,14 @@ module.exports = React.createClass( {
 		}
 
 		if ( abtest( 'domainsAddButton' ) === 'button' ) {
-			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new" target={ addDomainTarget }>{ this.translate( 'Add' ) }</a>;
+			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new">{ this.translate( 'Add' ) }</a>;
 		} else {
 			addDomainButton = '';
 		}
 
 		return (
 			 <li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
-				<a onClick={ this.onNavigate } href={ upgradesLink } target={ target }>
+				<a onClick={ this.onNavigate } href={ domainsLink } target={ target }>
 					<Gridicon icon="cart" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
 				</a>
