@@ -10,6 +10,7 @@ var includes = require( 'lodash/collection/includes' );
 
 var PLUGIN_TITLE = 'PragmaChecker';
 var SSR_READY = '/** @ssr-ready **/';
+var IGNORED_MODULES = [ 'config' ];
 
 function PragmaCheckPlugin( options ) {
 	this.options = options || {};
@@ -28,6 +29,7 @@ function scanDependencies( module, compilation ) {
 		// If the module is compiled through babel, we can be pretty sure it's our own module, not from npm.
 		if ( includes( dep.module.request, 'babel-loader' ) &&
 				dep.module._source &&
+				! includes( IGNORED_MODULES, dep.module.rawRequest ) &&
 				! includes( dep.module._source._value, SSR_READY ) ) {
 			compilation.errors.push( PLUGIN_TITLE + ': ' + module.rawRequest + ', dependency ' + dep.module.rawRequest + ' is not ' + SSR_READY );
 		}

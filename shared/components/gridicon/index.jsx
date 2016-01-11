@@ -1,3 +1,4 @@
+/** @ssr-ready **/
 
 /* !!!
 IF YOU ARE EDITING gridicon/index.jsx
