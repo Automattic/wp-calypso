@@ -10,7 +10,8 @@ var webpack = require( 'webpack' ),
  * Internal dependencies
  */
 var config = require( './server/config' ),
-	ChunkFileNamePlugin = require( './server/bundler/plugin' );
+	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
+	PragmaCheckPlugin = require( 'server/pragma-checker' );
 
 /**
  * Internal variables
@@ -96,6 +97,7 @@ jsLoader = {
 };
 
 if ( CALYPSO_ENV === 'development' ) {
+	webpackConfig.plugins.push( new PragmaCheckPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
 		'webpack-dev-server/client?/',
