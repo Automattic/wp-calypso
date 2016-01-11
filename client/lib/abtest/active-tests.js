@@ -44,5 +44,13 @@ module.exports = {
 			nudge: 50
 		},
 		defaultVariation: 'drake'
+	},
+	domainsAddButton: {
+		datestamp: '20160113',
+		variations: {
+			original: 50,
+			button: 50
+		},
+		defaultVariation: 'original'
 	}
 };

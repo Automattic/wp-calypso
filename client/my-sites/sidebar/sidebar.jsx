@@ -20,7 +20,8 @@ var config = require( 'config' ),
 	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
 	SidebarMenuItem = require( './sidebar-menu-item' ),
 	AdsUtils = require( 'lib/ads/utils' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -251,9 +252,10 @@ module.exports = React.createClass( {
 
 	upgrades: function() {
 		var site = this.getSelectedSite(),
-			upgradesLink = '/plans' + this.siteSuffix(),
 			target = null,
-			upgradesLink = '/domains' + this.siteSuffix();
+			domainsLink = '/domains' + this.siteSuffix(),
+			addDomainLink = '/domains/add' + this.siteSuffix(),
+			addDomainButton = '';
 
 		if ( ! site ) {
 			return null;
@@ -279,12 +281,17 @@ module.exports = React.createClass( {
 			return null;
 		}
 
+		if ( abtest( 'domainsAddButton' ) === 'button' ) {
+			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new">{ this.translate( 'Add' ) }</a>;
+		}
+
 		return (
 			 <li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
-				<a onClick={ this.onNavigate } href={ upgradesLink } target={ target }>
+				<a onClick={ this.onNavigate } href={ domainsLink } target={ target }>
 					<Gridicon icon="cart" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
 				</a>
+				{ addDomainButton }
 			</li>
 		);
 	},
