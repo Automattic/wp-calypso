@@ -54,7 +54,7 @@ module.exports = {
 		defaultVariation: 'original'
 	},
 	freeTrials: {
-		datestamp: '20160107',
+		datestamp: '20160112',
 		variations: {
 			notOffered: 90,
 			offered: 10
