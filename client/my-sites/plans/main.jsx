@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	isInFreeTrialTest = require( 'my-sites/plans/utils' ).isInFreeTrialTest,
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -74,7 +75,7 @@ var Plans = React.createClass( {
 			businessPlan,
 			premiumPlan;
 
-		if ( ! this.props.sitePlans.hasLoadedFromServer || ! config.isEnabled( 'upgrades/free-trials' ) ) {
+		if ( ! this.props.sitePlans.hasLoadedFromServer || ! isInFreeTrialTest() ) {
 			return null;
 		}
 

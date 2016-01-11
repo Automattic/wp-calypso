@@ -8,11 +8,11 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	abtest = require( 'lib/abtest' ).abtest,
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
+	isInFreeTrialTest = require( 'my-sites/plans/utils' ).isInFreeTrialTest,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	puchasesPaths = require( 'me/purchases/paths' );
 
@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		if ( abtest( 'freeTrials' ) === 'notOffered' ) {
+		if ( ! isInFreeTrialTest() ) {
 			return false;
 		}
 
