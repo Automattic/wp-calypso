@@ -19,11 +19,25 @@ import {
 } from './action-types';
 
 /**
- * Returns an action object to be used in fetching an object containing
- * the plans for the given site.
+ * Clears plans for the given site.
  *
- * @param  {Object} siteId ID of the concerned site
- * @return {Object}        Action object
+ * @param {Number} siteId identifier of the site
+ * @returns {Function} the corresponding action thunk
+ */
+export function clearSitePlans( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: REMOVE_SITE_PLANS,
+			siteId
+		} );
+	}
+}
+
+/**
+ * Fetches plans for the given site.
+ *
+ * @param {Number} siteId identifier of the site
+ * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSitePlans( siteId ) {
 	return ( dispatch ) => {
@@ -50,9 +64,9 @@ export function fetchSitePlans( siteId ) {
  * Returns an action object to be used in signalling that an object containing
  * the plans for a given site have been received.
  *
- * @param  {Object} siteId ID of the concerned site
- * @param  {Object} plans  Plans received
- * @return {Object}        Action object
+ * @param {Number} siteId identifier of the site
+ * @param {Object} plans list of plans received from the API
+ * @returns {Object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, plans ) {
 	plans = reject( plans, '_headers' );
@@ -65,11 +79,10 @@ export function fetchSitePlansCompleted( siteId, plans ) {
 }
 
 /**
- * Returns an action object to be used in updating an object containing
- * the plans for the given site.
+ * Clears plans and fetches them for the given site.
  *
- * @param  {Object} siteId ID of the concerned site
- * @return {Object}        Action object
+ * @param {Number} siteId identifier of the site
+ * @returns {Function} the corresponding action thunk
  */
 export function refreshSitePlans( siteId ) {
 	return ( dispatch ) => {
