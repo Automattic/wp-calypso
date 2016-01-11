@@ -16,47 +16,47 @@ export default React.createClass( {
 	propTypes: {
 		id: React.PropTypes.string,
 		name: React.PropTypes.string,
-		checked: PropTypes.bool.isRequired,
-		disabled: PropTypes.bool,
+		isChecked: PropTypes.bool.isRequired,
+		isDisabled: PropTypes.bool,
 		onChange: PropTypes.func
 	},
 
 	getInitialState() {
 		return {
-			focused: false
+			isFocused: false
 		}
 	},
 
 	getDefaultProps() {
 		return {
-			disabled: false,
+			isDisabled: false,
 			onChange: noop
 		};
 	},
 
 	change() {
-		const { checked, onChange } = this.props;
-		onChange( ! checked );
+		const { isChecked, onChange } = this.props;
+		onChange( ! isChecked );
 	},
 
 	focus() {
 		this.setState( {
-			focused: true
+			isFocused: true
 		} )
 	},
 
 	blur() {
 		this.setState( {
-			focused: false
+			isFocused: false
 		} )
 	},
 
 	render() {
-		const { focused } = this.state;
-		const { className, children, checked, disabled, id, name } = this.props;
+		const { isFocused } = this.state;
+		const { className, children, isChecked, isDisabled, id, name } = this.props;
 		const classes = classNames( className, 'checkbox', {
-			'is-focused': focused,
-			'is-disabled': disabled
+			'is-focused': isFocused,
+			'is-disabled': isDisabled
 		} );
 
 		return (
@@ -64,13 +64,13 @@ export default React.createClass( {
 				<input type="checkbox"
 					id={ id }
 					name={ name }
-					checked={ checked }
-					disabled={ disabled }
+					checked={ isChecked }
+					disabled={ isDisabled }
 					onChange={ this.change }
 					onFocus={ this.focus }
 					onBlur={ this.blur } />
 				{ children }
-				{ checked && <Gridicon icon="checkmark" size={ 18 } /> }
+				{ isChecked && <Gridicon icon="checkmark" size={ 18 } /> }
 			</label>
 		);
 	}

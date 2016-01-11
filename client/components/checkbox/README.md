@@ -9,7 +9,7 @@ Refer to the following code snippet for a typical usage example:
 
 ```jsx
 <Checkbox
-	checked={ this.state.showSubtitles }
+	isChecked={ this.state.showSubtitles }
 	onChange={ this.toggleShowSubtitles }>
 	Show subtitles
 </Checkbox>
@@ -27,11 +27,11 @@ The html global attribute as a unique identifier which must be unique in the who
 
 The name attribute is used when sending data in a form submission.
 
-### `checked` (`boolean`)
+### `isChecked` (`boolean`)
 
 Whether the checkbox should be checked or not.
 
-### `disabled` (`boolean`)
+### `isDisabled` (`boolean`)
 
 Whether the checkbox should be disabled or not.
 

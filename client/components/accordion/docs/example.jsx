@@ -37,7 +37,7 @@ module.exports = React.createClass( {
 
 				<div style={ { paddingBottom: '10px' } }>
 					<Checkbox
-						checked={ this.state.showSubtitles }
+						isChecked={ this.state.showSubtitles }
 						onChange={ this._toggleShowSubtitles }
 					>
 					Show subtitles

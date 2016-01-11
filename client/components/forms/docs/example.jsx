@@ -86,7 +86,7 @@ var FormFields = React.createClass( {
 						<Checkbox
 							id="comment_like_notification"
 							name="comment_like_notification"
-							checked={ this.state.checked }
+							isChecked={ this.state.checked }
 							onChange={ this.handleCheckbox }>
 							Email me when someone Likes one of my comments.
 						</Checkbox>
