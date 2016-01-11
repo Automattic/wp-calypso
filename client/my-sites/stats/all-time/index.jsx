@@ -19,7 +19,7 @@ module.exports = React.createClass( {
 	mixins: [ toggle( 'allTimeList' ), observe( 'allTimeList' ) ],
 
 	propTypes: {
-		allTimeList: React.PropTypes.object.isRequired,
+		allTimeList: React.PropTypes.object.isRequired
 	},
 
 	renderValue: function( value ) {
