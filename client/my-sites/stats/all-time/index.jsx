@@ -36,7 +36,6 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var bestDay = null,
-			classSets = {},
 			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
 			valueClass,
 			bestViews,
