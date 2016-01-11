@@ -156,7 +156,7 @@ var analytics = {
 			// ignore triggerName for now, it has no obvious place in statsd
 			if ( config( 'boom_analytics_enabled' ) ) {
 				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
-
+				var matched;
 				// prevent explosion of read list metrics
 				// this is a hack - ultimately we want to report this URLs in a more generic way to 
 				// google analytics
@@ -168,6 +168,12 @@ var analytics = {
 					featureSlug = 'domains_add_suggestion__suggestion__domain';
 				} else if ( document.location.pathname.startsWith( '/plugins/browse' ) ) {
 					featureSlug = 'plugins_browse__site';
+				} else if ( featureSlug.startsWith( 'read_post_feed_' ) ) {
+					featureSlug = 'read_post_feed__id';
+				} else if ( featureSlug.startsWith( 'read_post_id_' ) ) {
+					featureSlug = 'read_post_id__id';
+				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
+					featureSlug = `start_${matched[1]}`;
 				}
 
 				var json = JSON.stringify({
