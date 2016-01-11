@@ -22,6 +22,7 @@ var config = require( 'config' ),
 	SidebarMenuItem = require( './sidebar-menu-item' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	Gridicon = require( 'components/gridicon' ),
+	SidebarHeading = require( 'layout/sidebar/heading' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
@@ -635,7 +636,7 @@ module.exports = React.createClass( {
 
 				{ vip ?
 				<li className="sidebar-menu wordpress-utilities">
-					<h2 className="sidebar-heading">VIP</h2>
+					<SidebarHeading>VIP</SidebarHeading>
 					<ul>
 						{ this.vip() }
 						{ this.vipDeploys() }
@@ -649,14 +650,14 @@ module.exports = React.createClass( {
 
 				{ publish ?
 				<li className="sidebar-menu wordpress-content">
-					<h2 className="sidebar-heading">{ this.translate( 'Publish' ) }</h2>
+					<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
 					{ this.publish() }
 				</li>
 				: null }
 
 				{ appearance ?
 				<li className="sidebar-menu wordpress-appearance">
-					<h2 className="sidebar-heading">{ this.translate( 'Personalize' ) }</h2>
+					<SidebarHeading>{ this.translate( 'Personalize' ) }</SidebarHeading>
 					<ul>
 						{ this.themes() }
 						{ this.menus() }
@@ -666,7 +667,7 @@ module.exports = React.createClass( {
 
 				{ configuration ?
 				<li className="sidebar-menu wordpress-utilities">
-					<h2 className="sidebar-heading">{ this.translate( 'Configure' ) }</h2>
+					<SidebarHeading>{ this.translate( 'Configure' ) }</SidebarHeading>
 					<ul>
 						{ this.sharing() }
 						{ this.users() }

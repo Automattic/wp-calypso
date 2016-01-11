@@ -25,6 +25,7 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	ReaderTeams = require( 'lib/reader-teams' ),
 	Sidebar = require( 'layout/sidebar' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
+	SidebarHeading = require( 'layout/sidebar/heading' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
@@ -264,7 +265,7 @@ module.exports = React.createClass( {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<li className="sidebar-menu sidebar-streams">
-					<h2 className="sidebar-heading">{ this.translate( 'Streams' ) }</h2>
+					<SidebarHeading>{ this.translate( 'Streams' ) }</SidebarHeading>
 					<ul>
 						<li className={ this.itemLinkClass( '/', { 'sidebar-streams__following': true } ) }>
 							<a href="/">
@@ -314,7 +315,7 @@ module.exports = React.createClass( {
 				</li>
 
 				<li className="sidebar-menu sidebar-dynamic-menu">
-					<h2 className="sidebar-heading">{ this.translate( 'Lists' ) }</h2>
+					<SidebarHeading>{ this.translate( 'Lists' ) }</SidebarHeading>
 					<ul>
 						{ this.renderLists() }
 
@@ -325,7 +326,7 @@ module.exports = React.createClass( {
 				</li>
 
 				<li className="sidebar-menu sidebar-dynamic-menu">
-					<h2 className="sidebar-heading">{ this.translate( 'Tags' ) }</h2>
+					<SidebarHeading>{ this.translate( 'Tags' ) }</SidebarHeading>
 					<ul>
 						{ this.renderTags() }
 						<li className="sidebar-dynamic-menu__add" key="add-tag">
