@@ -16,7 +16,7 @@ import HeaderCake from 'components/header-cake';
 export default React.createClass( {
 	displayName: 'StatsPostDetail',
 
-	mixins: [ observe( 'site', 'postViewsList' ) ],
+	mixins: [ observe( 'postViewsList' ) ],
 
 	propTypes: {
 		path: PropTypes.string,
