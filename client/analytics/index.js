@@ -160,6 +160,8 @@ var analytics = {
 				// prevent explosion of read list metrics
 				if ( featureSlug.startsWith('read_list') ) {
 					featureSlug = 'read_list';
+				} else if ( featureSlug.startsWith('tag_') ) {
+					featureSlug = 'tag__id';
 				}
 
 				var json = JSON.stringify({
