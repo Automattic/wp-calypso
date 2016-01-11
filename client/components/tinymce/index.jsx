@@ -39,6 +39,7 @@ import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
 import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
+import placeholderPlugin from './plugins/placeholder/plugin';
 
 [
 	wpcomPlugin,
@@ -55,7 +56,8 @@ import contactFormPlugin from './plugins/contact-form/plugin';
 	touchScrollToolbarPlugin,
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
-	contactFormPlugin
+	contactFormPlugin,
+	placeholderPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -99,6 +101,7 @@ const PLUGINS = [
 	'lists',
 	'media',
 	'paste',
+	'placeholder',
 	'tabfocus',
 	'textcolor',
 	'wptextpattern',
@@ -132,6 +135,7 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		mode: React.PropTypes.string,
+		placeholder: React.PropTypes.string,
 		onActivate: React.PropTypes.func,
 		onBlur: React.PropTypes.func,
 		onChange: React.PropTypes.func,
@@ -460,6 +464,7 @@ module.exports = React.createClass( {
 				id={ this._id }
 				onChange={ this.onTextAreaChange }
 				tabIndex={ this.props.tabIndex }
+				placeholder={ this.props.placeholder }
 				value={ this.state.content }
 			/>
 		);

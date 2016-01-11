@@ -327,6 +327,7 @@ var PostEditor = React.createClass( {
 							<TinyMCE
 								ref="editor"
 								mode={ mode }
+								placeholder={ this.translate( 'Tell me your story…', { comment: 'Editor placeholder' } ) }
 								tabIndex={ 2 }
 								isNew={ this.state.isNew }
 								onSetContent={ this.debouncedSaveRawContent }

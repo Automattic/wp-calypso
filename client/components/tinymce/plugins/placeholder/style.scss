@@ -1,0 +1,4 @@
+body.is-showing-placeholder:not( :focus )::before {
+	font-style: italic;
+	opacity: 0.7;
+}
