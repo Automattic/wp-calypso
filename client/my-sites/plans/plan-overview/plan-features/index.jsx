@@ -71,22 +71,24 @@ const PlanFeatures = React.createClass( {
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
-					description={ this.translate( 'You can upload unlimited photos, videos, or music.' ) }
+					description={
+						isBusiness( this.props.selectedSite.plan )
+						? this.translate( 'You can upload unlimited photos, videos, or music.' )
+						: this.translate( 'You can upload up to 10GB of photos, videos, or music.' )
+					}
 					heading={ this.translate( 'Storage Space' ) }
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
-					description={ this.translate( 'You can upload and hosts videos on your site without advertising.' ) }
+					description={ this.translate( 'You can upload and host videos on your site without advertising.' ) }
 					heading={ this.translate( 'VideoPress' ) }
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
 					description={
 						isBusiness( this.props.selectedSite.plan )
-						?
-							this.translate( 'You can live chat with our Happiness Engineers anytime you need.' )
-						:
-							this.translate( 'You can contact our Happiness Engineers anytime you need.' )
+						? this.translate( 'You can live chat with our Happiness Engineers anytime you need.' )
+						: this.translate( 'You can contact our Happiness Engineers anytime you need.' )
 					}
 					heading={ this.translate( 'Support' ) }
 					willBeRemoved={ willBeRemoved } />
