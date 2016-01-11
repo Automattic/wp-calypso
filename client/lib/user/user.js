@@ -256,6 +256,8 @@ User.prototype.changeUser = function( username, password, callback, fnTokenError
 User.prototype.restoreUser = function() {
 	if ( config.isEnabled( 'support-user' ) ) {
 		wpcom.restoreUser();
+
+		this.fetch();
 	}
 }
 
