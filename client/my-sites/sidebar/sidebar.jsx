@@ -22,6 +22,8 @@ var config = require( 'config' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	Gridicon = require( 'components/gridicon' );
 
+var abtest = require( 'lib/abtest' ).abtest;
+
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
 
@@ -253,8 +255,11 @@ module.exports = React.createClass( {
 		var site = this.getSelectedSite(),
 			upgradesLink = '/plans' + this.siteSuffix(),
 			target = null,
-			upgradesLink = '/domains' + this.siteSuffix();
-
+			upgradesLink = '/domains' + this.siteSuffix(),
+			addDomainLink = '/domains' + '/add' + this.siteSuffix(),
+			addDomainTarget = '_self',
+			addDomainButton;
+			
 		if ( ! site ) {
 			return null;
 		}
@@ -279,12 +284,19 @@ module.exports = React.createClass( {
 			return null;
 		}
 
+		if ( abtest( 'domainsAddButton' ) === 'button' ) {
+			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new" target={ addDomainTarget }>{ this.translate( 'Add' ) }</a>;
+		} else {
+			addDomainButton = '';
+		}
+
 		return (
 			 <li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
 				<a onClick={ this.onNavigate } href={ upgradesLink } target={ target }>
 					<Gridicon icon="cart" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
 				</a>
+				{ addDomainButton }
 			</li>
 		);
 	},
