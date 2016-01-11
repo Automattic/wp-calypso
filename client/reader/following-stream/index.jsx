@@ -454,14 +454,14 @@ module.exports = React.createClass( {
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
-				<SectionHeader label={ this.translate( 'Following' ) } className={ "section-header__following-stream" }>
+				{ this.props.children }
+
+				<SectionHeader label={ this.translate( "Latest Posts" ) } className={ "section-header__following-stream" }>
 					<div className={ viewToggleClass } onClick={ this.handleView }>
 						<Gridicon icon="align-justify" className="view-toggle__inbox" />
 						<Gridicon icon="align-image-center" className="view-toggle__card" />
 					</div>
 				</SectionHeader>
-
-				{ this.props.children }
 
 				{ body }
 
