@@ -11,8 +11,10 @@ import isEmpty from 'lodash/lang/isEmpty';
 /**
  * Internal Dependencies
  */
+import { abtest } from 'lib/abtest';
 import i18n from 'lib/mixins/i18n';
 import config from 'config';
+import { defaultFlowName } from 'signup/config/flows';
 import route from 'lib/route';
 import analytics from 'analytics';
 import layoutFocus from 'lib/layout-focus';
@@ -69,6 +71,10 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
+		if ( utils.getFlowName( context.params ) === defaultFlowName && abtest( 'freeTrials' ) === 'offered' ) {
+			return page.redirect( '/start/free-trial' );
+		}
+
 		if ( context.path !== utils.getValidPath( context.params ) ) {
 			return page.redirect( utils.getValidPath( context.params ) );
 		}
