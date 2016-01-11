@@ -13,6 +13,7 @@ import mapValues from 'lodash/object/mapValues';
  * Internal dependencies
  */
 import ResizableIframe from 'components/resizable-iframe'
+import shortcodeUtils from 'lib/shortcode';
 
 /**
  * Module variables
@@ -122,6 +123,19 @@ export default React.createClass( {
 		this.props.onLoad( event );
 	},
 
+	getSandboxAttribute() {
+		// Tags of shortcodes that do not work if rendered in a sandboxed iframe.
+		const iframeNoSandbox = [
+			'wpvideo'
+		]
+		const shortcodeTag = shortcodeUtils.parse( this.props.shortcode ).tag;
+		const trustedHost = iframeNoSandbox.some( function ( trustedShortcodeTag ) {
+			return shortcodeTag === trustedShortcodeTag;
+		});
+
+		return trustedHost ? null : 'allow-scripts';
+	},
+
 	render() {
 		const classes = classNames( 'shortcode-frame', this.props.className );
 
@@ -134,6 +148,11 @@ export default React.createClass( {
 		// `shouldComponentUpdate`
 		const key = Math.random();
 
+		const extraProps = {};
+		if ( this.getSandboxAttribute() ) {
+			extraProps.sandbox = this.getSandboxAttribute();
+		}
+
 		return (
 			<ResizableIframe
 				key={ key }
@@ -141,8 +160,8 @@ export default React.createClass( {
 				src="https://wpcomwidgets.com/render/"
 				onLoad={ this.onFrameLoad }
 				frameBorder="0"
-				sandbox="allow-scripts"
-				className={ classes } />
+				className={ classes }
+				{ ...extraProps } />
 		);
 	}
 } );
