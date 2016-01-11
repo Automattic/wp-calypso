@@ -166,7 +166,7 @@ var analytics = {
 					featureSlug = 'tag__id';
 				} else if ( featureSlug.startsWith( 'domains_add_suggestion_' ) ) {
 					featureSlug = 'domains_add_suggestion__suggestion__domain';
-				} else if ( document.location.pathname.startsWith( '/plugins/browse' ) ) {
+				} else if ( document.location.pathname.startsWith( '/plugins/browse/' ) ) {
 					featureSlug = 'plugins_browse__site';
 				} else if ( featureSlug.startsWith( 'read_post_feed_' ) ) {
 					featureSlug = 'read_post_feed__id';
