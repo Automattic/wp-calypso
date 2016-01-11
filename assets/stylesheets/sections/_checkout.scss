@@ -222,16 +222,31 @@
 
 	.checkout-terms {
 		color: darken( $gray, 10% );
-		font-size: 12px;
-		font-weight: 100;
-		margin: 10px 0;
-		padding: 0 30px;
+		margin: 16px 0;
+		padding: 0;
 		text-align: center;
 
 		@include breakpoint( ">660px" ) {
-			margin-bottom: 20px;
 			padding: 0;
 			text-align: left;
+		}
+
+		p {
+			font-size: 12px;
+			font-weight: 100;
+			margin: 0;
+
+			@include breakpoint( ">660px" ) {
+				margin-left: 24px;
+			}
+		}
+
+		.gridicon {
+			float: left;
+
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
 		}
 	}
 
