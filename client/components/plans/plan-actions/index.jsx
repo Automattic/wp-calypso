@@ -12,7 +12,7 @@ var analytics = require( 'analytics' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	isInFreeTrialTest = require( 'my-sites/plans/utils' ).isInFreeTrialTest,
+	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	puchasesPaths = require( 'me/purchases/paths' );
 
@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		if ( ! isInFreeTrialTest() ) {
+		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
 			return false;
 		}
 

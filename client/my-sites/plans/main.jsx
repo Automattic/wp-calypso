@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	isInFreeTrialTest = require( 'my-sites/plans/utils' ).isInFreeTrialTest,
+	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -75,7 +75,7 @@ var Plans = React.createClass( {
 			businessPlan,
 			premiumPlan;
 
-		if ( ! this.props.sitePlans.hasLoadedFromServer || ! isInFreeTrialTest() ) {
+		if ( ! this.props.sitePlans.hasLoadedFromServer || getABTestVariation( 'freeTrials' ) !== 'offered' ) {
 			return null;
 		}
 
