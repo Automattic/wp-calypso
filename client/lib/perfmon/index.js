@@ -16,7 +16,8 @@ var debug = require( 'debug' )( 'calypso:perfmon' );
 const PLACEHOLDER_CLASSES = [
 	'placeholder',
 	'pulsing-dot is-active',
-	'is-loading'
+	'is-loading',
+	'is-processing'
 ];
 
 const EXCLUDE_PLACEHOLDER_CLASSES = [
