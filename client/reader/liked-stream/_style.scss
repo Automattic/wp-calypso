@@ -129,9 +129,14 @@
 		.reader-share {
 			margin-right: auto;
 		}
+
 		.post-permalink,
 		.reader__post-options {
 			display: none;
+		}
+
+		.like-button {
+			margin-left: 8px;
 		}
 	}
 }
