@@ -123,7 +123,7 @@ function removeItemAndDependencies( cartItemToRemove, cart ) {
 	var dependencies = getDependentProducts( cartItemToRemove, cart ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
-	return flow.apply( null, changes );
+	return flow( ...changes );
 }
 
 /**
@@ -632,23 +632,22 @@ function isPrivacyProduct( cartItem ) {
 /**
  * Changes presence of a private registration for the given domain cart items.
  *
- * @param {Object} cart - cart as `CartValue` object
  * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
  * @param {Function} changeFunction - the function that adds/removes the private registration to a shopping cart
  * @returns {Function} the function that adds/removes private registrations from the shopping cart
  */
-function changePrivacyForDomains( cart, domainItems, changeFunction ) {
-	return flow.apply( null, domainItems.map( function( item ) {
+function changePrivacyForDomains( domainItems, changeFunction ) {
+	return flow( ...domainItems.map( function( item ) {
 		return changeFunction( domainPrivacyProtection( { domain: item.meta, volume: item.volume } ) );
 	} ) );
 }
 
 function addPrivacyToAllDomains( cart ) {
-	return changePrivacyForDomains( cart, getDomainRegistrationsWithoutPrivacy( cart ), add );
+	return changePrivacyForDomains( getDomainRegistrationsWithoutPrivacy( cart ), add );
 }
 
 function removePrivacyFromAllDomains( cart ) {
-	return changePrivacyForDomains( cart, getDomainRegistrations( cart ), remove );
+	return changePrivacyForDomains( getDomainRegistrations( cart ), remove );
 }
 
 /**
@@ -683,7 +682,7 @@ function setVolume( cartItem, volume ) {
 	}
 
 	return function( cart ) {
-		return React.addons.update( cart, { products: { $apply: setItemVolume } } );
+		return update( cart, { products: { $apply: setItemVolume } } );
 	};
 }
 
@@ -725,8 +724,8 @@ module.exports = {
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
-	setVolume: setVolume,
-	isPrivacyProduct: isPrivacyProduct,
+	setVolume,
+	isPrivacyProduct,
 	noAdsItem,
 	planItem,
 	premiumPlan,

@@ -124,7 +124,7 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			break;
 
 		case UpgradesActionTypes.SET_CART_ITEM_VOLUME:
-			update( cartItems.setVolume( cartItem, action.volume ) );
+			update( cartItems.setVolume( action.cartItem, action.volume ) );
 			break;
 	}
 } );
