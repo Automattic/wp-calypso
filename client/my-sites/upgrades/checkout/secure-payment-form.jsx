@@ -28,7 +28,8 @@ var SecurePaymentForm = React.createClass( {
 	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {
-		products: React.PropTypes.object.isRequired
+		products: React.PropTypes.object.isRequired,
+		redirectTo: React.PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {

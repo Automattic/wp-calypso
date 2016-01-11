@@ -166,7 +166,7 @@ module.exports = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath() } />
+				redirectTo={ this.getCheckoutCompleteRedirectPath } />
 		);
 	},
 
