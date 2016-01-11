@@ -21,7 +21,7 @@ export default React.createClass( {
 	],
 
 	propTypes: {
-		postViewsList: PropTypes.element
+		postViewsList: PropTypes.object
 	},
 
 	getInitialState() {
@@ -38,23 +38,18 @@ export default React.createClass( {
 
 	render() {
 		const data = this.props.postViewsList.response;
+		const { showInfo, noData } = this.state;
 		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
 		let tableHeader,
 			tableRows,
 			tableBody,
-			highest,
-			classes;
+			highest;
 
-		classes = [
-			'stats-module',
-			'is-expanded',
-			'is-post-weeks',
-			{
-				'is-loading': this.props.postViewsList.isLoading(),
-				'is-showing-info': this.state.showInfo,
-				'has-no-data': this.state.noData
-			}
-		];
+		const classes = {
+			'is-loading': this.props.postViewsList.isLoading(),
+			'is-showing-info': showInfo,
+			'has-no-data': noData
+		};
 
 		if ( data && data.weeks ) {
 			highest = data.highest_week_average;
@@ -75,28 +70,25 @@ export default React.createClass( {
 				</thead>
 				);
 
-			tableRows = data.weeks.map( function( e, i ) {
-				let j,
-					dayCells,
-					cells = [],
-					changeClass,
+			tableRows = data.weeks.map( function( week, index ) {
+				let cells = [],
 					iconType;
 
 				// If there are fewer than 7 days in the first week, prepend blank days
-				if ( e.days.length < 7 && 0 === i ) {
-					for ( j = 0; j < 7 - e.days.length; j++ ) {
+				if ( week.days.length < 7 && 0 === index ) {
+					for ( let j = 0; j < 7 - week.days.length; j++ ) {
 						cells.push( <td key={ 'w0e' + j }></td> );
 					}
 				}
 
-				dayCells = e.days.map( function( event ) {
+				const dayCells = week.days.map( function( event, dayIndex ) {
 					let day = this.moment( event.day, 'YYYY-MM-DD' ),
 						cellClass = classNames( {
 							'highest-count': 0 !== highest && event.count === highest
 						} );
 
 					return (
-						<td key={ e.day } className={ cellClass }>
+						<td key={ dayIndex } className={ cellClass }>
 							<span className="date">{ day.format( 'MMM D' ) }</span>
 							<span className="value">{ this.numberFormat( event.count ) }</span>
 						</td>
@@ -106,44 +98,51 @@ export default React.createClass( {
 				cells = cells.concat( dayCells );
 
 				// If there are fewer than 7 days in the last week, append blank days
-				if ( e.days.length < 7 && 0 !== i ) {
-					for ( j = 0; j < 7 - e.days.length; j++ ) {
-						cells.push( <td key={ 'w' + i + 'e' + j }></td> );
+				if ( week.days.length < 7 && 0 !== index ) {
+					for ( let j = 0; j < 7 - week.days.length; j++ ) {
+						cells.push( <td key={ 'w' + index + 'e' + j }></td> );
 					}
 				}
 
-				cells.push( <td key={ 'total' + i }>{ this.numberFormat( e.total ) }</td> );
-				cells.push( <td key={ 'average' + i }>{ this.numberFormat( e.average ) }</td> );
+				cells.push( <td key={ 'total' + index }>{ this.numberFormat( week.total ) }</td> );
+				cells.push( <td key={ 'average' + index }>{ this.numberFormat( week.average ) }</td> );
 
-				if ( 'number' === typeof ( e.change ) ) {
-					changeClass = classNames( {
-						'value-rising': e.change > 0,
-						'value-falling': e.change < 0
+				if ( 'number' === typeof ( week.change ) ) {
+					let changeClass = classNames( {
+						'value-rising': week.change > 0,
+						'value-falling': week.change < 0
 					} );
 
-					if ( e.change > 0 ) {
+					if ( week.change > 0 ) {
 						iconType = 'arrow-up';
 					}
 
-					if ( e.change < 0 ) {
+					if ( week.change < 0 ) {
 						iconType = 'arrow-down';
 					}
 
-					cells.push( <td className={ changeClass } key={ 'change' + i }><span className="value"><Gridicon icon={ iconType } size={ 18 } />{ this.numberFormat( e.change, 2 ) }%</span></td> );
-				} else if ( 'object' === typeof ( e.change ) && null !== e.change && e.change.isInfinity ) {
-					cells.push( <td key={ 'change' + i }>&infin;</td> );
+					cells.push(
+						<td className={ changeClass } key={ 'change' + index }>
+							<span className="value">
+								{ iconType ? <Gridicon icon={ iconType } size={ 18 } /> : null }
+								{ this.numberFormat( week.change, 2 ) }%
+							</span>
+						</td>
+					);
+				} else if ( 'object' === typeof ( week.change ) && null !== week.change && week.change.isInfinity ) {
+					cells.push( <td key={ 'change' + index }>&infin;</td> );
 				} else {
-					cells.push( <td className="no-data" key={ 'change' + i }></td> );
+					cells.push( <td className="no-data" key={ 'change' + index }></td> );
 				}
 
-				return ( <tr key={ i }>{ cells }</tr> );
+				return ( <tr key={ index }>{ cells }</tr> );
 			}, this );
 
 			tableBody = ( <tbody>{ tableRows }</tbody> );
 		}
 
 		return (
-			<Card className={ classNames.apply( null, classes ) }>
+			<Card className={ classNames( 'stats-module', 'is-expanded', 'is-post-weeks', classes ) }>
 				<div className="module-header">
 					<h4 className="module-header-title">{ this.translate( 'Recent Weeks' ) }</h4>
 					<ul className="module-header-actions">
