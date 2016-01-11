@@ -32,7 +32,6 @@ export default React.createClass( {
 			{ name: 'Boardwalk', slug: 'boardwalk' },
 			{ name: 'Cubic', slug: 'cubic' },
 			{ name: 'Edin', slug: 'edin' },
-			{ name: 'Cols', slug: 'cols' },
 			{ name: 'Minnow', slug: 'minnow' },
 			{ name: 'Sequential', slug: 'sequential' },
 			{ name: 'Penscratch', slug: 'penscratch' },
