@@ -72,7 +72,7 @@ export default {
 
 	redirectToFlow( context, next ) {
 		if ( utils.getFlowName( context.params ) === defaultFlowName && abtest( 'freeTrials' ) === 'offered' ) {
-			return page.redirect( '/start/free-trial' );
+			return page.redirect( utils.getValidPath( { flowName: 'free-trial' } ) );
 		}
 
 		if ( context.path !== utils.getValidPath( context.params ) ) {
