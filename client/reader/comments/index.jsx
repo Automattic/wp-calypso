@@ -222,6 +222,10 @@ var PostCommentList = React.createClass( {
 		CommentStore.on( 'add', this._onAdd );
 	},
 
+	componentDidUpdate: function() {
+		this.props.onCommentsUpdate();
+	},
+
 	// Remove change listers from stores
 	componentWillUnmount: function() {
 		CommentStore.off( 'change', this._onChange );
