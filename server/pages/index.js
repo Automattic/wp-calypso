@@ -11,10 +11,7 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
-
-var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
+	sections = require( '../../client/sections' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -374,6 +371,8 @@ module.exports = function() {
 			renderLoggedInRoute( req, res );
 		} else {
 			const context = getDefaultContext( req );
+			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' )
+			const LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 
 			try {
 				context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
