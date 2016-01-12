@@ -22,6 +22,8 @@
 .plan-status__icon {
 	background-position: center;
 	background-repeat: no-repeat;
+	border-radius: 50%;
+	border: 3px solid lighten( $gray, 30% );
 	height: 50px;
 	min-width: 50px;
 	position: relative;
