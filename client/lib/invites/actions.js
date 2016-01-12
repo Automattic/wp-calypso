@@ -2,6 +2,7 @@
  * External dependencies
  */
 import Debug from 'debug';
+
 /**
  * Internal dependencies
  */
@@ -92,17 +93,4 @@ export function acceptInvite( invite ) {
 			}
 		}
 	);
-}
-
-export function displayInviteAccepted( invite ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DISPLAY_INVITE_ACCEPTED_NOTICE,
-		invite
-	} );
-}
-
-export function displayInviteDeclined() {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DISPLAY_INVITE_DECLINED_NOTICE
-	} );
 }

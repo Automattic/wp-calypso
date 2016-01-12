@@ -50,4 +50,4 @@ export function setRoute( path ) {
 
 export const successNotice = createNotice.bind( null, 'is-success' );
 export const errorNotice = createNotice.bind( null, 'is-error' );
-
+export const infoNotice = createNotice.bind( null, 'is-info' );
