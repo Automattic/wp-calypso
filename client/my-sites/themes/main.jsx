@@ -157,7 +157,6 @@ var Themes = React.createClass( {
 						key={ this.isMultisite() || site.ID }
 						siteId={ this.props.siteId }
 						sites={ this.props.sites }
-						setSelectedTheme={ this.setSelectedTheme }
 						togglePreview={ this.togglePreview }
 						getOptions={ partialRight( getButtonOptions, this.isLoggedOut(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
