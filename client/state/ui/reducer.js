@@ -6,7 +6,11 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE, SET_SECTION } from 'state/action-types';
+import {
+	SET_SELECTED_SITE,
+	SET_SECTION,
+	CURRENT_USER_ID_SET
+} from 'state/action-types';
 
 /**
  * Tracks the currently selected site ID.
@@ -19,6 +23,23 @@ export function selectedSite( state = null, action ) {
 	switch ( action.type ) {
 		case SET_SELECTED_SITE:
 			state = action.siteId || null;
+			break;
+	}
+
+	return state;
+}
+
+/**
+ * Tracks the current user ID.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function currentUserId( state = null, action ) {
+	switch ( action.type ) {
+		case CURRENT_USER_ID_SET:
+			state = action.userId;
 			break;
 	}
 
@@ -50,5 +71,6 @@ export default combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
-	selectedSite
+	selectedSite,
+	currentUserId
 } );

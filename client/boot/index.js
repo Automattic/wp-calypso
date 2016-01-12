@@ -22,6 +22,8 @@ var config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	route = require( 'lib/route' ),
 	user = require( 'lib/user' )(),
+	receiveUser = require( 'state/users/actions' ).receiveUser,
+	setCurrentUserId = require( 'state/ui/actions' ).setCurrentUserId,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
@@ -160,6 +162,10 @@ function boot() {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
 		analytics.initialize( user, superProps );
+
+		// Set current user in Redux store
+		reduxStore.dispatch( receiveUser( user.get() ) );
+		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );
