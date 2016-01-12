@@ -18,7 +18,7 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
-	displayName: 'StatsFollowersPage',
+	displayName: 'StatsFollowers',
 
 	mixins: [ toggle( 'FollowersPage' ), skeleton( 'data' ) ],
 
