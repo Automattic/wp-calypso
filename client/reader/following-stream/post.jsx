@@ -35,7 +35,7 @@ var Card = require( 'components/card' ),
 	Share = require( 'reader/share' ),
 	utils = require( 'reader/utils' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
-	FollowingEditHelper = require( 'reader/following-edit/helper' ),
+	FeedDisplayHelper = require( 'reader/lib/feed-display-helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
@@ -333,7 +333,7 @@ var Post = React.createClass( {
 		if ( ! site ) {
 			site = {
 				title: siteName,
-				domain: FollowingEditHelper.formatUrlForDisplay( post.site_URL )
+				domain: FeedDisplayHelper.formatUrlForDisplay( post.site_URL )
 			}
 		}
 

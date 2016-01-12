@@ -13,7 +13,7 @@ import Icon from 'reader/list-item/icon';
 import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
-import FollowingEditHelper from 'reader/following-edit/helper'; // @todo move this helper
+import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import { decodeEntities } from 'lib/formatting';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
@@ -68,8 +68,8 @@ const ListManagementSitesListItem = React.createClass( {
 			siteData = this.state.site,
 			feedData = this.state.feed,
 			iconUrl = siteData && siteData.get( 'icon' ),
-			displayUrl = FollowingEditHelper.formatUrlForDisplay( listItem.get( 'URL' ) ),
-			feedTitle = decodeEntities( FollowingEditHelper.getFeedTitle( siteData, feedData, displayUrl ) );
+			displayUrl = FeedDisplayHelper.formatUrlForDisplay( listItem.get( 'URL' ) ),
+			feedTitle = decodeEntities( FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl ) );
 
 		debug( listItem );
 
@@ -77,7 +77,7 @@ const ListManagementSitesListItem = React.createClass( {
 			<ListItem>
 				<Icon>{ iconUrl ? <img src={ iconUrl.get( 'img' ) } alt="Feed icon" /> : null }</Icon>
 				<Title>
-					<a href={ FollowingEditHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>Feed { feedTitle }</a>
+					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>Feed { feedTitle }</a>
 				</Title>
 				<Description>Desc<a href={ listItem.get( 'URL' ) }>{ displayUrl }</a></Description>
 				<Actions>
