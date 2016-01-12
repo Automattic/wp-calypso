@@ -1,177 +1,175 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module-followers' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var toggle = require( '../mixin-toggle' ),
-	SelectDropdown = require( 'components/select-dropdown' ),
-	StatsList = require( '../stats-list' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( '../stats-error' ),
-	skeleton = require( '../mixin-skeleton' ),
-	analytics = require( 'analytics' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import StatsList from '../stats-list';
+import SelectDropdown from 'components/select-dropdown';
+import toggle from '../mixin-toggle';
+import skeleton from '../mixin-skeleton';
+import ErrorPanel from '../stats-error';
+import Pagination from '../pagination';
+import analytics from 'analytics';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
-	displayName: 'StatsFollowers',
+export default React.createClass( {
+	displayName: 'StatsFollowersPage',
 
-	mixins: [ toggle( 'Followers' ), skeleton( 'data' ), observe( 'wpcomFollowersList', 'emailFollowersList' ) ],
+	mixins: [ toggle( 'FollowersPage' ), skeleton( 'data' ) ],
 
-	data: function( list ) {
-		if ( list && this.props[ list ] ) {
-			return this.props[ list ].response.data;
-		}
+	data( nextProps ) {
+		const props = nextProps || this.props;
+		return props.followersList.response.data;
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			activeFilter: 'wpcom-followers',
-			noData: ( this.props.wpcomFollowersList.isEmpty( 'subscribers' ) && this.props.emailFollowersList.isEmpty( 'subscribers' ) )
+			noData: this.props.followersList.isEmpty( 'subscribers' )
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( {
-			noData: ( nextProps.wpcomFollowersList.isEmpty( 'subscribers' ) && nextProps.emailFollowersList.isEmpty( 'subscribers' ) )
+			noData: nextProps.followersList.isEmpty( 'subscribers' )
 		} );
 	},
 
-	changeFilter: function( selection ) {
-		var gaEvent,
-			filter = selection.value;
-
-		if ( filter !== this.state.activeFilter ) {
-			switch ( filter ) {
-			case 'wpcom-followers':
-				gaEvent = 'Clicked By WordPress.com Followers Toggle';
-				break;
-			case 'email-followers':
-				gaEvent = 'Clicked Email Followers Toggle';
-				break;
+	filterSelect() {
+		const options = [
+			{
+				value: 'wpcom',
+				label: this.translate( 'WordPress.com Followers' )
+			},
+			{
+				value: 'email',
+				label: this.translate( 'Email Followers' )
 			}
+		];
 
-			if ( gaEvent ) {
-				analytics.ga.recordEvent( 'Stats', gaEvent );
-			}
-
-			this.setState( {
-				activeFilter: filter
-			} );
-		}
-	},
-
-	filterSelect: function() {
-		var selectFilter,
-			options = [
-				{
-					value: 'wpcom-followers',
-					label: this.translate( 'WordPress.com Followers' )
-				},
-				{
-					value: 'email-followers',
-					label: this.translate( 'Email Followers' )
-				}
-			];
-
-		if ( ( ! this.props.wpcomFollowersList.isEmpty( 'subscribers' ) ) && ( ! this.props.emailFollowersList.isEmpty( 'subscribers' ) ) ) {
-			selectFilter = (
+		if ( 'comment' !== this.props.followType ) {
+			return (
 				<div className="select-dropdown__wrapper">
-					<SelectDropdown options={ options } onSelect={ this.changeFilter } />
+					<SelectDropdown options={ options } onSelect={ this.props.changeFilter } />
 				</div>
 			);
 		}
-
-		return selectFilter;
 	},
 
-	render: function() {
-		debug( 'Rendering stats followers module' );
+	recordDownloadClick() {
+		analytics.ga.recordEvent( 'Stats', 'Clicked Download Email Followers CSV link' );
+	},
 
-		var wpcomData = this.data( 'wpcomFollowersList' ),
-			emailData = this.data( 'emailFollowersList' ),
-			noData = this.props.wpcomFollowersList.isEmpty( 'subscribers' ) && this.props.emailFollowersList.isEmpty( 'subscribers' ),
-			hasError = ( this.props.wpcomFollowersList.isError() || this.props.emailFollowersList.isError() ),
-			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
-			wpcomFollowers,
-			emailFollowers,
-			wpcomTotalFollowers,
-			emailTotalFollowers,
+	render() {
+		const data = this.data();
+		const hasError = this.props.followersList.isError();
+		const noData = this.props.followersList.isEmpty( 'subscribers' );
+		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
+
+		let followers,
 			moduleHeaderTitle,
-			moduleToggle,
-			summaryPageLink,
-			viewSummary,
-			activeFilter,
-			activeFilterClass,
+			labelLegend,
+			valueLegend,
+			pagination,
+			paginationSummary,
+			startIndex,
+			endIndex,
+			emailExportUrl,
+			emailExportLink,
+			itemType,
 			classes;
-
-		activeFilter = this.state.activeFilter;
-		if ( this.props.wpcomFollowersList.isEmpty( 'subscribers' ) ) {
-			activeFilter = 'email-followers';
-		}
-
-		activeFilterClass = 'tab-' + activeFilter;
 
 		classes = [
 			'stats-module',
-			'is-followers',
-			activeFilterClass,
+			'is-expanded',
+			'summary',
+			'is-followers-page',
 			{
-				'is-expanded': this.state.showModule,
-				'is-loading': this.props.wpcomFollowersList.isLoading() || this.props.emailFollowersList.isLoading(),
+				'is-loading': this.props.followersList.isLoading(),
 				'is-showing-info': this.state.showInfo,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
 			}
 		];
 
-		if ( 'email-followers' === activeFilter ) {
-			summaryPageLink = '/stats/follows/email/' + this.props.site.slug;
-		} else {
-			summaryPageLink = '/stats/follows/wpcom/' + this.props.site.slug;
+		switch ( this.props.followType ) {
+			case 'comment':
+				itemType = this.translate( 'Comments' );
+				break;
+
+			case 'email':
+				itemType = this.translate( 'Email' );
+				break;
+
+			case 'wpcom':
+				itemType = this.translate( 'WordPress.com' );
+				break;
 		}
 
-		if ( wpcomData && wpcomData.subscribers ) {
-			wpcomFollowers = <StatsList moduleName='wpcomFollowers' data={ wpcomData.subscribers } followList={ this.props.followList } />;
+		if ( data.total ) {
+			startIndex = this.props.perPage * ( this.props.page - 1 ) + 1;
+			endIndex = this.props.perPage * this.props.page;
+
+			if ( endIndex > data.total ) {
+				endIndex = data.total;
+			}
+
+			paginationSummary = this.translate( 'Showing %(startIndex)s - %(endIndex)s of %(total)s %(itemType)s followers', {
+				context: 'pagination',
+				comment: '"Showing [start index] - [end index] of [total] [item]" Example: Showing 21 - 40 of 300 WordPress.com followers',
+				args: {
+					startIndex: this.numberFormat( startIndex ),
+					endIndex: this.numberFormat( endIndex ),
+					total: this.numberFormat( data.total ),
+					itemType: itemType
+				}
+			} );
+
+			paginationSummary = (
+				<div className="module-content-text module-content-text-stat">
+					<p>{ paginationSummary }</p>
+				</div>
+			);
 		}
 
-		if ( emailData && emailData.subscribers ) {
-			emailFollowers = <StatsList moduleName='EmailFollowers' data={ emailData.subscribers } />;
-		}
+		pagination = <Pagination page={ this.props.page } perPage={ this.props.perPage } total={ data.total } pageClick={ this.props.pageClick } />;
 
-		if ( wpcomData && wpcomData.total ) {
-			wpcomTotalFollowers = <p>{ this.translate( 'Total WordPress.com Followers' ) }: { this.numberFormat( wpcomData.total ) }</p>;
-		}
-
-		if ( emailData && emailData.total ) {
-			emailTotalFollowers = <p>{ this.translate( 'Total Email Followers' ) }: { this.numberFormat( emailData.total ) }</p>;
-		}
-
-		if ( ! this.props.summary ) {
-			moduleToggle = (
-				<li className="module-header-action toggle-services">
-					<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Expand or collapse panel', { context: 'Stats panel action' } ) } title={ this.translate( 'Expand or collapse panel', { context: 'Stats panel action' } ) } onClick={ this.toggleModule }>
-						<Gridicon icon="chevron-down" />
-					</a>
-				</li>
-				);
+		if ( data && data.posts ) {
+			followers = <StatsList data={ data.posts } moduleName="Followers" />;
+			labelLegend = this.translate( 'Post', {
+				context: 'noun'
+			} );
+			valueLegend = this.translate( 'Followers' );
+		} else if ( data && data.subscribers ) {
+			followers = <StatsList data={ data.subscribers } followList={ this.props.followList } moduleName="Followers" />;
+			labelLegend = this.translate( 'Follower' );
+			valueLegend = this.translate( 'Since' );
 		}
 
 		moduleHeaderTitle = (
-			<h4 className="module-header-title"><a href={ summaryPageLink }>{ this.translate( 'Followers' ) }</a></h4>
+			<h4 className="module-header-title">{ this.translate( 'Followers' ) }</h4>
 			);
 
-		if ( ( wpcomData && wpcomData.viewAll ) || ( emailData && emailData.viewAll ) ) {
-			viewSummary = (
-				<div key='view-all' className='module-expand'>
-					<a href={ summaryPageLink }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
+		if ( 'email' === this.props.followType ) {
+			emailExportUrl = 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' + this.props.site.ID + '&blog_subscribers=csv&type=email';
+
+			emailExportLink = (
+				<div className="module-content-text">
+					<ul className="documentation">
+						<li>
+							<a href={ emailExportUrl } target="_blank" onClick={ this.recordDownloadClick }>
+								<Gridicon icon="cloud-download" />
+								{ this.translate( 'Download all email followers as CSV', { context: 'Action shown in stats followers module to download all email followers.' } ) }
+							</a>
+						</li>
+					</ul>
 				</div>
-				);
+			);
 		}
 
 		return (
@@ -181,11 +179,10 @@ module.exports = React.createClass( {
 						{ moduleHeaderTitle }
 						<ul className="module-header-actions">
 							<li className="module-header-action toggle-info">
-								<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
+								<a href="#" className="module-header-action-link" aria-label={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } title={ this.translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) } onClick={ this.toggleInfo } >
 									<Gridicon icon={ infoIcon } />
 								</a>
 							</li>
-							{ moduleToggle }
 						</ul>
 					</div>
 
@@ -197,51 +194,35 @@ module.exports = React.createClass( {
 							</ul>
 						</div>
 
-						{ noData && ! hasError ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No followers' ) } /> : null }
-
 						{ this.filterSelect() }
 
-						<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
-							<div className="module-content-text module-content-text-stat">
-								{ wpcomTotalFollowers }
-							</div>
+						{ ( noData && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No followers' ) } /> : null }
 
+						{ paginationSummary }
+
+						{ pagination }
+
+						<div className="stats-async-metabox-wrapper">
 							<ul className="module-content-list module-content-list-legend">
 								<li className="module-content-list-item">
 									<span className="module-content-list-item-wrapper">
 										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.translate( 'Since' ) }</span>
+											<span className="module-content-list-item-value">{ valueLegend }</span>
 										</span>
-										<span className="module-content-list-item-label">{ this.translate( 'Follower' ) }</span>
+										<span className="module-content-list-item-label">{ labelLegend }</span>
 									</span>
 								</li>
 							</ul>
-							{ wpcomFollowers }
-							{ this.props.wpcomFollowersList.isError() ? <ErrorPanel className="is-error" /> : null }
-						</div>
-
-						<div className="tab-content email-followers stats-async-metabox-wrapper">
-							<div className="module-content-text module-content-text-stat">
-								{ emailTotalFollowers }
-							</div>
-
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.translate( 'Since' ) }</span>
-										</span>
-										<span className="module-content-list-item-label">{ this.translate( 'Follower' ) }</span>
-									</span>
-								</li>
-							</ul>
-							{ emailFollowers }
-							{ this.props.emailFollowersList.isError() ? <ErrorPanel className={ 'network-error' } /> : null }
+							{ followers }
+							{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
 						</div>
 
 						<div className="module-placeholder is-void"></div>
+
+						{ pagination }
+
+						{ emailExportLink }
 					</div>
-					{ viewSummary }
 				</div>
 			</Card>
 		);
