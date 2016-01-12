@@ -3,9 +3,9 @@
  */
 import wpcom from 'lib/wp';
 import {
-	PUBLICIZE_CONNECTIONS_FETCH,
+	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAIL
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
 } from 'state/action-types';
 
 /**
@@ -18,7 +18,7 @@ import {
 export function fetchConnections( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: PUBLICIZE_CONNECTIONS_FETCH,
+			type: PUBLICIZE_CONNECTIONS_REQUEST,
 			siteId
 		} );
 
@@ -62,7 +62,7 @@ export function receiveConnections( siteId, data ) {
  */
 export function failConnectionsRequest( siteId, error ) {
 	return {
-		type: PUBLICIZE_CONNECTIONS_REQUEST_FAIL,
+		type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 		siteId,
 		error
 	};

@@ -8,9 +8,9 @@ import indexBy from 'lodash/collection/indexBy';
  * Internal dependencies
  */
 import {
-	PUBLICIZE_CONNECTIONS_FETCH,
+	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAIL
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
 } from 'state/action-types';
 
 /**
@@ -25,12 +25,12 @@ import {
  */
 export function fetchingConnections( state = {}, action ) {
 	switch ( action.type ) {
-		case PUBLICIZE_CONNECTIONS_FETCH:
+		case PUBLICIZE_CONNECTIONS_REQUEST:
 		case PUBLICIZE_CONNECTIONS_RECEIVE:
-		case PUBLICIZE_CONNECTIONS_REQUEST_FAIL:
+		case PUBLICIZE_CONNECTIONS_REQUEST_FAILURE:
 			const { type, siteId } = action;
 			state = Object.assign( {}, state, {
-				[ siteId ]: PUBLICIZE_CONNECTIONS_FETCH === type
+				[ siteId ]: PUBLICIZE_CONNECTIONS_REQUEST === type
 			} );
 			break;
 	}

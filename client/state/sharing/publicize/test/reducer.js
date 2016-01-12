@@ -7,9 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	PUBLICIZE_CONNECTIONS_FETCH,
+	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAIL
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	fetchingConnections,
@@ -20,7 +20,7 @@ import {
 describe( '#fetchingConnections()', () => {
 	it( 'should set fetching to true for fetching action', () => {
 		const state = fetchingConnections( null, {
-			type: PUBLICIZE_CONNECTIONS_FETCH,
+			type: PUBLICIZE_CONNECTIONS_REQUEST,
 			siteId: 2916284
 		} );
 
@@ -38,7 +38,7 @@ describe( '#fetchingConnections()', () => {
 
 	it( 'should set fetching to false for failed action', () => {
 		const state = fetchingConnections( null, {
-			type: PUBLICIZE_CONNECTIONS_REQUEST_FAIL,
+			type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 			siteId: 2916284
 		} );
 
