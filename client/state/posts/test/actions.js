@@ -121,6 +121,19 @@ describe( 'actions', () => {
 			} ).catch( done );
 		} );
 
+		it( 'should dispatch posts request success action with query results', ( done ) => {
+			requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POSTS_RECEIVE,
+					posts: [
+						{ ID: 841, title: 'Hello World' }
+					]
+				} );
+
+				done();
+			} ).catch( done );
+		} );
+
 		it( 'should dispatch fail action when request fails', ( done ) => {
 			requestSitePosts( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {

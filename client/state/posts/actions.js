@@ -49,7 +49,7 @@ export function requestSitePosts( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.site( siteId ).postsList( { query } ).then( ( { posts } ) => {
+		return wpcom.site( siteId ).postsList( query ).then( ( { posts } ) => {
 			dispatch( receivePosts( posts ) );
 			dispatch( {
 				type: POSTS_REQUEST_SUCCESS,
