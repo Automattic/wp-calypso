@@ -1,0 +1,41 @@
+.typeahead .search-card {
+	margin-bottom: 1px;
+}
+
+.typeahead__results {
+	list-style: none;
+	transform-origin: top;
+	transform: scaleY( 0 );
+	transition: transform .15s ease-in-out;
+	margin: 0;
+	max-height: 200px;
+	overflow-y: auto;
+	border: 1px solid lighten( $gray, 30% );
+	border-top-width: 0;
+	background-color: $white;
+
+	&::before {
+		content: '';
+		position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+		pointer-events: none;
+	}
+
+	.typeahead.has-results & {
+		transform: scaleY( 1 );
+	}
+}
+
+.typeahead__result {
+	padding: 8px;
+	cursor: pointer;
+
+	&:hover {
+		background-color: $blue-medium;
+		color: $white;
+	}
+}
