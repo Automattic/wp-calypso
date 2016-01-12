@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from 'state/action-types';
+import { SITE_RECEIVE } from 'state/action-types';
 import { items } from '../reducer';
 
 describe( 'reducer', () => {
@@ -19,7 +19,7 @@ describe( 'reducer', () => {
 
 		it( 'should index sites by ID', () => {
 			const state = items( null, {
-				type: RECEIVE_SITE,
+				type: SITE_RECEIVE,
 				site: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 
@@ -33,7 +33,7 @@ describe( 'reducer', () => {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 			const state = items( original, {
-				type: RECEIVE_SITE,
+				type: SITE_RECEIVE,
 				site: { ID: 77203074, name: 'Just You Wait' }
 			} );
 
@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 			const state = items( original, {
-				type: RECEIVE_SITE,
+				type: SITE_RECEIVE,
 				site: { ID: 2916284, name: 'Just You Wait' }
 			} );
 
