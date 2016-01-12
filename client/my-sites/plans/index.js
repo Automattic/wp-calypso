@@ -6,14 +6,15 @@ var page = require( 'page' );
 /**
  * Internal dependencies
  */
-var controller = require( 'my-sites/controller' ),
-	plansController = require( './controller' ),
-	adTracking = require( 'analytics/ad-tracking' ),
-	config = require( 'config' );
+var adTracking = require( 'analytics/ad-tracking' ),
+	config = require( 'config' ),
+	controller = require( 'my-sites/controller' ),
+	plansController = require( './controller' );
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
-		page( '/plans',
+		page(
+			'/plans',
 			adTracking.retarget,
 			controller.siteSelection,
 			controller.sites
