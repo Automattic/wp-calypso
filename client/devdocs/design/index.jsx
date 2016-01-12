@@ -48,6 +48,7 @@ var SearchCard = require( 'components/search-card' ),
 	BulkSelect = require( 'components/bulk-select/docs/example' ),
 	ExternalLink = require( 'components/external-link/docs/example' ),
 	FeatureGate = require( 'components/feature-example/docs/example' ),
+	PostsTypeahead = require( 'components/posts-typeahead/docs/example' ),
 	Collection,
 	FilterSummary,
 	Hider;
@@ -199,6 +200,7 @@ module.exports = React.createClass( {
 					<Version />
 					<ExternalLink />
 					<FeatureGate />
+					<PostsTypeahead />
 					<DatePicker />
 					<Spinners />
 					<InputChrono />
