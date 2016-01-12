@@ -258,25 +258,34 @@ var CheckoutThankYou = React.createClass( {
 		if ( this.cartHasJetpackPlan() ) {
 			return (
 				<p>
-					{ this.translate( 'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} or {{emailLink}}send an email{{/emailLink}} to our Happiness Engineers.', {
-						components: {
-							supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-							emailLink: <a href="http://jetpack.me/contact-support/" target="_blank" />
+					{ this.translate(
+						'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
+						'or {{contactLink}}contact us{{/contactLink}}.',
+						{
+							components: {
+								supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
+								contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
+							}
 						}
-					} ) }
+					) }
 				</p>
 			);
 		}
 
 		return (
 			<p>
-				{ this.translate( 'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, or {{emailLink}}send an email{{/emailLink}} to our Happiness Engineers.', {
-					components: {
-						supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' } target="_blank" />,
-						forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
-						emailLink: <a href="http://support.wordpress.com/contact/" target="_blank" />
+				{ this.translate(
+					'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
+					'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
+					'or {{contactLink}}contact us{{/contactLink}}.',
+					{
+						components: {
+							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' } target="_blank" />,
+							forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
+							contactLink: <a href={ '/help/contact' } />
+						}
 					}
-				} ) }
+				) }
 			</p>
 		);
 	}
