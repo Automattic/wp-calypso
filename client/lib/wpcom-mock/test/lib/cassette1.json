@@ -1,0 +1,86 @@
+{
+  "GET /sites/75913855/users?number=100&offset=0&order=ASC&order_by=display_name&search=&search_columns%5B%5D=display_name&search_columns%5B%5D=user_login&siteId=75913855": {
+    "params": {
+      "path": "/sites/75913855/users",
+      "method": "GET",
+      "apiVersion": "1.1",
+      "query": "number=100&offset=0&order=ASC&order_by=display_name&search=&search_columns%5B%5D=display_name&search_columns%5B%5D=user_login&siteId=75913855",
+      "callback": "lbcq7on",
+      "supports_args": true,
+      "supports_progress": true
+    },
+    "response": {
+      "found": 1,
+      "users": [
+        {
+          "ID": 42802006,
+          "avatar_URL": "https://1.gravatar.com/avatar/1fbe2cbf81d138800009924725439779?s=96&d=identicon&r=G",
+          "email": "allendav@automattic.com",
+          "login": "allendav",
+          "name": "Allen S (allendav)",
+          "nice_name": "allendav",
+          "profile_URL": "http://en.gravatar.com/allendav",
+          "roles": [ "editor" ],
+          "site_ID": 43405119
+        }
+      ],
+      "_headers": {
+        "Date": "Tue, 15 Sep 2015 14:15:42 GMT",
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "POST /sites/75913855/menus/new": [
+    {
+      "params": {
+        "path": "/sites/75913855/menus/new",
+        "method": "POST",
+        "apiVersion": "1.1",
+        "query": "",
+        "body": {
+          "name": "Menu 1",
+          "items": [
+            {
+              "name": "About",
+              "type": "page",
+              "type_family": "post_type",
+              "content_id": 1,
+              "items": [],
+              "id": 1
+            },
+            {
+              "name": "Test Page",
+              "type": "page",
+              "type_family": "post_type",
+              "content_id": 8,
+              "items": [],
+              "id": 2
+            },
+            {
+              "name": "New item",
+              "type": "page",
+              "type_family": "post_type",
+              "status": "publish",
+              "id": 3
+            }
+          ],
+          "locations": [
+            "primary"
+          ],
+          "description": "",
+          "id": 5319
+        },
+        "callback": "2ptn6bp",
+        "supports_args": true,
+        "supports_progress": true
+      },
+      "response": {
+        "id": 5319,
+        "_headers": {
+          "Date": "Tue, 15 Sep 2015 14:16:53 GMT",
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}
