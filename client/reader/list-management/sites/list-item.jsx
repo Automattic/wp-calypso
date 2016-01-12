@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -18,8 +17,6 @@ import { decodeEntities } from 'lib/formatting';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import smartSetState from 'lib/react-smart-set-state';
-
-const debug = debugFactory( 'calypso:reader:list-management' );
 
 const ListManagementSitesListItem = React.createClass( {
 
@@ -64,22 +61,24 @@ const ListManagementSitesListItem = React.createClass( {
 	},
 
 	render() {
-		const listItem = this.props.listItem,
-			siteData = this.state.site,
+		const siteData = this.state.site,
 			feedData = this.state.feed,
 			iconUrl = siteData && siteData.get( 'icon' ),
-			displayUrl = FeedDisplayHelper.formatUrlForDisplay( listItem.get( 'URL' ) ),
+			url = siteData ? siteData.get( 'URL' ) : feedData && feedData.get( 'feed_URL' ),
+			displayUrl = FeedDisplayHelper.formatUrlForDisplay( url ),
 			feedTitle = decodeEntities( FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl ) );
 
-		debug( listItem );
+		if ( ! feedTitle ) {
+			return null;
+		}
 
 		return (
 			<ListItem>
 				<Icon>{ iconUrl ? <img src={ iconUrl.get( 'img' ) } alt="Feed icon" /> : null }</Icon>
 				<Title>
-					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>Feed { feedTitle }</a>
+					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ feedTitle }</a>
 				</Title>
-				<Description>Desc<a href={ listItem.get( 'URL' ) }>{ displayUrl }</a></Description>
+				<Description><a href={ url }>{ displayUrl }</a></Description>
 				<Actions>
 				</Actions>
 			</ListItem>
