@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -45,7 +43,7 @@ describe( 'Checkbox', function() {
 	} );
 
 	describe( 'Events', function() {
-		it('should pass change events', function() {
+		it( 'should pass change events', function() {
 			const onChange = sinon.spy();
 			const checkbox = shallow( <Checkbox isChecked={ false } onChange={ onChange } /> );
 
