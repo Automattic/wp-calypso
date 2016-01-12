@@ -51,8 +51,6 @@ const ListManagementSites = React.createClass( {
 			lastListError: ReaderListsStore.getLastError(),
 		};
 
-		debug( newState );
-
 		return newState;
 	},
 
