@@ -219,7 +219,7 @@ module.exports = {
 	},
 
 	overview: function( context, next ) {
-		var StatsComponent = require( 'my-sites/stats/stats-overview' ),
+		var StatsComponent = require( './overview' ),
 			StatsSummaryList = require( 'lib/stats/summary-list' ),
 			filters = function() {
 				return [
