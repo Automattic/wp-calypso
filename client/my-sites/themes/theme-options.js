@@ -57,7 +57,6 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 		}
 
 		let actionCreator = function createAction() {
-			console.log( 'calling createAction' );
 			return () => {
 				action.apply( params.this, params.args );
 				Helper.trackClick( 'more button', name );
