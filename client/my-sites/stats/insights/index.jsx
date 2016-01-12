@@ -10,7 +10,7 @@ import StatsNavigation from '../stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
-import Followers from '../module-followers';
+import Followers from '../stats-followers';
 import PostTrends from 'my-sites/post-trends';
 import SiteOverview from '../overview';
 import SiteOverviewPlaceholder from 'my-sites/stats/module-site-overview-placeholder';
