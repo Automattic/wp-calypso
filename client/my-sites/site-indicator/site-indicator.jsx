@@ -230,7 +230,11 @@ export default React.createClass( {
 			if ( this.state.updateSucceed ) {
 				progressStatus = 'success';
 			}
-			return <ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />;
+			return (
+				<div className="site-indicator">
+					<ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />
+				</div>
+			);
 		}
 
 		indicatorClass = classNames( {
