@@ -5,10 +5,6 @@ import partial from 'lodash/function/partial';
 
 import { fetchState } from '../actions';
 import { actionTypes } from '../constants';
-import {
-	noImports,
-	defunctImporter
-} from './server-payloads';
 import store from '../store';
 
 const fetchTestState = partial( fetchState, 0 );
@@ -18,7 +14,7 @@ const resetStore = () => Dispatcher.handleViewAction( { type: actionTypes.RESET_
 const queuePayload = payload =>
 	nock( 'https://public-api.wordpress.com:443' )
 		.get( '/rest/v1.1/sites/0/imports/' )
-		.reply( 200, payload );
+		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
 
 describe( 'Importer store', () => {
 	beforeEach( resetStore );
@@ -27,7 +23,7 @@ describe( 'Importer store', () => {
 		it( 'should hydrate if the API returns a blank body', done => {
 			expect( hydratedState(), 'before fetch' ).to.be.false;
 
-			queuePayload( noImports );
+			queuePayload( 'no-imports' );
 			fetchTestState()
 				.then( () => { expect( hydratedState(), 'after fetch' ).to.be.true } )
 				.then( done )
@@ -37,7 +33,7 @@ describe( 'Importer store', () => {
 		it( 'should hydrate if the API returns a defunct importer', done => {
 			expect( hydratedState(), 'before fetch' ).to.be.false;
 
-			queuePayload( defunctImporter );
+			queuePayload( 'defunct-importer' );
 			fetchTestState()
 				.then( () => { expect( hydratedState(), 'after fetch' ).to.be.true } )
 				.then( done )
