@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import {
 	SET_SELECTED_SITE,
 	SET_SECTION,
-	USER_SET_CURRENT
+	CURRENT_USER_ID_SET
 } from 'state/action-types';
 
 /**
@@ -36,9 +36,9 @@ export function selectedSite( state = null, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function currentUser( state = null, action ) {
+export function currentUserId( state = null, action ) {
 	switch ( action.type ) {
-		case USER_SET_CURRENT:
+		case CURRENT_USER_ID_SET:
 			state = action.userId;
 			break;
 	}
@@ -72,5 +72,5 @@ export default combineReducers( {
 	isLoading,
 	hasSidebar,
 	selectedSite,
-	currentUser
+	currentUserId
 } );

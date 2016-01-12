@@ -4,7 +4,7 @@
 import {
 	SET_SELECTED_SITE,
 	SET_SECTION,
-	USER_SET_CURRENT
+	CURRENT_USER_ID_SET
 } from 'state/action-types';
 
 /**
@@ -28,9 +28,9 @@ export function setSelectedSite( siteId ) {
  * @param  {Number} userId User ID
  * @return {Object}        Action object
  */
-export function setCurrentUser( userId ) {
+export function setCurrentUserId( userId ) {
 	return {
-		type: USER_SET_CURRENT,
+		type: CURRENT_USER_ID_SET,
 		userId
 	};
 }

@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE, USER_SET_CURRENT } from 'state/action-types';
-import { selectedSite, currentUser } from '../reducer';
+import { SET_SELECTED_SITE, CURRENT_USER_ID_SET } from 'state/action-types';
+import { selectedSite, currentUserId } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#selectedSite()', () => {
@@ -36,16 +36,16 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#currentUser()', () => {
+	describe( '#currentUserId()', () => {
 		it( 'should default to null', () => {
-			const state = currentUser( undefined, {} );
+			const state = currentUserId( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should set the current user ID', () => {
-			const state = currentUser( null, {
-				type: USER_SET_CURRENT,
+			const state = currentUserId( null, {
+				type: CURRENT_USER_ID_SET,
 				userId: 73705554
 			} );
 

@@ -20,13 +20,13 @@ export function getSelectedSite( state ) {
 /**
  * Returns the user object for the current user.
  *
- * @param  {Object} state  Global state tree
- * @return {Object}        Selected site
+ * @param  {Object}  state  Global state tree
+ * @return {?Object}        Current user
  */
 export function getCurrentUser( state ) {
-	if ( ! state.ui.currentUser ) {
+	if ( ! state.ui.currentUserId ) {
 		return null;
 	}
 
-	return getUser( state, state.ui.currentUser );
+	return getUser( state, state.ui.currentUserId );
 }

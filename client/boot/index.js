@@ -23,7 +23,7 @@ var config = require( 'config' ),
 	route = require( 'lib/route' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
-	setCurrentUser = require( 'state/ui/actions' ).setCurrentUser,
+	setCurrentUserId = require( 'state/ui/actions' ).setCurrentUserId,
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'analytics/super-props' ),
 	i18n = require( 'lib/mixins/i18n' ),
@@ -165,7 +165,7 @@ function boot() {
 
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
-		reduxStore.dispatch( setCurrentUser( user.get().ID ) );
+		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 
 		// Create layout instance with current user prop
 		Layout = require( 'layout' );

@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE, USER_SET_CURRENT } from 'state/action-types';
-import { setSelectedSite, setCurrentUser } from '../actions';
+import { SET_SELECTED_SITE, CURRENT_USER_ID_SET } from 'state/action-types';
+import { setSelectedSite, setCurrentUserId } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setSelectedSite()', () => {
@@ -21,12 +21,12 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#setCurrentUser()', () => {
+	describe( '#setCurrentUserId()', () => {
 		it( 'should return an action object', () => {
-			const action = setCurrentUser( 73705554 );
+			const action = setCurrentUserId( 73705554 );
 
 			expect( action ).to.eql( {
-				type: USER_SET_CURRENT,
+				type: CURRENT_USER_ID_SET,
 				userId: 73705554
 			} );
 		} );

@@ -40,7 +40,7 @@ describe( 'selectors', () => {
 		it( 'should return null if no current user', () => {
 			const selected = getCurrentUser( {
 				ui: {
-					currentUser: null
+					currentUserId: null
 				}
 			} );
 
@@ -55,7 +55,7 @@ describe( 'selectors', () => {
 					}
 				},
 				ui: {
-					currentUser: 73705554
+					currentUserId: 73705554
 				}
 			} );
 
