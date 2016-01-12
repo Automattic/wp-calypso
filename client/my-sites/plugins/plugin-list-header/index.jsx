@@ -62,6 +62,9 @@ export default React.createClass( {
 	},
 
 	hasJetpackSelectedSites() {
+		if ( this.props.isWpCom ) {
+			return;
+		}
 		const selectedSite = this.props.sites.getSelectedSite();
 		if ( selectedSite ) {
 			return !! selectedSite.jetpack;
@@ -70,16 +73,20 @@ export default React.createClass( {
 	},
 
 	unselectOrSelectAll() {
+		const sites = this.props.isWpCom
+			? this.props.sites.getSelectedOrWPComBusiness()
+			: this.props.sites.getSelectedOrAllJetpackCanManage();
+
 		if ( this.props.selected.length > 0 ) {
-			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'none' );
+			PluginsActions.selectPlugins( sites, 'none' );
 			analytics.ga.recordEvent( 'Plugins', 'Clicked to Uncheck All Plugins' );
 			return;
 		}
-		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'all' );
+		PluginsActions.selectPlugins( sites, 'all' );
 		analytics.ga.recordEvent( 'Plugins', 'Clicked to Check All Plugins' );
 	},
 
-	renderCurrentActionButtons( isWpCom ) {
+	renderCurrentActionButtons() {
 		let buttons = [];
 		let rightSideButtons = [];
 		let leftSideButtons = [];
@@ -87,10 +94,10 @@ export default React.createClass( {
 		let activateButtons = [];
 
 		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
-		const isJetpackSelected = this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
+		const isJetpackSelected = this.props.isWpCom ? false : this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 		if ( ! this.props.isBulkManagementActive ) {
-			if ( ! isWpCom && 0 < this.props.pluginUpdateCount ) {
+			if ( ! this.props.isWpCom && 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
@@ -106,7 +113,7 @@ export default React.createClass( {
 					</Button>
 				</ButtonGroup>
 			);
-			if ( ! isWpCom && this.canAddNewPlugins() ) {
+			if ( ! this.props.isWpCom && this.canAddNewPlugins() ) {
 				const selectedSite = this.props.sites.getSelectedSite();
 				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
@@ -144,7 +151,7 @@ export default React.createClass( {
 			activateButtons.push( deactivateButton )
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
-			if ( this.hasJetpackSelectedSites() && ! isWpCom ) {
+			if ( this.hasJetpackSelectedSites() ) {
 				updateButtons.push(
 					<Button key="plugin-list-header__buttons-autoupdate-on"
 						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
@@ -195,7 +202,7 @@ export default React.createClass( {
 		let actions = [];
 
 		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
-		const isJetpackSelected = this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
+		const isJetpackSelected = this.props.isWpCom ? false : this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
 		const needsRemoveButton = !! this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 
 		if ( this.props.isBulkManagementActive ) {
