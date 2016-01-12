@@ -187,12 +187,12 @@ module.exports = React.createClass( {
 			<Card className="current-site">
 				{ hasOneSite
 					? this.addNewWordPressButton()
-					: <span
-						className="current-site__switch-sites"
-						onClick={ this.switchSites }>
+					: <span className="current-site__switch-sites">
+						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 16 } />
 							{ this.translate( 'Switch Site' ) }
-						</span>
+						</Button>
+					</span>
 				}
 				{ this.props.sites.selected
 					? <Site

@@ -61,46 +61,32 @@
 .current-site__switch-sites {
 	background: lighten( $gray, 30% );
 	border-bottom: 1px solid lighten( $gray, 25% );
-	font-size: 13px;
 	display: block;
-	padding: 8px 8px 8px 40px;
-	color: darken( $gray, 20% );
 	box-sizing: border-box;
 	cursor: pointer;
 	position: relative;
 
+	.button {
+		text-align: left;
+		padding: 16px;
+		width: 100%;
+
+		.gridicon {
+			margin-right: 4px;
+		}
+	}
+
 	@include breakpoint( "<660px" ) {
 		background-color: $gray-light;
-		padding: 18px 16px 18px 40px;
 	}
 
 	&:hover {
 		background-color: $gray-light;
-		color: $blue-medium;
-
-		.current-site__site-count {
-			border-color: $white;
-			color: $white;
-		}
-	}
-
-	.gridicon {
-		position: absolute;
-			top: 9px;
-			left: 16px;
-
-		@include breakpoint( "<660px" ) {
-				top: 15px;
-			height: 24px;
-			width: 24px;
-		}
 	}
 }
 
-.rtl .current-site__switch-sites {
-	&:before {
-		content: '\f429';
-	}
+.rtl .current-site__switch-sites .gridicon {
+	transform: rotate( 180deg );
 }
 
 .current-site .notice {
