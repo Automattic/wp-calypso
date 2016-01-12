@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Immutable from 'immutable';
-import includes from 'lodash/collection/includes';
+import partial from 'lodash/function/partial';
 
 /**
  * Internal dependencies
@@ -24,7 +24,11 @@ const initialState = Immutable.fromJS( {
 	}
 } );
 
+const equals = ( a, b ) => a === b;
 const increment = a => a + 1;
+
+const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
+const shouldRemove = importer => removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
 
 const ImporterStore = createReducerStore( function( state, payload ) {
 	let { action } = payload,
@@ -106,21 +110,13 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 			newState = newState
 				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) )
-				.update( 'importers', importers => {
-					const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
-
-					return importers.filterNot( importer => includes( removableStates, importer.get( 'importerState' ) ) )
-				} );
+				.update( 'importers', importers => importers.filterNot( shouldRemove ) );
 			break;
 
 		case actionTypes.SET_UPLOAD_PROGRESS:
-			newState = state.update( 'importers', importers => importers.map( importer => {
-				if ( action.importerId !== importer.get( 'importerId' ) ) {
-					return importer;
-				}
-
-				return importer.set( 'percentComplete', action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100 );
-			} ) );
+			newState = state.setIn( [ 'importers', action.importerId, 'percentComplete' ],
+				action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100
+			);
 			break;
 
 		case actionTypes.START_IMPORT:
@@ -144,8 +140,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case actionTypes.START_UPLOAD:
 			newState = state
 				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOADING )
-				.setIn( [ 'importers', action.importerId, 'filename' ], action.filename )
-				.setIn( [ 'importers', action.importerId, 'uploadAborter' ], action.uploadAborter );
+				.setIn( [ 'importers', action.importerId, 'filename' ], action.filename );
 			break;
 
 		default:

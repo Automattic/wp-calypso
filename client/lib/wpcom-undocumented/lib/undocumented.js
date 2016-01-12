@@ -1725,8 +1725,6 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
 
 	req.upload.onprogress = params.onprogress;
 	req.onabort = params.onabort;
-
-	return req;
 };
 
 /**

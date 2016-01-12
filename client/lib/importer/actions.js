@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
-import noop from 'lodash/utility/noop';
+import includes from 'lodash/collection/includes';
 const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
@@ -27,33 +27,32 @@ const apiFailure = data => {
 };
 const asArray = a => [].concat( a );
 
-function apiUpdateImporter( importerStatus ) {
-	apiSuccess();
-
+function receiveImporterStatus( importerStatus ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.RECEIVE_IMPORT_STATUS,
 		importerStatus
 	} );
 }
 
-export function cancelImport( siteId, importerId, uploadAborter = noop ) {
-	uploadAborter();
-
+export function cancelImport( siteId, importerId ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.CANCEL_IMPORT,
 		importerId,
 		siteId
 	} );
 
-	if ( importerId.includes( ID_GENERATOR_PREFIX ) ) {
+	// Bail if this is merely a local importer object because
+	// there is nothing on the server-side to cancel
+	if ( includes( importerId, ID_GENERATOR_PREFIX ) ) {
 		return;
 	}
 
 	apiStart();
 	wpcom
 		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
-		.then( importer => fromApi( importer ) )
-		.then( apiUpdateImporter )
+		.then( apiSuccess )
+		.then( fromApi )
+		.then( receiveImporterStatus )
 		.catch( apiFailure );
 }
 
@@ -72,12 +71,7 @@ export function fetchState( siteId ) {
 		.then( apiSuccess )
 		.then( asArray )
 		.then( importers => importers.map( fromApi ) )
-		.then( importers => importers.map( importerStatus => {
-			Dispatcher.handleViewAction( {
-				type: actionTypes.RECEIVE_IMPORT_STATUS,
-				importerStatus
-			} );
-		} ) )
+		.then( importers => importers.map( receiveImporterStatus ) )
 		.catch( apiFailure );
 }
 
@@ -155,7 +149,7 @@ export function startImporting( importerStatus ) {
 export function startUpload( importerStatus, file ) {
 	let { importerId, site: { ID: siteId } } = importerStatus;
 
-	const uploader = wpcom.uploadExportFile( siteId, {
+	wpcom.uploadExportFile( siteId, {
 		importStatus: toApi( importerStatus ),
 		file,
 
@@ -180,7 +174,6 @@ export function startUpload( importerStatus, file ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.START_UPLOAD,
 		filename: file.name,
-		importerId,
-		uploadAborter: uploader.abort.bind( uploader )
+		importerId
 	} );
 }
