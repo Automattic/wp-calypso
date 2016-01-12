@@ -4,7 +4,7 @@ COMPILERS ?= js:babel/register
 NODE_BIN := ../../../node_modules/.bin
 MOCHA ?= $(NODE_BIN)/mocha
 BASE_DIR := $(NODE_BIN)/../..
-NODE_PATH := test:$(BASE_DIR)/client:$(BASE_DIR)/shared
+NODE_PATH := test:$(BASE_DIR)/client
 
 # In order to simply stub modules, add test to the NODE_PATH
 test:

@@ -58,7 +58,7 @@ webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		modulesDirectories: [ 'node_modules', path.join( __dirname, 'client' ), path.join( __dirname, 'shared' ) ]
+		modulesDirectories: [ 'node_modules', path.join( __dirname, 'client' ) ]
 	},
 	node: {
 		console: false,

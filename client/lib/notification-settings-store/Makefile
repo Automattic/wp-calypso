@@ -1,7 +1,7 @@
 NODE_BIN := $(shell npm bin)
 MOCHA ?= $(NODE_BIN)/mocha
 BASE_DIR := $(NODE_BIN)/../..
-NODE_PATH := test:$(BASE_DIR)/client:$(BASE_DIR)/shared
+NODE_PATH := test:$(BASE_DIR)/client
 COMPILERS ?= js:babel-core/register
 REPORTER ?= spec
 UI ?= bdd

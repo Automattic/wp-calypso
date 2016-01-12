@@ -16,7 +16,7 @@ NODE_BIN := $(THIS_DIR)/node_modules/.bin
 NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
 BUNDLER ?= $(BIN)/bundler
-SASS ?= $(NODE_BIN)/node-sass --include-path 'client:shared'
+SASS ?= $(NODE_BIN)/node-sass --include-path 'client'
 RTLCSS ?= $(NODE_BIN)/rtlcss
 AUTOPREFIXER ?= $(NODE_BIN)/autoprefixer
 RECORD_ENV ?= $(BIN)/record-env
@@ -27,7 +27,7 @@ ALL_DEVDOCS_JS ?= $(THIS_DIR)/server/devdocs/bin/generate-devdocs-index
 
 # files used as prereqs
 SASS_FILES := $(shell \
-	find client shared assets \
+	find client assets \
 		-type f \
 		-name '*.scss' \
 )
@@ -58,7 +58,7 @@ CALYPSO_ENV ?= $(NODE_ENV)
 
 export NODE_ENV := $(NODE_ENV)
 export CALYPSO_ENV := $(CALYPSO_ENV)
-export NODE_PATH := server:shared:.
+export NODE_PATH := server:client:.
 
 .DEFAULT_GOAL := install
 
@@ -111,7 +111,7 @@ i18n-lint:
 
 # Skip files that are auto-generated
 mixedindentlint: node_modules/mixedindentlint
-	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js" --exclude="shared/components/gridicon/index.jsx"
+	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js" --exclude="client/components/gridicon/index.jsx"
 
 # keep track of the current CALYPSO_ENV so that it can be used as a
 # prerequisite for other rules

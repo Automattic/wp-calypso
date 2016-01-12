@@ -63,7 +63,7 @@ module.exports = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		modulesDirectories: [ 'node_modules', path.join( __dirname, 'server' ), path.join( __dirname, 'shared' ), __dirname ]
+		modulesDirectories: [ 'node_modules', path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ]
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,

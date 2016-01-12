@@ -3,7 +3,7 @@ REPORTER ?= spec
 NODE_BIN ?= ../../../../node_modules/.bin
 BASE_DIR := $(NODE_BIN)/../..
 MOCHA ?= $(NODE_BIN)/mocha
-NODE_PATH := test:$(BASE_DIR)/client:$(BASE_DIR)/shared
+NODE_PATH := test:$(BASE_DIR)/client
 
 test:
 	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)

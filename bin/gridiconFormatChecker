@@ -44,7 +44,7 @@ fs.readFile( filename, 'utf8', function ( err, data ) {
 	if ( result !== '' ) {
 		console.error( result );
 		console.log( '\033[mValid gridiconsizes are ' + validIconSizes.join( 'px, ' ) + 'px' );
-		console.log( '\033[mIf you need any of those Gridicons to have a non-standard size, please, add \'nonStandardSize\' as a property. See https://github.com/Automattic/wp-calypso/tree/master/shared/components/gridicon#props \n' );
+		console.log( '\033[mIf you need any of those Gridicons to have a non-standard size, please, add \'nonStandardSize\' as a property. See https://github.com/Automattic/wp-calypso/tree/master/client/components/gridicon#props \n' );
 		process.exit( 1 );
 	} else {
 		process.exit( 0 );
