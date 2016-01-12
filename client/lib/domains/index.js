@@ -41,6 +41,13 @@ function canRegister( domain, onComplete ) {
 		return;
 	}
 
+	// Punycode version of IDN starts with this ACE prefix: xn--,
+	// we cannot register those domains on WordPress.com
+	if ( domain.startsWith( 'xn--' ) ) {
+		onComplete( new ValidationError( 'not_registrable' ) );
+		return;
+	}
+
 	wpcom.undocumented().isDomainAvailable( domain, function( serverError, data ) {
 		var errorCode;
 		if ( serverError ) {
