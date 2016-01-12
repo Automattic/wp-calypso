@@ -10,7 +10,6 @@ import Chai, { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	POST_RECEIVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -29,8 +28,8 @@ describe( 'actions', () => {
 			const action = receivePost( post );
 
 			expect( action ).to.eql( {
-				type: POST_RECEIVE,
-				post
+				type: POSTS_RECEIVE,
+				posts: [ post ]
 			} );
 		} );
 	} );

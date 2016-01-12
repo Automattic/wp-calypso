@@ -3,7 +3,6 @@
  */
 import wpcom from 'lib/wp';
 import {
-	POST_RECEIVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -18,10 +17,7 @@ import {
  * @return {Object}      Action object
  */
 export function receivePost( post ) {
-	return {
-		type: POST_RECEIVE,
-		post
-	};
+	return receivePosts( [ post ] );
 }
 
 /**

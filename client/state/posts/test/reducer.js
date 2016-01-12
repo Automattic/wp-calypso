@@ -7,7 +7,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	POST_RECEIVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -24,17 +23,6 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should index posts by global ID', () => {
-			const state = items( null, {
-				type: POST_RECEIVE,
-				post: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			} );
-
-			expect( state ).to.eql( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			} );
-		} );
-
-		it( 'should index multiple posts by global ID', () => {
 			const state = items( null, {
 				type: POSTS_RECEIVE,
 				posts: [
@@ -54,8 +42,8 @@ describe( 'reducer', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, {
-				type: POST_RECEIVE,
-				post: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
+				type: POSTS_RECEIVE,
+				posts: [ { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' } ]
 			} );
 
 			expect( state ).to.eql( {
@@ -69,8 +57,8 @@ describe( 'reducer', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, {
-				type: POST_RECEIVE,
-				post: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
+				type: POSTS_RECEIVE,
+				posts: [ { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' } ]
 			} );
 
 			expect( state ).to.eql( {
@@ -88,8 +76,8 @@ describe( 'reducer', () => {
 
 		it( 'should map site ID, post ID pair to global ID', () => {
 			const state = sitePosts( null, {
-				type: POST_RECEIVE,
-				post: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				type: POSTS_RECEIVE,
+				posts: [ { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' } ]
 			} );
 
 			expect( state ).to.eql( {

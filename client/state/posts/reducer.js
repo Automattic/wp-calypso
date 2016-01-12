@@ -8,7 +8,6 @@ import indexBy from 'lodash/collection/indexBy';
  * Internal dependencies
  */
 import {
-	POST_RECEIVE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -24,12 +23,6 @@ import {
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case POST_RECEIVE:
-			state = Object.assign( {}, state, {
-				[ action.post.global_ID ]: action.post
-			} );
-			break;
-
 		case POSTS_RECEIVE:
 			state = Object.assign( {}, state, indexBy( action.posts, 'global_ID' ) );
 			break;
@@ -48,11 +41,9 @@ export function items( state = {}, action ) {
  */
 export function sitePosts( state = {}, action ) {
 	switch ( action.type ) {
-		case POST_RECEIVE:
 		case POSTS_RECEIVE:
 			state = Object.assign( {}, state );
-			let posts = action.post ? [ action.post ] : action.posts;
-			posts.forEach( ( post ) => {
+			action.posts.forEach( ( post ) => {
 				if ( ! state[ post.site_ID ] ) {
 					state[ post.site_ID ] = {};
 				}
