@@ -123,7 +123,7 @@ let InviteAccept = React.createClass( {
 							{
 								this.translate(
 									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="http://en.support.wordpress.com/" target="_blank" /> } }
+									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
 								)
 							}
 						</p>
@@ -146,7 +146,7 @@ let InviteAccept = React.createClass( {
 							{
 								this.translate(
 									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="http://en.support.wordpress.com/" target="_blank" /> } }
+									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
 								)
 							}
 						</p>
@@ -169,7 +169,7 @@ let InviteAccept = React.createClass( {
 							{
 								this.translate(
 									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="http://en.support.wordpress.com/" target="_blank" /> } }
+									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
 								)
 							}
 						</p>
@@ -192,7 +192,7 @@ let InviteAccept = React.createClass( {
 							{
 								this.translate(
 									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="http://en.support.wordpress.com/" target="_blank" /> } }
+									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
 								)
 							}
 						</p>
