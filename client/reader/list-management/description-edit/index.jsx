@@ -65,6 +65,7 @@ const ListManagementDescriptionEdit = React.createClass( {
 		);
 
 		const params = {
+			ID: this.props.list.ID,
 			owner: this.props.list.owner,
 			slug: this.props.list.slug,
 			title: this.state.title,

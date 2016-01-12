@@ -19,8 +19,8 @@ const assign = require( 'lodash/object/assign' ),
 const layoutFocus = require( 'lib/layout-focus' ),
 	Tags = require( 'lib/reader-tags/subscriptions' ),
 	TagActions = require( 'lib/reader-tags/actions' ),
-	ReaderLists = require( 'lib/reader-lists/subscriptions' ),
-	ListStore = require( 'lib/reader-lists/lists' ),
+	ReaderListsSubscriptionsStore = require( 'lib/reader-lists/subscriptions' ),
+	ReaderListsStore = require( 'lib/reader-lists/lists' ),
 	ReaderListActions = require( 'lib/reader-lists/actions' ),
 	ReaderTeams = require( 'lib/reader-teams' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
@@ -73,16 +73,18 @@ module.exports = React.createClass( {
 	componentDidMount: function() {
 		Tags.on( 'change', this.updateState );
 		Tags.on( 'add', this.highlightNewTag );
-		ReaderLists.on( 'change', this.updateState );
-		ReaderLists.on( 'create', this.highlightNewList );
+		ReaderListsStore.on( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.on( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.on( 'create', this.highlightNewList );
 		ReaderTeams.on( 'change', this.updateState );
 	},
 
 	componentWillUnmount: function() {
 		Tags.off( 'change', this.updateState );
 		Tags.off( 'add', this.highlightNewTag );
-		ReaderLists.off( 'change', this.updateState );
-		ReaderLists.off( 'create', this.highlightNewList );
+		ReaderListsStore.off( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.off( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.off( 'create', this.highlightNewList );
 		ReaderTeams.off( 'change', this.updateState );
 	},
 
@@ -91,9 +93,9 @@ module.exports = React.createClass( {
 	},
 
 	getStateFromStores: function() {
-		var tags = Tags.get(),
-			lists = ReaderLists.get(),
-			teams = ReaderTeams.get();
+		const tags = Tags.get();
+		const lists = ReaderListsSubscriptionsStore.get();
+		const teams = ReaderTeams.get();
 
 		if ( ! ( tags && lists && teams ) ) {
 			SidebarActions.fetch();
@@ -141,7 +143,7 @@ module.exports = React.createClass( {
 	},
 
 	highlightNewList: function( list ) {
-		list = ListStore.get( list.owner, list.slug );
+		list = ReaderListsStore.get( list.owner, list.slug );
 		window.location.href = url.resolve( 'https://wordpress.com', url.resolve( list.URL, 'edit' ) );
 		ReactDom.findDOMNode( this.refs.addListInput ).value = '';
 	},
@@ -211,7 +213,7 @@ module.exports = React.createClass( {
 			);
 
 			return (
-				<li className={ classes } key={ list.ID } >
+				<li className={ classes } key={ list.ID }>
 					<a href={ list.URL }><span className="menu-link-text">{ list.title }</span></a>
 					{ list.is_owner ? <a href={ listManageUrl } rel={ listRel } className="add-new">{ this.translate( 'Manage' ) }</a> : null }
 				</li>
