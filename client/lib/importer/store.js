@@ -13,15 +13,15 @@ import { createReducerStore } from 'lib/store';
 /**
  * Module variables
  */
-const initialState = {
+const initialState = Immutable.fromJS( {
 	count: 0,
-	importers: new Immutable.Map,
+	importers: {},
 	api: {
 		isHydrated: false,
 		isFetching: false,
 		retryCount: 0
 	}
-};
+} );
 
 const increment = a => a + 1;
 
@@ -30,6 +30,9 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		newState;
 
 	switch ( action.type ) {
+		case actionTypes.RESET_STORE:
+			return initialState;
+
 		case actionTypes.DEV_SET_STATE:
 			// Convert the importer list into an object
 			action.newState.importers = action.newState.importers
@@ -52,6 +55,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case actionTypes.API_SUCCESS:
 			newState = state
 				.setIn( [ 'api', 'isFetching' ], false )
+				.setIn( [ 'api', 'isHydrated' ], true )
 				.setIn( [ 'api', 'retryCount' ], 0 );
 			break;
 
@@ -92,7 +96,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 
 		case actionTypes.RECEIVE_IMPORT_STATUS:
-			newState = state.setIn( [ 'api', 'isHydrated' ], true );
+			newState = state
+				.setIn( [ 'api', 'isHydrated' ], true );
 
 			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
 				break;
@@ -138,7 +143,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 	}
 
 	return newState;
-}, Immutable.fromJS( initialState ) );
+}, initialState );
 
 export function getState() {
 	return ImporterStore.get().toJS();

@@ -39,5 +39,6 @@ export const actionTypes = Object.freeze( {
 
 	START_IMPORTING: 'importer-start-importing',
 
-	DEV_SET_STATE: 'dev-set-state'
+	DEV_SET_STATE: 'dev-set-state',
+	RESET_STORE: 'dev-reset-store'
 } );
