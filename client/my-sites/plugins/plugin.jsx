@@ -83,6 +83,7 @@ const SinglePlugin = React.createClass( {
 	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props,
 			selectedSite = this.props.sites.getSelectedSite();
+		let isWporg = false;
 
 		// .com sites can't install non .com plugins, if that's the case we don't retrieve any data from the store
 		if ( ! props.isWpcomPlugin && selectedSite && ! selectedSite.jetpack ) {
@@ -112,10 +113,12 @@ const SinglePlugin = React.createClass( {
 			// if it isn't a .com plugin, assign it .org details
 			plugin = Object.assign( plugin, WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, props.pluginSlug ) );
 			isFetching = WporgPluginsSelectors.isFetching( this.props.wporgPlugins, props.pluginSlug );
+			isWporg = true;
 		}
 
 		return {
 			isFetching: isFetching,
+			isWporg: isWporg,
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
@@ -192,7 +195,7 @@ const SinglePlugin = React.createClass( {
 					return true;
 				}
 
-				return sitePlugins.some( plugin => plugin.slug === pluginSlug );
+				return sitePlugins.some( sitePlugin => sitePlugin.slug === pluginSlug );
 			} );
 		}
 		return true;
@@ -218,11 +221,11 @@ const SinglePlugin = React.createClass( {
 	},
 
 	renderSitesList() {
-		if ( this.props.siteUrl ) {
+		if ( this.props.siteUrl || this.state.isFetching || ( this.state.plugin && ! this.state.plugin.fetched ) ) {
 			return;
 		}
 
-		if ( this.state.plugin.wporg ) {
+		if ( this.state.isWporg ) {
 			return (
 				<div>
 					<PluginSiteList
@@ -230,13 +233,15 @@ const SinglePlugin = React.createClass( {
 						title={ this.translate( 'Installed on', { comment: 'header for list of sites a plugin is installed on' } ) }
 						sites={ this.state.sites }
 						plugin={ this.state.plugin }
-						notices={ this.state.notices } />
+						notices={ this.state.notices }
+						wporg={ true } />
 					<PluginSiteList
 						className="plugin__not-installed-on"
 						title={ this.translate( 'Available sites', { comment: 'header for list of sites a plugin can be installed on' } ) }
 						sites={ this.state.notInstalledSites }
 						plugin={ this.state.plugin }
-						notices={ this.state.notices } />
+						notices={ this.state.notices }
+						wporg={ true } />
 				</div>
 			);
 		}
