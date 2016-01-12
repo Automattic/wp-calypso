@@ -1,10 +1,13 @@
 // External dependencies
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
+import get from 'lodash/object/get';
 
 // Internal dependencies
 import { requestInflight, requestTracker } from 'lib/inflight';
 import { action } from './constants';
+import { action as siteStoreActionTypes } from 'lib/reader-site-store/constants';
+import { action as feedStoreActionTypes } from 'lib/feed-store/constants';
 
 const PER_PAGE = 50;
 
@@ -36,8 +39,36 @@ export function fetchMoreItems( listOwner, listSlug, page ) {
 				type: action.ACTION_RECEIVE_READER_LIST_ITEMS,
 				data: data
 			} );
+
+			// If we received site or feed meta, fire off an action
+			data.items.forEach( function( item ) {
+				receiveMeta( item );
+			} );
 		}
 
 		Dispatcher.handleViewAction( { type: action.ACTION_FETCH_READER_LIST_ITEMS_COMPLETE } );
 	} ) );
+}
+
+function receiveMeta( item ) {
+	if ( get( item, 'meta.data.site' ) ) {
+		Dispatcher.handleServerAction( {
+			type: siteStoreActionTypes.RECEIVE_FETCH,
+			siteId: item.meta.data.site.ID,
+			data: item.meta.data.site
+		} );
+	}
+
+	if ( get( item, 'meta.data.feed' ) ) {
+		Dispatcher.handleServerAction( {
+			type: feedStoreActionTypes.FETCH,
+			feedId: item.meta.data.feed.feed_ID,
+		} );
+
+		Dispatcher.handleServerAction( {
+			type: feedStoreActionTypes.RECEIVE_FETCH,
+			feedId: item.meta.data.feed.feed_ID,
+			data: item.meta.data.feed
+		} );
+	}
 }
