@@ -88,7 +88,7 @@ Shallow rendering helps with inspecting whether our component renders correctly,
 >Shallow rendering is an experimental feature that lets you render a component "one level deep" and assert facts about what its render method returns, without worrying about the behavior of child components, which are not instantiated or rendered. This does not require a DOM.
 https://facebook.github.io/react/docs/test-utils.html#shallow-rendering
 
-For a complete example of usage, see `shared/components/themes-list/test/index.jsx`.
+For a complete example of usage, see `client/components/themes-list/test/index.jsx`.
 
 The render function basically just draws a bunch of Theme subcomponents:
 ```javascript
@@ -142,4 +142,3 @@ assert( this.themesList.props.children.length === this.props.themes.length, 'chi
 ```
 
 So here we avoid having to actually draw the `Theme` components when testing `ThemesList`.
-
