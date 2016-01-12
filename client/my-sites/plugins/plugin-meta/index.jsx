@@ -35,7 +35,8 @@ export default React.createClass( {
 		sites: React.PropTypes.array,
 		notices: React.PropTypes.object,
 		plugin: React.PropTypes.object.isRequired,
-		isPlaceholder: React.PropTypes.bool
+		isInstalledOnSite: React.PropTypes.bool.isRequired,
+		isPlaceholder: React.PropTypes.bool,
 	},
 
 	displayBanner() {
@@ -55,7 +56,7 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( ! this.isInstalledOnSite( this.props.selectedSite ) ) {
+		if ( ! this.props.isInstalledOnSite ) {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
 		}
 
@@ -117,14 +118,6 @@ export default React.createClass( {
 				linkToAuthor
 			}
 		} );
-	},
-
-	isInstalledOnSite( site ) {
-		return ( this.props.sites &&
-			this.props.sites.some( iteratorSite => {
-				return site.slug === iteratorSite.slug;
-			} )
-		);
 	},
 
 	getInstallButton() {
@@ -198,7 +191,7 @@ export default React.createClass( {
 
 	hasInstallButton() {
 		if ( this.props.selectedSite ) {
-			return ! this.isInstalledOnSite( this.props.selectedSite ) &&
+			return ! this.props.isInstalledOnSite &&
 				this.props.selectedSite.user_can_manage &&
 				this.props.selectedSite.jetpack;
 		}

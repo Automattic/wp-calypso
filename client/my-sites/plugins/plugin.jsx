@@ -243,6 +243,7 @@ export default React.createClass( {
 	},
 
 	renderPluginPlaceholder( classes ) {
+		const selectedSite = this.props.sites.getSelectedSite();
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -252,10 +253,11 @@ export default React.createClass( {
 						isPlaceholder
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
+						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						plugin={ this.state.plugin }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
-						selectedSite={ this.props.sites.getSelectedSite() } />
+						selectedSite={ selectedSite } />
 				</div>
 			</MainComponent>
 		);
@@ -277,6 +279,7 @@ export default React.createClass( {
 					<PluginMeta
 						notices={ {} }
 						isWpcomPlugin={ this.props.isWpcomPlugin }
+						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						plugin={ this.state.plugin }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
@@ -349,6 +352,7 @@ export default React.createClass( {
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
+						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						isInstalling={ installInProgress } />
 					<PluginSections plugin={ this.state.plugin } />
 					{ this.renderSitesList() }
