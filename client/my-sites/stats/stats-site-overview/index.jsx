@@ -1,69 +1,51 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module-site-overview' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var SiteIcon = require( 'components/site-icon' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	route = require( 'lib/route' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import SiteIcon from 'components/site-icon';
+import observe from 'lib/mixins/data-observe';
+import route from 'lib/route';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
-	displayName: 'StatsModuleSiteOverview',
+export default React.createClass( {
+	displayName: 'StatsSiteOverview',
 
 	proptypes: {
-		site: React.PropTypes.object.isRequired,
-		summaryData: React.PropTypes.object.isRequired,
-		path: React.PropTypes.string.isRequired
+		site: PropTypes.object.isRequired,
+		summaryData: PropTypes.object.isRequired,
+		path: PropTypes.string.isRequired
 	},
 
 	mixins: [ observe( 'summaryData' ) ],
 
-	ensureValue: function( value ) {
+	ensureValue( value ) {
 		if ( value || value === 0 ) {
 			return this.numberFormat( value );
-		} else {
-			// If no value present, return en-dash
-			return String.fromCharCode( 8211 );
 		}
+
+		// If no value present, return en-dash
+		return String.fromCharCode( 8211 );
 	},
 
-	render: function() {
-		debug( 'Rendering module site overview' );
+	isValueLow( value ) {
+		return ! value || 0 === value;
+	},
 
-		var site = this.props.site,
-			statTabs = [ 'views', 'visitors', 'likes', 'comments' ],
-			data = this.props.summaryData.data,
-			classSets = {},
-			siteStatsPath = [ this.props.path, site.slug ].join( '/' ),
-			headerPath = siteStatsPath,
-			classes,
-			title,
-			icon = null;
+	render() {
+		const { site, path, summaryData, insights } = this.props;
+		const { views, visitors, likes, comments } = summaryData.data;
+		const siteStatsPath = [ path, site.slug ].join( '/' );
+		let headerPath = siteStatsPath;
+		let title;
+		let icon;
 
-		statTabs.forEach( function( tabName ) {
-			var tabClassOptions = {};
-			if ( data && 0 === data[ tabName ] ) {
-				tabClassOptions[ 'is-low' ] = true;
-			}
-			tabClassOptions[ 'module-tab' ] = true;
-			tabClassOptions[ 'is-' + tabName ] = true;
-			classSets[ tabName ] = classNames( tabClassOptions );
-		} );
-
-		classes = [
-			'stats__overview',
-			'stats-module',
-			'is-site-overview'
-		];
-
-		if ( this.props.insights ) {
+		if ( insights ) {
 			title = this.translate( 'Today\'s Stats' );
 		} else {
 			title = site.title;
@@ -77,8 +59,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Card key={ site.ID } className={ classNames.apply( null, classes ) }>
-
+			<Card key={ site.ID } className="stats__overview stats-module is-site-overview">
 				<div className="module-header">
 					<h3 className="module-header-title">
 						<a href={ headerPath } className="module-header__link">
@@ -90,19 +71,34 @@ module.exports = React.createClass( {
 						</a>
 					</h3>
 				</div>
-
 				<ul className="module-tabs">
-					<li className={ classSets.views }>
-						<a href={ siteStatsPath }><Gridicon icon="visible" size={ 18 } /><span className="label">{ this.translate( 'Views', { context:'noun' } ) }</span><span className="value">{ this.ensureValue( data.views ) }</span></a>
+					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( views ) } ) }>
+						<a href={ siteStatsPath }>
+							<Gridicon icon="visible" size={ 18 } />
+							<span className="label">{ this.translate( 'Views', { context: 'noun' } ) }</span>
+							<span className="value">{ this.ensureValue( views ) }</span>
+						</a>
 					</li>
-					<li className={ classSets.visitors }>
-						<a href={ siteStatsPath + '?tab=visitors' }><Gridicon icon="user" size={ 18 } /><span className="label">{ this.translate( 'Visitors', { context:'noun' } ) }</span><span className="value">{ this.ensureValue( data.visitors ) }</span></a>
+					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( visitors ) } ) } >
+						<a href={ siteStatsPath + '?tab=visitors' }>
+							<Gridicon icon="user" size={ 18 } />
+							<span className="label">{ this.translate( 'Visitors', { context: 'noun' } ) }</span>
+							<span className="value">{ this.ensureValue( visitors ) }</span>
+						</a>
 					</li>
-					<li className={ classSets.likes }>
-						<a href={ siteStatsPath + '?tab=likes' }><Gridicon icon="star" size={ 18 } /><span className="label">{ this.translate( 'Likes', { context:'noun' } ) }</span> <span className="value">{ this.ensureValue( data.likes ) }</span></a>
+					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( likes ) } ) } >
+						<a href={ siteStatsPath + '?tab=likes' }>
+							<Gridicon icon="star" size={ 18 } />
+							<span className="label">{ this.translate( 'Likes', { context: 'noun' } ) }</span>
+							<span className="value">{ this.ensureValue( likes ) }</span>
+						</a>
 					</li>
-					<li className={ classSets.comments }>
-						<a href={ siteStatsPath + '?tab=comments' }><Gridicon icon="comment" size={ 18 } /><span className="label">{ this.translate( 'Comments', { context:'noun' } ) }</span> <span className="value">{ this.ensureValue( data.comments ) }</span></a>
+					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( comments ) } ) } >
+						<a href={ siteStatsPath + '?tab=comments' }>
+							<Gridicon icon="comment" size={ 18 } />
+							<span className="label">{ this.translate( 'Comments', { context: 'noun' } ) }</span>
+							<span className="value">{ this.ensureValue( comments ) }</span>
+						</a>
 					</li>
 				</ul>
 			</Card>
