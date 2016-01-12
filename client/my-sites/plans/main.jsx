@@ -3,6 +3,7 @@
  */
 var connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/collection/find' ),
+	page = require( 'page' ),
 	React = require( 'react' );
 
 /**
@@ -18,7 +19,9 @@ var analytics = require( 'analytics' ),
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
 	isPremium = require( 'lib/products-values' ).isPremium,
 	Main = require( 'components/main' ),
+	Notice = require( 'components/notice' ),
 	observe = require( 'lib/mixins/data-observe' ),
+	paths = require( './paths' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
 	preventWidows = require( 'lib/formatting' ).preventWidows,
@@ -70,6 +73,20 @@ var Plans = React.createClass( {
 				{ this.translate( 'Compare Plans' ) }
 			</a>
 		);
+	},
+
+	redirectToDefault() {
+		page.redirect( paths.plans( this.props.selectedSite.slug ) );
+	},
+
+	renderNotice() {
+		if ( 'free-trial-canceled' === this.props.destinationType ) {
+			return (
+				<Notice onDismissClick={ this.redirectToDefault } status="is-success">
+					{ this.translate( 'Your trial has been removed. Thanks for giving it a try!' ) }
+				</Notice>
+			);
+		}
 	},
 
 	renderTrialCopy: function() {
@@ -125,33 +142,38 @@ var Plans = React.createClass( {
 					cart={ this.props.cart }
 					destinationType={ this.props.context.params.destinationType }
 					plan={ currentPlan }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+					store={ this.props.context.store } />
 			);
 		}
 
 		return (
-			<Main>
-				<SidebarNavigation />
+			<div>
+				{ this.renderNotice() }
 
-				<div id="plans" className="plans has-sidebar">
-					<UpgradesNavigation
-						path={ this.props.context.path }
-						cart={ this.props.cart }
-						selectedSite={ this.props.selectedSite } />
+				<Main>
+					<SidebarNavigation />
 
-					{ this.renderTrialCopy() }
+					<div id="plans" className="plans has-sidebar">
+						<UpgradesNavigation
+							path={ this.props.context.path }
+							cart={ this.props.cart }
+							selectedSite={ this.props.selectedSite } />
 
-					<PlanList
-						sites={ this.props.sites }
-						plans={ this.props.plans.get() }
-						enableFreeTrials={ true }
-						sitePlans={ this.props.sitePlans }
-						onOpen={ this.openPlan }
-						onSelectPlan={ this.props.onSelectPlan }
-						cart={ this.props.cart } />
-					{ ! hasJpphpBundle && this.comparePlansLink() }
-				</div>
-			</Main>
+						{ this.renderTrialCopy() }
+
+						<PlanList
+							sites={ this.props.sites }
+							plans={ this.props.plans.get() }
+							enableFreeTrials={ true }
+							sitePlans={ this.props.sitePlans }
+							onOpen={ this.openPlan }
+							onSelectPlan={ this.props.onSelectPlan }
+							cart={ this.props.cart } />
+						{ ! hasJpphpBundle && this.comparePlansLink() }
+					</div>
+				</Main>
+			</div>
 		);
 	}
 } );

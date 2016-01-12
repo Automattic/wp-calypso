@@ -10,6 +10,7 @@ import page from 'page';
 import Main from 'components/main';
 import paths from '../paths';
 import PlanFeatures from './plan-features';
+import PlanRemove from './plan-remove';
 import PlanStatus from './plan-status';
 import Notice from 'components/notice';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -24,7 +25,8 @@ const PlanOverview = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		store: React.PropTypes.object.isRequired
 	},
 
 	redirectToDefault() {
@@ -48,7 +50,6 @@ const PlanOverview = React.createClass( {
 	render() {
 		return (
 			<div>
-
 				{ this.renderNotice() }
 
 				<Main className="plan-overview">
@@ -66,6 +67,11 @@ const PlanOverview = React.createClass( {
 					<PlanFeatures
 						plan={ this.props.plan }
 						selectedSite={ this.props.selectedSite } />
+
+					<PlanRemove
+						plan={ this.props.plan }
+						selectedSite={ this.props.selectedSite }
+						store={ this.props.store } />
 				</Main>
 			</div>
 		);

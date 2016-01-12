@@ -1784,6 +1784,14 @@ Undocumented.prototype.cancelPrivateRegistration = function( purchaseId, fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
+	debug( '/upgrades/{planId}/cancel-plan-trial' );
+
+	this.wpcom.req.post( {
+		path: `/upgrades/${planId}/cancel-plan-trial`
+	}, fn );
+};
+
 Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, fn ) {
 	debug( 'submitKayakoTicket' );
 
