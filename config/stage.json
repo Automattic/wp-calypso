@@ -68,6 +68,7 @@
 		"olark": true,
 		"olark_use_wpcom_configuration": true,
 		"community-translator": true,
+		"devdocs": true,
 		"jetpack_core_inline_update": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
