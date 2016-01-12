@@ -95,9 +95,15 @@ $progress-indicator__transition-speed: .4s;
 
 // is complete
 .progress-indicator.is-complete {
-	.progress-indicator__half:before,
-	.is-latter {
-		transform: rotate(#{progress-indicator__percent(100)}deg);
+	background: $alert-green;
+	box-shadow: none;
+	color: $white;
+	width: 28px;
+	height: 28px;
+	text-align: center;
+
+	.gridicon {
+		vertical-align: middle;
 	}
 }
 
