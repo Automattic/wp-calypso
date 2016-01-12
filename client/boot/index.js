@@ -262,11 +262,6 @@ function boot() {
 		next();
 	} );
 
-	page( '*', function( context, next ) {
-		context.store.dispatch( setRouteAction( context.pathname ) );
-		next();
-	} );
-
 	if ( config.isEnabled( 'oauth' ) ) {
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', require( 'auth/controller' ).checkToken );
@@ -314,6 +309,12 @@ function boot() {
 	} );
 
 	require( 'my-sites' )();
+
+	// clear notices
+	page( '*', function( context, next ) {
+		context.store.dispatch( setRouteAction( context.pathname ) );
+		next();
+	} );
 
 	// clear notices
 	//TODO: remove this one when notices are reduxified - it is for old notices
