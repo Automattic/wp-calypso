@@ -6,9 +6,8 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Button from 'components/forms/form-button';
 import OptionFieldset from 'my-sites/exporter/option-fieldset';
+import SpinnerButton from './spinner-button';
 
 /**
  * Displays additional options for customising an export
@@ -22,18 +21,11 @@ export default React.createClass( {
 
 	propTypes: {
 		// Event handlers
-		onToggleFieldset: PropTypes.func.isRequired,
+		onSelectPostType: PropTypes.func.isRequired,
+		onClickExport: PropTypes.func.isRequired,
 
 		// Data
-		posts: PropTypes.shape( {
-			isEnabled: PropTypes.bool.isRequired
-		} ),
-		pages: PropTypes.shape( {
-			isEnabled: PropTypes.bool.isRequired
-		} ),
-		feedback: PropTypes.shape( {
-			isEnabled: PropTypes.bool.isRequired
-		} )
+		postType: PropTypes.string
 	},
 
 	render() {
@@ -62,21 +54,21 @@ export default React.createClass( {
 
 		const buildOptionProps = key => ( {
 			legend: legends[ key ],
-			isEnabled: this.props[ key ].isEnabled,
+			isEnabled: this.props.postType === key,
 			menus: menus[ key ],
-			onToggleEnabled: () => this.props.onToggleFieldset( key )
+			onSelect: () => this.props.onSelectPostType( key )
 		} );
 
 		return (
-			<CompactCard className="exporter__more-info">
+			<div className="exporter__advanced-settings">
 				<h1 className="exporter__advanced-settings-title">
-					{ this.translate( 'Select Content to Export' ) }
+					{ this.translate( 'Select specific content to export' ) }
 				</h1>
 				<p>
 					{ this.translate(
-						'Use the options below to select specific content ' +
-						'types to download. You can deselect Posts, Pages, ' +
-						'and Feedback, or filter each by the listed parameters. ' +
+						'Use the options below to select a specific content ' +
+						'type to download. You can select Posts, Pages, ' +
+						'or Feedback, and filter by the listed parameters. ' +
 						'After making your selection you can download your ' +
 						'content in an .xml file.' ) }
 				</p>
@@ -87,10 +79,15 @@ export default React.createClass( {
 						description={ this.translate( 'Survey results etc.' ) }
 					/>
 				</div>
-				<Button isPrimary={ true }>
-					{ this.translate( 'Export Selected Content' ) }
-				</Button>
-			</CompactCard>
+				<SpinnerButton
+					className="exporter__export-button"
+					disabled={ !this.props.postType }
+					loading={ this.props.shouldShowProgress }
+					isPrimary={ true }
+					onClick={ this.props.onClickExport }
+					text={ this.translate( 'Export Selected Content' ) }
+					loadingText={ this.translate( 'Exporting…' ) } />
+			</div>
 		);
 	}
 } );

@@ -6,55 +6,59 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Gridicon from 'components/gridicon';
-import Button from 'components/forms/form-button';
+import FoldableCard from 'components/foldable-card';
 import AdvancedSettings from 'my-sites/exporter/advanced-settings';
+import SpinnerButton from './spinner-button';
 
 export default React.createClass( {
 	displayName: 'Exporter',
 
 	propTypes: {
-		toggleAdvancedSettings: PropTypes.func.isRequired,
-		toggleSection: PropTypes.func.isRequired,
-		advancedSettings: PropTypes.shape( {
-			isVisible: PropTypes.bool.isRequired
-		} ).isRequired
+		startExport: PropTypes.func.isRequired,
+		setPostType: PropTypes.func.isRequired,
+
+		shouldShowProgress: PropTypes.bool.isRequired,
+		postType: PropTypes.string
 	},
 
 	render: function() {
-		const { toggleAdvancedSettings, toggleSection, advancedSettings } = this.props;
+		const { setPostType, startExport } = this.props;
+		const { postType, shouldShowProgress } = this.props;
+
+		const exportButton = (
+			<SpinnerButton
+				className="exporter__export-button"
+				loading={ shouldShowProgress }
+				isPrimary={ true }
+				onClick={ startExport }
+				text={ this.translate( 'Export All' ) }
+				loadingText={ this.translate( 'Exporting…' ) } />
+		);
 
 		return (
 			<div className="exporter">
-				<CompactCard>
-					<header>
-						<Button
-							className="exporter__export-button"
-							disabled={ false }
-							isPrimary={ true }
-						>
-							{ this.translate( 'Export' ) }
-						</Button>
-						<h1 className="exporter__title">
-							{ this.translate( 'Download an Export File' ) }
-						</h1>
-					</header>
-					<a href="#" onClick={ toggleAdvancedSettings }>
-						<Gridicon
-							icon={ advancedSettings.isVisible ? 'chevron-up' : 'chevron-down' }
-							size={ 16 } />
-						{ this.translate( 'Advanced Export Settings' ) }
-					</a>
-				</CompactCard>
-
-				{
-					advancedSettings.isVisible &&
+				<FoldableCard
+					actionButtonIcon="cog"
+					header={
+						<div>
+							<h1 className="exporter__title">
+								{ this.translate( 'Export your content' ) }
+							</h1>
+							<h2 className="exporter__subtitle">
+								{ this.translate( 'Or select specific content items to export' ) }
+							</h2>
+						</div>
+					}
+					summary={ exportButton }
+					expandedSummary={ exportButton }
+					>
 					<AdvancedSettings
-						{ ...advancedSettings }
-						onToggleFieldset={ toggleSection }
+						postType={ postType }
+						shouldShowProgress={ shouldShowProgress }
+						onSelectPostType={ setPostType }
+						onClickExport={ startExport }
 					/>
-				}
+				</FoldableCard>
 			</div>
 		);
 	}
