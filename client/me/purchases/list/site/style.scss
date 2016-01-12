@@ -1,9 +1,22 @@
 .purchases-site {
 	margin-bottom: 15px;
 
-	.purchases-site__slug {
-		color: $gray;
-		font-size: 12px;
-		line-height: 28px;
+	.section-header {
+		@include breakpoint( "<660px" ) {
+			display: block;
+		}
+	}
+}
+
+.purchases-site__slug {
+	color: darken( $gray, 15% );
+	font-size: 12px;
+	line-height: 28px;
+}
+
+.section-header__label,
+.purchases-site__slug {
+	@include breakpoint( "<660px" ) {
+		line-height: 140%;
 	}
 }
