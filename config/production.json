@@ -77,7 +77,7 @@
 		"reader/discover": true,
 		"reader/recommendations": true,
 		"ad-tracking": true,
-		"perfmon": true,
+		"perfmon": false,
 		"mailing-lists/unsubscribe": true
 	},
 	"rtl": false,
