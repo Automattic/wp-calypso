@@ -16,7 +16,7 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
 	},
 
-	termsCopy: function() {
+	renderTerms: function() {
 		var message = this.translate(
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.', {
 			components: {
@@ -43,7 +43,7 @@ module.exports = React.createClass( {
 		return (
 			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
 				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ this.termsCopy() }</p>
+				<p>{ this.renderTerms() }</p>
 			</div>
 		);
 	}
