@@ -196,7 +196,7 @@ export default React.createClass( {
 
 						{ this.filterSelect() }
 
-						{ ( noData && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.translate( 'No followers' ) } /> : null }
+						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ this.translate( 'No followers' ) } /> : null }
 
 						{ paginationSummary }
 
