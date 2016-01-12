@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	SET_SELECTED_SITE,
+	SELECTED_SITE_SET,
 	SET_SECTION,
 	CURRENT_USER_ID_SET
 } from 'state/action-types';
@@ -16,7 +16,7 @@ import {
  */
 export function setSelectedSiteId( siteId ) {
 	return {
-		type: SET_SELECTED_SITE,
+		type: SELECTED_SITE_SET,
 		siteId
 	};
 }

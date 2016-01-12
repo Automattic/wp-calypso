@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE, CURRENT_USER_ID_SET } from 'state/action-types';
+import { SELECTED_SITE_SET, CURRENT_USER_ID_SET } from 'state/action-types';
 import { selectedSiteId, currentUserId } from '../reducer';
 
 describe( 'reducer', () => {
@@ -19,7 +19,7 @@ describe( 'reducer', () => {
 
 		it( 'should set the selected site ID', () => {
 			const state = selectedSiteId( null, {
-				type: SET_SELECTED_SITE,
+				type: SELECTED_SITE_SET,
 				siteId: 2916284
 			} );
 
@@ -28,7 +28,7 @@ describe( 'reducer', () => {
 
 		it( 'should set to null if siteId is undefined', () => {
 			const state = selectedSiteId( null, {
-				type: SET_SELECTED_SITE,
+				type: SELECTED_SITE_SET,
 				siteId: undefined
 			} );
 

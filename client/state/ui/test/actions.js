@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SET_SELECTED_SITE, CURRENT_USER_ID_SET } from 'state/action-types';
+import { SELECTED_SITE_SET, CURRENT_USER_ID_SET } from 'state/action-types';
 import { setSelectedSiteId, setCurrentUserId } from '../actions';
 
 describe( 'actions', () => {
@@ -15,7 +15,7 @@ describe( 'actions', () => {
 			const action = setSelectedSiteId( 2916284 );
 
 			expect( action ).to.eql( {
-				type: SET_SELECTED_SITE,
+				type: SELECTED_SITE_SET,
 				siteId: 2916284
 			} );
 		} );
