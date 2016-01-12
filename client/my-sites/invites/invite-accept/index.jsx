@@ -21,6 +21,7 @@ import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
+import analytics from 'analytics';
 
 /**
  * Module variables
@@ -88,15 +89,35 @@ let InviteAccept = React.createClass( {
 		);
 	},
 
+	clickedNoticeSiteLink() {
+		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
+	},
+
 	acceptedNotice( invite ) {
 		invite = invite || this.state.invite;
 		let displayOnNextPage = true;
+		let takeATour = (
+			<p className="invite-message__intro">
+				{
+					this.translate(
+						'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
+						{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
+					)
+				}
+			</p>
+		);
+		let site = (
+			<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
+				{ get( invite, 'site.title' ) }
+			</a>
+		);
+
 		switch ( get( invite, 'role' ) ) {
 			case 'follower':
 				this.props.successNotice(
 					this.translate(
-						'You are now following %(site)s', {
-							args: { site: get( invite, 'site.title' ) }
+						'You are now following {{site/}}', {
+							components: { site }
 						}
 					),
 					{
@@ -110,8 +131,8 @@ let InviteAccept = React.createClass( {
 				this.props.successNotice(
 					<div>
 						<h3 className="invite-message__title">
-							{ this.translate( 'You\'re now an Administrator of: %(site)s', {
-								args: { site: get( invite, 'site.title' ) }
+							{ this.translate( 'You\'re now an Administrator of: {{site/}}', {
+								components: { site }
 							} ) }
 						</h3>
 						<p className="invite-message__intro">
@@ -119,14 +140,7 @@ let InviteAccept = React.createClass( {
 								args: { site: get( invite, 'site.title' ) }
 							} ) }
 						</p>
-						<p className="invite-message__intro">
-							{
-								this.translate(
-									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
-								)
-							}
-						</p>
+						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				);
@@ -135,21 +149,14 @@ let InviteAccept = React.createClass( {
 				this.props.successNotice(
 					<div>
 						<h3 className="invite-message__title">
-							{ this.translate( 'You\'re now an Editor of: %(site)s', {
-								args: { site: get( invite, 'site.title' ) }
+							{ this.translate( 'You\'re now an Editor of: {{site/}}', {
+								components: { site }
 							} ) }
 						</h3>
 						<p className="invite-message__intro">
 							{ this.translate( 'This is your site dashboard where you can publish and manage your own posts and the posts of others, as well as upload media.' ) }
 						</p>
-						<p className="invite-message__intro">
-							{
-								this.translate(
-									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
-								)
-							}
-						</p>
+						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				);
@@ -158,21 +165,14 @@ let InviteAccept = React.createClass( {
 				this.props.successNotice(
 					<div>
 						<h3 className="invite-message__title">
-							{ this.translate( 'You\'re now an Author of: %(site)s', {
-								args: { site: get( invite, 'site.title' ) }
+							{ this.translate( 'You\'re now an Author of: {{site/}}', {
+								components: { site }
 							} ) }
 						</h3>
 						<p className="invite-message__intro">
 							{ this.translate( 'This is your site dashboard where you can publish and edit your own posts as well as upload media.' ) }
 						</p>
-						<p className="invite-message__intro">
-							{
-								this.translate(
-									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
-								)
-							}
-						</p>
+						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				);
@@ -181,29 +181,22 @@ let InviteAccept = React.createClass( {
 				this.props.successNotice(
 					<div>
 						<h3 className="invite-message__title">
-							{ this.translate( 'You\'re now a Contributor of: %(site)s', {
-								args: { site: get( invite, 'site.title' ) }
+							{ this.translate( 'You\'re now a Contributor of: {{site/}}', {
+								components: { site }
 							} ) }
 						</h3>
 						<p className="invite-message__intro">
 							{ this.translate( 'This is your site dashboard where you can write and manage your own posts.' ) }
 						</p>
-						<p className="invite-message__intro">
-							{
-								this.translate(
-									'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
-									{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
-								)
-							}
-						</p>
+						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
 				);
 				break;
 			case 'subscriber':
 				this.props.successNotice(
-					this.translate( 'You\'re now a Subscriber of: %(site)s', {
-						args: { site: get( invite, 'site.title' ) }
+					this.translate( 'You\'re now a Subscriber of: {{site/}}', {
+						components: { site }
 					} ),
 					{ displayOnNextPage }
 				);
