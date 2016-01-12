@@ -66,7 +66,7 @@ Hider = React.createClass( {
 		hide: React.PropTypes.bool,
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
+	shouldComponentUpdate: function( nextProps ) {
 		return this.props.hide !== nextProps.hide;
 	},
 
@@ -112,11 +112,11 @@ Collection = React.createClass( {
 
 		examples = this.props.children.map( ( example ) => {
 			return (
-				<Hider hide={ this.shouldWeHide( example ) } key={ "example-" + example.type.displayName }>
+				<Hider hide={ this.shouldWeHide( example ) } key={ 'example-' + example.type.displayName }>
 					{ example }
 				</Hider>
 			);
-		});
+		} );
 
 		return (
 			<div className="collection">
@@ -124,7 +124,6 @@ Collection = React.createClass( {
 				{ examples }
 			</div>
 		);
-
 	}
 } );
 
