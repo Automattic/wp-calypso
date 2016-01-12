@@ -122,7 +122,7 @@ module.exports = {
 			<Main className="plans has-sidebar">
 				<ReduxProvider store={ context.store }>
 					<CartData>
-						<PlansCompare sites={ sites }
+						<PlansCompare
 							enableFreeTrials
 							selectedSite={ site }
 							onSelectPlan={ onSelectPlan }
