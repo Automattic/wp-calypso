@@ -9,6 +9,7 @@ var page = require( 'page' );
 var adTracking = require( 'analytics/ad-tracking' ),
 	config = require( 'config' ),
 	controller = require( 'my-sites/controller' ),
+	paths = require( './paths' ),
 	plansController = require( './controller' );
 
 module.exports = function() {
@@ -44,7 +45,7 @@ module.exports = function() {
 		);
 
 		page(
-			'/plans/:domain/:destinationType?',
+			paths.plansDestination(),
 			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,

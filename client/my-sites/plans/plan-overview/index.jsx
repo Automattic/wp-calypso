@@ -8,8 +8,9 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'components/main';
-import PlanFeatures from 'my-sites/plans/plan-overview/plan-features';
-import PlanStatus from 'my-sites/plans/plan-overview/plan-status';
+import paths from '../paths';
+import PlanFeatures from './plan-features';
+import PlanStatus from './plan-status';
 import Notice from 'components/notice';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
@@ -27,7 +28,7 @@ const PlanOverview = React.createClass( {
 	},
 
 	redirectToDefault() {
-		page.redirect( `/plans/${ this.props.selectedSite.slug }` );
+		page.redirect( paths.plans( this.props.selectedSite.slug ) );
 	},
 
 	renderNotice() {
