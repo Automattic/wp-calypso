@@ -70,7 +70,8 @@ function getStoreForTag( storeId ) {
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
 		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams
+		onUpdateFetch: limitSiteParams,
+		dateProperty: 'tagged_on'
 	} );
 }
 
