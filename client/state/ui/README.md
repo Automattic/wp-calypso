@@ -7,23 +7,23 @@ A module for managing user interface state.
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `setSelectedSite( siteId: Number )`
+### `setSelectedSiteId( siteId: Number )`
 
-Sets the currently selected site, by site ID.
+Sets the currently selected site by site ID.
 
 ```js
-import { setSelectedSite } from 'state/ui/actions';
+import { setSelectedSiteId } from 'state/ui/actions';
 
-dispatch( setSelectedSite( 2916284 ) );
+dispatch( setSelectedSiteId( 2916284 ) );
 ```
 
 ## Reducers
 
 The included reducers add the following keys to the global state tree, under `ui`:
 
-#### `selectedSite`
+#### `selectedSiteId`
 
-The currently selected site, or `null` if no site is selected.
+The currently selected site ID, or `null` if no site is selected.
 
 ## Selectors
 

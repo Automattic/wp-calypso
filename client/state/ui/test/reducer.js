@@ -7,18 +7,18 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { SET_SELECTED_SITE, CURRENT_USER_ID_SET } from 'state/action-types';
-import { selectedSite, currentUserId } from '../reducer';
+import { selectedSiteId, currentUserId } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( '#selectedSite()', () => {
+	describe( '#selectedSiteId()', () => {
 		it( 'should default to null', () => {
-			const state = selectedSite( undefined, {} );
+			const state = selectedSiteId( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should set the selected site ID', () => {
-			const state = selectedSite( null, {
+			const state = selectedSiteId( null, {
 				type: SET_SELECTED_SITE,
 				siteId: 2916284
 			} );
@@ -27,7 +27,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set to null if siteId is undefined', () => {
-			const state = selectedSite( null, {
+			const state = selectedSiteId( null, {
 				type: SET_SELECTED_SITE,
 				siteId: undefined
 			} );

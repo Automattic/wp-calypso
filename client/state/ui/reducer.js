@@ -19,7 +19,7 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function selectedSite( state = null, action ) {
+export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
 		case SET_SELECTED_SITE:
 			state = action.siteId || null;
@@ -71,6 +71,6 @@ export default combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
-	selectedSite,
+	selectedSiteId,
 	currentUserId
 } );

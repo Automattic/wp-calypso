@@ -14,7 +14,7 @@ import {
  * @param  {Number} siteId Site ID
  * @return {Object}        Action object
  */
-export function setSelectedSite( siteId ) {
+export function setSelectedSiteId( siteId ) {
 	return {
 		type: SET_SELECTED_SITE,
 		siteId
