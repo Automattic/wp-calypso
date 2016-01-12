@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	config = require( 'config' ),
+	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -75,7 +75,7 @@ var Plans = React.createClass( {
 			businessPlan,
 			premiumPlan;
 
-		if ( ! this.props.sitePlans.hasLoadedFromServer || ! config.isEnabled( 'upgrades/free-trials' ) ) {
+		if ( ! this.props.sitePlans.hasLoadedFromServer || getABTestVariation( 'freeTrials' ) !== 'offered' ) {
 			return null;
 		}
 
@@ -123,9 +123,7 @@ var Plans = React.createClass( {
 			hasJpphpBundle = isJpphpBundle( currentPlan );
 		}
 
-		if ( config.isEnabled( 'upgrades/free-trials' ) &&
-			this.props.sitePlans.hasLoadedFromServer &&
-			currentPlan.freeTrial ) {
+		if ( this.props.sitePlans.hasLoadedFromServer && currentPlan.freeTrial ) {
 			return (
 				<PlanOverview
 					path={ this.props.context.path }
