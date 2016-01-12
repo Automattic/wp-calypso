@@ -42,11 +42,7 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 		if ( name === 'preview' ) {
 			action = togglePreview.bind( null, theme );
 		} else if ( site ) {
-			if ( name === 'customize' ) {
-				action = actions.customize.bind( actions, theme, site, 'showcase' );
-			} else {
-				action = actions[ name ].bind( actions, theme, site, 'showcase' );
-			}
+			action = actions[ name ].bind( actions, theme, site, 'showcase' );
 		} else {
 			action = setSelectedTheme.bind( null, name, theme );
 		}
