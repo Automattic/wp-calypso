@@ -30,8 +30,8 @@ module.exports = React.createClass( {
 				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{purchasesLink}}how your subscription works{{/purchasesLink}} and {{cancelLink}}how to cancel{{/cancelLink}}.', {
 				components: {
 					tosLink: <a href="//wordpress.com/tos/" target="_blank" />,
-					cancelLink: <a href="//en.support.wordpress.com/auto-renewal/" target="_blank" />,
-					purchasesLink: <a href="//en.support.wordpress.com/manage-purchases/" target="_blank" />
+					cancelLink: <a href="//support.wordpress.com/auto-renewal/" target="_blank" />,
+					purchasesLink: <a href="//support.wordpress.com/manage-purchases/" target="_blank" />
 				}
 			} );
 		}
