@@ -10,12 +10,12 @@ const wpcom = require( 'lib/wp' ).undocumented();
 import { actionTypes } from './constants';
 import { fromApi, toApi } from './common';
 
-const apiSuccess = (...args) => {
+const apiSuccess = data => {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.API_SUCCESS
 	} );
 
-	return args;
+	return data;
 };
 
 export function cancelImport( siteId, importerId ) {

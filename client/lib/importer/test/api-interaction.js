@@ -7,13 +7,14 @@ import { fetchState } from '../actions';
 import { actionTypes } from '../constants';
 import store from '../store';
 
-const fetchTestState = partial( fetchState, 0 );
+const testSiteId = 'en.blog.wordpress.com';
+const fetchTestState = partial( fetchState, testSiteId );
 const hydratedState = () => store.get().getIn( [ 'api', 'isHydrated' ] );
 const resetStore = () => Dispatcher.handleViewAction( { type: actionTypes.RESET_STORE } );
 
 const queuePayload = payload =>
 	nock( 'https://public-api.wordpress.com:443' )
-		.get( '/rest/v1.1/sites/0/imports/' )
+		.get( `/rest/v1.1/sites/${ testSiteId }/imports/` )
 		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
 
 describe( 'Importer store', () => {
