@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import PostEditStore from 'lib/posts/post-edit-store';
 import { fetchConnections } from 'state/sharing/publicize/actions';
-import { getConnectionsBySiteIdAvailableToCurrentUser, hasFetchedConnections } from 'state/sharing/publicize/selectors';
+import { getConnectionsBySiteIdUserId, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import EditorSharingAccordion from './accordion';
 
@@ -94,7 +94,7 @@ export default connect(
 		const site = getSelectedSite( state );
 		return {
 			hasFetchedConnections: site && hasFetchedConnections( state, site.ID ),
-			connections: site ? getConnectionsBySiteIdAvailableToCurrentUser( state, site.ID, ownProps.currentUserID ) : null,
+			connections: site ? getConnectionsBySiteIdUserId( state, site.ID, ownProps.currentUserID ) : null,
 			site
 		};
 	}

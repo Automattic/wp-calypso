@@ -19,18 +19,18 @@ export function getConnectionsBySiteId( state, siteId ) {
 
 /**
  * Returns an array of known connections for the given site ID
- * that are available to the current user
+ * that are available to the specified user ID.
  *
- * @param  {Object} state         Global state tree
- * @param  {Number} siteId        Site ID
- * @param  {Number} currentUserID ID of the current user
- * @return {Array}                Site connections
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} userId User ID to filter
+ * @return {Array}         User connections
  */
-export function getConnectionsBySiteIdAvailableToCurrentUser( state, siteId, currentUserID ) {
+export function getConnectionsBySiteIdUserId( state, siteId, userId ) {
 	const connectionsBySiteId = getConnectionsBySiteId( state, siteId );
 
-	return connectionsBySiteId.filter( connection => {
-		return connection.shared || connection.keyring_connection_user_ID === currentUserID;
+	return connectionsBySiteId.filter( ( connection ) => {
+		return connection.shared || connection.keyring_connection_user_ID === userId;
 	} );
 }
 
