@@ -53,7 +53,7 @@ let InviteAccept = React.createClass( {
 
 	componentWillUnmount() {
 		InvitesStore.off( 'change', this.refreshInvite );
-		userModule.on( 'change', this.refreshUser );
+		userModule.off( 'change', this.refreshUser );
 	},
 
 	refreshUser() {
