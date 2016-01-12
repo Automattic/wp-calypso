@@ -89,7 +89,7 @@ var messages = {
 			return i18n.translate( 'View Post' );
 		},
 		allPosts: function() {
-			return i18n.translate( 'All Posts' );
+			return i18n.translate( 'Posts' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -145,7 +145,7 @@ var messages = {
 			return i18n.translate( 'View Page' );
 		},
 		allPosts: function() {
-			return i18n.translate( 'All Pages' );
+			return i18n.translate( 'Pages' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
