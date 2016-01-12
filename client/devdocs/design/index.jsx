@@ -20,6 +20,7 @@ var SearchCard = require( 'components/search-card' ),
 	FollowButtons = require( 'components/follow-button/docs/example' ),
 	Accordions = require( 'components/accordion/docs/example' ),
 	Gridicons = require( 'components/gridicon/docs/example' ),
+	SocialLogos = require( 'components/social-logo/docs/example' ),
 	SelectDropdown = require( 'components/select-dropdown/docs/example' ),
 	SegmentedControl = require( 'components/segmented-control/docs/example' ),
 	Cards = require( 'components/card/docs/example' ),
@@ -184,6 +185,7 @@ module.exports = React.createClass( {
 					<AddNewButtons />
 					<CommentButtons />
 					<Gridicons />
+					<SocialLogos />
 					<LikeButtons />
 					<FollowButtons />
 					<Accordions />
