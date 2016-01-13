@@ -21,12 +21,16 @@ const ThemesSiteSelectorModal = React.createClass( {
 		actions: PropTypes.object
 	},
 
-	setSiteAndAction( action, theme, site ) {
+	redirectAndCallAction( site ) {
 		/**
 		 * Since this implies a route change, defer it in case other state
 		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
 		defer( () => {
+			const {
+				selectedAction: action,
+				selectedTheme: theme
+			} = this.props;
 			Helper.trackClick( 'site selector', action );
 			page( '/design/' + site.slug );
 			this.props.actions[ action ]( theme, site );
@@ -71,7 +75,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 					return ! site.jetpack;
 				} /* No Jetpack sites for now. */ }
 				hide={ onHide }
-				mainAction={ this.setSiteAndAction.bind( null, action, theme ) }
+				mainAction={ this.redirectAndCallAction }
 				mainActionLabel={ label }>
 
 				<Theme isActionable={ false } { ...theme } />
