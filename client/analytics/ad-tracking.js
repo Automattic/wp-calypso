@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-const async = require( 'async' ),
-	noop = require( 'lodash/utility/noop' ),
-	map = require( 'lodash/collection/map' ),
-	some = require( 'lodash/collection/some' ),
-	debug = require( 'debug' )( 'calypso:ad-tracking' );
+import async from 'async';
+import noop from 'lodash/utility/noop';
+import map from 'lodash/collection/map';
+import some from 'lodash/collection/some';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:ad-tracking' );
 
 /**
  * Internal dependencies
  */
-const loadScript = require( 'lib/load-script' ),
-	config = require( 'config' ),
-	isPremium = require( 'lib/products-values' ).isPremium,
-	isBusiness = require( 'lib/products-values' ).isBusiness;
+import loadScript from 'lib/load-script';
+import config from 'config';
+import { isBusiness, isPremium } from 'lib/products-values';
 
 /**
  * Module variables
