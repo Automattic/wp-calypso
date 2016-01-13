@@ -12,6 +12,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 const SrvRecord = React.createClass( {
 	statics: {
@@ -46,11 +47,11 @@ const SrvRecord = React.createClass( {
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
 					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
-					<FormTextInput
+					<FormTextInputWithAffixes
 						name="name"
 						onChange={ this.props.onChange( 'name' ) }
 						value={ name }
-						placeholder={ this.translate( 'e.g. example.%(domain)s', { args: { domain: this.props.selectedDomainName }, context: 'DNS Record', textOnly: true } ) } />
+						suffix={ '.' + this.props.selectedDomainName } />
 				</FormFieldset>
 
 				<FormFieldset>

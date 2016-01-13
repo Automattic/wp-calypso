@@ -11,7 +11,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 const TxtRecord = React.createClass( {
 	statics: {
@@ -39,17 +39,11 @@ const TxtRecord = React.createClass( {
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record TXT' } ) }</FormLabel>
 					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
-					<FormTextInput
+					<FormTextInputWithAffixes
 						name="name"
 						onChange={ this.props.onChange( 'name' ) }
 						value={ this.props.fieldValues.name }
-						placeholder={ this.translate( 'e.g. example.%(domain)s', {
-							args: {
-								domain: this.props.selectedDomainName
-							},
-							context: 'TXT Dns Record',
-							textOnly: true
-						} ) } />
+						suffix={ '.' + this.props.selectedDomainName } />
 				</FormFieldset>
 
 				<FormFieldset>

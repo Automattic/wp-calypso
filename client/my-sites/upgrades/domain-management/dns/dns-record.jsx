@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import endsWith from 'lodash/string/endsWith';
 
 /**
  * Internal dependencies
@@ -76,15 +77,19 @@ var DnsRecord = React.createClass( {
 	},
 
 	getName: function() {
-		var { name, service, protocol } = this.props.dnsRecord,
+		const { name, service, protocol, type } = this.props.dnsRecord,
 			domain = this.props.selectedDomainName,
 			isRoot = name === domain + '.';
 
-		if ( 'SRV' === this.props.dnsRecord.type ) {
+		if ( 'SRV' === type ) {
 			return service + '_' + protocol + '.' + ( isRoot ? name + '.' : '' ) + domain;
 		}
 
-		return isRoot ? domain : name + '.' + domain;
+		if ( endsWith( name, '.' ) ) {
+			return name.slice( 0, -1 );
+		}
+
+		return name + '.' + domain;
 	},
 
 	isBeingProcessed: function() {
