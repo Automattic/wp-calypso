@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import SummaryChart from '../module-summary-chart';
+import SummaryChart from '../stats-summary-chart';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import HeaderCake from 'components/header-cake';
