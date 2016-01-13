@@ -130,13 +130,28 @@ function retarget() {
 	}
 }
 
+function recordAddToCart( cartItem ) {
+	if ( ! hasLoadedScripts ) {
+		return loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
+	}
+
+	debug( 'Recorded that this item was added to the cart', cartItem );
+
+	window.fbq(
+		'track',
+		'AddToCart',
+		{
+			product_slug: cartItem.product_slug,
+			free_trial: Boolean( cartItem.free_trial )
+		}
+	)
+}
+
 function recordPurchase( product ) {
 	let type;
 
 	if ( ! hasLoadedScripts ) {
-		return loadTrackingScripts( function() {
-			recordPurchase( product );
-		} );
+		return loadTrackingScripts( recordPurchase.bind( null, product ) );
 	}
 
 	if ( isPremium( product ) ) {
@@ -197,6 +212,12 @@ module.exports = {
 		}
 
 		nextFunction();
+	},
+
+	recordAddToCart: function( cartItem ) {
+		if ( config.isEnabled( 'ad-tracking' ) ) {
+			recordAddToCart( cartItem );
+		}
 	},
 
 	recordPurchases: function( products ) {
