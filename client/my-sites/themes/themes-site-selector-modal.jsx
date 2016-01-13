@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import page from 'page';
 import find from 'lodash/collection/find';
 import defer from 'lodash/function/defer';
-import partial from 'lodash/function/partial';
 
 /**
  * Internal dependencies
@@ -35,14 +34,6 @@ const ThemesSiteSelectorModal = React.createClass( {
 		} );
 	},
 
-	getUrl( action, theme, site, getOptions ) {
-		var option = find( getOptions( site, theme ), { name: action } );
-
-		if ( option ) {
-			return option.url;
-		}
-	},
-
 	render() {
 		const {
 			selectedAction: action,
@@ -60,7 +51,6 @@ const ThemesSiteSelectorModal = React.createClass( {
 				filter={ site => ! site.jetpack /* No Jetpack sites for now. */ }
 				hide={ onHide }
 				mainAction={ this.setSiteAndAction.bind( null, action, theme ) }
-				getMainUrl={ partial( this.getUrl, action, theme, partial.placeholder, getOptions ) }
 				mainActionLabel={ option.label }>
 
 				<Theme isActionable={ false } { ...theme } />
