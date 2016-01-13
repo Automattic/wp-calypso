@@ -23,17 +23,18 @@ module.exports = React.createClass( {
 
 	downloadCsv( event ) {
 		event.preventDefault();
-		const data = this.props.dataList.csvData();
+		const { dataList, site, path, period } = this.props;
+		const data = dataList.csvData();
 
 		const fileName = [
-			this.props.site.slug,
-			this.props.path,
-			this.props.period.period,
-			this.props.period.startOf.format( 'L' ),
-			this.props.period.endOf.format( 'L' )
+			site.slug,
+			path,
+			period.period,
+			period.startOf.format( 'L' ),
+			period.endOf.format( 'L' )
 		].join( '_' ) + '.csv';
 
-		analytics.ga.recordEvent( 'Stats', 'CSV Download ' + titlecase( this.props.path ) );
+		analytics.ga.recordEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
 		const csvData = data.map( ( row ) => {
 			return row.join( ',' );
