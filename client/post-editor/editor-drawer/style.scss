@@ -15,8 +15,14 @@
 	}
 }
 
-.editor-drawer .accordion:not( .is-expanded ) .accordion__subtitle::after {
-	@include long-content-fade( $color: lighten( $gray, 30% ) );
+.editor-drawer .accordion:not( .is-expanded ) .accordion__toggle {
+	.accordion__subtitle::after {
+		@include long-content-fade( $color: lighten( $gray, 30% ) );
+	}
+
+	&:hover .accordion__subtitle::after {
+		@include long-content-fade( $color: $gray-light );
+	}
 }
 
 .editor-drawer__accordion.is-loading .accordion__subtitle {
