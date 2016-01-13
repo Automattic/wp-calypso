@@ -223,22 +223,17 @@ function fetchDns( domainName ) {
 function addDns( domainName, record, onComplete ) {
 	Dispatcher.handleServerAction( {
 		type: ActionTypes.DNS_ADD,
-		domainName
+		domainName,
+		record
 	} );
 
 	wpcom.addDns( domainName, record, ( error ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_ADD_COMPLETED,
-				domainName,
-				record
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_ADD_FAILED,
-				domainName
-			} );
-		}
+		const type = ! error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
+		Dispatcher.handleServerAction( {
+			type,
+			domainName,
+			record
+		} );
 
 		onComplete( error );
 	} );

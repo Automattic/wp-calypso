@@ -87,15 +87,19 @@ var DnsRecord = React.createClass( {
 		return isRoot ? domain : name + '.' + domain;
 	},
 
+	isBeingProcessed: function() {
+		return this.props.dnsRecord.isBeingDeleted || this.props.dnsRecord.isBeingAdded;
+	},
+
 	deleteDns: function() {
-		if ( this.props.dnsRecord.isBeingDeleted ) {
+		if ( this.isBeingProcessed() ) {
 			return;
 		}
 		this.props.deleteDns( this.props.dnsRecord );
 	},
 
 	render: function() {
-		const classes = classNames( { 'is-disabled': this.props.dnsRecord.isBeingDeleted } );
+		const classes = classNames( { 'is-disabled': this.isBeingProcessed() } );
 		return (
 			<li className={ classes }>
 				<div className="dns__list-type">

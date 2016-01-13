@@ -74,7 +74,7 @@ const DnsAddNew = React.createClass( {
 	},
 
 	setFormState( fields ) {
-		this.setState( { fields: fields } );
+		this.setState( { fields } );
 	},
 
 	onAddDnsRecord( event ) {
@@ -94,14 +94,16 @@ const DnsAddNew = React.createClass( {
 				formState.getAllFieldValues( this.state.fields ),
 				this.props.selectedDomainName
 			);
+			this.formStateController.resetFields( this.getInitialFields() );
 
 			upgradesActions.addDns( this.props.selectedDomainName, normalizedData, ( error ) => {
 				if ( error ) {
 					notices.error( error.message );
 				} else {
-					this.props.successNotice( this.translate( 'The DNS record has been added.' ) );
+					this.props.successNotice( this.translate( 'The DNS record has been added.' ), {
+						duration: 5000
+					} );
 					this.setState( { show: true } );
-					this.formStateController.resetFields( this.getInitialFields() );
 				}
 			} );
 		} );
@@ -173,8 +175,8 @@ const DnsAddNew = React.createClass( {
 
 					{ this.state.show && <FormButton
 						type="button"
-						isPrimary={ false }
 						disabled={ this.props.isSubmittingForm }
+						isPrimary={ false }
 						onClick={ this.onCancel }>
 						{ this.translate( 'Cancel' ) }
 					</FormButton> }

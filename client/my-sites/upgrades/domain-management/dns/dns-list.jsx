@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
  */
 import DnsRecord from './dns-record';
 import notices from 'notices';
-import { deleteDns as deleteDnsAction } from 'lib/upgrades/actions';
+import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
 import { successNotice } from 'state/notices/actions';
 
 const DnsList = React.createClass( {
@@ -26,6 +26,24 @@ const DnsList = React.createClass( {
 		deleteDnsAction( this.props.selectedDomainName, record, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.translate( 'The DNS record has not been deleted.' ) );
+			} else {
+				const notice = notices.success( this.translate( 'The DNS record has been deleted.' ), {
+					showDismiss: false,
+					duration: 5000,
+					button: this.translate( 'Undo' ),
+					onClick: () => {
+						notices.removeNotice( notice );
+						this.addDns( record );
+					}
+				} );
+			}
+		} );
+	},
+
+	addDns: function( record ) {
+		addDnsAction( this.props.selectedDomainName, record, ( error ) => {
+			if ( error ) {
+				notices.error( error.message );
 			}
 		} );
 	},
