@@ -1,11 +1,9 @@
-// External dependencies
-import React from 'react' ;
+var React = require( 'react' );
 
-// Internal dependencies
-import FollowingStream from 'reader/following-stream';
-import EmptyContent from './empty' ;
+var FollowingStream = require( 'reader/following-stream' ),
+	EmptyContent = require( './empty' );
 
-const LikedStream = React.createClass( {
+var LikedStream = React.createClass( {
 
 	render: function() {
 		var title = this.translate( 'My Likes' ),
@@ -15,7 +13,7 @@ const LikedStream = React.createClass( {
 			this.props.setPageTitle( title );
 		}
 		return (
-			<FollowingStream { ...this.props } className={ "my-likes__posts" } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true } />
+			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ true } />
 		);
 	}
 
