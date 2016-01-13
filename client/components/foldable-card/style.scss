@@ -27,8 +27,12 @@
 
 	&.has-border{
 		.foldable-card__summary,
-		.foldable-card__summary_expanded{
+		.foldable-card__summary_expanded {
 			margin-right: 48px;
+		}
+
+		.foldable-card__expand {
+			border-left: 1px $gray-light solid;
 		}
 	}
 
@@ -105,10 +109,6 @@ button.foldable-card__action {
 		.foldable-card.is-expanded & {
 			transform: rotate( 180deg );
 		}
-	}
-
-	&.has-border{
-		border-left: 1px $gray-light solid;
 	}
 
 	.gridicon:hover {

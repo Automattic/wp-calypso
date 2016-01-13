@@ -88,13 +88,8 @@ var FoldableCard = React.createClass( {
 		}
 		if ( this.props.children ) {
 			let iconSize = 24;
-			const classes = classNames( {
-				'foldable-card__action': true,
-				'foldable-card__expand': true,
-				'has-border': !! this.props.iconBorder
-			} );
 			return (
-				<button disabled={ this.props.disabled } className={ classes } onClick={ clickAction }>
+				<button disabled={ this.props.disabled } className="foldable-card__action foldable-card__expand" onClick={ clickAction }>
 					<span className="screen-reader-text">{ this.translate( 'More' ) }</span>
 					<Gridicon icon={ this.props.icon } size={ iconSize } />
 				</button>
