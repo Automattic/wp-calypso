@@ -81,30 +81,6 @@ module.exports = {
 			name: 'UnauthorizedFullAccessError'
 		}
 	},
-	// toggle plugin selection
-	togglePluginSelection: {
-		type: 'TOGGLE_PLUGIN_SELECTION',
-		plugin: plugins[ 2 ]
-	},
-
-	// select plugins
-	selectPluginsAll: {
-		type: 'SELECT_FILTER_PLUGINS',
-		sites: [ site ],
-		filter: 'all'
-	},
-
-	selectPluginsNone: {
-		type: 'SELECT_FILTER_PLUGINS',
-		sites: [ site ],
-		filter: 'none'
-	},
-
-	selectPluginsNeedUpdate: {
-		type: 'SELECT_FILTER_PLUGINS',
-		sites: [ site ],
-		filter: 'updates'
-	},
 
 	// Remove Plugin
 	removePlugin: {

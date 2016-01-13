@@ -291,22 +291,6 @@ PluginsActions = {
 			.catch( error => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
 	},
 
-	togglePluginSelection: function( plugin ) {
-		Dispatcher.handleViewAction( {
-			type: 'TOGGLE_PLUGIN_SELECTION',
-			plugin: plugin
-		} );
-	},
-
-	selectPlugins: function( sites, filter, options ) {
-		Dispatcher.handleViewAction( {
-			type: 'SELECT_FILTER_PLUGINS',
-			sites: sites,
-			filter: filter,
-			options: options
-		} );
-	},
-
 	activatePlugin: function( site, plugin ) {
 		var endpoint = site.jetpack ? wpcom.pluginsActivate : wpcom.activateWpcomPlugin,
 			pluginId = site.jetpack ? plugin.id : plugin.slug;
