@@ -14,7 +14,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	StatsStrings = require( './stats-strings' )(),
 	Countries = require( './stats-countries' ),
 	SummaryChart = require( './module-summary-chart' ),
-	VideoPlayDetails = require( './module-video-details' );
+	VideoPlayDetails = require( './stats-video-details' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsSummary',
