@@ -30,7 +30,8 @@ i18nState = {
 	numberFormatSettings: {},
 	jed: undefined,
 	locale: undefined,
-	localeSlug: undefined
+	localeSlug: undefined,
+	translations: undefined,
 };
 
 // add event emitter mixin
@@ -102,6 +103,7 @@ function setLocale( locale ) {
 	i18nState.locale = locale;
 	buildJedData( locale );
 	buildMomentAndNumber( locale );
+	i18nState.translations = new Map();
 	i18nState.emit( 'change' );
 }
 
@@ -334,9 +336,15 @@ mixin = {
 	 * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
 	 */
 	translate: function() {
-		var options, translation, sprintfArgs, errorMethod;
+		var options, translation, sprintfArgs, errorMethod, optionsString;
 
 		options = normalizeTranslateArguments( arguments );
+		optionsString = JSON.stringify( options );
+
+		translation = i18nState.translations.get( optionsString );
+		if ( translation ) {
+			return translation;
+		}
 
 		translation = getTranslationFromJed( options );
 
@@ -373,6 +381,7 @@ mixin = {
 			translation = hook( translation, options );
 		} );
 
+		i18nState.translations.set( optionsString, translation );
 		return translation;
 	},
 };
