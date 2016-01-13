@@ -24,8 +24,7 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			tabClick: () => {},
-			href: '#'
+			tabClick: () => {}
 		}
 	},
 
@@ -60,7 +59,7 @@ export default React.createClass( {
 				'is-low': ! value
 			} );
 
-		const linkClass = '#' === href ? 'no-link' : null;
+		const linkClass = ! href ? 'no-link' : null;
 
 		return (
 			<li className={ tabClass } onClick={ this.clickHandler } >
