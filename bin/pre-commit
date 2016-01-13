@@ -16,11 +16,11 @@ printf "\nValidating translatable strings:\n"
 for file in ${files}; do
     result=$(./bin/i18nlint --color ${file})
     if [ $? -ne 0 ]; then
-        printf "\033[31mi18nlint Failed: \033[0m$result\n"
+        printf "\033[31mi18nlint Failed: \033[0m%s\n" "$result"
         printf "\n -----\n"
         pass=false
     else
-        printf "\033[32mi18nlint Passed: ${file}\033[0m\n"
+        printf "\033[32mi18nlint Passed: %s\033[0m\n" "${file}"
     fi
 done
 
@@ -29,10 +29,10 @@ printf "\nValidating .jsx and .js:\n"
 for file in ${files}; do
     ./node_modules/.bin/eslint ${file}
     if [ $? -ne 0 ]; then
-        printf "\033[31meslint Failed: ${file}\033[0m\n"
+        printf "\033[31meslint Failed: %s\033[0m\n" "${file}"
         pass=false
     else
-        printf "\033[32meslint Passed: ${file}\033[0m\n"
+        printf "\033[32meslint Passed: %s\033[0m\n" "${file}"
     fi
 done
 
@@ -41,7 +41,7 @@ printf "\neslint validation complete\n"
 for file in ${files}; do
     ./bin/gridiconFormatChecker ${file}
         if [ $? -ne 0 ]; then
-        printf "\033[31mGridicon Format Check Failed: \033[0m${file}\n"
+        printf "\033[31mGridicon Format Check Failed: \033[0m%s\n" "${file}"
         pass=false
     fi
 done
