@@ -173,7 +173,7 @@ module.exports = function() {
 	if ( !initialized ) {
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-		if ( MutationObserver ) {
+		if ( MutationObserver && window.performance ) {
 			observeDomChanges( MutationObserver );
 		}
 
