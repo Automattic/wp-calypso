@@ -1705,13 +1705,12 @@ Undocumented.prototype.fetchImporterState = function( siteId ) {
 
 Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
-	const formData = Object
-		.keys( importerStatus )
-		.map( key => [ key, JSON.stringify( importerStatus[ key ] ) ] );
 
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
-		formData
+		formData: [
+			[ 'importStatus', JSON.stringify( importerStatus ) ]
+		]
 	} );
 };
 

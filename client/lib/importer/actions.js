@@ -2,21 +2,37 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
+import includes from 'lodash/collection/includes';
 const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Internal dependencies
  */
-import { actionTypes } from './constants';
+import { actionTypes, appStates } from './constants';
 import { fromApi, toApi } from './common';
 
+const ID_GENERATOR_PREFIX = 'local-generated-id-';
+
+const cancelOrder = ( siteId, importerId ) => toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
+const apiStart = () => Dispatcher.handleViewAction( { type: actionTypes.API_REQUEST } );
 const apiSuccess = data => {
-	Dispatcher.handleViewAction( {
-		type: actionTypes.API_SUCCESS
-	} );
+	Dispatcher.handleViewAction( { type: actionTypes.API_SUCCESS } );
 
 	return data;
 };
+const apiFailure = data => {
+	Dispatcher.handleViewAction( { type: actionTypes.API_FAILURE } );
+
+	return data;
+};
+const asArray = a => [].concat( a );
+
+function receiveImporterStatus( importerStatus ) {
+	Dispatcher.handleViewAction( {
+		type: actionTypes.RECEIVE_IMPORT_STATUS,
+		importerStatus
+	} );
+}
 
 export function cancelImport( siteId, importerId ) {
 	Dispatcher.handleViewAction( {
@@ -24,6 +40,20 @@ export function cancelImport( siteId, importerId ) {
 		importerId,
 		siteId
 	} );
+
+	// Bail if this is merely a local importer object because
+	// there is nothing on the server-side to cancel
+	if ( includes( importerId, ID_GENERATOR_PREFIX ) ) {
+		return;
+	}
+
+	apiStart();
+	wpcom
+		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
+		.then( apiSuccess )
+		.then( fromApi )
+		.then( receiveImporterStatus )
+		.catch( apiFailure );
 }
 
 export function failUpload( importerId, error ) {
@@ -35,22 +65,14 @@ export function failUpload( importerId, error ) {
 }
 
 export function fetchState( siteId ) {
-	Dispatcher.handleViewAction( {
-		type: actionTypes.API_REQUEST
-	} );
+	apiStart();
 
 	return wpcom.fetchImporterState( siteId )
 		.then( apiSuccess )
+		.then( asArray )
 		.then( importers => importers.map( fromApi ) )
-		.then( importers => importers.map( importerStatus => {
-			Dispatcher.handleViewAction( {
-				type: actionTypes.RECEIVE_IMPORT_STATUS,
-				importerStatus
-			} );
-		} ) )
-		.catch( () => Dispatcher.handleViewAction( {
-			type: actionTypes.API_FAILURE
-		} ) );
+		.then( importers => importers.map( receiveImporterStatus ) )
+		.catch( apiFailure );
 }
 
 export function finishUpload( importerId, importerStatus ) {
@@ -103,7 +125,7 @@ export function setUploadProgress( importerId, data ) {
 
 export function startImport( siteId, importerType ) {
 	// Use a fake ID until the server returns the real one
-	let importerId = `${ Math.round( Math.random() * 10000 ) }`;
+	let importerId = `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`;
 
 	Dispatcher.handleViewAction( {
 		type: actionTypes.START_IMPORT,
@@ -125,13 +147,7 @@ export function startImporting( importerStatus ) {
 }
 
 export function startUpload( importerStatus, file ) {
-	let { id: importerId, site: { ID: siteId } } = importerStatus;
-
-	Dispatcher.handleViewAction( {
-		type: actionTypes.START_UPLOAD,
-		filename: file.name,
-		importerId
-	} );
+	let { importerId, site: { ID: siteId } } = importerStatus;
 
 	wpcom.uploadExportFile( siteId, {
 		importStatus: toApi( importerStatus ),
@@ -152,6 +168,12 @@ export function startUpload( importerStatus, file ) {
 			} );
 		},
 
-		onabort: () => cancelImport( importerId )
+		onabort: () => cancelImport( siteId, importerId )
+	} );
+
+	Dispatcher.handleViewAction( {
+		type: actionTypes.START_UPLOAD,
+		filename: file.name,
+		importerId
 	} );
 }

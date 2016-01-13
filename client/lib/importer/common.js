@@ -4,6 +4,7 @@ import { appStates } from './constants';
 
 // Left( UI ) - Right( API )
 const importerStateMap = [
+	[ appStates.CANCEL_PENDING, 'cancel' ],
 	[ appStates.DEFUNCT, 'importStopped' ],
 	[ appStates.DISABLED, 'disabled' ],
 	[ appStates.IMPORT_FAILURE, 'importer-import-failure' ],
@@ -69,9 +70,9 @@ export function toApi( state ) {
 
 	return Object.assign( {},
 		{ importerId, progress },
-		{ importerStatus: appStateToApi( importerState ) },
+		{ importStatus: appStateToApi( importerState ) },
 		site && site.ID ? { siteId: site.ID } : {},
-		{ type: type.replace( 'importer-type-', '' ) },
+		type && { type: type.replace( 'importer-type-', '' ) },
 		customData ? { customData: replaceUserInfoWithIds( customData ) } : {}
 	);
 }
