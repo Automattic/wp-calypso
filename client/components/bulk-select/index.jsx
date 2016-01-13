@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -39,10 +40,14 @@ export default React.createClass( {
 	},
 
 	render() {
+		const isChecked = this.hasAllElementsSelected();
+		const inputClasses = classNames( 'bulk-select__box', {
+			'is-checked': isChecked // we need to add this css class to be able to test if the input if checked, since enzyme still doesn't support :checked pseudoselector
+		} );
 		return (
 			<span className="bulk-select" onClick={ this.handleToggleAll }>
 				<span className="bulk-select__container">
-					<input type="checkbox" className="bulk-select__box" checked={ this.hasAllElementsSelected() } readOnly />
+					<input type="checkbox" className={ inputClasses } checked={ isChecked } readOnly />
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
 				</span>

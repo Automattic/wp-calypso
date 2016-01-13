@@ -52,5 +52,13 @@ module.exports = {
 			button: 50
 		},
 		defaultVariation: 'original'
-	}
+	},
+	freeTrials: {
+		datestamp: '20160112',
+		variations: {
+			notOffered: 90,
+			offered: 10
+		},
+		defaultVariation: 'notOffered'
+	},
 };

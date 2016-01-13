@@ -1,29 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import config from 'config';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var ProgressIndicator = require( 'components/progress-indicator' ),
-	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' ),
-	analytics = require( 'analytics' );
+import Gridicon from 'components/gridicon';
+import ProgressIndicator from 'components/progress-indicator';
+import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import analytics from 'analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SiteIndicator',
 
-	getInitialState: function() {
+	getInitialState() {
 		return { expand: false };
 	},
 
-	hasUpdate: function() {
+	hasUpdate() {
 		return this.props.site.update && ! this.hasError() && this.props.site.update.total > 0;
 	},
 
-	hasError: function() {
+	hasError() {
 		var site = this.props.site;
 		if ( site.unreachable ) {
 			return true;
@@ -34,7 +35,7 @@ module.exports = React.createClass( {
 		return false;
 	},
 
-	hasWarning: function() {
+	hasWarning() {
 		var site = this.props.site;
 
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
@@ -49,12 +50,12 @@ module.exports = React.createClass( {
 		return false;
 	},
 
-	showIndicator: function() {
+	showIndicator() {
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
 		return this.props.site.user_can_manage && this.props.site.jetpack && ( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError );
 	},
 
-	toggleExpand: function() {
+	toggleExpand() {
 		this.setState( {
 			updateError: false,
 			updateSucceed: false,
@@ -64,7 +65,7 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked to ' + ( ! this.state.expand ? 'Expand' : 'Collapse' ) + ' the Site Indicator' );
 	},
 
-	updatesAvailable: function() {
+	updatesAvailable() {
 		if ( config.isEnabled( 'jetpack_core_inline_update' ) && this.props.site.update.wordpress && this.props.site.update.wp_update_version ) {
 			return (
 				<span>
@@ -104,7 +105,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	onUpdateError: function() {
+	onUpdateError() {
 		this.setState( {
 			expand: true,
 			updating: false,
@@ -112,7 +113,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	onUpdateSuccess: function() {
+	onUpdateSuccess() {
 		this.setState( {
 			updating: false,
 			updateSucceed: true
@@ -123,12 +124,12 @@ module.exports = React.createClass( {
 		}.bind( this ), 15000 );
 	},
 
-	handlePluginsUpdate: function() {
+	handlePluginsUpdate() {
 		window.scrollTo( 0, 0 );
 		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.update && this.props.site.update.total );
 	},
 
-	handleUpdate: function() {
+	handleUpdate() {
 		this.setState( {
 			updating: true,
 			expand: false
@@ -139,7 +140,7 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'site-indicator', 'Triggered Update WordPress Core Version From Calypso' );
 	},
 
-	unsupportedJetpackVersion: function() {
+	unsupportedJetpackVersion() {
 		return (
 			<span>
 				{ this.translate( 'Jetpack %(version)s is required', { args: { version: config( 'jetpack_min_version' ) } } ) }.
@@ -151,13 +152,13 @@ module.exports = React.createClass( {
 			</span> );
 	},
 
-	makeAnalyticsRecordEventHandler: function( action ) {
+	makeAnalyticsRecordEventHandler( action ) {
 		return function() {
 			analytics.ga.recordEvent( 'Site-Indicator', action );
 		};
 	},
 
-	errorAccessing: function() {
+	errorAccessing() {
 		let accessFailedMessage;
 
 		// Don't show the button if the site is not defined.
@@ -169,7 +170,7 @@ module.exports = React.createClass( {
 		return accessFailedMessage;
 	},
 
-	errorUpdating: function() {
+	errorUpdating() {
 		return ( <span>
 			{ this.translate( 'There was a problem updating. {{link}}Update on site{{/link}}.',
 				{
@@ -181,7 +182,7 @@ module.exports = React.createClass( {
 		</span> );
 	},
 
-	getText: function() {
+	getText() {
 		if ( this.state.updateError ) {
 			return this.errorUpdating();
 		}
@@ -201,7 +202,21 @@ module.exports = React.createClass( {
 		return null;
 	},
 
-	render: function() {
+	getIcon() {
+		if ( this.hasUpdate() ) {
+			return 'sync';
+		}
+
+		if ( this.hasWarning() ) {
+			return 'notice';
+		}
+
+		if ( this.hasError() ) {
+			return 'notice';
+		}
+	},
+
+	render() {
 		var indicatorClass, textClass, progressStatus;
 
 		if ( ! this.showIndicator() ) {
@@ -215,7 +230,11 @@ module.exports = React.createClass( {
 			if ( this.state.updateSucceed ) {
 				progressStatus = 'success';
 			}
-			return <ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />;
+			return (
+				<div className="site-indicator">
+					<ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />
+				</div>
+			);
 		}
 
 		indicatorClass = classNames( {
@@ -235,7 +254,11 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ indicatorClass }>
-				<button className="site-indicator__button" onClick={ this.toggleExpand } />
+				<button className="site-indicator__button" onClick={ this.toggleExpand }>
+					{ this.state.expand ?
+						<Gridicon icon="cross" size={ 18 } />
+					: <Gridicon icon={ this.getIcon() } size={ 16 } /> }
+				</button>
 				{ this.state.expand
 					? <div className="site-indicator__message">
 						<div className={ textClass }>

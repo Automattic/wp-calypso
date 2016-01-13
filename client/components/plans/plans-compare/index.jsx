@@ -28,7 +28,7 @@ var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
 
 	mixins: [
-		observe( 'sites', 'features', 'plans' )
+		observe( 'features', 'plans' )
 	],
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -58,7 +58,7 @@ var PlansCompare = React.createClass( {
 	},
 
 	goBack: function() {
-		var selectedSite = this.props.sites ? this.props.sites.getSelectedSite() : undefined,
+		var selectedSite = this.props.selectedSite,
 			plansLink = '/plans';
 
 		if ( this.props.backUrl ) {
@@ -101,8 +101,8 @@ var PlansCompare = React.createClass( {
 	},
 
 	showFreeTrialException: function() {
-		const hasTrial = this.props.sites
-				? this.props.sites.getSelectedSite().plan.free_trial
+		const hasTrial = this.props.selectedSite
+				? this.props.selectedSite.plan.free_trial
 				: false,
 			canStartTrial = this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
 				? this.props.sitePlans.data.some( property( 'canStartTrial' ) )
@@ -155,7 +155,7 @@ var PlansCompare = React.createClass( {
 		var plansColumns,
 			featuresList = this.props.features.get(),
 			plans = this.props.plans.get(),
-			site = this.props.sites ? this.props.sites.getSelectedSite() : undefined,
+			site = this.props.selectedSite,
 			showJetpackPlans = site ? site.jetpack : false;
 
 		plans = plans.filter( function( plan ) {

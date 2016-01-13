@@ -10,6 +10,14 @@ const wpcom = require( 'lib/wp' ).undocumented();
 import { actionTypes } from './constants';
 import { fromApi, toApi } from './common';
 
+const apiSuccess = data => {
+	Dispatcher.handleViewAction( {
+		type: actionTypes.API_SUCCESS
+	} );
+
+	return data;
+};
+
 export function cancelImport( siteId, importerId ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.CANCEL_IMPORT,
@@ -31,18 +39,15 @@ export function fetchState( siteId ) {
 		type: actionTypes.API_REQUEST
 	} );
 
-	wpcom.fetchImporterState( siteId )
-		.then( importer => fromApi( importer ) )
-		.then( importerStatus => {
-			Dispatcher.handleViewAction( {
-				type: actionTypes.API_SUCCESS
-			} );
-
+	return wpcom.fetchImporterState( siteId )
+		.then( apiSuccess )
+		.then( importers => importers.map( fromApi ) )
+		.then( importers => importers.map( importerStatus => {
 			Dispatcher.handleViewAction( {
 				type: actionTypes.RECEIVE_IMPORT_STATUS,
 				importerStatus
 			} );
-		} )
+		} ) )
 		.catch( () => Dispatcher.handleViewAction( {
 			type: actionTypes.API_FAILURE
 		} ) );

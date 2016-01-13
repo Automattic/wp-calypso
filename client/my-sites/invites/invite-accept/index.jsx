@@ -6,6 +6,9 @@ import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
 import store from 'store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import get from 'lodash/object/get'
 
 /**
  * Internal Dependencies
@@ -14,10 +17,11 @@ import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
 import user from 'lib/user';
-import { fetchInvite, displayInviteDeclined } from 'lib/invites/actions';
+import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
-import { displayInviteAccepted } from 'lib/invites/actions';
+import { successNotice, infoNotice } from 'state/notices/actions';
+import analytics from 'analytics';
 
 /**
  * Module variables
@@ -25,9 +29,7 @@ import { displayInviteAccepted } from 'lib/invites/actions';
 const debug = new Debug( 'calypso:invite-accept' );
 const userModule = user();
 
-export default React.createClass( {
-
-	displayName: 'InviteAccept',
+let InviteAccept = React.createClass( {
 
 	getInitialState() {
 		return {
@@ -42,7 +44,7 @@ export default React.createClass( {
 		if ( acceptedInvite && acceptedInvite.inviteKey === this.props.inviteKey ) {
 			store.remove( 'invite_accepted' );
 			page( this.getRedirectAfterAccept( acceptedInvite ) );
-			displayInviteAccepted( acceptedInvite );
+			this.acceptedNotice( acceptedInvite );
 			return;
 		}
 		fetchInvite( this.props.siteId, this.props.inviteKey );
@@ -52,7 +54,7 @@ export default React.createClass( {
 
 	componentWillUnmount() {
 		InvitesStore.off( 'change', this.refreshInvite );
-		userModule.on( 'change', this.refreshUser );
+		userModule.off( 'change', this.refreshUser );
 	},
 
 	refreshUser() {
@@ -73,10 +75,6 @@ export default React.createClass( {
 		this.setState( { invite, error } );
 	},
 
-	refreshRedirectPath() {
-		this.setState( { redirectPath: this.getRedirectAfterAccept() } );
-	},
-
 	getErrorTitle() {
 		return this.translate(
 			'Oops, your invite is not valid',
@@ -91,6 +89,121 @@ export default React.createClass( {
 		);
 	},
 
+	clickedNoticeSiteLink() {
+		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
+	},
+
+	acceptedNotice( invite ) {
+		invite = invite || this.state.invite;
+		let displayOnNextPage = true;
+		let takeATour = (
+			<p className="invite-message__intro">
+				{
+					this.translate(
+						'Since you\'re new, you might like to {{docsLink}}take a tour{{/docsLink}}.',
+						{ components: { docsLink: <a href="https://learn.wordpress.com/" target="_blank" /> } }
+					)
+				}
+			</p>
+		);
+		let site = (
+			<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
+				{ get( invite, 'site.title' ) }
+			</a>
+		);
+
+		switch ( get( invite, 'role' ) ) {
+			case 'follower':
+				this.props.successNotice(
+					this.translate(
+						'You are now following {{site/}}', {
+							components: { site }
+						}
+					),
+					{
+						button: this.translate( 'Visit Site' ),
+						href: get( invite, 'site.URL' ),
+						displayOnNextPage
+					}
+				);
+				break;
+			case 'administrator':
+				this.props.successNotice(
+					<div>
+						<h3 className="invite-message__title">
+							{ this.translate( 'You\'re now an Administrator of: {{site/}}', {
+								components: { site }
+							} ) }
+						</h3>
+						<p className="invite-message__intro">
+							{ this.translate( 'This is your site dashboard where you will be able to manage all aspects of %(site)s', {
+								args: { site: get( invite, 'site.title' ) }
+							} ) }
+						</p>
+						{ takeATour }
+					</div>,
+					{ displayOnNextPage }
+				);
+				break;
+			case 'editor':
+				this.props.successNotice(
+					<div>
+						<h3 className="invite-message__title">
+							{ this.translate( 'You\'re now an Editor of: {{site/}}', {
+								components: { site }
+							} ) }
+						</h3>
+						<p className="invite-message__intro">
+							{ this.translate( 'This is your site dashboard where you can publish and manage your own posts and the posts of others, as well as upload media.' ) }
+						</p>
+						{ takeATour }
+					</div>,
+					{ displayOnNextPage }
+				);
+				break;
+			case 'author':
+				this.props.successNotice(
+					<div>
+						<h3 className="invite-message__title">
+							{ this.translate( 'You\'re now an Author of: {{site/}}', {
+								components: { site }
+							} ) }
+						</h3>
+						<p className="invite-message__intro">
+							{ this.translate( 'This is your site dashboard where you can publish and edit your own posts as well as upload media.' ) }
+						</p>
+						{ takeATour }
+					</div>,
+					{ displayOnNextPage }
+				);
+				break;
+			case 'contributor':
+				this.props.successNotice(
+					<div>
+						<h3 className="invite-message__title">
+							{ this.translate( 'You\'re now a Contributor of: {{site/}}', {
+								components: { site }
+							} ) }
+						</h3>
+						<p className="invite-message__intro">
+							{ this.translate( 'This is your site dashboard where you can write and manage your own posts.' ) }
+						</p>
+						{ takeATour }
+					</div>,
+					{ displayOnNextPage }
+				);
+				break;
+			case 'subscriber':
+				this.props.successNotice(
+					this.translate( 'You\'re now a Subscriber of: {{site/}}', {
+						components: { site }
+					} ),
+					{ displayOnNextPage }
+				);
+				break;
+		}
+	},
+
 	getRedirectAfterAccept( invite = this.state.invite ) {
 		switch ( invite.role ) {
 			case 'viewer':
@@ -103,8 +216,8 @@ export default React.createClass( {
 	},
 
 	decline() {
+		this.props.infoNotice( this.translate( 'You declined to join.' ), { displayOnNextPage: true } );
 		page( '/' );
-		displayInviteDeclined();
 	},
 
 	renderForm() {
@@ -114,7 +227,7 @@ export default React.createClass( {
 		}
 		debug( 'Rendering invite' );
 		return this.state.user
-			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ this.state.user } />
+			? <LoggedIn { ...this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ this.state.user } acceptedNotice={ this.acceptedNotice } />
 			: <LoggedOut { ...this.state.invite } decline={ this.decline } />;
 	},
 
@@ -129,7 +242,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		let classes = classNames( 'invite-accept', { 'is-error': !! this.state.error } );
+		const classes = classNames( 'invite-accept', { 'is-error': !! this.state.error } );
 		return (
 			<div className={ classes }>
 				{ ! this.state.error && <InviteHeader { ...this.state.invite } /> }
@@ -138,3 +251,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, infoNotice }, dispatch )
+)( InviteAccept );

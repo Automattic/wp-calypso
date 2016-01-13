@@ -1,11 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
+
+export default React.createClass( {
 	displayName: 'ProgressIndicator',
 
 	getDefaultProps: function() {
@@ -26,10 +30,14 @@ module.exports = React.createClass( {
 		if ( 'failed' === status ) {
 			last = ( <div className="is-problem" /> );
 		} else if ( 'success' === status ) {
-			last = ( <div className="is-success" /> );
+			return (
+				<div className="progress-indicator is-complete">
+					<Gridicon icon="checkmark" size={ 18 } />
+				</div>
+			);
 		}
 
-		classes = classNames( {
+		classes = classnames( this.props.className, {
 			'progress-indicator': true,
 			'is-in-progress': 'in-progress' === status,
 			'is-processing': 'processing' === status,
@@ -38,7 +46,7 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ classnames( this.props.className, classes ) }>
+			<div className={ classes }>
 				<div className="progress-indicator__half" />
 				<div className="progress-indicator__half is-latter" />
 				{ last }

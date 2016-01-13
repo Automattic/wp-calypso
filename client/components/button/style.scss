@@ -63,8 +63,6 @@ button {
 		box-shadow: 0 0 0 2px $blue-light;
 	}
 	&.is-compact {
-		background: transparent;
-		border-radius: 0;
 		padding: 7px;
 		color: darken( $gray, 10% );
 		font-size: 11px;
@@ -189,6 +187,8 @@ button {
 	}
 
 	&.is-compact {
+		background: transparent;
+		border-radius: 0;
 		.gridicon {
 			width: 18px;
 			height: 18px;

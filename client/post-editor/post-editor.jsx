@@ -23,6 +23,7 @@ var actions = require( 'lib/posts/actions' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
+	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
 	Notice = require( 'components/notice' ),
@@ -88,7 +89,7 @@ var messages = {
 			return i18n.translate( 'View Post' );
 		},
 		allPosts: function() {
-			return i18n.translate( 'All Posts' );
+			return i18n.translate( 'Posts' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -144,7 +145,7 @@ var messages = {
 			return i18n.translate( 'View Page' );
 		},
 		allPosts: function() {
-			return i18n.translate( 'All Pages' );
+			return i18n.translate( 'Pages' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -351,15 +352,23 @@ var PostEditor = React.createClass( {
 					<div className="post-editor__sidebar">
 						<div className="post-editor__sidebar-header">
 							{ this.state.showDrafts ?
-								<button className="post-editor__close" onClick={ this.toggleDrafts } aria-label={ this.translate( 'Close drafts list' ) }>
-									<Gridicon icon="cross" size={ 18 } />
-									<span>{ this.translate( 'Close' ) }</span>
-								</button>
+								<Button
+									compact borderless
+									className="post-editor__close"
+									onClick={ this.toggleDrafts }
+									aria-label={ this.translate( 'Close drafts list' ) }
+								>
+									<Gridicon icon="cross" /> <span>{ this.translate( 'Close' ) }</span>
+								</Button>
 							:
-								<a className="post-editor__close" href={ this.getAllPostsUrl() } aria-label={ this.translate( 'View list of posts' ) }>
-									<Gridicon icon="arrow-left" size={ 18 } />
-									<span>{ this.getMessage( 'allPosts' ) }</span>
-								</a>
+								<Button
+									compact borderless
+									className="post-editor__close"
+									href={ this.getAllPostsUrl() }
+									aria-label={ this.translate( 'View list of posts' ) }
+								>
+									<Gridicon icon="arrow-left" size={ 18 } /> <span>{ this.getMessage( 'allPosts' ) }</span>
+								</Button>
 							}
 							{ this.props.type === 'post' && site ?
 								<PostCountsData siteId={ site.ID } status="draft">

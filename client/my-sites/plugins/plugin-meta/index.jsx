@@ -11,7 +11,6 @@ import _some from 'lodash/collection/some';
  */
 import analytics from 'analytics';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
@@ -23,6 +22,7 @@ import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginSettingsLink from 'my-sites/plugins/plugin-settings-link';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 
 export default React.createClass( {
@@ -35,7 +35,8 @@ export default React.createClass( {
 		sites: React.PropTypes.array,
 		notices: React.PropTypes.object,
 		plugin: React.PropTypes.object.isRequired,
-		isPlaceholder: React.PropTypes.bool
+		isInstalledOnSite: React.PropTypes.bool.isRequired,
+		isPlaceholder: React.PropTypes.bool,
 	},
 
 	displayBanner() {
@@ -55,7 +56,7 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( ! this.isInstalledOnSite( this.props.selectedSite ) ) {
+		if ( ! this.props.isInstalledOnSite ) {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
 		}
 
@@ -86,14 +87,7 @@ export default React.createClass( {
 			return;
 		}
 
-		return (
-			<a className="plugin-meta__settings-link"
-				href={ this.props.plugin.wp_admin_settings_page_url }
-				target="_blank">
-				{ this.translate( 'Setup' ) }
-				<Gridicon size={ 18 } icon="external" />
-			</a>
-		);
+		return <PluginSettingsLink linkUrl={ this.props.plugin.wp_admin_settings_page_url } />;
 	},
 
 	renderName() {
@@ -117,14 +111,6 @@ export default React.createClass( {
 				linkToAuthor
 			}
 		} );
-	},
-
-	isInstalledOnSite( site ) {
-		return ( this.props.sites &&
-			this.props.sites.some( iteratorSite => {
-				return site.slug === iteratorSite.slug;
-			} )
-		);
 	},
 
 	getInstallButton() {
@@ -198,7 +184,7 @@ export default React.createClass( {
 
 	hasInstallButton() {
 		if ( this.props.selectedSite ) {
-			return ! this.isInstalledOnSite( this.props.selectedSite ) &&
+			return ! this.props.isInstalledOnSite &&
 				this.props.selectedSite.user_can_manage &&
 				this.props.selectedSite.jetpack;
 		}

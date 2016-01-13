@@ -1,140 +1,42 @@
 // Stats All-time module on Insights page
-.stats-all-time__list {
-	margin: 0;
-	padding: 0;
-}
 
-.stats-all-time__list-item {
-	list-style-type: none;
-	float: left;
-	text-align: center;
-	margin: 20px 0 14px;
-	border-right: 1px solid $gray-light;
-	width: 25%;
-	box-sizing: border-box;
-	box-sizing: content-box;
-	color: $gray-dark;
+.stats-all-time {
 
-	&:last-child {
-		border-right: 0;
-	}
+	.module-tab {
 
-	&.stats-all-time__best {
-		color: $alert-yellow;
-	}
+		padding-bottom: 0;
 
-	@include breakpoint ( ">960px" ) {
-		.is-non-en & {
-			width: 49%;
+		@include breakpoint( ">480px" ) {
+			padding-bottom: 24px;
+		}
 
-			&:nth-child(2) {
-				border-right: 0;
+		&.is-best {
+			color: $alert-yellow;
+		}
+
+		&:nth-child(4) {
+			padding-bottom: 0;
+		}
+
+		.value {
+			font-size: 20px;
+			padding: 10px 0 5px;
+		}
+
+		.stats-all-time__best-day {
+			color: $gray-dark;
+			font-size: 11px;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+
+			@include breakpoint( "<480px" )  {
+				box-sizing: border-box;
+				display: block;
+				line-height: 1.7;
+				padding: 25px 0 0 56px;
+				text-align: left;
+				width: 100%;
 			}
 		}
-	}
-
-	@include breakpoint( "<960px" ) {
-		width: 49%;
-
-		&:nth-child(2) {
-			border-right: 0;
-		}
-	}
-
-	@include breakpoint( "<480px" ) {
-		width: 100%;
-		border: 0;
-		padding: 10px 0;
-	}
-
-	.gridicon {
-		margin-right: 4px;
-		vertical-align: middle;
-
-		@include breakpoint( "<480px" ) {
-			width: 24px;
-			height: 24px;
-			margin-left: 24px;
-			margin-right: 8px;
-			float: left;
-		}
-	}
-}
-
-.stats-all-time__item-posts {
-	width: 23%;
-
-	@include breakpoint( "<960px" ) {
-		width: 49%;
-	}
-}
-
-.stats-all-time__list-item,
-.stats-all-time__item-posts {
-	@include breakpoint( "<480px" ) {
-		width: auto;
-		float: none;
-		text-align: left;
-		margin: 0;
-		font-size: 16px;
-		clear: none;
-		border-top: 1px solid $gray-light;
-		box-sizing: border-box;
-	}
-}
-
-.stats-all-time__label {
-	font-size: 11px;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
-	line-height: 1.6;
-
-	@include breakpoint( "<480px" ) {
-		font-size: 14px;
-		line-height: 1.8;
-	}
-}
-
-.stats-all-time__value {
-	font-size: 20px;
-	color: $gray-dark;
-	width: 100%;
-	display: block;
-	padding: 16px 0;
-
-	&.is-loading {
-		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	&.is-low {
-		color: $gray;
-	}
-
-	@include breakpoint( "<480px" ) {
-		clear: none;
-		display: inline-table; // fixes "Best" section moving down the next line when resizing screen
-		float: right;
-		font-size: 16px;
-		margin-right: 24px;
-		padding: 0;
-		text-align: right;
-		width: auto;
-	}
-}
-
-.stats-all-time__best-day {
-	font-size: 11px;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
-	color: $gray-dark;
-	line-height: 1.8;
-	display: block;
-	width: 100%;
-
-	@include breakpoint( "<480px" )  {
-		box-sizing: border-box;
-		text-align: left;
-		line-height: 1.7;
-		padding-left: 56px;
 	}
 }

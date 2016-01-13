@@ -23,17 +23,9 @@
 	text-transform: none;
 	z-index: z-index( 'root', '.site-indicator__button' );
 	overflow: initial;
+	line-height: 28px;
 
-	&::before {
-		@include noticon( '\f420', 16px );
-		line-height: 1;
-		margin: 0;
-		opacity: 0.8;
-		position: absolute;
-			top: 5px;
-			left: 5px;
-		vertical-align: middle;
-	}
+
 	&:focus {
 		box-shadow: none;
 	}
@@ -53,34 +45,19 @@
 	.is-update & {
 		background: $alert-yellow;
 		color: $white;
-		&::before {
-			content: '\f420';
-		}
 	}
 
 	.is-warning & {
 		background: $alert-yellow;
 		color: $white;
-		&::before {
-			content: '\f414';
-		}
 	}
 
 	.is-error & {
 		background: $alert-red;
 		color: $white;
-		&::before {
-			content: '\f414',
-		}
 	}
 
 	.is-expanded & {
-		&::before {
-			content: '\f406';
-			font-size: 12px;
-			top: 7px;
-			left: 7px;
-		}
 		.accessible-focus &:focus {
 			border: 1px dotted $white;
 			&::before {
@@ -97,13 +74,6 @@
 	}
 }
 
-.site-indicator__progress-indicator.progress-indicator {
-	margin-top: -10px;
-	position: absolute;
-		top: 50%;
-		right: 21px;
-
-}
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
 	color: $white;

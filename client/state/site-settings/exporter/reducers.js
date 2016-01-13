@@ -3,31 +3,23 @@
  */
 import { combineReducers } from 'redux';
 import Immutable from 'immutable';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
 import {
-	TOGGLE_EXPORTER_ADVANCED_SETTINGS,
-	TOGGLE_EXPORTER_SECTION
+	SET_EXPORT_POST_TYPE,
+	REQUEST_START_EXPORT,
+	REPLY_START_EXPORT,
+	FAIL_EXPORT,
+	COMPLETE_EXPORT
 } from 'state/action-types';
 
-const debug = debugModule( 'calypso:exporter' );
+import { States } from './constants';
 
 const initialUIState = Immutable.fromJS( {
-	advancedSettings: {
-		isVisible: false,
-		posts: {
-			isEnabled: true
-		},
-		pages: {
-			isEnabled: true
-		},
-		feedback: {
-			isEnabled: true
-		}
-	}
+	exportingState: States.READY,
+	postType: null
 } );
 
 /**
@@ -39,10 +31,18 @@ const initialUIState = Immutable.fromJS( {
  */
 export function ui( state = initialUIState, action ) {
 	switch ( action.type ) {
-		case TOGGLE_EXPORTER_SECTION:
-			return state.updateIn( [ 'advancedSettings', action.section, 'isEnabled' ], ( x ) => ( !x ) );
-		case TOGGLE_EXPORTER_ADVANCED_SETTINGS:
-			return state.updateIn( [ 'advancedSettings', 'isVisible' ], ( x ) => ( !x ) );
+		case SET_EXPORT_POST_TYPE:
+			return state.set( 'postType', action.postType );
+
+		case REQUEST_START_EXPORT:
+			return state.set( 'exportingState', States.STARTING );
+
+		case REPLY_START_EXPORT:
+			return state.set( 'exportingState', States.EXPORTING );
+
+		case FAIL_EXPORT:
+		case COMPLETE_EXPORT:
+			return state.set( 'exportingState', States.READY );
 	}
 
 	return state;
