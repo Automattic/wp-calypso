@@ -7,7 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	SET_SELECTED_SITE,
+	SELECTED_SITE_SET,
 	SET_SECTION,
 	CURRENT_USER_ID_SET
 } from 'state/action-types';
@@ -19,9 +19,9 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function selectedSite( state = null, action ) {
+export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
-		case SET_SELECTED_SITE:
+		case SELECTED_SITE_SET:
 			state = action.siteId || null;
 			break;
 	}
@@ -71,6 +71,6 @@ export default combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
-	selectedSite,
+	selectedSiteId,
 	currentUserId
 } );

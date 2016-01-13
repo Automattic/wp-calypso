@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from 'state/action-types';
+import { SITE_RECEIVE } from 'state/action-types';
 import { receiveSite } from '../actions';
 
 describe( 'actions', () => {
@@ -16,7 +16,7 @@ describe( 'actions', () => {
 			const action = receiveSite( site );
 
 			expect( action ).to.eql( {
-				type: RECEIVE_SITE,
+				type: SITE_RECEIVE,
 				site
 			} );
 		} );

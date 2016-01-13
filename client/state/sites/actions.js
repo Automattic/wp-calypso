@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { RECEIVE_SITE } from 'state/action-types';
+import { SITE_RECEIVE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a site object has
@@ -12,7 +12,7 @@ import { RECEIVE_SITE } from 'state/action-types';
  */
 export function receiveSite( site ) {
 	return {
-		type: RECEIVE_SITE,
+		type: SITE_RECEIVE,
 		site
 	};
 }

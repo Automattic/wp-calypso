@@ -13,7 +13,7 @@ describe( 'selectors', () => {
 		it( 'should return null if no site is selected', () => {
 			const selected = getSelectedSite( {
 				ui: {
-					selectedSite: null
+					selectedSiteId: null
 				}
 			} );
 
@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 					}
 				},
 				ui: {
-					selectedSite: 2916284
+					selectedSiteId: 2916284
 				}
 			} );
 

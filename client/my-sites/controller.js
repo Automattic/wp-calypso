@@ -134,7 +134,7 @@ module.exports = {
 			var selectedSite = sites.getSelectedSite();
 			siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
 			context.store.dispatch( sitesActions.receiveSite( selectedSite ) );
-			context.store.dispatch( uiActions.setSelectedSite( selectedSite.ID ) );
+			context.store.dispatch( uiActions.setSelectedSiteId( selectedSite.ID ) );
 		}
 
 		// If there's a valid site from the url path
