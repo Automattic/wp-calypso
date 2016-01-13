@@ -22,7 +22,6 @@ describe( 'Reader Lists Store', function() {
 		} );
 
 		const lists = store.getLists();
-		debug( lists );
 		expect( lists.size ).to.eql( 1 );
 		expect( lists.first().toJS() ).to.eql( newList );
 	} );
@@ -51,5 +50,24 @@ describe( 'Reader Lists Store', function() {
 		const lists = store.getLists();
 		expect( lists.size ).to.eql( 2 );
 		expect( lists.first().toJS() ).to.eql( newLists[0] );
+	} );
+
+	it( 'creates a new list', function() {
+		const newList = {
+			ID: 4,
+			owner: 'restapitests',
+			name: 'feijoas'
+		};
+
+		Dispatcher.handleServerAction( {
+			type: action.RECEIVE_CREATE_READER_LIST,
+			data: {
+				list: newList
+			}
+		} );
+
+		const lists = store.getLists();
+		expect( lists.last().toJS() ).to.eql( newList );
+		expect( store.isUpdated( 4 ) ).to.eql( true );
 	} );
 } );

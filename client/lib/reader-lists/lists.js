@@ -42,11 +42,17 @@ function receiveList( state, newList ) {
 	return state.set( 'lists', updatedLists );
 };
 
+function markUpdatedList( state, listId ) {
+	const newUpdatedLists = state.get( 'updatedLists' ).setIn( [ +listId ], true );
+	return state.set( 'updatedLists', newUpdatedLists );
+}
+
 const ReaderListsStore = createReducerStore( ( state, payload ) => {
 	const data = get( payload, 'action.data' );
 
 	switch ( payload.action.type ) {
 		case actionTypes.RECEIVE_READER_LIST:
+		case actionTypes.UPDATE_READER_LIST:
 			return receiveList( state, data.list );
 
 		case actionTypes.RECEIVE_READER_LISTS:
@@ -55,6 +61,12 @@ const ReaderListsStore = createReducerStore( ( state, payload ) => {
 					state = receiveList( state, list );
 				} );
 			}
+			return state;
+
+		case actionTypes.RECEIVE_CREATE_READER_LIST:
+		case actionTypes.RECEIVE_UPDATE_READER_LIST:
+			state = receiveList( state, data.list );
+			state = markUpdatedList( state, data.list.ID );
 			return state;
 	}
 
@@ -74,6 +86,11 @@ ReaderListsStore.isFetching = function() {
 ReaderListsStore.getLastError = function() {
 	const state = ReaderListsStore.get();
 	return state.has( 'errors' ) ? state.get( 'errors' ).last() : null;
+};
+
+ReaderListsStore.isUpdated = function( listId ) {
+	const state = ReaderListsStore.get();
+	return !! state.get( 'updatedLists' ).has( listId );
 };
 
 export default ReaderListsStore;
