@@ -1,0 +1,12 @@
+// Tab Content (for comments module)
+
+.tab-content {
+	display: none;
+}
+
+.tab-email-followers .tab-content.email-followers,
+.tab-wpcom-followers .tab-content.wpcom-followers,
+.tab-top-authors .tab-content.top-authors,
+.tab-top-content .tab-content.top-content {
+	display: block;
+}
