@@ -5,7 +5,6 @@ var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	qs = require( 'querystring' ),
-	url = require( 'url' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 /**
@@ -31,11 +30,6 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			analyticsPageTitle = 'Blog Posts',
 			baseAnalyticsPath;
-
-		if ( !search && context.prevPath ) {
-			//Guessing search parameters from previous url
-			search = qs.parse( url.parse( context.prevPath ).query ).s;
-		}
 
 		function shouldRedirectMyPosts( author, sites ) {
 			var selectedSite = sites.getSelectedSite() || {};
