@@ -117,8 +117,9 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
+	border: 1px solid $gray-light;
 	background-color: lighten( $gray, 20% );
-	margin: 1px;
+	margin: 0;
 }
 
 .post-trends__day,
@@ -212,5 +213,22 @@
 		height: 10px;
 		float: left;
 		margin-left: 3px;
+	}
+}
+
+// A customization of chart__tooltip
+
+.trends__tooltip {
+	border: 1px solid red;
+	height: 0;
+	margin-top: -5px;
+
+	&.tip-top {
+
+		.tip-arrow {
+		    height: 10px;
+		    margin-top: -48px;
+		    position: static;
+		}
 	}
 }
