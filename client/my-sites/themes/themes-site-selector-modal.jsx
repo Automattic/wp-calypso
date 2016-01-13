@@ -61,7 +61,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			selectedTheme: theme,
 			onHide
 		} = this.props;
-		const option = this.getActionText( this.props.selectedAction );
+		const { label, header } = this.getActionText( this.props.selectedAction );
 		const isPreviewingPremium = theme.price && action === 'preview';
 
 		return (
@@ -70,10 +70,10 @@ const ThemesSiteSelectorModal = React.createClass( {
 				filter={ site => ! site.jetpack /* No Jetpack sites for now. */ }
 				hide={ onHide }
 				mainAction={ this.setSiteAndAction.bind( null, action, theme ) }
-				mainActionLabel={ option.label }>
+				mainActionLabel={ label }>
 
 				<Theme isActionable={ false } { ...theme } />
-				<h1>{ option.header }</h1>
+				<h1>{ header }</h1>
 				{ isPreviewingPremium &&
 					<h2>{ this.translate( 'You will be able to buy the design after the preview' ) }</h2>
 				}
