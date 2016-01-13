@@ -27,11 +27,7 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	padding: 16px 8px;
-
-	&:hover {
-		background-color: $gray-light;
-	}
+	padding: 8px 8px 8px 16px;
 
 	@include breakpoint( ">660px" ) {
 		justify-content: space-between;
@@ -96,26 +92,13 @@
 	}
 }
 
-button.post-editor__close,
-a.post-editor__close {
-	color: $gray-dark;
-	cursor: pointer;
+.post-editor__close.button.is-compact.is-borderless {
 	display: none;
-	line-height: 1.5;
-	font-size: 11px;
-	text-transform: uppercase;
-	align-self: flex-start;
-
-	&:hover,
-	&:hover .gridicon {
-		color: $blue-medium;
-	}
-
-	.gridicon {
-		color: $gray;
-		margin-right: 4px;
-		vertical-align: bottom;
-	}
+	align-self: center;
+	line-height: 14px;
+	padding: 0;
+	white-space: nowrap;
+	max-width: 50%;
 
 	@include breakpoint( ">660px" ) {
 		display: block;
