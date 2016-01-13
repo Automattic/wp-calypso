@@ -9,13 +9,13 @@
 
 .editor-drawer .accordion__toggle {
 	background: lighten( $gray, 30% );
-
-	&:hover {
-		background: $gray-light;
-	}
 }
 
 .editor-drawer .accordion:not( .is-expanded ) .accordion__toggle {
+	&:hover {
+		background: $gray-light;
+	}
+
 	.accordion__subtitle::after {
 		@include long-content-fade( $color: lighten( $gray, 30% ) );
 	}
