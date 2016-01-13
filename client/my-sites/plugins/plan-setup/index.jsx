@@ -8,12 +8,13 @@ import React from 'react'
 */
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PlanSetupInstructions from './instructions';
+import PluginInstallation from './installation';
 
 module.exports = React.createClass( {
 
 	displayName: 'PlanSetup',
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			keys: {},
 			status: 'not-started', // installing $plugin, configuring $plugin, finished, error
@@ -32,7 +33,7 @@ module.exports = React.createClass( {
 				site={ this.props.selectedSite }
 				template={ 'optInManage' }
 				title={ this.translate( 'Oh no! We can\'t automatically install your new plugins.' ) }
-			section={ 'plugins' }
+				section={ 'plugins' }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
 		);
 	},
@@ -44,6 +45,25 @@ module.exports = React.createClass( {
 				title={ this.translate( 'Oh no! You need to select a jetpack site to be able to setup your plan' ) }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
 		);
+	},
+
+	componentDidMount() {
+		this.runInstall();
+	},
+
+	runInstall() {
+		let steps = PluginInstallation.start( {
+			site: this.props.selectedSite,
+			plugins: [ 'vaultpress' ]
+		} );
+
+		steps.on( 'data', ( step ) => {
+			if ( 'undefined' === typeof step.name ) {
+				this.setState( { status: 'finished' } );
+			} else {
+				this.setState( { status: step.name } );
+			}
+		} );
 	},
 
 	render() {
