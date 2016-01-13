@@ -34,7 +34,6 @@ var _CACHE_TIME_TO_LIVE = 10 * 1000, // 10 sec
 // Stores the plugins of each site.
 var _fetching = {},
 	_pluginsBySite = {},
-	_selectedPlugins = {},
 	PluginsStore,
 	_filters = {
 		none: function() {
@@ -169,8 +168,6 @@ PluginsStore = {
 			}, this );
 		} );
 
-		pluginData.selected = _selectedPlugins[ pluginData.slug ];
-
 		if ( ! fetched ) {
 			return;
 		}
@@ -199,8 +196,6 @@ PluginsStore = {
 					plugins[ plugin.slug ] = assign( {}, plugin, { sites: [] } );
 				}
 				plugins[ plugin.slug ].sites.push( assign( {}, site, { plugin: plugin } ) );
-
-				plugins[ plugin.slug ].selected = _selectedPlugins[ plugin.slug ];
 			}, this );
 		} );
 		if ( ! fetched ) {
@@ -310,8 +305,7 @@ PluginsStore = {
 };
 
 PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		plugins;
+	var action = payload.action;
 	debug( 'register event Type', action.type, payload );
 
 	switch ( action.type ) {
@@ -330,28 +324,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
 			_fetching[ action.site.ID ] = false;
 			_pluginsBySite[ action.site.ID ] = {};
 			PluginsStore.emitChange();
-			break;
-
-		case 'TOGGLE_PLUGIN_SELECTION':
-			if ( _selectedPlugins[ action.plugin.slug ] ) {
-				delete _selectedPlugins[ action.plugin.slug ];
-			} else {
-				_selectedPlugins[ action.plugin.slug ] = true;
-			}
-			PluginsStore.emitChange();
-			break;
-
-		case 'SELECT_FILTER_PLUGINS':
-			_selectedPlugins = {};
-			if ( action.sites.length ) {
-				plugins = PluginsStore.getPlugins( action.sites, action.filter ) || [];
-				plugins.forEach( function( plugin ) {
-					_selectedPlugins[ plugin.slug ] = true;
-				} );
-				if ( ! action.options || ! action.options.silent ) {
-					PluginsStore.emitChange();
-				}
-			}
 			break;
 
 		case 'AUTOUPDATE_PLUGIN':

@@ -28,9 +28,7 @@ import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
 import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
 import PluginsStore from 'lib/plugins/store';
 import PluginsDataStore from 'lib/plugins/wporg-data/store';
 import PluginNotices from 'lib/plugins/notices';
@@ -54,45 +52,17 @@ export default React.createClass( {
 		return this.getPluginsState( this.props );
 	},
 
-	filterSelection: {
-		active( plugin ) {
-			if ( plugin.selected ) {
-				return some( plugin.sites, site => site.plugin && site.plugin.active );
-			}
-			return false;
-		},
-		inactive( plugin ) {
-			if ( plugin.selected ) {
-				return plugin.sites.some( site => site.plugin && ! site.plugin.active );
-			}
-			return false;
-		},
-		updates( plugin ) {
-			if ( plugin.selected ) {
-				return plugin.sites.some( site => site.plugin && site.plugin.update && site.canUpdateFiles );
-			}
-			return false;
-		},
-		selected( plugin ) {
-			return plugin.selected;
-		}
-	},
-
 	componentDidMount() {
 		debug( 'Plugins React component mounted.' );
 		this.props.sites.on( 'change', this.refreshPlugins );
 		PluginsStore.on( 'change', this.refreshPlugins );
 		PluginsDataStore.on( 'change', this.refreshPlugins );
-		PluginsLog.on( 'change', this.showDisconnectDialog );
 	},
 
 	componentWillUnmount() {
 		this.props.sites.removeListener( 'change', this.refreshPlugins );
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 		PluginsDataStore.removeListener( 'change', this.refreshPlugins );
-		PluginsLog.removeListener( 'change', this.showDisconnectDialog );
-
-		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAll(), 'none' );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -151,13 +121,6 @@ export default React.createClass( {
 
 	refreshPlugins( nextProps ) {
 		this.setState( this.getPluginsState( nextProps ) );
-	},
-
-	showDisconnectDialog() {
-		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
-			this.setState( { disconnectJetpackDialog: false } );
-			this.refs.dialog.open();
-		}
 	},
 
 	matchSearchTerms( search, plugin ) {
@@ -455,7 +418,6 @@ export default React.createClass( {
 						placeholder={ this.getSearchPlaceholder() } />
 				</SectionNav>
 				{ this.renderPluginsContent() }
-				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
 			</Main>
 		);
 	}
