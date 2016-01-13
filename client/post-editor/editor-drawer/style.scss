@@ -9,6 +9,10 @@
 
 .editor-drawer .accordion__toggle {
 	background: lighten( $gray, 30% );
+
+	&:hover {
+		background: $gray-light;
+	}
 }
 
 .editor-drawer .accordion:not( .is-expanded ) .accordion__subtitle::after {
