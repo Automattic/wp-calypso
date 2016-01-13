@@ -211,6 +211,26 @@ export default {
 		);
 	},
 
+	apps( context ) {
+		const AppsComponent = require( 'me/apps' ),
+			basePath = context.path;
+
+		titleActions.setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) );
+
+		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Get Apps' );
+
+		renderWithReduxStore(
+			React.createElement( AppsComponent,
+				{
+					userSettings: userSettings,
+					path: context.path
+				}
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
 	comments( context ) {
 		const CommentSettingsComponent = require( 'me/notification-settings/comment-settings' ),
 			basePath = context.path;

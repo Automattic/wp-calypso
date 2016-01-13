@@ -111,4 +111,5 @@ export default function() {
 	page( '/me/notifications/comments', controller.sidebar, controller.comments );
 	page( '/me/notifications/updates', controller.sidebar, controller.updates );
 	page( '/me/notifications/subscriptions', controller.sidebar, controller.notificationSubscriptions );
+	page( '/me/apps', controller.sidebar, controller.apps );
 };
