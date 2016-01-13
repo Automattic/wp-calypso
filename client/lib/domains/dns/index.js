@@ -98,12 +98,11 @@ function getNormalizedData( fieldValues, selectedDomainName ) {
 	var data = fieldValues;
 
 	data.data = getFieldWithDot( data.data );
+	data.name = getFieldWithDot( data.name );
 
 	if ( includes( [ 'A', 'AAAA' ], data.type ) ) {
 		data.name = removeTrailingDomain( data.name, selectedDomainName );
 	}
-
-	data.name = getFieldWithDot( data.name );
 
 	if ( data.target ) {
 		data.target = getFieldWithDot( data.target );
