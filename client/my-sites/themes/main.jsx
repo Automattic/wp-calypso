@@ -170,14 +170,6 @@ var Themes = React.createClass( {
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
 					actions={ bindActionCreators( Action, dispatch ) }
-					getOptions={ partialRight(
-						getButtonOptions,
-						this.isLoggedOut(),
-						bindActionCreators( Action, dispatch ),
-						this.setSelectedTheme,
-						this.togglePreview,
-						true
-					) }
 				/> }
 			</Main>
 		);

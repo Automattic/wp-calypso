@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
-import find from 'lodash/collection/find';
 import defer from 'lodash/function/defer';
 
 /**
@@ -12,14 +11,14 @@ import defer from 'lodash/function/defer';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import Helper from 'lib/themes/helpers';
+import i18n from 'lib/mixins/i18n';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
 		selectedAction: PropTypes.string.isRequired,
 		selectedTheme: PropTypes.object.isRequired,
 		onHide: PropTypes.func,
-		actions: PropTypes.object,
-		getOptions: PropTypes.func
+		actions: PropTypes.object
 	},
 
 	setSiteAndAction( action, theme, site ) {
@@ -34,15 +33,35 @@ const ThemesSiteSelectorModal = React.createClass( {
 		} );
 	},
 
+	getActionText( name ) {
+		return {
+			purchase: {
+				label: i18n.translate( 'Purchase', {
+					context: 'verb'
+				} ),
+				header: i18n.translate( 'Purchase on:', {
+					context: 'verb',
+					comment: 'label for selecting a site for which to purchase a theme'
+				} ),
+			},
+			activate: {
+				label: i18n.translate( 'Activate' ),
+				header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
+			},
+			customize: {
+				label: i18n.translate( 'Customize' ),
+				header: i18n.translate( 'Customize on:', { comment: 'label for selecting a site for which to customize a theme' } ),
+			}
+		}[ name ];
+	},
+
 	render() {
 		const {
 			selectedAction: action,
 			selectedTheme: theme,
-			onHide,
-			getOptions
+			onHide
 		} = this.props;
-		const options = getOptions( null, theme );
-		const option = find( options, { name: action } );
+		const option = this.getActionText( this.props.selectedAction );
 		const isPreviewingPremium = theme.price && action === 'preview';
 
 		return (
