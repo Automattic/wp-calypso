@@ -9,6 +9,7 @@ const page = require( 'page' );
 const controller = require( 'my-sites/controller' ),
 	upgradesController = require( './controller' ),
 	domainManagementController = require( './domain-management/controller' ),
+	trialsController = require( './trials/controller' ),
 	SiftScience = require( 'lib/siftscience' ),
 	config = require( 'config' ),
 	paths = require( './paths' ),
@@ -289,5 +290,14 @@ module.exports = function() {
 			controller.siteSelection,
 			upgradesController.checkout
 		);
+
+		page(
+			'/start-trial/:domain/:plan_name?',
+			adTracking.retarget,
+			controller.siteSelection,
+			trialsController.isEligible,
+			trialsController.startTrial
+		);
 	}
+
 };

@@ -73,7 +73,7 @@ sections = [
 	},
 	{
 		name: 'upgrades',
-		paths: [ '/domains', '/checkout' ],
+		paths: [ '/domains', '/checkout', '/start-trial' ],
 		module: 'my-sites/upgrades'
 	},
 	{

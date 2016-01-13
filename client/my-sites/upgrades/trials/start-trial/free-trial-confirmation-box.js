@@ -10,9 +10,9 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var isPlan = require( 'lib/products-values' ).isPlan,
-	PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
+	PayButton = require( 'my-sites/upgrades/checkout/pay-button' ),
+	PaymentBox = require( 'my-sites/upgrades/checkout/payment-box' ),
+	TermsOfService = require( './terms-of-service.jsx');
 
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {
@@ -35,6 +35,15 @@ const FreeTrialConfirmationBox = React.createClass( {
 				<TermsOfService />
 				<div className="payment-box-actions">
 					<PayButton
+						beforeSubmitText={
+							this.translate( 'Start %(days)s Day Free Trial', {
+								args: { days: '14' },
+								context: 'Pay button for free trials on /checkout'
+							} )
+						}
+						completingText={
+							this.translate( 'Starting your free trial…', { context: 'Loading state on /start-trial' } )
+						}
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />
 				</div>
@@ -57,6 +66,35 @@ const FreeTrialConfirmationBox = React.createClass( {
 		return (
 			<PaymentBox classSet={ classSet }>
 				{ this.content() }
+			</PaymentBox>
+		);
+	}
+} );
+
+FreeTrialConfirmationBox.Placeholder = React.createClass( {
+	displayName: 'FreeTrialConfirmationBox.Placeholder',
+
+	render: function() {
+		return (
+			<PaymentBox
+				classSet="selected is-empty"
+				contentClassSet="selected is-empty" >
+				<div className="payment-box-section">
+					<div className="placeholder-row placeholder"/>
+
+					<div className="placeholder-col-narrow placeholder-inline-pad">
+						<div className="placeholder" />
+					</div>
+				</div>
+
+				<TermsOfService />
+				<div className="payment-box-actions">
+					<div className="placeholder-button-container">
+						<div className="placeholder-col-narrow">
+							<div className="placeholder placeholder-button"></div>
+						</div>
+					</div>
+				</div>
 			</PaymentBox>
 		);
 	}

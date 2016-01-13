@@ -173,7 +173,7 @@ var TransactionStepsMixin = {
 
 		defer( () => {
 			// The Thank You page throws a rendering error if this is not in a defer.
-			page( this.props.redirectTo() );
+			page( this.props.redirectTo );
 		} );
 	}
 };
