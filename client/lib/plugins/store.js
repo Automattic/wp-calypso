@@ -186,22 +186,25 @@ PluginsStore = {
 		if ( sites.length === 0 ) {
 			return [];
 		}
-		sites.forEach( function( site ) {
-			var sitePlugins = PluginsStore.getSitePlugins( site );
+		sites.forEach( ( site ) => {
+			if ( sites.length > 1 && ! site.visible ) {
+				return;
+			}
+			const sitePlugins = PluginsStore.getSitePlugins( site );
 			if ( sitePlugins !== undefined ) {
 				fetched = true;
 			}
 			if ( ! sitePlugins ) {
 				return;
 			}
-			sitePlugins.forEach( function( plugin ) {
+			sitePlugins.forEach( ( plugin ) => {
 				if ( ! plugins[ plugin.slug ] ) {
 					plugins[ plugin.slug ] = assign( {}, plugin, { sites: [] } );
 				}
 				plugins[ plugin.slug ].sites.push( assign( {}, site, { plugin: plugin } ) );
 
 				plugins[ plugin.slug ].selected = _selectedPlugins[ plugin.slug ];
-			}, this );
+			} );
 		} );
 		if ( ! fetched ) {
 			return;
