@@ -10,11 +10,11 @@ var React = require( 'react' ),
  */
 var observe = require( 'lib/mixins/data-observe' ),
 	HeaderCake = require( 'components/header-cake' ),
-	StatsModule = require( './stats-module' ),
-	StatsStrings = require( './stats-strings' )(),
-	Countries = require( './stats-countries' ),
-	SummaryChart = require( './stats-summary-chart' ),
-	VideoPlayDetails = require( './stats-video-details' );
+	StatsModule = require( '../stats-module' ),
+	StatsStrings = require( '../stats-strings' )(),
+	Countries = require( '../stats-countries' ),
+	SummaryChart = require( '../stats-summary-chart' ),
+	VideoPlayDetails = require( '../stats-video-details' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsSummary',
