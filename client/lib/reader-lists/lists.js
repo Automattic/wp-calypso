@@ -2,6 +2,7 @@
 
 // External dependencies
 import { fromJS } from 'immutable';
+import get from 'lodash/object/get';
 import debugModule from 'debug';
 
 // Internal dependencies
@@ -17,19 +18,19 @@ const initialState = {
 	isFetching: false
 };
 
-function receiveList( state, data ) {
-	if ( ! data || ! data.list ) {
+function receiveList( state, newList ) {
+	if ( ! newList ) {
 		return state;
 	}
 
 	const existingLists = state.get( 'lists' );
-	const existingList = existingLists.get( +data.list.ID );
-	let updatedList = null;
+	const existingList = existingLists.get( +newList.ID );
 
+	let updatedList = null;
 	if ( existingList ) {
-		updatedList = existingList.mergeDeep( data.list );
+		updatedList = existingList.mergeDeep( newList );
 	} else {
-		updatedList = fromJS( data.list );
+		updatedList = fromJS( newList );
 	}
 
 	if ( existingList === updatedList ) {
@@ -37,15 +38,24 @@ function receiveList( state, data ) {
 		return state;
 	}
 
-	const updatedLists = existingLists.setIn( [ data.list.ID ], updatedList );
-
+	const updatedLists = existingLists.setIn( [ +newList.ID ], updatedList );
 	return state.set( 'lists', updatedLists );
 };
 
 const ReaderListsStore = createReducerStore( ( state, payload ) => {
+	const data = get( payload, 'action.data' );
+
 	switch ( payload.action.type ) {
 		case actionTypes.RECEIVE_READER_LIST:
-			return receiveList( state, payload.action.data );
+			return receiveList( state, data.list );
+
+		case actionTypes.RECEIVE_READER_LISTS:
+			if ( data && data.lists ) {
+				data.lists.forEach( function( list ) {
+					state = receiveList( state, list );
+				} );
+			}
+			return state;
 	}
 
 	return state;
