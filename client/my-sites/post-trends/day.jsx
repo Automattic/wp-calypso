@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 					isVisible={ this.state.showPopover }
 					position="top"
 					onClose={ noop }
-					className="chart__tooltip is-streak trends__tooltip"
+					className="chart__tooltip is-streak"
 					>
 					<Tooltip data={ this.buildTooltipData( date, data ) } />
 				</Popover>
@@ -116,5 +116,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-
 } );

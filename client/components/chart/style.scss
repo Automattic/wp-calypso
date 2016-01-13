@@ -491,10 +491,15 @@
 	}
 
 	&.is-streak {
+
+		margin-top: -5px;
+		height: 35px;
+
 		.tip-arrow {
-			&::before {
-				left: 87px;
-				top: -7px;
+
+	    	&::before {
+				left: 85px;
+				top: 30px;
 			}
 		}
 
@@ -539,7 +544,8 @@
 	}
 
 	&.is-published-item {
-			height: 19px;
+
+		height: 19px;
 
 		.label {
 			text-transform: none;
