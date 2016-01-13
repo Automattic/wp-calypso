@@ -13,8 +13,8 @@ export default React.createClass( {
 	displayName: 'StatsTabsTab',
 
 	propTypes: {
-		attr: PropTypes.string,
 		className: PropTypes.string,
+		gridicon: PropTypes.string,
 		label: PropTypes.string,
 		loading: PropTypes.bool,
 		selected: PropTypes.bool,
@@ -49,22 +49,26 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { attr, className, href, label, loading, selected, value } = this.props;
+		const { className, children, gridicon, href, label, loading, selected, value } = this.props;
 
-		const tabClassOptions = {
-			'is-selected': selected,
-			'is-loading': loading,
-			'is-low': ! value
-		};
+		const tabClass = classNames(
+			'stats-tab',
+			className,
+			{
+				'is-selected': selected,
+				'is-loading': loading,
+				'is-low': ! value
+			} );
 
-		tabClassOptions[ 'is-' + attr ] = true;
+		const linkClass = '#' === href ? 'no-link' : null;
 
 		return (
-			<li className={ classNames( 'module-tab', tabClassOptions ) } onClick={ this.clickHandler } >
-				<a href={ href } onClick={ this.handleLinkClick }>
-					<Gridicon icon={ className } size={ 18 } />
+			<li className={ tabClass } onClick={ this.clickHandler } >
+				<a href={ href } className={ linkClass } onClick={ this.handleLinkClick }>
+					{ gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null }
 					<span className="label">{ label }</span>
 					<span className="value">{ this.ensureValue( value ) }</span>
+					{ children }
 				</a>
 			</li>
 		);

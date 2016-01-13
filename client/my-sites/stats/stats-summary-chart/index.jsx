@@ -128,7 +128,7 @@ module.exports = React.createClass( {
 			attr: this.props.labelKey,
 			value: selectedBar ? this.state.selectedBar[ this.props.dataKey ] : null,
 			selected: true,
-			className: this.props.labelClass,
+			gridicon: this.props.labelClass,
 			label: this.props.tabLabel + label
 		};
 

@@ -12,6 +12,8 @@ import observe from 'lib/mixins/data-observe';
 import route from 'lib/route';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
 export default React.createClass( {
 	displayName: 'StatsSiteOverview',
@@ -23,15 +25,6 @@ export default React.createClass( {
 	},
 
 	mixins: [ observe( 'summaryData' ) ],
-
-	ensureValue( value ) {
-		if ( value || value === 0 ) {
-			return this.numberFormat( value );
-		}
-
-		// If no value present, return en-dash
-		return String.fromCharCode( 8211 );
-	},
 
 	isValueLow( value ) {
 		return ! value || 0 === value;
@@ -71,36 +64,32 @@ export default React.createClass( {
 						</a>
 					</h3>
 				</div>
-				<ul className="module-tabs">
-					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( views ) } ) }>
-						<a href={ siteStatsPath }>
-							<Gridicon icon="visible" size={ 18 } />
-							<span className="label">{ this.translate( 'Views', { context: 'noun' } ) }</span>
-							<span className="value">{ this.ensureValue( views ) }</span>
-						</a>
-					</li>
-					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( visitors ) } ) } >
-						<a href={ siteStatsPath + '?tab=visitors' }>
-							<Gridicon icon="user" size={ 18 } />
-							<span className="label">{ this.translate( 'Visitors', { context: 'noun' } ) }</span>
-							<span className="value">{ this.ensureValue( visitors ) }</span>
-						</a>
-					</li>
-					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( likes ) } ) } >
-						<a href={ siteStatsPath + '?tab=likes' }>
-							<Gridicon icon="star" size={ 18 } />
-							<span className="label">{ this.translate( 'Likes', { context: 'noun' } ) }</span>
-							<span className="value">{ this.ensureValue( likes ) }</span>
-						</a>
-					</li>
-					<li className={ classNames( 'module-tab', { 'is-low': this.isValueLow( comments ) } ) } >
-						<a href={ siteStatsPath + '?tab=comments' }>
-							<Gridicon icon="comment" size={ 18 } />
-							<span className="label">{ this.translate( 'Comments', { context: 'noun' } ) }</span>
-							<span className="value">{ this.ensureValue( comments ) }</span>
-						</a>
-					</li>
-				</ul>
+				<StatsTabs>
+					<StatsTab
+						className={ this.isValueLow( views ) ? 'is-low' : null }
+						href={ siteStatsPath }
+						gridicon="visible"
+						label={ this.translate( 'Views', { context: 'noun' } ) }
+						value={ views } />
+					<StatsTab
+						className={ this.isValueLow( visitors ) ? 'is-low' : null }
+						href={ siteStatsPath + '?tab=visitors' }
+						gridicon="user"
+						label={ this.translate( 'Visitors', { context: 'noun' } ) }
+						value={ visitors } />
+					<StatsTab
+						className={ this.isValueLow( likes ) ? 'is-low' : null }
+						href={ siteStatsPath + '?tab=likes' }
+						gridicon="star"
+						label={ this.translate( 'Likes', { context: 'noun' } ) }
+						value={ likes } />
+					<StatsTab
+						className={ this.isValueLow( comments ) ? 'is-low' : null }
+						href={ siteStatsPath + '?tab=comments' }
+						gridicon="comment"
+						label={ this.translate( 'Comments', { context: 'noun' } ) }
+						value={ comments } />
+				</StatsTabs>
 			</Card>
 		);
 	}
