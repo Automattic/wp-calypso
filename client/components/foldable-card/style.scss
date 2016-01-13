@@ -25,6 +25,13 @@
 		cursor: pointer;
 	}
 
+	&.has-border{
+		.foldable-card__summary,
+		.foldable-card__summary_expanded{
+			margin-right: 48px;
+		}
+	}
+
 	.foldable-card.is-compact & {
 		padding: 8px 16px;
 		min-height: 40px;
@@ -98,6 +105,10 @@ button.foldable-card__action {
 		.foldable-card.is-expanded & {
 			transform: rotate( 180deg );
 		}
+	}
+
+	&.has-border{
+		border-left: 1px $gray-light solid;
 	}
 
 	.gridicon:hover {
