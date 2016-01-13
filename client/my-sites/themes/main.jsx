@@ -26,7 +26,7 @@ var Main = require( 'components/main' ),
 	ThemesSiteSelectorModal = require( './themes-site-selector-modal' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
-	getButtonOptions = require( './theme-options' ),
+	getButtonOptions = require( './theme-options' ).getButtonOptions,
 	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' ),
 	user = require( 'lib/user' )();
 

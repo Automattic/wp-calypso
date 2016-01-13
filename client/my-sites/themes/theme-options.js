@@ -12,12 +12,69 @@ import pick from 'lodash/object/pick';
 import i18n from 'lib/mixins/i18n';
 import Helper from 'lib/themes/helpers';
 
-export default function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
+export const buttonOptions = {
+	signup: {
+		label: i18n.translate( 'Choose this design', {
+			comment: 'when signing up for a WordPress.com account with a selected theme'
+		} ),
+		hasUrl: true,
+		isHidden: ( site, theme, isLoggedOut ) => ! isLoggedOut
+	},
+	preview: {
+		label: i18n.translate( 'Preview', {
+			context: 'verb'
+		} ),
+		header: i18n.translate( 'Preview on:', {
+			context: 'verb',
+			comment: 'label for selecting a site on which to preview a theme'
+		} ),
+		hasAction: true,
+		hasUrl: false,
+		isHidden: ( site, theme ) => theme.active
+	},
+	purchase: {
+		label: i18n.translate( 'Purchase', {
+			context: 'verb'
+		} ),
+		header: i18n.translate( 'Purchase on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to purchase a theme'
+		} ),
+		hasAction: true,
+		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || theme.purchased || ! theme.price
+	},
+	activate: {
+		label: i18n.translate( 'Activate' ),
+		header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
+		hasAction: true,
+		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
+	},
+	customize: {
+		label: i18n.translate( 'Customize' ),
+		header: i18n.translate( 'Customize on:', { comment: 'label for selecting a site for which to customize a theme' } ),
+		hasAction: true,
+		isHidden: ( site, theme ) => ! theme.active || ( site && ! site.isCustomizable() )
+	},
+	separator: {
+		separator: true
+	},
+	details: {
+		label: i18n.translate( 'Details' ),
+		hasUrl: true
+	},
+	support: {
+		label: i18n.translate( 'Support' ),
+		hasUrl: true,
+		isHidden: site => site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+	},
+};
+
+export function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
 	return mapValues(
 		mapValues(
 			pick(
-				rawOptions( site, theme, isLoggedOut ),
-				option => ! option.isHidden
+				buttonOptions,
+				option => ! ( option.isHidden && option.isHidden( site, theme, isLoggedOut ) )
 			), appendUrl
 		), appendAction
 	);
@@ -69,62 +126,3 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 		};
 	}
 };
-
-function rawOptions( site, theme, isLoggedOut ) {
-	return {
-		signup: {
-			label: i18n.translate( 'Choose this design', {
-				comment: 'when signing up for a WordPress.com account with a selected theme'
-			} ),
-			hasUrl: true,
-			isHidden: ! isLoggedOut
-		},
-		preview: {
-			label: i18n.translate( 'Preview', {
-				context: 'verb'
-			} ),
-			header: i18n.translate( 'Preview on:', {
-				context: 'verb',
-				comment: 'label for selecting a site on which to preview a theme'
-			} ),
-			hasAction: true,
-			hasUrl: false,
-			isHidden: theme.active
-		},
-		purchase: {
-			label: i18n.translate( 'Purchase', {
-				context: 'verb'
-			} ),
-			header: i18n.translate( 'Purchase on:', {
-				context: 'verb',
-				comment: 'label for selecting a site for which to purchase a theme'
-			} ),
-			hasAction: true,
-			isHidden: isLoggedOut || theme.active || theme.purchased || ! theme.price
-		},
-		activate: {
-			label: i18n.translate( 'Activate' ),
-			header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-			hasAction: true,
-			isHidden: isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
-		},
-		customize: {
-			label: i18n.translate( 'Customize' ),
-			header: i18n.translate( 'Customize on:', { comment: 'label for selecting a site for which to customize a theme' } ),
-			hasAction: true,
-			isHidden: ! theme.active || ( site && ! site.isCustomizable() )
-		},
-		separator: {
-			separator: true
-		},
-		details: {
-			label: i18n.translate( 'Details' ),
-			hasUrl: true
-		},
-		support: {
-			label: i18n.translate( 'Support' ),
-			hasUrl: true,
-			isHidden: site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
-		},
-	};
-}
