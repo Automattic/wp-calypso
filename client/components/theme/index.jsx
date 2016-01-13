@@ -5,7 +5,8 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' ),
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/object/pick' ),
+	size = require( 'lodash/collection/size' );
 
 /**
  * Internal dependencies
@@ -42,7 +43,7 @@ var Theme = React.createClass( {
 		// Called when the more button is clicked
 		onMoreButtonClick: React.PropTypes.func,
 		// Options to populate the 'More' button popover menu with
-		buttonContents: React.PropTypes.arrayOf(
+		buttonContents: React.PropTypes.objectOf(
 			React.PropTypes.shape( {
 				label: React.PropTypes.string,
 				action: React.PropTypes.func,
@@ -57,7 +58,7 @@ var Theme = React.createClass( {
 	getDefaultProps: function() {
 		return ( {
 			isPlaceholder: false,
-			buttonContents: [],
+			buttonContents: {},
 			onMoreButtonClick: noop,
 			actionLabel: ''
 		} );
@@ -115,7 +116,6 @@ var Theme = React.createClass( {
 		}
 
 		const screenshotWidth = window && window.devicePixelRatio > 1 ? 680 : 340;
-
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
@@ -144,7 +144,7 @@ var Theme = React.createClass( {
 						{ this.props.purchased && ! this.props.active &&
 							<span className="price">{ this.translate( 'Purchased' ) }</span>
 						}
-						{ this.props.buttonContents.length ? <ThemeMoreButton id={ this.props.id }
+						{ size( this.props.buttonContents ) ? <ThemeMoreButton id={ this.props.id }
 							index={ this.props.index }
 							onClick={ this.props.onMoreButtonClick }
 							price={ this.props.price }

@@ -3,6 +3,8 @@
  */
 import titleCase from 'to-title-case';
 import assign from 'lodash/object/assign';
+import mapValues from 'lodash/object/mapValues';
+import pick from 'lodash/object/pick';
 
 /**
  * Internal dependencies
@@ -11,13 +13,17 @@ import i18n from 'lib/mixins/i18n';
 import Helper from 'lib/themes/helpers';
 
 export default function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
-	return rawOptions( site, theme, isLoggedOut )
-		.filter( option => ! option.isHidden )
-		.map( appendUrl )
-		.map( appendAction );
+	return mapValues(
+		mapValues(
+			pick(
+				rawOptions( site, theme, isLoggedOut ),
+				option => ! option.isHidden
+			), appendUrl
+		), appendAction
+	);
 
-	function appendUrl( option ) {
-		const { hasUrl, name } = option;
+	function appendUrl( option, name ) {
+		const { hasUrl } = option;
 
 		if ( ! hasUrl ) {
 			return option;
@@ -31,8 +37,8 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 		} );
 	}
 
-	function appendAction( option ) {
-		const { hasAction, name } = option;
+	function appendAction( option, name ) {
+		const { hasAction } = option;
 
 		if ( ! hasAction ) {
 			return option;
@@ -65,17 +71,15 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 };
 
 function rawOptions( site, theme, isLoggedOut ) {
-	return [
-		{
-			name: 'signup',
+	return {
+		signup: {
 			label: i18n.translate( 'Choose this design', {
 				comment: 'when signing up for a WordPress.com account with a selected theme'
 			} ),
 			hasUrl: true,
 			isHidden: ! isLoggedOut
 		},
-		{
-			name: 'preview',
+		preview: {
 			label: i18n.translate( 'Preview', {
 				context: 'verb'
 			} ),
@@ -87,8 +91,7 @@ function rawOptions( site, theme, isLoggedOut ) {
 			hasUrl: false,
 			isHidden: theme.active
 		},
-		{
-			name: 'purchase',
+		purchase: {
 			label: i18n.translate( 'Purchase', {
 				context: 'verb'
 			} ),
@@ -99,33 +102,29 @@ function rawOptions( site, theme, isLoggedOut ) {
 			hasAction: true,
 			isHidden: isLoggedOut || theme.active || theme.purchased || ! theme.price
 		},
-		{
-			name: 'activate',
+		activate: {
 			label: i18n.translate( 'Activate' ),
 			header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 			hasAction: true,
 			isHidden: isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
 		},
-		{
-			name: 'customize',
+		customize: {
 			label: i18n.translate( 'Customize' ),
 			header: i18n.translate( 'Customize on:', { comment: 'label for selecting a site for which to customize a theme' } ),
 			hasAction: true,
 			isHidden: ! theme.active || ( site && ! site.isCustomizable() )
 		},
-		{
+		separator: {
 			separator: true
 		},
-		{
-			name: 'details',
+		details: {
 			label: i18n.translate( 'Details' ),
 			hasUrl: true
 		},
-		{
-			name: 'support',
+		support: {
 			label: i18n.translate( 'Support' ),
 			hasUrl: true,
 			isHidden: site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 		},
-	];
+	};
 }
