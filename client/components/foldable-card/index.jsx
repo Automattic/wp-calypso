@@ -23,7 +23,6 @@ var FoldableCard = React.createClass( {
 		expandedSummary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ),
 		expanded: React.PropTypes.bool,
 		icon: React.PropTypes.string,
-		iconBorder: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
 		onClose: React.PropTypes.func,
 		onOpen: React.PropTypes.func,
@@ -43,7 +42,6 @@ var FoldableCard = React.createClass( {
 			cardKey: '',
 			icon: 'chevron-down',
 			isExpanded: false,
-			iconBorder: false
 		};
 	},
 
@@ -111,7 +109,7 @@ var FoldableCard = React.createClass( {
 			headerClickAction = this.props.clickableHeader ? this.getClickAction() : null,
 			headerClasses = classNames( 'foldable-card__header', {
 				'is-clickable': !! this.props.clickableHeader,
-				'has-border': !! this.props.iconBorder
+				'has-border': !! this.props.summary
 			} );
 		return (
 			<div className={ headerClasses } onClick={ headerClickAction }>

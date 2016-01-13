@@ -55,15 +55,6 @@ module.exports = React.createClass( {
 				</p>
 				<p>
 					<FoldableCard
-						header="This is a FoldableCard with iconBorder"
-						iconBorder={ true }
-						summary={ <button className="button">Update</button> }
-						expandedSummary={ <button className="button">Update</button> }>
-						Nothing to see here. Keep walking!
-					</FoldableCard>
-				</p>
-				<p>
-					<FoldableCard
 						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
 						summary={ <button className="button">Update</button> }
 						expandedSummary={ <button className="button">Update</button> }>
