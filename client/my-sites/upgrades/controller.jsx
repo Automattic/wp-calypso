@@ -19,6 +19,7 @@ var analytics = require( 'analytics' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	plansList = require( 'lib/plans-list' )(),
 	productsList = require( 'lib/products-list' )(),
+	TransactionStore = require( 'lib/transaction/store'),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 module.exports = {
@@ -168,7 +169,8 @@ module.exports = {
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
 			storedCards = require( 'lib/stored-cards' )(),
-			basePath = route.sectionify( context.path );
+			basePath = route.sectionify( context.path ),
+			temporaryCart = require( 'lib/cart/temporary' )();
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
@@ -176,28 +178,53 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
-		ReactDom.render(
-			(
-				<CheckoutData>
+		if ( temporaryCart ) {
+			ReactDom.render(
+				(
 					<Checkout
+						cart={ temporaryCart }
+						transaction={ TransactionStore.get() }
 						cards={ storedCards }
 						planName={ context.params.plan_name }
 						plans={ plansList }
 						productsList={ productsList }
 						sites={ sites } />
-				</CheckoutData>
-			),
-			document.getElementById( 'primary' )
-		);
+				),
+				document.getElementById( 'primary' )
+			);
 
-		ReactDom.render(
-			(
-				<CartData>
-					<SecondaryCart selectedSite={ sites.getSelectedSite() } />
-				</CartData>
-			),
-			document.getElementById( 'secondary' )
-		);
+			ReactDom.render(
+				(
+					<SecondaryCart
+						selectedSite={ sites.getSelectedSite() }
+						cart={ temporaryCart } />
+				),
+				document.getElementById( 'secondary' )
+			);
+		} else {
+			ReactDom.render(
+				(
+					<CheckoutData>
+						<Checkout
+							cards={ storedCards }
+							planName={ context.params.plan_name }
+							plans={ plansList }
+							productsList={ productsList }
+							sites={ sites } />
+					</CheckoutData>
+				),
+				document.getElementById( 'primary' )
+			);
+
+			ReactDom.render(
+				(
+					<CartData>
+						<SecondaryCart selectedSite={ sites.getSelectedSite() } />
+					</CartData>
+				),
+				document.getElementById( 'secondary' )
+			);
+		}
 	},
 
 	checkoutThankYou: function( context ) {
