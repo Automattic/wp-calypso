@@ -491,16 +491,12 @@
 	}
 
 	&.is-streak {
-
 		margin-top: -5px;
 		height: 35px;
 
-		.tip-arrow {
-
-	    	&::before {
-				left: 85px;
-				top: 30px;
-			}
+		.tip-arrow::before {
+			left: 85px;
+			top: 30px;
 		}
 
 		.tip-inner {
