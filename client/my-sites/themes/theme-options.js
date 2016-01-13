@@ -10,9 +10,9 @@ import assign from 'lodash/object/assign';
 import i18n from 'lib/mixins/i18n';
 import Helper from 'lib/themes/helpers';
 
-export default function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview, showAll = false ) {
+export default function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
 	return rawOptions( site, theme, isLoggedOut )
-		.filter( option => showAll || ! option.isHidden )
+		.filter( option => ! option.isHidden )
 		.map( appendUrl )
 		.map( appendAction );
 
