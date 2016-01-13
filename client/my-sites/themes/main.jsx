@@ -96,6 +96,19 @@ var Themes = React.createClass( {
 		return ! user.get();
 	},
 
+	getSelectedAction: function( action, theme ) {
+		const getOptions = partialRight(
+			getButtonOptions,
+			this.isLoggedOut(), // always false
+			bindActionCreators( Action, this.props.dispatch ), // redundant
+			this.setSelectedTheme,
+			this.togglePreview,
+			true
+		);
+		const options = getOptions( null, theme ); // site! pick first, then bind!
+		const option = find( options, { name: action } );
+	},
+
 	renderJetpackMessage: function() {
 		var site = this.props.sites.getSelectedSite();
 		return (
@@ -171,8 +184,8 @@ var Themes = React.createClass( {
 					actions={ bindActionCreators( Action, dispatch ) }
 					getOptions={ partialRight(
 						getButtonOptions,
-						this.isLoggedOut(),
-						bindActionCreators( Action, dispatch ),
+						this.isLoggedOut(), // always false
+						bindActionCreators( Action, dispatch ), // redundant
 						this.setSelectedTheme,
 						this.togglePreview,
 						true
