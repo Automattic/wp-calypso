@@ -13,7 +13,7 @@ import Comments from '../stats-comments';
 import Followers from '../module-followers';
 import PostTrends from 'my-sites/post-trends';
 import SiteOverview from '../overview';
-import SiteOverviewPlaceholder from 'my-sites/stats/module-site-overview-placeholder';
+import SiteOverviewPlaceholder from '../stats-overview-placeholder';
 import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
