@@ -204,7 +204,7 @@ export function failExport( failureReason ) {
 		failureReason,
 		{
 			button: i18n.translate( 'Get Help' ),
-			href: 'https://support.wordpress.com/'
+			href: '/help/contact'
 		}
 	);
 
