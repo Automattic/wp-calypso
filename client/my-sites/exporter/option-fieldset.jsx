@@ -40,7 +40,7 @@ module.exports = React.createClass( {
 		if ( this.props.isLoadingOptions ) {
 			return (
 				<div key={ key } className="exporter__placeholder-text">
-					Loading options...
+					{ this.translate( 'Loading options…' ) }
 				</div>
 			);
 		}

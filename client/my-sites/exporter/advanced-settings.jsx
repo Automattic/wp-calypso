@@ -35,11 +35,11 @@ export default React.createClass( {
 			feedback: this.translate( 'Feedback' )
 		};
 		const defaultLabels = {
-			author: 'All Authors',
-			status: 'All Statuses',
-			startDate: 'Start Date…',
-			endDate: 'End Date…',
-			category: 'All Categories'
+			author: this.translate( 'All Authors' ),
+			status: this.translate( 'All Statuses' ),
+			startDate: this.translate( 'Start Date…' ),
+			endDate: this.translate( 'End Date…' ),
+			category: this.translate( 'All Categories' )
 		}
 		let buildMenu = ( contentType, setting, optionList ) => {
 			return {
@@ -92,7 +92,7 @@ export default React.createClass( {
 					<OptionFieldset { ...buildOptionProps( 'posts' ) } />
 					<OptionFieldset { ...buildOptionProps( 'pages' ) } />
 					<OptionFieldset { ...buildOptionProps( 'feedback' ) }
-						description={ this.translate( 'Survey results etc.' ) }/>
+						description={ this.translate( 'Survey results etc.' ) } />
 				</div>
 				<SpinnerButton
 					className="exporter__export-button"
