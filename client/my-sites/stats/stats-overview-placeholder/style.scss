@@ -76,3 +76,8 @@
 		color: $transparent;
 	}
 }
+
+// Show block placeholder on the summary page only
+.stats-module.is-loading.summary .module-placeholder.is-block {
+	display: block;
+}
