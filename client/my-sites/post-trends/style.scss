@@ -117,12 +117,12 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
-	border: 1px solid lighten( $gray, 30% );
 	background-color: lighten( $gray, 20% );
+	margin: 1px;
 }
 
 .post-trends__day,
-.post-trends__key-day{
+.post-trends__key-day {
 	&.is-outside-month {
 		background-color: $transparent;
 	}
@@ -161,6 +161,7 @@
 }
 
 @include breakpoint( ">960px" ) {
+
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
 		display: none;
@@ -168,6 +169,7 @@
 }
 
 @include breakpoint( "<960px" ) {
+
 	.post-trends__year {
 		margin: 0 40px 0;
 	}
