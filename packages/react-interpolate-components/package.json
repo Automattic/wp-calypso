@@ -1,0 +1,43 @@
+{
+  "name": "react-interpolate-components",
+  "version": "0.0.0",
+  "description": "Convert strings into structured React components.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Automattic/wp-calypso/tree/master/packages/react-interpolate-components"
+  },
+  "main": "lib/index.js",
+  "keywords": [
+    "react",
+    "react-component",
+    "interpolation"
+  ],
+  "engines": {
+    "node": ">=4.2.3"
+  },
+  "scripts": {
+	"compile": "babel -sd lib/ src/",
+	"prepublish": "npm run compile",
+	"test": "make test"
+  },
+  "peerDependencies": {
+      "react": "^0.14.3",
+      "react-addons-create-fragment": "^0.14.3",
+      "react-dom": "^0.14.3"
+  },
+  "devDependencies": {
+    "babel": "^5.8.12",
+	"babel-core": "^5.8.12",
+    "babel-runtime": "^5.8.12",
+	"mocha": "^2.3.4"
+  },
+  "bugs": {
+    "url": "https://github.com/Automattic/wp-calypso/issues"
+  },
+  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/react-interpolate-components#readme",
+  "directories": {
+    "test": "test"
+  },
+  "author": "Bob Ralian <bob.ralian@gmail.com> (http://github.com/rralian)",
+  "license": "GPL-2.0"
+}
