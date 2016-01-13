@@ -8,12 +8,12 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
+var toggle = require( '../mixin-toggle' ),
 	SelectDropdown = require( 'components/select-dropdown' ),
-	StatsList = require( './stats-list' ),
+	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( './stats-error' ),
-	skeleton = require( './mixin-skeleton' ),
+	ErrorPanel = require( '../stats-error' ),
+	skeleton = require( '../mixin-skeleton' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' );

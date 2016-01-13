@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import Followers from '../module-followers-page.jsx';
+import Followers from '../stats-followers-page';
 import HeaderCake from 'components/header-cake';
 import analytics from 'analytics';
 
