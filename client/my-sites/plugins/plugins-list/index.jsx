@@ -370,7 +370,9 @@ export default React.createClass( {
 					hasAllNoManageSites={ hasAllNoManageSites }
 					plugin={ plugin }
 					sites={ plugin.sites }
-					progress={ false }
+					progress={ this.props.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
+					errors={ this.props.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
+					notices={ this.props.notices }
 					isSelected={ this.isSelected( plugin ) }
 					isSelectable={ this.state.bulkManagement }
 					onClick={ selectThisPlugin }
