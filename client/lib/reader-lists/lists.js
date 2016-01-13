@@ -1,128 +1,70 @@
+// Reader Lists Store
+
 // External dependencies
-import { decodeEntities } from 'lib/formatting';
-import dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
-import isEqual from 'lodash/lang/isEqual';
-import last from 'lodash/array/last';
+import { fromJS } from 'immutable';
+import debugModule from 'debug';
 
 // Internal dependencies
 import { action as actionTypes } from './constants';
+import { createReducerStore } from 'lib/store';
 
-var lists = {}, errors = [], updatedLists = {}, isFetching = false, ListStore;
+const debug = debugModule( 'calypso:reader-lists-items' ); //eslint-disable-line no-unused-vars
 
-function keyForList( owner, slug ) {
-	return owner + '-' + slug;
-}
-
-function getListURL( list ) {
-	return '/read/list/' + encodeURIComponent( list.owner ) + '/' + encodeURIComponent( list.slug ) + '/';
-}
-
-ListStore = {
-	get( owner, slug ) {
-		return lists[ keyForList( owner, slug ) ];
-	},
-
-	getLastError() {
-		return last( errors );
-	},
-
-	isUpdated( listId ) {
-		return !! updatedLists[ listId ];
-	},
-
-	isFetching() {
-		return isFetching;
-	},
-
-	setIsFetching( val ) {
-		isFetching = val;
-		ListStore.emit( 'change' );
-	}
+const initialState = {
+	lists: {},
+	updatedLists: {},
+	errors: [],
+	isFetching: false
 };
 
-emitter( ListStore );
-
-function receiveList( newList ) {
-	const existing = ListStore.get( newList.owner, newList.slug );
-
-	newList.URL = getListURL( newList );
-	newList.title = decodeEntities( newList.title );
-
-	if ( ! isEqual( existing, newList ) ) {
-		lists[ keyForList( newList.owner, newList.slug ) ] = newList;
-		ListStore.emit( 'change' );
-	}
-}
-
-function markUpdatedList( newList ) {
-	updatedLists[ newList.ID ] = true;
-	ListStore.emit( 'change' );
-}
-
-function markPending( owner, slug ) {
-	var key = keyForList( owner, slug ),
-		list = lists[ key ];
-
-	if ( ! list ) {
-		list = {
-			owner: owner,
-			slug: slug,
-			title: slug,
-			ID: null,
-			_state: 'pending'
-		};
-		lists[ key ] = list;
-		ListStore.emit( 'change' );
-	}
-}
-
-function clearUpdatedLists() {
-	updatedLists = {};
-	ListStore.emit( 'change' );
-}
-
-ListStore.dispatchToken = dispatcher.register( function( payload ) {
-	const action = payload.action;
-
-	if ( ! action ) {
-		return;
+function receiveList( state, data ) {
+	if ( ! data || ! data.list ) {
+		return state;
 	}
 
-	if ( action.error ) {
-		errors.push( action.error );
-		return;
+	const existingLists = state.get( 'lists' );
+	const existingList = existingLists.get( +data.list.ID );
+	let updatedList = null;
+
+	if ( existingList ) {
+		updatedList = existingList.mergeDeep( data.list );
+	} else {
+		updatedList = fromJS( data.list );
 	}
 
-	switch ( action.type ) {
+	if ( existingList === updatedList ) {
+		// no change, bail
+		return state;
+	}
+
+	const updatedLists = existingLists.setIn( [ data.list.ID ], updatedList );
+
+	return state.set( 'lists', updatedLists );
+};
+
+const ReaderListsStore = createReducerStore( ( state, payload ) => {
+	switch ( payload.action.type ) {
 		case actionTypes.RECEIVE_READER_LIST:
-			if ( action.data && action.data.list ) {
-				receiveList( action.data.list );
-			}
-			break;
-		case actionTypes.RECEIVE_READER_LISTS:
-			if ( action.data && action.data.lists ) {
-				action.data.lists.forEach( receiveList );
-			}
-			break;
-		case actionTypes.UPDATE_READER_LIST:
-			receiveList( action.data );
-			break;
-		case actionTypes.RECEIVE_CREATE_READER_LIST:
-		case actionTypes.RECEIVE_UPDATE_READER_LIST:
-			receiveList( action.data );
-			markUpdatedList( action.data );
-			break;
-		case actionTypes.FOLLOW_LIST:
-			markPending( action.data.owner, action.data.slug );
-			break;
-		case actionTypes.RECEIVE_FOLLOW_LIST:
-			receiveList( action.data );
-			break;
-		case actionTypes.DISMISS_READER_LIST_NOTICE:
-			clearUpdatedLists();
-			break;
+			return receiveList( state, payload.action.data );
 	}
-} );
 
-module.exports = ListStore;
+	return state;
+}, fromJS( initialState ) );
+
+ReaderListsStore.getLists = function() {
+	const state = ReaderListsStore.get();
+	return state.get( 'lists' );
+};
+
+ReaderListsStore.isFetching = function() {
+	const state = ReaderListsStore.get();
+	return state.get( 'isFetching' );
+};
+
+ReaderListsStore.getLastError = function() {
+	const state = ReaderListsStore.get();
+	return state.has( 'errors' ) ? state.get( 'errors' ).last() : null;
+};
+
+export default ReaderListsStore;
+
