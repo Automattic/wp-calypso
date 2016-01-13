@@ -1,7 +1,7 @@
 // Reader Lists Store
 
 // External dependencies
-import { fromJS } from 'immutable';
+import { fromJS, Map } from 'immutable';
 import get from 'lodash/object/get';
 import debugModule from 'debug';
 
@@ -68,6 +68,9 @@ const ReaderListsStore = createReducerStore( ( state, payload ) => {
 			state = receiveList( state, data.list );
 			state = markUpdatedList( state, data.list.ID );
 			return state;
+
+		case actionTypes.DISMISS_READER_LIST_NOTICE:
+			return state.set( 'updatedLists', new Map() );
 	}
 
 	return state;

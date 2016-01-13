@@ -70,4 +70,13 @@ describe( 'Reader Lists Store', function() {
 		expect( lists.last().toJS() ).to.eql( newList );
 		expect( store.isUpdated( 4 ) ).to.eql( true );
 	} );
+
+	it( 'dismisses a notice about an updated list', function() {
+		Dispatcher.handleViewAction( {
+			type: action.DISMISS_READER_LIST_NOTICE,
+			listId: 4
+		} );
+
+		expect( store.isUpdated( 4 ) ).to.eql( false );
+	} );
 } );
