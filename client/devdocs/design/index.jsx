@@ -20,6 +20,7 @@ var SearchCard = require( 'components/search-card' ),
 	FollowButtons = require( 'components/follow-button/docs/example' ),
 	Accordions = require( 'components/accordion/docs/example' ),
 	Gridicons = require( 'components/gridicon/docs/example' ),
+	SocialLogos = require( 'components/social-logo/docs/example' ),
 	SelectDropdown = require( 'components/select-dropdown/docs/example' ),
 	SegmentedControl = require( 'components/segmented-control/docs/example' ),
 	Cards = require( 'components/card/docs/example' ),
@@ -65,7 +66,7 @@ Hider = React.createClass( {
 		hide: React.PropTypes.bool,
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
+	shouldComponentUpdate: function( nextProps ) {
 		return this.props.hide !== nextProps.hide;
 	},
 
@@ -111,11 +112,11 @@ Collection = React.createClass( {
 
 		examples = this.props.children.map( ( example ) => {
 			return (
-				<Hider hide={ this.shouldWeHide( example ) } key={ "example-" + example.type.displayName }>
+				<Hider hide={ this.shouldWeHide( example ) } key={ 'example-' + example.type.displayName }>
 					{ example }
 				</Hider>
 			);
-		});
+		} );
 
 		return (
 			<div className="collection">
@@ -123,7 +124,6 @@ Collection = React.createClass( {
 				{ examples }
 			</div>
 		);
-
 	}
 } );
 
@@ -184,6 +184,7 @@ module.exports = React.createClass( {
 					<AddNewButtons />
 					<CommentButtons />
 					<Gridicons />
+					<SocialLogos />
 					<LikeButtons />
 					<FollowButtons />
 					<Accordions />
