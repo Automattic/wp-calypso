@@ -23,7 +23,10 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	ReaderListsStore = require( 'lib/reader-lists/lists' ),
 	ReaderListActions = require( 'lib/reader-lists/actions' ),
 	ReaderTeams = require( 'lib/reader-teams' ),
+	Sidebar = require( 'layout/sidebar' ),
 	SidebarActions = require( 'lib/reader-sidebar/actions' ),
+	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
@@ -261,9 +264,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<ul className="wpcom-sidebar sidebar reader-sidebar" onClick={ this.handleClick }>
-				<li className="sidebar-menu sidebar-streams">
-					<h2 className="sidebar-heading">{ this.translate( 'Streams' ) }</h2>
+			<Sidebar onClick={ this.handleClick }>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Streams' ) }</SidebarHeading>
 					<ul>
 						<li className={ this.itemLinkClass( '/', { 'sidebar-streams__following': true } ) }>
 							<a href="/">
@@ -310,10 +313,9 @@ module.exports = React.createClass( {
 							</a>
 						</li>
 					</ul>
-				</li>
-
-				<li className="sidebar-menu sidebar-dynamic-menu">
-					<h2 className="sidebar-heading">{ this.translate( 'Lists' ) }</h2>
+				</SidebarMenu>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Lists' ) }</SidebarHeading>
 					<ul>
 						{ this.renderLists() }
 
@@ -321,18 +323,17 @@ module.exports = React.createClass( {
 							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'New List' ) } ref="addListInput" onKeyDown={ this.handleCreateListKeyDown } />
 						</li>
 					</ul>
-				</li>
-
-				<li className="sidebar-menu sidebar-dynamic-menu">
-					<h2 className="sidebar-heading">{ this.translate( 'Tags' ) }</h2>
+				</SidebarMenu>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Tags' ) }</SidebarHeading>
 					<ul>
 						{ this.renderTags() }
 						<li className="sidebar-dynamic-menu__add" key="add-tag">
 							<input className="sidebar-dynamic-menu__add-input" type="text" placeholder={ this.translate( 'Follow a Tag' ) } ref="addTagInput" onKeyDown={ this.handleFollowTagKeyDown } />
 						</li>
 					</ul>
-				</li>
-			</ul>
+				</SidebarMenu>
+			</Sidebar>
 		);
 	}
 } );

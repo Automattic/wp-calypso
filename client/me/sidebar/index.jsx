@@ -8,6 +8,9 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MenuItem = require( './sidebar-item' ),
+	Sidebar = require( 'layout/sidebar' ),
+	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
@@ -55,75 +58,70 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="me-sidebar__menu">
-				<ul className="wpcom-sidebar sidebar">
+			<Sidebar>
+				<ProfileGravatar user={ this.props.user.get() } />
+				<FormButton
+					className="me-sidebar__menu__signout"
+					isPrimary={ false }
+					onClick={ this.recordClickEvent( 'Sidebar Sign Out Link', userUtilities.logout ) }
+					title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
+				>
+					{ this.translate( 'Sign Out' ) }
+				</FormButton>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
+					<ul>
+						<MenuItem
+							selected={ selected === 'profile' }
+							href={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
+							label={ this.translate( 'My Profile' ) }
+							icon="user"
+						/>
 
-					<ProfileGravatar user={ this.props.user.get() } />
+						<MenuItem
+							selected={ selected === 'account' }
+							href={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
+							label={ this.translate( 'Account Settings' ) }
+							icon="cog"
+						/>
 
-					<FormButton
-						className="me-sidebar__menu__signout"
-						isPrimary={false}
-						onClick={ this.recordClickEvent( 'Sidebar Sign Out Link', userUtilities.logout ) }
-						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
-					>
-						{ this.translate( 'Sign Out' ) }
-					</FormButton>
+						<MenuItem
+							selected={ selected === 'billing' }
+							href="/purchases"
+							label={ this.translate( 'Manage Purchases' ) }
+							icon="credit-card"
+						/>
 
-					<li className="sidebar-menu me-profile">
-						<h2 className="sidebar-heading">{ this.translate( 'Profile' ) }</h2>
-						<ul>
-							<MenuItem
-								selected={ selected === 'profile' }
-								href={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
-								label={ this.translate( 'My Profile' ) }
-								icon="user"
-							/>
+						<MenuItem
+							selected={ selected === 'security' }
+							href={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
+							label={ this.translate( 'Security' ) }
+							icon="lock"
+						/>
 
-							<MenuItem
-								selected={ selected === 'account' }
-								href={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
-								label={ this.translate( 'Account Settings' ) }
-								icon="cog"
-							/>
+						<MenuItem
+							selected={ selected === 'notifications' }
+							href={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
+							label={ this.translate( 'Notifications' ) }
+							icon="bell"
+						/>
 
-							<MenuItem
-								selected={ selected === 'billing' }
-								href="/purchases"
-								label={ this.translate( 'Manage Purchases' ) }
-								icon="credit-card"
-							/>
-
-							<MenuItem
-								selected={ selected === 'security' }
-								href={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
-								label={ this.translate( 'Security' ) }
-								icon="lock"
-							/>
-
-							<MenuItem
-								selected={ selected === 'notifications' }
-								href={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-								label={ this.translate( 'Notifications' ) }
-								icon="bell"
-							/>
-
-						</ul>
-					</li>
-					<li className="sidebar-menu me-extras">
-						<h2 className="sidebar-heading">{ this.translate( 'Special' ) }</h2>
-						<ul>
-							{ this.renderNextStepsItem( selected ) }
-							<MenuItem
-								selected={ selected === 'help' }
-								href={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
-								label={ this.translate( 'Help' ) }
-								external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
-								icon="help-outline"
-							/>
-						</ul>
-					</li>
-				</ul>
-			</div>
+					</ul>
+				</SidebarMenu>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Special' ) }</SidebarHeading>
+					<ul>
+						{ this.renderNextStepsItem( selected ) }
+						<MenuItem
+							selected={ selected === 'help' }
+							href={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
+							label={ this.translate( 'Help' ) }
+							external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
+							icon="help-outline"
+						/>
+					</ul>
+				</SidebarMenu>
+			</Sidebar>
 		);
 	},
 

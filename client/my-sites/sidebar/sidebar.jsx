@@ -13,6 +13,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
+	Sidebar = require( 'layout/sidebar' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	PublishMenu = require( './publish-menu' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' ),
@@ -21,6 +22,8 @@ var config = require( 'config' ),
 	SidebarMenuItem = require( './sidebar-menu-item' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	Gridicon = require( 'components/gridicon' ),
+	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
@@ -621,20 +624,22 @@ module.exports = React.createClass( {
 			vip = !! this.vip();
 
 		return (
-			<ul className="wpcom-sidebar sidebar">
-				<CurrentSite sites={ this.props.sites } siteCount={ this.props.user.get().visible_site_count } />
-
-				<li className="sidebar-menu">
+			<Sidebar>
+				<CurrentSite
+					sites={ this.props.sites }
+					siteCount={ this.props.user.get().visible_site_count }
+				/>
+				<SidebarMenu>
 					<ul>
 						{ this.stats() }
 						{ this.ads() }
 						{ this.plan() }
 					</ul>
-				</li>
+				</SidebarMenu>
 
 				{ vip ?
-				<li className="sidebar-menu wordpress-utilities">
-					<h2 className="sidebar-heading">VIP</h2>
+				<SidebarMenu>
+					<SidebarHeading>VIP</SidebarHeading>
 					<ul>
 						{ this.vip() }
 						{ this.vipDeploys() }
@@ -643,29 +648,29 @@ module.exports = React.createClass( {
 						{ this.vipBackups() }
 						{ this.vipLogs() }
 					</ul>
-				</li>
+				</SidebarMenu>
 				: null }
 
 				{ publish ?
-				<li className="sidebar-menu wordpress-content">
-					<h2 className="sidebar-heading">{ this.translate( 'Publish' ) }</h2>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
 					{ this.publish() }
-				</li>
+				</SidebarMenu>
 				: null }
 
 				{ appearance ?
-				<li className="sidebar-menu wordpress-appearance">
-					<h2 className="sidebar-heading">{ this.translate( 'Personalize' ) }</h2>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Personalize' ) }</SidebarHeading>
 					<ul>
 						{ this.themes() }
 						{ this.menus() }
 					</ul>
-				</li>
+				</SidebarMenu>
 				: null }
 
 				{ configuration ?
-				<li className="sidebar-menu wordpress-utilities">
-					<h2 className="sidebar-heading">{ this.translate( 'Configure' ) }</h2>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Configure' ) }</SidebarHeading>
 					<ul>
 						{ this.sharing() }
 						{ this.users() }
@@ -674,10 +679,9 @@ module.exports = React.createClass( {
 						{ this.siteSettings() }
 						{ this.wpAdmin() }
 					</ul>
-				</li>
+				</SidebarMenu>
 				: null }
-
-			</ul>
+			</Sidebar>
 		);
 	}
 } );

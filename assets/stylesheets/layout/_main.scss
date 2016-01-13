@@ -287,10 +287,10 @@ $sidebar-width-min: 228px;
 	transition: all 0.15s ease-in-out;
 }
 
-.wpcom-sidebar,
+.sidebar,
 .wp-secondary .site-selector,
 .current-site,
-.sidebar-menu {
+.sidebar__menu {
 	transform: translateX( 0 );
 	transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
 }
@@ -311,12 +311,12 @@ $sidebar-width-min: 228px;
 		}
 	}
 
-	.wpcom-sidebar {
+	.sidebar {
 		pointer-events: none;
 	}
 
 	.current-site,
-	.sidebar-menu {
+	.sidebar__menu {
 		opacity: 0;
 		transform: translateX( 64px );
 	}
@@ -324,6 +324,31 @@ $sidebar-width-min: 228px;
 
 .focus-sidebar {
 	overflow: hidden;
+}
+
+// site selector in the sidebar
+.wp-secondary .site-selector {
+	background: lighten( $gray, 30% );
+	border-right: 1px solid lighten( $gray, 25% );
+	position: fixed;
+		top: 47px;
+		bottom: 0;
+		left: -272px;
+	width: 272px;
+	overflow: hidden;
+	z-index: 10;
+	opacity: 0;
+	pointer-events: none;
+
+	.search {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100vw;
+		left: -100vw;
+		-webkit-overflow-scrolling: touch;
+	}
 }
 
 
