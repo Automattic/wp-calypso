@@ -117,8 +117,9 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
+	border: 1px solid $gray-light;
 	background-color: lighten( $gray, 20% );
-	margin: 1px;
+	margin: 0;
 }
 
 .post-trends__day,
