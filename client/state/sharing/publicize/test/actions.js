@@ -10,9 +10,9 @@ import Chai, { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	FETCH_PUBLICIZE_CONNECTIONS,
-	RECEIVE_PUBLICIZE_CONNECTIONS,
-	FAIL_PUBLICIZE_CONNECTIONS_REQUEST
+	PUBLICIZE_CONNECTIONS_REQUEST,
+	PUBLICIZE_CONNECTIONS_RECEIVE,
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	fetchConnections,
@@ -56,7 +56,7 @@ describe( '#fetchConnections()', () => {
 		fetchConnections( 2916284 )( spy );
 
 		expect( spy ).to.have.been.calledWith( {
-			type: FETCH_PUBLICIZE_CONNECTIONS,
+			type: PUBLICIZE_CONNECTIONS_REQUEST,
 			siteId: 2916284
 		} );
 	} );
@@ -66,7 +66,7 @@ describe( '#fetchConnections()', () => {
 			expect( spy ).to.have.been.calledTwice;
 
 			const action = spy.getCall( 1 ).args[ 0 ];
-			expect( action.type ).to.equal( RECEIVE_PUBLICIZE_CONNECTIONS );
+			expect( action.type ).to.equal( PUBLICIZE_CONNECTIONS_RECEIVE );
 			expect( action.siteId ).to.equal( 2916284 );
 			expect( action.data.connections ).to.eql( [ { ID: 2, site_ID: 2916284 } ] );
 
@@ -79,7 +79,7 @@ describe( '#fetchConnections()', () => {
 			expect( spy ).to.have.been.calledTwice;
 
 			const action = spy.getCall( 1 ).args[ 0 ];
-			expect( action.type ).to.equal( FAIL_PUBLICIZE_CONNECTIONS_REQUEST );
+			expect( action.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_FAILURE );
 			expect( action.siteId ).to.equal( 77203074 );
 			expect( action.error.message ).to.equal( 'An active access token must be used to access publicize connections.' );
 
@@ -94,7 +94,7 @@ describe( '#receiveConnections()', () => {
 		const action = receiveConnections( 2916284, data );
 
 		expect( action ).to.eql( {
-			type: RECEIVE_PUBLICIZE_CONNECTIONS,
+			type: PUBLICIZE_CONNECTIONS_RECEIVE,
 			siteId: 2916284,
 			data
 		} );
@@ -107,7 +107,7 @@ describe( '#failConnectionsRequest()', () => {
 		const action = failConnectionsRequest( 2916284, error );
 
 		expect( action ).to.eql( {
-			type: FAIL_PUBLICIZE_CONNECTIONS_REQUEST,
+			type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 			siteId: 2916284,
 			error
 		} );

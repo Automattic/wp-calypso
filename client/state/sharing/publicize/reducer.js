@@ -8,9 +8,9 @@ import indexBy from 'lodash/collection/indexBy';
  * Internal dependencies
  */
 import {
-	FETCH_PUBLICIZE_CONNECTIONS,
-	RECEIVE_PUBLICIZE_CONNECTIONS,
-	FAIL_PUBLICIZE_CONNECTIONS_REQUEST
+	PUBLICIZE_CONNECTIONS_REQUEST,
+	PUBLICIZE_CONNECTIONS_RECEIVE,
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
 } from 'state/action-types';
 
 /**
@@ -25,12 +25,12 @@ import {
  */
 export function fetchingConnections( state = {}, action ) {
 	switch ( action.type ) {
-		case FETCH_PUBLICIZE_CONNECTIONS:
-		case RECEIVE_PUBLICIZE_CONNECTIONS:
-		case FAIL_PUBLICIZE_CONNECTIONS_REQUEST:
+		case PUBLICIZE_CONNECTIONS_REQUEST:
+		case PUBLICIZE_CONNECTIONS_RECEIVE:
+		case PUBLICIZE_CONNECTIONS_REQUEST_FAILURE:
 			const { type, siteId } = action;
 			state = Object.assign( {}, state, {
-				[ siteId ]: FETCH_PUBLICIZE_CONNECTIONS === type
+				[ siteId ]: PUBLICIZE_CONNECTIONS_REQUEST === type
 			} );
 			break;
 	}
@@ -47,7 +47,7 @@ export function fetchingConnections( state = {}, action ) {
  */
 export function connections( state = {}, action ) {
 	switch ( action.type ) {
-		case RECEIVE_PUBLICIZE_CONNECTIONS:
+		case PUBLICIZE_CONNECTIONS_RECEIVE:
 			state = Object.assign( {}, state, indexBy( action.data.connections, 'ID' ) );
 			break;
 	}
@@ -66,7 +66,7 @@ export function connections( state = {}, action ) {
  */
 export function connectionsBySiteId( state = {}, action ) {
 	switch ( action.type ) {
-		case RECEIVE_PUBLICIZE_CONNECTIONS:
+		case PUBLICIZE_CONNECTIONS_RECEIVE:
 			state = Object.assign( {}, state, {
 				[ action.siteId ]: action.data.connections.map( ( connection ) => connection.ID )
 			} );
