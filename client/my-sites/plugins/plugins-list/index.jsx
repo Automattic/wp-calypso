@@ -362,10 +362,12 @@ export default React.createClass( {
 	renderPlugins() {
 		return this.props.plugins.map( plugin => {
 			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+			const hasAllNoManageSites = ! plugin.wpcom &&
+										! plugin.sites.some( site => site.modules && site.modules.indexOf( 'manage' ) !== -1 );
 			return (
 				<PluginItem
 					key={ plugin.slug }
-					hasAllNoManageSites={ false }
+					hasAllNoManageSites={ hasAllNoManageSites }
 					plugin={ plugin }
 					sites={ plugin.sites }
 					progress={ false }
