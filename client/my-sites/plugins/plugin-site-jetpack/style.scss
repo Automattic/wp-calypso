@@ -7,8 +7,8 @@
 		margin-right: 8px
 	}
 
-	.foldable-card__header {
-		padding: 8px 8px;
+	&.is-compact .foldable-card__header {
+		padding: 16px;
 	}
 
 	&.has-manage-error .foldable-card__action {
