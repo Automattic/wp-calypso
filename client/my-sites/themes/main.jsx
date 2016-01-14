@@ -167,12 +167,9 @@ var Themes = React.createClass( {
 						themesList={ this.props.themesList } />
 				}
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal
-					selectedAction={ Object.assign(
-						{}, actionLabels[ this.state.selectedAction ], { name: this.state.selectedAction }
-						// TODO: Only pass buttonOptions[ this.state.selectedAction ],
-						// having added the actual action as an attribute earlier (probably
-						// inside theme-options ), instead of assigning the name here.
-					) }
+					name={ this.state.selectedAction /* TODO: Can we get rid of this prop? */ }
+					label={ actionLabels[ this.state.selectedAction ].label }
+					header={ actionLabels[ this.state.selectedAction ].header }
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
 					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }

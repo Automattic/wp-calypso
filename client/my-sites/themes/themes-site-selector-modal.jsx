@@ -14,12 +14,9 @@ import Helper from 'lib/themes/helpers';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
-		selectedAction: React.PropTypes.objectOf(
-			React.PropTypes.shape( {
-				label: React.PropTypes.string.isRequired,
-				header: React.PropTypes.string.isRequired
-			} )
-		).isRequired,
+		name: React.PropTypes.string.isRequired,
+		label: React.PropTypes.string.isRequired,
+		header: React.PropTypes.string.isRequired,
 		selectedTheme: PropTypes.object.isRequired,
 		onHide: PropTypes.func,
 		action: PropTypes.func
@@ -31,7 +28,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
 		defer( () => {
-			Helper.trackClick( 'site selector', this.props.selectedAction.name );
+			Helper.trackClick( 'site selector', this.props.name );
 			page( '/design/' + site.slug );
 			this.props.action( this.props.selectedTheme, site );
 		} );
@@ -39,10 +36,11 @@ const ThemesSiteSelectorModal = React.createClass( {
 
 	render() {
 		const {
+			label,
+			header,
 			selectedTheme: theme,
 			onHide
 		} = this.props;
-		const { label, header } = this.props.selectedAction;
 
 		return (
 			<SiteSelectorModal className="themes__site-selector-modal"
