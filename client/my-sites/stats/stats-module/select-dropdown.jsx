@@ -31,4 +31,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
- } );
+} );

@@ -32,9 +32,9 @@ export default React.createClass( {
 
 		if ( dataList.response.data && dataList.response.data[ dataKey ] ) {
 			statsList = <StatsList
-								moduleName={ name }
-								data={ dataList.response.data[ dataKey ] }
-								followList={ followList } />;
+							moduleName={ name }
+							data={ dataList.response.data[ dataKey ] }
+							followList={ followList } />;
 		}
 
 		const classes = classNames( 'stats-comments__tab-content', { 'is-active': isActive } );
@@ -46,4 +46,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
- } );
+} );
