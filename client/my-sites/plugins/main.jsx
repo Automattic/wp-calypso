@@ -31,7 +31,6 @@ import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import PluginsDataStore from 'lib/plugins/wporg-data/store';
-import PluginNotices from 'lib/plugins/notices';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PlanNudge from 'components/plans/plan-nudge';
 import FeatureExample from 'components/feature-example';
@@ -46,7 +45,7 @@ export default React.createClass( {
 
 	displayName: 'Plugins',
 
-	mixins: [ URLSearch, PluginNotices ],
+	mixins: [ URLSearch ],
 
 	getInitialState() {
 		return this.getPluginsState( this.props );
@@ -291,7 +290,6 @@ export default React.createClass( {
 					header={ this.translate( 'WordPress.com Plugins' ) }
 					plugins={ this.getWpcomPlugins() }
 					isWpCom= { true }
-					notices={ this.state.notices }
 					sites={ this.props.sites }
 					selectedSite={ this.props.sites.getSelectedSite() }
 					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } />
@@ -299,7 +297,6 @@ export default React.createClass( {
 					header={ this.translate( 'Jetpack Plugins' ) }
 					plugins={ this.getJetpackPlugins() }
 					isWpCom={ false }
-					notices={ this.state.notices }
 					sites={ this.props.sites }
 					selectedSite={ this.props.sites.getSelectedSite() }
 					pluginUpdateCount={ this.state.pluginUpdateCount }

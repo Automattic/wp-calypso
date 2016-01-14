@@ -15,16 +15,18 @@ import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
+import PluginNotices from 'lib/plugins/notices';
 import SectionHeader from 'components/section-header';
 
 export default React.createClass( {
 	displayName: 'PluginsList',
 
+	mixins: [ PluginNotices ],
+
 	propTypes: {
 		plugins: PropTypes.array,
 		header: PropTypes.string,
 		isWpCom: PropTypes.bool,
-		notices: PropTypes.object,
 		sites: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		pluginUpdateCount: PropTypes.number,
@@ -143,15 +145,15 @@ export default React.createClass( {
 			this.setState( { selectedPlugins: {} } );
 
 			//PluginsActions.selectPlugins( this.props.sites, 'none' );
-			if ( this.props.notices && ( this.props.notices.completed || this.props.notices.errors ) ) {
-				PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
+			if ( this.state.notices && ( this.state.notices.completed || this.state.notices.errors ) ) {
+				PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
 			}
 			this.recordEvent( 'Clicked Manage Done' );
 		}
 	},
 
 	doActionOverSelected( actionName, action ) {
-		PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
+		PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
 		this.props.plugins.forEach( plugin => {
 			if ( this.isSelected( plugin ) ) {
 				// Ignore the user trying to deactive Jetpack.
@@ -165,7 +167,7 @@ export default React.createClass( {
 	},
 
 	updateAllPlugins() {
-		PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
+		PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
 		this.props.plugins.forEach( plugin => {
 			plugin.sites.forEach( site => PluginsActions.updatePlugin( site, site.plugin ) );
 		} );
@@ -183,12 +185,13 @@ export default React.createClass( {
 	},
 
 	deactiveAndDisconnectSelected() {
-		var waitForDeactivate = false;
+		let waitForDeactivate = false;
 
 		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
 			waitForDeactivate = true;
 			PluginsActions.deactivatePlugin( site, plugin );
 		} );
+
 		if ( waitForDeactivate ) {
 			this.setState( { disconnectJetpackDialog: true } );
 		} else {
@@ -307,7 +310,7 @@ export default React.createClass( {
 	},
 
 	showDisconnectDialog() {
-		if ( this.state.disconnectJetpackDialog && ! this.props.notices.inProgress.length ) {
+		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
 			this.setState( { disconnectJetpackDialog: false } );
 			this.refs.dialog.open();
 		}
@@ -368,9 +371,9 @@ export default React.createClass( {
 				hasAllNoManageSites={ hasAllNoManageSites }
 				plugin={ plugin }
 				sites={ plugin.sites }
-				progress={ this.props.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
-				errors={ this.props.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
-				notices={ this.props.notices }
+				progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
+				errors={ this.state.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
+				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ this.state.bulkManagement }
 				onClick={ selectThisPlugin }
