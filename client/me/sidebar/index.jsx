@@ -7,9 +7,9 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var MenuItem = require( './sidebar-item' ),
-	Sidebar = require( 'layout/sidebar' ),
+var Sidebar = require( 'layout/sidebar' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
@@ -71,37 +71,37 @@ module.exports = React.createClass( {
 				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
 					<ul>
-						<MenuItem
+						<SidebarItem
 							selected={ selected === 'profile' }
-							href={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
+							link={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
 							label={ this.translate( 'My Profile' ) }
 							icon="user"
 						/>
 
-						<MenuItem
+						<SidebarItem
 							selected={ selected === 'account' }
-							href={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
+							link={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
 							label={ this.translate( 'Account Settings' ) }
 							icon="cog"
 						/>
 
-						<MenuItem
+						<SidebarItem
 							selected={ selected === 'billing' }
-							href="/purchases"
+							link="/purchases"
 							label={ this.translate( 'Manage Purchases' ) }
 							icon="credit-card"
 						/>
 
-						<MenuItem
+						<SidebarItem
 							selected={ selected === 'security' }
-							href={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
+							link={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
 							label={ this.translate( 'Security' ) }
 							icon="lock"
 						/>
 
-						<MenuItem
+						<SidebarItem
 							selected={ selected === 'notifications' }
-							href={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
+							link={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
 							label={ this.translate( 'Notifications' ) }
 							icon="bell"
 						/>
@@ -118,9 +118,9 @@ module.exports = React.createClass( {
 							icon="my-sites"
 						/>
 						{ this.renderNextStepsItem( selected ) }
-						<MenuItem
+						<SidebarItem
 							selected={ selected === 'help' }
-							href={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
+							link={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
 							label={ this.translate( 'Help' ) }
 							external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
 							icon="help-outline"
@@ -135,9 +135,9 @@ module.exports = React.createClass( {
 		var currentUser = this.props.user.get();
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
 			return (
-				<MenuItem
+				<SidebarItem
 					selected={ selected === 'next' }
-					href="/me/next"
+					link="/me/next"
 					label={ this.translate( 'Next Steps' ) }
 					icon="list-checkmark"
 				/>

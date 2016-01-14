@@ -13,16 +13,16 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
-	Sidebar = require( 'layout/sidebar' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	PublishMenu = require( './publish-menu' ),
 	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' ),
 	productsValues = require( 'lib/products-values' ),
 	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
-	SidebarMenuItem = require( './sidebar-menu-item' ),
 	AdsUtils = require( 'lib/ads/utils' ),
 	Gridicon = require( 'components/gridicon' ),
+	Sidebar = require( 'layout/sidebar' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
@@ -137,7 +137,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SidebarMenuItem
+			<SidebarItem
 				label={ site.jetpack ? 'AdControl' : 'WordAds' }
 				className={ this.itemLinkClass( '/ads', 'ads' ) }
 				link={ adsLink }
@@ -169,7 +169,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SidebarMenuItem
+			<SidebarItem
 				label={ this.translate( 'Themes' ) }
 				className={ this.itemLinkClass( '/design', 'themes' ) }
 				link={ themesLink }
