@@ -42,11 +42,15 @@ export default React.createClass( {
 	},
 
 	componentDidMount() {
-		PluginsLog.on( 'change', this.showDisconnectDialog );
+		if ( this.props.isWpCom !== true ) {
+			PluginsLog.on( 'change', this.showDisconnectDialog );
+		}
 	},
 
 	componentWillUnmount() {
-		PluginsLog.removeListener( 'change', this.showDisconnectDialog );
+		if ( this.props.isWpCom !== true ) {
+			PluginsLog.removeListener( 'change', this.showDisconnectDialog );
+		}
 	},
 
 	isSelected( plugin ) {

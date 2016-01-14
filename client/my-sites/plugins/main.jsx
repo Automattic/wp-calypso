@@ -265,6 +265,7 @@ export default React.createClass( {
 
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
+		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( isEmpty( plugins ) ) {
 			if ( this.props.search ) {
@@ -286,21 +287,21 @@ export default React.createClass( {
 		}
 		return (
 			<div className="plugins__lists">
-				<PluginsList
+				{ ( ! selectedSite || selectedSite.jetpack === false ) && <PluginsList
 					header={ this.translate( 'WordPress.com Plugins' ) }
 					plugins={ this.getWpcomPlugins() }
 					isWpCom= { true }
 					sites={ this.props.sites }
-					selectedSite={ this.props.sites.getSelectedSite() }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } />
-				<PluginsList
+					selectedSite={ selectedSite }
+					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } /> }
+				{ ( ! selectedSite || selectedSite.jetpack === true ) &&  <PluginsList
 					header={ this.translate( 'Jetpack Plugins' ) }
 					plugins={ this.getJetpackPlugins() }
 					isWpCom={ false }
 					sites={ this.props.sites }
 					selectedSite={ this.props.sites.getSelectedSite() }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders( false ) } />
+					isPlaceholder= { this.shouldShowPluginListPlaceholders( false ) } /> }
 			</div>
 		);
 	},
