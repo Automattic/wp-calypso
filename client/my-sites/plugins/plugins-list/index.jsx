@@ -353,10 +353,7 @@ export default React.createClass( {
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.renderPlugins() }</div>
-				{ this.props.isWpCom
-					? null
-					: <DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
-				}
+				{ ! this.props.isWpCom && <DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" /> }
 			</span>
 		);
 	},
