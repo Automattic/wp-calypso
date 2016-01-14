@@ -15,7 +15,7 @@ var AddNewButtons = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/comment-button">Comment Buttons</a>
+					<a href="/devdocs/app-components/comment-button">Comment Buttons</a>
 				</h2>
 				<CommentButton commentCount={ 10 } />
 			</div>

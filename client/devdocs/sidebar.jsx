@@ -54,6 +54,12 @@ export default React.createClass( {
 							</a>
 						</li>
 						<li className="devdocs__navigation-item">
+							<Gridicon icon="custom-post-type" />
+							<a className="devdocs__sidebar-item" href="/devdocs/app-components">
+								App Components
+							</a>
+						</li>
+						<li className="devdocs__navigation-item">
 							<Gridicon icon="heading" />
 							<a className="devdocs__sidebar-item" href="/devdocs/design/typography">
 								Typography

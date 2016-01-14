@@ -15,7 +15,7 @@ var Sites = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/sites">Site and All Sites</a>
+					<a href="/devdocs/app-components/sites">Site and All Sites</a>
 				</h2>
 				<Site site={ sites.getPrimary() } />
 				<AllSites sites={ sites } />

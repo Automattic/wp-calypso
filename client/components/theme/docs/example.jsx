@@ -12,10 +12,14 @@ var Theme = require( '../' );
  * Component
  */
 var ThemeExample = React.createClass( {
+	displayName: 'Theme',
+
 	render: function() {
 		return (
 			<div className="design-assets__group">
-				<h2>Theme</h2>
+				<h2>
+					<a href="/devdocs/app-components/theme">Theme</a>
+				</h2>
 				<Theme
 				id="twentyfifteen"
 				name="Twenty Fifteen"

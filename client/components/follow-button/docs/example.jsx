@@ -19,7 +19,7 @@ var FollowButtons = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/follow-buttons">Follow Button</a>
+					<a href="/devdocs/app-component/follow-buttons">Follow Button</a>
 				</h2>
 				<Card>
 					<span>Default:</span>

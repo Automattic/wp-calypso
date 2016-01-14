@@ -47,7 +47,7 @@ var LikeButtons = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/like-button">Like button</a>
+					<a href="/devdocs/app-components/like-button">Like button</a>
 				</h2>
 				<Card>
 					<span>Default:</span>
