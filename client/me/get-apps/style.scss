@@ -26,15 +26,26 @@
 	background: lighten( $gray, 20% );
 }
 
+.get-apps__app {
+	width: 100%;
+	margin-bottom: 24px;
+}
+
 .get-apps__desktop .get-apps__app {
-	width: 33%;
+	@include breakpoint( ">480px" ) {
+		width: 33%;
+		margin-bottom: 0;
+	}
 }
 
 .get-apps__mobile .get-apps__app {
-	width: 50%;
-	
 	a img {
 		width: auto;
 		height: 40px;
 	}
+
+	@include breakpoint( ">480px" ) {
+		width: 50%;
+		margin-bottom: 0;
+	}	
 }
