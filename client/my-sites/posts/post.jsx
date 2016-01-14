@@ -239,7 +239,7 @@ module.exports = React.createClass({
 		if ( showComments ) {
 			commentHref = post.URL + '#comments';
 			if ( post.discussion && post.discussion.comment_count > 0 ) {
-				commentTitle = this.translate( '1 Comment', '%(count)s Comments', {
+				commentTitle = this.translate( '%(count)s Comment', '%(count)s Comments', {
 					count: post.discussion.comment_count,
 					args: {
 						count: post.discussion.comment_count
@@ -278,7 +278,7 @@ module.exports = React.createClass({
 
 		if ( showLikes ) {
 			if ( post.like_count > 0 ) {
-				likeTitle = this.translate( '1 Like', '%(count)s Likes', {
+				likeTitle = this.translate( '%(count)s Like', '%(count)s Likes', {
 					count: post.like_count,
 					args: {
 						count: post.like_count
@@ -393,7 +393,10 @@ module.exports = React.createClass({
 					onDelete={ this.deletePost }
 					onRestore={ this.restorePost }
 				/>
-				<ReactCSSTransitionGroup transitionName="updated-trans">
+				<ReactCSSTransitionGroup
+					transitionName="updated-trans"
+					transitionEnterTimeout={ 300 }
+					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 			</Card>
