@@ -10,7 +10,9 @@ import selectors from '../selectors';
 
 const state = {
 	test: Object.freeze( { slug: 'test' } ),
-	fetchingTest: Object.freeze( { slug: 'fetchingTest', isFetching: true } )
+	fetchingTest: Object.freeze( { slug: 'fetchingTest', isFetching: true } ),
+	fetchedTest: Object.freeze( { slug: 'fetchingTest', isFetching: false, isFetched: true } ),
+	fetchedTest2: Object.freeze( { slug: 'fetchingTest', isFetching: true, isFetched: true } )
 };
 
 describe( 'WPorg Selectors', function() {
@@ -55,6 +57,24 @@ describe( 'WPorg Selectors', function() {
 
 		it( 'Should get `true` if the requested plugin is being fetched', function() {
 			assert.equal( selectors.isFetching( state, 'fetchingTest' ), true );
+		} );
+	} );
+
+	describe( 'isFetched', function() {
+		it( 'Should get `false` if the requested plugin is not in the current state', function() {
+			assert.equal( selectors.isFetched( state, 'no.test' ), false );
+		} );
+
+		it( 'Should get `false` if the requested plugin has not being fetched', function() {
+			assert.equal( selectors.isFetched( state, 'test' ), false );
+		} );
+
+		it( 'Should get `true` if the requested plugin has being fetched', function() {
+			assert.equal( selectors.isFetched( state, 'fetchedTest' ), true );
+		} );
+
+		it( 'Should get `true` if the requested plugin has being fetched even if it\'s being fetche again', function() {
+			assert.equal( selectors.isFetched( state, 'fetchedTest2' ), true );
 		} );
 	} );
 } );

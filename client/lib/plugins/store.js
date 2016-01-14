@@ -309,6 +309,7 @@ PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
 
 	switch ( action.type ) {
 		case 'RECEIVE_PLUGINS':
+			_fetching[ action.site.ID ] = false;
 			if ( action.error ) {
 				updatePlugins( action.site, [] );
 				PluginsStore.emitChange();

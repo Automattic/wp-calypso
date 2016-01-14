@@ -50,7 +50,9 @@ const SinglePlugin = React.createClass( {
 	mixins: [ PluginNotices ],
 
 	componentWillMount() {
-		this.props.fetchPluginData( this.props.pluginSlug );
+		if ( ! this.isFetched() ) {
+			this.props.fetchPluginData( this.props.pluginSlug );
+		}
 	},
 
 	componentDidMount() {
@@ -75,20 +77,16 @@ const SinglePlugin = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.path !== nextProps.path ) {
-			this.refreshSitesAndPlugins( nextProps );
-		}
+		this.refreshSitesAndPlugins( nextProps );
 	},
 
 	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props,
 			selectedSite = this.props.sites.getSelectedSite();
-		let isWporg = false;
 
 		// .com sites can't install non .com plugins, if that's the case we don't retrieve any data from the store
 		if ( ! props.isWpcomPlugin && selectedSite && ! selectedSite.jetpack ) {
 			return {
-				isFetching: false,
 				accessError: false,
 				sites: [],
 				notInstalledSites: [],
@@ -103,22 +101,13 @@ const SinglePlugin = React.createClass( {
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
 
 		let plugin = Object.assign( {
-				name: props.pluginSlug,
-				id: props.pluginSlug,
-				slug: props.pluginSlug
-			}, sitePlugin ),
-			isFetching = ! sitePlugin;
-
-		if ( sitePlugin && ! props.isWpcomPlugin ) {
-			// if it isn't a .com plugin, assign it .org details
-			plugin = Object.assign( plugin, WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, props.pluginSlug ) );
-			isFetching = WporgPluginsSelectors.isFetching( this.props.wporgPlugins, props.pluginSlug );
-			isWporg = true;
-		}
+			name: props.pluginSlug,
+			id: props.pluginSlug,
+			slug: props.pluginSlug
+		}, sitePlugin );
 
 		return {
-			isFetching: isFetching,
-			isWporg: isWporg,
+			isWporg: sitePlugin && ! props.isWpcomPlugin,
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
@@ -180,25 +169,47 @@ const SinglePlugin = React.createClass( {
 
 	pluginExists( pluginSlug ) {
 		// if the plugin info is still being fetched, we default to true
-		if ( ! WporgPluginsSelectors.isFetching( this.props.wporgPlugins, pluginSlug ) ) {
-			const plugin = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, pluginSlug );
-			if ( plugin && plugin.fetched ) {
+		if ( this.props.isWpcomPlugin || this.isFetching() ) {
+			return true;
+		}
+		const plugin = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, pluginSlug );
+		if ( plugin && plugin.fetched ) {
+			return true;
+		}
+		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+		// if there's no info about the plugin from .org, we check if the pluginSlug exists in
+		// any of the user's sites, to check if it's a custom plugin
+		return sites.some( site => {
+			const sitePlugins = PluginsStore.getSitePlugins( site ) || [];
+
+			if ( PluginsStore.isFetchingSite( site ) ) {
 				return true;
 			}
-			const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-			// if there's no info about the plugin from .org, we check if the pluginSlug exists in
-			// any of the user's sites, to check if it's a custom plugin
-			return sites.some( site => {
-				const sitePlugins = PluginsStore.getSitePlugins( site ) || [];
 
-				if ( PluginsStore.isFetchingSite( site ) ) {
-					return true;
-				}
+			return sitePlugins.some( sitePlugin => sitePlugin.slug === pluginSlug );
+		} );
+	},
 
-				return sitePlugins.some( sitePlugin => sitePlugin.slug === pluginSlug );
-			} );
+	isFetching() {
+		return this.props.isWpcomPlugin || WporgPluginsSelectors.isFetching( this.props.wporgPlugins, this.props.pluginSlug );
+	},
+
+	isFetched() {
+		return this.props.isWpcomPlugin || WporgPluginsSelectors.isFetched( this.props.wporgPlugins, this.props.pluginSlug );
+	},
+
+	isFetchingSites() {
+		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+		return sites.some( PluginsStore.isFetchingSite );
+	},
+
+	getPlugin() {
+		let plugin = Object.assign( {}, this.state.plugin );
+		if ( ! this.props.isWpcomPlugin ) {
+			// if it isn't a .com plugin, assign it .org details
+			plugin = Object.assign( plugin, WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
 		}
-		return true;
+		return plugin;
 	},
 
 	getPluginDoesNotExistView( selectedSite ) {
@@ -221,7 +232,8 @@ const SinglePlugin = React.createClass( {
 	},
 
 	renderSitesList() {
-		if ( this.props.siteUrl || this.state.isFetching || ( this.state.plugin && ! this.state.plugin.fetched ) ) {
+		const plugin = this.getPlugin();
+		if ( this.props.siteUrl || this.isFetching() || ( plugin && ! plugin.fetched ) ) {
 			return;
 		}
 
@@ -232,14 +244,14 @@ const SinglePlugin = React.createClass( {
 						className="plugin__installed-on"
 						title={ this.translate( 'Installed on', { comment: 'header for list of sites a plugin is installed on' } ) }
 						sites={ this.state.sites }
-						plugin={ this.state.plugin }
+						plugin={ plugin }
 						notices={ this.state.notices }
 						wporg={ true } />
 					<PluginSiteList
 						className="plugin__not-installed-on"
 						title={ this.translate( 'Available sites', { comment: 'header for list of sites a plugin can be installed on' } ) }
 						sites={ this.state.notInstalledSites }
-						plugin={ this.state.plugin }
+						plugin={ plugin }
 						notices={ this.state.notices }
 						wporg={ true } />
 				</div>
@@ -249,7 +261,7 @@ const SinglePlugin = React.createClass( {
 					className="plugin__installed-on"
 					title={ this.translate( 'Available on', { comment: 'header for list of sites a plugin is available on' } ) }
 					sites={ this.state.sites }
-					plugin={ this.state.plugin }
+					plugin={ plugin }
 					notices={ this.state.notices } />
 	},
 
@@ -265,7 +277,7 @@ const SinglePlugin = React.createClass( {
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
 						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
-						plugin={ this.state.plugin }
+						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite } />
@@ -291,7 +303,7 @@ const SinglePlugin = React.createClass( {
 						notices={ {} }
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
-						plugin={ this.state.plugin }
+						plugin={ this.getPlugin() }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
 						selectedSite={ selectedSite }
@@ -327,12 +339,16 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		if ( this.state.isFetching ) {
+		if ( this.isFetching() ) {
 			return this.renderPluginPlaceholder( classes );
 		}
 
-		if ( ! this.pluginExists( this.props.pluginSlug ) ) {
+		if ( this.pluginExists( this.props.pluginSlug ) === false ) {
 			return this.getPluginDoesNotExistView( selectedSite );
+		}
+
+		if ( this.isFetchingSites() ) {
+			return this.renderPluginPlaceholder( classes );
 		}
 
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
@@ -350,7 +366,7 @@ const SinglePlugin = React.createClass( {
 		}
 
 		const installInProgress = PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
-
+		const plugin = this.getPlugin();
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -359,13 +375,13 @@ const SinglePlugin = React.createClass( {
 					<PluginMeta
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
-						plugin={ this.state.plugin }
+						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
 						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						isInstalling={ installInProgress } />
-					<PluginSections plugin={ this.state.plugin } />
+					<PluginSections plugin={ plugin } />
 					{ this.renderSitesList() }
 				</div>
 			</MainComponent>

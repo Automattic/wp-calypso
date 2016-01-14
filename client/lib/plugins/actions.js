@@ -137,10 +137,10 @@ PluginsActions = {
 					site: site
 				} );
 			} );
+
 			return;
 		}
 		const endpoint = site.jetpack ? wpcom.plugins : wpcom.wpcomPlugins;
-
 		endpoint.call( wpcom, site.ID, ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_PLUGINS',

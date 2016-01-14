@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { RECEIVE_WPORG_PLUGIN_DATA } from 'state/action-types';
+import { RECEIVE_WPORG_PLUGIN_DATA, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
@@ -17,6 +17,10 @@ function reducer( state = {}, action ) {
 			if ( action.data ) {
 				return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: true }, action.data ) );
 			}
+			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: false } ) );
+
+		case FETCH_WPORG_PLUGIN_DATA:
+			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: true } ) );
 
 		default:
 			return state;
