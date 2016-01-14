@@ -66,13 +66,7 @@ function sectionify( path ) {
 }
 
 function getStatsDefaultSitePage( slug ) {
-	var path;
-
-	if ( config.isEnabled( 'manage/stats/insights' ) && 'insights' === abtest( 'statsDefaultFilter' ) ) {
-		path = '/stats/insights/';
-	} else {
-		path = '/stats/day/';
-	}
+	var path = '/stats/insights/';
 
 	if ( slug ) {
 		return path + slug;

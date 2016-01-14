@@ -38,7 +38,6 @@
 		"settings/security/monitor": true,
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/stats": true,
-		"manage/stats/insights": true,
 		"me/billing-history": true,
 		"me/credit-cards": true,
 		"me/find-friends": false,

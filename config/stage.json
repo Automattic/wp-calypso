@@ -41,7 +41,6 @@
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/posts": true,
 		"manage/stats": true,
-		"manage/stats/insights": true,
 		"manage/site-settings/analytics" : true,
 		"manage/site-settings/delete-site": true,
 		"me/billing-history": true,
