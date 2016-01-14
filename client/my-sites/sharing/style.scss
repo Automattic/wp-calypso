@@ -214,10 +214,6 @@ $color-print: #f8f8f8;
 	margin-bottom: 1px;
 	padding: 0;
 
-	&:hover {
-		box-shadow: 0 0 0 1px lighten( $gray, 15% );
-	}
-
 	@include breakpoint( "<660px" ) {
 		margin: 0 0 16px 0;
 	}
@@ -229,7 +225,7 @@ $color-print: #f8f8f8;
 
 .sharing-service-action {
 	position: absolute;
-		right: 56px;
+		right: 64px;
 		top: 26px;
 
 	@include breakpoint( "<660px" ) {
@@ -396,7 +392,7 @@ $color-print: #f8f8f8;
 
 .sharing-service.is-placeholder .sharing-service__name,
 .sharing-service.is-placeholder .sharing-service__description {
-	margin-left: 97px;
+	margin-left: 64px;
 
 	@include breakpoint( "<660px" ) {
 		margin-left: 65px;

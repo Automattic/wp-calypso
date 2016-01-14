@@ -3,6 +3,8 @@
  */
 var React = require( 'react' );
 
+var Button = require( 'components/button' );
+
 module.exports = React.createClass( {
 	displayName: 'SharingServicePlaceholder',
 
@@ -14,7 +16,10 @@ module.exports = React.createClass( {
 					<div className="sharing-service__icon" />
 					<h3 className="sharing-service__name" />
 					<p className="sharing-service__description" />
-					<a className="sharing-service-action button" disabled={ true }>{ this.translate( 'Loading…' ) }</a>
+					<Button
+						compact
+						className="sharing-service-action"
+						disabled={ true }>{ this.translate( 'Loading…' ) }</Button>
 				</header>
 			</li>
 		);
