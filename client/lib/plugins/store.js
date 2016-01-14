@@ -304,9 +304,8 @@ PluginsStore = {
 	}
 };
 
-PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
-	debug( 'register event Type', action.type, payload );
+PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
+	debug( 'register event Type', action.type, action );
 
 	switch ( action.type ) {
 		case 'RECEIVE_PLUGINS':

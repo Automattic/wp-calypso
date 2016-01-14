@@ -11,6 +11,7 @@ import reject from 'lodash/collection/reject';
 import assign from 'lodash/object/assign';
 import property from 'lodash/utility/property';
 import isEmpty from 'lodash/lang/isEmpty';
+import get from 'lodash/object/get';
 
 /**
  * Internal dependencies
@@ -251,15 +252,11 @@ export default React.createClass( {
 		return some( this.props.sites.getSelectedOrAllWithPlugins(), site => site && site.jetpack && site.canUpdateFiles );
 	},
 
-	showPluginListPlaceholders( isWpCom ) {
-		let showPlaceholders = isEmpty( this.state.plugins );
-		const selectedSite = this.props.sites.getSelectedSite();
+	shouldShowPluginListPlaceholders( isWpCom ) {
+		const { plugins } = this.state;
+		const { sites } = this.props;
 
-		if ( showPlaceholders && selectedSite && selectedSite.jetpack === isWpCom ) {
-			showPlaceholders = false;
-		}
-
-		return showPlaceholders;
+		return ! isEmpty( plugins ) && isWpCom === get( sites.getSelectedSite(), 'jetpack' );
 	},
 
 	renderPluginsContent() {
@@ -292,7 +289,7 @@ export default React.createClass( {
 					notices={ this.state.notices }
 					sites={ this.props.sites }
 					selectedSite={ this.props.sites.getSelectedSite() }
-					isPlaceholder= { this.showPluginListPlaceholders( true ) } />
+					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } />
 				<PluginsList
 					header={ this.translate( 'Jetpack Plugins' ) }
 					plugins={ this.getJetpackPlugins() }
@@ -301,7 +298,7 @@ export default React.createClass( {
 					sites={ this.props.sites }
 					selectedSite={ this.props.sites.getSelectedSite() }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.showPluginListPlaceholders( false ) } />
+					isPlaceholder= { this.shouldShowPluginListPlaceholders( false ) } />
 			</div>
 		);
 	},

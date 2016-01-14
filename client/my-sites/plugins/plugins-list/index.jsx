@@ -352,33 +352,31 @@ export default React.createClass( {
 					setSelectionState={ this.setBulkSelectionState }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) } />
-				<div className={ itemListClasses }>{ this.renderPlugins() }</div>
+				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
 				{ ! this.props.isWpCom && <DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" /> }
 			</span>
 		);
 	},
 
-	renderPlugins() {
-		return this.props.plugins.map( plugin => {
-			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
-			const hasAllNoManageSites = ! plugin.wpcom &&
-										! plugin.sites.some( site => site.modules && site.modules.indexOf( 'manage' ) !== -1 );
-			return (
-				<PluginItem
-					key={ plugin.slug }
-					hasAllNoManageSites={ hasAllNoManageSites }
-					plugin={ plugin }
-					sites={ plugin.sites }
-					progress={ this.props.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
-					errors={ this.props.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
-					notices={ this.props.notices }
-					isSelected={ this.isSelected( plugin ) }
-					isSelectable={ this.state.bulkManagement }
-					onClick={ selectThisPlugin }
-					selectedSite={ this.props.selectedSite }
-					pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() } />
-			);
-		} );
+	renderPlugin( plugin ) {
+		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+		const hasAllNoManageSites = ! plugin.wpcom &&
+									! plugin.sites.some( site => site.modules && site.modules.indexOf( 'manage' ) !== -1 );
+		return (
+			<PluginItem
+				key={ plugin.slug }
+				hasAllNoManageSites={ hasAllNoManageSites }
+				plugin={ plugin }
+				sites={ plugin.sites }
+				progress={ this.props.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
+				errors={ this.props.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
+				notices={ this.props.notices }
+				isSelected={ this.isSelected( plugin ) }
+				isSelectable={ this.state.bulkManagement }
+				onClick={ selectThisPlugin }
+				selectedSite={ this.props.selectedSite }
+				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() } />
+		);
 	},
 
 	renderPlaceholders() {
