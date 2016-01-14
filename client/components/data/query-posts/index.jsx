@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { getSitePostsForQuery, isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { requestSitePosts } from 'state/posts/actions';
 
-class PostsSearch extends Component {
+class QueryPosts extends Component {
 	shouldComponentUpdate( nextProps ) {
 		return (
 			nextProps.siteId !== this.props.siteId ||
@@ -39,7 +39,7 @@ class PostsSearch extends Component {
 	}
 }
 
-PostsSearch.propTypes = {
+QueryPosts.propTypes = {
 	siteId: PropTypes.number,
 	query: PropTypes.object,
 	posts: PropTypes.array,
@@ -47,7 +47,7 @@ PostsSearch.propTypes = {
 	requestSitePosts: PropTypes.func
 };
 
-PostsSearch.defaultProps = {
+QueryPosts.defaultProps = {
 	requestSitePosts: () => {}
 };
 
@@ -64,4 +64,4 @@ export default connect(
 			requestSitePosts
 		}, dispatch );
 	}
-)( PostsSearch );
+)( QueryPosts );

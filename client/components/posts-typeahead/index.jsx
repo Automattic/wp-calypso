@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSitePostsForQuery, isRequestingSitePostsForQuery } from 'state/posts/selectors';
-import PostsSearch from 'components/data/posts-search';
+import QueryPosts from 'components/data/query-posts';
 import Typeahead from 'components/typeahead';
 import PostsTypeaheadResult from './result';
 
@@ -16,7 +16,7 @@ function PostsTypeahead( { siteId, search, onSearch, searching, posts } ) {
 	return (
 		<div className="posts-typeahead">
 			{ search && (
-				<PostsSearch
+				<QueryPosts
 					siteId={ siteId }
 					query={ { search } } />
 			) }

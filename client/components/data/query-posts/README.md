@@ -1,7 +1,7 @@
-Posts Search
-============
+Query Posts
+===========
 
-Posts Search is a React component used in managing the fetching of posts queries.
+Query Posts is a React component used in managing the fetching of posts queries.
 
 ## Usage
 
@@ -9,16 +9,22 @@ Render the component, passing `siteId` and `query`. It does not accept any child
 
 ```jsx
 import React from 'react';
-import PostsSearch from 'components/posts-search';
-import MyPostsList from './posts-list';
+import QueryPosts from 'components/data/posts-search';
+import MyPostsListItem from './list-item';
 
-export default function() {
+export default function MyPostsList( { posts } ) {
 	return (
 		<div>
-			<PostsSearch
+			<QueryPosts
 				siteId={ 3584907 }
 				query={ { search: 'Themes' } } />
-			<MyPostsList />
+			{ posts.map( ( post ) => {
+				return (
+					<MyPostsListItem
+						key={ post.global_ID }
+						post={ post } />
+				);
+			} }
 		</div>
 	);
 }
