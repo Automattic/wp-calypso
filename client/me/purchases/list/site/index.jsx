@@ -29,7 +29,9 @@ const PurchasesSite = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<SectionHeader label={ isPlaceholder ? this.translate( 'Loading…' ) : this.props.name } />
+				<SectionHeader label={ isPlaceholder ? this.translate( 'Loading…' ) : this.props.name }>
+					<span className="purchases-site__slug">{ this.props.slug }</span>
+				</SectionHeader>
 				{
 					isPlaceholder ?
 					this.placeholders() :
