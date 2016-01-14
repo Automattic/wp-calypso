@@ -117,7 +117,6 @@ module.exports = React.createClass( {
 		return (
 			<Notice
 				className="profile-links-add-other__error"
-				isCompact
 				status="is-error"
 				onDismissClick={ this.clearLastError }
 				text={ this.state.lastError }
