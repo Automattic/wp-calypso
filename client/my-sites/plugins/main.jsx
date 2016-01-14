@@ -28,7 +28,6 @@ import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
-import PluginsActions from 'lib/plugins/actions';
 import PluginsStore from 'lib/plugins/store';
 import PluginsDataStore from 'lib/plugins/wporg-data/store';
 import PluginNotices from 'lib/plugins/notices';
