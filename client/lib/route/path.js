@@ -2,9 +2,7 @@
  * Internal Dependencies
  */
 var trailingslashit = require( './trailingslashit' ),
-	untrailingslashit = require( './untrailingslashit' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	config = require( 'config' );
+	untrailingslashit = require( './untrailingslashit' );
 
 /**
  * Module variables
