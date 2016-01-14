@@ -4,6 +4,10 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import isEmpty from 'lodash/lang/isEmpty';
+import find from 'lodash/collection/find';
+import includes from 'lodash/collection/includes';
+import negate from 'lodash/function/negate';
+import range from 'lodash/utility/range';
 
 /**
  * Internal dependencies
@@ -59,8 +63,8 @@ export default React.createClass( {
 		}
 	},
 
-	isSelected( plugin ) {
-		return !! this.state.selectedPlugins[ plugin.slug ];
+	isSelected( { slug } ) {
+		return !! this.state.selectedPlugins[ slug ];
 	},
 
 	togglePlugin( plugin ) {
@@ -73,17 +77,14 @@ export default React.createClass( {
 
 	setBulkSelectionState( plugins, selectionState ) {
 		let slugsToBeUpdated = {};
-		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug] = selectionState );
+		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug] = this.hasNoSitesThatCanManage( plugin ) ? false : selectionState );
+
 		this.setState( { selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ) } );
 	},
 
 	getPluginBySlug( slug ) {
-		for ( let i = 0, l = this.props.plugins.lenght; i < l; i++ ) {
-			if ( this.props.plugins[ i ].slug === slug ) {
-				return this.props.plugins[ i ];
-			}
-		}
-		return false;
+		const { plugins } = this.props;
+		return find( plugins, plugin => plugin.slug === slug );
 	},
 
 	filterSelection: {
@@ -117,10 +118,12 @@ export default React.createClass( {
 		return this.props.pluginUpdateCount;
 	},
 
+	hasNoSitesThatCanManage( plugin ) {
+		return ! plugin.wpcom &&
+			! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
+	},
+
 	getSelected() {
-		if ( ! this.props.plugins ) {
-			return [];
-		}
 		return this.props.plugins.filter( this.filterSelection.selected.bind( this ) );
 	},
 
@@ -142,40 +145,39 @@ export default React.createClass( {
 	toggleBulkManagement() {
 		const bulkManagement = ! this.state.bulkManagement;
 
-		this.setState( {
-			bulkManagement
-		} );
-
 		if ( bulkManagement ) {
-			this.recordEvent( 'Clicked Manage' );
-		} else {
-			// Unselect all plugins.
-			this.setState( { selectedPlugins: {} } );
+			this.setState( { bulkManagement } );
+			return this.recordEvent( 'Clicked Manage' );
+		}
 
-			//PluginsActions.selectPlugins( this.props.sites, 'none' );
-			if ( this.state.notices && ( this.state.notices.completed || this.state.notices.errors ) ) {
-				PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
-			}
-			this.recordEvent( 'Clicked Manage Done' );
+		// Unselect all plugins.
+		this.setState( { selectedPlugins: {}, bulkManagement } );
+		this.removePluginsNotices();
+		this.recordEvent( 'Clicked Manage Done' );
+	},
+
+	removePluginsNotices() {
+		const { notices: { completed, errors } = {} } = this.state;
+		if ( completed || errors ) {
+			PluginsActions.removePluginsNotices( [ ...completed, ...errors ] );
 		}
 	},
 
 	doActionOverSelected( actionName, action ) {
-		PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
-		this.props.plugins.forEach( plugin => {
-			if ( this.isSelected( plugin ) ) {
-				// Ignore the user trying to deactive Jetpack.
-				// Dialog to confirm the disconnection will be handled after.
-				if ( 'deactivating' === actionName && plugin.slug === 'jetpack' ) {
-					return;
-				}
-				plugin.sites.forEach( site => action( site, site.plugin ) );
-			}
-		} );
+		const isDeactivatingAndJetpackSelected = ( { slug } ) => 'deactivating' === actionName && 'jetpack' === slug;
+		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
+		this.removePluginsNotices();
+
+		this.props.plugins
+			.filter( this.isSelected ) // only use selected sites
+			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving
+			.map( p => p.sites ) // list of plugins -> list of list of sites
+			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
+			.forEach( site => action( site, site.plugin ) );
 	},
 
 	updateAllPlugins() {
-		PluginsActions.removePluginsNotices( this.state.notices.completed.concat( this.state.notices.errors ) );
+		this.removePluginsNotices();
 		this.props.plugins.forEach( plugin => {
 			plugin.sites.forEach( site => PluginsActions.updatePlugin( site, site.plugin ) );
 		} );
@@ -226,7 +228,7 @@ export default React.createClass( {
 			siteName;
 
 		this.props.plugins
-			.filter( plugin => this.isSelected( plugin ) )
+			.filter( plugin => this.isSelected )
 			.forEach( ( plugin ) => {
 				pluginsList[ plugin.slug ] = true;
 				pluginName = plugin.name || plugin.slug;
@@ -295,7 +297,7 @@ export default React.createClass( {
 		}
 	},
 
-	removePluginNotice() {
+	removePluginDialog() {
 		const message = (
 			<div>
 				<span>{ this.getConfirmationText() }</span>
@@ -359,7 +361,7 @@ export default React.createClass( {
 					deactivateSelected={ this.deactivateSelected }
 					setAutoupdateSelected={ this.setAutoupdateSelected }
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-					removePluginNotice={ this.removePluginNotice }
+					removePluginNotice={ this.removePluginDialog }
 					setSelectionState={ this.setBulkSelectionState }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) } />
@@ -371,12 +373,10 @@ export default React.createClass( {
 
 	renderPlugin( plugin ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
-		const hasAllNoManageSites = ! plugin.wpcom &&
-									! plugin.sites.some( site => site.modules && site.modules.indexOf( 'manage' ) !== -1 );
 		return (
 			<PluginItem
 				key={ plugin.slug }
-				hasAllNoManageSites={ hasAllNoManageSites }
+				hasAllNoManageSites={ this.hasNoSitesThatCanManage( plugin ) }
 				plugin={ plugin }
 				sites={ plugin.sites }
 				progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
@@ -392,7 +392,6 @@ export default React.createClass( {
 
 	renderPlaceholders() {
 		const placeholderCount = this.props.isWpCom ? 3 : 16;
-		return [ ... Array( placeholderCount ).keys() ].map( i => <PluginItem key={ 'placeholder-' + i } /> );
+		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	}
 } );
-
