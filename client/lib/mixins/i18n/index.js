@@ -5,7 +5,8 @@ var debug = require( 'debug' )( 'calypso:i18n' ),
 	Jed = require( 'jed' ),
 	request = require( 'superagent' ),
 	tzDetect = require( './timezone' ).timezone,
-	moment = require( 'moment-timezone' );
+	moment = require( 'moment-timezone' ),
+	LRU = require( 'lru-cache' );
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ i18nState = {
 	jed: undefined,
 	locale: undefined,
 	localeSlug: undefined,
-	translations: undefined,
+	translations: LRU( { max: 100 } ),
 };
 
 // add event emitter mixin
@@ -103,7 +104,7 @@ function setLocale( locale ) {
 	i18nState.locale = locale;
 	buildJedData( locale );
 	buildMomentAndNumber( locale );
-	i18nState.translations = new Map();
+	i18nState.translations.reset();
 	i18nState.emit( 'change' );
 }
 
@@ -398,7 +399,6 @@ mixin = {
 
 		if ( cacheable && optionsString ) {
 			i18nState.translations.set( optionsString, translation );
-			console.log( 'translation cache: %d', i18nState.translations.size );
 		}
 		return translation;
 	},

@@ -56,6 +56,7 @@
     "key-mirror": "1.0.1",
     "keymaster": "1.6.2",
     "lodash": "3.10.1",
+    "lru-cache": "4.0.0",
     "lunr": "0.5.7",
     "marked": "0.3.5",
     "moment": "2.10.6",
