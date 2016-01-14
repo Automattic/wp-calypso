@@ -69,6 +69,27 @@ var FeedSubscriptionActions = {
 		} );
 	},
 
+	unfollowBySubscriptionId: function( subId, blogId ) {
+		if ( ! subId ) {
+			return;
+		}
+
+		Dispatcher.handleViewAction( {
+			type: ActionTypes.UNFOLLOW_READER_FEED,
+			subId: subId
+		} );
+
+		wpcom.undocumented().unfollowReaderFeed( { sub_id: subId }, function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.RECEIVE_UNFOLLOW_READER_FEED,
+				subId: subId,
+				blogId: blogId,
+				data: data,
+				error: error
+			} );
+		} );
+	},
+
 	dismissError: function( error ) {
 		if ( ! error ) {
 			return;
