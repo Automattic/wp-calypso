@@ -294,8 +294,6 @@ function reRenderTranslations() {
 	i18nState.emit( 'change' );
 }
 
-var cacheHits = 0, cacheMisses = 0;
-
 // The mixin object is injected during startup
 mixin = {
 	moment: moment,
@@ -350,17 +348,9 @@ mixin = {
 
 			translation = i18nState.translations.get( optionsString );
 			if ( translation ) {
-				cacheHits++;
-				if ( cacheHits % 100 === 0 ) {
-					console.log( 'translation cache hit rate: %f (%d / %d )', cacheHits / ( cacheHits + cacheMisses ), cacheHits, cacheMisses );
-				}
 				return translation;
 			}
 		}
-
-		cacheMisses++;
-
-		console.log( 'translation cache hit rate: %f (%d / %d )', cacheHits / ( cacheHits + cacheMisses ), cacheHits, cacheMisses );
 
 		translation = getTranslationFromJed( options );
 
