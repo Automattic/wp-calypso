@@ -25,5 +25,6 @@ render() {
 * `onClose` (`function`) — called on site selection
 * `onSiteSelect` (`function`) - called with the site `slug` on site selection
 * `filter` (`function`) - If present, passed to `sites.filter()` to display a subset of sites. Return `true` to display a site.
+* `isPlaceholder` (`bool`) - `true` to display as a placeholder
 
 

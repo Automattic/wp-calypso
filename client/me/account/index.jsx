@@ -357,9 +357,12 @@ module.exports = React.createClass( {
 			);
 		}
 
+		let primarySiteId = this.props.userSettings.getSetting( 'primary_site_ID' );
+
 		return (
 			<SitesDropdown
-				key={ this.props.userSettings.getSetting( 'primary_site_ID' ) }
+				key={ primarySiteId }
+				isPlaceholder={ ! primarySiteId }
 				selected={ this.props.userSettings.getSetting( 'primary_site_ID' ) }
 				onSiteSelect={ this.onSiteSelect }
 			/>

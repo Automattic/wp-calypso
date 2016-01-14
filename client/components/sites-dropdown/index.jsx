@@ -10,6 +10,7 @@ import noop from 'lodash/utility/noop';
  * Internal dependencies
  */
 import Site from 'my-sites/site';
+import SitePlaceholder from 'my-sites/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import sitesList from 'lib/sites-list';
 import Gridicon from 'components/gridicon';
@@ -30,14 +31,16 @@ export default React.createClass( {
 		showAllSites: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		onSiteSelect: React.PropTypes.func,
-		filter: React.PropTypes.func
+		filter: React.PropTypes.func,
+		isPlaceholder: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			showAllSites: false,
 			onClose: noop,
-			onSiteSelect: noop
+			onSiteSelect: noop,
+			isPlaceholder: false
 		};
 	},
 
@@ -60,18 +63,22 @@ export default React.createClass( {
 		} );
 	},
 
+	toggleOpen() {
+		this.setState( { open: ! this.state.open } );
+	},
+
 	render() {
 		return (
 			<div className={ classNames( 'sites-dropdown', { 'is-open': this.state.open } ) }>
 				<div className="sites-dropdown__wrapper">
 					<div
 						className="sites-dropdown__selected"
-						onClick={ () => this.setState( { open: ! this.state.open } ) }
-					>
-						<Site
-							site={ this.getSelectedSite() }
-							indicator={ false }
-						/>
+						onClick={ this.toggleOpen } >
+						{
+							this.props.isPlaceholder
+							? <SitePlaceholder />
+							: <Site site={ this.getSelectedSite() } indicator={ false } />
+						}
 						<Gridicon icon="chevron-down" />
 					</div>
 					{ this.state.open &&
