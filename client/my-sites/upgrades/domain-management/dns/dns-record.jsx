@@ -103,8 +103,17 @@ var DnsRecord = React.createClass( {
 		this.props.deleteDns( this.props.dnsRecord );
 	},
 
+	renderRemoveButton: function() {
+		return (
+			<Button borderless onClick={ this.deleteDns }>
+				<Gridicon icon="trash" />
+			</Button>
+		);
+	},
+
 	render: function() {
-		const classes = classNames( { 'is-disabled': this.isBeingProcessed() } );
+		const classes = classNames( { 'is-disabled': this.isBeingProcessed() } ),
+			isAllowedToBeRemoved = ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type;
 		return (
 			<li className={ classes }>
 				<div className="dns__list-type">
@@ -115,10 +124,7 @@ var DnsRecord = React.createClass( {
 					<em>{ this.handledBy() }</em>
 				</div>
 				<div className="dns__list-remove">
-					{ ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type ?
-						<Button borderless onClick={ this.deleteDns }>
-							<Gridicon icon="trash" />
-						</Button> : null }
+					{ isAllowedToBeRemoved && this.renderRemoveButton() }
 				</div>
 			</li>
 		);
