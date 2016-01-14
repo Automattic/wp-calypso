@@ -32,4 +32,12 @@
 			display: none;
 		}
 	}
+	.plan-feature {
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.plan-feature__heading {
+			margin-right: 10px;
+		}
+	}
 }
