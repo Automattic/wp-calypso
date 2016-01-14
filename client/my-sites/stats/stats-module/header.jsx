@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -49,13 +48,13 @@ export default React.createClass( {
 
 	toggleModule: function( event ) {
 		event.preventDefault();
-		const { path, onActionClick, showModule } = this.props;		
+		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';
 
 		if ( path ) {
 			analytics.ga.recordEvent( 'Stats', gaEvent + ' Module', titlecase( path ) );
 		}
-		
+
 		onActionClick( {
 			showModule: ! showModule
 		} );
