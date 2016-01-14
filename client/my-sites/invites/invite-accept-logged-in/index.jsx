@@ -17,6 +17,7 @@ import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
+import constants from 'my-sites/invites/constants';
 
 export default React.createClass( {
 
@@ -52,7 +53,7 @@ export default React.createClass( {
 		return (
 			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
 				<Card>
-					<InviteFormHeader { ...this.props } />
+					<InviteFormHeader { ... this.props.invite } />
 					<div className="invite-accept-logged-in__join-as">
 						<Gravatar user={ user } size={ 72 } />
 						{
