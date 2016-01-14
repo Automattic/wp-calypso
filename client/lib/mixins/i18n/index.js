@@ -338,29 +338,28 @@ mixin = {
 	 * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
 	 */
 	translate: function() {
-		var options, translation, sprintfArgs, errorMethod, optionsString;
+		var options, translation, sprintfArgs, errorMethod, optionsString, cacheable;
 
 		options = normalizeTranslateArguments( arguments );
 
-		try {
+		cacheable = ! options.components;
+
+		if ( cacheable ) {
 			optionsString = JSON.stringify( options );
 
 			translation = i18nState.translations.get( optionsString );
 			if ( translation ) {
 				cacheHits++;
 				if ( cacheHits % 100 === 0 ) {
-					console.log( 'translation cache hit rate: %f', cacheHits / ( cacheHits + cacheMisses ) );
+					console.log( 'translation cache hit rate: %f (%d / %d )', cacheHits / ( cacheHits + cacheMisses ), cacheHits, cacheMisses );
 				}
 				return translation;
 			}
-		} catch ( e ) {
-			// some translations end up with options that are not serializable as json
-			// this catches those and lets them on through to the normal processing
 		}
 
 		cacheMisses++;
 
-		console.log( 'translation cache hit rate: %f', cacheHits / ( cacheHits + cacheMisses ) );
+		console.log( 'translation cache hit rate: %f (%d / %d )', cacheHits / ( cacheHits + cacheMisses ), cacheHits, cacheMisses );
 
 		translation = getTranslationFromJed( options );
 
@@ -397,7 +396,7 @@ mixin = {
 			translation = hook( translation, options );
 		} );
 
-		if ( optionsString ) {
+		if ( cacheable && optionsString ) {
 			i18nState.translations.set( optionsString, translation );
 			console.log( 'translation cache: %d', i18nState.translations.size );
 		}
