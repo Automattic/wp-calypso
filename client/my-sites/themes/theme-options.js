@@ -24,10 +24,6 @@ export const buttonOptions = {
 		label: i18n.translate( 'Preview', {
 			context: 'verb'
 		} ),
-		header: i18n.translate( 'Preview on:', {
-			context: 'verb',
-			comment: 'label for selecting a site on which to preview a theme'
-		} ),
 		hasAction: true,
 		hasUrl: false,
 		isHidden: ( site, theme ) => theme.active
