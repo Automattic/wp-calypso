@@ -15,6 +15,7 @@ var ReactDom = require( 'react-dom' ),
 var DocsComponent = require( './main' ),
 	SingleDocComponent = require( './doc' ),
 	DesignAssetsComponent = require( './design' ),
+	AppComponents = require( './design/app-components' ),
 	Typography = require( './design/typography' ),
 	DevWelcome = require( './welcome' ),
 	Sidebar = require( './sidebar' ),
@@ -88,6 +89,18 @@ var devdocs = {
 
 		ReactDom.render(
 			React.createElement( DesignAssetsComponent, {
+				component: context.params.component
+			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	// App components
+	appComponents: function( context ) {
+		context.store.dispatch( setSection( 'devdocs' ) );
+
+		ReactDom.render(
+			React.createElement( AppComponents, {
 				component: context.params.component
 			} ),
 			document.getElementById( 'primary' )
