@@ -65,14 +65,11 @@ export function getButtonOptions( site, theme, isLoggedOut, actions, setSelected
 			return option;
 		}
 
-		if ( actionLabel.label ) {
-			option.label = actionLabel.label;
-		}
+		const { label, header } = actionLabel;
 
-		if ( actionLabel.header ) {
-			option.header = actionLabel.header;
-		}
-		return option;
+		return assign( {}, option, {
+			label, header
+		} );
 	};
 
 	function appendUrl( option, name ) {
