@@ -93,8 +93,8 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				fallbackHeaderText={ this.translate( 'Choose a theme.' ) }
-				fallbackSubHeaderText={ this.translate( 'No need to overthink it. You can always switch to a different theme\u00a0later.' ) }
-				subHeaderText={ this.translate( 'Choose a theme. You can always switch to a different theme\u00a0later.' ) }
+				fallbackSubHeaderText={ this.translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
+				subHeaderText={ this.translate( 'Choose a theme. You can always switch to a different theme later.' ) }
 				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }
 				{ ...this.props } />
