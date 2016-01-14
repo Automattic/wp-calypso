@@ -175,7 +175,7 @@ var Themes = React.createClass( {
 					) }
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
-					actions={ bindActionCreators( Action, dispatch ) }
+					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }
 				/> }
 			</Main>
 		);

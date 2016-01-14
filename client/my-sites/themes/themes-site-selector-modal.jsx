@@ -22,7 +22,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		).isRequired,
 		selectedTheme: PropTypes.object.isRequired,
 		onHide: PropTypes.func,
-		actions: PropTypes.object
+		action: PropTypes.func
 	},
 
 	redirectAndCallAction( site ) {
@@ -31,13 +31,9 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
 		defer( () => {
-			const {
-				selectedAction: action,
-				selectedTheme: theme
-			} = this.props;
-			Helper.trackClick( 'site selector', action.name );
+			Helper.trackClick( 'site selector', this.props.selectedAction.name );
 			page( '/design/' + site.slug );
-			this.props.actions[ action.name ]( theme, site );
+			this.props.action( this.props.selectedTheme, site );
 		} );
 	},
 
