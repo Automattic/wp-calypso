@@ -46,6 +46,7 @@
 		"post-editor-github-link": false,
 		"post-editor/post-type-switch": false,
 		"post-editor/contact-form": true,
+		"post-editor/media-advanced": true,
 
 		"manage/media": true,
 		"manage/posts": true,

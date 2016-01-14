@@ -42,6 +42,7 @@ mockery.registerMock( 'components/tinymce', MOCK_COMPONENT );
 mockery.registerMock( 'components/popover', MOCK_COMPONENT );
 mockery.registerMock( 'components/forms/clipboard-button', MOCK_COMPONENT );
 mockery.registerMock( 'post-editor/editor-mobile-navigation', MOCK_COMPONENT );
+mockery.registerMock( 'post-editor/editor-media-advanced', MOCK_COMPONENT );
 mockery.registerMock( 'post-editor/editor-ground-control', MOCK_COMPONENT );
 mockery.registerMock( 'post-editor/editor-drawer', MOCK_COMPONENT );
 mockery.registerMock( 'post-editor/editor-author', MOCK_COMPONENT );
