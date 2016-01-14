@@ -1,33 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var isExternal = require( 'lib/url' ).isExternal,
-	Gridicon = require( 'components/gridicon' ),
-	sections = require( 'sections' );
+import { isExternal } from 'lib/url';
+import Gridicon from 'components/gridicon';
+import from 'sections';
 
-/**
- * Component
- */
-var SidebarMenuItem = React.createClass( {
+export default React.createClass( {
+	displayName: 'SidebarItem',
+
 	propTypes: {
 		label: React.PropTypes.string.isRequired,
-		className: React.PropTypes.string.isRequired,
+		className: React.PropTypes.string,
 		link: React.PropTypes.string.isRequired,
 		buttonLink: React.PropTypes.string,
 		buttonLabel: React.PropTypes.string,
 		onNavigate: React.PropTypes.func,
 		icon: React.PropTypes.string,
+		selected: React.PropTypes.bool,
 		preloadSectionName: React.PropTypes.string
 	},
 
 	_preloaded: false,
 
-	renderButton: function( link ) {
+	renderButton( link ) {
 		if ( ! link ) {
 			return null;
 		}
@@ -44,18 +45,19 @@ var SidebarMenuItem = React.createClass( {
 		);
 	},
 
-	preload: function() {
+	preload() {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
 			sections.preload( this.props.preloadSectionName );
 		}
 	},
 
-	render: function() {
+	render() {
 		const isExternalLink = isExternal( this.props.link );
+		const classes = classnames( this.props.className, { selected: this.props.selected } );
 
 		return (
-			<li className={ this.props.className }>
+			<li className={ classes }>
 				<a
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
@@ -71,5 +73,3 @@ var SidebarMenuItem = React.createClass( {
 		);
 	}
 } );
-
-module.exports = SidebarMenuItem;
