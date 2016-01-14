@@ -5,18 +5,23 @@
 		@include breakpoint( "<660px" ) {
 			display: block;
 		}
+
+		&.card {
+			align-items: baseline;
+		}
 	}
 }
 
 .purchases-site__slug {
 	color: darken( $gray, 15% );
 	font-size: 12px;
-	line-height: 28px;
 }
 
 .section-header__label,
 .purchases-site__slug {
+	white-space: nowrap;
+
 	@include breakpoint( "<660px" ) {
-		line-height: 140%;
+		line-height: 15px;
 	}
 }
