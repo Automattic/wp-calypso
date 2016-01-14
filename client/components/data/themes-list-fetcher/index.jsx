@@ -96,8 +96,9 @@ const ThemesListFetcher = React.createClass( {
 
 		if ( options.triggeredByScroll ) {
 			onRealScroll();
-			this.props.fetchNextPage( site );
 		}
+
+		this.props.fetchNextPage( site );
 	},
 
 	render: function() {
