@@ -359,6 +359,8 @@ module.exports = React.createClass( {
 
 		return (
 			<SitesDropdown
+				key={ this.props.userSettings.getSetting( 'primary_site_ID' ) }
+				selected={ this.props.userSettings.getSetting( 'primary_site_ID' ) }
 				onSiteSelect={ this.onSiteSelect }
 			/>
 		);
