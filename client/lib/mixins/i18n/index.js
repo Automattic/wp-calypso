@@ -293,6 +293,8 @@ function reRenderTranslations() {
 	i18nState.emit( 'change' );
 }
 
+var cacheHits = 0, cacheMisses = 0;
+
 // The mixin object is injected during startup
 mixin = {
 	moment: moment,
@@ -339,12 +341,26 @@ mixin = {
 		var options, translation, sprintfArgs, errorMethod, optionsString;
 
 		options = normalizeTranslateArguments( arguments );
-		optionsString = JSON.stringify( options );
 
-		translation = i18nState.translations.get( optionsString );
-		if ( translation ) {
-			return translation;
+		try {
+			optionsString = JSON.stringify( options );
+
+			translation = i18nState.translations.get( optionsString );
+			if ( translation ) {
+				cacheHits++;
+				if ( cacheHits % 100 === 0 ) {
+					console.log( 'translation cache hit rate: %f', cacheHits / ( cacheHits + cacheMisses ) );
+				}
+				return translation;
+			}
+		} catch ( e ) {
+			// some translations end up with options that are not serializable as json
+			// this catches those and lets them on through to the normal processing
 		}
+
+		cacheMisses++;
+
+		console.log( 'translation cache hit rate: %f', cacheHits / ( cacheHits + cacheMisses ) );
 
 		translation = getTranslationFromJed( options );
 
@@ -381,7 +397,10 @@ mixin = {
 			translation = hook( translation, options );
 		} );
 
-		i18nState.translations.set( optionsString, translation );
+		if ( optionsString ) {
+			i18nState.translations.set( optionsString, translation );
+			console.log( 'translation cache: %d', i18nState.translations.size );
+		}
 		return translation;
 	},
 };
