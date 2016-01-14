@@ -217,7 +217,7 @@ module.exports = React.createClass( {
 			'Path': 'path-alt',
 			'Eventbrite': 'eventbrite'
 		};
-		
+
 		const header = (
 			<div>
 				<SocialLogo

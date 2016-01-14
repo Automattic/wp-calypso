@@ -425,14 +425,9 @@ $color-print: #f8f8f8;
 	position: relative;
 	background: transparent;
 	box-shadow: none;
-	border-bottom: 1px solid lighten( $gray, 30% );
 	list-style-type: none;
 	margin-bottom: 0;
 	padding: 8px 0;
-
-	&:first-child {
-		border-top: 1px solid lighten( $gray, 30% );
-	}
 
 	&.disabled {
 		opacity: 0.4;
@@ -441,10 +436,10 @@ $color-print: #f8f8f8;
 
 .sharing-connection__account-avatar {
 	position: absolute;
-	left: 0;
+	left: 5px;
 	top: 8px;
-	height: 40px;
-	width: 40px;
+	height: 36px;
+	width: 36px;
 	border: 1px solid $gray-light;
 	color: white;
 
@@ -454,7 +449,7 @@ $color-print: #f8f8f8;
 }
 
 .sharing-connection__account-status {
-	padding: 10px 90px 10px 48px;
+	padding: 10px 90px 10px 56px;
 
 	&.is-shareable {
 		padding-top: 0;
