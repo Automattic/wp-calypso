@@ -170,7 +170,6 @@ module.exports = {
 		redirectMap = {
 			account: '/me/account',
 			password: '/me/security',
-			security: '/me/security',
 			'public-profile': '/me/public-profile',
 			notifications: '/me/notifications',
 			disbursements: '/me/public-profile',
