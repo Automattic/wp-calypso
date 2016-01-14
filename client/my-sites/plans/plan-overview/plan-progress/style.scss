@@ -27,6 +27,7 @@
 
 .plan-progress__bar {
 	flex: 1 0 6em;
+	min-width: 250px;
 }
 
 .plan-progress__time-until-expiry {
