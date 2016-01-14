@@ -321,10 +321,10 @@ export default React.createClass( {
 
 		if ( this.props.isPlaceholder ) {
 			return (
-				<span>
+				<div className="plugins-list">
 					<SectionHeader key="plugins-list__section-placeholder" label={ this.props.header } className="plugins-list__section-actions is-placeholder" />
 					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
-				</span>
+				</div>
 				)
 		}
 
@@ -333,7 +333,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<span>
+			<div className="plugins-list" >
 				<PluginsListHeader label={ this.props.header }
 					isWpCom={ this.props.isWpCom }
 					isBulkManagementActive={ !! this.state.bulkManagement }
@@ -354,7 +354,7 @@ export default React.createClass( {
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
 				{ ! this.props.isWpCom && <DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" /> }
-			</span>
+			</div>
 		);
 	},
 
