@@ -27,7 +27,7 @@ var Main = require( 'components/main' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
 	getButtonOptions = require( './theme-options' ).getButtonOptions,
-	buttonOptions = require( './theme-options' ).buttonOptions,
+	optionLabels = require( './option-labels' ),
 	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' ),
 	user = require( 'lib/user' )();
 
@@ -168,7 +168,7 @@ var Themes = React.createClass( {
 				}
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal
 					selectedAction={ Object.assign(
-						{}, buttonOptions[ this.state.selectedAction ], { name: this.state.selectedAction }
+						{}, optionLabels[ this.state.selectedAction ], { name: this.state.selectedAction }
 						// TODO: Only pass buttonOptions[ this.state.selectedAction ],
 						// having added the actual action as an attribute earlier (probably
 						// inside theme-options ), instead of assigning the name here.
