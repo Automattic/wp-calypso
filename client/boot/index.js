@@ -327,7 +327,7 @@ function boot() {
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
-		page( '*', require( 'lib/olark' ).notifyLocation );
+		require( 'lib/olark' );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
