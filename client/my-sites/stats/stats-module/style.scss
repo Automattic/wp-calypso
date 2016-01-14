@@ -1,3 +1,17 @@
+// Select Dropdown
+.stats-module__select-dropdown-wrapper {
+	margin: 1em 20px;
+
+	.select-dropdown__container {
+		position: relative;
+	}
+
+	.stats-module.is-loading &,
+	.stats-module.has-no-data & {
+		display: none;
+	}
+}
+
 .card.stats-module {
 	padding: 0;
 }

@@ -1,7 +1,9 @@
-// Tab Content (for comments module)
-
-.tab-content {
+.stats-comments__tab-content {
 	display: none;
+
+	&.is-active {
+		display: block;
+	}
 }
 
 .tab-email-followers .tab-content.email-followers,
