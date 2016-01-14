@@ -38,20 +38,20 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-	    const { plan, sitePlan: details } = this.props;
-	    const hasDiscount = details && details.rawDiscount > 0;
+		const { plan, sitePlan: details } = this.props;
+		const hasDiscount = details && details.rawDiscount > 0;
 
-	    if ( this.props.isPlaceholder ) {
+		if ( this.props.isPlaceholder ) {
 			return <div className="plan-price is-placeholder" />;
 		}
 
-	    return (
-	        <div className="plan-price">
-	            <span>{ this.getPrice() }</span>
-	            <small className="plan-price__billing-period">
-	                { hasDiscount ? this.translate( 'for first year' ) : plan.bill_period_label }
-	            </small>
-	        </div>
-	    );
+		return (
+			<div className="plan-price">
+				<span>{ this.getPrice() }</span>
+				<small className="plan-price__billing-period">
+					{ hasDiscount ? this.translate( 'for first year' ) : plan.bill_period_label }
+				</small>
+			</div>
+		);
 	}
 } );
