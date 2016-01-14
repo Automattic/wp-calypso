@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import isEmpty from 'lodash/lang/isEmpty';
-import some from 'lodash/collection/some';
 
 /**
  * Internal dependencies
@@ -80,7 +79,7 @@ export default React.createClass( {
 	filterSelection: {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) ) {
-				return some( plugin.sites, site => site.plugin && site.plugin.active );
+				return plugin.sites.some( site => site.plugin && site.plugin.active );
 			}
 			return false;
 		},
