@@ -204,7 +204,7 @@ export default React.createClass( {
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-jetpack.svg"
 					title={ this.translate( 'Want to import into your site?' ) }
-					line={ this.translate( 'Visit your site\'s wp-admin for all your import and export needs.' ) }
+					line={ this.translate( `Visit your site's wp-admin for all your import and export needs.` ) }
 					action={ this.translate( 'Import into %(siteTitle)s', { args: { siteTitle: this.props.site.title } } ) }
 					actionURL={ this.props.site.options.admin_url + 'import.php' }
 					actionTarget="_blank"
