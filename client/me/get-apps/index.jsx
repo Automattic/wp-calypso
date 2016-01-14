@@ -28,6 +28,7 @@ module.exports = React.createClass( {
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
+							<img src="/calypso/images/me/get-apps-osx.svg" alt="" width="96" height="96" />
 						</div>
 						<p><strong>{ this.translate( 'Mac' ) }</strong><br />
 						{ this.translate( 'Requires 10.11 or newer' ) }</p>
@@ -36,6 +37,7 @@ module.exports = React.createClass( {
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
+							<img src="/calypso/images/me/get-apps-windows.svg" alt="" width="96" height="96" />
 						</div>
 						<p><strong>{ this.translate( 'Windows' ) }</strong><br />
 						{ this.translate( 'Requires 7 or newer' ) }</p>
@@ -44,6 +46,7 @@ module.exports = React.createClass( {
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
+							<img src="/calypso/images/me/get-apps-linux.svg" alt="" width="96" height="96" />
 						</div>
 						<p><strong>{ this.translate( 'Linux' ) }</strong><br />
 						{ this.translate( 'Choose your distribution' ) }</p>
@@ -57,18 +60,20 @@ module.exports = React.createClass( {
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
+							<img src="/calypso/images/me/get-apps-ios.svg" alt="" width="96" height="96" />
 						</div>
 						<p><strong>{ this.translate( 'iOS' ) }</strong><br />
 						{ this.translate( 'Requires 9 or newer' ) }</p>
-						<Button href="https://itunes.apple.com/us/app/wordpress/id335703880?mt=8">{ this.translate( 'Get' ) }</Button>
+						<a href="https://itunes.apple.com/us/app/wordpress/id335703880?mt=8"><img src="/calypso/images/me/get-apps-app-store.png" alt="" /></a>
 					</section>
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
+							<img src="/calypso/images/me/get-apps-android.svg" alt="" width="96" height="96" />
 						</div>
 						<p><strong>{ this.translate( 'Android' ) }</strong><br />
 						{ this.translate( 'Requires 4 or newer' ) }</p>
-						<Button href="https://play.google.com/store/apps/details?id=org.wordpress.android">{ this.translate( 'Get' ) }</Button>
+						<a href="https://play.google.com/store/apps/details?id=org.wordpress.android"><img src="/calypso/images/me/get-apps-google-play.png" alt="" /></a>
 					</section>
 
 				</Card>
