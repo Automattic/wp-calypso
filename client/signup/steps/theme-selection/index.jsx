@@ -74,8 +74,7 @@ module.exports = React.createClass( {
 				return {
 					id: theme.slug,
 					name: theme.name,
-					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660',
-					actionLabel: actionLabel
+					screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660'
 				}
 			} );
 		return (
@@ -83,6 +82,9 @@ module.exports = React.createClass( {
 				getButtonOptions= { noop }
 				onScreenshotClick= { this.handleScreenshotClick }
 				onMoreButtonClick= { noop }
+				getActionLabel={ function() {
+					return actionLabel;
+				} }
 				{ ...this.props }
 				themes= { themes } />
 		);

@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import titleCase from 'to-title-case';
 import assign from 'lodash/object/assign';
 import mapValues from 'lodash/object/mapValues';
 import pick from 'lodash/object/pick';
+import merge from 'lodash/object/merge';
 
 /**
  * Internal dependencies
@@ -13,103 +13,80 @@ import Helper from 'lib/themes/helpers';
 import actionLabels from './action-labels';
 import config from 'config';
 
-const buttonOptions = {
-	signup: {
-		hasUrl: true,
-		isHidden: ( site, theme, isLoggedOut ) => ! isLoggedOut
-	},
-	preview: {
-		hasAction: true,
-		hasUrl: false,
-		isHidden: ( site, theme ) => theme.active
-	},
-	purchase: {
-		hasAction: true,
-		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || theme.purchased || ! theme.price || ! config.isEnabled( 'upgrades/checkout' )
-	},
-	activate: {
-		hasAction: true,
-		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
-	},
-	customize: {
-		hasAction: true,
-		isHidden: ( site, theme ) => ! theme.active || ( site && ! site.isCustomizable() )
-	},
-	separator: {
-		separator: true
-	},
-	details: {
-		hasUrl: true
-	},
-	support: {
-		hasUrl: true,
-		// We don't know where support docs for a given theme on a self-hosted WP install are,
-		// and free themes don't have support docs.
-		isHidden: ( site, theme ) => ( site && site.jetpack ) || ! Helper.isPremium( theme )
-	},
-};
-
-export function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
-	let options = pick( buttonOptions, option => ! ( option.isHidden && option.isHidden( site, theme, isLoggedOut ) ) );
-	options = mapValues( options, appendLabelAndHeader );
-	options = mapValues( options, appendUrl );
-	options = mapValues( options, appendAction );
-	return options;
-
-	function appendLabelAndHeader( option, name ) {
-		const actionLabel = actionLabels[ name ];
-
-		if ( ! actionLabel ) {
-			return option;
-		}
-
-		const { label, header } = actionLabel;
-
-		return assign( {}, option, {
-			label, header
-		} );
+/*
+ * The following can be see as a sort of frontend to the lib/themes/actions
+ * and lib/themes/helpers modules, with different function signatures
+ * streamlined, so they can be used uniformly from my-sites/themes/main.
+ */
+export function getButtonOptions( site, isLoggedOut, actions, letUserSelectSite, showPreview ) {
+	const buttonOptions = {
+		signup: {
+			getUrl: theme => Helper.getSignupUrl( theme ),
+			isHidden: ! isLoggedOut
+		},
+		preview: {
+			action: theme => showPreview( theme ),
+			hideForTheme: theme => theme.active
+		},
+		purchase: {
+			action: theme => site
+				? actions.purchase( theme, site, 'showcase' )
+				: letUserSelectSite( 'purchase', theme ),
+			isHidden: isLoggedOut || ! config.isEnabled( 'upgrades/checkout' ),
+			hideForTheme: theme => theme.active || theme.purchased || ! theme.price
+		},
+		activate: {
+			action: theme => site
+				? actions.activate( theme, site, 'showcase' )
+				: letUserSelectSite( 'activate', theme ),
+			isHidden: isLoggedOut,
+			hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+		},
+		customize: {
+			action: theme => site
+				? actions.customize( theme, site )
+				: letUserSelectSite( 'customize', theme ),
+			isHidden: isLoggedOut && ( site && ! site.isCustomizable() ),
+			hideForTheme: theme => ! theme.active
+		},
+		separator: {
+			separator: true
+		},
+		details: {
+			getUrl: theme => Helper.getDetailsUrl( theme, site ),
+		},
+		support: {
+			getUrl: theme => Helper.getSupportUrl( theme, site ),
+			// We don't know where support docs for a given theme on a self-hosted WP install are,
+			// and free themes don't have support docs.
+			isHidden: site && site.jetpack,
+			hideForTheme: theme => ! Helper.isPremium( theme )
+		},
 	};
 
-	function appendUrl( option, name ) {
-		const { hasUrl } = option;
-
-		if ( ! hasUrl ) {
-			return option;
-		}
-
-		const methodName = `get${ titleCase( name ) }Url`;
-		const getUrl = Helper[ methodName ];
-
-		return assign( {}, option, {
-			url: getUrl( theme, site )
-		} );
-	}
-
-	function appendAction( option, name ) {
-		const { hasAction } = option;
-
-		if ( ! hasAction ) {
-			return option;
-		}
-
-		let action;
-		if ( name === 'preview' ) {
-			action = togglePreview.bind( null, theme );
-		} else if ( site ) {
-			action = actions[ name ].bind( actions, theme, site, 'showcase' );
-		} else {
-			action = setSelectedTheme.bind( null, name, theme );
-		}
-
-		return assign( {}, option, {
-			action: trackedAction( action, name )
-		} );
-	}
-
-	function trackedAction( action, name ) {
-		return () => {
-			action();
-			Helper.trackClick( 'more button', name );
-		};
-	}
+	const options = merge( {}, buttonOptions, actionLabels );
+	return pick( options, option => ! option.isHidden );
 };
+
+export function addTracking( options ) {
+	return mapValues( options, appendActionTracking );
+}
+
+function appendActionTracking( option, name ) {
+	const { action } = option;
+
+	if ( ! action ) {
+		return option;
+	}
+
+	return assign( {}, option, {
+		action: trackedAction( action, name )
+	} );
+}
+
+function trackedAction( action, name ) {
+	return t => {
+		action( t );
+		Helper.trackClick( 'more button', name );
+	};
+}

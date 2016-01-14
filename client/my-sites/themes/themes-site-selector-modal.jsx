@@ -52,7 +52,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 				mainAction={ this.redirectAndCallAction }
 				mainActionLabel={ label }>
 
-				<Theme isActionable={ false } { ...theme } />
+				<Theme isActionable={ false } theme={ theme } />
 				<h1>{ header }</h1>
 			</SiteSelectorModal>
 		);

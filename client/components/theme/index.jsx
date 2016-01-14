@@ -5,7 +5,6 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' ),
-	pick = require( 'lodash/object/pick' ),
 	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
@@ -22,18 +21,24 @@ var Theme = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		// Theme ID (theme-slug)
-		id: React.PropTypes.string.isRequired,
-		// Theme name
-		name: React.PropTypes.string.isRequired,
-		// Theme screenshot URL
-		screenshot: React.PropTypes.string,
-		// Theme price (pre-formatted string) -- empty string indicates free theme
-		price: React.PropTypes.string,
-		// If true, the user has 'purchased' the theme
-		purchased: React.PropTypes.bool,
-		// If true, highlight this theme as active
-		active: React.PropTypes.bool,
+		theme: React.PropTypes.shape( {
+			// Theme ID (theme-slug)
+			id: React.PropTypes.string.isRequired,
+			// Theme name
+			name: React.PropTypes.string.isRequired,
+			// Theme screenshot URL
+			screenshot: React.PropTypes.string,
+			// Theme price (pre-formatted string) -- empty string indicates free theme
+			price: React.PropTypes.string,
+			// If true, the user has 'purchased' the theme
+			purchased: React.PropTypes.bool,
+			// If true, highlight this theme as active
+			active: React.PropTypes.bool,
+			author: React.PropTypes.string,
+			author_uri: React.PropTypes.string,
+			demo_uri: React.PropTypes.string,
+			stylesheet: React.PropTypes.string
+		} ),
 		// If true, render a placeholder
 		isPlaceholder: React.PropTypes.bool,
 		// URL the screenshot link points to
@@ -46,7 +51,9 @@ var Theme = React.createClass( {
 		buttonContents: React.PropTypes.objectOf(
 			React.PropTypes.shape( {
 				label: React.PropTypes.string,
+				header: React.PropTypes.string,
 				action: React.PropTypes.func,
+				getUrl: React.PropTypes.func
 			} )
 		),
 		// Index of theme in results list
@@ -65,8 +72,7 @@ var Theme = React.createClass( {
 	},
 
 	onScreenshotClick: function() {
-		const theme = [ 'author', 'author_uri', 'demo_uri', 'id', 'name', 'screenshot', 'stylesheet' ];
-		this.props.onScreenshotClick( pick( this.props, theme ), this.props.index );
+		this.props.onScreenshotClick( this.props.theme, this.props.index );
 	},
 
 	renderPlaceholder: function() {
@@ -78,24 +84,12 @@ var Theme = React.createClass( {
 	},
 
 	renderHover: function() {
-		var actionLabel = this.translate( 'Preview', {
-			comment: 'appears on hovering a single theme thumbnail, opens the theme demo site preview'
-		} );
-
-		if ( this.props.active ) {
-			actionLabel = this.translate( 'Customize', {
-				comment: 'appears on hovering the active single theme thumbnail, opens the customizer'
-			} );
-		} else {
-			actionLabel = this.props.actionLabel || actionLabel;
-		}
-
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a className="theme__active-focus"
 					onClick={ this.onScreenshotClick }>
 					<span>
-						{ actionLabel }
+						{ this.props.actionLabel }
 					</span>
 				</a>
 			);
@@ -103,8 +97,15 @@ var Theme = React.createClass( {
 	},
 
 	render: function() {
+		const {
+			name,
+			active,
+			price,
+			purchased,
+			screenshot
+		} = this.props.theme;
 		const themeClass = classNames( 'theme', {
-			'is-active': this.props.active,
+			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
 		} );
 
@@ -121,9 +122,9 @@ var Theme = React.createClass( {
 				<div className="theme__content">
 					{ this.renderHover() }
 					<a href={ this.props.screenshotClickUrl }>
-						{ this.props.screenshot
+						{ screenshot
 							? <img className="theme__img"
-								src={ this.props.screenshot + '?w=' + screenshotWidth }
+								src={ screenshot + '?w=' + screenshotWidth }
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID }/>
 							: <div className="theme__no-screenshot" >
@@ -132,25 +133,23 @@ var Theme = React.createClass( {
 						}
 					</a>
 					<div className="theme__info" >
-						<h2>{ this.props.name }</h2>
-						{ this.props.active &&
+						<h2>{ name }</h2>
+						{ active &&
 							<span className="theme__active-label">{ this.translate( 'Active', {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
-						{ this.props.price && ! this.props.purchased &&
-							<span className="price">{ this.props.price }</span>
+						{ price && ! purchased &&
+							<span className="price">{ price }</span>
 						}
-						{ this.props.purchased && ! this.props.active &&
+						{ purchased && ! active &&
 							<span className="price">{ this.translate( 'Purchased' ) }</span>
 						}
-						{ ! isEmpty( this.props.buttonContents ) ? <ThemeMoreButton id={ this.props.id }
+						{ ! isEmpty( this.props.buttonContents ) ? <ThemeMoreButton
 							index={ this.props.index }
+							theme={ this.props.theme }
 							onClick={ this.props.onMoreButtonClick }
-							price={ this.props.price }
-							purchased={ this.props.purchased }
-							options={ this.props.buttonContents }
-							active={ this.props.active } /> : null }
+							options={ this.props.buttonContents } /> : null }
 					</div>
 				</div>
 			</Card>
