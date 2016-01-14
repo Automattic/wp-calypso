@@ -53,10 +53,6 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getCount: function() {
-		return user.get().visible_site_count;
-	},
-
 	onSearch: function( terms ) {
 		this.setState( { search: terms } );
 	},
@@ -173,8 +169,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var isLarge = this.getCount() > 6,
-			hasOneSite = this.getCount() === 1,
+		var isLarge = user.get().site_count > 6,
+			hasOneSite = user.get().visible_site_count === 1,
 			sitesInitialized = this.props.sites.initialized,
 			siteElements, selectorClass;
 
