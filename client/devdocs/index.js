@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var page = require( 'page' ),
-	config = require( 'config' );
+import page from 'page';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var controller = require( './controller' );
+import controller from './controller';
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'devdocs' ) ) {
 		page( '/devdocs', controller.sidebar, controller.devdocs );
 		page( '/devdocs/form-state-examples/:component?', controller.sidebar, controller.formStateExamples );
