@@ -387,7 +387,7 @@ mixin = {
 			translation = hook( translation, options );
 		} );
 
-		if ( cacheable && optionsString ) {
+		if ( cacheable ) {
 			i18nState.translations.set( optionsString, translation );
 		}
 		return translation;
