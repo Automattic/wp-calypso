@@ -3,7 +3,6 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
 	qs = require( 'qs' ),
 	debounce = require( 'lodash/function/debounce' ),
 	page = require( 'page' ),
@@ -89,11 +88,9 @@ var devdocs = {
 		context.store.dispatch( setSection( 'devdocs' ) );
 
 		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( DesignAssetsComponent, {
-					component: context.params.component
-				} )
-			),
+			React.createElement( DesignAssetsComponent, {
+				component: context.params.component
+			} ),
 			document.getElementById( 'primary' )
 		);
 	},
