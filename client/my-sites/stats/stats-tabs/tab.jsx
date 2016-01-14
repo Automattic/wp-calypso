@@ -15,6 +15,7 @@ export default React.createClass( {
 	propTypes: {
 		className: PropTypes.string,
 		gridicon: PropTypes.string,
+		href: PropTypes.string,
 		label: PropTypes.string,
 		loading: PropTypes.bool,
 		selected: PropTypes.bool,

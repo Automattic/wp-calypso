@@ -14,7 +14,7 @@ export default React.createClass( {
 
 	propTypes: {
 		activeKey: PropTypes.string,
-		activeIndex: PropTypes.number,
+		activeIndex: PropTypes.string,
 		dataList: PropTypes.object,
 		selectedTab: PropTypes.string,
 		switchTab: PropTypes.func,
