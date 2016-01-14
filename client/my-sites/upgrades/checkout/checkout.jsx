@@ -126,9 +126,9 @@ module.exports = React.createClass( {
 
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			planActions.clearSitePlans();
+			planActions.clearSitePlans( this.props.sites.getSelectedSite().ID );
 
-			Dispatcher.handleServerAction( {
+			Dispatcher.handleViewAction( {
 				type: 'FETCH_SITES'
 			} );
 
