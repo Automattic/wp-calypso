@@ -9,45 +9,28 @@ import pick from 'lodash/object/pick';
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import Helper from 'lib/themes/helpers';
+import actionLabels from './action-labels';
 
-export const buttonOptions = {
+const buttonOptions = {
 	signup: {
-		label: i18n.translate( 'Choose this design', {
-			comment: 'when signing up for a WordPress.com account with a selected theme'
-		} ),
 		hasUrl: true,
 		isHidden: ( site, theme, isLoggedOut ) => ! isLoggedOut
 	},
 	preview: {
-		label: i18n.translate( 'Preview', {
-			context: 'verb'
-		} ),
 		hasAction: true,
 		hasUrl: false,
 		isHidden: ( site, theme ) => theme.active
 	},
 	purchase: {
-		label: i18n.translate( 'Purchase', {
-			context: 'verb'
-		} ),
-		header: i18n.translate( 'Purchase on:', {
-			context: 'verb',
-			comment: 'label for selecting a site for which to purchase a theme'
-		} ),
 		hasAction: true,
 		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || theme.purchased || ! theme.price
 	},
 	activate: {
-		label: i18n.translate( 'Activate' ),
-		header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 		hasAction: true,
 		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || ( theme.price && ! theme.purchased )
 	},
 	customize: {
-		label: i18n.translate( 'Customize' ),
-		header: i18n.translate( 'Customize on:', { comment: 'label for selecting a site for which to customize a theme' } ),
 		hasAction: true,
 		isHidden: ( site, theme ) => ! theme.active || ( site && ! site.isCustomizable() )
 	},
@@ -55,11 +38,9 @@ export const buttonOptions = {
 		separator: true
 	},
 	details: {
-		label: i18n.translate( 'Details' ),
 		hasUrl: true
 	},
 	support: {
-		label: i18n.translate( 'Support' ),
 		hasUrl: true,
 		isHidden: site => site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
 	},
@@ -68,12 +49,31 @@ export const buttonOptions = {
 export function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
 	return mapValues(
 		mapValues(
-			pick(
-				buttonOptions,
-				option => ! ( option.isHidden && option.isHidden( site, theme, isLoggedOut ) )
+			mapValues(
+				pick(
+					buttonOptions,
+					option => ! ( option.isHidden && option.isHidden( site, theme, isLoggedOut ) )
+				), appendLabelAndHeader
 			), appendUrl
 		), appendAction
 	);
+
+	function appendLabelAndHeader( option, name ) {
+		const actionLabel = actionLabels[ name ];
+
+		if ( ! actionLabel ) {
+			return option;
+		}
+
+		if ( actionLabel.label ) {
+			option.label = actionLabel.label;
+		}
+
+		if ( actionLabel.header ) {
+			option.header = actionLabel.header;
+		}
+		return option;
+	};
 
 	function appendUrl( option, name ) {
 		const { hasUrl } = option;
