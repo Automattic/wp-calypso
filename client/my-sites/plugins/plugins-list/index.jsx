@@ -140,6 +140,9 @@ export default React.createClass( {
 		if ( bulkManagement ) {
 			this.recordEvent( 'Clicked Manage' );
 		} else {
+			// Unselect all plugins.
+			this.setState( { selectedPlugins: {} } );
+
 			//PluginsActions.selectPlugins( this.props.sites, 'none' );
 			if ( this.props.notices && ( this.props.notices.completed || this.props.notices.errors ) ) {
 				PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
