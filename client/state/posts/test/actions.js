@@ -56,6 +56,7 @@ describe( 'actions', () => {
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.reply( 200, {
+					found: 2,
 					posts: [
 						{ ID: 841, title: 'Hello World' },
 						{ ID: 413, title: 'Ribs & Chicken' }
@@ -64,6 +65,7 @@ describe( 'actions', () => {
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.query( { search: 'Hello' } )
 				.reply( 200, {
+					found: 1,
 					posts: [ { ID: 841, title: 'Hello World' } ]
 				} )
 				.get( '/rest/v1.1/sites/77203074/posts' )
@@ -111,6 +113,7 @@ describe( 'actions', () => {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: {},
+					found: 2,
 					posts: [
 						{ ID: 841, title: 'Hello World' },
 						{ ID: 413, title: 'Ribs & Chicken' }
@@ -124,7 +127,10 @@ describe( 'actions', () => {
 		it( 'should dispatch posts request success action with query results', ( done ) => {
 			requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: POSTS_RECEIVE,
+					type: POSTS_REQUEST_SUCCESS,
+					siteId: 2916284,
+					query: { search: 'Hello' },
+					found: 1,
 					posts: [
 						{ ID: 841, title: 'Hello World' }
 					]

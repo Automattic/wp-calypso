@@ -1,4 +1,18 @@
 /**
+ * External dependencies
+ */
+import range from 'lodash/utility/range';
+
+/**
+ * Internal dependencies
+ */
+import {
+	getNormalizedPostsQuery,
+	getSerializedPostsQuery,
+	getSerializedPostsQueryWithoutPage
+} from './utils';
+
+/**
  * Returns a post object by its global ID.
  *
  * @param  {Object} state    Global state tree
@@ -41,7 +55,7 @@ export function isTrackingSitePostsQuery( state, siteId, query ) {
 		return false;
 	}
 
-	return !! siteQueries[ siteId ][ JSON.stringify( query ) ];
+	return !! siteQueries[ siteId ][ getSerializedPostsQuery( query ) ];
 }
 
 /**
@@ -59,7 +73,7 @@ export function getSitePostsForQuery( state, siteId, query ) {
 		return null;
 	}
 
-	query = JSON.stringify( query );
+	query = getSerializedPostsQuery( query );
 	if ( ! siteQueries[ siteId ][ query ].posts ) {
 		return null;
 	}
@@ -83,6 +97,64 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
 		return false;
 	}
 
-	query = JSON.stringify( query );
+	query = getSerializedPostsQuery( query );
 	return state.posts.siteQueries[ siteId ][ query ].fetching;
+}
+
+/**
+ * Returns the last queryable page of posts for the given query, or null if the
+ * total number of queryable posts if unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Post query object
+ * @return {?Number}        Last posts page
+ */
+export function getSitePostsLastPageForQuery( state, siteId, query ) {
+	const { siteQueriesLastPage } = state.posts;
+	if ( ! siteQueriesLastPage[ siteId ] ) {
+		return null;
+	}
+
+	const serializedQuery = getSerializedPostsQueryWithoutPage( query );
+	return siteQueriesLastPage[ siteId ][ serializedQuery ] || null;
+}
+
+/**
+ * Returns true if the query has reached the last page of queryable pages, or
+ * null if the total number of queryable posts if unknown.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @param  {Object}   query  Post query object
+ * @return {?Boolean}        Whether last posts page has been reached
+ */
+export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
+	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
+	if ( null === lastPage ) {
+		return lastPage;
+	}
+
+	return lastPage === getNormalizedPostsQuery( query ).page;
+}
+
+/**
+ * Returns an array of posts for the posts query, including all known
+ * queried pages, or null if the number of pages is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Post query object
+ * @return {?Array}         Posts for the post query
+ */
+export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
+	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
+	if ( null === lastPage ) {
+		return lastPage;
+	}
+
+	return range( 1, lastPage + 1 ).reduce( ( memo, page ) => {
+		const pageQuery = Object.assign( {}, query, { page } );
+		return memo.concat( getSitePostsForQuery( state, siteId, pageQuery ) || [] );
+	}, [] );
 }

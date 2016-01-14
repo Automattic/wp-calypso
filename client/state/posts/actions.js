@@ -49,12 +49,13 @@ export function requestSitePosts( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.site( siteId ).postsList( query ).then( ( { posts } ) => {
+		return wpcom.site( siteId ).postsList( query ).then( ( { found, posts } ) => {
 			dispatch( receivePosts( posts ) );
 			dispatch( {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId,
 				query,
+				found,
 				posts
 			} );
 		} ).catch( ( error ) => {
