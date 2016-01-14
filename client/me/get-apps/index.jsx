@@ -29,24 +29,24 @@ module.exports = React.createClass( {
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
 						</div>
-						<p><strong>Mac</strong><br />
-						Requires 10.11 or newer</p>
+						<p><strong>{ this.translate( 'Mac' ) }</strong><br />
+						{ this.translate( 'Requires 10.11 or newer' ) }</p>
 						<Button href="https://desktop.wordpress.com/d/osx">{ this.translate( 'Download' ) }</Button>
 					</section>
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
 						</div>
-						<p><strong>Windows</strong><br />
-						Requires 7 or newer</p>
+						<p><strong>{ this.translate( 'Windows' ) }</strong><br />
+						{ this.translate( 'Requires 7 or newer' ) }</p>
 						<Button href="https://desktop.wordpress.com/d/windows">{ this.translate( 'Download' ) }</Button>
 					</section>
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
 						</div>
-						<p><strong>Linux</strong><br />
-						Choose your distribution</p>
+						<p><strong>{ this.translate( 'Linux' ) }</strong><br />
+						{ this.translate( 'Choose your distribution' ) }</p>
 						<Button href="https://desktop.wordpress.com/d/linux">{ this.translate( '.TAR.GZ' ) }</Button> <Button href="https://desktop.wordpress.com/d/linux-deb">{ this.translate( '.DEB' ) }</Button>
 					</section>
 
@@ -58,16 +58,16 @@ module.exports = React.createClass( {
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
 						</div>
-						<p><strong>iOS</strong><br />
-						Requires 9 or newer</p>
+						<p><strong>{ this.translate( 'iOS' ) }</strong><br />
+						{ this.translate( 'Requires 9 or newer' ) }</p>
 						<Button href="https://itunes.apple.com/us/app/wordpress/id335703880?mt=8">{ this.translate( 'Get' ) }</Button>
 					</section>
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
 						</div>
-						<p><strong>Android</strong><br />
-						Requires 4 or newer</p>
+						<p><strong>{ this.translate( 'Android' ) }</strong><br />
+						{ this.translate( 'Requires 4 or newer' ) }</p>
 						<Button href="https://play.google.com/store/apps/details?id=org.wordpress.android">{ this.translate( 'Get' ) }</Button>
 					</section>
 
