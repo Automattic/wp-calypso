@@ -86,15 +86,15 @@ function checkForVisiblePlaceholders( trigger ) {
 	// record event and reset timer if all placeholders are loaded OR user has just navigated
 	if ( placeholdersVisibleStart && ( visibleCount === 0 || trigger === 'navigate' ) ) {
 		// tell tracks to record duration
-		var duration = Date.now() - placeholdersVisibleStart;
+		var duration = parseInt(performance.now() - placeholdersVisibleStart, 10);
 		debug(`Recording placeholder wait. Duration: ${duration}, Trigger: ${trigger}`);
 		analytics.timing.record( `placeholder-wait`, duration, trigger );
-		placeholdersVisibleStart = visibleCount === 0 ? null : Date.now();
+		placeholdersVisibleStart = visibleCount === 0 ? null : performance.now();
 	}
 
 	// if we can see placeholders, placeholdersVisibleStart is falsy, start the clock
 	if ( visibleCount > 0 && !placeholdersVisibleStart ) {
-		placeholdersVisibleStart = Date.now(); // TODO: performance.now()?
+		placeholdersVisibleStart = performance.now(); // TODO: performance.now()?
 	}
 
 	// if there are placeholders hanging around, print some useful stats
@@ -173,7 +173,7 @@ module.exports = function() {
 	if ( !initialized ) {
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-		if ( MutationObserver ) {
+		if ( MutationObserver && window.performance ) {
 			observeDomChanges( MutationObserver );
 		}
 

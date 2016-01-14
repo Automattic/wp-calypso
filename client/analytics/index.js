@@ -4,6 +4,7 @@
 var debug = require( 'debug' )( 'calypso:analytics' ),
 	assign = require( 'lodash/object/assign' ),
 	omit = require( 'lodash/object/omit' ),
+	startsWith = require( 'lodash/string/startsWith' ),
 	isUndefined = require( 'lodash/lang/isUndefined' );
 
 /**
@@ -160,17 +161,17 @@ var analytics = {
 				// prevent explosion of read list metrics
 				// this is a hack - ultimately we want to report this URLs in a more generic way to 
 				// google analytics
-				if ( featureSlug.startsWith( 'read_list' ) ) {
+				if ( startsWith( featureSlug, 'read_list' ) ) {
 					featureSlug = 'read_list';
-				} else if ( featureSlug.startsWith( 'tag_' ) ) {
+				} else if ( startsWith( featureSlug, 'tag_' ) ) {
 					featureSlug = 'tag__id';
-				} else if ( featureSlug.startsWith( 'domains_add_suggestion_' ) ) {
+				} else if ( startsWith( featureSlug, 'domains_add_suggestion_' ) ) {
 					featureSlug = 'domains_add_suggestion__suggestion__domain';
-				} else if ( document.location.pathname.startsWith( '/plugins/browse/' ) ) {
+				} else if ( startsWith( document.location.pathname, '/plugins/browse/' ) ) {
 					featureSlug = 'plugins_browse__site';
-				} else if ( featureSlug.startsWith( 'read_post_feed_' ) ) {
+				} else if ( startsWith( featureSlug, 'read_post_feed_' ) ) {
 					featureSlug = 'read_post_feed__id';
-				} else if ( featureSlug.startsWith( 'read_post_id_' ) ) {
+				} else if ( startsWith( featureSlug, 'read_post_id_' ) ) {
 					featureSlug = 'read_post_id__id';
 				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
 					featureSlug = `start_${matched[1]}`;
