@@ -256,7 +256,12 @@ export default React.createClass( {
 		const { plugins } = this.state;
 		const { sites } = this.props;
 
-		return ! isEmpty( plugins ) && isWpCom === get( sites.getSelectedSite(), 'jetpack' );
+		let showPlaceholders = isEmpty( plugins );
+
+		if ( showPlaceholders && isWpCom === get( sites.getSelectedSite(), 'jetpack' ) ) {
+			return false;
+		}
+		return showPlaceholders;
 	},
 
 	renderPluginsContent() {
