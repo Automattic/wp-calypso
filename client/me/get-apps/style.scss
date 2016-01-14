@@ -1,24 +1,24 @@
-.apps .apps__title {
+.get-apps__title {
 	text-align: center;
 	font-size: 24px;
-	font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
+	font-family: $serif;
 	font-weight: 700;
 	line-height: 32px;
 	margin-bottom: 8px;
 }
 
-.apps .apps__subheading {
+.get-apps__subheading {
 	max-width: 500px;
 	margin: 16px auto;
 	text-align: center;
 }
 
-.apps .apps__app {
+.get-apps__app {
 	text-align: center;
 	float: left;
 }
 
-.apps .apps__app-icon {
+.get-apps__app-icon {
 	width: 96px;
 	height: 96px;
 	margin: 0 auto 16px auto;
@@ -26,10 +26,10 @@
 	background: lighten( $gray, 20% );
 }
 
-.apps .apps__desktop .apps__app {
+.get-apps__desktop .get-apps__app {
 	width: 33%;
 }
 
-.apps .apps__mobile .apps__app {
+.get-apps__mobile .get-apps__app {
 	width: 50%;
 }

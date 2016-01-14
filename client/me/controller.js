@@ -212,7 +212,7 @@ export default {
 	},
 
 	apps( context ) {
-		const AppsComponent = require( 'me/apps' ),
+		const AppsComponent = require( 'me/get-apps' ),
 			basePath = context.path;
 
 		titleActions.setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) );
