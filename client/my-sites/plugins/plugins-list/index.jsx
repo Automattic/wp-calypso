@@ -161,7 +161,7 @@ export default React.createClass( {
 				}
 				plugin.sites.forEach( site => action( site, site.plugin ) );
 			}
-		}, this );
+		} );
 	},
 
 	updateAllPlugins() {
