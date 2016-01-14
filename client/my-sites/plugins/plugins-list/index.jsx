@@ -24,13 +24,19 @@ export default React.createClass( {
 	mixins: [ PluginNotices ],
 
 	propTypes: {
-		plugins: PropTypes.array,
-		header: PropTypes.string,
-		isWpCom: PropTypes.bool,
-		sites: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		plugins: PropTypes.arrayOf( PropTypes.shape( {
+			sites: PropTypes.array,
+			slug: PropTypes.string,
+			name: PropTypes.string,
+			wpcom: PropTypes.bool,
+			wporg: PropTypes.bool,
+		} ) ).isRequired,
+		header: PropTypes.string.isRequired,
+		isWpCom: PropTypes.bool.isRequired,
+		sites: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 		pluginUpdateCount: PropTypes.number,
-		isPlaceholder: PropTypes.bool,
+		isPlaceholder: PropTypes.bool.isRequired,
 	},
 
 	getInitialState() {
@@ -58,19 +64,17 @@ export default React.createClass( {
 	},
 
 	togglePlugin( plugin ) {
-		let selectedPlugins = Object.assign( {}, this.state.selectedPlugins );
-		selectedPlugins[ plugin.slug ] = ! this.state.selectedPlugins[ plugin.slug ];
-		this.setState( { selectedPlugins } );
-		analytics.ga.recordEvent( 'Plugins', 'Clicked to ' + this.isSelected( plugin ) ? 'Deselect' : 'Select' + 'Single Plugin', 'Plugin Name', plugin.slug );
+		const { slug } = plugin;
+		const { selectedPlugins } = this.state;
+		const oldValue = selectedPlugins[ slug ];
+		this.setState( { selectedPlugins: Object.assign( {}, selectedPlugins, { [ slug ]: ! oldValue } ) } );
+		analytics.ga.recordEvent( 'Plugins', 'Clicked to ' + this.isSelected( plugin ) ? 'Deselect' : 'Select' + 'Single Plugin', 'Plugin Name', slug );
 	},
 
 	setBulkSelectionState( plugins, selectionState ) {
 		let slugsToBeUpdated = {};
 		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug] = selectionState );
-
-		let selectedPlugins = Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated );
-
-		this.setState( { selectedPlugins } );
+		this.setState( { selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ) } );
 	},
 
 	getPluginBySlug( slug ) {
