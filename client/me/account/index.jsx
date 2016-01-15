@@ -212,7 +212,7 @@ module.exports = React.createClass( {
 
 	onSiteSelect( siteSlug ) {
 		let selectedSite = sites.getSite( siteSlug );
-		if ( sites.getSite( siteSlug ) ) {
+		if ( selectedSite ) {
 			this.props.userSettings.updateSetting( 'primary_site_ID', selectedSite.ID );
 		}
 	},
