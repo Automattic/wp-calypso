@@ -47,10 +47,6 @@ import {
 import { getPurchase, getSelectedSite, goToList, isDataLoading, recordPageView } from '../utils';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
-function showPaymentDetails( purchase ) {
-	return canEditPaymentDetails( purchase ) && isPaidWithCreditCard( purchase );
-}
-
 function canEditPaymentDetails( purchase ) {
 	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
 }
@@ -360,7 +356,7 @@ const ManagePurchase = React.createClass( {
 			</span>
 		);
 
-		if ( isLoading || ! showPaymentDetails( purchase ) ) {
+		if ( isLoading || ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) ) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -492,7 +488,7 @@ const ManagePurchase = React.createClass( {
 
 		let path = paths.editCardDetails( this.props.selectedSite.slug, id );
 		if ( isPaidWithCreditCard( purchase ) ) {
-			path = paths.editCardDetailsWithCard( this.props.selectedSite.slug, id, payment.creditCard.id );
+			path = paths.editSpecificCardDetails( this.props.selectedSite.slug, id, payment.creditCard.id );
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {

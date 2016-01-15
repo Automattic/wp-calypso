@@ -30,7 +30,7 @@ function editCardDetails( siteName, purchaseId ) {
 	return editPaymentMethod( siteName, purchaseId ) + `/edit`;
 }
 
-function editCardDetailsWithCard( siteName, purchaseId, cardId = ':cardId' ) {
+function editSpecificCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 	return editPaymentMethod( siteName, purchaseId ) + `/edit/${ cardId }`;
 }
 
@@ -43,7 +43,7 @@ export default {
 	confirmCancelPurchase,
 	cancelPrivateRegistration,
 	editCardDetails,
-	editCardDetailsWithCard,
+	editSpecificCardDetails,
 	editPaymentMethod,
 	list,
 	listNotice,
