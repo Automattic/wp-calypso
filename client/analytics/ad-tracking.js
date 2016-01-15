@@ -3,7 +3,6 @@
  */
 import async from 'async';
 import noop from 'lodash/utility/noop';
-import map from 'lodash/collection/map';
 import some from 'lodash/collection/some';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:ad-tracking' );
@@ -131,6 +130,10 @@ function retarget() {
 }
 
 function recordAddToCart( cartItem ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
 	if ( ! hasStartedFetchingScripts ) {
 		return loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
 	}
@@ -149,6 +152,10 @@ function recordAddToCart( cartItem ) {
 
 function recordPurchase( product ) {
 	let type;
+
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
 
 	if ( ! hasStartedFetchingScripts ) {
 		return loadTrackingScripts( recordPurchase.bind( null, product ) );
@@ -214,15 +221,6 @@ module.exports = {
 		nextFunction();
 	},
 
-	recordAddToCart: function( cartItem ) {
-		if ( config.isEnabled( 'ad-tracking' ) ) {
-			recordAddToCart( cartItem );
-		}
-	},
-
-	recordPurchases: function( products ) {
-		if ( config.isEnabled( 'ad-tracking' ) ) {
-			map( products, recordPurchase );
-		}
-	}
+	recordAddToCart,
+	recordPurchase
 };

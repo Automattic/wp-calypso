@@ -122,7 +122,7 @@ var TransactionStepsMixin = {
 						success: false
 					} );
 				} else if ( step.data ) {
-					adTracking.recordPurchases( cartValue.products );
+					cartValue.products.map( adTracking.recordPurchase );
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
 						coupon_code: cartValue.coupon,
