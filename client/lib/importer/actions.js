@@ -3,6 +3,7 @@
  */
 import Dispatcher from 'dispatcher';
 import includes from 'lodash/collection/includes';
+import partial from 'lodash/function/partial';
 const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
@@ -56,7 +57,7 @@ export function cancelImport( siteId, importerId ) {
 		.catch( apiFailure );
 }
 
-export function failUpload( importerId, error ) {
+export function failUpload( importerId, { message: error } ) {
 	Dispatcher.handleViewAction( {
 		type: actionTypes.FAIL_UPLOAD,
 		importerId,
@@ -149,27 +150,24 @@ export function startImporting( importerStatus ) {
 export function startUpload( importerStatus, file ) {
 	let { importerId, site: { ID: siteId } } = importerStatus;
 
-	wpcom.uploadExportFile( siteId, {
-		importStatus: toApi( importerStatus ),
-		file,
+	wpcom
+		.uploadExportFile( siteId, {
+			importStatus: toApi( importerStatus ),
+			file,
 
-		onload: ( error, data ) => {
-			if ( ! error ) {
-				return finishUpload( importerId, data );
-			}
+			onprogress: event => {
+				setUploadProgress( importerId, {
+					uploadLoaded: event.loaded,
+					uploadTotal: event.total
+				} );
+			},
 
-			failUpload( importerId, error.message );
-		},
-
-		onprogress: event => {
-			setUploadProgress( importerId, {
-				uploadLoaded: event.loaded,
-				uploadTotal: event.total
-			} );
-		},
-
-		onabort: () => cancelImport( siteId, importerId )
-	} );
+			onabort: () => cancelImport( siteId, importerId )
+		} )
+		.then( data => Object.assign( data, { siteId } ) )
+		.then( fromApi )
+		.then( partial( finishUpload, importerId ) )
+		.catch( partial( failUpload, importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: actionTypes.START_UPLOAD,
