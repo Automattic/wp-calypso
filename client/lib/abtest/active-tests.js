@@ -1,12 +1,4 @@
 module.exports = {
-	statsDefaultFilter: {
-		datestamp: '20150601',
-		variations: {
-			day: 90,
-			insights: 10
-		},
-		defaultVariation: 'day'
-	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {

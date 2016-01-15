@@ -2,9 +2,7 @@
  * Internal Dependencies
  */
 var trailingslashit = require( './trailingslashit' ),
-	untrailingslashit = require( './untrailingslashit' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	config = require( 'config' );
+	untrailingslashit = require( './untrailingslashit' );
 
 /**
  * Module variables
@@ -66,13 +64,7 @@ function sectionify( path ) {
 }
 
 function getStatsDefaultSitePage( slug ) {
-	var path;
-
-	if ( config.isEnabled( 'manage/stats/insights' ) && 'insights' === abtest( 'statsDefaultFilter' ) ) {
-		path = '/stats/insights/';
-	} else {
-		path = '/stats/day/';
-	}
+	var path = '/stats/insights/';
 
 	if ( slug ) {
 		return path + slug;
