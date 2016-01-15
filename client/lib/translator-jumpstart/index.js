@@ -2,8 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:community-translator' ),
-	React = require( 'react' ),
-	ReactElement = require( 'react/lib/ReactElement' );
+	React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -42,32 +41,6 @@ var communityTranslatorToString = function() {
 	}
 	return Object.prototype.toString.call( this );
 };
-
-/**
- * When a translation is used in an html attribute, the ReactElement-wrapped translation
- * is treated as a string and .toString() is called implicitly on it. To avoid undesired
- * [object Object] display, we return the plain text translation from the ReactElement by
- * overriding ReactElement.prototype's .toString() method.
- *
- * We bail out of the override for safety if ReactElement.prototype.toString() isn't
- * initially what we expect.
- */
-function overrideReactElementToString() {
-	if ( ReactElement.prototype.toString !== Object.prototype.toString ) {
-		debug( 'Aborted ReactElement.prototype.toString override: unexpected value!' );
-		return;
-	}
-	ReactElement.prototype.toString = communityTranslatorToString;
-}
-
-// We restore the original ReactElement.prototype.toString behaviour when CT is disabled.
-function restoreReactElementToString() {
-	if ( ReactElement.prototype.toString !== communityTranslatorToString ) {
-		debug( 'Aborted ReactElement.prototype.toString restore: unexpected value!' );
-		return;
-	}
-	ReactElement.prototype.toString = Object.prototype.toString;
-}
 
 /* "Enabled" means that the user has opted in on the settings page
  *     ( but it's false until userSettings has loaded)
@@ -228,7 +201,6 @@ communityTranslatorJumpstart = {
 		function activate() {
 			// Wrap DOM elements and then activate the translator
 			_shouldWrapTranslations = true;
-			overrideReactElementToString();
 			i18n.reRenderTranslations();
 			window.communityTranslator.load();
 			debug( 'Translator activated' );
@@ -239,7 +211,6 @@ communityTranslatorJumpstart = {
 			window.communityTranslator.unload();
 			// Remove all the data tags from the DOM
 			_shouldWrapTranslations = false;
-			restoreReactElementToString();
 			i18n.reRenderTranslations();
 			debug( 'Translator deactivated' );
 			return false;
