@@ -12,6 +12,7 @@ var UserSignupComponent = require( 'signup/steps/user' ),
 
 module.exports = {
 	themes: ThemeSelectionComponent,
+	'theme-headstart': ThemeSelectionComponent,
 	site: SiteComponent,
 	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
@@ -19,6 +20,7 @@ module.exports = {
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
+	'domains-with-theme': DomainsStepComponent,
 	'design-type': DesignTypeComponent,
 	'jetpack-user': UserSignupComponent
 };
