@@ -226,7 +226,7 @@ var Posts = React.createClass( {
 
 	render: function() {
 		var posts = this.props.posts,
-			placeholderCount = 6,
+			placeholderCount = 1,
 			placeholders = [],
 			postList,
 			i;
