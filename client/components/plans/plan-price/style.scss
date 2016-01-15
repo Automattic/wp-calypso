@@ -43,6 +43,10 @@
 		display: block;
 		opacity: .7;
 	}
+
+	.plan-price__discount {
+		color: $alert-green;
+	}
 }
 
 @mixin plans-collapsed() {
