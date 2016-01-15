@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SELECTED_SITE_SET, CURRENT_USER_ID_SET } from 'state/action-types';
-import { selectedSiteId, currentUserId } from '../reducer';
+import { SELECTED_SITE_SET } from 'state/action-types';
+import { selectedSiteId } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {
@@ -33,23 +33,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.null;
-		} );
-	} );
-
-	describe( '#currentUserId()', () => {
-		it( 'should default to null', () => {
-			const state = currentUserId( undefined, {} );
-
-			expect( state ).to.be.null;
-		} );
-
-		it( 'should set the current user ID', () => {
-			const state = currentUserId( null, {
-				type: CURRENT_USER_ID_SET,
-				userId: 73705554
-			} );
-
-			expect( state ).to.equal( 73705554 );
 		} );
 	} );
 } );
