@@ -2,7 +2,6 @@
 	position: relative;
 	max-width: 300px;
 	margin: 40px auto 20px auto;
-	overflow: hidden;
 
 	@include breakpoint( "<480px" ) {
 		display: none;
@@ -33,11 +32,10 @@
 	background-color: $white;
 	color: $blue-medium;
 	font-size: 12px;
-	text-decoration: underline;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 		0 1px 2px lighten( $gray, 30% );
 
 	&:hover {
-		text-decoration: none;
+		text-decoration: underline;
 	}
 }
