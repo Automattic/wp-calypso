@@ -11,39 +11,41 @@ import { createReducerStore } from 'lib/store';
 const debug = debugModule( 'calypso:reader-lists-items' ); //eslint-disable-line no-unused-vars
 
 const initialState = fromJS( {
-	items: {},
+	lists: {},
 	errors: [],
-	currentPage: {},
-	isLastPage: {},
 	isFetching: false
 } );
-const defaultListItem = List();
+
+const defaultListItems = List(); // eslint-disable-line new-cap
 
 function getListItems( state, listId ) {
-	return state.get( 'items' ).get( +listId, defaultListItem ); // eslint-disable-line new-cap
+	return state.getIn( [ 'lists', +listId, 'items' ], defaultListItems );
 }
 
 function receiveItems( state, data ) {
 	// Is it the last page?
-	let isLastPage = state.get( 'isLastPage' );
+	let isLastPage = false;
 	if ( data.number === 0 ) {
-		isLastPage = isLastPage.set( data.list_ID, true );
+		isLastPage = true;
 	}
+
+	// What's the current page?
+	const currentPage = +data.page;
 
 	// Add new items from response
-	let items = state.get( 'items' );
+	let items = getListItems( state, data.list_ID );
 	if ( data && data.items ) {
-		const existingItems = getListItems( state, data.list_ID );
-		items = items.setIn( [ data.list_ID ], existingItems.concat( fromJS( data.items ) ) );
+		items = items.concat( fromJS( data.items ) );
 	}
 
-	// Set the current page
-	let currentPage = state.get( 'currentPage' );
-	currentPage = currentPage.set( data.list_ID, data.page );
-
-	return state.withMutations( currentState => {
-		currentState.set( 'isLastPage', isLastPage ).set( 'items', items ).set( 'currentPage', currentPage );
+	const updatedList = fromJS( {
+		items,
+		currentPage,
+		isLastPage
 	} );
+
+	const updatedLists = state.get( 'lists' ).setIn( [ data.list_ID ], updatedList );
+	return state.set( 'lists', updatedLists );
 };
 
 const ReaderListsItemsStore = createReducerStore( ( state, payload ) => {
@@ -82,12 +84,12 @@ ReaderListsItemsStore.getLastError = function() {
 
 ReaderListsItemsStore.isLastPage = function( listId ) {
 	const state = ReaderListsItemsStore.get();
-	return state.get( 'isLastPage' ).get( +listId, false );
+	return state.getIn( [ 'lists', +listId, 'isLastPage' ], false );
 };
 
 ReaderListsItemsStore.getCurrentPage = function( listId ) {
 	const state = ReaderListsItemsStore.get();
-	return state.get( 'currentPage' ).get( +listId, 0 );
+	return state.getIn( [ 'lists', +listId, 'currentPage' ], false );
 };
 
 export default ReaderListsItemsStore;
