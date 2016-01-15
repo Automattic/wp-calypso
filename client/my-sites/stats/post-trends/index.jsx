@@ -139,8 +139,8 @@ module.exports = React.createClass( {
 						{ this.getMonthComponents() }
 					</div>
 				</div>
-				<div className={ leftClass } onClick={ this.scrollLeft }><span className='left-arrow'></span></div>
-				<div className={ rightClass } onClick={ this.scrollRight }><span className='right-arrow'></span></div>
+				<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
+				<div className={ rightClass } onClick={ this.scrollRight }><span className="right-arrow"></span></div>
 				<div className="post-trends__key-container">
 					<span className="post-trends__key-label">{ this.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
 					<ul className="post-trends__key">
@@ -155,5 +155,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-
 } );
