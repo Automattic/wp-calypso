@@ -272,7 +272,6 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				isCompact={ true }
 				showDismiss={ false }
 				status="is-info"
 				text={
@@ -297,7 +296,6 @@ module.exports = React.createClass( {
 		if ( this.props.username.isUsernameValid() ) {
 			return (
 				<Notice
-					isCompact={ true }
 					showDismiss={ false }
 					status="is-success"
 					text={ this.translate( '%(username)s is a valid username.', {
@@ -309,7 +307,6 @@ module.exports = React.createClass( {
 		} else if ( null !== this.props.username.getValidationFailureMessage() ) {
 			return (
 				<Notice
-					isCompact={ true }
 					showDismiss={ false }
 					status="is-error"
 					text={ this.props.username.getValidationFailureMessage() } />
@@ -330,7 +327,6 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				isCompact={ true }
 				showDismiss={ false }
 				status={ status }
 				text={ text } />

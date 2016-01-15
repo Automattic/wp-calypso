@@ -90,7 +90,7 @@ module.exports = React.createClass( {
 			onClick,
 			isError;
 
-		if ( lastNotice ) {
+		if ( lastNotice && lastNotice.message ) {
 			isError = lastNotice.type === 'error';
 			showDismiss = lastNotice.showDismiss !== false;
 			onClick = showDismiss ? this.dismissNotice : null;
@@ -98,7 +98,6 @@ module.exports = React.createClass( {
 			notice = (
 				<Notice
 					status={ isError ? 'is-error' : 'is-success' }
-					isCompact={ true }
 					onDismissClick={ onClick }
 					showDismiss={ showDismiss }
 					>

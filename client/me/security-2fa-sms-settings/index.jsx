@@ -159,7 +159,6 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				isCompact
 				status="is-error"
 				onDismissClick={ this.clearLastError }
 				text={ errorMessage }
