@@ -7,6 +7,8 @@ import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
 import Gridicon from 'components/gridicon';
 
+import analytics from 'analytics';
+
 export default React.createClass( {
 
 	displayName: 'AppPromo',
@@ -15,6 +17,13 @@ export default React.createClass( {
 		return {
 			dismissed: false
 		};
+	},
+
+	componentDidMount: function() {
+		// record promo view event
+		if (!this.state.dismissed ) {
+			analytics.tracks.recordEvent( 'calypso_desktop_promo_write_view', { 'promo_code': 'a0001' } );
+		}
 	},
 
 	dismiss: function() {
@@ -29,6 +38,7 @@ export default React.createClass( {
 		var classes = classNames( 'app-promo', {
 			'dismissed': false
 		} ), element;
+
 
 		element = (
 			<div className={ classes }>
