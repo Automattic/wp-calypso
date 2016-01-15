@@ -13,7 +13,7 @@ const TextareaAutosizeExample = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>TextareaAutosize</h2>
-				<TextareaAutosize>Bananas</TextareaAutosize>
+				<TextareaAutosize></TextareaAutosize>
 			</div>
 		);
 	}

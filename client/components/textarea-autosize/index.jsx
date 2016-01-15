@@ -7,20 +7,25 @@ var debug = require( 'debug' )( 'calypso:textarea' );
 
 const TextareaAutosize = React.createClass( {
 	getInitialState() {
-		return { rowCount: 1 };
+		return { textareaHeight: null };
 	},
 
 	handleChange( event ) {
 		const textarea = event.target;
-		this.setState( {
-			rowCount: textarea.value.split( /\r*\n/ ).length
-		} );
+
+		if ( textarea.scrollHeight > textarea.clientHeight ) {
+			this.setState( {
+				textareaHeight: textarea.scrollHeight + 'px'
+			} );
+		}
 	},
 
 	render() {
-		debug( 'rows' + this.state.rowCount );
+		debug( 'rows' + this.state.textareaHeight );
+
+		const style = this.state.textareaHeight ? { height: this.state.textareaHeight } : null;
 		return (
-			<textarea {...this.props} rows={ this.state.rowCount } onChange={ this.handleChange }></textarea>
+			<textarea {...this.props} style={ style } onChange={ this.handleChange }></textarea>
 		);
 	}
 } );
