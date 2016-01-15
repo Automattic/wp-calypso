@@ -35,13 +35,6 @@ var communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
 
-var communityTranslatorToString = function() {
-	if ( typeof this.props.children === 'string' ) {
-		return this.props.children;
-	}
-	return Object.prototype.toString.call( this );
-};
-
 /* "Enabled" means that the user has opted in on the settings page
  *     ( but it's false until userSettings has loaded)
  * "Activated" means that the translator is toggled on, and wrapTranslate()
