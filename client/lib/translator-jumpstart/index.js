@@ -118,6 +118,12 @@ communityTranslatorJumpstart = {
 			optionsFromPage = {};
 		}
 
+		// text will be used in a text-only context, such as HTML attribute
+		if ( 'undefined' !== typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
+			// for the moment we will just not make it translatable
+			return displayedTranslationFromPage;
+		}
+
 		props = { className: 'translatable' };
 
 		if ( 'string' === typeof originalFromPage ) {
