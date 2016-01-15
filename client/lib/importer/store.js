@@ -81,7 +81,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case actionTypes.FINISH_UPLOAD:
 			newState = state
 				.deleteIn( [ 'importers' ], action.importerId )
-				.setIn( [ 'importers', fromApi( action.importerStatus ).importerId ], Immutable.fromJS( fromApi( action.importerStatus ) ) );
+				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 
 		case actionTypes.START_MAPPING_AUTHORS:

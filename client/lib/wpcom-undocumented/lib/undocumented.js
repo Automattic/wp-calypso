@@ -1715,16 +1715,22 @@ Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 };
 
 Undocumented.prototype.uploadExportFile = function( siteId, params ) {
-	var req = this.wpcom.req.post( {
-		path: `/sites/${ siteId }/imports/new`,
-		formData: [
-			[ 'importStatus', JSON.stringify( params.importStatus ) ],
-			[ 'import', params.file ]
-		]
-	}, params.onload );
+	return new Promise( ( resolve, reject ) => {
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
 
-	req.upload.onprogress = params.onprogress;
-	req.onabort = params.onabort;
+		const req = this.wpcom.req.post( {
+			path: `/sites/${ siteId }/imports/new`,
+			formData: [
+				[ 'importStatus', JSON.stringify( params.importStatus ) ],
+				[ 'import', params.file ]
+			]
+		}, resolver );
+
+		req.upload.onprogress = params.onprogress;
+		req.onabort = params.onabort;
+	} );
 };
 
 /**
