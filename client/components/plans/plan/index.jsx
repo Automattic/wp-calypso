@@ -156,6 +156,7 @@ module.exports = React.createClass( {
 			<PlanPrice
 				plan={ this.props.plan }
 				isPlaceholder={ this.isPlaceholder() }
+				isInSignup={ this.props.isInSignup }
 				sitePlan={ this.getSitePlan() }
 				site={ this.props.site } />
 		);
