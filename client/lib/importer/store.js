@@ -33,11 +33,9 @@ const shouldRemove = importer => removableStates.some( partial( equals, importer
 const adjustImporterLock = ( state, { action } ) => {
 	switch ( action.type ) {
 		case actionTypes.LOCK_IMPORT:
-			console.log( `Freezing importer ${ action.importerId }` );
 			return state.setIn( [ 'importerLocks', action.importerId ], true );
 
 		case actionTypes.UNLOCK_IMPORT:
-			console.log( `Unfreezing importer ${ action.importerId }` );
 			return state.setIn( [ 'importerLocks', action.importerId ], false );
 
 		default:
