@@ -169,7 +169,6 @@
 		bottom: 0; // 1
 		left: 16%; // 1
 	z-index: z-index( 'root', '.chart__bar-section' );
-	transition: top .3s ease-out; // 2
 
 	.chart__bar:hover &.is-bar {
 		background-color: $blue-medium;
