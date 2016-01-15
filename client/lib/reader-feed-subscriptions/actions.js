@@ -193,11 +193,6 @@ function receiveSubscriptionMeta( subscription ) {
 
 	if ( get( subscription, 'meta.data.feed' ) ) {
 		Dispatcher.handleServerAction( {
-			type: FeedStoreActionTypes.FETCH,
-			feedId: subscription.meta.data.feed.feed_ID,
-		} );
-
-		Dispatcher.handleServerAction( {
 			type: FeedStoreActionTypes.RECEIVE_FETCH,
 			feedId: subscription.meta.data.feed.feed_ID,
 			data: subscription.meta.data.feed

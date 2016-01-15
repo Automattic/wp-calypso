@@ -41,9 +41,11 @@ export function fetchMoreItems( listOwner, listSlug, page ) {
 			} );
 
 			// If we received site or feed meta, fire off an action
-			data.items.forEach( function( item ) {
-				receiveMeta( item );
-			} );
+			if ( data && data.items && Array.isArray( data.items ) ) {
+				data.items.forEach( function( item ) {
+					receiveMeta( item );
+				} );
+			}
 		}
 
 		Dispatcher.handleViewAction( { type: action.ACTION_FETCH_READER_LIST_ITEMS_COMPLETE } );
@@ -60,11 +62,6 @@ function receiveMeta( item ) {
 	}
 
 	if ( get( item, 'meta.data.feed' ) ) {
-		Dispatcher.handleServerAction( {
-			type: feedStoreActionTypes.FETCH,
-			feedId: item.meta.data.feed.feed_ID,
-		} );
-
 		Dispatcher.handleServerAction( {
 			type: feedStoreActionTypes.RECEIVE_FETCH,
 			feedId: item.meta.data.feed.feed_ID,
