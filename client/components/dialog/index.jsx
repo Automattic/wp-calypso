@@ -32,17 +32,17 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { isVisible, baseClassName } = this.props;
+		const { isVisible, baseClassName, transitionLeave, enterTimeout, leaveTimeout } = this.props;
 
 		return (
 			<RootChild>
 				<SingleChildCSSTransitionGroup
 					transitionName={ baseClassName || 'dialog' }
 					component="div"
-					transitionLeave={ this.props.transitionLeave }
+					transitionLeave={ transitionLeave }
 					onChildDidLeave={ this.onDialogDidLeave }
-					enterTimeout={ this.props.enterTimeout }
-					leaveTimeout={ this.props.leaveTimeout }>
+					enterTimeout={ enterTimeout }
+					leaveTimeout={ leaveTimeout }>
 					{ isVisible && (
 						<DialogBase { ...this.props } key="dialog" onDialogClose={ this.onDialogClose } />
 					) }
