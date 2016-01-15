@@ -13,9 +13,7 @@ const TextareaAutosize = React.createClass( {
 	handleChange( event ) {
 		const textarea = event.target;
 		this.setState( {
-			rowCount: Math.ceil(
-				( textarea.scrollHeight * this.state.rowCount ) / textarea.clientHeight
-			)
+			rowCount: textarea.value.split( /\r*\n/ ).length
 		} );
 	},
 
