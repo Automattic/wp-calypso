@@ -2,6 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import defaults from 'lodash/object/defaults';
+import omitBy from 'lodash/omitBy';
+import QueryString from 'querystring' ;
 
 /**
  * Internal dependencies
@@ -28,16 +31,44 @@ class WpVideoView extends Component {
 		return encodeURIComponent( content );
 	}
 
-	getEmbedUrl() {
-		var videopress_guid = shortcodeUtils.parse( this.props.content ).attrs.numeric[0];
-		return `https://videopress.com/embed/${ videopress_guid }`;
+	getShortCodeAttributes() {
+		const shortcode = shortcodeUtils.parse( this.props.content );
+		const namedAttrs = shortcode.attrs.named;
+		const defaultWidth = 640;
+		const defaultHeight = defaultWidth * 9 / 16;
+
+		return defaults( {
+			videopress_guid: shortcode.attrs.numeric[0],
+			w: parseInt( namedAttrs.w, 10 ) || undefined,
+			h: parseInt( namedAttrs.h, 10 ) || undefined,
+			autoplay: namedAttrs.autoplay === 'true',
+			hd: namedAttrs.hd === 'true',
+			loop: namedAttrs.loop === 'true',
+			at: parseInt( namedAttrs.at, 10 ) || undefined,
+			defaultLangCode: namedAttrs.defaultlangcode
+		}, {
+			w: defaultWidth,
+			h: defaultHeight,
+			at: 0,
+			defaultLangCode: false
+		} );
+	}
+
+	getEmbedUrl( attrs ) {
+		const queryString = QueryString.stringify( omitBy( attrs, ['videopress_guid', 'w', 'h'] ) );
+
+		return `https://videopress.com/embed/${ attrs.videopress_guid }?${ queryString }`;
 	}
 
 	render() {
+		const attrs = this.getShortCodeAttributes();
+
 		return (
 			<div className="wpview-content">
 				<iframe
-					src={ this.getEmbedUrl() }
+					width = { attrs.w }
+					height = { attrs.h }
+					src={ this.getEmbedUrl( attrs ) }
 					frameBorder="0"
 					allowFullScreen />
 			</div>
