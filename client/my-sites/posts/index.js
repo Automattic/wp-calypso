@@ -1,20 +1,18 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-var removeOverlay = require( 'remove-overlay' ),
-	controller = require( 'my-sites/controller' ),
-	postsController = require( './controller' );
+import controller from 'my-sites/controller';
+import postsController from './controller';
 
-module.exports = function() {
+export default function() {
 	page( '/posts/:author?/:status?/:domain?',
 		controller.siteSelection,
 		controller.navigation,
-		removeOverlay,
 		postsController.posts
 	);
 };
