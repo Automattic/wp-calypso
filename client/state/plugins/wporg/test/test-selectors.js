@@ -9,19 +9,13 @@ import { assert } from 'chai';
 import selectors from '../selectors';
 
 const state = {
-	test: Object.freeze( { slug: 'test' } ),
+	test: Object.freeze( { slug: 'test', isFetching: false } ),
 	fetchingTest: Object.freeze( { slug: 'fetchingTest', isFetching: true } ),
-	fetchedTest: Object.freeze( { slug: 'fetchingTest', isFetching: false, isFetched: true } ),
-	fetchedTest2: Object.freeze( { slug: 'fetchingTest', isFetching: true, isFetched: true } )
+	fetchedTest: Object.freeze( { slug: 'fetchingTest', isFetching: false, fetched: true } ),
+	fetchedTest2: Object.freeze( { slug: 'fetchingTest', isFetching: true, fetched: true } )
 };
 
 describe( 'WPorg Selectors', function() {
-	before( function() {
-	} );
-
-	after( function() {
-	} );
-
 	it( 'Should contain getPlugin method', function() {
 		assert.equal( typeof selectors.getPlugin, 'function' );
 	} );
@@ -42,13 +36,13 @@ describe( 'WPorg Selectors', function() {
 		it( 'Should return a new object with no pointers to the one stored in state', function() {
 			let plugin = selectors.getPlugin( state, 'test' );
 			plugin.isFetching = true;
-			assert.equal( selectors.getPlugin( state, 'test' ).isFetching, undefined );
+			assert.equal( selectors.getPlugin( state, 'test' ).isFetching, false );
 		} );
 	} );
 
 	describe( 'isFetching', function() {
-		it( 'Should get `false` if the requested plugin is not in the current state', function() {
-			assert.equal( selectors.isFetching( state, 'no.test' ), false );
+		it( 'Should get `true` if the requested plugin is not in the current state', function() {
+			assert.equal( selectors.isFetching( state, 'no.test' ), true );
 		} );
 
 		it( 'Should get `false` if the requested plugin is not being fetched', function() {

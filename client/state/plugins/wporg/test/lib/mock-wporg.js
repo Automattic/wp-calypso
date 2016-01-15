@@ -16,11 +16,12 @@ module.exports = {
 	},
 	fetchPluginInformation: function( pluginSlug, callback ) {
 		fetchPluginInformationCalls++;
-		lastRequestParams = pluginSlug;
 		if ( ! this.deactivatedCallbacks ) {
-			callback( null, {
-				slug: pluginSlug
-			} );
+			setTimeout( function() {
+				callback( null, {
+					slug: pluginSlug
+				} );
+			}, 1 );
 		}
 	}
 };
