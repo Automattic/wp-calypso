@@ -158,7 +158,7 @@ module.exports = {
 				}
 				this.setState( { submittingForm: false } );
 			} else {
-				notices.success( this.translate( 'Settings saved successfully!' ) );
+				notices.success( this.translate( 'Settings saved!' ) );
 				this.markSaved();
 				//for dirtyFields, see lib/mixins/dirty-linked-state
 				this.setState( { submittingForm: false, dirtyFields: [] } );
