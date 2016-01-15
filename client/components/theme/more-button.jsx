@@ -72,10 +72,9 @@ var ThemeMoreButton = React.createClass( {
 					onClose={ this.closePopover }
 					position="top left">
 
-					{ map( this.props.options, function( option, index ) {
-						// TODO: actual index!
+					{ map( this.props.options, function( option, key ) {
 						if ( option.separator ) {
-							return ( <hr key={ 'separator-' + index } className="popover__hr" /> );
+							return ( <hr key={ 'separator-' + key } className="popover__hr" /> );
 						}
 						if ( option.url ) {
 							return (
