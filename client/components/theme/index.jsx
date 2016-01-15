@@ -6,7 +6,7 @@ var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' ),
 	pick = require( 'lodash/object/pick' ),
-	size = require( 'lodash/collection/size' );
+	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
  * Internal dependencies
@@ -144,7 +144,7 @@ var Theme = React.createClass( {
 						{ this.props.purchased && ! this.props.active &&
 							<span className="price">{ this.translate( 'Purchased' ) }</span>
 						}
-						{ size( this.props.buttonContents ) ? <ThemeMoreButton id={ this.props.id }
+						{ ! isEmpty( this.props.buttonContents ) ? <ThemeMoreButton id={ this.props.id }
 							index={ this.props.index }
 							onClick={ this.props.onMoreButtonClick }
 							price={ this.props.price }
