@@ -236,7 +236,7 @@
 	}
 
 	@include breakpoint( ">1040px" ) {
-		right: 0;
+		right: -1px;
 	}
 }
 
