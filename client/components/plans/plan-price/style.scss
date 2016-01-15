@@ -12,6 +12,11 @@
 	color: darken( $gray, 10% );
 }
 
+.plan-header .plan-price__discount,
+.plan-price__discount .plan-price__billing-period {
+	color: $alert-green;
+}
+
 .plan-price.is-placeholder {
 	@include placeholder( 23% );
 }

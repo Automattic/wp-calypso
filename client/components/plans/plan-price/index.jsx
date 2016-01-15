@@ -46,11 +46,11 @@ module.exports = React.createClass( {
 		}
 
 	    return (
-	        <div className="plan-price">
+	        <div className={ hasDiscount ? "plan-price plan-price__discount" : "plan-price" }>
 	            <span>{ this.getPrice() }</span>
 	            <small className="plan-price__billing-period">
-	                { hasDiscount ? this.translate( 'for first year' ) : plan.bill_period_label }
-	            </small>
+		              { hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label }
+		          </small>
 	        </div>
 	    );
 	}
