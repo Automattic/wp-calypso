@@ -48,7 +48,7 @@ var ThemesHelpers = {
 
 	getSupportUrl: function( theme, site ) {
 		if ( ! site ) {
-			return ThemesHelpers.oldShowcaseUrl + theme.id;
+			return ThemesHelpers.oldShowcaseUrl + theme.id + '/support';
 		}
 
 		if ( site.jetpack ) {
