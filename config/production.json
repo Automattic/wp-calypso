@@ -11,6 +11,7 @@
 	"discover_blog_id": 53424024,
 	"features": {
 		"code-splitting": true,
+		"server-side-rendering": false,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/customize": true,
