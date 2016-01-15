@@ -3,7 +3,6 @@
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 20px;
-	text-align: right;
 }
 
 .plan-price__billing-period {
@@ -48,8 +47,7 @@
 
 @mixin plans-collapsed() {
 	.plan-header .plan-price {
-		display: inline-block;
-		padding: 0 0 0 40px;
+		padding: 0 20px 0 40px;
 	}
 
 	.plan-price__billing-period {
