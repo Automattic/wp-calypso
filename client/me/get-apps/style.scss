@@ -5,6 +5,10 @@
 	font-weight: 700;
 	line-height: 32px;
 	margin-bottom: 8px;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: 24px;
+	}
 }
 
 .get-apps__subheading {
