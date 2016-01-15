@@ -28,9 +28,9 @@ const ListManagementNavigation = React.createClass( {
 		return (
 			<SectionNav selectedText={ sectionNames[ current ] }>
 				<NavTabs>
-					<NavItem path={ `${baseListUrl}/sites` } selected={current === 'sites'}>{ this.translate( 'Sites' )}</NavItem>
-					<NavItem path={ `${baseListUrl}/tags` } selected={current === 'tags'}>{ this.translate( 'Tags' )}</NavItem>
-					<NavItem path={ `${baseListUrl}/edit` } selected={current === 'description-edit'}>{ this.translate( 'Description' )}</NavItem>
+					<NavItem path={ `${ baseListUrl }/edit` } selected={ current === 'description-edit' }>{ this.translate( 'Description' ) }</NavItem>
+					<NavItem path={ `${ baseListUrl }/sites` } selected={ current === 'sites' }>{ this.translate( 'Sites' ) }</NavItem>
+					<NavItem path={ `${ baseListUrl }/tags` } selected={ current === 'tags' }>{ this.translate( 'Tags' ) }</NavItem>
 				</NavTabs>
 			</SectionNav>
 			);
