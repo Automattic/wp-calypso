@@ -22,8 +22,8 @@ var ThemeMoreButton = React.createClass( {
 	propTypes: {
 		// Theme ID (theme-slug)
 		id: React.PropTypes.string.isRequired,
-		// Index of theme in results list
-		index: React.PropTypes.number.isRequired,
+		// Index of theme in results list, if any
+		index: React.PropTypes.number,
 		// Options to populate the popover menu with
 		options: React.PropTypes.objectOf(
 			React.PropTypes.shape( {
