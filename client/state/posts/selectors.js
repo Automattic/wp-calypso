@@ -7,10 +7,10 @@ import range from 'lodash/utility/range';
  * Internal dependencies
  */
 import {
-	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getSerializedPostsQueryWithoutPage
 } from './utils';
+import { DEFAULT_POST_QUERY } from './constants';
 
 /**
  * Returns a post object by its global ID.
@@ -135,7 +135,7 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
 		return lastPage;
 	}
 
-	return lastPage === getNormalizedPostsQuery( query ).page;
+	return lastPage === ( query.page || DEFAULT_POST_QUERY.page );
 }
 
 /**

@@ -14,10 +14,10 @@ import {
 	POSTS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
-	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getSerializedPostsQueryWithoutPage
 } from './utils';
+import { DEFAULT_POST_QUERY } from './constants';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -118,9 +118,8 @@ export function siteQueriesLastPage( state = {}, action ) {
 				state[ siteId ] = {};
 			}
 
-			const query = getNormalizedPostsQuery( action.query );
-			const serializedQuery = getSerializedPostsQueryWithoutPage( query );
-			const lastPage = Math.ceil( found / query.posts_per_page );
+			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query );
+			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
 			state[ siteId ][ serializedQuery ] = Math.max( lastPage, 1 );
 			break;
 	}

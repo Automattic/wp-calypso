@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+					'{"search":"Hello"}': {
 						fetching: true
 					}
 				}
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 		it( 'should accumulate site queries', () => {
 			const original = Object.freeze( {
 				2916284: {
-					'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+					'{"search":"Hello"}': {
 						fetching: true
 					}
 				}
@@ -132,10 +132,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+					'{"search":"Hello"}': {
 						fetching: true
 					},
-					'{"page":1,"posts_per_page":20,"search":"Hello W"}': {
+					'{"search":"Hello W"}': {
 						fetching: true
 					}
 				}
@@ -155,7 +155,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+					'{"search":"Hello"}': {
 						fetching: false,
 						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 					}
@@ -173,7 +173,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+					'{"search":"Hello"}': {
 						fetching: false
 					}
 				}
@@ -212,7 +212,7 @@ describe( 'reducer', () => {
 			const state = siteQueriesLastPage( null, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				query: { search: '', posts_per_page: 1 },
+				query: { search: '', number: 1 },
 				found: 2,
 				posts: [
 					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
@@ -221,7 +221,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"posts_per_page":1,"search":""}': 2
+					'{"number":1}': 2
 				}
 			} );
 		} );
@@ -230,7 +230,7 @@ describe( 'reducer', () => {
 			const state = siteQueriesLastPage( null, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				query: { search: '', posts_per_page: 1, page: 2 },
+				query: { search: '', number: 1, page: 2 },
 				found: 2,
 				posts: [
 					{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
@@ -239,7 +239,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"posts_per_page":1,"search":""}': 2
+					'{"number":1}': 2
 				}
 			} );
 		} );
@@ -248,14 +248,14 @@ describe( 'reducer', () => {
 			const state = siteQueriesLastPage( null, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				query: { search: 'none', posts_per_page: 1 },
+				query: { search: 'none', number: 1 },
 				found: 0,
 				posts: []
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"posts_per_page":1,"search":"none"}': 1
+					'{"search":"none","number":1}': 1
 				}
 			} );
 		} );
@@ -263,7 +263,7 @@ describe( 'reducer', () => {
 		it( 'should accumulate site post request success', () => {
 			const original = Object.freeze( {
 				2916284: {
-					'{"posts_per_page":20,"search":"Hello"}': 1
+					'{"search":"Hello"}': 1
 				}
 			} );
 			const state = siteQueriesLastPage( original, {
@@ -278,8 +278,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"posts_per_page":20,"search":"Hello"}': 1,
-					'{"posts_per_page":20,"search":"Ribs"}': 1
+					'{"search":"Hello"}': 1,
+					'{"search":"Ribs"}': 1
 				}
 			} );
 		} );

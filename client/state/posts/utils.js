@@ -4,22 +4,19 @@
 import omit from 'lodash/object/omit';
 
 /**
- * Module variables
+ * Internal dependencies
  */
-const DEFAULT_POSTS_PER_PAGE = 20;
+import { DEFAULT_POST_QUERY } from './constants';
 
 /**
- * Returns a normalized posts query, notably including a default page and posts
- * per page values if either is not specified.
+ * Returns a normalized posts query, excluding any values which match the
+ * default post query.
  *
  * @param  {Object} query Posts query
  * @return {Object}       Normalized posts query
  */
 export function getNormalizedPostsQuery( query ) {
-	return Object.assign( {
-		page: 1,
-		posts_per_page: DEFAULT_POSTS_PER_PAGE
-	}, query );
+	return omit( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
 }
 
 /**

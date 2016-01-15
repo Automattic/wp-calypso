@@ -89,7 +89,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":20,"search":"Hel"}': {
+							'{"search":"Hel"}': {
 								fetching: true
 							}
 						}
@@ -105,7 +105,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+							'{"search":"Hello"}': {
 								fetching: true
 							}
 						}
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+							'{"search":"Hello"}': {
 								fetching: true
 							}
 						}
@@ -152,7 +152,7 @@ describe( 'selectors', () => {
 					},
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+							'{"search":"Hello"}': {
 								fetching: false,
 								posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 							}
@@ -183,7 +183,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+							'{"search":"Hello"}': {
 								fetching: false
 							}
 						}
@@ -199,7 +199,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":20,"search":"Hello"}': {
+							'{"search":"Hello"}': {
 								fetching: true
 							}
 						}
@@ -239,7 +239,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"posts_per_page":20,"search":"Hello"}': 4
+							'{"search":"Hello"}': 4
 						}
 					}
 				}
@@ -253,7 +253,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"posts_per_page":20,"search":"Hello"}': 4
+							'{"search":"Hello"}': 4
 						}
 					}
 				}
@@ -279,7 +279,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"posts_per_page":20,"search":"Hello"}': 4
+							'{"search":"Hello"}': 4
 						}
 					}
 				}
@@ -293,7 +293,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"posts_per_page":20,"search":"Hello"}': 4
+							'{"search":"Hello"}': 4
 						}
 					}
 				}
@@ -307,7 +307,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"posts_per_page":20,"search":"Hello"}': 1
+							'{"search":"Hello"}': 1
 						}
 					}
 				}
@@ -337,11 +337,11 @@ describe( 'selectors', () => {
 					},
 					siteQueries: {
 						2916284: {
-							'{"page":1,"posts_per_page":1,"search":""}': {
+							'{"number":1}': {
 								fetching: false,
 								posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 							},
-							'{"page":2,"posts_per_page":1,"search":""}': {
+							'{"number":1,"page":2}': {
 								fetching: false,
 								posts: [ '6c831c187ffef321eb43a67761a525a3' ]
 							}
@@ -349,11 +349,11 @@ describe( 'selectors', () => {
 					},
 					siteQueriesLastPage: {
 						2916284: {
-							'{"posts_per_page":1,"search":""}': 2
+							'{"number":1}': 2
 						}
 					}
 				}
-			}, 2916284, { search: '', posts_per_page: 1 } );
+			}, 2916284, { search: '', number: 1 } );
 
 			expect( sitePosts ).to.eql( [
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
