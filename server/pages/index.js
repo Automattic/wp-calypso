@@ -375,11 +375,13 @@ module.exports = function() {
 		} else {
 			const context = getDefaultContext( req );
 
-			try {
-				context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
-			} catch ( ex ) {
-				if ( config( 'env' ) === 'development' ) {
-					throw ex;
+			if ( config.isEnabled( 'server-side-rendering' ) ) {
+				try {
+					context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
+				} catch ( ex ) {
+					if ( config( 'env' ) === 'development' ) {
+						throw ex;
+					}
 				}
 			}
 
