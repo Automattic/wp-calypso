@@ -33,6 +33,7 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 
 	function appendAction( option ) {
 		const { hasAction, name } = option;
+		let params = {};
 
 		if ( ! hasAction ) {
 			return option;
@@ -40,27 +41,31 @@ export default function getButtonOptions( site, theme, isLoggedOut, actions, set
 
 		let action;
 		if ( name === 'preview' ) {
-			action = togglePreview.bind( null, theme );
+			action = togglePreview;
+			params.args = [ theme ];
 		} else if ( site ) {
 			if ( name === 'customize' ) {
-				action = actions.customize.bind( actions, theme, site, 'showcase' );
+				action = actions.customize;
 			} else {
-				action = actions[ name ].bind( actions, theme, site, 'showcase' );
+				action = actions[ name ];
 			}
+			params.this = actions;
+			params.args = [ theme, site, 'showcase' ];
 		} else {
 			action = setSelectedTheme.bind( null, name, theme );
+			params.args = [ name, theme ];
 		}
 
-		return assign( {}, option, {
-			action: trackedAction( action, name )
-		} );
-	}
-
-	function trackedAction( action, name ) {
-		return () => {
-			action();
-			Helper.trackClick( 'more button', name );
+		let actionCreator = function createAction() {
+			return () => {
+				action.apply( params.this, params.args );
+				Helper.trackClick( 'more button', name );
+			};
 		};
+
+		return assign( {}, option, {
+			action: actionCreator
+		} );
 	}
 };
 

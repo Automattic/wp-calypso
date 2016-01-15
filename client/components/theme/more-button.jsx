@@ -92,7 +92,7 @@ var ThemeMoreButton = React.createClass( {
 							);
 						}
 						return (
-							<PopoverMenuItem key={ option.label } action={ option.action }>
+							<PopoverMenuItem key={ option.label } action={ this.state.showPopover ? option.action() : null }>
 								{ option.label }
 							</PopoverMenuItem>
 						);
