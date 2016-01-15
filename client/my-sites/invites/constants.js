@@ -8,12 +8,9 @@ import get from 'lodash/object/get'
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { successNotice } from 'state/notices/actions';
 
 export default {
-	acceptedNoticeText( invite ) {
-		invite = invite || this.state.invite;
-		let displayOnNextPage = true;
+	acceptedNotice( invite, displayOnNextPage = true ) {
 		let takeATour = (
 			<p className="invite-message__intro">
 				{
@@ -32,7 +29,7 @@ export default {
 
 		switch ( get( invite, 'role' ) ) {
 			case 'follower':
-				successNotice(
+				return [
 					i18n.translate(
 						'You are now following {{site/}}', {
 							components: { site }
@@ -43,10 +40,10 @@ export default {
 						href: get( invite, 'site.URL' ),
 						displayOnNextPage
 					}
-				);
+				];
 				break;
 			case 'administrator':
-				successNotice(
+				return [
 					<div>
 						<h3 className="invite-message__title">
 							{ i18n.translate( 'You\'re now an Administrator of: {{site/}}', {
@@ -61,10 +58,10 @@ export default {
 						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
-				);
+				];
 				break;
 			case 'editor':
-				successNotice(
+				return [
 					<div>
 						<h3 className="invite-message__title">
 							{ i18n.translate( 'You\'re now an Editor of: {{site/}}', {
@@ -77,10 +74,10 @@ export default {
 						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
-				);
+				];
 				break;
 			case 'author':
-				successNotice(
+				return [
 					<div>
 						<h3 className="invite-message__title">
 							{ i18n.translate( 'You\'re now an Author of: {{site/}}', {
@@ -93,10 +90,10 @@ export default {
 						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
-				);
+				];
 				break;
 			case 'contributor':
-				successNotice(
+				return [
 					<div>
 						<h3 className="invite-message__title">
 							{ i18n.translate( 'You\'re now a Contributor of: {{site/}}', {
@@ -109,16 +106,27 @@ export default {
 						{ takeATour }
 					</div>,
 					{ displayOnNextPage }
-				);
+				];
 				break;
 			case 'subscriber':
-				successNotice(
+				return [
 					i18n.translate( 'You\'re now a Subscriber of: {{site/}}', {
 						components: { site }
 					} ),
 					{ displayOnNextPage }
-				);
+				];
 				break;
+		}
+	},
+
+	getRedirectAfterAccept( invite ) {
+		switch ( invite.role ) {
+			case 'viewer':
+			case 'follower':
+				return '/';
+				break;
+			default:
+				return '/posts/' + invite.site.ID;
 		}
 	}
 };

@@ -5,7 +5,6 @@ import React from 'react';
 import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
-import store from 'store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -21,6 +20,7 @@ import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
 import analytics from 'analytics';
+import { getRedirectAfterAccept } from 'my-sites/invites/constants';
 
 /**
  * Module variables
@@ -39,13 +39,6 @@ let InviteAccept = React.createClass( {
 	},
 
 	componentWillMount() {
-		const acceptedInvite = store.get( 'invite_accepted' );
-		if ( acceptedInvite && acceptedInvite.inviteKey === this.props.inviteKey ) {
-			store.remove( 'invite_accepted' );
-			page( this.getRedirectAfterAccept( acceptedInvite ) );
-			this.acceptedNotice( acceptedInvite );
-			return;
-		}
 		fetchInvite( this.props.siteId, this.props.inviteKey );
 		userModule.on( 'change', this.refreshUser );
 		InvitesStore.on( 'change', this.refreshInvite );
@@ -92,17 +85,6 @@ let InviteAccept = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
 	},
 
-	getRedirectAfterAccept( invite = this.state.invite ) {
-		switch ( invite.role ) {
-			case 'viewer':
-			case 'follower':
-				return '/';
-				break;
-			default:
-				return '/posts/' + this.props.siteId;
-		}
-	},
-
 	decline() {
 		this.props.infoNotice( this.translate( 'You declined to join.' ), { displayOnNextPage: true } );
 		page( '/' );
@@ -115,8 +97,8 @@ let InviteAccept = React.createClass( {
 		}
 		debug( 'Rendering invite' );
 		return this.state.user
-			? <LoggedIn invite={ this.state.invite } redirectTo={ this.getRedirectAfterAccept() } decline={ this.decline } user={ this.state.user } />
-			: <LoggedOut { ...this.state.invite } decline={ this.decline } />;
+			? <LoggedIn invite={ this.state.invite } redirectTo={ getRedirectAfterAccept( this.state.invite ) } decline={ this.decline } user={ this.state.user } />
+			: <LoggedOut { ...this.state.invite } redirectTo={ getRedirectAfterAccept( this.state.invite ) } decline={ this.decline } />;
 	},
 
 	renderError() {

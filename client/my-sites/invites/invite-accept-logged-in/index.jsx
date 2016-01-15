@@ -17,7 +17,7 @@ import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
-import constants from 'my-sites/invites/constants';
+import { acceptedNotice } from 'my-sites/invites/constants';
 
 export default React.createClass( {
 
@@ -30,7 +30,7 @@ export default React.createClass( {
 	accept() {
 		this.setState( { submitting: true } );
 		acceptInvite( this.props );
-		this.props.acceptedNotice();
+		this.props.successNotice( ... acceptedNotice( this.props ) );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 		page( this.props.redirectTo );
 	},

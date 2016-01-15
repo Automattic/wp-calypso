@@ -3,6 +3,8 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
+import store from 'store';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -12,6 +14,8 @@ import titleActions from 'lib/screen-title/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { acceptedNotice, getRedirectAfterAccept } from 'my-sites/invites/constants';
+import { successNotice } from 'state/notices/actions';
 
 export function acceptInvite( context ) {
 	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
@@ -32,4 +36,15 @@ export function acceptInvite( context ) {
 		document.getElementById( 'primary' ),
 		context.store
 	);
+}
+
+export function inviteNotices( context, next ) {
+	const acceptedInvite = store.get( 'invite_accepted' );
+	if ( acceptedInvite ) {
+		store.remove( 'invite_accepted' );
+		context.store.dispatch( successNotice( ... acceptedNotice( acceptedInvite ) ) );
+		page( getRedirectAfterAccept( acceptedInvite ) );
+	} else {
+		next();
+	}
 }

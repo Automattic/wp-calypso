@@ -6,9 +6,14 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { acceptInvite } from './controller';
+import { acceptInvite, inviteNotices } from './controller';
 
 export default () => {
+	page(
+		'*',
+		inviteNotices
+	);
+
 	page(
 		'/accept-invite/:site_id/:invitation_key',
 		acceptInvite

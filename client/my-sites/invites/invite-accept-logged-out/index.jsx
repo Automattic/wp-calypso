@@ -25,10 +25,6 @@ export default React.createClass( {
 		return { error: false, bearerToken: false, userData: false, submitting: false };
 	},
 
-	getRedirectToAfterLoginUrl() {
-		return window.location.href;
-	},
-
 	submitButtonText() {
 		return this.translate( 'Sign Up & Join' );
 	},
@@ -49,7 +45,7 @@ export default React.createClass( {
 						( acceptError ) => {
 							if ( ! acceptError ) {
 								store.set( 'invite_accepted', this.props );
-								this.setState( { acceptError, userData, bearerToken } );
+								this.setState( { userData, bearerToken } );
 							}
 						}
 					);
@@ -117,7 +113,7 @@ export default React.createClass( {
 		return (
 			<div>
 				<SignupForm
-					getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
+					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }
