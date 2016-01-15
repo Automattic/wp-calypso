@@ -16,7 +16,7 @@ var EmailForwardingDetails = React.createClass( {
 		var supportLink = 'https://' + i18n.getLocaleSlug() + '.support.wordpress.com/email-forwarding/';
 		return (
 			<p className="email-forwarding__explanation">
-				{ this.translate( 'Email Forwarding feature lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.' ) }
+				{ this.translate( 'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.' ) }
 				{ ' ' }
 				<a href={ supportLink }
 						target="_blank"
