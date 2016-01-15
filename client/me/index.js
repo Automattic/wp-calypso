@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import removeOverlay from 'remove-overlay';
+import removeOverlay from 'lib/remove-overlay';
 import paths from './paths';
 
 export default function() {
