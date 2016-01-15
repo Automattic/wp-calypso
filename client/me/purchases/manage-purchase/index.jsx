@@ -85,7 +85,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	isDataFetchingAfterRenewal() {
-		return 'thank-you' === this.props.destinationType && this.props.selectedPurchase.isFetching;
+		return this.props.selectedPurchase.isFetching;
 	},
 
 	isDataValid( props = this.props ) {
