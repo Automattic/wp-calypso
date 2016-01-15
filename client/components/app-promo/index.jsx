@@ -8,14 +8,16 @@ import noop from 'lodash/utility/noop';
 import Gridicon from 'components/gridicon';
 
 import analytics from 'analytics';
+import store from 'store';
 
 export default React.createClass( {
 
 	displayName: 'AppPromo',
 
 	getInitialState: function() {
+		var has_dismissed = store.get('desktop_promo_dismissed');
 		return {
-			dismissed: false
+			dismissed: has_dismissed
 		};
 	},
 
@@ -28,6 +30,9 @@ export default React.createClass( {
 
 	dismiss: function() {
 		this.setState( { dismissed: true } );
+
+		// store as dismissed
+		store.set('desktop_promo_dismissed', true);
 	},
 
 	render() {
