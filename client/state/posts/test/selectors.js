@@ -89,7 +89,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"search":"Hel"}': {
+							'{"search":"hel"}': {
 								fetching: true
 							}
 						}
@@ -105,7 +105,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"search":"Hello"}': {
+							'{"search":"hello"}': {
 								fetching: true
 							}
 						}
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"search":"Hello"}': {
+							'{"search":"hello"}': {
 								fetching: true
 							}
 						}
@@ -152,7 +152,7 @@ describe( 'selectors', () => {
 					},
 					siteQueries: {
 						2916284: {
-							'{"search":"Hello"}': {
+							'{"search":"hello"}': {
 								fetching: false,
 								posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 							}
@@ -183,7 +183,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"search":"Hello"}': {
+							'{"search":"hello"}': {
 								fetching: false
 							}
 						}
@@ -199,7 +199,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueries: {
 						2916284: {
-							'{"search":"Hello"}': {
+							'{"search":"hello"}': {
 								fetching: true
 							}
 						}
@@ -239,7 +239,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"search":"Hello"}': 4
+							'{"search":"hello"}': 4
 						}
 					}
 				}
@@ -253,7 +253,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"search":"Hello"}': 4
+							'{"search":"hello"}': 4
 						}
 					}
 				}
@@ -279,7 +279,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"search":"Hello"}': 4
+							'{"search":"hello"}': 4
 						}
 					}
 				}
@@ -293,7 +293,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"search":"Hello"}': 4
+							'{"search":"hello"}': 4
 						}
 					}
 				}
@@ -307,7 +307,7 @@ describe( 'selectors', () => {
 				posts: {
 					siteQueriesLastPage: {
 						2916284: {
-							'{"search":"Hello"}': 1
+							'{"search":"hello"}': 1
 						}
 					}
 				}

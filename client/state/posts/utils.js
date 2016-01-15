@@ -27,7 +27,7 @@ export function getNormalizedPostsQuery( query ) {
  * @return {String}       Serialized posts query
  */
 export function getSerializedPostsQuery( query = {} ) {
-	return JSON.stringify( getNormalizedPostsQuery( query ) );
+	return JSON.stringify( getNormalizedPostsQuery( query ) ).toLowerCase();
 }
 
 /**
@@ -38,5 +38,5 @@ export function getSerializedPostsQuery( query = {} ) {
  * @return {String}       Serialized posts query
  */
 export function getSerializedPostsQueryWithoutPage( query ) {
-	return JSON.stringify( omit( getNormalizedPostsQuery( query ), 'page' ) );
+	return JSON.stringify( omit( getNormalizedPostsQuery( query ), 'page' ) ).toLowerCase();
 }

@@ -35,6 +35,14 @@ describe( 'utils', () => {
 
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
+
+		it( 'should lowercase the result', () => {
+			const serializedQuery = getSerializedPostsQuery( {
+				search: 'HeLlO'
+			} );
+
+			expect( serializedQuery ).to.equal( '{"search":"hello"}' );
+		} );
 	} );
 
 	describe( '#getSerializedPostsQueryWithoutPage()', () => {
@@ -45,6 +53,15 @@ describe( 'utils', () => {
 			} );
 
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
+		} );
+
+		it( 'should lowercase the result', () => {
+			const serializedQuery = getSerializedPostsQueryWithoutPage( {
+				search: 'HeLlO',
+				page: 2
+			} );
+
+			expect( serializedQuery ).to.equal( '{"search":"hello"}' );
 		} );
 	} );
 } );

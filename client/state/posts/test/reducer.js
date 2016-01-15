@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"search":"Hello"}': {
+					'{"search":"hello"}': {
 						fetching: true
 					}
 				}
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 		it( 'should accumulate site queries', () => {
 			const original = Object.freeze( {
 				2916284: {
-					'{"search":"Hello"}': {
+					'{"search":"hello"}': {
 						fetching: true
 					}
 				}
@@ -132,10 +132,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"search":"Hello"}': {
+					'{"search":"hello"}': {
 						fetching: true
 					},
-					'{"search":"Hello W"}': {
+					'{"search":"hello w"}': {
 						fetching: true
 					}
 				}
@@ -155,7 +155,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"search":"Hello"}': {
+					'{"search":"hello"}': {
 						fetching: false,
 						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 					}
@@ -173,7 +173,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"search":"Hello"}': {
+					'{"search":"hello"}': {
 						fetching: false
 					}
 				}
@@ -263,7 +263,7 @@ describe( 'reducer', () => {
 		it( 'should accumulate site post request success', () => {
 			const original = Object.freeze( {
 				2916284: {
-					'{"search":"Hello"}': 1
+					'{"search":"hello"}': 1
 				}
 			} );
 			const state = siteQueriesLastPage( original, {
@@ -278,8 +278,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'{"search":"Hello"}': 1,
-					'{"search":"Ribs"}': 1
+					'{"search":"hello"}': 1,
+					'{"search":"ribs"}': 1
 				}
 			} );
 		} );
