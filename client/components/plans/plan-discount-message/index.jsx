@@ -42,9 +42,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		if ( this.planHasDiscount() ) {
-			return this.planDiscountMessage();
-		} else if ( this.showMostPopularMessage() ) {
+		if ( this.showMostPopularMessage() ) {
 			return this.mostPopularPlan();
 		}
 		return false;
