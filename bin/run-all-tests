@@ -84,4 +84,4 @@ __cleanup() {
 trap __cleanup SIGINT SIGTERM
 
 # Run all tests
-find {$BASEDIR/../client,$BASEDIR/../server,$BASEDIR/../shared} -name Makefile | run_test_fast
+find {$BASEDIR/../client,$BASEDIR/../server} -name Makefile | run_test_fast

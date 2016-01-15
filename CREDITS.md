@@ -61,7 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 #### client/components/tinymce/plugins/wptextpattern
 #### client/lib/media/constants.js
 #### client/post-editor/media-modal/markup.js
-#### shared/lib/formatting/index.js
+#### client/lib/formatting/index.js
 ```text
 WordPress - Web publishing software
 

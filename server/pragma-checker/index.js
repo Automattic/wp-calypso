@@ -62,7 +62,7 @@ PragmaCheckPlugin.prototype.apply = function( compiler ) {
 				} );
 
 				if ( pragmaError ) {
-					console.log( info( PLUGIN_TITLE + ': Server Side Rendering constraints not met. Please see https://github.com/Automattic/wp-calypso/tree/master/shared#shared for details.' ) );
+					console.log( info( PLUGIN_TITLE + ': Server Side Rendering constraints not met. Please see https://github.com/Automattic/wp-calypso/tree/master/docs/server-side-rendering.md for details.' ) );
 					// We don't want to enable webpack's bail for all errors, so exit the process instead of throwing.
 					process.exit( 1 ); // eslint-disable-line no-process-exit
 				}
