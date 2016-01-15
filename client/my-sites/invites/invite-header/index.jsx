@@ -81,6 +81,15 @@ export default React.createClass( {
 					}
 				);
 				break;
+			case 'viewer':
+				text = this.translate(
+					'{{inviterName/}} invited you to view:', {
+						components: {
+							inviterName: inviterName
+						}
+					}
+				);
+				break;
 			case 'follower':
 				text = this.translate(
 					'{{inviterName/}} invited you to follow:', {
@@ -92,7 +101,7 @@ export default React.createClass( {
 				break
 			default:
 				text = this.translate(
-					'{{inviterName/}} invited you to be: %(invitedRole)s on:', {
+					'{{inviterName/}} invited you to be %(invitedRole)s on:', {
 						args: {
 							invitedRole: role
 						},
