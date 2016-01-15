@@ -74,7 +74,7 @@ communityTranslatorJumpstart = {
 	},
 
 	wrapTranslation: function( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		var props;
+		var props, dataElement;
 
 		if ( ! this.isEnabled() || ! this.isActivated() ) {
 			return displayedTranslationFromPage;
@@ -82,12 +82,6 @@ communityTranslatorJumpstart = {
 
 		if ( 'object' !== typeof optionsFromPage ) {
 			optionsFromPage = {};
-		}
-
-		// text will be used in a text-only context, such as HTML attribute
-		if ( 'undefined' !== typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
-			// for the moment we will just not make it translatable
-			return displayedTranslationFromPage;
 		}
 
 		props = { className: 'translatable' };
@@ -109,7 +103,18 @@ communityTranslatorJumpstart = {
 			props[ 'data-plural' ] = optionsFromPage.plural;
 		}
 
-		return React.DOM.data( props, displayedTranslationFromPage );
+		// React.DOM.data returns a frozen object, therefore we make a copy so that we can modify it below
+		dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
+
+		// now we can override the toString function which would otherwise return [object Object]
+		dataElement.toString = function() {
+			return displayedTranslationFromPage;
+		}
+
+		// freeze the object again to certify the same behavior as the original ReactElement object
+		Object.freeze( dataElement );
+
+		return dataElement;
 	},
 
 	init: function() {
@@ -286,9 +291,9 @@ i18n.registerComponentUpdateHook( function() {
 function trackTranslatorStatus() {
 	var newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
 		changed = previousEnabledSetting !== newSetting,
-		tracksEvent = newSetting ?
-			'calypso_community_translator_enabled' :
-			'calypso_community_translator_disabled';
+		tracksEvent = newSetting
+			? 'calypso_community_translator_enabled'
+			: 'calypso_community_translator_disabled';
 
 	if ( changed && previousEnabledSetting !== undefined ) {
 		debug( tracksEvent );
