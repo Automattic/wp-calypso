@@ -228,7 +228,7 @@ export default React.createClass( {
 			siteName;
 
 		this.props.plugins
-			.filter( plugin => this.isSelected )
+			.filter( this.isSelected )
 			.forEach( ( plugin ) => {
 				pluginsList[ plugin.slug ] = true;
 				pluginName = plugin.name || plugin.slug;

@@ -156,6 +156,11 @@ export default React.createClass( {
 		];
 	},
 
+	isFetchingPlugins() {
+		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+		return sites.some( PluginsStore.isFetchingSite );
+	},
+
 	getSelectedText() {
 		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
 		if ( 'undefined' !== typeof found ) {
@@ -255,7 +260,7 @@ export default React.createClass( {
 		const { plugins } = this.state;
 		const { sites } = this.props;
 
-		let showPlaceholders = isEmpty( plugins );
+		let showPlaceholders = isEmpty( plugins ) && this.isFetchingPlugins();
 
 		if ( showPlaceholders && isWpCom === get( sites.getSelectedSite(), 'jetpack' ) ) {
 			return false;
@@ -294,7 +299,7 @@ export default React.createClass( {
 					sites={ this.props.sites }
 					selectedSite={ selectedSite }
 					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } /> }
-				{ ( ! selectedSite || selectedSite.jetpack === true ) &&  <PluginsList
+				{ ( ! selectedSite || selectedSite.jetpack === true ) && <PluginsList
 					header={ this.translate( 'Jetpack Plugins' ) }
 					plugins={ this.getJetpackPlugins() }
 					isWpCom={ false }
