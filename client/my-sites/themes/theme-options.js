@@ -47,16 +47,11 @@ const buttonOptions = {
 };
 
 export function getButtonOptions( site, theme, isLoggedOut, actions, setSelectedTheme, togglePreview ) {
-	return mapValues(
-		mapValues(
-			mapValues(
-				pick(
-					buttonOptions,
-					option => ! ( option.isHidden && option.isHidden( site, theme, isLoggedOut ) )
-				), appendLabelAndHeader
-			), appendUrl
-		), appendAction
-	);
+	let options = pick( buttonOptions, option => ! ( option.isHidden && option.isHidden( site, theme, isLoggedOut ) ) );
+	options = mapValues( options, appendLabelAndHeader );
+	options = mapValues( options, appendUrl );
+	options = mapValues( options, appendAction );
+	return options;
 
 	function appendLabelAndHeader( option, name ) {
 		const actionLabel = actionLabels[ name ];
