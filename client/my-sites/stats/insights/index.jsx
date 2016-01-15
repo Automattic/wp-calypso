@@ -31,7 +31,10 @@ export default React.createClass( {
 		followList: PropTypes.object.isRequired,
 		insightsList: PropTypes.object.isRequired,
 		publicizeList: PropTypes.object.isRequired,
-		site: PropTypes.object,
+		site: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] ),
 		statSummaryList: PropTypes.object.isRequired,
 		streakList: PropTypes.object.isRequired,
 		summaryDate: PropTypes.string,

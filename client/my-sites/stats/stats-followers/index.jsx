@@ -129,10 +129,11 @@ module.exports = React.createClass( {
 			}
 		];
 
+		const summaryPageSlug = this.props.site ? this.props.site.slug : '';
 		if ( 'email-followers' === activeFilter ) {
-			summaryPageLink = '/stats/follows/email/' + this.props.site.slug;
+			summaryPageLink = '/stats/follows/email/' + summaryPageSlug;
 		} else {
-			summaryPageLink = '/stats/follows/wpcom/' + this.props.site.slug;
+			summaryPageLink = '/stats/follows/wpcom/' + summaryPageSlug;
 		}
 
 		if ( wpcomData && wpcomData.subscribers ) {

@@ -14,7 +14,10 @@ var SectionNav = require( 'components/section-nav' ),
 module.exports = React.createClass( {
 	propTypes: {
 		section: React.PropTypes.string.isRequired,
-		site: React.PropTypes.object
+		site: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] )
 	},
 
 	componentDidMount: function() {
