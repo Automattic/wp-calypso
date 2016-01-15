@@ -20,7 +20,7 @@ import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
 import analytics from 'analytics';
-import { getRedirectAfterAccept } from 'my-sites/invites/constants';
+import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 
 /**
  * Module variables

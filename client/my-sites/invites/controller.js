@@ -14,7 +14,7 @@ import titleActions from 'lib/screen-title/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { acceptedNotice, getRedirectAfterAccept } from 'my-sites/invites/constants';
+import { acceptedNotice, getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { successNotice } from 'state/notices/actions';
 
 export function acceptInvite( context ) {
