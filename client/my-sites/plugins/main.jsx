@@ -45,9 +45,9 @@ import PlanNudge from 'components/plans/plan-nudge';
  */
 const debug = debugModule( 'calypso:my-sites:plugins' );
 
-const PluginsList = React.createClass( {
+const PluginsMain = React.createClass( {
 
-	displayName: 'PluginsList',
+	displayName: 'PluginsMain',
 
 	mixins: [ URLSearch ],
 
@@ -353,6 +353,7 @@ const PluginsList = React.createClass( {
 	},
 
 	render() {
+		console.log( 'hello' );
 		if ( this.state.accessError ) {
 			return (
 				<Main>
@@ -441,4 +442,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchPluginData }, dispatch )
-)( PluginsList );
+)( PluginsMain );
