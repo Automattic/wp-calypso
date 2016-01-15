@@ -63,9 +63,8 @@ function add( newCartItem ) {
 
 /**
  * Determines if the given cart item should replace the cart.
- * This can happen if the given item:
- * - will result in mixed renewals/non-renewals or multiple renewals (excluding private registration).
- * - is a free trial plan
+ * This can happen if the given item will result in mixed renewals/non-renewals
+ * or multiple renewals (excluding private registration).
  *
  * @param {Object} cartItem - `CartItemValue` object
  * @param {Object} cart - the existing shopping cart
@@ -79,12 +78,6 @@ function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( ! isRenewal( cartItem ) && hasRenewalItem( cart ) ) {
 		// all items should replace the cart if the cart contains a renewal
-		return true;
-	}
-
-	if ( productsValues.isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
-		// adding a free trial plan to your cart replaces the cart
-		// adding another product to a cart containing a free trial removes the free trial
 		return true;
 	}
 
