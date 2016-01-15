@@ -10,17 +10,17 @@ import { createReducerStore } from 'lib/store';
 
 const debug = debugModule( 'calypso:reader-lists-items' ); //eslint-disable-line no-unused-vars
 
-const initialState = {
+const initialState = fromJS( {
 	items: {},
 	errors: [],
 	currentPage: {},
 	isLastPage: {},
 	isFetching: false
-};
+} );
 const defaultListItem = List();
 
 function getListItems( state, listId ) {
-	return state.get( 'items' ).get( parseInt( listId ), defaultListItem ); // eslint-disable-line new-cap
+	return state.get( 'items' ).get( +listId, defaultListItem ); // eslint-disable-line new-cap
 }
 
 function receiveItems( state, data ) {
@@ -41,7 +41,9 @@ function receiveItems( state, data ) {
 	let currentPage = state.get( 'currentPage' );
 	currentPage = currentPage.set( data.list_ID, data.page );
 
-	return state.set( 'isLastPage', isLastPage ).set( 'items', items ).set( 'currentPage', currentPage );
+	return state.withMutations( currentState => {
+		currentState.set( 'isLastPage', isLastPage ).set( 'items', items ).set( 'currentPage', currentPage );
+	} );
 };
 
 const ReaderListsItemsStore = createReducerStore( ( state, payload ) => {

@@ -66,7 +66,7 @@ const ListManagementSitesListItem = React.createClass( {
 			iconUrl = siteData && siteData.get( 'icon' ),
 			url = siteData ? siteData.get( 'URL' ) : feedData && feedData.get( 'feed_URL' ),
 			displayUrl = FeedDisplayHelper.formatUrlForDisplay( url ),
-			feedTitle = decodeEntities( FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl ) );
+			feedTitle = FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl );
 
 		if ( ! feedTitle ) {
 			return null;
@@ -76,7 +76,7 @@ const ListManagementSitesListItem = React.createClass( {
 			<ListItem>
 				<Icon>{ iconUrl ? <img src={ iconUrl.get( 'img' ) } alt="Feed icon" /> : null }</Icon>
 				<Title>
-					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ feedTitle }</a>
+					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ decodeEntities( feedTitle ) }</a>
 				</Title>
 				<Description><a href={ url }>{ displayUrl }</a></Description>
 				<Actions>
