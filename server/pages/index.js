@@ -8,7 +8,8 @@ var express = require( 'express' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
 	superagent = require( 'superagent' ),
 	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server' );
+	ReactDomServer = require( 'react-dom/server' ),
+	Helmet = require( 'react-helmet' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
@@ -16,7 +17,7 @@ var config = require( 'config' ),
 	sections = require( '../../client/sections' ),
 	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
 
-var LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
+var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 var cachedDesignMarkup;
 
 var HASH_LENGTH = 10,
@@ -378,7 +379,7 @@ module.exports = function() {
 		}
 	} );
 
-	app.get( '/design', function( req, res ) {
+	app.get( '/design(/type/:themeTier)?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
@@ -387,15 +388,18 @@ module.exports = function() {
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				try {
-					if ( cachedDesignMarkup ) {
-						context.layout = cachedDesignMarkup;
+					const tier = req.params.themeTier || 'all';
+					if ( cachedDesignMarkup[ tier ] ) {
+						context.layout = cachedDesignMarkup[ tier ];
 					} else {
 						let startTime = Date.now();
-						context.layout = cachedDesignMarkup = ReactDomServer.renderToString( LayoutLoggedOutDesignElement );
+						context.layout = cachedDesignMarkup[ tier ] = ReactDomServer.renderToString(
+							LayoutLoggedOutDesignFactory( { tier } ) );
 						let rtsTimeMs = Date.now() - startTime;
 
 						if ( rtsTimeMs > 15 ) {
-							// We think that renderToString should generally never take more than 15ms. We're probably wrong.
+							// We think that renderToString should generally
+							// never take more than 15ms. We're probably wrong.
 							bumpStat( 'calypso-ssr', 'loggedout-design-over-15ms-rendertostring' );
 						}
 						bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
@@ -406,6 +410,13 @@ module.exports = function() {
 					}
 				}
 			}
+
+			const {
+				title: helmetTitle,
+				meta: helmetMeta,
+				link: helmetLink
+			} = Helmet.rewind();
+			Object.assign( context, { helmetTitle, helmetMeta, helmetLink } );
 
 			res.render( 'index.jade', context );
 		}
