@@ -24,16 +24,16 @@ var ThemeExample = React.createClass( {
 				id="twentyfifteen"
 				name="Twenty Fifteen"
 				screenshot="//i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png"
-				buttonContents={ [
-					{
+				buttonContents={ {
+					action1: {
 						label: 'Menu Item 1',
 						action: function() { console.log( 'Menu Item 1 selected' ); }
 					},
-					{
+					action2: {
 						label: 'Menu Item 2',
 						action: function() { console.log( 'Menu Item 2 selected' ); }
 					}
-					] }
+				} }
 				onScreenshotClick={ function() { console.log( 'onScreenshotClick triggered' ); } } />
 			</div>
 		);

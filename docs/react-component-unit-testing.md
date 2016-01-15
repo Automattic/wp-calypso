@@ -100,7 +100,7 @@ render: function() {
 			{ this.props.themes.map( function( theme ) {
 				return (
 					<li key={ 'theme' + theme.name }>
-						<Theme { ...theme } />
+						<Theme theme={ theme } />
 					</li>
 				);
 			} ) }

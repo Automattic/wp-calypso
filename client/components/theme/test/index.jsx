@@ -45,7 +45,7 @@ describe( 'Theme', function() {
 			name: 'Theme name',
 			screenshot: '/theme/screenshot.png',
 			isSelected: true,
-			buttonContents: [ { label: 'Dummy action', action: sinon.spy() } ] // TODO: test if called when clicked
+			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } } // TODO: test if called when clicked
 		};
 	} );
 

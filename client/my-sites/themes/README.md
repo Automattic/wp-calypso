@@ -3,6 +3,11 @@ Themes
 
 Displays the Theme Showcase, which currently resides on `/design` and handles multi-site, single-site and Jetpack-site views.
 
+### `action-labels.js`
+
+Contains labels for individual Theme actions ('Activate', 'Customize' etc), as
+well as headers shown in the site selector modal ('Activate on' etc).
+
 ### `main.jsx`
 
 The main parent component for the Themes module.
