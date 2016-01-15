@@ -312,7 +312,7 @@ var PostEditor = React.createClass( {
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
-								{ this.state.post && isPage ?
+								{ this.state.post && isPage && site ?
 									<EditorPageSlug
 										slug={ this.state.post.slug }
 										path={ this.state.post.URL ? utils.getPagePath( this.state.post ) : site.URL + '/' }
