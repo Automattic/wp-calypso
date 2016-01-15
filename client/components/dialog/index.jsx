@@ -1,18 +1,23 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
-	debug = require( 'debug' )( 'calypso:dialog' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import noop from 'lodash/utility/noop';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-var SingleChildCSSTransitionGroup = require( 'components/single-child-css-transition-group' ),
-	DialogBase = require( './dialog-base' );
+import SingleChildCSSTransitionGroup from 'components/single-child-css-transition-group';
+import DialogBase from './dialog-base';
 
-var Dialog = React.createClass( {
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:dialog' );
+
+export default React.createClass( {
 	propTypes: {
 		isVisible: React.PropTypes.bool,
 		baseClassName: React.PropTypes.string,
@@ -88,5 +93,3 @@ var Dialog = React.createClass( {
 		}
 	}
 } );
-
-module.exports = Dialog;
