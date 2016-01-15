@@ -7,10 +7,11 @@
 	}
 
 	.gridicons-chevron-down {
+		align-self: center;
 		color: lighten( $gray, 10% );
-		position: absolute;
-			right: 16px;
-			top: 22px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 16px;
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 }
@@ -35,6 +36,7 @@
 
 .sites-dropdown__selected {
 	cursor: pointer;
+	display: flex;
 
 	.is-open & {
 		border-bottom: 1px solid lighten( $gray, 30% );
@@ -73,6 +75,8 @@
 }
 
 .sites-dropdown .site-selector .site {
+	flex-grow: 1;
+
 	.notouch & {
 		&:hover {
 			background: $blue-medium;
