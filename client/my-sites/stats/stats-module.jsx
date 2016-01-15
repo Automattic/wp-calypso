@@ -3,8 +3,7 @@
  */
 var React = require( 'react' ),
 	page = require( 'page' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module' );
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -18,8 +17,8 @@ var toggle = require( './mixin-toggle' ),
 	DownloadCsv = require( './stats-download-csv' ),
 	DatePicker = require( './stats-date-picker' ),
 	Card = require( 'components/card' ),
+	StatsModulePlaceholder = require( './stats-module/placeholder' ),
 	Gridicon = require( 'components/gridicon' );
-
 
 module.exports = React.createClass( {
 	displayName: 'StatModule',
@@ -55,8 +54,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'rendering stats module' );
-
 		var data = this.data(),
 			noData = this.props.dataList.isEmpty(),
 			hasError = this.props.dataList.isError(),
@@ -68,16 +65,16 @@ module.exports = React.createClass( {
 			moduleToggle,
 			classes;
 
-			classes = classNames(
-				'stats-module',
-				{
-					'is-expanded': this.state.showModule,
-					'is-loading': this.props.dataList.isLoading(),
-					'is-showing-info': this.state.showInfo,
-					'has-no-data': noData,
-					'is-showing-error': hasError || noData
-				}
-			);
+		classes = classNames(
+			'stats-module',
+			{
+				'is-expanded': this.state.showModule,
+				'is-loading': this.props.dataList.isLoading(),
+				'is-showing-info': this.state.showInfo,
+				'has-no-data': noData,
+				'is-showing-error': hasError || noData
+			}
+		);
 
 		statsList = <StatsList moduleName={ this.props.path } data={ data } followList={ this.props.followList } />;
 
@@ -95,7 +92,7 @@ module.exports = React.createClass( {
 
 			if ( this.props.dataList.response.viewAll ) {
 				viewSummary = (
-					<div key='view-all' className='module-expand'>
+					<div key="view-all" className="module-expand">
 						<a href="#" onClick={ this.viewAllHandler }>{ this.translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }<span className="right"></span></a>
 					</div>
 				);
@@ -116,7 +113,7 @@ module.exports = React.createClass( {
 					</div>
 					<div className="module-content">
 						<InfoPanel module={ this.props.path } />
-						{ ( noData && ! hasError ) ? <ErrorPanel className='is-empty-message' message={ this.props.moduleStrings.empty } /> : null }
+						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ this.props.moduleStrings.empty } /> : null }
 						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
 						<div className="stats-async-metabox-wrapper">
 							<ul className="module-content-list module-content-list-legend">
@@ -129,11 +126,11 @@ module.exports = React.createClass( {
 									</span>
 								</li>
 							</ul>
-							<div className="module-placeholder is-void"></div>
+							<StatsModulePlaceholder />
 							{ statsList }
 						</div>
-						{ this.props.summary ?
-							<DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
+						{ this.props.summary
+							? <DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
 						: null }
 					</div>
 					{ viewSummary }
