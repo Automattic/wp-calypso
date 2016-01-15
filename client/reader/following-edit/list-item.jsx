@@ -103,7 +103,7 @@ var SubscriptionListItem = React.createClass( {
 				</Title>
 				<Description><a href={ subscription.get( 'URL' ) }>{ displayUrl }</a></Description>
 				<Actions>
-					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } location="following_edit" isButtonOnly={ true } />
+					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } location="following_edit" isButtonOnly={ true } siteUrl={ subscription.get( 'URL' ) } />
 				</Actions>
 			</div>
 		);
