@@ -7,7 +7,6 @@ import partial from 'lodash/function/partial';
 /**
  * Internal dependencies
  */
-import { fromApi } from './common';
 import { actionTypes, appStates } from './constants';
 import { createReducerStore } from 'lib/store';
 
@@ -17,6 +16,7 @@ import { createReducerStore } from 'lib/store';
 const initialState = Immutable.fromJS( {
 	count: 0,
 	importers: {},
+	importerLocks: {},
 	api: {
 		isHydrated: false,
 		isFetching: false,
@@ -29,6 +29,19 @@ const increment = a => a + 1;
 
 const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
 const shouldRemove = importer => removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
+
+const adjustImporterLock = ( state, { action } ) => {
+	switch ( action.type ) {
+		case actionTypes.LOCK_IMPORT:
+			return state.setIn( [ 'importerLocks', action.importerId ], true );
+
+		case actionTypes.UNLOCK_IMPORT:
+			return state.setIn( [ 'importerLocks', action.importerId ], false );
+
+		default:
+			return state;
+	}
+}
 
 const ImporterStore = createReducerStore( function( state, payload ) {
 	let { action } = payload,
@@ -101,8 +114,11 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 
 		case actionTypes.RECEIVE_IMPORT_STATUS:
-			newState = state
-				.setIn( [ 'api', 'isHydrated' ], true );
+			newState = state.setIn( [ 'api', 'isHydrated' ], true );
+
+			if ( newState.getIn( [ 'importerLocks', action.importerStatus.importerId ], false ) ) {
+				break;
+			}
 
 			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
 				break;
@@ -147,6 +163,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			newState = state;
 			break;
 	}
+
+	newState = adjustImporterLock( newState, payload );
 
 	return newState;
 }, initialState );
