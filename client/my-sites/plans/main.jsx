@@ -17,6 +17,7 @@ var analytics = require( 'analytics' ),
 	isBusiness = require( 'lib/products-values' ).isBusiness,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
 	isPremium = require( 'lib/products-values' ).isPremium,
+	Main = require( 'components/main' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -109,8 +110,7 @@ var Plans = React.createClass( {
 	},
 
 	render: function() {
-		var classNames = 'main main-column ',
-			hasJpphpBundle,
+		var hasJpphpBundle,
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
@@ -130,7 +130,7 @@ var Plans = React.createClass( {
 		}
 
 		return (
-			<div className={ classNames } role="main">
+			<Main>
 				<SidebarNavigation />
 
 				<div id="plans" className="plans has-sidebar">
@@ -151,7 +151,7 @@ var Plans = React.createClass( {
 						cart={ this.props.cart } />
 					{ ! hasJpphpBundle && this.comparePlansLink() }
 				</div>
-			</div>
+			</Main>
 		);
 	}
 } );
