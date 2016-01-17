@@ -12,7 +12,7 @@ module.exports = React.createClass( {
 	displayName: 'TermsOfService',
 
 	recordTermsAndConditionsClick: function() {
-		analytics.ga.recordEvent( 'Tree Trials', 'Clicked Terms and Conditions Link' );
+		analytics.ga.recordEvent( 'Free Trials', 'Clicked Terms and Conditions Link' );
 	},
 
 	render: function() {

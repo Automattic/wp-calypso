@@ -181,7 +181,7 @@ module.exports = {
 				<CheckoutData>
 					<Checkout
 						cards={ storedCards }
-						planName={ context.params.plan_name }
+						planName={ context.params.planName }
 						plans={ plansList }
 						productsList={ productsList }
 						sites={ sites } />

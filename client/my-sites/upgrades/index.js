@@ -285,14 +285,14 @@ module.exports = function() {
 		);
 
 		page(
-			'/checkout/:domain/:plan_name?',
+			'/checkout/:domain/:planName?',
 			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.checkout
 		);
 
 		page(
-			'/start-trial/:domain/:plan_name?',
+			'/start-trial/:planName/:domain',
 			adTracking.retarget,
 			controller.siteSelection,
 			trialsController.isEligible,

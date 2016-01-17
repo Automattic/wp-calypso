@@ -39,7 +39,7 @@ export default {
 			FreeTrialCartData = require( './data/free-trial-cart' ),
 			basePath = route.sectionify( context.path ),
 			selectedSite = sites.getSelectedSite(),
-			planName = context.params.plan_name || 'premium';
+			planName = context.params.planName;
 
 		// removes the sidebar
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );

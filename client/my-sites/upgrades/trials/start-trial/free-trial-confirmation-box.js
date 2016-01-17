@@ -36,13 +36,14 @@ const FreeTrialConfirmationBox = React.createClass( {
 				<div className="payment-box-actions">
 					<PayButton
 						beforeSubmitText={
-							this.translate( 'Start %(days)s Day Free Trial', {
-								args: { days: '14' },
-								context: 'Pay button for free trials on /checkout'
+							this.translate( 'Start 14 Day Free Trial', {
+								context: 'Pay button for free trials on /start-trial'
 							} )
 						}
 						completingText={
-							this.translate( 'Starting your free trial…', { context: 'Loading state on /start-trial' } )
+							this.translate( 'Starting your free trial…', {
+								context: 'Loading state on /start-trial'
+							} )
 						}
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />

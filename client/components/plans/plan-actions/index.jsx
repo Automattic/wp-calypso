@@ -199,7 +199,7 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<a className="button is-primary plan-actions__upgrade-button"
-					href={ `/start-trial/${ this.props.site.slug }/${ isBusiness( this.props.plan ) ? 'business' : 'premium' }` }>
+					href={ `/start-trial/${ isBusiness( this.props.plan ) ? 'business' : 'premium' }/${ this.props.site.slug }` }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</a>
 
