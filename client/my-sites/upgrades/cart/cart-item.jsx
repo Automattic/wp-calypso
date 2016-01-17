@@ -13,7 +13,9 @@ var analytics = require( 'analytics' ),
 	isCredits = require( 'lib/products-values' ).isCredits,
 	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	abtest = require( 'lib/abtest' ).abtest,
+	{ isPremium, isBusiness } = require( 'lib/products-values' );
 
 module.exports = React.createClass( {
 	displayName: 'CartItem',
@@ -47,6 +49,24 @@ module.exports = React.createClass( {
 			args: {
 				cost: cost,
 				currency: cartItem.currency
+			}
+		} );
+	},
+
+	monthlyPrice: function() {
+		const { cost, currency } = this.props.cartItem,
+			isInSignup = this.props.cartItem.extra && this.props.cartItem.extra.context === 'signup';
+		if ( ! isInSignup ||
+				! ( isPremium( this.props.cartItem ) || isBusiness( this.props.cartItem ) ) ||
+				abtest( 'monthlyPlanPricing' ) === 'yearly' ||
+				cost === 0 ) {
+			return null;
+		}
+
+		return this.translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
+			args: {
+				monthlyPrice: +( cost / 12 ).toFixed( 2 ),
+				currency
 			}
 		} );
 	},
@@ -98,6 +118,9 @@ module.exports = React.createClass( {
 				<div className="secondary-details">
 					<span className="product-price">
 						{ this.price() }
+					</span>
+					<span className="product-monthly-price">
+						{ this.monthlyPrice() }
 					</span>
 					{ this.removeButton() }
 				</div>

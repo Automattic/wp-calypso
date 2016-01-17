@@ -53,4 +53,12 @@ module.exports = {
 		},
 		defaultVariation: 'notOffered'
 	},
+	monthlyPlanPricing: {
+		datestamp: '20160118',
+		variations: {
+			yearly: 50,
+			monthly: 50
+		},
+		defaultVariation: 'yearly'
+	},
 };
