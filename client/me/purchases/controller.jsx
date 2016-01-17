@@ -23,6 +23,7 @@ import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import paths from './paths';
 import PurchasesData from 'components/data/purchases';
+import PurchasesHeader from './list/header';
 import PurchasesList from './list';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
@@ -214,6 +215,7 @@ export default {
 
 		renderPage(
 			<Main>
+				<PurchasesHeader section={ 'purchases' } />
 				<NoSitesMessage />
 			</Main>
 		);
