@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/collection/find' );
+var connect = require( 'react-redux' ).connect,
+	find = require( 'lodash/collection/find' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
+	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
+	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
+	Gridicon = require( 'components/gridicon' ),
+	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
+	isPremium = require( 'lib/products-values' ).isPremium,
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
 	preventWidows = require( 'lib/formatting' ).preventWidows,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	Gridicon = require( 'components/gridicon' ),
-	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
-	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	isPremium = require( 'lib/products-values' ).isPremium,
-	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle;
+	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
 
 var Plans = React.createClass( {
 	displayName: 'Plans',
