@@ -122,6 +122,7 @@
 		"me/trophies": false,
 
 		"help": true,
+		"support-user": true,
 
 		"notifications2beta": true,
 		"muse": true,
