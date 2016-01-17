@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:wp' );
  */
 import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
-import wpcomSupport from 'lib/wp/support';
 
 let wpcom;
 
@@ -37,8 +36,4 @@ if ( config.isEnabled( 'oauth' ) ) {
 /**
  * Expose `wpcom`
  */
-if ( config.isEnabled( 'support-user' ) ) {
-	module.exports = wpcomSupport( wpcom );
-} else {
-	module.exports = wpcom;
-}
+module.exports = wpcom;
