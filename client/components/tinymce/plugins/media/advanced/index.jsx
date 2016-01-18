@@ -8,8 +8,9 @@ import ReactDomServer from 'react-dom/server';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
+import * as MediaSerialization from 'lib/media-serialization';
 import config from 'config';
-import { toggleEditorMediaAdvanced } from 'state/ui/editor/media/actions';
+import { setEditorMediaEditItem } from 'state/ui/editor/media/actions';
 import Gridicon from 'components/gridicon';
 
 export default function( editor ) {
@@ -32,7 +33,10 @@ export default function( editor ) {
 		},
 
 		onClick() {
-			store.dispatch( toggleEditorMediaAdvanced() );
+			const node = editor.selection.getStart();
+			const item = MediaSerialization.deserialize( node );
+
+			store.dispatch( setEditorMediaEditItem( item ) );
 		}
 	} );
 }

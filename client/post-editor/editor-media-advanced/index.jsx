@@ -2,13 +2,12 @@
  * External depencencies
  */
 import React, { PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { toggleEditorMediaAdvanced } from 'state/ui/editor/media/actions';
+import { setEditorMediaEditItem } from 'state/ui/editor/media/actions';
 import Dialog from 'components/dialog';
 
 function EditorMediaAdvanced( { visible, toggleVisible } ) {
@@ -32,12 +31,12 @@ EditorMediaAdvanced.defaultProps = {
 export default connect(
 	( state ) => {
 		return {
-			visible: state.ui.editor.media.advanced
+			item: state.ui.editor.media.editItem
 		};
 	},
 	( dispatch ) => {
-		return bindActionCreators( {
-			toggleVisible: toggleEditorMediaAdvanced
-		}, dispatch );
+		return {
+			resetEditItem: () => dispatch( setEditorMediaEditItem( null ) )
+		};
 	}
 )( EditorMediaAdvanced );
