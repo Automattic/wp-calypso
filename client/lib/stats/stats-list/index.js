@@ -11,6 +11,7 @@ var wpcom = require( 'lib/wp' ),
 	LocalList = require( 'lib/local-list' ),
 	statsParser = require( './stats-parser' )(),
 	analytics = require( 'analytics' );
+import { fetchSiteStats } from 'state/stats/actions';
 
 var responseHandler,
 	buildExportArray,
@@ -168,24 +169,23 @@ function StatsList( options ) {
  *
  */
 StatsList.prototype.fetch = function() {
-	var wpcomSite,
-		options = this.options,
-		postIdEndpoints = [ 'statsVideo', 'statsPostViews' ];
+	const {
+		options,
+		siteID,
+		statType
+	} = this;
 
-	if ( this.isDocumentedEndpoint ) {
-		wpcomSite = wpcom.site( this.siteID );
-	} else {
-		wpcomSite = wpcom.undocumented().site( this.siteID );
-	}
-
-	// statsPostViews && statsVideo expect just the post.ID as a param
-	if ( postIdEndpoints.indexOf( this.statType ) >= 0 ) {
-		options = this.options.post;
-	}
-
+	// @TODO handle this in actions file
 	this.startedAt = Date.now();
 
-	wpcomSite[ this.statType ].call( wpcomSite, options, responseHandler( this.options ).bind( this ) );
+	fetchSiteStats( {
+		siteID,
+		statType,
+		options,
+	} );
+
+// @TODO tie in responseHandler
+//	wpcomSite[ this.statType ].call( wpcomSite, options, responseHandler( this.options ).bind( this ) );
 };
 
 
