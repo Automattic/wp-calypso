@@ -6,6 +6,7 @@ var express = require( 'express' ),
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
+	superagent = require( 'superagent' ),
 	React = require( 'react' ),
 	ReactDomServer = require( 'react-dom/server' );
 
@@ -15,7 +16,8 @@ var config = require( 'config' ),
 	sections = require( '../../client/sections' ),
 	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
 
-var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
+var LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
+var cachedDesignMarkup;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -314,6 +316,14 @@ function renderLoggedInRoute( req, res ) {
 	}
 }
 
+function bumpStat( group, name ) {
+	const url = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
+
+	if ( config( 'env' ) === 'production' ) {
+		superagent.get( url ).end();
+	}
+}
+
 module.exports = function() {
 	var app = express();
 
@@ -377,7 +387,19 @@ module.exports = function() {
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				try {
-					context.layout = ReactDomServer.renderToString( LayoutLoggedOutDesignFactory() );
+					if ( cachedDesignMarkup ) {
+						context.layout = cachedDesignMarkup;
+					} else {
+						let startTime = Date.now();
+						context.layout = cachedDesignMarkup = ReactDomServer.renderToString( LayoutLoggedOutDesignElement );
+						let rtsTimeMs = Date.now() - startTime;
+
+						if ( rtsTimeMs > 15 ) {
+							// We think that renderToString should generally never take more than 15ms. We're probably wrong.
+							bumpStat( 'calypso-ssr', 'loggedout-design-over-15ms-rendertostring' );
+						}
+						bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
+					}
 				} catch ( ex ) {
 					if ( config( 'env' ) === 'development' ) {
 						throw ex;
