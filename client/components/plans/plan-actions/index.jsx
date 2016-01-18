@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var config = require( 'config' ),
+	React = require( 'react' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -12,7 +13,6 @@ var analytics = require( 'analytics' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	puchasesPaths = require( 'me/purchases/paths' );
 
@@ -154,11 +154,7 @@ module.exports = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
-			return false;
-		}
-
-		if ( ! this.props.enableFreeTrials ) {
+		if ( ! config.isEnabled( 'upgrades/free-trials' ) || ! this.props.enableFreeTrials ) {
 			return false;
 		}
 

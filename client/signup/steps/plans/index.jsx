@@ -9,7 +9,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var productsList = require( 'lib/products-list' )(),
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	analytics = require( 'analytics' ),
 	featuresList = require( 'lib/features-list' )(),
 	plansList = require( 'lib/plans-list' )(),
@@ -109,7 +108,7 @@ module.exports = React.createClass( {
 		let headerText = this.translate( 'Pick a plan that\'s right for you.' ),
 			subHeaderText;
 
-		if ( this.isFreeTrialFlow() && getABTestVariation( 'freeTrials' ) === 'offered' ) {
+		if ( this.isFreeTrialFlow() ) {
 			subHeaderText = this.translate(
 				'Try WordPress.com Premium or Business free for 14 days, no credit card required.'
 			);

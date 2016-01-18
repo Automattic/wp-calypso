@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/collection/find' );
 
@@ -9,7 +10,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
@@ -76,7 +76,7 @@ var Plans = React.createClass( {
 			businessPlan,
 			premiumPlan;
 
-		if ( ! this.props.sitePlans.hasLoadedFromServer || getABTestVariation( 'freeTrials' ) !== 'offered' ) {
+		if ( ! this.props.sitePlans.hasLoadedFromServer || ! config.isEnabled( 'upgrades/free-trials' ) ) {
 			return null;
 		}
 
