@@ -291,6 +291,7 @@ function registerTranslateHook( callback ) {
  */
 function reRenderTranslations() {
 	debug( 'Re-rendering all translations due to external request' );
+	i18nState.translations.reset();
 	i18nState.emit( 'change' );
 }
 
