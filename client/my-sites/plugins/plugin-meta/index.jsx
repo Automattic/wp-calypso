@@ -156,20 +156,24 @@ export default React.createClass( {
 						icon="sync"
 						text={ i18n.translate( 'A new version is available.' ) }>
 						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
-							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ] } } ) }
+							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ].newVersion } } ) }
 						</NoticeAction>
 					</Notice>
 				);
 			}
+
+			const noticeMessage = newVersions.length > 1
+				? i18n.translate( 'A new version is available for %(numberOfSites)s sites', { args: { numberOfSites: newVersions.length } } )
+				: i18n.translate( 'A new version is available for %(siteName)s', { args: { siteName: newVersions[0].title } } );
 			return (
 				<Notice
 					status="is-warning"
 					className="plugin-meta__version-notice"
 					showDismiss={ false }
 					icon="sync"
-					text={ i18n.translate( 'A new version is available in some of your sites' ) }>
+					text={ noticeMessage }>
 					<NoticeAction onClick={ this.handlePluginUpdatesMultiSite }>
-						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions.join( ', ' ) } } ) }
+						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: this.props.plugin.version } } ) }
 					</NoticeAction>
 				</Notice>
 			);
