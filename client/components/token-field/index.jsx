@@ -77,6 +77,7 @@ var TokenField = React.createClass( {
 				className={ classes }
 				tabIndex="-1"
 				onKeyDown={ this._onKeyDown }
+				onKeyPress={ this._onKeyPress }
 				onBlur={ this._onBlur }
 				onFocus={ this._onFocus }
 			>
@@ -261,10 +262,21 @@ var TokenField = React.createClass( {
 			case 46: // delete (to right)
 				preventDefault = this._handleDeleteKey( this._deleteTokenAfterInput );
 				break;
-			case 188: // comma
-				if ( ! event.shiftKey ) { // ignore <
-					preventDefault = this._handleCommaKey();
-				}
+			default:
+				break;
+		}
+
+		if ( preventDefault ) {
+			event.preventDefault();
+		}
+	},
+
+	_onKeyPress: function( event ) {
+		var preventDefault = false;
+
+		switch ( event.charCode ) {
+			case 44: // comma
+				preventDefault = this._handleCommaKey();
 				break;
 			default:
 				break;
@@ -382,7 +394,6 @@ var TokenField = React.createClass( {
 
 		if ( ! this._isInputEmpty() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
-			preventDefault = true;
 		}
 
 		return preventDefault;
