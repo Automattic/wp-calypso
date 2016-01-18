@@ -35,7 +35,7 @@ export default React.createClass( {
 	componentDidMount: function() {
 		// record promo view event
 		if (!this.state.dismissed ) {
-			analytics.tracks.recordEvent( 'calypso_desktop_promo_write_view', { 'promo_code': this.state.promo_item.promo_code } );
+			analytics.tracks.recordEvent( 'calypso_desktop_promo_view', { 'promo_location': this.props.location, 'promo_code': this.state.promo_item.promo_code } );
 		}
 	},
 
