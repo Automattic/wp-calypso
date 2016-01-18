@@ -83,7 +83,8 @@
 		"reader/recommendations": true,
 		"ad-tracking": false,
 		"perfmon": true,
-		"mailing-lists/unsubscribe": true
+		"mailing-lists/unsubscribe": true,
+		"accept-invite": true
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",

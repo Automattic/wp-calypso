@@ -79,7 +79,8 @@
 		"reader/recommendations": true,
 		"ad-tracking": true,
 		"perfmon": false,
-		"mailing-lists/unsubscribe": true
+		"mailing-lists/unsubscribe": true,
+		"accept-invite": false
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",
