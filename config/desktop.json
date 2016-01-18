@@ -44,7 +44,6 @@
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/delete-site": true,
 		"manage/stats": true,
-		"manage/stats/insights": true,
 		"manage/themes-jetpack": true,
 		"manage/themes": true,
 		"me/account": true,

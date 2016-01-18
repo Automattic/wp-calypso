@@ -4,11 +4,16 @@
 var React = require( 'react' ),
 	isUndefined = require( 'lodash/lang/isUndefined' );
 
+/**
+ * Internal dependencies
+ */
+import { abtest } from 'lib/abtest';
+
 module.exports = React.createClass( {
 	displayName: 'PlanPrice',
 
 	getFormattedPrice: function( plan ) {
-		var rawPrice, formattedPrice;
+		let rawPrice, formattedPrice;
 
 		if ( plan ) {
 			// the properties of a plan object from sites-list is snake_case
@@ -18,6 +23,11 @@ module.exports = React.createClass( {
 
 			if ( rawPrice === 0 ) {
 				return this.translate( 'Free', { context: 'Zero cost product price' } );
+			}
+
+			if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup ) {
+				const monthlyPrice = +( rawPrice / 12 ).toFixed( 2 );
+				formattedPrice = formattedPrice.replace( rawPrice, monthlyPrice );
 			}
 
 			return formattedPrice;
@@ -38,20 +48,27 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-	    const { plan, sitePlan: details } = this.props;
-	    const hasDiscount = details && details.rawDiscount > 0;
+		let periodLabel;
+		const { plan, sitePlan: details } = this.props,
+			hasDiscount = details && details.rawDiscount > 0;
 
-	    if ( this.props.isPlaceholder ) {
+		if ( this.props.isPlaceholder ) {
 			return <div className="plan-price is-placeholder" />;
 		}
 
-	    return (
-	        <div className={ hasDiscount ? "plan-price plan-price__discount" : "plan-price" }>
-	            <span>{ this.getPrice() }</span>
-	            <small className="plan-price__billing-period">
-		              { hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label }
-		          </small>
-	        </div>
-	    );
+		if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup && plan.raw_price !== 0 ) {
+			periodLabel = this.translate( 'per month, billed yearly' );
+		} else {
+			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label
+		}
+
+		return (
+			<div className={ hasDiscount ? "plan-price plan-price__discount" : "plan-price" }>
+				<span>{ this.getPrice() }</span>
+				<small className="plan-price__billing-period">
+					{ periodLabel }
+				</small>
+			</div>
+		);
 	}
 } );

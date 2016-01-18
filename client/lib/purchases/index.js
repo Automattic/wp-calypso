@@ -212,10 +212,6 @@ function showCreditCardExpiringWarning( purchase ) {
 		monthsUntilCardExpires( purchase ) < 3;
 }
 
-function showEditPaymentDetails( purchase ) {
-	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase ) && isPaidWithCreditCard( purchase );
-}
-
 export {
 	creditCardExpiresBeforeSubscription,
 	getName,
@@ -238,5 +234,4 @@ export {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	showEditPaymentDetails
 }

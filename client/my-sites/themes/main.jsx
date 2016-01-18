@@ -26,7 +26,8 @@ var Main = require( 'components/main' ),
 	ThemesSiteSelectorModal = require( './themes-site-selector-modal' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
-	getButtonOptions = require( './theme-options' ),
+	getButtonOptions = require( './theme-options' ).getButtonOptions,
+	actionLabels = require( './action-labels' ),
 	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' ),
 	user = require( 'lib/user' )();
 
@@ -132,7 +133,7 @@ var Themes = React.createClass( {
 
 		return (
 			<Main className="themes">
-				<SidebarNavigation />
+				{ this.isLoggedOut() ? null : <SidebarNavigation /> }
 				{ this.state.showPreview &&
 					<WebPreview showPreview={ this.state.showPreview }
 						onClose={ this.togglePreview }
@@ -157,7 +158,6 @@ var Themes = React.createClass( {
 						key={ this.isMultisite() || site.ID }
 						siteId={ this.props.siteId }
 						sites={ this.props.sites }
-						setSelectedTheme={ this.setSelectedTheme }
 						togglePreview={ this.togglePreview }
 						getOptions={ partialRight( getButtonOptions, this.isLoggedOut(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
@@ -166,18 +166,13 @@ var Themes = React.createClass( {
 						queryParams={ this.props.queryParams }
 						themesList={ this.props.themesList } />
 				}
-				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal selectedAction={ this.state.selectedAction }
+				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal
+					name={ this.state.selectedAction /* TODO: Can we get rid of this prop? */ }
+					label={ actionLabels[ this.state.selectedAction ].label }
+					header={ actionLabels[ this.state.selectedAction ].header }
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
-					actions={ bindActionCreators( Action, dispatch ) }
-					getOptions={ partialRight(
-						getButtonOptions,
-						this.isLoggedOut(),
-						bindActionCreators( Action, dispatch ),
-						this.setSelectedTheme,
-						this.togglePreview,
-						true
-					) }
+					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }
 				/> }
 			</Main>
 		);

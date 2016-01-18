@@ -29,7 +29,7 @@ var SiteSelectorModal = React.createClass( {
 		// mainAction: Will be run upon clicking the call-for-action button. Receives `site` as argument.
 		mainAction: React.PropTypes.func.isRequired,
 		// getMainUrl: Use if the call-for-action button should be turned into an `<a>` link. Receives `site` as argument, returns a URL.
-		getMainUrl: React.PropTypes.func.isRequired,
+		getMainUrl: React.PropTypes.func,
 		// mainActionLabel: Label for the call-for-action button.
 		mainActionLabel: React.PropTypes.string.isRequired,
 		// className: class name(s) to be added to the Dialog

@@ -97,7 +97,6 @@ module.exports = React.createClass( {
 
 		return (
 				<Notice className="profile-links__error"
-					isCompact={ true }
 					status="is-error"
 					onDismissClick={ this.clearLastError }>
 					{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }

@@ -11,7 +11,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
 import Followers from '../stats-followers';
-import PostTrends from 'my-sites/post-trends';
+import PostTrends from 'my-sites/stats/post-trends';
 import SiteOverview from '../stats-site-overview';
 import SiteOverviewPlaceholder from 'my-sites/stats/stats-overview-placeholder';
 import StatsModule from '../stats-module';

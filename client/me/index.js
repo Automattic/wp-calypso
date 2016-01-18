@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import removeOverlay from 'remove-overlay';
+import removeOverlay from 'lib/remove-overlay';
 import paths from './paths';
 
 export default function() {
@@ -49,6 +49,13 @@ export default function() {
 
 	page(
 		paths.purchases.editCardDetails(),
+		controller.sidebar,
+		controller.purchases.noSitesMessage,
+		controller.purchases.editCardDetails
+	);
+
+	page(
+		paths.purchases.editSpecificCardDetails(),
 		controller.sidebar,
 		controller.purchases.noSitesMessage,
 		controller.purchases.editCardDetails
@@ -111,4 +118,5 @@ export default function() {
 	page( '/me/notifications/comments', controller.sidebar, controller.comments );
 	page( '/me/notifications/updates', controller.sidebar, controller.updates );
 	page( '/me/notifications/subscriptions', controller.sidebar, controller.notificationSubscriptions );
+	page( '/me/get-apps', controller.sidebar, controller.apps );
 };

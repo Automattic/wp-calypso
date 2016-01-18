@@ -40,7 +40,7 @@ function isDataLoading( state ) {
 
 const EditCardDetailsData = React.createClass( {
 	propTypes: {
-		cardId: React.PropTypes.string.isRequired,
+		cardId: React.PropTypes.string,
 		component: React.PropTypes.func.isRequired,
 		purchaseId: React.PropTypes.string.isRequired,
 		loadingPlaceholder: React.PropTypes.func.isRequired,

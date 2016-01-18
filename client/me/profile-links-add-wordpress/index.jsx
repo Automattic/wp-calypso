@@ -117,7 +117,6 @@ module.exports = React.createClass( {
 		return (
 			<Notice
 				className="profile-links-add-wordpress__error"
-				isCompact={ true }
 				status="is-error"
 				onDismissClick={ this.clearLastError }>
 				{ this.state.lastError }

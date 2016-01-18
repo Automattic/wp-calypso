@@ -10,7 +10,10 @@ module.exports = React.createClass( {
 	displayName: 'EmptyContent',
 
 	propTypes: {
-		title: React.PropTypes.string,
+		title: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.array
+		] ),
 		illustration: React.PropTypes.string,
 		illustrationWidth: React.PropTypes.number,
 		line: React.PropTypes.string,

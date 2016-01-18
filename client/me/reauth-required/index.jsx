@@ -144,7 +144,6 @@ module.exports = React.createClass( {
 		return (
 			<div className="reauth-required__send-sms-throttled">
 				<Notice
-					isCompact={ true }
 					showDismiss={ false }
 					text={ this.translate(
 						'SMS codes are limited to once per minute. Please wait and try again.'

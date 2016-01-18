@@ -18,7 +18,6 @@ import LanguageSelector from 'components/forms/language-selector';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import protectForm from 'lib/mixins/protect-form';
 import formBase from 'me/form-base';
-import SelectSite from 'me/select-site';
 import config from 'config';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
@@ -41,6 +40,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
+import SitesDropdown from 'components/sites-dropdown';
 
 import _sites from 'lib/sites-list';
 import _user from 'lib/user';
@@ -210,6 +210,13 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	onSiteSelect( siteSlug ) {
+		let selectedSite = sites.getSite( siteSlug );
+		if ( selectedSite ) {
+			this.props.userSettings.updateSetting( 'primary_site_ID', selectedSite.ID );
+		}
+	},
+
 	renderHolidaySnow() {
 		// Note that years and months below are zero indexed
 		const today = this.moment();
@@ -272,7 +279,6 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				isCompact={ true }
 				showDismiss={ false }
 				status="is-info"
 				text={
@@ -297,7 +303,6 @@ module.exports = React.createClass( {
 		if ( this.props.username.isUsernameValid() ) {
 			return (
 				<Notice
-					isCompact={ true }
 					showDismiss={ false }
 					status="is-success"
 					text={ this.translate( '%(username)s is a valid username.', {
@@ -309,7 +314,6 @@ module.exports = React.createClass( {
 		} else if ( null !== this.props.username.getValidationFailureMessage() ) {
 			return (
 				<Notice
-					isCompact={ true }
 					showDismiss={ false }
 					status="is-error"
 					text={ this.props.username.getValidationFailureMessage() } />
@@ -330,7 +334,6 @@ module.exports = React.createClass( {
 
 		return (
 			<Notice
-				isCompact={ true }
 				showDismiss={ false }
 				status={ status }
 				text={ text } />
@@ -350,14 +353,15 @@ module.exports = React.createClass( {
 			);
 		}
 
+		let primarySiteId = this.props.userSettings.getSetting( 'primary_site_ID' );
+
 		return (
-			<SelectSite
-				disabled={ this.getDisabledState() }
-				id="primary_site_ID"
-				name="primary_site_ID"
-				onFocus={ this.recordFocusEvent( 'Primary Site Field' ) }
-				sites={ sites }
-				valueLink={ this.valueLink( 'primary_site_ID' ) } />
+			<SitesDropdown
+				key={ primarySiteId }
+				isPlaceholder={ ! primarySiteId }
+				selected={ this.props.userSettings.getSetting( 'primary_site_ID' ) }
+				onSiteSelect={ this.onSiteSelect }
+			/>
 		);
 	},
 

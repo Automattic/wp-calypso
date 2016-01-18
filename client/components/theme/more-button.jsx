@@ -4,7 +4,8 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:components:themes:more-button' ), // eslint-disable-line no-unused-vars
 	classNames = require( 'classnames' ),
-	isFunction = require( 'lodash/lang/isFunction' );
+	isFunction = require( 'lodash/lang/isFunction' ),
+	map = require( 'lodash/collection/map' );
 
 /**
  * Internal dependencies
@@ -21,10 +22,10 @@ var ThemeMoreButton = React.createClass( {
 	propTypes: {
 		// Theme ID (theme-slug)
 		id: React.PropTypes.string.isRequired,
-		// Index of theme in results list
-		index: React.PropTypes.number.isRequired,
+		// Index of theme in results list, if any
+		index: React.PropTypes.number,
 		// Options to populate the popover menu with
-		options: React.PropTypes.arrayOf(
+		options: React.PropTypes.objectOf(
 			React.PropTypes.shape( {
 				label: React.PropTypes.string,
 				action: React.PropTypes.func,
@@ -71,9 +72,9 @@ var ThemeMoreButton = React.createClass( {
 					onClose={ this.closePopover }
 					position="top left">
 
-					{ this.props.options.map( function( option, index ) {
+					{ map( this.props.options, function( option, key ) {
 						if ( option.separator ) {
-							return ( <hr key={ 'separator-' + index } className="popover__hr" /> );
+							return ( <hr key={ 'separator-' + key } className="popover__hr" /> );
 						}
 						if ( option.url ) {
 							return (

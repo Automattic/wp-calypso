@@ -81,12 +81,16 @@ module.exports = React.createClass( {
 
 		if ( date.isBefore( i18n.moment( this.props.month ).startOf( 'month' ) ) || date.isAfter( i18n.moment( this.props.month ).endOf( 'month' ) ) ) {
 			dayClasses['is-outside-month'] = true;
+
 		} else if ( date.isAfter( i18n.moment().endOf( 'day' ) ) ) {
 			dayClasses['is-after-today'] = true;
+
 		} else if ( level ) {
+
 			if ( level > 4 ) {
 				level = 4;
 			}
+
 			dayClasses[ 'is-level-' + level ] = true;
 			showTooltip = true;
 			dayClasses[ 'is-hovered' ] = this.state.showPopover;

@@ -1,12 +1,4 @@
 module.exports = {
-	statsDefaultFilter: {
-		datestamp: '20150601',
-		variations: {
-			day: 90,
-			insights: 10
-		},
-		defaultVariation: 'day'
-	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
@@ -60,5 +52,13 @@ module.exports = {
 			offered: 10
 		},
 		defaultVariation: 'notOffered'
+	},
+	monthlyPlanPricing: {
+		datestamp: '20160118',
+		variations: {
+			yearly: 50,
+			monthly: 50
+		},
+		defaultVariation: 'yearly'
 	},
 };

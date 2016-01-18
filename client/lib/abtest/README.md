@@ -109,7 +109,7 @@ To account for this, the A/B test module is smart enough to know that if the use
 
 ## Dealing with ineligible users
 
-By default, users are only included in the test if their locale is set to English (`en`), the current date is on or after the datestamp you set, and they have not participated in a test with the same name in the past.
+By default, users are only included in the test if their locale is set to English (`en`), the current date is on or after the datestamp you set, they have not participated in a test with the same name in the past, and they registered on or after the date that the test started.
 
 The locale restriction can be relaxed by adding `allowAnyLocale: true` to the test configuration.
 

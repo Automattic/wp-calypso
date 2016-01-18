@@ -18,7 +18,6 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
-import PluginsActions from 'lib/plugins/actions';
 
 export default React.createClass( {
 	displayName: 'Plugins-list-header',
@@ -33,6 +32,7 @@ export default React.createClass( {
 		deactiveAndDisconnectSelected: React.PropTypes.func.isRequired,
 		deactivateSelected: React.PropTypes.func.isRequired,
 		setAutoupdateSelected: React.PropTypes.func.isRequired,
+		setSelectionState: React.PropTypes.func.isRequired,
 		unsetAutoupdateSelected: React.PropTypes.func.isRequired,
 		removePluginNotice: React.PropTypes.func.isRequired,
 		haveActiveSelected: React.PropTypes.bool,
@@ -56,9 +56,7 @@ export default React.createClass( {
 	},
 
 	canUpdatePlugins() {
-		return this.props.plugins
-			.filter( plugin => plugin.selected )
-			.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
+		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
 	},
 
 	hasJetpackSelectedSites() {
@@ -70,13 +68,9 @@ export default React.createClass( {
 	},
 
 	unselectOrSelectAll() {
-		if ( this.props.selected.length > 0 ) {
-			PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'none' );
-			analytics.ga.recordEvent( 'Plugins', 'Clicked to Uncheck All Plugins' );
-			return;
-		}
-		PluginsActions.selectPlugins( this.props.sites.getSelectedOrAllWithPlugins(), 'all' );
-		analytics.ga.recordEvent( 'Plugins', 'Clicked to Check All Plugins' );
+		const someSelected = this.props.selected.length > 0;
+		this.props.setSelectionState( this.props.plugins, ! someSelected );
+		analytics.ga.recordEvent( 'Plugins', someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins' );
 	},
 
 	renderCurrentActionButtons( isWpCom ) {
@@ -87,7 +81,7 @@ export default React.createClass( {
 		let activateButtons = [];
 
 		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
-		const isJetpackSelected = this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
 		const needsRemoveButton = this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 		if ( ! this.props.isBulkManagementActive ) {
 			if ( ! isWpCom && 0 < this.props.pluginUpdateCount ) {
@@ -195,7 +189,7 @@ export default React.createClass( {
 		let actions = [];
 
 		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
-		const isJetpackSelected = this.props.plugins.some( plugin => plugin.selected && 'jetpack' === plugin.slug );
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
 		const needsRemoveButton = !! this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 
 		if ( this.props.isBulkManagementActive ) {

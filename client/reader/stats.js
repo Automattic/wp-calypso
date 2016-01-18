@@ -51,14 +51,22 @@ function getLocation() {
 	return 'unknown';
 }
 
-export function recordFollow() {
-	mc.bumpStat( 'reader_follows', getLocation() );
-	tracks.recordEvent( 'calypso_reader_site_followed' );
+export function recordFollow( url ) {
+	const source = getLocation();
+	mc.bumpStat( 'reader_follows', source );
+	tracks.recordEvent( 'calypso_reader_site_followed', {
+		url,
+		source
+	} );
 }
 
-export function recordUnfollow() {
-	mc.bumpStat( 'reader_unfollows', getLocation() );
-	tracks.recordEvent( 'calypso_reader_site_unfollowed' );
+export function recordUnfollow( url ) {
+	const source = getLocation();
+	mc.bumpStat( 'reader_unfollows', source );
+	tracks.recordEvent( 'calypso_reader_site_unfollowed', {
+		url,
+		source
+	} );
 }
 
 export function recordTrack( eventName, eventProperties ) {
