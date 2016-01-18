@@ -26,10 +26,15 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	PollerPool = require( 'lib/data-poller' ),
 	KeyboardShortcutsMenu,
+	SupportUser,
 	Layout;
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
+}
+
+if ( config.isEnabled( 'support-user' ) ) {
+	SupportUser = require( 'components/support-user' );
 }
 
 Layout = React.createClass( {
@@ -95,7 +100,12 @@ Layout = React.createClass( {
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<MasterbarLoggedIn user={ this.props.user } section={ this.props.section } sites={ this.props.sites } />
+				{ config.isEnabled( 'support-user' ) ? <SupportUser /> : null }
+				<MasterbarLoggedIn
+					user={ this.props.user }
+					section={ this.props.section }
+					sites={ this.props.sites }
+					isSupportUser={ config.isEnabled( 'support-user' ) && this.props.isSupportUser } />
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } /></div>
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
@@ -119,6 +129,8 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar } = state.ui;
-		return { isLoading, section, hasSidebar };
+		const isSupportUser = state.support.isSupportUser;
+
+		return { isLoading, section, hasSidebar, isSupportUser };
 	}
 )( Layout );

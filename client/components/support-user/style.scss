@@ -1,0 +1,47 @@
+.support-user__dialog.dialog.card {
+	min-width: 380px;
+}
+.support-user__heading {
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 32px;
+	margin-bottom: 15px;
+}
+
+.support-user__people-profile {
+	position: relative;
+	margin-top: -8px;
+	padding-bottom: 16px;
+	@include clear-fix;
+}
+
+.support-user__gravatar {
+	float: left;
+}
+
+.support-user__gravatar .gravatar {
+	width: 72px !important;
+	height: 72px !important;
+	display: block;
+}
+
+.support-user__detail {
+	margin-left: 96px;
+	padding-top: 12px;
+}
+
+.support-user__username {
+	font-family: $serif;
+	color: $gray-dark;
+	font-size: 21px;
+	font-weight: 700;
+	white-space: pre;
+	text-overflow: clip;
+	overflow: hidden;
+}
+
+.support-user__login {
+	color: $gray-dark;
+	font-size: 15px;
+	margin-top: -3px;
+}
