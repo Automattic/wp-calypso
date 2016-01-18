@@ -39,6 +39,10 @@ export default React.createClass( {
 		}
 	},
 
+	recordClickEvent: function() {
+		analytics.tracks.recordEvent( 'calypso_desktop_promo_click', { 'promo_location': this.props.location, 'promo_code': this.state.promo_item.promo_code } );
+	},
+
 	dismiss: function() {
 		this.setState( { dismissed: true } );
 
@@ -62,7 +66,7 @@ export default React.createClass( {
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
-				<a className="app-promo__link" title="Try the desktop app!" href={promo_link} target="_blank">
+				<a onClick={this.recordClickEvent} className="app-promo__link" title="Try the desktop app!" href={promo_link} target="_blank">
 					<img className="app-promo__icon" src="https://s0.wp.com/wp-content/themes/a8c/desktop/i/icon.png" width="32" height="32" alt="WordPress Desktop Icon" /> 
 					{this.state.promo_item.message}
 				</a>
