@@ -205,18 +205,19 @@ export default React.createClass( {
 	},
 
 	getAvailableNewVersions() {
-		let newVersions = [];
-		this.props.sites.forEach( function( site ) {
+		return this.props.sites.map( site => {
 			if ( ! site.canUpdateFiles ) {
-				return;
+				return null;
 			}
 			if ( site.plugin && site.plugin.update ) {
-				if ( 'error' !== site.plugin.update ) {
-					newVersions.push( site.plugin.update.new_version );
+				if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
+					return {
+						title: site.title,
+						newVersion: site.plugin.update.new_version
+					};
 				}
 			}
-		} );
-		return newVersions;
+		} ).filter( newVersions => newVersions );
 	},
 
 	handlePluginUpdatesSingleSite( event ) {
