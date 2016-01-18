@@ -25,5 +25,6 @@
   "logout_url",
   "siftscience_key",
   "facebook_api_key",
-  "discover_blog_id"
+  "discover_blog_id",
+  "support-user"
 ]
