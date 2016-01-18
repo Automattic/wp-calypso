@@ -27,7 +27,9 @@ User.dispatchToken = Dispatcher.register( function( payload ) {
 			_user.fetch();
 			break;
 		case InvitesActionTypes.INVITE_ACCEPTED:
-			incrementSiteCount();
+			if ( action.invite.role !== 'follower' ) {
+				incrementSiteCount();
+			}
 			break;
 	}
 } );
