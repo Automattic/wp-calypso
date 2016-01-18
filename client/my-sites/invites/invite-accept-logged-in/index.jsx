@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import page from 'page';
+import store from'store';
 
 /**
  * Internal dependencies
@@ -28,10 +29,10 @@ export default React.createClass( {
 
 	accept() {
 		this.setState( { submitting: true } );
-		acceptInvite( this.props );
-		this.props.acceptedNotice();
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
+		acceptInvite( this.props.invite );
+		store.set( 'invite_accepted', this.props.invite );
 		page( this.props.redirectTo );
+		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 	},
 
 	decline() {
@@ -52,7 +53,7 @@ export default React.createClass( {
 		return (
 			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
 				<Card>
-					<InviteFormHeader { ...this.props } />
+					<InviteFormHeader { ... this.props.invite } />
 					<div className="invite-accept-logged-in__join-as">
 						<Gravatar user={ user } size={ 72 } />
 						{
