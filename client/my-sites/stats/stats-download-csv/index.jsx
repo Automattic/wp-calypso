@@ -54,14 +54,11 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="module-content-text">
-				<ul className="documentation">
-					<li>
-						<a href="#" onClick={ this.downloadCsv }>
-							{ this.translate( 'Download data as CSV', { context: 'Action shown in stats to download data as csv.' } ) }
-							<Gridicon icon="cloud-download" />
-						</a>
-					</li>
-				</ul>
+				<a href="#" onClick={ this.downloadCsv }>
+					<Gridicon icon="cloud-download" />
+					<span className="label">{ this.translate( 'Download data as CSV', { context: 'Action shown in stats to download data as csv.' } ) }
+					</span>
+				</a>
 			</div>
 		);
 	}
