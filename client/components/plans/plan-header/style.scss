@@ -80,6 +80,10 @@
 			display: none;
 		}
 	}
+
+	@include breakpoint( "<480px" ) {
+		height: 70px;
+	}
 }
 
 .plans-compare {
