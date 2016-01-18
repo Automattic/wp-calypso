@@ -361,7 +361,7 @@ mixin = {
 			sprintfArgs.unshift( translation );
 			try {
 				translation = Jed.sprintf.apply( Jed, sprintfArgs );
-			} catch( error ) {
+			} catch ( error ) {
 				if ( ! window || ! window.console ) {
 					return;
 				}
