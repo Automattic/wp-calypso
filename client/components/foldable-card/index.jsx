@@ -41,7 +41,7 @@ var FoldableCard = React.createClass( {
 			onClose: noop,
 			cardKey: '',
 			icon: 'chevron-down',
-			isExpanded: false,
+			isExpanded: false
 		};
 	},
 
