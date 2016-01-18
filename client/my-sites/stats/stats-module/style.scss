@@ -241,13 +241,19 @@ ul.module-header-actions {
 // Module Content Text
 
 .module-content-text {
-	width: 100%;
-	min-height: 1em;
-	font-size: 13px;
+	box-sizing: border-box;
 	color: $gray-dark;
+	font-size: 13px;
+	padding: 10px 24px;
+	min-height: 1em;
+	width: 100%;
 
-	a:focus {
-		outline: thin dotted;
+	a {
+		display: block;
+
+		@include breakpoint( ">480px" ) {
+			display: inline;
+		}
 	}
 
 	@include breakpoint( ">960px" ) {
@@ -261,10 +267,6 @@ ul.module-header-actions {
 	.stats-module.is-loading & {
 		display: none;
 	}
-
-	// Hidden info box (help)
-	// 1: 'inline-block' to get around margin collapse issue, cleaner than 1px top padding
-	// 2: Temporary for the welcome guide, don't show info boxes while modules are loading even if the welcome message is still open
 
 	// Hidden info box
 	&-info {
@@ -284,9 +286,8 @@ ul.module-header-actions {
 	}
 
 	ul,
-	ol,
-	p {
-		margin: 1em 24px;
+	ol {
+		margin: 0;
 	}
 
 	// Representation of what the published status looks like within a list of posts and pages
@@ -302,6 +303,11 @@ ul.module-header-actions {
 	// Hide legends if there is no data
 	.stats-module.has-no-data & .legend {
 		display: none;
+	}
+
+	.gridicon {
+		margin-right: 4px;
+		vertical-align: middle;
 	}
 
 	// List of associated FAQ items, support pages, tips and tricks, etc
@@ -332,18 +338,12 @@ ul.module-header-actions {
 			@extend %mobile-link-element;
 			display: block;
 			position: relative;
-			padding: 6px 0 6px 30px;
+			padding: 6px 0 6px 0;
 
 			@include breakpoint( "<480px" ) {
 				padding-top: 12px;
 				padding-bottom: 12px;
 			}
-		}
-
-		.gridicon {
-			position: absolute;
-				left: 0;
-			vertical-align: middle;
 		}
 	}
 }
