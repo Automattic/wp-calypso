@@ -21,7 +21,6 @@ var actions = require( 'lib/posts/actions' ),
 	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
-	EditorMediaAdvanced = require( 'post-editor/editor-media-advanced' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	Button = require( 'components/button' ),
@@ -287,9 +286,6 @@ var PostEditor = React.createClass( {
 
 		return (
 			<div className="post-editor">
-				{ config.isEnabled( 'post-editor/media-advanced' ) && (
-					<EditorMediaAdvanced />
-				) }
 				<div className="post-editor__inner">
 					<div className="post-editor__content">
 						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
