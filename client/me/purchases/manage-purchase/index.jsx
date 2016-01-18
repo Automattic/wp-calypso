@@ -12,6 +12,7 @@ import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
 import { cartItems } from 'lib/cart-values';
+import config from 'config';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
 import HeaderCake from 'components/header-cake';
@@ -48,7 +49,7 @@ import { getPurchase, getSelectedSite, goToList, isDataLoading, recordPageView }
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 
 function canEditPaymentDetails( purchase ) {
-	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
+	return config.isEnabled( 'upgrades/credit-cards' ) && ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
 }
 
 const ManagePurchase = React.createClass( {
@@ -125,10 +126,20 @@ const ManagePurchase = React.createClass( {
 						}
 					}
 				) }>
-				<NoticeAction onClick={ this.handleRenew }>
-					{ this.translate( 'Renew Now' ) }
-				</NoticeAction>
+				{ this.renderRenewNoticeAction() }
 			</Notice>
+		);
+	},
+
+	renderRenewNoticeAction() {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
+		return (
+			<NoticeAction onClick={ this.handleRenew }>
+				{ this.translate( 'Renew Now' ) }
+			</NoticeAction>
 		);
 	},
 
@@ -155,7 +166,9 @@ const ManagePurchase = React.createClass( {
 									cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' )
 								},
 								components: {
-									a: <a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } />
+									a: canEditPaymentDetails() ?
+										<a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } /> :
+										<span />
 								}
 							}
 						)
@@ -378,7 +391,7 @@ const ManagePurchase = React.createClass( {
 	renderRenewButton() {
 		const purchase = getPurchase( this.props );
 
-		if ( ! isRenewable( purchase ) || isExpired( purchase ) || isExpiring( purchase ) ) {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! isRenewable( purchase ) || isExpired( purchase ) || isExpiring( purchase ) ) {
 			return null;
 		}
 
@@ -403,9 +416,7 @@ const ManagePurchase = React.createClass( {
 				showDismiss={ false }
 				status="is-error"
 				text={ this.translate( 'This purchase has expired and is no longer in use.' ) }>
-				<NoticeAction onClick={ this.handleRenew }>
-					{ this.translate( 'Renew Now' ) }
-				</NoticeAction>
+				{ this.renderRenewNoticeAction() }
 			</Notice>
 		);
 	},
