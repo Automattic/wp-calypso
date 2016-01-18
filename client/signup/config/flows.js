@@ -16,7 +16,7 @@ function getCheckoutDestination( dependencies ) {
 		return '/checkout/' + dependencies.siteSlug;
 	}
 
-	return '/me/next?welcome';
+	return 'https://' + dependencies.siteSlug;
 }
 
 const flows = {
