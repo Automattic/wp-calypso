@@ -70,7 +70,7 @@ export default React.createClass( {
 						<th>{ this.translate( 'Change', { context: 'Stats: noun - change over a period in weekly numbers' } ) }</th>
 					</tr>
 				</thead>
-				);
+			);
 
 			tableRows = data.weeks.map( function( week, index ) {
 				let cells = [];
@@ -79,7 +79,7 @@ export default React.createClass( {
 				let lastDayOfWeek = lastDay.day ? this.moment( lastDay.day, 'YYYY-MM-DD' ) : null;
 
 				// If the end of this week is before post_date, return
-				if ( publishDate && lastDayOfWeek && lastDayOfWeek.isBefore( publishDate ) ) {
+				if ( 7 === week.days.length && publishDate && lastDayOfWeek && lastDayOfWeek.isBefore( publishDate ) ) {
 					return null;
 				}
 
