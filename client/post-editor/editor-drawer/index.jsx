@@ -267,7 +267,7 @@ var EditorDrawer = React.createClass( {
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderMoreOptions() }
-				<AppPromo />
+				<AppPromo location="editor" />
 			</div>
 		);
 	},
