@@ -133,7 +133,7 @@ var Themes = React.createClass( {
 
 		return (
 			<Main className="themes">
-				<SidebarNavigation />
+				{ this.isLoggedOut() ? null : <SidebarNavigation /> }
 				{ this.state.showPreview &&
 					<WebPreview showPreview={ this.state.showPreview }
 						onClose={ this.togglePreview }
