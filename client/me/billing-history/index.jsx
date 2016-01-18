@@ -71,7 +71,7 @@ module.exports = React.createClass( {
 						</Card>
 					</div> }
 
-				{ config.isEnabled( 'me/credit-cards' ) &&
+				{ config.isEnabled( 'upgrades/credit-cards' ) &&
 					<CreditCards cards={ storedCards } /> }
 
 			</div>

@@ -58,7 +58,6 @@ module.exports = React.createClass( {
 			changeAddressLink = '/domains/manage/' + selectedSite.slug,
 			startOverLink = '/settings/start-over/' + selectedSite.slug,
 			deleteSiteLink = '/settings/delete-site/' + selectedSite.slug,
-			changeAddressLinkExternal = false,
 			changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' ),
 			strings, dialogButtons;
 
@@ -73,8 +72,6 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressLink = `https://${ selectedSite.domain }/wp-admin/index.php?page=my-blogs#blog_row_${ selectedSite.ID }`;
-			changeAddressLinkExternal = true;
 			changeAddressLinkText = this.translate( 'Change your site\'s address.' );
 		}
 
@@ -87,7 +84,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="delete-site-options">
-				<CompactCard href={ changeAddressLink } className="delete-site-options__link" target={ changeAddressLinkExternal ? '_blank' : null }>
+				<CompactCard href={ changeAddressLink } className="delete-site-options__link">
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.changeSiteAddress }</h2>
 						<p className="delete-site-options__section-desc">{ changeAddressLinkText }</p>
