@@ -15,12 +15,7 @@ export default () => {
 	);
 
 	page(
-		'/accept-invite/:site_id/:invitation_key',
-		acceptInvite
-	);
-
-	page(
-		'/accept-invite/:site_id/:invitation_key/:activation_key/:auth_key',
+		'/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?',
 		acceptInvite
 	);
 };
