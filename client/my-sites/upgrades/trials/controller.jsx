@@ -5,6 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import analytics from 'analytics';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Internal Dependencies
@@ -52,7 +53,7 @@ export default {
 			siteID: context.params.domain
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<Main className="main-column">
 					<div className="checkout start-trial">
@@ -62,13 +63,15 @@ export default {
 							plans={ plans }
 							sites={ sites } >
 							<StartTrial
+								site={ selectedSite }
 								redirectTo={ `/plans/${ selectedSite.slug }/thank-you` }
 								planName={ planName } />
 						</FreeTrialCartData>
 					</div>
 				</Main>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

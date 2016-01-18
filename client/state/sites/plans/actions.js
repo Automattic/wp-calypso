@@ -25,12 +25,10 @@ import {
  * @returns {Function} the corresponding action thunk
  */
 export function clearSitePlans( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: REMOVE_SITE_PLANS,
-			siteId
-		} );
-	}
+	return {
+		type: REMOVE_SITE_PLANS,
+		siteId
+	};
 }
 
 /**
@@ -86,11 +84,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  */
 export function refreshSitePlans( siteId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: REMOVE_SITE_PLANS,
-			siteId
-		} );
-
+		dispatch( clearSitePlans( siteId ) );
 		dispatch( fetchSitePlans( siteId ) );
 	}
 }
