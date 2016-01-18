@@ -4,19 +4,18 @@
 
 import config from 'config';
 
-export default function( user ) {
-	if ( config.isEnabled( 'support-user' ) ) {
-		const callback = ( error ) => {
-			if ( error ) {
-				console.error( error );
-			} else {
-				console.log( 'success' );
-			}
-		};
+import { supportUserFetchToken, supportUserRestore } from 'state/support/actions';
 
+/**
+ * Injects a `supportUser` object into `window` for testing
+ * @param  {User}       user       A Calypso User instance
+ * @param  {ReduxStore} reduxStore The global Redux store instance
+ */
+export default function( user, reduxStore ) {
+	if ( config.isEnabled( 'support-user' ) ) {
 		window.supportUser = {
-			login: ( username, password ) => user.changeUser( username, password, callback ),
-			logout: () => user.restoreUser()
+			login: ( ...args ) => reduxStore.dispatch( supportUserFetchToken( ...args ) ),
+			logout: ( ...args ) => reduxStore.dispatch( supportUserRestore( ...args ) )
 		};
 	}
 }

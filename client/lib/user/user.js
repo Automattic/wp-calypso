@@ -242,9 +242,12 @@ User.prototype.changeUser = function( username, password, callback ) {
 	if ( config.isEnabled( 'support-user' ) ) {
 		wpcom.changeUser( username, password, function( error ) {
 			if ( ! error ) {
+				this.once( 'change', () => callback() );
+				this.clear();
 				this.fetch();
+			} else {
+				callback( error );
 			}
-			callback( error );
 		}.bind( this ) );
 	}
 };
