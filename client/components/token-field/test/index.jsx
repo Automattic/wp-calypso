@@ -261,6 +261,12 @@ describe( 'TokenField', function() {
 			expect( wrapper.state.tokens ).to.deep.equal( [ 'foo', 'bar' ] );
 		} );
 
+		it( 'should not allow adding whitespace tokens with comma', function() {
+			setText( '   ' );
+			sendKeyPress( charCodes.comma );
+			expect( wrapper.state.tokens ).to.deep.equal( [ 'foo', 'bar' ] );
+		} );
+
 		it( 'should add a token when comma pressed', function() {
 			setText( 'baz' );
 			sendKeyPress( charCodes.comma );

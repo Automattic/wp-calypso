@@ -175,11 +175,11 @@ var TokenField = React.createClass( {
 				// there is a suggested token selected.  In that case, we don't
 				// want to add it, because it's easy to inadvertently hover
 				// over a suggestion.
-				if ( this._isInputEmptyOrWhitespace() ) {
-					debug( '_onBlur after timeout not adding current token' );
-				} else {
+				if ( this._inputHasValidValue() ) {
 					debug( '_onBlur after timeout adding current token' );
 					this._addCurrentToken();
+				} else {
+					debug( '_onBlur after timeout not adding current token' );
 				}
 				debug( '_onBlur resetting component state' );
 				this.setState( this.getInitialState() );
@@ -332,13 +332,12 @@ var TokenField = React.createClass( {
 
 	_addCurrentToken: function() {
 		var preventDefault = false,
-			isInputEmpty = this._isInputEmptyOrWhitespace(),
 			selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
 			this._addNewToken( selectedSuggestion );
 			preventDefault = true;
-		} else if ( ! isInputEmpty ) {
+		} else if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
 			preventDefault = true;
 		}
@@ -392,7 +391,7 @@ var TokenField = React.createClass( {
 	_handleCommaKey: function() {
 		var preventDefault = true;
 
-		if ( ! this._isInputEmpty() ) {
+		if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
 		}
 
@@ -403,8 +402,8 @@ var TokenField = React.createClass( {
 		return this.state.incompleteTokenValue.length === 0;
 	},
 
-	_isInputEmptyOrWhitespace: function() {
-		return /^\s*$/.test( this.state.incompleteTokenValue );
+	_inputHasValidValue: function() {
+		return this.props.saveTransform( this.state.incompleteTokenValue ).length > 0;
 	},
 
 	_deleteTokenBeforeInput: function() {
