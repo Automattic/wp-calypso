@@ -34,7 +34,7 @@
 	.plan-header {
 		background: $white;
 		width: 100%;
-		padding: 24px 16px;
+		padding: 24px 16px 16px;
 		position: relative;
 		box-sizing: border-box;
 		cursor: pointer;
@@ -79,6 +79,10 @@
 		&:before {
 			display: none;
 		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		height: 70px;
 	}
 }
 
@@ -140,7 +144,6 @@
 	.plan.card {
 		.plan-header {
 			float: left;
-			height: 70px;
 
 			.plan-header__title {
 				margin: -8px 0 0 0;

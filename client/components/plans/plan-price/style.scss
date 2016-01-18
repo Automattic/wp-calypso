@@ -3,13 +3,17 @@
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 20px;
-	text-align: right;
 }
 
 .plan-price__billing-period {
 	font-size: 12px;
 	font-style: italic;
 	color: darken( $gray, 10% );
+}
+
+.plan-header .plan-price__discount,
+.plan-price__discount .plan-price__billing-period {
+	color: $alert-green;
 }
 
 .plan-price.is-placeholder {
@@ -39,12 +43,15 @@
 		display: block;
 		opacity: .7;
 	}
+
+	.plan-price__discount {
+		color: $alert-green;
+	}
 }
 
 @mixin plans-collapsed() {
 	.plan-header .plan-price {
-		display: inline-block;
-		padding: 0 0 0 40px;
+		padding: 0 20px 0 40px;
 	}
 
 	.plan-price__billing-period {

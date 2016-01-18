@@ -59,11 +59,11 @@ module.exports = React.createClass( {
 		if ( abtest( 'monthlyPlanPricing' ) === 'monthly' && this.props.isInSignup && plan.raw_price !== 0 ) {
 			periodLabel = this.translate( 'per month, billed yearly' );
 		} else {
-			periodLabel = hasDiscount ? this.translate( 'for first year' ) : plan.bill_period_label
+			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label
 		}
 
 		return (
-			<div className="plan-price">
+			<div className={ hasDiscount ? "plan-price plan-price__discount" : "plan-price" }>
 				<span>{ this.getPrice() }</span>
 				<small className="plan-price__billing-period">
 					{ periodLabel }
