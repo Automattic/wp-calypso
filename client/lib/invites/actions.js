@@ -70,7 +70,7 @@ export function createAccount( userData, callback ) {
 	);
 }
 
-export function acceptInvite( invite ) {
+export function acceptInvite( invite, callback ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.INVITE_ACCEPTED,
 		invite,
@@ -91,6 +91,8 @@ export function acceptInvite( invite ) {
 			} else {
 				analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 			}
+
+			callback( error, data );
 		}
 	);
 }
