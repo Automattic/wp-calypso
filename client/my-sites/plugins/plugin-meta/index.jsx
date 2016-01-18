@@ -128,8 +128,8 @@ export default React.createClass( {
 	},
 
 	getVersionWarning() {
-		const newVersion = this.getAvailableNewVersion();
-		if ( this.isOutOfDate() && ! newVersion ) {
+		const newVersions = this.getAvailableNewVersions();
+		if ( this.isOutOfDate() && newVersions.length === 0 ) {
 			return <Notice
 				className="plugin-meta__version-notice"
 				text={ this.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress' ) }
@@ -145,17 +145,31 @@ export default React.createClass( {
 	},
 
 	getUpdateWarning() {
-		const newVersion = this.getAvailableNewVersion();
-		if ( newVersion ) {
+		const newVersions = this.getAvailableNewVersions();
+		if ( newVersions.length > 0 ) {
+			if ( this.props.selectedSite ) {
+				return (
+					<Notice
+						status="is-warning"
+						className="plugin-meta__version-notice"
+						showDismiss={ false }
+						icon="sync"
+						text={ i18n.translate( 'A new version is available.' ) }>
+						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
+							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ] } } ) }
+						</NoticeAction>
+					</Notice>
+				);
+			}
 			return (
 				<Notice
 					status="is-warning"
 					className="plugin-meta__version-notice"
 					showDismiss={ false }
 					icon="sync"
-					text={ i18n.translate( 'A new version is available.' ) }>
-					<NoticeAction onClick={ this.handlePluginUpdates }>
-						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersion } } ) }
+					text={ i18n.translate( 'A new version is available in some of your sites' ) }>
+					<NoticeAction onClick={ this.handlePluginUpdatesMultiSite }>
+						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions.join( ', ' ) } } ) }
 					</NoticeAction>
 				</Notice>
 			);
@@ -190,21 +204,22 @@ export default React.createClass( {
 		}
 	},
 
-	getAvailableNewVersion() {
-		if ( ! this.props.selectedSite || ! this.props.sites[ 0 ] ) {
-			return;
-		}
-		if ( ! this.props.sites[ 0 ].canUpdateFiles ) {
-			return;
-		}
-		if ( this.props.sites[ 0 ].plugin && this.props.sites[ 0 ].plugin.update ) {
-			if ( 'error' !== this.props.sites[ 0 ].plugin.update ) {
-				return this.props.sites[ 0 ].plugin.update.new_version;
+	getAvailableNewVersions() {
+		let newVersions = [];
+		this.props.sites.forEach( function( site ) {
+			if ( ! site.canUpdateFiles ) {
+				return;
 			}
-		}
+			if ( site.plugin && site.plugin.update ) {
+				if ( 'error' !== site.plugin.update ) {
+					newVersions.push( site.plugin.update.new_version );
+				}
+			}
+		} );
+		return newVersions;
 	},
 
-	handlePluginUpdates( event ) {
+	handlePluginUpdatesSingleSite( event ) {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
@@ -212,7 +227,23 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.sites[ 0 ].ID,
 			plugin: this.props.sites[ 0 ].plugin.slug,
-			selectedSite: this.props.sites[ 0 ].ID
+			selected_site: this.props.sites[ 0 ].ID
+		} );
+	},
+
+	handlePluginUpdatesMultiSite( event ) {
+		event.preventDefault();
+		this.props.sites.forEach( function( site ) {
+			if ( site.canUpdateFiles && site.plugin && site.plugin.update && 'error' !== site.plugin.update ) {
+				PluginsActions.updatePlugin( site, site.plugin );
+			}
+		} );
+
+		analytics.ga.recordEvent( 'Plugins', 'Clicked Update All Sites Plugin', 'Plugin Name', this.props.pluginSlug );
+		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
+			site: this.props.sites[ 0 ].ID,
+			plugin: this.props.sites[ 0 ].plugin.slug,
+			selected_site: this.props.sites[ 0 ].ID
 		} );
 	},
 
@@ -246,7 +277,7 @@ export default React.createClass( {
 						site={ this.props.selectedSite }
 						pluginVersion={ plugin && plugin.version }
 						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
-						hasUpdate={ this.getAvailableNewVersion() } />
+						hasUpdate={ this.getAvailableNewVersions().length > 0 } />
 
 				</Card>
 				{ this.getVersionWarning() }
