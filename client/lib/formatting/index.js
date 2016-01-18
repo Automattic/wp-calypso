@@ -63,9 +63,10 @@ function unicodeToString( character ) {
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
  * @param  {string} text        the text to work on
  * @param  {number} wordsToKeep the number of words to keep together
+ * @param  {number} minimun     the minimum number of words to apply this to
  * @return {string}             the widow-prevented string
  */
-function preventWidows( text, wordsToKeep ) {
+function preventWidows( text, wordsToKeep, minimun ) {
 	var words, endWords;
 
 	text = text && trim( text );
@@ -77,6 +78,10 @@ function preventWidows( text, wordsToKeep ) {
 
 	if ( ! words ) { // all whitespace
 		return text;
+	}
+
+	if ( words.length < minimun ) {
+		return words.join( ' ' );
 	}
 
 	if ( words.length <= wordsToKeep ) {
