@@ -6,6 +6,7 @@ import assign from 'lodash/object/assign';
 /**
  * Internal dependencies
  */
+import { recordAddToCart } from 'analytics/ad-tracking';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
@@ -44,6 +45,8 @@ function addItem( cartItem ) {
 			context: 'calypstore'
 		} ),
 		newCartItem = assign( {}, cartItem, { extra } );
+
+	recordAddToCart( cartItem );
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEM_ADD,
