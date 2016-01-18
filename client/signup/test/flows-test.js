@@ -1,3 +1,5 @@
+require( 'lib/react-test-env-setup' )();
+
 /**
  * External dependencies
  */
