@@ -26,7 +26,15 @@ export default React.createClass( {
 	},
 
 	submitButtonText() {
-		return this.translate( 'Sign Up & Join' );
+		let text = '';
+		if ( 'follower' === this.props.role ) {
+			text = this.translate( 'Sign Up & Follow' );
+		} else if ( 'viewer' === this.props.role ) {
+			text = this.translate( 'Sign Up & View' );
+		} else {
+			text = this.translate( 'Sign Up & Join' );
+		}
+		return text;
 	},
 
 	clickSignInLink() {

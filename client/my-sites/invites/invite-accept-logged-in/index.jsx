@@ -46,6 +46,48 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
 	},
 
+	getButtonText() {
+		let text = '';
+		if ( 'follower' === this.props.role ) {
+			text = this.state.submitting
+				? this.translate( 'Following…', { context: 'button' } )
+				: this.translate( 'Follow', { context: 'button' } );
+		} else {
+			text = this.state.submitting
+				? this.translate( 'Joining…', { context: 'button' } )
+				: this.translate( 'Join', { context: 'button' } );
+		}
+
+		return text;
+	},
+
+	getJoinAsText() {
+		const { user } = this.props;
+		let text = '';
+
+		if ( 'follower' === this.props.role ) {
+			text = this.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
+				components: {
+					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
+				},
+				args: {
+					username: user && user.display_name
+				}
+			} );
+		} else {
+			text = this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
+				components: {
+					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
+				},
+				args: {
+					username: user && user.display_name
+				}
+			} );
+		}
+
+		return text;
+	},
+
 	render() {
 		const { user } = this.props,
 			signInLink = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
@@ -56,26 +98,14 @@ export default React.createClass( {
 					<InviteFormHeader { ... this.props.invite } />
 					<div className="invite-accept-logged-in__join-as">
 						<Gravatar user={ user } size={ 72 } />
-						{
-							this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
-								components: {
-									usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
-								},
-								args: {
-									username: user && user.display_name
-								}
-							} )
-						}
+						{ this.getJoinAsText() }
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
 						<Button onClick={ this.decline } disabled={ this.state.submitting }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
-							{ this.state.submitting
-								? this.translate( 'Joining…', { context: 'button' } )
-								: this.translate( 'Join', { context: 'button' } )
-							}
+							{ this.getButtonText() }
 						</Button>
 					</div>
 				</Card>
