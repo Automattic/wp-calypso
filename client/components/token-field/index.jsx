@@ -77,6 +77,7 @@ var TokenField = React.createClass( {
 				className={ classes }
 				tabIndex="-1"
 				onKeyDown={ this._onKeyDown }
+				onKeyPress={ this._onKeyPress }
 				onBlur={ this._onBlur }
 				onFocus={ this._onFocus }
 			>
@@ -174,11 +175,11 @@ var TokenField = React.createClass( {
 				// there is a suggested token selected.  In that case, we don't
 				// want to add it, because it's easy to inadvertently hover
 				// over a suggestion.
-				if ( this._isInputEmptyOrWhitespace() ) {
-					debug( '_onBlur after timeout not adding current token' );
-				} else {
+				if ( this._inputHasValidValue() ) {
 					debug( '_onBlur after timeout adding current token' );
 					this._addCurrentToken();
+				} else {
+					debug( '_onBlur after timeout not adding current token' );
 				}
 				debug( '_onBlur resetting component state' );
 				this.setState( this.getInitialState() );
@@ -261,10 +262,21 @@ var TokenField = React.createClass( {
 			case 46: // delete (to right)
 				preventDefault = this._handleDeleteKey( this._deleteTokenAfterInput );
 				break;
-			case 188: // comma
-				if ( ! event.shiftKey ) { // ignore <
-					preventDefault = this._handleCommaKey();
-				}
+			default:
+				break;
+		}
+
+		if ( preventDefault ) {
+			event.preventDefault();
+		}
+	},
+
+	_onKeyPress: function( event ) {
+		var preventDefault = false;
+
+		switch ( event.charCode ) {
+			case 44: // comma
+				preventDefault = this._handleCommaKey();
 				break;
 			default:
 				break;
@@ -320,13 +332,12 @@ var TokenField = React.createClass( {
 
 	_addCurrentToken: function() {
 		var preventDefault = false,
-			isInputEmpty = this._isInputEmptyOrWhitespace(),
 			selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
 			this._addNewToken( selectedSuggestion );
 			preventDefault = true;
-		} else if ( ! isInputEmpty ) {
+		} else if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
 			preventDefault = true;
 		}
@@ -380,9 +391,8 @@ var TokenField = React.createClass( {
 	_handleCommaKey: function() {
 		var preventDefault = true;
 
-		if ( ! this._isInputEmpty() ) {
+		if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
-			preventDefault = true;
 		}
 
 		return preventDefault;
@@ -392,8 +402,8 @@ var TokenField = React.createClass( {
 		return this.state.incompleteTokenValue.length === 0;
 	},
 
-	_isInputEmptyOrWhitespace: function() {
-		return /^\s*$/.test( this.state.incompleteTokenValue );
+	_inputHasValidValue: function() {
+		return this.props.saveTransform( this.state.incompleteTokenValue ).length > 0;
 	},
 
 	_deleteTokenBeforeInput: function() {
