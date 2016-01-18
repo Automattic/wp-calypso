@@ -14,6 +14,7 @@ const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
+import { isFreeTrial } from 'lib/products-values';
 
 function fetchSitesUntilSiteAppears( siteSlug, callback ) {
 	sites.once( 'change', function() {
@@ -89,7 +90,7 @@ module.exports = {
 	},
 
 	addPlanToCart( callback, { siteSlug }, { cartItem } ) {
-		if ( isEmpty( cartItem ) ) {
+		if ( isEmpty( cartItem ) || isFreeTrial( cartItem ) ) {
 			// the user selected the free plan
 			return defer( callback );
 		}

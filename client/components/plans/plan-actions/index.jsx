@@ -198,10 +198,10 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<a className="button is-primary plan-actions__upgrade-button"
-					href={ `/start-trial/${ isBusiness( this.props.plan ) ? 'business' : 'premium' }/${ this.props.site.slug }` }>
+				<button className="button is-primary plan-actions__upgrade-button"
+					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
-				</a>
+				</button>
 
 				<small className="plan-actions__trial-period">
 					{ this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {

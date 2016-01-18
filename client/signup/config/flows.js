@@ -9,11 +9,16 @@ var assign = require( 'lodash/object/assign' ),
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	plans = require( 'lib/plans-list' )(),
+	productValues = require( 'lib/products-values' );
 
 function getCheckoutDestination( dependencies ) {
 	if ( dependencies.cartItem || dependencies.domainItem ) {
-		return '/checkout/' + dependencies.siteSlug;
+		if ( productValues.isFreeTrial( dependencies.cartItem ) ) {
+			return `/start-trial/${ plans.getPathFromSlug( dependencies.cartItem.product_slug ) }/${ dependencies.siteSlug }`
+		}
+		return `/checkout/${ dependencies.siteSlug }`;
 	}
 
 	return 'https://' + dependencies.siteSlug;

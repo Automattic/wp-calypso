@@ -17,15 +17,22 @@ var sites = require( 'lib/sites-list' )(),
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	titleActions = require( 'lib/screen-title/actions' ),
+	productValues = require( 'lib/products-values' );
 
 function handlePlanSelect( cartItem ) {
-	upgradesActions.addItem( cartItem );
-
 	// FIXME: @rads: The `defer` is necessary here to prevent an error with
 	//   React when changing pages, but the root cause is currently unknown.
 	defer( function() {
-		page( '/checkout/' + sites.getSelectedSite().slug );
+		var siteSlug = sites.getSelectedSite().slug;
+
+		if ( productValues.isFreeTrial( cartItem ) ) {
+			page( `/start-trial/${ plans.getPathFromSlug( cartItem.product_slug ) }/${ siteSlug }` );
+			return;
+		}
+
+		upgradesActions.addItem( cartItem );
+		page( `/checkout/${ siteSlug }` );
 	} );
 }
 

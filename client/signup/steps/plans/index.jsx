@@ -13,6 +13,7 @@ var productsList = require( 'lib/products-list' )(),
 	analytics = require( 'analytics' ),
 	featuresList = require( 'lib/features-list' )(),
 	plansList = require( 'lib/plans-list' )(),
+	sitesList = require( 'lib/sites-list' )(),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlansCompare = require( 'components/plans/plans-compare' ),
 	SignupActions = require( 'lib/signup/actions' ),
@@ -90,6 +91,7 @@ module.exports = React.createClass( {
 			<div>
 				<PlanList
 					plans={ this.state.plans }
+					sites={ sitesList }
 					comparePlansUrl={ this.comparePlansUrl() }
 					enableFreeTrials={ this.isFreeTrialFlow() }
 					isInSignup={ true }
