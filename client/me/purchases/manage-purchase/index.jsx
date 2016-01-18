@@ -43,10 +43,13 @@ import {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	showEditPaymentDetails
 } from 'lib/purchases';
 import { getPurchase, getSelectedSite, goToList, isDataLoading, recordPageView } from '../utils';
 import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
+
+function canEditPaymentDetails( purchase ) {
+	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
+}
 
 const ManagePurchase = React.createClass( {
 	propTypes: {
@@ -78,7 +81,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	isDataFetchingAfterRenewal() {
-		return 'thank-you' === this.props.destinationType && this.props.selectedPurchase.isFetching;
+		return this.props.selectedPurchase.isFetching;
 	},
 
 	isDataValid( props = this.props ) {
@@ -353,7 +356,7 @@ const ManagePurchase = React.createClass( {
 			</span>
 		);
 
-		if ( isLoading || ! showEditPaymentDetails( purchase ) ) {
+		if ( isLoading || ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) ) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -483,9 +486,14 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props ),
 			{ id, payment } = purchase;
 
-		if ( showEditPaymentDetails( purchase ) ) {
+		let path = paths.editCardDetails( this.props.selectedSite.slug, id );
+		if ( isPaidWithCreditCard( purchase ) ) {
+			path = paths.editSpecificCardDetails( this.props.selectedSite.slug, id, payment.creditCard.id );
+		}
+
+		if ( canEditPaymentDetails( purchase ) ) {
 			return (
-				<VerticalNavItem path={ paths.editCardDetails( this.props.selectedSite.slug, id, payment.creditCard.id ) }>
+				<VerticalNavItem path={ path }>
 					{ this.translate( 'Edit Payment Method' ) }
 				</VerticalNavItem>
 			);
