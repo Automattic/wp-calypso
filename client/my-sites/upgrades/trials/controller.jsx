@@ -39,7 +39,6 @@ export default {
 		const StartTrial = require( './start-trial' ),
 			FreeTrialCartData = require( './data/free-trial-cart' ),
 			basePath = route.sectionify( context.path ),
-			selectedSite = sites.getSelectedSite(),
 			planName = context.params.planName;
 
 		// removes the sidebar
@@ -63,8 +62,7 @@ export default {
 							plans={ plans }
 							sites={ sites } >
 							<StartTrial
-								site={ selectedSite }
-								redirectTo={ `/plans/${ selectedSite.slug }/thank-you` }
+								sites={ sites }
 								planName={ planName } />
 						</FreeTrialCartData>
 					</div>

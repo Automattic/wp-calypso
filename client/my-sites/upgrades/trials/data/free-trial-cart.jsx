@@ -20,12 +20,6 @@ const FreeTrialCartData = React.createClass( {
 		return { cart: {} };
 	},
 
-	componentDidMount: function() {
-		if ( this.props.planName ) {
-			this.updateCart();
-		}
-	},
-
 	componentWillMount: function() {
 		// reset the transaction store
 		resetTransaction();
@@ -34,28 +28,32 @@ const FreeTrialCartData = React.createClass( {
 		//   payment info, so for now we rely on the credits payment method for
 		//   free carts.
 		setPayment( storeTransactions.fullCreditsPayment() );
+
+		this.updateCart();
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.planName !== this.props.planName ) {
-			this.updateCart();
-		}
+	componentDidMount: function() {
+		this.props.sites.on( 'change', this.updateCart );
+	},
+
+	componentWillUnmount: function() {
+		this.props.sites.off( 'change', this.updateCart );
 	},
 
 	updateCart: function() {
-		const planSlug = this.props.plans.getSlugFromPath( this.props.planName ),
-			planItem = cartItems.getItemForPlan( { product_slug: planSlug }, { isFreeTrial: true } );
-
-		this.addItem( planItem );
-	},
-
-	addItem: function( item ) {
 		if ( this.isLoading() ) {
 			return;
 		}
 
+		const planSlug = this.props.plans.getSlugFromPath( this.props.planName ),
+			planItem = cartItems.getItemForPlan( { product_slug: planSlug }, { isFreeTrial: true } );
+
+		this.replaceCartWithItem( planItem );
+	},
+
+	replaceCartWithItem: function( item ) {
 		const selectedSite = this.props.sites.getSelectedSite(),
-			emptyCart = cartValues.emptyCart( selectedSite.ID );
+			emptyCart = cartValues.emptyTemporaryCart( selectedSite.ID );
 
 		const newCart = cartValues.fillInAllCartItemAttributes(
 			cartItems.add( item )( emptyCart ),
@@ -66,7 +64,11 @@ const FreeTrialCartData = React.createClass( {
 	},
 
 	isLoading: function() {
-		return ! this.props.products.hasLoadedFromServer();
+		const isLoadingPlan = ! this.props.planName,
+			isLoadingSites = ! this.props.sites.getSelectedSite(),
+			isLoadingProducts = ! this.props.products.hasLoadedFromServer();
+
+		return isLoadingPlan || isLoadingSites || isLoadingProducts;
 	},
 
 	getStateFromStores: function() {

@@ -8,18 +8,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
-import { cartItems } from 'lib/cart-values';
-import TransactionStepsMixin from 'my-sites/upgrades/checkout/transaction-steps-mixin';
-import FreeTrialConfirmationBox from './free-trial-confirmation-box';
+import observe from 'lib/mixins/data-observe';
 import { clearSitePlans } from 'state/sites/plans/actions';
+import FreeTrialForm from './free-trial-form';
 
 const StartTrial = React.createClass( {
-	mixins: [ TransactionStepsMixin ],
+	mixins: [ observe( 'sites' ) ],
 
-	handleSubmit: function( event ) {
-		analytics.ga.recordEvent( 'Upgrades', 'Submitted Free Trial Form' );
-
+	onSubmit: function() {
 		// invalidate `sitePlans` (/sites/:site/plans)
 		this.props.clearSitePlans();
 
@@ -27,28 +23,22 @@ const StartTrial = React.createClass( {
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_SITES'
 		} );
-
-		// `submitTransaction` comes from the `TransactionStepsMixin`
-		this.submitTransaction( event );
-	},
-
-	isLoading: function() {
-		return ! cartItems.hasFreeTrial( this.props.cart );
 	},
 
 	render: function() {
-		if ( this.isLoading() ) {
-			return (
-				<FreeTrialConfirmationBox.Placeholder />
-			);
+		const selectedSite = this.props.sites.getSelectedSite();
+
+		if ( ! selectedSite ) {
+			return <FreeTrialForm.Placeholder />
 		}
 
 		return (
-			<FreeTrialConfirmationBox
+			<FreeTrialForm
 				cart={ this.props.cart }
-				selected={ true }
-				onSubmit={ this.handleSubmit }
-				transactionStep={ this.props.transaction.step } />
+				transaction={ this.props.transaction }
+				site={ selectedSite }
+				redirectTo={ `/plans/${ selectedSite.slug }/thank-you` }
+				onSubmit={ this.onSubmit } />
 		);
 	}
 } );
@@ -58,7 +48,10 @@ export default connect(
 	function mapDispatchToProps( dispatch, ownProps ) {
 		return {
 			clearSitePlans() {
-				dispatch( clearSitePlans( ownProps.site.ID ) );
+				const selectedSite = ownProps.sites.getSelectedSite();
+				if ( selectedSite ) {
+					dispatch( clearSitePlans( selectedSite.ID ) );
+				}
 			}
 		};
 	}

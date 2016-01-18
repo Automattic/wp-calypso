@@ -12,7 +12,7 @@ var React = require( 'react' ),
 var isPlan = require( 'lib/products-values' ).isPlan,
 	PayButton = require( 'my-sites/upgrades/checkout/pay-button' ),
 	PaymentBox = require( 'my-sites/upgrades/checkout/payment-box' ),
-	TermsOfService = require( './terms-of-service.jsx');
+	TermsOfService = require( './terms-of-service.jsx' );
 
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {
