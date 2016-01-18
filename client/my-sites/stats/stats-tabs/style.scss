@@ -3,17 +3,20 @@
 
 .stats-tabs {
 	@include clear-fix;
+	background: $white;
 	border-top: 1px solid $gray-light;
 	list-style: none;
-	background: $white;
 	margin: 0;
 
 	.stats-tab {
-		margin: 0;
-		font-size: 16px;
-		clear: none;
+		background: $white;
 		border-top: 1px solid $gray-light;
 		box-sizing: border-box;
+		clear: none;
+		float: none;
+		font-size: 16px;
+		margin: 0;
+		text-align: left;
 
 		&:first-child {
 			border-top: none;
@@ -35,71 +38,61 @@
 			}
 		}
 
-		@include breakpoint( "<480px" ) {
-			width: auto;
-			float: none;
-			text-align: left;
-		}
-
 		a {
 			color: $gray-dark;
 		}
 
 		a,
 		.no-link {
-			@extend %mobile-link-element;
-			@include clear-fix;
-			padding: 5px 0 10px;
 			display: block;
-			background: $white;
+			min-height: 35px;
+			padding-top: 10px;
 
-			@include breakpoint( "<480px" ) {
-				line-height: 24px;
-				padding-top: 10px;
+			@include breakpoint( ">480px" ) {
+				@extend %mobile-link-element;
+				padding: 5px 0 10px;
+				@include clear-fix;
 				-webkit-touch-callout: none;
 			}
 		}
 
 		.label {
-			font-size: 11px;
-			letter-spacing: 0.1em;
-			line-height: inherit;
+			float: left;
 			text-transform: uppercase;
+			letter-spacing: 0.1em;
 
-			@include breakpoint( "<480px" ) {
-				font-size: 14px;
-				line-height: 24px;
-				float: left;
+			@include breakpoint( ">480px" ) {
+				font-size: 11px;
+				line-height: inherit;
+				float: none;
 			}
 		}
 
 		.gridicon {
-			vertical-align: middle;
-			margin-right: 4px;
-			margin-top: -2px;
+			float: left;
+			margin: 3px 8px 0 20px;
 
-			@include breakpoint( "<480px" ) {
-				width: 24px;
-				height: 24px;
-				margin-left: 24px;
-				margin-right: 8px;
-				float: left;
+			@include breakpoint( ">480px" ) {
+				float: none;
+				vertical-align: middle;
+				margin: -2px 4px 0 0;
 			}
 		}
 
 		.value {
 			clear: both;
-			display: block;
-			line-height: 24px;
 			color: $blue-wordpress;
+			display: block;
+			float: none;
+			line-height: 24px;
+			text-align: center;
 			transition: font-size .3s 0 ease-out;
 
 			@include breakpoint( "<480px" ) {
 				clear: none;
 				float: right;
 				font-size: 16px;
-				margin-right: 24px;
-				padding: 0;
+				padding: 0 20px 0 10px;
 			}
 		}
 
@@ -113,7 +106,8 @@
 			}
 
 			a:hover {
-				background: rgba(255,255,255,.5);
+				background: $white;
+				cursor: pointer;
 			}
 		}
 
@@ -221,7 +215,7 @@
 
 		&,
 		li {
-			border-color: $gray-light;
+			border-color: lighten( $gray, 30% );
 		}
 
 		a {
