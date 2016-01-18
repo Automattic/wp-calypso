@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 
 		const csvData = data.map( ( row ) => {
 			return row.join( ',' );
-		} ).join( "\n" );
+		} ).join( '\n' );
 
 		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
 
