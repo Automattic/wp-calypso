@@ -11,7 +11,8 @@ var React = require( 'react' ),
  */
 var observe = require( 'lib/mixins/data-observe' ),
 	ElementChart = require( 'components/chart' ),
-	StatTab = require( '../stats-tabs/tab' ),
+	StatsTabs = require( '../stats-tabs' ),
+	StatsTab = require( '../stats-tabs/tab' ),
 	analytics = require( 'analytics' ),
 	Card = require( 'components/card' );
 
@@ -128,13 +129,13 @@ module.exports = React.createClass( {
 			attr: this.props.labelKey,
 			value: selectedBar ? this.state.selectedBar[ this.props.dataKey ] : null,
 			selected: true,
-			className: this.props.labelClass,
+			gridicon: this.props.labelClass,
 			label: this.props.tabLabel + label
 		};
 
-		tabs = <StatTab key="chart-tab" { ...tabOptions } />;
+		tabs = <StatsTab key="chart-tab" { ...tabOptions } />;
 
-		return ( <ul className="module-tabs is-expanded">{ tabs }</ul> );
+		return ( <StatsTabs>{ tabs }</StatsTabs> );
 	},
 
 	render: function() {

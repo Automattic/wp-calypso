@@ -13,8 +13,9 @@ export default React.createClass( {
 	displayName: 'StatsTabsTab',
 
 	propTypes: {
-		attr: PropTypes.string,
 		className: PropTypes.string,
+		gridicon: PropTypes.string,
+		href: PropTypes.string,
 		label: PropTypes.string,
 		loading: PropTypes.bool,
 		selected: PropTypes.bool,
@@ -22,16 +23,11 @@ export default React.createClass( {
 		value: PropTypes.number
 	},
 
-	getDefaultProps() {
-		return {
-			tabClick: () => {},
-			href: '#'
-		}
-	},
-
 	clickHandler( event ) {
-		event.preventDefault();
-		this.props.tabClick( this.props );
+		if ( this.props.tabClick ) {
+			event.preventDefault();
+			this.props.tabClick( this.props );
+		}
 	},
 
 	ensureValue( value ) {
@@ -42,30 +38,34 @@ export default React.createClass( {
 		return String.fromCharCode( 8211 );
 	},
 
-	handleLinkClick( event ) {
-		if ( ! this.props.href ) {
-			event.preventDefault();
-		}
-	},
-
 	render() {
-		const { attr, className, href, label, loading, selected, value } = this.props;
+		const { className, children, gridicon, href, label, loading, selected, tabClick, value } = this.props;
 
-		const tabClassOptions = {
-			'is-selected': selected,
-			'is-loading': loading,
-			'is-low': ! value
-		};
+		const tabClass = classNames(
+			'stats-tab',
+			className,
+			{
+				'is-selected': selected,
+				'is-loading': loading,
+				'is-low': ! value
+			} );
 
-		tabClassOptions[ 'is-' + attr ] = true;
+		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
+		const tabLabel = <span className="label">{ label }</span>;
+		const tabValue = <span className="value">{ this.ensureValue( value ) }</span>;
+		const hasClickAction = href || tabClick;
 
 		return (
-			<li className={ classNames( 'module-tab', tabClassOptions ) } onClick={ this.clickHandler } >
-				<a href={ href } onClick={ this.handleLinkClick }>
-					<Gridicon icon={ className } size={ 18 } />
-					<span className="label">{ label }</span>
-					<span className="value">{ this.ensureValue( value ) }</span>
-				</a>
+			<li className={ tabClass } onClick={ this.clickHandler } >
+				{
+					hasClickAction
+					?	<a href={ href }>
+							{ tabIcon }{ tabLabel }{ tabValue }{ children }
+						</a>
+					: 	<span className="no-link">
+							{ tabIcon }{ tabLabel }{ tabValue }{ children }
+						</span>
+				}
 			</li>
 		);
 	}

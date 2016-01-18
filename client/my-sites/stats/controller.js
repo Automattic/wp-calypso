@@ -305,10 +305,10 @@ module.exports = {
 			date,
 			charts = function() {
 				return [
-					{ attr: 'views', legendOptions: [ 'visitors' ], className: 'visible', label: i18n.translate( 'Views', { context: 'noun' } ) },
-					{ attr: 'visitors', className: 'user', label: i18n.translate( 'Visitors', { context: 'noun' } ) },
-					{ attr: 'likes', className: 'star', label: i18n.translate( 'Likes', { context: 'noun' } ) },
-					{ attr: 'comments', className: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
+					{ attr: 'views', legendOptions: [ 'visitors' ], gridicon: 'visible', label: i18n.translate( 'Views', { context: 'noun' } ) },
+					{ attr: 'visitors', gridicon: 'user', label: i18n.translate( 'Visitors', { context: 'noun' } ) },
+					{ attr: 'likes', gridicon: 'star', label: i18n.translate( 'Likes', { context: 'noun' } ) },
+					{ attr: 'comments', gridicon: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
 				];
 			},
 			chartDate,

@@ -2,16 +2,12 @@
 
 .stats-all-time {
 
-	.module-tab {
+	.stats-tab {
 
 		padding-bottom: 0;
 
 		@include breakpoint( ">480px" ) {
 			padding-bottom: 24px;
-		}
-
-		&.is-best {
-			color: $alert-yellow;
 		}
 
 		&:nth-child(4) {
@@ -38,5 +34,12 @@
 				width: 100%;
 			}
 		}
+	}
+}
+
+.stats-all-time__is-best {
+	.gridicon,
+	.label {
+		color: $alert-yellow;
 	}
 }

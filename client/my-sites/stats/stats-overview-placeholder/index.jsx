@@ -8,6 +8,8 @@ import React, { PropTypes } from 'react';
  */
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
 export default React.createClass( {
 	displayName: 'StatsOverviewPlaceholder',
@@ -38,20 +40,28 @@ export default React.createClass( {
 					</h3>
 				</div>
 
-				<ul className="module-tabs">
-					<li className="module-tab is-views is-loading">
-						<a href="#"><Gridicon icon="visible" size={ 18 } /><span className="label">{ this.translate( 'Views' ) }</span> <span className="value">&ndash;</span></a>
-					</li>
-					<li className="module-tab is-visitors is-loading">
-						<a href="#"><Gridicon icon="user" size={ 18 } /><span className="label">{ this.translate( 'Visitors' ) }</span> <span className="value">&ndash;</span></a>
-					</li>
-					<li className="module-tab is-likes is-loading">
-						<a href="#"><Gridicon icon="star" size={ 18 } /><span className="label">{ this.translate( 'Likes' ) }</span> <span className="value">&ndash;</span></a>
-					</li>
-					<li className="module-tab is-comments is-loading">
-						<a href="#"><Gridicon icon="comment" size={ 18 } /><span className="label">{ this.translate( 'Comments' ) }</span> <span className="value">&ndash;</span></a>
-					</li>
-				</ul>
+				<StatsTabs>
+					<StatsTab
+						isLoading={ true }
+						gridicon="visible"
+						label={ this.translate( 'Views', { context: 'noun' } ) }
+						value={ null } />
+					<StatsTab
+						isLoading={ true }
+						gridicon="user"
+						label={ this.translate( 'Visitors', { context: 'noun' } ) }
+						value={ null } />
+					<StatsTab
+						isLoading={ true }
+						gridicon="star"
+						label={ this.translate( 'Likes', { context: 'noun' } ) }
+						value={ null } />
+					<StatsTab
+						isLoading={ true }
+						gridicon="comment"
+						label={ this.translate( 'Comments', { context: 'noun' } ) }
+						value={ null } />
+				</StatsTabs>
 			</Card>
 		);
 	}
