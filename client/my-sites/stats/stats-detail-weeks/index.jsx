@@ -38,6 +38,7 @@ export default React.createClass( {
 
 	render() {
 		const data = this.props.postViewsList.response;
+		const post = data.post;
 		const { showInfo, noData } = this.state;
 		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
 		let tableHeader,
@@ -52,6 +53,7 @@ export default React.createClass( {
 		};
 
 		if ( data && data.weeks ) {
+			const publishDate = post.post_date ? this.moment( post.post_date ) : null;
 			highest = data.highest_week_average;
 			tableHeader = (
 				<thead>
@@ -68,11 +70,18 @@ export default React.createClass( {
 						<th>{ this.translate( 'Change', { context: 'Stats: noun - change over a period in weekly numbers' } ) }</th>
 					</tr>
 				</thead>
-				);
+			);
 
 			tableRows = data.weeks.map( function( week, index ) {
-				let cells = [],
-					iconType;
+				let cells = [];
+				let iconType;
+				let lastDay = week.days[ week.days.length - 1 ];
+				let lastDayOfWeek = lastDay.day ? this.moment( lastDay.day, 'YYYY-MM-DD' ) : null;
+
+				// If the end of this week is before post_date, return
+				if ( 7 === week.days.length && publishDate && lastDayOfWeek && lastDayOfWeek.isBefore( publishDate ) ) {
+					return null;
+				}
 
 				// If there are fewer than 7 days in the first week, prepend blank days
 				if ( week.days.length < 7 && 0 === index ) {
