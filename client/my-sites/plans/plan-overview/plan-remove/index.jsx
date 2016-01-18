@@ -28,11 +28,14 @@ const PlanRemove = React.createClass( {
 
 	getInitialState() {
 		return {
+			isCanceling: false,
 			showDialog: false
 		};
 	},
 
 	removePlan( closeDialog ) {
+		this.setState( { isCanceling: true } );
+
 		wpcom.undocumented().cancelPlanTrial( this.props.plan.id, ( error, data ) => {
 			closeDialog();
 
@@ -51,7 +54,10 @@ const PlanRemove = React.createClass( {
 	},
 
 	closeDialog() {
-		this.setState( { showDialog: false } );
+		this.setState(  {
+			isCanceling: false,
+			showDialog: false
+		} );
 	},
 
 	showDialog( event ) {
@@ -76,8 +82,18 @@ const PlanRemove = React.createClass( {
 
 	renderDialog() {
 		const buttons = [
-			{ action: 'cancel', label: this.translate( 'Cancel' ) },
-			{ action: 'remove', label: this.translate( 'Remove Now' ), onClick: this.removePlan, isPrimary: true }
+			{
+				action: 'cancel',
+				disabled: this.state.isCanceling,
+				label: this.translate( 'Cancel' )
+			},
+			{
+				action: 'remove',
+				disabled: this.state.isCanceling,
+				isPrimary: true,
+				label: this.translate( 'Remove Now' ),
+				onClick: this.removePlan
+			}
 		];
 
 		return (
