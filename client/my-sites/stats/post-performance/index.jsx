@@ -108,9 +108,22 @@ module.exports = React.createClass( {
 				comments: post ? post.discussion.comment_count : emptyString
 			},
 			tabs = [
-				{ label: this.translate( 'Views' ), labelIcon: 'visible', value: values.views, link: summaryUrl },
-				{ label: this.translate( 'Likes' ), labelIcon: 'star', value: values.likes },
-				{ label: this.translate( 'Comments' ), labelIcon: 'comment', value: values.comments }
+				{
+					label: this.translate( 'Views' ),
+					labelIcon: 'visible',
+					value: this.numberFormat( values.views ),
+					link: summaryUrl
+				},
+				{
+					label: this.translate( 'Likes' ),
+					labelIcon: 'star',
+					value: this.numberFormat( values.likes )
+				},
+				{
+					label: this.translate( 'Comments' ),
+					labelIcon: 'comment',
+					value: this.numberFormat( values.comments )
+				}
 			];
 
 		return tabs.map( function( tabOptions, index ) {
@@ -179,8 +192,8 @@ module.exports = React.createClass( {
 					</h3>
 				</div>
 				<div className="module-content-text">
-					{ post ?
-						(
+					{ post
+						? (
 							<p>
 								{ this.translate(
 									'It\'s been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here\'s how the post has performed so far\u2026',
