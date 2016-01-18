@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var toggle = require( '../mixin-toggle' ),
-	SelectDropdown = require( 'components/select-dropdown' ),
+	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
 	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( '../stats-error' ),
@@ -80,11 +80,7 @@ module.exports = React.createClass( {
 			];
 
 		if ( ( ! this.props.wpcomFollowersList.isEmpty( 'subscribers' ) ) && ( ! this.props.emailFollowersList.isEmpty( 'subscribers' ) ) ) {
-			selectFilter = (
-				<div className="select-dropdown__wrapper">
-					<SelectDropdown options={ options } onSelect={ this.changeFilter } />
-				</div>
-			);
+			selectFilter = <StatsModuleSelectDropdown options={ options } onSelect={ this.changeFilter } />;
 		}
 
 		return selectFilter;

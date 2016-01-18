@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var StatsList = require( '../stats-list' ),
-	SelectDropdown = require( 'components/select-dropdown' ),
+	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
 	toggle = require( '../mixin-toggle' ),
 	skeleton = require( '../mixin-skeleton' ),
 	ErrorPanel = require( '../stats-error' ),
@@ -55,11 +55,7 @@ module.exports = React.createClass( {
 			];
 
 		if ( 'comment' !== this.props.followType ) {
-			selectFilter = (
-				<div className="select-dropdown__wrapper">
-					<SelectDropdown options={ options } onSelect={ this.props.changeFilter } />
-				</div>
-			);
+			selectFilter = <StatsModuleSelectDropdown options={ options } onSelect={ this.props.changeFilter } />;
 		}
 
 		return selectFilter;
