@@ -18,20 +18,6 @@
 	margin-left: 4px;
 }
 
-// Filter Select
-.select-dropdown__wrapper {
-	margin: 1em 20px;
-
-	.select-dropdown__container {
-		position: relative;
-	}
-
-	.stats-module.is-loading &,
-	.stats-module.has-no-data & {
-		display: none;
-	}
-}
-
 // Welcome Stats message
 // -- extends .welcome-message /assets/stylesheets/shared/welcome.scss
 
