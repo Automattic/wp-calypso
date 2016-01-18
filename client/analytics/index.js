@@ -22,7 +22,7 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?48' );
+loadScript( '//stats.wp.com/w.js?49' );
 loadScript( '//www.google-analytics.com/analytics.js' );
 
 function buildQuerystring( group, name ) {
@@ -159,7 +159,7 @@ var analytics = {
 				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
 				var matched;
 				// prevent explosion of read list metrics
-				// this is a hack - ultimately we want to report this URLs in a more generic way to 
+				// this is a hack - ultimately we want to report this URLs in a more generic way to
 				// google analytics
 				if ( startsWith( featureSlug, 'read_list' ) ) {
 					featureSlug = 'read_list';
@@ -245,12 +245,12 @@ var analytics = {
 
 		recordTiming: function( urlPath, eventType, duration, triggerName ) {
 			analytics.ga.initialize();
-		
+
 			debug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
 
 			if ( config( 'google_analytics_enabled' ) ) {
 				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName);
-			}	
+			}
 		}
 	},
 
