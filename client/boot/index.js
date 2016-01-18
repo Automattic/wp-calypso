@@ -154,14 +154,13 @@ function boot() {
 		i18n.setLocaleSlug( user.get().localeSlug );
 	} );
 
-	// Temporary support for development of the Support User feature
-	if ( config.isEnabled( 'support-user' ) ) {
-		require( 'lib/user/dev-support-user' )( user );
-	}
-
 	translatorJumpstart.init();
 
 	reduxStore = createReduxStore();
+
+	if ( config.isEnabled( 'support-user' ) ) {
+		require( 'lib/user/support-user-interop' )( reduxStore );
+	}
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
