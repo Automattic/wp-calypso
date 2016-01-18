@@ -99,7 +99,7 @@ export default React.createClass( {
 							loading={ isLoading }
 							value={ allTimeList.visitors } />
 						<StatsTab
-							className="stats-all-time__is-best"
+							className="is-best"
 							gridicon="trophy"
 							label={ this.translate( 'Best Views Ever' ) }
 							loading={ isLoading }

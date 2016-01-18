@@ -1,5 +1,3 @@
-// Stats All-time module on Insights page
-
 .stats-all-time {
 
 	.stats-tab {
@@ -12,6 +10,11 @@
 
 		&:nth-child(4) {
 			padding-bottom: 0;
+		}
+
+		&.is-best .gridicon,
+		&.is-best .label {
+			color: $alert-yellow;
 		}
 
 		.value {
@@ -29,17 +32,10 @@
 				box-sizing: border-box;
 				display: block;
 				line-height: 1.7;
-				padding: 25px 0 0 56px;
+				padding: 30px 0 10px 25px;
 				text-align: left;
 				width: 100%;
 			}
 		}
-	}
-}
-
-.stats-all-time__is-best {
-	.gridicon,
-	.label {
-		color: $alert-yellow;
 	}
 }
