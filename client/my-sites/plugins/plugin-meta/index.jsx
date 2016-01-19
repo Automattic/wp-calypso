@@ -245,15 +245,15 @@ export default React.createClass( {
 			if ( site.canUpdateFiles && plugin.update && 'error' !== plugin.update && plugin.update.new_version ) {
 				PluginsActions.updatePlugin( site, plugin );
 				PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
+
+				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
+					site: site,
+					plugin: plugin.slug
+				} );
 			}
 		} );
 
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Update All Sites Plugin', 'Plugin Name', this.props.pluginSlug );
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
-			site: this.props.sites[ 0 ].ID,
-			plugin: this.props.sites[ 0 ].plugin.slug,
-			selected_site: this.props.sites[ 0 ].ID
-		} );
 	},
 
 	render() {
