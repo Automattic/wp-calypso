@@ -45,14 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	freeTrials: {
-		datestamp: '20160112',
-		variations: {
-			notOffered: 90,
-			offered: 10
-		},
-		defaultVariation: 'notOffered'
-	},
 	monthlyPlanPricing: {
 		datestamp: '20160118',
 		variations: {
