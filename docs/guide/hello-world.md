@@ -170,8 +170,8 @@ If you want to learn more about our approach to writing React components, check 
 Time to hook this up with our controller function. Open `/hello-world/controller.js`. Import ReactDom and React at the top of the file:
 
 ```javascript
-var React = require( 'react' );
-var ReactDom = require( 'react-dom' );
+var React = require( 'react' ),
+		ReactDom = require( 'react-dom' );
 ```
 
 Then remove the `console.log` call and enter the following instead:
