@@ -18,7 +18,7 @@
 
 	// 'Void' placeholder, don't stare too long into the void or the void will stare back into you
 	&.is-void {
-		-webkit-animation: delay-fade-in 6s 1; // Animating in this silly way to have the graphic actually be visible once the animation is completed
+		-webkit-animation: delay-fade-in 2s 1; // Animating in this silly way to have the graphic actually be visible once the animation is completed
 	}
 
 	&.is-chart {
