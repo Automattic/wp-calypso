@@ -23,6 +23,9 @@ function getNextPageParams( store ) {
 		// only fetch four items for the initial page
 		// speeds up the initial fetch a fair bit
 		params.number = 4;
+		if ( store.startDate ) {
+			params.before = store.startDate;
+		}
 	}
 
 	return params;

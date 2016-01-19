@@ -43,6 +43,7 @@ var FeedStream = function( spec ) {
 	this.id = spec.id;
 
 	assign( this, {
+		id: spec.id,
 		postKeys: [], // an array of keys, as determined by the key maker,
 		pendingPostKeys: [],
 		postById: {},
@@ -66,7 +67,8 @@ var FeedStream = function( spec ) {
 			interval: 60 * 1000,
 			leading: false,
 			pauseWhenHidden: false
-		} )
+		} ),
+		startDate: spec.startDate
 	} );
 };
 

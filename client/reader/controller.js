@@ -5,7 +5,8 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
-	trim = require( 'lodash/string/trim' );
+	trim = require( 'lodash/string/trim' ),
+	moment = require( 'moment' );
 
 /**
  * Internal Dependencies
@@ -59,8 +60,14 @@ function removeFullPostDialog() {
 	__fullPostInstance = null;
 }
 
-function ensureStoreLoading( store ) {
+function ensureStoreLoading( store, context ) {
 	if ( store.getPage() === 1 ) {
+		if ( context.query.at ) {
+			const startDate = moment( context.query.at );
+			if ( startDate.isValid() ) {
+				store.startDate = startDate.format();
+			}
+		}
 		FeedStreamStoreActions.fetchNextPage( store.id );
 	}
 	return store;
@@ -117,7 +124,7 @@ module.exports = {
 			followingStore = feedStreamFactory( 'following' ),
 			mcKey = 'following';
 
-		ensureStoreLoading( followingStore );
+		ensureStoreLoading( followingStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -149,7 +156,7 @@ module.exports = {
 			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'blog';
 
-		ensureStoreLoading( feedStore );
+		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_blog_preview', {
@@ -184,7 +191,7 @@ module.exports = {
 			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'blog';
 
-		ensureStoreLoading( feedStore );
+		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_blog_preview', {
@@ -300,7 +307,7 @@ module.exports = {
 			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'topic';
 
-		ensureStoreLoading( tagStore );
+		ensureStoreLoading( tagStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_tag_loaded', {
@@ -334,7 +341,7 @@ module.exports = {
 			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'list';
 
-		ensureStoreLoading( listStore );
+		ensureStoreLoading( listStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_list_loaded', {
@@ -371,7 +378,7 @@ module.exports = {
 			feedStore = feedStreamFactory( 'a8c' ),
 			mcKey = 'a8c';
 
-		ensureStoreLoading( feedStore );
+		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -403,7 +410,7 @@ module.exports = {
 			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'postlike';
 
-		ensureStoreLoading( likedPostsStore );
+		ensureStoreLoading( likedPostsStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -549,7 +556,7 @@ module.exports = {
 
 		titleActions.setTitle( 'Discover' );
 
-		ensureStoreLoading( feedStore );
+		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_discover_viewed' );
