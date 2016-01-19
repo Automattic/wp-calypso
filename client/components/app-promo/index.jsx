@@ -14,6 +14,10 @@ export default React.createClass( {
 
 	displayName: 'AppPromo',
 
+	propTypes: {
+		location: React.PropTypes.element.isRequired
+	},
+
 	getInitialState: function() {
 		var has_dismissed = store.get('desktop_promo_dismissed');
 		var promo_options = [
@@ -67,7 +71,7 @@ export default React.createClass( {
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
 				<a onClick={this.recordClickEvent} className="app-promo__link" title="Try the desktop app!" href={promo_link} target="_blank">
-					<img className="app-promo__icon" src="https://s0.wp.com/wp-content/themes/a8c/desktop/i/icon.png" width="32" height="32" alt="WordPress Desktop Icon" /> 
+					<img className="app-promo__icon" src="https://s0.wp.com/wp-content/themes/a8c/desktop/i/icon.png" width="32" height="32" alt="WordPress Desktop Icon" />
 					{this.state.promo_item.message}
 				</a>
 			</div>
