@@ -63,6 +63,14 @@ NetworkConnectionApp = {
 			debug( 'Removing listener.' );
 			this.off( 'change', changeCallback );
 		}.bind( this ) );
+
+		//meetup hack, remove later
+		if ( window && window.app && window.app.isDebug ) {
+			window.offline = {
+				looseConnection: () => reduxStore.dispatch( connectionLost() ),
+				restoreConnection: () => reduxStore.dispatch( connectionRestored() )
+			}
+		}
 	},
 
 	/**
