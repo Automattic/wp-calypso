@@ -16,10 +16,10 @@
 		text-transform: capitalize;
 	}
 
-	.noticon {
+	.gridicon {
 		display: inline-block;
-		font-size: (13 / 12) * 1em;
-		margin-right: (3 / 13) * 1em;
+		margin: -4px 8px 0 0;
+		vertical-align: middle;
 	}
 
 	// Apply colors on /posts/* cards

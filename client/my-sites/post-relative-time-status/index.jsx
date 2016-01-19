@@ -4,6 +4,11 @@
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 
+/**
+ * Internal dependencies
+ */
+var Gridicon = require( 'components/gridicon' );
+
 module.exports = React.createClass( {
 
 	displayName: 'PostRelativeTime',
@@ -41,26 +46,30 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		return ( <span className="time"><span className="noticon noticon-time"></span><span className="time-text">{ this.moment( time ).fromNow() }</span>{ timeReference }</span> );
+		return ( <span className="time"><Gridicon icon="time" size={ 18 } /><span className="time-text">{ this.moment( time ).fromNow() }</span>{ timeReference }</span> );
 	},
 
 	getStatusText: function() {
 		var status = this.props.post.status,
 			statusClassName = 'status',
+			statusIcon = 'aside',
 			statusText;
 
 		if ( this.props.post.sticky ) {
 			statusText = this.translate( 'sticky' );
 			statusClassName += ' is-sticky';
+			statusIcon = 'bookmark-outline';
 		} else if ( status === 'pending' ) {
 			statusText = this.translate( 'pending review' );
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
 			statusText = this.translate( 'scheduled' );
 			statusClassName += ' is-scheduled';
+			statusIcon = 'calendar';
 		} else if ( status === 'trash' ) {
 			statusText = this.translate( 'trashed' );
 			statusClassName += ' is-trash';
+			statusIcon = 'trash';
 		} else if ( this.props.includeBasicStatus ) {
 			if ( status === 'draft' ) {
 				statusText = this.translate( 'draft' );
@@ -72,7 +81,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( statusText ) {
-			return ( <span className={ statusClassName }><span className="noticon noticon-document"></span><span className="status-text">{ statusText }</span></span> );
+			return ( <span className={ statusClassName }><Gridicon icon={ statusIcon } size={ 18 } /><span className="status-text">{ statusText }</span></span> );
 		}
 	},
 
