@@ -8,8 +8,7 @@ import { combineReducers } from 'redux';
  */
 import {
 	SELECTED_SITE_SET,
-	SET_SECTION,
-	CURRENT_USER_ID_SET
+	SET_SECTION
 } from 'state/action-types';
 import editor from './editor/reducer';
 
@@ -24,23 +23,6 @@ export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
 			state = action.siteId || null;
-			break;
-	}
-
-	return state;
-}
-
-/**
- * Tracks the current user ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function currentUserId( state = null, action ) {
-	switch ( action.type ) {
-		case CURRENT_USER_ID_SET:
-			state = action.userId;
 			break;
 	}
 
@@ -73,6 +55,5 @@ export default combineReducers( {
 	isLoading,
 	hasSidebar,
 	selectedSiteId,
-	currentUserId,
 	editor
 } );

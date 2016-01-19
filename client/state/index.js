@@ -15,6 +15,7 @@ import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer'
 import themes from 'lib/themes/reducers';
 import users from './users/reducer';
+import currentUser from './current-user/reducer';
 import ui from './ui/reducer';
 
 /**
@@ -28,6 +29,7 @@ const reducer = combineReducers( {
 	siteSettings,
 	themes,
 	users,
+	currentUser,
 	ui
 } );
 
