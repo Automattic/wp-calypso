@@ -22,7 +22,7 @@ module.exports = function() {
 					_sites.removeSite( action.site );
 					break;
 				case InvitesActionTypes.INVITE_ACCEPTED:
-					if ( action.invite.role !== 'follower' ) {
+					if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {
 						let sites = clone( _sites.get() );
 						if ( sites.length === 0 ) {
 							action.invite.site.primary = true;
