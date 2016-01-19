@@ -11,6 +11,7 @@ import React from 'react';
 import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import { cartItems } from 'lib/cart-values';
 import config from 'config';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
@@ -21,6 +22,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { oldShowcaseUrl } from 'lib/themes/helpers';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
+import RemovePurchase from '../remove-purchase';
 import Notice from 'components/notice';
 import titles from 'me/purchases/titles';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -500,9 +502,9 @@ const ManagePurchase = React.createClass( {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			return (
-				<VerticalNavItem path={ path }>
+				<CompactCard href={ path }>
 					{ this.translate( 'Edit Payment Method' ) }
-				</VerticalNavItem>
+				</CompactCard>
 			);
 		}
 
@@ -522,13 +524,13 @@ const ManagePurchase = React.createClass( {
 		};
 
 		return (
-			<VerticalNavItem path={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
 				{
 					isRefundable( purchase )
 					? this.translate( 'Cancel and Refund %(purchaseName)s', translateArgs )
 					: this.translate( 'Cancel %(purchaseName)s', translateArgs )
 				}
-			</VerticalNavItem>
+			</CompactCard>
 		);
 	},
 
@@ -541,9 +543,9 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<VerticalNavItem path={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
 				{ this.translate( 'Cancel Private Registration' ) }
-			</VerticalNavItem>
+			</CompactCard>
 		);
 	},
 
@@ -628,6 +630,9 @@ const ManagePurchase = React.createClass( {
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
 				{ cancelPrivateRegistrationNavItem }
+				<RemovePurchase
+					selectedSite={ this.props.selectedSite }
+					selectedPurchase={ this.props.selectedPurchase } />
 			</div>
 		);
 	},
