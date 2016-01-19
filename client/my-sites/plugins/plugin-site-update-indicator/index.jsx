@@ -76,9 +76,9 @@ module.exports = React.createClass( {
 			return;
 		}
 		if ( this.props.site.canUpdateFiles &&
-				( this.props.site.plugin.update || this.isUpdating() ) ) {
+				( ( this.props.site.plugin.update && ! this.props.site.plugin.update.recentlyUpdated ) || this.isUpdating() ) ) {
 			if ( ! this.props.expanded ) {
-				return <span className="plugin-site-update-indicator"><Gridicon icon="sync" size={ 20 } /></span>;
+				return <span className="plugin-site-update-indicator"><Gridicon icon="sync" size={ 20 } nonStandardSize /></span>;
 			}
 
 			return this.renderUpdate();
