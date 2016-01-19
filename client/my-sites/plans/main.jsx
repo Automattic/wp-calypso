@@ -13,6 +13,7 @@ var analytics = require( 'analytics' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlanOverview = require( './plan-overview' ),
+	preventWidows = require( 'lib/formatting' ).preventWidows,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
 	Gridicon = require( 'components/gridicon' ),
@@ -83,21 +84,15 @@ var Plans = React.createClass( {
 		premiumPlan = find( this.props.sitePlans.data, isPremium );
 
 		if ( businessPlan.canStartTrial && premiumPlan.canStartTrial ) {
-			message = this.translate( 'Try WordPress.com Premium or Business free for 14 days, no credit card{{nbsp/}}required', {
-				components: { nbsp: <span>&nbsp;</span> }
-			} );
+			message = this.translate( 'Try WordPress.com Premium or Business free for 14 days, no credit card required' );
 		}
 
 		if ( businessPlan.canStartTrial && ! premiumPlan.canStartTrial ) {
-			message = this.translate( 'Try WordPress.com Business free for 14 days, no credit card{{nbsp/}}required', {
-				components: { nbsp: <span>&nbsp;</span> }
-			} );
+			message = this.translate( 'Try WordPress.com Business free for 14 days, no credit card required' );
 		}
 
 		if ( ! businessPlan.canStartTrial && premiumPlan.canStartTrial ) {
-			message = this.translate( 'Try WordPress.com Premium free for 14 days, no credit card{{nbsp/}}required', {
-				components: { nbsp: <span>&nbsp;</span> }
-			} );
+			message = this.translate( 'Try WordPress.com Premium free for 14 days, no credit card required' );
 		}
 
 		if ( ! businessPlan.canStartTrial && ! premiumPlan.canStartTrial ) {
@@ -107,7 +102,7 @@ var Plans = React.createClass( {
 		return (
 			<div className="plans__trial-copy">
 				<span className="plans__trial-copy-text">
-					{ message }
+					{ preventWidows( message, 2 ) }
 				</span>
 			</div>
 		);
