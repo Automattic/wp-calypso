@@ -279,7 +279,8 @@ export default React.createClass( {
 		if ( ! messages ) {
 			return;
 		}
-		let link = config( 'login_url' ) + '?redirect_to=' + this.props.getRedirectToAfterLoginUrl();
+
+		let link = config( 'login_url' ) + '?redirect_to=' + this.props.getRedirectToAfterLoginUrl;
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
 				link += '&email_address=' + encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
@@ -373,7 +374,7 @@ export default React.createClass( {
 
 	termsOfServiceLink() {
 		return (
-			<p className='signup-form__terms-of-service-link'>{
+			<p className="signup-form__terms-of-service-link">{
 				this.translate(
 					'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
 					{
