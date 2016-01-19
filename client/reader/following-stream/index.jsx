@@ -3,6 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	assign = require( 'lodash/object/assign' ),
 	noop = require( 'lodash/utility/noop' ),
 	times = require( 'lodash/utility/times' );
 
@@ -23,6 +24,7 @@ var Main = require( 'components/main' ),
 	Post = require( './post' ),
 	CrossPost = require( './x-post' ),
 	page = require( 'page' ),
+	classnames = require( 'classnames' ),
 	PostUnavailable = require( './post-unavailable' ),
 	PostPlaceholder = require( './post-placeholder' ),
 	PostStore = require( 'lib/feed-post-store' ),
@@ -31,7 +33,10 @@ var Main = require( 'components/main' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+	XPostHelper = require( 'reader/xpost-helper' ),
+	Gridicon = require( 'components/gridicon' ),
+	Button = require( 'components/button' ),
+	SectionHeader = require( 'components/section-header' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -57,27 +62,37 @@ module.exports = React.createClass( {
 		suppressSiteNameLink: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
-		emptyContent: React.PropTypes.object
+		emptyContent: React.PropTypes.object,
+		viewList: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
-			onShowUpdates: noop
+			onShowUpdates: noop,
 		};
 	},
 
 	getInitialState: function() {
-		return this.getStateFromStores();
+		//return this.getStateFromStores();
+		return assign(
+			this.getStateFromStores(), {
+			viewList: true
+		} );
+	},
+
+	handleView: function() {
+		this.setState( { viewList: ! this.state.viewList } );
 	},
 
 	getStateFromStores: function( store ) {
 		store = store || this.props.store;
+
 		return {
 			posts: store.get(),
 			updateCount: store.getUpdateCount(),
-			selectedIndex: store.getSelectedIndex()
+			selectedIndex: store.getSelectedIndex(),
 		};
 	},
 
@@ -408,14 +423,24 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			body;
+			body,
+			contentClasses,
+			viewToggleClass = classnames( {
+				'view-toggle': true,
+				'is-list': this.state.viewList,
+			} );
+
+		contentClasses = classnames( {
+			'reader__content': true,
+			'is-list': this.state.viewList,
+		} );
 
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
-			className="reader__content"
+			className={ contentClasses }
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage()}
 			fetchingNextPage={ this.props.store.isFetchingNextPage()}
@@ -436,6 +461,19 @@ module.exports = React.createClass( {
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
 				{ this.props.children }
+
+				<SectionHeader label={ this.translate( "Latest Posts" ) } className={ "section-header__following-stream" }>
+					<div className={ viewToggleClass } onClick={ this.handleView }>
+						<div className="view-toggle__card">
+							<Gridicon icon="align-image-center" />
+							<span className="view-toggle__label">Card View</span>
+						</div>
+						<div className="view-toggle__list">
+							<Gridicon icon="align-justify" />
+							<span className="view-toggle__label">List View</span>
+						</div>
+					</div>
+				</SectionHeader>
 
 				{ body }
 
