@@ -157,18 +157,22 @@ export default React.createClass( {
 						icon="sync"
 						text={ i18n.translate( 'A new version is available.' ) }>
 						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
-							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ] } } ) }
+							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ].newVersion } } ) }
 						</NoticeAction>
 					</Notice>
 				);
 			}
+
+			const noticeMessage = newVersions.length > 1
+				? i18n.translate( 'A new version is available for %(numberOfSites)s sites', { args: { numberOfSites: newVersions.length } } )
+				: i18n.translate( 'A new version is available for %(siteName)s', { args: { siteName: newVersions[0].title } } );
 			return (
 				<Notice
 					status="is-warning"
 					className="plugin-meta__version-notice"
 					showDismiss={ false }
 					icon="sync"
-					text={ i18n.translate( 'A new version is available in some of your sites' ) }>
+					text={ noticeMessage }>
 					<NoticeAction onClick={ this.handlePluginUpdatesMultiSite }>
 						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: uniq( newVersions ).join( ', ' ) } } ) }
 					</NoticeAction>
@@ -206,18 +210,19 @@ export default React.createClass( {
 	},
 
 	getAvailableNewVersions() {
-		let newVersions = [];
-		this.props.sites.forEach( function( site ) {
+		return this.props.sites.map( site => {
 			if ( ! site.canUpdateFiles ) {
-				return;
+				return null;
 			}
 			if ( site.plugin && site.plugin.update ) {
-				if ( 'error' !== site.plugin.update ) {
-					newVersions.push( site.plugin.update.new_version );
+				if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
+					return {
+						title: site.title,
+						newVersion: site.plugin.update.new_version
+					};
 				}
 			}
-		} );
-		return newVersions;
+		} ).filter( newVersions => newVersions );
 	},
 
 	handlePluginUpdatesSingleSite( event ) {
