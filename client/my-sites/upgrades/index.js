@@ -292,7 +292,7 @@ module.exports = function() {
 		);
 
 		page(
-			'/start-trial/:planName/:domain',
+			'/start-trial/:planName/:site',
 			adTracking.retarget,
 			controller.siteSelection,
 			trialsController.isEligible,

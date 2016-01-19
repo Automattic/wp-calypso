@@ -57,7 +57,7 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_start_trial_page_view', { planName } );
 
 		titleActions.setTitle( i18n.translate( 'Free Trial' ), {
-			siteID: context.params.domain
+			siteID: context.params.site
 		} );
 
 		renderWithReduxStore(
