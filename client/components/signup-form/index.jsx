@@ -279,7 +279,8 @@ export default React.createClass( {
 		if ( ! messages ) {
 			return;
 		}
-		let link = config( 'login_url' ) + '?redirect_to=' + this.props.getRedirectToAfterLoginUrl();
+
+		let link = config( 'login_url' ) + '?redirect_to=' + this.props.getRedirectToAfterLoginUrl;
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
 				link += '&email_address=' + encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );

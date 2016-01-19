@@ -97,7 +97,7 @@ export default React.createClass( {
 		return (
 			<SignupForm
 				{ ...this.props }
-				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
+				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 				disabled={ this.userCreationStarted() }
 				submitting={ this.userCreationStarted() }
 				save={ this.save }
