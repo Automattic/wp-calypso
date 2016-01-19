@@ -37,7 +37,6 @@ ListStore = {
 
 	setIsFetching( val ) {
 		isFetching = val;
-		ListStore.emit( 'change' );
 	}
 };
 

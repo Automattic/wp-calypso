@@ -20,7 +20,7 @@ const initialState = {
 const defaultTagList = List();
 
 function getListTags( state, listId ) {
-	return state.get( 'tags' ).get( parseInt( listId ), defaultTagList ); // eslint-disable-line new-cap
+	return state.get( 'tags' ).get( +listId, defaultTagList ); // eslint-disable-line new-cap
 }
 
 function receiveTags( state, data ) {
@@ -80,12 +80,12 @@ ReaderListsTagsStore.getLastError = function() {
 
 ReaderListsTagsStore.isLastPage = function( listId ) {
 	const state = ReaderListsTagsStore.get();
-	return state.get( 'isLastPage' ).get( parseInt( listId ), false );
+	return state.get( 'isLastPage' ).get( +listId, false );
 };
 
 ReaderListsTagsStore.getCurrentPage = function( listId ) {
 	const state = ReaderListsTagsStore.get();
-	return state.get( 'currentPage' ).get( parseInt( listId ), 0 );
+	return state.get( 'currentPage' ).get( +listId, 0 );
 };
 
 module.exports = ReaderListsTagsStore;

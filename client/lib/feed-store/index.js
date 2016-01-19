@@ -54,7 +54,7 @@ function receiveError( feedId, error ) {
 function receiveFeed( feedId, attributes ) {
 	var feed = feeds[ feedId ];
 	if ( ! feed ) {
-		throw new Error( 'feed for ' + feedId + ' not found' );
+		feed = new FeedRecord( { feed_ID: feedId } );
 	}
 	attributes = pick( attributes, [
 		'feed_ID',

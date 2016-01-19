@@ -26,7 +26,7 @@ import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import smartSetState from 'lib/react-smart-set-state';
 import escapeRegexp from 'escape-string-regexp';
 import FollowingEditSortControls from './sort-controls';
-import FollowingEditHelper from 'reader/following-edit/helper';
+import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 const stats = require( 'reader/stats' );
@@ -122,8 +122,8 @@ const FollowingEdit = React.createClass( {
 			return subscriptions.sortBy( function( subscription ) {
 				const feed = FeedStore.get( subscription.get( 'feed_ID' ) ),
 					site = SiteStore.get( subscription.get( 'blog_ID' ) ),
-					displayUrl = FollowingEditHelper.formatUrlForDisplay( subscription.get( 'URL' ) );
-				return trimLeft( FollowingEditHelper.getFeedTitle( site, feed, displayUrl ).toLowerCase() );
+					displayUrl = FeedDisplayHelper.formatUrlForDisplay( subscription.get( 'URL' ) );
+				return trimLeft( FeedDisplayHelper.getFeedTitle( site, feed, displayUrl ).toLowerCase() );
 			} );
 		}
 

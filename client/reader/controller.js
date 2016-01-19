@@ -487,7 +487,14 @@ module.exports = {
 					owner: context.params.user,
 					slug: context.params.list
 				},
-				tab: 'sites'
+				tab: 'sites',
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				)
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -510,7 +517,14 @@ module.exports = {
 					owner: context.params.user,
 					slug: context.params.list
 				},
-				tab: 'tags'
+				tab: 'tags',
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				)
 			} ),
 			document.getElementById( 'primary' )
 		);
