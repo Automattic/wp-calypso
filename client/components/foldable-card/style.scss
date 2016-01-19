@@ -25,6 +25,17 @@
 		cursor: pointer;
 	}
 
+	&.has-border{
+		.foldable-card__summary,
+		.foldable-card__summary_expanded {
+			margin-right: 48px;
+		}
+
+		.foldable-card__expand {
+			border-left: 1px $gray-light solid;
+		}
+	}
+
 	.foldable-card.is-compact & {
 		padding: 8px 16px;
 		min-height: 40px;

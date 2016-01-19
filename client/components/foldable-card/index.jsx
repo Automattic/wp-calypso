@@ -108,7 +108,8 @@ var FoldableCard = React.createClass( {
 			expandedSummary = this.props.expandedSummary ? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span> : null,
 			headerClickAction = this.props.clickableHeader ? this.getClickAction() : null,
 			headerClasses = classNames( 'foldable-card__header', {
-				'is-clickable': !! this.props.clickableHeader
+				'is-clickable': !! this.props.clickableHeader,
+				'has-border': !! this.props.summary
 			} );
 		return (
 			<div className={ headerClasses } onClick={ headerClickAction }>
