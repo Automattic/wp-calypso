@@ -39,7 +39,11 @@ let InviteAccept = React.createClass( {
 	},
 
 	componentWillMount() {
-		fetchInvite( this.props.siteId, this.props.inviteKey );
+		// The site ID and invite key are required, so only fetch if set
+		if ( this.props.siteId && this.props.inviteKey ) {
+			fetchInvite( this.props.siteId, this.props.inviteKey );
+		}
+
 		userModule.on( 'change', this.refreshUser );
 		InvitesStore.on( 'change', this.refreshInvite );
 	},
@@ -65,6 +69,10 @@ let InviteAccept = React.createClass( {
 			} );
 		}
 		this.setState( { invite, error } );
+	},
+
+	isErrorState() {
+		return this.state.error || ! this.props.siteId || ! this.props.inviteKey;
 	},
 
 	getErrorTitle() {
@@ -112,11 +120,11 @@ let InviteAccept = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'invite-accept', { 'is-error': !! this.state.error } );
+		const classes = classNames( 'invite-accept', { 'is-error': !! this.isErrorState() } );
 		return (
 			<div className={ classes }>
-				{ ! this.state.error && <InviteHeader { ...this.state.invite } /> }
-				{ this.state.error ? this.renderError() : this.renderForm() }
+				{ ! this.isErrorState() && <InviteHeader { ...this.state.invite } /> }
+				{ this.isErrorState() ? this.renderError() : this.renderForm() }
 			</div>
 		);
 	}
