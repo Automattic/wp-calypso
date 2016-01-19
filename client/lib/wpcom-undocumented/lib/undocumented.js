@@ -1173,9 +1173,10 @@ Undocumented.prototype.readSite = function( query, fn ) {
 	this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
 };
 
-Undocumented.prototype.readSiteFeatured = function( siteId, fn ) {
+Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
+	var params = omit( query, [ 'before', 'after' ] );
 	debug( '/read/sites/:site/featured' );
-	this.wpcom.req.get( '/read/sites/' + siteId + '/featured', null, fn );
+	this.wpcom.req.get( '/read/sites/' + siteId + '/featured', params, fn );
 };
 
 Undocumented.prototype.readSitePosts = function( query, fn ) {

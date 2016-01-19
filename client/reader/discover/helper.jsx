@@ -45,6 +45,27 @@ module.exports = {
 		return post.discover_metadata.permalink;
 	},
 
+	hasSource( post ) {
+		return post && this.isDiscoverPost( post ) && !this.isDiscoverSitePick( post );
+	},
+
+	getSourceData: function( post ) {
+		if ( !this.hasSource( post ) ) {
+			return null;
+		}
+
+		const data = get( post, 'discover_metadata.featured_post_wpcom_data' );
+
+		if ( !data ) {
+			return null;
+		}
+
+		return {
+			blogId: data.blog_id,
+			postId: data.post_id
+		};
+	},
+
 	// Given an external or internal URL, return the relevant link props for an <a> tag
 	getLinkProps: function( linkUrl ) {
 		let parsedUrl = url.parse( linkUrl );
