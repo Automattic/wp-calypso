@@ -104,6 +104,20 @@ const hasRestrictedAccess = ( site ) => {
 		};
 	}
 
+	if ( ! sites.hasSiteWithPlugins() ) {
+		pluginPageError = {
+			title: i18n.translate( 'Want to add a store to your site?' ),
+			line: i18n.translate( 'Support for Shopify, Ecwid, and Gumroad is now available for WordPress.com Business.' ),
+			action: i18n.translate( 'Upgrade Now' ),
+			actionURL: '/plans/',
+			illustration: '/calypso/images/drake/drake-whoops.svg',
+			actionCallback: () => {
+				analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
+			},
+			featureExample: getMockBusinessPluginItems()
+		};
+	}
+
 	return pluginPageError;
 }
 
