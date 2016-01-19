@@ -34,17 +34,18 @@ export default React.createClass( {
 
 			if ( ! post || post._state === 'minimal' ) {
 				FeedPostStoreActions.fetchPost( postKey );
-			} else {
-				isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post );
+				return { post };
+			}
 
-				let isDiscoverSitePick = post && isDiscoverPost && DiscoverHelper.isDiscoverSitePick( post );
+			isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post );
 
-				if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
-					originalPost = FeedPostStore.get( {
-						blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
-						postId: post.discover_metadata.featured_post_wpcom_data.post_id
-					} );
-				}
+			let isDiscoverSitePick = post && isDiscoverPost && DiscoverHelper.isDiscoverSitePick( post );
+
+			if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
+				originalPost = FeedPostStore.get( {
+					blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
+					postId: post.discover_metadata.featured_post_wpcom_data.post_id
+				} );
 			}
 
 			return {
