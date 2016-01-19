@@ -232,6 +232,10 @@ module.exports = React.createClass( {
 			return null;
 		}
 
+		if ( ! this.props.sites.hasSiteWithPlugins() ) {
+			return null;
+		}
+
 		if ( ! config.isEnabled( 'manage/plugins' ) && site.options ) {
 			pluginsLink = site.options.admin_url + 'plugins.php';
 		}
