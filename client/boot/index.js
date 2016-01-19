@@ -11,7 +11,8 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	injectTapEventPlugin = require( 'react-tap-event-plugin' );
+	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
+	localForage = require( 'localforage' );
 
 /**
  * Internal dependencies
@@ -161,74 +162,77 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	reduxStore = createReduxStore();
-
-	if ( user.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( user, superProps );
-
-		// Set current user in Redux store
-		reduxStore.dispatch( receiveUser( user.get() ) );
-		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-
-		// Create layout instance with current user prop
-		Layout = require( 'layout' );
-
-		layoutElement = React.createElement( Layout, {
-			user: user,
-			sites: sites,
-			focus: layoutFocus,
-			nuxWelcome: nuxWelcome,
-			translatorInvitation: translatorInvitation
+	localForage.getItem( 'redux-state' ).then( function( initialState ) {
+		reduxStore = createReduxStore( null, initialState );
+		reduxStore.subscribe( function() {
+			localForage.setItem( 'redux-state', reduxStore.getState() );
 		} );
-	} else {
-		analytics.setSuperProps( superProps );
+		if ( user.get() ) {
+			// When logged in the analytics module requires user and superProps objects
+			// Inject these here
+			analytics.initialize( user, superProps );
 
-		if ( config.isEnabled( 'oauth' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-oauth' );
-		} else if ( startsWith( window.location.pathname, '/design' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-design' );
+			// Set current user in Redux store
+			reduxStore.dispatch( receiveUser( user.get() ) );
+			reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
+
+			// Create layout instance with current user prop
+			Layout = require( 'layout' );
+
+			layoutElement = React.createElement( Layout, {
+				user: user,
+				sites: sites,
+				focus: layoutFocus,
+				nuxWelcome: nuxWelcome,
+				translatorInvitation: translatorInvitation
+			} );
 		} else {
-			LoggedOutLayout = require( 'layout/logged-out' );
+			analytics.setSuperProps( superProps );
+
+			if ( config.isEnabled( 'oauth' ) ) {
+				LoggedOutLayout = require( 'layout/logged-out-oauth' );
+			} else if ( startsWith( window.location.pathname, '/design' ) ) {
+				LoggedOutLayout = require( 'layout/logged-out-design' );
+			} else {
+				LoggedOutLayout = require( 'layout/logged-out' );
+			}
+
+			layoutElement = React.createElement( LoggedOutLayout );
 		}
 
-		layoutElement = React.createElement( LoggedOutLayout );
-	}
+		if ( config.isEnabled( 'perfmon' ) ) {
+			// Record time spent watching slowly-flashing divs
+			perfmon();
+		}
 
-	if ( config.isEnabled( 'perfmon' ) ) {
-		// Record time spent watching slowly-flashing divs
-		perfmon();
-	}
+		layout = renderWithReduxStore(
+			layoutElement,
+			document.getElementById( 'wpcom' ),
+			reduxStore
+		);
 
-	layout = renderWithReduxStore(
-		layoutElement,
-		document.getElementById( 'wpcom' ),
-		reduxStore
-	);
+		debug( 'Main layout rendered.' );
 
-	debug( 'Main layout rendered.' );
+		// If `?sb` or `?sp` are present on the path set the focus of layout
+		// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
+		if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
+			layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
+			layoutFocus.set( layoutSection );
+			window.history.replaceState( null, document.title, window.location.pathname );
+		}
 
-	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
-	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
-		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
-		layoutFocus.set( layoutSection );
-		window.history.replaceState( null, document.title, window.location.pathname );
-	}
+		setUpContext( layout, reduxStore );
+		page( '*', require( 'lib/route/normalize' ) );
 
-	setUpContext( layout, reduxStore );
-	page( '*', require( 'lib/route/normalize' ) );
+		// warn against navigating from changed, unsaved forms
+		page( '*', require( 'lib/mixins/protect-form' ).checkFormHandler );
 
-	// warn against navigating from changed, unsaved forms
-	page( '*', require( 'lib/mixins/protect-form' ).checkFormHandler );
+		page( '*', function( context, next ) {
+			var path = context.pathname;
 
-	page( '*', function( context, next ) {
-		var path = context.pathname;
-
-		// Bypass this global handler for legacy routes
-		// to avoid bumping stats and changing focus to the content
-		if ( /.php$/.test( path ) ||
+			// Bypass this global handler for legacy routes
+			// to avoid bumping stats and changing focus to the content
+			if ( /.php$/.test( path ) ||
 				/^\/?$/.test( path ) && ! config.isEnabled( 'reader' ) ||
 				/^\/my-stats/.test( path ) ||
 				/^\/(post\b|page\b)/.test( path ) && ! config.isEnabled( 'post-editor' ) ||
@@ -238,117 +242,119 @@ function boot() {
 				/^\/plans/.test( path ) && ! config.isEnabled( 'manage/plans' ) ||
 				/^\/me/.test( path ) && ! /^\/me\/billing/.test( path ) &&
 				! /^\/me\/next/.test( path ) && ! config.isEnabled( 'me/my-profile' ) ) {
-			return next();
-		}
-
-		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			layoutFocus.next();
-		}
-
-		// If `?welcome` is present show the welcome message
-		if ( context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
-			// show welcome message, persistent for full sized screens
-			nuxWelcome.setWelcome( viewport.isDesktop() );
-		} else {
-			nuxWelcome.clearTempWelcome();
-		}
-
-		// Bump general stat tracking overall Newdash usage
-		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
-
-		next();
-	} );
-
-	page( '*', function( context, next ) {
-		if ( '/me/account' !== context.path && user.get().phone_account ) {
-			page( '/me/account' );
-		}
-
-		next();
-	} );
-
-	page( '*', function( context, next ) {
-		emailVerification.renderNotice( context );
-		next();
-	} );
-
-	if ( config.isEnabled( 'oauth' ) ) {
-		// Forces OAuth users to the /login page if no token is present
-		page( '*', require( 'auth/controller' ).checkToken );
-	}
-
-	// Load the application modules for the various sections and features
-	sections.load();
-
-	// delete any lingering local storage data from signup
-	if ( ! startsWith( window.location.pathname, '/start' ) ) {
-		[ 'signupProgress', 'signupDependencies' ].forEach( store.remove );
-	}
-
-	validSections = sections.get().reduce( function( acc, section ) {
-		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
-	}, [] );
-
-	if ( ! user.get() ) {
-		// Dead-end the sections the user can't access when logged out
-		page( '*', function( context, next ) {
-			var isValidSection = some( validSections, function( validPath ) {
-				return startsWith( context.path, validPath );
-			} );
-
-			if ( '/' === context.path && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-				page.redirect( '/devdocs/start' );
-				return;
+				return next();
 			}
 
-			if ( isValidSection ) {
-				next();
+			// Focus UI on the content on page navigation
+			if ( ! config.isEnabled( 'code-splitting' ) ) {
+				layoutFocus.next();
 			}
+
+			// If `?welcome` is present show the welcome message
+			if ( context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
+				// show welcome message, persistent for full sized screens
+				nuxWelcome.setWelcome( viewport.isDesktop() );
+			} else {
+				nuxWelcome.clearTempWelcome();
+			}
+
+			// Bump general stat tracking overall Newdash usage
+			analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
+
+			next();
 		} );
-	}
 
-	page( '*', function( context, next ) {
-		// Reset the selected site before each route is executed. This needs to
-		// occur after the sections routes execute to avoid a brief flash where
-		// sites are reset but the next section is waiting to be loaded.
-		if ( ! route.getSiteFragment( context.path ) && sites.getSelectedSite() ) {
-			sites.resetSelectedSite();
+		page( '*', function( context, next ) {
+			if ( '/me/account' !== context.path && user.get().phone_account ) {
+				page( '/me/account' );
+			}
+
+			next();
+		} );
+
+		page( '*', function( context, next ) {
+			emailVerification.renderNotice( context );
+			next();
+		} );
+
+		if ( config.isEnabled( 'oauth' ) ) {
+			// Forces OAuth users to the /login page if no token is present
+			page( '*', require( 'auth/controller' ).checkToken );
 		}
 
-		next();
+		// Load the application modules for the various sections and features
+		sections.load();
+
+		// delete any lingering local storage data from signup
+		if ( ! startsWith( window.location.pathname, '/start' ) ) {
+			[ 'signupProgress', 'signupDependencies' ].forEach( store.remove );
+		}
+
+		validSections = sections.get().reduce( function( acc, section ) {
+			return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
+		}, [] );
+
+		if ( ! user.get() ) {
+			// Dead-end the sections the user can't access when logged out
+			page( '*', function( context, next ) {
+				var isValidSection = some( validSections, function( validPath ) {
+					return startsWith( context.path, validPath );
+				} );
+
+				if ( '/' === context.path && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+					page.redirect( '/devdocs/start' );
+					return;
+				}
+
+				if ( isValidSection ) {
+					next();
+				}
+			} );
+		}
+
+		page( '*', function( context, next ) {
+			// Reset the selected site before each route is executed. This needs to
+			// occur after the sections routes execute to avoid a brief flash where
+			// sites are reset but the next section is waiting to be loaded.
+			if ( ! route.getSiteFragment( context.path ) && sites.getSelectedSite() ) {
+				sites.resetSelectedSite();
+			}
+
+			next();
+		} );
+
+		require( 'my-sites' )();
+
+		// clear notices
+		page( '*', function( context, next ) {
+			context.store.dispatch( setRouteAction( context.pathname ) );
+			next();
+		} );
+
+		// clear notices
+		//TODO: remove this one when notices are reduxified - it is for old notices
+		page( '*', require( 'notices' ).clearNoticesOnNavigation );
+
+		if ( config.isEnabled( 'olark' ) ) {
+			require( 'lib/olark' );
+		}
+
+		if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
+			require( 'lib/keyboard-shortcuts/global' )( sites );
+		}
+
+		if ( config.isEnabled( 'network-connection' ) ) {
+			require( 'lib/network-connection' ).init();
+		}
+
+		if ( config.isEnabled( 'desktop' ) ) {
+			require( 'lib/desktop' ).init();
+		}
+
+		detectHistoryNavigation.start();
+		page.start();
+
 	} );
-
-	require( 'my-sites' )();
-
-	// clear notices
-	page( '*', function( context, next ) {
-		context.store.dispatch( setRouteAction( context.pathname ) );
-		next();
-	} );
-
-	// clear notices
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', require( 'notices' ).clearNoticesOnNavigation );
-
-	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' );
-	}
-
-	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		require( 'lib/keyboard-shortcuts/global' )( sites );
-	}
-
-	if ( config.isEnabled( 'network-connection' ) ) {
-		require( 'lib/network-connection' ).init();
-	}
-
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init();
-	}
-
-	detectHistoryNavigation.start();
-	page.start();
 }
 
 window.AppBoot = function() {
