@@ -42,6 +42,20 @@ export default {
 					}
 				];
 				break;
+			case 'viewer':
+				return [
+					i18n.translate(
+						'You are now a viewer of: {{site/}}', {
+							components: { site }
+						}
+					),
+					{
+						button: i18n.translate( 'Visit Site' ),
+						href: get( invite, 'site.URL' ),
+						displayOnNextPage
+					}
+				];
+				break;
 			case 'administrator':
 				return [
 					<div>
