@@ -4,7 +4,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import i18n from 'lib/mixins/i18n';
-import _some from 'lodash/collection/some';
+import some from 'lodash/collection/some';
+import uniq from 'lodash/array/uniq';
 
 /**
  * Internal dependencies
@@ -169,7 +170,7 @@ export default React.createClass( {
 					icon="sync"
 					text={ i18n.translate( 'A new version is available in some of your sites' ) }>
 					<NoticeAction onClick={ this.handlePluginUpdatesMultiSite }>
-						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions.join( ', ' ) } } ) }
+						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: uniq( newVersions ).join( ', ' ) } } ) }
 					</NoticeAction>
 				</Notice>
 			);
@@ -191,7 +192,7 @@ export default React.createClass( {
 		}
 
 		const siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
-		return _some( this.props.plugin.compatibility, compatibleVersion => {
+		return some( this.props.plugin.compatibility, compatibleVersion => {
 			return compatibleVersion.indexOf( siteVersion ) === 0;
 		} );
 	},
