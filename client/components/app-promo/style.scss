@@ -12,14 +12,14 @@
 
 .app-promo .app-promo__icon {
 	position: absolute;
-	top: 10px;
+	top: 15px;
 	left: 20px;
 }
 
 .app-promo .app-promo__dismiss {
 	position: absolute;
-	right: 20px;
-	top: 10px;
+	right: 17px;
+	top: 12px;
 	cursor: pointer;
 
 	svg {
@@ -30,7 +30,7 @@
 .app-promo .app-promo__link {
 	display: block;
 	margin: 0 10px;
-	padding: 10px 30px 10px 50px;
+	padding: 8px 34px 8px 50px;
 	background-color: $white;
 	color: $blue-medium;
 	font-size: 12px;
