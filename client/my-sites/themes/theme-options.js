@@ -42,7 +42,9 @@ const buttonOptions = {
 	},
 	support: {
 		hasUrl: true,
-		isHidden: site => site && site.jetpack // We don't know where support docs for a given theme on a self-hosted WP install are.
+		// We don't know where support docs for a given theme on a self-hosted WP install are,
+		// and free themes don't have support docs.
+		isHidden: ( site, theme ) => ( site && site.jetpack ) || ! Helper.isPremium( theme )
 	},
 };
 
