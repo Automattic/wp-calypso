@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 				<div
 					className="devdocs__doc-content"
 					ref="body"
-					dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }}
+					dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }} //eslint-disable-line react/no-danger
 				/>
 			</div>
 		);

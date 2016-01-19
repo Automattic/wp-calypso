@@ -20,7 +20,7 @@ export default React.createClass( {
 			const caption = markup.caption( item );
 
 			if ( null === caption ) {
-				return <div key={ item.ID } dangerouslySetInnerHTML={ { __html: markup.get( item ) } } />;
+				return <div key={ item.ID } dangerouslySetInnerHTML={ { __html: markup.get( item ) } } />; //eslint-disable-line react/no-danger
 			}
 
 			return React.cloneElement( caption, { key: item.ID } );

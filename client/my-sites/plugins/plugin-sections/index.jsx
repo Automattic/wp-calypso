@@ -152,6 +152,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
+		/*eslint-disable react/no-danger*/
 		return (
 			<div className="plugin-sections">
 				<PluginCardHeader>
@@ -182,5 +183,6 @@ module.exports = React.createClass( {
 				</Card>
 			</div>
 		);
+		/*eslint-enable react/no-danger*/
 	}
 } );

@@ -24,10 +24,12 @@ const PostCommentContent = React.createClass( {
 			return <div className="comment__content">{ this.props.content }</div>;
 		}
 
+		/*eslint-disable react/no-danger*/
 		return (
 			<div className="comment__content" dangerouslySetInnerHTML={{ __html: this.props.content }}>
 			</div>
 		);
+		/*eslint-enable react/no-danger*/
 	}
 } );
 
