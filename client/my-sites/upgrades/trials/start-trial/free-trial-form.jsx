@@ -48,12 +48,12 @@ const FreeTrialForm = React.createClass( {
 		} );
 	},
 
-	isLoading: function() {
+	isCartLoading: function() {
 		return ! cartItems.hasFreeTrial( this.props.cart );
 	},
 
 	render: function() {
-		if ( this.isLoading() ) {
+		if ( this.isCartLoading() ) {
 			return (
 				<FreeTrialConfirmationBox.Placeholder />
 			);

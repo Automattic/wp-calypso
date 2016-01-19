@@ -41,7 +41,7 @@ const FreeTrialCartData = React.createClass( {
 	},
 
 	updateCart: function() {
-		if ( this.isLoading() ) {
+		if ( this.isDataLoading() ) {
 			return;
 		}
 
@@ -63,7 +63,7 @@ const FreeTrialCartData = React.createClass( {
 		this.setState( { cart: newCart } );
 	},
 
-	isLoading: function() {
+	isDataLoading: function() {
 		const isLoadingPlan = ! this.props.planName,
 			isLoadingSites = ! this.props.sites.getSelectedSite(),
 			isLoadingProducts = ! this.props.products.hasLoadedFromServer();
