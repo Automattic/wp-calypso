@@ -7,6 +7,7 @@ import Gridicon from 'components/gridicon';
 
 import analytics from 'analytics';
 import store from 'store';
+import userUtils from 'lib/user/utils';
 
 export default React.createClass( {
 
@@ -54,6 +55,11 @@ export default React.createClass( {
 
 	render: function() {
 		if ( this.state.dismissed ) {
+			return null;
+		}
+
+		// for initial test only show to english
+		if ( userUtils.getLocaleSlug() !== 'en' ) {
 			return null;
 		}
 
