@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	config = require( 'config' ),
 	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
 	classNames = require( 'classnames' ),
@@ -13,6 +12,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var observe = require( 'lib/mixins/data-observe' ),
+	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	PlanFeatures = require( 'components/plans/plan-features' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
@@ -108,7 +108,7 @@ var PlansCompare = React.createClass( {
 				? this.props.sitePlans.data.some( property( 'canStartTrial' ) )
 				: false;
 
-		if ( ! config.isEnabled( 'upgrades/free-trials' ) ) {
+		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
 			return false;
 		}
 
