@@ -85,7 +85,8 @@
 		"settings/security/monitor": true,
 		"settings/security/scan": false,
 		"ad-tracking": false,
-		"perfmon": true
+		"perfmon": true,
+		"accept-invite": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",
