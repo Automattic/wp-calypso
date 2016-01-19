@@ -166,9 +166,9 @@ const ManagePurchase = React.createClass( {
 									cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' )
 								},
 								components: {
-									a: canEditPaymentDetails() ?
-										<a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } /> :
-										<span />
+									a: canEditPaymentDetails( purchase )
+										? <a href={ paths.editCardDetails( this.props.selectedSite.slug, id, creditCard.id ) } />
+										: <span />
 								}
 							}
 						)
