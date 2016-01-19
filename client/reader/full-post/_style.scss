@@ -155,40 +155,37 @@
 	position: relative;
 
 	font-size: 16px;
-	line-height: 1.8;
+	line-height: 1.7;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
 	h1 {
 		font-size: 28px;
-		line-height: 1.4;
 		font-weight: 700;
 		margin: 0 0 16px 0;
 	}
 
 	h2 {
 		font-size: 24px;
-		line-height: 1.2;
 		font-weight: 700;
 		margin: 0 0 8px 0;
 	}
 
 	h3 {
 		font-size: 20px;
-		line-height: 1.2;
 		font-weight: 700;
 		margin: 0 0 8px 0;
 	}
 
 	h4 {
 		font-size: 18px;
-		line-height: 1.2;
 		font-weight: 700;
 		margin: 0 0 8px 0;
 	}
 
 	p {
 		margin: 0 0 24px 0;
+
 		&:last-child {
 			margin-bottom: 0;
 		}
