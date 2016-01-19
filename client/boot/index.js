@@ -162,8 +162,9 @@ function boot() {
 
 	translatorJumpstart.init();
 
+	localForage.setDriver( localForage.LOCALSTORAGE );
 	localForage.getItem( 'redux-state' ).then( function( initialState ) {
-		reduxStore = createReduxStore( null, initialState );
+		reduxStore = createReduxStore( initialState || {} );
 		reduxStore.subscribe( function() {
 			localForage.setItem( 'redux-state', reduxStore.getState() );
 		} );
