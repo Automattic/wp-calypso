@@ -68,6 +68,10 @@ function unicodeToString( character ) {
 function preventWidows( text, wordsToKeep ) {
 	var words, endWords;
 
+	if ( typeof text !== 'string' ) {
+		return text;
+	}
+
 	text = text && trim( text );
 	if ( ! text ) {
 		return text;
