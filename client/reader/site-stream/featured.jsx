@@ -27,8 +27,7 @@ export default React.createClass( {
 	getStateFromStores( store ) {
 		store = store || this.props.store;
 
-		let postKeys = store.get();
-		let posts = postKeys.map( postKey => {
+		let posts = store.get().map( postKey => {
 			let post = FeedPostStore.get( postKey ),
 				originalPost,
 				isDiscoverPost;
