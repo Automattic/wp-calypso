@@ -20,8 +20,8 @@ export default React.createClass( {
 		var has_dismissed = store.get( 'desktop_promo_dismissed' );
 		var promo_options = [
 			{ promo_code: 'a0001', message: 'WordPress.com your way  — apps now available in three delicious flavors — desktop, iOS, and Android.' },
-			{ promo_code: 'a0002', message: 'Get WordPress.com apps for desktop and mobile: download now!' },
-			{ promo_code: 'a0003', message: 'WordPress.com apps now available for desktop and mobile: download now!' },
+			{ promo_code: 'a0002', message: 'Get WordPress.com apps for desktop and mobile.' },
+			{ promo_code: 'a0003', message: 'WordPress.com apps now available for desktop and mobile.' },
 			{ promo_code: 'a0004', message: 'WordPress.com wherever you are — apps now available for desktop and mobile.' },
 			{ promo_code: 'a0005', message: 'WordPress.com at your fingertips — download apps for desktop and mobile.' },
 			{ promo_code: 'a0006', message: 'Blog anywhere, any time: download WordPress.com apps for desktop and mobile.' }
