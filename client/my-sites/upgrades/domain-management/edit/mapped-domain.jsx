@@ -7,14 +7,10 @@ const React = require( 'react' );
  * Internal dependencies
  */
 const analyticsMixin = require( 'lib/mixins/analytics' ),
-	config = require( 'config' ),
 	Card = require( 'components/card/compact' ),
 	Header = require( './card/header' ),
 	Property = require( './card/property' ),
-	SubscriptionSettings = require( './card/subscription-settings' ),
-	VerticalNav = require( 'components/vertical-nav' ),
-	VerticalNavItem = require( 'components/vertical-nav/item' ),
-	paths = require( 'my-sites/upgrades/paths' );
+	SubscriptionSettings = require( './card/subscription-settings' );
 
 const MappedDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -45,7 +41,6 @@ const MappedDomain = React.createClass( {
 		return (
 			<div>
 				{ this.getDomainDetailsCard() }
-				{ this.getVerticalNav() }
 			</div>
 		);
 	},
@@ -66,45 +61,6 @@ const MappedDomain = React.createClass( {
 						onClick={ this.handlePaymentSettingsClick } />
 				</Card>
 			</div>
-		);
-	},
-
-	getVerticalNav() {
-		return (
-			<VerticalNav>
-				{ this.emailNavItem() }
-				{ this.dnsRecordsNavItem() }
-			</VerticalNav>
-		);
-	},
-
-	emailNavItem() {
-		const path = paths.domainManagementEmail(
-			this.props.selectedSite.domain,
-			this.props.domain.name
-		);
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.translate( 'Email' ) }
-			</VerticalNavItem>
-		);
-	},
-
-	dnsRecordsNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-			return null;
-		}
-
-		const path = paths.domainManagementDns(
-			this.props.selectedSite.domain,
-			this.props.domain.name
-		);
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.translate( 'DNS Records' ) }
-			</VerticalNavItem>
 		);
 	}
 } );
