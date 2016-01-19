@@ -373,7 +373,7 @@ export default React.createClass( {
 
 	termsOfServiceLink() {
 		return (
-			<p className='signup-form__terms-of-service-link'>{
+			<p className="signup-form__terms-of-service-link">{
 				this.translate(
 					'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
 					{
