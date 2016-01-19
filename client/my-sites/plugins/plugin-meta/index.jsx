@@ -241,8 +241,9 @@ export default React.createClass( {
 	handlePluginUpdatesMultiSite( event ) {
 		event.preventDefault();
 		this.props.sites.forEach( ( site ) => {
-			if ( site.canUpdateFiles && site.plugin && site.plugin.update && 'error' !== site.plugin.update ) {
-				PluginsActions.updatePlugin( site, site.plugin );
+			const { plugin } = site;
+			if ( site.canUpdateFiles && plugin.update && 'error' !== plugin.update && plugin.update.new_version ) {
+				PluginsActions.updatePlugin( site, plugin );
 				PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
 			}
 		} );
