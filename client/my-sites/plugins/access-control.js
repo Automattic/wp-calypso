@@ -66,11 +66,11 @@ const hasRestrictedAccess = ( site ) => {
 
 	site = site || sites.getSelectedSite();
 
-	const WpCompluginPageError = {
+	const wpcomPluginPageError = {
 		title: i18n.translate( 'Want to add a store to your site?' ),
 		line: i18n.translate( 'Support for Shopify, Ecwid, and Gumroad is now available for WordPress.com Business.' ),
 		action: i18n.translate( 'Upgrade Now' ),
-		actionURL: '/plans/' + site.slug,
+		actionURL: '/plans/',
 		illustration: '/calypso/images/drake/drake-whoops.svg',
 		actionCallback: () => {
 			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
@@ -103,12 +103,12 @@ const hasRestrictedAccess = ( site ) => {
 	}
 
 	if ( abtest( 'businessPluginsNudge' ) === 'drake' && hasErrorCondition( site, 'noBusinessPlan' ) ) {
-		pluginPageError = WpCompluginPageError;
+		pluginPageError = wpcomPluginPageError;
+		pluginPageError.actionUrl = '/plans/' + site.slug;
 	}
 
 	if ( ! sites.hasSiteWithPlugins() && ! site ) {
-		pluginPageError = WpCompluginPageError;
-		pluginPageError.actionUrl = '/plans/';
+		pluginPageError = wpcomPluginPageError;
 	}
 
 	return pluginPageError;
