@@ -91,8 +91,9 @@ export function acceptInvite( invite, callback ) {
 			} else {
 				analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 			}
-
-			callback( error, data );
+			if ( typeof callback === 'function' ) {
+				callback( error, data );
+			}
 		}
 	);
 }
