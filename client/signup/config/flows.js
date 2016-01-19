@@ -48,7 +48,7 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'themes', 'site', 'plans', 'user' ],
 		destination: getCheckoutDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2015-09-03'
