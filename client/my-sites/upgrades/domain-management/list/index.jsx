@@ -9,6 +9,7 @@ import times from 'lodash/utility/times';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
+import config from 'config';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
@@ -66,6 +67,10 @@ const List = React.createClass( {
 	},
 
 	addDomainButton() {
+		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
+			return null;
+		}
+
 		return (
 			<Button
 				primary

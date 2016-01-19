@@ -61,6 +61,7 @@
 		"reader/discover": true,
 
 		"upgrades/checkout": true,
+		"upgrades/credit-cards": true,
 		"upgrades/domain-management/contacts-privacy": true,
 		"upgrades/domain-management/email": true,
 		"upgrades/domain-management/list": true,
@@ -85,7 +86,6 @@
 		"me/security/checkup": true,
 		"me/notifications": true,
 		"me/next-steps": true,
-		"me/credit-cards": true,
 		"me/find-friends": false,
 		"me/trophies": false,
 		"help": true,

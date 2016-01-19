@@ -7,7 +7,8 @@ const React = require( 'react' ),
 /**
  * Internal dependencies
  */
-const Main = require( 'components/main' ),
+const config = require( 'config' ),
+	Main = require( 'components/main' ),
 	Header = require( 'my-sites/upgrades/domain-management/components/header' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	AddGoogleAppsCard = require( './add-google-apps-card' ),
@@ -95,17 +96,25 @@ const Email = React.createClass( {
 	},
 
 	emptyContent() {
+		let props = {
+			title: this.translate( "You don't have any domains yet." ),
+			line: this.translate(
+				'Add a domain to your site to make it easier ' +
+				'to remember and easier to share, and get access to email ' +
+				'forwarding, Google Apps for Work, and other email services.'
+			),
+			illustration: '/calypso/images/drake/drake-whoops.svg'
+		};
+
+		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
+			props = Object.assign( props, {
+				action: this.translate( 'Add a Custom Domain' ),
+				actionURL: '/domains/add/' + this.props.selectedSite.domain
+			} );
+		}
+
 		return (
-			<EmptyContent
-				title={ this.translate( "You don't have any domains {{em}}yet{{/em}}.", {
-					components: { em: <em /> }
-				} ) }
-				line={ this.translate( 'Add a domain to your site to make it easier ' +
-					'to remember and easier to share, and get access to email ' +
-					'forwarding, Google Apps for Work, and other email services.' ) }
-				action={ this.translate( 'Add a Custom Domain' ) }
-				actionURL={ '/domains/add/' + this.props.selectedSite.domain }
-				illustration="/calypso/images/drake/drake-whoops.svg" />
+			<EmptyContent { ...props } />
 		);
 	},
 

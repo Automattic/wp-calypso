@@ -16,7 +16,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
+var config = require( 'config' ),
+	SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' ),
 	upgradesPaths = require( 'my-sites/upgrades/paths' ),
@@ -171,6 +172,10 @@ var UpgradesNavigation = React.createClass( {
 	},
 
 	cartToggleButton: function() {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
 		return (
 			<PopoverCart
 				cart={ this.props.cart }

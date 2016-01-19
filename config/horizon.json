@@ -60,6 +60,7 @@
 		"reader/recommendations": true,
 
 		"upgrades/checkout": true,
+		"upgrades/credit-cards": true,
 
 		"notifications2beta": true,
 		"muse": true,
@@ -75,7 +76,6 @@
 		"me/security": true,
 		"me/notifications": true,
 		"me/next-steps": true,
-		"me/credit-cards": true,
 		"me/find-friends": false,
 		"me/trophies": false,
 		"help": true,
