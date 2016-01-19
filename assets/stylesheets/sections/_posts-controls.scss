@@ -57,8 +57,6 @@
 	}
 }
 
-
-
 .post-controls__more-options {
 	transform: scale(0);
 	opacity: 0;
@@ -80,4 +78,8 @@
 			pointer-events: auto;
 		}
 	}
+}
+
+.post-controls__trash.is-scary {
+	color: $alert-red;
 }

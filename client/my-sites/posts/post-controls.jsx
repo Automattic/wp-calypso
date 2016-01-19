@@ -152,8 +152,8 @@ module.exports = React.createClass( {
 		if ( utils.userCan( 'delete_post', post ) ) {
 			if ( post.status === 'trash') {
 				availableControls.push( {
-					text: this.translate( 'Delete' ),
-					className: 'post-controls__trash',
+					text: this.translate( 'Delete Permanently' ),
+					className: 'post-controls__trash is-scary',
 					onClick: this.props.onDelete,
 					icon: 'trash'
 				} );
