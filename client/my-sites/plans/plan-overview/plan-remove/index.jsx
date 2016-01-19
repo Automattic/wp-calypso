@@ -37,8 +37,6 @@ const PlanRemove = React.createClass( {
 		this.setState( { isCanceling: true } );
 
 		wpcom.undocumented().cancelPlanTrial( this.props.plan.id, ( error, data ) => {
-			closeDialog();
-
 			if ( data && data.success ) {
 				this.props.store.dispatch( fetchSitePlansCompleted( this.props.selectedSite.ID, data.plans ) );
 
@@ -48,6 +46,8 @@ const PlanRemove = React.createClass( {
 
 				page( paths.plansDestination( this.props.selectedSite.slug, 'free-trial-canceled' ) );
 			} else {
+				closeDialog();
+
 				notices.error( error.message || this.translate( 'There was a problem removing the plan. Please try again later or contact support.' ) );
 			}
 		} );
