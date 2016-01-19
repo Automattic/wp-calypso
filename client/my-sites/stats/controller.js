@@ -175,16 +175,16 @@ module.exports = {
 			siteCreated = i18n.moment( site.options.created_at );
 		}
 
-		allTimeList = new StatsList( { siteID: siteId, statType: 'stats' } );
-		streakList = new StatsList( { siteID: siteId, statType: 'statsStreak', startDate: startDate, endDate: endDate, max: 3000 } );
-		statSummaryList = new StatsSummaryList( { period: 'day', sites: summarySites } );
-		insightsList = new StatsList( { siteID: siteId, statType: 'statsInsights' } );
-		commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: site.slug } );
-		tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: site.slug } );
-		publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: site.slug } );
-		wpcomFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: site.slug, max: 7 } );
-		emailFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'email', domain: site.slug, max: 7 } );
-		commentFollowersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: site.slug, max: 7 } );
+		allTimeList = new StatsList( { context, siteID: siteId, statType: 'stats' } );
+		streakList = new StatsList( { context, siteID: siteId, statType: 'statsStreak', startDate: startDate, endDate: endDate, max: 3000 } );
+		statSummaryList = new StatsSummaryList( { context, period: 'day', sites: summarySites } );
+		insightsList = new StatsList( { context, siteID: siteId, statType: 'statsInsights' } );
+		commentsList = new StatsList( { context, siteID: siteId, statType: 'statsComments' } );
+		tagsList = new StatsList( { context, siteID: siteId, statType: 'statsTags' } );
+		publicizeList = new StatsList( { context, siteID: siteId, statType: 'statsPublicize' } );
+		wpcomFollowersList = new StatsList( { context, siteID: siteId, statType: 'statsFollowers', type: 'wpcom', max: 7 } );
+		emailFollowersList = new StatsList( { context, siteID: siteId, statType: 'statsFollowers', type: 'email', max: 7 } );
+		commentFollowersList = new StatsList( { context, siteID: siteId, statType: 'statsCommentFollowers', max: 7 } );
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
@@ -451,21 +451,21 @@ module.exports = {
 			}
 
 			followList = new FollowList();
-			activeTabVisitsList = new StatsList( { siteID: siteId, statType: 'statsVisits', unit: activeFilter.period, quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields } );
-			visitsList = new StatsList( { siteID: siteId, statType: 'statsVisits', unit: activeFilter.period, quantity: chartQuantity, date: chartEndDate, stat_fields: 'views,visitors,likes,comments,post_titles' } );
-			postsPagesList = new StatsList( { siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			referrersList = new StatsList( { siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			clicksList = new StatsList( { siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			authorsList = new StatsList( { siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			countriesList = new StatsList( { siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			videoPlaysList = new StatsList( { siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			searchTermsList = new StatsList( { siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: currentSite.slug } );
-			commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: currentSite.slug } );
-			wpcomFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: currentSite.slug, max: 7 } );
-			emailFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'email', domain: currentSite.slug, max: 7 } );
-			commentFollowersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: currentSite.slug, max: 7 } );
-			publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: currentSite.slug } );
+			activeTabVisitsList = new StatsList( { context, siteID: siteId, statType: 'statsVisits', unit: activeFilter.period, quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields } );
+			visitsList = new StatsList( { context, siteID: siteId, statType: 'statsVisits', unit: activeFilter.period, quantity: chartQuantity, date: chartEndDate, stat_fields: 'views,visitors,likes,comments,post_titles' } );
+			postsPagesList = new StatsList( { context, siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate } );
+			referrersList = new StatsList( { context, siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate } );
+			clicksList = new StatsList( { context, siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate } );
+			authorsList = new StatsList( { context, siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate } );
+			countriesList = new StatsList( { context, siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate } );
+			videoPlaysList = new StatsList( { context, siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate } );
+			searchTermsList = new StatsList( { context, siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate } );
+			tagsList = new StatsList( { context, siteID: siteId, statType: 'statsTags' } );
+			commentsList = new StatsList( { context, siteID: siteId, statType: 'statsComments' } );
+			wpcomFollowersList = new StatsList( { context, siteID: siteId, statType: 'statsFollowers', type: 'wpcom', max: 7 } );
+			emailFollowersList = new StatsList( { context, siteID: siteId, statType: 'statsFollowers', type: 'email', max: 7 } );
+			commentFollowersList = new StatsList( { context, siteID: siteId, statType: 'statsCommentFollowers', max: 7 } );
+			publicizeList = new StatsList( { context, siteID: siteId, statType: 'statsPublicize' } );
 
 			siteComponent = SiteStatsComponent;
 
@@ -583,36 +583,36 @@ module.exports = {
 			switch ( context.params.module ) {
 
 				case 'posts':
-					visitsList = new StatsList( { statType: 'statsVisits', unit: activeFilter.period, siteID: siteId, quantity: 10, date: endDate } );
-					summaryList = new StatsList( { statType: 'statsTopPosts', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					visitsList = new StatsList( { context, statType: 'statsVisits', unit: activeFilter.period, siteID: siteId, quantity: 10, date: endDate } );
+					summaryList = new StatsList( { context, statType: 'statsTopPosts', siteID: siteId, period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'referrers':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'clicks':
-					summaryList = new StatsList( { statType: 'statsClicks', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, statType: 'statsClicks', siteID: siteId, period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'countryviews':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'authors':
-					summaryList = new StatsList( { statType: 'statsTopAuthors', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, statType: 'statsTopAuthors', siteID: siteId, period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'videoplays':
-					summaryList = new StatsList( { statType: 'statsVideoPlays', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, statType: 'statsVideoPlays', siteID: siteId, period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'videodetails':
-					summaryList = new StatsList( { statType: 'statsVideo', post: queryOptions.post, siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, statType: 'statsVideo', post: queryOptions.post, siteID: siteId, period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 				case 'searchterms':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { context, siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, max: 0 } );
 					break;
 
 			}
@@ -666,7 +666,7 @@ module.exports = {
 				window.location = '/stats';
 			}
 		} else {
-			postViewsList = new StatsList( { statType: 'statsPostViews', siteID: siteId, post: postId, domain: site.slug } );
+			postViewsList = new StatsList( { context, statType: 'statsPostViews', siteID: siteId, post: postId } );
 
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site', analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
 
@@ -723,12 +723,12 @@ module.exports = {
 
 			switch ( followType ) {
 				case 'comment':
-					followersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: site.slug, max: 20, page: pageNum } );
+					followersList = new StatsList( { context, siteID: siteId, statType: 'statsCommentFollowers', max: 20, page: pageNum } );
 					break;
 
 				case 'email':
 				case 'wpcom':
-					followersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', domain: site.slug, max: 20, page: pageNum, type: followType } );
+					followersList = new StatsList( { context, siteID: siteId, statType: 'statsFollowers', max: 20, page: pageNum, type: followType } );
 					break;
 			}
 

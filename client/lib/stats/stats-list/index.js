@@ -174,18 +174,20 @@ StatsList.prototype.fetch = function() {
 		siteID,
 		statType
 	} = this;
+	const context = options.context;
+	const store = context.store;
+
+	let _options = Object.assign( {}, options, { context: null } );
+	delete _options.context;
 
 	// @TODO handle this in actions file
 	this.startedAt = Date.now();
 
-	fetchSiteStats( {
+	store.dispatch( fetchSiteStats( {
 		siteID,
 		statType,
-		options,
-	} );
-
-// @TODO tie in responseHandler
-//	wpcomSite[ this.statType ].call( wpcomSite, options, responseHandler( this.options ).bind( this ) );
+		options: _options,
+	} ) );
 };
 
 

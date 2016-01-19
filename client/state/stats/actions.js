@@ -1,45 +1,25 @@
 /**
- * External dependencies
- */
-import { memoize } from 'lodash';
-
-/**
  * Internal dependencies
  */
+import { SITE_STATS_RECEIVE, SITE_STATS_REQUEST } from 'state/action-types';
+import { isDocumentedEndpoint, isUndocumentedEndpoint, isPostIdEndpoint, getValidEndpoints } from 'lib/stats/endpoints';
 import wpcom from 'lib/wp';
-import {
-	SITE_STATS_RECEIVE,
-	SITE_STATS_REQUEST
-} from 'state/action-types';
-
-const postIdEndpoints = [ 'statsVideo', 'statsPostViews' ];
-const documentedEndpoints = [ 'statsVideo', 'statsPublicize', 'statsStreak', 'statsFollowers', 'statsCommentFollowers', 'statsTopAuthors', 'statsTags', 'statsComments', 'statsPostViews', 'statsVideoPlays', 'stats', 'statsVisits', 'statsReferrers', 'statsTopPosts', 'statsClicks', 'statsCountryViews', 'statsSearchTerms' ];
-const undocumentedEndpoints = [ 'statsEvents', 'statsInsights' ];
-
-const isDocumentedEndpoint = ( statType ) => {
-	return memoize( () => {
-		return documentedEndpoints.includes( statType );
-	} );
-};
-
-const isUndocumentedEndpoint = ( statType ) => {
-	return memoize( () => {
-		return undocumentedEndpoints.includes( statType );
-	} );
-};
 
 /**
  * Returns an action object to be used in signalling that a site stats object has
  * been received.
  *
- * @param  {Object} siteStats The Site Stats received
+ * @param  {Object} payload keys: siteID, statType, options, response
  * @return {Object}      Action object
  */
-export function receiveSiteStats( siteStats ) {
-	console.log('siteStatsReceive');
+export function receiveSiteStats( payload ) {
+	const { siteID, statType, options, response } = payload;
 	return {
 		type: SITE_STATS_RECEIVE,
-		siteStats
+		siteID,
+		statType,
+		options,
+		response
 	};
 }
 
@@ -51,22 +31,19 @@ export function fetchSiteStats( data ) {
 	} = data;
 	let wpcomSite;
 	let _options = options;
-console.log('fetchSiteStats', data);
+
 	if ( isDocumentedEndpoint( statType ) ) {
 		wpcomSite = wpcom.site( siteID );
 	} else if ( isUndocumentedEndpoint( statType ) ) {
 		wpcomSite = wpcom.undocumented().site( siteID );
 	} else {
-		throw new TypeError( 'options.statType must be one of the following: ' + undocumentedEndpoints.concat( documentedEndpoints ).join( ', ' ) );
+		throw new TypeError( 'options.statType must be one of the following: ' + getValidEndpoints() );
 	}
 
 	// statsPostViews && statsVideo expect just the post.ID as a param
-	if ( postIdEndpoints.indexOf( statType ) >= 0 ) {
+	if ( isPostIdEndpoint( statType ) ) {
 		_options = options.post;
 	}
-
-// @TODO
-	//this.startedAt = Date.now();
 
 	return ( dispatch ) => {
 		dispatch( {
@@ -80,8 +57,12 @@ console.log('fetchSiteStats', data);
 					//dispatch();
 					console.log( 'dispatch error handler', error, response );
 				} else {
-					//dispatch();
-					console.log( 'dispatch receiveSiteStats', response );
+					dispatch( receiveSiteStats( {
+						siteID,
+						statType,
+						response,
+						options: _options
+					} ) );
 				}
 				resolve();
 			} );
