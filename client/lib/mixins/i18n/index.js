@@ -5,7 +5,8 @@ var debug = require( 'debug' )( 'calypso:i18n' ),
 	Jed = require( 'jed' ),
 	request = require( 'superagent' ),
 	tzDetect = require( './timezone' ).timezone,
-	moment = require( 'moment-timezone' );
+	moment = require( 'moment-timezone' ),
+	LRU = require( 'lru-cache' );
 
 /**
  * Internal dependencies
@@ -30,7 +31,8 @@ i18nState = {
 	numberFormatSettings: {},
 	jed: undefined,
 	locale: undefined,
-	localeSlug: undefined
+	localeSlug: undefined,
+	translations: LRU( { max: 100 } ),
 };
 
 // add event emitter mixin
@@ -102,6 +104,7 @@ function setLocale( locale ) {
 	i18nState.locale = locale;
 	buildJedData( locale );
 	buildMomentAndNumber( locale );
+	i18nState.translations.reset();
 	i18nState.emit( 'change' );
 }
 
@@ -288,6 +291,7 @@ function registerTranslateHook( callback ) {
  */
 function reRenderTranslations() {
 	debug( 'Re-rendering all translations due to external request' );
+	i18nState.translations.reset();
 	i18nState.emit( 'change' );
 }
 
@@ -334,9 +338,20 @@ mixin = {
 	 * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
 	 */
 	translate: function() {
-		var options, translation, sprintfArgs, errorMethod;
+		var options, translation, sprintfArgs, errorMethod, optionsString, cacheable;
 
 		options = normalizeTranslateArguments( arguments );
+
+		cacheable = ! options.components;
+
+		if ( cacheable ) {
+			optionsString = JSON.stringify( options );
+
+			translation = i18nState.translations.get( optionsString );
+			if ( translation ) {
+				return translation;
+			}
+		}
 
 		translation = getTranslationFromJed( options );
 
@@ -346,7 +361,7 @@ mixin = {
 			sprintfArgs.unshift( translation );
 			try {
 				translation = Jed.sprintf.apply( Jed, sprintfArgs );
-			} catch( error ) {
+			} catch ( error ) {
 				if ( ! window || ! window.console ) {
 					return;
 				}
@@ -373,6 +388,9 @@ mixin = {
 			translation = hook( translation, options );
 		} );
 
+		if ( cacheable ) {
+			i18nState.translations.set( optionsString, translation );
+		}
 		return translation;
 	},
 };
