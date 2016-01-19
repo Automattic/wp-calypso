@@ -171,7 +171,7 @@ Time to hook this up with our controller function. Open `/hello-world/controller
 
 ```javascript
 var React = require( 'react' ),
-		ReactDom = require( 'react-dom' );
+	ReactDom = require( 'react-dom' );
 ```
 
 Then remove the `console.log` call and enter the following instead:
