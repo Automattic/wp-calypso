@@ -46,12 +46,12 @@ module.exports = React.createClass( {
 			);
 		}
 
-		if ( this.props.sites ) {
-			site = this.props.sites.getSelectedSite();
-			showJetpackPlans = site && site.jetpack;
-		}
-
 		if ( ! this.props.isInSignup ) {
+			if ( this.props.sites ) {
+				site = this.props.sites.getSelectedSite();
+				showJetpackPlans = site && site.jetpack;
+			}
+
 			// check if this site was registered via the JPPHP "Jetpack Start" program
 			// if so, we want to display a message that this plan is managed via the hosting partner
 			currentPlan = getCurrentPlan( this.props.sitePlans.data );
