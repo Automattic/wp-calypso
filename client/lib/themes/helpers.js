@@ -47,11 +47,15 @@ var ThemesHelpers = {
 	},
 
 	getSupportUrl: function( theme, site ) {
-		if ( site && site.jetpack ) {
+		if ( ! site ) {
+			return ThemesHelpers.oldShowcaseUrl + theme.id + '/support';
+		}
+
+		if ( site.jetpack ) {
 			return '//wordpress.org/support/theme/' + theme.id;
 		}
 
-		return ThemesHelpers.oldShowcaseUrl + theme.id + '/support';
+		return ThemesHelpers.oldShowcaseUrl + site.slug + '/' + theme.id + '/support';
 	},
 
 	getForumUrl: function( theme ) {
