@@ -48,7 +48,7 @@ export default React.createClass( {
 
 	getButtonText() {
 		let text = '';
-		if ( 'follower' === this.props.role ) {
+		if ( 'follower' === this.props.invite.role ) {
 			text = this.state.submitting
 				? this.translate( 'Following…', { context: 'button' } )
 				: this.translate( 'Follow', { context: 'button' } );
@@ -65,7 +65,7 @@ export default React.createClass( {
 		const { user } = this.props;
 		let text = '';
 
-		if ( 'follower' === this.props.role ) {
+		if ( 'follower' === this.props.invite.role ) {
 			text = this.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
 					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
