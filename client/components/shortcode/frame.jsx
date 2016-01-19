@@ -33,11 +33,13 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 	fragment.scripts = mapValues( scripts, ( script ) => {
 		let extra;
 		if ( script.extra ) {
+			/*eslint-disable react/no-danger*/
 			extra = (
 				<script dangerouslySetInnerHTML={ {
 					__html: script.extra
 				} } />
 			);
+			/*eslint-enable react/no-danger*/
 		}
 
 		return createFragment( {
@@ -46,6 +48,7 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 		} );
 	} );
 
+	/*eslint-disable react/no-danger*/
 	return ReactDomServer.renderToStaticMarkup(
 		<html>
 			<head>
@@ -68,6 +71,7 @@ function buildFrameBody( { body, scripts, styles } = { body: '', scripts: {}, st
 			</body>
 		</html>
 	);
+	/*eslint-enable react/no-danger*/
 }
 
 export default React.createClass( {

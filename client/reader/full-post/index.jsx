@@ -166,6 +166,7 @@ FullPostView = React.createClass( {
 			postContent = post.content;
 		}
 
+		/*eslint-disable react/no-danger*/
 		return (
 			<div>
 				<article className={ articleClasses } id="modal-full-post" ref="article">
@@ -190,6 +191,7 @@ FullPostView = React.createClass( {
 				</article>
 			</div>
 		);
+		/*eslint-enable react/no-danger*/
 	},
 
 	_generateButtonClickHandler: function( clickHandler ) {

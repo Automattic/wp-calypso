@@ -77,6 +77,7 @@ Spinner = React.createClass( {
 		// SVG's `mask` attribute, see https://github.com/facebook/react/issues/1657#issuecomment-63209488
 		// The only variable we're using inside is `instanceId`, which is an (integer) counter
 		// we generate ourselves, so we're fine.
+		/*eslint-disable react/no-danger*/
 		return (
 			<div className={ this.getClassName() }>
 				<svg className="spinner__image"
@@ -113,6 +114,7 @@ Spinner = React.createClass( {
 				` } } />
 			</div>
 		);
+		/*eslint-enable react/no-danger*/
 	}
 } );
 

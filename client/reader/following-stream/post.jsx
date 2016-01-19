@@ -187,7 +187,7 @@ var Post = React.createClass( {
 		}
 
 		return useFeaturedEmbed ?
-			<div ref="featuredEmbed" className="reader__post-featured-video" key="featuredVideo" dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } /> :
+			<div ref="featuredEmbed" className="reader__post-featured-video" key="featuredVideo" dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } /> : //eslint-disable-line react/no-danger
 			<div className="reader__post-featured-image" onClick={ this.handlePermalinkClick }>
 				{ featuredSize ?
 					<img className="reader__post-featured-image-image"
@@ -394,7 +394,7 @@ var Post = React.createClass( {
 				<PostByline post={ post } site={ this.props.site } />
 
 				{ shouldUseFullExcerpt ?
-					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }} ></div> :
+					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }} ></div> : //eslint-disable-line react/no-danger
 					<PostExcerpt text={ post.excerpt } />
 				}
 
