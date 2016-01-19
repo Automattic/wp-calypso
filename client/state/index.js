@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  * Internal dependencies
  */
 import { analyticsMiddleware } from 'lib/themes/middlewares.js';
+import application from './application/reducer';
 import notices from './notices/reducer';
 import posts from './posts/reducer';
 import sharing from './sharing/reducer';
@@ -22,6 +23,7 @@ import ui from './ui/reducer';
  * Module variables
  */
 const reducer = combineReducers( {
+	application,
 	notices,
 	posts,
 	sharing,

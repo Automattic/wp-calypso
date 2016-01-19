@@ -19,7 +19,7 @@ export function removeNotice( noticeId ) {
 function createNotice( status, text, options = {} ) {
 	return ( dispatch ) => {
 		const notice = {
-			noticeId: uniqueId(),
+			noticeId: options.id || uniqueId(),
 			duration: options.duration,
 			showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
 			isPersistent: options.isPersistent || false,
@@ -51,3 +51,4 @@ export function setRoute( path ) {
 export const successNotice = createNotice.bind( null, 'is-success' );
 export const errorNotice = createNotice.bind( null, 'is-error' );
 export const infoNotice = createNotice.bind( null, 'is-info' );
+export const warningNotice = createNotice.bind( null, 'is-warning' );
