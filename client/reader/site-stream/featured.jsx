@@ -24,34 +24,22 @@ export default React.createClass( {
 		return this.getStateFromStores();
 	},
 
-	getStateFromStores( store ) {
-		store = store || this.props.store;
-
+	getStateFromStores( store = this.props.store ) {
 		let posts = store.get().map( postKey => {
-			let post = FeedPostStore.get( postKey ),
-				originalPost,
-				isDiscoverPost;
+			let post = FeedPostStore.get( postKey );
 
-			if ( ! post || post._state === 'minimal' ) {
+			if ( this.shouldFetch( post ) ) {
 				FeedPostStoreActions.fetchPost( postKey );
 				return { post };
 			}
 
-			isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post );
-
-			let isDiscoverSitePick = post && isDiscoverPost && DiscoverHelper.isDiscoverSitePick( post );
-
-			if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
-				originalPost = FeedPostStore.get( {
-					blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
-					postId: post.discover_metadata.featured_post_wpcom_data.post_id
-				} );
-			}
+			let source = this.getSourcePost( post ),
+				url = this.getPostUrl( source || post );
 
 			return {
 				post,
-				originalPost,
-				isDiscoverPost
+				source,
+				url
 			}
 		} );
 
@@ -80,20 +68,31 @@ export default React.createClass( {
 		}
 	},
 
+	shouldFetch( post ) {
+		return ! post || post._state === 'minimal';
+	},
+
+	getSourcePost( post ) {
+		let data = DiscoverHelper.getSourceData( post );
+
+		if ( !data ) {
+			return null;
+		}
+
+		return FeedPostStore.get( data );
+	},
+
+	getPostUrl( post ) {
+		return '/read/post/id/' + post.site_ID + '/' + post.ID;
+	},
+
 	handleClick( postData ) {
 		let post = postData.post;
 		stats.recordTrack( 'calypso_reader_clicked_featured_post', { blog_id: post.site_ID, post_id: post.ID } )
 		stats.recordAction( 'clicked_featured_post' );
 		stats.recordGaEvent( 'Clicked Featured Post' );
 
-		let url;
-		if ( postData.isDiscoverPost ) {
-			url = '/read/post/id/' + postData.originalPost.site_ID + '/' + postData.originalPost.ID;
-		} else {
-			url = '/read/post/id/' + post.site_ID + '/' + post.ID;
-		}
-
-		page( url );
+		page( postData.url );
 	},
 
 	renderPosts() {
