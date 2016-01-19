@@ -10,6 +10,7 @@ var React = require( 'react' ),
  */
 var toggle = require( '../mixin-toggle' ),
 	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
+	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	StatsList = require( '../stats-list' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	ErrorPanel = require( '../stats-error' ),
@@ -94,6 +95,7 @@ module.exports = React.createClass( {
 			noData = this.props.wpcomFollowersList.isEmpty( 'subscribers' ) && this.props.emailFollowersList.isEmpty( 'subscribers' ),
 			hasError = ( this.props.wpcomFollowersList.isError() || this.props.emailFollowersList.isError() ),
 			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
+			isLoading = this.props.wpcomFollowersList.isLoading() || this.props.emailFollowersList.isLoading(),
 			wpcomFollowers,
 			emailFollowers,
 			wpcomTotalFollowers,
@@ -119,7 +121,7 @@ module.exports = React.createClass( {
 			activeFilterClass,
 			{
 				'is-expanded': this.state.showModule,
-				'is-loading': this.props.wpcomFollowersList.isLoading() || this.props.emailFollowersList.isLoading(),
+				'is-loading': isLoading,
 				'is-showing-info': this.state.showInfo,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
@@ -235,7 +237,7 @@ module.exports = React.createClass( {
 							{ this.props.emailFollowersList.isError() ? <ErrorPanel className={ 'network-error' } /> : null }
 						</div>
 
-						<div className="module-placeholder is-void"></div>
+						<StatsModulePlaceholder isLoading={ isLoading } />
 					</div>
 					{ viewSummary }
 				</div>

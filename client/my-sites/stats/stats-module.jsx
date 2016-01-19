@@ -59,6 +59,7 @@ module.exports = React.createClass( {
 			hasError = this.props.dataList.isError(),
 			headerLink = this.props.moduleStrings.title,
 			infoIcon = this.state.showInfo ? 'info' : 'info-outline',
+			isLoading = this.props.dataList.isLoading(),
 			moduleHeaderTitle,
 			statsList,
 			viewSummary,
@@ -69,7 +70,7 @@ module.exports = React.createClass( {
 			'stats-module',
 			{
 				'is-expanded': this.state.showModule,
-				'is-loading': this.props.dataList.isLoading(),
+				'is-loading': isLoading,
 				'is-showing-info': this.state.showInfo,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
@@ -126,7 +127,7 @@ module.exports = React.createClass( {
 									</span>
 								</li>
 							</ul>
-							<StatsModulePlaceholder />
+							<StatsModulePlaceholder isLoading={ isLoading } />
 							{ statsList }
 						</div>
 						{ this.props.summary

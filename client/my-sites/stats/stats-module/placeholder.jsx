@@ -8,11 +8,19 @@ export default React.createClass( {
 	displayName: 'StatsModulePlaceholder',
 
 	propTypes: {
-		className: PropTypes.string
+		className: PropTypes.string,
+		isLoading: PropTypes.bool
 	},
 
 	render() {
-		const { className } = this.props;
-		return ( <div className={ classNames( 'stats-module__placeholder', 'is-void', className ) } /> );
+		const { className, isLoading } = this.props;
+
+		if ( ! isLoading ) {
+			return null;
+		}
+
+		const classes = classNames( 'stats-module__placeholder', 'is-void', className );
+
+		return ( <div className={ classes } /> );
 	}
 } );
