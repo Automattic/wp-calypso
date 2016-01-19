@@ -5,7 +5,6 @@ import React from 'react';
 import classNames from 'classnames';
 import i18n from 'lib/mixins/i18n';
 import some from 'lodash/collection/some';
-import uniq from 'lodash/array/uniq';
 
 /**
  * Internal dependencies
@@ -162,10 +161,12 @@ export default React.createClass( {
 					</Notice>
 				);
 			}
-
 			const noticeMessage = newVersions.length > 1
-				? i18n.translate( 'A new version is available for %(numberOfSites)s sites', { args: { numberOfSites: newVersions.length } } )
-				: i18n.translate( 'A new version is available for %(siteName)s', { args: { siteName: newVersions[0].title } } );
+				? i18n.translate( 'Version %(newPluginVersion)s is available for %(numberOfSites)s sites', { args: { numberOfSites: newVersions.length, newPluginVersion: this.props.plugin.version } } )
+				: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', { args: { siteName: newVersions[0].title, newPluginVersion: this.props.plugin.version } } );
+			const noticeActionMessage = newVersions.length > 1
+				? i18n.translate( 'Update all' )
+				: i18n.translate( 'Update' )
 			return (
 				<Notice
 					status="is-warning"
@@ -174,7 +175,7 @@ export default React.createClass( {
 					icon="sync"
 					text={ noticeMessage }>
 					<NoticeAction onClick={ this.handlePluginUpdatesMultiSite }>
-						{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: uniq( newVersions ).join( ', ' ) } } ) }
+						{ noticeActionMessage }
 					</NoticeAction>
 				</Notice>
 			);
