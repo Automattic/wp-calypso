@@ -21,6 +21,7 @@ const StartTrial = React.createClass( {
 
 		return (
 			<FreeTrialForm
+				planName={ this.props.planName }
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
 				selectedSite={ selectedSite }
