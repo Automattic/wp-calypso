@@ -234,6 +234,9 @@ export default React.createClass( {
 		let emptyContentData = { illustration: '/calypso/images/drake/drake-empty-results.svg', };
 
 		switch ( this.props.filter ) {
+			case 'active':
+				emptyContentData.title = this.translate( 'No plugins are active.', { textOnly: true } );
+				break;
 			case 'inactive':
 				emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
 				break;
@@ -280,15 +283,13 @@ export default React.createClass( {
 				} ) } />
 			}
 
-			if ( 'inactive' === this.props.filter || 'updates' === this.props.filter ) {
-				let emptyContentData = this.getEmptyContentData();
-				return ( <EmptyContent
-					title={ emptyContentData.title }
-					illustration={ emptyContentData.illustration }
-					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action } />
-				);
-			}
+			let emptyContentData = this.getEmptyContentData();
+			return ( <EmptyContent
+				title={ emptyContentData.title }
+				illustration={ emptyContentData.illustration }
+				actionURL={ emptyContentData.actionURL }
+				action={ emptyContentData.action } />
+			);
 		}
 		return (
 			<div className="plugins__lists">
