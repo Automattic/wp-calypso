@@ -66,7 +66,8 @@ export function fetchCurrentTheme( site ) {
 					type: ThemeConstants.RECEIVE_CURRENT_THEME,
 					site: site,
 					themeId: data.id,
-					themeName: data.name
+					themeName: data.name,
+					themeCost: data.cost
 				} );
 			}
 		};

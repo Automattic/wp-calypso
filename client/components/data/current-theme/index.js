@@ -27,7 +27,12 @@ const CurrentThemeData = React.createClass( {
 		// Connected props
 		currentTheme: React.PropTypes.shape( {
 			name: React.PropTypes.string,
-			id: React.PropTypes.string
+			id: React.PropTypes.string,
+			cost: React.PropTypes.shape( {
+				currency: React.PropTypes.string.isRequired,
+				number: React.PropTypes.number.isRequired,
+				display: React.PropTypes.string
+			} )
 		} ),
 		fetchCurrentTheme: React.PropTypes.func.isRequired
 	},
