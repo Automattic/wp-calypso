@@ -19,7 +19,8 @@
   "dependencies": {
     "acorn": "^2.6.4",
     "cli-color": "^1.1.0",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "spawn-sync": "^1.0.15"
   },
   "devDependencies": {
     "chai": "^3.4.1",
