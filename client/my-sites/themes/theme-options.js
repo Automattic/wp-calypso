@@ -11,6 +11,7 @@ import pick from 'lodash/object/pick';
  */
 import Helper from 'lib/themes/helpers';
 import actionLabels from './action-labels';
+import config from 'config';
 
 const buttonOptions = {
 	signup: {
@@ -24,7 +25,7 @@ const buttonOptions = {
 	},
 	purchase: {
 		hasAction: true,
-		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || theme.purchased || ! theme.price
+		isHidden: ( site, theme, isLoggedOut ) => isLoggedOut || theme.active || theme.purchased || ! theme.price || ! config.isEnabled( 'upgrades/checkout' )
 	},
 	activate: {
 		hasAction: true,

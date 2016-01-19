@@ -9,6 +9,7 @@ const React = require( 'react' ),
  */
 const Button = require( 'components/forms/form-button' ),
 	CompactCard = require( 'components/card/compact' ),
+	config = require( 'config' ),
 	paths = require( 'my-sites/upgrades/paths' ),
 	analyticsMixin = require( 'lib/mixins/analytics' );
 
@@ -67,10 +68,7 @@ const AddGoogleAppsCard = React.createClass( {
 						</h5>
 					</div>
 
-					<Button type="button"
-							onClick={ this.goToAddGoogleApps }>
-						{ this.translate( 'Add Google Apps' ) }
-					</Button>
+					{ this.renderAddGoogleAppsButton() }
 				</header>
 
 				<div className="add-google-apps-card__product-details">
@@ -150,13 +148,23 @@ const AddGoogleAppsCard = React.createClass( {
 						</h5>
 					</div>
 
-					<Button
-						type="button"
-						onClick={ this.goToAddGoogleApps }>
-						{ this.translate( 'Add Google Apps' ) }
-					</Button>
+					{ this.renderAddGoogleAppsButton() }
 				</div>
 			</CompactCard>
+		);
+	},
+
+	renderAddGoogleAppsButton() {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
+		return (
+			<Button
+				type="button"
+				onClick={ this.goToAddGoogleApps }>
+				{ this.translate( 'Add Google Apps' ) }
+			</Button>
 		);
 	},
 
