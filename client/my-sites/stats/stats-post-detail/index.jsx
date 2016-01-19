@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
+import Emojify from 'components/emojify';
 import SummaryChart from '../stats-summary-chart';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
@@ -37,16 +38,14 @@ export default React.createClass( {
 	render() {
 		let title;
 
-		if ( this.props.postViewsList.response.post && this.props.postViewsList.response.post.post_title ) {
-			title = this.translate( 'Stats for %(posttitle)s', {
-				comment: 'Title of the individual post stats page.',
-				args: {
-					posttitle: this.props.postViewsList.response.post.post_title
-				}
-			} );
-		}
+		const post = this.props.postViewsList.response.post;
+		const postOnRecord = post && post.post_title !== null;
 
-		if ( this.props.postViewsList.isError() ) {
+		if ( postOnRecord ) {
+			if ( typeof post.post_title === 'string' && post.post_title.length ) {
+				title = <Emojify>{ post.post_title }</Emojify>;
+			}
+		} else {
 			title = this.translate( 'We don\'t have that post on record yet.' );
 		}
 
