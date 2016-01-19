@@ -10,6 +10,7 @@ import Chai, { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	POSTS_QUERIES_RESET,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -18,7 +19,8 @@ import {
 import {
 	receivePost,
 	receivePosts,
-	requestSitePosts
+	requestSitePosts,
+	resetPostsQueries
 } from '../actions';
 
 describe( 'actions', () => {
@@ -56,6 +58,7 @@ describe( 'actions', () => {
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.reply( 200, {
+					found: 2,
 					posts: [
 						{ ID: 841, title: 'Hello World' },
 						{ ID: 413, title: 'Ribs & Chicken' }
@@ -64,6 +67,7 @@ describe( 'actions', () => {
 				.get( '/rest/v1.1/sites/2916284/posts' )
 				.query( { search: 'Hello' } )
 				.reply( 200, {
+					found: 1,
 					posts: [ { ID: 841, title: 'Hello World' } ]
 				} )
 				.get( '/rest/v1.1/sites/77203074/posts' )
@@ -111,9 +115,26 @@ describe( 'actions', () => {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: {},
+					found: 2,
 					posts: [
 						{ ID: 841, title: 'Hello World' },
 						{ ID: 413, title: 'Ribs & Chicken' }
+					]
+				} );
+
+				done();
+			} ).catch( done );
+		} );
+
+		it( 'should dispatch posts request success action with query results', ( done ) => {
+			requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POSTS_REQUEST_SUCCESS,
+					siteId: 2916284,
+					query: { search: 'Hello' },
+					found: 1,
+					posts: [
+						{ ID: 841, title: 'Hello World' }
 					]
 				} );
 
@@ -132,6 +153,26 @@ describe( 'actions', () => {
 
 				done();
 			} ).catch( done );
+		} );
+	} );
+
+	describe( '#resetPostsQueries()', () => {
+		it( 'should return an action object when site ID is omitted', () => {
+			const action = resetPostsQueries();
+
+			expect( action ).to.eql( {
+				type: POSTS_QUERIES_RESET,
+				siteId: undefined
+			} );
+		} );
+
+		it( 'should return an action object when site ID is included', () => {
+			const action = resetPostsQueries( 2916284 );
+
+			expect( action ).to.eql( {
+				type: POSTS_QUERIES_RESET,
+				siteId: 2916284
+			} );
 		} );
 	} );
 } );

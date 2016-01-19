@@ -3,14 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import omit from 'lodash/object/omit';
-import noop from 'lodash/utility/noop';
+import mapKeys from 'lodash/object/mapKeys';
+import snakeCase from 'lodash/string/snakeCase';
 
 /**
  * Internal dependencies
  */
-import Selector from './selector';
-import PostListFetcher from 'components/post-list-fetcher';
+import PostSelectorPagination from './pagination';
 
 export default React.createClass( {
 	displayName: 'PostSelector',
@@ -25,9 +24,10 @@ export default React.createClass( {
 		onChange: PropTypes.func,
 		selected: PropTypes.number,
 		excludeTree: PropTypes.number,
+		emptyMessage: PropTypes.string,
+		createLink: PropTypes.string,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
-		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
-		postListStoreId: PropTypes.string
+		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] )
 	},
 
 	getDefaultProps() {
@@ -35,42 +35,56 @@ export default React.createClass( {
 			type: 'post',
 			status: 'publish,private',
 			multiple: false,
-			onChange: noop,
 			orderBy: 'title',
-			order: 'ASC',
-			postListStoreId: 'post-selector'
+			order: 'ASC'
 		};
 	},
 
 	getInitialState() {
 		return {
-			searchTerm: null
+			page: 1,
+			search: ''
 		};
 	},
 
 	onSearch( term ) {
-		if ( term !== this.state.searchTerm ) {
-			this.setState( { searchTerm: term } );
+		if ( term !== this.state.search ) {
+			this.setState( {
+				page: 1,
+				search: term
+			} );
 		}
 	},
 
+	getQuery() {
+		const { type, status, excludeTree, orderBy, order } = this.props;
+		const { page, search } = this.state;
+		return mapKeys( { type, status, excludeTree, orderBy, order, page, search }, ( value, key ) => {
+			return snakeCase( key );
+		} );
+	},
+
+	incrementPage() {
+		this.setState( {
+			page: this.state.page + 1
+		} );
+	},
+
 	render() {
+		const { siteId, multiple, onChange, emptyMessage, createLink, selected } = this.props;
+
 		return (
-			<PostListFetcher
-				type={ this.props.type }
-				siteID={ this.props.siteId }
-				search={ this.state.searchTerm }
-				status={ this.props.status }
-				excludeTree={ this.props.excludeTree }
-				orderBy={ this.props.orderBy }
-				order={ this.props.order }
-				postListStoreId={ this.props.postListStoreId }
-			>
-				<Selector
-					{ ...omit( this.props, 'children' ) }
-					onSearch={ this.onSearch }
-				/>
-			</PostListFetcher>
+			<PostSelectorPagination
+				siteId={ siteId }
+				query={ this.getQuery() }
+				onNextPage={ this.incrementPage }
+				onSearch={ this.onSearch }
+				multiple={ multiple }
+				onChange={ onChange }
+				emptyMessage={ emptyMessage }
+				createLink={ createLink }
+				selected={ selected }
+			/>
 		);
 	}
 } );

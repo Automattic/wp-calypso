@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	POSTS_QUERIES_RESET,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -49,12 +50,13 @@ export function requestSitePosts( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.site( siteId ).postsList( { query } ).then( ( { posts } ) => {
+		return wpcom.site( siteId ).postsList( query ).then( ( { found, posts } ) => {
 			dispatch( receivePosts( posts ) );
 			dispatch( {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId,
 				query,
+				found,
 				posts
 			} );
 		} ).catch( ( error ) => {
@@ -65,5 +67,19 @@ export function requestSitePosts( siteId, query = {} ) {
 				error
 			} );
 		} );
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that post queries should
+ * be reset (forgotten), optionally for a specific site.
+ *
+ * @param  {?Number} siteId Site ID
+ * @return {Object}         Action object
+ */
+export function resetPostsQueries( siteId ) {
+	return {
+		type: POSTS_QUERIES_RESET,
+		siteId
 	};
 }

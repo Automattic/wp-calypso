@@ -3,16 +3,23 @@
  */
 import { combineReducers } from 'redux';
 import indexBy from 'lodash/collection/indexBy';
+import omit from 'lodash/object/omit';
 
 /**
  * Internal dependencies
  */
 import {
+	POSTS_QUERIES_RESET,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE
 } from 'state/action-types';
+import {
+	getSerializedPostsQuery,
+	getSerializedPostsQueryWithoutPage
+} from './utils';
+import { DEFAULT_POST_QUERY } from './constants';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -70,7 +77,7 @@ export function siteQueries( state = {}, action ) {
 		case POSTS_REQUEST_SUCCESS:
 		case POSTS_REQUEST_FAILURE:
 			const { type, siteId, posts } = action;
-			const query = JSON.stringify( action.query );
+			const query = getSerializedPostsQuery( action.query );
 
 			// Clone state and ensure that site is tracked
 			state = Object.assign( {}, state );
@@ -89,6 +96,50 @@ export function siteQueries( state = {}, action ) {
 				state[ siteId ][ query ].posts = posts.map( ( post ) => post.global_ID );
 			}
 			break;
+
+		case POSTS_QUERIES_RESET:
+			if ( action.siteId ) {
+				state = omit( state, action.siteId );
+			} else {
+				state = {};
+			}
+			break;
+	}
+
+	return state;
+}
+
+/**
+ * Returns the updated post query last page state after an action has been
+ * dispatched. The state reflects a mapping of site ID to last page for a posts
+ * query.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function siteQueriesLastPage( state = {}, action ) {
+	switch ( action.type ) {
+		case POSTS_REQUEST_SUCCESS:
+			const { siteId, found } = action;
+
+			state = Object.assign( {}, state );
+			if ( ! state[ siteId ] ) {
+				state[ siteId ] = {};
+			}
+
+			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query );
+			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
+			state[ siteId ][ serializedQuery ] = Math.max( lastPage, 1 );
+			break;
+
+		case POSTS_QUERIES_RESET:
+			if ( action.siteId ) {
+				state = omit( state, action.siteId );
+			} else {
+				state = {};
+			}
+			break;
 	}
 
 	return state;
@@ -97,5 +148,6 @@ export function siteQueries( state = {}, action ) {
 export default combineReducers( {
 	items,
 	sitePosts,
-	siteQueries
+	siteQueries,
+	siteQueriesLastPage
 } );
