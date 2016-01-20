@@ -49,6 +49,7 @@ const FreeTrialForm = React.createClass( {
 	},
 
 	isCartLoading: function() {
+		// The component is ready once the cart contains the free trial plan
 		return ! cartItems.hasFreeTrial( this.props.cart );
 	},
 
