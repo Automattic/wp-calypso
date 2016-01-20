@@ -27,7 +27,7 @@
 	"discover_blog_id": 53424024,
 	"features": {
 		"code-splitting": true,
-		"server-side-rendering": true,
+		"server-side-rendering": false,
 
 		"reader": true,
 		"reader/teams": true,
