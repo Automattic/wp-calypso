@@ -415,7 +415,7 @@ module.exports = function() {
 		} );
 	}
 
-	if ( config.isEnabled( 'reader/discover' ) ) {
+	if ( config.isEnabled( 'reader/discover' ) && config( 'env' ) !== 'development' ) {
 		app.get( '/discover', function( req, res ) {
 			if ( req.cookies.wordpress_logged_in ) {
 				renderLoggedInRoute( req, res );
