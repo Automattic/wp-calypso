@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Masterbar from './masterbar';
 import Item from './item';
 import Stats from './stats';
@@ -15,7 +14,6 @@ import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
 import config from 'config';
-import { getExitCheckoutUrl } from 'lib/checkout';
 
 export default React.createClass( {
 	displayName: 'Masterbar',
@@ -60,33 +58,7 @@ export default React.createClass( {
 		return 'my-sites';
 	},
 
-	getMinimalLogoUrl() {
-		if ( ! this.props.cart.hasLoadedFromServer || ! this.props.sites.getSelectedSite() ) {
-			return '/';
-		}
-
-		return getExitCheckoutUrl( this.props.cart, this.props.sites.getSelectedSite().slug );
-	},
-
-	renderMinimal() {
-		return (
-			<Masterbar>
-				<Item
-					url={ this.getMinimalLogoUrl() }
-					icon="my-sites"
-					className="masterbar__item-logo"
-				>
-					WordPress<span className="tld">.com</span>
-				</Item>
-			</Masterbar>
-		);
-	},
-
 	render() {
-		if ( 'checkout' === this.props.section && abtest( 'checkoutMasterbar' ) === 'minimal' ) {
-			return this.renderMinimal();
-		}
-
 		return (
 			<Masterbar>
 				<Stats
