@@ -11,6 +11,7 @@ import toggle from '../mixin-toggle';
 import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
 export default React.createClass( {
 	displayName: 'StatsPostDetailMonths',
@@ -41,8 +42,9 @@ export default React.createClass( {
 		const { showInfo, noData } = this.state;
 		const data = postViewsList.response;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
+		const isLoading = postViewsList.isLoading();
 		const classes = {
-			'is-loading': this.props.postViewsList.isLoading(),
+			'is-loading': isLoading,
 			'is-showing-info': showInfo,
 			'has-no-data': noData
 		};
@@ -146,7 +148,7 @@ export default React.createClass( {
 							)
 						}</p>
 					</div>
-					<div className="module-placeholder is-void"></div>
+					<StatsModulePlaceholder isLoading={ isLoading } />
 					<div className="module-content-table">
 						<div className="module-content-table-scroll">
 							<table cellPadding="0" cellSpacing="0">

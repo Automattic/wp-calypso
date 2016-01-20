@@ -14,6 +14,7 @@ import Gridicon from 'components/gridicon';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
 import StatsModuleHeader from '../stats-module/header';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 
@@ -176,7 +177,7 @@ export default React.createClass( {
 						isActive={ 'top-content' === activeFilter } />
 
 					{ this.renderSummary }
-					<div className="module-placeholder is-void"></div>
+					<StatsModulePlaceholder isLoading={ ! data } />
 				</div>
 			</Card>
 		);

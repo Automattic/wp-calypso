@@ -11,6 +11,7 @@ import observe from 'lib/mixins/data-observe';
 import toggle from '../mixin-toggle';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
 export default React.createClass( {
 	displayName: 'StatsPostDetailWeeks',
@@ -41,13 +42,14 @@ export default React.createClass( {
 		const post = data.post;
 		const { showInfo, noData } = this.state;
 		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
+		const isLoading = this.props.postViewsList.isLoading();
 		let tableHeader,
 			tableRows,
 			tableBody,
 			highest;
 
 		const classes = {
-			'is-loading': this.props.postViewsList.isLoading(),
+			'is-loading': isLoading,
 			'is-showing-info': showInfo,
 			'has-no-data': noData
 		};
@@ -179,7 +181,7 @@ export default React.createClass( {
 							)
 						}</p>
 					</div>
-					<div className="module-placeholder is-void"></div>
+					<StatsModulePlaceholder isLoading={ isLoading } />
 					<div className="module-content-table">
 						<div className="module-content-table-scroll">
 							<table cellPadding="0" cellSpacing="0">

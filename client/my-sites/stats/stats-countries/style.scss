@@ -1,14 +1,5 @@
 // Countries
 .countryviews {
-
-	&.is-block {
-		display: none;
-	}
-
-	.stats-module.is-loading & .summary .module-placeholder.is-block {
-		display: block;
-	}
-
 	.module-content-list-item-label .icon img {
 		background-color: $gray-light;
 	}

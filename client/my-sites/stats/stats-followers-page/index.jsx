@@ -10,6 +10,7 @@ var React = require( 'react' ),
  */
 var StatsList = require( '../stats-list' ),
 	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
+	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	toggle = require( '../mixin-toggle' ),
 	skeleton = require( '../mixin-skeleton' ),
 	ErrorPanel = require( '../stats-error' ),
@@ -71,6 +72,7 @@ module.exports = React.createClass( {
 		var data = this.data(),
 			hasError = this.props.followersList.isError(),
 			noData = this.props.followersList.isEmpty( 'subscribers' ),
+			isLoading = this.props.followersList.isLoading(),
 			followers,
 			moduleHeaderTitle,
 			labelLegend,
@@ -91,7 +93,7 @@ module.exports = React.createClass( {
 			'summary',
 			'is-followers-page',
 			{
-				'is-loading': this.props.followersList.isLoading(),
+				'is-loading': isLoading,
 				'is-showing-info': this.state.showInfo,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
@@ -218,7 +220,7 @@ module.exports = React.createClass( {
 							{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
 						</div>
 
-						<div className="module-placeholder is-void"></div>
+						<StatsModulePlaceholder isLoading={ isLoading } />
 
 						{ pagination }
 

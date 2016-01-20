@@ -2,16 +2,15 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:module-video-details' );
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
  */
 var StatsList = require( '../stats-list' ),
+	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	skeleton = require( '../mixin-skeleton' ),
 	Card = require( 'components/card' );
-
 
 module.exports = React.createClass( {
 	displayName: 'StatModuleVideoDetails',
@@ -25,9 +24,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering video details' );
-
-		var classes;
+		var classes,
+			isLoading = this.props.summaryList.isLoading();
 
 		classes = [
 			'stats-module',
@@ -35,7 +33,7 @@ module.exports = React.createClass( {
 			'summary',
 			'is-video-details',
 			{
-				'is-loading': this.props.summaryList.isLoading(),
+				'is-loading': isLoading,
 				'is-showing-info': this.state.showInfo,
 				'has-no-data': this.props.summaryList.isEmpty()
 			}
@@ -56,8 +54,8 @@ module.exports = React.createClass( {
 									</span>
 								</li>
 							</ul>
-							<div className="module-placeholder is-void"></div>
-							<StatsList moduleName='Video Details' data={ this.props.summaryList.response.pages ? this.props.summaryList.response.pages : [] } />
+							<StatsModulePlaceholder isLoading={ isLoading } />
+							<StatsList moduleName="Video Details" data={ this.props.summaryList.response.pages ? this.props.summaryList.response.pages : [] } />
 						</div>
 					</div>
 				</div>

@@ -13,6 +13,7 @@ var ElementChart = require( 'components/chart' ),
 	StatTabs = require( '../stats-tabs' ),
 	analytics = require( 'analytics' ),
 	observe = require( 'lib/mixins/data-observe' ),
+	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	Card = require( 'components/card' );
 
 module.exports = React.createClass( {
@@ -238,7 +239,7 @@ module.exports = React.createClass( {
 		return (
 			<Card className={ classNames.apply( null, classes ) }>
 				<Legend tabs={ this.props.charts } activeTab={ activeTab } availableCharts={ availableCharts } activeCharts={ this.state.activeLegendCharts } clickHandler={ this.onLegendClick } />
-				<div className="module-placeholder is-void is-chart"></div>
+				<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
 				<ElementChart loading={ activeTabLoading } data={ data } barClick={ this.props.barClick } />
 				<StatTabs dataList={ visitsList } tabs={ this.props.charts } switchTab={ this.props.switchTab } selectedTab={ this.props.chartTab } activeIndex={ this.props.queryDate } activeKey="period" />
 			</Card>
