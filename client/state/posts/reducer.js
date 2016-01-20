@@ -83,11 +83,13 @@ export function siteQueries( state = {}, action ) {
 				state[ siteId ] = {};
 			}
 
+			if ( ! state[ siteId ][ query ] ) {
+				state[ siteId ][ query ] = {};
+			}
+
 			// Only the initial request should be tracked as fetching. Success
 			// or failure types imply that fetching has completed.
-			state[ siteId ][ query ] = {
-				fetching: POSTS_REQUEST === type
-			};
+			state[ siteId ][ query ].fetching = ( POSTS_REQUEST === type );
 
 			// When a request succeeds, map the received posts to state.
 			if ( POSTS_REQUEST_SUCCESS === type ) {
