@@ -32,12 +32,12 @@ const Unlocked = React.createClass( {
 		};
 
 		const actions = [
-			promisy( declineTransfer, this.props.selectedDomainName ),
-			promisy( enableDomainLocking, this.props.selectedDomainName )
+			promisy( declineTransfer )( this.props.selectedDomainName ),
+			promisy( enableDomainLocking )( this.props.selectedDomainName )
 		];
 
 		if ( hasPrivacyProtection && ! privateDomain ) {
-			actions.push( promisy( enablePrivacyProtection, options ) );
+			actions.push( promisy( enablePrivacyProtection )( options ) );
 		}
 
 		Promise.all( actions ).then( () => {

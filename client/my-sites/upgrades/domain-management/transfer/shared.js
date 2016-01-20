@@ -80,23 +80,45 @@ export const displayRequestTransferCodeResponseNotice = ( responseError, domainS
 	}
 };
 
-
 /**
  * Converts async (wpcom) calls to promises by pushing a callback handler to the arguments list. The handler will resolve or
  * reject depending on the value.
- * @param {Function} fn - Function to be converted into
- * @param {...Array} args - List of arguments
- * @returns {Promise} Promise
+ *
+ * This only works with functions with the following convention:
+ * - Accepts a callback as the last argument
+ * - Calls the callback with arguments like (error, result) similar to node.JS style
+ *
+ * E.g.
+ * Previous:
+ * wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
+ * 	if ( error ) {
+ * 		debug( 'Fetching site plans failed: ', error );
+ * 	} else {
+ * 		dispatch( fetchSitePlansCompleted( siteId, data ) );
+ * 	}
+ * 	resolve();
+ * } );
+ *
+ * promisy( wpcom.undocumented().getSitePlans )( siteId ).then( ( data ) => {
+ * 	dispatch( fetchSitePlansCompleted( siteId, data ) );
+ * }, ( error ) => {
+ * 	debug( 'Fetching site plans failed: ', error );
+ * } );
+ *
+ * @param {Function} fn - Function to be wrapped
+ * @returns {Function} Wrapped function which returns a Promise
  */
-export const promisy = ( fn, ...args ) => {
-	return new Promise( function( resolve, reject ) {
-		args.push( function( error ) {
-			if ( error ) {
-				reject( error )
-			} else {
-				resolve( true )
-			}
+export const promisy = ( fn ) => {
+	return function( ...args ) {
+		return new Promise( function( resolve, reject ) {
+			args.push( function( error, res ) {
+				if ( error ) {
+					reject( error )
+				} else {
+					resolve( res )
+				}
+			} );
+			fn.apply( fn, args );
 		} );
-		fn.apply( fn, args );
-	} );
+	}
 };
