@@ -19,7 +19,8 @@ export default ( state = initialState, action ) => {
 		case ThemeConstants.RECEIVE_CURRENT_THEME:
 			return state.setIn( [ 'currentThemes', action.site.ID ], {
 				name: action.themeName,
-				id: action.themeId
+				id: action.themeId,
+				cost: action.themeCost
 			} );
 		case ThemeConstants.ACTIVATE_THEME:
 			return state.set( 'isActivating', true );

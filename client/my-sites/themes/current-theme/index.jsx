@@ -32,7 +32,8 @@ var CurrentTheme = React.createClass( {
 		var currentTheme = this.props.currentTheme,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = currentTheme ? currentTheme.name : placeholderText,
-			site = this.props.site;
+			site = this.props.site,
+			displaySupportButton = Helpers.isPremium( currentTheme ) && ! site.jetpack;
 
 		return (
 			<Card className="current-theme">
@@ -46,7 +47,7 @@ var CurrentTheme = React.createClass( {
 				</div>
 				<div className={ classNames(
 					'current-theme__actions',
-					{ 'two-buttons': site.jetpack }
+					{ 'two-buttons': ! displaySupportButton }
 					) } >
 					<CurrentThemeButton name="customize"
 						label={ this.translate( 'Customize' ) }
@@ -58,7 +59,7 @@ var CurrentTheme = React.createClass( {
 						noticon="info"
 						href={ currentTheme ? Helpers.getDetailsUrl( currentTheme, site ) : null }
 						onClick={ this.trackClick } />
-					{ ! site.jetpack && <CurrentThemeButton name="support"
+					{ displaySupportButton && <CurrentThemeButton name="support"
 						label={ this.translate( 'Support' ) }
 						noticon="help"
 						href={ currentTheme ? Helpers.getSupportUrl( currentTheme, site ) : null }
@@ -70,4 +71,3 @@ var CurrentTheme = React.createClass( {
 } );
 
 module.exports = CurrentTheme;
-
