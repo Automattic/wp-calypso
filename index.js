@@ -23,6 +23,12 @@ console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
 server = http.createServer( app );
 server.listen( port );
 
+// The desktop app runs Calypso in a fork.
+// This tells the parent process that Calypso has booted.
+if ( process.env.CALYPSO_IS_FORK ) {
+	process.send( { boot: 'ready' } );
+}
+
 // Enable hot reloader in development
 if ( config( 'env' ) === 'development' ) {
 	hotReloader = require( 'bundler/hot-reloader' );
