@@ -447,6 +447,12 @@ module.exports = function() {
 		} );
 	}
 
+	app.get( '/sw.js', function( request, response ) {
+		response.setHeader( 'Content-Type', 'text/javascript' );
+		response.status( 200 );
+		response.sendFile( 'serviceWorker.js', { root: './server/pages' } );
+	} );
+
 	// catchall path to serve shell for all non-static-file requests (other than auth routes)
 	app.get( '*', renderLoggedInRoute );
 
