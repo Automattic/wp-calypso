@@ -14,7 +14,7 @@ export default React.createClass( {
 	displayName: 'AppPromo',
 
 	propTypes: {
-		location: React.PropTypes.element.isRequired
+		location: React.PropTypes.string.isRequired
 	},
 
 	getInitialState: function() {
