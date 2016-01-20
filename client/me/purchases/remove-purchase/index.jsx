@@ -68,6 +68,7 @@ const RemovePurchase = React.createClass( {
 
 		return (
 			<Dialog
+				className="remove-purchase__dialog"
 				buttons={ buttons }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }>
