@@ -70,7 +70,7 @@ module.exports = {
 		defaultVariation: 'original'
 	},
 	checkoutMasterbar: {
-		datestamp: '20160125',
+		datestamp: '20160126',
 		variations: {
 			original: 50,
 			minimal: 50
