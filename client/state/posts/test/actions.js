@@ -10,7 +10,6 @@ import Chai, { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	POSTS_QUERIES_RESET,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -19,8 +18,7 @@ import {
 import {
 	receivePost,
 	receivePosts,
-	requestSitePosts,
-	resetPostsQueries
+	requestSitePosts
 } from '../actions';
 
 describe( 'actions', () => {
@@ -153,26 +151,6 @@ describe( 'actions', () => {
 
 				done();
 			} ).catch( done );
-		} );
-	} );
-
-	describe( '#resetPostsQueries()', () => {
-		it( 'should return an action object when site ID is omitted', () => {
-			const action = resetPostsQueries();
-
-			expect( action ).to.eql( {
-				type: POSTS_QUERIES_RESET,
-				siteId: undefined
-			} );
-		} );
-
-		it( 'should return an action object when site ID is included', () => {
-			const action = resetPostsQueries( 2916284 );
-
-			expect( action ).to.eql( {
-				type: POSTS_QUERIES_RESET,
-				siteId: 2916284
-			} );
 		} );
 	} );
 } );
