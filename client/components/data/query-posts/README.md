@@ -9,7 +9,7 @@ Render the component, passing `siteId` and `query`. It does not accept any child
 
 ```jsx
 import React from 'react';
-import QueryPosts from 'components/data/posts-search';
+import QueryPosts from 'components/data/query-posts';
 import MyPostsListItem from './list-item';
 
 export default function MyPostsList( { posts } ) {
