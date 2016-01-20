@@ -11,7 +11,7 @@ export function connectionLost() {
 		dispatch( warningNotice(
 			i18n.translate( 'Not connected. Some information may be out of sync.' )
 			, {
-				showDismiss: false,
+				showDismiss: true,
 				isPersistent: true,
 				id: 'connectionLost'
 			} )
@@ -26,7 +26,7 @@ export function connectionRestored() {
 		dispatch( successNotice(
 			i18n.translate( 'Connection restored.' )
 			, {
-				showDismiss: false,
+				showDismiss: true,
 				isPersistent: true,
 				id: 'connectionRestored',
 				duration: 5000
