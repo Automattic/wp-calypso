@@ -8,8 +8,10 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'components/main';
-import PlanFeatures from 'my-sites/plans/plan-overview/plan-features';
-import PlanStatus from 'my-sites/plans/plan-overview/plan-status';
+import paths from '../paths';
+import PlanFeatures from './plan-features';
+import PlanRemove from './plan-remove';
+import PlanStatus from './plan-status';
 import Notice from 'components/notice';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
@@ -23,11 +25,12 @@ const PlanOverview = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		store: React.PropTypes.object.isRequired
 	},
 
 	redirectToDefault() {
-		page.redirect( `/plans/${ this.props.selectedSite.slug }` );
+		page.redirect( paths.plans( this.props.selectedSite.slug ) );
 	},
 
 	renderNotice() {
@@ -47,7 +50,6 @@ const PlanOverview = React.createClass( {
 	render() {
 		return (
 			<div>
-
 				{ this.renderNotice() }
 
 				<Main className="plan-overview">
@@ -65,6 +67,11 @@ const PlanOverview = React.createClass( {
 					<PlanFeatures
 						plan={ this.props.plan }
 						selectedSite={ this.props.selectedSite } />
+
+					<PlanRemove
+						plan={ this.props.plan }
+						selectedSite={ this.props.selectedSite }
+						store={ this.props.store } />
 				</Main>
 			</div>
 		);

@@ -84,7 +84,8 @@ module.exports = {
 						selectedSite={ site }
 						onSelectPlan={ onSelectPlan }
 						plans={ plans }
-						context={ context } />
+						context={ context }
+						destinationType={ context.params.destinationType }/>
 				</CartData>
 			</ReduxProvider>,
 			document.getElementById( 'primary' )
