@@ -64,7 +64,7 @@ function addItems( items ) {
 function removeItem( item ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEM_REMOVE,
-		item
+		cartItem: item
 	} );
 }
 
