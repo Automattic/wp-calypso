@@ -40,24 +40,31 @@ function removePrivacyFromAllDomains() {
 	} );
 }
 
-function addItem( cartItem ) {
-	const extra = assign( {}, cartItem.extra, {
-			context: 'calypstore'
-		} ),
-		newCartItem = assign( {}, cartItem, { extra } );
+function addItem( item ) {
+	addItems( [ item ] );
+}
 
-	recordAddToCart( cartItem );
+function addItems( items ) {
+	const extendedItems = items.map( ( item ) => {
+		const extra = assign( {}, item.extra, {
+			context: 'calypstore'
+		} );
+
+		return assign( {}, item, { extra } );
+	} );
+
+	extendedItems.forEach( item => recordAddToCart( item ) );
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_ITEM_ADD,
-		cartItem: newCartItem
+		type: ActionTypes.CART_ITEMS_ADD,
+		cartItems: extendedItems
 	} );
 }
 
-function removeItem( cartItem ) {
+function removeItem( item ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEM_REMOVE,
-		cartItem
+		item
 	} );
 }
 
@@ -85,6 +92,7 @@ function applyCoupon( coupon ) {
 export {
 	addDomainToCart,
 	addItem,
+	addItems,
 	addPrivacyToAllDomains,
 	applyCoupon,
 	closeCartPopup,
