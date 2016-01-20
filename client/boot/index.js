@@ -11,8 +11,7 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
-	localForage = require( 'localforage' );
+	injectTapEventPlugin = require( 'react-tap-event-plugin' );
 
 /**
  * Internal dependencies

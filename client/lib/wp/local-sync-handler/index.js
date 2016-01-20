@@ -14,7 +14,7 @@ const defaultConfig = {
 	//size: 4980736,
 	storeName: 'keyvaluepairs',
 	description: 'Calypso app storing fata'
-}
+};
 
 /**
  * LocalSyncHandler class
@@ -35,7 +35,7 @@ export class LocalSyncHandler {
 		}
 
 		this.config = Object.assign( {}, defaultConfig, config );
-		console.log( `-> this.config -> `, this.config );
+		debug( `-> this.config -> `, this.config );
 
 		return this.wrapper( handler );
 	}
@@ -83,7 +83,11 @@ export class LocalSyncHandler {
 	getByPath( path, fn = () => {} ) {
 		debug( 'getting data from %o key', path );
 		localforage.config( this.config );
-		localforage.getItem( path, fn );
+	    //TODO: remove temp debugging
+		localforage.getItem( path, function( error, value) {
+			console.log( 'get by path =====================', path, error, value );
+		} );
+		return null;
 	}
 
 	setByPath( path, data, fn = () => {} ) {
