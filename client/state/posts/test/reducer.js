@@ -116,6 +116,31 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should preserve previous query results when requesting again', () => {
+			const original = Object.freeze( {
+				2916284: {
+					'{"search":"hello"}': {
+						fetching: false,
+						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+					}
+				}
+			} );
+			const state = siteQueries( original, {
+				type: POSTS_REQUEST,
+				siteId: 2916284,
+				query: { search: 'Hello' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'{"search":"hello"}': {
+						fetching: true,
+						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+					}
+				}
+			} );
+		} );
+
 		it( 'should accumulate site queries', () => {
 			const original = Object.freeze( {
 				2916284: {
@@ -180,6 +205,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 	} );
+
 	describe( '#sitePosts()', () => {
 		it( 'should default to an empty object', () => {
 			const state = sitePosts( undefined, {} );
