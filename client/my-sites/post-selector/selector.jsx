@@ -124,10 +124,14 @@ export default React.createClass( {
 		const domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId;
 
 		const input = (
-			<input id={ domId } type={ inputType } name='posts'
+			<input
+				id={ domId }
+				type={ inputType }
+				name="posts"
 				value={ itemId }
 				onChange={ this.props.onChange.bind( null, item ) }
-				checked={ checked } />
+				checked={ checked }
+				className="post-selector__input" />
 		);
 
 		return (
@@ -176,8 +180,8 @@ export default React.createClass( {
 
 		return (
 			<li>
-				<input className='placeholder-text' type={ inputType } name='posts' disabled={ true } />
-				<label><span className='placeholder-text'>Loading list of options...</span></label>
+				<input className="post-selector__input" type={ inputType } name="posts" disabled={ true } />
+				<label><span className="placeholder-text">Loading list of options...</span></label>
 			</li>
 		);
 	},
@@ -228,7 +232,7 @@ export default React.createClass( {
 					<span className='is-empty-content'>{ this.props.emptyMessage }</span> :
 					null
 				}
-				<form>
+				<form className="post-selector__results">
 					{ posts ? this.renderHierarchy( posts ) : this.renderPlaceholder() }
 				</form>
 			</div>
