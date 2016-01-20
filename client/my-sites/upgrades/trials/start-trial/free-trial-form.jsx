@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import analytics from 'analytics';
 import { cartItems } from 'lib/cart-values';
 import plansList from 'lib/plans-list';
+import { isPlan } from 'lib/products-values';
 import PaymentBox from 'my-sites/upgrades/checkout/payment-box';
 import TransactionStepsMixin from 'my-sites/upgrades/checkout/transaction-steps-mixin';
 import { clearSitePlans, fetchSitePlans } from 'state/sites/plans/actions';
@@ -53,6 +54,11 @@ const FreeTrialForm = React.createClass( {
 		return ! cartItems.hasFreeTrial( this.props.cart );
 	},
 
+	getProductName() {
+		const planProduct = find( this.props.cart.products, isPlan );
+		return ( planProduct && planProduct.product_name ) || '';
+	},
+
 	render: function() {
 		if ( this.isCartLoading() ) {
 			return (
@@ -72,7 +78,7 @@ const FreeTrialForm = React.createClass( {
 						<div className="payment-box-section">
 							<h6>
 							{
-								this.translate( 'The %(productName)s plan is not available for your site', { args: { productName: this.props.planName } } )
+								this.translate( 'The %(productName)s plan free trial is not available for your site', { args: { productName: this.getProductName() } } )
 							}
 							</h6>
 							<span>
