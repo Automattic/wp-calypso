@@ -4,11 +4,14 @@
 import localforage from 'localforage';
 import debugFactory from 'debug';
 
+// expose localforage just to development
+window.LF = localforage;
+
 const debug = debugFactory( 'local-sync-handler' );
 
 // default config object
 const defaultConfig = {
-	driver: localforage.LOCALSTORAGE,
+	driver: localforage.INDEXEDDB,
 	name: 'calypso',
 	version: 1.0,
 	//size: 4980736,
@@ -81,13 +84,17 @@ export class LocalSyncHandler {
 	}
 
 	getByPath( path, fn = () => {} ) {
-		debug( 'getting data from %o key', path );
 		localforage.config( this.config );
-	    //TODO: remove temp debugging
-		localforage.getItem( path, function( error, value) {
-			console.log( 'get by path =====================', path, error, value );
+
+		debug( 'getting data from %o key', path );
+		//TODO: remove temp debugging
+		localforage.getItem( path, function( err, data ) {
+			if ( err ) {
+				throw err;
+			}
+
+			return fn( null, data );
 		} );
-		return null;
 	}
 
 	setByPath( path, data, fn = () => {} ) {
