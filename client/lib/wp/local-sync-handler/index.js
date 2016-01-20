@@ -2,6 +2,7 @@
  * Module dependencies
  */
 import localforage from 'localforage';
+import { blackList } from './endpoints-list';
 import debugFactory from 'debug';
 
 // expose localforage just to development
@@ -38,8 +39,6 @@ export class LocalSyncHandler {
 		}
 
 		this.config = Object.assign( {}, defaultConfig, config );
-		debug( `-> this.config -> `, this.config );
-
 		return this.wrapper( handler );
 	}
 
@@ -53,6 +52,10 @@ export class LocalSyncHandler {
 			let responseSent = false;
 
 			debug( 'starting to get resurce ...' );
+			if ( self.inBlacklist( path ) ) {
+				return handler( params, fn );
+			};
+
 			self.getByPath( path, function( err, data ) {
 				if ( err ) {
 					// @TODO improve error handling here
@@ -68,7 +71,6 @@ export class LocalSyncHandler {
 				debug( 'requesting to WP.com' );
 				handler( params, ( resErr, resData ) => {
 					if ( resErr ) {
-						console.log( `-> resErr -> `, resErr );
 						return fn( resErr );
 					}
 
@@ -104,5 +106,21 @@ export class LocalSyncHandler {
 
 		localforage.config( this.config );
 		localforage.setItem( path, data, fn );
+	}
+
+	inBlacklist( path ) {
+		let inBlacklist = false;
+
+		for ( let i = 0; i < blackList.length; i++ ) {
+			let pattern = blackList[ i ];
+			let re = new RegExp( pattern );
+			if ( re.test( path ) ) {
+				debug( '%o is in the black list', path );
+				inBlacklist = true;
+				continue;
+			}
+		}
+
+		return inBlacklist;
 	}
 }
