@@ -43,7 +43,7 @@ var PostTime = React.createClass( {
 	render: function() {
 		var date = this.props.date;
 		return (
-			<time className={ this.props.className } dateTime={ date } title={ date } >
+			<time className={ this.props.className } dateTime={ date } title={ this.moment( date ).format( 'LLLL' ) } >
 				{ this.state.ago }
 			</time>
 		);
