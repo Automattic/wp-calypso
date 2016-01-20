@@ -59,6 +59,12 @@
 		border-width: 1px 0;
 		padding: 0;
 		overflow-x: auto;
+		margin: 0 auto;
+
+		@include breakpoint( ">960px" ) {
+			border-width: 1px;
+			max-width: 700px;
+		}
 	}
 
 	.mce-toolbar .mce-ico {
