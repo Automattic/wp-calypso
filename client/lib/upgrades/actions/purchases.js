@@ -55,6 +55,12 @@ function cancelPrivateRegistration( purchaseId, onComplete ) {
 	} );
 }
 
+function clearPurchases() {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.PURCHASES_REMOVE
+	} );
+}
+
 function deleteStoredCard( card, onComplete ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.STORED_CARDS_DELETE,
@@ -153,8 +159,9 @@ function fetchUserPurchases() {
 export {
 	cancelPurchase,
 	cancelPrivateRegistration,
+	clearPurchases,
 	deleteStoredCard,
 	fetchSitePurchases,
 	fetchStoredCards,
-	fetchUserPurchases
+	fetchUserPurchases,
 };
