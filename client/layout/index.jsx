@@ -26,6 +26,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	connect = require( 'react-redux' ).connect,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
+	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
 	CartData = require( 'components/data/cart' ),
 	KeyboardShortcutsMenu,
@@ -117,6 +118,7 @@ Layout = React.createClass( {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
+				{ this.props.connection === 'OFFLINE' && <OfflineStatus /> }
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
 						<WelcomeMessage welcomeSite={ newestSite } />
@@ -139,6 +141,12 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
-		return { isLoading, section, hasSidebar, chunkName };
+		return { 
+			isLoading,
+			section,
+			hasSidebar,
+			chunkName,
+			connection: state.application.isOnline
+		};
 	}
 )( Layout );
