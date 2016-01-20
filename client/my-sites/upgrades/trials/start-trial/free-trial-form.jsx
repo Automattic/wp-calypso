@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import find from 'lodash/collection/find';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import analytics from 'analytics';
 import { cartItems } from 'lib/cart-values';
-import TransactionStepsMixin from 'my-sites/upgrades/checkout/transaction-steps-mixin';
-import FreeTrialConfirmationBox from './free-trial-confirmation-box';
-import { clearSitePlans, fetchSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import plansList from 'lib/plans-list';
 import PaymentBox from 'my-sites/upgrades/checkout/payment-box';
+import TransactionStepsMixin from 'my-sites/upgrades/checkout/transaction-steps-mixin';
+import { clearSitePlans, fetchSitePlans } from 'state/sites/plans/actions';
+import { getPlansBySiteId } from 'state/sites/plans/selectors';
+import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 
 const plans = plansList();
 

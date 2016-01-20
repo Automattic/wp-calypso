@@ -1,23 +1,23 @@
 /**
  * External Dependencies
  */
+import analytics from 'analytics';
 import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
-import analytics from 'analytics';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
-import sitesList from 'lib/sites-list';
+import Main from 'components/main';
+import { getABTestVariation } from 'lib/abtest';
 import i18n from 'lib/mixins/i18n';
-import titleActions from 'lib/screen-title/actions';
 import plansList from 'lib/plans-list';
 import productsList from 'lib/products-list';
-import { getABTestVariation } from 'lib/abtest';
-import Main from 'components/main';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
+import titleActions from 'lib/screen-title/actions';
+import sitesList from 'lib/sites-list';
 import { setSection } from 'state/ui/actions';
 
 const sites = sitesList(),

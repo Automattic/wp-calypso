@@ -28,11 +28,10 @@ function handlePlanSelect( cartItem ) {
 
 		if ( productValues.isFreeTrial( cartItem ) ) {
 			page( `/start-trial/${ plans.getPathFromSlug( cartItem.product_slug ) }/${ siteSlug }` );
-			return;
+		} else {
+			upgradesActions.addItem( cartItem );
+			page( `/checkout/${ siteSlug }` );
 		}
-
-		upgradesActions.addItem( cartItem );
-		page( `/checkout/${ siteSlug }` );
 	} );
 }
 
