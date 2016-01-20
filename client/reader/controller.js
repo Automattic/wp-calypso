@@ -73,10 +73,8 @@ function ensureStoreLoading( store, context ) {
 	return store;
 }
 
-function pageTitleSetter() {
-	return function( title ) {
-		titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
-	};
+function setPageTitle( title ) {
+	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
 }
 
 module.exports = {
@@ -128,7 +126,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		pageTitleSetter()( i18n.translate( 'Following' ) );
+		setPageTitle( i18n.translate( 'Following' ) );
 
 		ReactDom.render(
 			React.createElement( FollowingComponent, {
@@ -153,7 +151,6 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
-			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'blog';
 
 		ensureStoreLoading( feedStore, context );
@@ -188,7 +185,6 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
 			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
-			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'blog';
 
 		ensureStoreLoading( feedStore, context );
@@ -223,8 +219,7 @@ module.exports = {
 			feedId = context.params.feed,
 			postId = context.params.post,
 			basePath = route.sectionify( context.path ),
-			fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId,
-			setPageTitle = pageTitleSetter( context );
+			fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;
 
@@ -260,8 +255,7 @@ module.exports = {
 			blogId = context.params.blog,
 			postId = context.params.post,
 			basePath = route.sectionify( context.path ),
-			fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId,
-			setPageTitle = pageTitleSetter( context );
+			fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;
 
@@ -304,7 +298,6 @@ module.exports = {
 				.replace( /-{2,}/g, '-' ),
 			encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
 			tagStore = feedStreamFactory( 'tag:' + tagSlug ),
-			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'topic';
 
 		ensureStoreLoading( tagStore, context );
@@ -338,7 +331,6 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list,
 			listStore = feedStreamFactory( 'list:' + context.params.user + '-' + context.params.list ),
-			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'list';
 
 		ensureStoreLoading( listStore, context );
@@ -382,7 +374,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		pageTitleSetter( context )( 'Automattic' );
+		setPageTitle( 'Automattic' );
 
 		ReactDom.render(
 			React.createElement( FollowingComponent, {
@@ -407,7 +399,6 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes',
 			likedPostsStore = feedStreamFactory( 'likes' ),
-			setPageTitle = pageTitleSetter( context ),
 			mcKey = 'postlike';
 
 		ensureStoreLoading( likedPostsStore, context );
@@ -439,7 +430,7 @@ module.exports = {
 			mcKey = 'following_edit',
 			search = context.query.s;
 
-		pageTitleSetter( context )( i18n.translate( 'Manage Followed Sites' ) );
+		setPageTitle( i18n.translate( 'Manage Followed Sites' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -454,7 +445,7 @@ module.exports = {
 		);
 	},
 
-	recommendedForYou: function( context ) {
+	recommendedForYou: function() {
 		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
 			basePath = '/recommendations',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Recommended Sites For You',
@@ -474,7 +465,7 @@ module.exports = {
 		);
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		pageTitleSetter( context )( i18n.translate( 'Recommended Sites For You' ) );
+		setPageTitle( i18n.translate( 'Recommended Sites For You' ) );
 	},
 
 	listManagementSites: function( context ) {
@@ -483,7 +474,7 @@ module.exports = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
 			mcKey = 'list_sites';
 
-		pageTitleSetter( context )( i18n.translate( 'Manage List' ) );
+		setPageTitle( i18n.translate( 'Manage List' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -513,7 +504,7 @@ module.exports = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
 			mcKey = 'list_tags';
 
-		pageTitleSetter( context )( i18n.translate( 'Manage List' ) );
+		setPageTitle( i18n.translate( 'Manage List' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -543,7 +534,7 @@ module.exports = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List Description',
 			mcKey = 'list_edit';
 
-		pageTitleSetter( context )( i18n.translate( 'Manage List Description' ) );
+		setPageTitle( i18n.translate( 'Manage List Description' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
