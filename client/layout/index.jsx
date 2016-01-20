@@ -76,7 +76,7 @@ Layout = React.createClass( {
 	},
 
 	render: function() {
-		var sectionClass = 'wp layout is-section-' + this.props.section + ' focus-' + this.props.focus.getCurrent(),
+		var sectionClass = 'wp layout is-section-' + this.props.section + ' focus-' + this.props.focus.getCurrent() + ' network-' + this.props.isOnline,
 			showWelcome = this.props.nuxWelcome.getWelcome(),
 			newestSite = this.newestSite(),
 			translatorInvitation = this.props.translatorInvitation,
@@ -119,6 +119,11 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar } = state.ui;
-		return { isLoading, section, hasSidebar };
+		return { 
+			isLoading,
+			section,
+			hasSidebar,
+			isOnline: state.application.isOnline
+		};
 	}
 )( Layout );
