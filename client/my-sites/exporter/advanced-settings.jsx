@@ -34,25 +34,41 @@ export default React.createClass( {
 			pages: this.translate( 'Pages' ),
 			feedback: this.translate( 'Feedback' )
 		};
+		const defaultLabels = {
+			author: this.translate( 'All Authors' ),
+			status: this.translate( 'All Statuses' ),
+			startDate: this.translate( 'Start Date…' ),
+			endDate: this.translate( 'End Date…' ),
+			category: this.translate( 'All Categories' )
+		}
+		let buildMenu = ( contentType, setting, optionList ) => {
+			return {
+				value: this.props[ contentType ][ setting ],
+				options: this.props.options[ contentType ][ optionList ],
+				defaultLabel: defaultLabels[ setting ],
+				onChange: ( e ) => this.props.onChangeSetting( contentType, setting, e.target.value )
+			};
+		};
 
 		const menus = {
 			posts: [
-				{ value: 0, options: [ this.translate( 'All Authors' ) ] },
-				{ value: 0, options: [ this.translate( 'All Statuses' ) ] },
-				{ value: 0, options: [ this.translate( 'Starting Date…' ) ] },
-				{ value: 0, options: [ this.translate( 'Ending Date…' ) ] },
-				{ value: 0, options: [ this.translate( 'All Categories' ) ] }
+				buildMenu( 'posts', 'author', 'authors' ),
+				buildMenu( 'posts', 'status', 'statuses' ),
+				buildMenu( 'posts', 'startDate', 'startDates' ),
+				buildMenu( 'posts', 'endDate', 'endDates' ),
+				buildMenu( 'posts', 'category', 'categories' )
 			],
 			pages: [
-				{ value: 0, options: [ this.translate( 'All Authors' ) ] },
-				{ value: 0, options: [ this.translate( 'All Statuses' ) ] },
-				{ value: 0, options: [ this.translate( 'Starting Date…' ) ] },
-				{ value: 0, options: [ this.translate( 'Ending Date…' ) ] }
+				buildMenu( 'pages', 'author', 'authors' ),
+				buildMenu( 'pages', 'status', 'statuses' ),
+				buildMenu( 'pages', 'startDate', 'startDates' ),
+				buildMenu( 'pages', 'endDate', 'endDates' ),
 			],
 			feedback: []
 		};
 
 		const buildOptionProps = key => ( {
+			isLoadingOptions: this.props.isLoadingOptions,
 			legend: legends[ key ],
 			isEnabled: this.props.postType === key,
 			menus: menus[ key ],
@@ -76,15 +92,14 @@ export default React.createClass( {
 					<OptionFieldset { ...buildOptionProps( 'posts' ) } />
 					<OptionFieldset { ...buildOptionProps( 'pages' ) } />
 					<OptionFieldset { ...buildOptionProps( 'feedback' ) }
-						description={ this.translate( 'Survey results etc.' ) }
-					/>
+						description={ this.translate( 'Survey results etc.' ) } />
 				</div>
 				<SpinnerButton
 					className="exporter__export-button"
 					disabled={ !this.props.postType }
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ true }
-					onClick={ this.props.onClickExport }
+					onClick={ () => this.props.onClickExport( this.props.postType ) }
 					text={ this.translate( 'Export Selected Content' ) }
 					loadingText={ this.translate( 'Exporting…' ) } />
 			</div>

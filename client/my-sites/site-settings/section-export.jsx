@@ -28,7 +28,7 @@ export default class SiteSettingsExport extends Component {
 
 		return (
 			<Provider store={ this.props.store }>
-				<ExporterContainer site={ this.props.site } />
+				<ExporterContainer />
 			</Provider>
 		);
 	}

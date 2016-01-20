@@ -1814,6 +1814,51 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, fn
 };
 
 /**
+ * Get the available export configuration settings for a site
+ *
+ * @param {int}       siteId            The site ID
+ * @param {Object}    advancedSettings  Advanced export configuration
+ * @param {Function}  fn                The callback function
+ * @api public
+ */
+Undocumented.prototype.getExportSettings = function( siteId, fn ) {
+	this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/exports/settings`
+	}, fn );
+}
+
+/**
+ * Start an export
+ *
+ * @param {int}       siteId            The site ID
+ * @param {Object}    advancedSettings  Advanced export configuration
+ * @param {Function}  fn                The callback function
+ * @api public
+ */
+Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
+	this.wpcom.req.post( {
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/exports/start`
+	}, advancedSettings, fn );
+}
+
+/**
+ * Check the status of an export
+ *
+ * @param {int}       siteId            The site ID
+ * @param {Object}    exportId          Advanced export configuration
+ * @param {Function}  fn                The callback function
+ * @api public
+ */
+Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
+	this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/exports/${ exportId }`
+	}, fn );
+}
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
