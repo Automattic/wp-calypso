@@ -20,7 +20,7 @@ export function plans( state = {}, action ) {
 		case FETCH_SITE_PLANS:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					isFetching: true
+					isFetching: true,
 				} )
 			} );
 		case FETCH_SITE_PLANS_COMPLETED:

@@ -27,7 +27,7 @@ module.exports = React.createClass( {
 	render: function() {
 		var plans = this.props.plans,
 			showJetpackPlans = false,
-			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
+			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.isFetching,
 			site,
 			plansList,
 			currentPlan;

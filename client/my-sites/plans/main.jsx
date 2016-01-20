@@ -30,16 +30,17 @@ var Plans = React.createClass( {
 	mixins: [ observe( 'sites', 'plans' ) ],
 
 	getInitialState: function() {
-		return { openPlan: '' };
+		return { openPlan: '', selectedSite: this.props.sites.getSelectedSite() };
 	},
 
 	componentDidMount: function() {
-		this.props.fetchSitePlans( this.props.selectedSite.ID );
+		this.props.fetchSitePlans( this.state.selectedSite.ID );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.selectedSite.ID !== nextProps.selectedSite.ID ) {
-			this.props.fetchSitePlans( nextProps.selectedSite.ID );
+	componentWillUpdate: function() {
+		if ( this.state.selectedSite !== this.props.sites.getSelectedSite() ) {
+			this.setState( { selectedSite: this.props.sites.getSelectedSite() } );
+			this.props.fetchSitePlans( this.state.selectedSite.ID );
 		}
 	},
 
@@ -53,7 +54,7 @@ var Plans = React.createClass( {
 
 	comparePlansLink: function() {
 		var url = '/plans/compare',
-			selectedSite = this.props.selectedSite;
+			selectedSite = this.props.sites.getSelectedSite();
 
 		if ( this.props.plans.get().length <= 0 ) {
 			return '';
@@ -159,7 +160,7 @@ var Plans = React.createClass( {
 module.exports = connect(
 	function mapStateToProps( state, props ) {
 		return {
-			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
+			sitePlans: getPlansBySiteId( state, props.sites.getSelectedSite().ID )
 		};
 	},
 	function mapDispatchToProps( dispatch ) {
