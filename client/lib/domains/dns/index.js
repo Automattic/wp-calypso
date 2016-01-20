@@ -61,8 +61,7 @@ function isValidName( name, type, selectedDomainName ) {
 	switch ( type ) {
 		case 'CNAME':
 			return (
-				isValidCname( name, selectedDomainName ) &&
-				isValidDomainName( name, type )
+				isValidDomainName( name + '.' + selectedDomainName, type )
 			);
 		case 'SRV':
 			return (
@@ -72,10 +71,6 @@ function isValidName( name, type, selectedDomainName ) {
 		default:
 			return isValidDomainName( name, type );
 	}
-}
-
-function isValidCname( name, selectedDomainName ) {
-	return endsWith( name, '.' + selectedDomainName );
 }
 
 function isValidData( data, type ) {
