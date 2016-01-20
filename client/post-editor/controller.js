@@ -20,7 +20,6 @@ var actions = require( 'lib/posts/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
-	resetPostsQueries = require( 'state/posts/actions' ).resetPostsQueries,
 	setSection = require( 'state/ui/actions' ).setSection,
 	analytics = require( 'analytics' );
 
@@ -106,8 +105,6 @@ module.exports = {
 			if ( maybeRedirect( context, postType, site ) ) {
 				return;
 			}
-
-			context.store.dispatch( resetPostsQueries( site.ID ) );
 
 			let titleStrings;
 			if ( 'page' === postType ) {
