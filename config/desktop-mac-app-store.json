@@ -1,7 +1,7 @@
 {
 	"env": "production",
 	"tracks_client_prop": "mac-app-store",
-	"hostname": "localhost",
+	"hostname": "127.0.0.1",
 	"i18n_default_locale_slug": "en",
 	"wpcom_user_bootstrap": false,
 	"signup_url": "/start/desktop",
