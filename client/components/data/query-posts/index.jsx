@@ -9,29 +9,24 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { getSitePostsForQuery, isRequestingSitePostsForQuery } from 'state/posts/selectors';
+import { isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { requestSitePosts } from 'state/posts/actions';
 
 class QueryPosts extends Component {
-	shouldComponentUpdate( nextProps ) {
-		return (
-			nextProps.siteId !== this.props.siteId ||
-			! shallowEqual( nextProps.query, this.props.query )
-		);
-	}
-
 	componentWillMount() {
-		this.maybeRequestPosts( this.props );
+		if ( ! this.props.requestingPosts ) {
+			this.props.requestSitePosts( this.props.siteId, this.props.query );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		this.maybeRequestPosts( nextProps );
-	}
-
-	maybeRequestPosts( props ) {
-		if ( props.siteId && ! props.posts && ! props.isRequestingPosts ) {
-			props.requestSitePosts( props.siteId, props.query );
+		if ( nextProps.requestingPosts || (
+				this.props.siteId === nextProps.siteId &&
+				shallowEqual( nextProps.query, this.props.query ) ) ) {
+			return;
 		}
+
+		nextProps.requestSitePosts( nextProps.siteId, nextProps.query );
 	}
 
 	render() {
@@ -42,8 +37,7 @@ class QueryPosts extends Component {
 QueryPosts.propTypes = {
 	siteId: PropTypes.number,
 	query: PropTypes.object,
-	posts: PropTypes.array,
-	isRequestingPosts: PropTypes.bool,
+	requestingPosts: PropTypes.bool,
 	requestSitePosts: PropTypes.func
 };
 
@@ -55,8 +49,7 @@ export default connect(
 	( state, ownProps ) => {
 		const { siteId, query } = ownProps;
 		return {
-			posts: getSitePostsForQuery( state, siteId, query ),
-			isRequestingPosts: isRequestingSitePostsForQuery( state, siteId, query )
+			requestingPosts: isRequestingSitePostsForQuery( state, siteId, query )
 		};
 	},
 	( dispatch ) => {
