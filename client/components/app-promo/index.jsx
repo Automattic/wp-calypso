@@ -19,6 +19,8 @@ export default React.createClass( {
 
 	getInitialState: function() {
 		var has_dismissed = store.get( 'desktop_promo_dismissed' );
+		var is_english = ( userUtils.getLocaleSlug() === 'en' );
+
 		var promo_options = [
 			{ promo_code: 'a0001', message: 'WordPress.com your way  — apps now available in three delicious flavors — desktop, iOS, and Android.' },
 			{ promo_code: 'a0002', message: 'Get WordPress.com apps for desktop and mobile.' },
@@ -31,13 +33,14 @@ export default React.createClass( {
 		var item = promo_options[Math.floor( Math.random() * promo_options.length )];
 		return {
 			promo_item: item,
-			dismissed: has_dismissed
+			dismissed: has_dismissed,
+			is_english: is_english
 		};
 	},
 
 	componentDidMount: function() {
 		// record promo view event
-		if ( ! this.state.dismissed ) {
+		if ( ( ! this.state.dismissed ) && ( this.state.is_english ) ) {
 			analytics.tracks.recordEvent( 'calypso_desktop_promo_view', { promo_location: this.props.location, promo_code: this.state.promo_item.promo_code } );
 		}
 	},
@@ -54,12 +57,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		if ( this.state.dismissed ) {
-			return null;
-		}
-
-		// for initial test only show to english
-		if ( userUtils.getLocaleSlug() !== 'en' ) {
+		if ( ( this.state.dismissed ) || ( ! this.state.is_english ) ) {
 			return null;
 		}
 
