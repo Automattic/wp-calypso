@@ -217,17 +217,16 @@ const ManagePurchase = React.createClass( {
 
 	handleRenew() {
 		const purchase = getPurchase( this.props ),
-			cartItem = cartItems.getRenewalItemFromProduct( purchase, {
+			renewItem = cartItems.getRenewalItemFromProduct( purchase, {
 				domain: purchase.meta
-			} );
+			} ),
+			renewItems = [ renewItem ];
 
 		// Track the renew now submit
 		analytics.tracks.recordEvent(
 			'calypso_purchases_renew_now_click',
 			{ product_slug: purchase.productSlug }
 		);
-
-		upgradesActions.addItem( cartItem );
 
 		if ( hasPrivateRegistration( purchase ) ) {
 			const privacyItem = cartItems.getRenewalItemFromCartItem( cartItems.domainPrivacyProtection( {
@@ -237,7 +236,7 @@ const ManagePurchase = React.createClass( {
 				domain: purchase.domain
 			} );
 
-			upgradesActions.addItem( privacyItem );
+			renewItems.push( privacyItem );
 		}
 
 		if ( isRedeemable( purchase ) ) {
@@ -248,8 +247,10 @@ const ManagePurchase = React.createClass( {
 				domain: purchase.domain
 			} );
 
-			upgradesActions.addItem( redemptionItem );
+			renewItems.push( redemptionItem );
 		}
+
+		upgradesActions.addItems( renewItems );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	},

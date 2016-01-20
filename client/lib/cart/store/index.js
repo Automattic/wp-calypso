@@ -3,7 +3,8 @@
  */
 var extend = require( 'lodash/object/assign' ),
 	partialRight = require( 'lodash/function/partialRight' ),
-	compose = require( 'lodash/function/compose' );
+	compose = require( 'lodash/function/compose' ),
+	flow = require( 'lodash/function/flow' );
 
 /**
  * Internal dependencies
@@ -98,16 +99,8 @@ function update( changeFunction ) {
 	cartAnalytics.recordEvents( previousCart, nextCart );
 }
 
-CartStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		cartItem;
-
-	if ( action.cartItem ) {
-		cartItem = cartValues.fillInSingleCartItemAttributes(
-			action.cartItem,
-			productsList.get()
-		);
-	}
+CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
+	const { action } = payload;
 
 	switch ( action.type ) {
 		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
@@ -118,8 +111,8 @@ CartStore.dispatchToken = Dispatcher.register( function( payload ) {
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.CART_ITEM_ADD:
-			update( cartItems.add( cartItem ) );
+		case UpgradesActionTypes.CART_ITEMS_ADD:
+			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
 			break;
 
 		case UpgradesActionTypes.CART_COUPON_APPLY:
@@ -127,7 +120,7 @@ CartStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
-			update( cartItems.removeItemAndDependencies( cartItem, CartStore.get() ) );
+			update( cartItems.removeItemAndDependencies( action.cartItem, CartStore.get() ) );
 			break;
 	}
 } );
