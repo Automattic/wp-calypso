@@ -4,7 +4,6 @@ var express = require( 'express' ),
 	qs = require( 'qs' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
-	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
 	React = require( 'react' ),
 	ReactDomServer = require( 'react-dom/server' );
@@ -12,10 +11,7 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
-
-var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
+	sections = require( '../../client/sections' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -197,6 +193,7 @@ function getDefaultContext( request ) {
 
 function renderLoggedOutRoute( req, res ) {
 	var context = getDefaultContext( req ),
+		i18nUtils = require( 'lib/i18n-utils' ),
 		language;
 
 	res.set( {
@@ -374,6 +371,8 @@ module.exports = function() {
 			renderLoggedInRoute( req, res );
 		} else {
 			const context = getDefaultContext( req );
+			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' )
+			const LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				try {
