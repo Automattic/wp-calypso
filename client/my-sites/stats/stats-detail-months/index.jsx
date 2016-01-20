@@ -132,13 +132,10 @@ export default React.createClass( {
 				</div>
 				<div className="module-content">
 					<div className="module-content-text module-content-text-info">
-						<p className="message">
-							{ this.translate( 'No views yet', { context: 'Empty info box title for post stats page in Stats' } ) }
-						</p>
 						<p>
 							{ this.translate( 'This panel gives you an overview of how many views your website gets on average.', { context: 'Info box description for post stats page in Stats' } ) }
 						</p>
-						<p className="legend achievement">{
+						<span className="legend achievement">{
 							this.translate(
 								'%(value)s = The all-time highest value.',
 								{ args:
@@ -146,7 +143,7 @@ export default React.createClass( {
 									context: 'Legend for post stats page in Stats'
 								}
 							)
-						}</p>
+						}</span>
 					</div>
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<div className="module-content-table">
