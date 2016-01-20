@@ -9,7 +9,7 @@ import classnames from 'classnames';
  */
 import { isExternal } from 'lib/url';
 import Gridicon from 'components/gridicon';
-import from 'sections';
+import sections from 'sections';
 
 export default React.createClass( {
 	displayName: 'SidebarItem',
