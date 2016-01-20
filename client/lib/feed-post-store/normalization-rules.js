@@ -1,12 +1,14 @@
 /**
  * External Dependecies
  */
-var find = require( 'lodash/collection/find' );
+const find = require( 'lodash/collection/find' ),
+	url = require( 'url' ),
+	matches = require( 'lodash/utility/matches' );
 
 /**
  * Internal Dependencies
  */
-var postNormalizer = require( 'lib/post-normalizer' ),
+const postNormalizer = require( 'lib/post-normalizer' ),
 	DISPLAY_TYPES = require( './display-types' );
 
 /**
@@ -16,7 +18,7 @@ const READER_CONTENT_WIDTH = 720,
 	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
 	ONE_LINER_THRESHOLD = ( 20 * 10 ); // roughly 10 lines of words
 
-var fastPostNormalizationRules = [
+const fastPostNormalizationRules = [
 		postNormalizer.decodeEntities,
 		postNormalizer.stripHTML,
 		postNormalizer.preventWidows,
@@ -73,7 +75,16 @@ function classifyPost( post, callback ) {
 			}
 		}
 
-		if ( find( post.content_images, { src: canonicalImage.uri } ) ) {
+		const canonicalImageUrl = url.parse( canonicalImage.uri, true, true ),
+			canonicalImageUrlImportantParts = {
+				hostname: canonicalImageUrl.hostname,
+				pathname: canonicalImageUrl.pathname,
+				query: canonicalImageUrl.query
+			};
+		if ( find( post.content_images, ( img ) => {
+			const imgUrl = url.parse( img.src, true, true );
+			return matches( imgUrl, canonicalImageUrlImportantParts );
+		} ) ) {
 			displayType ^= DISPLAY_TYPES.CANONICAL_IN_CONTENT;
 		}
 	}
