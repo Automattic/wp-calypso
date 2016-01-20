@@ -13,7 +13,7 @@
 	"discover_blog_id": 53424024,
 	"features": {
 		"code-splitting": true,
-		"server-side-rendering": false,
+		"server-side-rendering": true,
 		"post-editor": true,
 		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
