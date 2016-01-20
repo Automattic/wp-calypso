@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MasterbarMinimal from 'layout/masterbar/minimal';
+import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import ThemesHead from 'my-sites/themes/head';
 
 const LayoutLoggedOutDesign = ( { section, hasSidebar, tier = 'all' } ) => {
@@ -22,7 +22,7 @@ const LayoutLoggedOutDesign = ( { section, hasSidebar, tier = 'all' } ) => {
 	return (
 		<div className={ classes }>
 			<ThemesHead tier={ tier } />
-			<MasterbarMinimal url="/" />
+			<MasterbarLoggedOut url="/" />
 			<div id="content" className="wp-content">
 				<div id="primary" className="wp-primary wp-section" />
 				<div id="secondary" className="wp-secondary" />

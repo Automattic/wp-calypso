@@ -10,6 +10,7 @@ var express = require( 'express' ),
 	includes = require( 'lodash/collection/includes' ),
 	React = require( 'react' ),
 	ReactDomServer = require( 'react-dom/server' ),
+	ReactInjection = require( 'react/lib/ReactInjection' ),
 	Helmet = require( 'react-helmet' ),
 	pick = require( 'lodash/object/pick' );
 
@@ -17,11 +18,10 @@ var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
 	createReduxStore = require( 'state' ).createReduxStore,
-	setSection = require( 'state/ui/actions' ).setSection;
+	setSection = require( 'state/ui/actions' ).setSection,
+	i18n = require( 'lib/mixins/i18n');
 
-var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 var cachedDesignMarkup = {};
 
 var HASH_LENGTH = 10,
@@ -38,6 +38,11 @@ var staticFiles = [
 ];
 
 var chunksByPath = {};
+
+i18n.initialize();
+ReactInjection.Class.injectMixin( i18n.mixin );
+const LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+const LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 
 sections.forEach( function( section ) {
 	section.paths.forEach( function( path ) {
