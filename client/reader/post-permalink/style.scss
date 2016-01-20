@@ -1,6 +1,6 @@
 .reader__post-footer li.post-permalink {
 	display: inline-block;
-	padding: 4px;
+	padding: 4px 4px 4px 27px;
 	color: lighten( $gray, 10 );
 	position: relative;
 	box-sizing: border-box;
@@ -13,5 +13,12 @@
 	&:hover {
 		cursor: pointer;
 		color: $blue-light;
+	}
+
+	.gridicons-external {
+		position: absolute;
+			top: 2px;
+			left: 0px;
+		margin-left: 0;
 	}
 }

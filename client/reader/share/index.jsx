@@ -107,7 +107,8 @@ var ReaderShare = React.createClass( {
 		};
 	},
 
-	toggle() {
+	toggle( event ) {
+		event.preventDefault();
 		this.setState( { showingMenu: ! this.state.showingMenu } );
 	},
 
@@ -131,22 +132,28 @@ var ReaderShare = React.createClass( {
 		if ( ! config.isEnabled( 'reader/share' ) ) {
 			return null;
 		}
-		return React.createElement( this.props.tagName, { className: 'reader-share' }, [
-			( <span key="button" ref="shareButton" className={ buttonClasses } onTouchTap={ this.toggle }>
-				{ this.translate( 'Share', { comment: 'Share the post' } ) }
-			</span> ),
-			( <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
-				isVisible={ this.state.showingMenu }
-				onClose={ this.closeMenu }
-				position={ this.props.position }>
-				{ canShareToWordpress ? <PopoverMenuItem action="pressThis" className="reader-share__popover-item">
-					<Gridicon icon='my-sites' size={ 24 } /> WordPress</PopoverMenuItem> : null }
-				<PopoverMenuItem action="twitter" className="reader-share__popover-item">
-					{ twitterIcon } Twitter</PopoverMenuItem>
-				<PopoverMenuItem action="facebook" className="reader-share__popover-item">
-					{ facebookIcon } Facebook</PopoverMenuItem>
-			</PopoverMenu> )
-		] );
+		return React.createElement( this.props.tagName, {
+			className: 'reader-share',
+			onClick: this.toggle,
+			ref: 'shareButton' },
+			[
+				( <span key="button" ref="shareButton" className={ buttonClasses }>
+					<Gridicon icon="share" size={ 24 } />
+					{ this.translate( 'Share', { comment: 'Share the post' } ) }
+				</span> ),
+				( <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
+					isVisible={ this.state.showingMenu }
+					onClose={ this.closeMenu }
+					position={ this.props.position }>
+					{ canShareToWordpress ? <PopoverMenuItem action="pressThis" className="reader-share__popover-item">
+						<Gridicon icon="my-sites" size={ 24 } /> WordPress</PopoverMenuItem> : null }
+					<PopoverMenuItem action="twitter" className="reader-share__popover-item">
+						{ twitterIcon } Twitter</PopoverMenuItem>
+					<PopoverMenuItem action="facebook" className="reader-share__popover-item">
+						{ facebookIcon } Facebook</PopoverMenuItem>
+				</PopoverMenu> )
+			]
+		);
 	}
 
 } );

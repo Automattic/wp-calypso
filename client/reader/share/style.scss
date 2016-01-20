@@ -1,6 +1,6 @@
 .reader-share {
 	display: inline-block;
-	padding: 4px;
+	padding: 4px 4px 4px 27px;
 	color: lighten( $gray, 10 );
 	position: relative;
 	box-sizing: border-box;
@@ -10,10 +10,12 @@
 	&:hover, &:focus, &:active, .is-active {
 		cursor: pointer;
 		color: $blue-light;
+	}
 
-		.gridicon {
-			color: $white;
-		}
+	.gridicons-share {
+		position: absolute;
+			top: 2px;
+			left: 0px;
 	}
 }
 

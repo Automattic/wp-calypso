@@ -21,7 +21,14 @@ export default React.createClass( {
 		className: React.PropTypes.string,
 		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		icon: React.PropTypes.bool
+		icon: React.PropTypes.bool,
+		iconSize: React.PropTypes.number
+	},
+
+	getDefaultProps() {
+		return {
+			iconSize: 18
+		};
 	},
 
 	render() {
@@ -37,7 +44,7 @@ export default React.createClass( {
 		return (
 			<a { ...props }>
 				{ this.props.children }
-				{ this.props.icon ? <Gridicon icon="external" size={ 18 } /> : null }
+				{ this.props.icon ? <Gridicon icon="external" size={ this.props.iconSize } /> : null }
 			</a>
 		);
 	}
