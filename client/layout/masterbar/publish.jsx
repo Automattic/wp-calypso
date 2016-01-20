@@ -12,11 +12,10 @@ import config from 'config';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
 import viewport from 'lib/viewport';
+import sections from 'sections';
 
 export default React.createClass( {
 	displayName: 'MasterbarItemNew',
-
-	_preloaded: false,
 
 	propTypes: {
 		user: React.PropTypes.object,
@@ -57,14 +56,6 @@ export default React.createClass( {
 		}
 	},
 
-	onPreload() {
-		if ( ! this._preloaded && config.isEnabled( 'post-editor' ) ) {
-			this._preloaded = true;
-			// preload the post editor chunk
-			require.ensure( [ 'post-editor' ], () => {}, 'post-editor' );
-		}
-	},
-
 	getPopoverPosition() {
 		if ( viewport.isMobile() ) {
 			return 'bottom';
@@ -88,10 +79,11 @@ export default React.createClass( {
 				url={ newPostPath }
 				icon="create"
 				onClick={ this.onClick }
-				onPreload={ this.onPreload }
+				preloadSectionName="post-editor"
 				isActive={ this.props.isActive }
 				tooltip={ this.props.tooltip }
 				className={ classes }
+				sections={ sections }
 			>
 				{ this.props.children }
 				<SitesPopover

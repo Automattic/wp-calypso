@@ -177,7 +177,7 @@ module.exports = React.createClass( {
 				buttonLabel={ this.translate( 'Customize' ) }
 				onNavigate={ this.onNavigate }
 				icon={ 'themes' }
-				preload={ 'themes' }
+				preloadSectionName="themes"
 			/>
 		);
 	},

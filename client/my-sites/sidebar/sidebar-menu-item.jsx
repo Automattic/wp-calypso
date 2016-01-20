@@ -22,7 +22,7 @@ var SidebarMenuItem = React.createClass( {
 		buttonLabel: React.PropTypes.string,
 		onNavigate: React.PropTypes.func,
 		icon: React.PropTypes.string,
-		preload: React.PropTypes.string
+		preloadSectionName: React.PropTypes.string
 	},
 
 	_preloaded: false,
@@ -45,9 +45,9 @@ var SidebarMenuItem = React.createClass( {
 	},
 
 	preload: function() {
-		if ( ! this._preloaded && this.props.preload ) {
+		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
-			sections.preload( this.props.preload );
+			sections.preload( this.props.preloadSectionName );
 		}
 	},
 

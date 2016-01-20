@@ -18,12 +18,15 @@ export default React.createClass( {
 	propTypes: {
 		url: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		onPreload: React.PropTypes.func,
 		tooltip: React.PropTypes.string,
 		icon: React.PropTypes.string,
 		className: React.PropTypes.string,
-		isActive: React.PropTypes.bool
+		isActive: React.PropTypes.bool,
+		preloadSectionName: React.PropTypes.string,
+		sections: React.PropTypes.object
 	},
+
+	_preloaded: false,
 
 	getDefaultProps() {
 		return {
@@ -32,13 +35,26 @@ export default React.createClass( {
 		};
 	},
 
+	preload() {
+		if ( ! this._preloaded && this.props.preloadSectionName ) {
+			this._preloaded = true;
+			this.props.sections.preload( this.props.preloadSectionName );
+		}
+	},
+
 	render() {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 		} );
 
 		return (
-			<a href={ this.props.url } onClick={ this.props.onClick } title={ this.props.tooltip } className={ itemClasses } onTouchStart={ this.props.onPreload } onMouseEnter={ this.props.onPreload }>
+			<a
+				href={ this.props.url }
+				onClick={ this.props.onClick }
+				title={ this.props.tooltip }
+				className={ itemClasses }
+				onTouchStart={ this.preload }
+				onMouseEnter={ this.preload }>
 				{ !! this.props.icon &&
 					<Gridicon icon={ this.props.icon } size={ 24 } />
 				}

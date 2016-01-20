@@ -170,7 +170,7 @@ var PublishMenu = React.createClass( {
 				buttonLink={ menuItem.buttonLink }
 				onNavigate={ this.props.onNavigate }
 				icon={ icon }
-				preload={ preload }
+				preloadSectionName={ preload }
 			/>
 		);
 	},
