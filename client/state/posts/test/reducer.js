@@ -7,7 +7,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	POSTS_QUERIES_RESET,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -117,6 +116,31 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should preserve previous query results when requesting again', () => {
+			const original = Object.freeze( {
+				2916284: {
+					'{"search":"hello"}': {
+						fetching: false,
+						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+					}
+				}
+			} );
+			const state = siteQueries( original, {
+				type: POSTS_REQUEST,
+				siteId: 2916284,
+				query: { search: 'Hello' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'{"search":"hello"}': {
+						fetching: true,
+						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+					}
+				}
+			} );
+		} );
+
 		it( 'should accumulate site queries', () => {
 			const original = Object.freeze( {
 				2916284: {
@@ -179,48 +203,6 @@ describe( 'reducer', () => {
 					}
 				}
 			} );
-		} );
-
-		it( 'should reset queries for a single site upon queries reset', () => {
-			const original = Object.freeze( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					}
-				},
-				77203199: {
-					'{"search":"world"}': {
-						fetching: true
-					}
-				}
-			} );
-			const state = siteQueries( original, {
-				type: POSTS_QUERIES_RESET,
-				siteId: 2916284
-			} );
-
-			expect( state ).to.eql( {
-				77203199: {
-					'{"search":"world"}': {
-						fetching: true
-					}
-				}
-			} );
-		} );
-
-		it( 'should reset queries for all sites upon queries reset', () => {
-			const original = Object.freeze( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					}
-				}
-			} );
-			const state = siteQueries( original, {
-				type: POSTS_QUERIES_RESET
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -326,40 +308,6 @@ describe( 'reducer', () => {
 					'{"search":"ribs"}': 1
 				}
 			} );
-		} );
-
-		it( 'should reset queries for a single site upon queries reset', () => {
-			const original = Object.freeze( {
-				2916284: {
-					'{"search":"hello"}': 1
-				},
-				77203199: {
-					'{"search":"world"}': 2
-				}
-			} );
-			const state = siteQueriesLastPage( original, {
-				type: POSTS_QUERIES_RESET,
-				siteId: 2916284
-			} );
-
-			expect( state ).to.eql( {
-				77203199: {
-					'{"search":"world"}': 2
-				}
-			} );
-		} );
-
-		it( 'should reset queries for all sites upon queries reset', () => {
-			const original = Object.freeze( {
-				2916284: {
-					'{"search":"hello"}': 1
-				}
-			} );
-			const state = siteQueriesLastPage( original, {
-				type: POSTS_QUERIES_RESET
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );
