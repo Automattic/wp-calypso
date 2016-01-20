@@ -172,8 +172,6 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
-		context.store.dispatch( setSection( 'checkout' ) );
-
 		titleActions.setTitle( i18n.translate( 'Checkout' ), {
 			siteID: context.params.domain
 		} );
