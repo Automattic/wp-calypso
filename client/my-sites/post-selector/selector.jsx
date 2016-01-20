@@ -18,6 +18,7 @@ import NoResults from './no-results';
 import analytics from 'analytics';
 import Search from './search';
 import TreeConvert from 'lib/tree-convert';
+import { decodeEntities } from 'lib/formatting';
 
 /**
 * Constants
@@ -117,7 +118,7 @@ export default React.createClass( {
 
 	renderItem( item ) {
 		const itemId = item.ID;
-		const name = item.title || this.translate( 'Untitled' );
+		const name = item.title ? decodeEntities( item.title ) : this.translate( 'Untitled' );
 		const checked = this.props.selected === item.ID;
 		const inputType = this.props.multiple ? 'checkbox' : 'radio';
 		const domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId;
