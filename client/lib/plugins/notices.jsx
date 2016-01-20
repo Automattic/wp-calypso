@@ -17,16 +17,19 @@ function getCombination( translateArg ) {
 	return ( translateArg.numberOfSites > 1 ? 'n sites' : '1 site' ) + ' ' + ( translateArg.numberOfPlugins > 1 ? 'n plugins' : '1 plugin' );
 }
 
-function getTranslateArg( logs, sampleLog ) {
+function getTranslateArg( logs, sampleLog, typeFilter ) {
 	var groupedBySite,
-		groupedByPlugin;
+		groupedByPlugin,
+		filteredLogs = logs.filter( ( log ) => {
+			return log.status === typeFilter ? typeFilter : sampleLog.type;
+		} );
 
-	groupedBySite = groupBy( logs, function( log ) {
-		return log.site.ID && log.type === sampleLog.type;
+	groupedBySite = groupBy( filteredLogs, function( log ) {
+		return log.site.ID;
 	} );
 
-	groupedByPlugin = groupBy( logs, function( log ) {
-		return log.plugin.slug && log.type === sampleLog.type;
+	groupedByPlugin = groupBy( filteredLogs, function( log ) {
+		return log.plugin.slug;
 	} );
 
 	return {
@@ -64,7 +67,7 @@ module.exports = {
 		var logNotices = this.refreshPluginNotices();
 		this.setState( { notices: logNotices } );
 		if ( logNotices.inProgress.length > 0 ) {
-			notices.info( this.getMessage( logNotices.inProgress, this.inProgressMessage ) );
+			notices.info( this.getMessage( logNotices.inProgress, this.inProgressMessage, 'inProgress' ) );
 			return;
 		}
 
@@ -73,7 +76,7 @@ module.exports = {
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.completed.concat( logNotices.errors ) )
 			} );
 		} else if ( logNotices.errors.length > 0 ) {
-			notices.error( this.getMessage( logNotices.errors, this.errorMessage ), {
+			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'errors' ), {
 				button: this.getErrorButton( logNotices.errors ),
 				href: this.getErrorHref( logNotices.errors ),
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.errors )
@@ -85,7 +88,7 @@ module.exports = {
 				// the dismiss button would overlap the link to the settings page when activating
 				showDismiss = ! ( sampleLog.plugin.wp_admin_settings_page_url && 'ACTIVATE_PLUGIN' === sampleLog.action );
 
-			notices.success( this.getMessage( logNotices.completed, this.successMessage ), {
+			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
 				button: this.getSuccessButton( logNotices.completed ),
 				href: this.getSuccessHref( logNotices.completed ),
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.completed ),
@@ -94,10 +97,10 @@ module.exports = {
 		}
 	},
 
-	getMessage: function( logs, messageFunction ) {
+	getMessage: function( logs, messageFunction, typeFilter ) {
 		var sampleLog, combination, translateArg;
 		sampleLog = ( logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ] );
-		translateArg = getTranslateArg( logs, sampleLog );
+		translateArg = getTranslateArg( logs, sampleLog, typeFilter );
 		combination = getCombination( translateArg );
 		return messageFunction( sampleLog.action, combination, translateArg, sampleLog );
 	},
@@ -422,8 +425,8 @@ module.exports = {
 	},
 
 	erroredAndCompletedMessage: function( logNotices ) {
-		var completedMessage = this.getMessage( logNotices.completed, this.successMessage ),
-			errorMessage = this.getMessage( logNotices.errors, this.errorMessage );
+		var completedMessage = this.getMessage( logNotices.completed, this.successMessage, 'completed' ),
+			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'errors' );
 		return ' ' + completedMessage + ' ' + errorMessage;
 	},
 
