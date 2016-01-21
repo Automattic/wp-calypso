@@ -79,11 +79,10 @@ export default React.createClass( {
 				url={ newPostPath }
 				icon="create"
 				onClick={ this.onClick }
-				preloadSectionName="post-editor"
 				isActive={ this.props.isActive }
 				tooltip={ this.props.tooltip }
 				className={ classes }
-				sections={ sections }
+				preloadSection={ () => sections.preload( 'post-editor' ) }
 			>
 				{ this.props.children }
 				<SitesPopover

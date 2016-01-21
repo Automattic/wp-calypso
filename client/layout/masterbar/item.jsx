@@ -6,6 +6,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
+import isFunction from 'lodash/lang/isFunction';
 
 /**
  * Internal dependencies
@@ -22,8 +23,7 @@ export default React.createClass( {
 		icon: React.PropTypes.string,
 		className: React.PropTypes.string,
 		isActive: React.PropTypes.bool,
-		preloadSectionName: React.PropTypes.string,
-		sections: React.PropTypes.object
+		preloadSection: React.PropTypes.func
 	},
 
 	_preloaded: false,
@@ -36,9 +36,9 @@ export default React.createClass( {
 	},
 
 	preload() {
-		if ( ! this._preloaded && this.props.preloadSectionName ) {
+		if ( ! this._preloaded && isFunction( this.props.preloadSection ) ) {
 			this._preloaded = true;
-			this.props.sections.preload( this.props.preloadSectionName );
+			this.props.preloadSection();
 		}
 	},
 
