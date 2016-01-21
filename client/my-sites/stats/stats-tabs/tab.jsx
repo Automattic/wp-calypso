@@ -20,7 +20,10 @@ export default React.createClass( {
 		loading: PropTypes.bool,
 		selected: PropTypes.bool,
 		tabClick: PropTypes.func,
-		value: PropTypes.number
+		value: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string
+		] )
 	},
 
 	clickHandler( event ) {

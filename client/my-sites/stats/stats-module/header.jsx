@@ -17,17 +17,21 @@ export default React.createClass( {
 		siteId: PropTypes.number,
 		path: PropTypes.string,
 		title: PropTypes.string,
+		titleLink: PropTypes.string,
 		showInfo: PropTypes.bool,
 		showModule: PropTypes.bool,
 		isCollapsed: PropTypes.bool,
+		showActions: PropTypes.bool,
 		showCollapse: PropTypes.bool,
-		onActionClick: PropTypes.func.isRequired
+		onActionClick: PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
 			showCollapse: true,
-			showModule: true
+			showModule: true,
+			showActions: true,
+			onActionClick: () => {}
 		}
 	},
 
@@ -60,6 +64,31 @@ export default React.createClass( {
 		} );
 	},
 
+	renderActions() {
+		const { showCollapse, showInfo, showActions } = this.props;
+		const infoIcon = showInfo ? 'info' : 'info-outline';
+
+		if ( ! showActions ) {
+			return null;
+		}
+
+		return (
+			<ul className="module-header-actions">
+				<li className="module-header-action toggle-info">
+					<a href="#"
+						className="module-header-action-link"
+						aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						onClick={ this.toggleInfo }
+					>
+						<Gridicon icon={ infoIcon } />
+					</a>
+				</li>
+				{ showCollapse ? this.renderChevron() : null }
+			</ul>
+		);
+	},
+
 	renderChevron() {
 		return (
 			<li className="module-header-action toggle-services">
@@ -88,26 +117,30 @@ export default React.createClass( {
 		);
 	},
 
-	render() {
-		const { showCollapse, showInfo, title } = this.props;
-		const infoIcon = showInfo ? 'info' : 'info-outline';
+	renderTitle() {
+		const { title, titleLink } = this.props;
 
+		if ( titleLink ) {
+			return (
+				<h3 className="module-header-title">
+					<a href={ titleLink } className="module-header__link">
+						<span className="module-header__right-icon">
+							<Gridicon icon="stats" />
+						</span>
+						{ title }
+					</a>
+				</h3>
+			);
+		}
+
+		return <h3 className="module-header-title">{ title }</h3>;
+	},
+
+	render() {
 		return (
 			<div className="module-header">
-				<h4 className="module-header-title">{ title }</h4>
-				<ul className="module-header-actions">
-					<li className="module-header-action toggle-info">
-						<a href="#"
-							className="module-header-action-link"
-							aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
-							title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
-							onClick={ this.toggleInfo }
-						>
-							<Gridicon icon={ infoIcon } />
-						</a>
-					</li>
-					{ showCollapse ? this.renderChevron() : null }
-				</ul>
+				{ this.renderTitle() }
+				{ this.renderActions() }
 			</div>
 		);
 	}
