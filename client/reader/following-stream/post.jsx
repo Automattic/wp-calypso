@@ -417,8 +417,8 @@ var Post = React.createClass( {
 				}
 
 				<ul className="reader__post-footer">
-					<Share post={ post } />
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />
+					<Share post={ post } />
 					{ ( shouldShowComments ) ? <CommentButton onClick={ this.recordCommentButtonClick } commentCount={ commentCount } /> : null }
 					{ ( shouldShowLikes ) ? <LikeButton siteId={ likeSiteId } postId={ likePostId } /> : null }
 					<li className="reader__post-options"><PostOptions post={ post } site={ this.state.site } /></li>
