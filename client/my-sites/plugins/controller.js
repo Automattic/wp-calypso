@@ -50,11 +50,18 @@ function renderSinglePlugin( context, siteUrl, isWpcomPlugin ) {
 	}
 
 	if (
-		( ! site || ! site.jetpack ) &&
+		( site && ! site.jetpack ) &&
 		businessPlugins.indexOf( pluginSlug ) >= 0 &&
 		context.path.indexOf( '/business' ) < 0
 	) {
 		return page.redirect( '/plugins/' + pluginSlug + '/business' + ( site ? '/' + site.slug : '' ) );
+	}
+
+	if ( ! site &&
+		context.path.indexOf( '/business' ) >= 0 &&
+		-1 === businessPlugins.indexOf( pluginSlug )
+	) {
+		return page.redirect( '/plugins/' + pluginSlug );
 	}
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Plugin Details' );
