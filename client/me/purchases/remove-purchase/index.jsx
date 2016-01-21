@@ -9,11 +9,12 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
-import notices from 'notices';
 import { getPurchase, isDataLoading } from '../utils';
 import { getName, isRemovable } from 'lib/purchases';
-import { removePurchase } from 'lib/upgrades/actions';
+import Gridicon from 'components/gridicon';
+import notices from 'notices';
 import purchasePaths from '../paths';
+import { removePurchase } from 'lib/upgrades/actions';
 
 const RemovePurchase = React.createClass( {
 	propTypes: {
@@ -69,8 +70,11 @@ const RemovePurchase = React.createClass( {
 		const productName = getName( getPurchase( this.props ) );
 
 		return (
-			<CompactCard href="#" onClick={ this.openDialog }>
-				{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }
+			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
+				<a >
+					<Gridicon icon="trash" />
+					{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }
+				</a>
 			</CompactCard>
 		);
 	},
