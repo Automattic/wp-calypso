@@ -22,7 +22,10 @@ const ThemesSelection = React.createClass( {
 	mixins: [ urlSearch ],
 
 	propTypes: {
-		selectedSite: PropTypes.object,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired,
 		siteId: PropTypes.string,
 		search: PropTypes.string,
 		togglePreview: PropTypes.func.isRequired,
