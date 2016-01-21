@@ -353,7 +353,6 @@ const PluginsMain = React.createClass( {
 	},
 
 	render() {
-		console.log( 'hello' );
 		if ( this.state.accessError ) {
 			return (
 				<Main>
