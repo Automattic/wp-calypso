@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 						</div>
 						<p><strong>{ this.translate( 'Linux' ) }</strong><br />
 						{ this.translate( 'Choose your distribution' ) }</p>
-						<Button href="https://desktop.wordpress.com/d/linux?ref=getapps">{ this.translate( '.TAR.GZ' ) }</Button> <Button href="https://desktop.wordpress.com/d/linux-deb">{ this.translate( '.DEB' ) }</Button>
+						<Button href="https://desktop.wordpress.com/d/linux?ref=getapps">{ this.translate( '.TAR.GZ' ) }</Button> <Button href="https://desktop.wordpress.com/d/linux-deb?ref=getapps">{ this.translate( '.DEB' ) }</Button>
 					</section>
 
 				</Card>
