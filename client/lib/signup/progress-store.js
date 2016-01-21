@@ -14,7 +14,6 @@ var debug = require( 'debug' )( 'calypso:signup-progress-store' ), // eslint-dis
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	config = require( 'config' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	SignupDependencyStore = require( './dependency-store' ),
 	steps = require( 'signup/config/steps' );
