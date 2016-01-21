@@ -34,7 +34,9 @@
 	}
 
 	textarea {
+		max-height: 400px;
 		min-height: 33px;
+		height: auto;
 		padding-right: 60px;
 		resize: vertical;
 		font-family: $serif;
