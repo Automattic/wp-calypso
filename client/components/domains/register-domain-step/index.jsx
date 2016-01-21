@@ -177,6 +177,7 @@ var RegisterDomainStep = React.createClass( {
 					placeholder={ this.translate( 'Enter a domain or keyword', { textOnly: true } ) }
 					autoFocus={ true }
 					delaySearch={ true }
+					delayTimeout="2000"
 				/>
 			</div>
 		);
