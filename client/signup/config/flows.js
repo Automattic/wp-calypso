@@ -30,7 +30,7 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'domains', 'user' ],
+		steps: [ 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -39,7 +39,7 @@ const flows = {
 	},
 
 	premium: {
-		steps: [ 'domains', 'user' ],
+		steps: [ 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
