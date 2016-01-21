@@ -25,6 +25,17 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 		link(rel='stylesheet', href='/desktop/wordpress-desktop.css')
 		script(src='/calypso/build-desktop.js')
 		script(src='/desktop/desktop-app.js')
+		script.
+			(function() {
+				if ( 'serviceWorker' in navigator ) {
+					navigator.serviceWorker.register( 'sw.js' ).then( function( registration ) {
+						console.log( 'ServiceWorker registration successful with scope: ',    registration.scope );
+					}).catch(function( err ) {
+						// registration failed :(
+						console.log('ServiceWorker registration failed: ', err);
+					});
+				}
+			})();
 
 	body(class=isRTL ? 'rtl' : '')
 		#wpcom.wpcom-site
