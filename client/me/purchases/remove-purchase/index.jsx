@@ -9,6 +9,7 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
+import notices from 'notices';
 import { getPurchase, isDataLoading } from '../utils';
 import { getName, isExpiring } from 'lib/purchases';
 import { removePurchase } from 'lib/upgrades/actions';
@@ -42,9 +43,19 @@ const RemovePurchase = React.createClass( {
 	removePurchase( closeDialog ) {
 		removePurchase( this.props.selectedPurchase.data.id, success => {
 			if ( success ) {
+				notices.success(
+					this.translate( `The purchase was removed from {{em}}%(siteSlug)s{{/em}}.`, {
+						args: { siteSlug: this.props.selectedSite.slug },
+						components: { em: <em /> },
+						persistent: true
+					} )
+				);
+
 				page( purchasePaths.list() );
 			} else {
 				closeDialog();
+
+				notices.error( this.props.selectedPurchase.error );
 			}
 		} );
 	},

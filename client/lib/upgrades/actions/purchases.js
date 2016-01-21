@@ -167,7 +167,7 @@ function removePurchase( purchaseId, onComplete ) {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASE_REMOVE_FAILED,
-				error: PURCHASE_REMOVE_ERROR_MESSAGE
+				error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
