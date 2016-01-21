@@ -15,7 +15,8 @@ var analytics = require( 'analytics' ),
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	{ isPremium, isBusiness } = require( 'lib/products-values' );
+	{ isPremium, isBusiness } = require( 'lib/products-values' ),
+	isTheme = require( 'lib/products-values' ).isTheme;
 
 module.exports = React.createClass( {
 	displayName: 'CartItem',
@@ -92,13 +93,14 @@ module.exports = React.createClass( {
 	getProductInfo() {
 		var domain = this.props.cartItem.meta || this.props.selectedSite.domain,
 			info = null;
-
 		if ( isGoogleApps( this.props.cartItem ) && this.props.cartItem.extra.google_apps_users ) {
 			info = this.props.cartItem.extra.google_apps_users.map( user => <div>{ user.email }</div> );
 		} else if ( isCredits( this.props.cartItem ) ) {
 			info = null
 		} else if ( getIncludedDomain( this.props.cartItem ) ) {
 			info = getIncludedDomain( this.props.cartItem );
+		} else if ( isTheme( this.props.cartItem ) ) {
+			info = this.props.selectedSite.domain;
 		} else {
 			info = domain;
 		}
