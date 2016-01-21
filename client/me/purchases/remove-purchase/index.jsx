@@ -11,7 +11,7 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import notices from 'notices';
 import { getPurchase, isDataLoading } from '../utils';
-import { getName, isExpiring } from 'lib/purchases';
+import { getName, isRemovable } from 'lib/purchases';
 import { removePurchase } from 'lib/upgrades/actions';
 import purchasePaths from '../paths';
 
@@ -119,7 +119,7 @@ const RemovePurchase = React.createClass( {
 
 		const purchase = getPurchase( this.props );
 
-		if ( ! isExpiring( purchase ) ) {
+		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
 
