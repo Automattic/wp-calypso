@@ -550,7 +550,83 @@ module.exports = {
 		}
 	},
 
+	additionalExplanation: function( error_code ) {
+		switch ( error_code ) {
+			case 'no_package':
+				return i18n.translate( 'Plugin doesn\'t exits in the plugin repo.' );
+
+			case 'resource_not_found':
+				return i18n.translate( 'The site could not be reached.' );
+
+			case 'download_failed':
+				return i18n.translate( 'Download failed.' );
+
+			case 'plugin_already_installed':
+				return i18n.translate( 'Plugin is already installed.' );
+
+			case 'incompatible_archive':
+				return i18n.translate( 'Incompatible Archive.' );
+
+			case 'empty_archive_pclzip':
+				return i18n.translate( 'Empty archive.' );
+
+			case 'disk_full_unzip_file':
+				return i18n.translate( 'Could not copy files. You may have run out of disk space.' );
+
+			case 'mkdir_failed_ziparchive':
+			case 'mkdir_failed_pclzip':
+				return i18n.translate( 'Could not create directory.' );
+
+			case 'copy_failed_pclzip':
+				return i18n.translate( 'Could not copy file.' );
+
+			case 'md5_mismatch':
+				return i18n.translate( 'The checksum of the files don\'t match.' );
+
+			case 'bad_request':
+				return i18n.translate( 'Invalid Data provided.' );
+
+			case 'fs_unavailable':
+				return i18n.translate( 'Could not access filesystem.' );
+
+			case 'fs_error':
+				return i18n.translate( 'Filesystem error.' );
+
+			case 'fs_no_root_dir':
+				return i18n.translate( 'Unable to locate WordPress Root directory.' );
+
+			case 'fs_no_content_dir':
+				return i18n.translate( 'Unable to locate WordPress Content directory (wp-content).' );
+
+			case 'fs_no_plugins_dir':
+				return i18n.translate( 'Unable to locate WordPress Plugin directory.' );
+
+			case 'fs_no_folder':
+				return i18n.translate( 'Unable to locate needed folder.' );
+
+			case 'no_files':
+				return i18n.translate( 'The package contains no files.' );
+
+			case 'folder_exists':
+				return i18n.translate( 'Destination folder already exists.' );
+
+			case 'mkdir_failed':
+				return i18n.translate( 'Could not create directory.' );
+
+			case 'incompatible_archive':
+				return i18n.translate( 'The package could not be installed.' );
+
+			case 'files_not_writable':
+				return i18n.translate( 'The update cannot be installed because we will be unable to copy some files. This is usually due to inconsistent file permissions.' );
+
+			default:
+				return null;
+		}
+		return null;
+	},
+
 	singleErrorMessage: function( action, translateArg, sampleLog ) {
+		const additionalExplanation = this.additionalExplanation( sampleLog.error.error );
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
 				switch ( sampleLog.error.error ) {
@@ -558,7 +634,14 @@ module.exports = {
 						return i18n.translate( 'Error installing %(plugin)s on %(site)s, remote management is off.', {
 							args: translateArg
 						} );
+
 					default:
+						if ( additionalExplanation ) {
+							translateArg.additionalExplanation = additionalExplanation;
+							return i18n.translate( 'Error installing %(plugin)s on %(site)s. %(additionalExplanation)s', {
+								args: translateArg
+							} );
+						}
 						return i18n.translate( 'An error occurred while installing %(plugin)s on %(site)s.', {
 							args: translateArg
 						} );
@@ -581,6 +664,12 @@ module.exports = {
 							args: translateArg
 						} );
 					default:
+						if ( additionalExplanation ) {
+							translateArg.additionalExplanation = additionalExplanation;
+							return i18n.translate( 'Error updating %(plugin)s on %(site)s. %(additionalExplanation)s', {
+								args: translateArg
+							} );
+						}
 						return i18n.translate( 'An error occurred while updating %(plugin)s on %(site)s.', { args: translateArg } );
 				}
 				break;
