@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var StatsList = require( '../stats-list' ),
+	StatsListLegend = require( '../stats-list/legend' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	skeleton = require( '../mixin-skeleton' ),
 	Card = require( 'components/card' );
@@ -46,17 +47,9 @@ module.exports = React.createClass( {
 						<h4 className="module-header-title">{ this.translate( 'Video Embeds' ) }</h4>
 					</div>
 					<div className="module-content">
-						<div className="stats-async-metabox-wrapper">
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-label">{ this.translate( 'Page' ) }</span>
-									</span>
-								</li>
-							</ul>
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							<StatsList moduleName="Video Details" data={ this.props.summaryList.response.pages ? this.props.summaryList.response.pages : [] } />
-						</div>
+						<StatsListLegend label={ this.translate( 'Page' ) } />
+						<StatsModulePlaceholder isLoading={ isLoading } />
+						<StatsList moduleName="Video Details" data={ this.props.summaryList.response.pages ? this.props.summaryList.response.pages : [] } />
 					</div>
 				</div>
 			</Card>

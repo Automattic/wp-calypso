@@ -17,6 +17,7 @@ var toggle = require( '../mixin-toggle' ),
 	ErrorPanel = require( '../stats-error' ),
 	Card = require( 'components/card' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
+	StatsListLegend = require( '../stats-list/legend' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
@@ -130,20 +131,9 @@ module.exports = React.createClass( {
 
 						{ geochart }
 						<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
-						<div className="stats-async-metabox-wrapper">
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.translate( 'Views' ) }</span>
-										</span>
-										<span className="module-content-list-item-label">{ this.translate( 'Country' ) }</span>
-									</span>
-								</li>
-							</ul>
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							{ countries }
-						</div>
+						<StatsListLegend value={ this.translate( 'Views' ) } label={ this.translate( 'Country' ) } />
+						<StatsModulePlaceholder isLoading={ isLoading } />
+						{ countries }
 						{ this.props.summary
 							? <DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
 							: null }
