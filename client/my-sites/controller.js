@@ -127,6 +127,7 @@ module.exports = {
 		// If the path fragment does not resemble a site, set all sites to visible
 		if ( ! siteID ) {
 			sites.selectAll();
+			context.store.dispatch( uiActions.setAllSitesSelected() );
 			return next();
 		}
 
