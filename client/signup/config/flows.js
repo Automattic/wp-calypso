@@ -35,7 +35,7 @@ const flows = {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: null
+		lastModified: '2016-01-21'
 	},
 
 	premium: {
@@ -44,7 +44,7 @@ const flows = {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: null
+		lastModified: '2016-01-21'
 	},
 
 	main: {
