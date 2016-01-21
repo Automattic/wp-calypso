@@ -30,21 +30,21 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'domains', 'user' ],
+		steps: [ 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: null
+		lastModified: '2016-01-21'
 	},
 
 	premium: {
-		steps: [ 'domains', 'user' ],
+		steps: [ 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: null
+		lastModified: '2016-01-21'
 	},
 
 	main: {
