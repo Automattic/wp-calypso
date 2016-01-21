@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React from 'react';
 
 /**
@@ -10,6 +11,8 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import { getPurchase, isDataLoading } from '../utils';
 import { getName, isExpiring } from 'lib/purchases';
+import { removePurchase } from 'lib/upgrades/actions';
+import purchasePaths from '../paths';
 
 const RemovePurchase = React.createClass( {
 	propTypes: {
@@ -36,8 +39,14 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isDialogVisible: true } );
 	},
 
-	removePurchase() {
-		// TODO: actually remove the purchase
+	removePurchase( closeDialog ) {
+		removePurchase( this.props.selectedPurchase.data.id, success => {
+			if ( success ) {
+				page( purchasePaths.list() );
+			} else {
+				closeDialog();
+			}
+		} );
 	},
 
 	renderCard() {

@@ -37,10 +37,12 @@ const reducer = ( state, payload ) => {
 		case ActionTypes.PURCHASES_REMOVE:
 			return assign( {}, state, { data: [], hasLoadedFromServer: false } );
 
+		case ActionTypes.PURCHASE_REMOVE:
 		case ActionTypes.PURCHASES_SITE_FETCH:
 		case ActionTypes.PURCHASES_USER_FETCH:
 			return assign( {}, state, { isFetching: true } );
 
+		case ActionTypes.PURCHASE_REMOVE_COMPLETED:
 		case ActionTypes.PURCHASES_SITE_FETCH_COMPLETED:
 		case ActionTypes.PURCHASES_USER_FETCH_COMPLETED:
 			let { purchases } = action;
@@ -58,6 +60,7 @@ const reducer = ( state, payload ) => {
 				hasLoadedFromServer: true
 			} );
 
+		case ActionTypes.PURCHASE_REMOVE_FAILED:
 		case ActionTypes.PURCHASES_SITE_FETCH_FAILED:
 		case ActionTypes.PURCHASES_USER_FETCH_FAILED:
 			return assign( {}, state, { error: action.error } );
