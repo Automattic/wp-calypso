@@ -26,7 +26,8 @@ const RemovePurchase = React.createClass( {
 
 	getInitialState() {
 		return {
-			isDialogVisible: false
+			isDialogVisible: false,
+			isRemoving: false
 		};
 	},
 
@@ -41,14 +42,18 @@ const RemovePurchase = React.createClass( {
 	},
 
 	removePurchase( closeDialog ) {
+		this.setState( { isRemoving: true } );
+
 		removePurchase( this.props.selectedPurchase.data.id, success => {
+			this.setState( { isRemoving: false } );
+
 			if ( success ) {
 				notices.success(
 					this.translate( `The purchase was removed from {{em}}%(siteSlug)s{{/em}}.`, {
 						args: { siteSlug: this.props.selectedSite.slug },
-						components: { em: <em /> },
-						persistent: true
-					} )
+						components: { em: <em /> }
+					} ),
+					{ persistent: true }
 				);
 
 				page( purchasePaths.list() );
@@ -73,12 +78,12 @@ const RemovePurchase = React.createClass( {
 	renderDialog() {
 		const buttons = [ {
 				action: 'cancel',
-				disabled: false,
+				disabled: this.state.isRemoving,
 				label: this.translate( 'Cancel' )
 			},
 			{
 				action: 'remove',
-				disabled: false,
+				disabled: this.state.isRemoving,
 				isPrimary: true,
 				label: this.translate( 'Remove Now' ),
 				onClick: this.removePurchase
