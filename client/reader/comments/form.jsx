@@ -7,7 +7,8 @@ var Gravatar = require( 'components/gravatar' ),
 	User = require( 'lib/user' )().get(),
 	CommentActions = require( 'lib/comment-store/actions' ),
 	Notice = require( 'components/notice' ),
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	TextareaAutosize = require( 'components/textarea-autosize' );
 
 var PostCommentForm = React.createClass( {
 
@@ -185,7 +186,7 @@ var PostCommentForm = React.createClass( {
 				<fieldset>
 					<Gravatar user={ User } />
 					<label>
-						<textarea
+						<TextareaAutosize
 							defaultValue={ this.props.commentText }
 							rows="1"
 							placeholder={ this.translate( 'Enter your comment here…' ) }

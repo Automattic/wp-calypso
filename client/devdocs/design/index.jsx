@@ -30,6 +30,7 @@ var SearchCard = require( 'components/search-card' ),
 	Headers = require( 'components/header-cake/docs/example' ),
 	DropZones = require( 'components/drop-zone/docs/example' ),
 	FormFields = require( 'components/forms/docs/example' ),
+	TextareaAutosize = require( 'components/textarea-autosize/docs/example' ), // @todo should live in /forms/
 	SectionNav = require( 'components/section-nav/docs/example' ),
 	Spinners = require( 'components/spinner/docs/example' ),
 	Rating = require( 'components/rating/docs/example' ),
@@ -192,6 +193,7 @@ module.exports = React.createClass( {
 					<Headers />
 					<DropZones />
 					<FormFields searchKeywords="input textbox textarea radio"/>
+					<TextareaAutosize />
 					<ClipboardButtons />
 					<ClipboardButtonInput />
 					<Rating />
