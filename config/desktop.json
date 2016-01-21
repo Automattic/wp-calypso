@@ -24,6 +24,7 @@
 		"help": false,
 		"mailing-lists/unsubscribe": true,
 		"manage/ads": true,
+		"manage/ads/jetpack": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/jetpack-plans": true,
