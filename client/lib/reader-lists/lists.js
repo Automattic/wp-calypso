@@ -11,7 +11,7 @@ import { action as actionTypes } from './constants';
 var lists = {}, errors = [], updatedLists = {}, isFetching = false, ListStore;
 
 function keyForList( owner, slug ) {
-	return owner + '-' + slug;
+	return decodeURIComponent( owner ) + '-' + decodeURIComponent( slug );
 }
 
 function getListURL( list ) {
