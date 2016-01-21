@@ -8,7 +8,7 @@ const debug = require( 'debug' )( 'calypso:wporg-data:actions' );
  */
 import wporg from 'lib/wporg';
 import utils from 'lib/plugins/utils';
-import { RECEIVE_WPORG_PLUGIN_DATA, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
+import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
 
 /**
  *  Local variables;
@@ -35,7 +35,7 @@ export default {
 				debug( 'plugin details fetched from .org', pluginSlug, error, data );
 
 				dispatch( {
-					type: RECEIVE_WPORG_PLUGIN_DATA,
+					type: WPORG_PLUGIN_DATA_RECEIVE,
 					pluginSlug: pluginSlug,
 					data: data ? utils.normalizePluginData( { detailsFetched: Date.now() }, data ) : null,
 					error: error

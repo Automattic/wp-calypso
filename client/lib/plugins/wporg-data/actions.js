@@ -38,7 +38,7 @@ var PluginsDataActions = {
 			_fetching[ pluginSlug ] = null;
 			debug( 'plugin details fetched from .org', pluginSlug, error, data );
 			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_WPORG_PLUGIN_DATA',
+				type: 'WPORG_PLUGIN_DATA_RECEIVE',
 				pluginSlug: pluginSlug,
 				data: data ? utils.normalizePluginData( { detailsFetched: Date.now() }, data ) : null,
 				error: error

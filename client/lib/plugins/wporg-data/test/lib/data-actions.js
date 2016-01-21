@@ -47,14 +47,14 @@ module.exports = {
 		},
 		error: null,
 		pluginSlug: 'akismet',
-		type: 'RECEIVE_WPORG_PLUGIN_DATA',
+		type: 'WPORG_PLUGIN_DATA_RECEIVE',
 	},
 
 	fetchedNoPlugin: {
 		data: null,
 		error: { message: 'Unrecognized response format' },
 		pluginSlug: 'no-kismet',
-		type: 'RECEIVE_WPORG_PLUGIN_DATA',
+		type: 'WPORG_PLUGIN_DATA_RECEIVE',
 	},
 
 	fetchedNewPluginsList: {
