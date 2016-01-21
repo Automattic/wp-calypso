@@ -38,7 +38,6 @@ import {
 	isPaidWithCreditCard,
 	isRedeemable,
 	isRefundable,
-	isRemovable,
 	isRenewable,
 	isRenewing,
 	isIncludedWithPlan,
@@ -465,32 +464,6 @@ const ManagePurchase = React.createClass( {
 		}
 	},
 
-	renderRemovePurchaseInformation() {
-		const purchase = getPurchase( this.props ),
-			contactSupportUrl = 'https://support.wordpress.com/contact/';
-
-		if ( ! isRemovable( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<div className="manage-purchase__remove-box">
-				<em className="manage-purchase__content manage-purchase__remove-text">{ this.translate(
-					'{{strong}}Looking to remove this purchase?{{/strong}} Please {{a}}contact support{{/a}} to remove %(purchaseName)s from your account.',
-					{
-						args: {
-							purchaseName: getName( purchase )
-						},
-						components: {
-							a: <a href={ contactSupportUrl } target="_blank" />,
-							strong: <strong />
-						}
-					}
-				) }</em>
-			</div>
-		);
-	},
-
 	renderEditPaymentMethodNavItem() {
 		const purchase = getPurchase( this.props ),
 			{ id, payment } = purchase;
@@ -586,7 +559,6 @@ const ManagePurchase = React.createClass( {
 			price = this.renderPrice();
 			renewsOrExpiresOnLabel = this.renderRenewsOrExpiresOnLabel();
 			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
-			removePurchaseInformation = this.renderRemovePurchaseInformation();
 			renewButton = this.renderRenewButton();
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
@@ -606,6 +578,7 @@ const ManagePurchase = React.createClass( {
 							{ productLink }
 						</span>
 					</header>
+
 					<ul className="manage-purchase__meta">
 						<li>
 							<em className="manage-purchase__content manage-purchase__detail-label">
@@ -621,15 +594,15 @@ const ManagePurchase = React.createClass( {
 						</li>
 						{ this.renderPaymentDetails() }
 					</ul>
-					{ removePurchaseInformation }
+
 					{ renewButton }
 				</Card>
 
 				{ expiredRenewNotice }
-
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
 				{ cancelPrivateRegistrationNavItem }
+
 				<RemovePurchase
 					selectedSite={ this.props.selectedSite }
 					selectedPurchase={ this.props.selectedPurchase } />
