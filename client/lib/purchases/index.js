@@ -131,22 +131,18 @@ function isRefundable( purchase ) {
 }
 
 /**
- * Checks if an expired purchase can be removed from a user account.
- * Only domains and domain mappings can be removed.
- * Purchases included with plan can't be removed.
+ * Checks whether the specified purchase can be removed from a user account.
+ * Purchases included with a plan can't be removed.
  *
  * @param {Object} purchase
- * @return {boolean}
+ * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
 
-	return (
-		( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) &&
-		isExpired( purchase )
-	);
+	return isExpiring( purchase ) || isExpired( purchase );
 }
 
 function isRenewable( purchase ) {
