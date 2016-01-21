@@ -14,6 +14,7 @@ import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import layoutFocus from 'lib/layout-focus';
 import config from 'config';
+import sections from 'sections';
 
 export default React.createClass( {
 	displayName: 'Masterbar',
@@ -66,6 +67,7 @@ export default React.createClass( {
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
 					tooltip={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
+					preloadSection={ () => sections.preload( 'stats' ) }
 				>
 					{ this.props.user.get().visible_site_count > 1
 						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -78,10 +80,10 @@ export default React.createClass( {
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
 					tooltip={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
+					preloadSection={ () => sections.preload( 'reader' ) }
 				>
 					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
-
 				<Publish
 					sites={ this.props.sites }
 					user={ this.props.user }
@@ -97,6 +99,7 @@ export default React.createClass( {
 					isActive={ this.isActive( 'me' ) }
 					className="masterbar__item-me"
 					tooltip={ this.translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }
+					preloadSection={ () => sections.preload( 'me' ) }
 				>
 					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 					<span className="masterbar__item-me-label">
