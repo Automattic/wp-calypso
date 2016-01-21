@@ -7,6 +7,7 @@ var express = require( 'express' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
 	superagent = require( 'superagent' ),
+	includes = require( 'lodash/collection/includes' ),
 	React = require( 'react' ),
 	ReactDomServer = require( 'react-dom/server' ),
 	Helmet = require( 'react-helmet' );
@@ -385,7 +386,9 @@ module.exports = function() {
 			renderLoggedInRoute( req, res );
 		} else {
 			const context = getDefaultContext( req );
-			const tier = req.params.themeTier || 'all';
+			const tier = includes( [ 'all', 'free', 'premium' ], req.params.themeTier )
+				? req.params.themeTier
+				: 'all';
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				try {
