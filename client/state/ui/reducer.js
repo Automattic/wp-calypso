@@ -50,10 +50,18 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
+export function chunkName( state = false, action ) {
+	if ( action.type === SET_SECTION && action.chunkName !== undefined ) {
+		state = action.chunkName;
+	}
+	return state;
+}
+
 export default combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
+	chunkName,
 	selectedSiteId,
 	editor
 } );

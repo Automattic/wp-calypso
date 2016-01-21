@@ -96,7 +96,7 @@ Layout = React.createClass( {
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn user={ this.props.user } section={ this.props.section } sites={ this.props.sites } />
-				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } /></div>
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
 						<WelcomeMessage welcomeSite={ newestSite } />
@@ -118,7 +118,7 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { isLoading, section, hasSidebar } = state.ui;
-		return { isLoading, section, hasSidebar };
+		const { isLoading, section, hasSidebar, chunkName } = state.ui;
+		return { isLoading, section, hasSidebar, chunkName };
 	}
 )( Layout );

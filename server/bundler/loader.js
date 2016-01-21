@@ -64,6 +64,7 @@ function splitTemplate( path, module, chunkName ) {
 		'		return next();',
 		'	}',
 		'	context.store.dispatch( { type: "SET_SECTION", isLoading: true } );',
+		'	context.store.dispatch( { type: "SET_SECTION", chunkName: ' + JSON.stringify( chunkName ) + ' } );',
 		'	require.ensure([], function( require, error ) {',
 		'		if ( error ) {',
 		'			if ( ! LoadingError.isRetry() ) {',
