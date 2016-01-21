@@ -220,7 +220,7 @@ var RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( domain.indexOf( '.' ) < 0 ) {
+					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
 						return callback();
 					}
 
