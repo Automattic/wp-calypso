@@ -12,10 +12,6 @@
 		display: inline-block;
 	}
 
-	.form-setting-explanation {
-		margin: 5px 0;
-	}
-
 	.short-settings {
 		display: block;
 		min-width: 200px;
@@ -62,7 +58,7 @@
 		}
 	}
 
-	p.form-setting-explanation, p.settings-explanation {
+	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
 		font-size: 13px;

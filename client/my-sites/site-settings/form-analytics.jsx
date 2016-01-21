@@ -13,7 +13,11 @@ var formBase = require( './form-base' ),
 	config = require( 'config' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	EmptyContent = require( 'components/empty-content' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	FormFieldset = require( 'components/forms/form-fieldset' ),
+	FormLabel = require( 'components/forms/form-label' ),
+	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
 
 module.exports = React.createClass( {
 
@@ -72,7 +76,7 @@ module.exports = React.createClass( {
 
 		this.setState( {
 			wga: {
-				 code: event.target.value
+				code: event.target.value
 			},
 			isCodeValid: isCodeValid,
 			notice: notice
@@ -91,41 +95,43 @@ module.exports = React.createClass( {
 		}
 		return (
 			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
-				<fieldset>
-					<label htmlFor="wgaCode">{ this.translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }</label>
-					<input
+				<FormFieldset>
+					<FormLabel htmlFor="wgaCode">
+						{ this.translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+					</FormLabel>
+					<FormTextInput
 						name="wgaCode"
 						id="wgaCode"
-						type="text"
 						value={ this.state.wga.code }
-						onChange={this.handleCodeChange}
+						onChange={ this.handleCodeChange }
 						placeholder={ placeholderText }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.recordEvent.bind( this, 'Clicked Analytics Key Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedAnalyticsKey', 'Typed In Analytics Key Field' ) }
-					/>
-					<p className="settings-explanation"><a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
-						this.translate( 'Where can I find my Tracking ID?' )
+						onKeyPress={ this.recordEventOnce.bind( this, 'typedAnalyticsKey', 'Typed In Analytics Key Field' ) } />
+					<FormSettingExplanation>
+						<a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">
+							{ this.translate( 'Where can I find my Tracking ID?' ) }
+						</a>
+					</FormSettingExplanation>
+				</FormFieldset>
+				<p>
+					{ this.translate( 'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} with different insights into your traffic. WordPress.com stats and Google Analytics use different methods to identify and track activity on your site, so they will normally show slightly different totals for your visits, views, etc.', {
+						components: {
+							a: <a href={ '/stats/' + this.props.site.domain } />
+						} } )
 					}
-					</a></p>
-				</fieldset>
-				<p>{
-					this.translate( 'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} with different insights into your traffic. WordPress.com stats and Google Analytics use different methods to identify and track activity on your site, so they will normally show slightly different totals for your visits, views, etc.', {
-					components: {
-						a: <a href={ '/stats/' + this.props.site.domain } />
-					} } )
-				}</p>
-				<p>{
-					this.translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.', {
-					components: {
-						a: <a href="http://en.support.wordpress.com/google-analytics/" target="_blank" />
-					} } )
-				}</p>
+				</p>
+				<p>
+					{ this.translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.', {
+						components: {
+							a: <a href="http://en.support.wordpress.com/google-analytics/" target="_blank" />
+						} } )
+					}
+				</p>
 				<button
 					type="submit"
 					className="button is-primary"
-					disabled={ this.isSubmitButtonDisabled() }
-				>
+					disabled={ this.isSubmitButtonDisabled() }>
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 				</button>
 			</form>
@@ -149,8 +155,7 @@ module.exports = React.createClass( {
 				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
 				actionURL={ plansLink }
 				isCompact={ true }
-				actionCallback={ this.trackUpgradeClick }
-			/>
+				actionCallback={ this.trackUpgradeClick } />
 		);
 	},
 
@@ -165,7 +170,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 		// Only show Google Analytics for business users.
-		if ( productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan )) {
+		if ( productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan ) ) {
 			return this.form();
 		} else {
 			return this.upgradePrompt();
