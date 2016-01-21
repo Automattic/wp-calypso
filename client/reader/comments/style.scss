@@ -139,6 +139,7 @@
 }
 
 .comment__author {
+	font-weight: bold;
 	color: darken( $gray, 30 );
 
 	.gravatar {
@@ -147,6 +148,18 @@
 			left: -41px;
 		border-radius: 48px;
 	}
+
+	.gridicon {
+		height: 16px;
+		fill: lighten( $gray, 10 );
+		margin-left: 2px;
+		position: relative;
+			top: 2px;
+	}
+
+	&:hover .gridicon {
+		fill: $link-highlight;
+	}
 }
 
 .comment__username {
@@ -154,10 +167,15 @@
 }
 
 .comment__timestamp a {
+	font-weight: normal;
 	font-size: 13px;
 	color: lighten( $gray, 10 );
 	margin-left: 8px;
 	text-decoration: none;
+
+	&:hover {
+		color: $link-highlight;
+	}
 }
 
 .comment__moderation {
