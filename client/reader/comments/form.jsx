@@ -32,6 +32,13 @@ var PostCommentForm = React.createClass( {
 		}
 	},
 
+	componentDidUpdate: function() {
+		const commentTextNode = this.refs.commentText,
+			commentText = this.getCommentText(),
+			currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
+		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
+	},
+
 	handleSubmit: function( event ) {
 		event.preventDefault();
 		this.submit();
@@ -43,14 +50,6 @@ var PostCommentForm = React.createClass( {
 			event.preventDefault();
 			this.submit();
 		}
-
-		// Adjust the height of the textarea as needed.
-		var commentTextNode = this.refs.commentText;
-
-		setTimeout( function() {
-			commentTextNode.style.height = 'auto';
-			commentTextNode.style.height = commentTextNode.scrollHeight + 'px';
-		}, 0 );
 	},
 
 	handleKeyUp: function() {
