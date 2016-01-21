@@ -67,6 +67,7 @@ module.exports = React.createClass( {
 						disabled={ this.props.disabled || ! this.props.plugin }
 						site={ this.props.site }
 						redirect="/plugins/jetpack"
+						isMock={ this.props.isMock }
 						/>
 				</PluginAction>
 			);
