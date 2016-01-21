@@ -56,6 +56,7 @@
 		"me/security/checkup": true,
 		"me/trophies": false,
 		"muse": true,
+		"network-connection": true,
 		"olark_use_wpcom_configuration": false,
 		"phone_signup": true,
 		"post-editor": true,
