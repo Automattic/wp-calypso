@@ -410,16 +410,16 @@ module.exports = function() {
 						throw ex;
 					}
 				}
+
+				const { layout, helmetData } = cachedDesignMarkup[ tier ];
+
+				Object.assign( context, {
+					layout,
+					helmetTitle: helmetData.title,
+					helmetMeta: helmetData.meta,
+					helmetLink: helmetData.link,
+				} );
 			}
-
-			const { layout, helmetData } = cachedDesignMarkup[ tier ];
-
-			Object.assign( context, {
-				layout,
-				helmetTitle: helmetData.title,
-				helmetMeta: helmetData.meta,
-				helmetLink: helmetData.link,
-			} );
 
 			res.render( 'index.jade', context );
 		}
