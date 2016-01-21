@@ -66,7 +66,7 @@ export default React.createClass( {
 			}
 		), element;
 
-		var promo_link = 'https://wordpress.com/me/get-apps?ref=promo_write_' + this.state.promo_item.promo_code;
+		var promo_link = 'https://desktop.wordpress.com/?ref=promo_write_' + this.state.promo_item.promo_code;
 		element = (
 			<div className={ classes }>
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
