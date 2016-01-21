@@ -48,8 +48,8 @@ var PostCommentForm = React.createClass( {
 		var commentTextNode = this.refs.commentText;
 
 		setTimeout( function() {
-			commentTextNode.style.cssText = 'height: auto';
-			commentTextNode.style.cssText = 'height:' + commentTextNode.scrollHeight + 'px';
+			commentTextNode.style.height = 'auto';
+			commentTextNode.style.height = commentTextNode.scrollHeight + 'px';
 		}, 0 );
 	},
 
