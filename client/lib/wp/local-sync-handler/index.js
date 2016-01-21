@@ -47,6 +47,7 @@ export class LocalSyncHandler {
 		const self = this;
 
 		return function( params, fn ) {
+			const cloneParams = Object.assign( {}, params );
 			const path = params.path;
 
 			// response has been sent flag
@@ -61,7 +62,7 @@ export class LocalSyncHandler {
 				return handler( params, fn );
 			};
 
-			self.getByPath( key, function( err, data ) {
+			self.retrieveResponse( key, function( err, data ) {
 				if ( err ) {
 					// @TODO improve error handling here
 					console.error( err );
@@ -86,7 +87,17 @@ export class LocalSyncHandler {
 					}
 
 					debug( 'WP.com response is here. %o', resData );
-					self.setByPath( key, resData );
+
+					if ( responseSent ) {
+						debug( 'data is already stored. overwriting ...' );
+					}
+
+					let storingData = {
+						response: resData,
+						params: cloneParams
+					};
+
+					self.storeResponse( key, storingData );
 
 					if ( ! responseSent ) {
 						fn( err, resData );
@@ -118,20 +129,38 @@ export class LocalSyncHandler {
 		return hash;
 	}
 
-	getByPath( path, fn = () => {} ) {
+	retrieveResponse( key, fn = () => {} ) {
 		localforage.config( this.config );
 
-		debug( 'getting data from %o key', path );
-		localforage.getItem( path, fn );
+		debug( 'getting data from %o key', key );
+		localforage.getItem( key, ( err, data ) => {
+			if ( err ) {
+				return fn( err )
+			};
+
+			if ( ! data ) {
+				return fn();
+			}
+
+			fn( null, data.response || data );
+		} );
 	}
 
-	setByPath( path, data, fn = () => {} ) {
-		debug( 'storing data in %o key', path );
-		// clean some fields
-		delete data._headers;
+	/**
+	 * Store the WP.com REST-API response with the given key.
+	 *
+	 * @param {String} key - local forage key identifier
+	 * @param {Object} data - REST-API endoint response
+	 * @param {Function} [fn] - callback
+	 */
+	storeResponse( key, data, fn = () => {} ) {
+		debug( 'storing data in %o key', key );
+
+		// clean some fields from endpoint response
+		delete data.response._headers;
 
 		localforage.config( this.config );
-		localforage.setItem( path, data, fn );
+		localforage.setItem( key, data, fn );
 	}
 
 	inBlacklist( path ) {
