@@ -18,7 +18,7 @@ var config = require( 'config' ),
 	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
 
 var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
-var cachedDesignMarkup;
+var cachedDesignMarkup = {};
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -385,17 +385,18 @@ module.exports = function() {
 			renderLoggedInRoute( req, res );
 		} else {
 			const context = getDefaultContext( req );
+			const tier = req.params.themeTier || 'all';
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				try {
-					const tier = req.params.themeTier || 'all';
-					if ( cachedDesignMarkup[ tier ] ) {
-						context.layout = cachedDesignMarkup[ tier ];
-					} else {
+					if ( ! cachedDesignMarkup[ tier ] ) {
+						const cached = cachedDesignMarkup[ tier ] = {};
 						let startTime = Date.now();
-						context.layout = cachedDesignMarkup[ tier ] = ReactDomServer.renderToString(
-							LayoutLoggedOutDesignFactory( { tier } ) );
+						cached.layout = ReactDomServer.renderToString(
+								LayoutLoggedOutDesignFactory( { tier } ) );
 						let rtsTimeMs = Date.now() - startTime;
+
+						cached.helmetData = Helmet.rewind();
 
 						if ( rtsTimeMs > 15 ) {
 							// We think that renderToString should generally
@@ -411,12 +412,14 @@ module.exports = function() {
 				}
 			}
 
-			const {
-				title: helmetTitle,
-				meta: helmetMeta,
-				link: helmetLink
-			} = Helmet.rewind();
-			Object.assign( context, { helmetTitle, helmetMeta, helmetLink } );
+			const { layout, helmetData } = cachedDesignMarkup[ tier ];
+
+			Object.assign( context, {
+				layout,
+				helmetTitle: helmetData.title,
+				helmetMeta: helmetData.meta,
+				helmetLink: helmetData.link,
+			} );
 
 			res.render( 'index.jade', context );
 		}
