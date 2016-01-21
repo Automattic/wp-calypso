@@ -37,6 +37,7 @@ export default React.createClass( {
 		plugin: React.PropTypes.object.isRequired,
 		isInstalledOnSite: React.PropTypes.bool,
 		isPlaceholder: React.PropTypes.bool,
+		isMock: React.PropTypes.bool,
 	},
 
 	displayBanner() {
@@ -282,14 +283,14 @@ export default React.createClass( {
 						</div>
 						{ this.renderActions() }
 					</div>
-					<PluginInformation
+					{ ! this.props.isMock && <PluginInformation
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						plugin={ this.props.plugin }
 						isPlaceholder={ this.props.isPlaceholder }
 						site={ this.props.selectedSite }
 						pluginVersion={ plugin && plugin.version }
 						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
-						hasUpdate={ this.getAvailableNewVersions().length > 0 } />
+						hasUpdate={ this.getAvailableNewVersions().length > 0 } /> }
 
 				</Card>
 				{ this.getVersionWarning() }
