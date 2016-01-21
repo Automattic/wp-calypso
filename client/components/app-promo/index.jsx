@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 
 import analytics from 'analytics';
 import store from 'store';
 import userUtils from 'lib/user/utils';
+import viewport from 'lib/viewport';
 
 export default React.createClass( {
 
@@ -18,8 +18,19 @@ export default React.createClass( {
 	},
 
 	getInitialState: function() {
-		var has_dismissed = store.get( 'desktop_promo_dismissed' );
-		var is_english = ( userUtils.getLocaleSlug() === 'en' );
+		var show_promo = true;
+
+		if ( store.get( 'desktop_promo_dismissed' ) ) {
+			show_promo = false;
+		}
+
+		if ( userUtils.getLocaleSlug() !== 'en' ) {
+			show_promo = false;
+		}
+
+		if ( viewport.isMobile() ) {
+			show_promo = false;
+		}
 
 		var promo_options = [
 			{ promo_code: 'a0001', message: 'WordPress.com your way  — apps now available in three delicious flavors — desktop, iOS, and Android.' },
@@ -33,14 +44,13 @@ export default React.createClass( {
 		var item = promo_options[Math.floor( Math.random() * promo_options.length )];
 		return {
 			promo_item: item,
-			dismissed: has_dismissed,
-			is_english: is_english
+			show_promo: show_promo
 		};
 	},
 
 	componentDidMount: function() {
 		// record promo view event
-		if ( ( ! this.state.dismissed ) && ( this.state.is_english ) ) {
+		if ( this.state.show_promo ) {
 			analytics.tracks.recordEvent( 'calypso_desktop_promo_view', { promo_location: this.props.location, promo_code: this.state.promo_item.promo_code } );
 		}
 	},
@@ -50,25 +60,20 @@ export default React.createClass( {
 	},
 
 	dismiss: function() {
-		this.setState( { dismissed: true } );
+		this.setState( { show_promo: false } );
 
 		// store as dismissed
 		store.set( 'desktop_promo_dismissed', true );
 	},
 
 	render: function() {
-		if ( ( this.state.dismissed ) || ( ! this.state.is_english ) ) {
+		if ( ! this.state.show_promo ) {
 			return null;
 		}
 
-		var classes = classNames( 'app-promo', {
-				dismissed: false
-			}
-		), element;
-
 		var promo_link = 'https://desktop.wordpress.com/?ref=promo_write_' + this.state.promo_item.promo_code;
-		element = (
-			<div className={ classes }>
+		var element = (
+			<div className="app-promo">
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
