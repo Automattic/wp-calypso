@@ -42,7 +42,6 @@ var config = require( 'config' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	createReduxStore = require( 'state' ).createReduxStore,
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	reduxFluxSync = require( 'lib/redux-flux-sync' ),
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
 	LoggedOutLayout;
