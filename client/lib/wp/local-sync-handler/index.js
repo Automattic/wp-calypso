@@ -4,6 +4,7 @@
 import localforage from 'localforage';
 import { blackList } from './endpoints-list';
 import debugFactory from 'debug';
+import Hashes from 'jshashes';
 
 // expose localforage just to development
 window.LF = localforage;
@@ -16,7 +17,7 @@ const defaultConfig = {
 	name: 'calypso',
 	version: 1.0,
 	//size: 4980736,
-	storeName: 'keyvaluepairs',
+	storeName: 'calypso-store',
 	description: 'Calypso app storing fata'
 };
 
@@ -51,19 +52,23 @@ export class LocalSyncHandler {
 			// response has been sent flag
 			let responseSent = false;
 
+			// generate an unique resource key
+			const key = self.generateKey( params );
+
+			console.log( ' ' );
 			debug( 'starting to get resurce ...' );
 			if ( self.inBlacklist( path ) ) {
 				return handler( params, fn );
 			};
 
-			self.getByPath( path, function( err, data ) {
+			self.getByPath( key, function( err, data ) {
 				if ( err ) {
 					// @TODO improve error handling here
 					console.error( err );
 				}
 
 				if ( data ) {
-					debug( '%o already storaged. Let\'s be optimistic.', path );
+					debug( '%o already storaged %o. Let\'s be optimistic.', path, data );
 					fn( null, data );
 					responseSent = true;
 				}
@@ -71,11 +76,17 @@ export class LocalSyncHandler {
 				debug( 'requesting to WP.com' );
 				handler( params, ( resErr, resData ) => {
 					if ( resErr ) {
+						console.log( `-> resErr -> `, resErr );
+
+						if ( responseSent ) {
+							return;
+						}
+
 						return fn( resErr );
 					}
 
-					debug( 'WP.com response is here.' );
-					self.setByPath( path, resData );
+					debug( 'WP.com response is here. %o', resData );
+					self.setByPath( key, resData );
 
 					if ( ! responseSent ) {
 						fn( err, resData );
@@ -85,18 +96,33 @@ export class LocalSyncHandler {
 		};
 	}
 
+	/**
+	 * Generate a key from the given param object
+	 *
+	 * @param {Object} params - request parameters
+	 * @return {String} request key
+	 */
+	generateKey( params ) {
+		var key = params.apiVersion || '';
+		key += '-' + params.method;
+		key += '-' + params.path;
+
+		if ( params.query ) {
+			key += '-' + params.query;
+		}
+
+		debug( 'generating hash ... ' );
+		let hash = new Hashes.SHA1().b64( key );
+
+		debug( 'key: %o', hash );
+		return hash;
+	}
+
 	getByPath( path, fn = () => {} ) {
 		localforage.config( this.config );
 
 		debug( 'getting data from %o key', path );
-		//TODO: remove temp debugging
-		localforage.getItem( path, function( err, data ) {
-			if ( err ) {
-				throw err;
-			}
-
-			return fn( null, data );
-		} );
+		localforage.getItem( path, fn );
 	}
 
 	setByPath( path, data, fn = () => {} ) {
