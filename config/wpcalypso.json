@@ -42,7 +42,6 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"manage/themes/logged-out": true,
-		"premium-themes": true,
 		"press-this": true,
 		"manage/sharing": true,
 		"manage/plans": true,
@@ -69,6 +68,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": true,
 		"upgrades/domain-search": true,
+		"upgrades/premium-themes": true,
 
 		"notifications2beta": true,
 		"muse": true,

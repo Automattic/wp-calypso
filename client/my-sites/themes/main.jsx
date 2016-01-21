@@ -109,36 +109,6 @@ var Themes = React.createClass( {
 		);
 	},
 
-	renderToolbarButton() {
-		// TODO: exit only for paid theme!
-		if ( ! this.isLoggedOut() && ! config.isEnabled( 'upgrades/checkout' ) ) {
-			return null;
-		}
-
-		const site = this.props.sites.getSelectedSite(),
-			dispatch = this.props.dispatch,
-			webPreviewButtonText = this.isLoggedOut()
-				? this.translate( 'Choose this design', {
-					comment: 'when signing up for a WordPress.com account with a selected theme'
-				} )
-				: this.translate( 'Try & Customize', {
-					context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
-				} );
-
-		return (
-			<Button primary onClick={ this.setState.bind( this, { showPreview: false },
-				() => {
-					if ( this.isLoggedOut() ) {
-						dispatch( Action.signup( this.state.previewingTheme ) );
-					} else if ( site ) {
-						dispatch( Action.customize( this.state.previewingTheme, site ) );
-					} else {
-						this.setSelectedTheme( 'customize', this.state.previewingTheme );
-					}
-				} ) } >{ webPreviewButtonText }</Button>
-		);
-	},
-
 	render: function() {
 		var site = this.props.sites.getSelectedSite(),
 			isJetpack = site.jetpack,
@@ -153,6 +123,14 @@ var Themes = React.createClass( {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 
+		const webPreviewButtonText = this.isLoggedOut()
+			? this.translate( 'Choose this design', {
+				comment: 'when signing up for a WordPress.com account with a selected theme'
+			} )
+			: this.translate( 'Try & Customize', {
+				context: 'when previewing a theme demo, this button opens the Customizer with the previewed theme'
+			} );
+
 		return (
 			<Main className="themes">
 				{ this.isLoggedOut() ? null : <SidebarNavigation /> }
@@ -160,7 +138,16 @@ var Themes = React.createClass( {
 					<WebPreview showPreview={ this.state.showPreview }
 						onClose={ this.togglePreview }
 						previewUrl={ this.state.previewUrl } >
-						{ this.renderToolbarButton() }
+						<Button primary onClick={ this.setState.bind( this, { showPreview: false },
+							() => {
+								if ( this.isLoggedOut() ) {
+									dispatch( Action.signup( this.state.previewingTheme ) );
+								} else if ( site ) {
+									dispatch( Action.customize( this.state.previewingTheme, site ) );
+								} else {
+									this.setSelectedTheme( 'customize', this.state.previewingTheme );
+								}
+							} ) } >{ webPreviewButtonText }</Button>
 					</WebPreview>
 				}
 				{ this.renderThankYou() }

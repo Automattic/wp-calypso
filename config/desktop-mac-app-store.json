@@ -17,8 +17,6 @@
 		"code-splitting": false,
 		"network-connection": true,
 		"always_use_logout_url": true,
-		"premium-themes": false,
-		"premium-plans": false,
 
 		"post-editor": true,
 		"post-editor/author-selector": true,
@@ -73,6 +71,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": false,
+		"upgrades/premium-themes": false,
 
 		"muse": true,
 		"muse_for_touch_devices": false,

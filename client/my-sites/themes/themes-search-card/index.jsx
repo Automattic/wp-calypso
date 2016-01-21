@@ -70,7 +70,7 @@ var ThemesSearchCard = React.createClass( {
 
 	renderMobile( tiers ) {
 		const isJetpack = this.props.site && this.props.site.jetpack;
-		const isPremiumThemesEnabled = config.isEnabled( 'premium-themes' );
+		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
 
 		return (
@@ -105,7 +105,7 @@ var ThemesSearchCard = React.createClass( {
 
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
-		const isPremiumThemesEnabled = config.isEnabled( 'premium-themes' );
+		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
 			{ value: 'all', label: this.translate( 'All' ) },
