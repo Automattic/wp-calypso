@@ -136,6 +136,7 @@
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
 		"ad-tracking": false,
+		"desktop-promo": true,
 
 		"accept-invite": true,
 		"perfmon": false,
