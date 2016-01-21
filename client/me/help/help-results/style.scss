@@ -6,6 +6,12 @@
 .help-results__footer.card.is-compact {
 	padding: 8px 16px;
 }
+.help-results__footer.card.is-compact {
+	padding-left: 56px;
+	@include breakpoint( "<480px" ) {
+		padding-left: 48px;
+	}
+}
 
 .help-results__header {
 	font: 11px/16px $sans;
@@ -16,7 +22,6 @@
 }
 
 .help-results__footer {
-	padding-right: 56px;
 	font: 14px/24px $sans;
 	color: $gray;
 }
