@@ -275,12 +275,18 @@ module.exports = React.createClass( {
 		}
 	},
 
+	canShowChatbox: function() {
+		const { olark, isChatEnded } = this.state;
+
+		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
+	},
+
 	/**
 	 * Get the view for the contact page. This could either be the olark chat widget if a chat is in progress or a contact form.
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation, sitesInitialized, isSubmitting, isChatEnded } = this.state;
+		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
@@ -304,7 +310,7 @@ module.exports = React.createClass( {
 			);
 		}
 
-		if ( isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable ) ) {
+		if ( this.canShowChatbox() ) {
 			return <OlarkChatbox />;
 		}
 
@@ -352,7 +358,7 @@ module.exports = React.createClass( {
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
-				<Card>
+				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>
 			</Main>
