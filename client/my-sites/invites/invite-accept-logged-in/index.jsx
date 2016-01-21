@@ -13,7 +13,6 @@ import { bindActionCreators } from 'redux';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
 import Button from 'components/button';
-import config from 'config';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
 import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -92,17 +91,12 @@ let InviteAcceptLoggedIn = React.createClass( {
 	},
 
 	render() {
-		const { user } = this.props,
-			signInLink = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
-
+		const { invite, user, signInLink, matchEmailError } = this.props;
 		return (
 			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
 				<Card>
-					<InviteFormHeader { ... this.props.invite } />
-					<div className="invite-accept-logged-in__join-as">
-						<Gravatar user={ user } size={ 72 } />
-						{ this.getJoinAsText() }
-					</div>
+					<InviteFormHeader { ... invite } user matchEmailError />
+					{ ! matchEmailError &&
 					<div className="invite-accept-logged-in__button-bar">
 						<Button onClick={ this.decline } disabled={ this.state.submitting }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
@@ -111,13 +105,23 @@ let InviteAcceptLoggedIn = React.createClass( {
 							{ this.getButtonText() }
 						</Button>
 					</div>
+					}
+					{ matchEmailError &&
+					<div className="invite-accept-logged-in__button-bar">
+						<Button onClick={ this.signInLink } href={ signInLink }>
+							{ this.translate( 'Sign In as %(email)s', { context: 'button', args: { email: invite.sentTo } } ) }
+						</Button>
+					</div>
+					}
 				</Card>
 
-				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem onClick={ this.signInLink } href={ signInLink }>
-						{ this.translate( 'Sign in as a different user' ) }
-					</LoggedOutFormLinkItem>
-				</LoggedOutFormLinks>
+				{ ! invite.forceMatchingEmail &&
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem onClick={ this.signInLink } href={ signInLink }>
+							{ this.translate( 'Sign in as a different user' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				}
 			</div>
 		);
 	}
