@@ -4,7 +4,6 @@
 import React from 'react';
 import Gridicon from 'components/gridicon';
 
-import config from 'config';
 import analytics from 'analytics';
 import store from 'store';
 import userUtils from 'lib/user/utils';
@@ -20,10 +19,6 @@ export default React.createClass( {
 
 	getInitialState: function() {
 		var show_promo = true;
-
-		if ( ! config.isEnabled( 'desktop-promo' ) ) {
-			show_promo = false;
-		}
 
 		if ( store.get( 'desktop_promo_dismissed' ) ) {
 			show_promo = false;

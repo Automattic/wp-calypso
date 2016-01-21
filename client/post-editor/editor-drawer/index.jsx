@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/collection/find' ),
+	config = require( 'config' );
 
 /**
  * Internal dependencies
@@ -259,6 +260,14 @@ var EditorDrawer = React.createClass( {
 		);
 	},
 
+	renderAppPromo: function() {
+		if ( config.isEnabled( 'desktop-promo' ) ) {
+			return (
+				<AppPromo location="editor" />
+			);
+		}
+	},
+
 	renderPostDrawer: function() {
 		return (
 			<div className="editor-drawer">
@@ -267,7 +276,7 @@ var EditorDrawer = React.createClass( {
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderMoreOptions() }
-				<AppPromo location="editor" />
+				{ this.renderAppPromo() }
 			</div>
 		);
 	},
