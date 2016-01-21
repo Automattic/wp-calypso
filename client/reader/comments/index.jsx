@@ -13,7 +13,8 @@ var Gravatar = require( 'components/gravatar' ),
 	PostCommentForm = require( './form' ),
 	CommentLikeButtonContainer = require( './comment-likes' ),
 	stats = require( 'reader/stats' ),
-	PostCommentContent = require( './post-comment-content' );
+	PostCommentContent = require( './post-comment-content' ),
+	Gridicon = require( 'components/gridicon' );
 
 var PostComment = React.createClass( {
 
@@ -139,7 +140,10 @@ var PostComment = React.createClass( {
 			<li className={ 'comment depth-' + this.props.depth }>
 				<div className="comment__author">
 					<Gravatar user={ comment.author } />
-					<strong className="comment__username">{ comment.author.name }</strong>
+
+					{ comment.author.URL
+						? <a href={ comment.author.URL } target="_blank" className="comment__username">{ comment.author.name }<Gridicon icon="external" /></a>
+						: <strong className="comment__username">{ comment.author.name }</strong> }
 					<small className="comment__timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
