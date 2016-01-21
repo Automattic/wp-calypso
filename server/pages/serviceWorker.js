@@ -6,7 +6,9 @@ var urlsToCache = [
 	'http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3ZBw1xU1rKptJj_0jans920.woff2',
 	'http://fonts.gstatic.com/s/opensans/v13/xjAJXh38I15wypJXxuGMBogp9Q8gbYrhqGlRav_IXfk.woff2',
 	'http://fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTRampu5_7CjHW5spxoeN3Vs.woff2',
-	'http://fonts.gstatic.com/s/merriweather/v8/RFda8w1V0eDZheqfcyQ4EBampu5_7CjHW5spxoeN3Vs.woff2'
+	'http://fonts.gstatic.com/s/merriweather/v8/RFda8w1V0eDZheqfcyQ4EBampu5_7CjHW5spxoeN3Vs.woff2',
+	'http://s1.wp.com/wp-includes/js/tinymce/skins/lightgray/content.min.css',
+	'http://s1.wp.com/wp-includes/js/tinymce/skins/lightgray/skin.min.css'
 ];
 
 //Here are going to be regexes of stuff we want to cache.
