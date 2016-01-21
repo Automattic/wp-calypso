@@ -24,6 +24,7 @@ import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import config from 'config';
+import userUtils from 'lib/user/utils';
 
 /**
  * Module variables
@@ -82,7 +83,7 @@ let InviteAccept = React.createClass( {
 		this.setState( { matchEmailError: invite.forceMatchingEmail && user.email !== invite.sentTo } );
 	},
 
-	isErrorState() {
+	isInvalidInvite() {
 		return this.state.error || ! this.props.siteId || ! this.props.inviteKey;
 	},
 
@@ -110,11 +111,23 @@ let InviteAccept = React.createClass( {
 	},
 
 	signInLink() {
-		return config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+		const invite = this.state.invite;
+		let loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+
+		if ( invite && invite.sentTo ) {
+			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
+			loginUrl += presetEmail;
+		}
+
+		return loginUrl;
+	},
+
+	signUpLink() {
+		userUtils.logout( window.location.href );
 	},
 
 	renderForm() {
-		const { invite, user } = this.state;
+		const { invite, user, matchEmailError } = this.state;
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
@@ -125,11 +138,12 @@ let InviteAccept = React.createClass( {
 			invite: this.state.invite,
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
-			signInLink: this.signInLink()
+			signInLink: this.signInLink(),
+			forceMatchingEmail: matchEmailError
 		};
 		return user
 			? <LoggedIn { ... props } user={ this.state.user } />
-			: <LoggedOut { ... props } />
+			: <LoggedOut { ... props } />;
 	},
 
 	renderError() {
@@ -142,20 +156,44 @@ let InviteAccept = React.createClass( {
 		);
 	},
 
+	renderNoticeAction() {
+		const { user, invite } = this.state;
+
+		if ( ! user ) {
+			return;
+		}
+
+		let props;
+
+		if ( invite.knownUser ) {
+			props = { href: this.signInLink() };
+		} else {
+			props = { onClick: this.signUpLink };
+		}
+
+		return (
+			<NoticeAction { ... props } >
+				{ this.translate( 'Switch Accounts' ) }
+			</NoticeAction>
+		);
+	},
+
 	render() {
-		const classes = classNames( 'invite-accept', { 'is-error': !! this.isErrorState() } ),
+		const classes = classNames( 'invite-accept', { 'is-error': !! this.isInvalidInvite() } ),
 			{ invite, matchEmailError } = this.state;
+
 		return (
 			<div className={ classes }>
 				{ matchEmailError &&
-					<Notice text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) } status="is-error" showDismiss={ false }>
-						<NoticeAction href={ this.signInLink() }>
-							{ this.translate( 'Sign Out' ) }
-						</NoticeAction>
+					<Notice
+						text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+						status="is-error"
+						showDismiss={ false } >
+						{ this.renderNoticeAction() }
 					</Notice>
 				}
-				{ ! this.isErrorState() && <InviteHeader { ... invite } /> }
-				{ this.isErrorState() ? this.renderError() : this.renderForm() }
+				{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+				{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 			</div>
 		);
 	}

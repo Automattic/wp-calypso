@@ -90,13 +90,32 @@ let InviteAcceptLoggedIn = React.createClass( {
 		return text;
 	},
 
-	render() {
-		const { invite, user, signInLink, matchEmailError } = this.props;
+	renderMatchEmailError() {
 		return (
-			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
+			<Card>
+				<InviteFormHeader { ... this.props.invite } user={ this.props.user } matchEmailError />
+				<div className="invite-accept-logged-in__button-bar">
+					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
+						{
+							this.props.invite.knownUser
+							? this.translate( 'Sign In as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
+							: this.translate( 'Register as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
+						}
+					</Button>
+				</div>
+			</Card>
+		);
+	},
+
+	renderAccept() {
+		return (
+			<div>
 				<Card>
-					<InviteFormHeader { ... invite } user matchEmailError />
-					{ ! matchEmailError &&
+					<InviteFormHeader { ... this.props.invite } user={ this.props.user } />
+					<div className="invite-accept-logged-in__join-as">
+						<Gravatar user={ this.props.user } size={ 72 } />
+						{ this.getJoinAsText() }
+					</div>
 					<div className="invite-accept-logged-in__button-bar">
 						<Button onClick={ this.decline } disabled={ this.state.submitting }>
 							{ this.translate( 'Decline', { context: 'button' } ) }
@@ -105,23 +124,21 @@ let InviteAcceptLoggedIn = React.createClass( {
 							{ this.getButtonText() }
 						</Button>
 					</div>
-					}
-					{ matchEmailError &&
-					<div className="invite-accept-logged-in__button-bar">
-						<Button onClick={ this.signInLink } href={ signInLink }>
-							{ this.translate( 'Sign In as %(email)s', { context: 'button', args: { email: invite.sentTo } } ) }
-						</Button>
-					</div>
-					}
 				</Card>
 
-				{ ! invite.forceMatchingEmail &&
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem onClick={ this.signInLink } href={ signInLink }>
-							{ this.translate( 'Sign in as a different user' ) }
-						</LoggedOutFormLinkItem>
-					</LoggedOutFormLinks>
-				}
+				<LoggedOutFormLinks>
+					<LoggedOutFormLinkItem onClick={ this.signInLink } href={ this.props.signInLink }>
+						{ this.translate( 'Sign in as a different user' ) }
+					</LoggedOutFormLinkItem>
+				</LoggedOutFormLinks>
+			</div>
+		);
+	},
+
+	render() {
+		return (
+			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
+				{ this.props.forceMatchingEmail ? this.renderMatchEmailError() : this.renderAccept() }
 			</div>
 		);
 	}

@@ -10,7 +10,7 @@ var debug = require( 'debug' )( 'calypso:user:utilities' ),
 var user = require( 'lib/user' )();
 
 var userUtils = {
-	getLogoutUrl: function() {
+	getLogoutUrl: function( redirect ) {
 		var url = '/logout',
 			userData = user.get(),
 			subdomain = '';
@@ -29,13 +29,18 @@ var userUtils = {
 			url = userData.logout_URL;
 		}
 
+		if ( redirect ) {
+			redirect = '&redirect_to=' + encodeURIComponent( redirect );
+			url += redirect;
+		}
+
 		debug( 'Logout Url: ' + url );
 
 		return url;
 	},
 
-	logout: function() {
-		var logoutUrl = userUtils.getLogoutUrl();
+	logout: function( redirect ) {
+		var logoutUrl = userUtils.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
 		user.clear();
