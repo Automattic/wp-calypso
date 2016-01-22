@@ -324,5 +324,21 @@
 		font-size: 20px;
 	    font-weight: 700;
 	    margin: 0 0 24px 0;
+
+		&:first-child:first-letter {
+			float: left;
+			font-size: 60px;
+			font-weight: 400;
+			line-height: 0.5em;
+			margin-top: 0.4em;
+			margin-right: 0.15em;
+		}
+
+		// Firefox-only position fix
+		@-moz-document url-prefix() {
+			&:first-child:first-letter {
+				margin-top: 0.25em;
+			}
+		}
 	}
 }
