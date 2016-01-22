@@ -37,7 +37,7 @@ const ThemesSelection = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			tier: this.props.tier || config.isEnabled( 'upgrades/premium-themes' ) ? 'all' : 'free'
+			tier: this.props.tier || ( config.isEnabled( 'upgrades/premium-themes' ) ? 'all' : 'free' )
 		};
 	},
 
