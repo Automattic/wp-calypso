@@ -69,7 +69,7 @@ let Followers = React.createClass( {
 				<p>
 				{
 					this.translate(
-						'If you remove this follower, he or she will not receive notifications about this site.'
+						'If you remove this follower, he or she will no longer receive notifications about this site unless they re-follow.'
 					)
 				}
 				</p>
