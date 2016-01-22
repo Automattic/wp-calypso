@@ -213,15 +213,15 @@ module.exports = React.createClass( {
 				</button>
 
 				<small className="plan-actions__trial-period">
-					{ config.isEnabled( 'upgrades/checkout' ) ?
-						this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
+					{ config.isEnabled( 'upgrades/checkout' )
+						? this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
 							context: 'Store action',
 							components: {
 								a: <a href="#"
 									onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
 							}
-						} ) :
-						this.translate( 'Try it free for 14 days, no credit card needed.' )
+						} )
+						: this.translate( 'Try it free for 14 days, no credit card needed.' )
 					}
 				</small>
 			</div>
@@ -289,7 +289,7 @@ module.exports = React.createClass( {
 				'Like what you see? {{link}}Upgrade Now{{/link}}',
 				{
 					components: {
-						link: <a href='#'
+						link: <a href="#"
 							className="plan-actions__trial-upgrade-now"
 							onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
 					}
