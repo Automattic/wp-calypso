@@ -9,7 +9,8 @@ var ReactDom = require( 'react-dom' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
 	omit = require( 'lodash/object/omit' ),
-	twemoji = require( 'twemoji' );
+	twemoji = require( 'twemoji' ),
+	page = require( 'page' );
 
 /**
  * Internal Dependencies
@@ -38,7 +39,8 @@ var analytics = require( 'analytics' ),
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	ShareButton = require( 'reader/share' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
-	DiscoverVisitLink = require( 'reader/discover/visit-link' );
+	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
+	readerRoute = require( 'reader/route' );
 
 var loadingPost = {
 		URL: '',
@@ -121,9 +123,25 @@ FullPostView = React.createClass( {
 		stats.recordPermalinkClick( 'full_post_title' );
 	},
 
+	pickSite: function( event ) {
+		if ( utils.isSpecialClick( event ) ) {
+			return;
+		}
+
+		const url = readerRoute.getStreamUrlFromPost( this.props.post );
+		page.show( url );
+	},
+
+	handleSiteClick: function( event ) {
+		if ( ! utils.isSpecialClick( event ) ) {
+			event.preventDefault();
+		}
+	},
+
 	render: function() {
 		var post = this.props.post,
 			site = this.props.site,
+			siteish = utils.siteishFromSiteAndPost( site, post ),
 			hasFeaturedImage = post &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ) &&
 				post.canonical_image &&
@@ -178,7 +196,10 @@ FullPostView = React.createClass( {
 
 					<PostErrors post={ post } />
 
-					<Site site={ site.toJS() } href={ post.site_URL } />
+					<Site site={ siteish }
+						href={ post.site_URL }
+						onSelect={ this.pickSite }
+						onClick={ this.handleSiteClick } />
 
 					{ hasFeaturedImage
 						? <div className="full-post__featured-image test">

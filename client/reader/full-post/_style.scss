@@ -19,7 +19,9 @@
 		.reader__post-byline,
 		.reader__post-byline a,
 		.reader__post-read-time,
-		.reader__full-post-content p {
+		.reader__full-post-content p,
+		.site__info,
+		.site__title {
 			pointer-events: none;
 			user-select: none;
 			color: transparent;
