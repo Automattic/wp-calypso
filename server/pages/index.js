@@ -149,6 +149,7 @@ function getDefaultContext( request ) {
 		jsFile: 'build',
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
+		catchJsErrors: '/calypso/catch-js-errors.js',
 		devDocsURL: '/devdocs'
 	};
 

@@ -24,6 +24,7 @@ GET_I18N ?= $(BIN)/get-i18n
 I18NLINT ?= $(BIN)/i18nlint
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= $(THIS_DIR)/server/devdocs/bin/generate-devdocs-index
+UGLIFYJS ?=$(NODE_BIN)/uglifyjs
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -148,12 +149,15 @@ build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-inline-js:
+	@$(UGLIFYJS) -o public/catch-js-errors.js catch-js-errors.js
 
-build-wpcalypso: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css build-inline-js
+
+build-wpcalypso: build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css build-inline-js
 	@$(BUNDLER)
 
-build-desktop build-desktop-mac-app-store build-horizon build-stage build-production: build-server $(CLIENT_CONFIG_FILE) build-css
+build-desktop build-desktop-mac-app-store build-horizon build-stage build-production: build-server $(CLIENT_CONFIG_FILE) build-css build-inline-js
 	@$(BUNDLER)
 
 # the `clean` rule deletes all the files created from `make build`, but not
