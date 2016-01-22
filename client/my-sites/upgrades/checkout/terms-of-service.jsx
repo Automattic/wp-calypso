@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 		} );
 
 		// Need to add check for subscription products in the cart so we don't show this for one-off purchases like themes
-		if ( true ) {
+		if ( this.props.hasRenewableSubscription ) {
 			message =  this.translate(
 				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{purchasesLink}}how your subscription works{{/purchasesLink}} and {{cancelLink}}how to cancel{{/cancelLink}}.', {
 				components: {

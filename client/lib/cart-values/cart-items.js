@@ -286,6 +286,17 @@ function hasOnlyRenewalItems( cart ) {
 }
 
 /**
+ * Determines whether any product in the specified shopping cart is a renewable subscription.
+ * Will return false if the cart is empty.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if all the products in the cart are of the productSlug type
+ */
+function hasRenewableSubscription( cart ) {
+	return cart.products && some( getAll( cart ), function (cartItem){ return cartItem.bill_period > 0 } );
+}
+
+/**
  * Creates a new shopping cart item for a plan.
  *
  * @param {Object} productSlug - the unique string that identifies the product
@@ -687,6 +698,7 @@ module.exports = {
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
+	hasRenewableSubscription,
 	hasPlan,
 	hasProduct,
 	hasRenewalItem,
