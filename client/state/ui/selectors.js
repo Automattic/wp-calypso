@@ -6,7 +6,7 @@
  */
 export function getSelectedSite( state ) {
 	if ( ! state.ui.selectedSiteId ) {
-		return false;
+		return null;
 	}
 
 	return state.sites.items[ state.ui.selectedSiteId ];
