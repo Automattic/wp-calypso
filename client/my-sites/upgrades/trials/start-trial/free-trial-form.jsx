@@ -66,11 +66,14 @@ const FreeTrialForm = React.createClass( {
 			);
 		}
 
+		const planSlug = plans.getSlugFromPath( this.props.planName );
+		const hasTrialForThisPlan = this.props.selectedSite.plan.free_trial && this.props.selectedSite.plan.product_slug === planSlug;
+
 		// Do not display a placeholder while the sitePlans are loading
 		// It is just needed to check if site is eligible
-		if ( this.props.sitePlans.hasLoadedFromServer ) {
-			const plan = find( this.props.sitePlans.data, { productSlug: plans.getSlugFromPath( this.props.planName ) } );
-			if ( plan && ! plan.canStartTrial ) {
+		if ( hasTrialForThisPlan || this.props.sitePlans.hasLoadedFromServer ) {
+			const plan = find( this.props.sitePlans.data || [], { productSlug: planSlug } );
+			if ( hasTrialForThisPlan || plan && ! plan.canStartTrial ) {
 				return (
 					<PaymentBox
 						classSet="credits-payment-box selected"
@@ -83,7 +86,10 @@ const FreeTrialForm = React.createClass( {
 							</h6>
 							<span>
 							{
-								this.translate( 'You already had a 14 days free trial for %(siteName)s', { args: { siteName: this.props.selectedSite.slug } } )
+								hasTrialForThisPlan
+									? this.translate( 'You already are in a 14 days free trial for %(siteName)s', { args: { siteName: this.props.selectedSite.slug } } )
+									: this.translate( 'You already had a 14 days free trial for %(siteName)s', { args: { siteName: this.props.selectedSite.slug } } )
+
 							}
 							</span>
 						</div>

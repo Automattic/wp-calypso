@@ -26,17 +26,9 @@ const sites = sitesList(),
 
 export default {
 	isEligible: function( context, next ) {
-		const selectedSite = sites.getSelectedSite();
-
-		if ( ! selectedSite ) {
-			page.redirect( '/plans' );
-			return;
-		}
-
-		const hasTrial = selectedSite.plan.free_trial;
-
-		if ( hasTrial || getABTestVariation( 'freeTrials' ) !== 'offered' ) {
-			page.redirect( `/plans/${ selectedSite.slug }` );
+		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
+			const selectedSite = sites.getSelectedSite();
+			page.redirect( selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' );
 			return;
 		}
 
