@@ -1,6 +1,7 @@
 /**
  * This is a temporary file to assist development of the support user feature.
  */
+import { compose } from 'lodash';
 
 import config from 'config';
 
@@ -13,9 +14,11 @@ import { supportUserFetchToken, supportUserRestore } from 'state/support/actions
  */
 export default function( user, reduxStore ) {
 	if ( config.isEnabled( 'support-user' ) ) {
+		const dispatch = reduxStore.dispatch.bind( reduxStore );
+
 		window.supportUser = {
-			login: ( ...args ) => reduxStore.dispatch( supportUserFetchToken( ...args ) ),
-			logout: ( ...args ) => reduxStore.dispatch( supportUserRestore( ...args ) )
+			login: compose( dispatch, supportUserFetchToken ),
+			logout: compose( dispatch, supportUserRestore )
 		};
 	}
 }

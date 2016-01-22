@@ -9,8 +9,8 @@ import {
 	SUPPORT_USER_FETCH_TOKEN
 } from 'state/action-types';
 
-function isSupportUser( state = false, action ) {
-	switch ( action.type ) {
+function isSupportUser( state = false, { type } ) {
+	switch ( type ) {
 		case SUPPORT_USER_ACTIVATED:
 			return true;
 		case SUPPORT_USER_DEACTIVATED:
@@ -19,10 +19,10 @@ function isSupportUser( state = false, action ) {
 	return state;
 }
 
-function userData( state = {}, action ) {
-	switch ( action.type ) {
+function userData( state = {}, { type, userData } ) {
+	switch ( type ) {
 		case SUPPORT_USER_ACTIVATED:
-			return action.userData;
+			return userData;
 		case SUPPORT_USER_DEACTIVATED:
 			return null;
 	}
@@ -30,15 +30,15 @@ function userData( state = {}, action ) {
 	return state;
 }
 
-function errorMessage( state = null, action ) {
-	switch ( action.type ) {
+function errorMessage( state = null, { type, error } ) {
+	switch ( type ) {
 		case SUPPORT_USER_FETCH_TOKEN:
 			return null;
 		case SUPPORT_USER_ACTIVATED:
 			return null;
 		case SUPPORT_USER_DEACTIVATED:
-			if ( action.error ) {
-				return action.error;
+			if ( error ) {
+				return error;
 			}
 			return null;
 	}
@@ -52,8 +52,8 @@ function errorMessage( state = null, action ) {
  * @param  {object}  action
  * @return {Boolean}
  */
-function isTransitioning( state = false, action ) {
-	switch ( action.type ) {
+function isTransitioning( state = false, { type } ) {
+	switch ( type ) {
 		case SUPPORT_USER_FETCH_TOKEN:
 			return true;
 		case SUPPORT_USER_ACTIVATED:

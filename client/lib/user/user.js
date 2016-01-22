@@ -240,14 +240,14 @@ User.prototype.set = function( attributes ) {
 
 User.prototype.changeUser = function( username, password, callback ) {
 	if ( config.isEnabled( 'support-user' ) ) {
-		wpcom.changeUser( username, password, function( error ) {
-			if ( ! error ) {
-				this.once( 'change', () => callback() );
-				this.clear();
-				this.fetch();
-			} else {
-				callback( error );
+		return wpcom.changeUser( username, password, function( error ) {
+			if ( error ) {
+				return callback( error );
 			}
+
+			this.once( 'change', () => callback() );
+			this.clear();
+			this.fetch();
 		}.bind( this ) );
 	}
 };

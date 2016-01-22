@@ -20,30 +20,28 @@ import userSettings from 'lib/user-settings';
  */
 export function supportUserFetchToken( supportUser, supportPassword ) {
 	return ( dispatch ) => {
+		if ( !supportUser || !supportPassword ) {
+			return;
+		}
+
 		dispatch( {
 			type: SUPPORT_USER_FETCH_TOKEN,
 			supportUser
 		} );
 
-		if ( supportUser && supportPassword ) {
-			let user = new User();
+		const user = new User();
 
-			user.changeUser(
-				supportUser,
-				supportPassword,
-				( error ) => {
-					if ( error ) {
-						dispatch( supportUserDeactivated( error.message ) );
-					} else {
-						let userData = Object.assign( {}, user.data );
-						dispatch( supportUserActivated( userData ) );
-					}
-				},
-				( tokenError ) => {
-					dispatch( supportUserDeactivated( tokenError.message ) );
-				}
-			);
-		}
+		const activateSupportUser = ( userData ) => 
+			dispatch( supportUserActivated( Object.assign( {}, user.data ) ) );
+
+		const tokenErrorCallback = ( error ) => 
+			dispatch( supportUserDeactivated( error.message ) );
+
+		const changeUserCallback = error => error
+			? tokenErrorCallback( error )
+			: activateSupportUser();
+
+		user.changeUser( supportUser, supportPassword, changeUserCallback, tokenErrorCallback );
 	}
 }
 /**
