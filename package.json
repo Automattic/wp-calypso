@@ -64,7 +64,7 @@
     "morgan": "1.2.0",
     "node-sass": "3.4.2",
     "page": "1.6.1",
-    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-6",
+    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-8",
     "photon": "1.0.4",
     "q": "1.0.1",
     "qrcode.react": "0.5.2",
