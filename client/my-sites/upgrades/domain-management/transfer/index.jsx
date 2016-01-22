@@ -16,7 +16,6 @@ import IcannVerification from 'my-sites/upgrades/domain-management/transfer/ican
 import Locked from 'my-sites/upgrades/domain-management/transfer/locked';
 import Unlocked from 'my-sites/upgrades/domain-management/transfer/unlocked';
 import TransferProhibited from 'my-sites/upgrades/domain-management/transfer/transfer-prohibited';
-import PendingTransfer from 'my-sites/upgrades/domain-management/transfer/pending-transfer';
 import omit from 'lodash/object/omit';
 
 const Transfer = React.createClass( {
@@ -31,7 +30,7 @@ const Transfer = React.createClass( {
 	},
 
 	renderSection() {
-		const { locked, pendingTransfer } = this.props.wapiDomainInfo.data,
+		const { locked } = this.props.wapiDomainInfo.data,
 			{ isPendingIcannVerification, transferProhibited } = getSelectedDomain( this.props );
 		let section = null;
 
@@ -41,8 +40,6 @@ const Transfer = React.createClass( {
 			section = IcannVerification;
 		} else if ( locked ) {
 			section = Locked;
-		} else if ( pendingTransfer ) {
-			section = PendingTransfer;
 		} else {
 			section = Unlocked;
 		}
