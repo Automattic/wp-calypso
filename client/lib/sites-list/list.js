@@ -464,11 +464,7 @@ SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 };
 
 SitesList.prototype.getSelectedOrAllWithPlugins = function() {
-	return this.getSelectedOrAll().concat(
-		this.getSelectedOrAll().filter( function( site ) {
-			return isBusiness( site.plan );
-		} )
-	);
+	return this.getSelectedOrAll().filter( site => ( isBusiness( site.plan ) || site.jetpack ) && ( site.visible || this.selected ) );
 };
 
 SitesList.prototype.hasSiteWithPlugins = function() {
