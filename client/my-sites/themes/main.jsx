@@ -28,7 +28,7 @@ var Main = require( 'components/main' ),
 	getButtonOptions = require( './theme-options' ).getButtonOptions,
 	actionLabels = require( './action-labels' ),
 	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' ),
-	user = require( 'lib/user' )(),
+	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
 	getSelectedSite = require( 'state/ui/selectors' ).getSelectedSite;
 
 var Themes = React.createClass( {
@@ -37,7 +37,8 @@ var Themes = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		isLoggedOut: React.PropTypes.bool.isRequired
 	},
 
 	getInitialState: function() {
@@ -94,10 +95,6 @@ var Themes = React.createClass( {
 		return ! this.props.siteId; // Not the same as `! site` !
 	},
 
-	isLoggedOut: function() {
-		return ! user.get();
-	},
-
 	renderJetpackMessage: function() {
 		var site = this.props.selectedSite;
 		return (
@@ -124,7 +121,7 @@ var Themes = React.createClass( {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 
-		const webPreviewButtonText = this.isLoggedOut()
+		const webPreviewButtonText = this.props.isLoggedOut
 			? this.translate( 'Choose this design', {
 				comment: 'when signing up for a WordPress.com account with a selected theme'
 			} )
@@ -134,14 +131,14 @@ var Themes = React.createClass( {
 
 		return (
 			<Main className="themes">
-				{ this.isLoggedOut() ? null : <SidebarNavigation /> }
+				{ this.props.isLoggedOut ? null : <SidebarNavigation /> }
 				{ this.state.showPreview &&
 					<WebPreview showPreview={ this.state.showPreview }
 						onClose={ this.togglePreview }
 						previewUrl={ this.state.previewUrl } >
 						<Button primary onClick={ this.setState.bind( this, { showPreview: false },
 							() => {
-								if ( this.isLoggedOut() ) {
+								if ( this.props.isLoggedOut ) {
 									dispatch( Action.signup( this.state.previewingTheme ) );
 								} else if ( site ) {
 									dispatch( Action.customize( this.state.previewingTheme, site ) );
@@ -160,7 +157,7 @@ var Themes = React.createClass( {
 						siteId={ this.props.siteId }
 						selectedSite={ site }
 						togglePreview={ this.togglePreview }
-						getOptions={ partialRight( getButtonOptions, this.isLoggedOut(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
+						getOptions={ partialRight( getButtonOptions, this.props.isLoggedOut, bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
 						tier={ this.props.tier }
 						customize={ bindActionCreators( Action.customize, dispatch ) }
@@ -186,7 +183,8 @@ export default connect(
 		{
 			queryParams: ThemesListSelectors.getQueryParams( state ),
 			themesList: ThemesListSelectors.getThemesList( state ),
-			selectedSite: getSelectedSite( state )
+			selectedSite: getSelectedSite( state ),
+			isLoggedOut: ! getCurrentUser( state )
 		}
 	)
 )( Themes );
