@@ -4,7 +4,6 @@
 import { expect } from 'chai';
 import Dispatcher from 'dispatcher';
 import defer from 'lodash/function/defer';
-import find from 'lodash/collection/find';
 
 /**
  * Internal dependencies
@@ -13,6 +12,9 @@ import { action as actionTypes } from 'lib/upgrades/constants';
 import PurchasesStore from '../store';
 
 describe( 'Purchases Store', () => {
+	const userId = 1337,
+		siteId = 2701;
+
 	it( 'should be an object', () => {
 		expect( PurchasesStore ).to.be.an( 'object' );
 	} );
@@ -42,17 +44,67 @@ describe( 'Purchases Store', () => {
 	it( 'should return an object with the list of purchases when fetching completed', done => {
 		Dispatcher.handleServerAction( {
 			type: actionTypes.PURCHASES_USER_FETCH_COMPLETED,
-			purchases: [ { id: 1 }, { id: 2 } ]
+			purchases: [ { id: 1, siteId, userId }, { id: 2, siteId, userId } ]
 		} );
 
 		defer( () => {
 			Dispatcher.handleServerAction( {
 				type: actionTypes.PURCHASES_SITE_FETCH_COMPLETED,
-				purchases: [ { id: 2 }, { id: 3 } ]
+				purchases: [ { id: 2, siteId, userId }, { id: 3, siteId, userId } ]
 			} );
 
 			expect( PurchasesStore.get() ).to.be.eql( {
-				data: [ { id: 2 }, { id: 3 }, { id: 1 } ],
+				data: [
+					{ id: 2, siteId, userId },
+					{ id: 3, siteId, userId },
+					{ id: 1, siteId, userId } ],
+				error: null,
+				hasLoadedFromServer: true,
+				isFetching: false
+			} );
+
+			done();
+		} );
+	} );
+
+	it( 'should only remove purchases missing from the new purchases array with the same `userId` or `siteId`', done => {
+		const newPurchase = { id: 4, siteId: 2702, userId };
+
+		expect( PurchasesStore.getByPurchaseId( 3 ) ).to.exist;
+
+		Dispatcher.handleServerAction( {
+			type: actionTypes.PURCHASES_USER_FETCH_COMPLETED,
+			purchases: [
+				{ id: 1, siteId, userId },
+				{ id: 2, siteId, userId },
+				newPurchase // include purchase with new `siteId`
+			],
+			userId
+		} );
+
+		expect( PurchasesStore.get() ).to.be.eql( {
+			data: [
+				{ id: 1, siteId, userId },
+				{ id: 2, siteId, userId },
+				newPurchase // purchase with ID 3 was removed, `newPurchase` was added
+			],
+			error: null,
+			hasLoadedFromServer: true,
+			isFetching: false
+		} );
+
+		defer( () => {
+			Dispatcher.handleServerAction( {
+				type: actionTypes.PURCHASES_SITE_FETCH_COMPLETED,
+				purchases: [ { id: 2, siteId, userId } ],
+				siteId
+			} );
+
+			expect( PurchasesStore.get() ).to.be.eql( {
+				data: [
+					{ id: 2, siteId, userId },
+					newPurchase // the new purchase was not removed because it has a different `siteId`
+				],
 				error: null,
 				hasLoadedFromServer: true,
 				isFetching: false
@@ -69,9 +121,7 @@ describe( 'Purchases Store', () => {
 		} );
 
 		expect( PurchasesStore.getByPurchaseId( 2 ) ).to.be.eql( {
-			data: {
-				id: 2
-			},
+			data: { id: 2, siteId, userId },
 			error: null,
 			hasLoadedFromServer: true,
 			isFetching: false
@@ -88,7 +138,9 @@ describe( 'Purchases Store', () => {
 		expect( PurchasesStore.getByPurchaseId( 2 ) ).to.be.eql( {
 			data: {
 				id: 2,
-				error: 'Unable to fetch stored cards'
+				error: 'Unable to fetch stored cards',
+				siteId,
+				userId
 			},
 			error: null,
 			hasLoadedFromServer: true,
@@ -103,7 +155,9 @@ describe( 'Purchases Store', () => {
 				amount: 2200,
 				error: null,
 				hasPrivateRegistration: false,
-				id: 2
+				id: 2,
+				siteId,
+				userId
 			}
 		} );
 
@@ -112,7 +166,9 @@ describe( 'Purchases Store', () => {
 				amount: 2200,
 				error: null,
 				hasPrivateRegistration: false,
-				id: 2
+				id: 2,
+				siteId,
+				userId
 			},
 			error: null,
 			hasLoadedFromServer: true,

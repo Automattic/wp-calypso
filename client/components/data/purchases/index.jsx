@@ -15,8 +15,8 @@ import userFactory from 'lib/user';
 /**
  * Module variables
  */
-const stores = [ PurchasesStore ],
-	user = userFactory();
+const user = userFactory(),
+	stores = [ PurchasesStore, user ];
 
 function getStateFromStores( props ) {
 	return {
@@ -36,7 +36,7 @@ const PurchasesData = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
 
 	componentDidMount() {
-		fetchUserPurchases();
+		fetchUserPurchases( user.get().ID );
 	},
 
 	render() {

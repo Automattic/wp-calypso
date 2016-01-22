@@ -135,7 +135,7 @@ function fetchStoredCards() {
 	} );
 }
 
-function fetchUserPurchases() {
+function fetchUserPurchases( userId ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PURCHASES_USER_FETCH
 	} );
@@ -151,13 +151,14 @@ function fetchUserPurchases() {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASES_USER_FETCH_COMPLETED,
-				purchases: purchasesAssembler.createPurchasesArray( data )
+				purchases: purchasesAssembler.createPurchasesArray( data ),
+				userId
 			} );
 		}
 	} );
 }
 
-function removePurchase( purchaseId, onComplete ) {
+function removePurchase( purchaseId, userId, onComplete ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PURCHASE_REMOVE,
 		purchaseId
@@ -172,7 +173,8 @@ function removePurchase( purchaseId, onComplete ) {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PURCHASE_REMOVE_COMPLETED,
-				purchases: purchasesAssembler.createPurchasesArray( data )
+				purchases: purchasesAssembler.createPurchasesArray( data.purchases ),
+				userId
 			} );
 		}
 

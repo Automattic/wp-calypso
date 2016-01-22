@@ -61,7 +61,8 @@ const ManagePurchase = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		destinationType: React.PropTypes.string
+		destinationType: React.PropTypes.string,
+		user: React.PropTypes.object.isRequired
 	},
 
 	componentWillMount() {
@@ -534,7 +535,6 @@ const ManagePurchase = React.createClass( {
 			price,
 			renewsOrExpiresOnLabel,
 			renewsOrExpiresOn,
-			removePurchaseInformation,
 			renewButton,
 			expiredRenewNotice,
 			editPaymentMethodNavItem,
@@ -605,7 +605,8 @@ const ManagePurchase = React.createClass( {
 
 				<RemovePurchase
 					selectedSite={ this.props.selectedSite }
-					selectedPurchase={ this.props.selectedPurchase } />
+					selectedPurchase={ this.props.selectedPurchase }
+					user={ this.props.user } />
 			</div>
 		);
 	},

@@ -45,7 +45,7 @@ const RemovePurchase = React.createClass( {
 	removePurchase( closeDialog ) {
 		this.setState( { isRemoving: true } );
 
-		removePurchase( this.props.selectedPurchase.data.id, success => {
+		removePurchase( this.props.selectedPurchase.data.id, this.props.user.ID, success => {
 			this.setState( { isRemoving: false } );
 
 			if ( success ) {

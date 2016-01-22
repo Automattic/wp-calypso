@@ -11,14 +11,17 @@ import { fetchUserPurchases } from 'lib/upgrades/actions';
 import observe from 'lib/mixins/data-observe';
 import PurchasesStore from 'lib/purchases/store';
 import StoreConnection from 'components/data/store-connection';
+import userFactory from 'lib/user';
 
 /**
  * Module variables
  */
-const stores = [
-	CartStore,
-	PurchasesStore
-];
+const user = userFactory(),
+	stores = [
+		CartStore,
+		PurchasesStore,
+		user
+	];
 
 function getStateFromStores( props ) {
 	return {
@@ -26,7 +29,8 @@ function getStateFromStores( props ) {
 		purchaseId: props.purchaseId,
 		selectedPurchase: PurchasesStore.getByPurchaseId( parseInt( props.purchaseId, 10 ) ),
 		selectedSite: props.selectedSite,
-		destinationType: props.destinationType
+		destinationType: props.destinationType,
+		user: user.get()
 	};
 }
 
@@ -43,7 +47,7 @@ const ManagePurchaseData = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
 
 	componentWillMount() {
-		fetchUserPurchases();
+		fetchUserPurchases( user.get().ID );
 	},
 
 	render() {
