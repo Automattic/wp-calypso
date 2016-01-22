@@ -92,7 +92,7 @@ var Themes = React.createClass( {
 	},
 
 	isMultisite: function() {
-		return ! this.props.siteId; // Not the same as `! site` !
+		return ! this.props.selectedSite;
 	},
 
 	renderJetpackMessage: function() {
@@ -154,7 +154,6 @@ var Themes = React.createClass( {
 					? this.renderJetpackMessage()
 					: <ThemesSelection search={ this.props.search }
 						key={ this.isMultisite() || site.ID }
-						siteId={ this.props.siteId }
 						selectedSite={ site }
 						togglePreview={ this.togglePreview }
 						getOptions={ partialRight( getButtonOptions, this.props.isLoggedOut, bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }

@@ -26,7 +26,6 @@ const ThemesSelection = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		siteId: PropTypes.string,
 		search: PropTypes.string,
 		togglePreview: PropTypes.func.isRequired,
 		getOptions: PropTypes.func.isRequired,
@@ -67,7 +66,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	onTierSelect( { value: tier } ) {
-		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
+		const siteId = this.props.selectedSite.ID ? `/${this.props.selectedSite.ID}` : '';
 		const url = `/design/type/${tier}${siteId}`;
 		this.setState( { tier } );
 		Helper.trackClick( 'search bar filter', tier );
@@ -101,7 +100,7 @@ const ThemesSelection = React.createClass( {
 				</StickyPanel>
 				<ThemesData
 						site={ site }
-						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
+						isMultisite={ ! site.ID } // Not the same as `! site` !
 						search={ this.props.search }
 						tier={ this.state.tier }
 						onRealScroll={ this.trackScrollPage }

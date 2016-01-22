@@ -43,7 +43,6 @@ var controller = {
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( ThemesComponent, {
 					key: site_id,
-					siteId: site_id,
 					tier: tier,
 					search: context.query.s,
 					trackScrollPage: trackScrollPage.bind(
