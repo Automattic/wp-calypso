@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';;
+import { assert } from 'chai';
 import mockery from 'mockery';
 
 /**
@@ -13,7 +13,7 @@ const testDispatch = ( test, testCallNumber ) => {
 	let calls = 0;
 	return ( action ) => {
 		calls++;
-		if ( !testCallNumber || testCallNumber === calls ) {
+		if ( ! testCallNumber || testCallNumber === calls ) {
 			test( action );
 		}
 	}
