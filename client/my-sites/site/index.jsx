@@ -40,6 +40,7 @@ module.exports = React.createClass( {
 		return {
 			// onSelect callback
 			onSelect: noop,
+			onClick: noop,
 			// mouse event callbacks
 			onMouseEnter: noop,
 			onMouseLeave: noop,
@@ -65,7 +66,8 @@ module.exports = React.createClass( {
 		onMouseEnter: React.PropTypes.func,
 		onMouseLeave: React.PropTypes.func,
 		isSelected: React.PropTypes.bool,
-		site: React.PropTypes.object.isRequired
+		site: React.PropTypes.object.isRequired,
+		onClick: React.PropTypes.func
 	},
 
 	onSelect: function( event ) {
@@ -74,7 +76,7 @@ module.exports = React.createClass( {
 		}
 
 		this.props.onSelect( event );
-		event.preventDefault();
+		event.preventDefault(); // this doesn't actually do anything...
 	},
 
 	render: function() {
@@ -102,6 +104,7 @@ module.exports = React.createClass( {
 					target={ this.props.externalLink && '_blank' }
 					title={ this.props.homeLink ? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } ) : site.title }
 					onTouchTap={ this.onSelect }
+					onClick={ this.props.onClick }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
 					aria-label={ this.translate( 'Open site %(domain)s in new tab', { args: { domain: site.domain } } ) }

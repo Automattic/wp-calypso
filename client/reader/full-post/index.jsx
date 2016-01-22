@@ -9,7 +9,8 @@ var ReactDom = require( 'react-dom' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
 	omit = require( 'lodash/object/omit' ),
-	twemoji = require( 'twemoji' );
+	twemoji = require( 'twemoji' ),
+	page = require( 'page' );
 
 /**
  * Internal Dependencies
@@ -28,8 +29,7 @@ var analytics = require( 'analytics' ),
 	PostErrors = require( 'reader/post-errors' ),
 	PostStore = require( 'lib/feed-post-store' ),
 	PostStoreActions = require( 'lib/feed-post-store/actions' ),
-	SiteIcon = require( 'components/site-icon' ),
-	SiteLink = require( 'reader/site-link' ),
+	Site = require( 'my-sites/site' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
@@ -39,7 +39,8 @@ var analytics = require( 'analytics' ),
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	ShareButton = require( 'reader/share' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
-	DiscoverVisitLink = require( 'reader/discover/visit-link' );
+	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
+	readerRoute = require( 'reader/route' );
 
 var loadingPost = {
 		URL: '',
@@ -122,9 +123,25 @@ FullPostView = React.createClass( {
 		stats.recordPermalinkClick( 'full_post_title' );
 	},
 
+	pickSite: function( event ) {
+		if ( utils.isSpecialClick( event ) ) {
+			return;
+		}
+
+		const url = readerRoute.getStreamUrlFromPost( this.props.post );
+		page.show( url );
+	},
+
+	handleSiteClick: function( event ) {
+		if ( ! utils.isSpecialClick( event ) ) {
+			event.preventDefault();
+		}
+	},
+
 	render: function() {
 		var post = this.props.post,
 			site = this.props.site,
+			siteish = utils.siteishFromSiteAndPost( site, post ),
 			hasFeaturedImage = post &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ) &&
 				post.canonical_image &&
@@ -178,6 +195,11 @@ FullPostView = React.createClass( {
 				<article className={ articleClasses } id="modal-full-post" ref="article">
 
 					<PostErrors post={ post } />
+
+					<Site site={ siteish }
+						href={ post.site_URL }
+						onSelect={ this.pickSite }
+						onClick={ this.handleSiteClick } />
 
 					{ hasFeaturedImage
 						? <div className="full-post__featured-image test">
@@ -277,24 +299,11 @@ FullPostDialog = React.createClass( {
 					action: 'close',
 					isPrimary: true
 				}
-			], siteName, siteLink;
-
-		siteName = utils.siteNameFromSiteAndPost( site, post );
-
-		siteLink = this.props.suppressSiteNameLink
-			? siteName
-			: ( <SiteLink post={ post }>{ siteName }</SiteLink> );
+			];
 
 		if ( post && ! post._state ) {
 			shouldShowComments = PostCommentHelper.shouldShowComments( post );
 			shouldShowLikes = LikeHelper.shouldShowLikes( post );
-
-			buttons.push(
-				<div className="full-post__site" key="site-name">
-					<SiteIcon site={ site && site.toJS() } size={ 24 } />
-					<span className="full-post__site-name">{ siteLink }</span>
-				</div>
-			);
 
 			buttons.push( <PostOptions key="post-options" post={ post } site={ site } onBlock={ this.props.onClose } /> );
 
