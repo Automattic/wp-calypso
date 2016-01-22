@@ -13,7 +13,7 @@ export const displayResponseError = ( responseError ) => {
 	const errorMessages = {
 		unlock_domain_and_disable_private_reg_failed: translate(
 			'The domain could not be unlocked. ' +
-			'Additionally, Private Registration could not be disabled. ' +
+			'Additionally, Privacy Protection could not be disabled. ' +
 			'The transfer will most likely fail due to these errors.'
 		),
 		unlock_domain_failed: translate(
@@ -21,7 +21,7 @@ export const displayResponseError = ( responseError ) => {
 			'The transfer will most likely fail due to this error.'
 		),
 		disable_private_reg_failed: translate(
-			'Private Registration could not be disabled. ' +
+			'Privacy Protection could not be disabled. ' +
 			'The transfer will most likely fail due to this error.'
 		)
 	};
