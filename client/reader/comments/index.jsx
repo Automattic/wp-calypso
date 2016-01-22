@@ -74,6 +74,17 @@ var PostComment = React.createClass( {
 		this.props.onReplyClick( comment.ID );
 	},
 
+	recordAuthorClick: function() {
+		stats.recordAction( 'comment_author_click' );
+		stats.recordGaEvent( 'Clicked Author Name' );
+		stats.recordTrack( 'calypso_reader_comment_author_click', {
+			blog_id: this.props.post.site_ID,
+			post_id: this.props.post.ID,
+			comment_id: this.props.comment.ID,
+			author_url: this.props.comment.author.URL
+		} );
+	},
+
 	renderCommentForm: function() {
 		var post = this.props.post,
 			comment = this.props.comment,
@@ -142,7 +153,7 @@ var PostComment = React.createClass( {
 					<Gravatar user={ comment.author } />
 
 					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" className="comment__username">{ comment.author.name }<Gridicon icon="external" /></a>
+						? <a href={ comment.author.URL } target="_blank" className="comment__username" onClick={ this.recordAuthorClick }>{ comment.author.name }<Gridicon icon="external" /></a>
 						: <strong className="comment__username">{ comment.author.name }</strong> }
 					<small className="comment__timestamp">
 						<a href={ comment.URL }>
@@ -298,12 +309,22 @@ var PostCommentList = React.createClass( {
 
 	onReplyClick: function( commentID ) {
 		this.setState( { activeReplyCommentID: commentID } );
+		stats.recordAction( 'comment_reply_click' );
 		stats.recordGaEvent( 'Clicked Reply to Comment' );
+		stats.recordTrack( 'calypso_reader_comment_reply_click', {
+			blog_id: this.props.post.site_ID,
+			comment_id: commentID
+		} );
 	},
 
 	onReplyCancel: function() {
-		this.setState( { activeReplyCommentID: 0 } );
+		stats.recordAction( 'comment_reply_cancel_click' );
 		stats.recordGaEvent( 'Clicked Cancel Reply to Comment' );
+		stats.recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+			blog_id: this.props.post.site_ID,
+			comment_id: this.state.activeReplyCommentID
+		} );
+		this.setState( { activeReplyCommentID: 0 } );
 	},
 
 	onUpdateCommentText: function( commentText ) {
