@@ -3,6 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	classnames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' ),
 	times = require( 'lodash/utility/times' );
 
@@ -57,14 +58,16 @@ module.exports = React.createClass( {
 		suppressSiteNameLink: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
-		emptyContent: React.PropTypes.object
+		emptyContent: React.PropTypes.object,
+		className: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
 		return {
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
-			onShowUpdates: noop
+			onShowUpdates: noop,
+			className: ''
 		};
 	},
 
@@ -428,7 +431,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Main className="following">
+			<Main className={ classnames( 'following', this.props.className ) }>
 				<MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar>

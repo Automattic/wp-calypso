@@ -122,6 +122,23 @@
 			cursor: pointer;
 		}
 	}
+
+	&.tag-afk {
+		background: transparent;
+		box-shadow: none;
+
+		.reader__full-post-content,
+		.reader-post-byline__tag,
+		.reader__post-footer {
+			display: none;
+		}
+
+		.reader__post-title,
+		.reader-post-byline {
+			font-size: 12px;
+			line-height: normal;
+		}
+	}
 }
 
 // Featured Image/Video

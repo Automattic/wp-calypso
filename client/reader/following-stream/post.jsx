@@ -357,6 +357,18 @@ var Post = React.createClass( {
 			articleClasses[ 'is-selected' ] = true;
 		}
 
+		if ( post.site_ID ) {
+			articleClasses[ 'blog-' + post.site_ID ] = true;
+		}
+
+		if ( post.feed_ID ) {
+			articleClasses[ 'feed-' + post.feed_ID ] = true;
+		}
+
+		forOwn( post.tags, ( { slug } ) => {
+			articleClasses[ 'tag-' + slug ] = true;
+		} );
+
 		articleClasses = classnames( articleClasses );
 
 		tagClasses = classnames( tagClasses );
