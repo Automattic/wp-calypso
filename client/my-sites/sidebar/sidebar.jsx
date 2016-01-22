@@ -395,7 +395,7 @@ module.exports = React.createClass( {
 	users: function() {
 		var site = this.getSelectedSite(),
 			usersLink = '/people/team' + this.siteSuffix(),
-			addPeopleLink = '/people' + this.siteSuffix() + '/new',
+			addPeopleLink = '/people/new' + this.siteSuffix(),
 			addPeopleTarget = '_self',
 			addPeopleButton;
 
@@ -415,10 +415,10 @@ module.exports = React.createClass( {
 			usersLink = site.options.admin_url + 'users.php';
 		}
 
-		if ( ! config.isEnabled( 'manage/add-people' ) && site.options ) {
-			addPeopleLink = ( site.jetpack ) ?
-				site.options.admin_url + 'user-new.php' :
-				site.options.admin_url + 'users.php?page=wpcom-invite-users';
+		if ( site.options && ( ! config.isEnabled( 'manage/add-people' ) || site.jetpack ) ) {
+			addPeopleLink = ( site.jetpack )
+				? site.options.admin_url + 'user-new.php'
+				: site.options.admin_url + 'users.php?page=wpcom-invite-users';
 			addPeopleTarget = '_blank';
 		}
 
