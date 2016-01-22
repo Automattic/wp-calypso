@@ -24,7 +24,7 @@ import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsActions from 'state/plugins/wporg/actions';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -51,7 +51,7 @@ const SinglePlugin = React.createClass( {
 
 	componentWillMount() {
 		if ( ! this.isFetched() ) {
-			this.props.fetchPluginData( this.props.pluginSlug );
+			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
 	},
 
@@ -395,5 +395,5 @@ export default connect(
 			wporgPlugins: state.plugins.wporg
 		};
 	},
-	dispatch => bindActionCreators( { fetchPluginData }, dispatch )
+	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
 )( SinglePlugin );

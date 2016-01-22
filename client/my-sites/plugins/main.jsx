@@ -33,7 +33,7 @@ import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 
-import { fetchPluginData } from 'state/plugins/wporg/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
@@ -96,7 +96,7 @@ const PluginsMain = React.createClass( {
 			if ( ! plugin.wpcom ) {
 				let pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
 				if ( !pluginData ) {
-					this.props.fetchPluginData( plugin.slug );
+					this.props.wporgFetchPluginData( plugin.slug );
 				}
 				return assign( {}, plugin, pluginData );
 			}
@@ -440,5 +440,5 @@ export default connect(
 			wporgPlugins: state.plugins.wporg
 		};
 	},
-	dispatch => bindActionCreators( { fetchPluginData }, dispatch )
+	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
 )( PluginsMain );
