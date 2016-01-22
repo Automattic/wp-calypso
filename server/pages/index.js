@@ -408,20 +408,20 @@ module.exports = function() {
 						}
 						bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 					}
+
+					const { layout, helmetData } = cachedDesignMarkup[ tier ];
+
+					Object.assign( context, {
+						layout,
+						helmetTitle: helmetData.title,
+						helmetMeta: helmetData.meta,
+						helmetLink: helmetData.link,
+					} );
 				} catch ( ex ) {
 					if ( config( 'env' ) === 'development' ) {
 						throw ex;
 					}
 				}
-
-				const { layout, helmetData } = cachedDesignMarkup[ tier ];
-
-				Object.assign( context, {
-					layout,
-					helmetTitle: helmetData.title,
-					helmetMeta: helmetData.meta,
-					helmetLink: helmetData.link,
-				} );
 			}
 
 			res.render( 'index.jade', context );
