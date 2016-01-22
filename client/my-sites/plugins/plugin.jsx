@@ -103,11 +103,10 @@ const SinglePlugin = React.createClass( {
 		let plugin = Object.assign( {
 			name: props.pluginSlug,
 			id: props.pluginSlug,
-			slug: props.pluginSlug
+			slug: props.pluginSlug,
 		}, sitePlugin );
 
 		return {
-			isWporg: sitePlugin && ! props.isWpcomPlugin,
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
@@ -167,27 +166,26 @@ const SinglePlugin = React.createClass( {
 		);
 	},
 
-	pluginExists( pluginSlug ) {
-		// if the plugin info is still being fetched, we default to true
+	pluginExists( plugin ) {
 		if ( this.isFetching() ) {
-			return true;
+			return 'unknown';
 		}
-		const plugin = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, pluginSlug );
 		if ( plugin && plugin.fetched ) {
 			return true;
 		}
+
 		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-		// if there's no info about the plugin from .org, we check if the pluginSlug exists in
-		// any of the user's sites, to check if it's a custom plugin
-		return sites.some( site => {
-			const sitePlugins = PluginsStore.getSitePlugins( site ) || [];
 
-			if ( PluginsStore.isFetchingSite( site ) ) {
-				return true;
-			}
+		// If the plugin has at least one site then we know it exits
+		if ( plugin.sites && plugin.sites[0] ) {
+			return true;
+		}
 
-			return sitePlugins.some( sitePlugin => sitePlugin.slug === pluginSlug );
-		} );
+		if ( sites.some( PluginsStore.isFetchingSite ) ) {
+			return 'unknown';
+		}
+
+		return false;
 	},
 
 	isFetching() {
@@ -200,7 +198,7 @@ const SinglePlugin = React.createClass( {
 
 	isFetchingSites() {
 		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-		return sites.some( PluginsStore.isFetchingSite );
+		return sites.every( PluginsStore.isFetchingSite );
 	},
 
 	getPlugin() {
@@ -231,13 +229,12 @@ const SinglePlugin = React.createClass( {
 		);
 	},
 
-	renderSitesList() {
-		const plugin = this.getPlugin();
-		if ( this.props.siteUrl || this.isFetching() || ( plugin && ! plugin.fetched ) ) {
+	renderSitesList( plugin ) {
+		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
 		}
 
-		if ( this.state.isWporg ) {
+		if ( plugin.wporg ) {
 			return (
 				<div>
 					<PluginSiteList
@@ -276,7 +273,7 @@ const SinglePlugin = React.createClass( {
 						isPlaceholder
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
-						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
+						isInstalledOnSite={ this.isFetchingSites() ? null : !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
@@ -339,16 +336,15 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		if ( this.isFetching() ) {
+		const plugin = this.getPlugin();
+		const pluginExists = this.pluginExists( plugin );
+
+		if ( pluginExists === 'unknown' ) {
 			return this.renderPluginPlaceholder( classes );
 		}
 
-		if ( this.pluginExists( this.props.pluginSlug ) === false ) {
+		if ( this.pluginExists( plugin ) === false ) {
 			return this.getPluginDoesNotExistView( selectedSite );
-		}
-
-		if ( this.isFetchingSites() ) {
-			return this.renderPluginPlaceholder( classes );
 		}
 
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
@@ -366,7 +362,7 @@ const SinglePlugin = React.createClass( {
 		}
 
 		const installInProgress = PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
-		const plugin = this.getPlugin();
+
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -379,10 +375,10 @@ const SinglePlugin = React.createClass( {
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
-						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
+						isInstalledOnSite={ this.isFetchingSites() ? null : !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						isInstalling={ installInProgress } />
-					<PluginSections plugin={ plugin } />
-					{ this.renderSitesList() }
+					{ plugin.wporg && <PluginSections plugin={ plugin } /> }
+					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
 		);
