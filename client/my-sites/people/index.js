@@ -23,13 +23,15 @@ module.exports = function() {
 			);
 		} );
 
-		page(
-			'/people/new/:site_id',
-			peopleController.enforceSiteEnding,
-			controller.siteSelection,
-			controller.navigation,
-			peopleController.addPeople
-		);
+		if ( config.isEnabled( 'manage/add-people' ) ) {
+			page(
+				'/people/new/:site_id',
+				peopleController.enforceSiteEnding,
+				controller.siteSelection,
+				controller.navigation,
+				peopleController.invitePeople
+			);
+		}
 
 		page(
 			'/people/edit/:user_login/:site_id',

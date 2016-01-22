@@ -295,6 +295,15 @@ Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, message, fn ) {
+	debug( '/sites/:site_id:/invites/new query' );
+	this.wpcom.req.post( '/sites/' + siteId + '/invites/new', {}, {
+		invitees: usernamesOrEmails,
+		role: role,
+		message: message
+	}, fn );
+};
+
 /**
  * GET/POST site settings
  *

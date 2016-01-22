@@ -20,6 +20,7 @@ import UsersStore from 'lib/users/store';
 import UsersActions from 'lib/users/actions';
 import PeopleLogStore from 'lib/people/log-store';
 import titleActions from 'lib/screen-title/actions';
+import InvitePeople from './invite-people';
 
 /**
  * Module variables
@@ -47,6 +48,10 @@ export default {
 		renderPeopleList( filter, context );
 	},
 
+	invitePeople( context ) {
+		renderInvitePeople( context );
+	},
+
 	person( context ) {
 		renderSingleTeamMember( context );
 	}
@@ -65,6 +70,19 @@ function renderPeopleList( filter, context ) {
 		document.getElementById( 'primary' )
 	);
 	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
+}
+
+function renderInvitePeople( context ) {
+	if ( ! sites.initialized ) {
+		sites.once( 'change', () => page( context.path ) );
+	}
+
+	ReactDom.render(
+		React.createElement( InvitePeople, {
+			site: sites.getSelectedSite()
+		} ),
+		document.getElementById( 'primary' )
+	);
 }
 
 function renderSingleTeamMember( context ) {

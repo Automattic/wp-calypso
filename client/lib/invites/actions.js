@@ -97,3 +97,27 @@ export function acceptInvite( invite, callback ) {
 		}
 	);
 }
+
+export function sendInvites( siteId, usernamesOrEmails, role, message, callback ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.SENDING_INVITES,
+		siteId, usernamesOrEmails, role, message
+	} );
+	wpcom.undocumented().sendInvites( siteId, usernamesOrEmails, role, message, ( error, data ) => {
+		Dispatcher.handleServerAction( {
+			type: error ? ActionTypes.RECEIVE_SENDING_INVITES_ERROR : ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
+			error,
+			siteId,
+			usernamesOrEmails,
+			role,
+			message,
+			data
+		} );
+		if ( error ) {
+			analytics.tracks.recordEvent( 'calypso_invite_send_failed' );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_invite_send_success' );
+		}
+		callback( error, data );
+	} );
+}
