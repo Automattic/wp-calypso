@@ -14,17 +14,20 @@ var ThemesComponent = require( 'my-sites/themes/main' ),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	user = require( 'lib/user' )(),
+	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
 	buildTitle = require( 'lib/screen-title/utils' );
 
 var controller = {
 
 	themes: function( context ) {
 		const { tier, site_id } = context.params;
+		const user = getCurrentUser( context.store.getState() );
 		const title = buildTitle(
 			i18n.translate( 'Themes', { textOnly: true } ),
-			{ siteID: context.params.site_id } );
-		const Head = user.get() ? require( 'layout/head' ) : require( 'my-sites/themes/head' );
+			{ siteID: site_id } );
+		const Head = user
+			? require( 'layout/head' )
+			: require( 'my-sites/themes/head' );
 
 		let basePath = route.sectionify( context.path );
 		let analyticsPageTitle = 'Themes';
