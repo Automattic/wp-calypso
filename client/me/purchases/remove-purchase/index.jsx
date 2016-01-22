@@ -47,20 +47,36 @@ const RemovePurchase = React.createClass( {
 	removePurchase( closeDialog ) {
 		this.setState( { isRemoving: true } );
 
-		removePurchase( this.props.selectedPurchase.data.id, this.props.user.ID, success => {
-			this.setState( { isRemoving: false } );
+		const purchase = getPurchase( this.props ),
+			{ selectedSite, user } = this.props;
 
+		removePurchase( purchase.id, user.ID, success => {
 			if ( success ) {
-				notices.success(
-					this.translate( `The purchase was removed from {{em}}%(siteSlug)s{{/em}}.`, {
-						args: { siteSlug: this.props.selectedSite.slug },
-						components: { em: <em /> }
-					} ),
-					{ persistent: true }
-				);
+				if ( isDomainRegistration( purchase ) ) {
+					notices.success(
+						this.translate( `The domain {{em}}%(domain)s{{/em}} was removed from {{em}}%(wpcomUrl)s{{/em}}.`, {
+							args: {
+								domain: purchase.meta,
+								wpcomUrl: selectedSite.wpcom_url
+							},
+							components: { em: <em /> }
+						} ),
+						{ persistent: true }
+					);
+				} else {
+					notices.success(
+						this.translate( `The purchase was removed from {{em}}%(siteSlug)s{{/em}}.`, {
+							args: { siteSlug: selectedSite.slug },
+							components: { em: <em /> }
+						} ),
+						{ persistent: true }
+					);
+				}
 
 				page( purchasePaths.list() );
 			} else {
+				this.setState( { isRemoving: false } );
+
 				closeDialog();
 
 				notices.error( this.props.selectedPurchase.error );
@@ -126,20 +142,20 @@ const RemovePurchase = React.createClass( {
 					{ this.translate( 'By removing, you are canceling the domain registration. This may stop you from using it again, even with another service.' ) }
 				</p>
 			);
-		} else {
-			return (
-				<p>
-					{
-						this.translate( 'Are you sure you want to remove %(productName)s from {{em}}%(domain)s{{/em}}?', {
-							args: { productName, domain: this.props.selectedSite.slug },
-							components: { em: <em /> }
-						} )
-					}
-					{ ' ' }
-					{ this.translate( 'By removing it, you will not be able to reuse it again without purchasing a new subscription.' ) }
-				</p>
-			);
 		}
+
+		return (
+			<p>
+				{
+					this.translate( 'Are you sure you want to remove %(productName)s from {{em}}%(domain)s{{/em}}?', {
+						args: { productName, domain: this.props.selectedSite.slug },
+						components: { em: <em /> }
+					} )
+				}
+				{ ' ' }
+				{ this.translate( 'By removing it, you will not be able to reuse it again without purchasing a new subscription.' ) }
+			</p>
+		);
 	},
 
 	render() {
