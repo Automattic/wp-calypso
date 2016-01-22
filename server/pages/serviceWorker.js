@@ -1,6 +1,6 @@
 //Refactored example from http://www.html5rocks.com/en/tutorials/service-worker/introduction/
 //Needs work.
-
+var version = 1;
 var CACHE_NAME = 'CALYPSO';
 //TODO generate this during build
 var urlsToCache = [
@@ -21,16 +21,25 @@ var pathsToCache = [
 
 // Set the callback for the install step
 self.addEventListener( 'install', function( event ) {
+	console.log( '[ServiceWorker] Installed version', version );
 	// Perform install steps
 	event.waitUntil(
 		caches.open( CACHE_NAME ).then( function( cache ) {
 			console.log( '[CACHE] preloading ', urlsToCache );
-			return cache.addAll( urlsToCache.map( function( urlToPrefetch ) {
+			cache.addAll( urlsToCache.map( function( urlToPrefetch ) {
 				return new Request( urlToPrefetch, { mode: 'no-cors' } );
-			} ) );
+			} ) ).then( function() {
+				console.log( '[ServiceWorker] Skip waiting on install' );
+				return self.skipWaiting();
+			} );
 		} )
 	);
 } );
+
+self.addEventListener('activate', function(event) {
+	console.log('[ServiceWorker] Claiming clients for version', version);
+	event.waitUntil( self.clients.claim() );
+});
 
 self.addEventListener( 'fetch', function( event ) {
 	if ( event.request.url.indexOf( 'version' ) !== -1 || event.request.url.indexOf( 'sw.js' ) !== -1 ) {
