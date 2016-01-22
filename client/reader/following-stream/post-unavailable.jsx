@@ -16,13 +16,13 @@ var PostUnavailable = React.createClass( {
 
 	componentWillMount: function() {
 		this.errors = {
-			403: this.translate( 'This is a private site. You’re following the site, but not currently a member. Please request membership to display these posts in Reader.' ),
-			default: this.translate( 'An error occurred loading this post' )
+			unauthorized: this.translate( 'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.' ),
+			default: this.translate( 'An error occurred loading this post.' )
 		};
 	},
 
 	render: function() {
-		var errorMessage = this.errors[ this.props.post.statusCode || 'default' ];
+		var errorMessage = this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
 
 		if ( this.props.post.statusCode === 404 ) {
 			// don't render a card for 404s. These are posts that we once had but were deleted.
