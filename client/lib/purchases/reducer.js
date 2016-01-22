@@ -34,6 +34,9 @@ const reducer = ( state, payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
+		case ActionTypes.PURCHASES_REMOVE:
+			return assign( {}, state, { data: [], hasLoadedFromServer: false } );
+
 		case ActionTypes.PURCHASES_SITE_FETCH:
 		case ActionTypes.PURCHASES_USER_FETCH:
 			return assign( {}, state, { isFetching: true } );

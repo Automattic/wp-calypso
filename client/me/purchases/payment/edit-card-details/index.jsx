@@ -11,6 +11,7 @@ import React from 'react';
 import analytics from 'analytics';
 import camelCase from 'lodash/string/camelCase';
 import Card from 'components/card';
+import { clearPurchases } from 'lib/upgrades/actions/purchases';
 import CompactCard from 'components/card/compact';
 import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'components/upgrades/credit-card-form';
@@ -164,6 +165,8 @@ const EditCardDetails = React.createClass( {
 				notices.success( response.success, {
 					persistent: true
 				} );
+
+				clearPurchases();
 
 				const { id } = getPurchase( this.props );
 

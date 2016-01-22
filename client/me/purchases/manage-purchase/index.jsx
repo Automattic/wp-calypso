@@ -81,10 +81,6 @@ const ManagePurchase = React.createClass( {
 		recordPageView( 'manage', this.props, nextProps );
 	},
 
-	isDataFetchingAfterRenewal() {
-		return this.props.selectedPurchase.isFetching;
-	},
-
 	isDataValid( props = this.props ) {
 		if ( isDataLoading( props ) ) {
 			return true;
@@ -94,7 +90,7 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderNotices() {
-		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
+		if ( isDataLoading( this.props ) ) {
 			return null;
 		}
 
@@ -319,7 +315,7 @@ const ManagePurchase = React.createClass( {
 	renderPaymentInfo() {
 		const purchase = getPurchase( this.props );
 
-		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
+		if ( isDataLoading( this.props ) ) {
 			return <span className="manage-purchase__content manage-purchase__detail" />;
 		}
 
@@ -354,23 +350,22 @@ const ManagePurchase = React.createClass( {
 	},
 
 	renderPaymentDetails() {
-		const purchase = getPurchase( this.props ),
-			isLoading = isDataLoading( this.props ) || this.isDataFetchingAfterRenewal();
+		const purchase = getPurchase( this.props );
 
-		if ( ! isLoading && isOneTimePurchase( purchase ) ) {
+		if ( ! isDataLoading( this.props ) && isOneTimePurchase( purchase ) ) {
 			return null;
 		}
 
 		let paymentDetails = (
 			<span>
 				<em className="manage-purchase__content manage-purchase__detail-label">
-					{ isLoading ? null : this.translate( 'Payment method' ) }
+					{ isDataLoading( this.props ) ? null : this.translate( 'Payment method' ) }
 				</em>
 				{ this.renderPaymentInfo() }
 			</span>
 		);
 
-		if ( isLoading || ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) ) {
+		if ( isDataLoading( this.props ) || ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) ) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -571,7 +566,7 @@ const ManagePurchase = React.createClass( {
 			cancelPurchaseNavItem,
 			cancelPrivateRegistrationNavItem;
 
-		if ( isDataLoading( this.props ) || this.isDataFetchingAfterRenewal() ) {
+		if ( isDataLoading( this.props ) ) {
 			classes = 'manage-purchase__info is-placeholder';
 			editPaymentMethodNavItem = <VerticalNavItem isPlaceholder />;
 			cancelPurchaseNavItem = <VerticalNavItem isPlaceholder />;

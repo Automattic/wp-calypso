@@ -12,6 +12,7 @@ var Dispatcher = require( 'dispatcher' ),
  */
 var analytics = require( 'analytics' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
+	clearPurchases = require( 'lib/upgrades/actions/purchases' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
 	observe = require( 'lib/mixins/data-observe' ),
@@ -136,6 +137,8 @@ module.exports = React.createClass( {
 		var renewalItem;
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
+			clearPurchases();
+
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
 
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
