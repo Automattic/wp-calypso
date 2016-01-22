@@ -107,9 +107,8 @@ export default React.createClass( {
 	},
 
 	getPluginsState( nextProps ) {
-		const sites = this.state && this.state.bulkManagement ? this.props.sites.getSelectedOrAllWithPlugins() : this.props.sites.getSelectedOrAll(),
+		const sites = this.props.sites.getSelectedOrAllWithPlugins(),
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
-
 		return {
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			plugins: this.getPluginsFromStore( nextProps, sites ),
@@ -244,7 +243,7 @@ export default React.createClass( {
 				emptyContentData = this.getEmptyContentUpdateData();
 				break;
 			default:
-				emptyContentData.title = this.translate( 'No plugins match that filter.', { textOnly: true } );
+				return null;
 		}
 		return emptyContentData;
 	},
@@ -275,7 +274,7 @@ export default React.createClass( {
 		const plugins = this.state.plugins || [];
 		const selectedSite = this.props.sites.getSelectedSite();
 
-		if ( isEmpty( plugins ) ) {
+		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
 				return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
 					textOnly: true,
@@ -283,13 +282,14 @@ export default React.createClass( {
 				} ) } />
 			}
 
-			let emptyContentData = this.getEmptyContentData();
-			return ( <EmptyContent
-				title={ emptyContentData.title }
-				illustration={ emptyContentData.illustration }
-				actionURL={ emptyContentData.actionURL }
-				action={ emptyContentData.action } />
-			);
+			const emptyContentData = this.getEmptyContentData();
+			if ( emptyContentData ) {
+				return <EmptyContent
+					title={ emptyContentData.title }
+					illustration={ emptyContentData.illustration }
+					actionURL={ emptyContentData.actionURL }
+					action={ emptyContentData.action } />
+			}
 		}
 		return (
 			<div className="plugins__lists">
