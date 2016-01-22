@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React from 'react/addons';
 import Masterbar from './masterbar';
 
 /**

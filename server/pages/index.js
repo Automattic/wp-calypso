@@ -8,15 +8,15 @@ var express = require( 'express' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
 	superagent = require( 'superagent' ),
 	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server' );
+	ReactDomServer = require( 'react-dom/server' ),
+	ReactInjection = require( 'react/lib/ReactInjection' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+	i18n = require( 'lib/mixins/i18n');
 
-var LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
 var cachedDesignMarkup;
 
 var HASH_LENGTH = 10,
@@ -383,6 +383,13 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
+			i18n.initialize();
+			console.log( ReactInjection.Class.injectMixin( i18n.mixin ) );
+			console.log( 'i18n init done' );
+
+			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+			const LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
+
 			const context = getDefaultContext( req );
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
