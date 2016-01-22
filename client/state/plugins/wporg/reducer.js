@@ -15,9 +15,9 @@ function reducer( state = {}, action ) {
 	switch ( type ) {
 		case WPORG_PLUGIN_DATA_RECEIVE:
 			if ( action.data ) {
-				return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: true }, action.data ) );
+				return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: true, wporg: true }, action.data ) );
 			}
-			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: false } ) );
+			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: false, wporg: false } ) );
 
 		case FETCH_WPORG_PLUGIN_DATA:
 			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: true } ) );
