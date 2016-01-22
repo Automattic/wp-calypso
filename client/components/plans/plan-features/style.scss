@@ -19,20 +19,3 @@
 .plan-features__included {
 	color: $gray-dark;
 }
-
-.plan-features__included.no-text {
-	&:before {
-		color: $alert-green;
-
-		@include noticon( '\f418', 24px );
-	}
-}
-
-.plan-features__not-included.no-text {
-	&:before {
-		color: darken( $gray, 10% );
-
-		@include noticon( '-', 24px );
-		vertical-align: inherit;
-	}
-}

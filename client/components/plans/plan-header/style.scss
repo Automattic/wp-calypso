@@ -30,7 +30,8 @@
 	}
 }
 
-.plan {
+.plan,
+.plans-compare {
 	.plan-header {
 		background: $white;
 		width: 100%;
@@ -54,6 +55,7 @@
 			display: block;
 			font-size: 17px;
 			line-height: 16px;
+			text-align: center;
 
 			&:before {
 				left: 10px;
@@ -89,15 +91,22 @@
 .plans-compare {
 	.plan-header {
 		border-bottom: 2px solid lighten( $gray, 20% );
-		height: 3em;
-		padding: 0 15px 0 15px;
+		height: 7.5em;
+		padding: 10px 15px;
+
+		&:after {
+			display: none;
+		}
 
 		.plan-header__title {
+			padding: 0;
 			text-align: center;
-			color: $gray-dark;
-			font-size: 14px;
-			font-weight: 600;
+			color: $blue-wordpress;
 			line-height: 18px;
+
+			&:before {
+				top: 10px;
+			}
 
 			.header-text {
 				&:first-line {
@@ -134,7 +143,22 @@
 
 			.plan-header__title {
 				line-height: 20px;
-				text-align: center;
+			}
+		}
+	}
+
+	.plans-compare {
+		.plan-header {
+			height: 6em;
+			
+			.plan-header__title:before {
+				display: inline-block;
+			}
+
+			.plan-header__title,
+			.plan-price {
+				padding: 0 0 0 40px;
+				text-align: left;
 			}
 		}
 	}
@@ -159,8 +183,9 @@
 	.plans-compare {
 		.plan-header {
 			.plan-header__title {
-				.header-text {
-					display: none;
+				&:before {
+					position: static;
+					margin-bottom: 5px;
 				}
 			}
 		}

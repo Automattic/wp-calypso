@@ -20,3 +20,11 @@
 	text-align: right;
 	margin-top: 15px;
 }
+
+.plans-compare {
+	margin: -16px;
+
+	@include breakpoint( ">480px" ) {
+		margin: -24px;
+	}
+}

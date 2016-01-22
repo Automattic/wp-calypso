@@ -1,15 +1,42 @@
 .plan-feature-cell {
-	border-bottom: 1px solid lighten( $gray, 20% );
 	display: table;
 	height: 54px;
 	vertical-align: middle;
 	width: 100%;
+
+	&:nth-child(even) {
+		background: $gray-light;
+	}
 }
 
 .plan-feature-cell__feature-text {
 	display: table-cell;
 	vertical-align: middle;
 	font-size: 12px;
+
+	.gridicon {
+		color: $alert-green;
+	}
+}
+
+.feature-list {
+	&.is-placeholder {
+		.plan-feature-cell__feature-text {
+			span {
+				@include placeholder( 23% );
+				display: block;
+				width: 65%;
+			}
+		}
+	}
+
+	.plan-feature-cell {
+		padding-left: 16px;
+
+		@include breakpoint( ">480px" ) {
+			padding-left: 24px;
+		}
+	}
 }
 
 .feature-list.is-placeholder {
@@ -33,13 +60,12 @@
 
 .plan-features .plan-feature-cell__feature-text {
 	color: darken( $gray, 10% );
-	opacity: .7;
+	opacity: .9;
 }
 
 .plan-features:not(:nth-child(2)) {
 	.plan-feature-cell__feature-text {
 		color: $gray-dark;
-		opacity: .9;
 		font-weight: bold;
 	}
 }
