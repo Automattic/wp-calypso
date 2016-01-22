@@ -379,6 +379,7 @@ module.exports = {
 		ReactDom.render(
 			React.createElement( FollowingComponent, {
 				key: 'read-a8c',
+				className: 'is-a8c',
 				listName: 'Automattic',
 				store: feedStore,
 				trackScrollPage: trackScrollPage.bind(
