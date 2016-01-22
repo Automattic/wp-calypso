@@ -9,6 +9,7 @@ const React = require( 'react' ),
  * Internal dependencies
  */
 const CompactCard = require( 'components/card/compact' ),
+	config = require( 'config' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	paths = require( 'my-sites/upgrades/paths' ),
 	Notice = require( 'components/notice' ),
@@ -46,14 +47,19 @@ const GoogleAppsUsersCard = React.createClass( {
 					{ this.subtext() }
 					{ this.notice() }
 					{ this.userList() }
-					{ this.canAddUsers() ? this.addUsersButton() : null }
+					{ this.addUsersButton() }
 				</CompactCard>
 			</div>
 		);
 	},
 
 	canAddUsers() {
-		let { googleAppsSubscription } = getSelectedDomain( this.props );
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return false;
+		}
+
+		const { googleAppsSubscription } = getSelectedDomain( this.props );
+
 		return googleAppsSubscription.ownedByUserId === this.props.user.ID;
 	},
 
@@ -108,6 +114,10 @@ const GoogleAppsUsersCard = React.createClass( {
 	},
 
 	notice() {
+		if ( ! this.canAddUsers() ) {
+			return null;
+		}
+
 		return (
 			<Notice
 				className="google-apps-users-card__notice"
@@ -121,6 +131,10 @@ const GoogleAppsUsersCard = React.createClass( {
 	},
 
 	addUsersButton() {
+		if ( ! this.canAddUsers() ) {
+			return null;
+		}
+
 		return (
 			<button
 				className="google-apps-users-card__add-user-button button is-primary"

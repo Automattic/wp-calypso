@@ -41,7 +41,6 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"manage/themes/logged-out": true,
-		"premium-themes": true,
 		"press-this": true,
 		"manage/sharing": true,
 		"manage/plans": true,
@@ -61,6 +60,7 @@
 
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
+		"upgrades/premium-themes": true,
 
 		"notifications2beta": true,
 		"muse": true,

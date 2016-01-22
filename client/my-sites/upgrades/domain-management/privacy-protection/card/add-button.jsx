@@ -8,6 +8,7 @@ const page = require( 'page' ),
  * Internal dependencies
  */
 const cartItems = require( 'lib/cart-values' ).cartItems,
+	config = require( 'config' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
 const AddButton = React.createClass( {
@@ -20,6 +21,10 @@ const AddButton = React.createClass( {
 	},
 
 	render() {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
 		return (
 			<button
 				type="button"

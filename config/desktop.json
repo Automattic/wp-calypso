@@ -64,7 +64,6 @@
 		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"post-editor/pages": true,
-		"premium-themes": true,
 		"reader": true,
 		"reader/activities": true,
 		"reader/discover": true,
@@ -83,7 +82,8 @@
 		"upgrades/domain-management/name-servers": true,
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": false,
-		"upgrades/domain-search": true
+		"upgrades/domain-search": true,
+		"upgrades/premium-themes": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",
