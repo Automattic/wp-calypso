@@ -25,7 +25,9 @@ self.addEventListener( 'install', function( event ) {
 	event.waitUntil(
 		caches.open( CACHE_NAME ).then( function( cache ) {
 			console.log( '[CACHE] preloading ', urlsToCache );
-			return cache.addAll( urlsToCache );
+			return cache.addAll( urlsToCache.map( function( urlToPrefetch ) {
+				return new Request( urlToPrefetch, { mode: 'no-cors' } );
+			} ) );
 		} )
 	);
 } );
