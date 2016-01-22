@@ -14,7 +14,6 @@ var ThemesComponent = require( 'my-sites/themes/main' ),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	sites = require( 'lib/sites-list' )(),
 	titleActions = require( 'lib/screen-title/actions' );
 
 var controller = {
@@ -45,7 +44,6 @@ var controller = {
 				React.createElement( ThemesComponent, {
 					key: site_id,
 					siteId: site_id,
-					sites: sites,
 					tier: tier,
 					search: context.query.s,
 					trackScrollPage: trackScrollPage.bind(

@@ -20,7 +20,6 @@ var Main = require( 'components/main' ),
 	ThanksModal = require( 'my-sites/themes/thanks-modal' ),
 	config = require( 'config' ),
 	EmptyContent = require( 'components/empty-content' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	JetpackUpgradeMessage = require( './jetpack-upgrade-message' ),
 	JetpackManageDisabledMessage = require( './jetpack-manage-disabled-message' ),
 	ThemesSiteSelectorModal = require( './themes-site-selector-modal' ),
@@ -29,14 +28,16 @@ var Main = require( 'components/main' ),
 	getButtonOptions = require( './theme-options' ).getButtonOptions,
 	actionLabels = require( './action-labels' ),
 	ThemesListSelectors = require( 'lib/themes/selectors/themes-list' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	getSelectedSite = require( 'state/ui/selectors' ).getSelectedSite;
 
 var Themes = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
-
 	propTypes: {
 		siteId: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired
 	},
 
 	getInitialState: function() {
@@ -47,7 +48,7 @@ var Themes = React.createClass( {
 	},
 
 	renderCurrentTheme: function() {
-		var site = this.props.sites.getSelectedSite();
+		var site = this.props.selectedSite;
 		return (
 			<CurrentThemeData site={ site }>
 				<CurrentTheme
@@ -59,9 +60,9 @@ var Themes = React.createClass( {
 
 	renderThankYou: function() {
 		return (
-			<ActivatingTheme siteId={ this.props.sites.getSelectedSite().ID } >
+			<ActivatingTheme siteId={ this.props.selectedSite.ID } >
 				<ThanksModal
-					site={ this.props.sites.getSelectedSite() }
+					site={ this.props.selectedSite }
 					clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
 			</ActivatingTheme>
 		);
@@ -72,7 +73,7 @@ var Themes = React.createClass( {
 	},
 
 	togglePreview: function( theme ) {
-		const site = this.props.sites.getSelectedSite();
+		const site = this.props.selectedSite;
 		if ( site.jetpack ) {
 			this.props.dispatch( Action.customize( theme, site ) );
 		} else {
@@ -98,7 +99,7 @@ var Themes = React.createClass( {
 	},
 
 	renderJetpackMessage: function() {
-		var site = this.props.sites.getSelectedSite();
+		var site = this.props.selectedSite;
 		return (
 			<EmptyContent title={ this.translate( 'Changing Themes?' ) }
 				line={ this.translate( 'Use your site theme browser to manage themes.' ) }
@@ -110,7 +111,7 @@ var Themes = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.props.sites.getSelectedSite(),
+		var site = this.props.selectedSite,
 			isJetpack = site.jetpack,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			dispatch = this.props.dispatch;
@@ -157,7 +158,7 @@ var Themes = React.createClass( {
 					: <ThemesSelection search={ this.props.search }
 						key={ this.isMultisite() || site.ID }
 						siteId={ this.props.siteId }
-						sites={ this.props.sites }
+						selectedSite={ site }
 						togglePreview={ this.togglePreview }
 						getOptions={ partialRight( getButtonOptions, this.isLoggedOut(), bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
 						trackScrollPage={ this.props.trackScrollPage }
@@ -184,7 +185,8 @@ export default connect(
 		props,
 		{
 			queryParams: ThemesListSelectors.getQueryParams( state ),
-			themesList: ThemesListSelectors.getThemesList( state )
+			themesList: ThemesListSelectors.getThemesList( state ),
+			selectedSite: getSelectedSite( state )
 		}
 	)
 )( Themes );

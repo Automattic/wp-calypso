@@ -20,6 +20,19 @@ export function setSelectedSiteId( siteId ) {
 	};
 }
 
+/**
+ * Returns an action object to be used in signalling that all sites have been
+ * set as selected.
+ *
+ * @return {Object}        Action object
+ */
+export function setAllSitesSelected() {
+	return {
+		type: SELECTED_SITE_SET,
+		siteId: null
+	};
+}
+
 export function setSection( section, options = {} ) {
 	options.type = SET_SECTION;
 	if ( section ) {
