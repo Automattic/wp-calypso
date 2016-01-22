@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SITE_STATS_RECEIVE, SITE_STATS_REQUEST } from 'state/action-types';
+import { SITE_STATS_RECEIVE, SITE_STATS_REQUEST, SITE_STATS_REQUEST_FAILURE } from 'state/action-types';
 import { isDocumentedEndpoint, isUndocumentedEndpoint, isPostIdEndpoint, getValidEndpoints } from 'lib/stats/endpoints';
 import wpcom from 'lib/wp';
 
@@ -12,7 +12,7 @@ import wpcom from 'lib/wp';
  * @param  {Object} payload keys: siteID, statType, options, response
  * @return {Object}      Action object
  */
-export function receiveSiteStats( payload ) {
+function receiveSiteStats( payload ) {
 	const { siteID, statType, options, response } = payload;
 	return {
 		type: SITE_STATS_RECEIVE,
@@ -54,8 +54,10 @@ export function fetchSiteStats( data ) {
 		return new Promise( ( resolve ) => {
 			wpcomSite[ statType ].call( wpcomSite, _options, ( error, response ) => {
 				if ( error ) {
-					//dispatch();
-					console.log( 'dispatch error handler', error, response );
+					dispatch( {
+						type: SITE_STATS_REQUEST_FAILURE,
+						data
+					} );
 				} else {
 					dispatch( receiveSiteStats( {
 						siteID,
