@@ -111,6 +111,7 @@ const NoticesList = React.createClass( {
 				<Notice
 					key={ 'notice-' + index }
 					status={ notice.status }
+					duration = { notice.duration || null }
 					showDismiss={ notice.showDismiss }
 					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
 					text={ notice.text }>
