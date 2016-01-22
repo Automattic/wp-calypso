@@ -15,6 +15,7 @@ var route = require( 'lib/route' ),
 	notices = require( 'notices' ),
 	sites = require( 'lib/sites-list' )(),
 	analytics = require( 'analytics' ),
+	PlanSetup = require( './plan-setup' ),
 	PluginListComponent = require( './main' ),
 	PluginComponent = require( './plugin' ),
 	PluginBrowser = require( './plugins-browser' ),
@@ -156,6 +157,16 @@ function renderPluginsBrowser( context, siteUrl ) {
 	);
 }
 
+function renderProvisionPlugins() {
+	let site = sites.getSelectedSite();
+	ReactDom.render(
+		React.createElement( PlanSetup, {
+			selectedSite: site,
+		} ),
+		document.getElementById( 'primary' )
+	);
+}
+
 controller = {
 
 	plugins: function( filter, context ) {
@@ -206,6 +217,9 @@ controller = {
 			}
 		}
 		next();
+	},
+	setupPlugins: function() {
+		renderProvisionPlugins();
 	}
 
 };
