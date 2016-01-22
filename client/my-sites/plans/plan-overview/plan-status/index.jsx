@@ -11,6 +11,7 @@ import page from 'page';
 import Button from 'components/button';
 import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
+import config from 'config';
 import Gridicon from 'components/gridicon';
 import { getDaysUntilUserFacingExpiry, isInGracePeriod } from 'lib/plans';
 import Notice from 'components/notice';
@@ -60,6 +61,21 @@ const PlanStatus = React.createClass( {
 		}
 	},
 
+	renderPurchaseButton() {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="plan-status__button"
+				onClick={ this.purchasePlan }
+				primary>
+				{ this.translate( 'Purchase Now' ) }
+			</Button>
+		);
+	},
+
 	render() {
 		const { plan } = this.props,
 			iconClasses = classNames( 'plan-status__icon', {
@@ -90,12 +106,7 @@ const PlanStatus = React.createClass( {
 						{ this.renderNotice() }
 					</div>
 
-					<Button
-						className="plan-status__button"
-						onClick={ this.purchasePlan }
-						primary>
-						{ this.translate( 'Purchase Now' ) }
-					</Button>
+					{ this.renderPurchaseButton() }
 				</CompactCard>
 
 				{ ! isInGracePeriod( plan ) && <PlanProgress plan={ plan } /> }
