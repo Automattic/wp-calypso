@@ -148,7 +148,7 @@ module.exports = {
 
 	feedListing: function( context ) {
 		var FeedStream = require( 'reader/feed-stream' ),
-			basePath = route.sectionify( context.path ),
+			basePath = '/read/blog/feed/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
 			mcKey = 'blog';
@@ -182,7 +182,7 @@ module.exports = {
 
 	blogListing: function( context ) {
 		var SiteStream = require( 'reader/site-stream' ),
-			basePath = route.sectionify( context.path ),
+			basePath = '/read/blog/id/:blog_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
 			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
 			mcKey = 'blog';
@@ -218,7 +218,7 @@ module.exports = {
 		var FullPostDialog = require( 'reader/full-post' ),
 			feedId = context.params.feed,
 			postId = context.params.post,
-			basePath = route.sectionify( context.path ),
+			basePath = '/read/post/feed/:feed_id/:feed_item_id',
 			fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;
@@ -254,7 +254,7 @@ module.exports = {
 		var FullPostDialog = require( 'reader/full-post' ),
 			blogId = context.params.blog,
 			postId = context.params.post,
-			basePath = route.sectionify( context.path ),
+			basePath = '/read/post/id/:blog_id/:post_id',
 			fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;
@@ -290,7 +290,7 @@ module.exports = {
 
 	tagListing: function( context ) {
 		var TagStream = require( 'reader/tag-stream' ),
-			basePath = route.sectionify( context.path ),
+			basePath = '/tag/:slug',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
 			tagSlug = trim( context.params.tag )
 				.toLowerCase()
@@ -328,7 +328,7 @@ module.exports = {
 
 	listListing: function( context ) {
 		var ListStream = require( 'reader/list-stream' ),
-			basePath = route.sectionify( context.path ),
+			basePath = '/read/list/:owner/:slug',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list,
 			listStore = feedStreamFactory( 'list:' + context.params.user + '-' + context.params.list ),
 			mcKey = 'list';
@@ -470,8 +470,8 @@ module.exports = {
 
 	listManagementSites: function( context ) {
 		const listManagement = require( 'reader/list-management' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
+			basePath = '/read/list/:owner/:slug/sites',
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List > Sites',
 			mcKey = 'list_sites';
 
 		setPageTitle( i18n.translate( 'Manage List' ) );
@@ -500,8 +500,8 @@ module.exports = {
 
 	listManagementTags: function( context ) {
 		const listManagement = require( 'reader/list-management' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List',
+			basePath = '/read/list/:owner/:slug/tags',
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List > Tags',
 			mcKey = 'list_tags';
 
 		setPageTitle( i18n.translate( 'Manage List' ) );
@@ -530,8 +530,8 @@ module.exports = {
 
 	listManagementDescriptionEdit: function( context ) {
 		const listManagement = require( 'reader/list-management' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List Description',
+			basePath = '/read/list/:owner/:slug/edit',
+			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List > Description',
 			mcKey = 'list_edit';
 
 		setPageTitle( i18n.translate( 'Manage List Description' ) );
