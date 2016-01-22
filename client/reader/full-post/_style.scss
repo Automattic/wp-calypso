@@ -7,7 +7,7 @@
 	margin: 0 auto;
 
 	@include breakpoint( ">660px" ) {
-		padding-top: calc( 56px + 12vh );
+		padding-top: calc( 56px + 6vh );
 		padding-bottom: calc( 48px + 6vh );
 	}
 
