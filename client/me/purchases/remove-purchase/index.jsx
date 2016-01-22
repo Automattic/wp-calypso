@@ -12,6 +12,7 @@ import Dialog from 'components/dialog';
 import { getPurchase, isDataLoading } from '../utils';
 import { getName, isRemovable } from 'lib/purchases';
 import Gridicon from 'components/gridicon';
+import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { removePurchase } from 'lib/upgrades/actions';
@@ -97,11 +98,35 @@ const RemovePurchase = React.createClass( {
 
 		return (
 			<Dialog
-				className="remove-purchase__dialog"
 				buttons={ buttons }
+				className="remove-purchase__dialog"
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }>
 				<h1>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</h1>
+				{ this.renderDialogText() }
+			</Dialog>
+		);
+	},
+
+	renderDialogText() {
+		const purchase = getPurchase( this.props ),
+			productName = getName( purchase );
+
+		if ( isDomainRegistration( purchase ) ) {
+			return (
+				<p>
+					{
+						this.translate( 'This will remove %(domain)s from your account.', {
+							args: { domain: productName },
+							components: { em: <em /> }
+						} )
+					}
+					{ ' ' }
+					{ this.translate( 'By removing, you are canceling the domain registration. This may stop you from using it again, even with another service.' ) }
+				</p>
+			);
+		} else {
+			return (
 				<p>
 					{
 						this.translate( 'Are you sure you want to remove %(productName)s from {{em}}%(domain)s{{/em}}?', {
@@ -112,8 +137,8 @@ const RemovePurchase = React.createClass( {
 					{ ' ' }
 					{ this.translate( 'By removing it, you will not be able to reuse it again without purchasing a new subscription.' ) }
 				</p>
-			</Dialog>
-		);
+			);
+		}
 	},
 
 	render() {
