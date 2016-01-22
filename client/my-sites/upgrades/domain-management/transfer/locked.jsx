@@ -81,7 +81,7 @@ const Locked = React.createClass( {
 			<Button onClick={ this.handlePrivacyRemovalCancelClick }>{ this.translate( 'Cancel' ) }</Button>,
 			<Button
 				onClick={ this.handlePrivacyRemovalConfirmClick }
-				primary={ true }>{ this.translate( 'Continue with transfer' ) }</Button>
+				primary={ true }>{ this.translate( 'Continue with Transfer' ) }</Button>
 		];
 
 		return (

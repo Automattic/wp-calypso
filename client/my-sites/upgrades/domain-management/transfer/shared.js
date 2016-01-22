@@ -72,8 +72,8 @@ export const displayRequestTransferCodeResponseNotice = ( responseError, domainS
 	} else {
 		notices.success(
 			translate(
-				"An email has been sent to the Domain Registrant's contact email " +
-				"address containing the Domain Transfer Code. If you don't " +
+				'An email has been sent to contact email address for this domain ' +
+				'containing the Domain Transfer Code. If you don\'t ' +
 				'receive the email shortly, please check your spam folder.'
 			)
 		);

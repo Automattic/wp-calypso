@@ -21,7 +21,10 @@
 }
 
 .transfer-card {
-	p:last-child {
-		margin-bottom: 0;
+	p {
+		color: darken( $gray, 20% );
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 }
