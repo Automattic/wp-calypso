@@ -6,7 +6,7 @@ import { fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import ThemeConstants from 'lib/themes/constants';
+import ActionTypes from '../action-types';
 
 const initialState = fromJS( {
 	isActivating: false,
@@ -16,20 +16,20 @@ const initialState = fromJS( {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ThemeConstants.RECEIVE_CURRENT_THEME:
+		case ActionTypes.RECEIVE_CURRENT_THEME:
 			return state.setIn( [ 'currentThemes', action.site.ID ], {
 				name: action.themeName,
 				id: action.themeId,
 				cost: action.themeCost
 			} );
-		case ThemeConstants.ACTIVATE_THEME:
+		case ActionTypes.ACTIVATE_THEME:
 			return state.set( 'isActivating', true );
-		case ThemeConstants.ACTIVATED_THEME:
+		case ActionTypes.ACTIVATED_THEME:
 			return state
 				.set( 'isActivating', false )
 				.set( 'hasActivated', true )
 				.setIn( [ 'currentThemes', action.site.ID ], action.theme );
-		case ThemeConstants.CLEAR_ACTIVATED_THEME:
+		case ActionTypes.CLEAR_ACTIVATED_THEME:
 			return state.set( 'hasActivated', false );
 	}
 	return state;

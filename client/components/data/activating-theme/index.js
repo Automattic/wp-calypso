@@ -12,7 +12,7 @@ import {
 	isActivating,
 	hasActivated,
 	getCurrentTheme
-} from 'lib/themes/selectors/current-theme';
+} from 'state/themes/current-theme/selectors';
 
 /**
  * Passes the activating state of themes to the supplied child component.

@@ -1,26 +1,26 @@
 import { assert } from 'chai';
 import { createStore } from 'redux';
 
-import ThemeConstants from '../constants';
-import reducer from '../reducers/themes';
+import ActionTypes from '../../action-types';
+import reducer from '../reducer';
 
 describe( 'themes', () => {
 	const actionReceiveThemes = {
-		type: ThemeConstants.RECEIVE_THEMES,
+		type: ActionTypes.RECEIVE_THEMES,
 		themes: [
 			{ id: 'bold-news', active: true },
 			{ id: 'picard' }
 		]
 	};
 	const actionReceiveMoreThemes = {
-		type: ThemeConstants.RECEIVE_THEMES,
+		type: ActionTypes.RECEIVE_THEMES,
 		themes: [
 			{ id: 'picard' },
 			{ id: 'hue' }
 		]
 	};
 	const actionThemeActivated = {
-		type: ThemeConstants.ACTIVATED_THEME,
+		type: ActionTypes.ACTIVATED_THEME,
 		theme: { id: 'picard' }
 	};
 

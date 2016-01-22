@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Constants from 'lib/themes/constants';
-import { query, fetchNextPage } from 'lib/themes/actions';
-import { hasSiteChanged, isJetpack } from 'lib/themes/selectors/themes-last-query';
-import { isLastPage, isFetchingNextPage, getThemesList } from 'lib/themes/selectors/themes-list';
-import { getThemeById } from 'lib/themes/selectors/themes';
+import { PER_PAGE } from 'state/themes/themes-list/constants';
+import { query, fetchNextPage } from 'state/themes/actions';
+import { hasSiteChanged, isJetpack } from 'state/themes/themes-last-query/selectors';
+import { isLastPage, isFetchingNextPage, getThemesList } from 'state/themes/themes-list/selectors';
+import { getThemeById } from 'state/themes/themes/selectors';
 
 const ThemesListFetcher = React.createClass( {
 	propTypes: {
@@ -78,7 +78,7 @@ const ThemesListFetcher = React.createClass( {
 			search,
 			tier,
 			page: 0,
-			perPage: Constants.PER_PAGE,
+			perPage: PER_PAGE,
 		} );
 
 		this.props.fetchNextPage( site );

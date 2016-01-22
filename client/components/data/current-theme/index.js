@@ -9,8 +9,8 @@ import omit from 'lodash/object/omit';
 /**
  * Internal dependencies
  */
-import { fetchCurrentTheme } from 'lib/themes/actions';
-import { getCurrentTheme } from 'lib/themes/selectors/current-theme';
+import { fetchCurrentTheme } from 'state/themes/actions';
+import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 
 /**
  * Fetches the currently active theme of the supplied site
