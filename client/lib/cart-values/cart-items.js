@@ -290,10 +290,10 @@ function hasOnlyRenewalItems( cart ) {
  * Will return false if the cart is empty.
  *
  * @param {Object} cart - cart as `CartValue` object
- * @returns {boolean} true if all the products in the cart are of the productSlug type
+ * @returns {boolean} true if any product in the cart renews
  */
 function hasRenewableSubscription( cart ) {
-	return cart.products && some( getAll( cart ), function (cartItem){ return cartItem.bill_period > 0 } );
+	return cart.products && some( getAll( cart ), cartItem => cartItem.bill_period > 0 );
 }
 
 /**
@@ -698,9 +698,9 @@ module.exports = {
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
-	hasRenewableSubscription,
 	hasPlan,
 	hasProduct,
+	hasRenewableSubscription,
 	hasRenewalItem,
 	noAdsItem,
 	planItem,

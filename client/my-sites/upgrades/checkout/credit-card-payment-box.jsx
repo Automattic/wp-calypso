@@ -39,8 +39,8 @@ var CreditCardPaymentBox = React.createClass( {
 					transaction={ this.props.transaction } />
 
 				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-					/>
+					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
+
 				<div className="payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
