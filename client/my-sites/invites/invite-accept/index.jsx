@@ -18,7 +18,7 @@ import user from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
-import { successNotice, infoNotice } from 'state/notices/actions';
+import { infoNotice, errorNotice } from 'state/notices/actions';
 import analytics from 'analytics';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 
@@ -132,5 +132,5 @@ let InviteAccept = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice, infoNotice }, dispatch )
+	dispatch => bindActionCreators( { infoNotice, errorNotice }, dispatch )
 )( InviteAccept );

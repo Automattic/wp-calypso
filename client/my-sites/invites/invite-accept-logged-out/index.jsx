@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -16,8 +18,9 @@ import store from 'store'
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
+import { errorNotice } from 'state/notices/actions';
 
-export default React.createClass( {
+let InviteAcceptLoggedOut = React.createClass( {
 
 	displayName: 'InviteAcceptLoggedOut',
 
@@ -51,7 +54,15 @@ export default React.createClass( {
 					wpcom.undocumented().acceptInvite(
 						this.props,
 						( acceptError ) => {
-							if ( ! acceptError ) {
+							if ( acceptError ) {
+								this.setState( { submitting: false } )
+								this.setState( { submitting: false } )
+								if ( acceptError.message ) {
+									this.props.errorNotice( acceptError.message );
+								} else {
+									this.props.errorNotice( this.translate( 'There was an error accepting your invitation. Please try again.' ) )
+								}
+							} else {
 								store.set( 'invite_accepted', this.props );
 								this.setState( { userData, bearerToken } );
 							}
@@ -84,7 +95,12 @@ export default React.createClass( {
 			this.props,
 			( error ) => {
 				if ( error ) {
-					this.setState( { error } );
+					this.setState( { submitting: false } );
+					if ( error.message ) {
+						this.props.errorNotice( error.message );
+					} else {
+						this.props.errorNotice( this.translate( 'There was an error accepting your invitation. Please try again.' ) )
+					}
 				} else {
 					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( this.props.sentTo ) + '&key=' + this.props.authKey;
 				}
@@ -134,5 +150,10 @@ export default React.createClass( {
 			</div>
 		)
 	}
-
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { errorNotice }, dispatch )
+)( InviteAcceptLoggedOut );
+

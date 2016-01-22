@@ -242,18 +242,17 @@ export default React.createClass( {
 		}
 
 		this.formStateController.handleSubmit( hasErrors => {
-			if ( hasErrors ) {
-				this.setState( { submitting: false } );
-				return;
+			if ( ! hasErrors ) {
+				let analyticsData = {
+					unique_usernames_searched: usernamesSearched.length,
+					times_username_validation_failed: timesUsernameValidationFailed,
+					times_password_validation_failed: timesPasswordValidationFailed
+				};
+				this.props.submitForm( this.state.form, this.getUserData(), analyticsData );
+				resetAnalyticsData();
 			}
 
-			let analyticsData = {
-				unique_usernames_searched: usernamesSearched.length,
-				times_username_validation_failed: timesUsernameValidationFailed,
-				times_password_validation_failed: timesPasswordValidationFailed
-			};
-			this.props.submitForm( this.state.form, this.getUserData(), analyticsData );
-			resetAnalyticsData();
+			this.setState( { submitting: false } );
 		} );
 	},
 

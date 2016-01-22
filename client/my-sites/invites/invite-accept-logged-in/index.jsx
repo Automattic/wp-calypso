@@ -5,6 +5,8 @@ import React from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import store from'store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -18,8 +20,9 @@ import { acceptInvite } from 'lib/invites/actions';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
+import { errorNotice } from 'state/notices/actions';
 
-export default React.createClass( {
+let InviteAcceptLoggedIn = React.createClass( {
 
 	displayName: 'InviteAcceptLoggedIn',
 
@@ -29,10 +32,23 @@ export default React.createClass( {
 
 	accept() {
 		this.setState( { submitting: true } );
-		acceptInvite( this.props.invite );
-		store.set( 'invite_accepted', this.props.invite );
-		page( this.props.redirectTo );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
+		acceptInvite(
+			this.props.invite,
+			( error ) => {
+				if ( error ) {
+					this.setState( { submitting: false } );
+					if ( error.message ) {
+						this.props.errorNotice( error.message );
+					} else {
+						this.props.errorNotice( this.translate( 'There was an error accepting your invitation. Please try again.' ) )
+					}
+				} else {
+					store.set( 'invite_accepted', this.props.invite );
+					page( this.props.redirectTo );
+				}
+			}
+		);
 	},
 
 	decline() {
@@ -119,3 +135,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { errorNotice }, dispatch )
+)( InviteAcceptLoggedIn );
