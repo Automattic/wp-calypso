@@ -183,7 +183,7 @@ export default connect(
 		{
 			queryParams: ThemesListSelectors.getQueryParams( state ),
 			themesList: ThemesListSelectors.getThemesList( state ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite: getSelectedSite( state ) || false,
 			isLoggedOut: ! getCurrentUser( state )
 		}
 	)
