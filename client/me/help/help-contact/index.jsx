@@ -56,6 +56,9 @@ module.exports = React.createClass( {
 		olarkEvents.off( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.off( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 
+		// This event handler is only added when the user starts a chat in the startChat method. Its not added by default like the others.
+		olarkEvents.off( 'api.chat.onMessageToOperator', this.onChatStarted );
+
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
 		}
@@ -89,8 +92,14 @@ module.exports = React.createClass( {
 		savedContactForm = null;
 	},
 
+	onChatStarted: function() {
+		this.setState( { isSubmitting: false } );
+	},
+
 	startChat: function( contactForm ) {
 		const { message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
+		const { isSubmitting } = this.state;
+
 		const site = sites.getSite( siteSlug );
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
@@ -99,6 +108,14 @@ module.exports = React.createClass( {
 			'How I feel: ' + howYouFeel,
 			'Site I need help with: ' + ( site ? site.URL : 'N/A' )
 		];
+
+		if ( isSubmitting ) {
+			return;
+		}
+
+		this.setState( { isSubmitting: true } );
+
+		olarkEvents.on( 'api.chat.onMessageToOperator', this.onChatStarted );
 
 		notifications.forEach( olarkActions.sendNotificationToOperator );
 
@@ -319,7 +336,7 @@ module.exports = React.createClass( {
 			},
 			showChatVariation && {
 				onSubmit: this.startChat,
-				buttonLabel: this.translate( 'Chat with us' )
+				buttonLabel: isSubmitting ? this.translate( 'Starting chat' ) : this.translate( 'Chat with us' )
 			},
 			showKayakoVariation && {
 				onSubmit: this.submitKayakoTicket,
