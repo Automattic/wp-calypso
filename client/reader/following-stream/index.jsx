@@ -57,14 +57,16 @@ module.exports = React.createClass( {
 		suppressSiteNameLink: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
-		emptyContent: React.PropTypes.object
+		emptyContent: React.PropTypes.object,
+		className: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
 		return {
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
-			onShowUpdates: noop
+			onShowUpdates: noop,
+			className: 'following'
 		};
 	},
 
@@ -408,7 +410,12 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			body;
+			body,
+			containerClass = 'following';
+
+		if ( this.props.className ) {
+			containerClass = this.props.className;
+		}
 
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent || ( <EmptyContent /> );
@@ -428,7 +435,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Main className="following">
+			<Main className={ containerClass }>
 				<MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar>
