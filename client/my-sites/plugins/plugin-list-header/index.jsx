@@ -3,7 +3,9 @@
  */
 import React from 'react';
 import property from 'lodash/utility/property';
+import debounce from 'lodash/function/debounce';
 import config from 'config';
+import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import analytics from 'analytics';
 
@@ -18,6 +20,8 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
+
+let _actionBarVisible = true;
 
 export default React.createClass( {
 	displayName: 'Plugins-list-header',
@@ -46,10 +50,32 @@ export default React.createClass( {
 		isWpCom: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			isWpCom: false
 		};
+	},
+
+	getInitialState() {
+		return {
+			actionBarVisible: _actionBarVisible
+		};
+	},
+
+	componentDidMount() {
+		this.debouncedAfterResize = debounce( this.afterResize, 100 );
+
+		window.addEventListener( 'resize', this.debouncedAfterResize );
+		_actionBarVisible = findDOMNode( this ).offsetWidth > 719;
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.debouncedAfterResize );
+	},
+
+	afterResize() {
+		const actionBarVisible = findDOMNode( this ).offsetWidth > 719
+		this.setState( { actionBarVisible } );
 	},
 
 	onBrowserLinkClick() {
@@ -222,7 +248,6 @@ export default React.createClass( {
 			}
 
 			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
-
 			options.push(
 				<DropdownItem key="plugin__actions_activate"
 					disabled={ ! this.props.haveInactiveSelected }
@@ -285,7 +310,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.isBulkManagementActive } );
+		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.isBulkManagementActive, 'is-action-bar-visible': this.state.actionBarVisible } );
 		return (
 			<SectionHeader label={ this.props.label } className={ sectionClasses }>
 				{

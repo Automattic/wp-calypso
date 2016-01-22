@@ -41,10 +41,20 @@
 
 	.button-group {
 		margin-left: 8px;
+		display: inherit;
 	}
 
 	@include breakpoint( '>660px' ) {
 		padding-right: 16px;
+	}
+
+	&.is-action-bar-visible {
+		.plugin-list-header__actions_dropdown {
+			display: none;
+		}
+		.plugin-list-header__action-buttons {
+			display: flex;
+		}
 	}
 }
 
@@ -61,11 +71,7 @@
 }
 
 .plugin-list-header__actions_dropdown {
-	display: none;
-
-	@include breakpoint( "<960px" ) {
-		display: inline-block;
-	}
+	display: inline-block;
 }
 
 .plugin-list-header__actions_remove_item {
@@ -85,12 +91,8 @@
 
 .plugin-list-header__action-buttons {
 	align-items: center;
-	display: flex;
+	display: none;
 	flex-grow: 1;
-
-	@include breakpoint( "<960px" ) {
-		display: none;
-	}
 }
 
 .plugin-list-header__browser-button.button.is-compact {
