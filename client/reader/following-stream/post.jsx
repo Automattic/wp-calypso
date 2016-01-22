@@ -44,7 +44,8 @@ var Card = require( 'components/card' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
 	FeedPostStore = require( 'lib/feed-post-store' ),
 	FollowButton = require( 'reader/follow-button' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	smartSetState = require( 'lib/react-smart-set-state' );
 
 var Post = React.createClass( {
 
@@ -59,6 +60,8 @@ var Post = React.createClass( {
 		additionalClasses: React.PropTypes.object,
 		handleClick: React.PropTypes.func.isRequired
 	},
+
+	smartSetState: smartSetState,
 
 	getMaxFeaturedWidthSize: function() {
 		return ReactDom.findDOMNode( this ).offsetWidth;
@@ -112,6 +115,7 @@ var Post = React.createClass( {
 
 		return {
 			site: site,
+			siteish: utils.siteishFromSiteAndPost( site, post ),
 			originalPost: originalPost,
 			isDiscoverPost: isDiscoverPost,
 			isDiscoverSitePick: isDiscoverSitePick
@@ -138,7 +142,7 @@ var Post = React.createClass( {
 	updateState: function( props ) {
 		var newState = this.getStateFromStores( props );
 		if ( newState.site !== this.state.site ) {
-			this.setState( newState );
+			this.smartSetState( newState );
 		}
 	},
 
@@ -299,7 +303,7 @@ var Post = React.createClass( {
 
 	render: function() {
 		var post = this.props.post,
-			site = utils.siteishFromSiteAndPost( this.state.site, post ),
+			site = this.state.siteish,
 			featuredImage = this.featuredImageComponent( post ),
 			shouldShowComments = PostCommentHelper.shouldShowComments( post ),
 			shouldShowLikes = LikeHelper.shouldShowLikes( post ),
