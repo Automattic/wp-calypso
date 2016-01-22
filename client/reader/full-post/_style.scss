@@ -327,17 +327,16 @@
 
 		&:first-child:first-letter {
 			float: left;
-			font-size: 60px;
-			font-weight: 400;
-			line-height: 0.5em;
-			margin-top: 0.4em;
-			margin-right: 0.15em;
+			margin: 21px 12px 0 0;
+			font-size: 66px;
+		    font-weight: 400;
+		    line-height: 0.5;
 		}
 
 		// Firefox-only position fix
 		@-moz-document url-prefix() {
 			&:first-child:first-letter {
-				margin-top: 0.25em;
+				margin-top: 8px;
 			}
 		}
 	}
