@@ -11,10 +11,16 @@ import Masterbar from './masterbar';
  */
 import Item from './item';
 
-export default () => (
+const MasterbarMinimal = ( { url } ) => (
 	<Masterbar>
-		<Item url="/" icon="my-sites" className="masterbar__item-logo">
+		<Item url={ url } icon="my-sites" className="masterbar__item-logo">
 			WordPress<span className="tld">.com</span>
 		</Item>
 	</Masterbar>
 );
+
+MasterbarMinimal.propTypes = {
+	url: React.PropTypes.string.isRequired
+};
+
+export default MasterbarMinimal;

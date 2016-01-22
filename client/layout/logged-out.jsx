@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import MasterbarMinimal from 'layout/masterbar/minimal';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 
@@ -20,7 +20,7 @@ const LoggedOutLayout = ( { section, hasSidebar } ) => {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut />
+			<MasterbarMinimal url="/" />
 			<div id="content" className="wp-content">
 				<GlobalNotices id="notices" notices={ notices.list } />
 				<div id="primary" className="wp-primary wp-section" />

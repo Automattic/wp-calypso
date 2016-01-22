@@ -2,12 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import Masterbar from './masterbar';
 
 /**
  * Internal dependencies
  */
-import Item from './item';
+import MasterbarMinimal from './minimal';
 import { getExitCheckoutUrl } from 'lib/checkout';
 
 function getMinimalLogoUrl( cart, selectedSite ) {
@@ -19,14 +18,7 @@ function getMinimalLogoUrl( cart, selectedSite ) {
 }
 
 const MasterbarCheckout = ( { cart, selectedSite } ) => (
-	<Masterbar>
-		<Item
-			url={ getMinimalLogoUrl( cart, selectedSite ) }
-			icon="my-sites"
-			className="masterbar__item-logo">
-			WordPress<span className="tld">.com</span>
-		</Item>
-	</Masterbar>
+	<MasterbarMinimal url={ getMinimalLogoUrl( cart, selectedSite ) } />
 );
 
 export default MasterbarCheckout;
