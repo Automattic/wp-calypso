@@ -102,7 +102,7 @@ export default React.createClass( {
 		},
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some( site => site.plugin && site.plugin.update && site.canUpdateFiles );
+				return plugin.sites.some( site => site.plugin && site.plugin.update && site.plugin.update.new_version && site.canUpdateFiles );
 			}
 			return false;
 		},

@@ -23,6 +23,9 @@ import BulkSelect from 'components/bulk-select';
 
 let _actionBarVisible = true;
 
+// Below this width the action bar turns into a select dropdown.
+const MIN_VIEWPORT_WIDTH = 719;
+
 export default React.createClass( {
 	displayName: 'Plugins-list-header',
 
@@ -66,7 +69,7 @@ export default React.createClass( {
 		this.debouncedAfterResize = debounce( this.afterResize, 100 );
 
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-		_actionBarVisible = findDOMNode( this ).offsetWidth > 719;
+		_actionBarVisible = findDOMNode( this ).offsetWidth > MIN_VIEWPORT_WIDTH;
 	},
 
 	componentWillUnmount() {
@@ -74,7 +77,7 @@ export default React.createClass( {
 	},
 
 	afterResize() {
-		const actionBarVisible = findDOMNode( this ).offsetWidth > 719
+		const actionBarVisible = findDOMNode( this ).offsetWidth > MIN_VIEWPORT_WIDTH;
 		this.setState( { actionBarVisible } );
 	},
 
@@ -83,10 +86,7 @@ export default React.createClass( {
 	},
 
 	canAddNewPlugins() {
-		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			return ! this.props.isWpCom;
-		}
-		return false;
+		return config.isEnabled( 'manage/plugins/browser' ) && ! this.props.isWpCom;
 	},
 
 	canUpdatePlugins() {
