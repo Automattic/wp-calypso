@@ -379,7 +379,7 @@ BusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Add eCommerce' ) }
 					description={ this.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
 					buttonText={ this.translate( 'Set Up eCommerce' ) }
-					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/admin.php?page=business-plugins' ) } />
+					onButtonClick={ goToExternalPage( '/plugins/' + this.props.selectedSite.slug ) } />
 
 				{ ! showGetFreeDomainTip
 				? <PurchaseDetail
