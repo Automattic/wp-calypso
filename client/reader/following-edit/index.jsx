@@ -104,7 +104,7 @@ const FollowingEdit = React.createClass( {
 			const feed = FeedStore.get( item.get( 'feed_ID' ) ),
 				site = SiteStore.get( item.get( 'blog_ID' ) ),
 				phraseRe = new RegExp( escapeRegexp( phrase ), 'i' );
-			return item.get( 'URL' ).indexOf( phraseRe ) !== -1 ||
+			return item.get( 'URL' ).search( phraseRe ) !== -1 ||
 				( site && ( site.get( 'name' ) || '' ).search( phraseRe ) !== -1 ) ||
 				( site && ( site.get( 'URL' ) || '' ).search( phraseRe ) !== -1 ) ||
 				( feed && ( feed.name || '' ).search( phraseRe ) !== -1 ) ||
@@ -379,7 +379,7 @@ const FollowingEdit = React.createClass( {
 					delaySearch={ true }
 					ref="url-search" />
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
-				{ subscriptionsToDisplay.length === 0 && this.props.search ?
+				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading ?
 					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
 
 				<InfiniteList className="following-edit__sites"
