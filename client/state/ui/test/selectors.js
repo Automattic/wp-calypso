@@ -10,14 +10,14 @@ import { getSelectedSite } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
-		it( 'should return false if no site is selected', () => {
+		it( 'should return null if no site is selected', () => {
 			const selected = getSelectedSite( {
 				ui: {
-					selectedSiteId: false
+					selectedSiteId: null
 				}
 			} );
 
-			expect( selected ).to.be.false;
+			expect( selected ).to.be.null;
 		} );
 
 		it( 'should return the object for the selected site', () => {
