@@ -19,6 +19,7 @@ var Button = require( 'components/button' ),
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
+	PurchaseDetail = require( './purchase-detail' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
 /**
@@ -33,7 +34,6 @@ var BusinessPlanDetails,
 	JetpackBusinessPlanDetails,
 	JetpackPremiumPlanDetails,
 	PremiumPlanDetails,
-	PurchaseDetail,
 	SiteRedirectDetails;
 
 var CheckoutThankYou = React.createClass( {
@@ -626,22 +626,6 @@ function goToDomainManagement( selectedSite, domain ) {
 
 	return goToExternalPage( url );
 }
-
-PurchaseDetail = React.createClass( {
-	render: function() {
-		return (
-			<li className={ 'purchase-detail ' + this.props.additionalClass }>
-				<div className="purchase-detail-text">
-					<h3>{ this.props.title }</h3>
-					<p>{ this.props.description }</p>
-				</div>
-				<Button onClick={ this.props.onButtonClick } primary>
-					{ this.props.buttonText }
-				</Button>
-			</li>
-		);
-	}
-} );
 
 module.exports = connect(
 	undefined,
