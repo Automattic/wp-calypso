@@ -11,7 +11,7 @@ import rest from 'lodash/array/rest';
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
 import Dispatcher from 'dispatcher';
-import { STORED_CARDS_FROM_API, STORED_CARDS } from './constants';
+import { STORED_CARDS_FROM_API, STORED_CARDS } from './data';
 import StoredCardsStore from './../store';
 
 describe( 'Stored Cards Store', () => {

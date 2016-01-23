@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { createStoredCardsArray } from '../assembler.js';
-import { STORED_CARDS_FROM_API, STORED_CARDS } from './constants';
+import { STORED_CARDS_FROM_API, STORED_CARDS } from './data';
 
 describe( 'Stored Cards assembler', () => {
 	it( 'should be a function', () => {
