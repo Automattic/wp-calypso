@@ -15,7 +15,7 @@ var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' ),
 	store = require( 'store' ),
 	oAuthToken = require( 'lib/oauth-token' ),
 	userUtilities = require( 'lib/user/utils' ),
-	location = require( './page-notifier' );
+	location = require( 'lib/route/page-notifier' );
 
 /**
  * Module variables
