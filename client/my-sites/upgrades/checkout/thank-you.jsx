@@ -8,7 +8,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
+var Button = require( 'components/button' ),
+	config = require( 'config' ),
 	Dispatcher = require( 'dispatcher' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	Card = require( 'components/card' ),
@@ -33,7 +34,6 @@ var BusinessPlanDetails,
 	JetpackPremiumPlanDetails,
 	PremiumPlanDetails,
 	PurchaseDetail,
-	PurchaseDetailButton,
 	SiteRedirectDetails;
 
 var CheckoutThankYou = React.createClass( {
@@ -595,31 +595,10 @@ GenericDetails = React.createClass( {
 	render: function() {
 		return (
 			<ul className="purchase-details-list">
-				<PurchaseDetailButton text={ this.translate( 'Back to my site' ) } href={ this.props.selectedSite.URL } />
+				<Button href={ this.props.selectedSite.URL } primary>
+					{ this.translate( 'Back to my site' ) }
+				</Button>
 			</ul>
-		);
-	}
-} );
-
-PurchaseDetailButton = React.createClass( {
-	propTypes: {
-		onClick: React.PropTypes.func,
-		text: React.PropTypes.string.isRequired,
-		href: React.PropTypes.string,
-		target: React.PropTypes.string
-	},
-	render: function() {
-		if ( this.props.onClick ) {
-			return (
-				<a className="button is-primary" onClick={ this.props.onClick }>
-					{ this.props.text }
-				</a>
-			);
-		}
-		return (
-			<a className="button is-primary" href={ this.props.href } target={ this.props.target }>
-				{ this.props.text }
-			</a>
 		);
 	}
 } );
@@ -656,7 +635,9 @@ PurchaseDetail = React.createClass( {
 					<h3>{ this.props.title }</h3>
 					<p>{ this.props.description }</p>
 				</div>
-				<PurchaseDetailButton onClick={ this.props.onButtonClick } text={ this.props.buttonText } />
+				<Button onClick={ this.props.onButtonClick } primary>
+					{ this.props.buttonText }
+				</Button>
 			</li>
 		);
 	}
