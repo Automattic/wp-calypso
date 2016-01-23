@@ -176,6 +176,8 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
+		context.store.dispatch( setSection( null, { hasSidebar: true } ) );
+
 		ReactDom.render(
 			(
 				<CheckoutData>
