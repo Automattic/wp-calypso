@@ -12,11 +12,11 @@ import { reducer } from './../reducer';
 
 describe( 'Domains: Email Forwarding Reducer', () => {
 	it( 'should return the same state when no matching record passed in the delete complete action', () => {
-		const state = {
+		const state = Object.freeze( {
 				[ DOMAIN_NAME ]: {
 					list: EMAIL_FORWARDS
 				}
-			},
+			} ),
 			payload = {
 				action: {
 					type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
@@ -35,11 +35,11 @@ describe( 'Domains: Email Forwarding Reducer', () => {
 	} );
 
 	it( 'should return state without record passed in the delete completed action', () => {
-		const state = {
+		const state = Object.freeze( {
 				[ DOMAIN_NAME ]: {
 					list: EMAIL_FORWARDS
 				}
-			},
+			} ),
 			payload = {
 				action: {
 					type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
