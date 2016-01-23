@@ -4,6 +4,7 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' ),
+	unescapeString = require( 'lodash/string/unescape' ),
 	isEqual = require( 'lodash/lang/isEqual' ),
 	debounce = require( 'lodash/function/debounce' ),
 	throttle = require( 'lodash/function/throttle' ),
@@ -14,8 +15,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	NoResults = require( './no-results' ),
+var NoResults = require( './no-results' ),
 	analytics = require( 'analytics' ),
 	Search = require( './search' );
 
@@ -123,7 +123,7 @@ module.exports = React.createClass( {
 
 	renderItem: function( item ) {
 		var itemId = item.ID,
-			name = decodeEntities( item.name ) || this.translate( 'Untitled' ),
+			name = unescapeString( item.name ) || this.translate( 'Untitled' ),
 			checked = ( -1 !== this.state.selectedIds.indexOf( item.ID ) ),
 			inputType = this.props.multiple ? 'checkbox' : 'radio',
 			domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId,

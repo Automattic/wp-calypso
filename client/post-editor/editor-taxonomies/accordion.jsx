@@ -17,7 +17,7 @@ import TermStore from 'lib/terms/store';
 import siteUtils from 'lib/site/utils';
 import InfoPopover from 'components/info-popover';
 import { isPage } from 'lib/posts/utils';
-import { decodeEntities } from 'lib/formatting';
+import unescapeString from 'lodash/string/unescape';
 
 module.exports = React.createClass( {
 	displayName: 'EditorTaxonomiesAccordion',
@@ -103,7 +103,7 @@ module.exports = React.createClass( {
 		// either, so we need to get them from the site categories data
 		const categories = this.getCategories().map( ( categoryId ) => {
 			const category = TermStore.get( siteId, categoryId );
-			return category ? decodeEntities( category.name ) : null;
+			return category ? unescapeString( category.name ) : null;
 		} ).filter( categoryName => categoryName );
 
 		switch ( categories.length ) {
@@ -127,7 +127,7 @@ module.exports = React.createClass( {
 	getTagsSubtitle() {
 		let tags = this.props.post.tags || [];
 		tags = Array.isArray( tags ) ? tags : Object.keys( tags );
-		tags = tags.map( decodeEntities );
+		tags = tags.map( unescapeString );
 
 		switch ( tags.length ) {
 			case 0:
