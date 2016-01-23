@@ -16,7 +16,7 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			duration: null,
+			duration: 0,
 			status: 'is-info',
 			showDismiss: true,
 			className: '',
@@ -29,6 +29,7 @@ export default React.createClass( {
 		status: PropTypes.string,
 		showDismiss: PropTypes.bool,
 		isCompact: PropTypes.bool,
+		duration: React.PropTypes.number,
 		text: PropTypes.oneOfType( [
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
@@ -43,7 +44,7 @@ export default React.createClass( {
 		}
 	},
 
-	componentWillMount() {
+	componentWillUnmount() {
 		if ( this.dismissTimeout ) {
 			clearTimeout( this.dismissTimeout );
 		}
