@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var StatsList = require( '../stats-list' ),
+	StatsListLegend = require( '../stats-list/legend' ),
 	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	toggle = require( '../mixin-toggle' ),
@@ -205,21 +206,12 @@ module.exports = React.createClass( {
 
 						{ pagination }
 
-						<div className="stats-async-metabox-wrapper">
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ valueLegend }</span>
-										</span>
-										<span className="module-content-list-item-label">{ labelLegend }</span>
-									</span>
-								</li>
-							</ul>
-							{ followers }
-							{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
-						</div>
+						<StatsListLegend value={ valueLegend } label={ labelLegend } />
 
+						{ followers }
+						
+						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
+						
 						<StatsModulePlaceholder isLoading={ isLoading } />
 
 						{ pagination }

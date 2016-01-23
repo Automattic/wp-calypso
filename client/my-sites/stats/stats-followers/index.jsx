@@ -9,6 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var toggle = require( '../mixin-toggle' ),
+	StatsListLegend = require( '../stats-list/legend' ),
 	StatsModuleSelectDropdown = require( '../stats-module/select-dropdown' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
 	StatsList = require( '../stats-list' ),
@@ -203,17 +204,7 @@ module.exports = React.createClass( {
 							<div className="module-content-text module-content-text-stat">
 								{ wpcomTotalFollowers }
 							</div>
-
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.translate( 'Since' ) }</span>
-										</span>
-										<span className="module-content-list-item-label">{ this.translate( 'Follower' ) }</span>
-									</span>
-								</li>
-							</ul>
+							<StatsListLegend value={ this.translate( 'Since' ) } label={ this.translate( 'Follower' ) } />
 							{ wpcomFollowers }
 							{ this.props.wpcomFollowersList.isError() ? <ErrorPanel className="is-error" /> : null }
 						</div>
@@ -223,16 +214,7 @@ module.exports = React.createClass( {
 								{ emailTotalFollowers }
 							</div>
 
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.translate( 'Since' ) }</span>
-										</span>
-										<span className="module-content-list-item-label">{ this.translate( 'Follower' ) }</span>
-									</span>
-								</li>
-							</ul>
+							<StatsListLegend value={ this.translate( 'Since' ) } label={ this.translate( 'Follower' ) } />
 							{ emailFollowers }
 							{ this.props.emailFollowersList.isError() ? <ErrorPanel className={ 'network-error' } /> : null }
 						</div>

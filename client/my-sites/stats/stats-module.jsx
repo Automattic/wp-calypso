@@ -14,6 +14,7 @@ var toggle = require( './mixin-toggle' ),
 	ErrorPanel = require( './stats-error' ),
 	InfoPanel = require( './info-panel' ),
 	StatsList = require( './stats-list' ),
+	StatsListLegend = require( './stats-list/legend' ),
 	DownloadCsv = require( './stats-download-csv' ),
 	DatePicker = require( './stats-date-picker' ),
 	Card = require( 'components/card' ),
@@ -116,20 +117,9 @@ module.exports = React.createClass( {
 						<InfoPanel module={ this.props.path } />
 						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ this.props.moduleStrings.empty } /> : null }
 						{ hasError ? <ErrorPanel className={ 'network-error' } /> : null }
-						<div className="stats-async-metabox-wrapper">
-							<ul className="module-content-list module-content-list-legend">
-								<li className="module-content-list-item">
-									<span className="module-content-list-item-wrapper">
-										<span className="module-content-list-item-right">
-											<span className="module-content-list-item-value">{ this.props.moduleStrings.value }</span>
-										</span>
-										<span className="module-content-list-item-label">{ this.props.moduleStrings.item }</span>
-									</span>
-								</li>
-							</ul>
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							{ statsList }
-						</div>
+						<StatsListLegend value={ this.props.moduleStrings.value } label={ this.props.moduleStrings.item } />
+						<StatsModulePlaceholder isLoading={ isLoading } />
+						{ statsList }
 						{ this.props.summary
 							? <DownloadCsv period={ this.props.period } path={ this.props.path } site={ this.props.site } dataList={ this.props.dataList } />
 						: null }
