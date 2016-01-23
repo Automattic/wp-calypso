@@ -57,7 +57,7 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 	componentWillUnmount: function() {
 		PostEmailSubscriptionStore.off( 'change', this.handleChange );
-		CommentEmailSubscriptionStore.on( 'change', this.handleChange );
+		CommentEmailSubscriptionStore.off( 'change', this.handleChange );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
