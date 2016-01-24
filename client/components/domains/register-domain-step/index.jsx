@@ -419,6 +419,12 @@ var RegisterDomainStep = React.createClass( {
 				message = this.translate( 'Please enter a domain name or keyword.' );
 				break;
 
+			case 'empty_results':
+				message = this.translate( "We couldn't find any available domains for: %(domain)s", {
+					args: { domain }
+				} );
+				break;
+
 			case 'invalid_query':
 				message = this.translate( 'Sorry but %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
