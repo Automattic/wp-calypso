@@ -6,6 +6,7 @@ var ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/string/trim' ),
+	startsWith = require( 'lodash/string/startsWith' ),
 	moment = require( 'moment' );
 
 /**
@@ -13,6 +14,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var i18n = require( 'lib/mixins/i18n' ),
 	route = require( 'lib/route' ),
+	pageNotifier = require( 'lib/route/page-notifier' ),
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	feedStreamFactory = require( 'lib/feed-stream-store' ),
@@ -54,6 +56,22 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 		reader_views: readerView + '_scroll'
 	} );
 }
+
+// Listen for route changes and remove the full post dialog when we navigate away from it
+pageNotifier( ( newContext, oldContext ) => {
+	if ( ! oldContext ) {
+		return;
+	}
+
+	const fullPostViewPrefix = '/read/post/';
+
+	if ( startsWith( oldContext.path, fullPostViewPrefix ) &&
+		! startsWith( newContext.path, fullPostViewPrefix ) &&
+		__fullPostInstance ) {
+		__fullPostInstance.setState( { isVisible: false } );
+		__fullPostInstance = false;
+	}
+} );
 
 function removeFullPostDialog() {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );

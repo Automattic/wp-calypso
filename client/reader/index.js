@@ -39,11 +39,11 @@ module.exports = function() {
 		page.exit( '/read/blog/feed/:feed_id', controller.resetTitle );
 
 		page( '/read/post/feed/:feed/:post', setLastRoute, controller.feedPost );
-		page.exit( '/read/post/feed/:feed/:post', controller.resetTitle, controller.removePost );
+		page.exit( '/read/post/feed/:feed/:post', controller.resetTitle );
 
 		page( '/read/blog/id/:blog_id', saveLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.blogListing );
 		page( '/read/post/id/:blog/:post', setLastRoute, controller.blogPost );
-		page.exit( '/read/post/id/:blog/:post', controller.resetTitle, controller.removePost );
+		page.exit( '/read/post/id/:blog/:post', controller.resetTitle );
 
 		page( '/tag/:tag', saveLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
 	}
