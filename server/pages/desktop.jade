@@ -26,6 +26,23 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 		script(src='/calypso/build-desktop.js')
 		script(src='/desktop/desktop-app.js')
 
+		script.
+			(function() {
+				if ( window.navigator.userAgent.indexOf( 'Macintosh' ) !== -1 ) {
+					//Disable rubber band scrolling edge for OSX
+					document.addEventListener( 'DOMContentLoaded', function() {
+						document.body.addEventListener( 'mousewheel', function( e ) {
+							if ( 
+								( e.deltaY < 0 && document.body.scrollTop === 0 ) ||
+								( e.deltaY > 0 && document.body.scrollTop === document.body.scrollHeight - window.innerHeight )
+							) {
+								e.preventDefault()
+							}
+						} );
+					} );
+				}
+			})();
+
 	body(class=isRTL ? 'rtl' : '')
 		#wpcom.wpcom-site
 			.wpcom-site__logo.noticon.noticon-wordpress
