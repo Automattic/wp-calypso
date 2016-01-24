@@ -140,6 +140,16 @@ module.exports = {
 					} );
 				}
 
+				// handle command line arguments if applicable
+				if ( context.commandLine && context.commandLine.title && context.commandLine.content ) {
+					Object.assign( postOptions, {
+						title: context.commandLine.title,
+						content: context.commandLine.content
+					} );
+					context.commandLine.title = undefined;
+					context.commandLine.content = undefined;
+				}
+
 				actions.startEditingNew( site, postOptions );
 				titleActions.setTitle( titleStrings.new, { siteID: site.ID } );
 				analytics.pageView.record( '/' + postType, titleStrings.ga + ' > New' );
