@@ -115,6 +115,7 @@ module.exports = React.createClass( {
 		} else {
 			sites = this.props.sites.getVisible();
 		}
+		sites = this.props.sites.withSelectedFirst( sites );
 
 		if ( this.props.filter ) {
 			sites = sites.filter( this.props.filter );

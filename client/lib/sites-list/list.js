@@ -371,11 +371,7 @@ SitesList.prototype.getSite = function( siteID ) {
 	}
 
 	return this.get().filter( function( site ) {
-		// We need to check `slug` before `domain` to grab the correct site on certain
-		// clashes between a domain redirect and a Jetpack site, as well as domains
-		// on subfolders, but we also need to look for the `domain` as a last resort
-		// to cover mapped domains for regular WP.com sites.
-		return site.ID === siteID || site.slug === siteID || site.domain === siteID || site.wpcom_url === siteID;
+		return siteMatchesSiteId( site, siteID );
 	}, this ).shift();
 };
 
@@ -572,5 +568,23 @@ SitesList.prototype.onUpdatedPlugin = function( site ) {
 		}
 	}
 };
+
+SitesList.prototype.withSelectedFirst = function( sites ) {
+	if ( ! this.selected ) {
+		// we return a copy, so that we are consistent with returning a copy in the other case
+		return sites.slice();
+	}
+
+	return sites.filter( site => siteMatchesSiteId( site, this.selected ) )
+			.concat( sites.filter( site => ! siteMatchesSiteId( site, this.selected ) ) );
+}
+
+function siteMatchesSiteId( site, siteID ) {
+	// We need to check `slug` before `domain` to grab the correct site on certain
+	// clashes between a domain redirect and a Jetpack site, as well as domains
+	// on subfolders, but we also need to look for the `domain` as a last resort
+	// to cover mapped domains for regular WP.com sites.
+	return site.ID === siteID || site.slug === siteID || site.domain === siteID || site.wpcom_url === siteID;
+}
 
 module.exports = SitesList;
