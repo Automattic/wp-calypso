@@ -343,7 +343,7 @@ const SinglePlugin = React.createClass( {
 			return this.renderPluginPlaceholder( classes );
 		}
 
-		if ( this.pluginExists( plugin ) === false ) {
+		if ( pluginExists === false ) {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
