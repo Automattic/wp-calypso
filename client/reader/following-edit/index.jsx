@@ -257,9 +257,10 @@ const FollowingEdit = React.createClass( {
 		}
 	},
 
-	handleFollow: function() {
+	handleFollow: function( newUrl ) {
 		this.toggleAddSite();
 		this.setState( { isAttemptingFollow: true } );
+		stats.recordFollow( newUrl );
 	},
 
 	renderUnfollowError: function() {

@@ -19,7 +19,6 @@ import SiteStore from 'lib/reader-site-store';
 import { recordFollow, recordUnfollow, recordAction, recordGaEvent } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 
-
 const RecommendedForYou = React.createClass( {
 
 	getInitialState() {
@@ -81,8 +80,8 @@ const RecommendedForYou = React.createClass( {
 
 		times( number, ( i ) => {
 			placeholders.push(
-				<ListItem className="is-placeholder" key={'recommendation-placeholder-' + i}>
-					<Icon><SiteIcon size={48} /></Icon>
+				<ListItem className="is-placeholder" key={ 'recommendation-placeholder-' + i }>
+					<Icon><SiteIcon size={ 48 } /></Icon>
 					<Title>Loading</Title>
 					<Description>Loading the results...</Description>
 				</ListItem>
@@ -94,14 +93,6 @@ const RecommendedForYou = React.createClass( {
 
 	getItemRef( rec ) {
 		return 'recommendation-' + rec.blog_id;
-	},
-
-	trackFollowToggle( following ) {
-		if ( following ) {
-			recordFollow();
-		} else {
-			recordUnfollow();
-		}
 	},
 
 	trackSiteClick() {
@@ -123,7 +114,7 @@ const RecommendedForYou = React.createClass( {
 				</Title>
 				<Description>{ rec.reason }</Description>
 				<Actions>
-					<FollowButton siteUrl={ site.URL } onFollowToggle={ this.trackFollowToggle } />
+					<FollowButton siteUrl={ site.URL } />
 				</Actions>
 			</ListItem>
 			);

@@ -9,7 +9,8 @@ const React = require( 'react' ),
 const Search = require( 'components/search' ),
 	FollowingEditSubscribeFormResult = require( './subscribe-form-result' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'components/gridicon' ),
+	stats = require( 'reader/stats' );
 
 const minSearchLength = 8; // includes protocol
 
@@ -51,7 +52,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 		this.refs.followingEditSubscriptionSearch.clear();
 
 		// Call onFollow method on the parent
-		this.props.onFollow();
+		this.props.onFollow( this.state.searchString );
 	},
 
 	handleFollowIconClick: function() {
