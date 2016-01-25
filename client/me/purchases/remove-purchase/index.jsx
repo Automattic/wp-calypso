@@ -54,7 +54,7 @@ const RemovePurchase = React.createClass( {
 			if ( success ) {
 				if ( isDomainRegistration( purchase ) ) {
 					notices.success(
-						this.translate( `The domain {{em}}%(domain)s{{/em}} was removed from {{em}}%(wpcomUrl)s{{/em}}.`, {
+						this.translate( 'The domain {{em}}%(domain)s{{/em}} was removed from {{em}}%(wpcomUrl)s{{/em}}.', {
 							args: {
 								domain: purchase.meta,
 								wpcomUrl: selectedSite.wpcom_url
@@ -65,7 +65,7 @@ const RemovePurchase = React.createClass( {
 					);
 				} else {
 					notices.success(
-						this.translate( `The purchase was removed from {{em}}%(siteSlug)s{{/em}}.`, {
+						this.translate( 'The purchase was removed from {{em}}%(siteSlug)s{{/em}}.', {
 							args: { siteSlug: selectedSite.slug },
 							components: { em: <em /> }
 						} ),
