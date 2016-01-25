@@ -9,6 +9,7 @@ import classNames from 'classnames';
  */
 import CompactCard from 'components/card/compact';
 import DomainPrimaryFlag from 'my-sites/upgrades/domain-management/components/domain/primary-flag';
+import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 import Gridicon from 'components/gridicon';
@@ -46,12 +47,11 @@ const ListItem = React.createClass( {
 				<div className="domain-management-list-item__title">
 					{ this.props.domain.name }
 				</div>
-
-					<span className="domain-management-list-item__meta">
-						<span className="domain-management-list-item__type">{ this.getDomainTypeText() }</span>
-
-						<DomainPrimaryFlag domain={ this.props.domain }/>
-					</span>
+				<span className="domain-management-list-item__meta">
+					<span className="domain-management-list-item__type">{ this.getDomainTypeText() }</span>
+					{ this.props.domain.type !== 'WPCOM' && this.showDomainExpirationWarning( this.props.domain ) }
+					<DomainPrimaryFlag domain={ this.props.domain }/>
+				</span>
 				{ this.busyMessage() }
 			</div>
 		);
@@ -100,6 +100,34 @@ const ListItem = React.createClass( {
 			type="radio"
 			checked={ this.props.isSelected }
 			onChange={ this.handleSelect }/>
+	},
+
+	showDomainExpirationWarning( domain ) {
+		if ( domain.expired ) {
+			return (
+				<Notice isCompact status="is-error" icon="spam">
+					{ this.translate( 'Expired %(timeSinceExpiry)s', {
+						args: {
+							timeSinceExpiry: domain.expirationMoment.fromNow()
+						},
+						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"'
+					} ) }
+				</Notice>
+			);
+		}
+
+		if ( domain.expirationMoment && domain.expirationMoment < this.moment().add( 30, 'days' ) ) {
+			return (
+				<Notice isCompact status="is-error" icon="spam">
+					{ this.translate( 'Expires %(timeUntilExpiry)s', {
+						args: {
+							timeUntilExpiry: domain.expirationMoment.fromNow()
+						},
+						context: 'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"'
+					} ) }
+				</Notice>
+			);
+		}
 	},
 
 	getDomainTypeText() {
