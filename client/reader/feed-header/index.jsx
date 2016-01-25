@@ -63,7 +63,7 @@ var FeedHeader = React.createClass( {
 					{ siteish ? <Site site={ siteish } href={ siteish.URL } indicator={ false } /> : null }
 
 					{ siteish ? <div className="feed-header__follow">
-						<ReaderFollowButton siteUrl={ siteish.URL } iconSize={ 24 } location="blog_page" />
+						<ReaderFollowButton siteUrl={ siteish.URL } iconSize={ 24 } />
 					</div> : null }
 				</Card>
 

@@ -12,13 +12,12 @@ import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 
 import SiteIcon from 'components/site-icon';
-import FollowButton from 'components/follow-button';
+import FollowButton from 'reader/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
-import { recordFollow, recordUnfollow, recordAction, recordGaEvent } from 'reader/stats';
+import { recordAction, recordGaEvent } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
-
 
 const RecommendedForYou = React.createClass( {
 
@@ -81,8 +80,8 @@ const RecommendedForYou = React.createClass( {
 
 		times( number, ( i ) => {
 			placeholders.push(
-				<ListItem className="is-placeholder" key={'recommendation-placeholder-' + i}>
-					<Icon><SiteIcon size={48} /></Icon>
+				<ListItem className="is-placeholder" key={ 'recommendation-placeholder-' + i }>
+					<Icon><SiteIcon size={ 48 } /></Icon>
 					<Title>Loading</Title>
 					<Description>Loading the results...</Description>
 				</ListItem>
@@ -94,14 +93,6 @@ const RecommendedForYou = React.createClass( {
 
 	getItemRef( rec ) {
 		return 'recommendation-' + rec.blog_id;
-	},
-
-	trackFollowToggle( following ) {
-		if ( following ) {
-			recordFollow();
-		} else {
-			recordUnfollow();
-		}
 	},
 
 	trackSiteClick() {
@@ -123,7 +114,7 @@ const RecommendedForYou = React.createClass( {
 				</Title>
 				<Description>{ rec.reason }</Description>
 				<Actions>
-					<FollowButton siteUrl={ site.URL } onFollowToggle={ this.trackFollowToggle } />
+					<FollowButton siteUrl={ site.URL } />
 				</Actions>
 			</ListItem>
 			);
@@ -136,7 +127,7 @@ const RecommendedForYou = React.createClass( {
 					<h1>{ this.translate( 'Recommendations' ) }</h1>
 				</MobileBackToSidebar>
 
-				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' )}</h2>
+				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' ) }</h2>
 				<InfiniteList
 					items={ this.state.recommendations }
 					fetchingNextPage={ this.state.fetching }

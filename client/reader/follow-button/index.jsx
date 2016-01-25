@@ -16,9 +16,6 @@ var ReaderFollowButton = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	recordFollowToggle: function( isFollowing ) {
-		stats.recordAction( isFollowing ? 'followed_blog' : 'unfollowed_blog' );
-		stats.recordGaEvent( isFollowing ? 'Clicked Follow Blog' : 'Clicked Unfollow Blog', this.props.location );
-
 		stats[ isFollowing ? 'recordFollow' : 'recordUnfollow' ]( this.props.siteUrl );
 
 		if ( this.props.onFollowToggle ) {
