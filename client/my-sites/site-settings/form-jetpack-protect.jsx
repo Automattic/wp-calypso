@@ -58,14 +58,18 @@ module.exports = React.createClass( {
 
 	prompt: function() {
 		return (
-			<div>
-				<p>{ this.translate( 'Prevent brute force login attempts on your WordPress site.' ) }</p>
-				<p>
-					{ this.translate(
-						'Brute force attacks are one of the most common (and successful) ways that attackers gain access to your site. ' +
-						"When you activate Jetpack Protect, we'll automatically prevent malicious attempts to log into your site, but allow you to ensure you can always log in."
-					) }
-				</p>
+			<div className="site-settings__jetpack-prompt">
+				<img src="/calypso/images/jetpack/illustration-jetpack-protect.svg" width="128" height="128" />
+
+				<div className="site-settings__jetpack-prompt-text">
+					<p>{ this.translate( 'Prevent brute force login attempts on your WordPress site.' ) }</p>
+					<p>
+						{ this.translate(
+							'Brute force attacks are one of the most common (and successful) ways that attackers gain access to your site. ' +
+							"When you activate Jetpack Protect, we'll automatically prevent malicious attempts to log into your site, but allow you to ensure you can always log in."
+						) }
+					</p>
+				</div>
 			</div>
 		);
 	},
@@ -149,7 +153,7 @@ module.exports = React.createClass( {
 				primary
 				compact
 				>
-				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Protect' ) }
+				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate' ) }
 			</Button>
 		);
 	},

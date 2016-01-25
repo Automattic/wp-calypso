@@ -233,4 +233,23 @@
 	padding: 24px 24px 16px 24px;
 	border: 1px lighten( $gray, 30% ) solid;
 	border-width: 1px 0;
+
+	&.is-top-only {
+		border-bottom: 0px;
+		padding-bottom: 0px;
+	}
+}
+
+.site-settings__jetpack-prompt {
+	display: flex;
+
+	img {
+		width: 128px;
+		flex: 1;
+		margin-right: 16px;
+	}
+}
+
+.site-settings__jetpack-prompt-text {
+	flex: 4;
 }

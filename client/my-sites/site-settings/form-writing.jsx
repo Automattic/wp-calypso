@@ -104,21 +104,23 @@ module.exports = React.createClass( {
 					</FormFieldset>
 
 					{ config.isEnabled( 'press-this' ) &&
-						<div className="press-this">
-							<FormLabel>{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</FormLabel>
-							<p>{ this.translate( 'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.' ) }</p>
-							<p>{ this.translate( 'Use Press This to clip text, images and videos from any web page. Then edit and add more straight from Press This before you save or publish it in a post on your site.' ) }</p>
-							<p>{ this.translate( 'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites for a posting shortcut.' ) }</p>
-							<p className="pressthis">
-								<PressThisLink
-									site={ this.props.site }
-									onClick={ this.recordEvent.bind( this, 'Clicked Press This Button' ) }
-									onDragStart={ this.recordEvent.bind( this, 'Dragged Press This Button' ) }>
-									<span className="noticon noticon-pinned"></span>
-									{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-								</PressThisLink>
-							</p>
-						</div>
+						<FormFieldset className="has-divider is-top-only">
+							<div className="press-this">
+								<FormLabel>{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</FormLabel>
+								<p>{ this.translate( 'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.' ) }</p>
+								<p>{ this.translate( 'Use Press This to clip text, images and videos from any web page. Then edit and add more straight from Press This before you save or publish it in a post on your site.' ) }</p>
+								<p>{ this.translate( 'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites for a posting shortcut.' ) }</p>
+								<p className="pressthis">
+									<PressThisLink
+										site={ this.props.site }
+										onClick={ this.recordEvent.bind( this, 'Clicked Press This Button' ) }
+										onDragStart={ this.recordEvent.bind( this, 'Dragged Press This Button' ) }>
+										<span className="noticon noticon-pinned"></span>
+										{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+									</PressThisLink>
+								</p>
+							</div>
+						</FormFieldset>
 					}
 				</Card>
 			</form>

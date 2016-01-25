@@ -67,13 +67,18 @@ module.exports = React.createClass( {
 
 	prompt: function() {
 		return (
-			<div>
-				<p>{ this.translate( "Automatically monitor your website and make sure it's online." ) }</p>
-				<p>
-					{ this.translate(
-						"We'll periodically check your site from our global network of servers to make sure it's online, and email you if it looks like your site is not responding for any reason."
-					) }
-				</p>
+			<div className="site-settings__jetpack-prompt">
+				<img src="/calypso/images/jetpack/illustration-jetpack-monitor.svg" width="128" height="128" />
+
+				<div className="site-settings__jetpack-prompt-text">
+					<p>{ this.translate( "Automatically monitor your website and make sure it's online." ) }</p>
+					<p>
+						{ this.translate(
+							"We'll periodically check your site from our global network of servers to make sure it's online, and email you if it looks like your site is not responding for any reason."
+						) }
+					</p>
+				</div>
+
 			</div>
 		);
 	},
@@ -134,7 +139,7 @@ module.exports = React.createClass( {
 				onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) }
 				disabled={ this.disableForm() }
 				>
-				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Monitor' ) }
+				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate' ) }
 			</Button>
 		);
 	},
