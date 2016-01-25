@@ -38,6 +38,7 @@
 		"manage/plugins": true,
 		"manage/plugins/browser": true,
 		"manage/plugins/cache": false,
+		"manage/plugins/setup": false,
 		"manage/security": true,
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/posts": true,
