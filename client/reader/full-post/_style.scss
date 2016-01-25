@@ -306,4 +306,53 @@
 			}
 		}
 	}
+
+	blockquote.sidenote {
+		margin: 0;
+		padding: 0;
+		border: none;
+		background: none;
+		font-size: 13px;
+		width: 175px;
+
+		@include breakpoint( ">1040px" ) {
+			position: absolute;
+
+			&.right {
+				right: -( 175px + 32px );
+			}
+
+			&.left {
+				left: -( 175px + 32px );
+			}
+		}
+
+		@include breakpoint( "<1040px" ) {
+			&.right {
+				float: right;
+				margin: 0 0 24px 24px;
+			}
+
+			&.left {
+				float: left;
+				margin: 0 24px 24px 0;
+			}
+		}
+
+		@include breakpoint( "<480px" ) {
+			&.right,
+			&.left {
+				width: auto;
+				float: none;
+				margin: 0 0 24px 0;
+				background: lighten( $gray, 30 );
+				padding: 16px;
+
+				img {
+					display: block;
+					margin-bottom: 8px;
+				}
+			}
+		}
+	}
 }
