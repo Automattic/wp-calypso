@@ -218,9 +218,9 @@ form.google-apps-dialog {
 
 		&:before {
 			position: absolute;
-				left: 15px;
-				top: 6px;
-			@include noticon( '\f8b3', 60px );
+				left: 10px;
+				top: 7px;
+			@include noticon( '\f510', 30px );
 		}
 	}
 }
