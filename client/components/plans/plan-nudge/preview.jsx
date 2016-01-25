@@ -7,6 +7,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from 'config';
 
 export default React.createClass( {
 	displayName: 'PlanPreview',
@@ -18,7 +19,7 @@ export default React.createClass( {
 	},
 
 	renderAction: function() {
-		if ( ! this.props.action ) {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.action ) {
 			return null;
 		}
 
