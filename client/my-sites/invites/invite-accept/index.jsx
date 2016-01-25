@@ -104,9 +104,14 @@ let InviteAccept = React.createClass( {
 			return null;
 		}
 		debug( 'Rendering invite' );
+		let props = {
+			invite: this.state.invite,
+			redirectTo: getRedirectAfterAccept( this.state.invite ),
+			decline: this.decline
+		};
 		return this.state.user
-			? <LoggedIn invite={ this.state.invite } redirectTo={ getRedirectAfterAccept( this.state.invite ) } decline={ this.decline } user={ this.state.user } />
-			: <LoggedOut { ...this.state.invite } redirectTo={ getRedirectAfterAccept( this.state.invite ) } decline={ this.decline } />;
+			? <LoggedIn { ... props } user={ this.state.user } />
+			: <LoggedOut { ... props } />
 	},
 
 	renderError() {
