@@ -29,7 +29,7 @@ var userUtils = {
 			url = userData.logout_URL;
 		}
 
-		if ( redirect ) {
+		if ( 'string' === typeof redirect ) {
 			redirect = '&redirect_to=' + encodeURIComponent( redirect );
 			url += redirect;
 		}
