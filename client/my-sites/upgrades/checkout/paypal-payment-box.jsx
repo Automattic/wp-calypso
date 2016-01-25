@@ -149,7 +149,8 @@ module.exports = React.createClass( {
 						eventFormName="Checkout Form" />
 				</div>
 
-				<TermsOfService />
+				<TermsOfService
+					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
 				<div className="payment-box-actions">
 					<div className="pay-button">
