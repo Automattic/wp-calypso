@@ -164,6 +164,7 @@ module.exports = React.createClass( {
 					href={ allSitesPath }
 					onSelect={ this.onSiteSelect.bind( this, null ) }
 					isSelected={ ! this.props.sites.selected }
+					count={ false }
 				/>
 			);
 		}
