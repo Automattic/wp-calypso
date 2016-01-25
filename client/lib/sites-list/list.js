@@ -16,6 +16,8 @@ var wpcom = require( 'lib/wp' ),
 	Searchable = require( 'lib/mixins/searchable' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	isBusiness = require( 'lib/products-values' ).isBusiness,
+	PreferencesActions = require( 'lib/preferences/actions' ),
+	PreferencesStore = require( 'lib/preferences/store' ),
 	user = require( 'lib/user' )();
 
 /**
@@ -33,8 +35,10 @@ function SitesList() {
 	this.fetching = false;
 	this.selected = null;
 	this.lastSelected = null;
-	this.recentlySelected = [];
 	this.propagateChange = this.propagateChange.bind( this );
+
+	PreferencesActions.fetch();
+	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 }
 
 /**
@@ -380,7 +384,8 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 	if ( this.recentlySelected.length > 4 ) {
 		this.recentlySelected.pop();
 	}
-	console.log(this.recentlySelected);
+
+	PreferencesActions.set( 'recentSites', this.recentlySelected );
 
 	this.emit( 'change' );
 };

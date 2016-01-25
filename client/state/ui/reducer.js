@@ -8,7 +8,6 @@ import { combineReducers } from 'redux';
  */
 import {
 	SELECTED_SITE_SET,
-	RECENTLY_SELECTED_SITE_SET,
 	SET_SECTION
 } from 'state/action-types';
 import editor from './editor/reducer';
@@ -37,16 +36,13 @@ export function selectedSiteId( state = null, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function recentlySelectedSites( state = [], action ) {
+export function setRecentlySelectedSiteId( state = [], action ) {
 	switch ( action.type ) {
-		case RECENTLY_SELECTED_SITE_SET:
+		case SELECTED_SITE_SET:
 			state = [ action.siteId, ...state ];
-			// state = Object.assign( {}, state );
 			if ( state.length > 4 ) {
 				state.pop();
 			}
-			// state.push = action.siteId;
-			console.log(state);
 			break;
 	}
 
@@ -86,7 +82,7 @@ export default combineReducers( {
 	isLoading,
 	hasSidebar,
 	chunkName,
-	recentlySelectedSites,
 	selectedSiteId,
+	setRecentlySelectedSiteId,
 	editor
 } );

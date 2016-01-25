@@ -3,7 +3,6 @@
  */
 import {
 	SELECTED_SITE_SET,
-	RECENTLY_SELECTED_SITE_SET,
 	SET_SECTION
 } from 'state/action-types';
 
@@ -41,11 +40,4 @@ export function setSection( section, options = {} ) {
 	}
 	options.hasSidebar = ( options.hasSidebar === false ) ? false : true;
 	return options;
-}
-
-export function setRecentlySelectedSite( siteId ) {
-	return {
-		type: RECENTLY_SELECTED_SITE_SET,
-		siteId
-	};
 }
