@@ -4,6 +4,7 @@
 import React from 'react';
 import config from 'config';
 import classNames from 'classnames';
+import noop from 'lodash/utility/noop';
 
 /**
  * Internal dependencies
@@ -15,6 +16,17 @@ import analytics from 'analytics';
 
 export default React.createClass( {
 	displayName: 'SiteIndicator',
+
+	propTypes: {
+		site: React.PropTypes.object.isRequired,
+		onSelect: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			onSelect: noop
+		};
+	},
 
 	getInitialState() {
 		return { expand: false };
@@ -94,10 +106,19 @@ export default React.createClass( {
 				</span>
 			);
 		}
+
+		const recordEvent = analytics.ga.recordEvent.bind(
+				analytics,
+				'Site-Indicator',
+				'Clicked updates available link to wp-admin updates',
+				'Total Updates',
+				this.props.site.update && this.props.site.update.total
+			);
+
 		return (
 			<span>
 				<a
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Site-Indicator', 'Clicked updates available link to wp-admin updates', 'Total Updates', this.props.site.update && this.props.site.update.total ) }
+					onClick={ recordEvent }
 					href={ this.props.site.options.admin_url + 'update-core.php' } >
 					{ this.translate( 'There is an update available.', 'There are updates available.', { count: this.props.site.update.total } ) }
 				</a>
@@ -124,8 +145,9 @@ export default React.createClass( {
 		}.bind( this ), 15000 );
 	},
 
-	handlePluginsUpdate() {
+	handlePluginsUpdate( event ) {
 		window.scrollTo( 0, 0 );
+		this.props.onSelect( event );
 		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.update && this.props.site.update.total );
 	},
 
@@ -255,9 +277,10 @@ export default React.createClass( {
 		return (
 			<div className={ indicatorClass }>
 				<button className="site-indicator__button" onClick={ this.toggleExpand }>
-					{ this.state.expand ?
-						<Gridicon icon="cross" size={ 18 } />
-					: <Gridicon icon={ this.getIcon() } size={ 16 } /> }
+					{ this.state.expand
+						? <Gridicon icon="cross" size={ 18 } />
+						: <Gridicon icon={ this.getIcon() } size={ 16 } nonStandardSize />
+					}
 				</button>
 				{ this.state.expand
 					? <div className="site-indicator__message">

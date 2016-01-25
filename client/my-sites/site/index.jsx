@@ -68,7 +68,7 @@ module.exports = React.createClass( {
 		}
 
 		siteClass = classNames( {
-			'site': true,
+			site: true,
 			'is-jetpack': site.jetpack,
 			'is-primary': site.primary,
 			'is-private': site.is_private,
@@ -99,7 +99,7 @@ module.exports = React.createClass( {
 						</span>
 					}
 				</a>
-				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
+				{ this.props.indicator ? <SiteIndicator site={ site } onSelect={ this.props.onSelect } /> : null }
 			</div>
 		);
 	}
