@@ -52,21 +52,21 @@ const RemovePurchase = React.createClass( {
 
 		removePurchase( purchase.id, user.ID, success => {
 			if ( success ) {
+				const productName = getName( purchase );
+
 				if ( isDomainRegistration( purchase ) ) {
+
 					notices.success(
-						this.translate( 'The domain {{em}}%(domain)s{{/em}} was removed from {{em}}%(wpcomUrl)s{{/em}}.', {
-							args: {
-								domain: purchase.meta,
-								wpcomUrl: selectedSite.wpcom_url
-							},
+						this.translate( 'The domain {{em}}%(domain)s{{/em}} was removed from your account.', {
+							args: { domain: productName },
 							components: { em: <em /> }
 						} ),
 						{ persistent: true }
 					);
 				} else {
 					notices.success(
-						this.translate( 'The purchase was removed from {{em}}%(siteSlug)s{{/em}}.', {
-							args: { siteSlug: selectedSite.slug },
+						this.translate( '%(productName)s was removed from {{em}}%(siteSlug)s{{/em}}.', {
+							args: { productName, siteSlug: selectedSite.slug },
 							components: { em: <em /> }
 						} ),
 						{ persistent: true }
@@ -110,8 +110,7 @@ const RemovePurchase = React.createClass( {
 				label: this.translate( 'Remove Now' ),
 				onClick: this.removePurchase
 			} ],
-			purchase = getPurchase( this.props ),
-			productName = getName( purchase );
+			productName = getName( getPurchase( this.props ) );
 
 		return (
 			<Dialog
@@ -134,8 +133,7 @@ const RemovePurchase = React.createClass( {
 				<p>
 					{
 						this.translate( 'This will remove %(domain)s from your account.', {
-							args: { domain: productName },
-							components: { em: <em /> }
+							args: { domain: productName }
 						} )
 					}
 					{ ' ' }
