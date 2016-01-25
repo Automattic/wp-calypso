@@ -264,54 +264,9 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Current Plan' );
 	},
 
-	getTrialPlanHint() {
-		const remainingDays = this.moment(
-				this.props.sitePlan.expiry
-			).diff( this.moment(), 'days' );
-		let hint, upgradePrompt;
-
-		if ( remainingDays === 0 ) {
-			hint = this.translate( 'Your trial ends today.' );
-		} else {
-			hint = this.translate(
-				'Your trial ends in %(days)d day.',
-				'Your trial ends in %(days)d days.',
-				{
-					args: { days: remainingDays },
-					count: remainingDays
-				}
-			);
-		}
-
-		if ( config.isEnabled( 'upgrades/checkout' ) ) {
-			hint += ' ';
-			upgradePrompt = this.translate(
-				'Like what you see? {{link}}Upgrade Now{{/link}}',
-				{
-					components: {
-						link: <a href="#"
-							className="plan-actions__trial-upgrade-now"
-							onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
-					}
-				}
-			);
-		}
-
-		return (
-			<div className="plan-actions__trial-hint">
-				<strong>{ hint }</strong>
-				{ upgradePrompt }
-			</div>
-		);
-	},
-
 	getCurrentPlanHint: function() {
 		if ( ! this.props.sitePlan ) {
 			return;
-		}
-
-		if ( this.props.sitePlan.freeTrial ) {
-			return this.getTrialPlanHint();
 		}
 
 		return (
