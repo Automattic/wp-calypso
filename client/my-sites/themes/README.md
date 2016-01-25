@@ -16,9 +16,9 @@ The main parent component for the Themes module.
 
 The post-activation 'Thanks' dialog.
 
-### `theme-options.js`
+### `helpers.js`
 
-Contains the various options that are available for individual themes, and decides how to handle them.
+Contains helper functions.
 
 ### `theme-search-card`
 

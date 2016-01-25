@@ -4,7 +4,9 @@
 var analytics = require( 'analytics' ),
 	titlecase = require( 'to-title-case' ),
 	page = require( 'page' ),
-	startsWith = require( 'lodash/string/startsWith' );
+	startsWith = require( 'lodash/string/startsWith' ),
+	assign = require( 'lodash/object/assign' ),
+	mapValues = require( 'lodash/object/mapValues' );
 
 var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
@@ -91,6 +93,25 @@ var ThemesHelpers = {
 	trackClick: function( componentName, eventName, verb = 'click' ) {
 		const stat = `${componentName} ${eventName} ${verb}`;
 		analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
+	},
+
+	addTracking: function( options ) {
+		return mapValues( options, this.appendActionTracking );
+	},
+
+	appendActionTracking: function( option, name ) {
+		const { action } = option;
+
+		if ( ! action ) {
+			return option;
+		}
+
+		return assign( {}, option, {
+			action: t => {
+				action( t );
+				ThemesHelpers.trackClick( 'more button', name );
+			}
+		} );
 	},
 
 	navigateTo: function( url, external ) {
