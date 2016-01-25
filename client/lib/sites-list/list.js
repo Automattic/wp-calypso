@@ -82,34 +82,34 @@ SitesList.prototype.fetch = function() {
 	this.fetching = true;
 	debug( 'getting SitesList from api' );
 	wpcom.me().sites( { site_visibility: siteVisiblity }, function( error, data ) {
-		var sites, changed;
-
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
 			this.fetching = false;
 			return;
 		}
+		this.sync( data );
+	}.bind( this ) );
+};
 
-		debug( 'SitesList fetched from api:', data.sites );
+SitesList.prototype.sync = function( data ) {
+	debug( 'SitesList fetched from api:', data.sites );
 
-		sites = this.parse( data );
-
-		if ( ! this.initialized ) {
-			this.initialize( sites );
+	let sites = this.parse( data );
+	if ( ! this.initialized ) {
+		this.initialize( sites );
+		this.fetched = true;
+		this.emit( 'change' );
+	} else {
+		let changed = this.transaction( this.update, sites );
+		if ( changed || ! this.fetched ) {
 			this.fetched = true;
+			debug( 'SitesList changed via update' );
 			this.emit( 'change' );
-		} else {
-			changed = this.transaction( this.update, sites );
-			if ( changed || ! this.fetched ) {
-				this.fetched = true;
-				debug( 'SitesList changed via update' );
-				this.emit( 'change' );
-			}
 		}
 		this.fetching = false;
 		store.set( 'SitesList', sites );
-	}.bind( this ) );
-};
+	}
+}
 
 /**
  * Initialize data with Site objects
