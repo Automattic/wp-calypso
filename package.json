@@ -115,6 +115,7 @@
     "blanket": "1.1.6",
     "chai": "2.0.0",
     "chai-immutable": "^1.4.0",
+    "deep-freeze": "0.0.1",
     "enzyme": "1.1.0",
     "esformatter": "0.7.3",
     "esformatter-braces": "1.2.1",

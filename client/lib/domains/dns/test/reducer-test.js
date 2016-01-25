@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 import pick from 'lodash/object/pick';
 
@@ -13,11 +14,11 @@ import { reducer } from '../reducer';
 
 describe( 'Domains: DNS reducer', () => {
 	it( 'should return the same state when no matching record passed in the delete action', () => {
-		const state = {
+		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
 					records: [ RECORD_A ]
 				}
-			},
+			} ),
 			payload = {
 				action: {
 					type: ActionTypes.DNS_DELETE_COMPLETED,
@@ -32,11 +33,11 @@ describe( 'Domains: DNS reducer', () => {
 	} );
 
 	it( 'should return state without record passed in the delete action', () => {
-		const state = {
+		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
 					records: [ RECORD_TXT ]
 				}
-			},
+			} ),
 			payload = {
 				action: {
 					type: ActionTypes.DNS_DELETE_COMPLETED,
@@ -52,11 +53,11 @@ describe( 'Domains: DNS reducer', () => {
 
 	it( 'should return state without record (having no id) passed in the delete action', () => {
 		const RECORD_TXT_WITHOUT_ID = pick( RECORD_TXT, [ 'data', 'name', 'type' ] ),
-			state = {
+			state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
 					records: [ RECORD_TXT_WITHOUT_ID ]
 				}
-			},
+			} ),
 			payload = {
 				action: {
 					type: ActionTypes.DNS_DELETE_COMPLETED,
