@@ -9,7 +9,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 import eventRecorder from 'me/event-recorder';
-import CompactCard from 'components/card/compact';
 import ConnectedApplicationIcon from 'me/connected-application-icon';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import analytics from 'analytics';
@@ -119,16 +118,16 @@ module.exports = React.createClass( {
 
 		if ( message ) {
 			return (
-				<li className="connected-application-item__connection-detail">
-					<strong className="connected-application-item__connection-detail-title">
+				<div>
+					<h2>
 						{ this.translate( 'Access Scope' ) }
 						{ this.renderAccessScopeBadge() }
-					</strong>
+					</h2>
 
-					<span className="connected-application-item__connection-detail-description" >
+					<p className="connected-application-item__connection-detail-description" >
 						{ message }
-					</span>
-				</li>
+					</p>
+				</div>
 			);
 		}
 	},
@@ -140,11 +139,11 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<strong className="connected-application-item__connection-detail-title">
+				<h2>
 					{ this.translate( 'Application Website' ) }
-				</strong>
+				</h2>
 
-				<span className="connected-application-item__connection-detail-description">
+				<p>
 					<a
 						href={ safeProtocolUrl( this.props.connection.URL ) }
 						onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
@@ -152,33 +151,35 @@ module.exports = React.createClass( {
 					>
 						{ safeProtocolUrl( this.props.connection.URL ) }
 					</a>
-				</span>
+				</p>
 
 				{ this.translate( '{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}', {
 					components: {
-						detailTitle: <strong className="connected-application-item__connection-detail-title" />,
-						detailDescription: <span className="connected-application-item__connection-detail-description" />
+						detailTitle: <h2 />,
+					detailDescription: <p className="connected-application-item__connection-detail-description" />
 					},
 					args: {
 						date: this.moment( this.props.connection.authorized ).format( 'MMM D, YYYY @ h:mm a' )
 					}
 				} ) }
+				<p>
+					{ this.renderScopeMessage() }
+				</p>
 
-				<strong className="connected-application-item__connection-detail-title">
+				<h2>
 					{ this.translate( 'Access Permissions' ) }
-				</strong>
-
-				{ this.renderScopeMessage() }
-
-				{ this.props.connection.permissions.map( function( permission ) {
-					return (
-						<span
-							className="connected-application-item__connection-detail-description"
-							key={ 'permission-' + permission.name } >
-							{ permission.description }
-						</span>
-					);
-				}, this ) }
+				</h2>
+				<p>
+					{ this.props.connection.permissions.map( function( permission ) {
+						return (
+							<span
+								className="connected-application-item__connection-detail-description"
+								key={ 'permission-' + permission.name } >
+								{ permission.description }
+							</span>
+						);
+					}, this ) }
+				</p>
 			</div>
 		);
 	},
@@ -199,7 +200,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-
 		let classes = classNames( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder
@@ -209,6 +209,7 @@ module.exports = React.createClass( {
 			<FoldableCard
 				header={ this.header() }
 				summary={ this.summary() }
+				expandedSummary={ this.summary() }
 				clickableHeader
 				compact
 				className={ classes }>
