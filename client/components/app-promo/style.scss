@@ -1,0 +1,43 @@
+.app-promo {
+	position: relative;
+	max-width: 300px;
+	margin: 35px auto 15px auto;
+	padding: 5px 0;
+	overflow: hidden;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
+}
+
+.app-promo .app-promo__icon {
+	position: absolute;
+	top: 15px;
+	left: 20px;
+}
+
+.app-promo .app-promo__dismiss {
+	position: absolute;
+	right: 17px;
+	top: 12px;
+	cursor: pointer;
+
+	svg {
+		fill: lighten( $gray, 20% );
+	}
+}
+
+.app-promo .app-promo__link {
+	display: block;
+	margin: 0 10px;
+	padding: 8px 34px 8px 50px;
+	background-color: $white;
+	color: $blue-medium;
+	font-size: 12px;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

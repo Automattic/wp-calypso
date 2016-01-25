@@ -20,6 +20,7 @@
 		"login": false,
 
 		"ad-tracking": true,
+		"desktop-promo": false,
 		"community-translator": true,
 		"help": false,
 		"mailing-lists/unsubscribe": true,

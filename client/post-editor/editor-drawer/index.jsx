@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/collection/find' ),
+	config = require( 'config' );
 
 /**
  * Internal dependencies
@@ -32,7 +33,9 @@ var Accordion = require( 'components/accordion' ),
 	stats = require( 'lib/posts/stats' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	siteUtils = require( 'lib/site/utils' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	userSettings = require( 'lib/user-settings' ),
+	AppPromo = require( 'components/app-promo' );
 
 var EditorDrawer = React.createClass( {
 
@@ -44,8 +47,12 @@ var EditorDrawer = React.createClass( {
 	},
 
 	mixins: [
-		observe( 'postTypes' ),
+		observe( 'postTypes', 'userSettings' ),
 	],
+
+	componentDidMount: function() {
+		userSettings.fetchSettings();
+	},
 
 	onExcerptChange: function( event ) {
 		actions.edit( { excerpt: event.target.value } );
@@ -258,6 +265,29 @@ var EditorDrawer = React.createClass( {
 		);
 	},
 
+	renderAppPromo: function() {
+		// if promo not configured return
+		if ( ! config.isEnabled( 'desktop-promo' ) ) {
+			return;
+		};
+
+		// if user settings not loaded, return so we dont show
+		// before we can check if user is already a desktop user
+		if ( userSettings.getSetting( 'is_desktop_app_user' ) === null ) {
+			return;
+		}
+
+		// if already using desktop app, dont show promo
+		if ( userSettings.getSetting( 'is_desktop_app_user' ) ) {
+			return;
+		}
+
+		// made it through the gauntlet, show the promo!
+		return (
+			<AppPromo location="editor" />
+		);
+	},
+
 	renderPostDrawer: function() {
 		return (
 			<div className="editor-drawer">
@@ -266,6 +296,7 @@ var EditorDrawer = React.createClass( {
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderMoreOptions() }
+				{ this.renderAppPromo() }
 			</div>
 		);
 	},
