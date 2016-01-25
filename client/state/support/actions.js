@@ -13,7 +13,7 @@ import userSettings from 'lib/user-settings';
 
 /**
  * Requests a support user token, then dispatches the relevant actions upon response
- * 
+ *
  * @param  {string} supportUser     Support username
  * @param  {string} supportPassword Support password
  * @return {thunk}                  The action thunk
@@ -31,10 +31,10 @@ export function supportUserFetchToken( supportUser, supportPassword ) {
 
 		const user = new User();
 
-		const activateSupportUser = ( userData ) => 
+		const activateSupportUser = () =>
 			dispatch( supportUserActivated( Object.assign( {}, user.data ) ) );
 
-		const tokenErrorCallback = ( error ) => 
+		const tokenErrorCallback = ( error ) =>
 			dispatch( supportUserDeactivated( error.message ) );
 
 		const changeUserCallback = error => error
@@ -58,7 +58,8 @@ export function supportUserRestore() {
 /**
  * Returns an action object to signal that the support user was activated.
  *
- * @return {Object}      Action object
+ * @param  {Object} userData   New user's details
+ * @return {Object}            Action object
  */
 export function supportUserActivated( userData ) {
 	userSettings.fetchSettings();
@@ -72,7 +73,8 @@ export function supportUserActivated( userData ) {
 /**
  * Returns an action object to signal that the support user was disabled.
  *
- * @return {Object}      Action object
+ * @param  {error}  error The error which caused the deactivation, if any
+ * @return {Object}       Action object
  */
 export function supportUserDeactivated( error ) {
 	userSettings.fetchSettings();

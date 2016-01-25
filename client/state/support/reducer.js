@@ -19,14 +19,14 @@ function isSupportUser( state = false, { type } ) {
 	return state;
 }
 
-function userData( state = {}, { type, userData } ) {
-	switch ( type ) {
+function userData( state = {}, action ) {
+	switch ( action.type ) {
 		case SUPPORT_USER_ACTIVATED:
-			return userData;
+			return action.userData;
 		case SUPPORT_USER_DEACTIVATED:
 			return null;
 	}
-	
+
 	return state;
 }
 
@@ -47,10 +47,7 @@ function errorMessage( state = null, { type, error } ) {
 }
 
 /**
- * True if currently in transition between normal and support user
- * @param  {Boolean} state
- * @param  {object}  action
- * @return {Boolean}
+ * @return {Boolean} true if currently in transition between normal and support user
  */
 function isTransitioning( state = false, { type } ) {
 	switch ( type ) {
