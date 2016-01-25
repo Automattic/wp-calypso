@@ -12,7 +12,7 @@ import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 
 import SiteIcon from 'components/site-icon';
-import FollowButton from 'components/follow-button';
+import FollowButton from 'reader/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';

@@ -48,6 +48,9 @@ function getLocation() {
 	if ( path.indexOf( '/following/edit' ) === 0 ) {
 		return 'following_edit';
 	}
+	if ( path.indexOf( '/discover' ) === 0 ) {
+		return 'discover';
+	}
 	return 'unknown';
 }
 
