@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash/lang';
 
 /**
  * Internal dependencies
  */
 import toggle from '../mixin-toggle';
-import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -18,34 +18,32 @@ export default React.createClass( {
 	displayName: 'StatsPostDetailMonths',
 
 	propTypes: {
-		postViewsList: PropTypes.object
+		storeData: PropTypes.object.isRequired
 	},
 
 	mixins: [
-		toggle( 'PostMonth' ),
-		observe( 'postViewsList' )
+		toggle( 'PostMonth' )
 	],
 
 	getInitialState() {
 		return {
-			noData: this.props.postViewsList.isEmpty()
+			noData: isEmpty( this.props.storeData )
 		};
 	},
 
 	componentWillReceiveProps( nextProps ) {
 		this.setState( {
-			noData: nextProps.postViewsList.isEmpty()
+			noData: isEmpty( nextProps.storeData )
 		} );
 	},
 
 	render() {
-		const { title, total, dataKey, postViewsList } = this.props;
+		const { title, total, dataKey } = this.props;
 		const { showInfo, noData } = this.state;
-		const data = postViewsList.response;
+		const data = this.props.storeData;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
-		const isLoading = postViewsList.isLoading();
 		const classes = {
-			'is-loading': isLoading,
+			'is-loading': this.props.isLoading,
 			'is-showing-info': showInfo,
 			'has-no-data': noData
 		};
@@ -145,7 +143,7 @@ export default React.createClass( {
 						)
 					}</span>
 				</StatsModuleContent>
-				<StatsModulePlaceholder isLoading={ isLoading } />
+				<StatsModulePlaceholder isLoading={ this.props.isLoading } />
 				<div className="module-content-table">
 					<div className="module-content-table-scroll">
 						<table cellPadding="0" cellSpacing="0">

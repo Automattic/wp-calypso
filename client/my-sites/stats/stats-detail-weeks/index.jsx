@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash/lang';
 
 /**
  * Internal dependencies
@@ -19,40 +20,27 @@ export default React.createClass( {
 
 	mixins: [
 		toggle( 'PostWeek' ),
-		observe( 'site', 'postViewsList' )
+		observe( 'site' )
 	],
 
 	propTypes: {
-		postViewsList: PropTypes.object
-	},
-
-	getInitialState() {
-		return {
-			noData: this.props.postViewsList.isEmpty()
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			noData: nextProps.postViewsList.isEmpty()
-		} );
+		storeData: PropTypes.object.isRequired
 	},
 
 	render() {
-		const data = this.props.postViewsList.response;
+		const data = this.props.storeData;
 		const post = data.post;
-		const { showInfo, noData } = this.state;
+		const { showInfo } = this.state;
 		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
-		const isLoading = this.props.postViewsList.isLoading();
 		let tableHeader,
 			tableRows,
 			tableBody,
 			highest;
 
 		const classes = {
-			'is-loading': isLoading,
+			'is-loading': this.props.isLoading,
 			'is-showing-info': showInfo,
-			'has-no-data': noData
+			'has-no-data': isEmpty( this.props.storeData )
 		};
 
 		if ( data && data.weeks ) {
@@ -180,7 +168,7 @@ export default React.createClass( {
 						)
 					}</span>
 				</StatsModuleContent>
-				<StatsModulePlaceholder isLoading={ isLoading } />
+				<StatsModulePlaceholder isLoading={ this.props.isLoading } />
 				<div className="module-content-table">
 					<div className="module-content-table-scroll">
 						<table cellPadding="0" cellSpacing="0">

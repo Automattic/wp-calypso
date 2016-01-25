@@ -9,7 +9,7 @@ import wpcom from 'lib/wp';
  * Returns an action object to be used in signalling that a site stats object has
  * been received.
  *
- * @param  {Object} payload keys: siteID, statType, options, response
+ * @param  {Object} payload data dispatched from the API response callback
  * @return {Object}      Action object
  */
 function receiveSiteStats( payload ) {
@@ -25,24 +25,33 @@ function receiveSiteStats( payload ) {
 
 export function fetchSiteStats( data ) {
 	const {
+		domain,
 		options,
-		statType,
-		siteID
+		siteID,
+		statType
 	} = data;
+	const siteIdOrDomain = siteID || domain;
+
+	if ( ! siteIdOrDomain ) {
+		// Never try to fetch stats for a site without a site or domain
+		console.log('no siteIdOrDomain -- bailing')
+		return;
+	}
+
 	let wpcomSite;
-	let _options = options;
 
 	if ( isDocumentedEndpoint( statType ) ) {
-		wpcomSite = wpcom.site( siteID );
+		wpcomSite = wpcom.site( siteIdOrDomain );
 	} else if ( isUndocumentedEndpoint( statType ) ) {
-		wpcomSite = wpcom.undocumented().site( siteID );
+		wpcomSite = wpcom.undocumented().site( siteIdOrDomain );
 	} else {
 		throw new TypeError( 'options.statType must be one of the following: ' + getValidEndpoints() );
 	}
 
 	// statsPostViews && statsVideo expect just the post.ID as a param
-	if ( isPostIdEndpoint( statType ) ) {
-		_options = options.post;
+	let _options = options;
+	if ( isPostIdEndpoint( statType ) && _options && _options.post ) {
+		_options = _options.post;
 	}
 
 	return ( dispatch ) => {

@@ -8,8 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	ElementChart = require( 'components/chart' ),
+var ElementChart = require( 'components/chart' ),
 	StatsTabs = require( '../stats-tabs' ),
 	StatsTab = require( '../stats-tabs/tab' ),
 	StatsModulePlaceholder = require( '../stats-module/placeholder' ),
@@ -20,28 +19,25 @@ module.exports = React.createClass( {
 	displayName: 'StatsSummaryChart',
 
 	propTypes: {
-		dataList: React.PropTypes.object.isRequired,
+		storeData: React.PropTypes.object.isRequired,
 		labelKey: React.PropTypes.string.isRequired,
 		dataKey: React.PropTypes.string.isRequired
 	},
 
-	mixins: [ observe( 'dataList' ) ],
-
 	getInitialState: function() {
-		var chartDataLength = this.props.dataList.response.data ? this.props.dataList.response.data.length : null;
-
+		const chartData = this.props.storeData.data || [];
 		return {
-			selectedBar: chartDataLength ? this.props.dataList.response.data[ chartDataLength - 1 ] : null
+			selectedBar: chartData.length ? chartData[ chartData.length - 1 ] : null
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var selectedBar = this.state.selectedBar,
-			chartDataLength = nextProps.dataList.response.data ? nextProps.dataList.response.data.length : null;
+		const chartData = this.props.storeData.data || [];
+		let selectedBar = this.state.selectedBar;
 
 		// Always default to the last bar being selected
-		if ( ! selectedBar && chartDataLength ) {
-			selectedBar = nextProps.dataList.response.data[ chartDataLength - 1 ];
+		if ( ! selectedBar && chartData.length ) {
+			selectedBar = nextProps.storeData[ chartData.length - 1 ];
 		}
 
 		this.setState( {
@@ -50,7 +46,8 @@ module.exports = React.createClass( {
 	},
 
 	barClick: function( bar ) {
-		var selectedBar = this.props.dataList.response.data.filter( function( data ) {
+		const chartData = this.props.storeData.data || [];
+		const selectedBar = chartData.filter( function( data ) {
 			return isEqual( data, bar.data );
 		}, this ).shift();
 
@@ -92,9 +89,9 @@ module.exports = React.createClass( {
 	},
 
 	buildChartData: function() {
-		var data;
+		const chartData = this.props.storeData.data || [];
 
-		data = this.props.dataList.response.data.map( function( record ) {
+		let formattedData = chartData.map( function( record ) {
 			var chartDataItem,
 				className;
 
@@ -115,7 +112,7 @@ module.exports = React.createClass( {
 			return chartDataItem;
 		}, this );
 
-		return data;
+		return formattedData;
 	},
 
 	chartTabs: function() {
@@ -139,22 +136,19 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes,
-			isLoading = this.props.dataList.isLoading();
-
-		classes = [
+		const classes = [
 			'stats-module',
 			'is-summary-chart',
 			{
-				'is-loading': this.props.dataList.isLoading()
+				'is-loading': this.props.isLoading
 			}
 		];
 
 		return (
 			<Card className={ classNames.apply( null, classes ) }>
-				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
+				<StatsModulePlaceholder className="is-chart" isLoading={ this.props.isLoading } />
 				<ElementChart key="chart"
-					loading={ isLoading }
+					loading={ this.props.isLoading }
 					data={ this.buildChartData() }
 					barClick={ this.barClick } />
 				{ this.chartTabs() }

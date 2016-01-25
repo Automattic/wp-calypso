@@ -2,46 +2,40 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { merge } from 'lodash/object';
 
 /**
  * Internal dependencies
  */
 import { SITE_STATS_REQUEST, SITE_STATS_REQUEST_FAILURE, SITE_STATS_RECEIVE } from 'state/action-types';
 import { isPostIdEndpoint } from 'lib/stats/endpoints';
+import { getCompositeKey } from './utils';
 import statsParserFactory from 'lib/stats/stats-list/stats-parser';
 const statsParser = statsParserFactory();
 
-export function stringifyOptions( options = {} ) {
-	return Object.keys( options ).sort().map( ( key ) => {
-		const value = JSON.stringify( options[ key ] );
-		return key + ( value ? '=' + value : '' );
-	} ).join( '&' );
-}
-
 function parseAction( action ) {
-	const { options, postID, response, siteID, statType } = action;
+	const { domain, options, postID, response, siteID, statType } = action;
 	const _siteID = parseInt( siteID, 10 );
-	if ( ! _siteID ) {
-		throw new Error( 'Site stats actions require a siteID' );
+
+	if ( ! _siteID || domain ) {
+		throw new Error( 'Site stats actions require a siteID or domain' );
 	}
+
+	const _options = isPostIdEndpoint( statType )
+		? { post: postID || options }
+		: options;
+
 	return {
+		domain,
+		options: _options,
 		postID: parseInt( isPostIdEndpoint( statType ) ? options : postID, 10 ) || 0,
 		siteID: _siteID,
-		options,
 		response,
 		statType
 	}
 }
 
-export function getCompositeKey( action ) {
-	const { statType, siteID, postID, options } = parseAction( action );
-	const stringifiedOptions = stringifyOptions( options );
-	return `${siteID}_${ postID || '*' }_${statType}_${stringifiedOptions}`;
-}
-
 /**
- * Tracks all known stats items in a selectably-shaped object
+ * Tracks all known stats items via composite key
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -50,59 +44,44 @@ export function getCompositeKey( action ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_STATS_RECEIVE:
-			const { options, response, siteID, postID, statType } = parseAction( action );
-			const stringifiedOptions = stringifyOptions( options );
-			if ( typeof statsParser[statType] === 'function' ) {
-				console.log( `would call parser statsParser.${statType}` );
-				/*	@TODO Apply statsParser transformations
-				siteStats = statsParser[statType]( siteStats ).bind( {
-					siteID
-				} );
-				*/
-			}
+			const parsedAction = parseAction( action );
+			const { response, statType } = parsedAction;
 
-			return merge( {}, state, {
-				[ siteID ]: {
-					[ postID || '*' ]: {
-						[ statType ]: {
-							[ stringifiedOptions ]: {
-								response
-							}
-						}
-					}
-				}
+			// simulate the "this" context in the StatsList
+			// @TODO change the response parsers to take arguments instead of throwing contxt around
+			const parsedResponse = typeof statsParser[statType] === 'function'
+				? statsParser[statType].call( parsedAction, response )
+				: response;
+
+			const receiveItemsKey = getCompositeKey( parsedAction );
+			return Object.assign( {}, state, {
+				[ receiveItemsKey ]: parsedResponse
 			} );
-
 		default:
 			return state;
 	}
 }
 
-export function isFetching( state = {}, action ) {
-	let newState = {};
-	let fetchingKey;
+export function fetchingItems( state = {}, action ) {
+	let newState;
 
 	switch ( action.type ) {
 		case SITE_STATS_REQUEST_FAILURE:
 		case SITE_STATS_RECEIVE:
-			fetchingKey = getCompositeKey( action );
 			newState = Object.assign( {}, state );
-			delete newState[ fetchingKey ];
-			break;
+			delete newState[ getCompositeKey( action ) ];
+			return newState;
 		case SITE_STATS_REQUEST:
-			fetchingKey = getCompositeKey( action.data );
 			newState = Object.assign( {}, state, {
-				[ fetchingKey ]: true
+				[ getCompositeKey( action.data ) ]: true
 			} );
-			break;
+			return newState;
 		default:
-			break;
+			return state;
 	}
-
-	return newState;
 }
 
 export default combineReducers( {
 	items,
-	isFetching
+	fetchingItems
 } );

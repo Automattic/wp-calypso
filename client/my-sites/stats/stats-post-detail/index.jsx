@@ -3,25 +3,25 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
+//import observe from 'lib/mixins/data-observe';
 import Emojify from 'components/emojify';
 import SummaryChart from '../stats-summary-chart';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import HeaderCake from 'components/header-cake';
+import { fetchSiteStats } from 'state/stats/actions';
+import { getStatsItem, isStatsItemFetching } from 'state/stats/selectors';
 
-export default React.createClass( {
+const StatsPostDetail = React.createClass( {
 	displayName: 'StatsPostDetail',
 
-	mixins: [ observe( 'postViewsList' ) ],
-
 	propTypes: {
-		path: PropTypes.string,
-		postViewsList: PropTypes.object
+		path: PropTypes.string
 	},
 
 	goBack() {
@@ -31,6 +31,22 @@ export default React.createClass( {
 		page( this.props.context.prevPath || defaultBack );
 	},
 
+	componentWillMount() {
+		this.dispatchFetchAction();
+	},
+
+	dispatchFetchAction() {
+		const { domain, siteID, postID, statType } = this.props;
+		const options = { post: postID };
+
+		this.props.dispatch( fetchSiteStats( {
+			domain,
+			options,
+			siteID,
+			statType
+		} ) );
+	},
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	},
@@ -38,8 +54,11 @@ export default React.createClass( {
 	render() {
 		let title;
 
-		const post = this.props.postViewsList.response.post;
+		const { statsItem } = this.props;
+		const response = statsItem.data || {};
+		const post = response.post || {};
 		const postOnRecord = post && post.post_title !== null;
+		const isLoading = ! postOnRecord && this.props.isFetching;
 
 		if ( postOnRecord ) {
 			if ( typeof post.post_title === 'string' && post.post_title.length ) {
@@ -56,9 +75,9 @@ export default React.createClass( {
 				</HeaderCake>
 
 				<SummaryChart
+					storeData={ response }
+					isLoading={ isLoading }
 					key="chart"
-					loading={ this.props.postViewsList.isLoading() }
-					dataList={ this.props.postViewsList }
 					barClick={ this.props.barClick }
 					activeKey="period"
 					dataKey="value"
@@ -67,19 +86,43 @@ export default React.createClass( {
 					tabLabel={ this.translate( 'Views' ) } />
 
 				<PostMonths
+					storeData={ response }
+					isLoading={ isLoading }
 					dataKey="years"
 					title={ this.translate( 'Months and Years' ) }
 					total={ this.translate( 'Total' ) }
-					postViewsList={ this.props.postViewsList } />
+				/>
 
 				<PostMonths
+					storeData={ response }
+					isLoading={ isLoading }
 					dataKey="averages"
 					title={ this.translate( 'Average per Day' ) }
 					total={ this.translate( 'Overall' ) }
-					postViewsList={ this.props.postViewsList } />
+				/>
 
-				<PostWeeks postViewsList={ this.props.postViewsList } />
+				<PostWeeks storeData={ response } />
 			</div>
 		);
 	}
 } );
+
+export default connect(
+	function mapStateToProps( state, ownProps ) {
+		const { siteID, postID, statType } = ownProps;
+		const params = {
+			siteID,
+			statType,
+			options: {
+				post: postID
+			}
+		};
+		const statsItem = getStatsItem( state, params );
+		const isFetching = isStatsItemFetching( state, params )
+
+		return {
+			statsItem,
+			isFetching
+		};
+	}
+)( StatsPostDetail );
