@@ -89,7 +89,7 @@ const RemovePurchase = React.createClass( {
 
 		return (
 			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
-				<a >
+				<a href="#">
 					<Gridicon icon="trash" />
 					{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</a>
@@ -147,8 +147,8 @@ const RemovePurchase = React.createClass( {
 		return (
 			<p>
 				{
-					this.translate( 'Are you sure you want to remove %(productName)s from {{em}}%(domain)s{{/em}}?', {
-						args: { productName, domain: this.props.selectedSite.slug },
+					this.translate( 'Are you sure you want to remove %(productName)s from {{em}}%(siteSlug)s{{/em}}?', {
+						args: { productName, siteSlug: this.props.selectedSite.slug },
 						components: { em: <em /> }
 					} )
 				}
