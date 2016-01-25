@@ -113,8 +113,8 @@
 	color: $gray-dark;
 	display: block;
 	font-size: 14px;
+	line-height: 21px;
 	font-weight: 600;
-	line-height: 30px;
 	overflow: hidden;
 	text-align: left;
 	text-overflow: ellipsis;
@@ -122,6 +122,7 @@
 
 	@include breakpoint( '>480px' ) {
 		font-size: 24px;
+		line-height: 32px;
 		font-weight: 700;
 		font-family: $serif;
 	}
