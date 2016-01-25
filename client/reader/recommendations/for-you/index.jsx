@@ -16,7 +16,7 @@ import FollowButton from 'components/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
-import { recordFollow, recordUnfollow, recordAction, recordGaEvent } from 'reader/stats';
+import { recordAction, recordGaEvent } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
 
 const RecommendedForYou = React.createClass( {
@@ -127,7 +127,7 @@ const RecommendedForYou = React.createClass( {
 					<h1>{ this.translate( 'Recommendations' ) }</h1>
 				</MobileBackToSidebar>
 
-				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' )}</h2>
+				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' ) }</h2>
 				<InfiniteList
 					items={ this.state.recommendations }
 					fetchingNextPage={ this.state.fetching }
