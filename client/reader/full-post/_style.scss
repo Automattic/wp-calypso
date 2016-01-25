@@ -158,11 +158,12 @@
 	}
 
 	blockquote {
-		padding: 16px;
-		margin: 8px 0 24px 0;
-		border-left: 2px solid $gray;
+		padding: 16px 24px;
+		margin: 16px 0 32px 0;
 		color: darken( $gray, 20 );
-		background: lighten( $gray, 30 );
+		font-weight: normal;
+		font-size: 20px;
+		background: transparent;
 	}
 
 	img {
@@ -315,19 +316,33 @@
 		font-size: 13px;
 		width: 175px;
 
-		@include breakpoint( ">1040px" ) {
+		@media ( min-width: 1132px ) {
 			position: absolute;
 
 			&.right {
 				right: -( 175px + 32px );
+				margin-right: 0;
 			}
 
 			&.left {
 				left: -( 175px + 32px );
+				margin-left: 0;
 			}
 		}
 
-		@include breakpoint( "<1040px" ) {
+		@media ( max-width: 1132px ) {
+			&.right {
+				float: right;
+				margin: 0 -120px 24px 24px;
+			}
+
+			&.left {
+				float: left;
+				margin: 0 24px 24px -120px;
+			}
+		}
+
+		@include breakpoint( "<960px" ) {
 			&.right {
 				float: right;
 				margin: 0 0 24px 24px;
