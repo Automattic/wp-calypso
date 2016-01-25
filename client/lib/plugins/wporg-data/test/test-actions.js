@@ -37,10 +37,6 @@ describe( 'WPorg Data Actions', function() {
 		assert.isObject( WPorgActions );
 	} );
 
-	it( 'Actions should have method fetchPluginData', function() {
-		assert.isFunction( WPorgActions.fetchPluginData );
-	} );
-
 	it( 'Actions should have method fetchPluginsList', function() {
 		assert.isFunction( WPorgActions.fetchPluginsList );
 	} );

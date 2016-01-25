@@ -35,7 +35,7 @@ export default React.createClass( {
 		sites: React.PropTypes.array,
 		notices: React.PropTypes.object,
 		plugin: React.PropTypes.object.isRequired,
-		isInstalledOnSite: React.PropTypes.bool.isRequired,
+		isInstalledOnSite: React.PropTypes.bool,
 		isPlaceholder: React.PropTypes.bool,
 	},
 
@@ -56,7 +56,10 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( ! this.props.isInstalledOnSite ) {
+		if ( this.props.isInstalledOnSite === null )
+			return;
+
+		if ( this.props.isInstalledOnSite === false ) {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
 		}
 

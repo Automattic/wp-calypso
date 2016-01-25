@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import debugModule from 'debug';
 import page from 'page';
 import classNames from 'classnames';
@@ -20,8 +22,9 @@ import HeaderCake from 'components/header-cake';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
-import PluginsDataStore from 'lib/plugins/wporg-data/store';
+import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsActions from 'lib/plugins/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -38,19 +41,24 @@ const debug = debugModule( 'calypso:my-sites:plugin' );
 
 let _currentPageTitle = null;
 
-export default React.createClass( {
+const SinglePlugin = React.createClass( {
 
-	displayName: 'Plugin',
+	displayName: 'SinglePlugin',
 
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
 
 	mixins: [ PluginNotices ],
 
+	componentWillMount() {
+		if ( ! this.isFetched() ) {
+			this.props.wporgFetchPluginData( this.props.pluginSlug );
+		}
+	},
+
 	componentDidMount() {
 		debug( 'Plugin React component mounted.' );
 		this.props.sites.on( 'change', this.refreshSitesAndPlugins );
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
-		PluginsDataStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
 		this.updatePageTitle();
 	},
@@ -62,7 +70,6 @@ export default React.createClass( {
 	componentWillUnmount() {
 		this.props.sites.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
-		PluginsDataStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
 		if ( this.pluginRefreshTimeout ) {
 			clearTimeout( this.pluginRefreshTimeout );
@@ -70,9 +77,7 @@ export default React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.path !== nextProps.path ) {
-			this.refreshSitesAndPlugins( nextProps );
-		}
+		this.refreshSitesAndPlugins( nextProps );
 	},
 
 	getSitesPlugin( nextProps ) {
@@ -82,7 +87,6 @@ export default React.createClass( {
 		// .com sites can't install non .com plugins, if that's the case we don't retrieve any data from the store
 		if ( ! props.isWpcomPlugin && selectedSite && ! selectedSite.jetpack ) {
 			return {
-				isFetching: false,
 				accessError: false,
 				sites: [],
 				notInstalledSites: [],
@@ -97,20 +101,12 @@ export default React.createClass( {
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
 
 		let plugin = Object.assign( {
-				name: props.pluginSlug,
-				id: props.pluginSlug,
-				slug: props.pluginSlug
-			}, sitePlugin ),
-			isFetching = ! sitePlugin;
-
-		if ( sitePlugin && ! props.isWpcomPlugin ) {
-			// if it isn't a .com plugin, assign it .org details
-			plugin = Object.assign( plugin, PluginsDataStore.get( props.pluginSlug ) );
-			isFetching = PluginsDataStore.isFetching( props.pluginSlug );
-		}
+			name: props.pluginSlug,
+			id: props.pluginSlug,
+			slug: props.pluginSlug,
+		}, sitePlugin );
 
 		return {
-			isFetching: isFetching,
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
@@ -170,26 +166,48 @@ export default React.createClass( {
 		);
 	},
 
-	pluginExists( pluginSlug ) {
-		// if the plugin info is still being fetched, we default to true
-		if ( ! PluginsDataStore.isFetching( pluginSlug ) ) {
-			if ( PluginsDataStore.get( pluginSlug ) ) {
-				return true;
-			}
-			const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-			// if there's no info about the plugin from .org, we check if the pluginSlug exists in
-			// any of the user's sites, to check if it's a custom plugin
-			return sites.some( site => {
-				const sitePlugins = PluginsStore.getSitePlugins( site ) || [];
-
-				if ( PluginsStore.isFetchingSite( site ) ) {
-					return true;
-				}
-
-				return sitePlugins.some( plugin => plugin.slug === pluginSlug );
-			} );
+	pluginExists( plugin ) {
+		if ( this.isFetching() ) {
+			return 'unknown';
 		}
-		return true;
+		if ( plugin && plugin.fetched ) {
+			return true;
+		}
+
+		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+
+		// If the plugin has at least one site then we know it exits
+		if ( plugin.sites && plugin.sites[0] ) {
+			return true;
+		}
+
+		if ( sites.some( PluginsStore.isFetchingSite ) ) {
+			return 'unknown';
+		}
+
+		return false;
+	},
+
+	isFetching() {
+		return ! this.props.isWpcomPlugin && WporgPluginsSelectors.isFetching( this.props.wporgPlugins, this.props.pluginSlug );
+	},
+
+	isFetched() {
+		return this.props.isWpcomPlugin || WporgPluginsSelectors.isFetched( this.props.wporgPlugins, this.props.pluginSlug );
+	},
+
+	isFetchingSites() {
+		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+		return sites.every( PluginsStore.isFetchingSite );
+	},
+
+	getPlugin() {
+		let plugin = Object.assign( {}, this.state.plugin );
+		if ( ! this.props.isWpcomPlugin ) {
+			// if it isn't a .com plugin, assign it .org details
+			plugin = Object.assign( plugin, WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
+		}
+		return plugin;
 	},
 
 	getPluginDoesNotExistView( selectedSite ) {
@@ -211,26 +229,28 @@ export default React.createClass( {
 		);
 	},
 
-	renderSitesList() {
-		if ( this.props.siteUrl ) {
+	renderSitesList( plugin ) {
+		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
 		}
 
-		if ( this.state.plugin.wporg ) {
+		if ( plugin.wporg ) {
 			return (
 				<div>
 					<PluginSiteList
 						className="plugin__installed-on"
 						title={ this.translate( 'Installed on', { comment: 'header for list of sites a plugin is installed on' } ) }
 						sites={ this.state.sites }
-						plugin={ this.state.plugin }
-						notices={ this.state.notices } />
+						plugin={ plugin }
+						notices={ this.state.notices }
+						wporg={ true } />
 					<PluginSiteList
 						className="plugin__not-installed-on"
 						title={ this.translate( 'Available sites', { comment: 'header for list of sites a plugin can be installed on' } ) }
 						sites={ this.state.notInstalledSites }
-						plugin={ this.state.plugin }
-						notices={ this.state.notices } />
+						plugin={ plugin }
+						notices={ this.state.notices }
+						wporg={ true } />
 				</div>
 			);
 		}
@@ -238,7 +258,7 @@ export default React.createClass( {
 					className="plugin__installed-on"
 					title={ this.translate( 'Available on', { comment: 'header for list of sites a plugin is available on' } ) }
 					sites={ this.state.sites }
-					plugin={ this.state.plugin }
+					plugin={ plugin }
 					notices={ this.state.notices } />
 	},
 
@@ -253,8 +273,8 @@ export default React.createClass( {
 						isPlaceholder
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
-						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
-						plugin={ this.state.plugin }
+						isInstalledOnSite={ this.isFetchingSites() ? null : !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
+						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite } />
@@ -280,7 +300,7 @@ export default React.createClass( {
 						notices={ {} }
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
-						plugin={ this.state.plugin }
+						plugin={ this.getPlugin() }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
 						selectedSite={ selectedSite }
@@ -316,11 +336,14 @@ export default React.createClass( {
 			);
 		}
 
-		if ( this.state.isFetching ) {
+		const plugin = this.getPlugin();
+		const pluginExists = this.pluginExists( plugin );
+
+		if ( pluginExists === 'unknown' ) {
 			return this.renderPluginPlaceholder( classes );
 		}
 
-		if ( ! this.pluginExists( this.props.pluginSlug ) ) {
+		if ( pluginExists === false ) {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
@@ -348,16 +371,25 @@ export default React.createClass( {
 					<PluginMeta
 						isWpcomPlugin={ this.props.isWpcomPlugin }
 						notices={ this.state.notices }
-						plugin={ this.state.plugin }
+						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
-						isInstalledOnSite={ !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
+						isInstalledOnSite={ this.isFetchingSites() ? null : !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug ) }
 						isInstalling={ installInProgress } />
-					<PluginSections plugin={ this.state.plugin } />
-					{ this.renderSitesList() }
+					{ plugin.wporg && <PluginSections plugin={ plugin } /> }
+					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
 		);
 	}
 } );
+
+export default connect(
+	state => {
+		return {
+			wporgPlugins: state.plugins.wporg
+		};
+	},
+	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
+)( SinglePlugin );

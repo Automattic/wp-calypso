@@ -27,25 +27,6 @@ var _fetching = {},
 	_totalPagesPerCategory = {};
 
 var PluginsDataActions = {
-	fetchPluginData: function( pluginSlug ) {
-		if ( _fetching[ pluginSlug ] ) {
-			return;
-		}
-
-		_fetching[ pluginSlug ] = true;
-
-		wporg.fetchPluginInformation( pluginSlug, function( error, data ) {
-			_fetching[ pluginSlug ] = null;
-			debug( 'plugin details fetched from .org', pluginSlug, error, data );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_WPORG_PLUGIN_DATA',
-				pluginSlug: pluginSlug,
-				data: data ? utils.normalizePluginData( { detailsFetched: Date.now() }, data ) : null,
-				error: error
-			} );
-		} );
-	},
-
 	fetchPluginsList: debounce( function( category, page, searchTerm ) {
 		// We need to debounce this method to avoid mixing diferent dispatch batches (and get an invariant violation from react)
 		// Since the infinite scroll mixin is launching a bunch of fetch requests at the same time, without debounce is too easy

@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import some from 'lodash/collection/some';
@@ -30,20 +32,22 @@ import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
-import PluginsDataStore from 'lib/plugins/wporg-data/store';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PlanNudge from 'components/plans/plan-nudge';
+
+import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
+import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PlanNudge from 'components/plans/plan-nudge';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:my-sites:plugins' );
 
-export default React.createClass( {
+const PluginsMain = React.createClass( {
 
-	displayName: 'Plugins',
+	displayName: 'PluginsMain',
 
 	mixins: [ URLSearch ],
 
@@ -55,13 +59,11 @@ export default React.createClass( {
 		debug( 'Plugins React component mounted.' );
 		this.props.sites.on( 'change', this.refreshPlugins );
 		PluginsStore.on( 'change', this.refreshPlugins );
-		PluginsDataStore.on( 'change', this.refreshPlugins );
 	},
 
 	componentWillUnmount() {
 		this.props.sites.removeListener( 'change', this.refreshPlugins );
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
-		PluginsDataStore.removeListener( 'change', this.refreshPlugins );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -92,7 +94,11 @@ export default React.createClass( {
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
 			if ( ! plugin.wpcom ) {
-				return assign( {}, plugin, PluginsDataStore.get( plugin.slug ) );
+				let pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
+				if ( !pluginData ) {
+					this.props.wporgFetchPluginData( plugin.slug );
+				}
+				return assign( {}, plugin, pluginData );
 			}
 			return plugin;
 		} );
@@ -427,3 +433,12 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	state => {
+		return {
+			wporgPlugins: state.plugins.wporg
+		};
+	},
+	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
+)( PluginsMain );
