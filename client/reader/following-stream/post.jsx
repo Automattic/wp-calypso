@@ -223,7 +223,7 @@ var Post = React.createClass( {
 		classes( headerNode ).toggle( 'is-long', this.shouldApplyIsLong() );
 	},
 
-	propogateCardClick: function( options = {} ) {
+	propagateCardClick: function( options = {} ) {
 		let postToOpen = this.props.post;
 		// For Discover posts (but not site picks), open the original post in full post view
 		if ( this.state.originalPost ) {
@@ -264,14 +264,14 @@ var Post = React.createClass( {
 		// programattic ignore
 		if ( ! event.defaultPrevented ) { // some child handled it
 			event.preventDefault();
-			this.propogateCardClick();
+			this.propagateCardClick();
 		}
 	},
 
 	handleCommentButtonClick: function() {
 		stats.recordAction( 'click_comments' );
 		stats.recordGaEvent( 'Clicked Post Comment Button' );
-		this.propogateCardClick( { comments: true } );
+		this.propagateCardClick( { comments: true } );
 	},
 
 	recordTagClick: function() {
