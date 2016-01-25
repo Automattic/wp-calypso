@@ -46,7 +46,7 @@ module.exports = React.createClass( {
 			selected: null,
 			onClose: noop,
 			onSiteSelect: noop,
-			groups: true
+			groups: false
 		};
 	},
 
@@ -190,7 +190,7 @@ module.exports = React.createClass( {
 	renderRecentSites: function() {
 		const sites = this.props.sites.getRecentlySelected();
 
-		if ( ! sites || this.state.search ) {
+		if ( ! sites || this.state.search || ! this.props.groups ) {
 			return null;
 		}
 

@@ -90,6 +90,7 @@ export default React.createClass( {
 					visible={ this.state.isShowingPopover }
 					context={ this.state.postButtonContext }
 					onClose={ this.toggleSitesPopover.bind( this, false ) }
+					groups={ true }
 					position={ this.getPopoverPosition() } />
 			</MasterbarItem>
 		);
