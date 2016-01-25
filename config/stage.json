@@ -82,6 +82,7 @@
 		"reader/discover": true,
 		"reader/recommendations": true,
 		"ad-tracking": false,
+		"desktop-promo": true,
 		"perfmon": true,
 		"mailing-lists/unsubscribe": true,
 		"accept-invite": true
