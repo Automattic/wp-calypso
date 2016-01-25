@@ -311,13 +311,13 @@ export default React.createClass( {
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
-						disabled={ this.state.submitting || this.props.disabled }
+						disabled={ this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput }
 						id="email"
 						name="email"
 						type="email"
 						value={ formState.getFieldValue( this.state.form, 'email' ) }
 						isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
-						isValid={ this.state.validationInitialized && formState.isFieldValid( this.state.form, 'email' ) }
+						isValid={ ! this.props.disableEmailInput && this.state.validationInitialized && formState.isFieldValid( this.state.form, 'email' ) }
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent } />
 				</ValidationFieldset>

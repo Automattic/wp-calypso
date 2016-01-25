@@ -127,7 +127,8 @@ let InviteAcceptLoggedOut = React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
-					email={ this.props.invite.sentTo } />
+					email={ this.props.invite.sentTo }
+					disableEmailInput={ this.props.forceMatchingEmail }/>
 				{ this.state.userData && this.loginUser() }
 			</div>
 		)

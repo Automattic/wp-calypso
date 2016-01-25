@@ -14,19 +14,23 @@ import { bindActionCreators } from 'redux';
 import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import user from 'lib/user';
+import _user from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
 import analytics from 'analytics';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import config from 'config';
+import userUtils from 'lib/user/utils';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:invite-accept' );
-const userModule = user();
+const userModule = _user();
 
 let InviteAccept = React.createClass( {
 
@@ -34,7 +38,8 @@ let InviteAccept = React.createClass( {
 		return {
 			invite: false,
 			error: false,
-			user: userModule.get()
+			user: userModule.get(),
+			matchEmailError: false
 		}
 	},
 
@@ -55,6 +60,7 @@ let InviteAccept = React.createClass( {
 
 	refreshUser() {
 		this.setState( { user: userModule.get() } );
+		this.refreshMatchEmailError();
 	},
 
 	refreshInvite() {
@@ -69,9 +75,15 @@ let InviteAccept = React.createClass( {
 			} );
 		}
 		this.setState( { invite, error } );
+		this.refreshMatchEmailError();
 	},
 
-	isErrorState() {
+	refreshMatchEmailError() {
+		const { invite, user } = this.state;
+		this.setState( { matchEmailError: invite.forceMatchingEmail && user.email !== invite.sentTo } );
+	},
+
+	isInvalidInvite() {
 		return this.state.error || ! this.props.siteId || ! this.props.inviteKey;
 	},
 
@@ -98,20 +110,40 @@ let InviteAccept = React.createClass( {
 		page( '/' );
 	},
 
+	signInLink() {
+		const invite = this.state.invite;
+		let loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+
+		if ( invite && invite.sentTo ) {
+			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
+			loginUrl += presetEmail;
+		}
+
+		return loginUrl;
+	},
+
+	signUpLink() {
+		userUtils.logout( window.location.href );
+	},
+
 	renderForm() {
-		if ( ! this.state.invite ) {
+		const { invite, user, matchEmailError } = this.state;
+		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
 		}
 		debug( 'Rendering invite' );
+
 		let props = {
 			invite: this.state.invite,
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
-			decline: this.decline
+			decline: this.decline,
+			signInLink: this.signInLink(),
+			forceMatchingEmail: matchEmailError
 		};
-		return this.state.user
+		return user
 			? <LoggedIn { ... props } user={ this.state.user } />
-			: <LoggedOut { ... props } />
+			: <LoggedOut { ... props } />;
 	},
 
 	renderError() {
@@ -124,12 +156,44 @@ let InviteAccept = React.createClass( {
 		);
 	},
 
+	renderNoticeAction() {
+		const { user, invite } = this.state;
+
+		if ( ! user ) {
+			return;
+		}
+
+		let props;
+
+		if ( invite.knownUser ) {
+			props = { href: this.signInLink() };
+		} else {
+			props = { onClick: this.signUpLink };
+		}
+
+		return (
+			<NoticeAction { ... props } >
+				{ this.translate( 'Switch Accounts' ) }
+			</NoticeAction>
+		);
+	},
+
 	render() {
-		const classes = classNames( 'invite-accept', { 'is-error': !! this.isErrorState() } );
+		const classes = classNames( 'invite-accept', { 'is-error': !! this.isInvalidInvite() } ),
+			{ invite, matchEmailError } = this.state;
+
 		return (
 			<div className={ classes }>
-				{ ! this.isErrorState() && <InviteHeader { ...this.state.invite } /> }
-				{ this.isErrorState() ? this.renderError() : this.renderForm() }
+				{ matchEmailError &&
+					<Notice
+						text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+						status="is-error"
+						showDismiss={ false } >
+						{ this.renderNoticeAction() }
+					</Notice>
+				}
+				{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+				{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 			</div>
 		);
 	}
