@@ -137,6 +137,7 @@ module.exports = {
 			context.store.dispatch( sitesActions.receiveSite( selectedSite ) );
 			context.store.dispatch( uiActions.setSelectedSiteId( selectedSite.ID ) );
 			context.store.dispatch( uiActions.setRecentlySelectedSite( selectedSite.ID ) );
+			sites.setRecentlySelectedSite( selectedSite.ID );
 		}
 
 		// If there's a valid site from the url path
