@@ -30,7 +30,8 @@ module.exports = React.createClass( {
 		onClose: React.PropTypes.func,
 		selected: React.PropTypes.string,
 		hideSelected: React.PropTypes.bool,
-		filter: React.PropTypes.func
+		filter: React.PropTypes.func,
+		groups: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -43,7 +44,8 @@ module.exports = React.createClass( {
 			hideSelected: false,
 			selected: null,
 			onClose: noop,
-			onSiteSelect: noop
+			onSiteSelect: noop,
+			groups: true
 		};
 	},
 
@@ -165,7 +167,60 @@ module.exports = React.createClass( {
 			);
 		}
 
-		return siteElements;
+		if ( this.props.groups ) {
+			return (
+				<div>
+					<span className="site-selector__heading">
+						All Sites
+					</span>
+					{ siteElements }
+				</div>
+			);
+		} else {
+			return siteElements;
+		}
+	},
+
+	renderRecentSites: function() {
+		const sites = this.props.sites.getRecentlySelected();
+
+		if ( ! sites ) {
+			return null;
+		}
+
+		const recentSites = sites.map( function( site ) {
+			var siteHref;
+
+			if ( this.props.siteBasePath ) {
+				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
+			}
+
+			const isSelected = this.isSelected( site );
+
+			if ( isSelected && this.props.hideSelected ) {
+				return;
+			}
+
+			return (
+				<Site
+					site={ site }
+					href={ this.props.siteBasePath ? siteHref : null }
+					key={ 'site-' + site.ID }
+					indicator={ this.props.indicator }
+					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+					isSelected={ isSelected }
+				/>
+			);
+		}, this );
+
+		return (
+			<div>
+				<span className="site-selector__heading">
+					Recent Sites
+				</span>
+				{ recentSites }
+			</div>
+		);
 	},
 
 	render: function() {
@@ -190,9 +245,9 @@ module.exports = React.createClass( {
 				<Search ref="siteSearch" onSearch={ this.onSearch } autoFocus={ this.props.autoFocus } disabled={ ! sitesInitialized } />
 
 				<div className="site-selector__sites">
-					{ siteElements.length ? siteElements :
-						<div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>
-					}
+					{ this.renderRecentSites() }
+					{ siteElements }
+					<div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>
 				</div>
 
 				{ this.props.showAddNewSite ?
