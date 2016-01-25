@@ -483,6 +483,17 @@ SitesList.prototype.getVisible = function() {
 	}, this );
 };
 
+/**
+ * Get sites that are marked as visible and not recently selected
+ *
+ * @api public
+ **/
+SitesList.prototype.getVisibleAndNotRecent = function() {
+	return this.get().filter( function( site ) {
+		return site.visible === true && this.recentlySelected.indexOf( site.ID ) === -1;
+	}, this );
+};
+
 SitesList.prototype.getUpgradeable = function() {
 	return this.get().filter( function( site ) {
 		return site.isUpgradeable();

@@ -115,7 +115,7 @@ module.exports = React.createClass( {
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
 		} else {
-			sites = this.props.sites.getVisible();
+			sites = this.props.groups ? this.props.sites.getVisibleAndNotRecent() : this.props.sites.getVisible();
 		}
 
 		if ( this.props.filter ) {
