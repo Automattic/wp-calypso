@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import SignupForm from 'components/signup-form'
-import InviteFormHeader from 'my-sites/invites/invite-form-header'
-import { createAccount, acceptInvite } from 'lib/invites/actions'
-import WpcomLoginForm from 'signup/wpcom-login-form'
-import config from 'config'
-import wpcom from 'lib/wp'
-import store from 'store'
+import SignupForm from 'components/signup-form';
+import InviteFormHeader from 'my-sites/invites/invite-form-header';
+import { createAccount, acceptInvite } from 'lib/invites/actions';
+import WpcomLoginForm from 'signup/wpcom-login-form';
+import config from 'config';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
+import { errorNotice } from 'state/notices/actions';
 
-export default React.createClass( {
-
-	displayName: 'InviteAcceptLoggedOut',
+let InviteAcceptLoggedOut = React.createClass( {
 
 	getInitialState() {
 		return { error: false, bearerToken: false, userData: false, submitting: false };
@@ -27,9 +27,9 @@ export default React.createClass( {
 
 	submitButtonText() {
 		let text = '';
-		if ( 'follower' === this.props.role ) {
+		if ( 'follower' === this.props.invite.role ) {
 			text = this.translate( 'Sign Up & Follow' );
-		} else if ( 'viewer' === this.props.role ) {
+		} else if ( 'viewer' === this.props.invite.role ) {
 			text = this.translate( 'Sign Up & View' );
 		} else {
 			text = this.translate( 'Sign Up & Join' );
@@ -43,28 +43,25 @@ export default React.createClass( {
 
 	submitForm( form, userData ) {
 		this.setState( { submitting: true } );
-		createAccount(
-			userData,
-			( error, bearerToken ) => {
-				if ( bearerToken ) {
-					wpcom.loadToken( bearerToken );
-					wpcom.undocumented().acceptInvite(
-						this.props,
-						( acceptError ) => {
-							if ( ! acceptError ) {
-								store.set( 'invite_accepted', this.props );
-								this.setState( { userData, bearerToken } );
-							}
-						}
-					);
-				}
+
+		const createAccountCallback = ( error, bearerToken ) => {
+			if ( error ) {
+				this.setState( { submitting: false } );
+			} else if ( bearerToken ) {
+				store.set( 'invite_accepted', this.props.invite );
+				this.setState( { bearerToken, userData } );
 			}
+		};
+
+		this.props.createAccount(
+			userData,
+			createAccountCallback
 		);
 	},
 
 	renderFormHeader() {
 		return (
-			<InviteFormHeader { ...this.props } />
+			<InviteFormHeader { ...this.props.invite } />
 		);
 	},
 
@@ -79,14 +76,15 @@ export default React.createClass( {
 	},
 
 	subscribeUserByEmailOnly() {
+		const { invite } = this.props;
 		this.setState( { submitting: true } );
-		acceptInvite(
-			this.props,
+		this.props.acceptInvite(
+			invite,
 			( error ) => {
 				if ( error ) {
 					this.setState( { error } );
 				} else {
-					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( this.props.sentTo ) + '&key=' + this.props.authKey;
+					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( invite.sentTo ) + '&key=' + invite.authKey;
 				}
 			}
 		);
@@ -106,7 +104,7 @@ export default React.createClass( {
 	},
 
 	renderEmailOnlySubscriptionLink() {
-		if ( this.props.role !== 'follower' || ! this.props.activationKey ) {
+		if ( this.props.invite.role !== 'follower' || ! this.props.invite.activationKey ) {
 			return null;
 		}
 
@@ -129,10 +127,15 @@ export default React.createClass( {
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
-					email={ this.props.sentTo } />
+					email={ this.props.invite.sentTo } />
 				{ this.state.userData && this.loginUser() }
 			</div>
 		)
 	}
 
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
+)( InviteAcceptLoggedOut );

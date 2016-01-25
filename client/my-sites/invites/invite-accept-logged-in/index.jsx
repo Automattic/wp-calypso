@@ -4,7 +4,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import page from 'page';
-import store from'store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -19,9 +20,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
 
-export default React.createClass( {
-
-	displayName: 'InviteAcceptLoggedIn',
+let InviteAcceptLoggedIn = React.createClass( {
 
 	getInitialState() {
 		return { submitting: false }
@@ -29,9 +28,13 @@ export default React.createClass( {
 
 	accept() {
 		this.setState( { submitting: true } );
-		acceptInvite( this.props.invite );
-		store.set( 'invite_accepted', this.props.invite );
-		page( this.props.redirectTo );
+		this.props.acceptInvite( this.props.invite, error => {
+			if ( ! error ) {
+				page( this.props.redirectTo );
+			} else {
+				this.setState( { submitting: false } );
+			}
+		} );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 	},
 
@@ -119,3 +122,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { acceptInvite }, dispatch )
+)( InviteAcceptLoggedIn );
