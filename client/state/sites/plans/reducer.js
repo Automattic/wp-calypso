@@ -6,6 +6,7 @@ import {
 	FETCH_SITE_PLANS_COMPLETED,
 	REMOVE_SITE_PLANS
 } from './action-types';
+import { TO_OBJECT } from 'state/action-types';
 import omit from 'lodash/object/omit';
 
 export const initialSiteState = {
@@ -34,6 +35,9 @@ export function plans( state = {}, action ) {
 			} );
 		case REMOVE_SITE_PLANS:
 			return omit( state, action.siteId );
+		case TO_OBJECT:
+			//TODO: we have full instances of moment.js on sites.plans[siteID].data
+			return initialSiteState;
 	}
 
 	return state;

@@ -11,7 +11,8 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	injectTapEventPlugin = require( 'react-tap-event-plugin' );
+	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' );
 
 /**
  * Internal dependencies
@@ -40,7 +41,6 @@ var config = require( 'config' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
-	createReduxStore = require( 'state' ).createReduxStore,
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	// The following mixins require i18n content, so must be required after i18n is initialized
 	Layout,
@@ -140,8 +140,6 @@ function loadDevModulesAndBoot() {
 }
 
 function boot() {
-	var layoutSection, layout, layoutElement, reduxStore, validSections = [];
-
 	init();
 
 	// When the user is bootstrapped, we also bootstrap the
@@ -156,7 +154,11 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	reduxStore = createReduxStore();
+	createReduxStoreFromPersistedInitialState( reduxStoreReady );
+}
+
+function reduxStoreReady( reduxStore ) {
+	let layoutSection, layout, layoutElement, validSections = [];
 
 	if ( config.isEnabled( 'support-user' ) ) {
 		require( 'lib/user/support-user-interop' )( reduxStore );

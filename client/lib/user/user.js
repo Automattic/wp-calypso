@@ -5,7 +5,8 @@ var store = require( 'store' ),
 	debug = require( 'debug' )( 'calypso:user' ),
 	config = require( 'config' ),
 	qs = require( 'qs' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/lang/isEqual' ),
+	localforage = require( 'localforage' );
 
 /**
  * Internal dependencies
@@ -207,6 +208,7 @@ User.prototype.clear = function() {
 	this.data = [];
 	delete this.settings;
 	store.clear();
+	localforage.removeItem( 'redux-state' );
 };
 
 /**

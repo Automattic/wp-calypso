@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SITE_RECEIVE } from 'state/action-types';
+import { SITE_RECEIVE, TO_OBJECT } from 'state/action-types';
 import { items } from '../reducer';
 
 describe( 'reducer', () => {
@@ -54,6 +54,15 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: { ID: 2916284, name: 'Just You Wait' }
+			} );
+		} );
+		it( 'should return a js object on TO_OBJECT', () => {
+			const original = Object.freeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', somethingDecoratedMe: () => {} }
+			} );
+			const state = items( original, { type: TO_OBJECT } );
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 		} );
 	} );
