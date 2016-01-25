@@ -89,6 +89,7 @@
     "source-map-support": "0.3.2",
     "srcset": "1.0.0",
     "store": "1.3.16",
+    "striptags": "2.1.1",
     "superagent": "1.2.0",
     "tinymce": "4.2.8",
     "to-title-case": "0.1.5",
