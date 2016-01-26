@@ -223,11 +223,18 @@ var Post = React.createClass( {
 		classes( headerNode ).toggle( 'is-long', this.shouldApplyIsLong() );
 	},
 
+	propagateCardClick: function( options = {} ) {
+		let postToOpen = this.props.post;
+		// For Discover posts (but not site picks), open the original post in full post view
+		if ( this.state.originalPost ) {
+			postToOpen = this.state.originalPost;
+		}
+
+		this.props.handleClick( postToOpen, options );
+	},
+
 	handleCardClick: function( event ) {
-		var rootNode = ReactDom.findDOMNode( this ),
-			post = this.props.post,
-			postToOpen = post,
-			postOptions = {};
+		var rootNode = ReactDom.findDOMNode( this );
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
@@ -254,26 +261,17 @@ var Post = React.createClass( {
 			return;
 		}
 
-		// For Discover posts (but not site picks), open the original post in full post view
-		if ( this.state.originalPost ) {
-			postToOpen = this.state.originalPost;
-		}
-
-		// if the user clicked the comments button.
-		if ( closest( event.target, '.comment-button', true, rootNode ) ) {
-			postOptions.comments = true;
-		}
-
 		// programattic ignore
 		if ( ! event.defaultPrevented ) { // some child handled it
 			event.preventDefault();
-			this.props.handleClick( postToOpen, postOptions );
+			this.propagateCardClick();
 		}
 	},
 
-	recordCommentButtonClick: function() {
+	handleCommentButtonClick: function() {
 		stats.recordAction( 'click_comments' );
 		stats.recordGaEvent( 'Clicked Post Comment Button' );
+		this.propagateCardClick( { comments: true } );
 	},
 
 	recordTagClick: function() {
@@ -421,7 +419,7 @@ var Post = React.createClass( {
 				<ul className="reader__post-footer">
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />
 					<Share post={ post } />
-					{ ( shouldShowComments ) ? <CommentButton onClick={ this.recordCommentButtonClick } commentCount={ commentCount } /> : null }
+					{ ( shouldShowComments ) ? <CommentButton onClick={ this.handleCommentButtonClick } commentCount={ commentCount } /> : null }
 					{ ( shouldShowLikes ) ? <LikeButton siteId={ likeSiteId } postId={ likePostId } /> : null }
 					<li className="reader__post-options"><PostOptions post={ post } site={ this.state.site } /></li>
 				</ul>
