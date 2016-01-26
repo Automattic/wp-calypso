@@ -5,7 +5,8 @@ import React, { Component } from 'react';
 import defaults from 'lodash/object/defaults';
 import omitBy from 'lodash/omitBy';
 import find from 'lodash/collection/find';
-import QueryString from 'querystring' ;
+import QueryString from 'querystring';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -118,12 +119,21 @@ class WpVideoView extends Component {
 		return `https://videopress.com/embed/${ attrs.videopress_guid }?${ queryString }`;
 	}
 
+	onLoad() {
+		const doc = tinymce.activeEditor.iframeElement.contentDocument;
+		const script = doc.createElement( 'script' );
+		script.src = 'https://videopress.com/videopress-iframe.js';
+		script.type = 'text/javascript';
+		doc.getElementsByTagName( 'head' )[0].appendChild( script );
+	}
+
 	render() {
 		const attrs = this.getShortCodeAttributes();
 
 		return (
 			<div className="wpview-content">
 				<iframe
+					onLoad={ this.onLoad }
 					width = { attrs.w }
 					height = { attrs.h }
 					src={ this.getEmbedUrl( attrs ) }
