@@ -125,6 +125,8 @@
 		"help": true,
 		"support-user": true,
 
+		"show-site-groups": true,
+
 		"notifications2beta": true,
 		"muse": true,
 		"olark" : true,

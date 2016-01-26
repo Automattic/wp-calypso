@@ -16,6 +16,8 @@ var wpcom = require( 'lib/wp' ),
 	Searchable = require( 'lib/mixins/searchable' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	isBusiness = require( 'lib/products-values' ).isBusiness,
+	PreferencesActions = require( 'lib/preferences/actions' ),
+	PreferencesStore = require( 'lib/preferences/store' ),
 	user = require( 'lib/user' )();
 
 /**
@@ -34,6 +36,9 @@ function SitesList() {
 	this.selected = null;
 	this.lastSelected = null;
 	this.propagateChange = this.propagateChange.bind( this );
+
+	PreferencesActions.fetch();
+	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 }
 
 /**
@@ -339,7 +344,7 @@ SitesList.prototype.resetSelectedSite = function() {
 /**
  * Set selected site
  *
- * @param {number} Site ID to update visibility state
+ * @param {number} Site ID
  * @api private
  */
 SitesList.prototype.setSelectedSite = function( siteID ) {
@@ -358,6 +363,50 @@ SitesList.prototype.setSelectedSite = function( siteID ) {
  */
 SitesList.prototype.isSelected = function( site ) {
 	return this.selected === site.slug;
+};
+
+/**
+ * Set recently selected site
+ *
+ * @param {number} Site ID
+ * @api private
+ */
+SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
+	if ( ! siteID ) {
+		return;
+	}
+
+	// do not add duplicates
+	if ( this.recentlySelected.indexOf( siteID ) === -1 ) {
+		this.recentlySelected.unshift( siteID );
+	} else {
+		this.recentlySelected.splice( this.recentlySelected.indexOf( siteID ), 1 );
+		this.recentlySelected.unshift( siteID );
+	}
+
+	if ( this.recentlySelected.length > 3 ) {
+		this.recentlySelected.pop();
+	}
+
+	PreferencesActions.set( 'recentSites', this.recentlySelected );
+
+	this.emit( 'change' );
+};
+
+SitesList.prototype.getRecentlySelected = function() {
+	if ( ! this.recentlySelected.length ) {
+		return false;
+	}
+
+	let sites = [];
+
+	this.recentlySelected.forEach( function( id, index ) {
+		sites[ index ] = this.get().filter( function( site ) {
+			return id === site.ID;
+		}, this )[0];
+	}, this );
+
+	return sites;
 };
 
 /**
@@ -445,6 +494,17 @@ SitesList.prototype.getPublic = function() {
 SitesList.prototype.getVisible = function() {
 	return this.get().filter( function( site ) {
 		return site.visible === true;
+	}, this );
+};
+
+/**
+ * Get sites that are marked as visible and not recently selected
+ *
+ * @api public
+ **/
+SitesList.prototype.getVisibleAndNotRecent = function() {
+	return this.get().filter( function( site ) {
+		return site.visible === true && this.recentlySelected.indexOf( site.ID ) === -1;
 	}, this );
 };
 

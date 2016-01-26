@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	noop = require( 'lodash/utility/noop' ),
 	classNames = require( 'classnames' );
@@ -30,7 +31,8 @@ module.exports = React.createClass( {
 		onClose: React.PropTypes.func,
 		selected: React.PropTypes.string,
 		hideSelected: React.PropTypes.bool,
-		filter: React.PropTypes.func
+		filter: React.PropTypes.func,
+		groups: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -43,7 +45,8 @@ module.exports = React.createClass( {
 			hideSelected: false,
 			selected: null,
 			onClose: noop,
-			onSiteSelect: noop
+			onSiteSelect: noop,
+			groups: false
 		};
 	},
 
@@ -61,6 +64,7 @@ module.exports = React.createClass( {
 		this.closeSelector();
 		this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
+		ReactDom.findDOMNode( this.refs.selector ).scrollTop = 0;
 
 		// ignore mouse events as the default page() click event will handle navigation
 		if ( this.props.siteBasePath && event.type !== 'mouseup' ) {
@@ -106,6 +110,14 @@ module.exports = React.createClass( {
 		return selectedSite === site.domain || selectedSite === site.slug;
 	},
 
+	shouldShowGroups: function() {
+		if ( ! config.isEnabled( 'show-site-groups' ) ) {
+			return false;
+		}
+
+		return this.props.groups && user.get().visible_site_count > 14;
+	},
+
 	renderSiteElements: function() {
 		var allSitesPath = this.props.allSitesPath,
 			sites, siteElements;
@@ -113,7 +125,7 @@ module.exports = React.createClass( {
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
 		} else {
-			sites = this.props.sites.getVisible();
+			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecent() : this.props.sites.getVisible();
 		}
 
 		if ( this.props.filter ) {
@@ -165,7 +177,60 @@ module.exports = React.createClass( {
 			);
 		}
 
-		return siteElements;
+		if ( ! siteElements.length ) {
+			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
+		}
+
+		if ( this.shouldShowGroups() && ! this.state.search ) {
+			return (
+				<div>
+					<span className="site-selector__heading">{ this.translate( 'Sites' ) }</span>
+					{ siteElements }
+				</div>
+			);
+		} else {
+			return siteElements;
+		}
+	},
+
+	renderRecentSites: function() {
+		const sites = this.props.sites.getRecentlySelected();
+
+		if ( ! sites || this.state.search || ! this.shouldShowGroups() ) {
+			return null;
+		}
+
+		const recentSites = sites.map( function( site ) {
+			var siteHref;
+
+			if ( this.props.siteBasePath ) {
+				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
+			}
+
+			const isSelected = this.isSelected( site );
+
+			if ( isSelected && this.props.hideSelected ) {
+				return;
+			}
+
+			return (
+				<Site
+					site={ site }
+					href={ siteHref }
+					key={ 'site-' + site.ID }
+					indicator={ this.props.indicator }
+					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+					isSelected={ isSelected }
+				/>
+			);
+		}, this );
+
+		return (
+			<div>
+				<span className="site-selector__heading">{ this.translate( 'Recent Sites' ) }</span>
+				{ recentSites }
+			</div>
+		);
 	},
 
 	render: function() {
@@ -186,18 +251,18 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ selectorClass } ref="siteSelector">
-				<Search ref="siteSearch" onSearch={ this.onSearch } autoFocus={ this.props.autoFocus } disabled={ ! sitesInitialized } />
-
-				<div className="site-selector__sites">
-					{ siteElements.length ? siteElements :
-						<div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>
-					}
+			<div className={ selectorClass }>
+				<Search
+					ref="siteSearch"
+					onSearch={ this.onSearch }
+					autoFocus={ this.props.autoFocus }
+					disabled={ ! sitesInitialized }
+				/>
+				<div className="site-selector__sites" ref="selector">
+					{ this.renderRecentSites() }
+					{ siteElements }
 				</div>
-
-				{ this.props.showAddNewSite ?
-					this.addNewSite()
-				: null }
+				{ this.props.showAddNewSite && this.addNewSite() }
 			</div>
 		);
 	}

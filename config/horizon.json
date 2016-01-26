@@ -63,6 +63,8 @@
 		"upgrades/credit-cards": true,
 		"upgrades/premium-themes": true,
 
+		"show-site-groups": true,
+
 		"notifications2beta": true,
 		"muse": true,
 		"olark": true,

@@ -100,6 +100,7 @@ module.exports = React.createClass( {
 				user={ this.props.user }
 				autoFocus={ this.state.isAutoFocused }
 				onClose={ this.onClose }
+				groups={ true }
 			/>
 		);
 	}

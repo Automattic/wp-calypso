@@ -15,27 +15,6 @@ var SiteIcon = require( 'components/site-icon' ),
 module.exports = React.createClass( {
 	displayName: 'Site',
 
-	componentDidMount: function() {
-		if ( this.props.isSelected ) {
-			this.scrollIntoView();
-		}
-	},
-
-	componentDidUpdate: function( prevProps, prevState ) {
-		if ( this.props.isSelected && ! prevProps.isSelected ) {
-			this.scrollIntoView();
-		}
-	},
-
-	scrollIntoView: function() {
-		var node = this.refs.site,
-			parentScrollTop = node.offsetTop;
-		if ( node.previousSibling ) {
-			parentScrollTop -= node.previousSibling.offsetHeight / 2;
-		}
-		node.parentNode.scrollTop = parentScrollTop;
-	},
-
 	getDefaultProps: function() {
 		return {
 			// onSelect callback
@@ -98,7 +77,7 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ siteClass } ref="site">
+			<div className={ siteClass }>
 				<a className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					target={ this.props.externalLink && '_blank' }

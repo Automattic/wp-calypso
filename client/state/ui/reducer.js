@@ -29,6 +29,26 @@ export function selectedSiteId( state = null, action ) {
 	return state;
 }
 
+/**
+ * Tracks the four most recently selected site IDs.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function recentlySelectedSiteIds( state = [], action ) {
+	switch ( action.type ) {
+		case SELECTED_SITE_SET:
+			state = [ action.siteId, ...state ];
+			if ( state.length === 3 ) {
+				state.pop();
+			}
+			break;
+	}
+
+	return state;
+}
+
 export function section( state = false, action ) {
 	if ( action.type === SET_SECTION && action.section !== undefined ) {
 		state = action.section;
@@ -63,5 +83,6 @@ export default combineReducers( {
 	hasSidebar,
 	chunkName,
 	selectedSiteId,
+	recentlySelectedSiteIds,
 	editor
 } );

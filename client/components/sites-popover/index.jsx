@@ -19,7 +19,8 @@ module.exports = React.createClass( {
 		context: React.PropTypes.object,
 		visible: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
-		position: React.PropTypes.string
+		position: React.PropTypes.string,
+		groups: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -32,7 +33,8 @@ module.exports = React.createClass( {
 		return {
 			visible: false,
 			onClose: noop,
-			position: 'bottom left'
+			position: 'bottom left',
+			groups: false
 		};
 	},
 
@@ -67,6 +69,7 @@ module.exports = React.createClass( {
 						showAddNewSite={ false }
 						indicator={ false }
 						autoFocus={ ! hasTouch() }
+						groups={ true }
 						onClose={ this.props.onClose } /> : null }
 			</Popover>
 		);

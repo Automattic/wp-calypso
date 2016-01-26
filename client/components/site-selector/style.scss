@@ -109,7 +109,6 @@
 .site-selector__sites {
 	max-height: calc( 100% - 89px );
 	overflow-y: auto;
-	position: relative; // for calculation of offsetTop in <Site>
 }
 
 .site-selector__no-results {
@@ -127,4 +126,16 @@
 // Containers in the list of sites are larger
 .site-selector .site-action {
 	padding-top: 15px;
+}
+
+.site-selector__heading {
+	color: darken( $gray, 10% );
+	display: block;
+	font-weight: 600;
+	font-size: 12px;
+	margin: 16px 8px 6px 14px;
+
+	.count {
+		margin-left: 8px;
+	}
 }

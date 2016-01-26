@@ -28,7 +28,8 @@ module.exports = React.createClass( {
 			href: null,
 
 			// Mark as selected or not
-			isSelected: false
+			isSelected: false,
+			showCount: true
 		};
 	},
 
@@ -36,7 +37,8 @@ module.exports = React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		onSelect: React.PropTypes.func,
 		href: React.PropTypes.string,
-		isSelected: React.PropTypes.bool
+		isSelected: React.PropTypes.bool,
+		showCount: React.PropTypes.bool
 	},
 
 	onSelect: function( event ) {
@@ -59,7 +61,7 @@ module.exports = React.createClass( {
 						<span className="site__title">{ this.translate( 'All My Sites' ) }</span>
 						<span className="site__domain">{ this.translate( 'Manage all my sites' ) }</span>
 					</div>
-					<Count count={ user.get().visible_site_count } />
+					{ this.props.showCount && <Count count={ user.get().visible_site_count } /> }
 				</a>
 			</div>
 		);

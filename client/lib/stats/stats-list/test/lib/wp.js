@@ -66,6 +66,15 @@ module.exports = {
 					siteEndpoints[ endpoint ] = failureRequestStub;
 				}, this );
 				return siteEndpoints;
+			},
+			me: function() {
+				return {
+					settings: function() {
+						return {
+							get: () => {}
+						};
+					}
+				};
 			}
 		};
 	}
