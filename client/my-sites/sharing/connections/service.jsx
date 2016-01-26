@@ -185,21 +185,10 @@ module.exports = React.createClass( {
 		}
 	},
 
-	toggleOpen: function() {
-		var isNowOpen = ! this.state.isOpen;
-		this.setState( { isOpen: isNowOpen } );
-
-		if ( isNowOpen ) {
-			analytics.ga.recordEvent( 'Sharing', 'Expanded Service', this.props.service.name );
-		} else {
-			analytics.ga.recordEvent( 'Sharing', 'Collapsed Service', this.props.service.name );
-		}
-	},
-
 	render: function() {
 		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.name ),
 			connections = serviceConnections.getConnections( this.props.service.name ),
-			elementClass, icon;
+			elementClass;
 
 		elementClass = [
 			'sharing-service',
@@ -209,13 +198,13 @@ module.exports = React.createClass( {
 		].join( ' ' );
 
 		const iconsMap = {
-			'Facebook': 'facebook',
-			'Twitter': 'twitter',
+			Facebook: 'facebook',
+			Twitter: 'twitter',
 			'Google+': 'google-plus-alt',
-			'LinkedIn': 'linkedin',
-			'Tumblr': 'tumblr-alt',
-			'Path': 'path-alt',
-			'Eventbrite': 'eventbrite'
+			LinkedIn: 'linkedin',
+			Tumblr: 'tumblr-alt',
+			Path: 'path-alt',
+			Eventbrite: 'eventbrite'
 		};
 
 		const header = (

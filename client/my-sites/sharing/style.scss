@@ -370,20 +370,12 @@ $color-print: #f8f8f8;
 	}
 }
 
-.sharing-service.is-placeholder .sharing-service__icon,
+.sharing-service.is-placeholder .gridicons-share,
 .sharing-service.is-placeholder .sharing-service__name,
 .sharing-service.is-placeholder .sharing-service__description {
 	background-color: lighten( $gray, 30% );
+	color: lighten( $gray, 30% );
 	animation: loading-fade 1.6s ease-in-out infinite;
-}
-
-.sharing-service.is-placeholder .sharing-service__name,
-.sharing-service.is-placeholder .sharing-service__description {
-	margin-left: 64px;
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 65px;
-	}
 }
 
 .sharing-service.is-placeholder .sharing-service__name {
@@ -391,6 +383,8 @@ $color-print: #f8f8f8;
 	margin-bottom: 4px;
 	height: 22px;
 	width: 20%;
+	position: absolute;
+	left: 80px;
 
 	@include breakpoint( "<660px" ) {
 		width: 30%;
@@ -401,7 +395,10 @@ $color-print: #f8f8f8;
 	margin-top: 8px;
 	margin-bottom: 2px;
 	height: 16px;
-	width: 45%;
+	width: 150%;
+	position: absolute;
+	left: 0px;
+	top: 16px;
 }
 
 .sharing-connection {
