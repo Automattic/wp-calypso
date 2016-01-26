@@ -6,7 +6,7 @@ import { fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import ThemeConstants from '../constants';
+import ActionTypes from '../action-types';
 
 const initialState = fromJS( {
 	previousSiteId: 0,
@@ -17,10 +17,10 @@ const initialState = fromJS( {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ThemeConstants.QUERY_THEMES:
+		case ActionTypes.QUERY_THEMES:
 			return state.set( 'lastParams', action.params );
 
-		case ThemeConstants.INCREMENT_THEMES_PAGE:
+		case ActionTypes.INCREMENT_THEMES_PAGE:
 			return state
 				.set( 'previousSiteId', state.get( 'currentSiteId' ) )
 				.set( 'currentSiteId', action.site.ID )

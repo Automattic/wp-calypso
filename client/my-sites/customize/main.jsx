@@ -20,7 +20,7 @@ var notices = require( 'notices' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	museCustomizations = require( 'lib/customize/muse' ),
 	Actions = require( 'my-sites/customize/actions' ),
-	themeActivated = require( 'lib/themes/actions' ).activated;
+	themeActivated = require( 'state/themes/actions' ).activated;
 
 var mobileWidth = 400,
 	loadingTimer;

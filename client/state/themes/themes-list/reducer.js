@@ -8,11 +8,12 @@ import unique from 'lodash/array/unique';
 /**
  * Internal dependencies
  */
-import ThemeConstants from '../constants';
+import ActionTypes from '../action-types';
+import { PER_PAGE } from './constants';
 
 const defaultQuery = fromJS( {
 	search: '',
-	perPage: ThemeConstants.PER_PAGE,
+	perPage: PER_PAGE,
 	page: 0
 } );
 
@@ -56,10 +57,10 @@ function isActionForLastPage( list, action ) {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case ThemeConstants.QUERY_THEMES:
+		case ActionTypes.QUERY_THEMES:
 			return query( state, action.params );
 
-		case ThemeConstants.RECEIVE_THEMES:
+		case ActionTypes.RECEIVE_THEMES:
 			if (
 				( action.queryParams.id === state.getIn( [ 'query', 'id' ] ) ) ||
 				action.wasJetpack
@@ -73,17 +74,17 @@ export default ( state = initialState, action ) => {
 			}
 			return state;
 
-		case ThemeConstants.INCREMENT_THEMES_PAGE:
+		case ActionTypes.INCREMENT_THEMES_PAGE:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], true )
 				.updateIn( [ 'query', 'page' ], page => page + 1 )
 
-		case ThemeConstants.RECEIVE_THEMES_SERVER_ERROR:
+		case ActionTypes.RECEIVE_THEMES_SERVER_ERROR:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
 				.setIn( [ 'queryState', 'lastPage' ], true );
 
-		case ThemeConstants.ACTIVATED_THEME:
+		case ActionTypes.ACTIVATED_THEME:
 			// The `active` attribute isn't ever really read, but since
 			// `createReducerStore()` only emits a `change` event when the new
 			// state is different from the old one, we need something to change

@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	keyMirror = require( 'key-mirror' );
+import keyMirror from 'key-mirror';
 
-module.exports = assign( keyMirror( {
-
+export default keyMirror( {
 	// Action types
 	RECEIVE_THEMES: null,
 	QUERY_THEMES: null,
@@ -21,10 +19,4 @@ module.exports = assign( keyMirror( {
 	THEME_DETAILS: null,
 	THEME_SUPPORT: null,
 	THEME_CUSTOMIZE: null
-
-} ), {
-
-	// Misc. shared values
-	PER_PAGE: 20,
-
 } );

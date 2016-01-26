@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 import { createStore } from 'redux';
 
-import ThemeConstants from '../constants';
-import reducer from '../reducers/current-theme';
+import ActionTypes from '../../action-types';
+import reducer from '../reducer';
 
 describe( 'current-theme', () => {
 	const SITE = { ID: 77203074 }; // dummy id
 
 	const actionReceiveCurrentTheme = {
-		type: ThemeConstants.RECEIVE_CURRENT_THEME,
+		type: ActionTypes.RECEIVE_CURRENT_THEME,
 		themeId: 'twentyfifteen',
 		themeName: 'Twenty Fifteen',
 		site: SITE

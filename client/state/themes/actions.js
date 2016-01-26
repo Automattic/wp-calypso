@@ -9,12 +9,12 @@ const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no
 /**
  * Internal dependencies
  */
-import ThemeConstants from 'lib/themes/constants';
-import ThemeHelpers from './helpers';
-import { getCurrentTheme } from 'lib/themes/selectors/current-theme';
-import { isJetpack } from 'lib/themes/selectors/themes-last-query';
-import { getQueryParams } from 'lib/themes/selectors/themes-list';
-import { getThemeById } from 'lib/themes/selectors/themes';
+import ActionTypes from './action-types';
+import ThemeHelpers from 'lib/themes/helpers';
+import { getCurrentTheme } from './current-theme/selectors';
+import { isJetpack } from './themes-last-query/selectors';
+import { getQueryParams } from './themes-list/selectors';
+import { getThemeById } from './themes/selectors';
 import wpcom from 'lib/wp';
 
 export function fetchThemes( site ) {
@@ -45,14 +45,14 @@ export function fetchNextPage( site ) {
 
 export function query( params ) {
 	return {
-		type: ThemeConstants.QUERY_THEMES,
+		type: ActionTypes.QUERY_THEMES,
 		params: params
 	};
 }
 
 export function incrementThemesPage( site ) {
 	return {
-		type: ThemeConstants.INCREMENT_THEMES_PAGE,
+		type: ActionTypes.INCREMENT_THEMES_PAGE,
 		site: site
 	}
 }
@@ -63,7 +63,7 @@ export function fetchCurrentTheme( site ) {
 			debug( 'Received current theme', data );
 			if ( ! error ) {
 				dispatch( {
-					type: ThemeConstants.RECEIVE_CURRENT_THEME,
+					type: ActionTypes.RECEIVE_CURRENT_THEME,
 					site: site,
 					themeId: data.id,
 					themeName: data.name,
@@ -77,7 +77,7 @@ export function fetchCurrentTheme( site ) {
 
 export function receiveServerError( error ) {
 	return {
-		type: ThemeConstants.RECEIVE_THEMES_SERVER_ERROR,
+		type: ActionTypes.RECEIVE_THEMES_SERVER_ERROR,
 		error: error
 	};
 }
@@ -102,7 +102,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 		}
 
 		dispatch( {
-			type: ThemeConstants.RECEIVE_THEMES,
+			type: ActionTypes.RECEIVE_THEMES,
 			siteId: site.ID,
 			isJetpack: !! site.jetpack,
 			wasJetpack: isJetpack( getState() ),
@@ -125,7 +125,7 @@ export function activate( theme, site, source = 'unknown' ) {
 		};
 
 		dispatch( {
-			type: ThemeConstants.ACTIVATE_THEME,
+			type: ActionTypes.ACTIVATE_THEME,
 			theme: theme,
 			site: site
 		} );
@@ -144,7 +144,7 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 		}
 
 		defer( () => dispatch( {
-			type: ThemeConstants.ACTIVATED_THEME,
+			type: ActionTypes.ACTIVATED_THEME,
 			theme,
 			site,
 			meta: {
@@ -165,7 +165,7 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 
 export function clearActivated() {
 	return {
-		type: ThemeConstants.CLEAR_ACTIVATED_THEME
+		type: ActionTypes.CLEAR_ACTIVATED_THEME
 	};
 };
 
@@ -174,7 +174,7 @@ export function signup( theme ) {
 		const signupUrl = ThemeHelpers.getSignupUrl( theme );
 
 		dispatch( {
-			type: ThemeConstants.SIGNUP_WITH_THEME,
+			type: ActionTypes.SIGNUP_WITH_THEME,
 			theme
 		} );
 
@@ -190,7 +190,7 @@ export function details( theme, site ) {
 		const detailsUrl = ThemeHelpers.getDetailsUrl( theme, site );
 
 		dispatch( {
-			type: ThemeConstants.THEME_DETAILS,
+			type: ActionTypes.THEME_DETAILS,
 			theme: theme
 		} );
 
@@ -204,7 +204,7 @@ export function support( theme, site ) {
 		const supportUrl = ThemeHelpers.getSupportUrl( theme, site );
 
 		dispatch( {
-			type: ThemeConstants.THEME_SUPPORT,
+			type: ActionTypes.THEME_SUPPORT,
 			theme: theme
 		} );
 
@@ -217,7 +217,7 @@ export function preview( theme, site ) {
 		const previewUrl = ThemeHelpers.getPreviewUrl( theme, site );
 
 		dispatch( {
-			type: ThemeConstants.PREVIEW_THEME,
+			type: ActionTypes.PREVIEW_THEME,
 			site: site
 		} );
 
@@ -230,7 +230,7 @@ export function customize( theme, site ) {
 		const customizeUrl = ThemeHelpers.getCustomizeUrl( theme, site );
 
 		dispatch( {
-			type: ThemeConstants.THEME_CUSTOMIZE,
+			type: ActionTypes.THEME_CUSTOMIZE,
 			site: site.id
 		} );
 
@@ -249,7 +249,7 @@ export function purchase( theme, site, source = 'unknown' ) {
 			page( '/checkout/' + site.slug );
 
 			dispatch( {
-				type: ThemeConstants.PURCHASE_THEME,
+				type: ActionTypes.PURCHASE_THEME,
 				id: theme.id,
 				site: site
 			} );
