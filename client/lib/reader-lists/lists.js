@@ -15,7 +15,7 @@ function keyForList( owner, slug ) {
 }
 
 function getListURL( list ) {
-	return '/read/list/' + encodeURIComponent( list.owner ) + '/' + encodeURIComponent( list.slug ) + '/';
+	return '/read/list/' + encodeURIComponent( list.owner ) + '/' + encodeURIComponent( list.slug );
 }
 
 ListStore = {
