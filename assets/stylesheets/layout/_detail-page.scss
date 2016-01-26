@@ -116,6 +116,10 @@
 		position: relative;
 			top: 2px;
 		margin-right: 16px;
+
+		@include breakpoint( "<660px" ) {
+			margin-right: 8px;
+		}
 	}
 
 	@include breakpoint( "<660px" ) {
