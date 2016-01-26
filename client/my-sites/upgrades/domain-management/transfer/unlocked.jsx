@@ -41,7 +41,8 @@ const Unlocked = React.createClass( {
 		}
 
 		Promise.all( actions ).then( () => {
-			notices.success( this.translate( 'Transfer has been cancelled. Welcome back!' ) );
+			notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
+				'Privacy Protection has been enabled.' ) );
 			if ( this.isMounted() ) {
 				// component might be unmounted since it's state changed to locked
 				this.setState( { submitting: false } );
@@ -89,6 +90,7 @@ const Unlocked = React.createClass( {
 	},
 
 	render() {
+		const { privateDomain, hasPrivacyProtection, manualTransferRequired } = getSelectedDomain( this.props );
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Transfer Domain' ) } className="transfer__section-header">
@@ -105,24 +107,23 @@ const Unlocked = React.createClass( {
 
 				<Card className="transfer-card">
 					<div>
-						<p>
-							{ this.translate( 'We\'ve sent the transfer code for %(domain)s to your email.', {
-								args: {
-									domain: this.props.selectedDomainName
-								}
-							} ) }
+						<p>{ hasPrivacyProtection && ! privateDomain
+								? this.translate( 'Your domain is unlocked and Privacy Protection has been disabled to prepare for transfer.' )
+								: this.translate( 'Your domain is unlocked to prepare for transfer.' ) }
 						</p>
+
 						<p>
-							{ this.translate( 'You must provide your registrar with your domain name and transfer code to complete' +
-								' the transfer process. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-								{
-									components: {
-										learnMoreLink: <a
-											href="https://support.wordpress.com/transfer-domain-registration/"
-											target="_blank"/>
-									}
-								}
-							) }
+							{
+								! manualTransferRequired
+								? this.translate( 'We have sent the transfer authorization code to the domain registrant\'s' +
+									' email address. You must provide your registrar with your domain name and transfer code to complete' +
+									' the transfer process.' )
+								: this.translate( 'The registry for your domain requires a special process for transfers. ' +
+									'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
+									'shortly to help you complete the process.' )
+							} <a
+							href="https://support.wordpress.com/transfer-domain-registration/"
+							target="_blank">{ this.translate( 'Learn More.' ) }</a>
 						</p>
 					</div>
 				</Card>

@@ -65,16 +65,16 @@ export const displayRequestTransferCodeResponseNotice = ( responseError, domainS
 	if ( domainStatus.manualTransferRequired ) {
 		notices.success(
 			translate(
-				'Our support team has been notified and will contact you once we ' +
-				'receive the transfer code for this domain.'
+				'The registry for your domain requires a special process for transfers. ' +
+				'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
+				'shortly to help you complete the process.'
 			)
 		);
 	} else {
 		notices.success(
 			translate(
-				'An email has been sent to contact email address for this domain ' +
-				'containing the Domain Transfer Code. If you don\'t ' +
-				'receive the email shortly, please check your spam folder.'
+				'We have sent the transfer authorization code to the domain registrant\'s email address. ' +
+				'If you don\'t receive the email shortly, please check your spam folder.'
 			)
 		);
 	}

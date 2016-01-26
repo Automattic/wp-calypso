@@ -11,7 +11,6 @@ import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
-import Dialog from 'components/dialog';
 import { displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
 
 const Locked = React.createClass( {
@@ -42,13 +41,7 @@ const Locked = React.createClass( {
 		} );
 	},
 	handleTransferClick() {
-		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
-
-		if ( hasPrivacyProtection && privateDomain ) {
-			this.setState( { showDialog: true } );
-		} else {
-			this.unlockAndRequestTransferCode();
-		}
+		this.unlockAndRequestTransferCode();
 	},
 
 	isManualTransferRequired() {
@@ -67,53 +60,24 @@ const Locked = React.createClass( {
 		);
 	},
 
-	handlePrivacyRemovalCancelClick() {
-		this.setState( { showDialog: false } );
-	},
-
-	handlePrivacyRemovalConfirmClick() {
-		this.setState( { showDialog: false } );
-		this.unlockAndRequestTransferCode();
-	},
-
-	renderPrivacyRemovalDialog() {
-		const buttons = [
-			<Button onClick={ this.handlePrivacyRemovalCancelClick }>{ this.translate( 'Cancel' ) }</Button>,
-			<Button
-				onClick={ this.handlePrivacyRemovalConfirmClick }
-				primary={ true }>{ this.translate( 'Continue with Transfer' ) }</Button>
-		];
-
-		return (
-			<Dialog className="transfer__remove-privacy-dialog" isVisible={ this.state.showDialog } buttons={ buttons }>
-				<h1>{ this.translate( 'Privacy Protection' ) }</h1>
-				<p>{ this.translate( 'To transfer your domain to another registrar, your Privacy Protection will be disabled. ' +
-					'Your contact details will be publicly available during the transfer period.' ) }</p>
-			</Dialog>
-		);
-	},
-
 	render() {
+		const { privateDomain } = getSelectedDomain( this.props );
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Transfer Domain' ) }/>
 				<Card className="transfer-card">
 					<div>
 						<p>
-							{ this.translate(
-								'You can transfer your domain to another domain ' +
-								'registrar at any time by providing them with your a transfer code. ' +
-								'The transfer code will be sent to the domain\'s registered contact email. ' +
-								'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-								{
-									components: {
-										learnMoreLink: <a
-											href="https://support.wordpress.com/transfer-domain-registration/"
-											target="_blank"/>
-
-									}
-								}
-							) }
+							{ privateDomain
+								? this.translate( 'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
+									'Your contact information will be publicly available during the transfer period.' )
+								: this.translate( 'To transfer your domain, we must unlock it.' )
+							} <a
+									href="https://support.wordpress.com/transfer-domain-registration/"
+									target="_blank">{ this.translate( 'Learn More.' ) }</a>
+						</p>
+						<p className="transfer__small-text">
+							<a href="" onClick={ this.handleGiveMeTheCodeClick }>{ this.translate( 'I just want the transfer code for now.' ) }</a>
 						</p>
 						{ this.isManualTransferRequired() && this.renderManualTransferInfo() }
 						<Button
@@ -121,11 +85,10 @@ const Locked = React.createClass( {
 							onClick={ this.handleTransferClick }
 							primary
 							disabled={ this.state.submitting }>
-							{ this.translate( 'Request Transfer Code' ) }
+							{ this.translate( 'Update Settings And Continue' ) }
 						</Button>
 					</div>
 				</Card>
-				{ this.renderPrivacyRemovalDialog() }
 			</div>
 		);
 	}
