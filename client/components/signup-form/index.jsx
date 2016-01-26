@@ -320,6 +320,7 @@ export default React.createClass( {
 						isValid={ ! this.props.disableEmailInput && this.state.validationInitialized && formState.isFieldValid( this.state.form, 'email' ) }
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent } />
+					{ this.emailDisableExplanation() }
 				</ValidationFieldset>
 
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
@@ -398,6 +399,14 @@ export default React.createClass( {
 			return this.globalNotice( this.state.notice );
 		}
 		return false;
+	},
+
+	emailDisableExplanation() {
+		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
+			return (
+				<FormSettingExplanation noValidate={ true }>{ this.props.disableEmailExplanation }</FormSettingExplanation>
+			);
+		}
 	},
 
 	formFooter() {

@@ -37,8 +37,11 @@ export default React.createClass( {
 
 	getLoggedOutTitleForInvite() {
 		let title = '';
+		const { role, forceMatchingEmail, knownUser } = this.props;
 
-		const { role } = this.props;
+		if ( forceMatchingEmail && knownUser ) {
+			return this.translate( 'Sign in to continue:' );
+		}
 
 		switch ( role ) {
 			case 'administrator':

@@ -18,6 +18,8 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'analytics';
 import { errorNotice } from 'state/notices/actions';
+import Card from 'components/card';
+import FormButton from 'components/forms/form-button';
 
 let InviteAcceptLoggedOut = React.createClass( {
 
@@ -38,7 +40,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 	},
 
 	clickSignInLink() {
+		let signInLink = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
+		window.location = signInLink;
 	},
 
 	submitForm( form, userData ) {
@@ -93,10 +97,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 	},
 
 	renderFooterLink() {
-		let logInUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem onClick={ this.clickSignInLink } href={ logInUrl }>
+				<LoggedOutFormLinkItem onClick={ this.clickSignInLink }>
 					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
@@ -116,7 +119,26 @@ let InviteAcceptLoggedOut = React.createClass( {
 		);
 	},
 
+	renderSignInLinkOnly() {
+		return (
+			<div className="sign-up-form">
+				<Card className="logged-out-form">
+					{ this.renderFormHeader() }
+					<Card className="logged-out-form__footer">
+						<FormButton className="signup-form__submit" onClick={ this.clickSignInLink }>
+							{ this.translate( 'Sign In' ) }
+						</FormButton>
+					</Card>
+				</Card>
+			</div>
+		);
+	},
+
 	render() {
+		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
+			return this.renderSignInLinkOnly();
+		}
+
 		return (
 			<div>
 				<SignupForm
@@ -129,7 +151,8 @@ let InviteAcceptLoggedOut = React.createClass( {
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
-					disableEmailInput={ this.props.forceMatchingEmail }/>
+					disableEmailInput={ this.props.forceMatchingEmail }
+					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
 				{ this.state.userData && this.loginUser() }
 			</div>
 		)

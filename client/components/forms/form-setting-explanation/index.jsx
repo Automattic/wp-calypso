@@ -11,7 +11,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<p { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-setting-explanation' ) } >
+			<p { ...omit( this.props, 'className' ) }
+				className={ classnames( this.props.className, 'form-setting-explanation', { 'no-validate': this.props.noValidate } ) } >
 				{ this.props.children }
 			</p>
 		);
