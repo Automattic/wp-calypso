@@ -369,11 +369,9 @@ JetpackSite.prototype.getOption = function( query, callback ) {
 
 		if ( error ) {
 			debug( 'error getting option', error );
-			callback && callback( error );
-			return;
 		}
 
-		callback && callback( null, data );
+		callback && callback( error, data );
 	}.bind( this ) );
 
 	this.emit( 'change' );
@@ -387,11 +385,9 @@ JetpackSite.prototype.setOption = function( query, callback ) {
 
 		if ( error ) {
 			debug( 'error getting option', error );
-			callback && callback( error );
-			return;
 		}
 
-		callback && callback( null, data );
+		callback && callback( error, data );
 	}.bind( this ) );
 
 	this.emit( 'change' );
