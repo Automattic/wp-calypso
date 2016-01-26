@@ -91,12 +91,13 @@ class WpVideoView extends Component {
 		const namedAttrs = shortcode.attrs.named;
 		const videopress_guid = shortcode.attrs.numeric[0];
 
+		const defaultAttrValues = { hd: false, at: 0, defaultLangCode: undefined };
 		const defaultWidth = 640;
 		const defaultHeight = defaultWidth * 9 / 16;
 
 		const videoAttributes = this.getVideoAttributes( shortcode.attrs.numeric[0] ) || {};
 
-		return defaults( {
+		const attrs = defaults( {
 			videopress_guid,
 			w: parseInt( namedAttrs.w, 10 ) || videoAttributes.width,
 			h: parseInt( namedAttrs.h, 10 ) || videoAttributes.height,
@@ -108,9 +109,10 @@ class WpVideoView extends Component {
 		}, {
 			w: defaultWidth,
 			h: defaultHeight,
-			at: 0,
-			defaultLangCode: false
+			at: 0
 		} );
+
+		return omit( attrs, ( value, key ) => defaultAttrValues[key] === value );
 	}
 
 	getEmbedUrl( attrs ) {
