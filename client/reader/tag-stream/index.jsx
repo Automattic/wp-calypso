@@ -50,7 +50,7 @@ var FeedStream = React.createClass( {
 			return this.translate( 'Loading Tag' );
 		}
 
-		return tag.title || tag.slug;
+		return tag.display_name || tag.slug;
 	},
 
 	isSubscribed: function() {

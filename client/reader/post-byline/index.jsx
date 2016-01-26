@@ -32,7 +32,7 @@ var PostByline = React.createClass( {
 
 	renderAuthorName: function() {
 		const post = this.props.post,
-			gravatar = ( <Gravatar user={post.author} size={ 24 } /> ),
+			gravatar = ( <Gravatar user={ post.author } size={ 24 } /> ),
 			authorName = ( <span className="byline__author-name">{ post.author.name }</span> );
 
 		if ( ! post.author.URL ) {
@@ -73,11 +73,11 @@ var PostByline = React.createClass( {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
+						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" nonStandardSize size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">
-					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" size={ 16 } /> { primaryTag.name }</a>
+					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" nonStandardSize size={ 16 } /> { primaryTag.display_name }</a>
 				</li> : null }
 			</ul>
 		);
