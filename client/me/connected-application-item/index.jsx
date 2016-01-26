@@ -142,7 +142,6 @@ module.exports = React.createClass( {
 				<h2>
 					{ this.translate( 'Application Website' ) }
 				</h2>
-
 				<p>
 					<a
 						href={ safeProtocolUrl( this.props.connection.URL ) }
@@ -156,7 +155,7 @@ module.exports = React.createClass( {
 				{ this.translate( '{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}', {
 					components: {
 						detailTitle: <h2 />,
-					detailDescription: <p className="connected-application-item__connection-detail-description" />
+						detailDescription: <p className="connected-application-item__connection-detail-description" />
 					},
 					args: {
 						date: this.moment( this.props.connection.authorized ).format( 'MMM D, YYYY @ h:mm a' )
@@ -169,17 +168,15 @@ module.exports = React.createClass( {
 				<h2>
 					{ this.translate( 'Access Permissions' ) }
 				</h2>
-				<p>
+				<ul className="connected-application-item__connection-detail-descriptions">
 					{ this.props.connection.permissions.map( function( permission ) {
 						return (
-							<span
-								className="connected-application-item__connection-detail-description"
-								key={ 'permission-' + permission.name } >
+							<li key={ 'permission-' + permission.name } >
 								{ permission.description }
-							</span>
+							</li>
 						);
 					}, this ) }
-				</p>
+				</ul>
 			</div>
 		);
 	},
@@ -195,7 +192,7 @@ module.exports = React.createClass( {
 
 	summary: function() {
 		return( <div>{ this.props.isPlaceholder
-		 	? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
+			? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
 			: ( <Button compact onClick={ this.disconnect }>{ this.translate( 'Disconnect' ) }</Button> ) }</div> );
 	},
 

@@ -45,3 +45,12 @@
 	color: $white;
 	font-weight: normal;
 }
+
+.connected-application-item__connection-detail-descriptions {
+	margin-left: 1.5em;
+	margin-top: 4px;
+
+	li {
+		padding: 0;
+	}
+}
