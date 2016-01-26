@@ -8,11 +8,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import MasterbarMinimal from 'layout/masterbar/minimal';
 
 const LayoutLoggedOutDesign = () => (
 	<div className="wp is-section-design has-no-sidebar">
-		<MasterbarLoggedOut />
+		<MasterbarMinimal url="/" />
 		<div id="content" className="wp-content">
 			<div id="primary" className="wp-primary wp-section" />
 			<div id="secondary" className="wp-secondary" />

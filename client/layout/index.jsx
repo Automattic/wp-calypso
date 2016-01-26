@@ -9,7 +9,9 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+var abtest = require( 'lib/abtest' ).abtest,
+	MasterbarCheckout = require( 'layout/masterbar/checkout' ),
+	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
@@ -25,6 +27,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	PollerPool = require( 'lib/data-poller' ),
+	CartData = require( 'components/data/cart' ),
 	KeyboardShortcutsMenu,
 	Layout;
 
@@ -75,6 +78,23 @@ Layout = React.createClass( {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
 	},
 
+	renderMasterbar() {
+		if ( 'checkout' === this.props.section && abtest( 'checkoutMasterbar' ) === 'minimal' ) {
+			return (
+				<CartData>
+					<MasterbarCheckout selectedSite={ this.props.sites.getSelectedSite() } />
+				</CartData>
+			);
+		}
+
+		return (
+			<MasterbarLoggedIn
+				user={ this.props.user }
+				section={ this.props.section }
+				sites={ this.props.sites } />
+		);
+	},
+
 	render: function() {
 		var sectionClass = 'wp layout is-section-' + this.props.section + ' focus-' + this.props.focus.getCurrent(),
 			showWelcome = this.props.nuxWelcome.getWelcome(),
@@ -95,7 +115,7 @@ Layout = React.createClass( {
 		return (
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<MasterbarLoggedIn user={ this.props.user } section={ this.props.section } sites={ this.props.sites } />
+				{ this.renderMasterbar() }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
 				<div id="content" className="wp-content">
 					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">

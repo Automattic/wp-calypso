@@ -172,6 +172,8 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
+		context.store.dispatch( setSection( 'checkout' ) );
+
 		titleActions.setTitle( i18n.translate( 'Checkout' ), {
 			siteID: context.params.domain
 		} );
@@ -208,7 +210,7 @@ module.exports = {
 			basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
-		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
 
 		if ( ! lastTransaction ) {
 			page.redirect( '/plans' );

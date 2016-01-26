@@ -19,6 +19,7 @@ var analytics = require( 'analytics' ),
 	planActions = require( 'state/sites/plans/actions' ),
 	purchasePaths = require( 'me/purchases/paths' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
+	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	upgradesActions = require( 'lib/upgrades/actions' );
 
 module.exports = React.createClass( {
@@ -110,22 +111,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.state.previousCart ) {
-			if ( cartItems.hasDomainRegistration( this.state.previousCart ) ) {
-				redirectTo = '/domains/add/';
-			} else if ( cartItems.hasDomainMapping( this.state.previousCart ) ) {
-				redirectTo = '/domains/add/mapping/';
-			} else if ( cartItems.hasProduct( this.state.previousCart, 'offsite_redirect' ) ) {
-				redirectTo = '/domains/add/site-redirect/';
-			} else if ( cartItems.hasProduct( this.state.previousCart, 'premium_theme' ) ) {
-				redirectTo = '/design/';
-			}
-			redirectTo = redirectTo + this.props.sites.getSelectedSite().slug;
-
-			if ( cartItems.hasRenewalItem( this.state.previousCart ) ) {
-				renewalItem = cartItems.getRenewalItems( this.state.previousCart )[ 0 ];
-
-				redirectTo = purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
-			}
+			redirectTo = getExitCheckoutUrl( this.state.previousCart, this.props.sites.getSelectedSite().slug );
 		}
 
 		page.redirect( redirectTo );

@@ -68,5 +68,13 @@ module.exports = {
 			button: 50
 		},
 		defaultVariation: 'original'
+	},
+	checkoutMasterbar: {
+		datestamp: '20160126',
+		variations: {
+			original: 50,
+			minimal: 50
+		},
+		defaultVariation: 'original'
 	}
 };
