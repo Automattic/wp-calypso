@@ -221,7 +221,7 @@ var RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
+					if ( ! domain.match( /.{3,}\..{2,}/ ) || domain.match( /\.wordpress\.com/i ) ) {
 						return callback();
 					}
 
