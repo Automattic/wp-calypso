@@ -6,7 +6,8 @@ var FollowingStream = require( 'reader/following-stream' ),
 	ReaderTagActions = require( 'lib/reader-tags/actions' ),
 	TagSubscriptions = require( 'lib/reader-tags/subscriptions' ),
 	StreamHeader = require( 'reader/stream-header' ),
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	HeaderBack = require( 'reader/header-back' );
 
 var FeedStream = React.createClass( {
 
@@ -80,6 +81,7 @@ var FeedStream = React.createClass( {
 		}
 		return (
 			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+				{ this.props.showBack && <HeaderBack /> }
 				<StreamHeader
 					isPlaceholder={ ! tag }
 					icon={ <svg className="gridicon gridicon__tag" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M16 7H5c-1.105 0-2 .896-2 2v6c0 1.104.895 2 2 2h11l5-5-5-5z"/></g></svg> }

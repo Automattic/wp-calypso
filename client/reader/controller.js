@@ -58,7 +58,7 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 }
 
 // Listen for route changes and remove the full post dialog when we navigate away from it
-pageNotifier( ( newContext, oldContext ) => {
+pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 	if ( ! oldContext ) {
 		return;
 	}
@@ -76,6 +76,10 @@ pageNotifier( ( newContext, oldContext ) => {
 function removeFullPostDialog() {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
 	__fullPostInstance = null;
+}
+
+function userHasHistory( context ) {
+	return !! context.lastRoute;
 }
 
 function ensureStoreLoading( store, context ) {
@@ -192,7 +196,8 @@ module.exports = {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				suppressSiteNameLink: true
+				suppressSiteNameLink: true,
+				showBack: userHasHistory( context )
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -226,7 +231,8 @@ module.exports = {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				suppressSiteNameLink: true
+				suppressSiteNameLink: true,
+				showBack: userHasHistory( context )
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -338,7 +344,8 @@ module.exports = {
 					analyticsPageTitle,
 					mcKey
 				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				showBack: userHasHistory( context )
 			} ),
 			document.getElementById( 'primary' )
 		);
