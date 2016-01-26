@@ -14,17 +14,25 @@ import { getSelectedDomain } from 'lib/domains';
 import paths from 'my-sites/upgrades/paths';
 
 import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
+import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
 const EditSiteAddress = React.createClass( {
-	onFieldChange( event ) {
+	getInitialState() {
+		return {
+			newAddress: '',
+			newAddressRepeat: ''
+		};
+	},
 
+	onFieldChange( event ) {
+		event.preventDefault();
+		let name = event.target.getAttribute( 'name' );
+		this.setState( { [ name ]: event.target.value } );
 	},
 
 	render() {
@@ -43,13 +51,27 @@ const EditSiteAddress = React.createClass( {
 				<Card>
 					<FormFieldset>
 						<FormLabel htmlFor="new-address">{ this.translate( 'New Address' ) }</FormLabel>
-						<FormTextInputWithAffixes suffix="wordpress.com" id="new-address" name="new-address" type="text" onChange={ this.onFieldChange }/>
+						<FormTextInputWithAffixes
+							suffix="wordpress.com"
+							id="new-address"
+							name="newAddress"
+							type="text"
+							onChange={ this.onFieldChange }/>
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="new-address-repeat">{ this.translate( 'New Address Again' ) }</FormLabel>
-						<FormTextInputWithAffixes suffix="wordpress.com" id="new-address-repeat" name="new-address-repeat" type="text" onChange={ this.onFieldChange }/>
+						<FormLabel htmlFor="new-address-repeat">{ this.translate( 'Confirm New Address' ) }</FormLabel>
+						<FormTextInputWithAffixes
+							suffix="wordpress.com"
+							id="new-address-repeat"
+							name="newAddressRepeat"
+							type="text"
+							onChange={ this.onFieldChange }
+							disabled={ ! this.state.newAddress } />
 					</FormFieldset>
+
+					<FormButton
+						disabled={ ! this.state.newAddress || this.state.newAddress !== this.state.newAddressRepeat } />
 				</Card>
 			</Main>
 		);
