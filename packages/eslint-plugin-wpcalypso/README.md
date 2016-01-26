@@ -1,6 +1,6 @@
 # eslint-plugin-wpcalypso
 
-Custom ESLint rules for the WordPress.com Calypso project.
+Custom ESLint rules for the [WordPress.com Calypso project](https://github.com/automattic/wp-calypso).
 
 ## Installation
 
