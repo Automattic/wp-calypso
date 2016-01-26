@@ -96,7 +96,7 @@
 		"upgrades/premium-themes": true,
 		"upgrades/cart/multi-year-domain": true,
 
-	  "manage/customize": true,
+		"manage/customize": true,
 
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
