@@ -18,8 +18,9 @@ module.exports = {
 		batch.add( '/read/lists' );
 		batch.add( '/read/teams' );
 
+		isFetching = true;
+
 		batch.run( { apiVersion: '1.2' }, function( error, data ) {
-			isFetching = false;
 			if ( error ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_READER_TAG_SUBSCRIPTIONS',
@@ -38,6 +39,7 @@ module.exports = {
 					data: null,
 					error: error
 				} );
+
 				return;
 			}
 
@@ -58,6 +60,9 @@ module.exports = {
 				data: data[ '/read/teams' ],
 				error: error
 			} );
+
+			// have to set this after we dispatch, otherwise we may try to fetch again as a result of the dispatch.
+			isFetching = false;
 		} );
 	}
 };
