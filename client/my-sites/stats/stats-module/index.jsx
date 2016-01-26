@@ -8,17 +8,17 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var toggle = require( './mixin-toggle' ),
-	skeleton = require( './mixin-skeleton' ),
+var toggle = require( '../mixin-toggle' ),
+	skeleton = require( '../mixin-skeleton' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	ErrorPanel = require( './stats-error' ),
-	InfoPanel = require( './info-panel' ),
-	StatsList = require( './stats-list' ),
-	StatsListLegend = require( './stats-list/legend' ),
-	DownloadCsv = require( './stats-download-csv' ),
-	DatePicker = require( './stats-date-picker' ),
+	ErrorPanel = require( '../stats-error' ),
+	InfoPanel = require( '../info-panel' ),
+	StatsList = require( '../stats-list' ),
+	StatsListLegend = require( '../stats-list/legend' ),
+	DownloadCsv = require( '../stats-download-csv' ),
+	DatePicker = require( '../stats-date-picker' ),
 	Card = require( 'components/card' ),
-	StatsModulePlaceholder = require( './stats-module/placeholder' ),
+	StatsModulePlaceholder = require( './placeholder' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
