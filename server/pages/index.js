@@ -40,6 +40,25 @@ sections.forEach( function( section ) {
 	} );
 } );
 
+let languages = initLanguages();
+
+/**
+ * Build a map of language files.
+ */
+function initLanguages() {
+	let langMap = new Map();
+	config( 'languages' ).forEach( ( lang ) => {
+		const path = process.cwd() + `/server/lang/${ lang.langSlug }.json`;
+		try {
+			const langFile = fs.readFileSync( path );
+			langMap.set( lang.langSlug, JSON.parse( langFile.toString() ) );
+		} catch ( e ) {
+			debug( 'Could not read language file: ', path );
+		}
+	} );
+	return langMap;
+}
+
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
  * @param {String} path Path to file we want to hash
@@ -384,8 +403,7 @@ module.exports = function() {
 			renderLoggedInRoute( req, res );
 		} else {
 			i18n.initialize();
-			console.log( ReactInjection.Class.injectMixin( i18n.mixin ) );
-			console.log( 'i18n init done' );
+			ReactInjection.Class.injectMixin( i18n.mixin );
 
 			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
 			const LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
