@@ -80,7 +80,9 @@ let InviteAccept = React.createClass( {
 
 	refreshMatchEmailError() {
 		const { invite, user } = this.state;
-		this.setState( { matchEmailError: invite.forceMatchingEmail && user.email !== invite.sentTo } );
+		this.setState( {
+			matchEmailError: invite && invite.forceMatchingEmail && ( 'follower' !== invite.role ) && ( user.email !== invite.sentTo )
+		} );
 	},
 
 	isInvalidInvite() {
