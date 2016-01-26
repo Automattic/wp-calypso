@@ -41,38 +41,30 @@ module.exports = React.createClass( {
 		};
 	},
 
-	toggleDetail: function() {
-		if ( this.state.showDetail ) {
-			analytics.ga.recordEvent( 'Me', 'Collapsed Connected Application', this.props.connection.title );
-		} else {
-			analytics.ga.recordEvent( 'Me', 'Expanded Connected Application', this.props.connection.title );
-		}
-
-		this.setState( { showDetail: ! this.state.showDetail } );
-	},
-
 	disconnect: function( event ) {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
+		const { connection: { title, ID } } = this.props;
 		event.stopPropagation();
-		analytics.ga.recordEvent( 'Me', 'Clicked on Disconnect Connected Application Link', this.props.connection.title );
-		this.props.revoke( this.props.connection.ID );
+		analytics.ga.recordEvent( 'Me', 'Clicked on Disconnect Connected Application Link', title );
+		this.props.revoke( ID );
 	},
 
 	renderAccessScopeBadge: function() {
+		const { connection: { scope, site } } = this.props;
 		var meta = '';
 
 		if ( ! this.props.connection ) {
 			return;
 		}
 
-		if ( 'auth' === this.props.connection.scope ) {
+		if ( 'auth' === scope ) {
 			meta = this.translate( 'Authentication' );
-		} else if ( 'global' === this.props.connection.scope ) {
+		} else if ( 'global' === scope ) {
 			meta = this.translate( 'Global' );
-		} else if ( this.props.connection.site ) {
-			meta = this.props.connection.site.site_name;
+		} else if ( site ) {
+			meta = site.site_name;
 		}
 
 		if ( meta.length ) {
@@ -85,21 +77,22 @@ module.exports = React.createClass( {
 	},
 
 	renderScopeMessage: function() {
+		const { connection: { scope, site } } = this.props;
 		var message;
 		if ( ! this.props.connection ) {
 			return;
 		}
 
-		if ( 'global' === this.props.connection.scope ) {
+		if ( 'global' === scope ) {
 			message = this.translate(
 				'This connection is allowed to manage all of your blogs on WordPress.com, ' +
 				'including any Jetpack blogs that are connected to your WordPress.com account.'
 			);
-		} else if ( 'auth' === this.props.connection.scope ) {
+		} else if ( 'auth' === scope ) {
 			message = this.translate(
 				'This connection is not allowed to manage any of your blogs.'
 			);
-		} else if ( false !== this.props.connection.site ) {
+		} else if ( false !== site ) {
 			message = this.translate(
 				'This connection is only allowed to access {{siteLink}}%(siteName)s{{/siteLink}}', {
 					components: {
@@ -110,7 +103,7 @@ module.exports = React.createClass( {
 						/>
 					},
 					args: {
-						siteName: this.props.connection.site.site_name
+						siteName: site.site_name
 					}
 				}
 			);
@@ -133,22 +126,21 @@ module.exports = React.createClass( {
 	},
 
 	renderDetail: function() {
+		const { connection: { URL, authorized, permissions } } = this.props;
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
 
 		return (
 			<div>
-				<h2>
-					{ this.translate( 'Application Website' ) }
-				</h2>
+				<h2>{ this.translate( 'Application Website' ) }</h2>
 				<p>
 					<a
-						href={ safeProtocolUrl( this.props.connection.URL ) }
+						href={ safeProtocolUrl( URL ) }
 						onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
 						target="_blank"
 					>
-						{ safeProtocolUrl( this.props.connection.URL ) }
+						{ safeProtocolUrl( URL ) }
 					</a>
 				</p>
 
@@ -158,18 +150,18 @@ module.exports = React.createClass( {
 						detailDescription: <p className="connected-application-item__connection-detail-description" />
 					},
 					args: {
-						date: this.moment( this.props.connection.authorized ).format( 'MMM D, YYYY @ h:mm a' )
+						date: this.moment( authorized ).format( 'MMM D, YYYY @ h:mm a' )
 					}
 				} ) }
-				<p>
+				<div>
 					{ this.renderScopeMessage() }
-				</p>
+				</div>
 
 				<h2>
 					{ this.translate( 'Access Permissions' ) }
 				</h2>
 				<ul className="connected-application-item__connection-detail-descriptions">
-					{ this.props.connection.permissions.map( function( permission ) {
+					{ permissions.map( function( permission ) {
 						return (
 							<li key={ 'permission-' + permission.name } >
 								{ permission.description }
@@ -191,9 +183,13 @@ module.exports = React.createClass( {
 	},
 
 	summary: function() {
-		return( <div>{ this.props.isPlaceholder
-			? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
-			: ( <Button compact onClick={ this.disconnect }>{ this.translate( 'Disconnect' ) }</Button> ) }</div> );
+		return(
+			<div>
+				{ this.props.isPlaceholder
+					? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
+					: ( <Button compact onClick={ this.disconnect }>{ this.translate( 'Disconnect' ) }</Button> )
+				}
+			</div> );
 	},
 
 	render: function() {
