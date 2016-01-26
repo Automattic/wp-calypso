@@ -8,15 +8,15 @@ var express = require( 'express' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
 	superagent = require( 'superagent' ),
 	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server' );
+	ReactDomServer = require( 'react-dom/server' ),
+	ReactInjection = require( 'react/lib/ReactInjection' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+	i18n = require( 'lib/mixins/i18n');
 
-var LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
 var cachedDesignMarkup;
 
 var HASH_LENGTH = 10,
@@ -39,6 +39,25 @@ sections.forEach( function( section ) {
 		chunksByPath[ path ] = section.name;
 	} );
 } );
+
+let languages = initLanguages();
+
+/**
+ * Build a map of language files.
+ */
+function initLanguages() {
+	let langMap = new Map();
+	config( 'languages' ).forEach( ( lang ) => {
+		const path = process.cwd() + `/server/lang/${ lang.langSlug }.json`;
+		try {
+			const langFile = fs.readFileSync( path );
+			langMap.set( lang.langSlug, JSON.parse( langFile.toString() ) );
+		} catch ( e ) {
+			debug( 'Could not read language file: ', path );
+		}
+	} );
+	return langMap;
+}
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -383,6 +402,12 @@ module.exports = function() {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );
 		} else {
+			i18n.initialize();
+			ReactInjection.Class.injectMixin( i18n.mixin );
+
+			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+			const LayoutLoggedOutDesignElement = React.createFactory( LayoutLoggedOutDesign )();
+
 			const context = getDefaultContext( req );
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
