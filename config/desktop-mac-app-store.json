@@ -41,6 +41,7 @@
 		"manage/plugins": false,
 		"manage/plugins/browser": false,
 		"manage/plugins/cache": false,
+		"manage/plugins/setup": false,
 		"manage/customize": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,

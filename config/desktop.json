@@ -40,6 +40,7 @@
 		"manage/plugins": true,
 		"manage/plugins/browser": true,
 		"manage/plugins/cache": false,
+		"manage/plugins/setup": false,
 		"manage/posts": true,
 		"manage/security": true,
 		"manage/sharing": true,

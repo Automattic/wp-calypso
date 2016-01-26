@@ -16,6 +16,11 @@ module.exports = function() {
 		page( '/plugins/browse/:siteOrCategory?', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
 	}
 
+	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
+		page( '/plugins/setup', controller.siteSelection, controller.navigation, pluginsController.setupPlugins );
+		page( '/plugins/setup/:site', controller.siteSelection, controller.navigation, pluginsController.setupPlugins );
+	}
+
 	if ( config.isEnabled( 'manage/plugins' ) ) {
 		page( '/plugins', controller.siteSelection, controller.navigation, pluginsController.plugins.bind( null, 'all' ) );
 		[ 'active', 'inactive', 'updates' ].forEach( function( filter ) {

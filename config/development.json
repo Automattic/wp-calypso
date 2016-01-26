@@ -57,6 +57,7 @@
 		"manage/plugins/browser": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/plugins/cache": false,
+		"manage/plugins/setup": true,
 
 		"manage/export": true,
 		"manage/security": true,

@@ -32,6 +32,7 @@
 		"manage/plugins": true,
 		"manage/plugins/browser": true,
 		"manage/plugins/cache": false,
+		"manage/plugins/setup": false,
 		"manage/posts": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/delete-site": true,
