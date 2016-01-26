@@ -142,6 +142,7 @@ const RemovePurchase = React.createClass( {
 		}
 
 		let includedDomainText;
+
 		if ( isPlan( purchase ) && hasIncludedDomain( purchase ) ) {
 			includedDomainText = (
 				<p>
@@ -159,7 +160,7 @@ const RemovePurchase = React.createClass( {
 		}
 
 		return (
-			<span>
+			<div>
 				<p>
 					{
 						this.translate( 'Are you sure you want to remove %(productName)s from {{em}}%(siteSlug)s{{/em}}?', {
@@ -168,10 +169,14 @@ const RemovePurchase = React.createClass( {
 						} )
 					}
 					{ ' ' }
-					{ this.translate( 'By removing it, you will not be able to reuse it again without purchasing a new subscription.' ) }
+					{ this.translate( 'You will not be able to reuse it again without purchasing a new subscription.', {
+						context: "Removal confirmation on Manage Purchase page",
+						comment: "'it' refers to a product purchased by a user"
+					} ) }
 				</p>
+
 				{ includedDomainText }
-			</span>
+			</div>
 		);
 	},
 
