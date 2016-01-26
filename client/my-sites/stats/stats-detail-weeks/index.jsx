@@ -24,12 +24,15 @@ export default React.createClass( {
 	],
 
 	propTypes: {
-		storeData: PropTypes.object.isRequired
+		response: PropTypes.object.isRequired
 	},
 
 	render() {
-		const data = this.props.storeData;
-		const post = data.post;
+		const { response } = this.props;
+		const { data } = response;
+		const post = response && response.post
+			? response.post
+			: {};
 		const { showInfo } = this.state;
 		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
 		let tableHeader,
@@ -40,12 +43,12 @@ export default React.createClass( {
 		const classes = {
 			'is-loading': this.props.isLoading,
 			'is-showing-info': showInfo,
-			'has-no-data': isEmpty( this.props.storeData )
+			'has-no-data': isEmpty( data )
 		};
 
-		if ( data && data.weeks ) {
+		if ( response && response.weeks ) {
 			const publishDate = post.post_date ? this.moment( post.post_date ) : null;
-			highest = data.highest_week_average;
+			highest = response.highest_week_average;
 			tableHeader = (
 				<thead>
 					<tr className="top">
@@ -63,7 +66,7 @@ export default React.createClass( {
 				</thead>
 			);
 
-			tableRows = data.weeks.map( function( week, index ) {
+			tableRows = response.weeks.map( function( week, index ) {
 				let cells = [];
 				let iconType;
 				let lastDay = week.days[ week.days.length - 1 ];

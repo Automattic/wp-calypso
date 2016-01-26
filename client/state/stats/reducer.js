@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { pick } from 'lodash/object';
 
 /**
  * Internal dependencies
  */
 import { SITE_STATS_REQUEST, SITE_STATS_REQUEST_FAILURE, SITE_STATS_RECEIVE } from 'state/action-types';
 import { isPostIdEndpoint } from 'lib/stats/endpoints';
-import { getCompositeKey } from './utils';
+import { getCompositeKey, isDefined } from './utils';
 import statsParserFactory from 'lib/stats/stats-list/stats-parser';
 const statsParser = statsParserFactory();
 
@@ -24,14 +25,14 @@ function parseAction( action ) {
 		? { post: postID || options }
 		: options;
 
-	return {
-		domain,
+	const data = {
 		options: _options,
 		postID: parseInt( isPostIdEndpoint( statType ) ? options : postID, 10 ) || 0,
-		siteID: _siteID,
-		response,
-		statType
+		siteID: _siteID
 	}
+
+	const optionalData = pick( { domain, response, statType }, isDefined );
+	return Object.assign( {}, data, optionalData );
 }
 
 /**
@@ -48,7 +49,7 @@ export function items( state = {}, action ) {
 			const { response, statType } = parsedAction;
 
 			// simulate the "this" context in the StatsList
-			// @TODO change the response parsers to take arguments instead of throwing contxt around
+			// @TODO change the response parsers to take arguments instead of throwing context around
 			const parsedResponse = typeof statsParser[statType] === 'function'
 				? statsParser[statType].call( parsedAction, response )
 				: response;

@@ -18,34 +18,22 @@ export default React.createClass( {
 	displayName: 'StatsPostDetailMonths',
 
 	propTypes: {
-		storeData: PropTypes.object.isRequired
+		response: PropTypes.object.isRequired
 	},
 
 	mixins: [
 		toggle( 'PostMonth' )
 	],
 
-	getInitialState() {
-		return {
-			noData: isEmpty( this.props.storeData )
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			noData: isEmpty( nextProps.storeData )
-		} );
-	},
-
 	render() {
-		const { title, total, dataKey } = this.props;
-		const { showInfo, noData } = this.state;
-		const data = this.props.storeData;
+		const { title, total, dataKey, response } = this.props;
+		const { showInfo } = this.state;
+		const { data } = response;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
 		const classes = {
 			'is-loading': this.props.isLoading,
 			'is-showing-info': showInfo,
-			'has-no-data': noData
+			'has-no-data': isEmpty( data )
 		};
 
 		let tableHeader;
@@ -53,7 +41,7 @@ export default React.createClass( {
 		let tableBody;
 		let highest;
 
-		if ( data && data[ dataKey ] ) {
+		if ( response && response[ dataKey ] ) {
 			tableHeader = (
 				<thead>
 					<tr className="top">
@@ -75,10 +63,10 @@ export default React.createClass( {
 				</thead>
 			);
 
-			highest = 'years' === dataKey ? data.highest_month : data.highest_day_average;
+			highest = 'years' === dataKey ? response.highest_month : response.highest_day_average;
 
-			tableRows = Object.keys( data[ dataKey ] ).map( function( i ) {
-				const year = data[ dataKey ][ i ];
+			tableRows = Object.keys( response[ dataKey ] ).map( function( i ) {
+				const year = response[ dataKey ][ i ];
 				const cells = [];
 
 				cells.push( <th key={ 'header' + i }>{ i }</th> );

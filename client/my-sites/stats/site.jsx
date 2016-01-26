@@ -6,6 +6,7 @@ var page = require( 'page' ),
 	store = require( 'store' ),
 	debug = require( 'debug' )( 'calypso:stats:site' ),
 	url = require( 'url' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

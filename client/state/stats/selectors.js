@@ -3,10 +3,9 @@ import { getCompositeKey, normalizeParams } from './utils';
 export function getStatsItem( state, params ) {
 	const _params = normalizeParams( params );
 	const key = getCompositeKey( _params );
-	const data = key
+	return ( key && state.stats.items[key] )
 		? state.stats.items[key]
 		: {};
-	return { data };
 }
 
 export function isStatsItemFetching( state, params ) {

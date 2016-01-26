@@ -19,25 +19,25 @@ module.exports = React.createClass( {
 	displayName: 'StatsSummaryChart',
 
 	propTypes: {
-		storeData: React.PropTypes.object.isRequired,
+		response: React.PropTypes.object.isRequired,
 		labelKey: React.PropTypes.string.isRequired,
 		dataKey: React.PropTypes.string.isRequired
 	},
 
 	getInitialState: function() {
-		const chartData = this.props.storeData.data || [];
+		const chartData = this.props.response.data || [];
 		return {
 			selectedBar: chartData.length ? chartData[ chartData.length - 1 ] : null
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		const chartData = this.props.storeData.data || [];
+		const chartData = this.props.response.data || [];
 		let selectedBar = this.state.selectedBar;
 
 		// Always default to the last bar being selected
 		if ( ! selectedBar && chartData.length ) {
-			selectedBar = nextProps.storeData[ chartData.length - 1 ];
+			selectedBar = nextProps.response.data[ chartData.length - 1 ];
 		}
 
 		this.setState( {
@@ -46,7 +46,7 @@ module.exports = React.createClass( {
 	},
 
 	barClick: function( bar ) {
-		const chartData = this.props.storeData.data || [];
+		const chartData = this.props.response.data || [];
 		const selectedBar = chartData.filter( function( data ) {
 			return isEqual( data, bar.data );
 		}, this ).shift();
@@ -89,7 +89,7 @@ module.exports = React.createClass( {
 	},
 
 	buildChartData: function() {
-		const chartData = this.props.storeData.data || [];
+		const chartData = this.props.response.data || [];
 
 		let formattedData = chartData.map( function( record ) {
 			var chartDataItem,

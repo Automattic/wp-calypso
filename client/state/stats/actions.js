@@ -3,6 +3,7 @@
  */
 import { SITE_STATS_RECEIVE, SITE_STATS_REQUEST, SITE_STATS_REQUEST_FAILURE } from 'state/action-types';
 import { isDocumentedEndpoint, isUndocumentedEndpoint, isPostIdEndpoint, getValidEndpoints } from 'lib/stats/endpoints';
+import { getStatsTypesByModule } from './utils';
 import wpcom from 'lib/wp';
 
 /**
@@ -23,13 +24,25 @@ function receiveSiteStats( payload ) {
 	};
 }
 
+export function createFetchActionsForModule( module, activeFilter, endDate = null, extraOptions = {} ) {
+	const standardOptions = {
+		period: activeFilter.period,
+		date: endDate,
+		max: 0
+	};
+	const options = Object.assign( {}, standardOptions, extraOptions );
+	const actions = [];
+	const statTypes = getStatsTypesByModule( module );
+
+	statTypes.forEach( ( statType ) => {
+		actions.push( { statType, options } );
+	} );
+
+	return actions;
+}
+
 export function fetchSiteStats( data ) {
-	const {
-		domain,
-		options,
-		siteID,
-		statType
-	} = data;
+	const { domain, options, siteID, statType } = data;
 	const siteIdOrDomain = siteID || domain;
 
 	if ( ! siteIdOrDomain ) {

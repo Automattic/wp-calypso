@@ -10,6 +10,7 @@ import { saveAs } from 'browser-filesaver';
 import titlecase from 'to-title-case';
 import analytics from 'analytics';
 import Gridicon from 'components/gridicon';
+import { csvData } from 'state/stats/utils';
 
 module.exports = React.createClass( {
 	displayName: 'StatsDownloadCsv',
@@ -18,14 +19,13 @@ module.exports = React.createClass( {
 		site: PropTypes.object.isRequired,
 		path: PropTypes.string.isRequired,
 		period: PropTypes.object.isRequired,
-		dataList: PropTypes.object.isRequired
+		response: PropTypes.object.isRequired
 	},
 
 	downloadCsv( event ) {
 		event.preventDefault();
-		const { dataList, site, path, period } = this.props;
-		const data = dataList.csvData();
-
+		const { response, site, path, period } = this.props;
+		const data = csvData( response );
 		const fileName = [
 			site.slug,
 			path,
@@ -36,11 +36,11 @@ module.exports = React.createClass( {
 
 		analytics.ga.recordEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
-		const csvData = data.map( ( row ) => {
+		const _csvData = data.map( ( row ) => {
 			return row.join( ',' );
 		} ).join( '\n' );
 
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new Blob( [ _csvData ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	},

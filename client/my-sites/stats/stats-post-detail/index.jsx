@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-//import observe from 'lib/mixins/data-observe';
 import Emojify from 'components/emojify';
 import SummaryChart from '../stats-summary-chart';
 import PostMonths from '../stats-detail-months';
@@ -54,9 +53,12 @@ const StatsPostDetail = React.createClass( {
 	render() {
 		let title;
 
-		const { statsItem } = this.props;
-		const response = statsItem.data || {};
-		const post = response.post || {};
+		const { moduleState } = this.props;
+		const { statsPostViews } = moduleState;
+		const response = statsPostViews.response
+			? statsPostViews.response
+			: { post: {}, data: [] };
+		const { post } = response;
 		const postOnRecord = post && post.post_title !== null;
 		const isLoading = ! postOnRecord && this.props.isFetching;
 
@@ -75,7 +77,7 @@ const StatsPostDetail = React.createClass( {
 				</HeaderCake>
 
 				<SummaryChart
-					storeData={ response }
+					response={ response }
 					isLoading={ isLoading }
 					key="chart"
 					barClick={ this.props.barClick }
@@ -86,7 +88,7 @@ const StatsPostDetail = React.createClass( {
 					tabLabel={ this.translate( 'Views' ) } />
 
 				<PostMonths
-					storeData={ response }
+					response={ response }
 					isLoading={ isLoading }
 					dataKey="years"
 					title={ this.translate( 'Months and Years' ) }
@@ -94,14 +96,14 @@ const StatsPostDetail = React.createClass( {
 				/>
 
 				<PostMonths
-					storeData={ response }
+					response={ response }
 					isLoading={ isLoading }
 					dataKey="averages"
 					title={ this.translate( 'Average per Day' ) }
 					total={ this.translate( 'Overall' ) }
 				/>
 
-				<PostWeeks storeData={ response } />
+				<PostWeeks response={ response } />
 			</div>
 		);
 	}
@@ -110,19 +112,14 @@ const StatsPostDetail = React.createClass( {
 export default connect(
 	function mapStateToProps( state, ownProps ) {
 		const { siteID, postID, statType } = ownProps;
-		const params = {
-			siteID,
-			statType,
-			options: {
-				post: postID
+		const params = { siteID, statType, options: { post: postID } };
+		const moduleState = {
+			[ statType ]: {
+				response: getStatsItem( state, params ),
+				isFetching: isStatsItemFetching( state, params )
 			}
 		};
-		const statsItem = getStatsItem( state, params );
-		const isFetching = isStatsItemFetching( state, params )
 
-		return {
-			statsItem,
-			isFetching
-		};
+		return { moduleState };
 	}
 )( StatsPostDetail );
