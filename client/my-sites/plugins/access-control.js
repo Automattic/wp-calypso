@@ -119,7 +119,7 @@ const hasRestrictedAccess = ( site ) => {
 		}
 	}
 
-	if ( ! sites.hasSiteWithPlugins() && ! site ) {
+	if ( ! sites.hasSiteWithPlugins() ) {
 		pluginPageError = getWpcomPluginPageError();
 	}
 
