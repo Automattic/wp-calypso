@@ -55,6 +55,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 
 		this.props.createAccount(
 			userData,
+			this.props.invite,
 			createAccountCallback
 		);
 	},

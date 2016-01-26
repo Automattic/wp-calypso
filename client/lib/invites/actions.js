@@ -56,10 +56,12 @@ export function fetchInvite( siteId, inviteKey ) {
 	} );
 }
 
-export function createAccount( userData, callback ) {
+export function createAccount( userData, invite, callback ) {
+	const send_verification_email = ( userData.email !== invite.sentTo );
+
 	return dispatch => {
 		wpcom.undocumented().usersNew(
-			Object.assign( {}, userData, { validate: false } ),
+			Object.assign( {}, userData, { validate: false, send_verification_email } ),
 			( error, response ) => {
 				const bearerToken = response && response.bearer_token;
 				if ( error ) {
