@@ -9,7 +9,11 @@ import moment from 'moment';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { isDomainMapping, isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+import { isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+
+function getIncludedDomain( purchase ) {
+	return purchase.includedDomain;
+}
 
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
@@ -53,6 +57,10 @@ function getName( purchase ) {
 
 function getSubscriptionEndDate( purchase ) {
 	return purchase.expiryMoment.format( 'LL' );
+}
+
+function hasIncludedDomain( purchase ) {
+	return Boolean( purchase.includedDomain );
 }
 
 function hasPaymentMethod( purchase ) {
@@ -210,9 +218,11 @@ function showCreditCardExpiringWarning( purchase ) {
 
 export {
 	creditCardExpiresBeforeSubscription,
+	getIncludedDomain,
 	getName,
 	getPurchasesBySite,
 	getSubscriptionEndDate,
+	hasIncludedDomain,
 	hasPaymentMethod,
 	hasPrivateRegistration,
 	isCancelable,
