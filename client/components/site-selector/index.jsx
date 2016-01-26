@@ -12,7 +12,6 @@ var React = require( 'react' ),
  */
 var AllSites = require( 'my-sites/all-sites' ),
 	Button = require( 'components/button' ),
-	Count = require( 'components/count' ),
 	Gridicon = require( 'components/gridicon' ),
 	Site = require( 'my-sites/site' ),
 	SitePlaceholder = require( 'my-sites/site/placeholder' ),
@@ -166,7 +165,6 @@ module.exports = React.createClass( {
 					href={ allSitesPath }
 					onSelect={ this.onSiteSelect.bind( this, null ) }
 					isSelected={ ! this.props.sites.selected }
-					count={ false }
 				/>
 			);
 		}
@@ -178,10 +176,7 @@ module.exports = React.createClass( {
 		if ( this.props.groups && ! this.state.search ) {
 			return (
 				<div>
-					<span className="site-selector__heading">
-						{ this.translate( 'All Sites' ) }
-						<Count count={ user.get().visible_site_count } />
-					</span>
+					<span className="site-selector__heading">{ this.translate( 'Sites' ) }</span>
 					{ siteElements }
 				</div>
 			);
@@ -213,7 +208,7 @@ module.exports = React.createClass( {
 			return (
 				<Site
 					site={ site }
-					href={ this.props.siteBasePath ? siteHref : null }
+					href={ siteHref }
 					key={ 'site-' + site.ID }
 					indicator={ this.props.indicator }
 					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
@@ -249,16 +244,17 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ selectorClass }>
-				<Search ref="siteSearch" onSearch={ this.onSearch } autoFocus={ this.props.autoFocus } disabled={ ! sitesInitialized } />
-
+				<Search
+					ref="siteSearch"
+					onSearch={ this.onSearch }
+					autoFocus={ this.props.autoFocus }
+					disabled={ ! sitesInitialized }
+				/>
 				<div className="site-selector__sites" ref="selector">
 					{ this.renderRecentSites() }
 					{ siteElements }
 				</div>
-
-				{ this.props.showAddNewSite ?
-					this.addNewSite()
-				: null }
+				{ this.props.showAddNewSite && this.addNewSite() }
 			</div>
 		);
 	}

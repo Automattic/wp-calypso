@@ -28,7 +28,8 @@ module.exports = React.createClass( {
 			href: null,
 
 			// Mark as selected or not
-			isSelected: false
+			isSelected: false,
+			showCount: true
 		};
 	},
 

@@ -30,7 +30,7 @@ export function selectedSiteId( state = null, action ) {
 }
 
 /**
- * Tracks the currently selected site ID.
+ * Tracks the four most recently selected site IDs.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -40,7 +40,7 @@ export function setRecentlySelectedSiteId( state = [], action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
 			state = [ action.siteId, ...state ];
-			if ( state.length > 4 ) {
+			if ( state.length === 4 ) {
 				state.pop();
 			}
 			break;
