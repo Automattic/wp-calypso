@@ -233,7 +233,7 @@ module.exports = React.createClass( {
 			return (
 				<li className={ this.itemLinkClass( '/tag/' + tag.slug, { 'sidebar-dynamic-menu__tag': true } ) } key={ tag.ID } >
 					<a href={ tag.URL }>
-						{ tag.title || tag.slug }
+						{ tag.display_name || tag.slug }
 					</a>
 					{ tag.ID !== 'pending' ? <button className="sidebar-dynamic-menu__action" data-tag-slug={ tag.slug } onClick={ this.unfollowTag }>
 						<Gridicon icon="cross" size={ 24 } />
