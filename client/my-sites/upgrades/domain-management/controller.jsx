@@ -25,6 +25,7 @@ import SitesList from 'lib/sites-list';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import titleActions from 'lib/screen-title/actions';
+import EditSiteAddressData from 'components/data/domain-management/edit-site-address';
 
 const productsList = new ProductsList(),
 	sites = new SitesList();
@@ -303,7 +304,23 @@ module.exports = {
 			<TransferData
 				component={ DomainManagement.Transfer }
 				selectedDomainName={ context.params.domain }
-				sites={ sites } />
+				sites={ sites }/>
+		);
+	},
+
+	domainManagementEditSiteAddress( context ) {
+		setTitle(
+			i18n.translate( 'Domain Management' ) + ' › ' + i18n.translate( 'Edit Site Address' ),
+			context
+		);
+
+		renderPage(
+			<EditSiteAddressData
+				component={ DomainManagement.EditSiteAddress }
+				selectedDomainName={ context.params.domain }
+				sites={ sites }
+				context={ context }
+				/>
 		);
 	}
 };

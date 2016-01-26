@@ -92,6 +92,7 @@
 		"upgrades/domain-management/name-servers": true,
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": true,
+		"upgrades/domain-management/edit-site-address": true,
 		"upgrades/domain-search": true,
 		"upgrades/premium-themes": true,
 

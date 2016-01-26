@@ -290,4 +290,15 @@ module.exports = function() {
 			upgradesController.checkout
 		);
 	}
+
+	if ( config.isEnabled( 'upgrades/domain-management/edit-site-address' ) ) {
+		page(
+			paths.domainManagementEditSiteAddress( ':site', ':domain' ),
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( '/domains' ),
+			controller.jetPackWarning,
+			domainManagementController.domainManagementEditSiteAddress
+		);
+	}
 };
