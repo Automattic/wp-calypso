@@ -21,6 +21,7 @@ export default React.createClass( {
 		redirect: React.PropTypes.string.isRequired,
 		disabled: React.PropTypes.bool,
 		linkDisplay: React.PropTypes.bool,
+		isMock: React.PropTypes.bool,
 		text: React.PropTypes.string
 	},
 
@@ -48,6 +49,9 @@ export default React.createClass( {
 			scary: true,
 			onClick: ( event ) => {
 				event.preventDefault();
+				if ( this.props.isMock ) {
+					return;
+				}
 				this.refs.dialog.open();
 				analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 			}
