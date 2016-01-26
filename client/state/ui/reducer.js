@@ -36,11 +36,11 @@ export function selectedSiteId( state = null, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function setRecentlySelectedSiteId( state = [], action ) {
+export function recentlySelectedSiteIds( state = [], action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
 			state = [ action.siteId, ...state ];
-			if ( state.length === 4 ) {
+			if ( state.length === 3 ) {
 				state.pop();
 			}
 			break;
@@ -83,6 +83,6 @@ export default combineReducers( {
 	hasSidebar,
 	chunkName,
 	selectedSiteId,
-	setRecentlySelectedSiteId,
+	recentlySelectedSiteIds,
 	editor
 } );

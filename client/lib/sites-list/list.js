@@ -384,7 +384,7 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 		this.recentlySelected.unshift( siteID );
 	}
 
-	if ( this.recentlySelected.length > 4 ) {
+	if ( this.recentlySelected.length > 3 ) {
 		this.recentlySelected.pop();
 	}
 

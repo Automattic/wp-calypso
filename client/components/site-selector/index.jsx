@@ -110,6 +110,10 @@ module.exports = React.createClass( {
 		return selectedSite === site.domain || selectedSite === site.slug;
 	},
 
+	shouldShowGroups: function() {
+		return this.props.groups && user.get().visible_site_count > 11;
+	},
+
 	renderSiteElements: function() {
 		var allSitesPath = this.props.allSitesPath,
 			sites, siteElements;
@@ -173,7 +177,7 @@ module.exports = React.createClass( {
 			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
 		}
 
-		if ( this.props.groups && ! this.state.search ) {
+		if ( this.shouldShowGroups() && ! this.state.search ) {
 			return (
 				<div>
 					<span className="site-selector__heading">{ this.translate( 'Sites' ) }</span>
@@ -188,7 +192,7 @@ module.exports = React.createClass( {
 	renderRecentSites: function() {
 		const sites = this.props.sites.getRecentlySelected();
 
-		if ( ! sites || this.state.search || ! this.props.groups || user.get().visible_site_count < 6 ) {
+		if ( ! sites || this.state.search || ! this.shouldShowGroups() ) {
 			return null;
 		}
 
