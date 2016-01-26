@@ -11,17 +11,19 @@ import React from 'react';
 import analytics from 'analytics';
 import Button from 'components/button';
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import { cartItems } from 'lib/cart-values';
 import config from 'config';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { oldShowcaseUrl } from 'lib/themes/helpers';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
-import Notice from 'components/notice';
+import RemovePurchase from '../remove-purchase';
 import titles from 'me/purchases/titles';
 import VerticalNavItem from 'components/vertical-nav/item';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -36,7 +38,6 @@ import {
 	isPaidWithCreditCard,
 	isRedeemable,
 	isRefundable,
-	isRemovable,
 	isRenewable,
 	isRenewing,
 	isIncludedWithPlan,
@@ -60,7 +61,8 @@ const ManagePurchase = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		destinationType: React.PropTypes.string
+		destinationType: React.PropTypes.string,
+		user: React.PropTypes.object.isRequired
 	},
 
 	componentWillMount() {
@@ -463,32 +465,6 @@ const ManagePurchase = React.createClass( {
 		}
 	},
 
-	renderRemovePurchaseInformation() {
-		const purchase = getPurchase( this.props ),
-			contactSupportUrl = 'https://support.wordpress.com/contact/';
-
-		if ( ! isRemovable( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<div className="manage-purchase__remove-box">
-				<em className="manage-purchase__content manage-purchase__remove-text">{ this.translate(
-					'{{strong}}Looking to remove this purchase?{{/strong}} Please {{a}}contact support{{/a}} to remove %(purchaseName)s from your account.',
-					{
-						args: {
-							purchaseName: getName( purchase )
-						},
-						components: {
-							a: <a href={ contactSupportUrl } target="_blank" />,
-							strong: <strong />
-						}
-					}
-				) }</em>
-			</div>
-		);
-	},
-
 	renderEditPaymentMethodNavItem() {
 		const purchase = getPurchase( this.props ),
 			{ id, payment } = purchase;
@@ -500,9 +476,9 @@ const ManagePurchase = React.createClass( {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			return (
-				<VerticalNavItem path={ path }>
+				<CompactCard href={ path }>
 					{ this.translate( 'Edit Payment Method' ) }
-				</VerticalNavItem>
+				</CompactCard>
 			);
 		}
 
@@ -522,13 +498,13 @@ const ManagePurchase = React.createClass( {
 		};
 
 		return (
-			<VerticalNavItem path={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
 				{
 					isRefundable( purchase )
 					? this.translate( 'Cancel and Refund %(purchaseName)s', translateArgs )
 					: this.translate( 'Cancel %(purchaseName)s', translateArgs )
 				}
-			</VerticalNavItem>
+			</CompactCard>
 		);
 	},
 
@@ -541,9 +517,9 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<VerticalNavItem path={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
 				{ this.translate( 'Cancel Private Registration' ) }
-			</VerticalNavItem>
+			</CompactCard>
 		);
 	},
 
@@ -559,7 +535,6 @@ const ManagePurchase = React.createClass( {
 			price,
 			renewsOrExpiresOnLabel,
 			renewsOrExpiresOn,
-			removePurchaseInformation,
 			renewButton,
 			expiredRenewNotice,
 			editPaymentMethodNavItem,
@@ -584,7 +559,6 @@ const ManagePurchase = React.createClass( {
 			price = this.renderPrice();
 			renewsOrExpiresOnLabel = this.renderRenewsOrExpiresOnLabel();
 			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
-			removePurchaseInformation = this.renderRemovePurchaseInformation();
 			renewButton = this.renderRenewButton();
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
@@ -604,6 +578,7 @@ const ManagePurchase = React.createClass( {
 							{ productLink }
 						</span>
 					</header>
+
 					<ul className="manage-purchase__meta">
 						<li>
 							<em className="manage-purchase__content manage-purchase__detail-label">
@@ -619,15 +594,19 @@ const ManagePurchase = React.createClass( {
 						</li>
 						{ this.renderPaymentDetails() }
 					</ul>
-					{ removePurchaseInformation }
+
 					{ renewButton }
 				</Card>
 
 				{ expiredRenewNotice }
-
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
 				{ cancelPrivateRegistrationNavItem }
+
+				<RemovePurchase
+					selectedSite={ this.props.selectedSite }
+					selectedPurchase={ this.props.selectedPurchase }
+					user={ this.props.user } />
 			</div>
 		);
 	},

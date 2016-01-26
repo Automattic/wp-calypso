@@ -285,4 +285,12 @@ UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
+UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
+	debug( '/me/purchases/{purchaseId}/delete' );
+
+	this.wpcom.req.post( {
+		path: `/me/purchases/${purchaseId}/delete`
+	}, fn );
+};
+
 module.exports = UndocumentedMe;

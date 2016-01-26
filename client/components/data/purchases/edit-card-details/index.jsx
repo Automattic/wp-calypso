@@ -12,14 +12,16 @@ import observe from 'lib/mixins/data-observe';
 import PurchasesStore from 'lib/purchases/store';
 import StoreConnection from 'components/data/store-connection';
 import StoredCardsStore from 'lib/purchases/stored-cards/store';
+import userFactory from 'lib/user';
 
 /**
  * Module variables
  */
 const stores = [
-	PurchasesStore,
-	StoredCardsStore
-];
+		PurchasesStore,
+		StoredCardsStore
+	],
+	user = userFactory();
 
 function getStateFromStores( props ) {
 	return {
@@ -51,7 +53,7 @@ const EditCardDetailsData = React.createClass( {
 
 	componentWillMount() {
 		fetchStoredCards();
-		fetchUserPurchases();
+		fetchUserPurchases( user.get().ID );
 	},
 
 	render() {

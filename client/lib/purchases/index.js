@@ -9,7 +9,11 @@ import moment from 'moment';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import { isDomainMapping, isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+import { isDomainRegistration, isTheme, isPlan } from 'lib/products-values';
+
+function getIncludedDomain( purchase ) {
+	return purchase.includedDomain;
+}
 
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
@@ -53,6 +57,10 @@ function getName( purchase ) {
 
 function getSubscriptionEndDate( purchase ) {
 	return purchase.expiryMoment.format( 'LL' );
+}
+
+function hasIncludedDomain( purchase ) {
+	return Boolean( purchase.includedDomain );
 }
 
 function hasPaymentMethod( purchase ) {
@@ -131,22 +139,18 @@ function isRefundable( purchase ) {
 }
 
 /**
- * Checks if an expired purchase can be removed from a user account.
- * Only domains and domain mappings can be removed.
- * Purchases included with plan can't be removed.
+ * Checks whether the specified purchase can be removed from a user account.
+ * Purchases included with a plan can't be removed.
  *
  * @param {Object} purchase
- * @return {boolean}
+ * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
 
-	return (
-		( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) &&
-		isExpired( purchase )
-	);
+	return isExpiring( purchase ) || isExpired( purchase );
 }
 
 function isRenewable( purchase ) {
@@ -214,9 +218,11 @@ function showCreditCardExpiringWarning( purchase ) {
 
 export {
 	creditCardExpiresBeforeSubscription,
+	getIncludedDomain,
 	getName,
 	getPurchasesBySite,
 	getSubscriptionEndDate,
+	hasIncludedDomain,
 	hasPaymentMethod,
 	hasPrivateRegistration,
 	isCancelable,

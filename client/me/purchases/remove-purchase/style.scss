@@ -1,0 +1,21 @@
+.remove-purchase__dialog {
+	max-width: 500px;
+}
+
+.remove-purchase__card {
+	cursor: pointer;
+
+	.gridicon {
+		margin-top: -2px;
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}
+
+.remove-purchase__dialog.dialog__content {
+	h1 {
+		height: auto;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
