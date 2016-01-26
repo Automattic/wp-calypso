@@ -42,15 +42,8 @@
 		}
 	}
 
-	.reader__post-options {
-		float: none;
-		position: absolute;
-		top: 49px;
-		right: 4px;
-	}
-
-	.reader__post-header:after {
-		display: none;
+	.full-post__header {
+		position: relative;
 	}
 
 	.site {
@@ -58,6 +51,18 @@
 			padding: 0;
 			border-radius: 0;
 			text-decoration: none;
+		}
+	}
+
+	.follow-button {
+		position: absolute;
+			top: 0;
+			right: 0;
+
+		@include breakpoint( "<440px" ) {
+			.follow-button__label {
+				display: none;
+			}
 		}
 	}
 
@@ -79,17 +84,6 @@
 
 		a {
 			text-decoration: none;
-		}
-	}
-
-	.reader__post-footer {
-		margin: 8px 0 0 0;
-		padding: 0;
-		position: relative;
-
-		.reader__post-comments b,
-		.reader__post-likes b {
-			display: none;
 		}
 	}
 
