@@ -40,6 +40,25 @@ const Locked = React.createClass( {
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
 		} );
 	},
+
+	requestTransferCode() {
+		const options = {
+			siteId: this.props.selectedSite.ID,
+			domainName: this.props.selectedDomainName,
+			unlock: false,
+			disablePrivacy: false
+		};
+
+		this.setState( { submitting: true } );
+		requestTransferCode( options, ( error ) => {
+			if ( this.isMounted() ) {
+				// Component might be unmounted since it's state has just changed to unlocked.
+				this.setState( { submitting: false } );
+			}
+			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+		} );
+	},
+
 	handleTransferClick() {
 		this.unlockAndRequestTransferCode();
 	},
@@ -58,6 +77,11 @@ const Locked = React.createClass( {
 				) }
 			</p>
 		);
+	},
+
+	handleGiveMeTheCodeClick( event ) {
+		event.preventDefault();
+		this.requestTransferCode();
 	},
 
 	render() {
