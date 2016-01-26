@@ -107,6 +107,9 @@ User.prototype.fetch = function() {
 	debug( 'Getting user from api' );
 
 	me.get( { meta: 'flags' }, function( error, data ) {
+		// Release lock from subsequent fetches
+		this.fetching = false;
+
 		if ( error ) {
 			if ( ! config( 'wpcom_user_bootstrap' ) && error.error === 'authorization_required' ) {
 				/**
@@ -124,9 +127,6 @@ User.prototype.fetch = function() {
 		}
 
 		var userData = userUtils.filterUserObject( data );
-
-		// Release lock from subsequent fetches
-		this.fetching = false;
 
 		this.clearStoreIfChanged( userData.ID );
 
@@ -240,11 +240,14 @@ User.prototype.set = function( attributes ) {
 
 User.prototype.changeUser = function( username, password, callback ) {
 	if ( config.isEnabled( 'support-user' ) ) {
-		wpcom.changeUser( username, password, function( error ) {
-			if ( ! error ) {
-				this.fetch();
+		return wpcom.changeUser( username, password, function( error ) {
+			if ( error ) {
+				return callback( error );
 			}
-			callback( error );
+
+			this.once( 'change', () => callback() );
+			this.clear();
+			this.fetch();
 		}.bind( this ) );
 	}
 };
