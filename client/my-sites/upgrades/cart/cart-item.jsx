@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	range = require( 'lodash/utility/range' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analyticsMixin = require( 'lib/mixins/analytics' ),
 	canRemoveFromCart = require( 'lib/cart-values' ).canRemoveFromCart,
+	config = require( 'config' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	getIncludedDomain = cartItems.getIncludedDomain,
 	isCredits = require( 'lib/products-values' ).isCredits,
@@ -15,16 +17,23 @@ var analytics = require( 'analytics' ),
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	{ isPremium, isBusiness } = require( 'lib/products-values' ),
+	{ isPremium, isBusiness, isDomainRegistration } = require( 'lib/products-values' ),
 	isTheme = require( 'lib/products-values' ).isTheme;
 
 module.exports = React.createClass( {
 	displayName: 'CartItem',
 
+	mixins: [ analyticsMixin( 'cartItem' ) ],
+
 	removeFromCart: function( event ) {
 		event.preventDefault();
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Remove From Cart Icon', 'Product ID', this.props.cartItem.product_id );
+		this.recordEvent( 'remove', this.props.cartItem.product_id );
 		upgradesActions.removeItem( this.props.cartItem );
+	},
+
+	isBundlePlanApplied() {
+		var { cart, cartItem } = this.props;
+		return cartItems.hasDomainCredit( cart ) && isDomainProduct( cartItem ) && cartItem.cost === 0
 	},
 
 	price: function() {
@@ -40,7 +49,7 @@ module.exports = React.createClass( {
 			return this.getFreeTrialPrice();
 		}
 
-		if ( cartItems.hasDomainCredit( cart ) && isDomainProduct( cartItem ) && cartItem.cost === 0 ) {
+		if ( this.isBundlePlanApplied() ) {
 			return this.getDomainPlanPrice();
 		}
 
@@ -107,13 +116,32 @@ module.exports = React.createClass( {
 		return info;
 	},
 
+	handleDomainVolumeSelection: function( event ) {
+		event.preventDefault();
+		const volume = parseInt( event.target.value, 10 );
+		upgradesActions.setVolume( this.props.cartItem, volume );
+
+		this.recordEvent( 'changeVolume', volume );
+	},
+
+	getVolumeOptions: function() {
+		// present 1-year to 5-year subscriptions
+		return range( 1, 6 ).map( number =>
+			<option key={ number } value={ number }>
+				{ this.translate( '%(number)s year', '%(number)s years', { args: { number }, count: number } ) }
+			</option>
+		);
+	},
+
 	render: function() {
-		var name = this.getProductName();
+		const multiYearEnabled = config.isEnabled( 'upgrades/cart/multi-year-domain' ),
+			showVolumeSelection = multiYearEnabled && isDomainRegistration( this.props.cartItem ) &&
+				( ! this.isBundlePlanApplied() || ! this.props.cartItem.free_trial );
 
 		return (
 			<li className="cart-item">
 				<div className="primary-details">
-					<span className="product-name">{ name || this.translate( 'Loading…' ) }</span>
+					<span className="product-name">{ this.getProductName() || this.translate( 'Loading…' ) }</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
 				</div>
 
@@ -124,7 +152,15 @@ module.exports = React.createClass( {
 					<span className="product-monthly-price">
 						{ this.monthlyPrice() }
 					</span>
-					{ this.removeButton() }
+					{ showVolumeSelection && <select
+						name="product-domain-volume"
+						className="product-domain-volume"
+						onChange={ this.handleDomainVolumeSelection }
+						value={ this.props.cartItem.volume }>
+						{ this.getVolumeOptions() }
+					</select>
+					}
+					{ ! isCredits( this.props.cartItem ) && this.removeButton() }
 				</div>
 			</li>
 		);
@@ -138,17 +174,28 @@ module.exports = React.createClass( {
 					volume: cartItem.volume,
 					productName: cartItem.product_name
 				}
-			};
-
+			},
+			hasDomainSuffix, gappsProductName;
+		if ( isDomainRegistration( cartItem ) ) {
+			return cartItem.product_name;
+		}
 		if ( ! cartItem.volume ) {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
 				case 'gapps':
+					hasDomainSuffix = cartItem.product_name.includes( cartItem.meta );
+					gappsProductName = hasDomainSuffix ? cartItem.product_name : this.translate(
+						'%(productName)s for %(domain)s', {
+							args: {
+								productName: cartItem.product_name,
+								domain: cartItem.meta
+							}
+						} );
 					return this.translate(
 						'%(productName)s (1 User)', {
 							args: {
-								productName: cartItem.product_name
+								productName: gappsProductName
 							}
 						} );
 
@@ -161,6 +208,13 @@ module.exports = React.createClass( {
 					return this.translate(
 						'%(productName)s (%(volume)s User)',
 						'%(productName)s (%(volume)s Users)',
+						options
+					);
+
+				case 'private_whois':
+					return this.translate(
+						'%(productName)s (%(volume)s Year)',
+						'%(productName)s (%(volume)s Years)',
 						options
 					);
 

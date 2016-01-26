@@ -123,7 +123,7 @@ function removeItemAndDependencies( cartItemToRemove, cart ) {
 	var dependencies = getDependentProducts( cartItemToRemove, cart ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
-	return flow.apply( null, changes );
+	return flow( ...changes );
 }
 
 /**
@@ -337,12 +337,14 @@ function businessPlan( slug, properties ) {
  *
  * @param {Object} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
+ * @param {Number} volume
  * @returns {Object} the new item as `CartItemValue` object
  */
-function domainItem( productSlug, domain ) {
+function domainItem( productSlug, domain, volume = 1 ) {
 	return {
 		product_slug: productSlug,
-		meta: domain
+		meta: domain,
+		volume
 	};
 }
 
@@ -393,7 +395,7 @@ function siteRedirect( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainPrivacyProtection( properties ) {
-	return domainItem( 'private_whois', properties.domain );
+	return domainItem( 'private_whois', properties.domain, properties.volume );
 }
 
 /**
@@ -623,26 +625,29 @@ function getDomainRegistrationsWithoutPrivacy( cart ) {
 	} );
 }
 
+function isPrivacyProduct( cartItem ) {
+	return cartItem.product_slug === 'private_whois';
+}
+
 /**
  * Changes presence of a private registration for the given domain cart items.
  *
- * @param {Object} cart - cart as `CartValue` object
  * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
  * @param {Function} changeFunction - the function that adds/removes the private registration to a shopping cart
  * @returns {Function} the function that adds/removes private registrations from the shopping cart
  */
-function changePrivacyForDomains( cart, domainItems, changeFunction ) {
-	return flow.apply( null, domainItems.map( function( item ) {
-		return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
+function changePrivacyForDomains( domainItems, changeFunction ) {
+	return flow( ...domainItems.map( function( item ) {
+		return changeFunction( domainPrivacyProtection( { domain: item.meta, volume: item.volume } ) );
 	} ) );
 }
 
 function addPrivacyToAllDomains( cart ) {
-	return changePrivacyForDomains( cart, getDomainRegistrationsWithoutPrivacy( cart ), add );
+	return changePrivacyForDomains( getDomainRegistrationsWithoutPrivacy( cart ), add );
 }
 
 function removePrivacyFromAllDomains( cart ) {
-	return changePrivacyForDomains( cart, getDomainRegistrations( cart ), remove );
+	return changePrivacyForDomains( getDomainRegistrations( cart ), remove );
 }
 
 /**
@@ -665,6 +670,22 @@ function getIncludedDomain( cartItem ) {
 	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
+function setVolume( cartItem, volume ) {
+	function setItemVolume( items ) {
+		return items.map( item => {
+			if ( item.meta === cartItem.meta && ( item.product_id === cartItem.product_id || isPrivacyProduct( item ) ) ) {
+				return extend( {}, item, { volume } );
+			}
+
+			return item;
+		} );
+	}
+
+	return function( cart ) {
+		return update( cart, { products: { $apply: setItemVolume } } );
+	};
+}
+
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
@@ -680,6 +701,7 @@ module.exports = {
 	getDomainMappings,
 	getDomainRegistrations,
 	getDomainRegistrationTld,
+	getDependentProducts: getDependentProducts,
 	getGoogleApps,
 	getIncludedDomain,
 	getItemForPlan,
@@ -702,6 +724,8 @@ module.exports = {
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
+	setVolume,
+	isPrivacyProduct,
 	noAdsItem,
 	planItem,
 	premiumPlan,

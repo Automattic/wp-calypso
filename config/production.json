@@ -65,6 +65,7 @@
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": true,
 		"upgrades/premium-themes": true,
+		"upgrades/cart/multi-year-domain": false,
 		"muse": true,
 		"olark": true,
 		"olark_use_wpcom_configuration": true,

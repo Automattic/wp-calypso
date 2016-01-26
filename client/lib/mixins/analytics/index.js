@@ -722,6 +722,22 @@ const EVENTS = {
 					{ domain_name: domainName }
 				);
 			}
+		},
+	},
+	cartItem: {
+		changeVolume( volume ) {
+			analytics.ga.recordEvent(
+				'Upgrades',
+				'Changed the volume of a cart item',
+				'Volume',
+				volume
+			)
+		},
+		remove( productId ) {
+			analytics.ga.recordEvent(
+				'Upgrades',
+				'Clicked Remove From Cart Icon',
+				'Product ID', productId );
 		}
 	}
 };
