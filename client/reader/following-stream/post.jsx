@@ -32,6 +32,7 @@ var Card = require( 'components/card' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	Share = require( 'reader/share' ),
+	ShareHelper = require( 'reader/share/helper' ),
 	utils = require( 'reader/utils' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
@@ -305,6 +306,7 @@ var Post = React.createClass( {
 			featuredImage = this.featuredImageComponent( post ),
 			shouldShowComments = PostCommentHelper.shouldShowComments( post ),
 			shouldShowLikes = LikeHelper.shouldShowLikes( post ),
+			shouldShowShare = ShareHelper.shouldShowShare( post ),
 			hasFeaturedImage = featuredImage !== null,
 			articleClasses = assign( {
 				reader__card: true,
@@ -418,7 +420,7 @@ var Post = React.createClass( {
 
 				<ul className="reader__post-footer">
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />
-					<Share post={ post } />
+					{ ( shouldShowShare ) ? <Share post={ post } /> : null }
 					{ ( shouldShowComments ) ? <CommentButton onClick={ this.handleCommentButtonClick } commentCount={ commentCount } /> : null }
 					{ ( shouldShowLikes ) ? <LikeButton siteId={ likeSiteId } postId={ likePostId } /> : null }
 					<li className="reader__post-options"><PostOptions post={ post } site={ this.state.site } /></li>

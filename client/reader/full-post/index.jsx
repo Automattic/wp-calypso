@@ -39,6 +39,7 @@ var analytics = require( 'analytics' ),
 	stats = require( 'reader/stats' ),
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	ShareButton = require( 'reader/share' ),
+	ShareHelper = require( 'reader/share/helper' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
 	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
 	readerRoute = require( 'reader/route' );
@@ -298,6 +299,7 @@ FullPostDialog = React.createClass( {
 			site = this.props.site,
 			shouldShowComments = false,
 			shouldShowLikes = false,
+			shouldShowShare = false,
 			buttons = [
 				{
 					label: this.translate( 'Back', { context: 'Go back in browser history' } ),
@@ -309,6 +311,7 @@ FullPostDialog = React.createClass( {
 		if ( post && ! post._state ) {
 			shouldShowComments = PostCommentHelper.shouldShowComments( post );
 			shouldShowLikes = LikeHelper.shouldShowLikes( post );
+			shouldShowShare = ShareHelper.shouldShowShare( post );
 
 			buttons.push( <PostOptions key="post-options" post={ post } site={ site } onBlock={ this.props.onClose } /> );
 
@@ -320,7 +323,9 @@ FullPostDialog = React.createClass( {
 				buttons.push( <CommentButton key="comment-button" commentCount={ this.props.commentCount } onClick={ this.handleCommentButtonClick } tagName="div" /> );
 			}
 
-			buttons.push( <ShareButton post={ post } position="bottom left" tagName="div" /> );
+			if ( shouldShowShare ) {
+				buttons.push( <ShareButton post={ post } position="bottom left" tagName="div" /> );
+			}
 		}
 
 		buttons = buttons.map( function( button ) {
