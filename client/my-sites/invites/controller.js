@@ -16,10 +16,15 @@ import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
+import _user from 'lib/user';
 
 export function acceptInvite( context ) {
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
+		const userModule = _user();
+		if ( userModule.get().email === acceptedInvite.sentTo ) {
+			userModule.set( { email_verified: true } );
+		}
 		store.remove( 'invite_accepted' );
 		const acceptInviteCallback = error => {
 			if ( error ) {
