@@ -16,7 +16,7 @@ emitter( TagStore );
 
 function receiveTags( newTags ) {
 	forOwn( newTags, ( sub ) => {
-		sub.URL = '/tag/' + sub.slug + '/';
+		sub.URL = '/tag/' + sub.slug;
 		sub.title = decodeEntities( sub.title );
 		sub.slug = sub.slug.toLowerCase();
 		tags[ sub.slug ] = sub;
