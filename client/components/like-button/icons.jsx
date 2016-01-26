@@ -1,32 +1,26 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+import Gridicon from 'components/gridicon';
 
-var LikeIcons = React.createClass( {
+const LikeIcons = ( { size } ) => (
+	<span className="like-icons">
+		<Gridicon icon="star" size={ size } />
+		<Gridicon icon="star-outline" size={ size } />
+	</span>
+);
 
-	propTypes: { size: React.PropTypes.number, },
+LikeIcons.propTypes = {
+	size: React.PropTypes.number
+}
 
-	getDefaultProps: function() {
-		return { size: 24 };
-	},
+LikeIcons.defaultProps = {
+	size: 24
+}
 
-	render: function() {
-
-		var size = this.props.size;
-
-		return (
-			<span className="gridicon__wrapper">
-				<Gridicon icon="star" />
-				<Gridicon icon="star-outline" />
-			</span>
-		);
-	}
-} );
-
-module.exports = LikeIcons;
+export default LikeIcons;
