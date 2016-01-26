@@ -73,6 +73,12 @@ $color-print: #f8f8f8;
 	.sharing-service__name {
 		float: left;
 	}
+
+	@include breakpoint( "<660px" ) {
+		.sharing-service__name {
+			margin-top: 12px;
+		}
+	}
 }
 
 .sharing-settings {
@@ -208,21 +214,6 @@ $color-print: #f8f8f8;
 	}
 }
 
-.sharing-service {
-	//@extend %container;
-	box-shadow: 0 0 0 1px rgba( lighten( $gray, 20% ), 0.5 ), 0 1px 2px lighten( $gray, 30% );
-	margin-bottom: 1px;
-	padding: 0;
-
-	@include breakpoint( "<660px" ) {
-		margin: 0 0 16px 0;
-	}
-
-	&.is-open {
-		box-shadow: 0 0 0 1px lighten( $gray, 10% );
-	}
-}
-
 .sharing-service-action {
 	position: absolute;
 		right: 64px;
@@ -355,10 +346,6 @@ $color-print: #f8f8f8;
 
 	@include breakpoint( "<480px" ) {
 		display: none;
-	}
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 30px;
 	}
 }
 

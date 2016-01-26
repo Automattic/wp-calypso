@@ -267,6 +267,7 @@ module.exports = React.createClass( {
 				className={ elementClass }
 				header={ header }
 				clickableHeader
+				compact
 				summary={ action }
 				expandedSummary={ action } >
 				{ content }
