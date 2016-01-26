@@ -12,22 +12,22 @@
 		left: 0;
 	}
 
-	.gridicon__liked {
+	.gridicons-star {
 		opacity: 0;
 		pointer-events: none;
 		fill: $orange-jazzy;
 		transform: scale( 4 ) rotate( 90deg );
 	}
 
-	&.is-animated .gridicon__liked {
+	&.is-animated .gridicons-star {
 		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275);
 	}
 
-	.gridicon__like-empty {
+	.gridicons-star-outline {
 		fill: lighten( $gray, 20 );
 	}
 
-	&.is-animated .gridicon__like-empty {
+	&.is-animated .gridicons-star-outline {
 		transition: all 0.2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
 	}
 
@@ -35,7 +35,7 @@
 		cursor: pointer;
 		color: $blue-light;
 
-		.gridicon__like-empty {
+		.gridicons-star-outline {
 			fill: $blue-light;
 		}
 	}
@@ -43,14 +43,14 @@
 	&.is-liked {
 		color: lighten( $gray, 10 );;
 
-		.gridicon__liked {
+		.gridicons-star {
 			opacity: 1;
 			fill: $orange-jazzy;
 			pointer-events: auto;
 			transform: scale( 1 ) rotate( 0 );
 		}
 
-		.gridicon__like-empty {
+		.gridicons-star-outline {
 			opacity: 0;
 			pointer-events: none;
 			fill: $orange-jazzy;
