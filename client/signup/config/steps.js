@@ -47,18 +47,10 @@ module.exports = {
 		stepName: 'test',
 	},
 
-	'survey-user': {
-		stepName: 'survey-user',
-		apiRequestFunction: stepActions.createAccount,
-		dependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ]
-	},
-
 	survey: {
 		stepName: 'survey',
 		props: {
-			surveySiteType: ( '/start/vert-blog' === current ) ? 'blog' : 'site'
+			surveySiteType: ( current && current.toString().match( /\/start\/blog/ ) ) ? 'blog' : 'site'
 		},
 		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},

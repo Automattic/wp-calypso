@@ -20,7 +20,6 @@ module.exports = {
 	'select-plan': PaidPlansWithFreeTrials,
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
-	'survey-user': UserSignupComponent,
 	'design-type': DesignTypeComponent,
 	'themes-headstart': ThemeSelectionComponent,
 	'domains-with-theme': DomainsStepComponent,
