@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	throttle = require( 'lodash/function/throttle' ),
-	debug = require( 'debug' )( 'calypso:stats:geochart' );
+import React, { PropTypes } from 'react';
+import throttle from 'lodash/function/throttle';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+import analytics from 'analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsGeochart',
 
 	visualizationsLoaded: false,
@@ -18,80 +17,17 @@ module.exports = React.createClass( {
 	visualization: null,
 
 	propTypes: {
-		data: React.PropTypes.array.isRequired,
-		dataList: React.PropTypes.object.isRequired
+		data: PropTypes.array.isRequired,
+		dataList: PropTypes.object.isRequired
 	},
 
-	recordEvent: function() {
-		analytics.ga.recordEvent( 'Stats', 'Clicked Country on Map' );
-	},
-
-	drawRegionsMap: function() {
-		if ( this.isMounted() ) {
-			debug( 'this should only be called once ' );
-			this.visualizationsLoaded = true;
-			this.visualization = new window.google.visualization.GeoChart( this.refs.chart );
-			window.google.visualization.events.addListener( this.visualization, 'regionClick', this.recordEvent );
-
-			this.drawData();
-		}
-	},
-
-	resize: function() {
-		if ( this.visualizationsLoaded ) {
-			this.drawData();
-		}
-	},
-
-	drawData: function(){
-		var regionCodes = [];
-
-		if( this.props.data.length > 1 ) {
-			var data = window.google.visualization.arrayToDataTable( this.props.data ),
-				node = this.refs.chart,
-				width = node.clientWidth,
-				options = {
-					width: 100 + '%',
-					height: width <= 480 ? '238' : '480',
-					keepAspectRatio: true,
-					enableRegionInteractivity: true,
-					region: 'world',
-					colorAxis: { colors: [ '#FFF088', '#F34605' ] }
-				};
-
-			this.props.dataList.response.data.map( function( country ) {
-				if ( -1 === regionCodes.indexOf( country.region ) ) {
-					regionCodes.push( country.region );
-				}
-			} );
-
-			if ( 1 === regionCodes.length ) {
-				options.region = regionCodes[ 0 ];
-			}
-
-			debug( 'here are the data points ', this.props.data );
-			this.visualization.draw( data, options );
-		}
-	},
-
-	loadVisualizations: function( ){
-		// If google is already in the DOM, don't load it again.
-		if( window.google ) {
-			window.google.load( 'visualization', '1', { packages: [ 'geochart' ], callback: this.drawRegionsMap } );
-			clearTimeout( this.timer );
-		} else {
-			debug('no google');
-			this.tick();
-		}
-	},
-
-	componentDidMount: function() {
-		var domNode = this.refs.chart,
-			script = document.createElement( 'script' );
+	componentDidMount() {
+		const domNode = this.refs.chart;
+		const script = document.createElement( 'script' );
 
 		script.src = 'https://www.google.com/jsapi';
 
-		if( ! window.google ) {
+		if ( ! window.google ) {
 			domNode.appendChild( script );
 			this.tick();
 		} else {
@@ -103,14 +39,13 @@ module.exports = React.createClass( {
 		window.addEventListener( 'resize', this.resize );
 	},
 
-	componentDidUpdate: function(){
+	componentDidUpdate() {
 		if ( this.visualizationsLoaded ) {
 			this.drawData();
 		}
 	},
 
-	// Remove listener
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( this.visualization ) {
 			window.google.visualization.events.removeListener( this.visualization, 'regionClick', this.recordEvent );
 			this.visualization.clearChart();
@@ -121,13 +56,73 @@ module.exports = React.createClass( {
 		window.removeEventListener( 'resize', this.resize );
 	},
 
-	tick: function() {
+	recordEvent() {
+		analytics.ga.recordEvent( 'Stats', 'Clicked Country on Map' );
+	},
+
+	drawRegionsMap() {
+		if ( this.isMounted() ) {
+			this.visualizationsLoaded = true;
+			this.visualization = new window.google.visualization.GeoChart( this.refs.chart );
+			window.google.visualization.events.addListener( this.visualization, 'regionClick', this.recordEvent );
+
+			this.drawData();
+		}
+	},
+
+	resize() {
+		if ( this.visualizationsLoaded ) {
+			this.drawData();
+		}
+	},
+
+	drawData() {
+		const regionCodes = [];
+		const { data, dataList } = this.props;
+
+		if ( data.length ) {
+			const chartData = window.google.visualization.arrayToDataTable( data );
+			const node = this.refs.chart;
+			const width = node.clientWidth;
+
+			const options = {
+				width: 100 + '%',
+				height: width <= 480 ? '238' : '480',
+				keepAspectRatio: true,
+				enableRegionInteractivity: true,
+				region: 'world',
+				colorAxis: { colors: [ '#FFF088', '#F34605' ] }
+			};
+
+			dataList.response.data.map( function( country ) {
+				if ( -1 === regionCodes.indexOf( country.region ) ) {
+					regionCodes.push( country.region );
+				}
+			} );
+
+			if ( 1 === regionCodes.length ) {
+				options.region = regionCodes[ 0 ];
+			}
+
+			this.visualization.draw( chartData, options );
+		}
+	},
+
+	loadVisualizations() {
+		// If google is already in the DOM, don't load it again.
+		if ( window.google ) {
+			window.google.load( 'visualization', '1', { packages: [ 'geochart' ], callback: this.drawRegionsMap } );
+			clearTimeout( this.timer );
+		} else {
+			this.tick();
+		}
+	},
+
+	tick() {
 		this.timer = setTimeout( this.loadVisualizations, 1000 );
 	},
 
-	render: function() {
-		// TODO determine best course of action on responsiveness - or lack thereof - in the map visualization
-
-		return ( <div ref="chart" className="stats-geochart" /> );
+	render() {
+		return <div ref="chart" className="stats-geochart" />;
 	}
 } );
