@@ -23,67 +23,37 @@ describe( 'actions', function() {
 	} );
 
 	describe( 'successNotice()', function() {
-		it( 'should call dispatch with proper text and is-success status', function() {
+		it( 'should return action object with a proper text', function() {
 			const text = 'potato',
-				dispatch = spy();
+				action = successNotice( text );
 
-			//successNotice is a thunk - returns a function:
-			successNotice( text )( dispatch );
-
-			expect( dispatch.calledWithMatch( {
-				type: NEW_NOTICE,
-				notice: {
-					text,
-					status: 'is-success'
-				}
-			} ) ).to.be.ok;
+			expect( action.type ).to.eql( NEW_NOTICE );
+			expect( action.notice ).to.include( {
+				text,
+				status: 'is-success'
+			} );
 		} );
 
-		it( 'should call dispatch with proper default options when none provided', function() {
-			const dispatch = spy();
+		it( 'should use default options when none provided', function() {
+			const action = successNotice( '' );
 
-			//successNotice is a thunk - returns a function:
-			successNotice( '' )( dispatch );
-
-			expect( dispatch.calledWithMatch( {
-				notice: {
-					showDismiss: true
-				}
-			} ) ).to.be.ok;
+			expect( action.notice ).to.include( {
+				showDismiss: true
+			} );
 		} );
 
-		it( 'should call dispatch with type REMOVE_NOTICE and proper noticeId when duration is provided', function( done ) {
-			const dispatch = spy();
-
-			//successNotice is a thunk - returns a function:
-			successNotice( '', { duration: 2 } )( dispatch );
-			let noticeId = dispatch.firstCall.args[0].notice.noticeId;
-
-			setTimeout( function() {
-				expect( dispatch.calledWithMatch( {
-					type: REMOVE_NOTICE,
-					noticeId: noticeId
-				} ) ).to.be.ok;
-				done();
-			}, 3 );
-		} );
 	} );
 
 	describe( 'errorNotice()', function() {
-		it( 'should call dispatch proper text and is-error status', function() {
+		it( 'should return action object with a proper text', function() {
 			const text = 'potato',
-				dispatch = spy();
+				action = errorNotice( text );
 
-			//errorNotice is a thunk - returns a function:
-			errorNotice( text )( dispatch );
-
-			expect( dispatch.calledWithMatch( {
-				type: NEW_NOTICE,
-				notice: {
-					text,
-					status: 'is-error'
-				}
-			} ) ).to.be.ok;
+			expect( action.type ).to.eql( NEW_NOTICE );
+			expect( action.notice ).to.include( {
+				text,
+				status: 'is-error'
+			} );
 		} );
 	} );
 } );

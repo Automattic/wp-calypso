@@ -12,9 +12,11 @@ import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'Notice',
+	dismissTimeout: null,
 
 	getDefaultProps() {
 		return {
+			duration: 0,
 			status: 'is-info',
 			showDismiss: true,
 			className: '',
@@ -27,12 +29,25 @@ export default React.createClass( {
 		status: PropTypes.string,
 		showDismiss: PropTypes.bool,
 		isCompact: PropTypes.bool,
+		duration: React.PropTypes.number,
 		text: PropTypes.oneOfType( [
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
 		] ),
 		icon: PropTypes.string,
 		className: PropTypes.string
+	},
+
+	componentDidMount() {
+		if ( this.props.duration > 0 ) {
+			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+		}
+	},
+
+	componentWillUnmount() {
+		if ( this.dismissTimeout ) {
+			clearTimeout( this.dismissTimeout );
+		}
 	},
 
 	renderChildren() {
