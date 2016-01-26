@@ -45,7 +45,7 @@ var PlansCompare = React.createClass( {
 
 	componentDidMount: function() {
 		analytics.tracks.recordEvent( 'calypso_plans_compare', {
-			isInSignup: this.props.isInSignup
+			is_in_signup: this.props.isInSignup
 		} );
 
 		if ( ! this.props.isInSignup ) {
