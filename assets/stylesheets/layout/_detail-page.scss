@@ -75,48 +75,57 @@
 	-webkit-backface-visibility: hidden;
 	-webkit-transform: translateZ(0);
 
-	.button.action-button {
+	.detail-page-close.is-primary {
 		color: lighten( $gray, 10 );
-		padding: 0;
-		line-height: 32px;
-		text-align: center;
-		cursor: pointer;
+		padding: 0 8px;
+		text-align: left;
 		background: transparent;
 		border: none;
 		border-radius: 0;
+		position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+		min-width: 200px;
 
-		span {
+		.detail-page__button-label {
 			display: none;
-			font-weight: normal;
-			color: $gray;
 		}
-
-		&:hover,
-		&:focus {
-			color: $blue-medium;
-		}
-
-		&:before {
-			position: relative;
-			margin-right: 4px;
-		}
-	}
-
-	.detail-page-close {
-		float: left;
 
 		&:before {
 			@include noticon( '\f430', 32px );
-			top: 1px;
-			left: 0;
-			margin-right: 0;
+			position: relative;
+				top: 1px;
+				left: 0;
+		}
+
+		&:hover {
+			color: $blue-medium;
+			background: lighten( $gray, 30 );
+		}
+
+		&:focus {
+			color: $blue-medium;
 		}
 	}
 
-	.like-button, .comment-button, .reader-share {
-		top: 2px;
+	.like-button,
+	.comment-button,
+	.reader-share {
 		float: right;
+		position: relative;
+			top: 2px;
 		margin-right: 16px;
+
+		@include breakpoint( "<660px" ) {
+			margin-right: 8px;
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		.reader-share_button span {
+			display: none;
+		}
 	}
 
 	.post-options {
