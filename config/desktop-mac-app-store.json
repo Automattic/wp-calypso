@@ -48,8 +48,8 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"manage/sharing": true,
-		"manage/plans": false,
-		"manage/jetpack-plans": false,
+		"manage/plans": true,
+		"manage/jetpack-plans": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/delete-site": true,
 

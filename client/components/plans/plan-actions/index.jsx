@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
@@ -76,6 +77,10 @@ module.exports = React.createClass( {
 			return this.freePlanButton();
 		}
 
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
 		if ( this.props.sitePlan && this.props.sitePlan.freeTrial ) {
 			label = this.translate( 'Purchase Now' );
 		} else {
@@ -140,6 +145,10 @@ module.exports = React.createClass( {
 	},
 
 	canSelectPlan: function() {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return false;
+		}
+
 		if ( this.props.site ) {
 			if ( this.siteHasThisPlan() ) {
 				return false;
@@ -204,12 +213,16 @@ module.exports = React.createClass( {
 				</button>
 
 				<small className="plan-actions__trial-period">
-					{ this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
-						context: 'Store action',
-						components: {
-							a: <a href="#"
-								onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
-						} } ) }
+					{ config.isEnabled( 'upgrades/checkout' )
+						? this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
+							context: 'Store action',
+							components: {
+								a: <a href="#"
+									onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
+							}
+						} )
+						: this.translate( 'Try it free for 14 days, no credit card needed.' )
+					}
 				</small>
 			</div>
 		);
@@ -251,47 +264,9 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Current Plan' );
 	},
 
-	getTrialPlanHint: function() {
-		var remainingDays = this.moment(
-				this.props.sitePlan.expiry
-			).diff( this.moment(), 'days' ),
-			translationComponents = {
-				strong: <strong />,
-				link: <a href='#'
-					className="plan-actions__trial-upgrade-now"
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
-			},
-			hint;
-
-		if ( remainingDays === 0 ) {
-			hint = this.translate(
-				'{{strong}}Your trial ends today.{{/strong}} Like what you see? {{link}}Upgrade Now{{/link}}',
-				{ components: translationComponents }
-			);
-		} else {
-			hint = this.translate(
-				'{{strong}}Your trial ends in %(days)d day.{{/strong}} Like what you see? {{link}}Upgrade Now{{/link}}',
-				'{{strong}}Your trial ends in %(days)d days.{{/strong}} Like what you see? {{link}}Upgrade Now{{/link}}',
-				{
-					args: { days: remainingDays },
-					count: remainingDays,
-					components: translationComponents
-				}
-			);
-		}
-
-		return (
-			<div className="plan-actions__trial-hint">{ hint }</div>
-		);
-	},
-
 	getCurrentPlanHint: function() {
 		if ( ! this.props.sitePlan ) {
 			return;
-		}
-
-		if ( this.props.sitePlan.freeTrial ) {
-			return this.getTrialPlanHint();
 		}
 
 		return (
