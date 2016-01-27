@@ -8,7 +8,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
+var Button = require( 'components/button' ),
+	config = require( 'config' ),
 	Dispatcher = require( 'dispatcher' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	Card = require( 'components/card' ),
@@ -18,6 +19,7 @@ var config = require( 'config' ),
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
+	PurchaseDetail = require( './purchase-detail' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
 /**
@@ -32,8 +34,6 @@ var BusinessPlanDetails,
 	JetpackBusinessPlanDetails,
 	JetpackPremiumPlanDetails,
 	PremiumPlanDetails,
-	PurchaseDetail,
-	PurchaseDetailButton,
 	SiteRedirectDetails;
 
 var CheckoutThankYou = React.createClass( {
@@ -379,7 +379,7 @@ BusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Add eCommerce' ) }
 					description={ this.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
 					buttonText={ this.translate( 'Set Up eCommerce' ) }
-					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/admin.php?page=business-plugins' ) } />
+					onButtonClick={ goToExternalPage( '/plugins/' + this.props.selectedSite.slug ) } />
 
 				{ ! showGetFreeDomainTip
 				? <PurchaseDetail
@@ -595,31 +595,10 @@ GenericDetails = React.createClass( {
 	render: function() {
 		return (
 			<ul className="purchase-details-list">
-				<PurchaseDetailButton text={ this.translate( 'Back to my site' ) } href={ this.props.selectedSite.URL } />
+				<Button href={ this.props.selectedSite.URL } primary>
+					{ this.translate( 'Back to my site' ) }
+				</Button>
 			</ul>
-		);
-	}
-} );
-
-PurchaseDetailButton = React.createClass( {
-	propTypes: {
-		onClick: React.PropTypes.func,
-		text: React.PropTypes.string.isRequired,
-		href: React.PropTypes.string,
-		target: React.PropTypes.string
-	},
-	render: function() {
-		if ( this.props.onClick ) {
-			return (
-				<a className="button is-primary" onClick={ this.props.onClick }>
-					{ this.props.text }
-				</a>
-			);
-		}
-		return (
-			<a className="button is-primary" href={ this.props.href } target={ this.props.target }>
-				{ this.props.text }
-			</a>
 		);
 	}
 } );
@@ -647,20 +626,6 @@ function goToDomainManagement( selectedSite, domain ) {
 
 	return goToExternalPage( url );
 }
-
-PurchaseDetail = React.createClass( {
-	render: function() {
-		return (
-			<li className={ 'purchase-detail ' + this.props.additionalClass }>
-				<div className="purchase-detail-text">
-					<h3>{ this.props.title }</h3>
-					<p>{ this.props.description }</p>
-				</div>
-				<PurchaseDetailButton onClick={ this.props.onButtonClick } text={ this.props.buttonText } />
-			</li>
-		);
-	}
-} );
 
 module.exports = connect(
 	undefined,
