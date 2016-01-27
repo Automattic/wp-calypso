@@ -7,7 +7,7 @@ import { fromJS } from 'immutable';
  * Internal dependencies
  */
 import ActionTypes from '../action-types';
-import { FROM_OBJECT, TO_OBJECT } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 const initialState = fromJS( {
 	previousSiteId: 0,
@@ -26,9 +26,9 @@ export default ( state = initialState, action ) => {
 				.set( 'previousSiteId', state.get( 'currentSiteId' ) )
 				.set( 'currentSiteId', action.site.ID )
 				.set( 'isJetpack', !! action.site.jetpack );
-		case FROM_OBJECT:
+		case DESERIALIZE:
 			return fromJS( state );
-		case TO_OBJECT:
+		case SERIALIZE:
 			return state.toJS();
 	}
 

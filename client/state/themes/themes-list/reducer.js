@@ -9,7 +9,7 @@ import unique from 'lodash/array/unique';
  */
 import ActionTypes from '../action-types';
 import { PER_PAGE } from './constants';
-import { FROM_OBJECT, TO_OBJECT } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 const defaultQuery = fromJS( {
 	search: '',
@@ -90,9 +90,9 @@ export default ( state = initialState, action ) => {
 			// state is different from the old one, we need something to change
 			// here.
 			return state.set( 'active', action.theme.id );
-		case FROM_OBJECT:
+		case DESERIALIZE:
 			return query( fromJS( state ) );
-		case TO_OBJECT:
+		case SERIALIZE:
 			return state.toJS();
 	}
 

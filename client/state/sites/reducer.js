@@ -11,7 +11,7 @@ import omit from 'lodash/object/omit';
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
-import { SITE_RECEIVE, TO_OBJECT, FROM_OBJECT } from 'state/action-types';
+import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -27,7 +27,7 @@ export function items( state = {}, action ) {
 				[ action.site.ID ]: action.site
 			} );
 			break;
-		case TO_OBJECT:
+		case SERIALIZE:
 			// scrub _events, _maxListeners, and other misc functions
 			const sites = Object.keys( state ).map( ( siteID ) => {
 				let plainJSObject = Object.assign( {}, state[ siteID ] );
@@ -36,7 +36,7 @@ export function items( state = {}, action ) {
 				return plainJSObject;
 			} );
 			return indexBy( sites, 'ID' );
-		case FROM_OBJECT:
+		case DESERIALIZE:
 			//TODO: do we need to redecorate?
 			return state;
 	}

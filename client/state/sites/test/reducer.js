@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SITE_RECEIVE, TO_OBJECT } from 'state/action-types';
+import { SITE_RECEIVE, SERIALIZE } from 'state/action-types';
 import { items } from '../reducer';
 
 describe( 'reducer', () => {
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 			const original = Object.freeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', somethingDecoratedMe: () => {} }
 			} );
-			const state = items( original, { type: TO_OBJECT } );
+			const state = items( original, { type: SERIALIZE } );
 			expect( state ).to.eql( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );

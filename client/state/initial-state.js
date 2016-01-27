@@ -7,9 +7,8 @@ import localforage from 'localforage';
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
-import { reducer } from 'state';
-import { TO_OBJECT, FROM_OBJECT } from 'state/action-types'
+import { createReduxStore, reducer } from 'state';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types'
 
 /**
  * Module variables
@@ -22,17 +21,17 @@ const localforageConfig = {
 	description: 'Calypso Storage'
 };
 
-function toObject( state ) {
-	return reducer( state, { type: TO_OBJECT } );
+function serialize( state ) {
+	return reducer( state, { type: SERIALIZE } );
 }
 
-function fromObject( state ) {
-	return reducer( state, { type: FROM_OBJECT } );
+function deserialize( state ) {
+	return reducer( state, { type: DESERIALIZE } );
 }
 
 function loadInitialState( initialState ) {
 	debug( 'loading initial state with', initialState );
-	return createReduxStore( fromObject( initialState ) );
+	return createReduxStore( deserialize( initialState ) );
 }
 
 function loadInitialStateFailed( error ) {
@@ -42,7 +41,7 @@ function loadInitialStateFailed( error ) {
 
 function persistOnChange( reduxStore ) {
 	reduxStore.subscribe( function() {
-		localforage.setItem( 'redux-state', toObject( reduxStore.getState() ) )
+		localforage.setItem( 'redux-state', serialize( reduxStore.getState() ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
