@@ -373,7 +373,7 @@ SitesList.prototype.isSelected = function( site ) {
  */
 SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 	if ( ! this.recentlySelected.length ) {
-		this.recentlySelected = PreferencesStore.get( 'recentSites' );
+		this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 	}
 
 	if ( ! siteID || ! this.initialized ) {
