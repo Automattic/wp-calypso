@@ -145,9 +145,8 @@ FullPostView = React.createClass( {
 			site = this.props.site,
 			siteish = utils.siteishFromSiteAndPost( site, post ),
 			hasFeaturedImage = post &&
-				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ) &&
 				post.canonical_image &&
-				this.props.post.canonical_image.width > 620,
+				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
 			articleClasses = [ 'reader__full-post' ],
 			postContent,
 			shouldShowExcerptOnly = ( post.use_excerpt ? post.use_excerpt : false ),
