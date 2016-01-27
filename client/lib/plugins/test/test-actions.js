@@ -58,6 +58,19 @@ describe( 'WPcom Data Actions', function() {
 		assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 0 );
 	} );
 
+
+	it( 'when installing a plugin, it should return a rejected promise if the site files can\'t be updated', function( done ) {
+		actions.installPlugin( { canUpdateFiles: false, user_can_manage: true }, 'test', function() {} )
+			.then( function() { done( 'Promise should be rejected' ) } )
+			.catch( function() { done() } );
+	} );
+
+	it( 'when installing a plugin, it should return a rejected promise if user can\'t manage the site', function( done ) {
+		actions.installPlugin( { canUpdateFiles: true, user_can_manage: false }, 'test', function() {} )
+			.then( function() { done( 'Promise should be rejected' ) } )
+			.catch( function() { done() } );
+	});
+
 	it( 'Actions should have method removePlugin', function() {
 		assert.isFunction( actions.removePlugin );
 	} );
