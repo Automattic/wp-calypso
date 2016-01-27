@@ -98,11 +98,11 @@ const Unlocked = React.createClass( {
 							onClick={ this.handleCancelTransferClick }
 							disabled={ this.state.submitting }
 							compact>{ this.translate( 'Cancel Transfer' ) }</Button>
-						<Button
+					{ ! manualTransferRequired && <Button
 							onClick={ this.handleResendConfirmationCodeClick }
 							disabled={ this.state.submitting }
 							compact
-							primary>{ this.translate( 'Resend Transfer Code' ) }</Button>
+							primary>{ this.translate( 'Resend Transfer Code' ) }</Button> }
 				</SectionHeader>
 
 				<Card className="transfer-card">
