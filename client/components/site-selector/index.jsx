@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
-	page = require( 'page' ),
-	noop = require( 'lodash/utility/noop' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import page from 'page';
+import noop from 'lodash/utility/noop';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var AllSites = require( 'my-sites/all-sites' ),
-	Button = require( 'components/button' ),
-	Gridicon = require( 'components/gridicon' ),
-	Site = require( 'my-sites/site' ),
-	SitePlaceholder = require( 'my-sites/site/placeholder' ),
-	Search = require( 'components/search' ),
-	user = require( 'lib/user' )(),
-	config = require( 'config' );
+import AllSites from 'my-sites/all-sites';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
+import Site from 'my-sites/site';
+import SitePlaceholder from 'my-sites/site/placeholder';
+import Search from 'components/search';
+import userModule from 'lib/user';
+import config from 'config';
 
-module.exports = React.createClass( {
+const user = userModule();
+
+export default React.createClass( {
 	displayName: 'SiteSelector',
 
 	propTypes: {
@@ -35,7 +37,7 @@ module.exports = React.createClass( {
 		groups: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			sites: {},
 			showAddNewSite: false,
@@ -50,17 +52,17 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			search: ''
 		};
 	},
 
-	onSearch: function( terms ) {
+	onSearch( terms ) {
 		this.setState( { search: terms } );
 	},
 
-	onSiteSelect: function( siteSlug, event ) {
+	onSiteSelect( siteSlug, event ) {
 		this.closeSelector();
 		this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
@@ -72,11 +74,11 @@ module.exports = React.createClass( {
 		}
 	},
 
-	closeSelector: function() {
+	closeSelector() {
 		this.refs.siteSearch.blur();
 	},
 
-	addNewSite: function() {
+	addNewSite() {
 		return (
 			<span className="site-selector__add-new-site">
 				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
@@ -86,7 +88,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	getSiteBasePath: function( site ) {
+	getSiteBasePath( site ) {
 		var siteBasePath = this.props.siteBasePath,
 			postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
 
@@ -105,12 +107,12 @@ module.exports = React.createClass( {
 		return siteBasePath;
 	},
 
-	isSelected: function( site ) {
+	isSelected( site ) {
 		var selectedSite = this.props.selected || this.props.sites.selected;
 		return selectedSite === site.domain || selectedSite === site.slug;
 	},
 
-	shouldShowGroups: function() {
+	shouldShowGroups() {
 		if ( ! config.isEnabled( 'show-site-groups' ) ) {
 			return false;
 		}
@@ -118,9 +120,12 @@ module.exports = React.createClass( {
 		return this.props.groups && user.get().visible_site_count > 14;
 	},
 
-	renderSiteElements: function() {
-		var allSitesPath = this.props.allSitesPath,
-			sites, siteElements;
+	renderSites() {
+		var sites, siteElements;
+
+		if ( ! this.props.sites.initialized ) {
+			return <SitePlaceholder key="site-placeholder" />;
+		}
 
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
@@ -158,25 +163,6 @@ module.exports = React.createClass( {
 			);
 		}, this );
 
-		if ( this.props.showAllSites && ! this.state.search && allSitesPath ) {
-			// default posts links to /posts/my when possible and /posts when not
-			const postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
-			allSitesPath = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// There is currently no "all sites" version of the insights page
-			allSitesPath = allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
-
-			siteElements.unshift(
-				<AllSites
-					key="selector-all-sites"
-					sites={ this.props.sites }
-					href={ allSitesPath }
-					onSelect={ this.onSiteSelect.bind( this, null ) }
-					isSelected={ ! this.props.sites.selected }
-				/>
-			);
-		}
-
 		if ( ! siteElements.length ) {
 			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
 		}
@@ -188,12 +174,33 @@ module.exports = React.createClass( {
 					{ siteElements }
 				</div>
 			);
-		} else {
-			return siteElements;
+		}
+
+		return siteElements;
+	},
+
+	renderAllSites() {
+		if ( this.props.showAllSites && ! this.state.search && this.props.allSitesPath ) {
+			// default posts links to /posts/my when possible and /posts when not
+			const postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
+			let allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
+
+			// There is currently no "all sites" version of the insights page
+			allSitesPath = allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+
+			return(
+				<AllSites
+					key="selector-all-sites"
+					sites={ this.props.sites }
+					href={ allSitesPath }
+					onSelect={ this.onSiteSelect.bind( this, null ) }
+					isSelected={ ! this.props.sites.selected }
+				/>
+			);
 		}
 	},
 
-	renderRecentSites: function() {
+	renderRecentSites() {
 		const sites = this.props.sites.getRecentlySelected();
 
 		if ( ! sites || this.state.search || ! this.shouldShowGroups() ) {
@@ -233,21 +240,10 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
-		var isLarge = user.get().site_count > 6,
-			hasOneSite = user.get().visible_site_count === 1,
-			sitesInitialized = this.props.sites.initialized,
-			siteElements, selectorClass;
-
-		if ( sitesInitialized ) {
-			siteElements = this.renderSiteElements();
-		} else {
-			siteElements = [ <SitePlaceholder key="site-placeholder" /> ];
-		}
-
-		selectorClass = classNames( 'site-selector', 'sites-list', {
-			'is-large': isLarge,
-			'is-single': hasOneSite
+	render() {
+		const selectorClass = classNames( 'site-selector', 'sites-list', {
+			'is-large': user.get().site_count > 6,
+			'is-single': user.get().visible_site_count === 1
 		} );
 
 		return (
@@ -256,11 +252,12 @@ module.exports = React.createClass( {
 					ref="siteSearch"
 					onSearch={ this.onSearch }
 					autoFocus={ this.props.autoFocus }
-					disabled={ ! sitesInitialized }
+					disabled={ ! this.props.sites.initialized }
 				/>
 				<div className="site-selector__sites" ref="selector">
+					{ this.renderAllSites() }
 					{ this.renderRecentSites() }
-					{ siteElements }
+					{ this.renderSites() }
 				</div>
 				{ this.props.showAddNewSite && this.addNewSite() }
 			</div>
