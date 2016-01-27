@@ -168,6 +168,7 @@ class WpVideoView extends Component {
 					width={ attrs.w }
 					height={ attrs.h }
 					src={ this.getEmbedUrl( attrs ) }
+					className="wpview-type-video"
 					frameBorder="0"
 					allowFullScreen />
 			</div>
