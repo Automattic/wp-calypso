@@ -7,17 +7,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
-import EnableDomainLockingNotice from './enable-domain-locking-notice';
-import EnablePrivacyNotice from './enable-privacy-notice';
 import Header from 'my-sites/upgrades/domain-management/components/header';
-import IcannVerificationNotice from './icann-verification-notice';
 import Main from 'components/main';
 import paths from 'my-sites/upgrades/paths';
-import PendingTransferNotice from './pending-transfer-notice';
-import RequestTransferCode from './request-transfer-code';
-import TransferProhibitedNotice from './transfer-prohibited-notice';
+import { getSelectedDomain } from 'lib/domains';
+import IcannVerification from 'my-sites/upgrades/domain-management/transfer/icann-verification';
+import Locked from 'my-sites/upgrades/domain-management/transfer/locked';
+import Unlocked from 'my-sites/upgrades/domain-management/transfer/unlocked';
+import TransferProhibited from 'my-sites/upgrades/domain-management/transfer/transfer-prohibited';
+import omit from 'lodash/object/omit';
 
 const Transfer = React.createClass( {
 	propTypes: {
@@ -30,45 +29,36 @@ const Transfer = React.createClass( {
 		wapiDomainInfo: React.PropTypes.object.isRequired
 	},
 
+	renderSection() {
+		const { locked } = this.props.wapiDomainInfo.data,
+			{ isPendingIcannVerification, transferProhibited } = getSelectedDomain( this.props );
+		let section = null;
+
+		if ( transferProhibited ) {
+			section = TransferProhibited;
+		} else if ( isPendingIcannVerification ) {
+			section = IcannVerification;
+		} else if ( locked ) {
+			section = Locked;
+		} else {
+			section = Unlocked;
+		}
+		return React.createElement( section, omit( this.props, [ 'children' ] ) );
+	},
+
 	render() {
 		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+			return <DomainMainPlaceholder goBack={ this.goToEdit }/>;
 		}
 
 		return (
 			<Main className="domain-management-transfer">
-				{ this.renderHeader() }
-
-				<Card className="transfer-card">
-					<IcannVerificationNotice
-						domains={ this.props.domains }
-						selectedDomainName={ this.props.selectedDomainName } />
-
-					<TransferProhibitedNotice
-						domains={ this.props.domains }
-						selectedDomainName={ this.props.selectedDomainName } />
-
-					<EnableDomainLockingNotice
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
-						wapiDomainInfo={ this.props.wapiDomainInfo } />
-
-					<EnablePrivacyNotice
-						domains={ this.props.domains }
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite } />
-
-					<PendingTransferNotice
-						domains={ this.props.domains }
-						selectedDomainName={ this.props.selectedDomainName }
-						wapiDomainInfo={ this.props.wapiDomainInfo } />
-
-					<RequestTransferCode
-						domains={ this.props.domains }
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
-						wapiDomainInfo={ this.props.wapiDomainInfo } />
-				</Card>
+				<Header
+					onClick={ this.goToEdit }
+					selectedDomainName={ this.props.selectedDomainName }>
+					{ this.translate( 'Transfer Domain' ) }
+				</Header>
+				{ this.renderSection() }
 			</Main>
 		);
 	},
@@ -82,18 +72,7 @@ const Transfer = React.createClass( {
 
 	isDataLoading() {
 		return (
-			! this.props.wapiDomainInfo.hasLoadedFromServer ||
-			! this.props.domains.hasLoadedFromServer
-		);
-	},
-
-	renderHeader() {
-		return (
-			<Header
-					onClick={ this.goToEdit }
-					selectedDomainName={ this.props.selectedDomainName }>
-				{ this.translate( 'Transfer Domain' ) }
-			</Header>
+			! this.props.wapiDomainInfo.hasLoadedFromServer || ! this.props.domains.hasLoadedFromServer
 		);
 	}
 } );
