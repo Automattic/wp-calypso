@@ -56,4 +56,4 @@ export function isInGracePeriod( plan ) {
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isFetching && selectedSite;
-}
+};

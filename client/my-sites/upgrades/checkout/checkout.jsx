@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
+var connect = require( 'react-redux' ).connect,
+	Dispatcher = require( 'dispatcher' ),
 	isEmpty = require( 'lodash/lang/isEmpty' ),
 	isEqual = require( 'lodash/lang/isEqual' ),
 	page = require( 'page' ),
@@ -16,15 +17,13 @@ var analytics = require( 'analytics' ),
 	DomainDetailsForm = require( './domain-details-form' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
 	observe = require( 'lib/mixins/data-observe' ),
-	planActions = require( 'state/sites/plans/actions' ),
+	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
 	purchasePaths = require( 'me/purchases/paths' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	upgradesActions = require( 'lib/upgrades/actions' );
 
-module.exports = React.createClass( {
-	displayName: 'Checkout',
-
+const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
 
 	getInitialState: function() {
@@ -129,7 +128,7 @@ module.exports = React.createClass( {
 
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			planActions.clearSitePlans( this.props.sites.getSelectedSite().ID );
+			this.props.clearSitePlans( this.props.sites.getSelectedSite().ID );
 
 			Dispatcher.handleViewAction( {
 				type: 'FETCH_SITES'
@@ -197,3 +196,14 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = connect(
+	undefined,
+	function( dispatch ) {
+		return {
+			clearSitePlans: function( siteId ) {
+				dispatch( clearSitePlans( siteId ) );
+			}
+		};
+	}
+)( Checkout );
