@@ -82,7 +82,7 @@ const hasRestrictedAccess = ( site ) => {
 
 	// Display a 404 to users that don't have the rights to manage plugins
 	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) ) {
-		pluginPageError = {
+		return {
 			title: i18n.translate( 'Not Available' ),
 			line: i18n.translate( 'The page you requested could not be found' ),
 			illustration: '/calypso/images/drake/drake-404.svg',

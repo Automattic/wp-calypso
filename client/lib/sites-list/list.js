@@ -529,7 +529,12 @@ SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 };
 
 SitesList.prototype.getSelectedOrAllWithPlugins = function() {
-	return this.getSelectedOrAll().filter( site => ( isBusiness( site.plan ) || site.jetpack ) && ( site.visible || this.selected ) );
+	return this.getSelectedOrAll().filter( site => {
+		return site.capabilities &&
+			site.capabilities.manage_options &&
+			( isBusiness( site.plan ) || site.jetpack ) &&
+			( site.visible || this.selected )
+	} );
 };
 
 SitesList.prototype.hasSiteWithPlugins = function() {
