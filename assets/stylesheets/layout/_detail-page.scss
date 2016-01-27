@@ -87,6 +87,10 @@
 			bottom: 0;
 			left: 0;
 		min-width: 200px;
+		
+		@include breakpoint( "<480px" ) {
+			min-width: initial;
+		}
 
 		.detail-page__button-label {
 			display: none;
