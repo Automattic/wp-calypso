@@ -88,17 +88,11 @@ var ThemesList = React.createClass( {
 			return this.renderEmpty();
 		}
 
-		let themes = this.props.themes.map( this.renderTheme );
-
-		if ( this.props.loading ) {
-			themes.push( this.renderLoadingPlaceholders() );
-		}
-
-		themes.push( this.renderTrailingItems() );
-
 		return (
 			<div className="themes-list">
-				{ themes }
+				{ this.props.themes.map( this.renderTheme ) }
+				{ this.props.loading && this.renderLoadingPlaceholders() }
+				{ this.renderTrailingItems() }
 			</div>
 		);
 	}
