@@ -15,7 +15,7 @@ import analytics from 'analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ConnectedApplicationItem',
 
@@ -109,20 +109,22 @@ module.exports = React.createClass( {
 			);
 		}
 
-		if ( message ) {
-			return (
-				<div>
-					<h2>
-						{ this.translate( 'Access Scope' ) }
-						{ this.renderAccessScopeBadge() }
-					</h2>
-
-					<p className="connected-application-item__connection-detail-description" >
-						{ message }
-					</p>
-				</div>
-			);
+		if ( ! message ) {
+			return;
 		}
+
+		return (
+			<div>
+				<h2>
+					{ this.translate( 'Access Scope' ) }
+					{ this.renderAccessScopeBadge() }
+				</h2>
+
+				<p className="connected-application-item__connection-detail-description" >
+					{ message }
+				</p>
+			</div>
+		);
 	},
 
 	renderDetail: function() {
@@ -161,13 +163,11 @@ module.exports = React.createClass( {
 					{ this.translate( 'Access Permissions' ) }
 				</h2>
 				<ul className="connected-application-item__connection-detail-descriptions">
-					{ permissions.map( function( permission ) {
-						return (
-							<li key={ 'permission-' + permission.name } >
-								{ permission.description }
-							</li>
-						);
-					}, this ) }
+					{ permissions.map( ( { name, description } ) => (
+						<li key={ `permission-${ name }` }>
+							{ description }
+						</li>
+					) ) }
 				</ul>
 			</div>
 		);
