@@ -13,13 +13,22 @@ var CompactCard = require( 'components/card/compact' ),
 var PeopleSectionHeader = React.createClass( {
 	getDefaultProps: function() {
 		return {
-			label: ''
+			label: '',
+			compactLabel: false
 		};
 	},
 
 	render: function() {
+		const classes = classNames(
+			this.props.className,
+			'section-header',
+			{
+				'header-is-compact': this.props.compactLabel
+			}
+		);
+
 		return (
-			<CompactCard className={ classNames( this.props.className, 'section-header' ) }>
+			<CompactCard className={ classes }>
 				<div className="section-header__label">
 					{ this.props.label }
 					{

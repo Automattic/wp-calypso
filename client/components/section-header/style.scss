@@ -35,6 +35,10 @@
 
 .section-header__label {
 	color: $gray;
+	font-size: 14px;
+}
+
+.section-header.header-is-compact .section-header__label {
 	font-size: 11px;
 	text-transform: uppercase;
 }
