@@ -201,6 +201,10 @@ function boot() {
 		perfmon();
 	}
 
+	if ( config.isEnabled( 'network-connection' ) ) {
+		require( 'lib/network-connection' ).init( reduxStore );
+	}
+
 	layout = renderWithReduxStore(
 		layoutElement,
 		document.getElementById( 'wpcom' ),
@@ -337,10 +341,6 @@ function boot() {
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 		require( 'lib/keyboard-shortcuts/global' )( sites );
-	}
-
-	if ( config.isEnabled( 'network-connection' ) ) {
-		require( 'lib/network-connection' ).init();
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
