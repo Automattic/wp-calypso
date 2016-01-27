@@ -363,4 +363,34 @@ JetpackSite.prototype.updateSshCredentials = function( query, callback ) {
 	this.emit( 'change' );
 };
 
+JetpackSite.prototype.getOption = function( query, callback ) {
+	wpcom.undocumented().site( this.ID ).getOption( query, function( error, data ) {
+		this.emit( 'change' );
+
+		if ( error ) {
+			debug( 'error getting option', error );
+		}
+
+		callback && callback( error, data );
+	}.bind( this ) );
+
+	this.emit( 'change' );
+};
+
+JetpackSite.prototype.setOption = function( query, callback ) {
+	query.site_option = query.site_option || false;
+	query.is_array = query.is_array || false;
+	wpcom.undocumented().site( this.ID ).setOption( query, function( error, data ) {
+		this.emit( 'change' );
+
+		if ( error ) {
+			debug( 'error getting option', error );
+		}
+
+		callback && callback( error, data );
+	}.bind( this ) );
+
+	this.emit( 'change' );
+};
+
 module.exports = JetpackSite;

@@ -20,7 +20,8 @@ var resources = [
 	[ 'sshCredentialsNew', 'ssh-credentials/new', '1.1', 'post' ],
 	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
 	[ 'sshCredentialsMineDelete', 'ssh-credentials/mine/delete', '1.1', 'post' ],
-	[ 'sshScanToggle', 'ssh-credentials/mine', '1.1', 'post' ]
+	[ 'sshScanToggle', 'ssh-credentials/mine', '1.1', 'post' ],
+	[ 'getOption', 'option/' ]
 ];
 
 var list = function( resourceOptions ) {
@@ -167,6 +168,19 @@ UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback 
 
 UndocumentedSite.prototype.getMuseCustomizations = function( callback ) {
 	this.wpcom.req.get( '/sites/' + this._id + '/customizations', callback );
+}
+
+UndocumentedSite.prototype.setOption = function( query, callback ) {
+	this.wpcom.req.post(
+		'/sites/' + this._id + '/option',
+		{
+			option_name: query.option_name,
+			is_array: query.is_array,
+			site_option: query.site_option
+		},
+		{ option_value: query.option_value },
+		callback
+	);
 }
 
 /**
