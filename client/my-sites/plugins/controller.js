@@ -185,7 +185,7 @@ controller = {
 		var isWpcomPlugin = 'business' === context.params.business_plugin,
 			siteUrl = route.getSiteFragment( context.path );
 
-		if ( context.params.plugin && context.params.plugin === siteUrl ) {
+		if ( context.params.plugin && context.params.plugin === siteUrl.toString() ) {
 			controller.plugins( 'all', context );
 			return;
 		}
