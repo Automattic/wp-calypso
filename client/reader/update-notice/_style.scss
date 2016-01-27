@@ -2,7 +2,7 @@
 // Slides in when there are new posts available
 .reader-update-notice {
 	position: fixed;
-		top: 16px;
+		top: ( 47px + 8px );
 		right: 16px;
 	background: rgba( $orange-jazzy, 0.96 );
 	padding: 6px 18px 6px 34px;
@@ -15,10 +15,6 @@
 	transform: translateY( -100px );
 	pointer-events: none;
 	transition: background 0.15s ease-in-out, transform 0.20s cubic-bezier( 0.175, 0.885, 0.320, 1.275 );
-
-	@include breakpoint( ">660px" ) {
-		top: ( 47px + 8px ); // Make way for the sticky Masterbar
-	}
 
 	&:hover {
 		background: $blue-medium;
