@@ -127,16 +127,48 @@
 		background: transparent;
 		box-shadow: none;
 
+		&:hover {
+			cursor: pointer;
+		}
+
 		.reader__full-post-content,
 		.reader-post-byline__tag,
-		.reader__post-footer {
+		.reader-post-byline__date,
+		.reader__post-footer,
+		.site__info {
 			display: none;
 		}
 
-		.reader__post-title,
+		.site {
+			pointer-events: none;
+		}
+
+		.reader__post-header {
+			margin-bottom: 0;
+		}
+
+		.reader__post-title {
+			font-size: 14px;
+			margin: 0;
+			position: absolute;
+				top: 17px;
+				left: 66px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
 		.reader-post-byline {
-			font-size: 12px;
-			line-height: normal;
+			margin: 0;
+			font-size: 13px;
+			position: absolute;
+				top: 30px;
+				left: 44px;
+		}
+
+		.reader-post-byline {
+			//font-size: 12px;
+			//line-height: normal;
 		}
 	}
 }
