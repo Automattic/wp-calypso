@@ -8,13 +8,14 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var eventRecorder = require( 'me/event-recorder' ),
-	CompactCard = require( 'components/card/compact' ),
-	ConnectedApplicationIcon = require( 'me/connected-application-icon' ),
-	safeProtocolUrl = require( 'lib/safe-protocol-url' ),
-	analytics = require( 'analytics' );
+import eventRecorder from 'me/event-recorder';
+import ConnectedApplicationIcon from 'me/connected-application-icon';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import analytics from 'analytics';
+import Button from 'components/button';
+import FoldableCard from 'components/foldable-card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ConnectedApplicationItem',
 
@@ -40,39 +41,30 @@ module.exports = React.createClass( {
 		};
 	},
 
-	toggleDetail: function() {
-		if ( this.state.showDetail ) {
-			analytics.ga.recordEvent( 'Me', 'Collapsed Connected Application', this.props.connection.title );
-		} else {
-			analytics.ga.recordEvent( 'Me', 'Expanded Connected Application', this.props.connection.title );
-		}
-
-		this.setState( { showDetail: ! this.state.showDetail } );
-	},
-
 	disconnect: function( event ) {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
+		const { connection: { title, ID } } = this.props;
 		event.stopPropagation();
-		analytics.ga.recordEvent( 'Me', 'Clicked on Disconnect Connected Application Link', this.props.connection.title );
-		this.props.revoke( this.props.connection.ID );
+		analytics.ga.recordEvent( 'Me', 'Clicked on Disconnect Connected Application Link', title );
+		this.props.revoke( ID );
 	},
 
 	renderAccessScopeBadge: function() {
-		var meta = '',
-			connection = this.props.connection;
+		const { connection: { scope, site } } = this.props;
+		var meta = '';
 
-		if ( ! connection ) {
+		if ( ! this.props.connection ) {
 			return;
 		}
 
-		if ( 'auth' === connection.scope ) {
+		if ( 'auth' === scope ) {
 			meta = this.translate( 'Authentication' );
-		} else if ( 'global' === connection.scope ) {
+		} else if ( 'global' === scope ) {
 			meta = this.translate( 'Global' );
-		} else if ( connection.site ) {
-			meta = connection.site.site_name;
+		} else if ( site ) {
+			meta = site.site_name;
 		}
 
 		if ( meta.length ) {
@@ -85,151 +77,137 @@ module.exports = React.createClass( {
 	},
 
 	renderScopeMessage: function() {
-		var message,
-			connection = this.props.connection;
-
-		if ( ! connection ) {
+		const { connection: { scope, site } } = this.props;
+		var message;
+		if ( ! this.props.connection ) {
 			return;
 		}
 
-		if ( 'global' === connection.scope ) {
+		if ( 'global' === scope ) {
 			message = this.translate(
 				'This connection is allowed to manage all of your blogs on WordPress.com, ' +
 				'including any Jetpack blogs that are connected to your WordPress.com account.'
 			);
-		} else if ( 'auth' === connection.scope ) {
+		} else if ( 'auth' === scope ) {
 			message = this.translate(
 				'This connection is not allowed to manage any of your blogs.'
 			);
-		} else if ( false !== connection.site ) {
+		} else if ( false !== site ) {
 			message = this.translate(
 				'This connection is only allowed to access {{siteLink}}%(siteName)s{{/siteLink}}', {
 					components: {
 						siteLink: <a
 							target="_blank"
-							href={ safeProtocolUrl( connection.site.site_URL ) }
+							href={ safeProtocolUrl( this.props.connection.site.site_URL ) }
 							onClick={ this.recordClickEvent( 'Connected Application Scope Blog Link' ) }
 						/>
 					},
 					args: {
-						siteName: connection.site.site_name
+						siteName: site.site_name
 					}
 				}
 			);
 		}
 
-		if ( message ) {
-			return (
-				<li className="connected-application-item__connection-detail">
-					<strong className="connected-application-item__connection-detail-title">
-						{ this.translate( 'Access Scope' ) }
-						{ this.renderAccessScopeBadge() }
-					</strong>
-
-					<span className="connected-application-item__connection-detail-description" >
-						{ message }
-					</span>
-				</li>
-			);
+		if ( ! message ) {
+			return;
 		}
+
+		return (
+			<div>
+				<h2>
+					{ this.translate( 'Access Scope' ) }
+					{ this.renderAccessScopeBadge() }
+				</h2>
+
+				<p className="connected-application-item__connection-detail-description" >
+					{ message }
+				</p>
+			</div>
+		);
 	},
 
 	renderDetail: function() {
-		var connection = this.props.connection;
+		const { connection: { URL, authorized, permissions } } = this.props;
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
 
 		return (
-			<div className="connected-application-item__content">
-				<p className="connected-application-item__content-description">
-					{ connection.description }
+			<div>
+				<h2>{ this.translate( 'Application Website' ) }</h2>
+				<p>
+					<a
+						href={ safeProtocolUrl( URL ) }
+						onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
+						target="_blank"
+					>
+						{ safeProtocolUrl( URL ) }
+					</a>
 				</p>
-				<ul className="connected-application-item__ul">
-					<li className="connected-application-item__connection-detail">
-						<strong className="connected-application-item__connection-detail-title">
-							{ this.translate( 'Application Website' ) }
-						</strong>
 
-						<span className="connected-application-item__connection-detail-description">
-							<a
-								href={ safeProtocolUrl( connection.URL ) }
-								onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
-								target="_blank"
-							>
-								{ safeProtocolUrl( connection.URL ) }
-							</a>
-						</span>
-					</li>
-
-					<li className="connected-application-item__connection-detail">
-						{
-							this.translate( '{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}', {
-								components: {
-									detailTitle: <strong className="connected-application-item__connection-detail-title" />,
-									detailDescription: <span className="connected-application-item__connection-detail-description" />
-								},
-								args: {
-									date: this.moment( connection.authorized ).format( 'MMM D, YYYY @ h:mm a' )
-								}
-							} )
-						}
-					</li>
-
+				{ this.translate( '{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}', {
+					components: {
+						detailTitle: <h2 />,
+						detailDescription: <p className="connected-application-item__connection-detail-description" />
+					},
+					args: {
+						date: this.moment( authorized ).format( 'MMM D, YYYY @ h:mm a' )
+					}
+				} ) }
+				<div>
 					{ this.renderScopeMessage() }
+				</div>
 
-					<li className="connected-application-item__connection-detail">
-						<strong className="connected-application-item__connection-detail-title">
-							{ this.translate( 'Access Permissions' ) }
-						</strong>
-
-						{ connection.permissions.map( function( permission ) {
-							return (
-								<span
-									className="connected-application-item__connection-detail-description"
-									key={ 'permission-' + permission.name } >
-									{ permission.description }
-								</span>
-							);
-						}, this ) }
-					</li>
+				<h2>
+					{ this.translate( 'Access Permissions' ) }
+				</h2>
+				<ul className="connected-application-item__connection-detail-descriptions">
+					{ permissions.map( ( { name, description } ) => (
+						<li key={ `permission-${ name }` }>
+							{ description }
+						</li>
+					) ) }
 				</ul>
 			</div>
 		);
 	},
 
+	header: function() {
+		return (
+			<div className="connected-application-item__header">
+				<ConnectedApplicationIcon image={ this.props.connection.icon } />
+				<h3>{ this.props.connection.title }</h3>
+			</div>
+		);
+	},
+
+	summary: function() {
+		return(
+			<div>
+				{ this.props.isPlaceholder
+					? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
+					: ( <Button compact onClick={ this.disconnect }>{ this.translate( 'Disconnect' ) }</Button> )
+				}
+			</div> );
+	},
+
 	render: function() {
-		var connection = this.props.connection,
-			classes = classNames( {
-				'connected-application-item': true,
-				'is-open': this.state.showDetail,
-				'is-placeholder': this.props.isPlaceholder
-			} ),
-			noticonClasses = classNames( {
-				'connected-application-item__content-toggle': true,
-				noticon: true,
-				'noticon-collapse': this.state.showDetail,
-				'noticon-expand': ! this.state.showDetail
-			} );
+		let classes = classNames( {
+			'connected-application-item': true,
+			'is-placeholder': this.props.isPlaceholder
+		} );
 
 		return (
-			<CompactCard className={ classes }>
-				<div className="connected-application-item__header" onClick={ this.toggleDetail }>
-					<span className={ noticonClasses }></span>
-					<ConnectedApplicationIcon image={ connection.icon } />
-
-					<div className="connected-application-item__title">
-						{ connection.title }
-					</div>
-
-					<span className="connected-application-item__disconnect">
-						<a onClick={ this.disconnect } className="button">
-							{ this.translate( 'Disconnect' ) }
-						</a>
-					</span>
-				</div>
+			<FoldableCard
+				header={ this.header() }
+				summary={ this.summary() }
+				expandedSummary={ this.summary() }
+				clickableHeader
+				compact
+				className={ classes }>
 				{ this.renderDetail() }
-			</CompactCard>
+			</FoldableCard>
 		);
 	},
 } );
