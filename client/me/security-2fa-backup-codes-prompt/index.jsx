@@ -86,6 +86,11 @@ module.exports = React.createClass( {
 		this.setState( { lastError: false } );
 	},
 
+	onClickPrintButton: function( event ) {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
+		this.onPrintAgain( event );
+	},
+
 	possiblyRenderPrintAgainButton: function() {
 		if ( ! this.props.onPrintAgain ) {
 			return null;
@@ -96,10 +101,7 @@ module.exports = React.createClass( {
 				className="security-2fa-backup-codes-prompt__print"
 				disabled={ this.state.submittingCode }
 				isPrimary={ false }
-				onClick={ function( event ) {
-					analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
-					this.onPrintAgain( event );
-				}.bind( this ) }
+				onClick={ this.onClickPrintButton }
 				type="button"
 			>
 				{ this.translate( "Didn't Print The Codes?" ) }
