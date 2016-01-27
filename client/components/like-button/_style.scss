@@ -61,4 +61,10 @@
 			color: $orange-jazzy;
 		}
 	}
+
+	@include breakpoint( "<480px" ) {
+		.like-button__label-status {
+			display: none;
+		}
+	}
 }

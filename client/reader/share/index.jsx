@@ -112,7 +112,7 @@ var ReaderShare = React.createClass( {
 			[
 				( <span key="button" ref="shareButton" className={ buttonClasses }>
 					<Gridicon icon="share" size={ 24 } />
-					{ this.translate( 'Share', { comment: 'Share the post' } ) }
+					<span className="reader-share__button-label">{ this.translate( 'Share', { comment: 'Share the post' } ) }</span>
 				</span> ),
 				( <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
 					isVisible={ this.state.showingMenu }

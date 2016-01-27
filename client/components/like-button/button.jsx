@@ -69,9 +69,7 @@ var LikeButton = React.createClass( {
 
 		// Override the label with a counter
 		if ( likeCount > 0 || this.props.showCount ) {
-			likeLabel = this.translate( '%d Like', '%d Likes', {
-				args: [ likeCount ],
-				count: likeCount,
+			likeLabel = this.translate( 'Like', 'Likes', {
 				comment: 'Displayed when a person "likes" a post.'
 			} );
 		}
@@ -82,7 +80,10 @@ var LikeButton = React.createClass( {
 
 		containerClasses = classnames( containerClasses );
 
-		labelElement = ( <span className="like-button__label">{ likeLabel }</span> );
+		labelElement = ( <span className="like-button__label">
+			<span className="like-button__label-count">{ likeCount }</span>
+			<span className="like-button__label-status"> { likeLabel }</span>
+		</span> );
 
 		return (
 		React.createElement(

@@ -28,6 +28,12 @@
 	}
 }
 
+@include breakpoint( "<480px" ) {
+	.reader-share__button-label {
+		display: none;
+	}
+}
+
 .reader-share__popover-item {
 	span {
 		display: inline-block;
