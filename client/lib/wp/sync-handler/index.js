@@ -95,7 +95,7 @@ export class SyncHandler {
 						resolve( res );
 
 						debug( 'second callback run: %o', res );
-						callback( err, res );
+						callback( null, res );
 					} );
 				} );
 			}
