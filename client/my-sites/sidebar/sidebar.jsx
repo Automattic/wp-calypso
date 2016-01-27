@@ -285,7 +285,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( config.isEnabled( 'upgrades/domain-search' ) && abtest( 'domainsAddButton' ) === 'button' ) {
+		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new">{ this.translate( 'Add' ) }</a>;
 		}
 

@@ -37,14 +37,6 @@ module.exports = {
 		},
 		defaultVariation: 'drake'
 	},
-	domainsAddButton: {
-		datestamp: '20160113',
-		variations: {
-			original: 50,
-			button: 50
-		},
-		defaultVariation: 'original'
-	},
 	freeTrials: {
 		datestamp: '20160120',
 		variations: {
