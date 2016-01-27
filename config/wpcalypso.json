@@ -69,6 +69,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": true,
 		"upgrades/domain-search": true,
+		"upgrades/in-app-purchase": false,
 		"upgrades/premium-themes": true,
 
 		"show-site-groups": true,

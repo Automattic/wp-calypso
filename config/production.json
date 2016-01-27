@@ -64,6 +64,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": true,
+		"upgrades/in-app-purchase": false,
 		"upgrades/premium-themes": true,
 		"muse": true,
 		"olark": true,

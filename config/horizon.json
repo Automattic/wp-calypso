@@ -61,6 +61,7 @@
 
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
+		"upgrades/in-app-purchase": false,
 		"upgrades/premium-themes": true,
 
 		"show-site-groups": true,
