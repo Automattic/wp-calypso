@@ -28,6 +28,7 @@ var ThemesList = React.createClass( {
 		getButtonOptions: React.PropTypes.func,
 		onScreenshotClick: React.PropTypes.func.isRequired,
 		onMoreButtonClick: React.PropTypes.func,
+		getActionLabel: React.PropTypes.func
 	},
 
 	fetchNextPage: function( options ) {
@@ -42,6 +43,9 @@ var ThemesList = React.createClass( {
 			optionsGenerator: function() {
 				return [];
 			},
+			getActionLabel: function() {
+				return '';
+			}
 		};
 	},
 
@@ -57,13 +61,14 @@ var ThemesList = React.createClass( {
 			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme ) }
 			onScreenshotClick={ this.props.onScreenshotClick }
 			onMoreButtonClick={ this.props.onMoreButtonClick }
+			actionLabel={ this.props.getActionLabel( theme ) }
 			index={ index }
-			{ ...theme } />;
+			theme={ theme } />;
 	},
 
 	renderLoadingPlaceholders: function() {
 		return times( PER_PAGE, function( i ) {
-			return <Theme key={ 'placeholder-' + i } id={ 'placeholder-' + i } name="Loading…" isPlaceholder={ true } />;
+			return <Theme key={ 'placeholder-' + i } theme={ { id: 'placeholder-' + i, name: 'Loading…' } } isPlaceholder={ true } />;
 		} );
 	},
 

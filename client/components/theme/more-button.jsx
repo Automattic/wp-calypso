@@ -20,15 +20,17 @@ var PopoverMenu = require( 'components/popover/menu' ),
  */
 var ThemeMoreButton = React.createClass( {
 	propTypes: {
-		// Theme ID (theme-slug)
-		id: React.PropTypes.string.isRequired,
-		// Index of theme in results list, if any
+		// See Theme component propTypes
+		theme: React.PropTypes.object,
+		// Index of theme in results list
 		index: React.PropTypes.number,
 		// Options to populate the popover menu with
 		options: React.PropTypes.objectOf(
 			React.PropTypes.shape( {
 				label: React.PropTypes.string,
+				header: React.PropTypes.string,
 				action: React.PropTypes.func,
+				getUrl: React.PropTypes.func
 			} )
 		).isRequired,
 		active: React.PropTypes.bool
@@ -42,12 +44,12 @@ var ThemeMoreButton = React.createClass( {
 
 	togglePopover: function() {
 		this.setState( { showPopover: ! this.state.showPopover } );
-		! this.state.showPopover && this.props.onClick( this.props.id, this.props.index );
+		! this.state.showPopover && this.props.onClick( this.props.theme.id, this.props.index );
 	},
 
 	closePopover: function( action ) {
 		this.setState( { showPopover: false } );
-		isFunction( action ) && action();
+		isFunction( action ) && action( this.props.theme );
 	},
 
 	focus: function( event ) {
@@ -57,7 +59,7 @@ var ThemeMoreButton = React.createClass( {
 	render: function() {
 		var classes = classNames(
 			'theme__more-button',
-			{ 'is-active': this.props.active },
+			{ 'is-active': this.props.theme.active },
 			{ 'is-open': this.state.showPopover }
 		);
 
@@ -74,19 +76,20 @@ var ThemeMoreButton = React.createClass( {
 
 					{ map( this.props.options, function( option, key ) {
 						if ( option.separator ) {
-							return ( <hr key={ 'separator-' + key } className="popover__hr" /> );
+							return ( <hr key={ key } className="popover__hr" /> );
 						}
-						if ( option.url ) {
+						if ( option.getUrl ) {
+							const url = option.getUrl( this.props.theme );
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
 									onMouseOver={ this.focus }
 									key={ option.label }
-									href={ option.url }
-									target={ ( isOutsideCalypso( option.url ) &&
+									href={ url }
+									target={ ( isOutsideCalypso( url ) &&
 										// We don't want to open a new tab for the signup flow
 										// TODO: Remove this hack once we can just hand over
 										// to Calypso's signup flow with a theme selected.
-										option.url !== getSignupUrl( { id: this.props.id } ) )
+										url !== getSignupUrl( this.props.theme ) )
 										? '_blank' : null }>
 									{ option.label }
 								</a>

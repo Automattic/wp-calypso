@@ -41,10 +41,11 @@ describe( 'Theme', function() {
 
 	beforeEach( function() {
 		this.props = {
-			id: 'atheme',
-			name: 'Theme name',
-			screenshot: '/theme/screenshot.png',
-			isSelected: true,
+			theme: {
+				id: 'atheme',
+				name: 'Theme name',
+				screenshot: '/theme/screenshot.png',
+			},
 			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } } // TODO: test if called when clicked
 		};
 	} );
@@ -101,7 +102,7 @@ describe( 'Theme', function() {
 
 		context( 'with empty buttonContents', function() {
 			beforeEach( function() {
-				this.props.buttonContents = [];
+				this.props.buttonContents = {};
 
 				this.theme = ReactDom.render(
 					React.createElement( this.Theme, this.props ),
@@ -122,7 +123,7 @@ describe( 'Theme', function() {
 	context( 'when isPlaceholder is set to true', function() {
 		beforeEach( function() {
 			this.theme = ReactDom.render(
-				React.createElement( this.Theme, { id: 'placeholder-1', name: 'Loading', isPlaceholder: true } ),
+				React.createElement( this.Theme, { theme: { id: 'placeholder-1', name: 'Loading' }, isPlaceholder: true } ),
 				this.container
 			);
 
@@ -137,7 +138,7 @@ describe( 'Theme', function() {
 
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
-			this.props.price = '$50';
+			this.props.theme.price = '$50';
 			this.theme = ReactDom.render(
 				React.createElement( this.Theme, this.props ),
 				this.container

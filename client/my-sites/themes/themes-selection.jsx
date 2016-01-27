@@ -22,17 +22,17 @@ const ThemesSelection = React.createClass( {
 	mixins: [ urlSearch ],
 
 	propTypes: {
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
 		siteId: PropTypes.string,
 		search: PropTypes.string,
-		togglePreview: PropTypes.func.isRequired,
-		getOptions: PropTypes.func.isRequired,
-		customize: PropTypes.func.isRequired,
+		onScreenshotClick: PropTypes.func.isRequired,
+		getOptions: React.PropTypes.func,
 		queryParams: PropTypes.object.isRequired,
-		themesList: PropTypes.array.isRequired
+		themesList: PropTypes.array.isRequired,
+		getActionLabel: React.PropTypes.func
 	},
 
 	getInitialState: function() {
@@ -75,15 +75,11 @@ const ThemesSelection = React.createClass( {
 	},
 
 	onScreenshotClick( theme, resultsRank ) {
-		const site = this.props.selectedSite;
-
 		Helper.trackClick( 'theme', 'screenshot' );
-		if ( theme.active && site ) {
-			this.props.customize( theme, site );
-		} else {
+		if ( ! theme.active ) {
 			this.recordSearchResultsClick( theme, resultsRank );
-			this.props.togglePreview( theme );
 		}
+		this.props.onScreenshotClick( theme );
 	},
 
 	render() {
@@ -106,10 +102,11 @@ const ThemesSelection = React.createClass( {
 						tier={ this.state.tier }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
-					<ThemesList getButtonOptions={ this.props.getOptions.bind( null, site ) }
+					<ThemesList getButtonOptions={ this.props.getOptions }
 						onMoreButtonClick={ this.onMoreButtonClick }
 						onScreenshotClick={ this.onScreenshotClick }
-						getScreenshotUrl={ site ? partialRight( Helper.getPreviewUrl, site ) : null } />
+						getScreenshotUrl={ site ? partialRight( Helper.getPreviewUrl, site ) : null }
+						getActionLabel={ this.props.getActionLabel } />
 				</ThemesData>
 			</div>
 		);

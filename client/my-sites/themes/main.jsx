@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
-	partialRight = require( 'lodash/function/partialRight' ),
-	connect = require( 'react-redux' ).connect;
+	connect = require( 'react-redux' ).connect,
+	pick = require( 'lodash/object/pick' );
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ var Main = require( 'components/main' ),
 	ThemesSelection = require( './themes-selection' ),
 	ThemeHelpers = require( 'lib/themes/helpers' ),
 	getButtonOptions = require( './theme-options' ).getButtonOptions,
+	addTracking = require( './theme-options' ).addTracking,
 	actionLabels = require( './action-labels' ),
 	ThemesListSelectors = require( 'state/themes/themes-list/selectors' ),
 	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
@@ -69,7 +70,7 @@ var Themes = React.createClass( {
 		);
 	},
 
-	setSelectedTheme: function( action, theme ) {
+	showSiteSelectorModal: function( action, theme ) {
 		this.setState( { selectedTheme: theme, selectedAction: action } );
 	},
 
@@ -84,7 +85,7 @@ var Themes = React.createClass( {
 	},
 
 	hideSiteSelectorModal: function() {
-		this.setSelectedTheme( null, null );
+		this.showSiteSelectorModal( null, null );
 	},
 
 	isThemeOrActionSet: function() {
@@ -111,7 +112,17 @@ var Themes = React.createClass( {
 		var site = this.props.selectedSite,
 			isJetpack = site.jetpack,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			dispatch = this.props.dispatch;
+			dispatch = this.props.dispatch,
+			buttonOptions = getButtonOptions(
+				site,
+				this.props.isLoggedOut,
+				bindActionCreators( Action, dispatch ),
+				this.showSiteSelectorModal,
+				this.togglePreview
+			),
+			getScreenshotAction = function( theme ) {
+				return buttonOptions[ ( site && theme.active ) ? 'customize' : 'preview' ];
+			};
 
 		if ( isJetpack && jetpackEnabled && ! site.hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
@@ -140,10 +151,8 @@ var Themes = React.createClass( {
 							() => {
 								if ( this.props.isLoggedOut ) {
 									dispatch( Action.signup( this.state.previewingTheme ) );
-								} else if ( site ) {
-									dispatch( Action.customize( this.state.previewingTheme, site ) );
 								} else {
-									this.setSelectedTheme( 'customize', this.state.previewingTheme );
+									buttonOptions.customize.action( this.state.previewingTheme );
 								}
 							} ) } >{ webPreviewButtonText }</Button>
 					</WebPreview>
@@ -151,16 +160,24 @@ var Themes = React.createClass( {
 				{ this.renderThankYou() }
 				{ ! this.isMultisite() && this.renderCurrentTheme() }
 				{ isJetpack && ! jetpackEnabled
-					? this.renderJetpackMessage()
-					: <ThemesSelection search={ this.props.search }
+				? this.renderJetpackMessage()
+				: <ThemesSelection search={ this.props.search }
 						key={ this.isMultisite() || site.ID }
 						siteId={ this.props.siteId }
 						selectedSite={ site }
-						togglePreview={ this.togglePreview }
-						getOptions={ partialRight( getButtonOptions, this.props.isLoggedOut, bindActionCreators( Action, dispatch ), this.setSelectedTheme, this.togglePreview, false ) }
+						onScreenshotClick={ function( theme ) {
+							getScreenshotAction( theme ).action( theme );
+						} }
+						getActionLabel={ function( theme ) {
+							return getScreenshotAction( theme ).label
+						} }
+						getOptions={ function( theme ) {
+							return pick(
+								addTracking( buttonOptions ),
+								option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+							); } }
 						trackScrollPage={ this.props.trackScrollPage }
 						tier={ this.props.tier }
-						customize={ bindActionCreators( Action.customize, dispatch ) }
 						queryParams={ this.props.queryParams }
 						themesList={ this.props.themesList } />
 				}
