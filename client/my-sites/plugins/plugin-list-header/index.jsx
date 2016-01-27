@@ -3,7 +3,9 @@
  */
 import React from 'react';
 import property from 'lodash/utility/property';
+import debounce from 'lodash/function/debounce';
 import config from 'config';
+import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import analytics from 'analytics';
 
@@ -19,6 +21,11 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 
+let _actionBarVisible = true;
+
+// Below this width the action bar turns into a select dropdown.
+const MIN_VIEWPORT_WIDTH = 719;
+
 export default React.createClass( {
 	displayName: 'Plugins-list-header',
 
@@ -27,6 +34,8 @@ export default React.createClass( {
 		isBulkManagementActive: React.PropTypes.bool,
 		toggleBulkManagement: React.PropTypes.func.isRequired,
 		updateAllPlugins: React.PropTypes.func.isRequired,
+		updateSelected: React.PropTypes.func.isRequired,
+		haveUpdatesSelected: React.PropTypes.bool,
 		pluginUpdateCount: React.PropTypes.number.isRequired,
 		activateSelected: React.PropTypes.func.isRequired,
 		deactiveAndDisconnectSelected: React.PropTypes.func.isRequired,
@@ -44,27 +53,44 @@ export default React.createClass( {
 		isWpCom: React.PropTypes.bool
 	},
 
+	getDefaultProps() {
+		return {
+			isWpCom: false
+		};
+	},
+
+	getInitialState() {
+		return {
+			actionBarVisible: _actionBarVisible
+		};
+	},
+
+	componentDidMount() {
+		this.debouncedAfterResize = debounce( this.afterResize, 100 );
+
+		window.addEventListener( 'resize', this.debouncedAfterResize );
+		_actionBarVisible = findDOMNode( this ).offsetWidth > MIN_VIEWPORT_WIDTH;
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.debouncedAfterResize );
+	},
+
+	afterResize() {
+		const actionBarVisible = findDOMNode( this ).offsetWidth > MIN_VIEWPORT_WIDTH;
+		this.setState( { actionBarVisible } );
+	},
+
 	onBrowserLinkClick() {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
 	},
 
 	canAddNewPlugins() {
-		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			return this.hasJetpackSelectedSites();
-		}
-		return false;
+		return config.isEnabled( 'manage/plugins/browser' ) && ! this.props.isWpCom;
 	},
 
 	canUpdatePlugins() {
 		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
-	},
-
-	hasJetpackSelectedSites() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		if ( selectedSite ) {
-			return !! selectedSite.jetpack;
-		}
-		return this.props.sites.getJetpack().length > 0;
 	},
 
 	unselectOrSelectAll() {
@@ -73,11 +99,12 @@ export default React.createClass( {
 		analytics.ga.recordEvent( 'Plugins', someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins' );
 	},
 
-	renderCurrentActionButtons( isWpCom ) {
+	renderCurrentActionButtons() {
+		const { isWpCom } = this.props;
 		let buttons = [];
 		let rightSideButtons = [];
 		let leftSideButtons = [];
-		let updateButtons = [];
+		let autoupdateButtons = [];
 		let activateButtons = [];
 
 		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
@@ -113,6 +140,19 @@ export default React.createClass( {
 				);
 			}
 		} else {
+			if ( ! isWpCom ) {
+				const updateButton = (
+					<Button
+						key="plugin-list-header__buttons-update"
+						disabled={ ! this.props.haveUpdatesSelected }
+						compact primary
+						onClick={ this.props.updateSelected }>
+						{ this.translate( 'Update' ) }
+					</Button>
+				);
+				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
+			}
+
 			activateButtons.push(
 				<Button key="plugin-list-header__buttons-activate" disabled={ ! this.props.haveInactiveSelected } compact onClick={ this.props.activateSelected }>
 					{ this.translate( 'Activate' ) }
@@ -138,8 +178,8 @@ export default React.createClass( {
 			activateButtons.push( deactivateButton )
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
-			if ( this.hasJetpackSelectedSites() && ! isWpCom ) {
-				updateButtons.push(
+			if ( ! isWpCom ) {
+				autoupdateButtons.push(
 					<Button key="plugin-list-header__buttons-autoupdate-on"
 						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
 						compact
@@ -147,7 +187,7 @@ export default React.createClass( {
 						{ this.translate( 'Autoupdate' ) }
 					</Button>
 				);
-				updateButtons.push(
+				autoupdateButtons.push(
 					<Button key="plugin-list-header__buttons-autoupdate-off"
 						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
 						compact
@@ -156,7 +196,7 @@ export default React.createClass( {
 					</Button>
 				);
 
-				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ updateButtons }</ButtonGroup> );
+				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ autoupdateButtons }</ButtonGroup> );
 				leftSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-remove-button">
 						<Button compact scary
@@ -185,6 +225,7 @@ export default React.createClass( {
 	},
 
 	renderCurrentActionDropdown() {
+		const { isWpCom } = this.props;
 		let options = [];
 		let actions = [];
 
@@ -194,8 +235,19 @@ export default React.createClass( {
 
 		if ( this.props.isBulkManagementActive ) {
 			options.push( <DropdownItem key="plugin__actions_title" selected={ true } value="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
-			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
 
+			if ( ! isWpCom ) {
+				options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
+				options.push(
+					<DropdownItem key="plugin__actions_activate"
+						disabled={ ! this.props.haveUpdatesSelected }
+						onClick={ this.props.updateSelected }>
+						{ this.translate( 'Update' ) }
+					</DropdownItem>
+				);
+			}
+
+			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
 			options.push(
 				<DropdownItem key="plugin__actions_activate"
 					disabled={ ! this.props.haveInactiveSelected }
@@ -217,7 +269,7 @@ export default React.createClass( {
 					</DropdownItem>;
 			options.push( deactivateAction );
 
-			if ( this.hasJetpackSelectedSites() ) {
+			if ( ! isWpCom ) {
 				options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
 				options.push(
 					<DropdownItem key="plugin__actions_autoupdate"
@@ -258,7 +310,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.isBulkManagementActive } );
+		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.isBulkManagementActive, 'is-action-bar-visible': this.state.actionBarVisible } );
 		return (
 			<SectionHeader label={ this.props.label } className={ sectionClasses }>
 				{
@@ -269,7 +321,7 @@ export default React.createClass( {
 							onToggle={ this.unselectOrSelectAll } />
 				}
 				{ this.renderCurrentActionDropdown() }
-				{ this.renderCurrentActionButtons( this.props.isWpCom ) }
+				{ this.renderCurrentActionButtons() }
 			</SectionHeader>
 		);
 	}

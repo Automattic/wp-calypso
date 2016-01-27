@@ -102,7 +102,7 @@ export default React.createClass( {
 		},
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some( site => site.plugin && site.plugin.update && site.canUpdateFiles );
+				return plugin.sites.some( site => site.plugin && site.plugin.update && site.plugin.update.new_version && site.canUpdateFiles );
 			}
 			return false;
 		},
@@ -182,6 +182,11 @@ export default React.createClass( {
 			plugin.sites.forEach( site => PluginsActions.updatePlugin( site, site.plugin ) );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
+	},
+
+	updateSelected() {
+		this.doActionOverSelected( 'updating', PluginsActions.updatePlugin );
+		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	},
 
 	activateSelected() {
@@ -355,6 +360,7 @@ export default React.createClass( {
 					selected={ this.getSelected() }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateAllPlugins={ this.updateAllPlugins }
+					updateSelected= { this.updateSelected }
 					pluginUpdateCount={ this.getPluginUpdateCount() }
 					activateSelected={ this.activateSelected }
 					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
@@ -364,7 +370,8 @@ export default React.createClass( {
 					removePluginNotice={ this.removePluginDialog }
 					setSelectionState={ this.setBulkSelectionState }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
-					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) } />
+					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
+					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
 				{ ! this.props.isWpCom && <DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" /> }
 			</div>
