@@ -85,6 +85,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": false,
+		"upgrades/in-app-purchase": true,
 		"upgrades/premium-themes": false
 	},
 	"rtl": false,
