@@ -86,6 +86,10 @@ function domainManagementTransfer( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'transfer' );
 }
 
+function domainManagementEditSiteAddress( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'edit-site-address' );
+}
+
 function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' ),
 		matches = regExp.exec( pathname );
@@ -108,5 +112,6 @@ module.exports = {
 	domainManagementRedirectSettings,
 	domainManagementPrimaryDomain,
 	domainManagementTransfer,
+	domainManagementEditSiteAddress,
 	getSectionName
 };
