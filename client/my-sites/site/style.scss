@@ -157,3 +157,48 @@
 .site__content:hover .site__home {
 	opacity: 1;
 }
+
+.site__toggle-more-options {
+	color: $gray;
+	cursor: pointer;
+	margin-right: 16px;
+	line-height: 0;
+	.gridicon {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+}
+
+.site.is-toggled {
+	.site__toggle-more-options .gridicon {
+		transform: rotate( 90deg );
+	}
+}
+
+.site__actions {
+	align-items: center;
+	display: flex;
+	flex: 1 0 0;
+	justify-content: space-between;
+}
+
+.site__edit-icon {
+	color: darken( $gray, 10% );
+	font-weight: 600;
+	font-size: 11px;
+	text-transform: uppercase;
+}
+
+.site__star {
+	color: $gray;
+	cursor: pointer;
+	line-height: 0;
+
+	&:hover .gridicon {
+		color: $blue-wordpress;
+		opacity: 1;
+	}
+
+	.gridicons-star {
+		color: $blue-wordpress;
+	}
+}

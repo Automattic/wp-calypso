@@ -10,7 +10,8 @@ var React = require( 'react' ),
  */
 var SiteIcon = require( 'components/site-icon' ),
 	Gridicon = require( 'components/gridicon' ),
-	SiteIndicator = require( 'my-sites/site-indicator' );
+	SiteIndicator = require( 'my-sites/site-indicator' ),
+	sites = require( 'lib/sites-list' )();
 
 module.exports = React.createClass( {
 	displayName: 'Site',
@@ -49,6 +50,12 @@ module.exports = React.createClass( {
 		onClick: React.PropTypes.func
 	},
 
+	getInitialState: function() {
+		return {
+			showMoreActions: false
+		};
+	},
+
 	onSelect: function( event ) {
 		if ( this.props.homeLink ) {
 			return;
@@ -56,6 +63,30 @@ module.exports = React.createClass( {
 
 		this.props.onSelect( event );
 		event.preventDefault(); // this doesn't actually do anything...
+	},
+
+	starSite: function() {
+		const site = sites.getSelectedSite();
+		sites.toggleStarred( site.ID );
+	},
+
+	renderStar: function() {
+		const site = this.props.site;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		const isStarred = sites.isStarred( site );
+
+		return (
+			<button className="site__star" onClick={ this.starSite }>
+				{ isStarred
+					? <Gridicon icon="star" />
+					: <Gridicon icon="star-outline" />
+				}
+			</button>
+		);
 	},
 
 	render: function() {
@@ -73,7 +104,8 @@ module.exports = React.createClass( {
 			'is-primary': site.primary,
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
-			'is-selected': this.props.isSelected
+			'is-selected': this.props.isSelected,
+			'is-toggled': this.state.showMoreActions
 		} );
 
 		return (
@@ -96,11 +128,18 @@ module.exports = React.createClass( {
 					}
 				>
 					<SiteIcon site={ site } />
-					<div className="site__info">
-						<div className="site__title">{ site.title }</div>
-						<div className="site__domain">{ site.domain }</div>
-					</div>
-					{ this.props.homeLink &&
+					{ this.state.showMoreActions ?
+						<div className="site__actions">
+							<span className="site__edit-icon">Edit Icon</span>
+							{ this.renderStar() }
+						</div>
+					:
+						<div className="site__info">
+							<div className="site__title">{ site.title }</div>
+							<div className="site__domain">{ site.domain }</div>
+						</div>
+					}
+					{ this.props.homeLink && ! this.state.showMoreActions &&
 						<span className="site__home">
 							<Gridicon icon="house" size={ 12 } />
 						</span>
@@ -110,6 +149,12 @@ module.exports = React.createClass( {
 					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
 					: null
 				}
+				<button
+					className="site__toggle-more-options"
+					onClick={ () => this.setState( { showMoreActions: ! this.state.showMoreActions } ) }
+				>
+					<Gridicon icon="ellipsis" size={ 24 } />
+				</button>
 			</div>
 		);
 	}
