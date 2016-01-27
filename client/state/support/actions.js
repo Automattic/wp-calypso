@@ -37,11 +37,9 @@ export function supportUserFetchToken( supportUser, supportPassword ) {
 		const tokenErrorCallback = ( error ) =>
 			dispatch( supportUserDeactivated( error.message ) );
 
-		const changeUserCallback = error => error
-			? tokenErrorCallback( error )
-			: activateSupportUser();
-
-		user.changeUser( supportUser, supportPassword, changeUserCallback, tokenErrorCallback );
+		return user.changeUser( supportUser, supportPassword, tokenErrorCallback )
+			.then( activateSupportUser )
+			.catch( tokenErrorCallback )
 	}
 }
 /**
