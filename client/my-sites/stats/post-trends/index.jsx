@@ -1,25 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	throttle = require( 'lodash/throttle' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import throttle from 'lodash/throttle';
+import touchDetect from 'lib/touch-detect';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	Month = require( './month.jsx' );
+import observe from 'lib/mixins/data-observe';
+import i18n from 'lib/mixins/i18n';
+import Month from './month';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PostTrends',
 
 	mixins: [ observe( 'streakList' ) ],
 
 	propTypes: {
-		streakList: React.PropTypes.object.isRequired
+		streakList: PropTypes.object.isRequired
 	},
 
 	getInitialState: function() {
@@ -60,7 +63,7 @@ module.exports = React.createClass( {
 		scrollProps.canScrollLeft = left < 0;
 		scrollProps.canScrollRight = ( left > ( 0 - yearNode.scrollWidth + node.clientWidth - margin ) );
 
-		if ( this.state.canScrollLeft && node.clientWidth > ( yearNode.scrollWidth - margin ) ) {
+		if ( this.state.canScrollLeft && node.clientWidth >= ( yearNode.scrollWidth - margin ) ) {
 			yearNode.style.left = '0px';
 		}
 
@@ -131,27 +134,34 @@ module.exports = React.createClass( {
 			'is-loading': this.props.streakList.isLoading()
 		} );
 
+		if ( touchDetect.hasTouch() ) {
+			return null;
+		}
+
 		return (
+
 			<div className={ containerClass }>
-				<h1 className="post-trends__title">{ this.translate( 'Posting activity' ) }</h1>
-				<div ref="wrapper" className="post-trends__wrapper">
-					<div ref="year" className="post-trends__year">
-						{ this.getMonthComponents() }
+				<SectionHeader label={ this.translate( 'Posting Activity' ) }></SectionHeader>
+				<Card>
+					<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
+					<div className={ rightClass } onClick={ this.scrollRight }><span className="right-arrow"></span></div>
+					<div ref="wrapper" className="post-trends__wrapper">
+						<div ref="year" className="post-trends__year">
+							{ this.getMonthComponents() }
+						</div>
+						<div className="post-trends__key-container">
+							<span className="post-trends__key-label">{ this.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<ul className="post-trends__key">
+								<li className="post-trends__key-day is-today"></li>
+								<li className="post-trends__key-day is-level-1"></li>
+								<li className="post-trends__key-day is-level-2"></li>
+								<li className="post-trends__key-day is-level-3"></li>
+								<li className="post-trends__key-day is-level-4"></li>
+							</ul>
+							<span className="post-trends__key-label">{ this.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+						</div>
 					</div>
-				</div>
-				<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
-				<div className={ rightClass } onClick={ this.scrollRight }><span className="right-arrow"></span></div>
-				<div className="post-trends__key-container">
-					<span className="post-trends__key-label">{ this.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
-					<ul className="post-trends__key">
-						<li className="post-trends__key-day is-today"></li>
-						<li className="post-trends__key-day is-level-1"></li>
-						<li className="post-trends__key-day is-level-2"></li>
-						<li className="post-trends__key-day is-level-3"></li>
-						<li className="post-trends__key-day is-level-4"></li>
-					</ul>
-					<span className="post-trends__key-label">{ this.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
-				</div>
+				</Card>
 			</div>
 		);
 	}

@@ -105,7 +105,7 @@ module.exports = React.createClass( {
 					label: this.translate( 'Views Per Visitor' ),
 					value: this.numberFormat( ( item.data.views / item.data.visitors ), { decimals: 2 } ),
 					className: 'is-views-per-visitor',
-					icon: 'stats-alt'
+					icon: 'chevron-right'
 				} );
 
 				if ( item.data.post_titles && item.data.post_titles.length ) {

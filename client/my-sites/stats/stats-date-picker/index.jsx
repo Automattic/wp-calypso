@@ -64,7 +64,7 @@ export default React.createClass( {
 		return(
 			<div>
 				{ this.props.summary
-					? <h4 className="module-header-title" key="header-title">{ sectionTitle }</h4>
+					? <span>{ sectionTitle }</span>
 					: <h3 className="stats-section-title">{ sectionTitle }</h3>
 				}
 			</div>

@@ -23,7 +23,7 @@
 }
 
 .post-trends__year {
-	position: absolute;
+	position: relative;
 		top: 0;
 		left: 0;
 	display: block;
@@ -32,35 +32,36 @@
 }
 
 .post-trends__wrapper {
-	overflow: hidden;
 	position: relative;
-	height: 100px;
+	height: 130px;
 	max-width: 660px;	// necessary for fluid width mode
 	margin: 0 auto;
+	overflow: hidden;
 }
 
 .post-trends__scroll-left,
 .post-trends__scroll-right {
 	position: absolute;
-		top: 0;
+		top: 0px;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient(to right, $gray-light , rgba( $gray-light, .92 ), $transparent );
+	background: linear-gradient(to right, $white , rgba( $white, .92 ), $transparent );
 	text-align: left;
+	z-index: 100;
 
 	.left-arrow,
 	.right-arrow {
 		width: 30px;
 		height: 100px;
 		display: block;
-		background: url( '/calypso/images/stats/left-arrow.svg') no-repeat -4px 63px;
-		background-size: 25px 25px;
+		background: url( '/calypso/images/stats/left-arrow.svg') no-repeat 4px 48px;
+		background-size: 18px 18px;
 		opacity: .15;
 	}
 
 	.right-arrow {
-		background: url( '/calypso/images/stats/right-arrow.svg') no-repeat 5px 63px;
-		background-size: 25px 25px;
+		background: url( '/calypso/images/stats/right-arrow.svg') no-repeat 4px 48px;
+		background-size: 18px 18px;
 	}
 
 	&.is-active {
@@ -76,16 +77,16 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient(to left, $gray-light , rgba( $gray-light, .92 ), $transparent );
+	background: linear-gradient(to left, $white , rgba( $white, .92 ), $transparent );
 	text-align: right;
 }
 
 .post-trends__scroll-left {
-	left: 0;
+	left: 0px;
 }
 
 .post-trends__scroll-right {
-	right: 0;
+	right: 0px;
 }
 
 .post-trends__month {
@@ -126,6 +127,7 @@
 .post-trends__key-day {
 	&.is-outside-month {
 		background-color: $transparent;
+		border-color: $white;
 	}
 
 	&.is-today {
@@ -169,16 +171,15 @@
 	}
 }
 
-@include breakpoint( "<960px" ) {
+@include breakpoint( "<1040px" ) {
 
 	.post-trends__year {
-		margin: 0 40px 0;
+
 	}
 }
 
 .post-trends__key-container {
 	@include clear-fix;
-	margin: 0 3px 20px 0;
 	padding-top: 10px;
 	float: right;
 

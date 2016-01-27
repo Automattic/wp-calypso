@@ -18,11 +18,12 @@ export default React.createClass( {
 		dataList: PropTypes.object,
 		selectedTab: PropTypes.string,
 		switchTab: PropTypes.func,
-		tabs: PropTypes.array
+		tabs: PropTypes.array,
+		borderless: PropTypes.bool
 	},
 
 	render() {
-		const { children, dataList, activeIndex, activeKey, tabs, switchTab, selectedTab } = this.props;
+		const { children, dataList, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } = this.props;
 		let statsTabs;
 
 		if ( dataList ) {
@@ -53,7 +54,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<ul className={ classNames( 'stats-tabs', { 'is-enabled': !! dataList } ) }>
+			<ul className={ classNames( 'stats-tabs', { 'is-enabled': !! dataList }, { 'is-borderless': borderless } ) }>
 				{ statsTabs || children }
 			</ul>
 		);

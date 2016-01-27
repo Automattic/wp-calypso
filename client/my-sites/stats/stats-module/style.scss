@@ -3,7 +3,8 @@
 
 // Select Dropdown
 .stats-module__select-dropdown-wrapper {
-	margin: 1em 20px;
+	padding: 16px;
+	text-align: center;
 
 	.select-dropdown__container {
 		position: relative;
@@ -61,16 +62,12 @@
 
 .module-expand {
 	line-height: 40px;
+	display: block;
 
 	@include breakpoint( "<480px" ) {
 		line-height: 48px;
 	}
 
-	.stats-module.is-expanded & {
-		display: block;
-	}
-
-	&,
 	.stats-module.is-loading &,
 	.stats-module.has-no-data & {
 		display: none;
@@ -246,9 +243,10 @@ ul.module-header-actions {
 	box-sizing: border-box;
 	color: $gray-dark;
 	font-size: 13px;
-	padding: 10px 24px;
+	padding: 16px 16px 0 16px;
 	min-height: 1em;
 	width: 100%;
+	text-align: center;
 
 	a {
 		display: block;
@@ -350,25 +348,11 @@ ul.module-header-actions {
 	}
 }
 
-.stats-module.is-hidden {
-	display: none;
-}
-
 .tab-email-followers .tab-content.email-followers,
 .tab-wpcom-followers .tab-content.wpcom-followers,
 .tab-top-authors .tab-content.top-authors,
 .tab-top-content .tab-content.top-content {
 	display: block;
-}
-
-// Module Content
-.module-content {
-	display: none;
-	position: relative;
-
-	.stats-module.is-expanded & {
-		display: block;
-	}
 }
 
 // Module Content Table
