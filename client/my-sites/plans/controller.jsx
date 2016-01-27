@@ -80,8 +80,8 @@ module.exports = {
 		ReactDom.render(
 			<ReduxProvider store={ context.store }>
 				<CartData>
-					<Plans sites={ sites }
-						selectedSite={ site }
+					<Plans
+						sites={ sites }
 						onSelectPlan={ onSelectPlan }
 						plans={ plans }
 						context={ context }

@@ -13,11 +13,12 @@ var observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	FreeTrialNotice = require( './free-trial-notice' ),
-	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
+	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	Main = require( 'components/main' );
+	Main = require( 'components/main' ),
+	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
 	mixins: [ observe( 'productsList', 'sites' ) ],
@@ -39,7 +40,11 @@ var DomainSearch = React.createClass( {
 
 	componentDidMount: function() {
 		this.props.sites.on( 'change', this.checkSiteIsUpgradeable );
-		this.props.fetchSitePlans( this.props.sites.getSelectedSite().ID );
+		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
+	},
+
+	componentWillReceiveProps: function() {
+		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 	},
 
 	componentWillUnmount: function() {
@@ -113,12 +118,14 @@ var DomainSearch = React.createClass( {
 
 module.exports = connect(
 	function( state, props ) {
-		return { sitePlans: getPlansBySiteId( state, props.sites.getSelectedSite().ID ) };
+		return { sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ) };
 	},
 	function( dispatch ) {
 		return {
-			fetchSitePlans( siteId ) {
-				dispatch( fetchSitePlans( siteId ) );
+			fetchSitePlans( sitePlans, site ) {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
 			}
 		};
 	}

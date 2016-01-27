@@ -20,9 +20,10 @@ var observe = require( 'lib/mixins/data-observe' ),
 	analytics = require( 'analytics' ),
 	HeaderCake = require( 'components/header-cake' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
-	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
+	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Card = require( 'components/card' ),
-	featuresListUtils = require( 'lib/features-list/utils' );
+	featuresListUtils = require( 'lib/features-list/utils' ),
+	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
@@ -32,9 +33,7 @@ var PlansCompare = React.createClass( {
 	],
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( ! this.props.isInSignup && this.props.selectedSite.ID !== nextProps.selectedSite.ID ) {
-			this.props.fetchSitePlans( nextProps.selectedSite.ID );
-		}
+		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
 	},
 
 	getDefaultProps: function() {
@@ -49,7 +48,7 @@ var PlansCompare = React.createClass( {
 		} );
 
 		if ( ! this.props.isInSignup ) {
-			this.props.fetchSitePlans( this.props.selectedSite.ID );
+			this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
 		}
 	},
 
@@ -241,18 +240,16 @@ var PlansCompare = React.createClass( {
 
 module.exports = connect(
 	function mapStateToProps( state, props ) {
-		if ( ! props.selectedSite ) {
-			return { sitePlans: null };
-		}
-
 		return {
-			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
+			sitePlans: getPlansBySite( state, props.selectedSite )
 		};
 	},
 	function mapDispatchToProps( dispatch ) {
 		return {
-			fetchSitePlans( siteId ) {
-				dispatch( fetchSitePlans( siteId ) );
+			fetchSitePlans( sitePlans, site ) {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
 			}
 		};
 	}
