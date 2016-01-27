@@ -1,11 +1,10 @@
 /**
  * External Dependencies
  */
-var chai = require( 'chai' ),
-	expect = chai.expect,
-	Dispatcher = require( 'dispatcher' ),
-	immutable = require( 'immutable' ),
-	chaiImmutable = require( 'chai-immutable' );
+import chai, { expect} from 'chai';
+import Dispatcher from 'dispatcher';
+import Immutable from 'immutable';
+import chaiImmutable from 'chai-Immutable';
 
 chai.use( chaiImmutable );
 
@@ -13,24 +12,26 @@ const FeedSubscriptionStore = require( '../index' );
 
 describe( 'feed-subscription-store', function() {
 	beforeEach( function() {
-		FeedSubscriptionStore.clearSubscriptions();
+		Dispatcher.handleViewAction( {
+			type: 'RESET_FEED_SUBSCRIPTIONS_STATE',
+		} );
 	} );
 
 	it( 'should have a dispatch token', function() {
 		expect( FeedSubscriptionStore ).to.have.property( 'dispatchToken' );
 	} );
 
-	it( 'should follow a new feed', function() {
+	it( 'should follow a new feed by URL', function() {
 		var siteUrl = 'http://trailnose.com';
 
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.equal( immutable.fromJS(
+		expect( FeedSubscriptionStore.getSubscription( 'URL', siteUrl ) ).to.equal( Immutable.fromJS(
 			{
 				URL: siteUrl,
 				state: 'SUBSCRIBED'
@@ -44,28 +45,28 @@ describe( 'feed-subscription-store', function() {
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
 		Dispatcher.handleViewAction( {
 			type: 'UNFOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.be.undefined;
+		expect( FeedSubscriptionStore.getSubscription( 'URL', siteUrl ) ).to.be.undefined;
 	} );
 
 	it( 'should add subscription details when a follow is confirmed', function() {
-		var siteUrl = 'http://trailnose.com';
+		const siteUrl = 'http://trailnose.com';
 
 		// The initial action from the UI
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
@@ -82,7 +83,7 @@ describe( 'feed-subscription-store', function() {
 			}
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.equal( immutable.fromJS( {
+		expect( FeedSubscriptionStore.getSubscription( 'URL', siteUrl ) ).to.equal( Immutable.fromJS( {
 			URL: siteUrl,
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
@@ -96,29 +97,29 @@ describe( 'feed-subscription-store', function() {
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: zeldmanSiteUrl,
-			data: { url: zeldmanSiteUrl },
+			data: { URL: zeldmanSiteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( zeldmanSiteUrl ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', zeldmanSiteUrl ) ).to.eq( true );
 
 		// The response from the API - if there is a problem here, the
 		// follow should be removed from the store and an error made available
 		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_FOLLOW_READER_FEED',
+			type: 'RECEIVE_FOLLOW_READER_FEED_ERROR',
 			url: zeldmanSiteUrl,
 			data: null,
 			error: new Error( 'There was a problem' )
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( zeldmanSiteUrl ) ).to.eq( false );
-		expect( FeedSubscriptionStore.getLastErrorBySiteUrl( zeldmanSiteUrl ) ).to.be.an( 'object' );
-		expect( FeedSubscriptionStore.getLastErrorBySiteUrl( 'blah' ) ).to.be.undefined;
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', zeldmanSiteUrl ) ).to.eq( false );
+		expect( FeedSubscriptionStore.getLastError( 'URL', zeldmanSiteUrl ) ).to.be.an( 'object' );
+		expect( FeedSubscriptionStore.getLastError( 'URL', 'blah' ) ).to.be.undefined;
 
 		// The response from the API - if there is a problem here, the
 		// follow should be removed from the store and an error made available
 		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_FOLLOW_READER_FEED',
+			type: 'RECEIVE_FOLLOW_READER_FEED_ERROR',
 			url: zeldmanSiteUrl,
 			data: {
 				info: 'unable_to_follow',
@@ -126,9 +127,9 @@ describe( 'feed-subscription-store', function() {
 			}
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( zeldmanSiteUrl ) ).to.eq( false );
-		expect( FeedSubscriptionStore.getLastErrorBySiteUrl( zeldmanSiteUrl ).errorType ).to.be.ok;
-		expect( FeedSubscriptionStore.getLastErrorBySiteUrl( 'blah' ) ).to.be.undefined;
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', zeldmanSiteUrl ) ).to.eq( false );
+		expect( FeedSubscriptionStore.getLastError( 'URL', zeldmanSiteUrl ).get( 'errorType' ) ).to.be.ok;
+		expect( FeedSubscriptionStore.getLastError( 'URL', 'blah' ) ).to.be.undefined;
 	} );
 
 	it( 'should find a feed regardless of protocol used', function() {
@@ -138,11 +139,11 @@ describe( 'feed-subscription-store', function() {
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: zeldmanSiteUrl,
-			data: { url: zeldmanSiteUrl },
+			data: { URL: zeldmanSiteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.zeldman.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', 'https://www.zeldman.com' ) ).to.eq( true );
 	} );
 
 	it( 'should receive a list of subscriptions', function() {
@@ -154,14 +155,14 @@ describe( 'feed-subscription-store', function() {
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscription( 'http://www.banana.com' ) ).to.equal( immutable.fromJS( {
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', 'https://www.feijoa.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getSubscription( 'URL', 'http://www.banana.com' ) ).to.equal( Immutable.fromJS( {
 			ID: 1,
 			URL: 'http://www.banana.com',
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
 		} ) );
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 505 );
+		expect( FeedSubscriptionStore.getSubscriptionCount() ).to.eq( 505 );
 
 		// Receiving second page (subscriptions should be merged)
 		Dispatcher.handleViewAction( {
@@ -170,9 +171,9 @@ describe( 'feed-subscription-store', function() {
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.dragonfruit.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscription( 'http://www.dragonfruit.com' ) ).to.equal( immutable.fromJS( {
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', 'https://www.feijoa.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getIsFollowing( 'URL', 'https://www.dragonfruit.com' ) ).to.eq( true );
+		expect( FeedSubscriptionStore.getSubscription( 'URL', 'http://www.dragonfruit.com' ) ).to.equal( Immutable.fromJS( {
 			ID: 3,
 			URL: 'http://www.dragonfruit.com',
 			feed_ID: 456,
@@ -193,7 +194,7 @@ describe( 'feed-subscription-store', function() {
 		} );
 
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.tomato.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscriptions().count ).to.eq( 1 );
+		expect( FeedSubscriptionStore.getSubscriptions().size ).to.eq( 1 );
 	} );
 
 	it( 'should update an existing subscription in the store on re-follow', function() {
@@ -203,7 +204,7 @@ describe( 'feed-subscription-store', function() {
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
@@ -224,7 +225,7 @@ describe( 'feed-subscription-store', function() {
 		Dispatcher.handleViewAction( {
 			type: 'UNFOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
@@ -232,16 +233,16 @@ describe( 'feed-subscription-store', function() {
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
 		// The subscription data from the first follow response should still exist
 		// (and there should not be duplicate records for the same feed)
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( siteUrl ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscriptions().count ).to.eq( 1 );
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ).get( 'feed_ID' ) ).to.eq( 123 );
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ).get( 'state' ) ).to.eq( 'SUBSCRIBED' );
+		expect( FeedSubscriptionStore.getSubscriptions().size ).to.eq( 1 );
+		expect( FeedSubscriptionStore.getSubscription( 'URL', siteUrl ).get( 'feed_ID' ) ).to.eq( 123 );
+		expect( FeedSubscriptionStore.getSubscription( 'URL', siteUrl ).get( 'state' ) ).to.eq( 'SUBSCRIBED' );
 	} );
 
 	it( 'should update the total subscription count during follow and unfollow', function() {
@@ -250,38 +251,62 @@ describe( 'feed-subscription-store', function() {
 		// Receive initial total_subscriptions count
 		Dispatcher.handleViewAction( {
 			type: 'RECEIVE_FEED_SUBSCRIPTIONS',
-			data: { page: 1, total_subscriptions: 506, subscriptions: [ { ID: 3, URL: 'http://www.dragonfruit.com', feed_ID: 456 } ] },
+			data: { page: 1, total_subscriptions: 506, subscriptions: [ { ID: 345, URL: 'http://www.dragonfruit.com', feed_ID: 456 } ] },
 			error: null
 		} );
+
+		expect( FeedSubscriptionStore.getSubscriptionCount() ).to.eq( 506 );
 
 		// Follow
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 507 );
+		expect( FeedSubscriptionStore.getSubscriptionCount() ).to.eq( 507 );
 
 		// Unfollow
 		Dispatcher.handleViewAction( {
 			type: 'UNFOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 506 );
+		expect( FeedSubscriptionStore.getSubscriptionCount() ).to.eq( 506 );
 
 		// Re-follow (to check that the state change UNSUBSCRIBED->SUBSCRIBED updates the count correctly)
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
 			url: siteUrl,
-			data: { url: siteUrl },
+			data: { URL: siteUrl },
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 507 );
+		expect( FeedSubscriptionStore.getSubscriptionCount() ).to.eq( 507 );
+	} );
+
+	it( 'dismisses a error by site URL', function() {
+		const zeldmanSiteUrl = 'http://www.zeldman.com';
+
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_FOLLOW_READER_FEED_ERROR',
+			url: zeldmanSiteUrl,
+			data: {
+				info: 'unable_to_follow',
+				subscribed: false
+			}
+		} );
+
+		expect( FeedSubscriptionStore.getLastError( 'URL', zeldmanSiteUrl ) ).to.be.an( 'object' );
+
+		Dispatcher.handleViewAction( {
+			type: 'DISMISS_FOLLOW_ERROR',
+			URL: zeldmanSiteUrl
+		} );
+
+		expect( FeedSubscriptionStore.getLastError( 'URL', zeldmanSiteUrl ) ).to.be.an( 'undefined' );
 	} );
 } );

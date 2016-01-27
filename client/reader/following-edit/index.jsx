@@ -132,6 +132,7 @@ const FollowingEdit = React.createClass( {
 		} ).reverse();
 	},
 
+	// @todo find another way to do this
 	handleAdd: function( newSubscription ) {
 		let newState = {
 			isAttemptingFollow: false
