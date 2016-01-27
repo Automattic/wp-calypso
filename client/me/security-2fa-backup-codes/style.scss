@@ -1,24 +1,3 @@
-.security-2fa-backup-codes__status {
-	margin-top: 20px;
-}
-
-.security-2fa-backup-codes__status-heading {
-	font-weight: bold;
-}
-
-.security-2fa-backup-codes__status-not-verified {
-	text-transform: uppercase;
-	color: $alert-red;
-	font-weight: bold;
-}
-
-.security-2fa-backup-codes__status-need-verification {
-	color: $blue-wordpress;
-	font-weight: bold;
-}
-
-.security-2fa-backup-codes__status-verified {
-	text-transform: uppercase;
-	color: $alert-green;
-	font-weight: bold;
+.security-2fa-backup-codes .security-2fa-backup-codes-prompt {
+	margin-top: 16px;
 }

@@ -127,7 +127,7 @@ module.exports = React.createClass( {
 		return (
 			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
-					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code' ) }</FormLabel>
+					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code to Verify' ) }</FormLabel>
 					<FormTelInput
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
