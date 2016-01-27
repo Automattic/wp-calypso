@@ -91,7 +91,7 @@ var ThemesList = React.createClass( {
 		return (
 			<div className="themes-list">
 				{ this.props.themes.map( this.renderTheme ) }
-				{ this.props.loading ? this.renderLoadingPlaceholders() : null }
+				{ this.props.loading && this.renderLoadingPlaceholders() }
 				{ this.renderTrailingItems() }
 			</div>
 		);
