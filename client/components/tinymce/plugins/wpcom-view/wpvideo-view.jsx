@@ -86,31 +86,60 @@ class WpVideoView extends Component {
 		}
 	}
 
+	constrainVideoDimensions( shortcodeWidthAttribute, shortcodeHeightAttribute, videoWidth, videoHeight ) {
+		const defaultWidth = 640;
+		const defaultAspectRatio = 16 / 9;
+		const aspectRatio = videoWidth && videoHeight ? videoWidth / videoHeight : defaultAspectRatio;
+		let width = defaultWidth,
+			height = defaultWidth / defaultAspectRatio;
+
+		if ( shortcodeWidthAttribute && ! shortcodeHeightAttribute ) {
+			width = shortcodeWidthAttribute;
+			height = shortcodeWidthAttribute / aspectRatio;
+		} else if ( ! shortcodeWidthAttribute && shortcodeHeightAttribute ) {
+			width = shortcodeHeightAttribute * aspectRatio;
+			height = shortcodeHeightAttribute;
+		} else if ( shortcodeWidthAttribute && shortcodeHeightAttribute ) {
+			const definedAspectRatio = shortcodeWidthAttribute / shortcodeHeightAttribute;
+			if ( definedAspectRatio > aspectRatio ) {
+				width = shortcodeHeightAttribute * aspectRatio;
+				height = shortcodeHeightAttribute;
+			} else {
+				width = shortcodeWidthAttribute;
+				height = shortcodeWidthAttribute / aspectRatio;
+			}
+		} else if ( videoWidth && videoHeight ) {
+			width = videoWidth;
+			height = videoHeight;
+		}
+
+		return { width, height };
+	}
+
 	getShortCodeAttributes() {
 		const shortcode = shortcodeUtils.parse( this.props.content );
 		const namedAttrs = shortcode.attrs.named;
 		const videopress_guid = shortcode.attrs.numeric[0];
 
 		const defaultAttrValues = { hd: false, at: 0, defaultLangCode: undefined };
-		const defaultWidth = 640;
-		const defaultHeight = defaultWidth * 9 / 16;
 
 		const videoAttributes = this.getVideoAttributes( shortcode.attrs.numeric[0] ) || {};
+		const videoDimensions = this.constrainVideoDimensions(
+			parseInt( namedAttrs.w, 10 ) || undefined,
+			parseInt( namedAttrs.h, 10 ) || undefined,
+			videoAttributes.width,
+			videoAttributes.height );
 
-		const attrs = defaults( {
+		const attrs = {
 			videopress_guid,
-			w: parseInt( namedAttrs.w, 10 ) || videoAttributes.width,
-			h: parseInt( namedAttrs.h, 10 ) || videoAttributes.height,
+			w: videoDimensions.width,
+			h: videoDimensions.height,
 			autoplay: namedAttrs.autoplay === 'true',
 			hd: namedAttrs.hd === 'true',
 			loop: namedAttrs.loop === 'true',
-			at: parseInt( namedAttrs.at, 10 ) || undefined,
+			at: parseInt( namedAttrs.at, 10 ) || 0,
 			defaultLangCode: namedAttrs.defaultlangcode
-		}, {
-			w: defaultWidth,
-			h: defaultHeight,
-			at: 0
-		} );
+		};
 
 		return omit( attrs, ( value, key ) => defaultAttrValues[key] === value );
 	}
@@ -136,8 +165,8 @@ class WpVideoView extends Component {
 			<div className="wpview-content">
 				<iframe
 					onLoad={ this.onLoad }
-					width = { attrs.w }
-					height = { attrs.h }
+					width={ attrs.w }
+					height={ attrs.h }
 					src={ this.getEmbedUrl( attrs ) }
 					frameBorder="0"
 					allowFullScreen />
