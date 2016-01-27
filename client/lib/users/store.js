@@ -115,7 +115,7 @@ function deleteUserFromSite( siteId, userId ) {
 function deleteUserFromNamespaces( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
 		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
-			delete _userIDsByNamespace[ namespace ][ userId ];
+			_userIDsByNamespace[ namespace ].delete( userId );
 		}
 	} );
 }
