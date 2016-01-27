@@ -27,7 +27,6 @@ var abtest = require( 'lib/abtest' ).abtest,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
-	PollerPool = require( 'lib/data-poller' ),
 	CartData = require( 'components/data/cart' ),
 	KeyboardShortcutsMenu,
 	Layout;
@@ -43,35 +42,6 @@ Layout = React.createClass( {
 
 	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
-	_sitesPoller: null,
-
-	componentWillUpdate: function( nextProps ) {
-		if ( this.props.section !== nextProps.section ) {
-			if ( nextProps.section === 'sites' ) {
-				setTimeout( function() {
-					if ( ! this.isMounted() || this._sitesPoller ) {
-						return;
-					}
-					this._sitesPoller = PollerPool.add( this.props.sites, 'fetchAvailableUpdates', { interval: 900000 } );
-				}.bind( this ), 0 );
-			} else {
-				this.removeSitesPoller();
-			}
-		}
-	},
-
-	componentWillUnmount: function() {
-		this.removeSitesPoller();
-	},
-
-	removeSitesPoller: function() {
-		if ( ! this._sitesPoller ) {
-			return;
-		}
-
-		PollerPool.remove( this._sitesPoller );
-		this._sitesPoller = null;
-	},
 	closeWelcome: function() {
 		this.props.nuxWelcome.closeWelcome();
 		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );
@@ -143,7 +113,7 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
-		return { 
+		return {
 			isLoading,
 			section,
 			hasSidebar,

@@ -537,12 +537,6 @@ SitesList.prototype.hasSiteWithPlugins = function() {
 	} );
 };
 
-SitesList.prototype.fetchAvailableUpdates = function() {
-	this.getJetpack().forEach( function( site ) {
-		site.fetchAvailableUpdates();
-	}, this );
-};
-
 SitesList.prototype.removeSite = function( site ) {
 	var sites, changed;
 	if ( this.isSelected( site ) ) {
@@ -625,13 +619,13 @@ SitesList.prototype.onUpdatedPlugin = function( site ) {
 	}
 	site = this.getSite( site.slug );
 
-	if ( site.update && site.update.plugins ) {
-		let siteUpdateInfo = assign( {}, site.update );
+	if ( site.updates && site.updates.plugins ) {
+		let siteUpdateInfo = assign( {}, site.updates );
 		siteUpdateInfo.plugins--;
 		siteUpdateInfo.total--;
-		site.set( { update: siteUpdateInfo } );
+		site.set( { updates: siteUpdateInfo } );
 
-		if ( site.update.plugins <= 0 ) {
+		if ( site.updates.plugins <= 0 ) {
 			site.fetchAvailableUpdates();
 		}
 	}

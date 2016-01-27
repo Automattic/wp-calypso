@@ -70,7 +70,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		update = ( site.update && 'error' !== site.update && site.update.total > 0 ) ? <li><a href={ site.options.admin_url + 'update-core.php' } className="update-available">{ this.translate( 'Update Available' ) }</a></li> : null;
+		update = ( site.updates && 'error' !== site.updates && site.updates.total > 0 ) ? <li><a href={ site.options.admin_url + 'update-core.php' } className="update-available">{ this.translate( 'Update Available' ) }</a></li> : null;
 
 		if ( ! site.jetpack || config.isEnabled( 'manage/jetpack' ) ) {
 			settings = <a href={ '/settings/general/' + site.slug } className="site-settings">{ this.translate( 'Settings' ) }</a>;
@@ -143,7 +143,7 @@ module.exports = React.createClass( {
 			{
 				'is-jetpack': site.jetpack,
 				'is-private': site.is_private,
-				'has-update': site.update && ( 'error' !== site.update ) && ( site.update.total > 0 ),
+				'has-update': site.updates && ( 'error' !== site.updates ) && ( site.updates.total > 0 ),
 				'is-selected': this.props.selected
 			}
 		);
