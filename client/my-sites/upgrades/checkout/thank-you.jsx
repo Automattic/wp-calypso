@@ -359,7 +359,7 @@ PremiumPlanDetails = React.createClass( {
 						title={ this.translate( 'Get a free domain' ) }
 						description={ this.translate( 'WordPress.com Premium includes a free domain for your site.' ) }
 						buttonText={ this.translate( 'Add Free Domain' ) }
-						onButtonClick={ goToExternalPage( '/domains/add/' + this.props.selectedSite.slug ) } />
+						href={ '/domains/add/' + this.props.selectedSite.slug } />
 					: null
 				}
 
@@ -369,7 +369,8 @@ PremiumPlanDetails = React.createClass( {
 						title={ this.translate( 'Ads have been removed!' ) }
 						description={ this.translate( 'WordPress.com ads will not show up on your blog.' ) }
 						buttonText={ this.translate( 'View Your Site' ) }
-						onButtonClick={ goToExternalPage( this.props.selectedSite.URL ) } />
+						href={ this.props.selectedSite.URL }
+						target="_blank" />
 					: null
 				}
 
@@ -378,14 +379,16 @@ PremiumPlanDetails = React.createClass( {
 					title={ this.translate( 'Customize Fonts & Colors' ) }
 					description={ this.translate( 'You now have access to full font and CSS editing capabilites.' ) }
 					buttonText={ this.translate( 'Customize Your Site' ) }
-					onButtonClick={ goToExternalPage( customizeLink ) } />
+					href={ customizeLink }
+					target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
 
 				<PurchaseDetail
 					additionalClass="upload-to-videopress"
 					title={ this.translate( 'Upload to VideoPress' ) }
 					description={ this.translate( "Uploading videos to your blog couldn't be easier." ) }
 					buttonText={ this.translate( 'Start Using VideoPress' ) }
-					onButtonClick={ goToExternalPage( this.props.selectedSite.URL + '/wp-admin/media-new.php' ) } />
+					href={ this.props.selectedSite.URL + '/wp-admin/media-new.php' }
+					target="_blank" />
 			</ul>
 		);
 	}
@@ -400,14 +403,16 @@ JetpackPremiumPlanDetails = React.createClass( {
 					title={ this.translate( 'Akismet' ) }
 					description={ this.translate( 'Say goodbye to comment spam' ) }
 					buttonText={ this.translate( 'Start using Akismet' ) }
-					onButtonClick={ goToExternalPage( 'https://en.support.wordpress.com/setting-up-premium-services/' ) } />
+					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="vaultpress"
 					title={ this.translate( 'VaultPress' ) }
 					description={ this.translate( 'Backup your site' ) }
 					buttonText={ this.translate( 'Start using VaultPress' ) }
-					onButtonClick={ goToExternalPage( 'https://en.support.wordpress.com/setting-up-premium-services/' ) } />
+					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					target="_blank" />
 			</ul>
 		);
 	}
@@ -425,7 +430,7 @@ BusinessPlanDetails = React.createClass( {
 						title={ this.translate( 'Get a free domain' ) }
 						description={ this.translate( 'WordPress.com Business includes a free domain for your site.' ) }
 						buttonText={ this.translate( 'Add Free Domain' ) }
-						onButtonClick={ goToExternalPage( '/domains/add/' + this.props.selectedSite.slug ) } />
+						href={ '/domains/add/' + this.props.selectedSite.slug } />
 					: null }
 
 				<PurchaseDetail
@@ -433,7 +438,7 @@ BusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Add eCommerce' ) }
 					description={ this.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
 					buttonText={ this.translate( 'Set Up eCommerce' ) }
-					onButtonClick={ goToExternalPage( '/plugins/' + this.props.selectedSite.slug ) } />
+					href={ '/plugins/' + this.props.selectedSite.slug } />
 
 				{ ! showGetFreeDomainTip
 				? <PurchaseDetail
@@ -441,7 +446,8 @@ BusinessPlanDetails = React.createClass( {
 						title={ this.translate( 'Start a Live Chat' ) }
 						description={ this.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
 						buttonText={ this.translate( 'Talk to an Operator' ) }
-						onButtonClick={ goToExternalPage( '//support.wordpress.com/live-chat/' ) } />
+						href="//support.wordpress.com/live-chat/"
+						target="_blank" />
 					: null
 				}
 
@@ -450,7 +456,7 @@ BusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Browse Themes' ) }
 					description={ this.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
 					buttonText={ this.translate( 'Find a New Theme' ) }
-					onButtonClick={ goToExternalPage( '/themes/' + this.props.selectedSite.slug ) } />
+					href={ '/themes/' + this.props.selectedSite.slug } />
 			</ul>
 		);
 	}
@@ -465,21 +471,24 @@ JetpackBusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Akismet' ) }
 					description={ this.translate( 'Say goodbye to comment spam' ) }
 					buttonText={ this.translate( 'Start using Akismet' ) }
-					onButtonClick={ goToExternalPage( 'https://en.support.wordpress.com/setting-up-premium-services/' ) } />
+					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="vaultpress"
 					title={ this.translate( 'VaultPress' ) }
 					description={ this.translate( 'Backup your site' ) }
 					buttonText={ this.translate( 'Start using VaultPress' ) }
-					onButtonClick={ goToExternalPage( 'https://en.support.wordpress.com/setting-up-premium-services/' ) } />
+					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="polldaddy"
 					title={ this.translate( 'PollDaddy' ) }
 					description={ this.translate( 'Create surveys and polls' ) }
 					buttonText={ this.translate( 'Start using PollDaddy' ) }
-					onButtonClick={ goToExternalPage( 'https://en.support.wordpress.com/setting-up-premium-services/' ) } />
+					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					target="_blank" />
 			</ul>
 		);
 	}
@@ -523,21 +532,22 @@ DomainMappingDetails = React.createClass( {
 					title={ this.translate( 'Important!' ) }
 					description={ this.translate( "Your domain mapping won't work until you update the DNS settings." ) }
 					buttonText={ this.translate( 'Learn More' ) }
-					onButtonClick={ goToExternalPage( supportDoc ) } />
+					href={ supportDoc }
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="your-primary-domain"
 					title={ this.translate( 'Your Primary Domain' ) }
 					description={ primaryDomainDescription }
 					buttonText={ this.translate( 'Update Settings' ) }
-					onButtonClick={ goToDomainManagement( this.props.selectedSite, this.props.domain ) } />
+					href={ getDomainManagementUrl( this.props.selectedSite, this.props.domain ) } />
 
 				{ ! isPlan( this.props.selectedSite.plan ) ? <PurchaseDetail
 					additionalClass="upgrade-now"
 					title={ this.translate( 'Upgrade Now' ) }
 					description={ this.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
 					buttonText={ this.translate( 'View Plans' ) }
-					onButtonClick={ goToExternalPage( '/plans/' + this.props.selectedSite.slug ) } /> : null }
+					href={ '/plans/' + this.props.selectedSite.slug } /> : null }
 			</ul>
 		);
 	}
@@ -552,21 +562,22 @@ DomainRegistrationDetails = React.createClass( {
 					title={ this.translate( 'Important!' ) }
 					description={ this.translate( 'It can take up to 72 hours for your domain setup to complete.' ) }
 					buttonText={ this.translate( 'Learn More' ) }
-					onButtonClick={ goToExternalPage( '//support.wordpress.com/domains/' ) } />
+					href="//support.wordpress.com/domains/"
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="your-primary-domain"
 					title={ this.translate( 'Your Primary Domain' ) }
 					description={ this.translate( 'Want this to be your primary domain for this site?' ) }
 					buttonText={ this.translate( 'Update Settings' ) }
-					onButtonClick={ goToDomainManagement( this.props.selectedSite, this.props.domain ) } />
+					href={ getDomainManagementUrl( this.props.selectedSite, this.props.domain ) } />
 
 				{ ! isPlan( this.props.selectedSite.plan ) ? <PurchaseDetail
 					additionalClass="upgrade-now"
 					title={ this.translate( 'Upgrade Now' ) }
 					description={ this.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
 					buttonText={ this.translate( 'View Plans' ) }
-					onButtonClick={ goToExternalPage( '/plans/' + this.props.selectedSite.slug ) } /> : null }
+					href={ '/plans/' + this.props.selectedSite.slug } /> : null }
 			</ul>
 		);
 	}
@@ -581,21 +592,23 @@ GoogleAppsDetails = React.createClass( {
 					title={ this.translate( 'Google Apps Setup' ) }
 					description={ this.translate( 'You will receive an email shortly with your login information.' ) }
 					buttonText={ this.translate( 'More about Google Apps' ) }
-					onButtonClick={ goToExternalPage( 'https://en.support.wordpress.com/add-email/adding-google-apps-to-your-site/' ) } />
+					href="https://en.support.wordpress.com/add-email/adding-google-apps-to-your-site/"
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="important"
 					title={ this.translate( 'Important!' ) }
 					description={ this.translate( 'It can take up to 72 hours for your domain setup to complete.' ) }
 					buttonText={ this.translate( 'Learn More' ) }
-					onButtonClick={ goToExternalPage( '//support.wordpress.com/domains/' ) } />
+					href="//support.wordpress.com/domains/"
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="your-primary-domain"
 					title={ this.translate( 'Your Primary Domain' ) }
 					description={ this.translate( 'Want this to be your primary domain for this site?' ) }
 					buttonText={ this.translate( 'Update Settings' ) }
-					onButtonClick={ goToDomainManagement( this.props.selectedSite, this.props.domain ) } />
+					href={ getDomainManagementUrl( this.props.selectedSite, this.props.domain ) } />
 			</ul>
 		);
 	}
@@ -610,14 +623,15 @@ SiteRedirectDetails = React.createClass( {
 					title={ this.translate( 'Redirect now working' ) }
 					description={ this.translate( 'Visitors to your site will be redirected to your chosen target.' ) }
 					buttonText={ this.translate( 'Test Redirect' ) }
-					onButtonClick={ goToExternalPage( this.props.selectedSite.URL ) } />
+					href={ this.props.selectedSite.URL }
+					target="_blank" />
 
 				<PurchaseDetail
 					additionalClass="change-redirect-settings"
 					title={ this.translate( 'Change redirect settings' ) }
 					description={ this.translate( 'You can disable the redirect or change the target at any time.' ) }
 					buttonText={ this.translate( 'My Domains' ) }
-					onButtonClick={ goToDomainManagement( this.props.selectedSite ) } />
+					href={ getDomainManagementUrl( this.props.selectedSite ) } />
 			</ul>
 		);
 	}
@@ -632,14 +646,14 @@ ChargebackDetails = React.createClass( {
 					title={ this.translate( 'Important!' ) }
 					description={ this.translate( 'The chargeback fee has been paid and you can now use the full features of your site.' ) }
 					buttonText={ this.translate( 'Write a Post' ) }
-					onButtonClick={ goToExternalPage( '/post/' + this.props.selectedSite.slug ) } />
+					href={ '/post/' + this.props.selectedSite.slug } />
 
 				{ ! isPlan( this.props.selectedSite.plan ) ? <PurchaseDetail
 					additionalClass="upgrade-now"
 					title={ this.translate( 'Upgrade Now' ) }
 					description={ this.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
 					buttonText={ this.translate( 'View Plans' ) }
-					onButtonClick={ goToExternalPage( '/plans/' + this.props.selectedSite.slug ) } /> : null }
+					href={ '/plans/' + this.props.selectedSite.slug } /> : null }
 			</ul>
 		);
 	}
@@ -657,15 +671,7 @@ GenericDetails = React.createClass( {
 	}
 } );
 
-function goToExternalPage( url ) {
-	return function( event ) {
-		event.preventDefault();
-
-		window.open( url );
-	};
-}
-
-function goToDomainManagement( selectedSite, domain ) {
+function getDomainManagementUrl( selectedSite, domain ) {
 	let url;
 
 	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
@@ -678,7 +684,7 @@ function goToDomainManagement( selectedSite, domain ) {
 		url = '/my-domains/' + selectedSite.ID;
 	}
 
-	return goToExternalPage( url );
+	return url;
 }
 
 module.exports = connect(
