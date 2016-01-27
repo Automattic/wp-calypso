@@ -10,7 +10,9 @@
 		&.is-selected,
 		&:hover,
 		&.is-x-post.is-selected,
-		&.is-x-post:hover {
+		&.is-x-post:hover,
+		&.tag-afk.is-selected,
+		&.tag-afk:hover {
 			box-shadow: 0 0 0 1px $gray,
 						0 2px 4px lighten( $gray, 20 );
 		}
