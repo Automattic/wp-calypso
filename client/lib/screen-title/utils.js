@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { fromJS } from 'immutable';
+
+/**
  * Internal dependencies
  */
-
 import { decodeEntities } from 'lib/formatting';
 import config from 'config';
 import sitesList from 'lib/sites-list';
@@ -10,6 +14,8 @@ const sites = sitesList();
 
 function buildTitle( title, options ) {
 	let pageTitle = '';
+
+	options = toImmutable( options );
 
 	if ( options.get( 'count' ) ) {
 		pageTitle += '(' + options.get( 'count' ) + ') ';
@@ -53,6 +59,12 @@ function appendSite( title, options ) {
 	}
 
 	return title + ' \u2039 ' + siteName;
+}
+
+function toImmutable( object = {} ) {
+	return object.toJS
+		? object
+		: fromJS( object );
 }
 
 export default buildTitle;
