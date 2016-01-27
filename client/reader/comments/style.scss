@@ -231,30 +231,24 @@
 			margin-right: 18px;
 		}
 
-		.gridicon {
-			top: 4px;
+		&.comment__actions-reply {
+			.gridicon {
+				position: relative;
+					top: 4px;
+				margin-right: 4px;
+				transform: rotate(180deg);
+			}
 		}
 
-		.gridicon__like-empty {
-			fill: $gray;
+		&.like-button {
+			.gridicon {
+				top: 4px;
+			}
 		}
 
 		&:hover {
 			color: $blue-medium;
-
-			.gridicon__like-empty {
-				fill: $blue-medium;
-			}
 		}
-	}
-}
-
-.comment__actions-reply {
-	&:before {
-		@include noticon( '\f412', 16px );
-		margin-right: 4px;
-		position: relative;
-		top: 2px;
 	}
 }
 

@@ -124,7 +124,12 @@ var PostComment = React.createClass( {
 
 		return (
 			<div className="comment__actions">
-				{ showReplyButton ? <button className="comment__actions-reply" onClick={ this.handleReply }>Reply</button> : null }
+				{ showReplyButton ?
+					<button className="comment__actions-reply" onClick={ this.handleReply }>
+						<Gridicon icon="reply" size="18" />
+						<span className="comment__actions-reply-label">Reply</span>
+					</button>
+				: null }
 				{ showCancelReplyButton ? <button className="comment__actions-cancel-reply" onClick={ onReplyCancel }>Cancel reply</button> : null }
 				<CommentLikeButtonContainer className="comment__actions-like" tagName="button" siteId={ this.props.post.site_ID } commentId={ comment.ID } />
 				<span className="comment__actions-like-count">{ comment.like_count ? comment.like_count : null } likes</span>
