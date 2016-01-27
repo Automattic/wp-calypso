@@ -398,7 +398,7 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 };
 
 SitesList.prototype.getRecentlySelected = function() {
-	if ( ! this.recentlySelected.length ) {
+	if ( ! this.recentlySelected.length || ! this.initialized ) {
 		return false;
 	}
 
