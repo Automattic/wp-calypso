@@ -245,7 +245,7 @@ export default React.createClass( {
 	renderStarredSites() {
 		const sites = this.props.sites.getStarred();
 
-		if ( ! sites || this.state.search || ! this.shouldShowGroups() ) {
+		if ( ! sites || this.state.search || ! this.shouldShowGroups() || ! this.props.sites.starred.length ) {
 			return null;
 		}
 
