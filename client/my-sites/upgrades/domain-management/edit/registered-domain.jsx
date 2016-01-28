@@ -153,10 +153,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	transferNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/transfer' ) ) {
-			return null;
-		}
-
 		const path = paths.domainManagementTransfer(
 			this.props.selectedSite.domain,
 			this.props.domain.name
