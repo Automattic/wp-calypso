@@ -42,7 +42,7 @@
 	.jetpack-plan-price,
 	.wpcom-plan-price {
 		font-size: 10px;
-		padding: 1em 0;
+		padding: .25em 0;
 
 		@include breakpoint( ">480px" ) {
 			font-size: 12px;
@@ -104,6 +104,11 @@
 	.plans-compare {
 		.plan-header .plan-price {
 			font-size: 16px;
+
+			.plan-price__billing-period {
+				display: inline;
+				margin-left: 3px;
+			}
 		}
 	}
 }

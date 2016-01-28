@@ -91,7 +91,7 @@
 .plans-compare {
 	.plan-header {
 		border-bottom: 2px solid lighten( $gray, 20% );
-		height: 7.5em;
+		height: 9.5em;
 		padding: 10px 15px;
 
 		&:after {
@@ -105,7 +105,9 @@
 			line-height: 18px;
 
 			&:before {
-				top: 10px;
+				position: static;
+				display: block;
+				margin-bottom: 5px;
 			}
 
 			.header-text {
@@ -149,16 +151,10 @@
 
 	.plans-compare {
 		.plan-header {
-			height: 6em;
-			
-			.plan-header__title:before {
-				display: inline-block;
-			}
+			height: 9.5em;
 
-			.plan-header__title,
-			.plan-price {
-				padding: 0 0 0 40px;
-				text-align: left;
+			.plan-header__title:before {
+				display: block;
 			}
 		}
 	}
@@ -176,17 +172,6 @@
 			}
 			.plan-actions {
 				display: none;
-			}
-		}
-	}
-
-	.plans-compare {
-		.plan-header {
-			.plan-header__title {
-				&:before {
-					position: static;
-					margin-bottom: 5px;
-				}
 			}
 		}
 	}
