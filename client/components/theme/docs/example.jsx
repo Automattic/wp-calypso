@@ -38,6 +38,7 @@ var ThemeExample = React.createClass( {
 						action: function() { console.log( 'Menu Item 2 selected' ); }
 					}
 				} }
+				actionLabel="Click Action"
 				onScreenshotClick={ function() { console.log( 'onScreenshotClick triggered' ); } } />
 			</div>
 		);
