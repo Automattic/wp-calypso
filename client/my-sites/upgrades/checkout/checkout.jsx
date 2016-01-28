@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+var isEmpty = require( 'lodash/lang/isEmpty' ),
 	isEqual = require( 'lodash/lang/isEqual' ),
 	page = require( 'page' ),
 	React = require( 'react' );
@@ -16,7 +15,6 @@ var analytics = require( 'analytics' ),
 	DomainDetailsForm = require( './domain-details-form' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
 	observe = require( 'lib/mixins/data-observe' ),
-	planActions = require( 'state/sites/plans/actions' ),
 	purchasePaths = require( 'me/purchases/paths' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
@@ -128,14 +126,6 @@ module.exports = React.createClass( {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
 
 			return purchasePaths.managePurchaseDestination( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId, 'thank-you' );
-		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			planActions.clearSitePlans( this.props.sites.getSelectedSite().ID );
-
-			Dispatcher.handleViewAction( {
-				type: 'FETCH_SITES'
-			} );
-
-			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
 		return '/checkout/thank-you';
@@ -165,7 +155,7 @@ module.exports = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath } />
+				redirectTo={ this.getCheckoutCompleteRedirectPath() } />
 		);
 	},
 

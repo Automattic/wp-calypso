@@ -75,7 +75,7 @@ module.exports = React.createClass( {
 		} );
 
 		dataForApi = assign( {}, this.state, {
-			successUrl: origin + this.props.redirectTo(),
+			successUrl: origin + this.props.redirectTo,
 			cancelUrl: origin + '/checkout/' + this.props.selectedSite.slug,
 			cart: cart,
 			domainDetails: transaction.domainDetails

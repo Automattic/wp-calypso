@@ -9,7 +9,7 @@ Wrap a child component with `<CartData />`. [As a controller-view](https://faceb
 
 ```jsx
 var React = require( 'react' ),
-	CartData = require( 'components/data/cart-data' ),
+	CartData = require( 'components/data/cart' ),
 	MyChildComponent = require( './my-child-component' );
 
 module.exports = React.createClass( {

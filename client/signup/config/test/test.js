@@ -1,15 +1,17 @@
+require( 'lib/react-test-env-setup' )();
+
 /**
  * External dependencies
  */
-import keys from 'lodash/object/keys';
-import intersection from 'lodash/array/intersection';
-import isEmpty from 'lodash/lang/isEmpty';
+const keys = require( 'lodash/object/keys' ),
+	intersection = require( 'lodash/array/intersection' ),
+	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
  * Internal dependencies
  */
-import flows from '../flows';
-import steps from '../steps';
+const flows = require( '../flows' ),
+	steps = require( '../steps' );
 
 describe( 'signup/config', () => {
 	it( 'should not have overlapping step/flow names', () => {
