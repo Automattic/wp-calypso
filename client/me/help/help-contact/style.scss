@@ -15,3 +15,43 @@
 		margin-bottom: 32px;
 	}
 }
+
+.help-contact__chat-form {
+	padding: 0px;
+
+	#habla_conversation_div {
+		// Use !important here because olark sets the height in the style attribute for this element
+		height: calc( 100vh - 220px ) !important;
+		min-height: 167px;
+
+		@include breakpoint( ">660px" ) {
+			max-height: 625px;
+		}
+	}
+
+	#habla_window_div {
+		#habla_expanded_div {
+			border: none;
+		}
+
+		#habla_chatform_form {
+			margin-top: 0px;
+		}
+
+		#habla_input_div {
+			/* Stretch the text area to the sides of the contact form */
+			margin-right: -8px;
+			margin-left: -8px;
+			margin-bottom: -6px;
+		}
+
+		#habla_wcsend_input {
+			border: none;
+			resize: none;
+		}
+
+		#habla_middle_div {
+			padding-bottom: 0px;
+		}
+	}
+}
