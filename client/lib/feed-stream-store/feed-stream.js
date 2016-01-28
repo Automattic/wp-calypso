@@ -243,9 +243,9 @@ assign( FeedStream.prototype, {
 	},
 
 	/**
-	 * Checks if a recent error occured within the past minute. 
+	 * Checks if an error has occurred in the past minute.
 	 *
-	 * @param {string} errorType - Error type to check. If not passed in, will check for any errors and not specific one.
+	 * @param {string} errorType - Error type to check. If not provided, we'll check for errors of any type.
 	 */
 	hasRecentError: function( errorType ) {
 		var aMinuteAgo = Date.now() - ( 60 * 1000 );

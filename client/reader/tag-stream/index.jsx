@@ -11,6 +11,10 @@ var FollowingStream = require( 'reader/following-stream' ),
 
 var FeedStream = React.createClass( {
 
+	propTypes: {
+		tag: React.PropTypes.string
+	},
+
 	getInitialState: function() {
 		return {
 			title: this.getTitle(),

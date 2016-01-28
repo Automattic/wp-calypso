@@ -16,7 +16,10 @@ module.exports = React.createClass( {
 		] ),
 		illustration: React.PropTypes.string,
 		illustrationWidth: React.PropTypes.number,
-		line: React.PropTypes.string,
+		line: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.array
+		] ),
 		action: React.PropTypes.oneOfType( [
 			React.PropTypes.string,
 			React.PropTypes.element
