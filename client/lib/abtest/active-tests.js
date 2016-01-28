@@ -68,5 +68,13 @@ module.exports = {
 			minimal: 50
 		},
 		defaultVariation: 'original'
-	}
+	},
+	domainRegistrationCta: {
+		datestamp: '20160128',
+		variations: {
+			add: 50,
+			select: 50
+		},
+		defaultVariation: 'add'
+	},
 };

@@ -9,6 +9,7 @@ var React = require( 'react' ),
  */
 var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
 	cartItems = require( 'lib/cart-values/cart-items' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	DomainSuggestionFlag = require( 'components/domains/domain-suggestion-flag' );
 
 var DomainRegistrationSuggestion = React.createClass( {
@@ -25,6 +26,12 @@ var DomainRegistrationSuggestion = React.createClass( {
 
 		if ( isAdded ) {
 			return null;
+		}
+
+		if ( abtest( 'domainRegistrationCta' ) === 'select' ) {
+			return this.translate( 'Select', {
+				context: 'Select a domain registration to be added to the shopping cart'
+			} );
 		}
 
 		return this.translate( 'Add', {
