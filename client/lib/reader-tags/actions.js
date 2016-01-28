@@ -39,7 +39,7 @@ var ReaderTagActions = {
 		wpcom.undocumented().readTag( { slug }, function( error, data ) {
 			delete tagsLoading[ slug ];
 
-			if ( ! error && ( data && has( data, 'tag' ) && has( data.tag, 'error_data' ) ) ) {
+			if ( ! error && ( data && has( data, 'tag.error_data' ) ) ) {
 				error = data.tag.error_data;
 			}
 
