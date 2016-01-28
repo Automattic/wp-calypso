@@ -25,6 +25,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import config from 'config';
 import userUtils from 'lib/user/utils';
+import LocaleSuggestions from 'signup/locale-suggestions';
 
 /**
  * Module variables
@@ -126,6 +127,16 @@ let InviteAccept = React.createClass( {
 		userUtils.logout( window.location.href );
 	},
 
+	localeSuggestions() {
+		if ( this.state.user || ! this.props.locale ) {
+			return;
+		}
+
+		return (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+		);
+	},
+
 	renderForm() {
 		const { invite, user, matchEmailError } = this.state;
 		if ( ! invite ) {
@@ -183,17 +194,20 @@ let InviteAccept = React.createClass( {
 			{ invite, matchEmailError } = this.state;
 
 		return (
-			<div className={ classes }>
-				{ matchEmailError &&
-					<Notice
-						text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
-						status="is-error"
-						showDismiss={ false } >
-						{ this.renderNoticeAction() }
-					</Notice>
-				}
-				{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
-				{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
+			<div>
+				{ this.localeSuggestions() }
+				<div className={ classes }>
+					{ matchEmailError &&
+						<Notice
+							text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+							status="is-error"
+							showDismiss={ false } >
+							{ this.renderNoticeAction() }
+						</Notice>
+					}
+					{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
+				</div>
 			</div>
 		);
 	}

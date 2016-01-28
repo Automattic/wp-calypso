@@ -17,13 +17,39 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
+import i18nUtils from 'lib/i18n-utils';
+import pick from 'lodash/object/pick';
+import find from 'lodash/collection/find';
+import isEmpty from 'lodash/lang/isEmpty';
+
+/**
+ * Module variables
+ */
+const user = _user();
+
+function getLocale( parameters ) {
+	const paths = [ 'site_id', 'invitation_key', 'activation_key', 'auth_key', 'locale' ];
+	return find( pick( parameters, paths ), isLocale );
+}
+
+function isLocale( pathFragment ) {
+	return ! isEmpty( i18nUtils.getLanguage( pathFragment ) );
+}
+
+export function redirectWithoutLocaleifLoggedIn( context, next ) {
+	if ( user.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
+		let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+		return page.redirect( urlWithoutLocale );
+	}
+
+	next();
+}
 
 export function acceptInvite( context ) {
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
-		const userModule = _user();
-		if ( userModule.get().email === acceptedInvite.sentTo ) {
-			userModule.set( { email_verified: true } );
+		if ( user.get().email === acceptedInvite.sentTo ) {
+			user.set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
 		const acceptInviteCallback = error => {
@@ -49,7 +75,9 @@ export function acceptInvite( context ) {
 				siteId: context.params.site_id,
 				inviteKey: context.params.invitation_key,
 				activationKey: context.params.activation_key,
-				authKey: context.params.auth_key
+				authKey: context.params.auth_key,
+				locale: getLocale( context.params ),
+				path: context.path
 			}
 		),
 		document.getElementById( 'primary' ),
