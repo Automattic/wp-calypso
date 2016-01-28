@@ -107,6 +107,9 @@ User.prototype.fetch = function() {
 	debug( 'Getting user from api' );
 
 	me.get( { meta: 'flags' }, function( error, data ) {
+		// Release lock from subsequent fetches
+		this.fetching = false;
+
 		if ( error ) {
 			if ( ! config( 'wpcom_user_bootstrap' ) && error.error === 'authorization_required' ) {
 				/**
@@ -124,9 +127,6 @@ User.prototype.fetch = function() {
 		}
 
 		var userData = userUtils.filterUserObject( data );
-
-		// Release lock from subsequent fetches
-		this.fetching = false;
 
 		this.clearStoreIfChanged( userData.ID );
 
