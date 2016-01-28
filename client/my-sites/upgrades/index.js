@@ -158,16 +158,14 @@ module.exports = function() {
 		);
 	}
 
-	if ( config.isEnabled( 'upgrades/domain-management/transfer' ) ) {
-		page(
-			paths.domainManagementTransfer( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementTransfer
-		);
-	}
+	page(
+		paths.domainManagementTransfer( ':site', ':domain' ),
+		controller.siteSelection,
+		controller.navigation,
+		upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+		controller.jetPackWarning,
+		domainManagementController.domainManagementTransfer
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(
