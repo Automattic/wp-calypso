@@ -27,6 +27,9 @@
 		.site__title,
 		.site__domain {
 			color: $white;
+			&::after {
+				@include long-content-fade( $color: $gray );
+			}
 		}
 
 		.count {

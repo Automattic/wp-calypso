@@ -101,16 +101,15 @@
 		style: italic;
 	}
 	line-height: 1.4;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .site__title,
 .site__domain {
 	overflow: hidden;
-	text-overflow: ellipsis;
 	white-space: nowrap;
+	&::after {
+		@include long-content-fade();
+	}
 }
 
 .site__home {
@@ -193,9 +192,8 @@
 	cursor: pointer;
 	line-height: 0;
 
-	&:hover .gridicon {
-		color: $blue-wordpress;
-		opacity: 1;
+	&:hover .gridicons-star-outline {
+		color: $alert-yellow;
 	}
 
 	.gridicons-star {

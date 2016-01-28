@@ -89,6 +89,14 @@ module.exports = React.createClass( {
 		);
 	},
 
+	getHref: function() {
+		if ( this.state.showMoreActions || ! this.props.site ) {
+			return null;
+		}
+
+		return this.props.homeLink ? this.props.site.URL : this.props.href;
+	},
+
 	render: function() {
 		var site = this.props.site,
 			siteClass;
@@ -110,41 +118,44 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ siteClass }>
-				<a className="site__content"
-					href={ this.props.homeLink ? site.URL : this.props.href }
-					target={ this.props.externalLink && '_blank' }
-					title={ this.props.homeLink
-						? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
-						: site.title
-					}
-					onTouchTap={ this.onSelect }
-					onClick={ this.props.onClick }
-					onMouseEnter={ this.props.onMouseEnter }
-					onMouseLeave={ this.props.onMouseLeave }
-					aria-label={
-						this.translate( 'Open site %(domain)s in new tab', {
-							args: { domain: site.domain }
-						} )
-					}
-				>
-					<SiteIcon site={ site } />
-					{ this.state.showMoreActions ?
-						<div className="site__actions">
-							<span className="site__edit-icon">Edit Icon</span>
-							{ this.renderStar() }
-						</div>
-					:
+				{ ! this.state.showMoreActions ?
+					<a className="site__content"
+						href={ this.props.homeLink ? site.URL : this.props.href }
+						target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
+						title={ this.props.homeLink
+							? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
+							: site.title
+						}
+						onTouchTap={ this.onSelect }
+						onClick={ this.props.onClick }
+						onMouseEnter={ this.props.onMouseEnter }
+						onMouseLeave={ this.props.onMouseLeave }
+						aria-label={
+							this.translate( 'Open site %(domain)s in new tab', {
+								args: { domain: site.domain }
+							} )
+						}
+					>
+						<SiteIcon site={ site } />
 						<div className="site__info">
 							<div className="site__title">{ site.title }</div>
 							<div className="site__domain">{ site.domain }</div>
 						</div>
-					}
-					{ this.props.homeLink && ! this.state.showMoreActions &&
-						<span className="site__home">
-							<Gridicon icon="house" size={ 12 } />
-						</span>
-					}
-				</a>
+						{ this.props.homeLink &&
+							<span className="site__home">
+								<Gridicon icon="house" size={ 12 } />
+							</span>
+						}
+					</a>
+				:
+					<div className="site__content">
+						<SiteIcon site={ site } />
+						<div className="site__actions">
+							<span className="site__edit-icon">Edit Icon</span>
+							{ this.renderStar() }
+						</div>
+					</div>
+				}
 				{ this.props.indicator
 					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
 					: null
