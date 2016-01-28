@@ -11,6 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AllSites from 'my-sites/all-sites';
+import analytics from 'analytics';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'my-sites/site';
@@ -78,10 +79,14 @@ export default React.createClass( {
 		this.refs.siteSearch.blur();
 	},
 
+	recordAddNewSite() {
+		analytics.tracks.recordEvent( 'calypso_add_new_wordpress_click' );
+	},
+
 	addNewSite() {
 		return (
 			<span className="site-selector__add-new-site">
-				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
+				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' } onClick={ this.recordAddNewSite }>
 					<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
 				</Button>
 			</span>
