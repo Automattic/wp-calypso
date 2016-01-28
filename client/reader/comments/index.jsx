@@ -16,6 +16,8 @@ var Gravatar = require( 'components/gravatar' ),
 	PostCommentContent = require( './post-comment-content' ),
 	Gridicon = require( 'components/gridicon' );
 
+import { decodeEntities } from 'lib/formatting';
+
 var PostComment = React.createClass( {
 
 	propTypes: {
@@ -145,6 +147,8 @@ var PostComment = React.createClass( {
 		if ( comment.state && comment.state === CommentStates.PENDING ) {
 			comment.author = User;
 			comment.author.name = User.display_name;
+		} else {
+			comment.author.name = decodeEntities( comment.author.name );
 		}
 
 		// If we have an error, render the error component instead
