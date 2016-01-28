@@ -307,7 +307,7 @@ const PluginsMain = React.createClass( {
 					selectedSite={ selectedSite }
 					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } /> }
 				{ ( ! selectedSite || selectedSite.jetpack === true ) && <PluginsList
-					header={ this.translate( 'Jetpack Plugins' ) }
+					header={ this.translate( 'Plugins' ) }
 					plugins={ this.getJetpackPlugins() }
 					isWpCom={ false }
 					sites={ this.props.sites }
