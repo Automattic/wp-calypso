@@ -2,10 +2,11 @@
 .reader__card.card {
 	padding: 16px;
 	transition: all 0.1s ease-in-out;
-	margin-bottom: 24px;
+	margin-bottom: 8px;
 
 	@include breakpoint( ">480px" ) {
 		padding: 16px 24px 24px;
+		margin-bottom: 24px;
 
 		&.is-selected,
 		&:hover,
