@@ -11,6 +11,12 @@ import config from 'config';
 const localeRegex = /^[A-Z]{2}$/i;
 const localeWithRegionRegex = /^[A-Z]{2}-[A-Z]{2}$/i;
 
+function getPathParts( path ) {
+	// Remove trailing slash then split. If there is a trailing slash,
+	// then the end of the array could contain an empty string.
+	return path.replace( /\/$/, '' ).split( '/' );
+}
+
 const i18nUtils = {
 	getLanguage: function( langSlug ) {
 		let language;
@@ -41,9 +47,7 @@ const i18nUtils = {
 	 * @return {string|undefined} The locale slug if present or undefined
 	 */
 	getLocaleFromPath: function( path ) {
-		// Remove trailing slash then split. If there is a trailing slash,
-		// then the end of the array could contain an empty string.
-		const parts = path.replace( /\/$/, '' ).split( '/' );
+		const parts = getPathParts( path );
 		const locale = parts.pop();
 
 		return ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) ? undefined : locale;
@@ -56,9 +60,7 @@ const i18nUtils = {
 	 * @returns {string} original path minus locale slug
 	 */
 	removeLocaleFromPath: function( path ) {
-		// Remove trailing slash then split. If there is a trailing slash,
-		// then the end of the array could contain an empty string.
-		const parts = path.replace( /\/$/, '' ).split( '/' );
+		const parts = getPathParts( path );
 		const locale = parts.pop();
 
 		if ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) {
