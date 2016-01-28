@@ -403,7 +403,7 @@ JetpackPremiumPlanDetails = React.createClass( {
 					title={ this.translate( 'Akismet' ) }
 					description={ this.translate( 'Say goodbye to comment spam' ) }
 					buttonText={ this.translate( 'Start using Akismet' ) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href="https://support.wordpress.com/setting-up-premium-services/"
 					target="_blank" />
 
 				<PurchaseDetail
@@ -411,7 +411,7 @@ JetpackPremiumPlanDetails = React.createClass( {
 					title={ this.translate( 'VaultPress' ) }
 					description={ this.translate( 'Backup your site' ) }
 					buttonText={ this.translate( 'Start using VaultPress' ) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href="https://support.wordpress.com/setting-up-premium-services/"
 					target="_blank" />
 			</ul>
 		);
@@ -471,7 +471,7 @@ JetpackBusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Akismet' ) }
 					description={ this.translate( 'Say goodbye to comment spam' ) }
 					buttonText={ this.translate( 'Start using Akismet' ) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href="https://support.wordpress.com/setting-up-premium-services/"
 					target="_blank" />
 
 				<PurchaseDetail
@@ -479,7 +479,7 @@ JetpackBusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'VaultPress' ) }
 					description={ this.translate( 'Backup your site' ) }
 					buttonText={ this.translate( 'Start using VaultPress' ) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href="https://support.wordpress.com/setting-up-premium-services/"
 					target="_blank" />
 
 				<PurchaseDetail
@@ -487,7 +487,7 @@ JetpackBusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'PollDaddy' ) }
 					description={ this.translate( 'Create surveys and polls' ) }
 					buttonText={ this.translate( 'Start using PollDaddy' ) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href="https://support.wordpress.com/setting-up-premium-services/"
 					target="_blank" />
 			</ul>
 		);
@@ -592,7 +592,7 @@ GoogleAppsDetails = React.createClass( {
 					title={ this.translate( 'Google Apps Setup' ) }
 					description={ this.translate( 'You will receive an email shortly with your login information.' ) }
 					buttonText={ this.translate( 'More about Google Apps' ) }
-					href="https://en.support.wordpress.com/add-email/adding-google-apps-to-your-site/"
+					href="https://support.wordpress.com/add-email/adding-google-apps-to-your-site/"
 					target="_blank" />
 
 				<PurchaseDetail
