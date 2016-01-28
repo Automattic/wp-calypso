@@ -54,7 +54,7 @@ module.exports = {
 		defaultVariation: 'yearly'
 	},
 	plansUpgradeButton: {
-		datestamp: '20160118',
+		datestamp: '20160129',
 		variations: {
 			original: 50,
 			button: 50
