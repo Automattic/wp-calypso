@@ -20,15 +20,17 @@ export default React.createClass( {
 	render() {
 		return(
 			<Masterbar>
-				<Item url={ this.props.url } icon="my-sites" className="masterbar__item-logo">
+				<Item url={ this.props.url } icon="my-sites" className="masterbar__item-logo is-loggedout">
 					WordPress<span className="tld">.com</span>
 				</Item>
-				<Item url={ '/start' } className="masterbar_item-signup">
-					{ this.translate( 'Sign up', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
-				</Item>
-				<Item url={ config( 'login_url' ) } className="masterbar_item-login">
-					{ this.translate( 'Log in', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
-				</Item>
+				<div className="masterbar__login-links">
+					<Item url={ '/start' }>
+						{ this.translate( 'Sign up', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</Item>
+					<Item url={ config( 'login_url' ) }>
+						{ this.translate( 'Log in', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</Item>
+				</div>
 			</Masterbar>
 		);
 	},

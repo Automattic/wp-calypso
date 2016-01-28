@@ -86,6 +86,21 @@ $autobar-height: 20px;
 	.tld {
 		color: rgba(255, 255, 255, 0.6);
 	}
+
+	&.is-loggedout {
+		.gridicon {
+			margin: 0;
+		}
+	}
+}
+
+.masterbar__login-links {
+	display: flex;
+	margin-left: auto;
+
+	.masterbar__item-content {
+		display: inline;
+	}
 }
 
 .masterbar__item-new {
