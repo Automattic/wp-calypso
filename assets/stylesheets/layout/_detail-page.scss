@@ -122,12 +122,6 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
-		.reader-share_button span {
-			display: none;
-		}
-	}
-
 	.post-options {
 		float: right;
 		margin-right: 4px;
