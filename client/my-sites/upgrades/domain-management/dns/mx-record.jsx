@@ -42,7 +42,7 @@ const MxRecord = React.createClass( {
 					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInputWithAffixes
 						name="name"
-						onChange={ this.props.onChange( 'name' ) }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.name }
 						suffix={ '.' + this.props.selectedDomainName } />
 				</FormFieldset>
@@ -52,7 +52,7 @@ const MxRecord = React.createClass( {
 					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
-						onChange={ this.props.onChange( 'data' ) }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
 						placeholder={ this.translate( 'e.g. mail.your-provider.com', { context: 'MX DNS Record', textOnly: true } ) } />
 				</FormFieldset>
@@ -62,7 +62,7 @@ const MxRecord = React.createClass( {
 					{ ! isValid( 'aux' ) ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="aux"
-						onChange={ this.props.onChange( 'aux' ) }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.aux }
 						defaultValue="10" />
 				</FormFieldset>

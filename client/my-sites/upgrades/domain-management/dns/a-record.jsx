@@ -44,7 +44,7 @@ const ARecord = React.createClass( {
 					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInputWithAffixes
 						name="name"
-						onChange={ onChange( 'name' ) }
+						onChange={ onChange }
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName } />
 				</FormFieldset>
@@ -54,7 +54,7 @@ const ARecord = React.createClass( {
 					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
-						onChange={ onChange( 'data' ) }
+						onChange={ onChange }
 						value={ fieldValues.data }
 						placeholder={ placeholder } />
 				</FormFieldset>

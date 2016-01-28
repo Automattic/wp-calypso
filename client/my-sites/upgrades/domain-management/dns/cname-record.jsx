@@ -39,7 +39,7 @@ const CnameRecord = React.createClass( {
 					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInputWithAffixes
 						name="name"
-						onChange={ this.props.onChange( 'name' ) }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.name }
 						suffix={ '.' + this.props.selectedDomainName } />
 				</FormFieldset>
@@ -49,7 +49,7 @@ const CnameRecord = React.createClass( {
 					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
-						onChange={ this.props.onChange( 'data' ) }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
 						placeholder={ this.translate( 'e.g. mydomain.com', { context: 'CName DNS Record', textOnly: true } ) } />
 				</FormFieldset>

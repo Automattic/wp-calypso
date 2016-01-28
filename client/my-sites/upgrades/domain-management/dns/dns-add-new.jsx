@@ -109,13 +109,11 @@ const DnsAddNew = React.createClass( {
 		} );
 	},
 
-	onChange() {
-		return ( event ) => {
-			this.formStateController.handleFieldChange( {
-				name: event.target.name,
-				value: event.target.value.trim().toLowerCase()
-			} );
-		};
+	onChange( event ) {
+		this.formStateController.handleFieldChange( {
+			name: event.target.name,
+			value: event.target.value.trim().toLowerCase()
+		} );
 	},
 
 	changeType( event ) {
