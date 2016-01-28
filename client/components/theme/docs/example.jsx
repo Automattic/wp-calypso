@@ -15,15 +15,19 @@ var ThemeExample = React.createClass( {
 	displayName: 'Theme',
 
 	render: function() {
+		const theme = {
+			id: 'twentyfifteen',
+			name: 'Twenty Fifteen',
+			screenshot: '//i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png',
+		};
+
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/app-components/theme">Theme</a>
 				</h2>
 				<Theme
-				id="twentyfifteen"
-				name="Twenty Fifteen"
-				screenshot="//i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png"
+				theme={ theme }
 				buttonContents={ {
 					action1: {
 						label: 'Menu Item 1',
@@ -34,6 +38,7 @@ var ThemeExample = React.createClass( {
 						action: function() { console.log( 'Menu Item 2 selected' ); }
 					}
 				} }
+				actionLabel="Click Action"
 				onScreenshotClick={ function() { console.log( 'onScreenshotClick triggered' ); } } />
 			</div>
 		);
