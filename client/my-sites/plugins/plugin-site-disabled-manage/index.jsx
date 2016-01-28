@@ -7,6 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	Button = require( 'components/button' ),
 	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' );
 
 module.exports = React.createClass( {
@@ -30,7 +31,7 @@ module.exports = React.createClass( {
 		return (
 			<span className="plugin-site-disabled-manage">
 				<span className="plugin-site-disabled-manage__label">{ message }</span>
-				<a className="plugin-site-disabled-manage__link" href={ url } onClick={ analytics.ga.recordEvent.bind( analytics, 'Jetpack Manage', 'Clicked Enable Jetpack Manage Link' ) }> { this.translate( 'Enable' ) } </a>
+				<Button compact={ true } className="plugin-site-disabled-manage__link" href={ url } onClick={ analytics.ga.recordEvent.bind( analytics, 'Jetpack Manage', 'Clicked Enable Jetpack Manage Link' ) }> { this.translate( 'Enable' ) } </Button>
 			</span>
 		);
 	}
