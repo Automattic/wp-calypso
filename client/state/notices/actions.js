@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import uniqueId from 'lodash/utility/uniqueId';
+
+/**
  * Internal dependencies
  */
 import {
@@ -6,8 +11,6 @@ import {
 	REMOVE_NOTICE,
 	SET_ROUTE
 } from 'state/action-types';
-
-import { uniqueId } from 'lodash';
 
 export function removeNotice( noticeId ) {
 	return {

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { compose } from 'lodash';
+import compose from 'lodash/function/compose';
 
 /**
  * Internal dependencies

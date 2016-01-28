@@ -10,8 +10,8 @@ var fs = require( 'fs' ),
 	preProcessXGettextJSMatch = require( '../i18n/preprocess-xgettextjs-match.js' ),
 	SourceMapConsumer = require( 'source-map' ).SourceMapConsumer,
 	tokenize = require( '../../client/lib/interpolate-components/tokenize.js' ),
-	contains = require( 'lodash' ).contains,
-	flow = require( 'lodash' ).flow;
+	contains = require( 'lodash/collection/contains' ),
+	flow = require( 'lodash/function/flow' );
 
 /*
  * Module variables

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { omit } from 'lodash';
+import omit from 'lodash/object/omit';
 
 /**
  * Internal dependencies
