@@ -12,7 +12,8 @@ module.exports = {
 		'modules': true
 	},
 	'plugins': [
-		'eslint-plugin-react'
+		'eslint-plugin-react',
+		'eslint-plugin-wpcalypso'
 	],
 	'rules': {
 		'brace-style': [ 1, '1tbs' ],
@@ -89,6 +90,8 @@ module.exports = {
 		'valid-jsdoc': [ 1, { 'requireReturn': false } ],
 		// Common top-of-file requires, expressions between external, interal
 		'vars-on-top': 1,
-		'yoda': 0
+		'yoda': 0,
+		// Custom rules
+		"wpcalypso/no-lodash-import": 2
 	}
 };
