@@ -29,10 +29,10 @@ module.exports = {
 			return null;
 		}
 
-		if ( siteData ) {
-			return getSiteUrl( siteData.get( 'ID' ) );
+		if ( feedData ) {
+			return getFeedUrl( feedData.feed_ID );
 		}
 
-		return getFeedUrl( feedData.feed_ID );
+		return getSiteUrl( siteData.get( 'ID' ) )
 	}
 };
