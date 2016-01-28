@@ -158,6 +158,16 @@ let InviteAccept = React.createClass( {
 
 	renderError() {
 		debug( 'Rendering error: ' + JSON.stringify( this.state.error ) );
+		if ( this.state.error && this.state.error.error === 'already_member' ) {
+			return (
+				<EmptyContent
+					title={ this.translate( 'You are already a member of this blog.' ) }
+					line={ this.translate( 'Would you like to accept the invite with another account?' ) }
+					action={ this.translate( 'Switch User' ) }
+					actionURL={ config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ) }
+					illustration={ '/calypso/images/drake/drake-whoops.svg' } />
+			);
+		}
 		return (
 			<EmptyContent
 				title={ this.getErrorTitle() }
