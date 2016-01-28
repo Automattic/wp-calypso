@@ -133,11 +133,11 @@ export default React.createClass( {
 				</div>
 				<StatsModuleContent className="module-content-text-info">
 					<p>
-						{ this.translate( 'This panel gives you an overview of how many views your website gets on average.', { context: 'Info box description for post stats page in Stats' } ) }
+						{ this.translate( 'This table gives you an overview of how many views your post or page has received.', { context: 'Info box description for post stats page in Stats' } ) }
 					</p>
 					<span className="legend achievement">{
 						this.translate(
-							'%(value)s = The all-time highest value.',
+							'%(value)s = The all-time highest value',
 							{ args:
 								{ value: ( this.numberFormat( highest ) ) },
 								context: 'Legend for post stats page in Stats'
