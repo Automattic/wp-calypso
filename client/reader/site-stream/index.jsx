@@ -1,4 +1,5 @@
-var React = require( 'react' );
+var React = require( 'react' ),
+	page = require( 'page' );
 
 var FeedHeader = require( 'reader/feed-header' ),
 	FeedFeatured = require( './featured' ),
@@ -12,13 +13,23 @@ var FeedHeader = require( 'reader/feed-header' ),
 	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
 	feedStreamFactory = require( 'lib/feed-stream-store' );
 
-var SiteStream = React.createClass( {
+function checkForRedirect( site ) {
+	if ( site && site.get( 'prefer_feed' ) && site.get( 'feed_ID' ) ) {
+		setTimeout( function() {
+			page.replace( '/read/blog/feed/' + site.get( 'feed_ID' ) )
+		}, 0 );
+	}
+}
+
+const SiteStream = React.createClass( {
 
 	getDefaultProps: function() {
 		return { showBack: true };
 	},
 
 	getInitialState: function() {
+		const site = SiteStore.get( this.props.siteId );
+		checkForRedirect( site );
 		return {
 			site: SiteStore.get( this.props.siteId ),
 			title: this.getTitle()
@@ -42,6 +53,7 @@ var SiteStream = React.createClass( {
 	updateState: function() {
 		var site = SiteStore.get( this.props.siteId ),
 			newTitle = this.getTitle();
+		checkForRedirect( site );
 		if ( newTitle !== this.state.title || site !== this.state.site ) {
 			this.setState( {
 				title: newTitle,
