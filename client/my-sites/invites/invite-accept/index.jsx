@@ -190,13 +190,13 @@ let InviteAccept = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'invite-accept', { 'is-error': !! this.isInvalidInvite() } ),
+		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
 			{ invite, matchEmailError } = this.state;
 
 		return (
-			<div>
+			<div className="invite-accept">
 				{ this.localeSuggestions() }
-				<div className={ classes }>
+				<div className={ formClasses }>
 					{ matchEmailError &&
 						<Notice
 							text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
