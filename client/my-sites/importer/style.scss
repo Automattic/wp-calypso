@@ -118,6 +118,12 @@
 	}
 }
 
+.importer__import-spinner {
+	position: absolute;
+		left: 50%;
+	transform: translateX( -50% );
+}
+
 .importer__start {
 	float: none !important;
 }
