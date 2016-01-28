@@ -87,9 +87,9 @@ SitesList.prototype.fetch = function() {
 	this.fetching = true;
 	debug( 'getting SitesList from api' );
 	wpcom.me().sites( { site_visibility: siteVisiblity }, function( error, data ) {
+		this.fetching = false;
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
-			this.fetching = false;
 			return;
 		}
 		this.sync( data );
@@ -111,7 +111,6 @@ SitesList.prototype.sync = function( data ) {
 			debug( 'SitesList changed via update' );
 			this.emit( 'change' );
 		}
-		this.fetching = false;
 		store.set( 'SitesList', sites );
 	}
 }

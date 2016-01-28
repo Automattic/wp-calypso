@@ -37,10 +37,9 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 		},
 		callback => {
 			user.once( 'change', callback );
+			user.fetch();
 		}
 	], onComplete );
-
-	user.fetch();
 }
 
 module.exports = {
