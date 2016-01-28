@@ -9,8 +9,8 @@ var debug = require( 'debug' )( 'calypso:store-transactions' ),
 /**
  * Internal dependencies
  */
- var PluginsActions = require( 'lib/plugins/actions' ),
-	 PluginsStore = require( 'lib/plugins/store' );
+var PluginsActions = require( 'lib/plugins/actions' ),
+	PluginsStore = require( 'lib/plugins/store' );
 
 /**
  * Start provisioning premium plugins for a given site
@@ -62,7 +62,7 @@ InstallationFlow.prototype._pushStep = function( options ) {
 };
 
 // Install each plugin sequentially via a recursive callback
-InstallationFlow.prototype.installAll = function( slugs, callback ){
+InstallationFlow.prototype.installAll = function( slugs, callback ) {
 	let slug;
 	let installNext = () => {
 		if ( slugs.length > 0 ) {
@@ -77,7 +77,7 @@ InstallationFlow.prototype.installAll = function( slugs, callback ){
 	installNext();
 }
 
-InstallationFlow.prototype.install = function( slug, next ){
+InstallationFlow.prototype.install = function( slug, next ) {
 	this._pushStep( { name: 'install-plugin', plugin: slug } );
 	let site = this._initialData.site;
 
