@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var FoldableCard = require( 'components/foldable-card' );
+import FoldableCard from 'components/foldable-card';
+import Button from 'components/button';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'FoldableCard',
 
 	mixins: [ PureRenderMixin ],
@@ -58,6 +59,14 @@ module.exports = React.createClass( {
 						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
 						summary={ <button className="button">Update</button> }
 						expandedSummary={ <button className="button">Update</button> }>
+						Nothing to see here. Keep walking!
+					</FoldableCard>
+				</p>
+				<p>
+					<FoldableCard
+						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
+						summary={ <Button compact scary>Update</Button> }
+						expandedSummary={ <Button compact scary>Update</Button> }>
 						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</p>
