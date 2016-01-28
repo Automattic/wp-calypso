@@ -132,7 +132,7 @@ export default React.createClass( {
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
 		} else {
-			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecent() : this.props.sites.getVisible();
+			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecentNorStarred() : this.props.sites.getVisible();
 		}
 
 		if ( this.props.filter ) {
@@ -218,7 +218,7 @@ export default React.createClass( {
 
 			const isSelected = this.isSelected( site );
 
-			if ( isSelected && this.props.hideSelected ) {
+			if ( this.props.sites.isStarred( site ) ) {
 				return;
 			}
 
@@ -242,6 +242,42 @@ export default React.createClass( {
 		);
 	},
 
+	renderStarredSites() {
+		const sites = this.props.sites.getStarred();
+
+		if ( ! sites || this.state.search || ! this.shouldShowGroups() ) {
+			return null;
+		}
+
+		const starredSites = sites.map( function( site ) {
+			var siteHref;
+
+			if ( this.props.siteBasePath ) {
+				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
+			}
+
+			return (
+				<Site
+					site={ site }
+					href={ siteHref }
+					key={ 'site-' + site.ID }
+					indicator={ this.props.indicator }
+					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+					isSelected={ this.isSelected( site ) }
+				/>
+			);
+		}, this );
+
+		return (
+			<div>
+				<span className="site-selector__heading">
+					<Gridicon icon="star" size={ 18 } /> { this.translate( 'Starred' ) }
+				</span>
+				{ starredSites }
+			</div>
+		);
+	},
+
 	render() {
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
 			'is-large': user.get().site_count > 6,
@@ -259,6 +295,7 @@ export default React.createClass( {
 					/>
 					<div className="site-selector__sites" ref="selector">
 						{ this.renderAllSites() }
+						{ this.renderStarredSites() }
 						{ this.renderRecentSites() }
 						{ this.renderSites() }
 					</div>

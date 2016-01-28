@@ -144,7 +144,11 @@
 	display: block;
 	font-weight: 600;
 	font-size: 12px;
-	margin: 16px 8px 6px 14px;
+	margin: 6px 8px 6px 14px;
+
+	.gridicon {
+		vertical-align: sub;
+	}
 
 	.count {
 		margin-left: 8px;
