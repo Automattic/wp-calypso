@@ -456,7 +456,7 @@ BusinessPlanDetails = React.createClass( {
 					title={ this.translate( 'Browse Themes' ) }
 					description={ this.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
 					buttonText={ this.translate( 'Find a New Theme' ) }
-					href={ '/themes/' + this.props.selectedSite.slug } />
+					href={ '/design/' + this.props.selectedSite.slug } />
 			</ul>
 		);
 	}
