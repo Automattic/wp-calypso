@@ -59,7 +59,7 @@ module.exports = React.createClass( {
 							{ this.translate( '{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
 								{
 									components: {
-										readerLink: <a rel="external" href="https://wordpress.com/following/edit/" onClick={ this.recordClickEvent( 'Edit Subscriptions in Reader Link' ) } />
+										readerLink: <a href="/following/edit" onClick={ this.recordClickEvent( 'Edit Subscriptions in Reader Link' ) } />
 									}
 								} )
 							}
