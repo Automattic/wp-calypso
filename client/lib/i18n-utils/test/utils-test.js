@@ -26,6 +26,17 @@ describe( 'i18n-utils', function() {
 		it( 'should not remove the :step part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
 		} );
+
+		it( 'should not remove keys from an invite', function() {
+			assert.equal(
+				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/es' ),
+				'/accept-invite/site.wordpress.com/123456'
+			);
+			assert.equal(
+				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
+				'/accept-invite/site.wordpress.com/123456/123456/123456'
+			);
+		} );
 	} );
 	describe( 'getLanguage', function() {
 		it( 'should return a language', function() {

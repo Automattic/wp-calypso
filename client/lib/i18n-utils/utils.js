@@ -42,12 +42,16 @@ const i18nUtils = {
 	 * @returns {string} original path minus locale slug
 	 */
 	removeLocaleFromPath: function( path ) {
-		return path.replace( /([A-z-\/]+)(.*\/)([A-z-]+)(?!.*\/)/, function( match, p1, p2, p3 ) {
-			if ( 'undefined' === typeof i18nUtils.getLanguage( p3 ) ) {
-				return p1 + p2 + p3;
-			}
-			return p1;
-		} );
+		// Remove trailing slash then split. If there is a trailing slash,
+		// then the end of the array could contain an empty string.
+		const parts = path.replace( /\/$/, '' ).split( '/' );
+		const locale = parts.pop();
+
+		if ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) {
+			parts.push( locale );
+		}
+
+		return parts.join( '/' );
 	}
 };
 export default i18nUtils;
