@@ -180,7 +180,7 @@ module.exports = {
 
 		context.store.dispatch( setSection( null, { hasSidebar: true } ) );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<CheckoutData>
 					<Checkout
@@ -191,7 +191,8 @@ module.exports = {
 						sites={ sites } />
 				</CheckoutData>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		ReactDom.render(

@@ -53,3 +53,7 @@ export function getDaysUntilExpiry( plan ) {
 export function isInGracePeriod( plan ) {
 	return getDaysUntilUserFacingExpiry( plan ) <= 0;
 };
+
+export function shouldFetchSitePlans( sitePlans, selectedSite ) {
+	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isFetching && selectedSite;
+};

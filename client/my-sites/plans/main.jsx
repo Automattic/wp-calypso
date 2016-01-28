@@ -13,7 +13,8 @@ var analytics = require( 'analytics' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan,
-	getPlansBySiteId = require( 'state/sites/plans/selectors' ).getPlansBySiteId,
+	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
+	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Gridicon = require( 'components/gridicon' ),
 	isBusiness = require( 'lib/products-values' ).isBusiness,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
@@ -38,13 +39,11 @@ var Plans = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.props.fetchSitePlans( this.props.selectedSite.ID );
+		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.selectedSite.ID !== nextProps.selectedSite.ID ) {
-			this.props.fetchSitePlans( nextProps.selectedSite.ID );
-		}
+	componentWillReceiveProps: function() {
+		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
 	},
 
 	openPlan: function( planId ) {
@@ -57,7 +56,7 @@ var Plans = React.createClass( {
 
 	comparePlansLink: function() {
 		var url = '/plans/compare',
-			selectedSite = this.props.selectedSite;
+			selectedSite = this.props.sites.getSelectedSite();
 
 		if ( this.props.plans.get().length <= 0 ) {
 			return '';
@@ -76,7 +75,7 @@ var Plans = React.createClass( {
 	},
 
 	redirectToDefault() {
-		page.redirect( paths.plans( this.props.selectedSite.slug ) );
+		page.redirect( paths.plans( this.props.getSelectedSite().slug ) );
 	},
 
 	renderNotice() {
@@ -127,7 +126,8 @@ var Plans = React.createClass( {
 	},
 
 	render: function() {
-		var hasJpphpBundle,
+		var selectedSite = this.props.sites.getSelectedSite(),
+			hasJpphpBundle,
 			currentPlan;
 
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
@@ -142,7 +142,7 @@ var Plans = React.createClass( {
 					cart={ this.props.cart }
 					destinationType={ this.props.context.params.destinationType }
 					plan={ currentPlan }
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					store={ this.props.context.store } />
 			);
 		}
@@ -158,7 +158,7 @@ var Plans = React.createClass( {
 						<UpgradesNavigation
 							path={ this.props.context.path }
 							cart={ this.props.cart }
-							selectedSite={ this.props.selectedSite } />
+							selectedSite={ this.props.sites.getSelectedSite() } />
 
 						{ this.renderTrialCopy() }
 
@@ -181,13 +181,15 @@ var Plans = React.createClass( {
 module.exports = connect(
 	function mapStateToProps( state, props ) {
 		return {
-			sitePlans: getPlansBySiteId( state, props.selectedSite.ID )
+			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
 		};
 	},
 	function mapDispatchToProps( dispatch ) {
 		return {
-			fetchSitePlans( siteId ) {
-				dispatch( fetchSitePlans( siteId ) );
+			fetchSitePlans( sitePlans, site ) {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
 			}
 		};
 	}

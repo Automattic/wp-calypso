@@ -1,5 +1,9 @@
 import { initialSiteState } from './reducer';
 
-export function getPlansBySiteId( state, siteId ) {
-	return state.sites.plans[ siteId ] || initialSiteState;
+export function getPlansBySite( state, site ) {
+	if ( ! site ) {
+		return initialSiteState;
+	}
+
+	return state.sites.plans[ site.ID ] || initialSiteState;
 }
