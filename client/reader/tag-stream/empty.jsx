@@ -28,7 +28,7 @@ var TagEmptyContent = React.createClass( {
 
 		return ( <EmptyContent
 			title={ this.translate( 'No recent posts…' ) }
-			line={ this.translate( 'No posts have recently been tagged with this tag for your language.' ) }
+			line={ this.translate( 'No posts have recently been tagged with %(tag)s for your language', { args: { tag: this.props.tag } } ) }
 			action={ action }
 			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 			illustrationWidth={ 500 }
