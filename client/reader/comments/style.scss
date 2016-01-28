@@ -247,6 +247,12 @@
 			}
 		}
 	}
+
+	@include breakpoint( "<480px" ) {
+		.like-button .like-button__label-status {
+			display: inline;
+		}
+	}
 }
 
 .comment__actions-reply {
