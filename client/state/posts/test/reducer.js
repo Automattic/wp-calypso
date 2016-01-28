@@ -10,7 +10,9 @@ import {
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
-	POSTS_REQUEST_SUCCESS
+	POSTS_REQUEST_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import {
 	items,
@@ -70,6 +72,22 @@ describe( 'reducer', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
 			} );
 		} );
+
+		it( 'never persists state because this is not implemented', () => {
+			const original = Object.freeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			} );
+			const state = items( original, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'never loads persisted state because this is not implemented', () => {
+			const original = Object.freeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
 	} );
 
 	describe( '#sitePosts()', () => {
@@ -90,6 +108,21 @@ describe( 'reducer', () => {
 					841: '3d097cb7c5473c169bba0eb8e3c6cb64'
 				}
 			} );
+		} );
+		it( 'never persists state because this is not implemented', () => {
+			const original = Object.freeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			} );
+			const state = sitePosts( original, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'never loads persisted state because this is not implemented', () => {
+			const original = Object.freeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			} );
+			const state = sitePosts( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -204,26 +237,29 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-	} );
 
-	describe( '#sitePosts()', () => {
-		it( 'should default to an empty object', () => {
-			const state = sitePosts( undefined, {} );
-
+		it( 'never persists state because this is not implemented', () => {
+			const original = Object.freeze( {
+				2916284: {
+					'{"search":"hello"}': {
+						fetching: true
+					}
+				}
+			} );
+			const state = siteQueries( original, { type: SERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should map site ID, post ID pair to global ID', () => {
-			const state = sitePosts( null, {
-				type: POSTS_RECEIVE,
-				posts: [ { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' } ]
-			} );
-
-			expect( state ).to.eql( {
+		it( 'never loads persisted state because this is not implemented', () => {
+			const original = Object.freeze( {
 				2916284: {
-					841: '3d097cb7c5473c169bba0eb8e3c6cb64'
+					'{"search":"hello"}': {
+						fetching: true
+					}
 				}
 			} );
+			const state = siteQueries( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -308,6 +344,26 @@ describe( 'reducer', () => {
 					'{"search":"ribs"}': 1
 				}
 			} );
+		} );
+
+		it( 'never persists state because this is not implemented', () => {
+			const original = Object.freeze( {
+				2916284: {
+					'{"search":"hello"}': 1
+				}
+			} );
+			const state = siteQueriesLastPage( original, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'never loads persisted state because this is not implemented', () => {
+			const original = Object.freeze( {
+				2916284: {
+					'{"search":"hello"}': 1
+				}
+			} );
+			const state = siteQueriesLastPage( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

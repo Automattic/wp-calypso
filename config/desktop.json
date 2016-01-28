@@ -86,7 +86,8 @@
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
-		"upgrades/premium-themes": true
+		"upgrades/premium-themes": true,
+		"persist-redux": false
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",

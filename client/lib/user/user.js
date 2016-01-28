@@ -13,7 +13,8 @@ var store = require( 'store' ),
  */
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	userUtils = require( './shared-utils' );
+	userUtils = require( './shared-utils' ),
+	localforageConfig = require( 'state/initial-state' ).localforageConfig;
 
 /**
  * User component
@@ -208,7 +209,10 @@ User.prototype.clear = function() {
 	this.data = [];
 	delete this.settings;
 	store.clear();
-	localforage.removeItem( 'redux-state' );
+	if ( config.isEnabled( 'persist-redux' ) ) {
+		localforage.config( localforageConfig );
+		localforage.removeItem( 'redux-state' );
+	}
 };
 
 /**

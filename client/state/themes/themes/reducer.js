@@ -10,7 +10,7 @@ import transform from 'lodash/object/transform';
 import ActionTypes from '../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	themes: {},
 	currentSiteId: 0
 } );

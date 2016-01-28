@@ -68,6 +68,7 @@
 		"notifications2beta": true,
 		"muse": true,
 		"olark": true,
+		"persist-redux": false,
 		"olark_use_wpcom_configuration": true,
 		"community-translator": true,
 		"jetpack_core_inline_update": true,

@@ -12,7 +12,7 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' );
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
 
 /**
  * Internal dependencies

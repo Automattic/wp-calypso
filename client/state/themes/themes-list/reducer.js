@@ -22,7 +22,7 @@ const defaultQueryState = fromJS( {
 	isFetchingNextPage: false
 } );
 
-const initialState = query( fromJS( {
+export const initialState = query( fromJS( {
 	list: [],
 	nextId: 0,
 	query: {},
@@ -38,7 +38,7 @@ function add( ids, list ) {
 	return unique( list.concat( ids ) );
 }
 
-function query( state, params = {} ) {
+export function query( state, params = {} ) {
 	const nextId = state.get( 'nextId' );
 
 	return state

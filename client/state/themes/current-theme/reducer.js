@@ -9,7 +9,7 @@ import { DESERIALIZE, SERIALIZE } from 'state/action-types';
  */
 import ActionTypes from '../action-types';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	isActivating: false,
 	hasActivated: false,
 	currentThemes: {}

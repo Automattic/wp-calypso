@@ -5,19 +5,15 @@ require( 'lib/react-test-env-setup' )();
 import { expect } from 'chai';
 import sinon from 'sinon';
 
+const createReduxStore = require( 'state' ).createReduxStore;
+
 describe( 'state', () => {
-	var createReduxStore;
-	before( () => {
-		createReduxStore = require( 'state' ).createReduxStore;
-	} );
 	describe( 'createReduxStore', () => {
 		it( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
 			const reduxStoreWithEmptyState = createReduxStore( {} ).getState();
-			const reduxStoreWithNullState = createReduxStore( null ).getState();
 			expect( reduxStoreNoArgs ).to.be.an( 'object' );
 			expect( reduxStoreWithEmptyState ).to.eql( reduxStoreNoArgs );
-			expect( reduxStoreWithNullState ).to.eql( reduxStoreNoArgs );
 		} );
 		it( 'is instantiated with initialState', () => {
 			const user = { ID: 1234, display_name: 'test user', username: 'testuser' };

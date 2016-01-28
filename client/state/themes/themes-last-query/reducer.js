@@ -9,7 +9,7 @@ import { fromJS } from 'immutable';
 import ActionTypes from '../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	previousSiteId: 0,
 	currentSiteId: null,
 	isJetpack: null,

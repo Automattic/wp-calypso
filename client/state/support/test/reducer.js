@@ -9,6 +9,8 @@ import { expect } from 'chai';
 import {
 	SUPPORT_USER_TOKEN_SET,
 	SUPPORT_USER_RESTORE,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import {
 	supportUser,
@@ -33,6 +35,20 @@ describe( '#supportUser()', () => {
 
 		expect( state ).to.equal( '' );
 	} );
+
+	it( 'should never persist state', () => {
+		const state = supportUser( 'notarealtoken', {
+			type: SERIALIZE
+		} );
+		expect( state ).to.equal( '' );
+	} );
+
+	it( 'should never load persisted state', () => {
+		const state = supportUser( 'notarealtoken', {
+			type: DESERIALIZE
+		} );
+		expect( state ).to.equal( '' );
+	} );
 } );
 
 describe( '#supportToken()', () => {
@@ -51,6 +67,20 @@ describe( '#supportToken()', () => {
 			type: SUPPORT_USER_RESTORE
 		} );
 
+		expect( state ).to.equal( '' );
+	} );
+
+	it( 'should never persist state', () => {
+		const state = supportToken( 'notarealtoken', {
+			type: SERIALIZE
+		} );
+		expect( state ).to.equal( '' );
+	} );
+
+	it( 'should never load persisted state', () => {
+		const state = supportToken( 'notarealtoken', {
+			type: DESERIALIZE
+		} );
 		expect( state ).to.equal( '' );
 	} );
 } );

@@ -75,6 +75,7 @@
 		"muse": true,
 		"olark": true,
 		"olark_use_wpcom_configuration": true,
+		"persist-redux": false,
 		"community-translator": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": false,

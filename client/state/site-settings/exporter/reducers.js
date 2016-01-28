@@ -12,12 +12,14 @@ import {
 	REQUEST_START_EXPORT,
 	REPLY_START_EXPORT,
 	FAIL_EXPORT,
-	COMPLETE_EXPORT
+	COMPLETE_EXPORT,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 
 import { States } from './constants';
 
-const initialUIState = Immutable.fromJS( {
+export const initialUIState = Immutable.fromJS( {
 	exportingState: States.READY,
 	postType: null
 } );
@@ -43,6 +45,11 @@ export function ui( state = initialUIState, action ) {
 		case FAIL_EXPORT:
 		case COMPLETE_EXPORT:
 			return state.set( 'exportingState', States.READY );
+		case SERIALIZE:
+			return {};
+		case DESERIALIZE:
+			return initialUIState;
+
 	}
 
 	return state;
