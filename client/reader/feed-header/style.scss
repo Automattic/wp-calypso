@@ -1,11 +1,5 @@
 @include breakpoint( "<660px" ) {
 	.feed-header {
-		margin-top: 24px;
-
-		.follow-button {
-			right: 10px;
-		}
-
 		.follow-button__label {
 			display: none;
 		}
@@ -80,7 +74,7 @@
 }
 
 .is-section-reader .card.feed-header__site { // Extra specific to override the :hover
-	min-height: 85px;
+	//min-height: 85px;
 
 	&:hover {
 		cursor: default;
@@ -129,11 +123,12 @@
 .feed-header__follow {
 	.follow-button {
 		position: absolute;
-			top: 17px;
-			right: 24px;
+			top: 16px;
+			right: 8px;
 
 		@include breakpoint( "<660px" ) {
-			right: 8px;
+			top: 8px;
+			right: 0;
 		}
 	}
 }
