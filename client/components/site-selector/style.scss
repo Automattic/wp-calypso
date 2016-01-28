@@ -51,6 +51,9 @@
 			.site__title,
 			.site__domain {
 				color: $blue-medium;
+				&::after {
+					@include long-content-fade( $color: $gray-light );
+				}
 			}
 		}
 	}

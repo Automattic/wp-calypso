@@ -113,23 +113,23 @@
 }
 
 .site__home {
-	align-self: center;
 	background: $blue-medium;
-	border-radius: 50%;
 	color: $white;
 	display: block;
-	width: 28px;
-	height: 28px;
+	width: 32px;
+	height: 32px;
 	text-align: center;
 	text-transform: none;
 	overflow: initial;
 	opacity: 0;
 	transition: opacity 0.2s;
 	transform: translate3d(0, 0, 0);
+	position: absolute;
+		left: 17px;
+		top: 17px;
 
 	.gridicon {
-		line-height: 28px;
-		margin: 1px 0 0 -1px;
+		margin-top: 5px;
 		vertical-align: middle;
 	}
 
@@ -197,6 +197,6 @@
 	}
 
 	.gridicons-star {
-		color: $blue-wordpress;
+		color: $blue-medium;
 	}
 }

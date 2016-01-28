@@ -34,7 +34,8 @@ module.exports = React.createClass( {
 			// Mark as selected or not
 			isSelected: false,
 
-			homeLink: false
+			homeLink: false,
+			enableActions: false
 		};
 	},
 
@@ -52,7 +53,7 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			showMoreActions: false
+			showActions: false
 		};
 	},
 
@@ -143,7 +144,7 @@ module.exports = React.createClass( {
 						</div>
 						{ this.props.homeLink &&
 							<span className="site__home">
-								<Gridicon icon="house" size={ 12 } />
+								<Gridicon icon="house" size={ 18 } />
 							</span>
 						}
 					</a>
@@ -160,12 +161,14 @@ module.exports = React.createClass( {
 					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
 					: null
 				}
-				<button
-					className="site__toggle-more-options"
-					onClick={ () => this.setState( { showMoreActions: ! this.state.showMoreActions } ) }
-				>
-					<Gridicon icon="ellipsis" size={ 24 } />
-				</button>
+				{ this.props.enableActions &&
+					<button
+						className="site__toggle-more-options"
+						onClick={ () => this.setState( { showMoreActions: ! this.state.showMoreActions } ) }
+					>
+						<Gridicon icon="ellipsis" size={ 24 } />
+					</button>
+				}
 			</div>
 		);
 	}

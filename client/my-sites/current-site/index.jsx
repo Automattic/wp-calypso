@@ -198,6 +198,7 @@ module.exports = React.createClass( {
 					? <Site
 						site={ site }
 						homeLink={ true }
+						enableActions={ true }
 						externalLink={ true }
 						onSelect={ this.trackHomepageClick } />
 					: <AllSites sites={ this.props.sites } />
