@@ -18,11 +18,9 @@ import get from 'lodash/object/get';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
-import { isBusiness } from 'lib/products-values';
 import PluginItem from './plugin-item/plugin-item';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -353,22 +351,22 @@ const PluginsMain = React.createClass( {
 	},
 
 	render() {
+		const selectedSite = this.props.sites.getSelectedSite();
+
 		if ( this.state.accessError ) {
+			if ( this.state.accessError.abtest === 'nudge' ) {
+				return (
+					<Main>
+						<SidebarNavigation />
+						<PlanNudge currentProductId={ selectedSite.plan.product_id } selectedSiteSlug={ selectedSite.slug } />
+					</Main>
+				);
+			}
 			return (
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
-				</Main>
-			);
-		}
-
-		const selectedSite = this.props.sites.getSelectedSite();
-		if ( abtest( 'businessPluginsNudge' ) === 'nudge' && selectedSite && ! selectedSite.jetpack && ! isBusiness( selectedSite.plan ) ) {
-			return (
-				<Main>
-					<SidebarNavigation />
-					<PlanNudge currentProductId={ selectedSite.plan.product_id } selectedSiteSlug={ selectedSite.slug } />
 				</Main>
 			);
 		}
@@ -379,7 +377,7 @@ const PluginsMain = React.createClass( {
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
-						site={ this.props.sites.getSelectedSite() }
+						site={ selectedSite }
 						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
 						section="plugins"
 						featureExample={ this.getMockPluginItems() } />

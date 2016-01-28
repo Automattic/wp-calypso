@@ -5,6 +5,7 @@ var debug = require( 'debug' )( 'calypso:sites-list' ),
 	store = require( 'store' ),
 	assign = require( 'lodash/object/assign' ),
 	find = require( 'lodash/collection/find' ),
+	isEmpty = require( 'lodash/lang/isEmpty' ),
 	some = require( 'lodash/collection/some' );
 
 /**
@@ -528,13 +529,16 @@ SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 };
 
 SitesList.prototype.getSelectedOrAllWithPlugins = function() {
-	return this.getSelectedOrAll().filter( site => ( isBusiness( site.plan ) || site.jetpack ) && ( site.visible || this.selected ) );
+	return this.getSelectedOrAll().filter( site => {
+		return site.capabilities &&
+			site.capabilities.manage_options &&
+			( isBusiness( site.plan ) || site.jetpack ) &&
+			( site.visible || this.selected )
+	} );
 };
 
 SitesList.prototype.hasSiteWithPlugins = function() {
-	return some( this.get(), function( site ) {
-		return isBusiness( site.plan ) || site.jetpack;
-	} );
+	return ! isEmpty( this.getSelectedOrAllWithPlugins() );
 };
 
 SitesList.prototype.fetchAvailableUpdates = function() {

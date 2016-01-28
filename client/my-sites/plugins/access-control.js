@@ -61,6 +61,20 @@ const getMockBusinessPluginItems = () => {
 	} );
 }
 
+const getWpcomPluginPageError = ( siteSlug = '' ) => {
+	return {
+		title: i18n.translate( 'Want to add a store to your site?' ),
+		line: i18n.translate( 'Support for Shopify, Ecwid, and Gumroad is now available for WordPress.com Business.' ),
+		action: i18n.translate( 'Upgrade Now' ),
+		actionURL: '/plans/' + siteSlug,
+		illustration: '/calypso/images/drake/drake-whoops.svg',
+		actionCallback: () => {
+			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
+		},
+		featureExample: getMockBusinessPluginItems()
+	};
+}
+
 const hasRestrictedAccess = ( site ) => {
 	let pluginPageError;
 
@@ -68,7 +82,7 @@ const hasRestrictedAccess = ( site ) => {
 
 	// Display a 404 to users that don't have the rights to manage plugins
 	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) ) {
-		pluginPageError = {
+		return {
 			title: i18n.translate( 'Not Available' ),
 			line: i18n.translate( 'The page you requested could not be found' ),
 			illustration: '/calypso/images/drake/drake-404.svg',
@@ -90,18 +104,23 @@ const hasRestrictedAccess = ( site ) => {
 		);
 	}
 
-	if ( abtest( 'businessPluginsNudge' ) === 'drake' && hasErrorCondition( site, 'noBusinessPlan' ) ) {
-		pluginPageError = {
-			title: i18n.translate( 'Want to add a store to your site?' ),
-			line: i18n.translate( 'Support for Shopify, Ecwid, and Gumroad is now available for WordPress.com Business.' ),
-			action: i18n.translate( 'Upgrade Now' ),
-			actionURL: '/plans/' + site.slug,
-			illustration: '/calypso/images/drake/drake-whoops.svg',
-			actionCallback: () => {
-				analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
-			},
-			featureExample: getMockBusinessPluginItems()
-		};
+	if ( hasErrorCondition( site, 'noBusinessPlan' ) ) {
+		switch ( abtest( 'businessPluginsNudge' ) ) {
+			case 'nudge':
+				pluginPageError = {
+					abtest: 'nudge'
+				};
+				break;
+
+			case 'drake':
+			default:
+				pluginPageError = getWpcomPluginPageError( site.slug );
+				break;
+		}
+	}
+
+	if ( ! sites.hasSiteWithPlugins() ) {
+		pluginPageError = getWpcomPluginPageError();
 	}
 
 	return pluginPageError;

@@ -228,7 +228,11 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.sites.canManageSelectedOrAll() ) {
+		if ( ! this.props.sites.canManageSelectedOrAll()  ) {
+			return null;
+		}
+
+		if ( ! this.props.sites.hasSiteWithPlugins() && ! this.isSingle() ) {
 			return null;
 		}
 
