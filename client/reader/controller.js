@@ -26,6 +26,8 @@ var i18n = require( 'lib/mixins/i18n' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
 	readerRoute = require( 'reader/route' );
 
+import userSettings from 'lib/user-settings';
+
 // This is a tri-state.
 // null == nothing instantiated, nothing pending
 // false === waiting for transitions to end so we can unmount
@@ -465,7 +467,8 @@ module.exports = {
 				key: 'following-edit',
 				initialFollowUrl: context.query.follow,
 				search: search,
-				context: context
+				context: context,
+				userSettings: userSettings
 			} ),
 			document.getElementById( 'primary' )
 		);

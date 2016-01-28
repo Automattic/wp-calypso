@@ -22,7 +22,10 @@ const DELIVERY_FREQUENCY_INSTANTLY = 'instantly',
 
 var FollowingEditNotificationSettings = React.createClass( {
 
-	propTypes: { subscription: React.PropTypes.object.isRequired },
+	propTypes: {
+		subscription: React.PropTypes.object.isRequired,
+		isEmailBlocked: React.PropTypes.bool
+	},
 
 	getInitialState: function() {
 		return this.getStateFromStores();
@@ -135,8 +138,24 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 		if ( isExternal ) {
 			return (
-				<Card className="is-compact is-external following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
+				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
 					<p>{ this.translate( 'RSS feeds do not allow for email notifications.' ) }</p>
+				</Card>
+			);
+		}
+
+		if ( this.props.isEmailBlocked ) {
+			return (
+				<Card className="is-compact is-impossible-to-send-email following-edit__notification-settings-card" key={ 'notification-settings-comments-' + subscription.get( 'ID' ) }>
+					<p>{ this.translate( 'You have blocked all email updates from your subscribed blogs.' ) }</p>
+					<p>{ this.translate( 'You can change this in your {{settingsLink}}Notification Settings{{/settingsLink}}.',
+							{
+								components: {
+									settingsLink: <a href="/me/notifications/subscriptions" />
+								}
+							} )
+						}
+					</p>
 				</Card>
 			);
 		}

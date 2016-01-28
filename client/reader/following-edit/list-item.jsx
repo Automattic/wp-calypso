@@ -30,7 +30,8 @@ var SubscriptionListItem = React.createClass( {
 		classNames: React.PropTypes.string,
 		onNotificationSettingsOpen: React.PropTypes.func,
 		onNotificationSettingsClose: React.PropTypes.func,
-		openCards: React.PropTypes.object
+		openCards: React.PropTypes.object,
+		isEmailBlocked: React.PropTypes.bool
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -122,7 +123,7 @@ var SubscriptionListItem = React.createClass( {
 				className={ this.props.classNames }
 				expanded={ isCardExpanded }
 			>
-				{ isFollowing ? <FollowingEditNotificationSettings subscription={ subscription } /> : null }
+				{ isFollowing ? <FollowingEditNotificationSettings subscription={ subscription } isEmailBlocked={ this.props.isEmailBlocked } /> : null }
 			</FoldableCard>
 		);
 	}
