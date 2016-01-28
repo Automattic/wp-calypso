@@ -22,9 +22,11 @@ import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 
 let _actionBarVisible = true;
+let _actionBarDomElement = null;
 
-// Below this width the action bar turns into a select dropdown.
-const MIN_VIEWPORT_WIDTH = 719;
+// If the Action
+const MAX_ACTIONBAR_HEIGHT = 50;
+const MIN_ACTIONBAR_WIDTH = 600;
 
 export default React.createClass( {
 	displayName: 'Plugins-list-header',
@@ -67,9 +69,8 @@ export default React.createClass( {
 
 	componentDidMount() {
 		this.debouncedAfterResize = debounce( this.afterResize, 100 );
-
+		_actionBarDomElement = findDOMNode( this );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-		_actionBarVisible = findDOMNode( this ).offsetWidth > MIN_VIEWPORT_WIDTH;
 	},
 
 	componentWillUnmount() {
@@ -77,8 +78,26 @@ export default React.createClass( {
 	},
 
 	afterResize() {
-		const actionBarVisible = findDOMNode( this ).offsetWidth > MIN_VIEWPORT_WIDTH;
-		this.setState( { actionBarVisible } );
+		if ( this.props.isBulkManagementActive ) {
+			this.maybeMakeActionBarVisible();
+		}
+	},
+
+	maybeMakeActionBarVisible() {
+		if ( _actionBarDomElement.offsetWidth < MIN_ACTIONBAR_WIDTH ) {
+			return;
+		}
+		this.setState( { actionBarVisible: true } );
+		setTimeout( () => {
+			const actionBarVisible = _actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
+			this.setState( { actionBarVisible } );
+		}, 1 );
+	},
+
+	toggleBulkManagement() {
+		this.props.toggleBulkManagement();
+
+		this.maybeMakeActionBarVisible();
 	},
 
 	onBrowserLinkClick() {
@@ -122,7 +141,7 @@ export default React.createClass( {
 			}
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
-					<Button compact onClick={ this.props.toggleBulkManagement }>
+					<Button compact onClick={ this.toggleBulkManagement }>
 						{ this.translate( 'Edit All', { context: 'button label' } ) }
 					</Button>
 				</ButtonGroup>

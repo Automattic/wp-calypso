@@ -47,13 +47,14 @@
 	@include breakpoint( '>660px' ) {
 		padding-right: 16px;
 	}
-
-	&.is-action-bar-visible {
-		.plugin-list-header__actions_dropdown {
-			display: none;
-		}
-		.plugin-list-header__action-buttons {
-			display: flex;
+	@include breakpoint( '>960px' ) {
+		&.is-action-bar-visible {
+			.plugin-list-header__actions_dropdown {
+				display: none;
+			}
+			.plugin-list-header__action-buttons {
+				display: flex;
+			}
 		}
 	}
 }
