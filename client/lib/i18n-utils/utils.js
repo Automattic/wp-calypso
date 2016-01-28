@@ -36,6 +36,20 @@ const i18nUtils = {
 	},
 
 	/**
+	 * Assuming that locale is adding at the end of path, retrieves the locale if present.
+	 * @param {string} path - original path
+	 * @return {string|undefined} The locale slug if present or undefined
+	 */
+	getLocaleFromPath: function( path ) {
+		// Remove trailing slash then split. If there is a trailing slash,
+		// then the end of the array could contain an empty string.
+		const parts = path.replace( /\/$/, '' ).split( '/' );
+		const locale = parts.pop();
+
+		return ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) ? undefined : locale;
+	},
+
+	/**
 	 * Removes the trailing locale slug from the path, if it is present.
 	 * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
 	 * @param {string} path - original path
