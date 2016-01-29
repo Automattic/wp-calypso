@@ -13,7 +13,7 @@ var oAuthToken = require( 'lib/oauth-token' ),
 	testConstants = require( '../constants' );
 
 describe( 'oAuthStore', function() {
-	var oAuthStore
+	var oAuthStore;
 
 	beforeEach( function() {
 		oAuthStore = require( 'lib/oauth-store' );
