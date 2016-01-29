@@ -363,7 +363,7 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return domainItem( properties.productSlug, properties.domain );
+	return extend( domainItem( properties.productSlug, properties.domain ), { is_domain_registration: true } );
 }
 
 /**
