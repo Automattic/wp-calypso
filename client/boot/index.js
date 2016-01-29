@@ -335,10 +335,6 @@ function boot() {
 	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
-	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' );
-	}
-
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 		require( 'lib/keyboard-shortcuts/global' )( sites );
 	}

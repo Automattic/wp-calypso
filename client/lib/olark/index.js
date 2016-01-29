@@ -53,8 +53,10 @@ const olark = {
 
 	userType: 'Unknown',
 
-	initialize() {
+	initialize( dispatch ) {
 		debug( 'Initializing Olark Live Chat' );
+
+		this.dispatch = dispatch;
 
 		if ( config.isEnabled( 'olark_use_wpcom_configuration' ) ) {
 			this.getOlarkConfiguration()
@@ -396,4 +398,5 @@ const olark = {
 };
 
 emitter( olark );
-olark.initialize();
+
+export default olark;
