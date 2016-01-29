@@ -8,8 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	sites = require( 'lib/sites-list' )(),
+var sites = require( 'lib/sites-list' )(),
 	Notice = require( 'components/notice' ),
 	emailVerification = require( 'components/email-verification' );
 
@@ -74,20 +73,24 @@ module.exports = React.createClass( {
 				emailSent: response && response.success,
 				error: error,
 				pendingRequest: false
-			}, this.showEmailSentSuccessMessage );
+			} );
 		}.bind( this ) );
 	},
 
-	showEmailSentSuccessMessage: function() {
-		var user, noticeText;
-		if ( this.state.emailSent ) {
-			user = this.props.user.get();
+	emailSentNotice: function() {
+		var user = this.props.user.get(),
 			noticeText = this.translate(
 				'We sent another confirmation email to %(email)s.',
 				{ args: { email: user.email } }
 			);
-			notices.success( noticeText );
-		}
+
+		return (
+			<Notice
+				text={ noticeText }
+				status="is-success"
+				onDismissClick={ this.dismissNotice }
+				className="email-verification-notice" />
+		);
 	},
 
 	handleChangeEmail: function() {
@@ -122,10 +125,10 @@ module.exports = React.createClass( {
 					{ this.translate(
 						'{{requestButton}}Re-send your activation email{{/requestButton}} ' +
 						'or {{changeButton}}change the email address on your account{{/changeButton}}.', {
-						components: {
-							requestButton: <button className="button is-link" onClick={ this.sendVerificationEmail } />,
-							changeButton: <button className="button is-link" onClick={ this.handleChangeEmail } />
-						} }
+							components: {
+								requestButton: <button className="button is-link" onClick={ this.sendVerificationEmail } />,
+								changeButton: <button className="button is-link" onClick={ this.handleChangeEmail } />
+							} }
 					) }
 				</p>
 			</div> );
@@ -135,9 +138,9 @@ module.exports = React.createClass( {
 	},
 
 	verifiedNotice: function() {
-		var noticeText = isEmpty( sites.get() ) ?
-			this.translate( "You've successfully verified your email address." ) :
-			this.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." );
+		var noticeText = isEmpty( sites.get() )
+			? this.translate( "You've successfully verified your email address." )
+			: this.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." );
 
 		return (
 			<Notice status="is-success" onDismissClick={ this.dismissNotice } className="email-verification-notice">
@@ -149,8 +152,12 @@ module.exports = React.createClass( {
 	render: function() {
 		var user = this.props.user.get();
 
-		if ( ! user || this.state.emailSent || this.state.dismissed || ! this.state.activeNotice ) {
+		if ( ! user || this.state.dismissed || ! this.state.activeNotice ) {
 			return null;
+		}
+
+		if ( this.state.emailSent ) {
+			return this.emailSentNotice();
 		}
 
 		if ( 'UNVERIFIED' === this.state.activeNotice && ! user.email_verified ) {
