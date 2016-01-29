@@ -106,6 +106,13 @@ const flows = {
 		lastModified: '2015-10-30'
 	},
 
+	headstart: {
+		steps: [ 'themes-headstart', 'domains-with-theme', 'plans', 'user' ],
+		destination: getCheckoutDestination,
+		description: 'Regular flow but with Headstart enabled to pre-populate site content',
+		lastModified: '2015-02-01'
+	},
+
 	desktop: {
 		steps: [ 'themes', 'site', 'user' ],
 		destination: '/me/next?welcome',

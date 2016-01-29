@@ -20,5 +20,7 @@ module.exports = {
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
 	'design-type': DesignTypeComponent,
+	'themes-headstart': ThemeSelectionComponent,
+	'domains-with-theme': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent
 };
