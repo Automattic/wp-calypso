@@ -52,7 +52,7 @@ module.exports = {
 		renderWithReduxStore(
 			<DomainManagementData
 				component={ DomainManagement.List }
-				pageContext={ pageContext }
+				context={ pageContext }
 				productsList={ productsList }
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
@@ -74,7 +74,7 @@ module.exports = {
 		renderWithReduxStore(
 			<DomainManagementData
 				component={ DomainManagement.Edit }
-				pageContext={ pageContext }
+				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
@@ -97,7 +97,7 @@ module.exports = {
 		renderWithReduxStore(
 			<PrimaryDomainData
 				component={ DomainManagement.PrimaryDomain }
-				pageContext={ pageContext }
+				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
@@ -119,7 +119,7 @@ module.exports = {
 		renderWithReduxStore(
 			<WhoisData
 				component={ DomainManagement.ContactsPrivacy }
-				pageContext={ pageContext }
+				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
@@ -142,7 +142,7 @@ module.exports = {
 		renderWithReduxStore(
 			<WhoisData
 				component={ DomainManagement.EditContactInfo }
-				pageContext={ pageContext }
+				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
@@ -167,7 +167,7 @@ module.exports = {
 				component={ DomainManagement.Email }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
-				pageContext={ pageContext }
+				context={ pageContext }
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
@@ -250,7 +250,7 @@ module.exports = {
 		renderWithReduxStore(
 			<WhoisData
 				component={ DomainManagement.PrivacyProtection }
-				pageContext={ pageContext }
+				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
@@ -273,7 +273,7 @@ module.exports = {
 		renderWithReduxStore(
 			<DomainManagementData
 				component={ DomainManagement.AddGoogleApps }
-				pageContext={ pageContext }
+				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
