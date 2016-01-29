@@ -98,7 +98,14 @@ export default React.createClass( {
 	},
 
 	unverifiedDomains() {
-		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification ),
+		var notices,
+			domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+
+		if ( domains.length > 2 ) {
+			notices = <Notice status="is-error" showDismiss={ false } key="unverifiedDomains">{
+				this.translate( 'Some of your domains have unverified email addresses. This may lead to their temporary suspension.' )
+			}</Notice>;
+		} else if ( domains.length > 0 ) {
 			notices = domains.map( domain => {
 				const text = this.translate( 'You need to verify the email for %(domainName)s or the domain may be suspended. {{a}}Learn more.{{/a}}', {
 					args: {
@@ -110,6 +117,7 @@ export default React.createClass( {
 				} );
 				return <Notice status="is-error" showDismiss={ false } key={ 'unverifiedDomains' + domain.name }>{ text }</Notice>;
 			} );
+		}
 
 		return notices ? <div key="unverifiedDomains">{ notices }</div> : null;
 	},
