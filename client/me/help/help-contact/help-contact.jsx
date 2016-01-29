@@ -41,6 +41,8 @@ module.exports = React.createClass( {
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
+		olarkEvents.on( 'api.box.onShow', this.hideOlarkBox );
+		olarkEvents.on( 'api.box.onExpand', this.hideOlarkBox );
 
 		sites.on( 'change', this.onSitesChanged );
 
@@ -59,6 +61,8 @@ module.exports = React.createClass( {
 		olarkEvents.off( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.off( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.off( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
+		olarkEvents.off( 'api.box.onShow', this.hideOlarkBox );
+		olarkEvents.off( 'api.box.onExpand', this.hideOlarkBox );
 
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			this.props.shrinkOlarkBox();
@@ -86,6 +90,16 @@ module.exports = React.createClass( {
 
 	clearSavedContactForm: function() {
 		savedContactForm = null;
+	},
+
+	hideOlarkBox: function() {
+		if ( this.canShowChatbox() ) {
+			return;
+		}
+
+		// Hide the olark widget in the bottom right corner.
+		this.props.shrinkOlarkBox();
+		this.props.hideOlarkBox();
 	},
 
 	startChat: function( contactForm ) {
@@ -348,9 +362,6 @@ module.exports = React.createClass( {
 					} )
 			}
 		);
-
-		// Hide the olark widget in the bottom right corner.
-		this.props.hideOlarkBox();
 
 		return <HelpContactForm { ...contactFormProps } />;
 	},
