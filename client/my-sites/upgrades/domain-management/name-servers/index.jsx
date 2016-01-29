@@ -11,7 +11,7 @@ import Main from 'components/main';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from './icann-verification-card';
+import IcannVerificationCard from '../components/icann-verification-card';
 import notices from 'notices';
 import paths from 'my-sites/upgrades/paths';
 import VerticalNav from 'components/vertical-nav';
