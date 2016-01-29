@@ -2,10 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/utility/noop' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/lang/isEmpty' ),
+	isEqual = require( 'lodash/lang/isEqual' );
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ var Card = require( 'components/card' ),
  * Component
  */
 var Theme = React.createClass( {
-	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		theme: React.PropTypes.shape( {
@@ -60,6 +59,10 @@ var Theme = React.createClass( {
 		index: React.PropTypes.number,
 		// Label to show on screenshot hover.
 		actionLabel: React.PropTypes.string
+	},
+
+	shouldComponentUpdate: function( nextProps ) {
+		return ! isEqual( nextProps.theme, this.props.theme );
 	},
 
 	getDefaultProps: function() {
