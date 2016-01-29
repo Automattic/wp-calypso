@@ -336,7 +336,7 @@ module.exports = React.createClass( {
 
 		if ( abtest( 'plansUpgradeButton' ) === 'button' && productsValues.isFreePlan( site.plan ) ) {
 			labelClass = 'add-new';
-			planName = 'Upgrade'; // TODO: translate this string if the test is removed
+			planName = 'More'; // TODO: translate this string if the test is removed
 		}
 
 		if ( productsValues.isFreeTrial( site.plan ) ) {
