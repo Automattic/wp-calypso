@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import { Provider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	route = require( 'lib/route' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import analytics from 'analytics';
+import i18n from 'lib/mixins/i18n';
+import route from 'lib/route';
+import titleActions from 'lib/screen-title/actions';
 
-module.exports = {
+export default {
 	help: function( context ) {
 		var Help = require( './main' ),
 			basePath = route.sectionify( context.path );
@@ -28,13 +29,15 @@ module.exports = {
 	},
 
 	contact: function( context ) {
-		var ContactComponent = require( './help-contact' ),
+		var HelpContact = require( './help-contact' ),
 			basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Help > Contact' );
 
 		ReactDom.render(
-			<ContactComponent />,
+			<Provider store={ context.store }>
+				<HelpContact />
+			</Provider>,
 			document.getElementById( 'primary' )
 		);
 	}

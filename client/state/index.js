@@ -10,6 +10,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import { analyticsMiddleware } from './themes/middlewares.js';
 import application from './application/reducer';
 import notices from './notices/reducer';
+import olark from './olark/reducer';
 import posts from './posts/reducer';
 import plugins from './plugins/reducer';
 import sharing from './sharing/reducer';
@@ -27,6 +28,7 @@ const reducer = combineReducers( {
 	plugins,
 	application,
 	notices,
+	olark,
 	posts,
 	sharing,
 	sites,
