@@ -15,15 +15,25 @@ let IcannVerificationCard = React.createClass( {
 		selectedDomainName: React.PropTypes.string.isRequired
 	},
 
+	getExplanation() {
+		switch ( this.props.explanationContext ) {
+			case 'name-servers':
+				return this.translate(
+						'You must verify your email address through the ICANN ' +
+						'verification email before you are able to update the name ' +
+						'servers for your domain.' );
+		}
+
+		return this.translate(
+			'You must verify your email address through the ICANN verification email or your domain may be suspended.'
+		);
+	},
+
 	render() {
 		return (
 			<div className="icann-verification is-compact card">
 				<div className="icann-verification__explanation">
-					{ this.translate(
-						'You must verify your email address through the ICANN ' +
-						'verification email before you are able to update the name ' +
-						'servers for your domain.'
-					) }
+					{ this.getExplanation() }
 				</div>
 
 				<IcannVerification.Button submitting={ this.props.submitting }
