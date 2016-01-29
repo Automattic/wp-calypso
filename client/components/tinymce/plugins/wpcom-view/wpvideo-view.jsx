@@ -66,10 +66,6 @@ class WpVideoView extends Component {
 	}
 
 	fetchData( siteId ) {
-		if ( MediaListStore.getAll( siteId ) ) {
-			return;
-		}
-
 		setTimeout( () => {
 			MediaActions.setQuery( siteId, { mime_type: 'video/' } );
 			MediaActions.fetchNextPage( siteId )
@@ -78,6 +74,9 @@ class WpVideoView extends Component {
 
 	updateStateData() {
 		this.setState( getStateData( this.props.siteId ) );
+		if ( ! this.state.mediaFetchingNextPage && this.state.mediaHasNextPage ) {
+			this.fetchData( this.props.siteId );
+		}
 	}
 
 	getVideoAttributes( videopress_guid ) {
