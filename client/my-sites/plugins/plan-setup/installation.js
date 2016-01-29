@@ -1,16 +1,13 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:store-transactions' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	Readable = require( 'stream' ).Readable,
+var Readable = require( 'stream' ).Readable,
 	inherits = require( 'inherits' );
 
 /**
  * Internal dependencies
  */
-var PluginsActions = require( 'lib/plugins/actions' ),
-	PluginsStore = require( 'lib/plugins/store' );
+var PluginsActions = require( 'lib/plugins/actions' );
 
 /**
  * Start provisioning premium plugins for a given site
@@ -84,21 +81,23 @@ InstallationFlow.prototype.install = function( slug, next ) {
 	// Install the plugin. `installer` is a promise, so we can wait for the install
 	// to finish before trying to configure the plugin.
 	let installer = PluginsActions.installPlugin( site, { slug: slug } );
-	installer.then( () => {
-		this._pushStep( { name: 'configure-plugin', plugin: slug } );
-		// Configure the plugin (process depends on which plugin)
-		switch ( slug ) {
-			case 'vaultpress':
-				configureVaultPress( site, this._initialData.vaultpressKey, next );
-				break;
-			case 'akismet':
-				configureAkismet( site, this._initialData.akismetKey, next );
-				break;
-			case 'polldaddy':
-				configurePolldaddy( site, this._initialData.polldaddyKey, next );
-				break;
-		}
-	} );
+	installer
+		.then( () => {
+			this._pushStep( { name: 'configure-plugin', plugin: slug } );
+			// Configure the plugin (process depends on which plugin)
+			switch ( slug ) {
+				case 'vaultpress':
+					configureVaultPress( site, this._initialData.vaultpressKey, next );
+					break;
+				case 'akismet':
+					configureAkismet( site, this._initialData.akismetKey, next );
+					break;
+				case 'polldaddy':
+					configurePolldaddy( site, this._initialData.polldaddyKey, next );
+					break;
+			}
+		} )
+		.catch( () => { } );
 }
 
 // Configure VaultPress. Get the `vaultpress` option, which is an array. Update
