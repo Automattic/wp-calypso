@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import IcannVerification from 'my-sites/upgrades/domain-management/components/icann-verification';
+import IcannVerification from './icann-verification';
 import paths from 'my-sites/upgrades/paths';
 
 let IcannVerificationCard = React.createClass( {

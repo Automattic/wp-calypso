@@ -17,7 +17,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import IcannVerificationCard from 'my-sites/upgrades/domain-management/components/icann-verification-card';
+import IcannVerificationCard from 'my-sites/upgrades/domain-management/components/icann-verification/icann-verification-card';
 
 const RegisteredDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
