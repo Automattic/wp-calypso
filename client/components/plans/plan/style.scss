@@ -59,13 +59,8 @@
 
 		li {
 			font-size: 13px;
-			padding: 3px 0;
+			padding: 5px 0 5px 14px;
 			opacity: .8;
-
-			&:before {
-				@include noticon( '\f418', 16px );
-				vertical-align: middle;
-			}
 		}
 	}
 
@@ -153,4 +148,19 @@
 	@include breakpoint( ">660px" ) {
 		@include plans-in-three-columns();
 	}
+}
+
+.plan__feature {
+	padding-left: 10px;
+
+	&.is-plan-specific {
+		font-weight: bold;
+	}
+}
+
+.plan__features .gridicon {
+	margin-left: -12px;
+	position: relative;
+		left: -5px;
+		top: 2px;
 }
