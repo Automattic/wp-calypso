@@ -27,23 +27,18 @@ const Unlocked = React.createClass( {
 
 		this.setState( { submitting: true } );
 
-		const options = {
-			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName
-		};
+		promisy( enableDomainLocking )( {
+			domainName: this.props.selectedDomainName,
+			declineTransfer: true,
+			enablePrivacy: hasPrivacyProtection && ! privateDomain,
+			siteId: this.props.selectedSite.ID
+			if ( hasPrivacyProtection ) {
+				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
+					'Privacy Protection has been enabled.' ) );
+			} else {
+				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
+			}
 
-		const actions = [
-			promisy( declineTransfer )( this.props.selectedDomainName ),
-			promisy( enableDomainLocking )( this.props.selectedDomainName )
-		];
-
-		if ( hasPrivacyProtection && ! privateDomain ) {
-			actions.push( promisy( enablePrivacyProtection )( options ) );
-		}
-
-		Promise.all( actions ).then( () => {
-			notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
-				'Privacy Protection has been enabled.' ) );
 			if ( this.isMounted() ) {
 				// component might be unmounted since it's state changed to locked
 				this.setState( { submitting: false } );
@@ -64,7 +59,7 @@ const Unlocked = React.createClass( {
 								a: (
 									<a
 										href={ support.CONTACT }
-										target="_blank" />
+										target="_blank"/>
 								)
 							}
 						}
