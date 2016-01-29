@@ -36,4 +36,5 @@ render: function() {
 * (optional) `disabled` boolean: Sets the form as disabled
 * (optional) `submitting` boolean: Sets the state of the form as being submitted
 * (optional) `email` string: Initial value for email input
-* (options) `disableEmailInput` boolean: Disables the email input. Useful if email must be a certain value and that value is passed in through the `email` prop
+* (optional) `disableEmailInput` boolean: Disables the email input. Useful if email must be a certain value and that value is passed in through the `email` prop
+* (optional) `disableEmailExplanation` string: Explanation text that appears beneath the email field when disabled.

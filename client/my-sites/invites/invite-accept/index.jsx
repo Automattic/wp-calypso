@@ -61,7 +61,6 @@ let InviteAccept = React.createClass( {
 
 	refreshUser() {
 		this.setState( { user: userModule.get() } );
-		this.refreshMatchEmailError();
 	},
 
 	refreshInvite() {
@@ -76,12 +75,11 @@ let InviteAccept = React.createClass( {
 			} );
 		}
 		this.setState( { invite, error } );
-		this.refreshMatchEmailError();
 	},
 
-	refreshMatchEmailError() {
+	isMatchEmailError() {
 		const { invite, user } = this.state;
-		this.setState( { matchEmailError: invite.forceMatchingEmail && user.email !== invite.sentTo } );
+		return invite && invite.forceMatchingEmail && user.email !== invite.sentTo;
 	},
 
 	isInvalidInvite() {
@@ -138,7 +136,7 @@ let InviteAccept = React.createClass( {
 	},
 
 	renderForm() {
-		const { invite, user, matchEmailError } = this.state;
+		const { invite, user } = this.state;
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
@@ -150,8 +148,9 @@ let InviteAccept = React.createClass( {
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: matchEmailError
+			forceMatchingEmail: this.isMatchEmailError()
 		};
+
 		return user
 			? <LoggedIn { ... props } user={ this.state.user } />
 			: <LoggedOut { ... props } />;
@@ -170,11 +169,16 @@ let InviteAccept = React.createClass( {
 	renderNoticeAction() {
 		const { user, invite } = this.state;
 
-		if ( ! user ) {
+		if ( ! user && ! invite.knownUser ) {
 			return;
 		}
 
-		let props;
+		let props,
+			actionText = this.translate( 'Switch Accounts' );
+
+		if ( ! user ) {
+			actionText = this.translate( 'Sign In' );
+		}
 
 		if ( invite.knownUser ) {
 			props = { href: this.signInLink() };
@@ -184,20 +188,20 @@ let InviteAccept = React.createClass( {
 
 		return (
 			<NoticeAction { ... props } >
-				{ this.translate( 'Switch Accounts' ) }
+				{ actionText }
 			</NoticeAction>
 		);
 	},
 
 	render() {
 		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
-			{ invite, matchEmailError } = this.state;
+			{ invite, user } = this.state;
 
 		return (
 			<div className="invite-accept">
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
-					{ matchEmailError &&
+					{ this.isMatchEmailError() && user &&
 						<Notice
 							text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
 							status="is-error"

@@ -6,6 +6,11 @@
 		max-height: 0;
 		overflow: hidden;
 		transition: all .3s ease-in-out;
+		
+		&.no-validate {
+			max-height: none;
+			overflow: auto;
+		}
 	}
 
 	input:focus + .form-setting-explanation {
