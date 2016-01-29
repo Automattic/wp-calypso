@@ -27,7 +27,7 @@ module.exports = function( opts ) {
 		} ),
 		data = {},
 		configPaths = [
-			'__base.json',
+			'_shared.json',
 			opts.env + '.json',
 			opts.env + '.local.json'
 		],
