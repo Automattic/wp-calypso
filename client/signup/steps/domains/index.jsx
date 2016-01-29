@@ -75,6 +75,16 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	getThemeArgs: function() {
+		const isPurchasingTheme = this.props.queryObject && this.props.queryObject.premium;
+		const themeSlug = this.props.queryObject ? this.props.queryObject.theme : undefined;
+		const themeItem = isPurchasingTheme
+			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
+			: undefined;
+
+		return { themeSlug, themeItem };
+	},
+
 	submitWithDomain: function( googleAppsCartItem ) {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
@@ -88,7 +98,7 @@ module.exports = React.createClass( {
 				} ) :
 				undefined;
 
-		SignupActions.submitSignupStep( {
+		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
@@ -96,7 +106,7 @@ module.exports = React.createClass( {
 			isPurchasingItem,
 			siteUrl,
 			stepSectionName: this.props.stepSectionName
-		}, [], { domainItem } );
+		}, this.getThemeArgs() ), [], { domainItem } );
 
 		this.props.goToNextStep();
 	},
@@ -104,7 +114,7 @@ module.exports = React.createClass( {
 	handleAddMapping: function( sectionName, domain, state ) {
 		const domainItem = cartItems.domainMapping( { domain } );
 
-		SignupActions.submitSignupStep( {
+		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
 			stepName: this.props.stepName,
 			[ sectionName ]: state,
@@ -112,7 +122,7 @@ module.exports = React.createClass( {
 			isPurchasingItem: true,
 			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
-		} );
+		}, this.getThemeArgs() ) );
 
 		this.props.goToNextStep();
 	},
