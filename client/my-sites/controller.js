@@ -42,7 +42,7 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 	if ( context.layoutLast ) {
 		context.secondary = navigation;
 	} else {
-		React.render( navigation, document.getElementById( 'secondary' ) );
+		ReactDom.render( navigation, document.getElementById( 'secondary' ) );
 	}
 }
 
