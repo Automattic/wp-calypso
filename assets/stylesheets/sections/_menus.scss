@@ -63,7 +63,7 @@
 	width: 100%;
 	box-sizing: border-box;
 	overflow: hidden;
-
+	margin-top: -8px;
 	padding: 3%;
 	box-shadow: 0 -2px 0 lighten( $gray, 10% ) inset;
 }
@@ -163,7 +163,7 @@
 .menus__menu-header {
 	display: flex;
 	flex-direction: row;
-	margin: 20px 0;
+	margin: 24px 8px 8px 16px;
 
 	.menus__menu-name {
 		flex: 1 1 auto;
