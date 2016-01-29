@@ -1,30 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var CompactCard = require( 'components/card/compact' ),
-	Count = require( 'components/count' );
+import CompactCard from 'components/card/compact';
+import Count from 'components/count';
 
-var PeopleSectionHeader = React.createClass( {
-	getDefaultProps: function() {
+export default React.createClass( {
+	getDefaultProps() {
 		return {
 			label: '',
-			compactLabel: false
 		};
 	},
 
-	render: function() {
+	render() {
 		const classes = classNames(
 			this.props.className,
-			'section-header',
-			{
-				'header-is-compact': this.props.compactLabel
-			}
+			'section-header'
 		);
 
 		return (
@@ -43,5 +39,3 @@ var PeopleSectionHeader = React.createClass( {
 		);
 	}
 } );
-
-module.exports = PeopleSectionHeader;

@@ -38,25 +38,6 @@ var Cards = React.createClass( {
 						{ this.translate( 'Add' ) }
 					</Button>
 				</SectionHeader>
-
-				<br />
-
-				<SectionHeader compactLabel label={ this.translate( 'Team' ) } count={ 10 }>
-					<Button compact primary>
-						{ this.translate( 'Primary Action' ) }
-					</Button>
-					<Button compact>
-						{ this.translate( 'Manage' ) }
-					</Button>
-					<Button
-						compact
-						onClick={ function() {
-							alert( 'Clicked add button' );
-						} }
-					>
-						{ this.translate( 'Add' ) }
-					</Button>
-				</SectionHeader>
 			</div>
 		);
 	}
