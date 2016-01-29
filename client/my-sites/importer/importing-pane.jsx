@@ -57,13 +57,13 @@ export default React.createClass( {
 	},
 
 	getSuccessText: function() {
-		const { site: { slug }, counts: { pages, posts } } = this.props.importerStatus,
+		const { site: { slug }, progress: { page, post } } = this.props.importerStatus,
 			pageLink = <a href={ '/pages/' + slug } />,
 			pageText = this.translate( 'Pages', { context: 'noun' } ),
 			postLink = <a href={ '/posts/' + slug } />,
 			postText = this.translate( 'Posts', { context: 'noun' } );
 
-		if ( pages && posts ) {
+		if ( page && post ) {
 			return this.translate(
 				'All done! Check out {{a}}Posts{{/a}} or ' +
 				'{{b}}Pages{{/b}} to see your imported content.', {
@@ -75,12 +75,12 @@ export default React.createClass( {
 			);
 		}
 
-		if ( pages || posts ) {
+		if ( page || post ) {
 			return this.translate(
 				'All done! Check out {{a}}%(articles)s{{/a}} ' +
 				'to see your imported content.', {
-					components: { a: pages ? pageLink : postLink },
-					args: { articles: pages ? pageText : postText }
+					components: { a: page ? pageLink : postLink },
+					args: { articles: page ? pageText : postText }
 				}
 			);
 		}

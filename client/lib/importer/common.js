@@ -8,7 +8,7 @@ const importerStateMap = [
 	[ appStates.DEFUNCT, 'importStopped' ],
 	[ appStates.DISABLED, 'disabled' ],
 	[ appStates.IMPORT_FAILURE, 'importer-import-failure' ],
-	[ appStates.IMPORT_SUCCESS, 'importer-import-success' ],
+	[ appStates.IMPORT_SUCCESS, 'importSuccess' ],
 	[ appStates.IMPORTING, 'importing' ],
 	[ appStates.INACTIVE, 'importer-inactive' ],
 	[ appStates.MAP_AUTHORS, 'importer-map-authors' ],
