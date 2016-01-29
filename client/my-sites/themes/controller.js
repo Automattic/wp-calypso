@@ -41,7 +41,7 @@ var controller = {
 		}
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
-		context.layout =
+		context.primary =
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( Head, { title, tier: tier || 'all' },
 					React.createElement( ThemesComponent, {
