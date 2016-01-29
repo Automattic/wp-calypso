@@ -12,6 +12,7 @@ import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'lib/importer/constants';
 import ProgressBar from 'components/progress-bar';
 import MappingPane from './author-mapping-pane';
+import Spinner from 'components/spinner';
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImportingPane',
@@ -112,7 +113,7 @@ export default React.createClass( {
 		const { site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor } } = this.props;
 		const { importerId, errorData, customData } = this.props.importerStatus;
 		const progressClasses = classNames( 'importer__import-progress', { 'is-complete': this.isFinished() } );
-		let { percentComplete = 0, statusMessage } = this.props.importerStatus;
+		let { percentComplete, statusMessage } = this.props.importerStatus;
 
 		if ( this.isError() ) {
 			statusMessage = errorData.description;
@@ -125,10 +126,10 @@ export default React.createClass( {
 
 		return (
 			<div className="importer__importing-pane">
-				{ ( this.isError() || this.isImporting() ) ?
+				{ ( this.isError() || this.isImporting() ) &&
 					<p>{ this.getHeadingText() }</p>
-				: null }
-				{ this.isMapping() ?
+				}
+				{ this.isMapping() &&
 					<MappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ ( source, target ) => mapAuthor( importerId, source, target ) }
@@ -138,12 +139,13 @@ export default React.createClass( {
 						sourceTitle={ customData.siteTitle || this.translate( 'Original Site' ) }
 						targetTitle={ siteName }
 					/>
-				:
-					<div>
-						<ProgressBar className={ progressClasses } value={ percentComplete } />
-						<p className="importer__status-message">{ statusMessage }</p>
-					</div>
 				}
+				{ this.isImporting() && (
+					percentComplete
+						? <ProgressBar className={ progressClasses } value={ percentComplete } />
+						: <div><Spinner className="importer__import-spinner" /><br /></div>
+				) }
+				<div><p className="importer__status-message">{ statusMessage }</p></div>
 			</div>
 		);
 	}

@@ -150,7 +150,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 		case actionTypes.START_IMPORTING:
 			newState = state
-				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOADING );
+				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.IMPORTING );
 			break;
 
 		case actionTypes.START_UPLOAD:
