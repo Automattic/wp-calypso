@@ -135,18 +135,6 @@ function loadDevModulesAndBoot() {
 	boot();
 }
 
-function setUpReduxStore( context, next ) {
-	context.store = createReduxStore();
-
-	if ( user.get() ) {
-		// Set current user in Redux store
-		context.store.dispatch( receiveUser( user.get() ) );
-		context.store.dispatch( setCurrentUserId( user.get().ID ) );
-	}
-
-	next();
-}
-
 function renderLayout( context, next ) {
 	let layoutSection, layoutElement;
 
@@ -214,7 +202,7 @@ function renderLayout( context, next ) {
 }
 
 function boot() {
-	var validSections = [];
+	var reduxStore, validSections = [];
 
 	init();
 
@@ -235,7 +223,19 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	page( '*', setUpReduxStore );
+	reduxStore = createReduxStore();
+
+	page( '*', function( context, next ) {
+		context.store = reduxStore;
+
+		if ( user.get() ) {
+			// Set current user in Redux store
+			context.store.dispatch( receiveUser( user.get() ) );
+			context.store.dispatch( setCurrentUserId( user.get().ID ) );
+		}
+
+		next();
+	} );
 
 	page( '*', function( context, next ) {
 		var path = context.pathname;
