@@ -320,7 +320,7 @@ export default React.createClass( {
 				<SelectDropdown compact
 					className="plugin-list-header__actions_dropdown"
 					key="plugin-list-header__actions_dropdown"
-					selectedText="Actions">
+					selectedText={ this.translate( 'Actions' ) }>
 					{ options }
 				</SelectDropdown>
 			);
