@@ -73,7 +73,7 @@ const RegisteredDomain = React.createClass( {
 					icon: 'notice',
 					href: transferPath,
 					message: this.translate( 'Disabled for Transfer', {
-						context: 'An icon label when Privacy Protection is enabled.'
+						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
 					} )
 				} );
 			}
@@ -84,7 +84,7 @@ const RegisteredDomain = React.createClass( {
 			icon: 'notice',
 			href: privacyPath,
 			message: this.translate( 'None', {
-				context: 'An icon label when Privacy Protection is disabled.'
+				context: 'An icon label when Privacy Protection is not purchased by the user.'
 			} )
 		} );
 	},
