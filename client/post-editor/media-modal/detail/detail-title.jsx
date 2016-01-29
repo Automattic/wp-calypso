@@ -81,18 +81,16 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<h2 className="editor-media-modal-detail__title">
-				<TrackInputChanges onNewValue={ this.bumpStat }>
-					<FormTextInput
-						onKeyUp={ this.onKeyUp }
-						onChange={ this.onChange }
-						onBlur={ this.saveTitle }
-						value={ this.getTitleValue() }
-						placeholder={ this.translate( 'Untitled' ) }
-						readOnly={ ! userCan( 'upload_files', this.props.site ) }
-						className="editor-media-modal-detail__title-input" />
-				</TrackInputChanges>
-			</h2>
+			<TrackInputChanges onNewValue={ this.bumpStat }>
+				<FormTextInput
+					onKeyUp={ this.onKeyUp }
+					onChange={ this.onChange }
+					onBlur={ this.saveTitle }
+					value={ this.getTitleValue() }
+					placeholder={ this.translate( 'Untitled' ) }
+					readOnly={ ! userCan( 'upload_files', this.props.site ) }
+					className="editor-media-modal-detail__title-input" />
+			</TrackInputChanges>
 		);
 	}
 } );
