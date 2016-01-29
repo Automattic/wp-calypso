@@ -30,7 +30,9 @@ const ARecord = React.createClass( {
 
 	render() {
 		const classes = classnames( { 'is-hidden': ! this.props.show } ),
-			{ fieldValues, isValid, onChange, selectedDomainName } = this.props;
+			{ fieldValues, isValid, onChange, selectedDomainName } = this.props,
+			isNameValid = isValid( 'name' ),
+			isDataValid = isValid( 'data' );
 		let placeholder = this.translate( 'e.g. 123.45.78.9', { context: 'A DNS Record', textOnly: true } );
 
 		if ( this.props.fieldValues.type === 'AAAA' ) {
@@ -41,22 +43,24 @@ const ARecord = React.createClass( {
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInputWithAffixes
 						name="name"
+						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName } />
+					{ ! isNameValid ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Points To' ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
+						isError={ ! isDataValid }
 						onChange={ onChange }
 						value={ fieldValues.data }
 						placeholder={ placeholder } />
+					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);

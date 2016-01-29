@@ -32,28 +32,31 @@ const TxtRecord = React.createClass( {
 
 	render() {
 		const classes = classnames( { 'is-hidden': ! this.props.show } ),
-			isValid = this.props.isValid;
+			isValid = this.props.isValid,
+			isNameValid = isValid( 'name' ),
+			isDataValid = isValid( 'data' );
 
 		return (
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record TXT' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 					<FormTextInputWithAffixes
 						name="name"
+						isError={ ! isNameValid }
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.name }
 						suffix={ '.' + this.props.selectedDomainName } />
+					{ ! isNameValid ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Text', { context: 'Dns Record TXT' } ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError={ true } /> : null }
 					<FormTextarea
 						name="data"
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
 						placeholder={ this.translate( 'e.g. a=b; verification-key=something', { context: 'TXT DNS Record', textOnly: true } ) } />
+					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);
