@@ -171,10 +171,10 @@ export default React.createClass( {
 					</ul>
 				</div>
 				<StatsModuleContent className="module-content-text-info">
-					<p>{ this.translate( 'This panel gives you an overview of how many views your website is getting recently.' ) }</p>
+					<p>{ this.translate( 'This table gives you an overview of how many views your post or page has received in the recent weeks.' ) }</p>
 					<span className="legend achievement">{
 						this.translate(
-							'%(value)s = The highest recent value.',
+							'%(value)s = The highest recent value',
 							{ args: { value: ( this.numberFormat( highest ) ) },
 							context: 'Legend for post stats page in Stats' }
 						)
