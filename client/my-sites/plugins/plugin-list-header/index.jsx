@@ -22,7 +22,6 @@ import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 
 let _actionBarVisible = true;
-let _actionBarDomElement = null;
 
 // If the Action
 const MAX_ACTIONBAR_HEIGHT = 50;
@@ -69,7 +68,6 @@ export default React.createClass( {
 
 	componentDidMount() {
 		this.debouncedAfterResize = debounce( this.afterResize, 100 );
-		_actionBarDomElement = findDOMNode( this );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
 	},
 
@@ -84,12 +82,13 @@ export default React.createClass( {
 	},
 
 	maybeMakeActionBarVisible() {
-		if ( _actionBarDomElement.offsetWidth < MIN_ACTIONBAR_WIDTH ) {
+		const actionBarDomElement = findDOMNode( this );
+		if ( actionBarDomElement.offsetWidth < MIN_ACTIONBAR_WIDTH ) {
 			return;
 		}
 		this.setState( { actionBarVisible: true } );
 		setTimeout( () => {
-			const actionBarVisible = _actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
+			const actionBarVisible = actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
 			this.setState( { actionBarVisible } );
 		}, 1 );
 	},
