@@ -130,10 +130,6 @@ const Checkout = React.createClass( {
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			this.props.clearSitePlans( this.props.sites.getSelectedSite().ID );
 
-			Dispatcher.handleViewAction( {
-				type: 'FETCH_SITES'
-			} );
-
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
