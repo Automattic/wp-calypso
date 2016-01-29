@@ -17,6 +17,7 @@ var wpcom = require( 'lib/wp' ),
 	Searchable = require( 'lib/mixins/searchable' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isPlan = require( 'lib/products-values' ).isPlan,
 	PreferencesActions = require( 'lib/preferences/actions' ),
 	PreferencesStore = require( 'lib/preferences/store' ),
 	user = require( 'lib/user' )();
@@ -231,6 +232,27 @@ SitesList.prototype.update = function( sites ) {
 	}
 
 	return changed;
+};
+
+/**
+ * Updates the `plan` property of existing sites.
+ *
+ * @param {array} purchases - Array of purchases indexed by site IDs
+ */
+SitesList.prototype.updatePlans = function( purchases ) {
+	this.data = this.data.map( function( site ) {
+		var plan;
+
+		if ( purchases[ site.ID ] ) {
+			plan = find( purchases[ site.ID ], isPlan );
+
+			if ( plan ) {
+				site.set( { plan: plan } );
+			}
+		}
+
+		return site;
+	} );
 };
 
 /**
