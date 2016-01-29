@@ -98,7 +98,7 @@ const DnsAddNew = React.createClass( {
 
 			upgradesActions.addDns( this.props.selectedDomainName, normalizedData, ( error ) => {
 				if ( error ) {
-					notices.error( error.message );
+					notices.error( error.message || this.translate( 'The DNS record has not been added.' ) );
 				} else {
 					this.props.successNotice( this.translate( 'The DNS record has been added.' ), {
 						duration: 5000
