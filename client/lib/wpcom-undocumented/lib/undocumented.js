@@ -1831,6 +1831,21 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, fn
 };
 
 /**
+ * Get the available export configuration settings for a site
+ *
+ * @param {int}       siteId            The site ID
+ * @param {Function}  fn                The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getExportSettings = function( siteId, fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/exports/settings`
+	}, fn );
+}
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

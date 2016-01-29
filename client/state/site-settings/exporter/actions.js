@@ -3,8 +3,12 @@
  */
 import notices from 'notices';
 import i18n from 'lib/mixins/i18n';
+import wpcom from 'lib/wp';
 
 import {
+	EXPORT_ADVANCED_SETTINGS_FETCH,
+	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
+	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	SET_EXPORT_POST_TYPE,
 	REQUEST_START_EXPORT,
 	REPLY_START_EXPORT,
@@ -22,6 +26,47 @@ export function setPostType( postType ) {
 	return {
 		type: SET_EXPORT_POST_TYPE,
 		postType
+	};
+}
+
+/**
+ * Fetches the available advanced settings for customizing export content
+ * @param {Number} siteId The ID of the site to fetch
+ * @return {thunk}        An action thunk for fetching the advanced settings
+ */
+export function advancedSettingsFetch( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: EXPORT_ADVANCED_SETTINGS_FETCH,
+			siteId
+		} );
+
+		const updateExportSettings =
+			settings => dispatch( advancedSettingsReceive( siteId, settings ) );
+
+		const fetchFail =
+			error => dispatch( advancedSettingsFail( siteId, error ) );
+
+		return wpcom.undocumented()
+			.getExportSettings( siteId )
+			.then( updateExportSettings )
+			.catch( fetchFail )
+	}
+}
+
+export function advancedSettingsReceive( siteId, advancedSettings ) {
+	return {
+		type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
+		siteId,
+		advancedSettings
+	};
+}
+
+export function advancedSettingsFail( siteId, error ) {
+	return {
+		type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
+		siteId,
+		error
 	};
 }
 

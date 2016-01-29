@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { States } from './constants.js';
 
 /**
