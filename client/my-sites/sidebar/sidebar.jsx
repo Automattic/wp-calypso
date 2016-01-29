@@ -142,8 +142,7 @@ module.exports = React.createClass( {
 				className={ this.itemLinkClass( '/ads', 'ads' ) }
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
-				icon={ 'speaker' }
-			/>
+				icon={ 'speaker' } />
 		);
 	},
 
@@ -177,8 +176,7 @@ module.exports = React.createClass( {
 				buttonLabel={ this.translate( 'Customize' ) }
 				onNavigate={ this.onNavigate }
 				icon={ 'themes' }
-				preloadSectionName="themes"
-			/>
+				preloadSectionName="themes" />
 		);
 	},
 
