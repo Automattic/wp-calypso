@@ -1,6 +1,7 @@
-const data = require( '../../config/reader' )( {
+const data = require( './parser' )( {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
-	secrets: true
+	secrets: true,
+	configPath: require( 'path' ).resolve( __dirname, '..', '..', 'config' )
 } );
 
 /**

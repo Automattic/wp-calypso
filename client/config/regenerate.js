@@ -6,11 +6,13 @@
  */
 var fs = require( 'fs' ),
 	path = require( 'path' ),
-	keysPath = path.resolve( __dirname, '..', '..', 'config', 'client.json' ),
+	configPath = path.resolve( __dirname, '..', '..', 'config' ),
+	keysPath = path.resolve( configPath, 'client.json' ),
 	keys = JSON.parse( fs.readFileSync( keysPath, 'utf8' ) ),
-	data = require( 'config/reader' )( {
+	data = require( 'config/parser' )( {
 		env: process.env.CALYPSO_ENV || 'development',
-		includeSecrets: false
+		includeSecrets: false,
+		configPath: configPath
 	} ),
 	obj = {};
 

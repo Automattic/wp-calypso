@@ -8,30 +8,31 @@ const fs = require( 'fs' ),
 	assign = require( 'lodash/object/assign' ),
 	debug = require( 'debug' )( 'config' );
 
-function getDataFromFile( filename ) {
-	var filePath = path.resolve( __dirname, filename ),
-		fileData = {};
+function getDataFromFile( file ) {
+	var fileData = {};
 
-	if ( fs.existsSync( filePath ) ) {
-		debug( 'getting data from config file: %o', filename );
-		fileData = JSON.parse( fs.readFileSync( filePath, 'utf8' ) );
+	if ( fs.existsSync( file ) ) {
+		debug( 'getting data from config file: %o', file );
+		fileData = JSON.parse( fs.readFileSync( file, 'utf8' ) );
 	} else {
-		debug( 'skipping config file; not found: %o', filename );
+		debug( 'skipping config file; not found: %o', file );
 	}
 
 	return fileData;
 }
 
 module.exports = function( opts ) {
-	var opts = assign( opts, {
+	var opts = assign( {
 			env: 'development',
-			includeSecrets: false
-		} ),
+			includeSecrets: false,
+			configPath: null
+		}, opts ),
+		// TODO: validate configPath
 		data = {},
 		configPaths = [
-			'_shared.json',
-			opts.env + '.json',
-			opts.env + '.local.json'
+			path.resolve( opts.configPath, '_shared.json' ),
+			path.resolve( opts.configPath, opts.env + '.json' ),
+			path.resolve( opts.configPath, opts.env + '.local.json' )
 		],
 		realSecretsPath,
 		emptySecretsPath,
@@ -40,8 +41,8 @@ module.exports = function( opts ) {
 		disabledFeatures = process.env.DISABLE_FEATURES ? process.env.DISABLE_FEATURES.split( ',' ) : [];
 
 	if ( opts.includeSecrets ) {
-		realSecretsPath = path.resolve( __dirname, '..', '..', 'config', 'secrets.json' );
-		emptySecretsPath = path.resolve( __dirname, '..', '..', 'config', 'empty-secrets.json' );
+		realSecretsPath = path.resolve( opts.configPath, 'secrets.json' );
+		emptySecretsPath = path.resolve( opts.configPath, 'empty-secrets.json' );
 		secretsPath = fs.existsSync( realSecretsPath ) ? realSecretsPath : emptySecretsPath;
 
 		configPaths.push( secretsPath );
