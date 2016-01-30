@@ -148,6 +148,14 @@ const olark = {
 				'api.box.onHide',
 				'api.box.onShrink',
 				'api.chat.onMessageToVisitor'
+			],
+			updateFormattingEvents = [
+				'api.chat.onReady',
+				'api.chat.onBeginConversation',
+				'api.chat.onMessageToVisitor',
+				'api.chat.onMessageToOperator',
+				'api.chat.onCommandFromOperator',
+				'api.chat.onOfflineMessageToOperator'
 			];
 
 		olarkEvents.initialize();
@@ -159,6 +167,11 @@ const olark = {
 		olarkExpandedEvents.forEach( this.hookExpansionEventToStoreSync.bind( this ) );
 
 		updateDetailsEvents.forEach( eventName => olarkEvents.on( eventName, olarkActions.updateDetails ) );
+
+		updateFormattingEvents.forEach( eventName => olarkEvents.on( eventName, () => {
+			// Using setTimeout here so that we can call updateOlarkFormatting on the next tick, after the event has fired and all event handlers are processed.
+			setTimeout( () => this.updateOlarkFormatting( userData.display_name, userData.avatar_URL ), 0 );
+		} ) );
 
 		debug( 'Olark code loaded, beginning configuration' );
 
@@ -223,6 +236,75 @@ const olark = {
 		olarkApi.identify( identity );
 
 		olarkApi( 'api.chat.updateVisitorNickname', { snippet: visitorNickname } );
+	},
+
+	updateOlarkFormatting( username, avatarURL ) {
+		var allNameNodes = document.querySelectorAll( '.hbl_pal_local_fg, .hbl_pal_remote_fg:not(.habla_conversation_notification_nickname)' ),
+			olarkAvatars = document.querySelectorAll( '.olrk_avatar' ),
+			olarkAvatarMap = {},
+			defaultAvatarURL = '//gravatar.com/avatar?s=32&d=identicon&r=PG',
+			translatedStaffLabel = i18n.translate( 'staff' ),
+			personClassName, previousPersonClassName, gravatar, staffLabel,
+			avatarNodeIndex, avatarNode, staffNameNode, nameNodeContent,
+			nameNodeIndex, nameNode, isUserResponse;
+
+		// Generate a mapping for avatar to staff members
+		for ( avatarNodeIndex = 0; avatarNodeIndex < olarkAvatars.length; avatarNodeIndex++ ) {
+			avatarNode = olarkAvatars.item( avatarNodeIndex );
+			staffNameNode = avatarNode.parentElement.querySelector( '.hbl_pal_remote_fg' );
+
+			if ( ! staffNameNode ) {
+				continue;
+			}
+
+			olarkAvatarMap[ staffNameNode.originalTextContent || staffNameNode.textContent ] = avatarNode.getAttribute( 'src' );
+		}
+
+		for ( nameNodeIndex = 0; nameNodeIndex < allNameNodes.length; nameNodeIndex++ ) {
+			nameNode = allNameNodes.item( nameNodeIndex );
+			personClassName = nameNode.className.replace( /.*(habla_conversation_person\d+).*/, '$1' );
+			isUserResponse = !! nameNode.className.match( /hbl_pal_local_fg/ );
+			nameNodeContent = nameNode.textContent;
+
+			if ( previousPersonClassName === personClassName ) {
+				// Remove successive name labels so that they dont repeat
+				nameNode.parentElement.removeChild( nameNode );
+				continue;
+			}
+
+			if ( isUserResponse ) {
+				// Clear out the arrow and put the users name
+				nameNode.textContent = username;
+			} else if ( ! nameNode.querySelector( '.staff-label' ) ) {
+				// Keep a reference to the old text content before we change it
+				// because we use it to match up the avatars
+				nameNode.originalTextContent = nameNode.textContent;
+
+				// Add the staff label
+				nameNode.textContent = nameNode.textContent.replace( ':', '' );
+				staffLabel = document.createElement( 'span' );
+				staffLabel.setAttribute( 'class', 'staff-label' );
+				staffLabel.appendChild( document.createTextNode( translatedStaffLabel ) );
+
+				nameNode.appendChild( staffLabel );
+			}
+
+			if ( ! nameNode.querySelector( '.gravatar' ) ) {
+				// Inject the gravatar
+				gravatar = document.createElement( 'img' );
+				gravatar.setAttribute( 'class', 'gravatar' );
+
+				if ( isUserResponse ) {
+					gravatar.setAttribute( 'src', avatarURL );
+				} else {
+					gravatar.setAttribute( 'src', olarkAvatarMap[ nameNodeContent ] || defaultAvatarURL );
+				}
+
+				nameNode.insertBefore( gravatar, nameNode.firstChild );
+			}
+
+			previousPersonClassName = personClassName;
+		};
 	},
 
 	getSiteUrl() {
