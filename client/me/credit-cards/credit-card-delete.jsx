@@ -14,7 +14,7 @@ var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
 	successNotice = require( 'state/notices/actions' ).successNotice,
 	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-export const CreditCardDelete = React.createClass( {
+const CreditCardDelete = React.createClass( {
 
 	displayName: 'CreditCardDelete',
 

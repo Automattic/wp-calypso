@@ -15,7 +15,7 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import { successNotice } from 'state/notices/actions';
 
-export const EmailForwardingItem = React.createClass( {
+const EmailForwardingItem = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
 	deleteItem: function() {

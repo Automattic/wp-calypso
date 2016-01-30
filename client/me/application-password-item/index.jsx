@@ -13,7 +13,7 @@ var ActionRemove = require( 'me/action-remove' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-export const ApplicationPasswordsItem = React.createClass( {
+const ApplicationPasswordsItem = React.createClass( {
 
 	displayName: 'ApplicationPasswordsItem',
 

@@ -12,7 +12,7 @@ import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { successNotice } from 'state/notices/actions';
 
-export const DnsList = React.createClass( {
+const DnsList = React.createClass( {
 	propTypes: {
 		dns: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,

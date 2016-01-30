@@ -33,7 +33,7 @@ const options = {
 	community: 'community'
 };
 
-export const WPCOMNotifications = React.createClass( {
+const WPCOMNotifications = React.createClass( {
 	displayName: 'WPCOMNotifications',
 
 	getInitialState() {
