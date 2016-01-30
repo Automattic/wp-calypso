@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/***** WARNING: ES5 code only here. Not transpiled! *****/
 
 /**
  * Module dependencies/
