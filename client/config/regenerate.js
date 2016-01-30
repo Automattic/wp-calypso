@@ -10,7 +10,7 @@ var fs = require( 'fs' ),
 	keys = JSON.parse( fs.readFileSync( keysPath, 'utf8' ) ),
 	data = require( 'config/reader' )( {
 		env: process.env.CALYPSO_ENV || 'development',
-		secrets: false
+		includeSecrets: false
 	} ),
 	obj = {};
 

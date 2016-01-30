@@ -25,7 +25,7 @@ function getDataFromFile( filename ) {
 module.exports = function( opts ) {
 	var opts = assign( opts, {
 			env: 'development',
-			secrets: false
+			includeSecrets: false
 		} ),
 		data = {},
 		configPaths = [
@@ -33,16 +33,16 @@ module.exports = function( opts ) {
 			opts.env + '.json',
 			opts.env + '.local.json'
 		],
-		actualSecretsPath,
+		realSecretsPath,
 		emptySecretsPath,
 		secretsPath,
 		enabledFeatures = process.env.ENABLE_FEATURES ? process.env.ENABLE_FEATURES.split( ',' ) : [],
 		disabledFeatures = process.env.DISABLE_FEATURES ? process.env.DISABLE_FEATURES.split( ',' ) : [];
 
-	if ( opts.secrets ) {
-		actualSecretsPath = path.resolve( __dirname, '..', '..', 'config', 'secrets.json' );
+	if ( opts.includeSecrets ) {
+		realSecretsPath = path.resolve( __dirname, '..', '..', 'config', 'secrets.json' );
 		emptySecretsPath = path.resolve( __dirname, '..', '..', 'config', 'empty-secrets.json' );
-		secretsPath = fs.existsSync( actualSecretsPath ) ? actualSecretsPath : emptySecretsPath;
+		secretsPath = fs.existsSync( realSecretsPath ) ? realSecretsPath : emptySecretsPath;
 
 		configPaths.push( secretsPath );
 	}
