@@ -59,6 +59,8 @@ function receiveImporterStatus( importerStatus ) {
 }
 
 export function cancelImport( siteId, importerId ) {
+	lockImport( importerId );
+
 	Dispatcher.handleViewAction( {
 		type: actionTypes.CANCEL_IMPORT,
 		importerId,
@@ -116,6 +118,9 @@ export function mapAuthor( importerId, sourceAuthor, targetAuthor ) {
 }
 
 export function resetImport( siteId, importerId ) {
+	// We are done with this import session, so lock it away
+	lockImport( importerId );
+
 	Dispatcher.handleViewAction( {
 		type: actionTypes.RESET_IMPORT,
 		importerId,

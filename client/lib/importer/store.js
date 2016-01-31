@@ -121,6 +121,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			}
 
 			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
+				newState = newState
+					.deleteIn( [ 'importers', action.importerStatus.importerId ] );
 				break;
 			}
 
