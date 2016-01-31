@@ -7,8 +7,7 @@ const ReactDom = require( 'react-dom' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/string/trim' ),
 	startsWith = require( 'lodash/string/startsWith' ),
-	moment = require( 'moment' ),
-	ReduxProvider = require( 'react-redux' ).Provider;
+	moment = require( 'moment' );
 
 /**
  * Internal Dependencies
@@ -25,13 +24,14 @@ const i18n = require( 'lib/mixins/i18n' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	readerRoute = require( 'reader/route' );
+	readerRoute = require( 'reader/route'),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 // This is a tri-state.
 // null == nothing instantiated, nothing pending
 // false === waiting for transitions to end so we can unmount
-// object === instance alive and being used
-var __fullPostInstance = null,
+// function === instance alive and being used
+var __fullPostRemover = null,
 	// This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
 	// reset it
 	__lastTitle = null;
@@ -68,15 +68,15 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 
 	if ( startsWith( oldContext.path, fullPostViewPrefix ) &&
 		! startsWith( newContext.path, fullPostViewPrefix ) &&
-		__fullPostInstance ) {
-		__fullPostInstance.setState( { isVisible: false } );
-		__fullPostInstance = false;
+		__fullPostRemover ) {
+		__fullPostRemover();
+		__fullPostRemover = false;
 	}
 } );
 
 function removeFullPostDialog() {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
-	__fullPostInstance = null;
+	__fullPostRemover = null;
 }
 
 function userHasHistory( context ) {
@@ -130,11 +130,10 @@ module.exports = {
 
 		context.store.dispatch( setSection( 'reader' ) );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( ReaderSidebarComponent, { path: context.path } )
-			),
-			document.getElementById( 'secondary' )
+		renderWithReduxStore(
+			React.createElement( ReaderSidebarComponent, { path: context.path } ),
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 
 		next();
@@ -153,7 +152,7 @@ module.exports = {
 
 		setPageTitle( i18n.translate( 'Following' ) );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FollowingComponent, {
 				key: 'following',
 				listName: i18n.translate( 'Followed Sites' ),
@@ -167,7 +166,8 @@ module.exports = {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -185,7 +185,7 @@ module.exports = {
 			feed_id: context.params.feed_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
 				store: feedStore,
@@ -202,7 +202,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -220,7 +221,7 @@ module.exports = {
 			blog_id: context.params.blog_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
 				store: feedStore,
@@ -237,7 +238,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -254,8 +256,8 @@ module.exports = {
 
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state of
-		// __fullPostInstance before making another
-		__fullPostInstance = ReactDom.render(
+		// __fullPostRemover before making another
+		renderWithReduxStore(
 			React.createElement( FullPostDialog, {
 				feedId: feedId,
 				postId: postId,
@@ -263,9 +265,13 @@ module.exports = {
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
-				onClosed: removeFullPostDialog
+				onClosed: removeFullPostDialog,
+				removeAnimationHandlerSetter: function removeAnimationHandlerSetter( startRemoveAnimation ) {
+					__fullPostRemover = startRemoveAnimation;
+				}
 			} ),
-			document.getElementById( 'tertiary' )
+			document.getElementById( 'tertiary' ),
+			context.store
 		);
 	},
 
@@ -290,8 +296,8 @@ module.exports = {
 
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state of
-		// __fullPostInstance before making another
-		__fullPostInstance = ReactDom.render(
+		// __fullPostRemover before making another
+		renderWithReduxStore(
 			React.createElement( FullPostDialog, {
 				blogId: blogId,
 				postId: postId,
@@ -300,16 +306,20 @@ module.exports = {
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
-				onClosed: removeFullPostDialog
+				onClosed: removeFullPostDialog,
+				removeAnimationHandlerSetter: function removeAnimationHandlerSetter( startRemoveAnimation ) {
+					__fullPostRemover = startRemoveAnimation;
+				}
 			} ),
-			document.getElementById( 'tertiary' )
+			document.getElementById( 'tertiary' ),
+			context.store
 		);
 	},
 
 	removePost: function( context, next ) {
-		if ( __fullPostInstance ) {
-			__fullPostInstance.setState( { isVisible: false } );
-			__fullPostInstance = false;
+		if ( __fullPostRemover ) {
+			__fullPostRemover();
+			__fullPostRemover = false;
 		}
 
 		next();
@@ -334,7 +344,7 @@ module.exports = {
 			tag: tagSlug
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( TagStream, {
 				key: 'tag-' + encodedTag,
 				store: tagStore,
@@ -350,7 +360,8 @@ module.exports = {
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -369,7 +380,7 @@ module.exports = {
 			list_slug: context.params.list
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( ListStream, {
 				key: 'tag-' + context.params.user + '-' + context.params.list,
 				store: listStore,
@@ -387,7 +398,8 @@ module.exports = {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -404,7 +416,7 @@ module.exports = {
 
 		setPageTitle( 'Automattic' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FollowingComponent, {
 				key: 'read-a8c',
 				className: 'is-a8c',
@@ -419,7 +431,8 @@ module.exports = {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -434,7 +447,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( LikedPostsStream, {
 				key: 'liked',
 				store: likedPostsStore,
@@ -448,7 +461,8 @@ module.exports = {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -463,14 +477,15 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FollowingEdit, {
 				key: 'following-edit',
 				initialFollowUrl: context.query.follow,
 				search: search,
 				context: context
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -480,7 +495,7 @@ module.exports = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( RecommendedForYou, {
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -490,7 +505,8 @@ module.exports = {
 					mcKey
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -507,7 +523,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( listManagement, {
 				key: 'list-management-sites',
 				list: {
@@ -523,7 +539,8 @@ module.exports = {
 					mcKey
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -537,7 +554,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( listManagement, {
 				key: 'list-management-tags',
 				list: {
@@ -553,7 +570,8 @@ module.exports = {
 					mcKey
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -567,7 +585,7 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( listManagement, {
 				key: 'list-management-description-edit',
 				list: {
@@ -576,7 +594,8 @@ module.exports = {
 				},
 				tab: 'description-edit'
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -595,7 +614,7 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		analytics.tracks.recordEvent( 'calypso_reader_discover_viewed' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + blogId,
 				store: feedStore,
@@ -611,7 +630,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: false
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };
