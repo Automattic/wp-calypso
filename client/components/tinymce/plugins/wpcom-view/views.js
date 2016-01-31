@@ -14,7 +14,7 @@ import config from 'config';
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
 import ContactFormView from './contact-form-view';
-import WpVideoView from './wpvideo-view';
+import WpVideoView from './wpvideo-view-container';
 
 /**
  * Module variables
