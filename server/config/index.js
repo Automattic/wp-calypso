@@ -26,7 +26,7 @@ function isEnabled( feature ) {
 function anyEnabled() {
 	var args = Array.prototype.slice.call( arguments );
 	return args.some( function( feature ) {
-		return !! data.features[ feature ];
+		return isEnabled( feature );
 	} );
 }
 
