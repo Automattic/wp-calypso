@@ -148,7 +148,8 @@
 	color: $gray-dark;
 }
 
-.design-assets__group > .gridicon:hover {
+.design-assets__group > .gridicon:hover,
+.design-assets__group > .social-logo:hover {
 	fill: $gray;
 	cursor: pointer;
 }

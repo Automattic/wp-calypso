@@ -46,6 +46,7 @@ export default React.createClass( {
 				<SocialLogo icon="polldaddy" size={ 48 } onClick={ this.handleClick.bind( this, 'polldaddy' ) } />
 				<SocialLogo icon="print" size={ 48 } onClick={ this.handleClick.bind( this, 'print' ) } />
 				<SocialLogo icon="reddit" size={ 48 } onClick={ this.handleClick.bind( this, 'reddit' ) } />
+				<SocialLogo icon="share" size={ 48 } onClick={ this.handleClick.bind( this, 'share' ) } />
 				<SocialLogo icon="skype" size={ 48 } onClick={ this.handleClick.bind( this, 'skype' ) } />
 				<SocialLogo icon="spotify" size={ 48 } onClick={ this.handleClick.bind( this, 'spotify' ) } />
 				<SocialLogo icon="squarespace" size={ 48 } onClick={ this.handleClick.bind( this, 'squarespace' ) } />
@@ -54,6 +55,7 @@ export default React.createClass( {
 				<SocialLogo icon="tumblr-alt" size={ 48 } onClick={ this.handleClick.bind( this, 'tumblr-alt' ) } />
 				<SocialLogo icon="tumblr" size={ 48 } onClick={ this.handleClick.bind( this, 'tumblr' ) } />
 				<SocialLogo icon="twitch" size={ 48 } onClick={ this.handleClick.bind( this, 'twitch' ) } />
+				<SocialLogo icon="twitter-alt" size={ 48 } onClick={ this.handleClick.bind( this, 'twitter-alt' ) } />
 				<SocialLogo icon="twitter" size={ 48 } onClick={ this.handleClick.bind( this, 'twitter' ) } />
 				<SocialLogo icon="vimeo" size={ 48 } onClick={ this.handleClick.bind( this, 'vimeo' ) } />
 				<SocialLogo icon="whatsapp" size={ 48 } onClick={ this.handleClick.bind( this, 'whatsapp' ) } />
