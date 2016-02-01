@@ -244,6 +244,12 @@ PluginsActions = {
 					.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
 					.catch( manageError );
 			}
+			if ( error.name === 'ActivationErrorError' ) {
+				return autoupdate( plugin )
+					.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
+					.catch( manageError );
+			}
+
 			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error );
 		}
 

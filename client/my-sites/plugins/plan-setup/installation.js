@@ -80,7 +80,7 @@ InstallationFlow.prototype.install = function( slug, next ) {
 
 	// Install the plugin. `installer` is a promise, so we can wait for the install
 	// to finish before trying to configure the plugin.
-	let installer = PluginsActions.installPlugin( site, { slug: slug } );
+	let installer = PluginsActions.installPlugin( site, { slug: slug, id: slug + '/' + slug } );
 	installer.then( () => {
 		// @todo Handle failed installs - most likely the plugin already exists,
 		// and needs to be activated.
