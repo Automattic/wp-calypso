@@ -11,12 +11,12 @@ const debug = debugFactory( 'calypso:site-plans:actions' );
  * Internal dependencies
  */
 import { createSitePlanObject } from './assembler';
-import wpcom from 'lib/wp';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PLANS_REMOVE
 } from 'state/action-types';
+import wpcom from 'lib/wp';
 
 /**
  * Clears plans for the given site.
