@@ -13,6 +13,8 @@ var fs = require( 'fs' ),
 	data = require( './parser' )( configPath, {
 		env: process.env.CALYPSO_ENV || 'development',
 		includeSecrets: false,
+		enabledFeatures: process.env.ENABLE_FEATURES,
+		disabledFeatures: process.env.DISABLE_FEATURES
 	} ),
 	obj = {};
 

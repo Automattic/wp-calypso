@@ -25,7 +25,6 @@ module.exports = function( configPath, defaultOpts ) {
 	var opts = assign( {
 			env: 'development',
 			includeSecrets: false,
-			configPath: null
 		}, defaultOpts ),
 		data = {},
 		configFiles = [
@@ -36,8 +35,8 @@ module.exports = function( configPath, defaultOpts ) {
 		realSecretsPath,
 		emptySecretsPath,
 		secretsPath,
-		enabledFeatures = process.env.ENABLE_FEATURES ? process.env.ENABLE_FEATURES.split( ',' ) : [],
-		disabledFeatures = process.env.DISABLE_FEATURES ? process.env.DISABLE_FEATURES.split( ',' ) : [];
+		enabledFeatures = opts.enabledFeatures ? opts.enabledFeatures.split( ',' ) : [],
+		disabledFeatures = opts.disabledFeatures ? opts.disabledFeatures.split( ',' ) : [];
 
 	if ( opts.includeSecrets ) {
 		realSecretsPath = path.resolve( configPath, 'secrets.json' );
