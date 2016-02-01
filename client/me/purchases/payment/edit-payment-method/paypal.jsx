@@ -2,6 +2,8 @@
  * External Dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal Dependencies
@@ -10,8 +12,8 @@ import Button from 'components/button';
 import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import FoldableCard from 'components/foldable-card';
-import notices from 'notices';
 import { getPurchase } from 'me/purchases/utils';
+import { successNotice } from 'state/notices/actions';
 
 const EditPaymentMethodPaypal = React.createClass( {
 	propTypes: {
@@ -31,7 +33,7 @@ const EditPaymentMethodPaypal = React.createClass( {
 		if ( action === 'delete' ) {
 			// TODO: Add action that calls the API and deletes the account
 
-			notices.success( this.translate( 'The PayPal information was deleted successfully.' ) );
+			this.props.successNotice( this.translate( 'The PayPal information was deleted successfully.' ) );
 		}
 	},
 
@@ -102,4 +104,7 @@ const EditPaymentMethodPaypal = React.createClass( {
 	}
 } );
 
-export default EditPaymentMethodPaypal;
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( EditPaymentMethodPaypal );

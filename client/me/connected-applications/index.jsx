@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:connected-applications' );
+	debug = require( 'debug' )( 'calypso:me:connected-applications' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -15,9 +17,10 @@ var ConnectedAppItem = require( 'me/connected-application-item' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	notices = require( 'notices' ),
 	SecuritySectionNav = require( 'me/security-section-nav' ),
-	Main = require( 'components/main' );
+	Main = require( 'components/main' ),
+	successNotice = require( 'state/notices/actions' ).successNotice;
 
-module.exports = React.createClass( {
+const ConnectedApplications = React.createClass( {
 
 	displayName: 'ConnectedApplications',
 
@@ -48,7 +51,7 @@ module.exports = React.createClass( {
 					callback( error );
 				} else {
 					debug( 'Application connection was successfully revoked.' );
-					notices.success(
+					this.props.successNotice(
 						this.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
 							args: {
 								applicationTitle: application.title
@@ -137,3 +140,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( ConnectedApplications );
