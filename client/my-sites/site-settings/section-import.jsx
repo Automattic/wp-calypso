@@ -10,7 +10,6 @@ import includes from 'lodash/collection/includes';
 import CompactCard from 'components/card/compact';
 import EmptyContent from 'components/empty-content';
 import GhostImporter from 'my-sites/importer/importer-ghost';
-import { setState as setImporterState } from 'lib/importer/actions';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import MediumImporter from 'my-sites/importer/importer-medium';
@@ -18,11 +17,6 @@ import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import { fetchState } from 'lib/importer/actions';
 import { appStates, importerTypes } from 'lib/importer/constants';
-import config from 'config';
-
-const mockData = ( 'development' === config( 'env' ) )
-	? require( 'my-sites/importer/test/mock-data' )
-	: {};
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImport',
@@ -126,70 +120,6 @@ export default React.createClass( {
 		) );
 	},
 
-	advanceCustomPropsState: function( delta ) {
-		var stateSelector = this.refs.customPropsState,
-			nextIndex, totalStates;
-
-		totalStates = mockData.componentStates.length;
-		nextIndex = ( totalStates + parseInt( stateSelector.value ) + delta ) % totalStates;
-
-		stateSelector.value = nextIndex;
-		this.setCustomProps();
-	},
-
-	prevCustomPropsState: function( event ) {
-		if ( event ) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-
-		this.advanceCustomPropsState( -1 );
-	},
-
-	nextCustomPropsState: function( event ) {
-		if ( event ) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-
-		this.advanceCustomPropsState( 1 );
-	},
-
-	renderCustomPropControls: function() {
-		var states, style;
-
-		if ( 'development' !== config( 'env' ) ) {
-			return;
-		}
-
-		states = mockData.componentStates.map(
-			( item, index ) => <option key={'import-test-state-' + index } value={ index }>{ item.name }</option>
-		);
-
-		style = {
-			margin: '1em',
-			padding: '1em'
-		};
-
-		return (
-			<div style={ style }>
-				<label htmlFor="customProps">Custom Props</label>
-				<select name="customProps" ref="customPropsState" value={ this.state.customPropStateIndex } defaultValue="0" onChange={ this.setCustomProps }>
-					{states}
-				</select>
-				<a href="#" onClick={ this.prevCustomPropsState }>Prev</a> |
-				<a href="#" onClick={ this.nextCustomPropsState }>Next</a>
-			</div>
-		);
-	},
-
-	setCustomProps: function() {
-		var selectedState = this.refs.customPropsState.value,
-			newState = Object.assign( {}, { customPropsStateIndex: selectedState }, mockData.componentStates[ selectedState ].payload );
-
-		setImporterState( newState );
-	},
-
 	updateFromAPI: function() {
 		fetchState( this.props.site.ID );
 	},
@@ -215,7 +145,6 @@ export default React.createClass( {
 		return (
 			<div className="section-import">
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				{ this.renderCustomPropControls() }
 				<CompactCard>
 					<header>
 						<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
