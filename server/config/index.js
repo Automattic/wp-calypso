@@ -8,8 +8,8 @@ const data = require( './parser' )( {
  * Return config `key`.
  * Throws an error if the requested `key` is not set in the config file.
  *
- * @param {String} key
- * @return {Mixed}
+ * @param {String} key The key of the config entry.
+ * @return {Mixed} Value of config or error if not found.
  * @api public
  */
 function config( key ) {
