@@ -58,6 +58,12 @@ var Plans = React.createClass( {
 		var url = '/plans/compare',
 			selectedSite = this.props.sites.getSelectedSite();
 
+		var compareString = this.translate( 'Compare Plans' );
+
+		if ( selectedSite.jetpack ) {
+			compareString = this.translate( 'Compare Options' );
+		}
+
 		if ( this.props.plans.get().length <= 0 ) {
 			return '';
 		}
@@ -69,7 +75,7 @@ var Plans = React.createClass( {
 		return (
 			<a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>
 				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.translate( 'Compare Plans' ) }
+				{ compareString }
 			</a>
 		);
 	},

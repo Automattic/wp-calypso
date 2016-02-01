@@ -220,6 +220,12 @@ var PlansCompare = React.createClass( {
 	},
 
 	render: function() {
+		var compareString = this.translate( 'Compare Plans' );
+
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
+			compareString = this.translate( 'Compare Options' );
+		}
+
 		return (
 			<div className={ this.props.className }>
 				{
@@ -228,7 +234,7 @@ var PlansCompare = React.createClass( {
 					: <SidebarNavigation />
 				}
 				<HeaderCake onClick={ this.goBack }>
-					{ this.translate( 'Compare Plans' ) }
+					{ compareString }
 				</HeaderCake>
 				<Card className="plans">
 					{ this.comparisonTable() }
