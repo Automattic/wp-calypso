@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PLANS_FETCH_FAILED,
 	SITE_PLANS_REMOVE,
 	SERIALIZE,
 	DESERIALIZE
@@ -68,6 +69,31 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: false,
 					isFetching: true
+				}
+			} );
+		} );
+
+		it( 'should return the original state with an error and fetching disabled when fetching failed', () => {
+			const original = Object.freeze( {
+					11111111: {
+						data: [],
+						error: null,
+						hasLoadedFromServer: true,
+						isFetching: true
+					}
+				} ),
+				state = plans( original, {
+					type: SITE_PLANS_FETCH_FAILED,
+					siteId: 11111111,
+					error: 'Unable to fetch site plans',
+				} );
+
+			expect( state ).to.eql( {
+				11111111: {
+					data: [],
+					error: 'Unable to fetch site plans',
+					hasLoadedFromServer: true,
+					isFetching: false
 				}
 			} );
 		} );

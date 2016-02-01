@@ -14,6 +14,7 @@ import { createSitePlanObject } from './assembler';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PLANS_FETCH_FAILED,
 	SITE_PLANS_REMOVE
 } from 'state/action-types';
 import wpcom from 'lib/wp';
@@ -48,6 +49,14 @@ export function fetchSitePlans( siteId ) {
 			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
 				if ( error ) {
 					debug( 'Fetching site plans failed: ', error );
+
+					const errorMessage = error.message || this.translate( 'There was a problem fetching site plans. Please try again later or contact support.' );
+
+					dispatch( {
+						type: SITE_PLANS_FETCH_FAILED,
+						siteId,
+						error: errorMessage
+					} );
 				} else {
 					dispatch( fetchSitePlansCompleted( siteId, data ) );
 				}

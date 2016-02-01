@@ -9,6 +9,7 @@ import omit from 'lodash/object/omit';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PLANS_FETCH_FAILED,
 	SITE_PLANS_REMOVE
 } from 'state/action-types';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
@@ -37,6 +38,14 @@ export function plans( state = {}, action ) {
 					hasLoadedFromServer: true,
 					isFetching: false,
 					data: action.plans
+				} )
+			} );
+
+		case SITE_PLANS_FETCH_FAILED:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
+					error: action.error,
+					isFetching: false
 				} )
 			} );
 
