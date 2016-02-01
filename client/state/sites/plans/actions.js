@@ -16,7 +16,7 @@ import {
 	FETCH_SITE_PLANS,
 	FETCH_SITE_PLANS_COMPLETED,
 	REMOVE_SITE_PLANS
-} from './action-types';
+} from 'state/action-types';
 
 /**
  * Clears plans for the given site.
