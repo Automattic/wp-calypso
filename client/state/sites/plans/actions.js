@@ -15,9 +15,54 @@ import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PLANS_FETCH_FAILED,
-	SITE_PLANS_REMOVE
+	SITE_PLANS_REMOVE,
+	SITE_PLANS_TRIAL_CANCEL,
+	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
+	SITE_PLANS_TRIAL_CANCEL_FAILED
 } from 'state/action-types';
 import wpcom from 'lib/wp';
+
+/**
+ * Cancels the specified plan trial for the given site.
+ *
+ * @param {Number} siteId identifier of the site
+ * @param {Number} planId identifier of the plan
+ * @returns {Function} a promise that will resolve once updating is completed
+ */
+export function cancelSitePlanTrial( siteId, planId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_PLANS_TRIAL_CANCEL,
+			siteId
+		} );
+
+		return new Promise( ( resolve, reject ) => {
+			wpcom.undocumented().cancelPlanTrial( planId, ( error, data ) => {
+				if ( data && data.success ) {
+					dispatch( {
+						type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
+						siteId,
+						plans: map( data.plans, createSitePlanObject )
+					} );
+
+					resolve();
+				} else {
+					debug( 'Canceling site plan trial failed: ', error );
+
+					const errorMessage = error.message || this.translate( 'There was a problem canceling the plan trial. Please try again later or contact support.' );
+
+					dispatch( {
+						type: SITE_PLANS_TRIAL_CANCEL_FAILED,
+						siteId,
+						error: errorMessage
+					} );
+
+					reject( errorMessage );
+				}
+			} );
+		} );
+	}
+}
 
 /**
  * Returns an action object to be used in signalling that plans for the given site has been cleared.
