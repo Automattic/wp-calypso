@@ -36,6 +36,7 @@
 		"help": true,
 		"jetpack/calypso-first-signup-flow": true,
 		"jetpack_core_inline_update": true,
+		"jetpack-connect": true,
 		"keyboard-shortcuts": true,
 		"login": true,
 		"mailing-lists/unsubscribe": true,
