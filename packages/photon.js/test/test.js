@@ -39,6 +39,11 @@ describe('photon()', function () {
     assert(RegExp('https://i[0-2].wp.com/example.com/image.png').test(photon(url)));
   });
 
+  it('should Photon-ify a secure image URL', function () {
+    var url = 'https://example.com/image.png';
+    assert(RegExp('https://i[0-2].wp.com/example.com/image.png\\\?ssl=1').test(photon(url)));
+  });
+
   it('should not Photon-ify an existing Photon URL, even if the host is wrong', function () {
     var photonedUrl = photon('http://www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc');
     var alternateUrl = 'https://i1.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc';
@@ -106,4 +111,17 @@ describe('photon()', function () {
 
     assertHostedOnPhotonInsecurely(photonedUrl);
   });
+
+  it('should allow you to turn off ssl for fetching', function() {
+    var photonedUrl = photon('https://example.com/foo.png', { secure: false, ssl: 0 });
+
+    assertHostedOnPhotonInsecurely(photonedUrl);
+    assertQuery(photonedUrl, { ssl: 0 });
+
+    photonedUrl = photon('https://i0.wp.com/example.com/foo.png', { secure: false, ssl: 0 });
+
+    assertHostedOnPhotonInsecurely(photonedUrl);
+    assertQuery(photonedUrl, { ssl: 0 });
+  });
+
 });

@@ -42,7 +42,8 @@ var mappings = {
 function photon (imageUrl, opts) {
 
   // parse the URL, assuming //host.com/path style URLs are ok and parse the querystring
-  var parsedUrl = url.parse( imageUrl, true, true );
+  var parsedUrl = url.parse( imageUrl, true, true ),
+    wasSecure = parsedUrl.protocol === 'https:';
 
   delete parsedUrl.protocol;
   delete parsedUrl.auth;
@@ -50,7 +51,8 @@ function photon (imageUrl, opts) {
 
   var params = {
     slashes: true,
-    protocol: 'https:'
+    protocol: 'https:',
+    query: {}
   };
 
   if ( isAlreadyPhotoned( parsedUrl.host ) ) {
@@ -65,6 +67,9 @@ function photon (imageUrl, opts) {
     }
     params.pathname = url.format( parsedUrl ).substring(1);
     params.hostname = serverFromPathname( params.pathname );
+    if ( wasSecure ) {
+      params.query.ssl = 1;
+    }
   }
 
   if (opts) {
@@ -82,12 +87,12 @@ function photon (imageUrl, opts) {
         continue;
       }
 
-      // any other options just gets passed through as query-string parameters
-      if (!params.query) params.query = {};
-
       params.query[mappings[i] || i] = opts[i];
     }
   }
+
+  // do this after so a passed opt can't override it
+
 
   var photonUrl = url.format(params);
   debug('generated Photon URL: %s', photonUrl);
