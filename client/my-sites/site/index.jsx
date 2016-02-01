@@ -11,7 +11,10 @@ var React = require( 'react' ),
 var SiteIcon = require( 'components/site-icon' ),
 	Gridicon = require( 'components/gridicon' ),
 	SiteIndicator = require( 'my-sites/site-indicator' ),
+	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
 	sites = require( 'lib/sites-list' )();
+
+import { userCan } from 'lib/site/utils';
 
 module.exports = React.createClass( {
 	displayName: 'Site',
@@ -90,6 +93,19 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderEditIcon: function() {
+		if ( ! userCan( 'manage_options', this.props.site ) ) {
+			return;
+		}
+
+		return (
+			<a href={ getCustomizeUrl( null, this.props.site ) }
+				className="site__edit-icon">
+				{ this.translate( 'Edit Icon' ) }
+			</a>
+		);
+	},
+
 	getHref: function() {
 		if ( this.state.showMoreActions || ! this.props.site ) {
 			return null;
@@ -152,7 +168,7 @@ module.exports = React.createClass( {
 					<div className="site__content">
 						<SiteIcon site={ site } />
 						<div className="site__actions">
-							<span className="site__edit-icon">Edit Icon</span>
+							{ this.renderEditIcon() }
 							{ this.renderStar() }
 						</div>
 					</div>
