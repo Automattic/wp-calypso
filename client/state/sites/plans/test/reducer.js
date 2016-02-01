@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	SITE_PLANS_FETCH,
+	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PLANS_REMOVE,
 	SERIALIZE,
 	DESERIALIZE
@@ -22,6 +23,39 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
+		it( 'should return an empty state when original state and action are empty', () => {
+			const original = Object.freeze( {} ),
+				state = plans( original, {} );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should return an empty state when original state is undefined and action is unknown', () => {
+			const state = plans( undefined, {
+				type: 'SAY_HELLO',
+				siteId: 11111111
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should return the original state when action is unknown', () => {
+			const original = Object.freeze( {
+					11111111: {
+						data: [],
+						error: null,
+						hasLoadedFromServer: true,
+						isFetching: false
+					}
+				} ),
+				state = plans( original, {
+					type: 'MAKE_COFFEE',
+					siteId: 11111111
+				} );
+
+			expect( state ).to.eql( original );
+		} );
+
 		it( 'should return the initial state with fetching enabled when fetching is triggered', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH,
@@ -34,6 +68,23 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: false,
 					isFetching: true
+				}
+			} );
+		} );
+
+		it( 'should return a list of plans as well as loaded from server enabled and fetching disabled when fetching completed', () => {
+			const state = plans( undefined, {
+				type: SITE_PLANS_FETCH_COMPLETED,
+				siteId: 11111111,
+				plans: []
+			} );
+
+			expect( state ).to.eql( {
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isFetching: false
 				}
 			} );
 		} );
@@ -90,6 +141,32 @@ describe( 'reducer', () => {
 					isFetching: true
 				}
 			} );
+		} );
+
+		it( 'should return an empty state when original state is undefined and removal is triggered', () => {
+			const state = plans( undefined, {
+				type: SITE_PLANS_REMOVE,
+				siteId: 11111111
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should return the original state when removal is triggered for an unknown site', () => {
+			const original = Object.freeze( {
+					11111111: {
+						data: null,
+						error: 'Unable to fetch site plans',
+						hasLoadedFromServer: false,
+						isFetching: false
+					}
+				} ),
+				state = plans( original, {
+					type: SITE_PLANS_REMOVE,
+					siteId: 22222222
+				} );
+
+			expect( state ).to.eql( original );
 		} );
 
 		it( 'should remove plans for a given site when removal is triggered', () => {
