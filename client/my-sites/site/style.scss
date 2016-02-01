@@ -56,7 +56,7 @@
 	display: flex;
 	justify-content: space-between;
 	overflow: hidden;
-	padding: 16px;
+	padding: 16px 4px 16px 16px;
 	position: relative;
 	width: 100%;
 
@@ -160,7 +160,7 @@
 .site__toggle-more-options {
 	color: $gray;
 	cursor: pointer;
-	margin-right: 16px;
+	padding-right: 16px;
 	line-height: 0;
 	.gridicon {
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -170,6 +170,10 @@
 .site.is-toggled {
 	.site__toggle-more-options .gridicon {
 		transform: rotate( 90deg );
+	}
+	.site-icon {
+		border: 1px dashed $gray-dark;
+		opacity: 0.8;
 	}
 }
 
@@ -201,6 +205,6 @@
 	}
 
 	.gridicons-star {
-		color: $blue-medium;
+		color: $alert-yellow;
 	}
 }

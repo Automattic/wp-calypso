@@ -84,6 +84,9 @@
 			.site__title,
 			.site__domain {
 				color: white;
+				&::after {
+					@include long-content-fade( $color: $blue-medium );
+				}
 			}
 
 			.site__title:before {
