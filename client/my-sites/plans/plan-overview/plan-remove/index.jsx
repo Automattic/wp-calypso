@@ -8,54 +8,48 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { cancelSitePlanTrial } from 'state/sites/plans/actions';
 import CompactCard from 'components/card/compact';
+import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
+import { getPlansBySite } from 'state/sites/plans/selectors';
 import { isInGracePeriod } from 'lib/plans';
 import notices from 'notices';
 import paths from '../../paths';
-import { fetchSitePlansCompleted } from 'state/sites/plans/actions';
-import wpcom from 'lib/wp';
 
 const PlanRemove = React.createClass( {
 	propTypes: {
+		cancelSitePlanTrial: React.PropTypes.func.isRequired,
+		isUpdating: React.PropTypes.bool.isRequired,
 		plan: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired,
-		store: React.PropTypes.object.isRequired
+		] ).isRequired
 	},
 
 	getInitialState() {
 		return {
-			isCanceling: false,
 			showDialog: false
 		};
 	},
 
 	removePlan( closeDialog ) {
-		this.setState( { isCanceling: true } );
+		this.props.cancelSitePlanTrial( this.props.selectedSite.ID, this.props.plan.id ).then( () => {
+			Dispatcher.handleViewAction( {
+				type: 'FETCH_SITES'
+			} );
 
-		wpcom.undocumented().cancelPlanTrial( this.props.plan.id, ( error, data ) => {
-			if ( data && data.success ) {
-				this.props.store.dispatch( fetchSitePlansCompleted( this.props.selectedSite.ID, data.plans ) );
+			page( paths.plansDestination( this.props.selectedSite.slug, 'free-trial-canceled' ) );
+		} ).catch( ( error ) => {
+			closeDialog();
 
-				Dispatcher.handleViewAction( {
-					type: 'FETCH_SITES'
-				} );
-
-				page( paths.plansDestination( this.props.selectedSite.slug, 'free-trial-canceled' ) );
-			} else {
-				closeDialog();
-
-				notices.error( error.message || this.translate( 'There was a problem removing the plan. Please try again later or contact support.' ) );
-			}
+			notices.error( error );
 		} );
 	},
 
 	closeDialog() {
-		this.setState(  {
-			isCanceling: false,
+		this.setState( {
 			showDialog: false
 		} );
 	},
@@ -84,12 +78,12 @@ const PlanRemove = React.createClass( {
 		const buttons = [
 			{
 				action: 'cancel',
-				disabled: this.state.isCanceling,
+				disabled: this.props.isUpdating,
 				label: this.translate( 'Cancel' )
 			},
 			{
 				action: 'remove',
-				disabled: this.state.isCanceling,
+				disabled: this.props.isUpdating,
 				isPrimary: true,
 				label: this.translate( 'Remove Now' ),
 				onClick: this.removePlan
@@ -135,4 +129,19 @@ const PlanRemove = React.createClass( {
 	}
 } );
 
-export default PlanRemove;
+export default connect(
+	( state, props ) => {
+		const plans = getPlansBySite( state, props.selectedSite );
+
+		return {
+			isUpdating: plans.isUpdating
+		};
+	},
+	( dispatch ) => {
+		return {
+			cancelSitePlanTrial: ( siteId, planId ) => {
+				return dispatch( cancelSitePlanTrial( siteId, planId ) );
+			}
+		};
+	}
+)( PlanRemove );

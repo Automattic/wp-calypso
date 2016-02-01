@@ -25,8 +25,7 @@ const PlanOverview = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired,
-		store: React.PropTypes.object.isRequired
+		] ).isRequired
 	},
 
 	redirectToDefault() {
@@ -70,8 +69,7 @@ const PlanOverview = React.createClass( {
 
 					<PlanRemove
 						plan={ this.props.plan }
-						selectedSite={ this.props.selectedSite }
-						store={ this.props.store } />
+						selectedSite={ this.props.selectedSite } />
 				</Main>
 			</div>
 		);
