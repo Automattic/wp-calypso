@@ -5,6 +5,7 @@ import config from 'config';
 import localforage from 'localforage';
 import Hashes from 'jshashes';
 import warn from 'lib/warn';
+import { isWhitelisted } from './whitelist-handler';
 
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:sync-handler' );
@@ -47,6 +48,12 @@ export class SyncHandler {
 			// create a copy of the request params
 			const reqParams = Object.assign( {}, params );
 			const { path } = reqParams;
+
+			// whitelist barrier
+			if ( ! isWhitelisted( params ) ) {
+				debug( 'not whitelisted: skip %o request', path );
+				return handler( params, callback );
+			};
 
 			// generate an unique resource key
 			const key = this.generateKey( reqParams );
