@@ -11,9 +11,9 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 
 Fetches plans for the site with the given site ID.
 
-### `fetchSitePlansCompleted( siteId: Number, plans: Object )`
+### `fetchSitePlansCompleted( siteId: Number, data: Object )`
 
-Adds the plans to the set of plans for the given site ID.
+Adds the plans fetched from the API to the set of plans for the given site ID.
 
 ```js
 import { fetchSitePlans, fetchSitePlansCompleted } from 'state/sites/plans/actions';

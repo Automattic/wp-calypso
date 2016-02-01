@@ -72,16 +72,16 @@ export function fetchSitePlans( siteId ) {
  * the plans for a given site have been received.
  *
  * @param {Number} siteId identifier of the site
- * @param {Object} plans list of plans received from the API
+ * @param {Object} data list of plans received from the API
  * @returns {Object} the corresponding action object
  */
-export function fetchSitePlansCompleted( siteId, plans ) {
-	plans = reject( plans, '_headers' );
+export function fetchSitePlansCompleted( siteId, data ) {
+	data = reject( data, '_headers' );
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( plans, createSitePlanObject )
+		plans: map( data, createSitePlanObject )
 	};
 }
 
