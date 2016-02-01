@@ -193,7 +193,7 @@ PluginsActions = {
 	},
 
 	installPlugin: function( site, plugin ) {
-		var install, activate, autoupdate, dispatchMessage;
+		var install, activate, autoupdate, dispatchMessage, manageError;
 
 		if ( ! site.canUpdateFiles ) {
 			return getRejectedPromise( 'Error: Can\'t update files on the site' )
@@ -232,19 +232,34 @@ PluginsActions = {
 			recordEvent( 'calypso_plugin_installed', plugin, site, error );
 		};
 
+		manageError = function( error ) {
+			if ( error.name === 'PluginAlreadyInstalledError' ) {
+				if ( site.isMainNetworkSite() ) {
+					return autoupdate( plugin )
+						.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
+						.catch( manageError );
+				}
+				return activate( plugin )
+					.then( autoupdate )
+					.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
+					.catch( manageError );
+			}
+			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error );
+		}
+
 		dispatchMessage( 'INSTALL_PLUGIN' );
 
 		if ( site.isMainNetworkSite() ) {
 			return install()
 				.then( autoupdate )
 				.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
-				.catch( error => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error ) );
+				.catch( manageError );
 		}
 		return install()
 			.then( activate )
 			.then( autoupdate )
 			.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
-			.catch( error => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error ) );
+			.catch( manageError );
 	},
 
 	removePlugin: function( site, plugin ) {
@@ -470,5 +485,4 @@ PluginsActions = {
 		_actionsQueueBySite = {};
 	}
 };
-
 module.exports = PluginsActions;
