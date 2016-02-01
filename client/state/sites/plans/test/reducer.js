@@ -136,7 +136,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				11111111: {
 					data: null,
-					error: 'Unable to fetch site plans',
+					error: null,
 					hasLoadedFromServer: false,
 					isFetching: true
 				}
