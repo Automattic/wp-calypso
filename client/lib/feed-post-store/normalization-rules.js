@@ -80,10 +80,11 @@ function classifyPost( post, callback ) {
 				hostname: canonicalImageUrl.hostname,
 				pathname: canonicalImageUrl.pathname,
 				query: canonicalImageUrl.query
-			};
+			},
+			matcher = matches( canonicalImageUrlImportantParts );
 		if ( find( post.content_images, ( img ) => {
 			const imgUrl = url.parse( img.src, true, true );
-			return matches( imgUrl, canonicalImageUrlImportantParts );
+			return matcher( imgUrl );
 		} ) ) {
 			displayType ^= DISPLAY_TYPES.CANONICAL_IN_CONTENT;
 		}
