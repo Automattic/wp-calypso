@@ -21,18 +21,17 @@ function getDataFromFile( file ) {
 	return fileData;
 }
 
-module.exports = function( opts ) {
+module.exports = function( configPath, defaultOpts ) {
 	var opts = assign( {
 			env: 'development',
 			includeSecrets: false,
 			configPath: null
-		}, opts ),
-		// TODO: validate configPath
+		}, defaultOpts ),
 		data = {},
-		configPaths = [
-			path.resolve( opts.configPath, '_shared.json' ),
-			path.resolve( opts.configPath, opts.env + '.json' ),
-			path.resolve( opts.configPath, opts.env + '.local.json' )
+		configFiles = [
+			path.resolve( configPath, '_shared.json' ),
+			path.resolve( configPath, opts.env + '.json' ),
+			path.resolve( configPath, opts.env + '.local.json' )
 		],
 		realSecretsPath,
 		emptySecretsPath,
@@ -41,15 +40,15 @@ module.exports = function( opts ) {
 		disabledFeatures = process.env.DISABLE_FEATURES ? process.env.DISABLE_FEATURES.split( ',' ) : [];
 
 	if ( opts.includeSecrets ) {
-		realSecretsPath = path.resolve( opts.configPath, 'secrets.json' );
-		emptySecretsPath = path.resolve( opts.configPath, 'empty-secrets.json' );
+		realSecretsPath = path.resolve( configPath, 'secrets.json' );
+		emptySecretsPath = path.resolve( configPath, 'empty-secrets.json' );
 		secretsPath = fs.existsSync( realSecretsPath ) ? realSecretsPath : emptySecretsPath;
 
-		configPaths.push( secretsPath );
+		configFiles.push( secretsPath );
 	}
 
-	configPaths.forEach( function( configPath ) {
-		assign( data, getDataFromFile( configPath ) );
+	configFiles.forEach( function( file ) {
+		assign( data, getDataFromFile( file ) );
 	} );
 
 	if ( data.hasOwnProperty( 'features' ) ) {

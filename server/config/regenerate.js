@@ -10,10 +10,9 @@ var fs = require( 'fs' ),
 	keysPath = path.resolve( configPath, 'client.json' ),
 	keys = JSON.parse( fs.readFileSync( keysPath, 'utf8' ) ),
 	config = require( './' ),
-	data = require( './parser' )( {
+	data = require( './parser' )( configPath, {
 		env: process.env.CALYPSO_ENV || 'development',
 		includeSecrets: false,
-		configPath: configPath
 	} ),
 	obj = {};
 

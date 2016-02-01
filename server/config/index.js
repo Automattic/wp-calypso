@@ -1,7 +1,7 @@
-const data = require( './parser' )( {
+const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
+const data = require( './parser' )( configPath, {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
-	secrets: true,
-	configPath: require( 'path' ).resolve( __dirname, '..', '..', 'config' )
+	includeSecrets: true,
 } );
 
 /**
