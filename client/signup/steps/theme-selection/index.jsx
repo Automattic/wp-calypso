@@ -47,9 +47,12 @@ module.exports = React.createClass( {
 		if ( true === this.props.useHeadstart && themeSlug ) {
 			analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
 
-			SignupActions.submitSignupStep( { stepName: this.props.stepName }, null, {
-				theme: 'pub/' + themeSlug,
-				images: undefined
+			SignupActions.submitSignupStep( {
+				stepName: this.props.stepName,
+				processingMessage: this.translate( 'Adding your theme' ),
+				themeSlug
+			}, null, {
+				theme: 'pub/' + themeSlug
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: false } );

@@ -48,8 +48,7 @@ module.exports = {
 			blog_name: siteUrl,
 			blog_title: siteUrl,
 			options: {
-				theme: dependencies.theme,
-				images: dependencies.images
+				theme: dependencies.theme
 			},
 			validate: false,
 			find_available_url: isPurchasingItem

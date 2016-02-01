@@ -16,6 +16,16 @@ module.exports = {
 		dependencies: [ 'siteSlug' ]
 	},
 
+	'themes-headstart': {
+		stepName: 'themes-headstart',
+		props: {
+			useHeadstart: true,
+		},
+		apiRequestFunction: stepActions.setThemeOnSite,
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'theme' ]
+	},
+
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'themes' ]
@@ -65,6 +75,14 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
 		providesDependencies: [ 'siteSlug', 'domainItem' ],
+		delayApiRequestUntilComplete: true
+	},
+
+	'domains-with-theme': {
+		stepName: 'domains-with-theme',
+		apiRequestFunction: stepActions.addDomainItemsToCart,
+		providesDependencies: [ 'siteSlug', 'domainItem' ],
+		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
 
