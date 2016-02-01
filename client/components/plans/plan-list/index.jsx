@@ -75,6 +75,11 @@ module.exports = React.createClass( {
 				return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 			} );
 
+			// If showing Jetpack plans remove the first item (Free)
+			if ( site && site.jetpack ) {
+				plans.shift();
+			}
+
 			plansList = plans.map( function( plan ) {
 				return (
 					<Plan

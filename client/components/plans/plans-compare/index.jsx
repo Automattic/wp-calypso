@@ -161,6 +161,11 @@ var PlansCompare = React.createClass( {
 			return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 		} );
 
+		// If showing Jetpack plans remove the first item (Free)
+		if ( site && site.jetpack ) {
+			plans.shift();
+		}
+
 		if ( this.props.features.hasLoadedFromServer() && (
 			this.props.isInSignup || ! this.props.selectedSite || ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) )
 		) {
