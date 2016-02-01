@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	SITE_PLANS_FETCH,
-	REMOVE_SITE_PLANS,
+	SITE_PLANS_REMOVE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -69,7 +69,7 @@ describe( 'reducer', () => {
 					22222222: initialSiteState
 				} ),
 				state = plans( original, {
-					type: REMOVE_SITE_PLANS,
+					type: SITE_PLANS_REMOVE,
 					siteId: 11111111
 				} );
 
