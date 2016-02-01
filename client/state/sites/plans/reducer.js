@@ -25,60 +25,62 @@ export const initialSiteState = {
 	isUpdating: false
 };
 
+/**
+ * Returns a new state with the given attributes updated for the specified site.
+ *
+ * @param {Object} state current state
+ * @param {Number} siteId identifier of the site
+ * @param {Object} attributes list of attributes and their values
+ * @returns {Object} the new state
+ */
+function updateSiteState( state, siteId, attributes ) {
+	return Object.assign( {}, state, {
+		[ siteId ]: Object.assign( {}, initialSiteState, state[ siteId ], attributes )
+	} );
+}
+
 export function plans( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_PLANS_FETCH:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					error: null,
-					isFetching: true
-				} )
+			return updateSiteState( state, action.siteId, {
+				error: null,
+				isFetching: true
 			} );
 
 		case SITE_PLANS_FETCH_COMPLETED:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					error: null,
-					hasLoadedFromServer: true,
-					isFetching: false,
-					data: action.plans
-				} )
+			return updateSiteState( state, action.siteId, {
+				error: null,
+				hasLoadedFromServer: true,
+				isFetching: false,
+				data: action.plans
 			} );
 
 		case SITE_PLANS_FETCH_FAILED:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					error: action.error,
-					isFetching: false
-				} )
+			return updateSiteState( state, action.siteId, {
+				error: action.error,
+				isFetching: false
 			} );
 
 		case SITE_PLANS_REMOVE:
 			return omit( state, action.siteId );
 
 		case SITE_PLANS_TRIAL_CANCEL:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					isUpdating: true
-				} )
+			return updateSiteState( state, action.siteId, {
+				isUpdating: true
 			} );
 
 		case SITE_PLANS_TRIAL_CANCEL_COMPLETED:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					error: null,
-					hasLoadedFromServer: true,
-					isUpdating: false,
-					data: action.plans
-				} )
+			return updateSiteState( state, action.siteId, {
+				error: null,
+				hasLoadedFromServer: true,
+				isUpdating: false,
+				data: action.plans
 			} );
 
 		case SITE_PLANS_TRIAL_CANCEL_FAILED:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					error: action.error,
-					isUpdating: false
-				} )
+			return updateSiteState( state, action.siteId, {
+				error: action.error,
+				isUpdating: false
 			} );
 
 		case SERIALIZE:
