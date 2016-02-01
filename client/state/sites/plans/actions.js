@@ -13,8 +13,8 @@ const debug = debugFactory( 'calypso:site-plans:actions' );
 import { createSitePlanObject } from './assembler';
 import wpcom from 'lib/wp';
 import {
-	FETCH_SITE_PLANS,
-	FETCH_SITE_PLANS_COMPLETED,
+	SITE_PLANS_FETCH,
+	SITE_PLANS_FETCH_COMPLETED,
 	REMOVE_SITE_PLANS
 } from 'state/action-types';
 
@@ -42,7 +42,7 @@ export function clearSitePlans( siteId ) {
 export function fetchSitePlans( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: FETCH_SITE_PLANS,
+			type: SITE_PLANS_FETCH,
 			siteId
 		} );
 
@@ -72,7 +72,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
 	plans = reject( plans, '_headers' );
 
 	return {
-		type: FETCH_SITE_PLANS_COMPLETED,
+		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
 		plans: map( plans, createSitePlanObject )
 	};

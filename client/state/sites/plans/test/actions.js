@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { FETCH_SITE_PLANS_COMPLETED } from 'state/action-types';
+import { SITE_PLANS_FETCH_COMPLETED } from 'state/action-types';
 import { fetchSitePlansCompleted } from '../actions';
 
 describe( 'actions', () => {
@@ -16,7 +16,7 @@ describe( 'actions', () => {
 				action = fetchSitePlansCompleted( siteId );
 
 			expect( action ).to.eql( {
-				type: FETCH_SITE_PLANS_COMPLETED,
+				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId,
 				plans: []
 			} );

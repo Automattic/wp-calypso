@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	FETCH_SITE_PLANS,
+	SITE_PLANS_FETCH,
 	REMOVE_SITE_PLANS,
 	SERIALIZE,
 	DESERIALIZE
@@ -25,7 +25,7 @@ describe( 'reducer', () => {
 		it( 'should index plans by site ID', () => {
 			const siteId = 11111111,
 				state = plans( undefined, {
-					type: FETCH_SITE_PLANS,
+					type: SITE_PLANS_FETCH,
 					siteId: siteId
 				} );
 
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 					11111111: initialSiteState
 				} ),
 				state = plans( original, {
-					type: FETCH_SITE_PLANS,
+					type: SITE_PLANS_FETCH,
 					siteId: 55555555
 				} );
 
@@ -54,7 +54,7 @@ describe( 'reducer', () => {
 					11111111: initialSiteState
 				} ),
 				state = plans( original, {
-					type: FETCH_SITE_PLANS,
+					type: SITE_PLANS_FETCH,
 					siteId: 11111111
 				} );
 

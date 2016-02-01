@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	FETCH_SITE_PLANS,
-	FETCH_SITE_PLANS_COMPLETED,
+	SITE_PLANS_FETCH,
+	SITE_PLANS_FETCH_COMPLETED,
 	REMOVE_SITE_PLANS
 } from 'state/action-types';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
@@ -18,13 +18,13 @@ export const initialSiteState = {
 
 export function plans( state = {}, action ) {
 	switch ( action.type ) {
-		case FETCH_SITE_PLANS:
+		case SITE_PLANS_FETCH:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
 					isFetching: true
 				} )
 			} );
-		case FETCH_SITE_PLANS_COMPLETED:
+		case SITE_PLANS_FETCH_COMPLETED:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
 					error: null,
