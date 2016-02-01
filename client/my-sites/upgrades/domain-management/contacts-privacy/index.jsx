@@ -67,12 +67,8 @@ const ContactsPrivacy = React.createClass( {
 		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
 	},
 
-	isPrivacyProtectionEnabled() {
-		const domain = getSelectedDomain( this.props );
 
 		return domain && domain.hasPrivacyProtection;
-	},
-
 	goToEdit() {
 		page( paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName ) );
 	}

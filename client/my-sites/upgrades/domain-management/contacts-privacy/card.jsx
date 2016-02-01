@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const CompactCard = require( 'components/card/compact' ),
-	ContactDisplay = require( './contact-display' ),
-	Notice = require( 'components/notice' ),
-	paths = require( 'my-sites/upgrades/paths' ),
-	SectionHeader = require( 'components/section-header' );
+import CompactCard from 'components/card/compact';
+import ContactDisplay from './contact-display';
+import Notice from 'components/notice';
+import paths from 'my-sites/upgrades/paths';
+import SectionHeader from 'components/section-header';
 
 const ContactsPrivacyCard = React.createClass( {
 	propTypes: {
@@ -54,14 +53,13 @@ const ContactsPrivacyCard = React.createClass( {
 	getNotice() {
 		if ( this.props.privacyProtectionEnabled ) {
 			return (
-				<Notice status={ 'is-success' } showDismiss={ false }>
+				<Notice status="is-success" showDismiss={ false }>
 					{ this.translate(
-						'{{strong1}}Privacy Protection{{/strong1}} is turned on for this domain. ' +
-						'Your contact information is {{strong2}}private{{/strong2}}. ',
+						'{{strong}}Privacy Protection{{/strong}} is turned on for this domain. ' +
+						'Your contact information is {{strong}}private{{/strong}}. ',
 						{
 							components: {
-								strong1: <strong />,
-								strong2: <strong />
+								strong: <strong />
 							}
 						}
 					) }
@@ -70,27 +68,22 @@ const ContactsPrivacyCard = React.createClass( {
 		}
 
 		return (
-			<Notice status={ 'is-warning' } showDismiss={ false }>
+			<Notice status="is-warning" showDismiss={ false }>
 				{ this.translate(
-					'{{strong1}}Privacy Protection{{/strong1}} is turned off for this domain. ' +
-					'Your contact information is {{strong2}}public{{/strong2}}. ' +
+					'{{strong}}Privacy Protection{{/strong}} is turned off for this domain. ' +
+					'Your contact information is {{strong}}public{{/strong}}. ' +
 					'{{a}}Enable Privacy Protection{{/a}}',
 					{
 						components: {
-							strong1: <strong />,
-							strong2: <strong />,
-							a: <a href="" onClick={ this.goToPrivacyProtection } />
+							strong: <strong />,
+							a: <a
+								href={ paths.domainManagementPrivacyProtection(
+									this.props.selectedSite.slug, this.props.selectedDomainName ) } />
 						}
 					}
 				) }
 			</Notice>
 		);
-	},
-
-	goToPrivacyProtection( event ) {
-		event.preventDefault();
-
-		page( paths.domainManagementPrivacyProtection( this.props.selectedSite.domain, this.props.selectedDomainName ) );
 	}
 } );
 
