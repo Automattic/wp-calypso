@@ -119,10 +119,6 @@ export default React.createClass( {
 	},
 
 	shouldShowGroups() {
-		if ( ! config.isEnabled( 'show-site-groups' ) ) {
-			return false;
-		}
-
 		return this.props.groups && user.get().visible_site_count > 14;
 	},
 
