@@ -20,7 +20,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { oldShowcaseUrl } from 'lib/themes/helpers';
+import { getDetailsUrl as getThemeDetailsUrl } from 'lib/themes/helpers';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import RemovePurchase from '../remove-purchase';
@@ -299,7 +299,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		if ( isTheme( purchase ) ) {
-			url = oldShowcaseUrl + purchase.domain + '/' + purchase.meta;
+			url = getThemeDetailsUrl( { id: purchase.meta }, { slug: purchase.domain } );
 			text = this.translate( 'Theme Details' );
 		}
 
