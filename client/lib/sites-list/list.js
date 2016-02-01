@@ -392,7 +392,7 @@ SitesList.prototype.isSelected = function( site ) {
  * @api private
  */
 SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
-	if ( ! this.recentlySelected.length ) {
+	if ( ! this.recentlySelected ) {
 		this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 	}
 
