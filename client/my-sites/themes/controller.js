@@ -44,7 +44,9 @@ var controller = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 
-		ReactDom.render( React.createElement( SSRTest ), document.getElementById( 'primary' ) );
+		if ( ! document.getElementById( 'Themes' ) ) {
+			ReactDom.render( React.createElement( SSRTest ), document.getElementById( 'primary' ) );
+		}
 	}
 };
 

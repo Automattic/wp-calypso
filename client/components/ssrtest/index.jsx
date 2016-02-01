@@ -10,13 +10,27 @@ import React from 'react';
  */
 import Main from 'components/main';
 import Card from 'components/card';
+import Button from 'components/button';
 
-const SSRTest = () => (
-	<Main>
-		<Card>
-			<span>Rendered on the Server</span>
-		</Card>
-	</Main>
-)
+export default React.createClass( {
 
-export default SSRTest;
+	getInitialState() {
+		return { clicks: 0 };
+	},
+
+	click() {
+		this.setState( { clicks: this.state.clicks + 1 } );
+	},
+
+	render() {
+		return(
+			<Main>
+				<Card id="Themes" >
+					<span>Clicks: { this.state.clicks }</span>
+				</Card>
+				<Button onClick={ this.click }>Click</Button>
+			</Main>
+		)
+	},
+} );
+
