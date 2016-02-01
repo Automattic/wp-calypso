@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import omit from 'lodash/object/omit';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,7 +12,6 @@ import {
 	SITE_PLANS_REMOVE
 } from 'state/action-types';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import omit from 'lodash/object/omit';
 
 export const initialSiteState = {
 	error: null,
@@ -24,6 +28,7 @@ export function plans( state = {}, action ) {
 					isFetching: true
 				} )
 			} );
+
 		case SITE_PLANS_FETCH_COMPLETED:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
@@ -33,11 +38,14 @@ export function plans( state = {}, action ) {
 					data: action.plans
 				} )
 			} );
+
 		case SITE_PLANS_REMOVE:
 			return omit( state, action.siteId );
+
 		case SERIALIZE:
 			//TODO: we have full instances of moment.js on sites.plans[siteID].data
 			return {};
+
 		case DESERIALIZE:
 			return {};
 	}
