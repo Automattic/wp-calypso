@@ -15,7 +15,8 @@ import SectionHeader from 'components/section-header';
 const ContactsPrivacyCard = React.createClass( {
 	propTypes: {
 		contactInformation: React.PropTypes.object.isRequired,
-		privacyProtectionEnabled: React.PropTypes.bool.isRequired,
+		privateDomain: React.PropTypes.bool.isRequired,
+		hasPrivacyProtection: React.PropTypes.bool.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -51,7 +52,7 @@ const ContactsPrivacyCard = React.createClass( {
 	},
 
 	getNotice() {
-		if ( this.props.privacyProtectionEnabled ) {
+		if ( this.props.hasPrivacyProtection && this.props.privateDomain ) {
 			return (
 				<Notice status="is-success" showDismiss={ false }>
 					{ this.translate(
@@ -65,6 +66,23 @@ const ContactsPrivacyCard = React.createClass( {
 					) }
 				</Notice>
 			);
+		} else if ( this.props.hasPrivacyProtection && ! this.props.privateDomain ) {
+			return (
+				<Notice status="is-warning" showDismiss={ false }>
+					{ this.translate(
+						'{{strong}}Privacy Protection{{/strong}} is temporarily ' +
+						'disabled for this domain while the domain is being transferred. ' +
+						'Your contact information is {{strong}}public{{/strong}}. ' +
+						'{{a}}Cancel Transfer and Enable Privacy Protection{{/a}}',
+						{
+							components: {
+								strong: <strong />,
+								a: <a href={ paths.domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName ) } />
+							}
+						}
+					) }
+				</Notice>
+			)
 		}
 
 		return (
