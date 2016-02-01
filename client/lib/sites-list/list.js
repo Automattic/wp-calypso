@@ -413,6 +413,8 @@ SitesList.prototype.toggleStarred = function( siteID ) {
 };
 
 SitesList.prototype.getStarred = function() {
+	this.starred = PreferencesStore.get( 'starredSites' ) || [];
+
 	if ( ! this.initialized ) {
 		return false;
 	}
