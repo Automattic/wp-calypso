@@ -91,10 +91,13 @@
 
 		.button {
 			width: 100%;
-			margin-left: 16px;
+			margin-left: 0;
+			margin-top: 5px;
 
 			@include breakpoint( ">660px" ) {
 				width: 45%;
+				margin-left: 16px;
+				margin-top: 0;
 			}
 		}
 	}
