@@ -15,7 +15,8 @@ var ThemesComponent = require( 'my-sites/themes/main' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
-	buildTitle = require( 'lib/screen-title/utils' );
+	buildTitle = require( 'lib/screen-title/utils' ),
+	SSRTest = require( 'components/SSRTest' );
 
 var controller = {
 
@@ -42,25 +43,8 @@ var controller = {
 		}
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( Head, { title, tier: tier || 'all' },
-					React.createElement( ThemesComponent, {
-						key: site_id,
-						siteId: site_id,
-						tier: tier,
-						search: context.query.s,
-						trackScrollPage: trackScrollPage.bind(
-							null,
-							basePath,
-							analyticsPageTitle,
-							'Themes'
-						)
-					} )
-				)
-			),
-			document.getElementById( 'primary' )
-		);
+
+		ReactDom.render( React.createElement( SSRTest ), document.getElementById( 'primary' ) );
 	}
 };
 

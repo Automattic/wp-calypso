@@ -10,13 +10,16 @@ import React from 'react';
  */
 import MasterbarMinimal from 'layout/masterbar/minimal';
 import ThemesHead from 'my-sites/themes/head';
+import SSRTest from 'components/SSRTest';
 
 const LayoutLoggedOutDesign = ( { tier = 'all' } ) => (
 	<div className="wp is-section-design has-no-sidebar">
 		<ThemesHead tier={ tier } />
 		<MasterbarMinimal url="/" />
 		<div id="content" className="wp-content">
-			<div id="primary" className="wp-primary wp-section" />
+			<div id="primary" className="wp-primary wp-section" >
+				<SSRTest />
+			</div>
 			<div id="secondary" className="wp-secondary" />
 		</div>
 		<div id="tertiary" className="wp-overlay fade-background" />
