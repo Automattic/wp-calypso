@@ -86,7 +86,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom-unpublished', 'jed', 'debug' ];
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', 'catch-js-errors', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
 }
 
@@ -95,6 +95,8 @@ jsLoader = {
 	exclude: /node_modules/,
 	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
 };
+
+webpackConfig.entry[ 'catch-js-errors' ] = 'catch-js-errors.js';
 
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new PragmaCheckPlugin() );

@@ -72,7 +72,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 						a(href=devDocsURL title='DevDocs') docs
 
 		if 'development' === env
-			script(src=catchJsErrors)
+			script(src=urls[ 'catch-js-errors' ])
 
 		script.
 			(function() {
