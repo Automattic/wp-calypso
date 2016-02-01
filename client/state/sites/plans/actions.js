@@ -19,18 +19,16 @@ import {
 import wpcom from 'lib/wp';
 
 /**
- * Clears plans for the given site.
+ * Returns an action object to be used in signalling that plans for the given site has been cleared.
  *
  * @param {Number} siteId identifier of the site
- * @returns {Function} the corresponding action thunk
+ * @returns {Object} the corresponding action object
  */
 export function clearSitePlans( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_PLANS_REMOVE,
-			siteId
-		} );
-	}
+	return {
+		type: SITE_PLANS_REMOVE,
+		siteId
+	};
 }
 
 /**
@@ -86,11 +84,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  */
 export function refreshSitePlans( siteId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_PLANS_REMOVE,
-			siteId
-		} );
-
+		dispatch( clearSitePlans( siteId ) );
 		dispatch( fetchSitePlans( siteId ) );
 	}
 }

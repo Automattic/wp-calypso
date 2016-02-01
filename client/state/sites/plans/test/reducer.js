@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should remove plans for a given site ID', () => {
+		it( 'should clear plans for a given site ID', () => {
 			const original = Object.freeze( {
 					11111111: initialSiteState,
 					22222222: initialSiteState
