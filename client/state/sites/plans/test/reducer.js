@@ -12,7 +12,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { initialSiteState, plans } from '../reducer';
+import { plans } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {
@@ -23,20 +23,29 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should return the initial state with fetching enabled when fetching is triggered', () => {
-			const siteId = 11111111,
-				state = plans( undefined, {
-					type: SITE_PLANS_FETCH,
-					siteId: siteId
-				} );
+			const state = plans( undefined, {
+				type: SITE_PLANS_FETCH,
+				siteId: 11111111
+			} );
 
 			expect( state ).to.eql( {
-				[ siteId ]: Object.assign( {}, initialSiteState, { isFetching: true } )
+				11111111: {
+					data: null,
+					error: null,
+					hasLoadedFromServer: false,
+					isFetching: true
+				}
 			} );
 		} );
 
 		it( 'should accumulate plans for different sites', () => {
 			const original = Object.freeze( {
-					11111111: initialSiteState
+					11111111: {
+						data: [],
+						error: null,
+						hasLoadedFromServer: true,
+						isFetching: false
+					}
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_FETCH,
@@ -44,14 +53,29 @@ describe( 'reducer', () => {
 				} );
 
 			expect( state ).to.eql( {
-				11111111: initialSiteState,
-				55555555: Object.assign( {}, initialSiteState, { isFetching: true } )
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isFetching: false
+				},
+				55555555: {
+					data: null,
+					error: null,
+					hasLoadedFromServer: false,
+					isFetching: true
+				}
 			} );
 		} );
 
 		it( 'should override previous plans of the same site', () => {
 			const original = Object.freeze( {
-					11111111: initialSiteState
+					11111111: {
+						data: null,
+						error: 'Unable to fetch site plans',
+						hasLoadedFromServer: false,
+						isFetching: false
+					}
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_FETCH,
@@ -59,14 +83,29 @@ describe( 'reducer', () => {
 				} );
 
 			expect( state ).to.eql( {
-				11111111: Object.assign( {}, initialSiteState, { isFetching: true } )
+				11111111: {
+					data: null,
+					error: 'Unable to fetch site plans',
+					hasLoadedFromServer: false,
+					isFetching: true
+				}
 			} );
 		} );
 
 		it( 'should remove plans for a given site when removal is triggered', () => {
 			const original = Object.freeze( {
-					11111111: initialSiteState,
-					22222222: initialSiteState
+					11111111: {
+						data: null,
+						error: 'Unable to fetch site plans',
+						hasLoadedFromServer: false,
+						isFetching: false
+					},
+					22222222: {
+						data: [],
+						error: null,
+						hasLoadedFromServer: true,
+						isFetching: false
+					}
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_REMOVE,
@@ -74,7 +113,12 @@ describe( 'reducer', () => {
 				} );
 
 			expect( state ).to.eql( {
-				22222222: initialSiteState
+				22222222: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isFetching: false
+				}
 			} );
 		} );
 
