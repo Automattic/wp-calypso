@@ -11,7 +11,6 @@ var React = require( 'react' ),
  */
 var FormButton = require( 'components/forms/form-button' ),
 	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	notices = require( 'notices' ),
 	Security2faStatus = require( 'me/security-2fa-status' ),
 	Security2faCodePrompt = require( 'me/security-2fa-code-prompt' ),
 	analytics = require( 'analytics' ),
