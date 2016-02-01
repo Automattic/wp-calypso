@@ -38,9 +38,6 @@ function SitesList() {
 	this.selected = null;
 	this.lastSelected = null;
 	this.propagateChange = this.propagateChange.bind( this );
-
-	PreferencesActions.fetch();
-	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 }
 
 /**
@@ -421,6 +418,8 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 };
 
 SitesList.prototype.getRecentlySelected = function() {
+	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
+
 	if ( ! this.recentlySelected.length || ! this.initialized ) {
 		return false;
 	}
