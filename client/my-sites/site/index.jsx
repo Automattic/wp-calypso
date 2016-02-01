@@ -98,8 +98,14 @@ module.exports = React.createClass( {
 			return;
 		}
 
+		let url = getCustomizeUrl( null, this.props.site );
+
+		if ( ! this.props.site.jetpack && this.props.site.options ) {
+			url = this.props.site.options.admin_url + 'options-general.php';
+		}
+
 		return (
-			<a href={ getCustomizeUrl( null, this.props.site ) }
+			<a href={ url } target="_blank"
 				className="site__edit-icon">
 				{ this.translate( 'Edit Icon' ) }
 			</a>
