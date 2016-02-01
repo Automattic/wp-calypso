@@ -24,7 +24,6 @@ GET_I18N ?= $(BIN)/get-i18n
 I18NLINT ?= $(BIN)/i18nlint
 LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= $(THIS_DIR)/server/devdocs/bin/generate-devdocs-index
-UGLIFYJS ?=$(NODE_BIN)/uglifyjs
 
 # files used as prereqs
 SASS_FILES := $(shell \
