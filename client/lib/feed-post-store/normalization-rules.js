@@ -2,21 +2,26 @@
  * External Dependecies
  */
 const find = require( 'lodash/collection/find' ),
+	forEach = require( 'lodash/collection/forEach' ),
 	url = require( 'url' ),
-	matches = require( 'lodash/utility/matches' );
+	matches = require( 'lodash/utility/matches' ),
+	toArray = require( 'lodash/lang/toArray' );
 
 /**
  * Internal Dependencies
  */
 const postNormalizer = require( 'lib/post-normalizer' ),
+	resizeImageUrl = require( 'lib/resize-image-url' ),
 	DISPLAY_TYPES = require( './display-types' );
 
 /**
  * Module vars
  */
 const READER_CONTENT_WIDTH = 720,
+	DISCOVER_FULL_BLEED_WIDTH = 1082,
 	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
-	ONE_LINER_THRESHOLD = ( 20 * 10 ); // roughly 10 lines of words
+	ONE_LINER_THRESHOLD = ( 20 * 10 ), // roughly 10 lines of words
+	DISCOVER_BLOG_ID = 53424024;
 
 const fastPostNormalizationRules = [
 		postNormalizer.decodeEntities,
@@ -29,6 +34,7 @@ const fastPostNormalizationRules = [
 		postNormalizer.withContentDOM( [
 			postNormalizer.content.removeStyles,
 			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),
+			discoverFullBleedImages,
 			postNormalizer.content.makeEmbedsSecure,
 			postNormalizer.content.disableAutoPlayOnEmbeds,
 			postNormalizer.content.disableAutoPlayOnMedia,
@@ -43,6 +49,19 @@ const fastPostNormalizationRules = [
 		postNormalizer.pickCanonicalImage,
 		classifyPost
 	];
+
+function discoverFullBleedImages( post, callback ) {
+	if ( post.site_ID === DISCOVER_BLOG_ID ) {
+		const images = toArray( post.__contentDOM.querySelectorAll( '.fullbleed img, img.fullbleed' ) );
+		forEach( images, function( image ) {
+			const newSrc = resizeImageUrl( image.src, { w: DISCOVER_FULL_BLEED_WIDTH } );
+			let oldImageObject = find( post.content_images, { src: image.src } );
+			oldImageObject.src = newSrc;
+			image.src = newSrc;
+		} );
+	}
+	callback();
+}
 
 /**
  * Attempt to classify the post into a display type
