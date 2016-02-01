@@ -17,6 +17,4 @@ Combine multiple Flux stores into a single one. See inline JSDoc for details.
 
 Combined together, these helpers allow us to build drop-in wrappers to help with the transition to a Redux-based architecture.
 
-For real-world examples of both, check `/client/lib/themes`.
-
 [redux]: http://redux.js.org/
