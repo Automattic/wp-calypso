@@ -27,7 +27,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-start;
-	padding: 7px 14px 0 0;
+	padding: 5px 14px 5px 0;
 }
 
 // Token input
@@ -35,8 +35,8 @@ input[type="text"].token-field__input {
 	display: inline-block;
 	width: auto;
 	max-width: 100%;
-	margin: 0 0 7px 5px;
-	padding: 2px 0 2px 7px;
+	margin: 0 0 0 4px;
+	padding: 2px 0 2px 4px;
 	background: inherit;
 	border: 0;
 	outline: none;
