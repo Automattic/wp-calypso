@@ -82,7 +82,7 @@
 		"desktop-promo": true,
 		"perfmon": false,
 		"mailing-lists/unsubscribe": true,
-		"accept-invite": false
+		"accept-invite": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",
