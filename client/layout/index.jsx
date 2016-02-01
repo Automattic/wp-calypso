@@ -12,6 +12,7 @@ var React = require( 'react' ),
 var abtest = require( 'lib/abtest' ).abtest,
 	MasterbarCheckout = require( 'layout/masterbar/checkout' ),
 	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+	MasterbarMinimal = require( 'layout/masterbar/minimal' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
@@ -82,7 +83,19 @@ Layout = React.createClass( {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
 	},
 
-	renderMasterbar() {
+	renderEmailVerificationNotice: function() {
+		if ( ! this.props.user ) {
+			return null;
+		}
+
+		return <EmailVerificationNotice user={ this.props.user } />;
+	},
+
+	renderMasterbar: function() {
+		if ( ! this.props.user ) {
+			return <MasterbarMinimal url="/" />;
+		}
+
 		if ( 'checkout' === this.props.section && abtest( 'checkoutMasterbar' ) === 'minimal' ) {
 			return (
 				<CartData>
@@ -99,6 +112,32 @@ Layout = React.createClass( {
 		);
 	},
 
+	renderWelcome: function() {
+		var translatorInvitation = this.props.translatorInvitation,
+			showInvitation,
+			showWelcome,
+			newestSite;
+
+		if ( ! this.props.user ) {
+			return null;
+		}
+
+		showWelcome = this.props.nuxWelcome.getWelcome();
+		newestSite = this.newestSite();
+		showInvitation = ! showWelcome &&
+				translatorInvitation.isPending() &&
+				translatorInvitation.isValidSection( this.props.section );
+
+		return (
+			<span>
+				<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
+					<WelcomeMessage welcomeSite={ newestSite } />
+				</Welcome>
+				<TranslatorInvitation isVisible={ showInvitation } />
+			</span>
+		);
+	},
+
 	render: function() {
 		var sectionClass = classnames(
 				'wp',
@@ -107,12 +146,6 @@ Layout = React.createClass( {
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser }
 			),
-			showWelcome = this.props.nuxWelcome.getWelcome(),
-			newestSite = this.newestSite(),
-			translatorInvitation = this.props.translatorInvitation,
-			showInvitation = ! showWelcome &&
-				translatorInvitation.isPending() &&
-				translatorInvitation.isValidSection( this.props.section ),
 			loadingClass = classnames( {
 				layout__loader: true,
 				'is-active': this.props.isLoading
@@ -129,12 +162,9 @@ Layout = React.createClass( {
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
-					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
-						<WelcomeMessage welcomeSite={ newestSite } />
-					</Welcome>
-					<EmailVerificationNotice user={ this.props.user } />
+					{ this.renderWelcome() }
+					{ this.renderEmailVerificationNotice() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
-					<TranslatorInvitation isVisible={ showInvitation } />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />
 				</div>
@@ -150,7 +180,7 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
-		return { 
+		return {
 			isLoading,
 			isSupportUser: isSupportUser( state ),
 			section,
