@@ -11,7 +11,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AllSites from 'my-sites/all-sites';
-import analytics from 'analytics';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'my-sites/site';
@@ -63,6 +62,20 @@ export default React.createClass( {
 		this.setState( { search: terms } );
 	},
 
+	onKeyDown( event ) {
+		var filteredSites;
+
+		if ( event.keyCode === 13 ) {
+			// enter key
+			filteredSites = this.getFilteredSites();
+
+			if ( filteredSites.length === 1 && this.props.siteBasePath ) {
+				this.onSiteSelect( filteredSites[ 0 ].slug, event );
+				page( this.getSiteBasePath( filteredSites[ 0 ] ) + '/' + filteredSites[ 0 ].slug );
+			}
+		}
+	},
+
 	onSiteSelect( siteSlug, event ) {
 		this.closeSelector();
 		this.props.onSiteSelect( siteSlug );
@@ -79,14 +92,10 @@ export default React.createClass( {
 		this.refs.siteSearch.blur();
 	},
 
-	recordAddNewSite() {
-		analytics.tracks.recordEvent( 'calypso_add_new_wordpress_click' );
-	},
-
 	addNewSite() {
 		return (
 			<span className="site-selector__add-new-site">
-				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' } onClick={ this.recordAddNewSite }>
+				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
 					<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
 				</Button>
 			</span>
@@ -112,6 +121,22 @@ export default React.createClass( {
 		return siteBasePath;
 	},
 
+	getFilteredSites() {
+		var sites;
+
+		if ( this.state.search ) {
+			sites = this.props.sites.search( this.state.search );
+		} else {
+			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecent() : this.props.sites.getVisible();
+		}
+
+		if ( this.props.filter ) {
+			sites = sites.filter( this.props.filter );
+		}
+
+		return sites;
+	},
+
 	isSelected( site ) {
 		var selectedSite = this.props.selected || this.props.sites.selected;
 		return selectedSite === site.domain || selectedSite === site.slug;
@@ -126,20 +151,11 @@ export default React.createClass( {
 	},
 
 	renderSites() {
-		var sites, siteElements;
+		var sites = this.getFilteredSites(),
+			siteElements;
 
 		if ( ! this.props.sites.initialized ) {
 			return <SitePlaceholder key="site-placeholder" />;
-		}
-
-		if ( this.state.search ) {
-			sites = this.props.sites.search( this.state.search );
-		} else {
-			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecent() : this.props.sites.getVisible();
-		}
-
-		if ( this.props.filter ) {
-			sites = sites.filter( this.props.filter );
 		}
 
 		// Render sites
@@ -256,6 +272,7 @@ export default React.createClass( {
 				<Search
 					ref="siteSearch"
 					onSearch={ this.onSearch }
+					onKeyDown={ this.onKeyDown }
 					autoFocus={ this.props.autoFocus }
 					disabled={ ! this.props.sites.initialized }
 				/>
