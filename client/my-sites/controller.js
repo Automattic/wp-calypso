@@ -29,18 +29,21 @@ var user = require( 'lib/user' )(),
 function renderNavigation( context, allSitesPath, siteBasePath ) {
 	context.store.dispatch( uiActions.setSection( 'sites' ) );
 
-	// Render the My Sites navigation in #secondary
-	ReactDom.render(
-		React.createElement( NavigationComponent, {
-			layoutFocus: layoutFocus,
-			path: context.path,
-			allSitesPath: allSitesPath,
-			siteBasePath: siteBasePath,
-			user: user,
-			sites: sites
-		} ),
-		document.getElementById( 'secondary' )
+	const navigation = (
+		<NavigationComponent layoutFocus={ layoutFocus }
+			path={ context.path }
+			allSitesPath={ allSitesPath }
+			siteBasePath={ siteBasePath }
+			user={ user }
+			sites={ sites }
+		/>
 	);
+
+	if ( context.layoutLast ) {
+		context.secondary = navigation;
+	} else {
+		ReactDom.render( navigation, document.getElementById( 'secondary' ) );
+	}
 }
 
 function renderEmptySites() {
