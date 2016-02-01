@@ -19,6 +19,7 @@ import SitePlaceholder from 'my-sites/site/placeholder';
 import Search from 'components/search';
 import userModule from 'lib/user';
 import config from 'config';
+import PreferencesData from 'components/data/preferences-data';
 
 const user = userModule();
 
@@ -252,20 +253,22 @@ export default React.createClass( {
 		} );
 
 		return (
-			<div className={ selectorClass }>
-				<Search
-					ref="siteSearch"
-					onSearch={ this.onSearch }
-					autoFocus={ this.props.autoFocus }
-					disabled={ ! this.props.sites.initialized }
-				/>
-				<div className="site-selector__sites" ref="selector">
-					{ this.renderAllSites() }
-					{ this.renderRecentSites() }
-					{ this.renderSites() }
+			<PreferencesData>
+				<div className={ selectorClass }>
+					<Search
+						ref="siteSearch"
+						onSearch={ this.onSearch }
+						autoFocus={ this.props.autoFocus }
+						disabled={ ! this.props.sites.initialized }
+					/>
+					<div className="site-selector__sites" ref="selector">
+						{ this.renderAllSites() }
+						{ this.renderRecentSites() }
+						{ this.renderSites() }
+					</div>
+					{ this.props.showAddNewSite && this.addNewSite() }
 				</div>
-				{ this.props.showAddNewSite && this.addNewSite() }
-			</div>
+			</PreferencesData>
 		);
 	}
 } );
