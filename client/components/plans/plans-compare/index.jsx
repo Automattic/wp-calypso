@@ -178,11 +178,13 @@ var PlansCompare = React.createClass( {
 
 			return (
 				<div className="plans-compare">
-					<div className="plan-feature-column feature-list">
-						<PlanHeader/>
-						{ this.featureNames( featuresList ) }
+					<div className="plans-compare__columns">
+						<div className="plan-feature-column feature-list">
+							<PlanHeader/>
+							{ this.featureNames( featuresList ) }
+						</div>
+						{ this.featureColumns( site, plans, featuresList ) }
 					</div>
-					{ this.featureColumns( site, plans, featuresList ) }
 					{ this.freeTrialExceptionMessage( featuresList ) }
 				</div>
 			);

@@ -1,8 +1,13 @@
+.plans-compare__columns {
+	display: flex;
+		flex-direction: row;
+}
+
 .plan-feature-column {
-	display: inline-block;
+	flex-basis: 0;
+	flex-grow: 1;
 	font-size: .9em;
 	vertical-align: top;
-	width: 25%;
 
 	.feature-list {
 		text-align: left;
