@@ -32,7 +32,7 @@ const ReaderSidebarTagsListItem = React.createClass( {
 		return (
 			<li key={ tag.ID } className={ ReaderSidebarHelper.itemLinkClass( '/tag/' + tag.slug, this.props.path, { 'sidebar-dynamic-menu__tag': true } ) }>
 				<a className="sidebar__menu-item-label" href={ tag.URL }>
-					{ tag.title || tag.slug }
+					{ tag.display_name || tag.slug }
 				</a>
 				{ tag.ID !== 'pending' ? <button className="sidebar__menu-action" data-tag-slug={ tag.slug } onClick={ this.props.onUnfollow }>
 					<Gridicon icon="cross-small" />
