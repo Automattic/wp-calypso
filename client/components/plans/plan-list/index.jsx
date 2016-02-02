@@ -24,9 +24,26 @@ module.exports = React.createClass( {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
 	},
 
+	filterPlansBySiteAndProps: function( plan ) {
+		var site;
+
+		if ( this.props.sites ) {
+			site = this.props.sites.getSelectedSite();
+		}
+
+		if ( site && site.jetpack ) {
+			return 'jetpack_business' === plan.product_slug || 'jetpack_premium' === plan.product_slug;
+		}
+
+		if ( this.props.hideFreePlan && 'free_plan' !== plan.product_slug ) {
+			return false;
+		}
+
+		return 'jetpack' !== plan.product_type
+	},
+
 	render: function() {
 		var plans = this.props.plans,
-			showJetpackPlans = false,
 			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			site,
 			plansList,
@@ -48,7 +65,6 @@ module.exports = React.createClass( {
 
 		if ( this.props.sites ) {
 			site = this.props.sites.getSelectedSite();
-			showJetpackPlans = site && site.jetpack;
 		}
 
 		if ( ! this.props.isInSignup ) {
@@ -72,13 +88,8 @@ module.exports = React.createClass( {
 
 		if ( plans.length > 0 ) {
 			plans = plans.filter( function( plan ) {
-				return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
-			} );
-
-			// If showing Jetpack plans remove the first item (Free)
-			if ( site && site.jetpack ) {
-				plans.shift();
-			}
+				return this.filterPlansBySiteAndProps( plan );
+			}, this );
 
 			plansList = plans.map( function( plan ) {
 				return (
