@@ -94,4 +94,12 @@ module.exports = {
 		},
 		defaultVariation: 'add'
 	},
+	plansFeatureList: {
+		datestamp: '20040202',
+		variations: {
+			list: 50,
+			description: 50
+		},
+		defaultVariation: 'description'
+	}
 };

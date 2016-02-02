@@ -8,7 +8,9 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var abtest = require( 'lib/abtest' ).abtest,
+	analytics = require( 'analytics' ),
+	testFeatures = require( 'lib/features-list/test-features' ),
 	Gridicon = require( 'components/gridicon' ),
 	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
@@ -66,6 +68,29 @@ module.exports = React.createClass( {
 				handleLearnMoreClick={ this.handleLearnMoreClick }
 				plan={ plan } />
 		);
+	},
+
+	getFeatureList: function() {
+		var features;
+
+		if ( this.isPlaceholder() ) {
+			return;
+		}
+
+		features = testFeatures[ this.props.plan.product_slug ].map( function( feature, i ) {
+			var classes = classNames( 'plan__feature', {
+				'is-plan-specific': feature.planSpecific
+			} );
+
+			return (
+				<li className={ classes } key={ i }>
+					<Gridicon icon="checkmark" size={ 12 } />
+					{ feature.text }
+				</li>
+			);
+		} );
+
+		return <ul className="plan__features">{ features }</ul>;
 	},
 
 	showDetails: function() {
@@ -213,7 +238,7 @@ module.exports = React.createClass( {
 				</PlanHeader>
 				<div className="plan__plan-expand">
 					<div className="plan__plan-details">
-						{ this.getDescription() }
+						{ abtest( 'plansFeatureList' ) === 'list' ? this.getFeatureList() : this.getDescription() }
 					</div>
 					{ this.getPlanActions() }
 				</div>
