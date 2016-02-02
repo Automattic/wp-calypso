@@ -429,7 +429,8 @@ module.exports = React.createClass( {
 			getItemRef= { this.getPostRef }
 			renderItem={ this.renderPost }
 			selectedIndex={ this.props.store.getSelectedIndex()}
-			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
+			renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+			context={ document.getElementById( 'content' ) } /> );
 		}
 
 		return (
