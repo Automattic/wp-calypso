@@ -1469,6 +1469,14 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.themeDetails = function( themeId, fn ) {
+	debug( '/themes/:theme_id' );
+	this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/themes/' + themeId
+	}, fn );
+};
+
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
