@@ -50,7 +50,7 @@ Emitter( Site.prototype );
 Site.prototype.attributes = function( attributes ) {
 	attributes = attributes || {};
 
-	for ( var prop in attributes ) {
+	for ( let prop in attributes ) {
 		if ( attributes.hasOwnProperty( prop ) ) {
 			this[ prop ] = attributes[ prop ];
 		}
@@ -62,8 +62,11 @@ Site.prototype.attributes = function( attributes ) {
 Site.prototype.set = function( attributes ) {
 	var changed = false;
 
-	for ( var prop in attributes ) {
-		if ( attributes.hasOwnProperty( prop ) && ! isEqual( attributes[ prop ], this[ prop ] ) ) {
+	for ( let prop in attributes ) {
+		if (
+			attributes.hasOwnProperty( prop ) &&
+			! isEqual( attributes[ prop ], this[ prop ] )
+		) {
 			this[ prop ] = attributes[ prop ];
 			changed = true;
 		}
@@ -76,7 +79,6 @@ Site.prototype.set = function( attributes ) {
 	}
 
 	return changed;
-
 };
 
 /**
@@ -118,6 +120,8 @@ Site.prototype.updateComputedAttributes = function() {
 /**
  * Get full settings data, accepts optional siteID
  * to allow calling on an empty Site object.
+ *
+ * @param {String} siteID - site ID identifier
  */
 Site.prototype.fetchSettings = function( siteID ) {
 	var requestID = this.ID || siteID;
@@ -133,7 +137,6 @@ Site.prototype.fetchSettings = function( siteID ) {
 		data.latestSettings = new Date().getTime();
 		data.fetchingSettings = false;
 		this.set( data );
-
 	}.bind( this ) );
 };
 
@@ -143,15 +146,12 @@ Site.prototype.fetchSettings = function( siteID ) {
  * @param  {Function} callback    function to call when request resolves
  */
 Site.prototype.saveSettings = function( newSettings, callback ) {
-
 	var reflectSavedSettings = function( savedSettings ) {
-
 		var settings = this.settings,
 			updatedAttributes = { settings: settings },
 			key;
 
 		for ( key in savedSettings ) {
-
 			if ( ! savedSettings.hasOwnProperty( key ) ) {
 				continue;
 			}
@@ -164,36 +164,32 @@ Site.prototype.saveSettings = function( newSettings, callback ) {
 			}
 
 			settings[ key ] = savedSettings[ key ];
-
 		}
 
 		updatedAttributes.settings = settings;
 
 		this.set( updatedAttributes );
-
 	}.bind( this );
 
 	if ( 'string' === typeof newSettings.whitelistString ) {
-		newSettings.jetpack_protect_whitelist = newSettings.whitelistString.split( "\n" );
+		newSettings.jetpack_protect_whitelist = newSettings.whitelistString.split( '\n' );
 		newSettings = omit( newSettings, 'whitelistString' );
 	}
 
 	wpcom.undocumented().settings( this.ID, 'post', newSettings, function( error, data ) {
-
 		if ( ! error && data.updated ) {
-
 			reflectSavedSettings( data.updated );
-
 		}
+
 		callback( error, data );
 	} );
-
 };
 
 /**
  * Returns a site user object by user ID
  *
  * @param  {int} userId The user ID to retrieve
+ * @return {Object} site user object
  */
 Site.prototype.getUser = function( userId ) {
 	return find( this.getUsers(), { ID: userId } );
@@ -202,6 +198,8 @@ Site.prototype.getUser = function( userId ) {
 /**
  * Returns all of the site's users. Triggers a fetch if user data doesn't
  * already exist.
+ *
+ * @return {Array} site's user array
  */
 Site.prototype.getUsers = function() {
 	if ( ! this.users ) {
