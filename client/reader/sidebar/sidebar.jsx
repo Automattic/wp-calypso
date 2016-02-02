@@ -30,7 +30,9 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	stats = require( 'reader/stats' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
-	discoverHelper = require( 'reader/discover/helper' );
+	discoverHelper = require( 'reader/discover/helper' ),
+	AppPromo = require( 'components/app-promo' );
+
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
@@ -333,6 +335,7 @@ module.exports = React.createClass( {
 						</li>
 					</ul>
 				</SidebarMenu>
+				<AppPromo />
 			</Sidebar>
 		);
 	}
