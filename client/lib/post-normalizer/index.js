@@ -28,6 +28,13 @@ var assign = require( 'lodash/object/assign' ),
 var formatting = require( 'lib/formatting' ),
 	safeImageURL = require( 'lib/safe-image-url' );
 
+
+const DEFAULT_PHOTON_QUALITY = 80, // 80 was chosen after some heuristic testing as the best blend of size and quality
+	READING_WORDS_PER_SECOND = 250 / 60; // Longreads says that people can read 250 words per minute. We want the rate in words per second.
+
+const imageScaleFactor = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1,
+TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
 function debugForPost( post ) {
 	return function( msg ) {
 		debug( post.global_ID + ': ' + msg );
@@ -50,10 +57,7 @@ function stripAutoPlays( query ) {
 	return query;
 }
 
-const DEFAULT_PHOTON_QUALITY = 80, // 80 was chosen after some heuristic testing as the best blend of size and quality
-	READING_WORDS_PER_SECOND = 250 / 60; // Longreads says that people can read 250 words per minute. We want the rate in words per second.
 
-const imageScaleFactor = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1;
 
 /**
  * Asynchronously normalizes an object shaped like a post. Works on a copy of the post and does not mutate the original post.
@@ -510,24 +514,24 @@ normalizePost.content = {
 					image.parentNode.removeChild( image );
 					// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
 					// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
-					image.setAttribute( 'src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' );
+					image.setAttribute( 'src', TRANSPARENT_GIF );
 					image.removeAttribute( 'srcset' );
 					return;
 				}
 
 				safeSource = safeImageURL( imgSource );
-				if ( maxWidth ) {
+				if ( safeSource && maxWidth ) {
 					safeSource = maxWidthPhotonishURL( safeSource, maxWidth );
 				}
 
-				image.setAttribute( 'src', safeSource );
+				image.setAttribute( 'src', safeSource || TRANSPARENT_GIF );
 
 				if ( image.hasAttribute( 'srcset' ) ) {
 					const imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) ).map( imgSrc => {
 						if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
 							imgSrc.url = url.resolve( post.URL, imgSrc.url );
 						}
-						imgSrc.url = safeImageURL( imgSrc.url );
+						imgSrc.url = safeImageURL( imgSrc.url || TRANSPARENT_GIF );
 						return imgSrc;
 					} );
 					image.setAttribute( 'srcset', srcset.stringify( imgSrcSet ) );
