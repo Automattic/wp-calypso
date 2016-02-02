@@ -80,7 +80,7 @@
 		"reader/recommendations": true,
 		"ad-tracking": true,
 		"desktop-promo": true,
-		"perfmon": false,
+		"perfmon": true,
 		"mailing-lists/unsubscribe": true,
 		"accept-invite": true
 	},
