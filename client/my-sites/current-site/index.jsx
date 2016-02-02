@@ -73,6 +73,7 @@ module.exports = React.createClass( {
 		event.preventDefault();
 		event.stopPropagation();
 		layoutFocus.set( 'sites' );
+		this.refs.site.closeActions();
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	},
@@ -200,7 +201,8 @@ module.exports = React.createClass( {
 						homeLink={ true }
 						enableActions={ true }
 						externalLink={ true }
-						onSelect={ this.trackHomepageClick } />
+						onSelect={ this.trackHomepageClick }
+						ref="site" />
 					: <AllSites sites={ this.props.sites } />
 				}
 				{ this.getSiteNotices( site ) }

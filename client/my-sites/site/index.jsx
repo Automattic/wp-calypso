@@ -120,6 +120,10 @@ module.exports = React.createClass( {
 		return this.props.homeLink ? this.props.site.URL : this.props.href;
 	},
 
+	closeActions: function() {
+		this.setState( { showMoreActions: false } );
+	},
+
 	render: function() {
 		var site = this.props.site,
 			siteClass;
