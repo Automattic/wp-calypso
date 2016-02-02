@@ -210,6 +210,11 @@ module.exports = React.createClass( {
 						<Gridicon icon="ellipsis" size={ 24 } />
 					</button>
 				}
+				{ ! this.props.enableActions && sites.isStarred( this.props.site ) &&
+					<span className="site__star-badge">
+						<Gridicon icon="star" size={ 18 } />
+					</span>
+				}
 			</div>
 		);
 	}

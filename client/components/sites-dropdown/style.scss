@@ -81,6 +81,10 @@
 		&:hover {
 			background: $blue-medium;
 
+			.site__star-badge {
+				color: $white;
+			}
+
 			.site__title,
 			.site__domain {
 				color: white;

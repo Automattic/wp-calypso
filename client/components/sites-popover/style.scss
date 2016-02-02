@@ -36,6 +36,10 @@ $sites-popover-width: 300px;
 	text-decoration: none;
 }
 
+.sites-popover .site-selector__heading {
+	margin-top: 16px;
+}
+
 .sites-popover .site-selector .site {
 	&.is-selected {
 		background-color: $gray;
@@ -56,6 +60,10 @@ $sites-popover-width: 300px;
 	.notouch & {
 		&:hover {
 			background: $blue-medium;
+
+			.site__star-badge {
+				color: $white;
+			}
 
 			.site__title,
 			.site__domain {
