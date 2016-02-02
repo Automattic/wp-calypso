@@ -1470,12 +1470,12 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 };
 
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
-	debug( '/site/:site_id/themes/mine' );
+	debug( '/sites/:site_id/themes/mine' );
 	this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
 };
 
 Undocumented.prototype.activateTheme = function( theme, siteId, fn ) {
-	debug( '/site/:site_id/themes/mine' );
+	debug( '/sites/:site_id/themes/mine' );
 	this.wpcom.req.post( {
 		path: '/sites/' + siteId + '/themes/mine',
 		body: { theme: theme.id }
