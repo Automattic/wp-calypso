@@ -94,7 +94,8 @@ Layout = React.createClass( {
 			<MasterbarLoggedIn
 				user={ this.props.user }
 				section={ this.props.section }
-				sites={ this.props.sites } />
+				sites={ this.props.sites }
+				isSupportUser={ config.isEnabled( 'support-user' ) && this.props.isSupportUser } />
 		);
 	},
 
@@ -143,8 +144,10 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
+		const isSupportUser = state.support.isSupportUser;
 		return { 
 			isLoading,
+			isSupportUser,
 			section,
 			hasSidebar,
 			chunkName,
