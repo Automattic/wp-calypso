@@ -15,6 +15,7 @@ var SiteIcon = require( 'components/site-icon' ),
 	sites = require( 'lib/sites-list' )();
 
 import { userCan } from 'lib/site/utils';
+import Tooltip from 'components/tooltip';
 
 module.exports = React.createClass( {
 	displayName: 'Site',
@@ -56,7 +57,8 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			showActions: false
+			showActions: false,
+			starTooltip: false
 		};
 	},
 
@@ -84,11 +86,24 @@ module.exports = React.createClass( {
 		const isStarred = sites.isStarred( site );
 
 		return (
-			<button className="site__star" onClick={ this.starSite }>
+			<button
+				className="site__star"
+				onClick={ this.starSite }
+				onMouseEnter={ () => this.setState( { starTooltip: true } ) }
+				onMouseLeave={ () => this.setState( { starTooltip: false } ) }
+				ref="starButton"
+			>
 				{ isStarred
 					? <Gridicon icon="star" />
 					: <Gridicon icon="star-outline" />
 				}
+				<Tooltip
+					context={ this.refs && this.refs.starButton }
+					isVisible={ this.state.starTooltip && ! isStarred }
+					position="bottom"
+				>
+					{ this.translate( 'Star this site' ) }
+				</Tooltip>
 			</button>
 		);
 	},
