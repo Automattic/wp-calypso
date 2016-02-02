@@ -11,6 +11,7 @@ const debug = debugFactory( 'calypso:site-plans:actions' );
  * Internal dependencies
  */
 import { createSitePlanObject } from './assembler';
+import i18n from 'lib/mixins/i18n';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -49,7 +50,7 @@ export function cancelSitePlanTrial( siteId, planId ) {
 				} else {
 					debug( 'Canceling site plan trial failed: ', error );
 
-					const errorMessage = error.message || this.translate( 'There was a problem canceling the plan trial. Please try again later or contact support.' );
+					const errorMessage = error.message || i18n.translate( 'There was a problem canceling the plan trial. Please try again later or contact support.' );
 
 					dispatch( {
 						type: SITE_PLANS_TRIAL_CANCEL_FAILED,
@@ -95,7 +96,7 @@ export function fetchSitePlans( siteId ) {
 				if ( error ) {
 					debug( 'Fetching site plans failed: ', error );
 
-					const errorMessage = error.message || this.translate( 'There was a problem fetching site plans. Please try again later or contact support.' );
+					const errorMessage = error.message || i18n.translate( 'There was a problem fetching site plans. Please try again later or contact support.' );
 
 					dispatch( {
 						type: SITE_PLANS_FETCH_FAILED,
