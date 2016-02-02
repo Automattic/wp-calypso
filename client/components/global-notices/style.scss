@@ -1,7 +1,7 @@
 .global-notices {
 	overflow: hidden;
 
-	z-index: z-index( 'root', '.global-notices' );
+	z-index: 180;
 	position: fixed;
 		top: auto;
 		right: 0;
@@ -9,21 +9,19 @@
 		left: 0;
 
 	@include breakpoint( ">660px" ) {
-			top: 47px + 16px;
-			right: 16px;
-			bottom: auto;
-			left: auto;
-		max-width: calc( 100% - 32px );
+		top: 47px + 16px;
+		right: 16px;
+		bottom: auto;
+		left: auto;
 	}
 
 	@include breakpoint( ">960px" ) {
-			top: 47px + 24px;
-			right: 24px;
-		max-width: calc( 100% - 48px );
+		top: 47px + 24px;
+		right: 24px;
 	}
 
 	@include breakpoint( ">1040" ) {
-			right: 48px;
+		right: 48px;
 	}
 }
 
@@ -32,9 +30,9 @@
 	margin-bottom: 0;
 
 	@include breakpoint( ">660px" ) {
-		float: right;
 		border-radius: 20px;
 		display: inline-flex;
+		z-index: 180;
 		margin-bottom: 24px;
 	}
 }
@@ -51,9 +49,6 @@
 
 	@include breakpoint( ">660px" ) {
 		padding: 9px 13px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 }
 
