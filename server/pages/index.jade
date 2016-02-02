@@ -73,7 +73,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 		script( src=urls[ 'commons.js' ] )
 
-		if 'development' === env
+		if 'development' !== env
 			script( src=urls[ 'catch-js-errors' ] )
 
 		script.
