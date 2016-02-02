@@ -85,7 +85,7 @@ const ReaderSidebar = React.createClass( {
 
 	highlightNewList( list ) {
 		list = ReaderListsStore.get( list.owner, list.slug );
-		window.location.href = url.resolve( 'https://wordpress.com', url.resolve( list.URL, 'edit' ) );
+		window.location.href = url.resolve( 'https://wordpress.com', list.URL + '/edit' );
 	},
 
 	highlightNewTag( tag ) {
