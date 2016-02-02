@@ -89,7 +89,10 @@ var GoogleAppsDialog = React.createClass( {
 				<GoogleAppsProductDetails
 					price={ price }
 				/>
-				<ReactCSSTransitionGroup transitionName='google-apps-dialog__users'>
+				<ReactCSSTransitionGroup
+					transitionName='google-apps-dialog__users'
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ googleAppsUsers }
 				</ReactCSSTransitionGroup>
 				{ this.footer() }
