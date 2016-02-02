@@ -31,11 +31,17 @@ const layoutFocus = require( 'lib/layout-focus' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' ),
 	discoverHelper = require( 'reader/discover/helper' ),
+	observe = require( 'lib/mixins/data-observe' ),
+	userSettings = require( 'lib/user-settings' ),
 	AppPromo = require( 'components/app-promo' );
 
 
 module.exports = React.createClass( {
 	displayName: 'ReaderSidebar',
+
+	mixins: [
+		observe( 'userSettings' ),
+	],
 
 	itemLinkClass: function( path, additionalClasses ) {
 		var basePathLowerCase = this.props.path.split( '?' )[0].replace( /\/edit$/, '' ).toLowerCase(),
@@ -264,6 +270,29 @@ module.exports = React.createClass( {
 		}, this );
 	},
 
+	renderAppPromo: function() {
+		// if promo not configured return
+		if ( ! config.isEnabled( 'desktop-promo' ) ) {
+			return;
+		};
+
+		// if user settings not loaded, return so we dont show
+		// before we can check if user is already a desktop user
+		if ( userSettings.getSetting( 'is_desktop_app_user' ) === null ) {
+			return;
+		}
+
+		// if already using desktop app, dont show promo
+		if ( userSettings.getSetting( 'is_desktop_app_user' ) ) {
+			return;
+		}
+
+		// made it through the gauntlet, show the promo!
+		return (
+			<AppPromo location="reader" />
+		);
+	},
+
 	render: function() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
@@ -335,7 +364,7 @@ module.exports = React.createClass( {
 						</li>
 					</ul>
 				</SidebarMenu>
-				<AppPromo />
+				{ this.renderAppPromo() }
 			</Sidebar>
 		);
 	}
