@@ -8,17 +8,13 @@
 		left: 0;
 
 	@include breakpoint( ">660px" ) {
-		top: 47px + 16px;
-		right: 16px;
+		top: 47px + 24px;
+		right: 24px;
 		left: auto;
 	}
 
 	@include breakpoint( ">960px" ) {
-		top: 47px + 24px;
-		right: 24px;
-	}
-
-	@include breakpoint( ">1040" ) {
+		top: 47px + 32px;
 		right: 48px;
 	}
 }
@@ -34,17 +30,21 @@
 }
 
 .global-notices .notice__icon {
-	padding: 8px 0 8px 16px;
-}
-
-.global-notices .notice__text {
-	padding: 9px 16px;
+	padding: 8px 0 8px 8px;
 
 	@include breakpoint( ">660px" ) {
-		padding: 9px 13px;
+		padding: 8px 0 8px 16px;
 	}
 }
 
+.global-notices .notice__text {
+	padding: 9px 13px;
+}
+
 .global-notices .notice__dismiss {
-	padding: 8px 16px;
+	padding: 8px 8px 8px 16px;
+
+	@include breakpoint( ">660px" ) {
+		padding: 8px 16px;
+	}
 }
