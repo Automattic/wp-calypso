@@ -105,7 +105,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return a list of plans as well as loaded from server enabled and fetching disabled when fetching completed', () => {
+		it( 'should return a list of plans with loaded from server enabled and fetching disabled when fetching completed', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId: 11111111,
@@ -235,7 +235,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return a list of plans as well as loaded from server enabled and updating disabled when trial cancelation completed', () => {
+		it( 'should return a list of plans with loaded from server enabled and updating disabled when trial cancelation completed', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 				siteId: 11111111,
