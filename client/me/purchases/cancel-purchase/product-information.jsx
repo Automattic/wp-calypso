@@ -10,7 +10,7 @@ import { domainManagementEdit } from 'my-sites/upgrades/paths';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
 import Gridicon from 'components/gridicon';
 import { isBusiness, isGoogleApps, isPlan, isTheme } from 'lib/products-values';
-import { oldShowcaseUrl } from 'lib/themes/helpers';
+import { getDetailsUrl as getThemeDetailsUrl } from 'lib/themes/helpers';
 
 const CancelPurchaseProductInformation = React.createClass( {
 	propTypes: {
@@ -149,8 +149,8 @@ const CancelPurchaseProductInformation = React.createClass( {
 
 	renderThemeInformation() {
 		const { domain, meta, productName, siteName } = this.props.purchase,
-			themeDetailsUrl = `${ oldShowcaseUrl }${ domain }/${ meta }`,
-			themeSelectUrl = `${ oldShowcaseUrl }${ domain }`;
+			themeDetailsUrl = getThemeDetailsUrl( { id: meta }, { slug: domain } ),
+			themeSelectUrl = `/design/${ domain }`;
 
 		return (
 			<p>
