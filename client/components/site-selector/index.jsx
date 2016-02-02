@@ -209,7 +209,9 @@ export default React.createClass( {
 			return null;
 		}
 
-		const recentSites = sites.map( function( site ) {
+		const recentSites = sites.filter( function( site ) {
+			return ! this.props.sites.isStarred( site );
+		}, this ).map( function( site ) {
 			var siteHref;
 
 			if ( this.props.siteBasePath ) {
@@ -217,10 +219,6 @@ export default React.createClass( {
 			}
 
 			const isSelected = this.isSelected( site );
-
-			if ( this.props.sites.isStarred( site ) ) {
-				return;
-			}
 
 			return (
 				<Site
@@ -233,6 +231,10 @@ export default React.createClass( {
 				/>
 			);
 		}, this );
+
+		if ( ! recentSites.length ) {
+			return;
+		}
 
 		return (
 			<div>
