@@ -2,4 +2,9 @@
 	padding-top: 19px;
 	text-align: left;
 	@include clear-fix;
+
+	display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: center;
 }
