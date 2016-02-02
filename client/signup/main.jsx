@@ -300,6 +300,7 @@ const Signup = React.createClass( {
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
+						stepName={ this.props.stepName }
 						goToNextStep={ this.goToNextStep }
 						flowName={ this.props.flowName }
 						signupProgressStore={ this.state.progress }

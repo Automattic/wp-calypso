@@ -61,6 +61,13 @@ const flows = {
 		lastModified: '2015-09-03'
 	},
 
+	plan: {
+		steps: [ 'themes', 'site', 'select-plan', 'user' ],
+		destination: getCheckoutDestination,
+		description: '',
+		lastModified: '2016-02-02'
+	},
+
 	/* On deck flows*/
 
 	/* Testing flows */

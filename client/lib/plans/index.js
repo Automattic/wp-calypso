@@ -63,7 +63,7 @@ export function filterPlansBySiteAndProps( plan, site, hideFreePlan ) {
 		return 'jetpack_business' === plan.product_slug || 'jetpack_premium' === plan.product_slug;
 	}
 
-	if ( hideFreePlan && 'free_plan' !== plan.product_slug ) {
+	if ( hideFreePlan && 'free_plan' === plan.product_slug ) {
 		return false;
 	}
 

@@ -154,11 +154,12 @@ var PlansCompare = React.createClass( {
 	comparisonTable: function() {
 		var plansColumns,
 			featuresList = this.props.features.get(),
+			hideFreePlan = this.props.hideFreePlan ? true : false,
 			plans = this.props.plans.get(),
 			site = this.props.selectedSite;
 
 		plans = plans.filter( function( plan ) {
-			return filterPlansBySiteAndProps( plan, site );
+			return filterPlansBySiteAndProps( plan, site, hideFreePlan );
 		} );
 
 		if ( this.props.features.hasLoadedFromServer() && (

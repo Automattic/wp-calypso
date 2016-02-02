@@ -27,6 +27,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var plans = this.props.plans,
+			hideFreePlan = this.props.hideFreePlan ? true : false,
 			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			site,
 			plansList,
@@ -71,7 +72,7 @@ module.exports = React.createClass( {
 
 		if ( plans.length > 0 ) {
 			plans = plans.filter( function( plan ) {
-				return filterPlansBySiteAndProps( plan, site );
+				return filterPlansBySiteAndProps( plan, site, hideFreePlan );
 			} );
 
 			plansList = plans.map( function( plan ) {
