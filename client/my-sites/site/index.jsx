@@ -81,12 +81,19 @@ module.exports = React.createClass( {
 				<a className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					target={ this.props.externalLink && '_blank' }
-					title={ this.props.homeLink ? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } ) : site.title }
+					title={ this.props.homeLink
+						? this.translate( 'Visit "%(title)s"', { args: { title: site.title } } )
+						: site.title
+					}
 					onTouchTap={ this.onSelect }
 					onClick={ this.props.onClick }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
-					aria-label={ this.translate( 'Open site %(domain)s in new tab', { args: { domain: site.domain } } ) }
+					aria-label={
+						this.translate( 'Open site %(domain)s in new tab', {
+							args: { domain: site.domain }
+						} )
+					}
 				>
 					<SiteIcon site={ site } />
 					<div className="site__info">
@@ -99,7 +106,10 @@ module.exports = React.createClass( {
 						</span>
 					}
 				</a>
-				{ this.props.indicator ? <SiteIndicator site={ site } onSelect={ this.props.onSelect } /> : null }
+				{ this.props.indicator
+					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
+					: null
+				}
 			</div>
 		);
 	}
