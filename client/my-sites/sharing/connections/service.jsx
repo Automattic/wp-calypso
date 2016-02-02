@@ -200,10 +200,10 @@ module.exports = React.createClass( {
 		const iconsMap = {
 			Facebook: 'facebook',
 			Twitter: 'twitter',
-			'Google+': 'google-plus-alt',
+			'Google+': 'google-plus',
 			LinkedIn: 'linkedin',
-			Tumblr: 'tumblr-alt',
-			Path: 'path-alt',
+			Tumblr: 'tumblr',
+			Path: 'path',
 			Eventbrite: 'eventbrite'
 		};
 
