@@ -76,31 +76,37 @@ describe( 'config/parser', () => {
 		expect( data ).to.have.property( 'myenvlocal_only', 'myenvlocal' );
 		expect( data ).to.have.property( 'myenv_override', 'myenv' );
 		expect( data ).to.have.property( 'myenvlocal_override', 'myenvlocal' );
-		expect( data.features ).to.have.property( 'enabledFeature', true );
-		expect( data.features ).to.have.property( 'disabledFeature', false );
+		expect( data ).to.have.property( 'features' )
+			.that.is.an( 'object' )
+			.that.deep.equals( {
+				enabledFeature1: true,
+				enabledFeature2: true,
+				disabledFeature1: false,
+				disabledFeature2: false
+			} );
 	} );
 
-	it( 'should override enabled feature', () => {
+	it( 'should override enabled feature when disabledFeatures set', () => {
 		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
 		parser = require( 'config/parser' );
 
 		let data = parser( '/valid-path', {
 			env: 'myenv',
-			disabledFeatures: 'enabledFeature'
+			disabledFeatures: 'enabledFeature2'
 		} );
 
-		expect( data.features ).to.have.property( 'enabledFeature', false );
+		expect( data ).to.have.deep.property( 'features.enabledFeature2', false );
 	} );
 
-	it( 'should override disabled feature', () => {
+	it( 'should override disabled feature when enabledFeatures set', () => {
 		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
 		parser = require( 'config/parser' );
 
 		let data = parser( '/valid-path', {
 			env: 'myenv',
-			enabledFeatures: 'disabledFeature'
+			enabledFeatures: 'disabledFeature2'
 		} );
 
-		expect( data.features ).to.have.property( 'disabledFeature', true );
+		expect( data ).to.have.deep.property( 'features.disabledFeature2', true );
 	} );
 } );

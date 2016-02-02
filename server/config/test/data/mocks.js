@@ -56,8 +56,10 @@ export default {
 						shared_only: 'shared',
 						myenv_override: 'shared',
 						features: {
-							enabledFeature: true,
-							disabledFeature: false
+							enabledFeature1: true,
+							disabledFeature1: false,
+							enabledFeature2: true,
+							disabledFeature2: false
 						}
 					} );
 				case 'myenv.json':
