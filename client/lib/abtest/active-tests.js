@@ -61,6 +61,14 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	plansSocialProof: {
+		datestamp: '20160202',
+		variations: {
+			mostPopular: 50,
+			bestValue: 50
+		},
+		defaultVariation: 'mostPopular'
+	},	
 	checkoutMasterbar: {
 		datestamp: '20160126',
 		variations: {
