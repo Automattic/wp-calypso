@@ -9,9 +9,9 @@ export function isOnline( state ) {
 }
 
 export function getCommandLineNewPostData( state ) {
-    let { title, content, argumentsUsed } = state.application.commandLineArguments;
-    if ( argumentsUsed ) {
-        return {};
-    }
-    return { title, content }
+	let { title, content, argumentsUsed } = state.application.commandLineArguments;
+	if ( argumentsUsed ) {
+		return {};
+	}
+	return { title, content }
 }
