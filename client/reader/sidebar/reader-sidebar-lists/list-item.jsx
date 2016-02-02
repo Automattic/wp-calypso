@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import last from 'lodash/array/last';
 import classNames from 'classnames';
 
@@ -23,7 +24,7 @@ const ReaderSidebarListsListItem = React.createClass( {
 	componentDidMount() {
 		// Scroll to the current list
 		if ( this.props.list.slug === this.props.currentListSlug && this.props.list.owner === this.props.currentListOwner ) {
-			const node = this.getDOMNode();
+			const node = ReactDom.findDOMNode( this );
 			node.scrollIntoView();
 		}
 	},

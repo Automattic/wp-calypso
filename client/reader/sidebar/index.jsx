@@ -179,6 +179,7 @@ const ReaderSidebar = React.createClass( {
 					path={ this.props.path }
 					isOpen={ this.props.isTagsOpen }
 					onClick={ this.props.toggleTagsVisibility }
+					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
 			</Sidebar>
 		);

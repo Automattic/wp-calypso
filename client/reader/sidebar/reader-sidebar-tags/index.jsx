@@ -21,13 +21,14 @@ const ReaderSidebarTags = React.createClass( {
 		path: React.PropTypes.string.isRequired,
 		isOpen: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
-		currentTag: React.PropTypes.string
+		currentTag: React.PropTypes.string,
+		onTagExists: React.PropTypes.func
 	},
 
 	followTag: function( tag ) {
 		let subscription = TagStore.getSubscription( TagActions.slugify( tag ) );
 		if ( subscription ) {
-			this.highlightNewTag( subscription );
+			this.props.onTagExists( subscription );
 		} else {
 			TagActions.follow( tag );
 			stats.recordAction( 'followed_topic' );

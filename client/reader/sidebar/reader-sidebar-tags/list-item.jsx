@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -21,7 +22,7 @@ const ReaderSidebarTagsListItem = React.createClass( {
 	componentDidMount() {
 		// Scroll to the current tag
 		if ( this.props.currentTag && this.props.tag.slug === this.props.currentTag ) {
-			const node = this.getDOMNode();
+			const node = ReactDom.findDOMNode( this );
 			node.scrollIntoView();
 		}
 	},
