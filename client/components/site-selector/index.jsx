@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import page from 'page';
-import noop from 'lodash/utility/noop';
 import classNames from 'classnames';
 
 /**
@@ -22,6 +21,7 @@ import config from 'config';
 import PreferencesData from 'components/data/preferences-data';
 
 const user = userModule();
+const noop = () => {};
 
 export default React.createClass( {
 	displayName: 'SiteSelector',
