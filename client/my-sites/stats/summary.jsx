@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:stats:site' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,11 +16,14 @@ var observe = require( 'lib/mixins/data-observe' ),
 	Countries = require( './stats-countries' ),
 	SummaryChart = require( './stats-summary-chart' ),
 	VideoPlayDetails = require( './stats-video-details' );
+import { getStatsItem, isStatsItemFetching } from 'state/stats/selectors';
+import { fetchSiteStats } from 'state/stats/actions';
+import { getStatsTypesByModule } from 'state/stats/utils';
 
-module.exports = React.createClass( {
+const StatsSummary = React.createClass( {
 	displayName: 'StatsSummary',
 
-	mixins: [ observe( 'sites', 'summaryList' ) ],
+	mixins: [ observe( 'sites' ) ],
 
 	getActiveFilter: function() {
 		return this.props.filters().filter( function( filter ) {
@@ -29,7 +33,7 @@ module.exports = React.createClass( {
 
 	goBack: function() {
 		var pathParts = this.props.path.split( '/' ),
-			queryString = this.props.context.querystring ? '?' + this.props.context.querystring : null;
+			queryString = this.props.querystring ? '?' + this.props.querystring : null;
 
 		if ( history.length ) {
 			history.back();
@@ -52,13 +56,30 @@ module.exports = React.createClass( {
 		};
 	},
 
+	componentWillMount() {
+		this.dispatchFetchActions();
+	},
+
+	dispatchFetchActions() {
+		const { domain, siteID } = this.props;
+		this.props.fetchActions.forEach( ( action ) => {
+			const { statType, options } = action;
+
+			this.props.dispatch( fetchSiteStats( {
+				domain,
+				siteID,
+				statType,
+				options
+			} ) );
+		} );
+	},
+
 	componentDidMount: function() {
 		window.scrollTo( 0, 0 );
 	},
 
 	render: function() {
-		var site = this.props.sites.getSelectedSite(),
-			summaryViews = [],
+		let summaryViews = [],
 			title,
 			summaryView,
 			chartTitle,
@@ -66,8 +87,10 @@ module.exports = React.createClass( {
 
 		debug( 'Rendering summary-top-posts.jsx', this.props );
 
-		switch ( this.props.context.params.module ) {
+		const { module, moduleState, sites } = this.props;
+		const site = sites.getSelectedSite();
 
+		switch ( module ) {
 			case 'referrers':
 				title = this.translate( 'Referrers' );
 				summaryView = <StatsModule
@@ -75,7 +98,7 @@ module.exports = React.createClass( {
 					path={ 'referrers' }
 					moduleStrings={ StatsStrings.referrers }
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					summary={ true } />;
 				break;
@@ -87,7 +110,7 @@ module.exports = React.createClass( {
 					path={ 'clicks' }
 					moduleStrings={ StatsStrings.clicks }
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					summary={ true } />;
 				break;
@@ -98,7 +121,7 @@ module.exports = React.createClass( {
 					key='countries-summary'
 					path='countries-summary'
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					summary={ true } />;
 				break;
@@ -110,7 +133,7 @@ module.exports = React.createClass( {
 					path={ 'posts' }
 					moduleStrings={ StatsStrings.posts }
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					summary={ true } />;
 				break;
@@ -122,7 +145,7 @@ module.exports = React.createClass( {
 					path={ 'authors' }
 					moduleStrings={ StatsStrings.authors }
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					followList={ this.props.followList }
 					className='authorviews'
@@ -136,7 +159,7 @@ module.exports = React.createClass( {
 					path={ 'videoplays' }
 					moduleStrings={ StatsStrings.videoplays }
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					followList={ this.props.followList }
 					summary={ true } />;
@@ -144,9 +167,8 @@ module.exports = React.createClass( {
 
 			case 'videodetails':
 				title = this.translate( 'Video' );
-
-				if ( this.props.summaryList.response.post ) {
-					title = this.props.summaryList.response.post.post_title;
+				if ( moduleState.response.post ) {
+					title = moduleState.response.post.post_title;
 				}
 
 				chartTitle = (
@@ -159,8 +181,9 @@ module.exports = React.createClass( {
 
 				barChart = <SummaryChart
 					key='video-chart'
-					loading={ this.props.summaryList.isLoading() }
-					dataList={ this.props.summaryList }
+// @TODO move this to the component based on `moduleState`
+loading={ false }
+					moduleState={ moduleState }
 					activeKey="period"
 					dataKey='value'
 					labelKey='period'
@@ -170,7 +193,7 @@ module.exports = React.createClass( {
 				summaryViews.push( barChart );
 
 				summaryView = <VideoPlayDetails
-					summaryList={ this.props.summaryList }
+					moduleState={ moduleState }
 					key='page-embeds' />;
 				break;
 
@@ -181,7 +204,7 @@ module.exports = React.createClass( {
 					path={ 'searchterms' }
 					moduleStrings={ StatsStrings.search }
 					site={ site }
-					dataList={ this.props.summaryList }
+					moduleState={ moduleState }
 					period={ this.props.period }
 					summary={ true } />;
 				break;
@@ -201,3 +224,25 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	function mapStateToProps( state, ownProps ) {
+		const { fetchActions, module, postID, siteID } = ownProps;
+		const statTypes = getStatsTypesByModule( module );
+
+		const moduleState = {};
+		fetchActions.forEach( ( action ) => {
+			const { options, statType } = action;
+			if ( ! statTypes.includes( statType ) ) {
+				throw new Error( 'Invalid statType action for this module' );
+			}
+			const params = { siteID, postID, statType, options };
+			moduleState[statType] = {
+				response: getStatsItem( state, params ),
+				isFetching: isStatsItemFetching( state, params )
+			};
+		} );
+
+		return { moduleState };
+	}
+)( StatsSummary );

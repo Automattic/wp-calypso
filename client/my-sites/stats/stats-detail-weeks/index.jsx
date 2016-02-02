@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash/lang';
 
 /**
  * Internal dependencies
@@ -19,45 +20,35 @@ export default React.createClass( {
 
 	mixins: [
 		toggle( 'PostWeek' ),
-		observe( 'site', 'postViewsList' )
+		observe( 'site' )
 	],
 
 	propTypes: {
-		postViewsList: PropTypes.object
-	},
-
-	getInitialState() {
-		return {
-			noData: this.props.postViewsList.isEmpty()
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			noData: nextProps.postViewsList.isEmpty()
-		} );
+		response: PropTypes.object.isRequired
 	},
 
 	render() {
-		const data = this.props.postViewsList.response;
-		const post = data.post;
-		const { showInfo, noData } = this.state;
+		const { response } = this.props;
+		const { data } = response;
+		const post = response && response.post
+			? response.post
+			: {};
+		const { showInfo } = this.state;
 		const infoIcon = this.state.showInfo ? 'info' : 'info-outline';
-		const isLoading = this.props.postViewsList.isLoading();
 		let tableHeader,
 			tableRows,
 			tableBody,
 			highest;
 
 		const classes = {
-			'is-loading': isLoading,
+			'is-loading': this.props.isLoading,
 			'is-showing-info': showInfo,
-			'has-no-data': noData
+			'has-no-data': isEmpty( data )
 		};
 
-		if ( data && data.weeks ) {
+		if ( response && response.weeks ) {
 			const publishDate = post.post_date ? this.moment( post.post_date ) : null;
-			highest = data.highest_week_average;
+			highest = response.highest_week_average;
 			tableHeader = (
 				<thead>
 					<tr className="top">
@@ -75,7 +66,7 @@ export default React.createClass( {
 				</thead>
 			);
 
-			tableRows = data.weeks.map( function( week, index ) {
+			tableRows = response.weeks.map( function( week, index ) {
 				let cells = [];
 				let iconType;
 				let lastDay = week.days[ week.days.length - 1 ];
@@ -180,7 +171,7 @@ export default React.createClass( {
 						)
 					}</span>
 				</StatsModuleContent>
-				<StatsModulePlaceholder isLoading={ isLoading } />
+				<StatsModulePlaceholder isLoading={ this.props.isLoading } />
 				<div className="module-content-table">
 					<div className="module-content-table-scroll">
 						<table cellPadding="0" cellSpacing="0">

@@ -18,8 +18,8 @@ module.exports = React.createClass( {
 	visualization: null,
 
 	propTypes: {
-		data: React.PropTypes.array.isRequired,
-		dataList: React.PropTypes.object.isRequired
+		mapData: React.PropTypes.array.isRequired,
+		response: React.PropTypes.object.isRequired
 	},
 
 	recordEvent: function() {
@@ -45,9 +45,10 @@ module.exports = React.createClass( {
 
 	drawData: function(){
 		var regionCodes = [];
+		const { mapData, response } = this.props;
 
-		if( this.props.data.length > 1 ) {
-			var data = window.google.visualization.arrayToDataTable( this.props.data ),
+		if ( mapData.length > 1 ) {
+			var dataTable = window.google.visualization.arrayToDataTable( mapData ),
 				node = this.refs.chart,
 				width = node.clientWidth,
 				options = {
@@ -59,7 +60,7 @@ module.exports = React.createClass( {
 					colorAxis: { colors: [ '#FFF088', '#F34605' ] }
 				};
 
-			this.props.dataList.response.data.map( function( country ) {
+			response.data.map( function( country ) {
 				if ( -1 === regionCodes.indexOf( country.region ) ) {
 					regionCodes.push( country.region );
 				}
@@ -69,8 +70,8 @@ module.exports = React.createClass( {
 				options.region = regionCodes[ 0 ];
 			}
 
-			debug( 'here are the data points ', this.props.data );
-			this.visualization.draw( data, options );
+			debug( 'here are the data points ', mapData );
+			this.visualization.draw( dataTable, options );
 		}
 	},
 

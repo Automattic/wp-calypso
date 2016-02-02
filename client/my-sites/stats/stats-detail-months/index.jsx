@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash/lang';
 
 /**
  * Internal dependencies
  */
 import toggle from '../mixin-toggle';
-import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -18,36 +18,22 @@ export default React.createClass( {
 	displayName: 'StatsPostDetailMonths',
 
 	propTypes: {
-		postViewsList: PropTypes.object
+		response: PropTypes.object.isRequired
 	},
 
 	mixins: [
-		toggle( 'PostMonth' ),
-		observe( 'postViewsList' )
+		toggle( 'PostMonth' )
 	],
 
-	getInitialState() {
-		return {
-			noData: this.props.postViewsList.isEmpty()
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			noData: nextProps.postViewsList.isEmpty()
-		} );
-	},
-
 	render() {
-		const { title, total, dataKey, postViewsList } = this.props;
-		const { showInfo, noData } = this.state;
-		const data = postViewsList.response;
+		const { title, total, dataKey, response } = this.props;
+		const { showInfo } = this.state;
+		const { data } = response;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
-		const isLoading = postViewsList.isLoading();
 		const classes = {
-			'is-loading': isLoading,
+			'is-loading': this.props.isLoading,
 			'is-showing-info': showInfo,
-			'has-no-data': noData
+			'has-no-data': isEmpty( data )
 		};
 
 		let tableHeader;
@@ -55,7 +41,7 @@ export default React.createClass( {
 		let tableBody;
 		let highest;
 
-		if ( data && data[ dataKey ] ) {
+		if ( response && response[ dataKey ] ) {
 			tableHeader = (
 				<thead>
 					<tr className="top">
@@ -77,10 +63,10 @@ export default React.createClass( {
 				</thead>
 			);
 
-			highest = 'years' === dataKey ? data.highest_month : data.highest_day_average;
+			highest = 'years' === dataKey ? response.highest_month : response.highest_day_average;
 
-			tableRows = Object.keys( data[ dataKey ] ).map( function( i ) {
-				const year = data[ dataKey ][ i ];
+			tableRows = Object.keys( response[ dataKey ] ).map( function( i ) {
+				const year = response[ dataKey ][ i ];
 				const cells = [];
 
 				cells.push( <th key={ 'header' + i }>{ i }</th> );
@@ -145,7 +131,7 @@ export default React.createClass( {
 						)
 					}</span>
 				</StatsModuleContent>
-				<StatsModulePlaceholder isLoading={ isLoading } />
+				<StatsModulePlaceholder isLoading={ this.props.isLoading } />
 				<div className="module-content-table">
 					<div className="module-content-table-scroll">
 						<table cellPadding="0" cellSpacing="0">
