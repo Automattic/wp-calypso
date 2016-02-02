@@ -1,0 +1,9 @@
+.people-section-header {
+	
+	&.invite-open {
+
+		.section-header__label {
+			display: none;
+		}
+	}
+}
