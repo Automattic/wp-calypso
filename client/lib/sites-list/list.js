@@ -25,6 +25,7 @@ var wpcom = require( 'lib/wp' ),
 /**
  * SitesList component
  *
+ * @return {SitesList} site lists instance
  * @api public
  */
 function SitesList() {
@@ -51,6 +52,8 @@ Searchable( SitesList.prototype, [ 'name', 'URL' ] );
 /**
  * Get list of sites from current object or store,
  * trigger fetch on first request to update stale data
+ *
+ * @return {Object} user's sites object
  */
 SitesList.prototype.get = function() {
 	var data;
@@ -119,7 +122,9 @@ SitesList.prototype.sync = function( data ) {
 
 /**
  * Initialize data with Site objects
- **/
+ *
+ * @param {Array} sites - sites array
+ */
 SitesList.prototype.initialize = function( sites ) {
 	var allSingleSites = true;
 	this.markCollisions( sites );
@@ -137,7 +142,10 @@ SitesList.prototype.initialize = function( sites ) {
 
 /**
  * Create site Object
- **/
+ *
+ * @param {Object} site - site response object
+ * @return {Site} Site instance
+ */
 SitesList.prototype.createSiteObject = function( site ) {
 	/**
 	 * Jetpack sites require additional methods that are irrelevant
@@ -146,14 +154,16 @@ SitesList.prototype.createSiteObject = function( site ) {
 	 */
 	if ( site.jetpack ) {
 		return JetpackSite( site );
-	} else {
-		return Site( site );
 	}
+
+	return Site( site );
 };
+
 /**
  * Marks collisions between .com sites and Jetpack sites that have the same URL
  * Add the hasConflict attribute to .com sites that collide with Jetpack sites.
  *
+ * @param {Array} sites - user's sites array
  * @api private
  *
  */
@@ -175,9 +185,9 @@ SitesList.prototype.markCollisions = function( sites ) {
 /**
  * Parse data return from the API
  *
- * @param {array} data
- * @return {array} sites
- **/
+ * @param {Array} data - site endpoint response object
+ * @return {Array} sites
+ */
 SitesList.prototype.parse = function( data ) {
 	/**
 	 * Set primary flag for primary blog
@@ -191,11 +201,13 @@ SitesList.prototype.parse = function( data ) {
 
 /**
  * Merge changes to existing sites and remove any sites that are not present
- **/
+ *
+ * @param {Array} sites - user's sites array
+ * @return {Boolean} true if existing sites have been changed
+ */
 SitesList.prototype.update = function( sites ) {
 	var sitesMap = {},
-		changed = false,
-		oldSelected = this.getSelectedSite();
+		changed = false;
 
 	// Create ID -> site map from existing data
 	this.data.forEach( function( site ) {
@@ -225,7 +237,7 @@ SitesList.prototype.update = function( sites ) {
 	}, this );
 
 	// For any sites that were removed during update, unbind events
-	for ( var id in sitesMap ) {
+	for ( let id in sitesMap ) {
 		sitesMap[ id ].off( 'change', this.propagateChange );
 		changed = true;
 	}
@@ -261,7 +273,8 @@ SitesList.prototype.updatePlans = function( purchases ) {
  * @api public
  * @callback {function} callback
  * @param {...*} args - arguments passed to the callback
- **/
+ * @return {Function} callback
+ */
 SitesList.prototype.transaction = function() {
 	var args = Array.prototype.slice.call( arguments ),
 		callback = args.shift(),
@@ -276,7 +289,7 @@ SitesList.prototype.transaction = function() {
 /**
  * Event handler used to propagate change events from Site models
  * to the SitesList. Use `this.trasaction` to suppress this behavior.
- **/
+ */
 SitesList.prototype.propagateChange = function() {
 	if ( ! this.suppressPropagation ) {
 		debug( 'Propagating change event' );
@@ -290,11 +303,12 @@ SitesList.prototype.propagateChange = function() {
 /**
  * Return the list of virtual sites of a multisite
  *
+ * @param {Object} multisite - multisite object
+ * @return {Array} virtual sites array
  * @api public
  */
 SitesList.prototype.getNetworkSites = function( multisite ) {
 	return this.get().filter( function( site ) {
-
 		return site.jetpack &&
 			site.visible &&
 			( this.isConnectedSecondaryNetworkSite( site ) || site.isMainNetworkSite() ) &&
@@ -320,6 +334,7 @@ SitesList.prototype.isConnectedSecondaryNetworkSite = function( siteCandidate ) 
 /**
  * Return currently selected sites or site
  *
+ * @return {Array} selected sites array
  * @api public
  */
 SitesList.prototype.getSelectedOrAll = function() {
@@ -333,6 +348,7 @@ SitesList.prototype.getSelectedOrAll = function() {
 /**
  * Return currently selected sites or false
  *
+ * @return {Site|Boolean} currently selected site or false
  * @api public
  */
 SitesList.prototype.getSelectedSite = function() {
@@ -342,6 +358,7 @@ SitesList.prototype.getSelectedSite = function() {
 /**
  * Return the last selected site or false
  *
+ * @return {Site|Boolean} last selected site or false
  * @api public
  */
 SitesList.prototype.getLastSelectedSite = function() {
@@ -366,7 +383,7 @@ SitesList.prototype.resetSelectedSite = function() {
 /**
  * Set selected site
  *
- * @param {number} Site ID
+ * @param {Number} siteID - site identifier
  * @api private
  */
 SitesList.prototype.setSelectedSite = function( siteID ) {
@@ -381,6 +398,8 @@ SitesList.prototype.setSelectedSite = function( siteID ) {
 /**
  * Is the site selected
  *
+ * @param {Site} site - Site instance
+ * @return {Boolean} site selected condition
  * @api public
  */
 SitesList.prototype.isSelected = function( site ) {
@@ -390,6 +409,8 @@ SitesList.prototype.isSelected = function( site ) {
 /**
  * Is the site starred?
  *
+ * @param {Object} site - site object
+ * @return {Boolean} true if the given site has been starred
  * @api public
  */
 SitesList.prototype.isStarred = function( site ) {
@@ -421,7 +442,7 @@ SitesList.prototype.getStarred = function() {
 /**
  * Set recently selected site
  *
- * @param {number} Site ID
+ * @param {number} siteID - site identifier
  * @api private
  */
 SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
@@ -478,6 +499,8 @@ SitesList.prototype.getRecentlySelected = function() {
 /**
  * Get a single site object from a numeric ID or domain ID
  *
+ * @param {Number|String} siteID - site identifier
+ * @return {Site} site instance with the given site identifier
  * @api public
  */
 SitesList.prototype.getSite = function( siteID ) {
@@ -490,15 +513,19 @@ SitesList.prototype.getSite = function( siteID ) {
 		// clashes between a domain redirect and a Jetpack site, as well as domains
 		// on subfolders, but we also need to look for the `domain` as a last resort
 		// to cover mapped domains for regular WP.com sites.
-		return site.ID === siteID || site.slug === siteID || site.domain === siteID || site.wpcom_url === siteID;
+		return site.ID === siteID ||
+			site.slug === siteID ||
+			site.domain === siteID ||
+			site.wpcom_url === siteID;
 	}, this ).shift();
 };
 
 /**
  * Get primary site
  *
+ * @return {Site} return primary Site instance
  * @api public
- **/
+ */
 SitesList.prototype.getPrimary = function() {
 	return this.get().filter( function( site ) {
 		return site.primary === true;
@@ -508,8 +535,9 @@ SitesList.prototype.getPrimary = function() {
 /**
  * Set site visibility to a single site
  *
+ * @param {Number|String} siteID - site identifier
+ * @return {Boolean} whether there's a valid site object or not
  * @api public
- * @return (bool) Whether there's a valid site object or not
  */
 SitesList.prototype.select = function( siteID ) {
 	// Attempt to grab a site object from the passed ID
@@ -524,12 +552,10 @@ SitesList.prototype.select = function( siteID ) {
 	if ( site ) {
 		this.setSelectedSite( site.slug );
 		return true;
-	/**
-	 * If there's no valid site object return false
-	 */
-	} else {
-		return false;
 	}
+
+	// If there's no valid site object return false
+	return false;
 };
 
 SitesList.prototype.selectAll = function() {
@@ -555,8 +581,9 @@ SitesList.prototype.getPublic = function() {
 /**
  * Get sites that are marked as visible
  *
+ * @return {Array} visible sites array
  * @api public
- **/
+ */
 SitesList.prototype.getVisible = function() {
 	return this.get().filter( function( site ) {
 		return site.visible === true;
@@ -566,7 +593,9 @@ SitesList.prototype.getVisible = function() {
 /**
  * Get sites that are marked as visible and not recently selected
  *
+ * @return {Array} sites array
  * @api public
+<<<<<<< HEAD
  **/
 SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
 	return this.get().filter( function( site ) {
@@ -630,7 +659,8 @@ SitesList.prototype.removeSite = function( site ) {
 
 /**
  * Update site instance inside Sites
- * @param  {[type]} site site instance
+ *
+ * @param  {Site} updatedSite - Site instance
  */
 SitesList.prototype.updateSite = function( updatedSite ) {
 	var updatedSites = this.get().map( function( site ) {
@@ -647,7 +677,8 @@ SitesList.prototype.updateSite = function( updatedSite ) {
 
 /**
  * Whether the list sites has the ability to updates files
- * @return bool
+ *
+ * @return {Boolean} sites can update files condition
  */
 SitesList.prototype.canUpdateFiles = function() {
 	var allowUpdate = false;
@@ -658,33 +689,36 @@ SitesList.prototype.canUpdateFiles = function() {
 			return;
 		}
 	} );
+
 	return allowUpdate;
 };
 
 /**
- * Whether the user has a site that is selected or listed the user can manage
- * @return bool
+ * Whether the user has a site that is selected
+ * or listed the user can manage
+ *
+ * @return {Boolean} user can manage site
  */
 SitesList.prototype.canManageSelectedOrAll = function() {
 	return this.getSelectedOrAll().some( function( site ) {
 		if ( site.capabilities && site.capabilities.manage_options ) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	} );
 };
+
 /**
  * Whether the user has any jetpack site that the user can manage
- * @return bool
+ * @return {Boolean} user can manage any jetpack site
  */
 SitesList.prototype.canManageAnyJetpack = function() {
 	return this.getJetpack().some( function( site ) {
 		if ( site.capabilities && site.capabilities.manage_options ) {
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	} );
 };
 
