@@ -43,7 +43,7 @@ module.exports = React.createClass( {
 			}, this );
 
 			return (
-				<div className="plans-list">{ plansList }</div>
+				<div className="plan-list">{ plansList }</div>
 			);
 		}
 
