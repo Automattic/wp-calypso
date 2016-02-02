@@ -1,4 +1,5 @@
 # photon.js
+[![Build Status](https://travis-ci.org/Automattic/photon.js.svg?branch=master)](https://travis-ci.org/Automattic/photon.js)
 
 JavaScript library for the [WordPress.com][] [Photon][] image manipulation
 service.
