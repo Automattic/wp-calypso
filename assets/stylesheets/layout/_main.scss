@@ -100,6 +100,19 @@ body.rtl,
 	font-family: $sans;
 }
 
+/*rtl:ignore*/
+.rtl {
+	.gridicon {
+		&.gridicons-chevron-left,
+		&.gridicons-chevron-right,
+		&.gridicons-arrow-left,
+		&.gridicons-arrow-right {
+			transform: scaleX( -1 );
+		}
+
+	}
+}
+
 .notifications {
 	display: inherit;
 }
