@@ -7,5 +7,5 @@ As `ReactCSSTransitionGroup` seems to support these props as of React 0.14, we h
 
 ### Props (in addition to `ReactCSSTransitionGroup`'s)
 
-* `enterTimeout` (number) and `leaveTimeouts` (number): timeouts (in milliseconds) for the `enter` and `leave` events, respectively.
+* `enterTimeout` (number) and `leaveTimeout` (number): timeouts (in milliseconds) for the `enter` and `leave` events, respectively.
 * `onComponentDidLeave` (function): called when the `willLeave` callback is called (at the same time as `componentWillUnmount`).
