@@ -1,0 +1,22 @@
+
+.jetpack-price {
+	margin-top: 20px;
+	padding: 0 6px;
+	display: inline-block;
+	position: relative;
+}
+
+.jetpack-price:first-child {
+	opacity: 0.4;
+}
+
+.jetpack-price:first-child::before {
+	content: '';
+	border-bottom: 2px solid red;
+	width: 100%;
+	position: absolute;
+		right: 0;
+		top: 50%;
+	-webkit-transform: skewY(-10deg);
+	transform: skewY(-10deg);
+}

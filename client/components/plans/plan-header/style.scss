@@ -90,7 +90,7 @@
 	.plan-header {
 		border-bottom: 2px solid lighten( $gray, 20% );
 		height: 3em;
-		padding: 0 15px 10px 15px;
+		padding: 0 15px 0 15px;
 
 		.plan-header__title {
 			text-align: center;
@@ -185,4 +185,8 @@
 	@include breakpoint( ">660px" ) {
 		@include plans-in-three-columns();
 	}
+}
+
+.plan-list .jetpack_premium .plan-header__title, .plan-list .jetpack_business .plan-header__title {
+	margin-top: 15px;
 }
