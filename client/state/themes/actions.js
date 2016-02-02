@@ -184,7 +184,7 @@ export function signup( theme ) {
 	}
 }
 
-// Might be obsolete, since in theme-options.js, `hasUrl === true`
+// Might be obsolete, since in my-sites/themes, we're using `getUrl()` for Details
 export function details( theme, site ) {
 	return dispatch => {
 		const detailsUrl = ThemeHelpers.getDetailsUrl( theme, site );
@@ -198,7 +198,7 @@ export function details( theme, site ) {
 	}
 };
 
-// Might be obsolete, since in theme-options.js, `hasUrl === true`
+// Might be obsolete, since in my-sites/themes, we're using `getUrl()` for Support
 export function support( theme, site ) {
 	return dispatch => {
 		const supportUrl = ThemeHelpers.getSupportUrl( theme, site );

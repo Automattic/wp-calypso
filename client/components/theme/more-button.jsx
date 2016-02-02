@@ -95,11 +95,15 @@ var ThemeMoreButton = React.createClass( {
 								</a>
 							);
 						}
-						return (
-							<PopoverMenuItem key={ option.label } action={ option.action }>
-								{ option.label }
-							</PopoverMenuItem>
-						);
+						if ( option.action ) {
+							return (
+								<PopoverMenuItem key={ option.label } action={ option.action }>
+									{ option.label }
+								</PopoverMenuItem>
+							);
+						}
+						// If neither getUrl() nor action() are specified, filter this option.
+						return null;
 					}, this ) }
 
 				</PopoverMenu>
