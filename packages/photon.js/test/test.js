@@ -44,13 +44,13 @@ describe('photon()', function () {
     var alternateUrl = 'https://i1.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc';
 
     assertHostedOnPhoton(photonedUrl);
-    assert.notStrictEqual(alternateUrl, photonedUrl);
-    assert.strictEqual(alternateUrl, photon(alternateUrl));
+    assert.notStrictEqual(photonedUrl, alternateUrl);
+    assert.strictEqual(photon(alternateUrl), alternateUrl);
   });
 
   it('should handle photoning a photoned url', function() {
     var url = photon('http://example.com/image.png');
-    assert.strictEqual(url, photon(url));
+    assert.strictEqual(photon(url), url);
   });
 
   it('should add width parameters if specified', function() {
@@ -60,10 +60,10 @@ describe('photon()', function () {
     assertQuery(photonedUrl, { 'w':'50' });
   });
 
-  it('should encode query args for non-photon hosts', function() {
-    var photonedUrl = photon('http://example.com/image.png?foo=bar');
+  it('should return null for URLs with querystrings from non-photon hosts', function() {
+    var url = 'http://example.com/image.png?foo=bar';
 
-    assertPathname(photonedUrl, '/example.com/image.png%3Ffoo=bar');
+    assert.strictEqual(photon(url), null);
   });
 
   it('should handle protocolless URLs', function() {
