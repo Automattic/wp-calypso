@@ -32,6 +32,10 @@
 .current-site .site {
 	transition: opacity 0.15s ease-in-out;
 
+	.site__info {
+		animation: appear .3s ease-in-out;
+	}
+
 	.focus-sites & {
 		opacity: 0.2;
 		pointer-events: none;

@@ -165,6 +165,11 @@
 	.gridicon {
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
+	&:hover {
+		.gridicon {
+			color: darken( $gray, 20% );
+		}
+	}
 }
 
 .site.is-toggled {
@@ -182,6 +187,7 @@
 	display: flex;
 	flex: 1 0 0;
 	justify-content: space-between;
+	animation: appear .3s ease-in-out;
 }
 
 .site__edit-icon,
