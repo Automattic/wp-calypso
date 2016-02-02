@@ -10,13 +10,16 @@ var express = require( 'express' ),
 	includes = require( 'lodash/collection/includes' ),
 	React = require( 'react' ),
 	ReactDomServer = require( 'react-dom/server' ),
-	Helmet = require( 'react-helmet' );
+	Helmet = require( 'react-helmet' ),
+	pick = require( 'lodash/object/pick' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+	LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
+	createReduxStore = require( 'state' ).createReduxStore,
+	setSection = require( 'state/ui/actions' ).setSection;
 
 var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
 var cachedDesignMarkup = {};
@@ -392,11 +395,15 @@ module.exports = function() {
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				try {
+					const store = createReduxStore();
+					store.dispatch( setSection( 'design', { hasSidebar: false } ) );
+					context.initialReduxState = pick( store.getState(), 'ui' );
+
 					if ( ! cachedDesignMarkup[ tier ] ) {
 						const cached = cachedDesignMarkup[ tier ] = {};
 						let startTime = Date.now();
 						cached.layout = ReactDomServer.renderToString(
-								LayoutLoggedOutDesignFactory( { tier } ) );
+								LayoutLoggedOutDesignFactory( { tier, store } ) );
 						let rtsTimeMs = Date.now() - startTime;
 
 						cached.helmetData = Helmet.rewind();
