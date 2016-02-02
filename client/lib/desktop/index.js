@@ -17,6 +17,8 @@ var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' ),
 	userUtilities = require( 'lib/user/utils' ),
 	location = require( 'lib/route/page-notifier' );
 
+import { commandLineArguments } from 'state/application/actions';
+
 /**
  * Module variables
  */
@@ -26,7 +28,7 @@ var Desktop = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: function() {
+	init: function( reduxStore ) {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
@@ -37,6 +39,10 @@ var Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'cookie-auth-complete', this.onCookieAuthComplete.bind( this ) );
+
+		ipc.on( 'command-line-arguments', function( sender, args ) {
+			reduxStore.dispatch( commandLineArguments( args ) );
+		} );
 
 		window.addEventListener( 'message', this.receiveMessage.bind( this ) );
 

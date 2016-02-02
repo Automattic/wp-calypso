@@ -23,6 +23,9 @@ var actions = require( 'lib/posts/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	analytics = require( 'analytics' );
 
+import { getCommandLineNewPostData } from 'state/application/selectors';
+import { markCommandLineArgumentsUsed } from 'state/application/actions';
+
 function getPostID( context ) {
 	if ( ! context.params.post ) {
 		return null;
@@ -101,6 +104,7 @@ module.exports = {
 
 		function startEditing() {
 			const site = sites.getSite( route.getSiteFragment( context.path ) );
+			const commandLineArguments = context.store.getState()
 
 			if ( maybeRedirect( context, postType, site ) ) {
 				return;
@@ -139,6 +143,10 @@ module.exports = {
 						content: pressThisContent
 					} );
 				}
+
+				// handle command line arguments if applicable
+				Object.assign( postOptions, getCommandLineNewPostData( context.store.getState() ) );
+				context.store.dispatch( markCommandLineArgumentsUsed() );
 
 				actions.startEditingNew( site, postOptions );
 				titleActions.setTitle( titleStrings.new, { siteID: site.ID } );

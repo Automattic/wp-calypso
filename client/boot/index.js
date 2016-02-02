@@ -344,7 +344,7 @@ function boot() {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init();
+		require( 'lib/desktop' ).init( reduxStore );
 	}
 
 	detectHistoryNavigation.start();

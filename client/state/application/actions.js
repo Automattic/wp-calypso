@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
+import { CONNECTION_LOST, CONNECTION_RESTORED, COMMAND_LINE_ARGUMENTS, COMMAND_LINE_ARGUMENTS_USED } from 'state/action-types';
 import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
 import i18n from 'lib/mixins/i18n';
 
@@ -35,4 +35,12 @@ export function connectionRestored() {
 		);
 		dispatch( { type: CONNECTION_RESTORED } );
 	};
+}
+
+export function commandLineArguments( argumentsObject ) {
+	return { type: COMMAND_LINE_ARGUMENTS, commandLineArguments: argumentsObject }
+}
+
+export function markCommandLineArgumentsUsed() {
+	return { type: COMMAND_LINE_ARGUMENTS_USED };
 }
