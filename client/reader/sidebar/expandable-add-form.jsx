@@ -34,7 +34,8 @@ const ExpandableSidebarAddForm = React.createClass( {
 
 	toggleAdd() {
 		if ( ! this.state.isAdding ) {
-			this.refs.menuAddInput.focus();
+			// Disabling for now because IE does not display placeholder when field is focused.
+			//this.refs.menuAddInput.focus();
 			this.props.onAddClick();
 		}
 		this.setState( { isAdding: ! this.state.isAdding } );
