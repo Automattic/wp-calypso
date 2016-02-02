@@ -169,6 +169,10 @@ var analytics = {
 					featureSlug = 'domains_add_suggestion__suggestion__domain';
 				} else if ( startsWith( document.location.pathname, '/plugins/browse/' ) ) {
 					featureSlug = 'plugins_browse__site';
+				} else if ( featureSlug.match( /^plugins_[^_].*__/ ) ) {
+					featureSlug = 'plugins__site__plugin';
+				} else if ( featureSlug.match( /^plugins_[^_]/ ) ) {
+					featureSlug = 'plugins__site__unknown'; // fail safe because there seems to be some URLs we're not catching
 				} else if ( startsWith( featureSlug, 'read_post_feed_' ) ) {
 					featureSlug = 'read_post_feed__id';
 				} else if ( startsWith( featureSlug, 'read_post_id_' ) ) {
