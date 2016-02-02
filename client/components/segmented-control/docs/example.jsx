@@ -20,7 +20,8 @@ var SegmentedControlDemo = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			childSelected: 'all'
+			childSelected: 'all',
+			compact: false
 		};
 	},
 
@@ -36,6 +37,10 @@ var SegmentedControlDemo = React.createClass( {
 		};
 	},
 
+	toggleCompact: function() {
+		this.setState( { compact: ! this.state.compact } );
+	},
+
 	render: function() {
 		var controlDemoStyles = { maxWidth: 386 };
 
@@ -43,6 +48,9 @@ var SegmentedControlDemo = React.createClass( {
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/design/segmented-control">Segmented Control</a>
+					<a className="design-assets__toggle button" onClick={ this.toggleCompact }>
+						{ this.state.compact ? 'Normal' : 'Compact' }
+					</a>
 				</h2>
 
 				<h3>Items passed as options prop</h3>
@@ -50,12 +58,15 @@ var SegmentedControlDemo = React.createClass( {
 					options={ this.props.options }
 					onSelect={ this.selectSegment }
 					style={ controlDemoStyles }
+					compact={ this.state.compact }
 				/>
 
-				<h3 style={ { marginTop: 20 } }>items passed as children</h3>
+				<h3 style={ { marginTop: 20 } }>Primary version</h3>
 				<SegmentedControl
 					selectedText={ this.state.childSelected }
 					style={ controlDemoStyles }
+					primary={ true }
+					compact={ this.state.compact }
 				>
 					<ControlItem
 						selected={ this.state.childSelected === 'all' }
@@ -93,9 +104,9 @@ var SegmentedControlDemo = React.createClass( {
 					</ControlItem>
 				</SegmentedControl>
 
-				<h3 style={ { marginTop: 20 } }>Compact version of segmented control</h3>
+				<h3 style={ { marginTop: 20 } }>Three items</h3>
 				<SegmentedControl
-					compact={ true }
+					compact={ this.state.compact }
 					selectedText={ this.state.childSelected }
 					style={ { maxWidth: 280 } }
 				>

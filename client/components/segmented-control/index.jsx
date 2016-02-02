@@ -68,7 +68,8 @@ var SegmentedControl = React.createClass( {
 		var segmentedClasses = {
 			'segmented-control': true,
 			'keyboard-navigation': this.state.keyboardNavigation,
-			'is-compact': this.props.compact
+			'is-compact': this.props.compact,
+			'is-primary': this.props.primary
 		};
 
 		if ( this.props.className ) {
