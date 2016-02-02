@@ -94,7 +94,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentyfifteen', images: null } : undefined;
+		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentyfifteen' } : undefined;
 		return (
 			<StepWrapper
 				fallbackHeaderText={ this.translate( 'Choose a theme.' ) }
