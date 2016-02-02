@@ -1,6 +1,6 @@
 {
   "name": "photon",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "JavaScript library for the WordPress.com Photon image manipulation service",
   "main": "index.js",
   "scripts": {

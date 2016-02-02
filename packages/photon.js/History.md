@@ -1,4 +1,13 @@
 
+2.0.0 / 2016-02-02
+==================
+
+  * Add support for the `ssl` parameter to fetch images from https URLs
+  * Readme: add Travis-CI badge
+  * add `.travis.yml` file for Travis-CI
+  * package: update "mocha" to v2.4.5
+  * Return `null` for external URLs that contain querystrings (Breaking change!)
+
 1.0.4 / 2015-01-26
 ==================
 
