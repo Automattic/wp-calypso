@@ -57,3 +57,15 @@ export function isInGracePeriod( plan ) {
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isFetching && selectedSite;
 };
+
+export function filterPlansBySiteAndProps( plan, site, hideFreePlan ) {
+	if ( site && site.jetpack ) {
+		return 'jetpack_business' === plan.product_slug || 'jetpack_premium' === plan.product_slug;
+	}
+
+	if ( hideFreePlan && 'free_plan' !== plan.product_slug ) {
+		return false;
+	}
+
+	return 'jetpack' !== plan.product_type
+};

@@ -11,6 +11,7 @@ var Plan = require( 'components/plans/plan' ),
 	Card = require( 'components/card' ),
 	abtest = require( 'lib/abtest' ).abtest,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
+	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
 	getCurrentPlan = require( 'lib/plans' ).getCurrentPlan;
 
 module.exports = React.createClass( {
@@ -22,24 +23,6 @@ module.exports = React.createClass( {
 
 	openPlan: function( planId ) {
 		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
-	},
-
-	filterPlansBySiteAndProps: function( plan ) {
-		var site;
-
-		if ( this.props.sites ) {
-			site = this.props.sites.getSelectedSite();
-		}
-
-		if ( site && site.jetpack ) {
-			return 'jetpack_business' === plan.product_slug || 'jetpack_premium' === plan.product_slug;
-		}
-
-		if ( this.props.hideFreePlan && 'free_plan' !== plan.product_slug ) {
-			return false;
-		}
-
-		return 'jetpack' !== plan.product_type
 	},
 
 	render: function() {
@@ -88,8 +71,8 @@ module.exports = React.createClass( {
 
 		if ( plans.length > 0 ) {
 			plans = plans.filter( function( plan ) {
-				return this.filterPlansBySiteAndProps( plan );
-			}, this );
+				return filterPlansBySiteAndProps( plan, site );
+			} );
 
 			plansList = plans.map( function( plan ) {
 				return (
