@@ -8,6 +8,7 @@ import throttle from 'lodash/function/throttle';
  * Internal dependencies
  */
 import analytics from 'analytics';
+const loadScript = require( 'lib/load-script' ).loadScript;
 
 export default React.createClass( {
 	displayName: 'StatsGeochart',
@@ -22,13 +23,8 @@ export default React.createClass( {
 	},
 
 	componentDidMount() {
-		const domNode = this.refs.chart;
-		const script = document.createElement( 'script' );
-
-		script.src = 'https://www.google.com/jsapi';
-
 		if ( ! window.google ) {
-			domNode.appendChild( script );
+			loadScript( 'https://www.google.com/jsapi' );
 			this.tick();
 		} else {
 			// google jsapi is in the dom, load the visualizations again just in case
