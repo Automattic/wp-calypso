@@ -132,6 +132,10 @@
 	.plan-list .jetpack_premium, .plan-list .jetpack_business {
 		width: 49%;
 	}
+
+	.plan-list .jetpack_premium .gridicons-checkmark-circle, .plan-list .jetpack_business .gridicons-checkmark-circle {
+		display: none;
+	}
 }
 
 .plans.has-sidebar {
