@@ -243,13 +243,22 @@ html.iframed {
 $sidebar-width-max: 272px;
 $sidebar-width-min: 228px;
 
+html {
+	overflow-y: hidden;
+}
+
 .wp-content {
 	@include clear-fix;
 	position: relative;
 	margin: 47px 0 0 0;
 	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
-	overflow: hidden;
+	overflow-x: hidden;
+
+	@include breakpoint( ">480px" ) {
+		overflow-y: auto;
+		height: calc( 100vh - 47px );
+	}
 
 	.has-no-sidebar & {
 		padding-left: 32px;
