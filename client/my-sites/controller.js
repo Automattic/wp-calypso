@@ -43,10 +43,18 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 	);
 }
 
-function renderEmptySites() {
+function removeSidebar( context ) {
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+	context.store.dispatch( uiActions.setSection( 'sites', {
+		hasSidebar: false
+	} ) );
+}
+
+function renderEmptySites( context ) {
 	var NoSitesMessage = require( 'components/empty-content/no-sites-message' );
 
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	removeSidebar( context );
 
 	ReactDom.render(
 		React.createElement( NoSitesMessage ),
@@ -54,12 +62,12 @@ function renderEmptySites() {
 	);
 }
 
-function renderNoVisibleSites() {
+function renderNoVisibleSites( context ) {
 	var EmptyContentComponent = require( 'components/empty-content' ),
 		currentUser = user.get(),
 		hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	removeSidebar( context );
 
 	ReactDom.render(
 		React.createElement( EmptyContentComponent, {
@@ -99,12 +107,12 @@ module.exports = {
 		}
 
 		if ( currentUser && currentUser.site_count === 0 ) {
-			renderEmptySites();
+			renderEmptySites( context );
 			return analytics.pageView.record( basePath, analyticsPageTitle + ' > No Sites' );
 		}
 
 		if ( currentUser && currentUser.visible_site_count === 0 ) {
-			renderNoVisibleSites();
+			renderNoVisibleSites( context );
 			return analytics.pageView.record( basePath, analyticsPageTitle + ' > All Sites Hidden' );
 		}
 
