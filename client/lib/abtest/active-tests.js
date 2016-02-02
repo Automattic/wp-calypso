@@ -64,8 +64,9 @@ module.exports = {
 	plansSocialProof: {
 		datestamp: '20160202',
 		variations: {
-			mostPopular: 50,
-			bestValue: 50
+			mostPopular: 33,
+			bestValue: 33,
+			noTeaser: 34
 		},
 		defaultVariation: 'mostPopular'
 	},	

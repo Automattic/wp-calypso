@@ -24,6 +24,10 @@ module.exports = React.createClass( {
 		var hasBusiness = this.props.site && productsValues.isBusiness( this.props.site.plan );
 		var teaserText = this.translate( 'Our most popular plan' );
 
+		if ( abtest( 'plansSocialProof' ) === 'noTeaser' ) {
+			return null;
+		}
+
 		if ( abtest( 'plansSocialProof' ) === 'bestValue' ) {
 			teaserText = this.translate( 'Best value' );
 		}
