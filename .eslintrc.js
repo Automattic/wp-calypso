@@ -91,4 +91,4 @@ module.exports = {
 		'vars-on-top': 1,
 		'yoda': 0
 	}
-}
+};
