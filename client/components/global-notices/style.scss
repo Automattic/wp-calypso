@@ -3,48 +3,19 @@
 
 	z-index: 180;
 	position: fixed;
-		top: 47px;
-		right: 0;
-		left: 0;
-
-	@include breakpoint( ">660px" ) {
-		top: 47px + 24px;
-		right: 24px;
-		left: auto;
-	}
-
-	@include breakpoint( ">960px" ) {
 		top: 47px + 32px;
 		right: 48px;
+
+	@include breakpoint( "<960px" ) {
+	}
+
+	@include breakpoint( "<660px" ) {
+		top: 16px;
 	}
 }
 
 .global-notices .notice {
-	display: flex;
-
-	@include breakpoint( ">660px" ) {
-		border-radius: 20px;
-		display: inline-flex;
-		z-index: 180;
-	}
-}
-
-.global-notices .notice__icon {
-	padding: 8px 0 8px 8px;
-
-	@include breakpoint( ">660px" ) {
-		padding: 8px 0 8px 16px;
-	}
-}
-
-.global-notices .notice__text {
-	padding: 9px 13px;
-}
-
-.global-notices .notice__dismiss {
-	padding: 8px 8px 8px 16px;
-
-	@include breakpoint( ">660px" ) {
-		padding: 8px 16px;
-	}
+	border-radius: 50px;
+	display: inline-flex;
+	z-index: 180;
 }
