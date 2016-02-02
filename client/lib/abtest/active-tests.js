@@ -78,6 +78,14 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	periodLabelFree: {
+		datestamp: '20160202',
+		variations: {
+			forLife: 50,
+			withAdv: 50
+		},
+		defaultVariation: 'forLife'
+	},
 	domainRegistrationCta: {
 		datestamp: '20160128',
 		variations: {
