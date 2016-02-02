@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var Readable = require( 'stream' ).Readable,
-	inherits = require( 'inherits' );
+import { Readable } from 'stream';
+import inherits from 'inherits';
 
 /**
  * Internal dependencies
  */
-var PluginsActions = require( 'lib/plugins/actions' );
+import PluginsActions from 'lib/plugins/actions';
+import PluginsStore from 'lib/plugins/store';
 
 /**
  * Start provisioning premium plugins for a given site
@@ -77,13 +78,19 @@ InstallationFlow.prototype.installAll = function( slugs ) {
 InstallationFlow.prototype.install = function( slug, next ) {
 	this._pushStep( { name: 'install-plugin', plugin: slug } );
 	let site = this._initialData.site;
-
+	let plugin = PluginsStore.getSitePlugin( site, slug )
+	if ( ! plugin && PluginsStore.isFetchingSite( site ) ) {
+		// if the Plugins are still being fetched, we wait. We are not using flux
+		// store events because it would be more messy to handle the one-time-only
+		// callback with bound parameters than to do it this way.
+		return setTimeout( this.install.bind( this, slug, next ), 500 );
+	};
+	plugin = plugin || { slug: slug };
 	// Install the plugin. `installer` is a promise, so we can wait for the install
 	// to finish before trying to configure the plugin.
-	let installer = PluginsActions.installPlugin( site, { slug: slug, id: slug + '/' + slug } );
+	let installer = PluginsActions.installPlugin( site, plugin );
 	installer.then( () => {
-		// @todo Handle failed installs - most likely the plugin already exists,
-		// and needs to be activated.
+		// @todo Handle failed installs
 		// @todo Registration keys will be set here.
 		next();
 	} );
