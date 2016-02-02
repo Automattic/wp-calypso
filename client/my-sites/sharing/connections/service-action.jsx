@@ -1,12 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var serviceConnections = require( './service-connections' );
+import serviceConnections from './service-connections';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
+import classNames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'SharingServiceAction',
@@ -38,7 +41,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = [ 'sharing-service-action', 'button' ],
+		let primary = false,
+			borderless = false,
+			warning = false,
 			isPending, removableConnections, label;
 
 		isPending = 'unknown' === this.props.status || this.props.isDisconnecting ||
@@ -52,13 +57,11 @@ module.exports = React.createClass( {
 			label = this.translate( 'Loading…', { context: 'Sharing: Publicize status pending button label' } );
 		} else if ( this.props.isDisconnecting ) {
 			label = this.translate( 'Disconnecting…', { context: 'Sharing: Publicize disconnect pending button label' } );
-			classes.push( 'button' );
 		} else if ( this.props.isRefreshing ) {
 			label = this.translate( 'Reconnecting…', { context: 'Sharing: Publicize reconnect pending button label' } );
-			classes.push( 'is-warning' );
+			warning = true;
 		} else if ( this.props.isConnecting ) {
 			label = this.translate( 'Connecting…', { context: 'Sharing: Publicize connect pending button label' } );
-			classes.push( 'is-primary' );
 		} else if ( 'connected' === this.props.status && removableConnections.length ) {
 			if ( removableConnections.length > 1 ) {
 				label = this.translate( 'Disconnect All', { context: 'Sharing: Publicize disconnect button label' } );
@@ -67,12 +70,22 @@ module.exports = React.createClass( {
 			}
 		} else if ( 'reconnect' === this.props.status ) {
 			label = this.translate( 'Reconnect', { context: 'Sharing: Publicize reconnect pending button label' } );
-			classes.push( 'is-warning' );
+			warning = true;
 		} else {
-			label = this.translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' }  );
-			classes.push( 'is-primary' );
+			label = this.translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
+			primary = true;
 		}
 
-		return <a onClick={ this.onActionClick } className={ classes.join( ' ' ) } disabled={ isPending }>{ label }</a>;
+		return (
+			<Button
+				primary={ primary }
+				borderless={ borderless }
+				scary={ warning }
+				compact
+				onClick={ this.onActionClick }
+				disabled={ isPending }>
+				{ label }
+			</Button>
+		);
 	}
 } );

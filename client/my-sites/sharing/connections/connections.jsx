@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	where = require( 'lodash/collection/where' );
+import React from 'react';
+import where from 'lodash/collection/where';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	analytics = require( 'analytics' ),
-	SharingServicesGroup = require( './services-group' ),
-	AccountDialog = require( './account-dialog' ),
-	serviceConnections = require( './service-connections' );
+import observe from 'lib/mixins/data-observe';
+import analytics from 'analytics';
+import SharingServicesGroup from './services-group';
+import AccountDialog from './account-dialog';
+import serviceConnections from './service-connections';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingConnections',
 
 	mixins: [ observe( 'sites', 'services', 'connections', 'user' ) ],
@@ -117,12 +117,11 @@ module.exports = React.createClass( {
 			<div>
 				<SharingServicesGroup
 					services={ where( services, { type: 'publicize' } ) }
-					title={ this.translate( 'Publicize', { context: 'Sharing: Connections' } ) }
-					description={ this.translate( 'Connect social media services to automatically share new posts.' ) }
+					title={ this.translate( 'Publicize Your Posts' ) }
 					{ ...commonGroupProps } />
 				<SharingServicesGroup
 					services={ where( services, { type: 'other' } ) }
-					title={ this.translate( 'Other Connections', { context: 'Sharing: Connections' } ) }
+					title={ this.translate( 'Other Connections' ) }
 					description={ this.translate( 'Connect any of these additional services to further enhance your site.' ) }
 					{ ...commonGroupProps } />
 			</div>

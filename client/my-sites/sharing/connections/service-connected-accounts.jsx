@@ -73,7 +73,6 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<div className="sharing-service-accounts-detail">
-				<h2>{ this.translate( 'Connected Account', 'Connected Accounts', { count: this.props.connections.length } ) }</h2>
 				<ul className="sharing-service-connected-accounts">
 					{ this.getConnectionElements() }
 				</ul>

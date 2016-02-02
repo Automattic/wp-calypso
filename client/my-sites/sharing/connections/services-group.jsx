@@ -9,7 +9,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Service = require( './service' ),
-	ServicePlaceholder = require( './service-placeholder' );
+	ServicePlaceholder = require( './service-placeholder' ),
+	SectionHeader = require( 'components/section-header' );
 
 /**
  * Module variables
@@ -113,10 +114,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<header className="sharing-services-group__header">
-					<h3 className="sharing-service-group__title">{ this.props.title }</h3>
-					<p className="sharing-services-group__intro">{ this.props.description }</p>
-				</header>
+				<SectionHeader label={ this.props.title } />
 				<ul className="sharing-services-group__services">
 					{ this.renderServices( services ) }
 				</ul>

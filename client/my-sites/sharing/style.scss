@@ -13,6 +13,74 @@ $color-pocket: #ee4256;
 $color-email: #f8f8f8;
 $color-print: #f8f8f8;
 
+.foldable-card.sharing-service {
+
+	.sharing-service__logo {
+		float: left;
+		margin-right: 8px;
+	}
+
+	&.facebook {
+		h2,
+		.sharing-service__logo{
+			color: $color-facebook;
+		}
+	}
+
+	&.twitter {
+		h2,
+		.sharing-service__logo{
+			color: $color-twitter;
+		}
+	}
+
+	&.google_plus {
+		h2,
+		.sharing-service__logo {
+			color: $color-gplus;
+		}
+	}
+
+	&.linkedin {
+		h2,
+		.sharing-service__logo {
+			color: $color-linkedin;
+		}
+
+	}
+
+	&.tumblr{
+		h2,
+		.sharing-service__logo {
+			color: $color-tumblr;
+		}
+	}
+
+	&.path{
+		h2,
+		.sharing-service__logo {
+			color: $color-path;
+		}
+	}
+
+	&.eventbrite{
+		h2,
+		.sharing-service__logo {
+			color: $color-eventbrite;
+		}
+	}
+
+	.sharing-service__name {
+		float: left;
+	}
+
+	@include breakpoint( "<660px" ) {
+		.sharing-service__name {
+			margin-top: 12px;
+		}
+	}
+}
+
 .sharing-settings {
 	// labels, checkboxes, radio
 
@@ -35,10 +103,6 @@ $color-print: #f8f8f8;
 		margin-bottom: 0.5em;
 	}
 
-	@include breakpoint( "<660px" ) {
-		padding: 0 4em;
-	}
-
 	@include breakpoint( "<480px" ) {
 		padding: 0 0.25em;
 	}
@@ -47,57 +111,6 @@ $color-print: #f8f8f8;
 .sharing-settings.sharing-connections {
 	@include breakpoint( "<480px" ) {
 		padding: 16px 0;
-	}
-
-	h2 {
-		font-size: 20px;
-		margin-bottom: 10px;
-	}
-
-	.sharing-link p {
-		margin-bottom: 1em;
-	}
-
-	.button.is-warning {
-		background: darken( $alert-yellow, 3% );
-		border-color: darken( $alert-yellow, 10% );
-		color: $white;
-
-		&:hover {
-			border-color: darken( $alert-yellow, 15% );
-		}
-
-		&:focus {
-			border-color: darken( $alert-yellow, 15% );
-		}
-
-		&[disabled] {
-			background: lighten( $alert-yellow, 12% ) !important;
-			color: $white !important;
-			border-color: lighten( $alert-yellow, 8% ) !important;
-		}
-	}
-
-	.noticon-checkmark,
-	.noticon-warning {
-		vertical-align: middle;
-		margin-right: 0.25em;
-	}
-
-	.noticon-checkmark {
-		font-size: 18px;
-		margin: 0 1px 0 -3px;
-	}
-
-	.noticon-warning {
-		font-size: 12px;
-		margin: -1px 6px 0 0;
-	}
-
-	.sharing-service__content.is-placeholder .sharing-service-examples,
-	.sharing-service__content.is-placeholder .sharing-service-accounts-detail,
-	.sharing-service__content.is-placeholder .sharing-service-tip {
-		display: none;
 	}
 
 	.sharing-service-example {
@@ -197,29 +210,10 @@ $color-print: #f8f8f8;
 	}
 }
 
-.sharing-service {
-	//@extend %container;
-	box-shadow: 0 0 0 1px rgba( lighten( $gray, 20% ), 0.5 ), 0 1px 2px lighten( $gray, 30% );
-	margin-bottom: 16px;
-	padding: 0;
-
-	&:hover {
-		box-shadow: 0 0 0 1px lighten( $gray, 15% );
-	}
-
-	@include breakpoint( "<660px" ) {
-		margin: 0 0 16px 0;
-	}
-
-	&.is-open {
-		box-shadow: 0 0 0 1px lighten( $gray, 10% );
-	}
-}
-
 .sharing-service-action {
 	position: absolute;
-		right: 16px;
-		top: 22px;
+		right: 64px;
+		top: 26px;
 
 	@include breakpoint( "<660px" ) {
 		right: 10px;
@@ -253,10 +247,6 @@ $color-print: #f8f8f8;
 
 .sharing-service__content {
 	position: relative;
-	display: none;
-	padding: 15px 20px 20px 20px;
-	background: lighten( $gray, 30% );
-	border-top: 1px solid lighten( $gray, 20% );
 
 	&.is-placeholder {
 		height: 180px;
@@ -292,7 +282,7 @@ $color-print: #f8f8f8;
 	float: left;
 	height: 42px;
 	padding-top: 10px;
-	margin: 0 15px 0 32px;
+	margin: 0 15px 0 0;
 	text-align: center;
 	width: 50px;
 	border-radius: 4px;
@@ -343,19 +333,15 @@ $color-print: #f8f8f8;
 
 .sharing-service__name {
 	clear: none;
-	font-size: 20px;
 }
 
 .sharing-service__description {
 	margin: 0;
 	color: darken( $gray, 20% );
+	font-size: 14px;
 
 	@include breakpoint( "<480px" ) {
 		display: none;
-	}
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 30px;
 	}
 }
 
@@ -369,7 +355,7 @@ $color-print: #f8f8f8;
 
 .sharing-service__content-toggle {
 	position: absolute;
-		left: 12px;
+		right: 16px;
 		top: 30px;
 	font-size: 22px;
 	color: #aeb8be;
@@ -380,20 +366,12 @@ $color-print: #f8f8f8;
 	}
 }
 
-.sharing-service.is-placeholder .sharing-service__icon,
+.sharing-service.is-placeholder .gridicons-share,
 .sharing-service.is-placeholder .sharing-service__name,
 .sharing-service.is-placeholder .sharing-service__description {
 	background-color: lighten( $gray, 30% );
+	color: lighten( $gray, 30% );
 	animation: loading-fade 1.6s ease-in-out infinite;
-}
-
-.sharing-service.is-placeholder .sharing-service__name,
-.sharing-service.is-placeholder .sharing-service__description {
-	margin-left: 97px;
-
-	@include breakpoint( "<660px" ) {
-		margin-left: 65px;
-	}
 }
 
 .sharing-service.is-placeholder .sharing-service__name {
@@ -401,6 +379,8 @@ $color-print: #f8f8f8;
 	margin-bottom: 4px;
 	height: 22px;
 	width: 20%;
+	position: absolute;
+	left: 80px;
 
 	@include breakpoint( "<660px" ) {
 		width: 30%;
@@ -411,21 +391,19 @@ $color-print: #f8f8f8;
 	margin-top: 8px;
 	margin-bottom: 2px;
 	height: 16px;
-	width: 45%;
+	width: 150%;
+	position: absolute;
+	left: 0px;
+	top: 16px;
 }
 
 .sharing-connection {
 	position: relative;
 	background: transparent;
 	box-shadow: none;
-	border-bottom: 1px solid lighten( $gray, 30% );
 	list-style-type: none;
 	margin-bottom: 0;
 	padding: 8px 0;
-
-	&:first-child {
-		border-top: 1px solid lighten( $gray, 30% );
-	}
 
 	&.disabled {
 		opacity: 0.4;
@@ -434,10 +412,10 @@ $color-print: #f8f8f8;
 
 .sharing-connection__account-avatar {
 	position: absolute;
-	left: 0;
+	left: 5px;
 	top: 8px;
-	height: 40px;
-	width: 40px;
+	height: 36px;
+	width: 36px;
 	border: 1px solid $gray-light;
 	color: white;
 
@@ -447,7 +425,7 @@ $color-print: #f8f8f8;
 }
 
 .sharing-connection__account-status {
-	padding: 10px 90px 10px 48px;
+	padding: 10px 90px 10px 56px;
 
 	&.is-shareable {
 		padding-top: 0;
