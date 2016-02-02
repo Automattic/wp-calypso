@@ -65,6 +65,10 @@ module.exports = React.createClass( {
 			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label
 		}
 
+		if ( abtest( 'periodLabelFree' ) === 'withAdv' && plan.raw_price == 0 ){
+			periodLabel = this.translate ('with some advertising');
+		}
+
 		if ( site && site.jetpack ) {
 			return (
 				<JetpackPlanPrice
