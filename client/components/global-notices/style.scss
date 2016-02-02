@@ -22,7 +22,7 @@
 		max-width: calc( 100% - 48px );
 	}
 
-	@include breakpoint( ">1040" ) {
+	@include breakpoint( ">1040px" ) {
 			right: 48px;
 	}
 }
