@@ -11,6 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AllSites from 'my-sites/all-sites';
+import analytics from 'analytics';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'my-sites/site';
@@ -18,6 +19,7 @@ import SitePlaceholder from 'my-sites/site/placeholder';
 import Search from 'components/search';
 import userModule from 'lib/user';
 import config from 'config';
+import PreferencesData from 'components/data/preferences-data';
 
 const user = userModule();
 
@@ -78,10 +80,14 @@ export default React.createClass( {
 		this.refs.siteSearch.blur();
 	},
 
+	recordAddNewSite() {
+		analytics.tracks.recordEvent( 'calypso_add_new_wordpress_click' );
+	},
+
 	addNewSite() {
 		return (
 			<span className="site-selector__add-new-site">
-				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
+				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' } onClick={ this.recordAddNewSite }>
 					<Gridicon icon="add-outline" /> { this.translate( 'Add New WordPress' ) }
 				</Button>
 			</span>
@@ -113,10 +119,6 @@ export default React.createClass( {
 	},
 
 	shouldShowGroups() {
-		if ( ! config.isEnabled( 'show-site-groups' ) ) {
-			return false;
-		}
-
 		return this.props.groups && user.get().visible_site_count > 14;
 	},
 
@@ -247,20 +249,22 @@ export default React.createClass( {
 		} );
 
 		return (
-			<div className={ selectorClass }>
-				<Search
-					ref="siteSearch"
-					onSearch={ this.onSearch }
-					autoFocus={ this.props.autoFocus }
-					disabled={ ! this.props.sites.initialized }
-				/>
-				<div className="site-selector__sites" ref="selector">
-					{ this.renderAllSites() }
-					{ this.renderRecentSites() }
-					{ this.renderSites() }
+			<PreferencesData>
+				<div className={ selectorClass }>
+					<Search
+						ref="siteSearch"
+						onSearch={ this.onSearch }
+						autoFocus={ this.props.autoFocus }
+						disabled={ ! this.props.sites.initialized }
+					/>
+					<div className="site-selector__sites" ref="selector">
+						{ this.renderAllSites() }
+						{ this.renderRecentSites() }
+						{ this.renderSites() }
+					</div>
+					{ this.props.showAddNewSite && this.addNewSite() }
 				</div>
-				{ this.props.showAddNewSite && this.addNewSite() }
-			</div>
+			</PreferencesData>
 		);
 	}
 } );

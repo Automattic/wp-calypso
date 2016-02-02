@@ -8,13 +8,17 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var abtest = require( 'lib/abtest' ).abtest,
+	analytics = require( 'analytics' ),
+	testFeatures = require( 'lib/features-list/test-features' ),
 	Gridicon = require( 'components/gridicon' ),
+	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
 	PlanPrice = require( 'components/plans/plan-price' ),
 	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
-	Card = require( 'components/card' );
+	Card = require( 'components/card' ),
+	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' );
 
 module.exports = React.createClass( {
 	displayName: 'Plan',
@@ -37,6 +41,7 @@ module.exports = React.createClass( {
 
 	getDescription: function() {
 		var comparePlansUrl, siteSuffix;
+		const { plan, site } = this.props;
 
 		if ( this.isPlaceholder() ) {
 			return (
@@ -48,16 +53,44 @@ module.exports = React.createClass( {
 			);
 		}
 
-		siteSuffix = this.props.site ? this.props.site.slug : '';
+		siteSuffix = site ? site.slug : '';
 		comparePlansUrl = this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
 
+		if ( site && site.jetpack ) {
+			return (
+				<JetpackPlanDetails plan={ plan } />
+			);
+		}
+
 		return (
-			<div>
-				<p>{ this.props.plan.shortdesc }</p>
-				<a href={ comparePlansUrl } onClick={ this.handleLearnMoreClick }
-					className="plan__learn-more">{ this.translate( 'Learn more', { context: 'Find out more details about a plan' } ) }</a>
-			</div>
+			<WpcomPlanDetails
+				comparePlansUrl={ comparePlansUrl }
+				handleLearnMoreClick={ this.handleLearnMoreClick }
+				plan={ plan } />
 		);
+	},
+
+	getFeatureList: function() {
+		var features;
+
+		if ( this.isPlaceholder() ) {
+			return;
+		}
+
+		features = testFeatures[ this.props.plan.product_slug ].map( function( feature, i ) {
+			var classes = classNames( 'plan__feature', {
+				'is-plan-specific': feature.planSpecific
+			} );
+
+			return (
+				<li className={ classes } key={ i }>
+					<Gridicon icon="checkmark" size={ 12 } />
+					{ feature.text }
+				</li>
+			);
+		} );
+
+		return <ul className="plan__features">{ features }</ul>;
 	},
 
 	showDetails: function() {
@@ -205,7 +238,7 @@ module.exports = React.createClass( {
 				</PlanHeader>
 				<div className="plan__plan-expand">
 					<div className="plan__plan-details">
-						{ this.getDescription() }
+						{ abtest( 'plansFeatureList' ) === 'list' ? this.getFeatureList() : this.getDescription() }
 					</div>
 					{ this.getPlanActions() }
 				</div>

@@ -144,7 +144,13 @@ const SinglePlugin = React.createClass( {
 	},
 
 	getPreviousListUrl() {
-		return this.props.prevPath + '/' +
+		const splitPluginUrl = this.props.prevPath.split( '/' + this.props.pluginSlug + '/' );
+		let previousPath = this.props.prevPath;
+
+		if ( splitPluginUrl[1] ) { // Strip out the site url part.
+			previousPath = splitPluginUrl[0];
+		}
+		return previousPath + '/' +
 			( this.props.siteUrl || '' ) +
 			( this.props.prevQuerystring ? '?' + this.props.prevQuerystring : '' );
 	},

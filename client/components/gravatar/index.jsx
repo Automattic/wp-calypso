@@ -27,6 +27,12 @@ module.exports = React.createClass( {
 		};
 	},
 
+	getInitialState: function() {
+		return {
+			failedToLoad: false
+		}
+	},
+
 	_getResizedImageURL: function( imageURL ) {
 		var parsedURL, query;
 
@@ -44,18 +50,24 @@ module.exports = React.createClass( {
 		return url.format( parsedURL );
 	},
 
+	onError: function() {
+		this.setState( { failedToLoad: true } );
+	},
+
 	render: function() {
 		const size = this.props.size;
 
 		if ( ! this.props.user ) {
 			return <span className="gravatar is-placeholder" style={ { width: size, height: size } } />;
+		} else if ( this.state.failedToLoad ) {
+			return <span className="gravatar is-missing" />;
 		}
 
 		const alt = this.props.alt || this.props.user.display_name;
 		const avatarURL = this._getResizedImageURL( safeImageURL( this.props.user.avatar_URL ) );
 
 		return (
-			<img alt={ alt } className="gravatar" src={ avatarURL } width={ size } height={ size } />
+			<img alt={ alt } className="gravatar" src={ avatarURL } width={ size } height={ size } onError={ this.onError } />
 		);
 	}
 

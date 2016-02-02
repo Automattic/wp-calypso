@@ -2,16 +2,19 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:credit-card-delete' );
+	debug = require( 'debug' )( 'calypso:me:credit-card-delete' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
  */
 var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
 	wpcom = require( 'lib/wp' ),
-	notices = require( 'notices' );
+	successNotice = require( 'state/notices/actions' ).successNotice,
+	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-module.exports = React.createClass( {
+const CreditCardDelete = React.createClass( {
 
 	displayName: 'CreditCardDelete',
 
@@ -31,7 +34,7 @@ module.exports = React.createClass( {
 	handleDeleteCard: function( error, response ) {
 		if ( error && error.error ) {
 			debug( error.error, error.message );
-			notices.error( error.message );
+			this.props.errorNotice( error.message );
 			this.setState( {
 				deleting: false
 			} );
@@ -39,7 +42,7 @@ module.exports = React.createClass( {
 
 		if ( response ) {
 			debug( 'Card deleted sucessfully' );
-			notices.success( this.translate( 'Card deleted successfully' ) );
+			this.props.successNotice( this.translate( 'Card deleted successfully' ) );
 
 			// Update the list of cards
 			this.props.cards.fetch();
@@ -69,3 +72,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+)( CreditCardDelete );

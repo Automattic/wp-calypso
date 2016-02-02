@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { removeLocaleFromPath, getLanguage } from 'lib/i18n-utils';
+import { removeLocaleFromPath, getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
 
 describe( 'i18n-utils', function() {
 	describe( 'removeLocaleFromPath', function() {
@@ -26,7 +26,30 @@ describe( 'i18n-utils', function() {
 		it( 'should not remove the :step part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
 		} );
+
+		it( 'should not remove keys from an invite', function() {
+			assert.equal(
+				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/es' ),
+				'/accept-invite/site.wordpress.com/123456'
+			);
+			assert.equal(
+				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
+				'/accept-invite/site.wordpress.com/123456/123456/123456'
+			);
+		} );
 	} );
+
+	describe( 'getLocaleFromPath', function() {
+		it( 'should return undefined when no locale at end of path', function() {
+			assert.equal( getLocaleFromPath( '/start' ), undefined );
+		} );
+
+		it( 'should return locale string when at end of path', function() {
+			assert.equal( getLocaleFromPath( '/start/es' ), 'es' );
+			assert.equal( getLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ), 'es' );
+		} );
+	} );
+
 	describe( 'getLanguage', function() {
 		it( 'should return a language', function() {
 			expect( getLanguage( 'ja' ).langSlug ).to.equal( 'ja' );

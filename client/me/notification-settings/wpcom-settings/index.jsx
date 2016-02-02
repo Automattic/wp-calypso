@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import notices from 'notices';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -21,6 +22,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 /**
  * Module variables
@@ -31,7 +33,7 @@ const options = {
 	community: 'community'
 };
 
-export default React.createClass( {
+const WPCOMNotifications = React.createClass( {
 	displayName: 'WPCOMNotifications',
 
 	getInitialState() {
@@ -53,11 +55,11 @@ export default React.createClass( {
 		const state = store.getStateFor( 'wpcom' );
 
 		if ( state.error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
@@ -128,3 +130,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+)( WPCOMNotifications );

@@ -428,7 +428,7 @@ module.exports = function() {
 		}
 	} );
 
-	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?', function( req, res ) {
+	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in ) {
 			// the user is probably logged in
 			renderLoggedInRoute( req, res );

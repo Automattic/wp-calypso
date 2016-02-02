@@ -25,6 +25,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import config from 'config';
 import userUtils from 'lib/user/utils';
+import LocaleSuggestions from 'signup/locale-suggestions';
 
 /**
  * Module variables
@@ -60,7 +61,6 @@ let InviteAccept = React.createClass( {
 
 	refreshUser() {
 		this.setState( { user: userModule.get() } );
-		this.refreshMatchEmailError();
 	},
 
 	refreshInvite() {
@@ -75,12 +75,11 @@ let InviteAccept = React.createClass( {
 			} );
 		}
 		this.setState( { invite, error } );
-		this.refreshMatchEmailError();
 	},
 
-	refreshMatchEmailError() {
+	isMatchEmailError() {
 		const { invite, user } = this.state;
-		this.setState( { matchEmailError: invite.forceMatchingEmail && user.email !== invite.sentTo } );
+		return invite && invite.forceMatchingEmail && user.email !== invite.sentTo;
 	},
 
 	isInvalidInvite() {
@@ -126,8 +125,18 @@ let InviteAccept = React.createClass( {
 		userUtils.logout( window.location.href );
 	},
 
+	localeSuggestions() {
+		if ( this.state.user || ! this.props.locale ) {
+			return;
+		}
+
+		return (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+		);
+	},
+
 	renderForm() {
-		const { invite, user, matchEmailError } = this.state;
+		const { invite, user } = this.state;
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
@@ -139,8 +148,9 @@ let InviteAccept = React.createClass( {
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: matchEmailError
+			forceMatchingEmail: this.isMatchEmailError()
 		};
+
 		return user
 			? <LoggedIn { ... props } user={ this.state.user } />
 			: <LoggedOut { ... props } />;
@@ -148,6 +158,22 @@ let InviteAccept = React.createClass( {
 
 	renderError() {
 		debug( 'Rendering error: ' + JSON.stringify( this.state.error ) );
+		if ( this.state.error ) {
+			const props = {
+				line: this.translate( 'Would you like to accept the invite with a different account?' ),
+				action: this.translate( 'Switch Accounts' ),
+				actionURL: config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href ),
+				illustration: '/calypso/images/drake/drake-whoops.svg'
+			};
+			switch ( this.state.error.error ) {
+				case 'already_member':
+					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a member of this blog.' ) } /> );
+					break;
+				case 'already_subscribed':
+					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a follower on this blog.' ) } /> );
+					break;
+			}
+		}
 		return (
 			<EmptyContent
 				title={ this.getErrorTitle() }
@@ -159,11 +185,16 @@ let InviteAccept = React.createClass( {
 	renderNoticeAction() {
 		const { user, invite } = this.state;
 
-		if ( ! user ) {
+		if ( ! user && ! invite.knownUser ) {
 			return;
 		}
 
-		let props;
+		let props,
+			actionText = this.translate( 'Switch Accounts' );
+
+		if ( ! user ) {
+			actionText = this.translate( 'Sign In' );
+		}
 
 		if ( invite.knownUser ) {
 			props = { href: this.signInLink() };
@@ -173,27 +204,30 @@ let InviteAccept = React.createClass( {
 
 		return (
 			<NoticeAction { ... props } >
-				{ this.translate( 'Switch Accounts' ) }
+				{ actionText }
 			</NoticeAction>
 		);
 	},
 
 	render() {
-		const classes = classNames( 'invite-accept', { 'is-error': !! this.isInvalidInvite() } ),
-			{ invite, matchEmailError } = this.state;
+		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
+			{ invite, user } = this.state;
 
 		return (
-			<div className={ classes }>
-				{ matchEmailError &&
-					<Notice
-						text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
-						status="is-error"
-						showDismiss={ false } >
-						{ this.renderNoticeAction() }
-					</Notice>
-				}
-				{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
-				{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
+			<div className="invite-accept">
+				{ this.localeSuggestions() }
+				<div className={ formClasses }>
+					{ this.isMatchEmailError() && user &&
+						<Notice
+							text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+							status="is-error"
+							showDismiss={ false } >
+							{ this.renderNoticeAction() }
+						</Notice>
+					}
+					{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
+				</div>
 			</div>
 		);
 	}

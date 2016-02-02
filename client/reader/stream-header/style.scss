@@ -1,11 +1,5 @@
 @include breakpoint( "<660px" ) {
 	.stream-header {
-		margin-top: 24px;
-
-		.follow-button {
-			right: 10px;
-		}
-
 		.follow-button__label {
 			display: none;
 		}
@@ -137,10 +131,10 @@
 	.follow-button {
 		position: absolute;
 			top: 12px;
-			right: 24px;
+			right: 8px;
 
 		@include breakpoint( "<660px" ) {
-			right: 8px;
+			right: 0;
 		}
 	}
 }

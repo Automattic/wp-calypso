@@ -54,13 +54,22 @@ module.exports = {
 		defaultVariation: 'yearly'
 	},
 	plansUpgradeButton: {
-		datestamp: '20160118',
+		datestamp: '20160129',
 		variations: {
 			original: 50,
 			button: 50
 		},
 		defaultVariation: 'original'
 	},
+	plansSocialProof: {
+		datestamp: '20160202',
+		variations: {
+			mostPopular: 33,
+			bestValue: 33,
+			noTeaser: 34
+		},
+		defaultVariation: 'mostPopular'
+	},	
 	checkoutMasterbar: {
 		datestamp: '20160126',
 		variations: {
@@ -68,5 +77,29 @@ module.exports = {
 			minimal: 50
 		},
 		defaultVariation: 'original'
+	},
+	periodLabelFree: {
+		datestamp: '20160202',
+		variations: {
+			forLife: 50,
+			withAdv: 50
+		},
+		defaultVariation: 'forLife'
+	},
+	domainRegistrationCta: {
+		datestamp: '20160128',
+		variations: {
+			add: 50,
+			select: 50
+		},
+		defaultVariation: 'add'
+	},
+	plansFeatureList: {
+		datestamp: '20040202',
+		variations: {
+			list: 50,
+			description: 50
+		},
+		defaultVariation: 'description'
 	}
 };

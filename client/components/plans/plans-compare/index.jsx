@@ -161,6 +161,11 @@ var PlansCompare = React.createClass( {
 			return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
 		} );
 
+		// If showing Jetpack plans remove the first item (Free)
+		if ( site && site.jetpack ) {
+			plans.shift();
+		}
+
 		if ( this.props.features.hasLoadedFromServer() && (
 			this.props.isInSignup || ! this.props.selectedSite || ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) )
 		) {
@@ -220,6 +225,12 @@ var PlansCompare = React.createClass( {
 	},
 
 	render: function() {
+		var compareString = this.translate( 'Compare Plans' );
+
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
+			compareString = this.translate( 'Compare Options' );
+		}
+
 		return (
 			<div className={ this.props.className }>
 				{
@@ -228,7 +239,7 @@ var PlansCompare = React.createClass( {
 					: <SidebarNavigation />
 				}
 				<HeaderCake onClick={ this.goBack }>
-					{ this.translate( 'Compare Plans' ) }
+					{ compareString }
 				</HeaderCake>
 				<Card className="plans">
 					{ this.comparisonTable() }

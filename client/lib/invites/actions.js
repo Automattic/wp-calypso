@@ -51,7 +51,9 @@ export function fetchInvite( siteId, inviteKey ) {
 		} );
 
 		if ( error ) {
-			analytics.tracks.recordEvent( 'calypso_invite_validation_failure' );
+			analytics.tracks.recordEvent( 'calypso_invite_validation_failure', {
+				error: error.error
+			} );
 		}
 	} );
 }
@@ -68,7 +70,9 @@ export function createAccount( userData, invite, callback ) {
 					if ( error.message ) {
 						dispatch( errorNotice( error.message ) );
 					}
-					analytics.tracks.recordEvent( 'calypso_invite_account_creation_failed' );
+					analytics.tracks.recordEvent( 'calypso_invite_account_creation_failed', {
+						error: error.error
+					} );
 				} else {
 					analytics.tracks.recordEvent( 'calypso_invite_account_created' );
 				}
@@ -97,7 +101,9 @@ export function acceptInvite( invite, callback ) {
 					if ( error.message ) {
 						dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
 					}
-					analytics.tracks.recordEvent( 'calypso_invite_accept_failed' );
+					analytics.tracks.recordEvent( 'calypso_invite_accept_failed', {
+						error: error.error
+					} );
 				} else {
 					dispatch( successNotice( ... acceptedNotice( invite ) ) );
 					analytics.tracks.recordEvent( 'calypso_invite_accepted' );

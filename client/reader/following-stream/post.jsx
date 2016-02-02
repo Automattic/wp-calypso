@@ -36,6 +36,7 @@ var Card = require( 'components/card' ),
 	utils = require( 'reader/utils' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
+	EmbedHelper = require( 'reader/embed-helper' ),
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
@@ -153,12 +154,9 @@ var Post = React.createClass( {
 		this._parseEmoji();
 	},
 
-	getFeaturedSize: function( aspect, available ) {
+	getFeaturedSize: function( available ) {
 		available = available || this.getMaxFeaturedWidthSize();
-		return {
-			width: available + 'px',
-			height: Math.floor( available / aspect ) + 'px'
-		};
+		return this.featuredSizingStrategy( available );
 	},
 
 	featuredImageComponent: function( post ) {
@@ -182,11 +180,19 @@ var Post = React.createClass( {
 		//
 		useFeaturedEmbed = featuredEmbed &&
 			( ! featuredImage || ( featuredImage !== post.featured_image ) );
-		if ( useFeaturedEmbed && featuredEmbed.aspectRatio ) {
-			this.featuredAspect = featuredEmbed.aspectRatio;
+		if ( useFeaturedEmbed ) {
+			this.featuredSizingStrategy = EmbedHelper.getEmbedSizingFunction( featuredEmbed );
 		} else if ( featuredImage && post.canonical_image.width >= maxWidth ) {
-			this.featuredAspect = post.canonical_image.width / post.canonical_image.height;
-			featuredSize = this.getFeaturedSize( this.featuredAspect, maxWidth );
+			this.featuredSizingStrategy = function featuredImageSizingFunction( availible ) {
+				var aspectRatio = post.canonical_image.width / post.canonical_image.height;
+
+				return {
+					width: availible + 'px',
+					height: Math.floor( availible / aspectRatio ) + 'px'
+				};
+			};
+
+			featuredSize = this.getFeaturedSize( maxWidth );
 		}
 
 		return useFeaturedEmbed ?
@@ -212,7 +218,7 @@ var Post = React.createClass( {
 		}
 
 		if ( node ) {
-			assign( node.style, this.getFeaturedSize( this.featuredAspect ) );
+			assign( node.style, this.getFeaturedSize() );
 		}
 	},
 

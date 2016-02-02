@@ -10,6 +10,8 @@ import emailValidator from 'email-validator';
 import _debounce from 'lodash/function/debounce';
 import _map from 'lodash/collection/map';
 import _size from 'lodash/collection/size';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -35,12 +37,12 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import SitesDropdown from 'components/sites-dropdown';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 import _sites from 'lib/sites-list';
 import _user from 'lib/user';
@@ -53,7 +55,7 @@ const user = _user();
  */
 let debug = new Debug( 'calypso:me:account' );
 
-module.exports = React.createClass( {
+const Account = React.createClass( {
 
 	displayName: 'Account',
 
@@ -147,10 +149,10 @@ module.exports = React.createClass( {
 		this.props.userSettings.cancelPendingEmailChange( ( error, response ) => {
 			if ( error ) {
 				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
-				notices.error( this.translate( 'There was a problem canceling the email change. Please, try again.' ) );
+				this.props.errorNotice( this.translate( 'There was a problem canceling the email change. Please, try again.' ) );
 			} else {
 				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
-				notices.success( this.translate( 'The email change has been successfully canceled.' ) );
+				this.props.successNotice( this.translate( 'The email change has been successfully canceled.' ) );
 			}
 		} );
 	},
@@ -199,7 +201,7 @@ module.exports = React.createClass( {
 		this.props.username.change( username, action, ( error ) => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
-				notices.error( this.props.username.getValidationFailureMessage() );
+				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
 			} else {
 				this.markSaved();
 
@@ -628,3 +630,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+)( Account );

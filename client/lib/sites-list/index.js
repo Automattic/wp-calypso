@@ -29,6 +29,11 @@ module.exports = function() {
 				case 'FETCH_SITES':
 					_sites.fetch(); // refetch the sites from .com
 					break;
+				case 'TRANSACTION_STEP_SET':
+					if ( 'received-wpcom-response' === action.step.name && action.step.data ) {
+						_sites.updatePlans( action.step.data.purchases );
+					}
+					break;
 			}
 		} );
 	}

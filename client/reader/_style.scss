@@ -17,6 +17,22 @@
 	}
 }
 
+.reader__content,
+.reader__full-post-content {
+	sup, sub {
+		position: relative;
+		font-size: 0.83em;
+	}
+
+	sup {
+		top: -0.5em;
+	}
+
+	sub {
+		bottom: -0.5em;
+	}
+}
+
 .reader__site-name {
 	clear: none;
 	color: darken( $gray, 20 );
@@ -285,6 +301,10 @@
 
 	@include breakpoint( "<480px" ) {
 		margin-top: -72px;
+	}
+
+	.empty-content__illustration {
+		min-height: 100px;
 	}
 }
 

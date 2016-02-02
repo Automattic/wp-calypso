@@ -39,44 +39,54 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	getPrivacyProtection() {
-		if ( this.props.domain.hasPrivacyProtection ) {
-			const path = paths.domainManagementContactsPrivacy(
-				this.props.selectedSite.domain,
-				this.props.domain.name
-			);
-
-			return (
-				<a href={ path }>
-					<Notice
-						isCompact
-						status="is-success"
-						icon="lock">
-						{ this.translate( 'On', {
-							context: 'An icon label when Privacy Protection is enabled.'
-						} ) }
-					</Notice>
-				</a>
-			);
-		}
-
-		const path = paths.domainManagementPrivacyProtection(
-			this.props.selectedSite.domain,
-			this.props.domain.name
-		);
-
+	getLabel( { status, icon, message, href } ) {
 		return (
-			<a href={ path } onClick={ this.recordEvent( 'noneClick', this.props.domain ) }>
+			<a href={ href }>
 				<Notice
 					isCompact
-					status="is-warning"
-					icon="notice">
-					{ this.translate( 'None', {
-						context: 'An icon label when Privacy Protection is disabled.'
-					} ) }
+					status={ status }
+					icon={ icon }>{ message }
 				</Notice>
 			</a>
 		);
+	},
+
+	getPrivacyProtection() {
+		const { hasPrivacyProtection, privateDomain, name } = this.props.domain,
+			{ slug } = this.props.selectedSite,
+			privacyPath = paths.domainManagementContactsPrivacy( slug, name ),
+			transferPath = paths.domainManagementTransfer( slug, name );
+
+		if ( hasPrivacyProtection ) {
+			if ( privateDomain ) {
+				return this.getLabel( {
+					status: 'is-success',
+					icon: 'lock',
+					href: privacyPath,
+					message: this.translate( 'On', {
+						context: 'An icon label when Privacy Protection is enabled.'
+					} )
+				} );
+			} else {
+				return this.getLabel( {
+					status: 'is-warning',
+					icon: 'notice',
+					href: transferPath,
+					message: this.translate( 'Disabled for Transfer', {
+						context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
+					} )
+				} );
+			}
+		}
+
+		return this.getLabel( {
+			status: 'is-warning',
+			icon: 'notice',
+			href: privacyPath,
+			message: this.translate( 'None', {
+				context: 'An icon label when Privacy Protection is not purchased by the user.'
+			} )
+		} );
 	},
 
 	handlePaymentSettingsClick() {
@@ -87,7 +97,7 @@ const RegisteredDomain = React.createClass( {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			selectedSite={ this.props.selectedSite }
-			ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'newDomainsWithPrimary', 'newDomains' ] } />;
+			ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'newDomainsWithPrimary', 'newDomains' ] }/>;
 	},
 
 	getVerticalNav() {
@@ -190,7 +200,7 @@ const RegisteredDomain = React.createClass( {
 						</Property>
 
 						<SubscriptionSettings
-							onClick={ this.handlePaymentSettingsClick } />
+							onClick={ this.handlePaymentSettingsClick }/>
 					</Card>
 				</div>
 

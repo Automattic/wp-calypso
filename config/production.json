@@ -80,9 +80,9 @@
 		"reader/recommendations": true,
 		"ad-tracking": true,
 		"desktop-promo": true,
-		"perfmon": false,
+		"perfmon": true,
 		"mailing-lists/unsubscribe": true,
-		"accept-invite": false
+		"accept-invite": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",

@@ -373,7 +373,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div>
+			<div className={ this.state.fetchingSettings ? 'is-loading' : '' }>
 				<SectionHeader label={ this.translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }

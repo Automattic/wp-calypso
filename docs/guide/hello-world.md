@@ -8,7 +8,7 @@ Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your bro
 
 ## Adding a new section
 
-Sections are usually bigger areas of the application that have their own chunk of code, loaded asyncronously when its URLs is hit.
+Sections are usually bigger areas of the application that have their own chunk of code, loaded asynchronously when its URLs are hit.
 
 Creating a new section is composed of five steps:
 

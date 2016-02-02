@@ -242,10 +242,15 @@ assign( FeedStream.prototype, {
 		return date;
 	},
 
-	hasRecentError: function() {
+	/**
+	 * Checks if an error has occurred in the past minute.
+	 *
+	 * @param {string} errorType - Error type to check. If not provided, we'll check for errors of any type.
+	 */
+	hasRecentError: function( errorType ) {
 		var aMinuteAgo = Date.now() - ( 60 * 1000 );
 		return this.errors.some( function( error ) {
-			return error.timestamp && error.timestamp > aMinuteAgo;
+			return ( error.timestamp && error.timestamp > aMinuteAgo ) && ( ! errorType || errorType === error.error );
 		} );
 	},
 
