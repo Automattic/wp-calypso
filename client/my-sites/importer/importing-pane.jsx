@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import has from 'lodash/object/has';
 import omit from 'lodash/object/omit';
 
 /**
@@ -57,13 +58,17 @@ const hasProgressInfo = progress => {
 		return false;
 	}
 
-	const types = Object.keys( progress ).map( k => progress[ k ] );
+	const types = Object
+		.keys( progress )
+		.map( k => progress[ k ] )
+		.filter( ( { total } ) => total > 0 );
+
 	if ( ! types.length ) {
 		return false;
 	}
 
 	const firstType = types.shift();
-	if ( ! firstType.completed ) {
+	if ( ! has( firstType, 'completed' ) ) {
 		return false;
 	}
 
