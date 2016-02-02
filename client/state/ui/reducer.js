@@ -11,6 +11,7 @@ import {
 	SET_SECTION
 } from 'state/action-types';
 import editor from './editor/reducer';
+import reader from './reader/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -84,5 +85,6 @@ export default combineReducers( {
 	chunkName,
 	selectedSiteId,
 	recentlySelectedSiteIds,
-	editor
+	editor,
+	reader
 } );

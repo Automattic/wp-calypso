@@ -1,10 +1,15 @@
 // Reader Sidebar
 .is-section-reader .sidebar {
 
+	overflow-x: hidden;
+
 	.sidebar__menu {
+		margin-bottom: 8px;
+
 		.selected {
 			.menu-link-icon,
-			.sidebar-dynamic-menu__action-icon {
+			.sidebar__menu-action .gridicon,
+			.sidebar-dynamic-menu-action-icon {
 				fill: $white;
 			}
 
@@ -20,7 +25,7 @@
 				fill: darken( $gray, 20% );
 			}
 
-			.menu-link-text {
+			.sidebar__menu-item-label, .menu-link-text {
 				color: $gray-dark;
 			}
 
@@ -31,55 +36,194 @@
 		}
 	}
 
-	.sidebar-streams {
-	}
-
-	.sidebar-dynamic-menu__list,
-	.sidebar-dynamic-menu__tag,
-	.sidebar-dynamic-menu__explore {
-		a:first-child {
-			padding: 8px 16px 8px 24px;
-		}
-
-		a.add-new {
-			margin-top: 5px;
-		}
+	.is-togglable {
 
 		@include breakpoint( "<660px" ) {
-			a:first-child {
-				padding: 18px 16px 18px 24px;
+			margin-top: 0;
+		}
+
+		.sidebar__heading {
+			margin: 0;
+			padding: 10px 16px 10px 55px;
+			cursor: pointer;
+			position: relative;
+			transition: background-color 0.15s ease-in-out,
+				box-shadow 0.15s ease-in-out;
+
+			.gridicon {
+				top: 10px;
+				left: 20px;
+				height: 16px; // Smaller than recommended for gridicon, but works here
+				transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 			}
 
-			a.add-new {
+			.count {
+				margin-left: 8px;
+			}
+
+			&:hover {
+				color: $blue-medium;
+				background-color: $gray-light;
+
+				.gridicon {
+					fill: $blue-medium;
+				}
+			}
+		}
+
+		.sidebar__menu-list,
+		.sidebar__menu-empty {
+			height: 0;
+			overflow: hidden;
+		}
+
+		.sidebar__menu-item {
+			transition: transform 0.15s cubic-bezier(0.230, 1.000, 0.320, 1.000),
+				opacity 0.15s ease-in-out;
+			transition-delay: 0.05s;
+			opacity: 0;
+			transform: translateY( -100px );
+		}
+
+		&.is-toggle-open {
+			.sidebar__heading {
+				background-color: $gray-light;
+				box-shadow: 0 1px 0 lighten( $gray, 20 ),
+					0 -1px 0 lighten( $gray, 20 );
+
+				.gridicon {
+					transform: rotate( 180deg );
+				}
+			}
+
+			.sidebar__menu-add-button {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+			}
+
+			.sidebar__menu-list,
+			.sidebar__menu-empty {
+				height: auto;
+				padding-top: 8px;
+				padding-bottom: 8px;
+			}
+
+			.sidebar__menu-item {
+				opacity: 1;
+				transform: translateY( 0 );
+			}
+		}
+
+		.is-add-open {
+			.sidebar__menu-add {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateX( 0 );
+			}
+		}
+	}
+
+	.sidebar__menu-empty,
+	.sidebar__menu-empty:hover {
+		padding-right: 32px;
+		padding-left: 55px;
+		font-size: 13px;
+		color: $gray-dark;
+		background-color: transparent !important; // needs to be more specific
+	}
+
+	.sidebar__menu-item {
+		a.add-new {
+			margin-top: 5px;
+
+			@include breakpoint( "<660px" ) {
 				margin-top: 10px;
 			}
 		}
 	}
 
-	.sidebar-dynamic-menu__add {
-		padding: 8px;
+	.sidebar__menu-item-label {
+		padding: 8px 16px 8px 55px;
 
-		.gridicon {
-			top: 14px;
+		@include breakpoint( "<660px" ) {
+			padding: 18px 16px 18px 24px;
 		}
 	}
 
-	.sidebar-dynamic-menu__add-input {
-		font-size: 13px;
-		padding-left: 16px;
+	.sidebar__menu-add-button {
+		position: absolute;
+			top: 7px;
+			right: 8px;
+		border-width: 1px;
+		border-color: lighten( $gray, 20% );
+		padding: 6px 7px;
+		border-radius: 3px;
+		text-transform: none;
+
+		// Disabled by default
+		opacity: 0;
+		transform: translateX( -20px );
+		pointer-events: none;
+		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		transition-delay: 0.05s;
 	}
 
-	.sidebar-dynamic-menu__action {
+	.sidebar__menu-add {
+		opacity: 0;
+		//transform: translateX( 100px );
+		transition: all 0.15s ease-in;
+		pointer-events: none;
+		padding: 0;
+		position: absolute;
+			top: -1px;
+			left: -1px;
+			right: -1px;
+
+		input {
+			font-size: 13px;
+			padding: 10px 24px 9px;
+		}
+
+		.gridicon {
+			cursor: pointer;
+			position: absolute;
+				top: 0;
+				right: 0;
+				left: auto;
+			padding: 8px 13px;
+		}
+	}
+
+	.selected {
+		.sidebar__menu-action {
+			.gridicon {
+				fill: #fff !important;
+			}
+		}
+	}
+
+	.sidebar__menu-action {
 		position: absolute;
 			top: 3px;
 			right: 8px;
-	    line-height: 15px;
+		line-height: 15px;
 		padding: 3px 4px 2px 4px;
 
 		.gridicon {
 			position: relative;
 				top: 0;
 				left: auto;
+			fill: $gray !important; // this needs to be more specific
+		}
+
+
+		&:hover {
+			cursor: pointer;
+
+			.gridicon {
+				fill: $alert-red !important; // this needs to be more specific
+			}
 		}
 
 		@include breakpoint( "<660px" ) {
@@ -91,14 +235,8 @@
 		}
 	}
 
-	.sidebar-dynamic-menu__action-label {
+	.sidebar__menu-action-label,
+	.sidebar-dynamic-menu-action_label {
 		display: none;
 	}
-
-	// Sidebar Activity Items
-	// My Comments
-	.sidebar-activity__comments {}
-
-	// My Likes
-	.sidebar-activity__likes {}
 }
