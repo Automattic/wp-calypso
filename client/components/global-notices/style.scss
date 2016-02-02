@@ -22,7 +22,7 @@
 		max-width: calc( 100% - 48px );
 	}
 
-	@include breakpoint( ">1040" ) {
+	@include breakpoint( ">1040px" ) {
 			right: 48px;
 	}
 }
@@ -32,7 +32,6 @@
 	margin-bottom: 0;
 
 	@include breakpoint( ">660px" ) {
-		float: right;
 		border-radius: 20px;
 		display: inline-flex;
 		margin-bottom: 24px;
@@ -51,9 +50,6 @@
 
 	@include breakpoint( ">660px" ) {
 		padding: 9px 13px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 }
 
