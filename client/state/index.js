@@ -15,6 +15,7 @@ import plugins from './plugins/reducer';
 import sharing from './sharing/reducer';
 import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer'
+import support from './support/reducer'
 import themes from './themes/reducer';
 import users from './users/reducer';
 import currentUser from './current-user/reducer';
@@ -31,6 +32,7 @@ const reducer = combineReducers( {
 	sharing,
 	sites,
 	siteSettings,
+	support,
 	themes,
 	users,
 	currentUser,

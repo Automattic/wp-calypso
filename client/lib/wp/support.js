@@ -28,7 +28,7 @@ export default function wpcomSupport( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
 
 	return Object.assign( wpcom, {
-		changeUser: function( username, password, fn ) {
+		fetchSupportUserToken: function( username, password ) {
 			return wpcom.req.post(
 				{
 					apiVersion: '1.1',
@@ -36,20 +36,21 @@ export default function wpcomSupport( wpcom ) {
 				},
 				{
 					password: password
-				},
-				( error, response ) => {
-					if ( ! error ) {
-						supportUser = response.username;
-						supportToken = response.token;
-					}
-
-					fn( error, response );
 				}
 			);
 		},
-		restoreUser: function() {
-			supportUser = '';
-			supportToken = '';
+		/**
+		 * @param {String} supportUser  Support username
+		 * @param {String} supportToken Support token
+		 * @returns {bool}  true if the user and token were changed, false otherwise
+		 */
+		setSupportUserToken: function( newUser = '', newToken = '' ) {
+			if ( newUser !== supportUser || newToken !== supportToken ) {
+				supportUser = newUser;
+				supportToken = newToken;
+				return true;
+			}
+			return false;
 		},
 		request: ( params, callback ) => {
 			if ( supportUser && supportToken ) {
