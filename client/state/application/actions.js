@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { CONNECTION_LOST, CONNECTION_RESTORED, COMMAND_LINE_ARGUMENTS, COMMAND_LINE_ARGUMENTS_USED } from 'state/action-types';
+import {
+	CONNECTION_LOST,
+	CONNECTION_RESTORED,
+	COMMAND_LINE_ARGUMENTS,
+	COMMAND_LINE_ARGUMENTS_USED
+} from 'state/action-types';
 import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
 import i18n from 'lib/mixins/i18n';
 

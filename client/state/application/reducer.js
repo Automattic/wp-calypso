@@ -8,7 +8,12 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { CONNECTION_LOST, CONNECTION_RESTORED, COMMAND_LINE_ARGUMENTS, COMMAND_LINE_ARGUMENTS_USED } from 'state/action-types';
+import { 
+	CONNECTION_LOST,
+	CONNECTION_RESTORED,
+	COMMAND_LINE_ARGUMENTS,
+	COMMAND_LINE_ARGUMENTS_USED
+} from 'state/action-types';
 
 export function connectionState( state = 'CHECKING', action ) {
 	switch ( action.type ) {
