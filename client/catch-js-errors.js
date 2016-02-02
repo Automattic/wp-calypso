@@ -64,13 +64,20 @@
 		xhr.send( params );
 	}
 
-	if ( isLocalStorageNameSupported() && ( localStorage.getItem( 'log-errors' ) !== undefined && localStorage.getItem( 'log-errors' ) === 'true' ) || Math.random() <= 0.01 ) {
-		localStorage.setItem( 'log-errors', true );
+	if ( isLocalStorageNameSupported() ) {
+		// Randomly assign 1% of users to log errors
+		if ( localStorage.getItem( 'log-errors' ) === undefined && Math.random() <= 0.01 ) {
+			localStorage.setItem( 'log-errors', 'true' );
+		} else {
+			localStorage.setItem( 'log-errors', 'false' );
+		}
 
-		// set up handler to POST errors
-		window.onerror = debounce( function( message, scriptUrl, lineNumber, columnNumber, error ) {
-			sendErrorsToApi( message, scriptUrl, lineNumber, columnNumber, error );
-			savedWindowOnError();
-		}, 100 );
+		if ( localStorage.getItem( 'log-errors' ) !== undefined && localStorage.getItem( 'log-errors' ) === 'true' ) {
+			// set up handler to POST errors
+			window.onerror = debounce( function( message, scriptUrl, lineNumber, columnNumber, error ) {
+				sendErrorsToApi( message, scriptUrl, lineNumber, columnNumber, error );
+				savedWindowOnError();
+			}, 100 );
+		}
 	}
 }() );
