@@ -3,15 +3,13 @@
 
 	z-index: 180;
 	position: fixed;
-		top: auto;
+		top: 47px;
 		right: 0;
-		bottom: 0;
 		left: 0;
 
 	@include breakpoint( ">660px" ) {
 		top: 47px + 16px;
 		right: 16px;
-		bottom: auto;
 		left: auto;
 	}
 
@@ -27,25 +25,20 @@
 
 .global-notices .notice {
 	display: flex;
-	margin-bottom: 0;
 
 	@include breakpoint( ">660px" ) {
 		border-radius: 20px;
 		display: inline-flex;
 		z-index: 180;
-		margin-bottom: 24px;
 	}
 }
 
 .global-notices .notice__icon {
-
-	@include breakpoint( ">660px" ) {
-		padding: 8px 0 8px 16px;
-	}
+	padding: 8px 0 8px 16px;
 }
 
 .global-notices .notice__text {
-	padding-left: 16px;
+	padding: 9px 16px;
 
 	@include breakpoint( ">660px" ) {
 		padding: 9px 13px;
@@ -53,8 +46,5 @@
 }
 
 .global-notices .notice__dismiss {
-
-	@include breakpoint( ">660px" ) {
-		padding: 8px 16px;
-	}
+	padding: 8px 16px;
 }
