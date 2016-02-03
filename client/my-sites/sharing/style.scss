@@ -780,12 +780,12 @@ $color-print: #f8f8f8;
 	&.is-top::after {
 		bottom: -7px;
 		border-top-width: 0;
-		border-left-width: 0  #{"/*rtl:ignore*/"};
+		border-left-width: 0;
 	}
 
 	&.is-bottom::after {
 		top: -7px;
-		border-right-width: 0  #{"/*rtl:ignore*/"};
+		border-right-width: 0;
 		border-bottom-width: 0;
 	}
 
