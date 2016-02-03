@@ -26,10 +26,6 @@ function getFlowName( parameters ) {
 		currentFlowName = currentFlowName( parameters.flowName );
 	}
 
-	if ( ! isFlowName( parameters.flowName ) && currentFlowName === defaultFlowName ) {
-		return defaultFlowName;
-	}
-
 	return currentFlowName;
 }
 
