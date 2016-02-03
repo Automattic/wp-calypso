@@ -12,8 +12,7 @@ var React = require( 'react' ),
  */
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	isOutsideCalypso = require( 'lib/url' ).isOutsideCalypso,
-	getSignupUrl = require( 'lib/themes/helpers' ).getSignupUrl;
+	isOutsideCalypso = require( 'lib/url' ).isOutsideCalypso;
 
 /**
  * Component
@@ -85,12 +84,7 @@ var ThemeMoreButton = React.createClass( {
 									onMouseOver={ this.focus }
 									key={ option.label }
 									href={ url }
-									target={ ( isOutsideCalypso( url ) &&
-										// We don't want to open a new tab for the signup flow
-										// TODO: Remove this hack once we can just hand over
-										// to Calypso's signup flow with a theme selected.
-										url !== getSignupUrl( this.props.theme ) )
-										? '_blank' : null }>
+									target={ isOutsideCalypso( url ) ? '_blank' : null }>
 									{ option.label }
 								</a>
 							);
