@@ -91,7 +91,6 @@ var ThemesLoggedOut = React.createClass( {
 					tier={ this.props.tier }
 					queryParams={ this.props.queryParams }
 					themesList={ this.props.themesList } />
-				/> }
 			</Main>
 		);
 	}
