@@ -152,7 +152,7 @@ The following state tree demonstrates how users, sites, and posts may be interre
 }
 ```
 
-### Container Components
+### Data Components
 
 First, if you haven't already, you should consider reading the following blog posts, as they help to explain the reasoning behind splitting data and visual concerns:
 
@@ -167,15 +167,13 @@ With that in mind, we typically have a few concerns when building a component th
 
 The first of these, ensuring that data is available, is one that we'd wish to eliminate. It is unfortunate that a developer should concern themselves with the fetching behavior of data, as it would be preferable instead that a component describe its data needs, and that the syncing/fetching behavior be handled behind the scenes automatically. Tools like [Relay](https://facebook.github.io/relay/) get us closer to this reality, though Relay has environment requirements that we cannot currently satisfy. For the time being, we must handle our own data fetching, but we should be conscious of a future in which fetching is not a concern for our components.
 
-Framed this way, we can consider two types of container components: connected components and fetching components.
+Framed this way, we can consider two types of data components: app components and query components.
 
-#### Connected components
+#### App components
 
-Separating visual and data concerns is a good mindset to have when approaching components, and whenever possible, we should strive to create reusable visual components which accept simple props for rendering. However, pragmatically it is unreasonable to assume that components will always be reused and that there's always a clear divide between the visual and data elements. As such, while we recommend creating purely visual components whenever possible, it is also reasonable to create components that are directly tied to the global application state. We call these "connected" components, and we use the [`react-redux` library](https://github.com/rackt/react-redux) to assist in creating bindings between React components and the store instance.
+An app component wraps a visual component, connecting it to the global application state. We use the [`react-redux` library](https://github.com/rackt/react-redux) to assist in creating bindings between React components and the Redux store instance.
 
-You may come to encounter the term "App Component", which is a specific subset of connected components tailored towards reusability between sections of the application. Not all components are intended to be reused, and we recommend being liberal with your usage of [`react-redux`'s `connect`](https://github.com/rackt/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options) function, with a granularity reflective of the data requirements of the component.
-
-Below is an example of a connected component. It retrieves an array of posts for a given site and passes the posts to the component for rendering. If you're unfamiliar with the stateless function syntax for declaring components, refer to the [React 0.14 upgrade guide](https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#stateless-functional-components) for more information.
+Below is an example of an app component. It retrieves an array of posts for a given site and passes the posts to the component for rendering. If you're unfamiliar with the stateless function syntax for declaring components, refer to the [React 0.14 upgrade guide](https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#stateless-functional-components) for more information.
 
 ```jsx
 function PostsList( { posts } ) {
@@ -195,10 +193,10 @@ export default connect( ( state, ownProps ) => {
 } )( PostsList );
 ```
 
-The `connect` function accepts two arguments, and they each serve a distinct purpose. Both pass props to the connected component, and are respectively used to provide data and handle behavior on behalf of the component.
+The `connect` function accepts two arguments, and they each serve a distinct purpose. Both pass props to the app component, and are respectively used to provide data and handle behavior on behalf of the component.
 
-1. `mapStateToProps`: A function which, given the store state, returns props to be passed to the connected component. This is used to satisfy the need to make data available to the component.
-2. `mapDispatchToProps`: A function which, given the store dispatch method, returns props to be passed to the connected component. This is used to satisfy the need to allow the component to update the store state.
+1. `mapStateToProps`: A function which, given the store state, returns props to be passed to the app component. This is used to satisfy the need to make data available to the component.
+2. `mapDispatchToProps`: A function which, given the store dispatch method, returns props to be passed to the app component. This is used to satisfy the need to allow the component to update the store state.
 
 As an example, consider a component which renders a Delete button for a given post. We want to display the post title as a label in the delete button, and allow the component to trigger the post deletion when clicked.
 
@@ -231,15 +229,17 @@ export default connect(
 
 At this point, you might observe that the visual elements rendered in `<PostDeleteButton />` aren't very specific to posts and could probably be reused in different contexts. This is a good observation to make, and in this case it might make sense to split the visual component to its own separate file (e.g. `client/components/delete-button/index.jsx`). You should try to identify these opportunities as often as possible. Since the `connect` wrapping function is detached from the component declaration in the file above, it should not be difficult to separate the two.
 
-#### Fetching components 
+Separating visual and data concerns is a good mindset to have when approaching components, and whenever possible, we should strive to create reusable visual components which accept simple props for rendering. However, pragmatically it is unreasonable to assume that components will always be reused and that there's always a clear divide between the visual and data elements. As such, while we recommend creating purely visual components whenever possible, it is also reasonable to create components that are directly tied to the global application state.
 
-Fetching components accept as few props as possible to describe the data needs of the context in which they're used. They are responsible for dispatching the actions that fetch the desired data from the WordPress.com REST API. They should neither accept nor render any children.
+#### Query components 
 
-The benefits of fetching components are that they (a) are reusable, (b) take advantage of React's lifecycle methods to ensure that data needs are kept in sync, and (c) can be used by [connected "App Components"](https://wpcalypso.wordpress.com/devdocs/app-components) to maintain their self-sufficiency. That they neither accept nor render children eliminates the need for ancestor components to concern themselves with the data needs of leaf components and [can be more performant](https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1137).
+Query components accept as few props as possible to describe the data needs of the context in which they're used. They are responsible for dispatching the actions that fetch the desired data from the WordPress.com REST API. They should neither accept nor render any children.
 
-When creating a component that needs to consume data, we can simply include a fetching component as a child of that component. Placement of a fetching component might vary depending upon your usage. Reusable components such as App Components should always render a fetching component as a child to ensure self-sufficiency. For components specific to a particular section, it may be overkill to render a fetching component for every connected component, in which case you may consider including the fetching component towards the top of the render hierarchy.
+The benefits of query components are that they (a) are reusable, (b) take advantage of React's lifecycle methods to ensure that data needs are kept in sync, and (c) can be used by app components to maintain their self-sufficiency. That they neither accept nor render children eliminates the need for ancestor components to concern themselves with the data needs of leaf components and [can be more performant](https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1137).
 
-Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/master/client/components/data/query-posts) as an example of a fetching component. New fetching components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from existing data components.
+When creating a component that needs to consume data, we can simply include a query component as a child of that component.
+
+Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/master/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
 
 ### Selectors
 
