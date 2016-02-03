@@ -22,12 +22,22 @@ export const localforageConfig = {
 	description: 'Calypso Storage'
 };
 
+function getInitialServerState() {
+	// Bootstrapped state from a server-render
+	if ( typeof window === 'object' && window.initialReduxState ) {
+		return window.initialReduxState;
+	}
+	return {};
+}
+
 function serialize( state ) {
 	return reducer( state, { type: SERIALIZE } );
 }
 
-function deserialize( state ) {
-	return reducer( state, { type: DESERIALIZE } );
+function deserialize( localforageState ) {
+	const serverState = getInitialServerState();
+	const mergedState = Object.assign( {}, localforageState, serverState );
+	return reducer( mergedState, { type: DESERIALIZE } );
 }
 
 function loadInitialState( initialState ) {
@@ -63,7 +73,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 			.then( reduxStoreReady );
 	} else {
 		debug( 'persist-redux is not enabled, building state from scratch' );
-		reduxStoreReady( createReduxStore() );
+		reduxStoreReady( createReduxStore( getInitialServerState() ) );
 	}
 }
 
