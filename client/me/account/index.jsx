@@ -612,7 +612,10 @@ const Account = React.createClass( {
 						</FormFieldset>
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
-						<ReactCSSTransitionGroup transitionName="account__username-form-toggle">
+						<ReactCSSTransitionGroup
+							transitionName="account__username-form-toggle"
+							transitionEnterTimeout={ 500 }
+							transitionLeaveTimeout={ 10 }>
 							{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
 						</ReactCSSTransitionGroup>
 					</form>

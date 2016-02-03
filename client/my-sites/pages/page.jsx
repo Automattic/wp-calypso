@@ -301,7 +301,10 @@ module.exports = React.createClass( {
 					{ this.getSendToTrashItem() }
 					{ this.popoverMoreInfo() }
 				</PopoverMenu>
-				<ReactCSSTransitionGroup transitionName="updated-trans">
+				<ReactCSSTransitionGroup
+					transitionName="updated-trans"
+					transitionEnterTimeout={ 300 }
+					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 			</CompactCard>

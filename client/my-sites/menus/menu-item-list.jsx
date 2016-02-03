@@ -357,7 +357,10 @@ var MenuItem = React.createClass( {
 
 		return (
 			<div>
-				<ReactCSSTransitionGroup transitionName="menus__droptarget-slidevertical">
+				<ReactCSSTransitionGroup
+					transitionName="menus__droptarget-slidevertical"
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ this.renderDropTarget( 'before' ) }
 				</ReactCSSTransitionGroup>
 
@@ -366,10 +369,16 @@ var MenuItem = React.createClass( {
 				{ this.renderNewItem( 'after' ) }
 				{ this.renderNewItem( 'child' ) }
 
-				<ReactCSSTransitionGroup transitionName="menus__droptarget-slidevertical">
+				<ReactCSSTransitionGroup
+					transitionName="menus__droptarget-slidevertical"
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ this.renderDropTarget( 'after' ) }
 				</ReactCSSTransitionGroup>
-				<ReactCSSTransitionGroup transitionName="menus__droptarget-slidevertical">
+				<ReactCSSTransitionGroup
+					transitionName="menus__droptarget-slidevertical"
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ this.renderDropTarget( 'child' ) }
 				</ReactCSSTransitionGroup>
 
