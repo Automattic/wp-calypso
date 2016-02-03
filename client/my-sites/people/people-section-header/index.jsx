@@ -69,4 +69,4 @@ export default React.createClass( {
 			</SectionHeader>
 		);
 	}
- } );
+} );

@@ -11,11 +11,12 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import RoleSelect from 'my-sites/people/role-select';
 import TokenField from 'components/token-field';
 import Button from 'components/button';
+import { sendInvites } from 'lib/invites/actions';
 
 /**
  * Module Variable
  */
-const debug = new Debug( 'calypso:people-section-header:invite-form' );
+const debug = new Debug( 'calypso:invite-people-form' );
 
 export default React.createClass( {
 	displayName: 'InviteForm',
@@ -34,7 +35,6 @@ export default React.createClass( {
 			usernamesOrEmails: [],
 			role: '',
 			message: '',
-			response: false,
 			sendingInvites: false
 		} );
 	},
@@ -44,7 +44,14 @@ export default React.createClass( {
 	},
 
 	submitForm() {
-		debug( 'Sending invites', this.state );
+		debug( 'Sending invites.', this.state );
+		this.setState( { sendingInvites: true } );
+		sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, this.handleResponse );
+	},
+
+	handleResponse( error, data ) {
+		debug( 'Request to send invites complete. Results:', error, data );
+		this.setState( this.resetState() );
 	},
 
 	render() {
