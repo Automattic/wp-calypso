@@ -21,6 +21,7 @@ var instance;
 /**
  * MenuItemTypes constructor
  *
+ * @return {MenuItemTypes} menu item type instance
  * @api public
  */
 function MenuItemTypes() {
@@ -64,71 +65,69 @@ MenuItemTypes.prototype.init = function( site ) {
 };
 
 /**
- * Returns an array of default item types
- *
- * @return {array} itemTypes
+ * set array of default item types
  */
 MenuItemTypes.prototype.initializeDefaultTypes = function() {
 	this._defaultItemTypes = [
-			{
-				name: 'page',
-				family: 'post_type',
-				icon: 'document',
-				renderer: 'renderPostOptions',
-				show: true,
-				label: i18n.translate( 'Page' ),
-				createLink: '//wordpress.com/page/' + this.site.ID  + '/new',
-				gaEventLabel: 'Page'
-			},
-			{
-				name: 'custom',
-				family: 'custom',
-				icon: 'link',
-				renderer: 'renderLinkOptions',
-				show: true,
-				label: i18n.translate( 'Link' ),
-				gaEventLabel: 'Link'
-			},
-			{
-				name: 'category',
-				family: 'taxonomy',
-				icon: 'category',
-				renderer: 'renderCategoryOptions',
-				show: true,
-				label: i18n.translate( 'Category' ),
-				createLink: this.site.options.admin_url + 'edit-tags.php?taxonomy=category',
-				gaEventLabel: 'Category'
-			},
-			{
-				name: 'post_tag',
-				family: 'taxonomy',
-				icon: 'tag',
-				contentsList: new TagsList( this.site.ID ),
-				renderer: 'renderTaxonomyOptions',
-				show: true,
-				label: i18n.translate( 'Tag' ),
-				createLink: this.site.options.admin_url + 'edit-tags.php?taxonomy=post_tag',
-				gaEventLabel: 'Tag'
-			},
-			{
-				name: 'post_format',
-				family: 'taxonomy',
-				icon: 'summary',
-				renderer: 'renderTaxonomyContents',
-				show: false,
-				label: i18n.translate( 'Post Format' ),
-				gaEventLabel: 'Post Format'
-			},
-			{
-				name: 'post',
-				family: 'post_type',
-				icon: 'standard',
-				renderer: 'renderPostOptions',
-				show: true,
-				label: i18n.translate( 'Post' ),
-				createLink: '//wordpress.com/post/' + this.site.ID  + '/new',
-				gaEventLabel: 'Post'
-			}
+		{
+			name: 'page',
+			family: 'post_type',
+			icon: 'document',
+			renderer: 'renderPostOptions',
+			show: true,
+			label: i18n.translate( 'Page' ),
+			createLink: '//wordpress.com/page/' + this.site.ID + '/new',
+			gaEventLabel: 'Page'
+		},
+		{
+			name: 'custom',
+			family: 'custom',
+			icon: 'link',
+			renderer: 'renderLinkOptions',
+			show: true,
+			label: i18n.translate( 'Link' ),
+			gaEventLabel: 'Link'
+		},
+		{
+			name: 'category',
+			family: 'taxonomy',
+			icon: 'category',
+			renderer: 'renderCategoryOptions',
+			show: true,
+			label: i18n.translate( 'Category' ),
+			createLink: this.site.options.admin_url + 'edit-tags.php?taxonomy=category',
+			gaEventLabel: 'Category'
+		},
+		{
+			name: 'post_tag',
+			family: 'taxonomy',
+			icon: 'tag',
+			contentsList: new TagsList( this.site.ID ),
+			renderer: 'renderTaxonomyOptions',
+			show: true,
+			label: i18n.translate( 'Tag' ),
+			createLink: this.site.options.admin_url + 'edit-tags.php?taxonomy=post_tag',
+			gaEventLabel: 'Tag'
+		},
+		{
+			name: 'post_format',
+			family: 'taxonomy',
+			icon: 'summary',
+			renderer: 'renderTaxonomyContents',
+			show: false,
+			label: i18n.translate( 'Post Format' ),
+			gaEventLabel: 'Post Format'
+		},
+		{
+			name: 'post',
+			family: 'post_type',
+			icon: 'standard',
+			renderer: 'renderPostOptions',
+			show: true,
+			label: i18n.translate( 'Post' ),
+			createLink: '//wordpress.com/post/' + this.site.ID + '/new',
+			gaEventLabel: 'Post'
+		}
 	];
 };
 

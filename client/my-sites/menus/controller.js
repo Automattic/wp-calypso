@@ -20,19 +20,25 @@ var sites = require( 'lib/sites-list' )(),
 	titleActions = require( 'lib/screen-title/actions' );
 
 var controller = {
-
 	menus: function( context ) {
 		var analyticsPageTitle = 'Menus',
 			basePath = route.sectionify( context.path ),
 			site = sites.getSelectedSite(),
 			baseAnalyticsPath;
 
-		if ( site && site.capabilities && ! site.capabilities.edit_theme_options ) {
+		if (
+			site &&
+			site.capabilities &&
+			! site.capabilities.edit_theme_options
+		) {
 			notices.error( i18n.translate( 'You are not authorized to manage settings for this site.' ) );
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
+		titleActions.setTitle(
+			i18n.translate( 'Menus', { textOnly: true } ),
+			{ siteID: context.params.site_id }
+		);
 
 		function renderJetpackUpgradeMessage() {
 			ReactDom.render(
@@ -74,7 +80,6 @@ var controller = {
 			document.getElementById( 'primary' )
 		);
 	}
-
 };
 
 module.exports = controller;

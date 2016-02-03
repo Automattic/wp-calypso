@@ -90,9 +90,11 @@ SitesList.prototype.fetch = function() {
 
 	this.fetching = true;
 	debug( 'getting SitesList from api' );
-	wpcom.me().sites( { site_visibility: siteVisiblity }, function( error, data ) {
-		if ( error ) {
-			debug( 'error fetching SitesList from api', error );
+	wpcom
+	.me()
+	.sites( { site_visibility: siteVisiblity }, function( err, data ) {
+		if ( err ) {
+			debug( 'err fetching SitesList from api', err );
 			this.fetching = false;
 			return;
 		}
@@ -701,10 +703,9 @@ SitesList.prototype.canUpdateFiles = function() {
  */
 SitesList.prototype.canManageSelectedOrAll = function() {
 	return this.getSelectedOrAll().some( function( site ) {
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			return true;
-		}
-		return false;
+		return site.capabilities && site.capabilities.manage_options
+			? true
+			: false;
 	} );
 };
 
@@ -714,11 +715,9 @@ SitesList.prototype.canManageSelectedOrAll = function() {
  */
 SitesList.prototype.canManageAnyJetpack = function() {
 	return this.getJetpack().some( function( site ) {
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			return true;
-		}
-
-		return false;
+		return site.capabilities && site.capabilities.manage_options
+			? true
+			: false;
 	} );
 };
 

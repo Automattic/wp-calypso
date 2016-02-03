@@ -8,11 +8,10 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var protectForm = require( 'lib/mixins/protect-form' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	assign = require( 'lodash/object/assign' ),
 	MenuName = require( './menu-name' ),
 	MenuItemList = require( './menu-item-list' ),
-	MenuDeleteButton = require ( './menu-delete-button' ),
+	MenuDeleteButton = require( './menu-delete-button' ),
 	MenuSaveButton = require( './menus-save-button' ),
 	analytics = require( 'analytics' );
 
@@ -68,7 +67,6 @@ var Menu = React.createClass( {
 		moveOp = this.getMoveOperation( x, y, item );
 
 		if ( moveOp && ! this.operationsEqual( moveOp, this.previousOp ) ) {
-
 			// prevent drop of item into its own subtree
 			if ( menuData.isAncestor( this.draggedItem, item ) ) {
 				return;
@@ -200,10 +198,11 @@ var Menu = React.createClass( {
 	},
 
 	renderAddTip: function() {
-		return ! this.getEditItem() ?
-			<div className="menus__add-item-footer-label">
-				{ this.translate( 'Add new item' ) }
-			</div> : null;
+		return ! this.getEditItem()
+			? <div className="menus__add-item-footer-label">
+					{ this.translate( 'Add new item' ) }
+				</div>
+			: null;
 	},
 
 	render: function() {
@@ -220,16 +219,17 @@ var Menu = React.createClass( {
 			);
 
 			menuItemList = (
-				<MenuItemList items={ this.props.selectedMenu.items }
-						setEditItem={ this.setEditItem }
-						getEditItem={ this.getEditItem }
-						moveState={ this.state.moveState }
-						doMoveItem={ this.doMoveItem }
-						addState={ this.state.addState }
-						doAddItem={ this.doAddItem }
-						confirmDeleteItem={ this.state.confirmDeleteItem }
-						setConfirmDeleteItem={ this.setConfirmDeleteItem }
-						dragDrop={ this.dragDrop } />
+				<MenuItemList
+					items={ this.props.selectedMenu.items }
+					setEditItem={ this.setEditItem }
+					getEditItem={ this.getEditItem }
+					moveState={ this.state.moveState }
+					doMoveItem={ this.doMoveItem }
+					addState={ this.state.addState }
+					doAddItem={ this.doAddItem }
+					confirmDeleteItem={ this.state.confirmDeleteItem }
+					setConfirmDeleteItem={ this.setConfirmDeleteItem }
+					dragDrop={ this.dragDrop } />
 			);
 		}
 
@@ -239,11 +239,12 @@ var Menu = React.createClass( {
 					{ menuName }
 					<div className="menus__menu-actions">
 						<MenuDeleteButton selectedMenu={ this.props.selectedMenu }
-								selectedLocation={ this.props.selectedLocation }
-								setBusy={ this.props.setBusy }
-								confirmDiscard={ this.props.confirmDiscard } />
+							selectedLocation={ this.props.selectedLocation }
+							setBusy={ this.props.setBusy }
+							confirmDiscard={ this.props.confirmDiscard } />
+
 						<MenuSaveButton menuData={ this.props.siteMenus }
-								selectedMenu={ this.props.selectedMenu } />
+							selectedMenu={ this.props.selectedMenu } />
 					</div>
 				</div>
 

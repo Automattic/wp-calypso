@@ -245,7 +245,8 @@ var Menus = React.createClass( {
 		if ( selectedMenu ) {
 			// Menu components should not persist beyond save, since item ids
 			// are reallocated on every save
-			menu = <Menu key={ selectedMenu.id + ' ' + ( selectedMenu.lastSaveTime || 0 ) }
+			menu = <Menu
+						key={ selectedMenu.id + ' ' + ( selectedMenu.lastSaveTime || 0 ) }
 						selectedMenu={ selectedMenu }
 						selectedLocation={ selectedLocation }
 						siteMenus={ this.props.siteMenus }
