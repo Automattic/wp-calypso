@@ -388,24 +388,13 @@ BusinessPlanDetails = React.createClass( {
 						description={ this.translate( 'WordPress.com Business includes a free domain for your site.' ) }
 						buttonText={ this.translate( 'Add Free Domain' ) }
 						href={ '/domains/add/' + this.props.selectedSite.slug } />
-					: null }
-
-				<PurchaseDetail
-					additionalClass="ecommerce"
-					title={ this.translate( 'Add eCommerce' ) }
-					description={ this.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
-					buttonText={ this.translate( 'Set Up eCommerce' ) }
-					href={ '/plugins/' + this.props.selectedSite.slug } />
-
-				{ ! showGetFreeDomainTip
-				? <PurchaseDetail
+				: <PurchaseDetail
 						additionalClass="live-chat"
 						title={ this.translate( 'Start a Live Chat' ) }
 						description={ this.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
 						buttonText={ this.translate( 'Talk to an Operator' ) }
 						href="//support.wordpress.com/live-chat/"
 						target="_blank" />
-					: null
 				}
 
 				<PurchaseDetail
