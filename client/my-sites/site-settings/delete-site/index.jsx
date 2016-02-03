@@ -19,7 +19,7 @@ var HeaderCake = require( 'components/header-cake' ),
 	Button = require( 'components/button' ),
 	Dialog = require( 'components/dialog' ),
 	config = require( 'config' ),
-	Gridicon = require ( 'components/gridicon' ),
+	Gridicon = require( 'components/gridicon' ),
 	SiteListActions = require( 'lib/sites-list/actions' );
 
 module.exports = React.createClass( {
@@ -43,6 +43,27 @@ module.exports = React.createClass( {
 
 	componentWillUnmount: function() {
 		this.props.sites.off( 'change', this._updateSite );
+	},
+
+	renderNotice: function() {
+		var site = this.state.site;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		return (
+			<Notice status="is-warning" showDismiss={ false }>
+				{ this.translate( '{{strong}}%(domain)s{{/strong}} will be unavailable in the future.', {
+					components: {
+						strong: <strong />
+					},
+					args: {
+						domain: site.domain
+					}
+				} ) }
+			</Notice>
+		);
 	},
 
 	render: function() {
@@ -113,16 +134,7 @@ module.exports = React.createClass( {
 				<ActionPanel>
 					<ActionPanelTitle>{ strings.deleteSite }</ActionPanelTitle>
 					<ActionPanelBody>
-						<Notice status="is-warning" showDismiss={ false }>
-							{ this.translate( '{{strong}}%(domain)s{{/strong}} will be unavailable in the future.', {
-								components: {
-									strong: <strong />
-								},
-								args: {
-									domain: site.domain
-								}
-							} ) }
-						</Notice>
+						{ this.renderNotice() }
 						<ActionPanelFigure>
 							<h3 className="delete-site__content-list-header">{ this.translate( 'These items will be deleted' ) }</h3>
 							<ul className="delete-site__content-list">
