@@ -47,7 +47,7 @@ export default React.createClass( {
 	},
 
 	handleNewPlan: function() {
-		handlePlanSelect( this.state.businessPlan, this.props.selectedSiteSlug );
+		handlePlanSelect( this.state.businessPlan );
 	},
 
 	render: function() {

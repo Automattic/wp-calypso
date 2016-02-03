@@ -30,7 +30,7 @@ function handlePlanSelect( cartItem ) {
 }
 
 function onSelectPlan( cartItem ) {
-	handlePlanSelect( cartItem, sites.getSelectedSite().slug );
+	handlePlanSelect( cartItem );
 }
 
 module.exports = {
