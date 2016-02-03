@@ -84,6 +84,13 @@ export function hasSidebar( state = true, action ) {
 	return state;
 }
 
+export function isFullScreen( state = false, action ) {
+	if ( action.type === SET_SECTION && action.isFullScreen !== undefined ) {
+		state = action.isFullScreen;
+	}
+	return state;
+}
+
 export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case SET_SECTION:
@@ -112,6 +119,7 @@ export default combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
+	isFullScreen,
 	chunkName,
 	selectedSiteId,
 	recentlySelectedSiteIds,

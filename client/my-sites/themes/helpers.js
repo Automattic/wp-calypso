@@ -44,14 +44,14 @@ var ThemesHelpers = {
 
 	getDetailsUrl: function( theme, site ) {
 		if ( ! site ) {
-			return ThemesHelpers.oldShowcaseUrl + theme.id;
+			return '/themes/' + theme.id;
 		}
 
 		if ( site.jetpack ) {
 			return site.options.admin_url + 'themes.php?theme=' + theme.id;
 		}
 
-		return ThemesHelpers.oldShowcaseUrl + site.slug + '/' + theme.id;
+		return `/themes/${ theme.id }/${ site.slug }`;
 	},
 
 	getSupportUrl: function( theme, site ) {

@@ -20,7 +20,8 @@ const ThemesHead = ( { tier, children } ) => (
 )
 
 ThemesHead.propTypes = {
-	tier: React.PropTypes.string.isRequired
+	isSheet: React.PropTypes.bool,
+	tier: React.PropTypes.string
 };
 
 const themesMeta = {

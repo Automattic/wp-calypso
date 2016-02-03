@@ -13,10 +13,11 @@ import { connect } from 'react-redux';
 import MasterbarMinimal from 'layout/masterbar/minimal';
 import ThemesHead from 'my-sites/themes/head';
 
-const LayoutLoggedOutDesign = ( { section, hasSidebar, tier = 'all' } ) => {
+const LayoutLoggedOutDesign = ( { section, hasSidebar, isFullScreen, tier = 'all' } ) => {
 	const sectionClass = section ? 'is-section-' + section : '';
 	const classes = classNames( 'wp', sectionClass, {
-		'has-no-sidebar': ! hasSidebar
+		'has-no-sidebar': ! hasSidebar,
+		'full-screen': isFullScreen,
 	} );
 
 	return (
@@ -36,7 +37,8 @@ LayoutLoggedOutDesign.displayName = 'LayoutLoggedOutDesign';
 LayoutLoggedOutDesign.propTypes = {
 	section: React.PropTypes.string,
 	hasSidebar: React.PropTypes.bool,
-	tier: React.PropTypes.string
+	isFullScreen: React.PropTypes.bool,
+	tier: React.PropTypes.string,
 }
 
 export default connect(
@@ -46,6 +48,7 @@ export default connect(
 		{
 			section: state.ui.section,
 			hasSidebar: state.ui.hasSidebar,
+			isFullScreen: state.ui.isFullScreen,
 		}
 	)
 )( LayoutLoggedOutDesign );
