@@ -30,7 +30,7 @@ const NameserversToggle = React.createClass( {
 						name="wp-nameservers"
 						onChange={ this.handleToggle }
 						type="checkbox"
-						checked={ this.props.enabled ? 'checked' : '' }
+						checked={ this.props.enabled }
 						value="active"/>
 				</form>
 				{ this.renderExplanation() }
