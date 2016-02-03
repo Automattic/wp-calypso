@@ -5,6 +5,7 @@ import {
 	SUPPORT_USER_TOKEN_FETCH,
 	SUPPORT_USER_TOKEN_SET,
 	SUPPORT_USER_RESTORE,
+	SUPPORT_USER_TOGGLE_DIALOG,
 } from 'state/action-types';
 
 import wpcom from 'lib/wp';
@@ -51,5 +52,11 @@ export function supportUserRestore( error ) {
 	return {
 		type: SUPPORT_USER_RESTORE,
 		error
+	}
+}
+
+export function supportUserToggleDialog() {
+	return {
+		type: SUPPORT_USER_TOGGLE_DIALOG
 	}
 }
