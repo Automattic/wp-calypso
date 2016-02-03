@@ -70,7 +70,7 @@ module.exports = {
 		providesDependencies: [ 'cartItem' ]
 	},
 
-	'select-plan': {
+	'plans-without-free': {
 		stepName: 'plans-without-free',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug' ],

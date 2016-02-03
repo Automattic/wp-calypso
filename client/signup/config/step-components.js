@@ -17,7 +17,7 @@ module.exports = {
 	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	plans: PlansStepComponent,
-	'select-plan': SelectPlanStepComponent,
+	'plans-without-free': SelectPlanStepComponent,
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
