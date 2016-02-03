@@ -56,6 +56,9 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style.css'])
 
 	body(class=isRTL ? 'rtl' : '')
+		noscript
+			|Please enable JavaScript in your browser to enjoy WordPress.com.
+
 		if layout
 			#wpcom.wpcom-site!= layout
 		else
