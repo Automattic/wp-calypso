@@ -42,7 +42,7 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	// The following mixins require i18n content, so must be required after i18n is initialized
+	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
 function init() {
