@@ -51,6 +51,11 @@
 			padding: 0;
 			border-radius: 0;
 			text-decoration: none;
+			margin-right: 80px;
+
+			@include breakpoint( ">480px" ) {
+				margin-right: 120px;
+			}
 		}
 	}
 
