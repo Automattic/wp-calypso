@@ -111,6 +111,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(type='text/javascript')!='var currentUser = ' + sanitize.jsonStringifyForHtml( user )
 		if app
 			script(type='text/javascript')!='var app = ' + sanitize.jsonStringifyForHtml( app )
+		if initialReduxState
+			script(type='text/javascript')!='var initialReduxState = ' + sanitize.jsonStringifyForHtml( initialReduxState )
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
 		if 'development' === env || isDebug
