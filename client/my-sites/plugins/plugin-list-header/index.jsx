@@ -20,6 +20,7 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
+import Tooltip from 'components/tooltip';
 
 let _actionBarVisible = true;
 
@@ -62,7 +63,8 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			actionBarVisible: _actionBarVisible
+			actionBarVisible: _actionBarVisible,
+			addPluginTooltip: false
 		};
 	},
 
@@ -151,8 +153,22 @@ export default React.createClass( {
 
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-browser">
-						<Button compact href={ browserUrl } onClick={ this.onBrowserLinkClick } className="plugin-list-header__browser-button">
+						<Button
+							compact
+							href={ browserUrl }
+							onClick={ this.onBrowserLinkClick }
+							className="plugin-list-header__browser-button"
+							onMouseEnter={ () => this.setState( { addPluginTooltip: true } ) }
+			 				onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
+			 				ref="addPluginButton"
+			 				aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
+							<Tooltip
+								isVisible={ this.state.addPluginTooltip }
+								context={ this.refs && this.refs.addPluginButton }
+								position="bottom">
+								{ this.translate( 'Browse all plugins', { context: 'button tooltip' } ) }
+							</Tooltip>
 						</Button>
 					</ButtonGroup>
 				);
