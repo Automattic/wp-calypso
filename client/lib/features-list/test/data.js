@@ -8,12 +8,6 @@ var features = [
 		1008: true
 	},
 	{
-		product_slug: 'ecommerce',
-		title: 'eCommerce',
-		description: 'Sell stuff right on your blog with Ecwid and Shopify.',
-		1008: true
-	},
-	{
 		product_slug: 'custom-domain',
 		title: 'A Custom Site Address',
 		description: 'Register a new domain name (with private whois records) or map a domain you already own.',

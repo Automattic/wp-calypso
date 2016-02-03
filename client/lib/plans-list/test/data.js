@@ -52,7 +52,7 @@ var plans = [
 	},
 	"product_slug":"business-bundle",
 	"tagline":"Build a great website",
-	"description":"All you need to build a great website: live chat support, unlimited premium themes, easy ecommerce, unlimited storage, and a custom domain name.",
+	"description":"All you need to build a great website: live chat support, unlimited premium themes, unlimited storage, and a custom domain name.",
 	"capability":"manage_options",
 	"cost":299,
 	"bill_period":365,
