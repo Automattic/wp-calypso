@@ -29,10 +29,6 @@ function handlePlanSelect( cartItem ) {
 	} );
 }
 
-function onSelectPlan( cartItem ) {
-	handlePlanSelect( cartItem );
-}
-
 module.exports = {
 
 	plans: function( context ) {
@@ -82,7 +78,7 @@ module.exports = {
 				<CartData>
 					<Plans
 						sites={ sites }
-						onSelectPlan={ onSelectPlan }
+						onSelectPlan={ handlePlanSelect }
 						plans={ plans }
 						context={ context }
 						destinationType={ context.params.destinationType }/>
@@ -126,7 +122,7 @@ module.exports = {
 						<PlansCompare
 							enableFreeTrials
 							selectedSite={ site }
-							onSelectPlan={ onSelectPlan }
+							onSelectPlan={ handlePlanSelect }
 							plans={ plans }
 							features={ features }
 							productsList={ productsList } />
@@ -140,7 +136,5 @@ module.exports = {
 	redirectToCheckout: function( context ) {
 		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
 		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
-	},
-
-	handlePlanSelect,
+	}
 };
