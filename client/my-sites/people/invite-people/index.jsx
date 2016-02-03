@@ -4,6 +4,7 @@
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
+import get from 'lodash/object/get';
 
 /**
  * Internal dependencies
@@ -60,8 +61,10 @@ export default React.createClass( {
 	},
 
 	goBack() {
-		// Go back to last route with /people/team as the fallback
-		page.back( '/people/team' );
+		const siteSlug = get( this.props, 'site.slug' );
+		const fallback = siteSlug ? ( '/people/team/' + siteSlug ) : '/people/team';
+		// Go back to last route with /people/team/$site as the fallback
+		page.back( fallback );
 	},
 
 	renderRoleExplanation() {
