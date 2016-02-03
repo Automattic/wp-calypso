@@ -7,6 +7,7 @@ var UserSignupComponent = require( 'signup/steps/user' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
 	DomainsStepComponent = require( 'signup/steps/domains' ),
 	DesignTypeComponent = require( 'signup/steps/design-type' ),
+	SelectPlanStepComponent = require( 'signup/steps/select-plan' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
 	config = require( 'config' );
 
@@ -16,7 +17,7 @@ module.exports = {
 	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	plans: PlansStepComponent,
-	'select-plan': PlansStepComponent,
+	'select-plan': SelectPlanStepComponent,
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,

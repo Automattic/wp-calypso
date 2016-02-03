@@ -73,10 +73,6 @@ module.exports = React.createClass( {
 		this.props.goToNextStep();
 	},
 
-	hideFreePlan: function() {
-		return this.props.stepName === 'select-plan';
-	},
-
 	comparePlansUrl: function() {
 		return this.props.stepName + '/compare';
 	},
@@ -96,7 +92,7 @@ module.exports = React.createClass( {
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
 					enableFreeTrials={ this.isFreeTrialFlow() }
-					hideFreePlan={ this.hideFreePlan() }
+					hideFreePlan={ this.props.hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
 				<a
@@ -146,7 +142,7 @@ module.exports = React.createClass( {
 		return <PlansCompare
 			className="plans-step__compare"
 			enableFreeTrials={ this.isFreeTrialFlow() }
-			hideFreePlan={ this.hideFreePlan() }
+			hideFreePlan={ this.props.hideFreePlan }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
 			backUrl={ this.props.path.replace( '/compare', '' ) }
