@@ -22,6 +22,7 @@ program
 	.option( '-c, --color', 'Force color output', function() {
 		chalk.enabled = true;
 	} )
+	.option( '-v, --verbose', 'Print message for files with no errors')
 	.usage( 'inputFile' )
 	.on( '--help', function() {
 		console.log( 'i18nlint scans the given file for translation anti-patterns and offers suggestions to fix them' );
@@ -56,6 +57,8 @@ if ( warnings.length ) {
 			'\n    ' + warning.string );
 	} );
 	foundWarnings = true;
+} else if ( program.verbose ) {
+	console.log( chalk.green( inputFile + ' ok' ) );
 }
 
 if ( foundWarnings ) {
