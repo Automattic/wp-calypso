@@ -50,9 +50,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 
 		businessSignup: {
 			google: 'JxKBCKK-m1wQ1uXz_AM'
-		},
-
-		retargeting: '823166884443641'
+		}
 	};
 
 /**
