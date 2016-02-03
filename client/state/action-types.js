@@ -3,6 +3,9 @@
  * value mirroring its exported name.
  *
  * Please keep this list alphabetized!
+ *
+ * Unsure how to name an action type? Refer to our guidelines:
+ *  - https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md#actions
  */
 
 export const COMPLETE_EXPORT = 'COMPLETE_EXPORT';
