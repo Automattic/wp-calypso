@@ -112,5 +112,16 @@ module.exports = {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	'site-url-entry': {
+		stepName: 'site-url-entry',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		props: {
+			headerText: i18n.translate( 'Create an account for Jetpack' ),
+			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
+		},
+		providesDependencies: [ 'bearer_token', 'username' ]
 	}
 };

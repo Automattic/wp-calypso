@@ -1,0 +1,71 @@
+.jetpack-connect__main {
+	max-width: 400px;
+}
+
+.jetpack-connect__site-url-entry-container {
+	max-width: 400px;
+}
+
+.jetpack-connect__header-container {
+	text-align: center;
+
+	.jetpack-logo {
+		width: 72px;
+		height: 72px;
+	}
+
+	.step-header {
+		margin-bottom: 16px;
+	}
+}
+
+.jetpack-connect__wp-admin-dialog.dialog.card {
+	max-width: 400px;
+
+	.jetpack-connect__install-wp-admin {
+		width: 400px;
+		height: 294px;
+	}
+}
+
+.jetpack-connect__site-url-input-container {
+
+	.site-address-container {
+		position: relative;
+
+		.gridicon {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			color: lighten( $gray, 20% );
+		}
+
+		.form-text-input {
+			padding-left: 36px;
+		}
+
+		.spinner {
+			position: absolute;
+			right: 8px;
+			top: 10px;
+		}
+	}
+
+	.button {
+		width: 100%;
+		margin-top: 16px;
+		word-wrap: nowrap;
+	}
+}
+
+.logged-out-form__links {
+	max-width: 100%;
+
+	.logged-out-form__link-item {
+		.gridicon {
+			position: relative;
+			top: 4px;
+		}
+	}
+
+}
