@@ -13,7 +13,6 @@ import config from 'config'
 import analytics from 'analytics'
 import { isBusiness } from 'lib/products-values'
 import notices from 'notices'
-import { abtest } from 'lib/abtest'
 
 let sites = sitesList();
 
@@ -56,8 +55,8 @@ const getMockBusinessPluginItems = () => {
 			sites: [],
 			selectedSite: selectedSite,
 			progress: [],
-			isMock: true }
-		);
+			isMock: true
+		} );
 	} );
 }
 
@@ -105,18 +104,7 @@ const hasRestrictedAccess = ( site ) => {
 	}
 
 	if ( hasErrorCondition( site, 'noBusinessPlan' ) ) {
-		switch ( abtest( 'businessPluginsNudge' ) ) {
-			case 'nudge':
-				pluginPageError = {
-					abtest: 'nudge'
-				};
-				break;
-
-			case 'drake':
-			default:
-				pluginPageError = getWpcomPluginPageError( site.slug );
-				break;
-		}
+		pluginPageError = getWpcomPluginPageError( site.slug );
 	}
 
 	if ( ! sites.hasSiteWithPlugins() ) {

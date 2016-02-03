@@ -29,14 +29,6 @@ module.exports = {
 		},
 		defaultVariation: 'originalA'
 	},
-	businessPluginsNudge: {
-		datestamp: '20151119',
-		variations: {
-			drake: 50,
-			nudge: 50
-		},
-		defaultVariation: 'drake'
-	},
 	freeTrials: {
 		datestamp: '20160120',
 		variations: {
@@ -69,7 +61,7 @@ module.exports = {
 			noTeaser: 34
 		},
 		defaultVariation: 'mostPopular'
-	},	
+	},
 	checkoutMasterbar: {
 		datestamp: '20160126',
 		variations: {
