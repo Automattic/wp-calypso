@@ -2,14 +2,14 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ), // eslint-disable-line no-unused-vars
+	sinon = require( 'sinon' ),
 	assert = require( 'assert' );
 
 /**
  * Internal dependencies
  */
 var utils = require( '../utils' ),
-	flows = require( 'signup/config/flows' ),
-	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName;
+	flows = require( 'signup/config/flows' );
 
 debug( 'start utils test' );
 
@@ -40,39 +40,89 @@ describe( 'utils.getStepName', function() {
 } );
 
 describe( 'utils.getFlowName', function() {
-	it( 'should find the flow name in the flowName fragment if present', function() {
-		assert.equal( utils.getFlowName( { flowName: 'account' } ), 'account' );
+	afterEach( function() {
+		flows.filterFlowName = null;
 	} );
 
-	it( 'should return the current flow if the flow is missing', function() {
-		assert.equal( utils.getFlowName( {} ), 'account' );
+	it( 'should find the flow name in the flowName fragment if present', function() {
+		assert.equal( utils.getFlowName( { flowName: 'other' } ), 'other' );
+	} );
+
+	it( 'should return the default flow if the flow is missing', function() {
+		assert.equal( utils.getFlowName( {} ), 'main' );
+	} );
+
+	it( 'should return the result of filterFlowName if it is a function and the flow is missing', function() {
+		flows.filterFlowName = sinon.stub().returns( 'filtered' );
+		assert.equal( utils.getFlowName( {} ), 'filtered' );
+	} );
+
+	it( 'should return the result of filterFlowName if it is a function and the flow is not valid', function() {
+		flows.filterFlowName = sinon.stub().returns( 'filtered' );
+		assert.equal( utils.getFlowName( { flowName: 'invalid' } ), 'filtered' );
+	} );
+
+	it( 'should return the result of filterFlowName if it is a function and the requested flow is present', function() {
+		flows.filterFlowName = sinon.stub().returns( 'filtered' );
+		assert.equal( utils.getFlowName( { flowName: 'other' } ), 'filtered' );
+	} );
+
+	it( 'should return the passed flow if the result of filterFlowName is not valid', function() {
+		flows.filterFlowName = sinon.stub().returns( 'foobar' );
+		assert.equal( utils.getFlowName( { flowName: 'other' } ), 'other' );
+	} );
+
+	it( 'should call filterFlowName with the default flow if it is a function and the flow is not valid', function() {
+		flows.filterFlowName = sinon.stub().returns( 'filtered' );
+		utils.getFlowName( { flowName: 'invalid' } );
+		assert( flows.filterFlowName.calledWith( 'main' ) );
+	} );
+
+	it( 'should call filterFlowName with the requested flow if it is a function and the flow is valid', function() {
+		flows.filterFlowName = sinon.stub().returns( 'filtered' );
+		utils.getFlowName( { flowName: 'other' } );
+		assert( flows.filterFlowName.calledWith( 'other' ) );
 	} );
 } );
 
-describe( 'utils.getValidPath - currentFlowName !== defaultFlowName', function() {
-	it( 'should redirect to the current flow if no flow is present', function() {
-		assert.equal( utils.getValidPath( {} ), '/start/account/user' );
+describe( 'utils.getValidPath', function() {
+	it( 'should redirect to the default if no flow is present', function() {
+		assert.equal( utils.getValidPath( {} ), '/start/user' );
 	} );
 
-	it( 'should redirect invalid steps', function() {
+	it( 'should redirect to the current flow default if no step is present', function() {
+		assert.equal( utils.getValidPath( { flowName: 'account' } ), '/start/account/user' );
+	} );
+
+	it( 'should redirect to the default flow if the flow is the default', function() {
+		assert.equal( utils.getValidPath( { flowName: 'main' } ), '/start/user' );
+	} );
+
+	it( 'should redirect invalid steps to the default flow if no flow is present', function() {
 		assert.equal( utils.getValidPath( {
-			flowName: 'user',
 			stepName: 'fr',
 			stepSectionName: 'fr'
-		} ), '/start/account/user/fr' );
+		} ), '/start/user/fr' );
 	} );
 
-	it( 'should redirect invalid flow/steps', function() {
+	it( 'should preserve a valid locale to the default flow if one is specified', function() {
 		assert.equal( utils.getValidPath( {
-			flowName: 'user',
-			stepName: 'user',
+			stepName: 'fr',
+			stepSectionName: 'abc'
+		} ), '/start/user/abc/fr' );
+	} );
+
+	it( 'should redirect invalid steps to the current flow default', function() {
+		assert.equal( utils.getValidPath( {
+			flowName: 'account',
+			stepName: 'fr',
 			stepSectionName: 'fr'
 		} ), '/start/account/user/fr' );
 	} );
 
 	it( 'should preserve a valid locale if one is specified', function() {
 		assert.equal( utils.getValidPath( {
-			flowName: 'user',
+			flowName: 'account',
 			stepName: 'fr',
 			stepSectionName: 'abc'
 		} ), '/start/account/user/abc/fr' );
@@ -88,39 +138,15 @@ describe( 'utils.getValidPath - currentFlowName !== defaultFlowName', function()
 			lang: 'fr'
 		} ), '/start/account/user/' + randomStepSectionName + '/fr' );
 	} );
-} );
 
-describe( 'utils.getValidPath - currentFlowName === defaultFlowName', function() {
-	it( 'should redirect to the current flow if no flow is present', function() {
-		flows.currentFlowName = defaultFlowName;
-		assert.equal( utils.getValidPath( {} ), '/start/user' );
-	} );
+	it( 'should handle arbitrary step section names in the default flow', function() {
+		var randomStepSectionName = 'random-step-section-' + Math.random();
 
-	it( 'should redirect invalid steps', function() {
-		flows.currentFlowName = defaultFlowName;
 		assert.equal( utils.getValidPath( {
-			flowName: 'user',
-			stepName: 'fr',
-			stepSectionName: 'fr'
-		} ), '/start/user/fr' );
-	} );
-
-	it( 'should redirect invalid flow/steps', function() {
-		flows.currentFlowName = 'main';
-		assert.equal( utils.getValidPath( {
-			flowName: 'user',
 			stepName: 'user',
-			stepSectionName: 'fr'
-		} ), '/start/user/fr' );
-	} );
-
-	it( 'should preserve a valid locale if one is specified', function() {
-		flows.currentFlowName = 'main';
-		assert.equal( utils.getValidPath( {
-			flowName: 'user',
-			stepName: 'fr',
-			stepSectionName: 'abc'
-		} ), '/start/user/abc/fr' );
+			stepSectionName: randomStepSectionName,
+			lang: 'fr'
+		} ), '/start/user/' + randomStepSectionName + '/fr' );
 	} );
 } );
 
