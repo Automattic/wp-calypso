@@ -2,6 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:client:signup:controller-utils:test' ), // eslint-disable-line no-unused-vars
+	sinon = require( 'sinon' ),
 	assert = require( 'assert' );
 
 /**
@@ -40,12 +41,32 @@ describe( 'utils.getStepName', function() {
 } );
 
 describe( 'utils.getFlowName', function() {
+	afterEach( function() {
+		flows.currentFlowName = 'account';
+	} );
+
 	it( 'should find the flow name in the flowName fragment if present', function() {
-		assert.equal( utils.getFlowName( { flowName: 'account' } ), 'account' );
+		assert.equal( utils.getFlowName( { flowName: 'other' } ), 'other' );
 	} );
 
 	it( 'should return the current flow if the flow is missing', function() {
 		assert.equal( utils.getFlowName( {} ), 'account' );
+	} );
+
+	it( 'should call the currentFlowName if it is a function and the flow is missing', function() {
+		flows.currentFlowName = sinon.stub().returns( 'called' );
+		assert.equal( utils.getFlowName( {} ), 'called' );
+	} );
+
+	it( 'should call the currentFlowName with the requested flow if it is a function and the flow is not valid', function() {
+		flows.currentFlowName = sinon.stub().returns( 'called' );
+		utils.getFlowName( { flowName: 'invalid' } );
+		assert( flows.currentFlowName.calledWith( 'invalid' ) );
+	} );
+
+	it( 'should not call currentFlowName if it is a function and the flow is present', function() {
+		flows.currentFlowName = sinon.stub().returns( 'called' );
+		assert.equal( utils.getFlowName( { flowName: 'other' } ), 'other' );
 	} );
 } );
 
