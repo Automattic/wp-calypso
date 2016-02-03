@@ -67,8 +67,10 @@ FeedSubscriptionStore.isFetching = () => FeedSubscriptionStore.get().get( 'isFet
 FeedSubscriptionStore.getSubscriptionCount = () => FeedSubscriptionStore.get().get( 'subscriptionCount' );
 FeedSubscriptionStore.isLastPage = () => FeedSubscriptionStore.get().get( 'isLastPage' );
 FeedSubscriptionStore.getCurrentPage = () => FeedSubscriptionStore.get().get( 'currentPage' );
+FeedSubscriptionStore.getPerPage = () => FeedSubscriptionStore.get().get( 'perPage' );
 
 FeedSubscriptionStore.clearSubscriptions = () => FeedSubscriptionStore.get().set( 'subscriptions', [] );
+FeedSubscriptionStore.setIsFetching = ( value ) => FeedSubscriptionStore.get().set( 'isFetching', value );
 
 FeedSubscriptionStore.getLastError = function( key, value ) {
 	const state = FeedSubscriptionStore.get();
@@ -162,14 +164,22 @@ function updateSubscription( state, newSubscriptionInfo ) {
 		return state;
 	}
 
+	newSubscriptionInfo = fromJS( newSubscriptionInfo );
+
 	// Prepare URL, if we have one
-	if ( newSubscriptionInfo.URL ) {
-		newSubscriptionInfo.URL = FeedSubscriptionHelper.prepareSiteUrl( newSubscriptionInfo.URL );
+	if ( newSubscriptionInfo.get( 'URL' ) ) {
+		newSubscriptionInfo = newSubscriptionInfo.set( 'URL', FeedSubscriptionHelper.prepareSiteUrl( newSubscriptionInfo.get( 'URL' ) ) );
 	}
 
 	const subscriptionKey = chooseBestSubscriptionKey( newSubscriptionInfo );
 	const existingSubscriptionIndex = FeedSubscriptionStore.getSubscriptionIndex( subscriptionKey, newSubscriptionInfo.get( subscriptionKey ) );
 	const existingSubscription = state.get( 'subscriptions' ).get( +existingSubscriptionIndex );
+
+	debug( newSubscriptionInfo );
+	debug( subscriptionKey );
+	debug( existingSubscriptionIndex );
+	debug( existingSubscription );
+
 	if ( ! existingSubscription ) {
 		return state;
 	}
@@ -205,8 +215,10 @@ function removeSubscription( state, subscription ) {
 }
 
 function chooseBestSubscriptionKey( subscription ) {
+	subscription = fromJS( subscription );
+
 	// Subscription ID is the most reliable
-	if ( subscription.ID && subscription.ID > 0 ) {
+	if ( subscription.get( 'ID' ) && subscription.get( 'ID' ) > 0 ) {
 		return 'ID';
 	}
 

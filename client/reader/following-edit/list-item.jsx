@@ -78,8 +78,11 @@ var SubscriptionListItem = React.createClass( {
 	},
 
 	handleFollowToggle: function() {
-		const action = this.isFollowing() ? 'unfollow' : 'follow';
-		FeedSubscriptionActions[ action ]( this.props.subscription.get( 'URL' ), this.props.subscription.get( 'blog_ID' ) );
+		if ( this.isFollowing() ) {
+			FeedSubscriptionActions.unfollowBySubscriptionId( this.props.subscription.get( 'ID' ), this.props.subscription.get( 'blog_ID' ) );
+		} else {
+			FeedSubscriptionActions.follow( this.props.subscription.get( 'URL' ), this.props.subscription.get( 'blog_ID' ) );
+		}
 	},
 
 	isFollowing: function() {
@@ -103,7 +106,7 @@ var SubscriptionListItem = React.createClass( {
 				</Title>
 				<Description><a href={ subscription.get( 'URL' ) }>{ displayUrl }</a></Description>
 				<Actions>
-					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } isButtonOnly={ true } siteUrl={ subscription.get( 'URL' ) } />
+					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } isButtonOnly={ true } subId={ subscription.get( 'ID' ) } siteUrl={ subscription.get( 'URL' ) } />
 				</Actions>
 			</div>
 		);

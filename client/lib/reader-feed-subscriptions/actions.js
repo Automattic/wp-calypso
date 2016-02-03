@@ -86,13 +86,13 @@ const FeedSubscriptionActions = {
 
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.UNFOLLOW_READER_FEED,
-			subId: subId
+			ID: subId
 		} );
 
 		wpcom.undocumented().unfollowReaderFeed( { sub_id: subId }, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.RECEIVE_UNFOLLOW_READER_FEED,
-				subId: subId,
+				ID: subId,
 				blogId: blogId,
 				data: data,
 				error: error

@@ -1,12 +1,14 @@
 /**
  * External Dependencies
  */
-import chai, { expect} from 'chai';
+import chai, { expect } from 'chai';
 import Dispatcher from 'dispatcher';
 import Immutable from 'immutable';
 import chaiImmutable from 'chai-Immutable';
 
 chai.use( chaiImmutable );
+
+var debug = require( 'debug' )( 'calypso:bananas' );
 
 const FeedSubscriptionStore = require( '../index' );
 
@@ -308,5 +310,44 @@ describe( 'feed-subscription-store', function() {
 		} );
 
 		expect( FeedSubscriptionStore.getLastError( 'URL', zeldmanSiteUrl ) ).to.be.an( 'undefined' );
+	} );
+
+	it.skip( 'should unfollow an existing feed by subscription ID', function() {
+		const subId = 123;
+		const siteUrl = 'http://www.trailnose.com';
+
+		// The initial action from the UI
+		Dispatcher.handleViewAction( {
+			type: 'FOLLOW_READER_FEED',
+			url: siteUrl,
+			data: { URL: siteUrl },
+			error: null
+		} );
+
+		// The action from the API response
+		Dispatcher.handleServerAction( {
+			type: 'RECEIVE_FOLLOW_READER_FEED',
+			url: siteUrl,
+			data: {
+				subscribed: true,
+				subscription: {
+					ID: subId,
+					URL: siteUrl,
+					feed_ID: 123
+				}
+			}
+		} );
+
+		debug( FeedSubscriptionStore.getSubscriptions() );
+		expect( FeedSubscriptionStore.getSubscription( 'ID', subId ) ).to.be.an( 'object' );
+
+		Dispatcher.handleViewAction( {
+			type: 'UNFOLLOW_READER_FEED',
+			ID: subId,
+			data: { ID: subId },
+			error: null
+		} );
+
+		expect( FeedSubscriptionStore.getSubscription( 'ID', subId ) ).to.be.undefined;
 	} );
 } );
