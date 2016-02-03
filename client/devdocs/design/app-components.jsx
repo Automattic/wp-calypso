@@ -15,6 +15,7 @@ var SearchCard = require( 'components/search-card' ),
 	FollowButtons = require( 'components/follow-button/docs/example' ),
 	Sites = require( 'lib/sites-list/docs/example' ),
 	SitesDropdown = require( 'components/sites-dropdown/docs/example' ),
+	SiteSelector = require( 'components/site-selector/docs/example' ),
 	Theme = require( 'components/theme/docs/example' ),
 	PostSchedule = require( 'components/post-schedule/docs/example' ),
 	HeaderCake = require( 'components/header-cake' ),
@@ -146,6 +147,7 @@ module.exports = React.createClass( {
 					<FollowButtons />
 					<Sites />
 					<SitesDropdown />
+					<SiteSelector />
 					<Theme />
 					<PostSchedule />
 				</Collection>
