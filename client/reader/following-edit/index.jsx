@@ -391,7 +391,8 @@ const FollowingEdit = React.createClass( {
 					fetchNextPage={ this.fetchNextPage }
 					getItemRef= { this.getSubscriptionRef }
 					renderItem={ this.renderSubscription }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
+					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+					context={ document.getElementById( 'content' ) } />
 				}
 			</Main>
 		);

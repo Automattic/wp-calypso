@@ -137,6 +137,7 @@ const RecommendedForYou = React.createClass( {
 					getItemRef={ this.getItemRef }
 					renderItem={ this.renderItem }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
+					context={ document.getElementById( 'content' ) }
 					/>
 				</Main>
 			);

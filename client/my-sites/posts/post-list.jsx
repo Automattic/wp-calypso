@@ -245,6 +245,7 @@ var Posts = React.createClass( {
 					getItemRef={ this.getPostRef }
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+					context={ document.getElementById( 'content' ) }
 				/>
 			);
 

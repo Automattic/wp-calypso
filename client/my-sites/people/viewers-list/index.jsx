@@ -138,7 +138,8 @@ let Viewers = React.createClass( {
 					getItemRef={ this.getViewerRef }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
 					renderItem={ this.renderViewer }
-					guessedItemHeight={ 126 }>
+					guessedItemHeight={ 126 }
+					context={ document.getElementById( 'content' ) }>
 				</InfiniteList>
 			);
 		} else {
