@@ -14,6 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'analytics' ),
+	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
@@ -120,7 +121,7 @@ module.exports = {
 				<ReduxProvider store={ context.store }>
 					<CartData>
 						<PlansCompare
-							enableFreeTrials
+							enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 							selectedSite={ site }
 							onSelectPlan={ handlePlanSelect }
 							plans={ plans }

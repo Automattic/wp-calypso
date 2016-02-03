@@ -82,7 +82,11 @@ module.exports = React.createClass( {
 	},
 
 	isFreeTrialFlow: function() {
-		return 'free-trial' === this.props.flowName || 'plan' === this.props.flowName
+		if ( this.props.enableFreeTrials ) {
+			return true;
+		}
+
+		return getABTestVariation( 'freeTrials' ) === 'offered' && 'free-trial' === this.props.flowName;
 	},
 
 	plansList: function() {

@@ -16,6 +16,7 @@ module.exports = React.createClass( {
 			<div className="select-plan-step">
 				<PlansStepComponent
 					hideFreePlan
+					enableFreeTrials
 					{ ...this.props }
 				/>
 			</div>
