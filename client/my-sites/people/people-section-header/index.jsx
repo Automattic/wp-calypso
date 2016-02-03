@@ -38,16 +38,17 @@ export default React.createClass( {
 	},
 
 	renderHeaderContent() {
-		if ( ! config.isEnabled( 'manage/add-people' ) ) {
+		const { site } = this.props;
+		if ( ! config.isEnabled( 'manage/add-people' ) || ( site && site.jetpack ) ) {
 			return null;
 		}
 
 		if ( this.state.inviteOpen ) {
 			return (
 				<div>
-					<Gridicon icon="add-outline" size={ 24 } />
-					<InviteForm site={ this.props.site } />
-					<Button className="is-link" onClick={ this.closeInvite }>
+					<Gridicon icon="add-outline" size={ 24 } className="people-section-header__icon" />
+					<InviteForm site={ site } />
+					<Button className="people-section-header__close is-link" onClick={ this.closeInvite }>
 						<Gridicon icon="cross-small" size={ 24 } />
 					</Button>
 				</div>

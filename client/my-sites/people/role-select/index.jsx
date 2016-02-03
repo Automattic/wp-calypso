@@ -90,7 +90,7 @@ module.exports = React.createClass( {
 	render: function() {
 		var roles = Object.keys( this.state.roles );
 		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roles.length }>
+			<FormFieldset className="role-select" key={ this.props.key } disabled={ ! roles.length }>
 				{ this.renderLabel() }
 				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
 					{

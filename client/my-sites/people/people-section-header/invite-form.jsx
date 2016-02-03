@@ -10,7 +10,7 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
  */
 import RoleSelect from 'my-sites/people/role-select';
 import TokenField from 'components/token-field';
-import FormButton from 'components/forms/form-button';
+import Button from 'components/button';
 
 /**
  * Module Variable
@@ -49,25 +49,32 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="people-section-header__invite-form">
-				<TokenField
-					value={ this.state.usernamesOrEmails }
-					onChange={ this.onTokensChange }
-					placeHolder={ this.translate( 'Username or Email' ) } />
-				<RoleSelect
-					id="role"
-					name="role"
-					key="role"
-					siteId={ this.props.site.ID }
-					valueLink={ this.linkState( 'role' ) }
-					disabled={ this.state.sendingInvites }
-					hideLabel={ true }
-					appendRoles={ { role: {}, follower: {} } } />
-				<FormButton
-					onClick={ this.submitForm }
-					disabled={ this.state.sendingInvites }>
-						{ this.translate( 'Invite' ) }
-				</FormButton>
+			<div className="invite-form">
+				<div className="invite-form__fieldset">
+					<TokenField
+						value={ this.state.usernamesOrEmails }
+						onChange={ this.onTokensChange }
+						placeHolder={ this.translate( 'Username or Email' ) } />
+				</div>
+				<div className="invite-form__fieldset">
+					<RoleSelect
+						id="role"
+						name="role"
+						key="role"
+						siteId={ this.props.site.ID }
+						valueLink={ this.linkState( 'role' ) }
+						disabled={ this.state.sendingInvites }
+						hideLabel={ true }
+						appendRoles={ { role: {}, follower: {} } } />
+					<Button
+						compact
+						primary
+						onClick={ this.submitForm }
+						className="invite-form__submit"
+						disabled={ this.state.sendingInvites }>
+							{ this.translate( 'Invite' ) }
+					</Button>
+				</div>
 			</div>
 		);
 	}
