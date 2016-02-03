@@ -33,6 +33,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	Layout;
 
 import { isOffline } from 'state/application/selectors';
+import { isSupportUser } from 'state/support/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -144,10 +145,9 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
-		const isSupportUser = state.support.isSupportUser;
 		return { 
 			isLoading,
-			isSupportUser,
+			isSupportUser: isSupportUser( state ),
 			section,
 			hasSidebar,
 			chunkName,
