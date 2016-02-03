@@ -95,13 +95,18 @@ Layout = React.createClass( {
 			<MasterbarLoggedIn
 				user={ this.props.user }
 				section={ this.props.section }
-				sites={ this.props.sites }
-				isSupportUser={ config.isEnabled( 'support-user' ) && this.props.isSupportUser } />
+				sites={ this.props.sites } />
 		);
 	},
 
 	render: function() {
-		var sectionClass = 'wp layout is-section-' + this.props.section + ' focus-' + this.props.focus.getCurrent(),
+		var sectionClass = classnames(
+				'wp',
+				'layout',
+				`is-section-${this.props.section}`,
+				`focus-${this.props.focus.getCurrent()}`,
+				{ 'is-support-user': this.props.isSupportUser }
+			),
 			showWelcome = this.props.nuxWelcome.getWelcome(),
 			newestSite = this.newestSite(),
 			translatorInvitation = this.props.translatorInvitation,

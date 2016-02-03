@@ -4,10 +4,9 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 
-const Masterbar = ( { children, className } ) => (
-	<header id="header" className={ classNames( 'masterbar', className ) }>
+const Masterbar = ( { children } ) => (
+	<header id="header" className="masterbar">
 		{ children }
 	</header>
 );
