@@ -34,11 +34,6 @@
 	opacity: .8;
 }
 
-.plan-actions__plan-expiration,
-.plan-actions__trial-period {
-	height: 40px;
-}
-
 .plan-actions.is-placeholder {
 	.plan-actions__upgrade-button {
 		@include placeholder( 23% );
