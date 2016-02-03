@@ -12,7 +12,7 @@ var config = require( 'config' ),
 	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
-	if ( dependencies.cartItem || dependencies.domainItem ) {
+	if ( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem ) {
 		return '/checkout/' + dependencies.siteSlug;
 	}
 
@@ -45,6 +45,13 @@ const flows = {
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
 		lastModified: '2016-01-21'
+	},
+
+	'with-theme': {
+		steps: [ 'domains', 'plans', 'user' ],
+		destination: getCheckoutDestination,
+		description: 'Preselect a theme to activate/buy from an external source',
+		lastModified: '2016-01-27'
 	},
 
 	main: {
