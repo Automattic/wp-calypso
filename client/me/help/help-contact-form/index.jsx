@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( isEqual( nextProps.valueLink.value, this.state ) ) {
+		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
 
