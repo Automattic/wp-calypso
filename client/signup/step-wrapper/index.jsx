@@ -51,8 +51,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const className = 'step-wrapper step-wrapper__' + this.props.stepName;
 		return (
-			<div className="step-wrapper">
+			<div className={ className }>
 				<StepHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() } />

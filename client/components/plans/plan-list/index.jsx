@@ -26,17 +26,30 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var plans = this.props.plans,
+		var className = '',
+			plans = this.props.plans,
 			hideFreePlan = this.props.hideFreePlan ? true : false,
 			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
+			numberOfPlaceholders = 3,
 			site,
 			plansList,
 			currentPlan;
 
+		if ( this.props.sites ) {
+			site = this.props.sites.getSelectedSite();
+		}
+
+		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
+			numberOfPlaceholders = 2;
+			className = 'jetpack';
+		}
+
 		if ( plans.length === 0 || isLoadingSitePlans ) {
-			plansList = times( 3, function( n ) {
+			plansList = times( numberOfPlaceholders, function( n ) {
 				return (
-					<Plan placeholder={ true }
+					<Plan
+						className={ className }
+						placeholder={ true }
 						isInSignup={ this.props.isInSignup }
 						key={ `plan-${ n }` } />
 				);
@@ -45,10 +58,6 @@ module.exports = React.createClass( {
 			return (
 				<div className="plan-list">{ plansList }</div>
 			);
-		}
-
-		if ( this.props.sites ) {
-			site = this.props.sites.getSelectedSite();
 		}
 
 		if ( ! this.props.isInSignup ) {
@@ -90,14 +99,6 @@ module.exports = React.createClass( {
 						site={ site }
 						enableFreeTrials={ this.props.enableFreeTrials }
 						cart={ this.props.cart } />
-				);
-			}, this );
-		} else {
-			plansList = times( 3, function( n ) {
-				return (
-					<Plan placeholder={ true }
-						isInSignup={ this.props.isInSignup }
-						key={ `plan-${ n }` } />
 				);
 			}, this );
 		}

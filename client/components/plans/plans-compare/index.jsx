@@ -155,12 +155,17 @@ var PlansCompare = React.createClass( {
 		var plansColumns,
 			featuresList = this.props.features.get(),
 			hideFreePlan = this.props.hideFreePlan ? true : false,
+			numberOfPlaceholders = 4,
 			plans = this.props.plans.get(),
 			site = this.props.selectedSite;
 
 		plans = plans.filter( function( plan ) {
 			return filterPlansBySiteAndProps( plan, site, hideFreePlan );
 		} );
+
+		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
+			numberOfPlaceholders = 3;
+		}
 
 		if ( this.props.features.hasLoadedFromServer() && (
 			this.props.isInSignup || ! this.props.selectedSite || ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) )
@@ -190,7 +195,7 @@ var PlansCompare = React.createClass( {
 			);
 		}
 
-		plansColumns = times( 4, function( i ) {
+		plansColumns = times( numberOfPlaceholders, function( i ) {
 			var planFeatures,
 				classes = {
 					'plan-feature-column': true,
@@ -217,7 +222,9 @@ var PlansCompare = React.createClass( {
 
 		return (
 			<div className="plans-compare">
-				{ plansColumns }
+				<div className="plans-compare__columns">
+					{ plansColumns }
+				</div>
 			</div>
 		);
 	},
