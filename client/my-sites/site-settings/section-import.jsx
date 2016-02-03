@@ -16,7 +16,10 @@ import MediumImporter from 'my-sites/importer/importer-medium';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import { fetchState } from 'lib/importer/actions';
-import { appStates, importerTypes } from 'lib/importer/constants';
+import {
+	appStates,
+	WORDPRESS, GHOST, MEDIUM, SQUARESPACE
+} from 'lib/importer/constants';
 
 export default React.createClass( {
 	displayName: 'SiteSettingsImport',
@@ -36,28 +39,8 @@ export default React.createClass( {
 		ImporterStore.off( 'change', this.updateState );
 	},
 
-	getDescription: function() {
-		return this.translate(
-			'Import another site\'s content into ' +
-			'{{strong}}%(title)s{{/strong}}. Once you start an ' +
-			'import, come back here to check on the progress. ' +
-			'Check out our {{a}}import guide{{/a}} ' +
-			'if you need more help.', {
-				args: { title: this.getSiteTitle() },
-				components: {
-					a: <a href="https://support.wordpress.com/import/" />,
-					strong: <strong />
-				}
-			}
-		);
-	},
-
 	getInitialState: function() {
 		return getImporterState();
-	},
-
-	getSiteTitle: function() {
-		return this.props.site.title.length ? this.props.site.title : this.props.site.slug;
 	},
 
 	/**
@@ -67,57 +50,28 @@ export default React.createClass( {
 	 * @param {enum} type ImportConstants.IMPORT_TYPE_*
 	 * @returns {Array<Object>} ImportStatus objects
 	 */
-	getStatusFor: function( type ) {
+	getImports: function( type ) {
 		const { api: { isHydrated }, importers } = this.state;
 		const { site } = this.props;
-		var disabledTypes, status;
+		const { slug, title } = site;
+		const siteTitle = title.length ? title : slug;
 
-		disabledTypes = [
-			importerTypes.GHOST,
-			importerTypes.MEDIUM,
-			importerTypes.SQUARESPACE
-		];
+		const disabledTypes = [ GHOST, MEDIUM, SQUARESPACE ];
 
 		if ( ! isHydrated || includes( disabledTypes, type ) ) {
-			return [ { importerState: appStates.DISABLED, type } ];
+			return [ { importerState: appStates.DISABLED, type, siteTitle } ];
 		}
 
-		status = Object.keys( importers )
+		const status = Object.keys( importers )
 			.map( id => importers[ id ] )
 			.filter( importer => site.ID === importer.site.ID )
 			.filter( importer => type === importer.type );
 
 		if ( 0 === status.length ) {
-			return [ { importerState: appStates.INACTIVE, type } ];
+			return [ { importerState: appStates.INACTIVE, type, siteTitle } ];
 		}
 
-		return status.map( item => Object.assign( {}, item, { site } ) );
-	},
-
-	renderImporters: function() {
-		var siteTitle = this.getSiteTitle();
-
-		return Object.keys( importerTypes ).map( type => (
-			this.getStatusFor( importerTypes[ type ] ).map( ( status, index ) => {
-				const key = `import-list-${type}-${index}`;
-
-				status.siteTitle = siteTitle;
-
-				switch ( importerTypes[ type ] ) {
-					case importerTypes.GHOST:
-						return <GhostImporter key={ key } importerStatus={ status } />;
-
-					case importerTypes.MEDIUM:
-						return <MediumImporter key={ key } importerStatus={ status } />;
-
-					case importerTypes.SQUARESPACE:
-						return <SquarespaceImporter key={ key } importerStatus={ status } />;
-
-					case importerTypes.WORDPRESS:
-						return <WordPressImporter key={ key } importerStatus={ status } site={ this.props.site } />;
-				}
-			} )
-		) );
+		return status.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 	},
 
 	updateFromAPI: function() {
@@ -129,14 +83,31 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		if ( this.props.site.jetpack ) {
+		const { site } = this.props;
+		const { jetpack: isJetpack, options: { admin_url: adminUrl }, slug, title: siteTitle } = site;
+		const title = siteTitle.length ? siteTitle : slug;
+		const description = this.translate(
+			'Import another site\'s content into ' +
+			'{{strong}}%(title)s{{/strong}}. Once you start an ' +
+			'import, come back here to check on the progress. ' +
+			'Check out our {{a}}import guide{{/a}} ' +
+			'if you need more help.', {
+				args: { title },
+				components: {
+					a: <a href="https://support.wordpress.com/import/" />,
+					strong: <strong />
+				}
+			}
+		);
+
+		if ( isJetpack ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-jetpack.svg"
 					title={ this.translate( 'Want to import into your site?' ) }
 					line={ this.translate( `Visit your site's wp-admin for all your import and export needs.` ) }
-					action={ this.translate( 'Import into %(siteTitle)s', { args: { siteTitle: this.props.site.title } } ) }
-					actionURL={ this.props.site.options.admin_url + 'import.php' }
+					action={ this.translate( 'Import into %(title)s', { args: { title } } ) }
+					actionURL={ adminUrl + 'import.php' }
 					actionTarget="_blank"
 				/>
 			);
@@ -148,10 +119,22 @@ export default React.createClass( {
 				<CompactCard>
 					<header>
 						<h1 className="importer__section-title">{ this.translate( 'Import Another Site' ) }</h1>
-						<p className="importer__section-description">{ this.getDescription() }</p>
+						<p className="importer__section-description">{ description }</p>
 					</header>
 				</CompactCard>
-				{ this.renderImporters() }
+
+				{ this.getImports( WORDPRESS ).map( ( importerStatus, key ) =>
+					<WordPressImporter { ...{ key, site, importerStatus } } /> ) }
+
+				{ this.getImports( GHOST ).map( ( importerStatus, key ) =>
+					<GhostImporter { ...{ key, importerStatus } } /> ) }
+
+				{ this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
+					<MediumImporter { ...{ key, importerStatus } } /> ) }
+
+				{ this.getImports( SQUARESPACE ).map( ( importerStatus, key ) =>
+					<SquarespaceImporter { ...{ key, importerStatus } } /> ) }
+
 			</div>
 		);
 	}

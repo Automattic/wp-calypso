@@ -13,12 +13,10 @@ export const appStates = Object.freeze( {
 	UPLOADING: 'importer-uploading'
 } );
 
-export const importerTypes = Object.freeze( {
-	WORDPRESS: 'importer-type-wordpress',
-	GHOST: 'importer-type-ghost',
-	MEDIUM: 'importer-type-medium',
-	SQUARESPACE: 'importer-type-squarespace'
-} );
+export const WORDPRESS = 'importer-type-wordpress';
+export const GHOST = 'importer-type-ghost';
+export const MEDIUM = 'importer-type-medium';
+export const SQUARESPACE = 'importer-type-squarespace';
 
 export const actionTypes = Object.freeze( {
 	API_REQUEST: 'importer-api-request',
