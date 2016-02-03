@@ -28,6 +28,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	TRACKING_IDS = {
+		bingInit: '4074038',
+
 		facebookInit: '823166884443641',
 
 		freeSignup: {
@@ -39,8 +41,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		},
 
 		premiumSignup: {
-			google: 'UMSeCIyYmFwQ1uXz_AM',
-			bing: '4074038'
+			google: 'UMSeCIyYmFwQ1uXz_AM'
 		},
 
 		businessTrial: {
@@ -48,8 +49,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		},
 
 		businessSignup: {
-			google: 'JxKBCKK-m1wQ1uXz_AM',
-			bing: '4074039'
+			google: 'JxKBCKK-m1wQ1uXz_AM'
 		},
 
 		retargeting: '823166884443641'
@@ -106,6 +106,19 @@ function loadTrackingScripts( callback ) {
 		if ( ! some( errors ) ) {
 			// update Facebook's tracking global
 			window.fbq( 'init', TRACKING_IDS.facebookInit );
+
+			// update Bing's tracking global
+			const bingConfig = {
+				ti: TRACKING_IDS.bingInit
+			};
+
+			bingConfig.q = window.uetq;
+
+			if ( typeof UET !== 'undefined' ) {
+				// bing's script creates the UET global for us
+				window.uetq = new UET( bingConfig ); // eslint-disable-line
+				window.uetq.push( 'pageLoad' );
+			}
 
 			if ( typeof callback === 'function' ) {
 				callback();
@@ -190,6 +203,12 @@ function recordPurchase( product ) {
 		}
 	);
 
+	// record the purchase w/ Bing
+	window.uetq.push( {
+		ec: 'purchase',
+		gv: product.cost
+	} );
+
 	// record the purchase w/ Google if a tracking ID is present
 	if ( TRACKING_IDS[ type ] && TRACKING_IDS[ type ].google ) {
 		window.google_trackConversion( {
@@ -197,16 +216,6 @@ function recordPurchase( product ) {
 			google_conversion_label: TRACKING_IDS[ type ].google,
 			google_remarketing_only: false
 		} );
-	}
-
-	// record the purchase w/ Bing if a tracking ID is present
-	if ( TRACKING_IDS[ type ] && TRACKING_IDS[ type ].bing && typeof UET !== 'undefined' ) {
-		window.uetq = new UET( { // eslint-disable-line no-undef
-			ti: TRACKING_IDS[ type ].bing,
-			o: window.uetq
-		} );
-		window.uetq.push( 'pageLoad' );
-		window.uetq.push( { ec: 'conversion' } );
 	}
 }
 
