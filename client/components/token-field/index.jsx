@@ -82,7 +82,7 @@ var TokenField = React.createClass( {
 				onFocus={ this._onFocus }
 			>
 				<div ref="tokensAndInput"
-					className="token-field__input-container"
+					className={ classNames( 'token-field__input-container', { 'is-empty': ( this.props.value.length === 0 ) } ) }
 					onClick={ this._onClick }
 					tabIndex="-1"
 				>
