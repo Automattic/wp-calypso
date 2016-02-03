@@ -10,7 +10,7 @@ var Dispatcher = require( 'dispatcher' ),
 	page = require( 'page' ),
 	wpcom = require( 'lib/wp' ),
 	CartActions = require( 'lib/upgrades/actions' ),
-	ThemeHelper = require( 'lib/themes/helpers' ),
+	ThemeHelper = require( '../themes/helpers' ),
 	themeItem = require( 'lib/cart-values/cart-items' ).themeItem;
 
 var CustomizeActions = {

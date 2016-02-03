@@ -13,7 +13,7 @@ var Main = require( 'components/main' ),
 	Action = require( 'state/themes/actions' ),
 	ThemePreview = require( './theme-preview' ),
 	ThemesSelection = require( './themes-selection' ),
-	ThemeHelpers = require( 'lib/themes/helpers' ),
+	ThemeHelpers = require( './helpers' ),
 	actionLabels = require( './action-labels' ),
 	ThemesListSelectors = require( 'state/themes/themes-list/selectors' );
 

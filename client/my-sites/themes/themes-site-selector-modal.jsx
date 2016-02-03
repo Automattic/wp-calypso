@@ -10,7 +10,7 @@ import defer from 'lodash/function/defer';
  */
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
-import Helper from 'lib/themes/helpers';
+import Helper from './helpers';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
