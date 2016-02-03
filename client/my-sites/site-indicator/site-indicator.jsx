@@ -276,17 +276,19 @@ export default React.createClass( {
 
 		return (
 			<div className={ indicatorClass }>
-				<button className="site-indicator__button" onClick={ this.toggleExpand }>
-					{ this.state.expand
-						? <Gridicon icon="cross" size={ 18 } />
-						: <Gridicon icon={ this.getIcon() } size={ 16 } nonStandardSize />
-					}
-				</button>
+				{ ! this.state.expand &&
+					<button className="site-indicator__button" onClick={ this.toggleExpand }>
+						<Gridicon icon={ this.getIcon() } size={ 16 } nonStandardSize />
+					</button>
+				}
 				{ this.state.expand
 					? <div className="site-indicator__message">
 						<div className={ textClass }>
 							{ this.getText() }
 						</div>
+						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+							<Gridicon icon="cross" size={ 18 } />
+						</button>
 					</div>
 					: null }
 			</div>

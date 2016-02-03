@@ -8,6 +8,7 @@
 }
 
 .site-indicator__button {
+	align-self: center;
 	background: $gray-light;
 	border: none;
 	border-radius: 50%;
@@ -65,6 +66,10 @@
 				left: 6px;
 			}
 		}
+		.site-indicator__button {
+			position: absolute;
+				right: 0;
+		}
 	}
 
 	.notouch & {
@@ -78,12 +83,14 @@
 .site-indicator__message {
 	color: $white;
 	font-size: 12px;
-	padding: 5px 50px 5px 15px;
+	line-height: 1.4;
+	padding: 5px 16px 5px 16px;
 	position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
+	display: flex;
 
 	.is-warning &,
 	.is-update & {
@@ -101,6 +108,7 @@
 	}
 }
 .site-indicator__action {
+	align-self: center;
 	display: inline-block;
 	vertical-align: middle;
 

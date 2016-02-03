@@ -110,7 +110,7 @@ module.exports = React.createClass( {
 
 	renderEditIcon: function() {
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
-			return;
+			return <span />;
 		}
 
 		let url = getCustomizeUrl( null, this.props.site );

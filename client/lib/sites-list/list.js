@@ -576,7 +576,7 @@ SitesList.prototype.getVisible = function() {
  **/
 SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
 	return this.get().filter( function( site ) {
-		return site.visible === true && this.recentlySelected.indexOf( site.ID ) === -1 && ! this.isStarred( site );
+		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1 && ! this.isStarred( site );
 	}, this );
 };
 
