@@ -8,6 +8,8 @@
  *  - https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md#actions
  */
 
+export const COMMAND_LINE_ARGUMENTS = 'COMMAND_LINE_ARGUMENTS';
+export const COMMAND_LINE_ARGUMENTS_USED = 'COMMAND_LINE_ARGUMENTS_USED';
 export const COMPLETE_EXPORT = 'COMPLETE_EXPORT';
 export const CONNECTION_LOST = 'CONNECTION_LOST';
 export const CONNECTION_RESTORED = 'CONNECTION_RESTORED';
