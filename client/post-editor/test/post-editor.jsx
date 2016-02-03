@@ -56,6 +56,10 @@ mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
 mockery.registerMock( 'lib/layout-focus', {
 	set() {}
 } );
+// TODO: REDUX - add proper tests when whole post-editor is reduxified
+mockery.registerMock( 'react-redux', {
+	connect: () => component => component
+} );
 
 const PostEditor = require( '../post-editor' );
 

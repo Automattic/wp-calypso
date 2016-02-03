@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	pick = require( 'lodash/object/pick' );
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-var EditorFieldset = require( 'post-editor/editor-fieldset' ),
+const EditorFieldset = require( 'post-editor/editor-fieldset' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	PostActions = require( 'lib/posts/actions' ),
 	InfoPopover = require( 'components/info-popover' ),
 	stats = require( 'lib/posts/stats' );
+import { setDiscussionSettings } from 'state/ui/editor/post/actions';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -21,18 +23,20 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-module.exports = React.createClass( {
+const EditorDiscussion = React.createClass( {
 	displayName: 'EditorDiscussion',
 
 	propTypes: {
 		isNew: React.PropTypes.bool,
 		post: React.PropTypes.object,
-		site: React.PropTypes.object
+		site: React.PropTypes.object,
+		setDiscussionSettings: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
-			isNew: false
+			isNew: false,
+			setDiscussionSettings: () => {}
 		};
 	},
 
@@ -72,6 +76,9 @@ module.exports = React.createClass( {
 		stats.recordStat( statName );
 		stats.recordEvent( gaEvent, newStatus );
 
+		this.props.setDiscussionSettings( discussion );
+
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			discussion: discussion
 		} );
@@ -107,3 +114,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setDiscussionSettings }, dispatch )
+)( EditorDiscussion );
