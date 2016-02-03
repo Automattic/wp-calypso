@@ -12,6 +12,7 @@ var config = require( 'config' ),
 	PollerPool = require( 'lib/data-poller' )
 
 import { connectionLost, connectionRestored } from 'state/application/actions';
+import i18n from 'lib/mixins/i18n';
 
 var STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
@@ -39,9 +40,9 @@ NetworkConnectionApp = {
 		changeCallback = function() {
 			if ( connected ) {
 				debug( 'Showing notice "Connection restored".' );
-				reduxStore.dispatch( connectionRestored() );
+				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
 			} else {
-				reduxStore.dispatch( connectionLost() );
+				reduxStore.dispatch( connectionLost( i18n.translate( 'Not connected. Some information may be out of sync.' ) ) );
 				debug( 'Showing notice "No internet connection".' );
 			}
 		};
