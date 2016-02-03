@@ -89,8 +89,10 @@ InstallationFlow.prototype.install = function( slug, next ) {
 	// Install the plugin. `installer` is a promise, so we can wait for the install
 	// to finish before trying to configure the plugin.
 	let installer = PluginsActions.installPlugin( site, plugin );
-	installer.then( () => {
-		// @todo Handle failed installs
+	installer.then( ( response ) => {
+		if ( 'undefined' !== typeof response.error ) {
+			// @todo Handle failed installs
+		}
 		// @todo Registration keys will be set here.
 		next();
 	} );
