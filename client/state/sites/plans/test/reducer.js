@@ -6,7 +6,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { FETCH_SITE_PLANS, REMOVE_SITE_PLANS } from 'state/action-types';
+import {
+	FETCH_SITE_PLANS,
+	REMOVE_SITE_PLANS,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
 import { initialSiteState, plans } from '../reducer';
 
 describe( 'reducer', () => {
@@ -71,6 +76,24 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				22222222: initialSiteState
 			} );
+		} );
+
+		it( 'never persists state because this is not implemented', () => {
+			const original = Object.freeze( {
+				11111111: initialSiteState,
+				22222222: initialSiteState
+			} );
+			const state = plans( original, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'never loads persisted state because this is not implemented', () => {
+			const original = Object.freeze( {
+				11111111: initialSiteState,
+				22222222: initialSiteState
+			} );
+			const state = plans( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

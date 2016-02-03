@@ -126,6 +126,8 @@
 		"help": true,
 		"support-user": true,
 
+		"persist-redux": true,
+
 		"notifications2beta": true,
 		"muse": true,
 		"olark" : true,

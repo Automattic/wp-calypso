@@ -8,8 +8,9 @@ import transform from 'lodash/object/transform';
  * Internal dependencies
  */
 import ActionTypes from '../action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	themes: {},
 	currentSiteId: 0
 } );
@@ -37,6 +38,10 @@ export default ( state = initialState, action ) => {
 
 		case ActionTypes.ACTIVATED_THEME:
 			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
+		case DESERIALIZE:
+			return fromJS( state );
+		case SERIALIZE:
+			return state.toJS();
 	}
 	return state;
 };

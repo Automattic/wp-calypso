@@ -23,7 +23,7 @@ import ui from './ui/reducer';
 /**
  * Module variables
  */
-const reducer = combineReducers( {
+export const reducer = combineReducers( {
 	plugins,
 	application,
 	notices,
@@ -50,15 +50,7 @@ if ( typeof window === 'object' ) {
 
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
 
-function getInitialState() {
-	// Bootstrapped state from a server-render
-	if ( typeof window === 'object' && window.initialReduxState ) {
-		return window.initialReduxState;
-	}
-	return {};
-}
-
-export function createReduxStore() {
+export function createReduxStore( initialState = {} ) {
 	if (
 		typeof window === 'object' &&
 		window.app &&
@@ -67,5 +59,5 @@ export function createReduxStore() {
 	) {
 		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
 	}
-	return createStoreWithMiddleware( createStore )( reducer, getInitialState() );
-};
+	return createStoreWithMiddleware( createStore )( reducer, initialState );
+}

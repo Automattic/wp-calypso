@@ -8,7 +8,9 @@ import { combineReducers } from 'redux';
  */
 import {
 	SELECTED_SITE_SET,
-	SET_SECTION
+	SET_SECTION,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import editor from './editor/reducer';
 import reader from './reader/reducer';
@@ -23,8 +25,11 @@ import reader from './reader/reducer';
 export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
-			state = action.siteId || null;
-			break;
+			return action.siteId || null;
+		case SERIALIZE:
+			return null;
+		case DESERIALIZE:
+			return null
 	}
 
 	return state;
@@ -44,36 +49,61 @@ export function recentlySelectedSiteIds( state = [], action ) {
 			if ( state.length === 3 ) {
 				state.pop();
 			}
-			break;
+			return state;
+		case SERIALIZE:
+			return [];
+		case DESERIALIZE:
+			return [];
 	}
 
 	return state;
 }
 
+//TODO: do we really want to mix strings and booleans?
 export function section( state = false, action ) {
-	if ( action.type === SET_SECTION && action.section !== undefined ) {
-		state = action.section;
+	switch ( action.type ) {
+		case SET_SECTION:
+			return ( action.section !== undefined ) ? action.section : state;
+		case SERIALIZE:
+			return false;
+		case DESERIALIZE:
+			return false;
 	}
 	return state;
 }
 
 export function hasSidebar( state = true, action ) {
-	if ( action.type === SET_SECTION && action.hasSidebar !== undefined ) {
-		state = action.hasSidebar;
+	switch ( action.type ) {
+		case SET_SECTION:
+			return ( action.hasSidebar !== undefined ) ? action.hasSidebar : state;
+		case SERIALIZE:
+			return true;
+		case DESERIALIZE:
+			return true;
 	}
 	return state;
 }
 
 export function isLoading( state = false, action ) {
-	if ( action.type === SET_SECTION && action.isLoading !== undefined ) {
-		state = action.isLoading;
+	switch ( action.type ) {
+		case SET_SECTION:
+			return ( action.isLoading !== undefined ) ? action.isLoading : state;
+		case SERIALIZE:
+			return false;
+		case DESERIALIZE:
+			return false;
 	}
 	return state;
 }
 
 export function chunkName( state = false, action ) {
-	if ( action.type === SET_SECTION && action.chunkName !== undefined ) {
-		state = action.chunkName;
+	switch ( action.type ) {
+		case SET_SECTION:
+			return ( action.chunkName !== undefined ) ? action.chunkName : state;
+		case SERIALIZE:
+			return false;
+		case DESERIALIZE:
+			return false;
 	}
 	return state;
 }

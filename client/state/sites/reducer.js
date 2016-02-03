@@ -2,12 +2,16 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import pick from 'lodash/object/pick';
+import indexBy from 'lodash/collection/indexBy';
+import isFunction from 'lodash/lang/isFunction';
+import omit from 'lodash/object/omit';
 
 /**
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
-import { SITE_RECEIVE } from 'state/action-types';
+import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -19,12 +23,20 @@ import { SITE_RECEIVE } from 'state/action-types';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
-			state = Object.assign( {}, state, {
+			return Object.assign( {}, state, {
 				[ action.site.ID ]: action.site
 			} );
-			break;
+		case SERIALIZE:
+			// scrub _events, _maxListeners, and other misc functions
+			const sites = Object.keys( state ).map( ( siteID ) => {
+				let plainJSObject = pick( state[ siteID ], ( value ) => ! isFunction( value ) );
+				plainJSObject = omit( plainJSObject, [ '_events', '_maxListeners'] );
+				return plainJSObject;
+			} );
+			return indexBy( sites, 'ID' );
+		case DESERIALIZE:
+			return state;
 	}
-
 	return state;
 }
 

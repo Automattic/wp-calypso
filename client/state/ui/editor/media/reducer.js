@@ -6,13 +6,20 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { EDITOR_MEDIA_ADVANCED_TOGGLE } from 'state/action-types';
+import {
+	EDITOR_MEDIA_ADVANCED_TOGGLE,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
 
 function advanced( state = false, action ) {
 	switch ( action.type ) {
 		case EDITOR_MEDIA_ADVANCED_TOGGLE:
-			state = ! state;
-			break;
+			return ! state;
+		case SERIALIZE:
+			return false;
+		case DESERIALIZE:
+			return false;
 	}
 
 	return state;

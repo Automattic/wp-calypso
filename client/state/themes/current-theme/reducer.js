@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { fromJS } from 'immutable';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 /**
  * Internal dependencies
  */
 import ActionTypes from '../action-types';
 
-const initialState = fromJS( {
+export const initialState = fromJS( {
 	isActivating: false,
 	hasActivated: false,
 	currentThemes: {}
@@ -31,6 +32,10 @@ export default ( state = initialState, action ) => {
 				.setIn( [ 'currentThemes', action.site.ID ], action.theme );
 		case ActionTypes.CLEAR_ACTIVATED_THEME:
 			return state.set( 'hasActivated', false );
+		case DESERIALIZE:
+			return fromJS( state );
+		case SERIALIZE:
+			return state.toJS();
 	}
 	return state;
 };

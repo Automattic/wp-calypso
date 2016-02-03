@@ -5,14 +5,16 @@ var store = require( 'store' ),
 	debug = require( 'debug' )( 'calypso:user' ),
 	config = require( 'config' ),
 	qs = require( 'qs' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/lang/isEqual' ),
+	localforage = require( 'localforage' );
 
 /**
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	userUtils = require( './shared-utils' );
+	userUtils = require( './shared-utils' ),
+	localforageConfig = require( 'state/initial-state' ).localforageConfig;
 
 /**
  * User component
@@ -207,6 +209,10 @@ User.prototype.clear = function() {
 	this.data = [];
 	delete this.settings;
 	store.clear();
+	if ( config.isEnabled( 'persist-redux' ) ) {
+		localforage.config( localforageConfig );
+		localforage.removeItem( 'redux-state' );
+	}
 };
 
 /**

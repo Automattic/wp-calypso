@@ -4,12 +4,12 @@
 import { fromJS } from 'immutable';
 import pluck from 'lodash/collection/pluck';
 import unique from 'lodash/array/unique';
-
 /**
  * Internal dependencies
  */
 import ActionTypes from '../action-types';
 import { PER_PAGE } from './constants';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 const defaultQuery = fromJS( {
 	search: '',
@@ -22,7 +22,7 @@ const defaultQueryState = fromJS( {
 	isFetchingNextPage: false
 } );
 
-const initialState = query( fromJS( {
+export const initialState = query( fromJS( {
 	list: [],
 	nextId: 0,
 	query: {},
@@ -38,7 +38,7 @@ function add( ids, list ) {
 	return unique( list.concat( ids ) );
 }
 
-function query( state, params = {} ) {
+export function query( state, params = {} ) {
 	const nextId = state.get( 'nextId' );
 
 	return state
@@ -77,7 +77,7 @@ export default ( state = initialState, action ) => {
 		case ActionTypes.INCREMENT_THEMES_PAGE:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], true )
-				.updateIn( [ 'query', 'page' ], page => page + 1 )
+				.updateIn( [ 'query', 'page' ], page => page + 1 );
 
 		case ActionTypes.RECEIVE_THEMES_SERVER_ERROR:
 			return state
@@ -90,6 +90,10 @@ export default ( state = initialState, action ) => {
 			// state is different from the old one, we need something to change
 			// here.
 			return state.set( 'active', action.theme.id );
+		case DESERIALIZE:
+			return query( fromJS( state ) );
+		case SERIALIZE:
+			return state.toJS();
 	}
 
 	return state;

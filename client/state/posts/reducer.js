@@ -11,7 +11,9 @@ import {
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE
+	POSTS_REQUEST_FAILURE,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import {
 	getSerializedPostsQuery,
@@ -29,10 +31,12 @@ import { DEFAULT_POST_QUERY } from './constants';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
-			state = Object.assign( {}, state, indexBy( action.posts, 'global_ID' ) );
-			break;
+			return Object.assign( {}, state, indexBy( action.posts, 'global_ID' ) );
+		case SERIALIZE:
+			return {};
+		case DESERIALIZE:
+			return {};
 	}
-
 	return state;
 }
 
@@ -55,9 +59,11 @@ export function sitePosts( state = {}, action ) {
 
 				state[ post.site_ID ][ post.ID ] = post.global_ID;
 			} );
-			break;
+			return state;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 	}
-
 	return state;
 }
 
@@ -95,9 +101,11 @@ export function siteQueries( state = {}, action ) {
 			if ( POSTS_REQUEST_SUCCESS === type ) {
 				state[ siteId ][ query ].posts = posts.map( ( post ) => post.global_ID );
 			}
-			break;
+			return state;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 	}
-
 	return state;
 }
 
@@ -123,9 +131,11 @@ export function siteQueriesLastPage( state = {}, action ) {
 			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query );
 			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
 			state[ siteId ][ serializedQuery ] = Math.max( lastPage, 1 );
-			break;
+			return state;
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 	}
-
 	return state;
 }
 

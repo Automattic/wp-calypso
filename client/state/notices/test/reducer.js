@@ -6,7 +6,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { NEW_NOTICE, REMOVE_NOTICE } from 'state/action-types';
+import {
+	NEW_NOTICE,
+	REMOVE_NOTICE,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
 import { items } from '../reducer';
 
 describe( 'reducer', () => {
@@ -41,6 +46,26 @@ describe( 'reducer', () => {
 				{ noticeId: 1 },
 				{ noticeId: 3 }
 			] );
+		} );
+
+		it( 'never persists state', () => {
+			const notices = [
+				{ noticeId: 1 },
+				{ noticeId: 2 },
+				{ noticeId: 3 }
+			];
+			const state = items( notices, { type: SERIALIZE } );
+			expect( state ).to.eql( [] );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const notices = [
+				{ noticeId: 1 },
+				{ noticeId: 2 },
+				{ noticeId: 3 }
+			];
+			const state = items( notices, { type: DESERIALIZE } );
+			expect( state ).to.eql( [] );
 		} );
 	} );
 } );

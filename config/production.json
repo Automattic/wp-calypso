@@ -68,6 +68,7 @@
 		"muse": true,
 		"olark": true,
 		"olark_use_wpcom_configuration": true,
+		"persist-redux": false,
 		"community-translator": true,
 		"reader": true,
 		"reader/teams": true,

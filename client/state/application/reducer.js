@@ -6,16 +6,23 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
+import {
+	CONNECTION_LOST,
+	CONNECTION_RESTORED,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
 
 export function connectionState( state = 'CHECKING', action ) {
 	switch ( action.type ) {
 		case CONNECTION_LOST:
-			state = 'OFFLINE';
-			break;
+			return 'OFFLINE';
 		case CONNECTION_RESTORED:
-			state = 'ONLINE';
-			break;
+			return 'ONLINE';
+		case SERIALIZE:
+			return 'CHECKING';
+		case DESERIALIZE:
+			return 'CHECKING';
 	}
 
 	return state;
