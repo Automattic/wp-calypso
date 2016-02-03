@@ -8,6 +8,10 @@
 	position: absolute;
 		left: 0;
 		right: 0;
+
+	@include breakpoint( "<480px" ) {
+		margin: 0;
+	}
 }
 
 .signup__step-enter {
