@@ -304,6 +304,14 @@ Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, 
 	}, fn );
 };
 
+Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEmails, role, fn ) {
+	debug( '/sites/:site_id:/invites/validate query' );
+	this.wpcom.req.post( '/sites/' + siteId + '/invites/validate', {}, {
+		invitees: usernamesOrEmails,
+		role: role
+	}, fn );
+};
+
 /**
  * GET/POST site settings
  *
