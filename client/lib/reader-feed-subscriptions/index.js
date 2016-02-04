@@ -16,7 +16,6 @@ const Dispatcher = require( 'dispatcher' ),
 const Emitter = require( 'lib/mixins/emitter' ),
 	ActionTypes = require( './constants' ).action,
 	ErrorTypes = require( './constants' ).error,
-	PostStoreActionTypes = require( 'lib/feed-post-store/constants' ).action,
 	FeedSubscriptionHelper = require( './helper' ),
 	States = require( './constants' ).state;
 
@@ -121,20 +120,6 @@ var FeedSubscriptionStore = {
 		if ( addSubscription( { URL: action.url } ) ) {
 			FeedSubscriptionStore.emit( 'change' );
 		}
-	},
-
-	receivePost: function( post ) {
-		if ( ! ( post && post.site_URL ) ) {
-			return;
-		}
-
-		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( post.site_URL );
-		debug( 'receivePost: ' + siteUrl );
-		if ( ( post.is_following ) && ! this.getIsFollowingBySiteUrl( siteUrl ) ) {
-			addSubscription( { URL: siteUrl } );
-		}
-
-		FeedSubscriptionStore.emit( 'change' );
 	},
 
 	receiveSubscriptions: function( data ) {
@@ -383,11 +368,6 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case ActionTypes.DISMISS_FOLLOW_ERROR:
 			FeedSubscriptionStore.dismissError( action );
-			break;
-		case PostStoreActionTypes.RECEIVE_FEED_POST:
-			if ( action.data && ! action.data.errors ) {
-				FeedSubscriptionStore.receivePost( action.data );
-			}
 			break;
 		case ActionTypes.RECEIVE_FEED_SUBSCRIPTIONS:
 			if ( action.data && ! action.data.errors ) {
