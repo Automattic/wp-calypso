@@ -62,7 +62,7 @@ const flows = {
 	},
 
 	plan: {
-		steps: [ 'themes', 'site', 'plans-without-free', 'user' ],
+		steps: [ 'themes', 'site', 'select-plan', 'user' ],
 		destination: getCheckoutDestination,
 		description: '',
 		lastModified: '2016-02-02'

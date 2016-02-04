@@ -4,10 +4,10 @@
 var UserSignupComponent = require( 'signup/steps/user' ),
 	SiteComponent = require( 'signup/steps/site' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
+	PaidPlansWithFreeTrials = require( 'signup/steps/paid-plans-with-free-trials' ),
 	PlansStepComponent = require( 'signup/steps/plans' ),
 	DomainsStepComponent = require( 'signup/steps/domains' ),
 	DesignTypeComponent = require( 'signup/steps/design-type' ),
-	SelectPlanStepComponent = require( 'signup/steps/select-plan' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
 	config = require( 'config' );
 
@@ -17,7 +17,7 @@ module.exports = {
 	user: UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	plans: PlansStepComponent,
-	'plans-without-free': SelectPlanStepComponent,
+	'select-plan': PaidPlansWithFreeTrials,
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
