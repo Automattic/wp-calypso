@@ -76,14 +76,14 @@ const AccountPassword = React.createClass( {
 	},
 
 	submitForm: function( event ) {
-		const { userSettings: { saveSettings }, errorNotice: showErrorNotice } = this.props;
+		const { errorNotice: showErrorNotice } = this.props;
 		event.preventDefault();
 
 		this.setState( {
 			savingPassword: true
 		} );
 
-		saveSettings(
+		this.props.userSettings.saveSettings(
 			function( error, response ) {
 				this.setState( { savingPassword: false } );
 				this.markSaved();
