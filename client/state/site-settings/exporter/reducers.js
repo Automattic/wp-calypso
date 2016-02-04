@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import Immutable from 'immutable';
 
 /**
  * Internal dependencies
@@ -19,42 +18,36 @@ import {
 
 import { States } from './constants';
 
-export const initialUIState = Immutable.fromJS( {
-	exportingState: States.READY,
-	postType: null
-} );
-
-/**
- * Reducer for managing the exporter UI
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function ui( state = initialUIState, action ) {
+export function selectedPostType( state = null, action ) {
 	switch ( action.type ) {
 		case SET_EXPORT_POST_TYPE:
-			return state.set( 'postType', action.postType );
+			return action.postType;
+		case SERIALIZE:
+			return state;
+		case DESERIALIZE:
+			return state;
+	}
+	return state;
+}
 
+export function exportingState( state = States.READY, action ) {
+	switch ( action.type ) {
 		case REQUEST_START_EXPORT:
-			return state.set( 'exportingState', States.STARTING );
-
+			return States.STARTING;
 		case REPLY_START_EXPORT:
-			return state.set( 'exportingState', States.EXPORTING );
-
+			return States.EXPORTING;
 		case FAIL_EXPORT:
 		case COMPLETE_EXPORT:
-			return state.set( 'exportingState', States.READY );
+			return States.READY;
 		case SERIALIZE:
-			return {};
+			return state;
 		case DESERIALIZE:
-			return initialUIState;
-
+			return States.READY;
 	}
-
 	return state;
 }
 
 export default combineReducers( {
-	ui
+	selectedPostType,
+	exportingState
 } );

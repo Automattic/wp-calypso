@@ -8,16 +8,16 @@ import { compose } from 'lodash';
  * Internal dependencies
  */
 import Exporter from './exporter';
-import { getUIState, shouldShowProgress } from 'state/site-settings/exporter/selectors';
+import {
+	shouldShowProgress,
+	getSelectedPostType,
+} from 'state/site-settings/exporter/selectors';
 import { setPostType, startExport } from 'state/site-settings/exporter/actions';
 
 function mapStateToProps( state, ownProps ) {
-	const uiState = getUIState( state );
-
 	return {
 		site: ownProps.site,
-		postType: uiState.postType,
-		advancedSettings: uiState.advancedSettings,
+		postType: getSelectedPostType( state ),
 		shouldShowProgress: shouldShowProgress( state )
 	};
 }

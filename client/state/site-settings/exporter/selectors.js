@@ -6,18 +6,11 @@ import { States } from './constants.js';
  * @param  {Object} state    Global state tree
  * @return {boolean}         true if activity is in progress
  */
-export function shouldShowProgress( state ) {
-	const exportingState = state.siteSettings.exporter.ui.get( 'exportingState' );
+export const shouldShowProgress = ( state ) => {
+	const exportingState = state.siteSettings.exporter.exportingState;
 
 	return ( exportingState === States.STARTING || exportingState === States.EXPORTING );
 }
 
-/**
- * Return the exporter UI state as a plain JS object.
- *
- * @param  {Object} state    Global state tree
- * @return {Object}          Exporter UI state
- */
-export function getUIState( state ) {
-	return state.siteSettings.exporter.ui.toJS();
-}
+export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
+export const getExportingState = ( state ) => state.siteSettings.exporter.exportingState;
