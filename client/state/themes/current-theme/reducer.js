@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { fromJS } from 'immutable';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 /**
  * Internal dependencies
  */
 import ActionTypes from '../action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 export const initialState = fromJS( {
 	isActivating: false,
