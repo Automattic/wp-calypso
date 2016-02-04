@@ -76,7 +76,9 @@
 			// set up handler to POST errors
 			window.onerror = debounce( function( message, scriptUrl, lineNumber, columnNumber, error ) {
 				sendErrorsToApi( message, scriptUrl, lineNumber, columnNumber, error );
-				savedWindowOnError();
+				if ( savedWindowOnError ) {
+					savedWindowOnError();
+				}
 			}, 100 );
 		}
 	}
