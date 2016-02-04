@@ -19,7 +19,7 @@ var photon = require( 'photon' ),
  * We special case gravatar, because we control them.
  *
  * @param  {string} url The URL to secure
- * @return {string}     The secured URL
+ * @return {string}     The secured URL, or null if we couldn't make it safe
  */
 function safeImageURL( url ) {
 	if ( typeof url !== 'string' ) {
@@ -38,13 +38,6 @@ function safeImageURL( url ) {
 		return url.replace( /^http:/, 'https:' );
 	}
 
-	// Photon doesn't support query strings
-	if ( parsed.query ) {
-		delete parsed.search;
-		delete parsed.query;
-		url = uri.format( parsed );
-	}
-	// run it through photon, even if it had a querystring we couldn't strip
 	return photon( url );
 }
 

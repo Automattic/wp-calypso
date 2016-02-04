@@ -8983,19 +8983,13 @@
       "resolved": "git+https://github.com/Automattic/node-phone.git#0a3a87cc2b70906c7367ba3a9c9a27915f335443"
     },
     "photon": {
-      "version": "1.0.4",
-      "from": "photon@1.0.4",
-      "resolved": "https://registry.npmjs.org/photon/-/photon-1.0.4.tgz",
+      "version": "2.0.0",
       "dependencies": {
         "crc32": {
-          "version": "0.2.2",
-          "from": "crc32@0.2.2",
-          "resolved": "https://registry.npmjs.org/crc32/-/crc32-0.2.2.tgz"
+          "version": "0.2.2"
         },
         "seed-random": {
-          "version": "2.2.0",
-          "from": "seed-random@2.2.0",
-          "resolved": "https://registry.npmjs.org/seed-random/-/seed-random-2.2.0.tgz"
+          "version": "2.2.0"
         }
       }
     },

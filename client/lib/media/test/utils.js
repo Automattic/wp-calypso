@@ -46,7 +46,7 @@ describe( 'MediaUtils', function() {
 				photon: true
 			} );
 
-			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6' );
+			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1' );
 		} );
 
 		it( 'should generate the correct width-constrained photon URL', function() {
@@ -55,7 +55,7 @@ describe( 'MediaUtils', function() {
 				maxWidth: 450
 			} );
 
-			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?w=450' );
+			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1&w=450' );
 		} );
 
 		it( 'should generate the correct width-constrained URL', function() {
