@@ -77,6 +77,8 @@ function renderInvitePeople( context ) {
 		sites.once( 'change', () => page( context.path ) );
 	}
 
+	titleActions.setTitle( i18n.translate( 'Invite People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
+
 	ReactDom.render(
 		React.createElement( InvitePeople, {
 			site: sites.getSelectedSite()
