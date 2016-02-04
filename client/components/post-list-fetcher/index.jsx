@@ -86,7 +86,6 @@ function shouldQueryPosts( props, nextProps ) {
 }
 
 PostListFetcher = React.createClass( {
-
 	propTypes: {
 		children: React.PropTypes.element.isRequired,
 		type: React.PropTypes.string,
