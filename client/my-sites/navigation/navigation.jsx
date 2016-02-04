@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	SitePicker = require( 'my-sites/picker' ),
-	Sidebar = require( 'my-sites/sidebar' );
+import observe from 'lib/mixins/data-observe';
+import SitePicker from 'my-sites/picker';
+import Sidebar from 'my-sites/sidebar';
 
-var SITE_HEIGHT = 66,
+const SITE_HEIGHT = 66,
 	EXTRA_SITE_ITEMS_HEIGHT = 200;
 
 module.exports = React.createClass( {
@@ -24,17 +24,17 @@ module.exports = React.createClass( {
 	 *
 	 * @return {Number} height of the sites list
 	 */
-	getSitesHeight: function() {
+	getSitesHeight() {
 		var count = this.props.user.get().visible_site_count;
 		return ( count * SITE_HEIGHT ) + EXTRA_SITE_ITEMS_HEIGHT;
 	},
 
-	preventPickerDefault: function( event ) {
+	preventPickerDefault( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 	},
 
-	render: function() {
+	render() {
 		var layoutFocus = this.props.layoutFocus;
 
 		return (
