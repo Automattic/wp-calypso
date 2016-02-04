@@ -69,11 +69,16 @@ export default React.createClass( {
 	},
 
 	getTokenStatus( value ) {
-		if ( 'string' === typeof value && -1 < value.indexOf( 'error' ) ) {
-			return 'is-error';
+		let status;
+		if ( 'string' === typeof value ) {
+			if ( -1 < value.indexOf( 'error' ) ) {
+				status = 'is-error';
+			} else if ( -1 < value.indexOf( 'success' ) ) {
+				status = 'is-success';
+			}
 		}
 
-		return 'is-success';
+		return status;
 	},
 
 	renderRoleExplanation() {
