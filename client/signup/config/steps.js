@@ -21,7 +21,6 @@ module.exports = {
 		props: {
 			useHeadstart: true,
 		},
-		apiRequestFunction: stepActions.setThemeOnSite,
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
 	},
