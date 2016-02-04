@@ -18,36 +18,6 @@
 		}
 	}
 
-	.site {
-		margin-right: 96px;
-	}
-
-	.site__content {
-		padding: 0;
-	}
-
-	.site__title::before {
-		font-size: 14px;
-	}
-
-	.site__domain {
-		font-style: normal;
-	}
-
-	.follow-button {
-		position: absolute;
-			top: -5px;
-			right: 0;
-		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
-		padding-right: 0;
-
-		@include breakpoint( "<480px" ) {
-			top: 0;
-			right: 8px;
-		}
-
-	}
-
 	.reader-post-byline {
 		margin: 8px 0;
 		padding: 0;
@@ -181,9 +151,9 @@
 	position: relative;
 		top: 0;
 		left: -16px;
+	margin-top: 16px;
 	margin-bottom: 16px;
 	border-bottom: 1px solid lighten( $gray, 20 );
-	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
 	background: rgba( lighten( $gray, 30 ), 0.3 );
 
 	@include breakpoint( ">480px" ) {
@@ -294,11 +264,46 @@
 }
 
 .reader__post-header {
-	margin: 0 0 16px 0;
-	padding: 0;
+	margin: -16px -24px;
 	position: relative;
 	line-height: 16px;
 	@include clear-fix;
+
+	&.has-follow-button {
+		.site {
+			margin-right: 132px;
+		}
+	}
+
+	.site__content {
+		padding: 16px 24px;
+
+		&:hover {
+			background: lighten( $gray, 30 );
+		}
+	}
+
+	.site__title::before {
+		font-size: 14px;
+	}
+
+	.site__domain {
+		font-style: normal;
+	}
+
+	.follow-button {
+		position: absolute;
+			top: 15px;
+			right: 8px;
+		margin-top: 0;
+		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
+
+		@include breakpoint( "<480px" ) {
+			top: 0;
+			right: 8px;
+		}
+
+	}
 }
 
 .reader__post-byline {
