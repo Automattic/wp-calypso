@@ -29,7 +29,7 @@ if ( desktop.isForkedProcess() ) {
 	// We need to run it with an explicit hostname to avoid firewall warnings.
 	server.listen( { port, host }, function() {
 		// Tell the parent process that Calypso has booted.
-		desktop.sendBootSignal();
+		desktop.ready();
 	} );
 } else {
 	// Let non-forks listen on any host.
