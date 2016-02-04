@@ -56,6 +56,7 @@ const NoticesList = React.createClass( {
 					<Notice
 						key={ 'notice-' + index }
 						status={ notice.status }
+						duration={ notice.duration || null }
 						text={ notice.text }
 						isCompact={ notice.isCompact }
 						onDismissClick={ this.removeNotice.bind( this, notice ) }
