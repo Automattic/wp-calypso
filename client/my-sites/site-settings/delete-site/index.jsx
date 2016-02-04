@@ -20,6 +20,7 @@ var HeaderCake = require( 'components/header-cake' ),
 	Dialog = require( 'components/dialog' ),
 	config = require( 'config' ),
 	Gridicon = require( 'components/gridicon' ),
+	notices = require( 'notices' ),
 	SiteListActions = require( 'lib/sites-list/actions' );
 
 module.exports = React.createClass( {
@@ -203,11 +204,29 @@ module.exports = React.createClass( {
 	},
 
 	_deleteSite: function() {
+		var siteDomain = this.state.site.domain;
+
 		this.setState( { showDialog: false } );
 
-		SiteListActions.deleteSite( this.state.site, function( success ) {
-			if ( success ) {
+		notices.success(
+			this.translate( '{{strong}}%(siteDomain)s{{/strong}} is being deleted.', {
+				args: { siteDomain: siteDomain },
+				components: { strong: <strong /> }
+			} )
+		);
+
+		SiteListActions.deleteSite( this.state.site, function( error ) {
+			if ( ! error ) {
 				page.redirect( '/stats' );
+
+				notices.success(
+					this.translate( '{{strong}}%(siteDomain)s{{/strong}} has been deleted.', {
+						args: { siteDomain: siteDomain },
+						components: { strong: <strong /> }
+					} )
+				);
+			} else {
+				notices.error( error.message );
 			}
 		}.bind( this ) );
 	},

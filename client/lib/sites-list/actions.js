@@ -68,7 +68,7 @@ var SitesListActions = {
 				} );
 			}
 
-			onComplete( ! error );
+			onComplete( error );
 		} );
 	},
 
