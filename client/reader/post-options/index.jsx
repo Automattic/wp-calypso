@@ -31,7 +31,7 @@ var PostOptions = React.createClass( {
 
 	getInitialState: function() {
 		var state = this.getStateFromStores();
-		state.popoverPosition = 'bottom left';
+		state.popoverPosition = 'top left';
 		state.showPopoverMenu = false;
 		return state;
 	},

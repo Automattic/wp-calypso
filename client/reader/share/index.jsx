@@ -75,7 +75,7 @@ var ReaderShare = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			position: 'top left',
+			position: 'top',
 			tagName: 'li'
 		};
 	},
