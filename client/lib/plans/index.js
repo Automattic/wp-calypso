@@ -62,14 +62,16 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isFetching && selectedSite;
 };
 
-export function filterPlansBySiteAndProps( plan, site, hideFreePlan ) {
-	if ( site && site.jetpack ) {
-		return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
-	}
+export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {
+	return plans.filter( function( plan ) {
+		if ( site && site.jetpack ) {
+			return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
+		}
 
-	if ( hideFreePlan && 'free_plan' === plan.product_slug ) {
-		return false;
-	}
+		if ( hideFreePlan && 'free_plan' === plan.product_slug ) {
+			return false;
+		}
 
-	return 'jetpack' !== plan.product_type
+		return ! isJetpackPlan( plan );
+	} );
 };

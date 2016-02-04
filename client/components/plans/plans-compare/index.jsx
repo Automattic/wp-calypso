@@ -158,9 +158,7 @@ var PlansCompare = React.createClass( {
 			plans = this.props.plans.get(),
 			site = this.props.selectedSite;
 
-		plans = plans.filter( function( plan ) {
-			return filterPlansBySiteAndProps( plan, site, this.props.hideFreePlan );
-		}, this );
+		plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
 
 		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = 3;

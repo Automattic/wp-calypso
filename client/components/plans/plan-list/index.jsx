@@ -79,9 +79,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( plans.length > 0 ) {
-			plans = plans.filter( function( plan ) {
-				return filterPlansBySiteAndProps( plan, site, this.props.hideFreePlan );
-			}, this );
+			plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
 
 			plansList = plans.map( function( plan ) {
 				return (
