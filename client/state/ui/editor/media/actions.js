@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import { EDITOR_MEDIA_ADVANCED_TOGGLE } from 'state/action-types';
+import { EDITOR_MEDIA_EDIT_ITEM_SET } from 'state/action-types';
 
-export function toggleEditorMediaAdvanced() {
+export function setEditorMediaEditItem( item ) {
 	return {
-		type: EDITOR_MEDIA_ADVANCED_TOGGLE
+		type: EDITOR_MEDIA_EDIT_ITEM_SET,
+		item
 	};
 }

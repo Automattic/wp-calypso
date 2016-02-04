@@ -2,42 +2,62 @@
  * External depencencies
  */
 import React, { PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { toggleEditorMediaAdvanced } from 'state/ui/editor/media/actions';
+import { setEditorMediaEditItem } from 'state/ui/editor/media/actions';
 import Dialog from 'components/dialog';
 
-function EditorMediaAdvanced( { visible, toggleVisible } ) {
-	return (
-		<Dialog isVisible={ visible } onClose={ toggleVisible }>
-			WIP
-		</Dialog>
-	);
-}
+const EditorMediaAdvanced = React.createClass( {
+	propTypes: {
+		item: PropTypes.object,
+		resetEditItem: PropTypes.func,
+		insertMedia: PropTypes.func
+	},
 
-EditorMediaAdvanced.propTypes = {
-	visible: PropTypes.bool,
-	toggleVisible: PropTypes.func
-};
+	getDefaultProps() {
+		return {
+			resetEditItem: () => {},
+			insertMedia: () => {}
+		};
+	},
 
-EditorMediaAdvanced.defaultProps = {
-	visible: false,
-	toggleVisible: () => {}
-};
+	getButtonSettings() {
+		return [
+			{
+				action: 'confirm',
+				label: this.translate( 'Save' ),
+				isPrimary: true,
+				onClick: () => this.props.insertMedia( 'Updated' )
+			}
+		];
+	},
+
+	render() {
+		const { item, resetEditItem } = this.props;
+
+		return (
+			<Dialog
+				isVisible={ !! item }
+				buttons={ this.getButtonSettings() }
+				onClose={ resetEditItem }>
+				ID { item && item.media.ID }
+			</Dialog>
+		);
+	}
+} );
 
 export default connect(
 	( state ) => {
 		return {
-			visible: state.ui.editor.media.advanced
+			item: state.ui.editor.media.editItem
 		};
 	},
 	( dispatch ) => {
-		return bindActionCreators( {
-			toggleVisible: toggleEditorMediaAdvanced
-		}, dispatch );
+		return {
+			resetEditItem: () => dispatch( setEditorMediaEditItem( null ) )
+		};
 	}
 )( EditorMediaAdvanced );

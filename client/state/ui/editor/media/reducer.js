@@ -7,24 +7,24 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	EDITOR_MEDIA_ADVANCED_TOGGLE,
+	EDITOR_MEDIA_EDIT_ITEM_SET,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
 
-function advanced( state = false, action ) {
+export function editItem( state = null, action ) {
 	switch ( action.type ) {
-		case EDITOR_MEDIA_ADVANCED_TOGGLE:
-			return ! state;
+		case EDITOR_MEDIA_EDIT_ITEM_SET:
+			return action.item || null;
 		case SERIALIZE:
-			return false;
+			return null;
 		case DESERIALIZE:
-			return false;
+			return null;
 	}
 
 	return state;
 }
 
 export default combineReducers( {
-	advanced
+	editItem
 } );
