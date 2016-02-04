@@ -212,10 +212,6 @@ export default React.createClass( {
 		const recentSites = sites.map( function( site ) {
 			var siteHref;
 
-			if ( ! site ) {
-				return null;
-			}
-
 			if ( this.props.siteBasePath ) {
 				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
 			}

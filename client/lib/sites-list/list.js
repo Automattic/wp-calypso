@@ -432,7 +432,8 @@ SitesList.prototype.getRecentlySelected = function() {
 		}, this )[0];
 	}, this );
 
-	return sites;
+	// remove undefined sites
+	return sites.filter( site => site );
 };
 
 /**
