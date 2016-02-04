@@ -4,4 +4,9 @@
 
 .jetpack_premium .plan__plan-details li, .jetpack_business .plan__plan-details li {
 	opacity: 1.0;
+
+	&:before {
+		@include noticon( '\f418', 16px );
+		vertical-align: middle;
+	}
 }
