@@ -12,6 +12,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	analytics = require( 'analytics' ),
 	testFeatures = require( 'lib/features-list/test-features' ),
 	Gridicon = require( 'components/gridicon' ),
+	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
 	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
@@ -225,6 +226,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) === 'list';
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
@@ -238,7 +240,7 @@ module.exports = React.createClass( {
 				</PlanHeader>
 				<div className="plan__plan-expand">
 					<div className="plan__plan-details">
-						{ abtest( 'plansFeatureList' ) === 'list' ? this.getFeatureList() : this.getDescription() }
+						{ shouldDisplayFeatureList ? this.getFeatureList() : this.getDescription() }
 					</div>
 					{ this.getPlanActions() }
 				</div>

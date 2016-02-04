@@ -88,6 +88,13 @@ function isEnterprise( product ) {
 	return product.product_slug === 'wpcom-enterprise';
 }
 
+function isJetpackPlan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return 'jetpack' === product.product_type;
+}
+
 function isPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -263,6 +270,7 @@ module.exports = {
 	isDomainRedemption,
 	isDomainRegistration,
 	isEnterprise,
+	isJetpackPlan,
 	isFreePlan,
 	isFreeTrial,
 	isGoogleApps,
