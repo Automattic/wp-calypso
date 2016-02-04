@@ -1,6 +1,6 @@
 {
 	"env": "production",
-	"tracks_client_prop": "browser",
+	"client_slug": "browser",
 	"hostname": "wpcalypso.wordpress.com",
 	"i18n_default_locale_slug": "en",
 	"wpcom_user_bootstrap": true,

@@ -16,7 +16,7 @@ module.exports = {
 				environment: config( 'env' ),
 				site_count: sites.data ? sites.data.length : 0,
 				site_id_label: 'wpcom',
-				client: config( 'tracks_client_prop' )
+				client: config( 'client_slug' )
 			};
 
 		if ( selectedSite ) {
