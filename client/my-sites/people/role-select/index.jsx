@@ -10,7 +10,8 @@ var RolesStore = require( 'lib/site-roles/store' ),
 	RolesActions = require( 'lib/site-roles/actions' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' );
+	FormSelect = require( 'components/forms/form-select' ),
+	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
 
 var debug = debugFactory( 'calypso:role-select' );
 
@@ -90,6 +91,11 @@ module.exports = React.createClass( {
 						} )
 					}
 				</FormSelect>
+				{ this.props.explanation &&
+					<FormSettingExplanation>
+						{ this.props.explanation }
+					</FormSettingExplanation>
+				}
 			</FormFieldset>
 		);
 	}
