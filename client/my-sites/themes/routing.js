@@ -6,7 +6,6 @@ import transform from 'lodash/object/transform';
 /**
  * Internal dependencies
  */
-//import render from 'server/render';
 import controller from 'my-sites/controller';
 import { layoutFactory } from './controller';
 
@@ -58,39 +57,3 @@ export function selectProps( context ) {
 		queryString: context.query.s,
 	};
 }
-
-//export function serverRouteHandler( context, req, res ) {
-//	context = render.getExtendedContext( context, req );
-//	const factory = selectFactory( context );
-//	const props = selectProps( context );
-//	const renderer = render.makeRenderer( factory );
-//
-//	render.runServerRender( renderer( props ), context );
-//	res.render( 'index.jade', context );
-//}
-
-//function getParams( path, patterns ) {
-//	let results;
-//	patterns.some( pattern => {
-//		const matches = path.match( pattern );
-//		if ( matches && matches.length ) {
-//			results = matches[1];
-//			return true;
-//		}
-//	} );
-//	return results;
-//}
-	//let tier = getParams( path, [
-	//		/\/design\/type\/([^/]+)\//,
-	//		/\/design\/type\/([^/]+)/,
-	//] );
-
-	//tier = includes( [ 'all', 'free', 'premium' ], tier )
-	//	? tier
-	//	: 'all';
-
-	//const site_id = getParams( path, [
-	//		/\/design\/type\/[^/]+\/([^/]+)/,
-	//		/\/design\/([^/]+)\/?$/,
-	//] );
-

@@ -63,55 +63,6 @@ var controller = {
 		);
 	},
 
-	//isomorphicFoo: function( context ) {
-	//	const { tier, site_id } = ctx.params;
-	//	const { store } = ctx;
-	//	const user = store ? getCurrentUser( store.getState() ) : null;
-	//	const title = buildTitle(
-	//		i18n.translate( 'Themes', { textOnly: true } ),
-	//		{ siteID: site_id } );
-	//	const Head = user
-	//		? require( 'layout/head' )
-	//		: require( 'my-sites/themes/head' );
-
-	//	let basePath = route.sectionify( ctx.path );
-	//	let analyticsPageTitle = 'Themes';
-
-	//	if ( site_id ) {
-	//		basePath = basePath + '/:site_id';
-	//		analyticsPageTitle += ' > Single Site';
-	//	}
-
-	//	if ( tier ) {
-	//		analyticsPageTitle += ` > Type > ${titlecase( tier )}`;
-	//	}
-
-	//	const runClientAnalytics = () => {
-	//		analytics.pageView.record( basePath, analyticsPageTitle );
-	//	};
-
-	//	const ctxAttributes = {
-	//		layout: layoutFactory( {
-	//			context,
-	//			title,
-	//			tier,
-	//			site_id,
-	//			runClientAnalytics,
-	//		} )
-	//	};
-
-	//	if ( Helmet.peek() ) {
-	//		const helmetData = Helmet.rewind();
-	//		Object.assign( ctxAttributes, {
-	//			helmetTitle: helmetData.title,
-	//			helmetMeta: helmetData.meta,
-	//			helmetLink: helmetData.link,
-	//		} );
-	//	}
-
-	//	return ctxAttributes;
-	//},
-
 	layoutFactory
 };
 
