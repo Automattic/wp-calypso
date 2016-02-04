@@ -134,16 +134,6 @@ PlansList.prototype.getPathFromSlug = function( slug ) {
 	} );
 };
 
-/**
- * Get the plan corresponding to a product_slug
- */
-PlansList.prototype.getPlanFromPath = function( path ) {
-	return this.get().filter( function( plan ) {
-		return pathToSlugMapping[ path ] === plan.product_slug;
-	} ).shift();
-};
-
-
 // Save the plans to memory to save them being fetched from the store every time the user switches sites
 var _plans;
 

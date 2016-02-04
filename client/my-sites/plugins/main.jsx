@@ -36,7 +36,6 @@ import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PlanNudge from 'components/plans/plan-nudge';
 
 /**
  * Module variables
@@ -354,14 +353,6 @@ const PluginsMain = React.createClass( {
 		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( this.state.accessError ) {
-			if ( this.state.accessError.abtest === 'nudge' ) {
-				return (
-					<Main>
-						<SidebarNavigation />
-						<PlanNudge currentProductId={ selectedSite.plan.product_id } selectedSiteSlug={ selectedSite.slug } />
-					</Main>
-				);
-			}
 			return (
 				<Main>
 					<SidebarNavigation />
