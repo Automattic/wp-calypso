@@ -219,7 +219,6 @@ module.exports = React.createClass( {
 	plugins: function() {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
-			pluginsBrowseLink = '/plugins/browse' + this.siteSuffix(),
 			addPluginsButton,
 			noticon,
 			target;
@@ -246,8 +245,8 @@ module.exports = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			if ( ( this.isSingle() && site.jetpack ) || ( this.hasJetpackSites() && ! this.isSingle() ) ) {
-				addPluginsButton = <a onClick={ this.onNavigate } href={ pluginsBrowseLink } className="add-new">{ this.translate( 'Add' ) }</a>;
+			if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
+				addPluginsButton = <a onClick={ this.onNavigate } href={ '/plugins/browse' + this.siteSuffix() } className="add-new">{ this.translate( 'Add' ) }</a>;
 			}
 		}
 
