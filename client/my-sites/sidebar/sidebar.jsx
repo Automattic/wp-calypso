@@ -262,7 +262,11 @@ module.exports = React.createClass( {
 			addDomainLink = '/domains/add' + this.siteSuffix(),
 			addDomainButton = '';
 
-		if ( ! site ) {
+		if ( ! config.isEnabled( 'manage/plans' ) ) {
+			return null;
+		}
+
+		if ( ! this.isSingle() ) {
 			return null;
 		}
 
@@ -271,14 +275,6 @@ module.exports = React.createClass( {
 		}
 
 		if ( site.capabilities && ! site.capabilities.manage_options ) {
-			return null;
-		}
-
-		if ( ! this.isSingle() && ! config.isEnabled( 'manage/plans' ) ) {
-			return null;
-		}
-
-		if ( ! config.isEnabled( 'manage/plans' ) ) {
 			return null;
 		}
 
