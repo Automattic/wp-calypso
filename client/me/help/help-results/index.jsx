@@ -9,6 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import CompactCard from 'components/card/compact';
 import HelpResult from './item';
+import SectionHeader from 'components/section-header';
 
 module.exports = React.createClass( {
 	displayName: 'HelpResults',
@@ -22,13 +23,9 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="help-results">
-				<CompactCard className="help-results__header">
-					<span className="help-results__header-text">
-						{ this.props.header }
-					</span>
-				</CompactCard>
+				<SectionHeader label={ this.props.header }/>
 				{ this.props.helpLinks.map( helpLink => <HelpResult key={ helpLink.link } helpLink={ helpLink } iconPathDescription={ this.props.iconPathDescription } /> ) }
-				<a href={ this.props.searchLink } target="__blank" >
+				<a href={ this.props.searchLink } target="__blank">
 					<CompactCard className="help-results__footer">
 						<span className="help-results__footer-text">
 							{ this.props.footer }
