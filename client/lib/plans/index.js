@@ -10,6 +10,10 @@ import moment from 'moment';
  */
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
+import {
+	isFreeJetpackPlan,
+	isJetpackPlan
+} from 'lib/products-values';
 
 export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
 	addItem( cartItems.planItem( getCurrentPlan( sitePlans.data ).productSlug ) );
@@ -60,7 +64,7 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 
 export function filterPlansBySiteAndProps( plan, site, hideFreePlan ) {
 	if ( site && site.jetpack ) {
-		return 'jetpack_business' === plan.product_slug || 'jetpack_premium' === plan.product_slug;
+		return isJetpackPlan( plan ) && ! isFreeJetpackPlan( plan );
 	}
 
 	if ( hideFreePlan && 'free_plan' === plan.product_slug ) {
