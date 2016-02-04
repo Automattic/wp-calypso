@@ -55,9 +55,7 @@ var PostList = React.createClass( {
 	}
 } );
 
-
 var Posts = React.createClass( {
-
 	propTypes: {
 		author: React.PropTypes.number,
 		context: React.PropTypes.object.isRequired,
@@ -157,51 +155,50 @@ var Posts = React.createClass( {
 						}
 					} )	}
 			/>;
+		}
+
+		if ( config.isEnabled( 'post-editor' ) ) {
+			newPostLink = this.props.siteID ? '/post/' + this.props.siteID : '/post';
 		} else {
+			newPostLink = selectedSite ? '//wordpress.com/post/' + selectedSite.ID + '/new' : '//wordpress.com/post';
+		}
 
-			if ( config.isEnabled( 'post-editor' ) ) {
-				newPostLink = this.props.siteID ? '/post/' + this.props.siteID : '/post';
-			} else {
-				newPostLink = selectedSite ? '//wordpress.com/post/' + selectedSite.ID + '/new' : '//wordpress.com/post';
+		if ( this.props.hasRecentError ) {
+			attributes = {
+				title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
+				line: this.translate( 'Please check your internet connection.' )
 			}
-
-			if ( this.props.hasRecentError ) {
-				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-					line: this.translate( 'Please check your internet connection.' )
-				}
-			} else {
-				switch ( this.props.statusSlug ) {
-					case 'drafts':
-						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Post' ),
-							actionURL: newPostLink
-						};
-						break;
-					case 'scheduled':
-						attributes = {
-							title: this.translate( 'You don\'t have any scheduled posts.' ),
-							line: this.translate( 'Would you like to schedule a draft to publish?' ),
-							action: this.translate( 'Edit Drafts' ),
-							actionURL: ( this.props.siteID ) ? '/posts/drafts/' + this.props.siteID : '/posts/drafts'
-						};
-						break;
-					case 'trashed':
-						attributes = {
-							title: this.translate( 'You don\'t have any posts in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
-						};
-						break;
-					default:
-						attributes = {
-							title: this.translate( 'You haven\'t published any posts yet.' ),
-							line: this.translate( 'Would you like to publish your first post?' ),
-							action: this.translate( 'Start a Post' ),
-							actionURL: newPostLink
-						};
-				}
+		} else {
+			switch ( this.props.statusSlug ) {
+				case 'drafts':
+					attributes = {
+						title: this.translate( 'You don\'t have any drafts.' ),
+						line: this.translate( 'Would you like to create one?' ),
+						action: this.translate( 'Start a Post' ),
+						actionURL: newPostLink
+					};
+					break;
+				case 'scheduled':
+					attributes = {
+						title: this.translate( 'You don\'t have any scheduled posts.' ),
+						line: this.translate( 'Would you like to schedule a draft to publish?' ),
+						action: this.translate( 'Edit Drafts' ),
+						actionURL: ( this.props.siteID ) ? '/posts/drafts/' + this.props.siteID : '/posts/drafts'
+					};
+					break;
+				case 'trashed':
+					attributes = {
+						title: this.translate( 'You don\'t have any posts in your trash folder.' ),
+						line: this.translate( 'Everything you write is solid gold.' )
+					};
+					break;
+				default:
+					attributes = {
+						title: this.translate( 'You haven\'t published any posts yet.' ),
+						line: this.translate( 'Would you like to publish your first post?' ),
+						action: this.translate( 'Start a Post' ),
+						actionURL: newPostLink
+					};
 			}
 		}
 
@@ -267,7 +264,6 @@ var Posts = React.createClass( {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
-
 		} else {
 			if ( this.props.loading || ! this.props.sites.fetched ) {
 				for ( i = 0; i < placeholderCount; i++ ) {
