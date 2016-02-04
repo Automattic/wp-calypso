@@ -182,7 +182,7 @@ $autobar-height: 20px;
 			top: 9px;
 			left: 50%;
 		width: 8px;
-		z-index: 99999;
+		z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
 
 		// Animation
 		transform: translateZ(0);

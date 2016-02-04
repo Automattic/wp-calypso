@@ -542,7 +542,7 @@
 	// If done properly, might be an alternative for mobile.
 	// Seems not working properly with -webkit-perspective turned on.
 	/*@include responsive( mobile ) {
-		z-index: 190; // Higher than masterbar?
+		z-index: ; // Add an entry to _z-index.scss
 		border: 0;
 		padding: 80px 0 0;
 		background: rgba(244, 248, 250, 0.9);

@@ -142,7 +142,7 @@
 			top: 13px;
 			left: 18px;
 		fill: $blue-medium;
-		z-index: 23; // Higher than <Search>'s z-index: 22;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
 	}
 
 	.gridicons-add-outline {
@@ -163,7 +163,7 @@
 		position: absolute;
 			top: 68px;
 		width: 100%;
-		z-index: 35;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
 
 		@include breakpoint( "<480px" ) {
 			top: 59px;
