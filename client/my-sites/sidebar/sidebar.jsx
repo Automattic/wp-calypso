@@ -220,10 +220,21 @@ module.exports = React.createClass( {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
 			pluginsBrowseLink = '/plugins/browse' + this.siteSuffix(),
-			addPluginsButton;
+			addPluginsButton,
+			noticon,
+			target;
 
-		if ( ! this.isSingle() && ! config.isEnabled( 'manage/plugins' ) ) {
-			return null;
+		if ( ! config.isEnabled( 'manage/plugins' ) ) {
+			if ( ! this.isSingle() ) {
+				return null;
+			}
+
+			if ( site.options ) {
+				pluginsLink = site.options.admin_url + 'plugins.php';
+			}
+
+			target = '_blank';
+			noticon = <span className="noticon noticon-external" />;
 		}
 
 		if ( ! this.props.sites.canManageSelectedOrAll() ) {
@@ -234,10 +245,6 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/plugins' ) && site.options ) {
-			pluginsLink = site.options.admin_url + 'plugins.php';
-		}
-
 		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
 			if ( ( this.isSingle() && site.jetpack ) || ( this.hasJetpackSites() && ! this.isSingle() ) ) {
 				addPluginsButton = <a onClick={ this.onNavigate } href={ pluginsBrowseLink } className="add-new">{ this.translate( 'Add' ) }</a>;
@@ -246,10 +253,10 @@ module.exports = React.createClass( {
 
 		return (
 			<li className={ this.itemLinkClass( '/plugins', 'plugins' ) }>
-				<a onClick={ this.onNavigate } href={ pluginsLink } target={ ! config.isEnabled( 'manage/plugins' ) ? '_blank' : null }>
+				<a onClick={ this.onNavigate } href={ pluginsLink } target={ target }>
 					<Gridicon icon="plugins" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Plugins' ) }</span>
-					{ ! config.isEnabled( 'manage/plugins' ) ? <span className="noticon noticon-external" /> : null }
+					{ noticon }
 				</a>
 				{ addPluginsButton }
 			</li>
