@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var analytics = require( 'analytics' ),
 	classNames = require( 'classnames' ),
+	contains = require( 'lodash/collection/contains' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
-	analytics = require( 'analytics' ),
-	startsWith = require( 'lodash/string/startsWith' ),
 	has = require( 'lodash/object/has' ),
-	contains = require( 'lodash/collection/contains' );
+	React = require( 'react' ),
+	startsWith = require( 'lodash/string/startsWith' );
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	CurrentSite = require( 'my-sites/current-site' ),
-	PublishMenu = require( './publish-menu' ),
-	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' ),
-	productsValues = require( 'lib/products-values' ),
-	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
+var abtest = require( 'lib/abtest' ).abtest,
 	AdsUtils = require( 'lib/ads/utils' ),
+	config = require( 'config' ),
+	CurrentSite = require( 'my-sites/current-site' ),
+	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
 	Gridicon = require( 'components/gridicon' ),
+	productsValues = require( 'lib/products-values' ),
+	PublishMenu = require( './publish-menu' ),
 	Sidebar = require( 'layout/sidebar' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
 	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
