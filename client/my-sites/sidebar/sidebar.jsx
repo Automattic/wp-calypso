@@ -548,7 +548,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		site = this.getSelectedSite()
+		site = this.getSelectedSite();
 		viplink = '/vip/deploys' + this.siteSuffix();
 
 		if ( ! site ) {
