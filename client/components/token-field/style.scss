@@ -72,7 +72,12 @@ input[type="text"].token-field__input {
 }
 
 .token-field__token.is-borderless {
-	.token-field__token-text, .token-field__remove-token {
+	.token-field__token-text {
+		background: transparent;
+		color: $gray-dark;
+	}
+
+	.token-field__remove-token {
 		background: transparent;
 		color: $gray;
 	}
