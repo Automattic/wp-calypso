@@ -81,7 +81,7 @@ module.exports = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
 	},
 
-	isFreeTrialFlow: function() {
+	areFreeTrialsEnabled: function() {
 		if ( this.props.enableFreeTrials ) {
 			return true;
 		}
@@ -95,7 +95,7 @@ module.exports = React.createClass( {
 				<PlanList
 					plans={ this.state.plans }
 					comparePlansUrl={ this.comparePlansUrl() }
-					enableFreeTrials={ this.isFreeTrialFlow() }
+					enableFreeTrials={ this.areFreeTrialsEnabled() }
 					hideFreePlan={ this.props.hideFreePlan }
 					isInSignup={ true }
 					onSelectPlan={ this.onSelectPlan } />
@@ -114,7 +114,7 @@ module.exports = React.createClass( {
 		let headerText = this.translate( 'Pick a plan that\'s right for you.' ),
 			subHeaderText;
 
-		if ( this.isFreeTrialFlow() && getABTestVariation( 'freeTrials' ) === 'offered' ) {
+		if ( this.areFreeTrialsEnabled() && getABTestVariation( 'freeTrials' ) === 'offered' ) {
 			subHeaderText = this.translate(
 				'Try WordPress.com Premium or Business free for 14 days, no credit card required.'
 			);
@@ -145,7 +145,7 @@ module.exports = React.createClass( {
 	plansCompare: function() {
 		return <PlansCompare
 			className="plans-step__compare"
-			enableFreeTrials={ this.isFreeTrialFlow() }
+			enableFreeTrials={ this.areFreeTrialsEnabled() }
 			hideFreePlan={ this.props.hideFreePlan }
 			onSelectPlan={ this.onSelectPlan }
 			isInSignup={ true }
