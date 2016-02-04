@@ -11,8 +11,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	Sidebar = require( 'my-sites/sidebar' );
 
 var SITE_HEIGHT = 66,
-	EXTRA_SITE_ITEMS_HEIGHT = 200,
-	MAX_SIDEBAR_HEIGHT = 1200;
+	EXTRA_SITE_ITEMS_HEIGHT = 200;
 
 module.exports = React.createClass( {
 	displayName: 'MySitesNavigation',
@@ -23,7 +22,7 @@ module.exports = React.createClass( {
 	 * Calculate the height of the sites list based on how many sites
 	 * the user has to be displayed
 	 *
-	 * @return {number}
+	 * @return {Number} height of the sites list
 	 */
 	getSitesHeight: function() {
 		var count = this.props.user.get().visible_site_count;
@@ -36,14 +35,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var layoutFocus = this.props.layoutFocus,
-			containerHeight = MAX_SIDEBAR_HEIGHT;
-
-		// When layout focus is on sites list
-		// Calculate the height of the navigation block
-		if ( layoutFocus.getCurrent() === 'sites' ) {
-			containerHeight = this.getSitesHeight();
-		}
+		var layoutFocus = this.props.layoutFocus;
 
 		return (
 			<div className="sites-navigation">
