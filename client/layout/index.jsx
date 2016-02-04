@@ -33,6 +33,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	Layout;
 
 import { isOffline } from 'state/application/selectors';
+import { isSupportUser } from 'state/support/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -99,7 +100,13 @@ Layout = React.createClass( {
 	},
 
 	render: function() {
-		var sectionClass = 'wp layout is-section-' + this.props.section + ' focus-' + this.props.focus.getCurrent(),
+		var sectionClass = classnames(
+				'wp',
+				'layout',
+				`is-section-${this.props.section}`,
+				`focus-${this.props.focus.getCurrent()}`,
+				{ 'is-support-user': this.props.isSupportUser }
+			),
 			showWelcome = this.props.nuxWelcome.getWelcome(),
 			newestSite = this.newestSite(),
 			translatorInvitation = this.props.translatorInvitation,
@@ -145,6 +152,7 @@ export default connect(
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
 		return { 
 			isLoading,
+			isSupportUser: isSupportUser( state ),
 			section,
 			hasSidebar,
 			chunkName,

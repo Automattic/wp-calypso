@@ -17,6 +17,11 @@ $autobar-height: 20px;
 	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 
+	.is-support-user & {
+		background: $orange-jazzy;
+		border-bottom: 1px solid darken( $orange-jazzy, 4% );
+	}
+
 	@include breakpoint( ">660px" ) {
 		backface-visibility: hidden;
 	}
@@ -55,6 +60,10 @@ $autobar-height: 20px;
 
 	&.is-active {
 		background: $blue-dark;
+	}
+
+	.is-support-user &.is-active {
+		background: darken( $orange-jazzy, 10% );
 	}
 
 	@include breakpoint( "<480px" ) {
@@ -102,6 +111,17 @@ $autobar-height: 20px;
 
 	.masterbar__item-content {
 		display: none;
+	}
+
+	.is-support-user &,
+	.is-support-user &:focus,
+	.is-support-user &:hover,
+	.is-support-user &:visited {
+		color: $orange-jazzy;
+	}
+
+	.is-support-user &.is-active {
+		color: $white;
 	}
 
 	@include breakpoint( ">480px" ) {
