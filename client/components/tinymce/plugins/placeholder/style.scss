@@ -1,0 +1,3 @@
+body.is-showing-placeholder:not( :focus )::before {
+	opacity: 0.5;
+}
