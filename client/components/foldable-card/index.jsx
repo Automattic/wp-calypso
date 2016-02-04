@@ -138,7 +138,7 @@ var FoldableCard = React.createClass( {
 		return (
 			<Container className={ itemSiteClasses }>
 				{ this.renderHeader() }
-				{ this.renderContent() }
+				{ this.state.expanded && this.renderContent() }
 			</Container>
 		);
 	}
