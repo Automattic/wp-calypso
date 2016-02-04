@@ -5,21 +5,18 @@ var express = require( 'express' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' ),
-	superagent = require( 'superagent' ),
-	includes = require( 'lodash/collection/includes' ),
-	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server' ),
-	Helmet = require( 'react-helmet' );
+	debug = require( 'debug' )( 'calypso:pages' );
+	//React = require( 'react' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
+	//LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
+	render = require( '../render' );
 
-var LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
-var cachedDesignMarkup = {};
+//var layoutLoggedOutRenderer = render.makeCachedRenderer(
+//		React.createFactory( LayoutLoggedOutDesign ) );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -318,14 +315,6 @@ function renderLoggedInRoute( req, res ) {
 	}
 }
 
-function bumpStat( group, name ) {
-	const url = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
-
-	if ( config( 'env' ) === 'production' ) {
-		superagent.get( url ).end();
-	}
-}
-
 module.exports = function() {
 	var app = express();
 
@@ -380,53 +369,34 @@ module.exports = function() {
 		}
 	} );
 
-	app.get( '/design(/type/:themeTier)?', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			const context = getDefaultContext( req );
-			const tier = includes( [ 'all', 'free', 'premium' ], req.params.themeTier )
-				? req.params.themeTier
-				: 'all';
+	// app.get( '/design/*', function( req, res ) {
+	{
+		const {
+			getRouting,
+			selectFactory,
+			selectProps
+		} = require( 'my-sites/themes/routing' );
 
-			if ( config.isEnabled( 'server-side-rendering' ) ) {
-				try {
-					if ( ! cachedDesignMarkup[ tier ] ) {
-						const cached = cachedDesignMarkup[ tier ] = {};
-						let startTime = Date.now();
-						cached.layout = ReactDomServer.renderToString(
-								LayoutLoggedOutDesignFactory( { tier } ) );
-						let rtsTimeMs = Date.now() - startTime;
+		const loggedOut = render.makeServerHandler( {
+			getDefaultContext,
+			selectFactory,
+			selectProps,
+		} );
 
-						cached.helmetData = Helmet.rewind();
+		const { routes } = getRouting( false );
+		routes.forEach( route => app.get( route, loggedIn, loggedOut ) );
 
-						if ( rtsTimeMs > 15 ) {
-							// We think that renderToString should generally
-							// never take more than 15ms. We're probably wrong.
-							bumpStat( 'calypso-ssr', 'loggedout-design-over-15ms-rendertostring' );
-						}
-						bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
-					}
-
-					const { layout, helmetData } = cachedDesignMarkup[ tier ];
-
-					Object.assign( context, {
-						layout,
-						helmetTitle: helmetData.title,
-						helmetMeta: helmetData.meta,
-						helmetLink: helmetData.link,
-					} );
-				} catch ( ex ) {
-					if ( config( 'env' ) === 'development' ) {
-						throw ex;
-					}
-				}
+		// eventually this will disappear and we'll just have one handler
+		function loggedIn( req, res, next ) {
+			if ( req.cookies.wordpress_logged_in ||
+					! config.isEnabled( 'manage/themes/logged-out' ) ) {
+				// the user is probably logged in
+				renderLoggedInRoute( req, res );
+			} else {
+				next();
 			}
-
-			res.render( 'index.jade', context );
 		}
-	} );
+	}
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in ) {
