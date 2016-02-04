@@ -258,7 +258,6 @@ module.exports = React.createClass( {
 
 	upgrades: function() {
 		var site = this.getSelectedSite(),
-			target = null,
 			domainsLink = '/domains' + this.siteSuffix(),
 			addDomainLink = '/domains/add' + this.siteSuffix(),
 			addDomainButton = '';
@@ -293,7 +292,7 @@ module.exports = React.createClass( {
 
 		return (
 			<li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
-				<a onClick={ this.onNavigate } href={ domainsLink } target={ target }>
+				<a onClick={ this.onNavigate } href={ domainsLink }>
 					<Gridicon icon="cart" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
 				</a>
