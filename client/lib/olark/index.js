@@ -15,12 +15,22 @@ import analytics from 'analytics';
 import emitter from 'lib/mixins/emitter';
 import userModule from 'lib/user';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import olarkApi from 'lib/olark-api';
 import notices from 'notices';
 import olarkEvents from 'lib/olark-events';
-import olarkStore from 'lib/olark-store';
-import olarkActions from 'lib/olark-store/actions';
+import olarkApi from 'lib/olark-api';
 import i18n from 'lib/mixins/i18n';
+
+import {
+	hideOlarkBox,
+	sendOlarkNotificationToVisitor,
+	setOlarkExpanded,
+	setOlarkLocale,
+	setOlarkOperatorsAvailable,
+	setOlarkOperatorsAway,
+	setOlarkReady,
+	setOlarkUserEligibility,
+	updateOlarkDetails
+} from 'state/olark/actions';
 
 /**
  * Module variables
@@ -31,13 +41,6 @@ const user = userModule();
 const wpcomUndocumented = wpcom.undocumented();
 const DAY_IN_SECONDS = 86400;
 const DAY_IN_MILLISECONDS = DAY_IN_SECONDS * 1000;
-
-/**
- * Loads the Olark store so that it can start receiving actions
- * This is necessary here to capture events that occur in the Olark
- * module before the React tree gets drawn.
- */
-require( 'lib/olark-store' );
 
 const olark = {
 
@@ -53,8 +56,12 @@ const olark = {
 
 	userType: 'Unknown',
 
-	initialize() {
+	initialize( dispatch ) {
 		debug( 'Initializing Olark Live Chat' );
+
+		this.dispatch = dispatch;
+
+		olarkEvents.initialize();
 
 		if ( config.isEnabled( 'olark_use_wpcom_configuration' ) ) {
 			this.getOlarkConfiguration()
@@ -133,6 +140,7 @@ const olark = {
 	configureOlark: function( wpcomOlarkConfig = {} ) {
 		var userData = user.get(),
 			siteUrl = this.getSiteUrl(),
+			dispatch = this.dispatch,
 			updateDetailsEvents = [
 				'api.chat.onReady',
 				'api.chat.onOperatorsAway',
@@ -150,21 +158,19 @@ const olark = {
 				'api.chat.onMessageToVisitor'
 			];
 
-		olarkEvents.initialize();
-
-		olarkEvents.once( 'api.chat.onReady', olarkActions.setReady );
-		olarkEvents.on( 'api.chat.onOperatorsAway', olarkActions.setOperatorsAway );
-		olarkEvents.on( 'api.chat.onOperatorsAvailable', olarkActions.setOperatorsAvailable );
+		olarkEvents.once( 'api.chat.onReady', () => setOlarkReady()( dispatch ) );
+		olarkEvents.on( 'api.chat.onOperatorsAway', () => setOlarkOperatorsAway()( dispatch ) );
+		olarkEvents.on( 'api.chat.onOperatorsAvailable', () => setOlarkOperatorsAvailable()( dispatch ) );
 
 		olarkExpandedEvents.forEach( this.hookExpansionEventToStoreSync.bind( this ) );
 
-		updateDetailsEvents.forEach( eventName => olarkEvents.on( eventName, olarkActions.updateDetails ) );
+		updateDetailsEvents.forEach( eventName => olarkEvents.on( eventName, () => updateOlarkDetails()( dispatch ) ) );
 
 		debug( 'Olark code loaded, beginning configuration' );
 
 		olarkEvents.on( 'api.chat.onCommandFromOperator', ( event ) => {
 			if ( event.command.name === 'end' ) {
-				olarkActions.sendNotificationToVisitor( i18n.translate(
+				sendOlarkNotificationToVisitor( i18n.translate(
 					"Your live chat has ended. We'll send a transcript to %(email)s.",
 					{ args: { email: userData.email } }
 				) );
@@ -177,7 +183,7 @@ const olark = {
 
 		if ( config.isEnabled( 'help' ) ) {
 			// Only show the chatbox when a user is having a conversation. Chat will now be initiated only from the help/contact page
-			olarkApi( 'api.visitor.getDetails', ( details ) => details.isConversing ? this.showChatBox() : olarkActions.hideBox() );
+			olarkApi( 'api.visitor.getDetails', ( details ) => details.isConversing ? this.showChatBox() : hideOlarkBox() );
 		} else {
 			this.showChatBox();
 		}
@@ -187,13 +193,13 @@ const olark = {
 		// We query the dom here because there is no other 100% accurate way to figure this out. Olark does not
 		// provide initial events for api.box.onExpand when the api.box.show event is fired.
 		const isOlarkExpanded = !! document.querySelector( '.olrk-state-expanded' );
-		if ( isOlarkExpanded !== olarkStore.get().isOlarkExpanded ) {
-			olarkActions.setExpanded( isOlarkExpanded );
-		}
+		const dispatch = this.dispatch;
+
+		setOlarkExpanded( isOlarkExpanded )( dispatch );
 	},
 
 	hookExpansionEventToStoreSync( eventName ) {
-		olarkEvents.on( eventName, this.syncStoreWithExpandedState );
+		olarkEvents.on( eventName, () => this.syncStoreWithExpandedState() );
 	},
 
 	setOlarkOptions( userData, wpcomOlarkConfig = {} ) {
@@ -201,6 +207,7 @@ const olark = {
 		const identity = wpcomOlarkConfig.identity || config( 'olark' ).business_account_id;
 		const isUserEligible = ( 'undefined' === typeof wpcomOlarkConfig.isUserEligible ) ? true : wpcomOlarkConfig.isUserEligible;
 		const visitorNickname = wpcomOlarkConfig.nickname || ( userData.username + ' | ' + this.userType );
+		const dispatch = this.dispatch;
 
 		if ( false !== group ) {
 			olarkApi.configure( 'system.group', group );
@@ -212,10 +219,10 @@ const olark = {
 		olarkApi.configure( 'system.chat_does_not_follow_external_links', true );
 		olarkApi.configure( 'system.mask_credit_cards', true );
 
-		olarkActions.setUserEligibility( isUserEligible );
+		setOlarkUserEligibility( isUserEligible )( dispatch );
 
 		if ( wpcomOlarkConfig.locale ) {
-			olarkActions.setLocale( wpcomOlarkConfig.locale );
+			setOlarkLocale( wpcomOlarkConfig.locale )( dispatch );
 		}
 
 		// NOTE: According to the olark api documentation, "configure" api calls are supposed to go before the "identify" api call.
@@ -396,4 +403,5 @@ const olark = {
 };
 
 emitter( olark );
-olark.initialize();
+
+export default olark;

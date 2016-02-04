@@ -32,6 +32,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	KeyboardShortcutsMenu,
 	Layout;
 
+import olark from 'lib/olark';
 import { isOffline } from 'state/application/selectors';
 import { isSupportUser } from 'state/support/selectors';
 
@@ -45,6 +46,10 @@ Layout = React.createClass( {
 	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
+
+	componentDidMount: function() {
+		this.props.initializeOlark();
+	},
 
 	componentWillUpdate: function( nextProps ) {
 		if ( this.props.section !== nextProps.section ) {
@@ -150,13 +155,20 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, chunkName } = state.ui;
-		return { 
+		return {
 			isLoading,
 			isSupportUser: isSupportUser( state ),
 			section,
 			hasSidebar,
 			chunkName,
 			isOffline: isOffline( state )
+		};
+	},
+	( dispatch ) => {
+		return {
+			initializeOlark: () => {
+				config.isEnabled( 'olark' ) && olark.initialize( dispatch );
+			}
 		};
 	}
 )( Layout );
