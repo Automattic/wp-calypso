@@ -28,7 +28,8 @@ var TokenField = React.createClass( {
 		displayTransform: React.PropTypes.func,
 		saveTransform: React.PropTypes.func,
 		onChange: React.PropTypes.func,
-		tokenStatus: React.PropTypes.func
+		tokenStatus: React.PropTypes.func,
+		isBorderless: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -41,7 +42,8 @@ var TokenField = React.createClass( {
 				return token.trim();
 			},
 			onChange: function() {},
-			tokenStatus: function() {}
+			tokenStatus: function() {},
+			isBorderless: false
 		};
 	},
 
@@ -120,6 +122,7 @@ var TokenField = React.createClass( {
 				status={ this.props.tokenStatus( token ) }
 				displayTransform={ this.props.displayTransform }
 				onClickRemove={ this._onTokenClickRemove }
+				isBorderless={ this.props.isBorderless }
 			/>
 		);
 	},

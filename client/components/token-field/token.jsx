@@ -10,19 +10,23 @@ var Token = React.createClass( {
 		value: React.PropTypes.string.isRequired,
 		displayTransform: React.PropTypes.func.isRequired,
 		onClickRemove: React.PropTypes.func,
-		status: React.PropTypes.oneOf( [ 'is-error', 'is-success' ] )
+		status: React.PropTypes.oneOf( [ 'is-error', 'is-success' ] ),
+		isBorderless: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
-			onClickRemove: function() {}
+			onClickRemove: function() {},
+			isBorderless: false
 		};
 	},
 
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
-		const tokenClasses = classNames( 'token-field__token', this.props.status );
+		const tokenClasses = classNames( 'token-field__token', this.props.status, {
+			'is-borderless': this.props.isBorderless
+		} );
 
 		return (
 			<span className={ tokenClasses } tabIndex="-1">

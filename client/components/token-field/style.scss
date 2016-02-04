@@ -71,6 +71,13 @@ input[type="text"].token-field__input {
 	}
 }
 
+.token-field__token.is-borderless {
+	.token-field__token-text, .token-field__remove-token {
+		background: transparent;
+		color: $gray;
+	}
+}
+
 .token-field__token-text, .token-field__remove-token {
 	display: inline-block;
 	line-height: 24px;
@@ -97,7 +104,6 @@ input[type="text"].token-field__input {
 		background: darken( $gray, 10% );
 	}
 }
-
 
 // Suggestion list
 .token-field__suggestions-list {
