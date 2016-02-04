@@ -161,11 +161,13 @@ function recordPurchase( product ) {
 		}
 	);
 
-	// record the purchase w/ Bing
-	window.uetq.push( {
-		ec: 'purchase',
-		gv: product.cost
-	} );
+	// record the purchase w/ Bing if it is made with USD - Bing doesn't handle multiple currencies
+	if ( 'USD' === product.currency ) {
+		window.uetq.push( {
+			ec: 'purchase',
+			gv: product.cost
+		} );
+	}
 
 	// record the purchase w/ Google
 	window.google_trackConversion( {
