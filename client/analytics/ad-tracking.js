@@ -12,7 +12,6 @@ const debug = debugFactory( 'calypso:ad-tracking' );
  */
 import loadScript from 'lib/load-script';
 import config from 'config';
-import { isBusiness, isPremium } from 'lib/products-values';
 
 /**
  * Module variables
@@ -28,31 +27,9 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	TRACKING_IDS = {
+		bingInit: '4074038',
 		facebookInit: '823166884443641',
-
-		freeSignup: {
-			google: 'd-fNCIe7m1wQ1uXz_AM'
-		},
-
-		premiumTrial: {
-			google: '_q3ECJ--m1wQ1uXz_AM'
-		},
-
-		premiumSignup: {
-			google: 'UMSeCIyYmFwQ1uXz_AM',
-			bing: '4074038'
-		},
-
-		businessTrial: {
-			google: 'm9zRCNO8m1wQ1uXz_AM'
-		},
-
-		businessSignup: {
-			google: 'JxKBCKK-m1wQ1uXz_AM',
-			bing: '4074039'
-		},
-
-		retargeting: '823166884443641'
+		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM'
 	};
 
 /**
@@ -107,6 +84,18 @@ function loadTrackingScripts( callback ) {
 			// update Facebook's tracking global
 			window.fbq( 'init', TRACKING_IDS.facebookInit );
 
+			// update Bing's tracking global
+			const bingConfig = {
+				ti: TRACKING_IDS.bingInit,
+				q: window.uetq
+			};
+
+			if ( typeof UET !== 'undefined' ) {
+				// bing's script creates the UET global for us
+				window.uetq = new UET( bingConfig ); // eslint-disable-line
+				window.uetq.push( 'pageLoad' );
+			}
+
 			if ( typeof callback === 'function' ) {
 				callback();
 			}
@@ -151,8 +140,6 @@ function recordAddToCart( cartItem ) {
 }
 
 function recordPurchase( product ) {
-	let type;
-
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
@@ -161,23 +148,7 @@ function recordPurchase( product ) {
 		return loadTrackingScripts( recordPurchase.bind( null, product ) );
 	}
 
-	if ( isPremium( product ) ) {
-		if ( 0 === product.cost ) {
-			type = 'premiumTrial';
-		} else {
-			type = 'premiumSignup';
-		}
-	}
-
-	if ( isBusiness( product ) ) {
-		if ( 0 === product.cost ) {
-			type = 'businessTrial';
-		} else {
-			type = 'businessSignup';
-		}
-	}
-
-	debug( 'Recorded purchase', type );
+	debug( 'Recording purchase', product );
 
 	// record the purchase w/ Facebook
 	window.fbq(
@@ -190,24 +161,25 @@ function recordPurchase( product ) {
 		}
 	);
 
-	// record the purchase w/ Google if a tracking ID is present
-	if ( TRACKING_IDS[ type ] && TRACKING_IDS[ type ].google ) {
-		window.google_trackConversion( {
-			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_conversion_label: TRACKING_IDS[ type ].google,
-			google_remarketing_only: false
+	// record the purchase w/ Bing if it is made with USD - Bing doesn't handle multiple currencies
+	if ( 'USD' === product.currency ) {
+		window.uetq.push( {
+			ec: 'purchase',
+			gv: product.cost
 		} );
 	}
 
-	// record the purchase w/ Bing if a tracking ID is present
-	if ( TRACKING_IDS[ type ] && TRACKING_IDS[ type ].bing && typeof UET !== 'undefined' ) {
-		window.uetq = new UET( { // eslint-disable-line no-undef
-			ti: TRACKING_IDS[ type ].bing,
-			o: window.uetq
-		} );
-		window.uetq.push( 'pageLoad' );
-		window.uetq.push( { ec: 'conversion' } );
-	}
+	// record the purchase w/ Google
+	window.google_trackConversion( {
+		google_conversion_id: GOOGLE_CONVERSION_ID,
+		google_conversion_label: TRACKING_IDS.googleConversionLabel,
+		google_conversion_value: product.cost,
+		google_conversion_currency: product.currency,
+		google_custom_params: {
+			product_slug: product.product_slug
+		},
+		google_remarketing_only: false
+	} );
 }
 
 module.exports = {
