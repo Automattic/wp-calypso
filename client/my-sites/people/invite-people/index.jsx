@@ -131,13 +131,13 @@ export default React.createClass( {
 						</FormFieldset>
 
 						<FormButton disabled={ this.state.sendingInvites }>
-								{ this.translate(
-									'Send Invitation',
-									'Send Invitations', {
-										count: this.state.usernamesOrEmails.length || 1,
-										context: 'Button label'
-									}
-								) }
+							{ this.translate(
+								'Send Invitation',
+								'Send Invitations', {
+									count: this.state.usernamesOrEmails.length || 1,
+									context: 'Button label'
+								}
+							) }
 						</FormButton>
 					</form>
 				</Card>
