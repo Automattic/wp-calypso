@@ -28,6 +28,13 @@
 	flex-wrap: wrap;
 	align-items: flex-start;
 	padding: 5px 14px 5px 0;
+
+	&.is-empty {
+
+		input[type="text"].token-field__input {
+			width: 100%;
+		}
+	}
 }
 
 // Token input

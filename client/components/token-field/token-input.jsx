@@ -27,10 +27,11 @@ var TokenInput = React.createClass( {
 				ref="input"
 				type="text"
 				value={ this.props.value }
-			 	size={ this.props.value.length + 1 }
+				size={ this.props.value.length + 1 }
 				onBlur={ this.props.onBlur }
 				onChange={ this._onChange }
 				className="token-field__input"
+				placeholder={ this.props.placeholder }
 			/>
 		);
 	},

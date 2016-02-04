@@ -41,11 +41,14 @@ module.exports = React.createClass( {
 	},
 
 	refreshRoles: function( nextProps ) {
-		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
-
+		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId,
+			appendRoles,
+			siteRoles;
 		if ( siteId ) {
+			siteRoles = RolesStore.getRoles( siteId );
+			appendRoles = this.props.appendRoles || {};
 			this.setState( {
-				roles: RolesStore.getRoles( siteId )
+				roles: Object.assign( {}, appendRoles, siteRoles )
 			} );
 		}
 	},
@@ -71,15 +74,25 @@ module.exports = React.createClass( {
 		}, 0 );
 	},
 
+	renderLabel: function() {
+		if ( this.props.hideLabel ) {
+			return null;
+		}
+
+		return (
+			<FormLabel htmlFor={ this.props.id }>
+				{ this.translate( 'Role', {
+					context: 'Text that is displayed in a label of a form.'
+				} ) }
+			</FormLabel>
+		);
+	},
+
 	render: function() {
 		var roles = Object.keys( this.state.roles );
 		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roles.length }>
-				<FormLabel htmlFor={ this.props.id }>
-					{ this.translate( 'Role', {
-						context: 'Text that is displayed in a label of a form.'
-					} ) }
-				</FormLabel>
+			<FormFieldset className="role-select" key={ this.props.key } disabled={ ! roles.length }>
+				{ this.renderLabel() }
 				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
 					{
 						roles.map( function( role ) {

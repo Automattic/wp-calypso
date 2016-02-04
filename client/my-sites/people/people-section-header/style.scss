@@ -1,0 +1,77 @@
+.people-section-header {
+	
+	&.invite-open {
+
+		.section-header__label {
+			display: none;
+		}
+
+		.section-header__actions {
+			width: 100%;
+		}
+
+		.people-section-header__icon {
+			position: absolute;
+			top: 0;
+			left: -12px;
+
+			@include breakpoint( ">660px" ) {
+				left: -16px;
+			}
+		}
+
+		.people-section-header__close {
+			position: absolute;
+			top: -8px;
+			right: -12px;
+
+			@include breakpoint( ">660px" ) {
+				right: -16px;
+			}
+		}
+	}
+
+	.invite-form {
+		padding: 0 16px;
+		height: 88px;
+		flex-wrap: wrap;
+		display: flex;
+		justify-content: space-between;
+
+		@include breakpoint( ">660px" ) {
+			height: 40px;
+		}
+
+		.invite-form__fieldset {
+			height: 40px;
+			width: 100%;
+			display: flex;
+
+			@include breakpoint( ">660px" ) {
+				width: 40%;
+
+				&:first-child {
+					margin-bottom: 8px;
+					width: 60%;
+				}
+			}
+
+			.role-select {
+				width: 70%;
+				text-align: left;
+
+				@include breakpoint( ">660px" ) {
+					text-align: center;
+				}
+			}
+
+			.invite-form__submit {
+				width: 30%;
+			}
+		}
+	}
+}
+
+
+
+

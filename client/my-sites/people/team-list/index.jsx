@@ -9,14 +9,14 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' ),
 	PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	SiteUsersFetcher = require( 'components/site-users-fetcher' ),
 	UsersActions = require( 'lib/users/actions' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	NoResults = require( 'my-sites/no-results' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	PeopleSectionHeader = require( 'my-sites/people/people-section-header' );
 
 /**
  * Module Variables
@@ -43,7 +43,7 @@ var Team = React.createClass( {
 		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ) {
 			return (
 				<NoResults
-					image='/calypso/images/people/mystery-person.svg'
+					image="/calypso/images/people/mystery-person.svg"
 					text={
 						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
@@ -94,7 +94,10 @@ var Team = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ headerText } count={ this.props.fetchingUsers || this.props.fetchOptions.search ? undefined : this.props.totalUsers } />
+				<PeopleSectionHeader
+					label={ headerText }
+					count={ this.props.fetchingUsers || this.props.fetchOptions.search ? undefined : this.props.totalUsers }
+					site={ this.props.site } />
 				<Card className={ listClass }>
 					{ people }
 				</Card>
@@ -108,7 +111,7 @@ var Team = React.createClass( {
 			<PeopleListItem
 				key={ user.ID }
 				user={ user }
-				type='user'
+				type="user"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing } />
 		);
