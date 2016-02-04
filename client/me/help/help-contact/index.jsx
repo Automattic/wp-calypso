@@ -258,7 +258,7 @@ module.exports = React.createClass( {
 	 * Auto fill the subject with the first five words contained in the message field of the contact form.
 	 */
 	autofillSubject: function() {
-		if ( ! savedContactForm.message || savedContactForm.subject ) {
+		if ( ! savedContactForm || ! savedContactForm.message || savedContactForm.subject ) {
 			return;
 		}
 
