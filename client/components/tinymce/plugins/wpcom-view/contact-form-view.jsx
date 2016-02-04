@@ -29,7 +29,7 @@ export default React.createClass( {
 		},
 
 		edit( editor, content ) {
-			editor.execCommand( 'WP_ContactForm', content );
+			editor.execCommand( 'wpcomContactForm', content );
 		}
 	},
 	render() {
