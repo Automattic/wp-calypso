@@ -26,12 +26,15 @@ var PostOptions = React.createClass( {
 	},
 
 	getDefaultProps: function() {
-		return { onBlock: noop };
+		return {
+			onBlock: noop,
+			position: 'top left'
+		};
 	},
 
 	getInitialState: function() {
 		var state = this.getStateFromStores();
-		state.popoverPosition = 'top left';
+		state.popoverPosition = this.props.position;
 		state.showPopoverMenu = false;
 		return state;
 	},

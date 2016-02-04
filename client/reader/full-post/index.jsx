@@ -312,7 +312,7 @@ FullPostDialog = React.createClass( {
 			shouldShowLikes = LikeHelper.shouldShowLikes( post );
 			shouldShowShare = ShareHelper.shouldShowShare( post );
 
-			buttons.push( <PostOptions key="post-options" post={ post } site={ site } onBlock={ this.props.onClose } /> );
+			buttons.push( <PostOptions key="post-options" position="bottom left" post={ post } site={ site } onBlock={ this.props.onClose } /> );
 
 			if ( shouldShowLikes ) {
 				buttons.push( <LikeButton key="like-button" siteId={ post.site_ID } postId={ post.ID } tagName="div" forceCounter={ true } /> );
