@@ -39,7 +39,8 @@ const FollowingEdit = React.createClass( {
 
 	propTypes: {
 		initialFollowUrl: React.PropTypes.string,
-		search: React.PropTypes.string
+		search: React.PropTypes.string,
+		userSettings: React.PropTypes.object
 	},
 
 	getInitialState: function() {
@@ -205,6 +206,7 @@ const FollowingEdit = React.createClass( {
 
 	renderSubscription: function( subscription ) {
 		const subscriptionKey = this.getSubscriptionRef( subscription );
+		const isEmailBlocked = this.props.userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
 		return (
 			<SubscriptionListItem
@@ -213,7 +215,8 @@ const FollowingEdit = React.createClass( {
 				subscription={ subscription }
 				onNotificationSettingsOpen={ this.handleNotificationSettingsOpen }
 				onNotificationSettingsClose={ this.handleNotificationSettingsClose }
-				openCards={ this.state.openCards } />
+				openCards={ this.state.openCards }
+				isEmailBlocked={ isEmailBlocked } />
 		);
 	},
 
