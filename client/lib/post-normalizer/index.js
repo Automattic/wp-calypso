@@ -98,7 +98,11 @@ function normalizePost( post, transforms, callback ) {
 }
 
 function maxWidthPhotonishURL( imageURL, width ) {
-	var parsedURL = url.parse( imageURL, true, true ), // true, true means allow protocol-less hosts and parse the querystring
+	if ( ! imageURL ) {
+		return imageURL;
+	}
+
+	let parsedURL = url.parse( imageURL, true, true ), // true, true means allow protocol-less hosts and parse the querystring
 		isGravatar, sizeParam;
 
 	if ( ! parsedURL.host ) {
