@@ -15,6 +15,7 @@ const assert = require( 'chai' ).assert,
  * Internal dependencies
  */
 let normalizer = require( '../' ),
+	safeImageUrlFake = require( 'lib/safe-image-url' ),
 	allTransforms = [
 		normalizer.decodeEntities,
 		normalizer.stripHTML,
@@ -427,6 +428,20 @@ describe( 'post-normalizer', function() {
 					done( err );
 				}
 			);
+		} );
+
+		it( 'can remove images that cannot be made safe', function( done ) {
+			safeImageUrlFake.setReturns( null );
+			normalizer(
+				{
+					content: '<img width="700" height="700" src="http://example.com/example.jpg?nope">'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages( 400 ) ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '' );
+					done( err );
+				}
+			);
+			safeImageUrlFake.undoReturns();
 		} );
 
 		it( 'removes event handlers from content images', function( done ) {
