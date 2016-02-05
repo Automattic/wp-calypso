@@ -118,7 +118,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
 						<Button onClick={ this.decline } disabled={ this.state.submitting }>
-							{ this.translate( 'Decline', { context: 'button' } ) }
+							{ this.translate( 'Cancel', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
 							{ this.getButtonText() }
