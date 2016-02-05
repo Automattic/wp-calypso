@@ -48,9 +48,9 @@ let Followers = React.createClass( {
 			store = 'email' === this.props.type ? EmailFollowersStore : FollowersStore,
 			page = this.props.currentPage + 1,
 			paginationData = store.getPaginationData( this.props.fetchOptions ),
-			analyticsAction = 'email' === this.props.type ?
-				'Fetched more email followers with infinite list' :
-				'Fetched more followers with infinite list';
+			analyticsAction = 'email' === this.props.type
+				? 'Fetched more email followers with infinite list'
+				: 'Fetched more followers with infinite list';
 
 		if ( paginationData && paginationData.followersCurrentPage ) {
 			page = paginationData.followersCurrentPage + 1;
@@ -69,7 +69,7 @@ let Followers = React.createClass( {
 				<p>
 				{
 					this.translate(
-						'If you remove this follower, he or she will no longer receive notifications about this site unless they re-follow.'
+						'If removed, this follower will stop receiving notifications about this site, unless they re-follow.'
 					)
 				}
 				</p>
@@ -91,14 +91,18 @@ let Followers = React.createClass( {
 	},
 
 	renderFollower( follower ) {
+		const removeFollower = () => {
+			this.removeFollower( follower );
+		};
+
 		return (
 			<PeopleListItem
 				key={ follower.ID }
 				user={ follower }
-				type='follower'
+				type="follower"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
-				onRemove={ this.removeFollower.bind( this, follower ) }
+				onRemove={ removeFollower }
 			/>
 		);
 	},
@@ -124,7 +128,7 @@ let Followers = React.createClass( {
 
 	render() {
 		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) ),
-			headerText = this.translate( this.props.label, { context: 'A navigation label.' } ),
+			headerText = this.props.label,
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
 			followers,
 			emptyTitle;
@@ -132,7 +136,7 @@ let Followers = React.createClass( {
 		if ( this.noFollowerSearchResults() ) {
 			return (
 				<NoResults
-					image='/calypso/images/people/mystery-person.svg'
+					image="/calypso/images/people/mystery-person.svg"
 					text={
 						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
