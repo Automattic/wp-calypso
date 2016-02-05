@@ -78,14 +78,6 @@ module.exports = {
 		},
 		defaultVariation: 'forLife'
 	},
-	domainRegistrationCta: {
-		datestamp: '20160128',
-		variations: {
-			add: 50,
-			select: 50
-		},
-		defaultVariation: 'add'
-	},
 	plansFeatureList: {
 		datestamp: '20040202',
 		variations: {
