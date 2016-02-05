@@ -15,7 +15,12 @@ var postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
 var PostListFetcher;
 
 function dispatchQueryActions( postListStoreId, query ) {
+	var postListStore = postListStoreFactory( postListStoreId );
 	actions.queryPosts( query, postListStoreId );
+
+	if ( postListStore.getPage() === 0 ) {
+		actions.fetchNextPage( postListStoreId );
+	}
 }
 
 function queryPosts( props ) {
@@ -121,7 +126,7 @@ PostListFetcher = React.createClass( {
 
 	componentDidMount: function() {
 		var postListStore = postListStoreFactory( this.props.postListStoreId );
-		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000 } );
+		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000, leading: false } );
 	},
 
 	componentWillUnmount: function() {
