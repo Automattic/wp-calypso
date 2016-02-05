@@ -21,7 +21,8 @@ var HeaderCake = require( 'components/header-cake' ),
 	config = require( 'config' ),
 	Gridicon = require( 'components/gridicon' ),
 	notices = require( 'notices' ),
-	SiteListActions = require( 'lib/sites-list/actions' );
+	SiteListActions = require( 'lib/sites-list/actions' ),
+	purchasesPaths = require( 'me/purchases/paths' );
 
 module.exports = React.createClass( {
 
@@ -226,7 +227,15 @@ module.exports = React.createClass( {
 					} )
 				);
 			} else {
-				notices.error( error.message );
+				if ( error.error === 'active-subscriptions' ) {
+					error.message = this.translate( 'You have active premium upgrades on your site. Please cancel your upgrades prior to deleting your site.' );
+					notices.error( error.message, {
+						button: 'Manage Purchases',
+						onClick: this.managePurchases
+					} );
+				} else {
+					notices.error( error.message );
+				}
 			}
 		}.bind( this ) );
 	},
@@ -241,6 +250,10 @@ module.exports = React.createClass( {
 		if ( ! this.state.site ) {
 			event.preventDefault();
 		}
+	},
+
+	managePurchases: function() {
+		page( purchasesPaths.list() );
 	}
 
 } );
