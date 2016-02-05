@@ -11,7 +11,6 @@ import get from 'lodash/object/get';
  */
 import RoleSelect from 'my-sites/people/role-select';
 import TokenField from 'components/token-field';
-import FormTextArea from 'components/forms/form-textarea';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -20,6 +19,7 @@ import { sendInvites } from 'lib/invites/actions';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import CountedTextarea from 'components/forms/counted-textarea';
 
 export default React.createClass( {
 	displayName: 'InvitePeople',
@@ -46,6 +46,10 @@ export default React.createClass( {
 
 	onTokensChange( tokens ) {
 		this.setState( { usernamesOrEmails: tokens } );
+	},
+
+	onMessageChange( event ) {
+		this.setState( { message: event.target.value } );
 	},
 
 	submitForm( event ) {
@@ -119,10 +123,14 @@ export default React.createClass( {
 
 						<FormFieldset>
 							<FormLabel htmlFor="message">{ this.translate( 'Custom Message' ) }</FormLabel>
-							<FormTextArea
+							<CountedTextarea
 								name="message"
 								id="message"
-								valueLink={ this.linkState( 'message' ) }
+								showRemainingCharacters
+								maxLength={ 500 }
+								acceptableLength={ 500 }
+								onChange={ this.onMessageChange }
+								value={ this.state.message }
 								disabled={ this.state.sendingInvites } />
 							<FormSettingExplanation>
 								{ this.translate(
