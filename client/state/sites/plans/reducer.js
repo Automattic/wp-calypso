@@ -22,7 +22,6 @@ export const initialSiteState = {
 	data: null,
 	error: null,
 	hasLoadedFromServer: false,
-	isFetching: false,
 	isRequesting: false
 };
 
@@ -45,21 +44,21 @@ export function plans( state = {}, action ) {
 		case SITE_PLANS_FETCH:
 			return updateSiteState( state, action.siteId, {
 				error: null,
-				isFetching: true
+				isRequesting: true
 			} );
 
 		case SITE_PLANS_FETCH_COMPLETED:
 			return updateSiteState( state, action.siteId, {
 				error: null,
 				hasLoadedFromServer: true,
-				isFetching: false,
+				isRequesting: false,
 				data: action.plans
 			} );
 
 		case SITE_PLANS_FETCH_FAILED:
 			return updateSiteState( state, action.siteId, {
 				error: action.error,
-				isFetching: false
+				isRequesting: false
 			} );
 
 		case SITE_PLANS_REMOVE:

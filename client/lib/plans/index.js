@@ -59,7 +59,7 @@ export function isInGracePeriod( plan ) {
 };
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
-	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isFetching && selectedSite;
+	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 };
 
 export function filterPlansBySiteAndProps( plans, site, hideFreePlan ) {

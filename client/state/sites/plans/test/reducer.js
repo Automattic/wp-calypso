@@ -49,7 +49,6 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -61,7 +60,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should return the initial state with fetching enabled when fetching is triggered', () => {
+		it( 'should return the initial state with requesting enabled when fetching is triggered', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH,
 				siteId: 11111111
@@ -72,20 +71,18 @@ describe( 'reducer', () => {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
-					isFetching: true,
-					isRequesting: false
+					isRequesting: true
 				}
 			} );
 		} );
 
-		it( 'should return the original state with an error and fetching disabled when fetching failed', () => {
+		it( 'should return the original state with an error and requesting disabled when fetching failed', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isFetching: true,
-						isRequesting: false
+						isRequesting: true
 					}
 				} ),
 				state = plans( original, {
@@ -99,13 +96,12 @@ describe( 'reducer', () => {
 					data: [],
 					error: 'Unable to fetch site plans',
 					hasLoadedFromServer: true,
-					isFetching: false,
 					isRequesting: false
 				}
 			} );
 		} );
 
-		it( 'should return a list of plans with loaded from server enabled and fetching disabled when fetching completed', () => {
+		it( 'should return a list of plans with loaded from server enabled and requesting disabled when fetching completed', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId: 11111111,
@@ -117,7 +113,6 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isFetching: false,
 					isRequesting: false
 				}
 			} );
@@ -129,7 +124,6 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -143,15 +137,13 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isFetching: false,
 					isRequesting: false
 				},
 				55555555: {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
-					isFetching: true,
-					isRequesting: false
+					isRequesting: true
 				}
 			} );
 		} );
@@ -162,7 +154,6 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -176,8 +167,7 @@ describe( 'reducer', () => {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
-					isFetching: true,
-					isRequesting: false
+					isRequesting: true
 				}
 			} );
 		} );
@@ -188,7 +178,6 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: false,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -202,20 +191,18 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: false,
-					isFetching: false,
 					isRequesting: true
 				}
 			} );
 		} );
 
-		it( 'should return the original state with an error and updating disabled when trial cancelation failed', () => {
+		it( 'should return the original state with an error and requesting disabled when trial cancelation failed', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isFetching: false,
-						isRequesting: false
+						isRequesting: true
 					}
 				} ),
 				state = plans( original, {
@@ -229,13 +216,12 @@ describe( 'reducer', () => {
 					data: [],
 					error: 'Unable to cancel plan trial',
 					hasLoadedFromServer: true,
-					isFetching: false,
 					isRequesting: false
 				}
 			} );
 		} );
 
-		it( 'should return a list of plans with loaded from server enabled and updating disabled when trial cancelation completed', () => {
+		it( 'should return a list of plans with loaded from server enabled and requesting disabled when trial cancelation completed', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 				siteId: 11111111,
@@ -247,7 +233,6 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isFetching: false,
 					isRequesting: false
 				}
 			} );
@@ -268,7 +253,6 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -286,14 +270,12 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isFetching: false,
 						isRequesting: false
 					},
 					22222222: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -307,7 +289,6 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isFetching: false,
 					isRequesting: false
 				}
 			} );
@@ -319,7 +300,6 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
@@ -336,14 +316,12 @@ describe( 'reducer', () => {
 						data: null,
 						error: null,
 						hasLoadedFromServer: false,
-						isFetching: false,
 						isRequesting: false
 					},
 					22222222: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isFetching: false,
 						isRequesting: false
 					}
 				} ),
