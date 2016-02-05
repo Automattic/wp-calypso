@@ -11,7 +11,6 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
-import DeleteSiteNotices from 'notices/delete-site-notices';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { removeNotice } from 'state/notices/actions'
@@ -91,9 +90,9 @@ const NoticesList = React.createClass( {
 		if ( ! noticesList.length ) {
 			return null;
 		}
+
 		return (
 			<div id={ this.props.id } className="global-notices">
-				<DeleteSiteNotices />
 				{ noticesList }
 			</div>
 		);
