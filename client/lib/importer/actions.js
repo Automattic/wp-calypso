@@ -25,6 +25,9 @@ const ID_GENERATOR_PREFIX = 'local-generated-id-';
 /** Creates a request object to cancel an importer */
 const cancelOrder = ( siteId, importerId ) => toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
 
+/** Creates a request to expire an importer session */
+const expiryOrder = ( siteId, importerId ) => toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
+
 /** Creates a request object to start performing the actual import */
 const importOrder = importerStatus => toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
@@ -126,6 +129,14 @@ export function resetImport( siteId, importerId ) {
 		importerId,
 		siteId
 	} );
+
+	apiStart();
+	wpcom
+		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
+		.then( apiSuccess )
+		.then( fromApi )
+		.then( receiveImporterStatus )
+		.catch( apiFailure );
 }
 
 // Use when developing to force a new state into the store
