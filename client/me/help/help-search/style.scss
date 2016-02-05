@@ -1,13 +1,5 @@
 .help-search {
-	margin-bottom: 30px;
-}
-
-.help-search .search-card {
-	margin-bottom: 0px;
-}
-
-.help-search__no-results {
-	margin-top: 1px;
+	margin-bottom: 16px;
 }
 
 .help-search .no-results {
@@ -18,18 +10,11 @@
 }
 
 .help-results__placeholder {
-	.help-results__header,
-	.help-results__header-text,
+	.section-header__label,
 	.help-result__icon,
 	.help-result__title,
 	.help-result__description {
 		@include placeholder();
-	}
-	.help-results__header, {
-		background: $gray-light;
-	}
-	.help-results__header-text, {
-		background-color: lighten( $gray, 20% );
 	}
 	.help-results__footer {
 		display: none;
