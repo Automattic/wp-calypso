@@ -35,6 +35,7 @@
 	@include breakpoint( ">660px" ) {
 		border-radius: 20px;
 		display: inline-flex;
+		overflow: hidden;
 		margin-bottom: 24px;
 	}
 }
@@ -51,6 +52,13 @@
 
 	@include breakpoint( ">660px" ) {
 		padding: 9px 13px;
+	}
+}
+
+.global-notices .notice a.notice__action {
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+		padding: 9px 16px;
 	}
 }
 
