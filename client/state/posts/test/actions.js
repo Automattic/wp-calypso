@@ -103,8 +103,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts receive action when request completes', ( done ) => {
-			requestSitePosts( 2916284 )( spy ).then( () => {
+		it( 'should dispatch posts receive action when request completes', () => {
+			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
@@ -112,13 +112,11 @@ describe( 'actions', () => {
 						{ ID: 413, title: 'Ribs & Chicken' }
 					]
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch posts posts request success action when request completes', ( done ) => {
-			requestSitePosts( 2916284 )( spy ).then( () => {
+		it( 'should dispatch posts posts request success action when request completes', () => {
+			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -129,13 +127,11 @@ describe( 'actions', () => {
 						{ ID: 413, title: 'Ribs & Chicken' }
 					]
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch posts request success action with query results', ( done ) => {
-			requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
+		it( 'should dispatch posts request success action with query results', () => {
+			return requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -145,22 +141,18 @@ describe( 'actions', () => {
 						{ ID: 841, title: 'Hello World' }
 					]
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', ( done ) => {
-			requestSitePosts( 77203074 )( spy ).then( () => {
+		it( 'should dispatch fail action when request fails', () => {
+			return requestSitePosts( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_FAILURE,
 					siteId: 77203074,
 					query: {},
 					error: sinon.match( { message: 'User cannot access this private blog.' } )
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 	} );
 
@@ -191,42 +183,36 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts receive action when request completes', ( done ) => {
-			requestSitePost( 2916284, 413 )( spy ).then( () => {
+		it( 'should dispatch posts receive action when request completes', () => {
+			return requestSitePost( 2916284, 413 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
 						sinon.match( { ID: 413, title: 'Ribs & Chicken' } )
 					]
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch posts posts request success action when request completes', ( done ) => {
-			requestSitePost( 2916284, 413 )( spy ).then( () => {
+		it( 'should dispatch posts posts request success action when request completes', () => {
+			return requestSitePost( 2916284, 413 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postId: 413
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', ( done ) => {
-			requestSitePost( 2916284, 420 )( spy ).then( () => {
+		it( 'should dispatch fail action when request fails', () => {
+			return requestSitePost( 2916284, 420 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_FAILURE,
 					siteId: 2916284,
 					postId: 420,
 					error: sinon.match( { message: 'Unknown post' } )
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 	} );
 } );
