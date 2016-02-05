@@ -514,7 +514,9 @@ normalizePost.content = {
 
 				removeUnsafeAttributes( image );
 
-				if ( imageShouldBeRemovedFromContent( imgSource ) ) {
+				safeSource = safeImageURL( imgSource );
+
+				if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
 					image.parentNode.removeChild( image );
 					// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
 					// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
@@ -523,19 +525,18 @@ normalizePost.content = {
 					return;
 				}
 
-				safeSource = safeImageURL( imgSource );
-				if ( safeSource && maxWidth ) {
+				if ( maxWidth ) {
 					safeSource = maxWidthPhotonishURL( safeSource, maxWidth );
 				}
 
-				image.setAttribute( 'src', safeSource || TRANSPARENT_GIF );
+				image.setAttribute( 'src', safeSource );
 
 				if ( image.hasAttribute( 'srcset' ) ) {
 					const imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) ).map( imgSrc => {
 						if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
 							imgSrc.url = url.resolve( post.URL, imgSrc.url );
 						}
-						imgSrc.url = safeImageURL( imgSrc.url ) || TRANSPARENT_GIF;
+						imgSrc.url = safeImageURL( imgSrc.url );
 						return imgSrc;
 					} );
 					image.setAttribute( 'srcset', srcset.stringify( imgSrcSet ) );
