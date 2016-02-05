@@ -33,7 +33,6 @@ var Accordion = require( 'components/accordion' ),
 	stats = require( 'lib/posts/stats' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	siteUtils = require( 'lib/site/utils' ),
-	user = require( 'lib/user' )(),
 	userSettings = require( 'lib/user-settings' ),
 	AppPromo = require( 'components/app-promo' );
 
@@ -121,14 +120,7 @@ var EditorDrawer = React.createClass( {
 	},
 
 	renderSharing: function() {
-		const currentUser = user.get();
-		if ( ! currentUser ) {
-			return null;
-		}
-
-		return (
-			<EditorSharingContainer currentUserID={ currentUser.ID } />
-		);
+		return <EditorSharingContainer />;
 	},
 
 	renderFeaturedImage: function() {

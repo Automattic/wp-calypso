@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getConnectionsBySiteId,
-	getConnectionsBySiteIdAvailableToCurrentUser,
+	getSiteUserConnections,
 	hasFetchedConnections,
 	isFetchingConnections
 } from '../selectors';
@@ -49,9 +49,9 @@ describe( '#getConnectionsBySiteId()', () => {
 	} );
 } );
 
-describe( '#getConnectionsBySiteIdAvailableToCurrentUser()', () => {
+describe( '#getSiteUserConnections()', () => {
 	it( 'should return an empty array for a site which has not yet been fetched', () => {
-		const connections = getConnectionsBySiteIdAvailableToCurrentUser( {
+		const connections = getSiteUserConnections( {
 			sharing: {
 				publicize: {
 					connectionsBySiteId: {},
@@ -64,7 +64,7 @@ describe( '#getConnectionsBySiteIdAvailableToCurrentUser()', () => {
 	} );
 
 	it( 'should return an array of connection objects received for the site that are available to the current user', () => {
-		const connections = getConnectionsBySiteIdAvailableToCurrentUser( {
+		const connections = getSiteUserConnections( {
 			sharing: {
 				publicize: {
 					connectionsBySiteId: {
