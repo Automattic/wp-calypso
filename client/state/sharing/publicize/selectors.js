@@ -26,7 +26,7 @@ export function getConnectionsBySiteId( state, siteId ) {
  * @param  {Number} userId User ID to filter
  * @return {Array}         User connections
  */
-export function getConnectionsBySiteIdUserId( state, siteId, userId ) {
+export function getSiteUserConnections( state, siteId, userId ) {
 	const connectionsBySiteId = getConnectionsBySiteId( state, siteId );
 
 	return connectionsBySiteId.filter( ( connection ) => {
