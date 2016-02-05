@@ -158,3 +158,20 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 		return memo.concat( getSitePostsForQuery( state, siteId, pageQuery ) || [] );
 	}, [] );
 }
+
+/**
+ * Returns true if a request is in progress for the specified site post, or
+ * false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {Boolean}        Whether request is in progress
+ */
+export function isRequestingSitePost( state, siteId, postId ) {
+	if ( ! state.posts.siteRequests[ siteId ] ) {
+		return false;
+	}
+
+	return !! state.posts.siteRequests[ siteId ][ postId ];
+}

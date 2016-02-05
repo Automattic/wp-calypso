@@ -14,7 +14,8 @@ import {
 	isRequestingSitePostsForQuery,
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
-	getSitePostsForQueryIgnoringPage
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePost
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -359,6 +360,46 @@ describe( 'selectors', () => {
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
 				{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
 			] );
+		} );
+	} );
+
+	describe( '#isRequestingSitePost()', () => {
+		it( 'should return false if no request has been made', () => {
+			const isRequesting = isRequestingSitePost( {
+				posts: {
+					siteRequests: {}
+				}
+			}, 2916284, 841 );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if a request is in progress', () => {
+			const isRequesting = isRequestingSitePost( {
+				posts: {
+					siteRequests: {
+						2916284: {
+							841: true
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return false if a request has finished', () => {
+			const isRequesting = isRequestingSitePost( {
+				posts: {
+					siteRequests: {
+						2916284: {
+							841: false
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isRequesting ).to.be.false;
 		} );
 	} );
 } );
