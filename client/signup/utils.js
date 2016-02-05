@@ -22,8 +22,8 @@ function getFlowName( parameters ) {
 		return parameters.flowName;
 	}
 
-	if ( ! isFlowName( parameters.flowName ) && currentFlowName === defaultFlowName ) {
-		return defaultFlowName;
+	if ( typeof currentFlowName === 'function' ) {
+		currentFlowName = currentFlowName( parameters.flowName );
 	}
 
 	return currentFlowName;

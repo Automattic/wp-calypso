@@ -18,6 +18,11 @@ flows.__set__( 'flows', {
 	account: {
 		steps: [ 'user', 'site' ],
 		destination: '/'
+	},
+
+	other: {
+		steps: [ 'user', 'site' ],
+		destination: '/'
 	}
 } );
 
