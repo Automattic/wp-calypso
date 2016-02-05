@@ -535,7 +535,7 @@ normalizePost.content = {
 						if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
 							imgSrc.url = url.resolve( post.URL, imgSrc.url );
 						}
-						imgSrc.url = safeImageURL( imgSrc.url || TRANSPARENT_GIF );
+						imgSrc.url = safeImageURL( imgSrc.url ) || TRANSPARENT_GIF;
 						return imgSrc;
 					} );
 					image.setAttribute( 'srcset', srcset.stringify( imgSrcSet ) );
@@ -553,7 +553,8 @@ normalizePost.content = {
 
 			// grab all of the non-tracking pixels and push them into content_images
 			content_images = filter( content_images, function( image ) {
-				var edgeLength = image.height + image.width;
+				if ( ! image.src ) return false;
+				const edgeLength = image.height + image.width;
 				// if the image size isn't set (0) or is greater than 2, keep it
 				return edgeLength === 0 || edgeLength > 2;
 			} );
