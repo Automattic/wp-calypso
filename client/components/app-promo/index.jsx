@@ -69,7 +69,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		var promo_link = 'https://desktop.wordpress.com/?ref=promo_write_' + this.state.promo_item.promo_code;
+		var promo_link = 'https://desktop.wordpress.com/?ref=promo_' + this.props.location + '_' + this.state.promo_item.promo_code;
 		var element = (
 			<div className="app-promo">
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
