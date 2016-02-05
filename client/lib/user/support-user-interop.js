@@ -30,7 +30,6 @@ export default function( reduxStore ) {
 
 	// Called when the support user token was updated in wpcom
 	const onTokenChange = () => {
-		user.clear();
 		user.fetch();
 		userSettings.fetchSettings();
 	}
