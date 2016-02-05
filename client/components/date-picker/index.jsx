@@ -80,7 +80,7 @@ module.exports = React.createClass( {
 				},
 
 				getFirstDayOfWeek: function() {
-					return localeData.firstDayOfWeek();
+					return Number( localeData.firstDayOfWeek() );
 				}
 			};
 
