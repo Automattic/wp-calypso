@@ -23,6 +23,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Card = require( 'components/card' ),
 	featuresListUtils = require( 'lib/features-list/utils' ),
+	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var PlansCompare = React.createClass( {
@@ -153,17 +154,14 @@ var PlansCompare = React.createClass( {
 	comparisonTable: function() {
 		var plansColumns,
 			featuresList = this.props.features.get(),
+			numberOfPlaceholders = 4,
 			plans = this.props.plans.get(),
-			site = this.props.selectedSite,
-			showJetpackPlans = site ? site.jetpack : false;
+			site = this.props.selectedSite;
 
-		plans = plans.filter( function( plan ) {
-			return ( showJetpackPlans === ( 'jetpack' === plan.product_type ) );
-		} );
+		plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
 
-		// If showing Jetpack plans remove the first item (Free)
-		if ( site && site.jetpack ) {
-			plans.shift();
+		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
+			numberOfPlaceholders = 3;
 		}
 
 		if ( this.props.features.hasLoadedFromServer() && (
@@ -182,17 +180,19 @@ var PlansCompare = React.createClass( {
 
 			return (
 				<div className="plans-compare">
-					<div className="plan-feature-column feature-list">
-						<PlanHeader/>
-						{ this.featureNames( featuresList ) }
+					<div className="plans-compare__columns">
+						<div className="plan-feature-column feature-list">
+							<PlanHeader/>
+							{ this.featureNames( featuresList ) }
+						</div>
+						{ this.featureColumns( site, plans, featuresList ) }
 					</div>
-					{ this.featureColumns( site, plans, featuresList ) }
 					{ this.freeTrialExceptionMessage( featuresList ) }
 				</div>
 			);
 		}
 
-		plansColumns = times( 4, function( i ) {
+		plansColumns = times( numberOfPlaceholders, function( i ) {
 			var planFeatures,
 				classes = {
 					'plan-feature-column': true,
@@ -219,7 +219,9 @@ var PlansCompare = React.createClass( {
 
 		return (
 			<div className="plans-compare">
-				{ plansColumns }
+				<div className="plans-compare__columns">
+					{ plansColumns }
+				</div>
 			</div>
 		);
 	},

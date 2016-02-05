@@ -14,7 +14,6 @@ var abtest = require( 'lib/abtest' ).abtest,
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	puchasesPaths = require( 'me/purchases/paths' );
 
@@ -164,10 +163,6 @@ module.exports = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
-			return false;
-		}
-
 		if ( ! this.props.enableFreeTrials ) {
 			return false;
 		}

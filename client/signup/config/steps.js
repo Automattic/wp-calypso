@@ -70,6 +70,13 @@ module.exports = {
 		providesDependencies: [ 'cartItem' ]
 	},
 
+	'select-plan': {
+		stepName: 'select-plan',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'cartItem' ]
+	},
+
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.addDomainItemsToCart,

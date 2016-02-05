@@ -171,7 +171,7 @@ var Plans = React.createClass( {
 						<PlanList
 							sites={ this.props.sites }
 							plans={ this.props.plans.get() }
-							enableFreeTrials={ true }
+							enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
 							onSelectPlan={ this.props.onSelectPlan }

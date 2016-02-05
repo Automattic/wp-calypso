@@ -2,7 +2,6 @@
 	background: $gray-light;
 	box-sizing: border-box;
 	position: relative;
-	float: left;
 	width: 100%;
 	margin: 0 0 15px 0;
 	padding: 0;
@@ -102,7 +101,6 @@
 
 @mixin plans-in-three-columns() {
 	.plan {
-		width: 32%;
 		margin: 0 2% 15px 0;
 
 		&:last-child {
@@ -129,12 +127,11 @@
 		min-height: 155px;
 	}
 
-	.plan-list .jetpack_premium, .plan-list .jetpack_business {
-		width: 49%;
-	}
-
-	.plan-list .jetpack_premium .gridicons-checkmark-circle, .plan-list .jetpack_business .gridicons-checkmark-circle {
-		display: none;
+	.plan-list {
+		display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: center;
 	}
 }
 

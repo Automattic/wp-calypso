@@ -141,7 +141,7 @@ module.exports = React.createClass( {
 	},
 
 	getPlanDiscountMessage: function() {
-		if ( this.isPlaceholder() ) {
+		if ( this.isPlaceholder() || this.props.hideDiscountMessage ) {
 			return;
 		}
 
@@ -155,7 +155,7 @@ module.exports = React.createClass( {
 	},
 
 	getBadge: function() {
-		if ( this.props.site ) {
+		if ( this.props.site && ! this.props.site.jetpack ) {
 			if ( this.props.site.plan.product_slug === this.getProductSlug() ) {
 				return (
 					<Gridicon icon="checkmark-circle" />

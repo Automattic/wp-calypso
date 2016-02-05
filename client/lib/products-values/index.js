@@ -42,18 +42,18 @@ function formatProduct( product ) {
 	} );
 }
 
-function isJpphpBundle( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return product.product_slug === 'host-bundle';
-}
-
 function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'free_plan';
+}
+
+function isFreeJetpackPlan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === 'jetpack_free';
 }
 
 function isFreeTrial( product ) {
@@ -93,6 +93,13 @@ function isJetpackPlan( product ) {
 	assertValidProduct( product );
 
 	return 'jetpack' === product.product_type;
+}
+
+function isJpphpBundle( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === 'host-bundle';
 }
 
 function isPlan( product ) {
@@ -270,10 +277,11 @@ module.exports = {
 	isDomainRedemption,
 	isDomainRegistration,
 	isEnterprise,
-	isJetpackPlan,
 	isFreePlan,
+	isFreeJetpackPlan,
 	isFreeTrial,
 	isGoogleApps,
+	isJetpackPlan,
 	isJpphpBundle,
 	isNoAds,
 	isPlan,
