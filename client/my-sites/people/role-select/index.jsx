@@ -41,11 +41,15 @@ module.exports = React.createClass( {
 	},
 
 	refreshRoles: function( nextProps ) {
-		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
+		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId,
+			appendRoles,
+			siteRoles;
 
 		if ( siteId ) {
+			siteRoles = RolesStore.getRoles( siteId );
+			appendRoles = this.props.appendRoles || {};
 			this.setState( {
-				roles: RolesStore.getRoles( siteId )
+				roles: Object.assign( {}, appendRoles, siteRoles )
 			} );
 		}
 	},
