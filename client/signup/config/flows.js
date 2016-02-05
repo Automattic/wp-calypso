@@ -68,6 +68,21 @@ const flows = {
 		lastModified: '2016-02-02'
 	},
 
+	/* WP.com homepage flows */
+	website: {
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'user' ],
+		destination: getCheckoutDestination,
+		description: 'This flow is used for the users who clicked "Create Website" on the two-button homepage.',
+		lastModified: '2016-01-28'
+	},
+
+	blog: {
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'user' ],
+		destination: getCheckoutDestination,
+		description: 'This flow is used for the users who clicked "Create Blog" on the two-button homepage.',
+		lastModified: '2016-01-28'
+	},
+
 	/* On deck flows*/
 
 	/* Testing flows */
@@ -76,13 +91,6 @@ const flows = {
 		destination: '/me/next/welcome',
 		description: 'This flow is used to test the site step.',
 		lastModified: '2015-09-22'
-	},
-
-	verticals: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getCheckoutDestination,
-		description: 'Categorizing blog signups for Verticals Survey',
-		lastModified: '2015-12-10'
 	},
 
 	'delta-discover': {
