@@ -53,7 +53,7 @@ const MxRecord = React.createClass( {
 						name="data"
 						onChange={ this.props.onChange( 'data' ) }
 						value={ this.props.fieldValues.data }
-						placeholder={ this.translate( 'e.g. mail.my-provider.com', { context: 'MX DNS Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. mail.your-provider.com', { context: 'MX DNS Record', textOnly: true } ) } />
 				</FormFieldset>
 
 				<FormFieldset>
