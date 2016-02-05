@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -49,7 +50,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate posts', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, {
@@ -64,7 +65,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should override previous post of same ID', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, {
@@ -78,7 +79,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never persists state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, { type: SERIALIZE } );
@@ -86,7 +87,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, { type: DESERIALIZE } );
@@ -114,7 +115,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 		it( 'never persists state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = sitePosts( original, { type: SERIALIZE } );
@@ -122,7 +123,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = sitePosts( original, { type: DESERIALIZE } );
@@ -138,7 +139,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track site post query request fetching', () => {
-			const state = siteQueries( null, {
+			const state = siteQueries( undefined, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello' }
@@ -154,7 +155,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should preserve previous query results when requesting again', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': {
 						fetching: false,
@@ -179,7 +180,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate site queries', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': {
 						fetching: true
@@ -205,7 +206,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track site post query request success', () => {
-			const state = siteQueries( null, {
+			const state = siteQueries( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -226,7 +227,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track site post query request failure', () => {
-			const state = siteQueries( null, {
+			const state = siteQueries( undefined, {
 				type: POSTS_REQUEST_FAILURE,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -243,7 +244,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never persists state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': {
 						fetching: true
@@ -255,7 +256,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': {
 						fetching: true
@@ -275,7 +276,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track site post query request success last page', () => {
-			const state = siteQueriesLastPage( null, {
+			const state = siteQueriesLastPage( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: '', number: 1 },
@@ -293,7 +294,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should track last page regardless of page param', () => {
-			const state = siteQueriesLastPage( null, {
+			const state = siteQueriesLastPage( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: '', number: 1, page: 2 },
@@ -311,7 +312,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should consider no results as having last page of 1', () => {
-			const state = siteQueriesLastPage( null, {
+			const state = siteQueriesLastPage( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'none', number: 1 },
@@ -327,7 +328,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate site post request success', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': 1
 				}
@@ -351,7 +352,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never persists state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': 1
 				}
@@ -361,7 +362,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: {
 					'{"search":"hello"}': 1
 				}
@@ -393,7 +394,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate mappings', () => {
-			const state = siteRequests( Object.freeze( {
+			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true
 				}
@@ -412,7 +413,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should map site ID, post ID to false value if request finishes successfully', () => {
-			const state = siteRequests( Object.freeze( {
+			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true
 				}
@@ -430,7 +431,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should map site ID, post ID to false value if request finishes with failure', () => {
-			const state = siteRequests( Object.freeze( {
+			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true
 				}
@@ -448,7 +449,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never persists state because this is not implemented', () => {
-			const state = siteRequests( Object.freeze( {
+			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true
 				}
@@ -460,7 +461,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
-			const state = siteRequests( Object.freeze( {
+			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true
 				}

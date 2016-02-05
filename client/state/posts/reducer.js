@@ -114,25 +114,23 @@ export function siteQueries( state = {}, action ) {
 			const { type, siteId, posts } = action;
 			const query = getSerializedPostsQuery( action.query );
 
-			// Clone state and ensure that site is tracked
-			state = Object.assign( {}, state );
-			if ( ! state[ siteId ] ) {
-				state[ siteId ] = {};
-			}
+			state = Object.assign( {}, state, {
+				[ siteId ]: Object.assign( {}, state[ siteId ] )
+			} );
 
-			if ( ! state[ siteId ][ query ] ) {
-				state[ siteId ][ query ] = {};
-			}
-
-			// Only the initial request should be tracked as fetching. Success
-			// or failure types imply that fetching has completed.
-			state[ siteId ][ query ].fetching = ( POSTS_REQUEST === type );
+			state[ siteId ][ query ] = Object.assign( {}, state[ siteId ][ query ], {
+				// Only the initial request should be tracked as fetching.
+				// Success or failure types imply that fetching has completed.
+				fetching: ( POSTS_REQUEST === type )
+			} );
 
 			// When a request succeeds, map the received posts to state.
 			if ( POSTS_REQUEST_SUCCESS === type ) {
 				state[ siteId ][ query ].posts = posts.map( ( post ) => post.global_ID );
 			}
+
 			return state;
+
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
@@ -154,15 +152,15 @@ export function siteQueriesLastPage( state = {}, action ) {
 		case POSTS_REQUEST_SUCCESS:
 			const { siteId, found } = action;
 
-			state = Object.assign( {}, state );
-			if ( ! state[ siteId ] ) {
-				state[ siteId ] = {};
-			}
+			state = Object.assign( {}, state, {
+				[ siteId ]: Object.assign( {}, state[ siteId ] )
+			} );
 
 			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query );
 			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
 			state[ siteId ][ serializedQuery ] = Math.max( lastPage, 1 );
 			return state;
+
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
