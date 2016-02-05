@@ -20,7 +20,7 @@ import paths from '../../paths';
 const PlanRemove = React.createClass( {
 	propTypes: {
 		cancelSitePlanTrial: React.PropTypes.func.isRequired,
-		isUpdating: React.PropTypes.bool.isRequired,
+		isRequesting: React.PropTypes.bool.isRequired,
 		plan: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -78,12 +78,12 @@ const PlanRemove = React.createClass( {
 		const buttons = [
 			{
 				action: 'cancel',
-				disabled: this.props.isUpdating,
+				disabled: this.props.isRequesting,
 				label: this.translate( 'Cancel' )
 			},
 			{
 				action: 'remove',
-				disabled: this.props.isUpdating,
+				disabled: this.props.isRequesting,
 				isPrimary: true,
 				label: this.translate( 'Remove Now' ),
 				onClick: this.removePlan
@@ -134,7 +134,7 @@ export default connect(
 		const plans = getPlansBySite( state, props.selectedSite );
 
 		return {
-			isUpdating: plans.isUpdating
+			isRequesting: plans.isRequesting
 		};
 	},
 	( dispatch ) => {

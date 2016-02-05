@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 						error: null,
 						hasLoadedFromServer: true,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -73,7 +73,7 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: false,
 					isFetching: true,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -85,7 +85,7 @@ describe( 'reducer', () => {
 						error: null,
 						hasLoadedFromServer: true,
 						isFetching: true,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -100,7 +100,7 @@ describe( 'reducer', () => {
 					error: 'Unable to fetch site plans',
 					hasLoadedFromServer: true,
 					isFetching: false,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -118,7 +118,7 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: true,
 					isFetching: false,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -130,7 +130,7 @@ describe( 'reducer', () => {
 						error: null,
 						hasLoadedFromServer: true,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -144,14 +144,14 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: true,
 					isFetching: false,
-					isUpdating: false
+					isRequesting: false
 				},
 				55555555: {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
 					isFetching: true,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -163,7 +163,7 @@ describe( 'reducer', () => {
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -177,7 +177,7 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: false,
 					isFetching: true,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -189,7 +189,7 @@ describe( 'reducer', () => {
 						error: null,
 						hasLoadedFromServer: false,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -203,7 +203,7 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: false,
 					isFetching: false,
-					isUpdating: true
+					isRequesting: true
 				}
 			} );
 		} );
@@ -215,7 +215,7 @@ describe( 'reducer', () => {
 						error: null,
 						hasLoadedFromServer: true,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -230,7 +230,7 @@ describe( 'reducer', () => {
 					error: 'Unable to cancel plan trial',
 					hasLoadedFromServer: true,
 					isFetching: false,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -248,7 +248,7 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: true,
 					isFetching: false,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -269,7 +269,7 @@ describe( 'reducer', () => {
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -287,14 +287,14 @@ describe( 'reducer', () => {
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					},
 					22222222: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -308,7 +308,7 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: true,
 					isFetching: false,
-					isUpdating: false
+					isRequesting: false
 				}
 			} );
 		} );
@@ -320,7 +320,7 @@ describe( 'reducer', () => {
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {
@@ -337,14 +337,14 @@ describe( 'reducer', () => {
 						error: null,
 						hasLoadedFromServer: false,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					},
 					22222222: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
 						isFetching: false,
-						isUpdating: false
+						isRequesting: false
 					}
 				} ),
 				state = plans( original, {

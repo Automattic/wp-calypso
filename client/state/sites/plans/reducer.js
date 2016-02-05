@@ -23,7 +23,7 @@ export const initialSiteState = {
 	error: null,
 	hasLoadedFromServer: false,
 	isFetching: false,
-	isUpdating: false
+	isRequesting: false
 };
 
 /**
@@ -67,21 +67,21 @@ export function plans( state = {}, action ) {
 
 		case SITE_PLANS_TRIAL_CANCEL:
 			return updateSiteState( state, action.siteId, {
-				isUpdating: true
+				isRequesting: true
 			} );
 
 		case SITE_PLANS_TRIAL_CANCEL_COMPLETED:
 			return updateSiteState( state, action.siteId, {
 				error: null,
 				hasLoadedFromServer: true,
-				isUpdating: false,
+				isRequesting: false,
 				data: action.plans
 			} );
 
 		case SITE_PLANS_TRIAL_CANCEL_FAILED:
 			return updateSiteState( state, action.siteId, {
 				error: action.error,
-				isUpdating: false
+				isRequesting: false
 			} );
 
 		case SERIALIZE:
