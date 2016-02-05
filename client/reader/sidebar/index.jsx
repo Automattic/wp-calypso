@@ -28,8 +28,16 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import observe from 'lib/mixins/data-observe';
+import config from 'config';
+import userSettings from 'lib/user-settings';
+import AppPromo from 'components/app-promo';
 
 const ReaderSidebar = React.createClass( {
+
+	mixins: [
+		observe( 'userSettings' ),
+	],
 
 	componentDidMount() {
 		ReaderTagsSubscriptionStore.on( 'change', this.updateState );
@@ -122,6 +130,29 @@ const ReaderSidebar = React.createClass( {
 		}
 	},
 
+	renderAppPromo() {
+		// if promo not configured return
+		if ( ! config.isEnabled( 'desktop-promo' ) ) {
+			return;
+		};
+
+		// if user settings not loaded, return so we dont show
+		// before we can check if user is already a desktop user
+		if ( userSettings.getSetting( 'is_desktop_app_user' ) === null ) {
+			return;
+		}
+
+		// if already using desktop app, dont show promo
+		if ( userSettings.getSetting( 'is_desktop_app_user' ) ) {
+			return;
+		}
+
+		// made it through the gauntlet, show the promo!
+		return (
+			<AppPromo location="reader" />
+		);
+	},
+
 	render() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
@@ -181,6 +212,8 @@ const ReaderSidebar = React.createClass( {
 					onClick={ this.props.toggleTagsVisibility }
 					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
+
+				{ this.renderAppPromo() }
 			</Sidebar>
 		);
 	}
