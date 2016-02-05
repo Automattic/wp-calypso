@@ -315,19 +315,42 @@ describe( 'reducer', () => {
 
 		it( 'never persists state because this is not implemented', () => {
 			const original = Object.freeze( {
-				11111111: initialSiteState,
-				22222222: initialSiteState
-			} );
-			const state = plans( original, { type: SERIALIZE } );
+					11111111: {
+						data: null,
+						error: 'Unable to fetch site plans',
+						hasLoadedFromServer: false,
+						isFetching: false,
+						isUpdating: false
+					}
+				} ),
+				state = plans( original, {
+					type: SERIALIZE
+				} );
+
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
 			const original = Object.freeze( {
-				11111111: initialSiteState,
-				22222222: initialSiteState
-			} );
-			const state = plans( original, { type: DESERIALIZE } );
+					11111111: {
+						data: null,
+						error: null,
+						hasLoadedFromServer: false,
+						isFetching: false,
+						isUpdating: false
+					},
+					22222222: {
+						data: [],
+						error: null,
+						hasLoadedFromServer: true,
+						isFetching: false,
+						isUpdating: false
+					}
+				} ),
+				state = plans( original, {
+					type: DESERIALIZE
+				} );
+
 			expect( state ).to.eql( {} );
 		} );
 	} );
