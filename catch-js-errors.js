@@ -32,10 +32,8 @@
 	 */
 	function debounce( fn, delay ) {
 		var lastCall = Date.now();
-
 		return function() {
 			var now = Date.now();
-
 			if ( ( now - lastCall ) < delay ) {
 				return;
 			}
@@ -66,10 +64,12 @@
 
 	if ( isLocalStorageNameSupported() ) {
 		// Randomly assign 1% of users to log errors
-		if ( localStorage.getItem( 'log-errors' ) === undefined && Math.random() <= 0.01 ) {
-			localStorage.setItem( 'log-errors', 'true' );
-		} else {
-			localStorage.setItem( 'log-errors', 'false' );
+		if ( localStorage.getItem( 'log-errors' ) === undefined ) {
+			if ( Math.random() <= 0.01 ) {
+				localStorage.setItem( 'log-errors', 'true' );
+			} else {
+				localStorage.setItem( 'log-errors', 'false' );
+			}
 		}
 
 		if ( localStorage.getItem( 'log-errors' ) !== undefined && localStorage.getItem( 'log-errors' ) === 'true' ) {
