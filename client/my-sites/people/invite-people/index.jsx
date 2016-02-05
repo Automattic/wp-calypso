@@ -63,6 +63,7 @@ export default React.createClass( {
 	goBack() {
 		const siteSlug = get( this.props, 'site.slug' );
 		const fallback = siteSlug ? ( '/people/team/' + siteSlug ) : '/people/team';
+
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );
 	},
@@ -101,7 +102,7 @@ export default React.createClass( {
 								onChange={ this.onTokensChange } />
 							<FormSettingExplanation>
 								{ this.translate(
-									'Invite up to 10 email addresses and/or WordPress.com usernames.. ' +
+									'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
 									'Those needing a username will be sent instructions on how to create one.'
 								) }
 							</FormSettingExplanation>
