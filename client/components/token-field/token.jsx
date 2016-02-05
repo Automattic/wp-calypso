@@ -3,7 +3,6 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	noop = require( 'lodash/utility/noop' ),
 	classNames = require( 'classnames' );
 
 var Token = React.createClass( {
@@ -16,7 +15,7 @@ var Token = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			onClickRemove: noop
+			onClickRemove: function() {}
 		};
 	},
 

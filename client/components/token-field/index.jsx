@@ -11,8 +11,7 @@ var take = require( 'lodash/array/take' ),
 	each = require( 'lodash/collection/each' ),
 	identity = require( 'lodash/utility/identity' ),
 	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:token-field' ),
-	noop = require( 'lodash/utility/noop' );
+	debug = require( 'debug' )( 'calypso:token-field' );
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ var TokenField = React.createClass( {
 				return token.trim();
 			},
 			onChange: function() {},
-			tokenStatus: noop
+			tokenStatus: function() {}
 		};
 	},
 
