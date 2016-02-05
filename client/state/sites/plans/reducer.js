@@ -13,9 +13,10 @@ import {
 	SITE_PLANS_REMOVE,
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-	SITE_PLANS_TRIAL_CANCEL_FAILED
+	SITE_PLANS_TRIAL_CANCEL_FAILED,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 export const initialSiteState = {
 	data: null,
