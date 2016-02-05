@@ -152,6 +152,14 @@
 	@include clear-fix;
 }
 
+.importer__mapping-description {
+	margin-bottom: 16px;
+
+	& strong {
+		white-space: nowrap;
+	}
+}
+
 .importer__mapping-source-title {
 	float: left;
 	display: inline-block;

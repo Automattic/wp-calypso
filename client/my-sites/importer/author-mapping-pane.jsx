@@ -9,6 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Button from 'components/forms/form-button';
 import AuthorMapping from './author-mapping-item';
+import UsersStore from 'lib/users/store';
 
 export default React.createClass( {
 	displayName: 'ImporterMappingPane',
@@ -30,12 +31,54 @@ export default React.createClass( {
 		targetTitle: PropTypes.string.isRequired
 	},
 
+	getUserCount() {
+		const { totalUsers } = UsersStore.getPaginationData( {
+			siteId: this.props.siteId,
+			order: 'ASC',
+			order_by: 'display_name',
+			number: 50
+		} );
+
+		return totalUsers;
+	},
+
 	render: function() {
 		const { hasSingleAuthor, sourceAuthors, sourceTitle, targetTitle, onMap, onStartImport, siteId } = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
+		const targetUserCount = this.getUserCount();
+		console.log( targetUserCount );
+		const mappingDescription = targetUserCount === 1
+			? this.translate(
+				'We found multiple authors on your %(sourceType)s site. ' +
+				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
+				'all imported content will be assigned to you. ' +
+				'Click Start Import to proceed.', {
+					args: {
+						sourceType: 'WordPress',
+						destinationSiteTitle: targetTitle
+					},
+					components: {
+						b: <strong />
+					}
+			  } )
+			: this.translate(
+				'We found multiple authors on your %(sourceType)s site. ' +
+				'Please reassign the authors of the imported items to an existing ' +
+				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
+					args: {
+						sourceType: 'WordPress',
+						destinationSiteTitle: targetTitle
+					},
+					components: {
+						b: <strong />
+					}
+			  } );
 
 		return (
 			<div className="importer__mapping-pane">
+				<div className="importer__mapping-description">
+					{ mappingDescription }
+				</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>

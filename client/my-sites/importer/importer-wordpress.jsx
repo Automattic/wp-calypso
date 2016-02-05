@@ -8,6 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import FileImporter from './file-importer';
+import UsersStore from 'lib/users/store';
 
 /**
  * Module variables
@@ -15,6 +16,17 @@ import FileImporter from './file-importer';
 const importerData = {
 	title: 'WordPress',
 	icon: 'wordpress'
+};
+
+const fetchSiteUserCount = siteId => {
+	UsersStore.getPaginationData( {
+		order: 'ASC',
+		order_by: 'display_name',
+		number: 50,
+		siteId
+	} );
+
+	console.log( 'Fetched user info' );
 };
 
 export default React.createClass( {
@@ -34,6 +46,21 @@ export default React.createClass( {
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string
 		} )
+	},
+
+	componentDidMount() {
+		const { siteId } = this.props;
+
+		console.log( 'Mounting' );
+		fetchSiteUserCount( siteId );
+	},
+
+	componentDidUpdate( { prevSiteId } ) {
+		const { siteId } = this.props;
+
+		if ( siteId !== prevSiteId ) {
+			fetchSiteUserCount( siteId );
+		}
 	},
 
 	render: function() {
