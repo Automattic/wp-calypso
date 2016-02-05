@@ -8,6 +8,9 @@ import indexBy from 'lodash/collection/indexBy';
  * Internal dependencies
  */
 import {
+	POST_REQUEST,
+	POST_REQUEST_SUCCESS,
+	POST_REQUEST_FAILURE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -64,6 +67,34 @@ export function sitePosts( state = {}, action ) {
 		case DESERIALIZE:
 			return {};
 	}
+	return state;
+}
+
+/**
+ * Returns the updated site post requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID, post ID pairing to a
+ * boolean reflecting whether a request for the post is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function siteRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case POST_REQUEST:
+		case POST_REQUEST_SUCCESS:
+		case POST_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
+					[ action.postId ]: POST_REQUEST === action.type
+				} )
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
 	return state;
 }
 
@@ -142,6 +173,7 @@ export function siteQueriesLastPage( state = {}, action ) {
 export default combineReducers( {
 	items,
 	sitePosts,
+	siteRequests,
 	siteQueries,
 	siteQueriesLastPage
 } );

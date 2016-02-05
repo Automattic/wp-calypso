@@ -7,6 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	POST_REQUEST,
+	POST_REQUEST_SUCCESS,
+	POST_REQUEST_FAILURE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -18,7 +21,8 @@ import {
 	items,
 	sitePosts,
 	siteQueries,
-	siteQueriesLastPage
+	siteQueriesLastPage,
+	siteRequests
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -363,6 +367,107 @@ describe( 'reducer', () => {
 				}
 			} );
 			const state = siteQueriesLastPage( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( '#siteRequests()', () => {
+		it( 'should default to an empty object', () => {
+			const state = siteRequests( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should map site ID, post ID to true value if request in progress', () => {
+			const state = siteRequests( undefined, {
+				type: POST_REQUEST,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: true
+				}
+			} );
+		} );
+
+		it( 'should accumulate mappings', () => {
+			const state = siteRequests( Object.freeze( {
+				2916284: {
+					841: true
+				}
+			} ), {
+				type: POST_REQUEST,
+				siteId: 2916284,
+				postId: 413
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: true,
+					413: true
+				}
+			} );
+		} );
+
+		it( 'should map site ID, post ID to false value if request finishes successfully', () => {
+			const state = siteRequests( Object.freeze( {
+				2916284: {
+					841: true
+				}
+			} ), {
+				type: POST_REQUEST_SUCCESS,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: false
+				}
+			} );
+		} );
+
+		it( 'should map site ID, post ID to false value if request finishes with failure', () => {
+			const state = siteRequests( Object.freeze( {
+				2916284: {
+					841: true
+				}
+			} ), {
+				type: POST_REQUEST_FAILURE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: false
+				}
+			} );
+		} );
+
+		it( 'never persists state because this is not implemented', () => {
+			const state = siteRequests( Object.freeze( {
+				2916284: {
+					841: true
+				}
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'never loads persisted state because this is not implemented', () => {
+			const state = siteRequests( Object.freeze( {
+				2916284: {
+					841: true
+				}
+			} ), {
+				type: DESERIALIZE
+			} );
+
 			expect( state ).to.eql( {} );
 		} );
 	} );
