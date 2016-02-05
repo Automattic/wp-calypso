@@ -227,9 +227,10 @@ module.exports = React.createClass( {
 					} )
 				);
 			} else if ( error.error === 'active-subscriptions' ) {
-				error.message = this.translate( 'You have active premium upgrades on your site. Please cancel your upgrades prior to deleting your site.' );
+				error.message = this.translate( 'You must cancel any active subscriptions prior to deleting your site.' );
 				notices.error( error.message, {
 					button: 'Manage Purchases',
+					showDismiss: false,
 					onClick: this.managePurchases
 				} );
 			} else {
