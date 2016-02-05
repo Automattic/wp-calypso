@@ -48,9 +48,9 @@ let Followers = React.createClass( {
 			store = 'email' === this.props.type ? EmailFollowersStore : FollowersStore,
 			page = this.props.currentPage + 1,
 			paginationData = store.getPaginationData( this.props.fetchOptions ),
-			analyticsAction = 'email' === this.props.type ?
-				'Fetched more email followers with infinite list' :
-				'Fetched more followers with infinite list';
+			analyticsAction = 'email' === this.props.type
+				? 'Fetched more email followers with infinite list'
+				: 'Fetched more followers with infinite list';
 
 		if ( paginationData && paginationData.followersCurrentPage ) {
 			page = paginationData.followersCurrentPage + 1;
@@ -91,14 +91,18 @@ let Followers = React.createClass( {
 	},
 
 	renderFollower( follower ) {
+		const removeFollower = () => {
+			this.removeFollower( follower );
+		};
+
 		return (
 			<PeopleListItem
 				key={ follower.ID }
 				user={ follower }
-				type='follower'
+				type="follower"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
-				onRemove={ this.removeFollower.bind( this, follower ) }
+				onRemove={ removeFollower }
 			/>
 		);
 	},
@@ -132,7 +136,7 @@ let Followers = React.createClass( {
 		if ( this.noFollowerSearchResults() ) {
 			return (
 				<NoResults
-					image='/calypso/images/people/mystery-person.svg'
+					image="/calypso/images/people/mystery-person.svg"
 					text={
 						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
