@@ -124,7 +124,7 @@ let Followers = React.createClass( {
 
 	render() {
 		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) ),
-			headerText = this.translate( this.props.label, { context: 'A navigation label.' } ),
+			headerText = this.props.label,
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
 			followers,
 			emptyTitle;
