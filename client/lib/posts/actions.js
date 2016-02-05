@@ -480,6 +480,10 @@ PostActions = {
 
 		postListStore = postListStoreFactory( postListStoreId );
 
+		if ( postListStore.getPage() === 0 ) {
+			return PostActions.fetchNextPage( postListStoreId );
+		}
+
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_UPDATED_POSTS',
 			postListStoreId: postListStoreId
