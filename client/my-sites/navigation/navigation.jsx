@@ -10,24 +10,10 @@ import observe from 'lib/mixins/data-observe';
 import SitePicker from 'my-sites/picker';
 import Sidebar from 'my-sites/sidebar';
 
-const SITE_HEIGHT = 66,
-	EXTRA_SITE_ITEMS_HEIGHT = 200;
-
 module.exports = React.createClass( {
 	displayName: 'MySitesNavigation',
 
 	mixins: [ observe( 'sites', 'user', 'layoutFocus' ) ],
-
-	/**
-	 * Calculate the height of the sites list based on how many sites
-	 * the user has to be displayed
-	 *
-	 * @return {Number} height of the sites list
-	 */
-	getSitesHeight() {
-		var count = this.props.user.get().visible_site_count;
-		return ( count * SITE_HEIGHT ) + EXTRA_SITE_ITEMS_HEIGHT;
-	},
 
 	preventPickerDefault( event ) {
 		event.preventDefault();
