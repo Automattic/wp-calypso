@@ -2,6 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:post-types-list' );
+var omit = require( 'lodash/object/omit' );
+var values = require( 'lodash/object/values' );
 
 /**
  * Internal dependencies
@@ -52,13 +54,13 @@ PostTypesList.prototype.fetch = function( siteId ) {
 
 		debug( 'getting PostTypesList from api' );
 		wpcom
+		.undocumented()
 		.site( siteId )
-		.postTypesList( function( error, data ) {
+		.postTypesList( { context: 'edit' }, function( error, data ) {
 			if ( error ) {
 				debug( 'error fetching PostTypesList from api', error );
 				return;
 			}
-
 			this.data = this.parse( data );
 			this.emit( 'change' );
 			this.fetching = false;
@@ -73,7 +75,7 @@ PostTypesList.prototype.fetch = function( siteId ) {
  * @return {array} services
  **/
 PostTypesList.prototype.parse = function( data ) {
-	return data.post_types;
+	return values( omit( data, '_headers' ) );
 };
 
 /**

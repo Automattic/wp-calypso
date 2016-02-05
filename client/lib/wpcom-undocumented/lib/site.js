@@ -21,7 +21,8 @@ var resources = [
 	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
 	[ 'sshCredentialsMineDelete', 'ssh-credentials/mine/delete', '1.1', 'post' ],
 	[ 'sshScanToggle', 'ssh-credentials/mine', '1.1', 'post' ],
-	[ 'getOption', 'option/' ]
+	[ 'getOption', 'option/' ],
+	[ 'postTypesList', 'types', '2' ]
 ];
 
 var list = function( resourceOptions ) {
@@ -40,9 +41,19 @@ var list = function( resourceOptions ) {
 			return '/';
 		} );
 
+		if ( typeof query === 'function' ) {
+			fn = query;
+			query = {};
+		}
+
 		query.apiVersion = resourceOptions.apiVersion;
 
 		path = '/sites/' + this._id + '/' + subpath;
+
+		// wp-api resources
+		if ( '2' === query.apiVersion ) {
+			path = '/sites/' + this._id + '/wp/v2/' + subpath;
+		}
 
 		debug( 'calling undocumented site api path', path );
 		debug( 'query', query );
