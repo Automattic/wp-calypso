@@ -42,9 +42,8 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	// The following mixins require i18n content, so must be required after i18n is initialized
-	Layout,
-	LoggedOutLayout;
+	// The following components require the i18n mixin, so must be required after i18n is initialized
+	Layout;
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -164,6 +163,8 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/user/support-user-interop' )( reduxStore );
 	}
 
+	Layout = require( 'layout' );
+
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
@@ -174,8 +175,6 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 
 		// Create layout instance with current user prop
-		Layout = require( 'layout' );
-
 		layoutElement = React.createElement( Layout, {
 			user: user,
 			sites: sites,
@@ -186,15 +185,14 @@ function reduxStoreReady( reduxStore ) {
 	} else {
 		analytics.setSuperProps( superProps );
 
-		if ( config.isEnabled( 'oauth' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-oauth' );
-		} else if ( startsWith( window.location.pathname, '/design' ) ) {
-			LoggedOutLayout = require( 'layout/logged-out-design' );
+		if ( startsWith( window.location.pathname, '/design' ) ) {
+			Layout = require( 'layout/logged-out-design' );
+			layoutElement = React.createElement( Layout );
 		} else {
-			LoggedOutLayout = require( 'layout/logged-out' );
+			layoutElement = React.createElement( Layout, {
+				focus: layoutFocus
+			} );
 		}
-
-		layoutElement = React.createElement( LoggedOutLayout );
 	}
 
 	if ( config.isEnabled( 'perfmon' ) ) {
