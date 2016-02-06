@@ -126,7 +126,7 @@ PostListFetcher = React.createClass( {
 
 	componentDidMount: function() {
 		var postListStore = postListStoreFactory( this.props.postListStoreId );
-		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000, leading: false } );
+		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000 } );
 	},
 
 	componentWillUnmount: function() {
