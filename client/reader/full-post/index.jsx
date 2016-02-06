@@ -19,7 +19,6 @@ var ReactDom = require( 'react-dom' ),
  */
 var analytics = require( 'analytics' ),
 	CommentButton = require( 'components/comment-button' ),
-	CommentStore = require( 'lib/comment-store/comment-store' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	ExternalLink = require( 'components/external-link' ),
@@ -51,6 +50,7 @@ var analytics = require( 'analytics' ),
 	smartSetState = require( 'lib/react-smart-set-state' );
 
 import PostExcerpt from 'components/post-excerpt';
+import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 var loadingPost = {
 		URL: '',
@@ -360,6 +360,12 @@ FullPostDialog = React.createClass( {
 
 } );
 
+FullPostDialog = connect(
+	( state, ownProps ) => ( {
+		commentCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID )
+	} )
+)( FullPostDialog );
+
 function getPost( postKey ) {
 	var post = PostStore.get( postKey );
 	if ( ! post || post._state === 'minimal' ) {
@@ -395,7 +401,7 @@ FullPostContainer = React.createClass( {
 	},
 
 	getStateFromStores: function( props ) {
-		var post, site, feed, title, commentCount;
+		var post, site, feed, title;
 
 		props = props || this.props;
 
@@ -416,13 +422,6 @@ FullPostContainer = React.createClass( {
 			title = this.translate( 'Post' );
 		}
 
-		if ( post && post.site_ID && post.ID ) {
-			commentCount = CommentStore.getCommentCountForPost(
-				post.site_ID,
-				post.ID
-			);
-		}
-
 		if ( post && post.site_ID && ! post.is_external ) {
 			site = getSite( post.site_ID );
 		}
@@ -431,7 +430,7 @@ FullPostContainer = React.createClass( {
 			feed = getFeed( post.feed_ID );
 		}
 
-		return { post, site, feed, title, commentCount };
+		return { post, site, feed, title };
 	},
 
 	attemptToSendPageView: function() {
@@ -463,7 +462,6 @@ FullPostContainer = React.createClass( {
 	// Add change listeners to stores
 	componentDidMount: function() {
 		PostStore.on( 'change', this._onChange );
-		CommentStore.on( 'change', this._onChange );
 		SiteStore.on( 'change', this._onChange );
 		FeedStore.on( 'change', this._onChange );
 
@@ -494,7 +492,6 @@ FullPostContainer = React.createClass( {
 	// Remove change listeners from stores
 	componentWillUnmount: function() {
 		PostStore.off( 'change', this._onChange );
-		CommentStore.off( 'change', this._onChange );
 		SiteStore.off( 'change', this._onChange );
 		FeedStore.off( 'change', this._onChange );
 	},
@@ -518,7 +515,6 @@ FullPostContainer = React.createClass( {
 			<FullPostDialog {...passedProps }
 				isVisible={ this.props.isVisible }
 				post={ this.state.post }
-				commentCount={ this.state.commentCount }
 				site={ this.state.site }
 				feed={ this.state.feed }/>
 		);
@@ -527,12 +523,9 @@ FullPostContainer = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			isVisible: state.ui.reader.fullpost.isVisible
-		}
-	),
+	( state, ownProps ) => ( {
+		isVisible: state.ui.reader.fullpost.isVisible
+	} ),
 	( dispatch ) => bindActionCreators( {
 		showReaderFullPost
 	}, dispatch )
