@@ -47,12 +47,7 @@ the following tools, be sure to use paths that do not have spaces in them.
 	/c/git/cmd/git
     ```
 
-8. Install the `semver` package for Node.js globally:
-    ```
-    npm install semver -g
-    ```
-
-9. And you're done - you can follow
+8. And you're done - you can follow
    [the normal instructions](https://github.com/Automattic/wp-calypso/blob/master/docs/install.md#installing-and-running)
    from now on!
 
