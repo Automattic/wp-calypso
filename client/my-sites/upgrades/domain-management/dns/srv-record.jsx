@@ -112,7 +112,7 @@ const SrvRecord = React.createClass( {
 						isError={ ! isTargetValid }
 						onChange={ this.props.onChange }
 						value={ target }
-						placeholder={ this.translate( 'e.g. sip.myprovider.com', { context: 'SRV Dns Record', textOnly: true } ) } />
+						placeholder={ this.translate( 'e.g. sip.your-provider.com', { context: 'SRV Dns Record', textOnly: true } ) } />
 					{ ! isTargetValid ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError={ true } /> : null }
 				</FormFieldset>
 
