@@ -10,13 +10,13 @@
 
 ## Prerequisites
 
-To be able to clone the repo and run the application you need:
+To be able to clone the repo and run the application **on Mac OS X or Linux** you need:
 
-- On Mac OS X or Linux:
 -	[Node.js](http://nodejs.org/) and [NPM](https://www.npmjs.com/) installed. On Mac OS X using [brew](http://brew.sh/) is the easiest way to install `node` and `npm`.
 -	[Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 -	The repository also uses `make` to orchestrate compiling the JavaScript, running the server, and several other tasks. On Mac OS X, the easiest way to install `make` is through Apple's [Command Line Tools for Xcode](https://developer.apple.com/downloads/) (requires free registration).
-- On Windows, please follow [these setup steps](windows.md).
+
+**On Windows**, please follow [these setup steps](windows.md) to install the prerequisites.
 
 ## Installing and Running
 
