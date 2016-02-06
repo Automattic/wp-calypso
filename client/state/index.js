@@ -21,6 +21,7 @@ import themes from './themes/reducer';
 import users from './users/reducer';
 import currentUser from './current-user/reducer';
 import ui from './ui/reducer';
+import comments from './comments/reducer';
 
 /**
  * Module variables
@@ -39,7 +40,8 @@ export const reducer = combineReducers( {
 	themes,
 	users,
 	currentUser,
-	ui
+	ui,
+	comments
 } );
 
 let middleware = [ thunkMiddleware ];
