@@ -8959,19 +8959,13 @@
       }
     },
     "page": {
-      "version": "1.6.1",
-      "from": "page@1.6.1",
-      "resolved": "https://registry.npmjs.org/page/-/page-1.6.1.tgz",
+      "version": "1.6.4",
       "dependencies": {
         "path-to-regexp": {
-          "version": "1.0.3",
-          "from": "path-to-regexp@>=1.0.1 <1.1.0",
-          "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-1.0.3.tgz",
+          "version": "1.2.1",
           "dependencies": {
             "isarray": {
-              "version": "0.0.1",
-              "from": "isarray@0.0.1",
-              "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz"
+              "version": "0.0.1"
             }
           }
         }
