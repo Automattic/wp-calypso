@@ -137,11 +137,8 @@ mixedindentlint: node_modules/mixedindentlint
 	@$(RECORD_ENV) $@
 
 # generate the client-side `config` js file
-$(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json client/config/regenerate.js client/lib/user/shared-utils.js
+$(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json client/config/regenerate.js
 	@$(NODE) client/config/regenerate.js > $@
-
-client/lib/user/shared-utils.js: server/user-bootstrap/shared-utils.js
-	@ln -s $(realpath $<) $@
 
 public/style.css: node_modules $(SASS_FILES)
 	@$(SASS) assets/stylesheets/style.scss $@
