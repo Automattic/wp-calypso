@@ -1,31 +1,32 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+import map from 'lodash/map';
+import camelCase from 'lodash/camelCase';
 
 /**
  * Internal dependencies
  */
-var CountrySelect = require( 'my-sites/upgrades/components/form/country-select' ),
-	StateSelect = require( 'my-sites/upgrades/components/form/state-select' ),
-	Input = require( 'my-sites/upgrades/components/form/input' ),
-	HiddenInput = require( 'my-sites/upgrades/components/form/hidden-input' ),
-	PrivacyProtection = require( './privacy-protection' ),
-	PaymentBox = require( './payment-box' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	hasNlTld = cartItems.hasNlTld,
-	countriesList = require( 'lib/countries-list' ).forDomainRegistrations(),
-	statesList = require( 'lib/states-list' ).forDomainRegistrations(),
-	notices = require( 'notices' ),
-	ValidationErrorList = require( 'notices/validation-error-list' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	analytics = require( 'analytics' ),
-	formState = require( 'lib/form-state' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
+import PrivacyProtection from './privacy-protection';
+import PaymentBox from './payment-box';
+import { cartItems } from 'lib/cart-values';
+import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
+import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/states-list';
+import notices from 'notices';
+import ValidationErrorList from 'notices/validation-error-list';
+import analytics from 'analytics';
+import formState from 'lib/form-state';
+import upgradesActions from 'lib/upgrades/actions';
 
-module.exports = React.createClass( {
+// Cannot convert to ES6 import
+const wpcom = require( 'lib/wp' ).undocumented(),
+	countriesList = countriesListForDomainRegistrations(),
+	statesList = statesListForDomainRegistrations();
+
+export default React.createClass( {
 	displayName: 'DomainDetailsForm',
 
 	fieldNames: [
@@ -43,14 +44,14 @@ module.exports = React.createClass( {
 		'fax'
 	],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			form: null,
 			isDialogVisible: false
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
@@ -62,49 +63,42 @@ module.exports = React.createClass( {
 		this.setState( { form: this.formStateController.getInitialState() } );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		analytics.pageView.record( '/checkout/domain-registration-details', 'Checkout > Domain Registration Details' );
 	},
 
-	validate: function( fieldNames, onComplete ) {
-		var cart = this.props.cart,
-			domainRegistrations = cartItems.getDomainRegistrations( cart ),
-			domainNames = domainRegistrations.map( function( domainRegistration ) {
-				return domainRegistration.meta;
-			} );
+	validate( fieldNames, onComplete ) {
+		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 
-		wpcom.validateDomainContactInformation( fieldNames, domainNames, function( error, data ) {
-			var messages = data && data.messages ? data.messages : {};
+		wpcom.validateDomainContactInformation( fieldNames, domainNames, ( error, data ) => {
+			const messages = data && data.messages || {};
 			onComplete( error, messages );
 		} );
 	},
 
-	setFormState: function( state ) {
+	setFormState( form ) {
 		if ( ! this.isMounted() ) {
 			return;
 		}
 
-		const messages = formState.getErrorMessages( state );
+		const errorMessages = formState.getErrorMessages( form );
 
-		if ( messages.length > 0 ) {
-			const notice = notices.error( <ValidationErrorList messages={ messages } /> );
-			this.setState( {
-				form: state,
-				notice: notice
-			} );
+		if ( errorMessages.length > 0 ) {
+			const notice = notices.error( <ValidationErrorList messages={ errorMessages } /> );
+			this.setState( { form, notice } );
 		} else {
 			if ( this.state.notice ) {
 				notices.removeNotice( this.state.notice );
 			}
-			this.setState( { form: state } );
+			this.setState( { form } );
 		}
 	},
 
-	handleFormControllerError: function( error ) {
+	handleFormControllerError( error ) {
 		throw error;
 	},
 
-	handleChangeEvent: function( event ) {
+	handleChangeEvent( event ) {
 		// Resets the state field every time the user selects a different country
 		if ( event.target.name === 'country-code' ) {
 			this.formStateController.handleFieldChange( {
@@ -120,51 +114,43 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	getNumberOfDomainRegistrations: function() {
-		var cart = this.props.cart,
-			domainRegistrations = cartItems.getDomainRegistrations( cart );
-
-		return domainRegistrations.length;
+	getNumberOfDomainRegistrations() {
+		return cartItems.getDomainRegistrations( this.props.cart ).length;
 	},
 
-	field: function( componentClass, props ) {
-		var name = props.name;
-
-		return React.createElement( componentClass, assign( {}, props, {
+	getFieldProps( name ) {
+		return {
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ),
 			invalid: formState.isFieldInvalid( this.state.form, name ),
 			disabled: formState.isFieldDisabled( this.state.form, name ),
 			onChange: this.handleChangeEvent,
 			eventFormName: 'Checkout Form'
-		} ) );
+		};
 	},
 
-	showFax: function() {
-		var cart = this.props.cart,
-			countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
-
-		return countryCode === 'NL' && hasNlTld( cart );
+	showFax() {
+		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasNlTld( this.props.cart );
 	},
 
-	fields: function() {
-		var countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
+	fields() {
+		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' ),
+			fieldProps = ( name ) => this.getFieldProps( name ),
+			textOnly = true;
 
 		return (
 			<div>
-				{ this.field( Input, {
-					name: 'first-name',
-					autofocus: true,
-					label: this.translate( 'First Name', { textOnly: true } )
-				} ) }
-				{ this.field( Input, {
-					name: 'last-name',
-					label: this.translate( 'Last Name', { textOnly: true } )
-				} ) }
-				{ this.field( HiddenInput, {
-					name: 'organization',
-					label: this.translate( 'Organization', { textOnly: true } ),
-					text: this.translate(
+				<Input
+					name="first-name"
+					autofocus
+					label={ this.translate( 'First Name', { textOnly } ) }
+					{ ...fieldProps( 'first-name' ) }/>
+				<Input name="last-name" label={ this.translate( 'Last Name', { textOnly } ) } { ...fieldProps( 'last-name' ) }/>
+
+				<HiddenInput
+					name="organization"
+					label={ this.translate( 'Organization' ) }
+					text={ this.translate(
 						'Registering this domain for a company? + Add Organization Name',
 						'Registering these domains for a company? + Add Organization Name',
 						{
@@ -173,72 +159,61 @@ module.exports = React.createClass( {
 							count: this.getNumberOfDomainRegistrations(),
 							textOnly: true
 						}
-					)
-				} ) }
-				{ this.field( Input, {
-					name: 'email',
-					label: this.translate( 'Email', { textOnly: true } )
-				} ) }
-				{ this.field( Input, {
-					name: 'phone',
-					label: this.translate( 'Phone', { textOnly: true } )
-				} ) }
-				{ this.field( CountrySelect, {
-					name: 'country-code',
-					label: this.translate( 'Country', { textOnly: true } ),
-					countriesList: countriesList
-				} ) }
-				{ this.showFax() ? this.field( Input, {
-					name: 'fax',
-					label: this.translate( 'Fax', { textOnly: true } )
-				} ) : null }
-				{ this.field( Input, {
-					name: 'address-1',
-					label: this.translate( 'Address', { textOnly: true } )
-				} ) }
-				{ this.field( HiddenInput, {
-					name: 'address-2',
-					label: this.translate( 'Address Line 2', { textOnly: true } ),
-					text: this.translate( '+ Add Address Line 2', { textOnly: true } )
-				} ) }
-				{ this.field( Input, {
-					name: 'city',
-					label: this.translate( 'City', { textOnly: true } )
-				} ) }
-				{ this.field( StateSelect, {
-					name: 'state',
-					label: this.translate( 'State', { textOnly: true } ),
-					countryCode: countryCode,
-					statesList: statesList
-				} ) }
-				{ this.field( Input, {
-					name: 'postal-code',
-					label: this.translate( 'Postal Code', { textOnly: true } )
-				} ) }
+					) }/>
+
+				<Input name="email" label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
+				<Input name="phone" label={ this.translate( 'Phone', { textOnly } ) } { ...fieldProps( 'phone' ) }/>
+
+				<CountrySelect
+					name="country-code"
+					label={ this.translate( 'County', { textOnly } ) }
+					countriesList={ countriesList }
+					{ ...fieldProps( 'country-code' ) }/>
+
+				{ this.showFax() && <Input name="fax" label={ this.translate( 'Fax', { textOnly } ) } { ...( 'fax' ) }/> }
+				<Input name="address-1" label={ this.translate( 'Address', { textOnly } ) } { ...fieldProps( 'address-1' ) }/>
+
+				<Input
+					name="address-2"
+					label={ this.translate( 'Address Line 2', { textOnly } ) }
+					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
+					{ ...fieldProps( 'address-2' ) }/>
+
+				<Input name="city" label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
+
+				<StateSelect
+					name="state"
+					label={ this.translate( 'State', { textOnly: true } ) }
+					countryCode={ countryCode }
+					statesList={ statesList }
+					{ ...fieldProps( 'state' ) }/>
+
+				<Input name="postal-code" label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
+
 				<PrivacyProtection
 					cart={ this.props.cart }
 					countriesList= { countriesList }
 					disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 					fields={ this.state.form }
-					onButtonSelect={ this.handleButtonSelect }
-					onDialogClose={ this.handleDialogClose }
-					onDialogOpen={ this.handleDialogOpen }
-					onDialogSelect={ this.handleDialogSelect }
+					onButtonSelect={ this.handlePrivacyDialogButtonSelect }
+					onDialogClose={ this.handlePrivacyDialogClose }
+					onDialogOpen={ this.handlePrivacyDialogOpen }
+					onDialogSelect={ this.handlePrivacyDialogSelect }
 					isDialogVisible={ this.state.isDialogVisible }
 					productsList={ this.props.productsList } />
 			</div>
 		);
 	},
 
-	handleDialogClose: function() {
+	handlePrivacyDialogClose() {
 		this.setState( { isDialogVisible: false } );
 	},
 
-	handleDialogOpen: function() {
+	handlePrivacyDialogOpen() {
 		this.setState( { isDialogVisible: true } );
 	},
 
-	content: function() {
+	content() {
 		return (
 			<form>
 				{ this.fields() }
@@ -246,8 +221,8 @@ module.exports = React.createClass( {
 		);
 	},
 
-	handleButtonSelect: function( options ) {
-		this.formStateController.handleSubmit( function( hasErrors ) {
+	handlePrivacyDialogButtonSelect( options ) {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
 			if ( hasErrors ) {
@@ -261,17 +236,17 @@ module.exports = React.createClass( {
 			} else {
 				this.setState( { isDialogVisible: true } );
 			}
-		}.bind( this ) );
+		} );
 	},
 
-	recordSubmit: function() {
+	recordSubmit() {
 		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', {
 			errors: formState.getErrorMessages( this.state.form )
 		} );
 	},
 
-	handleDialogSelect: function( options ) {
-		this.formStateController.handleSubmit( function( hasErrors ) {
+	handlePrivacyDialogSelect( options ) {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.setState( { isDialogVisible: false } );
 			this.recordSubmit();
 
@@ -280,10 +255,10 @@ module.exports = React.createClass( {
 			}
 
 			this.finish( options );
-		}.bind( this ) );
+		} );
 	},
 
-	finish: function( options ) {
+	finish( options ) {
 		if ( options.addPrivacy ) {
 			upgradesActions.addPrivacyToAllDomains();
 		} else {
@@ -293,8 +268,8 @@ module.exports = React.createClass( {
 		upgradesActions.setDomainDetails( formState.getAllFieldValues( this.state.form ) );
 	},
 
-	render: function() {
-		var classSet = classNames( {
+	render() {
+		const classSet = classNames( {
 			'domain-details': true,
 			selected: true
 		} );
@@ -304,11 +279,8 @@ module.exports = React.createClass( {
 				classSet={ classSet }
 				title={ this.translate(
 					'Domain Registration Details',
-					'Domain Registration Details',
 					{
 						context: 'Domain registration details page',
-						comment: 'Count specifies the number of domain registrations',
-						count: this.getNumberOfDomainRegistrations(),
 						textOnly: true
 					} ) }>
 				{ this.content() }
