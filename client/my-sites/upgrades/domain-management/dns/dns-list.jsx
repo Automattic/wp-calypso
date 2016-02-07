@@ -43,7 +43,11 @@ const DnsList = React.createClass( {
 	addDns: function( record ) {
 		addDnsAction( this.props.selectedDomainName, record, ( error ) => {
 			if ( error ) {
-				notices.error( error.message );
+				notices.error( error.message || this.translate( 'The DNS record could not be restored.' ) );
+			} else {
+				this.props.successNotice( this.translate( 'The DNS record has been restored.' ), {
+					duration: 5000
+				} );
 			}
 		} );
 	},
