@@ -48,9 +48,9 @@ function Controller( options ) {
 	this._debouncedSanitize = debounce( this.sanitize, debounceWait );
 	this._debouncedValidate = debounce( this.validate, debounceWait );
 
-	this._hideFieldErrorsOnChange = isUndefined( options.hideFieldErrorsOnChange ) ?
-		false :
-		options.hideFieldErrorsOnChange;
+	this._hideFieldErrorsOnChange = isUndefined( options.hideFieldErrorsOnChange )
+		? false
+		: options.hideFieldErrorsOnChange;
 
 	if ( this._loadFunction ) {
 		this._loadFieldValues();
