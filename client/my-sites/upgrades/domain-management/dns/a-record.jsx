@@ -11,6 +11,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 const ARecord = React.createClass( {
 	statics: {
@@ -29,7 +30,9 @@ const ARecord = React.createClass( {
 
 	render() {
 		const classes = classnames( { 'is-hidden': ! this.props.show } ),
-			{ fieldValues, isValid, onChange, selectedDomainName } = this.props;
+			{ fieldValues, isValid, onChange, selectedDomainName } = this.props,
+			isNameValid = isValid( 'name' ),
+			isDataValid = isValid( 'data' );
 		let placeholder = this.translate( 'e.g. 123.45.78.9', { context: 'A DNS Record', textOnly: true } );
 
 		if ( this.props.fieldValues.type === 'AAAA' ) {
@@ -40,22 +43,24 @@ const ARecord = React.createClass( {
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
-					<FormTextInput
+					<FormTextInputWithAffixes
 						name="name"
-						onChange={ onChange( 'name' ) }
+						isError={ ! isNameValid }
+						onChange={ onChange }
 						value={ fieldValues.name }
-						placeholder={ this.translate( 'e.g. example.%(domain)s', { args: { domain: selectedDomainName }, context: 'DNS Record', textOnly: true } ) } />
+						suffix={ '.' + selectedDomainName } />
+					{ ! isNameValid ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Points To' ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
-						onChange={ onChange( 'data' ) }
+						isError={ ! isDataValid }
+						onChange={ onChange }
 						value={ fieldValues.data }
 						placeholder={ placeholder } />
+					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);

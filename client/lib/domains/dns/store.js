@@ -2,18 +2,14 @@
  * Internal dependencies
  */
 import { createReducerStore } from 'lib/store';
-import { reducer } from './reducer'
+import { getInitialStateForDomain, reducer } from './reducer';
 
 const DnsStore = createReducerStore( reducer );
 
 DnsStore.getByDomainName = function( domainName ) {
 	const state = this.get();
 
-	if ( ! state || ! state[ domainName ] ) {
-		return null;
-	}
-
-	return state[ domainName ];
+	return ( state[ domainName ] || getInitialStateForDomain() );
 };
 
 export default DnsStore;

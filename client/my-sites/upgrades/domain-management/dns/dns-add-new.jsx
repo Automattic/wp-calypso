@@ -30,6 +30,7 @@ import { successNotice } from 'state/notices/actions';
 
 const DnsAddNew = React.createClass( {
 	propTypes: {
+		isSubmittingForm: React.PropTypes.bool.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired
 	},
 
@@ -65,7 +66,7 @@ const DnsAddNew = React.createClass( {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues, this.props.selectedDomainName ) );
+				onComplete( null, validateAllFields( fieldValues ) );
 			}
 		}	);
 
@@ -73,7 +74,7 @@ const DnsAddNew = React.createClass( {
 	},
 
 	setFormState( fields ) {
-		this.setState( { fields: fields } );
+		this.setState( { fields } );
 	},
 
 	onAddDnsRecord( event ) {
@@ -93,26 +94,26 @@ const DnsAddNew = React.createClass( {
 				formState.getAllFieldValues( this.state.fields ),
 				this.props.selectedDomainName
 			);
+			this.formStateController.resetFields( this.getInitialFields() );
 
 			upgradesActions.addDns( this.props.selectedDomainName, normalizedData, ( error ) => {
 				if ( error ) {
-					notices.error( error.message );
+					notices.error( error.message || this.translate( 'The DNS record has not been added.' ) );
 				} else {
-					this.props.successNotice( this.translate( 'The DNS record has been added.' ) );
+					this.props.successNotice( this.translate( 'The DNS record has been added.' ), {
+						duration: 5000
+					} );
 					this.setState( { show: true } );
-					this.formStateController.resetFields( this.getInitialFields() );
 				}
 			} );
 		} );
 	},
 
-	onChange() {
-		return ( event ) => {
-			this.formStateController.handleFieldChange( {
-				name: event.target.name,
-				value: event.target.value
-			} );
-		};
+	onChange( event ) {
+		this.formStateController.handleFieldChange( {
+			name: event.target.name,
+			value: event.target.value.trim().toLowerCase()
+		} );
 	},
 
 	changeType( event ) {
@@ -165,13 +166,14 @@ const DnsAddNew = React.createClass( {
 
 				<FormFooter>
 					<FormButton
-						disabled={ formState.isSubmitButtonDisabled( this.state.fields ) }
+						disabled={ formState.isSubmitButtonDisabled( this.state.fields ) || this.props.isSubmittingForm }
 						onClick={ this.onAddDnsRecord }>
 						{ this.translate( 'Add New DNS Record' ) }
 					</FormButton>
 
 					{ this.state.show && <FormButton
 						type="button"
+						disabled={ this.props.isSubmittingForm }
 						isPrimary={ false }
 						onClick={ this.onCancel }>
 						{ this.translate( 'Cancel' ) }

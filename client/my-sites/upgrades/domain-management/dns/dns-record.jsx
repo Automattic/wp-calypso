@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classNames from 'classnames';
+import endsWith from 'lodash/string/endsWith';
 
 /**
  * Internal dependencies
@@ -75,24 +77,45 @@ var DnsRecord = React.createClass( {
 	},
 
 	getName: function() {
-		var { name, service, protocol } = this.props.dnsRecord,
+		const { name, service, protocol, type } = this.props.dnsRecord,
 			domain = this.props.selectedDomainName,
 			isRoot = name === domain + '.';
 
-		if ( 'SRV' === this.props.dnsRecord.type ) {
+		if ( 'SRV' === type ) {
 			return service + '_' + protocol + '.' + ( isRoot ? name + '.' : '' ) + domain;
 		}
 
-		return isRoot ? domain : name + '.' + domain;
+		if ( endsWith( name, '.' ) ) {
+			return name.slice( 0, -1 );
+		}
+
+		return name + '.' + domain;
+	},
+
+	isBeingProcessed: function() {
+		return this.props.dnsRecord.isBeingDeleted || this.props.dnsRecord.isBeingAdded;
 	},
 
 	deleteDns: function() {
+		if ( this.isBeingProcessed() ) {
+			return;
+		}
 		this.props.deleteDns( this.props.dnsRecord );
 	},
 
-	render: function() {
+	renderRemoveButton: function() {
 		return (
-			<li>
+			<Button borderless onClick={ this.deleteDns }>
+				<Gridicon icon="trash" />
+			</Button>
+		);
+	},
+
+	render: function() {
+		const classes = classNames( { 'is-disabled': this.isBeingProcessed() } ),
+			isAllowedToBeRemoved = ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type;
+		return (
+			<li className={ classes }>
 				<div className="dns__list-type">
 					<label>{ this.props.dnsRecord.type }</label>
 				</div>
@@ -101,10 +124,7 @@ var DnsRecord = React.createClass( {
 					<em>{ this.handledBy() }</em>
 				</div>
 				<div className="dns__list-remove">
-					{ ! this.props.dnsRecord.protected_field || 'MX' === this.props.dnsRecord.type ?
-						<Button borderless onClick={ this.deleteDns }>
-							<Gridicon icon="trash" />
-						</Button> : null }
+					{ isAllowedToBeRemoved && this.renderRemoveButton() }
 				</div>
 			</li>
 		);

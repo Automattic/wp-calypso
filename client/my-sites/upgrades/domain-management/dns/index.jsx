@@ -52,6 +52,7 @@ const Dns = React.createClass( {
 						selectedDomainName={ this.props.selectedDomainName } />
 
 					<DnsAddNew
+						isSubmittingForm={ this.props.dns.isSubmittingForm }
 						selectedDomainName={ this.props.selectedDomainName } />
 				</Card>
 			</Main>

@@ -905,6 +905,11 @@ ul.dns__list {
 			color: #58819e;
 			font-weight: normal;
 		}
+
+		&.is-disabled {
+			opacity: 0.2;
+			cursor: not-allowed;
+		}
 	}
 
 	.dns__list-type {

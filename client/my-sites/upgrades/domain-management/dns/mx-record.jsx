@@ -11,6 +11,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 const MxRecord = React.createClass( {
 	statics: {
@@ -32,38 +33,44 @@ const MxRecord = React.createClass( {
 
 	render() {
 		const classes = classnames( { 'is-hidden': ! this.props.show } ),
-			isValid = this.props.isValid;
+			isValid = this.props.isValid,
+			isNameValid = isValid( 'name' ),
+			isDataValid = isValid( 'data' ),
+			isAuxValid = isValid( 'aux' );
 
 		return (
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Host', { context: 'MX Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
-					<FormTextInput
+					<FormTextInputWithAffixes
 						name="name"
-						onChange={ this.props.onChange( 'name' ) }
+						isError={ ! isNameValid }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.name }
-						placeholder={ this.translate( 'e.g. example.%(domain)s', { args: { domain: this.props.selectedDomainName }, context: 'DNS Record', textOnly: true } ) } />
+						suffix={ '.' + this.props.selectedDomainName } />
+					{ ! isNameValid ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Handled by', { context: 'MX Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'data' ) ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="data"
-						onChange={ this.props.onChange( 'data' ) }
+						isError={ ! isDataValid }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
 						placeholder={ this.translate( 'e.g. mail.your-provider.com', { context: 'MX DNS Record', textOnly: true } ) } />
+					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Priority', { context: 'MX Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'aux' ) ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="aux"
-						onChange={ this.props.onChange( 'aux' ) }
+						isError={ ! isAuxValid }
+						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.aux }
 						defaultValue="10" />
+					{ ! isAuxValid ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);

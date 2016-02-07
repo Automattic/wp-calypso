@@ -12,6 +12,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 const SrvRecord = React.createClass( {
 	statics: {
@@ -39,28 +40,36 @@ const SrvRecord = React.createClass( {
 				return <option key={ protocol } value={ protocol }>{ protocol.toUpperCase() }</option>;
 			} ),
 			{ aux, name, port, protocol, service, target, weight } = this.props.fieldValues,
-			isValid = this.props.isValid;
+			isValid = this.props.isValid,
+			isNameValid = isValid( 'name' ),
+			isServiceValid = isValid( 'service' ),
+			isAuxValid = isValid( 'aux' ),
+			isWeightValid = isValid( 'weight' ),
+			isTargetValid = isValid( 'target' ),
+			isPortValid = isValid( 'port' );
 
 		return (
 			<div className={ classes }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'name' ) ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
-					<FormTextInput
+					<FormTextInputWithAffixes
 						name="name"
-						onChange={ this.props.onChange( 'name' ) }
+						isError={ ! isNameValid }
+						onChange={ this.props.onChange }
 						value={ name }
-						placeholder={ this.translate( 'e.g. example.%(domain)s', { args: { domain: this.props.selectedDomainName }, context: 'DNS Record', textOnly: true } ) } />
+						suffix={ '.' + this.props.selectedDomainName } />
+					{ ! isNameValid ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Service', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'service' ) ? <FormInputValidation text={ this.translate( 'Invalid Service' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="service"
-						onChange={ this.props.onChange( 'service' ) }
+						isError={ ! isServiceValid }
+						onChange={ this.props.onChange }
 						value={ service }
 						placeholder={ this.translate( 'e.g. sip', { context: 'SRV Dns Record', textOnly: true } ) } />
+					{ ! isServiceValid ? <FormInputValidation text={ this.translate( 'Invalid Service' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -68,7 +77,7 @@ const SrvRecord = React.createClass( {
 
 					<FormSelect
 							name="protocol"
-							onChange={ this.props.onChange( 'protocol' ) }
+							onChange={ this.props.onChange }
 							value={ protocol }>
 						{ options }
 					</FormSelect>
@@ -76,42 +85,46 @@ const SrvRecord = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Priority', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'aux' ) ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="aux"
-						onChange={ this.props.onChange( 'aux' ) }
+						isError={ ! isAuxValid }
+						onChange={ this.props.onChange }
 						value={ aux }
 						defaultValue="10" />
+					{ ! isAuxValid ? <FormInputValidation text={ this.translate( 'Invalid Priority' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Weight', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'weight' ) ? <FormInputValidation text={ this.translate( 'Invalid Weight' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="weight"
-						onChange={ this.props.onChange( 'weight' ) }
+						isError={ ! isWeightValid }
+						onChange={ this.props.onChange }
 						value={ weight }
 						defaultValue="10" />
+					{ ! isWeightValid ? <FormInputValidation text={ this.translate( 'Invalid Weight' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Target Host', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'target' ) ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="target"
-						onChange={ this.props.onChange( 'target' ) }
+						isError={ ! isTargetValid }
+						onChange={ this.props.onChange }
 						value={ target }
 						placeholder={ this.translate( 'e.g. sip.myprovider.com', { context: 'SRV Dns Record', textOnly: true } ) } />
+					{ ! isTargetValid ? <FormInputValidation text={ this.translate( 'Invalid Target Host' ) } isError={ true } /> : null }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Target Port', { context: 'Dns Record' } ) }</FormLabel>
-					{ ! isValid( 'port' ) ? <FormInputValidation text={ this.translate( 'Invalid Target Port' ) } isError={ true } /> : null }
 					<FormTextInput
 						name="port"
-						onChange={ this.props.onChange( 'port' ) }
+						isError={ ! isPortValid }
+						onChange={ this.props.onChange }
 						value={ port }
 						placeholder={ this.translate( 'e.g. 5060', { context: 'SRV Dns Record', textOnly: true } ) } />
+					{ ! isPortValid ? <FormInputValidation text={ this.translate( 'Invalid Target Port' ) } isError={ true } /> : null }
 				</FormFieldset>
 			</div>
 		);
