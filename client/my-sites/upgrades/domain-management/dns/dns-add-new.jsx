@@ -148,7 +148,10 @@ const DnsAddNew = React.createClass( {
 		const classes = classnames( 'form-content', { 'is-hidden': ! this.state.show } ),
 			options = [ 'A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT' ].map( function( type ) {
 				return <option key={ type }>{ type }</option>;
-			} );
+			} ),
+			isSubmitDisabled = formState.isSubmitButtonDisabled( this.state.fields ) ||
+				this.props.isSubmittingForm ||
+				formState.hasErrors( this.state.fields );
 
 		return (
 			<form className="dns__add-new">
@@ -166,7 +169,7 @@ const DnsAddNew = React.createClass( {
 
 				<FormFooter>
 					<FormButton
-						disabled={ formState.isSubmitButtonDisabled( this.state.fields ) || this.props.isSubmittingForm }
+						disabled={ this.state.show ? isSubmitDisabled : false }
 						onClick={ this.onAddDnsRecord }>
 						{ this.translate( 'Add New DNS Record' ) }
 					</FormButton>

@@ -350,6 +350,7 @@ module.exports = {
 	setFieldErrors: setFieldErrors,
 	getErrorMessages: getErrorMessages,
 	getFieldErrorMessages: getFieldErrorMessages,
+	hasErrors: hasErrors,
 	isFieldDisabled: isFieldDisabled,
 	isFieldInvalid: isFieldInvalid,
 	isFieldPendingValidation: isFieldPendingValidation,
