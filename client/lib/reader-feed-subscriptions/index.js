@@ -17,7 +17,8 @@ const Emitter = require( 'lib/mixins/emitter' ),
 	ActionTypes = require( './constants' ).action,
 	ErrorTypes = require( './constants' ).error,
 	FeedSubscriptionHelper = require( './helper' ),
-	States = require( './constants' ).state;
+	States = require( './constants' ).state,
+	FeedActionTypes = require( 'lib/feed-store/constants' ).action;
 
 const subscriptionsTemplate = {
 	list: Immutable.List(), // eslint-disable-line new-cap
@@ -372,6 +373,14 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case ActionTypes.RECEIVE_FEED_SUBSCRIPTIONS:
 			if ( action.data && ! action.data.errors ) {
 				FeedSubscriptionStore.receiveSubscriptions( action.data );
+			}
+			break;
+		case FeedActionTypes.RECEIVE_FETCH:
+			if ( action.data && action.data.is_following ) {
+				let subscription = action.data;
+				// Use the feed URL in as the primary URL
+				subscription.URL = subscription.feed_URL;
+				addSubscription( subscription );
 			}
 			break;
 	}
