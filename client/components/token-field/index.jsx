@@ -27,7 +27,8 @@ var TokenField = React.createClass( {
 		value: React.PropTypes.array,
 		displayTransform: React.PropTypes.func,
 		saveTransform: React.PropTypes.func,
-		onChange: React.PropTypes.func
+		onChange: React.PropTypes.func,
+		tokenStatus: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
@@ -39,7 +40,8 @@ var TokenField = React.createClass( {
 			saveTransform: function( token ) {
 				return token.trim();
 			},
-			onChange: function() {}
+			onChange: function() {},
+			tokenStatus: function() {}
 		};
 	},
 
@@ -115,6 +117,7 @@ var TokenField = React.createClass( {
 			<Token
 				key={ 'token-' + token }
 				value={ token }
+				status={ this.props.tokenStatus( token ) }
 				displayTransform={ this.props.displayTransform }
 				onClickRemove={ this._onTokenClickRemove }
 			/>

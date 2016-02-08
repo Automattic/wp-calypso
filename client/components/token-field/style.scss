@@ -57,6 +57,18 @@ input[type="text"].token-field__input {
 	padding: 0;
 	color: $white;
 	overflow: hidden;
+
+	&.is-success {
+		.token-field__token-text, .token-field__remove-token {
+			background: $alert-green;
+		}
+	}
+
+	&.is-error {
+		.token-field__token-text, .token-field__remove-token {
+			background: $alert-red;
+		}
+	}
 }
 
 .token-field__token-text, .token-field__remove-token {

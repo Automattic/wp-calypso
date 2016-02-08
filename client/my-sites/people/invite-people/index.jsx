@@ -72,6 +72,19 @@ export default React.createClass( {
 		page.back( fallback );
 	},
 
+	getTokenStatus( value ) {
+		let status;
+		if ( 'string' === typeof value ) {
+			if ( -1 < value.indexOf( 'error' ) ) {
+				status = 'is-error';
+			} else if ( -1 < value.indexOf( 'success' ) ) {
+				status = 'is-success';
+			}
+		}
+
+		return status;
+	},
+
 	renderRoleExplanation() {
 		return (
 			<a target="_blank" href="http://en.support.wordpress.com/user-roles/">
@@ -102,6 +115,7 @@ export default React.createClass( {
 						<FormFieldset>
 							<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
+								tokenStatus={ this.getTokenStatus }
 								value={ this.state.usernamesOrEmails }
 								onChange={ this.onTokensChange } />
 							<FormSettingExplanation>
