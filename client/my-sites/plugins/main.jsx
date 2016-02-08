@@ -90,23 +90,16 @@ const PluginsMain = React.createClass( {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
-			if ( ! plugin.wpcom ) {
-				let pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
-				if ( !pluginData ) {
-					this.props.wporgFetchPluginData( plugin.slug );
-				}
-				return assign( {}, plugin, pluginData );
+			let pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
+			if ( !pluginData ) {
+				this.props.wporgFetchPluginData( plugin.slug );
 			}
-			return plugin;
+			return assign( {}, plugin, pluginData );
 		} );
 	},
 
-	getJetpackPlugins() {
+	getWporgPlugins() {
 		return reject( this.state.plugins, property( 'wpcom' ) );
-	},
-
-	getWpcomPlugins() {
-		return filter( this.state.plugins, property( 'wpcom' ) );
 	},
 
 	getPluginsState( nextProps ) {
@@ -261,21 +254,14 @@ const PluginsMain = React.createClass( {
 		return some( this.props.sites.getSelectedOrAllWithPlugins(), site => site && site.jetpack && site.canUpdateFiles );
 	},
 
-	shouldShowPluginListPlaceholders( isWpCom ) {
+	shouldShowPluginListPlaceholders() {
 		const { plugins } = this.state;
-		const { sites } = this.props;
 
-		let showPlaceholders = isEmpty( plugins ) && this.isFetchingPlugins();
-
-		if ( showPlaceholders && isWpCom === get( sites.getSelectedSite(), 'jetpack' ) ) {
-			return false;
-		}
-		return showPlaceholders;
+		return isEmpty( plugins ) && this.isFetchingPlugins();
 	},
 
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
-		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
@@ -296,21 +282,13 @@ const PluginsMain = React.createClass( {
 		}
 		return (
 			<div className="plugins__lists">
-				{ ( ! selectedSite || selectedSite.jetpack === false ) && <PluginsList
-					header={ this.translate( 'WordPress.com Plugins' ) }
-					plugins={ this.getWpcomPlugins() }
-					isWpCom= { true }
-					sites={ this.props.sites }
-					selectedSite={ selectedSite }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders( true ) } /> }
-				{ ( ! selectedSite || selectedSite.jetpack === true ) && <PluginsList
+				<PluginsList
 					header={ this.translate( 'Plugins' ) }
-					plugins={ this.getJetpackPlugins() }
-					isWpCom={ false }
+					plugins={ this.getWporgPlugins() }
 					sites={ this.props.sites }
 					selectedSite={ this.props.sites.getSelectedSite() }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders( false ) } /> }
+					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
 			</div>
 		);
 	},
@@ -336,7 +314,7 @@ const PluginsMain = React.createClass( {
 			slug: 'no-slug',
 			canUpdateFiles: true,
 			name: 'Not a real site'
-		}
+		};
 
 		return plugins.map( plugin => {
 			return <PluginItem
@@ -396,7 +374,7 @@ const PluginsMain = React.createClass( {
 								key: filterItem.id,
 								path: filterItem.path,
 								selected: filterItem.id === this.props.filter,
-							}
+							};
 
 							if ( 'updates' === filterItem.id ) {
 								attr.count = this.state.pluginUpdateCount;

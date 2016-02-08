@@ -38,7 +38,6 @@ module.exports = React.createClass( {
 				site={ site }
 				secondarySites={ this.getSecondaryPluginSites( site ) }
 				plugin={ this.props.plugin }
-				wporg={ this.props.wporg }
 				notices={ this.props.notices } />;
 	},
 

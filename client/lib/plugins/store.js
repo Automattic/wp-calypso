@@ -218,6 +218,10 @@ PluginsStore = {
 
 	// Get Plugins for a single site
 	getSitePlugins: function( site ) {
+		if ( ! site.jetpack ) {
+			return [];
+		}
+
 		var storedList;
 		if ( ! _pluginsBySite[ site.ID ] && ! _fetching[ site.ID ] ) {
 			storedList = getPluginsBySiteFromStorage( site.ID );

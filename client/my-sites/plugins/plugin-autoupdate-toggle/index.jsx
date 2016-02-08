@@ -20,8 +20,7 @@ module.exports = React.createClass( {
 	propTypes: {
 		isMock: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
-		plugin: React.PropTypes.object.isRequired,
-		wporg: React.PropTypes.bool
+		plugin: React.PropTypes.object.isRequired
 	},
 
 	toggleAutoupdates: function() {
@@ -50,10 +49,6 @@ module.exports = React.createClass( {
 	getDisabledInfo: function() {
 		if ( ! this.props.site ) { // we don't have enough info
 			return null;
-		}
-
-		if ( ! this.props.wporg ) {
-			return this.translate( 'This plugin is not in the WordPress.org plugin repository, so we can\'t autoupdate it.' );
 		}
 
 		if ( ! this.props.site.hasMinimumJetpackVersion ) {

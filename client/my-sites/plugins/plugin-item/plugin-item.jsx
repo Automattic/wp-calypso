@@ -171,8 +171,7 @@ module.exports = React.createClass( {
 					plugin={ this.props.plugin }
 					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
-					notices={ this.props.notices }
-					wporg={ !! this.props.plugin.wporg } />
+					notices={ this.props.notices } />
 			</div>
 		);
 	},
