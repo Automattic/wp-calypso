@@ -1,43 +1,47 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debugFactory = require( 'debug' ),
-	omit = require( 'lodash/object/omit' ),
-	map = require( 'lodash/collection/map' );
-
-var RolesStore = require( 'lib/site-roles/store' ),
-	RolesActions = require( 'lib/site-roles/actions' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	sites = require( 'lib/sites-list' )();
-
-var debug = debugFactory( 'calypso:role-select' );
+import React from 'react';
+import debugFactory from 'debug';
+import omit from 'lodash/object/omit';
+import map from 'lodash/collection/map';
 
 /**
  * Internal dependencies
  */
-module.exports = React.createClass( {
+import RolesStore from 'lib/site-roles/store';
+import RolesActions from 'lib/site-roles/actions';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import sitesList from 'lib/sites-list';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:role-select' );
+const sites = sitesList();
+
+export default React.createClass( {
 	displayName: 'RoleSelect',
 
-	getInitialState: function() {
+	getInitialState() {
 		return ( {
 			roles: this.props.siteId ? RolesStore.getRoles( this.props.siteId ) : {}
 		} );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		RolesStore.on( 'change', this.refreshRoles );
 		this.fetchRoles();
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		RolesStore.removeListener( 'change', this.refreshRoles );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.refreshRoles( nextProps );
 	},
 
@@ -57,12 +61,11 @@ module.exports = React.createClass( {
 		};
 	},
 
-	refreshRoles: function( nextProps ) {
-		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId,
-			siteRoles;
+	refreshRoles( nextProps ) {
+		const siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
 
 		if ( siteId ) {
-			siteRoles = RolesStore.getRoles( siteId );
+			let siteRoles = RolesStore.getRoles( siteId );
 
 			if ( this.props.includeFollower ) {
 				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles )
@@ -74,8 +77,8 @@ module.exports = React.createClass( {
 		}
 	},
 
-	fetchRoles: function() {
-		var siteId = this.props.siteId || null;
+	fetchRoles() {
+		const siteId = this.props.siteId || null;
 		if ( ! siteId ) {
 			return;
 		}
@@ -87,7 +90,7 @@ module.exports = React.createClass( {
 
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			var fetching = RolesStore.isFetching( siteId );
+			const fetching = RolesStore.isFetching( siteId );
 			if ( fetching ) {
 				return;
 			}
@@ -95,8 +98,8 @@ module.exports = React.createClass( {
 		}, 0 );
 	},
 
-	render: function() {
-		var roleKeys = Object.keys( this.state.roles );
+	render() {
+		const roleKeys = Object.keys( this.state.roles );
 		return (
 			<FormFieldset key={ this.props.key } disabled={ ! roleKeys.length }>
 				<FormLabel htmlFor={ this.props.id }>
