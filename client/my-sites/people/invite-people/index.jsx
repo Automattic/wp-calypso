@@ -5,6 +5,7 @@ import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
 import get from 'lodash/object/get';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -20,6 +21,11 @@ import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:my-sites:people:invite' );
 
 export default React.createClass( {
 	displayName: 'InvitePeople',
@@ -54,8 +60,7 @@ export default React.createClass( {
 
 	submitForm( event ) {
 		event.preventDefault();
-
-		console.log( this.state );
+		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
 		this.setState( { sendingInvites: true } );
 		sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, ( error, data ) => {
