@@ -37,6 +37,35 @@ const debug = debugModule( 'calypso:posts-list' );
 
 let _nextId = 0;
 
+/**
+ * Find deleted posts based on ommissions in a new page of results.
+ * In some cases the new list may overlap with our stored list. And when
+ * this happens we can find elements that should be removed if they don't
+ * appear in the new post-list.
+ *
+ * @param  {array} currentList - stored list of PostIDs
+ * @param  {array} newPosts    - new page of postIDs
+ * @return {array}             - postIDs in currentList that should be deleted
+ */
+export function getRemovedPosts( currentList, newPosts ) {
+	if ( currentList.length < 3 || newPosts.length < 2 ) {
+		return [];
+	}
+
+	const overlapBegin = currentList.indexOf( newPosts[0] );
+	if ( overlapBegin === -1 ) {
+		return getRemovedPosts( currentList, newPosts.slice( 1 ) );
+	}
+
+	const overlapEnd = currentList.indexOf( newPosts.slice( -1 )[0] );
+	if ( overlapEnd === -1 ) {
+		return getRemovedPosts( currentList, newPosts.slice( 0, -1 ) );
+	}
+
+	const overlapList = currentList.slice( overlapBegin, ( overlapEnd + 1 ) );
+	return difference( overlapList, newPosts );
+}
+
 export default function( id ) {
 	if ( ! id ) {
 		throw new Error( 'must supply a post-list-store id' );
@@ -104,9 +133,9 @@ export default function( id ) {
 
 	/**
 	 * Sort the active list
-	 **/
+	 */
 	function sort() {
-		var key = _activeList.query.orderBy;
+		const key = _activeList.query.orderBy;
 
 		_activeList.postIds.sort( function( a, b ) {
 			var postA = PostsStore.get( a ),
@@ -164,7 +193,12 @@ export default function( id ) {
 		} );
 
 		if ( postIds.length ) {
-			// did we actually find any new posts?
+			// were some posts missing from the response?
+			const removedPosts = getRemovedPosts( _activeList.postIds, postIds );
+			if ( removedPosts.length ) {
+				_activeList.postIds = difference( _activeList.postIds, removedPosts );
+			}
+			// did we find any new posts?
 			postIds = difference( postIds, _activeList.postIds );
 			if ( postIds.length ) {
 				_activeList.postIds = _activeList.postIds.concat( postIds );
@@ -204,7 +238,7 @@ export default function( id ) {
 
 		if ( newPostIds.length ) {
 			_activeList.postIds = _activeList.postIds.concat( newPostIds );
-			sort( _activeList.postIds );
+			sort();
 		}
 	}
 
