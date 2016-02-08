@@ -7,7 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import notices from 'notices';
-import { translate } from 'lib/mixins/i18n'
+import { translate } from 'lib/mixins/i18n';
+import support from 'lib/support';
 
 export const displayResponseError = ( responseError ) => {
 	const errorMessages = {
@@ -35,7 +36,7 @@ export const displayResponseError = ( responseError ) => {
 					args: errorMessages[ responseError.error ],
 					components: {
 						strong: <strong />,
-						a: <a href="https://support.wordpress.com/contact/" target="_blank"/>
+						a: <a href={ support.CONTACT } target="_blank"/>
 					}
 				}
 			)
@@ -48,7 +49,7 @@ export const displayResponseError = ( responseError ) => {
 				'to have trouble.',
 				{
 					components: {
-						a: <a href="https://support.wordpress.com/contact/" target="_blank"/>
+						a: <a href={ support.CONTACT } target="_blank"/>
 					}
 				}
 			)

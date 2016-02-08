@@ -13,6 +13,7 @@ import Button from 'components/button';
 import { requestTransferCode, enableDomainLocking, enablePrivacyProtection, declineTransfer } from 'lib/upgrades/actions';
 import notices from 'notices';
 import { promisy, displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
+import support from 'lib/support';
 
 const Unlocked = React.createClass( {
 	getInitialState() {
@@ -62,7 +63,7 @@ const Unlocked = React.createClass( {
 							components: {
 								a: (
 									<a
-										href="https://support.wordpress.com/contact/"
+										href={ support.CONTACT }
 										target="_blank" />
 								)
 							}
@@ -122,7 +123,7 @@ const Unlocked = React.createClass( {
 									'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
 									'shortly to help you complete the process.' )
 							} <a
-							href="https://support.wordpress.com/transfer-domain-registration/"
+							href={ support.TRANSFER_DOMAIN_REGISTRATION }
 							target="_blank">{ this.translate( 'Learn More.' ) }</a>
 						</p>
 					</div>
