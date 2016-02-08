@@ -2,11 +2,13 @@
  * External dependencies
  */
 import EventEmitter from 'events/';
+import defer from 'lodash/function/defer';
 
 /**
  * Internal dependencies
  */
 import EmbedsListStore from 'lib/embeds/list-store';
+import EmbedsStore from 'lib/embeds/store';
 import actions from 'lib/embeds/actions';
 import _sites from 'lib/sites-list';
 import EmbedView from './view';
@@ -25,7 +27,7 @@ export default class EmbedViewManager extends EventEmitter {
 
 	onChange() {
 		this.emit( 'change' );
-		this.fetch();
+		this.fetchSiteEmbeds();
 	}
 
 	updateSite() {
@@ -35,7 +37,7 @@ export default class EmbedViewManager extends EventEmitter {
 			// First update (after adding initial listener) should trigger a
 			// fetch, but not emit a change event
 			this.siteId = siteId;
-			this.fetch();
+			this.fetchSiteEmbeds();
 		} else if ( this.siteId !== siteId ) {
 			// Subsequent updates should neither emit a change nor trigger a
 			// fetch unless the site has changed
@@ -49,7 +51,8 @@ export default class EmbedViewManager extends EventEmitter {
 
 		if ( 'change' === event && 1 === this.listeners( event ).length ) {
 			sites.addListener( event, this.sitesListener );
-			this.listListener = EmbedsListStore.addListener( this.onChange.bind( this ) );
+			this.embedsListListener = EmbedsListStore.addListener( this.onChange.bind( this ) );
+			this.embedsListener = EmbedsStore.addListener( this.onChange.bind( this ) );
 			this.updateSite();
 		}
 	}
@@ -60,15 +63,28 @@ export default class EmbedViewManager extends EventEmitter {
 		if ( 'change' === event && ! this.listeners( event ).length ) {
 			sites.removeListener( event, this.sitesListener );
 
-			if ( this.listListener ) {
-				this.listListener.remove();
+			if ( this.embedsListListener ) {
+				this.embedsListListener.remove();
+			}
+
+			if ( this.embedsListener ) {
+				this.embedsListener.remove();
 			}
 		}
 	}
 
-	fetch() {
+	fetchSiteEmbeds() {
 		if ( this.siteId && ! EmbedsListStore.get( this.siteId ) ) {
 			actions.fetch( this.siteId );
+		}
+	}
+
+	fetchEmbed( url ) {
+		// Only make a single attempt to fetch the embed, assuming that errors
+		// are intentional if the service chooses not to support the specific
+		// URL pattern. An unset status indicates an attempt is yet to be made.
+		if ( this.siteId && ! EmbedsStore.get( url ).status ) {
+			actions.fetch( this.siteId, url );
 		}
 	}
 
@@ -85,13 +101,26 @@ export default class EmbedViewManager extends EventEmitter {
 		const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
 		let match;
 		while ( ( match = rxLink.exec( content ) ) ) {
-			const isMatchingPattern = list.embeds.some( ( pattern ) => pattern.test( match[ 2 ] ) );
-			if ( isMatchingPattern ) {
-				return {
-					index: match.index + match[ 1 ].length,
-					content: match[ 2 ]
-				};
+			const url = match[ 2 ];
+
+			// Disregard URL if it's not a supported embed pattern for the site
+			const isMatchingPattern = list.embeds.some( ( pattern ) => pattern.test( url ) );
+			if ( ! isMatchingPattern ) {
+				continue;
 			}
+
+			// Disregard URL if we've not yet retrieved the embed result, or if
+			// the embed result is an error
+			const embed = EmbedsStore.get( url );
+			if ( ! embed.body ) {
+				defer( () => this.fetchEmbed( url ) );
+				continue;
+			}
+
+			return {
+				index: match.index + match[ 1 ].length,
+				content: url
+			};
 		}
 	}
 
