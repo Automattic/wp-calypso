@@ -173,6 +173,17 @@ module.exports = {
 		}
 	},
 
+	isJetpackSite: function( context, next ) {
+		var site = sites.getSelectedSite(),
+			allSitesPath = route.sectionify( context.path );
+
+		if ( ! site.jetpack ) {
+			return page.redirect( allSitesPath );
+		}
+
+		next();
+	},
+
 	jetpackModuleActive: function( moduleIds, redirect ) {
 		return function( context, next ) {
 			var site = sites.getSelectedSite();
