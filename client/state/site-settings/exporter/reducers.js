@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	SET_EXPORT_POST_TYPE,
 	REQUEST_START_EXPORT,
 	REPLY_START_EXPORT,
@@ -47,7 +48,29 @@ export function exportingState( state = States.READY, action ) {
 	return state;
 }
 
+/**
+ * Tracks available advanced settings for sites.
+ * @param  {Object} state  Current global state tree
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function advancedSettings( state = {}, action ) {
+	switch ( action.type ) {
+		case EXPORT_ADVANCED_SETTINGS_RECEIVE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: action.advancedSettings
+			} );
+		case SERIALIZE:
+			return state;
+		case DESERIALIZE:
+			return state;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	selectedPostType,
-	exportingState
+	exportingState,
+	advancedSettings
 } );
