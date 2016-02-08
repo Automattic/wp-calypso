@@ -10,7 +10,6 @@ import { Container } from 'flux/utils';
  */
 import ResizableIframe from 'components/resizable-iframe';
 import EmbedsStore from 'lib/embeds/store';
-import actions from 'lib/embeds/actions';
 
 class EmbedView extends Component {
 	static getStores() {
@@ -22,10 +21,6 @@ class EmbedView extends Component {
 	}
 
 	componentDidMount() {
-		if ( ! this.state.status || this.state.status === 'ERROR' ) {
-			setTimeout( () => actions.fetch( this.props.siteId, this.props.content ), 0 );
-		}
-
 		this.setState( {
 			wrapper: this.refs.view
 		}, this.setHtml );
