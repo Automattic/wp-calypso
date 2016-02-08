@@ -27,7 +27,8 @@ module.exports = React.createClass( {
 		onSelect: PropTypes.func,
 
 		legend: PropTypes.string.isRequired,
-		isEnabled: PropTypes.bool.isRequired
+		isEnabled: PropTypes.bool.isRequired,
+		shouldShowPlaceholders: PropTypes.bool.isRequired,
 	},
 
 	getDefaultProps() {
@@ -37,6 +38,20 @@ module.exports = React.createClass( {
 	},
 
 	render() {
+		const placeholderMap = ( menu, menuIndex ) => (
+			<div key={ menuIndex } className="exporter__placeholder-text">
+				{ this.translate( 'Loading options…' ) }
+			</div>
+		)
+
+		const selectMap = ( menu, menuIndex ) => (
+			<Select key={ menuIndex } disabled={ ! this.props.isEnabled }>
+				{ menu.options.map( ( option, optionIndex ) => (
+					<option value={ optionIndex } key={ optionIndex }>{ option }</option>
+				) ) }
+			</Select>
+		)
+
 		return (
 			<div className="exporter__option-fieldset">
 
@@ -54,13 +69,9 @@ module.exports = React.createClass( {
 				}
 
 				<div className="exporter__option-fieldset-fields">
-					{ this.props.menus.map( ( menu, menuIndex ) => (
-						<Select key={ menuIndex } disabled={ !this.props.isEnabled }>
-							{ menu.options.map( ( option, optionIndex ) => (
-								<option value={ optionIndex } key={ optionIndex }>{ option }</option>
-							) ) }
-						</Select>
-					) ) }
+					{ this.props.menus.map(
+						this.props.shouldShowPlaceholders ? placeholderMap : selectMap
+					) }
 				</div>
 
 			</div>

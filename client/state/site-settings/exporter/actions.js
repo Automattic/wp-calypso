@@ -35,7 +35,15 @@ export function setPostType( postType ) {
  * @return {thunk}        An action thunk for fetching the advanced settings
  */
 export function advancedSettingsFetch( siteId ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		if ( siteId === null || typeof siteId === 'undefined' ) {
+			return;
+		}
+
+		if ( getState().siteSettings.exporter.fetchingAdvancedSettings[ siteId ] === true ) {
+			return;
+		}
+
 		dispatch( {
 			type: EXPORT_ADVANCED_SETTINGS_FETCH,
 			siteId
@@ -50,7 +58,7 @@ export function advancedSettingsFetch( siteId ) {
 		return wpcom.undocumented()
 			.getExportSettings( siteId )
 			.then( updateExportSettings )
-			.catch( fetchFail )
+			.catch( fetchFail );
 	}
 }
 

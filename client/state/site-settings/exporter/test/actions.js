@@ -28,6 +28,11 @@ Chai.use( sinonChai );
 
 describe( '#advancedSettingsFetch()', () => {
 	const spy = sinon.spy();
+	const getState = () => ( {
+		siteSettings: { exporter: {
+			fetchingAdvancedSettings: {}
+		} }
+	} );
 
 	before( () => {
 		nock( 'https://public-api.wordpress.com:443' )
@@ -45,7 +50,7 @@ describe( '#advancedSettingsFetch()', () => {
 	} );
 
 	it( 'should dispatch fetch action when thunk triggered', () => {
-		advancedSettingsFetch( 100658273 )( spy );
+		advancedSettingsFetch( 100658273 )( spy, getState );
 
 		expect( spy ).to.have.been.calledWith( {
 			type: EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -54,7 +59,7 @@ describe( '#advancedSettingsFetch()', () => {
 	} );
 
 	it( 'should dispatch receive action when request completes', ( done ) => {
-		advancedSettingsFetch( 100658273 )( spy ).then( () => {
+		advancedSettingsFetch( 100658273 )( spy, getState ).then( () => {
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 100658273,
@@ -66,7 +71,7 @@ describe( '#advancedSettingsFetch()', () => {
 	} );
 
 	it( 'should dispatch fail action when request fails', ( done ) => {
-		advancedSettingsFetch( 0 )( spy ).then( () => {
+		advancedSettingsFetch( 0 )( spy, getState ).then( () => {
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 				siteId: 0
