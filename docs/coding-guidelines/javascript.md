@@ -979,7 +979,7 @@ More about:
 
 ## ESLint
 
-To help encourages folks to follow the coding standards, there is a [ESLint](http://eslint.org/) configuration file ```.eslintrc``` that configures ESLint to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [eslint-plugin-react](https://github.com/yannickcr/eslint-plugin-react), which we use in our configuration.
+To help encourages folks to follow the coding standards, there is a [ESLint](http://eslint.org/) configuration file ```.eslintrc``` that configures ESLint to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/yannickcr/eslint-plugin-wpcalypso), which we use in our configuration.
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 
@@ -1044,7 +1044,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-npm install -g eslint eslint-plugin-react babel-eslint
+npm install -g eslint eslint-plugin-wpcalypso eslint-plugin-react babel-eslint
 ```
 
 #### Identifying Spaces with Sublime Text
