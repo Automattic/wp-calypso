@@ -454,6 +454,16 @@ FullPostContainer = React.createClass( {
 		// as hidden, then set it to visible to trigger the animation.
 		process.nextTick( function() {
 			this.setState( { isVisible: true } ); //eslint-disable-line react/no-did-mount-set-state
+
+			if ( typeof this.props.removeAnimationHandlerSetter === 'function') {
+				this.props.removeAnimationHandlerSetter( function startRemoveAnimation() {
+					if ( ! this.isMounted() ) {
+						return;
+					}
+
+					this.setState( { isVisible: false } );
+				}.bind( this ) );
+			}
 		}.bind( this ) );
 	},
 

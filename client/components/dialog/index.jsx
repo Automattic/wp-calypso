@@ -10,7 +10,8 @@ var ReactDom = require( 'react-dom' ),
  * Internal dependencies
  */
 var SingleChildCSSTransitionGroup = require( 'components/single-child-css-transition-group' ),
-	DialogBase = require( './dialog-base' );
+	DialogBase = require( './dialog-base' ),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 var Dialog = React.createClass( {
 	propTypes: {
@@ -19,6 +20,10 @@ var Dialog = React.createClass( {
 		enterTimeout: React.PropTypes.number,
 		leaveTimeout: React.PropTypes.number,
 		onClosed: React.PropTypes.func
+	},
+
+	contextTypes: {
+		store: React.PropTypes.object
 	},
 
 	getDefaultProps: function() {
@@ -56,20 +61,29 @@ var Dialog = React.createClass( {
 
 	_renderDialogBase: function() {
 		var dialogComponent = this.props.isVisible ? <DialogBase { ...this.props } key="dialog" onDialogClose={ this.onDialogClose } /> : null,
-			transitionName = this.props.baseClassName || 'dialog';
+			transitionName = this.props.baseClassName || 'dialog',
+			renderFunc = ReactDom.render,
+			renderParams = [
+				<SingleChildCSSTransitionGroup
+					transitionName={ transitionName }
+					component="div"
+					transitionLeave={ this.props.transitionLeave }
+					onChildDidLeave={ this.onDialogDidLeave }
+					enterTimeout={ this.props.enterTimeout }
+					leaveTimeout={ this.props.leaveTimeout }>
+					{ dialogComponent }
+				</SingleChildCSSTransitionGroup>,
+				this._container
+			];
 
-		ReactDom.render(
-			<SingleChildCSSTransitionGroup
-				transitionName={ transitionName }
-				component="div"
-				transitionLeave={ this.props.transitionLeave }
-				onChildDidLeave={ this.onDialogDidLeave }
-				enterTimeout={ this.props.enterTimeout }
-				leaveTimeout={ this.props.leaveTimeout }>
-				{ dialogComponent }
-			</SingleChildCSSTransitionGroup>,
-			this._container
-		);
+
+		// if there is a redux store in context, render the element with it
+		if ( this.context.store ) {
+			renderFunc = renderWithReduxStore;
+			renderParams.push( this.context.store );
+		}
+
+		return renderFunc.apply( ReactDom, renderParams );
 	},
 
 	render: function() {
