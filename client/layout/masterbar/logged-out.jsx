@@ -14,6 +14,7 @@ import config from 'config';
 
 export default React.createClass( {
 	propTypes: {
+		// Target for the logo link
 		url: React.PropTypes.string.isRequired
 	},
 
@@ -21,7 +22,7 @@ export default React.createClass( {
 		return(
 			<MasterbarMinimal url={ this.props.url }>
 				<div className="masterbar__login-links">
-					<Item url={ '/start' }>
+					<Item url={ config( 'signup_url' ) }>
 						{ this.translate( 'Sign up', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</Item>
 					<Item url={ config( 'login_url' ) }>
