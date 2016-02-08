@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
+import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/upgrades/domain-management/components/form-footer';
@@ -19,7 +20,6 @@ import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { successNotice } from 'state/notices/actions';
-
 
 const EmailForwardingAddNew = React.createClass( {
 	propTypes: {
@@ -42,7 +42,7 @@ const EmailForwardingAddNew = React.createClass( {
 	},
 
 	hasReachedLimit() {
-		return this.props.emailForwarding.list.length >= 5;
+		return this.props.emailForwarding.list.length >= emailForwardingPlanLimit( this.props.selectedSite.plan );
 	},
 
 	onAddEmailForward( event ) {
@@ -164,6 +164,7 @@ const EmailForwardingAddNew = React.createClass( {
 		return (
 			<form className="email-forwarding__add-new">
 				<EmailForwardingLimit
+					selectedSite= { this.props.selectedSite }
 					emailForwarding={ this.props.emailForwarding } />
 
 				{ this.formFields() }
