@@ -67,7 +67,7 @@ export function section( state = false, action ) {
 		case SERIALIZE:
 			return false;
 		case DESERIALIZE:
-			return false;
+			return state;
 	}
 	return state;
 }
@@ -79,7 +79,7 @@ export function hasSidebar( state = true, action ) {
 		case SERIALIZE:
 			return true;
 		case DESERIALIZE:
-			return true;
+			return state;
 	}
 	return state;
 }
