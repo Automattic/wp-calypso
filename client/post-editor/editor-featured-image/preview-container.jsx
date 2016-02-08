@@ -3,7 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import defer from 'lodash/function/defer';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
@@ -11,8 +12,9 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
+import { setFeaturedImage } from 'state/ui/editor/post/actions';
 
-export default React.createClass( {
+const EditorFeaturedImagePreviewContainer = React.createClass( {
 	displayName: 'EditorFeaturedImagePreviewContainer',
 
 	propTypes: {
@@ -70,9 +72,12 @@ export default React.createClass( {
 
 		defer( () => {
 			if ( image && image.ID !== this.props.itemId ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				PostActions.edit( {
 					featured_image: image.ID
 				} );
+
+				this.props.setFeaturedImage( image.ID );
 			}
 		} );
 	},
@@ -85,3 +90,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setFeaturedImage }, dispatch )
+)( EditorFeaturedImagePreviewContainer );
