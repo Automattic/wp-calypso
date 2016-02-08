@@ -12,7 +12,7 @@ var React = require( 'react' ),
 var abtest = require( 'lib/abtest' ).abtest,
 	MasterbarCheckout = require( 'layout/masterbar/checkout' ),
 	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
-	MasterbarMinimal = require( 'layout/masterbar/minimal' ),
+	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
@@ -97,7 +97,7 @@ Layout = React.createClass( {
 		}
 
 		if ( ! this.props.user ) {
-			return <MasterbarMinimal url="/" />;
+			return <MasterbarLoggedOut url="/" />;
 		}
 
 		if ( 'checkout' === this.props.section && abtest( 'checkoutMasterbar' ) === 'minimal' ) {
