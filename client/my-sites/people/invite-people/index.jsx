@@ -123,10 +123,10 @@ export default React.createClass( {
 							id="role"
 							name="role"
 							key="role"
+							includeFollower
 							siteId={ this.props.site.ID }
 							valueLink={ this.linkState( 'role' ) }
 							disabled={ this.state.sendingInvites }
-							appendRoles={ { follower: {} } } // adds a pseudo-role of follower
 							explanation={ this.renderRoleExplanation() }/>
 
 						<FormFieldset>

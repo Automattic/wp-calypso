@@ -4,14 +4,15 @@
 var React = require( 'react' ),
 	debugFactory = require( 'debug' ),
 	omit = require( 'lodash/object/omit' ),
-	titleCase = require( 'to-title-case' );
+	map = require( 'lodash/collection/map' );
 
 var RolesStore = require( 'lib/site-roles/store' ),
 	RolesActions = require( 'lib/site-roles/actions' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSelect = require( 'components/forms/form-select' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
+	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
+	sites = require( 'lib/sites-list' )();
 
 var debug = debugFactory( 'calypso:role-select' );
 
@@ -40,16 +41,35 @@ module.exports = React.createClass( {
 		this.refreshRoles( nextProps );
 	},
 
+	getWPCOMFollowerRole( siteId ) {
+		siteId = siteId ? siteId : this.props.siteId;
+
+		let site = sites.getSite( siteId ),
+			displayName = site.is_private
+			? this.translate( 'Viewer', { context: 'Role that is displayed in a select' } )
+			: this.translate( 'Follower', { context: 'Role that is displayed in a select' } );
+
+		return {
+			follower: {
+				display_name: displayName,
+				name: 'follower'
+			}
+		};
+	},
+
 	refreshRoles: function( nextProps ) {
 		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId,
-			appendRoles,
 			siteRoles;
 
 		if ( siteId ) {
 			siteRoles = RolesStore.getRoles( siteId );
-			appendRoles = this.props.appendRoles || {};
+
+			if ( this.props.includeFollower ) {
+				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles )
+			}
+
 			this.setState( {
-				roles: Object.assign( {}, appendRoles, siteRoles )
+				roles: siteRoles
 			} );
 		}
 	},
@@ -76,9 +96,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var roles = Object.keys( this.state.roles );
+		var roleKeys = Object.keys( this.state.roles );
 		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roles.length }>
+			<FormFieldset key={ this.props.key } disabled={ ! roleKeys.length }>
 				<FormLabel htmlFor={ this.props.id }>
 					{ this.translate( 'Role', {
 						context: 'Text that is displayed in a label of a form.'
@@ -86,10 +106,10 @@ module.exports = React.createClass( {
 				</FormLabel>
 				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
 					{
-						roles.map( function( role ) {
+						map( this.state.roles, ( roleObject, key ) => {
 							return (
-								<option value={ role } key={ role }>
-									{ titleCase( role ) }
+								<option value={ key } key={ key }>
+									{ roleObject.display_name }
 								</option>
 							);
 						} )
