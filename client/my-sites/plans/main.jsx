@@ -81,7 +81,7 @@ var Plans = React.createClass( {
 	},
 
 	redirectToDefault() {
-		page.redirect( paths.plans( this.props.getSelectedSite().slug ) );
+		page.redirect( paths.plans( this.props.sites.getSelectedSite().slug ) );
 	},
 
 	renderNotice() {
@@ -148,8 +148,7 @@ var Plans = React.createClass( {
 					cart={ this.props.cart }
 					destinationType={ this.props.context.params.destinationType }
 					plan={ currentPlan }
-					selectedSite={ selectedSite }
-					store={ this.props.context.store } />
+					selectedSite={ selectedSite } />
 			);
 		}
 

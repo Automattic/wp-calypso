@@ -1,46 +1,95 @@
 /**
+ * External dependencies
+ */
+import omit from 'lodash/object/omit';
+
+/**
  * Internal dependencies
  */
 import {
-	FETCH_SITE_PLANS,
-	FETCH_SITE_PLANS_COMPLETED,
-	REMOVE_SITE_PLANS
-} from './action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import omit from 'lodash/object/omit';
+	SITE_PLANS_FETCH,
+	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PLANS_FETCH_FAILED,
+	SITE_PLANS_REMOVE,
+	SITE_PLANS_TRIAL_CANCEL,
+	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
+	SITE_PLANS_TRIAL_CANCEL_FAILED,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
 
 export const initialSiteState = {
+	data: null,
 	error: null,
 	hasLoadedFromServer: false,
-	isFetching: false,
-	data: null
+	isRequesting: false
 };
+
+/**
+ * Returns a new state with the given attributes updated for the specified site.
+ *
+ * @param {Object} state current state
+ * @param {Number} siteId identifier of the site
+ * @param {Object} attributes list of attributes and their values
+ * @returns {Object} the new state
+ */
+function updateSiteState( state, siteId, attributes ) {
+	return Object.assign( {}, state, {
+		[ siteId ]: Object.assign( {}, initialSiteState, state[ siteId ], attributes )
+	} );
+}
 
 export function plans( state = {}, action ) {
 	switch ( action.type ) {
-		case FETCH_SITE_PLANS:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, initialSiteState, state[ action.siteId ], {
-					isFetching: true
-				} )
+		case SITE_PLANS_FETCH:
+			return updateSiteState( state, action.siteId, {
+				error: null,
+				isRequesting: true
 			} );
-		case FETCH_SITE_PLANS_COMPLETED:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					error: null,
-					hasLoadedFromServer: true,
-					isFetching: false,
-					data: action.plans
-				} )
+
+		case SITE_PLANS_FETCH_COMPLETED:
+			return updateSiteState( state, action.siteId, {
+				error: null,
+				hasLoadedFromServer: true,
+				isRequesting: false,
+				data: action.plans
 			} );
-		case REMOVE_SITE_PLANS:
+
+		case SITE_PLANS_FETCH_FAILED:
+			return updateSiteState( state, action.siteId, {
+				error: action.error,
+				isRequesting: false
+			} );
+
+		case SITE_PLANS_REMOVE:
 			return omit( state, action.siteId );
+
+		case SITE_PLANS_TRIAL_CANCEL:
+			return updateSiteState( state, action.siteId, {
+				isRequesting: true
+			} );
+
+		case SITE_PLANS_TRIAL_CANCEL_COMPLETED:
+			return updateSiteState( state, action.siteId, {
+				error: null,
+				hasLoadedFromServer: true,
+				isRequesting: false,
+				data: action.plans
+			} );
+
+		case SITE_PLANS_TRIAL_CANCEL_FAILED:
+			return updateSiteState( state, action.siteId, {
+				error: action.error,
+				isRequesting: false
+			} );
+
 		case SERIALIZE:
 			//TODO: we have full instances of moment.js on sites.plans[siteID].data
 			return {};
+
 		case DESERIALIZE:
 			return {};
 	}
 
 	return state;
-}
+};

@@ -11,26 +11,71 @@ const debug = debugFactory( 'calypso:site-plans:actions' );
  * Internal dependencies
  */
 import { createSitePlanObject } from './assembler';
-import wpcom from 'lib/wp';
+import i18n from 'lib/mixins/i18n';
 import {
-	FETCH_SITE_PLANS,
-	FETCH_SITE_PLANS_COMPLETED,
-	REMOVE_SITE_PLANS
-} from './action-types';
+	SITE_PLANS_FETCH,
+	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PLANS_FETCH_FAILED,
+	SITE_PLANS_REMOVE,
+	SITE_PLANS_TRIAL_CANCEL,
+	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
+	SITE_PLANS_TRIAL_CANCEL_FAILED
+} from 'state/action-types';
+import wpcom from 'lib/wp';
 
 /**
- * Clears plans for the given site.
+ * Cancels the specified plan trial for the given site.
  *
  * @param {Number} siteId identifier of the site
- * @returns {Function} the corresponding action thunk
+ * @param {Number} planId identifier of the plan
+ * @returns {Function} a promise that will resolve once updating is completed
  */
-export function clearSitePlans( siteId ) {
+export function cancelSitePlanTrial( siteId, planId ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: REMOVE_SITE_PLANS,
+			type: SITE_PLANS_TRIAL_CANCEL,
 			siteId
 		} );
+
+		return new Promise( ( resolve, reject ) => {
+			wpcom.undocumented().cancelPlanTrial( planId, ( error, data ) => {
+				if ( data && data.success ) {
+					dispatch( {
+						type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
+						siteId,
+						plans: map( data.plans, createSitePlanObject )
+					} );
+
+					resolve();
+				} else {
+					debug( 'Canceling site plan trial failed: ', error );
+
+					const errorMessage = error.message || i18n.translate( 'There was a problem canceling the plan trial. Please try again later or contact support.' );
+
+					dispatch( {
+						type: SITE_PLANS_TRIAL_CANCEL_FAILED,
+						siteId,
+						error: errorMessage
+					} );
+
+					reject( errorMessage );
+				}
+			} );
+		} );
 	}
+}
+
+/**
+ * Returns an action object to be used in signalling that plans for the given site has been cleared.
+ *
+ * @param {Number} siteId identifier of the site
+ * @returns {Object} the corresponding action object
+ */
+export function clearSitePlans( siteId ) {
+	return {
+		type: SITE_PLANS_REMOVE,
+		siteId
+	};
 }
 
 /**
@@ -42,7 +87,7 @@ export function clearSitePlans( siteId ) {
 export function fetchSitePlans( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: FETCH_SITE_PLANS,
+			type: SITE_PLANS_FETCH,
 			siteId
 		} );
 
@@ -50,6 +95,14 @@ export function fetchSitePlans( siteId ) {
 			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
 				if ( error ) {
 					debug( 'Fetching site plans failed: ', error );
+
+					const errorMessage = error.message || i18n.translate( 'There was a problem fetching site plans. Please try again later or contact support.' );
+
+					dispatch( {
+						type: SITE_PLANS_FETCH_FAILED,
+						siteId,
+						error: errorMessage
+					} );
 				} else {
 					dispatch( fetchSitePlansCompleted( siteId, data ) );
 				}
@@ -65,16 +118,16 @@ export function fetchSitePlans( siteId ) {
  * the plans for a given site have been received.
  *
  * @param {Number} siteId identifier of the site
- * @param {Object} plans list of plans received from the API
+ * @param {Object} data list of plans received from the API
  * @returns {Object} the corresponding action object
  */
-export function fetchSitePlansCompleted( siteId, plans ) {
-	plans = reject( plans, '_headers' );
+export function fetchSitePlansCompleted( siteId, data ) {
+	data = reject( data, '_headers' );
 
 	return {
-		type: FETCH_SITE_PLANS_COMPLETED,
+		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( plans, createSitePlanObject )
+		plans: map( data, createSitePlanObject )
 	};
 }
 
@@ -86,11 +139,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  */
 export function refreshSitePlans( siteId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: REMOVE_SITE_PLANS,
-			siteId
-		} );
-
+		dispatch( clearSitePlans( siteId ) );
 		dispatch( fetchSitePlans( siteId ) );
 	}
 }
