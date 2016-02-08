@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var noop = require( 'lodash/utility/noop' ),
+const noop = require( 'lodash/utility/noop' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
+const Card = require( 'components/card' ),
 	EditPostStatus = require( 'post-editor/edit-post-status' ),
 	Gridicon = require( 'components/gridicon' ),
 	Popover = require( 'components/popover' ),
@@ -22,12 +24,13 @@ var Card = require( 'components/card' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
+import { setDate } from 'state/ui/editor/post/actions';
 
 function isPostEmpty( props ) {
 	return ( props.isNew && ! props.isDirty ) || ! props.hasContent;
 }
 
-module.exports = React.createClass( {
+const EditorGroundControl = React.createClass( {
 	displayName: 'EditorGroundControl',
 	propTypes: {
 		hasContent: React.PropTypes.bool,
@@ -40,6 +43,7 @@ module.exports = React.createClass( {
 		onPublish: React.PropTypes.func,
 		onSaveDraft: React.PropTypes.func,
 		post: React.PropTypes.object,
+		setDate: React.PropTypes.func,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
 		type: React.PropTypes.string
@@ -59,6 +63,7 @@ module.exports = React.createClass( {
 			onSaveDraft: noop,
 			post: null,
 			savedPost: null,
+			setDate: () => {},
 			site: {}
 		};
 	},
@@ -74,7 +79,9 @@ module.exports = React.createClass( {
 	},
 
 	setPostDate: function( date ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( { date: date ? date.format() : null } );
+		this.props.setDate( date );
 	},
 
 	setCurrentMonth: function( date ) {
@@ -402,3 +409,7 @@ module.exports = React.createClass( {
 	}
 } );
 
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setDate }, dispatch )
+)( EditorGroundControl );
