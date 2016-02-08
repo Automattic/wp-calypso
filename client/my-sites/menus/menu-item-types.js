@@ -2,7 +2,6 @@
  * External dependencies
  */
 var find = require( 'lodash/find' );
-var findIndex = require( 'lodash/findIndex';
 
 /**
  * Internal dependencies
@@ -173,7 +172,7 @@ MenuItemTypes.prototype.parse = function() {
 	newTypes = types.filter( function( type ) {
 		// With WP-API, post types self register via the `show_in_rest` flag, which replaces `api_queryable` from wpcom api
 		return ( find( this._defaultItemTypes, { name: type.slug } ) === undefined ) &&
-				( -1 === findIndex( this._excludedItemTypes, type.slug ) );
+				( ! find( this._excludedItemTypes, type.slug ) );
 	}, this );
 
 	debug( 'Found some new types', newTypes );
