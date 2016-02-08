@@ -343,7 +343,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init();
+		//require( 'lib/desktop' ).init();
 	}
 
 	detectHistoryNavigation.start();

@@ -25,7 +25,7 @@ var SignupActions = require( './actions' ),
 	SignupDependencyStore = require( './dependency-store' ),
 	flows = require( 'signup/config/flows' ),
 	steps = require( 'signup/config/steps' ),
-	wpcom = require( 'lib/wp' ),
+	oauthToken = require( 'lib/oauth-token' ),
 	user = require( 'lib/user' )();
 
 /**
@@ -108,7 +108,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_canMakeAuthenticatedRequests: function() {
-		return wpcom.isTokenLoaded() || user.get();
+		return oauthToken.getToken() || user.get();
 	},
 
 	_getFlowProvidesDependencies: function() {
@@ -124,8 +124,8 @@ assign( SignupFlowController.prototype, {
 			bearerToken = SignupDependencyStore.get().bearer_token,
 			dependencies = SignupDependencyStore.get();
 
-		if ( bearerToken && ! wpcom.isTokenLoaded() ) {
-			wpcom.loadToken( bearerToken );
+		if ( bearerToken && ! oauthToken.getToken() ) {
+			oauthToken.setToken( bearerToken );
 		}
 
 		if ( pendingSteps.length > 0 ) {

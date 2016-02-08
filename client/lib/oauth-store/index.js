@@ -46,7 +46,6 @@ function goToLogin() {
 
 function handleLogin( response ) {
 	debug( 'Access token received' );
-
 	OAuthToken.setToken( response.body.access_token );
 
 	goToLogin();
