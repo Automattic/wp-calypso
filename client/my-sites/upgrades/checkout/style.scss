@@ -67,6 +67,12 @@
 		}
 	}
 
+	&.connect-google-analytics {
+		.checkout__purchase-detail-text::before {
+			@include noticon( '\f806' ); //.noticon-milestone
+		}
+	}
+
 	&.important {
 		.checkout__purchase-detail-text::before {
 			@include noticon( '\f303' );

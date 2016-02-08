@@ -403,6 +403,13 @@ BusinessPlanDetails = React.createClass( {
 					description={ this.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
 					buttonText={ this.translate( 'Find a New Theme' ) }
 					href={ '/design/' + this.props.selectedSite.slug } />
+
+				<PurchaseDetail
+					additionalClass="connect-google-analytics"
+					title={ this.translate( 'Integrate Google Analytics' ) }
+					description={ this.translate( 'Connect your site to your existing Google Analytics account.' ) }
+					buttonText={ this.translate( 'Connect Google Analytics' ) }
+					href={ '/settings/analytics/' + this.props.selectedSite.slug } />
 			</ul>
 		);
 	}
