@@ -34,6 +34,10 @@ mockery.enable( {
 mockery.registerMock( 'components/info-popover', MOCK_COMPONENT );
 mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 mockery.registerSubstitute( 'query', 'component-query' );
+// TODO: REDUX - add proper tests when whole post-editor is reduxified
+mockery.registerMock( 'react-redux', {
+	connect: () => component => component
+} );
 i18n.initialize();
 ReactInjection.Class.injectMixin( i18n.mixin );
 TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' );

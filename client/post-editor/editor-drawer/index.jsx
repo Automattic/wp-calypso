@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	find = require( 'lodash/collection/find' );
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
+const Accordion = require( 'components/accordion' ),
 	AccordionSection = require( 'components/accordion/section' ),
 	Gridicon = require( 'components/gridicon' ),
 	TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' ),
@@ -32,14 +33,22 @@ var Accordion = require( 'components/accordion' ),
 	stats = require( 'lib/posts/stats' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	siteUtils = require( 'lib/site/utils' );
+import { setExcerpt } from 'state/ui/editor/post/actions';
 
-var EditorDrawer = React.createClass( {
+const EditorDrawer = React.createClass( {
 
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		postTypes: React.PropTypes.object,
-		isNew: React.PropTypes.bool
+		isNew: React.PropTypes.bool,
+		setExcerpt: React.PropTypes.func
+	},
+
+	getDefaultProps: function() {
+		return {
+			setExcerpt: () => {}
+		};
 	},
 
 	mixins: [
@@ -47,7 +56,9 @@ var EditorDrawer = React.createClass( {
 	],
 
 	onExcerptChange: function( event ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
+		this.props.setExcerpt( event.target.value );
 	},
 
 	currentPostTypeSupports: function( feature ) {
@@ -270,4 +281,7 @@ var EditorDrawer = React.createClass( {
 	}
 } );
 
-module.exports = EditorDrawer;
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setExcerpt }, dispatch )
+)( EditorDrawer );
