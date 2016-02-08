@@ -139,6 +139,11 @@ export default React.createClass( {
 		} );
 	},
 
+	isSubmitDisabled() {
+		const invitees = Array.isArray( this.state.usernamesOrEmails ) ? this.state.usernamesOrEmails : [];
+		return this.state.sendingInvites || ! invitees.length;
+	},
+
 	goBack() {
 		const siteSlug = get( this.props, 'site.slug' );
 		const fallback = siteSlug ? ( '/people/team/' + siteSlug ) : '/people/team';
@@ -205,7 +210,7 @@ export default React.createClass( {
 							</FormSettingExplanation>
 						</FormFieldset>
 
-						<FormButton disabled={ this.state.sendingInvites }>
+						<FormButton disabled={ this.isSubmitDisabled() }>
 							{ this.translate(
 								'Send Invitation',
 								'Send Invitations', {
