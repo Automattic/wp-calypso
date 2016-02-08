@@ -21,7 +21,13 @@ class EmbedView extends Component {
 	}
 
 	componentDidMount() {
-		this.setState( {
+		// Rendering the frame follows a specific set of steps, whereby an
+		// initial rendering pass is made, at which time the frame is rendered
+		// in a second pass, before finally setting the frame markup.
+		//
+		// TODO: Investigate and evaluate whether we need to avoid rendering
+		//       the iframe on the initial render pass
+		this.setState( { // eslint-disable-line react/no-did-mount-set-state
 			wrapper: this.refs.view
 		}, this.setHtml );
 	}
