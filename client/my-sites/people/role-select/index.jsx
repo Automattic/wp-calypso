@@ -1,57 +1,84 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debugFactory = require( 'debug' ),
-	omit = require( 'lodash/object/omit' ),
-	titleCase = require( 'to-title-case' );
-
-var RolesStore = require( 'lib/site-roles/store' ),
-	RolesActions = require( 'lib/site-roles/actions' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
-
-var debug = debugFactory( 'calypso:role-select' );
+import React from 'react';
+import debugFactory from 'debug';
+import omit from 'lodash/object/omit';
+import map from 'lodash/collection/map';
 
 /**
  * Internal dependencies
  */
-module.exports = React.createClass( {
+import RolesStore from 'lib/site-roles/store';
+import RolesActions from 'lib/site-roles/actions';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import sitesList from 'lib/sites-list';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:role-select' );
+const sites = sitesList();
+
+export default React.createClass( {
 	displayName: 'RoleSelect',
 
-	getInitialState: function() {
+	getInitialState() {
 		return ( {
 			roles: this.props.siteId ? RolesStore.getRoles( this.props.siteId ) : {}
 		} );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		RolesStore.on( 'change', this.refreshRoles );
 		this.fetchRoles();
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		RolesStore.removeListener( 'change', this.refreshRoles );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.refreshRoles( nextProps );
 	},
 
-	refreshRoles: function( nextProps ) {
-		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
+	getWPCOMFollowerRole( siteId ) {
+		siteId = siteId ? siteId : this.props.siteId;
+
+		let site = sites.getSite( siteId ),
+			displayName = site.is_private
+			? this.translate( 'Viewer', { context: 'Role that is displayed in a select' } )
+			: this.translate( 'Follower', { context: 'Role that is displayed in a select' } );
+
+		return {
+			follower: {
+				display_name: displayName,
+				name: 'follower'
+			}
+		};
+	},
+
+	refreshRoles( nextProps ) {
+		const siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
 
 		if ( siteId ) {
+			let siteRoles = RolesStore.getRoles( siteId );
+
+			if ( this.props.includeFollower ) {
+				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles )
+			}
+
 			this.setState( {
-				roles: RolesStore.getRoles( siteId )
+				roles: siteRoles
 			} );
 		}
 	},
 
-	fetchRoles: function() {
-		var siteId = this.props.siteId || null;
+	fetchRoles() {
+		const siteId = this.props.siteId || null;
 		if ( ! siteId ) {
 			return;
 		}
@@ -63,7 +90,7 @@ module.exports = React.createClass( {
 
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			var fetching = RolesStore.isFetching( siteId );
+			const fetching = RolesStore.isFetching( siteId );
 			if ( fetching ) {
 				return;
 			}
@@ -71,10 +98,10 @@ module.exports = React.createClass( {
 		}, 0 );
 	},
 
-	render: function() {
-		var roles = Object.keys( this.state.roles );
+	render() {
+		const roleKeys = Object.keys( this.state.roles );
 		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roles.length }>
+			<FormFieldset key={ this.props.key } disabled={ ! roleKeys.length }>
 				<FormLabel htmlFor={ this.props.id }>
 					{ this.translate( 'Role', {
 						context: 'Text that is displayed in a label of a form.'
@@ -82,10 +109,10 @@ module.exports = React.createClass( {
 				</FormLabel>
 				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
 					{
-						roles.map( function( role ) {
+						map( this.state.roles, ( roleObject, key ) => {
 							return (
-								<option value={ role } key={ role }>
-									{ titleCase( role ) }
+								<option value={ key } key={ key }>
+									{ roleObject.display_name }
 								</option>
 							);
 						} )
