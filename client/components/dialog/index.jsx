@@ -9,7 +9,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var SingleChildCSSTransitionGroup = require( 'components/single-child-css-transition-group' ),
+var ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
 	DialogBase = require( './dialog-base' );
 
 var Dialog = React.createClass( {
@@ -59,15 +59,15 @@ var Dialog = React.createClass( {
 			transitionName = this.props.baseClassName || 'dialog';
 
 		ReactDom.render(
-			<SingleChildCSSTransitionGroup
+			<ReactCSSTransitionGroup
 				transitionName={ transitionName }
 				component="div"
 				transitionLeave={ this.props.transitionLeave }
-				onChildDidLeave={ this.onDialogDidLeave }
-				enterTimeout={ this.props.enterTimeout }
-				leaveTimeout={ this.props.leaveTimeout }>
+				componentDidLeave={ this.onDialogDidLeave }
+				transitionEnterTimeout={ this.props.enterTimeout }
+				transitionLeaveTimeout={ this.props.leaveTimeout }>
 				{ dialogComponent }
-			</SingleChildCSSTransitionGroup>,
+			</ReactCSSTransitionGroup>,
 			this._container
 		);
 	},
