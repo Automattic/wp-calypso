@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
-	debug = require( 'debug' )( 'calypso:dialog' );
+import React from 'react';
+import noop from 'lodash/utility/noop';
 
 /**
  * Internal dependencies
  */
-var SingleChildCSSTransitionGroup = require( 'components/single-child-css-transition-group' ),
-	DialogBase = require( './dialog-base' );
+import SingleChildCSSTransitionGroup from 'components/single-child-css-transition-group';
+import RootChild from 'components/root-child';
+import DialogBase from './dialog-base';
 
-var Dialog = React.createClass( {
+export default React.createClass( {
 	propTypes: {
 		isVisible: React.PropTypes.bool,
 		baseClassName: React.PropTypes.string,
@@ -32,48 +31,24 @@ var Dialog = React.createClass( {
 		};
 	},
 
-	componentDidMount: function() {
-		debug( 'mounting' );
-		this._container = document.createElement( 'div' );
-		document.body.appendChild( this._container );
-
-		this._renderDialogBase();
-	},
-
-	componentDidUpdate: function() {
-		debug( 'updating' );
-		this._renderDialogBase();
-	},
-
-	componentWillUnmount: function() {
-		debug( 'unmounting' );
-		if ( this._container ) {
-			ReactDom.unmountComponentAtNode( this._container );
-			this._container.parentNode.removeChild( this._container );
-			this._container = null;
-		}
-	},
-
-	_renderDialogBase: function() {
-		var dialogComponent = this.props.isVisible ? <DialogBase { ...this.props } key="dialog" onDialogClose={ this.onDialogClose } /> : null,
-			transitionName = this.props.baseClassName || 'dialog';
-
-		ReactDom.render(
-			<SingleChildCSSTransitionGroup
-				transitionName={ transitionName }
-				component="div"
-				transitionLeave={ this.props.transitionLeave }
-				onChildDidLeave={ this.onDialogDidLeave }
-				enterTimeout={ this.props.enterTimeout }
-				leaveTimeout={ this.props.leaveTimeout }>
-				{ dialogComponent }
-			</SingleChildCSSTransitionGroup>,
-			this._container
-		);
-	},
-
 	render: function() {
-		return null;
+		const { isVisible, baseClassName, transitionLeave, enterTimeout, leaveTimeout } = this.props;
+
+		return (
+			<RootChild>
+				<SingleChildCSSTransitionGroup
+					transitionName={ baseClassName || 'dialog' }
+					component="div"
+					transitionLeave={ transitionLeave }
+					onChildDidLeave={ this.onDialogDidLeave }
+					enterTimeout={ enterTimeout }
+					leaveTimeout={ leaveTimeout }>
+					{ isVisible && (
+						<DialogBase { ...this.props } key="dialog" onDialogClose={ this.onDialogClose } />
+					) }
+				</SingleChildCSSTransitionGroup>
+			</RootChild>
+		);
 	},
 
 	onDialogDidLeave: function() {
@@ -88,5 +63,3 @@ var Dialog = React.createClass( {
 		}
 	}
 } );
-
-module.exports = Dialog;
