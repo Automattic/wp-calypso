@@ -8,6 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+
+import FormInputValidation from 'components/forms/form-input-validation';
 import analytics from 'analytics';
 import FocusMixin from './focus-mixin';
 
@@ -85,6 +87,7 @@ export default React.createClass( {
 					onClick={ this.recordFieldClick }
 					onBlur={ this.handleBlur }
 					onFocus={ this.handleFocus } />
+				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}

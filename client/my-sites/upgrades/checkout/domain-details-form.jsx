@@ -15,8 +15,6 @@ import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/states-list';
-import notices from 'notices';
-import ValidationErrorList from 'notices/validation-error-list';
 import analytics from 'analytics';
 import formState from 'lib/form-state';
 import upgradesActions from 'lib/upgrades/actions';
@@ -80,18 +78,7 @@ export default React.createClass( {
 		if ( ! this.isMounted() ) {
 			return;
 		}
-
-		const errorMessages = formState.getErrorMessages( form );
-
-		if ( errorMessages.length > 0 ) {
-			const notice = notices.error( <ValidationErrorList messages={ errorMessages } /> );
-			this.setState( { form, notice } );
-		} else {
-			if ( this.state.notice ) {
-				notices.removeNotice( this.state.notice );
-			}
-			this.setState( { form } );
-		}
+		this.setState( { form } );
 	},
 
 	handleFormControllerError( error ) {
@@ -120,11 +107,16 @@ export default React.createClass( {
 
 	getFieldProps( name ) {
 		return {
+			name,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ),
 			invalid: formState.isFieldInvalid( this.state.form, name ),
 			disabled: formState.isFieldDisabled( this.state.form, name ),
 			onChange: this.handleChangeEvent,
+			// The keys are mapped to snake_case when going to API and camelCase when the response is parsed and we are using
+			// kebab-case for HTML, so instead of using different variations all over the place, this accepts kebab-case and
+			// converts it to camelCase which is the format stored in the formState.
+			errorMessage: ( formState.getFieldErrorMessages( this.state.form, camelCase( name ) ) || [] ).join( '\n' ),
 			eventFormName: 'Checkout Form'
 		};
 	},
@@ -141,14 +133,13 @@ export default React.createClass( {
 		return (
 			<div>
 				<Input
-					name="first-name"
 					autofocus
 					label={ this.translate( 'First Name', { textOnly } ) }
 					{ ...fieldProps( 'first-name' ) }/>
-				<Input name="last-name" label={ this.translate( 'Last Name', { textOnly } ) } { ...fieldProps( 'last-name' ) }/>
+
+				<Input label={ this.translate( 'Last Name', { textOnly } ) } { ...fieldProps( 'last-name' ) }/>
 
 				<HiddenInput
-					name="organization"
 					label={ this.translate( 'Organization' ) }
 					text={ this.translate(
 						'Registering this domain for a company? + Add Organization Name',
@@ -159,36 +150,34 @@ export default React.createClass( {
 							count: this.getNumberOfDomainRegistrations(),
 							textOnly: true
 						}
-					) }/>
+					) }
+					{ ...fieldProps( 'organization' ) }/>
 
-				<Input name="email" label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
-				<Input name="phone" label={ this.translate( 'Phone', { textOnly } ) } { ...fieldProps( 'phone' ) }/>
+				<Input label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
+				<Input label={ this.translate( 'Phone', { textOnly } ) } { ...fieldProps( 'phone' ) }/>
 
 				<CountrySelect
-					name="country-code"
 					label={ this.translate( 'County', { textOnly } ) }
 					countriesList={ countriesList }
 					{ ...fieldProps( 'country-code' ) }/>
 
-				{ this.showFax() && <Input name="fax" label={ this.translate( 'Fax', { textOnly } ) } { ...( 'fax' ) }/> }
-				<Input name="address-1" label={ this.translate( 'Address', { textOnly } ) } { ...fieldProps( 'address-1' ) }/>
+				{ this.showFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
+				<Input label={ this.translate( 'Address', { textOnly } ) } { ...fieldProps( 'address-1' ) }/>
 
 				<Input
-					name="address-2"
 					label={ this.translate( 'Address Line 2', { textOnly } ) }
 					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
 					{ ...fieldProps( 'address-2' ) }/>
 
-				<Input name="city" label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
+				<Input label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
 
 				<StateSelect
-					name="state"
 					label={ this.translate( 'State', { textOnly: true } ) }
 					countryCode={ countryCode }
 					statesList={ statesList }
 					{ ...fieldProps( 'state' ) }/>
 
-				<Input name="postal-code" label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
+				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
 
 				<PrivacyProtection
 					cart={ this.props.cart }
