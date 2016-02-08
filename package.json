@@ -129,6 +129,7 @@
     "esformatter-special-bangs": "1.0.1",
     "eslint": "1.10.3",
     "eslint-plugin-react": "3.11.3",
+    "eslint-plugin-wpcalypso": "1.0.0",
     "jsdom": "7.2.0",
     "localStorage": "1.0.2",
     "lodash-deep": "1.5.3",
