@@ -377,9 +377,8 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case FeedActionTypes.RECEIVE_FETCH:
 			if ( action.data && action.data.is_following ) {
-				let subscription = action.data;
 				// Use the feed URL in as the primary URL
-				subscription.URL = subscription.feed_URL;
+				const subscription = Object.assign( {}, action.data, { URL: action.data.feed_URL } );
 				addSubscription( subscription );
 			}
 			break;
