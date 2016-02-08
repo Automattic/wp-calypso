@@ -220,10 +220,22 @@ controller = {
 		}
 		next();
 	},
+
 	setupPlugins: function() {
+		let selectedSite = sites.getSelectedSite();
+
+		// Not a Jetpack plan
+		if ( 0 !== selectedSite.plan.product_slug.indexOf( 'jetpack_' ) ) {
+			page.redirect( '/plugins' );
+			return;
+		// Not a paid plan (nothing to set up)
+		} else if ( 'jetpack_free' === selectedSite.plan.product_slug ) {
+			page.redirect( '/plans/' + selectedSite.slug );
+			return;
+		}
+
 		renderProvisionPlugins();
 	}
-
 };
 
 module.exports = controller;

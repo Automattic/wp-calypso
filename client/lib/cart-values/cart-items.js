@@ -252,6 +252,19 @@ function hasOnlyProductsOf( cart, productSlug ) {
 }
 
 /**
+ * Determines whether every product in the specified shopping cart is a Jetpack Plan
+ * Will return false if the cart is empty.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if all the products in the cart are Jetpack Plans
+ */
+function hasOnlyJetpackPlans( cart ) {
+	return cart.products && every( getAll( cart ), ( item ) => {
+		return ( 0 === item.product_slug.indexOf( 'jetpack_' ) );
+	} );
+}
+
+/**
  * Determines whether there is at least one domain registration item in the specified shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -698,6 +711,7 @@ module.exports = {
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
+	hasOnlyJetpackPlans,
 	hasPlan,
 	hasProduct,
 	hasRenewableSubscription,

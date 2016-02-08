@@ -7,16 +7,24 @@ import React from 'react'
 * Internal dependencies
 */
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PlanSetupInstructions from './instructions';
+import PluginInstallation from './installation';
 
 module.exports = React.createClass( {
 
 	displayName: 'PlanSetup',
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			keys: {},
 			status: 'not-started', // installing $plugin, configuring $plugin, finished, error
 		};
+	},
+
+	renderCantFileEdit() {
+		return (
+			<PlanSetupInstructions selectedSite={ this.props.selectedSite } />
+		);
 	},
 
 	renderNoManageWarning() {
@@ -25,7 +33,7 @@ module.exports = React.createClass( {
 				site={ this.props.selectedSite }
 				template={ 'optInManage' }
 				title={ this.translate( 'Oh no! We can\'t automatically install your new plugins.' ) }
-			section={ 'plugins' }
+				section={ 'plugins' }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
 		);
 	},
@@ -39,6 +47,25 @@ module.exports = React.createClass( {
 		);
 	},
 
+	componentDidMount() {
+		this.runInstall();
+	},
+
+	runInstall() {
+		let steps = PluginInstallation.start( {
+			site: this.props.selectedSite,
+			plugins: [ 'vaultpress' ]
+		} );
+
+		steps.on( 'data', ( step ) => {
+			if ( 'undefined' === typeof step.name ) {
+				this.setState( { status: 'finished' } );
+			} else {
+				this.setState( { status: step.name } );
+			}
+		} );
+	},
+
 	render() {
 		if ( ! this.props.selectedSite || ! this.props.selectedSite.jetpack ) {
 			return this.renderNoJetpackSiteSelected();
@@ -46,6 +73,10 @@ module.exports = React.createClass( {
 		if ( ! this.props.selectedSite.canManage() ) {
 			return this.renderNoManageWarning();
 		}
+		if ( ! this.props.selectedSite.canUpdateFiles ) {
+			return this.renderCantFileEdit();
+		}
+
 		return (
 			<div>
 				<h1>Setting up your plan…</h1>

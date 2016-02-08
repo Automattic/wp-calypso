@@ -1,0 +1,29 @@
+
+.plugin-plans {
+	margin: 0;
+	list-style: none;
+	text-align: center;
+}
+
+.plugin-plan {
+	display: inline-block;
+	width: 50%;
+
+	.plugin-plan__details {
+		> h3 {
+			font-weight: 600;
+		}
+
+		> p {
+			font-size: 12px;
+			opacity: 0.7;
+		}
+	}
+}
+
+/* Only apply this to lists of 3 items */
+.plugin-plan:nth-child(1):nth-last-child(3),
+.plugin-plan:nth-child(2):nth-last-child(2),
+.plugin-plan:nth-child(3):nth-last-child(1) {
+	width: 33.333333%;
+}

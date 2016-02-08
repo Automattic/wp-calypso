@@ -131,6 +131,8 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( this.props.sites.getSelectedSite().ID );
 
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
+		} else if ( cartItems.hasOnlyJetpackPlans( this.props.cart ) ) {
+			return '/plugins/setup/' + this.props.sites.getSelectedSite().slug;
 		}
 
 		return '/checkout/thank-you';
