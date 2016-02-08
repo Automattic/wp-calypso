@@ -9,7 +9,7 @@ See [shrinkwrap docs](https://docs.npmjs.com/cli/shrinkwrap)
 
 - In the root directory delete local node_modules
 - Run `npm install`
-- Update dependences and make sure it's saved to package.json. 
+- Update dependencies and make sure it's saved to package.json. 
 For example bumping lodash to 4.0.0 looks like `npm install lodash@4.0.0 --save`
 - Validate that Calypso works as expected with and that tests pass.
 - Run `npm shrinkwrap --dev`
