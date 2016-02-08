@@ -8,12 +8,10 @@ import debugModule from 'debug';
 import classNames from 'classnames';
 import some from 'lodash/collection/some';
 import find from 'lodash/collection/find';
-import filter from 'lodash/collection/filter';
 import reject from 'lodash/collection/reject';
 import assign from 'lodash/object/assign';
 import property from 'lodash/utility/property';
 import isEmpty from 'lodash/lang/isEmpty';
-import get from 'lodash/object/get';
 
 /**
  * Internal dependencies
