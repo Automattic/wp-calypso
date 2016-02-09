@@ -6,7 +6,7 @@ var ActionType = require( './constants' ).action,
 
 var FeedStoreActions = {
 	fetch: function( feedId ) {
-		var feed = FeedStore.get( feedId );
+		const feed = FeedStore.get( feedId );
 
 		if ( feed && feed.state === FeedState.PENDING ) {
 			return;

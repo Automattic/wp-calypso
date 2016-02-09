@@ -181,14 +181,13 @@ describe( 'feed-subscription-store', function() {
 	} );
 
 	it( 'should not add duplicate subscriptions', function() {
+		const siteUrl = 'http://www.tomato.com';
+
+		// The initial action from the UI
 		Dispatcher.handleViewAction( {
-			type: 'RECEIVE_FEED_POST',
-			data: { is_following: true, site_URL: 'http://www.tomato.com' },
-			error: null
-		} );
-		Dispatcher.handleViewAction( {
-			type: 'RECEIVE_FEED_POST',
-			data: { is_following: true, site_URL: 'http://www.tomato.com' },
+			type: 'FOLLOW_READER_FEED',
+			url: siteUrl,
+			data: { url: siteUrl },
 			error: null
 		} );
 
