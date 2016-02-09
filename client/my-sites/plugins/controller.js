@@ -30,9 +30,7 @@ var lastPluginsListVisited,
 	lastPluginsQuerystring,
 	controller;
 
-const businessPlugins = [ 'gumroad', 'shopify-store', 'ecwid' ];
-
-function renderSinglePlugin( context, siteUrl, isWpcomPlugin ) {
+function renderSinglePlugin( context, siteUrl ) {
 	var pluginSlug = decodeURIComponent( context.params.plugin ),
 		site = sites.getSelectedSite(),
 		analyticsPageTitle = 'Plugins',
@@ -41,29 +39,6 @@ function renderSinglePlugin( context, siteUrl, isWpcomPlugin ) {
 	baseAnalyticsPath = 'plugins/:plugin';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
-	}
-
-	if ( site &&
-		site.jetpack &&
-		context.path.indexOf( '/business' ) >= 0 &&
-		businessPlugins.indexOf( pluginSlug ) >= 0
-	) {
-		return page.redirect( '/plugins/' + pluginSlug + '/' + site.slug );
-	}
-
-	if (
-		( site && ! site.jetpack ) &&
-		businessPlugins.indexOf( pluginSlug ) >= 0 &&
-		context.path.indexOf( '/business' ) < 0
-	) {
-		return page.redirect( '/plugins/' + pluginSlug + '/business' + ( site ? '/' + site.slug : '' ) );
-	}
-
-	if ( ! site &&
-		context.path.indexOf( '/business' ) >= 0 &&
-		-1 === businessPlugins.indexOf( pluginSlug )
-	) {
-		return page.redirect( '/plugins/' + pluginSlug );
 	}
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Plugin Details' );
@@ -80,7 +55,6 @@ function renderSinglePlugin( context, siteUrl, isWpcomPlugin ) {
 			sites: sites,
 			pluginSlug: pluginSlug,
 			siteUrl: siteUrl,
-			isWpcomPlugin: isWpcomPlugin,
 			onPluginRefresh: title => titleActions.setTitle( title )
 		} ),
 		document.getElementById( 'primary' ),
@@ -182,8 +156,7 @@ controller = {
 	},
 
 	plugin: function( context ) {
-		var isWpcomPlugin = 'business' === context.params.business_plugin,
-			siteUrl = route.getSiteFragment( context.path );
+		var siteUrl = route.getSiteFragment( context.path );
 
 		if ( siteUrl && context.params.plugin && context.params.plugin === siteUrl.toString() ) {
 			controller.plugins( 'all', context );
@@ -191,7 +164,7 @@ controller = {
 		}
 
 		notices.clearNotices( 'notices' );
-		renderSinglePlugin( context, siteUrl, isWpcomPlugin );
+		renderSinglePlugin( context, siteUrl );
 	},
 
 	browsePlugins: function( context ) {
@@ -220,6 +193,7 @@ controller = {
 		}
 		next();
 	},
+
 	setupPlugins: function() {
 		renderProvisionPlugins();
 	}

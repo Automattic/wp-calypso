@@ -688,19 +688,6 @@ SitesList.prototype.canManageSelectedOrAll = function() {
 		}
 	} );
 };
-/**
- * Whether the user has any jetpack site that the user can manage
- * @return bool
- */
-SitesList.prototype.canManageAnyJetpack = function() {
-	return this.getJetpack().some( function( site ) {
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			return true;
-		} else {
-			return false;
-		}
-	} );
-};
 
 SitesList.prototype.onUpdatedPlugin = function( site ) {
 	if ( ! site.jetpack ) {

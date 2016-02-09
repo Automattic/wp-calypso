@@ -7,8 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var PluginSiteJetpack = require( 'my-sites/plugins/plugin-site-jetpack' ),
-	PluginSiteNetwork = require( 'my-sites/plugins/plugin-site-network' ),
-	PluginSiteBusiness = require( 'my-sites/plugins/plugin-site-business' );
+	PluginSiteNetwork = require( 'my-sites/plugins/plugin-site-network' );
 
 module.exports = React.createClass( {
 
@@ -16,11 +15,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		if ( ! this.props.site ) {
-			return;
-		}
-
-		if ( ! this.props.wporg ) {
-			return <PluginSiteBusiness { ...this.props } />;
+			return null;
 		}
 
 		if ( this.props.site.jetpack && this.props.secondarySites && this.props.secondarySites.length ) {

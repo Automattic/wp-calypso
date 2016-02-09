@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import property from 'lodash/property';
-import debounce from 'lodash/debounce';
+import debounce from 'lodash/function/debounce';
 import config from 'config';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
@@ -51,8 +50,7 @@ export default React.createClass( {
 		bulkManagement: React.PropTypes.bool,
 		sites: React.PropTypes.object.isRequired,
 		plugins: React.PropTypes.array.isRequired,
-		selected: React.PropTypes.array.isRequired,
-		isWpCom: React.PropTypes.bool
+		selected: React.PropTypes.array.isRequired
 	},
 
 	getDefaultProps() {
@@ -106,7 +104,7 @@ export default React.createClass( {
 	},
 
 	canAddNewPlugins() {
-		return config.isEnabled( 'manage/plugins/browser' ) && ! this.props.isWpCom;
+		return config.isEnabled( 'manage/plugins/browser' );
 	},
 
 	canUpdatePlugins() {
@@ -120,18 +118,16 @@ export default React.createClass( {
 	},
 
 	renderCurrentActionButtons() {
-		const { isWpCom } = this.props;
 		let buttons = [];
 		let rightSideButtons = [];
 		let leftSideButtons = [];
 		let autoupdateButtons = [];
 		let activateButtons = [];
 
-		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
 		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
+		const needsRemoveButton = this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
 		if ( ! this.props.isBulkManagementActive ) {
-			if ( ! isWpCom && 0 < this.props.pluginUpdateCount ) {
+			if ( 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
@@ -147,7 +143,7 @@ export default React.createClass( {
 					</Button>
 				</ButtonGroup>
 			);
-			if ( ! isWpCom && this.canAddNewPlugins() ) {
+			if ( this.canAddNewPlugins() ) {
 				const selectedSite = this.props.sites.getSelectedSite();
 				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
@@ -174,18 +170,16 @@ export default React.createClass( {
 				);
 			}
 		} else {
-			if ( ! isWpCom ) {
-				const updateButton = (
-					<Button
-						key="plugin-list-header__buttons-update"
-						disabled={ ! this.props.haveUpdatesSelected }
-						compact primary
-						onClick={ this.props.updateSelected }>
-						{ this.translate( 'Update' ) }
-					</Button>
-				);
-				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
-			}
+			const updateButton = (
+				<Button
+					key="plugin-list-header__buttons-update"
+					disabled={ ! this.props.haveUpdatesSelected }
+					compact primary
+					onClick={ this.props.updateSelected }>
+					{ this.translate( 'Update' ) }
+				</Button>
+			);
+			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
 
 			activateButtons.push(
 				<Button key="plugin-list-header__buttons-activate" disabled={ ! this.props.haveInactiveSelected } compact onClick={ this.props.activateSelected }>
@@ -212,35 +206,33 @@ export default React.createClass( {
 			activateButtons.push( deactivateButton )
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
-			if ( ! isWpCom ) {
-				autoupdateButtons.push(
-					<Button key="plugin-list-header__buttons-autoupdate-on"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
-						compact
-						onClick={ this.props.setAutoupdateSelected }>
-						{ this.translate( 'Autoupdate' ) }
-					</Button>
-				);
-				autoupdateButtons.push(
-					<Button key="plugin-list-header__buttons-autoupdate-off"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
-						compact
-						onClick={ this.props.unsetAutoupdateSelected }>
-						{ this.translate( 'Disable Autoupdates' ) }
-					</Button>
-				);
+			autoupdateButtons.push(
+				<Button key="plugin-list-header__buttons-autoupdate-on"
+					disabled={ ! this.canUpdatePlugins() }
+					compact
+					onClick={ this.props.setAutoupdateSelected }>
+					{ this.translate( 'Autoupdate' ) }
+				</Button>
+			);
+			autoupdateButtons.push(
+				<Button key="plugin-list-header__buttons-autoupdate-off"
+					disabled={ ! this.canUpdatePlugins() }
+					compact
+					onClick={ this.props.unsetAutoupdateSelected }>
+					{ this.translate( 'Disable Autoupdates' ) }
+				</Button>
+			);
 
-				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ autoupdateButtons }</ButtonGroup> );
-				leftSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-remove-button">
-						<Button compact scary
-							disabled={ ! needsRemoveButton }
-							onClick={ this.props.removePluginNotice }>
-							{ this.translate( 'Remove' ) }
-						</Button>
-					</ButtonGroup>
-				);
-			}
+			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ autoupdateButtons }</ButtonGroup> );
+			leftSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-remove-button">
+					<Button compact scary
+						disabled={ ! needsRemoveButton }
+						onClick={ this.props.removePluginNotice }>
+						{ this.translate( 'Remove' ) }
+					</Button>
+				</ButtonGroup>
+			);
 
 			rightSideButtons.push(
 				<button key="plugin-list-header__buttons-close-button"
@@ -263,9 +255,8 @@ export default React.createClass( {
 		let options = [];
 		let actions = [];
 
-		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
 		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = !! this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
+		const needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
 
 		if ( this.props.isBulkManagementActive ) {
 			options.push( <DropdownItem key="plugin__actions_title" selected={ true } value="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
@@ -307,14 +298,14 @@ export default React.createClass( {
 				options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
 				options.push(
 					<DropdownItem key="plugin__actions_autoupdate"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
+						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.setAutoupdateSelected }>
 						{ this.translate( 'Autoupdate' ) }
 					</DropdownItem>
 				);
 				options.push(
 					<DropdownItem key="plugin__actions_disable_autoupdate"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
+						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.unsetAutoupdateSelected }>
 						{ this.translate( 'Disable Autoupdates' ) }
 					</DropdownItem>

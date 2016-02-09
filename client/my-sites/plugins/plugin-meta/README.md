@@ -19,7 +19,6 @@ render: function() {
 
 #### Props
 
-* `isWpcomPlugin` : (boolean) If this plugin is a .com plugin or not.
 * `notices` : (object) Object of errored, inProgress, and completed actions.
 * `plugin` : (object) A plugin object.
 * `siteURL` : (string) The URL of the selected site. Used to determine if this is a single or all sites view.

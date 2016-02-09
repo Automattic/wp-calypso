@@ -24,23 +24,22 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		let version = this.props.plugin && this.props.plugin.version ?
-			this.translate( 'Version %(pluginVersion)s', { args: { pluginVersion: this.props.plugin.version } } ) : null;
+		let version = this.props.plugin && this.props.plugin.version
+			? this.translate( 'Version %(pluginVersion)s', { args: { pluginVersion: this.props.plugin.version } } )
+			: null;
 
-		const wpVersion = this.props.plugin && this.props.plugin.version && this.props.site && this.props.site.options.software_version && this.props.site.jetpack ?
-			this.translate( 'WordPress %(WordPressVersion)s', {
+		const wpVersion = this.props.plugin && this.props.plugin.version && this.props.site && this.props.site.options.software_version && this.props.site.jetpack
+			? this.translate( 'WordPress %(WordPressVersion)s', {
 				args: { WordPressVersion: this.props.site.options.software_version }
-			} ) : null;
-
-		// In case of WordPress.com Plugins
-		version = this.props.plugin && this.props.plugin.wpcom ? this.translate( 'Updated Automatically' ) : version;
+			} )
+			: null;
 
 		const hasUpdate = this.props.plugin && this.props.plugin.update && this.props.plugin.version !== this.props.plugin.update.new_version;
 
 		// In case of the version needing an update
 		version = hasUpdate ? this.translate( '{{icon/}} Version %(pluginVersion)s', {
 			args: { pluginVersion: this.props.plugin.version },
-			components: { icon: <Gridicon icon="sync" size={ 16 } /> }
+			components: { icon: <Gridicon icon="sync" size={ 18 } /> }
 		} ) : version;
 
 		// In case of an update happening
@@ -48,7 +47,7 @@ module.exports = React.createClass( {
 
 		version = updatingToVersion ? this.translate( '{{icon/}} Updating to Version %(pluginVersion)s', {
 			args: { pluginVersion: updatingToVersion },
-			components: { icon: <Gridicon icon="sync" size={ 16 } /> }
+			components: { icon: <Gridicon icon="sync" size={ 18 } /> }
 		} ) : version;
 
 		const classes = classNames( {

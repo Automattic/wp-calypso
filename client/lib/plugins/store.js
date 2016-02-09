@@ -98,9 +98,7 @@ function update( site, slug, plugin ) {
 	if ( ! _pluginsBySite[ site.ID ][ slug ] ) {
 		_pluginsBySite[ site.ID ][ slug ] = { slug: slug };
 	}
-	plugin = assign( {}, plugin, { wpcom: ! site.jetpack } );
 	plugin = PluginUtils.normalizePluginData( plugin );
-	plugin = PluginUtils.addWpcomIcon( plugin );
 	_pluginsBySite[ site.ID ][ slug ] = assign( {}, _pluginsBySite[ site.ID ][ slug ], plugin );
 
 	debug( 'update to ', _pluginsBySite[ site.ID ][ slug ] );
@@ -207,8 +205,6 @@ PluginsStore = {
 		if ( ! plugins ) {
 			return [];
 		}
-
-		plugins = PluginUtils.duplicateHybridPlugins( plugins );
 
 		if ( plugins.filter && !! pluginFilter ) {
 			plugins = plugins.filter( _filters[ pluginFilter ] );
