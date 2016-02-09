@@ -7,14 +7,14 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	POST_EDITOR_EDIT,
-	POST_EDITOR_START,
+	EDITOR_POST_EDIT,
+	EDITOR_EDITING_START,
 	POSTS_RECEIVE
 } from 'state/action-types';
 
 function currentPostGlobalId( state = null, action ) {
 	switch ( action.type ) {
-		case POST_EDITOR_START:
+		case EDITOR_EDITING_START:
 			const { globalId, siteId, postId } = action;
 			if ( globalId ) {
 				return globalId;
@@ -46,7 +46,7 @@ function currentPostGlobalId( state = null, action ) {
 
 function posts( state = {}, action ) {
 	switch ( action.type ) {
-		case POST_EDITOR_EDIT:
+		case EDITOR_POST_EDIT:
 			const { globalId, post } = action;
 			return Object.assign( {}, state, {
 				[ globalId ]: Object.assign( {}, state[ globalId ], post )

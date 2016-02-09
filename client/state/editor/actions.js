@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import warn from 'lib/warn';
-import { POST_EDITOR_EDIT, POST_EDITOR_START } from 'state/action-types';
+import { EDITOR_POST_EDIT, EDITOR_EDITING_START } from 'state/action-types';
 import { getSitePost } from 'state/posts/selectors';
 import { getCurrentPostGlobalId, isLoadingPost } from './selectors';
 
 export function startEditing( siteId, postId ) {
-	const action = { type: POST_EDITOR_START };
+	const action = { type: EDITOR_EDITING_START };
 	if ( ! postId ) {
 		return Object.assign( action, { siteId } );
 	}
@@ -38,7 +38,7 @@ export function editPost( post, globalId ) {
 		}
 
 		dispatch( {
-			type: POST_EDITOR_EDIT,
+			type: EDITOR_POST_EDIT,
 			globalId,
 			post
 		} );
