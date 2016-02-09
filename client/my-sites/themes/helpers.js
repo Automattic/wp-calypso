@@ -1,13 +1,18 @@
 /**
  * External dependencies
  */
-var analytics = require( 'analytics' ),
-	route = require( 'lib/route' ),
-	titlecase = require( 'to-title-case' ),
-	page = require( 'page' ),
-	startsWith = require( 'lodash/string/startsWith' ),
-	assign = require( 'lodash/object/assign' ),
-	mapValues = require( 'lodash/object/mapValues' );
+import analytics from 'analytics';
+import titlecase from 'to-title-case';
+import page from 'page';
+import startsWith from 'lodash/string/startsWith';
+import assign from 'lodash/object/assign';
+import mapValues from 'lodash/object/mapValues';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+import	route from 'lib/route';
 
 var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
@@ -43,15 +48,17 @@ var ThemesHelpers = {
 	},
 
 	getDetailsUrl: function( theme, site ) {
+		const baseUrl = config.isEnabled( 'manage/themes/details' ) ? '/themes/' : ThemesHelpers.oldShowcaseUrl;
+
 		if ( ! site ) {
-			return '/themes/' + theme.id;
+			return baseUrl + theme.id;
 		}
 
 		if ( site.jetpack ) {
 			return site.options.admin_url + 'themes.php?theme=' + theme.id;
 		}
 
-		return `/themes/${ theme.id }/${ site.slug }`;
+		return baseUrl + `${ theme.id }/${ site.slug }`;
 	},
 
 	getSupportUrl: function( theme, site ) {

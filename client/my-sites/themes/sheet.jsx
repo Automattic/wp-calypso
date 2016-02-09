@@ -12,13 +12,11 @@ import { connect } from 'react-redux';
 import Main from 'components/main';
 import { getThemeById } from 'state/themes/themes/selectors';
 
-console.log( getThemeById );
-
 export const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
 
 	propTypes: {
-		theme: React.PropTypes.object,
+		themeSlug: React.PropTypes.string,
 	},
 
 	render() {

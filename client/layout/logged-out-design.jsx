@@ -12,20 +12,25 @@ import { connect } from 'react-redux';
  */
 import MasterbarMinimal from 'layout/masterbar/minimal';
 import ThemesHead from 'my-sites/themes/head';
+import ThemeSheetComponent from 'my-sites/themes/sheet';
 
-const LayoutLoggedOutDesign = ( { section, hasSidebar, isFullScreen, tier = 'all' } ) => {
+const LayoutLoggedOutDesign = ( { routeName, match, section, hasSidebar, isFullScreen, tier = 'all' } ) => {
+	const primary = routeName === 'themes' ? <ThemeSheetComponent themeSlug={ match.theme_slug } /> : null;
 	const sectionClass = section ? 'is-section-' + section : '';
-	const classes = classNames( 'wp', sectionClass, {
+	const classes = classNames( 'wp layout', sectionClass, {
+		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar,
 		'full-screen': isFullScreen,
 	} );
 
 	return (
 		<div className={ classes }>
-			<ThemesHead tier={ tier } />
+			<ThemesHead tier={ tier } isSheet={ routeName === 'themes' } />
 			<MasterbarMinimal url="/" />
 			<div id="content" className="wp-content">
-				<div id="primary" className="wp-primary wp-section" />
+				<div id="primary" className="wp-primary wp-section">
+					{ primary }
+				</div>
 				<div id="secondary" className="wp-secondary" />
 			</div>
 			<div id="tertiary" className="wp-overlay fade-background" />

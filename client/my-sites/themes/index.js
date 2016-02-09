@@ -24,7 +24,7 @@ const routing = {
 	middlewares: [
 		{ value: ( context, next ) => {
 			context.store.dispatch( setSection( 'design', { hasSidebar: !! user.get(), isFullScreen: false } ) );
-			setTimeout( next, 1 );
+			next();
 		}, enableLoggedOut: true },
 		{ value: controller.navigation, enableLoggedOut: false },
 		{ value: controller.siteSelection, enableLoggedOut: false },
@@ -46,10 +46,12 @@ module.exports = function() {
 		const { routes, middlewares } = getRouting( user.get() );
 		routes.forEach( route => page( route, ...middlewares ) );
 
-		page( '/themes/:slug/:site_id?', ( context, next ) => {
-			context.store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
-			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-			next();
-		}, themesController.details );
+		if ( config.isEnabled( 'manage/themes/details' ) ) {
+			page( '/themes/:slug/:site_id?', ( context, next ) => {
+				context.store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
+				ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+				next();
+			}, themesController.details );
+		}
 	}
 };

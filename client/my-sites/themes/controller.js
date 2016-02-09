@@ -70,18 +70,26 @@ var controller = {
 
 	details: function( context ) {
 		const user = getCurrentUser( context.store.getState() );
+
 		const Head = user
 			? require( 'layout/head' )
 			: require( 'my-sites/themes/head' );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( Head, { title: 'A theme' },
-					React.createElement( ThemeSheetComponent, { themeSlug: context.params.slug } )
-				)
-			),
-			document.getElementById( 'primary' )
+		const element = (
+			<ReduxProvider store={ context.store } >
+				<Head title="Something Theme — WordPress.com" isSheet>
+					<ThemeSheetComponent themeSlug={ context.params.slug } />
+				</Head>
+			</ReduxProvider>
 		);
+
+		// FIXME: temporary hack until we have a proper isomorphic, one tree routing solution. Do NOT do this!
+		const sheetsDomElement = document.getElementsByClassName( 'themes__sheet' )[0];
+		if ( ! sheetsDomElement ) {
+			ReactDom.render( element, document.getElementById( 'primary' ) );
+		}
+
+		return element;
 	}
 
 };

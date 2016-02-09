@@ -27,7 +27,7 @@ var user = require( 'lib/user' )(),
  * the site selector list and the sidebar section items
  */
 function renderNavigation( context, allSitesPath, siteBasePath ) {
-	//context.store.dispatch( uiActions.setSection( 'sites' ) );
+	context.store.dispatch( uiActions.setSection( 'sites' ) );
 
 	// Render the My Sites navigation in #secondary
 	ReactDom.render(
