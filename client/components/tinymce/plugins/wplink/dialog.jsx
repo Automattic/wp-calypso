@@ -13,7 +13,6 @@ import find from 'lodash/find';
 var MediaSerialization = require( 'lib/media-serialization' ),
 	MediaStore = require( 'lib/media/store' ),
 	MediaUtils = require( 'lib/media/utils' ),
-	sites = require( 'lib/sites-list' )(),
 	Dialog = require( 'components/dialog' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
@@ -23,6 +22,7 @@ var MediaSerialization = require( 'lib/media-serialization' ),
 	Gridicon = require( 'components/gridicon' );
 
 import PostSelector from 'my-sites/post-selector';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 
 /**
@@ -131,7 +131,7 @@ var LinkDialog = React.createClass( {
 
 	getInferredUrl: function() {
 		var selectedText = this.props.editor.selection.getContent(),
-			selectedNode, site, parsedImage, knownImage;
+			selectedNode, parsedImage, knownImage;
 
 		if ( REGEXP_EMAIL.test( selectedText ) ) {
 			return 'mailto:' + selectedText;
@@ -140,11 +140,10 @@ var LinkDialog = React.createClass( {
 		}
 
 		selectedNode = this.props.editor.selection.getNode();
-		site = sites.getSelectedSite();
 		if ( selectedNode && 'IMG' === selectedNode.nodeName ) {
 			parsedImage = MediaSerialization.deserialize( selectedNode );
-			if ( site && parsedImage.media.ID ) {
-				knownImage = MediaStore.get( site.ID, parsedImage.media.ID ) || parsedImage.media;
+			if ( this.props.site && parsedImage.media.ID ) {
+				knownImage = MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
 				return MediaUtils.url( knownImage, {
 					size: 'full'
 				} );
@@ -310,14 +309,16 @@ var LinkDialog = React.createClass( {
 				<FormFieldset>
 					<FormLabel>
 						<span>{ this.translate( 'Link to existing content' ) }</span>
-						<PostSelector
-							siteId={ this.props.siteId }
-							type="any"
-							status="publish"
-							orderBy="date"
-							order="DESC"
-							selected={ this.getSelectedPostId() }
-							onChange={ this.setExistingContent } />
+						{ this.props.site && (
+							<PostSelector
+								siteId={ this.props.site.ID }
+								type="any"
+								status="publish"
+								orderBy="date"
+								order="DESC"
+								selected={ this.getSelectedPostId() }
+								onChange={ this.setExistingContent } />
+						) }
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
@@ -326,8 +327,9 @@ var LinkDialog = React.createClass( {
 } );
 
 export default connect( ( state ) => {
+	const selectedSite = getSelectedSite( state );
 	return {
-		siteId: state.ui.selectedSiteId,
-		sitePosts: getSitePosts( state, state.ui.selectedSiteId )
+		site: selectedSite,
+		sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null
 	};
 } )( LinkDialog );
