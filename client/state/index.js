@@ -3,6 +3,7 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { router5Middleware, router5Reducer } from 'redux-router5';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import ui from './ui/reducer';
  * Module variables
  */
 export const reducer = combineReducers( {
+	router: router5Reducer,
 	plugins,
 	application,
 	notices,
@@ -48,16 +50,9 @@ if ( typeof window === 'object' ) {
 	];
 }
 
-let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
-
-export function createReduxStore( initialState = {} ) {
-	if (
-		typeof window === 'object' &&
-		window.app &&
-		window.app.isDebug &&
-		window.devToolsExtension
-	) {
-		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
-	}
+export function createReduxStore( initialState = {}, router ) {
+	console.log( router );
+	middleware = [ router5Middleware( router ), ...middleware ];
+	let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
 	return createStoreWithMiddleware( createStore )( reducer, initialState );
 }

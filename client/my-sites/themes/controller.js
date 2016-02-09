@@ -22,6 +22,7 @@ var SingleSiteComponent = require( 'my-sites/themes/single-site' ),
 var controller = {
 
 	themes: function( context ) {
+		context = context || {};
 		const { tier, site_id } = context.params;
 		const user = getCurrentUser( context.store.getState() );
 		const title = buildTitle(
@@ -51,8 +52,7 @@ var controller = {
 		}
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
+		return React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( Head, { title, tier: tier || 'all' },
 					React.createElement( ThemesComponent, {
 						key: site_id,
@@ -67,9 +67,7 @@ var controller = {
 						)
 					} )
 				)
-			),
-			document.getElementById( 'primary' )
-		);
+			);
 	}
 };
 
