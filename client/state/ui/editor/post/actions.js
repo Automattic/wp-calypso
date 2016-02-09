@@ -80,6 +80,11 @@ export function removeLocation() {
 	return { type: 'TODO' };
 }
 
+export function setMenuOrder( newOrder ) {
+	debug( 'setMenuOrder', newOrder );
+	return { type: 'TODO' };
+}
+
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
