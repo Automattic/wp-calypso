@@ -28,4 +28,8 @@ module.exports = function() {
 	if ( config.isEnabled( 'login' ) ) {
 		page( '/log-in/:lang?', controller.login );
 	}
+
+	if ( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) ) {
+		page( '/jetpack/connect', controller.jetpackConnect );
+	}
 };

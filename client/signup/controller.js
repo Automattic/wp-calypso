@@ -17,6 +17,7 @@ import route from 'lib/route';
 import analytics from 'analytics';
 import layoutFocus from 'lib/layout-focus';
 import SignupComponent from './main';
+import JetpackConnect from './jetpack-connect';
 import utils from './utils';
 import userModule from 'lib/user';
 import titleActions from 'lib/screen-title/actions';
@@ -141,6 +142,13 @@ export default {
 				path: context.path,
 				locale: context.params.lang
 			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	jetpackConnect( context ) {
+		ReactDom.render(
+			React.createElement( JetpackConnect, {} ),
 			document.getElementById( 'primary' )
 		);
 	}
