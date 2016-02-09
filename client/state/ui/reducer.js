@@ -65,7 +65,7 @@ export function section( state = false, action ) {
 		case SET_SECTION:
 			return ( action.section !== undefined ) ? action.section : state;
 		case SERIALIZE:
-			return false;
+			return state;
 		case DESERIALIZE:
 			return state;
 	}
@@ -77,7 +77,7 @@ export function hasSidebar( state = true, action ) {
 		case SET_SECTION:
 			return ( action.hasSidebar !== undefined ) ? action.hasSidebar : state;
 		case SERIALIZE:
-			return true;
+			return state;
 		case DESERIALIZE:
 			return state;
 	}
