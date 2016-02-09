@@ -650,15 +650,6 @@ const Account = React.createClass( {
 						</ReactCSSTransitionGroup>
 					</form>
 				</Card>
-				<SectionHeader label={ this.translate( 'Privacy' ) } />
-				<Card>
-					<p>{ this.translate( "We use some third party tools to collect data about how users interact with our site. You can find more information about how we use these tools in our privacy policy. If you'd prefer that we not track your interactions you may opt out by using the following link: " ) }</p>
-					<p>
-						<a href="https://www.inspectlet.com/optout" target="_blank" onClick={ this.recordClickEvent( 'Inspectlet Opt-out Link' ) }>
-							{ this.getOptoutText( 'Inspectlet.com' ) }
-						</a>
-					</p>
-				</Card>
 			</Main>
 		);
 	}
