@@ -138,7 +138,7 @@ export default React.createClass( {
 			<Main>
 				<HeaderCake isCompact onClick={ this.goBack }/>
 				<Card>
-					<form onSubmit={ this.submitForm } onChange={ this.validate }>
+					<form onSubmit={ this.submitForm } >
 						<FormFieldset>
 							<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
