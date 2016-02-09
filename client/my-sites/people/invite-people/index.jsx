@@ -57,10 +57,7 @@ export default React.createClass( {
 			message: '',
 			response: false,
 			sendingInvites: false,
-			validation: {
-				errors: [],
-				success: []
-			}
+			getTokenStatus: () => {}
 		} );
 	},
 
@@ -75,10 +72,23 @@ export default React.createClass( {
 	},
 
 	refreshValidation() {
-		this.setState( { validation: {
-			errors: InvitesCreateValidationStore.getErrors( this.state.siteId ) || [],
-			success: InvitesCreateValidationStore.getSuccess( this.state.siteId ) || []
-		} } );
+		const errors = InvitesCreateValidationStore.getErrors( this.state.siteId ) || [];
+		let success = InvitesCreateValidationStore.getSuccess( this.state.siteId ) || [];
+		if ( ! success.indexOf ) {
+			success = Object.keys( success ).map( key => success[ key ] );
+		}
+		this.setState( {
+			getTokenStatus: ( value ) => {
+				if ( 'string' === typeof value ) {
+					if ( errors[ value ] ) {
+						return 'is-error';
+					}
+					if ( success.indexOf( value ) > -1 ) {
+						return 'is-success';
+					}
+				}
+			}
+		} );
 	},
 
 	submitForm( event ) {
@@ -100,16 +110,6 @@ export default React.createClass( {
 
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );
-	},
-
-	getTokenStatus( value ) {
-		if ( 'string' === typeof value ) {
-			if ( this.state.validation.errors[ value ] ) {
-				return 'is-error';
-			} else if ( this.state.validation.success.indexOf( value ) > -1 || this.state.validation.success[ value ] ) {
-				return 'is-success';
-			}
-		}
 	},
 
 	renderRoleExplanation() {
@@ -143,7 +143,7 @@ export default React.createClass( {
 							<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
 								isBorderless
-								tokenStatus={ this.getTokenStatus }
+								tokenStatus={ this.state.getTokenStatus }
 								value={ this.state.usernamesOrEmails }
 								onChange={ this.onTokensChange } />
 							<FormSettingExplanation>
