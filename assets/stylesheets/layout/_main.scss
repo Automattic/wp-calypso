@@ -291,10 +291,10 @@ $sidebar-width-min: 228px;
 @include breakpoint( "<660px" ) {
 	.wp-content {
 		margin-left: 0;
-		padding: 8px;
+		padding: 0;
 
 		.has-no-sidebar & {
-			padding-left: 8px;
+			padding-left: 0;
 		}
 	}
 }
