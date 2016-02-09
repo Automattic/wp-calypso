@@ -3,7 +3,6 @@
  */
 var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
 	store = require( 'store' ),
-	Dispatcher = require( 'dispatcher' ),
 	assign = require( 'lodash/object/assign' ),
 	defer = require( 'lodash/function/defer' ),
 	difference = require( 'lodash/array/difference' ),
@@ -29,7 +28,7 @@ var SignupActions = require( './actions' ),
 	oauthToken = require( 'lib/oauth-token' ),
 	user = require( 'lib/user' )();
 
-import { actions as ActionTypes } from 'lib/oauth-store/constants';
+import * as OAuthToken from 'lib/oauth-token';
 
 /**
  * Constants
@@ -128,15 +127,7 @@ assign( SignupFlowController.prototype, {
 			dependencies = SignupDependencyStore.get();
 
 		if ( bearerToken && ! oauthToken.getToken() ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.RECEIVE_AUTH_LOGIN,
-				data: {
-					body: {
-						access_token: bearerToken
-					}
-				}
-			} );
-			// oauthToken.setToken( bearerToken );
+			OAuthToken.setToken( bearerToken );
 		}
 
 		if ( pendingSteps.length > 0 ) {
@@ -144,6 +135,7 @@ assign( SignupFlowController.prototype, {
 		}
 
 		if ( completedSteps.length === this._flow.steps.length && undefined !== this._onComplete ) {
+			debugger;
 			if ( this._assertFlowProvidedRequiredDependencies() ) {
 				// deferred to ensure that the onComplete function is called after the stores have
 				// emitted their final change events.

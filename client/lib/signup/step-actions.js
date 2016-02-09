@@ -145,6 +145,9 @@ module.exports = {
 			validate: false
 		};
 
+		console.log( 'create site' );
+		console.log( wpcom );
+
 		wpcom.undocumented().sitesNew( data, function( errors, response ) {
 			let providedDependencies, siteSlug;
 

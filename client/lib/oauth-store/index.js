@@ -69,6 +69,9 @@ const AuthStore = createReducerStore( function( state, payload ) {
 				handleLogin( action.data );
 			}
 			break;
+		case ActionTypes.RECEIVE_BEARER_TOKEN:
+			OAuthToken.setToken( action.token );
+			break;
 	}
 
 	if ( stateChanges ) {
