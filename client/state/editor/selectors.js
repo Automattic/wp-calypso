@@ -17,6 +17,6 @@ export function isLoadingPost( state, globalId ) {
 
 export function getEditedPost( state, globalId ) {
 	const post = getPost( state, globalId );
-	const edits = state.posts.items[ globalId ];
+	const edits = state.editor.posts[ globalId ];
 	return Object.assign( {}, post, edits );
 }
