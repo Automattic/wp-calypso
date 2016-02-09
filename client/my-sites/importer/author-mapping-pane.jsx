@@ -32,25 +32,18 @@ export default React.createClass( {
 		targetTitle: PropTypes.string.isRequired
 	},
 
-	getUserCount() {
-		const { totalUsers } = UsersStore.getPaginationData( {
-			siteId: this.props.siteId,
+	getFetchOptions( options = {} ) {
+		return Object.assign( {
+			number: 50,
 			order: 'ASC',
 			order_by: 'display_name',
-			number: 50
-		} );
-
-		return totalUsers;
+			siteId: this.props.siteId
+		}, options );
 	},
 
-	render: function() {
-		const { hasSingleAuthor, sourceAuthors, sourceTitle, targetTitle, onMap, onStartImport, siteId } = this.props;
-		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
-		const targetUserCount = this.getUserCount();
-		let mappingDescription;
-
-		if ( targetUserCount === 1 && sourceAuthors.length === 1 ) {
-			mappingDescription = this.translate(
+	getMappingDescription( numSourceUsers, numTargetUsers, targetTitle ) {
+		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
+			return this.translate(
 				'We found one author on your %(sourceType)s site. ' +
 				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
 				'all imported content will be assigned to you. ' +
@@ -64,8 +57,8 @@ export default React.createClass( {
 					}
 				}
 			);
-		} else if ( targetUserCount === 1 && sourceAuthors.length > 1 ) {
-			mappingDescription = this.translate(
+		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
+			return this.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
 				'all imported content will be assigned to you. ' +
@@ -79,8 +72,8 @@ export default React.createClass( {
 					}
 				}
 			);
-		} else if ( targetUserCount > 1 && sourceAuthors.length === 1 ) {
-			mappingDescription = this.translate(
+		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
+			return this.translate(
 				'We found multiple authors on {{b}}%(destinationSiteTitle)s{{/b}}. ' +
 				'Please reassign the authors of the imported items to an existing ' +
 				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
@@ -93,8 +86,8 @@ export default React.createClass( {
 					}
 				}
 			);
-		} else if ( targetUserCount > 1 && sourceAuthors.length > 1 ) {
-			mappingDescription = this.translate(
+		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
+			return this.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 				'Please reassign the authors of the imported items to an existing ' +
 				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
@@ -108,10 +101,24 @@ export default React.createClass( {
 				}
 			);
 		}
+	},
+
+	getUserCount() {
+		const fetchOptions = this.getFetchOptions( 50 );
+		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
+
+		return totalUsers;
+	},
+
+	render: function() {
+		const { hasSingleAuthor, sourceAuthors, sourceTitle, targetTitle, onMap, onStartImport, siteId } = this.props;
+		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
+		const targetUserCount = this.getUserCount();
+		const mappingDescription = this.getMappingDescription( sourceAuthors.length, targetUserCount, targetTitle );
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ { siteId: this.props.siteId, number: 1, order: 'ASC', order_by: 'display_name' } }>
+				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) }>
 					<div className="importer__mapping-description">
 						{ mappingDescription }
 					</div>
