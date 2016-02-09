@@ -40,7 +40,7 @@ const SelfHostedInstructions = React.createClass( {
 	render: function() {
 		return (
 			<div className="auth__self-hosted-instructions">
-				<a href="#" onClick={ this.toggleSelfHostedInstructions } className="auth__self-hosted-instructions-close"><Gridicon icon="cross" size={ 24 } /></a>
+				<a href="#" onClick={ this.props.onClickClose } className="auth__self-hosted-instructions-close"><Gridicon icon="cross" size={ 24 } /></a>
 
 				<h2>{ this.translate( 'Add self-hosted site' ) }</h2>
 				<p>{ this.translate( 'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com' ) }</p>
@@ -181,7 +181,7 @@ module.exports = React.createClass( {
 					<a href="#" onClick={this.toggleSelfHostedInstructions}>{ this.translate( 'Add self-hosted site' ) }</a>
 					<a href={ 'https://wordpress.com' + config( 'signup_url' ) } target="_blank">{ this.translate( 'Create account' ) }</a>
 				</div>
-				{ showingInstructions && <SelfHostedInstructions /> }
+				{ showingInstructions && <SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } /> }
 			</Main>
 		);
 	}
