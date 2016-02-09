@@ -90,6 +90,11 @@ export function setPageParent( newParentId ) {
 	return { type: 'TODO' };
 }
 
+export function setPageTemplate( newTemplate ) {
+	debug( 'setPageTemplate', newTemplate );
+	return { type: 'TODO' };
+}
+	
 
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
