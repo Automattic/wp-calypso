@@ -59,12 +59,12 @@ const FollowingEdit = React.createClass( {
 
 	getStateFromStores: function( props = this.props ) {
 		const newState = {
-			subscriptions: FeedSubscriptionStore.getSubscriptions().list,
+			subscriptions: FeedSubscriptionStore.getSubscriptions(),
 			currentPage: FeedSubscriptionStore.getCurrentPage(),
 			isLastPage: FeedSubscriptionStore.isLastPage(),
 			isLoading: FeedSubscriptionStore.isFetching(),
 			lastError: FeedSubscriptionStore.getLastError(),
-			totalSubscriptions: FeedSubscriptionStore.getTotalSubscriptions(),
+			totalSubscriptions: FeedSubscriptionStore.getSubscriptionCount(),
 			windowWidth: this.getWindowWidth()
 		};
 
@@ -133,6 +133,7 @@ const FollowingEdit = React.createClass( {
 		} ).reverse();
 	},
 
+	// @todo find another way to do this
 	handleAdd: function( newSubscription ) {
 		let newState = {
 			isAttemptingFollow: false
