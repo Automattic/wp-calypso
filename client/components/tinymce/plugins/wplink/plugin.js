@@ -12,6 +12,8 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	tinymce = require( 'tinymce/tinymce' );
 
+import { Provider as ReduxProvider } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -34,10 +36,9 @@ function wpLink( editor ) {
 
 	editor.addCommand( 'WP_Link', function() {
 		ReactDom.render(
-			React.createElement( LinkDialog, {
-				visible: true,
-				editor: editor
-			} ),
+			React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
+				React.createElement( LinkDialog, { visible: true, editor: editor } )
+			),
 			node
 		);
 	} );

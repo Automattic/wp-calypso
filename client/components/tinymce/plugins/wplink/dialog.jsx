@@ -4,6 +4,9 @@
 var React = require( 'react' ),
 	tinymce = require( 'tinymce/tinymce' );
 
+import { connect } from 'react-redux';
+import find from 'lodash/find';
+
 /**
  * Internal dependencies
  */
@@ -18,6 +21,9 @@ var MediaSerialization = require( 'lib/media-serialization' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	Gridicon = require( 'components/gridicon' );
+
+import PostSelector from 'my-sites/post-selector';
+import { getSitePosts } from 'state/posts/selectors';
 
 /**
  * Module variables
@@ -246,6 +252,24 @@ var LinkDialog = React.createClass( {
 		return buttons;
 	},
 
+	setExistingContent( post ) {
+		this.setState( {
+			linkText: post.title,
+			url: post.URL
+		} );
+	},
+
+	getSelectedPostId() {
+		if ( ! this.state.url || ! this.props.sitePosts ) {
+			return;
+		}
+
+		const selectedPost = find( this.props.sitePosts, { URL: this.state.url } );
+		if ( selectedPost ) {
+			return selectedPost.ID;
+		}
+	},
+
 	render: function() {
 		return (
 			<Dialog
@@ -283,9 +307,27 @@ var LinkDialog = React.createClass( {
 						<span>{ this.translate( 'Open link in a new window/tab' ) }</span>
 					</FormLabel>
 				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						<span>{ this.translate( 'Link to existing content' ) }</span>
+						<PostSelector
+							siteId={ this.props.siteId }
+							type="any"
+							status="publish"
+							orderBy="date"
+							order="DESC"
+							selected={ this.getSelectedPostId() }
+							onChange={ this.setExistingContent } />
+					</FormLabel>
+				</FormFieldset>
 			</Dialog>
 		);
 	}
 } );
 
-module.exports = LinkDialog;
+export default connect( ( state ) => {
+	return {
+		siteId: state.ui.selectedSiteId,
+		sitePosts: getSitePosts( state, state.ui.selectedSiteId )
+	};
+} )( LinkDialog );
