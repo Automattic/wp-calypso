@@ -1,18 +1,14 @@
 /**
  * Module dependencies
  */
-import config from 'config';
 import localforage from 'localforage';
 import Hashes from 'jshashes';
 import warn from 'lib/warn';
 import { isWhitelisted } from './whitelist-handler';
+import { defaults } from './defaults';
 
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:sync-handler' );
-
-// defaults
-const defaults = config( 'sync-handler-defaults' );
-defaults.driver = localforage[ defaults.driver ];
 
 /**
  * SyncHandler class
