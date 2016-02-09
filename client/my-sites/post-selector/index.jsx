@@ -64,6 +64,20 @@ export default React.createClass( {
 		} );
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		const isChangingQuery = [
+			'type',
+			'status',
+			'excludeTree',
+			'orderBy',
+			'order'
+		].some( ( prop ) => nextProps[ prop ] !== this.props[ prop ] );
+
+		if ( isChangingQuery ) {
+			this.setState( { page: 1 } );
+		}
+	},
+
 	incrementPage() {
 		this.setState( {
 			page: this.state.page + 1
