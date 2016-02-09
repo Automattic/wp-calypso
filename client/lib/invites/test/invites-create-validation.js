@@ -8,38 +8,44 @@ const assert = require( 'chai' ).assert;
 const Dispatcher = require( 'dispatcher' ),
 	constants = require( 'lib/invites/constants' );
 
-describe( 'List Invites Store', function() {
+describe( 'Invites Create Validation Store', () => {
 	let InvitesCreateValidationStore;
 	const siteId = 123;
+
+	const validationData = {
+		errors: {
+			'test@gmail.com': {
+				errors: {
+					'form-error-username-or-email': [ 'User already has a role on your site.' ]
+				},
+				error_data: []
+			}
+		},
+		success: [ 'testuser', 'test2@gmail.com' ]
+	}
+
 	const actions = {
 		receiveValidaton: {
 			type: constants.action.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
 			siteId: siteId,
-			data: {
-				errors: [ 'asdfasdf' ],
-				success: [
-					'test_user',
-					'test_email@example.com'
-				]
-			}
+			data: validationData
 		},
-
 	};
 
 	beforeEach( () => {
 		InvitesCreateValidationStore = require( 'lib/invites/stores/invites-create-validation' );
 	} );
 
-	describe( 'Listing invites', () => {
+	describe( 'Validating invite creation', () => {
 		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.receiveValidaton );
 		} );
 
-		it( 'Validation isn\t empty', () => {
+		it( 'Validation is not empty', () => {
 			const success = InvitesCreateValidationStore.getSuccess( siteId );
 			assert.lengthOf( success, 2 );
 			const errors = InvitesCreateValidationStore.getErrors( siteId );
-			assert.lengthOf( errors, 1 );
+			assert.equal( errors, validationData.errors );
 		} );
 	} );
 } );
