@@ -70,6 +70,16 @@ export function setDate( postDate ) {
 	return { type: 'TODO' };
 }
 
+export function setLocation( latitude, longitude ) {
+	debug( 'setLocation', latitude, longitude );
+	return { type: 'TODO' };
+}
+
+export function removeLocation() {
+	debug( 'removeLocation' );
+	return { type: 'TODO' };
+}
+
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
