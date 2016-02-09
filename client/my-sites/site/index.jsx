@@ -72,7 +72,7 @@ module.exports = React.createClass( {
 	},
 
 	starSite: function() {
-		const site = sites.getSelectedSite();
+		const site = this.props.site;
 		sites.toggleStarred( site.ID );
 	},
 
@@ -155,7 +155,8 @@ module.exports = React.createClass( {
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
 			'is-selected': this.props.isSelected,
-			'is-toggled': this.state.showMoreActions
+			'is-toggled': this.state.showMoreActions,
+			'has-edit-capabilities': userCan( 'manage_options', site )
 		} );
 
 		return (

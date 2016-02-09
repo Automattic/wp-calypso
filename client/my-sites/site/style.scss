@@ -176,12 +176,15 @@
 	.site__toggle-more-options .gridicon {
 		transform: rotate( 90deg );
 	}
+	.site-indicator {
+		display: none;
+	}
+}
+
+.site.is-toggled.has-edit-capabilities {
 	.site-icon {
 		border: 1px dashed $gray-dark;
 		opacity: 0.8;
-	}
-	.site-indicator {
-		display: none;
 	}
 }
 

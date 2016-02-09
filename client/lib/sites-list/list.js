@@ -419,9 +419,7 @@ SitesList.prototype.getStarred = function() {
 		return false;
 	}
 
-	return this.get().filter( function( site ) {
-		return this.starred.indexOf( site.ID ) > -1;
-	}, this );
+	return this.get().filter( this.isStarred, this );
 };
 
 /**

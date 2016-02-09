@@ -26,7 +26,6 @@
 	overflow: initial;
 	line-height: 28px;
 
-
 	&:focus {
 		box-shadow: none;
 	}
@@ -91,6 +90,7 @@
 		right: 0;
 		bottom: 0;
 	display: flex;
+	justify-content: space-between;
 
 	.is-warning &,
 	.is-update & {
@@ -98,13 +98,6 @@
 	}
 	.is-error & {
 		background: $alert-red;
-	}
-	&::before {
-		content: '';
-		display: inline-block;
-		height: 100%;
-		margin-right: -0.25em;
-		vertical-align: middle;
 	}
 }
 .site-indicator__action {
