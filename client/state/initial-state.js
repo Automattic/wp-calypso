@@ -73,7 +73,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 			.then( reduxStoreReady );
 	} else {
 		debug( 'persist-redux is not enabled, building state from scratch' );
-		reduxStoreReady( createReduxStore( getInitialServerState() ) );
+		reduxStoreReady( loadInitialState( {} ) );
 	}
 }
 
