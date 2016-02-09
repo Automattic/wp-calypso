@@ -31,13 +31,18 @@ var abtest = require( 'lib/abtest' ).abtest,
 	PollerPool = require( 'lib/data-poller' ),
 	CartData = require( 'components/data/cart' ),
 	KeyboardShortcutsMenu,
-	Layout;
+	Layout,
+	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
 import { isSupportUser } from 'state/support/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
+}
+
+if ( config.isEnabled( 'support-user' ) ) {
+	SupportUser = require( 'support/support-user' );
 }
 
 Layout = React.createClass( {
@@ -163,6 +168,7 @@ Layout = React.createClass( {
 			<div className={ sectionClass }>
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
+				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
