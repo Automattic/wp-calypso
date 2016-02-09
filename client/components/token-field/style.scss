@@ -68,6 +68,12 @@ input[type="text"].token-field__input {
 			background: $alert-red;
 		}
 	}
+
+	&.is-validating {
+		.token-field__token-text, .token-field__remove-token {
+			background: $gray;
+		}
+	}
 }
 
 .token-field__token.is-borderless {
@@ -91,6 +97,12 @@ input[type="text"].token-field__input {
 	&.is-error {
 		.token-field__token-text {
 			color: $alert-red;
+		}
+	}
+
+	&.is-validating {
+		.token-field__token-text {
+			color: $gray;
 		}
 	}
 }
