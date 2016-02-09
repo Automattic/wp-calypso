@@ -63,8 +63,8 @@ export default React.createClass( {
 
 	onTokensChange( tokens ) {
 		this.setState( { usernamesOrEmails: tokens } );
-		const { siteId, role } = this.state;
-		createInviteValidation( siteId, tokens, role );
+		const { role } = this.state;
+		createInviteValidation( this.props.site.ID, tokens, role );
 	},
 
 	onMessageChange( event ) {
@@ -72,8 +72,8 @@ export default React.createClass( {
 	},
 
 	refreshValidation() {
-		const errors = InvitesCreateValidationStore.getErrors( this.state.siteId ) || [];
-		let success = InvitesCreateValidationStore.getSuccess( this.state.siteId ) || [];
+		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID ) || [];
+		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID ) || [];
 		if ( ! success.indexOf ) {
 			success = Object.keys( success ).map( key => success[ key ] );
 		}
