@@ -140,7 +140,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, callback 
 	} );
 }
 
-export function createInviteValidation( siteId, usernamesOrEmails, role, callback ) {
+export function createInviteValidation( siteId, usernamesOrEmails, role ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CREATE_INVITE_VALIDATION,
 		siteId, usernamesOrEmails, role
@@ -159,6 +159,5 @@ export function createInviteValidation( siteId, usernamesOrEmails, role, callbac
 		} else {
 			analytics.tracks.recordEvent( 'calypso_invite_create_validation_success' );
 		}
-		callback( error, data );
 	} );
 }

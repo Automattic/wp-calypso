@@ -17,7 +17,7 @@ const reducer = ( state = initialState, payload ) => {
 	const { action } = payload;
 	switch ( action.type ) {
 		case ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS:
-			return state.setIn( [ 'success', action.siteId, action.usernamesOrEmails ], action.data.success ).setIn( [ 'errors', action.siteId, action.usernamesOrEmails ], action.data.errors );
+			return state.setIn( [ 'success', action.siteId ], action.data.success ).setIn( [ 'errors', action.siteId ], action.data.errors );
 	}
 	return state;
 }

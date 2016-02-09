@@ -22,6 +22,7 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
+import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 
 /**
  * Module variables
@@ -32,6 +33,14 @@ export default React.createClass( {
 	displayName: 'InvitePeople',
 
 	mixins: [ LinkedStateMixin ],
+
+	componentDidMount() {
+		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
+	},
+
+	componentWillUnmount() {
+		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
+	},
 
 	componentWillReceiveProps() {
 		this.setState( this.resetState() );
@@ -47,18 +56,29 @@ export default React.createClass( {
 			role: 'follower',
 			message: '',
 			response: false,
-			sendingInvites: false
+			sendingInvites: false,
+			validation: {
+				errors: [],
+				success: []
+			}
 		} );
 	},
 
 	onTokensChange( tokens ) {
 		this.setState( { usernamesOrEmails: tokens } );
-		let { siteId, role } = this.state;
-		createInviteValidation( siteId, tokens, role, ( error, data ) => { console.log( error, data ) } );
+		const { siteId, role } = this.state;
+		createInviteValidation( siteId, tokens, role );
 	},
 
 	onMessageChange( event ) {
 		this.setState( { message: event.target.value } );
+	},
+
+	refreshValidation() {
+		this.setState( { validation: {
+			errors: InvitesCreateValidationStore.getErrors( this.state.siteId ) || [],
+			success: InvitesCreateValidationStore.getSuccess( this.state.siteId ) || []
+		} } );
 	},
 
 	submitForm( event ) {
@@ -83,16 +103,13 @@ export default React.createClass( {
 	},
 
 	getTokenStatus( value ) {
-		let status;
 		if ( 'string' === typeof value ) {
-			if ( -1 < value.indexOf( 'error' ) ) {
-				status = 'is-error';
-			} else if ( -1 < value.indexOf( 'success' ) ) {
-				status = 'is-success';
+			if ( this.state.validation.errors[ value ] ) {
+				return 'is-error';
+			} else if ( this.state.validation.success.indexOf( value ) > -1 || this.state.validation.success[ value ] ) {
+				return 'is-success';
 			}
 		}
-
-		return status;
 	},
 
 	renderRoleExplanation() {

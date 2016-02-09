@@ -6,7 +6,7 @@ import { reducer, initialState } from 'lib/invites/reducers/invites-create-valid
 
 const InvitesCreateValidationStore = createReducerStore( reducer, initialState );
 
-InvitesCreateValidationStore.getSuccess = ( siteId, usernamesOrEmails ) => InvitesCreateValidationStore.get().getIn( [ 'success', siteId, usernamesOrEmails ] );
-InvitesCreateValidationStore.getErrors = ( siteId, usernamesOrEmails ) => InvitesCreateValidationStore.get().getIn( [ 'errors', siteId, usernamesOrEmails ] );
+InvitesCreateValidationStore.getSuccess = ( siteId ) => InvitesCreateValidationStore.get().getIn( [ 'success', siteId ] );
+InvitesCreateValidationStore.getErrors = ( siteId ) => InvitesCreateValidationStore.get().getIn( [ 'errors', siteId ] );
 
 export default InvitesCreateValidationStore;
