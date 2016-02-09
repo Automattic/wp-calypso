@@ -16,9 +16,21 @@ export default React.createClass( {
 	propTypes: {
 		startExport: PropTypes.func.isRequired,
 		setPostType: PropTypes.func.isRequired,
+		advancedSettingsFetch: PropTypes.func.isRequired,
 
 		shouldShowProgress: PropTypes.bool.isRequired,
-		postType: PropTypes.string
+		postType: PropTypes.string,
+		siteId: PropTypes.number
+	},
+
+	componentWillMount() {
+		this.props.advancedSettingsFetch( this.props.siteId );
+	},
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.siteId !== this.props.siteId ) {
+			this.props.advancedSettingsFetch( newProps.siteId );
+		}
 	},
 
 	render: function() {

@@ -2,12 +2,15 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import OptionFieldset from 'my-sites/exporter/option-fieldset';
 import SpinnerButton from './spinner-button';
+
+import { advancedSettings } from 'state/site-settings/exporter/selectors';
 
 /**
  * Displays additional options for customising an export
@@ -16,7 +19,7 @@ import SpinnerButton from './spinner-button';
  * exported. Posts and Pages can also be filtered by Authors, Statuses,
  * and Date.
  */
-export default React.createClass( {
+const AdvancedSettings = React.createClass( {
 	displayName: 'AdvancedSettings',
 
 	propTypes: {
@@ -56,7 +59,8 @@ export default React.createClass( {
 			legend: legends[ key ],
 			isEnabled: this.props.postType === key,
 			menus: menus[ key ],
-			onSelect: () => this.props.onSelectPostType( key )
+			onSelect: () => this.props.onSelectPostType( key ),
+			shouldShowPlaceholders: this.props.shouldShowPlaceholders
 		} );
 
 		return (
@@ -81,7 +85,7 @@ export default React.createClass( {
 				</div>
 				<SpinnerButton
 					className="exporter__export-button"
-					disabled={ !this.props.postType }
+					disabled={ ! this.props.postType }
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ true }
 					onClick={ this.props.onClickExport }
@@ -91,3 +95,13 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapStateToProps = ( state ) => {
+	const siteId = state.ui.selectedSiteId;
+	return {
+		siteId: siteId,
+		shouldShowPlaceholders: ! advancedSettings( state, siteId )
+	};
+};
+
+export default connect( mapStateToProps )( AdvancedSettings );

@@ -12,11 +12,15 @@ import {
 	shouldShowProgress,
 	getSelectedPostType,
 } from 'state/site-settings/exporter/selectors';
-import { setPostType, startExport } from 'state/site-settings/exporter/actions';
+import {
+	setPostType,
+	startExport,
+	advancedSettingsFetch
+} from 'state/site-settings/exporter/actions';
 
-function mapStateToProps( state, ownProps ) {
+function mapStateToProps( state ) {
 	return {
-		site: ownProps.site,
+		siteId: state.ui.selectedSiteId,
 		postType: getSelectedPostType( state ),
 		shouldShowProgress: shouldShowProgress( state )
 	};
@@ -25,7 +29,8 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return {
 		setPostType: compose( dispatch, setPostType ),
-		startExport: () => startExport()( dispatch )
+		startExport: () => startExport()( dispatch ),
+		advancedSettingsFetch: compose( dispatch, advancedSettingsFetch )
 	};
 }
 

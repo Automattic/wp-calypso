@@ -7,6 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	EXPORT_ADVANCED_SETTINGS_FAIL,
+	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	DESERIALIZE,
 	SERIALIZE
@@ -14,7 +16,8 @@ import {
 import {
 	selectedPostType,
 	exportingState,
-	advancedSettings
+	advancedSettings,
+	fetchingAdvancedSettings
 } from '../reducers';
 import {
 	SAMPLE_ADVANCED_SETTINGS,
@@ -44,6 +47,57 @@ describe( 'reducer', () => {
 		it( 'ignores persisted state since server side checking is not implemented yet', () => {
 			const state = exportingState( States.EXPORTING, { type: DESERIALIZE } );
 			expect( state ).to.eql( States.READY );
+		} );
+	} );
+
+	describe( '#fetchingAdvancedSettings()', () => {
+		it( 'should not persist state', () => {
+			const state = fetchingAdvancedSettings( { 100658273: true }, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = fetchingAdvancedSettings( { 100658273: true }, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should index fetching status by site ID', () => {
+			const state = fetchingAdvancedSettings( null, {
+				type: EXPORT_ADVANCED_SETTINGS_FETCH,
+				siteId: 100658273
+			} );
+			expect( state ).to.eql( { 100658273: true } );
+		} );
+
+		it( 'should reset fetching status after receive', () => {
+			const state = fetchingAdvancedSettings( null, {
+				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
+				siteId: 100658273,
+				advancedSettings: {}
+			} );
+			expect( state ).to.eql( { 100658273: false } );
+		} );
+
+		it( 'should reset fetching status after fail', () => {
+			const state = fetchingAdvancedSettings( null, {
+				type: EXPORT_ADVANCED_SETTINGS_FAIL,
+				siteId: 100658273,
+				advancedSettings: {}
+			} );
+			expect( state ).to.eql( { 100658273: false } );
+		} );
+
+		it( 'should not replace fetching status with other site', () => {
+			const state = fetchingAdvancedSettings( {
+				100658273: true
+			}, {
+				type: EXPORT_ADVANCED_SETTINGS_FETCH,
+				siteId: 12345
+			} );
+			expect( state ).to.eql( {
+				100658273: true,
+				12345: true
+			} );
 		} );
 	} );
 

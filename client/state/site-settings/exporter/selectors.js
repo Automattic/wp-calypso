@@ -17,3 +17,4 @@ export const shouldShowProgress = ( state ) => {
 
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
 export const getExportingState = ( state ) => state.siteSettings.exporter.exportingState;
+export const advancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
