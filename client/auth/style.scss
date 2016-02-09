@@ -163,3 +163,93 @@
 	margin: 0 16px;
 	padding: 10px 0;
 }
+
+.auth__links a:hover,
+.auth__links a:focus {
+	color: $gray-light;
+}
+
+.auth__self-hosted-instructions {
+	color: #fff;
+	background: $blue-dark;
+	border-radius: 8px;
+	padding: 40px;
+	position: absolute;
+	z-index: 4;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+	min-width: 320px;
+	max-width: 60%;
+	min-height: 60%;
+	max-height: 96%;
+	text-align: left;
+	counter-reset: item;
+
+	@include breakpoint( "<480px" ) {
+		left: 0;
+		top: -8px;
+		right: 0;
+		bottom: -8px;
+		min-width: 0;
+		min-height: 0;
+		max-width: none;
+		max-height: none;
+		overflow: auto;
+		transform: translate( 0, 0 );
+		border-radius: 0;
+	}
+
+	ol {
+		list-style: none;
+		position: relative;
+	}
+
+	ol li {
+		counter-increment: item;
+		margin-bottom: 1.5em;
+	}
+
+	ol li:before {
+		margin-right: 2em;
+		content: counter(item);
+		background: $white;
+		border-radius: 100%;
+		color: $blue-dark;
+		width: 24px;
+		height: 24px;
+		text-align: center;
+		display: inline-block;
+		position: absolute;
+		left: -3em;
+		font-weight: bold;
+	}
+
+	h2 {
+		font-weight: bold;
+		margin-bottom: 1.5em;
+	}
+
+	a {
+		color: $blue-light;
+		text-decoration: underline;
+	}
+
+	.auth__self-hosted-instructions-close {
+		display: block;
+		width: 24px;
+		height: 24px;
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		text-decoration: none;
+		color: $white;
+	}
+
+	.auth__self-hosted-instructions-close:hover {
+		color: $gray-light;
+	}
+
+}
+
+
