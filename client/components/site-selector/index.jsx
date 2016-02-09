@@ -119,7 +119,7 @@ export default React.createClass( {
 	},
 
 	shouldShowGroups() {
-		return this.props.groups && user.get().visible_site_count > 14;
+		return this.props.groups;
 	},
 
 	renderSites() {
@@ -132,7 +132,9 @@ export default React.createClass( {
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
 		} else {
-			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecentNorStarred() : this.props.sites.getVisible();
+			sites = this.shouldShowGroups()
+				? this.props.sites.getVisibleAndNotRecentNorStarred()
+				: this.props.sites.getVisible();
 		}
 
 		if ( this.props.filter ) {

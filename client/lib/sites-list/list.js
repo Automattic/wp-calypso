@@ -435,7 +435,7 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 		this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 	}
 
-	if ( ! siteID || ! this.initialized ) {
+	if ( ! siteID || ! this.initialized || user.get().visible_site_count < 12 ) {
 		return;
 	}
 
