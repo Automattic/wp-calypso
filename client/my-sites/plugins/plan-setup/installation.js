@@ -92,9 +92,39 @@ InstallationFlow.prototype.install = function( slug, next ) {
 	installer.then( ( response ) => {
 		if ( 'undefined' !== typeof response.error ) {
 			// @todo Handle failed installs
+			console.warn( response.error );
+			return;
 		}
-		// @todo Registration keys will be set here.
-		next();
+		this._pushStep( { name: 'configure-plugin', plugin: slug } );
+		// Configure the plugin (process depends on which plugin)
+		configureOption( site, plugin, next );
+	} );
+}
+
+// Configure the relevant option for each plugin
+function configureOption( site, plugin, callback ) {
+	let option = false;
+	let key = site.options[ plugin.slug ];
+	switch ( plugin.slug ) {
+		case 'vaultpress':
+			option = 'vaultpress_auto_register';
+			break;
+		case 'akismet':
+			option = 'wordpress_api_key';
+			break;
+		case 'polldaddy':
+			option = 'polldaddy_api_key';
+			break;
+	}
+	if ( ! option ) {
+		callback();
+		return;
+	}
+	site.setOption( { option_name: option, option_value: key }, ( error ) => {
+		if ( error ) {
+			console.warn( error );
+		}
+		callback();
 	} );
 }
 
