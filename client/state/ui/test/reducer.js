@@ -78,38 +78,38 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#section()', () => {
-		it( 'should not persist data because this is not implemented', () => {
+		it( 'should persist data', () => {
 			const state = section( 'hello', {
 				type: SERIALIZE
 			} );
 
-			expect( state ).to.eql( false );
+			expect( state ).to.eql( 'hello' );
 		} );
 
-		it( 'should not load persisted state because this is not implemented', () => {
+		it( 'should load persisted state', () => {
 			const state = section( 'hello', {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.eql( false );
+			expect( state ).to.eql( 'hello' );
 		} );
 	} );
 
 	describe( '#hasSidebar()', () => {
-		it( 'should not persist data because this is not implemented', () => {
+		it( 'should persist data', () => {
 			const state = hasSidebar( false, {
 				type: SERIALIZE
 			} );
 
-			expect( state ).to.eql( true );
+			expect( state ).to.eql( false );
 		} );
 
-		it( 'should not load persisted state because this is not implemented', () => {
+		it( 'should load persisted state', () => {
 			const state = hasSidebar( false, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.eql( true );
+			expect( state ).to.eql( false );
 		} );
 	} );
 
