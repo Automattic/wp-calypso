@@ -20,5 +20,5 @@ translate( 'comment must be a string literal.',
 translate( 'options containing a comment must be an object literal.',
 	argsWithComment );
 translate( 'options containing a context must be an object literal.', argsWithContext );
-translate( 'string literal keys are ok', { 'context': contextVariable } );
-translate( 'string literal keys are ok', { 'comment': commentVariable } );
+translate( 'string literal keys are ok', { 'context': contextVariable } );  // eslint-disable-line quote-props
+translate( 'string literal keys are ok', { 'comment': commentVariable } );  // eslint-disable-line quote-props

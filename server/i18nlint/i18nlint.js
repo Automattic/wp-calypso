@@ -343,7 +343,7 @@ function auditASTNodeForVariablesInTranslateArguments( node, properties, warning
 		if ( isNotAcceptableTranslateArgument( node.arguments[ i ] ) ) {
 			warnings.push( {
 				string: "We can't pass variables or functions to translate() (only string literals).\n" +
-					"    See https://wpcalypso.wordpress.com/devdocs/client/lib/mixins/i18n#strings-only",
+					'    See https://wpcalypso.wordpress.com/devdocs/client/lib/mixins/i18n#strings-only',
 				original: originalString,
 				location: node.arguments[ i ].loc.start
 			} );
@@ -361,7 +361,7 @@ function auditASTNodeForVariablesInTranslateArguments( node, properties, warning
 				warnings.push( {
 					string: "'" + keyName( releventProperties[ i ] ) + "' " +
 						"option in translate() can't be a variable or function (it must be a string literal).\n" +
-						"    See https://wpcalypso.wordpress.com/devdocs/client/lib/mixins/i18n#strings-only",
+						'    See https://wpcalypso.wordpress.com/devdocs/client/lib/mixins/i18n#strings-only',
 					original: originalString,
 					location: releventProperties[ i ].value.loc.start
 				} );
