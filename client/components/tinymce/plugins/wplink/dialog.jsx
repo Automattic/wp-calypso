@@ -1,26 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' );
-
+import React from 'react';
+import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
 import find from 'lodash/find';
 
 /**
  * Internal dependencies
  */
-var MediaSerialization = require( 'lib/media-serialization' ),
-	MediaStore = require( 'lib/media/store' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	Dialog = require( 'components/dialog' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	Gridicon = require( 'components/gridicon' );
-
+import * as MediaSerialization from 'lib/media-serialization';
+import MediaStore from 'lib/media/store';
+import MediaUtils from 'lib/media/utils';
+import Dialog from 'components/dialog';
+import FormTextInput from 'components/forms/form-text-input';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import Gridicon from 'components/gridicon';
 import PostSelector from 'my-sites/post-selector';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
