@@ -9,6 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Button from 'components/forms/form-button';
 import AuthorMapping from './author-mapping-item';
+import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
 export default React.createClass( {
@@ -46,9 +47,25 @@ export default React.createClass( {
 		const { hasSingleAuthor, sourceAuthors, sourceTitle, targetTitle, onMap, onStartImport, siteId } = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
 		const targetUserCount = this.getUserCount();
-		console.log( targetUserCount );
-		const mappingDescription = targetUserCount === 1
-			? this.translate(
+		let mappingDescription;
+
+		if ( targetUserCount === 1 && sourceAuthors.length === 1 ) {
+			mappingDescription = this.translate(
+				'We found one author on your %(sourceType)s site. ' +
+				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
+				'all imported content will be assigned to you. ' +
+				'Click Start Import to proceed.', {
+					args: {
+						sourceType: 'WordPress',
+						destinationSiteTitle: targetTitle
+					},
+					components: {
+						b: <strong />
+					}
+				}
+			);
+		} else if ( targetUserCount === 1 && sourceAuthors.length > 1 ) {
+			mappingDescription = this.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
 				'all imported content will be assigned to you. ' +
@@ -60,8 +77,24 @@ export default React.createClass( {
 					components: {
 						b: <strong />
 					}
-			  } )
-			: this.translate(
+				}
+			);
+		} else if ( targetUserCount > 1 && sourceAuthors.length === 1 ) {
+			mappingDescription = this.translate(
+				'We found multiple authors on {{b}}%(destinationSiteTitle)s{{/b}}. ' +
+				'Please reassign the authors of the imported items to an existing ' +
+				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
+					args: {
+						sourceType: 'WordPress',
+						destinationSiteTitle: targetTitle
+					},
+					components: {
+						b: <strong />
+					}
+				}
+			);
+		} else if ( targetUserCount > 1 && sourceAuthors.length > 1 ) {
+			mappingDescription = this.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 				'Please reassign the authors of the imported items to an existing ' +
 				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
@@ -72,13 +105,17 @@ export default React.createClass( {
 					components: {
 						b: <strong />
 					}
-			  } );
+				}
+			);
+		}
 
 		return (
 			<div className="importer__mapping-pane">
-				<div className="importer__mapping-description">
-					{ mappingDescription }
-				</div>
+				<SiteUsersFetcher fetchOptions={ { siteId: this.props.siteId, number: 1, order: 'ASC', order_by: 'display_name' } }>
+					<div className="importer__mapping-description">
+						{ mappingDescription }
+					</div>
+				</SiteUsersFetcher>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>
