@@ -64,6 +64,12 @@ export default React.createClass( {
 
 		this.setState( { sendingInvites: true } );
 		sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, ( error, data ) => {
+			if ( error ) {
+				debug( 'Send invite error:' + JSON.stringify( error ) );
+			} else {
+				debug( 'Send invites response: ' + JSON.stringify( data ) );
+			}
+
 			this.setState( {
 				sendingInvites: false,
 				response: error ? error : data
@@ -97,19 +103,6 @@ export default React.createClass( {
 			<a target="_blank" href="http://en.support.wordpress.com/user-roles/">
 				{ this.translate( 'Learn more about roles' ) }
 			</a>
-		);
-	},
-
-	renderResponse() {
-		return (
-			<Card>
-				<label>Response:</label><br />
-				<code>
-					<pre>
-						{ JSON.stringify( this.state.response ) }
-					</pre>
-				</code>
-			</Card>
 		);
 	},
 
@@ -173,7 +166,6 @@ export default React.createClass( {
 						</FormButton>
 					</form>
 				</Card>
-				{ this.state.response && this.renderResponse() }
 			</Main>
 		);
 	}
