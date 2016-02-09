@@ -85,6 +85,12 @@ export function setMenuOrder( newOrder ) {
 	return { type: 'TODO' };
 }
 
+export function setPageParent( newParentId ) {
+	debug( 'setPageParent', newParentId );
+	return { type: 'TODO' };
+}
+
+
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
