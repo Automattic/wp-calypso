@@ -81,6 +81,18 @@ input[type="text"].token-field__input {
 		color: $gray;
 		padding: 0 2px;
 	}
+
+	&.is-success {
+		.token-field__token-text {
+			color: $alert-green;
+		}
+	}
+
+	&.is-error {
+		.token-field__token-text {
+			color: $alert-red;
+		}
+	}
 }
 
 .token-field__token-text, .token-field__remove-token {
