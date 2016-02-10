@@ -53,7 +53,7 @@ const NoticesList = React.createClass( {
 		let noticesList = noticesRaw.map( function( notice, index ) {
 				return (
 					<Notice
-						key={ 'notice-' + index }
+						key={ 'notice-old-' + index }
 						status={ notice.status }
 						duration={ notice.duration || null }
 						text={ notice.text }
