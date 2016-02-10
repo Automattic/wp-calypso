@@ -174,7 +174,8 @@ var LinkDialog = React.createClass( {
 				newWindow: false,
 				showLinkText: true,
 				linkText: '',
-				url: ''
+				url: '',
+				isUserDefinedLinkText: false
 			};
 
 		if ( linkNode ) {
@@ -206,7 +207,10 @@ var LinkDialog = React.createClass( {
 	},
 
 	setLinkText: function( event ) {
-		this.setState( { linkText: event.target.value } );
+		this.setState( {
+			linkText: event.target.value,
+			isUserDefinedLinkText: true
+		} );
 	},
 
 	setNewWindow: function( event ) {
@@ -261,10 +265,18 @@ var LinkDialog = React.createClass( {
 	},
 
 	setExistingContent( post ) {
-		this.setState( {
-			linkText: post.title,
-			url: post.URL
-		} );
+		let state = { url: post.URL };
+		const shouldSetLinkText = (
+			! this.state.isUserDefinedLinkText &&
+			! this.props.editor.selection.getContent() &&
+			! this.getLink()
+		);
+
+		if ( shouldSetLinkText ) {
+			Object.assign( state, { linkText: post.title } );
+		}
+
+		this.setState( state );
 	},
 
 	getSelectedPostId() {
