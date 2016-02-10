@@ -11,6 +11,7 @@ function getSectionsModule( sections ) {
 			"var page = require( 'page' ),",
 			"\tlayoutFocus = require( 'lib/layout-focus' ),",
 			"\tReact = require( 'react' ),",
+			"\tReactDom = require( 'react-dom' ),",
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tclasses = require( 'component-classes' );",
 			'\n',
@@ -84,7 +85,17 @@ function splitTemplate( path, module, chunkName ) {
 		'		}',
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
-		'			require( ' + JSON.stringify( module ) + ' )();',
+		'			require( ' + JSON.stringify( module ) + ' )( page );',
+		'			page( function( context, next ) {',
+						// FIXME: Remove the DOM check once we have a proper isomorphic, one tree routing solution.
+		'				if ( context.primary && ! document.getElementById( "primary" ).hasChildNodes() ) {',
+		'					ReactDom.render(',
+		'						context.primary,',
+		'						document.getElementById( "primary" )',
+		'					);',
+		'				}',
+		'				next();',
+		'			} );',
 		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
 		'		}',
 		'		layoutFocus.next();',
@@ -126,4 +137,3 @@ module.exports = function( content ) {
 
 	return getSectionsModule( sections );
 };
-

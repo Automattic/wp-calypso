@@ -1,15 +1,10 @@
 /**
- * External dependencies
- */
-import page from 'page';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
 import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, details, renderPrimary } from './controller';
+import { singleSite, multiSite, loggedOut, details } from './controller';
 
 const user = userFactory();
 
@@ -27,16 +22,14 @@ const routes = isLoggedIn
 		'/design/type/:tier': [ loggedOut ]
 	};
 
-export default function() {
+export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		// Does iterating over Object.keys preserve order? If it doesn't, use lodash's mapValues
 		Object.keys( routes ).forEach( route => {
-			page( route, ...routes[ route ] );
+			router( route, ...routes[ route ] );
 		} )
-		page( '/design*', renderPrimary ); // Call explicitly here because client-specific
 	}
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		page( '/themes/:slug/:site_id?', details );
-		page( '/themes*', renderPrimary ); // Call explicitly here because client-specific
+		router( '/themes/:slug/:site_id?', details );
 	}
 };
