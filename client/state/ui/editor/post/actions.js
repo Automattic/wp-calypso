@@ -155,6 +155,36 @@ export function setPostPasswordProtected( newPassword ) {
 	return { type: 'TODO' };
 }
 
+export function setContent( newContent ) {
+	debug( 'setContent', newContent );
+	return { type: 'TODO' };
+}
+
+export function setRawContent( htmlContent ) {
+	debug( 'setRawContent', htmlContent );
+	return { type: 'TODO' };
+}
+
+export function stopEditing() {
+	debug( 'stopEditing' );
+	return { type: 'TODO' };
+}
+
+export function save( callback ) {
+	debug( 'save', callback );
+	return { type: 'TODO' };
+}
+
+export function autosave( callback ) {
+	debug( 'autosave', callback );
+	return { type: 'TODO' };
+}
+
+export function setPostPublished() {
+	debug( 'setPostPublished' );
+	return { type: 'TODO' };
+}
+
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
