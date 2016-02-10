@@ -894,8 +894,7 @@ MenuData.prototype.fetchDefaultMenu = function() {
  */
 MenuData.prototype.setDefaultMenu = function( pages ) {
 	var items = [],
-		site = sites.getSelectedSite(),
-		isDefaultMenuSet = !! this.data.defaultMenu;
+		site = sites.getSelectedSite();
 
 	pages.forEach( function( page ) {
 		var item = {
@@ -921,9 +920,8 @@ MenuData.prototype.setDefaultMenu = function( pages ) {
 		items: items,
 		locations: [ this.getPrimaryLocation() ]
 	} );
-	if ( ! isDefaultMenuSet ) {
-		this.data.menus.unshift( this.data.defaultMenu );
-	}
+
+	this.data.menus.unshift( this.data.defaultMenu );
 	this.emit( 'change' );
 };
 

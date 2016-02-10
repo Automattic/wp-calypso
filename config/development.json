@@ -149,18 +149,8 @@
 		"perfmon": false,
 		"mailing-lists/unsubscribe": true,
 
-		"jetpack/calypso-first-signup-flow": true,
-		"sync-handler": true
+		"jetpack/calypso-first-signup-flow": true
 	},
-
-	"sync-handler-defaults": {
-		"name": "Calypso sync-handler",
-		"version": 1.0,
-		"driver": "INDEXEDDB",
-		"storeName": "calypso_sync_handler",
-		"description": "Request-handler wrapper used to catch REST-API responses"
-	},
-
 	"muse_supported_themes": [
 		"pub/twentytwelve",
 		"pub/twentythirteen",
