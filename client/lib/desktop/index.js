@@ -86,20 +86,26 @@ var Desktop = {
 		ipc.send( 'unread-notices-count', count );
 	},
 
-	clearNotificationBar: function() {
-		// todo find a better way. seems to be react component state based
-		var bar = document.querySelector( '#wpnt-notes-panel2' );
+	getNotificationLinkElement: function() {
+		return document.querySelector( '.masterbar__item-notifications' );
+	},
 
-		if ( bar.style.display === 'block' ) {
-			this.onToggleNotifications();
+	clearNotificationBar: function() {
+		// TODO: find a better way. seems to be react component state based
+		const notificationsLink = this.getNotificationLinkElement();
+		if ( notificationsLink && notificationsLink.className && notificationsLink.className.indexOf( 'is-active' ) !== -1 ) {
+			notificationsLink.click();
 		}
 	},
 
 	onToggleNotifications: function() {
-		// todo find a better way of doing this - masterbar seems to use state to toggle this
+		// TODO: find a better way of doing this - masterbar seems to use state to toggle this
 		debug( 'Toggle notifications' );
 
-		document.querySelector( '.notifications a' ).click();
+		const notificationsLink = this.getNotificationLinkElement();
+		if ( notificationsLink ) {
+			notificationsLink.click();
+		}
 	},
 
 	onSignout: function() {
