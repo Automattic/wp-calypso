@@ -22,6 +22,7 @@ import Gridicon from 'components/gridicon';
 import PostSelector from 'my-sites/post-selector';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Module variables
@@ -273,7 +274,9 @@ var LinkDialog = React.createClass( {
 		);
 
 		if ( shouldSetLinkText ) {
-			Object.assign( state, { linkText: post.title } );
+			Object.assign( state, {
+				linkText: decodeEntities( post.title )
+			} );
 		}
 
 		this.setState( state );
