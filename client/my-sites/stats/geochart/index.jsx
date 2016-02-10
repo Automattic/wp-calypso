@@ -91,7 +91,7 @@ export default React.createClass( {
 			};
 
 			dataList.response.data.map( function( country ) {
-				if ( -1 === regionCodes.indexOf( country.region ) ) {
+				if ( regionCodes.indexOf( country.region ) === -1 ) {
 					regionCodes.push( country.region );
 				}
 			} );
