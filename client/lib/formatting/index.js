@@ -8,7 +8,7 @@ var trim = require( 'lodash/string/trim' ),
 /**
  * Internal Dependencies
  */
-var decode = require( './decode-entities' );
+var decode = require( 'he' ).decode;
 
 function decodeEntities( text ) {
 	if ( text === undefined || text === false || text === null ) {
