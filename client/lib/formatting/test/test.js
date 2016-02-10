@@ -13,7 +13,7 @@ var chai = require( 'chai' ),
 var capitalPDangit = require( '../' ).capitalPDangit,
 	parseHtml = require( '../' ).parseHtml,
 	decodeEntitiesNode = require( '../decode-entities/node' ),
-	decodeEntitiesBrowser = require( '../decode-entities/node' );
+	decodeEntitiesBrowser = require( '../decode-entities/browser' );
 
 describe( 'capitalPDangit', function() {
 	it( 'should error when input is not a string', function() {
