@@ -1,11 +1,9 @@
 /**
  * External Dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import omit from 'lodash/omit';
-import startsWith from 'lodash/startsWith';
 
 /**
  * Internal Dependencies
@@ -132,18 +130,7 @@ export function details( context, next ) {
 		isFullScreen: true
 	} ) );
 
-	// When we're logged in, we need to remove the sidebar.
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
 	context.primary = makeElement( ThemeSheetComponent, Head, context.store, props );
+	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
-}
-
-// Generic middleware -- move to client/controller.js?
-// lib/react-helpers isn't probably middleware-specific enough
-export function renderPrimary( context ) {
-	ReactDom.render(
-		context.primary,
-		document.getElementById( 'primary' )
-	);
 }
