@@ -40,10 +40,15 @@
 	}
 }
 
+.editor-drawer__label {
+	@include clear-fix;
+}
+
 .editor-drawer__label-text {
 	color: $gray;
 	display: block;
 	font-size: 11px;
+	line-height: 18px;
 	margin-bottom: 4px;
 	text-transform: uppercase;
 }
@@ -53,7 +58,7 @@
 }
 
 .editor-drawer__heading {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 4px;
 }
 
