@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-var chai = require( 'chai' );
+import chai from 'chai';
 
 /**
  * Internal Dependencies
  */
-var capitalPDangit = require( '../' ).capitalPDangit,
-	parseHtml = require( '../' ).parseHtml;
+import { capitalPDangit, parseHtml } from '../';
 
 require( 'lib/react-test-env-setup' )();
 
