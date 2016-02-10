@@ -20,7 +20,9 @@ export default React.createClass( {
 
 	render() {
 		return(
-			<MasterbarMinimal url={ this.props.url }>
+			<MasterbarMinimal
+				url={ this.props.url }
+				loggedOut={ true }>
 				<div className="masterbar__login-links">
 					<Item url={ config( 'signup_url' ) }>
 						{ this.translate( 'Sign up', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
