@@ -3,6 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	ReactDomServer = require( 'react-dom/server' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
 	React = require( 'react' ),
 	tinymce = require( 'tinymce/tinymce' ),
 	pick = require( 'lodash/object/pick' ),
@@ -71,16 +72,18 @@ function mediaButton( editor ) {
 		}
 
 		ReactDom.render(
-			<MediaLibrarySelectedData siteId={ selectedSite.ID }>
-				<EditorMediaModal
-					{ ...props }
-					onClose={ renderModal.bind( null, { visible: false } ) }
-					onInsertMedia={ ( markup ) => {
-						insertMedia( markup );
-						renderModal( { visible: false } );
-					} }
-					site={ selectedSite } />
-			</MediaLibrarySelectedData>,
+			<ReduxProvider store={ editor.getParam( 'redux_store' ) }>
+				<MediaLibrarySelectedData siteId={ selectedSite.ID }>
+					<EditorMediaModal
+						{ ...props }
+						onClose={ renderModal.bind( null, { visible: false } ) }
+						onInsertMedia={ ( markup ) => {
+							insertMedia( markup );
+							renderModal( { visible: false } );
+						} }
+						site={ selectedSite } />
+				</MediaLibrarySelectedData>
+			</ReduxProvider>,
 			nodes.modal
 		);
 	}
