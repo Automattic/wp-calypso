@@ -92,7 +92,7 @@ welcome:
 install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
-run: welcome githooks-commit install build
+run: welcome githooks install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
 node-version:
