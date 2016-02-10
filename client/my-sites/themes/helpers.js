@@ -2,6 +2,7 @@
  * External dependencies
  */
 var analytics = require( 'analytics' ),
+	route = require( 'lib/route' ),
 	titlecase = require( 'to-title-case' ),
 	page = require( 'page' ),
 	startsWith = require( 'lodash/string/startsWith' ),
@@ -125,7 +126,23 @@ var ThemesHelpers = {
 		} else {
 			page( url );
 		}
-	}
+	},
+
+	getAnalyticsData: function( path, tier, site_id ) {
+		let basePath = route.sectionify( path );
+		let analyticsPageTitle = 'Themes';
+
+		if ( site_id ) {
+			basePath = basePath + '/:site_id';
+			analyticsPageTitle += ' > Single Site';
+		}
+
+		if ( tier ) {
+			analyticsPageTitle += ` > Type > ${titlecase( tier )}`;
+		}
+
+		return { basePath, analyticsPageTitle };
+	},
 };
 
 module.exports = ThemesHelpers;
