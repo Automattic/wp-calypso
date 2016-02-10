@@ -70,7 +70,7 @@ var ThemesSingleSite = React.createClass( {
 					action: theme => dispatch( Action.activate( theme, site, 'showcase' ) ),
 					hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
 				},
-				customize: site.isCustomizable()
+				customize: site && site.isCustomizable()
 					? {
 						action: theme => dispatch( Action.customize( theme, site ) ),
 						hideForTheme: theme => ! theme.active
@@ -184,7 +184,7 @@ export default connect(
 		{
 			queryParams: ThemesListSelectors.getQueryParams( state ),
 			themesList: ThemesListSelectors.getThemesList( state ),
-			selectedSite: getSelectedSite( state )
+			selectedSite: getSelectedSite( state ) || false,
 		}
 	)
 )( ThemesSingleSite );
