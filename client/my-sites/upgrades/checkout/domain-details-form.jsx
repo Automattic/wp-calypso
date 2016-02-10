@@ -157,7 +157,7 @@ export default React.createClass( {
 				<Input label={ this.translate( 'Phone', { textOnly } ) } { ...fieldProps( 'phone' ) }/>
 
 				<CountrySelect
-					label={ this.translate( 'County', { textOnly } ) }
+					label={ this.translate( 'Country', { textOnly } ) }
 					countriesList={ countriesList }
 					{ ...fieldProps( 'country-code' ) }/>
 
