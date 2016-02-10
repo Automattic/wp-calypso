@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
 import find from 'lodash/find';
@@ -31,9 +31,28 @@ var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
 var LinkDialog = React.createClass( {
+	propTypes: {
+		visible: PropTypes.bool,
+		editor: PropTypes.object,
+		onClose: PropTypes.func,
+		site: PropTypes.object,
+		sitePosts: PropTypes.array
+	},
 
 	getInitialState: function() {
 		return this.getState();
+	},
+
+	getDefaultProps() {
+		return {
+			onClose: () => {}
+		};
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		if ( nextProps.visible && ! this.props.visible ) {
+			this.setState( this.getState() );
+		}
 	},
 
 	getLink: function() {
@@ -94,12 +113,6 @@ var LinkDialog = React.createClass( {
 		this.closeDialog();
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.visible && ! this.state.showDialog ) {
-			this.setState( this.getState() );
-		}
-	},
-
 	hasSelectedText: function( linkNode ) {
 		var editor = this.props.editor,
 			html = editor.selection.getContent(),
@@ -157,7 +170,6 @@ var LinkDialog = React.createClass( {
 			linkNode = editor.dom.getParent( selectedNode, 'a[href]' ),
 			onlyText = this.hasSelectedText( linkNode ),
 			nextState = {
-				showDialog: true,
 				isNew: true,
 				newWindow: false,
 				showLinkText: true,
@@ -186,8 +198,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	closeDialog: function() {
-		this.props.editor.focus();
-		this.setState( { showDialog: false } );
+		this.props.onClose();
 	},
 
 	setUrl: function( event ) {
@@ -270,7 +281,7 @@ var LinkDialog = React.createClass( {
 	render: function() {
 		return (
 			<Dialog
-				isVisible={ this.state.showDialog }
+				isVisible={ this.props.visible }
 				onClose={ this.closeDialog }
 				buttons={ this.getButtons() }
 				autoFocus={ false }
