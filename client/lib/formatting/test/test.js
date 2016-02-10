@@ -1,13 +1,16 @@
 /**
  * External dependencies
  */
-var chai = require( 'chai' );
+import chai from 'chai';
 
 /**
  * Internal Dependencies
  */
-var capitalPDangit = require( '../' ).capitalPDangit,
-	parseHtml = require( '../' ).parseHtml;
+import {
+	capitalPDangit,
+	parseHtml,
+	decodeEntities
+} from '../';
 
 require( 'lib/react-test-env-setup' )();
 
@@ -89,5 +92,17 @@ describe( 'parseHtml', function() {
 			var link = parseHtml( string ).querySelectorAll( 'a' );
 			chai.assert.equal( link[ 0 ].innerHTML, 'hello world' );
 		} );
+	} );
+} );
+
+describe( '#decodeEntities()', () => {
+	it( 'should decode entities', () => {
+		const decoded = decodeEntities( 'Ribs &gt; Chicken' );
+		chai.assert.equal( decoded, 'Ribs > Chicken' );
+	} );
+
+	it( 'should not alter already-decoded entities', () => {
+		const decoded = decodeEntities( 'Ribs > Chicken. Truth &amp; Liars.' );
+		chai.assert.equal( decoded, 'Ribs > Chicken. Truth & Liars.' );
 	} );
 } );
