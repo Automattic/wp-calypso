@@ -35,6 +35,27 @@ const LostPassword = React.createClass( {
 	}
 } );
 
+const SelfHostedInstructions = React.createClass( {
+
+	render: function() {
+		return (
+			<div className="auth__self-hosted-instructions">
+				<a href="#" onClick={ this.props.onClickClose } className="auth__self-hosted-instructions-close"><Gridicon icon="cross" size={ 24 } /></a>
+
+				<h2>{ this.translate( 'Add self-hosted site' ) }</h2>
+				<p>{ this.translate( 'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com' ) }</p>
+				<p>{ this.translate( 'If you\'d like to edit your self-hosted WordPress blog or site, you can do that by following these instructions:' ) }</p>
+
+				<ol>
+					<li><strong>{ this.translate( 'Install the Jetpack plugin.' ) }</strong><br /><a href="http://jetpack.me/install/">{ this.translate( 'Please follow these instructions to install Jetpack' ) }</a>.</li>
+					<li>{ this.translate( 'Connect Jetpack to WordPress.com.' ) }</li>
+					<li>{ this.translate( 'Now you can sign in to the app using the WordPress.com account Jetpack is connected to, and you can find your self-hosted site under the "My Sites" section.' ) }</li>
+				</ol>
+			</div>
+		);
+	}
+} );
+
 module.exports = React.createClass( {
 	displayName: 'Auth',
 
@@ -96,8 +117,13 @@ module.exports = React.createClass( {
 		return this.hasLoginDetails();
 	},
 
+	toggleSelfHostedInstructions: function () {
+	    var isShowing = !this.state.showInstructions;
+	    this.setState( { showInstructions: isShowing } );
+	},
+
 	render: function() {
-		const { requires2fa, inProgress, errorMessage, errorLevel } = this.state;
+		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
 		return (
 			<Main className="auth">
@@ -152,9 +178,10 @@ module.exports = React.createClass( {
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">
-					<a href="https://jetpack.me/support/site-management/" target="_blank">{ this.translate( 'Add self-hosted site' ) }</a>
+					<a href="#" onClick={ this.toggleSelfHostedInstructions }>{ this.translate( 'Add self-hosted site' ) }</a>
 					<a href={ 'https://wordpress.com' + config( 'signup_url' ) } target="_blank">{ this.translate( 'Create account' ) }</a>
 				</div>
+				{ showInstructions && <SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } /> }
 			</Main>
 		);
 	}
