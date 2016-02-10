@@ -109,11 +109,11 @@ module.exports = React.createClass( {
 	translateCategory( category ) {
 		switch ( category ) {
 			case 'new':
-				return this.translate( 'new', { context: 'Category description for the plugin browser.' } );
+				return this.translate( 'New', { context: 'Category description for the plugin browser.' } );
 			case 'popular':
-				return this.translate( 'popular', { context: 'Category description for the plugin browser.' } );
+				return this.translate( 'Popular', { context: 'Category description for the plugin browser.' } );
 			case 'featured':
-				return this.translate( 'featured', { context: 'Category description for the plugin browser.' } );
+				return this.translate( 'Featured', { context: 'Category description for the plugin browser.' } );
 		}
 	},
 
