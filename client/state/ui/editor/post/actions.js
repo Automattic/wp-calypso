@@ -135,6 +135,26 @@ export function setTitle( newTitle ) {
 	return { type: 'TODO' };
 }
 
+export function setPostPublic() {
+	debug( 'setPostPublic' );
+	return { type: 'TODO' };
+}
+
+export function setPostPrivate() {
+	debug( 'setPostPrivate' );
+	return { type: 'TODO' };
+}
+
+export function setPostPassword( newPassword ) {
+	debug( 'setPostPassword', newPassword );
+	return { type: 'TODO' };
+}
+
+export function setPostPasswordProtected( newPassword ) {
+	debug( 'setPostPasswordProtected', newPassword );
+	return { type: 'TODO' };
+}
+
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
