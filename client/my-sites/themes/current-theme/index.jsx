@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	Helpers = require( 'lib/themes/helpers' ),
+	Helpers = require( '../helpers' ),
 	CurrentThemeButton = require( './button' );
 
 /**

@@ -20,7 +20,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { getDetailsUrl as getThemeDetailsUrl } from 'lib/themes/helpers';
+import { getDetailsUrl as getThemeDetailsUrl } from 'my-sites/themes/helpers';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import RemovePurchase from '../remove-purchase';

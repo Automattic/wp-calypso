@@ -13,7 +13,7 @@ var Search = require( 'components/search' ),
 	SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' ),
-	Helper = require( 'lib/themes/helpers' ),
+	Helper = require( '../helpers' ),
 	config = require( 'config' ),
 	isMobile = require( 'lib/viewport' ).isMobile;
 
