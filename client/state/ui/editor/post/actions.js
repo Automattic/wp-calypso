@@ -100,6 +100,17 @@ export function setPostFormat( newFormat ) {
 	return { type: 'TODO' };
 }
 
+export function addPublicizeConnectionKey( newKeyID ) {
+	debug( 'addPublicizeConnectionKey', newKeyID );
+	return { type: 'TODO' };
+}
+
+export function removePublicizeConnectionKey() {
+	debug( 'removePublicizeConnectionKey' );
+	return { type: 'TODO' };
+}
+
+
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
