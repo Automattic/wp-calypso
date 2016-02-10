@@ -29,7 +29,7 @@ module.exports = {
 
 	checkToken: function( context, next ) {
 		// Check we have an OAuth token, otherwise redirect to login page
-		if ( OAuthToken.getToken() === false && ! startsWith( context.path, '/login' ) && ! startsWith( context.path, '/oauth' ) ) {
+		if ( OAuthToken.getToken() === false && ! startsWith( context.path, '/login' ) && ! startsWith( context.path, '/oauth' ) && ! startsWith( context.path, '/start' ) ) {
 			page( '/login' );
 		} else {
 			next();

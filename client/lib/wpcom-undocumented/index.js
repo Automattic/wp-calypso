@@ -29,7 +29,7 @@ function WPCOMUndocumented( token, reqHandler ) {
 	if ( 'function' === typeof token ) {
 		reqHandler = token;
 		token = null;
-	} else {
+	} else if ( token ) {
 		this.loadToken( token );
 	}
 
