@@ -4,7 +4,7 @@
   "description": "Decode HTML entities",
   "main": "node.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd .. && make test"
   },
   "browser": "./browser.js"
 }
