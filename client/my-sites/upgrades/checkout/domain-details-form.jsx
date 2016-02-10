@@ -164,7 +164,7 @@ export default React.createClass( {
 				{ this.showFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
 				<Input label={ this.translate( 'Address', { textOnly } ) } { ...fieldProps( 'address-1' ) }/>
 
-				<Input
+				<HiddenInput
 					label={ this.translate( 'Address Line 2', { textOnly } ) }
 					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
 					{ ...fieldProps( 'address-2' ) }/>
