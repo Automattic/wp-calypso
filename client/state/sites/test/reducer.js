@@ -31,8 +31,7 @@ describe( 'reducer', () => {
 		it( 'should index sites by ID', () => {
 			const state = items( null, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284, name: 'WordPress.com Example Blog' },
-				somethingDecoratedMe: () => {}
+				site: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 
 			expect( state ).to.eql( {
@@ -46,8 +45,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 77203074, name: 'Just You Wait' },
-				somethingDecoratedMe: () => {}
+				site: { ID: 77203074, name: 'Just You Wait' }
 			} );
 
 			expect( state ).to.eql( {
@@ -74,7 +72,9 @@ describe( 'reducer', () => {
 				const original = deepFreeze( {
 					2916284: {
 						ID: 2916284,
-						name: 'WordPress.com Example Blog'
+						name: 'WordPress.com Example Blog',
+						somethingDecoratedMe: () => {
+						}
 					}
 				} );
 				const state = items( original, { type: SERIALIZE } );

@@ -3,6 +3,7 @@
  */
 import { combineReducers } from 'redux';
 import pick from 'lodash/object/pick';
+import indexBy from 'lodash/collection/indexBy';
 import isFunction from 'lodash/lang/isFunction';
 import omit from 'lodash/object/omit';
 
@@ -24,18 +25,17 @@ import { isValidStateWithSchema } from 'state/utils';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
-			//TODO: do not pass a decorated site object to SITE_RECEIVE
-			//site objects are being decorated in SitesList in lib/sites/sites-list/index.js
-			//with either lib/site/index.js or lib/site/jetpack.js
-			const blackList = [ '_headers', 'fetchingSettings', 'fetchingUsers',
-				'latestSettings', '_events', '_maxListeners' ];
-			let plainJSObject = pick( action.site, ( value ) => ! isFunction( value ) );
-			plainJSObject = omit( plainJSObject, blackList );
 			return Object.assign( {}, state, {
-				[ action.site.ID ]: plainJSObject
+				[ action.site.ID ]: action.site
 			} );
 		case SERIALIZE:
-			return state;
+			// scrub _events, _maxListeners, and other misc functions
+			const sites = Object.keys( state ).map( ( siteID ) => {
+				let plainJSObject = pick( state[ siteID ], ( value ) => ! isFunction( value ) );
+				plainJSObject = omit( plainJSObject, [ '_events', '_maxListeners'] );
+				return plainJSObject;
+			} );
+			return indexBy( sites, 'ID' );
 		case DESERIALIZE:
 			return isValidStateWithSchema( state, schema ) ? state : {};
 	}
