@@ -12,6 +12,7 @@ var React = require( 'react' ),
 var analytics = require( 'analytics' ),
 	FocusMixin = require( './focus-mixin.js' ),
 	FormLabel = require( 'components/forms/form-label' ),
+	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	FormSelect = require( 'components/forms/form-select' );
 
 module.exports = React.createClass( {
@@ -71,6 +72,7 @@ module.exports = React.createClass( {
 						} ) }
 					</FormSelect>
 				</div>
+				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}
