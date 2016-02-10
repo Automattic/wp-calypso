@@ -125,6 +125,11 @@ export function setSlug( newSlug ) {
 	return { type: 'TODO' };
 }
 
+export function setTags( newTags ) {
+	debug( 'setTags', newTags );
+	return { type: 'TODO' };
+}
+
 export const EDITING_MODES = 
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
