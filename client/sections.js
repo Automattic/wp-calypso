@@ -35,12 +35,12 @@ sections = [
 		module: 'my-sites/plugins'
 	},
 	{
-		name: 'posts-pages',
+		name: 'pages',
 		paths: [ '/pages' ],
 		module: 'my-sites/pages'
 	},
 	{
-		name: 'posts-pages',
+		name: 'posts',
 		paths: [ '/posts' ],
 		module: 'my-sites/posts'
 	},
@@ -77,7 +77,7 @@ sections = [
 		module: 'my-sites/upgrades'
 	},
 	{
-		name: 'upgrades',
+		name: 'plans',
 		paths: [ '/plans' ],
 		module: 'my-sites/plans'
 	}

@@ -8,6 +8,7 @@ var React = require( 'react' ),
 	startsWith = require( 'lodash/string/startsWith' ),
 	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso' ),
+	ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
@@ -42,6 +43,10 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	createRouter = require( 'create-router' ).createRouter,
+	createReduxStore = require( 'state' ).createReduxStore,
+	Provider = require( 'react-redux' ).Provider,
+	RouterProvider = require( 'react-router5' ).RouterProvider,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -153,7 +158,37 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	createReduxStoreFromPersistedInitialState( reduxStoreReady );
+	const router = createRouter();
+	const App = require( 'app' );
+
+	router.start( ( err, state ) => {
+		const store2 = createReduxStore( { router: { route: state } }, router );
+		const wrappedApp = (
+			<Provider store={ store2 } >
+				<RouterProvider router={ router } >
+					<App user={ user }
+						sites={ sites }
+						focus={ layoutFocus }
+						nuxWelcome={ nuxWelcome }
+						translatorInvitation={ translatorInvitation } />
+				</RouterProvider>
+			</Provider>
+		);
+
+		if ( user.get() ) {
+			// When logged in the analytics module requires user and superProps objects
+			// Inject these here
+			analytics.initialize( user, superProps );
+
+			// Set current user in Redux store
+			store2.dispatch( receiveUser( user.get() ) );
+			store2.dispatch( setCurrentUserId( user.get().ID ) );
+		}
+
+		ReactDom.render( wrappedApp, document.getElementById( 'wpcom' ) );
+	} );
+
+	//createReduxStoreFromPersistedInitialState( reduxStoreReady );
 }
 
 function reduxStoreReady( reduxStore ) {
@@ -162,8 +197,6 @@ function reduxStoreReady( reduxStore ) {
 	if ( config.isEnabled( 'support-user' ) ) {
 		require( 'lib/user/support-user-interop' )( reduxStore );
 	}
-
-	Layout = require( 'layout' );
 
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
@@ -346,8 +379,10 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/desktop' ).init();
 	}
 
-	detectHistoryNavigation.start();
-	page.start();
+	//detectHistoryNavigation.start();
+	//page.start();
+	//
+
 }
 
 window.AppBoot = function() {

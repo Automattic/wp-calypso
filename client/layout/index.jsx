@@ -175,8 +175,12 @@ Layout = React.createClass( {
 					{ this.renderWelcome() }
 					{ this.renderEmailVerificationNotice() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+					<div id="primary" className="wp-primary wp-section">
+						{ this.props.primary }
+					</div>
+					<div id="secondary" className="wp-secondary">
+						{ this.props.secondary }
+					</div>
 				</div>
 				<div id="tertiary" />
 				<TranslatorLauncher

@@ -35,9 +35,14 @@ function getRouting( isLoggedIn ) {
 	} );
 }
 
-module.exports = function() {
+function loadPage( controller, ...middlwares ) {
+	// run middlewares, save context in route state
+	// run controller, dispatch either a route action or redux action to update the layout with the returned element
+}
+
+
+module.exports = function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
-		const { routes, middlewares } = getRouting( user.get() );
-		routes.forEach( route => page( route, ...middlewares ) );
+		router.add( { name: '/design', path: '/design', onActivate: ( dispatch ) => dispatch( loadPage( themesController.themes ) ) } );
 	}
 };
