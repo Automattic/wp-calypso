@@ -202,6 +202,7 @@ export default function( id ) {
 			postIds = difference( postIds, _activeList.postIds );
 			if ( postIds.length ) {
 				_activeList.postIds = _activeList.postIds.concat( postIds );
+				sort();
 				_activeList.page++;
 			}
 		}

@@ -26,5 +26,6 @@
   "siftscience_key",
   "facebook_api_key",
   "discover_blog_id",
-  "support-user"
+  "support-user",
+  "sync-handler-defaults"
 ]
