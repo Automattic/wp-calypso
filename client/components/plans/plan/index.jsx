@@ -8,9 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	analytics = require( 'analytics' ),
-	testFeatures = require( 'lib/features-list/test-features' ),
+var analytics = require( 'analytics' ),
 	Gridicon = require( 'components/gridicon' ),
 	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
 	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
@@ -69,29 +67,6 @@ module.exports = React.createClass( {
 				handleLearnMoreClick={ this.handleLearnMoreClick }
 				plan={ plan } />
 		);
-	},
-
-	getFeatureList: function() {
-		var features;
-
-		if ( this.isPlaceholder() ) {
-			return;
-		}
-
-		features = testFeatures[ this.props.plan.product_slug ].map( function( feature, i ) {
-			var classes = classNames( 'plan__feature', {
-				'is-plan-specific': feature.planSpecific
-			} );
-
-			return (
-				<li className={ classes } key={ i }>
-					<Gridicon icon="checkmark" size={ 12 } />
-					{ feature.text }
-				</li>
-			);
-		} );
-
-		return <ul className="plan__features">{ features }</ul>;
 	},
 
 	showDetails: function() {
@@ -226,7 +201,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) === 'list';
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
@@ -240,7 +214,7 @@ module.exports = React.createClass( {
 				</PlanHeader>
 				<div className="plan__plan-expand">
 					<div className="plan__plan-details">
-						{ shouldDisplayFeatureList ? this.getFeatureList() : this.getDescription() }
+						{ this.getDescription() }
 					</div>
 					{ this.getPlanActions() }
 				</div>

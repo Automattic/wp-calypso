@@ -7,8 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	analytics = require( 'analytics' ),
+var analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
@@ -249,7 +248,7 @@ module.exports = React.createClass( {
 	},
 
 	freePlanExpiration: function() {
-		if ( ! this.planHasCost() && abtest( 'plansFeatureList' ) !== 'list' ) {
+		if ( ! this.planHasCost() ) {
 			return (
 				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
 			);
