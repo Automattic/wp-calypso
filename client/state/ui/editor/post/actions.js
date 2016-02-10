@@ -130,7 +130,7 @@ export function setTags( newTags ) {
 	return { type: 'TODO' };
 }
 
-export const EDITING_MODES = 
+export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
 };
