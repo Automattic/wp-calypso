@@ -181,8 +181,8 @@
 	transform: translate( -50%, -50% );
 	min-width: 320px;
 	max-width: 60%;
-	min-height: 60%;
-	max-height: 96%;
+	max-height: 80%;
+	overflow: auto;
 	text-align: left;
 	counter-reset: item;
 
@@ -247,7 +247,7 @@
 	}
 
 	.auth__self-hosted-instructions-close:hover {
-		color: $gray-light;
+		color: $blue-light;
 	}
 
 }

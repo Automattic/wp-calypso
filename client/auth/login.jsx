@@ -118,12 +118,12 @@ module.exports = React.createClass( {
 	},
 
 	toggleSelfHostedInstructions: function () {
-	    var isShowing = !this.state.showingInstructions;
-	    this.setState({ showingInstructions: isShowing });
+	    var isShowing = !this.state.showInstructions;
+	    this.setState( { showInstructions: isShowing } );
 	},
 
 	render: function() {
-		const { requires2fa, inProgress, errorMessage, errorLevel, showingInstructions } = this.state;
+		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
 		return (
 			<Main className="auth">
@@ -178,10 +178,10 @@ module.exports = React.createClass( {
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">
-					<a href="#" onClick={this.toggleSelfHostedInstructions}>{ this.translate( 'Add self-hosted site' ) }</a>
+					<a href="#" onClick={ this.toggleSelfHostedInstructions }>{ this.translate( 'Add self-hosted site' ) }</a>
 					<a href={ 'https://wordpress.com' + config( 'signup_url' ) } target="_blank">{ this.translate( 'Create account' ) }</a>
 				</div>
-				{ showingInstructions && <SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } /> }
+				{ showInstructions && <SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } /> }
 			</Main>
 		);
 	}
