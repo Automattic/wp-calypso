@@ -331,6 +331,13 @@ normalizePost.safeImageProperties = function( maxWidth ) {
 		if ( post.canonical_image && post.canonical_image.type === 'image' ) {
 			makeImageURLSafe( post.canonical_image, 'uri', maxWidth, post.URL );
 		}
+		if ( post.attachments ) {
+			forOwn( post.attachments, function( attachment ) {
+				if ( startsWith( attachment.mime_type, 'image/' ) ) {
+					makeImageURLSafe( attachment, 'URL', maxWidth, post.URL );
+				}
+			} );
+		}
 
 		callback();
 	};
