@@ -139,3 +139,25 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, callback 
 		callback( error, data );
 	} );
 }
+
+export function createInviteValidation( siteId, usernamesOrEmails, role ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CREATE_INVITE_VALIDATION,
+		siteId, usernamesOrEmails, role
+	} );
+	wpcom.undocumented().createInviteValidation( siteId, usernamesOrEmails, role, ( error, data ) => {
+		Dispatcher.handleServerAction( {
+			type: error ? ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_ERROR : ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
+			error,
+			siteId,
+			usernamesOrEmails,
+			role,
+			data
+		} );
+		if ( error ) {
+			analytics.tracks.recordEvent( 'calypso_invite_create_validation_failed' );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_invite_create_validation_success' );
+		}
+	} );
+}

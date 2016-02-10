@@ -27,7 +27,7 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	padding: 8px 8px 8px 16px;
+	padding: 8px;
 
 	@include breakpoint( ">660px" ) {
 		justify-content: space-between;
@@ -95,14 +95,18 @@
 .post-editor__close.button.is-compact.is-borderless {
 	display: none;
 	align-self: center;
-	line-height: 14px;
-	padding: 0;
+	line-height: 12px;
+	padding: 8px;
 	white-space: nowrap;
 	max-width: 50%;
 
 	@include breakpoint( ">660px" ) {
 		display: block;
 	}
+}
+
+.post-editor .drafts-button {
+	padding: 3px 8px;
 }
 
 .post-editor .draft .post-relative-time-status {

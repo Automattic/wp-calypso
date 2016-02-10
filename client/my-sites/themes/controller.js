@@ -3,8 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	titlecase = require( 'to-title-case' );
+	ReduxProvider = require( 'react-redux' ).Provider;
 
 /**
  * Internal Dependencies
@@ -13,11 +12,11 @@ var SingleSiteComponent = require( 'my-sites/themes/single-site' ),
 	MultiSiteComponent = require( 'my-sites/themes/multi-site' ),
 	LoggedOutComponent = require( 'my-sites/themes/logged-out' ),
 	analytics = require( 'analytics' ),
-	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
-	buildTitle = require( 'lib/screen-title/utils' );
+	buildTitle = require( 'lib/screen-title/utils' ),
+	getAnalyticsData = require( './helpers' ).getAnalyticsData;
 
 var controller = {
 
@@ -31,24 +30,19 @@ var controller = {
 			? require( 'layout/head' )
 			: require( 'my-sites/themes/head' );
 
-		let basePath = route.sectionify( context.path );
-		let analyticsPageTitle = 'Themes';
 		let ThemesComponent;
-
-		if ( site_id ) {
-			basePath = basePath + '/:site_id';
-			analyticsPageTitle += ' > Single Site';
-		}
-
-		if ( tier ) {
-			analyticsPageTitle += ` > Type > ${titlecase( tier )}`;
-		}
 
 		if ( user ) {
 			ThemesComponent = site_id ? SingleSiteComponent : MultiSiteComponent;
 		} else {
 			ThemesComponent = LoggedOutComponent;
 		}
+
+		const { basePath, analyticsPageTitle } = getAnalyticsData(
+			context.path,
+			tier,
+			site_id
+		);
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 		ReactDom.render(

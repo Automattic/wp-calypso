@@ -34,5 +34,19 @@ module.exports = {
 		}
 
 		return getSiteUrl( siteData.get( 'ID' ) )
+	},
+
+	getSiteUrl: function( siteData, feedData, subscription ) {
+		var siteUrl;
+
+		if ( siteData && siteData.get( 'URL' ) ) {
+			siteUrl = siteData.get( 'URL' );
+		} else if ( feedData && feedData.URL ) {
+			siteUrl = feedData.URL;
+		} else if ( subscription && subscription.get( 'URL' ) ) {
+			siteUrl = subscription.get( 'URL' );
+		}
+
+		return siteUrl;
 	}
 };

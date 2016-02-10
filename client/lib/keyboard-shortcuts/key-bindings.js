@@ -126,6 +126,14 @@ KeyBindings.prototype.get = function() {
 					keys: [ 'n' ],
 					text: i18n.translate( 'Open Notifications' )
 				}
+			},
+			{
+				eventName: 'open-support-user',
+				keys: [ 's', 'u' ],
+				description: {
+					keys: [],
+					text: '',
+				}
 			}
 		],
 

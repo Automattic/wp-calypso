@@ -8,7 +8,7 @@ import React from 'react';
  */
 import WebPreview from 'components/web-preview';
 import Button from 'components/button';
-import { getPreviewUrl } from 'lib/themes/helpers';
+import { getPreviewUrl } from './helpers';
 
 export default React.createClass( {
 	displayName: 'ThemePreview',

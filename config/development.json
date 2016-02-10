@@ -146,7 +146,9 @@
 
 		"accept-invite": true,
 		"perfmon": false,
-		"mailing-lists/unsubscribe": true
+		"mailing-lists/unsubscribe": true,
+
+		"jetpack/calypso-first-signup-flow": true
 	},
 	"muse_supported_themes": [
 		"pub/twentytwelve",

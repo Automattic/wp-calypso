@@ -26,6 +26,17 @@
 	float: right;
 }
 
+.exporter__placeholder-text {
+	padding-left: 24px;
+	padding-right: 24px;
+	margin-bottom: 24px;
+	height: 32px;
+
+	color: transparent;
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
 .exporter__advanced-settings {
 	padding-bottom: 50px;
 }

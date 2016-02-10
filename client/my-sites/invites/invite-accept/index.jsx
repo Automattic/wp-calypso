@@ -16,7 +16,7 @@ import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
 import _user from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
-import InvitesStore from 'lib/invites/stores/invites-validation';
+import InvitesStore from 'lib/invites/stores/invites-accept-validation';
 import EmptyContent from 'components/empty-content';
 import { successNotice, infoNotice } from 'state/notices/actions';
 import analytics from 'analytics';

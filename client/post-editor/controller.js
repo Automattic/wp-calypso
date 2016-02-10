@@ -23,6 +23,13 @@ var actions = require( 'lib/posts/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	analytics = require( 'analytics' );
 
+import {
+	setEditingMode,
+	startEditingNew,
+	startEditingExisting,
+	EDITING_MODES
+} from 'state/ui/editor/post/actions';
+
 function getPostID( context ) {
 	if ( ! context.params.post ) {
 		return null;
@@ -124,9 +131,13 @@ module.exports = {
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
 			if ( postID ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( site, postID );
 				titleActions.setTitle( titleStrings.edit, { siteID: site.ID } );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', titleStrings.ga + ' > Edit' );
+
+				context.store.dispatch( setEditingMode( EDITING_MODES.EXISTING, titleStrings.edit, { siteID: site.ID } ) );
+				context.store.dispatch( startEditingExisting( site, postID ) );
 			} else {
 				let postOptions = { type: postType };
 
@@ -140,9 +151,13 @@ module.exports = {
 					} );
 				}
 
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingNew( site, postOptions );
 				titleActions.setTitle( titleStrings.new, { siteID: site.ID } );
 				analytics.pageView.record( '/' + postType, titleStrings.ga + ' > New' );
+
+				context.store.dispatch( setEditingMode( EDITING_MODES.NEW, titleStrings.new, { siteID: site.ID } ) );
+				context.store.dispatch( startEditingNew( site, postOptions ) );
 			}
 		}
 

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	classnames = require( 'classnames' );
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
+const MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
 	EditorMediaModal = require( 'post-editor/media-modal' ),
 	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
 	PostActions = require( 'lib/posts/actions' ),
@@ -15,19 +16,27 @@ var MediaLibrarySelectedData = require( 'components/data/media-library-selected-
 	stats = require( 'lib/posts/stats' ),
 	AccordionSection = require( 'components/accordion/section' ),
 	EditorFeaturedImagePreviewContainer = require( './preview-container' );
+import {
+	setFeaturedImage,
+	removeFeaturedImage
+} from 'state/ui/editor/post/actions';
 
-var EditorFeaturedImage = React.createClass( {
+const EditorFeaturedImage = React.createClass( {
 
 	propTypes: {
 		maxWidth: React.PropTypes.number,
 		site: React.PropTypes.object,
-		post: React.PropTypes.object
+		post: React.PropTypes.object,
+		setFeaturedImage: React.PropTypes.func,
+		removeFeaturedImage: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
 			editable: false,
-			maxWidth: 450
+			maxWidth: 450,
+			setFeaturedImage: () => {},
+			removeFeaturedImage: () => {}
 		};
 	},
 
@@ -50,6 +59,9 @@ var EditorFeaturedImage = React.createClass( {
 			return;
 		}
 
+		this.props.setFeaturedImage( items[0].ID );
+
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			featured_image: items[0].ID
 		} );
@@ -59,6 +71,9 @@ var EditorFeaturedImage = React.createClass( {
 	},
 
 	removeImage: function() {
+		this.props.removeFeaturedImage();
+
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			featured_image: ''
 		} );
@@ -133,4 +148,7 @@ var EditorFeaturedImage = React.createClass( {
 	}
 } );
 
-module.exports = EditorFeaturedImage;
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setFeaturedImage, removeFeaturedImage }, dispatch )
+)( EditorFeaturedImage );

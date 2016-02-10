@@ -28,6 +28,7 @@ module.exports = function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/', controller.loadSubscriptions );
 		page( '/read/*', controller.loadSubscriptions );
+		page( '/tag/*', controller.loadSubscriptions );
 
 		page( '/', updateLastRoute, controller.removePost, controller.sidebar, controller.following );
 
@@ -73,6 +74,6 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'reader/discover' ) ) {
-		page( '/discover', updateLastRoute, controller.removePost, controller.sidebar, controller.discover );
+		page( '/discover', updateLastRoute, controller.loadSubscriptions, controller.removePost, controller.sidebar, controller.discover );
 	}
 };

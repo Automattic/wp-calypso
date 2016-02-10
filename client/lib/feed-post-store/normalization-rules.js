@@ -29,8 +29,8 @@ const fastPostNormalizationRules = [
 		postNormalizer.preventWidows,
 		postNormalizer.makeSiteIDSafeForAPI,
 		postNormalizer.pickPrimaryTag,
-		postNormalizer.firstPassCanonicalImage,
 		postNormalizer.safeImageProperties( READER_CONTENT_WIDTH ),
+		postNormalizer.firstPassCanonicalImage,
 		postNormalizer.withContentDOM( [
 			postNormalizer.content.removeStyles,
 			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),

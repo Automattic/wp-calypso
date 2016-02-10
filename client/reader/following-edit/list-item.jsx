@@ -23,7 +23,9 @@ const Icon = require( 'reader/list-item/icon' ),
 	FeedStore = require( 'lib/feed-store' ),
 	smartSetState = require( 'lib/react-smart-set-state' );
 
-var SubscriptionListItem = React.createClass( {
+import ExternalLink from 'components/external-link';
+
+const SubscriptionListItem = React.createClass( {
 
 	propTypes: {
 		subscription: React.PropTypes.object.isRequired,
@@ -92,7 +94,8 @@ var SubscriptionListItem = React.createClass( {
 			siteData = this.state.site,
 			feedData = this.state.feed,
 			iconUrl = siteData && siteData.get( 'icon' ),
-			displayUrl = FeedDisplayHelper.formatUrlForDisplay( subscription.get( 'URL' ) ),
+			siteUrl = FeedDisplayHelper.getSiteUrl( siteData, feedData, subscription ),
+			displayUrl = FeedDisplayHelper.formatUrlForDisplay( siteUrl ),
 			isFollowing = this.isFollowing(),
 			feedTitle = decodeEntities( FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl ) );
 
@@ -102,7 +105,7 @@ var SubscriptionListItem = React.createClass( {
 				<Title>
 					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ feedTitle }</a>
 				</Title>
-				<Description><a href={ subscription.get( 'URL' ) }>{ displayUrl }</a></Description>
+				<Description><ExternalLink icon={ true } href={ siteUrl } target="_blank" iconSize={ 12 }>{ displayUrl }</ExternalLink></Description>
 				<Actions>
 					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } isButtonOnly={ true } siteUrl={ subscription.get( 'URL' ) } />
 				</Actions>

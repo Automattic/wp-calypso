@@ -6,6 +6,7 @@ import { assert } from 'chai';
 import Dispatcher from 'dispatcher';
 import isPlainObject from 'lodash/lang/isPlainObject';
 import isArray from 'lodash/lang/isArray';
+import { getRemovedPosts } from '../post-list-store.js';
 
 /**
  * Mock Data
@@ -16,6 +17,24 @@ const TWO_POST_PAYLOAD = {
 		global_ID: 778
 	}, {
 		global_ID: 779
+	} ]
+};
+const THREE_POST_PAYLOAD = {
+	found: 2,
+	posts: [ {
+		global_ID: 778
+	}, {
+		global_ID: 779
+	}, {
+		global_ID: 780
+	} ]
+};
+const OMITTED_POST_PAYLOAD = {
+	found: 2,
+	posts: [ {
+		global_ID: 778
+	}, {
+		global_ID: 780
 	} ]
 };
 const DEFAULT_POST_LIST_ID = 'default';
@@ -159,6 +178,15 @@ describe( 'post-list-store', () => {
 		} );
 	} );
 
+	describe( '#getRemovedPosts', () => {
+		it( 'should remove ommitted posts from overlapping post-list response', () => {
+			const storedList = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+			const freshList = [ 3, 5, 7, 9 ];
+			const expectedResults = [ 4, 6, 8 ];
+			assert.deepEqual( getRemovedPosts( storedList, freshList ), expectedResults );
+		} );
+	} );
+
 	describe( '#getUpdatesParams', () => {
 		it( 'should return an object of params', () => {
 			assert.isTrue( isPlainObject( defaultPostListStore.getUpdatesParams() ) );
@@ -196,6 +224,13 @@ describe( 'post-list-store', () => {
 			assert.equal( defaultPostListStore.getAll().length, 1 );
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, TWO_POST_PAYLOAD );
 			assert.equal( defaultPostListStore.getAll().length, 3 );
+		} );
+
+		it( 'should remove posts omitted in a follow-up post-list page', () => {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, THREE_POST_PAYLOAD );
+			assert.equal( defaultPostListStore.getAll().length, 3 );
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, OMITTED_POST_PAYLOAD );
+			assert.equal( defaultPostListStore.getAll().length, 2 );
 		} );
 
 		it( 'should add only unique post.global_IDs postListStore', () => {

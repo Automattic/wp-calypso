@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no
  * Internal dependencies
  */
 import ActionTypes from './action-types';
-import ThemeHelpers from 'lib/themes/helpers';
+import ThemeHelpers from 'my-sites/themes/helpers';
 import { getCurrentTheme } from './current-theme/selectors';
 import { isJetpack } from './themes-last-query/selectors';
 import { getQueryParams } from './themes-list/selectors';

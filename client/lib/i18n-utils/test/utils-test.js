@@ -76,5 +76,10 @@ describe( 'i18n-utils', function() {
 		it( 'should return undefined when we lookup random words', function() {
 			expect( getLanguage( 'themes' ) ).to.equal( undefined );
 		} );
+
+		it( 'should return a language with a three letter country code', function() {
+			expect( getLanguage( 'ast' ).langSlug ).to.equal( 'ast' );
+		} );
+
 	} );
 } );

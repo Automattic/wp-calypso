@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Helper from 'lib/themes/helpers';
+import Helper from './helpers';
 import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';

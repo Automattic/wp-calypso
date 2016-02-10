@@ -95,6 +95,7 @@
     "superagent": "1.2.0",
     "tinymce": "4.2.8",
     "to-title-case": "0.1.5",
+    "tv4": "1.2.7",
     "tween.js": "16.3.1",
     "twemoji": "1.3.2",
     "uglify-js": "2.6.1",
@@ -107,7 +108,7 @@
     "xgettext-js": "0.2.0"
   },
   "engines": {
-    "node": ">=4.2.3"
+    "node": ">=4.3.0"
   },
   "scripts": {
     "test": "make test"

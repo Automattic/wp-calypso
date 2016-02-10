@@ -43,6 +43,7 @@ import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import SitesDropdown from 'components/sites-dropdown';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { getLanguage } from 'lib/i18n-utils';
 
 import _sites from 'lib/sites-list';
 import _user from 'lib/user';
@@ -136,6 +137,34 @@ const Account = React.createClass( {
 				</FormFieldset>
 			);
 		}
+	},
+
+	thankTranslationContributors() {
+		let locale = this.props.userSettings.getSetting( 'language' );
+		if ( ! locale || locale === 'en' ) {
+			return;
+		}
+
+		const language = getLanguage( locale );
+		if ( ! language ) {
+			return;
+		}
+
+		// Config names are like 'fr - Francais', so strip the slug off
+		const languageName = language.name.replace( /^[a-zA-Z-]* - /, '' );
+		const url = 'https://en.support.wordpress.com/translators/?contributor_locale=' + locale;
+
+		return ( <FormSettingExplanation> {
+			this.translate( 'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!', {
+				components: {
+					a: <a
+							target="_blank"
+							href={ url }
+					/>,
+					language: <span>{ languageName }</span>
+				}
+			} ) }
+		</FormSettingExplanation> );
 	},
 
 	getOptoutText( website ) {
@@ -457,6 +486,7 @@ const Account = React.createClass( {
 						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						valueLink={ this.updateLanguage() } />
+					{ this.thankTranslationContributors() }
 				</FormFieldset>
 
 				{ this.communityTranslator() }

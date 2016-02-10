@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' );
+import React from 'react';
+import classNames from 'classnames';
+import omit from 'lodash/object/omit';
+import noop from 'lodash/utility/noop';
 
 /**
  * Internal dependencies
  */
-var FormTextarea = require( 'components/forms/form-textarea' );
+import FormTextarea from 'components/forms/form-textarea';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'CountedTextarea',
 
 	propTypes: {
@@ -23,7 +23,7 @@ module.exports = React.createClass( {
 		showRemainingCharacters: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			value: '',
 			placeholder: '',
@@ -33,39 +33,37 @@ module.exports = React.createClass( {
 		};
 	},
 
-	renderCountPanel: function() {
-		var length = this.props.value.length;
-
+	renderCountPanel() {
+		let length = this.props.value.length;
 		if ( ! length && this.props.countPlaceholderLength ) {
 			length = this.props.placeholder.length;
 		}
 
+		let panelText;
 		if ( this.props.showRemainingCharacters && this.props.acceptableLength ) {
-			return ( <div className="counted-textarea__count-panel">
-				{ this.translate( '%d character remaining', '%d characters remaining', {
-					context: 'Input length',
-					args: [ this.props.acceptableLength - length ],
-					count: this.props.acceptableLength - length
-				} ) }
-					{ this.props.children }
-				</div>
-			);
+			panelText = this.translate( '%d character remaining', '%d characters remaining', {
+				context: 'Input length',
+				args: [ this.props.acceptableLength - length ],
+				count: this.props.acceptableLength - length
+			} );
 		} else {
-			return (
-				<div className="counted-textarea__count-panel">
-					{ this.translate( '%d character', '%d characters', {
-						context: 'Input length',
-						args: [ length ],
-						count: length
-					} ) }
-					{ this.props.children }
-				</div>
-			);
+			panelText = this.translate( '%d character', '%d characters', {
+				context: 'Input length',
+				args: [ length ],
+				count: length
+			} );
 		}
+
+		return (
+			<div className="counted-textarea__count-panel">
+				{ panelText }
+				{ this.props.children }
+			</div>
+		);
 	},
 
-	render: function() {
-		var classes = classNames( 'counted-textarea', this.props.className, {
+	render() {
+		const classes = classNames( 'counted-textarea', this.props.className, {
 			'is-exceeding-acceptable-length': this.props.acceptableLength && this.props.value.length > this.props.acceptableLength
 		} );
 

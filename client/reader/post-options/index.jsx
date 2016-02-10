@@ -1,24 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	noop = require( 'lodash/utility/noop' ),
 	page = require( 'page' );
+
+import get from 'lodash/object/get';
 
 /**
  * Internal dependencies
  */
-var PopoverMenu = require( 'components/popover/menu' ),
+const PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions/index' ),
 	SiteStore = require( 'lib/reader-site-store' ),
+	FeedStore = require( 'lib/feed-store' ),
+	FeedStoreActions = require( 'lib/feed-store/actions' ),
 	SiteBlockStore = require( 'lib/reader-site-blocks/index' ),
 	SiteBlockActions = require( 'lib/reader-site-blocks/actions' ),
 	postUtils = require( 'lib/posts/utils' ),
 	FollowButton = require( 'reader/follow-button' ),
 	stats = require( 'reader/stats' );
 
-var PostOptions = React.createClass( {
+const PostOptions = React.createClass( {
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,
@@ -42,20 +46,26 @@ var PostOptions = React.createClass( {
 	componentDidMount: function() {
 		SiteBlockStore.on( 'change', this.updateState );
 		FeedSubscriptionStore.on( 'change', this.updateState );
+		FeedStore.on( 'change', this.updateState );
 	},
 
 	componentWillUnmount: function() {
 		SiteBlockStore.off( 'change', this.updateState );
 		FeedSubscriptionStore.off( 'change', this.updateState );
+		FeedStore.off( 'change', this.updateState );
 	},
 
 	getStateFromStores: function() {
-		var siteId = this.props.post.site_ID;
+		const siteId = this.props.post.site_ID,
+			feed = this.getFeed(),
+			followUrl = this.getFollowUrl( feed );
 
 		return {
 			isBlocked: SiteBlockStore.getIsBlocked( siteId ),
 			blockError: SiteBlockStore.getLastErrorBySite( siteId ),
-			followError: FeedSubscriptionStore.getLastErrorBySiteUrl( this.props.post.site_URL )
+			feed: this.getFeed(),
+			followUrl: followUrl,
+			followError: FeedSubscriptionStore.getLastErrorBySiteUrl( followUrl )
 		};
 	},
 
@@ -85,6 +95,27 @@ var PostOptions = React.createClass( {
 		stats.recordGaEvent( 'Clicked Report Post', 'post_options' );
 
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
+	},
+
+	getFollowUrl( feed ) {
+		return feed ? feed.get( 'feed_URL' ) : this.props.post.site_URL;
+	},
+
+	getFeed() {
+		const feedId = get( this.props, 'post.feed_ID' );
+		if ( ! feedId || feedId < 1 ) {
+			return;
+		}
+
+		const feed = FeedStore.get( feedId );
+
+		if ( ! feed ) {
+			setTimeout( function() {
+				FeedStoreActions.fetch( feedId );
+			}, 0 );
+		}
+
+		return feed;
 	},
 
 	_showPopoverMenu: function() {
@@ -157,7 +188,7 @@ var PostOptions = React.createClass( {
 						position={ this.state.popoverPosition }
 						context={ this.refs && this.refs.popoverMenuButton }>
 
-					<FollowButton tagName={ PopoverMenuItem } siteUrl={ post.site_URL } />
+					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } className="post-options__edit has-icon">
 						<svg className="gridicon gridicon__edit" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M4 15v5h5l9-9-5-5-9 9zM16 3l-2 2 5 5 2-2-5-5z"/></g></svg>

@@ -1,6 +1,6 @@
 // Reader Feed Subscription Store
 
-//const debug = require( 'debug' )( 'calypso:reader:feed-subs' );
+const debug = require( 'debug' )( 'calypso:reader:feed-subs' );
 
 // External Dependencies
 const Dispatcher = require( 'dispatcher' ),
@@ -16,9 +16,9 @@ const Dispatcher = require( 'dispatcher' ),
 const Emitter = require( 'lib/mixins/emitter' ),
 	ActionTypes = require( './constants' ).action,
 	ErrorTypes = require( './constants' ).error,
-	PostStoreActionTypes = require( 'lib/feed-post-store/constants' ).action,
 	FeedSubscriptionHelper = require( './helper' ),
-	States = require( './constants' ).state;
+	States = require( './constants' ).state,
+	FeedActionTypes = require( 'lib/feed-store/constants' ).action;
 
 const subscriptionsTemplate = {
 	list: Immutable.List(), // eslint-disable-line new-cap
@@ -42,6 +42,7 @@ var FeedSubscriptionStore = {
 	// We haven't received confirmation from the API yet, but we want to update the UI
 	receiveFollow: function( action ) {
 		var subscription = { URL: action.data.url };
+		debug( 'receiveFollow: ' + action.data.url );
 		if ( addSubscription( subscription ) ) {
 			FeedSubscriptionStore.emit( 'change' );
 		}
@@ -50,7 +51,9 @@ var FeedSubscriptionStore = {
 	receiveUnfollow: function( action ) {
 		// Tentatively remove the subscription
 		// We haven't received confirmation from the API yet, but we want to update the UI
-		if ( removeSubscription( { URL: action.data.url } ) ) {
+		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( action.data.url );
+		debug( 'receiveUnfollow: ' + siteUrl );
+		if ( removeSubscription( { URL: siteUrl } ) ) {
 			FeedSubscriptionStore.emit( 'change' );
 		}
 	},
@@ -58,18 +61,22 @@ var FeedSubscriptionStore = {
 	receiveFollowResponse: function( action ) {
 		var updatedSubscriptionInfo;
 
+		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( action.url );
+		debug( 'receiveFollowResponse: ' + siteUrl );
+
 		if ( ! action.error && action.data && action.data.subscribed && ! action.data.info ) {
 			// The follow worked - discard any existing errors for this site
-			FeedSubscriptionStore.removeErrorsForSiteUrl( action.url );
+			FeedSubscriptionStore.removeErrorsForSiteUrl( siteUrl );
 
 			// Remove the placeholder subscription and add the full subscription info
 			if ( action.data.subscription ) {
 				updatedSubscriptionInfo = action.data.subscription;
 				updatedSubscriptionInfo.state = States.SUBSCRIBED;
 
-				updateSubscription( action.url, updatedSubscriptionInfo );
-
-				FeedSubscriptionStore.emit( 'add', this.getSubscription( action.url ) );
+				updateSubscription( siteUrl, updatedSubscriptionInfo );
+				debug( 'updateSubscription ' + siteUrl );
+				debug( updatedSubscriptionInfo );
+				FeedSubscriptionStore.emit( 'add', this.getSubscription( siteUrl ) );
 			}
 
 			FeedSubscriptionStore.emit( 'change' );
@@ -88,7 +95,7 @@ var FeedSubscriptionStore = {
 
 		// If the user is already subscribed, we don't want to remove the subscription again
 		if ( errorInfo !== 'already_subscribed' ) {
-			removeSubscription( { URL: action.url } );
+			removeSubscription( { URL: siteUrl } );
 		}
 
 		FeedSubscriptionStore.emit( 'change' );
@@ -96,6 +103,7 @@ var FeedSubscriptionStore = {
 
 	receiveUnfollowResponse: function( action ) {
 		if ( ! action.error && action.data && ! action.data.subscribed ) {
+			debug( 'receiveUnfollowResponse: ' + action.url );
 			// The unfollow worked - discard any existing errors for this site
 			FeedSubscriptionStore.removeErrorsForSiteUrl( action.url );
 			FeedSubscriptionStore.emit( 'remove', action.url );
@@ -115,20 +123,6 @@ var FeedSubscriptionStore = {
 		}
 	},
 
-	receivePost: function( post ) {
-		if ( ! ( post && post.site_URL ) ) {
-			return;
-		}
-
-		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( post.site_URL );
-
-		if ( ( post.is_following ) && ! this.getIsFollowingBySiteUrl( post.site_URL ) ) {
-			addSubscription( { URL: siteUrl } );
-		}
-
-		FeedSubscriptionStore.emit( 'change' );
-	},
-
 	receiveSubscriptions: function( data ) {
 		var currentSubscriptions = subscriptions,
 			newSubscriptions,
@@ -140,6 +134,7 @@ var FeedSubscriptionStore = {
 
 		// All subscriptions we receive this way will be 'subscribed', so set the state accordingly
 		const subscriptionsWithState = map( data.subscriptions, function( sub ) {
+			sub.URL = FeedSubscriptionHelper.prepareSiteUrl( sub.URL );
 			return subscriptionTemplate.merge( sub );
 		} );
 
@@ -300,9 +295,19 @@ function updateSubscription( url, newSubscriptionInfo ) {
 
 	const existingSubscription = subscriptions.list.get( subscriptionIndex );
 
+	// Ensure we're working with an Immutable object
+	newSubscriptionInfo = Immutable.fromJS( newSubscriptionInfo );
+
 	// If it's a refollow (i.e. the store has handled an unsubscribe for this feed already), add is_refollow flag to the updated subscription object
-	if ( existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && typeof newSubscriptionInfo.get === 'function' && newSubscriptionInfo.get( 'state' ) === States.SUBSCRIBED ) {
+	if ( existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && newSubscriptionInfo.get( 'state' ) === States.SUBSCRIBED ) {
 		newSubscriptionInfo = newSubscriptionInfo.merge( { is_refollow: true } );
+	}
+
+	// Used the incoming URL if there is one - it might be different to the original subscribed URL after feed autodiscovery
+	const newSubscriptionInfoUrl = newSubscriptionInfo.get( 'URL' );
+	if ( newSubscriptionInfoUrl ) {
+		debug( 'New subscription URL is ' + newSubscriptionInfoUrl );
+		newSubscriptionInfo = newSubscriptionInfo.set( 'URL', FeedSubscriptionHelper.prepareSiteUrl( newSubscriptionInfoUrl ) );
 	}
 
 	const updatedSubscription = existingSubscription.merge( newSubscriptionInfo );
@@ -365,14 +370,16 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case ActionTypes.DISMISS_FOLLOW_ERROR:
 			FeedSubscriptionStore.dismissError( action );
 			break;
-		case PostStoreActionTypes.RECEIVE_FEED_POST:
-			if ( action.data && ! action.data.errors ) {
-				FeedSubscriptionStore.receivePost( action.data );
-			}
-			break;
 		case ActionTypes.RECEIVE_FEED_SUBSCRIPTIONS:
 			if ( action.data && ! action.data.errors ) {
 				FeedSubscriptionStore.receiveSubscriptions( action.data );
+			}
+			break;
+		case FeedActionTypes.RECEIVE_FETCH:
+			if ( action.data && action.data.is_following ) {
+				// Use the feed URL in as the primary URL
+				const subscription = Object.assign( {}, action.data, { URL: action.data.feed_URL } );
+				addSubscription( subscription );
 			}
 			break;
 	}

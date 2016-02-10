@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	noop = require( 'lodash/utility/noop' );
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var actions = require( 'lib/posts/actions' ),
+const actions = require( 'lib/posts/actions' ),
 	Button = require( 'components/button' ),
 	FormToggle = require( 'components/forms/form-toggle/compact' ),
 	Revisions = require( 'post-editor/editor-revisions' ),
@@ -20,15 +22,28 @@ var actions = require( 'lib/posts/actions' ),
 	postScheduleUtils = require( 'components/post-schedule/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
 	stats = require( 'lib/posts/stats' );
+import {
+	toggleStickyStatus,
+	togglePendingStatus
+} from 'state/ui/editor/post/actions'
 
-var EditPostStatus = React.createClass( {
+const EditPostStatus = React.createClass( {
 	propTypes: {
+		togglePendingStatus: React.PropTypes.func,
+		toggleStickyStatus: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		type: React.PropTypes.string,
 		onSave: React.PropTypes.func,
 		onDateChange: React.PropTypes.func,
 		site: React.PropTypes.object
+	},
+
+	getDefaultProps: function() {
+		return {
+			togglePendingStatus: () => {},
+			toggleStickyStatus: () => {}
+		};
 	},
 
 	getInitialState: function() {
@@ -53,7 +68,9 @@ var EditPostStatus = React.createClass( {
 		stats.recordStat( stickyStat );
 		stats.recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { sticky: ! this.props.post.sticky } );
+		this.props.toggleStickyStatus( this.props.post.sticky );
 	},
 
 	togglePendingStatus: function() {
@@ -62,7 +79,9 @@ var EditPostStatus = React.createClass( {
 		stats.recordStat( 'status_changed' );
 		stats.recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
 
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { status: pending ? 'draft' : 'pending' } );
+		this.props.togglePendingStatus( this.props.post.status );
 	},
 
 	togglePostSchedulePopover: function() {
@@ -233,4 +252,12 @@ var EditPostStatus = React.createClass( {
 	}
 } );
 
-module.exports = EditPostStatus;
+
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( {
+		toggleStickyStatus,
+		togglePendingStatus
+	}, dispatch )
+)( EditPostStatus );

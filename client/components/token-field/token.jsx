@@ -3,26 +3,33 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	noop = require( 'lodash/utility/noop' );
+	classNames = require( 'classnames' );
 
 var Token = React.createClass( {
 	propTypes: {
 		value: React.PropTypes.string.isRequired,
 		displayTransform: React.PropTypes.func.isRequired,
-		onClickRemove: React.PropTypes.func
+		onClickRemove: React.PropTypes.func,
+		status: React.PropTypes.oneOf( [ 'is-error', 'is-success' ] ),
+		isBorderless: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
-			onClickRemove: noop
+			onClickRemove: function() {},
+			isBorderless: false
 		};
 	},
 
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
+		const tokenClasses = classNames( 'token-field__token', this.props.status, {
+			'is-borderless': this.props.isBorderless
+		} );
+
 		return (
-			<span className="token-field__token" tabIndex="-1">
+			<span className={ tokenClasses } tabIndex="-1">
 				<span className="token-field__token-text">
 					{ this.props.displayTransform( this.props.value ) }
 				</span>

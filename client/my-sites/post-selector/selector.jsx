@@ -18,6 +18,7 @@ import NoResults from './no-results';
 import analytics from 'analytics';
 import Search from './search';
 import TreeConvert from 'lib/tree-convert';
+import { decodeEntities } from 'lib/formatting';
 
 /**
 * Constants
@@ -117,16 +118,20 @@ export default React.createClass( {
 
 	renderItem( item ) {
 		const itemId = item.ID;
-		const name = item.title || this.translate( 'Untitled' );
+		const name = item.title ? decodeEntities( item.title ) : this.translate( 'Untitled' );
 		const checked = this.props.selected === item.ID;
 		const inputType = this.props.multiple ? 'checkbox' : 'radio';
 		const domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId;
 
 		const input = (
-			<input id={ domId } type={ inputType } name='posts'
+			<input
+				id={ domId }
+				type={ inputType }
+				name="posts"
 				value={ itemId }
 				onChange={ this.props.onChange.bind( null, item ) }
-				checked={ checked } />
+				checked={ checked }
+				className="post-selector__input" />
 		);
 
 		return (
@@ -175,8 +180,8 @@ export default React.createClass( {
 
 		return (
 			<li>
-				<input className='placeholder-text' type={ inputType } name='posts' disabled={ true } />
-				<label><span className='placeholder-text'>Loading list of options...</span></label>
+				<input className="post-selector__input" type={ inputType } name="posts" disabled={ true } />
+				<label><span className="placeholder-text">Loading list of options...</span></label>
 			</li>
 		);
 	},
@@ -227,7 +232,7 @@ export default React.createClass( {
 					<span className='is-empty-content'>{ this.props.emptyMessage }</span> :
 					null
 				}
-				<form>
+				<form className="post-selector__results">
 					{ posts ? this.renderHierarchy( posts ) : this.renderPlaceholder() }
 				</form>
 			</div>

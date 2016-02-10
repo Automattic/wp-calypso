@@ -7,7 +7,7 @@ var assert = require( 'chai' ).assert,
  */
 var unqualifiedPlaceholdersSnippet = 'multiple placeholders in a translation should be named.',
 	missingSingularPlaceholderSnippet = 'Placeholders in the plural and singular strings should match',
-	variableTranslateArgumentsSnippet = 'must be literal';
+	variableTranslateArgumentsSnippet = 'literal';
 
 describe( 'i18nlint.auditString', function() {
 	it( 'should not find problems with an ok string \'%(s)s%(t)s\'', function() {
@@ -80,8 +80,8 @@ describe( 'i18nlint', function() {
 	it( 'should warn about non-literal arguments to translate()', function() {
 		var i, specificProblems,
 			warnings = i18nlint.scanFile( 'test/testfiles/non-literal-translate-arguments.js' ),
-			// snippets
-			args = 'Arguments',
+			// snippets to differentiate error messages
+			args = 'to translate()',
 			context = 'context',
 			comment = 'comment';
 

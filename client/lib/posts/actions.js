@@ -441,7 +441,7 @@ PostActions = {
 
 		postListStore = postListStoreFactory( postListStoreId );
 
-		if ( postListStore.isLastPage() ) {
+		if ( postListStore.isLastPage() || postListStore.isFetchingNextPage() ) {
 			return;
 		}
 
@@ -479,6 +479,10 @@ PostActions = {
 		var id, params, siteID, postListStore;
 
 		postListStore = postListStoreFactory( postListStoreId );
+
+		if ( postListStore.isFetchingNextPage() ) {
+			return;
+		}
 
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_UPDATED_POSTS',

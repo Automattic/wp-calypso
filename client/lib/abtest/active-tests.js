@@ -62,14 +62,6 @@ module.exports = {
 		},
 		defaultVariation: 'mostPopular'
 	},
-	checkoutMasterbar: {
-		datestamp: '20160126',
-		variations: {
-			original: 50,
-			minimal: 50
-		},
-		defaultVariation: 'original'
-	},
 	periodLabelFree: {
 		datestamp: '20160202',
 		variations: {

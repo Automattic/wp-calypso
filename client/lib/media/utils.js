@@ -364,6 +364,23 @@ var MediaUtils = {
 			type: 'single',
 			attrs: attrs
 		} );
+	},
+
+	/**
+	 * Returns true if the specified user is capable of deleting the media
+	 * item, or false otherwise.
+	 *
+	 * @param  {Object}  item Media item
+	 * @param  {Object}  user User object
+	 * @param  {Object}  site Site object
+	 * @return {Boolean}      Whether user can delete item
+	 */
+	canUserDeleteItem( item, user, site ) {
+		if ( user.ID === item.author_ID ) {
+			return site.capabilities.delete_posts;
+		}
+
+		return site.capabilities.delete_others_posts;
 	}
 };
 
