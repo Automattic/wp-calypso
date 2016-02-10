@@ -17,16 +17,18 @@ var i18nUtils = require( 'lib/i18n-utils' ),
 	formState = require( 'lib/form-state' );
 
 function getFlowName( parameters ) {
-	var currentFlowName = flows.currentFlowName;
+	// If a flow name was passed and is valid, use it.
 	if ( parameters.flowName && isFlowName( parameters.flowName ) ) {
 		return parameters.flowName;
 	}
 
-	if ( ! isFlowName( parameters.flowName ) && currentFlowName === defaultFlowName ) {
-		return defaultFlowName;
+	// If no flow name was passed, check currentFlowName (which is a function).
+	if ( flows.currentFlowName && isFlowName( flows.currentFlowName ) ) {
+		return flows.currentFlowName;
 	}
 
-	return currentFlowName;
+	// Nothing else is valid, go with the default flow.
+	return flows.defaultFlowName;
 }
 
 function isFlowName( pathFragment ) {
