@@ -21,6 +21,8 @@ import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
+import { createInviteValidation } from 'lib/invites/actions';
+import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 
 /**
  * Module variables
@@ -31,6 +33,14 @@ export default React.createClass( {
 	displayName: 'InvitePeople',
 
 	mixins: [ LinkedStateMixin ],
+
+	componentDidMount() {
+		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
+	},
+
+	componentWillUnmount() {
+		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
+	},
 
 	componentWillReceiveProps() {
 		this.setState( this.resetState() );
@@ -46,16 +56,39 @@ export default React.createClass( {
 			role: 'follower',
 			message: '',
 			response: false,
-			sendingInvites: false
+			sendingInvites: false,
+			getTokenStatus: () => {}
 		} );
 	},
 
 	onTokensChange( tokens ) {
 		this.setState( { usernamesOrEmails: tokens } );
+		const { role } = this.state;
+		createInviteValidation( this.props.site.ID, tokens, role );
 	},
 
 	onMessageChange( event ) {
 		this.setState( { message: event.target.value } );
+	},
+
+	refreshValidation() {
+		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID ) || [];
+		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID ) || [];
+		if ( ! success.indexOf ) {
+			success = Object.keys( success ).map( key => success[ key ] );
+		}
+		this.setState( {
+			getTokenStatus: ( value ) => {
+				if ( 'string' === typeof value ) {
+					if ( errors[ value ] ) {
+						return 'is-error';
+					}
+					if ( success.indexOf( value ) > -1 ) {
+						return 'is-success';
+					}
+				}
+			}
+		} );
 	},
 
 	submitForm( event ) {
@@ -77,19 +110,6 @@ export default React.createClass( {
 
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );
-	},
-
-	getTokenStatus( value ) {
-		let status;
-		if ( 'string' === typeof value ) {
-			if ( -1 < value.indexOf( 'error' ) ) {
-				status = 'is-error';
-			} else if ( -1 < value.indexOf( 'success' ) ) {
-				status = 'is-success';
-			}
-		}
-
-		return status;
 	},
 
 	renderRoleExplanation() {
@@ -123,7 +143,7 @@ export default React.createClass( {
 							<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
 								isBorderless
-								tokenStatus={ this.getTokenStatus }
+								tokenStatus={ this.state.getTokenStatus }
 								value={ this.state.usernamesOrEmails }
 								onChange={ this.onTokensChange } />
 							<FormSettingExplanation>
@@ -142,7 +162,8 @@ export default React.createClass( {
 							siteId={ this.props.site.ID }
 							valueLink={ this.linkState( 'role' ) }
 							disabled={ this.state.sendingInvites }
-							explanation={ this.renderRoleExplanation() }/>
+							explanation={ this.renderRoleExplanation() }
+							/>
 
 						<FormFieldset>
 							<FormLabel htmlFor="message">{ this.translate( 'Custom Message' ) }</FormLabel>
