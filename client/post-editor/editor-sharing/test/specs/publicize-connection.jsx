@@ -11,7 +11,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var PublicizeConnection = require( '../../publicize-connection' );
+var PublicizeConnection = require( '../../publicize-connection' ).WrappedComponent;
 
 /**
  * Module variables
