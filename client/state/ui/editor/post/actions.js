@@ -120,6 +120,11 @@ export function setSharingLikeOption( optionKey, optionValue ) {
 	return { type: 'TODO' };
 }
 
+export function setSlug( newSlug ) {
+	debug( 'setSlug', newSlug );
+	return { type: 'TODO' };
+}
+
 export const EDITING_MODES = 
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'

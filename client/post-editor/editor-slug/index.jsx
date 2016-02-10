@@ -6,6 +6,8 @@ import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import noop from 'lodash/utility/noop';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal Dependencies
@@ -14,13 +16,15 @@ import actions from 'lib/posts/actions';
 import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
 import { recordStat, recordEvent } from 'lib/posts/stats';
+import { setSlug } from 'state/ui/editor/post/actions';
 
-export default React.createClass( {
+const PostEditorSlug = React.createClass( {
 	displayName: 'PostEditorSlug',
 
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
+		setSlug: PropTypes.func,
 		path: PropTypes.string,
 		slug: PropTypes.string,
 		onEscEnter: PropTypes.func,
@@ -32,6 +36,7 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
+			setSlug: () => {},
 			onEscEnter: noop,
 			isEditable: true
 		};
@@ -44,7 +49,10 @@ export default React.createClass( {
 	},
 
 	onSlugChange( event ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { slug: event.target.value } );
+
+		this.props.setSlug( event.target.value );
 	},
 
 	onSlugKeyDown( event ) {
@@ -127,3 +135,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setSlug }, dispatch )
+)( PostEditorSlug );
