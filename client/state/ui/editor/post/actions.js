@@ -115,7 +115,12 @@ export function setPublicizeMessage( newMessage ) {
 	return { type: 'TODO' };
 }
 
-export const EDITING_MODES = {
+export function setSharingLikeOption( optionKey, optionValue ) {
+	debug( 'setSharingLikeOption', optionKey, optionValue );
+	return { type: 'TODO' };
+}
+
+export const EDITING_MODES = 
 	EXISTING: 'EDITING_MODE_EXISTING',
 	NEW: 'EDITING_MODE_NEW'
 };
