@@ -107,7 +107,7 @@
     "xgettext-js": "0.2.0"
   },
   "engines": {
-    "node": ">=4.2.3"
+    "node": ">=4.3.0"
   },
   "scripts": {
     "test": "make test"
