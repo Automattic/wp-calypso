@@ -216,12 +216,24 @@ describe( 'post-normalizer', function() {
 				featured_media: {
 					uri: 'http://example.com/media.jpg',
 					type: 'image'
+				},
+				attachments: {
+					1234: {
+						mime_type: 'image/png',
+						URL: 'http://example.com/media.jpg'
+					},
+					3456: {
+						mime_type: 'text/text',
+						URL: 'http://example.com/media.jpg'
+					}
 				}
 			};
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
 				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.attachments['1234'].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' )
+				assert.strictEqual( normalized.attachments['3456'].URL, 'http://example.com/media.jpg' );
 				done( err );
 			} );
 		} );

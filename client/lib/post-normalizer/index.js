@@ -28,12 +28,11 @@ var assign = require( 'lodash/object/assign' ),
 var formatting = require( 'lib/formatting' ),
 	safeImageURL = require( 'lib/safe-image-url' );
 
-
 const DEFAULT_PHOTON_QUALITY = 80, // 80 was chosen after some heuristic testing as the best blend of size and quality
 	READING_WORDS_PER_SECOND = 250 / 60; // Longreads says that people can read 250 words per minute. We want the rate in words per second.
 
 const imageScaleFactor = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1,
-TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+	TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 function debugForPost( post ) {
 	return function( msg ) {
@@ -56,8 +55,6 @@ function stripAutoPlays( query ) {
 	} );
 	return query;
 }
-
-
 
 /**
  * Asynchronously normalizes an object shaped like a post. Works on a copy of the post and does not mutate the original post.
@@ -330,6 +327,13 @@ normalizePost.safeImageProperties = function( maxWidth ) {
 		}
 		if ( post.canonical_image && post.canonical_image.type === 'image' ) {
 			makeImageURLSafe( post.canonical_image, 'uri', maxWidth, post.URL );
+		}
+		if ( post.attachments ) {
+			forOwn( post.attachments, function( attachment ) {
+				if ( startsWith( attachment.mime_type, 'image/' ) ) {
+					makeImageURLSafe( attachment, 'URL', maxWidth, post.URL );
+				}
+			} );
 		}
 
 		callback();
