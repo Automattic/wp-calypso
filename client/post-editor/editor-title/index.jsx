@@ -4,6 +4,8 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash/object/omit';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -16,11 +18,13 @@ import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
+import { setTitle } from 'state/ui/editor/post/actions';
 
-export default React.createClass( {
+const EditorTitle = React.createClass( {
 	displayName: 'EditorTitle',
 
 	propTypes: {
+		setTitle: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
 		isNew: PropTypes.bool,
@@ -36,7 +40,8 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			isNew: true,
-			onChange: () => {}
+			onChange: () => {},
+			setTitle: () => {},
 		};
 	},
 
@@ -64,10 +69,12 @@ export default React.createClass( {
 			return;
 		}
 
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			title: event.target.value
 		} );
 
+		this.props.setTitle( event.target.value );
 		onChange( event );
 	},
 
@@ -127,3 +134,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setTitle }, dispatch )
+)( EditorTitle );
