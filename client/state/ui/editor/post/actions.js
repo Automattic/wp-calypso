@@ -110,6 +110,10 @@ export function removePublicizeConnectionKey() {
 	return { type: 'TODO' };
 }
 
+export function setPublicizeMessage( newMessage ) {
+	debug( 'setPublicizeMessage', newMessage );
+	return { type: 'TODO' };
+}
 
 export const EDITING_MODES = {
 	EXISTING: 'EDITING_MODE_EXISTING',

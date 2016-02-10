@@ -1,22 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var CountedTextarea = require( 'components/forms/counted-textarea' ),
+const CountedTextarea = require( 'components/forms/counted-textarea' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	TrackInputChanges = require( 'components/track-input-changes' ),
 	InfoPopover = require( 'components/info-popover' );
+import { setPublicizeMessage } from 'state/ui/editor/post/actions';
 
-module.exports = React.createClass( {
+const PublicizeMessage = React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
+		setPublicizeMessage: React.PropTypes.func,
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
@@ -25,6 +29,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			setPublicizeMessage: () => {},
 			message: '',
 			acceptableLength: 140,
 			requireCount: false,
@@ -32,7 +37,10 @@ module.exports = React.createClass( {
 	},
 
 	onChange: function( event ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.updateMetadata( '_wpas_mess', event.target.value );
+
+		this.props.setPublicizeMessage( event.target.value );
 	},
 
 	recordStats: function() {
@@ -95,3 +103,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setPublicizeMessage }, dispatch )
+)( PublicizeMessage );
