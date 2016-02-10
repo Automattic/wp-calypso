@@ -76,7 +76,7 @@ export default React.createClass( {
 		const regionCodes = [];
 		const { data, dataList } = this.props;
 
-		if ( data.length ) {
+		if ( data.length > 1 ) {
 			const chartData = window.google.visualization.arrayToDataTable( data );
 			const node = this.refs.chart;
 			const width = node.clientWidth;
