@@ -9,9 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	MasterbarCheckout = require( 'layout/masterbar/checkout' ),
-	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarMinimal = require( 'layout/masterbar/minimal' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
@@ -29,7 +27,6 @@ var abtest = require( 'lib/abtest' ).abtest,
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
-	CartData = require( 'components/data/cart' ),
 	KeyboardShortcutsMenu,
 	Layout,
 	SupportUser;
@@ -103,14 +100,6 @@ Layout = React.createClass( {
 
 		if ( ! this.props.user ) {
 			return <MasterbarMinimal url="/" />;
-		}
-
-		if ( 'checkout' === this.props.section && abtest( 'checkoutMasterbar' ) === 'minimal' ) {
-			return (
-				<CartData>
-					<MasterbarCheckout selectedSite={ this.props.sites.getSelectedSite() } />
-				</CartData>
-			);
 		}
 
 		return (
