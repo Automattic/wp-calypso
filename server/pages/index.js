@@ -466,7 +466,7 @@ module.exports = function() {
 			if ( req.cookies.wordpress_logged_in ) {
 				renderLoggedInRoute( req, res );
 			} else {
-				res.redirect( 'https://discover.wordpress.com' );
+				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			}
 		} );
 	}
