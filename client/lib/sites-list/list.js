@@ -39,6 +39,7 @@ function SitesList() {
 	this.lastSelected = null;
 	this.propagateChange = this.propagateChange.bind( this );
 	this.starred = PreferencesStore.get( 'starredSites' ) || [];
+	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 }
 
 /**
@@ -433,7 +434,7 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 		this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 	}
 
-	if ( ! siteID || ! this.initialized || user.get().visible_site_count < 12 ) {
+	if ( ! siteID || ! this.initialized ) {
 		return;
 	}
 
@@ -574,6 +575,10 @@ SitesList.prototype.getVisible = function() {
  **/
 SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
 	return this.get().filter( function( site ) {
+		if ( user.get().visible_site_count < 12 ) {
+			return site.visible === true && ! this.isStarred( site );
+		}
+
 		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1 && ! this.isStarred( site );
 	}, this );
 };
