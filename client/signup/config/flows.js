@@ -183,7 +183,7 @@ function removeUserStepFromFlow( flow ) {
 
 function getCurrentFlowName( currentUrl ) {
 	// Headstart test - Only consider users from the homepage
-	if ( '/start/en?ref=homepage' === currentUrl && 'headstart' === abtest( 'headstart' ) ) {
+	if ( ( '/start/blog/en?ref=homepage' === currentUrl || '/start/website/en?ref=homepage' === currentUrl ) && 'headstart' === abtest( 'headstart' ) ) {
 		return 'headstart';
 	}
 	return 'main';
