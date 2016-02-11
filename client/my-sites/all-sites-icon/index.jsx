@@ -9,6 +9,8 @@ var React = require( 'react' ),
  */
 var SiteIcon = require( 'components/site-icon' );
 
+const MAX_ICONS = 4;
+
 module.exports = React.createClass( {
 	displayName: 'AllSitesIcon',
 
@@ -17,17 +19,17 @@ module.exports = React.createClass( {
 	},
 
 	getMaxSites: function() {
-		return this.props.sites.slice( 0, 4 );
+		return this.props.sites.slice( 0, MAX_ICONS );
 	},
 
 	getSitesWithIcons: function() {
 		return this.props.sites.filter( function( site ) {
 			return site.icon;
-		} ).slice( 0, 4 );
+		} ).slice( 0, MAX_ICONS );
 	},
 
 	getIcons: function() {
-		var sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, 4 );
+		var sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
 
 		return sites.map( function( site ) {
 			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 33 } />;
