@@ -40,11 +40,18 @@ this.props.successNotice(
 
 * `successNotice()`
 * `errorNotice()`
+* `infoNotice()`
+* `warningNotice()`
 
 ## Options
 
 The first argument is the text to be displayed on the notice. The second argument is an optional object and accepts some properties:
 
-* `duration: 5000`: (optional) Duration in milliseconds to display the notice before dismissing.
-* `showDismiss: false`: (optional) To indicate if dismiss button should be rendered within the overlay.
+*All these parameters are optional*
+
+* `id` (default generated `uniqueId()` ) ID for your notice
+* `duration` (default null - notices stay forever) Duration in milliseconds to display the notice before dismissing.
+* `showDismiss` (default true) To indicate if dismiss button should be rendered within the overlay.
+* `isPersistent` (default false - notices disappear when navigating route) - should notice be persistent between route changes?
+* `displayOnNextPage` (default false) - should notice appear on next route change?
 
