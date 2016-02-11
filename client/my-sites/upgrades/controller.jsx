@@ -254,5 +254,31 @@ module.exports = {
 
 			next();
 		};
+	},
+
+	redirectIfThemePurchased: function( context, next ) {
+		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
+			cartItems = require( 'lib/cart-values' ).cartItems,
+			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
+			selectedSite = lastTransaction.selectedSite,
+			cart = lastTransaction.cart,
+			cartAllItems = cartItems.getAll( cart );
+
+		if ( cartItems.hasOnlyProductsOf( cart, 'premium_theme' ) ) {
+			const { meta, extra: { source } } = cartAllItems[ 0 ];
+			// TODO: When this section is migrated to Redux altogether,
+			// use react-redux to `connect()` components and `dispatch()` actions.
+			context.store.dispatch( activated( meta, selectedSite, source, true ) );
+
+			// If we're coming from the signup funnel, redirect to the frontend
+			if ( source === 'signup-with-theme' ) {
+				page.redirect( selectedSite.URL );
+			} else {
+				page.redirect( '/design/' + selectedSite.slug );
+			}
+			return;
+		}
+
+		next();
 	}
 };
