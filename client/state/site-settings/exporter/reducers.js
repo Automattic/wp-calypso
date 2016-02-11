@@ -11,12 +11,12 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	SET_EXPORT_POST_TYPE,
-	REQUEST_START_EXPORT,
-	REPLY_START_EXPORT,
-	FAIL_EXPORT,
-	COMPLETE_EXPORT,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	EXPORT_COMPLETE,
+	EXPORT_START_REQUEST,
+	EXPORT_STARTED,
+	EXPORT_FAILURE
 } from 'state/action-types';
 
 import { States } from './constants';
@@ -26,26 +26,38 @@ export function selectedPostType( state = null, action ) {
 		case SET_EXPORT_POST_TYPE:
 			return action.postType;
 		case SERIALIZE:
-			return state;
+			return null;
 		case DESERIALIZE:
-			return state;
+			return null;
 	}
 	return state;
 }
 
-export function exportingState( state = States.READY, action ) {
-	switch ( action.type ) {
-		case REQUEST_START_EXPORT:
-			return States.STARTING;
-		case REPLY_START_EXPORT:
-			return States.EXPORTING;
-		case FAIL_EXPORT:
-		case COMPLETE_EXPORT:
-			return States.READY;
+/**
+ * Tracks the state of the exporter for each site ID
+ * @param  {Object} state  The current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export function exportingState( state = {}, { type, siteId } ) {
+	switch ( type ) {
+		case EXPORT_START_REQUEST:
+			return Object.assign( {}, state, {
+				[ siteId ]: States.STARTING
+			} );
+		case EXPORT_STARTED:
+			return Object.assign( {}, state, {
+				[ siteId ]: States.EXPORTING
+			} );
+		case EXPORT_COMPLETE:
+		case EXPORT_FAILURE:
+			return Object.assign( {}, state, {
+				[ siteId ]: States.READY
+			} );
 		case SERIALIZE:
-			return state;
+			return {};
 		case DESERIALIZE:
-			return States.READY;
+			return {};
 	}
 	return state;
 }
@@ -92,7 +104,6 @@ export function advancedSettings( state = {}, action ) {
 		case DESERIALIZE:
 			return state;
 	}
-
 	return state;
 }
 

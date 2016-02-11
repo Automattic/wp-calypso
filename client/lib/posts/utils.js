@@ -117,8 +117,8 @@ var utils = {
 			[
 				postNormalizer.decodeEntities,
 				postNormalizer.stripHTML,
-				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.safeImageProperties( imageWidth ),
+				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.withContentDOM( [
 					postNormalizer.content.removeStyles,
 					postNormalizer.content.safeContentImages( imageWidth )

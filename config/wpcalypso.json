@@ -11,6 +11,7 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
 	"discover_blog_id": 53424024,
+	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"code-splitting": true,
 		"server-side-rendering": true,
@@ -91,6 +92,7 @@
 		"me/find-friends": false,
 		"me/trophies": false,
 		"help": true,
+		"support-user": true,
 		"phone_signup": true,
 		"login": false,
 		"network-connection": true,
@@ -115,6 +117,15 @@
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": "3033aa025c1a9648c703eb70132ff220"
 	},
+
+	"sync-handler-defaults": {
+		"name": "Calypso sync-handler",
+		"version": 1.0,
+		"driver": "INDEXEDDB",
+		"storeName": "calypso_sync_handler",
+		"description": "Request-handler wrapper used to catch REST-API responses"
+	},
+
 	"muse_supported_themes": [
 		"pub/twentytwelve",
 		"pub/twentythirteen",

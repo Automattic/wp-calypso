@@ -9,6 +9,7 @@
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_blog_id": 53424024,
+	"discover_logged_out_redirect_url": "/",
 	"features": {
 		"desktop": true,
 		"fluid-width": true,
@@ -103,6 +104,13 @@
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": "3033aa025c1a9648c703eb70132ff220"
+	},
+	"sync-handler-defaults": {
+		"name": "Calypso sync-handler",
+		"version": 1.0,
+		"driver": "INDEXEDDB",
+		"storeName": "calypso_sync_handler",
+		"description": "Request-handler wrapper used to catch REST-API responses"
 	},
 	"muse_supported_themes": [
 		"pub/twentytwelve",

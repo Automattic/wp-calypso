@@ -1,15 +1,19 @@
+/* eslint-disable vars-on-top */
+require( 'lib/react-test-env-setup' )();
+
 /**
  * External dependencies
  */
-var chai = require( 'chai' );
+var chai = require( 'chai' ),
+	each = require( 'lodash/collection/each' );
 
 /**
  * Internal Dependencies
  */
 var capitalPDangit = require( '../' ).capitalPDangit,
-	parseHtml = require( '../' ).parseHtml;
-
-require( 'lib/react-test-env-setup' )();
+	parseHtml = require( '../' ).parseHtml,
+	decodeEntitiesNode = require( '../decode-entities/node' ),
+	decodeEntitiesBrowser = require( '../decode-entities/browser' );
 
 describe( 'capitalPDangit', function() {
 	it( 'should error when input is not a string', function() {
@@ -88,6 +92,25 @@ describe( 'parseHtml', function() {
 		strings.forEach( function( string ) {
 			var link = parseHtml( string ).querySelectorAll( 'a' );
 			chai.assert.equal( link[ 0 ].innerHTML, 'hello world' );
+		} );
+	} );
+} );
+
+describe( '#decodeEntities()', () => {
+	each( {
+		node: decodeEntitiesNode,
+		browser: decodeEntitiesBrowser
+	}, ( decodeEntities, env ) => {
+		describe( env, () => {
+			it( 'should decode entities', () => {
+				const decoded = decodeEntities( 'Ribs &gt; Chicken' );
+				chai.assert.equal( decoded, 'Ribs > Chicken' );
+			} );
+
+			it( 'should not alter already-decoded entities', () => {
+				const decoded = decodeEntities( 'Ribs > Chicken. Truth &amp; Liars.' );
+				chai.assert.equal( decoded, 'Ribs > Chicken. Truth & Liars.' );
+			} );
 		} );
 	} );
 } );

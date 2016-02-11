@@ -3,6 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/function/debounce';
 import sortBy from 'lodash/collection/sortBy';
@@ -18,6 +19,13 @@ import NoResults from './no-results';
 import analytics from 'analytics';
 import Search from './search';
 import TreeConvert from 'lib/tree-convert';
+import { decodeEntities } from 'lib/formatting';
+import {
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQuery,
+	isSitePostsLastPageForQuery
+} from 'state/posts/selectors';
+import QueryPosts from 'components/data/query-posts';
 
 /**
 * Constants
@@ -53,10 +61,12 @@ function buildTree( items ) {
 	return treeConverter.treeify( sortedPosts );
 }
 
-export default React.createClass( {
+const PostSelectorPosts = React.createClass( {
 	displayName: 'PostSelectorPosts',
 
 	propTypes: {
+		siteId: PropTypes.number.isRequired,
+		query: PropTypes.object,
 		posts: PropTypes.array,
 		page: PropTypes.number,
 		lastPage: PropTypes.bool,
@@ -117,16 +127,20 @@ export default React.createClass( {
 
 	renderItem( item ) {
 		const itemId = item.ID;
-		const name = item.title || this.translate( 'Untitled' );
+		const name = item.title ? decodeEntities( item.title ) : this.translate( 'Untitled' );
 		const checked = this.props.selected === item.ID;
 		const inputType = this.props.multiple ? 'checkbox' : 'radio';
 		const domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId;
 
 		const input = (
-			<input id={ domId } type={ inputType } name='posts'
+			<input
+				id={ domId }
+				type={ inputType }
+				name="posts"
 				value={ itemId }
 				onChange={ this.props.onChange.bind( null, item ) }
-				checked={ checked } />
+				checked={ checked }
+				className="post-selector__input" />
 		);
 
 		return (
@@ -175,8 +189,8 @@ export default React.createClass( {
 
 		return (
 			<li>
-				<input className='placeholder-text' type={ inputType } name='posts' disabled={ true } />
-				<label><span className='placeholder-text'>Loading list of options...</span></label>
+				<input className="post-selector__input" type={ inputType } name="posts" disabled={ true } />
+				<label><span className="placeholder-text">Loading list of options...</span></label>
 			</li>
 		);
 	},
@@ -213,6 +227,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classes } onScroll={ this.checkScrollPosition }>
+				<QueryPosts siteId={ this.props.siteId } query={ this.props.query } />
 				{ showSearch ?
 					<Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> :
 					null
@@ -227,10 +242,19 @@ export default React.createClass( {
 					<span className='is-empty-content'>{ this.props.emptyMessage }</span> :
 					null
 				}
-				<form>
+				<form className="post-selector__results">
 					{ posts ? this.renderHierarchy( posts ) : this.renderPlaceholder() }
 				</form>
 			</div>
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const { siteId, query } = ownProps;
+	return {
+		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
+		loading: isRequestingSitePostsForQuery( state, siteId, query )
+	};
+} )( PostSelectorPosts );

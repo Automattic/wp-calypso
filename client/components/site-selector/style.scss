@@ -29,6 +29,11 @@
 			color: $white;
 		}
 
+		.count {
+			border-color: $white;
+			color: $white;
+		}
+
 		&.is-private .site__title::before {
 			color: $white;
 		}

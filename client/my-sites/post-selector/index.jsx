@@ -9,7 +9,7 @@ import snakeCase from 'lodash/string/snakeCase';
 /**
  * Internal dependencies
  */
-import PostSelectorPagination from './pagination';
+import PostSelectorPosts from './selector';
 
 export default React.createClass( {
 	displayName: 'PostSelector',
@@ -64,6 +64,20 @@ export default React.createClass( {
 		} );
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		const isChangingQuery = [
+			'type',
+			'status',
+			'excludeTree',
+			'orderBy',
+			'order'
+		].some( ( prop ) => nextProps[ prop ] !== this.props[ prop ] );
+
+		if ( isChangingQuery ) {
+			this.setState( { page: 1 } );
+		}
+	},
+
 	incrementPage() {
 		this.setState( {
 			page: this.state.page + 1
@@ -74,7 +88,7 @@ export default React.createClass( {
 		const { siteId, multiple, onChange, emptyMessage, createLink, selected } = this.props;
 
 		return (
-			<PostSelectorPagination
+			<PostSelectorPosts
 				siteId={ siteId }
 				query={ this.getQuery() }
 				onNextPage={ this.incrementPage }

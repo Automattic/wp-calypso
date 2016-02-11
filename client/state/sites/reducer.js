@@ -12,6 +12,8 @@ import omit from 'lodash/object/omit';
  */
 import { plans } from './plans/reducer';
 import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import schema from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -35,7 +37,7 @@ export function items( state = {}, action ) {
 			} );
 			return indexBy( sites, 'ID' );
 		case DESERIALIZE:
-			return state;
+			return isValidStateWithSchema( state, schema ) ? state : {};
 	}
 	return state;
 }

@@ -27,26 +27,26 @@ import { States } from '../constants';
 
 describe( 'reducer', () => {
 	describe( 'selectedPostType', () => {
-		it( 'persists state', () => {
+		it( 'does not persist state', () => {
 			const postType = 'feedback';
 			const state = selectedPostType( postType, { type: SERIALIZE } );
-			expect( state ).to.eql( 'feedback' );
+			expect( state ).to.be.null;
 		} );
-		it( 'loads persisted state', () => {
+		it( 'does not load persisted state', () => {
 			const postType = 'feedback';
 			const state = selectedPostType( postType, { type: DESERIALIZE } );
-			expect( state ).to.eql( 'feedback' );
+			expect( state ).to.be.null;
 		} );
 	} );
 
 	describe( 'exportingState', () => {
-		it( 'persists state', () => {
-			const state = exportingState( States.EXPORTING, { type: SERIALIZE } );
-			expect( state ).to.eql( States.EXPORTING );
+		it( 'does not persist state', () => {
+			const state = exportingState( { 100658273: States.EXPORTING }, { type: SERIALIZE } );
+			expect( state ).to.eql( {} );
 		} );
-		it( 'ignores persisted state since server side checking is not implemented yet', () => {
-			const state = exportingState( States.EXPORTING, { type: DESERIALIZE } );
-			expect( state ).to.eql( States.READY );
+		it( 'does not load persisted state', () => {
+			const state = exportingState( { 100658273: States.EXPORTING }, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 

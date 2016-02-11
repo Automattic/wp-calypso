@@ -2,14 +2,25 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import mockery from 'mockery';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
 import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { items } from '../reducer';
 
+let items;
 describe( 'reducer', () => {
+	before( function() {
+		mockery.registerMock( 'lib/warn', () => {} );
+		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
+		items = require( '../reducer' ).items;
+	} );
+	after( function() {
+		mockery.deregisterAll();
+		mockery.disable();
+	} );
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
@@ -29,7 +40,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate sites', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 			const state = items( original, {
@@ -44,7 +55,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should override previous site of same ID', () => {
-			const original = Object.freeze( {
+			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 			const state = items( original, {
@@ -58,7 +69,7 @@ describe( 'reducer', () => {
 		} );
 		describe( 'persistence', () => {
 			it( 'should return a js object on SERIALIZE', () => {
-				const original = Object.freeze( {
+				const original = deepFreeze( {
 					2916284: {
 						ID: 2916284,
 						name: 'WordPress.com Example Blog',
@@ -71,8 +82,8 @@ describe( 'reducer', () => {
 					2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 				} );
 			} );
-			it( 'it loads state on DESERIALIZE', () => {
-				const original = Object.freeze( {
+			it( 'validates state on DESERIALIZE', () => {
+				const original = deepFreeze( {
 					2916284: {
 						ID: 2916284,
 						name: 'WordPress.com Example Blog'
@@ -94,15 +105,15 @@ describe( 'reducer', () => {
 					}
 				} );
 			} );
-			it.skip( 'when state has validation errors on DESERIALIZE it returns initial state', () => {
-				const original = Object.freeze( {
+			it( 'returns initial state when state is missing required properties', () => {
+				const original = deepFreeze( {
 					2916284: { name: 'WordPress.com Example Blog' }
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
-			it.skip( 'when state has validation errors on DESERIALIZE it returns initial state', () => {
-				const original = Object.freeze( {
+			it( 'returns initial state when state has invalid keys', () => {
+				const original = deepFreeze( {
 					foobar: { name: 'WordPress.com Example Blog' }
 				} );
 				const state = items( original, { type: DESERIALIZE } );

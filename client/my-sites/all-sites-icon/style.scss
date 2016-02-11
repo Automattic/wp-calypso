@@ -3,12 +3,12 @@
  */
 
 .all-sites-icon {
-	margin-right: 12px;
+	margin: -8px 12px -8px -8px;
 	position: relative;
 		left: 0;
 		top: 0;
-	height: 32px;
-	width: 32px;
+	height: 50px;
+	width: 50px;
 
 	.site-icon.is-blank::before {
 		display: none;
@@ -22,18 +22,18 @@
 		background: $gray-dark;
 		content: '';
 		display: block;
-		height: 9px;
-		width: 9px;
+		height: 12px;
+		width: 12px;
 		position: absolute;
-			left: 17px;
-			top: 17px;
+			left: 30px;
+			top: 30px;
 	}
 
 	&.is-shape-2::after,
 	&.is-shape-1::after {
 		position: absolute;
-			left: 6px;
-			top: 6px;
+			left: 8px;
+			top: 8px;
 	}
 }
 
@@ -42,8 +42,6 @@
 	background: $gray;
 	border: none;
 	margin-right: 0;
-	height: 15px;
-	width: 15px;
 	position: absolute;
 }
 
@@ -81,7 +79,8 @@
 }
 
 // Shape with three or more icons
-.all-sites-icon.is-shape-3 .site-icon {
+.all-sites-icon.is-shape-3 .site-icon,
+.all-sites-icon.is-shape-4 .site-icon {
 	// Top left
 	left: 0;
 	right: auto;
@@ -101,5 +100,13 @@
 		left: auto;
 		right: 0;
 		top: 0;
+	}
+
+	& + .site-icon + .site-icon + .site-icon {
+		// Top right
+		top: auto;
+		left: auto;
+		right: 0;
+		bottom: 0;
 	}
 }

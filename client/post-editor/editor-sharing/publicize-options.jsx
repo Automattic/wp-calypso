@@ -66,7 +66,9 @@ module.exports = React.createClass( {
 		}
 
 		this.connectionPopupMonitor.open( href );
-		this.connectionPopupMonitor.once( 'close', this.props.fetchConnections );
+		this.connectionPopupMonitor.once( 'close', () => {
+			this.props.fetchConnections( this.props.site.ID )
+		} );
 	},
 
 	newConnection: function() {
@@ -102,7 +104,7 @@ module.exports = React.createClass( {
 		// to connections previously returning a 400 error
 		this.props.site.once( 'change', () => {
 			if ( this.props.site.isModuleActive( 'publicize' ) ) {
-				this.props.fetchConnections();
+				this.props.fetchConnections( this.props.site.ID );
 			}
 		} );
 	},
