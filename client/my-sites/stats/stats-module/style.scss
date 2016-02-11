@@ -108,8 +108,8 @@
 	.right {
 		color: $gray;
 		position: absolute;
-		right: 24px;
-		top: 0;
+			right: 24px;
+			top: 0;
 	}
 }
 
@@ -156,8 +156,8 @@ ul.module-header-actions {
 	list-style: none;
 	margin: 0;
 	position: absolute;
-	right: 0;
-	top: 0;
+		right: 0;
+		top: 0;
 
 	// Fade really long module titles
 	&::before {
@@ -500,9 +500,9 @@ ul.module-header-actions {
 		content: "";
 		display: block;
 		position: absolute;
-			top: 0;
 			bottom: 16px; // 1
 			left: 0;
+			top: 0;
 		width: 20px;
 		z-index: z-index( 'root', '.module-content-table::after' );
 	}
