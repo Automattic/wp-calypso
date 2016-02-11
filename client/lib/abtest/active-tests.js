@@ -62,14 +62,6 @@ module.exports = {
 		},
 		defaultVariation: 'mostPopular'
 	},
-	periodLabelFree: {
-		datestamp: '20160202',
-		variations: {
-			forLife: 50,
-			withAdv: 50
-		},
-		defaultVariation: 'forLife'
-	},
 	plansFeatureList: {
 		datestamp: '20040202',
 		variations: {
