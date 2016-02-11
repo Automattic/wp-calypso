@@ -29,7 +29,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return {
 		setPostType: compose( dispatch, setPostType ),
-		startExport: () => startExport()( dispatch ),
+		startExport: compose( dispatch, startExport ),
 		advancedSettingsFetch: compose( dispatch, advancedSettingsFetch )
 	};
 }
