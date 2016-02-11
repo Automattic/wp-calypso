@@ -1,16 +1,11 @@
 /**
- * External dependencies
- */
-import compose from 'lodash/function/compose';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 
-import { supportUserTokenFetch, supportUserRestore } from 'state/support/actions';
+import { supportUserRestore } from 'state/support/actions';
 import { getSupportUser, getSupportToken } from 'state/support/selectors';
 
 /**
@@ -25,8 +20,6 @@ import { getSupportUser, getSupportToken } from 'state/support/selectors';
  */
 export default function( reduxStore ) {
 	const user = new User();
-	const dispatch = reduxStore.dispatch.bind( reduxStore );
-	const getState = reduxStore.getState.bind( reduxStore );
 
 	// Called when the support user token was updated in wpcom
 	const onTokenChange = () => {
@@ -48,11 +41,4 @@ export default function( reduxStore ) {
 			onTokenChange();
 		}
 	} );
-
-	// For testing during development. Adds support user functions to
-	// the dev console. The UI will replace these functions in future PRs.
-	window.supportUser = {
-		login: compose( dispatch, supportUserTokenFetch ),
-		logout: compose( dispatch, supportUserRestore )
-	};
 }

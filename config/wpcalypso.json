@@ -92,6 +92,7 @@
 		"me/find-friends": false,
 		"me/trophies": false,
 		"help": true,
+		"support-user": true,
 		"phone_signup": true,
 		"login": false,
 		"network-connection": true,
