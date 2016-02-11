@@ -33,6 +33,7 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
+import offlineQueue from './offlineActionQueue/middleware';
 
 /**
  * Module variables
@@ -76,6 +77,7 @@ if ( typeof window === 'object' ) {
 	];
 }
 
+middleware.push( offlineQueue );
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
 
 export function createReduxStore( initialState = {} ) {
