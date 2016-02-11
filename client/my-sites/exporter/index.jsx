@@ -11,26 +11,32 @@ import Exporter from './exporter';
 import {
 	shouldShowProgress,
 	getSelectedPostType,
+	isExporting,
 } from 'state/site-settings/exporter/selectors';
 import {
+	advancedSettingsFetch,
+	exportStatusFetch,
 	setPostType,
 	startExport,
-	advancedSettingsFetch
 } from 'state/site-settings/exporter/actions';
 
 function mapStateToProps( state ) {
+	const siteId = state.ui.selectedSiteId;
+
 	return {
-		siteId: state.ui.selectedSiteId,
+		siteId,
 		postType: getSelectedPostType( state ),
-		shouldShowProgress: shouldShowProgress( state )
+		shouldShowProgress: shouldShowProgress( state, siteId ),
+		isExporting: isExporting( state, siteId ),
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return {
+		advancedSettingsFetch: compose( dispatch, advancedSettingsFetch ),
+		exportStatusFetch: compose( dispatch, exportStatusFetch ),
 		setPostType: compose( dispatch, setPostType ),
 		startExport: compose( dispatch, startExport ),
-		advancedSettingsFetch: compose( dispatch, advancedSettingsFetch )
 	};
 }
 

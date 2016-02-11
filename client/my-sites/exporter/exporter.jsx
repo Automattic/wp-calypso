@@ -9,6 +9,7 @@ import React, { PropTypes } from 'react';
 import FoldableCard from 'components/foldable-card';
 import AdvancedSettings from 'my-sites/exporter/advanced-settings';
 import SpinnerButton from './spinner-button';
+import Interval, { EVERY_SECOND } from 'lib/interval';
 
 export default React.createClass( {
 	displayName: 'Exporter',
@@ -34,10 +35,12 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { setPostType, startExport } = this.props;
-		const { postType, shouldShowProgress } = this.props;
+		const { setPostType, startExport, exportStatusFetch } = this.props;
+		const { postType, shouldShowProgress, isExporting } = this.props;
 		const siteId = this.props.site.ID;
+
 		const exportAll = () => startExport( siteId );
+		const fetchStatus = () => exportStatusFetch( siteId );
 
 		const exportButton = (
 			<SpinnerButton
@@ -73,6 +76,7 @@ export default React.createClass( {
 						onClickExport={ startExport }
 					/>
 				</FoldableCard>
+				{ isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>
 		);
 	}

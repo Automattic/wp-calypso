@@ -13,17 +13,24 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
+	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
+	EXPORT_STATUS_FETCH,
 } from 'state/action-types';
 import {
 	advancedSettingsFetch,
 	advancedSettingsReceive,
 	advancedSettingsFail,
 	startExport,
+	exportStatusFetch,
 } from '../actions';
-import { SAMPLE_ADVANCED_SETTINGS } from './sample-data';
+import {
+	SAMPLE_ADVANCED_SETTINGS,
+	SAMPLE_EXPORT_COMPLETE_RESPONSE,
+	SAMPLE_EXPORT_FAILED_RESPONSE,
+} from './sample-data';
 
 /**
  * Test setup
@@ -44,7 +51,11 @@ describe( 'actions', () => {
 			.get( '/rest/v1.1/sites/100658273/exports/settings' )
 			.reply( 200, SAMPLE_ADVANCED_SETTINGS )
 			.post( '/rest/v1.1/sites/2916284/exports/start' )
-			.reply( 200, true );
+			.reply( 200, true )
+			.get( '/rest/v1.1/sites/100658273/exports/0')
+			.reply( 200, SAMPLE_EXPORT_COMPLETE_RESPONSE )
+			.get( '/rest/v1.1/sites/2916284/exports/0')
+			.reply( 200, SAMPLE_EXPORT_FAILED_RESPONSE );
 	} );
 
 	beforeEach( () => {
@@ -146,6 +157,36 @@ describe( 'actions', () => {
 
 				done();
 			} ).catch( done );
+		} );
+	} );
+
+	describe( '#exportStatusFetch()', () => {
+		it( 'should dispatch fetch export status action when thunk triggered', () => {
+			exportStatusFetch( 100658273 )( spy );
+			expect( spy ).to.have.been.calledWithMatch( {
+				type: EXPORT_STATUS_FETCH,
+				siteId: 100658273
+			} );
+		} );
+
+		it( 'should dispatch export complete action when an export has completed', () => {
+			exportStatusFetch( 100658273 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledTwice;
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: EXPORT_COMPLETE,
+					siteId: 100658273
+				} );
+			} );
+		} );
+
+		it( 'should dispatch export failure action when an export has failed', () => {
+			exportStatusFetch( 2916284 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledTwice;
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: EXPORT_FAILURE,
+					siteId: 2916284
+				} );
+			} );
 		} );
 	} );
 } );
