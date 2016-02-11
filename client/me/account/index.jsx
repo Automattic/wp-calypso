@@ -40,7 +40,6 @@ import NoticeAction from 'components/notice/notice-action';
 import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
-import SectionHeader from 'components/section-header';
 import SitesDropdown from 'components/sites-dropdown';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
