@@ -20,6 +20,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { sendInvites } from 'lib/invites/actions';
 import Card from 'components/card';
 import Main from 'components/main';
+import Tooltip from 'components/tooltip';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
@@ -29,6 +30,8 @@ import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-vali
  * Module variables
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );
+
+let _tokens = {};
 
 export default React.createClass( {
 	displayName: 'InvitePeople',
@@ -56,7 +59,8 @@ export default React.createClass( {
 			message: '',
 			response: false,
 			sendingInvites: false,
-			getTokenStatus: () => {}
+			getTokenStatus: () => {},
+			displayErrorTooltip: v => v
 		} );
 	},
 
@@ -97,9 +101,10 @@ export default React.createClass( {
 		const { success, errors } = this.state;
 
 		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
-			let status;
+			let status, tooltip;
 			if ( errors && errors[ value ] ) {
 				status = 'error';
+				tooltip = errors[ value ].errors[ Object.keys( errors[ value ].errors )[ 0 ] ];
 			} else if ( ! includes( success, value ) ) {
 				status = 'validating';
 			}
@@ -107,7 +112,8 @@ export default React.createClass( {
 			if ( status ) {
 				value = {
 					value,
-					status
+					status,
+					tooltip
 				};
 			}
 
