@@ -6,7 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingPostTypes } from '../selectors';
+import {
+	isRequestingPostTypes,
+	getPostTypes
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostTypes()', () => {
@@ -42,6 +45,34 @@ describe( 'selectors', () => {
 			}, 2916284 );
 
 			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( '#getPostTypes()', () => {
+		it( 'should return null if the site is not tracked', () => {
+			const postTypes = getPostTypes( {
+				postTypes: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( postTypes ).to.be.null;
+		} );
+
+		it( 'should return the post types for a site', () => {
+			const postTypes = getPostTypes( {
+				postTypes: {
+					items: {
+						2916284: {
+							post: { name: 'post', label: 'Posts' }
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( postTypes ).to.eql( {
+				post: { name: 'post', label: 'Posts' }
+			} )
 		} );
 	} );
 } );
