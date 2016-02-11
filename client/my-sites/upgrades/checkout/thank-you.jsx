@@ -17,6 +17,7 @@ var Button = require( 'components/button' ),
 	analytics = require( 'analytics' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
+	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
 	PurchaseDetail = require( './purchase-detail' ),
@@ -80,6 +81,8 @@ var CheckoutThankYou = React.createClass( {
 				type: 'FETCH_SITES'
 			} );
 		}
+
+		this.props.fetchReceipt( this.props.receiptId );
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
@@ -625,10 +628,17 @@ function goToDomainManagement( selectedSite, domain ) {
 }
 
 module.exports = connect(
-	undefined,
+	function mapStateToProps( state, props ) {
+		return {
+			receipts: state.receipts
+		};
+	},
 	function mapDispatchToProps( dispatch ) {
 		return {
-			refreshSitePlans( siteId ) {
+			fetchReceipt: function( receiptId ) {
+				dispatch( fetchReceipt( receiptId ) );
+			},
+			refreshSitePlans: function( siteId ) {
 				dispatch( refreshSitePlans( siteId ) );
 			}
 		};

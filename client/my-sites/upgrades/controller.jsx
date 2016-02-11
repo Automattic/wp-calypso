@@ -212,9 +212,9 @@ module.exports = {
 
 	checkoutThankYou: function( context ) {
 		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			CheckoutData = require( 'components/data/checkout' ),
 			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			basePath = route.sectionify( context.path );
+			basePath = route.sectionify( context.path ),
+			receiptId = Number( context.params.receipt_id );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
 		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
@@ -229,12 +229,11 @@ module.exports = {
 
 		renderWithReduxStore(
 			(
-				<CheckoutData>
-					<CheckoutThankYouComponent
-						lastTransaction={ lastTransaction }
-						productsList={ productsList }
-						selectedSite={ sites.getSelectedSite() } />
-				</CheckoutData>
+				<CheckoutThankYouComponent
+					lastTransaction={ lastTransaction }
+					productsList={ productsList }
+					receiptId={ receiptId }
+					selectedSite={ sites.getSelectedSite() } />
 			),
 			document.getElementById( 'primary' ),
 			context.store
@@ -261,9 +260,16 @@ module.exports = {
 		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
 			cartItems = require( 'lib/cart-values' ).cartItems,
 			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			selectedSite = lastTransaction.selectedSite,
-			cart = lastTransaction.cart,
-			cartAllItems = cartItems.getAll( cart );
+			selectedSite = sites.getSelectedSite,
+			cart,
+			cartAllItems;
+
+		if ( ! lastTransaction ) {
+			return next();
+		}
+
+		cart = lastTransaction.cart,
+		cartAllItems = cartItems.getAll( cart );
 
 		if ( cartItems.hasOnlyProductsOf( cart, 'premium_theme' ) ) {
 			const { meta, extra: { source } } = cartAllItems[ 0 ];

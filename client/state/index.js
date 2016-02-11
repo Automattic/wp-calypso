@@ -12,6 +12,7 @@ import notices from './notices/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import plugins from './plugins/reducer';
+import receipts from './receipts/reducer';
 import sharing from './sharing/reducer';
 import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer';
@@ -30,6 +31,7 @@ export const reducer = combineReducers( {
 	notices,
 	posts,
 	postTypes,
+	receipts,
 	sharing,
 	sites,
 	siteSettings,

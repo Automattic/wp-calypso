@@ -119,7 +119,8 @@ const Checkout = React.createClass( {
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
-		var renewalItem;
+		var renewalItem,
+			receiptId = this.props.transaction.step.data.receipt_id;
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			clearPurchases();
@@ -133,8 +134,7 @@ const Checkout = React.createClass( {
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
-		// TODO: include the receipt ID in this URL when it is present
-		return `/checkout/${ this.props.sites.getSelectedSite().slug }/thank-you`;
+		return `/checkout/${ this.props.sites.getSelectedSite().slug }/${ receiptId }/thank-you`;
 	},
 
 	content: function() {
