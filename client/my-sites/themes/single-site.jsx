@@ -31,10 +31,16 @@ var Main = require( 'components/main' ),
 var ThemesSingleSite = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.string,
+		tier: React.PropTypes.string,
+		search: React.PropTypes.string,
+		trackScrollPage: React.PropTypes.func,
+		// Connected Props
+		queryParams: React.PropTypes.object,
+		themesList: React.PropTypes.array,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
 	},
 
 	getInitialState: function() {
