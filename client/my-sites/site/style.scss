@@ -196,6 +196,10 @@
 	animation: appear .3s ease-in-out;
 }
 
+.site__edit-icon-text {
+	animation: appear .3s ease-in-out;
+}
+
 .site__edit-icon,
 .site__edit-icon:visited {
 	color: darken( $gray, 10% );

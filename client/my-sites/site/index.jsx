@@ -39,7 +39,8 @@ module.exports = React.createClass( {
 			isSelected: false,
 
 			homeLink: false,
-			enableActions: false
+			enableActions: false,
+			disableStarring: false
 		};
 	},
 
@@ -52,7 +53,9 @@ module.exports = React.createClass( {
 		onMouseLeave: React.PropTypes.func,
 		isSelected: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
-		onClick: React.PropTypes.func
+		onClick: React.PropTypes.func,
+		enableActions: React.PropTypes.bool,
+		disableStarring: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -79,7 +82,7 @@ module.exports = React.createClass( {
 	renderStar: function() {
 		const site = this.props.site;
 
-		if ( ! site ) {
+		if ( ! site || this.props.disableStarring ) {
 			return null;
 		}
 
@@ -122,7 +125,7 @@ module.exports = React.createClass( {
 		return (
 			<a href={ url } target="_blank" className="site__edit-icon">
 				<SiteIcon site={ this.props.site } />
-				{ this.translate( 'Edit Icon' ) }
+				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
 			</a>
 		);
 	},

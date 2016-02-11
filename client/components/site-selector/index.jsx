@@ -234,10 +234,6 @@ export default React.createClass( {
 			);
 		}, this );
 
-		if ( ! recentSites.length ) {
-			return;
-		}
-
 		return recentSites;
 	},
 
