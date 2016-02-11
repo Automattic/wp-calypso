@@ -124,7 +124,7 @@ const CONTENT_CSS = [
 	window.app.tinymceWpSkin,
 	'//s1.wp.com/wp-includes/css/dashicons.css',
 	window.app.tinymceEditorCss,
-	'//fonts.googleapis.com/css?family=Merriweather:700%2C400%2C700italic%2C400italic',
+	'//s1.wp.com/i/fonts/merriweather/merriweather.css',
 ];
 
 module.exports = React.createClass( {
