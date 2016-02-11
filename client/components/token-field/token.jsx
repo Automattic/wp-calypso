@@ -10,7 +10,7 @@ var Token = React.createClass( {
 		value: React.PropTypes.string.isRequired,
 		displayTransform: React.PropTypes.func.isRequired,
 		onClickRemove: React.PropTypes.func,
-		status: React.PropTypes.oneOf( [ 'is-error', 'is-success' ] ),
+		status: React.PropTypes.oneOf( [ 'is-error', 'is-success', 'is-validating' ] ),
 		isBorderless: React.PropTypes.bool
 	},
 
