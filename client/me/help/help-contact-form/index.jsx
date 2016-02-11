@@ -9,6 +9,7 @@ import isEqual from 'lodash/lang/isEqual';
 /**
  * Internal dependencies
  */
+import analytics from 'analytics';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
@@ -94,6 +95,17 @@ module.exports = React.createClass( {
 		this.setState( { siteSlug } );
 	},
 
+	trackClickStats: function( selectionName, selectedOption ) {
+		const tracksEvent = {
+			howCanWeHelp: 'calypso_help_how_can_we_help_click',
+			howYouFeel: 'calypso_help_how_you_feel_click'
+		}[ selectionName ];
+
+		if ( tracksEvent ) {
+			analytics.tracks.recordEvent( tracksEvent, { selected_option: selectedOption } );
+		}
+	},
+
 	/**
 	 * Render both a SegmentedControl and SelectDropdown component.
 	 *
@@ -116,7 +128,8 @@ module.exports = React.createClass( {
 				value: option.value,
 				title: option.label,
 				onClick: () => {
-					this.setState( { [ selectionName ]: option.value } )
+					this.setState( { [ selectionName ]: option.value } );
+					this.trackClickStats( selectionName, option.value );
 				}
 			}
 		} ) );
