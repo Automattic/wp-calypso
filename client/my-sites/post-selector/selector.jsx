@@ -11,6 +11,7 @@ import filter from 'lodash/filter';
 import camelCase from 'lodash/camelCase';
 import clone from 'lodash/clone';
 import throttle from 'lodash/throttle';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -25,6 +26,8 @@ import {
 	isRequestingSitePostsForQuery,
 	isSitePostsLastPageForQuery
 } from 'state/posts/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
+import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 
 /**
@@ -127,10 +130,11 @@ const PostSelectorPosts = React.createClass( {
 
 	renderItem( item ) {
 		const itemId = item.ID;
-		const name = item.title ? decodeEntities( item.title ) : this.translate( 'Untitled' );
+		const name = item.title || this.translate( 'Untitled' );
 		const checked = this.props.selected === item.ID;
 		const inputType = this.props.multiple ? 'checkbox' : 'radio';
 		const domId = camelCase( this.props.analyticsPrefix ) + '-option-' + itemId;
+		const postType = get( this.props.postTypes, [ item.type, 'labels', 'singular_name' ], '' );
 
 		const input = (
 			<input
@@ -147,7 +151,12 @@ const PostSelectorPosts = React.createClass( {
 			<li key={ 'post-' + itemId } className="post-selector__list-item">
 				<label>
 					{ input }
-					<span className="post-selector__label">{ name }</span>
+					<span className="post-selector__label">
+						{ decodeEntities( name ) }
+						<span className="post-selector__label-type">
+							{ decodeEntities( postType ) }
+						</span>
+					</span>
 				</label>
 				{ item.items ? this.renderHierarchy( item.items, true ) : null }
 			</li>
@@ -210,6 +219,7 @@ const PostSelectorPosts = React.createClass( {
 	render() {
 		const numberPosts = this.props.posts ? this.props.posts.length : 0;
 		const showSearch = ( numberPosts > this.props.searchThreshold ) || this.state.searchTerm;
+		const isAnyType = 'any' === this.props.query.type;
 		let posts;
 
 		if ( this.props.posts ) {
@@ -221,13 +231,15 @@ const PostSelectorPosts = React.createClass( {
 			'post-selector',
 			this.props.className, {
 				'is-loading': this.props.loading,
-				'is-compact': ! showSearch && ! this.props.loading
+				'is-compact': ! showSearch && ! this.props.loading,
+				'is-any-type': isAnyType
 			}
 		);
 
 		return (
 			<div className={ classes } onScroll={ this.checkScrollPosition }>
 				<QueryPosts siteId={ this.props.siteId } query={ this.props.query } />
+				{ isAnyType && <QueryPostTypes siteId={ this.props.siteId } /> }
 				{ showSearch ?
 					<Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> :
 					null
@@ -255,6 +267,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
 		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
-		loading: isRequestingSitePostsForQuery( state, siteId, query )
+		loading: isRequestingSitePostsForQuery( state, siteId, query ),
+		postTypes: getPostTypes( state, siteId )
 	};
 } )( PostSelectorPosts );

@@ -89,12 +89,30 @@ input[type=checkbox].post-selector__input {
 }
 
 .post-selector__label {
+	position: relative;
 	display: block;
 	margin-left: 24px;
 	margin-top: 2px;
 
+	.post-selector.is-any-type & {
+		display: flex;
+		justify-content: space-between;
+	}
+
 	.post-selector.is-compact & {
 		font-size: 14px;
 		margin-top: 0;
+	}
+}
+
+.post-selector__label-type {
+	display: none;
+	margin-left: 8px;
+	font-size: 11px;
+	text-transform: uppercase;
+	color: $gray;
+
+	.post-selector.is-any-type & {
+		display: block;
 	}
 }
