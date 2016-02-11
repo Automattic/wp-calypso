@@ -17,20 +17,20 @@ module.exports = React.createClass( {
 	},
 
 	getMaxSites: function() {
-		return this.props.sites.slice( 0, 3 );
+		return this.props.sites.slice( 0, 4 );
 	},
 
 	getSitesWithIcons: function() {
 		return this.props.sites.filter( function( site ) {
 			return site.icon;
-		} ).slice( 0, 3 );
+		} ).slice( 0, 4 );
 	},
 
 	getIcons: function() {
-		var sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, 3 );
+		var sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, 4 );
 
 		return sites.map( function( site ) {
-			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 15 } />;
+			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 33 } />;
 		} );
 	},
 

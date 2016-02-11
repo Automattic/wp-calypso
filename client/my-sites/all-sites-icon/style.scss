@@ -3,12 +3,12 @@
  */
 
 .all-sites-icon {
-	margin-right: 12px;
+	margin: -16px 12px -16px -16px;
 	position: relative;
 		left: 0;
 		top: 0;
-	height: 32px;
-	width: 32px;
+	height: 66px;
+	width: 66px;
 
 	.site-icon.is-blank::before {
 		display: none;
@@ -81,7 +81,8 @@
 }
 
 // Shape with three or more icons
-.all-sites-icon.is-shape-3 .site-icon {
+.all-sites-icon.is-shape-3 .site-icon,
+.all-sites-icon.is-shape-4 .site-icon {
 	// Top left
 	left: 0;
 	right: auto;
@@ -101,5 +102,13 @@
 		left: auto;
 		right: 0;
 		top: 0;
+	}
+
+	& + .site-icon + .site-icon + .site-icon {
+		// Top right
+		top: auto;
+		left: auto;
+		right: 0;
+		bottom: 0;
 	}
 }
