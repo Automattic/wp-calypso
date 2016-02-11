@@ -3,6 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/function/debounce';
 import sortBy from 'lodash/collection/sortBy';
@@ -19,6 +20,12 @@ import analytics from 'analytics';
 import Search from './search';
 import TreeConvert from 'lib/tree-convert';
 import { decodeEntities } from 'lib/formatting';
+import {
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQuery,
+	isSitePostsLastPageForQuery
+} from 'state/posts/selectors';
+import QueryPosts from 'components/data/query-posts';
 
 /**
 * Constants
@@ -54,10 +61,12 @@ function buildTree( items ) {
 	return treeConverter.treeify( sortedPosts );
 }
 
-export default React.createClass( {
+const PostSelectorPosts = React.createClass( {
 	displayName: 'PostSelectorPosts',
 
 	propTypes: {
+		siteId: PropTypes.number.isRequired,
+		query: PropTypes.object,
 		posts: PropTypes.array,
 		page: PropTypes.number,
 		lastPage: PropTypes.bool,
@@ -218,6 +227,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classes } onScroll={ this.checkScrollPosition }>
+				<QueryPosts siteId={ this.props.siteId } query={ this.props.query } />
 				{ showSearch ?
 					<Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> :
 					null
@@ -239,3 +249,12 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const { siteId, query } = ownProps;
+	return {
+		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
+		loading: isRequestingSitePostsForQuery( state, siteId, query )
+	};
+} )( PostSelectorPosts );
