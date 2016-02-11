@@ -73,7 +73,9 @@ module.exports = React.createClass( {
 		event.preventDefault();
 		event.stopPropagation();
 		layoutFocus.set( 'sites' );
-		this.refs.site.closeActions();
+		if ( this.refs.site ) {
+			this.refs.site.closeActions();
+		}
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	},

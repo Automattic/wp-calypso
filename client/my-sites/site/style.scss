@@ -192,7 +192,7 @@
 	align-items: center;
 	display: flex;
 	flex: 1 0 0;
-	justify-content: space-between;
+	justify-content: flex-end;
 	animation: appear .3s ease-in-out;
 }
 
@@ -202,6 +202,8 @@
 	font-weight: 600;
 	font-size: 11px;
 	text-transform: uppercase;
+	display: flex;
+	align-items: center;
 	&:hover {
 		color: $blue-medium;
 	}

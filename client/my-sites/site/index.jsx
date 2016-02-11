@@ -110,7 +110,7 @@ module.exports = React.createClass( {
 
 	renderEditIcon: function() {
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
-			return <span />;
+			return <SiteIcon site={ this.props.site } />;
 		}
 
 		let url = getCustomizeUrl( null, this.props.site );
@@ -120,8 +120,8 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<a href={ url } target="_blank"
-				className="site__edit-icon">
+			<a href={ url } target="_blank" className="site__edit-icon">
+				<SiteIcon site={ this.props.site } />
 				{ this.translate( 'Edit Icon' ) }
 			</a>
 		);
@@ -197,9 +197,8 @@ module.exports = React.createClass( {
 					</a>
 				:
 					<div className="site__content">
-						<SiteIcon site={ site } />
+						{ this.renderEditIcon() }
 						<div className="site__actions">
-							{ this.renderEditIcon() }
 							{ this.renderStar() }
 						</div>
 					</div>
