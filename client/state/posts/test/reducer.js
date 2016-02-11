@@ -152,6 +152,19 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should track post queries without specified site', () => {
+			const state = queries( undefined, {
+				type: POSTS_REQUEST,
+				query: { search: 'Hello' }
+			} );
+
+			expect( state ).to.eql( {
+				'{"search":"hello"}': {
+					fetching: true
+				}
+			} );
+		} );
+
 		it( 'should preserve previous query results when requesting again', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"hello"}': {
@@ -270,6 +283,21 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				'2916284:{"number":1}': 2
+			} );
+		} );
+
+		it( 'should track last page without specified site', () => {
+			const state = queriesLastPage( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				query: { search: '', number: 1 },
+				found: 2,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				]
+			} );
+
+			expect( state ).to.eql( {
+				'{"number":1}': 2
 			} );
 		} );
 
