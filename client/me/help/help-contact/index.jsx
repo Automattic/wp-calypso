@@ -348,9 +348,6 @@ module.exports = React.createClass( {
 			}
 		);
 
-		// Hide the olark widget in the bottom right corner.
-		olarkActions.hideBox();
-
 		return <HelpContactForm { ...contactFormProps } />;
 	},
 
