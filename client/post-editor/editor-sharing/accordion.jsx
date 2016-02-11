@@ -1,22 +1,29 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	Gridicon = require( 'components/gridicon' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	serviceConnections = require( 'my-sites/sharing/connections/service-connections' ),
-	PostMetadata = require( 'lib/post-metadata' ),
-	Sharing = require( './' ),
-	AccordionSection = require( 'components/accordion/section' ),
-	postUtils = require( 'lib/posts/utils' );
+import Accordion from 'components/accordion';
+import FormTextInput from 'components/forms/form-text-input';
+import Gridicon from 'components/gridicon';
+import serviceConnections from 'my-sites/sharing/connections/service-connections';
+import PostMetadata from 'lib/post-metadata';
+import Sharing from './';
+import AccordionSection from 'components/accordion/section';
+import postUtils from 'lib/posts/utils';
+import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
-module.exports = React.createClass( {
+const EditorSharingAccordion = React.createClass( {
 	displayName: 'EditorSharingAccordion',
 
 	propTypes: {
@@ -24,7 +31,7 @@ module.exports = React.createClass( {
 		post: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
 		connections: React.PropTypes.array,
-		fetchConnections: React.PropTypes.func
+		requestConnections: React.PropTypes.func
 	},
 
 	getSubtitle: function() {
@@ -110,6 +117,9 @@ module.exports = React.createClass( {
 				subtitle={ this.getSubtitle() }
 				icon={ <Gridicon icon="share" /> }
 				className={ classes }>
+				{ this.props.site && (
+					<QueryPublicizeConnections siteId={ this.props.site.ID } />
+				) }
 				<AccordionSection>
 					{ ! hideSharing && (
 						<Sharing
@@ -117,7 +127,7 @@ module.exports = React.createClass( {
 							post={ this.props.post }
 							isNew={ this.props.isNew }
 							connections={ this.props.connections }
-							fetchConnections={ this.props.fetchConnections }
+							fetchConnections={ this.props.requestConnections }
 						/>
 					) }
 					{ this.renderShortUrl() }
@@ -126,3 +136,20 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const site = getSelectedSite( state );
+		const user = getCurrentUser( state );
+
+		return {
+			connections: site && user ? getSiteUserConnections( state, site.ID, user.ID ) : null,
+			site
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			requestConnections
+		}, dispatch );
+	}
+)( EditorSharingAccordion );
