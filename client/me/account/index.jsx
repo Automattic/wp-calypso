@@ -166,13 +166,6 @@ const Account = React.createClass( {
 		</FormSettingExplanation> );
 	},
 
-	getOptoutText( website ) {
-		return this.translate( '%(website)s opt-out', {
-			args: { website: website },
-			context: 'A website address, formatted to look like "Website.com"'
-		} );
-	},
-
 	cancelEmailChange() {
 		this.props.userSettings.cancelPendingEmailChange( ( error, response ) => {
 			if ( error ) {
