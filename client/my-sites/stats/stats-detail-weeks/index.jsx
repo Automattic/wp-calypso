@@ -70,7 +70,6 @@ export default React.createClass( {
 						<th>{ this.translate( 'Sun' ) }</th>
 						<th>{ this.translate( 'Total' ) }</th>
 						<th>{ this.translate( 'Average' ) }</th>
-						<th>{ this.translate( 'Change', { context: 'Stats: noun - change over a period in weekly numbers' } ) }</th>
 					</tr>
 				</thead>
 			);
@@ -117,12 +116,12 @@ export default React.createClass( {
 				}
 
 				cells.push( <td key={ 'total' + index }>{ this.numberFormat( week.total ) }</td> );
-				cells.push( <td key={ 'average' + index }>{ this.numberFormat( week.average ) }</td> );
 
 				if ( 'number' === typeof ( week.change ) ) {
 					let changeClass = classNames( {
-						'value-rising': week.change > 0,
-						'value-falling': week.change < 0
+						'is-rising': week.change > 0,
+						'is-falling': week.change < 0,
+						'is-same': week.change === 0
 					} );
 
 					if ( week.change > 0 ) {
@@ -133,16 +132,14 @@ export default React.createClass( {
 						iconType = 'arrow-down';
 					}
 
-					cells.push(
-						<td className={ changeClass } key={ 'change' + index }>
-							<span className="value">
+					cells.push( <td key={ 'average' + index }>
+						{ this.numberFormat( week.average ) }
+							<span className={ 'value ' + changeClass } key={ 'change' + index }>
 								{ iconType ? <Gridicon icon={ iconType } size={ 18 } /> : null }
 								{ this.numberFormat( week.change, 2 ) }%
-							</span>
-						</td>
-					);
-				} else if ( 'object' === typeof ( week.change ) && null !== week.change && week.change.isInfinity ) {
-					cells.push( <td key={ 'change' + index }>&infin;</td> );
+							</span></td>
+						);
+
 				} else {
 					cells.push( <td className="no-data" key={ 'change' + index }></td> );
 				}
