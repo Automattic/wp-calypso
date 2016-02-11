@@ -53,15 +53,6 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	plansSocialProof: {
-		datestamp: '20160202',
-		variations: {
-			mostPopular: 33,
-			bestValue: 33,
-			noTeaser: 34
-		},
-		defaultVariation: 'mostPopular'
-	},
 	plansFeatureList: {
 		datestamp: '20040202',
 		variations: {

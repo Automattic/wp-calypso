@@ -6,8 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var productsValues = require( 'lib/products-values' ),
-	abtest = require( 'lib/abtest' ).abtest;
+var productsValues = require( 'lib/products-values' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanDiscountMessage',
@@ -22,18 +21,9 @@ module.exports = React.createClass( {
 
 	mostPopularPlan: function() {
 		var hasBusiness = this.props.site && productsValues.isBusiness( this.props.site.plan );
-		var teaserText = this.translate( 'Our most popular plan' );
-
-		if ( abtest( 'plansSocialProof' ) === 'noTeaser' ) {
-			return null;
-		}
-
-		if ( abtest( 'plansSocialProof' ) === 'bestValue' ) {
-			teaserText = this.translate( 'Best value' );
-		}
 
 		return (
-			hasBusiness ? null : <div className="plan-discount-message">{ teaserText }</div>
+			hasBusiness ? null : <div className="plan-discount-message">{ this.translate( 'Our most popular plan' ) }</div>
 		);
 	},
 
