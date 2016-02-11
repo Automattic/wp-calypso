@@ -12,7 +12,8 @@ var PlanHeader = require( 'components/plans/plan-header' ),
 	PlanFeatureCell = require( 'components/plans/plan-feature-cell' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanPrice = require( 'components/plans/plan-price' ),
-	PlanDiscountMessage = require( 'components/plans/plan-discount-message' );
+	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
+	preventWidows = require( 'lib/formatting' ).preventWidows;
 
 module.exports = React.createClass( {
 	displayName: 'PlanFeatures',
@@ -29,7 +30,7 @@ module.exports = React.createClass( {
 	},
 
 	headerText: function() {
-		return <span className="header-text">{ this.props.plan.product_name }</span>;
+		return <span className="header-text">{ preventWidows( this.props.plan.product_name, 2, 3 ) }</span>;
 	},
 
 	render: function() {
