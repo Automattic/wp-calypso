@@ -34,6 +34,7 @@ import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 import offlineQueue from './offlineActionQueue/middleware';
+import connectionMiddleware from './offlineActionQueue/reducer';
 
 /**
  * Module variables
@@ -64,7 +65,8 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	wordads
+	wordads,
+	connectionMiddleware,
 } );
 
 let middleware = [ thunkMiddleware ];
