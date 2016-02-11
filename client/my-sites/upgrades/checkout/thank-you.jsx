@@ -66,15 +66,12 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var lastTransaction = this.props.lastTransaction,
-			selectedSite;
+		var lastTransaction = this.props.lastTransaction;
 
 		if ( lastTransaction ) {
-			selectedSite = lastTransaction.selectedSite;
-
 			// Refresh selected site plans if the user just purchased a plan
 			if ( cartItems.hasPlan( lastTransaction.cart ) ) {
-				this.props.refreshSitePlans( selectedSite.ID );
+				this.props.refreshSitePlans( this.props.selectedSite.ID );
 			}
 
 			// Refresh the list of sites to update the `site.plan` property
@@ -206,7 +203,7 @@ var CheckoutThankYou = React.createClass( {
 
 	productRelatedMessages: function() {
 		var cart = this.props.lastTransaction.cart,
-			selectedSite = this.props.lastTransaction.selectedSite,
+			selectedSite = this.props.selectedSite,
 			componentClass,
 			domain;
 

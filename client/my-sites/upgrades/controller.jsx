@@ -168,7 +168,12 @@ module.exports = {
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
 			storedCards = require( 'lib/stored-cards' )(),
-			basePath = route.sectionify( context.path );
+			basePath = route.sectionify( context.path ),
+			planName = context.params.plan_name;
+
+		if ( 'thank-you' === planName ) {
+			return;
+		}
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
@@ -185,7 +190,7 @@ module.exports = {
 				<CheckoutData>
 					<Checkout
 						cards={ storedCards }
-						planName={ context.params.plan_name }
+						planName={ planName }
 						plans={ plansList }
 						productsList={ productsList }
 						sites={ sites } />
@@ -207,6 +212,7 @@ module.exports = {
 
 	checkoutThankYou: function( context ) {
 		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
+			CheckoutData = require( 'components/data/checkout' ),
 			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
 			basePath = route.sectionify( context.path );
 
@@ -222,10 +228,14 @@ module.exports = {
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 
 		renderWithReduxStore(
-			React.createElement( CheckoutThankYouComponent, {
-				lastTransaction: lastTransaction,
-				productsList: productsList
-			} ),
+			(
+				<CheckoutData>
+					<CheckoutThankYouComponent
+						lastTransaction={ lastTransaction }
+						productsList={ productsList }
+						selectedSite={ sites.getSelectedSite() } />
+				</CheckoutData>
+			),
 			document.getElementById( 'primary' ),
 			context.store
 		);
