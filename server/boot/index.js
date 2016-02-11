@@ -45,7 +45,11 @@ function setup() {
 	}
 
 	// attach the static file server to serve the `public` dir
-	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
+	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ), {
+		setHeaders: function( res, path ) {
+			res.header( 'Access-Control-Allow-Origin', '*' );
+		}
+	} ) );
 
 	// serve files when not in production so that the source maps work correctly
 	if ( 'development' === config( 'env' ) ) {
