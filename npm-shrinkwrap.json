@@ -13387,6 +13387,9 @@
           "version": "2.0.1"
         }
       }
+    },
+    "react-click-outside": {
+      "version": "2.1.0"
     }
   }
 }

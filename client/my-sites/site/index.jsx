@@ -11,7 +11,7 @@ var React = require( 'react' ),
 var SiteIcon = require( 'components/site-icon' ),
 	Gridicon = require( 'components/gridicon' ),
 	SiteIndicator = require( 'my-sites/site-indicator' ),
-	getCustomizeUrl = require( 'lib/themes/helpers' ).getCustomizeUrl,
+	getCustomizeUrl = require( 'my-sites/themes/helpers' ).getCustomizeUrl,
 	sites = require( 'lib/sites-list' )();
 
 import { userCan } from 'lib/site/utils';
