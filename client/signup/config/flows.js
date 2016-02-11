@@ -2,6 +2,7 @@
  * External dependencies
  */
 var assign = require( 'lodash/object/assign' ),
+	includes = require( 'lodash/collection/includes' ),
 	reject = require( 'lodash/collection/reject' );
 
 /**
@@ -9,6 +10,7 @@ var assign = require( 'lodash/object/assign' ),
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	user = require( 'lib/user' )();
 
 function getCheckoutDestination( dependencies ) {
@@ -180,6 +182,10 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
+	const headstartFlows = [ 'blog', 'website' ];
+	if ( includes( headstartFlows, flowName ) && 'headstart' === abtest( 'headstart' ) ) {
+		return 'headstart';
+	}
 	return flowName;
 }
 
