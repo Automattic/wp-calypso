@@ -9,7 +9,7 @@ function getAssets( stats ) {
 			name: chunk.names[0],
 			hash: chunk.hash,
 			file: filename,
-			url: path.resolve( stats.publicPath, filename )
+			url: stats.publicPath + filename,
 		};
 	} );
 }
