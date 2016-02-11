@@ -77,8 +77,8 @@ export default React.createClass( {
 
 	render: function() {
 		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props;
-		const isPrimary = includes( [ ...cancelStates, ...stopStates ], importerState );
 		const canCancel = isEnabled && ! includes( [ appStates.UPLOADING ], importerState );
+		const isScary = includes( [ ...stopStates, ...cancelStates ], importerState );
 
 		return (
 			<header className="importer-service">
@@ -86,7 +86,8 @@ export default React.createClass( {
 				<Button
 					className="importer__master-control"
 					disabled={ ! canCancel }
-					isPrimary={ isPrimary }
+					isPrimary={ false }
+					scary={ isScary }
 					onClick={ this.controlButtonClicked }
 				>
 					{ this.getButtonText() }
