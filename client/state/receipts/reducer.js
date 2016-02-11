@@ -1,8 +1,15 @@
 /**
+ * External dependencies
+ */
+import { combineReducers } from 'redux';
+
+/**
  * Internal dependencies
  */
 import {
-	RECEIPT_FETCH_COMPLETED
+	RECEIPT_FETCH,
+	RECEIPT_FETCH_COMPLETED,
+	RECEIPT_FETCH_FAILED
 } from 'state/action-types';
 
 const initialReceiptState = {
@@ -28,6 +35,10 @@ function updateReceiptState( state, receiptId, attributes ) {
 
 export function receipts( state = {}, action ) {
 	switch ( action.type ) {
+		case RECEIPT_FETCH:
+			return updateReceiptState( state, action.receiptId, {
+				isRequesting: true
+			} );
 		case RECEIPT_FETCH_COMPLETED:
 			return updateReceiptState( state, action.receiptId, {
 				data: action.receipt,
@@ -35,7 +46,16 @@ export function receipts( state = {}, action ) {
 				hasLoadedFromServer: true,
 				isRequesting: false
 			} );
+		case RECEIPT_FETCH_FAILED:
+			return updateReceiptState( state, action.receiptId, {
+				error: action.error,
+				isRequesting: false
+			} );
 	}
 
 	return state;
 }
+
+export default combineReducers( {
+	receipts
+} );

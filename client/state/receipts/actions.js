@@ -9,7 +9,7 @@ import {
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
-export function getReceipt( receiptId ) {
+export function fetchReceipt( receiptId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: RECEIPT_FETCH,
