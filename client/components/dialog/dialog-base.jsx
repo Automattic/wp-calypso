@@ -70,7 +70,7 @@ var DialogBase = React.createClass( {
 
 		return (
 			<div className={ backdropClassName } ref="backdrop">
-				<Card className={ dialogClassName } role="dialog" ref="dialog">
+				<Card className={ dialogClassName } role="dialog" ref="dialog" tagName={ this.props.contentTagName }>
 					<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
 						{ this.props.children }
 					</div>
