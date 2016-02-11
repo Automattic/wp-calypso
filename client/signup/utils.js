@@ -17,16 +17,18 @@ var i18nUtils = require( 'lib/i18n-utils' ),
 	formState = require( 'lib/form-state' );
 
 function getFlowName( parameters ) {
-	var currentFlowName = flows.currentFlowName;
-	if ( parameters.flowName && isFlowName( parameters.flowName ) ) {
-		return parameters.flowName;
-	}
+	const flow = ( parameters.flowName && isFlowName( parameters.flowName ) ) ? parameters.flowName : defaultFlowName;
+	return maybeFilterFlowName( flow, flows.filterFlowName );
+}
 
-	if ( ! isFlowName( parameters.flowName ) && currentFlowName === defaultFlowName ) {
-		return defaultFlowName;
+function maybeFilterFlowName( flowName, filterCallback ) {
+	if ( filterCallback && typeof filterCallback === 'function' ) {
+		const filteredFlow = filterCallback( flowName );
+		if ( isFlowName( filteredFlow ) ) {
+			return filteredFlow;
+		}
 	}
-
-	return currentFlowName;
+	return flowName;
 }
 
 function isFlowName( pathFragment ) {
