@@ -5,7 +5,7 @@ import config from 'config';
 
 let warn;
 if ( config( 'env' ) !== 'production' && 'function' === typeof console.warn ) {
-	warn = console.warn.bind( console );
+	warn = ( ...args ) => console.warn( ...args );
 } else {
 	warn = () => {};
 }
