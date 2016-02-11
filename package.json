@@ -4,7 +4,7 @@
   "description": "Magellan plugin to provide Mocha support",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --slow 400"
   },
   "repository": {
     "type": "git",
@@ -17,13 +17,12 @@
   },
   "homepage": "https://github.com/TestArmada/magellan-mocha-plugin#readme",
   "dependencies": {
-    "acorn": "^2.6.4",
-    "cli-color": "^1.1.0",
     "lodash": "^3.10.1",
     "spawn-sync": "^1.0.15"
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "coffee-script": "^1.10.0",
     "mocha": "^2.2.4"
   }
 }
