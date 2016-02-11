@@ -22,22 +22,32 @@ export function getNormalizedPostsQuery( query ) {
 
 /**
  * Returns a serialized posts query, used as the key in the
- * `state.posts.siteQueries` state object.
+ * `state.posts.queries` state object.
  *
- * @param  {Object} query Posts query
- * @return {String}       Serialized posts query
+ * @param  {Object} query  Posts query
+ * @param  {Number} siteId Optional site ID
+ * @return {String}        Serialized posts query
  */
-export function getSerializedPostsQuery( query = {} ) {
-	return JSON.stringify( getNormalizedPostsQuery( query ) ).toLowerCase();
+export function getSerializedPostsQuery( query = {}, siteId ) {
+	const normalizedQuery = getNormalizedPostsQuery( query );
+	const serializedQuery = JSON.stringify( normalizedQuery ).toLowerCase();
+
+	if ( siteId ) {
+		return [ siteId, serializedQuery ].join( ':' );
+	}
+
+	return serializedQuery;
 }
 
 /**
  * Returns a serialized posts query, excluding any page parameter, used as the
- * key in the `state.posts.siteQueriesLastPage` state object.
+ * key in the `state.posts.queriesLastPage` state object.
  *
- * @param  {Object} query Posts query
- * @return {String}       Serialized posts query
+ * @param  {Object} query  Posts query
+ * @param  {Number} siteId Optional site ID
+ * @return {String}        Serialized posts query
  */
-export function getSerializedPostsQueryWithoutPage( query ) {
-	return JSON.stringify( omit( getNormalizedPostsQuery( query ), 'page' ) ).toLowerCase();
+export function getSerializedPostsQueryWithoutPage( query, siteId ) {
+	query = Object.assign( getNormalizedPostsQuery( query ), { siteId } );
+	return JSON.stringify( omit( query, 'page' ) ).toLowerCase();
 }

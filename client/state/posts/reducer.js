@@ -100,33 +100,31 @@ export function siteRequests( state = {}, action ) {
 
 /**
  * Returns the updated post query state after an action has been dispatched.
- * The state reflects a mapping of site ID to active queries.
+ * The state reflects a mapping of serialized query key to query status.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function siteQueries( state = {}, action ) {
+export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_REQUEST:
 		case POSTS_REQUEST_SUCCESS:
 		case POSTS_REQUEST_FAILURE:
 			const { type, siteId, posts } = action;
-			const query = getSerializedPostsQuery( action.query );
+			const serializedQuery = getSerializedPostsQuery( action.query, siteId );
 
 			state = Object.assign( {}, state, {
-				[ siteId ]: Object.assign( {}, state[ siteId ] )
-			} );
-
-			state[ siteId ][ query ] = Object.assign( {}, state[ siteId ][ query ], {
-				// Only the initial request should be tracked as fetching.
-				// Success or failure types imply that fetching has completed.
-				fetching: ( POSTS_REQUEST === type )
+				[ serializedQuery ]: Object.assign( {}, state[ serializedQuery ], {
+					// Only the initial request should be tracked as fetching.
+					// Success or failure types imply that fetching has completed.
+					fetching: ( POSTS_REQUEST === type )
+				} )
 			} );
 
 			// When a request succeeds, map the received posts to state.
 			if ( POSTS_REQUEST_SUCCESS === type ) {
-				state[ siteId ][ query ].posts = posts.map( ( post ) => post.global_ID );
+				state[ serializedQuery ].posts = posts.map( ( post ) => post.global_ID );
 			}
 
 			return state;
@@ -140,26 +138,23 @@ export function siteQueries( state = {}, action ) {
 
 /**
  * Returns the updated post query last page state after an action has been
- * dispatched. The state reflects a mapping of site ID to last page for a posts
- * query.
+ * dispatched. The state reflects a mapping of serialized query to last known
+ * page number.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function siteQueriesLastPage( state = {}, action ) {
+export function queriesLastPage( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_REQUEST_SUCCESS:
 			const { siteId, found } = action;
-
-			state = Object.assign( {}, state, {
-				[ siteId ]: Object.assign( {}, state[ siteId ] )
-			} );
-
-			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query );
+			const serializedQuery = getSerializedPostsQueryWithoutPage( action.query, siteId );
 			const lastPage = Math.ceil( found / ( action.query.number || DEFAULT_POST_QUERY.number ) );
-			state[ siteId ][ serializedQuery ] = Math.max( lastPage, 1 );
-			return state;
+
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: Math.max( lastPage, 1 )
+			} );
 
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -172,6 +167,6 @@ export default combineReducers( {
 	items,
 	sitePosts,
 	siteRequests,
-	siteQueries,
-	siteQueriesLastPage
+	queries,
+	queriesLastPage
 } );
