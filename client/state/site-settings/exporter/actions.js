@@ -13,6 +13,7 @@ import {
 	EXPORT_FAILURE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
+	EXPORT_STATUS_FETCH,
 	SET_EXPORT_POST_TYPE,
 } from 'state/action-types';
 
@@ -112,6 +113,35 @@ export function exportStarted( siteId ) {
 		type: EXPORT_STARTED,
 		siteId
 	};
+}
+
+export function exportStatusFetch( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: EXPORT_STATUS_FETCH,
+			siteId
+		} );
+
+		const success = ( response ) => {
+			switch( response.status ) {
+				case 'finished':
+					return dispatch( exportComplete( siteId, response[ '$attachment_url' ] ) )
+				case 'running':
+					return
+			}
+
+			return dispatch( exportFailed( siteId ) );
+		}
+
+		const failure = () => {
+			dispatch( exportFailed( siteId ) );
+		}
+
+		return wpcom.undocumented()
+			.getExport( siteId, 'undefined' )
+			.then( success )
+			.catch( failure );
+	}
 }
 
 export function exportFailed( siteId, error ) {
