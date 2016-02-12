@@ -13,7 +13,8 @@ var Dialog = require( 'components/dialog' ),
 	CategorySelector = require( 'my-sites/category-selector' ),
 	CategoryStore = require( 'lib/terms/category-store-factory' )( 'default' ),
 	TermActions = require( 'lib/terms/actions' ),
-	AddNewButton = require( 'components/add-new-button' ),
+	Button = require( 'components/button' ),
+	Gridicon = require( 'components/gridicon' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormSectionHeading = require( 'components/forms/form-section-heading' ),
@@ -166,9 +167,9 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<AddNewButton isCompact={ true } onClick={ this.openDialog }>
-					{ addCategoryString }
-				</AddNewButton>
+				<Button borderless compact={ true } onClick={ this.openDialog }>
+					<Gridicon icon="folder" /> { addCategoryString }
+				</Button>
 				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.closeDialog } additionalClassNames="category-selector__add-category-dialog">
 					<FormSectionHeading>{ addCategoryString }</FormSectionHeading>
 					<FormFieldset>
