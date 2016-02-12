@@ -100,8 +100,8 @@ export default React.createClass( {
 
 					return (
 						<td key={ dayIndex } className={ cellClass }>
-							<span className="date">{ day.format( 'MMM D' ) }</span>
-							<span className="value">{ this.numberFormat( event.count ) }</span>
+							<span className="stats-detail-weeks__date">{ day.format( 'MMM D' ) }</span>
+							<span className="stats-detail-weeks__value">{ this.numberFormat( event.count ) }</span>
 						</td>
 					);
 				}, this );
@@ -134,7 +134,7 @@ export default React.createClass( {
 
 					cells.push( <td key={ 'average' + index }>
 						{ this.numberFormat( week.average ) }
-							<span className={ 'value ' + changeClass } key={ 'change' + index }>
+							<span className={ 'stats-detail-weeks__value ' + changeClass } key={ 'change' + index }>
 								{ iconType ? <Gridicon icon={ iconType } size={ 18 } /> : null }
 								{ this.numberFormat( week.change, 2 ) }%
 							</span></td>

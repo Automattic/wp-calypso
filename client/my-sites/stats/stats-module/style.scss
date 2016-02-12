@@ -390,7 +390,7 @@ ul.module-header-actions {
 	th {
 		border-bottom: 1px solid $gray-light;
 		border-right: 1px solid $gray-light;
-		font-size: 14px;
+		font-size: 12px;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
 
@@ -413,11 +413,6 @@ ul.module-header-actions {
 		background: $white;
 		position: absolute;
 		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
-
-		// Disable fixed legend for mobile
-		@include breakpoint( "<480px" ) {
-			position: static;
-		}
 	}
 
 	// Left this modifier as-is because these tables are likely going to change
@@ -446,12 +441,12 @@ ul.module-header-actions {
 		color: transparent;
 	}
 
-	.date,
-	.value {
+	.stats-detail-weeks__date,
+	.stats-detail-weeks__value {
 		white-space: nowrap;
 	}
 
-	.value {
+	.stats-detail-weeks__value {
 		display: block;
 		font-size: 12px;
 
@@ -474,17 +469,17 @@ ul.module-header-actions {
 		}
 
 		.gridicon {
-			margin-bottom: -4px;
+			margin: 0 2px -3px -4px;
 			width: 15px;
 		}
 	}
 
 	thead th,
-	.date {
+	.stats-detail-weeks__date {
 		color: $gray;
 	}
 
-	.date {
+	.stats-detail-weeks__date {
 		display: block;
 		font-size: 11px;
 		letter-spacing: .1em;
@@ -496,7 +491,6 @@ ul.module-header-actions {
 	// 2: Much wider to show horizontal scrolling better (since the window loads scrolled to the left)
 	&::before,
 	&::after {
-		background-image: linear-gradient(to left, $transparent 0%, $white 90%);
 		content: "";
 		display: block;
 		position: absolute;
@@ -508,9 +502,9 @@ ul.module-header-actions {
 	}
 
 	&::after {
-		background-image: linear-gradient(to right, $transparent 0%, $white 90%);
 		left: auto;
 		right: 0;
 		width: 60px; // 2
+		@include long-content-fade( $color: $white, $size: 15% );
 	}
 }
