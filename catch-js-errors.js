@@ -40,7 +40,10 @@
 				return stringifyErrorForUrlParams( error, index );
 			} );
 
+			xhr.setRequestHeader( 'Content-length', params.length );
+			xhr.setRequestHeader( 'Connection', 'close' );
 			xhr.send( params );
+
 			savedErrors = [];
 		}
 	}
