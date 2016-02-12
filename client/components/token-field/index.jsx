@@ -10,8 +10,7 @@ var take = require( 'lodash/array/take' ),
 	identity = require( 'lodash/utility/identity' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:token-field' ),
-	reject = require( 'lodash/collection/reject' ),
-	find = require( 'lodash/collection/find' ),
+	some = require( 'lodash/collection/some' ),
 	forEach = require( 'lodash/collection/forEach' );
 
 /**
@@ -131,13 +130,8 @@ var TokenField = React.createClass( {
 	},
 
 	_renderToken: function( token ) {
-		let value = token;
-		let status;
-
-		if ( 'object' === typeof token ) {
-			value = token.value;
-			status = token.status;
-		}
+		const value = this._getTokenValue( token );
+		const status = token.status ? token.status : undefined;
 
 		return (
 			<Token
@@ -455,13 +449,8 @@ var TokenField = React.createClass( {
 	},
 
 	_deleteToken: function( token ) {
-		const searchValue = 'object' === typeof token ? token.value : token;
-		let newTokens = reject( this.props.value, ( item ) => {
-			if ( 'object' === typeof item ) {
-				return item.value === searchValue;
-			}
-
-			return item === searchValue;
+		const newTokens = this.props.value.filter( ( item ) => {
+			return this._getTokenValue( item ) !== this._getTokenValue( token );
 		} );
 		this.props.onChange( newTokens );
 	},
@@ -509,15 +498,17 @@ var TokenField = React.createClass( {
 	},
 
 	_valueContainsToken( token ) {
-		let search = find( this.props.value, ( item ) => {
-			if ( 'object' === typeof item ) {
-				return item.value === token;
-			}
-
-			return item === token;
+		return some( this.props.value, ( item ) => {
+			return this._getTokenValue( token ) === this._getTokenValue( item );
 		} );
+	},
 
-		return !! search;
+	_getTokenValue( token ) {
+		if ( 'object' === typeof token ) {
+			return token.value;
+		}
+
+		return token;
 	},
 
 	_getIndexOfInput: function() {
