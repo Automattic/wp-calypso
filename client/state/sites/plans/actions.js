@@ -16,7 +16,7 @@ import {
 	SITE_PLANS_REMOVE,
 	SITE_PLANS_TRIAL_CANCEL
 } from 'state/action-types';
-import { registerConnection } from 'state/offlineActionQueue/middleware';
+import { registerConnection } from 'state/connectionMiddleware/middleware';
 import {
 	connectCancelSitePlanTrial,
 	connectFetchSitePlans
