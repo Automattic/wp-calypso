@@ -152,7 +152,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Button borderless compact={ true } onClick={ this.newConnection }>
+			<Button borderless compact onClick={ this.newConnection }>
 				<Gridicon icon="add" /> { this.translate( 'Connect new service' ) }
 				<span className="editor-sharing__external-link-indicator">
 					<Gridicon icon="external" size={ 18 } />
