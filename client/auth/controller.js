@@ -28,8 +28,11 @@ module.exports = {
 	},
 
 	checkToken: function( context, next ) {
+		const loggedOutRoutes = [ '/login', '/oauth', '/start' ],
+			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
+
 		// Check we have an OAuth token, otherwise redirect to login page
-		if ( OAuthToken.getToken() === false && ! startsWith( context.path, '/login' ) && ! startsWith( context.path, '/oauth' ) && ! startsWith( context.path, '/start' ) ) {
+		if ( OAuthToken.getToken() === false && ! isValidSection ) {
 			page( '/login' );
 		} else {
 			next();
