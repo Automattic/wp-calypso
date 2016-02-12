@@ -14,7 +14,6 @@ var SearchCard = require( 'components/search-card' ),
 	Notices = require( 'components/notice/docs/example' ),
 	Buttons = require( 'components/button/docs/example' ),
 	ButtonGroups = require( 'components/button-group/docs/example' ),
-	AddNewButtons = require( 'components/add-new-button/docs/example' ),
 	Accordions = require( 'components/accordion/docs/example' ),
 	Gridicons = require( 'components/gridicon/docs/example' ),
 	SocialLogos = require( 'components/social-logo/docs/example' ),
@@ -174,7 +173,6 @@ module.exports = React.createClass( {
 					<Notices />
 					<Buttons />
 					<ButtonGroups />
-					<AddNewButtons />
 					<Gridicons />
 					<SocialLogos />
 					<Accordions />
