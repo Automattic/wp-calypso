@@ -4,6 +4,7 @@ var config = require( 'config' ),
 function getSectionsModule( sections ) {
 	var dependencies = '',
 		loadSection = '',
+		loadSectionFunctionBody = '',
 		sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
@@ -24,8 +25,11 @@ function getSectionsModule( sections ) {
 				sectionLoaders += splitTemplate( path, section.module, section.name );
 			} );
 		} );
+
+		loadSectionFunctionBody = getSectionLoaderSwitch( sections );
 	} else {
 		sectionLoaders = getRequires( sections );
+		loadSectionFunctionBody = getImmediateCallbackCalling();
 	}
 
 	return [
@@ -36,6 +40,9 @@ function getSectionsModule( sections ) {
 		'	},',
 		'	load: function() {',
 		'		' + sectionLoaders,
+		'	},',
+		'	loadSection: function( section, callback ) {',
+		'		' + loadSectionFunctionBody,
 		'	},',
 		'	preload: function( section ) {',
 		'		switch ( section ) {',
@@ -86,16 +93,6 @@ function splitTemplate( path, module, chunkName ) {
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
 		'			require( ' + JSON.stringify( module ) + ' )( page );',
-		'			page( function( context, next ) {',
-						// FIXME: Remove the DOM check once we have a proper isomorphic, one tree routing solution.
-		'				if ( context.primary && ! document.getElementById( "primary" ).hasChildNodes() ) {',
-		'					ReactDom.render(',
-		'						context.primary,',
-		'						document.getElementById( "primary" )',
-		'					);',
-		'				}',
-		'				next();',
-		'			} );',
 		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
 		'		}',
 		'		layoutFocus.next();',
@@ -119,6 +116,57 @@ function singleEnsure( chunkName ) {
 	];
 
 	return result.join( '\n' );
+}
+
+function getSectionLoaderSwitch( sections ) {
+	return [
+		'switch ( section ) {',
+			cases( sections ),
+		'}'
+	].join( '\n' );
+
+	function cases( sections ) {
+		return sections.map( function( section ) {
+			return getSectionLoader( section.module, section.name );
+		} ).join( '' );
+	}
+}
+
+function getImmediateCallbackCalling() {
+	return 'callback();';
+}
+
+function getSectionLoader( module, chunkName ) {
+	return [
+		'case ' + JSON.stringify( chunkName ) + ':',
+		'	if ( _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
+		'		layoutFocus.next();',
+		'		console.log( "loader: section cached" );',
+		'		callback();',
+		'		return;',
+		'	}',
+		'	context.store.dispatch( { type: "SET_SECTION", isLoading: true } );',
+		'	context.store.dispatch( { type: "SET_SECTION", chunkName: ' + JSON.stringify( chunkName ) + ' } );',
+		'	require.ensure([], function( require, error ) {',
+		'		if ( error ) {',
+		'			if ( ! LoadingError.isRetry() ) {',
+		'				LoadingError.retry( ' + JSON.stringify( chunkName ) + ' );',
+		'			} else {',
+		'				context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
+		'				LoadingError.show( ' + JSON.stringify( chunkName ) + ' );',
+		'			}',
+		'			return;',
+		'		}',
+		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
+		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
+		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
+		'			console.log( "loader: section required" );',
+		'			callback()',
+		'		}',
+		'		layoutFocus.next();',
+		'	}, ' + JSON.stringify( chunkName ) + ' );',
+		'	break;\n'
+		].join( '\n' );
 }
 
 module.exports = function( content ) {

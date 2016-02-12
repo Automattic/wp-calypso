@@ -1,7 +1,13 @@
 /**
+ * External dependencies
+ */
+import ReactDom from 'react-dom';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
+import sections from 'sections';
 import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
 import { singleSite, multiSite, loggedOut, details } from './controller';
@@ -24,12 +30,41 @@ const routes = isLoggedIn
 
 export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
+		router( '/design*', ensureMiddleware );
 		// Does iterating over Object.keys preserve order? If it doesn't, use lodash's mapValues
 		Object.keys( routes ).forEach( route => {
-			router( route, ...routes[ route ] );
-		} )
+			router( route, ...[
+				ensureMiddleware,
+				...routes[ route ],
+				renderMiddleware,
+			] );
+		} );
+		router( '/design*', renderMiddleware );
 	}
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
+		router( '/themes*', ensureMiddleware );
 		router( '/themes/:slug/:site_id?', details );
+		router( '/themes*', renderMiddleware );
 	}
+
+	console.log( 'themes routes set up!' );
 };
+
+function ensureMiddleware( ctx, next ) {
+	console.log( 'ensureMiddleware' );
+	sections.loadSection( 'themes', () => {
+		console.log( 'loaded!' );
+		next();
+	} );
+}
+
+function renderMiddleware( ctx ) {
+	debugger;
+	if ( ctx.primary ) {
+		console.log( 'renderMiddleware: rendering' );
+		ReactDom.render(
+			ctx.primary,
+			document.getElementById( 'primary' )
+		);
+	}
+}

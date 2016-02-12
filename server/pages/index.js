@@ -413,10 +413,10 @@ module.exports = function() {
 	const setUpServerSideRouting = ( expressApp ) => {
 		const liftMiddleware = ( ctxBasedFn ) => {
 			return ( req, res, next ) => {
-				const mockCtx = {
-					...getDefaultContext( req ),
-					//...getEnhancedContext( req ),
-				}
+				//const mockCtx = {
+				//	...getDefaultContext( req ),
+				//	//...getEnhancedContext( req ),
+				//}
 				ctxBasedFn( mockCtx, next )
 			}
 		}
