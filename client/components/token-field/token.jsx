@@ -5,13 +5,19 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' );
 
+/**
+ * Internal dependencies
+ */
+var Tooltip = require( 'components/tooltip' );
+
 var Token = React.createClass( {
 	propTypes: {
 		value: React.PropTypes.string.isRequired,
 		displayTransform: React.PropTypes.func.isRequired,
 		onClickRemove: React.PropTypes.func,
 		status: React.PropTypes.oneOf( [ 'error', 'success', 'validating' ] ),
-		isBorderless: React.PropTypes.bool
+		isBorderless: React.PropTypes.bool,
+		tooltip: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -39,6 +45,11 @@ var Token = React.createClass( {
 				<span
 					className="token-field__remove-token noticon noticon-close-alt"
 					onClick={ this._onClickRemove } />
+			{ this.props.tooltip &&
+				<Tooltip context={ this } isVisible={ true }>
+						{ this.props.tooltip }
+				</Tooltip>
+			}
 			</span>
 		);
 	},
