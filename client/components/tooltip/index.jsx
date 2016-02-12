@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -22,7 +23,8 @@ export default React.createClass( {
 
 	propTypes: {
 		isVisible: React.PropTypes.bool,
-		position: React.PropTypes.string
+		position: React.PropTypes.string,
+		status: React.PropTypes.string
 	},
 
 	render() {
@@ -30,9 +32,15 @@ export default React.createClass( {
 			return null;
 		}
 
+		const classes = classnames(
+			'popover',
+			'tooltip',
+			`is-${ this.props.status }`
+		);
+
 		return (
 			<Popover
-				className="popover tooltip"
+				className={ classes }
 				isVisible={ this.props.isVisible }
 				context={ this.props.context }
 				onClose={ noop }
