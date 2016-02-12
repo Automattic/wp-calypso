@@ -16,8 +16,10 @@ export function actionQueue( state = [], action ) {
 		delete action.type;
 		return [ ...state, action ];
 	} else 	if ( action.type === OFFLINE_QUEUE_REMOVE ) {
-		return state.filter( queuedAction => ( queuedAction.id !== action.id ) );
+		state = state.filter( queuedAction => ( queuedAction.id !== action.id ) );
 	}
+
+	return state;
 }
 
 export default combineReducers( {

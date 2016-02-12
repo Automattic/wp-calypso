@@ -50,14 +50,17 @@ function getFirstAction( state ) {
  *  But in case the connectionFunction fails or does not dispatch anything,
  *  debouncer kicks in.
  */
-function fireNextQueuedAction( dispatch, state ) {
+function fireNextQueuedAction( store ) {
 	clearTimeout( actionTimeout );
-	const firstAction = getFirstAction( state );
+	const firstAction = getFirstAction( store.getState() );
 
-	if ( isOnline( state ) && firstAction ) {
-		dispatch( removeAction( firstAction.id ) );
-		setTimeout( fireNextQueuedAction, ACTION_TIMEOUT );
-		fireAction( firstAction.action, dispatch, state );
+	if ( !isOffline( store.getState() ) && firstAction ) {
+		//for testing:
+		firstAction.action.noQueue = true;
+
+		store.dispatch( removeAction( firstAction.id ) );
+		setTimeout( fireNextQueuedAction.bind( null, store ), ACTION_TIMEOUT );
+		fireAction( firstAction.action, store );
 	}
 }
 
@@ -68,16 +71,16 @@ function fireNextQueuedAction( dispatch, state ) {
  * @param  {[type]} dispatch [description]
  * @return {[type]}          [description]
  */
-function dispatchAndFireNextQueuedAction( dispatch, state ) {
+function dispatchAndFireNextQueuedAction( store ) {
 	return action => {
-		dispatch( action );
-		fireNextQueuedAction( dispatch, state );
+		store.dispatch( action );
+		fireNextQueuedAction( store );
 	}
 }
 
-function fireAction( action, dispatch, state ) {
-	dispatch = dispatchAndFireNextQueuedAction( dispatch, state );
-	connections[ action.type ].connectionFunction( dispatch, action );
+function fireAction( action, store ) {
+	const dispatch = dispatchAndFireNextQueuedAction( store );
+	connections[ action.type ].connectionFunction( action, dispatch );
 };
 
 function shouldQueueAction( action ) {
@@ -86,18 +89,24 @@ function shouldQueueAction( action ) {
 
 const offlineQueue = store => next => action => {
 	if (
-		// isOffline( store.getState() ) &&
+		//isOffline( store.getState() ) &&
+		!action.noQueue &&
 		shouldQueueAction( action )
 	) {
 		next( queueAction( action ) );
 	} else if ( action.type === CONNECTION_RESTORED ) {
 		next( action );
-		fireNextQueuedAction( store.dispatch, store.getState() );
+		fireNextQueuedAction( store );
 	} else if ( connections.hasOwnProperty( action.type ) ) {
-		fireAction( action, store.dispatch, store.getState() );
+		fireAction( action, store );
 		next( action );
 	} else {
 		next( action );
+	}
+
+	//for testing:
+	window.testReplay = () => {
+		fireNextQueuedAction( store );
 	}
 };
 
