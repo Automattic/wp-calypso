@@ -16,6 +16,10 @@ import config from 'config';
  */
 const debug = debugModule( 'calypso:state' );
 
+const DAY_IN_HOURS = 24;
+const HOUR_IN_MS = 3600000;
+export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
+
 export const localforageConfig = {
 	name: 'calypso',
 	storeName: 'calypso_store',
@@ -31,10 +35,12 @@ function getInitialServerState() {
 }
 
 function serialize( state ) {
-	return reducer( state, { type: SERIALIZE } );
+	const serializedState = reducer( state, { type: SERIALIZE } );
+	return Object.assign( serializedState, { _timestamp: Date.now() } );
 }
 
 function deserialize( localforageState ) {
+	delete localforageState._timestamp;
 	const serverState = getInitialServerState();
 	const mergedState = Object.assign( {}, localforageState, serverState );
 	return reducer( mergedState, { type: DESERIALIZE } );
@@ -43,7 +49,12 @@ function deserialize( localforageState ) {
 function loadInitialState( initialState ) {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
-		throw new Error( 'no initial state found in localforage' );
+		debug( 'no initial state found in localforage' );
+		initialState = {};
+	}
+	if ( initialState._timestamp && initialState._timestamp + MAX_AGE < Date.now() ) {
+		debug( 'stored state is too old, building redux store from scratch' );
+		initialState = {};
 	}
 	return createReduxStore( deserialize( initialState ) );
 }
