@@ -5,7 +5,6 @@ import React from 'react';
 import omit from 'lodash/object/omit';
 import once from 'lodash/function/once';
 import filter from 'lodash/collection/filter';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
@@ -148,5 +147,5 @@ export default connect(
 			}
 		}
 	),
-	bindActionCreators.bind( null, { query, fetchNextPage } )
+	{ query, fetchNextPage }
 )( ThemesListFetcher );

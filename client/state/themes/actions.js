@@ -75,6 +75,25 @@ export function fetchCurrentTheme( site ) {
 	};
 }
 
+export function fetchThemeDetails( id ) {
+	return dispatch => {
+		const callback = ( error, data ) => {
+			debug( 'Received theme details', data );
+			if ( error ) {
+				dispatch( receiveServerError( error ) );
+			} else {
+				dispatch( {
+					type: ActionTypes.RECEIVE_THEME_DETAILS,
+					themeId: data.id,
+					themeName: data.name,
+					themeAuthor: data.author
+				} );
+			}
+		};
+		wpcom.undocumented().themeDetails( id, callback );
+	}
+}
+
 export function receiveServerError( error ) {
 	return {
 		type: ActionTypes.RECEIVE_THEMES_SERVER_ERROR,
