@@ -4,7 +4,7 @@ export function createReceiptObject( data ) {
 		purchases: data.purchases.map( purchase => {
 			return {
 				freeTrial: purchase.free_trial,
-				isDomainRegistration: Boolean( purchase.isDomainRegistration ),
+				isDomainRegistration: Boolean( purchase.is_domain_registration ),
 				meta: purchase.meta,
 				productId: purchase.product_id,
 				productSlug: purchase.product_slug,

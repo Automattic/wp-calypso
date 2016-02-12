@@ -9,7 +9,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' ),
+var activated = require( 'state/themes/actions' ).activated,
+	Button = require( 'components/button' ),
 	config = require( 'config' ),
 	Dispatcher = require( 'dispatcher' ),
 	Card = require( 'components/card' ),
@@ -87,8 +88,7 @@ var CheckoutThankYou = React.createClass( {
 
 	redirectIfThemePurchased: function() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
-			// TODO: move this to checkout.jsx
-			// context.store.dispatch( activated( meta, this.props.selectedSite, source, true ) );
+			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
 			page.redirect( '/design/' + this.props.selectedSite.slug );
 			return;
 		}
@@ -640,6 +640,9 @@ module.exports = connect(
 	},
 	function mapDispatchToProps( dispatch ) {
 		return {
+			activatedTheme: function( meta, selectedSite ) {
+				dispatch( activated( meta, selectedSite, 'calypstore', true ) );
+			},
 			fetchReceipt: function( receiptId ) {
 				dispatch( fetchReceipt( receiptId ) );
 			},
