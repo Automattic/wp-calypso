@@ -15,6 +15,7 @@ var Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
+	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
 	isPlan = require( 'lib/products-values' ).isPlan,
 	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
 	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
@@ -82,7 +83,9 @@ var CheckoutThankYou = React.createClass( {
 			} );
 		}
 
-		this.props.fetchReceipt( this.props.receiptId );
+		if ( ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
+			this.props.fetchReceipt( this.props.receiptId );
+		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
@@ -630,7 +633,7 @@ function goToDomainManagement( selectedSite, domain ) {
 module.exports = connect(
 	function mapStateToProps( state, props ) {
 		return {
-			receipts: state.receipts
+			receipt: getReceiptById( state, props.receiptId )
 		};
 	},
 	function mapDispatchToProps( dispatch ) {
