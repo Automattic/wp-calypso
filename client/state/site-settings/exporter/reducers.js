@@ -50,9 +50,12 @@ export function exportingState( state = {}, { type, siteId } ) {
 				[ siteId ]: States.EXPORTING
 			} );
 		case EXPORT_COMPLETE:
+			return Object.assign( {}, state, {
+				[ siteId ]: States.COMPLETE
+			} );
 		case EXPORT_FAILURE:
 			return Object.assign( {}, state, {
-				[ siteId ]: States.READY
+				[ siteId ]: States.FAILED
 			} );
 		case SERIALIZE:
 			return {};
@@ -107,9 +110,19 @@ export function advancedSettings( state = {}, action ) {
 	return state;
 }
 
+export function downloadURL( state = null, action ) {
+	switch ( action.type ) {
+		case EXPORT_COMPLETE:
+			return action.downloadURL;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	selectedPostType,
 	exportingState,
 	fetchingAdvancedSettings,
-	advancedSettings
+	advancedSettings,
+	downloadURL,
 } );

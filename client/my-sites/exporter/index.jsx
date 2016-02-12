@@ -12,6 +12,7 @@ import {
 	shouldShowProgress,
 	getSelectedPostType,
 	isExporting,
+	getExportingState,
 } from 'state/site-settings/exporter/selectors';
 import {
 	advancedSettingsFetch,
@@ -19,6 +20,7 @@ import {
 	setPostType,
 	startExport,
 } from 'state/site-settings/exporter/actions';
+import { States } from 'state/site-settings/exporter/constants';
 
 function mapStateToProps( state ) {
 	const siteId = state.ui.selectedSiteId;
@@ -28,6 +30,9 @@ function mapStateToProps( state ) {
 		postType: getSelectedPostType( state ),
 		shouldShowProgress: shouldShowProgress( state, siteId ),
 		isExporting: isExporting( state, siteId ),
+		downloadURL: state.siteSettings.exporter.downloadURL,
+		didComplete: getExportingState( state, siteId ) === States.COMPLETE,
+		didFail: getExportingState( state, siteId ) === States.FAILED,
 	};
 }
 

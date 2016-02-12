@@ -10,6 +10,8 @@ import FoldableCard from 'components/foldable-card';
 import AdvancedSettings from 'my-sites/exporter/advanced-settings';
 import SpinnerButton from './spinner-button';
 import Interval, { EVERY_SECOND } from 'lib/interval';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 export default React.createClass( {
 	displayName: 'Exporter',
@@ -52,8 +54,35 @@ export default React.createClass( {
 				loadingText={ this.translate( 'Exporting…' ) } />
 		);
 
+		var notice = null;
+		if ( this.props.didComplete ) {
+			notice = (
+				<Notice
+					status="is-success"
+					text={ this.translate( 'Your export was successful! A download link has also been sent to your email.' ) }
+				>
+					<NoticeAction href={ this.props.downloadURL }>
+						Download
+					</NoticeAction>
+				</Notice>
+			);
+		}
+		if ( this.props.didFail ) {
+			notice = (
+				<Notice
+					status="is-error"
+					text={ this.translate( 'There was a problem preparing your export file. Please check your connection and try again, or contact support.' ) }
+				>
+					<NoticeAction href={ '/help/contact' }>
+						Get Help
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
 		return (
 			<div className="exporter">
+				{ notice }
 				<FoldableCard
 					actionButtonIcon="cog"
 					header={

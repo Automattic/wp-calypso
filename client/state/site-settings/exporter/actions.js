@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import notices from 'notices';
 import wpcom from 'lib/wp';
-
-const i18n = require( 'lib/mixins/i18n' );
 
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -123,19 +120,19 @@ export function exportStatusFetch( siteId ) {
 			siteId
 		} );
 
-		const success = ( response ) => {
+		const failure = ( error ) => {
+			dispatch( exportFailed( siteId, error ) );
+		}
+
+		const success = ( response = {} ) => {
 			switch ( response.status ) {
 				case 'finished':
 					return dispatch( exportComplete( siteId, response.$attachment_url ) )
 				case 'running':
-					return
+					return;
 			}
 
-			return dispatch( exportFailed( siteId ) );
-		}
-
-		const failure = ( error ) => {
-			dispatch( exportFailed( siteId, error ) );
+			return failure( response );
 		}
 
 		return wpcom.undocumented()
@@ -146,14 +143,6 @@ export function exportStatusFetch( siteId ) {
 }
 
 export function exportFailed( siteId, error ) {
-	notices.error(
-		i18n.translate( 'There was a problem preparing your export file. Please check your connection and try again, or contact support.' ),
-		{
-			button: i18n.translate( 'Get Help' ),
-			href: '/help/contact'
-		}
-	);
-
 	return {
 		type: EXPORT_FAILURE,
 		siteId,
@@ -162,14 +151,6 @@ export function exportFailed( siteId, error ) {
 }
 
 export function exportComplete( siteId, downloadURL ) {
-	notices.success(
-		i18n.translate( 'Your export was successful! A download link has also been sent to your email.' ),
-		{
-			button: i18n.translate( 'Download' ),
-			href: downloadURL
-		}
-	);
-
 	return {
 		type: EXPORT_COMPLETE,
 		siteId,

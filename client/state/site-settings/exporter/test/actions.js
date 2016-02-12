@@ -23,20 +23,14 @@ import {
 	advancedSettingsFetch,
 	advancedSettingsReceive,
 	advancedSettingsFail,
+	exportStatusFetch,
+	startExport
 } from '../actions';
 import {
 	SAMPLE_ADVANCED_SETTINGS,
 	SAMPLE_EXPORT_COMPLETE_RESPONSE,
 	SAMPLE_EXPORT_FAILED_RESPONSE,
 } from './sample-data';
-
-import rewire from 'rewire';
-const actions = rewire( '../actions' );
-actions.__set__( 'i18n', { translate: ( token ) => token } );
-const {
-	exportStatusFetch,
-	startExport
-} = actions;
 
 /**
  * Test setup
