@@ -21,6 +21,10 @@ function getCheckoutDestination( dependencies ) {
 	return 'https://' + dependencies.siteSlug;
 }
 
+function getPostsDestination( dependencies ) {
+	return '/posts/' + dependencies.siteSlug;
+}
+
 const flows = {
 	/* Production flows*/
 
@@ -139,7 +143,7 @@ const flows = {
 
 	desktop: {
 		steps: [ 'themes', 'site', 'user' ],
-		destination: '/me/next?welcome',
+		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
 		lastModified: '2015-11-05'
 	},
