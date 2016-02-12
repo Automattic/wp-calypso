@@ -23,14 +23,20 @@ import {
 	advancedSettingsFetch,
 	advancedSettingsReceive,
 	advancedSettingsFail,
-	startExport,
-	exportStatusFetch,
 } from '../actions';
 import {
 	SAMPLE_ADVANCED_SETTINGS,
 	SAMPLE_EXPORT_COMPLETE_RESPONSE,
 	SAMPLE_EXPORT_FAILED_RESPONSE,
 } from './sample-data';
+
+import rewire from 'rewire';
+const actions = rewire( '../actions' );
+actions.__set__( 'i18n', { translate: ( token ) => token } );
+const {
+	exportStatusFetch,
+	startExport
+} = actions;
 
 /**
  * Test setup
@@ -52,9 +58,9 @@ describe( 'actions', () => {
 			.reply( 200, SAMPLE_ADVANCED_SETTINGS )
 			.post( '/rest/v1.1/sites/2916284/exports/start' )
 			.reply( 200, true )
-			.get( '/rest/v1.1/sites/100658273/exports/0')
+			.get( '/rest/v1.1/sites/100658273/exports/0' )
 			.reply( 200, SAMPLE_EXPORT_COMPLETE_RESPONSE )
-			.get( '/rest/v1.1/sites/2916284/exports/0')
+			.get( '/rest/v1.1/sites/2916284/exports/0' )
 			.reply( 200, SAMPLE_EXPORT_FAILED_RESPONSE );
 	} );
 
@@ -169,24 +175,28 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch export complete action when an export has completed', () => {
+		it( 'should dispatch export complete action when an export has completed', ( done ) => {
 			exportStatusFetch( 100658273 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_COMPLETE,
 					siteId: 100658273
 				} );
-			} );
+
+				done();
+			} ).catch( done );
 		} );
 
-		it( 'should dispatch export failure action when an export has failed', () => {
+		it( 'should dispatch export failure action when an export has failed', ( done ) => {
 			exportStatusFetch( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_FAILURE,
 					siteId: 2916284
 				} );
-			} );
+
+				done();
+			} ).catch( done );
 		} );
 	} );
 } );

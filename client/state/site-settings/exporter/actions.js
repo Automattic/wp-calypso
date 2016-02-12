@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import notices from 'notices';
-import i18n from 'lib/mixins/i18n';
 import wpcom from 'lib/wp';
+
+const i18n = require( 'lib/mixins/i18n' );
 
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -123,9 +124,9 @@ export function exportStatusFetch( siteId ) {
 		} );
 
 		const success = ( response ) => {
-			switch( response.status ) {
+			switch ( response.status ) {
 				case 'finished':
-					return dispatch( exportComplete( siteId, response[ '$attachment_url' ] ) )
+					return dispatch( exportComplete( siteId, response.$attachment_url ) )
 				case 'running':
 					return
 			}
@@ -133,18 +134,26 @@ export function exportStatusFetch( siteId ) {
 			return dispatch( exportFailed( siteId ) );
 		}
 
-		const failure = () => {
-			dispatch( exportFailed( siteId ) );
+		const failure = ( error ) => {
+			dispatch( exportFailed( siteId, error ) );
 		}
 
 		return wpcom.undocumented()
-			.getExport( siteId, 'undefined' )
+			.getExport( siteId, 0 )
 			.then( success )
 			.catch( failure );
 	}
 }
 
 export function exportFailed( siteId, error ) {
+	notices.error(
+		i18n.translate( 'There was a problem preparing your export file. Please check your connection and try again, or contact support.' ),
+		{
+			button: i18n.translate( 'Get Help' ),
+			href: '/help/contact'
+		}
+	);
+
 	return {
 		type: EXPORT_FAILURE,
 		siteId,
