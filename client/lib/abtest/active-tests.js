@@ -65,14 +65,6 @@ module.exports = {
 		},
 		defaultVariation: 'mostPopular'
 	},
-	plansFeatureList: {
-		datestamp: '20040202',
-		variations: {
-			list: 50,
-			description: 50
-		},
-		defaultVariation: 'description'
-	},
 	headstart: {
 		datestamp: '20160205',
 		variations: {
