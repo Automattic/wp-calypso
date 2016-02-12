@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' );
+import React from 'react'
+import PureRenderMixin from 'react-pure-render/mixin'
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Tooltip = require( 'components/tooltip' );
+import Tooltip from 'components/tooltip'
 
-var Token = React.createClass( {
+export default React.createClass( {
+
+	displayName: 'Token',
+
 	propTypes: {
 		value: React.PropTypes.string.isRequired,
 		displayTransform: React.PropTypes.func.isRequired,
@@ -20,45 +23,44 @@ var Token = React.createClass( {
 		tooltip: React.PropTypes.string
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
-			onClickRemove: function() {},
+			onClickRemove: () => {},
 			isBorderless: false
 		};
 	},
 
 	mixins: [ PureRenderMixin ],
 
-	render: function() {
+	render() {
+		const { value, status, isBorderless, tooltip, displayTransform } = this.props;
 		const tokenClasses = classNames( 'token-field__token', {
-			'is-error': 'error' === this.props.status,
-			'is-success': 'success' === this.props.status,
-			'is-validating': 'validating' === this.props.status,
-			'is-borderless': this.props.isBorderless
+			'is-error': 'error' === status,
+			'is-success': 'success' === status,
+			'is-validating': 'validating' === status,
+			'is-borderless': isBorderless
 		} );
 
 		return (
 			<span className={ tokenClasses } tabIndex="-1">
 				<span className="token-field__token-text">
-					{ this.props.displayTransform( this.props.value ) }
+					{ displayTransform( value ) }
 				</span>
 				<span
 					className="token-field__remove-token noticon noticon-close-alt"
 					onClick={ this._onClickRemove } />
-			{ this.props.tooltip &&
-				<Tooltip context={ this } status={ this.props.status } isVisible={ true } position="bottom">
-						{ this.props.tooltip }
+			{ tooltip &&
+				<Tooltip context={ this } status={ status } isVisible={ true } position="bottom">
+						{ tooltip }
 				</Tooltip>
 			}
 			</span>
 		);
 	},
 
-	_onClickRemove: function() {
+	_onClickRemove() {
 		this.props.onClickRemove( {
 			value: this.props.value
 		} );
 	}
 } );
-
-module.exports = Token;
