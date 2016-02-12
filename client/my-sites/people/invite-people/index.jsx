@@ -20,7 +20,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { sendInvites } from 'lib/invites/actions';
 import Card from 'components/card';
 import Main from 'components/main';
-import Tooltip from 'components/tooltip';
 import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
@@ -104,7 +103,7 @@ export default React.createClass( {
 			let status, tooltip;
 			if ( errors && errors[ value ] ) {
 				status = 'error';
-				tooltip = errors[ value ].errors[ Object.keys( errors[ value ].errors )[ 0 ] ];
+				tooltip = errors[ value ].errors[ Object.keys( errors[ value ].errors )[ 0 ] ][0];
 			} else if ( ! includes( success, value ) ) {
 				status = 'validating';
 			}
