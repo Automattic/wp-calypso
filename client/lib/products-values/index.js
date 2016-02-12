@@ -38,8 +38,16 @@ function formatProduct( product ) {
 		product_slug: product.product_slug || product.productSlug,
 		is_domain_registration: product.is_domain_registration !== undefined
 			? product.is_domain_registration
-			: product.isDomainRegistration
+			: product.isDomainRegistration,
+		free_trial: product.free_trial || product.freeTrial
 	} );
+}
+
+function isChargeback( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === 'chargeback';
 }
 
 function isFreePlan( product ) {
@@ -93,6 +101,20 @@ function isJetpackPlan( product ) {
 	assertValidProduct( product );
 
 	return 'jetpack' === product.product_type;
+}
+
+function isJetpackBusiness( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isBusiness( product ) && isJetpackPlan( product );
+}
+
+function isJetpackPremium( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isPremium( product ) && isJetpackPlan( product );
 }
 
 function isJpphpBundle( product ) {
@@ -269,6 +291,7 @@ module.exports = {
 	formatProduct,
 	getDomainProductRanking,
 	isBusiness,
+	isChargeback,
 	isCredits,
 	isCustomDesign,
 	isDependentProduct,
@@ -281,6 +304,8 @@ module.exports = {
 	isFreeJetpackPlan,
 	isFreeTrial,
 	isGoogleApps,
+	isJetpackBusiness,
+	isJetpackPremium,
 	isJetpackPlan,
 	isJpphpBundle,
 	isNoAds,

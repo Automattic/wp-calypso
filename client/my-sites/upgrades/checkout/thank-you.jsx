@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
+	find = require( 'lodash/collection/find' ),
 	store = require( 'store' );
 
 /**
@@ -11,13 +12,24 @@ var React = require( 'react' ),
 var Button = require( 'components/button' ),
 	config = require( 'config' ),
 	Dispatcher = require( 'dispatcher' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
 	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
+	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
+	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
+	isChargeback = require( 'lib/products-values' ).isChargeback,
+	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
+	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
+	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
+	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
+	isJetpackBusiness = require( 'lib/products-values' ).isJetpackBusiness,
 	isPlan = require( 'lib/products-values' ).isPlan,
-	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
+	isPremium = require( 'lib/products-values' ).isPremium,
+	isSiteRedirect = require( 'lib/products-values' ).isSiteRedirect,
+	getPrimaryDomain = require( 'lib/domains' ).getPrimaryDomain,
+	isSubdomain = require( 'lib/domains' ).isSubdomain,
 	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
@@ -37,6 +49,10 @@ var BusinessPlanDetails,
 	JetpackPremiumPlanDetails,
 	PremiumPlanDetails,
 	SiteRedirectDetails;
+
+function getPurchases( props ) {
+	return props.receipt.data.purchases;
+}
 
 var CheckoutThankYou = React.createClass( {
 	statics: {
@@ -72,7 +88,7 @@ var CheckoutThankYou = React.createClass( {
 
 		if ( lastTransaction ) {
 			// Refresh selected site plans if the user just purchased a plan
-			if ( cartItems.hasPlan( lastTransaction.cart ) ) {
+			if ( getPurchases( this.props ).some( isPlan ) ) {
 				this.props.refreshSitePlans( this.props.selectedSite.ID );
 			}
 
@@ -91,7 +107,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	thankYouHeader: function() {
-		if ( this.cartHasFreeTrial() ) {
+		if ( this.freeTrialWasPurchased() ) {
 			return (
 				<h1>
 					{
@@ -106,7 +122,7 @@ var CheckoutThankYou = React.createClass( {
 		var productName = this.getSingleProductName(),
 			headerText;
 
-		if ( this.cartHasFreeTrial() && productName ) {
+		if ( this.freeTrialWasPurchased() && productName ) {
 			headerText = this.translate( 'We hope you enjoy %(productName)s. What\'s next? Take it for a spin!', {
 				args: {
 					productName: productName
@@ -127,13 +143,11 @@ var CheckoutThankYou = React.createClass( {
 		return <h2>{ headerText }</h2>
 	},
 	getSingleProductName() {
-		var products;
-		if ( cartItems ) {
-			products = cartItems.getAll( this.props.lastTransaction.cart );
-			if ( products.length === 1 ) {
-				return products[ 0 ].product_name;
-			}
+		if ( getPurchases( this.props ).length ) {
+			return getPurchases( this.props )[ 0 ].productNameShort;
 		}
+
+		return null;
 	},
 
 	render: function() {
@@ -156,12 +170,12 @@ var CheckoutThankYou = React.createClass( {
 		);
 	},
 
-	cartHasFreeTrial: function() {
-		return cartItems.hasFreeTrial( this.props.lastTransaction.cart );
+	freeTrialWasPurchased: function() {
+		return getPurchases( this.props ).some( isFreeTrial );
 	},
 
-	cartHasJetpackPlan: function() {
-		return ( cartItems.hasProduct( this.props.lastTransaction.cart, 'jetpack_premium' ) || cartItems.hasProduct( this.props.lastTransaction.cart, 'jetpack_business' ) );
+	jetpackPlanWasPurchased: function() {
+		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
 	takeItForASpin: function() {
@@ -176,7 +190,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	premiumFreeTrialMessage: function() {
-		if ( this.cartHasFreeTrial() ) {
+		if ( this.freeTrialWasPurchased() ) {
 			return (
 				<div className="try-out-message">
 					<p>
@@ -192,7 +206,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	businessFreeTrialMessage: function() {
-		if ( this.cartHasFreeTrial() ) {
+		if ( this.freeTrialWasPurchased() ) {
 			return (
 				<div className="try-out-message">
 					<p>
@@ -208,36 +222,36 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	productRelatedMessages: function() {
-		var cart = this.props.lastTransaction.cart,
+		var purchases = getPurchases( this.props ),
 			selectedSite = this.props.selectedSite,
 			componentClass,
 			domain;
 
-		if ( cartItems.hasProduct( cart, 'value_bundle' ) ) {
-			componentClass = PremiumPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'business-bundle' ) ) {
-			componentClass = BusinessPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'jetpack_premium' ) ) {
+		if ( purchases.some( isJetpackPremium ) ) {
 			componentClass = JetpackPremiumPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'jetpack_business' ) ) {
+		} else if ( purchases.some( isJetpackBusiness ) ) {
 			componentClass = JetpackBusinessPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'gapps' ) || cartItems.hasProduct( cart, 'gapps_extra_license' ) ) {
-			domain = cartItems.getGoogleApps( cart )[ 0 ].meta;
+		} else if ( purchases.some( isPremium ) ) {
+			componentClass = PremiumPlanDetails;
+		} else if ( purchases.some( isBusiness ) ) {
+			componentClass = BusinessPlanDetails;
+		} else if ( purchases.some( isGoogleApps ) ) {
+			domain = find( purchases, isGoogleApps ).meta;
 
 			componentClass = GoogleAppsDetails;
-		} else if ( cartItems.hasDomainRegistration( cart ) ) {
-			domain = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+		} else if ( purchases.some( isDomainRegistration ) ) {
+			domain = find( purchases ).meta;
 
 			componentClass = DomainRegistrationDetails;
-		} else if ( cartItems.hasProduct( cart, 'domain_map' ) ) {
-			domain = cartItems.getDomainMappings( cart )[ 0 ].meta;
+		} else if ( purchases.some( isDomainMapping ) ) {
+			domain = find( purchases, isDomainMapping ).meta;
 
 			componentClass = DomainMappingDetails;
-		} else if ( cartItems.hasProduct( cart, 'offsite_redirect' ) ) {
-			domain = cartItems.getSiteRedirects( cart )[ 0 ].meta;
+		} else if ( purchases.some( isSiteRedirect ) ) {
+			domain = find( purchases, isSiteRedirect ).meta;
 
 			componentClass = SiteRedirectDetails;
-		} else if ( cartItems.hasProduct( cart, 'chargeback' ) ) {
+		} else if ( purchases.some( isChargeback ) ) {
 			componentClass = ChargebackDetails;
 		} else {
 			componentClass = GenericDetails;
@@ -247,7 +261,7 @@ var CheckoutThankYou = React.createClass( {
 			<div>
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
-					isFreeTrial: this.cartHasFreeTrial(),
+					isFreeTrial: this.freeTrialWasPurchased(),
 					locale: i18n.getLocaleSlug(),
 					domain: domain
 				} ) }
@@ -258,7 +272,7 @@ var CheckoutThankYou = React.createClass( {
 	supportRelatedMessages: function() {
 		var localeSlug = i18n.getLocaleSlug();
 
-		if ( this.cartHasJetpackPlan() ) {
+		if ( this.jetpackPlanWasPurchased() ) {
 			return (
 				<p>
 					{ this.translate(
