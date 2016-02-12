@@ -190,7 +190,7 @@ module.exports = React.createClass( {
 					<Gauge />
 					<SearchDemo />
 					<Headers />
-					<DropZones />
+					<DropZones searchKeywords="drag" />
 					<FormFields searchKeywords="input textbox textarea radio"/>
 					<ClipboardButtons />
 					<ClipboardButtonInput />
@@ -200,14 +200,14 @@ module.exports = React.createClass( {
 					<ExternalLink />
 					<FeatureGate />
 					<DatePicker />
-					<Spinners />
+					<Spinners searchKeywords="loading" />
 					<InputChrono />
-					<TimezoneDropdown />
-					<FoldableCard />
 					<PaymentLogo />
 					<BulkSelect />
 					<SectionHeader />
 					<SectionNav />
+					<TimezoneDropdown />
+					<FoldableCard />
 				</Collection>
 			</div>
 		);

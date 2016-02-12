@@ -81,12 +81,7 @@ var SectionNavigation = React.createClass( {
 	},
 
 	render: function() {
-		var demoSections = {},
-			dropdownDemoMargin;
-
-		dropdownDemoMargin = {
-			marginBottom: 650
-		};
+		var demoSections = {};
 
 		forEach( this.props, function( prop, key ) {
 			demoSections[ key ] = [];
@@ -106,7 +101,7 @@ var SectionNavigation = React.createClass( {
 		}.bind( this ) );
 
 		return (
-			<div className="design-assets__group" style={ dropdownDemoMargin }>
+			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/design/section-nav">Section Navigation</a>
 				</h2>
