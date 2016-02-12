@@ -10,7 +10,7 @@ var Token = React.createClass( {
 		value: React.PropTypes.string.isRequired,
 		displayTransform: React.PropTypes.func.isRequired,
 		onClickRemove: React.PropTypes.func,
-		status: React.PropTypes.oneOf( [ 'is-error', 'is-success' ] ),
+		status: React.PropTypes.oneOf( [ 'error', 'success', 'validating' ] ),
 		isBorderless: React.PropTypes.bool
 	},
 
@@ -24,7 +24,10 @@ var Token = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
-		const tokenClasses = classNames( 'token-field__token', this.props.status, {
+		const tokenClasses = classNames( 'token-field__token', {
+			'is-error': 'error' === this.props.status,
+			'is-success': 'success' === this.props.status,
+			'is-validating': 'validating' === this.props.status,
 			'is-borderless': this.props.isBorderless
 		} );
 

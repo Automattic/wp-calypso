@@ -6,6 +6,7 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
 import get from 'lodash/object/get';
 import debugModule from 'debug';
+import contains from 'lodash/collection/contains';
 
 /**
  * Internal dependencies
@@ -62,9 +63,16 @@ export default React.createClass( {
 	},
 
 	onTokensChange( tokens ) {
-		this.setState( { usernamesOrEmails: tokens } );
 		const { role } = this.state;
-		createInviteValidation( this.props.site.ID, tokens, role );
+		const filteredTokens = tokens.map( ( value ) => {
+			if ( 'object' === typeof value ) {
+				return value.value;
+			}
+			return value;
+		} );
+
+		this.setState( { usernamesOrEmails: filteredTokens } );
+		createInviteValidation( this.props.site.ID, filteredTokens, role );
 	},
 
 	onMessageChange( event ) {
@@ -77,18 +85,36 @@ export default React.createClass( {
 		if ( ! success.indexOf ) {
 			success = Object.keys( success ).map( key => success[ key ] );
 		}
+
 		this.setState( {
-			getTokenStatus: ( value ) => {
-				if ( 'string' === typeof value ) {
-					if ( errors[ value ] ) {
-						return 'is-error';
-					}
-					if ( success.indexOf( value ) > -1 ) {
-						return 'is-success';
-					}
-				}
-			}
+			errors,
+			success
 		} );
+	},
+
+	getTokensWithStatus() {
+		const { success, errors } = this.state;
+
+		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
+			let status;
+			if ( errors && errors[ value ] ) {
+				status = 'error';
+			} else if ( ! contains( success, value ) ) {
+				status = 'validating';
+			}
+
+			if ( status ) {
+				value = {
+					value,
+					status
+				};
+			}
+
+			return value;
+		} );
+
+		debug( 'Generated tokens: ' + JSON.stringify( tokens ) );
+		return tokens;
 	},
 
 	submitForm( event ) {
@@ -136,8 +162,7 @@ export default React.createClass( {
 							<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
 								isBorderless
-								tokenStatus={ this.state.getTokenStatus }
-								value={ this.state.usernamesOrEmails }
+								value={ this.getTokensWithStatus() }
 								onChange={ this.onTokensChange } />
 							<FormSettingExplanation>
 								{ this.translate(
