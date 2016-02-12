@@ -33,7 +33,7 @@ function updateReceiptState( state, receiptId, attributes ) {
 	} );
 }
 
-export function receipts( state = {}, action ) {
+export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case RECEIPT_FETCH:
 			return updateReceiptState( state, action.receiptId, {
@@ -57,5 +57,5 @@ export function receipts( state = {}, action ) {
 }
 
 export default combineReducers( {
-	receipts
+	items
 } );

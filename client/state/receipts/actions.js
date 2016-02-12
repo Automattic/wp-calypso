@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { createReceiptObject } from './assembler';
 import i18n from 'lib/mixins/i18n';
 import {
 	RECEIPT_FETCH,
@@ -29,11 +30,7 @@ export function fetchReceipt( receiptId ) {
 
 					reject( errorMessage );
 				} else {
-					dispatch( {
-						type: RECEIPT_FETCH_COMPLETED,
-						receiptId,
-						receipt: data
-					} );
+					dispatch( fetchReceiptCompleted( receiptId, data ) );
 
 					resolve();
 				}
@@ -41,3 +38,11 @@ export function fetchReceipt( receiptId ) {
 		} );
 	};
 };
+
+export function fetchReceiptCompleted( receiptId, data ) {
+	return {
+		type: RECEIPT_FETCH_COMPLETED,
+		receiptId,
+		receipt: createReceiptObject( data )
+	};
+}

@@ -11,18 +11,18 @@ import {
 	RECEIPT_FETCH_COMPLETED,
 	RECEIPT_FETCH_FAILED
 } from 'state/action-types';
-import { receipts } from '../reducer';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( '#receipts()', () => {
+	describe( '#items()', () => {
 		it( 'should return an empty state when original state is undefined and action is empty', () => {
-			const state = receipts( undefined, {} );
+			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should return the initial state with requesting enabled when fetching is triggered', () => {
-			const state = receipts( undefined, {
+			const state = items( undefined, {
 				type: RECEIPT_FETCH,
 				receiptId: 11111111
 			} );
@@ -46,7 +46,7 @@ describe( 'reducer', () => {
 						isRequesting: true
 					}
 				} ),
-				state = receipts( original, {
+				state = items( original, {
 					type: RECEIPT_FETCH_FAILED,
 					receiptId: 11111111,
 					error: 'Unable to fetch the receipt.'
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 						isRequesting: true
 					}
 				} ),
-				state = receipts( original, {
+				state = items( original, {
 					type: RECEIPT_FETCH_COMPLETED,
 					receiptId: 11111111,
 					receipt: { amount: 20 }
