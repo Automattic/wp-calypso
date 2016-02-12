@@ -24,12 +24,22 @@ describe( 'reducer', () => {
 			type: RECEIVE_THEME_DETAILS,
 			themeId: 'mood',
 			themeName: 'Mood',
-			themeAuthor: 'Automattic'
+			themeAuthor: 'Automattic',
+			themeScreenshot: 'mood.jpg',
+			themePrice: '$20',
+			themeDescription: 'the best theme ever invented',
+			themeDescriptionLong: 'the plato form of a theme',
+			themeSupportDocumentation: 'support comes from within',
 		} );
 
 		expect( state.get( 'mood' ).toJS() ).to.eql( {
 			name: 'Mood',
-			author: 'Automattic'
+			author: 'Automattic',
+			screenshot: 'mood.jpg',
+			price: '$20',
+			description: 'the best theme ever invented',
+			descriptionLong: 'the plato form of a theme',
+			supportDocumentation: 'support comes from within',
 		} );
 	} );
 

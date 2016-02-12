@@ -3,7 +3,6 @@
  */
 import ReactDomServer from 'react-dom/server';
 import Helmet from 'react-helmet';
-import memoize from 'lodash/memoize';
 import superagent from 'superagent';
 import Lru from 'lru-cache';
 
@@ -13,7 +12,6 @@ import Lru from 'lru-cache';
 import config from 'config';
 
 const markupCache = new Lru( { max: 1000 } );
-const memoizedRenderToString = memoize( ReactDomServer.renderToString, element => JSON.stringify( element ) );
 
 function bumpStat( group, name ) {
 	const url = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
@@ -23,18 +21,25 @@ function bumpStat( group, name ) {
 	}
 }
 
-export function render( element ) {
-	memoizedRenderToString.cache = markupCache;
-
-	if ( ! memoizedRenderToString.cache.has( JSON.stringify( element ) ) ) {
-		bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
-	}
-
+/**
+* Render and cache supplied React element to a markup string.
+* Cache is keyed by stringified element by default.
+*
+* @param {object} element - React element to be rendered to html
+* @param {string} key - (optional) custom key
+* @return {object} context object with `layout` field populated
+*/
+export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
-		const context = {
-			layout: memoizedRenderToString( element, JSON.stringify( element ) ),
-		};
+
+		let layout = markupCache.get( key );
+		if ( ! layout ) {
+			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
+			layout = ReactDomServer.renderToString( element );
+			markupCache.set( key, layout );
+		}
+		const context = { layout };
 		const rtsTimeMs = Date.now() - startTime;
 
 		if ( Helmet.peek() ) {
@@ -58,4 +63,5 @@ export function render( element ) {
 			throw ex;
 		}
 	}
+	//todo: render an error?
 }

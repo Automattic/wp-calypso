@@ -1471,10 +1471,11 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 };
 
 Undocumented.prototype.themeDetails = function( themeId, fn ) {
+	const path = `/themes/${ themeId }`;
 	debug( '/themes/:theme_id' );
-	this.wpcom.req.get( {
+	this.wpcom.req.get( path, {
 		apiVersion: '1.1',
-		path: '/themes/' + themeId
+		extended: 'true',
 	}, fn );
 };
 

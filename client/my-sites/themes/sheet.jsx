@@ -1,5 +1,8 @@
 /** @ssr-ready **/
 
+/* eslint-disable react/no-danger  */
+// FIXME!!!^ we want to ensure we have sanitised data…
+
 /**
  * External dependencies
  */
@@ -19,7 +22,6 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import { purchase, customize, activate, signup } from 'state/themes/actions';
-import { getThemeById } from 'state/themes/themes/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import ThemeHelpers from 'my-sites/themes/helpers';
 import i18n from 'lib/mixins/i18n';
@@ -28,19 +30,14 @@ export const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
 
 	propTypes: {
-		themeSlug: React.PropTypes.string,
-	},
-
-	getDefaultProps() {
-		return {
-			theme: {
-				price: '$125',
-				description_long: `
-Kitsch four loko deep v, tousled kombucha polaroid gentrify. Kitsch bushwick mixtape, ugh wayfarers artisan YOLO godard direct trade. Post-ironic YOLO helvetica, hammock small batch man bun gastropub ethical forage. Neutra retro swag, chambray polaroid deep v distillery microdosing messenger bag pabst narwhal bitters. Fingerstache retro banh mi mixtape pabst. Tote bag cred everyday carry meh ennui leggings. Austin truffaut marfa, deep v artisan kickstarter fingerstache gentrify typewriter aesthetic meditation pop-up.
-
-				Man braid meditation meggings art party occupy kale chips, raw denim aesthetic pop-up portland cred. Cold-pressed godard authentic beard offal, quinoa butcher photo booth. Literally messenger bag waistcoat cliche taxidermy, austin knausgaard freegan. Seitan master cleanse skateboard, pickled mixtape YOLO before they sold out ugh. Authentic actually ethical fanny pack squid, flannel kale chips YOLO humblebrag polaroid franzen. Pitchfork flannel mumblecore food truck. Craft beer fap 90's, heirloom shabby chic typewriter salvia listicle pabst beard tacos sustainable yuccie.`
-			}
-		};
+		id: React.PropTypes.string,
+		name: React.PropTypes.string,
+		author: React.PropTypes.string,
+		screenshot: React.PropTypes.string,
+		price: React.PropTypes.string,
+		description: React.PropTypes.string,
+		descriptionLong: React.PropTypes.string,
+		supportDocumentation: React.PropTypes.string,
 	},
 
 	onBackClick() {
@@ -50,49 +47,65 @@ Kitsch four loko deep v, tousled kombucha polaroid gentrify. Kitsch bushwick mix
 	onPrimaryClick() {
 		let action;
 
-		if ( ThemeHelpers.isPremium( this.props.theme ) && ! this.props.theme.purchased && this.props.isLoggedIn ) {
-			action = purchase( this.props.theme, this.props.selectedSite, 'showcase-sheet' );
-		} else if ( this.props.theme.active ) {
-			action = customize( this.props.theme, this.props.selectedSite );
+		if ( ThemeHelpers.isPremium( this.props ) && ! this.props.purchased && this.props.isLoggedIn ) { //FIXME: purchased ENOENT
+			action = purchase( this.props, this.props.selectedSite, 'showcase-sheet' );
+		} else if ( this.props.active ) { //FIXME: active ENOENT
+			action = customize( this.props, this.props.selectedSite );
 		} else if ( this.props.isLoggedIn ) {
-			action = activate( this.props.theme, this.props.selectedSite, 'showcase-sheet' );
+			action = activate( this.props, this.props.selectedSite, 'showcase-sheet' );
 		} else {
-			action = signup( this.props.theme );
+			action = signup( this.props );
 		}
 
 		this.props.dispatch( action );
 	},
 
+	getContentElement( section ) {
+		return {
+			details: <div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />,
+			documentation: <div dangerouslySetInnerHTML={ { __html: this.props.supportDocumentation } } />,
+			support: <div>Visit the support forum</div>,
+		}[ section ];
+	},
+
+	getDangerousElements( section ) {
+		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
+		const themeContentElement = this.getContentElement( section );
+		return { priceElement, themeContentElement };
+	},
+
 	render() {
 		let actionTitle;
-		if ( this.props.isLoggedIn && this.props.theme.active ) {
+		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
 			actionTitle = i18n.translate( 'Customize' );
 		} else if ( this.props.isLoggedIn ) {
-			actionTitle = ThemeHelpers.isPremium( this.props.theme ) && ! this.props.theme.purchased
+			actionTitle = ThemeHelpers.isPremium( this.props ) && ! this.props.purchased //FIXME: purchased ENOENT
 				? i18n.translate( 'Purchase & Activate' )
 				: i18n.translate( 'Activate' );
 		} else {
 			actionTitle = i18n.translate( 'Start with this design' );
 		}
 
-		const section = this.props.contentSection || 'details';
+		const section = this.props.section || 'details';
 		const filterStrings = {
 			details: i18n.translate( 'Details', { context: 'Filter label for theme content' } ),
 			documentation: i18n.translate( 'Documentation', { context: 'Filter label for theme content' } ),
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
+		const { themeContentElement, priceElement } = this.getDangerousElements( section );
+
 		return (
 			<Main className="themes__sheet">
 				<div className="themes__sheet-bar">
-					<span className="themes__sheet-bar-title">Pineapple Fifteen</span>
-					<span className="themes__sheet-bar-tag">by Alpha and Omega</span>
+					<span className="themes__sheet-bar-title">{ this.props.name }</span>
+					<span className="themes__sheet-bar-tag">by { this.props.author }</span>
 				</div>
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
 							<div className="themes__sheet-action-bar-container">
-								<span className="themes__sheet-action-bar-cost">{ this.props.theme.price }</span>
+								{ priceElement }
 								<Button secondary >{ i18n.translate( 'Download' ) }</Button>
 								<Button primary icon onClick={ this.onPrimaryClick }><Gridicon icon="checkmark"/>{ actionTitle }</Button>
 							</div>
@@ -100,18 +113,18 @@ Kitsch four loko deep v, tousled kombucha polaroid gentrify. Kitsch bushwick mix
 						<div className="themes__sheet-content">
 							<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
 								<NavTabs label="Details" >
-									<NavItem path={ `/themes/${ this.props.themeSlug }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
-									<NavItem path={ `/themes/${ this.props.themeSlug }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
-									<NavItem path={ `/themes/${ this.props.themeSlug }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
+									<NavItem path={ `/themes/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
+									<NavItem path={ `/themes/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
+									<NavItem path={ `/themes/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
 								</NavTabs>
 							</SectionNav>
-							<Card className="themes__sheet-content">{ this.props.theme.description_long }</Card>
+							<Card className="themes__sheet-content">{ themeContentElement }</Card>
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
 						<Card className="themes_sheet-action-bar-spacer"/>
 						<div className="themes__sheet-screenshot">
-							<img className="themes__sheet-img" src="https://i2.wp.com/theme.wordpress.com/wp-content/themes/pub/orvis/screenshot.png?w=680" />
+							<img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />
 						</div>
 					</div>
 				</div>
@@ -124,7 +137,6 @@ export default connect(
 	( state, props ) => Object.assign( {},
 		props,
 		{
-			theme: getThemeById( state, props.themeSlug ),
 			selectedSite: getSelectedSite( state ) || false,
 		}
 	)
