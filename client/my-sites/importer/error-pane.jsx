@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import Page from 'page';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ export default React.createClass( {
 	contactSupport: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
+		Page( '/help' );
 	},
 
 	getImportError: function() {
