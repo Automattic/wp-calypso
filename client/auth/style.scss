@@ -175,7 +175,7 @@
 	border-radius: 8px;
 	padding: 40px;
 	position: absolute;
-	z-index: 4;
+	z-index: z-index( 'root', '.auth__self-hosted-instructions' );
 	top: 50%;
 	left: 50%;
 	transform: translate( -50%, -50% );
