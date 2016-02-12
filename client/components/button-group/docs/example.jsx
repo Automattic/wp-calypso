@@ -17,48 +17,51 @@ var Buttons = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
+	getInitialState: function() {
+		return {
+			compact: false
+		};
+	},
+
+	toggleButtons: function() {
+		this.setState( { compact: ! this.state.compact } );
+	},
+
 	render: function() {
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/design/button-group">Button Group</a>
+					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>
+						{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
+					</a>
 				</h2>
 				<Card>
 					<div>
 						<ButtonGroup className="example">
-							<Button compact>One button</Button>
+							<Button compact={ this.state.compact }>Do thing</Button>
+							<Button compact={ this.state.compact }>Do another thing</Button>
 						</ButtonGroup>
 					</div>
 					<div>
 						<ButtonGroup className="example">
-							<Button compact>Do things</Button>
-							<Button compact>Cancel</Button>
+							<Button compact={ this.state.compact }>Button one</Button>
+							<Button compact={ this.state.compact }>Button two</Button>
+							<Button compact={ this.state.compact } scary>Button Three</Button>
 						</ButtonGroup>
 					</div>
 					<div>
 						<ButtonGroup className="example">
-							<Button compact>Button one</Button>
-							<Button compact>Button two</Button>
-							<Button compact>Button three</Button>
+							<Button compact={ this.state.compact }><Gridicon icon="add-image" /></Button>
+							<Button compact={ this.state.compact }><Gridicon icon="heart" /></Button>
+							<Button compact={ this.state.compact }><Gridicon icon="briefcase" /></Button>
+							<Button compact={ this.state.compact }><Gridicon icon="history" /></Button>
 						</ButtonGroup>
 					</div>
 					<div>
 						<ButtonGroup className="example">
-							<Button compact>Draft</Button>
-							<Button compact primary>Save</Button>
-							<Button compact primary scary>Delete</Button>
-						</ButtonGroup>
-					</div>
-					<div>
-						<ButtonGroup className="example">
-							<Button>Do bigger things</Button>
-							<Button>Cancel</Button>
-						</ButtonGroup>
-					</div>
-					<div>
-						<ButtonGroup className="example">
-							<Button primary>Publish</Button>
-							<Button primary><Gridicon icon="calendar" /></Button>
+							<Button primary compact={ this.state.compact }>Publish</Button>
+							<Button primary compact={ this.state.compact }><Gridicon icon="calendar" /></Button>
 						</ButtonGroup>
 					</div>
 				</Card>
