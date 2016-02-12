@@ -215,6 +215,10 @@
 	margin-right: 4px;
 }
 
+.mce-toolbar .mce-wpcom-button.mce-contact-form svg {
+	margin-left: 4px;
+}
+
 .mce-toolbar .mce-wpcom-button.mce-contact-form:hover svg,
 .mce-toolbar .mce-wpcom-button.mce-media:hover svg {
 	fill: $gray-dark;
@@ -583,7 +587,7 @@ div.mce-path {
 }
 
 .mce-toolbar-grp:not( .mce-inline-toolbar-grp ) .mce-btn-group .mce-btn.mce-first {
-	margin-left: 8px;
+	margin-left: 4px;
 }
 
 #wp-fullscreen-buttons .mce-btn:hover,
