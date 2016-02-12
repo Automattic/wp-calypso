@@ -81,4 +81,13 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	altThemes: {
+		datestamp: '20160215',
+		variations: {
+			original: 20,
+			altThemes: 20,
+			notTested: 60
+		},
+		defaultVariation: 'original'
+	},
 };
