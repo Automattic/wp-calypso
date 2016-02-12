@@ -12,7 +12,7 @@ import {
 	RECEIPT_FETCH_FAILED
 } from 'state/action-types';
 
-const initialReceiptState = {
+export const initialReceiptState = {
 	data: null,
 	error: null,
 	hasLoadedFromServer: false,
