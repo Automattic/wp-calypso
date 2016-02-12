@@ -15,7 +15,7 @@ var PublicizeMessage = require( './publicize-message' ),
 	paths = require( 'lib/paths' ),
 	PostMetadata = require( 'lib/post-metadata' ),
 	PopupMonitor = require( 'lib/popup-monitor' ),
-	AddNewButton = require( 'components/add-new-button' ),
+	Button = require( 'components/button' ),
 	siteUtils = require( 'lib/site/utils' ),
 	Gridicon = require( 'components/gridicon' ),
 	stats = require( 'lib/posts/stats' );
@@ -152,15 +152,12 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<AddNewButton
-				isCompact={ true }
-				onClick={ this.newConnection }
-				>
-				{ this.translate( 'Connect new service' ) }
-			<span className="editor-sharing__external-link-indicator">
-				<Gridicon icon="external" size={ 18 } />
-			</span>
-			</AddNewButton>
+			<Button borderless compact={ true } onClick={ this.newConnection }>
+				<Gridicon icon="add" /> { this.translate( 'Connect new service' ) }
+				<span className="editor-sharing__external-link-indicator">
+					<Gridicon icon="external" size={ 18 } />
+				</span>
+			</Button>
 		);
 	},
 
