@@ -32,6 +32,14 @@ export default React.createClass( {
 		} ).isRequired
 	},
 
+	componentWillMount() {
+		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
+
+		if ( hasSingleAuthor ) {
+			selectAuthor( this.getCurrentUser() );
+		}
+	},
+
 	getCurrentUser() {
 		const currentUser = user().get();
 
