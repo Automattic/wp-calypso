@@ -1,24 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:stats:postPerformance' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	PostListStore = require( 'lib/posts/post-list-store-factory' )(),
-	PostStatsStore = require( 'lib/post-stats/store' ),
-	StatsTabs = require( '../stats-tabs' ),
-	Emojify = require( 'components/emojify' ),
-	actions = require( 'lib/posts/actions' ),
-	Gridicon = require( 'components/gridicon' );
+import Card from 'components/card';
+import PostListStoreFactory from 'lib/posts/post-list-store-factory';
+import PostStatsStore from 'lib/post-stats/store';
+import StatsModuleHeader from '../stats-module/header';
+import StatsModuleContent from '../stats-module/content-text';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
+import Emojify from 'components/emojify';
+import actions from 'lib/posts/actions';
+
+const PostListStore = new PostListStoreFactory;
 
 function getPostState() {
-	var posts = PostListStore.getAll(),
-		post = posts.length ? posts[ 0 ] : null;
+	const posts = PostListStore.getAll();
+	const post = posts.length ? posts[ 0 ] : null;
+
 	return {
 		post: post,
 		postID: post ? post.ID : null,
@@ -36,61 +40,62 @@ function queryPosts( siteID ) {
 	actions.fetchNextPage();
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'StatsPostPerformance',
 
 	propTypes: {
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] )
+		site: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.object
+		] ),
+		siteID: PropTypes.number
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		PostListStore.on( 'change', this.onPostsChange );
 		queryPosts( this.props.site.ID );
 		PostStatsStore.on( 'change', this.onViewsChange );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		PostListStore.off( 'change', this.onPostsChange );
 		PostStatsStore.off( 'change', this.onViewsChange );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site.ID !== this.props.siteID ) {
 			queryPosts( nextProps.site.ID );
 		}
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			loading: true,
 			post: null,
 			postID: null,
-			views: String.fromCharCode( 8211 )
+			views: null
 		};
 	},
 
-	onPostsChange: function() {
-		var postState = getPostState();
+	onPostsChange() {
+		const postState = getPostState();
 
 		this.setState( postState );
 	},
 
-	onViewsChange: function() {
-		var views = this.getTotalViews();
+	onViewsChange() {
+		const views = this.getTotalViews();
 
 		if ( this.state.views !== views ) {
 			this.setState( {
-				views: this.getTotalViews()
+				views: views
 			} );
 		}
 	},
 
-	getTotalViews: function() {
-		var views = null;
+	getTotalViews() {
+		let views;
 
 		if ( this.state.post ) {
 			views = PostStatsStore.getItem( 'totalViews', this.props.site.ID, this.state.post.ID );
@@ -99,100 +104,66 @@ module.exports = React.createClass( {
 		return views;
 	},
 
-	buildTabs: function( summaryUrl ) {
-		var post = this.state.post,
-			isLoading = this.state.loading,
-			emptyString = String.fromCharCode( 8211 ),
-			values = {
-				views: this.state.views,
-				likes: post ? post.like_count : emptyString,
-				comments: post ? post.discussion.comment_count : emptyString
+	buildTabs( summaryUrl ) {
+		const { post, loading, views } = this.state;
+		const tabClassName = 'is-post-summary';
+
+		const tabs = [
+			{
+				label: this.translate( 'Views' ),
+				gridicon: 'visible',
+				value: views,
+				href: summaryUrl,
+				className: tabClassName,
+				loading: loading
 			},
-			tabs = [
-				{
-					label: this.translate( 'Views' ),
-					labelIcon: 'visible',
-					value: this.numberFormat( values.views ),
-					link: summaryUrl
-				},
-				{
-					label: this.translate( 'Likes' ),
-					labelIcon: 'star',
-					value: this.numberFormat( values.likes )
-				},
-				{
-					label: this.translate( 'Comments' ),
-					labelIcon: 'comment',
-					value: this.numberFormat( values.comments )
-				}
-			];
+			{
+				label: this.translate( 'Likes' ),
+				gridicon: 'star',
+				value: post ? post.like_count : null,
+				className: tabClassName,
+				loading: loading
+			},
+			{
+				label: this.translate( 'Comments' ),
+				gridicon: 'comment',
+				value: post ? post.discussion.comment_count : null,
+				className: tabClassName,
+				loading: loading
+			}
+		];
 
-		return tabs.map( function( tabOptions, index ) {
-			var valueClass = classNames( 'value', { 'is-low': tabOptions.value === 0 } ),
-				wrapperClass = classNames( {
-					'stats-tab': true,
-					'is-post-summary': true,
-					'is-loading': isLoading
-				} ),
-				tabInnerClass = classNames( {
-					'no-link': ! tabOptions.link
-				} ),
-				tabContent;
-
-			tabContent = (
-				<span className={ tabInnerClass }>
-					<Gridicon icon={ tabOptions.labelIcon } size={ 18 } />
-					<span className="label">
-						{ tabOptions.label }
-					</span>
-					<span className={ valueClass }>{ tabOptions.value }</span>
-				</span>
-			);
-
-			return (
-				<li className={ wrapperClass } key={ index }>
-					{ tabOptions.link ? ( <a href={ summaryUrl }>{ tabContent }</a> ) : tabContent }
-				</li>
-			);
+		return tabs.map( function( tabOptions ) {
+			return <StatsTab { ...tabOptions } key={ tabOptions.gridicon } />;
 		} );
 	},
 
-	render: function() {
-		var post = this.state.post,
-			postTime = post ? this.moment( post.date ) : this.moment(),
-			cardClass = classNames( {
-				'is-loading': this.state.loading,
-				'stats__latest-post-summary': true,
-				'stats-module': true,
-				'is-site-overview': true,
-				'is-hidden': ! this.state.loading && ! this.state.post
-			} ),
-			summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : '#',
-			postTitle;
+	render() {
+		const { post, loading } = this.state;
+		const postTime = post ? this.moment( post.date ) : this.moment();
+		const cardClass = classNames( 'stats-module', 'stats__latest-post-summary', 'is-site-overview', {
+			'is-loading': loading,
+			'is-hidden': ! loading && ! post
+		} );
+
+		const summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : '#';
+		let postTitle;
 
 		if ( post ) {
-			if ( !post.title ) {
+			if ( ! post.title ) {
 				postTitle = this.translate( '(no title)' );
 			} else {
 				postTitle = post.title;
 			}
 		}
 
-		debug( 'rendering', this.state );
-
 		return (
 			<Card className={ cardClass }>
-				<div className="module-header">
-					<h3 className="module-header-title">
-						<a href={ summaryUrl } className="module-header__link">
-							<span className="module-header__right-icon">
-								<Gridicon icon="stats" />
-							</span>
-							{ this.translate( 'Latest Post Summary' ) }
-						</a>
-					</h3>
-				</div>
-				<div className="module-content-text">
+				<StatsModuleHeader
+					showActions={ false }
+					titleLink={ summaryUrl }
+					title={ this.translate( 'Latest Post Summary' ) } />
+				<StatsModuleContent>
 					{ post
 						? (
 							<p>
@@ -212,7 +183,7 @@ module.exports = React.createClass( {
 							</p>
 						) : null
 					}
-				</div>
+				</StatsModuleContent>
 				<StatsTabs>
 					{ this.buildTabs( summaryUrl ) }
 				</StatsTabs>
