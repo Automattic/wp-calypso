@@ -2,7 +2,7 @@
  * External dependencies
  */
 var jsdom = require( 'jsdom' ).jsdom,
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 /**
  * Module variables

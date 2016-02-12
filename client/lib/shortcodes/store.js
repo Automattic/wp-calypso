@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { ReduceStore } from 'flux/utils';
-import pick from 'lodash/object/pick';
-import intersection from 'lodash/array/intersection';
+import pickBy from 'lodash/pickBy';
+import intersection from 'lodash/intersection';
 
 /**
  * Internal dependencies
@@ -80,7 +80,7 @@ class ShortcodesStore extends ReduceStore {
 				const updatedIds = media.map( ( item ) => item.ID.toString() );
 
 				state = Object.assign( {}, state, {
-					[ action.siteId ]: pick( state[ action.siteId ], ( status, shortcode ) => {
+					[ action.siteId ]: pickBy( state[ action.siteId ], ( status, shortcode ) => {
 						const parsed = Shortcode.parse( shortcode );
 						if ( parsed.tag !== 'gallery' || ! parsed.attrs.named || ! parsed.attrs.named.ids ) {
 							return true;

@@ -2,15 +2,15 @@
  * External dependencies
  */
 var update = require( 'react-addons-update' ),
-	every = require( 'lodash/collection/every' ),
-	extend = require( 'lodash/object/assign' ),
-	flow = require( 'lodash/function/flow' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	merge = require( 'lodash/object/merge' ),
-	reject = require( 'lodash/collection/reject' ),
-	rest = require( 'lodash/array/rest' ),
-	some = require( 'lodash/collection/some' ),
-	where = require( 'lodash/collection/where' );
+	every = require( 'lodash/every' ),
+	assign = require( 'lodash/assign' ),
+	flow = require( 'lodash/flow' ),
+	isEqual = require( 'lodash/isEqual' ),
+	merge = require( 'lodash/merge' ),
+	reject = require( 'lodash/reject' ),
+	tail = require( 'lodash/tail' ),
+	some = require( 'lodash/some' ),
+	filter = require( 'lodash/filter' );
 
 /**
  * Internal dependencies
@@ -212,7 +212,7 @@ function getDomainRegistrationTld( cartItem ) {
 											'items.' );
 	}
 
-	return '.' + rest( cartItem.meta.split( '.' ) ).join( '.' );
+	return '.' + tail( cartItem.meta.split( '.' ) ).join( '.' );
 }
 
 /**
@@ -363,7 +363,7 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return extend( domainItem( properties.productSlug, properties.domain ), { is_domain_registration: true } );
+	return assign( domainItem( properties.productSlug, properties.domain ), { is_domain_registration: true } );
 }
 
 /**
@@ -409,13 +409,13 @@ function domainRedemption( properties ) {
 function googleApps( properties ) {
 	var item = domainItem( 'gapps', properties.meta ? properties.meta : properties.domain );
 
-	return extend( item, { extra: { google_apps_users: properties.users } } );
+	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
 function googleAppsExtraLicenses( properties ) {
 	var item = domainItem( 'gapps_extra_license', properties.domain );
 
-	return extend( item, { extra: { google_apps_users: properties.users } } );
+	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
 function customDesignItem() {
@@ -483,7 +483,7 @@ function getItemForPlan( plan, properties ) {
  * @returns {Object} the corresponding item in the shopping cart as `CartItemValue` object
  */
 function findFreeTrial( cart ) {
-	return where( getAll( cart ), { free_trial: true } )[ 0 ];
+	return filter( getAll( cart ), { free_trial: true } )[ 0 ];
 }
 
 /**
@@ -493,7 +493,7 @@ function findFreeTrial( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getDomainRegistrations( cart ) {
-	return where( getAll( cart ), { is_domain_registration: true } );
+	return filter( getAll( cart ), { is_domain_registration: true } );
 }
 
 /**
@@ -503,7 +503,7 @@ function getDomainRegistrations( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getDomainMappings( cart ) {
-	return where( getAll( cart ), { product_slug: 'domain_map' } );
+	return filter( getAll( cart ), { product_slug: 'domain_map' } );
 }
 
 /**
@@ -600,7 +600,7 @@ function getRenewalItemFromCartItem( cartItem, properties ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getSiteRedirects( cart ) {
-	return where( getAll( cart ), { product_slug: 'offsite_redirect' } );
+	return filter( getAll( cart ), { product_slug: 'offsite_redirect' } );
 }
 
 function hasDomainInCart( cart, domain ) {

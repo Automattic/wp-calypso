@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' );
+	omit = require( 'lodash/omit' ),
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal Dependencies

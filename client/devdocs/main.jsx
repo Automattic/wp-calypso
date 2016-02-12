@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isFunction = require( 'lodash/lang/isFunction' ),
+	isFunction = require( 'lodash/isFunction' ),
 	classNames = require( 'classnames' );
 
 /**

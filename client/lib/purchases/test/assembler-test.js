@@ -28,7 +28,10 @@ describe( 'Purchases assembler', () => {
 			payment_card_type: 'visa',
 			payment_details: 7890,
 			payment_expiry: '11/16',
-			payment_type: 'credit_card'
+			payment_type: 'credit_card',
+			payment_name: 'My VISA',
+			payment_country_code: 'US',
+			payment_country_name: 'United States'
 		} ] ) ).to.have.deep.property( '[0].payment' ).that.deep.equals( {
 			creditCard: {
 				expiryDate: '11/16',
@@ -37,7 +40,10 @@ describe( 'Purchases assembler', () => {
 				number: 7890,
 				type: 'visa'
 			},
-			type: 'credit_card'
+			type: 'credit_card',
+			countryCode: 'US',
+			countryName: 'United States',
+			name: 'My VISA'
 		} );
 	} );
 } );

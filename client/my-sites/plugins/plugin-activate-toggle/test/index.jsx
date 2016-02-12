@@ -7,7 +7,7 @@ var chai = require( 'chai' ),
 	React = require( 'react' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	TestUtils = require( 'react-addons-test-utils' );
 
 /**

@@ -4,7 +4,7 @@
 const Dispatcher = require( 'dispatcher' ),
 	scrollStore = require( 'lib/infinite-list/scroll-store' ),
 	positionsStore = require( 'lib/infinite-list/positions-store' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Module variables

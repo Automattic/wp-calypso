@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	compact = require( 'lodash/array/compact' );
+	compact = require( 'lodash/compact' );
 
 /**
  * Internal dependencies

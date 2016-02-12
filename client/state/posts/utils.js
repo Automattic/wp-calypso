@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/object/omit';
+import omit from 'lodash/omit';
+import omitBy from 'lodash/omitBy';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import { DEFAULT_POST_QUERY } from './constants';
  * @return {Object}       Normalized posts query
  */
 export function getNormalizedPostsQuery( query ) {
-	return omit( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
+	return omitBy( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
 }
 
 /**

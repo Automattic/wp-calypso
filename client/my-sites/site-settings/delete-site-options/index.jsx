@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
-	filter = require( 'lodash/collection/filter' );
+	filter = require( 'lodash/filter' );
 
 /**
  * Internal dependencies

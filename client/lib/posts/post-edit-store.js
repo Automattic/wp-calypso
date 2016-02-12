@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	clone = require( 'lodash/lang/clone' ),
-	filter = require( 'lodash/collection/filter' ),
-	without = require( 'lodash/array/without' ),
-	map = require( 'lodash/collection/map' ),
-	pick = require( 'lodash/object/pick' );
+	isEqual = require( 'lodash/isEqual' ),
+	clone = require( 'lodash/clone' ),
+	filter = require( 'lodash/filter' ),
+	without = require( 'lodash/without' ),
+	map = require( 'lodash/map' ),
+	pickBy = require( 'lodash/pickBy' );
 
 /**
  * Internal dependencies
@@ -420,7 +420,7 @@ PostEditStore = {
 			return Object.freeze( {} );
 		}
 
-		changedAttributes = pick( _post, function( value, key ) {
+		changedAttributes = pickBy( _post, function( value, key ) {
 			return value !== _savedPost[ key ] && 'metadata' !== key;
 		} );
 

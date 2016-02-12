@@ -2,10 +2,10 @@
 
 // External Dependencies
 var Dispatcher = require( 'dispatcher' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	map = require( 'lodash/collection/map' ),
-	reject = require( 'lodash/collection/reject' ),
-	find = require( 'lodash/collection/find' );
+	isEqual = require( 'lodash/isEqual' ),
+	map = require( 'lodash/map' ),
+	reject = require( 'lodash/reject' ),
+	find = require( 'lodash/find' );
 
 // Internal Dependencies
 var emitter = require( 'lib/mixins/emitter' ),

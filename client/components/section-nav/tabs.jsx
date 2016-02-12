@@ -3,7 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	debounce = require( 'lodash/function/debounce' ),
+	debounce = require( 'lodash/debounce' ),
 	classNames = require( 'classnames' );
 
 /**

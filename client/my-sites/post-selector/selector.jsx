@@ -5,12 +5,12 @@ import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import debounce from 'lodash/function/debounce';
-import sortBy from 'lodash/collection/sortBy';
-import filter from 'lodash/collection/filter';
-import camelCase from 'lodash/string/camelCase';
-import clone from 'lodash/lang/clone';
-import throttle from 'lodash/function/throttle';
+import debounce from 'lodash/debounce';
+import sortBy from 'lodash/sortBy';
+import filter from 'lodash/filter';
+import camelCase from 'lodash/camelCase';
+import clone from 'lodash/clone';
+import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies

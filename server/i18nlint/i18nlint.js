@@ -10,8 +10,8 @@ var fs = require( 'fs' ),
 	preProcessXGettextJSMatch = require( '../i18n/preprocess-xgettextjs-match.js' ),
 	SourceMapConsumer = require( 'source-map' ).SourceMapConsumer,
 	tokenize = require( '../../client/lib/interpolate-components/tokenize.js' ),
-	contains = require( 'lodash/collection/contains' ),
-	flow = require( 'lodash/function/flow' );
+	includes = require( 'lodash/includes' ),
+	flow = require( 'lodash/flow' );
 
 /*
  * Module variables
@@ -271,11 +271,11 @@ function isNotAcceptableTranslateArgument( node ) {
 	// likely to lead to confusion than convenience.
 
 	return ! ( node && node.type &&
-		contains( [ 'Literal', 'ObjectExpression', 'BinaryExpression' ], node.type ) );
+		includes( [ 'Literal', 'ObjectExpression', 'BinaryExpression' ], node.type ) );
 }
 
 function isRelevantProperty( property ) {
-	return contains( [ 'context', 'comment' ], keyName( property ) );
+	return includes( [ 'context', 'comment' ], keyName( property ) );
 }
 
 /* Grab the content out of from the source */

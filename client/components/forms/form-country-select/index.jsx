@@ -2,10 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	classnames = require( 'classnames' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 
 module.exports = React.createClass( {
 

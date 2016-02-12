@@ -5,7 +5,7 @@ var assert = require( 'assert' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
-	unique = require( 'lodash/array/uniq' );
+	uniq = require( 'lodash/uniq' );
 
 /**
  * Internal dependencies
@@ -109,7 +109,7 @@ describe( 'FormToggle', function() {
 					return input.id;
 				} );
 
-			return ids.length === unique( ids ).length;
+			return ids.length === uniq( ids ).length;
 		} );
 	} );
 } );

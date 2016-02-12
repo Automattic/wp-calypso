@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	extend = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -130,7 +130,7 @@ module.exports = React.createClass( {
 	field: function( componentClass, props ) {
 		var name = props.name;
 
-		return React.createElement( componentClass, extend( {}, props, {
+		return React.createElement( componentClass, assign( {}, props, {
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ),
 			invalid: formState.isFieldInvalid( this.state.form, name ),

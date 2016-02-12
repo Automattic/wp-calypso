@@ -2,11 +2,11 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
-	first = require( 'lodash/array/first' ),
-	some = require( 'lodash/collection/some' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	values = require( 'lodash/object/values' ),
+	noop = require( 'lodash/noop' ),
+	head = require( 'lodash/head' ),
+	some = require( 'lodash/some' ),
+	findIndex = require( 'lodash/findIndex' ),
+	values = require( 'lodash/values' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:post-editor:media' );
 
@@ -95,7 +95,7 @@ module.exports = React.createClass( {
 
 			mimePrefix = MediaUtils.getMimePrefix( item );
 			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.state.activeView );
-		}, this );
+		}.bind( this ) );
 	},
 
 	confirmSelection: function() {
@@ -265,7 +265,7 @@ module.exports = React.createClass( {
 
 	getFirstEnabledFilter: function() {
 		if ( this.props.enabledFilters ) {
-			return first( this.props.enabledFilters );
+			return head( this.props.enabledFilters );
 		}
 	},
 

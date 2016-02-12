@@ -3,8 +3,8 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	debounce = require( 'lodash/function/debounce' ),
-	assign = require( 'lodash/object/assign' ),
+	debounce = require( 'lodash/debounce' ),
+	assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:editor-media-modal' );
 
 /**

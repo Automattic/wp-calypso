@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import partialRight from 'lodash/function/partialRight';
+import partialRight from 'lodash/partialRight';
 import page from 'page';
 
 /**

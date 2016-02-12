@@ -1,4 +1,4 @@
-import shuffle from 'lodash/collection/shuffle';
+import shuffle from 'lodash/shuffle';
 
 const map = {
 	blog: [

@@ -5,7 +5,7 @@ require( 'lib/react-test-env-setup' )();
  * External dependencies
  */
 var chai = require( 'chai' ),
-	each = require( 'lodash/collection/each' );
+	each = require( 'lodash/each' );
 
 /**
  * Internal Dependencies

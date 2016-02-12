@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+var assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
+	map = require( 'lodash/map' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ function sortItemsByDate( siteId ) {
 	}
 
 	sortedItems = MediaUtils.sortItemsByDate( MediaListStore.getAll( siteId ) );
-	_media[ siteId ] = pluck( sortedItems, 'ID' );
+	_media[ siteId ] = map( sortedItems, 'ID' );
 }
 
 function ensureMediaForSiteId( siteId ) {

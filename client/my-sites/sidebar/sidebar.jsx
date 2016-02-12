@@ -5,9 +5,9 @@ var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
 	analytics = require( 'analytics' ),
-	startsWith = require( 'lodash/string/startsWith' ),
-	has = require( 'lodash/object/has' ),
-	contains = require( 'lodash/collection/contains' );
+	startsWith = require( 'lodash/startsWith' ),
+	has = require( 'lodash/has' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
@@ -498,7 +498,7 @@ module.exports = React.createClass( {
 				return null;
 			}
 
-			if ( ! contains( currentUser.meta.data.flags.active_flags, 'wpcom-use-wpadmin-flows' ) ) {
+			if ( ! includes( currentUser.meta.data.flags.active_flags, 'wpcom-use-wpadmin-flows' ) ) {
 				return null;
 			}
 		}

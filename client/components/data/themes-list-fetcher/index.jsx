@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import omit from 'lodash/object/omit';
-import once from 'lodash/function/once';
-import filter from 'lodash/collection/filter';
+import omit from 'lodash/omit';
+import once from 'lodash/once';
+import filter from 'lodash/filter';
 import { connect } from 'react-redux';
 
 /**

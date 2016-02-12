@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-const includes = require( 'lodash/collection/includes' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	endsWith = require( 'lodash/string/endsWith' );
+const includes = require( 'lodash/includes' ),
+	mapValues = require( 'lodash/mapValues' ),
+	endsWith = require( 'lodash/endsWith' );
 
 function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {

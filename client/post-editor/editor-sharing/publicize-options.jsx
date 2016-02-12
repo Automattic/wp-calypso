@@ -2,9 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	get = require( 'lodash/object/get' ),
-	includes = require( 'lodash/collection/includes' ),
-	pluck = require( 'lodash/collection/pluck' ),
+	get = require( 'lodash/get' ),
+	includes = require( 'lodash/includes' ),
+	map = require( 'lodash/map' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -129,7 +129,7 @@ module.exports = React.createClass( {
 			targeted = this.hasConnections() ? this.props.connections.filter( function( connection ) {
 				return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
 			} ) : [],
-			requireCount = includes( pluck( targeted, 'service' ), 'twitter' ),
+			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
 			acceptableLength = ( requireCount ) ? 140 - 23 - 23 : null;
 
 		if ( ! this.hasConnections() ) {

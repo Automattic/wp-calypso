@@ -1,8 +1,8 @@
 // External dependencies
-var assign = require( 'lodash/object/assign' ),
-	clone = require( 'lodash/lang/clone' ),
+var assign = require( 'lodash/assign' ),
+	clone = require( 'lodash/clone' ),
 	config = require( 'config' ),
-	forEach = require( 'lodash/collection/forEach' );
+	forEach = require( 'lodash/forEach' );
 
 // Internal dependencies
 var Dispatcher = require( 'dispatcher' ),

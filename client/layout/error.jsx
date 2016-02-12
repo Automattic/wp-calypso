@@ -3,7 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' );
 

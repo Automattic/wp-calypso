@@ -2,8 +2,8 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	endsWith = require( 'lodash/string/endsWith' ),
-	omit = require( 'lodash/object/omit' ),
+	endsWith = require( 'lodash/endsWith' ),
+	omit = require( 'lodash/omit' ),
 	page = require( 'page' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;

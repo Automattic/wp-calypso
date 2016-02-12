@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import unescapeString from 'lodash/string/unescape';
+import unescapeString from 'lodash/unescape';
 import _debug from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

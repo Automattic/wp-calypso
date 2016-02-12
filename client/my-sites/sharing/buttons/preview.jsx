@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	some = require( 'lodash/collection/some' ),
-	where = require( 'lodash/collection/where' );
+	some = require( 'lodash/some' ),
+	filter = require( 'lodash/filter' );
 
 /**
  * Internal dependencies
@@ -139,7 +139,7 @@ module.exports = React.createClass( {
 	},
 
 	getPreviewButtonsElement: function() {
-		var enabledButtons = where( this.props.buttons, { enabled: true } );
+		var enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
 			return (

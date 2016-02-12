@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	times = require( 'lodash/utility/times' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	times = require( 'lodash/times' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies

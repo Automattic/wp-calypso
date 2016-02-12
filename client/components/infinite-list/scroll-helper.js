@@ -1,5 +1,5 @@
 
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:infinite-list:helper' );
 
 /**

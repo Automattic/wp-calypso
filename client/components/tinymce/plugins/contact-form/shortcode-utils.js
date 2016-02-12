@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import pick from 'lodash/object/pick';
-import identity from 'lodash/utility/identity';
+import pickBy from 'lodash/pickBy';
+import identity from 'lodash/identity';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 		tag: 'contact-form',
 		type: 'closed',
 		content,
-		attrs: pick( { to, subject }, identity )
+		attrs: pickBy( { to, subject }, identity )
 	} );
 };
 
@@ -55,7 +55,7 @@ export function deserialize( shortcode ) {
 				content = content.slice( field.index + field.content.length )
 			}
 
-			return pick( { to, subject, fields }, identity );
+			return pickBy( { to, subject, fields }, identity );
 		}( parsed );
 	}
 

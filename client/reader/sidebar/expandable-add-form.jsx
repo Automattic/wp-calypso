@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 
 /**
  * Internal Dependencies

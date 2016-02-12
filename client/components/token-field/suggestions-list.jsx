@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var map = require( 'lodash/collection/map' ),
+var map = require( 'lodash/map' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),

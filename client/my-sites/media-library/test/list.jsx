@@ -8,7 +8,7 @@ var expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
-	toArray = require( 'lodash/lang/toArray' ),
+	toArray = require( 'lodash/toArray' ),
 	mockery = require( 'mockery' );
 
 /**

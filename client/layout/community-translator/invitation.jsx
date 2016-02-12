@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import merge from 'lodash/object/merge';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies

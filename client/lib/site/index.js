@@ -2,9 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:site' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	find = require( 'lodash/collection/find' ),
-	omit = require( 'lodash/object/omit' );
+	isEqual = require( 'lodash/isEqual' ),
+	find = require( 'lodash/find' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies

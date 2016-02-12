@@ -3,8 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import mapKeys from 'lodash/object/mapKeys';
-import snakeCase from 'lodash/string/snakeCase';
+import mapKeys from 'lodash/mapKeys';
+import snakeCase from 'lodash/snakeCase';
 
 /**
  * Internal dependencies

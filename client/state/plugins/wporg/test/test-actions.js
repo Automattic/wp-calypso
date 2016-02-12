@@ -27,7 +27,7 @@ describe( 'WPorg Data Actions', function() {
 			warnOnUnregistered: false
 		} );
 		mockery.registerMock( 'lib/wporg', mockedWporg );
-		mockery.registerMock( 'lodash/function/debounce', function( cb ) {
+		mockery.registerMock( 'lodash/debounce', function( cb ) {
 			return cb;
 		} );
 

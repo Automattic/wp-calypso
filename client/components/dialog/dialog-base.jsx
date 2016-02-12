@@ -5,7 +5,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	clickOutside = require( 'click-outside' ),
 	closest = require( 'component-closest' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	classnames = require( 'classnames' ),
 	componentClasses = require( 'component-classes' );
 

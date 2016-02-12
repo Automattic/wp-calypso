@@ -2,11 +2,11 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:password-generator' ),
-	merge = require( 'lodash/object/merge' ),
-	pick = require( 'lodash/object/pick' ),
-	random = require( 'lodash/number/random' ),
-	map = require( 'lodash/collection/map' ),
-	sample = require( 'lodash/collection/sample' );
+	merge = require( 'lodash/merge' ),
+	pick = require( 'lodash/pick' ),
+	random = require( 'lodash/random' ),
+	map = require( 'lodash/map' ),
+	sample = require( 'lodash/sample' );
 
 /**
  * Internal dependencies

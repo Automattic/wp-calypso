@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { fromJS, Map } from 'immutable';
-import transform from 'lodash/object/transform';
+import transform from 'lodash/transform';
 
 /**
  * Internal dependencies

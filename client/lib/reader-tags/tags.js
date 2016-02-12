@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import forOwn from 'lodash/object/forOwn';
+import forOwn from 'lodash/forOwn';
 
 /**
  * Internal dependencies

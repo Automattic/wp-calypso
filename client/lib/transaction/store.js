@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var cloneDeep = require( 'lodash/lang/cloneDeep' ),
-	mergeDeep = require( 'lodash/object/merge' ),
-	extend = require( 'lodash/object/assign' ),
+var cloneDeep = require( 'lodash/cloneDeep' ),
+	merge = require( 'lodash/merge' ),
+	assign = require( 'lodash/assign' ),
 	update = require( 'react-addons-update' );
 
 /**
@@ -45,15 +45,15 @@ function reset() {
 }
 
 function setDomainDetails( domainDetails ) {
-	replaceData( mergeDeep( _transaction, { domainDetails: domainDetails } ) );
+	replaceData( merge( _transaction, { domainDetails: domainDetails } ) );
 }
 
 function setPayment( payment ) {
-	replaceData( extend( {}, _transaction, { payment: payment } ) );
+	replaceData( assign( {}, _transaction, { payment: payment } ) );
 }
 
 function setStep( step ) {
-	replaceData( extend( {}, _transaction, {
+	replaceData( assign( {}, _transaction, {
 		step: step,
 		errors: ( step.error ? step.error.message : {} )
 	} ) );

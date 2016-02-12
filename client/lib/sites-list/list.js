@@ -3,10 +3,10 @@
  */
 var debug = require( 'debug' )( 'calypso:sites-list' ),
 	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' ),
-	find = require( 'lodash/collection/find' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	some = require( 'lodash/collection/some' );
+	assign = require( 'lodash/assign' ),
+	find = require( 'lodash/find' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	some = require( 'lodash/some' );
 
 /**
  * Internal dependencies

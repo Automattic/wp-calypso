@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import Dispatcher from 'dispatcher';
 import nock from 'nock';
-import partial from 'lodash/function/partial';
+import partial from 'lodash/partial';
 
 import { fetchState } from '../actions';
 import { actionTypes } from '../constants';

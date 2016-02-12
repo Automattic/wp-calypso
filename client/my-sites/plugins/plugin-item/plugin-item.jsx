@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	uniq = require( 'lodash/array/uniq' ),
+	uniqBy = require( 'lodash/uniqBy' ),
 	i18n = require( 'lib/mixins/i18n' );
 
 /**
@@ -45,7 +45,7 @@ module.exports = React.createClass( {
 		var progress = this.props.progress ? this.props.progress : [],
 			log = progress[ 0 ],
 			message,
-			uniqLogs = uniq( progress, function( uniqLog ) {
+			uniqLogs = uniqBy( progress, function( uniqLog ) {
 				return uniqLog.site.ID;
 			} ),
 			translationArgs = {

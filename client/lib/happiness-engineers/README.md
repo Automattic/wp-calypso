@@ -11,7 +11,7 @@ Example usage
  * External dependencies
  */
 var React = require( 'react' ),
-	map = require( 'lodash/collection/map' );
+	map = require( 'lodash/map' );
 
 /**
  * Internal dependencies

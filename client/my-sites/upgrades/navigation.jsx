@@ -2,16 +2,16 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	startsWith = require( 'lodash/string/startsWith' ),
+	startsWith = require( 'lodash/startsWith' ),
 	Dispatcher = require( 'dispatcher' ),
-	find = require( 'lodash/collection/find' ),
-	propertyOf = require( 'lodash/utility/propertyOf' ),
-	flatten = require( 'lodash/array/flatten' ),
-	map = require( 'lodash/collection/map' ),
-	sortBy = require( 'lodash/collection/sortBy' ),
-	size = require( 'lodash/collection/size' ),
-	filter = require( 'lodash/collection/filter' ),
-	includes = require( 'lodash/collection/includes' );
+	find = require( 'lodash/find' ),
+	propertyOf = require( 'lodash/propertyOf' ),
+	flatten = require( 'lodash/flatten' ),
+	map = require( 'lodash/map' ),
+	sortBy = require( 'lodash/sortBy' ),
+	size = require( 'lodash/size' ),
+	filter = require( 'lodash/filter' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
@@ -132,7 +132,7 @@ var UpgradesNavigation = React.createClass( {
 			} ),
 			selectedPath = find( sortedPaths, function( path ) {
 				return startsWith( this.props.path, path );
-			}, this );
+			}.bind( this ) );
 
 		return find( this.getNavItemData(), function( itemData ) {
 			return includes( itemData.paths, selectedPath );

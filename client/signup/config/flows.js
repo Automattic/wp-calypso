@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	includes = require( 'lodash/collection/includes' ),
-	reject = require( 'lodash/collection/reject' );
+var assign = require( 'lodash/assign' ),
+	includes = require( 'lodash/includes' ),
+	reject = require( 'lodash/reject' );
 
 /**
 * Internal dependencies

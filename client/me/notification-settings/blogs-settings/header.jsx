@@ -4,8 +4,8 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
-import zip from 'lodash/array/zip';
-import includes from 'lodash/collection/includes';
+import zip from 'lodash/zip';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies

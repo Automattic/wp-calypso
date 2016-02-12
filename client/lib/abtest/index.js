@@ -2,10 +2,10 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:abtests' ),
-	contains = require( 'lodash/collection/contains' ),
-	keys = require( 'lodash/object/keys' ),
-	reduce = require( 'lodash/collection/reduce' ),
-	some = require( 'lodash/collection/some' ),
+	includes = require( 'lodash/includes' ),
+	keys = require( 'lodash/keys' ),
+	reduce = require( 'lodash/reduce' ),
+	some = require( 'lodash/some' ),
 	store = require( 'store' );
 
 /**
@@ -49,7 +49,7 @@ ABTest.prototype.init = function( name ) {
 		throw new Error( 'No default variation found for ' + name );
 	}
 
-	if ( ! contains( variationNames, testConfig.defaultVariation ) ) {
+	if ( ! includes( variationNames, testConfig.defaultVariation ) ) {
 		throw new Error( 'A default variation is specified for ' + name + ' but it is not part of the variations' );
 	}
 
@@ -81,7 +81,7 @@ ABTest.prototype.getVariationAndSetAsNeeded = function() {
 		return this.defaultVariation;
 	}
 
-	if ( savedVariation && contains( this.variationNames, savedVariation ) ) {
+	if ( savedVariation && includes( this.variationNames, savedVariation ) ) {
 		debug( '%s: existing variation: "%s"', this.experimentId, savedVariation );
 		return savedVariation;
 	}
@@ -159,7 +159,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 	return some( previousExperimentIds, function( previousExperimentId ) {
 		previousName = previousExperimentId.substring( 0, previousExperimentId.length - '_YYYYMMDD'.length );
 		return ( previousExperimentId !== this.experimentId ) && ( previousName === this.name );
-	}, this );
+	}.bind( this ) );
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function() {

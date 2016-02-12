@@ -4,8 +4,8 @@
 var url = require( 'url' ),
 	path = require( 'path' ),
 	photon = require( 'photon' ),
-	includes = require( 'lodash/collection/includes' ),
-	omit = require( 'lodash/object/omit' );
+	includes = require( 'lodash/includes' ),
+	omitBy = require( 'lodash/omitBy' );
 
 /**
  * Internal dependencies
@@ -349,7 +349,7 @@ var MediaUtils = {
 			delete attrs.size;
 		}
 
-		attrs = omit( attrs, function( value, key ) {
+		attrs = omitBy( attrs, function( value, key ) {
 			return GalleryDefaultAttrs[ key ] === value;
 		} );
 

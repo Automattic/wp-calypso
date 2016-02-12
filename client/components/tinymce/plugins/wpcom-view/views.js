@@ -2,10 +2,10 @@
  * External dependencies
  */
 import EventEmitter from 'events/';
-import forEach from 'lodash/collection/forEach';
-import pluck from 'lodash/collection/pluck';
-import mapValues from 'lodash/object/mapValues';
-import values from 'lodash/object/values';
+import forEach from 'lodash/forEach';
+import map from 'lodash/map';
+import mapValues from 'lodash/mapValues';
+import values from 'lodash/values';
 
 /**
  * Internal dependencies
@@ -92,7 +92,7 @@ export default {
 			} );
 		} );
 
-		content = pluck( pieces, 'content' ).join( '' );
+		content = map( pieces, 'content' ).join( '' );
 		return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
 	},
 

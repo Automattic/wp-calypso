@@ -4,7 +4,7 @@
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
-import intersection from 'lodash/array/intersection';
+import intersection from 'lodash/intersection';
 
 /**
  * Internal Dependencies

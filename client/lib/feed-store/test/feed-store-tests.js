@@ -4,7 +4,7 @@
 var expect = require( 'chai' ).expect,
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
-	forOwn = require( 'lodash/object/forOwn' );
+	forOwn = require( 'lodash/forOwn' );
 
 var FeedState = require( '../constants' ).state,
 	FeedStore, FeedStoreActions;

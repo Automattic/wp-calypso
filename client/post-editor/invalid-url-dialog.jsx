@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 import page from 'page';
-import startsWith from 'lodash/string/startsWith';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal dependencies

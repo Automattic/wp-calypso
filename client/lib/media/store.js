@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var values = require( 'lodash/object/values' );
+var values = require( 'lodash/values' );
 
 /**
  * Internal dependencies

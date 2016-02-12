@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import get from 'lodash/object/get';
+import get from 'lodash/get';
 
 /**
  * Internal Dependencies

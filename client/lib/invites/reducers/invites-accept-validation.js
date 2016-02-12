@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { fromJS } from 'immutable';
-import mapValues from 'lodash/object/mapValues';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies

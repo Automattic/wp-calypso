@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import React from 'react';
-import get from 'lodash/object/get'
+import get from 'lodash/get'
 
 /**
  * Internal dependencies

@@ -7,9 +7,9 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import i18n from 'lib/mixins/i18n';
 import Debug from 'debug';
 import emailValidator from 'email-validator';
-import _debounce from 'lodash/function/debounce';
-import _map from 'lodash/collection/map';
-import _size from 'lodash/collection/size';
+import debounce from 'lodash/debounce';
+import map from 'lodash/map';
+import size from 'lodash/size';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -75,7 +75,7 @@ const Account = React.createClass( {
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' component is mounted.' );
-		this.debouncedUsernameValidate = _debounce( this.validateUsername, 600 );
+		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	},
 
 	componentWillUnmount() {
@@ -502,7 +502,7 @@ const Account = React.createClass( {
 		 * If there are no actions or if there is only one action,
 		 * which we assume is the 'none' action, we ignore the actions.
 		 */
-		if ( _size( actions ) <= 1 ) {
+		if ( size( actions ) <= 1 ) {
 			return;
 		}
 
@@ -511,7 +511,7 @@ const Account = React.createClass( {
 				<FormLegend>{ this.translate( 'Would you like a matching blog address too?' ) }</FormLegend>
 				{
 					// message is translated in the API
-					_map( actions, function( message, key ) {
+					map( actions, function( message, key ) {
 						return (
 							<FormLabel key={ key }>
 								<FormRadio
@@ -523,7 +523,7 @@ const Account = React.createClass( {
 								<span>{ message }</span>
 							</FormLabel>
 						);
-					}, this )
+					}.bind( this ) )
 				}
 			</FormFieldset>
 		);

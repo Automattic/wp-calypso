@@ -6,7 +6,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
-	startsWith = require( 'lodash/string/startsWith' ),
+	startsWith = require( 'lodash/startsWith' ),
 	qs = require( 'querystring' );
 
 /**

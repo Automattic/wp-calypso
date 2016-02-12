@@ -2,8 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:wpcom-followers-store' ),
-	_omit = require( 'lodash/object/omit' ),
-	endsWith = require( 'lodash/string/endsWith' );
+	omit = require( 'lodash/omit' ),
+	endsWith = require( 'lodash/endsWith' );
 
 /**
  * Internal dependencies
@@ -100,7 +100,7 @@ function updateFollowers( fetchOptions, followers, total ) {
 }
 
 function getNamespace( fetchOptions ) {
-	return deterministicStringify( _omit( fetchOptions, [ 'page', 'max' ] ) );
+	return deterministicStringify( omit( fetchOptions, [ 'page', 'max' ] ) );
 }
 
 function decrementPaginationData( siteId, followerId ) {

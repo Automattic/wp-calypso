@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:module-chart:x-axis' ),
-	throttle = require( 'lodash/function/throttle' );
+	throttle = require( 'lodash/throttle' );
 
 /**
  * Internal dependencies

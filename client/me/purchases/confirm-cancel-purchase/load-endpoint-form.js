@@ -1,8 +1,8 @@
 /**
  * External Dependencies
  **/
-import toArray from 'lodash/lang/toArray';
-import zipObject from 'lodash/array/zipObject';
+import toArray from 'lodash/toArray';
+import fromPairs from 'lodash/fromPairs';
 
 /**
  * Internal Dependencies
@@ -67,7 +67,7 @@ function submitForm( { form, onSubmit, selectedPurchase, selectedSite } ) {
 }
 
 function getFormData( { form, selectedPurchase, selectedSite } ) {
-	const inputs = zipObject(
+	const inputs = fromPairs(
 		toArray( form.elements )
 			.filter( ( element ) => {
 				return ( element.type === 'radio' ) ? element.checked : true;

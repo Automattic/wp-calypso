@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-var extend = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	pick = require( 'lodash/object/pick' ),
-	omit = require( 'lodash/object/omit' ),
-	compose = require( 'lodash/function/compose' ),
+	pick = require( 'lodash/pick' ),
+	omit = require( 'lodash/omit' ),
+	flowRight = require( 'lodash/flowRight' ),
 	Dispatcher = require( 'dispatcher' ),
 	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	debug = require( 'debug' )( 'calypso:cart-data:cart-synchronizer' );
@@ -16,7 +16,7 @@ var extend = require( 'lodash/object/assign' ),
 var Emitter = require( 'lib/mixins/emitter' );
 
 function preprocessCartFromServer( cart ) {
-	var newCart = extend( {}, cart, {
+	var newCart = assign( {}, cart, {
 		client_metadata: createClientMetadata(),
 		products: castProductIDsToNumbers( cart.products )
 	} );
@@ -41,7 +41,7 @@ function createClientMetadata() {
 //   with the API where it sometimes returns product IDs as strings.
 function castProductIDsToNumbers( cartItems ) {
 	return cartItems.map( function( item ) {
-		return extend( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
+		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
 }
 
@@ -53,7 +53,7 @@ function preprocessCartForServer( cart ) {
 	newCartItems = cart.products.map( function( cartItem ) {
 		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
 	} );
-	newCart = extend( {}, newCart, { products: newCartItems } );
+	newCart = assign( {}, newCart, { products: newCartItems } );
 
 	return newCart;
 }
@@ -132,7 +132,7 @@ CartSynchronizer.prototype.resume = function() {
 
 CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	if ( this._queuedChanges ) {
-		this._queuedChanges = compose( changeFunction, this._queuedChanges );
+		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
 	} else {
 		this._queuedChanges = changeFunction;
 	}

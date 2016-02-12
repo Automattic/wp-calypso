@@ -4,13 +4,13 @@ const debug = require( 'debug' )( 'calypso:reader:feed-subs' );
 
 // External Dependencies
 const Dispatcher = require( 'dispatcher' ),
-	reject = require( 'lodash/collection/reject' ),
-	findLast = require( 'lodash/collection/findLast' ),
-	get = require( 'lodash/object/get' ),
-	last = require( 'lodash/array/last' ),
+	reject = require( 'lodash/reject' ),
+	findLast = require( 'lodash/findLast' ),
+	get = require( 'lodash/get' ),
+	last = require( 'lodash/last' ),
 	Immutable = require( 'immutable' ),
-	clone = require( 'lodash/lang/clone' ),
-	map = require( 'lodash/collection/map' );
+	clone = require( 'lodash/clone' ),
+	map = require( 'lodash/map' );
 
 // Internal Dependencies
 const Emitter = require( 'lib/mixins/emitter' ),

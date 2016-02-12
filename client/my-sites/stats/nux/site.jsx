@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	page = require( 'page' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies

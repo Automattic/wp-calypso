@@ -3,12 +3,12 @@
  */
 const React = require( 'react' ),
 	update = require( 'react-addons-update' ),
-	groupBy = require( 'lodash/collection/groupBy' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	map = require( 'lodash/collection/map' ),
+	groupBy = require( 'lodash/groupBy' ),
+	mapValues = require( 'lodash/mapValues' ),
+	map = require( 'lodash/map' ),
 	page = require( 'page' ),
-	find = require( 'lodash/collection/find' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	find = require( 'lodash/find' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

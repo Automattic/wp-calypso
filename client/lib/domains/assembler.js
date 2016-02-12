@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-const find = require( 'lodash/collection/find' ),
-	without = require( 'lodash/array/without' ),
-	mapKeys = require( 'lodash/object/mapKeys' ),
-	camelCase = require( 'lodash/string/camelCase' );
+const find = require( 'lodash/find' ),
+	without = require( 'lodash/without' ),
+	mapKeys = require( 'lodash/mapKeys' ),
+	camelCase = require( 'lodash/camelCase' );
 
 /**
  * Internal dependencies

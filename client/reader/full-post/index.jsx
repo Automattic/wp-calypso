@@ -4,11 +4,11 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	twemoji = require( 'twemoji' ),
 	page = require( 'page' );
 

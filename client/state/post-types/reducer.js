@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import indexBy from 'lodash/collection/indexBy';
+import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
@@ -56,7 +56,7 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_TYPES_RECEIVE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: indexBy( action.types, 'name' )
+				[ action.siteId ]: keyBy( action.types, 'name' )
 			} );
 
 		case DESERIALIZE:

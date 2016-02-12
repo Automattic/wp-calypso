@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import get from 'lodash/object/get'
+import get from 'lodash/get'
 
 /**
  * Internal dependencies

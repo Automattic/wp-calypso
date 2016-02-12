@@ -2,14 +2,14 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import clone from 'lodash/lang/clone';
-import assign from 'lodash/object/assign';
-import transform from 'lodash/object/transform';
-import difference from 'lodash/array/difference';
-import last from 'lodash/array/last';
-import max from 'lodash/collection/max';
+import clone from 'lodash/clone';
+import assign from 'lodash/assign';
+import transform from 'lodash/transform';
+import difference from 'lodash/difference';
+import last from 'lodash/last';
+import maxBy from 'lodash/maxBy';
 import { EventEmitter } from 'events/';
-import some from 'lodash/collection/some';
+import some from 'lodash/some';
 
 /**
  * Internal dependencies
@@ -368,7 +368,7 @@ export default function( id ) {
 			}
 
 			if ( _activeList.postIds.length ) {
-				params.modified_after = max( this.getAll(), function( post ) {
+				params.modified_after = maxBy( this.getAll(), function( post ) {
 					return new Date( post.modified ).getTime();
 				} ).modified;
 

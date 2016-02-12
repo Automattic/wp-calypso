@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var intersection = require( 'lodash/array/intersection' );
+var intersection = require( 'lodash/intersection' );
 
 /**
  * Internal dependencies

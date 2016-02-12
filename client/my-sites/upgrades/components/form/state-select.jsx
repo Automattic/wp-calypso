@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	observe = require( 'lib/mixins/data-observe' );
 
 /**

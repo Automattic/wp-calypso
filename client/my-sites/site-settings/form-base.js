@@ -2,7 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies

@@ -3,11 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import isEmpty from 'lodash/lang/isEmpty';
-import find from 'lodash/collection/find';
-import includes from 'lodash/collection/includes';
-import negate from 'lodash/function/negate';
-import range from 'lodash/utility/range';
+import isEmpty from 'lodash/isEmpty';
+import find from 'lodash/find';
+import includes from 'lodash/includes';
+import negate from 'lodash/negate';
+import range from 'lodash/range';
 
 /**
  * Internal dependencies

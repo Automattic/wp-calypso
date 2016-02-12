@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' ),
+	find = require( 'lodash/find' ),
 	debug = require( 'debug' )( 'calypso:menus:index' ); // eslint-disable-line no-unused-vars
 
 /**

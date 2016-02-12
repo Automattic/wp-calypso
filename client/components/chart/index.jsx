@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:chart' ),
-	noop = require( 'lodash/utility/noop' ),
-	throttle = require( 'lodash/function/throttle' );
+	noop = require( 'lodash/noop' ),
+	throttle = require( 'lodash/throttle' );
 
 /**
  * Internal dependencies

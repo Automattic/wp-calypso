@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

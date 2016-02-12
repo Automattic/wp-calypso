@@ -2,8 +2,8 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import map from 'lodash/collection/map';
-import reject from 'lodash/collection/reject';
+import map from 'lodash/map';
+import reject from 'lodash/reject';
 
 const debug = debugFactory( 'calypso:site-plans:actions' );
 

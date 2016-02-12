@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	first = require( 'lodash/array/first' ),
-	values = require( 'lodash/object/values' ),
+	head = require( 'lodash/head' ),
+	values = require( 'lodash/values' ),
 	debug = require( 'debug' )( 'calypso:validate-fieldset' ); // eslint-disable-line no-unused-vars
 
 /**
@@ -21,7 +21,7 @@ module.exports = React.createClass( {
 			<FormInputValidation
 				isError={ true }
 				isValid={ false }
-				text={ first( values( this.props.errorMessages ) ) } /> :
+				text={ head( values( this.props.errorMessages ) ) } /> :
 			null;
 
 		return <div className="validation-fieldset__validation-message">{ validationElement }</div>;

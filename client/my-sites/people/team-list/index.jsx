@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies

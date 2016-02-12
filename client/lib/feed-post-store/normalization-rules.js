@@ -1,11 +1,11 @@
 /**
  * External Dependecies
  */
-const find = require( 'lodash/collection/find' ),
-	forEach = require( 'lodash/collection/forEach' ),
+const find = require( 'lodash/find' ),
+	forEach = require( 'lodash/forEach' ),
 	url = require( 'url' ),
-	matches = require( 'lodash/utility/matches' ),
-	toArray = require( 'lodash/lang/toArray' );
+	matches = require( 'lodash/matches' ),
+	toArray = require( 'lodash/toArray' );
 
 /**
  * Internal Dependencies

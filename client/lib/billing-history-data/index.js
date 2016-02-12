@@ -4,7 +4,7 @@
 var debug = require( 'debug' )( 'calypso:my-sites:billing-history:billing-data' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies

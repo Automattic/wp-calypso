@@ -5,8 +5,8 @@ global.localStorage = require( 'localStorage' );
  */
 var debug = require( 'debug' )( 'calypso:signup-flow-controller:test' ), // eslint-disable-line no-unused-vars
 	assert = require( 'assert' ),
-	defer = require( 'lodash/function/defer' ),
-	ary = require( 'lodash/function/ary' );
+	defer = require( 'lodash/defer' ),
+	ary = require( 'lodash/ary' );
 
 /**
  * Internal dependencies

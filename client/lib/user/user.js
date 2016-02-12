@@ -5,7 +5,7 @@ var store = require( 'store' ),
 	debug = require( 'debug' )( 'calypso:user' ),
 	config = require( 'config' ),
 	qs = require( 'qs' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies

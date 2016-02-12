@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const startsWith = require( 'lodash/string/startsWith' );
+const startsWith = require( 'lodash/startsWith' );
 
 function domainManagementRoot() {
 	return '/domains/manage';

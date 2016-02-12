@@ -3,8 +3,8 @@
  * External dependencies
  */
 
-var sum = require( 'lodash/math/sum' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+var sum = require( 'lodash/sum' ),
+	isEqual = require( 'lodash/isEqual' ),
 	debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
 
 /**

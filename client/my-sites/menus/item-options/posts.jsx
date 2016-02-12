@@ -2,7 +2,7 @@
  * External Dependenices
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 /**
  * Internal Dependencies
  */

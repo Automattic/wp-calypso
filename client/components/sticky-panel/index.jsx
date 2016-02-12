@@ -3,7 +3,7 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	throttle = require( 'lodash/function/throttle' ),
+	throttle = require( 'lodash/throttle' ),
 	raf = require( 'raf' ),
 	classNames = require( 'classnames' );
 

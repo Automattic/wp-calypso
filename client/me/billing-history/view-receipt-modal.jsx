@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	closest = require( 'component-closest' ),
-	defer = require( 'lodash/function/defer' ),
+	defer = require( 'lodash/defer' ),
 	titleCase = require( 'to-title-case' );
 
 /**

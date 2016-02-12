@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/object/assign';
-import defer from 'lodash/function/defer';
-import isEmpty from 'lodash/lang/isEmpty';
+import assign from 'lodash/assign';
+import defer from 'lodash/defer';
+import isEmpty from 'lodash/isEmpty';
 import async from 'async';
 
 /**

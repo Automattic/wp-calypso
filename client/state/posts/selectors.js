@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import range from 'lodash/utility/range';
+import range from 'lodash/range';
 
 /**
  * Internal dependencies

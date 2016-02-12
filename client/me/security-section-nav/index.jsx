@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies
@@ -51,9 +51,8 @@ module.exports = React.createClass( {
 
 	getSelectedText: function() {
 		var text = '',
-			found = find( this.getNavtabs(), function( tab ) {
-				return this.getFilteredPath() === tab.path;
-			}, this );
+			filteredPath = this.getFilteredPath(),
+			found = find( this.getNavtabs(), { path: filteredPath } );
 
 		if ( 'undefined' !== typeof found ) {
 			text = found.title;

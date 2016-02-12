@@ -2,7 +2,7 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	pluck = require( 'lodash/collection/pluck' );
+	map = require( 'lodash/map' );
 
 /**
  * Internal dependencies
@@ -164,7 +164,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return a new array array, sorted descending by date', function() {
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should return the item with the the greater ID if the dates are not set', function() {
@@ -173,7 +173,7 @@ describe( 'MediaUtils', function() {
 				return item;
 			} );
 
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should return the item with the the greater ID if the dates are equal', function() {
@@ -182,7 +182,7 @@ describe( 'MediaUtils', function() {
 				return item;
 			} );
 
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should parse dates in string format', function() {
@@ -191,12 +191,12 @@ describe( 'MediaUtils', function() {
 				return item;
 			} );
 
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should not mutate the original array', function() {
 			MediaUtils.sortItemsByDate( items );
-			expect( pluck( items, 'ID' ) ).to.eql( [ 1, 2 ] );
+			expect( map( items, 'ID' ) ).to.eql( [ 1, 2 ] );
 		} );
 	} );
 

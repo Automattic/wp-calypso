@@ -2,9 +2,9 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import some from 'lodash/collection/some';
-import startsWith from 'lodash/string/startsWith';
-import assign from 'lodash/object/assign';
+import some from 'lodash/some';
+import startsWith from 'lodash/startsWith';
+import assign from 'lodash/assign';
 
 module.exports = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
@@ -36,6 +36,6 @@ module.exports = {
 	pathStartsWithOneOf: function( paths, currentPath ) {
 		return some( paths, function( path ) {
 			return startsWith( currentPath.toLowerCase(), path.toLowerCase() )
-		}, this );
+		} );
 	}
 }

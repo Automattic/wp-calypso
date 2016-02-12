@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import Dispatcher from 'dispatcher';
-import defer from 'lodash/function/defer';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies

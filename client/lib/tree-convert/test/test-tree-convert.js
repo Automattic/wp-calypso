@@ -1,7 +1,7 @@
 global.localStorage = require( 'localStorage' );
 
 var expect = require( 'chai' ).expect,
-	cloneDeep = require( 'lodash/lang/cloneDeep' ),
+	cloneDeep = require( 'lodash/cloneDeep' ),
 	TreeConvert = require( 'lib/tree-convert' ),
 	fixtures = require( './fixtures' );
 

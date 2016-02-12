@@ -4,8 +4,8 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
-	times = require( 'lodash/utility/times' );
+	noop = require( 'lodash/noop' ),
+	times = require( 'lodash/times' );
 
 /**
  * Internal dependencies

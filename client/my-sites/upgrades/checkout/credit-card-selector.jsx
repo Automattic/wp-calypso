@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	where = require( 'lodash/collection/where' ),
+	filter = require( 'lodash/filter' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -87,7 +87,7 @@ var CreditCardSelector = React.createClass({
 
 	getStoredCardDetails: function( section ) {
 		var cards = this.props.cards.get();
-		return where( cards, { stored_details_id: section } )[ 0 ];
+		return filter( cards, { stored_details_id: section } )[ 0 ];
 	}
 
 } );

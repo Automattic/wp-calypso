@@ -3,7 +3,7 @@
 // External dependencies
 const React = require( 'react' ),
 	url = require( 'url' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 // Internal dependencies
 const Search = require( 'components/search' ),

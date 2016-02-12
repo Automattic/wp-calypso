@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import defer from 'lodash/function/defer';
+import defer from 'lodash/defer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */

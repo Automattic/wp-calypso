@@ -5,10 +5,10 @@ var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:edit-team-member-form' ),
-	omit = require( 'lodash/object/omit' ),
-	assign = require( 'lodash/object/assign' ),
-	filter = require( 'lodash/collection/filter' ),
-	pick = require( 'lodash/object/pick' ),
+	omit = require( 'lodash/omit' ),
+	assign = require( 'lodash/assign' ),
+	filter = require( 'lodash/filter' ),
+	pick = require( 'lodash/pick' ),
 	page = require( 'page' );
 
 /**

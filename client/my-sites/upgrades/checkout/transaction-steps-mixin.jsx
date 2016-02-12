@@ -3,11 +3,11 @@
  */
 var React = require( 'react' ), // eslint-disable-line no-unused-vars
 	debug = require( 'debug' )( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' ),
-	flatten = require( 'lodash/array/flatten' ),
-	values = require( 'lodash/object/values' ),
-	pick = require( 'lodash/object/pick' ),
-	defer = require( 'lodash/function/defer' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+	flatten = require( 'lodash/flatten' ),
+	values = require( 'lodash/values' ),
+	pick = require( 'lodash/pick' ),
+	defer = require( 'lodash/defer' ),
+	isEqual = require( 'lodash/isEqual' ),
 	page = require( 'page' );
 
 /**

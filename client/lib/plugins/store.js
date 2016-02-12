@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	isArray = require( 'lodash/lang/isArray' ),
+var assign = require( 'lodash/assign' ),
+	isArray = require( 'lodash/isArray' ),
 	debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' ),
-	_sortBy = require( 'lodash/collection/sortBy' ),
-	_uniq = require( 'lodash/array/uniq' ),
-	_compact = require( 'lodash/array/compact' ),
-	_values = require( 'lodash/object/values' );
+	sortBy = require( 'lodash/sortBy' ),
+	uniq = require( 'lodash/uniq' ),
+	compact = require( 'lodash/compact' ),
+	values = require( 'lodash/values' );
 
 /**
  * Internal dependencies
@@ -201,7 +201,7 @@ PluginsStore = {
 		if ( ! fetched ) {
 			return;
 		}
-		plugins = _sortBy( plugins, function( plugin ) {
+		plugins = sortBy( plugins, function( plugin ) {
 			return plugin.slug;
 		} );
 		if ( ! plugins ) {
@@ -232,7 +232,7 @@ PluginsStore = {
 		if ( ! _pluginsBySite[ site.ID ] ) {
 			return _pluginsBySite[ site.ID ];
 		}
-		return _values( _pluginsBySite[ site.ID ] );
+		return values( _pluginsBySite[ site.ID ] );
 	},
 
 	getSitePlugin: function( site, pluginSlug ) {
@@ -258,8 +258,8 @@ PluginsStore = {
 			return null;
 		}
 
-		pluginSites = _uniq(
-			_compact(
+		pluginSites = uniq(
+			compact(
 				plugin.sites.map( function( site ) {
 					// we create a copy of the site to avoid any possible modification down the line affecting the main list
 					let pluginSite = site.jetpack

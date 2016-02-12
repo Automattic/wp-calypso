@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/object/assign';
-import contains from 'lodash/collection/contains';
+import assign from 'lodash/assign';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -63,7 +63,7 @@ module.exports = {
 			];
 
 		allowedKeys.forEach( function( key ) {
-			user[ key ] = obj[ key ] && contains( decodeWhitelist, key )
+			user[ key ] = obj[ key ] && includes( decodeWhitelist, key )
 				? decodeEntities( obj[ key ] )
 				: obj[ key ];
 		} );

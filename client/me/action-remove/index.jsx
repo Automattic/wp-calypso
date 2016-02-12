@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classnames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	classNames = require( 'classnames' );
 
 module.exports = React.createClass( {

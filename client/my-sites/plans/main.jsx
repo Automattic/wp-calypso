@@ -2,7 +2,7 @@
  * External dependencies
  */
 var connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/collection/find' ),
+	find = require( 'lodash/find' ),
 	page = require( 'page' ),
 	React = require( 'react' );
 

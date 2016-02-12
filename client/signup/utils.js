@@ -1,11 +1,11 @@
 /**
  * Exernal dependencies
  */
-var isEmpty = require( 'lodash/lang/isEmpty' ),
-	find = require( 'lodash/collection/find' ),
-	indexOf = require( 'lodash/array/indexOf' ),
-	pick = require( 'lodash/object/pick' ),
-	merge = require( 'lodash/object/merge' );
+var isEmpty = require( 'lodash/isEmpty' ),
+	find = require( 'lodash/find' ),
+	indexOf = require( 'lodash/indexOf' ),
+	pick = require( 'lodash/pick' ),
+	merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const assign = require( 'lodash/object/assign' ),
+const assign = require( 'lodash/assign' ),
 	expect = require( 'chai' ).expect;
 
 /**

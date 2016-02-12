@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import isNaN from 'lodash/lang/isNaN';
+import isNaN from 'lodash/isNaN';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

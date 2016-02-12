@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import isEmpty from 'lodash/lang/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 import classNames from 'classnames';
 
 /**

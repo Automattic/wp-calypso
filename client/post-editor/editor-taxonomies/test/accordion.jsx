@@ -9,7 +9,7 @@ var ReactDom = require( 'react-dom' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	mockery = require( 'mockery' ),
 	expect = require( 'chai' ).expect,
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	TestUtils = require( 'react-addons-test-utils' );
 
 /**

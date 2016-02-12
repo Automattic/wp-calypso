@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import isFunction from 'lodash/lang/isFunction';
-import reduce from 'lodash/collection/reduce';
+import isFunction from 'lodash/isFunction';
+import reduce from 'lodash/reduce';
 
 /**
  * Internal dependencies

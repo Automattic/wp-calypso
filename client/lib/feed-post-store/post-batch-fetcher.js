@@ -1,7 +1,7 @@
-var assign = require( 'lodash/object/assign' ),
-	forOwn = require( 'lodash/object/forOwn' ),
+var assign = require( 'lodash/assign' ),
+	forOwn = require( 'lodash/forOwn' ),
 	Immutable = require( 'immutable' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 var FeedPostStore = require( './' ),
 	wpcom = require( 'lib/wp' );
@@ -96,7 +96,7 @@ assign( PostBatchFetcher.prototype, {
 				}
 
 				this.onPostReceived( containerId, postId, post );
-			}, this );
+			}.bind( this ) );
 		}
 	}
 } );

@@ -2,9 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:users:store' ),
-	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' ),
-	endsWith = require( 'lodash/string/endsWith' );
+	omit = require( 'lodash/omit' ),
+	find = require( 'lodash/find' ),
+	endsWith = require( 'lodash/endsWith' );
 
 /**
  * Internal dependencies

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var store = require( 'store' ),
-	forOwn = require( 'lodash/object/forOwn' ),
+	forOwn = require( 'lodash/forOwn' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 
 /**

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var assert = require( 'chai' ).assert,
-	range = require( 'lodash/utility/range' );
+	range = require( 'lodash/range' );
 
 /**
  * Internal dependencies

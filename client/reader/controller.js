@@ -5,8 +5,8 @@ const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
-	trim = require( 'lodash/string/trim' ),
-	startsWith = require( 'lodash/string/startsWith' ),
+	trim = require( 'lodash/trim' ),
+	startsWith = require( 'lodash/startsWith' ),
 	moment = require( 'moment' ),
 	ReduxProvider = require( 'react-redux' ).Provider;
 

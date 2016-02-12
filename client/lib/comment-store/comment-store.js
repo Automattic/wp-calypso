@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	config = require( 'config' ),
 	//debug = require( 'debug' )( 'calypso:lib:comment-store' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	clone = require( 'lodash/lang/clone' ),
+	isEqual = require( 'lodash/isEqual' ),
+	clone = require( 'lodash/clone' ),
 	moment = require( 'moment' ),
-	findKey = require( 'lodash/object/findKey' ),
-	reject = require( 'lodash/collection/reject' );
+	findKey = require( 'lodash/findKey' ),
+	reject = require( 'lodash/reject' );
 
 
 /**

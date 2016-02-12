@@ -4,15 +4,15 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	classnames = require( 'classnames' ),
 	closest = require( 'component-closest' ),
 	classes = require( 'component-classes' ),
 	//debug = require( 'debug' )( 'calypso:reader:following:post' ),
-	first = require( 'lodash/array/first' ),
-	forOwn = require( 'lodash/object/forOwn' ),
+	head = require( 'lodash/head' ),
+	forOwn = require( 'lodash/forOwn' ),
 	twemoji = require( 'twemoji' ),
-	get = require( 'lodash/object/get' ),
+	get = require( 'lodash/get' ),
 	page = require( 'page' );
 
 /**
@@ -161,7 +161,7 @@ var Post = React.createClass( {
 
 	featuredImageComponent: function( post ) {
 		var featuredImage = ( post.canonical_image && post.canonical_image.uri ),
-			featuredEmbed = first( post.content_embeds ),
+			featuredEmbed = head( post.content_embeds ),
 			maxWidth = Math.min( 653, window.innerWidth ),
 			featuredSize, useFeaturedEmbed;
 

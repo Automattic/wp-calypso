@@ -1,6 +1,6 @@
 // External Dependencies
-var forEach = require( 'lodash/collection/forEach' ),
-	get = require( 'lodash/object/get' );
+var forEach = require( 'lodash/forEach' ),
+	get = require( 'lodash/get' );
 
 // Internal dependencies
 var Dispatcher = require( 'dispatcher' ),

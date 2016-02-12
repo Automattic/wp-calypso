@@ -2,8 +2,8 @@
  * External dependencies
  */
 var ReactDom = require( 'react-dom' ),
-	without = require( 'lodash/array/without' ),
-	difference = require( 'lodash/array/difference' );
+	without = require( 'lodash/without' ),
+	difference = require( 'lodash/difference' );
 
 var allowedCssClasses = [],
 	components = [];

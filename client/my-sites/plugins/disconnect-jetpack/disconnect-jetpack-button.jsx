@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/object/assign';
+import assign from 'lodash/assign';
 import classNames from 'classnames';
 
 /**

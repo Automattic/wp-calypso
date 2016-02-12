@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
-	reject = require( 'lodash/collection/reject' ),
+	reject = require( 'lodash/reject' ),
 	classNames = require( 'classnames' );
 
 /**

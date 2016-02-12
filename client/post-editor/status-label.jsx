@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var noop = require( 'lodash/utility/noop' ),
+var noop = require( 'lodash/noop' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' );

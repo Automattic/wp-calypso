@@ -2,12 +2,12 @@
  * External dependencies
  */
 var creditcards = require( 'creditcards' ),
-	compact = require( 'lodash/array/compact' ),
-	isArray = require( 'lodash/lang/isArray' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	toArray = require( 'lodash/lang/toArray' ),
-	inRange = require( 'lodash/number/inRange' ),
-	capitalize = require( 'lodash/string/capitalize' );
+	compact = require( 'lodash/compact' ),
+	isArray = require( 'lodash/isArray' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	toArray = require( 'lodash/toArray' ),
+	inRange = require( 'lodash/inRange' ),
+	capitalize = require( 'lodash/capitalize' );
 
 /**
  * Internal dependencies

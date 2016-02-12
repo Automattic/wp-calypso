@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import some from 'lodash/collection/some';
+import some from 'lodash/some';
 import classNames from 'classnames';
 
 /**

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var defer = require( 'lodash/function/defer' );
+var defer = require( 'lodash/defer' );
 
 /**
  * Internal dependencies

@@ -6,11 +6,12 @@ const ReactDom = require( 'react-dom' ),
 	debug = require( 'debug' )( 'calypso:post-editor' ),
 	page = require( 'page' ),
 	classnames = require( 'classnames' ),
-	debounce = require( 'lodash/function/debounce' ),
-	throttle = require( 'lodash/function/throttle' ),
-	assign = require( 'lodash/object/assign' );
+	debounce = require( 'lodash/debounce' ),
+	throttle = require( 'lodash/throttle' ),
+	assign = require( 'lodash/assign' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */

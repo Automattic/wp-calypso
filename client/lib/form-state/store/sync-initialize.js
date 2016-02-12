@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import mapValues from 'lodash/object/mapValues';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies

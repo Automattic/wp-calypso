@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	sortBy = require( 'lodash/collection/sortBy' ),
+var assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
+	sortBy = require( 'lodash/sortBy' ),
 	EventEmitter = require( 'events/' ).EventEmitter,
-	includes = require( 'lodash/collection/includes' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	includes = require( 'lodash/includes' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies

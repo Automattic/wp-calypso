@@ -4,7 +4,7 @@
 var expect = require( 'chai' ).expect,
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 var State = require( '../constants' ).state,
 	SiteStore, SiteStoreActions;

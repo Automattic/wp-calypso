@@ -3,7 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import includes from 'lodash/collection/includes';
+import includes from 'lodash/includes';
 import page from 'page';
 
 /**

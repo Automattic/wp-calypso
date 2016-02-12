@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import endsWith from 'lodash/string/endsWith';
+import endsWith from 'lodash/endsWith';
 
 /**
  * Internal dependencies

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+	find = require( 'lodash/find' ),
+	isEqual = require( 'lodash/isEqual' ),
 	classNames = require( 'classnames' );
 
 /**

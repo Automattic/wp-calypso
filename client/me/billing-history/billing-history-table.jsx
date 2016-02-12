@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	includes = require( 'lodash/collection/includes' ),
-	without = require( 'lodash/array/without' ),
+	includes = require( 'lodash/includes' ),
+	without = require( 'lodash/without' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 

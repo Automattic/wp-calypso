@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import find from 'lodash/collection/find';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies

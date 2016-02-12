@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import property from 'lodash/utility/property';
-import debounce from 'lodash/function/debounce';
+import property from 'lodash/property';
+import debounce from 'lodash/debounce';
 import config from 'config';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';

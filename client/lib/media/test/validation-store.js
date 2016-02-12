@@ -2,7 +2,7 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	rewire = require( 'rewire' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' );

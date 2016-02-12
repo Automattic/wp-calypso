@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	get = require( 'lodash/object/get' ),
+	get = require( 'lodash/get' ),
 	classNames = require( 'classnames' );
 
 /**

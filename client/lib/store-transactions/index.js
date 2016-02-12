@@ -2,7 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:store-transactions' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	Readable = require( 'stream' ).Readable,
 	inherits = require( 'inherits' );
 

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	property = require( 'lodash/utility/property' ),
-	sortBy = require( 'lodash/collection/sortBy' );
+	property = require( 'lodash/property' ),
+	sortBy = require( 'lodash/sortBy' );
 
 /**
  * Internal dependencies

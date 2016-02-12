@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	update = require( 'react-addons-update' ),
-	cloneDeep = require( 'lodash/lang/cloneDeep' ),
-	find = require( 'lodash/collection/find' ),
+	cloneDeep = require( 'lodash/cloneDeep' ),
+	find = require( 'lodash/find' ),
 	debug = require( 'debug' )( 'calypso:menus:editable-item' ); // eslint-disable-line no-unused-vars
 
 /**

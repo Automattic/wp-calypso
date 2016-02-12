@@ -5,8 +5,8 @@ var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
 	classNames = require( 'classnames' ),
-	times = require( 'lodash/utility/times' ),
-	property = require( 'lodash/utility/property' );
+	times = require( 'lodash/times' ),
+	property = require( 'lodash/property' );
 
 /**
  * Internal dependencies

@@ -11,7 +11,7 @@
  * External dependencies
  */
 var tinymce = require( 'tinymce/tinymce' ),
-	debounce = require( 'lodash/function/debounce' ),
+	debounce = require( 'lodash/debounce' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 

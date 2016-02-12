@@ -2,7 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:my-sites:plugins:actions' ),
-	defer = require( 'lodash/function/defer' );
+	defer = require( 'lodash/defer' );
 /**
  * Internal dependencies
  */

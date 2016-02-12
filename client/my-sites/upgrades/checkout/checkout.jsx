@@ -3,8 +3,8 @@
  */
 var connect = require( 'react-redux' ).connect,
 	Dispatcher = require( 'dispatcher' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	isEqual = require( 'lodash/isEqual' ),
 	page = require( 'page' ),
 	React = require( 'react' );
 

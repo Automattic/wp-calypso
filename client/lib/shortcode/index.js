@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var memoize = require( 'lodash/function/memoize' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+var memoize = require( 'lodash/memoize' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Module variables

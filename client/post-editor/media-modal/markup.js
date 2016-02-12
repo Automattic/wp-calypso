@@ -3,7 +3,7 @@
  */
 var ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' );
 
 /**

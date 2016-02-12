@@ -4,7 +4,7 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	wrapWithClickOutside = require( 'react-click-outside' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies

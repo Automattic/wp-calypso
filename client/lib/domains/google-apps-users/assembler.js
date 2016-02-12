@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-const pluck = require( 'lodash/collection/pluck' );
+const map = require( 'lodash/map' );
 
 function createDomainObject( dataTransferObject ) {
-	return pluck( dataTransferObject.accounts, 'email' );
+	return map( dataTransferObject.accounts, 'email' );
 }
 
 module.exports = {

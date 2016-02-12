@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classes = require( 'component-classes' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

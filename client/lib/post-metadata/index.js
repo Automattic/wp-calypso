@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var find = require( 'lodash/collection/find' );
+var find = require( 'lodash/find' );
 
 /**
  * Module variables

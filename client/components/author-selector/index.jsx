@@ -4,7 +4,7 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:author-selector' ),
-	trim = require( 'lodash/string/trim' );
+	trim = require( 'lodash/trim' );
 
 /**
  * Internal dependencies

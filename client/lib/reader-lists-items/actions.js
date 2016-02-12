@@ -1,7 +1,7 @@
 // External dependencies
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import get from 'lodash/object/get';
+import get from 'lodash/get';
 
 // Internal dependencies
 import { requestInflight, requestTracker } from 'lib/inflight';

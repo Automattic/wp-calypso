@@ -4,9 +4,9 @@
 import analytics from 'analytics';
 import titlecase from 'to-title-case';
 import page from 'page';
-import startsWith from 'lodash/string/startsWith';
-import assign from 'lodash/object/assign';
-import mapValues from 'lodash/object/mapValues';
+import startsWith from 'lodash/startsWith';
+import assign from 'lodash/assign';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies

@@ -4,10 +4,10 @@
 import ReactDomServer from 'react-dom/server';
 import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
-import omit from 'lodash/object/omit';
-import isEqual from 'lodash/lang/isEqual';
+import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
-import mapValues from 'lodash/object/mapValues';
+import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies

@@ -5,7 +5,7 @@
  */
 const fs = require( 'fs' ),
 	path = require( 'path' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'config' );
 
 function getDataFromFile( file ) {

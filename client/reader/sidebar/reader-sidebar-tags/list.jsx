@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import map from 'lodash/collection/map';
+import map from 'lodash/map';
 
 /**
  * Internal Dependencies
@@ -19,16 +19,17 @@ const ReaderSidebarTagsList = React.createClass( {
 	},
 
 	renderItems() {
+		const { path, onUnfollow, currentTag } = this.props;
 		return map( this.props.tags, function( tag ) {
 			return (
 				<ReaderSidebarTagsListItem
 					key={ tag.ID }
 					tag={ tag }
-					path={ this.props.path }
-					onUnfollow={ this.props.onUnfollow }
-					currentTag={ this.props.currentTag } />
+					path={ path }
+					onUnfollow={ onUnfollow }
+					currentTag={ currentTag } />
 			);
-		}, this );
+		} );
 	},
 
 	render() {

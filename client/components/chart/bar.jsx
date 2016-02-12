@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	debug = require( 'debug' )( 'calypso:module-chart:bar' );
 
 /**

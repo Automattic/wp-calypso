@@ -1,5 +1,5 @@
 var Emitter = require( 'lib/mixins/emitter' ),
-	wrap = require( 'lodash/function/wrap' ),
+	wrap = require( 'lodash/wrap' ),
 	debug = require( 'debug' )( 'calypso:ticker' );
 
 var ticker = {};

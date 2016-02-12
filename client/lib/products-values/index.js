@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	difference = require( 'lodash/array/difference' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	pick = require( 'lodash/object/pick' );
+var assign = require( 'lodash/assign' ),
+	difference = require( 'lodash/difference' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal dependencies

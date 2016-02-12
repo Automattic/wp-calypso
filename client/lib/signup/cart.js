@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var forEach = require( 'lodash/collection/forEach' );
+var forEach = require( 'lodash/forEach' );
 
 /**
  * Internal dependencies

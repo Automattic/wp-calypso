@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import indexBy from 'lodash/collection/indexBy';
+import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ export function fetchingConnections( state = {}, action ) {
 export function connections( state = {}, action ) {
 	switch ( action.type ) {
 		case PUBLICIZE_CONNECTIONS_RECEIVE:
-			return Object.assign( {}, state, indexBy( action.data.connections, 'ID' ) );
+			return Object.assign( {}, state, keyBy( action.data.connections, 'ID' ) );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:

@@ -2,9 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	zipObject = require( 'lodash/array/zipObject' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	assign = require( 'lodash/object/assign' ),
+	fromPairs = require( 'lodash/fromPairs' ),
+	findIndex = require( 'lodash/findIndex' ),
+	assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:forms:sortable-list' ),
 	classNames = require( 'classnames' );
 
@@ -255,7 +255,7 @@ module.exports = React.createClass( {
 					'is-draggable': isDraggable
 				} ), item;
 
-			events = zipObject( events.map( function( event ) {
+			events = fromPairs( events.map( function( event ) {
 				return [ event, this[ event ].bind( null, index ) ];
 			}, this ) );
 

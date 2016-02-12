@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	times = require( 'lodash/utility/times' );
+	times = require( 'lodash/times' );
 
 /**
  * Internal dependencies
@@ -52,7 +52,7 @@ module.exports = React.createClass( {
 						isInSignup={ this.props.isInSignup }
 						key={ `plan-${ n }` } />
 				);
-			}, this );
+			}.bind( this ) );
 
 			return (
 				<div className="plan-list">{ plansList }</div>
@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 			}, this );
 		}
 
-		var aaMarkup;
+		let aaMarkup;
 		if ( abtest( 'plansPageBusinessAATest' ) === 'originalA' ) {
 			aaMarkup = plansList;
 		} else {

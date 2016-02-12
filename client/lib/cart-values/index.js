@@ -3,7 +3,7 @@
  */
 var update = require( 'react-addons-update' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	extend = require( 'lodash/object/extend' );
+	extend = require( 'lodash/extend' );
 
 /**
  * Internal dependencies

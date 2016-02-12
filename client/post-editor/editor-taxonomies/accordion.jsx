@@ -17,7 +17,7 @@ import TermStore from 'lib/terms/store';
 import siteUtils from 'lib/site/utils';
 import InfoPopover from 'components/info-popover';
 import { isPage } from 'lib/posts/utils';
-import unescapeString from 'lodash/string/unescape';
+import unescapeString from 'lodash/unescape';
 
 module.exports = React.createClass( {
 	displayName: 'EditorTaxonomiesAccordion',

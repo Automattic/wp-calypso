@@ -2,10 +2,10 @@
  * External dependencies
  */
 var store = require( 'store' ),
-	assign = require( 'lodash/object/assign' ),
-	keys = require( 'lodash/object/keys' ),
-	difference = require( 'lodash/array/difference' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	assign = require( 'lodash/assign' ),
+	keys = require( 'lodash/keys' ),
+	difference = require( 'lodash/difference' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

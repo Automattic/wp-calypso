@@ -1,8 +1,8 @@
 //var debug = require( 'debug' )( 'calypso:reader:discover' );
 
 // External dependencies
-var find = require( 'lodash/collection/find' ),
-	get = require( 'lodash/object/get' ),
+var find = require( 'lodash/find' ),
+	get = require( 'lodash/get' ),
 	url = require( 'url' );
 
 /**

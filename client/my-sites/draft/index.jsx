@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classnames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	url = require( 'url' );
 
 /**

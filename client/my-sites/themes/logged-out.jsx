@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
-	pick = require( 'lodash/object/pick' ),
-	merge = require( 'lodash/object/merge' );
+	pickBy = require( 'lodash/pickBy' ),
+	merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies
@@ -83,7 +83,7 @@ var ThemesLoggedOut = React.createClass( {
 						return buttonOptions.preview.label;
 					} }
 					getOptions={ function( theme ) {
-						return pick(
+						return pickBy(
 							ThemeHelpers.addTracking( buttonOptions ),
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }

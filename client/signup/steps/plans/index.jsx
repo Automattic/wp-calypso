@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:steps:plans' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

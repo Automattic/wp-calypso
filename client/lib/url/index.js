@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import startsWith from 'lodash/string/startsWith';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Check if a URL is located outside of Calypso.

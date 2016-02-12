@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import includes from 'lodash/collection/includes';
+import includes from 'lodash/includes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

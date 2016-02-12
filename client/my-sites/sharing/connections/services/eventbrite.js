@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var last = require( 'lodash/array/last' );
+var last = require( 'lodash/last' );
 
 /**
  * Internal dependencies

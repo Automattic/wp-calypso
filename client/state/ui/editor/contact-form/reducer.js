@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import cloneDeep from 'lodash/lang/cloneDeep';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Internal dependencies

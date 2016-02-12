@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var isEqual = require( 'lodash/lang/isEqual' ),
+var isEqual = require( 'lodash/isEqual' ),
 	debug = require( 'debug' )( 'calypso:posts' );
 
 /**
