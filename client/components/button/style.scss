@@ -148,6 +148,8 @@ button {
 .button.is-borderless {
 	border: none;
 	color: darken( $gray, 10% );
+	padding-left: 0;
+	padding-right: 0;
 
 	&:hover {
 		color: $gray-dark;

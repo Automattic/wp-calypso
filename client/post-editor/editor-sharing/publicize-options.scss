@@ -9,8 +9,9 @@
 	}
 
 	.editor-sharing__external-link-indicator {
-		float: right;
 		color: $gray;
+		margin-left: 4px;
+		vertical-align: text-top;
 	}
 }
 
