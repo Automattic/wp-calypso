@@ -197,11 +197,15 @@ var Customize = React.createClass( {
 	buildCustomizerQuery: function() {
 		var protocol = window.location.protocol,
 			host = window.location.host,
-			query = cloneDeep( this.props.query );
+			query = cloneDeep( this.props.query ),
+			site = this.getSite();
 
 		query.return = protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
 		query.calypsoOrigin = protocol + '//' + host;
+		if ( site.options && site.options.frame_nonce ) {
+			query['frame-nonce'] = site.options.frame_nonce;
+		}
 
 		return Qs.stringify( query );
 	},
