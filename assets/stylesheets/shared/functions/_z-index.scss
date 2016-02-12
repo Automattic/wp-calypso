@@ -16,7 +16,7 @@
 // So before adding a new z-index:
 // 1. You'll want to make sure the element actually creates a stacking context
 // 2. Lookup what it's parent stacking context is
-// You can run this handy gist: https://gist.github.com/gwwar/2f661deec7b99a1a418b) in the console to find both.
+// You can run this handy gist: https://gist.github.com/gwwar/2f661deec7b99a1a418b in the console to find both.
 //
 // For readability please sort values from lowest to highest.
 //
@@ -75,9 +75,11 @@ $z-layers: (
 		'.site-indicator__button': 3,
 		'ul.module-content-list-item-actions.collapsed': 3,
 		'.auth__input-wrapper .gridicon': 3,
+		'.auth__self-hosted-instructions': 4,
 		'.auth__form .form-password-input__toggle-visibility': 4,
 		'.site-selector': 10,
 		'.editor-featured-image__preview.is-transient::after': 10,
+		'.wp-secondary .site-selector': 10,
 		'.range__label': 10,
 		'.sticky-panel.is-sticky .sticky-panel__content': 20,
 		'.editor-featured-image .editor-drawer-well__remove': 20,
@@ -135,7 +137,7 @@ $z-layers: (
 		'.environment-badge .bug-report': 1000
 	),
 	'.masterbar': (
-		'.masterbar .notifications.unread .notification-bubble': 99999
+		'.masterbar__notifications-bubble': 99999
 	),
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
@@ -176,9 +178,8 @@ $z-layers: (
 		'.editor-media-modal-gallery__preview-toggle': 100
 	),
 	'.following-edit': ( //aka 'main'
-		'.following-edit-sort-controls': 30,
-		'.following-edit .reader-list-item__card.is-search-result': 35,
-		'.following-edit__subscribe-form .gridicons-add-outline': 40
+		'.following-edit__subscribe-form .gridicons-add-outline': 23,
+		'.following-edit__subscribe-form .card.is-search-result': 35
 	),
 
 	// The following may be inserted into different areas.

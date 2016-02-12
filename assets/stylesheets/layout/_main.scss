@@ -355,7 +355,7 @@ $sidebar-width-min: 228px;
 		left: -272px;
 	width: 272px;
 	overflow: hidden;
-	z-index: 10;
+	z-index: z-index( 'root', '.wp-secondary .site-selector' );
 	opacity: 0;
 	pointer-events: none;
 
