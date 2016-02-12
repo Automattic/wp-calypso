@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
 import get from 'lodash/object/get';
 import debugModule from 'debug';
@@ -32,8 +31,6 @@ const debug = debugModule( 'calypso:my-sites:people:invite' );
 
 export default React.createClass( {
 	displayName: 'InvitePeople',
-
-	mixins: [ LinkedStateMixin ],
 
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
@@ -79,9 +76,15 @@ export default React.createClass( {
 		this.setState( { message: event.target.value } );
 	},
 
+	onRoleChange( event ) {
+		const role = event.target.value;
+		this.setState( { role } );
+		createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
+	},
+
 	refreshValidation() {
-		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID ) || [];
-		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID ) || [];
+		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || [];
+		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [];
 		if ( ! success.indexOf ) {
 			success = Object.keys( success ).map( key => success[ key ] );
 		}
@@ -178,7 +181,8 @@ export default React.createClass( {
 							key="role"
 							includeFollower
 							siteId={ this.props.site.ID }
-							valueLink={ this.linkState( 'role' ) }
+							onChange={ this.onRoleChange }
+							value={ this.state.role }
 							disabled={ this.state.sendingInvites }
 							explanation={ this.renderRoleExplanation() }
 							/>
