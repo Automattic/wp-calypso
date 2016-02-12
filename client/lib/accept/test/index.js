@@ -7,7 +7,8 @@ require( 'lib/react-test-env-setup' )();
 var expect = require( 'chai' ).expect,
 	TestUtils = require( 'react-addons-test-utils' ),
 	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
+	sinon = require( 'sinon' ),
+	noop = require( 'lodash/utility/noop' );
 
 /**
  * Internal dependencies
@@ -23,6 +24,9 @@ describe( '#accept()', function() {
 		mockery.registerSubstitute( 'event', 'component-event' );
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
+		mockery.registerMock( 'component-classes', function() {
+			return { add: noop, toggle: noop, remove: noop }
+		} );
 		accept = require( '../' );
 		AcceptDialog = require( '../dialog' );
 		AcceptDialog.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );

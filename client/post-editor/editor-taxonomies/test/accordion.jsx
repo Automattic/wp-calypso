@@ -9,6 +9,7 @@ var ReactDom = require( 'react-dom' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	mockery = require( 'mockery' ),
 	expect = require( 'chai' ).expect,
+	noop = require( 'lodash/utility/noop' ),
 	TestUtils = require( 'react-addons-test-utils' );
 
 /**
@@ -32,6 +33,9 @@ mockery.enable( {
 } );
 
 mockery.registerMock( 'components/info-popover', MOCK_COMPONENT );
+mockery.registerMock( 'component-classes', function() {
+	return { add: noop, toggle: noop, remove: noop }
+} );
 mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 mockery.registerSubstitute( 'query', 'component-query' );
 // TODO: REDUX - add proper tests when whole post-editor is reduxified

@@ -541,3 +541,8 @@ body.newdash div.wordpress-com-extension-promo {
 		display: none;
 	}
 }
+
+//added to the html element when we don't want the background content to scroll
+html.no-scroll {
+	overflow: hidden;
+}
