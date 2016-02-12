@@ -33,7 +33,6 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
-import offlineQueue from './offlineActionQueue/middleware';
 import connectionMiddleware from './connectionMiddleware/middleware';
 import connectionMiddlewareReducer from './connectionMiddleware/reducer';
 
@@ -67,7 +66,7 @@ export const reducer = combineReducers( {
 	ui,
 	users,
 	wordads,
-	connectionMiddlewareReducer
+	connectionMiddleware: connectionMiddlewareReducer
 } );
 
 let middleware = [ thunkMiddleware ];
