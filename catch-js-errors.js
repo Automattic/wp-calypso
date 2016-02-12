@@ -1,11 +1,13 @@
 ( function() {
-	var savedWindowOnError = window.onerror;
+	var savedWindowOnError = window.onerror,
+		savedErrors = [],
+		sendingErrorsToApi;
 
 	// Props http://stackoverflow.com/a/20405830/379063
-	function stringifyErrorForUrlParams( error ) {
+	function stringifyErrorForUrlParams( error, index ) {
 		var simpleObject = {};
 		Object.getOwnPropertyNames( error ).forEach( function( key ) {
-			simpleObject[ key ] = encodeURIComponent( error[ key ] );
+			simpleObject[ key + index ] = encodeURIComponent( error[ key ] );
 		} );
 		return JSON.stringify( simpleObject );
 	};
@@ -23,30 +25,35 @@
 		}
 	}
 
-	/**
-	 * Throttle function by delay ms
-	 *
-	 * @param {function} fn wrapped function
-	 * @param {number} delay minimum debounce time in ms
-	 * @returns {function} a callback
-	 */
-	function debounce( fn, delay ) {
-		var lastCall = Date.now();
-		return function() {
-			var now = Date.now();
-			if ( ( now - lastCall ) < delay ) {
-				return;
-			}
-
-			lastCall = now;
-			fn.apply( null, arguments );
-		}
-	}
-
-	function sendErrorsToApi( message, scriptUrl, lineNumber, columnNumber, error ) {
+	function sendErrorsToApi() {
 		var xhr = new XMLHttpRequest(),
 			params;
 
+		if ( savedErrors.length > 0 ) {
+			// POST to the API
+			xhr.open( 'POST', 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', true );
+			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+
+			params = 'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
+
+			params += savedErrors.map( function( error, index ) {
+				return stringifyErrorForUrlParams( error, index );
+			} );
+
+			xhr.send( params );
+			savedErrors = [];
+		}
+	}
+
+	function startSendingErrorsToApi() {
+		if ( ! sendingErrorsToApi ) {
+			sendingErrorsToApi = setInterval( function() {
+				sendErrorsToApi();
+			}, 10000 );
+		}
+	}
+
+	function saveError( message, scriptUrl, lineNumber, columnNumber, error ) {
 		error = error || new Error( message );
 
 		// Add user agent if we have it
@@ -54,12 +61,7 @@
 			error.userAgent = navigator.userAgent;
 		}
 
-		// POST to the API
-		xhr.open( 'POST', 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', true );
-		xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-
-		params = 'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=' + stringifyErrorForUrlParams( error );
-		xhr.send( params );
+		savedErrors.push( error );
 	}
 
 	if ( isLocalStorageNameSupported() ) {
@@ -74,12 +76,13 @@
 
 		if ( localStorage.getItem( 'log-errors' ) !== undefined && localStorage.getItem( 'log-errors' ) === 'true' ) {
 			// set up handler to POST errors
-			window.onerror = debounce( function( message, scriptUrl, lineNumber, columnNumber, error ) {
-				sendErrorsToApi( message, scriptUrl, lineNumber, columnNumber, error );
+			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
+				saveError( message, scriptUrl, lineNumber, columnNumber, error );
+				startSendingErrorsToApi();
 				if ( savedWindowOnError ) {
 					savedWindowOnError();
 				}
-			}, 100 );
+			}
 		}
 	}
 }() );
