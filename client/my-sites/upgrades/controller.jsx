@@ -12,7 +12,6 @@ var analytics = require( 'analytics' ),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	activated = require( 'state/themes/actions' ).activated,
 	Main = require( 'components/main' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
@@ -212,25 +211,17 @@ module.exports = {
 
 	checkoutThankYou: function( context ) {
 		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
 			basePath = route.sectionify( context.path ),
 			receiptId = Number( context.params.receipt_id );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
 		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
 
-		if ( ! lastTransaction ) {
-			page.redirect( '/plans' );
-
-			return;
-		}
-
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 
 		renderWithReduxStore(
 			(
 				<CheckoutThankYouComponent
-					lastTransaction={ lastTransaction }
 					productsList={ productsList }
 					receiptId={ receiptId }
 					selectedSite={ sites.getSelectedSite() } />
@@ -240,8 +231,6 @@ module.exports = {
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-		CheckoutThankYouComponent.setLastTransaction( null );
 	},
 
 	redirectIfNoSite: function( redirectTo ) {
@@ -254,32 +243,5 @@ module.exports = {
 
 			next();
 		};
-	},
-
-	redirectIfThemePurchased: function( context, next ) {
-		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			cartItems = require( 'lib/cart-values' ).cartItems,
-			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			selectedSite = sites.getSelectedSite,
-			cart,
-			cartAllItems;
-
-		if ( ! lastTransaction ) {
-			return next();
-		}
-
-		cart = lastTransaction.cart,
-		cartAllItems = cartItems.getAll( cart );
-
-		if ( cartItems.hasOnlyProductsOf( cart, 'premium_theme' ) ) {
-			const { meta, extra: { source } } = cartAllItems[ 0 ];
-			// TODO: When this section is migrated to Redux altogether,
-			// use react-redux to `connect()` components and `dispatch()` actions.
-			context.store.dispatch( activated( meta, selectedSite, source, true ) );
-			page.redirect( '/design/' + selectedSite.slug );
-			return;
-		}
-
-		next();
 	}
 };

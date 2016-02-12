@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/collection/find' ),
-	store = require( 'store' );
+	page = require( 'page' );
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ var Button = require( 'components/button' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	isPremium = require( 'lib/products-values' ).isPremium,
 	isSiteRedirect = require( 'lib/products-values' ).isSiteRedirect,
+	isTheme = require( 'lib/products-values' ).isTheme,
 	getPrimaryDomain = require( 'lib/domains' ).getPrimaryDomain,
 	isSubdomain = require( 'lib/domains' ).isSubdomain,
 	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
@@ -55,42 +56,26 @@ function getPurchases( props ) {
 }
 
 var CheckoutThankYou = React.createClass( {
-	statics: {
-		setLastTransaction: function( transaction ) {
-			if ( ! store.enabled ) {
-				return;
-			}
+	componentDidMount: function() {
+		this.redirectIfThemePurchased();
+		this.refreshSitesAndSitePlansIfPlanPurchased();
 
-			store.set( 'CheckoutThankYou', { lastTransaction: transaction } );
-		},
-
-		getLastTransaction: function() {
-			// This will return `null` if the store is empty *or* if the store is not
-			// supported by the browser, such as in Safari's Private Browsing
-			// mode.
-			var data;
-
-			if ( ! store.enabled ) {
-				return null;
-			}
-
-			data = store.get( 'CheckoutThankYou' );
-			if ( ! data ) {
-				return null;
-			}
-
-			return data.lastTransaction;
+		if ( ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
+			this.props.fetchReceipt( this.props.receiptId );
 		}
+
+		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
 
-	componentDidMount: function() {
-		var lastTransaction = this.props.lastTransaction;
+	componentWillReceiveProps: function() {
+		this.redirectIfThemePurchased();
+		this.refreshSitesAndSitePlansIfPlanPurchased();
+	},
 
-		if ( lastTransaction ) {
+	refreshSitesAndSitePlansIfPlanPurchased: function() {
+		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).some( isPlan ) ) {
 			// Refresh selected site plans if the user just purchased a plan
-			if ( getPurchases( this.props ).some( isPlan ) ) {
-				this.props.refreshSitePlans( this.props.selectedSite.ID );
-			}
+			this.props.refreshSitePlans( this.props.selectedSite.ID );
 
 			// Refresh the list of sites to update the `site.plan` property
 			// needed to display the plan name on the right of the `Plans` menu item
@@ -98,12 +83,15 @@ var CheckoutThankYou = React.createClass( {
 				type: 'FETCH_SITES'
 			} );
 		}
+	},
 
-		if ( ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
-			this.props.fetchReceipt( this.props.receiptId );
+	redirectIfThemePurchased: function() {
+		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
+			// TODO: move this to checkout.jsx
+			// context.store.dispatch( activated( meta, this.props.selectedSite, source, true ) );
+			page.redirect( '/design/' + this.props.selectedSite.slug );
+			return;
 		}
-
-		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
 
 	thankYouHeader: function() {

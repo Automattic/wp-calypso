@@ -13,8 +13,7 @@ var React = require( 'react' ), // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies
  */
-var CheckoutThankYou = require( './thank-you' ),
-	analytics = require( 'analytics' ),
+var analytics = require( 'analytics' ),
 	adTracking = require( 'analytics/ad-tracking' ),
 	notices = require( 'notices' ),
 	isFree = require( 'lib/cart-values' ).isFree,
@@ -165,11 +164,6 @@ var TransactionStepsMixin = {
 		if ( ! step.last || step.error ) {
 			return;
 		}
-
-		CheckoutThankYou.setLastTransaction( {
-			cart: cart,
-			selectedSite: selectedSite
-		} );
 
 		defer( () => {
 			// The Thank You page throws a rendering error if this is not in a defer.
