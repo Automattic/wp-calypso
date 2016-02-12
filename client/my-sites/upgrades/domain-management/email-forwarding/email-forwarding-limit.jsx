@@ -6,7 +6,7 @@ import React from 'react';
 const EmailForwardingLimit = React.createClass( {
 	maxForwards() {
 		if ( this.props.maxForwards === 500 ) {
-			return 'unlimited';
+			return this.translate( 'unlimited' );
 		}
 
 		return this.props.maxForwards;
