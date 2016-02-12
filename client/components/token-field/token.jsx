@@ -46,7 +46,7 @@ var Token = React.createClass( {
 					className="token-field__remove-token noticon noticon-close-alt"
 					onClick={ this._onClickRemove } />
 			{ this.props.tooltip &&
-				<Tooltip context={ this } isVisible={ true }>
+				<Tooltip context={ this } status={ this.props.status } isVisible={ true }>
 						{ this.props.tooltip }
 				</Tooltip>
 			}
