@@ -98,9 +98,9 @@ export default React.createClass( {
 		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
 			let status;
 			if ( errors && errors[ value ] ) {
-				status = 'is-error';
+				status = 'error';
 			} else if ( ! contains( success, value ) ) {
-				status = 'is-validating';
+				status = 'validating';
 			}
 
 			if ( status ) {
