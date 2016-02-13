@@ -2,29 +2,24 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import localforage from 'localforage';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore, reducer } from 'state';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types'
+import { getLocalForage } from 'lib/localforage';
 import config from 'config';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
+const localforage = getLocalForage();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
-
-export const localforageConfig = {
-	name: 'calypso',
-	storeName: 'calypso_store',
-	description: 'Calypso Storage'
-};
 
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
@@ -76,7 +71,6 @@ function persistOnChange( reduxStore ) {
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		localforage.config( localforageConfig );
 		localforage.getItem( 'redux-state' )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
