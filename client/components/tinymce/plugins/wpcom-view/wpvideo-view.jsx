@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import omitBy from 'lodash/omitBy';
-import find from 'lodash/collection/find';
+import pick from 'lodash/pick';
 import QueryString from 'querystring';
 import tinymce from 'tinymce/tinymce';
 
@@ -11,22 +12,39 @@ import tinymce from 'tinymce/tinymce';
  * Internal dependencies
  */
 import shortcodeUtils from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
+import { getVideo } from 'state/videos/selectors';
+import QueryVideo from 'components/data/query-video';
 
 class WpVideoView extends Component {
 
-	getVideoAttributes( videopress_guid ) {
-		if ( this.props.media ) {
-			return find( this.props.media, item => MediaUtils.isVideoPressItem( item ) && item.videopress_guid === videopress_guid );
+	static match( content ) {
+		const match = shortcodeUtils.next( 'wpvideo', content );
+
+		if ( match ) {
+			return {
+				index: match.index,
+				content: match.content,
+				options: {
+					shortcode: match.shortcode
+				}
+			};
 		}
 	}
 
-	constrainVideoDimensions( shortcodeWidthAttribute, shortcodeHeightAttribute, videoWidth, videoHeight ) {
+	static serialize( content ) {
+		return encodeURIComponent( content );
+	}
+
+	constrainVideoDimensions( shortcodeWidthAttribute, shortcodeHeightAttribute ) {
 		const defaultWidth = 640;
 		const defaultAspectRatio = 16 / 9;
-		const aspectRatio = videoWidth && videoHeight ? videoWidth / videoHeight : defaultAspectRatio;
-		let width = defaultWidth,
-			height = defaultWidth / defaultAspectRatio;
+		let { width, height } = this.props.video
+			? this.props.video
+			: {
+				width: defaultWidth,
+				height: defaultWidth / defaultAspectRatio
+			};
+		const aspectRatio = width / height;
 
 		if ( shortcodeWidthAttribute && ! shortcodeHeightAttribute ) {
 			width = shortcodeWidthAttribute;
@@ -43,30 +61,22 @@ class WpVideoView extends Component {
 				width = shortcodeWidthAttribute;
 				height = shortcodeWidthAttribute / aspectRatio;
 			}
-		} else if ( videoWidth && videoHeight ) {
-			width = videoWidth;
-			height = videoHeight;
 		}
 
 		return { width, height };
 	}
 
-	getShortCodeAttributes() {
+	getVideoAttributes() {
 		const shortcode = shortcodeUtils.parse( this.props.content );
 		const namedAttrs = shortcode.attrs.named;
-		const videopress_guid = shortcode.attrs.numeric[0];
 
-		const defaultAttrValues = { hd: false, at: 0, defaultLangCode: undefined };
-
-		const videoAttributes = this.getVideoAttributes( shortcode.attrs.numeric[0] ) || {};
 		const videoDimensions = this.constrainVideoDimensions(
-			parseInt( namedAttrs.w, 10 ) || undefined,
-			parseInt( namedAttrs.h, 10 ) || undefined,
-			videoAttributes.width,
-			videoAttributes.height );
+			parseInt( namedAttrs.w, 10 ),
+			parseInt( namedAttrs.h, 10 )
+		);
 
-		const attrs = {
-			videopress_guid,
+		const shortcodeAttributes = {
+			guid: shortcode.attrs.numeric[0],
 			w: videoDimensions.width,
 			h: videoDimensions.height,
 			autoplay: namedAttrs.autoplay === 'true',
@@ -76,13 +86,21 @@ class WpVideoView extends Component {
 			defaultLangCode: namedAttrs.defaultlangcode
 		};
 
-		return omit( attrs, ( value, key ) => defaultAttrValues[key] === value );
+		return Object.assign(
+			pick( shortcodeAttributes, [ 'guid', 'w', 'h' ] ),
+			{ embedUrl: this.getEmbedUrl( shortcodeAttributes ) }
+		);
 	}
 
-	getEmbedUrl( attrs ) {
-		const queryString = QueryString.stringify( omitBy( attrs, ['videopress_guid', 'w', 'h'] ) );
+	getEmbedUrl( shortcodeAttributes ) {
+		const defaultAttributeValues = { hd: false, at: 0, defaultLangCode: undefined };
+		const attributesWithNonDefaultValues = omitBy(
+			shortcodeAttributes,
+			( value, key ) => defaultAttributeValues[key] === value );
+		const queryStringAttributes = [ 'autoplay', 'hd', 'loop', 'at', 'defaultLangCode' ];
+		const queryString = QueryString.stringify( pick( attributesWithNonDefaultValues, queryStringAttributes ) );
 
-		return `https://videopress.com/embed/${ attrs.videopress_guid }?${ queryString }`;
+		return `https://videopress.com/embed/${ shortcodeAttributes.guid }?${ queryString }`;
 	}
 
 	onLoad() {
@@ -94,15 +112,16 @@ class WpVideoView extends Component {
 	}
 
 	render() {
-		const attrs = this.getShortCodeAttributes();
+		const videoAttributes = this.getVideoAttributes();
 
 		return (
 			<div className="wpview-content">
+				<QueryVideo guid={ videoAttributes.guid } />
 				<iframe
 					onLoad={ this.onLoad }
-					width={ attrs.w }
-					height={ attrs.h }
-					src={ this.getEmbedUrl( attrs ) }
+					width={ videoAttributes.w }
+					height={ videoAttributes.h }
+					src={ videoAttributes.embedUrl }
 					className="wpview-type-video"
 					frameBorder="0"
 					allowFullScreen />
@@ -113,8 +132,13 @@ class WpVideoView extends Component {
 }
 
 WpVideoView.propTypes = {
-	media: PropTypes.array,
-	content: PropTypes.string
+	content: PropTypes.string,
+	video: PropTypes.object
 };
 
-export default WpVideoView;
+export default connect( ( state, props ) => {
+	const guid = shortcodeUtils.parse( props.content ).attrs.numeric[0];
+	return {
+		video: getVideo( state, guid )
+	};
+} )( WpVideoView );
