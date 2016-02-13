@@ -1,7 +1,7 @@
 Styles
 ======
 
-Calypso uses Sass to build its CSS and compile it to `public/style.css`. Remember that all styles end up in a single file, so all styles will apply to every page, all the time. Make sure you namespace your styles for the page you are working on.
+Calypso uses Sass to build it's CSS and compile it to `public/style.css`. Remember that all styles end up in a single file, so all styles will apply to every page--all the time. Make sure you namespace your styles for the page you are working on.
 
 ### Adding a new Sass file
 
