@@ -149,13 +149,13 @@ export default React.createClass( {
 	},
 
 	doActionOverSelected( actionName, action ) {
-		const isDeactivating = () => 'deactivating' === actionName;
+		const isDeactivatingAndJetpackSelected = ( { slug } ) => 'deactivating' === actionName && 'jetpack' === slug;
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginsNotices();
 
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
-			.filter( negate( isDeactivating ) ) // ignore sites that are deactiving
+			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving
 			.map( p => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
 			.forEach( site => action( site, site.plugin ) );

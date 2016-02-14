@@ -8,7 +8,6 @@ import debugModule from 'debug';
 import classNames from 'classnames';
 import some from 'lodash/collection/some';
 import find from 'lodash/collection/find';
-import assign from 'lodash/object/assign';
 import isEmpty from 'lodash/lang/isEmpty';
 
 /**
@@ -86,11 +85,11 @@ const PluginsMain = React.createClass( {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
-			let pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
-			if ( !pluginData ) {
+			const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
+			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
-			return assign( {}, plugin, pluginData );
+			return Object.assign( {}, plugin, pluginData );
 		} );
 	},
 

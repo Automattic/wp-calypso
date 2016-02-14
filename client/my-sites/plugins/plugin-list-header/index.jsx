@@ -53,12 +53,6 @@ export default React.createClass( {
 		selected: React.PropTypes.array.isRequired
 	},
 
-	getDefaultProps() {
-		return {
-			isWpCom: false
-		};
-	},
-
 	getInitialState() {
 		return {
 			actionBarVisible: _actionBarVisible,
@@ -118,14 +112,14 @@ export default React.createClass( {
 	},
 
 	renderCurrentActionButtons() {
-		let buttons = [];
-		let rightSideButtons = [];
-		let leftSideButtons = [];
-		let autoupdateButtons = [];
-		let activateButtons = [];
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug ),
+			needsRemoveButton = this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected,
+			buttons = [],
+			rightSideButtons = [],
+			leftSideButtons = [],
+			autoupdateButtons = [],
+			activateButtons = [];
 
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
 		if ( ! this.props.isBulkManagementActive ) {
 			if ( 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
@@ -155,9 +149,9 @@ export default React.createClass( {
 							onClick={ this.onBrowserLinkClick }
 							className="plugin-list-header__browser-button"
 							onMouseEnter={ () => this.setState( { addPluginTooltip: true } ) }
-			 				onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
-			 				ref="addPluginButton"
-			 				aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
+							onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
+							ref="addPluginButton"
+							aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPluginTooltip }
@@ -186,7 +180,7 @@ export default React.createClass( {
 					{ this.translate( 'Activate' ) }
 				</Button>
 			);
-			let deactivateButton = isJetpackSelected
+			const deactivateButton = isJetpackSelected
 				? (
 					<Button compact
 						key="plugin-list-header__buttons-deactivate"
@@ -251,87 +245,76 @@ export default React.createClass( {
 	},
 
 	renderCurrentActionDropdown() {
-		const { isWpCom } = this.props;
-		let options = [];
-		let actions = [];
+		if ( ! this.props.isBulkManagementActive ) {
+			return null;
+		}
 
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug ),
+			needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
 
-		if ( this.props.isBulkManagementActive ) {
-			options.push( <DropdownItem key="plugin__actions_title" selected={ true } value="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
+		return (
+			<SelectDropdown compact
+					className="plugin-list-header__actions_dropdown"
+					key="plugin-list-header__actions_dropdown"
+					selectedText={ this.translate( 'Actions' ) } >
 
-			if ( ! isWpCom ) {
-				options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
-				options.push(
-					<DropdownItem key="plugin__actions_activate"
+				<DropdownItem key="plugin__actions_title" selected={ true } value="Actions">
+					{ this.translate( 'Actions' ) }
+				</DropdownItem>
+
+				<DropdownSeparator key="plugin__actions_separator_1" />
+
+				<DropdownItem key="plugin__actions_activate"
 						disabled={ ! this.props.haveUpdatesSelected }
 						onClick={ this.props.updateSelected }>
-						{ this.translate( 'Update' ) }
-					</DropdownItem>
-				);
-			}
+					{ this.translate( 'Update' ) }
+				</DropdownItem>
 
-			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
-			options.push(
+				<DropdownSeparator key="plugin__actions_separator_1" />
+
 				<DropdownItem key="plugin__actions_activate"
-					disabled={ ! this.props.haveInactiveSelected }
-					onClick={ this.props.activateSelected }>
+						disabled={ ! this.props.haveInactiveSelected }
+						onClick={ this.props.activateSelected }>
 					{ this.translate( 'Activate' ) }
 				</DropdownItem>
-			);
 
-			let deactivateAction = isJetpackSelected
-				? <DropdownItem key="plugin__actions_disconnect"
-					disabled={ ! this.props.haveActiveSelected }
-					onClick={ this.props.deactiveAndDisconnectSelected }>
+				{ isJetpackSelected
+					? <DropdownItem key="plugin__actions_disconnect"
+							disabled={ ! this.props.haveActiveSelected }
+							onClick={ this.props.deactiveAndDisconnectSelected }>
 						{ this.translate( 'Disconnect' ) }
 					</DropdownItem>
-				: <DropdownItem key="plugin__actions_deactivate"
-					disabled={ ! this.props.haveActiveSelected }
-					onClick={ this.props.deactivateSelected }>
+					: <DropdownItem key="plugin__actions_deactivate"
+							disabled={ ! this.props.haveActiveSelected }
+							onClick={ this.props.deactivateSelected }>
 						{ this.translate( 'Deactivate' ) }
-					</DropdownItem>;
-			options.push( deactivateAction );
+					</DropdownItem>
+				}
 
-			if ( ! isWpCom ) {
-				options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
-				options.push(
-					<DropdownItem key="plugin__actions_autoupdate"
+				<DropdownSeparator key="plugin__actions_separator_2" />
+
+				<DropdownItem key="plugin__actions_autoupdate"
 						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.setAutoupdateSelected }>
-						{ this.translate( 'Autoupdate' ) }
-					</DropdownItem>
-				);
-				options.push(
-					<DropdownItem key="plugin__actions_disable_autoupdate"
+					{ this.translate( 'Autoupdate' ) }
+				</DropdownItem>
+
+				<DropdownItem key="plugin__actions_disable_autoupdate"
 						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.unsetAutoupdateSelected }>
-						{ this.translate( 'Disable Autoupdates' ) }
-					</DropdownItem>
-				);
+					{ this.translate( 'Disable Autoupdates' ) }
+				</DropdownItem>
 
-				options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
-				options.push(
-					<DropdownItem key="plugin__actions_remove"
+				<DropdownSeparator key="plugin__actions_separator_3" />
+
+				<DropdownItem key="plugin__actions_remove"
 						className="plugin-list-header__actions_remove_item"
 						disabled={ ! needsRemoveButton }
 						onClick={ this.props.removePluginNotice } >
-						{ this.translate( 'Remove' ) }
-					</DropdownItem>
-				);
-			}
-
-			actions.push(
-				<SelectDropdown compact
-					className="plugin-list-header__actions_dropdown"
-					key="plugin-list-header__actions_dropdown"
-					selectedText={ this.translate( 'Actions' ) }>
-					{ options }
-				</SelectDropdown>
-			);
-		}
-		return actions;
+					{ this.translate( 'Remove' ) }
+				</DropdownItem>
+			</SelectDropdown>
+		);
 	},
 
 	render() {

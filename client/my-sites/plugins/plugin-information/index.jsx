@@ -74,23 +74,6 @@ export default React.createClass( {
 		);
 	},
 
-	renderWPCOMPluginSupportLink() {
-		if ( ! this.props.plugin || ! this.props.plugin.support_URL ) {
-			return;
-		}
-		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
-
-		return (
-			<ExternalLink
-				icon={ true }
-				href={ this.props.plugin.support_URL }
-				onClick={ recordEvent }
-				className="plugin-information__external-link" >
-				{ this.translate( 'Learn More' ) }
-			</ExternalLink>
-		);
-	},
-
 	renderLastUpdated() {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
 			const dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -196,7 +179,16 @@ export default React.createClass( {
 		);
 	},
 
-	renderWporg() {
+	render() {
+		if ( this.props.isPlaceholder ) {
+			return this.renderPlaceholder();
+		}
+
+		// We cannot retrieve information for plugins which are not registered to the wp.org registry
+		if ( ! this.props.plugin.wporg ) {
+			return null;
+		}
+
 		const classes = classNames( {
 			'plugin-information__version-info': true,
 			'is-singlesite': !! this.props.siteVersion
@@ -204,40 +196,29 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-information">
-					<div className="plugin-information__wrapper">
-						<div className={ classes }>
-							<div className="plugin-information__version-shell">
-								{ this.props.pluginVersion && <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" /> }
-								{ this.renderLastUpdated() }
-							</div>
-							<div className="plugin-information__version-shell">
-								{ this.renderSiteVersion() }
-								{ this.renderLimits() }
-							</div>
+				<div className="plugin-information__wrapper">
+					<div className={ classes }>
+						<div className="plugin-information__version-shell">
+							{ this.props.pluginVersion && <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" /> }
+							{ this.renderLastUpdated() }
 						</div>
-						<div className="plugin-information__links">
-							{ this.renderWporgLink() }
-							{ this.renderHomepageLink() }
+						<div className="plugin-information__version-shell">
+							{ this.renderSiteVersion() }
+							{ this.renderLimits() }
 						</div>
 					</div>
-					<PluginRatings
-						rating={ this.props.plugin.rating }
-						ratings={ this.props.plugin.ratings }
-						downloaded={ this.props.plugin.downloaded }
-						numRatings={ this.props.plugin.num_ratings }
-						slug={ this.props.plugin.slug } />
+					<div className="plugin-information__links">
+						{ this.renderWporgLink() }
+						{ this.renderHomepageLink() }
+					</div>
+				</div>
+				<PluginRatings
+					rating={ this.props.plugin.rating }
+					ratings={ this.props.plugin.ratings }
+					downloaded={ this.props.plugin.downloaded }
+					numRatings={ this.props.plugin.num_ratings }
+					slug={ this.props.plugin.slug } />
 			</div>
 		);
-	},
-
-	render() {
-		if ( this.props.isPlaceholder ) {
-			return this.renderPlaceholder();
-		}
-
-		if ( this.props.plugin.wporg ) {
-			return this.renderWporg();
-		}
-		return null;
 	}
 } );

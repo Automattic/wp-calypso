@@ -6,7 +6,7 @@ import i18n from 'lib/mixins/i18n'
 import config from 'config'
 import notices from 'notices'
 
-let sites = sitesList();
+const sites = sitesList();
 
 const hasErrorCondition = ( site, type ) => {
 	const errorConditions = {
@@ -25,8 +25,6 @@ const getWpcomPluginPageError = () => {
 };
 
 const hasRestrictedAccess = ( site ) => {
-	let pluginPageError;
-
 	site = site || sites.getSelectedSite();
 
 	// Display a 404 to users that don't have the rights to manage plugins
@@ -54,10 +52,8 @@ const hasRestrictedAccess = ( site ) => {
 	}
 
 	if ( ! sites.hasSiteWithPlugins() ) {
-		pluginPageError = getWpcomPluginPageError();
+		return getWpcomPluginPageError();
 	}
-
-	return pluginPageError;
 };
 
 export default { hasRestrictedAccess };
