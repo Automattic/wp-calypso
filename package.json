@@ -106,7 +106,7 @@
     "wpcom-proxy-request": "1.0.5",
     "wpcom-unpublished": "1.0.8",
     "wpcom-xhr-request": "0.3.3",
-    "xgettext-js": "0.2.0"
+    "xgettext-js": "0.2.2"
   },
   "engines": {
     "node": ">=4.3.0"
