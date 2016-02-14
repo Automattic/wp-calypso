@@ -1,6 +1,6 @@
 {
   "name": "interpolate-components",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Convert strings into structured React components.",
   "repository": {
     "type": "git",
@@ -20,7 +20,6 @@
   },
   "devDependencies": {
     "babel": "^5.8.12",
-    "babel-cli": "^5.8.12",
     "babel-core": "^5.8.12",
     "babel-runtime": "^5.8.12",
     "mocha": "^2.3.4"
