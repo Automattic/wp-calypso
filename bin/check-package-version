@@ -4,14 +4,14 @@ var exec = require( 'child_process' ).exec;
 var pj = require( '../' + process.argv[2] );
 var semver = require( 'semver' );
 
-if(pj.private) {
-  process.exit( 0 );
+if( pj.private ) {
+	process.exit( 0 );
 }
 
 exec( 'npm view ' + pj.name + ' version', function( error, stdout, stderr ) {
-  if ( semver.gt(pj.version, stdout) ) {
-    process.exit( 0 );
-  } else {
-    process.exit( 1 );
-  }
+	if ( semver.gt(pj.version, stdout) ) {
+		process.exit( 0 );
+	} else {
+		process.exit( 1 );
+	}
 });
