@@ -9,7 +9,7 @@ var fs = require( 'fs' ),
 	babel = require( 'babel-core' ),
 	preProcessXGettextJSMatch = require( '../i18n/preprocess-xgettextjs-match.js' ),
 	SourceMapConsumer = require( 'source-map' ).SourceMapConsumer,
-	tokenize = require( '../../client/lib/interpolate-components/tokenize.js' ),
+	tokenize = require( '../../client/lib/interpolate-components/src/tokenize.js' ),
 	includes = require( 'lodash/includes' ),
 	flow = require( 'lodash/flow' );
 
