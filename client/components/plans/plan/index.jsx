@@ -41,8 +41,8 @@ module.exports = React.createClass( {
 	},
 
 	getComparePlansUrl: function() {
-		const { site } = this.props;
-		var siteSuffix = site ? site.slug : '';
+		var site = this.props.site,
+			siteSuffix = site ? site.slug : '';
 
 		return this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
 	},
