@@ -12,7 +12,7 @@ import paths from 'my-sites/upgrades/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const PrimaryDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'primaryDomain' ) ],

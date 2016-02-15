@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const EditContactInfoPrivacyEnabledCard = React.createClass( {
 	render() {

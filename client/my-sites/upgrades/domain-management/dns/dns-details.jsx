@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var support = require( 'lib/support' );
+var support = require( 'lib/url/support' );
 
 var DnsDetails = React.createClass( {
 	render: function() {

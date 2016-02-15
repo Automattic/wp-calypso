@@ -16,7 +16,7 @@ import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
 import analyticsMixin from 'lib/mixins/analytics';
 import Notice from 'components/notice';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const MIN_NAMESERVER_LENGTH = 2,
 	MAX_NAMESERVER_LENGTH = 4;

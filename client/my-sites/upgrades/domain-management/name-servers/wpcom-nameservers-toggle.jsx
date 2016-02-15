@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 var Toggle = require( 'components/forms/form-toggle' ),
-	support = require( 'lib/support' );
+	support = require( 'lib/url/support' );
 import analyticsMixin from 'lib/mixins/analytics';
 
 const NameserversToggle = React.createClass( {

@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import AddButton from './add-button';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const Content = React.createClass( {
 	propTypes: {

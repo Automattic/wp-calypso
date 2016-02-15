@@ -8,7 +8,7 @@ import React from 'react';
  */
 import notices from 'notices';
 import { translate } from 'lib/mixins/i18n';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 export const displayResponseError = ( responseError ) => {
 	const errorMessages = {

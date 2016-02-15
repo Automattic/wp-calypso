@@ -11,7 +11,7 @@ import ContactDisplay from './contact-display';
 import Notice from 'components/notice';
 import paths from 'my-sites/upgrades/paths';
 import SectionHeader from 'components/section-header';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const ContactsPrivacyCard = React.createClass( {
 	propTypes: {

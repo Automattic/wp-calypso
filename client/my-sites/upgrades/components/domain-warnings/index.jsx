@@ -13,7 +13,7 @@ import Notice from 'components/notice';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );

@@ -13,7 +13,7 @@ import Button from 'components/button';
 import { requestTransferCode, enableDomainLocking, enablePrivacyProtection, declineTransfer } from 'lib/upgrades/actions';
 import notices from 'notices';
 import { promisy, displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const Unlocked = React.createClass( {
 	getInitialState() {

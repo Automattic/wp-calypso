@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
-	support = require( 'lib/support' ),
+	support = require( 'lib/url/support' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {

@@ -11,7 +11,7 @@ import SectionHeader from 'components/section-header';
 import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
 import Button from 'components/button';
 import notices from 'notices';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const IcannVerification = React.createClass( {
 	getInitialState() {

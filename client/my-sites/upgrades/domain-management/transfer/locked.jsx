@@ -12,7 +12,7 @@ import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
 import { displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
-import support from 'lib/support';
+import support from 'lib/url/support';
 
 const Locked = React.createClass( {
 	getInitialState() {

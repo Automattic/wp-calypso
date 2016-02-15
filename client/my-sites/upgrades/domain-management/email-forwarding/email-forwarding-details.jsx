@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var i18n = require( 'lib/mixins/i18n' ),
-	support = require( 'lib/support' ),
+	support = require( 'lib/url/support' ),
 	analyticsMixin = require( 'lib/mixins/analytics' );
 
 var EmailForwardingDetails = React.createClass( {

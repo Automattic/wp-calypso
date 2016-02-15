@@ -11,7 +11,7 @@ const Button = require( 'components/forms/form-button' ),
 	CompactCard = require( 'components/card/compact' ),
 	config = require( 'config' ),
 	paths = require( 'my-sites/upgrades/paths' ),
-	support = require( 'lib/support' ),
+	support = require( 'lib/url/support' ),
 	analyticsMixin = require( 'lib/mixins/analytics' );
 
 const AddGoogleAppsCard = React.createClass( {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
+import support from './support';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -20,4 +21,4 @@ function isExternal( url ) {
 	return isOutsideCalypso( url ) && ! startsWith( url, '//wordpress.com' );
 }
 
-export default { isOutsideCalypso, isExternal };
+export default { isOutsideCalypso, isExternal, support };

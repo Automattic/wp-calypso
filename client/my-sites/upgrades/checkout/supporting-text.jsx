@@ -6,7 +6,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var cartValues = require( 'lib/cart-values' ),
-	support = require( 'lib/support' ),
+	support = require( 'lib/url/support' ),
 	getRefundPolicy = cartValues.getRefundPolicy,
 	cartItems = cartValues.cartItems,
 	hasFreeTrial = cartItems.hasFreeTrial,
