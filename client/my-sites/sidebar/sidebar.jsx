@@ -294,7 +294,7 @@ module.exports = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
 				<a onClick={ this.onNavigate } href={ domainsLink } target={ target }>
-					<Gridicon icon="cart" size={ 24 } />
+					<Gridicon icon="globe" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
 				</a>
 				{ addDomainButton }
