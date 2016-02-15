@@ -19,7 +19,9 @@ var abtest = require( 'lib/abtest' ).abtest,
 	PlanPrice = require( 'components/plans/plan-price' ),
 	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
 	Card = require( 'components/card' ),
-	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' );
+	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' ),
+	productsValues = require( 'lib/products-values' ),
+	isBusiness = productsValues.isBusiness;
 
 module.exports = React.createClass( {
 	displayName: 'Plan',
@@ -76,7 +78,6 @@ module.exports = React.createClass( {
 
 	getFeatureList: function() {
 		var features,
-			showMoreLink = false,
 			moreLink = '';
 
 		if ( this.isPlaceholder() ) {
@@ -89,7 +90,6 @@ module.exports = React.createClass( {
 			} );
 
 			if ( abtest( 'plansFeatureList' ) === 'andMore' && feature.testVariable ) {
-				showMoreLink = true;
 				return null;
 			}
 
@@ -101,7 +101,7 @@ module.exports = React.createClass( {
 			);
 		} );
 
-		if ( showMoreLink ) {
+		if ( abtest( 'plansFeatureList' ) === 'andMore' && isBusiness( this.props.plan ) ) {
 			moreLink = (
 				<li className="plan__feature is-plan-specific">
 					<Gridicon icon="checkmark" size={ 12 } />
