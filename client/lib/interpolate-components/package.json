@@ -4,7 +4,7 @@
 	"description": "Convert strings into structured React components.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Automattic/interpolate-components.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git"
 	},
 	"main": "lib/index.js",
 	"keywords": [
