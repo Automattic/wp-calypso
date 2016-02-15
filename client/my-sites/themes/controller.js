@@ -11,11 +11,9 @@ var ReactDom = require( 'react-dom' ),
 var SingleSiteComponent = require( 'my-sites/themes/single-site' ),
 	MultiSiteComponent = require( 'my-sites/themes/multi-site' ),
 	LoggedOutComponent = require( 'my-sites/themes/logged-out' ),
-	ThemeSheetComponent = require( 'my-sites/themes/sheet' ).ThemeSheet,
 	analytics = require( 'analytics' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	setSection = require( 'state/ui/actions' ).setSection,
 	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
 	buildTitle = require( 'lib/screen-title/utils' ),
 	getAnalyticsData = require( './helpers' ).getAnalyticsData;
@@ -66,32 +64,7 @@ var controller = {
 			),
 			document.getElementById( 'primary' )
 		);
-	},
-
-	details: function( context ) {
-		const user = getCurrentUser( context.store.getState() );
-
-		const Head = user
-			? require( 'layout/head' )
-			: require( 'my-sites/themes/head' );
-
-		const element = (
-			<ReduxProvider store={ context.store } >
-				<Head title="Something Theme — WordPress.com" isSheet>
-					<ThemeSheetComponent themeSlug={ context.params.slug } />
-				</Head>
-			</ReduxProvider>
-		);
-
-		// FIXME: temporary hack until we have a proper isomorphic, one tree routing solution. Do NOT do this!
-		const sheetsDomElement = document.getElementsByClassName( 'themes__sheet' )[0];
-		if ( ! sheetsDomElement ) {
-			ReactDom.render( element, document.getElementById( 'primary' ) );
-		}
-
-		return element;
 	}
-
 };
 
 module.exports = controller;
