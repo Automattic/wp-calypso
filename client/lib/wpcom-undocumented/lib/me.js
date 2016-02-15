@@ -37,6 +37,12 @@ UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callb
 	return this.wpcom.req.get( args, callback );
 };
 
+UndocumentedMe.prototype.getReceipt = function( receiptId, fn ) {
+	return this.wpcom.req.get( {
+		path: `/me/billing-history/receipt/${ receiptId }`
+	}, fn );
+};
+
 UndocumentedMe.prototype.purchases = function( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
 };
