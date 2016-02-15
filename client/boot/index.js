@@ -359,7 +359,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init();
+		//require( 'lib/desktop' ).init();
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {

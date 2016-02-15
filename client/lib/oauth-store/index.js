@@ -46,7 +46,6 @@ function goToLogin() {
 
 function handleLogin( response ) {
 	debug( 'Access token received' );
-
 	OAuthToken.setToken( response.body.access_token );
 
 	goToLogin();
@@ -69,6 +68,9 @@ const AuthStore = createReducerStore( function( state, payload ) {
 			} else {
 				handleLogin( action.data );
 			}
+			break;
+		case ActionTypes.RECEIVE_BEARER_TOKEN:
+			OAuthToken.setToken( action.token );
 			break;
 	}
 

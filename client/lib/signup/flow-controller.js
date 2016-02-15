@@ -25,8 +25,10 @@ var SignupActions = require( './actions' ),
 	SignupDependencyStore = require( './dependency-store' ),
 	flows = require( 'signup/config/flows' ),
 	steps = require( 'signup/config/steps' ),
-	wpcom = require( 'lib/wp' ),
+	oauthToken = require( 'lib/oauth-token' ),
 	user = require( 'lib/user' )();
+
+import * as OAuthToken from 'lib/oauth-token';
 
 /**
  * Constants
@@ -108,7 +110,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_canMakeAuthenticatedRequests: function() {
-		return wpcom.isTokenLoaded() || user.get();
+		return oauthToken.getToken() || user.get();
 	},
 
 	_getFlowProvidesDependencies: function() {
@@ -124,8 +126,8 @@ assign( SignupFlowController.prototype, {
 			bearerToken = SignupDependencyStore.get().bearer_token,
 			dependencies = SignupDependencyStore.get();
 
-		if ( bearerToken && ! wpcom.isTokenLoaded() ) {
-			wpcom.loadToken( bearerToken );
+		if ( bearerToken && ! oauthToken.getToken() ) {
+			OAuthToken.setToken( bearerToken );
 		}
 
 		if ( pendingSteps.length > 0 ) {
@@ -133,6 +135,7 @@ assign( SignupFlowController.prototype, {
 		}
 
 		if ( completedSteps.length === this._flow.steps.length && undefined !== this._onComplete ) {
+			debugger;
 			if ( this._assertFlowProvidedRequiredDependencies() ) {
 				// deferred to ensure that the onComplete function is called after the stores have
 				// emitted their final change events.
