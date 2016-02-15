@@ -17,55 +17,18 @@ const controller = require( 'my-sites/controller' ),
 module.exports = function() {
 	SiftScience.recordUser();
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
+	if ( config.isEnabled( 'upgrades/domain-management/email' ) ) {
 		page(
-			paths.domainManagementRoot(),
+			paths.domainManagementEmail(),
 			controller.siteSelection,
 			controller.sites
 		);
 
 		page(
-			paths.domainManagementList( ':site' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementList
-		);
-
-		page(
-			paths.domainManagementEdit( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementEdit
-		);
-
-		page(
-			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			domainManagementController.domainManagementPrivacyProtection
-		);
-
-		page(
-			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementPrimaryDomain
-		);
-	}
-
-	if ( config.isEnabled( 'upgrades/domain-management/email' ) ) {
-		page(
 			paths.domainManagementEmail( ':site', ':domain' ),
 			controller.siteSelection,
 			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+			upgradesController.redirectIfNoSite( paths.domainManagementEmail() ),
 			controller.jetPackWarning,
 			domainManagementController.domainManagementEmail
 		);
@@ -74,7 +37,7 @@ module.exports = function() {
 			paths.domainManagementEmail( ':site' ),
 			controller.siteSelection,
 			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+			upgradesController.redirectIfNoSite( paths.domainManagementEmail() ),
 			controller.jetPackWarning,
 			domainManagementController.domainManagementEmail
 		);
@@ -166,6 +129,49 @@ module.exports = function() {
 		controller.jetPackWarning,
 		domainManagementController.domainManagementTransfer
 	);
+
+	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
+		page(
+			paths.domainManagementRoot(),
+			controller.siteSelection,
+			controller.sites
+		);
+
+		page(
+			paths.domainManagementList( ':site' ),
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+			controller.jetPackWarning,
+			domainManagementController.domainManagementList
+		);
+
+		page(
+			paths.domainManagementEdit( ':site', ':domain' ),
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+			controller.jetPackWarning,
+			domainManagementController.domainManagementEdit
+		);
+
+		page(
+			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+			domainManagementController.domainManagementPrivacyProtection
+		);
+
+		page(
+			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
+			controller.jetPackWarning,
+			domainManagementController.domainManagementPrimaryDomain
+		);
+	}
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(
