@@ -106,14 +106,6 @@
 		"business_group_id": "3033aa025c1a9648c703eb70132ff220"
 	},
 
-	"sync-handler-defaults": {
-		"name": "Calypso sync-handler",
-		"version": 1.0,
-		"driver": "INDEXEDDB",
-		"storeName": "calypso_sync_handler",
-		"description": "Request-handler wrapper used to catch REST-API responses"
-	},
-
 	"muse_supported_themes": [
 		"pub/twentytwelve",
 		"pub/twentythirteen",
