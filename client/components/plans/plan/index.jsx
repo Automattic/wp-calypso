@@ -83,12 +83,14 @@ module.exports = React.createClass( {
 				'is-plan-specific': feature.planSpecific
 			} );
 
-			return (
-				<li className={ classes } key={ i }>
-					<Gridicon icon="checkmark" size={ 12 } />
-					{ feature.text }
-				</li>
-			);
+			if ( abtest( 'plansFeatureList' ) !== 'andMore' || !feature.testVariable ) {
+				return (
+					<li className={ classes } key={ i }>
+						<Gridicon icon="checkmark" size={ 12 } />
+						{ feature.text }
+					</li>
+				);
+			}
 		} );
 
 		return <ul className="plan__features">{ features }</ul>;
@@ -226,7 +228,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) === 'list';
+		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) !== 'description';
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
