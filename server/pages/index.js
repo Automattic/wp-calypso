@@ -24,7 +24,8 @@ var config = require( 'config' ),
 	ThemeSheet = require( 'my-sites/themes/sheet' ).default,
 	ThemeDetails = require( 'components/data/theme-details' ),
 	wpcom = require( 'lib/wp' ),
-	ThemesActionTypes = require( 'state/themes/action-types' );
+	ThemesActionTypes = require( 'state/themes/action-types' ),
+	isomorphicRouting = require( 'isomorphic-routing' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -378,6 +379,9 @@ module.exports = function() {
 			renderLoggedOutRoute( req, res );
 		}
 	} );
+
+	// Isomorphic Routing for the themes sections
+	// require( 'my-sites/themes' )( isomorphicRouting.serverRouter( app, getDefaultContext ) );
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
 		app.get( '/theme/:theme_slug/:section?', function( req, res ) {

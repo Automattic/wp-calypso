@@ -65,3 +65,10 @@ export function render( element, key = JSON.stringify( element ) ) {
 	}
 	//todo: render an error?
 }
+
+export function serverRender( context ) {
+	if ( config.isEnabled( 'server-side-rendering' ) ) {
+		Object.assign( context, render( context.layout ) );
+	}
+	context.res.render( 'index.jade', context );
+}
