@@ -434,14 +434,14 @@
 	}
 
 	.tip-inner {
-		border: 0px;
+		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
 		color: $white;
 		background: darken( $gray, 30% );
 		font-size: 11px;
 		padding: 6px 10px;
-		margin-top: 5px;
+		margin-top: 4px;
 		width: 230px;
 		text-align: left;
 

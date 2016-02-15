@@ -78,11 +78,11 @@
 
 	a {
 		@extend %mobile-link-element;
-		position: relative;
-		display: block;
-		padding: 0 24px;
 		border-top: 1px solid $gray-light;
+		display: block;
 		font-size: 14px;
+		padding: 0 24px;
+		position: relative;
 
 		// Hover state
 		@include breakpoint( ">480px" ) {
@@ -108,19 +108,19 @@
 	.right {
 		color: $gray;
 		position: absolute;
-		right: 24px;
-		top: 0;
+			right: 24px;
+			top: 0;
 	}
 }
 
 // Module Header
 
 .module-header {
-	position: relative;
 	background: $white;
-	line-height: 40px;
 	height: 40px;
+	line-height: 40px;
 	padding-left: 24px;
+	position: relative;
 
 	.stats-module.is-loading & {
 		cursor: default;
@@ -139,12 +139,11 @@
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	width: auto;
-	font-weight: bold;
+	color: $gray-dark;
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
-	color: $gray-dark;
+	width: auto;
 }
 
 // Module Header Actions
@@ -152,13 +151,13 @@
 // 2: So the focus outline isn't covered by the fading pseudo-element
 
 ul.module-header-actions {
-	position: absolute;
-	list-style: none;
-	top: 0;
-	right: 0;
-	height: 40px;
-	margin: 0;
 	background: $white;
+	height: 40px;
+	list-style: none;
+	margin: 0;
+	position: absolute;
+		right: 0;
+		top: 0;
 
 	// Fade really long module titles
 	&::before {
@@ -187,14 +186,14 @@ ul.module-header-actions {
 
 	.module-header-action-link {
 		@extend %mobile-interface-element;
-		height: 40px;
-		min-width: 40px;
-		line-height: 40px;
-		display: inline-block;
-		text-align: center;
-		position: relative; // 2
-		z-index: z-index( 'root', 'ul.module-header-actions .module-header-action-link' ); // 2
 		color: $gray;
+		display: inline-block;
+		height: 40px;
+		line-height: 40px;
+		min-width: 40px;
+		position: relative; // 2
+		text-align: center;
+		z-index: z-index( 'root', 'ul.module-header-actions .module-header-action-link' ); // 2
 
 		.stats-module.is-loading & {
 			cursor: default;
@@ -273,11 +272,11 @@ ul.module-header-actions {
 
 	// Hidden info box
 	&-info {
+		background: $gray-light;
+		box-shadow: inset 0 1px 0 $gray-light;
+		color: $gray-dark;
 		display: none;
 		position: relative;
-		background: $gray-light;
-		color: $gray-dark;
-		box-shadow: inset 0 1px 0 $gray-light;
 
 		.stats-module.is-showing-info & {
 			display: inline-block; // 1
@@ -295,8 +294,8 @@ ul.module-header-actions {
 
 	// Representation of what the published status looks like within a list of posts and pages
 	.legend.published {
-		padding-left: 12px;
 		border-left: 4px solid $orange-jazzy;
+		padding-left: 12px;
 	}
 
 	.legend.achievement {
@@ -318,8 +317,8 @@ ul.module-header-actions {
 		list-style: none;
 
 		li {
-			line-height: 2em;
 			font-size: 14px;
+			line-height: 2em;
 
 			@include breakpoint( ">960px" ) {
 				.module-list & {
@@ -331,7 +330,7 @@ ul.module-header-actions {
 				border-bottom: 1px solid $gray-light;
 
 				&:last-child {
-					border: none;
+					border: 0;
 					margin-bottom: -12px;
 				}
 			}
@@ -378,10 +377,10 @@ ul.module-header-actions {
 	position: relative;
 
 	.module-content-table-scroll {
+		min-height: 210px;
 		overflow: auto;
 		overflow-x: auto;
 		overflow-y: visible;
-		min-height: 210px;
 	}
 
 	// Table cells
@@ -389,10 +388,10 @@ ul.module-header-actions {
 	// 2: Make right padding much greater to accommodate for increased gradient
 	td,
 	th {
-		font-size: 14px;
-		padding: 8px 12px;
 		border-bottom: 1px solid $gray-light;
 		border-right: 1px solid $gray-light;
+		font-size: 12px;
+		padding: 8px 12px;
 		white-space: nowrap; // 1
 
 		&:first-child {
@@ -400,8 +399,8 @@ ul.module-header-actions {
 		}
 
 		&:last-child {
-			padding-right: 60px; // 2
 			border-right: none;
+			padding-right: 60px; // 2
 		}
 	}
 
@@ -414,11 +413,6 @@ ul.module-header-actions {
 		background: $white;
 		position: absolute;
 		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
-
-		// Disable fixed legend for mobile
-		@include breakpoint( "<480px" ) {
-			position: static;
-		}
 	}
 
 	// Left this modifier as-is because these tables are likely going to change
@@ -439,47 +433,57 @@ ul.module-header-actions {
 	}
 
 	.stats-module & td.highest-count {
-		position: relative;
 		color: $alert-yellow;
+		position: relative;
 	}
 
 	.spacer {
 		color: transparent;
 	}
 
-	.date,
-	.value {
+	.stats-detail-weeks__date,
+	.stats-detail-weeks__value {
 		white-space: nowrap;
 	}
 
-	.value {
-		display: inline-block;
-	}
+	.stats-detail-weeks__value {
+		display: block;
+		font-size: 12px;
 
-	.value-rising,
-	.value-falling {
-		color: $alert-green;
+		&.is-rising {
+			color: $alert-green;
+		}
+
+		&.is-falling {
+			color: $alert-red;
+		}
+
+		&.is-same {
+			color: $gray;
+		}
+
+		&.is-rising,
+		&.is-falling,
+		&.is-same {
+			margin-top: -2px;
+		}
 
 		.gridicon {
-			margin-right: 4px;
-			margin-bottom: -2px;
+			margin: 0 2px -3px -4px;
+			width: 15px;
 		}
 	}
 
-	.value-falling {
-		color: $alert-red;
-	}
-
 	thead th,
-	.date {
+	.stats-detail-weeks__date {
 		color: $gray;
 	}
 
-	.date {
+	.stats-detail-weeks__date {
 		display: block;
 		font-size: 11px;
-		text-transform: uppercase;
 		letter-spacing: .1em;
+		text-transform: uppercase;
 	}
 
 	// Fade out sides of tables to hint at horizontal scrolling
@@ -490,18 +494,17 @@ ul.module-header-actions {
 		content: "";
 		display: block;
 		position: absolute;
-			top: 0;
 			bottom: 16px; // 1
 			left: 0;
-		z-index: z-index( 'root', '.module-content-table::after' );
+			top: 0;
 		width: 20px;
-		background-image: linear-gradient(to left, $transparent 0%, $white 90%);
+		z-index: z-index( 'root', '.module-content-table::after' );
 	}
 
 	&::after {
-		right: 0;
 		left: auto;
+		right: 0;
 		width: 60px; // 2
-		background-image: linear-gradient(to right, $transparent 0%, $white 90%);
+		@include long-content-fade( $color: $white, $size: 15% );
 	}
 }
