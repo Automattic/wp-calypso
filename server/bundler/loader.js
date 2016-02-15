@@ -61,7 +61,7 @@ function splitTemplate( path, module, chunkName ) {
 		path = JSON.stringify( path );
 	} else {
 		regex = utils.pathToRegExp( path );
-		path = '/' + utils.regExpToString( regex.toString().slice( 1, -1 ) ) + '/';
+		path = '/' + regex.toString().slice( 1, -1 ) + '/';
 	}
 
 	result = [
