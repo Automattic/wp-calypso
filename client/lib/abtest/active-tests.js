@@ -73,4 +73,12 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	checkoutFooter: {
+		datestamp: '20160215',
+		variations: {
+			original: 50,
+			noFooter: 50
+		},
+		defaultVariation: 'original'
+	},
 };

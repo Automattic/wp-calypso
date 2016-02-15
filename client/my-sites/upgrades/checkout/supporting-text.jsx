@@ -8,7 +8,8 @@ var React = require( 'react' );
 var cartValues = require( 'lib/cart-values' ),
 	getRefundPolicy = cartValues.getRefundPolicy,
 	cartItems = cartValues.cartItems,
-	hasFreeTrial = cartItems.hasFreeTrial;
+	hasFreeTrial = cartItems.hasFreeTrial,
+	abtest = require( 'lib/abtest' ).abtest;
 
 var SupportingText = React.createClass( {
 
@@ -70,6 +71,10 @@ var SupportingText = React.createClass( {
 	},
 
 	render: function() {
+		if ( abtest( 'checkoutFooter' ) === 'noFooter' ) {
+			return null;
+		}
+
 		return hasFreeTrial( this.props.cart )
 		? null : (
 				<ul className="supporting-text">
