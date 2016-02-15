@@ -57,7 +57,7 @@ module.exports = {
 		defaultVariation: 'original'
 	},
 	plansFeatureList: {
-		datestamp: '20040214',
+		datestamp: '20160215',
 		variations: {
 			list: 33,
 			andMore: 33,
