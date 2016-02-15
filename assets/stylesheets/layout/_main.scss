@@ -273,6 +273,11 @@ $sidebar-width-min: 228px;
 	.has-no-sidebar & {
 		padding-left: 32px;
 	}
+
+	.full-screen & {
+		padding: 0;
+		margin: 0;
+	}
 }
 
 // Tablets
