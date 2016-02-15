@@ -79,6 +79,7 @@
     "react-addons-css-transition-group": "0.14.3",
     "react-addons-linked-state-mixin": "0.14.3",
     "react-addons-update": "0.14.3",
+    "react-click-outside": "2.1.0",
     "react-day-picker": "1.1.0",
     "react-dom": "0.14.3",
     "react-helmet": "2.2.0",

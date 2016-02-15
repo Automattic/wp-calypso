@@ -119,7 +119,7 @@ export default React.createClass( {
 	},
 
 	shouldShowGroups() {
-		return this.props.groups && user.get().visible_site_count > 14;
+		return this.props.groups;
 	},
 
 	renderSites() {
@@ -132,7 +132,9 @@ export default React.createClass( {
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
 		} else {
-			sites = this.shouldShowGroups() ? this.props.sites.getVisibleAndNotRecent() : this.props.sites.getVisible();
+			sites = this.shouldShowGroups()
+				? this.props.sites.getVisibleAndNotRecentNorStarred()
+				: this.props.sites.getVisible();
 		}
 
 		if ( this.props.filter ) {
@@ -172,7 +174,7 @@ export default React.createClass( {
 		if ( this.shouldShowGroups() && ! this.state.search ) {
 			return (
 				<div>
-					<span className="site-selector__heading">{ this.translate( 'Sites' ) }</span>
+					{ user.get().visible_site_count > 12 && this.renderRecentSites() }
 					{ siteElements }
 				</div>
 			);
@@ -209,7 +211,9 @@ export default React.createClass( {
 			return null;
 		}
 
-		const recentSites = sites.map( function( site ) {
+		const recentSites = sites.filter( function( site ) {
+			return ! this.props.sites.isStarred( site );
+		}, this ).map( function( site ) {
 			var siteHref;
 
 			if ( this.props.siteBasePath ) {
@@ -217,10 +221,6 @@ export default React.createClass( {
 			}
 
 			const isSelected = this.isSelected( site );
-
-			if ( isSelected && this.props.hideSelected ) {
-				return;
-			}
 
 			return (
 				<Site
@@ -234,10 +234,38 @@ export default React.createClass( {
 			);
 		}, this );
 
+		return recentSites;
+	},
+
+	renderStarredSites() {
+		const sites = this.props.sites.getStarred();
+
+		if ( ! sites || this.state.search || ! this.shouldShowGroups() || ! this.props.sites.starred.length ) {
+			return null;
+		}
+
+		const starredSites = sites.map( function( site ) {
+			var siteHref;
+
+			if ( this.props.siteBasePath ) {
+				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
+			}
+
+			return (
+				<Site
+					site={ site }
+					href={ siteHref }
+					key={ 'site-' + site.ID }
+					indicator={ this.props.indicator }
+					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+					isSelected={ this.isSelected( site ) }
+				/>
+			);
+		}, this );
+
 		return (
-			<div>
-				<span className="site-selector__heading">{ this.translate( 'Recent Sites' ) }</span>
-				{ recentSites }
+			<div className="site-selector__starred">
+				{ starredSites }
 			</div>
 		);
 	},
@@ -259,7 +287,7 @@ export default React.createClass( {
 					/>
 					<div className="site-selector__sites" ref="selector">
 						{ this.renderAllSites() }
-						{ this.renderRecentSites() }
+						{ this.renderStarredSites() }
 						{ this.renderSites() }
 					</div>
 					{ this.props.showAddNewSite && this.addNewSite() }

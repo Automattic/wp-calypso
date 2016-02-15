@@ -24,9 +24,16 @@
 	.notouch &.is-selected:hover {
 		background-color: $gray;
 
+		.site__star-badge {
+			color: $white;
+		}
+
 		.site__title,
 		.site__domain {
 			color: $white;
+			&::after {
+				@include long-content-fade( $color: $gray );
+			}
 		}
 
 		.count {
@@ -48,6 +55,9 @@
 			.site__title,
 			.site__domain {
 				color: $blue-medium;
+				&::after {
+					@include long-content-fade( $color: $gray-light );
+				}
 			}
 		}
 	}
@@ -133,14 +143,6 @@
 	padding-top: 15px;
 }
 
-.site-selector__heading {
-	color: darken( $gray, 10% );
-	display: block;
-	font-weight: 600;
-	font-size: 12px;
-	margin: 16px 8px 6px 14px;
-
-	.count {
-		margin-left: 8px;
-	}
+.site-selector .all-sites {
+	border-bottom: 1px solid lighten( $gray, 20% );
 }

@@ -368,6 +368,16 @@ $sidebar-width-min: 228px;
 		border-bottom: 1px solid lighten( $gray, 20% );
 	}
 
+	.site,
+	.all-sites {
+		.site__title,
+		.site__domain {
+			&::after {
+				@include long-content-fade( $color: lighten( $gray, 30% ) );
+			}
+		}
+	}
+
 	@include breakpoint( "<660px" ) {
 		width: 100vw;
 		left: -100vw;
