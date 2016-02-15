@@ -21,6 +21,7 @@ import reject from 'lodash/collection/reject';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SignupDependencyStore from 'lib/signup/dependency-store';
 import SignupProgressStore from 'lib/signup/progress-store';
 import SignupFlowController from 'lib/signup/flow-controller';
@@ -35,6 +36,7 @@ const user = userModule();
 import analytics from 'analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
+import * as oauthToken from 'lib/oauth-token';
 
 /**
  * Constants
@@ -144,12 +146,21 @@ const Signup = React.createClass( {
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
-		if ( user.get() ) {
+		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( function() {
 				page( destination );
 			}.bind( this ) );
-		} else {
+		}
+
+		if ( ! userIsLoggedIn && config.isEnabled( 'oauth' ) ) {
+			oauthToken.setToken( dependencies.bearer_token );
+			window.location.href = destination;
+		}
+
+		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
 			this.setState( {
 				bearerToken: dependencies.bearer_token,
 				username: dependencies.username,

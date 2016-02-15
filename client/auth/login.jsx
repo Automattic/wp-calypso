@@ -179,7 +179,7 @@ module.exports = React.createClass( {
 				</a>
 				<div className="auth__links">
 					<a href="#" onClick={ this.toggleSelfHostedInstructions }>{ this.translate( 'Add self-hosted site' ) }</a>
-					<a href={ 'https://wordpress.com' + config( 'signup_url' ) } target="_blank">{ this.translate( 'Create account' ) }</a>
+					<a href={ config( 'signup_url' ) }>{ this.translate( 'Create account' ) }</a>
 				</div>
 				{ showInstructions && <SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } /> }
 			</Main>
