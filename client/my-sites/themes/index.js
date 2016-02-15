@@ -2,7 +2,6 @@
  * External dependencies
  */
 var page = require( 'page' ),
-	ReactDom = require( 'react-dom' ),
 	transform = require( 'lodash/object/transform' );
 
 /**
@@ -11,7 +10,6 @@ var page = require( 'page' ),
 var config = require( 'config' ),
 	user = require( 'lib/user' )(),
 	controller = require( 'my-sites/controller' ),
-	setSection = require( 'state/ui/actions' ).setSection,
 	themesController = require( './controller' );
 
 const routing = {
@@ -22,10 +20,6 @@ const routing = {
 		{ value: '/design', enableLoggedOut: true },
 	],
 	middlewares: [
-		{ value: ( context, next ) => {
-			context.store.dispatch( setSection( 'design', { hasSidebar: !! user.get(), isFullScreen: false } ) );
-			next();
-		}, enableLoggedOut: true },
 		{ value: controller.navigation, enableLoggedOut: false },
 		{ value: controller.siteSelection, enableLoggedOut: false },
 		{ value: themesController.themes, enableLoggedOut: true },
@@ -45,13 +39,5 @@ module.exports = function() {
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		const { routes, middlewares } = getRouting( user.get() );
 		routes.forEach( route => page( route, ...middlewares ) );
-
-		if ( config.isEnabled( 'manage/themes/details' ) ) {
-			page( '/themes/:slug/:site_id?', ( context, next ) => {
-				context.store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
-				ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-				next();
-			}, themesController.details );
-		}
 	}
 };

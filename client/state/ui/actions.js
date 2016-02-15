@@ -39,6 +39,5 @@ export function setSection( section, options = {} ) {
 		options.section = section;
 	}
 	options.hasSidebar = ( options.hasSidebar === false ) ? false : true;
-	options.isFullScreen = !! options.isFullScreen;
 	return options;
 }
