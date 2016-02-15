@@ -31,12 +31,18 @@
 			params = 'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
 			params += encodeURIComponent( JSON.stringify( savedErrors ) );
 
-			xhr.setRequestHeader( 'Content-length', params.length );
-			xhr.setRequestHeader( 'Connection', 'close' );
 			xhr.send( params );
 
 			savedErrors = [];
 		}
+	}
+
+	function errorToPlainObject( error ) {
+		var simpleObject = {};
+		Object.getOwnPropertyNames( error ).forEach( function( key ) {
+			simpleObject[ key ] = error[ key ];
+		} );
+		return simpleObject;
 	}
 
 	function handleError( error ) {
@@ -52,7 +58,7 @@
 
 		// add the message to the pack and reset flush timeout
 		clearTimeout( packTimeout );
-		savedErrors.push( error );
+		savedErrors.push( errorToPlainObject( error ) );
 
 		// if we can send the pack now, let's do it
 		if ( canSendNow ) {
