@@ -54,7 +54,7 @@ function fireNextQueuedAction( store ) {
 	clearTimeout( actionTimeout );
 	const firstAction = getFirstAction( store.getState() );
 
-	if ( !isOffline( store.getState() ) && firstAction ) {
+	if ( ! isOffline( store.getState() ) && firstAction ) {
 		//for testing:
 		firstAction.action.noQueue = true;
 
@@ -90,7 +90,7 @@ function shouldQueueAction( action ) {
 const offlineQueue = store => next => action => {
 	if (
 		//isOffline( store.getState() ) &&
-		!action.noQueue &&
+		! action.noQueue &&
 		shouldQueueAction( action )
 	) {
 		next( queueAction( action ) );
