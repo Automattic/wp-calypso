@@ -76,6 +76,7 @@
 		"reader/recommendations": true,
 		"reader/share": true,
 		"reader/teams": true,
+		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
 		"upgrades/checkout": false,
 		"upgrades/credit-cards": false,

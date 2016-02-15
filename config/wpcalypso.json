@@ -60,6 +60,7 @@
 		"reader/following-edit": true,
 		"reader/recommendations": true,
 		"reader/discover": true,
+		"rubberband-scroll-disable": false,
 
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,

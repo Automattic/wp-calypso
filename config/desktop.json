@@ -67,6 +67,7 @@
 		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"post-editor/pages": true,
+		"rubberband-scroll-disable": true,
 		"reader": true,
 		"reader/activities": true,
 		"reader/discover": true,

@@ -362,6 +362,10 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/desktop' ).init();
 	}
 
+	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
+		require( 'lib/rubberband-scroll-disable' )( document.body );
+	}
+
 	detectHistoryNavigation.start();
 	page.start();
 }

@@ -84,6 +84,7 @@
 		"reader/following-edit": true,
 		"reader/discover": true,
 		"reader/recommendations": true,
+		"rubberband-scroll-disable": false,
 		"ad-tracking": false,
 		"desktop-promo": true,
 		"perfmon": true,
