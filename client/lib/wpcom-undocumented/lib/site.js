@@ -53,6 +53,7 @@ var list = function( resourceOptions ) {
 		// wp-api resources
 		if ( '2' === query.apiVersion ) {
 			path = '/sites/' + this._id + '/wp/v2/' + subpath;
+			query.apiNamespace = 'wp';
 			query.locale = i18n.getLocaleSlug();
 		}
 
