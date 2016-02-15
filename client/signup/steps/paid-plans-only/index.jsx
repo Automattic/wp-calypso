@@ -13,10 +13,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="paid-plans-with-free-trials">
+			<div className="paid-plans-only">
 				<PlansStepComponent
 					hideFreePlan
-					enableFreeTrials
 					{ ...this.props }
 				/>
 			</div>
