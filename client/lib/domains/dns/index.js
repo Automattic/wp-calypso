@@ -46,18 +46,10 @@ function isValidDomain( name ) {
 }
 
 function isValidName( name, type ) {
-	switch ( type ) {
-		case 'SRV':
-			return (
-				name === '' ||
-				isValidSubdomain( name )
-			);
-		default:
-			return isValidSubdomain( name, type );
+	if ( isNameEmptyAndItsAllowed( name, type ) ) {
+		return true;
 	}
-}
 
-function isValidSubdomain( name, type ) {
 	switch ( type ) {
 		case 'A':
 		case 'AAAA':
@@ -93,10 +85,9 @@ function getNormalizedData( record, selectedDomainName ) {
 }
 
 function getNormalizedName( name, type, selectedDomainName ) {
-	const isSrvWithEmptyName = 'SRV' === type && ! name,
-		endsWithDomain = endsWith( name, '.' + selectedDomainName );
+	const endsWithDomain = endsWith( name, '.' + selectedDomainName );
 
-	if ( isSrvWithEmptyName ) {
+	if ( isNameEmptyAndItsAllowed( name, type ) ) {
 		return name;
 	}
 
@@ -113,6 +104,10 @@ function getNormalizedName( name, type, selectedDomainName ) {
 
 function isIpRecord( type ) {
 	return includes( [ 'A', 'AAAA' ], type );
+}
+
+function isNameEmptyAndItsAllowed( name, type ) {
+	return ! name && includes( [ 'MX', 'SRV', 'TXT' ], type );
 }
 
 function getFieldWithDot( field ) {

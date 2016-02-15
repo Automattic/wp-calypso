@@ -89,7 +89,7 @@ var DnsRecord = React.createClass( {
 			return name.slice( 0, -1 );
 		}
 
-		return name + '.' + domain;
+		return name ? name + '.' + domain : domain;
 	},
 
 	isBeingProcessed: function() {
