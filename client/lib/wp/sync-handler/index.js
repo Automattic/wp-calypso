@@ -28,7 +28,10 @@ export class SyncHandler {
 			setup = {};
 		}
 
+		// setup localforage configuration
 		this.setup = Object.assign( {}, defaults, setup );
+		localforage.config( this.setup );
+
 		this.reqHandler = handler;
 		return this.syncHandlerWrapper( handler );
 	}
@@ -178,19 +181,16 @@ export class SyncHandler {
 	}
 
 	retrieveRecord( key, fn = () => {} ) {
-		localforage.config( this.setup );
 		debug( 'getting data from %o key\n', key );
 		return localforage.getItem( key, fn );
 	}
 
 	storeRecord( key, data, fn = () => {} ) {
-		localforage.config( this.setup );
 		debug( 'storing data in %o key\n', key );
 		return localforage.setItem( key, data, fn );
 	}
 
 	removeRecord( key, fn = () => {} ) {
-		localforage.config( this.setup );
 		debug( 'removing %o key\n', key );
 		return localforage.removeItem( key, fn );
 	}
