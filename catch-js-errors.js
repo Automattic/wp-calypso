@@ -1,16 +1,10 @@
 ( function() {
 	var savedWindowOnError = window.onerror,
 		savedErrors = [],
-		sendingErrorsToApi;
-
-	// Props http://stackoverflow.com/a/20405830/379063
-	function stringifyErrorForUrlParams( error, index ) {
-		var simpleObject = {};
-		Object.getOwnPropertyNames( error ).forEach( function( key ) {
-			simpleObject[ key + index ] = encodeURIComponent( error[ key ] );
-		} );
-		return JSON.stringify( simpleObject );
-	};
+		lastTimeSent = 0,
+		packTimeout = null,
+		THROTTLE_DURATION = 10000,
+		MAX_BUFFER_SIZE = 10000;
 
 	// Props http://stackoverflow.com/a/17604754/379063
 	function isLocalStorageNameSupported() {
@@ -35,10 +29,7 @@
 			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
 			params = 'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
-
-			params += savedErrors.map( function( error, index ) {
-				return stringifyErrorForUrlParams( error, index );
-			} );
+			params += encodeURIComponent( JSON.stringify( savedErrors ) );
 
 			xhr.setRequestHeader( 'Content-length', params.length );
 			xhr.setRequestHeader( 'Connection', 'close' );
@@ -48,12 +39,36 @@
 		}
 	}
 
-	function startSendingErrorsToApi() {
-		if ( ! sendingErrorsToApi ) {
-			sendingErrorsToApi = setInterval( function() {
-				sendErrorsToApi();
-			}, 10000 );
+	function handleError( error ) {
+		var canSendNow;
+
+		// if we have packed too much messages, it's probably good to stop stacking more and drop new messages while the buffer is flushed
+		if ( savedErrors.length > MAX_BUFFER_SIZE ) {
+			return;
 		}
+
+		// we can send a message we have waited long enough (because we are throttling)
+		canSendNow = +new Date() - lastTimeSent > THROTTLE_DURATION;
+
+		// add the message to the pack and reset flush timeout
+		clearTimeout( packTimeout );
+		savedErrors.push( error );
+
+		// if we can send the pack now, let's do it
+		if ( canSendNow ) {
+			flushErrors();
+		} else {
+			// else set a timeout to ensure message is sent at least THROTTLE_DURATION after it happened
+			// This is needed as a message could otherwise stay in the pack forever if no message comes afterwards
+			packTimeout = setTimeout( function() {
+				flushErrors();
+			}, THROTTLE_DURATION );
+		}
+	}
+
+	function flushErrors() {
+		lastTimeSent = +new Date();
+		sendErrorsToApi();
 	}
 
 	function saveError( message, scriptUrl, lineNumber, columnNumber, error ) {
@@ -64,7 +79,7 @@
 			error.userAgent = navigator.userAgent;
 		}
 
-		savedErrors.push( error );
+		handleError( error );
 	}
 
 	if ( isLocalStorageNameSupported() ) {
@@ -81,7 +96,6 @@
 			// set up handler to POST errors
 			window.onerror = function( message, scriptUrl, lineNumber, columnNumber, error ) {
 				saveError( message, scriptUrl, lineNumber, columnNumber, error );
-				startSendingErrorsToApi();
 				if ( savedWindowOnError ) {
 					savedWindowOnError();
 				}
