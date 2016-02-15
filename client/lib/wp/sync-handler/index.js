@@ -66,7 +66,13 @@ export class SyncHandler {
 				// let's be optimistic
 				if ( localRecord ) {
 					debug( '%o stored(%o). Let\'s be optimistic ...\n', path, localRecord );
-					callback( null, localRecord.body );
+					// try/catch in case cached record does not match expected schema
+					try {
+						callback( null, localRecord.body );
+					} catch ( error ) {
+						this.removeRecord( key );
+						debug( 'Callback failed with localRecord (%o), deleting record.', localRecord, error );
+					}
 				} else {
 					debug( 'No data for [%s] %o - %o', reqParams.method, path, reqParams );
 				}
