@@ -18,7 +18,7 @@ function registerMultiPage( { routes, handlers } ) {
 	routes.forEach( path => page( path, ...handlers ) );
 }
 
-function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJetpack = true } ) {
+function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJetpack = true } = {} ) {
 	const handlers = [
 		controller.siteSelection,
 		controller.navigation
