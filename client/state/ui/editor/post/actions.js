@@ -66,7 +66,8 @@ export function removeFeaturedImage() {
 }
 
 export function setDate( postDate ) {
-	debug( 'setDate', postDate );
+	//Previous action was sending it formatted
+	debug( 'setDate', postDate, ( postDate ? postDate.format() : null ) );
 	return { type: 'TODO' };
 }
 
