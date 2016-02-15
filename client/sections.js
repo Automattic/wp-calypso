@@ -69,7 +69,8 @@ sections = [
 		name: 'themes',
 		paths: [ '/design', '/themes' ],
 		module: 'my-sites/themes',
-		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' )
+		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
+		routing: config( 'env' ) === 'development' ? 'isomorphic' : ''
 	},
 	{
 		name: 'upgrades',
