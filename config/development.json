@@ -27,6 +27,8 @@
 	"discover_blog_id": 53424024,
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
+		"oauth": true,
+
 		"code-splitting": true,
 		"server-side-rendering": true,
 

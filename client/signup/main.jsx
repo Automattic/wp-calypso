@@ -6,7 +6,6 @@ const debug = debugModule( 'calypso:signup' );
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import page from 'page';
-import startsWith from 'lodash/string/startsWith';
 import sortBy from 'lodash/collection/sortBy';
 import last from 'lodash/array/last';
 import find from 'lodash/collection/find';
@@ -30,7 +29,6 @@ import FlowProgressIndicator from './flow-progress-indicator';
 import steps from './config/steps';
 import stepComponents from './config/step-components';
 import flows from './config/flows';
-import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
 const user = userModule();
 import analytics from 'analytics';
@@ -48,7 +46,6 @@ const Signup = React.createClass( {
 
 	getInitialState() {
 		return {
-			login: false,
 			progress: SignupProgressStore.get(),
 			dependencies: SignupDependencyStore.get(),
 			loadingScreenStartTime: undefined,
@@ -160,14 +157,6 @@ const Signup = React.createClass( {
 			window.location.href = destination;
 		}
 
-		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
-			this.setState( {
-				bearerToken: dependencies.bearer_token,
-				username: dependencies.username,
-				redirectTo: this.loginRedirectTo( destination )
-			} );
-		}
-
 		this.signupFlowController.reset();
 	},
 
@@ -181,21 +170,6 @@ const Signup = React.createClass( {
 		debug( 'Signup component unmounted' );
 		SignupProgressStore.off( 'change', this.loadProgressFromStore );
 		SignupProgressStore.off( 'change', this.loadDependenciesFromStore );
-	},
-
-	loginRedirectTo( path ) {
-		var redirectTo;
-
-		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
-			return path;
-		}
-
-		redirectTo = window.location.protocol + '//' + window.location.hostname; // Don't force https because of local development
-
-		if ( window.location.port ) {
-			redirectTo += ':' + window.location.port;
-		}
-		return redirectTo + path;
 	},
 
 	firstUnsubmittedStepName() {
@@ -287,15 +261,6 @@ const Signup = React.createClass( {
 			null;
 	},
 
-	loginForm() {
-		return this.state.bearerToken ?
-			<WpcomLoginForm
-				authorization={ 'Bearer ' + this.state.bearerToken }
-				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } /> :
-			null;
-	},
-
 	currentStep() {
 		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
@@ -347,7 +312,6 @@ const Signup = React.createClass( {
 					transitionLeaveTimeout={ 300 }>
 					{ this.currentStep() }
 				</ReactCSSTransitionGroup>
-				{ this.loginForm() }
 			</span>
 		);
 	}
