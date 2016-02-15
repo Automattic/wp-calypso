@@ -81,6 +81,7 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"manage/themes/logged-out": true,
+		"manage/themes/details": true,
 		"press-this": true,
 
 		"manage/plans": true,

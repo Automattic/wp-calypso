@@ -11,3 +11,7 @@ export function getSelectedSite( state ) {
 
 	return state.sites.items[ state.ui.selectedSiteId ];
 }
+
+export function getIsFullScreen( state ) {
+	return state.ui.isFullScreen;
+}

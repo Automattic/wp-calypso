@@ -22,6 +22,10 @@ $autobar-height: 20px;
 		border-bottom: 1px solid darken( $orange-jazzy, 4% );
 	}
 
+	.full-screen & {
+		border: none;
+	}
+
 	@include breakpoint( ">660px" ) {
 		backface-visibility: hidden;
 	}

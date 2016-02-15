@@ -67,7 +67,7 @@ sections = [
 	},
 	{
 		name: 'themes',
-		paths: [ '/design' ],
+		paths: [ '/design', '/themes' ],
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' )
 	},
