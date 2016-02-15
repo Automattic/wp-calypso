@@ -5,7 +5,8 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
 	debounce = require( 'lodash/function/debounce' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/object/omit' ),
+	isEqual = require( 'lodash/lang/isEqual' );
 
 /**
  * Internal dependencies
@@ -101,6 +102,25 @@ var Posts = React.createClass( {
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
+	},
+
+	shouldComponentUpdate: function( nextProps ) {
+		if ( nextProps.loading !== this.props.loading ) {
+			return true;
+		}
+		if ( nextProps.hasRecentError !== this.props.hasRecentError ) {
+			return true;
+		}
+		if ( nextProps.lastPage !== this.props.lastPage ) {
+			return true;
+		}
+		if ( nextProps.statusSlug !== this.props.statusSlug ) {
+			return true;
+		}
+		if ( ! isEqual( nextProps.posts.map( post => post.ID ), this.props.posts.map( post => post.ID ) ) ) {
+			return true;
+		}
+		return false;
 	},
 
 	afterResize: function() {
