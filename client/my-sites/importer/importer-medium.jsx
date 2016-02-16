@@ -25,6 +25,8 @@ export default React.createClass( {
 	render: function() {
 		importerData.description = this.translate( 'Import posts from a Medium export file.' );
 
+		importerData.uploadDescription = this.translate( 'Upload a Medium export file' );
+
 		return <FileImporter importerData={ importerData } {...this.props} />;
 	}
 } );

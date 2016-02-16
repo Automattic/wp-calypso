@@ -56,7 +56,7 @@ export default React.createClass( {
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
-		const disabledTypes = [ GHOST, MEDIUM, SQUARESPACE ];
+		const disabledTypes = [ GHOST, SQUARESPACE ];
 
 		if ( ! isHydrated || includes( disabledTypes, type ) ) {
 			return [ { importerState: appStates.DISABLED, type, siteTitle } ];
@@ -130,7 +130,7 @@ export default React.createClass( {
 					<GhostImporter { ...{ key, importerStatus } } /> ) }
 
 				{ this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
-					<MediumImporter { ...{ key, importerStatus } } /> ) }
+					<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
 				{ this.getImports( SQUARESPACE ).map( ( importerStatus, key ) =>
 					<SquarespaceImporter { ...{ key, importerStatus } } /> ) }
