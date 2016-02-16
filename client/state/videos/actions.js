@@ -22,27 +22,21 @@ export function fetchVideo( guid ) {
 			guid
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().videos( guid, ( error, data ) => {
-				if ( error ) {
-					dispatch( {
-						type: VIDEO_FETCH_FAILED,
-						guid,
-						error
-					} );
-				} else {
-					dispatch( {
-						type: VIDEO_RECEIVE,
-						guid,
-						data
-					} );
-					dispatch( {
-						type: VIDEO_FETCH_COMPLETED,
-						guid
-					} );
-				}
-
-				resolve();
+		return wpcom.undocumented().videos( guid ).then( ( data ) => {
+			dispatch( {
+				type: VIDEO_RECEIVE,
+				guid,
+				data
+			} );
+			dispatch( {
+				type: VIDEO_FETCH_COMPLETED,
+				guid
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: VIDEO_FETCH_FAILED,
+				guid,
+				error
 			} );
 		} );
 	};

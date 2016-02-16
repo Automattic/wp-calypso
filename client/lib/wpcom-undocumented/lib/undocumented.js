@@ -1890,9 +1890,10 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
  *
  * @param {String}    guid              VideoPress guid
  * @param {Function}  callback          Callback function
+ * @returns {Promise}                   A promise that resolves when the request completes
  */
 Undocumented.prototype.videos = function( guid, callback ) {
-	this.wpcom.req.get( { path: '/videos/' + guid }, callback );
+	return this.wpcom.req.get( { path: '/videos/' + guid }, callback );
 };
 
 /**
