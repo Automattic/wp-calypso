@@ -12,7 +12,7 @@ import {
 	isOnline
 } from 'state/application/selectors';
 import {
-	OFFLINE_QUEUE_ACTION,
+	OFFLINE_QUEUE_ADD,
 	CONNECTION_RESTORED,
 	OFFLINE_QUEUE_REMOVE,
 } from 'state/action-types';
@@ -25,7 +25,7 @@ let actionTimeout = null;
 //Prob should be in actions
 function queueAction( action ) {
 	return {
-		type: OFFLINE_QUEUE_ACTION,
+		type: OFFLINE_QUEUE_ADD,
 		id: uniqueId(),
 		dispatchedAt: ( new Date() ).getTime(),
 		squash: connections[ action.type ].squash,

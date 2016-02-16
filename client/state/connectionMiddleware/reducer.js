@@ -7,12 +7,12 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	OFFLINE_QUEUE_ACTION,
+	OFFLINE_QUEUE_ADD,
 	OFFLINE_QUEUE_REMOVE
 } from 'state/action-types';
 
 export function actionQueue( state = [], action ) {
-	if ( action.type === OFFLINE_QUEUE_ACTION ) {
+	if ( action.type === OFFLINE_QUEUE_ADD ) {
 		let shouldQueueAction = true;
 
 		if ( action.squash ) {
