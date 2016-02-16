@@ -48,6 +48,13 @@ module.exports = function( params, query, body, fn ) {
 		params.apiVersion = this.apiVersion;
 	}
 
+	// - `apiNamespace`
+	if ( query.apiNamespace ) {
+		params.apiNamespace = query.apiNamespace;
+		debug( 'apiNamespace: %o', params.apiNamespace );
+		delete query.apiNamespace;
+	}
+
 	// - `proxyOrigin`
 	if ( query.proxyOrigin ) {
 		params.proxyOrigin = query.proxyOrigin;
