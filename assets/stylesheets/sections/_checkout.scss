@@ -771,7 +771,7 @@
 	}
 }
 
-.checkout-thank-you {
+.checkout__thank-you {
 	box-sizing: border-box;
 	position: static;
 	text-align: center;
@@ -848,11 +848,30 @@
 			border-bottom: 1px solid $blue-medium;
 		}
 	}
+
+	&.is-placeholder {
+		.checkout__thank-you-header,
+		.checkout__thank-you-subheader {
+			@include placeholder( 23% );
+
+			display: block;
+			margin: 0 auto;
+		}
+
+		.checkout__thank-you-header {
+			width: 50%;
+		}
+
+		.checkout__thank-you-subheader {
+			margin-top: 15px;
+			width: 40%;
+		}
+	}
 }
 
 // Mobile styles
 @include breakpoint( "<660px" ) {
-	.checkout-thank-you {
+	.checkout__thank-you {
 		background: transparent;
 		padding: 14px;
 
@@ -883,7 +902,7 @@
 
 // Desktop styles
 @include breakpoint( ">660px" ) {
-	.checkout-thank-you {
+	.checkout__thank-you {
 		.thank-you-message {
 			border-bottom: 1px solid lighten( $gray, 30% );
 

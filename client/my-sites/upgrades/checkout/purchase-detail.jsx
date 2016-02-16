@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React from 'react';
 
 /**
@@ -8,24 +9,31 @@ import React from 'react';
  */
 import Button from 'components/button';
 
-const PurchaseDetail = ( { additionalClass, buttonText, description, onButtonClick, title } ) => (
-	<li className={ 'checkout__purchase-detail ' + additionalClass }>
-		<div className="checkout__purchase-detail-text">
-			<h3 className="checkout__purchase-detail-title">{ title }</h3>
-			<p className="checkout__purchase-detail-description">{ description }</p>
-		</div>
-		<Button onClick={ onButtonClick } primary>
-			{ buttonText }
-		</Button>
-	</li>
-);
+const PurchaseDetail = ( { additionalClass, buttonText, description, isPlaceholder, onButtonClick, title } ) => {
+	const classes = classNames( 'checkout__purchase-detail', additionalClass, {
+		'is-placeholder': isPlaceholder
+	} );
+
+	return (
+		<li className={ classes }>
+			<div className="checkout__purchase-detail-text">
+				<h3 className="checkout__purchase-detail-title">{ title }</h3>
+				<p className="checkout__purchase-detail-description">{ description }</p>
+			</div>
+			<Button className="checkout__purchase-detail-button" onClick={ onButtonClick } primary>
+				{ buttonText }
+			</Button>
+		</li>
+	);
+};
 
 PurchaseDetail.propTypes = {
 	additionalClass: React.PropTypes.string,
-	buttonText: React.PropTypes.string.isRequired,
-	description: React.PropTypes.string.isRequired,
-	onButtonClick: React.PropTypes.func.isRequired,
-	title: React.PropTypes.string.isRequired
+	buttonText: React.PropTypes.string,
+	description: React.PropTypes.string,
+	isPlaceholder: React.PropTypes.bool,
+	onButtonClick: React.PropTypes.func,
+	title: React.PropTypes.string
 };
 
 export default PurchaseDetail;

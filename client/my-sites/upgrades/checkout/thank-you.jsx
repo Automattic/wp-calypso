@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/collection/find' ),
 	page = require( 'page' );
@@ -95,20 +96,31 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	thankYouHeader: function() {
+		if ( ! this.props.receipt.hasLoadedFromServer ) {
+			return <h1 className="checkout__thank-you-header">{ this.translate( 'Loading…' ) }</h1>;
+		}
+
 		if ( this.freeTrialWasPurchased() ) {
 			return (
-				<h1>
+				<h1 className="checkout__thank-you-header">
 					{
 						this.translate( 'Your 14 day free trial starts today!' )
 					}
 				</h1>
 			);
 		}
-		return <h1>{ this.translate( 'Thank you for your purchase!' ) }</h1>
+		return <h1 className="checkout__thank-you-header">{ this.translate( 'Thank you for your purchase!' ) }</h1>
 	},
+
 	thankYouSubHeader: function() {
-		var productName = this.getSingleProductName(),
+		var productName,
 			headerText;
+
+		if ( ! this.props.receipt.hasLoadedFromServer ) {
+			return <h2 className="checkout__thank-you-subheader">{ this.translate( 'Loading…' ) }</h2>;
+		}
+
+		productName = this.getSingleProductName();
 
 		if ( this.freeTrialWasPurchased() && productName ) {
 			headerText = this.translate( 'We hope you enjoy %(productName)s. What\'s next? Take it for a spin!', {
@@ -128,8 +140,9 @@ var CheckoutThankYou = React.createClass( {
 			headerText = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
 		}
 
-		return <h2>{ headerText }</h2>
+		return <h2 className="checkout__thank-you-subheader">{ headerText }</h2>
 	},
+
 	getSingleProductName() {
 		if ( getPurchases( this.props ).length ) {
 			return getPurchases( this.props )[ 0 ].productNameShort;
@@ -139,8 +152,12 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	render: function() {
+		var classes = classNames( 'checkout__thank-you', {
+			'is-placeholder': ! this.props.receipt.hasLoadedFromServer
+		} );
+
 		return (
-			<Main className="checkout-thank-you">
+			<Main className={ classes }>
 				<Card>
 					<div className="thank-you-message">
 						<span className="receipt-icon"></span>
@@ -210,10 +227,22 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	productRelatedMessages: function() {
-		var purchases = getPurchases( this.props ),
-			selectedSite = this.props.selectedSite,
+		var selectedSite = this.props.selectedSite,
+			purchases,
 			componentClass,
 			domain;
+
+		if ( ! this.props.receipt.hasLoadedFromServer ) {
+			return (
+				<div>
+					<PurchaseDetail isPlaceholder />
+					<PurchaseDetail isPlaceholder />
+					<PurchaseDetail isPlaceholder />
+				</div>
+			);
+		}
+
+		purchases = getPurchases( this.props );
 
 		if ( purchases.some( isJetpackPremium ) ) {
 			componentClass = JetpackPremiumPlanDetails;
@@ -259,6 +288,10 @@ var CheckoutThankYou = React.createClass( {
 
 	supportRelatedMessages: function() {
 		var localeSlug = i18n.getLocaleSlug();
+
+		if ( ! this.props.receipt.hasLoadedFromServer ) {
+			return <p>{ this.translate( 'Loading…' ) }</p>;
+		}
 
 		if ( this.jetpackPlanWasPurchased() ) {
 			return (
