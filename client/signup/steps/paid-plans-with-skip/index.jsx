@@ -8,16 +8,12 @@ import React from 'react';
  */
 import PaidPlansOnlyStep from 'signup/steps/paid-plans-only';
 
-export default React.createClass( {
-	displayName: 'PaidPlansWithSkip',
+const PaidPlansWithSkip = ( props ) => (
+	<div className="paid-plans-with-skip">
+		<PaidPlansOnlyStep
+			showSkipStepButton
+			{ ...props } />
+	</div>
+);
 
-	render: function() {
-		return (
-			<div className="paid-plans-with-skip">
-				<PaidPlansOnlyStep
-					showSkipStepButton
-					{ ...this.props } />
-			</div>
-		);
-	}
-} );
+export default PaidPlansWithSkip;
