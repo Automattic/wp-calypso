@@ -6,7 +6,7 @@
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git"
 	},
-	"main": "src/index.js",
+	"main": "lib/index.js",
 	"keywords": [
 		"react",
 		"react-component",
