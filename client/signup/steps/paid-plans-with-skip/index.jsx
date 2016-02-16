@@ -8,7 +8,7 @@ import React from 'react';
  */
 import PaidPlansOnlyStepComponent from 'signup/steps/paid-plans-only';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PaidPlansWithSkip',
 
 	render: function() {
