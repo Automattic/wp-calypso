@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getVideo,
-	isFetchingVideo
+	isRequestingVideo
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -26,41 +26,41 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isFetchingVideo()', () => {
+	describe( '#isRequestingVideo()', () => {
 		it( 'should return false if the video is not being fetched', () => {
-			const isFetching = isFetchingVideo( {
+			const isRequesting = isRequestingVideo( {
 				videos: {
-					fetchingVideo: {
+					videoRequests: {
 						kUJmAcSf: false
 					}
 				}
 			}, 'kUJmAcSf' );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the video has never been fetched', () => {
-			const isFetching = isFetchingVideo( {
+			const isRequesting = isRequestingVideo( {
 				videos: {
-					fetchingVideo: {
+					videoRequests: {
 						aJnoKdwr: true
 					}
 				}
 			}, 'kUJmAcSf' );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return true if the video is being fetched', () => {
-			const isFetching = isFetchingVideo( {
+			const isRequesting = isRequestingVideo( {
 				videos: {
-					fetchingVideo: {
+					videoRequests: {
 						kUJmAcSf: true
 					}
 				}
 			}, 'kUJmAcSf' );
 
-			expect( isFetching ).to.be.true;
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 } );

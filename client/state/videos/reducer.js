@@ -7,9 +7,9 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	VIDEO_FETCH,
-	VIDEO_FETCH_COMPLETED,
-	VIDEO_FETCH_FAILED,
+	VIDEO_REQUEST,
+	VIDEO_REQUEST_SUCCESS,
+	VIDEO_REQUEST_FAILURE,
 	VIDEO_RECEIVE
 } from 'state/action-types';
 
@@ -31,22 +31,22 @@ export function items( state = {}, action ) {
 }
 
 /**
- * Track the current status for fetching videos. Maps guid to the
- * fetching status for the video corresponding to that guid. Assigns `true` for
- * currently fetching,  `false` for done or failed fetching,
- * or `undefined` if no fetch attempt has been made for the video.
+ * Tracks the current status for video requests. Maps guid to the
+ * request status for the video corresponding to that guid. Assigns `true` for
+ * a request in progress, `false` for successful or failed requests,
+ * or `undefined` if no request has been made for the video.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function fetchingVideo( state = {}, action ) {
+export function videoRequests( state = {}, action ) {
 	switch ( action.type ) {
-		case VIDEO_FETCH:
-		case VIDEO_FETCH_COMPLETED:
-		case VIDEO_FETCH_FAILED:
+		case VIDEO_REQUEST:
+		case VIDEO_REQUEST_SUCCESS:
+		case VIDEO_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				[ action.guid ]: VIDEO_FETCH === action.type
+				[ action.guid ]: VIDEO_REQUEST === action.type
 			} );
 	}
 	return state;
@@ -54,5 +54,5 @@ export function fetchingVideo( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	fetchingVideo
+	videoRequests
 } );

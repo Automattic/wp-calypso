@@ -8,22 +8,22 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isFetchingVideo } from 'state/videos/selectors';
-import { fetchVideo } from 'state/videos/actions';
+import { isRequestingVideo } from 'state/videos/selectors';
+import { requestVideo } from 'state/videos/actions';
 
 class QueryVideo extends Component {
 
 	componentWillMount() {
-		if ( ! this.props.fetchingVideo ) {
-			this.props.fetchVideo( this.props.guid );
+		if ( ! this.props.requestingVideo ) {
+			this.props.requestVideo( this.props.guid );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.fetchingVideo || ( this.props.guid === nextProps.guid ) ) {
+		if ( nextProps.requestingVideo || ( this.props.guid === nextProps.guid ) ) {
 			return;
 		}
-		nextProps.fetchVideo( nextProps.guid );
+		nextProps.requestVideo( nextProps.guid );
 	}
 
 	render() {
@@ -33,24 +33,24 @@ class QueryVideo extends Component {
 
 QueryVideo.propTypes = {
 	guid: PropTypes.string,
-	fetchingVideo: PropTypes.bool,
-	fetchVideo: PropTypes.func
+	requestingVideo: PropTypes.bool,
+	requestVideo: PropTypes.func
 };
 
 QueryVideo.defaultProps = {
-	fetchVideo: () => {}
+	requestVideo: () => {}
 };
 
 export default connect(
 	( state, props ) => {
 		const guid = props.guid;
 		return {
-			fetchingVideo: isFetchingVideo( state, guid )
+			requestingVideo: isRequestingVideo( state, guid )
 		};
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			fetchVideo
+			requestVideo
 		}, dispatch );
 	}
 )( QueryVideo );

@@ -3,9 +3,9 @@
  */
 import wpcom from 'lib/wp';
 import {
-	VIDEO_FETCH,
-	VIDEO_FETCH_COMPLETED,
-	VIDEO_FETCH_FAILED,
+	VIDEO_REQUEST,
+	VIDEO_REQUEST_SUCCESS,
+	VIDEO_REQUEST_FAILURE,
 	VIDEO_RECEIVE
 } from 'state/action-types';
 
@@ -13,12 +13,12 @@ import {
  * Triggers a network request to fetch a video.
  *
  * @param  {String}    guid VideoPress guid
- * @return {Function}       a promise that will resolve once fetching is completed
+ * @return {Function}  Action thunk
  */
-export function fetchVideo( guid ) {
+export function requestVideo(guid ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: VIDEO_FETCH,
+			type: VIDEO_REQUEST,
 			guid
 		} );
 
@@ -29,12 +29,12 @@ export function fetchVideo( guid ) {
 				data
 			} );
 			dispatch( {
-				type: VIDEO_FETCH_COMPLETED,
+				type: VIDEO_REQUEST_SUCCESS,
 				guid
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
-				type: VIDEO_FETCH_FAILED,
+				type: VIDEO_REQUEST_FAILURE,
 				guid,
 				error
 			} );

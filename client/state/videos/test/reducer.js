@@ -8,14 +8,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	VIDEO_FETCH,
-	VIDEO_FETCH_COMPLETED,
-	VIDEO_FETCH_FAILED,
+	VIDEO_REQUEST,
+	VIDEO_REQUEST_SUCCESS,
+	VIDEO_REQUEST_FAILURE,
 	VIDEO_RECEIVE
 } from 'state/action-types';
 import {
 	items,
-	fetchingVideo
+	videoRequests
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -58,16 +58,16 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#fetchingVideo()', () => {
+	describe( '#videoRequests()', () => {
 		it( 'should default to an empty object', () => {
-			const state = fetchingVideo( undefined, {} );
+			const state = videoRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should map guid to true value if fetching in progress', () => {
-			const state = fetchingVideo( undefined, {
-				type: VIDEO_FETCH,
+		it( 'should map guid to true value if a request is in progress for that guid', () => {
+			const state = videoRequests( undefined, {
+				type: VIDEO_REQUEST,
 				guid: 'kUJmAcSf'
 			} );
 
@@ -77,10 +77,10 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate mappings', () => {
-			const state = fetchingVideo( deepFreeze( {
+			const state = videoRequests( deepFreeze( {
 				kUJmAcSf: true
 			} ), {
-				type: VIDEO_FETCH,
+				type: VIDEO_REQUEST,
 				guid: 'aJnoKdwr'
 			} );
 
@@ -90,11 +90,11 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map guid to false value if fetching finishes successfully', () => {
-			const state = fetchingVideo( deepFreeze( {
+		it( 'should map guid to false value if a request for that guid finishes successfully', () => {
+			const state = videoRequests( deepFreeze( {
 				kUJmAcSf: true
 			} ), {
-				type: VIDEO_FETCH_COMPLETED,
+				type: VIDEO_REQUEST_SUCCESS,
 				guid: 'kUJmAcSf'
 			} );
 
@@ -103,11 +103,11 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map guid to false value if fetching finishes with failure', () => {
-			const state = fetchingVideo( deepFreeze( {
+		it( 'should map guid to false value if a request for that guid finishes with failure', () => {
+			const state = videoRequests( deepFreeze( {
 				kUJmAcSf: true
 			} ), {
-				type: VIDEO_FETCH_FAILED,
+				type: VIDEO_REQUEST_FAILURE,
 				guid: 'kUJmAcSf'
 			} );
 

@@ -17,6 +17,6 @@ export function getVideo( state, guid ) {
  * @param  {String}  guid   VideoPress guid
  * @return {Boolean}        true if request is in progress
  */
-export function isFetchingVideo( state, guid ) {
-	return !! state.videos.fetchingVideo[ guid ];
+export function isRequestingVideo( state, guid ) {
+	return !! state.videos.videoRequests[ guid ];
 }

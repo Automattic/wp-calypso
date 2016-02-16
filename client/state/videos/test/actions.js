@@ -10,12 +10,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	VIDEO_FETCH,
-	VIDEO_FETCH_COMPLETED,
-	VIDEO_FETCH_FAILED,
+	VIDEO_REQUEST,
+	VIDEO_REQUEST_SUCCESS,
+	VIDEO_REQUEST_FAILURE,
 	VIDEO_RECEIVE
 } from 'state/action-types';
-import { fetchVideo } from '../actions';
+import { requestVideo } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -28,7 +28,7 @@ describe( 'actions', () => {
 		nock.cleanAll();
 	} );
 
-	describe( '#fetchVideo()', () => {
+	describe( '#requestVideo()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -45,17 +45,17 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
-			fetchVideo( 'kUJmAcSf' )( spy );
+		it( 'should dispatch request action when thunk triggered', () => {
+			requestVideo( 'kUJmAcSf' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: VIDEO_FETCH,
+				type: VIDEO_REQUEST,
 				guid: 'kUJmAcSf'
 			} );
 		} );
 
 		it( 'should dispatch video receive action when request completes', () => {
-			return fetchVideo( 'kUJmAcSf' )( spy ).then( () => {
+			return requestVideo( 'kUJmAcSf' )( spy ).then( () => {
 				const action = spy.getCall( 1 ).args[ 0 ];
 
 				expect( action.type ).to.equal( VIDEO_RECEIVE );
@@ -66,19 +66,19 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch video fetch completed action when fetching completes', () => {
-			return fetchVideo( 'kUJmAcSf' )( spy ).then( () => {
+		it( 'should dispatch video request success action when request completes', () => {
+			return requestVideo( 'kUJmAcSf' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: VIDEO_FETCH_COMPLETED,
+					type: VIDEO_REQUEST_SUCCESS,
 					guid: 'kUJmAcSf'
 				} );
 			} );
 		} );
 
-		it( 'should dispatch video fetch failed action when fetching fails', () => {
-			return fetchVideo( 'abcdefgh' )( spy ).then( () => {
+		it( 'should dispatch video request failed action when request fails', () => {
+			return requestVideo( 'abcdefgh' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: VIDEO_FETCH_FAILED,
+					type: VIDEO_REQUEST_FAILURE,
 					guid: 'abcdefgh',
 					error: sinon.match( { message: 'The specified video was not found.' } )
 				} );
