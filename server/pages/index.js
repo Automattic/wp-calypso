@@ -17,6 +17,7 @@ var config = require( 'config' ),
 	sections = require( '../../client/sections' ),
 	LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
 	render = require( 'render' ).render,
+	i18n = require( 'lib/mixins/i18n' ),
 	createReduxStore = require( 'state' ).createReduxStore,
 	setSection = require( 'state/ui/actions' ).setSection;
 
@@ -372,10 +373,12 @@ module.exports = function() {
 	} );
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
+
 		app.get( '/themes/:theme_slug', function( req, res ) {
 			const context = getDefaultContext( req );
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
+				i18n.initialize();
 				const store = createReduxStore();
 
 				store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
@@ -404,6 +407,7 @@ module.exports = function() {
 
 			if ( config.isEnabled( 'server-side-rendering' ) ) {
 				const store = createReduxStore();
+				i18n.initialize();
 				store.dispatch( setSection( 'design', { hasSidebar: false } ) );
 				context.initialReduxState = pick( store.getState(), 'ui' );
 

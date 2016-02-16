@@ -36,7 +36,7 @@ export default function() {
 		page( '/design*', renderPrimary ); // Call explicitly here because client-specific
 	}
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		page( '/themes/:slug/:site_id?', details );
+		page( '/themes/:slug/:section?/:site_id?', details );
 		page( '/themes*', renderPrimary ); // Call explicitly here because client-specific
 	}
 };

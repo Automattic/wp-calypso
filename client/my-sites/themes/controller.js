@@ -120,9 +120,11 @@ export function details( context, next ) {
 		: require( 'my-sites/themes/head' );
 	const props = {
 		themeSlug: context.params.slug,
+		contentSection: context.params.section,
 		title: buildTitle(
 			i18n.translate( 'Theme Details', { textOnly: true } )
-		)
+		),
+		isLoggedIn: !! user
 	};
 
 	context.store.dispatch( setSection( 'themes', {
