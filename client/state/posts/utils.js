@@ -30,7 +30,7 @@ export function getNormalizedPostsQuery( query ) {
  */
 export function getSerializedPostsQuery( query = {}, siteId ) {
 	const normalizedQuery = getNormalizedPostsQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery ).toLowerCase();
+	const serializedQuery = JSON.stringify( normalizedQuery ).toLocaleLowerCase();
 
 	if ( siteId ) {
 		return [ siteId, serializedQuery ].join( ':' );
