@@ -10,7 +10,7 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' ),
+	sections = require( '../../client/sections' ).get(),
 	isomorphicRouting = require( 'isomorphic-routing' );
 
 var HASH_LENGTH = 10,
@@ -365,8 +365,7 @@ module.exports = function() {
 		}
 	} );
 
-	// Isomorphic Routing for the themes sections
-	require( 'my-sites/themes' )( isomorphicRouting.serverRouter( app, getDefaultContext ) );
+	isomorphicRouting( app, getDefaultContext );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in ) {

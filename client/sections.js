@@ -135,7 +135,8 @@ sections = [
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
 		secondary: false,
-		group: 'sites'
+		group: 'sites',
+		isomorphic: true
 	},
 	{
 		name: 'themes',
@@ -143,7 +144,8 @@ sections = [
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
+		isomorphic: true
 	},
 	{
 		name: 'upgrades',
