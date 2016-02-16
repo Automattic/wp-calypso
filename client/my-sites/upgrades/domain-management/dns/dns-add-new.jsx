@@ -6,8 +6,6 @@ import classnames from 'classnames';
 import includes from 'lodash/includes';
 import assign from 'lodash/assign';
 import find from 'lodash/find';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -26,7 +24,6 @@ import formState from 'lib/form-state';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
-import { successNotice } from 'state/notices/actions';
 
 const DnsAddNew = React.createClass( {
 	propTypes: {
@@ -100,7 +97,7 @@ const DnsAddNew = React.createClass( {
 				if ( error ) {
 					notices.error( error.message || this.translate( 'The DNS record has not been added.' ) );
 				} else {
-					this.props.successNotice( this.translate( 'The DNS record has been added.' ), {
+					notices.success( this.translate( 'The DNS record has been added.' ), {
 						duration: 5000
 					} );
 					this.setState( { show: true } );
@@ -191,7 +188,4 @@ const DnsAddNew = React.createClass( {
 	}
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( DnsAddNew );
+export default DnsAddNew;
