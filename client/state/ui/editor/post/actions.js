@@ -166,6 +166,11 @@ export function setRawContent( htmlContent ) {
 	return { type: 'TODO' };
 }
 
+export function resetRawContent() {
+	debug( 'resetRawContent' );
+	return { type: 'TODO' };
+}
+
 export function stopEditing() {
 	debug( 'stopEditing' );
 	return { type: 'TODO' };
