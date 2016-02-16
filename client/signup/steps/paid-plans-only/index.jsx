@@ -9,7 +9,7 @@ import React from 'react';
 import PlansStepComponent from 'signup/steps/plans';
 
 module.exports = React.createClass( {
-	displayName: 'PaidPlansWithFreeTrialsStep',
+	displayName: 'PaidPlansOnly',
 
 	render: function() {
 		return (
