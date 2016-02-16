@@ -75,7 +75,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					span(class=['environment', 'is-docs'])
 						a(href=devDocsURL title='DevDocs') docs
 
-		if 'development' !== env && 'production' !== env
+		if 'development' !== env
 			script( src='/calypso/catch-js-errors.min.js' )
 
 		script.
