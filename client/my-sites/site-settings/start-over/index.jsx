@@ -63,10 +63,8 @@ module.exports = React.createClass( {
 					<ActionPanelFooter>
 						<Button
 							className="settings-action-panel__support-button"
-							href="https://en.support.wordpress.com/contact"
-							target="_blank">
+							href="/help/contact">
 							{ strings.contactSupport }
-							<Gridicon icon="external" />
 						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
