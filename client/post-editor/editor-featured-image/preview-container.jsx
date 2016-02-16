@@ -18,12 +18,19 @@ const EditorFeaturedImagePreviewContainer = React.createClass( {
 	displayName: 'EditorFeaturedImagePreviewContainer',
 
 	propTypes: {
+		setFeaturedImage: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string
 		] ).isRequired,
 		maxWidth: PropTypes.number
+	},
+
+	getDefaultProps: function() {
+		return {
+			setFeaturedImage: () => {}
+		};
 	},
 
 	getInitialState: function() {
