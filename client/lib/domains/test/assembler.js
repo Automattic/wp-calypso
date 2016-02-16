@@ -48,7 +48,8 @@ describe( 'assembler', () => {
 			privateDomain: undefined,
 			registrationDate: undefined,
 			registrationMoment: undefined,
-			type: domainTypes.SITE_REDIRECT
+			type: domainTypes.SITE_REDIRECT,
+			hasZone: undefined
 		},
 		mappedDomainObject = assign( {}, redirectDomainObject, {
 			type: domainTypes.MAPPED
