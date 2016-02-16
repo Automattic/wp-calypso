@@ -18,6 +18,9 @@ env-config.sh
 # added during build
 /config/secrets.json
 
+# config overrides
+/config/*.local.json
+
 /build
 
 /public/*.js
