@@ -39,6 +39,11 @@
 			animation: pulse-light 0.8s ease-in-out infinite;
 			background-color: lighten( $gray, 30% );
 			color: transparent;
+			width: 95%;
+
+			&::after {
+				display: none;
+			}
 		}
 
 		.notouch .sites-popover &:hover {
