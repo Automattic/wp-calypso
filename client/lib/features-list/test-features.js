@@ -75,7 +75,8 @@ const features = {
 		},
 		{
 			text: 'eCommerce',
-			planSpecific: true
+			planSpecific: true,
+			testVariable: true
 		},
 		{
 			text: 'Unlimited Premium Themes',
@@ -83,7 +84,8 @@ const features = {
 		},
 		{
 			text: 'Google Analytics',
-			planSpecific: true
+			planSpecific: true,
+			testVariable: true
 		},
 		{
 			text: 'Live Chat Support',

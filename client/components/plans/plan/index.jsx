@@ -19,7 +19,9 @@ var abtest = require( 'lib/abtest' ).abtest,
 	PlanPrice = require( 'components/plans/plan-price' ),
 	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
 	Card = require( 'components/card' ),
-	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' );
+	WpcomPlanDetails = require( 'my-sites/plans/wpcom-plan-details' ),
+	productsValues = require( 'lib/products-values' ),
+	isBusiness = productsValues.isBusiness;
 
 module.exports = React.createClass( {
 	displayName: 'Plan',
@@ -40,8 +42,14 @@ module.exports = React.createClass( {
 		}
 	},
 
+	getComparePlansUrl: function() {
+		var site = this.props.site,
+			siteSuffix = site ? site.slug : '';
+
+		return this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
+	},
+
 	getDescription: function() {
-		var comparePlansUrl, siteSuffix;
 		const { plan, site } = this.props;
 
 		if ( this.isPlaceholder() ) {
@@ -54,9 +62,6 @@ module.exports = React.createClass( {
 			);
 		}
 
-		siteSuffix = site ? site.slug : '';
-		comparePlansUrl = this.props.comparePlansUrl ? this.props.comparePlansUrl : '/plans/compare/' + siteSuffix;
-
 		if ( site && site.jetpack ) {
 			return (
 				<JetpackPlanDetails plan={ plan } />
@@ -65,14 +70,15 @@ module.exports = React.createClass( {
 
 		return (
 			<WpcomPlanDetails
-				comparePlansUrl={ comparePlansUrl }
+				comparePlansUrl={ this.getComparePlansUrl() }
 				handleLearnMoreClick={ this.handleLearnMoreClick }
 				plan={ plan } />
 		);
 	},
 
 	getFeatureList: function() {
-		var features;
+		var features,
+			moreLink = '';
 
 		if ( this.isPlaceholder() ) {
 			return;
@@ -83,6 +89,10 @@ module.exports = React.createClass( {
 				'is-plan-specific': feature.planSpecific
 			} );
 
+			if ( abtest( 'plansFeatureList' ) === 'andMore' && feature.testVariable ) {
+				return null;
+			}
+
 			return (
 				<li className={ classes } key={ i }>
 					<Gridicon icon="checkmark" size={ 12 } />
@@ -91,7 +101,21 @@ module.exports = React.createClass( {
 			);
 		} );
 
-		return <ul className="plan__features">{ features }</ul>;
+		if ( abtest( 'plansFeatureList' ) === 'andMore' && isBusiness( this.props.plan ) ) {
+			moreLink = (
+				<li className="plan__feature is-plan-specific">
+					<Gridicon icon="checkmark" size={ 12 } />
+					<a href={ this.getComparePlansUrl() }>And more</a>
+				</li>
+			);
+		}
+
+		return (
+			<ul className="plan__features">
+				{ features }
+				{ moreLink }
+			</ul>
+		);
 	},
 
 	showDetails: function() {
@@ -226,7 +250,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) === 'list';
+		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) !== 'description';
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }
