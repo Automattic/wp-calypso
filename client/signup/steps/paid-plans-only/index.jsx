@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PlansStepComponent from 'signup/steps/plans';
+import PlansStep from 'signup/steps/plans';
 
 export default React.createClass( {
 	displayName: 'PaidPlansOnly',
@@ -14,7 +14,7 @@ export default React.createClass( {
 	render: function() {
 		return (
 			<div className="paid-plans-only">
-				<PlansStepComponent
+				<PlansStep
 					hideFreePlan
 					{ ...this.props }
 				/>
