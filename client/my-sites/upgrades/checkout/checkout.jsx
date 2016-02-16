@@ -135,7 +135,7 @@ const Checkout = React.createClass( {
 
 	getCheckoutCompleteRedirectPath: function() {
 		var renewalItem,
-			receiptId = this.props.transaction.step.data.receipt_id;
+			receiptId = ':receipt_id';
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			clearPurchases();
@@ -149,10 +149,15 @@ const Checkout = React.createClass( {
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
-		this.props.fetchReceiptCompleted( receiptId, {
-			receipt_id: receiptId,
-			purchases: this.getPurchasesFromReceipt()
-		} );
+		if ( this.props.transaction.step.data && this.props.transaction.step.data.receipt_id ) {
+			receiptId = this.props.transaction.step.data.receipt_id;
+
+			this.props.fetchReceiptCompleted( receiptId, {
+				receipt_id: receiptId,
+				purchases: this.getPurchasesFromReceipt()
+			} );
+		}
+
 
 		return `/checkout/${ this.props.sites.getSelectedSite().slug }/${ receiptId }/thank-you`;
 	},
