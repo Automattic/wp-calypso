@@ -58,8 +58,7 @@ function ensureMiddleware( ctx, next ) {
 	} );
 }
 
-function renderMiddleware( ctx ) {
-	debugger;
+function renderMiddleware( ctx, next ) {
 	if ( ctx.primary ) {
 		console.log( 'renderMiddleware: rendering' );
 		ReactDom.render(
@@ -67,4 +66,5 @@ function renderMiddleware( ctx ) {
 			document.getElementById( 'primary' )
 		);
 	}
+	next();
 }
