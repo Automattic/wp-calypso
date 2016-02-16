@@ -6,17 +6,30 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { SELECTED_SITE_SET, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import {
-	selectedSiteId,
-	recentlySelectedSiteIds,
-	section,
-	hasSidebar,
-	isLoading,
-	chunkName
-} from '../reducer';
+	SELECTED_SITE_SET,
+	SERIALIZE,
+	DESERIALIZE
+} from 'state/action-types';
+import reducer, { selectedSiteId } from '../reducer';
 
 describe( 'reducer', () => {
+	it( 'should refuse to persist any state', () => {
+		const state = reducer( {
+			selectedSiteId: 2916284
+		}, { type: SERIALIZE } );
+
+		expect( state ).to.eql( {} );
+	} );
+
+	it( 'should refuse to restore any persisted state', () => {
+		const state = reducer( {
+			selectedSiteId: 2916284
+		}, { type: DESERIALIZE } );
+
+		expect( state ).to.eql( {} );
+	} );
+
 	describe( '#selectedSiteId()', () => {
 		it( 'should default to null', () => {
 			const state = selectedSiteId( undefined, {} );
@@ -40,112 +53,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.null;
-		} );
-
-		it( 'should not persist data because this is not implemented', () => {
-			const state = selectedSiteId( 2916284, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( null );
-		} );
-
-		it( 'should not load persisted state because this is not implemented', () => {
-			const state = selectedSiteId( 2916284, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( null );
-		} );
-	} );
-
-	describe( '#recentlySelectedSiteIds()', () => {
-		it( 'should not persist data because this is not implemented', () => {
-			const state = recentlySelectedSiteIds( [ 2916284 ], {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( [] );
-		} );
-
-		it( 'should not load persisted state because this is not implemented', () => {
-			const state = recentlySelectedSiteIds( [ 2916284 ], {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( [] );
-		} );
-	} );
-
-	describe( '#section()', () => {
-		it( 'should persist data', () => {
-			const state = section( 'hello', {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( 'hello' );
-		} );
-
-		it( 'should load persisted state', () => {
-			const state = section( 'hello', {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( 'hello' );
-		} );
-	} );
-
-	describe( '#hasSidebar()', () => {
-		it( 'should persist data', () => {
-			const state = hasSidebar( false, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-
-		it( 'should load persisted state', () => {
-			const state = hasSidebar( false, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-	} );
-
-	describe( '#isLoading()', () => {
-		it( 'should not persist data because this is not implemented', () => {
-			const state = isLoading( true, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-
-		it( 'should not load persisted state because this is not implemented', () => {
-			const state = isLoading( true, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-	} );
-
-	describe( '#chunkName()', () => {
-		it( 'should not persist data because this is not implemented', () => {
-			const state = chunkName( 'hello', {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-
-		it( 'should not load persisted state because this is not implemented', () => {
-			const state = chunkName( 'hello', {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( false );
 		} );
 	} );
 } );
