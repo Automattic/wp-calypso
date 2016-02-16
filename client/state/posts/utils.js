@@ -48,6 +48,5 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
  * @return {String}        Serialized posts query
  */
 export function getSerializedPostsQueryWithoutPage( query, siteId ) {
-	query = Object.assign( getNormalizedPostsQuery( query ), { siteId } );
-	return JSON.stringify( omit( query, 'page' ) ).toLowerCase();
+	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
 }
