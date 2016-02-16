@@ -89,21 +89,21 @@ const CurrentSite = React.createClass( {
 		return this.props.sites.getSelectedSite();
 	},
 
-	getDomainExpirationNotices: function() {
+	getDomainWarnings: function() {
 		let domainStore = this.state.domainsStore.getBySite( this.getSelectedSite().ID ),
 			domains = domainStore && domainStore.list || [];
 		return (
 			<DomainWarnings
 				selectedSite={ this.getSelectedSite() }
 				domains={ domains }
-				ruleWhiteList={ [ 'expiredDomains', 'expiringDomains' ] } />
+				ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'wrongNSMappedDomains' ] } />
 		);
 	},
 
 	getSiteNotices: function() {
 		return (
 			<div>
-				{ this.getDomainExpirationNotices() }
+				{ this.getDomainWarnings() }
 			</div>
 		);
 	},
