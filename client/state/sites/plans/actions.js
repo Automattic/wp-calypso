@@ -63,7 +63,7 @@ export function fetchSitePlans( siteId ) {
 		siteId
 	}
 }
-registerConnection( SITE_PLANS_FETCH, connectFetchSitePlans, { offlineQueue: true } );
+registerConnection( SITE_PLANS_FETCH, connectFetchSitePlans, { offlineQueue: true, squash: true } );
 
 /**
  * Returns an action object to be used in signalling that an object containing

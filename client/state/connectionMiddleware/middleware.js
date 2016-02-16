@@ -2,6 +2,7 @@
  * External dependencies
  */
 import uniqueId from 'lodash/utility/uniqueId';
+import Hashes from 'jshashes';
 
 /**
  * Internal dependencies
@@ -27,6 +28,8 @@ function queueAction( action ) {
 		type: OFFLINE_QUEUE_ACTION,
 		id: uniqueId(),
 		dispatchedAt: ( new Date() ).getTime(),
+		squash: connections[ action.type ].squash,
+		hash: new Hashes.SHA1().hex( JSON.stringify( action ) ),
 		action: action
 	}
 }
@@ -113,7 +116,8 @@ const offlineQueue = store => next => action => {
 export function registerConnection( actionType, connectionFunction, options = {} ) {
 	connections[ actionType ] = Object.assign( {
 		connectionFunction,
-		offlineQueue: false
+		offlineQueue: false,
+		squash: false,
 	}, options );
 }
 
