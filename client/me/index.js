@@ -89,10 +89,6 @@ export default function() {
 		controller.purchases.managePurchase
 	);
 
-	if ( config.isEnabled( 'me/next-steps' ) ) {
-		page( '/me/next/:welcome?', controller.sidebar, controller.nextStepsWelcomeRedirect, controller.nextSteps );
-	}
-
 	if ( config.isEnabled( 'me/security' ) ) {
 		page( '/me/security', controller.sidebar, controller.password );
 		page( '/me/security/two-step', controller.sidebar, controller.twoStep );

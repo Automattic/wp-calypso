@@ -266,7 +266,7 @@ function reduxStoreReady( reduxStore ) {
 		}
 
 		// If `?welcome` is present show the welcome message
-		if ( context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
+		if ( context.querystring === 'welcome' ) {
 			// show welcome message, persistent for full sized screens
 			nuxWelcome.setWelcome( viewport.isDesktop() );
 		} else {
