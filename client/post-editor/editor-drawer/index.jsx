@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	find = require( 'lodash/find' );
+import React from 'react';
+import get from 'lodash/get';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -31,9 +32,11 @@ const Accordion = require( 'components/accordion' ),
 	TrackInputChanges = require( 'components/track-input-changes' ),
 	actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	siteUtils = require( 'lib/site/utils' );
 import { setExcerpt } from 'state/ui/editor/post/actions';
+import QueryPostTypes from 'components/data/query-post-types';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
 
 const EditorDrawer = React.createClass( {
 
@@ -51,10 +54,6 @@ const EditorDrawer = React.createClass( {
 		};
 	},
 
-	mixins: [
-		observe( 'postTypes' ),
-	],
-
 	onExcerptChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
@@ -62,19 +61,17 @@ const EditorDrawer = React.createClass( {
 	},
 
 	currentPostTypeSupports: function( feature ) {
-		if ( ! this.props.site ) {
+		const { site, postTypes, type } = this.props;
+		if ( ! site ) {
 			return false;
 		}
 
-		const types = this.props.postTypes.get( this.props.site.ID );
-		const currentType = find( types, { name: this.props.type } );
-
-		// assume positively if we can't determine support
-		if ( ! currentType || ! currentType.supports ) {
+		// Default to true until post types are known
+		if ( ! postTypes ) {
 			return true;
 		}
 
-		return currentType.supports[ feature ];
+		return get( postTypes, [ type, 'supports', feature ], false );
 	},
 
 	recordExcerptChangeStats: function() {
@@ -240,7 +237,7 @@ const EditorDrawer = React.createClass( {
 
 	renderPageDrawer: function() {
 		return (
-			<div className="editor-drawer">
+			<div>
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				<Accordion
@@ -267,7 +264,7 @@ const EditorDrawer = React.createClass( {
 
 	renderPostDrawer: function() {
 		return (
-			<div className="editor-drawer">
+			<div>
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				{ this.renderSharing() }
@@ -278,14 +275,29 @@ const EditorDrawer = React.createClass( {
 	},
 
 	render: function() {
-		if ( this.props.type === 'page' ) {
-			return this.renderPageDrawer();
-		}
-		return this.renderPostDrawer();
+		const { site, type } = this.props;
+
+		return (
+			<div className="editor-drawer">
+				{ site && <QueryPostTypes siteId={ site.ID } /> }
+				{ 'page' === type
+					? this.renderPageDrawer()
+					: this.renderPostDrawer() }
+			</div>
+		);
 	}
 } );
 
 export default connect(
-	null,
+	( state ) => {
+		const site = getSelectedSite( state );
+		if ( ! site ) {
+			return {};
+		}
+
+		return {
+			postTypes: getPostTypes( state, site.ID )
+		};
+	},
 	dispatch => bindActionCreators( { setExcerpt }, dispatch )
 )( EditorDrawer );
