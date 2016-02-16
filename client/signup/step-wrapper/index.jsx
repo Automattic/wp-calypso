@@ -58,7 +58,7 @@ module.exports = React.createClass( {
 					subHeaderText={ this.subHeaderText() } />
 				<div className="is-animated-content">
 					{ this.props.stepContent }
-					<div className="step-wrapper_buttons">
+					<div className="step-wrapper__buttons">
 						<PreviousStepButton
 							flowName={ this.props.flowName }
 							positionInFlow={ this.props.positionInFlow }
