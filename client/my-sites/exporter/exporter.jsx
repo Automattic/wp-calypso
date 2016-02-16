@@ -37,13 +37,12 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { setPostType, startExport, exportStatusFetch, clearExport } = this.props;
+		const { setPostType, startExport, exportStatusFetch } = this.props;
 		const { postType, shouldShowProgress, isExporting } = this.props;
 		const siteId = this.props.site.ID;
 
 		const exportAll = () => startExport( siteId );
 		const fetchStatus = () => exportStatusFetch( siteId );
-		const dismissNotice = () => clearExport( siteId );
 
 		const exportButton = (
 			<SpinnerButton
@@ -60,8 +59,8 @@ export default React.createClass( {
 			notice = (
 				<Notice
 					status="is-success"
+					showDismiss={ false }
 					text={ this.translate( 'Your export was successful! A download link has also been sent to your email.' ) }
-					onDismissClick={ dismissNotice }
 				>
 					<NoticeAction href={ this.props.downloadURL }>
 						{ this.translate( 'Download' ) }
@@ -73,8 +72,8 @@ export default React.createClass( {
 			notice = (
 				<Notice
 					status="is-error"
+					showDismiss={ false }
 					text={ this.translate( 'There was a problem preparing your export file. Please check your connection and try again, or contact support.' ) }
-					onDismissClick={ dismissNotice }
 				>
 					<NoticeAction href={ '/help/contact' }>
 						{ this.translate( 'Get Help' ) }

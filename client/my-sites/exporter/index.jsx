@@ -19,7 +19,6 @@ import {
 	exportStatusFetch,
 	setPostType,
 	startExport,
-	clearExport,
 } from 'state/site-settings/exporter/actions';
 import { States } from 'state/site-settings/exporter/constants';
 
@@ -43,7 +42,6 @@ function mapDispatchToProps( dispatch ) {
 		exportStatusFetch: compose( dispatch, exportStatusFetch ),
 		setPostType: compose( dispatch, setPostType ),
 		startExport: compose( dispatch, startExport ),
-		clearExport: compose( dispatch, clearExport ),
 	};
 }
 
