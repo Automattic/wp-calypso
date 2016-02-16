@@ -7,6 +7,7 @@ import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
+	EXPORT_CLEAR,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_START_REQUEST,
@@ -155,5 +156,12 @@ export function exportComplete( siteId, downloadURL ) {
 		type: EXPORT_COMPLETE,
 		siteId,
 		downloadURL
+	}
+}
+
+export function clearExport( siteId ) {
+	return {
+		type: EXPORT_CLEAR,
+		siteId
 	}
 }

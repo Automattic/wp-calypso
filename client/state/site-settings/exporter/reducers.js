@@ -13,6 +13,7 @@ import {
 	SET_EXPORT_POST_TYPE,
 	SERIALIZE,
 	DESERIALIZE,
+	EXPORT_CLEAR,
 	EXPORT_COMPLETE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
@@ -56,6 +57,10 @@ export function exportingState( state = {}, { type, siteId } ) {
 		case EXPORT_FAILURE:
 			return Object.assign( {}, state, {
 				[ siteId ]: States.FAILED
+			} );
+		case EXPORT_CLEAR:
+			return Object.assign( {}, state, {
+				[ siteId ]: States.READY
 			} );
 		case SERIALIZE:
 			return {};
@@ -114,6 +119,12 @@ export function downloadURL( state = null, action ) {
 	switch ( action.type ) {
 		case EXPORT_COMPLETE:
 			return action.downloadURL;
+		case EXPORT_CLEAR:
+			return null;
+		case SERIALIZE:
+			return null;
+		case DESERIALIZE:
+			return null;
 	}
 
 	return state;
