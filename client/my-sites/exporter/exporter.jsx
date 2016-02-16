@@ -64,7 +64,7 @@ export default React.createClass( {
 					onDismissClick={ dismissNotice }
 				>
 					<NoticeAction href={ this.props.downloadURL }>
-						Download
+						{ this.translate( 'Download' ) }
 					</NoticeAction>
 				</Notice>
 			);
@@ -77,7 +77,7 @@ export default React.createClass( {
 					onDismissClick={ dismissNotice }
 				>
 					<NoticeAction href={ '/help/contact' }>
-						Get Help
+						{ this.translate( 'Get Help' ) }
 					</NoticeAction>
 				</Notice>
 			);
