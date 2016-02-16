@@ -6,9 +6,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import debugModule from 'debug';
 import classNames from 'classnames';
-import some from 'lodash/collection/some';
-import find from 'lodash/collection/find';
-import isEmpty from 'lodash/lang/isEmpty';
+import some from 'lodash/some';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal dependencies

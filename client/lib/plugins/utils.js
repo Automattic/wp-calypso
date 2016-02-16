@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var _pick = require( 'lodash/object/pick' ),
-	_assign = require( 'lodash/object/assign' ),
-	_map = require( 'lodash/collection/map' ),
-	filter = require( 'lodash/collection/filter' ),
-	_transform = require( 'lodash/object/transform' ),
-	_sortByAll = require( 'lodash/collection/sortByAll' ),
+var pick = require( 'lodash/pick' ),
+	assign = require( 'lodash/assign' ),
+	map = require( 'lodash/map' ),
+	filter = require( 'lodash/filter' ),
+	transform = require( 'lodash/transform' ),
+	sortBy = require( 'lodash/sortBy' ),
 	sanitizeHtml = require( 'sanitize-html' );
 
 /**
