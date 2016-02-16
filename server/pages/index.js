@@ -10,7 +10,7 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' ),
+	sections = require( '../../client/sections' ).get(),
 	isomorphicRouting = require( 'isomorphic-routing' );
 
 var HASH_LENGTH = 10,

@@ -25,7 +25,7 @@ function getEnhancedContext( context, req ) {
 }
 
 module.exports = function( expressApp, getDefaultContext ) {
-	sections
+	sections.get()
 		.filter( function( section ) {
 			return section.routing === 'isomorphic';
 		} )
@@ -78,7 +78,7 @@ module.exports = function( expressApp, getDefaultContext ) {
 				expressApp.get( path, setUpRoute );
 			} );
 			// Individual routes from chunk
-			require( 'client/' + section.module )( serverRouter ); // possibly also pass context.isLoggedIn/isServerSide?
+			sections.require( section.module )( serverRouter ); // possibly also pass context.isLoggedIn/isServerSide?
 			// Render!
 			section.paths.forEach( function( path ) {
 				expressApp.get( path, serverRender );

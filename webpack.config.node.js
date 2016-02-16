@@ -51,6 +51,11 @@ module.exports = {
 	module: {
 		loaders: [
 			{
+				test: /sections.js$/,
+				exclude: 'node_modules',
+				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
+			},
+			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
 				loader: 'babel-loader?optional[]=runtime'
