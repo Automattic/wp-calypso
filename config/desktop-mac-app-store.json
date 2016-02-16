@@ -9,7 +9,6 @@
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
-	"flickr_api_key": "2205be654575698ace17159e352e7648",
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
