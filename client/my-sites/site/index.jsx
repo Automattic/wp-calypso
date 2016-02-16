@@ -1,27 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import classnames from 'classnames';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var SiteIcon = require( 'components/site-icon' ),
-	Gridicon = require( 'components/gridicon' ),
-	SiteIndicator = require( 'my-sites/site-indicator' ),
-	getCustomizeUrl = require( 'my-sites/themes/helpers' ).getCustomizeUrl,
-	sites = require( 'lib/sites-list' )();
-
+import SiteIcon from 'components/site-icon';
+import Gridicon from 'components/gridicon';
+import SiteIndicator from 'my-sites/site-indicator';
+import { getCustomizeUrl } from 'my-sites/themes/helpers';
+import sitesList from 'lib/sites-list';
 import { userCan } from 'lib/site/utils';
 import Tooltip from 'components/tooltip';
 import ExternalLink from 'components/external-link';
 
-module.exports = React.createClass( {
+const sites = sitesList();
+
+export default React.createClass( {
 	displayName: 'Site',
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			// onSelect callback
 			onSelect: noop,
@@ -59,14 +60,14 @@ module.exports = React.createClass( {
 		disableStarring: React.PropTypes.bool
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			showActions: false,
 			starTooltip: false
 		};
 	},
 
-	onSelect: function( event ) {
+	onSelect( event ) {
 		if ( this.props.homeLink ) {
 			return;
 		}
@@ -75,12 +76,12 @@ module.exports = React.createClass( {
 		event.preventDefault(); // this doesn't actually do anything...
 	},
 
-	starSite: function() {
+	starSite() {
 		const site = this.props.site;
 		sites.toggleStarred( site.ID );
 	},
 
-	renderStar: function() {
+	renderStar() {
 		const site = this.props.site;
 
 		if ( ! site || this.props.disableStarring ) {
@@ -112,7 +113,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderEditIcon: function() {
+	renderEditIcon() {
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
 			return <SiteIcon site={ this.props.site } />;
 		}
@@ -131,7 +132,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	getHref: function() {
+	getHref() {
 		if ( this.state.showMoreActions || ! this.props.site ) {
 			return null;
 		}
@@ -139,20 +140,19 @@ module.exports = React.createClass( {
 		return this.props.homeLink ? this.props.site.URL : this.props.href;
 	},
 
-	closeActions: function() {
+	closeActions() {
 		this.setState( { showMoreActions: false } );
 	},
 
-	render: function() {
-		var site = this.props.site,
-			siteClass;
+	render() {
+		const site = this.props.site;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
 			return null;
 		}
 
-		siteClass = classNames( {
+		const siteClass = classnames( {
 			site: true,
 			'is-jetpack': site.jetpack,
 			'is-primary': site.primary,
