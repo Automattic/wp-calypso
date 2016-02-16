@@ -202,8 +202,9 @@ githooks-push:
 list-publishable-modules:
 	./bin/list-publishable-modules.js
 
+# publishes module given via path to NPM: make publish-module path=PATH_TO_MODULE
 publish-module:
-	( cd $(path) && make publish )
+	make -C $(path) publish
 
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
