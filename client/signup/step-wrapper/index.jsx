@@ -58,13 +58,15 @@ module.exports = React.createClass( {
 					subHeaderText={ this.subHeaderText() } />
 				<div className="is-animated-content">
 					{ this.props.stepContent }
-					{ this.renderSkip() }
-					<PreviousStepButton
-						flowName={ this.props.flowName }
-						positionInFlow={ this.props.positionInFlow }
-						stepName={ this.props.stepName }
-						backUrl={ this.props.backUrl }
-						signupProgressStore={ this.props.signupProgressStore } />
+					<div className="step-wrapper_buttons">
+						<PreviousStepButton
+							flowName={ this.props.flowName }
+							positionInFlow={ this.props.positionInFlow }
+							stepName={ this.props.stepName }
+							backUrl={ this.props.backUrl }
+							signupProgressStore={ this.props.signupProgressStore } />
+						{ this.renderSkip() }
+					</div>
 				</div>
 			</div>
 		);

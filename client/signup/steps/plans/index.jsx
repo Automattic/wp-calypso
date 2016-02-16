@@ -16,7 +16,6 @@ var productsList = require( 'lib/products-list' )(),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlansCompare = require( 'components/plans/plans-compare' ),
 	SignupActions = require( 'lib/signup/actions' ),
-	SkipStepButton = require( 'signup/skip-step-button' ),
 	StepWrapper = require( 'signup/step-wrapper' ),
 	Gridicon = require( 'components/gridicon' );
 
@@ -132,6 +131,7 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
+				goToNextStep={ this.props.showSkipStepButton ? this.onSelectPlan : null }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
@@ -162,14 +162,6 @@ module.exports = React.createClass( {
 				'compare' === this.props.stepSectionName
 				? this.plansCompare()
 				: this.plansSelection()
-			}
-			{
-				this.props.showSkipStepButton
-					? <SkipStepButton
-						goToNextStep={ this.onSelectPlan }
-						stepName={ this.props.stepName }
-						defaultDependencies={ this.props.defaultDependencies } />
-					: null
 			}
 		</div>;
 	}

@@ -1,0 +1,16 @@
+.step-wrapper {
+	.step-wrapper_buttons {
+		text-align: center;
+
+		.skip-step,
+		.previous-step {
+			display: inline-block;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+
+		.previous-step {
+			line-height: 34px;
+		}
+	}
+}
