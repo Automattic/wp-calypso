@@ -18,6 +18,7 @@ import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
 import { recordAction, recordGaEvent } from 'reader/stats';
 import { getSiteUrl } from 'reader/route';
+import { decodeEntities } from 'lib/formatting';
 
 const RecommendedForYou = React.createClass( {
 
@@ -112,7 +113,7 @@ const RecommendedForYou = React.createClass( {
 				<Title>
 					<a href={ siteUrl } onclick={ this.trackSiteClick }>{ title }</a>
 				</Title>
-				<Description>{ rec.reason }</Description>
+				<Description>{ decodeEntities( rec.reason ) }</Description>
 				<Actions>
 					<FollowButton siteUrl={ site.URL } />
 				</Actions>
