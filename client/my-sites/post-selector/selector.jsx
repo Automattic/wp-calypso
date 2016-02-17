@@ -80,7 +80,8 @@ const PostSelectorPosts = React.createClass( {
 		onSearch: PropTypes.func,
 		onChange: PropTypes.func,
 		onNextPage: PropTypes.func,
-		multiple: PropTypes.bool
+		multiple: PropTypes.bool,
+		showTypeLabel: PropTypes.bool
 	},
 
 	getInitialState() {
@@ -219,7 +220,6 @@ const PostSelectorPosts = React.createClass( {
 	render() {
 		const numberPosts = this.props.posts ? this.props.posts.length : 0;
 		const showSearch = ( numberPosts > this.props.searchThreshold ) || this.state.searchTerm;
-		const isAnyType = 'any' === this.props.query.type;
 		let posts;
 
 		if ( this.props.posts ) {
@@ -227,19 +227,26 @@ const PostSelectorPosts = React.createClass( {
 			posts = ( this.props.lastPage && ! this.state.searchTerm ) ? buildTree( this.props.posts ) : this.props.posts;
 		}
 
+		let showTypeLabels;
+		if ( 'boolean' === typeof this.props.showTypeLabels ) {
+			showTypeLabels = this.props.showTypeLabels;
+		} else {
+			showTypeLabels = 'any' === this.props.query.type;
+		}
+
 		const classes = classNames(
 			'post-selector',
 			this.props.className, {
 				'is-loading': this.props.loading,
 				'is-compact': ! showSearch && ! this.props.loading,
-				'is-any-type': isAnyType
+				'is-type-labels-visible': showTypeLabels
 			}
 		);
 
 		return (
 			<div className={ classes } onScroll={ this.checkScrollPosition }>
 				<QueryPosts siteId={ this.props.siteId } query={ this.props.query } />
-				{ isAnyType && <QueryPostTypes siteId={ this.props.siteId } /> }
+				{ showTypeLabels && <QueryPostTypes siteId={ this.props.siteId } /> }
 				{ showSearch ?
 					<Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> :
 					null

@@ -10,9 +10,16 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import PostSelector from '../';
 import observe from 'lib/mixins/data-observe';
 import sites from 'lib/sites-list';
+import FormLabel from 'components/forms/form-label';
 
 const PostSelectorExample = React.createClass( {
 	mixins: [ observe( 'sites' ), PureRenderMixin ],
+
+	getInitialState() {
+		return {
+			showTypeLabels: true
+		};
+	},
 
 	render() {
 		const primary = this.props.sites.getPrimary();
@@ -23,12 +30,20 @@ const PostSelectorExample = React.createClass( {
 					<a href="/devdocs/app-components/post-selector">Post Selector</a>
 				</h2>
 				<div style={ { width: 300 } }>
+					<FormLabel>
+						<input
+							type="checkbox"
+							checked={ this.state.showTypeLabels }
+							onChange={ () => this.setState( { showTypeLabels: ! this.state.showTypeLabels } ) } />
+						Show Type Labels
+					</FormLabel>
 					{ this.props.sites.initialized && (
 						<PostSelector
 							siteId={ primary ? primary.ID : 3584907 }
 							type="any"
 							orderBy="date"
-							order="DESC" />
+							order="DESC"
+							showTypeLabels={ this.state.showTypeLabels } />
 					) }
 				</div>
 			</div>
