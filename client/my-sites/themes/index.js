@@ -1,16 +1,11 @@
 /**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
 import sections from 'sections';
 import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, details } from './controller';
+import { singleSite, multiSite, loggedOut, details, renderPrimary } from './controller';
 
 const user = userFactory();
 
@@ -36,15 +31,15 @@ export default function( router ) {
 			router( route, ...[
 				ensureMiddleware,
 				...routes[ route ],
-				renderMiddleware,
+				renderPrimary,
 			] );
 		} );
-		router( '/design*', renderMiddleware );
+		router( '/design*', renderPrimary );
 	}
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
 		router( '/themes*', ensureMiddleware );
 		router( '/themes/:slug/:site_id?', details );
-		router( '/themes*', renderMiddleware );
+		router( '/themes*', renderPrimary );
 	}
 
 	console.log( 'themes routes set up!' );
@@ -56,15 +51,4 @@ function ensureMiddleware( ctx, next ) {
 		console.log( 'loaded!' );
 		next();
 	} );
-}
-
-function renderMiddleware( ctx, next ) {
-	if ( ctx.primary ) {
-		console.log( 'renderMiddleware: rendering' );
-		ReactDom.render(
-			ctx.primary,
-			document.getElementById( 'primary' )
-		);
-	}
-	next();
 }
