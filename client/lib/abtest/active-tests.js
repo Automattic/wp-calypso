@@ -91,4 +91,12 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	paidPlansOnly: {
+		datestamp: '20160217',
+		variations: {
+			allPlans: 90,
+			skipForFree: 10
+		},
+		defaultVariation: 'allPlans'
+	},
 };
