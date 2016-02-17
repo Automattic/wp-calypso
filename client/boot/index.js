@@ -202,7 +202,7 @@ function reduxStoreReady( reduxStore ) {
 				props = { routeName: matchedRoutes[0].name, match: matchedRoutes[0].match };
 				Layout = require( 'layout/logged-out-design' );
 			}
-		} else if ( startsWith( '/design', window.location.pathname ) ) {
+		} else if ( startsWith( window.location.pathname, '/design' ) ) {
 			Layout = require( 'layout/logged-out-design' );
 		}
 
