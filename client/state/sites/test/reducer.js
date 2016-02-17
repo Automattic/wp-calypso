@@ -2,24 +2,21 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
+import sinon from 'sinon';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
 import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { items } from '../reducer';
 
-let items;
 describe( 'reducer', () => {
 	before( function() {
-		mockery.registerMock( 'lib/warn', () => {} );
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
-		items = require( '../reducer' ).items;
+		sinon.stub( console, 'warn' );
 	} );
 	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
+		console.warn.restore();
 	} );
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {

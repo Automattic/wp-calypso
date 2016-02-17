@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -27,13 +28,21 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it.skip( 'should validate ID is positive', () => {
+			before( () => {
+				sinon.stub( console, 'warn' );
+			} );
+
+			after( () => {
+				console.warn.restore();
+			} );
+
+			it( 'should validate ID is positive', () => {
 				const state = id( -1, {
 					type: DESERIALIZE
 				} );
 				expect( state ).to.equal( null );
 			} );
-			it.skip( 'should validate ID is a number', () => {
+			it( 'should validate ID is a number', () => {
 				const state = id( 'foobar', {
 					type: DESERIALIZE
 				} );
