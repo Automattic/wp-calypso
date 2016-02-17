@@ -343,6 +343,7 @@ Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
 	updatedParams.body = Object.assign( {}, body, { locale } );
 
 	if ( apiVersion ) {
+		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
 		this.wpcom.req[ method.toLowerCase() ]( updatedParams, { apiVersion }, fn );
 	} else {
 		this.wpcom.req[ method.toLowerCase() ]( updatedParams, fn );
