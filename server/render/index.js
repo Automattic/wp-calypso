@@ -26,7 +26,7 @@ function bumpStat( group, name ) {
 export function render( element ) {
 	memoizedRenderToString.cache = markupCache;
 
-	if ( ! memoizedRenderToString.cache.has( element ) ) {
+	if ( ! memoizedRenderToString.cache.has( JSON.stringify( element ) ) ) {
 		bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 	}
 
