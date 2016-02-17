@@ -1,4 +1,4 @@
-export default {
+export const sitesSchema = {
 	type: 'object',
 	patternProperties: {
 		//be careful to escape regexes properly

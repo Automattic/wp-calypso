@@ -12,7 +12,7 @@ import omit from 'lodash/omit';
  */
 import { plans } from './plans/reducer';
 import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import schema from './schema';
+import { sitesSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -37,7 +37,10 @@ export function items( state = {}, action ) {
 			} );
 			return keyBy( sites, 'ID' );
 		case DESERIALIZE:
-			return isValidStateWithSchema( state, schema ) ? state : {};
+			if ( isValidStateWithSchema( state, sitesSchema ) ) {
+				return state;
+			}
+			return {};
 	}
 	return state;
 }
