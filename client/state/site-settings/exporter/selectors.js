@@ -36,5 +36,11 @@ export function isExporting( state, siteId ) {
 	return exportingState === States.EXPORTING;
 }
 
+export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
 export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
-export const advancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
+export const getPostTypeOptions = ( state, siteId, postType ) => {
+	const advancedSettings = getAdvancedSettings( state, siteId );
+	if ( ! advancedSettings ) return null;
+
+	return advancedSettings[ postType ];
+}
