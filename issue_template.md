@@ -24,6 +24,6 @@ If you want to prefix the title with “Question:”, “Feature Request:”, or
 
 ## Steps to reproduce
 
-## Browser OS version
+## Browser / OS version
 
-## Screenshots/Video
+## Screenshots / Video
