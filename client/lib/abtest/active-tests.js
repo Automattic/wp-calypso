@@ -91,7 +91,7 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
-	paidPlansOnly: {
+	freePlansDefault: {
 		datestamp: '20160217',
 		variations: {
 			allPlans: 90,

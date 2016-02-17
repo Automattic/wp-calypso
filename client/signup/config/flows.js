@@ -219,6 +219,11 @@ function filterFlowName( flowName ) {
 			return ( 'blog' === flowName ) ? 'blog-altthemes' : 'website-altthemes';
 		}
 	}
+
+	if ( 'skipForFree' === abtest( 'freePlansDefault' ) ) {
+		return 'upgrade';
+	}
+
 	return flowName;
 }
 
