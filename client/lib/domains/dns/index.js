@@ -5,11 +5,12 @@ const includes = require( 'lodash/includes' ),
 	mapValues = require( 'lodash/mapValues' ),
 	endsWith = require( 'lodash/endsWith' );
 
-function validateAllFields( fieldValues ) {
+function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
+			value,
+			domainName,
 			name: fieldName,
-			value: value,
 			type: fieldValues.type,
 		} );
 
@@ -17,10 +18,10 @@ function validateAllFields( fieldValues ) {
 	} );
 }
 
-function validateField( { name, value, type } ) {
+function validateField( { name, value, type, domainName } ) {
 	switch ( name ) {
 		case 'name':
-			return isValidName( value, type );
+			return isValidName( value, type, domainName );
 		case 'target':
 			return isValidDomain( value, type );
 		case 'data':
@@ -45,8 +46,8 @@ function isValidDomain( name ) {
 	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
 }
 
-function isValidName( name, type ) {
-	if ( isNameEmptyAndItsAllowed( name, type ) ) {
+function isValidName( name, type, domainName ) {
+	if ( isRootDomain( name, domainName ) && canBeRootDomain( type ) ) {
 		return true;
 	}
 
@@ -87,8 +88,8 @@ function getNormalizedData( record, selectedDomainName ) {
 function getNormalizedName( name, type, selectedDomainName ) {
 	const endsWithDomain = endsWith( name, '.' + selectedDomainName );
 
-	if ( isNameEmptyAndItsAllowed( name, type ) ) {
-		return name;
+	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type ) ) {
+		return '';
 	}
 
 	if ( endsWithDomain ) {
@@ -106,8 +107,18 @@ function isIpRecord( type ) {
 	return includes( [ 'A', 'AAAA' ], type );
 }
 
-function isNameEmptyAndItsAllowed( name, type ) {
-	return ! name && includes( [ 'MX', 'SRV', 'TXT' ], type );
+function isRootDomain( name, domainName ) {
+	const rootDomainVariations = [
+		'@',
+		domainName,
+		domainName + '.',
+		'@.' + domainName,
+		'@.' + domainName + '.' ];
+	return ! name || includes( rootDomainVariations, name );
+}
+
+function canBeRootDomain( type ) {
+	return includes( [ 'MX', 'SRV', 'TXT' ], type );
 }
 
 function getFieldWithDot( field ) {
