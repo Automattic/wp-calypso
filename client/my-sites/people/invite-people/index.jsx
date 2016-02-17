@@ -6,6 +6,7 @@ import page from 'page';
 import get from 'lodash/get';
 import debugModule from 'debug';
 import includes from 'lodash/includes';
+import some from 'lodash/some';
 
 /**
  * Internal dependencies
@@ -140,8 +141,23 @@ export default React.createClass( {
 	},
 
 	isSubmitDisabled() {
-		const invitees = Array.isArray( this.state.usernamesOrEmails ) ? this.state.usernamesOrEmails : [];
-		return this.state.sendingInvites || ! invitees.length;
+		const { errors, success, usernamesOrEmails } = this.state;
+		const invitees = Array.isArray( usernamesOrEmails ) ? usernamesOrEmails : [];
+
+		// If there are no invitees, then don't allow submitting the form
+		if ( this.state.sendingInvites || ! invitees.length ) {
+			return true;
+		}
+
+		if ( errors && errors.length ) {
+			return true;
+		}
+
+		// If there are invitees, and there are no errors, let's check
+		// if there are any pending validations.
+		return some( usernamesOrEmails, ( value ) => {
+			return ! includes( success, value );
+		} );
 	},
 
 	goBack() {
