@@ -9,7 +9,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<div>
-				<p>{ this.props.plan.shortdesc }</p>
+				<p>{ this.props.plan.description }</p>
 				<ul>
 					<li>{ this.props.plan.feature_1 }</li>
 					<li>{ this.props.plan.feature_2 }</li>
