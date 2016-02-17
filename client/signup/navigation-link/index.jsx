@@ -17,10 +17,10 @@ const NavigationLink = React.createClass( {
 		goToNextStep: React.PropTypes.func,
 		direction: React.PropTypes.string.isRequired,
 		flowName: React.PropTypes.string.isRequired,
-		stepName: React.PropTypes.string.isRequired,
-		previousPath: React.PropTypes.string,
 		positionInFlow: React.PropTypes.number,
-		signupProgressStore: React.PropTypes.array
+		previousPath: React.PropTypes.string,
+		signupProgressStore: React.PropTypes.array,
+		stepName: React.PropTypes.string.isRequired
 	},
 
 	getBackUrl() {
