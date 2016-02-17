@@ -131,6 +131,7 @@ module.exports = React.createClass( {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
+				goToNextStep={ this.props.showSkipStepButton ? this.onSelectPlan : null }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }

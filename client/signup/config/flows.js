@@ -69,7 +69,14 @@ const flows = {
 	},
 
 	plan: {
-		steps: [ 'themes', 'site', 'select-plan', 'user' ],
+		steps: [ 'themes', 'domains', 'select-plan', 'user' ],
+		destination: getCheckoutDestination,
+		description: '',
+		lastModified: '2016-02-02'
+	},
+
+	upgrade: {
+		steps: [ 'themes', 'domains', 'select-plan-or-skip', 'user' ],
 		destination: getCheckoutDestination,
 		description: '',
 		lastModified: '2016-02-02'

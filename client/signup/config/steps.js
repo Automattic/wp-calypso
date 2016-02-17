@@ -88,6 +88,13 @@ module.exports = {
 		providesDependencies: [ 'cartItem' ]
 	},
 
+	'select-plan-or-skip': {
+		stepName: 'select-plan-or-skip',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'cartItem' ]
+	},
+
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.addDomainItemsToCart,

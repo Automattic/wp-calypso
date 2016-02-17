@@ -6,15 +6,15 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PlansStepComponent from 'signup/steps/plans';
+import PlansStep from 'signup/steps/plans';
 
-module.exports = React.createClass( {
-	displayName: 'PaidPlansWithFreeTrialsStep',
+export default React.createClass( {
+	displayName: 'PaidPlansOnly',
 
 	render: function() {
 		return (
 			<div className="paid-plans-only">
-				<PlansStepComponent
+				<PlansStep
 					hideFreePlan
 					{ ...this.props }
 				/>

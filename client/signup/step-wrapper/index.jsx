@@ -7,8 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var StepHeader = require( 'signup/step-header' ),
-	SkipStepButton = require( 'signup/skip-step-button' ),
-	PreviousStepButton = require( 'signup/previous-step-button' );
+	NavigationLink = require( 'signup/navigation-link' );
 
 module.exports = React.createClass( {
 	displayName: 'StepWrapper',
@@ -16,10 +15,11 @@ module.exports = React.createClass( {
 	renderSkip: function() {
 		if ( this.props.goToNextStep ) {
 			return (
-				<SkipStepButton
+				<NavigationLink
+					direction="forward"
 					goToNextStep={ this.props.goToNextStep }
-					stepName={ this.props.stepName }
-					defaultDependencies={ this.props.defaultDependencies } />
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName } />
 			);
 		}
 	},
@@ -58,13 +58,16 @@ module.exports = React.createClass( {
 					subHeaderText={ this.subHeaderText() } />
 				<div className="is-animated-content">
 					{ this.props.stepContent }
-					{ this.renderSkip() }
-					<PreviousStepButton
-						flowName={ this.props.flowName }
-						positionInFlow={ this.props.positionInFlow }
-						stepName={ this.props.stepName }
-						backUrl={ this.props.backUrl }
-						signupProgressStore={ this.props.signupProgressStore } />
+					<div className="step-wrapper__buttons">
+						<NavigationLink
+							direction="back"
+							flowName={ this.props.flowName }
+							positionInFlow={ this.props.positionInFlow }
+							stepName={ this.props.stepName }
+							backUrl={ this.props.backUrl }
+							signupProgressStore={ this.props.signupProgressStore } />
+						{ this.renderSkip() }
+					</div>
 				</div>
 			</div>
 		);
