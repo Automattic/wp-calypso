@@ -23,7 +23,9 @@ var analytics = require( 'analytics' ),
 	purchasePaths = require( 'me/purchases/paths' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	{ setSection } = require( 'state/ui/actions' ),
+	{ abtest } = require( 'lib/abtest' );
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
@@ -60,6 +62,10 @@ const Checkout = React.createClass( {
 			if ( this.props.planName ) {
 				this.addPlanToCart();
 			}
+		}
+
+		if ( abtest( 'sidebarOnCheckoutOfOneProduct' ) === 'hidden' ) {
+			this.props.showSidebar( ! ( nextProps.cart.hasLoadedFromServer && ! nextProps.cart.hasPendingServerUpdates && nextProps.cart.products.length === 1 ) );
 		}
 	},
 
@@ -228,6 +234,9 @@ module.exports = connect(
 			},
 			fetchReceiptCompleted: function( receiptId, data ) {
 				dispatch( fetchReceiptCompleted( receiptId, data ) );
+			},
+			showSidebar: function( hasSidebar ) {
+				dispatch( setSection( null, { hasSidebar } ) );
 			}
 		};
 	}
