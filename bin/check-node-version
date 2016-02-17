@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const requiredVersion = require( '../package' ).engines.node,
-	path = require( 'path' ),
 	semver = require( process.env.SEMVER_GLOBAL_PATH );
 
 if ( ! semver.satisfies( process.version, requiredVersion ) ) {
