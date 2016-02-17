@@ -534,7 +534,8 @@ Undocumented.prototype.getPlans = function( fn ) {
 	debug( '/plans query' );
 	this._sendRequestWithLocale( {
 		path: '/plans',
-		method: 'get'
+		method: 'get',
+		apiVersion: '1.2'
 	}, fn );
 };
 
