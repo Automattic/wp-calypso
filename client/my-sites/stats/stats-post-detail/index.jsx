@@ -39,13 +39,16 @@ export default React.createClass( {
 		let title;
 
 		const post = this.props.postViewsList.response.post;
+		const isLoading = this.props.postViewsList.isLoading();
 		const postOnRecord = post && post.post_title !== null;
 
 		if ( postOnRecord ) {
 			if ( typeof post.post_title === 'string' && post.post_title.length ) {
 				title = <Emojify>{ post.post_title }</Emojify>;
 			}
-		} else {
+		}
+
+		if ( ! postOnRecord && ! isLoading ) {
 			title = this.translate( 'We don\'t have that post on record yet.' );
 		}
 
@@ -57,7 +60,7 @@ export default React.createClass( {
 
 				<SummaryChart
 					key="chart"
-					loading={ this.props.postViewsList.isLoading() }
+					loading={ isLoading }
 					dataList={ this.props.postViewsList }
 					barClick={ this.props.barClick }
 					activeKey="period"
