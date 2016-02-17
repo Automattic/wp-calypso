@@ -1,27 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	qs = require( 'querystring' );
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var PostActions = require( 'lib/posts/actions' ),
+const PostActions = require( 'lib/posts/actions' ),
 	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
 	Notice = require( 'components/notice' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
 
+import { setLocation, removeLocation } from 'state/ui/editor/post/actions';
+
 /**
  * Module variables
  */
-var GOOGLE_MAPS_BASE_URL = 'http://maps.google.com/maps/api/staticmap?';
+const GOOGLE_MAPS_BASE_URL = 'http://maps.google.com/maps/api/staticmap?';
 
-module.exports = React.createClass( {
+const EditorLocation = React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
+		setLocation: React.PropTypes.func,
+		removeLocation: React.PropTypes.func,
 		label: React.PropTypes.string,
 		coordinates: function( props, propName ) {
 			var prop = props[ propName ];
@@ -29,6 +36,13 @@ module.exports = React.createClass( {
 				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
 			}
 		}
+	},
+
+	getDefaultProps: function() {
+		return {
+			setLocation: () => {},
+			removeLocation: () => {}
+		};
 	},
 
 	getInitialState: function() {
@@ -42,12 +56,14 @@ module.exports = React.createClass( {
 			locating: false
 		} );
 
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.updateMetadata( {
 			geo_latitude: position.coords.latitude,
 			geo_longitude: position.coords.longitude
 		} );
 
 		stats.recordStat( 'location_geolocate_success' );
+		this.props.setLocation( position.coords.latitude, position.coords.longitude );
 	},
 
 	onGeolocateFailure: function( error ) {
@@ -82,7 +98,10 @@ module.exports = React.createClass( {
 	},
 
 	clear: function() {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.deleteMetadata( [ 'geo_latitude', 'geo_longitude' ] );
+
+		this.props.removeLocation();
 	},
 
 	onSearchSelect: function( result ) {
@@ -143,3 +162,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setLocation, removeLocation }, dispatch )
+)( EditorLocation );

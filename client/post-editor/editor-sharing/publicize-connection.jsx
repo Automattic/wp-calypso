@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import includes from 'lodash/collection/includes';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,11 +15,14 @@ import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
 import Gridicon from 'components/gridicon';
+import { addPublicizeConnectionKey, removePublicizeConnectionKey } from 'state/ui/editor/post/actions';
 
-export default React.createClass( {
+const EditorSharingPublicizeConnection = React.createClass( {
 	displayName: 'EditorSharingPublicizeConnection',
 
 	propTypes: {
+		addPublicizeConnectionKey: PropTypes.func,
+		removePublicizeConnectionKey: PropTypes.func,
 		post: PropTypes.object,
 		connection: PropTypes.object,
 		onRefresh: PropTypes.func
@@ -25,6 +30,8 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
+			addPublicizeConnectionKey: () => {},
+			removePublicizeConnectionKey: () => {},
 			onRefresh: () => {}
 		};
 	},
@@ -51,13 +58,19 @@ export default React.createClass( {
 		}
 
 		if ( event.target.checked ) {
+			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			PostActions.deleteMetadata( '_wpas_skip_' + connection.keyring_connection_ID );
 			PostStats.recordStat( 'sharing_enabled_' + connection.service );
 			PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
+
+			this.props.removePublicizeConnectionKey();
 		} else {
+			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
 			PostStats.recordStat( 'sharing_disabled_' + connection.service );
 			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
+
+			this.props.addPublicizeConnectionKey( connection.keyring_connection_ID );
 		}
 	},
 
@@ -104,3 +117,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { addPublicizeConnectionKey, removePublicizeConnectionKey }, dispatch )
+)( EditorSharingPublicizeConnection );

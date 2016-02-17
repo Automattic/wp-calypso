@@ -1,21 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var FormRadio = require( 'components/forms/form-radio' ),
+const FormRadio = require( 'components/forms/form-radio' ),
 	Gridicon = require( 'components/gridicon' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	AccordionSection = require( 'components/accordion/section' );
+import { setPostFormat } from 'state/ui/editor/post/actions';
 
-module.exports = React.createClass( {
+const EditorPostFormats = React.createClass( {
 	displayName: 'EditorPostFormats',
 
 	propTypes: {
+		setPostFormat: React.PropTypes.func,
 		post: React.PropTypes.object,
 		value: React.PropTypes.string,
 		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
@@ -26,6 +30,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			setPostFormat: () => {},
 			value: 'standard'
 		};
 	},
@@ -60,9 +65,12 @@ module.exports = React.createClass( {
 	},
 
 	onChange: function( event ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			format: event.target.value
 		} );
+
+		this.props.setPostFormat( event.target.value );
 
 		stats.recordStat( 'post_format_changed' );
 		stats.recordEvent( 'Changed Post Format', event.target.value );
@@ -100,3 +108,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setPostFormat }, dispatch )
+)( EditorPostFormats );

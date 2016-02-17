@@ -50,9 +50,13 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'post-editor/status-label', MOCK_COMPONENT );
 		mockery.registerMock( 'components/sticky-panel', MOCK_COMPONENT );
 		mockery.registerMock( 'components/post-schedule', MOCK_COMPONENT );
-		EditorGroundControl = require( '../' );
+		EditorGroundControl = require( '../' ).WrappedComponent;
 		EditorGroundControl.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 		EditorGroundControl.prototype.__reactAutoBindMap.moment = moment;
+		// TODO: REDUX - add proper tests when whole post-editor is reduxified
+		mockery.registerMock( 'react-redux', {
+			connect: () => component => component
+		} );
 	} );
 
 	beforeEach( function() {

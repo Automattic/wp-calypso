@@ -1,25 +1,35 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-var EditorFieldset = require( 'post-editor/editor-fieldset' ),
+const EditorFieldset = require( 'post-editor/editor-fieldset' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' );
+import { setSharingLikeOption } from 'state/ui/editor/post/actions';
 
-module.exports = React.createClass( {
+const SharingLikeOptions = React.createClass( {
 	displayName: 'SharingLikeOptions',
 
 	propTypes: {
+		setSharingLikeOption: React.PropTypes.func,
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		isSharingButtonsEnabled: React.PropTypes.bool,
 		isLikesEnabled: React.PropTypes.bool,
 		isNew: React.PropTypes.bool
+	},
+
+	getDefaultProps: function() {
+		return {
+			setSharingLikeOption: () => {}
+		};
 	},
 
 	isShowingSharingButtons: function() {
@@ -79,11 +89,14 @@ module.exports = React.createClass( {
 	},
 
 	onChange: function( event ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			[ event.target.name ]: event.target.checked
 		} );
 
 		this.recordStats( event );
+
+		this.props.setSharingLikeOption( event.target.name, event.target.checked );
 	},
 
 	recordStats: function( event ) {
@@ -109,3 +122,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { setSharingLikeOption }, dispatch )
+)( SharingLikeOptions );
