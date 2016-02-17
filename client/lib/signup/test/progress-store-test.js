@@ -3,6 +3,8 @@ global.localStorage = require( 'localStorage' );
 /**
  * External dependencies
  */
+import sinon from 'sinon';
+
 var debug = require( 'debug' )( 'calypso:signup-progress-store:test' ), // eslint-disable-line no-unused-vars
 	assert = require( 'assert' ),
 	omit = require( 'lodash/object/omit' ),
@@ -31,17 +33,19 @@ describe( 'SignupProgressStore', function() {
 		assert.equal( SignupProgressStore.get()[ 0 ].stepName, 'site-selection' );
 	} );
 
-	it( 'should add a timestamp to each step', function( done ) {
-		var previousTimestamp;
+	it( 'should add a timestamp to each step', function() {
+		var previousTimestamp,
+			clock = sinon.useFakeTimers();
 
 		SignupActions.saveSignupStep( { stepName: 'site-selection' } );
+		clock.tick( 100 );
 		previousTimestamp = SignupProgressStore.get()[ 0 ].lastUpdated;
 
-		setTimeout( function() {
-			SignupActions.saveSignupStep( { stepName: 'site-selection' } );
-			assert( SignupProgressStore.get()[ 0 ].lastUpdated > previousTimestamp );
-			done();
-		}, 5 );
+		SignupActions.saveSignupStep( { stepName: 'site-selection' } );
+		clock.tick( 100 );
+		assert( SignupProgressStore.get()[ 0 ].lastUpdated > previousTimestamp );
+
+		clock.restore();
 	} );
 
 	it( 'should not store the same step twice', function() {
