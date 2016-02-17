@@ -21,16 +21,12 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 module.exports = React.createClass( {
 	displayName: 'DomainsStep',
 
-	basePath: function() {
-		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale );
-	},
-
 	showGoogleApps: function() {
-		page( this.basePath() + '/google' );
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
 
 	showDomainSearch: function() {
-		page( this.basePath() );
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
 	},
 
 	getInitialState: function() {
