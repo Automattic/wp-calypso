@@ -31,6 +31,7 @@ module.exports = function() {
 		page( '/tag/*', controller.loadSubscriptions );
 
 		page( '/', updateLastRoute, controller.removePost, controller.sidebar, controller.following );
+		page( '/read/following', '/' );
 
 		page( '/read/blog/feed/:feed_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.feedListing );
 		page.exit( '/read/blog/feed/:feed_id', controller.resetTitle );
