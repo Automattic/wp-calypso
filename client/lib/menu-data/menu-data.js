@@ -117,7 +117,7 @@ MenuData.prototype.get = function() {
 MenuData.prototype.fetch = function() {
 	var requestedSiteID = this.siteID;
 
-	wpcom.undocumented().menus( this.siteID, function( error, data ) {
+	wpcom.undocumented().menus( this.siteID, ( error, data ) => {
 		if ( error ) {
 			this.emit( 'error', i18n.translate( 'There was a problem fetching your menu data.' ) );
 			debug( 'Error', error, data );
@@ -134,7 +134,7 @@ MenuData.prototype.fetch = function() {
 
 		debug( 'Parsed data:', this.data );
 		this.change( { reset: true } );
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -388,29 +388,29 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 	debug( 'saveMenu', menu );
 
 	this.emit( 'saving' );
-	wpcom.undocumented().menusUpdate(
-			this.siteID,
-			menu.id,
-			this.interceptSaveForHomepageLink( menu ),
-			function( error, data ) {
-				var parsedMenu;
+	wpcom
+	.undocumented()
+	.menusUpdate(
+		this.siteID,
+		menu.id,
+		this.interceptSaveForHomepageLink( menu ),
+		( error, data ) => {
+			if ( error ) {
+				this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
+				debug( 'Error', error, data );
+				return;
+			}
 
-				if ( error ) {
-					this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
-					debug( 'Error', error, data );
-					return;
-				}
+			// The response will contain server-allocated
+			// IDs for newly created items
+			const parsedMenu = this.parseMenu( data.menu );
+			parsedMenu.lastSaveTime = Date.now();
+			this.replaceMenu( parsedMenu );
 
-				// The response will contain server-allocated
-				// IDs for newly created items
-				parsedMenu = this.parseMenu( data.menu );
-				parsedMenu.lastSaveTime = Date.now();
-				this.replaceMenu( parsedMenu );
-
-				this.change( { reset: true } );
-				this.emit( 'saved' );
-				callback && callback( null, parsedMenu );
-			}.bind( this ) );
+			this.change( { reset: true } );
+			this.emit( 'saved' );
+			callback && callback( null, parsedMenu );
+		} );
 };
 
 MenuData.prototype.deleteMenu = function( menu, callback ) {
@@ -429,7 +429,9 @@ MenuData.prototype.deleteMenu = function( menu, callback ) {
 	this.emit( 'change' );
 	this.emit( 'saving' );
 
-	wpcom.undocumented().menusDelete( this.siteID, menu.id, function( error, data ) {
+	wpcom
+	.undocumented()
+	.menusDelete( this.siteID, menu.id, ( error, data ) => {
 		if ( error || ( data && ! data.deleted ) ) {
 			this.data.menus = menusBackup;
 			this.emit( 'error', i18n.translate( "Sorry, we couldn't delete this menu." ) );
@@ -443,7 +445,7 @@ MenuData.prototype.deleteMenu = function( menu, callback ) {
 
 		callback && callback( null, data );
 		this.emit( 'saved' );
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -741,12 +743,12 @@ MenuData.prototype.addItem = function( item, targetId, position, menuId ) {
  * @param {string} selectedLocation selected location
  */
 MenuData.prototype.addNewMenu = function( selectedLocation ) {
-	this.addMenu( this._incrementMenuName( this.data.menus ), function( err, menu ) {
-		if ( err ) {
+	this.addMenu( this._incrementMenuName( this.data.menus ), ( error, menu ) => {
+		if ( error ) {
 			return;
 		}
 		this.setMenuAtLocation( menu.id, selectedLocation );
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -763,7 +765,9 @@ MenuData.prototype.addMenu = function( name, callback, attributes ) {
 		locations: []
 	}, attributes );
 
-	wpcom.undocumented().menusUpdate( this.siteID, 0, newMenu, function( error, data ) {
+	wpcom
+	.undocumented()
+	.menusUpdate( this.siteID, 0, newMenu, ( error, data ) => {
 		if ( ! error && data.id ) {
 			newMenu.id = data.id;
 			this.data.menus.push( newMenu );
@@ -775,7 +779,7 @@ MenuData.prototype.addMenu = function( name, callback, attributes ) {
 			debug( 'error creating menu', error );
 			callback && callback( error );
 		}
-	}.bind( this ) );
+	} );
 };
 
 // FIXME: this just appends ASCII numerals to the end of the string,
@@ -870,7 +874,9 @@ MenuData.prototype.fetchDefaultMenu = function() {
 	this.data.defaultMenu = false;
 	this.fetchingDefaultMenu = true;
 
-	wpcom.site( requestedSiteID ).postsList( params, function( error, data ) {
+	wpcom
+	.site( requestedSiteID )
+	.postsList( params, ( error, data ) => {
 		this.fetchingDefaultMenu = false;
 		if ( error ) {
 			this.emit( 'error', i18n.translate( 'There was a problem loading the default menu.' ) );
@@ -884,7 +890,7 @@ MenuData.prototype.fetchDefaultMenu = function() {
 		}
 
 		this.setDefaultMenu( data.posts );
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -970,10 +976,10 @@ MenuData.prototype.saveDefaultMenu = function() {
  * the previously generated default menu and updates the local recently created
  * menu (update name and set location-menu association).
  *
- * @param {Object} err - rest-api error response
+ * @param {Object} error - rest-api error response
  * @param {Object} menu - rest-api menu data response
  */
-MenuData.prototype.onDefaultMenuSaved = function( err, menu ) {
+MenuData.prototype.onDefaultMenuSaved = function( error, menu ) {
 	if ( menu && menu.id ) {
 		this.deleteDefaultMenu();
 
@@ -985,7 +991,7 @@ MenuData.prototype.onDefaultMenuSaved = function( err, menu ) {
 		menu.locations = [ this.getPrimaryLocation() ];
 		this.saveMenu( menu );
 	} else {
-		debug( 'onDefaultMenuSaved: fail', err );
+		debug( 'onDefaultMenuSaved: fail', error );
 	}
 };
 
