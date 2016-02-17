@@ -336,18 +336,17 @@ Undocumented.prototype.settings = function( siteId, method, data, fn ) {
 };
 
 Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
-	var locale = i18n.getLocaleSlug(),
-		updatedParams;
+	const { apiVersion, body = {}, method } = originalParams,
+		locale = i18n.getLocaleSlug(),
+		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
 
-	updatedParams = clone( originalParams );
-	if ( originalParams.body ) {
-		updatedParams.body = clone( originalParams.body );
-		updatedParams.body.locale = locale;
+	updatedParams.body = Object.assign( {}, body, { locale } );
+
+	if ( apiVersion ) {
+		this.wpcom.req[ method.toLowerCase() ]( updatedParams, { apiVersion }, fn );
 	} else {
-		updatedParams.body = { locale: locale };
+		this.wpcom.req[ method.toLowerCase() ]( updatedParams, fn );
 	}
-
-	this.wpcom.req[ updatedParams.method.toLowerCase() ]( updatedParams, fn );
 };
 
 /**
