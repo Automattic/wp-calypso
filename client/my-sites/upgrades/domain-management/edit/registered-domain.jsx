@@ -204,7 +204,7 @@ const RegisteredDomain = React.createClass( {
 							onClick={ this.handlePaymentSettingsClick }/>
 					</Card>
 
-					<IcannVerificationCard selectedDomainName={ domain.name } />
+					<IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } />
 				</div>
 
 				{ this.getVerticalNav() }
