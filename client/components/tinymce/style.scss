@@ -694,10 +694,10 @@ div.mce-path {
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button {
 	padding-right: 20px;
-	margin-top: 4px;
 	color: darken( $gray, 20% );
 	font-family: $sans;
 	font-size: 13px;
+	height: 34px;
 	width: auto;
 	min-width: 110px;
 	text-overflow: initial;
@@ -737,7 +737,7 @@ div.mce-path {
 }
 
 .mce-panel .mce-btn.mce-listbox i.mce-caret {
-	margin: 0 -2px 0 0;
+	margin: 4px -2px 0 0;
 }
 
 .mce-panel .mce-btn:hover i.mce-caret {
