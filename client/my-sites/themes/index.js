@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import config from 'config';
-import sections from 'sections';
 import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, details, renderElements } from './controller';
+import { singleSite, multiSite, loggedOut, details } from './controller';
+import { ensureMiddleware, renderElements } from 'controller';
 
 const user = userFactory();
 
@@ -44,11 +44,3 @@ export default function( router ) {
 
 	console.log( 'themes routes set up!' );
 };
-
-function ensureMiddleware( ctx, next ) {
-	console.log( 'ensureMiddleware' );
-	sections.loadSection( 'themes', () => {
-		console.log( 'loaded!' );
-		next();
-	} );
-}
