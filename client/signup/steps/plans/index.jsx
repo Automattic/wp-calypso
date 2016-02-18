@@ -16,6 +16,7 @@ var productsList = require( 'lib/products-list' )(),
 	PlanList = require( 'components/plans/plan-list' ),
 	PlansCompare = require( 'components/plans/plans-compare' ),
 	SignupActions = require( 'lib/signup/actions' ),
+	signupUtils = require( 'signup/utils' ),
 	StepWrapper = require( 'signup/step-wrapper' ),
 	Gridicon = require( 'components/gridicon' );
 
@@ -74,7 +75,7 @@ module.exports = React.createClass( {
 	},
 
 	comparePlansUrl: function() {
-		return this.props.stepName + '/compare';
+		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'compare', this.props.locale );
 	},
 
 	handleComparePlansLinkClick: function( linkLocation ) {
