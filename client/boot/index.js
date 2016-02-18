@@ -43,6 +43,7 @@ var config = require( 'config' ),
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -159,6 +160,8 @@ function boot() {
 
 function reduxStoreReady( reduxStore ) {
 	let layoutSection, layout, layoutElement, validSections = [];
+
+	bindWpLocaleState( reduxStore );
 
 	if ( config.isEnabled( 'support-user' ) ) {
 		require( 'lib/user/support-user-interop' )( reduxStore );

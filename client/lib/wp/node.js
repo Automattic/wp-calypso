@@ -1,13 +1,17 @@
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wpcom-undocumented' );
-var config = require( 'config' );
+import wpcomUndocumented from 'lib/wpcom-undocumented';
+import config from 'config';
+import { injectLocalization } from './localization';
 
-wpcom = wpcom( require( 'wpcom-xhr-request' ) );
+let wpcom = wpcomUndocumented( require( 'wpcom-xhr-request' ) );
 
 if ( config.isEnabled( 'support-user' ) ) {
 	wpcom = require( 'lib/wp/support' )( wpcom );
 }
+
+// Inject localization helpers to `wpcom` instance
+wpcom = injectLocalization( wpcom );
 
 module.exports = wpcom;

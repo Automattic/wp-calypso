@@ -16,3 +16,18 @@ export function getCurrentUser( state ) {
 
 	return getUser( state, state.currentUser.id );
 }
+
+/**
+ * Returns the locale slug for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Current user locale
+ */
+export function getCurrentUserLocale( state ) {
+	const user = getCurrentUser( state );
+	if ( ! user ) {
+		return null;
+	}
+
+	return user.localeSlug || null;
+}
