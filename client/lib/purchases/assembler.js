@@ -2,7 +2,6 @@
  * External dependencies
  */
 import camelCase from 'lodash/camelCase';
-import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -57,17 +56,17 @@ function createPurchaseObject( purchase ) {
 	};
 
 	if ( 'credit_card' === purchase.payment_type ) {
-		return merge( {}, object, {
-			payment: {
-				creditCard: {
-					id: Number( purchase.payment_card_id ),
-					type: purchase.payment_card_type,
-					number: Number( purchase.payment_details ),
-					expiryDate: purchase.payment_expiry,
-					expiryMoment: purchase.payment_expiry ? i18n.moment( purchase.payment_expiry, 'MM/YY' ) : null
-				}
+		const payment = Object.assign( {}, object.payment, {
+			creditCard: {
+				id: Number( purchase.payment_card_id ),
+				type: purchase.payment_card_type,
+				number: Number( purchase.payment_details ),
+				expiryDate: purchase.payment_expiry,
+				expiryMoment: purchase.payment_expiry ? i18n.moment( purchase.payment_expiry, 'MM/YY' ) : null
 			}
 		} );
+
+		return Object.assign( {}, object, { payment } );
 	}
 
 	return object;
