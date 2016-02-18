@@ -135,6 +135,9 @@ export default React.createClass( {
 				{ this.getImports( SQUARESPACE ).map( ( importerStatus, key ) =>
 					<SquarespaceImporter { ...{ key, importerStatus } } /> ) }
 
+				<CompactCard href={ adminUrl + 'import.php' } target="_blank">
+						{ this.translate( 'Other importers') }
+				</CompactCard>
 			</div>
 		);
 	}
