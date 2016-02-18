@@ -219,22 +219,6 @@ function filterFlowName( flowName ) {
 			return ( 'blog' === flowName ) ? 'blog-altthemes' : 'website-altthemes';
 		}
 	}
-
-	let isInPreviousTest = false;
-
-	if ( getABTestVariation( 'headstart' ) && getABTestVariation( 'headstart' ) !== 'notTested' ) {
-		isInPreviousTest = true;
-	}
-
-	if ( getABTestVariation( 'altThemes' ) && getABTestVariation( 'altThemes' ) !== 'notTested' ) {
-		isInPreviousTest = true;
-	}
-
-	const freePlansTestFlows = [ 'blog', 'website', 'main' ];
-	if ( includes( freePlansTestFlows, flowName ) && ! isInPreviousTest ) {
-		return 'skipForFree' === abtest( 'freePlansDefault' ) ? 'upgrade' : flowName;
-	}
-
 	return flowName;
 }
 
