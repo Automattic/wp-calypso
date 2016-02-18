@@ -39,6 +39,7 @@ const fastPostNormalizationRules = [
 			postNormalizer.content.disableAutoPlayOnEmbeds,
 			postNormalizer.content.disableAutoPlayOnMedia,
 			postNormalizer.content.detectEmbeds,
+			postNormalizer.content.detectPolls,
 			postNormalizer.content.wordCountAndReadingTime
 		] ),
 		classifyPost
