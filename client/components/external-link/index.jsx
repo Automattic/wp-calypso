@@ -4,7 +4,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
-import assign from 'lodash/object/assign';
+import assign from 'lodash/assign';
 
 /**
  * Internal dependencies

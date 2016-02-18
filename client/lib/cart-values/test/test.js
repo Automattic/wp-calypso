@@ -8,7 +8,7 @@ var assert = require( 'assert' );
  */
 var cartValues = require( '../' ),
 	cartItems = cartValues.cartItems,
-	flow = require( 'lodash/function/flow' );
+	flow = require( 'lodash/flow' );
 
 var TEST_BLOG_ID = 1,
 	PREMIUM_PRODUCT = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ),

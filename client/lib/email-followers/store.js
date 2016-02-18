@@ -2,7 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:email-followers-store' ),
-	_omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -99,7 +99,7 @@ function updateFollowers( fetchOptions, followers, total ) {
 }
 
 function getNamespace( fetchOptions ) {
-	return deterministicStringify( _omit( fetchOptions, [ 'page', 'max' ] ) );
+	return deterministicStringify( omit( fetchOptions, [ 'page', 'max' ] ) );
 }
 
 function decrementPaginationData( siteId, followerId ) {

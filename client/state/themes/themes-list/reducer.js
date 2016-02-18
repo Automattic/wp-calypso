@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { fromJS } from 'immutable';
-import pluck from 'lodash/collection/pluck';
-import unique from 'lodash/array/unique';
+import map from 'lodash/map';
+import uniq from 'lodash/uniq'
 /**
  * Internal dependencies
  */
@@ -35,7 +35,7 @@ export const initialState = query( fromJS( {
  */
 
 function add( ids, list ) {
-	return unique( list.concat( ids ) );
+	return uniq( list.concat( ids ) );
 }
 
 export function query( state, params = {} ) {
@@ -67,7 +67,7 @@ export default ( state = initialState, action ) => {
 			) {
 				const newState = state
 						.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
-						.update( 'list', add.bind( null, pluck( action.themes, 'id' ) ) );
+						.update( 'list', add.bind( null, map( action.themes, 'id' ) ) );
 
 				return newState.setIn( [ 'queryState', 'isLastPage' ],
 						isActionForLastPage( newState.get( 'list' ), action ) );

@@ -2,7 +2,7 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/pick' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 /**

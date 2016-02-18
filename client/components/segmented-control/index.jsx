@@ -3,8 +3,8 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	filter = require( 'lodash/collection/filter' ),
-	map = require( 'lodash/collection/map' ),
+	filter = require( 'lodash/filter' ),
+	map = require( 'lodash/map' ),
 	classNames = require( 'classnames' );
 
 /**

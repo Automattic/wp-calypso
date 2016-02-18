@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var protectForm = require( 'lib/mixins/protect-form' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	MenuName = require( './menu-name' ),
 	MenuItemList = require( './menu-item-list' ),
 	MenuDeleteButton = require ( './menu-delete-button' ),

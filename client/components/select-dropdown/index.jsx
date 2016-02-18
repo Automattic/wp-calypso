@@ -3,11 +3,11 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	findWhere = require( 'lodash/collection/findWhere' ),
-	filter = require( 'lodash/collection/filter' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	map = require( 'lodash/collection/map' ),
-	result = require( 'lodash/object/result' ),
+	find = require( 'lodash/find' ),
+	filter = require( 'lodash/filter' ),
+	findIndex = require( 'lodash/findIndex' ),
+	map = require( 'lodash/map' ),
+	result = require( 'lodash/result' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -170,7 +170,7 @@ var SelectDropdown = React.createClass( {
 		let dropdownClassName = classNames( dropdownClasses );
 		let selectedText = this.props.selectedText
 			? this.props.selectedText
-			: result( findWhere(
+			: result( find(
 				this.props.options, { value: this.state.selected }
 			), 'label' );
 

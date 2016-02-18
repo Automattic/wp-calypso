@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import compose from 'lodash/function/compose';
+import flowRight from 'lodash/flowRight';
 
 /**
  * Internal dependencies
@@ -61,9 +61,9 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
-		supportUserTokenFetch: compose( dispatch, supportUserTokenFetch ),
-		supportUserRestore: compose( dispatch, supportUserRestore ),
-		supportUserToggleDialog: compose( dispatch, supportUserToggleDialog ),
+		supportUserTokenFetch: flowRight( dispatch, supportUserTokenFetch ),
+		supportUserRestore: flowRight( dispatch, supportUserRestore ),
+		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
 	}
 }
 

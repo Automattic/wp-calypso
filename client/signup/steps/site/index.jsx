@@ -2,9 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	includes = require( 'lodash/collection/includes' ),
-	map = require( 'lodash/collection/map' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	includes = require( 'lodash/includes' ),
+	map = require( 'lodash/map' ),
 	debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies
@@ -216,7 +216,7 @@ module.exports = React.createClass( {
 				);
 			}
 			return message;
-		}, this );
+		}.bind( this ) );
 	},
 
 	formFields: function() {

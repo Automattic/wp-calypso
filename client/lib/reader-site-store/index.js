@@ -2,8 +2,8 @@
 
 // External Dependencies
 var Immutable = require( 'immutable' ),
-	omit = require( 'lodash/object/omit' ),
-	has = require( 'lodash/object/has' );
+	omit = require( 'lodash/omit' ),
+	has = require( 'lodash/has' );
 
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import shuffle from 'lodash/collection/shuffle';
-import find from 'lodash/collection/find';
+import shuffle from 'lodash/shuffle';
+import find from 'lodash/find';
 import { translate } from 'lib/mixins/i18n';
 
 const verticals = [

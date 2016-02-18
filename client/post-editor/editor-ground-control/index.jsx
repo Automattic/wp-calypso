@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const noop = require( 'lodash/utility/noop' ),
+const noop = require( 'lodash/noop' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 import { connect } from 'react-redux';

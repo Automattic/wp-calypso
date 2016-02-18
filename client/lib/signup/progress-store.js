@@ -3,12 +3,12 @@
  */
 var debug = require( 'debug' )( 'calypso:signup-progress-store' ), // eslint-disable-line no-unused-vars
 	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' ),
-	map = require( 'lodash/collection/map' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	clone = require( 'lodash/lang/clone' );
+	assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
+	find = require( 'lodash/find' ),
+	map = require( 'lodash/map' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies

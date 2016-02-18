@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	forEach = require( 'lodash/collection/forEach' );
+	forEach = require( 'lodash/forEach' );
 
 /**
  * Internal dependencies

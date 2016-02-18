@@ -18,9 +18,9 @@ import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
 import i18nUtils from 'lib/i18n-utils';
-import pick from 'lodash/object/pick';
-import find from 'lodash/collection/find';
-import isEmpty from 'lodash/lang/isEmpty';
+import pick from 'lodash/pick';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Module variables

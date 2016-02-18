@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import first from 'lodash/array/first';
-import last from 'lodash/array/last';
-import rest from 'lodash/array/rest';
+import head from 'lodash/head';
+import last from 'lodash/last';
+import tail from 'lodash/tail';
 
 /**
  * Internal dependencies
@@ -91,7 +91,7 @@ describe( 'Stored Cards Store', () => {
 	it( 'should return an object with the previous list of cards and deleting enabled when deleting is triggered', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.STORED_CARDS_DELETE,
-			card: first( STORED_CARDS )
+			card: head( STORED_CARDS )
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
@@ -104,7 +104,7 @@ describe( 'Stored Cards Store', () => {
 	it( 'should return an object with the previous list of cards and deleting disabled when deleting failed', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.STORED_CARDS_DELETE_FAILED,
-			card: first( STORED_CARDS )
+			card: head( STORED_CARDS )
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
@@ -117,13 +117,13 @@ describe( 'Stored Cards Store', () => {
 	it( 'should return an object with a new list of cards and deleting disabled when deleting completed', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.STORED_CARDS_DELETE_COMPLETED,
-			card: first( STORED_CARDS )
+			card: head( STORED_CARDS )
 		} );
 
 		expect( StoredCardsStore.get() ).to.be.eql( {
 			isDeleting: false,
 			isFetching: false,
-			list: rest( STORED_CARDS )
+			list: tail( STORED_CARDS )
 		} );
 	} );
 

@@ -2,10 +2,10 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	page = require( 'page' );
 
-import get from 'lodash/object/get';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies

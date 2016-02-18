@@ -5,8 +5,8 @@
  */
 var error = require( 'chalk' ).bold.red;
 var info = require( 'chalk' ).bold.yellow;
-var startsWith = require( 'lodash/string/startsWith' );
-var includes = require( 'lodash/collection/includes' );
+var startsWith = require( 'lodash/startsWith' );
+var includes = require( 'lodash/includes' );
 
 var PLUGIN_TITLE = 'PragmaChecker';
 var SSR_READY = '/** @ssr-ready **/';

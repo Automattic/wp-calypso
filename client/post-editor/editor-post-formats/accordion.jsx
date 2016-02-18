@@ -2,10 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	pick = require( 'lodash/object/pick' ),
-	find = require( 'lodash/collection/find' ),
+	pick = require( 'lodash/pick' ),
+	find = require( 'lodash/find' ),
 	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:viewers:store' ),
-	_assign = require( 'lodash/object/assign' ),
-	_values = require( 'lodash/object/values' );
+	assign = require( 'lodash/assign' ),
+	values = require( 'lodash/values' );
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ var ViewersStore = {
 			return false;
 		}
 
-		return _values( _viewersBySite[ siteId ] );
+		return values( _viewersBySite[ siteId ] );
 	},
 
 	isRemoving: function( siteId ) {
@@ -54,7 +54,7 @@ function updateViewer( siteId, id, viewer ) {
 		_viewersBySite[ siteId ][ id ] = {};
 	}
 
-	_viewersBySite[ siteId ][ id ] = _assign( {}, _viewersBySite[ siteId ][ id ], viewer );
+	_viewersBySite[ siteId ][ id ] = assign( {}, _viewersBySite[ siteId ][ id ], viewer );
 
 	debug( 'Updating viewer:', _viewersBySite[ siteId ][ id ] );
 }

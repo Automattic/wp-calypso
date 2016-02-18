@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var throttle = require( 'lodash/function/throttle' );
+var throttle = require( 'lodash/throttle' );
 
 
 /**

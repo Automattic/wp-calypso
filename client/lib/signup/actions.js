@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import defer from 'lodash/function/defer';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies

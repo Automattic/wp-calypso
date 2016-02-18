@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	page = require( 'page' ),
 	toTitleCase = require( 'to-title-case' ),
-	trim = require( 'lodash/string/trim' );
+	trim = require( 'lodash/trim' );
 
 /**
  * Internal dependencies

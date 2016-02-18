@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import omit from 'lodash/object/omit';
+import omit from 'lodash/omit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

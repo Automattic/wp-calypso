@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/object/assign';
-import noop from 'lodash/utility/noop';
+import assign from 'lodash/assign';
+import noop from 'lodash/noop';
 
 export default React.createClass( {
 	displayName: 'TrackInputChanges',

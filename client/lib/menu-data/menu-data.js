@@ -2,14 +2,15 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import assign from 'lodash/object/assign';
-import omit from 'lodash/object/omit';
-import without from 'lodash/array/without';
-import contains from 'lodash/collection/contains';
-import find from 'lodash/collection/find';
-import cloneDeep from 'lodash/lang/cloneDeep';
-import findIndex from 'lodash/array/findIndex';
-import createCallback from 'lodash/utility/callback';
+import assign from 'lodash/assign';
+import omit from 'lodash/omit';
+import without from 'lodash/without';
+import includes from 'lodash/includes';
+import find from 'lodash/find';
+import cloneDeep from 'lodash/cloneDeep';
+import cloneDeepWith from 'lodash/cloneDeepWith';
+import findIndex from 'lodash/findIndex';
+import iteratee from 'lodash/iteratee';
 
 /**
  * Internal dependencies
@@ -282,8 +283,8 @@ MenuData.prototype.allocateClientIDs = function( menu ) {
  */
 MenuData.prototype.decodeProperties = function( properties, obj ) {
 	// 'undefined' makes 'cloneDeep' use it's own cloning method vs the value returned here
-	return cloneDeep( obj, ( value, key ) => (
-		contains( properties, key ) ? decodeEntities( value ) : undefined
+	return cloneDeepWith( obj, ( value, key ) => (
+		includes( properties, key ) ? decodeEntities( value ) : undefined
 	) );
 };
 
@@ -318,7 +319,7 @@ MenuData.prototype.getMenu = function( locationName ) {
 	}
 
 	menu = find( this.data.menus, function( _menu ) {
-		return contains( _menu.locations, locationName );
+		return includes( _menu.locations, locationName );
 	} );
 
 	return menu || null;
@@ -516,7 +517,7 @@ MenuData.prototype.setMenuAtLocation = function( menuId, locationName, changeOpt
 	}
 
 	previousMenu = find( this.data.menus, function( itemMenu ) {
-		return contains( itemMenu.locations, locationName );
+		return includes( itemMenu.locations, locationName );
 	} );
 
 	if ( previousMenu ) {
@@ -620,7 +621,7 @@ MenuData.prototype.hasSubsequentSiblings = function( item, parent ) {
  * @return {object} item
  */
 MenuData.prototype.find = function( criterion, menus ) {
-	var predicate = createCallback( criterion ),
+	var predicate = iteratee( criterion ),
 		i, result;
 
 	menus = menus || this.data.menus;
@@ -637,7 +638,7 @@ MenuData.prototype.findByName = function( name ) {
 };
 
 MenuData.prototype.replaceItem = function( criterion, newItem, menus ) {
-	var predicate = createCallback( criterion ), i;
+	var predicate = iteratee( criterion ), i;
 
 	menus = menus || this.data.menus;
 

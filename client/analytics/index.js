@@ -2,10 +2,10 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:analytics' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	startsWith = require( 'lodash/string/startsWith' ),
-	isUndefined = require( 'lodash/lang/isUndefined' );
+	assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
+	startsWith = require( 'lodash/startsWith' ),
+	isUndefined = require( 'lodash/isUndefined' );
 
 /**
  * Internal dependencies

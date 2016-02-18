@@ -3,9 +3,9 @@
  */
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	noop = require( 'lodash/utility/noop' ),
-	first = require( 'lodash/array/first' ),
-	where = require( 'lodash/collection/where' );
+	noop = require( 'lodash/noop' ),
+	head = require( 'lodash/head' ),
+	filter = require( 'lodash/filter' );
 
 /**
  * Internal dependencies
@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 
 	_getCountryData: function() {
 		// TODO: move this to country-list or CountrySelect
-		return first( where( this.props.countriesList.get(), {
+		return head( filter( this.props.countriesList.get(), {
 			code: this.state.countryCode
 		} ) );
 	},

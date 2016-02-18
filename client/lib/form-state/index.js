@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-var isEmpty = require( 'lodash/lang/isEmpty' ),
-	filter = require( 'lodash/collection/filter' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	pick = require( 'lodash/object/pick' ),
-	property = require( 'lodash/utility/property' ),
-	flatten = require( 'lodash/array/flatten' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	debounce = require( 'lodash/function/debounce' ),
-	every = require( 'lodash/collection/every' ),
-	extend = require( 'lodash/object/assign' ),
-	uniqueId = require( 'lodash/utility/uniqueId' ),
-	some = require( 'lodash/collection/some' ),
-	isUndefined = require( 'lodash/lang/isUndefined' ),
-	camelCase = require( 'lodash/string/camelCase' ),
-	constant = require( 'lodash/utility/constant' ),
+var isEmpty = require( 'lodash/isEmpty' ),
+	filter = require( 'lodash/filter' ),
+	map = require( 'lodash/map' ),
+	pickBy = require( 'lodash/pickBy' ),
+	property = require( 'lodash/property' ),
+	flatten = require( 'lodash/flatten' ),
+	mapValues = require( 'lodash/mapValues' ),
+	debounce = require( 'lodash/debounce' ),
+	every = require( 'lodash/every' ),
+	assign = require( 'lodash/assign' ),
+	uniqueId = require( 'lodash/uniqueId' ),
+	some = require( 'lodash/some' ),
+	isUndefined = require( 'lodash/isUndefined' ),
+	camelCase = require( 'lodash/camelCase' ),
+	constant = require( 'lodash/constant' ),
 	update = require( 'react-addons-update' );
 
 function Controller( options ) {
@@ -57,7 +57,7 @@ function Controller( options ) {
 	}
 }
 
-extend( Controller.prototype, {
+assign( Controller.prototype, {
 	getInitialState: function() {
 		return this._initialState;
 	},
@@ -188,7 +188,7 @@ function changeFieldValues( formState, fieldValues ) {
 
 function updateFields( formState, callback ) {
 	return mapValues( formState, function( field, name ) {
-		return extend( {}, field, callback( name ) );
+		return assign( {}, field, callback( name ) );
 	} );
 }
 
@@ -199,13 +199,13 @@ function initializeFields( formState, fieldValues ) {
 }
 
 function setFieldsValidating( formState ) {
-	return extend( {}, formState, updateFields( formState, function() {
+	return assign( {}, formState, updateFields( formState, function() {
 		return { isValidating: true };
 	} ) );
 }
 
 function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
-	return extend( {}, formState, updateFields( getFieldsValidating( formState ), function( name ) {
+	return assign( {}, formState, updateFields( getFieldsValidating( formState ), function( name ) {
 		var newFields = {
 			errors: fieldErrors[ name ] || [],
 			isPendingValidation: false,
@@ -275,7 +275,7 @@ function getFieldErrorMessages( formState, fieldName ) {
 }
 
 function getFieldsValidating( formState ) {
-	return pick( formState, property( 'isValidating' ) );
+	return pickBy( formState, property( 'isValidating' ) );
 }
 
 function isInitialized( field ) {
@@ -313,7 +313,7 @@ function getErrorMessages( formState ) {
 		return isFieldInvalid( formState, name );
 	} );
 
-	return flatten( pluck( invalidFields, 'errors' ) );
+	return flatten( map( invalidFields, 'errors' ) );
 }
 
 function isSubmitButtonDisabled( formState ) {

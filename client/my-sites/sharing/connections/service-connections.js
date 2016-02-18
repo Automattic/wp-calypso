@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var some = require( 'lodash/collection/some' ),
-	flatten = require( 'lodash/array/flatten' ),
-	filter = require( 'lodash/collection/filter' ),
-	uniq = require( 'lodash/array/uniq' );
+var some = require( 'lodash/some' ),
+	flatten = require( 'lodash/flatten' ),
+	filter = require( 'lodash/filter' ),
+	uniq = require( 'lodash/uniq' );
 
 /**
  * Internal dependencies

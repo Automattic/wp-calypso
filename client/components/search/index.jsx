@@ -4,8 +4,8 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
-import debounce from 'lodash/function/debounce';
-import noop from 'lodash/utility/noop';
+import debounce from 'lodash/debounce';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies

@@ -4,8 +4,8 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:components:themes:more-button' ), // eslint-disable-line no-unused-vars
 	classNames = require( 'classnames' ),
-	isFunction = require( 'lodash/lang/isFunction' ),
-	map = require( 'lodash/collection/map' );
+	isFunction = require( 'lodash/isFunction' ),
+	map = require( 'lodash/map' );
 
 /**
  * Internal dependencies
@@ -98,7 +98,7 @@ var ThemeMoreButton = React.createClass( {
 						}
 						// If neither getUrl() nor action() are specified, filter this option.
 						return null;
-					}, this ) }
+					}.bind( this ) ) }
 
 				</PopoverMenu>
 			</span>

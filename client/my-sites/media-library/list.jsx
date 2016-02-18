@@ -3,10 +3,10 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	clone = require( 'lodash/lang/clone' ),
-	noop = require( 'lodash/utility/noop' ),
-	filter = require( 'lodash/collection/filter' ),
-	findIndex = require( 'lodash/array/findIndex' );
+	clone = require( 'lodash/clone' ),
+	noop = require( 'lodash/noop' ),
+	filter = require( 'lodash/filter' ),
+	findIndex = require( 'lodash/findIndex' );
 
 /**
  * Internal dependencies

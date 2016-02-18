@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
-	find = require( 'lodash/collection/find' ),
+	find = require( 'lodash/find' ),
 	debug = require( 'debug' )( 'calypso:menus:menu-items-list' ); // eslint-disable-line no-unused-vars
 
 /**

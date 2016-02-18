@@ -1,6 +1,6 @@
 // External dependencies
 import React from 'react';
-import times from 'lodash/utility/times';
+import times from 'lodash/times';
 import debugModule from 'debug';
 
 // Internal dependencies

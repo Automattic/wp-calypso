@@ -3,7 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:application-passwords-data' ),
 	makeEmitter = require( 'lib/mixins/emitter' ),
-	filter = require( 'lodash/collection/filter' ),
+	filter = require( 'lodash/filter' ),
 	store = require( 'store' );
 
 /**
@@ -59,7 +59,7 @@ ApplicationPasswords.prototype.revoke = function( passwordID, callback ) {
 			// Remove connection from this object and localStorage
 			this.data = filter( this.data, function( password ) {
 				return parseInt( password.ID, 10 ) !== passwordID;
-			}, this );
+			} );
 
 			store.set( 'wpcom_me_application_passwords', this.data );
 			this.emit( 'change' );

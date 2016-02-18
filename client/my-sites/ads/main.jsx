@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies

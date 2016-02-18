@@ -3,9 +3,9 @@
  */
 var rewire = require( 'rewire' ),
 	assert = require( 'better-assert' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+	isEqual = require( 'lodash/isEqual' ),
 	sinon = require( 'sinon' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 describe( 'PostEditStore', function() {
 	var PostEditStore, dispatcherCallback;

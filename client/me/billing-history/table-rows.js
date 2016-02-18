@@ -2,11 +2,11 @@
  * External dependencies
  */
 var i18n = require( 'lib/mixins/i18n' ),
-	some = require( 'lodash/collection/some' ),
-	values = require( 'lodash/object/values' ),
-	isDate = require( 'lodash/lang/isDate' ),
-	omit = require( 'lodash/object/omit' ),
-	flatten = require( 'lodash/array/flatten' );
+	some = require( 'lodash/some' ),
+	values = require( 'lodash/values' ),
+	isDate = require( 'lodash/isDate' ),
+	omit = require( 'lodash/omit' ),
+	flatten = require( 'lodash/flatten' );
 
 function formatDate( date ) {
 	return i18n.moment( date ).format( 'MMM D, YYYY' );

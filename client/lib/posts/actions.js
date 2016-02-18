@@ -2,11 +2,11 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:posts' ),
-	defer = require( 'lodash/function/defer' ),
+	defer = require( 'lodash/defer' ),
 	store = require( 'store' ),
-	clone = require( 'lodash/lang/clone' ),
-	zipObject = require( 'lodash/array/zipObject' ),
-	assign = require( 'lodash/object/assign' );
+	clone = require( 'lodash/clone' ),
+	fromPairs = require( 'lodash/fromPairs' ),
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ function handleMetadataOperation( key, value, operation ) {
 		// Normalize a string or array of string keys to an object of key value
 		// pairs. To accomodate both, we coerce the key into an array before
 		// mapping to pull the object pairs.
-		key = zipObject( [].concat( key ).map( ( meta ) => [ meta, value ] ) );
+		key = fromPairs( [].concat( key ).map( ( meta ) => [ meta, value ] ) );
 	}
 
 	// Overwrite duplicates based on key

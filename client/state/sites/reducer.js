@@ -2,10 +2,10 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import pick from 'lodash/object/pick';
-import indexBy from 'lodash/collection/indexBy';
-import isFunction from 'lodash/lang/isFunction';
-import omit from 'lodash/object/omit';
+import pickBy from 'lodash/pickBy';
+import keyBy from 'lodash/keyBy';
+import isFunction from 'lodash/isFunction';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -31,11 +31,11 @@ export function items( state = {}, action ) {
 		case SERIALIZE:
 			// scrub _events, _maxListeners, and other misc functions
 			const sites = Object.keys( state ).map( ( siteID ) => {
-				let plainJSObject = pick( state[ siteID ], ( value ) => ! isFunction( value ) );
+				let plainJSObject = pickBy( state[ siteID ], ( value ) => ! isFunction( value ) );
 				plainJSObject = omit( plainJSObject, [ '_events', '_maxListeners'] );
 				return plainJSObject;
 			} );
-			return indexBy( sites, 'ID' );
+			return keyBy( sites, 'ID' );
 		case DESERIALIZE:
 			return isValidStateWithSchema( state, schema ) ? state : {};
 	}

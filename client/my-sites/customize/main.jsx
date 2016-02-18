@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	url = require( 'url' ),
 	Qs = require( 'qs' ),
-	cloneDeep = require( 'lodash/lang/cloneDeep' ),
+	cloneDeep = require( 'lodash/cloneDeep' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect,
 	debug = require( 'debug' )( 'calypso:my-sites:customize' );

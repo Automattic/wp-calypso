@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/object/assign';
+import assign from 'lodash/assign';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 
 export default React.createClass( {
 

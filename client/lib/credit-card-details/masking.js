@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var identity = require( 'lodash/utility/identity' );
+var identity = require( 'lodash/identity' );
 
 var fieldMasks = {};
 

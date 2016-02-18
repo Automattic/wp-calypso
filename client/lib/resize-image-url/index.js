@@ -1,8 +1,8 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
+var assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
 	url = require( 'url' );
 
 const IMAGE_SCALE_FACTOR = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1;

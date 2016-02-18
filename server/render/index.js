@@ -3,7 +3,7 @@
  */
 import ReactDomServer from 'react-dom/server';
 import Helmet from 'react-helmet';
-import memoize from 'lodash/function/memoize';
+import memoize from 'lodash/memoize';
 import superagent from 'superagent';
 import Lru from 'lru-cache';
 

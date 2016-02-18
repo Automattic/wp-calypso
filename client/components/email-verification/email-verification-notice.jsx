@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	page = require( 'page' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

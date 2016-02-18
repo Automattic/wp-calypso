@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	config = require( 'config' ),
-	findWhere = require( 'lodash/collection/findWhere' ),
-	includes = require( 'lodash/collection/includes' );
+	find = require( 'lodash/find' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
@@ -140,7 +140,7 @@ module.exports = React.createClass( {
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		selectedText = findWhere( this.getFilters(), { id: this.props.filter } ).title;
+		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs { ...this.props } selectedText={ selectedText } filters={ this.getNavigableFilters() } />

@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import page from 'page';
-import get from 'lodash/object/get';
+import get from 'lodash/get';
 import debugModule from 'debug';
-import contains from 'lodash/collection/contains';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -102,7 +102,7 @@ export default React.createClass( {
 			let status;
 			if ( errors && errors[ value ] ) {
 				status = 'error';
-			} else if ( ! contains( success, value ) ) {
+			} else if ( ! includes( success, value ) ) {
 				status = 'validating';
 			}
 

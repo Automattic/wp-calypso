@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var some = require( 'lodash/collection/some' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	flatten = require( 'lodash/array/flatten' ),
-	compact = require( 'lodash/array/compact' ),
-	values = require( 'lodash/object/values' ),
-	property = require( 'lodash/utility/property' ),
-	endsWith = require( 'lodash/string/endsWith' );
+var some = require( 'lodash/some' ),
+	mapValues = require( 'lodash/mapValues' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	flatten = require( 'lodash/flatten' ),
+	compact = require( 'lodash/compact' ),
+	values = require( 'lodash/values' ),
+	property = require( 'lodash/property' ),
+	endsWith = require( 'lodash/endsWith' );
 
 /**
  * Internal dependencies
@@ -52,8 +52,8 @@ function validate( { users, fields, domainSuffix } ) {
 			}
 
 			return Object.assign( {}, field, { error: error } );
-		}, this );
-	}, this );
+		} );
+	} );
 
 	errors = compact( flatten( users.map( function( user ) {
 		return values( user ).map( property( 'error' ) );

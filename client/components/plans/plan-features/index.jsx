@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies

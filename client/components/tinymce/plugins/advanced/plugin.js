@@ -2,7 +2,7 @@
  * External dependencies
  */
 var tinymce = require( 'tinymce/tinymce' ),
-	throttle = require( 'lodash/function/throttle' );
+	throttle = require( 'lodash/throttle' );
 
 /**
  * Internal dependencies

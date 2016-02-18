@@ -4,10 +4,10 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	createFragment = require( 'react-addons-create-fragment' ),
-	without = require( 'lodash/array/without' ),
-	includes = require( 'lodash/collection/includes' ),
+	without = require( 'lodash/without' ),
+	includes = require( 'lodash/includes' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies

@@ -3,7 +3,7 @@
  */
 var expect = require( 'chai' ).expect,
 	rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	sinon = require( 'sinon' );
 
 /**

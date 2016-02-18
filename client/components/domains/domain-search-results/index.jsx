@@ -4,8 +4,8 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	page = require( 'page' ),
-	times = require( 'lodash/utility/times' ),
-	contains = require( 'lodash/collection/contains' ),
+	times = require( 'lodash/times' ),
+	includes = require( 'lodash/includes' ),
 	Notice = require( 'components/notice' );
 
 /**
@@ -19,7 +19,7 @@ var DomainRegistrationSuggestion = require( 'components/domains/domain-registrat
 var DomainSearchResults = React.createClass( {
 	isDomainUnavailable: function() {
 		return this.props.lastDomainError &&
-			contains( [ 'not_available', 'not_available_but_mappable' ], this.props.lastDomainError.code );
+			includes( [ 'not_available', 'not_available_but_mappable' ], this.props.lastDomainError.code );
 	},
 
 	domainAvailability: function() {

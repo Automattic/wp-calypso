@@ -2,8 +2,8 @@
  * External dependencies
  */
 import async from 'async';
-import noop from 'lodash/utility/noop';
-import some from 'lodash/collection/some';
+import noop from 'lodash/noop';
+import some from 'lodash/some';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:ad-tracking' );
 

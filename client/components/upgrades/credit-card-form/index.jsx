@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import extend from 'lodash/object/assign';
+import assign from 'lodash/assign';
 import React from 'react';
 
 /**
@@ -22,7 +22,7 @@ const CreditCardForm = React.createClass( {
 	},
 
 	field: function( fieldName, componentClass, props ) {
-		return React.createElement( componentClass, extend( {}, props, {
+		return React.createElement( componentClass, assign( {}, props, {
 			additionalClasses: 'credit-card-form__field',
 			eventFormName: this.props.eventFormName,
 			invalid: this.props.isFieldInvalid( fieldName ),

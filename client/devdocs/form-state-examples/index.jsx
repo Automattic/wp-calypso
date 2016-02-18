@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import capitalize from 'lodash/string/capitalize';
-import camelCase from 'lodash/string/camelCase';
-import kebabCase from 'lodash/string/kebabCase';
+import upperFirst from 'lodash/upperFirst';
+import camelCase from 'lodash/camelCase';
+import kebabCase from 'lodash/kebabCase';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ class FormStateExamples extends React.Component {
 	}
 
 	component() {
-		const componentName = capitalize( camelCase( this.props.component ) ),
+		const componentName = upperFirst( camelCase( this.props.component ) ),
 			ComponentClass = COMPONENTS[ componentName ];
 
 		return (

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import indexBy from 'lodash/collection/indexBy';
+import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ import { DEFAULT_POST_QUERY } from './constants';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
-			return Object.assign( {}, state, indexBy( action.posts, 'global_ID' ) );
+			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
 		case SERIALIZE:
 			return {};
 		case DESERIALIZE:

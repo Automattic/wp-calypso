@@ -8,7 +8,7 @@ var debug = require( 'debug' )( 'calypso:wporg-data:actions' );
  */
 var Dispatcher = require( 'dispatcher' ),
 	wporg = require( 'lib/wporg' ),
-	debounce = require( 'lodash/function/debounce' ),
+	debounce = require( 'lodash/debounce' ),
 	utils = require( 'lib/plugins/utils' );
 
 /**

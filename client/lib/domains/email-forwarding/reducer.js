@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import findIndex from 'lodash/array/findIndex';
+import findIndex from 'lodash/findIndex';
 import update from 'react-addons-update';
-import sortBy from 'lodash/collection/sortBy';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Internal dependencies

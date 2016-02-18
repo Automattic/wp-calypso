@@ -2,8 +2,8 @@
 import { decodeEntities } from 'lib/formatting';
 import dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-import isEqual from 'lodash/lang/isEqual';
-import last from 'lodash/array/last';
+import isEqual from 'lodash/isEqual';
+import last from 'lodash/last';
 
 // Internal dependencies
 import { action as actionTypes } from './constants';

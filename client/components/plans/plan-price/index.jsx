@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isUndefined = require( 'lodash/lang/isUndefined' );
+	isUndefined = require( 'lodash/isUndefined' );
 
 /**
  * Internal dependencies

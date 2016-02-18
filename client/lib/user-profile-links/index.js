@@ -2,8 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:user:profile-links' ),
-	reject = require( 'lodash/collection/reject' ),
-	some = require( 'lodash/collection/some' );
+	reject = require( 'lodash/reject' ),
+	some = require( 'lodash/some' );
 
 /**
  * Internal dependencies

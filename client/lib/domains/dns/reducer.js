@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import findIndex from 'lodash/array/findIndex';
-import isUndefined from 'lodash/lang/isUndefined';
+import findIndex from 'lodash/findIndex';
+import isUndefined from 'lodash/isUndefined';
 import update from 'react-addons-update';
 
 /**

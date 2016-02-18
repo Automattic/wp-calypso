@@ -4,8 +4,8 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	page = require( 'page' ),
-	some = require( 'lodash/collection/some' ),
-	capitalize = require( 'lodash/string/capitalize' );
+	some = require( 'lodash/some' ),
+	capitalize = require( 'lodash/capitalize' );
 
 /**
  * Internal Dependencies

@@ -4,8 +4,8 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	Clipboard = require( 'clipboard' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' ),
+	omit = require( 'lodash/omit' ),
+	noop = require( 'lodash/noop' ),
 	classNames = require( 'classnames' );
 
 /**

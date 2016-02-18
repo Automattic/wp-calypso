@@ -24,7 +24,7 @@ describe( 'WPORG Plugins Lists Store', function() {
 			warnOnReplace: false,
 			warnOnUnregistered: false
 		} );
-		mockery.registerMock( 'lodash/function/debounce', function( cb ) {
+		mockery.registerMock( 'lodash/debounce', function( cb ) {
 			return cb;
 		} );
 		mockery.registerMock( 'store', localStorageMock );

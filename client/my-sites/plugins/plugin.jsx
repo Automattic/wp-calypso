@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import debugModule from 'debug';
 import page from 'page';
 import classNames from 'classnames';
-import property from 'lodash/utility/property';
-import filter from 'lodash/collection/filter';
-import reject from 'lodash/collection/reject';
-import uniq from 'lodash/array/uniq';
+import property from 'lodash/property';
+import filter from 'lodash/filter';
+import reject from 'lodash/reject';
+import uniq from 'lodash/uniq';
 import config from 'config';
 
 /**

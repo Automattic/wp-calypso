@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classnames = require( 'classnames' ),
-	includes = require( 'lodash/collection/includes' );
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies

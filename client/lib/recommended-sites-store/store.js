@@ -1,6 +1,6 @@
 import Dispatcher from 'dispatcher';
 import { OrderedSet, fromJS } from 'immutable';
-import pick from 'lodash/object/pick';
+import pick from 'lodash/pick';
 
 import Emitter from 'lib/mixins/emitter';
 import { ACTION_RECEIVE_SITE_RECOMMENDATIONS, ACTION_RECEIVE_SITE_RECOMMENDATIONS_ERROR } from './constants';

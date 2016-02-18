@@ -1,25 +1,25 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	async = require( 'async' ),
 	debug = require( 'debug' )( 'calypso:post-normalizer' ),
-	deepClone = require( 'lodash/lang/cloneDeep' ),
-	every = require( 'lodash/collection/every' ),
-	endsWith = require( 'lodash/string/endsWith' ),
-	filter = require( 'lodash/collection/filter' ),
-	find = require( 'lodash/collection/find' ),
-	first = require( 'lodash/array/first' ),
-	forEach = require( 'lodash/collection/forEach' ),
-	forOwn = require( 'lodash/object/forOwn' ),
-	map = require( 'lodash/collection/map' ),
-	max = require( 'lodash/collection/max' ),
-	pick = require( 'lodash/object/pick' ),
-	some = require( 'lodash/collection/some' ),
+	cloneDeep = require( 'lodash/cloneDeep' ),
+	every = require( 'lodash/every' ),
+	endsWith = require( 'lodash/endsWith' ),
+	filter = require( 'lodash/filter' ),
+	find = require( 'lodash/find' ),
+	head = require( 'lodash/head' ),
+	forEach = require( 'lodash/forEach' ),
+	forOwn = require( 'lodash/forOwn' ),
+	map = require( 'lodash/map' ),
+	maxBy = require( 'lodash/maxBy' ),
+	pick = require( 'lodash/pick' ),
+	some = require( 'lodash/some' ),
 	srcset = require( 'srcset' ),
-	startsWith = require( 'lodash/string/startsWith' ),
-	toArray = require( 'lodash/lang/toArray' ),
-	uniq = require( 'lodash/array/uniq' ),
+	startsWith = require( 'lodash/startsWith' ),
+	toArray = require( 'lodash/toArray' ),
+	uniqBy = require( 'lodash/uniqBy' ),
 	url = require( 'url' );
 
 /**
@@ -74,7 +74,7 @@ function normalizePost( post, transforms, callback ) {
 		return;
 	}
 
-	let normalizedPost = deepClone( post ),
+	let normalizedPost = cloneDeep( post ),
 		postDebug = debugForPost( post );
 
 	postDebug( 'running transforms' );
@@ -278,7 +278,7 @@ normalizePost.firstPassCanonicalImage = function firstPassCanonicalImage( post, 
 			type: 'image'
 		}, imageSizeFromAttachments( post.featured_image ) );
 	} else {
-		let candidate = first( filter( post.attachments, function( attachment ) {
+		let candidate = head( filter( post.attachments, function( attachment ) {
 			return startsWith( attachment.mime_type, 'image/' );
 		} ) );
 
@@ -304,14 +304,12 @@ normalizePost.makeSiteIDSafeForAPI = function makeSiteIDSafeForAPI( post, callba
 };
 
 normalizePost.pickPrimaryTag = function assignPrimaryTag( post, callback ) {
-	var NO_ENTRIES_FOUND_MARKER = -Infinity;
-
 	// if we hand max an invalid or empty array, it returns -Infinity
-	post.primary_tag = max( post.tags, function( tag ) {
+	post.primary_tag = maxBy( post.tags, function( tag ) {
 		return tag.post_count;
 	} );
 
-	if ( post.primary_tag === NO_ENTRIES_FOUND_MARKER ) {
+	if ( post.primary_tag === undefined ) {
 		delete post.primary_tag;
 	}
 
@@ -379,7 +377,7 @@ normalizePost.waitForImagesToLoad = function waitForImagesToLoad( post, callback
 	} );
 
 	// dedupe the set of images
-	imagesToCheck = uniq( imagesToCheck, function( image ) {
+	imagesToCheck = uniqBy( imagesToCheck, function( image ) {
 		return image.src;
 	} );
 

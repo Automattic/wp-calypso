@@ -2,7 +2,7 @@
  * External dependencies
  */
 var rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import last from 'lodash/array/last';
+import last from 'lodash/last';
 import classNames from 'classnames';
 
 /**

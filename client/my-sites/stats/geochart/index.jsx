@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import throttle from 'lodash/function/throttle';
+import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies

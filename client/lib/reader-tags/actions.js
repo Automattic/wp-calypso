@@ -1,6 +1,6 @@
 // External Dependencies
-var trim = require( 'lodash/string/trim' );
-var has = require( 'lodash/object/has' );
+var trim = require( 'lodash/trim' );
+var has = require( 'lodash/has' );
 
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import debounce from 'lodash/function/debounce';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies

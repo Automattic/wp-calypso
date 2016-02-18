@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var _pick = require( 'lodash/object/pick' ),
-	_assign = require( 'lodash/object/assign' ),
-	_property = require( 'lodash/utility/property' ),
-	_reject = require( 'lodash/collection/reject' ),
-	_map = require( 'lodash/collection/map' ),
-	filter = require( 'lodash/collection/filter' ),
-	_transform = require( 'lodash/object/transform' ),
-	_sortByAll = require( 'lodash/collection/sortByAll' ),
+var pick = require( 'lodash/pick' ),
+	assign = require( 'lodash/assign' ),
+	property = require( 'lodash/property' ),
+	reject = require( 'lodash/reject' ),
+	map = require( 'lodash/map' ),
+	filter = require( 'lodash/filter' ),
+	transform = require( 'lodash/transform' ),
+	sortBy = require( 'lodash/sortBy' ),
 	sanitizeHtml = require( 'sanitize-html' );
 
 /**
@@ -60,7 +60,7 @@ function filterNoticesBy( site, pluginSlug, log ) {
 
 PluginUtils = {
 	whiteListPluginData: function( plugin ) {
-		return _pick( plugin,
+		return pick( plugin,
 			'active',
 			'author',
 			'author_url',
@@ -111,7 +111,7 @@ PluginUtils = {
 		if ( ! list ) {
 			return null;
 		}
-		let screenshots = _map( list, function( li ) {
+		let screenshots = map( list, function( li ) {
 			const img = li.querySelectorAll( 'img' );
 			const captionP = li.querySelectorAll( 'p' );
 
@@ -138,7 +138,7 @@ PluginUtils = {
 			}
 			return splittedVersion;
 		}
-		let sortedCompatibility = _sortByAll( Object.keys( compatibilityList ).map( splitInNumbers ), [ 0, 1, 2 ] );
+		let sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [ 0, 1, 2 ] );
 		return sortedCompatibility.map( function( version ) {
 			if ( version.length && version[ version.length - 1 ] === 0 ) {
 				version.pop();
@@ -148,9 +148,9 @@ PluginUtils = {
 	},
 
 	normalizePluginData: function( plugin, pluginData ) {
-		plugin = this.whiteListPluginData( _assign( plugin, pluginData ) );
+		plugin = this.whiteListPluginData( assign( plugin, pluginData ) );
 
-		return _transform( plugin, function( returnData, item, key ) {
+		return transform( plugin, function( returnData, item, key ) {
 			switch ( key ) {
 				case 'short_description':
 				case 'description':
@@ -209,7 +209,7 @@ PluginUtils = {
 
 	addWpcomIcon: function( plugin ) {
 		if ( plugin.slug && plugin.wpcom ) {
-			return _assign( {}, plugin, { icon: '/calypso/images/upgrades/plugins/' + plugin.slug + '.png' } );
+			return assign( {}, plugin, { icon: '/calypso/images/upgrades/plugins/' + plugin.slug + '.png' } );
 		}
 
 		return plugin;
@@ -224,16 +224,16 @@ PluginUtils = {
 	 */
 	duplicateHybridPlugins: function( plugins ) {
 		return plugins.reduce( function( result, plugin ) {
-			if ( ( plugin.wpcom && plugin.sites.some( _property( 'jetpack' ) ) ) ||
-					( ! plugin.wpcom && ! plugin.sites.every( _property( 'jetpack' ) ) ) ) {
+			if ( ( plugin.wpcom && plugin.sites.some( property( 'jetpack' ) ) ) ||
+					( ! plugin.wpcom && ! plugin.sites.every( property( 'jetpack' ) ) ) ) {
 				// this is a plugin shared by .com and Jetpack sites, add it twice with different sites
 				return result.concat(
-					_assign( {}, plugin, {
-						sites: filter( plugin.sites, _property( 'jetpack' ) ),
+					assign( {}, plugin, {
+						sites: filter( plugin.sites, property( 'jetpack' ) ),
 						wpcom: false
 					} ),
-					PluginUtils.addWpcomIcon( _assign( {}, plugin, {
-						sites: _reject( plugin.sites, _property( 'jetpack' ) ),
+					PluginUtils.addWpcomIcon( assign( {}, plugin, {
+						sites: reject( plugin.sites, property( 'jetpack' ) ),
 						wpcom: true
 					} ) )
 				);

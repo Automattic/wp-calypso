@@ -1,7 +1,7 @@
 //var debug = require( 'debug' )( 'calypso:feed-subscription-actions' );
 
 // External dependencies
-var get = require( 'lodash/object/get' );
+var get = require( 'lodash/get' );
 
 // Internal dependencies
 var Dispatcher = require( 'dispatcher' ),

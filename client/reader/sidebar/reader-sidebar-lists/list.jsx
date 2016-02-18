@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import map from 'lodash/collection/map';
+import map from 'lodash/map';
 
 /**
  * Internal Dependencies
@@ -19,16 +19,17 @@ const ReaderSidebarListsList = React.createClass( {
 	},
 
 	renderItems() {
+		const { currentListOwner, currentListSlug, path } = this.props;
 		return map( this.props.lists, function( list ) {
 			return (
 				<ReaderSidebarListsListItem
 					key={ list.ID }
 					list={ list }
-					path={ this.props.path }
-					currentListOwner={ this.props.currentListOwner }
-					currentListSlug={ this.props.currentListSlug } />
+					path={ path }
+					currentListOwner={ currentListOwner }
+					currentListSlug={ currentListSlug } />
 			);
-		}, this );
+		} );
 	},
 
 	render: function() {

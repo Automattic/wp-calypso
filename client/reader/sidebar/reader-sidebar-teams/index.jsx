@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import map from 'lodash/collection/map';
+import map from 'lodash/map';
 
 /**
  * Internal Dependencies
@@ -17,11 +17,12 @@ const ReaderSidebarTeams = React.createClass( {
 	},
 
 	renderItems() {
+		const { path } = this.props;
 		return map( this.props.teams, function( team ) {
 			return (
-				<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ this.props.path } />
+				<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
 			);
-		}, this );
+		} );
 	},
 
 	render: function() {

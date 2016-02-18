@@ -3,8 +3,8 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	throttle = require( 'lodash/function/throttle' ),
-	debounce = require( 'lodash/function/debounce' ),
+	throttle = require( 'lodash/throttle' ),
+	debounce = require( 'lodash/debounce' ),
 	debug = require( 'debug' )( 'calypso:menus:option-list' ); // eslint-disable-line no-unused-vars
 
 /**

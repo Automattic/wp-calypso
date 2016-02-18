@@ -4,8 +4,8 @@
 var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	omit = require( 'lodash/omit' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

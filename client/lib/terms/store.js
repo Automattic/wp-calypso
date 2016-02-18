@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var values = require( 'lodash/object/values' ),
-	clone = require( 'lodash/lang/clone' );
+var values = require( 'lodash/values' ),
+	clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies

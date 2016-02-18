@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import camelCase from 'lodash/string/camelCase';
-import merge from 'lodash/object/merge';
+import camelCase from 'lodash/camelCase';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies

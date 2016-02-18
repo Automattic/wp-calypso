@@ -2,8 +2,8 @@
  * External Dependencies
  */
 var urls = require( 'url' ),
-	assign = require( 'lodash/object/assign' ),
-	pick = require( 'lodash/object/pick' );
+	assign = require( 'lodash/assign' ),
+	pick = require( 'lodash/pick' );
 
 module.exports = function( url ) {
 	var bits,

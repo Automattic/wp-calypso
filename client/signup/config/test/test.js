@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import keys from 'lodash/object/keys';
-import intersection from 'lodash/array/intersection';
-import isEmpty from 'lodash/lang/isEmpty';
+import keys from 'lodash/keys';
+import intersection from 'lodash/intersection';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal dependencies

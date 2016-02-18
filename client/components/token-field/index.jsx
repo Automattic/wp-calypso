@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var take = require( 'lodash/array/take' ),
-	clone = require( 'lodash/lang/clone' ),
-	map = require( 'lodash/collection/map' ),
+var take = require( 'lodash/take' ),
+	clone = require( 'lodash/clone' ),
+	map = require( 'lodash/map' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	each = require( 'lodash/collection/each' ),
-	identity = require( 'lodash/utility/identity' ),
+	each = require( 'lodash/each' ),
+	identity = require( 'lodash/identity' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:token-field' ),
-	some = require( 'lodash/collection/some' ),
-	forEach = require( 'lodash/collection/forEach' );
+	some = require( 'lodash/some' ),
+	forEach = require( 'lodash/forEach' );
 
 /**
  * Internal dependencies

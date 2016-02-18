@@ -2,8 +2,8 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
-import includes from 'lodash/collection/includes';
-import partial from 'lodash/function/partial';
+import includes from 'lodash/includes';
+import partial from 'lodash/partial';
 const wpcom = require( 'lib/wp' ).undocumented();
 
 /**

@@ -2,10 +2,10 @@
  * External dependencies
  */
 var assert = require( 'assert' ),
-	extend = require( 'lodash/object/assign' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	constant = require( 'lodash/utility/constant' ),
-	zipObject = require( 'lodash/array/zipObject' );
+	assign = require( 'lodash/assign' ),
+	mapValues = require( 'lodash/mapValues' ),
+	constant = require( 'lodash/constant' ),
+	zipObject = require( 'lodash/zipObject' );
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ function testController( options ) {
 		debounceWait: 0
 	};
 
-	return formState.Controller( extend( defaults, options ) );
+	return formState.Controller( assign( defaults, options ) );
 }
 
 describe( 'form', function() {

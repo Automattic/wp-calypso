@@ -4,7 +4,7 @@
 var expect = require( 'chai' ).expect,
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
-	set = require( 'lodash/object/set' );
+	set = require( 'lodash/set' );
 
 var PostListStore, FeedPostStore, FeedSubscriptionStore;
 

@@ -4,8 +4,8 @@
 import rewire from 'rewire';
 import { assert } from 'chai';
 import Dispatcher from 'dispatcher';
-import isPlainObject from 'lodash/lang/isPlainObject';
-import isArray from 'lodash/lang/isArray';
+import isPlainObject from 'lodash/isPlainObject';
+import isArray from 'lodash/isArray';
 import { getRemovedPosts } from '../post-list-store.js';
 
 /**

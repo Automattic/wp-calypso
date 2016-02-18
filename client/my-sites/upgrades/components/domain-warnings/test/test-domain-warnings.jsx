@@ -7,7 +7,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import chai from 'chai';
-import identity from 'lodash/utility/identity';
+import identity from 'lodash/identity';
 import i18n from 'lib/mixins/i18n';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';

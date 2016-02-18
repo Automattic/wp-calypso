@@ -2,9 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:sharing-buttons-list' ),
-	uniq = require( 'lodash/array/uniq' ),
-	sortBy = require( 'lodash/collection/sortBy' ),
-	findIndex = require( 'lodash/array/findIndex' );
+	uniq = require( 'lodash/uniq' ),
+	sortBy = require( 'lodash/sortBy' ),
+	findIndex = require( 'lodash/findIndex' );
 
 /**
  * Internal dependencies

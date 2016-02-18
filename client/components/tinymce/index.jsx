@@ -5,8 +5,8 @@ const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	autosize = require( 'autosize' ),
-	forEach = require( 'lodash/collection/forEach' ),
-	assign = require( 'lodash/object/assign' ),
+	forEach = require( 'lodash/forEach' ),
+	assign = require( 'lodash/assign' ),
 	tinymce = require( 'tinymce/tinymce' );
 
 require( 'tinymce/themes/modern/theme.js' );
@@ -298,7 +298,7 @@ module.exports = React.createClass( {
 			if ( this.props[ eventHandler ] ) {
 				this._editor.off( eventName, this.props[ eventHandler ] );
 			}
-		}, this );
+		}.bind( this ) );
 
 		window.removeEventListener( 'scroll', this.onScrollPinTools );
 		tinymce.remove( this._editor );
@@ -321,7 +321,7 @@ module.exports = React.createClass( {
 					this._editor.off( eventName, this.props[ eventHandler ] );
 				}
 			}
-		}, this );
+		}.bind( this ) );
 	},
 
 	onScrollPinTools: function() {

@@ -6,8 +6,8 @@ var express = require( 'express' ),
 	fspath = require( 'path' ),
 	marked = require( 'marked' ),
 	lunr = require( 'lunr' ),
-	find = require( 'lodash/collection/find' ),
-	escapeHTML = require( 'lodash/string/escape' );
+	find = require( 'lodash/find' ),
+	escapeHTML = require( 'lodash/escape' );
 
 /**
  * Internal dependencies

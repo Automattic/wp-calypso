@@ -6,17 +6,17 @@ const debug = debugModule( 'calypso:signup' );
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import page from 'page';
-import startsWith from 'lodash/string/startsWith';
-import sortBy from 'lodash/collection/sortBy';
-import last from 'lodash/array/last';
-import find from 'lodash/collection/find';
-import some from 'lodash/collection/some';
-import defer from 'lodash/function/defer';
-import delay from 'lodash/function/delay';
-import assign from 'lodash/object/assign';
-import matchesProperty from 'lodash/utility/matchesProperty';
-import indexOf from 'lodash/array/indexOf';
-import reject from 'lodash/collection/reject';
+import startsWith from 'lodash/startsWith';
+import sortBy from 'lodash/sortBy';
+import last from 'lodash/last';
+import find from 'lodash/find';
+import some from 'lodash/some';
+import defer from 'lodash/defer';
+import delay from 'lodash/delay';
+import assign from 'lodash/assign';
+import matchesProperty from 'lodash/matchesProperty';
+import indexOf from 'lodash/indexOf';
+import reject from 'lodash/reject';
 
 /**
  * Internal dependencies

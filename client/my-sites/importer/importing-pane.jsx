@@ -4,8 +4,8 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import has from 'lodash/object/has';
-import omit from 'lodash/object/omit';
+import has from 'lodash/has';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies

@@ -2,9 +2,9 @@
  * External dependencies
  */
 import inherits from 'inherits';
-import some from 'lodash/collection/some';
-import includes from 'lodash/collection/includes';
-import find from 'lodash/collection/find';
+import some from 'lodash/some';
+import includes from 'lodash/includes';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies

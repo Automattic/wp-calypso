@@ -8,8 +8,8 @@ var sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	expect = require( 'chai' ).use( sinonChai ).expect,
 	rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' ),
-	isPlainObject = require( 'lodash/lang/isPlainObject' ),
+	assign = require( 'lodash/assign' ),
+	isPlainObject = require( 'lodash/isPlainObject' ),
 	mockery = require( 'mockery' );
 
 /**
@@ -69,10 +69,10 @@ describe( 'MediaActions', function() {
 				};
 			}
 		} );
-		mockery.registerMock( 'lodash/utility/uniqueId', function() {
+		mockery.registerMock( 'lodash/uniqueId', function() {
 			return 'media-1';
 		} );
-		mockery.registerMock( 'lodash/lang/isPlainObject', function( obj ) {
+		mockery.registerMock( 'lodash/isPlainObject', function( obj ) {
 			// In the browser, our DUMMY_UPLOAD will be an instanceof
 			// window.File, but File is not provided by jsdom
 			if ( obj === DUMMY_UPLOAD ) {

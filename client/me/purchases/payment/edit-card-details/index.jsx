@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import extend from 'lodash/object/assign';
+import assign from 'lodash/assign';
 import page from 'page';
 import React from 'react';
 
@@ -9,7 +9,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import analytics from 'analytics';
-import camelCase from 'lodash/string/camelCase';
+import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import { clearPurchases } from 'lib/upgrades/actions/purchases';
 import CompactCard from 'components/card/compact';
@@ -17,11 +17,11 @@ import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'components/upgrades/credit-card-form';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
-import forOwn from 'lodash/object/forOwn';
+import forOwn from 'lodash/forOwn';
 import HeaderCake from 'components/header-cake' ;
-import kebabCase from 'lodash/string/kebabCase';
+import kebabCase from 'lodash/kebabCase';
 import Main from 'components/main';
-import mapKeys from 'lodash/object/mapKeys';
+import mapKeys from 'lodash/mapKeys';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
@@ -64,7 +64,7 @@ const EditCardDetails = React.createClass( {
 	 * @param fields
 	 */
 	mergeCard( card, fields: {} ) {
-		return extend( {}, fields, {
+		return assign( {}, fields, {
 			name: card.name
 		} );
 	},

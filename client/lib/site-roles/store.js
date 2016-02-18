@@ -2,7 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:viewers:store' ),
-	_clone = require( 'lodash/lang/clone' );
+	clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ function updateRoles( siteId, roles ) {
 	}
 
 	roles.forEach( function( role ) {
-		_rolesBySite[ siteId ][ role.name ] = _clone( role );
+		_rolesBySite[ siteId ][ role.name ] = clone( role );
 	} );
 }
 

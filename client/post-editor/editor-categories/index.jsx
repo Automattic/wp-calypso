@@ -2,8 +2,8 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	without = require( 'lodash/array/without' ),
-	clone = require( 'lodash/lang/clone' ),
+	without = require( 'lodash/without' ),
+	clone = require( 'lodash/clone' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:post-editor:editor-categories' );
 import { connect } from 'react-redux';

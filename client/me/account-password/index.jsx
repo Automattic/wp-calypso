@@ -4,9 +4,9 @@
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
-	_debounce = require( 'lodash/function/debounce' ),
-	_first = require( 'lodash/array/first' ),
-	_isEmpty = require( 'lodash/lang/isEmpty' ),
+	debounce = require( 'lodash/debounce' ),
+	head = require( 'lodash/head' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	classNames = require( 'classnames' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
@@ -33,7 +33,7 @@ const AccountPassword = React.createClass( {
 	mixins: [ LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
 
 	componentDidMount: function() {
-		this.debouncedPasswordValidate = _debounce( this.validatePassword, 300 );
+		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 	},
 
 	componentWillUnmount: function() {
@@ -106,13 +106,13 @@ const AccountPassword = React.createClass( {
 	},
 
 	renderValidationNotices: function() {
-		var failure = _first( this.props.accountPasswordData.getValidationFailures() );
+		var failure = head( this.props.accountPasswordData.getValidationFailures() );
 
 		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
 			return (
 				<FormInputValidation text={ this.translate( 'Your password can be saved.' ) } />
 			);
-		} else if ( ! _isEmpty( failure ) ) {
+		} else if ( ! isEmpty( failure ) ) {
 			return (
 				<FormInputValidation isError text={ failure.explanation } />
 			);

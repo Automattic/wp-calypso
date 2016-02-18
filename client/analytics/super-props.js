@@ -2,7 +2,7 @@
  * External dependencies
  */
 var config = require( 'config' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 /**
  * Internal dependencies
  */

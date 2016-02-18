@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	Gridicon = require( 'components/gridicon' ),
 	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies

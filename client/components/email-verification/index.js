@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var startsWith = require( 'lodash/string/startsWith' );
+var startsWith = require( 'lodash/startsWith' );
 
 /**
  * Internal dependencies

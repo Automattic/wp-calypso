@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import compose from 'lodash/function/compose';
+import flowRight from 'lodash/flowRight';
 
 /**
  * Internal dependencies
@@ -38,10 +38,10 @@ function mapStateToProps( state ) {
 
 function mapDispatchToProps( dispatch ) {
 	return {
-		advancedSettingsFetch: compose( dispatch, advancedSettingsFetch ),
-		exportStatusFetch: compose( dispatch, exportStatusFetch ),
-		setPostType: compose( dispatch, setPostType ),
-		startExport: compose( dispatch, startExport ),
+		advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
+		exportStatusFetch: flowRight( dispatch, exportStatusFetch ),
+		setPostType: flowRight( dispatch, setPostType ),
+		startExport: flowRight( dispatch, startExport ),
 	};
 }
 

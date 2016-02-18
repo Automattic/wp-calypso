@@ -2,12 +2,12 @@
  * External dependencies.
  */
 var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
-	isPlainObject = require( 'lodash/lang/isPlainObject' ),
-	clone = require( 'lodash/lang/clone' ),
-	omit = require( 'lodash/object/omit' ),
-	camelCase = require( 'lodash/string/camelCase' ),
-	snakeCase = require( 'lodash/string/snakeCase' ),
-	pick = require( 'lodash/object/pick' );
+	isPlainObject = require( 'lodash/isPlainObject' ),
+	clone = require( 'lodash/clone' ),
+	omit = require( 'lodash/omit' ),
+	camelCase = require( 'lodash/camelCase' ),
+	snakeCase = require( 'lodash/snakeCase' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal dependencies.

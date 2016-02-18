@@ -2,7 +2,7 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

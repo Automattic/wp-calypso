@@ -1,6 +1,6 @@
 // External dependencies
 var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 	//debug = require( 'debug' )( 'calypso:comment-likes' );
 
 // Internal dependencies

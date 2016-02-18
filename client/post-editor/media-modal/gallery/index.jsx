@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/utility/noop';
-import assign from 'lodash/object/assign';
-import omit from 'lodash/object/omit';
-import some from 'lodash/collection/some';
-import isEqual from 'lodash/lang/isEqual';
+import noop from 'lodash/noop';
+import assign from 'lodash/assign';
+import omitBy from 'lodash/omitBy';
+import some from 'lodash/some';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
@@ -115,7 +115,7 @@ export default React.createClass( {
 
 		// Merge object of settings with existing set
 		let updatedSettings = assign( {}, this.props.settings, setting );
-		updatedSettings = omit( updatedSettings, ( updatedValue ) => null === updatedValue );
+		updatedSettings = omitBy( updatedSettings, ( updatedValue ) => null === updatedValue );
 		this.props.onUpdateSettings( updatedSettings );
 	},
 

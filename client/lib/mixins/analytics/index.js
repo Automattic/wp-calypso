@@ -3,7 +3,7 @@
  */
 import analytics from 'analytics';
 import { type as domainTypes } from 'lib/domains/constants';
-import snakeCase from 'lodash/string/snakeCase';
+import snakeCase from 'lodash/snakeCase';
 
 const getDomainTypeText = function( domain ) {
 	switch ( domain.type ) {

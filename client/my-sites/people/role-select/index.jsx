@@ -3,8 +3,8 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
-import omit from 'lodash/object/omit';
-import map from 'lodash/collection/map';
+import omit from 'lodash/omit';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies

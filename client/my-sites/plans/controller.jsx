@@ -5,7 +5,7 @@ var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
-	defer = require( 'lodash/function/defer' );
+	defer = require( 'lodash/defer' );
 
 /**
  * Internal Dependencies

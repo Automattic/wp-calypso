@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import assign from 'lodash/object/assign';
-import find from 'lodash/collection/find';
-import matches from 'lodash/utility/matches';
+import assign from 'lodash/assign';
+import find from 'lodash/find';
+import matches from 'lodash/matches';
 
 /**
  * Internal Dependencies

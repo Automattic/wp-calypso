@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import find from 'lodash/collection/find';
-import includes from 'lodash/collection/includes';
+import find from 'lodash/find';
+import includes from 'lodash/includes';
 import moment from 'moment';
 
 /**

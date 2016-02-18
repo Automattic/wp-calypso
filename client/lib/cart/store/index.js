@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var extend = require( 'lodash/object/assign' ),
-	partialRight = require( 'lodash/function/partialRight' ),
-	compose = require( 'lodash/function/compose' ),
-	flow = require( 'lodash/function/flow' );
+var assign = require( 'lodash/assign' ),
+	partialRight = require( 'lodash/partialRight' ),
+	flowRight = require( 'lodash/flowRight' ),
+	flow = require( 'lodash/flow' );
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ var CartStore = {
 	get: function() {
 		var value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
-		return extend( {}, value, {
+		return assign( {}, value, {
 			hasLoadedFromServer: hasLoadedFromServer(),
 			hasPendingServerUpdates: hasPendingServerUpdates()
 		} );
@@ -87,7 +87,7 @@ function update( changeFunction ) {
 		previousCart,
 		nextCart;
 
-	wrappedFunction = compose(
+	wrappedFunction = flowRight(
 		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);

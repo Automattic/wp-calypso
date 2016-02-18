@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import pick from 'lodash/object/pick';
+import pick from 'lodash/pick';
 
 /**
  * Internal Dependencies

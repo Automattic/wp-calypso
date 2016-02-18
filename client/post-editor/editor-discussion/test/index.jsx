@@ -11,7 +11,7 @@ var ReactDom = require( 'react-dom' ),
 	sinonChai = require( 'sinon-chai' ),
 	mockery = require( 'mockery' ),
 	chai = require( 'chai' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	expect = chai.expect;
 
 chai.use( sinonChai );

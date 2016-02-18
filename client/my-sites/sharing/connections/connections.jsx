@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import where from 'lodash/collection/where';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -116,11 +116,11 @@ export default React.createClass( {
 		return (
 			<div>
 				<SharingServicesGroup
-					services={ where( services, { type: 'publicize' } ) }
+					services={ filter( services, { type: 'publicize' } ) }
 					title={ this.translate( 'Publicize Your Posts' ) }
 					{ ...commonGroupProps } />
 				<SharingServicesGroup
-					services={ where( services, { type: 'other' } ) }
+					services={ filter( services, { type: 'other' } ) }
 					title={ this.translate( 'Other Connections' ) }
 					description={ this.translate( 'Connect any of these additional services to further enhance your site.' ) }
 					{ ...commonGroupProps } />

@@ -6,9 +6,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:community-translator-invitation' ),
-	contains = require( 'lodash/collection/contains' ),
+	includes = require( 'lodash/includes' ),
 	store = require( 'store' ),
-	once = require( 'lodash/function/once' );
+	once = require( 'lodash/once' );
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ function maybeInvite() {
 		return;
 	}
 
-	if ( contains( excludedLocales, locale ) ) {
+	if ( includes( excludedLocales, locale ) ) {
 		debug( 'Not inviting because of user locale', locale );
 		return;
 	}

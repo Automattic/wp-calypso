@@ -4,7 +4,7 @@
 var sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	expect = require( 'chai' ).use( sinonChai ).expect,
-	memoize = require( 'lodash/function/memoize' );
+	memoize = require( 'lodash/memoize' );
 
 /**
  * Internal dependencies

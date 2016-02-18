@@ -6,7 +6,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import qs from 'qs';
-import isEmpty from 'lodash/lang/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal Dependencies

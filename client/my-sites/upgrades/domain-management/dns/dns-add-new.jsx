@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import includes from 'lodash/collection/includes';
-import assign from 'lodash/object/assign';
-import find from 'lodash/collection/find';
+import includes from 'lodash/includes';
+import assign from 'lodash/assign';
+import find from 'lodash/find';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

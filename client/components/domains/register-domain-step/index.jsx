@@ -2,15 +2,15 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	extend = require( 'lodash/object/extend' ),
+	extend = require( 'lodash/extend' ),
 	async = require( 'async' ),
-	flatten = require( 'lodash/array/flatten' ),
-	reject = require( 'lodash/collection/reject' ),
-	find = require( 'lodash/collection/find' ),
-	uniq = require( 'lodash/array/uniq' ),
-	times = require( 'lodash/utility/times' ),
-	compact = require( 'lodash/array/compact' ),
-	noop = require( 'lodash/utility/noop' ),
+	flatten = require( 'lodash/flatten' ),
+	reject = require( 'lodash/reject' ),
+	find = require( 'lodash/find' ),
+	uniqBy = require( 'lodash/uniqBy' ),
+	times = require( 'lodash/times' ),
+	compact = require( 'lodash/compact' ),
+	noop = require( 'lodash/noop' ),
 	page = require( 'page' );
 
 /**
@@ -270,7 +270,7 @@ var RegisterDomainStep = React.createClass( {
 					return;
 				}
 
-				suggestions = uniq( flatten( compact( result ) ), function( suggestion ) {
+				suggestions = uniqBy( flatten( compact( result ) ), function( suggestion ) {
 					return suggestion.domain_name;
 				} );
 

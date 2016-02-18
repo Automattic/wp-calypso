@@ -3,9 +3,9 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	noop = require( 'lodash/noop' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies

@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	throttle = require( 'lodash/function/throttle' );
+	throttle = require( 'lodash/throttle' );
 
 /**
  * Internal dependencies

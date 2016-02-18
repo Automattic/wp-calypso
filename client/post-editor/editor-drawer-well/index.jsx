@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies

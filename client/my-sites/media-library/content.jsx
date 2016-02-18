@@ -3,12 +3,12 @@
  */
 var React = require( 'react' ),
 	createFragment = require( 'react-addons-create-fragment' ),
-	noop = require( 'lodash/utility/noop' ),
-	first = require( 'lodash/array/first' ),
-	values = require( 'lodash/object/values' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	groupBy = require( 'lodash/collection/groupBy' ),
-	debounce = require( 'lodash/function/debounce' ),
+	noop = require( 'lodash/noop' ),
+	head = require( 'lodash/head' ),
+	values = require( 'lodash/values' ),
+	mapValues = require( 'lodash/mapValues' ),
+	groupBy = require( 'lodash/groupBy' ),
+	debounce = require( 'lodash/debounce' ),
 	debug = require( 'debug' )( 'calypso:media-library:content' );
 
 /**
@@ -105,7 +105,7 @@ module.exports = React.createClass( {
 	renderErrors: function() {
 		var errorTypes, notices;
 
-		errorTypes = values( this.props.mediaValidationErrors ).map( first );
+		errorTypes = values( this.props.mediaValidationErrors ).map( head );
 		notices = mapValues( groupBy( errorTypes ), ( occurrences, errorType ) => {
 			let message, onDismiss;
 			const i18nOptions = {

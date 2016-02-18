@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var trim = require( 'lodash/string/trim' ),
+var trim = require( 'lodash/trim' ),
 	warn = require( 'lib/warn' ),
 	stripTags = require( 'striptags' );
 

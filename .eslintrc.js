@@ -92,6 +92,6 @@ module.exports = {
 		'vars-on-top': 1,
 		'yoda': 0,
 		// Custom rules
-		"wpcalypso/no-lodash-import": 2
+		'wpcalypso/no-lodash-import': 2
 	}
 };

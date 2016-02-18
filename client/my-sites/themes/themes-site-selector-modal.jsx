@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
-import defer from 'lodash/function/defer';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies

@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:followers-list' );
 
 /**

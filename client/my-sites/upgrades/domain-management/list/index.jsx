@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
-import times from 'lodash/utility/times';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies

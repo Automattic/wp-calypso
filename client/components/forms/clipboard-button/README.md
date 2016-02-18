@@ -39,7 +39,7 @@ The text to copy to the user's clipboard upon clicking the button.
 <table>
 	<tr><td>Type</td><td>Function</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>lodash/utility/noop</code></td></tr>
+	<tr><td>Default</td><td><code>lodash/noop</code></td></tr>
 </table>
 
 Function to invoke after the text has been copied to the user's clipboard. This will not be triggered if the a prompt is shown in place of direct clipboard copy, in cases where the browser does not grant clipboard access.

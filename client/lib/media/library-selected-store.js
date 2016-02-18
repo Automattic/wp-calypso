@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var pluck = require( 'lodash/collection/pluck' );
+var map = require( 'lodash/map' );
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ function ensureSelectedItemsForSiteId( siteId ) {
 }
 
 function setSelectedItems( siteId, items ) {
-	_media[ siteId ] = pluck( items, 'ID' );
+	_media[ siteId ] = map( items, 'ID' );
 }
 
 function addSingle( siteId, item ) {

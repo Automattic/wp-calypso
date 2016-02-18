@@ -2,7 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:infinite-list' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	raf = require( 'raf' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),

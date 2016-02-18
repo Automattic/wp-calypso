@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	includes = require( 'lodash/collection/includes' ),
-	noop = require( 'lodash/utility/noop' );
+	includes = require( 'lodash/includes' ),
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies

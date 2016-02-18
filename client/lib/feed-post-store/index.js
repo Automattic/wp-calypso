@@ -1,13 +1,13 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:feed-post-store' ),
-	forEach = require( 'lodash/collection/forEach' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	forOwn = require( 'lodash/object/forOwn' ),
-	clone = require( 'lodash/lang/clone' );
+	forEach = require( 'lodash/forEach' ),
+	isEqual = require( 'lodash/isEqual' ),
+	forOwn = require( 'lodash/forOwn' ),
+	clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies

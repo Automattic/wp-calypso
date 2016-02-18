@@ -3,7 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:StatesList' ),
 	inherits = require( 'inherits' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	store = require( 'store' );
 
 /**

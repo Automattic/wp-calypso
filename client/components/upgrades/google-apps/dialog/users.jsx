@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	clone = require( 'lodash/lang/clone' );
+	clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies

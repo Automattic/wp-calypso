@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	some = require( 'lodash/collection/some' );
+	some = require( 'lodash/some' );
 
 /**
  * Internal dependencies

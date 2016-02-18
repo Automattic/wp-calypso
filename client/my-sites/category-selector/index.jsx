@@ -4,12 +4,12 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	unescapeString = require( 'lodash/string/unescape' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	debounce = require( 'lodash/function/debounce' ),
-	throttle = require( 'lodash/function/throttle' ),
-	camelCase = require( 'lodash/string/camelCase' ),
-	sortBy = require( 'lodash/collection/sortBy' ),
+	unescapeString = require( 'lodash/unescape' ),
+	isEqual = require( 'lodash/isEqual' ),
+	debounce = require( 'lodash/debounce' ),
+	throttle = require( 'lodash/throttle' ),
+	camelCase = require( 'lodash/camelCase' ),
+	sortBy = require( 'lodash/sortBy' ),
 	debug = require( 'debug' )( 'calypso:my-sites:category-selector' );
 
 /**

@@ -2,11 +2,11 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	uniq = require( 'lodash/array/uniq' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	range = require( 'lodash/utility/range' ),
+	uniq = require( 'lodash/uniq' ),
+	map = require( 'lodash/map' ),
+	range = require( 'lodash/range' ),
 	closest = require( 'component-closest' ),
-	last = require( 'lodash/array/last' ),
+	last = require( 'lodash/last' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -234,7 +234,7 @@ module.exports = React.createClass( {
 	},
 
 	getApps: function() {
-		return uniq( pluck( this.props.transactions, 'service' ) );
+		return uniq( map( this.props.transactions, 'service' ) );
 	},
 
 	renderAppPicker: function( title, app, analyticsEvent ) {

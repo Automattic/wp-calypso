@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	classnames = require( 'classnames' );
 
 module.exports = React.createClass( {

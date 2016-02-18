@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import assign from 'lodash/object/assign';
-import find from 'lodash/collection/find';
-import where from 'lodash/collection/where';
+import assign from 'lodash/assign';
+import find from 'lodash/find';
+import filter from 'lodash/filter';
 
 /**
  * Internal Dependencies
@@ -15,11 +15,11 @@ const PurchasesStore = createReducerStore( reducer, initialState );
 
 assign( PurchasesStore, {
 	getBySite( siteId ) {
-		return assign( {}, this.get(), { data: where( this.get().data, { siteId } ) } );
+		return assign( {}, this.get(), { data: filter( this.get().data, { siteId } ) } );
 	},
 
 	getByUser( userId ) {
-		return assign( {}, this.get(), { data: where( this.get().data, { userId } ) } );
+		return assign( {}, this.get(), { data: filter( this.get().data, { userId } ) } );
 	},
 
 	getByPurchaseId( id ) {

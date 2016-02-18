@@ -2,7 +2,7 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	defer = require( 'lodash/function/defer' ),
+	defer = require( 'lodash/defer' ),
 	page = require( 'page' );
 
 /**

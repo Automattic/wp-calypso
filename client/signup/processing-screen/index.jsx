@@ -4,13 +4,13 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	flatten = require( 'lodash/array/flatten' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	map = require( 'lodash/collection/map' ),
-	find = require( 'lodash/collection/find' ),
-	reject = require( 'lodash/collection/reject' ),
-	filter = require( 'lodash/collection/filter' ),
-	pick = require( 'lodash/object/pick' );
+	flatten = require( 'lodash/flatten' ),
+	map = require( 'lodash/map' ),
+	map = require( 'lodash/map' ),
+	find = require( 'lodash/find' ),
+	reject = require( 'lodash/reject' ),
+	filter = require( 'lodash/filter' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ var steps = require( 'signup/config/steps' );
  * Sorts the given steps in the roughly the order they will be processed.
  */
 function sortSteps( progressSteps ) {
-	var canonicalSteps = pick( steps, pluck( progressSteps, 'stepName' ) ),
+	var canonicalSteps = pick( steps, map( progressSteps, 'stepName' ) ),
 		stepWithToken = find( canonicalSteps, { providesToken: true } ) || [],
 		stepsWithoutDependencies = reject( canonicalSteps, function( step ) {
 			return step.dependencies || step.providesToken;

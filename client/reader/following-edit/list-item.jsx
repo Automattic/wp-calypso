@@ -3,7 +3,7 @@
  */
 const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies

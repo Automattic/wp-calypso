@@ -4,10 +4,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import values from 'lodash/object/values';
-import noop from 'lodash/utility/noop';
-import some from 'lodash/collection/some';
-import every from 'lodash/collection/every';
+import values from 'lodash/values';
+import noop from 'lodash/noop';
+import some from 'lodash/some';
+import every from 'lodash/every';
 
 /**
  * Internal dependencies

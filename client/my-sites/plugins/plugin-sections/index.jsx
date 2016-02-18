@@ -3,8 +3,8 @@
  */
 var React = require( 'react' ),
 	titleCase = require( 'to-title-case' ),
-	find = require( 'lodash/collection/find' ),
-	filter = require( 'lodash/collection/filter' ),
+	find = require( 'lodash/find' ),
+	filter = require( 'lodash/filter' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -90,15 +90,17 @@ module.exports = React.createClass( {
 	},
 
 	getDefaultSection: function() {
+		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function( section ) {
-			return this.props.plugin.sections[ section.key ];
-		}, this ).key;
+			return sections[ section.key ];
+		} ).key;
 	},
 
 	getAvailableSections: function() {
+		const sections = this.props.plugin.sections;
 		return filter( this.getFilteredSections(), function( section ) {
-			return this.props.plugin.sections[ section.key ];
-		}, this );
+			return sections[ section.key ];
+		} );
 	},
 
 	getNavTitle: function( sectionKey ) {

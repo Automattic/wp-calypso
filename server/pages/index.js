@@ -6,10 +6,10 @@ var express = require( 'express' ),
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' ),
-	includes = require( 'lodash/collection/includes' ),
+	includes = require( 'lodash/includes' ),
 	React = require( 'react' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/pick' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
@@ -316,7 +316,6 @@ function renderLoggedInRoute( req, res ) {
 		res.render( 'index.jade', context );
 	}
 }
-
 
 module.exports = function() {
 	var app = express();

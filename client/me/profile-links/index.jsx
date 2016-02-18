@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	_times = require( 'lodash/utility/times' );
+	times = require( 'lodash/times' );
 
 /**
  * Internal dependencies
@@ -135,7 +135,7 @@ module.exports = React.createClass( {
 	renderPlaceholders: function() {
 		return (
 			<ul className="profile-links__list">
-				{ _times( 2, function( index ) {
+				{ times( 2, function( index ) {
 					return (
 						<ProfileLink
 							title="Loading Profile Links"

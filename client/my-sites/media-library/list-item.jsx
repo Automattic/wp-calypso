@@ -3,10 +3,10 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	noop = require( 'lodash/noop' ),
+	assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * External dependencies

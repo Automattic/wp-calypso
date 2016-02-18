@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal dependencies

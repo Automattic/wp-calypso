@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import defer from 'lodash/function/defer';
+import defer from 'lodash/defer';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 

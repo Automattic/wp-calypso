@@ -5,8 +5,8 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
-import isFunction from 'lodash/lang/isFunction';
+import noop from 'lodash/noop';
+import isFunction from 'lodash/isFunction';
 
 /**
  * Internal dependencies

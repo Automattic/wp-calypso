@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' ),
-	debounce = require( 'lodash/function/debounce' );
+	find = require( 'lodash/find' ),
+	debounce = require( 'lodash/debounce' );
 
 /**
  * Internal dependencies

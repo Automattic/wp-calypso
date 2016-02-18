@@ -3,7 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:infinite-list:positions-store' ),
 	Dispatcher = require( 'dispatcher' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal Dependencies

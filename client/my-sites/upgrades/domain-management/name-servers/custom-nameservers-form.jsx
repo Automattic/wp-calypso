@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import dropRightWhile from 'lodash/array/dropRightWhile';
-import negate from 'lodash/function/negate';
-import identity from 'lodash/utility/identity';
+import dropRightWhile from 'lodash/dropRightWhile';
+import negate from 'lodash/negate';
+import identity from 'lodash/identity';
 
 /**
  * Internal dependencies

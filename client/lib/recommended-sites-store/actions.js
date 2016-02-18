@@ -1,6 +1,6 @@
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import get from 'lodash/object/get';
+import get from 'lodash/get';
 
 import { requestInflight, requestTracker } from 'lib/inflight';
 import store from './store';

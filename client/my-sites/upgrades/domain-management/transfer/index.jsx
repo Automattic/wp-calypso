@@ -16,7 +16,7 @@ import IcannVerification from 'my-sites/upgrades/domain-management/transfer/ican
 import Locked from 'my-sites/upgrades/domain-management/transfer/locked';
 import Unlocked from 'my-sites/upgrades/domain-management/transfer/unlocked';
 import TransferProhibited from 'my-sites/upgrades/domain-management/transfer/transfer-prohibited';
-import omit from 'lodash/object/omit';
+import omit from 'lodash/omit';
 
 const Transfer = React.createClass( {
 	propTypes: {

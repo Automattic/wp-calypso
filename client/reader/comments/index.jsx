@@ -1,8 +1,8 @@
 // External Dependencies
 var React = require( 'react' ),
-	map = require( 'lodash/collection/map' ),
-	noop = require( 'lodash/utility/noop' ),
-	find = require( 'lodash/collection/find' );
+	map = require( 'lodash/map' ),
+	noop = require( 'lodash/noop' ),
+	find = require( 'lodash/find' );
 
 // Internal Dependencies
 var Gravatar = require( 'components/gravatar' ),

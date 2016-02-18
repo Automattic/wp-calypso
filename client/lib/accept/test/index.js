@@ -8,7 +8,7 @@ var expect = require( 'chai' ).expect,
 	TestUtils = require( 'react-addons-test-utils' ),
 	mockery = require( 'mockery' ),
 	sinon = require( 'sinon' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies

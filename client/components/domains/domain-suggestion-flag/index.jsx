@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import endsWith from 'lodash/string/endsWith';
+import endsWith from 'lodash/endsWith';
 
 /**
  * Internal dependencies

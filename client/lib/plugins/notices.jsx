@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var groupBy = require( 'lodash/collection/groupBy' );
+var groupBy = require( 'lodash/groupBy' );
 
 /**
  * Internal dependencies

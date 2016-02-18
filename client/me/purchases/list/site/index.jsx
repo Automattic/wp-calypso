@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import times from 'lodash/utility/times';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies

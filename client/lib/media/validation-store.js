@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var mapValues = require( 'lodash/object/mapValues' ),
-	without = require( 'lodash/array/without' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	pick = require( 'lodash/object/pick' );
+var mapValues = require( 'lodash/mapValues' ),
+	without = require( 'lodash/without' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	pickBy = require( 'lodash/pickBy' );
 
 /**
  * Internal dependencies
@@ -96,7 +96,7 @@ function clearValidationErrorsByType( siteId, errorType ) {
 		return;
 	}
 
-	_errors[ siteId ] = pick(
+	_errors[ siteId ] = pickBy(
 		mapValues( _errors[ siteId ], ( errors ) => without( errors, errorType ) ),
 		( errors ) => ! isEmpty( errors )
 	);

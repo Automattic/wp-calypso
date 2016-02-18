@@ -4,8 +4,8 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import omit from 'lodash/object/omit';
-import startsWith from 'lodash/string/startsWith';
+import omit from 'lodash/omit';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal Dependencies

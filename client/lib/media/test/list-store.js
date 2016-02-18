@@ -3,8 +3,8 @@
  */
 var expect = require( 'chai' ).expect,
 	rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' ),
-	find = require( 'lodash/collection/find' ),
+	assign = require( 'lodash/assign' ),
+	find = require( 'lodash/find' ),
 	sinon = require( 'sinon' );
 
 /**

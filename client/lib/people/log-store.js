@@ -2,9 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:my-sites:people:log-store' ),
-	clone = require( 'lodash/lang/clone' ),
-	find = require( 'lodash/collection/find' ),
-	reject = require( 'lodash/collection/reject' );
+	clone = require( 'lodash/clone' ),
+	find = require( 'lodash/find' ),
+	reject = require( 'lodash/reject' );
 
 /**
  * Internal dependencies

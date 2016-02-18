@@ -2,11 +2,11 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:user:settings' ),
-	merge = require( 'lodash/object/merge' ),
-	assign = require( 'lodash/object/assign' ),
-	keys = require( 'lodash/object/keys' ),
+	merge = require( 'lodash/merge' ),
+	assign = require( 'lodash/assign' ),
+	keys = require( 'lodash/keys' ),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

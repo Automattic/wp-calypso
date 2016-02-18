@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	some = require( 'lodash/collection/some' ),
-	xor = require( 'lodash/array/xor' );
+	some = require( 'lodash/some' ),
+	xor = require( 'lodash/xor' );
 
 /**
  * Internal dependencies

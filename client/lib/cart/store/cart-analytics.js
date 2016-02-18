@@ -3,7 +3,7 @@
  */
 var analytics = require( 'analytics' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
-	difference = require( 'lodash/array/difference' );
+	difference = require( 'lodash/difference' );
 
 function recordEvents( previousCart, nextCart ) {
 	var previousItems = cartItems.getAll( previousCart ),

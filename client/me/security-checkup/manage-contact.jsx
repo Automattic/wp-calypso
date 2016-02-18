@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	keyMirror = require( 'key-mirror' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies

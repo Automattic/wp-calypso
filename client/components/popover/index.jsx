@@ -4,7 +4,7 @@
 var clickOutside = require( 'click-outside' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	Tip = require( 'component-tip' );
 
 /**

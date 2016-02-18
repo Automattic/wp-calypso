@@ -4,12 +4,12 @@
 
 // External Dependencies
 const Dispatcher = require( 'dispatcher' ),
-	reject = require( 'lodash/collection/reject' ),
-	findLast = require( 'lodash/collection/findLast' ),
-	get = require( 'lodash/object/get' ),
-	last = require( 'lodash/array/last' ),
+	reject = require( 'lodash/reject' ),
+	findLast = require( 'lodash/findLast' ),
+	get = require( 'lodash/get' ),
+	last = require( 'lodash/last' ),
 	Immutable = require( 'immutable' ),
-	forEach = require( 'lodash/collection/forEach' );
+	forEach = require( 'lodash/forEach' );
 
 // Internal Dependencies
 const Emitter = require( 'lib/mixins/emitter' ),

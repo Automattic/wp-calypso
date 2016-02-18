@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import map from 'lodash/collection/map';
-import forEach from 'lodash/collection/forEach';
-import first from 'lodash/array/first';
-import includes from 'lodash/collection/includes';
-import keys from 'lodash/object/keys';
+import map from 'lodash/map';
+import forEach from 'lodash/forEach';
+import head from 'lodash/head';
+import includes from 'lodash/includes';
+import keys from 'lodash/keys';
 import debugModule from 'debug';
 import classNames from 'classnames';
 
@@ -157,7 +157,7 @@ export default React.createClass( {
 
 					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
 						analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
-							error: first( keys( fieldError ) ),
+							error: head( keys( fieldError ) ),
 							username: fields.username
 						} );
 
@@ -166,7 +166,7 @@ export default React.createClass( {
 
 					if ( field === 'password' ) {
 						analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
-							error: first( keys( fieldError ) )
+							error: head( keys( fieldError ) )
 						} );
 
 						timesPasswordValidationFailed++;

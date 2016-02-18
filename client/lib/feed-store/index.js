@@ -1,7 +1,7 @@
 
 // External Dependencies
 var Immutable = require( 'immutable' ),
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/pick' );
 
 // Internal Dependencies
 var ActionType = require( './constants' ).action,

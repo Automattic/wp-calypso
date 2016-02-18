@@ -2,7 +2,7 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 /**

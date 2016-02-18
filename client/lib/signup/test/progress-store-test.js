@@ -7,10 +7,10 @@ import sinon from 'sinon';
 
 var debug = require( 'debug' )( 'calypso:signup-progress-store:test' ), // eslint-disable-line no-unused-vars
 	assert = require( 'assert' ),
-	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' ),
-	last = require( 'lodash/array/last' ),
-	defer = require( 'lodash/function/defer' );
+	omit = require( 'lodash/omit' ),
+	find = require( 'lodash/find' ),
+	last = require( 'lodash/last' ),
+	defer = require( 'lodash/defer' );
 
 /**
  * Internal dependencies

@@ -6,7 +6,7 @@ require( 'lib/react-test-env-setup' )();
  */
 var rewire = require( 'rewire' ),
 	assert = require( 'chai' ).assert,
-	includes = require( 'lodash/collection/includes' ),
+	includes = require( 'lodash/includes' ),
 	Dispatcher = require( 'dispatcher' );
 
 /**

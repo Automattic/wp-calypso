@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	expect = require( 'chai' ).expect;
 
 /**

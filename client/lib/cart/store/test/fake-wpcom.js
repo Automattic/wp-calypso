@@ -1,4 +1,4 @@
-var toArray = require( 'lodash/lang/toArray' );
+var toArray = require( 'lodash/toArray' );
 
 function FakeWPCOM() {
 	if ( ! ( this instanceof FakeWPCOM ) ) {

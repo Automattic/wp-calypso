@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
-	assign = require( 'lodash/object/assign' ),
+	assign = require( 'lodash/assign' ),
 	classes = require( 'component-classes' ),
 	oAuthToken = require( 'lib/oauth-token' );
 

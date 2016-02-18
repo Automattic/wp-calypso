@@ -7,7 +7,7 @@ import page from 'page';
 import url from 'url';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import startsWith from 'lodash/string/startsWith';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal Dependencies

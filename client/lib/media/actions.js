@@ -2,9 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:media' ),
-	assign = require( 'lodash/object/assign' ),
-	uniqueId = require( 'lodash/utility/uniqueId' ),
-	isPlainObject = require( 'lodash/lang/isPlainObject' ),
+	assign = require( 'lodash/assign' ),
+	uniqueId = require( 'lodash/uniqueId' ),
+	isPlainObject = require( 'lodash/isPlainObject' ),
 	path = require( 'path' );
 
 /**

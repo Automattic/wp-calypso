@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 
 module.exports = React.createClass( {
 	displayName: 'PrivacyProtectionExample',

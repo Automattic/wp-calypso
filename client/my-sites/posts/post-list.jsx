@@ -4,9 +4,9 @@
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
-	debounce = require( 'lodash/function/debounce' ),
-	omit = require( 'lodash/object/omit' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	debounce = require( 'lodash/debounce' ),
+	omit = require( 'lodash/omit' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies

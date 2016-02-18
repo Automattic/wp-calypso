@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' );
+	omit = require( 'lodash/omit' ),
+	noop = require( 'lodash/noop' );
 
 /**
  * Module variables

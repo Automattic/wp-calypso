@@ -7,7 +7,7 @@ require( 'lib/react-test-env-setup' )();
 import { assert } from 'chai';
 import React from 'react';
 import { shallow } from 'enzyme';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
