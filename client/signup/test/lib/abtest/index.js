@@ -1,5 +1,7 @@
 // abtest stub
 export default {
-	abtest() { return ''; }
+	abtest() { return ''; },
+
+	getABTestVariation() { return ''; }
 };
 
