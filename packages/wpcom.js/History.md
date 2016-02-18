@@ -1,4 +1,9 @@
 
+4.8.3 / 2015-2-18
+==================
+
+* adds support for special `apiNamespace` param to integrate core WP-API
+
 4.8.3 / 2015-12-10
 ==================
 
