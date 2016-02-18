@@ -92,7 +92,7 @@ module.exports = {
 		defaultVariation: 'original'
 	},
 	freePlansDefault: {
-		datestamp: '20160217',
+		datestamp: '20160218',
 		variations: {
 			allPlans: 90,
 			skipForFree: 10
