@@ -392,44 +392,6 @@ module.exports = function() {
 		} );
 	}
 
-	const declareServerSide = ( ctx, next ) => {
-		ctx.isServerSide = true
-		//ctx.isLoggedIn = (look at cookies)
-		next()
-	}
-
-	const serverRender = ( ctx ) => {
-		/*
-		if ( cacheHit( ctx.layoutFactory, ctx.props ) ) {
-			ctx.layout = cacheGet( ctx.layoutFactory, ctx.props )
-		} else {
-			ctx.layout = ctx.layoutFactory( ctx.props )
-			cacheSet( ctx.layoutFactory, ctx.props, ctx.layout )
-		}
-		*/
-	}
-
-///
-	const setUpServerSideRouting = ( expressApp ) => {
-		const liftMiddleware = ( ctxBasedFn ) => {
-			return ( req, res, next ) => {
-				//const mockCtx = {
-				//	...getDefaultContext( req ),
-				//	//...getEnhancedContext( req ),
-				//}
-				ctxBasedFn( mockCtx, next )
-			}
-		}
-
-		function serverRouter( route, ...mws ) {
-			app.get( route, mws.map( liftMiddleware ) );
-		}
-
-		app.get( '/design*', declareServerSide, blankRender );
-		themes( serverRouter );
-		app.get( '/design*', serverRender );
-	}
-
 	app.get( '/design(/type/:themeTier)?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
 			// the user is probably logged in
