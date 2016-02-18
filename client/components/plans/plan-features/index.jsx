@@ -29,7 +29,13 @@ module.exports = React.createClass( {
 	},
 
 	headerText: function() {
-		return <span className="header-text">{ this.props.plan.product_name }</span>;
+		return (
+			<span className="header-text">
+				WordPress.com
+				<br />
+				{ this.props.plan.product_name_short }
+			</span>
+		);
 	},
 
 	render: function() {
