@@ -31,13 +31,13 @@ const PurchaseItem = React.createClass( {
 	renewsOrExpiresOn() {
 		const { purchase } = this.props;
 
-		// if ( showCreditCardExpiringWarning( purchase ) ) {
-		// 	return (
-		// 		<Notice isCompact status="is-error" icon="spam">
-		// 			{ this.translate( 'Credit card expiring soon' ) }
-		// 		</Notice>
-		// 	);
-		// }
+		if ( showCreditCardExpiringWarning( purchase ) ) {
+			return (
+				<Notice isCompact status="is-error" icon="spam">
+					{ this.translate( 'Credit card expiring soon' ) }
+				</Notice>
+			);
+		}
 
 		if ( isRenewing( purchase ) ) {
 			return this.translate( 'Renews on %s', {
