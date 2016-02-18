@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -14,15 +16,20 @@ import analytics from 'analytics';
 import Spinner from 'components/spinner';
 import Gridicon from 'components/gridicon';
 import { isMobile } from 'lib/viewport';
+import i18n from 'lib/mixins/i18n';
+
 /**
  * Internal variables
  */
-var _instance = 1,
-	SEARCH_DEBOUNCE_MS = 300;
+var SEARCH_DEBOUNCE_MS = 300;
 
-module.exports = React.createClass( {
+const Search = React.createClass( {
 
 	displayName: 'Search',
+
+	statics: {
+		instances: 0
+	},
 
 	propTypes: {
 		additionalClasses: React.PropTypes.string,
@@ -68,11 +75,9 @@ module.exports = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.id = _instance;
-		_instance++;
-		this.onSearch = this.props.delaySearch
-			? debounce( this.props.onSearch, this.props.delayTimeout )
-			: this.props.onSearch;
+		this.setState( {
+			instanceId: ++Search.instances
+		} );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -116,6 +121,10 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		this.onSearch = this.props.delaySearch
+			? debounce( this.props.onSearch, this.props.delayTimeout )
+			: this.props.onSearch;
+
 		if ( this.props.autoFocus ) {
 			this.focus();
 		}
@@ -223,7 +232,7 @@ module.exports = React.createClass( {
 		var searchClass,
 			searchValue = this.state.keyword,
 			placeholder = this.props.placeholder ||
-				this.translate( 'Search…', { textOnly: true } ),
+				i18n.translate( 'Search…', { textOnly: true } ),
 
 			enableOpenIcon = this.props.pinned && ! this.state.isOpen,
 			isOpenUnpinnedOrQueried = this.state.isOpen ||
@@ -255,13 +264,13 @@ module.exports = React.createClass( {
 						? this._keyListener.bind( this, 'openSearch' )
 						: null
 					}
-					aria-controls={ 'search-component-' + this.id }
-					aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }>
+					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
 				<Gridicon icon="search" className="search-open__icon"/>
 				</div>
 				<input
 					type="search"
-					id={ 'search-component-' + this.id }
+					id={ 'search-component-' + this.state.instanceId }
 					className="search__input"
 					placeholder={ placeholder }
 					role="search"
@@ -287,8 +296,8 @@ module.exports = React.createClass( {
 				onTouchTap={ this.closeSearch }
 				tabIndex="0"
 				onKeyDown={ this._keyListener.bind( this, 'closeSearch' ) }
-				aria-controls={ 'search-component-' + this.id }
-				aria-label={ this.translate( 'Close Search', { context: 'button label' } ) }>
+				aria-controls={ 'search-component-' + this.state.instanceId }
+				aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
 			<Gridicon icon="cross" className="search-close__icon"/>
 			</span>
 		);
@@ -303,3 +312,5 @@ module.exports = React.createClass( {
 		}
 	}
 } );
+
+module.exports = Search;

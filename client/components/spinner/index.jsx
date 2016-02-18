@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -43,7 +45,8 @@ Spinner = React.createClass( {
 	 *                   elements, or false otherwise.
 	 */
 	isSVGCSSAnimationSupported: function() {
-		return ! /(MSIE |Trident\/)/.test( global.window.navigator.userAgent );
+		const navigator = global.window ? global.window.navigator.userAgent : ''; // FIXME: replace with UA from server
+		return ! /(MSIE |Trident\/)/.test( navigator );
 	},
 
 	getClassName: function() {

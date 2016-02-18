@@ -10,7 +10,8 @@ var ReactDom = require( 'react-dom' ),
  * Internal Dependencies
  */
 var SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' );
+	DropdownItem = require( 'components/select-dropdown/item' ),
+	viewport = require( 'lib/viewport' );
 
 /**
  * Internal Variables
@@ -68,6 +69,8 @@ var NavTabs = React.createClass( {
 			'has-siblings': this.props.hasSiblingControls
 		} );
 
+		var innerWidth = viewport.getWindowInnerWidth();
+
 		return (
 			<div className="section-nav-group" ref="navGroup">
 				<div className={ tabsClassName }>
@@ -86,7 +89,7 @@ var NavTabs = React.createClass( {
 
 					{
 						this.state.isDropdown &&
-						window.innerWidth > MOBILE_PANEL_THRESHOLD &&
+						innerWidth > MOBILE_PANEL_THRESHOLD &&
 						this.getDropdown()
 					}
 				</div>

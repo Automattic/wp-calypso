@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -9,6 +11,8 @@ import classNames from 'classnames';
  */
 import ObserveWindowSizeMixin from 'lib/mixins/observe-window-resize';
 import Gridicon from 'components/gridicon';
+import i18n from 'lib/mixins/i18n';
+import viewport from 'lib/viewport';
 
 /**
  * Module variables
@@ -38,8 +42,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { text = this.translate( 'Back' ), href, onClick, spacer } = this.props;
-		const windowWidth = window.innerWidth;
+		const { text = i18n.translate( 'Back' ), href, onClick, spacer } = this.props;
+		const windowWidth = viewport.getWindowInnerWidth();
 		const hideText = windowWidth <= HIDE_BACK_CRITERIA.windowWidth && text.length >= HIDE_BACK_CRITERIA.characterLength || windowWidth <= 300;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
