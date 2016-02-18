@@ -102,7 +102,7 @@ const flows = {
 	/* Testing flows */
 	'test-site': {
 		steps: config( 'env' ) === 'development' ? [ 'site', 'user' ] : [ 'user' ],
-		destination: '/me/next/welcome',
+		destination: getCheckoutDestination,
 		description: 'This flow is used to test the site step.',
 		lastModified: '2015-09-22'
 	},
@@ -137,7 +137,7 @@ const flows = {
 
 	'site-user': {
 		steps: [ 'site', 'user' ],
-		destination: '/me/next?welcome',
+		destination: getCheckoutDestination,
 		description: 'Signup flow for free site/account',
 		lastModified: '2015-10-30'
 	},

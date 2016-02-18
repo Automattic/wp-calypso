@@ -323,43 +323,6 @@ export default {
 
 	purchases: purchasesController,
 
-	nextSteps( context ) {
-		const analyticsBasePath = route.sectionify( context.path ),
-			NextSteps = require( './next-steps' ),
-			trophiesData = require( 'lib/trophies-data' ),
-			isWelcome = 'welcome' === context.params.welcome;
-
-		titleActions.setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) );
-
-		if ( isWelcome ) {
-			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		}
-
-		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
-		analytics.pageView.record( analyticsBasePath, ANALYTICS_PAGE_TITLE + ' > Next' );
-
-		renderWithReduxStore(
-			React.createElement( NextSteps, {
-				path: context.path,
-				isWelcome: isWelcome,
-				trophiesData: trophiesData
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
-
-	// Users that are redirected to `/me/next?welcome` after signup should visit
-	// `/me/next/welcome` instead.
-	nextStepsWelcomeRedirect( context, next ) {
-		if ( includes( context.path, '?welcome' ) ) {
-			return page.redirect( '/me/next/welcome' );
-		}
-
-		next();
-	},
-
 	profileRedirect() {
 		page.redirect( '/me' );
 	},

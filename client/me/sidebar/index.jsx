@@ -129,7 +129,6 @@ module.exports = React.createClass( {
 							icon="my-sites"
 							onNavigate={ this.onNavigate }
 						/>
-						{ this.renderNextStepsItem( selected ) }
 						<SidebarItem
 							selected={ selected === 'help' }
 							link={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
@@ -142,20 +141,5 @@ module.exports = React.createClass( {
 				</SidebarMenu>
 			</Sidebar>
 		);
-	},
-
-	renderNextStepsItem: function( selected ) {
-		var currentUser = this.props.user.get();
-		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
-			return (
-				<SidebarItem
-					selected={ selected === 'next' }
-					link="/me/next"
-					label={ this.translate( 'Next Steps' ) }
-					icon="list-checkmark"
-					onNavigate={ this.onNavigate }
-				/>
-			);
-		}
 	}
 } );
