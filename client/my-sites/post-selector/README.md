@@ -121,3 +121,12 @@ A message to be shown if no posts are found.
 </table>
 
 A link to be shown if the search results in no found posts.
+
+### `showTypeLabels`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+Whether post type labels should be shown adjacent to post options results. If omitted, default behavior is to show the labels only if query `type` is set to `any`.

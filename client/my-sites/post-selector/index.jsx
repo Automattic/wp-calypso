@@ -27,7 +27,8 @@ export default React.createClass( {
 		emptyMessage: PropTypes.string,
 		createLink: PropTypes.string,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
-		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] )
+		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
+		showTypeLabels: PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -85,7 +86,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { siteId, multiple, onChange, emptyMessage, createLink, selected } = this.props;
+		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels } = this.props;
 
 		return (
 			<PostSelectorPosts
@@ -98,6 +99,7 @@ export default React.createClass( {
 				emptyMessage={ emptyMessage }
 				createLink={ createLink }
 				selected={ selected }
+				showTypeLabels={ showTypeLabels }
 			/>
 		);
 	}
