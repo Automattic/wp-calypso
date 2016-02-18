@@ -14,15 +14,27 @@ var config = require( 'config' ),
 	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	user = require( 'lib/user' )();
 
-function getCheckoutDestination( dependencies ) {
-	if ( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem ) {
-		return '/checkout/' + dependencies.siteSlug;
+function getCheckoutUrl( dependencies ) {
+	return '/checkout/' + dependencies.siteSlug;
+}
+
+function dependenciesContainCartItem( dependencies ) {
+	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+}
+
+function getSiteDestination( dependencies ) {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
 	}
 
 	return 'https://' + dependencies.siteSlug;
 }
 
 function getPostsDestination( dependencies ) {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
+	}
+
 	return '/posts/' + dependencies.siteSlug;
 }
 
@@ -53,7 +65,7 @@ const flows = {
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
 		lastModified: '2016-01-21'
 	},
-	
+
 	businessv2: {
 		steps: ['domains', 'user' ],
 		destination: function( dependencies ) {
@@ -74,28 +86,28 @@ const flows = {
 
 	'with-theme': {
 		steps: [ 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'Preselect a theme to activate/buy from an external source',
 		lastModified: '2016-01-27'
 	},
 
 	main: {
 		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2015-09-03'
 	},
 
 	plan: {
 		steps: [ 'themes', 'domains', 'select-plan', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: '',
 		lastModified: '2016-02-02'
 	},
 
 	upgrade: {
 		steps: [ 'themes', 'domains', 'select-plan-or-skip', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: '',
 		lastModified: '2016-02-02'
 	},
@@ -103,14 +115,14 @@ const flows = {
 	/* WP.com homepage flows */
 	website: {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'This flow is used for the users who clicked "Create Website" on the two-button homepage.',
 		lastModified: '2016-01-28'
 	},
 
 	blog: {
 		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'This flow is used for the users who clicked "Create Blog" on the two-button homepage.',
 		lastModified: '2016-01-28'
 	},
@@ -134,21 +146,21 @@ const flows = {
 
 	'delta-blog': {
 		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'A copy of the `main` flow for the Delta email campaigns',
 		lastModified: null
 	},
 
 	'delta-site': {
 		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'A copy of the `main` flow for the Delta email campaigns',
 		lastModified: null
 	},
 
 	'delta-bloggingu': {
 		steps: [ 'themes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'A copy of the `main` flow for the Delta Blogging U email campaign',
 		lastModified: null
 	},
@@ -162,13 +174,13 @@ const flows = {
 
 	headstart: {
 		steps: [ 'themes-headstart', 'domains-with-theme', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'Regular flow but with Headstart enabled to pre-populate site content',
 		lastModified: '2015-02-01'
 	},
 
 	desktop: {
-		steps: [ 'themes', 'site', 'user' ],
+		steps: [ 'themes', 'domains', 'plans', 'user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
 		lastModified: '2015-11-05'
@@ -176,7 +188,7 @@ const flows = {
 
 	layout: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'Theme trifurcation flow',
 		lastModified: '2015-12-14'
 	},
@@ -195,21 +207,21 @@ const flows = {
 
 	'free-trial': {
 		steps: [ 'themes', 'site', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'Signup flow for free trials',
 		lastModified: '2015-12-18'
 	},
 
 	'website-altthemes': {
 		steps: [ 'survey', 'altthemes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'Alternative theme selection for the users who clicked "Create Website" on the two-button homepage.',
 		lastModified: '2016-02-12'
 	},
 
 	'blog-altthemes': {
 		steps: [ 'survey', 'altthemes', 'domains', 'plans', 'user' ],
-		destination: getCheckoutDestination,
+		destination: getSiteDestination,
 		description: 'Alternative theme selection for the users who clicked "Create blog" on the two-button homepage.',
 		lastModified: '2016-02-12'
 	},
