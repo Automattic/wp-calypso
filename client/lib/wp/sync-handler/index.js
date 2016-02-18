@@ -178,6 +178,8 @@ export class SyncHandler {
 			key = new Hashes.SHA1().hex( key );
 		}
 
+		key = 'sync-record-' + key;
+
 		debug( 'key: %o', key );
 		return key;
 	}
