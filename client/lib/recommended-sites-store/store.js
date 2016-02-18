@@ -6,7 +6,8 @@ import Emitter from 'lib/mixins/emitter';
 import { ACTION_RECEIVE_SITE_RECOMMENDATIONS, ACTION_RECEIVE_SITE_RECOMMENDATIONS_ERROR } from './constants';
 
 var recommendations = OrderedSet(),
-	page = 1;
+	page = 1,
+	isLastPage = false;
 
 const store = {
 	get() {
@@ -14,6 +15,12 @@ const store = {
 	},
 	getPage() {
 		return page;
+	},
+	isLastPage() {
+		return isLastPage;
+	},
+	setIsLastPage( value ) {
+		isLastPage = !! value;
 	}
 };
 
@@ -21,6 +28,11 @@ function receiveRecommendations( data ) {
 	// consume the recommendations
 	const previousRecs = recommendations;
 	if ( data && data.blogs ) {
+		if ( data.blogs.length === 0 ) {
+			store.setIsLastPage( true );
+			store.emit( 'change' );
+			return;
+		}
 		const pruned = data.blogs.map( function( blog ) {
 			return pick( blog, [ 'blog_id', 'follow_reco_id', 'reason' ] );
 		} );
