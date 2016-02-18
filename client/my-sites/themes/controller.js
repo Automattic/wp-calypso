@@ -1,97 +1,153 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider;
+import ReactDom from 'react-dom';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import omit from 'lodash/object/omit';
+import startsWith from 'lodash/string/startsWith';
 
 /**
  * Internal Dependencies
  */
-var SingleSiteComponent = require( 'my-sites/themes/single-site' ),
-	MultiSiteComponent = require( 'my-sites/themes/multi-site' ),
-	LoggedOutComponent = require( 'my-sites/themes/logged-out' ),
-	ThemeSheetComponent = require( 'my-sites/themes/sheet' ).ThemeSheet,
-	analytics = require( 'analytics' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	trackScrollPage = require( 'lib/track-scroll-page' ),
-	setSection = require( 'state/ui/actions' ).setSection,
-	getCurrentUser = require( 'state/current-user/selectors' ).getCurrentUser,
-	buildTitle = require( 'lib/screen-title/utils' ),
-	getAnalyticsData = require( './helpers' ).getAnalyticsData;
+import SingleSiteComponent from 'my-sites/themes/single-site';
+import MultiSiteComponent from 'my-sites/themes/multi-site';
+import LoggedOutComponent from 'my-sites/themes/logged-out';
+import { ThemeSheet as ThemeSheetComponent } from 'my-sites/themes/sheet';
+import analytics from 'analytics';
+import i18n from 'lib/mixins/i18n';
+import trackScrollPage from 'lib/track-scroll-page';
+import buildTitle from 'lib/screen-title/utils';
+import { getAnalyticsData } from './helpers';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { setSection } from 'state/ui/actions';
+import ClientSideEffects from './client-side-effects';
 
-var controller = {
+function getProps( context ) {
+	const { tier, site_id: siteId } = context.params;
 
-	themes: function( context ) {
-		const { tier, site_id } = context.params;
-		const user = getCurrentUser( context.store.getState() );
-		const title = buildTitle(
-			i18n.translate( 'Themes', { textOnly: true } ),
-			{ siteID: site_id } );
-		const Head = user
-			? require( 'layout/head' )
-			: require( 'my-sites/themes/head' );
+	const title = buildTitle(
+		i18n.translate( 'Themes', { textOnly: true } ),
+		{ siteID: siteId } );
 
-		let ThemesComponent;
+	const { basePath, analyticsPageTitle } = getAnalyticsData(
+		context.path,
+		tier,
+		siteId
+	);
 
-		if ( user ) {
-			ThemesComponent = site_id ? SingleSiteComponent : MultiSiteComponent;
-		} else {
-			ThemesComponent = LoggedOutComponent;
-		}
-
-		const { basePath, analyticsPageTitle } = getAnalyticsData(
-			context.path,
-			tier,
-			site_id
-		);
-
+	const runClientAnalytics = function() {
 		analytics.pageView.record( basePath, analyticsPageTitle );
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( Head, { title, tier: tier || 'all' },
-					React.createElement( ThemesComponent, {
-						key: site_id,
-						siteId: site_id,
-						tier: tier,
-						search: context.query.s,
-						trackScrollPage: trackScrollPage.bind(
-							null,
-							basePath,
-							analyticsPageTitle,
-							'Themes'
-						)
-					} )
-				)
-			),
-			document.getElementById( 'primary' )
+	};
+
+	const boundTrackScrollPage = function() {
+		trackScrollPage(
+			basePath,
+			analyticsPageTitle,
+			'Themes'
 		);
-	},
+	};
 
-	details: function( context ) {
-		const user = getCurrentUser( context.store.getState() );
+	return {
+		title,
+		tier,
+		search: context.query.s,
+		trackScrollPage: boundTrackScrollPage,
+		runClientAnalytics
+	};
+}
 
-		const Head = user
-			? require( 'layout/head' )
-			: require( 'my-sites/themes/head' );
-
-		const element = (
-			<ReduxProvider store={ context.store } >
-				<Head title="Something Theme — WordPress.com" isSheet>
-					<ThemeSheetComponent themeSlug={ context.params.slug } />
-				</Head>
-			</ReduxProvider>
-		);
-
-		// FIXME: temporary hack until we have a proper isomorphic, one tree routing solution. Do NOT do this!
-		const sheetsDomElement = document.getElementsByClassName( 'themes__sheet' )[0];
-		if ( ! sheetsDomElement ) {
-			ReactDom.render( element, document.getElementById( 'primary' ) );
-		}
-
-		return element;
-	}
-
+function makeElement( ThemesComponent, Head, store, props ) {
+	return(
+		<ReduxProvider store={ store }>
+			<Head title={ props.title } tier={ props.tier || 'all' }>
+				<ThemesComponent { ...omit( props, [ 'title', 'runClientAnalytics' ] ) } />
+				<ClientSideEffects>
+					{ props.runClientAnalytics }
+				</ClientSideEffects>
+			</Head>
+		</ReduxProvider>
+	);
 };
 
-module.exports = controller;
+export function singleSite( context, next ) {
+	const Head = require( 'layout/head' );
+	const { site_id: siteId } = context.params;
+	const props = getProps( context );
+
+	props.key = siteId;
+	props.siteId = siteId;
+
+	context.store.dispatch( setSection( 'design', {
+		hasSidebar: true,
+		isFullScreen: false
+	} ) );
+
+	context.primary = makeElement( SingleSiteComponent, Head, context.store, props );
+	next();
+}
+
+export function multiSite( context, next ) {
+	const Head = require( 'layout/head' );
+	const props = getProps( context );
+
+	context.store.dispatch( setSection( 'design', {
+		hasSidebar: true,
+		isFullScreen: false
+	} ) );
+
+	context.primary = makeElement( MultiSiteComponent, Head, context.store, props );
+	next();
+}
+
+export function loggedOut( context, next ) {
+	const Head = require( 'my-sites/themes/head' );
+	const props = getProps( context );
+
+	context.store.dispatch( setSection( 'design', {
+		hasSidebar: false,
+		isFullScreen: false
+	} ) );
+
+	context.primary = makeElement( LoggedOutComponent, Head, context.store, props );
+	next();
+}
+
+export function details( context, next ) {
+	const user = getCurrentUser( context.store.getState() );
+	const Head = user
+		? require( 'layout/head' )
+		: require( 'my-sites/themes/head' );
+	const props = {
+		themeSlug: context.params.slug,
+		title: buildTitle(
+			i18n.translate( 'Theme Details', { textOnly: true } )
+		)
+	}
+
+	context.store.dispatch( setSection( 'themes', {
+		hasSidebar: false,
+		isFullScreen: true
+	} ) );
+
+	// When we're logged in, we need to remove the sidebar.
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+
+	context.primary = makeElement( ThemeSheetComponent, Head, context.store, props );
+	next();
+}
+
+// Generic middleware -- move to client/controller.js?
+// lib/react-helpers isn't probably middleware-specific enough
+export function renderPrimary( context ) {
+	const { path } = context.params;
+	// FIXME: temporary hack until we have a proper isomorphic, one tree routing solution. Do NOT do this!
+	const sheetsDomElement = startsWith( path, '/themes' ) && document.getElementsByClassName( 'themes__sheet' )[0];
+	const mainDomElement = startsWith( path, '/design' ) && document.getElementsByClassName( 'themes main' )[0];
+	if ( ! sheetsDomElement && ! mainDomElement ) {
+		ReactDom.render(
+			context.primary,
+			document.getElementById( 'primary' )
+		);
+	}
+}
