@@ -67,7 +67,7 @@
     "node-sass": "3.4.2",
     "page": "1.6.4",
     "path-parser": "1.0.2",
-    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-8",
+    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-9",
     "photon": "2.0.0",
     "q": "1.0.1",
     "qrcode.react": "0.5.2",
