@@ -1878,6 +1878,21 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
 };
 
 /**
+ * Check the status of an export
+ *
+ * @param {int}       siteId            The site ID
+ * @param {Object}    exportId          Export ID (for future use)
+ * @param {Function}  fn                The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/exports/${ exportId }`
+	}, fn );
+}
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

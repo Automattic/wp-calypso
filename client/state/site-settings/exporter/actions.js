@@ -1,18 +1,18 @@
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import i18n from 'lib/mixins/i18n';
 import wpcom from 'lib/wp';
 
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
+	EXPORT_CLEAR,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
+	EXPORT_STATUS_FETCH,
 	SET_EXPORT_POST_TYPE,
 } from 'state/action-types';
 
@@ -114,6 +114,35 @@ export function exportStarted( siteId ) {
 	};
 }
 
+export function exportStatusFetch( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: EXPORT_STATUS_FETCH,
+			siteId
+		} );
+
+		const failure = ( error ) => {
+			dispatch( exportFailed( siteId, error ) );
+		}
+
+		const success = ( response = {} ) => {
+			switch ( response.status ) {
+				case 'finished':
+					return dispatch( exportComplete( siteId, response.$attachment_url ) )
+				case 'running':
+					return;
+			}
+
+			return failure( response );
+		}
+
+		return wpcom.undocumented()
+			.getExport( siteId, 0 )
+			.then( success )
+			.catch( failure );
+	}
+}
+
 export function exportFailed( siteId, error ) {
 	return {
 		type: EXPORT_FAILURE,
@@ -123,17 +152,16 @@ export function exportFailed( siteId, error ) {
 }
 
 export function exportComplete( siteId, downloadURL ) {
-	notices.success(
-		i18n.translate( 'Your export was successful! A download link has also been sent to your email.' ),
-		{
-			button: i18n.translate( 'Download' ),
-			href: downloadURL
-		}
-	);
-
 	return {
 		type: EXPORT_COMPLETE,
 		siteId,
 		downloadURL
+	}
+}
+
+export function clearExport( siteId ) {
+	return {
+		type: EXPORT_CLEAR,
+		siteId
 	}
 }
