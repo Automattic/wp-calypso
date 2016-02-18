@@ -199,12 +199,8 @@ githooks-commit:
 githooks-push:
 	@if [ ! -e .git/hooks/pre-push ]; then ln -s ../../bin/pre-push .git/hooks/pre-push; fi
 
-list-publishable-modules:
-	./bin/list-publishable-modules.js
-
-# publishes module given via path to NPM: make publish-module path=PATH_TO_MODULE
-publish-module:
-	make -C $(path) publish
+publish-modules:
+	@./bin/publish-modules
 
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:

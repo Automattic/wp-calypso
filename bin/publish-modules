@@ -1,0 +1,93 @@
+#!/usr/bin/env node
+
+var exec = require( 'child-process-promise' ).exec;
+var semver = require( 'semver' );
+
+console.log( 'Modules requiring publish:' );
+
+function getAllModules() {
+	var command = 'find client -type f -print | grep \'package.json\'';
+	return exec( command ).then( function( result ) {
+		return result.stdout.split( /\s+/ );
+	} );
+}
+
+function getPublishableModules( allModules ) {
+	var packageJson;
+	return allModules.filter( function( modulePath ) {
+		if ( !modulePath ) {
+			return;
+		}
+		packageJson = require( modulePath );
+		if ( !packageJson.private ) {
+			return true;
+		}
+	} );
+}
+
+function publishModule( modulePath ) {
+	return exec( 'make -C ' + modulePath.slice( 0, -12 ) + ' publish' )
+		.progress( function( childProcess ) {
+			childProcess.stdout.on( 'data', function( data ) {
+				console.log( data.toString() );
+			} );
+			childProcess.stderr.on( 'data', function( data ) {
+				console.log( data.toString() );
+			} );
+		} )
+}
+
+function publishModules() {
+	getAllModules()
+		.then( getPublishableModules )
+		.then( requiresUpdate );
+}
+
+function requiresUpdate( modules ) {
+	var modulePath;
+	var packageJson;
+	if ( !modules.length ) {
+		throw true;
+	}
+	modulePath = modules.shift();
+	packageJson = require( modulePath );
+
+	exec( 'npm view ' + packageJson.name + ' version' )
+		.then( function( result ) {
+			if ( result.stdout && semver.gt( packageJson.version, result.stdout ) ) {
+				console.log( '\n' );
+				console.log( packageJson.name );
+			}
+			return modulePath;
+		} )
+		.fail( function() {
+			console.log( '\n' );
+			console.log( packageJson.name + ' <--- Not in npm' );
+			return modulePath;
+		} )
+		.then( function() {
+			console.log( 'Would you like to publish this module? Y or N' );
+			shouldPublishModule( modulePath, modules );
+		} );
+};
+
+function shouldPublishModule( modulePath, modules ) {
+	var stdin = process.stdin;
+	stdin.resume();
+	stdin.once( 'data', function( data ) {
+		data = data.toString().trim();
+		if ( /^[yY]{1}$/.test( data ) ) {
+			publishModule( modulePath )
+				.then( function() {
+					requiresUpdate( modules );
+				} );
+		} else if ( /^[nN]{1}$/.test( data ) ) {
+			requiresUpdate( modules )
+		} else {
+			console.log( 'Invalid input. Y or N' );
+			shouldPublishModule( modulePath, modules );
+		}
+	} );
+}
+
+publishModules();
