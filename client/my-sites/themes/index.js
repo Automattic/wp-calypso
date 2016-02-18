@@ -5,7 +5,7 @@ import config from 'config';
 import sections from 'sections';
 import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, details, renderPrimary } from './controller';
+import { singleSite, multiSite, loggedOut, details, renderElements } from './controller';
 
 const user = userFactory();
 
@@ -31,15 +31,15 @@ export default function( router ) {
 			router( route, ...[
 				ensureMiddleware,
 				...routes[ route ],
-				renderPrimary,
+				renderElements,
 			] );
 		} );
-		router( '/design*', renderPrimary );
+		router( '/design*', renderElements );
 	}
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
 		router( '/themes*', ensureMiddleware );
 		router( '/themes/:slug/:site_id?', details );
-		router( '/themes*', renderPrimary );
+		router( '/themes*', renderElements );
 	}
 
 	console.log( 'themes routes set up!' );
