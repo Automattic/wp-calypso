@@ -228,7 +228,8 @@
 
 // Followed Sites and Search Transitions
 .following-edit__sites,
-.following-edit .search-card {
+.following-edit .search-card,
+.following-edit .no-results {
 	transition: all 0.2s ease-in-out;
 }
 
@@ -239,6 +240,10 @@
 	pointer-events: none;
 }
 
+.is-adding .no-results {
+	opacity: 0.3;
+	margin-top: 85px;
+}
 
 // Followed Site Cards
 .following-edit .reader-list-item__card {
