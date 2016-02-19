@@ -39,9 +39,10 @@ function buildTree( items ) {
 	const sortedPosts = [];
 
 	// clone objects to prevent mutating store data, set parent to number
-	items.forEach( function( item ) {
+	items.forEach( function( item, i ) {
 		let post = clone( item );
 		post.parent = post.parent ? post.parent.ID : 0;
+		post.order = i;
 		sortedPosts.push( post );
 	} );
 
