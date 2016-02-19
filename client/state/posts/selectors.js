@@ -50,12 +50,7 @@ export function getSitePost( state, siteId, postId ) {
  * @return {Boolean}        Whether posts query is tracked for site
  */
 export function isTrackingSitePostsQuery( state, siteId, query ) {
-	const { siteQueries } = state.posts;
-	if ( ! siteQueries[ siteId ] ) {
-		return false;
-	}
-
-	return !! siteQueries[ siteId ][ getSerializedPostsQuery( query ) ];
+	return !! state.posts.queries[ getSerializedPostsQuery( query, siteId ) ];
 }
 
 /**
@@ -68,17 +63,16 @@ export function isTrackingSitePostsQuery( state, siteId, query ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	const { siteQueries } = state.posts;
 	if ( ! isTrackingSitePostsQuery( state, siteId, query ) ) {
 		return null;
 	}
 
-	query = getSerializedPostsQuery( query );
-	if ( ! siteQueries[ siteId ][ query ].posts ) {
+	const serializedQuery = getSerializedPostsQuery( query, siteId );
+	if ( ! state.posts.queries[ serializedQuery ].posts ) {
 		return null;
 	}
 
-	return siteQueries[ siteId ][ query ].posts.map( ( globalId ) => {
+	return state.posts.queries[ serializedQuery ].posts.map( ( globalId ) => {
 		return getPost( state, globalId );
 	} );
 }
@@ -97,8 +91,8 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
 		return false;
 	}
 
-	query = getSerializedPostsQuery( query );
-	return state.posts.siteQueries[ siteId ][ query ].fetching;
+	const serializedQuery = getSerializedPostsQuery( query, siteId );
+	return state.posts.queries[ serializedQuery ].fetching;
 }
 
 /**
@@ -111,13 +105,8 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
  * @return {?Number}        Last posts page
  */
 export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	const { siteQueriesLastPage } = state.posts;
-	if ( ! siteQueriesLastPage[ siteId ] ) {
-		return null;
-	}
-
-	const serializedQuery = getSerializedPostsQueryWithoutPage( query );
-	return siteQueriesLastPage[ siteId ][ serializedQuery ] || null;
+	const serializedQuery = getSerializedPostsQueryWithoutPage( query, siteId );
+	return state.posts.queriesLastPage[ serializedQuery ] || null;
 }
 
 /**

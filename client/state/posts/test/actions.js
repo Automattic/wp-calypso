@@ -22,7 +22,8 @@ import {
 	receivePost,
 	receivePosts,
 	requestSitePosts,
-	requestSitePost
+	requestSitePost,
+	requestPosts
 } from '../actions';
 
 describe( 'actions', () => {
@@ -151,6 +152,37 @@ describe( 'actions', () => {
 					siteId: 77203074,
 					query: {},
 					error: sinon.match( { message: 'User cannot access this private blog.' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#requestPosts()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/rest/v1.1/me/posts' )
+				.reply( 200, {
+					found: 2,
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' }
+					]
+				} );
+		} );
+
+		after( () => {
+			nock.cleanAll();
+		} );
+
+		it( 'should dispatch posts receive action when request completes', () => {
+			return requestPosts()( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: POSTS_RECEIVE,
+					posts: [
+						{ ID: 841, title: 'Hello World' },
+						{ ID: 413, title: 'Ribs & Chicken' }
+					]
 				} );
 			} );
 		} );

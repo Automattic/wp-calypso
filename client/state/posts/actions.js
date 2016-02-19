@@ -40,7 +40,7 @@ export function receivePosts( posts ) {
 /**
  * Triggers a network request to fetch posts for the specified site and query.
  *
- * @param  {Number}   siteId Site ID
+ * @param  {?Number}  siteId Site ID
  * @param  {String}   query  Post query
  * @return {Function}        Action thunk
  */
@@ -52,7 +52,14 @@ export function requestSitePosts( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.site( siteId ).postsList( query ).then( ( { found, posts } ) => {
+		let source;
+		if ( siteId ) {
+			source = wpcom.site( siteId );
+		} else {
+			source = wpcom.me();
+		}
+
+		return source.postsList( query ).then( ( { found, posts } ) => {
 			dispatch( receivePosts( posts ) );
 			dispatch( {
 				type: POSTS_REQUEST_SUCCESS,
@@ -103,4 +110,15 @@ export function requestSitePost( siteId, postId ) {
 			} );
 		} );
 	};
+}
+
+/**
+ * Returns a function which, when invoked, triggers a network request to fetch
+ * posts across all of the current user's sites for the specified query.
+ *
+ * @param  {String}   query Post query
+ * @return {Function}       Action thunk
+ */
+export function requestPosts( query = {} ) {
+	return requestSitePosts( null, query );
 }

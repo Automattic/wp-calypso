@@ -21,8 +21,8 @@ import {
 import {
 	items,
 	sitePosts,
-	siteQueries,
-	siteQueriesLastPage,
+	queries,
+	queriesLastPage,
 	siteRequests
 } from '../reducer';
 
@@ -131,82 +131,85 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#siteQueries()', () => {
+	describe( '#queries()', () => {
 		it( 'should default to an empty object', () => {
-			const state = siteQueries( undefined, {} );
+			const state = queries( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track site post query request fetching', () => {
-			const state = siteQueries( undefined, {
+		it( 'should track post query request fetching', () => {
+			const state = queries( undefined, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello' }
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: true
+				}
+			} );
+		} );
+
+		it( 'should track post queries without specified site', () => {
+			const state = queries( undefined, {
+				type: POSTS_REQUEST,
+				query: { search: 'Hello' }
+			} );
+
+			expect( state ).to.eql( {
+				'{"search":"hello"}': {
+					fetching: true
 				}
 			} );
 		} );
 
 		it( 'should preserve previous query results when requesting again', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: false,
-						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: false,
+					posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 				}
 			} );
-			const state = siteQueries( original, {
+			const state = queries( original, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello' }
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true,
-						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: true,
+					posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 				}
 			} );
 		} );
 
-		it( 'should accumulate site queries', () => {
+		it( 'should accumulate queries', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: true
 				}
 			} );
-			const state = siteQueries( original, {
+			const state = queries( original, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello W' }
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					},
-					'{"search":"hello w"}': {
-						fetching: true
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: true
+				},
+				'2916284:{"search":"hello w"}': {
+					fetching: true
 				}
 			} );
 		} );
 
-		it( 'should track site post query request success', () => {
-			const state = siteQueries( undefined, {
+		it( 'should track post query request success', () => {
+			const state = queries( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -217,17 +220,15 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: false,
-						posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: false,
+					posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 				}
 			} );
 		} );
 
-		it( 'should track site post query request failure', () => {
-			const state = siteQueries( undefined, {
+		it( 'should track post query request failure', () => {
+			const state = queries( undefined, {
 				type: POSTS_REQUEST_FAILURE,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -235,48 +236,42 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: false
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: false
 				}
 			} );
 		} );
 
 		it( 'never persists state because this is not implemented', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: true
 				}
 			} );
-			const state = siteQueries( original, { type: SERIALIZE } );
+			const state = queries( original, { type: SERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': {
-						fetching: true
-					}
+				'2916284:{"search":"hello"}': {
+					fetching: true
 				}
 			} );
-			const state = siteQueries( original, { type: DESERIALIZE } );
+			const state = queries( original, { type: DESERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 	} );
 
-	describe( '#siteQueriesLastPage()', () => {
+	describe( '#queriesLastPage()', () => {
 		it( 'should default to an empty object', () => {
-			const state = siteQueriesLastPage( undefined, {} );
+			const state = queriesLastPage( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track site post query request success last page', () => {
-			const state = siteQueriesLastPage( undefined, {
+		it( 'should track post query request success last page', () => {
+			const state = queriesLastPage( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: '', number: 1 },
@@ -287,14 +282,27 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"number":1}': 2
-				}
+				'2916284:{"number":1}': 2
+			} );
+		} );
+
+		it( 'should track last page without specified site', () => {
+			const state = queriesLastPage( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				query: { search: '', number: 1 },
+				found: 2,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				]
+			} );
+
+			expect( state ).to.eql( {
+				'{"number":1}': 2
 			} );
 		} );
 
 		it( 'should track last page regardless of page param', () => {
-			const state = siteQueriesLastPage( undefined, {
+			const state = queriesLastPage( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: '', number: 1, page: 2 },
@@ -305,14 +313,12 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"number":1}': 2
-				}
+				'2916284:{"number":1}': 2
 			} );
 		} );
 
 		it( 'should consider no results as having last page of 1', () => {
-			const state = siteQueriesLastPage( undefined, {
+			const state = queriesLastPage( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'none', number: 1 },
@@ -321,19 +327,15 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"none","number":1}': 1
-				}
+				'2916284:{"search":"none","number":1}': 1
 			} );
 		} );
 
 		it( 'should accumulate site post request success', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': 1
-				}
+				'2916284:{"search":"hello"}': 1
 			} );
-			const state = siteQueriesLastPage( original, {
+			const state = queriesLastPage( original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Ribs' },
@@ -344,30 +346,24 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'{"search":"hello"}': 1,
-					'{"search":"ribs"}': 1
-				}
+				'2916284:{"search":"hello"}': 1,
+				'2916284:{"search":"ribs"}': 1
 			} );
 		} );
 
 		it( 'never persists state because this is not implemented', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': 1
-				}
+				'2916284:{"search":"hello"}': 1
 			} );
-			const state = siteQueriesLastPage( original, { type: SERIALIZE } );
+			const state = queriesLastPage( original, { type: SERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'never loads persisted state because this is not implemented', () => {
 			const original = deepFreeze( {
-				2916284: {
-					'{"search":"hello"}': 1
-				}
+				'2916284:{"search":"hello"}': 1
 			} );
-			const state = siteQueriesLastPage( original, { type: DESERIALIZE } );
+			const state = queriesLastPage( original, { type: DESERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 	} );
