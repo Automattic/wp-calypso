@@ -14,8 +14,8 @@ const controller = require( 'my-sites/controller' ),
 	paths = require( './paths' ),
 	adTracking = require( 'analytics/ad-tracking' );
 
-function registerMultiPage( { routes, handlers } ) {
-	routes.forEach( path => page( path, ...handlers ) );
+function registerMultiPage( { paths, handlers } ) {
+	paths.forEach( path => page( path, ...handlers ) );
 }
 
 function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJetpack = true } = {} ) {
@@ -46,7 +46,7 @@ module.exports = function() {
 		);
 
 		registerMultiPage( {
-			routes: [
+			paths: [
 				paths.domainManagementEmail( ':site', ':domain' ),
 				paths.domainManagementEmail( ':site' )
 			],
@@ -57,7 +57,7 @@ module.exports = function() {
 		} );
 
 		registerMultiPage( {
-			routes: [
+			paths: [
 				paths.domainManagementAddGoogleApps( ':site', ':domain' ),
 				paths.domainManagementAddGoogleApps( ':site' )
 			],
