@@ -39,11 +39,6 @@
 	fill: $white;
 	border-radius: 5px;
 
-	&.is-ghost {
-		stroke: $gray;
-		fill: $gray;
-	}
-
 	&.is-wordpress {
 		background-color: $blue-wordpress;
 	}
