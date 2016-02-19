@@ -9,6 +9,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
+	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -24,7 +25,8 @@ import {
 	queryRequests,
 	queries,
 	queriesLastPage,
-	siteRequests
+	siteRequests,
+	edits
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -504,6 +506,148 @@ describe( 'reducer', () => {
 			} ), {
 				type: DESERIALIZE
 			} );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( '#edits()', () => {
+		it( 'should default to an empty object', () => {
+			const state = edits( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track new post draft revisions by site ID', () => {
+			const state = edits( undefined, {
+				type: POST_EDIT,
+				siteId: 2916284,
+				post: { title: 'Ribs & Chicken' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} );
+		} );
+
+		it( 'should track existing post revisions by site ID, post ID', () => {
+			const state = edits( undefined, {
+				type: POST_EDIT,
+				siteId: 2916284,
+				postId: 841,
+				post: { title: 'Hello World' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					}
+				}
+			} );
+		} );
+
+		it( 'should accumulate posts', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: POST_EDIT,
+				siteId: 2916284,
+				postId: 841,
+				post: { title: 'Hello World' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					},
+					841: {
+						title: 'Hello World'
+					}
+				}
+			} );
+		} );
+
+		it( 'should accumulate sites', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: POST_EDIT,
+				siteId: 77203074,
+				postId: 841,
+				post: { title: 'Hello World' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				},
+				77203074: {
+					841: {
+						title: 'Hello World'
+					}
+				}
+			} );
+		} );
+
+		it( 'should merge post revisions', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: POST_EDIT,
+				siteId: 2916284,
+				post: { content: 'Delicious.' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken',
+						content: 'Delicious.'
+					}
+				}
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), { type: SERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
