@@ -19,7 +19,7 @@ import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
-import ClientSideEffects from './client-side-effects';
+import ClientSideEffects from 'components/client-side-effects';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;
