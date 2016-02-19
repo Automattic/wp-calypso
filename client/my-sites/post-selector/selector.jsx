@@ -6,8 +6,6 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
-import sortBy from 'lodash/sortBy';
-import filter from 'lodash/filter';
 import camelCase from 'lodash/camelCase';
 import clone from 'lodash/clone';
 import throttle from 'lodash/throttle';
@@ -36,20 +34,6 @@ import QueryPosts from 'components/data/query-posts';
 const SEARCH_DEBOUNCE_TIME_MS = 500;
 const SCROLL_THROTTLE_TIME_MS = 400;
 const treeConverter = new TreeConvert( 'ID' );
-
-function sortBranch( items ) {
-	let menuOrders = filter( items, function( item ) {
-		return item.menu_order > 0;
-	} );
-
-	return sortBy( items, function( item ) {
-		if ( menuOrders.length ) {
-			return item.menu_order;
-		}
-
-		return item.title.toLowerCase();
-	} );
-}
 
 function buildTree( items ) {
 	const sortedPosts = [];
@@ -179,12 +163,11 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	renderHierarchy( items, isRecursive ) {
-		const sortedItems = this.props.lastPage ? sortBranch( items ) : items;
 		const listClass = isRecursive ? 'post-selector__nested-list' : 'post-selector__list';
 
 		return (
 			<ul className={ listClass }>
-				{ sortedItems.map( this.renderItem, this ) }
+				{ items.map( this.renderItem, this ) }
 				{
 					this.props.loading && ! isRecursive ?
 					this.renderPlaceholderItem() :
