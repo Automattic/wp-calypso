@@ -24,10 +24,10 @@
 }
 
 .importer__service-icon {
-	$noticon-size: 40px;
 	width: 50px;
 	height: 45px;
-	padding-bottom: 5px;
+	padding-top: 2.5px;
+	padding-bottom: 2.5px;
 
 	position: absolute;
 		left: 20px;
@@ -39,12 +39,7 @@
 	fill: $white;
 	border-radius: 5px;
 
-	&.is-ghost {
-		stroke: $gray;
-		fill: $gray;
-	}
-
-	&.is-wordpress {
+	&.wordpress {
 		background-color: $blue-wordpress;
 	}
 }
