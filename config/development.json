@@ -1,6 +1,6 @@
 {
 	"env": "development",
-	"tracks_client_prop": "browser",
+	"client_slug": "browser",
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
