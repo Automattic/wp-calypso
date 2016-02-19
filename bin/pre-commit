@@ -51,7 +51,7 @@ if [ "$packages" != "" ]; then
 		if [ "$packagePath" != "" ]; then
 			changes=$(git diff --cached --name-only $packagePath)
 			if [ "$changes" != "" ]; then
-				./bin/check-package-version ${package}
+				./bin/package-requires-update ${package}
 				if [ $? -ne 0 ]; then
 					printf "\033[31mPackage must be versioned: \033[0m%s\n" "${packagePath}"
 					pass=false
