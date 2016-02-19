@@ -95,6 +95,7 @@ function wpview( editor ) {
 					React.createElement( views.components[ type ], {
 						content: getText( view ),
 						siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
+						editor,
 						onResize: debounce( triggerNodeChanged, 500 )
 					} )
 				),

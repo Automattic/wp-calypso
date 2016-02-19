@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import omitBy from 'lodash/omitBy';
 import pick from 'lodash/pick';
 import QueryString from 'querystring';
-import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -104,7 +103,7 @@ class WpVideoView extends Component {
 	}
 
 	onLoad() {
-		const doc = tinymce.activeEditor.iframeElement.contentDocument;
+		const doc = this.props.editor.iframeElement.contentDocument;
 		const script = doc.createElement( 'script' );
 		script.src = 'https://videopress.com/videopress-iframe.js';
 		script.type = 'text/javascript';
@@ -118,7 +117,7 @@ class WpVideoView extends Component {
 			<div className="wpview-content">
 				<QueryVideo guid={ videoAttributes.guid } />
 				<iframe
-					onLoad={ this.onLoad }
+					onLoad={ this.onLoad.bind( this ) }
 					width={ videoAttributes.w }
 					height={ videoAttributes.h }
 					src={ videoAttributes.embedUrl }
@@ -133,6 +132,7 @@ class WpVideoView extends Component {
 
 WpVideoView.propTypes = {
 	content: PropTypes.string,
+	editor: PropTypes.object,
 	video: PropTypes.object
 };
 
