@@ -63,32 +63,7 @@ export function connections( state = {}, action ) {
 	return state;
 }
 
-/**
- * Tracks known connections for a site. Maps site ID to an array of connection
- * IDs. When new connections are received, existing known connections for the
- * site ID contained in the action payload are destroyed.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function connectionsBySiteId( state = {}, action ) {
-	switch ( action.type ) {
-		case PUBLICIZE_CONNECTIONS_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.data.connections.map( ( connection ) => connection.ID )
-			} );
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			return state;
-	}
-
-	return state;
-}
-
 export default combineReducers( {
 	fetchingConnections,
-	connections,
-	connectionsBySiteId
+	connections
 } );

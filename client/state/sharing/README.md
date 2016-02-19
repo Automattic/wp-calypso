@@ -33,10 +33,6 @@ An object mapping site ID to connection fetching status for that site.
 
 All known connections, indexed by connection ID.
 
-#### `connectionsBySiteId`
-
-An object mapping site ID to an array of connection IDs for that site.
-
 ### Selectors
 
 Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
