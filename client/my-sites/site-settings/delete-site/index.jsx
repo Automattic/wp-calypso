@@ -160,7 +160,7 @@ module.exports = React.createClass( {
 							this.translate( 'If you\'re unsure about what will be deleted or need any help, not to worry, our support team ' +
 								'is here to answer any questions you might have.' )
 						}</p>
-						<p><a className="settings-action-panel__body-text-link" href="https://en.support.wordpress.com/contact" target="_blank">{ strings.contactSupport }</a></p>
+						<p><a className="settings-action-panel__body-text-link" href="/help/contact">{ strings.contactSupport }</a></p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						<Button
