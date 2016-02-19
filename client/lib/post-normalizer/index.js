@@ -25,8 +25,9 @@ var assign = require( 'lodash/assign' ),
 /**
  * Internal depedencies
  */
-var formatting = require( 'lib/formatting' ),
-	safeImageURL = require( 'lib/safe-image-url' );
+import i18n from 'lib/mixins/i18n';
+import formatting from 'lib/formatting';
+import safeImageURL from 'lib/safe-image-url';
 
 const DEFAULT_PHOTON_QUALITY = 80, // 80 was chosen after some heuristic testing as the best blend of size and quality
 	READING_WORDS_PER_SECOND = 250 / 60; // Longreads says that people can read 250 words per minute. We want the rate in words per second.
@@ -728,6 +729,32 @@ normalizePost.content = {
 				srcUrl.query = stripAutoPlays( srcUrl.query );
 				srcUrl.search = null;
 				embed.src = url.format( srcUrl );
+			}
+		} );
+
+		callback();
+	},
+
+	// Attempt to find embedded Polldaddy polls - and link to any we find
+	detectPolls( post, callback ) {
+		if ( ! post.__contentDOM ) {
+			throw new Error( 'this transform must be used as part of withContentDOM' );
+		}
+
+		// Polldaddy embed markup isn't very helpfully structured, but we can look for the noscript tag,
+		// which contains the information we need, and replace it with a paragraph.
+		let noscripts = toArray( post.__contentDOM.querySelectorAll( 'noscript' ) );
+
+		noscripts.forEach( function( noscript ) {
+			if ( ! noscript.firstChild ) {
+				return;
+			}
+			let firstChildData = formatting.decodeEntities( noscript.firstChild.data );
+			let match = firstChildData.match( '^<a href="http:\/\/polldaddy.com\/poll\/([0-9]+)' );
+			if ( match ) {
+				let p = document.createElement( 'p' );
+				p.innerHTML = '<a rel="external" target="_blank" href="http://polldaddy.com/poll/' + match[1] + '">' + i18n.translate( 'Take our poll' ) + '</a>';
+				noscript.parentNode.replaceChild( p, noscript );
 			}
 		} );
 

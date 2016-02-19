@@ -6,7 +6,7 @@ require( 'lib/react-test-env-setup' )();
 
 // Uncomment this require to use the blanket coverage tests.
 //require( 'blanket' )( {
-//	pattern: /post-normalizer\//
+//  pattern: /post-normalizer\//
 //} );
 
 const assert = require( 'chai' ).assert,
@@ -849,6 +849,23 @@ describe( 'post-normalizer', function() {
 					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
 				], function( err, normalized ) {
 					assert.isUndefined( normalized.content_embeds, 'No content_embeds should have been found' );
+					done( err );
+				}
+			);
+		} );
+		it( 'links to embedded Polldaddy polls', function( done ) {
+			normalizer(
+				{
+					content: '<a name="pd_a_8980420"></a>' +
+					'<div class="PDS_Poll" id="PDI_container8980420" style="display:inline-block;"></div>' +
+					'<div id="PD_superContainer"></div>' +
+					'<script type="text/javascript" charset="UTF-8" src="//static.polldaddy.com/p/8980420.js"></script>' +
+					'<noscript><a href="http://polldaddy.com/poll/8980420">Take Our Poll</a></noscript>',
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.detectPolls ] )
+				], function( err, normalized ) {
+					assert.include( normalized.content, '<p><a rel="external" target="_blank" href="http://polldaddy.com/poll/8980420">Take our poll</a></p>' );
 					done( err );
 				}
 			);
