@@ -1,37 +1,34 @@
 /**
+ * External Dependencies
+ */
+import React from 'react';
+
+/**
  * Internal Dependencies
  */
 import SingleSiteComponent from 'my-sites/themes/single-site';
 import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from 'my-sites/themes/logged-out';
-import analytics from 'lib/analytics';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from '../helpers';
-import { makeElement } from './index.node.js';
+import { makeElement, runClientAnalytics, LoggedOutHead } from './index.node.js';
+import DefaultHead from 'layout/head';
 
 /**
  * Re-export
  */
 export { details } from './index.node.js';
 
-function getProps( context ) {
+function getMultiSiteProps( context ) {
 	const { tier, site_id: siteId } = context.params;
-
-	const title = buildTitle(
-		i18n.translate( 'Themes', { textOnly: true } ),
-		{ siteID: siteId } );
 
 	const { basePath, analyticsPageTitle } = getAnalyticsData(
 		context.path,
 		tier,
 		siteId
 	);
-
-	const runClientAnalytics = function() {
-		analytics.pageView.record( basePath, analyticsPageTitle );
-	};
 
 	const boundTrackScrollPage = function() {
 		trackScrollPage(
@@ -42,38 +39,51 @@ function getProps( context ) {
 	};
 
 	return {
-		title,
 		tier,
 		search: context.query.s,
-		trackScrollPage: boundTrackScrollPage,
-		runClientAnalytics
+		trackScrollPage: boundTrackScrollPage
 	};
 }
 
-export function singleSite( context, next ) {
-	const Head = require( 'layout/head' );
+function getSingleSiteProps( context ) {
 	const { site_id: siteId } = context.params;
-	const props = getProps( context );
+
+	const props = getMultiSiteProps( context );
 
 	props.key = siteId;
 	props.siteId = siteId;
 
-	context.primary = makeElement( SingleSiteComponent, Head, context.store, props );
-	next();
+	return props;
 }
 
-export function multiSite( context, next ) {
-	const Head = require( 'layout/head' );
-	const props = getProps( context );
+const LoggedInHead = ( { children, context: { params: { tier, site_id: siteID } } } ) => (
+	<DefaultHead
+		title={ buildTitle(
+			i18n.translate( 'Themes', { textOnly: true } ),
+			{ siteID }
+		) }
+		tier={ tier || 'all' }>
+		{ children }
+	</DefaultHead>
+);
 
-	context.primary = makeElement( MultiSiteComponent, Head, context.store, props );
-	next();
-}
+export const singleSite = makeElement(
+	SingleSiteComponent,
+	getSingleSiteProps,
+	LoggedInHead,
+	runClientAnalytics
+);
 
-export function loggedOut( context, next ) {
-	const Head = require( 'my-sites/themes/head' );
-	const props = getProps( context );
+export const multiSite = makeElement(
+	MultiSiteComponent,
+	getMultiSiteProps,
+	LoggedInHead,
+	runClientAnalytics
+);
 
-	context.primary = makeElement( LoggedOutComponent, Head, context.store, props );
-	next();
-}
+export const loggedOut = makeElement(
+	LoggedOutComponent,
+	getMultiSiteProps,
+	LoggedOutHead,
+	runClientAnalytics
+);
