@@ -3,6 +3,7 @@
  */
 import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -171,13 +172,11 @@ export function queriesLastPage( state = {}, action ) {
 export function edits( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_EDIT:
-			const { post, siteId, postId = '' } = action;
-			state = Object.assign( {}, state, {
-				[ siteId ]: Object.assign( {}, state[ siteId ] )
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					[ action.postId || '' ]: action.post
+				}
 			} );
-
-			state[ siteId ][ postId ] = Object.assign( {}, state[ siteId ][ postId ], post );
-			return state;
 
 		case SERIALIZE:
 		case DESERIALIZE:

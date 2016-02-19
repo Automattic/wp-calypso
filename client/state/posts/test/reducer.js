@@ -628,6 +628,39 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should merge nested post revisions', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken',
+						discussion: {
+							comments_open: false
+						}
+					}
+				}
+			} ), {
+				type: POST_EDIT,
+				siteId: 2916284,
+				post: {
+					discussion: {
+						pings_open: false
+					}
+				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken',
+						discussion: {
+							comments_open: false,
+							pings_open: false
+						}
+					}
+				}
+			} );
+		} );
+
 		it( 'should not persist state', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
