@@ -10,7 +10,6 @@ var assign = require( 'lodash/assign' ),
  */
 var analytics = require( 'analytics' ),
 	cartValues = require( 'lib/cart-values' ),
-	CheckoutThankYou = require( './thank-you' ),
 	CountrySelect = require( 'my-sites/upgrades/components/form/country-select' ),
 	Input = require( 'my-sites/upgrades/components/form/input' ),
 	notices = require( 'notices' ),
@@ -104,10 +103,6 @@ module.exports = React.createClass( {
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
-				CheckoutThankYou.setLastTransaction( {
-					cart: cart,
-					selectedSite: this.props.selectedSite
-				} );
 				window.location = paypalExpressURL;
 			}
 		}.bind( this ) );

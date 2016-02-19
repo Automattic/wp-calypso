@@ -277,7 +277,7 @@ module.exports = function() {
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(
 			'/checkout/:site/:receiptId?/thank-you',
-			upgradesController.redirectIfThemePurchased,
+			controller.siteSelection,
 			upgradesController.checkoutThankYou
 		);
 

@@ -3,6 +3,7 @@
  */
 var connect = require( 'react-redux' ).connect,
 	Dispatcher = require( 'dispatcher' ),
+	forEach = require( 'lodash/forEach' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	isEqual = require( 'lodash/isEqual' ),
 	page = require( 'page' ),
@@ -17,6 +18,7 @@ var analytics = require( 'analytics' ),
 	DomainDetailsForm = require( './domain-details-form' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
 	observe = require( 'lib/mixins/data-observe' ),
+	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
 	purchasePaths = require( 'me/purchases/paths' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
@@ -118,8 +120,22 @@ const Checkout = React.createClass( {
 		return true;
 	},
 
+	getPurchasesFromReceipt: function() {
+		var purchases = this.props.transaction.step.data.purchases,
+			flatPurchases = [];
+
+		// purchases are of the format { [siteId]: [ { product_id: ... } ] },
+		// so we need to flatten them to get a list of purchases
+		forEach( purchases, sitePurchases => {
+			flatPurchases = flatPurchases.concat( sitePurchases );
+		} );
+
+		return flatPurchases;
+	},
+
 	getCheckoutCompleteRedirectPath: function() {
-		var renewalItem;
+		var renewalItem,
+			receiptId = ':receiptId';
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			clearPurchases();
@@ -133,8 +149,17 @@ const Checkout = React.createClass( {
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
-		// TODO: include the receipt ID in this URL when it is present
-		return `/checkout/${ this.props.sites.getSelectedSite().slug }/thank-you`;
+		if ( this.props.transaction.step.data && this.props.transaction.step.data.receipt_id ) {
+			receiptId = this.props.transaction.step.data.receipt_id;
+
+			this.props.fetchReceiptCompleted( receiptId, {
+				receiptId: receiptId,
+				purchases: this.getPurchasesFromReceipt()
+			} );
+		}
+
+
+		return `/checkout/${ this.props.sites.getSelectedSite().slug }/${ receiptId }/thank-you`;
 	},
 
 	content: function() {
@@ -200,6 +225,9 @@ module.exports = connect(
 		return {
 			clearSitePlans: function( siteId ) {
 				dispatch( clearSitePlans( siteId ) );
+			},
+			fetchReceiptCompleted: function( receiptId, data ) {
+				dispatch( fetchReceiptCompleted( receiptId, data ) );
 			}
 		};
 	}

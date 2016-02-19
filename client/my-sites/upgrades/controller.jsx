@@ -12,7 +12,6 @@ var analytics = require( 'analytics' ),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	activated = require( 'state/themes/actions' ).activated,
 	Main = require( 'components/main' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
@@ -168,7 +167,12 @@ module.exports = {
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
 			storedCards = require( 'lib/stored-cards' )(),
-			basePath = route.sectionify( context.path );
+			basePath = route.sectionify( context.path ),
+			planName = context.params.plan_name;
+
+		if ( 'thank-you' === planName ) {
+			return;
+		}
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
@@ -185,7 +189,7 @@ module.exports = {
 				<CheckoutData>
 					<Checkout
 						cards={ storedCards }
-						planName={ context.params.plan_name }
+						planName={ planName }
 						plans={ plansList }
 						productsList={ productsList }
 						sites={ sites } />
@@ -207,32 +211,26 @@ module.exports = {
 
 	checkoutThankYou: function( context ) {
 		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			basePath = route.sectionify( context.path );
+			basePath = route.sectionify( context.path ),
+			receiptId = Number( context.params.receiptId );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
 		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
 
-		if ( ! lastTransaction ) {
-			page.redirect( '/plans' );
-
-			return;
-		}
-
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 
 		renderWithReduxStore(
-			React.createElement( CheckoutThankYouComponent, {
-				lastTransaction: lastTransaction,
-				productsList: productsList
-			} ),
+			(
+				<CheckoutThankYouComponent
+					productsList={ productsList }
+					receiptId={ receiptId }
+					selectedSite={ sites.getSelectedSite() } />
+			),
 			document.getElementById( 'primary' ),
 			context.store
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-		CheckoutThankYouComponent.setLastTransaction( null );
 	},
 
 	redirectIfNoSite: function( redirectTo ) {
@@ -245,25 +243,5 @@ module.exports = {
 
 			next();
 		};
-	},
-
-	redirectIfThemePurchased: function( context, next ) {
-		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			cartItems = require( 'lib/cart-values' ).cartItems,
-			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			selectedSite = lastTransaction.selectedSite,
-			cart = lastTransaction.cart,
-			cartAllItems = cartItems.getAll( cart );
-
-		if ( cartItems.hasOnlyProductsOf( cart, 'premium_theme' ) ) {
-			const { meta, extra: { source } } = cartAllItems[ 0 ];
-			// TODO: When this section is migrated to Redux altogether,
-			// use react-redux to `connect()` components and `dispatch()` actions.
-			context.store.dispatch( activated( meta, selectedSite, source, true ) );
-			page.redirect( '/design/' + selectedSite.slug );
-			return;
-		}
-
-		next();
 	}
 };

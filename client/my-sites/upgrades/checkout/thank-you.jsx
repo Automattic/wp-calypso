@@ -2,21 +2,38 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
-	store = require( 'store' );
+	find = require( 'lodash/find' ),
+	page = require( 'page' );
 
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' ),
+var activated = require( 'state/themes/actions' ).activated,
+	Button = require( 'components/button' ),
 	config = require( 'config' ),
 	Dispatcher = require( 'dispatcher' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
 	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
+	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
+	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
+	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
+	isChargeback = require( 'lib/products-values' ).isChargeback,
+	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
+	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
+	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
+	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
+	isJetpackBusiness = require( 'lib/products-values' ).isJetpackBusiness,
 	isPlan = require( 'lib/products-values' ).isPlan,
-	{ getPrimaryDomain, isSubdomain } = require( 'lib/domains' ),
+	isPremium = require( 'lib/products-values' ).isPremium,
+	isSiteRedirect = require( 'lib/products-values' ).isSiteRedirect,
+	isTheme = require( 'lib/products-values' ).isTheme,
+	getPrimaryDomain = require( 'lib/domains' ).getPrimaryDomain,
+	isSubdomain = require( 'lib/domains' ).isSubdomain,
+	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	i18n = require( 'lib/mixins/i18n' ),
 	PurchaseDetail = require( './purchase-detail' ),
@@ -36,46 +53,31 @@ var BusinessPlanDetails,
 	PremiumPlanDetails,
 	SiteRedirectDetails;
 
+function getPurchases( props ) {
+	return props.receipt.data.purchases;
+}
+
 var CheckoutThankYou = React.createClass( {
-	statics: {
-		setLastTransaction: function( transaction ) {
-			if ( ! store.enabled ) {
-				return;
-			}
+	componentDidMount: function() {
+		this.redirectIfThemePurchased();
+		this.refreshSitesAndSitePlansIfPlanPurchased();
 
-			store.set( 'CheckoutThankYou', { lastTransaction: transaction } );
-		},
-
-		getLastTransaction: function() {
-			// This will return `null` if the store is empty *or* if the store is not
-			// supported by the browser, such as in Safari's Private Browsing
-			// mode.
-			var data;
-
-			if ( ! store.enabled ) {
-				return null;
-			}
-
-			data = store.get( 'CheckoutThankYou' );
-			if ( ! data ) {
-				return null;
-			}
-
-			return data.lastTransaction;
+		if ( this.props.receiptId && ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
+			this.props.fetchReceipt( this.props.receiptId );
 		}
+
+		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
 
-	componentDidMount: function() {
-		var lastTransaction = this.props.lastTransaction,
-			selectedSite;
+	componentWillReceiveProps: function() {
+		this.redirectIfThemePurchased();
+		this.refreshSitesAndSitePlansIfPlanPurchased();
+	},
 
-		if ( lastTransaction ) {
-			selectedSite = lastTransaction.selectedSite;
-
+	refreshSitesAndSitePlansIfPlanPurchased: function() {
+		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).some( isPlan ) ) {
 			// Refresh selected site plans if the user just purchased a plan
-			if ( cartItems.hasPlan( lastTransaction.cart ) ) {
-				this.props.refreshSitePlans( selectedSite.ID );
-			}
+			this.props.refreshSitePlans( this.props.selectedSite.ID );
 
 			// Refresh the list of sites to update the `site.plan` property
 			// needed to display the plan name on the right of the `Plans` menu item
@@ -83,27 +85,48 @@ var CheckoutThankYou = React.createClass( {
 				type: 'FETCH_SITES'
 			} );
 		}
+	},
 
-		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
+	isDataLoaded: function() {
+		return ! this.props.receiptId || this.props.receipt.hasLoadedFromServer;
+	},
+
+	redirectIfThemePurchased: function() {
+		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
+			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
+			page.redirect( '/design/' + this.props.selectedSite.slug );
+			return;
+		}
 	},
 
 	thankYouHeader: function() {
-		if ( this.cartHasFreeTrial() ) {
+		if ( ! this.isDataLoaded() ) {
+			return <h1 className="checkout__thank-you-header">{ this.translate( 'Loading…' ) }</h1>;
+		}
+
+		if ( this.freeTrialWasPurchased() ) {
 			return (
-				<h1>
+				<h1 className="checkout__thank-you-header">
 					{
 						this.translate( 'Your 14 day free trial starts today!' )
 					}
 				</h1>
 			);
 		}
-		return <h1>{ this.translate( 'Thank you for your purchase!' ) }</h1>
+		return <h1 className="checkout__thank-you-header">{ this.translate( 'Thank you for your purchase!' ) }</h1>
 	},
+
 	thankYouSubHeader: function() {
-		var productName = this.getSingleProductName(),
+		var productName,
 			headerText;
 
-		if ( this.cartHasFreeTrial() && productName ) {
+		if ( ! this.isDataLoaded() ) {
+			return <h2 className="checkout__thank-you-subheader">{ this.translate( 'Loading…' ) }</h2>;
+		}
+
+		productName = this.getSingleProductName();
+
+		if ( this.freeTrialWasPurchased() && productName ) {
 			headerText = this.translate( 'We hope you enjoy %(productName)s. What\'s next? Take it for a spin!', {
 				args: {
 					productName: productName
@@ -121,21 +144,24 @@ var CheckoutThankYou = React.createClass( {
 			headerText = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
 		}
 
-		return <h2>{ headerText }</h2>
+		return <h2 className="checkout__thank-you-subheader">{ headerText }</h2>
 	},
+
 	getSingleProductName() {
-		var products;
-		if ( cartItems ) {
-			products = cartItems.getAll( this.props.lastTransaction.cart );
-			if ( products.length === 1 ) {
-				return products[ 0 ].product_name;
-			}
+		if ( this.props.receiptId && getPurchases( this.props ).length ) {
+			return getPurchases( this.props )[ 0 ].productNameShort;
 		}
+
+		return null;
 	},
 
 	render: function() {
+		var classes = classNames( 'checkout__thank-you', {
+			'is-placeholder': ! this.isDataLoaded()
+		} );
+
 		return (
-			<Main className="checkout-thank-you">
+			<Main className={ classes }>
 				<Card>
 					<div className="thank-you-message">
 						<span className="receipt-icon"></span>
@@ -153,12 +179,20 @@ var CheckoutThankYou = React.createClass( {
 		);
 	},
 
-	cartHasFreeTrial: function() {
-		return cartItems.hasFreeTrial( this.props.lastTransaction.cart );
+	freeTrialWasPurchased: function() {
+		if ( ! this.props.receiptId ) {
+			return false;
+		}
+
+		return getPurchases( this.props ).some( isFreeTrial );
 	},
 
-	cartHasJetpackPlan: function() {
-		return ( cartItems.hasProduct( this.props.lastTransaction.cart, 'jetpack_premium' ) || cartItems.hasProduct( this.props.lastTransaction.cart, 'jetpack_business' ) );
+	jetpackPlanWasPurchased: function() {
+		if ( ! this.props.receiptId ) {
+			return false;
+		}
+
+		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
 	takeItForASpin: function() {
@@ -173,7 +207,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	premiumFreeTrialMessage: function() {
-		if ( this.cartHasFreeTrial() ) {
+		if ( this.freeTrialWasPurchased() ) {
 			return (
 				<div className="try-out-message">
 					<p>
@@ -189,7 +223,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	businessFreeTrialMessage: function() {
-		if ( this.cartHasFreeTrial() ) {
+		if ( this.freeTrialWasPurchased() ) {
 			return (
 				<div className="try-out-message">
 					<p>
@@ -205,37 +239,53 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	productRelatedMessages: function() {
-		var cart = this.props.lastTransaction.cart,
-			selectedSite = this.props.lastTransaction.selectedSite,
+		var selectedSite = this.props.selectedSite,
+			purchases,
 			componentClass,
 			domain;
 
-		if ( cartItems.hasProduct( cart, 'value_bundle' ) ) {
-			componentClass = PremiumPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'business-bundle' ) ) {
-			componentClass = BusinessPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'jetpack_premium' ) ) {
-			componentClass = JetpackPremiumPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'jetpack_business' ) ) {
-			componentClass = JetpackBusinessPlanDetails;
-		} else if ( cartItems.hasProduct( cart, 'gapps' ) || cartItems.hasProduct( cart, 'gapps_extra_license' ) ) {
-			domain = cartItems.getGoogleApps( cart )[ 0 ].meta;
+		if ( ! this.isDataLoaded() ) {
+			return (
+				<div>
+					<PurchaseDetail isPlaceholder />
+					<PurchaseDetail isPlaceholder />
+					<PurchaseDetail isPlaceholder />
+				</div>
+			);
+		}
 
-			componentClass = GoogleAppsDetails;
-		} else if ( cartItems.hasDomainRegistration( cart ) ) {
-			domain = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+		if ( this.props.receiptId ) {
+			purchases = getPurchases( this.props );
 
-			componentClass = DomainRegistrationDetails;
-		} else if ( cartItems.hasProduct( cart, 'domain_map' ) ) {
-			domain = cartItems.getDomainMappings( cart )[ 0 ].meta;
+			if ( purchases.some( isJetpackPremium ) ) {
+				componentClass = JetpackPremiumPlanDetails;
+			} else if ( purchases.some( isJetpackBusiness ) ) {
+				componentClass = JetpackBusinessPlanDetails;
+			} else if ( purchases.some( isPremium ) ) {
+				componentClass = PremiumPlanDetails;
+			} else if ( purchases.some( isBusiness ) ) {
+				componentClass = BusinessPlanDetails;
+			} else if ( purchases.some( isGoogleApps ) ) {
+				domain = find( purchases, isGoogleApps ).meta;
 
-			componentClass = DomainMappingDetails;
-		} else if ( cartItems.hasProduct( cart, 'offsite_redirect' ) ) {
-			domain = cartItems.getSiteRedirects( cart )[ 0 ].meta;
+				componentClass = GoogleAppsDetails;
+			} else if ( purchases.some( isDomainRegistration ) ) {
+				domain = find( purchases ).meta;
 
-			componentClass = SiteRedirectDetails;
-		} else if ( cartItems.hasProduct( cart, 'chargeback' ) ) {
-			componentClass = ChargebackDetails;
+				componentClass = DomainRegistrationDetails;
+			} else if ( purchases.some( isDomainMapping ) ) {
+				domain = find( purchases, isDomainMapping ).meta;
+
+				componentClass = DomainMappingDetails;
+			} else if ( purchases.some( isSiteRedirect ) ) {
+				domain = find( purchases, isSiteRedirect ).meta;
+
+				componentClass = SiteRedirectDetails;
+			} else if ( purchases.some( isChargeback ) ) {
+				componentClass = ChargebackDetails;
+			} else {
+				componentClass = GenericDetails;
+			}
 		} else {
 			componentClass = GenericDetails;
 		}
@@ -244,7 +294,7 @@ var CheckoutThankYou = React.createClass( {
 			<div>
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
-					isFreeTrial: this.cartHasFreeTrial(),
+					isFreeTrial: this.freeTrialWasPurchased(),
 					locale: i18n.getLocaleSlug(),
 					domain: domain
 				} ) }
@@ -255,7 +305,11 @@ var CheckoutThankYou = React.createClass( {
 	supportRelatedMessages: function() {
 		var localeSlug = i18n.getLocaleSlug();
 
-		if ( this.cartHasJetpackPlan() ) {
+		if ( ! this.props.receipt.hasLoadedFromServer ) {
+			return <p>{ this.translate( 'Loading…' ) }</p>;
+		}
+
+		if ( this.jetpackPlanWasPurchased() ) {
 			return (
 				<p>
 					{ this.translate(
@@ -628,10 +682,20 @@ function goToDomainManagement( selectedSite, domain ) {
 }
 
 module.exports = connect(
-	undefined,
+	function mapStateToProps( state, props ) {
+		return {
+			receipt: getReceiptById( state, props.receiptId )
+		};
+	},
 	function mapDispatchToProps( dispatch ) {
 		return {
-			refreshSitePlans( siteId ) {
+			activatedTheme: function( meta, selectedSite ) {
+				dispatch( activated( meta, selectedSite, 'calypstore', true ) );
+			},
+			fetchReceipt: function( receiptId ) {
+				dispatch( fetchReceipt( receiptId ) );
+			},
+			refreshSitePlans: function( siteId ) {
 				dispatch( refreshSitePlans( siteId ) );
 			}
 		};

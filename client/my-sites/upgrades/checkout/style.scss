@@ -108,15 +108,36 @@
 			@include noticon( '\f411' );
 		}
 	}
+
+	&.is-placeholder {
+		padding-top: 60px;
+
+		.checkout__purchase-detail-button,
+		.checkout__purchase-detail-description,
+		.checkout__purchase-detail-title {
+			@include placeholder( 23% );
+
+			display: block;
+		}
+
+		.checkout__purchase-detail-button {
+			border: none;
+			margin: 0 auto;
+			width: 50%;
+		}
+
+		.checkout__purchase-detail-description {
+			margin-top: 10px;
+		}
+
+		.checkout__purchase-detail-title {
+			margin: 0 auto;
+			width: 85%;
+		}
+	}
 }
 
 .checkout__purchase-detail-text {
-	&::before {
-		color: lighten( $gray, 20% );
-		@include noticon( '\f803' );
-		top: -8px;
-	}
-
 	@include breakpoint( ">660px" ) {
 		&::before {
 			font-size: 70px;
@@ -132,6 +153,14 @@
 			position: absolute;
 				left: 0;
 		}
+	}
+}
+
+.checkout__purchase-detail:not( .is-placeholder ) .checkout__purchase-detail-text {
+	&::before {
+		color: lighten( $gray, 20% );
+		@include noticon( '\f803' );
+		top: -8px;
 	}
 }
 
