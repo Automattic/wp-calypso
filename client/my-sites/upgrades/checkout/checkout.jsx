@@ -133,7 +133,8 @@ const Checkout = React.createClass( {
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
-		return '/checkout/thank-you';
+		// TODO: include the receipt ID in this URL when it is present
+		return `/checkout/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 	},
 
 	content: function() {
