@@ -3,6 +3,8 @@
  */
 import { expect } from 'chai';
 import { Map, fromJS } from 'immutable';
+import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -10,7 +12,6 @@ import { Map, fromJS } from 'immutable';
 import { RECEIVE_THEME_DETAILS } from '../../action-types';
 import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from '../../../action-types';
 import reducer from '../reducer';
-import deepFreeze from 'deep-freeze';
 
 describe( 'reducer', () => {
 	it( 'should default to an empty Immutable Map', () => {
@@ -34,8 +35,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'persistence', () => {
+		before( () => {
+			sinon.stub( console, 'warn' );
+		} );
+		after( () => {
+			console.warn.restore();
+		} );
 		const initialState = Map();
-
 		it( 'persists state and converts to a plain JS object', () => {
 			const jsObject = deepFreeze( {
 				mood: {
@@ -69,7 +75,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 
-		it.skip( 'should ignore loading data with invalid keys ', () => {
+		it( 'should ignore loading data with invalid keys ', () => {
 			const jsObject = deepFreeze( {
 				missingKey: true,
 				mood: {
@@ -81,9 +87,9 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( initialState );
 		} );
 
-		it.skip( 'should ignore loading data with invalid values ', () => {
+		it( 'should ignore loading data with invalid values ', () => {
 			const jsObject = deepFreeze( {
-				mood: 'foo',
+				mood: 'foo'
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
 			expect( state ).to.eql( initialState );
