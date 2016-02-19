@@ -262,7 +262,7 @@ var CheckoutThankYou = React.createClass( {
 	supportRelatedMessages: function() {
 		var localeSlug = i18n.getLocaleSlug();
 
-		if ( ! this.props.receipt.hasLoadedFromServer ) {
+		if ( ! this.isDataLoaded() ) {
 			return <p>{ this.translate( 'Loading…' ) }</p>;
 		}
 
