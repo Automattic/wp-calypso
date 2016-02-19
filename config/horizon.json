@@ -26,7 +26,7 @@
 		"manage/customize": true,
 		"manage/drafts": true,
 		"manage/edit-user": true,
-		"manage/import": false,
+		"manage/import": true,
 		"manage/jetpack": true,
 		"manage/jetpack-plans": true,
 		"manage/media": true,
