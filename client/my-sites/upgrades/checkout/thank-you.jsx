@@ -62,7 +62,7 @@ var CheckoutThankYou = React.createClass( {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
 
-		if ( ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
+		if ( this.props.receiptId && ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
 			this.props.fetchReceipt( this.props.receiptId );
 		}
 
@@ -87,6 +87,10 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
+	isDataLoaded: function() {
+		return ! this.props.receiptId || this.props.receipt.hasLoadedFromServer;
+	},
+
 	redirectIfThemePurchased: function() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
 			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
@@ -96,7 +100,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	thankYouHeader: function() {
-		if ( ! this.props.receipt.hasLoadedFromServer ) {
+		if ( ! this.isDataLoaded() ) {
 			return <h1 className="checkout__thank-you-header">{ this.translate( 'Loading…' ) }</h1>;
 		}
 
@@ -116,7 +120,7 @@ var CheckoutThankYou = React.createClass( {
 		var productName,
 			headerText;
 
-		if ( ! this.props.receipt.hasLoadedFromServer ) {
+		if ( ! this.isDataLoaded() ) {
 			return <h2 className="checkout__thank-you-subheader">{ this.translate( 'Loading…' ) }</h2>;
 		}
 
@@ -144,7 +148,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	getSingleProductName() {
-		if ( getPurchases( this.props ).length ) {
+		if ( this.props.receiptId && getPurchases( this.props ).length ) {
 			return getPurchases( this.props )[ 0 ].productNameShort;
 		}
 
@@ -153,7 +157,7 @@ var CheckoutThankYou = React.createClass( {
 
 	render: function() {
 		var classes = classNames( 'checkout__thank-you', {
-			'is-placeholder': ! this.props.receipt.hasLoadedFromServer
+			'is-placeholder': ! this.isDataLoaded()
 		} );
 
 		return (
@@ -176,10 +180,18 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	freeTrialWasPurchased: function() {
+		if ( ! this.props.receiptId ) {
+			return false;
+		}
+
 		return getPurchases( this.props ).some( isFreeTrial );
 	},
 
 	jetpackPlanWasPurchased: function() {
+		if ( ! this.props.receiptId ) {
+			return false;
+		}
+
 		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
@@ -232,7 +244,7 @@ var CheckoutThankYou = React.createClass( {
 			componentClass,
 			domain;
 
-		if ( ! this.props.receipt.hasLoadedFromServer ) {
+		if ( ! this.isDataLoaded() ) {
 			return (
 				<div>
 					<PurchaseDetail isPlaceholder />
@@ -242,34 +254,38 @@ var CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		purchases = getPurchases( this.props );
+		if ( this.props.receiptId ) {
+			purchases = getPurchases( this.props );
 
-		if ( purchases.some( isJetpackPremium ) ) {
-			componentClass = JetpackPremiumPlanDetails;
-		} else if ( purchases.some( isJetpackBusiness ) ) {
-			componentClass = JetpackBusinessPlanDetails;
-		} else if ( purchases.some( isPremium ) ) {
-			componentClass = PremiumPlanDetails;
-		} else if ( purchases.some( isBusiness ) ) {
-			componentClass = BusinessPlanDetails;
-		} else if ( purchases.some( isGoogleApps ) ) {
-			domain = find( purchases, isGoogleApps ).meta;
+			if ( purchases.some( isJetpackPremium ) ) {
+				componentClass = JetpackPremiumPlanDetails;
+			} else if ( purchases.some( isJetpackBusiness ) ) {
+				componentClass = JetpackBusinessPlanDetails;
+			} else if ( purchases.some( isPremium ) ) {
+				componentClass = PremiumPlanDetails;
+			} else if ( purchases.some( isBusiness ) ) {
+				componentClass = BusinessPlanDetails;
+			} else if ( purchases.some( isGoogleApps ) ) {
+				domain = find( purchases, isGoogleApps ).meta;
 
-			componentClass = GoogleAppsDetails;
-		} else if ( purchases.some( isDomainRegistration ) ) {
-			domain = find( purchases ).meta;
+				componentClass = GoogleAppsDetails;
+			} else if ( purchases.some( isDomainRegistration ) ) {
+				domain = find( purchases ).meta;
 
-			componentClass = DomainRegistrationDetails;
-		} else if ( purchases.some( isDomainMapping ) ) {
-			domain = find( purchases, isDomainMapping ).meta;
+				componentClass = DomainRegistrationDetails;
+			} else if ( purchases.some( isDomainMapping ) ) {
+				domain = find( purchases, isDomainMapping ).meta;
 
-			componentClass = DomainMappingDetails;
-		} else if ( purchases.some( isSiteRedirect ) ) {
-			domain = find( purchases, isSiteRedirect ).meta;
+				componentClass = DomainMappingDetails;
+			} else if ( purchases.some( isSiteRedirect ) ) {
+				domain = find( purchases, isSiteRedirect ).meta;
 
-			componentClass = SiteRedirectDetails;
-		} else if ( purchases.some( isChargeback ) ) {
-			componentClass = ChargebackDetails;
+				componentClass = SiteRedirectDetails;
+			} else if ( purchases.some( isChargeback ) ) {
+				componentClass = ChargebackDetails;
+			} else {
+				componentClass = GenericDetails;
+			}
 		} else {
 			componentClass = GenericDetails;
 		}
