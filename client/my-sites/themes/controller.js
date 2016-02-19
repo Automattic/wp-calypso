@@ -18,7 +18,6 @@ import analytics from 'analytics';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
-import route from 'lib/route';
 import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
@@ -116,14 +115,9 @@ export function loggedOut( context, next ) {
 
 function getDetailsProps( context ) {
 	const { slug, section } = context.params;
-
-	let basePath = route.sectionify( context.path );
-	let analyticsPageTitle = 'Themes';
-
-	if ( slug ) {
-		basePath = basePath + '/:slug';
-		analyticsPageTitle += ' > Details Sheet';
-	}
+	const user = getCurrentUser( context.store.getState() );
+	const basePath = '/themes/:slug';
+	const analyticsPageTitle = 'Themes > Details Sheet';
 
 	const runClientAnalytics = function() {
 		analytics.pageView.record( basePath, analyticsPageTitle );
