@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var clickOutside = require( 'click-outside' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	Tip = require( 'component-tip' );
+import clickOutside from 'click-outside';
+import ReactDom from 'react-dom';
+import React from 'react';
+import omit from 'lodash/omit';
+import Tip from 'component-tip';
 
 /**
  * Internal dependencies
  */
-var closeOnEsc = require( 'lib/mixins/close-on-esc' ),
-	warn = require( 'lib/warn' );
+import closeOnEsc from 'lib/mixins/close-on-esc';
+import warn from 'lib/warn';
 
 var Content = React.createClass( {
 	mixins: [ closeOnEsc( '_close' ) ],
