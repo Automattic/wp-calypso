@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import omit from 'lodash/omit';
 import Tip from 'component-tip';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -33,6 +34,10 @@ var Popover = React.createClass( {
 		onClose: React.PropTypes.func.isRequired,
 		position: React.PropTypes.string,
 		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+	},
+
+	contextTypes: {
+		store: React.PropTypes.object
 	},
 
 	getDefaultProps: function() {
@@ -73,10 +78,19 @@ var Popover = React.createClass( {
 		}
 
 		if ( this.props.isVisible && this.props.context ) {
-			ReactDom.render(
-				<Content { ...omit( this.props, 'className' ) } onClose={ this._close } />,
-				this._container
-			);
+			let content = <Content { ...omit( this.props, 'className' ) } onClose={ this._close } />;
+
+			// Context is lost when creating a new render hierarchy, so ensure
+			// that we preserve the context that we care about
+			if ( this.context.store ) {
+				content = (
+					<ReduxProvider store={ this.context.store }>
+						{ content }
+					</ReduxProvider>
+				);
+			}
+
+			ReactDom.render( content, this._container );
 
 			if ( ! prevProps.isVisible ) {
 				const contextNode = ReactDom.findDOMNode( this.props.context );
