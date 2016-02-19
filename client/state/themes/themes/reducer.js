@@ -9,6 +9,8 @@ import transform from 'lodash/transform';
  */
 import ActionTypes from '../action-types';
 import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
+import { themesSchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 export const initialState = fromJS( {
 	themes: {},
@@ -39,6 +41,10 @@ export default ( state = initialState, action ) => {
 		case ActionTypes.ACTIVATED_THEME:
 			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, themesSchema ) ) {
+				return fromJS( state );
+			}
+			return initialState;
 		case SERVER_DESERIALIZE:
 			return fromJS( state );
 		case SERIALIZE:
