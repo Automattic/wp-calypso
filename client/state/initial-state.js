@@ -2,12 +2,13 @@
  * External dependencies
  */
 import debugModule from 'debug';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore, reducer } from 'state';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types'
+import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
 import { getLocalForage } from 'lib/localforage';
 import config from 'config';
 
@@ -24,7 +25,8 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
 	if ( typeof window === 'object' && window.initialReduxState ) {
-		return window.initialReduxState;
+		const serverState = reducer( window.initialReduxState, { type: SERVER_DESERIALIZE } );
+		return pick( serverState, Object.keys( window.initialReduxState ) );
 	}
 	return {};
 }
@@ -34,11 +36,9 @@ function serialize( state ) {
 	return Object.assign( serializedState, { _timestamp: Date.now() } );
 }
 
-function deserialize( localforageState ) {
-	delete localforageState._timestamp;
-	const serverState = getInitialServerState();
-	const mergedState = Object.assign( {}, localforageState, serverState );
-	return reducer( mergedState, { type: DESERIALIZE } );
+function deserialize( state ) {
+	delete state._timestamp;
+	return reducer( state, { type: DESERIALIZE } );
 }
 
 function loadInitialState( initialState ) {
@@ -51,7 +51,10 @@ function loadInitialState( initialState ) {
 		debug( 'stored state is too old, building redux store from scratch' );
 		initialState = {};
 	}
-	return createReduxStore( deserialize( initialState ) );
+	const localforageState = deserialize( initialState );
+	const serverState = getInitialServerState();
+	const mergedState = Object.assign( {}, localforageState, serverState );
+	return createReduxStore( mergedState );
 }
 
 function loadInitialStateFailed( error ) {
