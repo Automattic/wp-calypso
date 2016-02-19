@@ -8,6 +8,8 @@ import { fromJS } from 'immutable';
  */
 import ActionTypes from '../action-types';
 import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
+import { themesLastQuerySchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 export const initialState = fromJS( {
 	previousSiteId: 0,
@@ -27,6 +29,10 @@ export default ( state = initialState, action ) => {
 				.set( 'currentSiteId', action.site.ID )
 				.set( 'isJetpack', !! action.site.jetpack );
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, themesLastQuerySchema ) ) {
+				return fromJS( state );
+			}
+			return initialState;
 		case SERVER_DESERIALIZE:
 			return fromJS( state );
 		case SERIALIZE:
