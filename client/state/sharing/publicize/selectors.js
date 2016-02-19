@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import filter from 'lodash/filter';
+
+/**
  * Returns an array of known connections for the given site ID.
  *
  * @param  {Object} state  Global state tree
@@ -6,15 +11,7 @@
  * @return {Array}         Site connections
  */
 export function getConnectionsBySiteId( state, siteId ) {
-	const { connectionsBySiteId, connections } = state.sharing.publicize;
-
-	if ( ! connectionsBySiteId[ siteId ] ) {
-		return [];
-	}
-
-	return connectionsBySiteId[ siteId ].map( ( connectionId ) => {
-		return connections[ connectionId ];
-	} );
+	return filter( state.sharing.publicize.connections, { site_ID: siteId } );
 }
 
 /**
@@ -27,10 +24,9 @@ export function getConnectionsBySiteId( state, siteId ) {
  * @return {Array}         User connections
  */
 export function getSiteUserConnections( state, siteId, userId ) {
-	const connectionsBySiteId = getConnectionsBySiteId( state, siteId );
-
-	return connectionsBySiteId.filter( ( connection ) => {
-		return connection.shared || connection.keyring_connection_user_ID === userId;
+	return filter( state.sharing.publicize.connections, ( connection ) => {
+		const { site_ID, shared, keyring_connection_user_ID } = connection;
+		return site_ID === siteId && ( shared || keyring_connection_user_ID === userId );
 	} );
 }
 
