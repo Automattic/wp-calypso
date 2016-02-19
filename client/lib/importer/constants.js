@@ -16,7 +16,7 @@ export const appStates = Object.freeze( {
 
 export const WORDPRESS = 'importer-type-wordpress';
 export const GHOST = 'importer-type-ghost';
-export const MEDIUM = 'importer-type-medium';
+export const MEDIUM = 'importer-type-medium_import';
 export const SQUARESPACE = 'importer-type-squarespace';
 
 export const actionTypes = Object.freeze( {
