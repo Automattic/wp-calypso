@@ -132,7 +132,7 @@ const RecommendedForYou = React.createClass( {
 				<InfiniteList
 					items={ this.state.recommendations }
 					fetchingNextPage={ this.state.fetching }
-					lastPage={ this.state.recommendations && this.state.recommendations.length >= 100 }
+					lastPage={ RecommendedSites.isLastPage() }
 					guessedItemHeight={ 300 }
 					fetchNextPage={ this.loadMore }
 					getItemRef={ this.getItemRef }
