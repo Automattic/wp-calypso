@@ -14,7 +14,7 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import config from 'config';
-import	route from 'lib/route';
+import route from 'lib/route';
 
 var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
