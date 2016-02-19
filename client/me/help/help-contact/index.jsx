@@ -36,6 +36,8 @@ module.exports = React.createClass( {
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
+		olarkEvents.on( 'api.chat.onMessageToVisitor', this.trackChatDisplayError );
+		olarkEvents.on( 'api.chat.onMessageToOperator', this.trackChatDisplayError );
 
 		sites.on( 'change', this.onSitesChanged );
 
@@ -55,6 +57,8 @@ module.exports = React.createClass( {
 		olarkEvents.off( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.off( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
 		olarkEvents.off( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
+		olarkEvents.off( 'api.chat.onMessageToVisitor', this.trackChatDisplayError );
+		olarkEvents.off( 'api.chat.onMessageToOperator', this.trackChatDisplayError );
 
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
@@ -216,6 +220,35 @@ module.exports = React.createClass( {
 
 		// Trigger the onkeydown callback added by olark so that we can send the message to the operator.
 		widgetInput.onkeydown( { keyCode: KEY_ENTER } );
+	},
+
+	trackChatDisplayError: function() {
+		const { olark, isChatEnded } = this.state;
+
+		// If the user sent/received a message to/from an operator but the chatbox is not inlined
+		// then something must be going wrong. Lets record this event and give some details
+		if ( this.canShowChatbox() ) {
+			return;
+		}
+
+		const tracksData = {
+			olark_locale: olark.locale,
+			olark_is_chat_ended: isChatEnded,
+			olark_is_ready: olark.isOlarkReady,
+			olark_is_expanded: olark.isOlarkExpanded,
+			olark_is_user_eligible: olark.isUserEligible,
+			olark_is_operator_available: olark.isOperatorAvailable
+		};
+
+		// Do a check here to make sure that details are present because an error in the
+		// olark event stack could cause it to be null/undefined
+		if ( olark.details ) {
+			tracksData.olark_is_conversing = olark.details.isConversing;
+		} else {
+			tracksData.olark_details_missing = true;
+		}
+
+		analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display', tracksData );
 	},
 
 	onOperatorsAway: function() {
