@@ -9,6 +9,8 @@ var recommendations = OrderedSet(),
 	page = 1,
 	isLastPage = false;
 
+const MAX_RECOMMENDATIONS = 100;
+
 const store = {
 	get() {
 		return recommendations.toJS();
@@ -38,7 +40,11 @@ function receiveRecommendations( data ) {
 		} );
 
 		recommendations = recommendations.union( fromJS( pruned ) );
+
 		if ( recommendations !== previousRecs ) {
+			if ( recommendations.length >= MAX_RECOMMENDATIONS ) {
+				store.setIsLastPage( true );
+			}
 			page++;
 			store.emit( 'change' );
 		}
