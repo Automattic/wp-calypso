@@ -80,8 +80,9 @@ const olark = {
 			// change if they purchase upgrades or if their upgrades expire. There's also throttling that happens for unpaid users.
 			// There is lots to consider before storing this configuration
 			debug( 'Using rest api to get olark configuration' );
+			const clientSlug = config( 'client_slug' );
 
-			wpcomUndocumented.getOlarkConfiguration( ( error, configuration ) => {
+			wpcomUndocumented.getOlarkConfiguration( clientSlug, ( error, configuration ) => {
 				if ( error ) {
 					reject( error );
 					return;
