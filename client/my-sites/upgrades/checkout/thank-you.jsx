@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/collection/find' ),
+	find = require( 'lodash/find' ),
 	page = require( 'page' );
 
 /**
