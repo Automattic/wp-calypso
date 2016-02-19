@@ -113,9 +113,7 @@ const PostOptions = React.createClass( {
 		const feed = FeedStore.get( feedId );
 
 		if ( ! feed ) {
-			setTimeout( function() {
-				FeedStoreActions.fetch( feedId );
-			}, 0 );
+			FeedStoreActions.fetch( feedId );
 		}
 
 		return feed;

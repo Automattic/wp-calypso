@@ -10,7 +10,6 @@ var FeedState = require( '../constants' ).state,
 	FeedStore, FeedStoreActions;
 
 describe( 'FeedStore', function() {
-
 	var readFeedStub,
 		mockWpcom = {
 			undocumented: function() {
@@ -42,7 +41,6 @@ describe( 'FeedStore', function() {
 		changeSpy.reset();
 	} );
 
-
 	it( 'should have a dispatch token', function() {
 		expect( FeedStore ).to.have.property( 'dispatchToken' );
 	} );
@@ -51,23 +49,12 @@ describe( 'FeedStore', function() {
 		expect( FeedStore.get( 'UNKNOWN' ) ).to.be.undefined;
 	} );
 
-	it( 'should create a pending record when sent REFRESH', function() {
-		FeedStoreActions.fetch( 'KNOWN' );
-
-		expect( readFeedStub.callCount ).to.equal( 1 );
-		expect( readFeedStub.args[ 0 ][ 0 ] ).to.eql( { ID: 'KNOWN', meta: 'site' } );
-
-		expect( FeedStore.get( 'KNOWN' ).state ).to.equal( FeedState.PENDING );
-		expect( changeSpy.callCount ).to.equal( 1 );
-	} );
-
-	it( 'should pass through the pending state and prevent double fetches', function() {
-
+	it( 'should prevent double fetches', function() {
 		FeedStoreActions.fetch( 'twice' );
 		FeedStoreActions.fetch( 'twice' );
 
 		expect( readFeedStub.callCount ).to.equal( 1 );
-		expect( changeSpy.callCount ).to.equal( 1 );
+		expect( changeSpy.callCount ).to.equal( 0 );
 	} );
 
 	it( 'should accept a good response', function() {
@@ -84,7 +71,7 @@ describe( 'FeedStore', function() {
 
 		FeedStoreActions.fetch( 1234 );
 
-		expect( changeSpy.callCount ).to.equal( 2 );
+		expect( changeSpy.callCount ).to.equal( 1 );
 
 		feedFromStore = FeedStore.get( 1234 );
 
@@ -94,7 +81,6 @@ describe( 'FeedStore', function() {
 		forOwn( feed, function( val, key ) {
 			expect( feedFromStore[ key ] ).to.eql( val );
 		} );
-
 	} );
 
 	it( 'should accept an error', function() {
@@ -104,7 +90,7 @@ describe( 'FeedStore', function() {
 
 		FeedStoreActions.fetch( 'BAD' );
 
-		expect( changeSpy.callCount ).to.equal( 2 );
+		expect( changeSpy.callCount ).to.equal( 1 );
 
 		feedFromStore = FeedStore.get( 'BAD' );
 
@@ -112,5 +98,4 @@ describe( 'FeedStore', function() {
 		expect( feedFromStore.state ).to.equal( FeedState.ERROR );
 		expect( feedFromStore.error ).to.equal( error );
 	} );
-
 } );
