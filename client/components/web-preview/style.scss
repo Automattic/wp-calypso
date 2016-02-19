@@ -68,12 +68,6 @@
 	}
 }
 
-.web-preview__frame {
-	background: $gray-light;
-	width: 100%;
-	height: 100%;
-}
-
 .web-preview__toolbar {
 	background: $white;
 	border-bottom: 1px solid lighten( $gray, 20% );
@@ -139,8 +133,12 @@
 }
 
 .web-preview__frame {
+	display: block;
+	width: 100%;
+	height: 100%;
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
+	background: $gray-light;
 
 	.is-loaded & {
 		opacity: 1;
@@ -150,6 +148,8 @@
 .web-preview__placeholder {
 	width: 100%;
 	height: 100%;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 .web-preview .spinner {
