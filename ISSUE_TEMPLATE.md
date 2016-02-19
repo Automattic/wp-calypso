@@ -1,29 +1,32 @@
+<!-- Thanks for contributing to Calypso! Pick a clear title ("Editor: add spell check") and proceed. -->
+
+#### Steps to reproduce
+1. Starting at URL: 
+2. 
+3. 
+4. 
+
+#### What I expected
+
+
+#### What happened instead
+
+
+#### Browser / OS version
+
+
+#### Screenshot / Video
+
 <!--
-Thank you for contributing to Calypso!
+PLEASE NOTE
+- These comments won't show up when you submit the issue.
+- Everything is optional, but try to add as many details as possible.
+- If requesting a new feature, explain why you'd like to see it added.
 
 Docs & troubleshooting:
-=======================
 https://github.com/Automattic/wp-calypso/blob/master/CONTRIBUTING.md
 https://github.com/Automattic/wp-calypso/blob/master/docs/troubleshooting.md
 
-Think you found a bug?
-======================
-Use the template below to log a new bug. If you want to prefix the title with a “Question:”, “Bug:”, or the general area of the application, that would be helpful, but by no means mandatory. If you have write access, add the appropriate labels.
-
-Have a feature request?
-=======================
-If you want to prefix the title with “Question:”, “Feature Request:”, or the general area of the application, that would be helpful. For example, "Editor: add ability to choose from most popular tags" would make a great title.
+Helpful tips for screenshots:
+https://en.support.wordpress.com/make-a-screenshot/
 -->
-
-<!-- BUG TEMPLATE -->
-## URL:
-
-## What I expected
-
-## What happened instead
-
-## Steps to reproduce
-
-## Browser / OS version
-
-## Screenshots / Video
