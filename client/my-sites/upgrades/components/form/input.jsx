@@ -52,9 +52,13 @@ export default React.createClass( {
 		}
 	},
 
+	focus() {
+		ReactDom.findDOMNode( this.refs.input ).focus();
+	},
+
 	autofocusInput() {
 		if ( this.props.autofocus ) {
-			ReactDom.findDOMNode( this.refs.input ).focus();
+			this.focus();
 		}
 	},
 

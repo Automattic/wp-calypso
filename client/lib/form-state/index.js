@@ -194,7 +194,7 @@ function updateFields( formState, callback ) {
 
 function initializeFields( formState, fieldValues ) {
 	return updateFields( formState, function( name ) {
-		return { value: fieldValues[ name ] || '' };
+		return { value: fieldValues[ name ] || '', name };
 	} );
 }
 
@@ -308,10 +308,13 @@ function isFieldValidating( formState, fieldName ) {
 	return field.isValidating;
 }
 
-function getErrorMessages( formState ) {
-	var invalidFields = filter( formState, function( field, name ) {
-		return isFieldInvalid( formState, name );
+function getInvalidFields( formState ) {
+	return filter( formState, function( field ) {
+		return isFieldInvalid( formState, field.name );
 	} );
+}
+function getErrorMessages( formState ) {
+	var invalidFields = getInvalidFields( formState );
 
 	return flatten( map( invalidFields, 'errors' ) );
 }
@@ -349,6 +352,7 @@ module.exports = {
 	setFieldsValidating: setFieldsValidating,
 	setFieldErrors: setFieldErrors,
 	getErrorMessages: getErrorMessages,
+	getInvalidFields: getInvalidFields,
 	getFieldErrorMessages: getFieldErrorMessages,
 	isFieldDisabled: isFieldDisabled,
 	isFieldInvalid: isFieldInvalid,

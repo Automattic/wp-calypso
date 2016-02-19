@@ -2,9 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import map from 'lodash/map';
 import camelCase from 'lodash/camelCase';
+import kebabCase from 'lodash/kebabCase';
+import head from 'lodash/head';
 
 /**
  * Internal dependencies
@@ -108,6 +111,7 @@ export default React.createClass( {
 	getFieldProps( name ) {
 		return {
 			name,
+			ref: name,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ),
 			invalid: formState.isFieldInvalid( this.state.form, name ),
@@ -215,6 +219,7 @@ export default React.createClass( {
 			this.recordSubmit();
 
 			if ( hasErrors ) {
+				this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
 				return;
 			}
 

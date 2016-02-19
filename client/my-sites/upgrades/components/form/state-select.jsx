@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' ),
+	ReactDom = require( 'react-dom' ),
 	observe = require( 'lib/mixins/data-observe' );
 
 /**
@@ -25,6 +26,10 @@ module.exports = React.createClass( {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } State Select` );
 		}
+	},
+
+	focus() {
+		ReactDom.findDOMNode( this.refs.input ).focus();
 	},
 
 	render: function() {
@@ -55,6 +60,7 @@ module.exports = React.createClass( {
 					<div>
 						<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 						<FormSelect
+							ref="input"
 							name={ this.props.name }
 							value={ this.props.value }
 							disabled={ this.props.disabled }

@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' ),
+	ReactDom = require( 'react-dom' ),
 	observe = require( 'lib/mixins/data-observe' );
 
 /**
@@ -20,13 +21,17 @@ module.exports = React.createClass( {
 
 	mixins: [ FocusMixin( 'input' ), observe( 'countriesList' ) ],
 
-	recordCountrySelectClick: function() {
+	recordCountrySelectClick() {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );
 		}
 	},
 
-	render: function() {
+	focus() {
+		ReactDom.findDOMNode( this.refs.input ).focus();
+	},
+
+	render() {
 		var classes = classNames( this.props.additionalClasses, 'country', {
 				focus: this.state.focus,
 				invalid: this.props.invalid
