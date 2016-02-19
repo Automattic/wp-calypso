@@ -10,6 +10,7 @@ import camelCase from 'lodash/camelCase';
 import clone from 'lodash/clone';
 import throttle from 'lodash/throttle';
 import get from 'lodash/get';
+import xorBy from 'lodash/xorBy';
 
 /**
  * Internal dependencies
@@ -70,9 +71,19 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	getInitialState() {
-		return {
-			searchTerm: null
-		};
+		let state = { searchTerm: null };
+
+		if ( this.props.posts ) {
+			// Yes, this is what you're told not to do, but treeifying posts is
+			// particularly expensive, so we save the hierarchy as a cache
+			//
+			// See: https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
+			Object.assign( state, {
+				postsHierarchy: buildTree( this.props.posts )
+			} );
+		}
+
+		return state;
 	},
 
 	getDefaultProps() {
@@ -102,6 +113,19 @@ const PostSelectorPosts = React.createClass( {
 		this.debouncedSearch = debounce( function() {
 			this.props.onSearch( this.state.searchTerm );
 		}.bind( this ), SEARCH_DEBOUNCE_TIME_MS );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ( ! this.props.posts || ! this.state.postsHierarchy ) && nextProps.posts ) {
+			// Has no current posts, but receiving, so build tree
+			this.setState( { postsHierarchy: buildTree( nextProps.posts ) } );
+		} else if ( ! nextProps.posts ) {
+			// No longer has incoming posts, reset hierarchy to null
+			this.setState( { postsHierarchy: null } );
+		} else if ( xorBy( this.props.posts, nextProps.posts, 'global_ID' ).length ) {
+			// Incoming posts are different, rebuild tree
+			this.setState( { postsHierarchy: buildTree( nextProps.posts ) } );
+		}
 	},
 
 	hasNoSearchResults() {
@@ -204,12 +228,6 @@ const PostSelectorPosts = React.createClass( {
 	render() {
 		const numberPosts = this.props.posts ? this.props.posts.length : 0;
 		const showSearch = ( numberPosts > this.props.searchThreshold ) || this.state.searchTerm;
-		let posts;
-
-		if ( this.props.posts ) {
-			// Only build tree if all pages are loaded, and not searching
-			posts = ( this.props.lastPage && ! this.state.searchTerm ) ? buildTree( this.props.posts ) : this.props.posts;
-		}
 
 		let showTypeLabels;
 		if ( 'boolean' === typeof this.props.showTypeLabels ) {
@@ -246,7 +264,9 @@ const PostSelectorPosts = React.createClass( {
 					null
 				}
 				<form className="post-selector__results">
-					{ posts ? this.renderHierarchy( posts ) : this.renderPlaceholder() }
+					{ this.state.postsHierarchy
+						? this.renderHierarchy( this.state.postsHierarchy )
+						: this.renderPlaceholder() }
 				</form>
 			</div>
 		);
