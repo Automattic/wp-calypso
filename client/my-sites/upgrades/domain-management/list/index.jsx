@@ -28,7 +28,7 @@ const List = React.createClass( {
 			return <DomainWarnings
 				domains={ this.props.domains.list }
 				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [ 'newDomainsWithPrimary', 'newDomains' ] } />;
+				ruleWhiteList={ [ 'newDomainsWithPrimary', 'newDomains', 'unverifiedDomains' ] } />;
 		}
 	},
 

@@ -13,6 +13,7 @@ import Notice from 'components/notice';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
+import paths from 'my-sites/upgrades/paths';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
@@ -36,7 +37,7 @@ export default React.createClass( {
 	},
 
 	getPipe() {
-		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomainsWithPrimary, this.newDomains ],
+		let allRules = [ this.expiredDomains, this.expiringDomains, this.newDomainsWithPrimary, this.newDomains, this.unverifiedDomains ],
 			rules;
 		if ( ! this.props.ruleWhiteList ) {
 			rules = allRules;
@@ -70,7 +71,7 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={false}>{text} {renewLink}</Notice>
+		return <Notice status="is-error" showDismiss={ false } key="expiredDomains">{ text } { renewLink }</Notice>
 	},
 
 	expiringDomains() {
@@ -93,7 +94,32 @@ export default React.createClass( {
 			} );
 			renewLink = renewLinkPlural;
 		}
-		return <Notice status="is-error" showDismiss={false}>{text} {renewLink}</Notice>;
+		return <Notice status="is-error" showDismiss={ false } key="expiringDomains">{ text } { renewLink }</Notice>;
+	},
+
+	unverifiedDomains() {
+		var notices,
+			domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+
+		if ( domains.length > 2 ) {
+			notices = <Notice status="is-error" showDismiss={ false } key="unverifiedDomains">{
+				this.translate( 'Some of your domains have unverified email addresses. This may lead to their temporary suspension.' )
+			}</Notice>;
+		} else if ( domains.length > 0 ) {
+			notices = domains.map( domain => {
+				const text = this.translate( 'You need to verify the email for %(domainName)s or the domain may be suspended. {{a}}Learn more.{{/a}}', {
+					args: {
+						domainName: domain.name
+					},
+					components: {
+						a: <a href={ paths.domainManagementEdit( this.props.selectedSite.domain, domain.name ) } />
+					}
+				} );
+				return <Notice status="is-error" showDismiss={ false } key={ 'unverifiedDomains' + domain.name }>{ text }</Notice>;
+			} );
+		}
+
+		return notices ? <div key="unverifiedDomains">{ notices }</div> : null;
 	},
 
 	newDomainsWithPrimary() {
@@ -140,7 +166,7 @@ export default React.createClass( {
 			);
 		}
 
-		return <Notice status="is-warning" showDismiss={ false }>{ text }</Notice>;
+		return <Notice status="is-warning" showDismiss={ false } key="newPrimary">{ text }</Notice>;
 	},
 
 	newDomains() {
@@ -170,7 +196,7 @@ export default React.createClass( {
 				}
 			);
 		}
-		return <Notice status="is-warning" showDismiss={ false }>{ text }</Notice>;
+		return <Notice status="is-warning" showDismiss={ false } key="newDomains">{ text }</Notice>;
 	},
 
 	componentWillMount: function() {
@@ -179,15 +205,8 @@ export default React.createClass( {
 		}
 	},
 	render: function() {
-		let pipe = this.getPipe();
-
-		for ( let renderer of pipe ) {
-			let result = renderer();
-			if ( result ) {
-				return result;
-			}
-		}
-		return null;
+		const notices = this.getPipe().map( renderer => renderer() ).filter( notice => notice );
+		return notices.length ? <div>{ notices }</div> : null;
 	}
 
 } );

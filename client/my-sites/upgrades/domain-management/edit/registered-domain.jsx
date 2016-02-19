@@ -17,6 +17,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import IcannVerificationCard from '../components/icann-verification-card';
 
 const RegisteredDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -202,6 +203,8 @@ const RegisteredDomain = React.createClass( {
 						<SubscriptionSettings
 							onClick={ this.handlePaymentSettingsClick }/>
 					</Card>
+
+					{ domain.isPendingIcannVerification ? <IcannVerificationCard selectedDomainName={ domain.name } /> : null }
 				</div>
 
 				{ this.getVerticalNav() }
