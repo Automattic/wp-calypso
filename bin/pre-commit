@@ -53,7 +53,7 @@ if [ "$packages" != "" ]; then
 			if [ "$changes" != "" ]; then
 				./bin/package-requires-update ${package}
 				if [ $? -ne 0 ]; then
-					printf "\033[31mPackage must be versioned: \033[0m%s\n" "${packagePath}"
+					printf "\033[31mPackage error: \033[0m%s\n" "${packagePath}"
 					pass=false
 				fi
 			fi

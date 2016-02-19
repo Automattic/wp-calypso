@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var exec = require( 'child_process' ).exec;
+var exec = require( 'child-process-promise' ).exec;
 var packageJson = require( '../' + process.argv[2] );
 var semver = require( 'semver' );
 
@@ -8,10 +8,19 @@ if ( packageJson.private ) {
 	process.exitCode = 0;
 }
 
-exec( 'npm view ' + packageJson.name + ' version', function( error, stdout ) {
-	if ( semver.gt( packageJson.version, stdout ) ) {
-		process.exitCode = 0;
-	} else {
-		process.exitCode = 1;
-	}
-} );
+if ( /[^A-Za-z0-9_\/:=-]/.test( packageJson.name ) ) {
+	console.log( packageJson.name, 'Package name cannot contain spaces and/or invalid characters' );
+	console.log( '\n' );
+	process.exitCode = 1;
+} else {
+	exec( 'npm view ' + packageJson.name + ' version' )
+		.then( function( result ) {
+			if ( semver.gt( packageJson.version, result.stdout ) ) {
+				process.exitCode = 0;
+			} else {
+				console.log( packageJson.name, 'Package must be versioned' );
+				console.log( '\n' );
+				process.exitCode = 1;
+			}
+		} );
+}
