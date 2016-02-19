@@ -24,6 +24,10 @@ function cancelPurchase( purchaseId, onComplete ) {
 
 		const success = ! error && data.success;
 
+		if ( success ) {
+			clearPurchases();
+		}
+
 		onComplete( success );
 	} );
 }
