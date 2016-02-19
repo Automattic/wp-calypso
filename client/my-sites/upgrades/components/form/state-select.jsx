@@ -15,6 +15,7 @@ var analytics = require( 'analytics' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSelect = require( 'components/forms/form-select' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
+	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
 	Input = require( './input' );
 
 module.exports = React.createClass( {
@@ -29,7 +30,9 @@ module.exports = React.createClass( {
 	},
 
 	focus() {
-		ReactDom.findDOMNode( this.refs.input ).focus();
+		var node = ReactDom.findDOMNode( this.refs.input );
+		node.focus();
+		scrollIntoViewport( node );
 	},
 
 	render: function() {

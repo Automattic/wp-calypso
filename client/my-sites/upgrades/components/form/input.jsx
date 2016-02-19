@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import FormInputValidation from 'components/forms/form-input-validation';
 import analytics from 'analytics';
 import FocusMixin from './focus-mixin';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default React.createClass( {
 	displayName: 'Input',
@@ -53,7 +54,9 @@ export default React.createClass( {
 	},
 
 	focus() {
-		ReactDom.findDOMNode( this.refs.input ).focus();
+		var node = ReactDom.findDOMNode( this.refs.input );
+		node.focus();
+		scrollIntoViewport( node );
 	},
 
 	autofocusInput() {
