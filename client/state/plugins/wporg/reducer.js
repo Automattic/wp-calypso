@@ -7,6 +7,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducers } from 'redux';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
@@ -15,17 +16,29 @@ function updatePluginState( state = {}, pluginSlug, attributes ) {
 	);
 }
 
-function reducer( state = {}, action ) {
+export function fetchingItems( state = {}, action ) {
+	switch ( action.type ) {
+		case FETCH_WPORG_PLUGIN_DATA:
+			return Object.assign( {}, state, { [ action.pluginSlug ]: true } );
+		case WPORG_PLUGIN_DATA_RECEIVE:
+			return Object.assign( {}, state, { [ action.pluginSlug ]: false } );
+		case SERIALIZE:
+			return {};
+		case DESERIALIZE:
+			return {};
+	}
+	return state;
+}
+
+export function items( state = {}, action ) {
 	const { type, pluginSlug } = action;
 	switch ( type ) {
 		case WPORG_PLUGIN_DATA_RECEIVE:
 			if ( action.data ) {
-				return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: true, wporg: true }, action.data ) );
+				return updatePluginState( state, pluginSlug, Object.assign( { fetched: true, wporg: true }, action.data ) );
 			}
-			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: false, fetched: false, wporg: false } ) );
+			return updatePluginState( state, pluginSlug, Object.assign( { fetched: false, wporg: false } ) );
 
-		case FETCH_WPORG_PLUGIN_DATA:
-			return updatePluginState( state, pluginSlug, Object.assign( { isFetching: true } ) );
 		case SERIALIZE:
 			return {};
 		case DESERIALIZE:
@@ -35,4 +48,7 @@ function reducer( state = {}, action ) {
 	}
 }
 
-export default reducer;
+export default combineReducers( {
+	items,
+	fetchingItems
+} );

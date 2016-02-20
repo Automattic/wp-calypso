@@ -426,7 +426,7 @@ const PluginsMain = React.createClass( {
 export default connect(
 	state => {
 		return {
-			wporgPlugins: state.plugins.wporg
+			wporgPlugins: state.plugins.wporg.items
 		};
 	},
 	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )

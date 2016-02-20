@@ -195,7 +195,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	isFetching() {
-		return ! this.props.isWpcomPlugin && WporgPluginsSelectors.isFetching( this.props.wporgPlugins, this.props.pluginSlug );
+		return ! this.props.isWpcomPlugin && this.props.wporgFetching;
 	},
 
 	isFetched() {
@@ -392,9 +392,10 @@ const SinglePlugin = React.createClass( {
 } );
 
 export default connect(
-	state => {
+	( state, props ) => {
 		return {
-			wporgPlugins: state.plugins.wporg
+			wporgPlugins: state.plugins.wporg.items,
+			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug )
 		};
 	},
 	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
