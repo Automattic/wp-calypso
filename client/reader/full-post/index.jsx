@@ -4,13 +4,15 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	assign = require( 'lodash/assign' ),
+	defer = require( 'lodash/defer' ),
 	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
 	omit = require( 'lodash/omit' ),
 	twemoji = require( 'twemoji' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal Dependencies
@@ -42,7 +44,8 @@ var analytics = require( 'analytics' ),
 	ShareHelper = require( 'reader/share/helper' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
 	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
-	readerRoute = require( 'reader/route' );
+	readerRoute = require( 'reader/route' ),
+	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost;
 
 var loadingPost = {
 		URL: '',
@@ -374,7 +377,7 @@ FullPostContainer = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
-		return assign( { isVisible: false }, this.getStateFromStores() );
+		return this.getStateFromStores();
 	},
 
 	getStateFromStores: function( props ) {
@@ -452,9 +455,7 @@ FullPostContainer = React.createClass( {
 
 		// This is a trick to make the dialog animations happy. We have to initially render the dialog
 		// as hidden, then set it to visible to trigger the animation.
-		process.nextTick( function() {
-			this.setState( { isVisible: true } ); //eslint-disable-line react/no-did-mount-set-state
-		}.bind( this ) );
+		defer( this.props.showReaderFullPost );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -489,14 +490,14 @@ FullPostContainer = React.createClass( {
 	render: function() {
 		var passedProps = omit( this.props, [ 'postId', 'feedId' ] );
 
-		if ( this.props.setPageTitle && this.state.isVisible ) { // only set the title if we're visible
+		if ( this.props.setPageTitle && this.props.isVisible ) { // only set the title if we're visible
 			this.props.setPageTitle( this.state.title );
 		}
 
 		return (
 
 			<FullPostDialog {...passedProps }
-				isVisible={ this.state.isVisible }
+				isVisible={ this.props.isVisible }
 				post={ this.state.post }
 				commentCount={ this.state.commentCount }
 				site={ this.state.site } />
@@ -505,4 +506,14 @@ FullPostContainer = React.createClass( {
 
 } );
 
-module.exports = FullPostContainer;
+export default connect(
+	( state, props ) => Object.assign( {},
+		props,
+		{
+			isVisible: state.ui.reader.fullpost.isVisible
+		}
+	),
+	( dispatch ) => bindActionCreators( {
+		showReaderFullPost
+	}, dispatch )
+)( FullPostContainer );

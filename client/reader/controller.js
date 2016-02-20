@@ -24,19 +24,15 @@ const i18n = require( 'lib/mixins/i18n' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
+	hideReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).hideReaderFullPost,
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
 	readerRoute = require( 'reader/route' );
 
 import userSettings from 'lib/user-settings';
 
-// This is a tri-state.
-// null == nothing instantiated, nothing pending
-// false === waiting for transitions to end so we can unmount
-// object === instance alive and being used
-var __fullPostInstance = null,
-	// This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
-	// reset it
-	__lastTitle = null;
+// This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
+// reset it
+var __lastTitle = null;
 
 function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
@@ -69,16 +65,13 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 	const fullPostViewPrefix = '/read/post/';
 
 	if ( startsWith( oldContext.path, fullPostViewPrefix ) &&
-		! startsWith( newContext.path, fullPostViewPrefix ) &&
-		__fullPostInstance ) {
-		__fullPostInstance.setState( { isVisible: false } );
-		__fullPostInstance = false;
+		! startsWith( newContext.path, fullPostViewPrefix ) ) {
+		oldContext.store.dispatch( hideReaderFullPost() );
 	}
 } );
 
 function removeFullPostDialog() {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
-	__fullPostInstance = null;
 }
 
 function userHasHistory( context ) {
@@ -257,16 +250,18 @@ module.exports = {
 		// this will automatically unmount anything that was already mounted
 		// in #tertiary, so we don't have to check the current state of
 		// __fullPostInstance before making another
-		__fullPostInstance = ReactDom.render(
-			React.createElement( FullPostDialog, {
-				feedId: feedId,
-				postId: postId,
-				setPageTitle: setPageTitle,
-				onClose: function() {
-					page.back( context.lastRoute || '/' );
-				},
-				onClosed: removeFullPostDialog
-			} ),
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( FullPostDialog, {
+					feedId: feedId,
+					postId: postId,
+					setPageTitle: setPageTitle,
+					onClose: function() {
+						page.back( context.lastRoute || '/' );
+					},
+					onClosed: removeFullPostDialog
+				} )
+			),
 			document.getElementById( 'tertiary' )
 		);
 	},
@@ -291,29 +286,26 @@ module.exports = {
 		trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 		// this will automatically unmount anything that was already mounted
-		// in #tertiary, so we don't have to check the current state of
-		// __fullPostInstance before making another
-		__fullPostInstance = ReactDom.render(
-			React.createElement( FullPostDialog, {
-				blogId: blogId,
-				postId: postId,
-				context: context,
-				setPageTitle: setPageTitle,
-				onClose: function() {
-					page.back( context.lastRoute || '/' );
-				},
-				onClosed: removeFullPostDialog
-			} ),
+		// in #tertiary, so we don't have to check the current state
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( FullPostDialog, {
+					blogId: blogId,
+					postId: postId,
+					context: context,
+					setPageTitle: setPageTitle,
+					onClose: function() {
+						page.back( context.lastRoute || '/' );
+					},
+					onClosed: removeFullPostDialog
+				} )
+			),
 			document.getElementById( 'tertiary' )
 		);
 	},
 
 	removePost: function( context, next ) {
-		if ( __fullPostInstance ) {
-			__fullPostInstance.setState( { isVisible: false } );
-			__fullPostInstance = false;
-		}
-
+		context.store.dispatch( hideReaderFullPost() );
 		next();
 	},
 
