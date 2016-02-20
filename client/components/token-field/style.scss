@@ -68,12 +68,18 @@ input[type="text"].token-field__input {
 			background: $alert-red;
 		}
 	}
+
+	&.is-validating {
+		.token-field__token-text, .token-field__remove-token {
+			background: $gray;
+		}
+	}
 }
 
 .token-field__token.is-borderless {
 	.token-field__token-text {
 		background: transparent;
-		color: $gray-dark;
+		color: $blue-wordpress;
 	}
 
 	.token-field__remove-token {
@@ -81,12 +87,32 @@ input[type="text"].token-field__input {
 		color: $gray;
 		padding: 0 2px;
 	}
+
+	&.is-success {
+		.token-field__token-text {
+			color: $alert-green;
+		}
+	}
+
+	&.is-error {
+		.token-field__token-text {
+			color: $alert-red;
+		}
+	}
+
+	&.is-validating {
+		.token-field__token-text {
+			color: $gray-dark;
+		}
+	}
 }
 
-.token-field__token-text, .token-field__remove-token {
+.token-field__token-text,
+.token-field__remove-token {
 	display: inline-block;
 	line-height: 24px;
 	background: darken( $gray, 20% );
+	transition: all .2s cubic-bezier( .4, 1, .4, 1 );
 }
 
 .token-field__token-text {
