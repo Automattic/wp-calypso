@@ -4,7 +4,7 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	assign = require( 'lodash/assign' ),
+	defer = require( 'lodash/defer' ),
 	classes = require( 'component-classes' ),
 	debug = require( 'debug' )( 'calypso:reader-full-post' ), //eslint-disable-line no-unused-vars
 	moment = require( 'moment' ),
@@ -377,7 +377,7 @@ FullPostContainer = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
-		return assign( {}, this.getStateFromStores() );
+		return this.getStateFromStores();
 	},
 
 	getStateFromStores: function( props ) {
@@ -455,9 +455,7 @@ FullPostContainer = React.createClass( {
 
 		// This is a trick to make the dialog animations happy. We have to initially render the dialog
 		// as hidden, then set it to visible to trigger the animation.
-		process.nextTick( function() {
-			this.props.showReaderFullPost();
-		}.bind( this ) );
+		defer( this.props.showReaderFullPost );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {

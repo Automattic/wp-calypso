@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	SERIALIZE,
 	DESERIALIZE,
-	READER_FULLPOST_SET_VISIBILITY
+	READER_FULLPOST_HIDE,
+	READER_FULLPOST_SHOW
 } from 'state/action-types';
 import {
 	isVisible
@@ -35,13 +36,11 @@ describe( 'reducer', () => {
 
 		it( 'should set visibility correctly', () => {
 			const state = isVisible( undefined, {
-				type: READER_FULLPOST_SET_VISIBILITY,
-				show: true
+				type: READER_FULLPOST_SHOW
 			} );
 
 			const nextState = isVisible( state, {
-				type: READER_FULLPOST_SET_VISIBILITY,
-				show: false
+				type: READER_FULLPOST_HIDE
 			} );
 
 			expect( state ).to.eql( true );

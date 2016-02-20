@@ -7,7 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	READER_FULLPOST_SET_VISIBILITY
+	READER_FULLPOST_HIDE,
+	READER_FULLPOST_SHOW
 } from 'state/action-types';
 import {
 	showReaderFullPost,
@@ -19,8 +20,7 @@ describe( 'actions', () => {
 		it( 'should dispatch correct action', () => {
 			const action = showReaderFullPost();
 
-			expect( action.type ).to.eql( READER_FULLPOST_SET_VISIBILITY );
-			expect( action.show ).to.eql( true );
+			expect( action.type ).to.eql( READER_FULLPOST_SHOW );
 		} );
 	} );
 
@@ -28,8 +28,7 @@ describe( 'actions', () => {
 		it( 'should dispatch correct action', () => {
 			const action = hideReaderFullPost();
 
-			expect( action.type ).to.eql( READER_FULLPOST_SET_VISIBILITY );
-			expect( action.show ).to.eql( false );
+			expect( action.type ).to.eql( READER_FULLPOST_HIDE );
 		} );
 	} );
 } );
