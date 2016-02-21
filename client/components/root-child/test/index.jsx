@@ -3,19 +3,19 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import { expect } from 'chai';
+import ReactDom from 'react-dom';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var RootChild = require( '../' );
+import RootChild from '../';
 
 /**
  * Module variables
  */
-var Greeting = React.createClass( {
+const Greeting = React.createClass( {
 	getDefaultProps: function() {
 		return { toWhom: 'World' };
 	},
@@ -45,7 +45,7 @@ describe( 'RootChild', function() {
 	} );
 
 	describe( 'rendering', function() {
-		it( 'should render any children as descendents of body', function() {
+		it( 'should render any children as descendants of body', function() {
 			var tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild
