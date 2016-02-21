@@ -3,14 +3,14 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-const expect = require( 'chai' ).expect,
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import { expect } from 'chai';
+import ReactDom from 'react-dom';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const RootChild = require( '../' );
+import RootChild from '../';
 
 /**
  * Module variables
