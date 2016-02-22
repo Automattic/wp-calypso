@@ -20,7 +20,7 @@ import { forDomainRegistrations as countriesListForDomainRegistrations } from 'l
 import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/states-list';
 import analytics from 'analytics';
 import formState from 'lib/form-state';
-import upgradesActions from 'lib/upgrades/actions';
+import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
@@ -254,12 +254,12 @@ export default React.createClass( {
 
 	finish( options ) {
 		if ( options.addPrivacy ) {
-			upgradesActions.addPrivacyToAllDomains();
+			addPrivacyToAllDomains();
 		} else {
-			upgradesActions.removePrivacyFromAllDomains();
+			removePrivacyFromAllDomains();
 		}
 
-		upgradesActions.setDomainDetails( formState.getAllFieldValues( this.state.form ) );
+		setDomainDetails( formState.getAllFieldValues( this.state.form ) );
 	},
 
 	render() {
