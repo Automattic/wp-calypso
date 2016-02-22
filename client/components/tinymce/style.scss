@@ -64,7 +64,7 @@
 		overflow-x: auto;
 		margin: 0 auto;
 
-		@include breakpoint( ">960px" ) {
+		@media screen and ( min-width: ( 700px + $sidebar-width-min ) ) {
 			border-left-width: 1px;
 			border-right-width: 1px;
 		}
