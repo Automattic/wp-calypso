@@ -870,5 +870,18 @@ describe( 'post-normalizer', function() {
 				}
 			);
 		} );
+		it( 'prepares a version of the post content with linebreak elements only', function( done ) {
+			normalizer(
+				{
+					content: '<p><img src="http://example.com/image.jpg"></p><p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p><p></p>',
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.createContentWithLinebreakElementsOnly ] )
+				], function( err, normalized ) {
+					assert.strictEqual( normalized.content_with_linebreak_elements_only, '<p>Giraffes are <br>great</p><p></p>' );
+					done( err );
+				}
+			);
+		} );
 	} );
 } );

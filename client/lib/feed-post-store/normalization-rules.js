@@ -1,5 +1,5 @@
 /**
- * External Dependecies
+ * External Dependencies
  */
 const find = require( 'lodash/find' ),
 	forEach = require( 'lodash/forEach' ),
@@ -32,7 +32,6 @@ const fastPostNormalizationRules = [
 		postNormalizer.safeImageProperties( READER_CONTENT_WIDTH ),
 		postNormalizer.firstPassCanonicalImage,
 		postNormalizer.withContentDOM( [
-			postNormalizer.content.createContentWithLinebreakElementsOnly,
 			postNormalizer.content.removeStyles,
 			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),
 			discoverFullBleedImages,
@@ -41,6 +40,7 @@ const fastPostNormalizationRules = [
 			postNormalizer.content.disableAutoPlayOnMedia,
 			postNormalizer.content.detectEmbeds,
 			postNormalizer.content.detectPolls,
+			postNormalizer.content.createContentWithLinebreakElementsOnly,
 			postNormalizer.content.wordCountAndReadingTime
 		] ),
 		classifyPost

@@ -476,18 +476,20 @@ normalizePost.content = {
 			throw new Error( 'this transform must be used as part of withContentDOM' );
 		}
 
-		post.content_with_linebreak_elements_only = striptags( post.content, [ 'p', 'br' ] );
+		post.content_with_linebreak_elements_only = striptags( post.__contentDOM.innerHTML, [ 'p', 'br', 'noscript' ] );
 
 		// Spin up a new DOM for the linebreak markup
 		const dom = document.createElement( 'div' );
 		dom.innerHTML = post.content_with_linebreak_elements_only;
 
-		// Strip any empty p elements
+		// Strip any empty p elements from the beginning of the content
 		let paragraphs = dom.querySelectorAll( 'p' );
 		forEach( paragraphs, function( element ) {
-			if ( element.innerHTML.length < 1 ) {
-				element.parentNode && element.parentNode.removeChild( element );
+			if ( element.innerHTML.length > 0 ) {
+				return false;
 			}
+
+			element.parentNode && element.parentNode.removeChild( element );
 		} );
 
 		post.content_with_linebreak_elements_only = dom.innerHTML;
