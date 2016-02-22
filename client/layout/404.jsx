@@ -9,12 +9,15 @@ import page from 'page';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
+import { setSection } from 'state/ui/actions';
 
 let Page404 = React.createClass( {
 	displayName: 'Page404',
 
 	statics: {
-		show() {
+		show( context ) {
+			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
 			ReactDom.render(
 				React.createElement( Page404, {} ),
 				document.getElementById( 'primary' )
