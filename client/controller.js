@@ -12,8 +12,20 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:controller' );
 
-export function clientRouter( route, ...mws ) {
-	page( route, ...[ ...mws, renderElements ] );
+/**
+ * Isomorphic routing helper, client side
+ *
+ * @param { string } route - A route path
+ * @param { ...function } middlewares - Middleware to be invoked for route
+ *
+ * This function is passed to individual sections' controllers via
+ * `server/bundler/loader`. Sections are free to either ignore it, or use it
+ * instead of directly calling `page` for linking routes and middlewares in
+ * order to be also usable for server-side rendering (and isomorphic routing).
+ * `clientRouter` then also renders React elements contained in `context.primary`.
+ */
+export function clientRouter( route, ...middlewares ) {
+	page( route, ...[ ...middlewares, renderElements ] );
 }
 
 export function renderElements( context ) {
@@ -25,7 +37,8 @@ function renderPrimary( context ) {
 	const { path, primary } = context;
 
 	// FIXME: temporary hack until we have a proper isomorphic, one tree
-	// routing solution. Do NOT do this!
+	// routing solution (see https://github.com/Automattic/wp-calypso/pull/3302)
+	// Do NOT do this!
 	const sheetsDomElement = startsWith( path, '/themes' ) &&
 		document.getElementsByClassName( 'themes__sheet' )[0];
 
