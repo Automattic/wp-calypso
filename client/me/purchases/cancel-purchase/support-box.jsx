@@ -21,7 +21,7 @@ const CancelPurchaseSupportBox = React.createClass( {
 	},
 
 	render() {
-		const contactSupportUrl = 'https://support.wordpress.com/';
+		const contactSupportUrl = '/help/contact';
 
 		return (
 			<div className="cancel-purchase-support-box">
