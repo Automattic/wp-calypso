@@ -123,7 +123,7 @@ export function details( context, next ) {
 		title: buildTitle(
 			i18n.translate( 'Theme Details', { textOnly: true } )
 		)
-	}
+	};
 
 	context.store.dispatch( setSection( 'themes', {
 		hasSidebar: false,
