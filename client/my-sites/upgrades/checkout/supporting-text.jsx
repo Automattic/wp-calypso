@@ -6,6 +6,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var cartValues = require( 'lib/cart-values' ),
+	support = require( 'lib/url/support' ),
 	getRefundPolicy = cartValues.getRefundPolicy,
 	cartItems = cartValues.cartItems,
 	hasFreeTrial = cartItems.hasFreeTrial,
@@ -26,7 +27,7 @@ var SupportingText = React.createClass( {
 	refundText: function() {
 		var refundDocsLink = (
 			<a className="credit-card-supporting-text__refund-link"
-				href="https://en.support.wordpress.com/refunds/"
+				href={ support.REFUNDS }
 				target="_blank" />
 		);
 

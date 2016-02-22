@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import AddButton from './add-button';
+import support from 'lib/url/support';
 
 const Content = React.createClass( {
 	propTypes: {
@@ -25,7 +26,7 @@ const Content = React.createClass( {
 
 					<p>
 						{ this.translate( 'With Privacy Protection, we show our partner\'s contact information instead of your own.' ) }
-						<a href="https://support.wordpress.com/domains/register-domain/#public-versus-private"
+						<a href={ support.PUBLIC_VS_PRIVATE }
 							target="_blank">{ this.translate( 'Learn more.' ) }</a>
 					</p>
 				</div>

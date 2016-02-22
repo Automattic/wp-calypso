@@ -7,6 +7,7 @@ import React from 'react';
 import { translate } from 'lib/mixins/i18n';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
+import support from 'lib/url/support';
 
 const TransferProhibited = () => (
 	<div>
@@ -19,7 +20,7 @@ const TransferProhibited = () => (
 					'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						components: {
-							learnMoreLink: <a href="https://support.wordpress.com/transfer-domain-registration/" target="_blank"/>
+							learnMoreLink: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank"/>
 						}
 					}
 				) }

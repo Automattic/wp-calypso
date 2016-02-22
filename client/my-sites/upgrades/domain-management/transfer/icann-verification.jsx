@@ -11,6 +11,7 @@ import SectionHeader from 'components/section-header';
 import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
 import Button from 'components/button';
 import notices from 'notices';
+import support from 'lib/url/support';
 
 const IcannVerification = React.createClass( {
 	getInitialState() {
@@ -55,7 +56,7 @@ const IcannVerification = React.createClass( {
 							{
 								components: {
 									learnMoreLink: <a
-										href="https://support.wordpress.com/transfer-domain-registration/"
+										href={ support.TRANSFER_DOMAIN_REGISTRATION }
 										target="_blank"/>
 								}
 							}

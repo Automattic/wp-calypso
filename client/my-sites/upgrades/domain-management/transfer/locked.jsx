@@ -12,6 +12,7 @@ import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
 import { displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
+import support from 'lib/url/support';
 
 const Locked = React.createClass( {
 	getInitialState() {
@@ -97,7 +98,7 @@ const Locked = React.createClass( {
 									'Your contact information will be publicly available during the transfer period.' )
 								: this.translate( 'To transfer your domain, we must unlock it.' )
 							} <a
-									href="https://support.wordpress.com/transfer-domain-registration/"
+									href={ support.TRANSFER_DOMAIN_REGISTRATION }
 									target="_blank">{ this.translate( 'Learn More.' ) }</a>
 						</p>
 						<p className="transfer__small-text">

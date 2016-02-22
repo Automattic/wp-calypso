@@ -6,7 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-var Toggle = require( 'components/forms/form-toggle' );
+var Toggle = require( 'components/forms/form-toggle' ),
+	support = require( 'lib/url/support' );
 import analyticsMixin from 'lib/mixins/analytics';
 
 const NameserversToggle = React.createClass( {
@@ -53,8 +54,6 @@ const NameserversToggle = React.createClass( {
 			return null;
 		}
 
-		const nameServersSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/';
-
 		return (
 			<p className="name-servers__explanation">
 				{ this.translate(
@@ -63,7 +62,7 @@ const NameserversToggle = React.createClass( {
 					{
 						components: {
 							a: (
-								<a href={ nameServersSupportUrl }
+								<a href={ support.CHANGE_NAME_SERVERS }
 									target="_blank"
 									onClick={ this.handleLearnMoreClick } />
 							)

@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import support from 'lib/url/support';
 
 const EditContactInfoPrivacyEnabledCard = React.createClass( {
 	render() {
@@ -18,7 +19,7 @@ const EditContactInfoPrivacyEnabledCard = React.createClass( {
 						'If you need to make a change to your domain\'s contact info, please {{a}}contact support{{/a}}.',
 						{
 							components: {
-								a: <a href="https://support.wordpress.com/contact" target="_blank" />
+								a: <a href={ support.CONTACT } target="_blank" />
 							}
 						}
 					) }

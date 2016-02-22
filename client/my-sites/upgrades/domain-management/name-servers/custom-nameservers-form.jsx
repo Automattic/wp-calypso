@@ -16,6 +16,7 @@ import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
 import analyticsMixin from 'lib/mixins/analytics';
 import Notice from 'components/notice';
+import support from 'lib/url/support';
 
 const MIN_NAMESERVER_LENGTH = 2,
 	MAX_NAMESERVER_LENGTH = 4;
@@ -35,8 +36,6 @@ const CustomNameserversForm = React.createClass( {
 	},
 
 	warning() {
-		const nameServersSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/';
-
 		return (
 			<Notice
 				status="is-warning"
@@ -46,7 +45,7 @@ const CustomNameserversForm = React.createClass( {
 					'WordPress.com site to load & other features to be available.'
 				) }
 				{ ' ' }
-				<a href={ nameServersSupportUrl }
+				<a href={ support.CHANGE_NAME_SERVERS }
 						target="_blank"
 						onClick={ this.handleLearnMoreClick }>
 					{ this.translate( 'Learn more.' ) }
@@ -60,13 +59,11 @@ const CustomNameserversForm = React.createClass( {
 	},
 
 	popularHostsMessage() {
-		const newNameServerSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/#finding-out-your-new-name-server';
-
 		return (
 			<div className="custom-nameservers-form__explanation">
 				{ this.translate( 'Not sure what name servers to use?' ) }
 				{ ' ' }
-				<a href={ newNameServerSupportUrl }
+				<a href={ support.CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 						target="_blank"
 						onClick={ this.handleLookUpClick }>
 					{ this.translate( 'Look up the name servers for popular hosts.' ) }

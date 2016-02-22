@@ -11,6 +11,7 @@ import ContactDisplay from './contact-display';
 import Notice from 'components/notice';
 import paths from 'my-sites/upgrades/paths';
 import SectionHeader from 'components/section-header';
+import support from 'lib/url/support';
 
 const ContactsPrivacyCard = React.createClass( {
 	propTypes: {
@@ -36,7 +37,7 @@ const ContactsPrivacyCard = React.createClass( {
 							'{{a}}Learn more.{{/a}}',
 							{
 								components: {
-									a: <a href="https://support.wordpress.com/domains/register-domain/#public-versus-private" target="_blank" />
+									a: <a href={ support.PUBLIC_VS_PRIVATE } target="_blank" />
 								}
 							}
 						) }

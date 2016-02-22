@@ -11,6 +11,7 @@ const Button = require( 'components/forms/form-button' ),
 	CompactCard = require( 'components/card/compact' ),
 	config = require( 'config' ),
 	paths = require( 'my-sites/upgrades/paths' ),
+	support = require( 'lib/url/support' ),
 	analyticsMixin = require( 'lib/mixins/analytics' );
 
 const AddGoogleAppsCard = React.createClass( {
@@ -27,7 +28,7 @@ const AddGoogleAppsCard = React.createClass( {
 
 	render() {
 		const gapps = this.props.products.gapps,
-			googleAppsSupportUrl = 'https://support.wordpress.com/add-email/adding-google-apps-to-your-site/';
+			googleAppsSupportUrl = support.ADDING_GOOGLE_APPS_TO_YOUR_SITE;
 		let price = gapps && gapps.cost_display;
 
 		// Gapps price is stored annually but we'd like to show a monthly price

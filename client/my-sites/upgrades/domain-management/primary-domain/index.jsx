@@ -12,6 +12,7 @@ import paths from 'my-sites/upgrades/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
+import support from 'lib/url/support';
 
 const PrimaryDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'primaryDomain' ) ],
@@ -75,7 +76,7 @@ const PrimaryDomain = React.createClass( {
 		}
 	},
 	render() {
-		const primaryDomainSupportUrl = 'https://support.wordpress.com/domains/#setting-the-primary-domain';
+		const primaryDomainSupportUrl = support.SETTING_PRIMARY_DOMAIN;
 
 		return (
 			<Main className="domain-management-primary-domain">

@@ -13,12 +13,13 @@ import Notice from 'components/notice';
 import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import i18n from 'lib/mixins/i18n';
+import support from 'lib/url/support';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
 
-const allAboutDomainsLink = <a href="https://support.wordpress.com/all-about-domains/" target="_blank"/>,
-	domainsLink = <a href="https://support.wordpress.com/domains/" target="_blank" />,
+const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank"/>,
+	domainsLink = <a href={ support.DOMAINS } target="_blank" />,
 	pNode = <p />,
 	renewLinkSingle = <a href={ purchasesPaths.list() }>{ i18n.translate( 'Renew it now.', { context: 'Call to action link for renewing an expiring/expired domain' } ) }</a>,
 	renewLinkPlural = <a href={ purchasesPaths.list() }>{ i18n.translate( 'Renew them now.', { context: 'Call to action link for renewing an expiring/expired domain' } ) }</a>;
