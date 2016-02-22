@@ -348,6 +348,29 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
 
+	// 404 handler.
+	page( '*', function( context, next ) {
+		if ( ! config.isEnabled( 'code-splitting' ) ) {
+			// If code-splitting is not enabled and we got to this route handler, no section route was matched.
+
+			// Show 404 component.
+
+			return;
+		}
+
+		var appState = context.store.getState();
+
+		// When code-splitting is enabled, chunkName is set when a section route is matched (e.g.: /stats).
+		// If it is not set, no section route was matched and no section JS chunk is loaded. Show 404.
+		if ( ! appState.ui.chunkName ) {
+			// Show 404 component.
+			
+			return;
+		}
+
+		next();
+	} );
+
 	detectHistoryNavigation.start();
 	page.start();
 }
