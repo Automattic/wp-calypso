@@ -10,9 +10,9 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
-import { requestTransferCode, enableDomainLocking, enablePrivacyProtection, declineTransfer } from 'lib/upgrades/actions';
+import { requestTransferCode, enableDomainLocking } from 'lib/upgrades/actions';
 import notices from 'notices';
-import { promisy, displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
+import { displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
 import support from 'lib/url/support';
 
 const Unlocked = React.createClass( {
@@ -27,49 +27,52 @@ const Unlocked = React.createClass( {
 
 		this.setState( { submitting: true } );
 
-		const options = {
-			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName
-		};
+		enableDomainLocking( {
+			domainName: this.props.selectedDomainName,
+			declineTransfer: true,
+			enablePrivacy: hasPrivacyProtection && ! privateDomain,
+			siteId: this.props.selectedSite.ID
+		}, ( error ) => {
+			if ( error ) {
+				const contactLink = <a href={ support.CONTACT } target="_blank"/>;
+				let errorMessage;
 
-		const actions = [
-			promisy( declineTransfer )( this.props.selectedDomainName ),
-			promisy( enableDomainLocking )( this.props.selectedDomainName )
-		];
-
-		if ( hasPrivacyProtection && ! privateDomain ) {
-			actions.push( promisy( enablePrivacyProtection )( options ) );
-		}
-
-		Promise.all( actions ).then( () => {
-			notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
-				'Privacy Protection has been enabled.' ) );
+				switch ( error.error ) {
+					case 'enable_private_reg_failed':
+						errorMessage = this.translate( 'We were unable to enable Privacy Protection for your domain. ' +
+							'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+							{ components: { contactLink } } );
+						break;
+					case 'decline_transfer_failed':
+						errorMessage = this.translate( 'We were unable to stop the transfer for your domain. ' +
+							'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+							{ components: { contactLink } } );
+						break;
+					case 'lock_domain_failed':
+						errorMessage = this.translate( 'We were unable to lock your domain. ' +
+							'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+							{ components: { contactLink } } );
+						break;
+					default:
+						errorMessage = this.translate(
+							'Oops! Something went wrong and your request could not be ' +
+							'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
+							'you continue to have trouble.', { components: { contactLink } }
+						);
+						break;
+				}
+				notices.error( errorMessage );
+			} else {
+				if ( hasPrivacyProtection ) {
+					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
+						'Privacy Protection has been enabled.' ) );
+				} else {
+					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
+				}
+			}
 			if ( this.isMounted() ) {
 				// component might be unmounted since it's state changed to locked
 				this.setState( { submitting: false } );
-			}
-		}, ( error ) => {
-			if ( this.isMounted() ) {
-				// component might be unmounted since the request
-				this.setState( { submitting: false } );
-			}
-			if ( error ) {
-				notices.error(
-					this.translate(
-						'Oops! Something went wrong and your request could not be ' +
-						'processed. Please try again or {{a}}Contact Support{{/a}} if ' +
-						'you continue to have trouble.',
-						{
-							components: {
-								a: (
-									<a
-										href={ support.CONTACT }
-										target="_blank" />
-								)
-							}
-						}
-					)
-				);
 			}
 		} );
 	},
