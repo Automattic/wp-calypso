@@ -12,7 +12,7 @@ import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode, enableDomainLocking } from 'lib/upgrades/actions';
 import notices from 'notices';
-import { promisy, displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
+import { displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
 import support from 'lib/url/support';
 
 const Unlocked = React.createClass( {
@@ -27,27 +27,12 @@ const Unlocked = React.createClass( {
 
 		this.setState( { submitting: true } );
 
-		promisy( enableDomainLocking )( {
+		enableDomainLocking( {
 			domainName: this.props.selectedDomainName,
 			declineTransfer: true,
 			enablePrivacy: hasPrivacyProtection && ! privateDomain,
 			siteId: this.props.selectedSite.ID
-			if ( hasPrivacyProtection ) {
-				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
-					'Privacy Protection has been enabled.' ) );
-			} else {
-				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
-			}
-
-			if ( this.isMounted() ) {
-				// component might be unmounted since it's state changed to locked
-				this.setState( { submitting: false } );
-			}
 		}, ( error ) => {
-			if ( this.isMounted() ) {
-				// component might be unmounted since the request
-				this.setState( { submitting: false } );
-			}
 			if ( error ) {
 				const contactLink = <a href={ support.CONTACT } target="_blank"/>;
 				let errorMessage;
@@ -76,8 +61,18 @@ const Unlocked = React.createClass( {
 						);
 						break;
 				}
-
 				notices.error( errorMessage );
+			} else {
+				if ( hasPrivacyProtection ) {
+					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
+						'Privacy Protection has been enabled.' ) );
+				} else {
+					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
+				}
+			}
+			if ( this.isMounted() ) {
+				// component might be unmounted since it's state changed to locked
+				this.setState( { submitting: false } );
 			}
 		} );
 	},
