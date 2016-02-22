@@ -87,7 +87,7 @@
 		"olark": true,
 		"olark_use_wpcom_configuration": true,
 		"perfmon": false,
-		"persist-redux": false,
+		"persist-redux": true,
 		"phone_signup": true,
 		"post-editor": true,
 		"post-editor-github-link": false,
