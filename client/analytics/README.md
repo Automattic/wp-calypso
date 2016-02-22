@@ -22,7 +22,7 @@ Automatticians may refer to internal documentation for more information about MC
 
 ```js
 // require the module
-var analytics = require( 'analytics' );
+import analytics from 'analytics';
 
 ```
 
@@ -30,7 +30,7 @@ var analytics = require( 'analytics' );
 
 ### analytics#pageView#record( pageURL, pageTitle )
 
-Record a pageview:
+Record a pageview both in Google Analytics and Tracks:
 
 ```js
 analytics.pageView.record( '/posts/draft', 'Posts > Drafts' );
