@@ -14,6 +14,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { connectionsSchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Track the current status for fetching connections. Maps site ID to the
@@ -55,8 +57,11 @@ export function connections( state = {}, action ) {
 		case PUBLICIZE_CONNECTIONS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.data.connections, 'ID' ) );
 		case SERIALIZE:
-			return {};
+			return state;
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, connectionsSchema ) ) {
+				return state;
+			}
 			return {};
 	}
 
