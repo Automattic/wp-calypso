@@ -1,4 +1,9 @@
 /**
+ * Internal dependency.
+ */
+var config = require( 'config' );
+
+/**
  * A little module for loading a external script
  */
 
@@ -45,6 +50,11 @@ var loadScript = function( url, callback ) {
 };
 
 var loadjQueryDependentScript = function( scriptURL, callback ) {
+	// It is not possible to expose jQuery globally in Electron App: https://github.com/atom/electron/issues/254.
+	// It needs to be loaded using require and npm package.
+	if ( config.isEnabled( 'desktop' ) ) {
+		window.jQuery = require( 'jquery' );
+	}
 	if ( window.jQuery ) {
 		loadScript( scriptURL, callback );
 		return;
