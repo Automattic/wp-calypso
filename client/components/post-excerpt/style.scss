@@ -1,5 +1,4 @@
 .post-excerpt {
-	.post-excerpt__text {
 		@extend %content-font;
 		margin: 0;
 		position: relative;
@@ -33,5 +32,4 @@
 				}
 			}
 		}
-	}
 }

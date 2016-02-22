@@ -402,8 +402,8 @@ var Post = React.createClass( {
 				<PostByline post={ post } site={ this.props.site } />
 
 				{ shouldUseFullExcerpt ?
-					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }} ></div> : //eslint-disable-line react/no-danger
-					<PostExcerpt text={ post.excerpt } />
+					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }}></div> : //eslint-disable-line react/no-danger
+					<PostExcerpt content={ post.content } />
 				}
 
 				{ shouldShowExcerptOnly ?
