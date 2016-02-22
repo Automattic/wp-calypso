@@ -289,6 +289,11 @@ $sidebar-width-min: 228px;
 		.has-no-sidebar & {
 			padding-left: 24px;
 		}
+
+		.full-screen & {
+			padding: 0;
+			margin: 0;
+		}
 	}
 }
 
