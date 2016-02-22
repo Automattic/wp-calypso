@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import omitBy from 'lodash/omitBy';
 import pick from 'lodash/pick';
+import includes from 'lodash/includes';
 import QueryString from 'querystring';
 
 /**
@@ -72,9 +73,9 @@ class WpVideoView extends Component {
 			guid: shortcode.attrs.numeric[0],
 			w: videoDimensions.width,
 			h: videoDimensions.height,
-			autoplay: namedAttrs.autoplay === 'true',
-			hd: namedAttrs.hd === 'true',
-			loop: namedAttrs.loop === 'true',
+			autoplay: includes( [ 'true', '1' ], namedAttrs.autoplay ),
+			hd: includes( [ 'true', '1' ], namedAttrs.hd ),
+			loop: includes( [ 'true', '1' ], namedAttrs.loop ),
 			at: parseInt( namedAttrs.at, 10 ) || 0,
 			defaultLangCode: namedAttrs.defaultlangcode
 		};
