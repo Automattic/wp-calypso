@@ -52,14 +52,8 @@ class WpVideoView extends Component {
 			width = shortcodeHeightAttribute * aspectRatio;
 			height = shortcodeHeightAttribute;
 		} else if ( shortcodeWidthAttribute && shortcodeHeightAttribute ) {
-			const definedAspectRatio = shortcodeWidthAttribute / shortcodeHeightAttribute;
-			if ( definedAspectRatio > aspectRatio ) {
-				width = shortcodeHeightAttribute * aspectRatio;
-				height = shortcodeHeightAttribute;
-			} else {
-				width = shortcodeWidthAttribute;
-				height = shortcodeWidthAttribute / aspectRatio;
-			}
+			width = shortcodeWidthAttribute;
+			height = shortcodeHeightAttribute;
 		}
 
 		return { width, height };
@@ -95,7 +89,7 @@ class WpVideoView extends Component {
 		const defaultAttributeValues = { hd: false, at: 0, defaultLangCode: undefined };
 		const attributesWithNonDefaultValues = omitBy(
 			shortcodeAttributes,
-			( value, key ) => defaultAttributeValues[key] === value );
+			( value, key ) => defaultAttributeValues[ key ] === value );
 		const queryStringAttributes = [ 'autoplay', 'hd', 'loop', 'at', 'defaultLangCode' ];
 		const queryString = QueryString.stringify( pick( attributesWithNonDefaultValues, queryStringAttributes ) );
 
