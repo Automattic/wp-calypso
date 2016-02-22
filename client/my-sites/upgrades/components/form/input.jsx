@@ -1,32 +1,35 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	FocusMixin = require( './focus-mixin.js' );
 
-module.exports = React.createClass( {
+import FormInputValidation from 'components/forms/form-input-validation';
+import analytics from 'analytics';
+import FocusMixin from './focus-mixin';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
+
+export default React.createClass( {
 	displayName: 'Input',
 
 	mixins: [ FocusMixin( 'input' ) ],
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return { type: 'text', autofocus: false };
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.setupInputModeHandlers();
 		this.autofocusInput();
 	},
 
-	setupInputModeHandlers: function() {
-		var inputElement = ReactDom.findDOMNode( this.refs.input );
+	setupInputModeHandlers() {
+		const inputElement = ReactDom.findDOMNode( this.refs.input );
 
 		if ( this.props.inputMode === 'numeric' ) {
 			// This forces mobile browsers to use a numeric keyboard. We have to
@@ -35,15 +38,10 @@ module.exports = React.createClass( {
 			//
 			// This workaround is based on the following StackOverflow post:
 			// http://stackoverflow.com/a/19998430/821706
-			inputElement.addEventListener( 'touchstart', function() {
-				inputElement.pattern = '\\d*';
-			} );
+			inputElement.addEventListener( 'touchstart', () => inputElement.pattern = '\\d*' );
 
-			[ 'keydown', 'blur' ].forEach( function( eventName ) {
-				inputElement.addEventListener( eventName, function() {
-					inputElement.pattern = '.*';
-				} );
-			} );
+			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
+				inputElement.addEventListener( eventName, () => inputElement.pattern = '.*' ) );
 		}
 	},
 
@@ -55,20 +53,26 @@ module.exports = React.createClass( {
 		}
 	},
 
+	focus() {
+		var node = ReactDom.findDOMNode( this.refs.input );
+		node.focus();
+		scrollIntoViewport( node );
+	},
+
 	autofocusInput() {
 		if ( this.props.autofocus ) {
-			ReactDom.findDOMNode( this.refs.input ).focus();
+			this.focus();
 		}
 	},
 
-	recordFieldClick: function() {
+	recordFieldClick() {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
 		}
 	},
 
-	render: function() {
-		var classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, {
+	render() {
+		const classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, {
 			focus: this.state.focus,
 			active: Boolean( this.props.value ),
 			invalid: this.props.invalid
@@ -90,6 +94,7 @@ module.exports = React.createClass( {
 					onClick={ this.recordFieldClick }
 					onBlur={ this.handleBlur }
 					onFocus={ this.handleFocus } />
+				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}

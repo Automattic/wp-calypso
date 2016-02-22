@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' ),
+	ReactDom = require( 'react-dom' ),
 	observe = require( 'lib/mixins/data-observe' );
 
 /**
@@ -12,6 +13,8 @@ var React = require( 'react' ),
 var analytics = require( 'analytics' ),
 	FocusMixin = require( './focus-mixin.js' ),
 	FormLabel = require( 'components/forms/form-label' ),
+	FormInputValidation = require( 'components/forms/form-input-validation' ),
+	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
 	FormSelect = require( 'components/forms/form-select' );
 
 module.exports = React.createClass( {
@@ -19,13 +22,19 @@ module.exports = React.createClass( {
 
 	mixins: [ FocusMixin( 'input' ), observe( 'countriesList' ) ],
 
-	recordCountrySelectClick: function() {
+	recordCountrySelectClick() {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );
 		}
 	},
 
-	render: function() {
+	focus() {
+		var node = ReactDom.findDOMNode( this.refs.input );
+		node.focus();
+		scrollIntoViewport( node );
+	},
+
+	render() {
 		var classes = classNames( this.props.additionalClasses, 'country', {
 				focus: this.state.focus,
 				invalid: this.props.invalid
@@ -71,6 +80,7 @@ module.exports = React.createClass( {
 						} ) }
 					</FormSelect>
 				</div>
+				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}

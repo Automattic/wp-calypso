@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' ),
+	ReactDom = require( 'react-dom' ),
 	observe = require( 'lib/mixins/data-observe' );
 
 /**
@@ -13,6 +14,8 @@ var analytics = require( 'analytics' ),
 	FocusMixin = require( './focus-mixin.js' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSelect = require( 'components/forms/form-select' ),
+	FormInputValidation = require( 'components/forms/form-input-validation' ),
+	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
 	Input = require( './input' );
 
 module.exports = React.createClass( {
@@ -24,6 +27,12 @@ module.exports = React.createClass( {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } State Select` );
 		}
+	},
+
+	focus() {
+		var node = ReactDom.findDOMNode( this.refs.input );
+		node.focus();
+		scrollIntoViewport( node );
 	},
 
 	render: function() {
@@ -54,6 +63,7 @@ module.exports = React.createClass( {
 					<div>
 						<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 						<FormSelect
+							ref="input"
 							name={ this.props.name }
 							value={ this.props.value }
 							disabled={ this.props.disabled }
@@ -66,6 +76,7 @@ module.exports = React.createClass( {
 						} ) }
 						</FormSelect>
 					</div>
+					{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 				</div>
 			);
 		}
