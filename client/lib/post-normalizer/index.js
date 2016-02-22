@@ -22,8 +22,10 @@ var assign = require( 'lodash/assign' ),
 	uniqBy = require( 'lodash/uniqBy' ),
 	url = require( 'url' );
 
+import striptags from 'striptags';
+
 /**
- * Internal depedencies
+ * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
 import formatting from 'lib/formatting';
@@ -468,6 +470,30 @@ normalizePost.withContentDOM = function( transforms ) {
 };
 
 normalizePost.content = {
+
+	createContentWithLinebreakElementsOnly: function createContentWithLinebreakElementsOnly( post, callback ) {
+		if ( ! post.__contentDOM ) {
+			throw new Error( 'this transform must be used as part of withContentDOM' );
+		}
+
+		post.content_with_linebreak_elements_only = striptags( post.content, [ 'p', 'br' ] );
+
+		// Spin up a new DOM for the linebreak markup
+		const dom = document.createElement( 'div' );
+		dom.innerHTML = post.content_with_linebreak_elements_only;
+
+		// Strip any empty p elements
+		let paragraphs = dom.querySelectorAll( 'p' );
+		forEach( paragraphs, function( element ) {
+			if ( element.innerHTML.length < 1 ) {
+				element.parentNode && element.parentNode.removeChild( element );
+			}
+		} );
+
+		post.content_with_linebreak_elements_only = dom.innerHTML;
+
+		callback();
+	},
 
 	removeStyles: function removeContentStyles( post, callback ) {
 		if ( ! post.__contentDOM ) {

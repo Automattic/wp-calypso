@@ -403,7 +403,7 @@ var Post = React.createClass( {
 
 				{ shouldUseFullExcerpt ?
 					<div key="full-post-inline" className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }}></div> : //eslint-disable-line react/no-danger
-					<PostExcerpt content={ post.content } />
+					<PostExcerpt content={ post.content_with_linebreak_elements_only ? post.content_with_linebreak_elements_only : post.excerpt } />
 				}
 
 				{ shouldShowExcerptOnly ?

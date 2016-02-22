@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import striptags from 'striptags';
 
 const PostExcerpt = React.createClass( {
 
@@ -16,16 +15,13 @@ const PostExcerpt = React.createClass( {
 			return null;
 		}
 
-		// Strip all non-linebreak tags
-		const preparedContent = striptags( this.props.content, [ 'p', 'br' ] );
-
 		const classes = classnames( {
 			'post-excerpt': true,
-			'is-long': ( preparedContent.length > 80 )
+			'is-long': ( this.props.content.length > 80 )
 		} );
 
 		return (
-			<div className={ classes } dangerouslySetInnerHTML={{ __html: preparedContent }}></div> //eslint-disable-line react/no-danger
+			<div className={ classes } dangerouslySetInnerHTML={{ __html: this.props.content }}></div> //eslint-disable-line react/no-danger
 		);
 	}
 } );

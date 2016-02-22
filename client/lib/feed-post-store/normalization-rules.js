@@ -32,6 +32,7 @@ const fastPostNormalizationRules = [
 		postNormalizer.safeImageProperties( READER_CONTENT_WIDTH ),
 		postNormalizer.firstPassCanonicalImage,
 		postNormalizer.withContentDOM( [
+			postNormalizer.content.createContentWithLinebreakElementsOnly,
 			postNormalizer.content.removeStyles,
 			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),
 			discoverFullBleedImages,
