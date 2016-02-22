@@ -92,19 +92,19 @@ var CheckoutThankYou = React.createClass( {
 
 	thankYouHeader: function() {
 		if ( ! this.isDataLoaded() ) {
-			return <h1 className="checkout__thank-you-header">{ this.translate( 'Loading…' ) }</h1>;
+			return <h1 className="checkout-thank-you__header">{ this.translate( 'Loading…' ) }</h1>;
 		}
 
 		if ( this.freeTrialWasPurchased() ) {
 			return (
-				<h1 className="checkout__thank-you-header">
+				<h1 className="checkout-thank-you__header">
 					{
 						this.translate( 'Your 14 day free trial starts today!' )
 					}
 				</h1>
 			);
 		}
-		return <h1 className="checkout__thank-you-header">{ this.translate( 'Thank you for your purchase!' ) }</h1>
+		return <h1 className="checkout-thank-you__header">{ this.translate( 'Thank you for your purchase!' ) }</h1>
 	},
 
 	thankYouSubHeader: function() {
@@ -112,7 +112,7 @@ var CheckoutThankYou = React.createClass( {
 			headerText;
 
 		if ( ! this.isDataLoaded() ) {
-			return <h2 className="checkout__thank-you-subheader">{ this.translate( 'Loading…' ) }</h2>;
+			return <h2 className="checkout-thank-you__subheader">{ this.translate( 'Loading…' ) }</h2>;
 		}
 
 		productName = this.getSingleProductName();
@@ -135,7 +135,7 @@ var CheckoutThankYou = React.createClass( {
 			headerText = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
 		}
 
-		return <h2 className="checkout__thank-you-subheader">{ headerText }</h2>
+		return <h2 className="checkout-thank-you__subheader">{ headerText }</h2>
 	},
 
 	getSingleProductName() {
@@ -147,22 +147,22 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'checkout__thank-you', {
+		var classes = classNames( 'checkout-thank-you', {
 			'is-placeholder': ! this.isDataLoaded()
 		} );
 
 		return (
 			<Main className={ classes }>
 				<Card>
-					<div className="thank-you-message">
-						<span className="receipt-icon"></span>
+					<div className="checkout-thank-you__message">
+						<span className="checkout-thank-you__receipt-icon"></span>
 						{ this.thankYouHeader() }
 						{ this.thankYouSubHeader() }
 					</div>
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<div className="get-support">
+				<div className="checkout-thank-you__get-support">
 					<h3>{ this.translate( 'Questions? Need Help?' ) }</h3>
 					{ this.supportRelatedMessages() }
 				</div>

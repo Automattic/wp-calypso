@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const GoogleAppsDetails = ( { selectedSite, domain } ) => {
 	return (
-		<ul className="purchase-details-list">
+		<ul className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="google-apps-details"
 				title={ i18n.translate( 'Google Apps Setup' ) }

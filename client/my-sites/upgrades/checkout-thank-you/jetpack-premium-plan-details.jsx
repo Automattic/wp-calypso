@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const JetpackPremiumPlanDetails = () => {
 	return (
-		<ul className="purchase-details-list">
+		<ul className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="akismet"
 				title={ i18n.translate( 'Akismet' ) }

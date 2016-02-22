@@ -13,7 +13,7 @@ import PurchaseDetail from './purchase-detail';
 
 const DomainRegistrationDetails = ( { selectedSite, domain } ) => {
 	return (
-		<ul className="purchase-details-list">
+		<ul className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="important"
 				title={ i18n.translate( 'Important!' ) }

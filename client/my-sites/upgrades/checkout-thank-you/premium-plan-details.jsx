@@ -16,7 +16,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 		showGetFreeDomainTip = ! isFreeTrial;
 
 	return (
-		<ul className="purchase-details-list">
+		<ul className="checkout-thank-you__purchase-details-list">
 			{
 				showGetFreeDomainTip
 				? <PurchaseDetail

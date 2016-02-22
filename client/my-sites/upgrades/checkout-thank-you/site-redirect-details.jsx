@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const SiteRedirectDetails = ( { selectedSite } ) => {
 	return (
-		<ul className="purchase-details-list">
+		<ul className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="redirect-now-working"
 				title={ i18n.translate( 'Redirect now working' ) }

@@ -1,4 +1,4 @@
-.checkout__thank-you {
+.checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
 	text-align: center;
@@ -6,44 +6,6 @@
 
 	&.main {
 		max-width: 960px;
-	}
-
-	.thank-you-message {
-		padding-bottom: 20px;
-
-		.receipt-icon {
-			display: inline-block;
-			position: relative;
-
-			&::before {
-				@include noticon( '\f425', 70px );
-				color: lighten( $gray, 20% );
-			}
-
-			&::after {
-				@include noticon( '\f418', 18px );
-				background: #53b66c;
-				border-radius: 18px;
-				color: $white;
-				position: absolute;
-					top: 6px;
-					right: 15px;
-				width: 18px;
-				height: 18px;
-			}
-		}
-
-		> h1 {
-			color: $gray-dark;
-			font-weight: 100;
-			margin: 0;
-		}
-
-		> h2 {
-			color: $gray-dark;
-			font-weight: 200;
-			opacity: 0.6;
-		}
 	}
 
 	.try-out-message {
@@ -54,51 +16,26 @@
 		}
 	}
 
-	.purchase-details-list {
-		list-style: none;
-	}
-
-	.get-support {
-		border-top: 1px solid lighten( $gray, 20% );
-		color: darken($gray, 10%);
-		font-size: 14px;
-
-		> h3 {
-			font-weight: 600;
-		}
-
-		> p {
-			margin-bottom: 0;
-		}
-
-		a {
-			border-bottom: 1px solid $blue-medium;
-		}
-	}
-
 	&.is-placeholder {
-		.checkout__thank-you-header,
-		.checkout__thank-you-subheader {
+		.checkout-thank-you__header,
+		.checkout-thank-you__subheader {
 			@include placeholder( 23% );
 
 			display: block;
 			margin: 0 auto;
 		}
 
-		.checkout__thank-you-header {
+		.checkout-thank-you__header {
 			width: 50%;
 		}
 
-		.checkout__thank-you-subheader {
+		.checkout-thank-you__subheader {
 			margin-top: 15px;
 			width: 40%;
 		}
 	}
-}
 
-// Mobile styles
-@include breakpoint( "<660px" ) {
-	.checkout__thank-you {
+	@include breakpoint( "<660px" ) {
 		background: transparent;
 		padding: 14px;
 
@@ -107,87 +44,108 @@
 			box-shadow: none;
 			padding: 0;
 		}
-
-		.thank-you-message {
-			> h1,
-			> h2 {
-				font-size: 17px;
-			}
-		}
-
-		.purchase-details-list {
-			display: inline-block;
-			margin: 0 0 10px 0;
-		}
-
-		.get-support {
-			border-bottom: 1px solid lighten( $gray, 20% );
-			padding: 20px 0;
-		}
 	}
 }
 
-// Desktop styles
-@include breakpoint( ">660px" ) {
-	.checkout__thank-you {
-		.thank-you-message {
-			border-bottom: 1px solid lighten( $gray, 30% );
+.checkout-thank-you__get-support {
+	border-top: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid lighten( $gray, 20% );
+	color: darken($gray, 10%);
+	font-size: 14px;
+	padding: 20px 0;
 
-			> h1 {
-				font-size: 25px;
-			}
-			> h2 {
-				font-size: 20px;
-				max-width: 50%;
-				margin: auto;
-			}
-		}
-
-		.purchase-details-list {
-			margin: 0;
-			padding: 30px 0;
-		}
-
-		.purchase-detail {
-			vertical-align: top;
-		}
-
-		.purchase-detail-text {
-			&::before {
-				font-size: 70px;
-			}
-
-			> p {
-				margin: 0 50px 10px 50px;
-			}
-		}
-
-		.get-support {
-			padding: 20px;
-
-			> h3 {
-				display: inline;
-				margin-right: 15px;
-			}
-
-			> p {
-				display: inline;
-			}
-		}
+	> h3 {
+		font-weight: 600;
 	}
-}
 
-.checkout__purchase-detail-description {
-	font-size: 12px;
-	opacity: 0.7;
+	> p {
+		margin-bottom: 0;
+	}
+
+	a {
+		border-bottom: 1px solid $blue-medium;
+	}
 
 	@include breakpoint( ">660px" ) {
-		margin: 0 50px 10px 50px;
+		padding: 20px;
+		border-bottom: none;
+
+		> h3 {
+			display: inline;
+			margin-right: 15px;
+		}
+
+		> p {
+			display: inline;
+		}
 	}
 }
 
-.checkout__purchase-detail {
+.checkout-thank-you__header {
+	font-size: 25px;
+	font-weight: 100;
+	margin: 0;
+}
+
+.checkout-thank-you__subheader {
+	font-size: 20px;
+	font-weight: 200;
+	opacity: 0.6;
+	margin: auto;
+	max-width: 50%;
+}
+
+.checkout-thank-you__header,
+.checkout-thank-you__subheader {
+	color: $gray-dark;
+
+	@include breakpoint( "<660px" ) {
+		font-size: 17px;
+		max-width: 100%;
+	}
+}
+
+.checkout-thank-you__purchase-details-list {
+	list-style: none;
+	margin: 0;
+	padding: 30px 0;
+
+	@include breakpoint( "<660px" ) {
+		display: inline-block;
+		margin: 0 0 10px 0;
+	}
+}
+
+.checkout-thank-you__message {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding-bottom: 20px;
+}
+
+.checkout-thank-you__receipt-icon {
 	display: inline-block;
+	position: relative;
+
+	&::before {
+		@include noticon( '\f425', 70px );
+		color: lighten( $gray, 20% );
+	}
+
+	&::after {
+		@include noticon( '\f418', 18px );
+		background: #53b66c;
+		border-radius: 18px;
+		color: $white;
+		position: absolute;
+			top: 6px;
+			right: 15px;
+		width: 18px;
+		height: 18px;
+	}
+}
+
+.checkout-thank-you__purchase-detail {
+	display: inline-block;
+	vertical-align: top;
 	width: 33.333333%;
 
 	@include breakpoint( "<660px" ) {
@@ -210,80 +168,80 @@
 	}
 
 	&.get-free-domain {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f475' );
 		}
 	}
 
 	&.customize-fonts-and-colors {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f103' );
 		}
 	}
 
 	&.upload-to-videopress {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f104' );
 		}
 	}
 
 	&.ads-have-been-removed {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f803' );
 			top: -7px;
 		}
 	}
 
 	&.ecommerce {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f447' );
 		}
 	}
 
 	&.live-chat {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f108' );
 		}
 	}
 
 	&.unlimited-premium-themes {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f103' );
 		}
 	}
 
 	&.important {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f303' );
 		}
 	}
 
 	&.your-primary-domain {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f475' );
 		}
 	}
 
 	&.upgrade-now {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f800' );
 		}
 	}
 
 	&.google-apps-details {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f410' );
 		}
 	}
 
 	&.redirect-now-working {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f442' );
 		}
 	}
 
 	&.change-redirect-settings {
-		.checkout__purchase-detail-text::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f411' );
 		}
 	}
@@ -291,35 +249,48 @@
 	&.is-placeholder {
 		padding-top: 60px;
 
-		.checkout__purchase-detail-button,
-		.checkout__purchase-detail-description,
-		.checkout__purchase-detail-title {
+		.checkout-thank-you__purchase-detail-button,
+		.checkout-thank-you__purchase-detail-description,
+		.checkout-thank-you__purchase-detail-title {
 			@include placeholder( 23% );
 
 			display: block;
 		}
 
-		.checkout__purchase-detail-button {
+		.checkout-thank-you__purchase-detail-button {
 			border: none;
 			margin: 0 auto;
 			width: 50%;
 		}
 
-		.checkout__purchase-detail-description {
+		.checkout-thank-you__purchase-detail-description {
 			margin-top: 10px;
 		}
 
-		.checkout__purchase-detail-title {
+		.checkout-thank-you__purchase-detail-title {
 			margin: 0 auto;
 			width: 85%;
 		}
 	}
 }
 
-.checkout__purchase-detail-text {
+.checkout-thank-you__purchase-detail-description {
+	font-size: 12px;
+	opacity: 0.7;
+
+	@include breakpoint( ">660px" ) {
+		margin: 0 50px 10px 50px;
+	}
+}
+
+.checkout-thank-you__purchase-detail-text {
 	@include breakpoint( ">660px" ) {
 		&::before {
 			font-size: 70px;
+		}
+
+		> p {
+			margin: 0 50px 10px 50px;
 		}
 	}
 
@@ -335,7 +306,7 @@
 	}
 }
 
-.checkout__purchase-detail:not( .is-placeholder ) .checkout__purchase-detail-text {
+.checkout-thank-you__purchase-detail:not( .is-placeholder ) .checkout-thank-you__purchase-detail-text {
 	&::before {
 		color: lighten( $gray, 20% );
 		@include noticon( '\f803' );
@@ -343,6 +314,6 @@
 	}
 }
 
-.checkout__purchase-detail-title {
+.checkout-thank-you__purchase-detail-title {
 	font-weight: 600;
 }
