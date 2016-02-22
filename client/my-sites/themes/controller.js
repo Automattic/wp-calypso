@@ -140,7 +140,7 @@ export function details( context, next ) {
 // Generic middleware -- move to client/controller.js?
 // lib/react-helpers isn't probably middleware-specific enough
 export function renderPrimary( context ) {
-	const { path } = context.params;
+	const { path } = context;
 	// FIXME: temporary hack until we have a proper isomorphic, one tree routing solution. Do NOT do this!
 	const sheetsDomElement = startsWith( path, '/themes' ) && document.getElementsByClassName( 'themes__sheet' )[0];
 	const mainDomElement = startsWith( path, '/design' ) && document.getElementsByClassName( 'themes main' )[0];
