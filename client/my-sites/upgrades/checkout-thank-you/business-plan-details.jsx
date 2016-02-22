@@ -10,7 +10,7 @@ import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from './purchase-detail';
 
 const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
-	var showGetFreeDomainTip = ! isFreeTrial;
+	const showGetFreeDomainTip = ! isFreeTrial;
 
 	return (
 		<ul className="purchase-details-list">
@@ -21,24 +21,13 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 					description={ i18n.translate( 'WordPress.com Business includes a free domain for your site.' ) }
 					buttonText={ i18n.translate( 'Add Free Domain' ) }
 					href={ '/domains/add/' + selectedSite.slug } />
-				: null }
-
-			<PurchaseDetail
-				additionalClass="ecommerce"
-				title={ i18n.translate( 'Add eCommerce' ) }
-				description={ i18n.translate( 'Connect your Ecwid or Shopify store with your WordPress.com site.' ) }
-				buttonText={ i18n.translate( 'Set Up eCommerce' ) }
-				href={ '/plugins/' + selectedSite.slug } />
-
-			{ ! showGetFreeDomainTip
-			? <PurchaseDetail
+			: <PurchaseDetail
 					additionalClass="live-chat"
 					title={ i18n.translate( 'Start a Live Chat' ) }
 					description={ i18n.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
 					buttonText={ i18n.translate( 'Talk to an Operator' ) }
 					href="//support.wordpress.com/live-chat/"
 					target="_blank" />
-				: null
 			}
 
 			<PurchaseDetail
@@ -47,6 +36,13 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 				description={ i18n.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
 				buttonText={ i18n.translate( 'Find a New Theme' ) }
 				href={ '/design/' + selectedSite.slug } />
+
+			<PurchaseDetail
+				additionalClass="connect-google-analytics"
+				title={ i18n.translate( 'Integrate Google Analytics' ) }
+				description={ i18n.translate( 'Connect your site to your existing Google Analytics account.' ) }
+				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
+				href={ '/settings/analytics/' + selectedSite.slug } />
 		</ul>
 	);
 };

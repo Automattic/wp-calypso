@@ -19,15 +19,15 @@ export default React.createClass( {
 	},
 
 	componentWillMount: function() {
-		getPrimaryDomain( this.props.selectedSite.ID, function( error, data ) {
+		getPrimaryDomain( this.props.selectedSite.ID, ( error, data ) => {
 			if ( ! error && data ) {
 				this.setState( { primaryDomain: data.domain } );
 			}
-		}.bind( this ) );
+		} );
 	},
 
 	render: function() {
-		var primaryDomainDescription,
+		let primaryDomainDescription,
 			supportDoc;
 
 		if ( isSubdomain( this.props.domain ) ) {
