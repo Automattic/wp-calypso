@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDom from 'react-dom';
 import page from 'page';
 
 /**
@@ -15,7 +15,7 @@ let Page404 = React.createClass( {
 
 	statics: {
 		show() {
-			ReactDOM.render(
+			ReactDom.render(
 				React.createElement( Page404, {} ),
 				document.getElementById( 'primary' )
 			);
@@ -32,7 +32,7 @@ let Page404 = React.createClass( {
 				illustration="/calypso/images/drake/drake-404.svg"
 				title={ this.translate( 'Uh oh. Page not found.' ) }
 				line={ this.translate( 'Sorry, the page you were looking for doesn\'t exist or has been moved.' ) }
-				action={ this.translate( 'Go back home' ) }
+				action={ this.translate( 'Return to Home' ) }
 				actionURL="/"
 				actionCallback={ this.redirectHome }
 			/>
