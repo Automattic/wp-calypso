@@ -55,12 +55,6 @@
 		}
 	}
 
-	&.ecommerce {
-		.checkout__purchase-detail-text::before {
-			@include noticon( '\f447' );
-		}
-	}
-
 	&.live-chat {
 		.checkout__purchase-detail-text::before {
 			@include noticon( '\f108' );
@@ -70,6 +64,12 @@
 	&.unlimited-premium-themes {
 		.checkout__purchase-detail-text::before {
 			@include noticon( '\f103' );
+		}
+	}
+
+	&.connect-google-analytics {
+		.checkout__purchase-detail-text::before {
+			@include noticon( '\f806' ); //.noticon-milestone
 		}
 	}
 
