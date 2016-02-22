@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 export function isJetpack( state ) {
 	return !! state.themes.themesLastQuery.get( 'isJetpack' );
 }

@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -29,7 +31,7 @@ module.exports = React.createClass( {
 		if ( this.props.href ) {
 			element = 'a';
 			linkIndicator = <Gridicon
-				className='card__link-indicator'
+				className="card__link-indicator"
 				icon={ this.props.target ? 'external' : 'chevron-right' } />;
 		}
 

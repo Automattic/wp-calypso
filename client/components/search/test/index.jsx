@@ -8,6 +8,7 @@ import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import sinon from 'sinon';
 import mockery from 'mockery';
+import noop from 'lodash/noop';
 
 const EMPTY_COMPONENT = React.createClass( {
 	render: function() {
@@ -18,19 +19,17 @@ const EMPTY_COMPONENT = React.createClass( {
 describe( 'Search', function() {
 	beforeEach( function() {
 		mockery.registerMock( 'analytics', {} );
+		mockery.registerMock( 'lib/mixins/i18n', { translate: noop } );
 		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
 		mockery.enable();
 		mockery.warnOnUnregistered( false );
 
 		this.searchClass = require( '../' );
-		this.searchClass.prototype.__reactAutoBindMap.translate = sinon.stub();
 	} );
 
 	afterEach( function() {
-		mockery.deregisterMock( 'analytics' );
+		mockery.deregisterAll();
 		mockery.disable();
-
-		delete this.searchClass.prototype.__reactAutoBindMap.translate;
 	} );
 
 	describe( 'initialValue', function() {

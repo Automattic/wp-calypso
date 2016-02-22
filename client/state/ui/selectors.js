@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * Returns the site object for the currently selected site.
  *
