@@ -47,6 +47,8 @@ var analytics = require( 'analytics' ),
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost;
 
+import PostExcerpt from 'components/post-excerpt';
+
 var loadingPost = {
 		URL: '',
 		title: 'hi there',
@@ -187,12 +189,6 @@ FullPostView = React.createClass( {
 
 		articleClasses = articleClasses.join( ' ' );
 
-		if ( post.use_excerpt ) {
-			postContent = post.excerpt;
-		} else {
-			postContent = post.content;
-		}
-
 		/*eslint-disable react/no-danger*/
 		return (
 			<div>
@@ -219,7 +215,10 @@ FullPostView = React.createClass( {
 
 					<PostByline post={ post } site={ site } icon={ true }/>
 
-					<div className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: postContent } }></div>
+					{ post.use_excerpt ?
+						<PostExcerpt content={ post.content_with_linebreak_elements_only ? post.content_with_linebreak_elements_only : post.excerpt } /> :
+						<div className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }}></div> //eslint-disable-line react/no-danger
+					}
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ isDiscoverPost ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
