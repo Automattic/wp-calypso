@@ -11,7 +11,10 @@
 	}
 }
 
-.mce-tinymce {
+.mce-container.mce-tinymce {
+	max-width: 700px;
+	margin: 0 auto;
+
 	& > .mce-container-body {
 		&:after {
 			margin-top: 1px;
@@ -62,8 +65,8 @@
 		margin: 0 auto;
 
 		@include breakpoint( ">960px" ) {
-			border-width: 1px;
-			max-width: 700px;
+			border-left-width: 1px;
+			border-right-width: 1px;
 		}
 	}
 
