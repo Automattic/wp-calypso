@@ -151,10 +151,11 @@ var utils = {
 	},
 
 	normalizeAsync: function( post, callback ) {
+
 		postNormalizer(
 			post,
 			[
-				postNormalizer.waitForImagesToLoad,
+				//postNormalizer.waitForImagesToLoad,
 				postNormalizer.keepValidImages( 72, 72 )
 			],
 			callback
