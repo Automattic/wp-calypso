@@ -447,10 +447,6 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 		}
 	}
 
-	if ( this.recentlySelected.length > 3 ) {
-		this.recentlySelected.pop();
-	}
-
 	PreferencesActions.set( 'recentSites', this.recentlySelected );
 
 	this.emit( 'change' );
