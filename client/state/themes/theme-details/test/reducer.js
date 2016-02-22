@@ -8,7 +8,7 @@ import { Map, fromJS } from 'immutable';
  * Internal dependencies
  */
 import { RECEIVE_THEME_DETAILS } from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from '../../../action-types';
+import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from '../../../action-types';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
@@ -54,6 +54,17 @@ describe( 'reducer', () => {
 				}
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
+			expect( state ).to.eql( fromJS( jsObject ) );
+		} );
+
+		it( 'converts state from server to immutable.js object', () => {
+			const jsObject = Object.freeze( {
+				mood: {
+					name: 'Mood',
+					author: 'Automattic'
+				}
+			} );
+			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 

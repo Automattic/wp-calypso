@@ -9,7 +9,8 @@ import { fromJS } from 'immutable';
  */
 import {
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	SERVER_DESERIALIZE
 } from 'state/action-types';
 import reducer, { initialState } from '../reducer';
 
@@ -44,6 +45,22 @@ describe( 'themes-last-query reducer', () => {
 				}
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
+			expect( state ).to.eql( fromJS( jsObject ) );
+		} );
+
+		it( 'converts state from server to immutable.js object', () => {
+			const jsObject = Object.freeze( {
+				currentSiteId: 12345678,
+				previousSiteId: 2123982,
+				isJetpack: false,
+				lastParams: {
+					search: 'foo bar',
+					tier: 'all',
+					page: 0,
+					perPage: 20
+				}
+			} );
+			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 
