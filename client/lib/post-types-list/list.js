@@ -2,8 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:post-types-list' );
-var omit = require( 'lodash/object/omit' );
-var values = require( 'lodash/object/values' );
+var omit = require( 'lodash/omit' );
+var values = require( 'lodash/values' );
 
 /**
  * Internal dependencies
