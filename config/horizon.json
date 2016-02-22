@@ -85,6 +85,7 @@
 		"settings/security/scan": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
+		"upgrades/paypal": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/premium-themes": true
 	},

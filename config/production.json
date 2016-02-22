@@ -77,6 +77,7 @@
 		"settings/security/monitor": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
+		"upgrades/paypal": true,
 		"upgrades/domain-management/contacts-privacy": true,
 		"upgrades/domain-management/email": true,
 		"upgrades/domain-management/list": true,
