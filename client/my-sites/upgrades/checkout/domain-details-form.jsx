@@ -65,7 +65,7 @@ export default React.createClass( {
 	},
 
 	componentDidMount() {
-		analytics.pageView.record( '/checkout/domain-registration-details', 'Checkout > Domain Registration Details' );
+		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
 	},
 
 	validate( fieldNames, onComplete ) {
@@ -149,7 +149,7 @@ export default React.createClass( {
 						'Registering this domain for a company? + Add Organization Name',
 						'Registering these domains for a company? + Add Organization Name',
 						{
-							context: 'Domain registration details page',
+							context: 'Domain contact information page',
 							comment: 'Count specifies the number of domain registrations',
 							count: this.getNumberOfDomainRegistrations(),
 							textOnly: true
@@ -272,9 +272,9 @@ export default React.createClass( {
 			<PaymentBox
 				classSet={ classSet }
 				title={ this.translate(
-					'Domain Registration Details',
+					'Domain Contact Information',
 					{
-						context: 'Domain registration details page',
+						context: 'Domain contact information page',
 						textOnly: true
 					} ) }>
 				{ this.content() }
