@@ -86,6 +86,7 @@
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/paypal": true,
 		"upgrades/premium-themes": true
 	},
 	"siftscience_key": "a4f69f6759",

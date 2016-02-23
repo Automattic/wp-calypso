@@ -88,6 +88,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/paypal": true,
 		"upgrades/premium-themes": true
 	},
 	"siftscience_key": "e00e878351",

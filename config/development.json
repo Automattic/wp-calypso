@@ -124,6 +124,7 @@
 		"upgrades/domain-management/transfer": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
 		"vip": false,
 		"vip/backups": true,

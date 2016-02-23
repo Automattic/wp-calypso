@@ -87,6 +87,7 @@
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/paypal": false,
 		"upgrades/premium-themes": true
 	},
 	"rtl": false,
