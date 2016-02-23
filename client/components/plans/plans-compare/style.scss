@@ -32,3 +32,9 @@
 		margin: -24px;
 	}
 }
+
+.plans-compare__section-navigation {
+	@include breakpoint( ">480px" ) {
+		display: none;
+	}
+}

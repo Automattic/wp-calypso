@@ -24,6 +24,9 @@ var observe = require( 'lib/mixins/data-observe' ),
 	Card = require( 'components/card' ),
 	featuresListUtils = require( 'lib/features-list/utils' ),
 	filterPlansBySiteAndProps = require( 'lib/plans' ).filterPlansBySiteAndProps,
+	NavItem = require( 'components/section-nav/item' ),
+	NavTabs = require( 'components/section-nav/tabs' ),
+	SectionNav = require( 'components/section-nav' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var PlansCompare = React.createClass( {
@@ -35,6 +38,12 @@ var PlansCompare = React.createClass( {
 
 	componentWillReceiveProps: function( nextProps ) {
 		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
+	},
+
+	getInitialState: function() {
+		return {
+			currentPlan: 'premium'
+		}
 	},
 
 	getDefaultProps: function() {
@@ -151,6 +160,15 @@ var PlansCompare = React.createClass( {
 		return null;
 	},
 
+	getComparisonTableClasses: function() {
+		var comparisonTableClasses = {
+			'plans-compare__columns': true,
+		};
+
+		comparisonTableClasses[ this.state.currentPlan ] = true;
+		return comparisonTableClasses;
+	},
+
 	comparisonTable: function() {
 		var plansColumns,
 			featuresList = this.props.features.get(),
@@ -180,7 +198,7 @@ var PlansCompare = React.createClass( {
 
 			return (
 				<div className="plans-compare">
-					<div className="plans-compare__columns">
+					<div className={ classNames( this.getComparisonTableClasses() ) }>
 						<div className="plan-feature-column feature-list">
 							<PlanHeader/>
 							{ this.featureNames( featuresList ) }
@@ -226,6 +244,30 @@ var PlansCompare = React.createClass( {
 		);
 	},
 
+	setPlan: function( plan ) {
+		this.setState( {
+			'currentPlan': plan
+		} );
+	},
+
+	sectionNavigationForMobile() {
+		return (
+			<SectionNav className="plans-compare__section-navigation">
+				<NavTabs>
+					<NavItem onClick={ this.setPlan.bind( this, 'free' ) }>
+						{ this.translate( 'Free' ) }
+					</NavItem>
+					<NavItem onClick={ this.setPlan.bind( this, 'premium' ) }>
+						{ this.translate( 'Premium' ) }
+					</NavItem>
+					<NavItem onClick={ this.setPlan.bind( this, 'business' ) }>
+						{ this.translate( 'Business' ) }
+					</NavItem>
+				</NavTabs>
+			</SectionNav>
+		);
+	},
+
 	render: function() {
 		var compareString = this.translate( 'Compare Plans' );
 
@@ -243,6 +285,7 @@ var PlansCompare = React.createClass( {
 				<HeaderCake onClick={ this.goBack }>
 					{ compareString }
 				</HeaderCake>
+				{ this.sectionNavigationForMobile() }
 				<Card className="plans">
 					{ this.comparisonTable() }
 				</Card>
