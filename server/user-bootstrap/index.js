@@ -5,7 +5,7 @@ var superagent = require( 'superagent' ),
 
 var config = require( 'config' ),
 	API_KEY = config( 'wpcom_calypso_rest_api_key' ),
-	userUtils = require( './shared-utils' ),
+	userUtils = require( '../../client/lib/user/shared-utils' ),
 
 	/**
 	* WordPress.com REST API /me endpoint.
