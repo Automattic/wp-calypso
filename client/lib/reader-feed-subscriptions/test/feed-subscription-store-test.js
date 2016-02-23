@@ -161,7 +161,7 @@ describe( 'feed-subscription-store', function() {
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
 		} ) );
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 505 );
+		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 2 );
 
 		// Receiving second page (subscriptions should be merged)
 		Dispatcher.handleViewAction( {
@@ -246,13 +246,6 @@ describe( 'feed-subscription-store', function() {
 	it( 'should update the total subscription count during follow and unfollow', function() {
 		const siteUrl = 'http://www.mango.com';
 
-		// Receive initial total_subscriptions count
-		Dispatcher.handleViewAction( {
-			type: 'RECEIVE_FEED_SUBSCRIPTIONS',
-			data: { page: 1, total_subscriptions: 506, subscriptions: [ { ID: 3, URL: 'http://www.dragonfruit.com', feed_ID: 456 } ] },
-			error: null
-		} );
-
 		// Follow
 		Dispatcher.handleViewAction( {
 			type: 'FOLLOW_READER_FEED',
@@ -261,7 +254,7 @@ describe( 'feed-subscription-store', function() {
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 507 );
+		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 1 );
 
 		// Unfollow
 		Dispatcher.handleViewAction( {
@@ -271,7 +264,7 @@ describe( 'feed-subscription-store', function() {
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 506 );
+		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 0 );
 
 		// Re-follow (to check that the state change UNSUBSCRIBED->SUBSCRIBED updates the count correctly)
 		Dispatcher.handleViewAction( {
@@ -281,6 +274,6 @@ describe( 'feed-subscription-store', function() {
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 507 );
+		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 1 );
 	} );
 } );

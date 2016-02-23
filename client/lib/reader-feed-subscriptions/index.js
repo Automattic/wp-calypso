@@ -32,7 +32,7 @@ var subscriptions = clone( subscriptionsTemplate ),
 	currentPage = 0,
 	isLastPage = false,
 	isFetching = false,
-	totalSubscriptions,
+	totalSubscriptions = 0,
 	subscriptionTemplate = Immutable.Map( { // eslint-disable-line new-cap
 		state: States.SUBSCRIBED
 	} );
@@ -125,10 +125,6 @@ var FeedSubscriptionStore = {
 	},
 
 	receiveSubscriptions: function( data ) {
-		var currentSubscriptions = subscriptions,
-			newSubscriptions,
-			combinedSubscriptions;
-
 		if ( ! data.subscriptions ) {
 			return;
 		}
@@ -150,11 +146,6 @@ var FeedSubscriptionStore = {
 
 		// Set the current page
 		currentPage = data.page;
-
-		// Set total subscriptions for user on the first page only (we keep track of it in the store after that)
-		if ( currentPage === 1 ) {
-			totalSubscriptions = data.total_subscriptions;
-		}
 
 		FeedSubscriptionStore.emit( 'change' );
 	},
@@ -218,6 +209,7 @@ var FeedSubscriptionStore = {
 
 	clearSubscriptions: function() {
 		subscriptions = clone( subscriptionsTemplate );
+		totalSubscriptions = 0;
 	},
 
 	isLastPage: function() {
@@ -261,10 +253,7 @@ function addSubscription( subscription, addToTop = true ) {
 		subscriptions.list = subscriptions.list.push( newSubscription );
 	}
 	subscriptions.count++;
-
-	if ( totalSubscriptions > 0 ) {
-		totalSubscriptions++;
-	}
+	totalSubscriptions++;
 
 	return true;
 }
@@ -310,7 +299,7 @@ function updateSubscription( url, newSubscriptionInfo ) {
 
 	subscriptions.list = updatedSubscriptionsList;
 
-	if ( totalSubscriptions > 0 && existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && updatedSubscription.get( 'state' ) === States.SUBSCRIBED ) {
+	if ( existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && updatedSubscription.get( 'state' ) === States.SUBSCRIBED ) {
 		totalSubscriptions++;
 	}
 
