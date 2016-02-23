@@ -79,7 +79,6 @@
 		"settings/security/monitor": true,
 		"upgrades/checkout": false,
 		"upgrades/credit-cards": false,
-		"upgrades/paypal": false,
 		"upgrades/domain-management/contacts-privacy": true,
 		"upgrades/domain-management/email": true,
 		"upgrades/domain-management/list": true,
@@ -88,6 +87,7 @@
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": false,
 		"upgrades/in-app-purchase": true,
+		"upgrades/paypal": false,
 		"upgrades/premium-themes": false
 	},
 	"rtl": false,

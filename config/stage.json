@@ -81,7 +81,6 @@
 		"settings/security/scan": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
-		"upgrades/paypal": true,
 		"upgrades/domain-management/contacts-privacy": true,
 		"upgrades/domain-management/email": true,
 		"upgrades/domain-management/list": true,
@@ -89,6 +88,7 @@
 		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/paypal": true,
 		"upgrades/premium-themes": true
 	},
 	"siftscience_key": "e00e878351",
