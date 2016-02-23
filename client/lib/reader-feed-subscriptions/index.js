@@ -11,7 +11,7 @@ const Dispatcher = require( 'dispatcher' ),
 	Immutable = require( 'immutable' ),
 	clone = require( 'lodash/clone' ),
 	map = require( 'lodash/map' ),
-	forEach = require( 'lodash/foreach' );
+	forEach = require( 'lodash/forEach' );
 
 // Internal Dependencies
 const Emitter = require( 'lib/mixins/emitter' ),
