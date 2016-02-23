@@ -10,7 +10,8 @@ const Dispatcher = require( 'dispatcher' ),
 	last = require( 'lodash/last' ),
 	Immutable = require( 'immutable' ),
 	clone = require( 'lodash/clone' ),
-	map = require( 'lodash/map' );
+	map = require( 'lodash/map' ),
+	forEach = require( 'lodash/foreach' );
 
 // Internal Dependencies
 const Emitter = require( 'lib/mixins/emitter' ),
@@ -138,28 +139,14 @@ var FeedSubscriptionStore = {
 			return subscriptionTemplate.merge( sub );
 		} );
 
-		newSubscriptions = Immutable.List( subscriptionsWithState ); // eslint-disable-line new-cap
-
 		// Is it the last page?
 		if ( data.number === 0 ) {
 			isLastPage = true;
 		}
 
-		// Is it a new page of results?
-		if ( currentPage > 0 && data.page > currentPage ) {
-			combinedSubscriptions = currentSubscriptions.list.concat( newSubscriptions );
-
-			subscriptions = {
-				count: combinedSubscriptions.size,
-				list: combinedSubscriptions
-			};
-		} else {
-			// Looks like the first results we've received...
-			subscriptions = {
-				count: newSubscriptions.size,
-				list: newSubscriptions
-			};
-		}
+		forEach( subscriptionsWithState, function( subscription ) {
+			addSubscription( subscription.toJS(), false );
+		} );
 
 		// Set the current page
 		currentPage = data.page;
@@ -250,7 +237,7 @@ var FeedSubscriptionStore = {
 	}
 };
 
-function addSubscription( subscription ) {
+function addSubscription( subscription, addToTop = true ) {
 	if ( ! subscription || ! subscription.URL ) {
 		return;
 	}
@@ -268,7 +255,11 @@ function addSubscription( subscription ) {
 	// Otherwise, create a new subscription
 	subscription.URL = preparedSiteUrl;
 	const newSubscription = subscriptionTemplate.merge( subscription );
-	subscriptions.list = subscriptions.list.unshift( newSubscription );
+	if ( addToTop ) {
+		subscriptions.list = subscriptions.list.unshift( newSubscription );
+	} else {
+		subscriptions.list = subscriptions.list.push( newSubscription );
+	}
 	subscriptions.count++;
 
 	if ( totalSubscriptions > 0 ) {
@@ -385,4 +376,4 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = FeedSubscriptionStore;
+export default FeedSubscriptionStore;
