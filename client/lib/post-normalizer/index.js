@@ -438,7 +438,12 @@ normalizePost.pickCanonicalImage = function pickCanonicalImage( post, callback )
 };
 
 normalizePost.createContentWithLinebreakElementsOnly = function createContentWithLinebreakElementsOnly( post, callback ) {
-	let betterExcerpt = striptags( post.__contentDOM.innerHTML, [ 'p', 'br', 'noscript' ] );
+	if ( ! post || ! post.content ) {
+		callback();
+		return;
+	}
+
+	let betterExcerpt = striptags( post.content, [ 'p', 'br', 'noscript' ] );
 
 	// Spin up a new DOM for the linebreak markup
 	const dom = document.createElement( 'div' );
