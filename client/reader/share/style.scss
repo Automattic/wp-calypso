@@ -18,6 +18,10 @@
 		position: absolute;
 			top: 3px;
 			left: 3px;
+
+		@include breakpoint( "<480px" ) {
+			left: 6px;
+		}
 	}
 
 	.is-active {
@@ -29,31 +33,50 @@
 	}
 }
 
-@include breakpoint( "<480px" ) {
-	.reader-share .gridicon {
-		left: 6px;
-	}
-	
-	.reader-share__button-label {
+.reader-share__button-label {
+
+	@include breakpoint( "<480px" ) {
 		display: none;
 	}
 }
 
+.reader-share__popover {
+
+	@include breakpoint( "<480px" ) {
+		width: 152px;
+		padding-right: 2px;
+	}
+}
+
 .reader-share__popover-item {
+
+	@include breakpoint( "<480px" ) {
+		width: 150px;
+	}
+
 	span {
 		display: inline-block;
 		line-height: 24px;
-		margin-left: 32px;
+		margin-left: 34px;
+
+		@include breakpoint( ">480px" ) {
+			margin-left: 27px;
+		}
 	}
+
 	.gridicon,
 	.social-logo {
 		height: 24px;
 		width: 24px;
 		position: absolute;
 			top: 8px;
-			left: 16px;
+			left: 18px;
 		padding: 0;
 		fill: $gray;
+
+		@include breakpoint( ">480px" ) {
+			left: 11px;
+		}
 	}
 
 	.gridicons-my-sites {
