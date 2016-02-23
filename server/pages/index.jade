@@ -75,7 +75,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					span(class=['environment', 'is-docs'])
 						a(href=devDocsURL title='DevDocs') docs
 
-		script( src=catchJsErrors )
+		if 'development' !== env
+			script( src=catchJsErrors )
 
 		script.
 			(function() {
