@@ -75,7 +75,7 @@ var ReaderShare = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			position: 'top',
+			position: 'top left',
 			tagName: 'li'
 		};
 	},
@@ -117,8 +117,10 @@ var ReaderShare = React.createClass( {
 				( <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
 					isVisible={ this.state.showingMenu }
 					onClose={ this.closeMenu }
-					position={ this.props.position }>
-					{ canShareToWordpress ? <PopoverMenuItem action="pressThis" className="reader-share__popover-item">
+					position={ this.props.position }
+					className="popover reader-share__popover">
+					{ canShareToWordpress ?
+					<PopoverMenuItem action="pressThis" className="reader-share__popover-item">
 						<Gridicon icon="my-sites" size={ 24 } /> WordPress</PopoverMenuItem> : null }
 					<PopoverMenuItem action="twitter" className="reader-share__popover-item">
 						<SocialLogo icon="twitter" /> Twitter</PopoverMenuItem>
