@@ -45,6 +45,19 @@ User.prototype.initialize = function() {
 	this.fetching = false;
 	this.initialized = false;
 
+	if ( config.isEnabled( 'support-user' ) ) {
+		const supportUser = store.get( 'support_user' );
+
+		if ( supportUser && supportUser.user && supportUser.token ) {
+			debug( 'support user is active', supportUser );
+			wpcom.setSupportUserToken( supportUser.user, supportUser.token );
+
+			// Make sure that the user stored in localStorage matches the logged-in user
+			this.fetch();
+			return;
+		}
+	}
+
 	if ( config( 'wpcom_user_bootstrap' ) ) {
 		this.data = window.currentUser || false;
 
