@@ -309,8 +309,8 @@ function isFieldValidating( formState, fieldName ) {
 }
 
 function getInvalidFields( formState ) {
-	return filter( formState, function( field ) {
-		return isFieldInvalid( formState, field.name );
+	return filter( formState, function( field, fieldName ) {
+		return isFieldInvalid( formState, fieldName );
 	} );
 }
 function getErrorMessages( formState ) {
