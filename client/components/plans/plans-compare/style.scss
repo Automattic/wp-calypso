@@ -30,7 +30,34 @@
 }
 
 .plans-compare__section-navigation {
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( ">660px" ) {
 		display: none;
+	}
+}
+
+@include breakpoint( "<480px" ) {
+	.plans-compare__columns {
+		.feature-list .plan-header,
+		.plan-features {
+			display: none;
+		}
+
+		&.free {
+			.free_plan {
+				display: block;
+			}
+		}
+
+		&.premium {
+			.value_bundle {
+				display: block;
+			}
+		}
+
+		&.business {
+			.business-bundle {
+				display: block;
+			}
+		}
 	}
 }

@@ -252,19 +252,21 @@ var PlansCompare = React.createClass( {
 
 	sectionNavigationForMobile() {
 		return (
-			<SectionNav className="plans-compare__section-navigation">
-				<NavTabs>
-					<NavItem onClick={ this.setPlan.bind( this, 'free' ) }>
-						{ this.translate( 'Free' ) }
-					</NavItem>
-					<NavItem onClick={ this.setPlan.bind( this, 'premium' ) }>
-						{ this.translate( 'Premium' ) }
-					</NavItem>
-					<NavItem onClick={ this.setPlan.bind( this, 'business' ) }>
-						{ this.translate( 'Business' ) }
-					</NavItem>
-				</NavTabs>
-			</SectionNav>
+			<span className="plans-compare__section-navigation">
+				<SectionNav>
+					<NavTabs>
+						<NavItem onClick={ this.setPlan.bind( this, 'free' ) }>
+							{ this.translate( 'Free' ) }
+						</NavItem>
+						<NavItem onClick={ this.setPlan.bind( this, 'premium' ) }>
+							{ this.translate( 'Premium' ) }
+						</NavItem>
+						<NavItem onClick={ this.setPlan.bind( this, 'business' ) }>
+							{ this.translate( 'Business' ) }
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+			</span>
 		);
 	},
 
