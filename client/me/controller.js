@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
 import includes from 'lodash/includes';
 import page from 'page';
@@ -21,6 +20,7 @@ import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
+import { removeSidebar } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me',
 	devices = devicesFactory(),
@@ -332,8 +332,7 @@ export default {
 		titleActions.setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) );
 
 		if ( isWelcome ) {
-			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+			removeSidebar( context );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );

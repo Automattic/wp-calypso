@@ -18,7 +18,8 @@ var analytics = require( 'analytics' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	plansList = require( 'lib/plans-list' )(),
 	productsList = require( 'lib/products-list' )(),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
+	removeSidebar = require( 'lib/react-helpers' ).removeSidebar;
 
 module.exports = {
 
@@ -211,7 +212,6 @@ module.exports = {
 			receiptId = Number( context.params.receiptId );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
-		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
 
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 
@@ -226,7 +226,7 @@ module.exports = {
 			context.store
 		);
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		removeSidebar( context, { section: 'checkout-thank-you'} );
 	},
 
 	redirectIfNoSite: function( redirectTo ) {
