@@ -20,6 +20,7 @@ import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
+import LayoutLoggedOutDesign from 'layout/logged-out-design';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;
@@ -66,6 +67,20 @@ function makeElement( ThemesComponent, Head, store, props ) {
 			</Head>
 		</ReduxProvider>
 	);
+};
+
+// Where do we put this? It's client/server-agnostic, so not in client/controller,
+// which requires ReactDom... Maybe in lib/react-helpers?
+export function makeLoggedOutLayout( context, next ) {
+	const { store, primary, secondary, tertiary } = context;
+	context.layout = (
+		<ReduxProvider store={ store }>
+			<LayoutLoggedOutDesign primary={ primary }
+				secondary={ secondary }
+				tertiary={ tertiary } />
+		</ReduxProvider>
+	);
+	next();
 };
 
 export function singleSite( context, next ) {

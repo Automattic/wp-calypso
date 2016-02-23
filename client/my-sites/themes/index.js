@@ -4,7 +4,7 @@
 import config from 'config';
 import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, details } from './controller';
+import { singleSite, multiSite, loggedOut, details, makeLoggedOutLayout } from './controller';
 
 const user = userFactory();
 
@@ -18,13 +18,17 @@ const designRoutes = isLoggedIn
 		'/design/type/:tier/:site_id': [ singleSite, navigation, siteSelection ],
 	}
 	: {
-		'/design': [ loggedOut ],
-		'/design/type/:tier': [ loggedOut ]
+		'/design': [ loggedOut, makeLoggedOutLayout ],
+		'/design/type/:tier': [ loggedOut, makeLoggedOutLayout ]
 	};
 
-const themesRoutes = {
-	'/themes/:slug/:section?/:site_id?': [ details ]
-};
+const themesRoutes = isLoggedIn
+	? {
+		'/themes/:slug/:section?/:site_id?': [ details ]
+	}
+	: {
+		'/themes/:slug/:section?/:site_id?': [ details, makeLoggedOutLayout ]
+	};
 
 const routes = Object.assign( {},
 	config.isEnabled( 'manage/themes' ) ? designRoutes : {},

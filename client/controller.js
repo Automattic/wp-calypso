@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import ReactDom from 'react-dom';
-import startsWith from 'lodash/startsWith';
 
 /**
  * Internal dependencies
@@ -22,28 +21,37 @@ const debug = debugFactory( 'calypso:controller' );
  * `server/bundler/loader`. Sections are free to either ignore it, or use it
  * instead of directly calling `page` for linking routes and middlewares in
  * order to be also usable for server-side rendering (and isomorphic routing).
- * `clientRouter` then also renders React elements contained in `context.primary`.
+ * `clientRouter` then also renders the element tree contained in `context.layout`
+ * (or, if that is empty, in `context.primary`) to the respectively corresponding
+ * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...[ ...middlewares, renderElements ] );
+	page( route, ...[ ...middlewares, render ] );
 }
 
-export function renderElements( context ) {
+function render( context ) {
+	context.layout
+		? renderSingleTree( context )
+		: renderSeparateTrees( context );
+}
+
+function renderSingleTree( context ) {
+	ReactDom.render(
+		context.layout,
+		document.getElementById( 'wpcom' )
+	);
+}
+
+function renderSeparateTrees( context ) {
 	renderPrimary( context );
 	renderSecondary( context );
 }
 
 function renderPrimary( context ) {
-	const { path, primary } = context;
+	const { primary } = context;
 
-	// FIXME: temporary hack until we have a proper isomorphic, one tree
-	// routing solution (see https://github.com/Automattic/wp-calypso/pull/3302)
-	// Do NOT do this!
-	const sheetsDomElement = startsWith( path, '/themes' ) &&
-		document.getElementsByClassName( 'themes__sheet' )[0];
-
-	if ( primary && ! sheetsDomElement ) {
-		debug( 'Rendering primary', context, path, primary );
+	if ( primary ) {
+		debug( 'Rendering primary', primary );
 		ReactDom.render(
 			primary,
 			document.getElementById( 'primary' )
