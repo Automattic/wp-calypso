@@ -51,6 +51,7 @@
     "inherits": "2.0.1",
     "jade": "pugjs/jade#29784fd",
     "jed": "1.0.2",
+    "jquery": "1.11.3",
     "jshashes": "1.0.5",
     "json-loader": "0.5.4",
     "jstimezonedetect": "1.0.5",
