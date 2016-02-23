@@ -17,6 +17,7 @@ var activated = require( 'state/themes/actions' ).activated,
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
 	ChargebackDetails = require( './chargeback-details' ),
+	CheckoutThankYouHeader = require( './header' ),
 	DomainMappingDetails = require( './domain-mapping-details' ),
 	DomainRegistrationDetails = require( './domain-registration-details' ),
 	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
@@ -90,54 +91,6 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
-	thankYouHeader: function() {
-		if ( ! this.isDataLoaded() ) {
-			return <h1 className="checkout-thank-you__header">{ this.translate( 'Loading…' ) }</h1>;
-		}
-
-		if ( this.freeTrialWasPurchased() ) {
-			return (
-				<h1 className="checkout-thank-you__header">
-					{
-						this.translate( 'Your 14 day free trial starts today!' )
-					}
-				</h1>
-			);
-		}
-		return <h1 className="checkout-thank-you__header">{ this.translate( 'Thank you for your purchase!' ) }</h1>
-	},
-
-	thankYouSubHeader: function() {
-		var productName,
-			headerText;
-
-		if ( ! this.isDataLoaded() ) {
-			return <h2 className="checkout-thank-you__subheader">{ this.translate( 'Loading…' ) }</h2>;
-		}
-
-		productName = this.getSingleProductName();
-
-		if ( this.freeTrialWasPurchased() && productName ) {
-			headerText = this.translate( 'We hope you enjoy %(productName)s. What\'s next? Take it for a spin!', {
-				args: {
-					productName: productName
-				}
-			} );
-		} else if ( productName ) {
-			headerText = this.translate( 'You will receive an email confirmation shortly for your purchase of ' +
-				"%(productName)s. What's next?", {
-					args: {
-						productName: productName
-					}
-				}
-			);
-		} else {
-			headerText = this.translate( 'You will receive an email confirmation shortly. What\'s next?' );
-		}
-
-		return <h2 className="checkout-thank-you__subheader">{ headerText }</h2>
-	},
-
 	getSingleProductName() {
 		if ( this.props.receiptId && getPurchases( this.props ).length ) {
 			return getPurchases( this.props )[ 0 ].productNameShort;
@@ -154,11 +107,11 @@ var CheckoutThankYou = React.createClass( {
 		return (
 			<Main className={ classes }>
 				<Card>
-					<div className="checkout-thank-you__message">
-						<span className="checkout-thank-you__receipt-icon"></span>
-						{ this.thankYouHeader() }
-						{ this.thankYouSubHeader() }
-					</div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ this.isDataLoaded() }
+						isFreeTrial={ this.freeTrialWasPurchased() }
+						productName={ this.getSingleProductName() } />
+
 					{ this.productRelatedMessages() }
 				</Card>
 

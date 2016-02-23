@@ -1,0 +1,71 @@
+.checkout-thank-you-header {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding-bottom: 20px;
+}
+
+.checkout-thank-you-header__icon {
+	display: inline-block;
+	position: relative;
+
+	&::before {
+		@include noticon( '\f425', 70px );
+		color: lighten( $gray, 20% );
+	}
+
+	&::after {
+		@include noticon( '\f418', 18px );
+		background: #53b66c;
+		border-radius: 18px;
+		color: $white;
+		position: absolute;
+		top: 6px;
+		right: 15px;
+		width: 18px;
+		height: 18px;
+	}
+}
+
+.checkout-thank-you-header__heading {
+	font-size: 25px;
+	font-weight: 100;
+	margin: 0;
+}
+
+.checkout-thank-you-header__text {
+	font-size: 20px;
+	font-weight: 200;
+	opacity: 0.6;
+	margin: auto;
+	max-width: 50%;
+}
+
+.checkout-thank-you-header__heading,
+.checkout-thank-you-header__text {
+	color: $gray-dark;
+
+	@include breakpoint( "<660px" ) {
+		font-size: 17px;
+		max-width: 100%;
+	}
+}
+
+.checkout-thank-you {
+	&.is-placeholder {
+		.checkout-thank-you-header__heading,
+		.checkout-thank-you-header__text {
+			@include placeholder( 23% );
+
+			display: block;
+			margin: 0 auto;
+		}
+
+		.checkout-thank-you-header__heading {
+			width: 50%;
+		}
+
+		.checkout-thank-you-header__text {
+			margin-top: 15px;
+			width: 40%;
+		}
+	}
+}
