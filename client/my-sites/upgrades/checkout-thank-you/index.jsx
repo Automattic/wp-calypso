@@ -102,10 +102,14 @@ var CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<div className="checkout-thank-you__get-support">
-					<h3>{ this.translate( 'Questions? Need Help?' ) }</h3>
-					{ this.supportRelatedMessages() }
-				</div>
+				<Card className="checkout-thank-you__get-support">
+					<div className="checkout-thank-you__get-support-text">
+						<h3 className="checkout-thank-you__support_heading">
+							{ this.translate( 'Questions? Need Help?' ) }
+						</h3>
+						{ this.supportRelatedMessages() }
+					</div>
+				</Card>
 			</Main>
 		);
 	},
@@ -205,12 +209,16 @@ var CheckoutThankYou = React.createClass( {
 		var localeSlug = i18n.getLocaleSlug();
 
 		if ( ! this.isDataLoaded() ) {
-			return <p>{ this.translate( 'Loading…' ) }</p>;
+			return (
+				<p className="checkout-thank-you__support-related-messages">
+					{ this.translate( 'Loading…' ) }
+				</p>
+			);
 		}
 
 		if ( this.jetpackPlanWasPurchased() ) {
 			return (
-				<p>
+				<p className="checkout-thank-you__support-related-messages">
 					{ this.translate(
 						'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
 						'or {{contactLink}}contact us{{/contactLink}}.',
@@ -226,7 +234,7 @@ var CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-			<p>
+			<p className="checkout-thank-you__support-related-messages">
 				{ this.translate(
 					'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
 					'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +

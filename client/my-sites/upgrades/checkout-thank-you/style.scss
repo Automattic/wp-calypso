@@ -21,37 +21,26 @@
 }
 
 .checkout-thank-you__get-support {
-	border-top: 1px solid lighten( $gray, 20% );
-	border-bottom: 1px solid lighten( $gray, 20% );
-	color: darken($gray, 10%);
-	font-size: 14px;
-	padding: 20px 0;
+	color: $gray;
+	text-align: center;
+}
 
-	> h3 {
-		font-weight: 600;
-	}
-
-	> p {
-		margin-bottom: 0;
-	}
+.checkout-thank-you__get-support-text {
+	margin: 0 auto;
+	max-width: 660px;
+	text-align: left;
 
 	a {
 		border-bottom: 1px solid $blue-medium;
 	}
+}
 
-	@include breakpoint( ">660px" ) {
-		padding: 20px;
-		border-bottom: none;
+.checkout-thank-you__support_heading {
+	font-weight: 600;
+}
 
-		> h3 {
-			display: inline;
-			margin-right: 15px;
-		}
-
-		> p {
-			display: inline;
-		}
-	}
+.checkout-thank-you__support-related-messages {
+	margin: 0;
 }
 
 .checkout-thank-you__purchase-details-list {
