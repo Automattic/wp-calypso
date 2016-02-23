@@ -107,7 +107,9 @@ var CheckoutThankYou = React.createClass( {
 						<h3 className="checkout-thank-you__support_heading">
 							{ this.translate( 'Questions? Need Help?' ) }
 						</h3>
-						{ this.supportRelatedMessages() }
+						<p className="checkout-thank-you__support-related-messages">
+							{ this.supportRelatedMessages() }
+						</p>
 					</div>
 				</Card>
 			</Main>
@@ -209,46 +211,33 @@ var CheckoutThankYou = React.createClass( {
 		var localeSlug = i18n.getLocaleSlug();
 
 		if ( ! this.isDataLoaded() ) {
-			return (
-				<p className="checkout-thank-you__support-related-messages">
-					{ this.translate( 'Loading…' ) }
-				</p>
-			);
+			return this.translate( 'Loading…' );
 		}
 
 		if ( this.jetpackPlanWasPurchased() ) {
-			return (
-				<p className="checkout-thank-you__support-related-messages">
-					{ this.translate(
-						'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
-						'or {{contactLink}}contact us{{/contactLink}}.',
-						{
-							components: {
-								supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-								contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
-							}
-						}
-					) }
-				</p>
+			return this.translate(
+				'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
+				'or {{contactLink}}contact us{{/contactLink}}.',
+				{
+					components: {
+						supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
+						contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
+					}
+				}
 			);
 		}
 
-		return (
-			<p className="checkout-thank-you__support-related-messages">
-				{ this.translate(
-					'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
-					'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
-					'or {{contactLink}}contact us{{/contactLink}}.',
-					{
-						components: {
-							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' }
-								target="_blank" />,
-							forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
-							contactLink: <a href={ '/help/contact' } />
-						}
-					}
-				) }
-			</p>
+		return this.translate(
+			'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
+			'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
+			'or {{contactLink}}contact us{{/contactLink}}.',
+			{
+				components: {
+					supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' } target="_blank" />,
+					forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
+					contactLink: <a href={ '/help/contact' } />
+				}
+			}
 		);
 	}
 } );
