@@ -1,7 +1,7 @@
 {
   "name": "wpcom",
   "description": "Official JavaScript library for the WordPress.com REST API",
-  "version": "4.8.4",
+  "version": "4.8.5",
   "main": "dist/index.js",
   "author": "Automattic, Inc.",
   "contributors": [
@@ -26,7 +26,7 @@
     "debug": "^2.2.0",
     "json-loader": "^0.5.4",
     "qs": "^4.0.0",
-    "wpcom-xhr-request": "0.3.3"
+    "wpcom-xhr-request": "0.3.4"
   },
   "devDependencies": {
     "babel-core": "^5.8.23",

@@ -6,6 +6,7 @@ var Category = require('./site.category');
 var Tag = require('./site.tag');
 var Media = require('./site.media');
 var Comment = require('./site.comment');
+var SiteWordAds = require('./site.wordads');
 var Follow = require('./site.follow');
 var debug = require('debug')('wpcom:site');
 
@@ -13,7 +14,7 @@ var debug = require('debug')('wpcom:site');
  * Resources array
  * A list of endpoints with the same structure
  */
-var resources = ['categories', 'comments', 'follows', 'media', 'posts', 'shortcodes', 'embeds', ['pageTemplates', 'page-templates'], ['stats', 'stats'], ['statsClicks', 'stats/clicks'], ['statsComments', 'stats/comments'], ['statsCommentFollowers', 'stats/comment-followers'], ['statsCountryViews', 'stats/country-views'], ['statsFollowers', 'stats/followers'], ['statsPublicize', 'stats/publicize'], ['statsReferrers', 'stats/referrers'], ['statsSearchTerms', 'stats/search-terms'], ['statsStreak', 'stats/streak'], ['statsSummary', 'stats/summary'], ['statsTags', 'stats/tags'], ['statsTopAuthors', 'stats/top-authors'], ['statsTopPosts', 'stats/top-posts'], ['statsVideoPlays', 'stats/video-plays'], ['statsVisits', 'stats/visits'], 'tags', 'users'];
+var resources = ['categories', 'comments', 'follows', 'media', 'posts', 'shortcodes', 'embeds', ['pageTemplates', 'page-templates'], ['postTypesList', 'post-types'], ['stats', 'stats'], ['statsClicks', 'stats/clicks'], ['statsComments', 'stats/comments'], ['statsCommentFollowers', 'stats/comment-followers'], ['statsCountryViews', 'stats/country-views'], ['statsFollowers', 'stats/followers'], ['statsPublicize', 'stats/publicize'], ['statsReferrers', 'stats/referrers'], ['statsSearchTerms', 'stats/search-terms'], ['statsStreak', 'stats/streak'], ['statsSummary', 'stats/summary'], ['statsTags', 'stats/tags'], ['statsTopAuthors', 'stats/top-authors'], ['statsTopPosts', 'stats/top-posts'], ['statsVideoPlays', 'stats/video-plays'], ['statsVisits', 'stats/visits'], 'tags', 'users'];
 
 /**
  * Create a Site instance
@@ -206,6 +207,34 @@ Site.prototype.tag = function (slug) {
 };
 
 /**
+ * Get number of posts in the post type groups by post status
+ *
+ * *Example:*
+ *   // Get number post of pages
+ *    wpcom
+ *    .site( 'my-blog.wordpress.com' )
+ *    .postCounts( 'page', function( err, data ) {
+ *      // `counts` data object
+ *    } );
+ *
+ * @param {String} type - post type
+ * @param {Object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
+ */
+Site.prototype.postCounts = function (type, query, fn) {
+  if (type === undefined) type = 'post';
+
+  if ('function' === typeof query) {
+    fn = query;
+    query = {};
+  }
+
+  var path = '/sites/' + this._id + '/post-counts/' + type;
+  return this.wpcom.req.get(path, query, fn);
+};
+
+/**
  * Get a rendered shortcode for a site.
  *
  * Note: The current user must have publishing access.
@@ -324,6 +353,22 @@ Site.prototype.statsPostViews = function (postId, query, fn) {
   }
 
   return this.wpcom.req.get(path, query, fn);
+};
+
+/**
+ * Return a `SiteWordAds` instance.
+ *
+ * *Example:*
+ *    // Create a SiteWordAds instance
+ *
+ *    var wordAds = wpcom
+ *      .site( 'my-blog.wordpress.com' )
+ *      .wordAds();
+ *
+ * @return {SiteWordAds} SiteWordAds instance
+ */
+Site.prototype.wordAds = function () {
+  return new SiteWordAds(this._id, this.wpcom);
 };
 
 /**
