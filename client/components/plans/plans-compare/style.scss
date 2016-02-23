@@ -11,10 +11,6 @@
 
 	&.feature-list {
 		text-align: left;
-
-		@include breakpoint( "<660px" ) {
-			display: none;
-		}
 	}
 }
 
