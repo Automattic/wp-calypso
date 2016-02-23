@@ -10,6 +10,7 @@ import CountriesList from 'lib/countries-list';
 import { fetchStoredCards, fetchUserPurchases } from 'lib/upgrades/actions';
 import observe from 'lib/mixins/data-observe';
 import PurchasesStore from 'lib/purchases/store';
+import { shouldFetchPurchases } from 'lib/purchases';
 import StoreConnection from 'components/data/store-connection';
 import StoredCardsStore from 'lib/purchases/stored-cards/store';
 import userFactory from 'lib/user';
@@ -53,7 +54,9 @@ const EditCardDetailsData = React.createClass( {
 
 	componentWillMount() {
 		fetchStoredCards();
-		fetchUserPurchases( user.get().ID );
+		if ( shouldFetchPurchases( PurchasesStore.get() ) ) {
+			fetchUserPurchases( user.get().ID );
+		}
 	},
 
 	render() {
