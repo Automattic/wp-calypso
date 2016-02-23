@@ -121,7 +121,11 @@ var TransactionStepsMixin = {
 						success: false
 					} );
 				} else if ( step.data ) {
-					cartValue.products.map( adTracking.recordPurchase );
+					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
+					// zero-value cost and would thus lead to a wrong computation of conversions
+					if ( ! cartItems.hasFreeTrial( cartValue ) ) {
+						cartValue.products.map( adTracking.recordPurchase );
+					}
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
 						coupon_code: cartValue.coupon,
