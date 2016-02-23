@@ -99,4 +99,12 @@ module.exports = {
 		},
 		defaultVariation: 'allPlans'
 	},
+	domainSearchResultsCount: {
+		datestamp: '20160223',
+		variations: {
+			original: 50,
+			moreResults: 50
+		},
+		defaultVariation: 'original'
+	},
 };
