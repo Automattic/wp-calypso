@@ -4,6 +4,8 @@
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
+import config from 'config';
+
 /**
  * Internal dependencies
  */
@@ -34,7 +36,7 @@ module.exports = {
 		analytics.pageView.record( basePath, 'Help > Contact' );
 
 		ReactDom.render(
-			<ContactComponent />,
+			<ContactComponent clientSlug={ config( 'client_slug' ) } />,
 			document.getElementById( 'primary' )
 		);
 	}

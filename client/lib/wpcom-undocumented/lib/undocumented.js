@@ -1824,12 +1824,12 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, fn ) {
+Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, client, fn ) {
 	debug( 'submitKayakoTicket' );
 
 	this.wpcom.req.post( {
 		path: '/help/tickets/kayako/new',
-		body: { subject, message, locale }
+		body: { subject, message, locale, client }
 	}, fn );
 };
 
@@ -1839,17 +1839,18 @@ Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, 
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.getOlarkConfiguration = function( fn ) {
+Undocumented.prototype.getOlarkConfiguration = function( client, fn ) {
 	this.wpcom.req.get( {
 		apiVersion: '1.1',
-		path: '/help/olark/mine'
+		path: '/help/olark/mine',
+		body: { client }
 	}, fn );
 };
 
-Undocumented.prototype.submitSupportForumsTopic = function( subject, message, fn ) {
+Undocumented.prototype.submitSupportForumsTopic = function( subject, message, client, fn ) {
 	this.wpcom.req.post( {
 		path: '/help/forums/support/topics/new',
-		body: { subject, message }
+		body: { subject, message, client }
 	}, fn );
 };
 
