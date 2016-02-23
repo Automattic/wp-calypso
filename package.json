@@ -88,6 +88,7 @@
     "redux": "3.0.4",
     "redux-analytics": "0.3.0",
     "redux-thunk": "1.0.0",
+    "reselect": "2.0.3",
     "rtlcss": "1.6.1",
     "sanitize-html": "1.11.1",
     "source-map": "0.1.39",

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
@@ -31,41 +30,18 @@ import { DEFAULT_POST_QUERY } from './constants';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
+export function items( state = [], action ) {
 	switch ( action.type ) {
 		case POSTS_RECEIVE:
-			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
-}
-
-/**
- * Returns the updated site posts state after an action has been dispatched.
- * The state reflects a mapping of site ID, post ID pairing to global post ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function sitePosts( state = {}, action ) {
-	switch ( action.type ) {
-		case POSTS_RECEIVE:
-			state = Object.assign( {}, state );
-			action.posts.forEach( ( post ) => {
-				if ( ! state[ post.site_ID ] ) {
-					state[ post.site_ID ] = {};
-				}
-
-				state[ post.site_ID ][ post.ID ] = post.global_ID;
+			const globalIds = action.posts.map( post => post.global_ID );
+			const withoutReceivedPosts = state.filter( ( post ) => {
+				return globalIds.indexOf( post.global_ID ) === - 1;
 			} );
-			return state;
+			return [ ...withoutReceivedPosts, ...action.posts ];
 		case SERIALIZE:
+			return [];
 		case DESERIALIZE:
-			return {};
+			return [];
 	}
 	return state;
 }
@@ -165,7 +141,6 @@ export function queriesLastPage( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	sitePosts,
 	siteRequests,
 	queries,
 	queriesLastPage

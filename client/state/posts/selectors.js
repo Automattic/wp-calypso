@@ -2,6 +2,8 @@
  * External dependencies
  */
 import range from 'lodash/range';
+import keyBy from 'lodash/keyBy';
+import { createSelector } from 'reselect';
 
 /**
  * Internal dependencies
@@ -13,6 +15,16 @@ import {
 import { DEFAULT_POST_QUERY } from './constants';
 
 /**
+ * Returns all posts indexed by globalId
+ *
+ * @param  {Object} state    Global state tree
+ * @return {Object}          Posts object
+ */
+export const getPostsByGlobalId = createSelector( getPosts, ( posts ) => {
+	return keyBy( posts, 'global_ID' );
+} );
+
+/**
  * Returns a post object by its global ID.
  *
  * @param  {Object} state    Global state tree
@@ -20,8 +32,38 @@ import { DEFAULT_POST_QUERY } from './constants';
  * @return {Object}          Post object
  */
 export function getPost( state, globalId ) {
-	return state.posts.items[ globalId ];
+	return getPostsByGlobalId( state )[ globalId ];
 }
+
+/**
+ * Returns an array of all posts.
+ *
+ * @param  {Object} state    Global state tree
+ * @return {Array}           Posts array
+ */
+export function getPosts( state ) {
+	return state.posts.items;
+}
+
+/**
+ * Returns a mapping of site ID, post ID pairing to global post ID.
+ *
+ * @param state
+ */
+export const getSitePosts = createSelector(
+	getPosts,
+	( posts ) => {
+		const sitePosts = {};
+		posts.forEach( ( post ) => {
+			if ( ! sitePosts[ post.site_ID ] ) {
+				sitePosts[ post.site_ID ] = {};
+			}
+
+			sitePosts[ post.site_ID ][ post.ID ] = post.global_ID;
+		} );
+		return sitePosts;
+	}
+);
 
 /**
  * Returns a post object by site ID, post ID pair.
@@ -32,7 +74,7 @@ export function getPost( state, globalId ) {
  * @return {?Object}        Post object
  */
 export function getSitePost( state, siteId, postId ) {
-	const { sitePosts } = state.posts;
+	const sitePosts = getSitePosts( state );
 	if ( ! sitePosts[ siteId ] || ! sitePosts[ siteId ][ postId ] ) {
 		return null;
 	}

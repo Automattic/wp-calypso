@@ -15,7 +15,8 @@ import {
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePost
+	isRequestingSitePost,
+	getPostsByGlobalId
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -23,9 +24,9 @@ describe( 'selectors', () => {
 		it( 'should return the object for the post global ID', () => {
 			const post = getPost( {
 				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					}
+					items: [
+						{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					]
 				}
 			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
 
@@ -37,7 +38,7 @@ describe( 'selectors', () => {
 		it( 'should return null if the site has not received any posts', () => {
 			const post = getSitePost( {
 				posts: {
-					sitePosts: {}
+					items: []
 				}
 			}, 2916284, 841 );
 
@@ -47,9 +48,12 @@ describe( 'selectors', () => {
 		it( 'should return null if the post is not known for the site', () => {
 			const post = getSitePost( {
 				posts: {
-					sitePosts: {
-						2916284: {}
-					}
+					items: [
+						{
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							site_ID: 2916284
+						}
+					]
 				}
 			}, 2916284, 841 );
 
@@ -59,14 +63,9 @@ describe( 'selectors', () => {
 		it( 'should return the object for the post site ID, post ID pair', () => {
 			const post = getSitePost( {
 				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					},
-					sitePosts: {
-						2916284: {
-							841: '3d097cb7c5473c169bba0eb8e3c6cb64'
-						}
-					}
+					items: [
+						{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					]
 				}
 			}, 2916284, 841 );
 
@@ -362,6 +361,25 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( '#getPostsByGlobalId()', () => {
+		it( 'should index by global id', () => {
+			const postsByGlobalId = getPostsByGlobalId( {
+				posts: {
+					items: [
+						{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+						{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
+					]
+				}
+			} );
+			expect( postsByGlobalId[ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ).to.eql(
+				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			);
+			expect( postsByGlobalId['6c831c187ffef321eb43a67761a525a3'] ).to.eql(
+				{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
+			);
 		} );
 	} );
 } );
