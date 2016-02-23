@@ -279,7 +279,7 @@ function getFieldsValidating( formState ) {
 }
 
 function isInitialized( field ) {
-	return field.value !== null;
+	return field && field.value !== null;
 }
 
 function isEveryFieldInitialized( formState ) {
