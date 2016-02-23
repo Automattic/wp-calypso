@@ -83,6 +83,7 @@ function splitTemplate( path, section ) {
 
 	result = [
 		'page( ' + pathRegex + ', function( context, next ) {',
+		'	context.sectionRouteMatched = true;',
 		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		layoutFocus.next();',
