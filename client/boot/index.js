@@ -163,8 +163,14 @@ function reduxStoreReady( reduxStore ) {
 
 	bindWpLocaleState( reduxStore );
 
+	// Is a support user token active?
 	if ( config.isEnabled( 'support-user' ) ) {
 		require( 'lib/user/support-user-interop' )( reduxStore );
+		const supportUser = store.get( 'support_user' );
+		const { supportUserTokenSet } = require( 'state/support/actions' );
+		if ( supportUser && supportUser.user && supportUser.token ) {
+			reduxStore.dispatch( supportUserTokenSet( supportUser.user, supportUser.token ) );
+		}
 	}
 
 	Layout = require( 'layout' );

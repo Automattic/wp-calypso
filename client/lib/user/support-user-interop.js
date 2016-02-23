@@ -4,9 +4,13 @@
 import wpcom from 'lib/wp';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
+import store from 'store';
+import debugModule from 'debug';
 
 import { supportUserRestore } from 'state/support/actions';
 import { getSupportUser, getSupportToken } from 'state/support/selectors';
+
+const debug = debugModule( 'calypso:support-user' );
 
 /**
  * Connects the Redux store and the low-level support user functions
@@ -25,6 +29,16 @@ export default function( reduxStore ) {
 	const onTokenChange = () => {
 		user.fetch();
 		userSettings.fetchSettings();
+
+		user.once( 'change', () => {
+			const state = reduxStore.getState();
+			store.set( 'support_user', {
+				user: getSupportUser( state ),
+				token: getSupportToken( state )
+			} );
+			debug( 'Restarting Calypso' );
+			window.location.reload();
+		} )
 	}
 
 	// Called when an API call fails due to a token error
