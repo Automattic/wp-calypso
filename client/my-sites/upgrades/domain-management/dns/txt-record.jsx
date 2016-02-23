@@ -39,9 +39,10 @@ const TxtRecord = React.createClass( {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record TXT' } ) }</FormLabel>
+					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
+						placeholder={ this.translate( 'Enter subdomain (optional)', { context: 'Placeholder shown when entering the optional subdomain part of a new DNS record' } ) }
 						isError={ ! isNameValid }
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.name }
