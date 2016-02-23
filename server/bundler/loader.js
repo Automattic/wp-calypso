@@ -12,7 +12,8 @@ function getSectionsModule( sections ) {
 			"\tlayoutFocus = require( 'lib/layout-focus' ),",
 			"\tReact = require( 'react' ),",
 			"\tLoadingError = require( 'layout/error' ),",
-			"\tclasses = require( 'component-classes' );",
+			"\tclasses = require( 'component-classes' ),",
+			"\tcontroller = require( 'controller' );",
 			'\n',
 			'var _loadedSections = {};'
 		].join( '\n' );
@@ -84,7 +85,7 @@ function splitTemplate( path, module, chunkName ) {
 		'		}',
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
-		'			require( ' + JSON.stringify( module ) + ' )();',
+		'			require( ' + JSON.stringify( module ) + ' )( controller.clientRouter );',
 		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
 		'		}',
 		'		layoutFocus.next();',
@@ -126,4 +127,3 @@ module.exports = function( content ) {
 
 	return getSectionsModule( sections );
 };
-
