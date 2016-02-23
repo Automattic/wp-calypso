@@ -11,12 +11,6 @@
 	@include breakpoint( "<660px" ) {
 		background: transparent;
 		padding: 14px;
-
-		.card {
-			background: none;
-			box-shadow: none;
-			padding: 0;
-		}
 	}
 }
 
