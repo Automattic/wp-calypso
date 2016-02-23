@@ -140,9 +140,11 @@ var FeedSubscriptionStore = {
 			isLastPage = true;
 		}
 
+		subscriptions.list = subscriptions.list.asMutable();
 		forEach( subscriptionsWithState, function( subscription ) {
 			addSubscription( subscription.toJS(), false );
 		} );
+		subscriptions.list = subscriptions.list.asImmutable();
 
 		// Set the current page
 		currentPage = data.page;
