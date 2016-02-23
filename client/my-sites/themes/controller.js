@@ -20,6 +20,7 @@ import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from './client-side-effects';
 
@@ -115,6 +116,7 @@ export function loggedOut( context, next ) {
 
 function getDetailsProps( context ) {
 	const { slug, section } = context.params;
+	const themeName = ( getThemeDetails( context.store.getState(), slug ) || false ).name;
 	const user = getCurrentUser( context.store.getState() );
 	const basePath = '/themes/:slug';
 	const analyticsPageTitle = 'Themes > Details Sheet';
@@ -127,7 +129,10 @@ function getDetailsProps( context ) {
 		themeSlug: slug,
 		contentSection: section,
 		title: buildTitle(
-			i18n.translate( 'Theme Details', { textOnly: true } )
+			i18n.translate( '%(theme)s Theme', {
+				args: { theme: themeName },
+				textOnly: true
+			} )
 		),
 		isLoggedIn: !! user,
 		runClientAnalytics
