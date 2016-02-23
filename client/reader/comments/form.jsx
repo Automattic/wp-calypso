@@ -56,8 +56,13 @@ var PostCommentForm = React.createClass( {
 		this.updateCommentText();
 	},
 
-	handleFocus: function() {
+	handleFocus: function( event ) {
 		this.toggleButtonVisibility( true );
+
+		// Prevent Android devices obscuring the input with the on-screen keyboard
+		if ( Element.prototype.scrollIntoViewIfNeeded ) {
+			event.target.scrollIntoViewIfNeeded();
+		}
 	},
 
 	handleBlur: function() {
