@@ -443,7 +443,7 @@ normalizePost.createContentWithLinebreakElementsOnly = function createContentWit
 		return;
 	}
 
-	let betterExcerpt = striptags( post.content, [ 'p', 'br', 'noscript' ] );
+	let betterExcerpt = striptags( post.content, [ 'p', 'br' ] );
 
 	// Spin up a new DOM for the linebreak markup
 	const dom = document.createElement( 'div' );

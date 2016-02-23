@@ -31,7 +31,6 @@ const fastPostNormalizationRules = [
 		postNormalizer.pickPrimaryTag,
 		postNormalizer.safeImageProperties( READER_CONTENT_WIDTH ),
 		postNormalizer.firstPassCanonicalImage,
-		postNormalizer.createContentWithLinebreakElementsOnly,
 		postNormalizer.withContentDOM( [
 			postNormalizer.content.removeStyles,
 			postNormalizer.content.safeContentImages( READER_CONTENT_WIDTH ),
@@ -43,6 +42,7 @@ const fastPostNormalizationRules = [
 			postNormalizer.content.detectPolls,
 			postNormalizer.content.wordCountAndReadingTime
 		] ),
+		postNormalizer.createContentWithLinebreakElementsOnly,
 		classifyPost
 	],
 	slowPostNormalizationRules = [
