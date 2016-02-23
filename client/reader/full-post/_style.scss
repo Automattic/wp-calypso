@@ -6,11 +6,6 @@
 	max-width: 700px;
 	margin: 0 auto;
 
-	@include breakpoint( ">660px" ) {
-		padding-top: calc( 56px + 6vh );
-		padding-bottom: calc( 48px + 6vh );
-	}
-
 	&.is-placeholder {
 		.reader__post-options,
 		.reader__post-time,
@@ -43,30 +38,35 @@
 	}
 
 	.full-post__header {
+		margin: 0 -24px;
 		position: relative;
-	}
 
-	.site {
-		.site__content {
-			padding: 0;
-			border-radius: 0;
-			text-decoration: none;
-			margin-right: 80px;
+		.follow-button {
+			position: absolute;
+				top: 16px;
+				right: 0;
 
-			@include breakpoint( ">480px" ) {
-				margin-right: 120px;
+			@include breakpoint( "<480px" ) {
+				.follow-button__label {
+					display: none;
+				}
 			}
 		}
-	}
 
-	.follow-button {
-		position: absolute;
-			top: 0;
-			right: 0;
+		.site {
+			.site__content {
+				padding: 16px 24px;
+				border-radius: 0;
+				text-decoration: none;
+				margin-right: 80px;
 
-		@include breakpoint( "<480px" ) {
-			.follow-button__label {
-				display: none;
+				@include breakpoint( ">480px" ) {
+					margin-right: 120px;
+				}
+				
+				&:hover {
+					background: lighten( $gray, 30 );
+				}
 			}
 		}
 	}

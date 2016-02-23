@@ -319,6 +319,10 @@ var Post = React.createClass( {
 				'has-featured-image': hasFeaturedImage,
 				'hide-xpost': this.props.xPostedTo
 			}, this.additionalClasses ),
+			headerClasses = {
+				"reader__post-header": true,
+				"has-follow-button": this.props.showFollowInHeader
+			},
 			primaryTag = post.primary_tag,
 			tagClasses = {
 				'reader__post-tag': true,
@@ -366,6 +370,8 @@ var Post = React.createClass( {
 
 		tagClasses = classnames( tagClasses );
 
+		headerClasses = classnames( headerClasses );
+
 		if ( isDiscoverPost ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
 		}
@@ -387,7 +393,7 @@ var Post = React.createClass( {
 
 				<PostErrors post={ post } />
 
-				<div className="reader__post-header">
+				<div className={ headerClasses }>
 					{ this.props.showFollowInHeader ? <FollowButton siteUrl={ post.site_URL } /> : null }
 					<Site site={ site }
 						href={ post.site_URL }
