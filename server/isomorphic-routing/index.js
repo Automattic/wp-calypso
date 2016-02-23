@@ -1,5 +1,5 @@
 /**
- * External dependecies
+ * External dependencies
  */
 var React = require( 'react' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
@@ -7,10 +7,11 @@ var React = require( 'react' ),
 	isEmpty = require( 'lodash/lang/isEmpty' );
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 var config = require( 'config' ),
 	sections = require( '../../client/sections' ),
+	i18n = require( 'lib/mixins/i18n' ),
 	LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
 	render = require( 'render' ).render,
 	createReduxStore = require( 'state' ).createReduxStore,
@@ -38,6 +39,7 @@ module.exports = function( expressApp, getDefaultContext ) {
 			let store = createReduxStore();
 
 			function setUpRoute( req, res, next ) {
+				i18n.initialize();
 				context.isServerSide = true;
 				context.isLoggedIn = req.cookies.wordpress_logged_in;
 
