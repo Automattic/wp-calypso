@@ -42,7 +42,7 @@ function receiveRecommendations( data ) {
 		recommendations = recommendations.union( fromJS( pruned ) );
 
 		if ( recommendations !== previousRecs ) {
-			if ( recommendations.length >= MAX_RECOMMENDATIONS ) {
+			if ( recommendations.count() >= MAX_RECOMMENDATIONS ) {
 				store.setIsLastPage( true );
 			}
 			page++;
