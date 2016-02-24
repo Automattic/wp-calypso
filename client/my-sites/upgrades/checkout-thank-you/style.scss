@@ -91,7 +91,7 @@
 	&::before {
 		@include noticon( '\f803' );
 
-		background: $blue-dark;
+		background: darken( $gray, 30%);
 		border-radius: 25px;
 		color: $white;
 		font-size: 30px;
