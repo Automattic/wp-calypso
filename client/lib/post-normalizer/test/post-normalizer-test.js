@@ -31,6 +31,7 @@ let normalizer = require( '../' ),
 			normalizer.content.detectEmbeds,
 			normalizer.content.wordCountAndReadingTime
 		] ),
+		normalizer.createContentWithLinebreakElementsOnly,
 		normalizer.waitForImagesToLoad,
 		normalizer.pickCanonicalImage,
 		normalizer.keepValidImages( 1, 1 )
@@ -866,6 +867,20 @@ describe( 'post-normalizer', function() {
 					normalizer.withContentDOM( [ normalizer.content.detectPolls ] )
 				], function( err, normalized ) {
 					assert.include( normalized.content, '<p><a rel="external" target="_blank" href="http://polldaddy.com/poll/8980420">Take our poll</a></p>' );
+					done( err );
+				}
+			);
+		} );
+		it( 'prepares a version of the post content with linebreak elements only', function( done ) {
+			normalizer(
+				{
+					content: '<br><p class="wp-caption-text">caption</p><p><img src="http://example.com/image.jpg"></p>'
+					+ '<p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p><p></p>',
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.createContentWithLinebreakElementsOnly ] )
+				], function( err, normalized ) {
+					assert.strictEqual( normalized.content_with_linebreak_elements_only, '<p>Giraffes are <br>great</p><p></p>' );
 					done( err );
 				}
 			);

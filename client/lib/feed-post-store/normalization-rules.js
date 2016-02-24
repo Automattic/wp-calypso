@@ -1,5 +1,5 @@
 /**
- * External Dependecies
+ * External Dependencies
  */
 const find = require( 'lodash/find' ),
 	forEach = require( 'lodash/forEach' ),
@@ -42,6 +42,7 @@ const fastPostNormalizationRules = [
 			postNormalizer.content.detectPolls,
 			postNormalizer.content.wordCountAndReadingTime
 		] ),
+		postNormalizer.createContentWithLinebreakElementsOnly,
 		classifyPost
 	],
 	slowPostNormalizationRules = [

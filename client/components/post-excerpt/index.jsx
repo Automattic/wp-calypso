@@ -1,31 +1,29 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
 
-var PostExcerpt = React.createClass( {
+const PostExcerpt = React.createClass( {
 
-	render: function() {
-		var text = this.props.text,
-			textClass = [ 'post-excerpt__text' ];
+	propTypes: {
+		content: React.PropTypes.string.isRequired
+	},
 
-		if ( ! text ) {
+	render() {
+		if ( ! this.props.content ) {
 			return null;
 		}
 
-		if ( text.length > 80 ) {
-			textClass.push( 'is-long' );
-		}
-
-		textClass = textClass.join( ' ' );
+		const classes = classnames( {
+			'post-excerpt': true,
+			'is-long': ( this.props.content.length > 80 )
+		} );
 
 		return (
-			<div className={ classnames( this.props.className, 'post-excerpt' ) }>
-				<p className={ textClass }>{ text }</p>
-			</div>
+			<div className={ classes } dangerouslySetInnerHTML={{ __html: this.props.content }}></div> //eslint-disable-line react/no-danger
 		);
 	}
 } );
 
-module.exports = PostExcerpt;
+export default PostExcerpt;

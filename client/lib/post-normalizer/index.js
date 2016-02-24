@@ -22,8 +22,10 @@ var assign = require( 'lodash/assign' ),
 	uniqBy = require( 'lodash/uniqBy' ),
 	url = require( 'url' );
 
+import striptags from 'striptags';
+
 /**
- * Internal depedencies
+ * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
 import formatting from 'lib/formatting';
@@ -434,6 +436,35 @@ normalizePost.pickCanonicalImage = function pickCanonicalImage( post, callback )
 	}
 	callback();
 };
+
+normalizePost.createContentWithLinebreakElementsOnly = function createContentWithLinebreakElementsOnly( post, callback ) {
+	if ( ! post || ! post.content ) {
+		callback();
+		return;
+	}
+
+	let betterExcerpt = striptags( post.content, [ 'p', 'br' ] );
+
+	// Spin up a new DOM for the linebreak markup
+	const dom = document.createElement( 'div' );
+	dom.innerHTML = betterExcerpt;
+
+	// Strip any empty p and br elements from the beginning of the content
+	// Also ditch any photo captions with the wp-caption-text class
+	let elements = dom.querySelectorAll( 'p, br' );
+	forEach( elements, function( element ) {
+		if ( element.innerHTML.length > 0 && ! element.className.includes( 'wp-caption-text' ) ) {
+			return false;
+		}
+
+		element.parentNode && element.parentNode.removeChild( element );
+	} );
+
+	post.content_with_linebreak_elements_only = dom.innerHTML;
+	dom.innerHTML = '';
+
+	callback();
+},
 
 normalizePost.withContentDOM = function( transforms ) {
 	return function withContentDOM( post, callback ) {
