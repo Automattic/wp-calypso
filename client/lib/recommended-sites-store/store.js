@@ -5,13 +5,19 @@ import pick from 'lodash/pick';
 import Emitter from 'lib/mixins/emitter';
 import { ACTION_RECEIVE_SITE_RECOMMENDATIONS, ACTION_RECEIVE_SITE_RECOMMENDATIONS_ERROR } from './constants';
 
-var recommendations = OrderedSet(),
+let recommendations = OrderedSet(),
 	page = 1,
 	isLastPage = false;
 
-const MAX_RECOMMENDATIONS = 100;
-
 const store = {
+	_reset() {
+		recommendations = OrderedSet();
+		page = 1;
+		isLastPage = false;
+	},
+	maxRecommendations() {
+		return 100;
+	},
 	get() {
 		return recommendations.toJS();
 	},
@@ -42,7 +48,7 @@ function receiveRecommendations( data ) {
 		recommendations = recommendations.union( fromJS( pruned ) );
 
 		if ( recommendations !== previousRecs ) {
-			if ( recommendations.length >= MAX_RECOMMENDATIONS ) {
+			if ( recommendations.count() >= store.maxRecommendations() ) {
 				store.setIsLastPage( true );
 			}
 			page++;
