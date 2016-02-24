@@ -25,6 +25,8 @@ const EditorTitle = React.createClass( {
 	displayName: 'EditorTitle',
 
 	propTypes: {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
 		setTitle: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
@@ -40,6 +42,8 @@ const EditorTitle = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			siteId: 0,
+			postId: null,
 			isNew: true,
 			onChange: () => {},
 			setTitle: () => {},
