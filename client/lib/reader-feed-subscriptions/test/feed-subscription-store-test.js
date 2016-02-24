@@ -161,7 +161,7 @@ describe( 'feed-subscription-store', function() {
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
 		} ) );
-		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 2 );
+		expect( FeedSubscriptionStore.getTotalSubscriptions() ).to.eq( 505 );
 
 		// Receiving second page (subscriptions should be merged)
 		Dispatcher.handleViewAction( {

@@ -142,12 +142,16 @@ var FeedSubscriptionStore = {
 
 		subscriptions.list = subscriptions.list.asMutable();
 		forEach( subscriptionsWithState, function( subscription ) {
-			addSubscription( subscription.toJS(), false );
+			_acceptSubscription( subscription, false );
 		} );
 		subscriptions.list = subscriptions.list.asImmutable();
 
 		// Set the current page
 		currentPage = data.page;
+
+		if ( currentPage === 1 ) {
+			totalSubscriptions = data.total_subscriptions;
+		}
 
 		FeedSubscriptionStore.emit( 'change' );
 	},
@@ -231,6 +235,24 @@ var FeedSubscriptionStore = {
 	}
 };
 
+function _acceptSubscription( subscription, addToTop = true ) {
+	let subs = subscriptions.list;
+	const existingIndex = subs.findIndex( value => value.get( 'URL' ) === subscription.get( 'URL' ) );
+	if ( existingIndex !== -1 ) {
+		// update the existing subscription by merging together
+		subs = subs.mergeIn( [ existingIndex ], subscription );
+		if ( subs !== subscriptions.list ) {
+			subscriptions.list = subs;
+			return true;
+		}
+		return false;
+	}
+
+	// new subscription
+	subscriptions.list = subs[ addToTop ? 'unshift' : 'push' ]( subscription );
+	return true;
+}
+
 function addSubscription( subscription, addToTop = true ) {
 	if ( ! subscription || ! subscription.URL ) {
 		return;
@@ -249,11 +271,7 @@ function addSubscription( subscription, addToTop = true ) {
 	// Otherwise, create a new subscription
 	subscription.URL = preparedSiteUrl;
 	const newSubscription = subscriptionTemplate.merge( subscription );
-	if ( addToTop ) {
-		subscriptions.list = subscriptions.list.unshift( newSubscription );
-	} else {
-		subscriptions.list = subscriptions.list.push( newSubscription );
-	}
+	_acceptSubscription( newSubscription, addToTop );
 	subscriptions.count++;
 	totalSubscriptions++;
 
@@ -271,7 +289,7 @@ function updateSubscription( url, newSubscriptionInfo ) {
 		return item.get( 'URL' ) === preparedSiteUrl;
 	} );
 
-	if ( isNaN( subscriptionIndex ) ) {
+	if ( subscriptionIndex === -1 ) {
 		return;
 	}
 
