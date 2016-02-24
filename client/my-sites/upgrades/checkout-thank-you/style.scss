@@ -91,15 +91,6 @@
 	}
 }
 
-.checkout-thank-you__purchase-detail-description {
-	font-size: 12px;
-	opacity: 0.7;
-
-	@include breakpoint( ">660px" ) {
-		margin: 0 50px 10px 50px;
-	}
-}
-
 .checkout-thank-you__purchase-detail-text {
 	&::before {
 		@include noticon( '\f803' );
@@ -114,6 +105,7 @@
 
 	@include breakpoint( ">660px" ) {
 		&::before {
+			float: right;
 			font-size: 50px;
 			border-radius: 50px;
 		}
@@ -121,7 +113,13 @@
 }
 
 .checkout-thank-you__purchase-detail-title {
+	clear: none;
+	font-size: 16px;
 	font-weight: 600;
+}
+
+.checkout-thank-you__purchase-detail-description {
+	font-size: 13px;
 }
 
 .checkout-thank-you__purchase-detail.is-compact {
