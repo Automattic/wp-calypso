@@ -24,30 +24,30 @@
 }
 
 .importer__service-icon {
-	width: 48px;
-	height: 48px;
+	box-sizing: border-box;
+	float: left;
+	width: 40px;
+	height: 40px;
 	padding: 2px;
-
-	position: absolute;
-		left: 20px;
-		top: 18px;
+	margin-right: 16px;
 
 	background-color: $gray-dark;
-	stroke: $white;
-	stroke-width: 0.1;
 	fill: $white;
-	border-radius: 5px;
+	border-radius: 4px;
 
 	&.wordpress {
 		background-color: $blue-wordpress;
 	}
+	
+	@include breakpoint(">960px") {
+		width: 56px;
+		height: 56px;
+		padding: 4px;
+	}
 }
 
 .importer__service-info {
-	padding-top: 70px;
-
 	@include breakpoint(">480px") {
-		padding-top: inherit;
 		margin-left: 60px;
 	}
 }
