@@ -64,14 +64,14 @@ function plugin( editor ) {
 			this._super();
 			this.remove();
 			window.removeEventListener( 'scroll', this.throttledReposition );
-			editor.off( 'click touchstart focusout', this.boundHideIfNotMarked );
+			editor.off( 'SpellcheckEnd click touchstart focusout', this.boundHideIfNotMarked );
 		},
 
 		postRender() {
 			this._super();
 			this.reposition();
 			window.addEventListener( 'scroll', this.throttledReposition );
-			editor.on( 'click touchstart focusout', this.boundHideIfNotMarked );
+			editor.on( 'SpellcheckEnd click touchstart focusout', this.boundHideIfNotMarked );
 		},
 
 		reposition() {
