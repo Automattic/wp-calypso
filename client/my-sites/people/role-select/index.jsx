@@ -20,7 +20,7 @@ import sitesList from 'lib/sites-list';
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:role-select' );
+const debug = debugFactory( 'calypso:my-sites:people:role-select' );
 const sites = sitesList();
 
 export default React.createClass( {
@@ -42,6 +42,8 @@ export default React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		const siteId = nextProps.siteId || this.props.siteId;
+		this.fetchRoles( siteId );
 		this.refreshRoles( nextProps );
 	},
 
@@ -77,16 +79,18 @@ export default React.createClass( {
 		}
 	},
 
-	fetchRoles() {
-		const siteId = this.props.siteId || null;
+	fetchRoles( siteId = this.props.siteId ) {
 		if ( ! siteId ) {
+			debug( 'siteId not set' );
 			return;
 		}
 
-		if ( RolesStore.getRoles( siteId ).length ) {
+		if ( Object.keys( RolesStore.getRoles( siteId ) ).length ) {
 			debug( 'initial fetch not necessary' );
 			return;
 		}
+
+		debug( 'Fetching roles for ' + siteId );
 
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
