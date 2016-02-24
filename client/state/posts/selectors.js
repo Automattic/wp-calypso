@@ -2,7 +2,6 @@
  * External dependencies
  */
 import range from 'lodash/range';
-import keyBy from 'lodash/keyBy';
 import { createSelector } from 'reselect';
 
 /**
@@ -20,9 +19,9 @@ import { DEFAULT_POST_QUERY } from './constants';
  * @param  {Object} state    Global state tree
  * @return {Object}          Posts object
  */
-export const getPostsByGlobalId = createSelector( getPosts, ( posts ) => {
-	return keyBy( posts, 'global_ID' );
-} );
+export function getPostsByGlobalId( state ) {
+	return state.posts.items;
+};
 
 /**
  * Returns a post object by its global ID.
@@ -41,9 +40,13 @@ export function getPost( state, globalId ) {
  * @param  {Object} state    Global state tree
  * @return {Array}           Posts array
  */
-export function getPosts( state ) {
-	return state.posts.items;
-}
+export const getPosts = createSelector(
+	getPostsByGlobalId,
+	( postsByGlobalId = {} ) => {
+		return Object.keys( postsByGlobalId )
+			.map( globalId => postsByGlobalId[ globalId ] );
+	}
+);
 
 /**
  * Returns a mapping of site ID, post ID pairing to global post ID.

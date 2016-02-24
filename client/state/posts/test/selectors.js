@@ -16,7 +16,7 @@ import {
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePost,
-	getPostsByGlobalId
+	getPosts
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -24,9 +24,9 @@ describe( 'selectors', () => {
 		it( 'should return the object for the post global ID', () => {
 			const post = getPost( {
 				posts: {
-					items: [
-						{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					]
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					}
 				}
 			}, '3d097cb7c5473c169bba0eb8e3c6cb64' );
 
@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 		it( 'should return null if the site has not received any posts', () => {
 			const post = getSitePost( {
 				posts: {
-					items: []
+					items: {}
 				}
 			}, 2916284, 841 );
 
@@ -48,12 +48,9 @@ describe( 'selectors', () => {
 		it( 'should return null if the post is not known for the site', () => {
 			const post = getSitePost( {
 				posts: {
-					items: [
-						{
-							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-							site_ID: 2916284
-						}
-					]
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { site_ID: 2916284 }
+					}
 				}
 			}, 2916284, 841 );
 
@@ -63,9 +60,9 @@ describe( 'selectors', () => {
 		it( 'should return the object for the post site ID, post ID pair', () => {
 			const post = getSitePost( {
 				posts: {
-					items: [
-						{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					]
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					}
 				}
 			}, 2916284, 841 );
 
@@ -364,21 +361,21 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getPostsByGlobalId()', () => {
-		it( 'should index by global id', () => {
-			const postsByGlobalId = getPostsByGlobalId( {
+	describe( '#getPosts()', () => {
+		it( 'should return a list of posts', () => {
+			const posts = getPosts( {
 				posts: {
-					items: [
-						{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
-					]
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
+					}
 				}
 			} );
-			expect( postsByGlobalId[ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ).to.eql(
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			);
-			expect( postsByGlobalId['6c831c187ffef321eb43a67761a525a3'] ).to.eql(
-				{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
+			expect( posts ).to.eql(
+				[
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+					{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
+				]
 			);
 		} );
 	} );
