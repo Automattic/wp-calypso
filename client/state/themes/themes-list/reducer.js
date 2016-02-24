@@ -9,7 +9,7 @@ import uniq from 'lodash/uniq'
  */
 import ActionTypes from '../action-types';
 import { PER_PAGE } from './constants';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from 'state/action-types';
 
 const defaultQuery = fromJS( {
 	search: '',
@@ -91,6 +91,7 @@ export default ( state = initialState, action ) => {
 			// here.
 			return state.set( 'active', action.theme.id );
 		case DESERIALIZE:
+		case SERVER_DESERIALIZE:
 			return query( fromJS( state ) );
 		case SERIALIZE:
 			return state.toJS();

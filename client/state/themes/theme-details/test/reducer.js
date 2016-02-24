@@ -8,8 +8,9 @@ import { Map, fromJS } from 'immutable';
  * Internal dependencies
  */
 import { RECEIVE_THEME_DETAILS } from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from '../../../action-types';
+import { DESERIALIZE, SERIALIZE, SERVER_DESERIALIZE } from '../../../action-types';
 import reducer from '../reducer';
+import deepFreeze from 'deep-freeze';
 
 describe( 'reducer', () => {
 	it( 'should default to an empty Immutable Map', () => {
@@ -36,7 +37,7 @@ describe( 'reducer', () => {
 		const initialState = Map();
 
 		it( 'persists state and converts to a plain JS object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				mood: {
 					name: 'Mood',
 					author: 'Automattic'
@@ -47,7 +48,7 @@ describe( 'reducer', () => {
 			expect( persistedState ).to.eql( jsObject );
 		} );
 		it( 'loads valid persisted state and converts to immutable.js object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				mood: {
 					name: 'Mood',
 					author: 'Automattic'
@@ -57,8 +58,19 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 
+		it( 'converts state from server to immutable.js object', () => {
+			const jsObject = deepFreeze( {
+				mood: {
+					name: 'Mood',
+					author: 'Automattic'
+				}
+			} );
+			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
+			expect( state ).to.eql( fromJS( jsObject ) );
+		} );
+
 		it.skip( 'should ignore loading data with invalid keys ', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				missingKey: true,
 				mood: {
 					name: 'Mood',
@@ -70,7 +82,7 @@ describe( 'reducer', () => {
 		} );
 
 		it.skip( 'should ignore loading data with invalid values ', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				mood: 'foo',
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
