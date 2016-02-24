@@ -742,6 +742,8 @@ normalizePost.content = {
 				aspectRatio = Number( iframe.width ) / Number( iframe.height );
 			}
 
+			const embedUrl = iframe.getAttribute( 'data-wpcom-embed-url' );
+
 			do {
 				if ( ! node.className ) {
 					continue;
@@ -755,6 +757,8 @@ normalizePost.content = {
 
 			return {
 				type: embedType,
+				src: iframe.src,
+				embedUrl,
 				iframe: iframe.outerHTML,
 				aspectRatio: aspectRatio,
 				width: width,

@@ -8588,6 +8588,9 @@
     },
     "blob": {
       "version": "0.0.4"
+    },
+    "valid-url": {
+      "version": "1.0.9"
     }
   }
 }

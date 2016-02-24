@@ -316,6 +316,12 @@ describe( 'EditorGroundControl', function() {
 			expect( tree.isPrimaryButtonEnabled() ).to.be.true;
 		} );
 
+		it( 'should return true if form is not publishind and post is new and has content, but is not dirty', function() {
+			var tree = ReactDom.render( <EditorGroundControl isPublishing={ false } post={ {} } hasContent isDirty={ false } isNew />, document.body );
+
+			expect( tree.isPrimaryButtonEnabled() ).to.be.true;
+		} );
+
 		it( 'should return false if form is publishing', function() {
 			var tree = ReactDom.render( <EditorGroundControl isPublishing />, document.body );
 
@@ -328,8 +334,8 @@ describe( 'EditorGroundControl', function() {
 			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
 		} );
 
-		it( 'should return false if not dirty', function() {
-			var tree = ReactDom.render( <EditorGroundControl post={ {} } isDirty={ false } isNew />, document.body );
+		it( 'should return false if not dirty and has no content', function() {
+			var tree = ReactDom.render( <EditorGroundControl post={ {} } isDirty={ false } hasContent={ false } isNew />, document.body );
 
 			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
 		} );

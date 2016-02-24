@@ -15,9 +15,22 @@ $sites-popover-width: 300px;
 }
 
 .sites-popover .site-selector {
+	position: relative;
+
 	&.is-large {
 		padding-top: 50px;
 	}
+}
+
+.sites-popover.has-header .site-selector {
+	position: relative;
+}
+
+.sites-popover.has-header .sites-popover__header {
+	margin: 4px 16px;
+	font-size: 14px;
+	color: $blue-dark;
+	border-bottom: 1px solid $blue-dark;
 }
 
 .sites-popover .search {

@@ -68,10 +68,6 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 
 // Listen for route changes and remove the full post dialog when we navigate away from it
 pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
-	if ( ! oldContext ) {
-		return;
-	}
-
 	const fullPostViewRegex = /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i;
 
 	if ( ( ! oldContext || oldContext.path.match( fullPostViewRegex ) ) && ! newContext.path.match( fullPostViewRegex ) ) {

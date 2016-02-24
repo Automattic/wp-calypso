@@ -108,6 +108,7 @@
     "tween.js": "16.3.1",
     "twemoji": "1.3.2",
     "uglify-js": "2.6.1",
+    "valid-url": "1.0.9",
     "walk": "2.3.4",
     "webpack": "1.12.6",
     "webpack-dev-middleware": "1.2.0",
