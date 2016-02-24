@@ -1,18 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import partial from 'lodash/partial';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	CartStore = require( 'lib/cart/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	userFactory = require( 'lib/user' );
-
+import StoreConnection from 'components/data/store-connection';
+import DomainsStore from 'lib/domains/store';
+import CartStore from 'lib/cart/store';
+import observe from 'lib/mixins/data-observe';
+import { fetchDomains } from 'lib/upgrades/actions';
+import userFactory from 'lib/user';
+import {
+	fetchByDomain,
+	fetchBySiteId
+} from 'state/google-apps-users/actions';
+import {
+	getByDomain,
+	getBySite,
+	getLoaded
+} from 'state/google-apps-users/selectors';
 const user = userFactory();
 
 var stores = [
@@ -34,11 +44,13 @@ function getStateFromStores( props ) {
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
-		user: user.get()
+		user: user.get(),
+		users: props.users,
+		loaded: props.loaded
 	};
 }
 
-module.exports = React.createClass( {
+const EmailData = React.createClass( {
 	displayName: 'EmailData',
 
 	propTypes: {
@@ -53,6 +65,7 @@ module.exports = React.createClass( {
 
 	componentWillMount() {
 		this.loadDomains();
+		this.props.fetch();
 	},
 
 	componentWillUpdate() {
@@ -63,7 +76,7 @@ module.exports = React.createClass( {
 		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( this.prevSelectedSite !== selectedSite ) {
-			upgradesActions.fetchDomains( selectedSite.ID );
+			fetchDomains( selectedSite.ID );
 
 			this.prevSelectedSite = selectedSite;
 		}
@@ -72,6 +85,8 @@ module.exports = React.createClass( {
 	render() {
 		return (
 			<StoreConnection
+				users={ this.props.users }
+				loaded={ this.props.loaded }
 				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
@@ -82,3 +97,29 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state, ownProps ) => {
+		let usersGetter;
+		if ( ownProps.selectedDomainName ) {
+			usersGetter = partial( getByDomain, state, ownProps.selectedDomainName );
+		} else {
+			usersGetter = partial( getBySite, state, ownProps.sites.getSelectedSite().ID );
+		}
+		return {
+			users: usersGetter(),
+			loaded: getLoaded( state )
+		}
+	},
+	( dispatch, ownProps ) => {
+		let usersFetcher;
+		if ( ownProps.selectedDomainName ) {
+			usersFetcher = partial( fetchByDomain, ownProps.selectedDomainName );
+		} else {
+			usersFetcher = partial( fetchBySiteId, ownProps.sites.getSelectedSite().ID );
+		}
+		return {
+			fetch: () => dispatch( usersFetcher() )
+		}
+	}
+)( EmailData );
