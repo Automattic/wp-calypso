@@ -128,7 +128,7 @@ var PostComment = React.createClass( {
 			<div className="comment__actions">
 				{ showReplyButton ?
 					<button className="comment__actions-reply" onClick={ this.handleReply }>
-						<Gridicon icon="reply" size="18" />
+						<Gridicon icon="reply" size={ 18 } />
 						<span className="comment__actions-reply-label">Reply</span>
 					</button>
 				: null }
