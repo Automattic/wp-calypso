@@ -42,17 +42,6 @@
 	margin: 0;
 }
 
-.checkout-thank-you__purchase-details-list {
-	list-style: none;
-	margin: 0;
-	padding: 30px 0;
-
-	@include breakpoint( "<660px" ) {
-		display: inline-block;
-		margin: 0 0 10px 0;
-	}
-}
-
 .checkout-thank-you__header {
 	font-size: 25px;
 	font-weight: 100;
@@ -103,16 +92,56 @@
 	}
 }
 
-.checkout-thank-you__purchase-detail {
+.checkout-thank-you__purchase-details-list {
+	list-style: none;
+	margin: 0;
+}
 
-	@include breakpoint( "<660px" ) {
-		.button {
-			max-width: 80%;
-		}
+.checkout-thank-you__purchase-detail-description {
+	font-size: 12px;
+	opacity: 0.7;
+
+	@include breakpoint( ">660px" ) {
+		margin: 0 50px 10px 50px;
+	}
+}
+
+.checkout-thank-you__purchase-detail-text {
+	&::before {
+		@include noticon( '\f803' );
+
+		background: $blue-dark;
+		border-radius: 25px;
+		color: $white;
+		font-size: 30px;
+		margin-bottom: 10px;
+		padding: 5px;
 	}
 
 	@include breakpoint( ">660px" ) {
-		vertical-align: top;
+		&::before {
+			font-size: 70px;
+		}
+
+		> p {
+			margin: 0 50px 10px 50px;
+		}
+	}
+}
+
+.checkout-thank-you__purchase-detail-title {
+	font-weight: 600;
+}
+
+>>>>>>> Checkout: Thank you: Layout changes for the mobile view of the thank you page
+.checkout-thank-you__purchase-detail {
+	color: $gray;
+	padding: 30px;
+
+	@include breakpoint( "<660px" ) {
+		.button {
+			width: 80%;
+		}
 	}
 
 	&.get-free-domain {
@@ -224,39 +253,4 @@
 			width: 85%;
 		}
 	}
-}
-
-.checkout-thank-you__purchase-detail-description {
-	font-size: 12px;
-	opacity: 0.7;
-
-	@include breakpoint( ">660px" ) {
-		margin: 0 50px 10px 50px;
-	}
-}
-
-.checkout-thank-you__purchase-detail-text {
-	&::before {
-		@include noticon( '\f803' );
-
-		background: $blue-dark;
-		border-radius: 25px;
-		color: $white;
-		font-size: 20px;
-		padding: 5px;
-	}
-
-	@include breakpoint( ">660px" ) {
-		&::before {
-			font-size: 70px;
-		}
-
-		> p {
-			margin: 0 50px 10px 50px;
-		}
-	}
-}
-
-.checkout-thank-you__purchase-detail-title {
-	font-weight: 600;
 }
