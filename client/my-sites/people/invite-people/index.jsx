@@ -85,9 +85,6 @@ export default React.createClass( {
 	refreshValidation() {
 		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || [];
 		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [];
-		if ( ! success.indexOf ) {
-			success = Object.keys( success ).map( key => success[ key ] );
-		}
 
 		this.setState( {
 			errors,
