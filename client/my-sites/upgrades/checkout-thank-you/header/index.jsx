@@ -4,6 +4,11 @@
 import classNames from 'classnames';
 import React from 'react';
 
+/**
+ * External dependencies
+ */
+import { isPlan } from 'lib/products-values';
+
 const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
 		isDataLoaded: React.PropTypes.bool.isRequired,
@@ -29,11 +34,10 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( this.props.isFreeTrial ) {
-			return this.translate( "We hope you enjoy %(productName)s. What's next? Take it for a spin!", {
-				args: {
-					productName: this.props.primaryPurchase.productShort
-				}
+		if ( isPlan( this.props.primaryPurchase ) ) {
+			return this.translate( "Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!", {
+				args: { productName: this.props.primaryPurchase.productName },
+				components: { strong: <strong /> }
 			} );
 		}
 
