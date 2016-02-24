@@ -21,11 +21,17 @@ describe( '#createSelector', () => {
 			return filter( state.posts, { site_ID: siteId } );
 		} );
 		getSitePosts = createSelector( selector, ( state ) => state.posts );
+		sinon.stub( console, 'warn' );
 	} );
 
 	beforeEach( () => {
+		console.warn.reset();
 		selector.reset();
 		getSitePosts.memoizedSelector.cache.clear();
+	} );
+
+	after( () => {
+		console.warn.restore();
 	} );
 
 	it( 'should expose its memoized function', () => {
@@ -55,6 +61,22 @@ describe( '#createSelector', () => {
 		getSitePosts( state, 2916284 );
 
 		expect( selector ).to.have.been.calledOnce;
+	} );
+
+	it( 'should warn against complex arguments in development mode', () => {
+		const state = { posts: {} };
+
+		getSitePosts( state, 1 );
+		getSitePosts( state, '' );
+		getSitePosts( state, 'foo' );
+		getSitePosts( state, true );
+		getSitePosts( state, null );
+		getSitePosts( state, undefined );
+		getSitePosts( state, {} );
+		getSitePosts( state, [] );
+		getSitePosts( state, 1, [] );
+
+		expect( console.warn ).to.have.been.calledThrice;
 	} );
 
 	it( 'should return the expected value of differing arguments', () => {
