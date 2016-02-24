@@ -198,6 +198,10 @@ var CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
+				<CompactCard className="checkout-thank-you__features-header">
+					{ this.translate( "Get started with your site's new features" ) }
+				</CompactCard>
+
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
 					isFreeTrial: this.freeTrialWasPurchased(),
