@@ -10,6 +10,7 @@ import CartStore from 'lib/cart/store';
 import { fetchUserPurchases } from 'lib/upgrades/actions';
 import observe from 'lib/mixins/data-observe';
 import PurchasesStore from 'lib/purchases/store';
+import { shouldFetchPurchases } from 'lib/purchases';
 import StoreConnection from 'components/data/store-connection';
 import userFactory from 'lib/user';
 
@@ -47,7 +48,9 @@ const ManagePurchaseData = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
 
 	componentWillMount() {
-		fetchUserPurchases( user.get().ID );
+		if ( shouldFetchPurchases( PurchasesStore.get() ) ) {
+			fetchUserPurchases( user.get().ID );
+		}
 	},
 
 	render() {

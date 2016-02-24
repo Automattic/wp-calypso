@@ -52,6 +52,7 @@ const CancelPurchaseButton = React.createClass( {
 						}
 					}
 				), { persistent: true } );
+
 				page( paths.list() );
 			} else {
 				notices.error( this.translate(
