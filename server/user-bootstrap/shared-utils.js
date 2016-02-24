@@ -1,1 +1,1 @@
-export * from 'client/lib/user/shared-utils';
+export * from 'lib/user/shared-utils';
