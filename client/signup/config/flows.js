@@ -84,14 +84,14 @@ const flows = {
 
 	/* WP.com homepage flows */
 	website: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getCheckoutDestination,
 		description: 'This flow is used for the users who clicked "Create Website" on the two-button homepage.',
 		lastModified: '2016-01-28'
 	},
 
 	blog: {
-		steps: [ 'survey', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getCheckoutDestination,
 		description: 'This flow is used for the users who clicked "Create Blog" on the two-button homepage.',
 		lastModified: '2016-01-28'

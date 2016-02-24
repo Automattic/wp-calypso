@@ -22,6 +22,7 @@ module.exports = {
 	'select-plan-or-skip': PaidPlansWithSkip,
 	domains: DomainsStepComponent,
 	survey: SurveyStepComponent,
+	'survey-user': UserSignupComponent,
 	'design-type': DesignTypeComponent,
 	'themes-headstart': ThemeSelectionComponent,
 	altthemes: ThemeSelectionComponent,

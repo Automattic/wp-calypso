@@ -74,6 +74,14 @@ module.exports = {
 		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
 
+	'survey-user': {
+		stepName: 'survey-user',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		dependencies: [ 'surveySiteType', 'surveyQuestion' ],
+		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
 	plans: {
 		stepName: 'plans',
 		apiRequestFunction: stepActions.addPlanToCart,
