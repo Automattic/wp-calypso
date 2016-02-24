@@ -62,12 +62,9 @@ const EditorDrawer = React.createClass( {
 
 	currentPostTypeSupports: function( feature ) {
 		const { site, postTypes, type } = this.props;
-		if ( ! site ) {
-			return false;
-		}
 
 		// Default to true until post types are known
-		if ( ! postTypes ) {
+		if ( ! site || ! postTypes ) {
 			return true;
 		}
 
