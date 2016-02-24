@@ -30,8 +30,7 @@
 	}
 }
 
-.plan,
-.plans-compare {
+.plan {
 	.plan-header {
 		background: $white;
 		width: 100%;
@@ -88,40 +87,6 @@
 	}
 }
 
-.plans-compare {
-	.plan-header {
-		border-bottom: 2px solid lighten( $gray, 20% );
-		height: 9.5em;
-		padding: 10px 15px;
-
-		&:after {
-			display: none;
-		}
-
-		.plan-header__title {
-			padding: 0;
-			text-align: center;
-			color: $blue-wordpress;
-			line-height: 18px;
-
-			&:before {
-				position: static;
-				display: block;
-				margin-bottom: 5px;
-			}
-
-			.header-text {
-				&:first-line {
-					color: $white;
-					font-size: 13px;
-					color: darken( $gray, 10% );
-				}
-
-			}
-		}
-	}
-}
-
 @mixin plans-in-three-columns() {
 	.plan, .plan-feature-column {
 		.plan-header {
@@ -145,16 +110,6 @@
 
 			.plan-header__title {
 				line-height: 20px;
-			}
-		}
-	}
-
-	.plans-compare {
-		.plan-header {
-			height: 9.5em;
-
-			.plan-header__title:before {
-				display: block;
 			}
 		}
 	}

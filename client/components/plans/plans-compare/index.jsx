@@ -221,7 +221,19 @@ var PlansCompare = React.createClass( {
 					} );
 				return (
 					<th className={ classes } key={ plan.product_slug }>
-						<PlanHeader key={ plan.product_slug } text={ plan.product_name_short }>
+						<PlanHeader key={ plan.product_slug }>
+							<PlanActions
+								plan={ plan }
+								isInSignup={ this.props.isInSignup }
+								onSelectPlan={ this.props.onSelectPlan }
+								sitePlan={ sitePlan }
+								site={ this.props.selectedSite }
+								cart={ this.props.cart }
+								enableFreeTrials={ this.props.enableFreeTrials }
+								isImageButton />
+							<span className="plans-compare__plan-name">
+								{ plan.product_name_short }
+							</span>
 							<PlanPrice
 								plan={ plan }
 								sitePlan={ sitePlan }
@@ -382,14 +394,15 @@ var PlansCompare = React.createClass( {
 	},
 
 	render: function() {
-		var compareString = this.translate( 'Compare Plans' );
+		var compareString = this.translate( 'Compare Plans' ),
+			classes = classNames( this.props.className, 'plans-compare' );
 
 		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );
 		}
 
 		return (
-			<div className={ this.props.className }>
+			<div className={ classes }>
 				{
 					this.props.isInSignup
 					? null

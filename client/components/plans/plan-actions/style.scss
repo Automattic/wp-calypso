@@ -94,38 +94,6 @@
 	white-space: nowrap;
 }
 
-.plans-compare {
-	.plan-actions {
-		font-size: 16px;
-		padding: 10px;
-	}
-
-	.plan-actions__upgrade-button {
-		overflow: visible;
-		padding-left: 5px;
-		padding-right: 5px;
-		white-space: normal;
-	}
-
-	.plan-actions__current-plan-label {
-		font-size: 12px;
-		padding: 10px 5px;
-
-		&:before {
-			margin-left: -5px;
-			padding-right: 1px;
-		}
-	}
-}
-
-@mixin plans-collapsed {
-	.plans-compare {
-		.plan-actions {
-			display: none;
-		}
-	}
-}
-
 .plans.has-sidebar {
 	@include breakpoint( "<960px" ) {
 		@include plans-collapsed();
