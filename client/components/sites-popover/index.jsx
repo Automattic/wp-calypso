@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	noop = require( 'lodash/noop' );
+	noop = require( 'lodash/noop' ),
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -16,11 +17,13 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		sites: React.PropTypes.object,
+		siteQuerystring: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		context: React.PropTypes.object,
 		visible: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		position: React.PropTypes.string,
-		groups: React.PropTypes.bool
+		groups: React.PropTypes.bool,
+		className: React.PropTypes.string
 	},
 
 	getInitialState: function() {
@@ -34,7 +37,9 @@ module.exports = React.createClass( {
 			visible: false,
 			onClose: noop,
 			position: 'bottom left',
-			groups: false
+			groups: false,
+			siteQuerystring: false,
+			className: ''
 		};
 	},
 
@@ -55,22 +60,36 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		let classes = classnames(
+			this.props.className,
+			'popover sites-popover',
+			this.props.header && 'has-header' );
+
 		return (
 			<Popover
 				isVisible={ this.props.visible }
 				context={ this.props.context }
 				onClose={ this.props.onClose }
 				position={ this.props.position }
-				className="popover sites-popover">
-				{ this.state.popoverVisible ?
-					<SiteSelector
-						sites={ this.props.sites }
-						siteBasePath="/post"
-						showAddNewSite={ false }
-						indicator={ false }
-						autoFocus={ ! hasTouch() }
-						groups={ true }
-						onClose={ this.props.onClose } /> : null }
+				className={ classes }>
+				{ this.state.popoverVisible && this.props.header
+					? <div className="sites-popover__header">
+							{ this.props.header }
+						</div>
+					: null
+				}
+				{ this.state.popoverVisible
+					? <SiteSelector
+							sites={ this.props.sites }
+							siteBasePath="/post"
+							siteQuerystring={ this.props.siteQuerystring }
+							showAddNewSite={ false }
+							indicator={ false }
+							autoFocus={ ! hasTouch() }
+							groups={ true }
+							onClose={ this.props.onClose } />
+					: null
+				}
 			</Popover>
 		);
 	}

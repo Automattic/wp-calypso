@@ -7,7 +7,8 @@ var ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
 	startsWith = require( 'lodash/startsWith' ),
-	qs = require( 'querystring' );
+	qs = require( 'querystring' ),
+	isValidUrl = require( 'valid-url' ).isWebUri;
 
 /**
  * Internal dependencies
@@ -90,13 +91,35 @@ function maybeRedirect( context, postType, site ) {
 	return false;
 }
 
-function getPressThisContent( text, url, title ) {
-	return ReactDomServer.renderToStaticMarkup(
-		<p>
-			{ text ? <blockquote>{ text }</blockquote> : null }
-			via <a href={ url }>{ title }</a>.
-		</p>
+function getPressThisContent( query ) {
+	const { text, url, title, image, embed } = query;
+	const pieces = [];
+
+	if ( image ) {
+		pieces.push( ReactDomServer.renderToStaticMarkup( <p><a href={ url }><img src={ image } /></a></p> ) );
+	}
+	if ( isValidUrl( embed ) ) {
+		pieces.push( ReactDomServer.renderToStaticMarkup( <p>{ embed }</p> ) );
+	}
+	if ( text ) {
+		pieces.push( ReactDomServer.renderToStaticMarkup( <blockquote>{ text }</blockquote> ) );
+	}
+
+	pieces.push(
+		ReactDomServer.renderToStaticMarkup(
+			<p>
+				{
+					i18n.translate( 'via {{anchor/}}', {
+						components: {
+							anchor: ( <a href={ url }>{ title }</a> )
+						}
+					} )
+				}
+			</p>
+		)
 	);
+
+	return pieces.join( '\n\n' );
 }
 
 module.exports = {
@@ -145,7 +168,7 @@ module.exports = {
 
 				// handle press-this params if applicable
 				if ( context.query.url ) {
-					let pressThisContent = getPressThisContent( context.query.text, context.query.url, context.query.title );
+					const pressThisContent = getPressThisContent( context.query );
 					Object.assign( postOptions, {
 						postFormat: 'quote',
 						title: context.query.title,

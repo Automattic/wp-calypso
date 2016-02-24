@@ -141,9 +141,9 @@ var DialogBase = React.createClass( {
 			return;
 		}
 
-		this.props.onClickOutside( event );
+		const shouldStayOpen = this.props.onClickOutside( event );
 
-		if ( ! event.defaultPrevented ) {
+		if ( ! shouldStayOpen ) {
 			this._close();
 		}
 	},
