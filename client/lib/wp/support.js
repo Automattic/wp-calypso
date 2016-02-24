@@ -6,6 +6,7 @@ import qs from 'qs';
 export default function wpcomSupport( wpcom ) {
 	let supportUser = '';
 	let supportToken = '';
+	let interceptResponse = null;
 
 	/**
 	 * Add the supportUser and supportToken to the query.
@@ -44,17 +45,31 @@ export default function wpcomSupport( wpcom ) {
 		 * @param {String} supportToken Support token
 		 * @returns {bool}  true if the user and token were changed, false otherwise
 		 */
-		setSupportUserToken: function( newUser = '', newToken = '' ) {
+		setSupportUserToken: function( newUser = '', newToken = '', newTokenErrorCallback ) {
 			if ( newUser !== supportUser || newToken !== supportToken ) {
 				supportUser = newUser;
 				supportToken = newToken;
+				interceptResponse = ( callback ) => {
+					return ( response, ...args ) => {
+						console.log( response, response.error, args );
+
+						if ( response && response.error &&
+							response.error === 'invalid_support_token' &&
+							typeof newTokenErrorCallback === 'function' ) {
+							newTokenErrorCallback( response );
+						}
+
+						// Call the original response callback
+						callback( response, ...args );
+					}
+				}
 				return true;
 			}
 			return false;
 		},
 		request: ( params, callback ) => {
 			if ( supportUser && supportToken ) {
-				return request( addSupportData( params ), callback );
+				return request( addSupportData( params ), interceptResponse( callback ) );
 			}
 
 			return request( params, callback );

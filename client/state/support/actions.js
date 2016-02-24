@@ -2,13 +2,15 @@
  * Internal dependencies
  */
 import {
+	SUPPORT_USER_ACTIVATE,
+	SUPPORT_USER_DEACTIVATE,
 	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_TOKEN_SET,
-	SUPPORT_USER_RESTORE,
+	SUPPORT_USER_SWITCH,
 	SUPPORT_USER_TOGGLE_DIALOG,
 } from 'state/action-types';
 
 import wpcom from 'lib/wp';
+import supportUser from 'lib/user/support-user-interop';
 
 /**
  * Requests a support user token, then dispatches the relevant actions upon response
@@ -17,41 +19,56 @@ import wpcom from 'lib/wp';
  * @param  {string} supportPassword Support password
  * @return {thunk}                  The action thunk
  */
-export function supportUserTokenFetch( supportUser, supportPassword ) {
+export function supportUserTokenFetch( user, password ) {
 	return ( dispatch ) => {
-		if ( !supportUser || !supportPassword ) {
+		if ( !user || !password ) {
 			return;
 		}
 
 		dispatch( {
 			type: SUPPORT_USER_TOKEN_FETCH,
-			supportUser
+			supportUser: user
 		} );
 
-		const setToken = ( response ) =>
-			dispatch( supportUserTokenSet( response.username, response.token ) );
+		const setToken = ( response ) => {
+			dispatch( supportUserSwitch() );
+			supportUser.rebootWithToken( response.username, response.token );
+		}
 
 		const errorFetchingToken = ( error ) =>
-			dispatch( supportUserRestore( error.message ) );
+			dispatch( supportUserDeactivate( error.message ) );
 
-		return wpcom.fetchSupportUserToken( supportUser, supportPassword )
+		return wpcom.fetchSupportUserToken( user, password )
 			.then( setToken )
 			.catch( errorFetchingToken );
 	}
 }
 
-export function supportUserTokenSet( supportUser, supportToken ) {
+/**
+ * To be called when support user is changing, before the page is reloaded
+ * @return {Object}              Action object
+ */
+export function supportUserSwitch() {
 	return {
-		type: SUPPORT_USER_TOKEN_SET,
-		supportUser,
-		supportToken
+		type: SUPPORT_USER_SWITCH
 	}
 }
 
-export function supportUserRestore( error ) {
+export function supportUserActivate() {
 	return {
-		type: SUPPORT_USER_RESTORE,
-		error
+		type: SUPPORT_USER_ACTIVATE
+	}
+}
+
+/**
+ * Dispatched when the support user is deactivated, intentionally or due to an error
+ * @param  {string} errorMessage An error that caused the deactivation, if any
+ * @return {Object}              Action object
+ */
+export function supportUserDeactivate( errorMessage = null ) {
+	return {
+		type: SUPPORT_USER_DEACTIVATE,
+		errorMessage
 	}
 }
 

@@ -10,6 +10,7 @@ import flowRight from 'lodash/flowRight';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
+import supportUser from 'lib/user/support-user-interop';
 
 import {
 	supportUserTokenFetch,
@@ -53,16 +54,17 @@ const SupportUser = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
-		isSupportUser: isSupportUser( state ),
+		isSupportUser: state.support.isSupportUser,
 		isTransitioning: state.support.isTransitioning,
 		showDialog: state.support.showDialog,
+		disableCalypso: state.support.shouldReloadPage,
 	}
 }
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		supportUserTokenFetch: flowRight( dispatch, supportUserTokenFetch ),
-		supportUserRestore: flowRight( dispatch, supportUserRestore ),
+		supportUserRestore: supportUser.rebootNormally,
 		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
 	}
 }
