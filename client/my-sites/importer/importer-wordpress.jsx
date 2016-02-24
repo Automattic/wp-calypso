@@ -39,7 +39,7 @@ export default React.createClass( {
 	render: function() {
 		importerData.description = this.translate(
 			'Import posts, pages, and media ' +
-			'from a WordPress export file.'
+			'from a WordPress export\u00A0file.'
 		);
 
 		importerData.uploadDescription = this.translate(

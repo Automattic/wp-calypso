@@ -83,7 +83,7 @@ export default React.createClass( {
 		return (
 			<header className="importer-service">
 				{ includes( [ 'wordpress' ], icon )
-					? <SocialLogo className="importer__service-icon" icon={ icon } size={ 50 } />
+					? <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />
 					: <svg className="importer__service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" /> }
 				<Button
 					className="importer__master-control"
