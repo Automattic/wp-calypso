@@ -49,23 +49,21 @@
 	}
 }
 
-.checkout-thank-you {
-	&.is-placeholder {
-		.checkout-thank-you-header__heading,
-		.checkout-thank-you-header__text {
-			@include placeholder( 23% );
+.checkout-thank-you-header.is-placeholder {
+	.checkout-thank-you-header__heading,
+	.checkout-thank-you-header__text {
+		@include placeholder( 23% );
 
-			display: block;
-			margin: 0 auto;
-		}
+		display: block;
+		margin: 0 auto;
+	}
 
-		.checkout-thank-you-header__heading {
-			width: 50%;
-		}
+	.checkout-thank-you-header__heading {
+		width: 50%;
+	}
 
-		.checkout-thank-you-header__text {
-			margin-top: 15px;
-			width: 40%;
-		}
+	.checkout-thank-you-header__text {
+		margin-top: 15px;
+		width: 40%;
 	}
 }

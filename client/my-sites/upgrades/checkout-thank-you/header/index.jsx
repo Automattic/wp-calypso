@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classNames';
 import React from 'react';
 
 const CheckoutThankYouHeader = React.createClass( {
@@ -45,8 +46,12 @@ const CheckoutThankYouHeader = React.createClass( {
 	},
 
 	render() {
+		const classes = {
+			'checkout-thank-you-header': true,
+			'is-placeholder': ! this.props.isDataLoaded
+		}
 		return (
-			<div className="checkout-thank-you-header">
+			<div className={ classNames( classes ) }>
 				<span className="checkout-thank-you-header__icon"/>
 				<h1 className="checkout-thank-you-header__heading">
 					{ this.renderHeading() }
