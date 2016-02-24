@@ -154,7 +154,6 @@ var utils = {
 		postNormalizer(
 			post,
 			[
-				postNormalizer.waitForImagesToLoad,
 				postNormalizer.keepValidImages( 72, 72 )
 			],
 			callback

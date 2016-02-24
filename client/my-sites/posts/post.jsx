@@ -164,6 +164,12 @@ module.exports = React.createClass({
 
 	getPostImage: function() {
 		if ( ! this.props.postImages ) {
+			if ( this.props.post.canonical_image ) {
+				return (
+					<div className="post-image is-placeholder" />
+				);
+			}
+
 			return null;
 		}
 
