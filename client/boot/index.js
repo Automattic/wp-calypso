@@ -202,10 +202,10 @@ function reduxStoreReady( reduxStore ) {
 
 			if ( matchedRoutes.length ) {
 				props = { routeName: matchedRoutes[0].name, match: matchedRoutes[0].match };
-				Layout = require( 'layout/logged-out-design' );
+				Layout = require( 'layout/logged-out' );
 			}
 		} else if ( startsWith( window.location.pathname, '/design' ) ) {
-			Layout = require( 'layout/logged-out-design' );
+			Layout = require( 'layout/logged-out' );
 		}
 
 		layoutElement = React.createElement( Layout, Object.assign( {}, props, {

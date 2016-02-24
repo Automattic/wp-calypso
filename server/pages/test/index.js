@@ -13,7 +13,7 @@ import noop from 'lodash/noop';
 import { createReduxStore } from 'state';
 
 describe( 'Server pages:', function() {
-	context( 'when trying to renderToString() LayoutLoggedOutDesign ', function() {
+	context( 'when trying to renderToString() LayoutLoggedOut ', function() {
 		before( function() {
 			mockery.enable( {
 				warnOnReplace: false,
@@ -22,10 +22,9 @@ describe( 'Server pages:', function() {
 
 			mockery.registerMock( 'analytics', noop );
 
-			const LayoutLoggedOutDesign = require( 'layout/logged-out-design' );
-			this.LayoutLoggedOutDesignFactory = React.createFactory( LayoutLoggedOutDesign );
+			const LayoutLoggedOut = require( 'layout/logged-out' );
+			this.LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
 			this.props = {
-				tier: 'free',
 				store: createReduxStore(),
 			};
 		} );
@@ -35,7 +34,7 @@ describe( 'Server pages:', function() {
 		} );
 
 		it( "doesn't throw an exception", function() {
-			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, this.LayoutLoggedOutDesignFactory( this.props ) ) );
+			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, this.LayoutLoggedOutFactory( this.props ) ) );
 		} );
 	} );
 } );

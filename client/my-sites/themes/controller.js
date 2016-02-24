@@ -20,7 +20,7 @@ import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
-import LayoutLoggedOutDesign from 'layout/logged-out-design';
+import LayoutLoggedOut from 'layout/logged-out';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;
@@ -75,7 +75,7 @@ export function makeLoggedOutLayout( context, next ) {
 	const { store, primary, secondary, tertiary } = context;
 	context.layout = (
 		<ReduxProvider store={ store }>
-			<LayoutLoggedOutDesign primary={ primary }
+			<LayoutLoggedOut primary={ primary }
 				secondary={ secondary }
 				tertiary={ tertiary } />
 		</ReduxProvider>

@@ -15,7 +15,7 @@ var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
+	LayoutLoggedOut = require( 'layout/logged-out' ),
 	render = require( 'render' ).render,
 	i18n = require( 'lib/mixins/i18n' ),
 	createReduxStore = require( 'state' ).createReduxStore,
@@ -389,7 +389,7 @@ module.exports = function() {
 
 				Object.assign( context, render( (
 					<ReduxProvider store={ store }>
-						<LayoutLoggedOutDesign primary={ primary } />
+						<LayoutLoggedOut primary={ primary } />
 					</ReduxProvider>
 				) ) );
 			}
@@ -415,7 +415,7 @@ module.exports = function() {
 				context.initialReduxState = pick( store.getState(), 'ui' );
 
 				Object.assign( context,
-					render( <LayoutLoggedOutDesign tier={ tier } store={ store } /> )
+					render( <LayoutLoggedOut tier={ tier } store={ store } /> )
 				);
 			}
 

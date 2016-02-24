@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import MasterbarMinimal from 'layout/masterbar/minimal';
 
-const LayoutLoggedOutDesign = ( { primary, secondary, tertiary, section, hasSidebar, isFullScreen } ) => {
+const LayoutLoggedOut = ( { primary, secondary, tertiary, section, hasSidebar, isFullScreen } ) => {
 	const sectionClass = section ? 'is-section-' + section : '';
 	const classes = classNames( 'wp layout', sectionClass, {
 		'focus-content': true,
@@ -38,8 +38,8 @@ const LayoutLoggedOutDesign = ( { primary, secondary, tertiary, section, hasSide
 	);
 }
 
-LayoutLoggedOutDesign.displayName = 'LayoutLoggedOutDesign';
-LayoutLoggedOutDesign.propTypes = {
+LayoutLoggedOut.displayName = 'LayoutLoggedOut';
+LayoutLoggedOut.propTypes = {
 	section: React.PropTypes.string,
 	hasSidebar: React.PropTypes.bool,
 	isFullScreen: React.PropTypes.bool
@@ -55,4 +55,4 @@ export default connect(
 			isFullScreen: state.ui.isFullScreen,
 		}
 	)
-)( LayoutLoggedOutDesign );
+)( LayoutLoggedOut );
