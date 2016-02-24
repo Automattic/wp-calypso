@@ -42,7 +42,10 @@ const PurchaseDetail = ( {
 PurchaseDetail.propTypes = {
 	additionalClass: React.PropTypes.string,
 	buttonText: React.PropTypes.string,
-	description: React.PropTypes.string,
+	description: React.PropTypes.oneOfType( [
+		React.PropTypes.array,
+		React.PropTypes.string,
+	] ),
 	href: React.PropTypes.string,
 	isPlaceholder: React.PropTypes.bool,
 	target: React.PropTypes.string,
