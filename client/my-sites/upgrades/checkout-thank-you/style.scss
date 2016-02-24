@@ -91,15 +91,13 @@
 	}
 }
 
-
 .checkout-thank-you__purchase-detail-title {
+	clear: none;
 	font-size: 16px;
 	font-weight: 600;
 }
 
-.checkout-thank-you__purchase-detail-description {
-	font-size: 13px;
-
+.checkout-thank-you__purchase-detail-text {
 	&::before {
 		@include noticon( '\f803' );
 
@@ -120,6 +118,10 @@
 	}
 }
 
+.checkout-thank-you__purchase-detail-description {
+	font-size: 13px;
+}
+
 .checkout-thank-you__purchase-detail.is-compact {
 	color: $gray;
 	padding: 30px;
@@ -137,86 +139,88 @@
 	}
 
 	&.get-free-domain {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f475' );
 		}
 	}
 
 	&.customize-fonts-and-colors {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f103' );
 		}
 	}
 
 	&.upload-to-videopress {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f104' );
 		}
 	}
 
 	&.ads-have-been-removed {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f803' );
 			top: -7px;
 		}
 	}
 
 	&.ecommerce {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f447' );
 		}
 	}
 
 	&.live-chat {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f108' );
 		}
 	}
 
 	&.unlimited-premium-themes {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f103' );
 		}
 	}
 
 	&.important {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f303' );
 		}
 	}
 
 	&.your-primary-domain {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f475' );
 		}
 	}
 
 	&.upgrade-now {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f800' );
 		}
 	}
 
 	&.google-apps-details {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f410' );
 		}
 	}
 
 	&.redirect-now-working {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f442' );
 		}
 	}
 
 	&.change-redirect-settings {
-		.checkout-thank-you__purchase-detail-description::before {
+		.checkout-thank-you__purchase-detail-text::before {
 			@include noticon( '\f411' );
 		}
 	}
 
 	&.is-placeholder {
-		//padding-top: 60px;
+		.checkout-thank-you__purchase-detail-text::before {
+			content: none;
+		}
 
 		.checkout-thank-you__purchase-detail-button,
 		.checkout-thank-you__purchase-detail-description,
@@ -237,12 +241,7 @@
 
 		.checkout-thank-you__purchase-detail-description {
 			margin-top: 10px;
-
-			&::before {
-				content: none;
-			}
 		}
-
 
 		.checkout-thank-you__purchase-detail-title {
 			width: 85%;

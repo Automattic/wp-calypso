@@ -5,9 +5,16 @@ import classNames from 'classnames';
 import React from 'react';
 
 /**
+<<<<<<< HEAD
  * External dependencies
  */
 import { isPlan } from 'lib/products-values';
+=======
+ * Internal dependencies
+ */
+import CompactCard from 'components/card/compact';
+import Gridicon from 'components/gridicon';
+>>>>>>> Checkout: Thank you: Change the CSS for the header on the thank you page to fit the mockup
 
 const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
@@ -32,6 +39,7 @@ const CheckoutThankYouHeader = React.createClass( {
 	getText() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
+<<<<<<< HEAD
 		}
 
 		if ( this.props.primaryPurchase ) {
@@ -46,6 +54,27 @@ const CheckoutThankYouHeader = React.createClass( {
 				"You will receive an email confirmation shortly for your purchase of %(productName)s. What's next?", {
 					args: {
 						productName: this.props.primaryPurchase.productName
+=======
+		} else if ( this.props.productName ) {
+			if ( this.props.isFreeTrial ) {
+				return this.translate( "We hope you enjoy {{strong}}%(productName)s{{/strong}}. What's next? Take it for a spin!", {
+					args: {
+						productName: this.props.productName
+					},
+					components: {
+						strong: <strong/>
+					}
+				} );
+			} else {
+				return this.translate(
+					"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
+						args: {
+							productName: this.props.productName
+						},
+						components: {
+							strong: <strong/>
+						}
+>>>>>>> Checkout: Thank you: Change the CSS for the header on the thank you page to fit the mockup
 					}
 				}
 			);
@@ -61,6 +90,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		}
 
 		return (
+<<<<<<< HEAD
 			<div className={ classNames( classes ) }>
 				<span className="checkout-thank-you-header__icon" />
 
@@ -72,6 +102,21 @@ const CheckoutThankYouHeader = React.createClass( {
 					{ this.getText() }
 				</h2>
 			</div>
+=======
+			<CompactCard className={ classNames( classes ) }>
+				<div className="checkout-thank-you-header-content">
+					<span className="checkout-thank-you-header__icon">
+						<Gridicon icon="trophy" size={ 48 } />
+					</span>
+					<h1 className="checkout-thank-you-header__heading">
+						{ this.renderHeading() }
+					</h1>
+					<h2 className="checkout-thank-you-header__text">
+						{ this.renderText() }
+					</h2>
+				</div>
+			</CompactCard>
+>>>>>>> Checkout: Thank you: Change the CSS for the header on the thank you page to fit the mockup
 		);
 	}
 } );
