@@ -1,25 +1,23 @@
 var ActionType = require( './constants' ).action,
 	Dispatcher = require( 'dispatcher' ),
-	FeedStore = require( './' ),
-	FeedState = require( './constants' ).state,
+	inflight = require( 'lib/inflight' ),
 	wpcom = require( 'lib/wp' );
 
-var FeedStoreActions = {
-	fetch: function( feedId ) {
-		const feed = FeedStore.get( feedId );
+function requestKey( feedId ) {
+	return `feed-${feedId}`;
+}
 
-		if ( feed && feed.state === FeedState.PENDING ) {
+const FeedStoreActions = {
+	fetch: function( feedId ) {
+		const key = requestKey( feedId );
+
+		if ( inflight.requestInflight( key ) ) {
 			return;
 		}
 
-		Dispatcher.handleViewAction( {
-			type: ActionType.FETCH,
-			feedId: feedId
-		} );
-
 		wpcom.undocumented().readFeed(
 			{ ID: feedId, meta: 'site' },
-			FeedStoreActions.receiveFeedFetch.bind( FeedStoreActions, feedId )
+			inflight.requestTracker( key, FeedStoreActions.receiveFeedFetch.bind( FeedStoreActions, feedId ) )
 		);
 	},
 

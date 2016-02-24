@@ -10,7 +10,9 @@ const Dispatcher = require( 'dispatcher' ),
 	last = require( 'lodash/last' ),
 	Immutable = require( 'immutable' ),
 	clone = require( 'lodash/clone' ),
-	map = require( 'lodash/map' );
+	map = require( 'lodash/map' ),
+	moment = require( 'moment' ),
+	forEach = require( 'lodash/forEach' );
 
 // Internal Dependencies
 const Emitter = require( 'lib/mixins/emitter' ),
@@ -31,7 +33,7 @@ var subscriptions = clone( subscriptionsTemplate ),
 	currentPage = 0,
 	isLastPage = false,
 	isFetching = false,
-	totalSubscriptions,
+	totalSubscriptions = 0,
 	subscriptionTemplate = Immutable.Map( { // eslint-disable-line new-cap
 		state: States.SUBSCRIBED
 	} );
@@ -124,10 +126,6 @@ var FeedSubscriptionStore = {
 	},
 
 	receiveSubscriptions: function( data ) {
-		var currentSubscriptions = subscriptions,
-			newSubscriptions,
-			combinedSubscriptions;
-
 		if ( ! data.subscriptions ) {
 			return;
 		}
@@ -138,36 +136,39 @@ var FeedSubscriptionStore = {
 			return subscriptionTemplate.merge( sub );
 		} );
 
-		newSubscriptions = Immutable.List( subscriptionsWithState ); // eslint-disable-line new-cap
-
 		// Is it the last page?
 		if ( data.number === 0 ) {
 			isLastPage = true;
 		}
 
-		// Is it a new page of results?
-		if ( currentPage > 0 && data.page > currentPage ) {
-			combinedSubscriptions = currentSubscriptions.list.concat( newSubscriptions );
+		subscriptions.list = subscriptions.list.asMutable();
+		forEach( subscriptionsWithState, function( subscription ) {
+			_acceptSubscription( subscription, false );
+		} );
+		subscriptions.list = subscriptions.list.sort( function( a, b ) {
+			const aDate = moment( a.get( 'date_subscribed' ) ),
+				bDate = moment( b.get( 'date_subscribed' ) );
 
-			subscriptions = {
-				count: combinedSubscriptions.size,
-				list: combinedSubscriptions
-			};
-		} else {
-			// Looks like the first results we've received...
-			subscriptions = {
-				count: newSubscriptions.size,
-				list: newSubscriptions
-			};
-		}
+			if ( aDate.isAfter( bDate ) ) {
+				return -1;
+			}
+
+			if ( aDate.isBefore( bDate ) ) {
+				return 1;
+			}
+
+			return b.get( 'feed_ID' ) - a.get( 'feed_ID' );
+		} );
+
+		subscriptions.list = subscriptions.list.asImmutable();
 
 		// Set the current page
 		currentPage = data.page;
 
-		// Set total subscriptions for user on the first page only (we keep track of it in the store after that)
 		if ( currentPage === 1 ) {
 			totalSubscriptions = data.total_subscriptions;
 		}
+		subscriptions.count = subscriptions.list.count();
 
 		FeedSubscriptionStore.emit( 'change' );
 	},
@@ -231,6 +232,7 @@ var FeedSubscriptionStore = {
 
 	clearSubscriptions: function() {
 		subscriptions = clone( subscriptionsTemplate );
+		totalSubscriptions = 0;
 	},
 
 	isLastPage: function() {
@@ -250,7 +252,25 @@ var FeedSubscriptionStore = {
 	}
 };
 
-function addSubscription( subscription ) {
+function _acceptSubscription( subscription, addToTop = true ) {
+	let subs = subscriptions.list;
+	const existingIndex = subs.findIndex( value => value.get( 'URL' ) === subscription.get( 'URL' ) );
+	if ( existingIndex !== -1 ) {
+		// update the existing subscription by merging together
+		subs = subs.mergeIn( [ existingIndex ], subscription );
+		if ( subs !== subscriptions.list ) {
+			subscriptions.list = subs;
+			return true;
+		}
+		return false;
+	}
+
+	// new subscription
+	subscriptions.list = subs[ addToTop ? 'unshift' : 'push' ]( subscription );
+	return true;
+}
+
+function addSubscription( subscription, addToTop = true ) {
 	if ( ! subscription || ! subscription.URL ) {
 		return;
 	}
@@ -268,12 +288,9 @@ function addSubscription( subscription ) {
 	// Otherwise, create a new subscription
 	subscription.URL = preparedSiteUrl;
 	const newSubscription = subscriptionTemplate.merge( subscription );
-	subscriptions.list = subscriptions.list.unshift( newSubscription );
+	_acceptSubscription( newSubscription, addToTop );
 	subscriptions.count++;
-
-	if ( totalSubscriptions > 0 ) {
-		totalSubscriptions++;
-	}
+	totalSubscriptions++;
 
 	return true;
 }
@@ -289,7 +306,7 @@ function updateSubscription( url, newSubscriptionInfo ) {
 		return item.get( 'URL' ) === preparedSiteUrl;
 	} );
 
-	if ( isNaN( subscriptionIndex ) ) {
+	if ( subscriptionIndex === -1 ) {
 		return;
 	}
 
@@ -319,7 +336,7 @@ function updateSubscription( url, newSubscriptionInfo ) {
 
 	subscriptions.list = updatedSubscriptionsList;
 
-	if ( totalSubscriptions > 0 && existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && updatedSubscription.get( 'state' ) === States.SUBSCRIBED ) {
+	if ( existingSubscription.get( 'state' ) === States.UNSUBSCRIBED && updatedSubscription.get( 'state' ) === States.SUBSCRIBED ) {
 		totalSubscriptions++;
 	}
 
@@ -385,4 +402,4 @@ FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = FeedSubscriptionStore;
+export default FeedSubscriptionStore;
