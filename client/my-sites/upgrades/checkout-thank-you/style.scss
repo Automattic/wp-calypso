@@ -42,30 +42,6 @@
 	margin: 0;
 }
 
-.checkout-thank-you__header {
-	font-size: 25px;
-	font-weight: 100;
-	margin: 0;
-}
-
-.checkout-thank-you__subheader {
-	font-size: 20px;
-	font-weight: 200;
-	opacity: 0.6;
-	margin: auto;
-	max-width: 50%;
-}
-
-.checkout-thank-you__header,
-.checkout-thank-you__subheader {
-	color: $gray-dark;
-
-	@include breakpoint( "<660px" ) {
-		font-size: 17px;
-		max-width: 100%;
-	}
-}
-
 .checkout-thank-you__message {
 	padding-bottom: 20px;
 }
@@ -138,7 +114,6 @@
 	font-weight: 600;
 }
 
->>>>>>> Checkout: Thank you: Layout changes for the mobile view of the thank you page
 .checkout-thank-you__purchase-detail {
 	color: $gray;
 	padding: 30px;
