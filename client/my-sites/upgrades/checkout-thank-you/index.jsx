@@ -92,7 +92,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	getSingleProductName() {
-		if ( this.props.receiptId && getPurchases( this.props ).length ) {
+		if ( this.isDataLoaded() && getPurchases( this.props ).length ) {
 			return getPurchases( this.props )[ 0 ].productNameShort;
 		}
 
@@ -124,7 +124,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	freeTrialWasPurchased: function() {
-		if ( ! this.props.receiptId ) {
+		if ( ! this.isDataLoaded() ) {
 			return false;
 		}
 

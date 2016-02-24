@@ -7,7 +7,7 @@ const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
 		isDataLoaded: React.PropTypes.bool.isRequired,
 		isFreeTrial: React.PropTypes.bool.isRequired,
-		productName: React.PropTypes.string.isRequired
+		productName: React.PropTypes.string
 	},
 
 	renderHeading() {
