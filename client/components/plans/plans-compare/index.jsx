@@ -2,9 +2,11 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
-	property = require( 'lodash/property' );
+	property = require( 'lodash/property' ),
+	times = require( 'lodash/times' );
 
 /**
  * Internal dependencies
@@ -144,7 +146,7 @@ var PlansCompare = React.createClass( {
 		}
 
 		if ( ! this.props.selectedSite ) {
-			return true;
+			return false;
 		}
 
 		if ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) {
@@ -179,22 +181,37 @@ var PlansCompare = React.createClass( {
 	},
 
 	getTableHeader: function() {
-		var plans = this.getPlans(),
-			planElements = [ <th className="plans-compare__features" /> ];
+		var plans, planElements;
 
-		planElements = planElements.concat( plans.map( function( plan ) {
-			var sitePlan = this.getSitePlan( plan );
-			return (
-				<th className="plans-compare__header-cell" key={ plan.product_slug }>
-					<PlanHeader key={ plan.product_slug } text={ plan.product_name_short }>
-						<PlanPrice
-							plan={ plan }
-							sitePlan={ sitePlan }
-							site={ this.props.selectedSite } />
-					</PlanHeader>
-				</th>
-			);
-		}.bind( this ) ) );
+		if ( this.isDataLoading() ) {
+			planElements = times( 4, function( n ) {
+				if ( n === 0 ) {
+					return <th className="plans-compare__features" key={ n } />;
+				}
+				return (
+					<th key={ n } className="plans-compare__header-cell">
+						<div className="plans-compare__header-cell-placeholder" />
+					</th>
+				);
+			} );
+		} else {
+			plans = this.getPlans();
+			planElements = [ <th className="plans-compare__features" key="placeholder" /> ];
+
+			planElements = planElements.concat( plans.map( function( plan ) {
+				var sitePlan = this.getSitePlan( plan );
+				return (
+					<th className="plans-compare__header-cell" key={ plan.product_slug }>
+						<PlanHeader key={ plan.product_slug } text={ plan.product_name_short }>
+							<PlanPrice
+								plan={ plan }
+								sitePlan={ sitePlan }
+								site={ this.props.selectedSite } />
+						</PlanHeader>
+					</th>
+				);
+			}.bind( this ) ) );
+		}
 
 		return (
 			<tr>{ planElements }</tr>
@@ -202,8 +219,30 @@ var PlansCompare = React.createClass( {
 	},
 
 	getTableFeatureRows: function() {
-		var plans = this.getPlans(),
-			features = this.getFeatures(),
+		var plans, features, rows;
+
+		if ( this.isDataLoading() ) {
+			rows = times( 8, function( i ) {
+				var cells = times( 4, function( n ) {
+					var classes = classNames( 'plans-compare__cell-placeholder', {
+						'is-plan-specific': n !== 0
+					} );
+
+					return (
+						<td className="plans-compare__cell" key={ n }>
+							<div className={ classes } />
+						</td>
+					);
+				} );
+
+				return (
+					<tr className="plans-compare__row" key={ i }>{ cells }</tr>
+				);
+			} );
+		} else {
+			plans = this.getPlans();
+			features = this.getFeatures();
+
 			rows = features.map( function( feature ) {
 				var planFeatures = plans.map( function( plan ) {
 					var content;
@@ -237,13 +276,20 @@ var PlansCompare = React.createClass( {
 					</tr>
 				);
 			}.bind( this ) );
+		}
 
 		return rows;
 	},
 
 	getTableActionRow: function() {
-		var plans = this.getPlans(),
-			cells = [ <td /> ];
+		var plans, cells;
+
+		if ( this.isDataLoading() ) {
+			return null;
+		}
+
+		plans = this.getPlans();
+		cells = [ <td key="placeholder" /> ];
 
 		cells = cells.concat( plans.map( function( plan ) {
 			var sitePlan = this.getSitePlan( plan );
@@ -267,10 +313,6 @@ var PlansCompare = React.createClass( {
 	},
 
 	comparisonTable: function() {
-		if ( this.isDataLoading() ) {
-			return 'loading...';
-		}
-
 		return (
 			<table className="plans-compare__table">
 				<thead>

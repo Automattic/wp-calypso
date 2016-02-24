@@ -60,6 +60,22 @@
 	}
 }
 
+.plans-compare__cell-placeholder {
+	@include placeholder( 23% );
+
+	&.is-plan-specific {
+		margin: 0 auto;
+		width: 50%;
+	}
+}
+
+.plans-compare__header-cell-placeholder {
+	margin: 0 auto 10px auto;
+	width: 80%;
+
+	@include placeholder( 23% );
+}
+
 .plans-compare__table .gridicon {
 	color: $alert-green;
 	vertical-align: middle;
