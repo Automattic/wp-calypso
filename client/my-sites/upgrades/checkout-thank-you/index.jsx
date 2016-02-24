@@ -13,6 +13,7 @@ var React = require( 'react' ),
 var activated = require( 'state/themes/actions' ).activated,
 	Dispatcher = require( 'dispatcher' ),
 	Card = require( 'components/card' ),
+	CompactCard = require( 'components/card/compact' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
@@ -98,9 +99,9 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
-				<Card>
+				<CompactCard className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
-				</Card>
+				</CompactCard>
 
 				<Card className="checkout-thank-you__get-support">
 					<div className="checkout-thank-you__get-support-text">
