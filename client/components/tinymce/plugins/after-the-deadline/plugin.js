@@ -21,6 +21,7 @@
 import tinymce from 'tinymce/tinymce';
 import qs from 'querystring';
 import find from 'lodash/find';
+import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies
@@ -40,6 +41,56 @@ const IGNORE_PREFERENCE_NAME = 'editorProofreadIgnore';
 function plugin( editor ) {
 	var suggestionsMenu, started, atdCore, dom,
 		each = tinymce.each;
+
+	const SuggestionsMenu = tinymce.ui.Menu.extend( {
+		init( settings ) {
+			settings.context = 'contextmenu';
+			settings.autofix = false;
+
+			this.on( 'autohide', this.autohide.bind( this ) );
+			this.throttledReposition = throttle( this.reposition.bind( this ), 200 );
+
+			this._super( settings );
+		},
+
+		autohide( event ) {
+			if ( isMarkedNode( event.target ) ) {
+				event.preventDefault();
+			}
+		},
+
+		hide() {
+			this._super();
+			this.remove();
+			window.removeEventListener( 'scroll', this.throttledReposition );
+		},
+
+		postRender() {
+			this._super();
+			this.reposition();
+			window.addEventListener( 'scroll', this.throttledReposition );
+		},
+
+		reposition() {
+			const rootNode = editor.dom.getRoot();
+			let pos = tinymce.DOM.getPos( editor.getContentAreaContainer() );
+			let targetPos = editor.dom.getPos( this.settings.target );
+
+			// Adjust targetPos for scrolling in the editor
+			if ( rootNode.nodeName === 'BODY' ) {
+				targetPos.x -= rootNode.ownerDocument.documentElement.scrollLeft || rootNode.scrollLeft;
+				targetPos.y -= rootNode.ownerDocument.documentElement.scrollTop || rootNode.scrollTop;
+			} else {
+				targetPos.x -= rootNode.scrollLeft;
+				targetPos.y -= rootNode.scrollTop;
+			}
+
+			pos.x += targetPos.x;
+			pos.y += targetPos.y;
+
+			this.moveTo( pos.x, pos.y + this.settings.target.offsetHeight );
+		}
+	} );
 
 	/* initializes the functions used by the AtD Core UI Module */
 	function initAtDCore() {
@@ -197,8 +248,7 @@ function plugin( editor ) {
 
 	// Create the suggestions menu
 	function showSuggestions( target ) {
-		var pos, root, targetPos,
-			items = [],
+		var items = [],
 			text = target.innerText || target.textContent,
 			errorDescription = atdCore.findSuggestion( target );
 
@@ -275,40 +325,11 @@ function plugin( editor ) {
 		}
 
 		// Render menu
-		suggestionsMenu = new tinymce.ui.Menu( {
-			items: items,
-			context: 'contextmenu',
-			onautohide: function( event ) {
-				if ( isMarkedNode( event.target ) ) {
-					event.preventDefault();
-				}
-			},
-			onhide: function() {
-				suggestionsMenu.remove();
-				suggestionsMenu = null;
-			}
-		} );
-
+		suggestionsMenu = new SuggestionsMenu( { items, target } );
 		suggestionsMenu.renderTo( document.body );
-
-		// Position menu
-		pos = tinymce.DOM.getPos( editor.getContentAreaContainer() );
-		targetPos = editor.dom.getPos( target );
-		root = editor.dom.getRoot();
-
-		// Adjust targetPos for scrolling in the editor
-		if ( root.nodeName === 'BODY' ) {
-			targetPos.x -= root.ownerDocument.documentElement.scrollLeft || root.scrollLeft;
-			targetPos.y -= root.ownerDocument.documentElement.scrollTop || root.scrollTop;
-		} else {
-			targetPos.x -= root.scrollLeft;
-			targetPos.y -= root.scrollTop;
-		}
-
-		pos.x += targetPos.x;
-		pos.y += targetPos.y;
-
-		suggestionsMenu.moveTo( pos.x, pos.y + target.offsetHeight );
+		suggestionsMenu.on( 'hide', () => {
+			suggestionsMenu = null;
+		} );
 	}
 
 	// Init everything
