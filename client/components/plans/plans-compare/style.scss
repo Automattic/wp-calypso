@@ -40,18 +40,56 @@
 	padding: 10px;
 	vertical-align: middle;
 
-	&.is-plan-specific {
-		font-weight: 600;
-		text-align: center;
+	@include breakpoint( "<660px" ) {
+		&:not(.is-selected) {
+			display: none;
+		}
+	}
+}
+
+.plans-compare__cell-content {
+	font-weight: 600;
+	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		float: right;
 	}
 }
 
 .plans-compare__features {
-	max-width: 120px;
+	@include breakpoint( ">660px" ) {
+		max-width: 120px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .plans-compare__header-cell {
 	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		&:not(.is-selected) {
+			display: none;
+		}
+	}
+}
+
+.plans-compare__action-cell {
+	@include breakpoint( "<660px" ) {
+		&:not(.is-selected) {
+			display: none;
+		}
+	}
+}
+
+.plans-compare__feature-title-mobile {
+	float: left;
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
 }
 
 .plans-compare__row {

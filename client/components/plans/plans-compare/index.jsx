@@ -20,6 +20,9 @@ var observe = require( 'lib/mixins/data-observe' ),
 	PlanPrice = require( 'components/plans/plan-price' ),
 	analytics = require( 'analytics' ),
 	HeaderCake = require( 'components/header-cake' ),
+	isFreePlan = require( 'lib/products-values' ).isFreePlan,
+	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isPremium = require( 'lib/products-values' ).isPremium,
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Card = require( 'components/card' ),
@@ -42,9 +45,7 @@ var PlansCompare = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return {
-			currentPlan: 'premium'
-		}
+		return { selectedPlan: 'premium' }
 	},
 
 	getDefaultProps: function() {
@@ -156,6 +157,20 @@ var PlansCompare = React.createClass( {
 		return true;
 	},
 
+	isSelected: function( plan ) {
+		if ( this.state.selectedPlan === 'free' ) {
+			return isFreePlan( plan );
+		}
+
+		if ( this.state.selectedPlan === 'premium' ) {
+			return isPremium( plan );
+		}
+
+		if ( this.state.selectedPlan === 'business' ) {
+			return isBusiness( plan );
+		}
+	},
+
 	getFeatures: function() {
 		var plans = this.getPlans();
 
@@ -188,6 +203,7 @@ var PlansCompare = React.createClass( {
 				if ( n === 0 ) {
 					return <th className="plans-compare__features" key={ n } />;
 				}
+
 				return (
 					<th key={ n } className="plans-compare__header-cell">
 						<div className="plans-compare__header-cell-placeholder" />
@@ -199,9 +215,12 @@ var PlansCompare = React.createClass( {
 			planElements = [ <th className="plans-compare__features" key="placeholder" /> ];
 
 			planElements = planElements.concat( plans.map( function( plan ) {
-				var sitePlan = this.getSitePlan( plan );
+				var sitePlan = this.getSitePlan( plan ),
+					classes = classNames( 'plans-compare__header-cell', {
+						'is-selected': this.isSelected( plan )
+					} );
 				return (
-					<th className="plans-compare__header-cell" key={ plan.product_slug }>
+					<th className={ classes } key={ plan.product_slug }>
 						<PlanHeader key={ plan.product_slug } text={ plan.product_name_short }>
 							<PlanPrice
 								plan={ plan }
@@ -245,7 +264,10 @@ var PlansCompare = React.createClass( {
 
 			rows = features.map( function( feature ) {
 				var planFeatures = plans.map( function( plan ) {
-					var content;
+					var classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
+							'is-selected': this.isSelected( plan )
+						} ),
+						content;
 
 					if ( typeof feature[ plan.product_id ] === 'boolean' && feature[ plan.product_id ] ) {
 						content = <Gridicon icon="checkmark-circle" size={ 24 } />;
@@ -257,12 +279,17 @@ var PlansCompare = React.createClass( {
 
 					return (
 						<td
-							className="plans-compare__cell is-plan-specific"
+							className={ classes }
 							key={ plan.product_id }>
-							{ content }
+							<div className="plans-compare__feature-title-mobile">
+								{ feature.title }
+							</div>
+							<div className="plans-compare__cell-content">
+								{ content }
+							</div>
 						</td>
 					);
-				} );
+				}.bind( this ) );
 
 				return (
 					<tr className="plans-compare__row" key={ feature.title }>
@@ -289,12 +316,16 @@ var PlansCompare = React.createClass( {
 		}
 
 		plans = this.getPlans();
-		cells = [ <td key="placeholder" /> ];
+		cells = [ <td className="plans-compare__action-cell" key="placeholder" /> ];
 
 		cells = cells.concat( plans.map( function( plan ) {
-			var sitePlan = this.getSitePlan( plan );
+			var sitePlan = this.getSitePlan( plan ),
+				classes = classNames( 'plans-compare__action-cell', {
+					'is-selected': this.isSelected( plan )
+				} );
+
 			return (
-				<td key={ plan.product_id }>
+				<td className={ classes } key={ plan.product_id }>
 					<PlanActions
 						enableFreeTrials={ this.props.enableFreeTrials }
 						onSelectPlan={ this.props.onSelectPlan }
@@ -326,10 +357,8 @@ var PlansCompare = React.createClass( {
 		);
 	},
 
-	setPlan: function( plan ) {
-		this.setState( {
-			'currentPlan': plan
-		} );
+	setPlan: function( name ) {
+		this.setState( { selectedPlan: name } );
 	},
 
 	sectionNavigationForMobile() {
@@ -370,7 +399,7 @@ var PlansCompare = React.createClass( {
 					{ compareString }
 				</HeaderCake>
 				{ this.sectionNavigationForMobile() }
-				<Card className="plans">
+				<Card>
 					{ this.comparisonTable() }
 					{ this.freeTrialExceptionMessage() }
 				</Card>
