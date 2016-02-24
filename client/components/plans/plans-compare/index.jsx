@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
+	find = require( 'lodash/find' ),
 	page = require( 'page' ),
 	property = require( 'lodash/property' ),
 	times = require( 'lodash/times' );
@@ -171,6 +172,14 @@ var PlansCompare = React.createClass( {
 		}
 	},
 
+	getColumnCount: function() {
+		if ( ! this.props.selectedSite ) {
+			return 4;
+		}
+
+		return this.props.selectedSite.jetpack ? 3 : 4;
+	},
+
 	getFeatures: function() {
 		var plans = this.getPlans();
 
@@ -199,7 +208,7 @@ var PlansCompare = React.createClass( {
 		var plans, planElements;
 
 		if ( this.isDataLoading() ) {
-			planElements = times( 4, function( n ) {
+			planElements = times( this.getColumnCount(), function( n ) {
 				if ( n === 0 ) {
 					return <th className="plans-compare__features" key={ n } />;
 				}
@@ -209,7 +218,7 @@ var PlansCompare = React.createClass( {
 						<div className="plans-compare__header-cell-placeholder" />
 					</th>
 				);
-			} );
+			}.bind( this ) );
 		} else {
 			plans = this.getPlans();
 			planElements = [ <th className="plans-compare__features" key="placeholder" /> ];
@@ -254,7 +263,7 @@ var PlansCompare = React.createClass( {
 
 		if ( this.isDataLoading() ) {
 			rows = times( 8, function( i ) {
-				var cells = times( 4, function( n ) {
+				var cells = times( this.getColumnCount(), function( n ) {
 					var classes = classNames( 'plans-compare__cell-placeholder', {
 						'is-plan-specific': n !== 0
 					} );
@@ -264,12 +273,12 @@ var PlansCompare = React.createClass( {
 							<div className={ classes } />
 						</td>
 					);
-				} );
+				}.bind( this ) );
 
 				return (
 					<tr className="plans-compare__row" key={ i }>{ cells }</tr>
 				);
-			} );
+			}.bind( this ) );
 		} else {
 			plans = this.getPlans();
 			features = this.getFeatures();
@@ -408,7 +417,9 @@ var PlansCompare = React.createClass( {
 
 	render: function() {
 		var compareString = this.translate( 'Compare Plans' ),
-			classes = classNames( this.props.className, 'plans-compare' );
+			classes = classNames( this.props.className, 'plans-compare', {
+				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
+			} );
 
 		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
 			compareString = this.translate( 'Compare Options' );

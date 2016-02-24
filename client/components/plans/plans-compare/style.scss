@@ -45,6 +45,13 @@
 		display: inline;
 		margin-left: 3px;
 	}
+
+	&.is-jetpack-site {
+		.plans-compare__header-cell,
+		.plans-compare__features {
+			width: 33%;
+		}
+	}
 }
 
 .plans-compare__plan-name {
@@ -80,10 +87,6 @@
 }
 
 .plans-compare__features {
-	@include breakpoint( ">660px" ) {
-		max-width: 120px;
-	}
-
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
@@ -98,6 +101,11 @@
 			display: none;
 		}
 	}
+}
+
+.plans-compare__header-cell,
+.plans-compare__features {
+	width: 25%;
 }
 
 .plans-compare__action-cell {
