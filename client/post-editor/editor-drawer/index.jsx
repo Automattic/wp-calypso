@@ -60,8 +60,19 @@ const EditorDrawer = React.createClass( {
 		this.props.setExcerpt( event.target.value );
 	},
 
+	currentPostTypeSupportsAll: function() {
+		// We explicitly hard-code posts as supporting all features, which is a
+		// hack that saves us a network request. While technically possible for
+		// a theme to remove feature support for posts, this is very rare. If
+		// encountered, we should consider removing this shortcut.
+		return 'post' === this.props.type;
+	},
+
 	currentPostTypeSupports: function( feature ) {
 		const { site, postTypes, type } = this.props;
+		if ( this.currentPostTypeSupportsAll() ) {
+			return true;
+		}
 
 		// Default to true until post types are known
 		if ( ! site || ! postTypes ) {
@@ -79,7 +90,7 @@ const EditorDrawer = React.createClass( {
 	renderTaxonomies: function() {
 		var element;
 
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'tags' ) ) {
+		if ( ! this.currentPostTypeSupports( 'tags' ) ) {
 			return;
 		}
 
@@ -142,7 +153,7 @@ const EditorDrawer = React.createClass( {
 	renderExcerpt: function() {
 		var excerpt;
 
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'excerpt' ) ) {
+		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
 			return;
 		}
 
@@ -177,7 +188,7 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'geo-location' ) ) {
+		if ( ! this.currentPostTypeSupports( 'geo-location' ) ) {
 			return;
 		}
 
@@ -190,7 +201,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderDiscussion: function() {
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'comments' ) ) {
+		if ( ! this.currentPostTypeSupports( 'comments' ) ) {
 			return;
 		}
 
@@ -206,11 +217,12 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderMoreOptions: function() {
-		if ( 'post' !== this.props.type &&
+		if (
 			! this.currentPostTypeSupports( 'excerpt' ) &&
 			! this.currentPostTypeSupports( 'geo-location' ) &&
 			! this.currentPostTypeSupports( 'comments' ) &&
-			! siteUtils.isPermalinkEditable( this.props.site ) ) {
+			! siteUtils.isPermalinkEditable( this.props.site )
+		) {
 			return;
 		}
 
@@ -276,7 +288,9 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<div className="editor-drawer">
-				{ site && <QueryPostTypes siteId={ site.ID } /> }
+				{ site && ! this.currentPostTypeSupportsAll() && (
+					<QueryPostTypes siteId={ site.ID } />
+				) }
 				{ 'page' === type
 					? this.renderPageDrawer()
 					: this.renderPostDrawer() }
