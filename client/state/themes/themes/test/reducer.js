@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import { fromJS } from 'immutable';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import reducer, { initialState } from '../reducer';
 describe( 'themes reducer', () => {
 	describe( 'persistence', () => {
 		it( 'persists state and converts to a plain JS object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {
@@ -47,7 +48,7 @@ describe( 'themes reducer', () => {
 			expect( persistedState ).to.eql( jsObject );
 		} );
 		it( 'loads persisted state and converts to immutable.js object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {
@@ -77,7 +78,7 @@ describe( 'themes reducer', () => {
 		} );
 
 		it( 'converts state from server to immutable.js object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {
@@ -107,7 +108,7 @@ describe( 'themes reducer', () => {
 		} );
 
 		it.skip( 'should ignore loading data with invalid keys ', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				wrongkey: {
 					activetest: {
@@ -137,7 +138,7 @@ describe( 'themes reducer', () => {
 		} );
 
 		it.skip( 'should ignore loading data with invalid values ', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {

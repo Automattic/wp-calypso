@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import { fromJS } from 'immutable';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import reducer, { initialState } from '../reducer';
 describe( 'themes-last-query reducer', () => {
 	describe( 'persistence', () => {
 		it( 'persists state and converts to a plain JS object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				previousSiteId: 2123982,
 				isJetpack: false,
@@ -49,7 +50,7 @@ describe( 'themes-last-query reducer', () => {
 		} );
 
 		it( 'converts state from server to immutable.js object', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				previousSiteId: 2123982,
 				isJetpack: false,
@@ -65,7 +66,7 @@ describe( 'themes-last-query reducer', () => {
 		} );
 
 		it.skip( 'should ignore loading data with invalid keys ', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				wrongkey: 2123982,
 				isJetpack: false,
@@ -81,7 +82,7 @@ describe( 'themes-last-query reducer', () => {
 		} );
 
 		it.skip( 'should ignore loading data with invalid values ', () => {
-			const jsObject = Object.freeze( {
+			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				previousSiteId: 2123982,
 				isJetpack: false,
