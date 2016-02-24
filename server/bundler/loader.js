@@ -2,7 +2,7 @@ var config = require( 'config' ),
 	utils = require( './utils' );
 
 function getSectionsModule( sections ) {
-	var dependencies = '',
+	var dependencies,
 		loadSection = '',
 		sectionLoaders = '';
 
@@ -25,6 +25,7 @@ function getSectionsModule( sections ) {
 			} );
 		} );
 	} else {
+		dependencies = "var controller = require( 'controller' );\n";
 		sectionLoaders = getRequires( sections );
 	}
 
@@ -98,7 +99,7 @@ function splitTemplate( path, module, chunkName ) {
 }
 
 function requireTemplate( module ) {
-	return 'require( ' + JSON.stringify( module ) + ' )();\n';
+	return 'require( ' + JSON.stringify( module ) + ' )( controller.clientRouter );\n';
 }
 
 function singleEnsure( chunkName ) {
