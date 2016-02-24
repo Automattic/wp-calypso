@@ -386,9 +386,6 @@ function plugin( editor ) {
 				'.hiddenSuggestion{border-bottom:2px solid blue;cursor:default;}' );
 		}
 
-		// Menu z-index > DFW
-		tinymce.DOM.addStyle( 'div.mce-floatpanel{z-index:150100 !important;}' );
-
 		// Click on misspelled word
 		editor.on( 'click', function( event ) {
 			if ( isMarkedNode( event.target ) ) {

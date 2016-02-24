@@ -659,6 +659,5 @@ function wpcomPlugin( editor ) {
 
 module.exports = function() {
 	// Set the minimum value for the modals z-index higher than #wpadminbar (100000)
-	tinymce.ui.FloatPanel.zIndex = 100100;
 	tinymce.PluginManager.add( 'wpcom', wpcomPlugin );
 };
