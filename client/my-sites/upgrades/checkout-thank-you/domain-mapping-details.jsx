@@ -43,7 +43,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<ul className="checkout-thank-you__purchase-details-list">
+			<div className="checkout-thank-you__purchase-details-list">
 				<PurchaseDetail
 					additionalClass="important"
 					title={ this.translate( 'Important!' ) }
@@ -65,7 +65,7 @@ export default React.createClass( {
 					description={ this.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
 					buttonText={ this.translate( 'View Plans' ) }
 					href={ '/plans/' + this.props.selectedSite.slug } /> : null }
-			</ul>
+			</div>
 		);
 	}
 } );

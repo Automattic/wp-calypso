@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const ChargebackDetails = ( { selectedSite } ) => {
 	return (
-		<ul className="checkout-thank-you__purchase-details-list">
+		<div className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="important"
 				title={ i18n.translate( 'Important!' ) }
@@ -26,7 +26,7 @@ const ChargebackDetails = ( { selectedSite } ) => {
 				description={ i18n.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
 				buttonText={ i18n.translate( 'View Plans' ) }
 				href={ '/plans/' + selectedSite.slug } /> : null }
-		</ul>
+		</div>
 	);
 };
 

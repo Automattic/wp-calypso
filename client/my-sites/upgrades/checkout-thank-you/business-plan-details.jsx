@@ -13,7 +13,7 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 	const showGetFreeDomainTip = ! isFreeTrial;
 
 	return (
-		<ul className="checkout-thank-you__purchase-details-list">
+		<div className="checkout-thank-you__purchase-details-list">
 			{ showGetFreeDomainTip
 			? <PurchaseDetail
 					additionalClass="get-free-domain"
@@ -52,7 +52,7 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
-		</ul>
+		</div>
 	);
 };
 

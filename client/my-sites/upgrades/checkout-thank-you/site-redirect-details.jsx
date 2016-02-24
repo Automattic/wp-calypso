@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const SiteRedirectDetails = ( { selectedSite } ) => {
 	return (
-		<ul className="checkout-thank-you__purchase-details-list">
+		<div className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="redirect-now-working"
 				title={ i18n.translate( 'Redirect now working' ) }
@@ -27,7 +27,7 @@ const SiteRedirectDetails = ( { selectedSite } ) => {
 				description={ i18n.translate( 'You can disable the redirect or change the target at any time.' ) }
 				buttonText={ i18n.translate( 'My Domains' ) }
 				href={ getDomainManagementUrl( selectedSite ) } />
-		</ul>
+		</div>
 	);
 };
 

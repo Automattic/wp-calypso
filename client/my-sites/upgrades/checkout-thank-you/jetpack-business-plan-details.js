@@ -11,7 +11,7 @@ import PurchaseDetail from './purchase-detail';
 
 const JetpackBusinessPlanDetails = () => {
 	return (
-		<ul className="checkout-thank-you__purchase-details-list">
+		<div className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="akismet"
 				title={ i18n.translate( 'Akismet' ) }
@@ -35,7 +35,7 @@ const JetpackBusinessPlanDetails = () => {
 				buttonText={ i18n.translate( 'Start using PollDaddy' ) }
 				href="https://support.wordpress.com/setting-up-premium-services/"
 				target="_blank" />
-		</ul>
+		</div>
 	);
 };
 

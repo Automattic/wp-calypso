@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const GoogleAppsDetails = ( { selectedSite, domain } ) => {
 	return (
-		<ul className="checkout-thank-you__purchase-details-list">
+		<div className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="google-apps-details"
 				title={ i18n.translate( 'Google Apps Setup' ) }
@@ -35,7 +35,7 @@ const GoogleAppsDetails = ( { selectedSite, domain } ) => {
 				description={ i18n.translate( 'Want this to be your primary domain for this site?' ) }
 				buttonText={ i18n.translate( 'Update Settings' ) }
 				href={ getDomainManagementUrl( selectedSite, domain ) } />
-		</ul>
+		</div>
 	);
 };
 

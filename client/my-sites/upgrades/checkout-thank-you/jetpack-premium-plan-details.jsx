@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const JetpackPremiumPlanDetails = () => {
 	return (
-		<ul className="checkout-thank-you__purchase-details-list">
+		<div className="checkout-thank-you__purchase-details-list">
 			<PurchaseDetail
 				additionalClass="akismet"
 				title={ i18n.translate( 'Akismet' ) }
@@ -28,7 +28,7 @@ const JetpackPremiumPlanDetails = () => {
 				buttonText={ i18n.translate( 'Start using VaultPress' ) }
 				href="https://support.wordpress.com/setting-up-premium-services/"
 				target="_blank" />
-		</ul>
+		</div>
 	);
 };
 

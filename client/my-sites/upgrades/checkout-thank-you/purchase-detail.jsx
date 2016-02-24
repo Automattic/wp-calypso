@@ -8,6 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
+import CompactCard from 'components/card/compact';
 
 const PurchaseDetail = ( {
 	additionalClass,
@@ -23,7 +24,7 @@ const PurchaseDetail = ( {
 	} );
 
 	return (
-		<li className={ classes }>
+		<CompactCard className={ classes }>
 			<div className="checkout-thank-you__purchase-detail-text">
 				<h3 className="checkout-thank-you__purchase-detail-title">{ title }</h3>
 				<p className="checkout-thank-you__purchase-detail-description">{ description }</p>
@@ -35,7 +36,7 @@ const PurchaseDetail = ( {
 				primary>
 				{ buttonText }
 			</Button>
-		</li>
+		</CompactCard>
 	);
 };
 
