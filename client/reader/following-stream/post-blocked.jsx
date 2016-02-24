@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	stats = require( 'reader/stats' ),
 	SiteBlockActions = require( 'lib/reader-site-blocks/actions' ),
 	Card = require( 'components/card' );
 
@@ -18,6 +19,9 @@ var PostBlocked = React.createClass( {
 	unblock: function() {
 		analytics.mc.bumpStat( 'reader_actions', 'unblocked_blog' );
 		analytics.ga.recordEvent( 'reader_actions', 'Clicked Unblock Site' );
+		stats.recordTrack( 'calypso_reader_unblock_site', {
+			blog_id: this.props.post.site_ID,
+		} );
 		SiteBlockActions.unblock( this.props.post.site_ID );
 	},
 

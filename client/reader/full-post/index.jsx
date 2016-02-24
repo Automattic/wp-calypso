@@ -430,7 +430,7 @@ FullPostContainer = React.createClass( {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			analytics.tracks.recordEvent( 'calypso_reader_article_opened', {
+			stats.recordTrack( 'calypso_reader_article_opened', {
 				blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
 				post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
 				feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
