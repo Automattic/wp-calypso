@@ -13,6 +13,7 @@ var store = require( 'store' ),
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	userUtils = require( './shared-utils' ),
+	supportUser = require( 'lib/user/support-user-interop' ),
 	getLocalForage = require( 'lib/localforage' ).getLocalForage;
 
 /**
@@ -45,17 +46,12 @@ User.prototype.initialize = function() {
 	this.fetching = false;
 	this.initialized = false;
 
-	if ( config.isEnabled( 'support-user' ) ) {
-		const supportUser = store.get( 'support_user' );
+	if ( supportUser.shouldBootToSupportUser() ) {
+		supportUser.boot();
+		this.fetch();
 
-		if ( supportUser && supportUser.user && supportUser.token ) {
-			debug( 'support user is active', supportUser );
-			wpcom.setSupportUserToken( supportUser.user, supportUser.token );
-
-			// Make sure that the user stored in localStorage matches the logged-in user
-			this.fetch();
-			return;
-		}
+		// We're booting into support user mode, skip initialization of the main user.
+		return;
 	}
 
 	if ( config( 'wpcom_user_bootstrap' ) ) {
