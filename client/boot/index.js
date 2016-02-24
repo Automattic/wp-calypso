@@ -89,7 +89,6 @@ function setUpContext( layout, reduxStore ) {
 	page( '*', function( context, next ) {
 		var parsed = url.parse( location.href, true );
 
-		context.layout = layout;
 		context.store = reduxStore;
 
 		// Break routing and do full page load for logout link in /me
