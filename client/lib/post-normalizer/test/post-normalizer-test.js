@@ -874,7 +874,8 @@ describe( 'post-normalizer', function() {
 		it( 'prepares a version of the post content with linebreak elements only', function( done ) {
 			normalizer(
 				{
-					content: '<p><img src="http://example.com/image.jpg"></p><p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p><p></p>',
+					content: '<br><p class="wp-caption-text">caption</p><p><img src="http://example.com/image.jpg"></p>'
+					+ '<p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p><p></p>',
 				},
 				[
 					normalizer.withContentDOM( [ normalizer.createContentWithLinebreakElementsOnly ] )

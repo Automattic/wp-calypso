@@ -449,10 +449,11 @@ normalizePost.createContentWithLinebreakElementsOnly = function createContentWit
 	const dom = document.createElement( 'div' );
 	dom.innerHTML = betterExcerpt;
 
-	// Strip any empty p elements from the beginning of the content
-	let paragraphs = dom.querySelectorAll( 'p' );
-	forEach( paragraphs, function( element ) {
-		if ( element.innerHTML.length > 0 ) {
+	// Strip any empty p and br elements from the beginning of the content
+	// Also ditch any photo captions with the wp-caption-text class
+	let elements = dom.querySelectorAll( 'p, br' );
+	forEach( elements, function( element ) {
+		if ( element.innerHTML.length > 0 && ! element.className.includes( 'wp-caption-text' ) ) {
 			return false;
 		}
 
