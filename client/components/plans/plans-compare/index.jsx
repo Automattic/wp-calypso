@@ -4,8 +4,6 @@
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	page = require( 'page' ),
-	classNames = require( 'classnames' ),
-	times = require( 'lodash/times' ),
 	property = require( 'lodash/property' );
 
 /**
@@ -14,9 +12,10 @@ var React = require( 'react' ),
 var observe = require( 'lib/mixins/data-observe' ),
 	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	PlanFeatures = require( 'components/plans/plan-features' ),
+	Gridicon = require( 'components/gridicon' ),
+	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
-	PlanFeatureCell = require( 'components/plans/plan-feature-cell' ),
+	PlanPrice = require( 'components/plans/plan-price' ),
 	analytics = require( 'analytics' ),
 	HeaderCake = require( 'components/header-cake' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
@@ -82,33 +81,6 @@ var PlansCompare = React.createClass( {
 		page( plansLink );
 	},
 
-	featureNames: function( featuresList ) {
-		return featuresList.map( function( feature ) {
-			return (
-				<PlanFeatureCell key={ feature.product_slug } title={ feature.description }>
-					{ feature.title } { this.freeTrialExceptionMarker( feature ) }
-				</PlanFeatureCell>
-			);
-		}, this );
-	},
-
-	featureColumns: function( site, plans, featuresList ) {
-		return plans.map( function( plan ) {
-			return (
-				<PlanFeatures
-					enableFreeTrials={ this.props.enableFreeTrials }
-					onSelectPlan={ this.props.onSelectPlan }
-					isInSignup={ this.props.isInSignup }
-					key={ plan.product_id }
-					plan={ plan }
-					site={ site }
-					cart={ this.props.cart }
-					features={ featuresList }
-					sitePlans={ this.props.sitePlans } />
-			);
-		}, this );
-	},
-
 	showFreeTrialException: function() {
 		const hasTrial = this.props.selectedSite
 				? this.props.selectedSite.plan.free_trial
@@ -148,8 +120,10 @@ var PlansCompare = React.createClass( {
 		return null;
 	},
 
-	freeTrialExceptionMessage: function( featuresList ) {
-		if ( this.showFreeTrialException() && featuresList.some( featuresListUtils.featureNotPartOfTrial ) ) {
+	freeTrialExceptionMessage: function() {
+		if ( ! this.isDataLoading() &&
+			this.showFreeTrialException() &&
+			this.getFeatures().some( featuresListUtils.featureNotPartOfTrial ) ) {
 			return (
 				<div className="plans-compare__free-trial-exception-message">
 					{ this.translate( '* Not included during the free trial period' ) }
@@ -160,87 +134,153 @@ var PlansCompare = React.createClass( {
 		return null;
 	},
 
-	getComparisonTableClasses: function() {
-		var comparisonTableClasses = {
-			'plans-compare__columns': true,
-		};
+	isDataLoading: function() {
+		if ( ! this.props.features.get() ) {
+			return true;
+		}
 
-		comparisonTableClasses[ this.state.currentPlan ] = true;
-		return comparisonTableClasses;
+		if ( this.props.isInSignup ) {
+			return false;
+		}
+
+		if ( ! this.props.selectedSite ) {
+			return true;
+		}
+
+		if ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) {
+			return false;
+		}
+
+		return true;
+	},
+
+	getFeatures: function() {
+		var plans = this.getPlans();
+
+		return this.props.features.get().filter( function( feature ) {
+			return plans.some( function( plan ) {
+				return feature[ plan.product_id ];
+			} );
+		} );
+	},
+
+	getPlans: function() {
+		return filterPlansBySiteAndProps(
+			this.props.plans.get(),
+			this.props.selectedSite,
+			this.props.hideFreePlan
+		);
+	},
+
+	getSitePlan: function( plan ) {
+		return this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer
+			? find( this.props.sitePlans.data, { productSlug: plan.product_slug } )
+			: undefined;
+	},
+
+	getTableHeader: function() {
+		var plans = this.getPlans(),
+			planElements = [ <th className="plans-compare__features" /> ];
+
+		planElements = planElements.concat( plans.map( function( plan ) {
+			var sitePlan = this.getSitePlan( plan );
+			return (
+				<th className="plans-compare__header-cell" key={ plan.product_slug }>
+					<PlanHeader key={ plan.product_slug } text={ plan.product_name_short }>
+						<PlanPrice
+							plan={ plan }
+							sitePlan={ sitePlan }
+							site={ this.props.selectedSite } />
+					</PlanHeader>
+				</th>
+			);
+		}.bind( this ) ) );
+
+		return (
+			<tr>{ planElements }</tr>
+		);
+	},
+
+	getTableFeatureRows: function() {
+		var plans = this.getPlans(),
+			features = this.getFeatures(),
+			rows = features.map( function( feature ) {
+				var planFeatures = plans.map( function( plan ) {
+					var content;
+
+					if ( typeof feature[ plan.product_id ] === 'boolean' && feature[ plan.product_id ] ) {
+						content = <Gridicon icon="checkmark-circle" size={ 24 } />;
+					}
+
+					if ( typeof feature[ plan.product_id ] === 'string' ) {
+						content = feature[ plan.product_id ];
+					}
+
+					return (
+						<td
+							className="plans-compare__cell is-plan-specific"
+							key={ plan.product_id }>
+							{ content }
+						</td>
+					);
+				} );
+
+				return (
+					<tr className="plans-compare__row" key={ feature.title }>
+						<td
+							className="plans-compare__cell"
+							key={ feature.title }>
+							{ feature.title }
+							{ this.freeTrialExceptionMarker( feature ) }
+						</td>
+						{ planFeatures }
+					</tr>
+				);
+			}.bind( this ) );
+
+		return rows;
+	},
+
+	getTableActionRow: function() {
+		var plans = this.getPlans(),
+			cells = [ <td /> ];
+
+		cells = cells.concat( plans.map( function( plan ) {
+			var sitePlan = this.getSitePlan( plan );
+			return (
+				<td key={ plan.product_id }>
+					<PlanActions
+						enableFreeTrials={ this.props.enableFreeTrials }
+						onSelectPlan={ this.props.onSelectPlan }
+						isInSignup={ this.props.isInSignup }
+						plan={ plan }
+						site={ this.props.selectedSite }
+						sitePlan={ sitePlan }
+						cart={ this.props.cart } />
+				</td>
+			);
+		}.bind( this ) ) );
+
+		return (
+			<tr>{ cells }</tr>
+		);
 	},
 
 	comparisonTable: function() {
-		var plansColumns,
-			featuresList = this.props.features.get(),
-			numberOfPlaceholders = 4,
-			plans = this.props.plans.get(),
-			site = this.props.selectedSite;
-
-		plans = filterPlansBySiteAndProps( plans, site, this.props.hideFreePlan );
-
-		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
-			numberOfPlaceholders = 3;
+		if ( this.isDataLoading() ) {
+			return 'loading...';
 		}
-
-		if ( this.props.features.hasLoadedFromServer() && (
-			this.props.isInSignup || ! this.props.selectedSite || ( this.props.sitePlans && this.props.sitePlans.hasLoadedFromServer ) )
-		) {
-			// Remove features not supported by any plan
-			featuresList = featuresList.filter( function( feature ) {
-				var keepFeature = false;
-				plans.forEach( function( plan ) {
-					if ( plan.product_id in feature ) {
-						keepFeature = true;
-					}
-				} );
-				return keepFeature;
-			} );
-
-			return (
-				<div className="plans-compare">
-					<div className={ classNames( this.getComparisonTableClasses() ) }>
-						<div className="plan-feature-column feature-list">
-							<PlanHeader/>
-							{ this.featureNames( featuresList ) }
-						</div>
-						{ this.featureColumns( site, plans, featuresList ) }
-					</div>
-					{ this.freeTrialExceptionMessage( featuresList ) }
-				</div>
-			);
-		}
-
-		plansColumns = times( numberOfPlaceholders, function( i ) {
-			var planFeatures,
-				classes = {
-					'plan-feature-column': true,
-					'is-placeholder': true,
-					'feature-list': i === 0,
-					'plan-features': i > 0
-				};
-
-			planFeatures = times( 5, function( j ) {
-				return (
-					<PlanFeatureCell key={ 'cell-' + i + '-' + j }>
-						<span></span>
-					</PlanFeatureCell>
-				);
-			} );
-
-			return (
-				<div className={ classNames( classes ) } key={ 'column-' + i }>
-					<PlanHeader isPlaceholder={ true }/>
-					{ planFeatures }
-				</div>
-			);
-		} );
 
 		return (
-			<div className="plans-compare">
-				<div className="plans-compare__columns">
-					{ plansColumns }
-				</div>
-			</div>
+			<table className="plans-compare__table">
+				<thead>
+					{ this.getTableHeader() }
+				</thead>
+				<tbody>
+					{ this.getTableFeatureRows() }
+					{ this.getTableActionRow() }
+				</tbody>
+			</table>
 		);
 	},
 
@@ -290,6 +330,7 @@ var PlansCompare = React.createClass( {
 				{ this.sectionNavigationForMobile() }
 				<Card className="plans">
 					{ this.comparisonTable() }
+					{ this.freeTrialExceptionMessage() }
 				</Card>
 			</div>
 		);

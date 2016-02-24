@@ -35,29 +35,32 @@
 	}
 }
 
-@include breakpoint( "<480px" ) {
-	.plans-compare__columns {
-		.feature-list .plan-header,
-		.plan-features {
-			display: none;
-		}
+.plans-compare__cell {
+	font-size: 12px;
+	padding: 10px;
+	vertical-align: middle;
 
-		&.free {
-			.free_plan {
-				display: block;
-			}
-		}
-
-		&.premium {
-			.value_bundle {
-				display: block;
-			}
-		}
-
-		&.business {
-			.business-bundle {
-				display: block;
-			}
-		}
+	&.is-plan-specific {
+		font-weight: 600;
+		text-align: center;
 	}
+}
+
+.plans-compare__features {
+	max-width: 120px;
+}
+
+.plans-compare__header-cell {
+	text-align: center;
+}
+
+.plans-compare__row {
+	&:nth-child(odd) {
+		background: $gray-light;
+	}
+}
+
+.plans-compare__table .gridicon {
+	color: $alert-green;
+	vertical-align: middle;
 }
