@@ -63,6 +63,7 @@ class WpVideoView extends Component {
 	getVideoAttributes() {
 		const shortcode = shortcodeUtils.parse( this.props.content );
 		const namedAttrs = shortcode.attrs.named;
+		const numericAttrs = shortcode.attrs.numeric;
 
 		const videoDimensions = this.constrainVideoDimensions(
 			parseInt( namedAttrs.w, 10 ),
@@ -70,12 +71,12 @@ class WpVideoView extends Component {
 		);
 
 		const shortcodeAttributes = {
-			guid: shortcode.attrs.numeric[0],
+			guid: numericAttrs[0],
 			w: videoDimensions.width,
 			h: videoDimensions.height,
-			autoplay: includes( [ 'true', '1' ], namedAttrs.autoplay ),
-			hd: includes( [ 'true', '1' ], namedAttrs.hd ),
-			loop: includes( [ 'true', '1' ], namedAttrs.loop ),
+			autoplay: includes( [ 'true', '1' ], namedAttrs.autoplay ) || includes( numericAttrs, 'autoplay' ),
+			hd: includes( [ 'true', '1' ], namedAttrs.hd ) || includes( numericAttrs, 'hd' ),
+			loop: includes( [ 'true', '1' ], namedAttrs.loop ) || includes( numericAttrs, 'loop' ),
 			at: parseInt( namedAttrs.at, 10 ) || 0,
 			defaultLangCode: namedAttrs.defaultlangcode
 		};
