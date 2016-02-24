@@ -61,7 +61,7 @@ export function recordFollow( url ) {
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source )
-	tracks.recordEvent( 'calypso_reader_site_followed', {
+	recordTrack( 'calypso_reader_site_followed', {
 		url,
 		source
 	} );
@@ -72,7 +72,7 @@ export function recordUnfollow( url ) {
 	mc.bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source )
-	tracks.recordEvent( 'calypso_reader_site_unfollowed', {
+	recordTrack( 'calypso_reader_site_unfollowed', {
 		url,
 		source
 	} );
