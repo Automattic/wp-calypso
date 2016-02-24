@@ -374,13 +374,26 @@ var PlansCompare = React.createClass( {
 	},
 
 	sectionNavigationForMobile() {
+		var text = {
+				free: this.translate( 'Free' ),
+				premium: this.translate( 'Premium' ),
+				business: this.translate( 'Business' )
+			},
+			freeOption = (
+				<NavItem onClick={ this.setPlan.bind( this, 'free' ) }>
+					{ this.translate( 'Free' ) }
+				</NavItem>
+			);
+
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
+			freeOption = null;
+		}
+
 		return (
 			<span className="plans-compare__section-navigation">
-				<SectionNav>
+				<SectionNav selectedText={ text[ this.state.selectedPlan ] }>
 					<NavTabs>
-						<NavItem onClick={ this.setPlan.bind( this, 'free' ) }>
-							{ this.translate( 'Free' ) }
-						</NavItem>
+						{ freeOption }
 						<NavItem onClick={ this.setPlan.bind( this, 'premium' ) }>
 							{ this.translate( 'Premium' ) }
 						</NavItem>
