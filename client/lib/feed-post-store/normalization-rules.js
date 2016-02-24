@@ -42,7 +42,7 @@ const fastPostNormalizationRules = [
 			postNormalizer.content.detectPolls,
 			postNormalizer.content.wordCountAndReadingTime
 		] ),
-		postNormalizer.createContentWithLinebreakElementsOnly,
+		postNormalizer.createBetterExcerpt,
 		classifyPost
 	],
 	slowPostNormalizationRules = [

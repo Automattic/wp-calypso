@@ -19,6 +19,7 @@ var assign = require( 'lodash/assign' ),
 	srcset = require( 'srcset' ),
 	startsWith = require( 'lodash/startsWith' ),
 	toArray = require( 'lodash/toArray' ),
+	trim = require( 'lodash/trim' ),
 	uniqBy = require( 'lodash/uniqBy' ),
 	url = require( 'url' );
 
@@ -437,10 +438,14 @@ normalizePost.pickCanonicalImage = function pickCanonicalImage( post, callback )
 	callback();
 };
 
-normalizePost.createContentWithLinebreakElementsOnly = function createContentWithLinebreakElementsOnly( post, callback ) {
+normalizePost.createBetterExcerpt = function createBetterExcerpt( post, callback ) {
 	if ( ! post || ! post.content ) {
 		callback();
 		return;
+	}
+
+	function removeElement( element ) {
+		element.parentNode && element.parentNode.removeChild( element );
 	}
 
 	let betterExcerpt = striptags( post.content, [ 'p', 'br' ] );
@@ -449,18 +454,34 @@ normalizePost.createContentWithLinebreakElementsOnly = function createContentWit
 	const dom = document.createElement( 'div' );
 	dom.innerHTML = betterExcerpt;
 
+
+	// Ditch any photo captions with the wp-caption-text class
+	forEach( dom.querySelectorAll( '.wp-caption-text' ), removeElement );
+
 	// Strip any empty p and br elements from the beginning of the content
-	// Also ditch any photo captions with the wp-caption-text class
-	let elements = dom.querySelectorAll( 'p, br' );
-	forEach( elements, function( element ) {
-		if ( element.innerHTML.length > 0 && ! element.className.includes( 'wp-caption-text' ) ) {
+	forEach( dom.querySelectorAll( 'p,br' ), function( element ) {
+		// is this element non-empty? bail on our iteration.
+		if ( element.childNodes.length > 0 && trim( element.textContent ).length > 0 ) {
 			return false;
 		}
-
 		element.parentNode && element.parentNode.removeChild( element );
 	} );
 
-	post.content_with_linebreak_elements_only = dom.innerHTML;
+	// now strip any p's that are empty
+	forEach( dom.querySelectorAll( 'p' ), function( element ) {
+		if ( trim( element.textContent ).length === 0 ) {
+			element.parentNode && element.parentNode.removeChild( element );
+		}
+	} );
+
+	// now limit it to the first three elements
+	forEach( dom.querySelectorAll( 'p, br' ), function( element, index ) {
+		if ( index >= 3 ) {
+			element.parentNode && element.parentNode.removeChild( element );
+		}
+	} );
+
+	post.better_excerpt = trim( dom.innerHTML );
 	dom.innerHTML = '';
 
 	callback();

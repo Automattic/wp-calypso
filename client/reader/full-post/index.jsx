@@ -216,7 +216,7 @@ FullPostView = React.createClass( {
 					<PostByline post={ post } site={ site } icon={ true }/>
 
 					{ post.use_excerpt ?
-						<PostExcerpt content={ post.content_with_linebreak_elements_only ? post.content_with_linebreak_elements_only : post.excerpt } /> :
+						<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } /> :
 						<div className="reader__full-post-content" dangerouslySetInnerHTML={{ __html: post.content }}></div> //eslint-disable-line react/no-danger
 					}
 
