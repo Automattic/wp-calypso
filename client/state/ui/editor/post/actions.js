@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { EDITOR_POST_CURRENT_ID } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:ui:editor:post:actions' );
 
@@ -12,12 +13,20 @@ export function setEditingMode( mode, modeTitle, site ) {
 
 export function startEditingNew( site, postOptions ) {
 	debug( 'startEditingNew', site, postOptions );
-	return { type: 'TODO' };
+	return {
+		type: EDITOR_POST_CURRENT_ID,
+		siteId: site.ID,
+		postId: null
+	};
 }
 
 export function startEditingExisting( site, postID ) {
 	debug( 'startEditingExisting', site, postID );
-	return { type: 'TODO' };
+	return {
+		type: EDITOR_POST_CURRENT_ID,
+		siteId: site.ID,
+		postId: postID
+	};
 }
 
 export function toggleStickyStatus( currentStatus ) {
@@ -131,8 +140,8 @@ export function setTags( newTags ) {
 	return { type: 'TODO' };
 }
 
-export function setTitle( newTitle ) {
-	debug( 'setTitle', newTitle );
+export function setTitle( siteId, postId, newTitle ) {
+	debug( 'setTitle', siteId, postId, newTitle );
 	return { type: 'TODO' };
 }
 

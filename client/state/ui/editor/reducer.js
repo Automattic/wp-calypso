@@ -8,8 +8,10 @@ import { combineReducers } from 'redux';
  */
 import media from './media/reducer';
 import contactForm from './contact-form/reducer';
+import post from './post/reducer';
 
 export default combineReducers( {
 	media,
-	contactForm
+	contactForm,
+	post
 } );
