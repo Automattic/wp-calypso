@@ -12,7 +12,6 @@ import { isPlan } from 'lib/products-values';
 =======
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 >>>>>>> Checkout: Thank you: Change the CSS for the header on the thank you page to fit the mockup
 
@@ -91,6 +90,7 @@ const CheckoutThankYouHeader = React.createClass( {
 
 		return (
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<div className={ classNames( classes ) }>
 				<span className="checkout-thank-you-header__icon" />
 
@@ -104,9 +104,12 @@ const CheckoutThankYouHeader = React.createClass( {
 			</div>
 =======
 			<CompactCard className={ classNames( classes ) }>
+=======
+			<div className={ classNames( classes ) }>
+>>>>>>> Checkout: Thank you: Clean up padding and font styles.
 				<div className="checkout-thank-you-header-content">
 					<span className="checkout-thank-you-header__icon">
-						<Gridicon icon="trophy" size={ 48 } />
+						<Gridicon icon="trophy" size={ 72 } />
 					</span>
 					<h1 className="checkout-thank-you-header__heading">
 						{ this.renderHeading() }
@@ -115,8 +118,12 @@ const CheckoutThankYouHeader = React.createClass( {
 						{ this.renderText() }
 					</h2>
 				</div>
+<<<<<<< HEAD
 			</CompactCard>
 >>>>>>> Checkout: Thank you: Change the CSS for the header on the thank you page to fit the mockup
+=======
+			</div>
+>>>>>>> Checkout: Thank you: Clean up padding and font styles.
 		);
 	}
 } );

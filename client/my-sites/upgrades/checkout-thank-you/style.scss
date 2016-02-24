@@ -24,13 +24,17 @@
 
 .checkout-thank-you__get-support {
 	color: $gray;
-	text-align: center;
 }
 
 .checkout-thank-you__get-support-text {
-	margin: 0 auto;
-	max-width: 600px;
-	text-align: left;
+	margin: 16px auto;
+	max-width: 700px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		margin: 24px auto;
+		text-align: left;
+	}
 
 	a {
 		border-bottom: 1px solid $blue-medium;
@@ -38,11 +42,14 @@
 }
 
 .checkout-thank-you__support_heading {
-	font-weight: 600;
+	color: darken( $gray, 20% );
+	font-size: 21px;
 }
 
 .checkout-thank-you__support-related-messages {
-	margin: 0;
+	color: darken( $gray, 10% );
+	font-size: 16px;
+	margin: 8px 0 0 0;
 }
 
 .checkout-thank-you__message {
@@ -72,17 +79,24 @@
 }
 
 .checkout-thank-you__features-header {
-	color: $gray;
-	font-size: 16px;
+	color: darken( $gray, 20% );
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 32px;
+	padding: 48px 48px 24px 48px;
 
 	@include breakpoint( ">660px" ) {
 		box-shadow: none;
-		margin-top: 30px;
+		padding-bottom: 0;
 	}
 }
 
 .checkout-thank-you__purchase-details-list {
 	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		padding-bottom: 48px;
+	}
 }
 
 .checkout-thank-you__product-related-messages {
@@ -94,48 +108,55 @@
 
 .checkout-thank-you__purchase-detail-title {
 	clear: none;
-	font-size: 16px;
-	font-weight: 600;
+	color: darken( $gray, 20% );
+	font-size: 21px;
 }
 
 .checkout-thank-you__purchase-detail-text {
 	&::before {
 		@include noticon( '\f803' );
 
-		background: darken( $gray, 30%);
-		border-radius: 25px;
+		background: darken( $gray, 20% );
+		border-radius: 50%;
 		color: $white;
 		font-size: 30px;
 		margin-bottom: 10px;
-		padding: 5px;
-	}
+		padding: 10px;
 
-	@include breakpoint( ">660px" ) {
-		&::before {
+		@include breakpoint( ">660px" ) {
 			float: right;
-			font-size: 50px;
-			border-radius: 50px;
+			font-size: 48px;
+			margin-top: 24px;
 		}
 	}
 }
 
 .checkout-thank-you__purchase-detail-description {
-	font-size: 13px;
+	color: darken( $gray, 10% );
+	font-size: 16px;
+	margin: 8px 0 16px 0;
 }
 
-.checkout-thank-you__purchase-detail.is-compact {
+.checkout-thank-you__purchase-detail {
+	border: 1px solid lighten( $gray, 30% );
+	border-radius: 3px;
+	box-sizing: border-box;
 	color: $gray;
-	padding: 30px;
+	padding: 32px;
 
 	@include breakpoint( "<660px" ) {
+		&:last-child {
+			border-bottom: none;
+		}
+
 		.button {
 			width: 80%;
 		}
 	}
 
 	@include breakpoint( ">660px" ) {
-		max-width: 600px;
-		margin: 20px auto;
+		max-width: 700px;
+		margin: 16px auto;
 		text-align: left;
 	}
 

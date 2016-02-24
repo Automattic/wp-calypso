@@ -1,16 +1,18 @@
-.checkout-thank-you-header.is-compact {
+.checkout-thank-you-header {
 	background: $blue-medium;
 	color: $white;
+	padding: 48px 24px;
 	text-align: center;
 
 	@include breakpoint( ">660px" ) {
-		padding: 50px 0;
+		padding: 72px 24px;
 	}
 }
 
 .checkout-thank-you-header-content {
 	margin: 0 auto;
-	max-width: 600px;
+	max-width: 700px;
+	overflow: auto;
 
 	@include breakpoint( ">660px" ) {
 		text-align: left;
@@ -23,15 +25,24 @@
 
 	@include breakpoint( ">660px" ) {
 		float: left;
-		margin-right: 20px;
+		height: 132px;
+		margin-right: 32px;
+		width: 132px;
 	}
 
 	.gridicon {
 		background: white;
-		border-radius: 40px;
+		border-radius: 50%;
 		color: darken( $gray, 30% );
 		font-size: 30px;
-		padding: 10px;
+		height: 48px;
+		padding: 30px;
+		width: 48px;
+
+		@include breakpoint( ">660px" ) {
+			height: 72px;
+			width: 72px;
+		}
 	}
 }
 
@@ -41,13 +52,14 @@
 }
 
 .checkout-thank-you-header__heading {
-	font-size: 20px;
+	font-size: 24px;
 	font-weight: 700;
-	margin-bottom: 16px;
+	margin: 24px 0 8px 0;
 }
 
 .checkout-thank-you-header__text {
-	font-size: 13px;
+	font-size: 18px;
+	font-weight: 300;
 }
 
 .checkout-thank-you-header.is-placeholder {

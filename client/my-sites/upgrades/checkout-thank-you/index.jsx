@@ -13,7 +13,6 @@ var React = require( 'react' ),
 var activated = require( 'state/themes/actions' ).activated,
 	Dispatcher = require( 'dispatcher' ),
 	Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
@@ -205,9 +204,9 @@ var CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				<CompactCard className="checkout-thank-you__features-header">
+				<div className="checkout-thank-you__features-header">
 					{ this.translate( "Get started with your site's new features" ) }
-				</CompactCard>
+				</div>
 
 				<div className="checkout-thank-you__purchase-details-list">
 					{ React.createElement( componentClass, {
