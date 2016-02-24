@@ -1,5 +1,7 @@
 import { mc, ga, tracks } from 'analytics';
 
+import SubscriptionStore from 'lib/reader-feed-subscriptions';
+
 export function recordAction( action ) {
 	mc.bumpStat( 'reader_actions', action );
 }
@@ -77,5 +79,9 @@ export function recordUnfollow( url ) {
 }
 
 export function recordTrack( eventName, eventProperties ) {
+	const subCount = SubscriptionStore.getTotalSubscriptions();
+	if ( subCount != null ) {
+		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
+	}
 	tracks.recordEvent( eventName, eventProperties );
 }
