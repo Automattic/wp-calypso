@@ -7,15 +7,18 @@ import React from 'react';
 const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
 		isDataLoaded: React.PropTypes.bool.isRequired,
-		isFreeTrial: React.PropTypes.bool.isRequired,
-		productName: React.PropTypes.string
+		isFreeTrial: React.PropTypes.bool,
+		primaryPurchase: React.PropTypes.object,
+		selectedSite: React.PropTypes.object
 	},
 
 	renderHeading() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
-		} else if ( this.props.isFreeTrial ) {
-			return this.translate( 'Your 14 day free trial starts today!' );
+		}
+
+		if ( this.props.isFreeTrial ) {
+			return this.translate( 'Way to go, your 14 day free trial starts now!' );
 		}
 
 		return this.translate( 'Thank you for your purchase!' );
@@ -24,22 +27,24 @@ const CheckoutThankYouHeader = React.createClass( {
 	renderText() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
-		} else if ( this.props.productName ) {
-			if ( this.props.isFreeTrial ) {
-				return this.translate( "We hope you enjoy %(productName)s. What's next? Take it for a spin!", {
+		}
+
+		if ( this.props.isFreeTrial ) {
+			return this.translate( "We hope you enjoy %(productName)s. What's next? Take it for a spin!", {
+				args: {
+					productName: this.props.primaryPurchase.productShort
+				}
+			} );
+		}
+
+		if ( this.props.primaryPurchase ) {
+			return this.translate(
+				"You will receive an email confirmation shortly for your purchase of %(productName)s. What's next?", {
 					args: {
-						productName: this.props.productName
+						productName: this.props.primaryPurchase.productName
 					}
-				} );
-			} else {
-				return this.translate(
-					"You will receive an email confirmation shortly for your purchase of %(productName)s. What's next?", {
-						args: {
-							productName: this.props.productName
-						}
-					}
-				);
-			}
+				}
+			);
 		}
 
 		return this.translate( "You will receive an email confirmation shortly. What's next?" );

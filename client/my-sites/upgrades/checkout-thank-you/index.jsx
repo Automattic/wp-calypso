@@ -107,11 +107,6 @@ var CheckoutThankYou = React.createClass( {
 		return (
 			<Main className={ classes }>
 				<Card>
-					<CheckoutThankYouHeader
-						isDataLoaded={ this.isDataLoaded() }
-						isFreeTrial={ this.freeTrialWasPurchased() }
-						productName={ this.getSingleProductName() } />
-
 					{ this.productRelatedMessages() }
 				</Card>
 
@@ -141,6 +136,7 @@ var CheckoutThankYou = React.createClass( {
 
 	productRelatedMessages: function() {
 		var selectedSite = this.props.selectedSite,
+			primaryPurchase = null,
 			purchases,
 			componentClass,
 			domain;
@@ -148,6 +144,9 @@ var CheckoutThankYou = React.createClass( {
 		if ( ! this.isDataLoaded() ) {
 			return (
 				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ false }
+						selectedSite={ this.props.selectedSite } />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -160,30 +159,39 @@ var CheckoutThankYou = React.createClass( {
 
 			if ( purchases.some( isJetpackPremium ) ) {
 				componentClass = JetpackPremiumPlanDetails;
+				primaryPurchase = find( purchases, isJetpackPremium );
 			} else if ( purchases.some( isJetpackBusiness ) ) {
 				componentClass = JetpackBusinessPlanDetails;
+				primaryPurchase = find( purchases, isJetpackBusiness );
 			} else if ( purchases.some( isPremium ) ) {
 				componentClass = PremiumPlanDetails;
+				primaryPurchase = find( purchases, isPremium );
 			} else if ( purchases.some( isBusiness ) ) {
 				componentClass = BusinessPlanDetails;
+				primaryPurchase = find( purchases, isBusiness );
 			} else if ( purchases.some( isGoogleApps ) ) {
 				domain = find( purchases, isGoogleApps ).meta;
 
 				componentClass = GoogleAppsDetails;
+				primaryPurchase = find( purchases, isGoogleApps );
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				domain = find( purchases ).meta;
 
 				componentClass = DomainRegistrationDetails;
+				primaryPurchase = find( purchases, isDomainRegistration );
 			} else if ( purchases.some( isDomainMapping ) ) {
 				domain = find( purchases, isDomainMapping ).meta;
 
 				componentClass = DomainMappingDetails;
+				primaryPurchase = find( purchases, isDomainMapping );
 			} else if ( purchases.some( isSiteRedirect ) ) {
 				domain = find( purchases, isSiteRedirect ).meta;
 
 				componentClass = SiteRedirectDetails;
+				primaryPurchase = find( purchases, isSiteRedirect );
 			} else if ( purchases.some( isChargeback ) ) {
 				componentClass = ChargebackDetails;
+				primaryPurchase = find( purchases, isChargeback );
 			} else {
 				componentClass = GenericDetails;
 			}
@@ -193,6 +201,12 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<div>
+				<CheckoutThankYouHeader
+					isDataLoaded={ this.isDataLoaded() }
+					isFreeTrial={ this.freeTrialWasPurchased() }
+					primaryPurchase={ primaryPurchase }
+					selectedSite={ this.props.selectedSite } />
+
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
 					isFreeTrial: this.freeTrialWasPurchased(),
