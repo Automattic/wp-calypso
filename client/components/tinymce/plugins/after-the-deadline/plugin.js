@@ -47,15 +47,16 @@ function plugin( editor ) {
 			settings.context = 'contextmenu';
 			settings.autofix = false;
 
-			this.on( 'autohide', this.autohide.bind( this ) );
 			this.throttledReposition = throttle( this.reposition.bind( this ), 200 );
+			this.on( 'autohide', ( event ) => event.preventDefault() );
+			this.boundHideIfNotMarked = this.hideIfNotMarked.bind( this );
 
 			this._super( settings );
 		},
 
-		autohide( event ) {
-			if ( isMarkedNode( event.target ) ) {
-				event.preventDefault();
+		hideIfNotMarked( event ) {
+			if ( ! isMarkedNode( event.target ) ) {
+				this.hide();
 			}
 		},
 
@@ -63,12 +64,14 @@ function plugin( editor ) {
 			this._super();
 			this.remove();
 			window.removeEventListener( 'scroll', this.throttledReposition );
+			editor.off( 'click touchstart focusout', this.boundHideIfNotMarked );
 		},
 
 		postRender() {
 			this._super();
 			this.reposition();
 			window.addEventListener( 'scroll', this.throttledReposition );
+			editor.on( 'click touchstart focusout', this.boundHideIfNotMarked );
 		},
 
 		reposition() {
