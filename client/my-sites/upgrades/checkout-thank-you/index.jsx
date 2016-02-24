@@ -209,12 +209,14 @@ var CheckoutThankYou = React.createClass( {
 					{ this.translate( "Get started with your site's new features" ) }
 				</CompactCard>
 
-				{ React.createElement( componentClass, {
-					selectedSite: selectedSite,
-					isFreeTrial: this.freeTrialWasPurchased(),
-					locale: i18n.getLocaleSlug(),
-					domain: domain
-				} ) }
+				<div className="checkout-thank-you__purchase-details-list">
+					{ React.createElement( componentClass, {
+						selectedSite: selectedSite,
+						isFreeTrial: this.freeTrialWasPurchased(),
+						locale: i18n.getLocaleSlug(),
+						domain: domain
+					} ) }
+				</div>
 			</div>
 		);
 	},

@@ -12,7 +12,7 @@ import PurchaseDetail from './purchase-detail';
 
 const ChargebackDetails = ( { selectedSite } ) => {
 	return (
-		<div className="checkout-thank-you__purchase-details-list">
+		<div>
 			<PurchaseDetail
 				additionalClass="important"
 				title={ i18n.translate( 'Important!' ) }

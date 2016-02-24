@@ -43,7 +43,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="checkout-thank-you__purchase-details-list">
+			<div>
 				<PurchaseDetail
 					additionalClass="important"
 					title={ this.translate( 'Important!' ) }

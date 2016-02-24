@@ -13,7 +13,7 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 	const showGetFreeDomainTip = ! isFreeTrial;
 
 	return (
-		<div className="checkout-thank-you__purchase-details-list">
+		<div>
 			{ showGetFreeDomainTip
 			? <PurchaseDetail
 					additionalClass="get-free-domain"
