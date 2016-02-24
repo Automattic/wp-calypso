@@ -407,8 +407,7 @@
 	position: relative;
 
 	@include breakpoint( ">660px" ) {
-		padding: 24px;
-		padding-bottom: 20px;
+		padding: 24px 24px 20px;
 	}
 
 	.button {
@@ -437,9 +436,7 @@
 	}
 
 	strong {
-		background: url('/calypso/images/upgrades/google-apps-logo.png');
-		background-position: left center;
-		background-repeat: no-repeat;
+		background: url('/calypso/images/upgrades/google-apps-logo.png') no-repeat left center;
 		background-size: 80px;
 		display: inline-block;
 		height: 40px;
@@ -634,8 +631,7 @@ ul.email-forwarding__list {
 	border-bottom: 2px solid lighten( $gray, 20% );
 	display: block;
 	overflow: auto;
-	padding: 16px;
-	padding-bottom: 20px;
+	padding: 16px 16px 20px;
 	position: relative;
 
 	@include breakpoint( ">660px" ) {
@@ -954,6 +950,7 @@ ul.dns__list {
 }
 
 .google-apps-users-card.card {
+	padding: 0;
 	@include clear-fix;
 }
 
@@ -983,13 +980,16 @@ ul.dns__list {
 
 .google-apps-users-card__user-list {
 	list-style: none;
-	margin: 0 0 16px 0;
+	margin: 0;
 
 	li {
-		color: #58819e;
 		border-top: 1px solid $gray-light;
-		padding: 10px 0;
+		padding: 20px 24px;
 		@include clear-fix;
+
+		&:first-of-type {
+			border-top: none;
+		}
 
 		&:last-of-type {
 			border-bottom: 1px solid $gray-light;
