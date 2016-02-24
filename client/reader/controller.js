@@ -112,6 +112,27 @@ module.exports = {
 		next();
 	},
 
+	legacyRedirects: function( context, next ) {
+		const legacyPathRegexes = {
+			feed_stream: /\/read\/blog\/feed\/([0-9]+)/i,
+			feed_full_post: /\/read\/post\/feed\/([0-9]+)\/([0-9]+)/i,
+			blog_stream: /\/read\/blog\/id\/([0-9]+)/i,
+			blog_full_post: /\/read\/post\/id\/([0-9]+)\/([0-9]+)/i,
+		};
+
+		if ( context.path.match( legacyPathRegexes.feed_stream ) ) {
+			page.redirect( `/read/feeds/${context.params.feed_id}` );
+		} else if ( context.path.match( legacyPathRegexes.feed_full_post ) ) {
+			page.redirect( `/read/feeds/${context.params.feed_id}/posts/${context.params.post_id}` );
+		} else if ( context.path.match( legacyPathRegexes.blog_stream ) ) {
+			page.redirect( `/read/blogs/${context.params.blog_id}` );
+		} else if ( context.path.match( legacyPathRegexes.blog_full_post ) ) {
+			page.redirect( `/read/blogs/${context.params.blog_id}/posts/${context.params.post_id}` );
+		}
+
+		next();
+	},
+
 	loadSubscriptions: function( context, next ) {
 		// these three are included to ensure that the stores required have been loaded and can accept actions
 		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ), // eslint-disable-line no-unused-vars

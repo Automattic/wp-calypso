@@ -33,15 +33,24 @@ module.exports = function() {
 		page( '/', updateLastRoute, controller.removePost, controller.sidebar, controller.following );
 		page( '/read/following', '/' );
 
-		page( '/read/blog/feed/:feed_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.feedListing );
-		page.exit( '/read/blog/feed/:feed_id', controller.resetTitle );
+		// Feed stream
+		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
+		page( '/read/feeds/:feed_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.feedListing );
+		page.exit( '/read/feeds/:feed_id', controller.resetTitle );
 
-		page( '/read/post/feed/:feed/:post', updateLastRoute, controller.feedPost );
-		page.exit( '/read/post/feed/:feed/:post', controller.resetTitle );
+		// Feed full post
+		page( '/read/post/feed/:feed_id/:post_id', controller.legacyRedirects );
+		page( '/read/feeds/:feed/posts/:post', updateLastRoute, controller.feedPost );
+		page.exit( '/read/feeds/:feed/posts/:post', controller.resetTitle );
 
-		page( '/read/blog/id/:blog_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.blogListing );
-		page( '/read/post/id/:blog/:post', updateLastRoute, controller.blogPost );
-		page.exit( '/read/post/id/:blog/:post', controller.resetTitle );
+		// Blog stream
+		page( '/read/blog/id/:blog_id', controller.legacyRedirects );
+		page( '/read/blogs/:blog_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.blogListing );
+
+		// Blog full post
+		page( '/read/post/id/:blog_id/:post_id', controller.legacyRedirects );
+		page( '/read/blogs/:blog/posts/:post', updateLastRoute, controller.blogPost );
+		page.exit( '/read/blogs/:blog/posts/:post', controller.resetTitle );
 
 		page( '/tag/:tag', updateLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
 	}
