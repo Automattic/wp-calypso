@@ -8,7 +8,6 @@ var React = require( 'react' );
  */
 var StoreConnection = require( 'components/data/store-connection' ),
 	DomainsStore = require( 'lib/domains/store' ),
-	GoogleAppsUsersStore = require( 'lib/domains/google-apps-users/store' ),
 	CartStore = require( 'lib/cart/store' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
@@ -18,7 +17,6 @@ const user = userFactory();
 
 var stores = [
 	DomainsStore,
-	GoogleAppsUsersStore,
 	CartStore
 ];
 
@@ -34,7 +32,6 @@ function getStateFromStores( props ) {
 		cart: CartStore.get(),
 		context: props.context,
 		products: props.products,
-		googleAppsUsers: GoogleAppsUsersStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
 		user: user.get()
