@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classNames from 'classNames';
+import classNames from 'classnames';
 import React from 'react';
 
 const CheckoutThankYouHeader = React.createClass( {
