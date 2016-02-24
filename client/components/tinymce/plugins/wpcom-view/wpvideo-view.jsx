@@ -77,6 +77,7 @@ class WpVideoView extends Component {
 			autoplay: includes( [ 'true', '1' ], namedAttrs.autoplay ) || includes( numericAttrs, 'autoplay' ),
 			hd: includes( [ 'true', '1' ], namedAttrs.hd ) || includes( numericAttrs, 'hd' ),
 			loop: includes( [ 'true', '1' ], namedAttrs.loop ) || includes( numericAttrs, 'loop' ),
+			permalink: includes( [ 'true', '1' ], namedAttrs.permalink ) || includes( numericAttrs, 'permalink' ),
 			at: parseInt( namedAttrs.at, 10 ) || 0,
 			defaultLangCode: namedAttrs.defaultlangcode
 		};
@@ -92,7 +93,7 @@ class WpVideoView extends Component {
 		const attributesWithNonDefaultValues = omitBy(
 			shortcodeAttributes,
 			( value, key ) => defaultAttributeValues[ key ] === value );
-		const queryStringAttributes = [ 'autoplay', 'hd', 'loop', 'at', 'defaultLangCode' ];
+		const queryStringAttributes = [ 'autoplay', 'hd', 'loop', 'permalink', 'at', 'defaultLangCode' ];
 		const queryString = QueryString.stringify( pick( attributesWithNonDefaultValues, queryStringAttributes ) );
 
 		return `https://videopress.com/embed/${ shortcodeAttributes.guid }?${ queryString }`;
