@@ -26,7 +26,8 @@ const i18n = require( 'lib/mixins/i18n' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	hideReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).hideReaderFullPost,
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	readerRoute = require( 'reader/route' );
+	readerRoute = require( 'reader/route' ),
+	stats = require( 'reader/stats' );
 
 import userSettings from 'lib/user-settings';
 
@@ -48,7 +49,7 @@ function trackScrollPage( path, title, category, readerView, pageNum ) {
 	debug( 'scroll [%s], [%s], [%s], [%d]', path, title, category, pageNum );
 
 	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', pageNum );
-	analytics.tracks.recordEvent( 'calypso_reader_infinite_scroll_performed' );
+	stats.recordTrack( 'calypso_reader_infinite_scroll_performed' );
 	analytics.pageView.record( path, title );
 	analytics.mc.bumpStat( {
 		newdash_pageviews: 'scroll',
@@ -176,7 +177,7 @@ module.exports = {
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_blog_preview', {
+		stats.recordTrack( 'calypso_reader_blog_preview', {
 			feed_id: context.params.feed_id
 		} );
 
@@ -211,7 +212,7 @@ module.exports = {
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_blog_preview', {
+		stats.recordTrack( 'calypso_reader_blog_preview', {
 			blog_id: context.params.blog_id
 		} );
 
@@ -324,7 +325,7 @@ module.exports = {
 		ensureStoreLoading( tagStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_tag_loaded', {
+		stats.recordTrack( 'calypso_reader_tag_loaded', {
 			tag: tagSlug
 		} );
 
@@ -358,7 +359,7 @@ module.exports = {
 		ensureStoreLoading( listStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_list_loaded', {
+		stats.recordTrack( 'calypso_reader_list_loaded', {
 			list_owner: context.params.user,
 			list_slug: context.params.list
 		} );
@@ -588,7 +589,7 @@ module.exports = {
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		analytics.tracks.recordEvent( 'calypso_reader_discover_viewed' );
+		stats.recordTrack( 'calypso_reader_discover_viewed' );
 
 		ReactDom.render(
 			React.createElement( SiteStream, {
