@@ -1,29 +1,26 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	defer = require( 'lodash/defer' ),
-	page = require( 'page' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const CompactCard = require( 'components/card/compact' ),
-	config = require( 'config' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	paths = require( 'my-sites/upgrades/paths' ),
-	Notice = require( 'components/notice' ),
-	analyticsMixin = require( 'lib/mixins/analytics' ),
-	{ getSelectedDomain } = require( 'lib/domains' ),
-	SectionHeader = require( 'components/section-header' );
+import CompactCard from 'components/card/compact';
+import paths from 'my-sites/upgrades/paths';
+import ExternalLink from 'components/external-link';
+import analyticsMixin from 'lib/mixins/analytics';
+import SectionHeader from 'components/section-header';
+import i18n from 'lib/mixins/i18n';
+import { getSelectedDomain } from 'lib/domains';
 
-const GoogleAppsUsersCard = React.createClass( {
+const GoogleAppsUsers = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
 	propTypes: {
 		domains: React.PropTypes.object.isRequired,
-		googleAppsUsers: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
+		googleAppsUsers: React.PropTypes.array.isRequired,
+		selectedDomainName: React.PropTypes.string,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
@@ -31,129 +28,85 @@ const GoogleAppsUsersCard = React.createClass( {
 		user: React.PropTypes.object.isRequired
 	},
 
-	componentWillMount() {
-		// NOTE: There is an error about dispatching during another dispatch unless
-		//   we wrap this in a `defer`.
-		defer( () => {
-			upgradesActions.fetchGoogleAppsUsers( this.props.selectedDomainName );
-		} );
-	},
-
-	render() {
-		return (
-			<div>
-				{ this.header() }
-				<CompactCard className="google-apps-users-card">
-					{ this.subtext() }
-					{ this.notice() }
-					{ this.userList() }
-					{ this.addUsersButton() }
-				</CompactCard>
-			</div>
-		);
-	},
-
 	canAddUsers() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
-			return false;
-		}
-
-		const { googleAppsSubscription } = getSelectedDomain( this.props );
-
-		return googleAppsSubscription.ownedByUserId === this.props.user.ID;
-	},
-
-	header() {
-		return (
-			<SectionHeader label={ this.translate( 'Google Apps' ) } />
+		const domainsInContext = this.props.selectedDomainName
+			? [ getSelectedDomain( this.props ) ]
+			: this.props.domains.list;
+		return domainsInContext.some( domain =>
+			domain.googleAppsSubscription.ownedByUserId === this.props.user.ID
 		);
 	},
 
-	subtext() {
-		return (
-			<h4 className="google-apps-users-card__subtext">
-				{ this.translate( 'Professional email, online storage, shared calendars, video meetings, & more.' ) }
-			</h4>
-		);
-	},
-
-	userList() {
-		if ( ! this.props.googleAppsUsers.hasLoadedFromServer ) {
-			return this.translate( 'Loading…' );
-		}
-
-		return (
-			<ul className="google-apps-users-card__user-list">
-				{ this.props.googleAppsUsers.value.map( this.userItem ) }
-			</ul>
-		);
-	},
-
-	userItem( user ) {
-		return (
-			<li key={ user }>
-				<span className="google-apps-users-card__user-email">
-					{ user }
-				</span>
-
-				<a
-					className="google-apps-users-card__user-manage-link"
-					href="https://admin.google.com"
-					target="_blank"
-					onClick={ this.handleManageClick( user ) }>
-					{ this.translate( 'Manage', { context: 'Google Apps user item' } ) }
-				</a>
-			</li>
-		);
-	},
-
-	handleManageClick( user ) {
+	generateClickHandler( user ) {
 		return () => {
 			this.recordEvent( 'manageClick', this.props.selectedDomainName, user );
 		};
 	},
 
-	notice() {
-		if ( ! this.canAddUsers() ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				className="google-apps-users-card__notice"
-				text={ this.translate( 'Add more Google Apps users for {{strong}}$50 per user / year{{/strong}}, billed annually.', {
-					components: {
-						strong: <strong />
-					}
-				} ) }
-				showDismiss={ false } />
-		);
-	},
-
-	addUsersButton() {
-		if ( ! this.canAddUsers() ) {
-			return null;
-		}
-
-		return (
-			<button
-				className="google-apps-users-card__add-user-button button is-primary"
-				onClick={ this.goToAddGoogleApps }>
-				{ this.translate( 'Add Google Apps User' ) }
-			</button>
-		);
-	},
-
-	goToAddGoogleApps( event ) {
-		event.preventDefault();
-
+	goToAddGoogleApps() {
 		this.recordEvent( 'addGoogleAppsUserClick', this.props.selectedDomainName );
+	},
 
-		page( paths.domainManagementAddGoogleApps(
-			this.props.selectedSite.domain,
-			this.props.selectedDomainName
-		) );
+	render() {
+		return (
+			<div>
+				<SectionHeader
+					count={ this.props.googleAppsUsers.length }
+					label={ this.translate( 'Google Apps Users' ) }>
+					{ this.canAddUsers() && (
+						<a
+							href={ paths.domainManagementAddGoogleApps(
+								this.props.selectedSite.slug, this.props.selectedDomainName
+							) }
+							className="button is-compact is-primary"
+							onClick={ this.goToAddGoogleApps }>
+							{ this.translate( 'Add Google Apps User' ) }
+						</a>
+					) }
+				</SectionHeader>
+				<CompactCard className="google-apps-users-card">
+					<ul className="google-apps-users-card__user-list">
+						{ this.props.googleAppsUsers.map(
+							( user, index ) => (
+								<GoogleAppsUserItem
+									key={ index } user={ user }
+									onClick={ this.generateClickHandler( user ) }/>
+							)
+						) }
+					</ul>
+				</CompactCard>
+			</div>
+		);
 	}
 } );
 
-module.exports = GoogleAppsUsersCard;
+const GoogleAppsUserItem = React.createClass( {
+	propTypes: {
+		user: React.PropTypes.object.isRequired,
+		onClick: React.PropTypes.func
+	},
+
+	shouldComponentUpdate( nextProps ) {
+		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
+	},
+
+	render() {
+		return (
+			<li>
+				<span className="google-apps-users-card__user-email">
+					{ this.props.user.email }
+				</span>
+
+				<ExternalLink
+					icon
+					className="google-apps-users-card__user-manage-link"
+					href={ `https://admin.google.com/a/${ this.props.user.domain }` }
+					target="_blank">
+					{ i18n.translate( 'Manage', { context: 'Google Apps user item' } ) }
+				</ExternalLink>
+			</li>
+		);
+	}
+} );
+
+export default GoogleAppsUsers;

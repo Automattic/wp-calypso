@@ -31,22 +31,16 @@ var stores = [
 ];
 
 function getStateFromStores( props ) {
-	let domains;
-
-	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
-	}
-
 	return {
-		domains,
+		domains: DomainsStore.getBySite( props.selectedSite.ID ) || {},
 		cart: CartStore.get(),
 		context: props.context,
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
 		user: user.get(),
-		users: props.users,
-		loaded: props.loaded
+		googleAppsUsers: props.googleAppsUsers,
+		googleAppsUsersLoaded: props.googleAppsUsersLoaded
 	};
 }
 
@@ -58,7 +52,9 @@ const EmailData = React.createClass( {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired
+		sites: React.PropTypes.object.isRequired,
+		googleAppsUsers: React.PropTypes.array.isRequired,
+		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
 	mixins: [ observe( 'productsList' ) ],
@@ -85,8 +81,9 @@ const EmailData = React.createClass( {
 	render() {
 		return (
 			<StoreConnection
-				users={ this.props.users }
-				loaded={ this.props.loaded }
+				domains={ this.props.domains }
+				googleAppsUsers={ this.props.googleAppsUsers }
+				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
 				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
@@ -107,8 +104,8 @@ export default connect(
 			usersGetter = partial( getBySite, state, ownProps.sites.getSelectedSite().ID );
 		}
 		return {
-			users: usersGetter(),
-			loaded: getLoaded( state )
+			googleAppsUsers: usersGetter(),
+			googleAppsUsersLoaded: getLoaded( state )
 		}
 	},
 	( dispatch, ownProps ) => {

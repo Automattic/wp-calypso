@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -30,8 +29,8 @@ const Email = React.createClass( {
 			React.PropTypes.bool
 		] ).isRequired,
 		user: React.PropTypes.object.isRequired,
-		users: React.PropTypes.array.isRequired,
-		loaded: React.PropTypes.bool.isRequired
+		googleAppsUsers: React.PropTypes.array.isRequired,
+		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
 	render() {
@@ -63,9 +62,10 @@ const Email = React.createClass( {
 	},
 
 	content() {
-		if ( ! this.props.domains.hasLoadedFromServer ) {
+		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded ) ) {
 			return this.translate( 'Loading…' );
 		}
+
 		let domainList = this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
@@ -79,20 +79,30 @@ const Email = React.createClass( {
 	},
 
 	emptyContent() {
-		let props = {
-			title: this.translate( "You don't have any domains yet." ),
-			line: this.translate(
-				'Add a domain to your site to make it easier ' +
-				'to remember and easier to share, and get access to email ' +
-				'forwarding, Google Apps for Work, and other email services.'
-			),
+		let props;
+		if ( this.props.selectedDomainName ) {
+			props = {
+				title: this.translate( 'Google Apps is not supported on this domain' ),
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' )
+			}
+		} else {
+			props = {
+				title: this.translate( "You don't have any domains yet." ),
+				line: this.translate(
+					'Add a domain to your site to make it easier ' +
+					'to remember and easier to share, and get access to email ' +
+					'forwarding, Google Apps for Work, and other email services.'
+				)
+			};
+		}
+		Object.assign( props, {
 			illustration: '/calypso/images/drake/drake-whoops.svg',
 			action: this.translate( 'Add a Custom Domain' ),
-			actionURL: '/domains/add/' + this.props.selectedSite.domain
-		};
+			actionURL: '/domains/add/' + this.props.selectedSite.slug
+		} );
 
 		return (
-			<EmptyContent { ...props } />
+			<EmptyContent {...props } />
 		);
 	},
 
@@ -104,12 +114,12 @@ const Email = React.createClass( {
 		return (
 			<div>
 				<AddGoogleAppsCard { ...this.props } />
-				<VerticalNav>
+				{ this.props.selectedDomainName && <VerticalNav>
 					<VerticalNavItem
 						path={ paths.domainManagementEmailForwarding( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
 						{ this.translate( 'Email Forwarding' ) }
 					</VerticalNavItem>
-				</VerticalNav>
+				</VerticalNav> }
 			</div>
 		);
 	},

@@ -1,18 +1,20 @@
+import createSelector from 'lib/create-selector';
+
 function getGoogleAppsUsersState( state ) {
 	return state.googleAppsUsers;
 }
 
-export function getByDomain( state, domain ) {
-	return getGoogleAppsUsersState( state ).items.filter( item => item.domain === domain );
+function createGoogleAppsUsersSelector( fn ) {
+	return createSelector( fn, ( state ) => [ getGoogleAppsUsersState( state ) ] );
 }
 
-export function getBySite( state, siteId ) {
-	return getGoogleAppsUsersState( state ).items.filter( item => item.site_id === siteId );
-}
+export const getByDomain = createGoogleAppsUsersSelector(
+	( state, domainName ) => getGoogleAppsUsersState( state ).items.filter( item => item.domain === domainName )
+);
 
-export function getAll( state ) {
-	return getGoogleAppsUsersState( state );
-}
+export const getBySite = createGoogleAppsUsersSelector(
+	( state, siteId ) => getGoogleAppsUsersState( state ).items.filter( item => item.site_id === siteId )
+);
 
 export function getLoaded( state ) {
 	return getGoogleAppsUsersState( state ).loaded;
