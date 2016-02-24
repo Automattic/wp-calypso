@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WordPress.com REST API Proxy Pinghub Test Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="../dist/wpcom-proxy-request.js"></script>
+    <script>
+      function echo(o) {
+        var d = document.createElement('pre');
+        d.innerHTML = JSON.stringify(o, null, 2);
+        document.body.appendChild(d);
+      }
+
+      var path = '/pinghub/wpcom/me/test';
+
+      var xhr = WPCOM.proxy({path: path, action: 'connect'}, function(){});
+
+      var callback = function(err, event) {
+        if ( err || event.type !== 'load' ) {
+          echo( err || event );
+        }
+
+        else if ( ! event.response || ! event.response.type ) {
+        }
+
+        else if ( event.response.type === 'open' ) {
+          echo( "Connected" );
+          [1, 2, 3, 4, 5].map( x => setTimeout( function() {
+            WPCOM.proxy({path: path, action: 'send', message: x}, function(err, res) {
+              if (err) throw err;
+              echo( "Sent " + x );
+            });
+          }, 30 * x ) );
+          setTimeout( function() {
+            WPCOM.proxy({path: path, action: 'disconnect'}, function(){});
+          }, 2000 );
+        }
+
+        else if ( event.response.type === 'message' ) {
+          echo( "Received " + event.response.data );
+        }
+
+        else if ( event.response.type === 'close' ) {
+          echo( "Closed" );
+        }
+      };
+
+      var onload = function(e) {
+          callback( null, e );
+      };
+      var onerror = function(e) {
+          callback( e, null );
+      };
+
+      xhr.onload = onload;
+      xhr.onerror = onerror;
+      xhr.onclose = onerror;
+    </script>
+  </body>
+</html>

@@ -384,11 +384,19 @@ function onmessage (e) {
   }
 
   var xhr = requests[id];
-  delete requests[id];
 
   var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
+
+  if ( statusCode == 207 ) {
+    // 207 is a signal from rest-proxy. It means, "this isn't the final
+    // response to the query." The proxy supports WebSocket connections
+    // by invoking the original success callback for each message received.
+  } else {
+    // this is the final response to this query
+    delete requests[id];
+  }
 
   if (!xhr.params.metaAPI) {
     debug('got %o status code for URL: %o', statusCode, xhr.params.path);
@@ -514,17 +522,10 @@ exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
-
-/**
- * Use chrome.storage.local if we are in an app
- */
-
-var storage;
-
-if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined')
-  storage = chrome.storage.local;
-else
-  storage = window.localStorage;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
 
 /**
  * Colors.
@@ -632,9 +633,9 @@ function log() {
 function save(namespaces) {
   try {
     if (null == namespaces) {
-      storage.removeItem('debug');
+      exports.storage.removeItem('debug');
     } else {
-      storage.debug = namespaces;
+      exports.storage.debug = namespaces;
     }
   } catch(e) {}
 }
@@ -649,7 +650,7 @@ function save(namespaces) {
 function load() {
   var r;
   try {
-    r = storage.debug;
+    r = exports.storage.debug;
   } catch(e) {}
   return r;
 }
@@ -659,6 +660,23 @@ function load() {
  */
 
 exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage(){
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
 
 },{"./debug":4}],4:[function(require,module,exports){
 
@@ -900,13 +918,17 @@ module.exports = function(val, options){
  */
 
 function parse(str) {
-  var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(str);
+  str = '' + str;
+  if (str.length > 10000) return;
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
   if (!match) return;
   var n = parseFloat(match[1]);
   var type = (match[2] || 'ms').toLowerCase();
   switch (type) {
     case 'years':
     case 'year':
+    case 'yrs':
+    case 'yr':
     case 'y':
       return n * y;
     case 'days':
@@ -915,16 +937,26 @@ function parse(str) {
       return n * d;
     case 'hours':
     case 'hour':
+    case 'hrs':
+    case 'hr':
     case 'h':
       return n * h;
     case 'minutes':
     case 'minute':
+    case 'mins':
+    case 'min':
     case 'm':
       return n * m;
     case 'seconds':
     case 'second':
+    case 'secs':
+    case 'sec':
     case 's':
       return n * s;
+    case 'milliseconds':
+    case 'millisecond':
+    case 'msecs':
+    case 'msec':
     case 'ms':
       return n;
   }

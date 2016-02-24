@@ -383,11 +383,19 @@ function onmessage (e) {
   }
 
   var xhr = requests[id];
-  delete requests[id];
 
   var body = data[0];
   var statusCode = data[1];
   var headers = data[2];
+
+  if ( statusCode == 207 ) {
+    // 207 is a signal from rest-proxy. It means, "this isn't the final
+    // response to the query." The proxy supports WebSocket connections
+    // by invoking the original success callback for each message received.
+  } else {
+    // this is the final response to this query
+    delete requests[id];
+  }
 
   if (!xhr.params.metaAPI) {
     debug('got %o status code for URL: %o', statusCode, xhr.params.path);
