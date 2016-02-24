@@ -11,6 +11,7 @@ const Dispatcher = require( 'dispatcher' ),
 	Immutable = require( 'immutable' ),
 	clone = require( 'lodash/clone' ),
 	map = require( 'lodash/map' ),
+	moment = require( 'moment' ),
 	forEach = require( 'lodash/forEach' );
 
 // Internal Dependencies
@@ -144,6 +145,21 @@ var FeedSubscriptionStore = {
 		forEach( subscriptionsWithState, function( subscription ) {
 			_acceptSubscription( subscription, false );
 		} );
+		subscriptions.list = subscriptions.list.sort( function( a, b ) {
+			const aDate = moment( a.get( 'date_subscribed' ) ),
+				bDate = moment( b.get( 'date_subscribed' ) );
+
+			if ( aDate.isAfter( bDate ) ) {
+				return -1;
+			}
+
+			if ( aDate.isBefore( bDate ) ) {
+				return 1;
+			}
+
+			return b.get( 'feed_ID' ) - a.get( 'feed_ID' );
+		} );
+
 		subscriptions.list = subscriptions.list.asImmutable();
 
 		// Set the current page
@@ -152,6 +168,7 @@ var FeedSubscriptionStore = {
 		if ( currentPage === 1 ) {
 			totalSubscriptions = data.total_subscriptions;
 		}
+		subscriptions.count = subscriptions.list.count();
 
 		FeedSubscriptionStore.emit( 'change' );
 	},
