@@ -16,6 +16,7 @@ var SiteIcon = require( 'components/site-icon' ),
 
 import { userCan } from 'lib/site/utils';
 import Tooltip from 'components/tooltip';
+import ExternalLink from 'components/external-link';
 
 module.exports = React.createClass( {
 	displayName: 'Site',
@@ -123,10 +124,10 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<a href={ url } target="_blank" className="site__edit-icon">
+			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon">
 				<SiteIcon site={ this.props.site } />
 				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
-			</a>
+			</ExternalLink>
 		);
 	},
 
