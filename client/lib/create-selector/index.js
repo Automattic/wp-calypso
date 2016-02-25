@@ -5,11 +5,6 @@ import memoize from 'lodash/memoize';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
- * Internal dependencies
- */
-import config from 'config';
-
-/**
  * Constants
  */
 const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ];
@@ -23,12 +18,17 @@ const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ];
  * @type {Function} Function returning cache key for memoized selector
  */
 const getCacheKey = ( () => {
-	if ( 'development' !== config( 'env' ) ) {
+	let warn, includes;
+	if ( 'production' !== process.env.NODE_ENV ) {
+		// Webpack can optimize bundles if it can detect that a block will
+		// never be reached. Since `NODE_ENV` is defined using DefinePlugin,
+		// these debugging modules will be excluded from the production build.
+		warn = require( 'lib/warn' );
+		includes = require( 'lodash/includes' );
+	} else {
 		return ( state, ...args ) => args.join();
 	}
 
-	const warn = require( 'lib/warn' );
-	const includes = require( 'lodash/includes' );
 	return ( state, ...args ) => {
 		const hasInvalidArg = args.some( ( arg ) => {
 			return arg && ! includes( VALID_ARG_TYPES, typeof arg );
