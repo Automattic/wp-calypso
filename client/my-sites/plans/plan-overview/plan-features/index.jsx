@@ -34,12 +34,6 @@ const PlanFeatures = React.createClass( {
 					willBeRemoved={ willBeRemoved } />
 
 				<PlanFeature
-					button={ { label: this.translate( 'Set up eCommerce' ), href: `/plugins/${ this.props.selectedSite.slug }` } }
-					description={ this.translate( 'Connect your Shopify, Ecwid, or Gumroad account to your WordPress.com site.' ) }
-					heading={ this.translate( 'eCommerce Integration' ) }
-					willBeRemoved={ willBeRemoved } />
-
-				<PlanFeature
 					button={ { label: this.translate( 'Set up Analytics' ), href: `/settings/analytics/${ this.props.selectedSite.slug }` } }
 					description={ this.translate( 'Connect your Google Analytics account.' ) }
 					heading={ this.translate( 'Google Analytics Integration' ) }
