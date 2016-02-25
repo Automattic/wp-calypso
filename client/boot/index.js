@@ -22,7 +22,6 @@ var config = require( 'config' ),
 	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
 	analytics = require( 'analytics' ),
 	route = require( 'lib/route' ),
-	routerHelper = require( 'lib/router-helper' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
@@ -47,7 +46,7 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	setSection = require( 'state/ui/actions' ).setSection,
+	show404 = require( 'lib/router-helper' ).show404,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -350,11 +349,19 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
 
-	// 404 handler. Do NOT put any routes below this one. If code-splitting is enabled and a new section is loaded,
-	// this `page()` is removed from the chain of registered `page()`s and a new 404 handler is added.
-	// Refer to `server/bundler/loader.js` for more details.
-	page( '*', function( context ) {
-		routerHelper.show404( context );
+	// 404 handler. Do not put any routes below this one.
+	page( '*', function( context, next ) {
+		if ( config.isEnabled( 'code-splitting' ) ) {
+			if ( ! context.sectionRouteMatched ) {
+				show404( context );
+
+				return;
+			}
+
+			next();
+		} else {
+			show404( context );
+		}
 	} );
 
 	detectHistoryNavigation.start();

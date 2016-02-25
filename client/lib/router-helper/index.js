@@ -20,7 +20,3 @@ export function show404( context ) {
 		document.getElementById( 'primary' )
 	);
 }
-
-export function removeCurrent404Route( page ) {
-	page.callbacks.splice( page.callbacks.length - 1 );
-}

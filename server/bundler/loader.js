@@ -15,7 +15,7 @@ function getSectionsModule( sections ) {
 			"\tclasses = require( 'component-classes' ),",
 			"\tcontroller = require( 'controller' ),",
 			"\tpreloadHub = require( 'sections-preload' ).hub,",
-			"\trouterHelper = require( 'lib/router-helper' );",
+			"\tshow404 = require( 'lib/router-helper' ).show404;",
 			'\n',
 			'var _loadedSections = {};\n'
 		].join( '\n' );
@@ -104,12 +104,9 @@ function splitTemplate( path, section ) {
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
-		'			routerHelper.removeCurrent404Route( page );',
 		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
-		'			page( "*", function( context ) {',
-		'				routerHelper.show404( context );',
-		'			} );',
+		'			page( ' + pathRegex + ', show404 );',
 		'		}',
 		'		layoutFocus.next();',
 		'		next();',
