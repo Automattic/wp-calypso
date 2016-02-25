@@ -99,13 +99,6 @@ const CheckoutThankYou = React.createClass( {
 			<Main className={ classes }>
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
-
-					<CheckoutThankYouHeader
-						isDataLoaded={ this.isDataLoaded() }
-						isFreeTrial={ this.freeTrialWasPurchased() }
-						productName={ this.getSingleProductName() } />
-
-					{ this.productRelatedMessages() }
 				</Card>
 
 				<Card className="checkout-thank-you__get-support">
