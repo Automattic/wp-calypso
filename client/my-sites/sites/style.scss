@@ -1,0 +1,18 @@
+.sites__select-heading {
+	clear: both;
+	color: darken( $gray, 30% );
+	display: block;
+	font-family: $serif;
+	font-size: 32px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.sites .site-selector .site {
+	.site__title,
+	.site__domain {
+		&::after {
+			@include long-content-fade( $color: $gray-light );
+		}
+	}
+}
