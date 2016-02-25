@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from 'config';
 import Hashes from 'jshashes';
 import debugFactory from 'debug';
 
@@ -30,6 +31,11 @@ export class SyncHandler {
 	 * @return {Function} sync-handler wrapper
 	 */
 	constructor( handler ) {
+		// expose `syncHandler` global var (dev mode)
+		if ( 'development' === config( 'env' ) ) {
+			window.syncHandler = this;
+		}
+
 		this.reqHandler = handler;
 		return this.syncHandlerWrapper( handler );
 	}
@@ -219,4 +225,9 @@ export const pruneRecordsFrom = lifetime => {
 
 export const clearAll = () => {
 	return cacheIndex.clearAll();
+}
+
+// expose `cacheIndex` global var (dev mode)
+if ( 'development' === config( 'env' ) ) {
+	window.cacheIndex = cacheIndex;
 }
