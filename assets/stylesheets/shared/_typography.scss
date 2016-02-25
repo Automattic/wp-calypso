@@ -6,10 +6,8 @@ $code: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", $monospace;
 $serif-fallback: Georgia, "Times New Roman", Times, serif;
 $serif: Merriweather, $serif-fallback;
 
-$sans-fallback: Helvetica, Arial, sans-serif;
-$sans: "Open Sans", $sans-fallback; // 400 400i 600 700 700i
-
-$sans-rtl: Tahoma, $sans-fallback;
+$sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+$sans-rtl: Tahoma, $sans;
 
 %content-font {
 	font-family: $serif;
