@@ -126,7 +126,7 @@ var CheckoutThankYou = React.createClass( {
 		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
-	getPrimaryPurchaseAndComponentAndDomain: function() {
+	getComponentAndPrimaryPurchaseAndDomain: function() {
 		var primaryPurchase = null,
 			purchases,
 			componentClass,
@@ -177,12 +177,12 @@ var CheckoutThankYou = React.createClass( {
 			componentClass = GenericDetails;
 		}
 
-		return [ primaryPurchase, componentClass, domain ];
+		return [ componentClass, primaryPurchase, domain ];
 	},
 
 	productRelatedMessages: function() {
 		var selectedSite = this.props.selectedSite,
-			[ primaryPurchase, componentClass, domain ] = this.getPrimaryPurchaseAndComponentAndDomain();
+			[ componentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
