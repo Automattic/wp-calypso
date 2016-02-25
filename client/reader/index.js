@@ -35,6 +35,7 @@ module.exports = function() {
 
 		// Feed stream
 		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
+		page( '/read/feeds/:feed_id/posts', controller.redirects );
 		page( '/read/feeds/:feed_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.feedListing );
 		page.exit( '/read/feeds/:feed_id', controller.resetTitle );
 
@@ -45,6 +46,7 @@ module.exports = function() {
 
 		// Blog stream
 		page( '/read/blog/id/:blog_id', controller.legacyRedirects );
+		page( '/read/blogs/:blog_id/posts', controller.redirects );
 		page( '/read/blogs/:blog_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.blogListing );
 
 		// Blog full post
