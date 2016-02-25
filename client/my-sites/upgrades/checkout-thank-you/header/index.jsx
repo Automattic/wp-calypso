@@ -75,11 +75,11 @@ const CheckoutThankYouHeader = React.createClass( {
 
 		return (
 			<div className={ classNames( classes ) }>
-				<div className="checkout-thank-you-header-content">
+				<div className="checkout-thank-you-header__content">
 					<span className="checkout-thank-you-header__icon">
 						<Gridicon icon="trophy" size={ 72 } />
 					</span>
-					<div>
+					<div className="checkout-thank-you-header__copy">
 						<h1 className="checkout-thank-you-header__heading">
 							{ this.getHeading() }
 						</h1>

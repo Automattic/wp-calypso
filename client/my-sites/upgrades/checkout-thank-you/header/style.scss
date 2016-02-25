@@ -9,7 +9,7 @@
 	}
 }
 
-.checkout-thank-you-header-content {
+.checkout-thank-you-header__content {
 	margin: 0 auto;
 	max-width: 700px;
 
@@ -44,6 +44,10 @@
 			width: 72px;
 		}
 	}
+}
+
+.checkout-thank-you-header__copy {
+	width: 100%;
 }
 
 .checkout-thank-you-header__heading,
