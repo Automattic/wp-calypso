@@ -185,7 +185,14 @@ module.exports = React.createClass( {
 					>
 						<SiteIcon site={ site } />
 						<div className="site__info">
-							<div className="site__title">{ site.title }</div>
+							<div className="site__title">
+								{ this.props.site.is_private &&
+									<span className="site__badge">
+										<Gridicon icon="lock" size={ 14 } />
+									</span>
+								}
+								{ site.title }
+							</div>
 							<div className="site__domain">{ site.domain }</div>
 						</div>
 						{ this.props.homeLink &&
@@ -196,11 +203,6 @@ module.exports = React.createClass( {
 						{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
 							<span className="site__badge">
 								<Gridicon icon="star" size={ 18 } />
-							</span>
-						}
-						{ this.props.site.is_private &&
-							<span className="site__badge">
-								<Gridicon icon="lock" size={ 18 } />
 							</span>
 						}
 					</a>

@@ -221,9 +221,9 @@
 }
 
 .site__badge {
-	align-self: center;
 	color: $gray;
-	padding-right: 16px;
+	padding-right: 4px;
 	line-height: 0;
 	position: relative;
+	vertical-align: middle;
 }
