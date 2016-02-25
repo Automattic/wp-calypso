@@ -38,7 +38,6 @@ var activated = require( 'state/themes/actions' ).activated,
 	isTheme = require( 'lib/products-values' ).isTheme,
 	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
-	i18n = require( 'lib/mixins/i18n' ),
 	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
 	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
 	PremiumPlanDetails = require( './premium-plan-details' ),
@@ -49,7 +48,7 @@ function getPurchases( props ) {
 	return props.receipt.data.purchases;
 }
 
-var CheckoutThankYou = React.createClass( {
+const CheckoutThankYou = React.createClass( {
 	componentDidMount: function() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
