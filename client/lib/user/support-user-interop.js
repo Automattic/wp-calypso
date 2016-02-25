@@ -9,7 +9,7 @@ import debugModule from 'debug';
 import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
-import { supportUserActivate } from 'state/support/actions';
+import { supportUserTokenFetch, supportUserActivate, supportUserError } from 'state/support/actions';
 
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
@@ -33,6 +33,26 @@ class SupportUser {
 		} );
 	}
 
+	fetchToken( user, password ) {
+		debug( 'Fetching support user token' );
+
+		return this.reduxStoreReady.then( ( reduxStore ) => {
+			reduxStore.dispatch( supportUserTokenFetch( user ) );
+
+			const setToken = ( response ) => {
+				this.rebootWithToken( response.username, response.token );
+			};
+
+			const errorFetchingToken = ( error ) => {
+				reduxStore.dispatch( supportUserError( error.message ) );
+			};
+
+			return wpcom.fetchSupportUserToken( user, password )
+				.then( setToken )
+				.catch( errorFetchingToken );
+		} );
+	}
+
 	/**
 	 * Reboot normally as the main user
 	 */
@@ -44,8 +64,10 @@ class SupportUser {
 	}
 
 	/**
-	 * Reboot Calypso as the support user
-	 */
+	  * Reboot Calypso as the support user
+	  * @param  {string} user  The support user's username
+	  * @param  {string} token The support token
+	  */
 	rebootWithToken( user, token ) {
 		debug( 'Rebooting Calypso with support user' );
 
@@ -99,9 +121,13 @@ class DisabledSupportUser {
 	rebootNormally() {}
 	rebootWithToken() {}
 	setReduxStore() {}
-	shouldBootToSupportUser() { return false; }
+	shouldBootToSupportUser() {
+		return false;
+	}
 	boot() {}
-	isEnabled() { return false; }
+	isEnabled() {
+		return false;
+	}
 }
 
 let supportUser = null;

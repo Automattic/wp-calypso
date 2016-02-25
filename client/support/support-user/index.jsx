@@ -12,10 +12,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
 import supportUser from 'lib/user/support-user-interop';
 
-import {
-	supportUserTokenFetch,
-	supportUserToggleDialog,
-} from 'state/support/actions';
+import { supportUserToggleDialog } from 'state/support/actions';
 
 const SupportUser = React.createClass( {
 	displayName: 'SupportUser',
@@ -57,15 +54,15 @@ const mapStateToProps = ( state ) => {
 		isTransitioning: state.support.isTransitioning,
 		showDialog: state.support.showDialog,
 		errorMessage: state.support.errorMessage,
-	}
+	};
 }
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
-		supportUserTokenFetch: flowRight( dispatch, supportUserTokenFetch ),
+		supportUserTokenFetch: supportUser.fetchToken.bind( supportUser ),
 		supportUserRestore: supportUser.rebootNormally,
 		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
-	}
+	};
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( SupportUser );
