@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' );
+import React from 'react';
+import classnames from 'classnames';
+import omit from 'lodash/omit';
 
-module.exports = React.createClass( {
-
-	displayName: 'FormSelect',
-
-	render: function() {
+const FormSelect = React.createClass( {
+	render() {
 		return (
 			<select { ...omit( this.props, 'classname' ) } className={ classnames( this.props.className, 'form-select' ) } >
 				{ this.props.children }
@@ -17,3 +14,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default FormSelect;
