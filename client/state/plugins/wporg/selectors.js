@@ -6,13 +6,12 @@ const getPlugin = function( state, pluginSlug ) {
 };
 
 const isFetching = function( state, pluginSlug ) {
-	const plugin = getPlugin( state, pluginSlug );
-	// if the plugin or the `isFetching` attribute doesn't exist yet,
+	// if the `isFetching` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
-	if ( ! plugin || typeof plugin.isFetching === 'undefined' ) {
+	if ( typeof state[ pluginSlug ] === 'undefined' ) {
 		return true;
 	}
-	return plugin.isFetching;
+	return state[ pluginSlug ];
 };
 
 const isFetched = function( state, pluginSlug ) {
