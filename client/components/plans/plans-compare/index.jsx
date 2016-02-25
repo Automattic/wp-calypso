@@ -389,7 +389,9 @@ var PlansCompare = React.createClass( {
 				business: this.translate( 'Business' )
 			},
 			freeOption = (
-				<NavItem onClick={ this.setPlan.bind( this, 'free' ) }>
+				<NavItem
+					onClick={ this.setPlan.bind( this, 'free' ) }
+					selected={ 'free' === this.state.selectedPlan }>
 					{ this.translate( 'Free' ) }
 				</NavItem>
 			);
@@ -403,10 +405,14 @@ var PlansCompare = React.createClass( {
 				<SectionNav selectedText={ text[ this.state.selectedPlan ] }>
 					<NavTabs>
 						{ freeOption }
-						<NavItem onClick={ this.setPlan.bind( this, 'premium' ) }>
+						<NavItem
+							onClick={ this.setPlan.bind( this, 'premium' ) }
+							selected={ 'premium' === this.state.selectedPlan }>
 							{ this.translate( 'Premium' ) }
 						</NavItem>
-						<NavItem onClick={ this.setPlan.bind( this, 'business' ) }>
+						<NavItem
+							onClick={ this.setPlan.bind( this, 'business' ) }
+							selected={ 'business' === this.state.selectedPlan }>
 							{ this.translate( 'Business' ) }
 						</NavItem>
 					</NavTabs>
