@@ -448,7 +448,8 @@ SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
 		}
 	}
 
-	PreferencesActions.set( 'recentSites', this.recentlySelected );
+	const sites = this.recentlySelected.slice( 0, 3 );
+	PreferencesActions.set( 'recentSites', sites );
 
 	this.emit( 'change' );
 };

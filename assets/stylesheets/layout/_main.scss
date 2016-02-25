@@ -388,6 +388,10 @@ $sidebar-width-min: 228px;
 		left: -100vw;
 		-webkit-overflow-scrolling: touch;
 	}
+
+	.site-selector__recent {
+		border-bottom: 1px solid lighten( $gray, 20% );
+	}
 }
 
 

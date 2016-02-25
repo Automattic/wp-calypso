@@ -234,7 +234,11 @@ export default React.createClass( {
 			);
 		}, this );
 
-		return recentSites;
+		if ( ! recentSites ) {
+			return null;
+		}
+
+		return <div className="site-selector__recent">{ recentSites }</div>;
 	},
 
 	renderStarredSites() {
