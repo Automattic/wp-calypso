@@ -6,13 +6,13 @@ require( 'lib/react-test-env-setup' )();
 var expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' );
+	TestUtils = require( 'react-addons-test-utils' ),
+	mockery = require( 'mockery' );
 
 /**
  * Internal dependencies
  */
-var TokenFieldWrapper = require( './token-field-wrapper' ),
-	fixtures = require( './fixtures' );
+var fixtures = require( './lib/fixtures' );
 
 /**
  * Module variables
@@ -32,6 +32,12 @@ var keyCodes = {
 var charCodes = {
 	comma: 44
 };
+
+const EMPTY_COMPONENT = React.createClass( {
+	render: function() {
+		return <div />;
+	}
+} );
 
 describe( 'TokenField', function() {
 	var reactContainer, wrapper, tokenFieldNode, textInputNode;
@@ -92,6 +98,14 @@ describe( 'TokenField', function() {
 	} );
 
 	beforeEach( function() {
+		var TokenFieldWrapper;
+		mockery.registerMock( 'components/tooltip', EMPTY_COMPONENT );
+		mockery.enable( {
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		} );
+
+		TokenFieldWrapper = require( './lib/token-field-wrapper' );
 		wrapper = ReactDom.render( <TokenFieldWrapper />, reactContainer );
 		tokenFieldNode = ReactDom.findDOMNode( wrapper.refs.tokenField );
 		textInputNode = tokenFieldNode.querySelector( '.token-field__input' );
@@ -100,6 +114,8 @@ describe( 'TokenField', function() {
 
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( reactContainer );
+		mockery.disable();
+		mockery.deregisterAll();
 	} );
 
 	describe( 'displaying tokens', function() {
