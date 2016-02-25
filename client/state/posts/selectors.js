@@ -2,6 +2,8 @@
  * External dependencies
  */
 import range from 'lodash/range';
+import reduce from 'lodash/reduce';
+import setWith from 'lodash/setWith';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -31,17 +33,9 @@ export function getPost( state, globalId ) {
  */
 export const getPostsBySiteIdAndPostId = createSelector(
 	( state ) => {
-		const globalIds = Object.keys( state.posts.items );
-		const sitePosts = {};
-		globalIds.forEach( ( globalId ) => {
-			const post = state.posts.items[ globalId ];
-			if ( ! sitePosts[ post.site_ID ] ) {
-				sitePosts[ post.site_ID ] = {};
-			}
-
-			sitePosts[ post.site_ID ][ post.ID ] = post.global_ID;
-		} );
-		return sitePosts;
+		return reduce( state.posts.items, ( result, post, globalId ) => {
+			return setWith( result, [ post.site_ID, post.ID ], globalId, Object );
+		}, {} );
 	},
 	( state ) => [ state.posts.items ]
 );
