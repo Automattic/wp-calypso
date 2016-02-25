@@ -1,16 +1,17 @@
 /**
+ * External dependencies
+ */
+import debugModule from 'debug';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
-import debugModule from 'debug';
-
-import { supportUserActivate, supportUserDeactivate, supportUserSwitch } from 'state/support/actions';
-import { getSupportUser, getSupportToken } from 'state/support/selectors';
+import { supportUserActivate } from 'state/support/actions';
 
 const debug = debugModule( 'calypso:support-user' );
-
 const STORAGE_KEY = 'boot_support_user';
 
 /**
@@ -76,6 +77,8 @@ class SupportUser {
 
 		wpcom.setSupportUserToken( user, token, errorHandler );
 
+		// boot() is called before the redux store is ready, so we need to
+		// wait for it to become available
 		this.reduxStoreReady.then( ( reduxStore ) => {
 			reduxStore.dispatch( supportUserActivate() );
 		} );
@@ -83,8 +86,7 @@ class SupportUser {
 
 	// Called when an API call fails due to a token error
 	_onTokenError( error ) {
-		debug( 'Token Error:', error.message );
-		debug( 'Deactivating support user' );
+		debug( 'Deactivating support user and rebooting due to token error', error.message );
 		this.rebootNormally();
 	}
 
@@ -96,6 +98,7 @@ class SupportUser {
 class DisabledSupportUser {
 	rebootNormally() {}
 	rebootWithToken() {}
+	setReduxStore() {}
 	shouldBootToSupportUser() { return false; }
 	boot() {}
 	isEnabled() { return false; }
