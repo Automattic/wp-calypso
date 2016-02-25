@@ -15,11 +15,12 @@ var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOutDesign = require( 'layout/logged-out-design' ),
+	LayoutLoggedOut = require( 'layout/logged-out' ),
 	render = require( 'render' ).render,
 	i18n = require( 'lib/mixins/i18n' ),
 	createReduxStore = require( 'state' ).createReduxStore,
-	setSection = require( 'state/ui/actions' ).setSection;
+	setSection = require( 'state/ui/actions' ).setSection,
+	ThemeSheetComponent = require( 'my-sites/themes/sheet' ).default;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -374,7 +375,6 @@ module.exports = function() {
 	} );
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-
 		app.get( '/themes/:theme_slug', function( req, res ) {
 			const context = getDefaultContext( req );
 
@@ -385,9 +385,11 @@ module.exports = function() {
 				store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
 				context.initialReduxState = pick( store.getState(), 'ui' );
 
+				const primary = <ThemeSheetComponent themeSlug={ req.params.theme_slug } />;
+
 				Object.assign( context, render( (
 					<ReduxProvider store={ store }>
-						<LayoutLoggedOutDesign store={ store } routeName={ 'themes' } match={ { theme_slug: req.params.theme_slug } } />
+						<LayoutLoggedOut primary={ primary } />
 					</ReduxProvider>
 				) ) );
 			}
@@ -413,7 +415,7 @@ module.exports = function() {
 				context.initialReduxState = pick( store.getState(), 'ui' );
 
 				Object.assign( context,
-					render( <LayoutLoggedOutDesign tier={ tier } store={ store } /> )
+					render( <LayoutLoggedOut tier={ tier } store={ store } /> )
 				);
 			}
 

@@ -89,7 +89,6 @@ function setUpContext( layout, reduxStore ) {
 	page( '*', function( context, next ) {
 		var parsed = url.parse( location.href, true );
 
-		context.layout = layout;
 		context.store = reduxStore;
 
 		// Break routing and do full page load for logout link in /me
@@ -203,10 +202,10 @@ function reduxStoreReady( reduxStore ) {
 
 			if ( matchedRoutes.length ) {
 				props = { routeName: matchedRoutes[0].name, match: matchedRoutes[0].match };
-				Layout = require( 'layout/logged-out-design' );
+				Layout = require( 'layout/logged-out' );
 			}
 		} else if ( startsWith( window.location.pathname, '/design' ) ) {
-			Layout = require( 'layout/logged-out-design' );
+			Layout = require( 'layout/logged-out' );
 		}
 
 		layoutElement = React.createElement( Layout, Object.assign( {}, props, {
