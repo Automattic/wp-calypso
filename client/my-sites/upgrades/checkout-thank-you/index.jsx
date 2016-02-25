@@ -111,7 +111,7 @@ var CheckoutThankYou = React.createClass( {
 
 				<Card className="checkout-thank-you__get-support">
 					<div className="checkout-thank-you__get-support-text">
-						<h3 className="checkout-thank-you__support_heading">
+						<h3 className="checkout-thank-you__support-heading">
 							{ this.translate( 'Questions? Need Help?' ) }
 						</h3>
 						<p className="checkout-thank-you__support-related-messages">
