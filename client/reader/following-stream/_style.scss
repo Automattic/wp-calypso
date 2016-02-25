@@ -314,3 +314,55 @@
 	font-size: 12px;
 	line-height: 1;
 }
+
+.following__style-list .reader__card.card {
+	display: flex;
+	padding: 16px;
+	margin-bottom: 0;
+	justify-content: flex-start;
+	overflow: hidden;
+
+	.reader__post-header {
+		flex: 0 0 200px;
+		margin: 0;
+
+		.follow-button {
+			display: none;
+		}
+
+		.site {
+			margin-right: 24px;
+		}
+	}
+
+	.reader__post-title {
+		margin: 0 24px 0 0;
+		font-size: 18px;
+		flex-grow: 0;
+		display: inline;
+		text-overflow: ellipsis;
+
+		white-space: nowrap;
+	}
+
+	.reader__post-featured-image,
+	.reader__post-featured-video,
+	.reader-post-byline,
+	.reader__full-post-content,
+	.post-excerpt-link,
+	.reader__post-footer,
+	.reader-post-images,
+	{
+		display: none;
+	}
+
+	.post-excerpt .post-excerpt__text,
+	{
+		flex-grow: 1;
+		max-height: 24px;
+	}
+
+	.post-excerpt .post-excerpt__text.is-long:after {
+		width: 150px;
+	}
+}

@@ -433,7 +433,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Main className={ classnames( 'following', this.props.className ) }>
+			<Main className={ classnames( 'following', 'following__style-list', this.props.className ) }>
 				<MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar>
