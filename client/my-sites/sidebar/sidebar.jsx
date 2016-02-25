@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var analytics = require( 'analytics' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
-	analytics = require( 'analytics' ),
-	startsWith = require( 'lodash/startsWith' ),
 	has = require( 'lodash/has' ),
-	includes = require( 'lodash/includes' );
+	includes = require( 'lodash/includes' ),
+	React = require( 'react' ),
+	startsWith = require( 'lodash/startsWith' );
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	CurrentSite = require( 'my-sites/current-site' ),
-	PublishMenu = require( './publish-menu' ),
-	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' ),
-	productsValues = require( 'lib/products-values' ),
-	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
+var abtest = require( 'lib/abtest' ).abtest,
 	AdsUtils = require( 'lib/ads/utils' ),
+	config = require( 'config' ),
+	CurrentSite = require( 'my-sites/current-site' ),
+	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
 	Gridicon = require( 'components/gridicon' ),
+	productsValues = require( 'lib/products-values' ),
+	PublishMenu = require( './publish-menu' ),
 	Sidebar = require( 'layout/sidebar' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
 	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
 
 module.exports = React.createClass( {
 	displayName: 'MySitesSidebar',
@@ -219,37 +219,43 @@ module.exports = React.createClass( {
 	plugins: function() {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
-			pluginsBrowseLink = '/plugins/browse' + this.siteSuffix(),
-			addPluginsButton;
+			addPluginsButton,
+			noticon,
+			target;
 
-		if ( ! this.isSingle() && ! config.isEnabled( 'manage/plugins' ) ) {
-			return null;
+		if ( ! config.isEnabled( 'manage/plugins' ) ) {
+			if ( ! this.isSingle() ) {
+				return null;
+			}
+
+			if ( site.options ) {
+				pluginsLink = site.options.admin_url + 'plugins.php';
+			}
+
+			target = '_blank';
+			noticon = <span className="noticon noticon-external" />;
 		}
 
 		if ( ! this.props.sites.canManageSelectedOrAll() ) {
 			return null;
 		}
 
-		if ( ! this.props.sites.hasSiteWithPlugins() && ! this.isSingle() ) {
+		if ( ! this.props.sites.hasSiteWithPlugins() ) {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/plugins' ) && site.options ) {
-			pluginsLink = site.options.admin_url + 'plugins.php';
-		}
-
 		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			if ( ( this.isSingle() && site.jetpack ) || ( this.hasJetpackSites() && ! this.isSingle() ) ) {
-				addPluginsButton = <a onClick={ this.onNavigate } href={ pluginsBrowseLink } className="add-new">{ this.translate( 'Add' ) }</a>;
+			if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
+				addPluginsButton = <a onClick={ this.onNavigate } href={ '/plugins/browse' + this.siteSuffix() } className="add-new">{ this.translate( 'Add' ) }</a>;
 			}
 		}
 
 		return (
 			<li className={ this.itemLinkClass( '/plugins', 'plugins' ) }>
-				<a onClick={ this.onNavigate } href={ pluginsLink } target={ ! config.isEnabled( 'manage/plugins' ) ? '_blank' : null }>
+				<a onClick={ this.onNavigate } href={ pluginsLink } target={ target }>
 					<Gridicon icon="plugins" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Plugins' ) }</span>
-					{ ! config.isEnabled( 'manage/plugins' ) ? <span className="noticon noticon-external" /> : null }
+					{ noticon }
 				</a>
 				{ addPluginsButton }
 			</li>
@@ -258,12 +264,15 @@ module.exports = React.createClass( {
 
 	upgrades: function() {
 		var site = this.getSelectedSite(),
-			target = null,
 			domainsLink = '/domains' + this.siteSuffix(),
 			addDomainLink = '/domains/add' + this.siteSuffix(),
 			addDomainButton = '';
 
-		if ( ! site ) {
+		if ( ! config.isEnabled( 'manage/plans' ) ) {
+			return null;
+		}
+
+		if ( ! this.isSingle() ) {
 			return null;
 		}
 
@@ -272,14 +281,6 @@ module.exports = React.createClass( {
 		}
 
 		if ( site.capabilities && ! site.capabilities.manage_options ) {
-			return null;
-		}
-
-		if ( ! this.isSingle() && ! config.isEnabled( 'manage/plans' ) ) {
-			return null;
-		}
-
-		if ( ! config.isEnabled( 'manage/plans' ) ) {
 			return null;
 		}
 
@@ -293,7 +294,7 @@ module.exports = React.createClass( {
 
 		return (
 			<li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
-				<a onClick={ this.onNavigate } href={ domainsLink } target={ target }>
+				<a onClick={ this.onNavigate } href={ domainsLink }>
 					<Gridicon icon="globe" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
 				</a>
@@ -548,7 +549,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		site = this.getSelectedSite()
+		site = this.getSelectedSite();
 		viplink = '/vip/deploys' + this.siteSuffix();
 
 		if ( ! site ) {
