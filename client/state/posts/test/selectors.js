@@ -15,7 +15,8 @@ import {
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePost
+	isRequestingSitePost,
+	getPostsBySiteIdAndPostId
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -357,6 +358,32 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( '#getPostsBySiteIdAndPostId()', () => {
+		it( 'should return global post id by siteId and postId', () => {
+			const postsBySiteIdAnPostId = getPostsBySiteIdAndPostId( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
+						'9bba0eb8e3c6cb643d097cb7c5473c16': { ID: 222, site_ID: 1111111, global_ID: '9bba0eb8e3c6cb643d097cb7c5473c16', title: 'Steak & Eggs' }
+					}
+				}
+			} );
+			expect( postsBySiteIdAnPostId ).to.eql( {
+				2916284: { 841: '3d097cb7c5473c169bba0eb8e3c6cb64', 413: '6c831c187ffef321eb43a67761a525a3' },
+				1111111: { 222: '9bba0eb8e3c6cb643d097cb7c5473c16' }
+			} );
+		} );
+		it( 'can handle empty items', () => {
+			const postsBySiteIdAnPostId = getPostsBySiteIdAndPostId( {
+				posts: {
+					items: {}
+				}
+			} );
+			expect( postsBySiteIdAnPostId ).to.eql( {} );
 		} );
 	} );
 } );
