@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isFunction = require( 'lodash/isFunction' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import isFunction from 'lodash/isFunction';
 
 /**
  * Internal dependencies
  */
-var DocService = require( './service' ),
-	Card = require( 'components/card' ),
-	Main = require( 'components/main' ),
-	SearchCard = require( 'components/search-card' );
+import DocService from './service';
+import Card from 'components/card';
+import Main from 'components/main';
+import SearchCard from 'components/search-card';
+import { decodeEntities } from 'lib/formatting';
 
 var DEFAULT_FILES = [
-		'docs/guide/index.md',
-		'README.md',
-		'CONTRIBUTING.md',
-		'docs/coding-guidelines.md',
-		'client/lib/mixins/i18n/README.md',
-		'docs/coding-guidelines/javascript.md',
-		'docs/coding-guidelines/css.md',
-		'docs/coding-guidelines/html.md'
-	];
+	'docs/guide/index.md',
+	'README.md',
+	'CONTRIBUTING.md',
+	'docs/coding-guidelines.md',
+	'client/lib/mixins/i18n/README.md',
+	'docs/coding-guidelines/javascript.md',
+	'docs/coding-guidelines/css.md',
+	'docs/coding-guidelines/html.md'
+];
 
 module.exports = React.createClass( {
 	displayName: 'Devdocs',
@@ -130,17 +130,17 @@ module.exports = React.createClass( {
 
 	snippet: function( result ) {
 		// split around <mark> tags to avoid setting unescaped inner HTML
-		var parts = result.snippet.split(/(<mark>.*?<\/mark>)/);
+		var parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
 		return (
 			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
 				{ parts.map( function( part, i ) {
 					var markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
-						return <mark key={ 'mark' + i }>{markMatch[1]}</mark>;
-					} else {
-						return part;
+						return <mark key={ 'mark' + i }>{ markMatch[1] }</mark>;
 					}
+
+					return decodeEntities( part );
 				} ) }
 			</div>
 		);

@@ -1,20 +1,21 @@
 /**
  * Extenal dependencies
  */
-var express = require( 'express' ),
-	fs = require( 'fs' ),
-	fspath = require( 'path' ),
-	marked = require( 'marked' ),
-	lunr = require( 'lunr' ),
-	find = require( 'lodash/find' ),
-	escapeHTML = require( 'lodash/escape' );
+import express from 'express';
+import fs from 'fs';
+import fspath from 'path';
+import marked from 'marked';
+import lunr from 'lunr';
+import find from 'lodash/find';
+import escapeHTML from 'lodash/escape';
 
 /**
  * Internal dependencies
  */
-var	config = require( 'config' ),
-	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	searchIndex = require( 'devdocs/search-index' ),
+import config from 'config';
+import searchIndex from 'devdocs/search-index';
+
+var	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
 	documents = searchIndex.documents;
 
@@ -59,18 +60,17 @@ function listDocs( filePaths ) {
 				title: doc.title,
 				snippet: defaultSnippet( doc )
 			};
-		} else {
-			return {
-				path: path,
-				title: 'Not found: ' + path,
-				snippet: ''
-			};
 		}
+		return {
+			path: path,
+			title: 'Not found: ' + path,
+			snippet: ''
+		};
 	} );
 	return results;
 }
 
-/**
+/*
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
@@ -102,9 +102,8 @@ function makeSnippet( doc, query ) {
 
 	if ( snippets.length ) {
 		return '...' + snippets.join( ' ... ' ) + '...';
-	} else {
-		return defaultSnippet( doc );
 	}
+	return defaultSnippet( doc );
 }
 
 function escapeRegexString( str ) {
