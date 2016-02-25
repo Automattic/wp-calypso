@@ -134,27 +134,13 @@ var CheckoutThankYou = React.createClass( {
 		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
-	productRelatedMessages: function() {
-		var selectedSite = this.props.selectedSite,
-			primaryPurchase = null,
+	getPrimaryPurchaseAndComponentAndDomain: function() {
+		var primaryPurchase = null,
 			purchases,
 			componentClass,
 			domain;
 
-		if ( ! this.isDataLoaded() ) {
-			return (
-				<div>
-					<CheckoutThankYouHeader
-						isDataLoaded={ false }
-						selectedSite={ this.props.selectedSite } />
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
-				</div>
-			);
-		}
-
-		if ( this.props.receiptId ) {
+		if ( this.isDataLoaded() ) {
 			purchases = getPurchases( this.props );
 
 			if ( purchases.some( isJetpackPremium ) ) {
@@ -197,6 +183,26 @@ var CheckoutThankYou = React.createClass( {
 			}
 		} else {
 			componentClass = GenericDetails;
+		}
+
+		return [ primaryPurchase, componentClass, domain ];
+	},
+
+	productRelatedMessages: function() {
+		var selectedSite = this.props.selectedSite,
+			[ primaryPurchase, componentClass, domain ] = this.getPrimaryPurchaseAndComponentAndDomain();
+
+		if ( ! this.isDataLoaded() ) {
+			return (
+				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ false }
+						selectedSite={ this.props.selectedSite } />
+					<PurchaseDetail isPlaceholder />
+					<PurchaseDetail isPlaceholder />
+					<PurchaseDetail isPlaceholder />
+				</div>
+			);
 		}
 
 		return (
