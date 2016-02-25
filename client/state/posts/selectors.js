@@ -2,7 +2,7 @@
  * External dependencies
  */
 import range from 'lodash/range';
-import { createSelector } from 'reselect';
+import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
@@ -41,11 +41,8 @@ export function getPost( state, globalId ) {
  * @return {Array}           Posts array
  */
 export const getPosts = createSelector(
-	getPostsByGlobalId,
-	( postsByGlobalId = {} ) => {
-		return Object.keys( postsByGlobalId )
-			.map( globalId => postsByGlobalId[ globalId ] );
-	}
+	( state ) => Object.keys( state.posts.items ).map( id => state.posts.items[ id ] ),
+	( state ) => [ state.posts.items ]
 );
 
 /**
@@ -53,9 +50,9 @@ export const getPosts = createSelector(
  *
  * @param state
  */
-export const getSitePosts = createSelector(
-	getPosts,
-	( posts ) => {
+export const getPostsBySiteIdAndPostId = createSelector(
+	( state ) => {
+		const posts = getPosts( state );
 		const sitePosts = {};
 		posts.forEach( ( post ) => {
 			if ( ! sitePosts[ post.site_ID ] ) {
@@ -65,7 +62,8 @@ export const getSitePosts = createSelector(
 			sitePosts[ post.site_ID ][ post.ID ] = post.global_ID;
 		} );
 		return sitePosts;
-	}
+	},
+	( state ) => [ state.posts.items ]
 );
 
 /**
@@ -77,12 +75,12 @@ export const getSitePosts = createSelector(
  * @return {?Object}        Post object
  */
 export function getSitePost( state, siteId, postId ) {
-	const sitePosts = getSitePosts( state );
-	if ( ! sitePosts[ siteId ] || ! sitePosts[ siteId ][ postId ] ) {
+	const postsBySiteIdAndPostId = getPostsBySiteIdAndPostId( state );
+	if ( ! postsBySiteIdAndPostId[ siteId ] || ! postsBySiteIdAndPostId[ siteId ][ postId ] ) {
 		return null;
 	}
 
-	return getPost( state, sitePosts[ siteId ][ postId ] );
+	return getPost( state, postsBySiteIdAndPostId[ siteId ][ postId ] );
 }
 
 /**
