@@ -127,57 +127,63 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	getComponentAndPrimaryPurchaseAndDomain: function() {
-		var primaryPurchase = null,
-			purchases,
-			componentClass,
-			domain;
+		var purchases;
 
 		if ( this.isDataLoaded() ) {
 			purchases = getPurchases( this.props );
 
 			if ( purchases.some( isJetpackPremium ) ) {
-				componentClass = JetpackPremiumPlanDetails;
-				primaryPurchase = find( purchases, isJetpackPremium );
+				return [
+					JetpackPremiumPlanDetails,
+					find( purchases, isJetpackPremium )
+				];
 			} else if ( purchases.some( isJetpackBusiness ) ) {
-				componentClass = JetpackBusinessPlanDetails;
-				primaryPurchase = find( purchases, isJetpackBusiness );
+				return [
+					JetpackBusinessPlanDetails,
+					find( purchases, isJetpackBusiness )
+				];
 			} else if ( purchases.some( isPremium ) ) {
-				componentClass = PremiumPlanDetails;
-				primaryPurchase = find( purchases, isPremium );
+				return [
+					PremiumPlanDetails,
+					find( purchases, isPremium )
+				];
 			} else if ( purchases.some( isBusiness ) ) {
-				componentClass = BusinessPlanDetails;
-				primaryPurchase = find( purchases, isBusiness );
+				return [
+					BusinessPlanDetails,
+					find( purchases, isBusiness )
+				];
 			} else if ( purchases.some( isGoogleApps ) ) {
-				domain = find( purchases, isGoogleApps ).meta;
-
-				componentClass = GoogleAppsDetails;
-				primaryPurchase = find( purchases, isGoogleApps );
+				return [
+					GoogleAppsDetails,
+					find( purchases, isGoogleApps ),
+					find( purchases, isGoogleApps ).meta
+				];
 			} else if ( purchases.some( isDomainRegistration ) ) {
-				domain = find( purchases ).meta;
-
-				componentClass = DomainRegistrationDetails;
-				primaryPurchase = find( purchases, isDomainRegistration );
+				return [
+					DomainRegistrationDetails,
+					find( purchases, isDomainRegistration ),
+					find( purchases ).meta
+				];
 			} else if ( purchases.some( isDomainMapping ) ) {
-				domain = find( purchases, isDomainMapping ).meta;
-
-				componentClass = DomainMappingDetails;
-				primaryPurchase = find( purchases, isDomainMapping );
+				return [
+					DomainMappingDetails,
+					find( purchases, isDomainMapping ),
+					find( purchases, isDomainMapping ).meta
+				];
 			} else if ( purchases.some( isSiteRedirect ) ) {
-				domain = find( purchases, isSiteRedirect ).meta;
-
-				componentClass = SiteRedirectDetails;
-				primaryPurchase = find( purchases, isSiteRedirect );
+				return [
+					SiteRedirectDetails,
+					find( purchases, isSiteRedirect ),
+					find( purchases, isSiteRedirect ).meta
+				];
 			} else if ( purchases.some( isChargeback ) ) {
-				componentClass = ChargebackDetails;
-				primaryPurchase = find( purchases, isChargeback );
-			} else {
-				componentClass = GenericDetails;
+				return [
+					ChargebackDetails,
+					find( purchases, isChargeback ) ];
 			}
-		} else {
-			componentClass = GenericDetails;
 		}
 
-		return [ componentClass, primaryPurchase, domain ];
+		return [ GenericDetails ];
 	},
 
 	productRelatedMessages: function() {
@@ -247,7 +253,8 @@ var CheckoutThankYou = React.createClass( {
 					'or {{contactLink}}contact us{{/contactLink}}.',
 					{
 						components: {
-							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' } target="_blank" />,
+							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' }
+								target="_blank" />,
 							forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
 							contactLink: <a href={ '/help/contact' } />
 						}
