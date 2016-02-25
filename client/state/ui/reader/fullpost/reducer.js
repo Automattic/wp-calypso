@@ -8,9 +8,7 @@ import { combineReducers } from 'redux';
  */
 import {
 	READER_FULLPOST_SHOW,
-	READER_FULLPOST_HIDE,
-	SERIALIZE,
-	DESERIALIZE
+	READER_FULLPOST_HIDE
 } from 'state/action-types';
 
 export function isVisible( state = false, action ) {
@@ -18,10 +16,6 @@ export function isVisible( state = false, action ) {
 		case READER_FULLPOST_SHOW:
 			return true;
 		case READER_FULLPOST_HIDE:
-			return false;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
 			return false;
 	}
 

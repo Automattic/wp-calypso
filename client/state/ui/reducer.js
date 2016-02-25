@@ -26,10 +26,6 @@ export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
 			return action.siteId || null;
-		case SERIALIZE:
-			return null;
-		case DESERIALIZE:
-			return null
 	}
 
 	return state;
@@ -50,10 +46,6 @@ export function recentlySelectedSiteIds( state = [], action ) {
 				state.pop();
 			}
 			return state;
-		case SERIALIZE:
-			return [];
-		case DESERIALIZE:
-			return [];
 	}
 
 	return state;
@@ -64,10 +56,6 @@ export function section( state = false, action ) {
 	switch ( action.type ) {
 		case SET_SECTION:
 			return ( action.section !== undefined ) ? action.section : state;
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			return state;
 	}
 	return state;
 }
@@ -76,10 +64,6 @@ export function hasSidebar( state = true, action ) {
 	switch ( action.type ) {
 		case SET_SECTION:
 			return ( action.hasSidebar !== undefined ) ? action.hasSidebar : state;
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			return state;
 	}
 	return state;
 }
@@ -95,10 +79,6 @@ export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case SET_SECTION:
 			return ( action.isLoading !== undefined ) ? action.isLoading : state;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
 	}
 	return state;
 }
@@ -107,15 +87,11 @@ export function chunkName( state = false, action ) {
 	switch ( action.type ) {
 		case SET_SECTION:
 			return ( action.chunkName !== undefined ) ? action.chunkName : state;
-		case SERIALIZE:
-			return false;
-		case DESERIALIZE:
-			return false;
 	}
 	return state;
 }
 
-export default combineReducers( {
+const reducer = combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
@@ -126,3 +102,11 @@ export default combineReducers( {
 	editor,
 	reader
 } );
+
+export default function( state, action ) {
+	if ( SERIALIZE === action.type || DESERIALIZE === action.type ) {
+		return {};
+	}
+
+	return reducer( state, action );
+}
