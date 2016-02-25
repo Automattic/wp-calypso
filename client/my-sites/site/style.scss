@@ -10,16 +10,6 @@
 	padding: 0;
 	position: relative;
 
-	// Show lock icon on private sites
-	&.is-private {
-		.site__title::before {
-			@include noticon( '\f470', 16px );
-			color: $gray;
-			margin: 0 3px 2px 0;
-			vertical-align: bottom;
-		}
-	}
-
 	&.is-redirect {
 		.site__title::before {
 			@include noticon( '\f458', 16px );
@@ -230,7 +220,7 @@
 	}
 }
 
-.site__star-badge {
+.site__badge {
 	align-self: center;
 	color: $gray;
 	padding-right: 16px;
