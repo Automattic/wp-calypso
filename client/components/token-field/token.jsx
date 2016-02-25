@@ -20,13 +20,15 @@ export default React.createClass( {
 		onClickRemove: React.PropTypes.func,
 		status: React.PropTypes.oneOf( [ 'error', 'success', 'validating' ] ),
 		isBorderless: React.PropTypes.bool,
-		tooltip: React.PropTypes.string
+		tooltip: React.PropTypes.string,
+		disabled: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			onClickRemove: () => {},
-			isBorderless: false
+			isBorderless: false,
+			disabled: false
 		};
 	},
 
@@ -38,7 +40,8 @@ export default React.createClass( {
 			'is-error': 'error' === status,
 			'is-success': 'success' === status,
 			'is-validating': 'validating' === status,
-			'is-borderless': isBorderless
+			'is-borderless': isBorderless,
+			'is-disabled': this.props.disabled
 		} );
 
 		return (
@@ -50,14 +53,16 @@ export default React.createClass( {
 				<span className="token-field__token-text">
 					{ displayTransform( value ) }
 				</span>
-				<span
-					className="token-field__remove-token noticon noticon-close-alt"
-					onClick={ this._onClickRemove } />
-			{ tooltip &&
-				<Tooltip context={ this } status={ status } isVisible={ true } position="bottom">
-						{ tooltip }
-				</Tooltip>
-			}
+				{ ! this.props.disabled &&
+					<span
+						className="token-field__remove-token noticon noticon-close-alt"
+						onClick={ this._onClickRemove } />
+				}
+				{ tooltip &&
+					<Tooltip context={ this } status={ status } isVisible={ true } position="bottom">
+							{ tooltip }
+					</Tooltip>
+				}
 			</span>
 		);
 	},

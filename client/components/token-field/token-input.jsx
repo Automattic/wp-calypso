@@ -32,6 +32,7 @@ var TokenInput = React.createClass( {
 				onBlur={ this.props.onBlur }
 				onChange={ this._onChange }
 				className="token-field__input"
+				disabled={ this.props.disabled }
 			/>
 		);
 	},

@@ -15,6 +15,11 @@
 		border-color: lighten( $gray, 10% );
 	}
 
+	&.is-disabled {
+		background: $gray-light;
+		border-color: lighten( $gray, 30% );
+	}
+
 	&.is-active {
 		border-color: $blue-wordpress;
 		box-shadow: 0 0 0 2px $blue-light;
@@ -121,6 +126,16 @@ input[type="text"].token-field__input {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.token-field.is-disabled .token-field__token-text {
+	border-radius: 4px;
+	padding: 0 6px;
+}
+
+.token-field.is-disabled .token-field__token.is-error .token-field__token-text {
+	border-radius: 4px 0 0 4px;
+	padding: 0 4px 0 6px;
 }
 
 .token-field__remove-token {

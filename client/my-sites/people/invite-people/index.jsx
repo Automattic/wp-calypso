@@ -64,7 +64,9 @@ const InvitePeople = React.createClass( {
 			message: '',
 			sendingInvites: false,
 			getTokenStatus: () => {},
-			errorToDisplay: false
+			errorToDisplay: false,
+			errors: {},
+			success: []
 		} );
 	},
 
@@ -212,7 +214,7 @@ const InvitePeople = React.createClass( {
 	},
 
 	isSubmitDisabled() {
-		const { errors, success, usernamesOrEmails } = this.state;
+		const { success, usernamesOrEmails } = this.state;
 		const invitees = Array.isArray( usernamesOrEmails ) ? usernamesOrEmails : [];
 
 		// If there are no invitees, then don't allow submitting the form
@@ -220,7 +222,7 @@ const InvitePeople = React.createClass( {
 			return true;
 		}
 
-		if ( errors && errors.length ) {
+		if ( this.hasValidationErrors() ) {
 			return true;
 		}
 
@@ -229,6 +231,13 @@ const InvitePeople = React.createClass( {
 		return some( usernamesOrEmails, ( value ) => {
 			return ! includes( success, value );
 		} );
+	},
+
+	hasValidationErrors() {
+		const { errors } = this.state;
+		const errorKeys = errors && Object.keys( errors );
+
+		return !! errorKeys.length;
 	},
 
 	goBack() {
@@ -260,7 +269,8 @@ const InvitePeople = React.createClass( {
 								maxLength={ 10 }
 								value={ this.getTokensWithStatus() }
 								onChange={ this.onTokensChange }
-								onFocus={ this.onFocusTokenField } />
+								onFocus={ this.onFocusTokenField }
+								disabled={ this.state.sendingInvites || this.hasValidationErrors() }/>
 							<FormSettingExplanation>
 								{ this.translate(
 									'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
