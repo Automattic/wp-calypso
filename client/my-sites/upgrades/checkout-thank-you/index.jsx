@@ -126,11 +126,21 @@ var CheckoutThankYou = React.createClass( {
 		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
+	/**
+	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
+	 * just performed by the user.
+	 *
+	 * @returns {*[]} an array of varying size with the component instance, then an optional purchase followed possibly by a domain name
+	 */
 	getComponentAndPrimaryPurchaseAndDomain: function() {
-		var purchases;
-
 		if ( this.isDataLoaded() ) {
-			purchases = getPurchases( this.props );
+			const purchases = getPurchases( this.props );
+
+			const findPurchaseAndDomain = ( purchases, predicate ) => {
+				const purchase = find( purchases, predicate );
+
+				return [ purchase, purchase.meta ];
+			};
 
 			if ( purchases.some( isJetpackPremium ) ) {
 				return [
@@ -155,26 +165,22 @@ var CheckoutThankYou = React.createClass( {
 			} else if ( purchases.some( isGoogleApps ) ) {
 				return [
 					GoogleAppsDetails,
-					find( purchases, isGoogleApps ),
-					find( purchases, isGoogleApps ).meta
+					...findPurchaseAndDomain( purchases, isGoogleApps )
 				];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [
 					DomainRegistrationDetails,
-					find( purchases, isDomainRegistration ),
-					find( purchases, isDomainRegistration ).meta
+					...findPurchaseAndDomain( purchases, isDomainRegistration )
 				];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [
 					DomainMappingDetails,
-					find( purchases, isDomainMapping ),
-					find( purchases, isDomainMapping ).meta
+					...findPurchaseAndDomain( purchases, isDomainMapping )
 				];
 			} else if ( purchases.some( isSiteRedirect ) ) {
 				return [
 					SiteRedirectDetails,
-					find( purchases, isSiteRedirect ),
-					find( purchases, isSiteRedirect ).meta
+					...findPurchaseAndDomain( purchases, isSiteRedirect )
 				];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [
