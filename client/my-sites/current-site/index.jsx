@@ -202,7 +202,6 @@ module.exports = React.createClass( {
 						site={ site }
 						homeLink={ true }
 						enableActions={ true }
-						disableStarring={ hasOneSite }
 						externalLink={ true }
 						onSelect={ this.trackHomepageClick }
 						ref="site" />

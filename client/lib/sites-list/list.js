@@ -414,6 +414,8 @@ SitesList.prototype.toggleStarred = function( siteID ) {
 };
 
 SitesList.prototype.getStarred = function() {
+	// Disable stars
+	return false;
 	this.starred = PreferencesStore.get( 'starredSites' ) || [];
 	return this.get().filter( this.isStarred, this );
 };
@@ -567,10 +569,10 @@ SitesList.prototype.getVisible = function() {
 SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
 	return this.get().filter( function( site ) {
 		if ( user.get().visible_site_count < 12 ) {
-			return site.visible === true && ! this.isStarred( site );
+			return site.visible === true;
 		}
 
-		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1 && ! this.isStarred( site );
+		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1;
 	}, this );
 };
 
