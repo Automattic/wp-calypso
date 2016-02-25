@@ -13,6 +13,7 @@ var store = require( 'store' ),
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	userUtils = require( './shared-utils' ),
+	supportUser = require( 'lib/user/support-user-interop' ),
 	getLocalForage = require( 'lib/localforage' ).getLocalForage;
 
 /**
@@ -28,7 +29,24 @@ function User() {
 		return new User();
 	}
 
-	this.initialize();
+	if ( supportUser.isEnabled() ) {
+		this.fetching = false;
+		this.initialized = false;
+
+		const selectBoot = ( shouldBootToSupportUser ) => {
+			if( shouldBootToSupportUser ) {
+				supportUser.boot()
+			} else {
+				this.initialize();
+			}
+		}
+
+		supportUser
+			.shouldBootToSupportUser()
+			.then( selectBoot );
+	} else {
+		this.initialize();
+	}
 }
 
 

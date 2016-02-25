@@ -2,13 +2,14 @@
  * Internal dependencies
  */
 import {
+	SUPPORT_USER_ACTIVATE,
+	SUPPORT_USER_ERROR,
 	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_TOKEN_SET,
-	SUPPORT_USER_RESTORE,
 	SUPPORT_USER_TOGGLE_DIALOG,
 } from 'state/action-types';
 
 import wpcom from 'lib/wp';
+import supportUser from 'lib/user/support-user-interop';
 
 /**
  * Requests a support user token, then dispatches the relevant actions upon response
@@ -17,41 +18,45 @@ import wpcom from 'lib/wp';
  * @param  {string} supportPassword Support password
  * @return {thunk}                  The action thunk
  */
-export function supportUserTokenFetch( supportUser, supportPassword ) {
+export function supportUserTokenFetch( user, password ) {
 	return ( dispatch ) => {
-		if ( !supportUser || !supportPassword ) {
+		if ( !user || !password ) {
 			return;
 		}
 
 		dispatch( {
 			type: SUPPORT_USER_TOKEN_FETCH,
-			supportUser
+			supportUser: user
 		} );
 
-		const setToken = ( response ) =>
-			dispatch( supportUserTokenSet( response.username, response.token ) );
+		const setToken = ( response ) => {
+			supportUser.rebootWithToken( response.username, response.token );
+		}
 
 		const errorFetchingToken = ( error ) =>
-			dispatch( supportUserRestore( error.message ) );
+			dispatch( supportUserError( error.message ) );
 
-		return wpcom.fetchSupportUserToken( supportUser, supportPassword )
+		return wpcom.fetchSupportUserToken( user, password )
 			.then( setToken )
 			.catch( errorFetchingToken );
 	}
 }
 
-export function supportUserTokenSet( supportUser, supportToken ) {
+export function supportUserActivate() {
 	return {
-		type: SUPPORT_USER_TOKEN_SET,
-		supportUser,
-		supportToken
+		type: SUPPORT_USER_ACTIVATE
 	}
 }
 
-export function supportUserRestore( error ) {
+/**
+ * Dispatched when an error occurs while attempting to activate support user
+ * @param  {string} errorMessage
+ * @return {Object}              Action object
+ */
+export function supportUserError( errorMessage = null ) {
 	return {
-		type: SUPPORT_USER_RESTORE,
-		error
+		type: SUPPORT_USER_ERROR,
+		errorMessage
 	}
 }
 
