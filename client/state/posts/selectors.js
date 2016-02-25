@@ -21,7 +21,7 @@ import { DEFAULT_POST_QUERY } from './constants';
  */
 export function getPostsByGlobalId( state ) {
 	return state.posts.items;
-};
+}
 
 /**
  * Returns a post object by its global ID.
@@ -35,26 +35,16 @@ export function getPost( state, globalId ) {
 }
 
 /**
- * Returns an array of all posts.
- *
- * @param  {Object} state    Global state tree
- * @return {Array}           Posts array
- */
-export const getPosts = createSelector(
-	( state ) => Object.keys( state.posts.items ).map( id => state.posts.items[ id ] ),
-	( state ) => [ state.posts.items ]
-);
-
-/**
  * Returns a mapping of site ID, post ID pairing to global post ID.
  *
  * @param state
  */
 export const getPostsBySiteIdAndPostId = createSelector(
 	( state ) => {
-		const posts = getPosts( state );
+		const globalIds = Object.keys( state.posts.items );
 		const sitePosts = {};
-		posts.forEach( ( post ) => {
+		globalIds.forEach( ( globalId ) => {
+			const post = state.posts.items[ globalId ];
 			if ( ! sitePosts[ post.site_ID ] ) {
 				sitePosts[ post.site_ID ] = {};
 			}

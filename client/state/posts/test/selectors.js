@@ -15,8 +15,7 @@ import {
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePost,
-	getPosts
+	isRequestingSitePost
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -358,25 +357,6 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( isRequesting ).to.be.false;
-		} );
-	} );
-
-	describe( '#getPosts()', () => {
-		it( 'should return a list of posts', () => {
-			const posts = getPosts( {
-				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
-					}
-				}
-			} );
-			expect( posts ).to.eql(
-				[
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-					{ ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Goodbye' }
-				]
-			);
 		} );
 	} );
 } );
