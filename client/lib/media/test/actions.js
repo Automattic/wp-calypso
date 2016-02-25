@@ -185,12 +185,18 @@ describe( 'MediaActions', function() {
 	describe( '#add()', function() {
 		it( 'should accept a single upload', function() {
 			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-			expect( mediaAdd ).to.have.been.calledOnce;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+				type: 'CREATE_MEDIA_ITEM'
+			} );
 		} );
 
 		it( 'should accept an array of uploads', function() {
 			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
-			expect( mediaAdd ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+				type: 'CREATE_MEDIA_ITEM'
+			} );
 		} );
 
 		it( 'should accept a file URL', function() {
@@ -201,9 +207,11 @@ describe( 'MediaActions', function() {
 		it( 'should accept a FileList of uploads', function() {
 			var uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
-			sandbox.stub( Array, 'isArray' ).returns( false );
 			MediaActions.add( DUMMY_SITE_ID, uploads );
-			expect( mediaAdd ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+				type: 'CREATE_MEDIA_ITEM'
+			} );
 		} );
 
 		it( 'should accept a plain object file descriptor', function() {
@@ -266,6 +274,15 @@ describe( 'MediaActions', function() {
 				url: DUMMY_URL,
 				parent_id: 200
 			} );
+		} );
+
+		it( 'should upload in series', ( done ) => {
+			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
+			expect( mediaAdd ).to.have.been.calledOnce;
+			setTimeout( () => {
+				expect( mediaAdd ).to.have.been.calledTwice;
+				done();
+			}, 0 );
 		} );
 	} );
 
