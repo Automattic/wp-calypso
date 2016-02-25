@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/some' ),
@@ -23,6 +22,7 @@ var config = require( 'config' ),
 	localStoragePolyfill = require( 'lib/local-storage' )(), //eslint-disable-line
 	analytics = require( 'analytics' ),
 	route = require( 'lib/route' ),
+	routerHelper = require( 'lib/router-helper' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
@@ -49,8 +49,7 @@ var config = require( 'config' ),
 	supportUser = require( 'lib/user/support-user-interop' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
-	Layout,
-	Page404;
+	Layout;
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -351,35 +350,15 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/rubberband-scroll-disable' )( document.body );
 	}
 
-	// 404 handler. Do not put any routes below this one.
-	page( '*', function( context, next ) {
-		if ( config.isEnabled( 'code-splitting' ) ) {
-			if ( ! context.sectionRouteMatched ) {
-				show404( context );
-
-				return;
-			}
-
-			next();
-		} else {
-			show404( context );
-		}
+	// 404 handler. Do NOT put any routes below this one. If code-splitting is enabled and a new section is loaded,
+	// this `page()` is removed from the chain of registered `page()`s and a new 404 handler is added.
+	// Refer to `server/bundler/loader.js` for more details.
+	page( '*', function( context ) {
+		routerHelper.show404( context );
 	} );
 
 	detectHistoryNavigation.start();
 	page.start();
-}
-
-function show404( context ) {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-
-	Page404 = require( 'layout/404' );
-
-	ReactDom.render(
-		<Page404 />,
-		document.getElementById( 'primary' )
-	);
 }
 
 window.AppBoot = function() {
