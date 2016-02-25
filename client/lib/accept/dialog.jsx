@@ -12,9 +12,11 @@ module.exports = React.createClass( {
 	displayName: 'AcceptDialog',
 
 	propTypes: {
+		// message can either be a string, an element or an array of string/elements (returned by `this.translate`)
 		message: React.PropTypes.oneOfType( [
 			React.PropTypes.string,
-			React.PropTypes.element
+			React.PropTypes.element,
+			React.PropTypes.array,
 		] ).isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		confirmButtonText: React.PropTypes.string,

@@ -284,7 +284,6 @@ export default React.createClass( {
 						{ this.renderActions() }
 					</div>
 					{ ! this.props.isMock && <PluginInformation
-						isWpcomPlugin={ this.props.isWpcomPlugin }
 						plugin={ this.props.plugin }
 						isPlaceholder={ this.props.isPlaceholder }
 						site={ this.props.selectedSite }

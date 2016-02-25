@@ -27,7 +27,6 @@ export default React.createClass( {
 		hasUpdate: React.PropTypes.bool,
 		pluginVersion: React.PropTypes.string,
 		siteVersion: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool] ),
-		isWpcomPlugin: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -71,23 +70,6 @@ export default React.createClass( {
 				onClick={ recordEvent }
 				className="plugin-information__external-link" >
 				{ this.translate( 'WordPress.org Plugin page' ) }
-			</ExternalLink>
-		);
-	},
-
-	renderWPCOMPluginSupportLink() {
-		if ( ! this.props.plugin || ! this.props.plugin.support_URL ) {
-			return;
-		}
-		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
-
-		return (
-			<ExternalLink
-				icon={ true }
-				href={ this.props.plugin.support_URL }
-				onClick={ recordEvent }
-				className="plugin-information__external-link" >
-				{ this.translate( 'Learn More' ) }
 			</ExternalLink>
 		);
 	},
@@ -164,7 +146,7 @@ export default React.createClass( {
 	},
 
 	renderPlaceholder() {
-		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true, 'is-wpcom-plugin': this.props.isWpcomPlugin } );
+		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true } );
 		return (
 			<div className={ classes } >
 					<div className="plugin-information__wrapper">
@@ -186,61 +168,13 @@ export default React.createClass( {
 							{ this.renderHomepageLink() }
 						</div>
 					</div>
-					{ ! this.props.isWpcomPlugin &&
 					<PluginRatings
 						rating={ this.props.plugin.rating }
 						ratings={ this.props.plugin.ratings }
 						downloaded={ this.props.plugin.downloaded }
 						numRatings={ this.props.plugin.num_ratings }
 						slug={ this.props.plugin.slug }
-						placeholder={ true } /> }
-			</div>
-		);
-	},
-
-	renderWpcom() {
-		return (
-			<div className="plugin-information">
-				<p className="plugin-information__description">
-					{ this.props.plugin.description }
-				</p>
-				<div className="plugin-information__links">
-					{ this.renderWPCOMPluginSupportLink() }
-				</div>
-		</div>
-		);
-	},
-
-	renderWporg() {
-		const classes = classNames( {
-			'plugin-information__version-info': true,
-			'is-singlesite': !! this.props.siteVersion
-		} );
-
-		return (
-			<div className="plugin-information">
-					<div className="plugin-information__wrapper">
-						<div className={ classes }>
-							<div className="plugin-information__version-shell">
-								{ this.props.pluginVersion && <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" /> }
-								{ this.renderLastUpdated() }
-							</div>
-							<div className="plugin-information__version-shell">
-								{ this.renderSiteVersion() }
-								{ this.renderLimits() }
-							</div>
-						</div>
-						<div className="plugin-information__links">
-							{ this.renderWporgLink() }
-							{ this.renderHomepageLink() }
-						</div>
-					</div>
-					<PluginRatings
-						rating={ this.props.plugin.rating }
-						ratings={ this.props.plugin.ratings }
-						downloaded={ this.props.plugin.downloaded }
-						numRatings={ this.props.plugin.num_ratings }
-						slug={ this.props.plugin.slug } />
+						placeholder={ true } />
 			</div>
 		);
 	},
@@ -250,13 +184,41 @@ export default React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		if ( this.props.plugin.wpcom ) {
-			return this.renderWpcom();
+		// We cannot retrieve information for plugins which are not registered to the wp.org registry
+		if ( ! this.props.plugin.wporg ) {
+			return null;
 		}
 
-		if ( this.props.plugin.wporg ) {
-			return this.renderWporg();
-		}
-		return null;
+		const classes = classNames( {
+			'plugin-information__version-info': true,
+			'is-singlesite': !! this.props.siteVersion
+		} );
+
+		return (
+			<div className="plugin-information">
+				<div className="plugin-information__wrapper">
+					<div className={ classes }>
+						<div className="plugin-information__version-shell">
+							{ this.props.pluginVersion && <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" /> }
+							{ this.renderLastUpdated() }
+						</div>
+						<div className="plugin-information__version-shell">
+							{ this.renderSiteVersion() }
+							{ this.renderLimits() }
+						</div>
+					</div>
+					<div className="plugin-information__links">
+						{ this.renderWporgLink() }
+						{ this.renderHomepageLink() }
+					</div>
+				</div>
+				<PluginRatings
+					rating={ this.props.plugin.rating }
+					ratings={ this.props.plugin.ratings }
+					downloaded={ this.props.plugin.downloaded }
+					numRatings={ this.props.plugin.num_ratings }
+					slug={ this.props.plugin.slug } />
+			</div>
+		);
 	}
 } );

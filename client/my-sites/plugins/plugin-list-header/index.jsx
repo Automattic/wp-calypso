@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import property from 'lodash/property';
 import debounce from 'lodash/debounce';
 import config from 'config';
 import { findDOMNode } from 'react-dom';
@@ -51,14 +50,7 @@ export default React.createClass( {
 		bulkManagement: React.PropTypes.bool,
 		sites: React.PropTypes.object.isRequired,
 		plugins: React.PropTypes.array.isRequired,
-		selected: React.PropTypes.array.isRequired,
-		isWpCom: React.PropTypes.bool
-	},
-
-	getDefaultProps() {
-		return {
-			isWpCom: false
-		};
+		selected: React.PropTypes.array.isRequired
 	},
 
 	getInitialState() {
@@ -106,7 +98,7 @@ export default React.createClass( {
 	},
 
 	canAddNewPlugins() {
-		return config.isEnabled( 'manage/plugins/browser' ) && ! this.props.isWpCom;
+		return config.isEnabled( 'manage/plugins/browser' );
 	},
 
 	canUpdatePlugins() {
@@ -120,18 +112,16 @@ export default React.createClass( {
 	},
 
 	renderCurrentActionButtons() {
-		const { isWpCom } = this.props;
-		let buttons = [];
-		let rightSideButtons = [];
-		let leftSideButtons = [];
-		let autoupdateButtons = [];
-		let activateButtons = [];
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug ),
+			needsRemoveButton = this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected,
+			buttons = [],
+			rightSideButtons = [],
+			leftSideButtons = [],
+			autoupdateButtons = [],
+			activateButtons = [];
 
-		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
 		if ( ! this.props.isBulkManagementActive ) {
-			if ( ! isWpCom && 0 < this.props.pluginUpdateCount ) {
+			if ( 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
@@ -147,7 +137,7 @@ export default React.createClass( {
 					</Button>
 				</ButtonGroup>
 			);
-			if ( ! isWpCom && this.canAddNewPlugins() ) {
+			if ( this.canAddNewPlugins() ) {
 				const selectedSite = this.props.sites.getSelectedSite();
 				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
@@ -159,9 +149,9 @@ export default React.createClass( {
 							onClick={ this.onBrowserLinkClick }
 							className="plugin-list-header__browser-button"
 							onMouseEnter={ () => this.setState( { addPluginTooltip: true } ) }
-			 				onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
-			 				ref="addPluginButton"
-			 				aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
+							onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
+							ref="addPluginButton"
+							aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPluginTooltip }
@@ -174,25 +164,23 @@ export default React.createClass( {
 				);
 			}
 		} else {
-			if ( ! isWpCom ) {
-				const updateButton = (
-					<Button
-						key="plugin-list-header__buttons-update"
-						disabled={ ! this.props.haveUpdatesSelected }
-						compact primary
-						onClick={ this.props.updateSelected }>
-						{ this.translate( 'Update' ) }
-					</Button>
-				);
-				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
-			}
+			const updateButton = (
+				<Button
+					key="plugin-list-header__buttons-update"
+					disabled={ ! this.props.haveUpdatesSelected }
+					compact primary
+					onClick={ this.props.updateSelected }>
+					{ this.translate( 'Update' ) }
+				</Button>
+			);
+			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
 
 			activateButtons.push(
 				<Button key="plugin-list-header__buttons-activate" disabled={ ! this.props.haveInactiveSelected } compact onClick={ this.props.activateSelected }>
 					{ this.translate( 'Activate' ) }
 				</Button>
 			);
-			let deactivateButton = isJetpackSelected
+			const deactivateButton = isJetpackSelected
 				? (
 					<Button compact
 						key="plugin-list-header__buttons-deactivate"
@@ -212,35 +200,33 @@ export default React.createClass( {
 			activateButtons.push( deactivateButton )
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
 
-			if ( ! isWpCom ) {
-				autoupdateButtons.push(
-					<Button key="plugin-list-header__buttons-autoupdate-on"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
-						compact
-						onClick={ this.props.setAutoupdateSelected }>
-						{ this.translate( 'Autoupdate' ) }
-					</Button>
-				);
-				autoupdateButtons.push(
-					<Button key="plugin-list-header__buttons-autoupdate-off"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
-						compact
-						onClick={ this.props.unsetAutoupdateSelected }>
-						{ this.translate( 'Disable Autoupdates' ) }
-					</Button>
-				);
+			autoupdateButtons.push(
+				<Button key="plugin-list-header__buttons-autoupdate-on"
+					disabled={ ! this.canUpdatePlugins() }
+					compact
+					onClick={ this.props.setAutoupdateSelected }>
+					{ this.translate( 'Autoupdate' ) }
+				</Button>
+			);
+			autoupdateButtons.push(
+				<Button key="plugin-list-header__buttons-autoupdate-off"
+					disabled={ ! this.canUpdatePlugins() }
+					compact
+					onClick={ this.props.unsetAutoupdateSelected }>
+					{ this.translate( 'Disable Autoupdates' ) }
+				</Button>
+			);
 
-				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ autoupdateButtons }</ButtonGroup> );
-				leftSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-remove-button">
-						<Button compact scary
-							disabled={ ! needsRemoveButton }
-							onClick={ this.props.removePluginNotice }>
-							{ this.translate( 'Remove' ) }
-						</Button>
-					</ButtonGroup>
-				);
-			}
+			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ autoupdateButtons }</ButtonGroup> );
+			leftSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-remove-button">
+					<Button compact scary
+						disabled={ ! needsRemoveButton }
+						onClick={ this.props.removePluginNotice }>
+						{ this.translate( 'Remove' ) }
+					</Button>
+				</ButtonGroup>
+			);
 
 			rightSideButtons.push(
 				<button key="plugin-list-header__buttons-close-button"
@@ -259,88 +245,76 @@ export default React.createClass( {
 	},
 
 	renderCurrentActionDropdown() {
-		const { isWpCom } = this.props;
-		let options = [];
-		let actions = [];
+		if ( ! this.props.isBulkManagementActive ) {
+			return null;
+		}
 
-		const hasWpcomPlugins = this.props.selected.some( property( 'wpcom' ) );
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = !! this.props.selected.length && ! hasWpcomPlugins && this.canUpdatePlugins() && ! isJetpackSelected;
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug ),
+			needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
 
-		if ( this.props.isBulkManagementActive ) {
-			options.push( <DropdownItem key="plugin__actions_title" selected={ true } value="Actions">{ this.translate( 'Actions' ) }</DropdownItem> );
+		return (
+			<SelectDropdown compact
+					className="plugin-list-header__actions_dropdown"
+					key="plugin-list-header__actions_dropdown"
+					selectedText={ this.translate( 'Actions' ) } >
 
-			if ( ! isWpCom ) {
-				options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
-				options.push(
-					<DropdownItem key="plugin__actions_activate"
+				<DropdownItem key="plugin__actions_title" selected={ true } value="Actions">
+					{ this.translate( 'Actions' ) }
+				</DropdownItem>
+
+				<DropdownSeparator key="plugin__actions_separator_1" />
+
+				<DropdownItem key="plugin__actions_activate"
 						disabled={ ! this.props.haveUpdatesSelected }
 						onClick={ this.props.updateSelected }>
-						{ this.translate( 'Update' ) }
-					</DropdownItem>
-				);
-			}
+					{ this.translate( 'Update' ) }
+				</DropdownItem>
 
-			options.push( <DropdownSeparator key="plugin__actions_separator_1" /> );
-			options.push(
+				<DropdownSeparator key="plugin__actions_separator_1" />
+
 				<DropdownItem key="plugin__actions_activate"
-					disabled={ ! this.props.haveInactiveSelected }
-					onClick={ this.props.activateSelected }>
+						disabled={ ! this.props.haveInactiveSelected }
+						onClick={ this.props.activateSelected }>
 					{ this.translate( 'Activate' ) }
 				</DropdownItem>
-			);
 
-			let deactivateAction = isJetpackSelected
-				? <DropdownItem key="plugin__actions_disconnect"
-					disabled={ ! this.props.haveActiveSelected }
-					onClick={ this.props.deactiveAndDisconnectSelected }>
+				{ isJetpackSelected
+					? <DropdownItem key="plugin__actions_disconnect"
+							disabled={ ! this.props.haveActiveSelected }
+							onClick={ this.props.deactiveAndDisconnectSelected }>
 						{ this.translate( 'Disconnect' ) }
 					</DropdownItem>
-				: <DropdownItem key="plugin__actions_deactivate"
-					disabled={ ! this.props.haveActiveSelected }
-					onClick={ this.props.deactivateSelected }>
+					: <DropdownItem key="plugin__actions_deactivate"
+							disabled={ ! this.props.haveActiveSelected }
+							onClick={ this.props.deactivateSelected }>
 						{ this.translate( 'Deactivate' ) }
-					</DropdownItem>;
-			options.push( deactivateAction );
+					</DropdownItem>
+				}
 
-			if ( ! isWpCom ) {
-				options.push( <DropdownSeparator key="plugin__actions_separator_2" /> );
-				options.push(
-					<DropdownItem key="plugin__actions_autoupdate"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
+				<DropdownSeparator key="plugin__actions_separator_2" />
+
+				<DropdownItem key="plugin__actions_autoupdate"
+						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.setAutoupdateSelected }>
-						{ this.translate( 'Autoupdate' ) }
-					</DropdownItem>
-				);
-				options.push(
-					<DropdownItem key="plugin__actions_disable_autoupdate"
-						disabled={ hasWpcomPlugins || ! this.canUpdatePlugins() }
-						onClick={ this.props.unsetAutoupdateSelected }>
-						{ this.translate( 'Disable Autoupdates' ) }
-					</DropdownItem>
-				);
+					{ this.translate( 'Autoupdate' ) }
+				</DropdownItem>
 
-				options.push( <DropdownSeparator key="plugin__actions_separator_3" /> );
-				options.push(
-					<DropdownItem key="plugin__actions_remove"
+				<DropdownItem key="plugin__actions_disable_autoupdate"
+						disabled={ ! this.canUpdatePlugins() }
+						onClick={ this.props.unsetAutoupdateSelected }>
+					{ this.translate( 'Disable Autoupdates' ) }
+				</DropdownItem>
+
+				<DropdownSeparator key="plugin__actions_separator_3" />
+
+				<DropdownItem key="plugin__actions_remove"
 						className="plugin-list-header__actions_remove_item"
 						disabled={ ! needsRemoveButton }
 						onClick={ this.props.removePluginNotice } >
-						{ this.translate( 'Remove' ) }
-					</DropdownItem>
-				);
-			}
-
-			actions.push(
-				<SelectDropdown compact
-					className="plugin-list-header__actions_dropdown"
-					key="plugin-list-header__actions_dropdown"
-					selectedText={ this.translate( 'Actions' ) }>
-					{ options }
-				</SelectDropdown>
-			);
-		}
-		return actions;
+					{ this.translate( 'Remove' ) }
+				</DropdownItem>
+			</SelectDropdown>
+		);
 	},
 
 	render() {

@@ -128,14 +128,6 @@ module.exports = React.createClass( {
 			return this.renderUpdateFlag();
 		}
 
-		if ( pluginData.wpcom ) {
-			return (
-				<div className="plugin-item__last_updated">
-					{ this.translate( 'Updated Automatically' ) }
-				</div>
-			);
-		}
-
 		if ( pluginData.last_updated ) {
 			return (
 				<div className="plugin-item__last_updated">

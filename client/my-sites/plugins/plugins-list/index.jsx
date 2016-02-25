@@ -32,11 +32,8 @@ export default React.createClass( {
 			sites: PropTypes.array,
 			slug: PropTypes.string,
 			name: PropTypes.string,
-			wpcom: PropTypes.bool,
-			wporg: PropTypes.bool,
 		} ) ).isRequired,
 		header: PropTypes.string.isRequired,
-		isWpCom: PropTypes.bool.isRequired,
 		sites: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 		pluginUpdateCount: PropTypes.number,
@@ -52,15 +49,11 @@ export default React.createClass( {
 	},
 
 	componentDidMount() {
-		if ( this.props.isWpCom !== true ) {
-			PluginsLog.on( 'change', this.showDisconnectDialog );
-		}
+		PluginsLog.on( 'change', this.showDisconnectDialog );
 	},
 
 	componentWillUnmount() {
-		if ( this.props.isWpCom !== true ) {
-			PluginsLog.removeListener( 'change', this.showDisconnectDialog );
-		}
+		PluginsLog.removeListener( 'change', this.showDisconnectDialog );
 	},
 
 	isSelected( { slug } ) {
@@ -111,16 +104,8 @@ export default React.createClass( {
 		}
 	},
 
-	getPluginUpdateCount() {
-		if ( this.props.isWpCom ) {
-			return 0;
-		}
-		return this.props.pluginUpdateCount;
-	},
-
 	hasNoSitesThatCanManage( plugin ) {
-		return ! plugin.wpcom &&
-			! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
+		return ! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
 	},
 
 	getSelected() {
@@ -353,7 +338,6 @@ export default React.createClass( {
 		return (
 			<div className="plugins-list" >
 				<PluginsListHeader label={ this.props.header }
-					isWpCom={ this.props.isWpCom }
 					isBulkManagementActive={ !! this.state.bulkManagement }
 					sites={ this.props.sites }
 					plugins={ this.props.plugins }
@@ -361,7 +345,7 @@ export default React.createClass( {
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateAllPlugins={ this.updateAllPlugins }
 					updateSelected= { this.updateSelected }
-					pluginUpdateCount={ this.getPluginUpdateCount() }
+					pluginUpdateCount={ this.props.pluginUpdateCount }
 					activateSelected={ this.activateSelected }
 					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
 					deactivateSelected={ this.deactivateSelected }
@@ -373,7 +357,7 @@ export default React.createClass( {
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
-				{ ! this.props.isWpCom && <DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" /> }
+				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
 			</div>
 		);
 	},
@@ -393,12 +377,12 @@ export default React.createClass( {
 				isSelectable={ this.state.bulkManagement }
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
-				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + ( plugin.wpcom ? '/business' : '' ) + this.siteSuffix() } />
+				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() } />
 		);
 	},
 
 	renderPlaceholders() {
-		const placeholderCount = this.props.isWpCom ? 3 : 16;
+		const placeholderCount = 16;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	}
 } );

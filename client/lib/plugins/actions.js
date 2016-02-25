@@ -8,7 +8,6 @@ var debug = require( 'debug' )( 'calypso:my-sites:plugins:actions' ),
  */
 var analytics = require( 'analytics' ),
 	Dispatcher = require( 'dispatcher' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
 	wpcom = require( 'lib/wp' ).undocumented();
 
 var _actionsQueueBySite = {},
@@ -133,7 +132,7 @@ PluginsActions = {
 	},
 
 	fetchSitePlugins: function( site ) {
-		if ( ! site.user_can_manage || ( ! site.jetpack && ! isBusiness( site.plan ) ) ) {
+		if ( ! site.user_can_manage || ! site.jetpack ) {
 			defer( () => {
 				Dispatcher.handleViewAction( {
 					type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
