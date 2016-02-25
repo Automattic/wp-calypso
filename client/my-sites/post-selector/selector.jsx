@@ -7,10 +7,8 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import camelCase from 'lodash/camelCase';
-import clone from 'lodash/clone';
 import throttle from 'lodash/throttle';
 import get from 'lodash/get';
-import xorBy from 'lodash/xorBy';
 
 /**
  * Internal dependencies
@@ -18,10 +16,9 @@ import xorBy from 'lodash/xorBy';
 import NoResults from './no-results';
 import analytics from 'analytics';
 import Search from './search';
-import TreeConvert from 'lib/tree-convert';
 import { decodeEntities } from 'lib/formatting';
 import {
-	getSitePostsForQueryIgnoringPage,
+	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePostsForQuery,
 	isSitePostsLastPageForQuery
 } from 'state/posts/selectors';
@@ -34,21 +31,6 @@ import QueryPosts from 'components/data/query-posts';
 */
 const SEARCH_DEBOUNCE_TIME_MS = 500;
 const SCROLL_THROTTLE_TIME_MS = 400;
-const treeConverter = new TreeConvert( 'ID' );
-
-function buildTree( items ) {
-	const sortedPosts = [];
-
-	// clone objects to prevent mutating store data, set parent to number
-	items.forEach( function( item, i ) {
-		let post = clone( item );
-		post.parent = post.parent ? post.parent.ID : 0;
-		post.order = i;
-		sortedPosts.push( post );
-	} );
-
-	return treeConverter.treeify( sortedPosts );
-}
 
 const PostSelectorPosts = React.createClass( {
 	displayName: 'PostSelectorPosts',
@@ -71,19 +53,7 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	getInitialState() {
-		let state = { searchTerm: null };
-
-		if ( this.props.posts ) {
-			// Yes, this is what you're told not to do, but treeifying posts is
-			// particularly expensive, so we save the hierarchy as a cache
-			//
-			// See: https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
-			Object.assign( state, {
-				postsHierarchy: buildTree( this.props.posts )
-			} );
-		}
-
-		return state;
+		return { searchTerm: null };
 	},
 
 	getDefaultProps() {
@@ -113,19 +83,6 @@ const PostSelectorPosts = React.createClass( {
 		this.debouncedSearch = debounce( function() {
 			this.props.onSearch( this.state.searchTerm );
 		}.bind( this ), SEARCH_DEBOUNCE_TIME_MS );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ( ! this.props.posts || ! this.state.postsHierarchy ) && nextProps.posts ) {
-			// Has no current posts, but receiving, so build tree
-			this.setState( { postsHierarchy: buildTree( nextProps.posts ) } );
-		} else if ( ! nextProps.posts ) {
-			// No longer has incoming posts, reset hierarchy to null
-			this.setState( { postsHierarchy: null } );
-		} else if ( xorBy( this.props.posts, nextProps.posts, 'global_ID' ).length ) {
-			// Incoming posts are different, rebuild tree
-			this.setState( { postsHierarchy: buildTree( nextProps.posts ) } );
-		}
 	},
 
 	hasNoSearchResults() {
@@ -264,8 +221,8 @@ const PostSelectorPosts = React.createClass( {
 					null
 				}
 				<form className="post-selector__results">
-					{ this.state.postsHierarchy
-						? this.renderHierarchy( this.state.postsHierarchy )
+					{ this.props.posts
+						? this.renderHierarchy( this.props.posts )
 						: this.renderPlaceholder() }
 				</form>
 			</div>
@@ -276,7 +233,7 @@ const PostSelectorPosts = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 	return {
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		posts: getSitePostsHierarchyForQueryIgnoringPage( state, siteId, query ),
 		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
 		loading: isRequestingSitePostsForQuery( state, siteId, query ),
 		postTypes: getPostTypes( state, siteId )
