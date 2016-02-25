@@ -5,10 +5,9 @@
 	font-family: $sans;
 	font-size: 20px;
 	margin: 24px 0;
-}
-
-.sites__select-heading-path {
-	margin-left: 8px;
+	strong {
+		text-transform: capitalize;
+	}
 }
 
 .sites__selector-wrapper.card {

@@ -12,6 +12,7 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
+import { preventWidows } from 'lib/formatting';
 
 export default React.createClass( {
 	displayName: 'Sites',
@@ -55,22 +56,27 @@ export default React.createClass( {
 	},
 
 	getHeaderText() {
-		return (
-			<span>
-				{ this.translate( 'Please Select a Site to open:' ) }
-				<strong className="sites__select-heading-path">{ this.props.path }</strong>
-			</span>
-		)
+		if ( this.props.getSiteSelectionHeaderText ) {
+			return this.props.getSiteSelectionHeaderText();
+		}
+
+		const path = this.props.path.replace( /\//g, ' ' );
+
+		return this.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
+			args: {
+				path: path
+			},
+			components: {
+				strong: <strong />
+			}
+		} );
 	},
 
 	render: function() {
 		return (
 			<Main className="sites">
 				<h2 className="sites__select-heading">
-					{ this.props.getSiteSelectionHeaderText
-						? this.props.getSiteSelectionHeaderText()
-						: this.getHeaderText()
-					}
+					{ this.getHeaderText() }
 				</h2>
 				<Card className="sites__selector-wrapper">
 					<SiteSelector
