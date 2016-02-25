@@ -17,7 +17,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		selectedSite: React.PropTypes.object
 	},
 
-	renderHeading() {
+	getHeading() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
 		}
@@ -29,7 +29,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		return this.translate( 'Thank you for your purchase!' );
 	},
 
-	renderText() {
+	getText() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
 		}
@@ -59,14 +59,17 @@ const CheckoutThankYouHeader = React.createClass( {
 			'checkout-thank-you-header': true,
 			'is-placeholder': ! this.props.isDataLoaded
 		}
+
 		return (
 			<div className={ classNames( classes ) }>
-				<span className="checkout-thank-you-header__icon"/>
+				<span className="checkout-thank-you-header__icon" />
+
 				<h1 className="checkout-thank-you-header__heading">
-					{ this.renderHeading() }
+					{ this.getHeading() }
 				</h1>
+
 				<h2 className="checkout-thank-you-header__text">
-					{ this.renderText() }
+					{ this.getText() }
 				</h2>
 			</div>
 		);
