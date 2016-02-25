@@ -66,7 +66,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 					)
 				}
 				buttonText={ i18n.translate( 'Start a new post' ) }
-				href={ '/post/' + selectedSite.URL } />
+				href={ '/post/' + selectedSite.slug } />
 
 		</ul>
 	);
