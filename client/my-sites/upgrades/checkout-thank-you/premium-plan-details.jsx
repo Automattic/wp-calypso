@@ -45,7 +45,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 
 			<PurchaseDetail
 				additionalClass="customize-fonts-and-colors"
-				title={ i18n.translate( 'Customize Fonts & Colors' ) }
+				title={ i18n.translate( 'Customize your theme' ) }
 				description={
 					i18n.translate(
 						"You now have direct control over your site's fonts and colors in the customizer. " +
@@ -58,16 +58,16 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 
 			<PurchaseDetail
 				additionalClass="upload-to-videopress"
-				title={ i18n.translate( 'Upload to VideoPress' ) }
+				title={ i18n.translate( 'Video and audio posts' ) }
 				description={
 					i18n.translate(
-						'Upload video and audio files directly to your site, with no ads or limits. ' +
-						'The Premium plan also adds 10GB of file storage.'
+						'Enrich your posts with video and audio, uploaded directly on your site. ' +
+						'No ads or limits. The Premium plan also adds 10GB of file storage.'
 					)
 				}
-				buttonText={ i18n.translate( 'Upload files' ) }
-				href={ selectedSite.URL + '/wp-admin/media-new.php' }
-				target="_blank" />
+				buttonText={ i18n.translate( 'Start a new post' ) }
+				href={ '/post/' + selectedSite.URL } />
+
 		</ul>
 	);
 };
