@@ -7,10 +7,11 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import { getLocalForage } from 'lib/localforage';
 import config from 'config';
-import store from 'store';
 import { supportUserActivate } from 'state/support/actions';
 
+const localforage = getLocalForage();
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
 
@@ -39,8 +40,9 @@ class SupportUser {
 	rebootNormally() {
 		debug( 'Rebooting Calypso normally' );
 
-		store.remove( STORAGE_KEY );
-		window.location.reload();
+		localforage
+			.removeItem( STORAGE_KEY )
+			.then( window.location.reload );
 	}
 
 	/**
@@ -49,8 +51,9 @@ class SupportUser {
 	rebootWithToken( user, token ) {
 		debug( 'Rebooting Calypso with support user' );
 
-		store.set( STORAGE_KEY, { user, token } );
-		window.location.reload();
+		localforage
+			.setItem( STORAGE_KEY, { user, token } )
+			.then( window.location.reload );
 	}
 
 	/**
@@ -58,30 +61,36 @@ class SupportUser {
 	 * @return {bool} true if a support user token is waiting to be injected on boot, false otherwise
 	 */
 	shouldBootToSupportUser() {
-		const supportUser = store.get( STORAGE_KEY );
-		if ( supportUser && supportUser.user && supportUser.token ) {
-			return true;
+		const checkForSupportToken = ( supportUser ) => {
+			return ( supportUser && supportUser.user && supportUser.token );
 		}
 
-		return false;
+		return localforage
+			.getItem( STORAGE_KEY )
+			.then( checkForSupportToken );
 	}
 
 	/**
 	 * Inject the support user token into all following API calls
 	 */
 	boot() {
-		const { user, token } = store.get( STORAGE_KEY );
-		debug( 'Booting Calypso with support user', user );
+		const setSupportUser = ( { user, token } ) => {
+			debug( 'Booting Calypso with support user', user );
 
-		const errorHandler = ( error ) => this._onTokenError( error );
+			const errorHandler = ( error ) => this._onTokenError( error );
 
-		wpcom.setSupportUserToken( user, token, errorHandler );
+			wpcom.setSupportUserToken( user, token, errorHandler );
 
-		// boot() is called before the redux store is ready, so we need to
-		// wait for it to become available
-		this.reduxStoreReady.then( ( reduxStore ) => {
-			reduxStore.dispatch( supportUserActivate() );
-		} );
+			// boot() is called before the redux store is ready, so we need to
+			// wait for it to become available
+			this.reduxStoreReady.then( ( reduxStore ) => {
+				reduxStore.dispatch( supportUserActivate() );
+			} );
+		}
+
+		localforage
+			.getItem( STORAGE_KEY )
+			.then( setSupportUser );
 	}
 
 	// Called when an API call fails due to a token error

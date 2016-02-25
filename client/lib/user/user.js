@@ -29,7 +29,24 @@ function User() {
 		return new User();
 	}
 
-	this.initialize();
+	if ( supportUser.isEnabled() ) {
+		this.fetching = false;
+		this.initialized = false;
+
+		const selectBoot = ( shouldBootToSupportUser ) => {
+			if( shouldBootToSupportUser ) {
+				supportUser.boot()
+			} else {
+				this.initialize();
+			}
+		}
+
+		supportUser
+			.shouldBootToSupportUser()
+			.then( selectBoot );
+	} else {
+		this.initialize();
+	}
 }
 
 
@@ -45,14 +62,6 @@ User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
 	this.initialized = false;
-
-	if ( supportUser.shouldBootToSupportUser() ) {
-		supportUser.boot();
-		this.fetch();
-
-		// We're booting into support user mode, skip initialization of the main user.
-		return;
-	}
 
 	if ( config( 'wpcom_user_bootstrap' ) ) {
 		this.data = window.currentUser || false;
