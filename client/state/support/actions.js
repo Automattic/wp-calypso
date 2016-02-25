@@ -3,9 +3,8 @@
  */
 import {
 	SUPPORT_USER_ACTIVATE,
-	SUPPORT_USER_DEACTIVATE,
+	SUPPORT_USER_ERROR,
 	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_SWITCH,
 	SUPPORT_USER_TOGGLE_DIALOG,
 } from 'state/action-types';
 
@@ -31,26 +30,15 @@ export function supportUserTokenFetch( user, password ) {
 		} );
 
 		const setToken = ( response ) => {
-			dispatch( supportUserSwitch() );
 			supportUser.rebootWithToken( response.username, response.token );
 		}
 
 		const errorFetchingToken = ( error ) =>
-			dispatch( supportUserDeactivate( error.message ) );
+			dispatch( supportUserError( error.message ) );
 
 		return wpcom.fetchSupportUserToken( user, password )
 			.then( setToken )
 			.catch( errorFetchingToken );
-	}
-}
-
-/**
- * To be called when support user is changing, before the page is reloaded
- * @return {Object}              Action object
- */
-export function supportUserSwitch() {
-	return {
-		type: SUPPORT_USER_SWITCH
 	}
 }
 
@@ -61,13 +49,13 @@ export function supportUserActivate() {
 }
 
 /**
- * Dispatched when the support user is deactivated, intentionally or due to an error
- * @param  {string} errorMessage An error that caused the deactivation, if any
+ * Dispatched when an error occurs while attempting to activate support user
+ * @param  {string} errorMessage
  * @return {Object}              Action object
  */
-export function supportUserDeactivate( errorMessage = null ) {
+export function supportUserError( errorMessage = null ) {
 	return {
-		type: SUPPORT_USER_DEACTIVATE,
+		type: SUPPORT_USER_ERROR,
 		errorMessage
 	}
 }

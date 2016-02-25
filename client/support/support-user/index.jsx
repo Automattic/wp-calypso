@@ -14,10 +14,8 @@ import supportUser from 'lib/user/support-user-interop';
 
 import {
 	supportUserTokenFetch,
-	supportUserRestore,
 	supportUserToggleDialog,
 } from 'state/support/actions';
-import { isSupportUser } from 'state/support/selectors';
 
 const SupportUser = React.createClass( {
 	displayName: 'SupportUser',
@@ -44,6 +42,7 @@ const SupportUser = React.createClass( {
 				isVisible={ this.props.showDialog }
 				isBusy={ this.props.isTransitioning }
 				isLoggedIn={ this.props.isSupportUser }
+				errorMessage={ this.props.errorMessage }
 
 				onCloseDialog={ this.props.supportUserToggleDialog }
 				onChangeUser={ this.props.supportUserTokenFetch }
@@ -57,7 +56,7 @@ const mapStateToProps = ( state ) => {
 		isSupportUser: state.support.isSupportUser,
 		isTransitioning: state.support.isTransitioning,
 		showDialog: state.support.showDialog,
-		disableCalypso: state.support.shouldReloadPage,
+		errorMessage: state.support.errorMessage,
 	}
 }
 

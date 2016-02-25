@@ -51,16 +51,14 @@ export default function wpcomSupport( wpcom ) {
 				supportToken = newToken;
 				interceptResponse = ( callback ) => {
 					return ( response, ...args ) => {
-						console.log( response, response.error, args );
-
 						if ( response && response.error &&
 							response.error === 'invalid_support_token' &&
 							typeof newTokenErrorCallback === 'function' ) {
 							newTokenErrorCallback( response );
+						} else {
+							// Call the original response callback
+							callback( response, ...args );
 						}
-
-						// Call the original response callback
-						callback( response, ...args );
 					}
 				}
 				return true;
@@ -68,7 +66,7 @@ export default function wpcomSupport( wpcom ) {
 			return false;
 		},
 		request: ( params, callback ) => {
-			if ( supportUser && supportToken ) {
+			if ( supportUser && supportToken && interceptResponse ) {
 				return request( addSupportData( params ), interceptResponse( callback ) );
 			}
 
