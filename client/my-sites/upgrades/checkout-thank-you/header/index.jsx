@@ -7,13 +7,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isPlan } from 'lib/products-values';
+import { isFreeTrial, isPlan } from 'lib/products-values';
 import Gridicon from 'components/gridicon';
 
 const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
 		isDataLoaded: React.PropTypes.bool.isRequired,
-		isFreeTrial: React.PropTypes.bool,
 		primaryPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.object
 	},
@@ -23,7 +22,7 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( this.props.isFreeTrial ) {
+		if ( isFreeTrial( this.props.primaryPurchase ) ) {
 			return this.translate( 'Way to go, your 14 day free trial starts now!' );
 		}
 
@@ -35,33 +34,31 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( this.props.primaryPurchase ) {
-			if ( this.props.isFreeTrial ) {
-				return this.translate( "We hope you enjoy {{strong}}%(productName)s{{/strong}}. What's next? Take it for a spin!", {
+		if ( isFreeTrial( this.props.primaryPurchase ) ) {
+			return this.translate( "We hope you enjoy {{strong}}%(productName)s{{/strong}}. What's next? Take it for a spin!", {
+				args: {
+					productName: this.props.productName
+				},
+				components: {
+					strong: <strong/>
+				}
+			} );
+		} else if ( isPlan( this.props.primaryPurchase ) ) {
+			return this.translate( "Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!", {
+				args: { productName: this.props.primaryPurchase.productName },
+				components: { strong: <strong /> }
+			} );
+		} else {
+			return this.translate(
+				"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
 					args: {
 						productName: this.props.productName
 					},
 					components: {
 						strong: <strong/>
 					}
-				} );
-			} else if ( isPlan( this.props.primaryPurchase ) ) {
-				return this.translate( "Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!", {
-					args: { productName: this.props.primaryPurchase.productName },
-					components: { strong: <strong /> }
-				} );
-			} else {
-				return this.translate(
-					"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
-						args: {
-							productName: this.props.productName
-						},
-						components: {
-							strong: <strong/>
-						}
-					}
-				);
-			}
+				}
+			);
 		}
 
 		return this.translate( "You will receive an email confirmation shortly. What's next?" );

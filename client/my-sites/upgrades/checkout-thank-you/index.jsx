@@ -48,7 +48,7 @@ function getPurchases( props ) {
 	return props.receipt.data.purchases;
 }
 
-const CheckoutThankYou = React.createClass( {
+var CheckoutThankYou = React.createClass( {
 	componentDidMount: function() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
@@ -192,7 +192,6 @@ const CheckoutThankYou = React.createClass( {
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
-					isFreeTrial={ this.freeTrialWasPurchased() }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
