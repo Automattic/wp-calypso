@@ -68,7 +68,11 @@ export default React.createClass( {
 		this.closeSelector();
 		this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
-		ReactDom.findDOMNode( this.refs.selector ).scrollTop = 0;
+
+		let node = ReactDom.findDOMNode( this.refs.selector );
+		if ( node ) {
+			node.scrollTop = 0;
+		}
 
 		// ignore mouse events as the default page() click event will handle navigation
 		if ( this.props.siteBasePath && event.type !== 'mouseup' ) {

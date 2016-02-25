@@ -1,26 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:manage' );
-
+import React from 'react';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-var SiteCard = require( './site-card' ),
-	SearchCard = require( 'components/search-card' ),
-	Gridicon = require( 'components/gridicon' ),
-	Main = require( 'components/main' ),
-	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	config = require( 'config' );
-
+import Main from 'components/main';
+import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Sites',
 
 	mixins: [ observe( 'sites', 'user' ) ],
@@ -29,18 +21,7 @@ module.exports = React.createClass( {
 		path: React.PropTypes.string.isRequired
 	},
 
-	getSiteCount: function() {
-		var user, sites;
-		if ( ! this.props.sites.initialized ) {
-			user = this.props.user.get();
-			return user.visible_site_count;
-		}
-
-		sites = this.props.sites.getVisible();
-		return sites.length;
-	},
-
-	filterSites: function( site ) {
+	filterSites( site ) {
 		let path = this.props.path;
 
 		// Override the path to be /sites so that when a site is
@@ -49,20 +30,18 @@ module.exports = React.createClass( {
 			path = '/sites';
 		}
 
-		/**
-		 * Filters sites based on public or private nature
-		 * for paths `/public` and `/private` only
-		 */
+		// Filters sites based on public or private nature
+		// for paths `/public` and `/private` only
 		if ( path === '/sites/private' ) {
 			return site.is_private;
 		}
 
-		// filter out jetpack sites when on particular routes
+		// Filter out jetpack sites when on particular routes
 		if ( /^\/menus/.test( path ) || /^\/customize/.test( path ) ) {
 			return ! site.jetpack;
 		}
 
-		// filter out sites with no upgrades on particular routes
+		// Filter out sites with no upgrades on particular routes
 		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.sourcePath ) ) {
 			return site.isUpgradeable();
 		}
@@ -75,17 +54,14 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var sitesMarkup,
-			siteSelectionHeaderText = this.translate( 'Please Select a Site:' ),
-			sitesTruncated;
-
-		if ( this.props.getSiteSelectionHeaderText ) {
-			siteSelectionHeaderText = this.props.getSiteSelectionHeaderText();
-		}
-
 		return (
 			<Main className="sites">
-				<h2 className="sites__select-heading">{ siteSelectionHeaderText }</h2>
+				<h2 className="sites__select-heading">
+					{ this.props.getSiteSelectionHeaderText
+						? this.props.getSiteSelectionHeaderText()
+						: this.translate( 'Please Select a Site:' )
+					}
+				</h2>
 				<SiteSelector
 					filter={ ( site ) => this.filterSites( site ) }
 					onSiteSelect={ this.onSiteSelect }
