@@ -91,14 +91,6 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
-	getSingleProductName() {
-		if ( this.isDataLoaded() && getPurchases( this.props ).length ) {
-			return getPurchases( this.props )[ 0 ].productNameShort;
-		}
-
-		return null;
-	},
-
 	render: function() {
 		var classes = classNames( 'checkout-thank-you', {
 			'is-placeholder': ! this.isDataLoaded()
