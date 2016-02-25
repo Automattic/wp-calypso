@@ -12,7 +12,14 @@ import { connect } from 'react-redux';
  */
 import MasterbarMinimal from 'layout/masterbar/minimal';
 
-const LayoutLoggedOut = ( { primary, secondary, tertiary, section, hasSidebar, isFullScreen } ) => {
+const LayoutLoggedOut = ( {
+	primary,
+	secondary,
+	tertiary,
+	section,
+	hasSidebar = true,
+	isFullScreen = false
+} ) => {
 	const sectionClass = section ? 'is-section-' + section : '';
 	const classes = classNames( 'wp layout', sectionClass, {
 		'focus-content': true,
