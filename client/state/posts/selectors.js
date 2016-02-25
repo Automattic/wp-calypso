@@ -14,16 +14,6 @@ import {
 import { DEFAULT_POST_QUERY } from './constants';
 
 /**
- * Returns all posts indexed by globalId
- *
- * @param  {Object} state    Global state tree
- * @return {Object}          Posts object
- */
-export function getPostsByGlobalId( state ) {
-	return state.posts.items;
-}
-
-/**
  * Returns a post object by its global ID.
  *
  * @param  {Object} state    Global state tree
@@ -31,7 +21,7 @@ export function getPostsByGlobalId( state ) {
  * @return {Object}          Post object
  */
 export function getPost( state, globalId ) {
-	return getPostsByGlobalId( state )[ globalId ];
+	return state.posts.items[ globalId ];
 }
 
 /**
