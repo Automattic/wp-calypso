@@ -86,7 +86,7 @@ function splitTemplate( path, module, chunkName ) {
 		'		}',
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
-		'			require( ' + JSON.stringify( module ) + ' )( controller.clientRouter );',
+		'			require( ' + JSON.stringify( module ) + ' )( controller.clientRouter, controller.clientRenderer );',
 		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
 		'		}',
 		'		layoutFocus.next();',
@@ -99,7 +99,7 @@ function splitTemplate( path, module, chunkName ) {
 }
 
 function requireTemplate( module ) {
-	return 'require( ' + JSON.stringify( module ) + ' )( controller.clientRouter );\n';
+	return 'require( ' + JSON.stringify( module ) + ' )( controller.clientRouter, controller.clientRenderer );\n';
 }
 
 function singleEnsure( chunkName ) {

@@ -26,10 +26,10 @@ const debug = debugFactory( 'calypso:controller' );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...[ ...middlewares, render ] );
+	page( route, ...middlewares );
 }
 
-function render( context ) {
+export function clientRenderer( context ) {
 	context.layout
 		? renderSingleTree( context )
 		: renderSeparateTrees( context );
