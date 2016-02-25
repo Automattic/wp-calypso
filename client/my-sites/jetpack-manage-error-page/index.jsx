@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react'
-import merge from 'lodash/merge'
 
 /**
  * Internal dependencies
@@ -61,7 +60,7 @@ module.exports = React.createClass( {
 			},
 			default: {}
 		};
-		return merge( defaults[ this.props.template ] || defaults.default, this.props );
+		return Object.assign( {}, defaults[ this.props.template ] || defaults.default, this.props );
 	},
 
 	render() {
