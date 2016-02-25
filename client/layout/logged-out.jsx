@@ -47,6 +47,9 @@ const LayoutLoggedOut = ( {
 
 LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
+	primary: React.PropTypes.element,
+	secondary: React.PropTypes.element,
+	tertiary: React.PropTypes.element,
 	section: React.PropTypes.string,
 	hasSidebar: React.PropTypes.bool,
 	isFullScreen: React.PropTypes.bool
