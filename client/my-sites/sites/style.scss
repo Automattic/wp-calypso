@@ -2,17 +2,15 @@
 	clear: both;
 	color: darken( $gray, 30% );
 	display: block;
-	font-family: $serif;
-	font-size: 32px;
-	font-weight: bold;
-	margin-bottom: 20px;
+	font-family: $sans;
+	font-size: 20px;
+	margin: 24px 0;
 }
 
-.sites .site-selector .site {
-	.site__title,
-	.site__domain {
-		&::after {
-			@include long-content-fade( $color: $gray-light );
-		}
-	}
+.sites__select-heading-path {
+	margin-left: 8px;
+}
+
+.sites__selector-wrapper.card {
+	padding: 0;
 }

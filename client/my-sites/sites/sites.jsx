@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
@@ -53,20 +54,32 @@ export default React.createClass( {
 		page.replace( addSiteFragment( this.props.path, slug ) );
 	},
 
+	getHeaderText() {
+		return (
+			<span>
+				{ this.translate( 'Please Select a Site to open:' ) }
+				<strong className="sites__select-heading-path">{ this.props.path }</strong>
+			</span>
+		)
+	},
+
 	render: function() {
 		return (
 			<Main className="sites">
 				<h2 className="sites__select-heading">
 					{ this.props.getSiteSelectionHeaderText
 						? this.props.getSiteSelectionHeaderText()
-						: this.translate( 'Please Select a Site:' )
+						: this.getHeaderText()
 					}
 				</h2>
-				<SiteSelector
-					filter={ ( site ) => this.filterSites( site ) }
-					onSiteSelect={ this.onSiteSelect }
-					sites={ this.props.sites }
-				/>
+				<Card className="sites__selector-wrapper">
+					<SiteSelector
+						filter={ ( site ) => this.filterSites( site ) }
+						onSiteSelect={ this.onSiteSelect }
+						sites={ this.props.sites }
+						groups={ true }
+					/>
+				</Card>
 			</Main>
 		);
 	}
