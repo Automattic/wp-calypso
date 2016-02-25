@@ -133,7 +133,7 @@ export default React.createClass( {
 			sites = this.props.sites.search( this.state.search );
 		} else {
 			sites = this.shouldShowGroups()
-				? this.props.sites.getVisibleAndNotRecentNorStarred()
+				? this.props.sites.getVisibleAndNotRecent()
 				: this.props.sites.getVisible();
 		}
 

@@ -566,13 +566,28 @@ SitesList.prototype.getVisible = function() {
  *
  * @api public
  **/
-SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
+SitesList.prototype.getVisibleAndNotRecent = function() {
 	return this.get().filter( function( site ) {
 		if ( user.get().visible_site_count < 12 ) {
 			return site.visible === true;
 		}
 
 		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1;
+	}, this );
+};
+
+/**
+ * Get sites that are marked as visible and not recently selected
+ *
+ * @api public
+ **/
+SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
+	return this.get().filter( function( site ) {
+		if ( user.get().visible_site_count < 12 ) {
+			return site.visible === true && ! this.isStarred( site );
+		}
+
+		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1 && ! this.isStarred( site );
 	}, this );
 };
 
