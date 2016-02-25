@@ -194,8 +194,13 @@ module.exports = React.createClass( {
 							</span>
 						}
 						{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
-							<span className="site__star-badge">
+							<span className="site__badge">
 								<Gridicon icon="star" size={ 18 } />
+							</span>
+						}
+						{ this.props.site.is_private &&
+							<span className="site__badge">
+								<Gridicon icon="lock" size={ 18 } />
 							</span>
 						}
 					</a>
