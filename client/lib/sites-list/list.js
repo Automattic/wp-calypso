@@ -567,6 +567,7 @@ SitesList.prototype.getVisible = function() {
  * @api public
  **/
 SitesList.prototype.getVisibleAndNotRecent = function() {
+	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 	return this.get().filter( function( site ) {
 		if ( user.get().visible_site_count < 12 ) {
 			return site.visible === true;
