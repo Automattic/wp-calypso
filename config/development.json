@@ -84,6 +84,7 @@
 		"muse": true,
 		"network-connection": true,
 		"notifications2beta": true,
+		"oauth": true,
 		"olark": true,
 		"olark_use_wpcom_configuration": true,
 		"perfmon": false,
