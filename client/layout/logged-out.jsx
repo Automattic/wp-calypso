@@ -53,13 +53,9 @@ LayoutLoggedOut.propTypes = {
 }
 
 export default connect(
-	( state, props ) => Object.assign(
-		{},
-		props,
-		{
-			section: state.ui.section,
-			hasSidebar: state.ui.hasSidebar,
-			isFullScreen: state.ui.isFullScreen,
-		}
-	)
+	( state ) => ( {
+		section: state.ui.section,
+		hasSidebar: state.ui.hasSidebar,
+		isFullScreen: state.ui.isFullScreen,
+	} )
 )( LayoutLoggedOut );
