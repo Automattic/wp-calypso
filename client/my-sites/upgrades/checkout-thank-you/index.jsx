@@ -13,6 +13,7 @@ var React = require( 'react' ),
 var activated = require( 'state/themes/actions' ).activated,
 	Dispatcher = require( 'dispatcher' ),
 	Card = require( 'components/card' ),
+	HeaderCake = require( 'components/header-cake' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
@@ -24,6 +25,7 @@ var activated = require( 'state/themes/actions' ).activated,
 	GenericDetails = require( './generic-details' ),
 	GoogleAppsDetails = require( './google-apps-details' ),
 	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
+	isDomainRedemption = require( 'lib/products-values' ).isDomainRedemption,
 	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
 	isChargeback = require( 'lib/products-values' ).isChargeback,
 	isBusiness = require( 'lib/products-values' ).isBusiness,
@@ -90,6 +92,39 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
+	goBackUrl() {
+		var purchases;
+		if ( this.isDataLoaded() ) {
+			purchases = getPurchases( this.props );
+
+			function shouldGoBackToPlans() {
+				return purchases.some( isJetpackPremium ) || purchases.some( isJetpackBusiness ) || purchases.some( isPremium ) || purchases.some( isBusiness );
+			}
+
+			function shouldGoBackToDomainManagment() {
+				return purchases.some( isDomainRegistration ) || purchases.some( isDomainMapping ) || purchases.some( isSiteRedirect ) || purchases.some( isDomainRedemption );
+			}
+
+			function shouldGoBackToDomainManagmentEmail() {
+				return purchases.some( isGoogleApps );
+			}
+
+			if ( shouldGoBackToPlans( purchases ) ) {
+				return '/plans/' + this.props.selectedSite.slug;
+			} else if ( shouldGoBackToDomainManagment( purchases ) ) {
+				return '/domains/manage/' + this.props.selectedSite.slug;
+			} else if ( shouldGoBackToDomainManagmentEmail( purchases ) ) {
+				return '/domains/manage/email/' + this.props.selectedSite.slug;
+			}
+		}
+
+		return '/stats/' + this.props.selectedSite.slug;
+	},
+
+	goBack: function() {
+		page( this.goBackUrl() );
+	},
+
 	render: function() {
 		var classes = classNames( 'checkout-thank-you', {
 			'is-placeholder': ! this.isDataLoaded()
@@ -97,6 +132,8 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
+				<HeaderCake isCompact="true" onClick={ this.goBack } />
+
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
 				</Card>
