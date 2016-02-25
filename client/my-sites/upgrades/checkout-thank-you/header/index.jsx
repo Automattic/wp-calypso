@@ -111,12 +111,14 @@ const CheckoutThankYouHeader = React.createClass( {
 					<span className="checkout-thank-you-header__icon">
 						<Gridicon icon="trophy" size={ 72 } />
 					</span>
-					<h1 className="checkout-thank-you-header__heading">
-						{ this.renderHeading() }
-					</h1>
-					<h2 className="checkout-thank-you-header__text">
-						{ this.renderText() }
-					</h2>
+					<div>
+						<h1 className="checkout-thank-you-header__heading">
+							{ this.renderHeading() }
+						</h1>
+						<h2 className="checkout-thank-you-header__text">
+							{ this.renderText() }
+						</h2>
+					</div>
 				</div>
 <<<<<<< HEAD
 			</CompactCard>

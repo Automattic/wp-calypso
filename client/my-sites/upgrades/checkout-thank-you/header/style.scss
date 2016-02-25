@@ -12,19 +12,19 @@
 .checkout-thank-you-header-content {
 	margin: 0 auto;
 	max-width: 700px;
-	overflow: auto;
 
 	@include breakpoint( ">660px" ) {
+		display: flex;
 		text-align: left;
 	}
 }
 
 .checkout-thank-you-header__icon {
 	display: block;
+	margin: 0 auto;
 	position: relative;
 
 	@include breakpoint( ">660px" ) {
-		float: left;
 		height: 132px;
 		margin-right: 32px;
 		width: 132px;
@@ -33,14 +33,14 @@
 	.gridicon {
 		background: white;
 		border-radius: 50%;
-		color: darken( $gray, 30% );
-		font-size: 30px;
+		color: darken( $gray, 20% );
 		height: 48px;
-		padding: 30px;
+		padding: 21px;
 		width: 48px;
 
 		@include breakpoint( ">660px" ) {
 			height: 72px;
+			padding: 30px;
 			width: 72px;
 		}
 	}
@@ -53,7 +53,7 @@
 
 .checkout-thank-you-header__heading {
 	font-size: 24px;
-	font-weight: 700;
+	font-weight: 400;
 	margin: 24px 0 8px 0;
 }
 
