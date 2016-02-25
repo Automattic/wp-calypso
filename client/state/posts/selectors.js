@@ -2,6 +2,9 @@
  * External dependencies
  */
 import range from 'lodash/range';
+import reduce from 'lodash/reduce';
+import setWith from 'lodash/setWith';
+import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
@@ -24,6 +27,20 @@ export function getPost( state, globalId ) {
 }
 
 /**
+ * Returns a mapping of site ID, post ID pairing to global post ID.
+ *
+ * @param state
+ */
+export const getPostsBySiteIdAndPostId = createSelector(
+	( state ) => {
+		return reduce( state.posts.items, ( result, post, globalId ) => {
+			return setWith( result, [ post.site_ID, post.ID ], globalId, Object );
+		}, {} );
+	},
+	( state ) => [ state.posts.items ]
+);
+
+/**
  * Returns a post object by site ID, post ID pair.
  *
  * @param  {Object}  state  Global state tree
@@ -32,12 +49,12 @@ export function getPost( state, globalId ) {
  * @return {?Object}        Post object
  */
 export function getSitePost( state, siteId, postId ) {
-	const { sitePosts } = state.posts;
-	if ( ! sitePosts[ siteId ] || ! sitePosts[ siteId ][ postId ] ) {
+	const postsBySiteIdAndPostId = getPostsBySiteIdAndPostId( state );
+	if ( ! postsBySiteIdAndPostId[ siteId ] || ! postsBySiteIdAndPostId[ siteId ][ postId ] ) {
 		return null;
 	}
 
-	return getPost( state, sitePosts[ siteId ][ postId ] );
+	return getPost( state, postsBySiteIdAndPostId[ siteId ][ postId ] );
 }
 
 /**

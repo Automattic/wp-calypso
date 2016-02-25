@@ -44,33 +44,6 @@ export function items( state = {}, action ) {
 }
 
 /**
- * Returns the updated site posts state after an action has been dispatched.
- * The state reflects a mapping of site ID, post ID pairing to global post ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function sitePosts( state = {}, action ) {
-	switch ( action.type ) {
-		case POSTS_RECEIVE:
-			state = Object.assign( {}, state );
-			action.posts.forEach( ( post ) => {
-				if ( ! state[ post.site_ID ] ) {
-					state[ post.site_ID ] = {};
-				}
-
-				state[ post.site_ID ][ post.ID ] = post.global_ID;
-			} );
-			return state;
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
-}
-
-/**
  * Returns the updated site post requests state after an action has been
  * dispatched. The state reflects a mapping of site ID, post ID pairing to a
  * boolean reflecting whether a request for the post is in progress.
@@ -165,7 +138,6 @@ export function queriesLastPage( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	sitePosts,
 	siteRequests,
 	queries,
 	queriesLastPage
