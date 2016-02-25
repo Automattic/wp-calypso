@@ -17,12 +17,11 @@ let IcannVerificationCard = React.createClass( {
 	},
 
 	getExplanation() {
-		switch ( this.props.explanationContext ) {
-			case 'name-servers':
-				return this.translate(
-						'You must verify your email address through the ICANN ' +
-						'verification email before you are able to update the name ' +
-						'servers for your domain.' );
+		if ( this.props.explanationContext === 'name-servers' ) {
+			return this.translate(
+					'You must verify your email address through the ICANN ' +
+					'verification email before you are able to update the name ' +
+					'servers for your domain.' );
 		}
 
 		return this.translate(
