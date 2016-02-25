@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 
 			homeLink: false,
 			enableActions: false,
-			disableStarring: false
+			disableStarring: true
 		};
 	},
 
@@ -193,7 +193,7 @@ module.exports = React.createClass( {
 								<Gridicon icon="house" size={ 18 } />
 							</span>
 						}
-						{ ! this.props.enableActions && sites.isStarred( this.props.site ) &&
+						{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
 							<span className="site__star-badge">
 								<Gridicon icon="star" size={ 18 } />
 							</span>

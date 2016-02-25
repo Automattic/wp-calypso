@@ -414,6 +414,8 @@ SitesList.prototype.toggleStarred = function( siteID ) {
 };
 
 SitesList.prototype.getStarred = function() {
+	// Disable stars
+	return false;
 	this.starred = PreferencesStore.get( 'starredSites' ) || [];
 	return this.get().filter( this.isStarred, this );
 };
@@ -556,6 +558,21 @@ SitesList.prototype.getPublic = function() {
 SitesList.prototype.getVisible = function() {
 	return this.get().filter( function( site ) {
 		return site.visible === true;
+	}, this );
+};
+
+/**
+ * Get sites that are marked as visible and not recently selected
+ *
+ * @api public
+ **/
+SitesList.prototype.getVisibleAndNotRecent = function() {
+	return this.get().filter( function( site ) {
+		if ( user.get().visible_site_count < 12 ) {
+			return site.visible === true;
+		}
+
+		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1;
 	}, this );
 };
 
