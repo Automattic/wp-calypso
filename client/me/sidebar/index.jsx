@@ -34,6 +34,15 @@ module.exports = React.createClass( {
 		window.scrollTo( 0, 0 );
 	},
 
+	onSignOut: function() {
+		const currentUser = this.props.user.get();
+		
+		// If user is using en locale, redirect to app promo page on sign out
+		const isEnLocale = ( currentUser && currentUser.localeSlug === 'en' );
+		userUtilities.logout( isEnLocale ? '/?apppromo' : '' );
+		this.recordClickEvent( 'Sidebar Sign Out Link' );
+	},
+
 	render: function() {
 		var context = this.props.context,
 			filterMap = {
@@ -69,7 +78,7 @@ module.exports = React.createClass( {
 				<FormButton
 					className="me-sidebar__menu__signout"
 					isPrimary={ false }
-					onClick={ this.recordClickEvent( 'Sidebar Sign Out Link', userUtilities.logout ) }
+					onClick={ this.onSignOut }
 					title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 				>
 					{ this.translate( 'Sign Out' ) }
