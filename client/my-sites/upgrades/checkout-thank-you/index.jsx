@@ -173,7 +173,7 @@ const CheckoutThankYou = React.createClass( {
 
 	productRelatedMessages: function() {
 		var selectedSite = this.props.selectedSite,
-			[ componentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
+			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -201,11 +201,10 @@ const CheckoutThankYou = React.createClass( {
 				</div>
 
 				<div className="checkout-thank-you__purchase-details-list">
-					{ React.createElement( componentClass, {
-						selectedSite: selectedSite,
-						isFreeTrial: this.freeTrialWasPurchased(),
-						domain: domain
-					} ) }
+					<ComponentClass
+						selectedSite={ selectedSite }
+						isFreeTrial={ this.freeTrialWasPurchased() }
+						domain={ domain } />
 				</div>
 			</div>
 		);
