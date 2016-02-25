@@ -162,7 +162,7 @@ var CheckoutThankYou = React.createClass( {
 				return [
 					DomainRegistrationDetails,
 					find( purchases, isDomainRegistration ),
-					find( purchases ).meta
+					find( purchases, isDomainRegistration ).meta
 				];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [
