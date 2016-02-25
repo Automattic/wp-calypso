@@ -6,37 +6,29 @@ import userFactory from 'lib/user';;
 import { navigation, siteSelection } from 'my-sites/controller';
 import { singleSite, multiSite, loggedOut, details, makeLoggedOutLayout } from './controller';
 
-const user = userFactory();
+export default function( router, renderer ) {
+	const user = userFactory();
+	const isLoggedIn = !! user.get();
 
-const isLoggedIn = !! user.get();
-
-const designRoutes = isLoggedIn
-	? {
-		'/design': [ multiSite, navigation, siteSelection ],
-		'/design/:site_id': [ singleSite, navigation, siteSelection ],
-		'/design/type/:tier': [ multiSite, navigation, siteSelection ],
-		'/design/type/:tier/:site_id': [ singleSite, navigation, siteSelection ],
+	if ( config.isEnabled( 'manage/themes' ) ) {
+		if ( isLoggedIn ) {
+			router( '/design', multiSite, navigation, siteSelection );
+			router( '/design/:site_id', singleSite, navigation, siteSelection );
+			router( '/design/type/:tier', multiSite, navigation, siteSelection );
+			router( '/design/type/:tier/:site_id', singleSite, navigation, siteSelection );
+		} else {
+			router( '/design', loggedOut, makeLoggedOutLayout );
+			router( '/design/type/:tier', loggedOut, makeLoggedOutLayout );
+		}
+		router( '/design*', renderer );
 	}
-	: {
-		'/design': [ loggedOut, makeLoggedOutLayout ],
-		'/design/type/:tier': [ loggedOut, makeLoggedOutLayout ]
-	};
 
-const themesRoutes = isLoggedIn
-	? {
-		'/themes/:slug/:section?/:site_id?': [ details ]
+	if ( config.isEnabled( 'manage/themes/details' ) ) {
+		if ( isLoggedIn ) {
+			router( '/themes/:slug/:section?/:site_id?', details );
+		} else {
+			router( '/themes/:slug/:section?/:site_id?', details, makeLoggedOutLayout );
+		};
+		router( '/themes*', renderer );
 	}
-	: {
-		'/themes/:slug/:section?/:site_id?': [ details, makeLoggedOutLayout ]
-	};
-
-const routes = Object.assign( {},
-	config.isEnabled( 'manage/themes' ) ? designRoutes : {},
-	config.isEnabled( 'manage/themes/details' ) ? themesRoutes : {}
-)
-
-export default function( router ) {
-	Object.keys( routes ).forEach( route => {
-		router( route, ...routes[ route ] );
-	} )
 };
