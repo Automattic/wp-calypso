@@ -4,6 +4,8 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:manage' );
 
+import page from 'page';
+
 /**
  * Internal dependencies
  */
@@ -16,6 +18,7 @@ var SiteCard = require( './site-card' ),
 	config = require( 'config' );
 
 import SiteSelector from 'components/site-selector';
+import { addSiteFragment } from 'lib/route';
 
 module.exports = React.createClass( {
 	displayName: 'Sites',
@@ -67,6 +70,10 @@ module.exports = React.createClass( {
 		return site;
 	},
 
+	onSiteSelect: function( slug ) {
+		page.replace( addSiteFragment( this.props.path, slug ) );
+	},
+
 	render: function() {
 		var sitesMarkup,
 			siteSelectionHeaderText = this.translate( 'Please Select a Site:' ),
@@ -81,6 +88,7 @@ module.exports = React.createClass( {
 				<h2 className="sites__select-heading">{ siteSelectionHeaderText }</h2>
 				<SiteSelector
 					filter={ ( site ) => this.filterSites( site ) }
+					onSiteSelect={ this.onSiteSelect }
 					sites={ this.props.sites }
 				/>
 			</Main>
