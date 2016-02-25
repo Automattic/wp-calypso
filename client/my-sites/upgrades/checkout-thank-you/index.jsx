@@ -91,14 +91,6 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
-	getSingleProductName() {
-		if ( this.isDataLoaded() && getPurchases( this.props ).length ) {
-			return getPurchases( this.props )[ 0 ].productNameShort;
-		}
-
-		return null;
-	},
-
 	render: function() {
 		var classes = classNames( 'checkout-thank-you', {
 			'is-placeholder': ! this.isDataLoaded()
@@ -107,11 +99,6 @@ var CheckoutThankYou = React.createClass( {
 		return (
 			<Main className={ classes }>
 				<Card>
-					<CheckoutThankYouHeader
-						isDataLoaded={ this.isDataLoaded() }
-						isFreeTrial={ this.freeTrialWasPurchased() }
-						productName={ this.getSingleProductName() } />
-
 					{ this.productRelatedMessages() }
 				</Card>
 
@@ -139,15 +126,56 @@ var CheckoutThankYou = React.createClass( {
 		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
+	/**
+	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
+	 * just performed by the user.
+	 *
+	 * @returns {*[]} an array of varying size with the component instance, then an optional purchase object possibly followed by a domain name
+	 */
+	getComponentAndPrimaryPurchaseAndDomain: function() {
+		if ( this.isDataLoaded() ) {
+			const purchases = getPurchases( this.props );
+
+			const findPurchaseAndDomain = ( purchases, predicate ) => {
+				const purchase = find( purchases, predicate );
+
+				return [ purchase, purchase.meta ];
+			};
+
+			if ( purchases.some( isJetpackPremium ) ) {
+				return [ JetpackPremiumPlanDetails, find( purchases, isJetpackPremium ) ];
+			} else if ( purchases.some( isJetpackBusiness ) ) {
+				return [ JetpackBusinessPlanDetails, find( purchases, isJetpackBusiness ) ];
+			} else if ( purchases.some( isPremium ) ) {
+				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
+			} else if ( purchases.some( isBusiness ) ) {
+				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
+			} else if ( purchases.some( isGoogleApps ) ) {
+				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
+			} else if ( purchases.some( isDomainRegistration ) ) {
+				return [ DomainRegistrationDetails, ...findPurchaseAndDomain( purchases, isDomainRegistration ) ];
+			} else if ( purchases.some( isDomainMapping ) ) {
+				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
+			} else if ( purchases.some( isSiteRedirect ) ) {
+				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
+			} else if ( purchases.some( isChargeback ) ) {
+				return [ ChargebackDetails, find( purchases, isChargeback ) ];
+			}
+		}
+
+		return [ GenericDetails ];
+	},
+
 	productRelatedMessages: function() {
 		var selectedSite = this.props.selectedSite,
-			purchases,
-			componentClass,
-			domain;
+			[ componentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
 				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ false }
+						selectedSite={ this.props.selectedSite } />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -155,44 +183,14 @@ var CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		if ( this.props.receiptId ) {
-			purchases = getPurchases( this.props );
-
-			if ( purchases.some( isJetpackPremium ) ) {
-				componentClass = JetpackPremiumPlanDetails;
-			} else if ( purchases.some( isJetpackBusiness ) ) {
-				componentClass = JetpackBusinessPlanDetails;
-			} else if ( purchases.some( isPremium ) ) {
-				componentClass = PremiumPlanDetails;
-			} else if ( purchases.some( isBusiness ) ) {
-				componentClass = BusinessPlanDetails;
-			} else if ( purchases.some( isGoogleApps ) ) {
-				domain = find( purchases, isGoogleApps ).meta;
-
-				componentClass = GoogleAppsDetails;
-			} else if ( purchases.some( isDomainRegistration ) ) {
-				domain = find( purchases ).meta;
-
-				componentClass = DomainRegistrationDetails;
-			} else if ( purchases.some( isDomainMapping ) ) {
-				domain = find( purchases, isDomainMapping ).meta;
-
-				componentClass = DomainMappingDetails;
-			} else if ( purchases.some( isSiteRedirect ) ) {
-				domain = find( purchases, isSiteRedirect ).meta;
-
-				componentClass = SiteRedirectDetails;
-			} else if ( purchases.some( isChargeback ) ) {
-				componentClass = ChargebackDetails;
-			} else {
-				componentClass = GenericDetails;
-			}
-		} else {
-			componentClass = GenericDetails;
-		}
-
 		return (
 			<div>
+				<CheckoutThankYouHeader
+					isDataLoaded={ this.isDataLoaded() }
+					isFreeTrial={ this.freeTrialWasPurchased() }
+					primaryPurchase={ primaryPurchase }
+					selectedSite={ this.props.selectedSite } />
+
 				{ React.createElement( componentClass, {
 					selectedSite: selectedSite,
 					isFreeTrial: this.freeTrialWasPurchased(),
@@ -235,7 +233,8 @@ var CheckoutThankYou = React.createClass( {
 					'or {{contactLink}}contact us{{/contactLink}}.',
 					{
 						components: {
-							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' } target="_blank" />,
+							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' }
+								target="_blank" />,
 							forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
 							contactLink: <a href={ '/help/contact' } />
 						}

@@ -4,42 +4,51 @@
 import classNames from 'classnames';
 import React from 'react';
 
+/**
+ * External dependencies
+ */
+import { isPlan } from 'lib/products-values';
+
 const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
 		isDataLoaded: React.PropTypes.bool.isRequired,
-		isFreeTrial: React.PropTypes.bool.isRequired,
-		productName: React.PropTypes.string
+		isFreeTrial: React.PropTypes.bool,
+		primaryPurchase: React.PropTypes.object,
+		selectedSite: React.PropTypes.object
 	},
 
-	renderHeading() {
+	getHeading() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
-		} else if ( this.props.isFreeTrial ) {
-			return this.translate( 'Your 14 day free trial starts today!' );
+		}
+
+		if ( this.props.isFreeTrial ) {
+			return this.translate( 'Way to go, your 14 day free trial starts now!' );
 		}
 
 		return this.translate( 'Thank you for your purchase!' );
 	},
 
-	renderText() {
+	getText() {
 		if ( ! this.props.isDataLoaded ) {
 			return this.translate( 'Loading…' );
-		} else if ( this.props.productName ) {
-			if ( this.props.isFreeTrial ) {
-				return this.translate( "We hope you enjoy %(productName)s. What's next? Take it for a spin!", {
+		}
+
+		if ( isPlan( this.props.primaryPurchase ) ) {
+			return this.translate( "Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!", {
+				args: { productName: this.props.primaryPurchase.productName },
+				components: { strong: <strong /> }
+			} );
+		}
+
+		if ( this.props.primaryPurchase ) {
+			return this.translate(
+				"You will receive an email confirmation shortly for your purchase of %(productName)s. What's next?", {
 					args: {
-						productName: this.props.productName
+						productName: this.props.primaryPurchase.productName
 					}
-				} );
-			} else {
-				return this.translate(
-					"You will receive an email confirmation shortly for your purchase of %(productName)s. What's next?", {
-						args: {
-							productName: this.props.productName
-						}
-					}
-				);
-			}
+				}
+			);
 		}
 
 		return this.translate( "You will receive an email confirmation shortly. What's next?" );
@@ -50,14 +59,17 @@ const CheckoutThankYouHeader = React.createClass( {
 			'checkout-thank-you-header': true,
 			'is-placeholder': ! this.props.isDataLoaded
 		}
+
 		return (
 			<div className={ classNames( classes ) }>
-				<span className="checkout-thank-you-header__icon"/>
+				<span className="checkout-thank-you-header__icon" />
+
 				<h1 className="checkout-thank-you-header__heading">
-					{ this.renderHeading() }
+					{ this.getHeading() }
 				</h1>
+
 				<h2 className="checkout-thank-you-header__text">
-					{ this.renderText() }
+					{ this.getText() }
 				</h2>
 			</div>
 		);

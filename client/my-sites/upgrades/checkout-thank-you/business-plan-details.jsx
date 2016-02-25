@@ -17,9 +17,18 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 			{ showGetFreeDomainTip
 			? <PurchaseDetail
 					additionalClass="get-free-domain"
-					title={ i18n.translate( 'Get a free domain' ) }
-					description={ i18n.translate( 'WordPress.com Business includes a free domain for your site.' ) }
-					buttonText={ i18n.translate( 'Add Free Domain' ) }
+					title={ i18n.translate( 'Get your custom domain' ) }
+					description={
+						i18n.translate(
+							"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
+							'A free domain is included with your plan.',
+							{
+								args: { siteDomain: selectedSite.domain },
+								components: { em: <em /> }
+							}
+						)
+					}
+					buttonText={ i18n.translate( 'Claim your free domain' ) }
 					href={ '/domains/add/' + selectedSite.slug } />
 			: <PurchaseDetail
 					additionalClass="live-chat"
@@ -32,15 +41,15 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 
 			<PurchaseDetail
 				additionalClass="unlimited-premium-themes"
-				title={ i18n.translate( 'Browse Themes' ) }
-				description={ i18n.translate( 'Browse our collection of beautiful and amazing themes for your site.' ) }
-				buttonText={ i18n.translate( 'Find a New Theme' ) }
+				title={ i18n.translate( 'Find a new theme' ) }
+				description={ i18n.translate( 'All our premium themes, normally ranging $18 to $175 in price, are now available at no extra cost.' ) }
+				buttonText={ i18n.translate( 'Browse premium themes' ) }
 				href={ '/design/' + selectedSite.slug } />
 
 			<PurchaseDetail
 				additionalClass="connect-google-analytics"
-				title={ i18n.translate( 'Integrate Google Analytics' ) }
-				description={ i18n.translate( 'Connect your site to your existing Google Analytics account.' ) }
+				title={ i18n.translate( 'Stats from Google Analytics' ) }
+				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
 		</ul>

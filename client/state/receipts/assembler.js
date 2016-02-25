@@ -8,6 +8,7 @@ export function createReceiptObject( data ) {
 				meta: purchase.meta,
 				productId: purchase.product_id,
 				productSlug: purchase.product_slug,
+				productName: purchase.product_name,
 				productNameShort: purchase.product_name_short
 			};
 		} )
