@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import map from 'lodash/map';
 import camelCase from 'lodash/camelCase';
@@ -114,7 +113,7 @@ export default React.createClass( {
 			ref: name,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ),
-			invalid: formState.isFieldInvalid( this.state.form, name ),
+			isError: formState.isFieldInvalid( this.state.form, name ),
 			disabled: formState.isFieldDisabled( this.state.form, name ),
 			onChange: this.handleChangeEvent,
 			// The keys are mapped to snake_case when going to API and camelCase when the response is parsed and we are using

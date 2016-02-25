@@ -20,7 +20,6 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			focus: false,
 			toggled: false
 		};
 	},
@@ -29,7 +28,6 @@ module.exports = React.createClass( {
 		event.preventDefault();
 
 		this.setState( {
-			focus: true,
 			toggled: true
 		} );
 	},
@@ -37,14 +35,14 @@ module.exports = React.createClass( {
 	render: function() {
 		if ( this.state.toggled ) {
 			return (
-				<Input { ...this.props } initialFocus={ this.state.focus } />
-			);
-		} else {
-			return (
-				<div className="hidden-input">
-					<a href="" onClick={ this.handleClick }>{ this.props.text }</a>
-				</div>
+				<Input { ...this.props } autofocus />
 			);
 		}
+
+		return (
+			<div className="hidden-input">
+				<a href="" onClick={ this.handleClick }>{ this.props.text }</a>
+			</div>
+		);
 	}
 } );

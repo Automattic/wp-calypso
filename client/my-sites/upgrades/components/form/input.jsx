@@ -9,18 +9,17 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import analytics from 'analytics';
-import FocusMixin from './focus-mixin';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default React.createClass( {
 	displayName: 'Input',
 
-	mixins: [ FocusMixin( 'input' ) ],
-
 	getDefaultProps() {
-		return { type: 'text', autofocus: false };
+		return { autofocus: false };
 	},
 
 	componentDidMount() {
@@ -72,17 +71,12 @@ export default React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, {
-			focus: this.state.focus,
-			active: Boolean( this.props.value ),
-			invalid: this.props.invalid
-		}, this.props.classes );
+		const classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, this.props.classes );
 
 		return (
 			<div className={ classes }>
-				<label htmlFor={ this.props.name } className="form-label">{ this.props.label }</label>
-				<input
-					type={ this.props.type }
+				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+				<FormTextInput
 					placeholder={ this.props.label }
 					id={ this.props.name }
 					value={ this.props.value }
@@ -92,8 +86,7 @@ export default React.createClass( {
 					disabled={ this.props.disabled }
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
-					onBlur={ this.handleBlur }
-					onFocus={ this.handleFocus } />
+					isError={ this.props.isError } />
 				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);

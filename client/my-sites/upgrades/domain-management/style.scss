@@ -282,13 +282,6 @@
 			width: 100%;
 		}
 
-		&.invalid {
-			input,
-			select {
-				border-color: $alert-red;
-			}
-		}
-
 		input[ disabled ], select[ disabled ] {
 			cursor: not-allowed;
 		}
