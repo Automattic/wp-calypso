@@ -859,22 +859,6 @@ ul.email-forwarding__list {
 	}
 }
 
-.name-servers {
-	.icann-verification {
-		.button {
-			margin-bottom: 15px;
-
-			@include breakpoint( '<480px' ) {
-				width: 100%;
-			}
-		}
-	}
-
-	.icann-verification__explanation {
-		margin-bottom: 15px;
-	}
-}
-
 ul.dns__list {
 	list-style: none;
 	margin: 15px 0 0 0;

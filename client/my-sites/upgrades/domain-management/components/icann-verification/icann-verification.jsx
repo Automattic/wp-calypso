@@ -58,7 +58,7 @@ const Button = React.createClass( {
 			<button disabled={ this.props.submitting }
 					className="button is-primary is-full-width"
 					onClick={ this.props.onClick }>
-				{ this.translate( 'Resend ICANN Verification Email' ) }
+				{ this.translate( 'Resend verification email' ) }
 			</button>
 		);
 	}

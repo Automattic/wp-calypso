@@ -13,7 +13,7 @@ import Main from 'components/main';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from './icann-verification-card';
+import IcannVerificationCard from 'my-sites/upgrades/domain-management/components/icann-verification/icann-verification-card';
 import notices from 'notices';
 import paths from 'my-sites/upgrades/paths';
 import VerticalNav from 'components/vertical-nav';
@@ -23,7 +23,6 @@ import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
 import isEmpty from 'lodash/isEmpty';
 import { successNotice } from 'state/notices/actions'
-
 
 const NameServers = React.createClass( {
 	propTypes: {
@@ -150,7 +149,10 @@ const NameServers = React.createClass( {
 		}
 
 		if ( this.needsVerification() ) {
-			return <IcannVerificationCard selectedDomainName={ this.props.selectedDomainName } />;
+			return <IcannVerificationCard
+				selectedDomainName={ this.props.selectedDomainName }
+				explanationContext="name-servers"
+				selectedSite={ this.props.selectedSite } />;
 		}
 
 		return (
