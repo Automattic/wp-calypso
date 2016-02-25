@@ -12,10 +12,8 @@ import { connect } from 'react-redux';
  */
 import MasterbarMinimal from 'layout/masterbar/minimal';
 import ThemesHead from 'my-sites/themes/head';
-import ThemeSheetComponent from 'my-sites/themes/sheet';
 
-const LayoutLoggedOutDesign = ( { routeName, match, section, hasSidebar, isFullScreen, tier = 'all' } ) => {
-	const primary = routeName === 'themes' ? <ThemeSheetComponent themeSlug={ match.theme_slug } /> : null;
+const LayoutLoggedOutDesign = ( { primary, section, hasSidebar, isFullScreen, tier = 'all' } ) => {
 	const sectionClass = section ? 'is-section-' + section : '';
 	const classes = classNames( 'wp layout', sectionClass, {
 		'focus-content': true,
@@ -25,7 +23,7 @@ const LayoutLoggedOutDesign = ( { routeName, match, section, hasSidebar, isFullS
 
 	return (
 		<div className={ classes }>
-			<ThemesHead tier={ tier } isSheet={ routeName === 'themes' } />
+			<ThemesHead tier={ tier } isSheet={ section === 'themes' } />
 			<MasterbarMinimal url="/" />
 			<div id="content" className="wp-content">
 				<div id="primary" className="wp-primary wp-section">
