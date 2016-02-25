@@ -92,37 +92,35 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
-	goBackUrl() {
-		var purchases;
+	goBack() {
+		var purchases,
+			shouldGoBackToPlans,
+			shouldGoBackToDomainManagment,
+			shouldGoBackToDomainManagmentEmail,
+			backUrl = '/stats/';
+
 		if ( this.isDataLoaded() ) {
 			purchases = getPurchases( this.props );
 
-			function shouldGoBackToPlans() {
-				return purchases.some( isJetpackPremium ) || purchases.some( isJetpackBusiness ) || purchases.some( isPremium ) || purchases.some( isBusiness );
-			}
+			shouldGoBackToPlans = purchases.some( isPlan );
 
-			function shouldGoBackToDomainManagment() {
-				return purchases.some( isDomainRegistration ) || purchases.some( isDomainMapping ) || purchases.some( isSiteRedirect ) || purchases.some( isDomainRedemption );
-			}
+			shouldGoBackToDomainManagment = purchases.some( isDomainRegistration ) ||
+				purchases.some( isDomainMapping ) ||
+				purchases.some( isSiteRedirect ) ||
+				purchases.some( isDomainRedemption );
 
-			function shouldGoBackToDomainManagmentEmail() {
-				return purchases.some( isGoogleApps );
-			}
-
-			if ( shouldGoBackToPlans( purchases ) ) {
-				return '/plans/' + this.props.selectedSite.slug;
-			} else if ( shouldGoBackToDomainManagment( purchases ) ) {
-				return '/domains/manage/' + this.props.selectedSite.slug;
-			} else if ( shouldGoBackToDomainManagmentEmail( purchases ) ) {
-				return '/domains/manage/email/' + this.props.selectedSite.slug;
-			}
+			shouldGoBackToDomainManagmentEmail = purchases.some( isGoogleApps );
 		}
 
-		return '/stats/' + this.props.selectedSite.slug;
-	},
+		if ( shouldGoBackToPlans ) {
+			backUrl = '/plans/';
+		} else if ( shouldGoBackToDomainManagment ) {
+			backUrl = '/domains/manage/';
+		} else if ( shouldGoBackToDomainManagmentEmail ) {
+			backUrl = '/domains/manage/email/';
+		}
 
-	goBack: function() {
-		page( this.goBackUrl() );
+		page( backUrl + this.props.selectedSite.slug );
 	},
 
 	render: function() {
@@ -132,7 +130,7 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
-				<HeaderCake isCompact="true" onClick={ this.goBack } />
+				<HeaderCake onClick={ this.goBack } isCompact />
 
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
