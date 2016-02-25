@@ -8,6 +8,7 @@ import marked from 'marked';
 import lunr from 'lunr';
 import find from 'lodash/find';
 import escapeHTML from 'lodash/escape';
+import striptags from 'striptags';
 
 /**
  * Internal dependencies
@@ -113,7 +114,8 @@ function escapeRegexString( str ) {
 }
 
 function defaultSnippet( doc ) {
-	var content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
+	var docBody = striptags( marked( doc.body ) );
+	var content = docBody.substring( 0, DEFAULT_SNIPPET_LENGTH );
 	return escapeHTML( content ) + '&hellip;';
 }
 
