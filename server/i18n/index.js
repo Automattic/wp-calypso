@@ -172,6 +172,7 @@ function readFile( outputFile, arrayName, inputFiles, done ) {
 	async.map( inputFiles, function( inputFile, callback ) {
 		fs.readFile( inputFile, 'utf8', function( err, data ) {
 			if ( err ) {
+				process.exitCode = 1;
 				console.log( 'i18n: Error reading ' + inputFile );
 				callback( err );
 			} else {
@@ -180,10 +181,12 @@ function readFile( outputFile, arrayName, inputFiles, done ) {
 		} );
 	}, function( err, data ) {
 		if ( err ) {
+			process.exitCode = 1;
 			return console.log( err );
 		}
 		fs.writeFile( outputFile, buildPhpOutput( data.join( '\n' ), arrayName ), 'utf8', function( error ) {
 			if ( error ) {
+				process.exitCode = 1;
 				console.log( error );
 			} else {
 				console.log( 'get-i18n completed' );
