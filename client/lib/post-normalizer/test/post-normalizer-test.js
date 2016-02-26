@@ -10,7 +10,8 @@ require( 'lib/react-test-env-setup' )();
 //} );
 
 const assert = require( 'chai' ).assert,
-	Spy = require( 'sinon' ).spy;
+	sinon = require( 'sinon' ),
+	Spy = sinon.spy;
 /**
  * Internal dependencies
  */
@@ -67,6 +68,27 @@ describe( 'post-normalizer', function() {
 		normalizer( post, [ identifyTransform ], function( err, normalized ) {
 			assert.notStrictEqual( normalized, post );
 			done( err );
+		} );
+	} );
+
+	it( 'should allow synchronous invocation', () => {
+		const post = {};
+		const normalized = normalizer( post, [ identifyTransform ] );
+
+		assert.notStrictEqual( normalized, post );
+		assert.deepEqual( normalized, post );
+	} );
+
+	it( 'should warn about asynchronous usage in synchronous mode in non-production environments', ( done ) => {
+		const post = {};
+		sinon.stub( console, 'warn' );
+
+		normalizer( post, [ asyncTransform ] );
+
+		process.nextTick( () => {
+			assert.isTrue( console.warn.called );
+			console.warn.restore();
+			done();
 		} );
 	} );
 
