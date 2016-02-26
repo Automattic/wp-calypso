@@ -306,7 +306,7 @@ var PlansCompare = React.createClass( {
 							className={ classes }
 							key={ plan.product_id }>
 							<div className={ mobileClasses }>
-								{ feature.title }
+								{ feature.title } { this.freeTrialExceptionMarker( feature ) }
 							</div>
 							<div className="plans-compare__cell-content">
 								{ content }
