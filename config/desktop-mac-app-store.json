@@ -79,7 +79,6 @@
 		"settings/security/monitor": true,
 		"upgrades/checkout": false,
 		"upgrades/credit-cards": false,
-		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": false,
 		"upgrades/domain-search": false,
 		"upgrades/in-app-purchase": true,

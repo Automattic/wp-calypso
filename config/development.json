@@ -116,7 +116,6 @@
 		"sync-handler": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
-		"upgrades/domain-management/site-redirect": true,
 		"upgrades/domain-management/transfer": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,

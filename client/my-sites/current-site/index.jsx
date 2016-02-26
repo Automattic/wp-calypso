@@ -89,14 +89,10 @@ module.exports = React.createClass( {
 	},
 
 	getSiteRedirectNotice: function( site ) {
-		const isSiteRedirected = site.options && site.options.is_redirect;
-
-		if ( ! isSiteRedirected ) {
+		if ( ! ( site.options && site.options.is_redirect ) ) {
 			return null;
 		}
 		const { hostname } = url.parse( site.URL );
-		let href = paths.domainManagementList( site.domain );
-
 		return (
 			<Notice
 				showDismiss={ false }
@@ -105,7 +101,7 @@ module.exports = React.createClass( {
 					args: { url: hostname },
 					components: { a: <a href={ site.URL }/> }
 				} ) }>
-				<NoticeAction href={ href }>
+				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
 					{ this.translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>

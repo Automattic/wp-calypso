@@ -72,13 +72,11 @@ module.exports = function() {
 		domainManagementController.domainManagementEmailForwarding
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/site-redirect' ) ) {
-		page(
-			paths.domainManagementRedirectSettings( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementRedirectSettings
-		);
-	}
+	page(
+		paths.domainManagementRedirectSettings( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementRedirectSettings
+	);
 
 	page(
 		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
