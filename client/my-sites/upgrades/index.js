@@ -92,19 +92,17 @@ module.exports = function() {
 		domainManagementController.domainManagementEditContactInfo
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-		page(
-			paths.domainManagementDns( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementDns
-		);
+	page(
+		paths.domainManagementDns( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementDns
+	);
 
-		page(
-			paths.domainManagementNameServers( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementNameServers
-		);
-	}
+	page(
+		paths.domainManagementNameServers( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementNameServers
+	);
 
 	page(
 		paths.domainManagementTransfer( ':site', ':domain' ),
