@@ -9,37 +9,36 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-const Accordion = require( 'components/accordion' ),
-	AccordionSection = require( 'components/accordion/section' ),
-	Gridicon = require( 'components/gridicon' ),
-	TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' ),
-	CategoryListData = require( 'components/data/category-list-data' ),
-	TagListData = require( 'components/data/tag-list-data' ),
-	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorSharingAccordion = require( 'post-editor/editor-sharing/accordion' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	PostFormatsData = require( 'components/data/post-formats-data' ),
-	PostFormatsAccordion = require( 'post-editor/editor-post-formats/accordion' ),
-	Location = require( 'post-editor/editor-location' ),
-	Discussion = require( 'post-editor/editor-discussion' ),
-	PageParent = require( 'post-editor/editor-page-parent' ),
-	EditorMoreOptionsSlug = require( 'post-editor/editor-more-options/slug' ),
-	InfoPopover = require( 'components/info-popover' ),
-	PageTemplatesData = require( 'components/data/page-templates-data' ),
-	PageTemplates = require( 'post-editor/editor-page-templates' ),
-	PageOrder = require( 'post-editor/editor-page-order' ),
-	PostMetadata = require( 'lib/post-metadata' ),
-	TrackInputChanges = require( 'components/track-input-changes' ),
-	actions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' ),
-	siteUtils = require( 'lib/site/utils' );
+import Accordion from 'components/accordion';
+import AccordionSection from 'components/accordion/section';
+import Gridicon from 'components/gridicon';
+import TaxonomiesAccordion from 'post-editor/editor-taxonomies/accordion';
+import CategoryListData from 'components/data/category-list-data';
+import TagListData from 'components/data/tag-list-data';
+import FeaturedImage from 'post-editor/editor-featured-image';
+import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
+import FormTextarea from 'components/forms/form-textarea';
+import PostFormatsData from 'components/data/post-formats-data';
+import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
+import Location from 'post-editor/editor-location';
+import Discussion from 'post-editor/editor-discussion';
+import PageParent from 'post-editor/editor-page-parent';
+import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
+import InfoPopover from 'components/info-popover';
+import PageTemplatesData from 'components/data/page-templates-data';
+import PageTemplates from 'post-editor/editor-page-templates';
+import PageOrder from 'post-editor/editor-page-order';
+import PostMetadata from 'lib/post-metadata';
+import TrackInputChanges from 'components/track-input-changes';
+import actions from 'lib/posts/actions';
+import stats from 'lib/posts/stats';
+import siteUtils from 'lib/site/utils';
 import { setExcerpt } from 'state/ui/editor/post/actions';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 
 const EditorDrawer = React.createClass( {
-
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
