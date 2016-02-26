@@ -11,7 +11,10 @@
 	}
 }
 
-.mce-tinymce {
+.mce-container.mce-tinymce {
+	max-width: 700px;
+	margin: 0 auto;
+
 	& > .mce-container-body {
 		&:after {
 			margin-top: 1px;
@@ -61,9 +64,9 @@
 		overflow-x: auto;
 		margin: 0 auto;
 
-		@include breakpoint( ">960px" ) {
-			border-width: 1px;
-			max-width: 700px;
+		@media screen and ( min-width: ( 700px + $sidebar-width-min ) ) {
+			border-left-width: 1px;
+			border-right-width: 1px;
 		}
 	}
 

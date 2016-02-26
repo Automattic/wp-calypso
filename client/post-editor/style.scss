@@ -240,7 +240,7 @@
 	}
 
 	@include breakpoint( ">1040px" ) {
-		right: -1px;
+		right: 0;
 	}
 }
 
@@ -278,11 +278,12 @@
 
 .editor__header-divider {
 	background-color: lighten( $gray, 25% );
-	margin: 0;
-}
+	max-width: 700px;
+	margin: 0 auto;
 
-.editor .mce-tinymce {
-	margin-top: -1px;
+	& ~ .mce-tinymce {
+		margin-top: -1px;
+	}
 }
 
 .post-editor .drafts__list + .infinite-scroll-end::after {
