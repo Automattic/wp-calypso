@@ -83,6 +83,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": false,
+		"sync-handler": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/in-app-purchase": false,
