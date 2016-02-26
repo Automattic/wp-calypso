@@ -132,6 +132,10 @@ export default React.createClass( {
 						iconType = 'arrow-down';
 					}
 
+					if ( week.change === 0 ) {
+
+					}
+
 					cells.push( <td key={ 'average' + index }>
 						{ this.numberFormat( week.average ) }
 							<span className={ 'stats-detail-weeks__value ' + changeClass } key={ 'change' + index }>
