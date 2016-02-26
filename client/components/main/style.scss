@@ -4,9 +4,12 @@
 	z-index: z-index( 'root', '.main' );
 
 	// Themes is a great example of using all this new space ;)
-	&.themes,
-	&.sites {
+	&.themes {
 		max-width: 100%;
+	}
+
+	&.sites {
+		max-width: 320px;
 	}
 
 	// The customizer is full-width
