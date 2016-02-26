@@ -13,6 +13,7 @@ var React = require( 'react' ),
 var activated = require( 'state/themes/actions' ).activated,
 	Dispatcher = require( 'dispatcher' ),
 	Card = require( 'components/card' ),
+	HeaderCake = require( 'components/header-cake' ),
 	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
@@ -24,6 +25,8 @@ var activated = require( 'state/themes/actions' ).activated,
 	GenericDetails = require( './generic-details' ),
 	GoogleAppsDetails = require( './google-apps-details' ),
 	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
+	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
+	isDomainRedemption = require( 'lib/products-values' ).isDomainRedemption,
 	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
 	isChargeback = require( 'lib/products-values' ).isChargeback,
 	isBusiness = require( 'lib/products-values' ).isBusiness,
@@ -40,9 +43,11 @@ var activated = require( 'state/themes/actions' ).activated,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
 	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
+	plansPaths = require( 'my-sites/plans/paths' ),
 	PremiumPlanDetails = require( './premium-plan-details' ),
 	PurchaseDetail = require( './purchase-detail' ),
-	SiteRedirectDetails = require( './site-redirect-details' );
+	SiteRedirectDetails = require( './site-redirect-details' ),
+	upgradesPaths = require( 'my-sites/upgrades/paths' );
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -90,6 +95,24 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
+	goBack() {
+		if ( this.isDataLoaded() ) {
+			const purchases = getPurchases( this.props );
+
+			if ( purchases.some( isPlan ) ) {
+				page( plansPaths.plans( this.props.selectedSite.slug ) );
+			} else if ( purchases.some( isDomainProduct ) || purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) ) ) {
+				page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
+			} else if ( purchases.some( isGoogleApps ) ) {
+				const purchase = find( purchases, isGoogleApps );
+
+				page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
+			}
+		} else {
+			page( `/stats/insights/${ this.props.selectedSite.slug }` );
+		}
+	},
+
 	render: function() {
 		var classes = classNames( 'checkout-thank-you', {
 			'is-placeholder': ! this.isDataLoaded()
@@ -97,6 +120,8 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
+				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
+
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
 				</Card>
