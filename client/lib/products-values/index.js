@@ -150,9 +150,9 @@ function isDomainProduct( product ) {
 	assertValidProduct( product );
 
 	return (
+		isDomainMapping( product ) ||
 		isDomainRegistration( product ) ||
-		product.product_slug === 'domain_map' ||
-		product.product_slug === 'private_whois'
+		isPrivateRegistration( product )
 	);
 }
 
@@ -202,9 +202,9 @@ function getDomainProductRanking( product ) {
 
 	if ( isDomainRegistration( product ) ) {
 		return 0;
-	} else if ( product.product_slug === 'domain_map' ) {
+	} else if ( isDomainMapping( product ) ) {
 		return 1;
-	} else if ( product.product_slug === 'private_whois' ) {
+	} else if ( isPrivateRegistration( product ) ) {
 		return 2;
 	}
 }
