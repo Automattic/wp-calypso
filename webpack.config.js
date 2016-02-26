@@ -88,6 +88,9 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom-unpublished', 'jed', 'debug' ];
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
+	// jquery is only needed in the build for the desktop app
+	// see electron bug: https://github.com/atom/electron/issues/254
+	webpackConfig.externals.push( 'jquery' );
 }
 
 jsLoader = {
