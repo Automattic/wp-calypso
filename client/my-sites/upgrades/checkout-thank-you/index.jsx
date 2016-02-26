@@ -38,7 +38,6 @@ var activated = require( 'state/themes/actions' ).activated,
 	isTheme = require( 'lib/products-values' ).isTheme,
 	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
-	i18n = require( 'lib/mixins/i18n' ),
 	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
 	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
 	PremiumPlanDetails = require( './premium-plan-details' ),
@@ -98,14 +97,20 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
-				<Card>
+				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<div className="checkout-thank-you__get-support">
-					<h3>{ this.translate( 'Questions? Need Help?' ) }</h3>
-					{ this.supportRelatedMessages() }
-				</div>
+				<Card className="checkout-thank-you__get-support">
+					<div className="checkout-thank-you__get-support-text">
+						<h3 className="checkout-thank-you__support-heading">
+							{ this.translate( 'Questions? Need Help?' ) }
+						</h3>
+						<p className="checkout-thank-you__support-related-messages">
+							{ this.supportRelatedMessages() }
+						</p>
+					</div>
+				</Card>
 			</Main>
 		);
 	},
@@ -168,7 +173,7 @@ var CheckoutThankYou = React.createClass( {
 
 	productRelatedMessages: function() {
 		var selectedSite = this.props.selectedSite,
-			[ componentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
+			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -187,60 +192,52 @@ var CheckoutThankYou = React.createClass( {
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
-					isFreeTrial={ this.freeTrialWasPurchased() }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				{ React.createElement( componentClass, {
-					selectedSite: selectedSite,
-					isFreeTrial: this.freeTrialWasPurchased(),
-					locale: i18n.getLocaleSlug(),
-					domain: domain
-				} ) }
+				<div className="checkout-thank-you__features-header">
+					{ this.translate( "Get started with your site's new features" ) }
+				</div>
+
+				<div className="checkout-thank-you__purchase-details-list">
+					<ComponentClass
+						selectedSite={ selectedSite }
+						isFreeTrial={ this.freeTrialWasPurchased() }
+						domain={ domain } />
+				</div>
 			</div>
 		);
 	},
 
 	supportRelatedMessages: function() {
-		var localeSlug = i18n.getLocaleSlug();
-
 		if ( ! this.isDataLoaded() ) {
-			return <p>{ this.translate( 'Loading…' ) }</p>;
+			return this.translate( 'Loading…' );
 		}
 
 		if ( this.jetpackPlanWasPurchased() ) {
-			return (
-				<p>
-					{ this.translate(
-						'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
-						'or {{contactLink}}contact us{{/contactLink}}.',
-						{
-							components: {
-								supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-								contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
-							}
-						}
-					) }
-				</p>
+			return this.translate(
+				'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
+				'or {{contactLink}}contact us{{/contactLink}}.',
+				{
+					components: {
+						supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
+						contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
+					}
+				}
 			);
 		}
 
-		return (
-			<p>
-				{ this.translate(
-					'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
-					'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
-					'or {{contactLink}}contact us{{/contactLink}}.',
-					{
-						components: {
-							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' }
-								target="_blank" />,
-							forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
-							contactLink: <a href={ '/help/contact' } />
-						}
-					}
-				) }
-			</p>
+		return this.translate(
+			'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
+			'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
+			'or {{contactLink}}contact us{{/contactLink}}.',
+			{
+				components: {
+					supportDocsLink: <a href="http://support.wordpress.com" target="_blank" />,
+					forumLink: <a href="http://forums.wordpress.com" target="_blank" />,
+					contactLink: <a href={ '/help/contact' } />
+				}
+			}
 		);
 	}
 } );
