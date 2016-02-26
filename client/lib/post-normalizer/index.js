@@ -21,7 +21,8 @@ var assign = require( 'lodash/assign' ),
 	toArray = require( 'lodash/toArray' ),
 	trim = require( 'lodash/trim' ),
 	uniqBy = require( 'lodash/uniqBy' ),
-	url = require( 'url' );
+	url = require( 'url' ),
+	values = require( 'lodash/values' );
 
 import striptags from 'striptags';
 
@@ -309,7 +310,7 @@ normalizePost.makeSiteIDSafeForAPI = function makeSiteIDSafeForAPI( post, callba
 
 normalizePost.pickPrimaryTag = function assignPrimaryTag( post, callback ) {
 	// if we hand max an invalid or empty array, it returns -Infinity
-	post.primary_tag = maxBy( post.tags, function( tag ) {
+	post.primary_tag = maxBy( values( post.tags ), function( tag ) {
 		return tag.post_count;
 	} );
 
@@ -453,7 +454,6 @@ normalizePost.createBetterExcerpt = function createBetterExcerpt( post, callback
 	// Spin up a new DOM for the linebreak markup
 	const dom = document.createElement( 'div' );
 	dom.innerHTML = betterExcerpt;
-
 
 	// Ditch any photo captions with the wp-caption-text class
 	forEach( dom.querySelectorAll( '.wp-caption-text' ), removeElement );
