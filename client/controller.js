@@ -21,14 +21,19 @@ const debug = debugFactory( 'calypso:controller' );
  * `server/bundler/loader`. Sections are free to either ignore it, or use it
  * instead of directly calling `page` for linking routes and middlewares in
  * order to be also usable for server-side rendering (and isomorphic routing).
- * `clientRouter` then also renders the element tree contained in `context.layout`
- * (or, if that is empty, in `context.primary`) to the respectively corresponding
- * divs.
  */
 export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares );
 }
 
+/**
+ * Client side renderer
+ *
+ * @param { object } context -- Middleware context
+ *
+ * Middleware to render the element tree contained in `context.layout` (or, if
+ * that is empty, in `context.primary`) to the respectively corresponding divs.
+ */
 export function clientRenderer( context ) {
 	context.layout
 		? renderSingleTree( context )
