@@ -10,7 +10,7 @@ BABEL ?= $(NODE_BIN)/babel
 MOCHA ?= $(NODE_BIN)/mocha
 
 test:
-	@NODE_ENV=test NODE_PATH=test:../../../client $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)
+	@NODE_ENV=test NODE_PATH=test $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)
 
 publish:
 	@npm install
