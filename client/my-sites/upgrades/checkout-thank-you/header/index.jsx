@@ -37,7 +37,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		if ( isFreeTrial( this.props.primaryPurchase ) ) {
 			return this.translate( "We hope you enjoy {{strong}}%(productName)s{{/strong}}. What's next? Take it for a spin!", {
 				args: {
-					productName: this.props.productName
+					productName: this.props.primaryPurchase.productName
 				},
 				components: {
 					strong: <strong/>
@@ -52,7 +52,7 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate(
 				"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
 					args: {
-						productName: this.props.productName
+						productName: this.props.primaryPurchase.productName
 					},
 					components: {
 						strong: <strong/>
