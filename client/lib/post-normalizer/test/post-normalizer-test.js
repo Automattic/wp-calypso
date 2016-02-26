@@ -255,40 +255,40 @@ describe( 'post-normalizer', function() {
 	describe( 'pickPrimaryTag', function() {
 		it( 'can pick the primary tag by taking the tag with the highest post_count as the primary', function( done ) {
 			var post = {
-				tags: [
-					{
+				tags: {
+					first: {
 						name: 'first',
 						post_count: 2
 					},
-					{
+					second: {
 						name: 'second',
 						post_count: 200
 					}
-				]
+				}
 			};
 
 			normalizer( post, [ normalizer.pickPrimaryTag ], function( err, normalized ) {
-				assert.deepEqual( normalized.primary_tag, post.tags[ 1 ] );
+				assert.deepEqual( normalized.primary_tag, post.tags.second );
 				done( err );
 			} );
 		} );
 
 		it( 'can pick the primary tag by taking the first tag as primary if there is a tie', function( done ) {
 			var post = {
-				tags: [
-					{
+				tags: {
+					first: {
 						name: 'first',
 						post_count: 200
 					},
-					{
+					second: {
 						name: 'second',
 						post_count: 200
 					}
-				]
+				}
 			};
 
 			normalizer( post, [ normalizer.pickPrimaryTag ], function( err, normalized ) {
-				assert.deepEqual( normalized.primary_tag, post.tags[ 0 ] );
+				assert.deepEqual( normalized.primary_tag, post.tags.first );
 				done( err );
 			} );
 		} );
