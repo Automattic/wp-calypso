@@ -25,6 +25,7 @@ var activated = require( 'state/themes/actions' ).activated,
 	GenericDetails = require( './generic-details' ),
 	GoogleAppsDetails = require( './google-apps-details' ),
 	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
+	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
 	isDomainRedemption = require( 'lib/products-values' ).isDomainRedemption,
 	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
 	isChargeback = require( 'lib/products-values' ).isChargeback,
@@ -103,8 +104,7 @@ var CheckoutThankYou = React.createClass( {
 
 			shouldGoBackToPlans = purchases.some( isPlan );
 
-			shouldGoBackToDomainManagment = purchases.some( isDomainRegistration ) ||
-				purchases.some( isDomainMapping ) ||
+			shouldGoBackToDomainManagment = purchases.some( isDomainProduct ) ||
 				purchases.some( isSiteRedirect ) ||
 				purchases.some( isDomainRedemption );
 
