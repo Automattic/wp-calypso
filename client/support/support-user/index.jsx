@@ -10,7 +10,7 @@ import flowRight from 'lodash/flowRight';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
-import supportUser from 'lib/user/support-user-interop';
+import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
 
 import { supportUserToggleDialog } from 'state/support/actions';
 
@@ -59,8 +59,8 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
-		supportUserTokenFetch: supportUser.fetchToken.bind( supportUser ),
-		supportUserRestore: supportUser.rebootNormally,
+		supportUserTokenFetch: fetchToken,
+		supportUserRestore: rebootNormally,
 		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
 	};
 }
