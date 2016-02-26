@@ -59,7 +59,7 @@ class SupportUser {
 	rebootNormally() {
 		debug( 'Rebooting Calypso normally' );
 
-		store.remove( STORAGE_KEY );
+		store.clear();
 		window.location.reload();
 	}
 
