@@ -4,13 +4,13 @@
 	text-align: center;
 	width: 100%;
 
-	&.main {
-		max-width: 960px;
-	}
-
 	@include breakpoint( "<660px" ) {
 		background: transparent;
 		padding: 14px;
+	}
+
+	&.main {
+		max-width: 960px;
 	}
 }
 
@@ -74,86 +74,11 @@
 		border-radius: 3px;
 		max-width: 700px;
 		margin: 16px auto;
-		padding-right: 130px;
+		padding-right: 140px;
 		text-align: left;
 	}
 
-	&::before {
-		@include noticon( '\f803' );
-
-		background: darken( $gray, 20% );
-		border-radius: 50%;
-		color: $white;
-		font-size: 30px;
-		margin-bottom: 10px;
-		padding: 10px;
-
-		@include breakpoint( ">660px" ) {
-			font-size: 48px;
-			margin-top: -34px;
-			position: absolute;
-				top: 50%;
-				right: 32px;
-		}
-	}
-
-	&.get-free-domain::before {
-		@include noticon( '\f475' );
-	}
-
-	&.customize-fonts-and-colors::before {
-		@include noticon( '\f103' );
-	}
-
-	&.upload-to-videopress::before {
-		@include noticon( '\f104' );
-	}
-
-	&.ads-have-been-removed::before {
-		@include noticon( '\f803' );
-	}
-
-	&.ecommerce::before {
-		@include noticon( '\f447' );
-	}
-
-	&.live-chat::before {
-		@include noticon( '\f108' );
-	}
-
-	&.unlimited-premium-themes::before {
-		@include noticon( '\f103' );
-	}
-
-	&.important::before {
-		@include noticon( '\f303' );
-	}
-
-	&.your-primary-domain::before {
-		@include noticon( '\f475' );
-	}
-
-	&.upgrade-now::before {
-		@include noticon( '\f800' );
-	}
-
-	&.google-apps-details::before {
-		@include noticon( '\f410' );
-	}
-
-	&.redirect-now-working::before {
-		@include noticon( '\f442' );
-	}
-
-	&.change-redirect-settings::before {
-		@include noticon( '\f411' );
-	}
-
 	&.is-placeholder {
-		.checkout-thank-you__purchase-detail-text::before {
-			content: none;
-		}
-
 		.checkout-thank-you__purchase-detail-button,
 		.checkout-thank-you__purchase-detail-description,
 		.checkout-thank-you__purchase-detail-title {
@@ -182,6 +107,33 @@
 				margin: 0 auto;
 			}
 		}
+	}
+}
+
+.checkout-thank-you__purchase-detail-icon {
+	background: darken( $gray, 20% );
+	border-radius: 50%;
+	color: $white;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	padding: 16px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: -36px;
+		position: absolute;
+			right: 36px;
+			top: 50%;
+	}
+}
+
+.checkout-thank-you__purchase-detail-icon,
+.checkout-thank-you__purchase-detail-icon .gridicon {
+	height: 48px;
+	width: 48px;
+
+	@include breakpoint( "<660px" ) {
+		height: 36px;
+		width: 36px;
 	}
 }
 

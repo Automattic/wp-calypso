@@ -14,7 +14,7 @@ const SiteRedirectDetails = ( { selectedSite } ) => {
 	return (
 		<div>
 			<PurchaseDetail
-				additionalClass="redirect-now-working"
+				icon="external"
 				title={ i18n.translate( 'Redirect now working' ) }
 				description={ i18n.translate( 'Visitors to your site will be redirected to your chosen target.' ) }
 				buttonText={ i18n.translate( 'Test Redirect' ) }
@@ -22,7 +22,7 @@ const SiteRedirectDetails = ( { selectedSite } ) => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="change-redirect-settings"
+				icon="cog"
 				title={ i18n.translate( 'Change redirect settings' ) }
 				description={ i18n.translate( 'You can disable the redirect or change the target at any time.' ) }
 				buttonText={ i18n.translate( 'My Domains' ) }

@@ -14,7 +14,7 @@ const JetpackPremiumPlanDetails = () => {
 	return (
 		<div>
 			<PurchaseDetail
-				additionalClass="akismet"
+				icon="comment"
 				title={ i18n.translate( 'Akismet' ) }
 				description={ i18n.translate( 'Say goodbye to comment spam' ) }
 				buttonText={ i18n.translate( 'Start using Akismet' ) }
@@ -22,7 +22,7 @@ const JetpackPremiumPlanDetails = () => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="vaultpress"
+				icon="cog"
 				title={ i18n.translate( 'VaultPress' ) }
 				description={ i18n.translate( 'Backup your site' ) }
 				buttonText={ i18n.translate( 'Start using VaultPress' ) }

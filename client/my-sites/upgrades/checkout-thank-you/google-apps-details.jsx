@@ -14,7 +14,7 @@ const GoogleAppsDetails = ( { selectedSite, domain } ) => {
 	return (
 		<div>
 			<PurchaseDetail
-				additionalClass="google-apps-details"
+				icon="mail"
 				title={ i18n.translate( 'Google Apps Setup' ) }
 				description={ i18n.translate( 'You will receive an email shortly with your login information.' ) }
 				buttonText={ i18n.translate( 'More about Google Apps' ) }
@@ -22,7 +22,7 @@ const GoogleAppsDetails = ( { selectedSite, domain } ) => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="important"
+				icon="time"
 				title={ i18n.translate( 'Important!' ) }
 				description={ i18n.translate( 'It can take up to 72 hours for your domain setup to complete.' ) }
 				buttonText={ i18n.translate( 'Learn More' ) }
@@ -30,7 +30,7 @@ const GoogleAppsDetails = ( { selectedSite, domain } ) => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="your-primary-domain"
+				icon="globe"
 				title={ i18n.translate( 'Your Primary Domain' ) }
 				description={ i18n.translate( 'Want this to be your primary domain for this site?' ) }
 				buttonText={ i18n.translate( 'Update Settings' ) }

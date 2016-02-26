@@ -13,7 +13,7 @@ const JetpackBusinessPlanDetails = () => {
 	return (
 		<div>
 			<PurchaseDetail
-				additionalClass="akismet"
+				icon="comment"
 				title={ i18n.translate( 'Akismet' ) }
 				description={ i18n.translate( 'Say goodbye to comment spam' ) }
 				buttonText={ i18n.translate( 'Start using Akismet' ) }
@@ -21,7 +21,7 @@ const JetpackBusinessPlanDetails = () => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="vaultpress"
+				icon="cog"
 				title={ i18n.translate( 'VaultPress' ) }
 				description={ i18n.translate( 'Backup your site' ) }
 				buttonText={ i18n.translate( 'Start using VaultPress' ) }
@@ -29,7 +29,7 @@ const JetpackBusinessPlanDetails = () => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="polldaddy"
+				icon="stats-alt"
 				title={ i18n.translate( 'PollDaddy' ) }
 				description={ i18n.translate( 'Create surveys and polls' ) }
 				buttonText={ i18n.translate( 'Start using PollDaddy' ) }
