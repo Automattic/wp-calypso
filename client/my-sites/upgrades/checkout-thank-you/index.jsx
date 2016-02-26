@@ -130,7 +130,7 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
-				<HeaderCake onClick={ this.goBack } isCompact />
+				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
 
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
