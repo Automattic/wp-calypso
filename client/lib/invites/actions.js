@@ -12,6 +12,7 @@ import { action as ActionTypes } from 'lib/invites/constants';
 import analytics from 'analytics';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { acceptedNotice } from 'my-sites/invites/utils';
+import i18n from 'lib/mixins/i18n';
 
 /**
  * Module variables
@@ -117,27 +118,44 @@ export function acceptInvite( invite, callback ) {
 }
 
 export function sendInvites( siteId, usernamesOrEmails, role, message, callback ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.SENDING_INVITES,
-		siteId, usernamesOrEmails, role, message
-	} );
-	wpcom.undocumented().sendInvites( siteId, usernamesOrEmails, role, message, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: error ? ActionTypes.RECEIVE_SENDING_INVITES_ERROR : ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
-			error,
-			siteId,
-			usernamesOrEmails,
-			role,
-			message,
-			data
+	return dispatch => {
+		Dispatcher.handleViewAction( {
+			type: ActionTypes.SENDING_INVITES,
+			siteId, usernamesOrEmails, role, message
 		} );
-		if ( error ) {
-			analytics.tracks.recordEvent( 'calypso_invite_send_failed' );
-		} else {
-			analytics.tracks.recordEvent( 'calypso_invite_send_success' );
-		}
-		callback( error, data );
-	} );
+		wpcom.undocumented().sendInvites( siteId, usernamesOrEmails, role, message, ( error, data ) => {
+			Dispatcher.handleServerAction( {
+				type: error ? ActionTypes.RECEIVE_SENDING_INVITES_ERROR : ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
+				error,
+				siteId,
+				usernamesOrEmails,
+				role,
+				message,
+				data
+			} );
+
+			if ( error ) {
+				if ( error.message ) {
+					dispatch( errorNotice( i18n.translate(
+						'Invitation failed to send',
+						'Invitations failed to send', {
+							count: usernamesOrEmails.length
+						}
+					) ) );
+				}
+				analytics.tracks.recordEvent( 'calypso_invite_send_failed' );
+			} else {
+				dispatch( successNotice( i18n.translate(
+					'Invitation sent successfully',
+					'Invitations sent successfully', {
+						count: usernamesOrEmails.length
+					}
+				) ) );
+				analytics.tracks.recordEvent( 'calypso_invite_send_success' );
+			}
+			callback( error, data );
+		} );
+	}
 }
 
 export function createInviteValidation( siteId, usernamesOrEmails, role ) {
