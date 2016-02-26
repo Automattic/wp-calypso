@@ -3,7 +3,7 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
+const expect = require( 'chai' ).expect,
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
@@ -12,12 +12,12 @@ var expect = require( 'chai' ).expect,
 /**
  * Internal dependencies
  */
-var fixtures = require( './lib/fixtures' );
+const fixtures = require( './lib/fixtures' );
 
 /**
  * Module variables
  */
-var keyCodes = {
+const keyCodes = {
 	backspace: 8,
 	tab: 9,
 	enter: 13,
@@ -29,7 +29,7 @@ var keyCodes = {
 	comma: 188
 };
 
-var charCodes = {
+const charCodes = {
 	comma: 44
 };
 
@@ -77,14 +77,14 @@ describe( 'TokenField', function() {
 			// This suggestion is not part of a partial match; just return
 			// the whole suggestion
 			return node.innerHTML;
-		} else {
-			// This suggestion is part of a partial match; return the three
-			// sections of the suggestion (before match, match, and after
-			// match)
-			return Array.prototype.slice.call( suggestionContent.childNodes ).map( function( child ) {
-				return child.innerHTML;
-			} );
 		}
+
+		// This suggestion is part of a partial match; return the three
+		// sections of the suggestion (before match, match, and after
+		// match)
+		return Array.prototype.slice.call( suggestionContent.childNodes ).map( function( child ) {
+			return child.innerHTML;
+		} );
 	}
 
 	function getSelectedSuggestion() {
@@ -119,7 +119,6 @@ describe( 'TokenField', function() {
 	} );
 
 	describe( 'displaying tokens', function() {
-
 		it( 'should render default tokens', function() {
 			expect( wrapper.state.tokens ).to.deep.equal( [ 'foo', 'bar' ] );
 		} );
@@ -143,11 +142,9 @@ describe( 'TokenField', function() {
 			} );
 			expect( getTokensHTML() ).to.deep.equal( fixtures.specialTokens.htmlUnescaped );
 		} );
-
 	} );
 
 	describe( 'suggestions', function() {
-
 		it( 'should render default suggestions', function() {
 			// limited by maxSuggestions (default 100 so doesn't matter here)
 			expect( getSuggestionsHTML() ).to.deep.equal( wrapper.state.tokenSuggestions );
@@ -236,11 +233,9 @@ describe( 'TokenField', function() {
 				done();
 			}, 110 );
 		} );
-
 	} );
 
 	describe( 'adding tokens', function() {
-
 		it( 'should add a token when Tab pressed', function() {
 			setText( 'baz' );
 			sendKeyDown( keyCodes.tab );
@@ -450,11 +445,9 @@ describe( 'TokenField', function() {
 			expect( wrapper.state.tokens ).to.deep.equal( [ 'foo', 'bar', 'of' ] );
 			expect( getSelectedSuggestion() ).to.equal( null );
 		} );
-
 	} );
 
 	describe( 'removing tokens', function() {
-
 		it( 'should remove tokens when X icon clicked', function() {
 			TestUtils.Simulate.click( tokenFieldNode.querySelector( '.token-field__remove-token' ) );
 			expect( wrapper.state.tokens ).to.deep.equal( [ 'bar' ] );
@@ -471,7 +464,5 @@ describe( 'TokenField', function() {
 			sendKeyDown( keyCodes.delete );
 			expect( wrapper.state.tokens ).to.deep.equal( [ 'bar' ] );
 		} );
-
 	} );
-
 } );
