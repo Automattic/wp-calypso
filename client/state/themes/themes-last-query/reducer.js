@@ -27,10 +27,11 @@ export default ( state = initialState, action ) => {
 				.set( 'currentSiteId', action.site.ID )
 				.set( 'isJetpack', !! action.site.jetpack );
 		case DESERIALIZE:
+			return initialState;
 		case SERVER_DESERIALIZE:
 			return fromJS( state );
 		case SERIALIZE:
-			return state.toJS();
+			return {};
 	}
 
 	return state;

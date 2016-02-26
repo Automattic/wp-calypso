@@ -17,7 +17,7 @@ import reducer, { initialState } from '../reducer';
 
 describe( 'themes-last-query reducer', () => {
 	describe( 'persistence', () => {
-		it( 'persists state and converts to a plain JS object', () => {
+		it( 'does not persist data because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
 				previousSiteId: 2123982,
@@ -31,9 +31,9 @@ describe( 'themes-last-query reducer', () => {
 			} );
 			const state = fromJS( jsObject );
 			const persistedState = reducer( state, { type: SERIALIZE } );
-			expect( persistedState ).to.eql( jsObject );
+			expect( persistedState ).to.eql( {} );
 		} );
-		it( 'loads valid persisted state and converts to immutable.js object', () => {
+		it( 'does not load persisted data because this is not implemented yet', () => {
 			const jsObject = Object.freeze( {
 				currentSiteId: 12345678,
 				previousSiteId: 2123982,
@@ -46,7 +46,7 @@ describe( 'themes-last-query reducer', () => {
 				}
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( fromJS( jsObject ) );
+			expect( state ).to.eql( initialState );
 		} );
 
 		it( 'converts state from server to immutable.js object', () => {
