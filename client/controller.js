@@ -14,17 +14,12 @@ const debug = debugFactory( 'calypso:controller' );
 /**
  * Isomorphic routing helper, client side
  *
- * @param { string } route - A route path
- * @param { ...function } middlewares - Middleware to be invoked for route
- *
  * This function is passed to individual sections' controllers via
  * `server/bundler/loader`. Sections are free to either ignore it, or use it
  * instead of directly calling `page` for linking routes and middlewares in
  * order to be also usable for server-side rendering (and isomorphic routing).
  */
-export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares );
-}
+export const clientRouter = page;
 
 /**
  * Client side renderer
