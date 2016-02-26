@@ -123,8 +123,9 @@ export class SyncHandler {
 			 * @param {Object} serverResponse - server response object
 			 */
 			const cacheResponse = serverResponse => {
-				// remove _headers from server response
-				delete serverResponse._headers;
+				// get response object without _headers property
+				let responseWithoutHeaders = Object.assign( {}, serverResponse );
+				delete responseWithoutHeaders._headers;
 
 				let storingData = {
 					__sync: {
@@ -132,7 +133,7 @@ export class SyncHandler {
 						synced: Date.now(),
 						syncing: false
 					},
-					body: serverResponse,
+					body: responseWithoutHeaders,
 					params: reqParams
 				};
 
