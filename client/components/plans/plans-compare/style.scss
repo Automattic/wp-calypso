@@ -118,9 +118,14 @@
 
 .plans-compare__feature-title-mobile {
 	float: left;
+	opacity: .5;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
+	}
+
+	&.is-available {
+		opacity: 1;
 	}
 }
 

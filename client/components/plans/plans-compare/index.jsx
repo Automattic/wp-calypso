@@ -288,6 +288,9 @@ var PlansCompare = React.createClass( {
 					var classes = classNames( 'plans-compare__cell', 'is-plan-specific', {
 							'is-selected': this.isSelected( plan )
 						} ),
+						mobileClasses = classNames( 'plans-compare__feature-title-mobile', {
+							'is-available': feature[ plan.product_id ]
+						} ),
 						content;
 
 					if ( typeof feature[ plan.product_id ] === 'boolean' && feature[ plan.product_id ] ) {
@@ -302,7 +305,7 @@ var PlansCompare = React.createClass( {
 						<td
 							className={ classes }
 							key={ plan.product_id }>
-							<div className="plans-compare__feature-title-mobile">
+							<div className={ mobileClasses }>
 								{ feature.title }
 							</div>
 							<div className="plans-compare__cell-content">
