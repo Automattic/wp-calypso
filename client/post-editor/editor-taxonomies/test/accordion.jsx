@@ -33,6 +33,7 @@ mockery.enable( {
 } );
 
 mockery.registerMock( 'components/info-popover', MOCK_COMPONENT );
+mockery.registerMock( 'components/tooltip', MOCK_COMPONENT );
 mockery.registerMock( 'component-classes', function() {
 	return { add: noop, toggle: noop, remove: noop }
 } );
