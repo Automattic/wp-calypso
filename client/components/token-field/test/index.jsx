@@ -40,7 +40,7 @@ const EMPTY_COMPONENT = React.createClass( {
 } );
 
 describe( 'TokenField', function() {
-	var reactContainer, wrapper, tokenFieldNode, textInputNode;
+	var reactContainer, wrapper, tokenFieldNode, textInputNode, TokenFieldWrapper;
 
 	function setText( text ) {
 		TestUtils.Simulate.change( textInputNode, { target: { value: text } } );
@@ -95,17 +95,21 @@ describe( 'TokenField', function() {
 	before( function() {
 		reactContainer = document.createElement( 'div' );
 		document.body.appendChild( reactContainer );
-	} );
 
-	beforeEach( function() {
-		var TokenFieldWrapper;
 		mockery.registerMock( 'components/tooltip', EMPTY_COMPONENT );
 		mockery.enable( {
 			warnOnReplace: false,
 			warnOnUnregistered: false
 		} );
-
 		TokenFieldWrapper = require( './lib/token-field-wrapper' );
+	} );
+
+	after( function() {
+		mockery.disable();
+		mockery.deregisterAll();
+	} );
+
+	beforeEach( function() {
 		wrapper = ReactDom.render( <TokenFieldWrapper />, reactContainer );
 		tokenFieldNode = ReactDom.findDOMNode( wrapper.refs.tokenField );
 		textInputNode = tokenFieldNode.querySelector( '.token-field__input' );
@@ -114,8 +118,6 @@ describe( 'TokenField', function() {
 
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( reactContainer );
-		mockery.disable();
-		mockery.deregisterAll();
 	} );
 
 	describe( 'displaying tokens', function() {
