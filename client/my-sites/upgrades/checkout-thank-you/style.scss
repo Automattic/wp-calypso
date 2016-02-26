@@ -48,32 +48,6 @@
 	margin: 8px 0 0 0;
 }
 
-.checkout-thank-you__message {
-	padding-bottom: 20px;
-}
-
-.checkout-thank-you__receipt-icon {
-	display: inline-block;
-	position: relative;
-
-	&::before {
-		@include noticon( '\f425', 70px );
-		color: lighten( $gray, 20% );
-	}
-
-	&::after {
-		@include noticon( '\f418', 18px );
-		background: #53b66c;
-		border-radius: 18px;
-		color: $white;
-		position: absolute;
-			top: 6px;
-			right: 15px;
-		width: 18px;
-		height: 18px;
-	}
-}
-
 .checkout-thank-you__features-header {
 	color: darken( $gray, 20% );
 	font-size: 24px;
@@ -93,13 +67,6 @@
 	@include breakpoint( ">660px" ) {
 		margin: 0 24px;
 		padding-bottom: 48px;
-	}
-}
-
-.checkout-thank-you__product-related-messages {
-	@include breakpoint( ">660px" ) {
-		background: $white;
-		margin: 10px 50px;
 	}
 }
 
