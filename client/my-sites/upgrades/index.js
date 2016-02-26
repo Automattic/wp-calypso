@@ -38,41 +38,39 @@ function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJ
 module.exports = function() {
 	SiftScience.recordUser();
 
-	if ( config.isEnabled( 'upgrades/domain-management/email' ) ) {
-		page(
-			paths.domainManagementEmail(),
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		paths.domainManagementEmail(),
+		controller.siteSelection,
+		controller.sites
+	);
 
-		registerMultiPage( {
-			paths: [
-				paths.domainManagementEmail( ':site', ':domain' ),
-				paths.domainManagementEmail( ':site' )
-			],
-			handlers: [
-				...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
-				domainManagementController.domainManagementEmail
-			]
-		} );
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementEmail( ':site', ':domain' ),
+			paths.domainManagementEmail( ':site' )
+		],
+		handlers: [
+			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
+			domainManagementController.domainManagementEmail
+		]
+	} );
 
-		registerMultiPage( {
-			paths: [
-				paths.domainManagementAddGoogleApps( ':site', ':domain' ),
-				paths.domainManagementAddGoogleApps( ':site' )
-			],
-			handlers: [
-				...getCommonHandlers(),
-				domainManagementController.domainManagementAddGoogleApps
-			]
-		} );
-
-		page(
-			paths.domainManagementEmailForwarding( ':site', ':domain' ),
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
+			paths.domainManagementAddGoogleApps( ':site' )
+		],
+		handlers: [
 			...getCommonHandlers(),
-			domainManagementController.domainManagementEmailForwarding
-		);
-	}
+			domainManagementController.domainManagementAddGoogleApps
+		]
+	} );
+
+	page(
+		paths.domainManagementEmailForwarding( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEmailForwarding
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-management/site-redirect' ) ) {
 		page(

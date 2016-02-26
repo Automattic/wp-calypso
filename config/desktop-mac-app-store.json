@@ -79,7 +79,6 @@
 		"settings/security/monitor": true,
 		"upgrades/checkout": false,
 		"upgrades/credit-cards": false,
-		"upgrades/domain-management/email": true,
 		"upgrades/domain-management/list": true,
 		"upgrades/domain-management/name-servers": true,
 		"upgrades/domain-management/site-redirect": true,
