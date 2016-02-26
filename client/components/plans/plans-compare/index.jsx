@@ -210,7 +210,7 @@ var PlansCompare = React.createClass( {
 		if ( this.isDataLoading() ) {
 			planElements = times( this.getColumnCount(), function( n ) {
 				if ( n === 0 ) {
-					return <th className="plans-compare__features" key={ n } />;
+					return <th className="plans-compare__header-cell" key={ n } />;
 				}
 
 				return (
@@ -221,7 +221,7 @@ var PlansCompare = React.createClass( {
 			}.bind( this ) );
 		} else {
 			plans = this.getPlans();
-			planElements = [ <th className="plans-compare__features" key="placeholder" /> ];
+			planElements = [ <th className="plans-compare__header-cell" key="placeholder" /> ];
 
 			planElements = planElements.concat( plans.map( function( plan ) {
 				var sitePlan = this.getSitePlan( plan ),
@@ -427,6 +427,7 @@ var PlansCompare = React.createClass( {
 	render: function() {
 		var compareString = this.translate( 'Compare Plans' ),
 			classes = classNames( this.props.className, 'plans-compare', {
+				'is-placeholder': this.isDataLoading(),
 				'is-jetpack-site': this.props.selectedSite && this.props.selectedSite.jetpack
 			} );
 

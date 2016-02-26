@@ -47,9 +47,17 @@
 	}
 
 	&.is-jetpack-site {
-		.plans-compare__header-cell,
-		.plans-compare__features {
+		.plans-compare__header-cell {
 			width: 33%;
+		}
+	}
+
+	&.is-placeholder {
+		.plans-compare__cell:nth-child(2),
+		.plans-compare__header-cell:nth-child(2) {
+			@include breakpoint( "<660px" ) {
+				display: table-cell;
+			}
 		}
 	}
 }
@@ -86,26 +94,17 @@
 	}
 }
 
-.plans-compare__features {
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-}
-
 .plans-compare__header-cell {
 	text-align: center;
 	width: 25%;
 
 	@include breakpoint( "<660px" ) {
-		&:not(.is-selected) {
-			display: none;
+		display: none;
+
+		.is-selected {
+			display: table-cell;
 		}
 	}
-}
-
-.plans-compare__header-cell,
-.plans-compare__features {
-	width: 25%;
 }
 
 .plans-compare__action-cell {
