@@ -38,6 +38,7 @@ function assertValidProduct( product ) {
 function formatProduct( product ) {
 	return assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
+		product_type: product.product_type || product.productType,
 		is_domain_registration: product.is_domain_registration !== undefined
 			? product.is_domain_registration
 			: product.isDomainRegistration,
