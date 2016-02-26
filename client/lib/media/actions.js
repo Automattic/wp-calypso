@@ -5,8 +5,7 @@ var debug = require( 'debug' )( 'calypso:media' ),
 	assign = require( 'lodash/assign' ),
 	uniqueId = require( 'lodash/uniqueId' ),
 	isPlainObject = require( 'lodash/isPlainObject' ),
-	path = require( 'path' ),
-	async = require( 'async' );
+	path = require( 'path' );
 
 /**
  * Internal dependencies
@@ -105,17 +104,17 @@ MediaActions.add = function( siteId, files ) {
 	// but one would hope that it would never take this long to upload an item.
 	const baseTime = Date.now() + ONE_YEAR_IN_MILLISECONDS;
 
-	const transientIds = files.map( ( file, i ) => {
+	return files.reduce( ( lastUpload, file, i ) => {
 		// Generate a fake transient media item that can be rendered into the list
 		// immediately, even before the media has persisted to the server
-		let transientMedia = {
-			ID: uniqueId( 'media-' ),
-			transient: true
+		const id = uniqueId( 'media-' );
+		const transientMedia = {
+			ID: id,
+			transient: true,
+			// Assign a date such that the first item will be the oldest at the
+			// time of upload, as this is expected order when uploads finish
+			date: new Date( baseTime - ( files.length - i ) ).toISOString()
 		};
-
-		// Assign a date such that the first item will be the oldest at the
-		// time of upload, as this is expected order when all uploads finish
-		transientMedia.date = new Date( baseTime - ( files.length - i ) ).toISOString();
 
 		if ( 'string' === typeof file ) {
 			// Generate from string
@@ -148,17 +147,8 @@ MediaActions.add = function( siteId, files ) {
 		} );
 
 		// Abort upload if file fails to pass validation.
-		if ( MediaValidationStore.getErrors( siteId, transientMedia.ID ).length ) {
-			return;
-		}
-
-		return transientMedia.ID;
-	} );
-
-	async.forEachOfSeries( files, ( file, i, next ) => {
-		// Lack of transient ID indicates validation failure, so bail
-		if ( ! transientIds[ i ] ) {
-			return next();
+		if ( MediaValidationStore.getErrors( siteId, id ).length ) {
+			return Promise.resolve();
 		}
 
 		// Determine upload mechanism by object type
@@ -175,23 +165,19 @@ MediaActions.add = function( siteId, files ) {
 		}
 
 		debug( 'Uploading media to %d from %o', siteId, file );
-		wpcom.site( siteId )[ addHandler ]( {}, file, function( error, data ) {
-			var item;
-			if ( data && data.media ) {
-				item = data.media[0];
-			}
-
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				error: error,
-				siteId: siteId,
-				id: transientIds[ i ],
-				data: item
+		return lastUpload.then( () => {
+			// Achieve series upload by waiting for the previous promise to
+			// resolve before starting this item's upload
+			const action = { type: 'RECEIVE_MEDIA_ITEM', id, siteId };
+			return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
+				Dispatcher.handleServerAction( Object.assign( action, {
+					data: data.media[ 0 ]
+				} ) );
+			} ).catch( ( error ) => {
+				Dispatcher.handleServerAction( Object.assign( action, { error } ) );
 			} );
-
-			next();
 		} );
-	} );
+	}, Promise.resolve() );
 };
 
 MediaActions.edit = function( siteId, item ) {

@@ -91,8 +91,8 @@ describe( 'MediaActions', function() {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		mediaGet = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		mediaList = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
-		mediaAdd = sandbox.stub().callsArgWithAsync( 2, null, DUMMY_API_RESPONSE );
-		mediaAddUrls = sandbox.stub().callsArgWithAsync( 2, null, DUMMY_API_RESPONSE );
+		mediaAdd = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
+		mediaAddUrls = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaUpdate = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaDelete = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		MediaActions.__set__( '_fetching', {} );
@@ -200,8 +200,9 @@ describe( 'MediaActions', function() {
 		} );
 
 		it( 'should accept a file URL', function() {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_URL );
-			expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
+			} );
 		} );
 
 		it( 'should accept a FileList of uploads', function() {
@@ -218,26 +219,20 @@ describe( 'MediaActions', function() {
 			var file = { file: DUMMY_UPLOAD, parent_id: 300 };
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			MediaActions.add( DUMMY_SITE_ID, file );
-
-			expect( mediaAdd ).to.have.been.calledWithMatch( {}, file );
+			return MediaActions.add( DUMMY_SITE_ID, file ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, file );
+			} );
 		} );
 
-		it( 'should call to the WordPress.com REST API', function( done ) {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-
-			expect( mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
-
-			process.nextTick( function() {
+		it( 'should call to the WordPress.com REST API', function() {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEM',
-					error: null,
 					siteId: DUMMY_SITE_ID,
 					id: 'media-1',
 					data: DUMMY_API_RESPONSE.media[ 0 ]
 				} );
-
-				done();
 			} );
 		} );
 
@@ -257,32 +252,37 @@ describe( 'MediaActions', function() {
 		it( 'should attach file upload to a post if one is being edited', function() {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-
-			expect( mediaAdd ).to.have.been.calledWithMatch( {}, {
-				file: DUMMY_UPLOAD,
-				parent_id: 200
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, {
+					file: DUMMY_UPLOAD,
+					parent_id: 200
+				} );
 			} );
 		} );
 
 		it( 'should attach URL upload to a post if one is being edited', function() {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_URL );
-
-			expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, {
-				url: DUMMY_URL,
-				parent_id: 200
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, {
+					url: DUMMY_URL,
+					parent_id: 200
+				} );
 			} );
 		} );
 
-		it( 'should upload in series', ( done ) => {
-			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
-			expect( mediaAdd ).to.have.been.calledOnce;
-			setTimeout( () => {
-				expect( mediaAdd ).to.have.been.calledTwice;
-				done();
-			}, 0 );
+		it( 'should upload in series', () => {
+			// An awkward test, but the idea is that at the point at which
+			// handleServerAction is called for the first received media,
+			// only the first of the two items should have started uploading.
+			Dispatcher.handleServerAction.restore();
+			sandbox.stub( Dispatcher, 'handleServerAction' ).throws();
+
+			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
+				expect( Dispatcher.handleServerAction ).to.have.thrown;
+			} ).catch( () => {
+				expect( mediaAdd ).to.have.been.calledOnce;
+			} );
 		} );
 	} );
 
