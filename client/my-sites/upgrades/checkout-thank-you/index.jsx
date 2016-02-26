@@ -43,9 +43,11 @@ var activated = require( 'state/themes/actions' ).activated,
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
 	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
+	plansPaths = require( 'my-sites/plans/paths' ),
 	PremiumPlanDetails = require( './premium-plan-details' ),
 	PurchaseDetail = require( './purchase-detail' ),
-	SiteRedirectDetails = require( './site-redirect-details' );
+	SiteRedirectDetails = require( './site-redirect-details' ),
+	upgradesPaths = require( 'my-sites/upgrades/paths' );
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -96,8 +98,7 @@ var CheckoutThankYou = React.createClass( {
 	goBack() {
 		let shouldGoBackToPlans,
 			shouldGoBackToDomainManagment,
-			shouldGoBackToDomainManagmentEmail,
-			backUrl = '/stats/';
+			shouldGoBackToDomainManagmentEmail;
 
 		if ( this.isDataLoaded() ) {
 			const purchases = getPurchases( this.props );
@@ -112,14 +113,14 @@ var CheckoutThankYou = React.createClass( {
 		}
 
 		if ( shouldGoBackToPlans ) {
-			backUrl = '/plans/';
+			page( plansPaths.plans( this.props.selectedSite.slug ) );
 		} else if ( shouldGoBackToDomainManagment ) {
-			backUrl = '/domains/manage/';
+			page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
 		} else if ( shouldGoBackToDomainManagmentEmail ) {
-			backUrl = '/domains/manage/email/';
+			page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug ) );
+		} else {
+			page( `/stats/insights/${ this.props.selectedSite.slug }` );
 		}
-
-		page( backUrl + this.props.selectedSite.slug );
 	},
 
 	render: function() {
