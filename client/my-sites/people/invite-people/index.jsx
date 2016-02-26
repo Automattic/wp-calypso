@@ -56,8 +56,7 @@ export default React.createClass( {
 			message: '',
 			response: false,
 			sendingInvites: false,
-			getTokenStatus: () => {},
-			displayErrorTooltip: v => v
+			getTokenStatus: () => {}
 		} );
 	},
 
