@@ -72,7 +72,7 @@ export default React.createClass( {
 
 		this.setState( {
 			usernamesOrEmails: filteredTokens,
-			errorTokenHover: ! includes( filteredTokens, errorTokenHover ) ? false : errorTokenHover
+			errorTokenHover: includes( filteredTokens, errorTokenHover ) && errorTokenHover
 		} );
 		createInviteValidation( this.props.site.ID, filteredTokens, role );
 	},
