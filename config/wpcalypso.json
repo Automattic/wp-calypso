@@ -89,6 +89,7 @@
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
 		"support-user": true,
+		"sync-handler": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-management/contacts-privacy": true,
