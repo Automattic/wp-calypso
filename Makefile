@@ -1,10 +1,7 @@
-# get Makefile directory name: http://stackoverflow.com/a/5982798/376773
-THIS_MAKEFILE_PATH:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
-THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
+SINGLE_QUOTE := '
+# We need to escape single quote as '\''
+THIS_DIR := '$(subst $(SINGLE_QUOTE),$(SINGLE_QUOTE)\$(SINGLE_QUOTE)$(SINGLE_QUOTE),$(CURDIR))'
 
-empty:=
-space:=$(empty) $(empty)
-THIS_DIR:= $(subst $(space),\$(space),$(THIS_DIR))
 ifeq ($(OS),Windows_NT)
 SEPARATOR := ;
 else
@@ -28,7 +25,7 @@ RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
 I18NLINT ?= $(BIN)/i18nlint
 LIST_ASSETS ?= $(BIN)/list-assets
-ALL_DEVDOCS_JS ?= $(THIS_DIR)/server/devdocs/bin/generate-devdocs-index
+ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 
 # files used as prereqs
 SASS_FILES := $(shell \
