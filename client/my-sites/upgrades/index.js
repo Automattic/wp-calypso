@@ -82,19 +82,17 @@ module.exports = function() {
 		);
 	}
 
-	if ( config.isEnabled( 'upgrades/domain-management/contacts-privacy' ) ) {
-		page(
-			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementContactsPrivacy
-		);
+	page(
+		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementContactsPrivacy
+	);
 
-		page(
-			paths.domainManagementEditContactInfo( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEditContactInfo
-		);
-	}
+	page(
+		paths.domainManagementEditContactInfo( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEditContactInfo
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
 		page(

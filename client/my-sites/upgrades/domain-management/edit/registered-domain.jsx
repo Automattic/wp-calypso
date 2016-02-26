@@ -147,9 +147,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/contacts-privacy' ) ) {
-			return null;
-		}
 
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.domain,
