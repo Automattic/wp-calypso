@@ -108,9 +108,9 @@ export function advancedSettings( state = {}, action ) {
 				[ action.siteId ]: action.advancedSettings
 			} );
 		case SERIALIZE:
-			return state;
+			return {};
 		case DESERIALIZE:
-			return state;
+			return {};
 	}
 	return state;
 }
