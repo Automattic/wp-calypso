@@ -4,5 +4,5 @@ const requiredVersion = require( '../package' ).engines.node,
 
 if ( ! semver.satisfies( process.version, requiredVersion ) ) {
 	console.error( 'wp-calypso requires node ' + requiredVersion + '. Please upgrade! See https://nodejs.org for instructions.' );
-	process.exitCode = 1;
+	process.exit( 1 );
 }
