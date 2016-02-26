@@ -13,6 +13,7 @@ var store = require( 'store' ),
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	userUtils = require( './shared-utils' ),
+	supportUser = require( 'lib/user/support-user-interop' ),
 	getLocalForage = require( 'lib/localforage' ).getLocalForage;
 
 /**
@@ -44,6 +45,14 @@ User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
 	this.initialized = false;
+
+	if ( supportUser.shouldBootToSupportUser() ) {
+		supportUser.boot();
+		this.fetch();
+
+		// We're booting into support user mode, skip initialization of the main user.
+		return;
+	}
 
 	if ( config( 'wpcom_user_bootstrap' ) ) {
 		this.data = window.currentUser || false;

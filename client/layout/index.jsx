@@ -32,7 +32,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
-import { isSupportUser } from 'state/support/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -179,7 +178,7 @@ export default connect(
 		const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
 		return {
 			isLoading,
-			isSupportUser: isSupportUser( state ),
+			isSupportUser: state.support.isSupportUser,
 			section,
 			hasSidebar,
 			isFullScreen,

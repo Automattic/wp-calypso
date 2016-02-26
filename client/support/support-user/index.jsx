@@ -10,13 +10,9 @@ import flowRight from 'lodash/flowRight';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
+import supportUser from 'lib/user/support-user-interop';
 
-import {
-	supportUserTokenFetch,
-	supportUserRestore,
-	supportUserToggleDialog,
-} from 'state/support/actions';
-import { isSupportUser } from 'state/support/selectors';
+import { supportUserToggleDialog } from 'state/support/actions';
 
 const SupportUser = React.createClass( {
 	displayName: 'SupportUser',
@@ -43,6 +39,7 @@ const SupportUser = React.createClass( {
 				isVisible={ this.props.showDialog }
 				isBusy={ this.props.isTransitioning }
 				isLoggedIn={ this.props.isSupportUser }
+				errorMessage={ this.props.errorMessage }
 
 				onCloseDialog={ this.props.supportUserToggleDialog }
 				onChangeUser={ this.props.supportUserTokenFetch }
@@ -53,18 +50,19 @@ const SupportUser = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
-		isSupportUser: isSupportUser( state ),
+		isSupportUser: state.support.isSupportUser,
 		isTransitioning: state.support.isTransitioning,
 		showDialog: state.support.showDialog,
-	}
+		errorMessage: state.support.errorMessage,
+	};
 }
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
-		supportUserTokenFetch: flowRight( dispatch, supportUserTokenFetch ),
-		supportUserRestore: flowRight( dispatch, supportUserRestore ),
+		supportUserTokenFetch: supportUser.fetchToken.bind( supportUser ),
+		supportUserRestore: supportUser.rebootNormally,
 		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
-	}
+	};
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( SupportUser );

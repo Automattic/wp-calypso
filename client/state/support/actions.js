@@ -2,56 +2,40 @@
  * Internal dependencies
  */
 import {
+	SUPPORT_USER_ACTIVATE,
+	SUPPORT_USER_ERROR,
 	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_TOKEN_SET,
-	SUPPORT_USER_RESTORE,
 	SUPPORT_USER_TOGGLE_DIALOG,
 } from 'state/action-types';
 
-import wpcom from 'lib/wp';
-
 /**
- * Requests a support user token, then dispatches the relevant actions upon response
+ * Dispatched when a support user token is being fetched
  *
  * @param  {string} supportUser     Support username
- * @param  {string} supportPassword Support password
  * @return {thunk}                  The action thunk
  */
-export function supportUserTokenFetch( supportUser, supportPassword ) {
-	return ( dispatch ) => {
-		if ( !supportUser || !supportPassword ) {
-			return;
-		}
+export function supportUserTokenFetch( supportUser ) {
+	return {
+		type: SUPPORT_USER_TOKEN_FETCH,
+		supportUser
+	};
+}
 
-		dispatch( {
-			type: SUPPORT_USER_TOKEN_FETCH,
-			supportUser
-		} );
-
-		const setToken = ( response ) =>
-			dispatch( supportUserTokenSet( response.username, response.token ) );
-
-		const errorFetchingToken = ( error ) =>
-			dispatch( supportUserRestore( error.message ) );
-
-		return wpcom.fetchSupportUserToken( supportUser, supportPassword )
-			.then( setToken )
-			.catch( errorFetchingToken );
+export function supportUserActivate() {
+	return {
+		type: SUPPORT_USER_ACTIVATE
 	}
 }
 
-export function supportUserTokenSet( supportUser, supportToken ) {
+/**
+ * Dispatched when an error occurs while attempting to activate support user
+ * @param  {string} errorMessage Message describing the error to display to the user
+ * @return {Object}              Action object
+ */
+export function supportUserError( errorMessage = null ) {
 	return {
-		type: SUPPORT_USER_TOKEN_SET,
-		supportUser,
-		supportToken
-	}
-}
-
-export function supportUserRestore( error ) {
-	return {
-		type: SUPPORT_USER_RESTORE,
-		error
+		type: SUPPORT_USER_ERROR,
+		errorMessage
 	}
 }
 
