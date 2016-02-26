@@ -96,28 +96,16 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	goBack() {
-		let shouldGoBackToPlans,
-			shouldGoBackToDomainManagment,
-			shouldGoBackToDomainManagmentEmail;
-
 		if ( this.isDataLoaded() ) {
 			const purchases = getPurchases( this.props );
 
-			shouldGoBackToPlans = purchases.some( isPlan );
-
-			shouldGoBackToDomainManagment = purchases.some( isDomainProduct ) ||
-				purchases.some( isSiteRedirect ) ||
-				purchases.some( isDomainRedemption );
-
-			shouldGoBackToDomainManagmentEmail = purchases.some( isGoogleApps );
-		}
-
-		if ( shouldGoBackToPlans ) {
-			page( plansPaths.plans( this.props.selectedSite.slug ) );
-		} else if ( shouldGoBackToDomainManagment ) {
-			page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
-		} else if ( shouldGoBackToDomainManagmentEmail ) {
-			page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug ) );
+			if ( purchases.some( isPlan ) ) {
+				page( plansPaths.plans( this.props.selectedSite.slug ) );
+			} else if ( purchases.some( isDomainProduct ) || purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) ) ) {
+				page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
+			} else if ( purchases.some( isGoogleApps ) ) {
+				page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug ) );
+			}
 		} else {
 			page( `/stats/insights/${ this.props.selectedSite.slug }` );
 		}
