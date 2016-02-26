@@ -1,0 +1,29 @@
+.checkout-thank-you-footer {
+	color: $gray;
+}
+
+.checkout-thank-you-footer__content {
+	margin: 16px auto;
+	max-width: 700px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		margin: 24px auto;
+		text-align: left;
+	}
+
+	a {
+		border-bottom: 1px solid $blue-medium;
+	}
+}
+
+.checkout-thank-you-footer__heading {
+	color: darken( $gray, 20% );
+	font-size: 21px;
+}
+
+.checkout-thank-you-footer__text {
+	color: darken( $gray, 10% );
+	font-size: 16px;
+	margin: 8px 0 0 0;
+}

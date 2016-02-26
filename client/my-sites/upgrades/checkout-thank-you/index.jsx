@@ -15,6 +15,7 @@ var activated = require( 'state/themes/actions' ).activated,
 	BusinessPlanDetails = require( './business-plan-details' ),
 	Card = require( 'components/card' ),
 	ChargebackDetails = require( './chargeback-details' ),
+	CheckoutThankYouFooter = require( './footer' ),
 	CheckoutThankYouHeader = require( './header' ),
 	Dispatcher = require( 'dispatcher' ),
 	DomainMappingDetails = require( './domain-mapping-details' ),
@@ -33,7 +34,6 @@ var activated = require( 'state/themes/actions' ).activated,
 	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
 	isJetpackBusiness = require( 'lib/products-values' ).isJetpackBusiness,
-	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
 	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
 	isPlan = require( 'lib/products-values' ).isPlan,
 	isPremium = require( 'lib/products-values' ).isPremium,
@@ -126,16 +126,9 @@ var CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<Card className="checkout-thank-you__get-support">
-					<div className="checkout-thank-you__get-support-text">
-						<h3 className="checkout-thank-you__support-heading">
-							{ this.translate( 'Questions? Need Help?' ) }
-						</h3>
-						<p className="checkout-thank-you__support-related-messages">
-							{ this.supportRelatedMessages() }
-						</p>
-					</div>
-				</Card>
+				<CheckoutThankYouFooter
+					isDataLoaded={ this.isDataLoaded() }
+					receipt={ this.props.receipt } />
 			</Main>
 		);
 	},
@@ -146,14 +139,6 @@ var CheckoutThankYou = React.createClass( {
 		}
 
 		return getPurchases( this.props ).some( isFreeTrial );
-	},
-
-	jetpackPlanWasPurchased: function() {
-		if ( ! this.props.receiptId ) {
-			return false;
-		}
-
-		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
 	/**
@@ -206,6 +191,7 @@ var CheckoutThankYou = React.createClass( {
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
 						selectedSite={ this.props.selectedSite } />
+
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -231,38 +217,6 @@ var CheckoutThankYou = React.createClass( {
 						domain={ domain } />
 				</div>
 			</div>
-		);
-	},
-
-	supportRelatedMessages: function() {
-		if ( ! this.isDataLoaded() ) {
-			return this.translate( 'Loading…' );
-		}
-
-		if ( this.jetpackPlanWasPurchased() ) {
-			return this.translate(
-				'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
-				'or {{contactLink}}contact us{{/contactLink}}.',
-				{
-					components: {
-						supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-						contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
-					}
-				}
-			);
-		}
-
-		return this.translate(
-			'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
-			'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
-			'or {{contactLink}}contact us{{/contactLink}}.',
-			{
-				components: {
-					supportDocsLink: <a href="http://support.wordpress.com" target="_blank" />,
-					forumLink: <a href="http://forums.wordpress.com" target="_blank" />,
-					contactLink: <a href={ '/help/contact' } />
-				}
-			}
 		);
 	}
 } );
