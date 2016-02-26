@@ -116,9 +116,9 @@ var utils = {
 		return post && 'page' === post.type;
 	},
 
-	normalizeSync: function( post, callback ) {
+	normalizeSync: function( post ) {
 		var imageWidth = 653;
-		postNormalizer(
+		return postNormalizer(
 			post,
 			[
 				postNormalizer.decodeEntities,
@@ -129,8 +129,7 @@ var utils = {
 					postNormalizer.content.removeStyles,
 					postNormalizer.content.safeContentImages( imageWidth )
 				] )
-			],
-			callback
+			]
 		);
 	},
 

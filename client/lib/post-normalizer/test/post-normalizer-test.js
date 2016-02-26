@@ -10,7 +10,8 @@ require( 'lib/react-test-env-setup' )();
 //} );
 
 const assert = require( 'chai' ).assert,
-	Spy = require( 'sinon' ).spy;
+	sinon = require( 'sinon' ),
+	Spy = sinon.spy;
 /**
  * Internal dependencies
  */
@@ -51,6 +52,18 @@ function asyncTransform( post, callback ) {
 }
 
 describe( 'post-normalizer', function() {
+	before( () => {
+		sinon.stub( console, 'warn' );
+	} );
+
+	beforeEach( () => {
+		console.warn.reset();
+	} );
+
+	after( () => {
+		console.warn.restore();
+	} );
+
 	it( 'should export a function', function() {
 		assert.equal( typeof normalizer, 'function' );
 	} );
@@ -67,6 +80,29 @@ describe( 'post-normalizer', function() {
 		normalizer( post, [ identifyTransform ], function( err, normalized ) {
 			assert.notStrictEqual( normalized, post );
 			done( err );
+		} );
+	} );
+
+	it( 'should allow synchronous invocation', ( done ) => {
+		const post = {};
+		const normalized = normalizer( post, [ identifyTransform ] );
+
+		assert.notStrictEqual( normalized, post );
+		assert.deepEqual( normalized, post );
+
+		process.nextTick( () => {
+			assert.isFalse( console.warn.called );
+			done();
+		} );
+	} );
+
+	it( 'should warn about asynchronous usage in synchronous mode in non-production environments', ( done ) => {
+		const post = {};
+		normalizer( post, [ asyncTransform ] );
+
+		process.nextTick( () => {
+			assert.isTrue( console.warn.called );
+			done();
 		} );
 	} );
 

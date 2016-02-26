@@ -25,6 +25,7 @@ var assign = require( 'lodash/assign' ),
 	values = require( 'lodash/values' );
 
 import striptags from 'striptags';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -38,6 +39,15 @@ const DEFAULT_PHOTON_QUALITY = 80, // 80 was chosen after some heuristic testing
 
 const imageScaleFactor = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1,
 	TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+const WARN_ASYNC_USAGE = ( () => {
+	let warn = noop;
+	if ( 'production' !== process.env.NODE_ENV ) {
+		warn = require( 'lib/warn' );
+	}
+
+	return () => warn( 'Asynchronous post normalization should not be used in synchronous mode.' );
+} )();
 
 function debugForPost( post ) {
 	return function( msg ) {
@@ -62,27 +72,50 @@ function stripAutoPlays( query ) {
 }
 
 /**
- * Asynchronously normalizes an object shaped like a post. Works on a copy of the post and does not mutate the original post.
- * @param  {object} post A post shaped object, generally returned by the API
- * @param {array} transforms An array of transforms to perform. Each transformation should be a function
- * that takes a post and a node-style callback. It should mutate the post and call the callback when complete.
- * @param {function} callback A node-style callback, invoked when the transformation is complete, or when the first error occurs.
- * If successful, the callback is invoked with `(null, theMutatedPost)`
+ * Normalizes an object shaped like a post. Works on a copy of the post and
+ * does not mutate the original post. If a callback is omitted, transforms will
+ * be applied synchronously, but in these cases you should be careful to only
+ * use synchronous transformations.
+ *
+ * @param  {Object}   post       Post shaped object usually returned by the API
+ * @param  {Array}    transforms Array of transforms to perform. Each transform
+ *                               should be a function that takes a post and a
+ *                               node-style callback. It should mutate the post
+ *                               and call the callback when complete.
+ * @param  {Function} callback   Optional node-style callback for async usage,
+ *                               invoked when the transforms complete, or when
+ *                               the first error occurs. Callback is invoked
+ *                               with `null, transformedPost` if successful
+ * @return {?Object}             If called synchronously, the normalized post
  */
 function normalizePost( post, transforms, callback ) {
-	if ( ! callback ) {
-		throw new Error( 'must supply a callback' );
-	}
 	if ( ! post || ! transforms ) {
 		debug( 'no post or no transform' );
-		callback( null, post );
-		return;
+		if ( callback ) {
+			callback( null, post );
+		}
+		return post;
 	}
 
 	let normalizedPost = cloneDeep( post ),
 		postDebug = debugForPost( post );
 
 	postDebug( 'running transforms' );
+
+	if ( ! callback ) {
+		let transformCallback = noop;
+		if ( 'production' !== process.env.NODE_ENV ) {
+			process.nextTick( () => {
+				transformCallback = WARN_ASYNC_USAGE;
+			} );
+		}
+
+		transforms.forEach( ( transform ) => {
+			transform( normalizedPost, () => transformCallback() );
+		} );
+
+		return normalizedPost;
+	}
 
 	async.eachSeries(
 		transforms, function( transform, transformCallback ) {
