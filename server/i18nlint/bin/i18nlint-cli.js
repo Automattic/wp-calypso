@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint  no-process-exit:0 */
+
 /**
  * External dependencies
  */
@@ -15,22 +17,23 @@ var i18nlint = require( '../i18nlint.js' );
 /**
  * Global variables
  */
-var foundWarnings = false;
+var inputFile,
+	warnings = [],
+	foundWarnings = false;
 
 program
 	.version( '0.1.0' )
 	.option( '-c, --color', 'Force color output', function() {
 		chalk.enabled = true;
 	} )
-	.option( '-v, --verbose', 'Print message for files with no errors')
+	.option( '-v, --verbose', 'Print message for files with no errors' )
 	.usage( 'inputFile' )
 	.on( '--help', function() {
 		console.log( 'i18nlint scans the given file for translation anti-patterns and offers suggestions to fix them' );
 	} )
 	.parse( process.argv );
 
-var inputFile = program.args[ 0 ],
-	warnings = [];
+inputFile = program.args[ 0 ];
 
 if ( ! inputFile ) {
 	console.log( 'Error: You must enter an input file.' );
