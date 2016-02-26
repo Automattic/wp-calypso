@@ -12,20 +12,15 @@ var CartBody = require( 'my-sites/upgrades/cart/cart-body' ),
 	CartPlanAd = require( './cart-plan-ad' ),
 	Sidebar = require( 'layout/sidebar' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	{ abtest } = require( 'lib/abtest' );
+	{ isSidebarHiddenForCart } = require( 'lib/cart-values' );
 
 var SecondaryCart = React.createClass( {
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
 
-	cartShouldBeHidden: function() {
-		return this.props.cart.hasLoadedFromServer && this.props.cart.products.length === 1 &&
-			abtest( 'sidebarOnCheckoutOfOneProduct' ) === 'hidden';
-	},
-
 	render: function() {
-		var selectedSite = this.props.selectedSite;
+		const { cart, selectedSite } = this.props;
 
-		if ( this.cartShouldBeHidden() ) {
+		if ( isSidebarHiddenForCart( cart ) ) {
 			return null;
 		}
 
@@ -34,9 +29,9 @@ var SecondaryCart = React.createClass( {
 				<CartSummaryBar additionalClasses="cart-header" />
 				<CartPlanAd
 					selectedSite={ selectedSite }
-					cart={ this.props.cart } />
+					cart={ cart } />
 				<CartBody
-					cart={ this.props.cart }
+					cart={ cart }
 					selectedSite={ selectedSite }
 					showCoupon={ true } />
 			</Sidebar>
