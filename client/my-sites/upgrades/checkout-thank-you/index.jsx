@@ -93,14 +93,13 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	goBack() {
-		var purchases,
-			shouldGoBackToPlans,
+		let shouldGoBackToPlans,
 			shouldGoBackToDomainManagment,
 			shouldGoBackToDomainManagmentEmail,
 			backUrl = '/stats/';
 
 		if ( this.isDataLoaded() ) {
-			purchases = getPurchases( this.props );
+			const purchases = getPurchases( this.props );
 
 			shouldGoBackToPlans = purchases.some( isPlan );
 
