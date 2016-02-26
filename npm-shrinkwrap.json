@@ -9742,6 +9742,9 @@
           "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.4.2.tgz"
         }
       }
+    },
+    "ms": {
+      "version": "0.7.1"
     }
   }
 }

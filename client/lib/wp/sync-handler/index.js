@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
+import config from 'config';
 import Hashes from 'jshashes';
-import warn from 'lib/warn';
-import { isWhitelisted } from './whitelist-handler';
+import debugFactory from 'debug';
+
 /**
  * Internal dependencies
  */
-import debugFactory from 'debug';
+import warn from 'lib/warn';
 import { getLocalForage } from 'lib/localforage';
+import { isWhitelisted } from './whitelist-handler';
+import { cacheIndex } from './cache-index';
 
 /**
  * Module variables
@@ -28,6 +31,11 @@ export class SyncHandler {
 	 * @return {Function} sync-handler wrapper
 	 */
 	constructor( handler ) {
+		// expose `syncHandler` global var (dev mode)
+		if ( 'development' === config( 'env' ) ) {
+			window.syncHandler = this;
+		}
+
 		this.reqHandler = handler;
 		return this.syncHandlerWrapper( handler );
 	}
@@ -121,7 +129,7 @@ export class SyncHandler {
 				let storingData = {
 					__sync: {
 						key,
-						synced: new Date().toString(),
+						synced: Date.now(),
 						syncing: false
 					},
 					body: serverResponse,
@@ -129,11 +137,9 @@ export class SyncHandler {
 				};
 
 				// add/override gotten data from server-side
-				this.storeRecord( key, storingData, err => {
-					if ( err ) {
-						// @TODO error handling
-						warn( err );
-					}
+				this.storeRecord( key, storingData ).catch( err => {
+					// @TODO error handling
+					warn( err );
 				} );
 			};
 
@@ -178,22 +184,50 @@ export class SyncHandler {
 			key = new Hashes.SHA1().hex( key );
 		}
 
+		key = 'sync-record-' + key;
+
 		debug( 'key: %o', key );
 		return key;
 	}
 
-	retrieveRecord( key, fn = () => {} ) {
+	retrieveRecord( key ) {
 		debug( 'getting data from %o key\n', key );
-		return localforage.getItem( key, fn );
+		return localforage.getItem( key );
 	}
 
-	storeRecord( key, data, fn = () => {} ) {
+	/**
+	 * Add/Override a record.
+	 *
+	 * @param {String} key - record key identifier
+	 * @param {Object} data - data to store
+	 * @return {Promise} native ES6 promise
+	 */
+	storeRecord( key, data ) {
 		debug( 'storing data in %o key\n', key );
-		return localforage.setItem( key, data, fn );
+
+		// add this record to history
+		return cacheIndex
+			.addItem( key )
+			.then( localforage.setItem( key, data ) );
 	}
 
-	removeRecord( key, fn = () => {} ) {
+	removeRecord( key ) {
 		debug( 'removing %o key\n', key );
-		return localforage.removeItem( key, fn );
+		return localforage
+			.removeItem( key )
+			.then( cacheIndex.removeItem( key ) );
 	}
+}
+
+export const pruneRecordsFrom = lifetime => {
+	return cacheIndex.pruneRecordsFrom( lifetime );
+}
+
+export const clearAll = () => {
+	return cacheIndex.clearAll();
+}
+
+// expose `cacheIndex` global var (dev mode)
+if ( 'development' === config( 'env' ) ) {
+	window.cacheIndex = cacheIndex;
 }
