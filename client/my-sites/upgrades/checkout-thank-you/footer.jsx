@@ -20,7 +20,7 @@ const CheckoutThankYouFooter = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( this.props.receipt.data.purchases.some( isJetpackPlan ) ) {
+		if ( this.props.receipt.data && this.props.receipt.data.purchases.some( isJetpackPlan ) ) {
 			return this.translate(
 				'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
 				'or {{contactLink}}contact us{{/contactLink}}.',

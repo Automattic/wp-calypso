@@ -96,7 +96,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	goBack() {
-		if ( this.isDataLoaded() ) {
+		if ( this.isDataLoaded() && this.props.receiptId ) {
 			const purchases = getPurchases( this.props );
 
 			if ( purchases.some( isPlan ) ) {
@@ -134,7 +134,7 @@ var CheckoutThankYou = React.createClass( {
 	},
 
 	freeTrialWasPurchased: function() {
-		if ( ! this.isDataLoaded() ) {
+		if ( ! this.isDataLoaded() || ! this.props.receiptId ) {
 			return false;
 		}
 
@@ -148,7 +148,7 @@ var CheckoutThankYou = React.createClass( {
 	 * @returns {*[]} an array of varying size with the component instance, then an optional purchase object possibly followed by a domain name
 	 */
 	getComponentAndPrimaryPurchaseAndDomain: function() {
-		if ( this.isDataLoaded() ) {
+		if ( this.isDataLoaded() && this.props.receiptId ) {
 			const purchases = getPurchases( this.props );
 
 			const findPurchaseAndDomain = ( purchases, predicate ) => {
