@@ -84,11 +84,21 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-logo {
-	font-size: 17px;
-	font-weight: 300;
+	svg {
+		height: 30px;
+		width: 180px;
+		position: relative;
+			top: 9px;
+			left: -4px;
+	}
 
-	.tld {
-		color: rgba(255, 255, 255, 0.6);
+	@include breakpoint( "<480px" ) {
+		.masterbar__item-content {
+			display: block;
+			margin: 0 auto;
+			width: 28px;
+			overflow: hidden;
+		}
 	}
 }
 
