@@ -20,7 +20,6 @@ import {
 } from 'state/action-types';
 import {
 	items,
-	sitePosts,
 	queries,
 	queriesLastPage,
 	siteRequests
@@ -91,42 +90,6 @@ describe( 'reducer', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			} );
 			const state = items( original, { type: DESERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
-	} );
-
-	describe( '#sitePosts()', () => {
-		it( 'should default to an empty object', () => {
-			const state = sitePosts( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should map site ID, post ID pair to global ID', () => {
-			const state = sitePosts( null, {
-				type: POSTS_RECEIVE,
-				posts: [ { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' } ]
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					841: '3d097cb7c5473c169bba0eb8e3c6cb64'
-				}
-			} );
-		} );
-		it( 'never persists state because this is not implemented', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			} );
-			const state = sitePosts( original, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'never loads persisted state because this is not implemented', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			} );
-			const state = sitePosts( original, { type: DESERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 	} );

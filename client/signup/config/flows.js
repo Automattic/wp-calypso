@@ -53,6 +53,24 @@ const flows = {
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
 		lastModified: '2016-01-21'
 	},
+	
+	businessv2: {
+		steps: ['domains', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/business/' + dependencies.siteSlug;
+		},
+		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the business plan to the users cart.',
+		lastModified: '2016-02-26'
+	},
+
+	premiumv2: {
+		steps: ['domains', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/premium/' + dependencies.siteSlug;
+		},
+		description: 'Made for CT CMO trial project. Create an account and a blog, without theme selection, and then add the business plan to the users cart.',
+		lastModified: '2016-02-26'
+	},
 
 	'with-theme': {
 		steps: [ 'domains', 'plans', 'user' ],

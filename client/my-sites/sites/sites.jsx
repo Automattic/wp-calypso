@@ -52,7 +52,11 @@ export default React.createClass( {
 	},
 
 	onSiteSelect: function( slug ) {
-		page.replace( addSiteFragment( this.props.path, slug ) );
+		let path = this.props.path;
+		if ( path === '/sites' ) {
+			path = '/stats/insights';
+		}
+		page( addSiteFragment( path, slug ) );
 	},
 
 	getHeaderText() {

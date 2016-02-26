@@ -45,6 +45,11 @@ if ( config.isEnabled( 'support-user' ) ) {
 	wpcom = wpcomSupport( wpcom );
 }
 
+// expose wpcom global var only in development
+if ( 'development' === config( 'env' ) ) {
+	window.wpcom = wpcom;
+}
+
 // Inject localization helpers to `wpcom` instance
 wpcom = injectLocalization( wpcom );
 

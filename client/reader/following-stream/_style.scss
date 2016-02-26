@@ -27,14 +27,6 @@
 		padding: 0;
 	}
 
-	.site__title::before {
-		font-size: 14px;
-	}
-
-	.site__domain {
-		font-style: normal;
-	}
-
 	.follow-button {
 		position: absolute;
 			top: -5px;
@@ -60,11 +52,6 @@
 			width: 16px;
 			top: 4px;
 		}
-	}
-
-	.site-icon {
-		display: inline-block;
-		margin-right: 6px;
 	}
 
 	// Loading Placeholders
