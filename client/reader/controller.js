@@ -6,7 +6,6 @@ const ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/trim' ),
-	startsWith = require( 'lodash/startsWith' ),
 	moment = require( 'moment' ),
 	ReduxProvider = require( 'react-redux' ).Provider;
 
@@ -63,10 +62,9 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 		return;
 	}
 
-	const fullPostViewPrefix = '/read/post/';
+	const fullPostViewRegex = /\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)/i;
 
-	if ( startsWith( oldContext.path, fullPostViewPrefix ) &&
-		! startsWith( newContext.path, fullPostViewPrefix ) ) {
+	if ( oldContext.path.match( fullPostViewRegex ) && ! newContext.path.match( fullPostViewRegex ) ) {
 		oldContext.store.dispatch( hideReaderFullPost() );
 	}
 } );
@@ -198,7 +196,7 @@ module.exports = {
 
 	feedListing: function( context ) {
 		var FeedStream = require( 'reader/feed-stream' ),
-			basePath = '/read/blog/feed/:feed_id',
+			basePath = '/read/feeds/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
 			mcKey = 'blog';
@@ -233,7 +231,7 @@ module.exports = {
 
 	blogListing: function( context ) {
 		var SiteStream = require( 'reader/site-stream' ),
-			basePath = '/read/blog/id/:blog_id',
+			basePath = '/read/blogs/:blog_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
 			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
 			mcKey = 'blog';
@@ -270,7 +268,7 @@ module.exports = {
 		var FullPostDialog = require( 'reader/full-post' ),
 			feedId = context.params.feed,
 			postId = context.params.post,
-			basePath = '/read/post/feed/:feed_id/:feed_item_id',
+			basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 			fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;
@@ -308,7 +306,7 @@ module.exports = {
 		var FullPostDialog = require( 'reader/full-post' ),
 			blogId = context.params.blog,
 			postId = context.params.post,
-			basePath = '/read/post/id/:blog_id/:post_id',
+			basePath = '/read/blogs/:blog_id/posts/:post_id',
 			fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;

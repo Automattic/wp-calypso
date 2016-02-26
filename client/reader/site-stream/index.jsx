@@ -20,7 +20,7 @@ var FeedHeader = require( 'reader/feed-header' ),
 function checkForRedirect( site ) {
 	if ( site && site.get( 'prefer_feed' ) && site.get( 'feed_ID' ) ) {
 		setTimeout( function() {
-			page.replace( '/read/blog/feed/' + site.get( 'feed_ID' ) )
+			page.replace( '/read/feeds/' + site.get( 'feed_ID' ) )
 		}, 0 );
 	}
 }

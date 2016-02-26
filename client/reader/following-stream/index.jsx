@@ -232,8 +232,7 @@ module.exports = React.createClass( {
 	},
 
 	isPostFullScreen: function() {
-		return window.location.href.indexOf( '/read/post/feed/' ) > -1 ||
-			window.location.href.indexOf( '/read/post/id' ) > -1;
+		return !! window.location.href.match( /\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)/i );
 	},
 
 	selectNextItem: function() {
@@ -333,9 +332,9 @@ module.exports = React.createClass( {
 		}
 		var method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
-			page[ method ]( '/read/post/feed/' + post.feed_ID + '/' + post.feed_item_ID + hashtag );
+			page[ method ]( '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID + hashtag );
 		} else {
-			page[ method ]( '/read/post/id/' + post.site_ID + '/' + post.ID + hashtag );
+			page[ method ]( '/read/blogs/' + post.site_ID + '/posts/' + post.ID + hashtag );
 		}
 	},
 

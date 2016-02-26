@@ -11,17 +11,17 @@ var route = require( '../' );
 describe( 'reader/route', function() {
 	describe( 'getStreamUrlFromPost', function() {
 		it( 'should return url for post from feed', function() {
-			expect( route.getStreamUrlFromPost( { feed_ID: 1234 } ) ).to.equal( '/read/blog/feed/1234' );
+			expect( route.getStreamUrlFromPost( { feed_ID: 1234 } ) ).to.equal( '/read/feeds/1234' );
 		} );
 
 		it( 'should return url for post from site', function() {
-			expect( route.getStreamUrlFromPost( { site_ID: 1234 } ) ).to.equal( '/read/blog/id/1234' );
+			expect( route.getStreamUrlFromPost( { site_ID: 1234 } ) ).to.equal( '/read/blogs/1234' );
 		} );
 	} );
 
 	describe( 'getSiteUrl', function() {
 		it( 'should return site URL', function() {
-			expect( route.getSiteUrl( 1234 ) ).to.equal( '/read/blog/id/1234' );
+			expect( route.getSiteUrl( 1234 ) ).to.equal( '/read/blogs/1234' );
 		} );
 
 		it( 'should return pretty URL for discover', function() {
@@ -31,7 +31,7 @@ describe( 'reader/route', function() {
 
 	describe( 'getFeedUrl', function() {
 		it( 'should return site URL', function() {
-			expect( route.getFeedUrl( 1234 ) ).to.equal( '/read/blog/feed/1234' );
+			expect( route.getFeedUrl( 1234 ) ).to.equal( '/read/feeds/1234' );
 		} );
 
 		it( 'should return pretty URL for discover', function() {

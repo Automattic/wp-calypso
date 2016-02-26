@@ -1,5 +1,5 @@
-const FEED_URL_BASE = '/read/blog/feed/';
-const SITE_URL_BASE = '/read/blog/id/';
+const FEED_URL_BASE = '/read/feeds/';
+const SITE_URL_BASE = '/read/blogs/';
 
 const PRETTY_FEED_URLS = {
 	12733228: '/discover'
