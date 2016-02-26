@@ -30,8 +30,6 @@ import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-vali
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );
 
-let _tokens = {};
-
 export default React.createClass( {
 	displayName: 'InvitePeople',
 
