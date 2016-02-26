@@ -22,10 +22,6 @@ var analytics = require( 'analytics' ),
 
 module.exports = {
 
-	domainSearchIndex: function() {
-		page.redirect( '/domains/add' + ( sites.getSelectedSite() ? ( '/' + sites.getSelectedSite().slug ) : '' ) );
-	},
-
 	domainsAddHeader: function( context, next ) {
 		context.getSiteSelectionHeaderText = function() {
 			return i18n.translate( 'Select a site to add a domain' );

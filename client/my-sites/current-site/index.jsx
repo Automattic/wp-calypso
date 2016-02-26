@@ -95,11 +95,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 		const { hostname } = url.parse( site.URL );
-		let href = 'https://wordpress.com/my-domains';
-
-		if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-			href = paths.domainManagementList( site.domain );
-		}
+		let href = paths.domainManagementList( site.domain );
 
 		return (
 			<Notice
@@ -192,7 +188,7 @@ module.exports = React.createClass( {
 					? this.addNewWordPressButton()
 					: <span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
-							<Gridicon icon="arrow-left" size={ 16 } />
+							<Gridicon icon="arrow-left" size={ 18 } />
 							{ this.translate( 'Switch Site' ) }
 						</Button>
 					</span>

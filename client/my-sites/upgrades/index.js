@@ -112,37 +112,35 @@ module.exports = function() {
 		domainManagementController.domainManagementTransfer
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-		page(
-			paths.domainManagementRoot(),
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		paths.domainManagementRoot(),
+		controller.siteSelection,
+		controller.sites
+	);
 
-		page(
-			paths.domainManagementList( ':site' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementList
-		);
+	page(
+		paths.domainManagementList( ':site' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementList
+	);
 
-		page(
-			paths.domainManagementEdit( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEdit
-		);
+	page(
+		paths.domainManagementEdit( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEdit
+	);
 
-		page(
-			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-			...getCommonHandlers( { warnIfJetpack: false } ),
-			domainManagementController.domainManagementPrivacyProtection
-		);
+	page(
+		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
+		...getCommonHandlers( { warnIfJetpack: false } ),
+		domainManagementController.domainManagementPrivacyProtection
+	);
 
-		page(
-			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementPrimaryDomain
-		);
-	}
+	page(
+		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementPrimaryDomain
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(
@@ -218,38 +216,19 @@ module.exports = function() {
 		);
 	}
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-		page(
-			'/domains',
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		'/domains',
+		controller.siteSelection,
+		controller.sites
+	);
 
-		page(
-			'/domains/:site',
-			controller.siteSelection,
-			controller.navigation,
-			controller.jetPackWarning,
-			domainManagementController.domainManagementIndex
-		);
-	} else {
-		page(
-			'/domains',
-			adTracking.retarget,
-			controller.siteSelection,
-			upgradesController.domainsAddHeader,
-			controller.jetPackWarning,
-			controller.sites
-		);
-
-		page( '/domains/:domain',
-			adTracking.retarget,
-			controller.siteSelection,
-			controller.navigation,
-			controller.jetPackWarning,
-			upgradesController.domainSearchIndex
-		);
-	}
+	page(
+		'/domains/:site',
+		controller.siteSelection,
+		controller.navigation,
+		controller.jetPackWarning,
+		domainManagementController.domainManagementIndex
+	);
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(
