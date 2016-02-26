@@ -56,12 +56,13 @@ export default React.createClass( {
 			message: '',
 			response: false,
 			sendingInvites: false,
-			getTokenStatus: () => {}
+			getTokenStatus: () => {},
+			errorTokenHover: false
 		} );
 	},
 
 	onTokensChange( tokens ) {
-		const { role } = this.state;
+		const { role, errorTokenHover } = this.state;
 		const filteredTokens = tokens.map( ( value ) => {
 			if ( 'object' === typeof value ) {
 				return value.value;
@@ -69,7 +70,10 @@ export default React.createClass( {
 			return value;
 		} );
 
-		this.setState( { usernamesOrEmails: filteredTokens } );
+		this.setState( {
+			usernamesOrEmails: filteredTokens,
+			errorTokenHover: ! includes( filteredTokens, errorTokenHover ) ? false : errorTokenHover
+		} );
 		createInviteValidation( this.props.site.ID, filteredTokens, role );
 	},
 
@@ -83,6 +87,10 @@ export default React.createClass( {
 		createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
 	},
 
+	onErrorTokenMouseLeave() {
+		this.setState( { errorTokenHover: false } )
+	},
+
 	refreshValidation() {
 		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || [];
 		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [];
@@ -94,7 +102,7 @@ export default React.createClass( {
 	},
 
 	getTokensWithStatus() {
-		const { success, errors } = this.state;
+		const { success, errors, errorTokenHover } = this.state;
 
 		let errorTooltipAdded = false;
 		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
@@ -104,10 +112,13 @@ export default React.createClass( {
 
 				// We only want to show one tooltip.
 				if ( ! errorTooltipAdded ) {
-					// Attempt to get the error message for the tooltip, and set errorTooltipAdded
-					// to true if message was found.
-					tooltip = get( errors, [ value, 'message' ] );
-					errorTooltipAdded = !! tooltip;
+					if ( ! errorTokenHover || ( errorTokenHover && value === errorTokenHover ) ) {
+						// Attempt to get the error message for the tooltip, and set errorTooltipAdded
+						// to true if message was found.
+						let errorValue = errorTokenHover ? errorTokenHover : value;
+						tooltip = get( errors, [ errorValue, 'message' ] );
+						errorTooltipAdded = !! tooltip;
+					}
 				}
 			} else if ( ! includes( success, value ) ) {
 				status = 'validating';
@@ -117,7 +128,9 @@ export default React.createClass( {
 				value = {
 					value,
 					status,
-					tooltip
+					tooltip,
+					onMouseEnter: () => this.setState( { errorTokenHover: value.value } ),
+					onMouseLeave: this.onErrorTokenMouseLeave
 				};
 			}
 

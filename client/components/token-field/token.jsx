@@ -42,7 +42,11 @@ export default React.createClass( {
 		} );
 
 		return (
-			<span className={ tokenClasses } tabIndex="-1">
+			<span
+				className={ tokenClasses }
+				tabIndex="-1"
+				onMouseEnter={ this.props.onMouseEnter }
+				onMouseLeave={ this.props.onMouseLeave } >
 				<span className="token-field__token-text">
 					{ displayTransform( value ) }
 				</span>
