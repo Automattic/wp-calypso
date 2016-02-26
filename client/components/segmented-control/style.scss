@@ -23,7 +23,7 @@
 
 	&:last-of-type {
 		.segmented-control__link {
-			border-right: solid 1px $gray;
+			border-right: solid 1px lighten( $gray, 20% );
 			border-top-right-radius: 4px;
 			border-bottom-right-radius: 4px;
 		}
@@ -39,7 +39,7 @@
 .segmented-control__link {
 	display: block;
 	padding: 8px 12px;
-	border: solid 1px $gray;
+	border: solid 1px lighten( $gray, 20% );
 	border-right: none;
 	font-size: 14px;
 	line-height: 18px;
@@ -51,7 +51,7 @@
 		outline: none;
 
 		.keyboard-navigation & .segmented-control__text {
-			outline: dotted 1px $blue-wordpress;
+			outline: dotted 1px $gray-dark;
 		}
 	}
 
@@ -63,10 +63,11 @@
 
 	.segmented-control__item.is-selected & {
 		border-color: $gray-dark;
-		background-color: $gray-light;
 		color: $gray-dark;
 	}
 }
+
+
 
 .segmented-control__text {
 	display: block;
@@ -81,5 +82,25 @@
 	.segmented-control__link {
 		font-size: 13px;
 		padding: 4px 8px;
+	}
+}
+
+//Primary variation
+.segmented-control.is-primary {
+
+	.segmented-control__item {
+
+		&.is-selected {
+
+			.segmented-control__link {
+		  	border-color: $blue-medium;
+		 		background-color: $blue-medium;
+		 		color: $white;
+		  }
+
+			+ .segmented-control__item .segmented-control__link {
+				border-left-color: $blue-medium;
+			}
+		}
 	}
 }
