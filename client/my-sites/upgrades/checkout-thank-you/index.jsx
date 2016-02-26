@@ -104,7 +104,9 @@ var CheckoutThankYou = React.createClass( {
 			} else if ( purchases.some( isDomainProduct ) || purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) ) ) {
 				page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
 			} else if ( purchases.some( isGoogleApps ) ) {
-				page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug ) );
+				const purchase = find( purchases, isGoogleApps );
+
+				page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
 			}
 		} else {
 			page( `/stats/insights/${ this.props.selectedSite.slug }` );
