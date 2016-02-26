@@ -90,8 +90,8 @@ var CheckoutThankYou = React.createClass( {
 	redirectIfThemePurchased: function() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
 			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
+
 			page.redirect( '/design/' + this.props.selectedSite.slug );
-			return;
 		}
 	},
 
