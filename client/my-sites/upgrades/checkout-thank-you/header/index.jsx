@@ -34,14 +34,14 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( isPlan( this.props.primaryPurchase ) ) {
-			return this.translate( "Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!", {
-				args: { productName: this.props.primaryPurchase.productName },
-				components: { strong: <strong /> }
-			} );
-		}
-
 		if ( this.props.primaryPurchase ) {
+			if ( isPlan( this.props.primaryPurchase ) ) {
+				return this.translate( "Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!", {
+					args: { productName: this.props.primaryPurchase.productName },
+					components: { strong: <strong /> }
+				} );
+			}
+
 			return this.translate(
 				"You will receive an email confirmation shortly for your purchase of %(productName)s. What's next?", {
 					args: {
