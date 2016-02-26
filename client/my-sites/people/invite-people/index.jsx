@@ -97,11 +97,19 @@ export default React.createClass( {
 	getTokensWithStatus() {
 		const { success, errors } = this.state;
 
+		let errorTooltipAdded = false;
 		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
 			let status, tooltip;
 			if ( errors && errors[ value ] ) {
 				status = 'error';
-				tooltip = errors[ value ].errors[ Object.keys( errors[ value ].errors )[ 0 ] ][0];
+
+				// We only want to show one tooltip.
+				if ( ! errorTooltipAdded ) {
+					// Attempt to get the error message for the tooltip, and set errorTooltipAdded
+					// to true if message was found.
+					tooltip = get( errors, [ value, 'message' ] );
+					errorTooltipAdded = !! tooltip;
+				}
 			} else if ( ! includes( success, value ) ) {
 				status = 'validating';
 			}
