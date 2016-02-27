@@ -62,7 +62,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it( 'persists state', () => {
+			it( 'does not persist state because this is not implemented yet', () => {
 				const state = Object.freeze( {
 					73705554: {
 						ID: 73705554,
@@ -87,10 +87,10 @@ describe( 'reducer', () => {
 					}
 				} );
 				const persistedState = items( state, { type: SERIALIZE } );
-				expect( persistedState ).to.eql( state );
+				expect( persistedState ).to.eql( {} );
 			} );
 
-			it( 'loads valid persisted state', () => {
+			it( 'does not load persisted state because this is not implemented yet', () => {
 				const persistedState = Object.freeze( {
 					73705554: {
 						ID: 73705554,
@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = items( persistedState, { type: DESERIALIZE } );
-				expect( state ).to.eql( persistedState );
+				expect( state ).to.eql( {} );
 			} );
 
 			it.skip( 'should ignore loading data with invalid keys ', () => {

@@ -26,9 +26,9 @@ export function items( state = {}, action ) {
 				[ action.user.ID ]: action.user
 			} );
 		case DESERIALIZE:
-			return state;
+			return {};
 		case SERIALIZE:
-			return state;
+			return {};
 	}
 
 	return state;
