@@ -3,8 +3,6 @@
 var exec = require( 'child-process-promise' ).exec;
 var semver = require( 'semver' );
 
-console.log( 'Modules requiring publish:' );
-
 function getAllModules() {
 	var command = 'find client -type f -print | grep \'package.json\'';
 	return exec( command ).then( function( result ) {
@@ -53,6 +51,8 @@ function requiresUpdate( modules ) {
 	var packageJson;
 	if ( !modules.length ) {
 		throw true;
+	} else {
+		console.log( 'Modules requiring publish:' );
 	}
 	modulePath = modules.shift();
 	try {
