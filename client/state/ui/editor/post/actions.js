@@ -135,8 +135,8 @@ export function setSlug( newSlug ) {
 	return { type: 'TODO' };
 }
 
-export function setTags( newTags ) {
-	debug( 'setTags', newTags );
+export function setTags( siteId, postId, newTags ) {
+	debug( 'setTags', siteId, postId, newTags );
 	return { type: 'TODO' };
 }
 

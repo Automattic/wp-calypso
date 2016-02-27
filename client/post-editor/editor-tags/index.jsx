@@ -17,6 +17,7 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isPage } from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import { setTags } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const debug = _debug( 'calypso:post-editor:editor-tags' );
 
@@ -24,6 +25,8 @@ const EditorTags = React.createClass( {
 	displayName: 'EditorTags',
 
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setTags: React.PropTypes.func,
 		post: React.PropTypes.object,
 		tags: React.PropTypes.arrayOf( React.PropTypes.object ),
@@ -33,6 +36,8 @@ const EditorTags = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			setTags: () => {},
 		};
 	},
@@ -59,7 +64,7 @@ const EditorTags = React.createClass( {
 			tags: selectedTags
 		} );
 
-		this.props.setTags( selectedTags );
+		this.props.setTags( this.props.siteId, this.props.postId, selectedTags );
 	},
 
 	getPostTags: function() {
@@ -102,6 +107,9 @@ const EditorTags = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( { setTags }, dispatch )
 )( EditorTags );

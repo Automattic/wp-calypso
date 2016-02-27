@@ -42,7 +42,7 @@ const EditorTitle = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			siteId: 0,
+			siteId: null,
 			postId: null,
 			isNew: true,
 			onChange: () => {},
