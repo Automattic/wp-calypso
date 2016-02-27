@@ -16,13 +16,18 @@ const Gravatar = require( 'components/gravatar' ),
 	config = require( 'config' ),
 	stats = require( 'lib/posts/stats' );
 import { setAuthor } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const EditorAuthor = React.createClass( {
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setAuthor: React.PropTypes.func,
 	},
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			setAuthor: () => {}
 		};
 	},
@@ -66,7 +71,7 @@ const EditorAuthor = React.createClass( {
 		stats.recordEvent( 'Changed Author' );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( { author: author } );
-		this.props.setAuthor( author );
+		this.props.setAuthor( this.props.siteId, this.props.postId, author );
 	},
 
 	userCanAssignAuthor: function() {
@@ -85,6 +90,9 @@ const EditorAuthor = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( { setAuthor }, dispatch )
 )( EditorAuthor );

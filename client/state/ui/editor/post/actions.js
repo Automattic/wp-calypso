@@ -39,8 +39,8 @@ export function togglePendingStatus( siteId, postId, currentStatus ) {
 	return { type: 'TODO' };
 }
 
-export function setAuthor( newAuthor ) {
-	debug( 'setAuthor', newAuthor );
+export function setAuthor( siteId, postId, newAuthor ) {
+	debug( 'setAuthor', siteId, postId, newAuthor );
 	return { type: 'TODO' };
 }
 
