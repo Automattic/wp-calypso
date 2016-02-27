@@ -29,8 +29,8 @@ export function startEditingExisting( site, postID ) {
 	};
 }
 
-export function toggleStickyStatus( currentStatus ) {
-	debug( 'toggleStickyStatus', currentStatus );
+export function toggleStickyStatus( siteId, postId, currentStatus ) {
+	debug( 'toggleStickyStatus', siteId, postId, currentStatus );
 	return { type: 'TODO' };
 }
 
