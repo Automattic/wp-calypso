@@ -42,6 +42,7 @@ function publishModule( modulePath ) {
 }
 
 function publishModules() {
+	console.log( 'Modules requiring publish:' );
 	getAllModules()
 		.then( getPublishableModules )
 		.then( requiresUpdate );
@@ -52,8 +53,6 @@ function requiresUpdate( modules ) {
 	var packageJson;
 	if ( !modules.length ) {
 		throw true;
-	} else {
-		console.log( 'Modules requiring publish:' );
 	}
 	modulePath = modules.shift();
 	try {
