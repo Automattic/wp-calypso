@@ -1,8 +1,18 @@
 #!/usr/bin/env node
 
 var exec = require( 'child-process-promise' ).exec;
-var packageJson = require( '../' + process.argv[2] );
+var packageJson;
 var semver = require( 'semver' );
+
+if ( !process.argv[2] ) {
+	console.log( 'This script requires that you provide arguments' );
+}
+
+try {
+	packageJson = require( '../' + process.argv[2] );
+} catch ( e ) {
+	console.log( 'Failure: ', e );
+}
 
 if ( packageJson.private ) {
 	process.exitCode = 0;
