@@ -24,7 +24,7 @@ function getPublishableModules( allModules ) {
 				return true;
 			}
 		} catch ( e ) {
-			console.log( 'Failure: ', e );
+			console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
 		}
 	} );
 }
@@ -58,15 +58,17 @@ function requiresUpdate( modules ) {
 	try {
 		packageJson = require( modulePath );
 	} catch ( e ) {
-		console.log( 'Failure: ', e );
+		console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
 	}
 	if ( !validatePackageName( packageJson.name ) ) {
-		console.log( 'Package name contains spaces and/or invalid characters: ', packageJson.name );
+		console.log( '\x1b[41mPackage name contains spaces and/or invalid characters:\x1b[0m ', packageJson.name );
 		return;
 	}
 	exec( 'npm view ' + packageJson.name + ' version' )
 		.then( function( result ) {
-			if ( result.stdout && semver.gt( packageJson.version, result.stdout ) ) {
+			if ( !semver.valid( packageJson.version ) ) {
+				console.log( '\x1b[41mPackage version is not valid semver:\x1b[0m ', packageJson.name );
+			} else if ( result.stdout && semver.gt( packageJson.version, result.stdout ) ) {
 				console.log( '\n' );
 				console.log( packageJson.name );
 			}
@@ -96,7 +98,7 @@ function shouldPublishModule( modulePath, modules ) {
 		} else if ( /^[nN]{1}$/.test( data ) ) {
 			requiresUpdate( modules )
 		} else {
-			console.log( 'Invalid input. Y or N' );
+			console.log( '\x1b[41mInvalid input.\x1b[0m Y or N' );
 			shouldPublishModule( modulePath, modules );
 		}
 	} );
