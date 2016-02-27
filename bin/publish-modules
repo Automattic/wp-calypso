@@ -14,13 +14,18 @@ function getAllModules() {
 
 function getPublishableModules( allModules ) {
 	var packageJson;
+
 	return allModules.filter( function( modulePath ) {
 		if ( !modulePath ) {
 			return;
 		}
-		packageJson = require( modulePath );
-		if ( !packageJson.private ) {
-			return true;
+		try {
+			packageJson = require( modulePath );
+			if ( !packageJson.private ) {
+				return true;
+			}
+		} catch ( e ) {
+			console.log( 'Failure: ', e );
 		}
 	} );
 }
@@ -50,7 +55,11 @@ function requiresUpdate( modules ) {
 		throw true;
 	}
 	modulePath = modules.shift();
-	packageJson = require( modulePath );
+	try {
+		packageJson = require( modulePath );
+	} catch ( e ) {
+		console.log( 'Failure: ', e );
+	}
 
 	exec( 'npm view ' + packageJson.name + ' version' )
 		.then( function( result ) {
