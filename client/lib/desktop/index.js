@@ -37,6 +37,7 @@ var Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'cookie-auth-complete', this.onCookieAuthComplete.bind( this ) );
+		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
 		window.addEventListener( 'message', this.receiveMessage.bind( this ) );
 
@@ -147,6 +148,13 @@ var Desktop = {
 	onCookieAuthComplete: function() {
 		var iframe = document.querySelector( '#wpnt-notes-iframe2' );
 		iframe.src = iframe.src;
+	},
+
+	onShowHelp: function() {
+		debug( 'Showing help' );
+
+		this.clearNotificationBar();
+		page( '/help' );
 	},
 
 	print: function( title, html ) {
