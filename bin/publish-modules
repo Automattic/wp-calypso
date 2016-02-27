@@ -5,7 +5,7 @@ var semver = require( 'semver' );
 var validatePackageName = require( 'validate-npm-package-name' );
 
 function getAllModules() {
-	var command = 'find client -type f -print | grep \'package.json\'';
+	var command = 'find client -type f -name \'package.json\' -print';
 	return exec( command ).then( function( result ) {
 		return result.stdout.split( /\s+/ );
 	} );
