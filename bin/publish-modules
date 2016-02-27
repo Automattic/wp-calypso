@@ -52,7 +52,9 @@ function requiresUpdate( modules ) {
 	var modulePath;
 	var packageJson;
 	if ( !modules.length ) {
-		throw true;
+		/* jshint ignore:start*/
+		process.exit(0);
+		/* jshint ignore:end*/
 	}
 	modulePath = modules.shift();
 	try {
