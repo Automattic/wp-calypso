@@ -34,8 +34,8 @@ export function toggleStickyStatus( siteId, postId, currentStatus ) {
 	return { type: 'TODO' };
 }
 
-export function togglePendingStatus( currentStatus ) {
-	debug( 'togglePendingStatus', currentStatus );
+export function togglePendingStatus( siteId, postId, currentStatus ) {
+	debug( 'togglePendingStatus', siteId, postId, currentStatus );
 	return { type: 'TODO' };
 }
 

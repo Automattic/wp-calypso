@@ -85,7 +85,7 @@ const EditPostStatus = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { status: pending ? 'draft' : 'pending' } );
-		this.props.togglePendingStatus( this.props.post.status );
+		this.props.togglePendingStatus( this.props.siteId, this.props.postId, this.props.post.status );
 	},
 
 	togglePostSchedulePopover: function() {
