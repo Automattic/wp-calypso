@@ -73,7 +73,7 @@ export default function createSelector( selector, getDependants = DEFAULT_GET_DE
 	let lastDependants;
 
 	return Object.assign( function( state, ...args ) {
-		let currentDependants = getDependants( state );
+		let currentDependants = getDependants( state, ...args );
 		if ( ! Array.isArray( currentDependants ) ) {
 			currentDependants = [ currentDependants ];
 		}
