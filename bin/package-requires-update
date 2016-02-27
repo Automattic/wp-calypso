@@ -6,13 +6,13 @@ var semver = require( 'semver' );
 var validatePackageName = require( 'validate-npm-package-name' );
 
 if ( !process.argv[2] ) {
-	console.log( 'This script requires that you provide arguments' );
+	console.log( '\x1b[41mThis script requires that you provide arguments\x1b[0m' );
 }
 
 try {
 	packageJson = require( '../' + process.argv[2] );
 } catch ( e ) {
-	console.log( 'Failure: ', e );
+	console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
 }
 
 if ( packageJson.private ) {
@@ -20,16 +20,19 @@ if ( packageJson.private ) {
 }
 
 if ( !validatePackageName( packageJson.name ) ) {
-	console.log( 'Package name contains spaces and/or invalid characters: ', packageJson.name );
+	console.log( '\x1b[41mPackage name contains spaces and/or invalid characters:\x1b[0m ', packageJson.name );
 } else {
 	exec( 'npm view ' + packageJson.name + ' version' )
 		.then( function( result ) {
 			if ( !semver.valid( packageJson.version ) ) {
-				console.log( 'Package version is not valid semver: ', packageJson.name );
+				console.log( '\x1b[41mPackage version is not valid semver:\x1b[0m ', packageJson.name );
 			} else if ( semver.gt( packageJson.version, result.stdout ) ) {
 				process.exitCode = 0;
 			} else {
-				console.log( packageJson.name, 'Package must be versioned' );
+				console.log(
+					'\x1b[41mYou have made changes to a package but have not bumped the version:\x1b[0m ',
+					packageJson.name
+				);
 				console.log( '\n' );
 				process.exitCode = 1;
 			}
