@@ -62,6 +62,7 @@ function requiresUpdate( modules ) {
 		console.log( 'Failure: ', e );
 	}
 	if ( !validatePackageName( packageJson.name ) ) {
+		console.log( 'Package name contains spaces and/or invalid characters: ', packageJson.name );
 		return;
 	}
 	exec( 'npm view ' + packageJson.name + ' version' )

@@ -3,6 +3,7 @@
 var exec = require( 'child-process-promise' ).exec;
 var packageJson;
 var semver = require( 'semver' );
+var validatePackageName = require( 'validate-npm-package-name' );
 
 if ( !process.argv[2] ) {
 	console.log( 'This script requires that you provide arguments' );
@@ -18,10 +19,8 @@ if ( packageJson.private ) {
 	process.exitCode = 0;
 }
 
-if ( /[^A-Za-z0-9_\/:=-]/.test( packageJson.name ) ) {
-	console.log( packageJson.name, 'Package name cannot contain spaces and/or invalid characters' );
-	console.log( '\n' );
-	process.exitCode = 1;
+if ( !validatePackageName( packageJson.name ) ) {
+	console.log( 'Package name contains spaces and/or invalid characters: ', packageJson.name );
 } else {
 	exec( 'npm view ' + packageJson.name + ' version' )
 		.then( function( result ) {
