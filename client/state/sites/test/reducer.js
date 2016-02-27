@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 		describe( 'persistence', () => {
-			it( 'should return a js object on SERIALIZE', () => {
+			it( 'does not persist state because this is not implemented yet', () => {
 				const original = deepFreeze( {
 					2916284: {
 						ID: 2916284,
@@ -75,11 +75,9 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = items( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {
-					2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
-				} );
+				expect( state ).to.eql( {} );
 			} );
-			it( 'validates state on DESERIALIZE', () => {
+			it( 'does not load persisted state because this is not implemented yet', () => {
 				const original = deepFreeze( {
 					2916284: {
 						ID: 2916284,
@@ -91,25 +89,16 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {
-					2916284: {
-						ID: 2916284,
-						name: 'WordPress.com Example Blog'
-					},
-					2916285: {
-						ID: 2916285,
-						name: 'WordPress.com Example Blog 2'
-					}
-				} );
+				expect( state ).to.eql( {} );
 			} );
-			it( 'returns initial state when state is missing required properties', () => {
+			it.skip( 'returns initial state when state is missing required properties', () => {
 				const original = deepFreeze( {
 					2916284: { name: 'WordPress.com Example Blog' }
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
-			it( 'returns initial state when state has invalid keys', () => {
+			it.skip( 'returns initial state when state has invalid keys', () => {
 				const original = deepFreeze( {
 					foobar: { name: 'WordPress.com Example Blog' }
 				} );
