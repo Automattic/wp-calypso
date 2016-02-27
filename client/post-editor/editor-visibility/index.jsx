@@ -72,10 +72,20 @@ const EditorVisibility = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.visibility !== this.state.visibility && this.state.passwordIsValid ) {
+	componentWillMount() {
+		this.setVisibility( this.props );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.state.passwordIsValid ) {
+			this.setVisibility( nextProps );
+		}
+	},
+
+	setVisibility( props ) {
+		if ( props.visibility !== this.state.visibility ) {
 			this.setState( {
-				visibility: this.props.visibility
+				visibility: props.visibility
 			} );
 		}
 	},
