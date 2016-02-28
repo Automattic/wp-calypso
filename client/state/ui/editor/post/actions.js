@@ -165,38 +165,38 @@ export function setPostPasswordProtected( siteId, postId, newPassword ) {
 	return { type: 'TODO' };
 }
 
-export function setContent( newContent ) {
-	debug( 'setContent', newContent );
+export function setContent( siteId, postId, newContent ) {
+	debug( 'setContent', siteId, postId, newContent );
 	return { type: 'TODO' };
 }
 
-export function setRawContent( htmlContent ) {
-	debug( 'setRawContent', htmlContent );
+export function setRawContent( siteId, postId, htmlContent ) {
+	debug( 'setRawContent', siteId, postId, htmlContent );
 	return { type: 'TODO' };
 }
 
-export function resetRawContent() {
-	debug( 'resetRawContent' );
+export function resetRawContent( siteId, postId ) {
+	debug( 'resetRawContent', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function stopEditing() {
-	debug( 'stopEditing' );
+export function stopEditing( siteId, postId ) {
+	debug( 'stopEditing', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function save( callback ) {
-	debug( 'save', callback );
+export function save( siteId, postId, callback ) {
+	debug( 'save', siteId, postId, callback );
 	return { type: 'TODO' };
 }
 
-export function autosave( callback ) {
-	debug( 'autosave', callback );
+export function autosave( siteId, postId, callback ) {
+	debug( 'autosave', siteId, postId, callback );
 	return { type: 'TODO' };
 }
 
-export function setPostPublished() {
-	debug( 'setPostPublished' );
+export function setPostPublished( siteId, postId ) {
+	debug( 'setPostPublished', siteId, postId );
 	return { type: 'TODO' };
 }
 

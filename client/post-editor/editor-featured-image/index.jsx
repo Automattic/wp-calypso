@@ -5,6 +5,7 @@ const React = require( 'react' ),
 	classnames = require( 'classnames' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 /**
  * Internal dependencies
  */
@@ -61,7 +62,7 @@ const EditorFeaturedImage = React.createClass( {
 			return;
 		}
 
-		this.props.setFeaturedImage( this.props.site.ID, this.props.post.ID, items[0].ID );
+		this.props.setFeaturedImage( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), items[0].ID );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
@@ -73,7 +74,7 @@ const EditorFeaturedImage = React.createClass( {
 	},
 
 	removeImage: function() {
-		this.props.removeFeaturedImage( this.props.site.ID, this.props.post.ID );
+		this.props.removeFeaturedImage( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ) );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
@@ -90,7 +91,7 @@ const EditorFeaturedImage = React.createClass( {
 		}
 
 		return (
-			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
+			<MediaLibrarySelectedData siteId={ get( this, 'props.site.ID' ) }>
 				<EditorMediaModal
 					visible={ this.state.isSelecting }
 					onClose={ this.setImage }
@@ -116,7 +117,7 @@ const EditorFeaturedImage = React.createClass( {
 
 		return (
 			<EditorFeaturedImagePreviewContainer
-				siteId={ this.props.site.ID }
+				siteId={ get( this, 'props.site.ID' ) }
 				itemId={ itemId }
 				maxWidth={ this.props.maxWidth } />
 		);

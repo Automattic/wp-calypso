@@ -5,6 +5,7 @@ const React = require( 'react' ),
 	pick = require( 'lodash/pick' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 /**
  * Internal dependencies
  */
@@ -78,7 +79,7 @@ const EditorDiscussion = React.createClass( {
 		stats.recordStat( statName );
 		stats.recordEvent( gaEvent, newStatus );
 
-		this.props.setDiscussionSettings( this.props.site.ID, this.props.post.ID, discussion );
+		this.props.setDiscussionSettings( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), discussion );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {

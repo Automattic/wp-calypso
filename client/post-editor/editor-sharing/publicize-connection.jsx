@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import includes from 'lodash/includes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -66,14 +67,14 @@ const EditorSharingPublicizeConnection = React.createClass( {
 			PostStats.recordStat( 'sharing_enabled_' + connection.service );
 			PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
 
-			this.props.removePublicizeConnectionKey( this.props.siteId, this.props.post.ID );
+			this.props.removePublicizeConnectionKey( get( this, 'props.siteId' ), get( this, 'props.post.ID' ) );
 		} else {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
 			PostStats.recordStat( 'sharing_disabled_' + connection.service );
 			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
 
-			this.props.addPublicizeConnectionKey( this.props.siteId, this.props.post.ID, connection.keyring_connection_ID );
+			this.props.addPublicizeConnectionKey( get( this, 'props.siteId' ), get( this, 'props.post.ID' ), connection.keyring_connection_ID );
 		}
 	},
 

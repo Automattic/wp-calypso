@@ -4,6 +4,7 @@
 const React = require( 'react' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -96,7 +97,7 @@ const SharingLikeOptions = React.createClass( {
 
 		this.recordStats( event );
 
-		this.props.setSharingLikeOption( this.props.siteId, this.props.post.ID, event.target.name, event.target.checked );
+		this.props.setSharingLikeOption( get( this, 'props.siteId' ), get( this, 'props.post.ID' ), event.target.name, event.target.checked );
 	},
 
 	recordStats: function( event ) {

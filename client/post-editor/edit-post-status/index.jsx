@@ -5,6 +5,7 @@ const React = require( 'react' ),
 	noop = require( 'lodash/noop' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 /**
  * Internal dependencies
  */
@@ -71,7 +72,7 @@ const EditPostStatus = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { sticky: ! this.props.post.sticky } );
-		this.props.toggleStickyStatus( this.props.site.ID, this.props.post.ID, this.props.post.sticky );
+		this.props.toggleStickyStatus( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), this.props.post.sticky );
 	},
 
 	togglePendingStatus: function() {
@@ -82,7 +83,7 @@ const EditPostStatus = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { status: pending ? 'draft' : 'pending' } );
-		this.props.togglePendingStatus( this.props.site.ID, this.props.post.ID, this.props.post.status );
+		this.props.togglePendingStatus( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), get( this, 'props.post.status' ) );
 	},
 
 	togglePostSchedulePopover: function() {

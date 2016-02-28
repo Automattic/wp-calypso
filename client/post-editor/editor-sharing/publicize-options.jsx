@@ -119,7 +119,7 @@ module.exports = React.createClass( {
 		return (
 			<PublicizeServices
 				post={ this.props.post }
-				siteId={ this.props.site.ID }
+				siteId={ get( this, 'props.site.ID' ) }
 				connections={ this.props.connections }
 				newConnectionPopup={ this.newConnectionPopup } />
 		);
@@ -142,8 +142,8 @@ module.exports = React.createClass( {
 			<PublicizeMessage
 				message={ PostMetadata.publicizeMessage( this.props.post ) }
 				preview={ preview }
-				siteId={ this.props.site.ID }
-				postId={ this.props.post.ID }
+				siteId={ get( this, 'props.site.ID' ) }
+				postId={ get( this, 'props.post.ID' ) }
 				requireCount={ requireCount }
 				acceptableLength={ acceptableLength } />
 		);

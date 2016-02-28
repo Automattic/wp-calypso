@@ -8,6 +8,7 @@ const React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:post-editor:editor-categories' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 /**
  * Internal dependencies
  */
@@ -91,7 +92,7 @@ const EditorCategories = React.createClass( {
 		postActions.edit( {
 			categories: selected
 		} );
-		this.props.setCategories( this.props.site.ID, this.props.post.ID, selected );
+		this.props.setCategories( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), selected );
 	},
 
 	onSearch: function( searchTerm ) {
@@ -118,10 +119,10 @@ const EditorCategories = React.createClass( {
 		}
 
 		return (
-			<CategoryList siteId={ this.props.site.ID } search={ this.state.searchTerm } >
+			<CategoryList siteId={ get( this, 'props.site.ID' ) } search={ this.state.searchTerm } >
 				{ categorySelector }
 				{ canAddCategories && (
-					<AddCategory siteId={ this.props.site.ID } searching={ this.state.searchTerm ? true : false } />
+					<AddCategory siteId={ get( this, 'props.site.ID' ) } searching={ this.state.searchTerm ? true : false } />
 				) }
 			</CategoryList>
 		);

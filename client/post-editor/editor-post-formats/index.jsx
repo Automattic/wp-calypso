@@ -4,6 +4,7 @@
 const React = require( 'react' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -73,7 +74,7 @@ const EditorPostFormats = React.createClass( {
 			format: event.target.value
 		} );
 
-		this.props.setPostFormat( this.props.site.ID, this.props.post.ID, event.target.value );
+		this.props.setPostFormat( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), event.target.value );
 
 		stats.recordStat( 'post_format_changed' );
 		stats.recordEvent( 'Changed Post Format', event.target.value );

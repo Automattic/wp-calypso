@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -44,8 +45,8 @@ export default React.createClass( {
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
-			siteId: this.props.site ? this.props.site.ID : null,
-			postId: this.props.post ? this.props.post.ID : null,
+			siteId: get( this, 'props.site.ID' ),
+			postId: get( this, 'props.post.ID' ),
 			visibility: utils.getVisibility( this.props.post ),
 			onPrivatePublish: this.props.onPrivatePublish,
 			isPrivateSite,

@@ -62,6 +62,7 @@ import {
 	setPostPublished,
 	resetRawContent
 } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const messages = {
 	post: {
@@ -180,6 +181,8 @@ const messages = {
 
 const PostEditor = React.createClass( {
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setContent: React.PropTypes.func,
 		setExcerpt: React.PropTypes.func,
 		stopEditing: React.PropTypes.func,
@@ -196,6 +199,8 @@ const PostEditor = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			setContent: () => {},
 			setExcerpt: () => {},
 			stopEditing: () => {},
@@ -265,7 +270,7 @@ const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.stopEditing();
 
-		this.props.stopEditing();
+		this.props.stopEditing( this.props.siteId, this.props.postId );
 		this.debouncedAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
@@ -495,9 +500,9 @@ const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( edits );
 
-		this.props.setTitle( autosave.title );
-		this.props.setExcerpt( autosave.excerpt );
-		this.props.setContent( autosave.content );
+		this.props.setTitle( this.props.siteId, this.props.postId, autosave.title );
+		this.props.setExcerpt( this.props.siteId, this.props.postId, autosave.excerpt );
+		this.props.setContent( this.props.siteId, this.props.postId, autosave.content );
 	},
 
 	closeAutosaveDialog: function() {
@@ -573,7 +578,7 @@ const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.editRawContent( this.refs.editor.getContent( { format: 'raw' } ) );
 
-		this.props.setRawContent( this.refs.editor.getContent( { format: 'raw' } ) );
+		this.props.setRawContent( this.props.siteId, this.props.postId, this.refs.editor.getContent( { format: 'raw' } ) );
 	},
 
 	autosave: function() {
@@ -587,7 +592,7 @@ const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { content: this.refs.editor.getContent() } );
 
-		this.props.setContent( this.refs.editor.getContent() );
+		this.props.setContent( this.props.siteId, this.props.postId, this.refs.editor.getContent() );
 
 		// Make sure that after TinyMCE processing that the post is still dirty
 		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() || ! this.state.post ) {
@@ -606,7 +611,7 @@ const PostEditor = React.createClass( {
 				}
 			}.bind( this );
 		}
-		this.props.autosave( callback );
+		this.props.autosave( this.props.siteId, this.props.postId, callback );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.autosave( callback );
@@ -659,8 +664,8 @@ const PostEditor = React.createClass( {
 
 		edits.content = this.refs.editor.getContent();
 
-		this.props.setContent( edits.content );
-		this.props.save();
+		this.props.setContent( this.props.siteId, this.props.postId, edits.content );
+		this.props.save( this.props.siteId, this.props.postId );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.saveEdited( edits, function( error ) {
@@ -704,8 +709,8 @@ const PostEditor = React.createClass( {
 		}.bind( this );
 
 		if ( status === 'publish' ) {
-			this.props.setContent( this.refs.editor.getContent() );
-			this.props.autosave( previewPost );
+			this.props.setContent( this.props.siteId, this.props.postId, this.refs.editor.getContent() );
+			this.props.autosave( this.props.siteId, this.props.postId, previewPost );
 
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: this.refs.editor.getContent() } );
@@ -776,17 +781,17 @@ const PostEditor = React.createClass( {
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
-			this.props.setPostPrivate();
+			this.props.setPostPrivate( this.props.siteId, this.props.postId );
 		} else {
-			this.props.setPostPublished();
+			this.props.setPostPublished( this.props.siteId, this.props.postId );
 		}
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
 		edits.content = this.refs.editor.getContent();
 
-		this.props.setContent( edits.content );
-		this.props.save();
+		this.props.setContent( this.props.siteId, this.props.postId, edits.content );
+		this.props.save( this.props.siteId, this.props.postId );
 
 		actions.saveEdited( edits, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
@@ -906,16 +911,16 @@ const PostEditor = React.createClass( {
 			actions.edit( { content: content } );
 			actions.resetRawContent();
 
-			this.props.setContent( content );
-			this.props.resetRawContent();
+			this.props.setContent( this.props.siteId, this.props.postId, content );
+			this.props.resetRawContent( this.props.siteId, this.props.postId );
 
 			if ( mode === 'html' ) {
 				// Set raw content directly to avoid race conditions
 				actions.editRawContent( content );
-				this.props.setRawContent( content );
+				this.props.setRawContent( this.props.siteId, this.props.postId, content );
 			} else {
 				this.saveRawContent();
-				this.props.save();
+				this.props.save( this.props.siteId, this.props.postId );
 			}
 		}.bind( this ), 0 );
 	}
@@ -923,7 +928,10 @@ const PostEditor = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( {
 		setContent,
 		setExcerpt,

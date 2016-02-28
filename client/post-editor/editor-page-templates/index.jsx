@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import find from 'lodash/find';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -80,7 +81,7 @@ const EditorPageTemplates = React.createClass( {
 	_selectTemplate( template ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( { page_template: template.file } );
-		this.props.setPageTemplate( this.props.siteId, this.props.post.ID, template );
+		this.props.setPageTemplate( get( this, 'props.siteId' ), get( this, 'props.post.ID' ), template );
 	},
 
 	_getSelectedTemplateText() {
