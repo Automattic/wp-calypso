@@ -130,8 +130,8 @@ export function setSharingLikeOption( siteId, postId, optionKey, optionValue ) {
 	return { type: 'TODO' };
 }
 
-export function setSlug( newSlug ) {
-	debug( 'setSlug', newSlug );
+export function setSlug( siteId, postId, newSlug ) {
+	debug( 'setSlug', siteId, postId, newSlug );
 	return { type: 'TODO' };
 }
 
