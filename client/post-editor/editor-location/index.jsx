@@ -17,6 +17,7 @@ const PostActions = require( 'lib/posts/actions' ),
 	EditorLocationSearch = require( './search' );
 
 import { setLocation, removeLocation } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -27,6 +28,8 @@ const EditorLocation = React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setLocation: React.PropTypes.func,
 		removeLocation: React.PropTypes.func,
 		label: React.PropTypes.string,
@@ -40,6 +43,8 @@ const EditorLocation = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			setLocation: () => {},
 			removeLocation: () => {}
 		};
@@ -63,7 +68,7 @@ const EditorLocation = React.createClass( {
 		} );
 
 		stats.recordStat( 'location_geolocate_success' );
-		this.props.setLocation( position.coords.latitude, position.coords.longitude );
+		this.props.setLocation( this.props.siteId, this.props.postId, position.coords.latitude, position.coords.longitude );
 	},
 
 	onGeolocateFailure: function( error ) {
@@ -101,7 +106,7 @@ const EditorLocation = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.deleteMetadata( [ 'geo_latitude', 'geo_longitude' ] );
 
-		this.props.removeLocation();
+		this.props.removeLocation( this.props.siteId, this.props.postId );
 	},
 
 	onSearchSelect: function( result ) {
@@ -164,6 +169,9 @@ const EditorLocation = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( { setLocation, removeLocation }, dispatch )
 )( EditorLocation );

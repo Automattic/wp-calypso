@@ -80,13 +80,13 @@ export function setDate( siteId, postId, postDate ) {
 	return { type: 'TODO' };
 }
 
-export function setLocation( latitude, longitude ) {
-	debug( 'setLocation', latitude, longitude );
+export function setLocation( siteId, postId, latitude, longitude ) {
+	debug( 'setLocation', siteId, postId, latitude, longitude );
 	return { type: 'TODO' };
 }
 
-export function removeLocation() {
-	debug( 'removeLocation' );
+export function removeLocation( siteId, postId ) {
+	debug( 'removeLocation', siteId, postId );
 	return { type: 'TODO' };
 }
 
