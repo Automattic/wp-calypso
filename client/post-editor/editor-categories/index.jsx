@@ -18,14 +18,11 @@ const CategorySelector = require( 'my-sites/category-selector' ),
 	siteUtils = require( 'lib/site/utils' ),
 	stats = require( 'lib/posts/stats' );
 import { setCategories } from 'state/ui/editor/post/actions';
-import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const EditorCategories = React.createClass( {
 	displayName: 'EditorCategories',
 
 	propTypes: {
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		setCategories: React.PropTypes.func
@@ -33,8 +30,8 @@ const EditorCategories = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			setCategories: () => {},
-			siteId: null,
-			postId: null,
+			site: {},
+			post: {},
 		};
 	},
 	getInitialState: function() {
@@ -94,7 +91,7 @@ const EditorCategories = React.createClass( {
 		postActions.edit( {
 			categories: selected
 		} );
-		this.props.setCategories( this.props.siteId, this.props.postId, selected );
+		this.props.setCategories( this.props.site.ID, this.props.post.ID, selected );
 	},
 
 	onSearch: function( searchTerm ) {
@@ -132,9 +129,6 @@ const EditorCategories = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		postId: getCurrentEditedPostId( state )
-	} ),
+	null,
 	dispatch => bindActionCreators( { setCategories }, dispatch )
 )( EditorCategories );
