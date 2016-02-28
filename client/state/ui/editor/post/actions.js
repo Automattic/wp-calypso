@@ -59,8 +59,8 @@ export function setDiscussionSettings( siteId, postId, newSettings ) {
 	return { type: 'TODO' };
 }
 
-export function setExcerpt( newExcerpt ) {
-	debug( 'setExcerpt', newExcerpt );
+export function setExcerpt( siteId, postId, newExcerpt ) {
+	debug( 'setExcerpt', siteId, postId, newExcerpt );
 	return { type: 'TODO' };
 }
 

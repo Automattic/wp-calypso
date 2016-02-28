@@ -49,6 +49,8 @@ const EditorDrawer = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			site: {},
+			post: {},
 			setExcerpt: () => {}
 		};
 	},
@@ -56,7 +58,7 @@ const EditorDrawer = React.createClass( {
 	onExcerptChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
-		this.props.setExcerpt( event.target.value );
+		this.props.setExcerpt( this.props.site.ID, this.props.post.ID, event.target.value );
 	},
 
 	currentPostTypeSupportsAll: function() {
