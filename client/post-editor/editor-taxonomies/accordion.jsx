@@ -88,6 +88,7 @@ module.exports = React.createClass( {
 			<AccordionSection>
 				<Tags
 					post={ this.props.post }
+					site={ this.props.site }
 					tags={ this.props.tags }
 					tagsHasNextPage={ this.props.tagsHasNextPage }
 					tagsFetchingNextPage={ this.props.tagsFetchingNextPage }

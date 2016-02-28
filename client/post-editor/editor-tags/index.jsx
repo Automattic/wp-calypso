@@ -29,6 +29,7 @@ const EditorTags = React.createClass( {
 		postId: React.PropTypes.number,
 		setTags: React.PropTypes.func,
 		post: React.PropTypes.object,
+		site: React.PropTypes.object,
 		tags: React.PropTypes.arrayOf( React.PropTypes.object ),
 		tagsHasNextPage: React.PropTypes.bool,
 		tagsFetchingNextPage: React.PropTypes.bool
@@ -36,8 +37,8 @@ const EditorTags = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			siteId: null,
-			postId: null,
+			post: {},
+			site: {},
 			setTags: () => {},
 		};
 	},
@@ -64,7 +65,7 @@ const EditorTags = React.createClass( {
 			tags: selectedTags
 		} );
 
-		this.props.setTags( this.props.siteId, this.props.postId, selectedTags );
+		this.props.setTags( this.props.site.ID, this.props.post.ID, selectedTags );
 	},
 
 	getPostTags: function() {
@@ -107,9 +108,6 @@ const EditorTags = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		postId: getCurrentEditedPostId( state )
-	} ),
+	null,
 	dispatch => bindActionCreators( { setTags }, dispatch )
 )( EditorTags );
