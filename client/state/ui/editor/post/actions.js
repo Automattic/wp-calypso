@@ -90,8 +90,8 @@ export function removeLocation( siteId, postId ) {
 	return { type: 'TODO' };
 }
 
-export function setMenuOrder( newOrder ) {
-	debug( 'setMenuOrder', newOrder );
+export function setMenuOrder( siteId, postId, newOrder ) {
+	debug( 'setMenuOrder', siteId, postId, newOrder );
 	return { type: 'TODO' };
 }
 
