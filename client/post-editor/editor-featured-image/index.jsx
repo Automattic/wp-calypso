@@ -73,7 +73,7 @@ const EditorFeaturedImage = React.createClass( {
 	},
 
 	removeImage: function() {
-		this.props.removeFeaturedImage();
+		this.props.removeFeaturedImage( this.props.site.ID, this.props.post.ID );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {

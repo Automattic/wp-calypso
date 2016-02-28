@@ -69,8 +69,8 @@ export function setFeaturedImage( siteId, postId, newImage ) {
 	return { type: 'TODO' };
 }
 
-export function removeFeaturedImage() {
-	debug( 'removeFeaturedImage' );
+export function removeFeaturedImage( siteId, postId ) {
+	debug( 'removeFeaturedImage', siteId, postId );
 	return { type: 'TODO' };
 }
 
