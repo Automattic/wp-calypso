@@ -34,6 +34,8 @@ module.exports = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			post: {},
+			site: {},
 			fetchConnections: () => {}
 		};
 	},
@@ -140,6 +142,8 @@ module.exports = React.createClass( {
 			<PublicizeMessage
 				message={ PostMetadata.publicizeMessage( this.props.post ) }
 				preview={ preview }
+				siteId={ this.props.site.ID }
+				postId={ this.props.post.ID }
 				requireCount={ requireCount }
 				acceptableLength={ acceptableLength } />
 		);

@@ -116,12 +116,12 @@ export function addPublicizeConnectionKey( siteId, postId, newKeyID ) {
 }
 
 export function removePublicizeConnectionKey( siteId, postId ) {
-	debug( 'removePublicizeConnectionKey', siteId, postId  );
+	debug( 'removePublicizeConnectionKey', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setPublicizeMessage( newMessage ) {
-	debug( 'setPublicizeMessage', newMessage );
+export function setPublicizeMessage( siteId, postId, newMessage ) {
+	debug( 'setPublicizeMessage', siteId, postId, newMessage );
 	return { type: 'TODO' };
 }
 

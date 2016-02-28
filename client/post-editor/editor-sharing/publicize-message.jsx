@@ -20,6 +20,8 @@ const PublicizeMessage = React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setPublicizeMessage: React.PropTypes.func,
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
@@ -29,6 +31,8 @@ const PublicizeMessage = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			setPublicizeMessage: () => {},
 			message: '',
 			acceptableLength: 140,
@@ -40,7 +44,7 @@ const PublicizeMessage = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.updateMetadata( '_wpas_mess', event.target.value );
 
-		this.props.setPublicizeMessage( event.target.value );
+		this.props.setPublicizeMessage( this.props.siteId, this.props.postId, event.target.value );
 	},
 
 	recordStats: function() {
