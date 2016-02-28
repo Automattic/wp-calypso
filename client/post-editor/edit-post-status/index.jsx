@@ -25,12 +25,9 @@ import {
 	toggleStickyStatus,
 	togglePendingStatus
 } from 'state/ui/editor/post/actions'
-import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const EditPostStatus = React.createClass( {
 	propTypes: {
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
 		togglePendingStatus: React.PropTypes.func,
 		toggleStickyStatus: React.PropTypes.func,
 		post: React.PropTypes.object,
@@ -43,8 +40,8 @@ const EditPostStatus = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			siteId: null,
-			postId: null,
+			site: {},
+			post: {},
 			togglePendingStatus: () => {},
 			toggleStickyStatus: () => {}
 		};
@@ -74,7 +71,7 @@ const EditPostStatus = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { sticky: ! this.props.post.sticky } );
-		this.props.toggleStickyStatus( this.props.siteId, this.props.postId, this.props.post.sticky );
+		this.props.toggleStickyStatus( this.props.site.ID, this.props.post.ID, this.props.post.sticky );
 	},
 
 	togglePendingStatus: function() {
@@ -259,10 +256,7 @@ const EditPostStatus = React.createClass( {
 
 
 export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		postId: getCurrentEditedPostId( state )
-	} ),
+	null,
 	dispatch => bindActionCreators( {
 		toggleStickyStatus,
 		togglePendingStatus
