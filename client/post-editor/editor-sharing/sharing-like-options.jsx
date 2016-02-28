@@ -96,7 +96,7 @@ const SharingLikeOptions = React.createClass( {
 
 		this.recordStats( event );
 
-		this.props.setSharingLikeOption( event.target.name, event.target.checked );
+		this.props.setSharingLikeOption( this.props.siteId, this.props.post.ID, event.target.name, event.target.checked );
 	},
 
 	recordStats: function( event ) {

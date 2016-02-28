@@ -125,8 +125,8 @@ export function setPublicizeMessage( siteId, postId, newMessage ) {
 	return { type: 'TODO' };
 }
 
-export function setSharingLikeOption( optionKey, optionValue ) {
-	debug( 'setSharingLikeOption', optionKey, optionValue );
+export function setSharingLikeOption( siteId, postId, optionKey, optionValue ) {
+	debug( 'setSharingLikeOption', siteId, postId, optionKey, optionValue );
 	return { type: 'TODO' };
 }
 
