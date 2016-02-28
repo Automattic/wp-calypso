@@ -29,6 +29,8 @@ const EditorPageParent = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			setPageParent: () => {},
 		};
 	},
@@ -40,7 +42,7 @@ const EditorPageParent = React.createClass( {
 			parent: parentId
 		} );
 
-		this.props.setPageParent( parentId );
+		this.props.setPageParent( this.props.siteId, this.props.postId, parentId );
 	},
 
 	getEmptyMessage() {

@@ -28,6 +28,8 @@ const EditorDeletePost = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			site: {},
+			post: {},
 			trashPost: () => {}
 		};
 	},
@@ -51,7 +53,7 @@ const EditorDeletePost = React.createClass( {
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			this.props.trashPost( this.props.post, handleTrashingPost );
+			this.props.trashPost( this.props.site.ID, this.props.post.ID, handleTrashingPost );
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.trash( this.props.post, handleTrashingPost );
 		}

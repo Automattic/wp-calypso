@@ -35,6 +35,8 @@ const EditorDiscussion = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			site: {},
+			post: {},
 			isNew: false,
 			setDiscussionSettings: () => {}
 		};
@@ -76,7 +78,7 @@ const EditorDiscussion = React.createClass( {
 		stats.recordStat( statName );
 		stats.recordEvent( gaEvent, newStatus );
 
-		this.props.setDiscussionSettings( discussion );
+		this.props.setDiscussionSettings( this.props.site.ID, this.props.post.ID, discussion );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {

@@ -49,13 +49,13 @@ export function setCategories( siteId, postId, newCategories ) {
 	return { type: 'TODO' };
 }
 
-export function trashPost( post, callback ) {
-	debug( 'trashPost', post, callback );
+export function trashPost( siteId, postId, callback ) {
+	debug( 'trashPost', siteId, postId, callback );
 	return { type: 'TODO' };
 }
 
-export function setDiscussionSettings( newSettings ) {
-	debug( 'setDiscussionSettings', newSettings );
+export function setDiscussionSettings( siteId, postId, newSettings ) {
+	debug( 'setDiscussionSettings', siteId, postId, newSettings );
 	return { type: 'TODO' };
 }
 
@@ -95,8 +95,8 @@ export function setMenuOrder( siteId, postId, newOrder ) {
 	return { type: 'TODO' };
 }
 
-export function setPageParent( newParentId ) {
-	debug( 'setPageParent', newParentId );
+export function setPageParent( siteId, postId, newParentId ) {
+	debug( 'setPageParent', siteId, postId, newParentId );
 	return { type: 'TODO' };
 }
 
