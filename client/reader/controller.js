@@ -120,19 +120,19 @@ module.exports = {
 
 	legacyRedirects: function( context, next ) {
 		const legacyPathRegexes = {
-			feed_stream: /\/read\/blog\/feed\/([0-9]+)/i,
-			feed_full_post: /\/read\/post\/feed\/([0-9]+)\/([0-9]+)/i,
-			blog_stream: /\/read\/blog\/id\/([0-9]+)/i,
-			blog_full_post: /\/read\/post\/id\/([0-9]+)\/([0-9]+)/i,
+			feedStream: /\/read\/blog\/feed\/([0-9]+)/i,
+			feedFullPost: /\/read\/post\/feed\/([0-9]+)\/([0-9]+)/i,
+			blogStream: /\/read\/blog\/id\/([0-9]+)/i,
+			blogFullPost: /\/read\/post\/id\/([0-9]+)\/([0-9]+)/i,
 		};
 
-		if ( context.path.match( legacyPathRegexes.feed_stream ) ) {
+		if ( context.path.match( legacyPathRegexes.feedStream ) ) {
 			page.redirect( `/read/feeds/${context.params.feed_id}` );
-		} else if ( context.path.match( legacyPathRegexes.feed_full_post ) ) {
+		} else if ( context.path.match( legacyPathRegexes.feedFullPost ) ) {
 			page.redirect( `/read/feeds/${context.params.feed_id}/posts/${context.params.post_id}` );
-		} else if ( context.path.match( legacyPathRegexes.blog_stream ) ) {
+		} else if ( context.path.match( legacyPathRegexes.blogStream ) ) {
 			page.redirect( `/read/blogs/${context.params.blog_id}` );
-		} else if ( context.path.match( legacyPathRegexes.blog_full_post ) ) {
+		} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
 			page.redirect( `/read/blogs/${context.params.blog_id}/posts/${context.params.post_id}` );
 		}
 
