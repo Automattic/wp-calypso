@@ -64,8 +64,8 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 
 	const fullPostViewRegex = /\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)/i;
 
-	if ( oldContext.path.match( fullPostViewRegex ) && ! newContext.path.match( fullPostViewRegex ) ) {
-		oldContext.store.dispatch( hideReaderFullPost() );
+	if ( ( ! oldContext || oldContext.path.match( fullPostViewRegex ) ) && ! newContext.path.match( fullPostViewRegex ) ) {
+		newContext.store.dispatch( hideReaderFullPost() );
 	}
 } );
 
