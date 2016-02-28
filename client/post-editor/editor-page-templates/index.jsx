@@ -19,7 +19,7 @@ const EditorPageTemplates = React.createClass( {
 	displayName: 'EditorPageTemplates',
 
 	propTypes: {
-		siiteId: PropTypes.number,
+		siteId: PropTypes.number,
 		post: PropTypes.object,
 		setPageTemplate: PropTypes.func,
 		pageTemplates: PropTypes.array.isRequired
