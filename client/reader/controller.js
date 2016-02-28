@@ -62,7 +62,7 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 		return;
 	}
 
-	const fullPostViewRegex = /\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)/i;
+	const fullPostViewRegex = /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i;
 
 	if ( ( ! oldContext || oldContext.path.match( fullPostViewRegex ) ) && ! newContext.path.match( fullPostViewRegex ) ) {
 		newContext.store.dispatch( hideReaderFullPost() );
@@ -105,9 +105,9 @@ module.exports = {
 		}
 
 		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
-		if ( context.path.match( /\/read\/feeds\/([0-9]+)\/posts/i ) ) {
+		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
 			redirect = `/read/feeds/${context.params.feed_id}`
-		} else if ( context.path.match( /\/read\/blogs\/([0-9]+)\/posts/i ) ) {
+		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
 			redirect = `/read/blogs/${context.params.blog_id}`
 		}
 
@@ -120,10 +120,10 @@ module.exports = {
 
 	legacyRedirects: function( context, next ) {
 		const legacyPathRegexes = {
-			feedStream: /\/read\/blog\/feed\/([0-9]+)/i,
-			feedFullPost: /\/read\/post\/feed\/([0-9]+)\/([0-9]+)/i,
-			blogStream: /\/read\/blog\/id\/([0-9]+)/i,
-			blogFullPost: /\/read\/post\/id\/([0-9]+)\/([0-9]+)/i,
+			feedStream: /^\/read\/blog\/feed\/([0-9]+)$/i,
+			feedFullPost: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
+			blogStream: /^\/read\/blog\/id\/([0-9]+)$/i,
+			blogFullPost: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
 		};
 
 		if ( context.path.match( legacyPathRegexes.feedStream ) ) {
