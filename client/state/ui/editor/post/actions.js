@@ -105,18 +105,18 @@ export function setPageTemplate( siteId, postId, newTemplate ) {
 	return { type: 'TODO' };
 }
 
-export function setPostFormat( newFormat ) {
-	debug( 'setPostFormat', newFormat );
+export function setPostFormat( siteId, postId, newFormat ) {
+	debug( 'setPostFormat', siteId, postId, newFormat );
 	return { type: 'TODO' };
 }
 
-export function addPublicizeConnectionKey( newKeyID ) {
-	debug( 'addPublicizeConnectionKey', newKeyID );
+export function addPublicizeConnectionKey( siteId, postId, newKeyID ) {
+	debug( 'addPublicizeConnectionKey', siteId, postId, newKeyID );
 	return { type: 'TODO' };
 }
 
-export function removePublicizeConnectionKey() {
-	debug( 'removePublicizeConnectionKey' );
+export function removePublicizeConnectionKey( siteId, postId ) {
+	debug( 'removePublicizeConnectionKey', siteId, postId  );
 	return { type: 'TODO' };
 }
 

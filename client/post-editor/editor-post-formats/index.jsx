@@ -21,6 +21,7 @@ const EditorPostFormats = React.createClass( {
 	propTypes: {
 		setPostFormat: React.PropTypes.func,
 		post: React.PropTypes.object,
+		site: React.PropTypes.object,
 		value: React.PropTypes.string,
 		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
 			slug: React.PropTypes.string,
@@ -30,6 +31,8 @@ const EditorPostFormats = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			site: {},
+			object: {},
 			setPostFormat: () => {},
 			value: 'standard'
 		};
@@ -70,7 +73,7 @@ const EditorPostFormats = React.createClass( {
 			format: event.target.value
 		} );
 
-		this.props.setPostFormat( event.target.value );
+		this.props.setPostFormat( this.props.site.ID, this.props.post.ID, event.target.value );
 
 		stats.recordStat( 'post_format_changed' );
 		stats.recordEvent( 'Changed Post Format', event.target.value );
