@@ -19,6 +19,7 @@ const EditorPageTemplates = React.createClass( {
 	displayName: 'EditorPageTemplates',
 
 	propTypes: {
+		siiteId: PropTypes.number,
 		post: PropTypes.object,
 		setPageTemplate: PropTypes.func,
 		pageTemplates: PropTypes.array.isRequired
@@ -26,6 +27,8 @@ const EditorPageTemplates = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			siteId: null,
+			post: {},
 			setPageTemplate: () => {},
 			pageTemplates: []
 		};
@@ -77,7 +80,7 @@ const EditorPageTemplates = React.createClass( {
 	_selectTemplate( template ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( { page_template: template.file } );
-		this.props.setPageTemplate( template );
+		this.props.setPageTemplate( this.props.siteId, this.props.post.ID, template );
 	},
 
 	_getSelectedTemplateText() {

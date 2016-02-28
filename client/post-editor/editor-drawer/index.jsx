@@ -260,7 +260,7 @@ const EditorDrawer = React.createClass( {
 								parent={ this.props.post.parent_id ? this.props.post.parent_id : 0 }
 							/>
 							<PageTemplatesData siteId={ this.props.site.ID } >
-								<PageTemplates post={ this.props.post } />
+								<PageTemplates siteId={ this.props.site.ID } post={ this.props.post } />
 							</PageTemplatesData>
 						</div>
 					: null }

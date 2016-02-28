@@ -100,8 +100,8 @@ export function setPageParent( siteId, postId, newParentId ) {
 	return { type: 'TODO' };
 }
 
-export function setPageTemplate( newTemplate ) {
-	debug( 'setPageTemplate', newTemplate );
+export function setPageTemplate( siteId, postId, newTemplate ) {
+	debug( 'setPageTemplate', siteId, postId, newTemplate );
 	return { type: 'TODO' };
 }
 
