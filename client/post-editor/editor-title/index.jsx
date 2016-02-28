@@ -19,14 +19,11 @@ import FormTextInput from 'components/forms/form-text-input';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
 import { setTitle } from 'state/ui/editor/post/actions';
-import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const EditorTitle = React.createClass( {
 	displayName: 'EditorTitle',
 
 	propTypes: {
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
 		setTitle: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
@@ -42,8 +39,8 @@ const EditorTitle = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			siteId: null,
-			postId: null,
+			site: {},
+			post: {},
 			isNew: true,
 			onChange: () => {},
 			setTitle: () => {},
@@ -79,7 +76,7 @@ const EditorTitle = React.createClass( {
 			title: event.target.value
 		} );
 
-		this.props.setTitle( this.props.siteId, this.props.postId, event.target.value );
+		this.props.setTitle( this.props.site.ID, this.props.post.ID, event.target.value );
 		onChange( event );
 	},
 
@@ -141,9 +138,6 @@ const EditorTitle = React.createClass( {
 } );
 
 export default connect(
-	state => ( { 
-		siteId: getSelectedSiteId( state ),
-		postId: getCurrentEditedPostId( state )
-	} ),
+	null,
 	dispatch => bindActionCreators( { setTitle }, dispatch )
 )( EditorTitle );
