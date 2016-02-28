@@ -39,6 +39,8 @@ const EditorVisibility = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			siteId: null,
+			postId: null,
 			isPrivateSite: false,
 			setPostPassword: () => {},
 			setPostPasswordProtected: () => {},
@@ -48,6 +50,8 @@ const EditorVisibility = React.createClass( {
 	},
 
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setPostPassword: React.PropTypes.func,
 		setPostPasswordProtected: React.PropTypes.func,
 		setPostPrivate: React.PropTypes.func,
@@ -186,12 +190,12 @@ const EditorVisibility = React.createClass( {
 		switch ( newVisibility ) {
 			case 'public':
 				postEdits.password = '';
-				this.props.setPostPublic();
+				this.props.setPostPublic( this.props.siteId, this.props.postId );
 				break;
 
 			case 'password':
 				postEdits.password = this.props.savedPassword || ' ';
-				this.props.setPostPasswordProtected( postEdits.password );
+				this.props.setPostPasswordProtected( this.props.siteId, this.props.postId, postEdits.password );
 				break;
 		}
 
@@ -231,7 +235,7 @@ const EditorVisibility = React.createClass( {
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );
 
-		this.props.setPostPrivate();
+		this.props.setPostPrivate( this.props.siteId, this.props.postId );
 	},
 
 	onPrivatePublish() {
@@ -274,7 +278,7 @@ const EditorVisibility = React.createClass( {
 
 		this.setState( { passwordIsValid: newPassword.length > 0 } );
 
-		this.props.setPostPassword( newPassword );
+		this.props.setPostPassword( this.props.siteId, this.props.postId, newPassword );
 	},
 
 	renderPasswordInput() {

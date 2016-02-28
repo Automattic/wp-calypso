@@ -44,6 +44,8 @@ export default React.createClass( {
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
+			siteId: this.props.site ? this.props.site.ID : null,
+			postId: this.props.post ? this.props.post.ID : null,
 			visibility: utils.getVisibility( this.props.post ),
 			onPrivatePublish: this.props.onPrivatePublish,
 			isPrivateSite,

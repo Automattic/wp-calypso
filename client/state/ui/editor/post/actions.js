@@ -145,22 +145,22 @@ export function setTitle( siteId, postId, newTitle ) {
 	return { type: 'TODO' };
 }
 
-export function setPostPublic() {
-	debug( 'setPostPublic' );
+export function setPostPublic( siteId, postId ) {
+	debug( 'setPostPublic', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setPostPrivate() {
-	debug( 'setPostPrivate' );
+export function setPostPrivate( siteId, postId ) {
+	debug( 'setPostPrivate', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setPostPassword( newPassword ) {
-	debug( 'setPostPassword', newPassword );
+export function setPostPassword( siteId, postId, newPassword ) {
+	debug( 'setPostPassword', siteId, postId, newPassword );
 	return { type: 'TODO' };
 }
 
-export function setPostPasswordProtected( newPassword ) {
+export function setPostPasswordProtected( siteId, postId, newPassword ) {
 	debug( 'setPostPasswordProtected', newPassword );
 	return { type: 'TODO' };
 }
