@@ -85,7 +85,8 @@ var Team = React.createClass( {
 					getItemRef={ this._getPersonRef }
 					renderLoadingPlaceholders={ this._renderLoadingPeople }
 					renderItem={ this._renderPerson }
-					guessedItemHeight={ 126 }>
+					guessedItemHeight={ 126 }
+					context={ document.getElementById( 'content' ) }>
 				</InfiniteList>
 			);
 		} else {

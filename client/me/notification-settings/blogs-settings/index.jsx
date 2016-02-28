@@ -68,7 +68,8 @@ export default React.createClass( {
 				guessedItemHeight={ 69 }
 				getItemRef={ blog => `blog-${ blog.ID }` }
 				renderItem={ renderBlog }
-				renderLoadingPlaceholders={ () => <Placeholder /> } />
+				renderLoadingPlaceholders={ () => <Placeholder /> }
+				context={ document.getElementById( 'content' ) } />
 		);
 	}
 } );
