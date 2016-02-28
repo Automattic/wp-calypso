@@ -17,7 +17,6 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isPage } from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import { setTags } from 'state/ui/editor/post/actions';
-import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const debug = _debug( 'calypso:post-editor:editor-tags' );
 
