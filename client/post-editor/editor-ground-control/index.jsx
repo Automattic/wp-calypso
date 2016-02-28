@@ -24,6 +24,7 @@ const Card = require( 'components/card' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
 import { setDate } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 function isPostEmpty( props ) {
 	return ( props.isNew && ! props.isDirty ) || ! props.hasContent;
@@ -32,6 +33,8 @@ function isPostEmpty( props ) {
 const EditorGroundControl = React.createClass( {
 	displayName: 'EditorGroundControl',
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		hasContent: React.PropTypes.bool,
 		isDirty: React.PropTypes.bool,
 		isSaveBlocked: React.PropTypes.bool,
@@ -52,6 +55,8 @@ const EditorGroundControl = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			siteId: null,
+			postId: null,
 			hasContent: false,
 			isDirty: false,
 			isSaveBlocked: false,
@@ -80,7 +85,7 @@ const EditorGroundControl = React.createClass( {
 	setPostDate: function( date ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( { date: date ? date.format() : null } );
-		this.props.setDate( date );
+		this.props.setDate( this.props.siteId, this.props.postId, date );
 	},
 
 	setCurrentMonth: function( date ) {
@@ -409,6 +414,9 @@ const EditorGroundControl = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( { setDate }, dispatch )
 )( EditorGroundControl );
