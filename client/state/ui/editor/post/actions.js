@@ -64,8 +64,8 @@ export function setExcerpt( siteId, postId, newExcerpt ) {
 	return { type: 'TODO' };
 }
 
-export function setFeaturedImage( newImage ) {
-	debug( 'setFeaturedImage', newImage );
+export function setFeaturedImage( siteId, postId, newImage ) {
+	debug( 'setFeaturedImage', siteId, postId, newImage );
 	return { type: 'TODO' };
 }
 

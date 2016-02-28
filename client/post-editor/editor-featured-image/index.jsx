@@ -36,7 +36,9 @@ const EditorFeaturedImage = React.createClass( {
 			editable: false,
 			maxWidth: 450,
 			setFeaturedImage: () => {},
-			removeFeaturedImage: () => {}
+			removeFeaturedImage: () => {},
+			site: {},
+			post: {}
 		};
 	},
 
@@ -59,7 +61,7 @@ const EditorFeaturedImage = React.createClass( {
 			return;
 		}
 
-		this.props.setFeaturedImage( items[0].ID );
+		this.props.setFeaturedImage( this.props.site.ID, this.props.post.ID, items[0].ID );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
