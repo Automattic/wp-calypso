@@ -44,8 +44,8 @@ export function setAuthor( siteId, postId, newAuthor ) {
 	return { type: 'TODO' };
 }
 
-export function setCategories( newCategories ) {
-	debug( 'setCategories', newCategories );
+export function setCategories( siteId, postId, newCategories ) {
+	debug( 'setCategories', siteId, postId, newCategories );
 	return { type: 'TODO' };
 }
 
