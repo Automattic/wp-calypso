@@ -89,6 +89,20 @@
 		}
 	}
 
+	&.is-headerless {
+		padding-top: 0;
+
+		.reader__post-title {
+			padding-top: 16px;
+		}
+
+		&.has-featured-image {
+			.reader__post-title {
+				padding-top: 0;
+			}
+		}
+	}
+
 	.post-excerpt-only {
 		p {
 			margin-bottom: 1em;

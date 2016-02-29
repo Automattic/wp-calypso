@@ -358,6 +358,10 @@ const Post = React.createClass( {
 			articleClasses[ 'feed-' + post.feed_ID ] = true;
 		}
 
+		if ( ! this.props.showPostHeader ) {
+			articleClasses[ 'is-headerless' ] = true;
+		}
+
 		forOwn( post.tags, ( { slug } ) => {
 			articleClasses[ 'tag-' + slug ] = true;
 		} );
