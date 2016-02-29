@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -25,7 +26,7 @@ const STORAGE_KEY = 'boot_support_user';
 
 export const isEnabled = () => config.isEnabled( 'support-user' );
 
-let _setReduxStore = null;
+let _setReduxStore = noop;
 const reduxStoreReady = new Promise( ( resolve ) => {
 	if ( ! isEnabled() ) {
 		return;
@@ -95,7 +96,7 @@ export const boot = () => {
 	if ( ! isEnabled() ) {
 		return;
 	}
-	
+
 	const { user, token } = store.get( STORAGE_KEY );
 	debug( 'Booting Calypso with support user', user );
 
