@@ -106,31 +106,32 @@ export default React.createClass( {
 
 		let errorTooltipAdded = false;
 		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
-			let status, tooltip;
+			const originalValue = value;
 			if ( errors && errors[ value ] ) {
-				status = 'error';
+				let tooltip;
 
 				// We only want to show one tooltip.
 				if ( ! errorTooltipAdded ) {
 					if ( ! errorTokenHover || ( errorTokenHover && value === errorTokenHover ) ) {
 						// Attempt to get the error message for the tooltip, and set errorTooltipAdded
 						// to true if message was found.
-						let errorValue = errorTokenHover ? errorTokenHover : value;
+						const errorValue = errorTokenHover || value;
 						tooltip = get( errors, [ errorValue, 'message' ] );
 						errorTooltipAdded = !! tooltip;
 					}
 				}
-			} else if ( ! includes( success, value ) ) {
-				status = 'validating';
-			}
 
-			if ( status ) {
 				value = {
-					value,
-					status,
+					status: 'error',
+					value: originalValue,
 					tooltip,
-					onMouseEnter: () => this.setState( { errorTokenHover: value.value } ),
+					onMouseEnter: () => this.setState( { errorTokenHover: originalValue } ),
 					onMouseLeave: this.onErrorTokenMouseLeave
+				};
+			} else if ( ! includes( success, value ) ) {
+				value = {
+					value: originalValue,
+					status: 'validating'
 				};
 			}
 
