@@ -64,23 +64,23 @@ const CheckoutThankYouHeader = React.createClass( {
 
 	render() {
 		const classes = {
-			'checkout-thank-you-header': true,
+			'checkout-thank-you__header': true,
 			'is-placeholder': ! this.props.isDataLoaded
 		};
 
 		return (
 			<div className={ classNames( classes ) }>
-				<div className="checkout-thank-you-header__content">
-					<span className="checkout-thank-you-header__icon">
+				<div className="checkout-thank-you__header-content">
+					<span className="checkout-thank-you__header-icon">
 						<Gridicon icon="trophy" size={ 72 } />
 					</span>
 
-					<div className="checkout-thank-you-header__copy">
-						<h1 className="checkout-thank-you-header__heading">
+					<div className="checkout-thank-you__header-copy">
+						<h1 className="checkout-thank-you__header-heading">
 							{ this.getHeading() }
 						</h1>
 
-						<h2 className="checkout-thank-you-header__text">
+						<h2 className="checkout-thank-you__header-text">
 							{ this.getText() }
 						</h2>
 					</div>
