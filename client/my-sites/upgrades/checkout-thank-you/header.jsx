@@ -22,11 +22,7 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( ! this.props.primaryPurchase ) {
-			return this.translate( 'Thank you for your purchase!' );
-		}
-
-		if ( isFreeTrial( this.props.primaryPurchase ) ) {
+		if ( this.props.primaryPurchase && isFreeTrial( this.props.primaryPurchase ) ) {
 			return this.translate( 'Way to go, your 14 day free trial starts now!' );
 		}
 
