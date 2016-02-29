@@ -438,13 +438,10 @@ module.exports = React.createClass( {
 				</MobileBackToSidebar>
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
-
 				{ header }
-
 				{ body }
-
 			</Main>
-			);
+		);
 	}
 
 } );
