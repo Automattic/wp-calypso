@@ -57,9 +57,10 @@ const Post = React.createClass( {
 		isSelected: React.PropTypes.bool.isRequired,
 		xPostedTo: React.PropTypes.array,
 		suppressSiteNameLink: React.PropTypes.bool,
+		showPostHeader: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		additionalClasses: React.PropTypes.object,
-		handleClick: React.PropTypes.func.isRequired
+		handleClick: React.PropTypes.func.isRequired,
 	},
 
 	smartSetState: smartSetState,
@@ -386,7 +387,7 @@ const Post = React.createClass( {
 
 				<PostErrors post={ post } />
 
-				<PostHeader site={ site } siteUrl={ post.site_URL } showFollow={ this.props.showFollowInHeader } onSiteSelect={ this.pickSite } onSiteClick={ this.handleSiteClick } />
+				{ this.props.showPostHeader ? <PostHeader site={ site } siteUrl={ post.site_URL } showFollow={ this.props.showFollowInHeader } onSiteSelect={ this.pickSite } onSiteClick={ this.handleSiteClick } /> : null }
 
 				{ featuredImage }
 
