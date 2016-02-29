@@ -57,13 +57,13 @@ export default React.createClass( {
 			response: false,
 			sendingInvites: false,
 			getTokenStatus: () => {},
-			errorTokenHover: false
+			errorToDisplay: false
 		} );
 	},
 
 	onTokensChange( tokens ) {
-		const { role, errorTokenHover } = this.state;
-		const filteredTokens = tokens.map( ( value ) => {
+		const { role, errorToDisplay } = this.state;
+		const filteredTokens = tokens.map( value => {
 			if ( 'object' === typeof value ) {
 				return value.value;
 			}
@@ -72,7 +72,7 @@ export default React.createClass( {
 
 		this.setState( {
 			usernamesOrEmails: filteredTokens,
-			errorTokenHover: includes( filteredTokens, errorTokenHover ) && errorTokenHover
+			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay
 		} );
 		createInviteValidation( this.props.site.ID, filteredTokens, role );
 	},
@@ -92,49 +92,44 @@ export default React.createClass( {
 	},
 
 	refreshValidation() {
-		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || [];
-		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [];
+		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || {},
+			success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [],
+			errorsKeys = Object.keys( errors ),
+			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[0] );
 
 		this.setState( {
+			errorToDisplay,
 			errors,
 			success
 		} );
 	},
 
+	getTooltip( value ) {
+		const { errors, errorToDisplay } = this.state;
+		if ( errorToDisplay && value !== errorToDisplay ) {
+			return null;
+		}
+		return get( errors, [ value, 'message' ] );
+	},
+
 	getTokensWithStatus() {
-		const { success, errors, errorTokenHover } = this.state;
+		const { success, errors } = this.state;
 
-		let errorTooltipAdded = false;
-		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
-			const originalValue = value;
+		const tokens = this.state.usernamesOrEmails.map( value => {
 			if ( errors && errors[ value ] ) {
-				let tooltip;
-
-				// We only want to show one tooltip.
-				if ( ! errorTooltipAdded ) {
-					if ( ! errorTokenHover || ( errorTokenHover && value === errorTokenHover ) ) {
-						// Attempt to get the error message for the tooltip, and set errorTooltipAdded
-						// to true if message was found.
-						const errorValue = errorTokenHover || value;
-						tooltip = get( errors, [ errorValue, 'message' ] );
-						errorTooltipAdded = !! tooltip;
-					}
-				}
-
-				value = {
+				return {
 					status: 'error',
-					value: originalValue,
-					tooltip,
-					onMouseEnter: () => this.setState( { errorTokenHover: originalValue } ),
-					onMouseLeave: this.onErrorTokenMouseLeave
+					value,
+					tooltip: this.getTooltip( value ),
+					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
 				};
-			} else if ( ! includes( success, value ) ) {
-				value = {
-					value: originalValue,
+			}
+			if ( ! includes( success, value ) ) {
+				return {
+					value,
 					status: 'validating'
 				};
 			}
-
 			return value;
 		} );
 
