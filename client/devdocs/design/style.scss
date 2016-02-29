@@ -70,3 +70,12 @@
 	text-align: center;
 	cursor: default;
 }
+
+
+.design-assets__group {
+	.wordpress-logo,
+	.jetpack-logo {
+		fill: darken( $gray, 20% );
+		margin-right: 16px;
+	}
+}
