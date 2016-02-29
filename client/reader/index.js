@@ -31,12 +31,20 @@ module.exports = function() {
 		page( '/tag/*', controller.loadSubscriptions );
 
 		page( '/', updateLastRoute, controller.removePost, controller.sidebar, controller.following );
+
+		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
+		page( '/read', '/' );
+		page( '/read/blogs', '/' );
+		page( '/read/feeds', '/' );
+		page( '/read/blog', '/' );
+		page( '/read/post', '/' );
+		page( '/read/feed', '/' );
 
 		// Feed stream
 		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
-		page( '/read/feeds/:feed_id/posts', controller.redirects );
-		page( '/read/feeds/:feed_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.feedListing );
+		page( '/read/feeds/:feed_id/posts', controller.incompleteUrlRedirects );
+		page( '/read/feeds/:feed_id', updateLastRoute, controller.prettyRedirects, controller.removePost, controller.sidebar, controller.feedListing );
 		page.exit( '/read/feeds/:feed_id', controller.resetTitle );
 
 		// Feed full post
@@ -46,8 +54,8 @@ module.exports = function() {
 
 		// Blog stream
 		page( '/read/blog/id/:blog_id', controller.legacyRedirects );
-		page( '/read/blogs/:blog_id/posts', controller.redirects );
-		page( '/read/blogs/:blog_id', updateLastRoute, controller.redirects, controller.removePost, controller.sidebar, controller.blogListing );
+		page( '/read/blogs/:blog_id/posts', controller.incompleteUrlRedirects );
+		page( '/read/blogs/:blog_id', updateLastRoute, controller.prettyRedirects, controller.removePost, controller.sidebar, controller.blogListing );
 
 		// Blog full post
 		page( '/read/post/id/:blog_id/:post_id', controller.legacyRedirects );

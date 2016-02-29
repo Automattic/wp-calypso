@@ -95,20 +95,13 @@ function setPageTitle( title ) {
 }
 
 module.exports = {
-	redirects: function( context, next ) {
+	prettyRedirects: function( context, next ) {
 		// Do we have a 'pretty' site or feed URL?
 		let redirect;
 		if ( context.params.blog_id ) {
 			redirect = readerRoute.getPrettySiteUrl( context.params.blog_id );
 		} else if ( context.params.feed_id ) {
 			redirect = readerRoute.getPrettyFeedUrl( context.params.feed_id );
-		}
-
-		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
-		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/feeds/${context.params.feed_id}`
-		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/blogs/${context.params.blog_id}`
 		}
 
 		if ( redirect ) {
@@ -134,6 +127,22 @@ module.exports = {
 			page.redirect( `/read/blogs/${context.params.blog_id}` );
 		} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
 			page.redirect( `/read/blogs/${context.params.blog_id}/posts/${context.params.post_id}` );
+		}
+
+		next();
+	},
+
+	incompleteUrlRedirects: function( context, next ) {
+		let redirect;
+		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
+		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
+			redirect = `/read/feeds/${context.params.feed_id}`
+		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
+			redirect = `/read/blogs/${context.params.blog_id}`
+		}
+
+		if ( redirect ) {
+			return page.redirect( redirect );
 		}
 
 		next();
