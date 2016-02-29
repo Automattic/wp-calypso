@@ -31,6 +31,26 @@ const SupportUserLoginDialog = React.createClass( {
 		this.setState( { supportPassword: '' } );
 	},
 
+	onInputKeyDown( event ) {
+		switch ( event.key ) {
+			case 'Enter':
+				event.preventDefault();
+				switch ( event.target.name ) {
+					case 'supportUser':
+						console.log( this.supportPasswordInput );
+						this.supportPasswordInput.focus();
+						break;
+					case 'supportPassword':
+						this.onChangeUser();
+						break;
+				}
+				return;
+			case 'Escape':
+				event.preventDefault();
+				this.props.onCloseDialog();
+		}
+	},
+
 	render() {
 		const { isVisible, isBusy, onCloseDialog, errorMessage } = this.props;
 
@@ -49,6 +69,8 @@ const SupportUserLoginDialog = React.createClass( {
 					Cancel
 			</FormButton>
 		];
+
+		const supportPasswordRef = ( ref ) => this.supportPasswordInput = ref;
 
 		return (
 			<Dialog
@@ -73,6 +95,7 @@ const SupportUserLoginDialog = React.createClass( {
 							name="supportUser"
 							id="supportUser"
 							placeholder="Username"
+							onKeyDown={ this.onInputKeyDown }
 							valueLink={ this.linkState( 'supportUser' ) } />
 					</FormLabel>
 
@@ -82,6 +105,8 @@ const SupportUserLoginDialog = React.createClass( {
 							name="supportPassword"
 							id="supportPassword"
 							placeholder="Password"
+							ref={ supportPasswordRef }
+							onKeyDown={ this.onInputKeyDown }
 							valueLink={ this.linkState( 'supportPassword' ) } />
 					</FormLabel>
 				</FormFieldset>
