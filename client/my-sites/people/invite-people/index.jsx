@@ -76,7 +76,7 @@ const InvitePeople = React.createClass( {
 			usernamesOrEmails: filteredTokens,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay
 		} );
-		this.props.createInviteValidation( this.props.site.ID, filteredTokens, role );
+		createInviteValidation( this.props.site.ID, filteredTokens, role );
 	},
 
 	onMessageChange( event ) {
@@ -86,7 +86,7 @@ const InvitePeople = React.createClass( {
 	onRoleChange( event ) {
 		const role = event.target.value;
 		this.setState( { role } );
-		this.props.createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
+		createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
 	},
 
 	refreshValidation() {
@@ -258,5 +258,5 @@ const InvitePeople = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { sendInvites, createInviteValidation }, dispatch )
+	dispatch => bindActionCreators( { sendInvites }, dispatch )
 )( InvitePeople );
