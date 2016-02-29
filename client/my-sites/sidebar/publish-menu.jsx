@@ -178,13 +178,13 @@ var PublishMenu = React.createClass( {
 			customPostTypes;
 
 		customPostTypes = this.state.postTypes.filter( function( type ) {
-			return ! some( menuItems, { name: type.name } );
+			return ! some( menuItems, { name: type.slug } );
 		} );
 
 		customMenuItems = customPostTypes.map( function( postType ) {
 			return {
 				name: postType.slug,
-				label: postType.name,
+				label: postType.labels ? postType.labels.menu_name : postType.name,
 				className: postType.slug,
 
 				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
