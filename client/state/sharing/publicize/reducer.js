@@ -35,9 +35,9 @@ export function fetchingConnections( state = {}, action ) {
 				[ siteId ]: PUBLICIZE_CONNECTIONS_REQUEST === type
 			} );
 		case SERIALIZE:
-			return state;
+			return {};
 		case DESERIALIZE:
-			return state;
+			return {};
 	}
 
 	return state;
@@ -55,9 +55,9 @@ export function connections( state = {}, action ) {
 		case PUBLICIZE_CONNECTIONS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.data.connections, 'ID' ) );
 		case SERIALIZE:
-			return state;
+			return {};
 		case DESERIALIZE:
-			return state;
+			return {};
 	}
 
 	return state;

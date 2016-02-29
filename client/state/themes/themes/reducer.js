@@ -39,10 +39,11 @@ export default ( state = initialState, action ) => {
 		case ActionTypes.ACTIVATED_THEME:
 			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
+			return initialState;
 		case SERVER_DESERIALIZE:
 			return fromJS( state );
 		case SERIALIZE:
-			return state.toJS();
+			return {};
 	}
 	return state;
 };

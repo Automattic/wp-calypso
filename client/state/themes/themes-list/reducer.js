@@ -91,10 +91,11 @@ export default ( state = initialState, action ) => {
 			// here.
 			return state.set( 'active', action.theme.id );
 		case DESERIALIZE:
+			return initialState;
 		case SERVER_DESERIALIZE:
 			return query( fromJS( state ) );
 		case SERIALIZE:
-			return state.toJS();
+			return {};
 	}
 
 	return state;

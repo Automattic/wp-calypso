@@ -60,6 +60,10 @@ export function errorMessage( state = null, action ) {
 			return action.errorMessage;
 		case SUPPORT_USER_ACTIVATE:
 			return null;
+		case SERIALIZE:
+			return null;
+		case DESERIALIZE:
+			return null;
 	}
 
 	return state;

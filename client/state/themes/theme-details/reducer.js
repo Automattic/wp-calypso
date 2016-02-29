@@ -23,10 +23,11 @@ export default ( state = Map(), action ) => {
 					supportDocumentation: action.themeSupportDocumentation,
 				} ) );
 		case DESERIALIZE:
+			return Map();
 		case SERVER_DESERIALIZE:
 			return fromJS( state );
 		case SERIALIZE:
-			return state.toJS();
+			return {};
 	}
 	return state;
 };

@@ -54,26 +54,21 @@ describe( 'initial-state', () => {
 					state,
 					savedState = {
 						currentUser: { id: 123456789 },
-						users: {
+						postTypes: {
 							items: {
-								123456789: {
-									ID: 123456789,
-									username: 'testuser'
-								},
-								111111111: {
-									ID: 111111111,
-									username: 'testuser2'
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' }
 								}
 							}
 						},
 						_timestamp: Date.now()
 					},
 					serverState = {
-						users: {
+						postTypes: {
 							items: {
-								123456789: {
-									ID: 123456789,
-									username: 'updatedtestuser'
+								77203074: {
+									post: { name: 'post', label: 'Posts' }
 								}
 							}
 						}
@@ -111,7 +106,7 @@ describe( 'initial-state', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
 				it( 'server state shallowly overrides local forage state', () => {
-					expect( state.users ).to.equal( serverState.users );
+					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
 				} );
 			} );
 			describe( 'with stale persisted data and initial server data', () => {
@@ -121,26 +116,21 @@ describe( 'initial-state', () => {
 					state,
 					savedState = {
 						currentUser: { id: 123456789 },
-						users: {
+						postTypes: {
 							items: {
-								123456789: {
-									ID: 123456789,
-									username: 'testuser'
-								},
-								111111111: {
-									ID: 111111111,
-									username: 'testuser2'
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' }
 								}
 							}
 						},
 						_timestamp: Date.now() - MAX_AGE
 					},
 					serverState = {
-						users: {
+						postTypes: {
 							items: {
-								123456789: {
-									ID: 123456789,
-									username: 'updatedtestuser'
+								77203074: {
+									post: { name: 'post', label: 'Posts' }
 								}
 							}
 						}
@@ -172,7 +162,7 @@ describe( 'initial-state', () => {
 					expect( consoleSpy.called ).to.equal( false );
 				} );
 				it( 'builds using server state', () => {
-					expect( state.users ).to.equal( serverState.users );
+					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
 				} );
 				it( 'does not build using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( null );
@@ -188,15 +178,11 @@ describe( 'initial-state', () => {
 					state,
 					savedState = {
 						currentUser: { id: 123456789 },
-						users: {
+						postTypes: {
 							items: {
-								123456789: {
-									ID: 123456789,
-									username: 'testuser'
-								},
-								111111111: {
-									ID: 111111111,
-									username: 'testuser2'
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' }
 								}
 							}
 						},
@@ -231,7 +217,7 @@ describe( 'initial-state', () => {
 				} );
 				it( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
-					expect( state.users ).to.equal( savedState.users );
+					expect( state.postTypes.items ).to.equal( savedState.postTypes.items );
 				} );
 				it( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );

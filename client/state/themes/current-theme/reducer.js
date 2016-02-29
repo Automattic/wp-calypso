@@ -33,10 +33,11 @@ export default ( state = initialState, action ) => {
 		case ActionTypes.CLEAR_ACTIVATED_THEME:
 			return state.set( 'hasActivated', false );
 		case DESERIALIZE:
+			return initialState;
 		case SERVER_DESERIALIZE:
 			return fromJS( state );
 		case SERIALIZE:
-			return state.toJS();
+			return {};
 	}
 	return state;
 };

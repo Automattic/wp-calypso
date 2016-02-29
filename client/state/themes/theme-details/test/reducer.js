@@ -46,7 +46,7 @@ describe( 'reducer', () => {
 	describe( 'persistence', () => {
 		const initialState = Map();
 
-		it( 'persists state and converts to a plain JS object', () => {
+		it( 'does not persist state because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
 				mood: {
 					name: 'Mood',
@@ -55,9 +55,9 @@ describe( 'reducer', () => {
 			} );
 			const state = fromJS( jsObject );
 			const persistedState = reducer( state, { type: SERIALIZE } );
-			expect( persistedState ).to.eql( jsObject );
+			expect( persistedState ).to.eql( {} );
 		} );
-		it( 'loads valid persisted state and converts to immutable.js object', () => {
+		it( 'does not load persisted state because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
 				mood: {
 					name: 'Mood',
@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 				}
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
-			expect( state ).to.eql( fromJS( jsObject ) );
+			expect( state ).to.eql( Map() );
 		} );
 
 		it( 'converts state from server to immutable.js object', () => {
@@ -93,7 +93,7 @@ describe( 'reducer', () => {
 
 		it.skip( 'should ignore loading data with invalid values ', () => {
 			const jsObject = deepFreeze( {
-				mood: 'foo',
+				mood: 'foo'
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
 			expect( state ).to.eql( initialState );

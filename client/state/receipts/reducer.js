@@ -9,7 +9,9 @@ import { combineReducers } from 'redux';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
-	RECEIPT_FETCH_FAILED
+	RECEIPT_FETCH_FAILED,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 
 export const initialReceiptState = {
@@ -51,6 +53,10 @@ export function items( state = {}, action ) {
 				error: action.error,
 				isRequesting: false
 			} );
+		case SERIALIZE:
+			return {};
+		case DESERIALIZE:
+			return {};
 	}
 
 	return state;

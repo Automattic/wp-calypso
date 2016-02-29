@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -9,7 +10,9 @@ import { expect } from 'chai';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
-	RECEIPT_FETCH_FAILED
+	RECEIPT_FETCH_FAILED,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import { items } from '../reducer';
 
@@ -84,6 +87,32 @@ describe( 'reducer', () => {
 					hasLoadedFromServer: true,
 					isRequesting: false
 				}
+			} );
+		} );
+		describe( 'persistence', () => {
+			it( 'does not persist data because this is not implemented yet', () => {
+				const original = deepFreeze( {
+					11111111: {
+						data: { amount: 10 },
+						error: null,
+						hasLoadedFromServer: true,
+						isRequesting: true
+					}
+				} );
+				const state = items( original, { type: SERIALIZE } );
+				expect( state ).to.eql( {} );
+			} );
+			it( 'does not load persisted data because this is not implemented yet', () => {
+				const original = deepFreeze( {
+					11111111: {
+						data: { amount: 10 },
+						error: null,
+						hasLoadedFromServer: true,
+						isRequesting: true
+					}
+				} );
+				const state = items( original, { type: DESERIALIZE } );
+				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );

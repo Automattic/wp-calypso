@@ -102,16 +102,16 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#advancedSettings()', () => {
-		it( 'should persist state', () => {
+		it( 'does not persist data because this is not implemented yet', () => {
 			const settings = { 100658273: SAMPLE_ADVANCED_SETTINGS };
 			const state = advancedSettings( settings, { type: SERIALIZE } );
-			expect( state ).to.eql( settings );
+			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should load persisted state', () => {
+		it( 'does not load persisted data because this is not implemented yet', () => {
 			const settings = { 100658273: SAMPLE_ADVANCED_SETTINGS };
 			const state = advancedSettings( settings, { type: DESERIALIZE } );
-			expect( state ).to.eql( settings );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should index settings by site ID', () => {
