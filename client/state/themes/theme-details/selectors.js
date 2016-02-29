@@ -1,3 +1,6 @@
+/** @ssr-ready **/
+
 export function getThemeDetails( state, id ) {
-	return state.themes.themeDetails.get( id ).toJS();
+	const theme = state.themes.themeDetails.get( id );
+	return theme ? theme.toJS() : undefined;
 }

@@ -9,7 +9,8 @@ var express = require( 'express' ),
 	includes = require( 'lodash/includes' ),
 	React = require( 'react' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
-	pick = require( 'lodash/pick' );
+	pick = require( 'lodash/pick' ),
+	url = require( 'url' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
@@ -20,7 +21,10 @@ var config = require( 'config' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	createReduxStore = require( 'state' ).createReduxStore,
 	setSection = require( 'state/ui/actions' ).setSection,
-	ThemeSheetComponent = require( 'my-sites/themes/sheet' ).default;
+	ThemeSheet = require( 'my-sites/themes/sheet' ).default,
+	ThemeDetails = require( 'components/data/theme-details' ),
+	wpcom = require( 'lib/wp' ),
+	ThemesActionTypes = require( 'state/themes/action-types' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -35,7 +39,8 @@ var staticFiles = [
 	{ path: 'style-rtl.css' }
 ];
 
-var chunksByPath = {};
+var chunksByPath = {},
+	themeDetails = new Map();
 
 sections.forEach( function( section ) {
 	section.paths.forEach( function( path ) {
@@ -375,23 +380,64 @@ module.exports = function() {
 	} );
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		app.get( '/themes/:theme_slug', function( req, res ) {
-			const context = getDefaultContext( req );
+		app.get( '/themes/:theme_slug/:section?', function( req, res ) {
+			function updateRenderCache( themeSlug ) {
+				wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
+					if ( error ) {
+						debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
+						return;
+					}
+					const themeData = themeDetails.get( themeSlug );
+					if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
+						debug( 'caching', themeSlug );
+						themeDetails.set( themeSlug, data );
+						// update the render cache
+						renderThemeSheet( data );
+					}
+				} );
+			}
 
-			if ( config.isEnabled( 'server-side-rendering' ) ) {
-				i18n.initialize();
+			function renderThemeSheet( theme ) {
+				const context = {};
 				const store = createReduxStore();
+				store.dispatch( {
+					type: ThemesActionTypes.RECEIVE_THEME_DETAILS,
+					themeId: theme.id,
+					themeName: theme.name,
+					themeAuthor: theme.author,
+					themeScreenshot: theme.screenshot,
+					themePrice: theme.price ? theme.price.display : undefined,
+					themeDescription: theme.description,
+					themeDescriptionLong: theme.description_long,
+					themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
+				} );
 
 				store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
-				context.initialReduxState = pick( store.getState(), 'ui' );
+				context.initialReduxState = pick( store.getState(), 'ui', 'themes' );
 
-				const primary = <ThemeSheetComponent themeSlug={ req.params.theme_slug } />;
+				const primary = <ThemeDetails id={ theme.id }><ThemeSheet /></ThemeDetails>;
 
-				Object.assign( context, render( (
+				const element = (
 					<ReduxProvider store={ store }>
 						<LayoutLoggedOut primary={ primary } />
 					</ReduxProvider>
-				) ) );
+				);
+				const path = url.parse( req.url ).path;
+				const key = JSON.stringify( element ) + path + JSON.stringify( context.initialReduxState );
+				Object.assign( context, render( element, key ) );
+				return context;
+			};
+
+			const context = getDefaultContext( req );
+			if ( config.isEnabled( 'server-side-rendering' ) ) {
+				const theme = themeDetails.get( req.params.theme_slug );
+				if ( theme ) {
+					Object.assign( context, renderThemeSheet( theme ) );
+					debug( 'found theme!', theme.id );
+				}
+
+				i18n.initialize();
+				req.params.theme_slug && updateRenderCache( req.params.theme_slug ); // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
 			}
 
 			res.render( 'index.jade', context );

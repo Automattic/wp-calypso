@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -23,6 +25,10 @@ const ThemeDetailsData = React.createClass( {
 		// Connected props
 		name: React.PropTypes.string,
 		author: React.PropTypes.string,
+		screenshot: React.PropTypes.string,
+		description: React.PropTypes.string,
+		descriptionLong: React.PropTypes.string,
+		supportDocumentation: React.PropTypes.string,
 		fetchThemeDetails: React.PropTypes.func.isRequired
 	},
 
