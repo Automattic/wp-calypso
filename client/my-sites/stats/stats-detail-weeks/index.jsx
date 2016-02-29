@@ -145,7 +145,6 @@ export default React.createClass( {
 								{ displayValue }
 							</span></td>
 						);
-
 				} else {
 					cells.push( <td className="no-data" key={ 'change' + index }></td> );
 				}
