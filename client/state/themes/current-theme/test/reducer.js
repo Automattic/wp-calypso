@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import { fromJS } from 'immutable';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -17,6 +18,12 @@ import reducer, { initialState } from '../reducer';
 
 describe( 'current-theme reducer', () => {
 	describe( 'persistence', () => {
+		before( () => {
+			sinon.stub( console, 'warn' );
+		} );
+		after( () => {
+			console.warn.restore();
+		} );
 		it( 'persists state and converts to a plain JS object', () => {
 			const jsObject = deepFreeze( {
 				isActivating: true,
@@ -77,7 +84,7 @@ describe( 'current-theme reducer', () => {
 			expect( state ).to.eql( fromJS( jsObject ) );
 		} );
 
-		it.skip( 'should ignore loading data with invalid keys ', () => {
+		it( 'should ignore loading data with invalid keys ', () => {
 			const jsObject = deepFreeze( {
 				missingKey: true,
 				hasActivated: false,
@@ -97,14 +104,14 @@ describe( 'current-theme reducer', () => {
 			expect( state ).to.eql( initialState );
 		} );
 
-		it.skip( 'should ignore loading data with invalid values ', () => {
+		it( 'should ignore loading data with invalid values ', () => {
 			const jsObject = deepFreeze( {
 				isActivating: true,
-				hasActivated: 'foo',
+				hasActivated: true,
 				currentThemes: {
 					123456: {
 						name: 'my test theme',
-						id: 'testtheme',
+						id: 2345,
 						cost: {
 							currency: 'USD',
 							number: 0,
