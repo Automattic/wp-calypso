@@ -37,6 +37,10 @@ module.exports = React.createClass( {
 		return this.props.submitting || this.state.hidePassword;
 	},
 
+	focus: function() {
+		this.refs.textField.focus();
+	},
+
 	render: function() {
 
 		var toggleVisibilityClasses = classNames( {
@@ -48,6 +52,7 @@ module.exports = React.createClass( {
 			<div className="form-password-input">
 				<FormTextInput { ...omit( this.props, 'hideToggle' ) }
 					autoComplete="off"
+					ref="textField"
 					type={ this.hidden() ? 'password' : 'text' } />
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
