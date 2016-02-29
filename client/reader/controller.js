@@ -6,7 +6,6 @@ const ReactDom = require( 'react-dom' ),
 	page = require( 'page' ),
 	debug = require( 'debug' )( 'calypso:reader:controller' ),
 	trim = require( 'lodash/trim' ),
-	startsWith = require( 'lodash/startsWith' ),
 	moment = require( 'moment' ),
 	ReduxProvider = require( 'react-redux' ).Provider;
 
@@ -63,11 +62,10 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 		return;
 	}
 
-	const fullPostViewPrefix = '/read/post/';
+	const fullPostViewRegex = /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i;
 
-	if ( startsWith( oldContext.path, fullPostViewPrefix ) &&
-		! startsWith( newContext.path, fullPostViewPrefix ) ) {
-		oldContext.store.dispatch( hideReaderFullPost() );
+	if ( ( ! oldContext || oldContext.path.match( fullPostViewRegex ) ) && ! newContext.path.match( fullPostViewRegex ) ) {
+		newContext.store.dispatch( hideReaderFullPost() );
 	}
 } );
 
@@ -97,12 +95,50 @@ function setPageTitle( title ) {
 }
 
 module.exports = {
-	redirects: function( context, next ) {
+	prettyRedirects: function( context, next ) {
+		// Do we have a 'pretty' site or feed URL?
 		let redirect;
 		if ( context.params.blog_id ) {
 			redirect = readerRoute.getPrettySiteUrl( context.params.blog_id );
 		} else if ( context.params.feed_id ) {
 			redirect = readerRoute.getPrettyFeedUrl( context.params.feed_id );
+		}
+
+		if ( redirect ) {
+			return page.redirect( redirect );
+		}
+
+		next();
+	},
+
+	legacyRedirects: function( context, next ) {
+		const legacyPathRegexes = {
+			feedStream: /^\/read\/blog\/feed\/([0-9]+)$/i,
+			feedFullPost: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
+			blogStream: /^\/read\/blog\/id\/([0-9]+)$/i,
+			blogFullPost: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
+		};
+
+		if ( context.path.match( legacyPathRegexes.feedStream ) ) {
+			page.redirect( `/read/feeds/${context.params.feed_id}` );
+		} else if ( context.path.match( legacyPathRegexes.feedFullPost ) ) {
+			page.redirect( `/read/feeds/${context.params.feed_id}/posts/${context.params.post_id}` );
+		} else if ( context.path.match( legacyPathRegexes.blogStream ) ) {
+			page.redirect( `/read/blogs/${context.params.blog_id}` );
+		} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
+			page.redirect( `/read/blogs/${context.params.blog_id}/posts/${context.params.post_id}` );
+		}
+
+		next();
+	},
+
+	incompleteUrlRedirects: function( context, next ) {
+		let redirect;
+		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
+		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
+			redirect = `/read/feeds/${context.params.feed_id}`
+		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
+			redirect = `/read/blogs/${context.params.blog_id}`
 		}
 
 		if ( redirect ) {
@@ -169,7 +205,7 @@ module.exports = {
 
 	feedListing: function( context ) {
 		var FeedStream = require( 'reader/feed-stream' ),
-			basePath = '/read/blog/feed/:feed_id',
+			basePath = '/read/feeds/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
 			mcKey = 'blog';
@@ -204,7 +240,7 @@ module.exports = {
 
 	blogListing: function( context ) {
 		var SiteStream = require( 'reader/site-stream' ),
-			basePath = '/read/blog/id/:blog_id',
+			basePath = '/read/blogs/:blog_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
 			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
 			mcKey = 'blog';
@@ -241,7 +277,7 @@ module.exports = {
 		var FullPostDialog = require( 'reader/full-post' ),
 			feedId = context.params.feed,
 			postId = context.params.post,
-			basePath = '/read/post/feed/:feed_id/:feed_item_id',
+			basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 			fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;
@@ -279,7 +315,7 @@ module.exports = {
 		var FullPostDialog = require( 'reader/full-post' ),
 			blogId = context.params.blog,
 			postId = context.params.post,
-			basePath = '/read/post/id/:blog_id/:post_id',
+			basePath = '/read/blogs/:blog_id/posts/:post_id',
 			fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 		__lastTitle = TitleStore.getState().title;

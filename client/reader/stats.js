@@ -29,11 +29,11 @@ function getLocation() {
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';
 	}
-	if ( path.indexOf( '/read/blog/' ) === 0 ) {
-		return 'blog_page';
-	}
-	if ( path.indexOf( '/read/post/' ) === 0 ) {
+	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
+	}
+	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)$/i ) ) {
+		return 'blog_page';
 	}
 	if ( path.indexOf( '/read/list/' ) === 0 ) {
 		return 'list';

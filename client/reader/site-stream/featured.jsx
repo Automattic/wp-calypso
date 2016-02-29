@@ -83,7 +83,7 @@ export default React.createClass( {
 	},
 
 	getPostUrl( post ) {
-		return '/read/post/id/' + post.site_ID + '/' + post.ID;
+		return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
 	},
 
 	handleClick( postData ) {
