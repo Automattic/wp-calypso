@@ -1,51 +1,51 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
+var classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/find' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var activated = require( 'state/themes/actions' ).activated,
-	Dispatcher = require( 'dispatcher' ),
-	Card = require( 'components/card' ),
-	HeaderCake = require( 'components/header-cake' ),
-	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
+	Card = require( 'components/card' ),
 	ChargebackDetails = require( './chargeback-details' ),
+	CheckoutThankYouFooter = require( './footer' ),
 	CheckoutThankYouHeader = require( './header' ),
+	Dispatcher = require( 'dispatcher' ),
 	DomainMappingDetails = require( './domain-mapping-details' ),
 	DomainRegistrationDetails = require( './domain-registration-details' ),
-	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
+	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	GenericDetails = require( './generic-details' ),
+	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
 	GoogleAppsDetails = require( './google-apps-details' ),
+	HeaderCake = require( 'components/header-cake' ),
+	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isChargeback = require( 'lib/products-values' ).isChargeback,
 	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
 	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
 	isDomainRedemption = require( 'lib/products-values' ).isDomainRedemption,
 	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
-	isChargeback = require( 'lib/products-values' ).isChargeback,
-	isBusiness = require( 'lib/products-values' ).isBusiness,
 	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
-	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
-	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
 	isJetpackBusiness = require( 'lib/products-values' ).isJetpackBusiness,
+	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
 	isPlan = require( 'lib/products-values' ).isPlan,
 	isPremium = require( 'lib/products-values' ).isPremium,
 	isSiteRedirect = require( 'lib/products-values' ).isSiteRedirect,
 	isTheme = require( 'lib/products-values' ).isTheme,
-	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
-	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
 	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
+	Main = require( 'components/main' ),
 	plansPaths = require( 'my-sites/plans/paths' ),
 	PremiumPlanDetails = require( './premium-plan-details' ),
 	PurchaseDetail = require( './purchase-detail' ),
+	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	SiteRedirectDetails = require( './site-redirect-details' ),
 	upgradesPaths = require( 'my-sites/upgrades/paths' );
 
@@ -90,8 +90,8 @@ var CheckoutThankYou = React.createClass( {
 	redirectIfThemePurchased: function() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
 			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
+
 			page.redirect( '/design/' + this.props.selectedSite.slug );
-			return;
 		}
 	},
 
@@ -126,16 +126,9 @@ var CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<Card className="checkout-thank-you__get-support">
-					<div className="checkout-thank-you__get-support-text">
-						<h3 className="checkout-thank-you__support-heading">
-							{ this.translate( 'Questions? Need Help?' ) }
-						</h3>
-						<p className="checkout-thank-you__support-related-messages">
-							{ this.supportRelatedMessages() }
-						</p>
-					</div>
-				</Card>
+				<CheckoutThankYouFooter
+					isDataLoaded={ this.isDataLoaded() }
+					receipt={ this.props.receipt } />
 			</Main>
 		);
 	},
@@ -146,14 +139,6 @@ var CheckoutThankYou = React.createClass( {
 		}
 
 		return getPurchases( this.props ).some( isFreeTrial );
-	},
-
-	jetpackPlanWasPurchased: function() {
-		if ( ! this.props.receiptId ) {
-			return false;
-		}
-
-		return getPurchases( this.props ).some( isJetpackPlan );
 	},
 
 	/**
@@ -206,6 +191,7 @@ var CheckoutThankYou = React.createClass( {
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
 						selectedSite={ this.props.selectedSite } />
+
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -231,38 +217,6 @@ var CheckoutThankYou = React.createClass( {
 						domain={ domain } />
 				</div>
 			</div>
-		);
-	},
-
-	supportRelatedMessages: function() {
-		if ( ! this.isDataLoaded() ) {
-			return this.translate( 'Loading…' );
-		}
-
-		if ( this.jetpackPlanWasPurchased() ) {
-			return this.translate(
-				'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
-				'or {{contactLink}}contact us{{/contactLink}}.',
-				{
-					components: {
-						supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-						contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
-					}
-				}
-			);
-		}
-
-		return this.translate(
-			'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
-			'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
-			'or {{contactLink}}contact us{{/contactLink}}.',
-			{
-				components: {
-					supportDocsLink: <a href="http://support.wordpress.com" target="_blank" />,
-					forumLink: <a href="http://forums.wordpress.com" target="_blank" />,
-					contactLink: <a href={ '/help/contact' } />
-				}
-			}
 		);
 	}
 } );

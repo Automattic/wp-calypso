@@ -31,7 +31,7 @@ const CheckoutThankYouHeader = React.createClass( {
 
 	getText() {
 		if ( ! this.props.isDataLoaded ) {
-			return this.translate( 'Loading…' );
+			return this.translate( "You will receive an email confirmation shortly. What's next?" );
 		}
 
 		if ( isFreeTrial( this.props.primaryPurchase ) ) {
@@ -40,7 +40,7 @@ const CheckoutThankYouHeader = React.createClass( {
 					productName: this.props.primaryPurchase.productName
 				},
 				components: {
-					strong: <strong/>
+					strong: <strong />
 				}
 			} );
 		} else if ( isPlan( this.props.primaryPurchase ) ) {
@@ -48,27 +48,25 @@ const CheckoutThankYouHeader = React.createClass( {
 				args: { productName: this.props.primaryPurchase.productName },
 				components: { strong: <strong /> }
 			} );
-		} else {
-			return this.translate(
-				"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
-					args: {
-						productName: this.props.primaryPurchase.productName
-					},
-					components: {
-						strong: <strong/>
-					}
-				}
-			);
 		}
 
-		return this.translate( "You will receive an email confirmation shortly. What's next?" );
+		return this.translate(
+			"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
+				args: {
+					productName: this.props.primaryPurchase.productName
+				},
+				components: {
+					strong: <strong />
+				}
+			}
+		);
 	},
 
 	render() {
 		const classes = {
 			'checkout-thank-you-header': true,
 			'is-placeholder': ! this.props.isDataLoaded
-		}
+		};
 
 		return (
 			<div className={ classNames( classes ) }>
@@ -76,10 +74,12 @@ const CheckoutThankYouHeader = React.createClass( {
 					<span className="checkout-thank-you-header__icon">
 						<Gridicon icon="trophy" size={ 72 } />
 					</span>
+
 					<div className="checkout-thank-you-header__copy">
 						<h1 className="checkout-thank-you-header__heading">
 							{ this.getHeading() }
 						</h1>
+
 						<h2 className="checkout-thank-you-header__text">
 							{ this.getText() }
 						</h2>
