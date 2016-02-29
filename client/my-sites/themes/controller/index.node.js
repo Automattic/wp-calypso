@@ -12,13 +12,14 @@ import debugFactory from 'debug';
 import { ThemeSheet as ThemeSheetComponent } from 'my-sites/themes/sheet';
 import ThemeDetailsComponent from 'components/data/theme-details';
 import i18n from 'lib/mixins/i18n';
-import buildTitle from 'lib/screen-title/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
 import ThemesActionTypes from 'state/themes/action-types';
 import wpcom from 'lib/wp';
 import config from 'config';
+import { decodeEntities } from 'lib/formatting';
 
 const debug = debugFactory( 'calypso:themes' );
 let themeDetailsCache = new Map();
@@ -84,16 +85,20 @@ export function fetchThemeDetailsData( context, next ) {
 }
 
 export function details( context, next ) {
+	const { slug, section } = context.params;
 	const user = getCurrentUser( context.store.getState() );
+	const themeName = ( getThemeDetails( context.store.getState(), slug ) || false ).name;
+	const title = i18n.translate( '%(theme)s Theme', {
+		args: { theme: themeName },
+		textOnly: true
+	} );
 	const Head = user
 		? require( 'layout/head' )
 		: require( 'my-sites/themes/head' );
 	const props = {
-		themeSlug: context.params.slug,
-		contentSection: context.params.section,
-		title: buildTitle(
-			i18n.translate( 'Theme Details', { textOnly: true } )
-		),
+		themeSlug: slug,
+		contentSection: section,
+		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
 		isLoggedIn: !! user
 	};
 
