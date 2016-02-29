@@ -135,14 +135,12 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, callback 
 			} );
 
 			if ( error ) {
-				if ( error.message ) {
-					dispatch( errorNotice( i18n.translate(
-						'Invitation failed to send',
-						'Invitations failed to send', {
-							count: usernamesOrEmails.length
-						}
-					) ) );
-				}
+				dispatch( errorNotice( i18n.translate(
+					'Invitation failed to send',
+					'Invitations failed to send', {
+						count: usernamesOrEmails.length
+					}
+				) ) );
 				analytics.tracks.recordEvent( 'calypso_invite_send_failed' );
 			} else {
 				dispatch( successNotice( i18n.translate(
