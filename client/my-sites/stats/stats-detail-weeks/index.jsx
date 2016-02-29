@@ -124,6 +124,8 @@ export default React.createClass( {
 						'is-same': week.change === 0
 					} );
 
+					let displayValue = this.numberFormat( week.change, 2 ) + '%';
+
 					if ( week.change > 0 ) {
 						iconType = 'arrow-up';
 					}
@@ -132,14 +134,17 @@ export default React.createClass( {
 						iconType = 'arrow-down';
 					}
 
+					if ( week.change === 0 ) {
+						displayValue = this.translate( 'No change', { context: 'Stats: No change in stats value from prior period' } );
+					}
+
 					cells.push( <td key={ 'average' + index }>
 						{ this.numberFormat( week.average ) }
 							<span className={ 'stats-detail-weeks__value ' + changeClass } key={ 'change' + index }>
 								{ iconType ? <Gridicon icon={ iconType } size={ 18 } /> : null }
-								{ this.numberFormat( week.change, 2 ) }%
+								{ displayValue }
 							</span></td>
 						);
-
 				} else {
 					cells.push( <td className="no-data" key={ 'change' + index }></td> );
 				}
