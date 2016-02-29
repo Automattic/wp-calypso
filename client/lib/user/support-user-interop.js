@@ -11,9 +11,6 @@ import config from 'config';
 import store from 'store';
 import { supportUserTokenFetch, supportUserActivate, supportUserError } from 'state/support/actions';
 
-const debug = debugModule( 'calypso:support-user' );
-const STORAGE_KEY = 'boot_support_user';
-
 /**
  * Connects the Redux store and the low-level support user functions
  * of the wpcom library. When the support user token is changed in the
@@ -21,120 +18,118 @@ const STORAGE_KEY = 'boot_support_user';
  * error occurs in a wpcom API call, the error is forwarded to the
  * Redux store via an action. This also forces any data refreshes
  * that are required due to the change of user.
- *
- * @param {Object}  reduxStore  The global redux store instance
  */
-class SupportUser {
-	constructor() {
-		debug( 'Support User is enabled in this environment' );
 
-		this.reduxStoreReady = new Promise( ( resolve ) => {
-			this.setReduxStore = ( reduxStore ) => resolve( reduxStore );
-		} );
+const debug = debugModule( 'calypso:support-user' );
+const STORAGE_KEY = 'boot_support_user';
+
+export const isEnabled = () => config.isEnabled( 'support-user' );
+
+let _setReduxStore = null;
+const reduxStoreReady = new Promise( ( resolve ) => {
+	if ( ! isEnabled() ) {
+		return;
 	}
 
-	fetchToken( user, password ) {
-		debug( 'Fetching support user token' );
+	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
+} );
+export const setReduxStore = _setReduxStore;
 
-		return this.reduxStoreReady.then( ( reduxStore ) => {
-			reduxStore.dispatch( supportUserTokenFetch( user ) );
-
-			const setToken = ( response ) => {
-				this.rebootWithToken( response.username, response.token );
-			};
-
-			const errorFetchingToken = ( error ) => {
-				reduxStore.dispatch( supportUserError( error.message ) );
-			};
-
-			return wpcom.fetchSupportUserToken( user, password )
-				.then( setToken )
-				.catch( errorFetchingToken );
-		} );
-	}
-
-	/**
-	 * Reboot normally as the main user
-	 */
-	rebootNormally() {
-		debug( 'Rebooting Calypso normally' );
-
-		store.clear();
-		window.location.reload();
-	}
-
-	/**
-	  * Reboot Calypso as the support user
-	  * @param  {string} user  The support user's username
-	  * @param  {string} token The support token
-	  */
-	rebootWithToken( user, token ) {
-		debug( 'Rebooting Calypso with support user' );
-
-		store.set( STORAGE_KEY, { user, token } );
-		window.location.reload();
-	}
-
-	/**
-	 * Check if there's a support user to be activated on boot
-	 * @return {bool} true if a support user token is waiting to be injected on boot, false otherwise
-	 */
-	shouldBootToSupportUser() {
-		const supportUser = store.get( STORAGE_KEY );
-		if ( supportUser && supportUser.user && supportUser.token ) {
-			return true;
-		}
-
+/**
+ * Check if there's a support user to be activated on boot
+ * @return {bool} true if a support user token is waiting to be injected on boot, false otherwise
+ */
+export const shouldBoot = () => {
+	if ( ! isEnabled() ) {
 		return false;
 	}
 
-	/**
-	 * Inject the support user token into all following API calls
-	 */
-	boot() {
-		const { user, token } = store.get( STORAGE_KEY );
-		debug( 'Booting Calypso with support user', user );
-
-		const errorHandler = ( error ) => this._onTokenError( error );
-
-		wpcom.setSupportUserToken( user, token, errorHandler );
-
-		// boot() is called before the redux store is ready, so we need to
-		// wait for it to become available
-		this.reduxStoreReady.then( ( reduxStore ) => {
-			reduxStore.dispatch( supportUserActivate() );
-		} );
-	}
-
-	// Called when an API call fails due to a token error
-	_onTokenError( error ) {
-		debug( 'Deactivating support user and rebooting due to token error', error.message );
-		this.rebootNormally();
-	}
-
-	isEnabled() {
+	const supportUser = store.get( STORAGE_KEY );
+	if ( supportUser && supportUser.user && supportUser.token ) {
 		return true;
 	}
-}
 
-class DisabledSupportUser {
-	rebootNormally() {}
-	rebootWithToken() {}
-	setReduxStore() {}
-	shouldBootToSupportUser() {
-		return false;
+	return false;
+};
+
+/**
+ * Reboot normally as the main user
+ */
+export const rebootNormally = () => {
+	if ( ! isEnabled() ) {
+		return;
 	}
-	boot() {}
-	isEnabled() {
-		return false;
+
+	debug( 'Rebooting Calypso normally' );
+
+	store.clear();
+	window.location.reload();
+};
+
+/**
+  * Reboot Calypso as the support user
+  * @param  {string} user  The support user's username
+  * @param  {string} token The support token
+  */
+export const rebootWithToken = ( user, token ) => {
+	if ( ! isEnabled() ) {
+		return;
 	}
-}
 
-let supportUser = null;
-if ( config.isEnabled( 'support-user' ) ) {
-	supportUser = new SupportUser();
-} else {
-	supportUser = new DisabledSupportUser();
-}
+	debug( 'Rebooting Calypso with support user' );
 
-export default supportUser;
+	store.set( STORAGE_KEY, { user, token } );
+	window.location.reload();
+};
+
+// Called when an API call fails due to a token error
+const onTokenError = ( error ) => {
+	debug( 'Deactivating support user and rebooting due to token error', error.message );
+	rebootNormally();
+};
+
+/**
+ * Inject the support user token into all following API calls
+ */
+export const boot = () => {
+	if ( ! isEnabled() ) {
+		return;
+	}
+	
+	const { user, token } = store.get( STORAGE_KEY );
+	debug( 'Booting Calypso with support user', user );
+
+	const errorHandler = ( error ) => onTokenError( error );
+
+	wpcom.setSupportUserToken( user, token, errorHandler );
+
+	// boot() is called before the redux store is ready, so we need to
+	// wait for it to become available
+	reduxStoreReady.then( ( reduxStore ) => {
+		reduxStore.dispatch( supportUserActivate() );
+	} );
+};
+
+export const fetchToken = ( user, password ) => {
+	if ( ! isEnabled() ) {
+		return;
+	}
+
+	debug( 'Fetching support user token' );
+
+	return reduxStoreReady.then( ( reduxStore ) => {
+		reduxStore.dispatch( supportUserTokenFetch( user ) );
+
+		const setToken = ( response ) => {
+			rebootWithToken( response.username, response.token );
+		};
+
+		const errorFetchingToken = ( error ) => {
+			reduxStore.dispatch( supportUserError( error.message ) );
+		};
+
+		return wpcom.fetchSupportUserToken( user, password )
+			.then( setToken )
+			.catch( errorFetchingToken );
+	} );
+};
