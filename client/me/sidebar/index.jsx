@@ -39,7 +39,11 @@ module.exports = React.createClass( {
 		
 		// If user is using en locale, redirect to app promo page on sign out
 		const isEnLocale = ( currentUser && currentUser.localeSlug === 'en' );
-		userUtilities.logout( isEnLocale ? '/?apppromo' : '' );
+		let redirect = null;
+		if ( isEnLocale && !config.isEnabled( 'desktop' ) ) {
+			redirect = '/?apppromo';
+		}
+		userUtilities.logout( redirect );
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
 
