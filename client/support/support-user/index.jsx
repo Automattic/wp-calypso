@@ -25,7 +25,11 @@ const SupportUser = React.createClass( {
 		KeyboardShortcuts.off( 'open-support-user', this.onKeyboardShortcut );
 	},
 
-	onKeyboardShortcut: function() {
+	onKeyboardShortcut: function( e ) {
+		// Because the username field is auto-focused, this prevents
+		// the shortcut key being entered into the field
+		e.preventDefault();
+
 		if ( this.props.isSupportUser ) {
 			this.props.supportUserRestore();
 		} else {
