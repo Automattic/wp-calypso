@@ -18,6 +18,7 @@ import analytics from 'analytics';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {
+	getSitePostsForQueryIgnoringPage,
 	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePostsForQuery,
 	isSitePostsLastPageForQuery
@@ -39,6 +40,7 @@ const PostSelectorPosts = React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		query: PropTypes.object,
 		posts: PropTypes.array,
+		postsHierarchy: PropTypes.array,
 		page: PropTypes.number,
 		lastPage: PropTypes.bool,
 		loading: PropTypes.bool,
@@ -221,8 +223,8 @@ const PostSelectorPosts = React.createClass( {
 					null
 				}
 				<form className="post-selector__results">
-					{ this.props.posts
-						? this.renderHierarchy( this.props.posts )
+					{ this.props.postsHierarchy
+						? this.renderHierarchy( this.props.postsHierarchy )
 						: this.renderPlaceholder() }
 				</form>
 			</div>
@@ -233,7 +235,8 @@ const PostSelectorPosts = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 	return {
-		posts: getSitePostsHierarchyForQueryIgnoringPage( state, siteId, query ),
+		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		postsHierarchy: getSitePostsHierarchyForQueryIgnoringPage( state, siteId, query ),
 		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
 		loading: isRequestingSitePostsForQuery( state, siteId, query ),
 		postTypes: getPostTypes( state, siteId )
