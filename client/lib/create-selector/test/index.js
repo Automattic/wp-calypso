@@ -180,4 +180,14 @@ describe( '#createSelector', () => {
 
 		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be.true;
 	} );
+
+	it( 'should call dependant state getter with arguments', () => {
+		const getDeps = sinon.spy();
+		const memoizedSelector = createSelector( () => null, getDeps );
+		const state = {};
+
+		memoizedSelector( state, 1, 2, 3 );
+
+		expect( getDeps ).to.have.been.calledWithExactly( state, 1, 2, 3 );
+	} );
 } );
