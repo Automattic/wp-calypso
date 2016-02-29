@@ -77,8 +77,36 @@ export function siteRequests( state = {}, action ) {
 }
 
 /**
+ * Returns the updated post query requesting state after an action has been
+ * dispatched. The state reflects a mapping of serialized query to whether a
+ * network request is in-progress for that query.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function queryRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case POSTS_REQUEST:
+		case POSTS_REQUEST_SUCCESS:
+		case POSTS_REQUEST_FAILURE:
+			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: POSTS_REQUEST === action.type
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated post query state after an action has been dispatched.
- * The state reflects a mapping of serialized query key to query status.
+ * The state reflects a mapping of serialized query key to an array of post
+ * global IDs for the query, if a query response was successfully received.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -86,31 +114,13 @@ export function siteRequests( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case POSTS_REQUEST:
 		case POSTS_REQUEST_SUCCESS:
-		case POSTS_REQUEST_FAILURE:
-			const { type, siteId, posts } = action;
-			const serializedQuery = getSerializedPostsQuery( action.query, siteId );
-
-			state = Object.assign( {}, state, {
-				[ serializedQuery ]: Object.assign( {}, state[ serializedQuery ], {
-					// Only the initial request should be tracked as fetching.
-					// Success or failure types imply that fetching has completed.
-					fetching: ( POSTS_REQUEST === type )
-				} )
+			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: action.posts.map( ( post ) => post.global_ID )
 			} );
-
-			// When a request succeeds, map the received posts to state.
-			if ( POSTS_REQUEST_SUCCESS === type ) {
-				state[ serializedQuery ].posts = posts.map( ( post ) => post.global_ID );
-			}
-
-			return state;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
+
 	return state;
 }
 
@@ -144,6 +154,7 @@ export function queriesLastPage( state = {}, action ) {
 export default combineReducers( {
 	items,
 	siteRequests,
+	queryRequests,
 	queries,
 	queriesLastPage
 } );
