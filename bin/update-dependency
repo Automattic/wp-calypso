@@ -80,7 +80,6 @@ function updatePackage( packageJsonPath ) {
 			return;
 		}
 		curr = conf[dependencies][dep];
-
 		console.log( '  updating %j %j %s v%s -> v%s', packageJsonPath, dependencies, dep, curr, version );
 		conf[dependencies][dep] = version;
 		changed = true;
