@@ -4,74 +4,79 @@
  * Module dependencies.
  */
 
-var path = require('path');
-var fs = require('fs');
+var dirs;
+var path = require( 'path' );
+var fs = require( 'fs' );
 var join = path.join;
 var read = fs.readFileSync;
 var write = fs.writeFileSync;
-var readdir = fs.readdirSync;
 
 var dep = process.argv[2];
 var version = process.argv[3];
-if (!dep || !version) {
-	console.log('usage:');
-	console.log('  ' + process.argv.slice(0, 2).join(' ') + ' <dependencyName> <newVersion>');
-	return process.exit(2);
+
+if ( !dep || !version ) {
+	console.log( 'usage:' );
+	console.log( '  ' + process.argv.slice( 0, 2 ).join( ' ' ) + ' <dependencyName> <newVersion>' );
+	process.exit( 2 ); //eslint-disable-line no-process-exit
 }
 
 console.log();
-console.log('  updating %s to %s', dep, version);
-var dirs = [
+console.log( '  updating %s to %s', dep, version );
+
+dirs = [
 	'server',
 	'client'
 ];
 
-function visitPackageFiles(dir, callback) {
+function visitPackageFiles( dir, callback ) {
 	fs.readdir( dir, function( err, list ) {
-		if (err) {
+		if ( err ) {
 			callback( err );
 		}
 
-		list.forEach( function(file) {
-
+		list.forEach( function( file ) {
 			file = join( dir, file );
 
 			if ( /package\.json$/.test( file ) ) {
 				callback( null, file );
 			}
 
-			fs.stat(file, function( err, stat ) {
+			fs.stat( file, function( error, stat ) {
 				if ( stat && stat.isDirectory() ) {
-			  		visitPackageFiles( file, callback );
-			  	}
-			});
-		});
-	});
+					visitPackageFiles( file, callback );
+				}
+			} );
+		} );
+	} );
 }
 
-dirs.forEach( function ( dir ) {
-	visitPackageFiles( dir, function( err, path ) {
-		if ( err ) { console.log( err ); }
+dirs.forEach( function( dir ) {
+	visitPackageFiles( dir, function( err, packageJsonPath ) {
 		var conf;
+		var json;
+		if ( err ) {
+			console.log( err );
+		}
 		try {
-			conf = JSON.parse( read( path, 'utf8' ) );
-		} catch (e) {
+			conf = JSON.parse( read( packageJsonPath, 'utf8' ) );
+		} catch ( e ) {
 			//console.error('skipping %j: %s', name, e);
 			return;
 		}
-		[ 'dependencies', 'devDependencies' ].forEach(function (dependencies) {
-			if (! conf[dependencies] ) {
+		[ 'dependencies', 'devDependencies' ].forEach( function( dependencies ) {
+			var curr;
+			if ( !conf[dependencies] ) {
 				return;
 			}
-			if (! conf[dependencies][dep] ) {
+			if ( !conf[dependencies][dep] ) {
 				return;
 			}
-			var curr = conf[dependencies][dep];
-			console.log('  updating %j %j %s v%s -> v%s', path, dependencies, dep, curr, version);
+			curr = conf[dependencies][dep];
+			console.log( '  updating %j %j %s v%s -> v%s', packageJsonPath, dependencies, dep, curr, version );
 			conf[dependencies][dep] = version;
-		});
-		var json = JSON.stringify(conf, null, 2);
-		write(path, json + '\n');
-	});
-});
-console.log('');
+		} );
+		json = JSON.stringify( conf, null, 2 );
+		write( packageJsonPath, json + '\n' );
+	} );
+} );
+console.log( '' );
