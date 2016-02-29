@@ -6,10 +6,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
-import sortBy from 'lodash/sortBy';
-import filter from 'lodash/filter';
 import camelCase from 'lodash/camelCase';
-import clone from 'lodash/clone';
 import throttle from 'lodash/throttle';
 import get from 'lodash/get';
 
@@ -19,10 +16,10 @@ import get from 'lodash/get';
 import NoResults from './no-results';
 import analytics from 'analytics';
 import Search from './search';
-import TreeConvert from 'lib/tree-convert';
 import { decodeEntities } from 'lib/formatting';
 import {
 	getSitePostsForQueryIgnoringPage,
+	getSitePostsHierarchyForQueryIgnoringPage,
 	isRequestingSitePostsForQuery,
 	isSitePostsLastPageForQuery
 } from 'state/posts/selectors';
@@ -35,34 +32,6 @@ import QueryPosts from 'components/data/query-posts';
 */
 const SEARCH_DEBOUNCE_TIME_MS = 500;
 const SCROLL_THROTTLE_TIME_MS = 400;
-const treeConverter = new TreeConvert( 'ID' );
-
-function sortBranch( items ) {
-	let menuOrders = filter( items, function( item ) {
-		return item.menu_order > 0;
-	} );
-
-	return sortBy( items, function( item ) {
-		if ( menuOrders.length ) {
-			return item.menu_order;
-		}
-
-		return item.title.toLowerCase();
-	} );
-}
-
-function buildTree( items ) {
-	const sortedPosts = [];
-
-	// clone objects to prevent mutating store data, set parent to number
-	items.forEach( function( item ) {
-		let post = clone( item );
-		post.parent = post.parent ? post.parent.ID : 0;
-		sortedPosts.push( post );
-	} );
-
-	return treeConverter.treeify( sortedPosts );
-}
 
 const PostSelectorPosts = React.createClass( {
 	displayName: 'PostSelectorPosts',
@@ -71,6 +40,7 @@ const PostSelectorPosts = React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		query: PropTypes.object,
 		posts: PropTypes.array,
+		postsHierarchy: PropTypes.array,
 		page: PropTypes.number,
 		lastPage: PropTypes.bool,
 		loading: PropTypes.bool,
@@ -85,9 +55,7 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	getInitialState() {
-		return {
-			searchTerm: null
-		};
+		return { searchTerm: null };
 	},
 
 	getDefaultProps() {
@@ -179,12 +147,11 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	renderHierarchy( items, isRecursive ) {
-		const sortedItems = this.props.lastPage ? sortBranch( items ) : items;
 		const listClass = isRecursive ? 'post-selector__nested-list' : 'post-selector__list';
 
 		return (
 			<ul className={ listClass }>
-				{ sortedItems.map( this.renderItem, this ) }
+				{ items.map( this.renderItem, this ) }
 				{
 					this.props.loading && ! isRecursive ?
 					this.renderPlaceholderItem() :
@@ -220,12 +187,6 @@ const PostSelectorPosts = React.createClass( {
 	render() {
 		const numberPosts = this.props.posts ? this.props.posts.length : 0;
 		const showSearch = ( numberPosts > this.props.searchThreshold ) || this.state.searchTerm;
-		let posts;
-
-		if ( this.props.posts ) {
-			// Only build tree if all pages are loaded, and not searching
-			posts = ( this.props.lastPage && ! this.state.searchTerm ) ? buildTree( this.props.posts ) : this.props.posts;
-		}
 
 		let showTypeLabels;
 		if ( 'boolean' === typeof this.props.showTypeLabels ) {
@@ -262,7 +223,9 @@ const PostSelectorPosts = React.createClass( {
 					null
 				}
 				<form className="post-selector__results">
-					{ posts ? this.renderHierarchy( posts ) : this.renderPlaceholder() }
+					{ this.props.postsHierarchy
+						? this.renderHierarchy( this.props.postsHierarchy )
+						: this.renderPlaceholder() }
 				</form>
 			</div>
 		);
@@ -273,6 +236,7 @@ export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 	return {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		postsHierarchy: getSitePostsHierarchyForQueryIgnoringPage( state, siteId, query ),
 		lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
 		loading: isRequestingSitePostsForQuery( state, siteId, query ),
 		postTypes: getPostTypes( state, siteId )

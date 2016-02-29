@@ -168,4 +168,16 @@ describe( '#createSelector', () => {
 
 		expect( selector ).to.have.been.calledTwice;
 	} );
+
+	it( 'should accept an optional custom cache key generating function', () => {
+		const getSitePostsWithCustomGetCacheKey = createSelector(
+			selector,
+			( state ) => state.posts,
+			( state, siteId ) => `CUSTOM${ siteId }`
+		);
+
+		getSitePostsWithCustomGetCacheKey( { posts: {} }, 2916284 );
+
+		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be.true;
+	} );
 } );

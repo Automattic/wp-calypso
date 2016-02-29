@@ -2,10 +2,12 @@
  * External dependencies
  */
 import range from 'lodash/range';
+import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
  */
+import TreeConvert from 'lib/tree-convert';
 import {
 	getSerializedPostsQuery,
 	getSerializedPostsQueryWithoutPage
@@ -130,6 +132,38 @@ export function getSitePostsForQueryIgnoringPage( state, siteId, query ) {
 		return memo.concat( getSitePostsForQuery( state, siteId, pageQuery ) || [] );
 	}, [] );
 }
+
+/**
+ * Returns an array of posts for the posts query, including all known queried
+ * pages, preserving hierarchy. Returns null if no posts have been received.
+ * Hierarchy is represented by `parent` and `items` properties on each post.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Object} query  Post query object
+ * @return {?Array}        Hierarchical posts for the post query
+ */
+export const getSitePostsHierarchyForQueryIgnoringPage = createSelector(
+	( state, siteId, query ) => {
+		let sitePosts = getSitePostsForQueryIgnoringPage( state, siteId, query );
+		if ( ! sitePosts ) {
+			return sitePosts;
+		}
+
+		// For each site post object, add `parent` and `order` properties.
+		// These are used by the TreeConvert library to build the hierarchy.
+		const treeReadySitePosts = sitePosts.map( ( post, i ) => {
+			return Object.assign( {}, post, {
+				parent: post.parent ? post.parent.ID : 0,
+				order: i
+			} );
+		} );
+
+		return ( new TreeConvert( 'ID' ) ).treeify( treeReadySitePosts );
+	},
+	( state ) => [ state.posts.queries ],
+	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
+);
 
 /**
  * Returns true if a request is in progress for the specified site post, or
