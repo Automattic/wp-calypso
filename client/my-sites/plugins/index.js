@@ -11,10 +11,8 @@ var controller = require( 'my-sites/controller' ),
 	pluginsController = require( './controller' );
 
 module.exports = function() {
-	if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-		page( '/plugins/browse/:category/:site', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
-		page( '/plugins/browse/:siteOrCategory?', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
-	}
+	page( '/plugins/browse/:category/:site', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
+	page( '/plugins/browse/:siteOrCategory?', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
 
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page( '/plugins/setup', controller.siteSelection, controller.navigation, pluginsController.setupPlugins );

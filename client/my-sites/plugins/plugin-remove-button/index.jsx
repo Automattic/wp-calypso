@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -155,8 +154,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( this.props.plugin.slug === 'jetpack' ||
-				! config.isEnabled( 'manage/plugins/browser' ) ) {
+		if ( this.props.plugin.slug === 'jetpack' ) {
 			return null;
 		}
 

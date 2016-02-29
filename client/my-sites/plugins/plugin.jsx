@@ -209,12 +209,9 @@ const SinglePlugin = React.createClass( {
 	},
 
 	getPluginDoesNotExistView( selectedSite ) {
-		let actionUrl,
-			action;
-		if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-			actionUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
+		let actionUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' ),
 			action = this.translate( 'Browse all plugins' );
-		}
+
 		return (
 			<MainComponent>
 				<JetpackManageErrorPage

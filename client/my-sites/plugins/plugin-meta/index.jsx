@@ -118,7 +118,7 @@ export default React.createClass( {
 	},
 
 	getInstallButton() {
-		if ( this.hasInstallButton() && config.isEnabled( 'manage/plugins/browser' ) ) {
+		if ( this.hasInstallButton() ) {
 			return <PluginInstallButton { ...this.props } />;
 		}
 	},
