@@ -34,7 +34,8 @@ const DnsAddNew = React.createClass( {
 	getInitialState() {
 		return {
 			show: false,
-			fields: null
+			fields: null,
+			type: 'A'
 		};
 	},
 
@@ -54,13 +55,9 @@ const DnsAddNew = React.createClass( {
 		return assign( {}, Component.initialFields, { type } );
 	},
 
-	getInitialFields() {
-		return this.getFieldsForType( 'A' );
-	},
-
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
-			initialFields: this.getInitialFields(),
+			initialFields: this.getFieldsForType( this.state.type ),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
 				onComplete( null, validateAllFields( fieldValues, this.props.selectedDomainName ) );
@@ -91,7 +88,7 @@ const DnsAddNew = React.createClass( {
 				formState.getAllFieldValues( this.state.fields ),
 				this.props.selectedDomainName
 			);
-			this.formStateController.resetFields( this.getInitialFields() );
+			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
 
 			upgradesActions.addDns( this.props.selectedDomainName, normalizedData, ( error ) => {
 				if ( error ) {
@@ -107,14 +104,17 @@ const DnsAddNew = React.createClass( {
 	},
 
 	onChange( event ) {
+		const { name, value } = event.target,
+			skipNormalization = name === 'data' && this.state.type === 'TXT';
 		this.formStateController.handleFieldChange( {
-			name: event.target.name,
-			value: event.target.value.trim().toLowerCase()
+			name,
+			value: skipNormalization ? value : value.trim().toLowerCase(),
 		} );
 	},
 
 	changeType( event ) {
 		const fields = this.getFieldsForType( event.target.value );
+		this.setState( { type: event.target.value } );
 		this.formStateController.resetFields( fields );
 	},
 
