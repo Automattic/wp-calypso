@@ -10,7 +10,7 @@ import JetpackLogo from 'components/jetpack-logo';
 import Card from 'components/card';
 
 module.exports = React.createClass( {
-	displayName: 'JetpackLogos',
+	displayName: 'JetpackLogo',
 
 	render() {
 		return (
