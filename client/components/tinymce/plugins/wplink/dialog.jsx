@@ -23,6 +23,7 @@ import PostSelector from 'my-sites/post-selector';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 import { decodeEntities } from 'lib/formatting';
+import { recordEvent, recordStat } from 'lib/posts/stats';
 
 /**
  * Module variables
@@ -278,6 +279,9 @@ var LinkDialog = React.createClass( {
 				linkText: decodeEntities( post.title )
 			} );
 		}
+
+		recordStat( 'link-existing-content' );
+		recordEvent( 'Set link to existing content' );
 
 		this.setState( state );
 	},
