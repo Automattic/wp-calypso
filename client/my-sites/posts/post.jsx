@@ -193,9 +193,9 @@ module.exports = React.createClass({
 		}
 
 		if ( this.props.post.format === 'quote' ) {
-			excerptElement = <PostExcerpt text={ this.getTrimmedExcerpt() } className="post__quote" />;
+			excerptElement = <PostExcerpt content={ this.getTrimmedExcerpt() } className="post__quote" />;
 		} else {
-			excerptElement = <PostExcerpt text={ this.getTrimmedExcerpt() } />;
+			excerptElement = <PostExcerpt content={ this.getTrimmedExcerpt() } />;
 		}
 
 		return (
