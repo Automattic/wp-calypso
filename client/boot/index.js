@@ -1,9 +1,4 @@
 /**
- * Internal dependencies
- */
-import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
-
-/**
  * External dependencies
  */
 var React = require( 'react' ),
@@ -50,6 +45,7 @@ var config = require( 'config' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
+	supportUser = require( 'lib/user/support-user-interop' ),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -171,7 +167,7 @@ function reduxStoreReady( reduxStore ) {
 
 	bindWpLocaleState( reduxStore );
 
-	setSupportUserReduxStore( reduxStore );
+	supportUser.setReduxStore( reduxStore );
 
 	Layout = require( 'layout' );
 
