@@ -19,10 +19,10 @@
 		"test": "make test"
 	},
 	"devDependencies": {
-		"babel": "^5.8.12",
-		"babel-core": "^5.8.12",
-		"babel-runtime": "^5.8.12",
-		"mocha": "^2.3.4"
+		"babel": "5.8.12",
+		"babel-core": "5.8.12",
+		"babel-runtime": "5.8.12",
+		"mocha": "2.3.4"
 	},
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
@@ -32,9 +32,9 @@
 		"test": "test"
 	},
 	"dependencies": {
-		"react": "^0.14.3",
-		"react-addons-create-fragment": "^0.14.3",
-		"react-dom": "^0.14.3"
+		"react": "0.14.3",
+		"react-addons-create-fragment": "0.14.3",
+		"react-dom": "0.14.3"
 	},
 	"author": "Bob Ralian <bob.ralian@gmail.com> (http://github.com/rralian)",
 	"license": "GPL-2.0"
