@@ -34,15 +34,13 @@ import {
 	isDomainRegistration,
 	isFreeTrial,
 	isGoogleApps,
-	isJetpackBusiness,
-	isJetpackPremium,
+	isJetpackPlan,
 	isPlan,
 	isPremium,
 	isSiteRedirect,
 	isTheme
 } from 'lib/products-values';
-import JetpackBusinessPlanDetails from './jetpack-business-plan-details';
-import JetpackPremiumPlanDetails from './jetpack-premium-plan-details';
+import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
@@ -163,10 +161,8 @@ const CheckoutThankYou = React.createClass( {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 
-			if ( purchases.some( isJetpackPremium ) ) {
-				return [ JetpackPremiumPlanDetails, find( purchases, isJetpackPremium ) ];
-			} else if ( purchases.some( isJetpackBusiness ) ) {
-				return [ JetpackBusinessPlanDetails, find( purchases, isJetpackBusiness ) ];
+			if ( purchases.some( isJetpackPlan ) ) {
+				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
