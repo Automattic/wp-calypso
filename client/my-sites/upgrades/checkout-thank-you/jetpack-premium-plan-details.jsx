@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 const JetpackPremiumPlanDetails = () => {
 	return (

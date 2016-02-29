@@ -8,7 +8,7 @@ import React from 'react';
  */
 import config from 'config';
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',

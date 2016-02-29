@@ -9,7 +9,7 @@ import React from 'react';
 import { getDomainManagementUrl } from './utils';
 import { getPrimaryDomain, isSubdomain } from 'lib/domains';
 import { isPlan } from 'lib/products-values';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 export default React.createClass( {
 	getInitialState: function() {

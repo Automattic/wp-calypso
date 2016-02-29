@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { isPlan } from 'lib/products-values';
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 const ChargebackDetails = ( { selectedSite } ) => {
 	return (

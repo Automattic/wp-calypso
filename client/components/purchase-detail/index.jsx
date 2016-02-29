@@ -19,19 +19,19 @@ const PurchaseDetail = ( {
 	target,
 	title
 } ) => {
-	const classes = classNames( 'checkout-thank-you__purchase-detail', {
+	const classes = classNames( 'purchase-detail', {
 		'is-placeholder': isPlaceholder
 	} );
 
 	return (
 		<div className={ classes }>
-			{ icon && <div className="checkout-thank-you__purchase-detail-icon"><Gridicon icon={ icon } /></div> }
-			<div className="checkout-thank-you__purchase-detail-text">
-				<h3 className="checkout-thank-you__purchase-detail-title">{ title }</h3>
-				<p className="checkout-thank-you__purchase-detail-description">{ description }</p>
+			{ icon && <div className="purchase-detail__icon"><Gridicon icon={ icon } /></div> }
+			<div className="purchase-detail__text">
+				<h3 className="purchase-detail__title">{ title }</h3>
+				<p className="purchase-detail__description">{ description }</p>
 			</div>
 			<Button
-				className="checkout-thank-you__purchase-detail-button"
+				className="purchase-detail__button"
 				href={ href }
 				target={ target }
 				primary>
