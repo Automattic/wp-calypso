@@ -232,7 +232,7 @@ module.exports = React.createClass( {
 	},
 
 	isPostFullScreen: function() {
-		return !! window.location.href.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
+		return !! window.location.pathname.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
 	},
 
 	selectNextItem: function() {
