@@ -66,6 +66,13 @@ const flows = {
 		lastModified: '2016-01-21'
 	},
 
+	free: {
+		steps: [ 'themes', 'domains', 'user' ],
+		destination: getSiteDestination,
+		description: 'Create an account and a blog and default to the free plan.',
+		lastModified: '2016-02-29'
+	},
+
 	businessv2: {
 		steps: ['domains', 'user' ],
 		destination: function( dependencies ) {
