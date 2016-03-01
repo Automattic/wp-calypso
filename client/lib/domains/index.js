@@ -22,26 +22,24 @@ function ValidationError( code ) {
 
 inherits( ValidationError, Error );
 
-function canAddGoogleApps( domain ) {
-	var tld = domain.split( '.' )[ 1 ],
+function canAddGoogleApps( domainName ) {
+	var tld = domainName.split( '.' )[ 1 ],
 		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
-			return includes( domain, phrase );
+			return includes( domainName, phrase );
 		} );
 
 	if ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase ) {
 		return false;
 	}
-
-	return true;
 }
 
-function canRegister( domain, onComplete ) {
-	if ( ! domain ) {
+function canRegister( domainName, onComplete ) {
+	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domain, function( serverError, data ) {
+	wpcom.undocumented().isDomainAvailable( domainName, function( serverError, data ) {
 		var errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
@@ -61,13 +59,13 @@ function canRegister( domain, onComplete ) {
 	} );
 }
 
-function canMap( domain, onComplete ) {
-	if ( ! domain ) {
+function canMap( domainName, onComplete ) {
+	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
 	}
 
-	wpcom.undocumented().isDomainMappable( domain, function( serverError, data ) {
+	wpcom.undocumented().isDomainMappable( domainName, function( serverError, data ) {
 		var errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
@@ -83,13 +81,13 @@ function canMap( domain, onComplete ) {
 	} );
 }
 
-function canRedirect( siteId, domain, onComplete ) {
-	if ( ! domain ) {
+function canRedirect( siteId, domainName, onComplete ) {
+	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domain, function( serverError, data ) {
+	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
 		} else if ( ! data.can_redirect ) {
@@ -106,12 +104,12 @@ function getPrimaryDomain( siteId, onComplete ) {
 	} );
 }
 
-function getFixedDomainSearch( domain ) {
-	return domain.trim().toLowerCase().replace( /^(https?:\/\/)?(www\.)?/, '' ).replace( /\/$/, '' );
+function getFixedDomainSearch( domainName ) {
+	return domainName.trim().toLowerCase().replace( /^(https?:\/\/)?(www\.)?/, '' ).replace( /\/$/, '' );
 }
 
-function isSubdomain( domain ) {
-	return domain.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
+function isSubdomain( domainName ) {
+	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
 function isInitialized( state, siteId ) {
