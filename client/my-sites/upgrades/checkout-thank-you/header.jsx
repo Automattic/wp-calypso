@@ -22,7 +22,7 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( isFreeTrial( this.props.primaryPurchase ) ) {
+		if ( this.props.primaryPurchase && isFreeTrial( this.props.primaryPurchase ) ) {
 			return this.translate( 'Way to go, your 14 day free trial starts now!' );
 		}
 
@@ -30,7 +30,7 @@ const CheckoutThankYouHeader = React.createClass( {
 	},
 
 	getText() {
-		if ( ! this.props.isDataLoaded ) {
+		if ( ! this.props.isDataLoaded || ! this.props.primaryPurchase ) {
 			return this.translate( "You will receive an email confirmation shortly. What's next?" );
 		}
 
