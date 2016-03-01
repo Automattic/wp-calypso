@@ -12,6 +12,8 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	tinymce = require( 'tinymce/tinymce' );
 
+import { Provider as ReduxProvider } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -19,6 +21,23 @@ var LinkDialog = require( './dialog' );
 
 function wpLink( editor ) {
 	var node, toolbar;
+
+	function render( visible = true ) {
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
+				React.createElement( LinkDialog, {
+					visible: visible,
+					editor: editor,
+					onClose: () => render( false )
+				} )
+			),
+			node
+		);
+
+		if ( ! visible ) {
+			editor.focus();
+		}
+	}
 
 	editor.on( 'init', function() {
 		node = editor.getContainer().appendChild(
@@ -32,15 +51,7 @@ function wpLink( editor ) {
 		node = null;
 	} );
 
-	editor.addCommand( 'WP_Link', function() {
-		ReactDom.render(
-			React.createElement( LinkDialog, {
-				visible: true,
-				editor: editor
-			} ),
-			node
-		);
-	} );
+	editor.addCommand( 'WP_Link', render );
 
 	// WP default shortcut
 	editor.addShortcut( 'access+a', '', 'WP_Link' );

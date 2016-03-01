@@ -3,6 +3,7 @@
  */
 import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -24,6 +25,18 @@ import { DEFAULT_POST_QUERY } from './constants';
 export function getPost( state, globalId ) {
 	return state.posts.items[ globalId ];
 }
+
+/**
+ * Returns an array of post objects by site ID.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @return {Array}         Site posts
+ */
+export const getSitePosts = createSelector(
+	( state, siteId ) => filter( state.posts.items, { site_ID: siteId } ),
+	( state ) => [ state.posts.items ]
+);
 
 /**
  * Returns an array of posts for the posts query, or null if no posts have been
