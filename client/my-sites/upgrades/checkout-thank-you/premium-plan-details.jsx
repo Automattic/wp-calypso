@@ -10,13 +10,13 @@ import config from 'config';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
 
-const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
+const PremiumPlanDetails = ( { selectedSite } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
 		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 
 	return (
 		<div>
-			{ ! isFreeTrial && <PurchaseDetail
+			<PurchaseDetail
 				icon="globe"
 				title={ i18n.translate( 'Get your custom domain' ) }
 				description={
@@ -31,7 +31,6 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 				}
 				buttonText={ i18n.translate( 'Claim your free domain' ) }
 				href={ '/domains/add/' + selectedSite.slug } />
-			}
 
 			<PurchaseDetail
 				icon="customize"
@@ -63,7 +62,6 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 };
 
 PremiumPlanDetails.propTypes = {
-	isFreeTrial: React.PropTypes.bool.isRequired,
 	selectedSite: React.PropTypes.object.isRequired
 };
 

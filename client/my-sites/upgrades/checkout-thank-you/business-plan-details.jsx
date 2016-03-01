@@ -9,10 +9,10 @@ import React from 'react';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
 
-const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
+const BusinessPlanDetails = ( { selectedSite } ) => {
 	return (
 		<div>
-			{ ! isFreeTrial && <PurchaseDetail
+			<PurchaseDetail
 				icon="globe"
 				title={ i18n.translate( 'Get your custom domain' ) }
 				description={
@@ -27,7 +27,6 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 				}
 				buttonText={ i18n.translate( 'Claim your free domain' ) }
 				href={ '/domains/add/' + selectedSite.slug } />
-			}
 
 			<PurchaseDetail
 				icon="customize"
@@ -47,7 +46,6 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 };
 
 BusinessPlanDetails.propTypes = {
-	isFreeTrial: React.PropTypes.bool.isRequired,
 	selectedSite: React.PropTypes.object.isRequired
 };
 
