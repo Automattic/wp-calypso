@@ -7,6 +7,8 @@ import get from 'lodash/get';
 import debugModule from 'debug';
 import includes from 'lodash/includes';
 import some from 'lodash/some';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -30,7 +32,7 @@ import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-vali
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );
 
-export default React.createClass( {
+const InvitePeople = React.createClass( {
 	displayName: 'InvitePeople',
 
 	componentDidMount() {
@@ -138,7 +140,7 @@ export default React.createClass( {
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
 		this.setState( { sendingInvites: true } );
-		sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, ( error, data ) => {
+		this.props.sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, ( error, data ) => {
 			if ( error ) {
 				debug( 'Send invite error:' + JSON.stringify( error ) );
 			} else {
@@ -253,3 +255,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { sendInvites }, dispatch )
+)( InvitePeople );

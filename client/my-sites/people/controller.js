@@ -21,6 +21,7 @@ import UsersActions from 'lib/users/actions';
 import PeopleLogStore from 'lib/people/log-store';
 import titleActions from 'lib/screen-title/actions';
 import InvitePeople from './invite-people';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module variables
@@ -79,11 +80,12 @@ function renderInvitePeople( context ) {
 
 	titleActions.setTitle( i18n.translate( 'Invite People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( InvitePeople, {
 			site: sites.getSelectedSite()
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
