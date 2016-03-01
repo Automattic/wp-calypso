@@ -20,6 +20,46 @@ const localforage = getLocalForage();
 const debug = debugFactory( 'calypso:sync-handler' );
 
 /**
+ * Generate a key from the given param object
+ *
+ * @param {Object} params - request parameters
+ * @param {Boolean} applyHash - codificate key when it's true
+ * @return {String} request key
+ */
+export const generateKey = ( params, applyHash = true ) => {
+	var key = `${params.apiVersion || ''}-${params.method}-${params.path}`;
+
+	if ( params.query ) {
+		key += '-' + params.query;
+	}
+
+	if ( applyHash ) {
+		key = new Hashes.SHA1().hex( key );
+	}
+
+	key = 'sync-record-' + key;
+
+	debug( 'key: %o', key );
+	return key;
+}
+
+/**
+ * Detect pagination changes in local vs request response bodies
+ * @param  {Object} res - response object as passed from promise
+ * @param  {Object} localResponseBody - local response body
+ * @return {Boolean} returns whether pagination has changed
+ */
+export const hasPaginationChanged = ( res, localResponseBody ) => {
+	if ( ! res || ! res.meta || ! res.meta.next_page ) {
+		return false;
+	}
+	if ( localResponseBody && localResponseBody.meta && localResponseBody.meta.next_page === res.meta.next_page ) {
+		return false;
+	}
+	return true;
+}
+
+/**
  * SyncHandler class
  */
 export class SyncHandler {
@@ -32,7 +72,7 @@ export class SyncHandler {
 	 */
 	constructor( handler ) {
 		// expose `syncHandler` global var (dev mode)
-		if ( 'development' === config( 'env' ) ) {
+		if ( 'development' === config( 'env' ) && typeof window !== 'undefined' ) {
 			window.syncHandler = this;
 		}
 
@@ -59,7 +99,7 @@ export class SyncHandler {
 			}
 
 			// generate an unique resource key
-			const key = this.generateKey( reqParams );
+			const key = generateKey( reqParams );
 
 			debug( 'starting to get resource ...' );
 
@@ -72,7 +112,7 @@ export class SyncHandler {
 			const localResponseHandler = localRecord => {
 				// let's be optimistic
 				if ( localRecord ) {
-					debug( '%o stored(%o). Let\'s be optimistic ...\n', path, localRecord );
+					debug( 'local callback run => %o, params (%o), response (%o)', path, reqParams, localRecord );
 					// try/catch in case cached record does not match expected schema
 					try {
 						callback( null, localRecord.body );
@@ -99,18 +139,22 @@ export class SyncHandler {
 			 * Fetch data from WP.com.
 			 * Run the double callback.
 			 *
+			 * @param {Object} localRecord - local response body
 			 * @return {Promise} promise
 			 */
-			const networkFetch = () => {
+			const networkFetch = localRecord => {
 				return new Promise( ( resolve, reject ) => {
 					handler( reqParams, ( err, res ) => {
 						if ( err ) {
 							return reject( err );
 						}
 
-						resolve( res );
+						resolve( {
+							localResponse: localRecord,
+							serverResponse: res,
+						} );
 
-						debug( 'second callback run: %o, %o', reqParams, res );
+						debug( 'server callback run => %o, params (%o), response (%o)', path, reqParams, res );
 						callback( null, res );
 					} );
 				} );
@@ -120,9 +164,10 @@ export class SyncHandler {
 			 * Add/Override the data gotten from the
 			 * WP.com server-side response.
 			 *
-			 * @param {Object} serverResponse - server response object
+			 * @param {Object} combinedResponse - object with local and server responses
 			 */
-			const cacheResponse = serverResponse => {
+			const cacheResponse = combinedResponse => {
+				const { serverResponse } = combinedResponse;
 				// get response object without _headers property
 				let responseWithoutHeaders = Object.assign( {}, serverResponse );
 				delete responseWithoutHeaders._headers;
@@ -159,36 +204,23 @@ export class SyncHandler {
 				}
 			};
 
+			const checkPagination = combinedResponse => {
+				if ( ! combinedResponse ) {
+					return;
+				}
+				const { serverResponse, localResponse } = combinedResponse;
+				if ( hasPaginationChanged( serverResponse, localResponse.body ) ) {
+					// clearPageResultsForSite( reqParams )
+				}
+				return serverResponse;
+			};
 			// request/response workflow
 			this.retrieveRecord( key )
 				.then( localResponseHandler, recordErrorHandler )
 				.then( networkFetch )
-				.then( cacheResponse, networkErrorHandler );
+				.then( cacheResponse, networkErrorHandler )
+				.then( checkPagination );
 		};
-	}
-
-	/**
-	 * Generate a key from the given param object
-	 *
-	 * @param {Object} params - request parameters
-	 * @param {Boolean} applyHash - codificate key when it's true
-	 * @return {String} request key
-	 */
-	generateKey( params, applyHash = true ) {
-		var key = `${params.apiVersion || ''}-${params.method}-${params.path}`;
-
-		if ( params.query ) {
-			key += '-' + params.query;
-		}
-
-		if ( applyHash ) {
-			key = new Hashes.SHA1().hex( key );
-		}
-
-		key = 'sync-record-' + key;
-
-		debug( 'key: %o', key );
-		return key;
 	}
 
 	retrieveRecord( key ) {
@@ -229,6 +261,6 @@ export const clearAll = () => {
 }
 
 // expose `cacheIndex` global var (dev mode)
-if ( 'development' === config( 'env' ) ) {
+if ( 'development' === config( 'env' ) && typeof window !== 'undefined' ) {
 	window.cacheIndex = cacheIndex;
 }
