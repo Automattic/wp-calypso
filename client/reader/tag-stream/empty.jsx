@@ -42,7 +42,7 @@ var TagEmptyContent = React.createClass( {
 		);
 
 		return ( <EmptyContent
-			title={ this.translate( 'No recent posts…' ) }
+			title={ this.translate( 'No recent posts' ) }
 			line={ message }
 			action={ action }
 			secondaryAction={ secondaryAction }

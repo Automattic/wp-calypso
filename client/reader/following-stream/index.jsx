@@ -413,13 +413,11 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			header, body;
+			body;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
-			header = null;
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
-			header = this.props.children;
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
 			className="reader__content"
@@ -441,7 +439,7 @@ module.exports = React.createClass( {
 				</MobileBackToSidebar>
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
-				{ header }
+				{ this.props.children }
 				{ body }
 			</Main>
 		);

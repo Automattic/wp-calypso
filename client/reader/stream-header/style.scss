@@ -134,11 +134,16 @@
 .stream-header__follow {
 	.follow-button {
 		position: absolute;
-			top: 12px;
+			top: 14px;
 			right: 8px;
 
 		@include breakpoint( "<660px" ) {
 			right: 0;
+		}
+
+		.gridicon {
+			top: 5px;
+			left: 14px;
 		}
 	}
 }

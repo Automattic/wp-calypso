@@ -25,6 +25,11 @@
 			color: $gray;
 		}
 
+		.gridicon {
+			top: 5px;
+			left: 14px;
+		}
+
 		&:hover {
 			background: none;
 
@@ -121,12 +126,13 @@
 .feed-header__follow {
 	.follow-button {
 		position: absolute;
-			top: 16px;
+			top: 12px;
 			right: 8px;
 
-		@include breakpoint( "<660px" ) {
-			top: 8px;
-			right: 0;
+		@include breakpoint( ">480px" ) {
+			position: absolute;
+				top: 20px;
+				right: 0;
 		}
 	}
 }
@@ -134,7 +140,7 @@
 .feed-header__details {
 	margin: 24px 0 46px 0;
 	text-align: center;
-	border-bottom: 1px solid lighten( $gray, 20 );
+	border-bottom: 1px solid lighten( $gray, 20% );
 }
 
 .feed-header__description {
