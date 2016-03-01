@@ -176,6 +176,9 @@ const CheckoutThankYou = React.createClass( {
 
 	productRelatedMessages() {
 		const selectedSite = this.props.selectedSite,
+			featuresHeaderClasses = classNames( 'checkout-thank-you__features-header', {
+				'is-placeholder': ! this.isDataLoaded()
+			} ),
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
@@ -184,6 +187,8 @@ const CheckoutThankYou = React.createClass( {
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
 						selectedSite={ this.props.selectedSite } />
+
+					<div className={ featuresHeaderClasses } />
 
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -199,8 +204,8 @@ const CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				<div className="checkout-thank-you__features-header">
-					{ this.translate( "Get started with your site's new features" ) }
+				<div className={ featuresHeaderClasses }>
+					{ this.translate( 'What now?' ) }
 				</div>
 
 				<div className="checkout-thank-you__purchase-details-list">
