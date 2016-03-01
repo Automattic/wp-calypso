@@ -12,15 +12,7 @@ import PurchaseDetail from 'components/purchase-detail';
 const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 	return (
 		<div>
-			{ isFreeTrial
-			? <PurchaseDetail
-				icon="comment"
-				title={ i18n.translate( 'Start a Live Chat' ) }
-				description={ i18n.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
-				buttonText={ i18n.translate( 'Talk to an Operator' ) }
-				href="//support.wordpress.com/live-chat/"
-				target="_blank" />
-			: <PurchaseDetail
+			{ ! isFreeTrial && <PurchaseDetail
 				icon="globe"
 				title={ i18n.translate( 'Get your custom domain' ) }
 				description={

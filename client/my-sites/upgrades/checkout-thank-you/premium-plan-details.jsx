@@ -16,15 +16,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 
 	return (
 		<div>
-			{ isFreeTrial
-			? <PurchaseDetail
-				icon="globe"
-				title={ i18n.translate( 'Ads have been removed!' ) }
-				description={ i18n.translate( 'WordPress.com ads will not show up on your blog.' ) }
-				buttonText={ i18n.translate( 'View your site' ) }
-				href={ selectedSite.URL }
-				target="_blank" />
-			: <PurchaseDetail
+			{ ! isFreeTrial && <PurchaseDetail
 				icon="globe"
 				title={ i18n.translate( 'Get your custom domain' ) }
 				description={
