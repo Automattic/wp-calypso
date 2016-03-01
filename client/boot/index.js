@@ -52,6 +52,10 @@ var config = require( 'config' ),
 function init() {
 	var i18nLocaleStringsObject = null;
 
+	if ( window.app && window.app.debugFilter ) {
+		localStorage.setItem( 'debug', window.app.debugFilter );
+	}
+
 	debug( 'Starting Calypso. Let\'s do this.' );
 
 	// prune sync-handler records more than two days old

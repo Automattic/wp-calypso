@@ -193,6 +193,7 @@ function getDefaultContext( request ) {
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
+		context.app.debugFilter = process.env.DEBUG;
 	}
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
