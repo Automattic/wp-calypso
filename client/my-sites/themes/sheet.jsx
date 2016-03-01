@@ -73,6 +73,13 @@ export const ThemeSheet = React.createClass( {
 		return { priceElement, themeContentElement };
 	},
 
+	validateSection( section ) {
+		if ( [ 'details', 'support', 'documentation' ].indexOf( section ) === -1 ) {
+			return 'details';
+		}
+		return section;
+	},
+
 	renderBar() {
 		const placeholder = <span className="themes__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
@@ -125,7 +132,7 @@ export const ThemeSheet = React.createClass( {
 			actionTitle = i18n.translate( 'Pick this design' );
 		}
 
-		const section = this.props.section || 'details';
+		const section = this.validateSection( this.props.section );
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
 
 		return (
