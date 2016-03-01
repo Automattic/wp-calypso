@@ -197,6 +197,9 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
+		const purchases = getPurchases( this.props ),
+			hideFeaturesHeading = purchases.some( isGoogleApps ) || purchases.some( isDomainRegistration ) || purchases.some( isDomainMapping );
+
 		return (
 			<div>
 				<CheckoutThankYouHeader
@@ -204,9 +207,7 @@ const CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				<div className={ featuresHeaderClasses }>
-					{ this.translate( 'What now?' ) }
-				</div>
+				{ ! hideFeaturesHeading && <div className={ featuresHeaderClasses }>{ this.translate( 'What now?' ) }</div> }
 
 				<div className="checkout-thank-you__purchase-details-list">
 					<ComponentClass
