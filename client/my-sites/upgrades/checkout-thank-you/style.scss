@@ -184,3 +184,129 @@
 		}
 	}
 }
+
+// Header subcomponent styles
+.checkout-thank-you__header {
+	background: $blue-medium;
+	color: $white;
+	padding: 48px 24px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		padding: 72px 24px;
+	}
+}
+
+.checkout-thank-you__header-content {
+	margin: 0 auto;
+	max-width: 700px;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		text-align: left;
+	}
+}
+
+.checkout-thank-you__header-icon {
+	display: block;
+	margin: 0 auto;
+	position: relative;
+
+	@include breakpoint( ">660px" ) {
+		height: 132px;
+		margin-right: 32px;
+		width: 132px;
+	}
+
+	.gridicon {
+		background: white;
+		border-radius: 50%;
+		color: darken( $gray, 20% );
+		height: 48px;
+		padding: 21px;
+		width: 48px;
+
+		@include breakpoint( ">660px" ) {
+			height: 72px;
+			padding: 30px;
+			width: 72px;
+		}
+	}
+}
+
+.checkout-thank-you__header-copy {
+	width: 100%;
+}
+
+.checkout-thank-you__header-heading,
+.checkout-thank-you__header-text {
+	clear: none;
+}
+
+.checkout-thank-you__header-heading {
+	font-size: 24px;
+	font-weight: 400;
+	margin: 24px 0 8px 0;
+}
+
+.checkout-thank-you__header-text {
+	font-size: 18px;
+	font-weight: 300;
+}
+
+.checkout-thank-you__header.is-placeholder {
+	.checkout-thank-you__header-icon {
+		display: none;
+	}
+
+	.checkout-thank-you__header-heading,
+	.checkout-thank-you__header-text {
+		@include placeholder( 23% );
+
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.checkout-thank-you__header-heading {
+		width: 50%;
+	}
+
+	.checkout-thank-you__header-text {
+		margin-top: 15px;
+		width: 40%;
+	}
+}
+
+// Footer Subcomponent styles
+.checkout-thank-you__footer {
+	color: $gray;
+}
+
+.checkout-thank-you__footer-content {
+	margin: 16px auto;
+	max-width: 700px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		margin: 24px auto;
+		text-align: left;
+	}
+
+	a {
+		border-bottom: 1px solid $blue-medium;
+	}
+}
+
+.checkout-thank-you__footer-heading {
+	color: darken( $gray, 20% );
+	font-size: 21px;
+}
+
+.checkout-thank-you__footer-text {
+	color: darken( $gray, 10% );
+	font-size: 16px;
+	margin: 8px 0 0 0;
+}
