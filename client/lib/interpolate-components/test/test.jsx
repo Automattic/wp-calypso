@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import interpolateComponents from '../src/index';
+import interpolateComponents from 'lib/interpolate-components';
 
 describe( 'interpolate-components', () => {
 	const input = React.DOM.input();
