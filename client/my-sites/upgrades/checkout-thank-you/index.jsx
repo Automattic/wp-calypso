@@ -32,17 +32,14 @@ import {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
-	isFreeTrial,
 	isGoogleApps,
-	isJetpackBusiness,
-	isJetpackPremium,
+	isJetpackPlan,
 	isPlan,
 	isPremium,
 	isSiteRedirect,
 	isTheme
 } from 'lib/products-values';
-import JetpackBusinessPlanDetails from './jetpack-business-plan-details';
-import JetpackPremiumPlanDetails from './jetpack-premium-plan-details';
+import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
@@ -145,14 +142,6 @@ const CheckoutThankYou = React.createClass( {
 		);
 	},
 
-	freeTrialWasPurchased() {
-		if ( ! this.isDataLoaded() || this.isGenericReceipt() ) {
-			return false;
-		}
-
-		return getPurchases( this.props ).some( isFreeTrial );
-	},
-
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
@@ -163,10 +152,8 @@ const CheckoutThankYou = React.createClass( {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 
-			if ( purchases.some( isJetpackPremium ) ) {
-				return [ JetpackPremiumPlanDetails, find( purchases, isJetpackPremium ) ];
-			} else if ( purchases.some( isJetpackBusiness ) ) {
-				return [ JetpackBusinessPlanDetails, find( purchases, isJetpackBusiness ) ];
+			if ( purchases.some( isJetpackPlan ) ) {
+				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
@@ -219,7 +206,6 @@ const CheckoutThankYou = React.createClass( {
 				<div className="checkout-thank-you__purchase-details-list">
 					<ComponentClass
 						selectedSite={ selectedSite }
-						isFreeTrial={ this.freeTrialWasPurchased() }
 						domain={ domain } />
 				</div>
 			</div>

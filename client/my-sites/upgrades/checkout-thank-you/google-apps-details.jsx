@@ -6,42 +6,31 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getDomainManagementUrl } from './utils';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
+import userFactory from 'lib/user';
 
-const GoogleAppsDetails = ( { selectedSite, domain } ) => {
+const user = userFactory();
+
+const GoogleAppsDetails = ( { selectedSite } ) => {
 	return (
-		<div>
-			<PurchaseDetail
-				icon="mail"
-				title={ i18n.translate( 'Google Apps Setup' ) }
-				description={ i18n.translate( 'You will receive an email shortly with your login information.' ) }
-				buttonText={ i18n.translate( 'More about Google Apps' ) }
-				href="https://support.wordpress.com/add-email/adding-google-apps-to-your-site/"
-				target="_blank" />
-
-			<PurchaseDetail
-				icon="time"
-				title={ i18n.translate( 'Important!' ) }
-				description={ i18n.translate( 'It can take up to 72 hours for your domain setup to complete.' ) }
-				buttonText={ i18n.translate( 'Learn More' ) }
-				href="//support.wordpress.com/domains/"
-				target="_blank" />
-
-			<PurchaseDetail
-				icon="globe"
-				title={ i18n.translate( 'Your Primary Domain' ) }
-				description={ i18n.translate( 'Want this to be your primary domain for this site?' ) }
-				buttonText={ i18n.translate( 'Update Settings' ) }
-				href={ getDomainManagementUrl( selectedSite, domain ) } />
-		</div>
+		<PurchaseDetail
+			icon="cog"
+			title={ i18n.translate( 'Finish setting up your Google Apps account' ) }
+			description={
+				i18n.translate(
+					'We emailed you at %(email)s with login information for your new Google Apps account. If you can’t find it, try a global search for “Google Apps”.',
+					{ args: { email: user.get().email } }
+				)
+			}
+			buttonText={ i18n.translate( 'Learn more about Google Apps' ) }
+			href="https://apps.google.com/learning-center/"
+			target="_blank" />
 	);
 };
 
 GoogleAppsDetails.propTypes = {
-	selectedSite: React.PropTypes.object.isRequired,
-	domain: React.PropTypes.string.isRequired
+	selectedSite: React.PropTypes.object.isRequired
 };
 
 export default GoogleAppsDetails;

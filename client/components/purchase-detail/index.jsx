@@ -23,13 +23,10 @@ const PurchaseDetail = ( {
 		'is-placeholder': isPlaceholder
 	} );
 
-	return (
-		<div className={ classes }>
-			{ icon && <div className="purchase-detail__icon"><Gridicon icon={ icon } /></div> }
-			<div className="purchase-detail__text">
-				<h3 className="purchase-detail__title">{ title }</h3>
-				<p className="purchase-detail__description">{ description }</p>
-			</div>
+	let buttonElement;
+
+	if ( buttonText || isPlaceholder ) {
+		buttonElement = (
 			<Button
 				className="purchase-detail__button"
 				href={ href }
@@ -37,6 +34,19 @@ const PurchaseDetail = ( {
 				primary>
 				{ buttonText }
 			</Button>
+		);
+	}
+
+	return (
+		<div className={ classes }>
+			{ icon && <div className="purchase-detail__icon"><Gridicon icon={ icon } /></div> }
+
+			<div className="purchase-detail__text">
+				<h3 className="purchase-detail__title">{ title }</h3>
+				<p className="purchase-detail__description">{ description }</p>
+			</div>
+
+			{ buttonElement }
 		</div>
 	);
 };

@@ -10,38 +10,27 @@ import config from 'config';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
 
-const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
+const PremiumPlanDetails = ( { selectedSite } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
-		showGetFreeDomainTip = ! isFreeTrial;
+		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 
 	return (
 		<div>
-			{
-				showGetFreeDomainTip
-				? <PurchaseDetail
-						icon="globe"
-						title={ i18n.translate( 'Get your custom domain' ) }
-						description={
-							i18n.translate(
-								"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
-								'A free domain is included with your plan.',
-								{
-									args: { siteDomain: selectedSite.domain },
-									components: { em: <em /> }
-								}
-							)
+			<PurchaseDetail
+				icon="globe"
+				title={ i18n.translate( 'Get your custom domain' ) }
+				description={
+					i18n.translate(
+						"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
+						'A free domain is included with your plan.',
+						{
+							args: { siteDomain: selectedSite.domain },
+							components: { em: <em /> }
 						}
-						buttonText={ i18n.translate( 'Claim your free domain' ) }
-						href={ '/domains/add/' + selectedSite.slug } />
-				: <PurchaseDetail
-						icon="globe"
-						title={ i18n.translate( 'Ads have been removed!' ) }
-						description={ i18n.translate( 'WordPress.com ads will not show up on your blog.' ) }
-						buttonText={ i18n.translate( 'View your site' ) }
-						href={ selectedSite.URL }
-						target="_blank" />
-			}
+					)
+				}
+				buttonText={ i18n.translate( 'Claim your free domain' ) }
+				href={ '/domains/add/' + selectedSite.slug } />
 
 			<PurchaseDetail
 				icon="customize"
@@ -73,7 +62,6 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 };
 
 PremiumPlanDetails.propTypes = {
-	isFreeTrial: React.PropTypes.bool.isRequired,
 	selectedSite: React.PropTypes.object.isRequired
 };
 

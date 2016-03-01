@@ -11,11 +11,9 @@ import i18n from 'lib/mixins/i18n';
 
 const GenericDetails = ( { selectedSite } ) => {
 	return (
-		<div>
-			<Button href={ selectedSite.URL } primary>
-				{ i18n.translate( 'Go to my site' ) }
-			</Button>
-		</div>
+		<Button href={ selectedSite.URL } primary>
+			{ i18n.translate( 'Go to my site' ) }
+		</Button>
 	);
 };
 
