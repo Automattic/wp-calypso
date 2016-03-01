@@ -87,10 +87,6 @@ export default React.createClass( {
 		createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
 	},
 
-	onErrorTokenMouseLeave() {
-		this.setState( { errorTokenHover: false } )
-	},
-
 	refreshValidation() {
 		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || {},
 			success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [],
