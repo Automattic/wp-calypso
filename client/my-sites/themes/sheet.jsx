@@ -113,9 +113,9 @@ export const ThemeSheet = React.createClass( {
 						<div className="themes__sheet-content">
 							<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
 								<NavTabs label="Details" >
-									<NavItem path={ `/themes/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
-									<NavItem path={ `/themes/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
-									<NavItem path={ `/themes/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
+									<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
+									<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
+									<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
 								</NavTabs>
 							</SectionNav>
 							<Card className="themes__sheet-content">{ themeContentElement }</Card>

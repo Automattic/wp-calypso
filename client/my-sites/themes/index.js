@@ -24,10 +24,10 @@ const designRoutes = isLoggedIn
 
 const themesRoutes = isLoggedIn
 	? {
-		'/themes/:slug/:section?/:site_id?': [ details ]
+		'/theme/:slug/:section?/:site_id?': [ details ],
 	}
 	: {
-		'/themes/:slug/:section?/:site_id?': [ details, makeLoggedOutLayout ]
+		'/theme/:slug/:section?': [ details, makeLoggedOutLayout ],
 	};
 
 const routes = Object.assign( {},

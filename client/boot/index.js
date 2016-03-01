@@ -196,7 +196,7 @@ function reduxStoreReady( reduxStore ) {
 		if ( config.isEnabled( 'manage/themes/details' ) ) {
 			const themesRoutes = [
 				{ name: 'design', path: new Path( '/design' ) },
-				{ name: 'themes', path: new Path( '/themes/:theme_slug' ) },
+				{ name: 'theme', path: new Path( '/theme/:theme_slug' ) },
 			];
 
 			const matchedRoutes = themesRoutes
