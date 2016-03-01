@@ -138,10 +138,12 @@ var TokenField = React.createClass( {
 				key={ 'token-' + value }
 				value={ value }
 				status={ status }
+				tooltip={ token.tooltip }
 				displayTransform={ this.props.displayTransform }
 				onClickRemove={ this._onTokenClickRemove }
 				isBorderless={ this.props.isBorderless }
-			/>
+				onMouseEnter={ token.onMouseEnter }
+				onMouseLeave={ token.onMouseLeave } />
 		);
 	},
 
