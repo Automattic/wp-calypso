@@ -22,7 +22,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 		<div>
 			<div className="checkout-thank-you__domain-registration-details-compact">
 				<PurchaseDetail
-					icon="notice"
+					icon="mail"
 					title={ i18n.translate( 'Verify your email address' ) }
 					description={ i18n.translate( 'We sent you an email with a request to verify your new domain. Unverified domains may be suspended.' ) }
 					buttonText={ i18n.translate( 'Learn more about verifying your domain' ) }

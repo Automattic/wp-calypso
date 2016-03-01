@@ -2,7 +2,6 @@
 	border-top: 1px solid lighten( $gray, 30% );
 	box-sizing: border-box;
 	color: $gray;
-	padding: 32px;
 	position: relative;
 
 	@include breakpoint( "<660px" ) {
@@ -20,7 +19,6 @@
 		border-radius: 3px;
 		max-width: 700px;
 		margin: 16px auto;
-		padding-right: 140px;
 		text-align: left;
 	}
 
@@ -56,6 +54,14 @@
 	}
 }
 
+.purchase-detail__content {
+	padding: 32px;
+
+	@include breakpoint( ">660px" ) {
+		padding-right: 140px;
+	}
+}
+
 .purchase-detail__description {
 	color: darken( $gray, 10% );
 	font-size: 16px;
@@ -76,6 +82,21 @@
 			right: 36px;
 			top: 50%;
 	}
+
+	.purchase-detail__notice-icon.gridicon {
+		fill: $alert-yellow;
+		height: 24px;
+		position: relative;
+			right: -26px;
+			top: -3px;
+		width: 24px;
+
+		@include breakpoint( ">660px" ) {
+			position: relative;
+				right: -42px;
+				top: -6px;
+		}
+	}
 }
 
 .purchase-detail__icon,
@@ -87,6 +108,14 @@
 		height: 36px;
 		width: 36px;
 	}
+}
+
+.purchase-detail__required-notice {
+	background-color: $alert-yellow;
+	color: $white;
+	font-size: 14px;
+	padding: 8px;
+	text-align: center;
 }
 
 .purchase-detail__title {

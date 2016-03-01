@@ -31,5 +31,7 @@ export default React.createClass( {
 - *href* (string) – URL passed as the `href` prop for the `Button`
 - *icon* (string) – icon slug passed as the `icon` prop of the `Gridicon`
 - *isPlaceholder* (boolean) – determines whether or not to render shimmering placeholders
+- *isRequired* (boolean) – adds a notice icon next to the main icon
+- *requiredText* (string) – adds a notice to the top, determines the text in that notice
 - *target* (string) – target passed as the `target` prop for the `Button`
 - *title* (string) – string used as the text of the heading
