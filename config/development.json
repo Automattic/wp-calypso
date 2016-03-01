@@ -89,7 +89,6 @@
 		"perfmon": false,
 		"persist-redux": false,
 		"phone_signup": true,
-		"post-editor": true,
 		"post-editor-github-link": false,
 		"post-editor/contact-form": true,
 		"post-editor/iframe-preview": true,
