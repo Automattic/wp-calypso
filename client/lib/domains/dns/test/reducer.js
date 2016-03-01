@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 	it( 'should return state without record passed in the delete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					records: [ RECORD_TXT ]
+					records: [ RECORD_A, RECORD_TXT ]
 				}
 			} ),
 			payload = {
@@ -48,14 +48,14 @@ describe( 'reducer', () => {
 
 		const result = reducer( state, payload );
 
-		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [] } } );
+		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A ] } } );
 	} );
 
 	it( 'should return state without record (having no id) passed in the delete action', () => {
 		const RECORD_TXT_WITHOUT_ID = pick( RECORD_TXT, [ 'data', 'name', 'type' ] ),
 			state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					records: [ RECORD_TXT_WITHOUT_ID ]
+					records: [ RECORD_A, RECORD_TXT_WITHOUT_ID ]
 				}
 			} ),
 			payload = {
@@ -68,6 +68,6 @@ describe( 'reducer', () => {
 
 		const result = reducer( state, payload );
 
-		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [] } } );
+		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A ] } } );
 	} );
 } );
