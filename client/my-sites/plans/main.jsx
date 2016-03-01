@@ -39,11 +39,16 @@ var Plans = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
+		this.updateSitePlans();
 	},
 
 	componentWillReceiveProps: function() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
+		this.updateSitePlans();
+	},
+
+	updateSitePlans: function() {
+		var selectedSite = this.props.sites.getSelectedSite();
+		this.props.fetchSitePlans( this.props.sitePlans, selectedSite );
 	},
 
 	openPlan: function( planId ) {
@@ -163,12 +168,12 @@ var Plans = React.createClass( {
 						<UpgradesNavigation
 							path={ this.props.context.path }
 							cart={ this.props.cart }
-							selectedSite={ this.props.sites.getSelectedSite() } />
+							selectedSite={ selectedSite } />
 
 						{ this.renderTrialCopy() }
 
 						<PlanList
-							sites={ this.props.sites }
+							site={ selectedSite }
 							plans={ this.props.plans.get() }
 							enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 							sitePlans={ this.props.sitePlans }
