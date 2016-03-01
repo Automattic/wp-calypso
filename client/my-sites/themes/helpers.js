@@ -50,17 +50,16 @@ var ThemesHelpers = {
 	},
 
 	getDetailsUrl: function( theme, site ) {
-		const baseUrl = config.isEnabled( 'manage/themes/details' ) ? '/theme/' : ThemesHelpers.oldShowcaseUrl;
-
-		if ( ! site ) {
-			return baseUrl + theme.id;
-		}
-
-		if ( site.jetpack ) {
+		if ( site && site.jetpack ) {
 			return site.options.admin_url + 'themes.php?theme=' + theme.id;
 		}
 
-		return baseUrl + `${ theme.id }/${ site.slug }`;
+		let baseUrl = ThemesHelpers.oldShowcaseUrl + `${ theme.id }`;
+		if ( config.isEnabled( 'manage/themes/details' ) ) {
+			baseUrl = `/theme/${ theme.id }/details`;
+		}
+
+		return baseUrl + ( site ? `/${ site.slug }` : '' );
 	},
 
 	getSupportUrl: function( theme, site ) {
