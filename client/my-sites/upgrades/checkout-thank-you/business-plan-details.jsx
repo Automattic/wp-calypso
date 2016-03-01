@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 	const showGetFreeDomainTip = ! isFreeTrial;
@@ -16,7 +16,7 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 		<div>
 			{ showGetFreeDomainTip
 			? <PurchaseDetail
-					additionalClass="get-free-domain"
+					icon="globe"
 					title={ i18n.translate( 'Get your custom domain' ) }
 					description={
 						i18n.translate(
@@ -31,7 +31,7 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 					buttonText={ i18n.translate( 'Claim your free domain' ) }
 					href={ '/domains/add/' + selectedSite.slug } />
 			: <PurchaseDetail
-					additionalClass="live-chat"
+					icon="comment"
 					title={ i18n.translate( 'Start a Live Chat' ) }
 					description={ i18n.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
 					buttonText={ i18n.translate( 'Talk to an Operator' ) }
@@ -40,14 +40,14 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 			}
 
 			<PurchaseDetail
-				additionalClass="unlimited-premium-themes"
+				icon="customize"
 				title={ i18n.translate( 'Find a new theme' ) }
 				description={ i18n.translate( 'All our premium themes, normally ranging $18 to $175 in price, are now available at no extra cost.' ) }
 				buttonText={ i18n.translate( 'Browse premium themes' ) }
 				href={ '/design/' + selectedSite.slug } />
 
 			<PurchaseDetail
-				additionalClass="connect-google-analytics"
+				icon="stats-alt"
 				title={ i18n.translate( 'Stats from Google Analytics' ) }
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }

@@ -8,13 +8,13 @@ import React from 'react';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 const JetpackPremiumPlanDetails = () => {
 	return (
 		<div>
 			<PurchaseDetail
-				additionalClass="akismet"
+				icon="comment"
 				title={ i18n.translate( 'Akismet' ) }
 				description={ i18n.translate( 'Say goodbye to comment spam' ) }
 				buttonText={ i18n.translate( 'Start using Akismet' ) }
@@ -22,7 +22,7 @@ const JetpackPremiumPlanDetails = () => {
 				target="_blank" />
 
 			<PurchaseDetail
-				additionalClass="vaultpress"
+				icon="cog"
 				title={ i18n.translate( 'VaultPress' ) }
 				description={ i18n.translate( 'Backup your site' ) }
 				buttonText={ i18n.translate( 'Start using VaultPress' ) }

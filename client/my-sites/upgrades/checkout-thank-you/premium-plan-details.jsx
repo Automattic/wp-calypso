@@ -8,7 +8,7 @@ import React from 'react';
  */
 import config from 'config';
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
@@ -20,7 +20,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 			{
 				showGetFreeDomainTip
 				? <PurchaseDetail
-						additionalClass="get-free-domain"
+						icon="globe"
 						title={ i18n.translate( 'Get your custom domain' ) }
 						description={
 							i18n.translate(
@@ -35,7 +35,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 						buttonText={ i18n.translate( 'Claim your free domain' ) }
 						href={ '/domains/add/' + selectedSite.slug } />
 				: <PurchaseDetail
-						additionalClass="ads-have-been-removed"
+						icon="globe"
 						title={ i18n.translate( 'Ads have been removed!' ) }
 						description={ i18n.translate( 'WordPress.com ads will not show up on your blog.' ) }
 						buttonText={ i18n.translate( 'View your site' ) }
@@ -44,7 +44,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 			}
 
 			<PurchaseDetail
-				additionalClass="customize-fonts-and-colors"
+				icon="customize"
 				title={ i18n.translate( 'Customize your theme' ) }
 				description={
 					i18n.translate(
@@ -57,7 +57,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 				target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
 
 			<PurchaseDetail
-				additionalClass="upload-to-videopress"
+				icon="image-multiple"
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={
 					i18n.translate(

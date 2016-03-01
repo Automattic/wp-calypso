@@ -9,7 +9,7 @@ import React from 'react';
 import { getDomainManagementUrl } from './utils';
 import { getPrimaryDomain, isSubdomain } from 'lib/domains';
 import { isPlan } from 'lib/products-values';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
 export default React.createClass( {
 	getInitialState: function() {
@@ -45,7 +45,7 @@ export default React.createClass( {
 		return (
 			<div>
 				<PurchaseDetail
-					additionalClass="important"
+					icon="time"
 					title={ this.translate( 'Important!' ) }
 					description={ this.translate( "Your domain mapping won't work until you update the DNS settings." ) }
 					buttonText={ this.translate( 'Learn More' ) }
@@ -53,14 +53,14 @@ export default React.createClass( {
 					target="_blank" />
 
 				<PurchaseDetail
-					additionalClass="your-primary-domain"
+					icon="globe"
 					title={ this.translate( 'Your Primary Domain' ) }
 					description={ primaryDomainDescription }
 					buttonText={ this.translate( 'Update Settings' ) }
 					href={ getDomainManagementUrl( this.props.selectedSite, this.props.domain ) } />
 
 				{ ! isPlan( this.props.selectedSite.plan ) ? <PurchaseDetail
-					additionalClass="upgrade-now"
+					icon="comment"
 					title={ this.translate( 'Upgrade Now' ) }
 					description={ this.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
 					buttonText={ this.translate( 'View Plans' ) }
