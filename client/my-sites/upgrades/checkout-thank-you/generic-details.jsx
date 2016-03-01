@@ -13,7 +13,7 @@ const GenericDetails = ( { selectedSite } ) => {
 	return (
 		<div>
 			<Button href={ selectedSite.URL } primary>
-				{ i18n.translate( 'Back to my site' ) }
+				{ i18n.translate( 'Go to my site' ) }
 			</Button>
 		</div>
 	);
