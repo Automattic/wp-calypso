@@ -67,10 +67,6 @@ const SiteRedirect = React.createClass( {
 	},
 
 	siteRedirectNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/site-redirect' ) ) {
-			return;
-		}
-
 		return (
 			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.domain, this.props.domain.name ) }>
 				{ this.translate( 'Redirect Settings' ) }

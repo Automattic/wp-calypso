@@ -8,7 +8,6 @@ import React from 'react';
  */
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
-import config from 'config';
 import Notice from 'components/notice';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import Header from './card/header';
@@ -130,10 +129,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	nameServersNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-			return null;
-		}
-
 		const path = paths.domainManagementNameServers(
 			this.props.selectedSite.domain,
 			this.props.domain.name
@@ -147,9 +142,6 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/contacts-privacy' ) ) {
-			return null;
-		}
 
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.domain,

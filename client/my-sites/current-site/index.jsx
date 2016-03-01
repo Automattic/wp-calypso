@@ -89,18 +89,10 @@ module.exports = React.createClass( {
 	},
 
 	getSiteRedirectNotice: function( site ) {
-		const isSiteRedirected = site.options && site.options.is_redirect;
-
-		if ( ! isSiteRedirected ) {
+		if ( ! ( site.options && site.options.is_redirect ) ) {
 			return null;
 		}
 		const { hostname } = url.parse( site.URL );
-		let href = 'https://wordpress.com/my-domains';
-
-		if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-			href = paths.domainManagementList( site.domain );
-		}
-
 		return (
 			<Notice
 				showDismiss={ false }
@@ -109,7 +101,7 @@ module.exports = React.createClass( {
 					args: { url: hostname },
 					components: { a: <a href={ site.URL }/> }
 				} ) }>
-				<NoticeAction href={ href }>
+				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
 					{ this.translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>
@@ -192,7 +184,7 @@ module.exports = React.createClass( {
 					? this.addNewWordPressButton()
 					: <span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
-							<Gridicon icon="arrow-left" size={ 16 } />
+							<Gridicon icon="arrow-left" size={ 18 } />
 							{ this.translate( 'Switch Site' ) }
 						</Button>
 					</span>

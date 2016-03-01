@@ -38,77 +38,69 @@ function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJ
 module.exports = function() {
 	SiftScience.recordUser();
 
-	if ( config.isEnabled( 'upgrades/domain-management/email' ) ) {
-		page(
-			paths.domainManagementEmail(),
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		paths.domainManagementEmail(),
+		controller.siteSelection,
+		controller.sites
+	);
 
-		registerMultiPage( {
-			paths: [
-				paths.domainManagementEmail( ':site', ':domain' ),
-				paths.domainManagementEmail( ':site' )
-			],
-			handlers: [
-				...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
-				domainManagementController.domainManagementEmail
-			]
-		} );
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementEmail( ':site', ':domain' ),
+			paths.domainManagementEmail( ':site' )
+		],
+		handlers: [
+			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
+			domainManagementController.domainManagementEmail
+		]
+	} );
 
-		registerMultiPage( {
-			paths: [
-				paths.domainManagementAddGoogleApps( ':site', ':domain' ),
-				paths.domainManagementAddGoogleApps( ':site' )
-			],
-			handlers: [
-				...getCommonHandlers(),
-				domainManagementController.domainManagementAddGoogleApps
-			]
-		} );
-
-		page(
-			paths.domainManagementEmailForwarding( ':site', ':domain' ),
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
+			paths.domainManagementAddGoogleApps( ':site' )
+		],
+		handlers: [
 			...getCommonHandlers(),
-			domainManagementController.domainManagementEmailForwarding
-		);
-	}
+			domainManagementController.domainManagementAddGoogleApps
+		]
+	} );
 
-	if ( config.isEnabled( 'upgrades/domain-management/site-redirect' ) ) {
-		page(
-			paths.domainManagementRedirectSettings( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementRedirectSettings
-		);
-	}
+	page(
+		paths.domainManagementEmailForwarding( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEmailForwarding
+	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/contacts-privacy' ) ) {
-		page(
-			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementContactsPrivacy
-		);
+	page(
+		paths.domainManagementRedirectSettings( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementRedirectSettings
+	);
 
-		page(
-			paths.domainManagementEditContactInfo( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEditContactInfo
-		);
-	}
+	page(
+		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementContactsPrivacy
+	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-		page(
-			paths.domainManagementDns( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementDns
-		);
+	page(
+		paths.domainManagementEditContactInfo( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEditContactInfo
+	);
 
-		page(
-			paths.domainManagementNameServers( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementNameServers
-		);
-	}
+	page(
+		paths.domainManagementDns( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementDns
+	);
+
+	page(
+		paths.domainManagementNameServers( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementNameServers
+	);
 
 	page(
 		paths.domainManagementTransfer( ':site', ':domain' ),
@@ -116,37 +108,35 @@ module.exports = function() {
 		domainManagementController.domainManagementTransfer
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-		page(
-			paths.domainManagementRoot(),
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		paths.domainManagementRoot(),
+		controller.siteSelection,
+		controller.sites
+	);
 
-		page(
-			paths.domainManagementList( ':site' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementList
-		);
+	page(
+		paths.domainManagementList( ':site' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementList
+	);
 
-		page(
-			paths.domainManagementEdit( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEdit
-		);
+	page(
+		paths.domainManagementEdit( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEdit
+	);
 
-		page(
-			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-			...getCommonHandlers( { warnIfJetpack: false } ),
-			domainManagementController.domainManagementPrivacyProtection
-		);
+	page(
+		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
+		...getCommonHandlers( { warnIfJetpack: false } ),
+		domainManagementController.domainManagementPrivacyProtection
+	);
 
-		page(
-			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
-			...getCommonHandlers(),
-			domainManagementController.domainManagementPrimaryDomain
-		);
-	}
+	page(
+		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementPrimaryDomain
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(
@@ -222,38 +212,19 @@ module.exports = function() {
 		);
 	}
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-		page(
-			'/domains',
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		'/domains',
+		controller.siteSelection,
+		controller.sites
+	);
 
-		page(
-			'/domains/:site',
-			controller.siteSelection,
-			controller.navigation,
-			controller.jetPackWarning,
-			domainManagementController.domainManagementIndex
-		);
-	} else {
-		page(
-			'/domains',
-			adTracking.retarget,
-			controller.siteSelection,
-			upgradesController.domainsAddHeader,
-			controller.jetPackWarning,
-			controller.sites
-		);
-
-		page( '/domains/:domain',
-			adTracking.retarget,
-			controller.siteSelection,
-			controller.navigation,
-			controller.jetPackWarning,
-			upgradesController.domainSearchIndex
-		);
-	}
+	page(
+		'/domains/:site',
+		controller.siteSelection,
+		controller.navigation,
+		controller.jetPackWarning,
+		domainManagementController.domainManagementIndex
+	);
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(

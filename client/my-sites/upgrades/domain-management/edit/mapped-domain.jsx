@@ -7,7 +7,6 @@ const React = require( 'react' );
  * Internal dependencies
  */
 const analyticsMixin = require( 'lib/mixins/analytics' ),
-	config = require( 'config' ),
 	Card = require( 'components/card/compact' ),
 	Header = require( './card/header' ),
 	Property = require( './card/property' ),
@@ -92,9 +91,6 @@ const MappedDomain = React.createClass( {
 	},
 
 	dnsRecordsNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-			return null;
-		}
 
 		const path = paths.domainManagementDns(
 			this.props.selectedSite.domain,
