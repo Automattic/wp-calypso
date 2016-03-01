@@ -63,7 +63,7 @@
 		"olark": true,
 		"olark_use_wpcom_configuration": true,
 		"perfmon": true,
-		"persist-redux": false,
+		"persist-redux": true,
 		"phone_signup": false,
 		"post-editor": true,
 		"post-editor/iframe-preview": true,
