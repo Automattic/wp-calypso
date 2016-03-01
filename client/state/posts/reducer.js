@@ -23,7 +23,7 @@ import {
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
-import { itemsSchema } from './schema';
+import { itemsSchema, queriesSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -119,6 +119,13 @@ export function queries( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: action.posts.map( ( post ) => post.global_ID )
 			} );
+
+		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, queriesSchema ) ) {
+				return state;
+			}
+
+			return {};
 	}
 
 	return state;

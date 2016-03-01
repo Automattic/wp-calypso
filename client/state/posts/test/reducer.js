@@ -28,6 +28,14 @@ import {
 } from '../reducer';
 
 describe( 'reducer', () => {
+	before( () => {
+		sinon.stub( console, 'warn' );
+	} );
+
+	after( () => {
+		console.warn.restore();
+	} );
+
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
@@ -80,13 +88,6 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			before( () => {
-				sinon.stub( console, 'warn' );
-			} );
-			after( () => {
-				console.warn.restore();
-			} );
-
 			it( 'persists state', () => {
 				const original = deepFreeze( {
 					'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -289,6 +290,16 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 			} );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+			} );
+
+			const state = queries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
