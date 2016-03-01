@@ -33,7 +33,7 @@ var FeedEmptyContent = React.createClass( {
 					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
 
 		return ( <EmptyContent
-			title={ this.translate( 'No recent posts…' ) }
+			title={ this.translate( 'No recent posts' ) }
 			line={ this.translate( 'This site has not posted anything recently.' ) }
 			action={ action }
 			secondaryAction={ secondaryAction }
