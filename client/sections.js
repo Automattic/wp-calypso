@@ -122,19 +122,17 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 }
 
-if ( config.isEnabled( 'post-editor' ) ) {
-	editorPaths = [ '/post' ];
+editorPaths = [ '/post' ];
 
-	if ( config.isEnabled( 'post-editor/pages' ) ) {
-		editorPaths.push( '/page' );
-	}
-
-	sections.push( {
-		name: 'post-editor',
-		paths: editorPaths,
-		module: 'post-editor'
-	} );
+if ( config.isEnabled( 'post-editor/pages' ) ) {
+	editorPaths.push( '/page' );
 }
+
+sections.push( {
+	name: 'post-editor',
+	paths: editorPaths,
+	module: 'post-editor'
+} );
 
 if ( config.isEnabled( 'devdocs' ) ) {
 	sections.push( {

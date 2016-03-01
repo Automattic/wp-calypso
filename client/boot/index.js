@@ -255,7 +255,6 @@ function reduxStoreReady( reduxStore ) {
 		if ( /.php$/.test( path ) ||
 				/^\/?$/.test( path ) && ! config.isEnabled( 'reader' ) ||
 				/^\/my-stats/.test( path ) ||
-				/^\/(post\b|page\b)/.test( path ) && ! config.isEnabled( 'post-editor' ) ||
 				/^\/notifications/.test( path ) ||
 				/^\/themes/.test( path ) ||
 				/^\/manage/.test( path ) ||

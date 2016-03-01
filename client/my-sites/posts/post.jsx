@@ -8,8 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	Card = require( 'components/card' ),
+var Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' ),
 	PostRelativeTimeStatus = require( 'my-sites/post-relative-time-status' ),
 	PostControls = require( './post-controls' ),
@@ -352,8 +351,7 @@ module.exports = React.createClass({
 	},
 
 	getContentLinkTarget: function() {
-		if ( config.isEnabled( 'post-editor' ) &&
-				utils.userCan( 'edit_post', this.props.post ) ) {
+		if ( utils.userCan( 'edit_post', this.props.post ) ) {
 			return null;
 		}
 

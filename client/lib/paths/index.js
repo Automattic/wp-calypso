@@ -1,13 +1,8 @@
-/**
- * Internal dependencies
- */
-var config = require( 'config' );
-
 function editorPathFromSite( site ) {
 	var path = '',
 		siteSlug;
 
-	if ( config.isEnabled( 'post-editor' ) && site ) {
+	if ( site ) {
 		siteSlug = ( typeof site === 'object' ) ? site.slug : site;
 		path = '/' + siteSlug;
 	} else if ( site && typeof site === 'object' ) {
@@ -24,16 +19,8 @@ function editorPathFromSite( site ) {
  * @return {string}      URL to post editor
  */
 module.exports.newPost = function( site ) {
-	var sitePath = editorPathFromSite( site ),
-		url;
-
-	if ( config.isEnabled( 'post-editor' ) ) {
-		url = '/post' + sitePath;
-	} else {
-		url = '//wordpress.com/post' + sitePath;
-	}
-
-	return url;
+	var sitePath = editorPathFromSite( site );
+	return '/post' + sitePath;
 };
 
 /**
@@ -43,16 +30,8 @@ module.exports.newPost = function( site ) {
  * @return {string}      URL to page editor
  */
 module.exports.newPage = function( site ) {
-	var sitePath = editorPathFromSite( site ),
-		url;
-
-	if ( config.isEnabled( 'post-editor' ) ) {
-		url = '/page' + sitePath;
-	} else {
-		url = '//wordpress.com/page' + sitePath;
-	}
-
-	return url;
+	var sitePath = editorPathFromSite( site );
+	return '/page' + sitePath;
 };
 
 /**

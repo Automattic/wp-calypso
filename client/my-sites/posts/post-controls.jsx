@@ -80,7 +80,7 @@ module.exports = React.createClass( {
 				text: this.translate( 'Edit' ),
 				className: 'post-controls__edit',
 				href: this.props.editURL,
-				target: config.isEnabled( 'post-editor' ) ? null : '_blank',
+				target: null,
 				onClick: this.edit,
 				icon: 'pencil'
 			} );

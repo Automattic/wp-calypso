@@ -8,7 +8,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import config from 'config';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
 import viewport from 'lib/viewport';
@@ -49,7 +48,7 @@ export default React.createClass( {
 		const visibleSiteCount = this.props.user.get().visible_site_count;
 
 		// if multi-site and editor enabled, show site-selector
-		if ( visibleSiteCount > 1 && config.isEnabled( 'post-editor' ) ) {
+		if ( visibleSiteCount > 1 ) {
 			this.toggleSitesPopover();
 			event.preventDefault();
 			return;

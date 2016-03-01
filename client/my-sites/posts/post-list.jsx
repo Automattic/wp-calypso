@@ -19,7 +19,6 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	EmptyContent = require( 'components/empty-content' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	NoResults = require( 'my-sites/no-results' ),
-	config = require( 'config' ),
 	route = require( 'lib/route' ),
 	mapStatus = route.mapPostStatus;
 
@@ -158,12 +157,7 @@ var Posts = React.createClass( {
 					} )	}
 			/>;
 		} else {
-
-			if ( config.isEnabled( 'post-editor' ) ) {
-				newPostLink = this.props.siteID ? '/post/' + this.props.siteID : '/post';
-			} else {
-				newPostLink = selectedSite ? '//wordpress.com/post/' + selectedSite.ID + '/new' : '//wordpress.com/post';
-			}
+			newPostLink = this.props.siteID ? '/post/' + this.props.siteID : '/post';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {

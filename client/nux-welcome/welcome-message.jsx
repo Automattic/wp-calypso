@@ -45,7 +45,7 @@ module.exports = React.createClass( {
 			customizeEnabled = true;
 
 		if ( welcomeSite ) {
-			postLink = config.isEnabled( 'post-editor' ) ? '/post/' + welcomeSite.slug : '//wordpress.com/post/' + welcomeSite.ID + '/new';
+			postLink = '/post/' + welcomeSite.slug;
 			customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + welcomeSite.slug : adminURL + 'customize.php?return=' + encodeURIComponent( window.location.href );
 			sharingLink = config.isEnabled( 'manage/sharing' ) ? '/sharing/' + welcomeSite.slug : adminURL + 'options-general.php?page=sharing';
 		}
