@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -77,20 +78,52 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state because this is not implemented', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+		describe( 'persistence', () => {
+			before( () => {
+				sinon.stub( console, 'warn' );
 			} );
-			const state = items( original, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
+			after( () => {
+				console.warn.restore();
+			} );
 
-		it( 'never loads persisted state because this is not implemented', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			it( 'persists state', () => {
+				const original = deepFreeze( {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World'
+					}
+				} );
+				const state = items( original, { type: SERIALIZE } );
+				expect( state ).to.eql( original );
 			} );
-			const state = items( original, { type: DESERIALIZE } );
-			expect( state ).to.eql( {} );
+
+			it( 'loads valid persisted state', () => {
+				const original = deepFreeze( {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World'
+					}
+				} );
+				const state = items( original, { type: DESERIALIZE } );
+				expect( state ).to.eql( original );
+			} );
+
+			it( 'loads default state when schema does not match', () => {
+				const original = deepFreeze( {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						site_ID: 'foo',
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World'
+					}
+				} );
+				const state = items( original, { type: DESERIALIZE } );
+				expect( state ).to.eql( {} );
+			} );
 		} );
 	} );
 
@@ -215,7 +248,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'never loads persisted state because this is not implemented', () => {
+		it( 'never persists state because this is not implemented', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"hello"}': {
 					fetching: true
@@ -314,7 +347,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state because this is not implemented', () => {
+		it( 'never persists state', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"hello"}': 1
 			} );
@@ -322,7 +355,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'never loads persisted state because this is not implemented', () => {
+		it( 'never loads persisted state', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"hello"}': 1
 			} );
@@ -407,7 +440,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state because this is not implemented', () => {
+		it( 'never persists state', () => {
 			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true
@@ -419,7 +452,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'never loads persisted state because this is not implemented', () => {
+		it( 'never loads persisted state', () => {
 			const state = siteRequests( deepFreeze( {
 				2916284: {
 					841: true

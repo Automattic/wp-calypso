@@ -23,6 +23,8 @@ import {
 	getSerializedPostsQueryWithoutPage
 } from './utils';
 import { DEFAULT_POST_QUERY } from './constants';
+import { itemsSchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -36,8 +38,11 @@ export function items( state = {}, action ) {
 		case POSTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
 		case SERIALIZE:
-			return {};
+			return state;
 		case DESERIALIZE:
+			if ( isValidStateWithSchema( state, itemsSchema ) ) {
+				return state;
+			}
 			return {};
 	}
 	return state;
