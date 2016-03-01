@@ -25,6 +25,11 @@
 			color: $gray;
 		}
 
+		.gridicon {
+			top: 6px;
+			left: 14px;
+		}
+
 		&:hover {
 			background: none;
 
@@ -121,12 +126,13 @@
 .feed-header__follow {
 	.follow-button {
 		position: absolute;
-			top: 16px;
+			top: 12px;
 			right: 8px;
 
-		@include breakpoint( "<660px" ) {
-			top: 8px;
-			right: 0;
+		@include breakpoint( ">480px" ) {
+			position: absolute;
+				top: 20px;
+				right: 0;
 		}
 	}
 }
