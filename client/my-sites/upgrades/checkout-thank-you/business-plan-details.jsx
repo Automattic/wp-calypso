@@ -32,7 +32,7 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 			<PurchaseDetail
 				icon="customize"
 				title={ i18n.translate( 'Find a new theme' ) }
-				description={ i18n.translate( 'All our premium themes, normally ranging $18 to $175 in price, are now available at no extra cost.' ) }
+				description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
 				buttonText={ i18n.translate( 'Browse premium themes' ) }
 				href={ '/design/' + selectedSite.slug } />
 
