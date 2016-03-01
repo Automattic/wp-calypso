@@ -39,12 +39,12 @@ export function render( element, key = JSON.stringify( element ) ) {
 			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );
 		}
-		const context = { renderedLayout };
+		let context = { renderedLayout };
 		const rtsTimeMs = Date.now() - startTime;
 
 		if ( Helmet.peek() ) {
 			const helmetData = Helmet.rewind();
-			Object.assign( {}, context, {
+			Object.assign( context, {
 				helmetTitle: helmetData.title,
 				helmetMeta: helmetData.meta,
 				helmetLink: helmetData.link,
