@@ -199,6 +199,9 @@ githooks-commit:
 githooks-push:
 	@if [ ! -e .git/hooks/pre-push ]; then ln -s ../../bin/pre-push .git/hooks/pre-push; fi
 
+publish-modules:
+	@./bin/publish-modules
+
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 

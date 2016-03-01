@@ -4,74 +4,93 @@
  * Module dependencies.
  */
 
-var path = require('path');
-var fs = require('fs');
+var dirs;
+var path = require( 'path' );
+var fs = require( 'fs' );
 var join = path.join;
 var read = fs.readFileSync;
 var write = fs.writeFileSync;
-var readdir = fs.readdirSync;
 
 var dep = process.argv[2];
 var version = process.argv[3];
-if (!dep || !version) {
-	console.log('usage:');
-	console.log('  ' + process.argv.slice(0, 2).join(' ') + ' <dependencyName> <newVersion>');
-	return process.exit(2);
+
+function checkInput() {
+	if ( !dep || !version ) {
+		console.log( '\x1b[41mupdate-dependency must called with two parameters\x1b[0m ' );
+		console.log( '\x1b[41mPlease provide the following parameters:\x1b[0m <dependencyName> <newVersion>' );
+		process.exit( 2 ); //eslint-disable-line no-process-exit
+	}
 }
 
-console.log();
-console.log('  updating %s to %s', dep, version);
-var dirs = [
-	'server',
-	'client'
-];
+function updateDepencies() {
+	console.log();
+	console.log( '  updating %s to %s', dep, version );
 
-function visitPackageFiles(dir, callback) {
+	dirs = [
+		'server',
+		'client'
+	];
+
+	dirs.forEach( function( dir ) {
+		visitPackageFiles( dir, updatePackage );
+	} );
+
+	console.log( '' );
+}
+
+function visitPackageFiles( dir, callback ) {
 	fs.readdir( dir, function( err, list ) {
-		if (err) {
-			callback( err );
+		if ( err ) {
+			console.log( '\x1b[41mFailure reading directory:\x1b[0m ', err );
 		}
 
-		list.forEach( function(file) {
-
+		list.forEach( function( file ) {
 			file = join( dir, file );
 
 			if ( /package\.json$/.test( file ) ) {
-				callback( null, file );
+				callback( file );
 			}
 
-			fs.stat(file, function( err, stat ) {
+			fs.stat( file, function( error, stat ) {
 				if ( stat && stat.isDirectory() ) {
-			  		visitPackageFiles( file, callback );
-			  	}
-			});
-		});
-	});
+					visitPackageFiles( file, callback );
+				}
+			} );
+		} );
+	} );
 }
 
-dirs.forEach( function ( dir ) {
-	visitPackageFiles( dir, function( err, path ) {
-		if ( err ) { console.log( err ); }
-		var conf;
-		try {
-			conf = JSON.parse( read( path, 'utf8' ) );
-		} catch (e) {
-			//console.error('skipping %j: %s', name, e);
+function updatePackage( packageJsonPath ) {
+	var changed = false;
+	var conf;
+	var json;
+	try {
+		conf = JSON.parse( read( packageJsonPath, 'utf8' ) );
+	} catch ( e ) {
+		console.log( '\x1b[41mFailure reading package.json:\x1b[0m ', e );
+		return;
+	}
+
+	[ 'dependencies', 'devDependencies' ].forEach( function( dependencies ) {
+		var curr;
+		if ( !conf[dependencies] ) {
 			return;
 		}
-		[ 'dependencies', 'devDependencies' ].forEach(function (dependencies) {
-			if (! conf[dependencies] ) {
-				return;
-			}
-			if (! conf[dependencies][dep] ) {
-				return;
-			}
-			var curr = conf[dependencies][dep];
-			console.log('  updating %j %j %s v%s -> v%s', path, dependencies, dep, curr, version);
-			conf[dependencies][dep] = version;
-		});
-		var json = JSON.stringify(conf, null, 2);
-		write(path, json + '\n');
-	});
-});
-console.log('');
+		if ( !conf[dependencies][dep] ) {
+			return;
+		}
+		curr = conf[dependencies][dep];
+		console.log( '  updating %j %j %s v%s -> v%s', packageJsonPath, dependencies, dep, curr, version );
+		conf[dependencies][dep] = version;
+		changed = true;
+	} );
+
+	if ( changed ) {
+		json = JSON.stringify( conf, null, '\t' );
+		write( packageJsonPath, json + '\n' );
+	}
+}
+
+checkInput();
+
+updateDepencies();

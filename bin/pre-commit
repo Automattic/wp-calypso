@@ -5,50 +5,63 @@ PATH="$PATH:/usr/local/bin"
 printf "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see CONTRIBUTING.md for details.\n\n"
 
 files=$(git diff --cached --name-only --diff-filter=ACM | grep ".jsx*$")
-if [ "$files" = "" ]; then
-    exit 0
-fi
-
 pass=true
 
-# i18nlinting.  Just have i18nlint issue warnings for now without failing
-printf "\nValidating translatable strings:\n"
-for file in ${files}; do
-    result=$(./bin/i18nlint --color ${file})
-    if [ $? -ne 0 ]; then
-        printf "\033[31mi18nlint Failed: \033[0m%s\n" "$result"
-        printf "\n -----\n"
-        pass=false
-    else
-        printf "\033[32mi18nlint Passed: %s\033[0m\n" "${file}"
-    fi
-done
+if [ "$files" != "" ]; then
+	# i18nlinting. Just have i18nlint issue warnings for now without failing
+	printf "\nValidating translatable strings:\n"
+	for file in ${files}; do
+		result=$(./bin/i18nlint --color ${file})
+		if [ $? -ne 0 ]; then
+			printf "\033[31mi18nlint Failed: \033[0m%s\n" "$result"
+			printf "\n -----\n"
+			pass=false
+		else
+			printf "\033[32mi18nlint Passed: %s\033[0m\n" "${file}"
+		fi
+	done
 
-printf "\nValidating .jsx and .js:\n"
+	printf "\nValidating .jsx and .js:\n"
 
-for file in ${files}; do
-    ./node_modules/.bin/eslint ${file}
-    if [ $? -ne 0 ]; then
-        printf "\033[31meslint Failed: %s\033[0m\n" "${file}"
-        pass=false
-    else
-        printf "\033[32meslint Passed: %s\033[0m\n" "${file}"
-    fi
-done
+	for file in ${files}; do
+		./node_modules/.bin/eslint ${file}
+		if [ $? -ne 0 ]; then
+			printf "\033[31meslint Failed: %s\033[0m\n" "${file}"
+			pass=false
+		else
+			printf "\033[32meslint Passed: %s\033[0m\n" "${file}"
+		fi
+	done
 
-printf "\neslint validation complete\n"
+	printf "\neslint validation complete\n"
 
-for file in ${files}; do
-    ./bin/check-gridicon-format ${file}
-        if [ $? -ne 0 ]; then
-        printf "\033[31mGridicon Format Check Failed: \033[0m%s\n" "${file}"
-        pass=false
-    fi
-done
+	for file in ${files}; do
+		./bin/check-gridicon-format ${file}
+		if [ $? -ne 0 ]; then
+			printf "\033[31mGridicon Format Check Failed: \033[0m%s\n" "${file}"
+			pass=false
+		fi
+	done
+fi
 
+packages=$(find client -type f -print | grep 'package.json')
+if [ "$packages" != "" ]; then
+	for package in ${packages}; do
+		packagePath=${package%package.json}
+		if [ "$packagePath" != "" ]; then
+			changes=$(git diff --cached --name-only $packagePath)
+			if [ "$changes" != "" ]; then
+				./bin/package-requires-update ${package}
+				if [ $? -ne 0 ]; then
+					pass=false
+				fi
+			fi
+		fi
+	done
+fi
 if ! $pass; then
-    printf "\n\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n\n"
-    exit 1
+	printf "\n\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n\n"
+	exit 1
 else
-    printf "\n\033[42mCOMMIT SUCCEEDED\033[0m\n\n"
+	printf "\n\033[42mCOMMIT SUCCEEDED\033[0m\n\n"
 fi

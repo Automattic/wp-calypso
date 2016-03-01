@@ -14,7 +14,7 @@ var debug = require( 'debug' )( 'calypso:i18n' ),
 var config = require( 'config' ),
 	numberFormatPHPJS = require( './number-format' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	interpolateComponents = require( 'lib/interpolate-components' );
+	interpolateComponents = require( 'lib/interpolate-components/src' );
 
 /**
  * variables
