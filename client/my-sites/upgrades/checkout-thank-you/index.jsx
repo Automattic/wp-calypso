@@ -194,6 +194,12 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
+		let purchases;
+
+		if ( ! this.isGenericReceipt() ) {
+			purchases = getPurchases( this.props );
+		}
+
 		return (
 			<div>
 				<CheckoutThankYouHeader
@@ -209,6 +215,7 @@ const CheckoutThankYou = React.createClass( {
 				{ ComponentClass
 					? <div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
+							purchases={ purchases }
 							selectedSite={ selectedSite }
 							domain={ domain } />
 					</div>
