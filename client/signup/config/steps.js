@@ -25,25 +25,6 @@ module.exports = {
 		providesDependencies: [ 'theme' ]
 	},
 
-	altthemes: {
-		stepName: 'altthemes',
-		props: {
-			themes: [
-				{ name: 'Dyad', slug: 'dyad' },
-				{ name: 'Independent Publisher', slug: 'independent-publisher' },
-				{ name: 'Sela', slug: 'sela' },
-				{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
-				{ name: 'Twenty Sixteen', slug: 'twentysixteen' },
-				{ name: 'Penscratch', slug: 'penscratch' },
-				{ name: 'Edin', slug: 'edin' },
-				{ name: 'Publication', slug: 'publication' },
-				{ name: 'Harmonic', slug: 'harmonic' },
-			],
-		},
-		apiRequestFunction: stepActions.setThemeOnSite,
-		dependencies: [ 'siteSlug' ]
-	},
-
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'themes' ]

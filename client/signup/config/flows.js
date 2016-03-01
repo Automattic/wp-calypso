@@ -225,20 +225,6 @@ const flows = {
 		description: 'Signup flow for free trials',
 		lastModified: '2015-12-18'
 	},
-
-	'website-altthemes': {
-		steps: [ 'survey', 'altthemes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Alternative theme selection for the users who clicked "Create Website" on the two-button homepage.',
-		lastModified: '2016-02-12'
-	},
-
-	'blog-altthemes': {
-		steps: [ 'survey', 'altthemes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Alternative theme selection for the users who clicked "Create blog" on the two-button homepage.',
-		lastModified: '2016-02-12'
-	},
 };
 
 function removeUserStepFromFlow( flow ) {
@@ -257,20 +243,9 @@ function filterFlowName( flowName ) {
 		return 'headstart';
 	}
 
-	const altThemesFlows = [ 'blog', 'website' ];
-	if ( includes( altThemesFlows, flowName ) && 'notTested' === getABTestVariation( 'headstart' ) ) {
-		if ( 'altThemes' === abtest( 'altThemes' ) ) {
-			return ( 'blog' === flowName ) ? 'blog-altthemes' : 'website-altthemes';
-		}
-	}
-
 	let isInPreviousTest = false;
 
 	if ( getABTestVariation( 'headstart' ) && getABTestVariation( 'headstart' ) !== 'notTested' ) {
-		isInPreviousTest = true;
-	}
-
-	if ( getABTestVariation( 'altThemes' ) && getABTestVariation( 'altThemes' ) !== 'notTested' ) {
 		isInPreviousTest = true;
 	}
 
