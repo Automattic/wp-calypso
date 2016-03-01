@@ -26,19 +26,6 @@ export function getPost( state, globalId ) {
 }
 
 /**
- * Returns true if the specified posts query is being tracked for the site, or
- * false otherwise.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Post query object
- * @return {Boolean}        Whether posts query is tracked for site
- */
-export function isTrackingSitePostsQuery( state, siteId, query ) {
-	return !! state.posts.queries[ getSerializedPostsQuery( query, siteId ) ];
-}
-
-/**
  * Returns an array of posts for the posts query, or null if no posts have been
  * received.
  *
@@ -48,16 +35,12 @@ export function isTrackingSitePostsQuery( state, siteId, query ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	if ( ! isTrackingSitePostsQuery( state, siteId, query ) ) {
-		return null;
-	}
-
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	if ( ! state.posts.queries[ serializedQuery ].posts ) {
+	if ( ! state.posts.queries[ serializedQuery ] ) {
 		return null;
 	}
 
-	return state.posts.queries[ serializedQuery ].posts.map( ( globalId ) => {
+	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
 		return getPost( state, globalId );
 	} );
 }
@@ -72,12 +55,8 @@ export function getSitePostsForQuery( state, siteId, query ) {
  * @return {Boolean}        Whether posts are being requested
  */
 export function isRequestingSitePostsForQuery( state, siteId, query ) {
-	if ( ! isTrackingSitePostsQuery( state, siteId, query ) ) {
-		return false;
-	}
-
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	return state.posts.queries[ serializedQuery ].fetching;
+	return !! state.posts.queryRequests[ serializedQuery ];
 }
 
 /**

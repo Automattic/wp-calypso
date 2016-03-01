@@ -21,12 +21,21 @@ import {
 } from 'state/action-types';
 import {
 	items,
+	queryRequests,
 	queries,
 	queriesLastPage,
 	siteRequests
 } from '../reducer';
 
 describe( 'reducer', () => {
+	before( () => {
+		sinon.stub( console, 'warn' );
+	} );
+
+	after( () => {
+		console.warn.restore();
+	} );
+
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
@@ -79,13 +88,6 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			before( () => {
-				sinon.stub( console, 'warn' );
-			} );
-			after( () => {
-				console.warn.restore();
-			} );
-
 			it( 'persists state', () => {
 				const original = deepFreeze( {
 					'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -127,81 +129,108 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#queries()', () => {
+	describe( '#queryRequests()', () => {
 		it( 'should default to an empty object', () => {
-			const state = queries( undefined, {} );
+			const state = queryRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should track post query request fetching', () => {
-			const state = queries( undefined, {
+			const state = queryRequests( undefined, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello' }
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': {
-					fetching: true
-				}
+				'2916284:{"search":"hello"}': true
 			} );
 		} );
 
 		it( 'should track post queries without specified site', () => {
-			const state = queries( undefined, {
+			const state = queryRequests( undefined, {
 				type: POSTS_REQUEST,
 				query: { search: 'Hello' }
 			} );
 
 			expect( state ).to.eql( {
-				'{"search":"hello"}': {
-					fetching: true
-				}
-			} );
-		} );
-
-		it( 'should preserve previous query results when requesting again', () => {
-			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': {
-					fetching: false,
-					posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-				}
-			} );
-			const state = queries( original, {
-				type: POSTS_REQUEST,
-				siteId: 2916284,
-				query: { search: 'Hello' }
-			} );
-
-			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': {
-					fetching: true,
-					posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-				}
+				'{"search":"hello"}': true
 			} );
 		} );
 
 		it( 'should accumulate queries', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': {
-					fetching: true
-				}
+				'2916284:{"search":"hello"}': true
 			} );
-			const state = queries( original, {
+
+			const state = queryRequests( original, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello W' }
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': {
-					fetching: true
-				},
-				'2916284:{"search":"hello w"}': {
-					fetching: true
-				}
+				'2916284:{"search":"hello"}': true,
+				'2916284:{"search":"hello w"}': true
 			} );
+		} );
+
+		it( 'should track post query request success', () => {
+			const state = queryRequests( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				]
+			} );
+
+			expect( state ).to.eql( {
+				'2916284:{"search":"hello"}': false
+			} );
+		} );
+
+		it( 'should track post query request failure', () => {
+			const state = queryRequests( undefined, {
+				type: POSTS_REQUEST_FAILURE,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				error: new Error()
+			} );
+
+			expect( state ).to.eql( {
+				'2916284:{"search":"hello"}': false
+			} );
+		} );
+
+		it( 'should never persist state', () => {
+			const original = deepFreeze( {
+				'2916284:{"search":"hello"}': true
+			} );
+
+			const state = queryRequests( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should never load persisted state', () => {
+			const original = deepFreeze( {
+				'2916284:{"search":"hello"}': true
+			} );
+
+			const state = queryRequests( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( '#queries()', () => {
+		it( 'should default to an empty object', () => {
+			const state = queries( undefined, {} );
+
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should track post query request success', () => {
@@ -216,45 +245,60 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': {
-					fetching: false,
-					posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-				}
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 			} );
 		} );
 
-		it( 'should track post query request failure', () => {
-			const state = queries( undefined, {
-				type: POSTS_REQUEST_FAILURE,
+		it( 'should accumulate query request success', () => {
+			const original = deepFreeze( {
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+			} );
+			const state = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				query: { search: 'Hello' },
-				error: new Error()
+				query: { search: 'Hello W' },
+				posts: [
+					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				]
 			} );
 
 			expect( state ).to.eql( {
-				'2916284:{"search":"hello"}': {
-					fetching: false
-				}
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+				'2916284:{"search":"hello w"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 			} );
 		} );
 
-		it( 'never persists state because this is not implemented', () => {
+		it( 'should persist state', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': {
-					fetching: true
-				}
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 			} );
+
 			const state = queries( original, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
+
+			expect( state ).to.eql( {
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+			} );
 		} );
 
-		it( 'never persists state because this is not implemented', () => {
+		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
-				'2916284:{"search":"hello"}': {
-					fetching: true
-				}
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 			} );
+
 			const state = queries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {
+				'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+			} );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+			} );
+
+			const state = queries( original, { type: DESERIALIZE } );
+
 			expect( state ).to.eql( {} );
 		} );
 	} );
