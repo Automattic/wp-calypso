@@ -27,19 +27,19 @@ function bumpStat( group, name ) {
 *
 * @param {object} element - React element to be rendered to html
 * @param {string} key - (optional) custom key
-* @return {object} context object with `layout` field populated
+* @return {object} context object with `renderedLayout` field populated
 */
 export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
 
-		let layout = markupCache.get( key );
-		if ( ! layout ) {
+		let renderedLayout = markupCache.get( key );
+		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
-			layout = ReactDomServer.renderToString( element );
-			markupCache.set( key, layout );
+			renderedLayout = ReactDomServer.renderToString( element );
+			markupCache.set( key, renderedLayout );
 		}
-		const context = { layout };
+		const context = { renderedLayout };
 		const rtsTimeMs = Date.now() - startTime;
 
 		if ( Helmet.peek() ) {
