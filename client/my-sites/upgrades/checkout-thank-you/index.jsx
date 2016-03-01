@@ -158,10 +158,10 @@ const CheckoutThankYou = React.createClass( {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
-			} else if ( purchases.some( isGoogleApps ) ) {
-				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [ DomainRegistrationDetails, ...findPurchaseAndDomain( purchases, isDomainRegistration ) ];
+			} else if ( purchases.some( isGoogleApps ) ) {
+				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {
