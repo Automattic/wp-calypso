@@ -1,44 +1,51 @@
-var React = require( 'react' );
+/**
+ * External Dependencies
+ */
+import React from 'react';
 
-var FollowingStream = require( 'reader/following-stream' ),
-	EmptyContent = require( './empty' ),
-	ReaderTags = require( 'lib/reader-tags/tags' ),
-	ReaderTagActions = require( 'lib/reader-tags/actions' ),
-	TagSubscriptions = require( 'lib/reader-tags/subscriptions' ),
-	StreamHeader = require( 'reader/stream-header' ),
-	stats = require( 'reader/stats' ),
-	HeaderBack = require( 'reader/header-back' );
+/**
+ * Internal Dependencies
+ */
+import FollowingStream from 'reader/following-stream';
+import EmptyContent from './empty';
+import ReaderTags from 'lib/reader-tags/tags';
+import ReaderTagActions from 'lib/reader-tags/actions';
+import TagSubscriptions from 'lib/reader-tags/subscriptions';
+import StreamHeader from 'reader/stream-header';
+import HeaderBack from 'reader/header-back';
 
-var FeedStream = React.createClass( {
+const stats = require( 'reader/stats' );
+
+const FeedStream = React.createClass( {
 
 	propTypes: {
 		tag: React.PropTypes.string
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			title: this.getTitle(),
 			subscribed: this.isSubscribed()
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		ReaderTags.on( 'change', this.updateState );
 		TagSubscriptions.on( 'change', this.updateState );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		ReaderTags.off( 'change', this.updateState );
 		TagSubscriptions.off( 'change', this.updateState );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.tag !== this.props.tag ) {
 			this.updateState();
 		}
 	},
 
-	updateState: function() {
+	updateState() {
 		var newState = {
 			title: this.getTitle(),
 			subscribed: this.isSubscribed()
@@ -48,17 +55,17 @@ var FeedStream = React.createClass( {
 		}
 	},
 
-	getTitle: function() {
+	getTitle() {
 		var tag = ReaderTags.get( this.props.tag );
 		if ( ! tag ) {
 			ReaderTagActions.fetchTag( this.props.tag );
-			return this.translate( 'Loading Tag' );
+			return this.props.tag;
 		}
 
 		return tag.display_name || tag.slug;
 	},
 
-	isSubscribed: function() {
+	isSubscribed() {
 		var tag = ReaderTags.get( this.props.tag );
 		if ( ! tag ) {
 			return false;
@@ -66,7 +73,7 @@ var FeedStream = React.createClass( {
 		return TagSubscriptions.isSubscribed( tag.slug );
 	},
 
-	toggleFollowing: function( isFollowing ) {
+	toggleFollowing( isFollowing ) {
 		var tag = ReaderTags.get( this.props.tag );
 		ReaderTagActions[ isFollowing ? 'follow' : 'unfollow' ]( tag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
@@ -76,27 +83,28 @@ var FeedStream = React.createClass( {
 		} );
 	},
 
-	render: function() {
-		var tag = ReaderTags.get( this.props.tag ),
-			emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
+	render() {
+		const tag = ReaderTags.get( this.props.tag ) || { slug: this.props.tag },
+			emptyContent = ( <EmptyContent tag={ this.props.tag } /> ),
+			isFollowPossible = !! tag.ID;
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title );
 		}
+
 		return (
 			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				{ this.props.showBack && <HeaderBack /> }
 				<StreamHeader
-					isPlaceholder={ ! tag }
+					isPlaceholder={ false }
 					icon={ <svg className="gridicon gridicon__tag" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M16 7H5c-1.105 0-2 .896-2 2v6c0 1.104.895 2 2 2h11l5-5-5-5z"/></g></svg> }
 					title={ this.state.title }
-					showFollow={ true }
+					showFollow={ isFollowPossible }
 					following={ this.state.subscribed }
 					onFollowToggle={ this.toggleFollowing } />
 			</FollowingStream>
 		);
 	}
-
 } );
 
-module.exports = FeedStream;
+export default FeedStream;
