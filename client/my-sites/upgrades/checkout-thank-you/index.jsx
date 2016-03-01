@@ -1,60 +1,68 @@
 /**
  * External dependencies
  */
-var classNames = require( 'classnames' ),
-	connect = require( 'react-redux' ).connect,
-	find = require( 'lodash/find' ),
-	page = require( 'page' ),
-	React = require( 'react' );
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import find from 'lodash/find';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var activated = require( 'state/themes/actions' ).activated,
-	analytics = require( 'analytics' ),
-	BusinessPlanDetails = require( './business-plan-details' ),
-	Card = require( 'components/card' ),
-	ChargebackDetails = require( './chargeback-details' ),
-	CheckoutThankYouFooter = require( './footer' ),
-	CheckoutThankYouHeader = require( './header' ),
-	Dispatcher = require( 'dispatcher' ),
-	DomainMappingDetails = require( './domain-mapping-details' ),
-	DomainRegistrationDetails = require( './domain-registration-details' ),
-	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
-	GenericDetails = require( './generic-details' ),
-	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
-	GoogleAppsDetails = require( './google-apps-details' ),
-	HeaderCake = require( 'components/header-cake' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	isChargeback = require( 'lib/products-values' ).isChargeback,
-	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
-	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
-	isDomainRedemption = require( 'lib/products-values' ).isDomainRedemption,
-	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
-	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
-	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
-	isJetpackBusiness = require( 'lib/products-values' ).isJetpackBusiness,
-	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
-	isPlan = require( 'lib/products-values' ).isPlan,
-	isPremium = require( 'lib/products-values' ).isPremium,
-	isSiteRedirect = require( 'lib/products-values' ).isSiteRedirect,
-	isTheme = require( 'lib/products-values' ).isTheme,
-	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
-	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
-	Main = require( 'components/main' ),
-	plansPaths = require( 'my-sites/plans/paths' ),
-	PremiumPlanDetails = require( './premium-plan-details' ),
-	PurchaseDetail = require( 'components/purchase-detail' ),
-	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
-	SiteRedirectDetails = require( './site-redirect-details' ),
-	upgradesPaths = require( 'my-sites/upgrades/paths' );
+import { activated } from 'state/themes/actions';
+import analytics from 'analytics';
+import BusinessPlanDetails from './business-plan-details';
+import Card from 'components/card';
+import ChargebackDetails from './chargeback-details';
+import CheckoutThankYouFooter from './footer';
+import CheckoutThankYouHeader from './header';
+import Dispatcher from 'dispatcher';
+import DomainMappingDetails from './domain-mapping-details';
+import DomainRegistrationDetails from './domain-registration-details';
+import { fetchReceipt } from 'state/receipts/actions';
+import GenericDetails from './generic-details';
+import { getReceiptById } from 'state/receipts/selectors';
+import GoogleAppsDetails from './google-apps-details';
+import HeaderCake from 'components/header-cake';
+import {
+	isBusiness,
+	isChargeback,
+	isDomainMapping,
+	isDomainProduct,
+	isDomainRedemption,
+	isDomainRegistration,
+	isFreeTrial,
+	isGoogleApps,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isPlan,
+	isPremium,
+	isSiteRedirect,
+	isTheme
+} from 'lib/products-values';
+import JetpackBusinessPlanDetails from './jetpack-business-plan-details';
+import JetpackPremiumPlanDetails from './jetpack-premium-plan-details';
+import Main from 'components/main';
+import plansPaths from 'my-sites/plans/paths';
+import PremiumPlanDetails from './premium-plan-details';
+import PurchaseDetail from 'components/purchase-detail';
+import { refreshSitePlans } from 'state/sites/plans/actions';
+import SiteRedirectDetails from './site-redirect-details';
+import upgradesPaths from 'my-sites/upgrades/paths';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
 }
 
-var CheckoutThankYou = React.createClass( {
-	componentDidMount: function() {
+function findPurchaseAndDomain( purchases, predicate ) {
+	const purchase = find( purchases, predicate );
+
+	return [ purchase, purchase.meta ];
+}
+
+const CheckoutThankYou = React.createClass( {
+	componentDidMount() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
 
@@ -65,12 +73,12 @@ var CheckoutThankYou = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 	},
 
-	componentWillReceiveProps: function() {
+	componentWillReceiveProps() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
 	},
 
-	refreshSitesAndSitePlansIfPlanPurchased: function() {
+	refreshSitesAndSitePlansIfPlanPurchased() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).some( isPlan ) ) {
 			// Refresh selected site plans if the user just purchased a plan
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
@@ -83,15 +91,15 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
-	isDataLoaded: function() {
+	isDataLoaded() {
 		return this.isGenericReceipt() || this.props.receipt.hasLoadedFromServer;
 	},
 
-	isGenericReceipt: function() {
+	isGenericReceipt() {
 		return ! this.props.receiptId;
 	},
 
-	redirectIfThemePurchased: function() {
+	redirectIfThemePurchased() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
 			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
 
@@ -117,8 +125,8 @@ var CheckoutThankYou = React.createClass( {
 		}
 	},
 
-	render: function() {
-		var classes = classNames( 'checkout-thank-you', {
+	render() {
+		const classes = classNames( 'checkout-thank-you', {
 			'is-placeholder': ! this.isDataLoaded()
 		} );
 
@@ -137,7 +145,7 @@ var CheckoutThankYou = React.createClass( {
 		);
 	},
 
-	freeTrialWasPurchased: function() {
+	freeTrialWasPurchased() {
 		if ( ! this.isDataLoaded() || this.isGenericReceipt() ) {
 			return false;
 		}
@@ -151,15 +159,9 @@ var CheckoutThankYou = React.createClass( {
 	 *
 	 * @returns {*[]} an array of varying size with the component instance, then an optional purchase object possibly followed by a domain name
 	 */
-	getComponentAndPrimaryPurchaseAndDomain: function() {
+	getComponentAndPrimaryPurchaseAndDomain() {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
-
-			const findPurchaseAndDomain = ( purchases, predicate ) => {
-				const purchase = find( purchases, predicate );
-
-				return [ purchase, purchase.meta ];
-			};
 
 			if ( purchases.some( isJetpackPremium ) ) {
 				return [ JetpackPremiumPlanDetails, find( purchases, isJetpackPremium ) ];
@@ -185,8 +187,8 @@ var CheckoutThankYou = React.createClass( {
 		return [ GenericDetails ];
 	},
 
-	productRelatedMessages: function() {
-		var selectedSite = this.props.selectedSite,
+	productRelatedMessages() {
+		const selectedSite = this.props.selectedSite,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
@@ -225,21 +227,21 @@ var CheckoutThankYou = React.createClass( {
 	}
 } );
 
-module.exports = connect(
-	function mapStateToProps( state, props ) {
+export default connect(
+	( state, props ) => {
 		return {
 			receipt: getReceiptById( state, props.receiptId )
 		};
 	},
-	function mapDispatchToProps( dispatch ) {
+	( dispatch ) => {
 		return {
-			activatedTheme: function( meta, selectedSite ) {
+			activatedTheme: ( meta, selectedSite ) => {
 				dispatch( activated( meta, selectedSite, 'calypstore', true ) );
 			},
-			fetchReceipt: function( receiptId ) {
+			fetchReceipt: ( receiptId ) => {
 				dispatch( fetchReceipt( receiptId ) );
 			},
-			refreshSitePlans: function( siteId ) {
+			refreshSitePlans: ( siteId ) => {
 				dispatch( refreshSitePlans( siteId ) );
 			}
 		};
