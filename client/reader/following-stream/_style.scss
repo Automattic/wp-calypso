@@ -5,7 +5,7 @@
 	margin-bottom: 8px;
 
 	@include breakpoint( ">480px" ) {
-		padding: 16px 24px 24px;
+		padding: 16px 24px 24px 24px;
 		margin-bottom: 24px;
 
 		&.is-selected,
@@ -90,16 +90,16 @@
 	}
 
 	&.is-headerless {
-		padding-top: 0;
+		@include breakpoint( ">480px" ) {
+			padding-top: 24px;
+		}
 
 		.reader__post-title {
-			padding-top: 16px;
+			margin-top: 0px;
 		}
 
 		&.has-featured-image {
-			.reader__post-title {
-				padding-top: 0;
-			}
+			padding-top: 0;
 		}
 	}
 
