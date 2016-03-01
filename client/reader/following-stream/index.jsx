@@ -56,6 +56,7 @@ module.exports = React.createClass( {
 		store: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		suppressSiteNameLink: React.PropTypes.bool,
+		showPostHeader: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
@@ -64,6 +65,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			showPostHeader: true,
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
 			onShowUpdates: noop,
@@ -302,7 +304,7 @@ module.exports = React.createClass( {
 			placeholders = [];
 
 		times( count, function( i ) {
-			placeholders.push( <PostPlaceholder key={'feed-post-placeholder-' + i} /> );
+			placeholders.push( <PostPlaceholder key={ 'feed-post-placeholder-' + i } /> );
 		} );
 
 		return placeholders;
@@ -326,11 +328,11 @@ module.exports = React.createClass( {
 
 	showFullPost: function( post, options ) {
 		options = options || {};
-		var hashtag = '';
-		if ( options[ 'comments' ] ) {
+		let hashtag = '';
+		if ( options.comments ) {
 			hashtag += '#comments';
 		}
-		var method = options && options.replaceHistory ? 'replace' : 'show';
+		const method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
 			page[ method ]( '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID + hashtag );
 		} else {
@@ -353,8 +355,8 @@ module.exports = React.createClass( {
 					if ( isSelected ) {
 						this._selectedGap = c;
 					}
-				}}
-				key={'gap-' + postKey.from + '-' + postKey.to}
+				} }
+				key={ 'gap-' + postKey.from + '-' + postKey.to }
 				gap={ postKey }
 				selected={ isSelected }
 				store={ this.props.store } />
@@ -372,10 +374,10 @@ module.exports = React.createClass( {
 
 		switch ( postState ) {
 			case 'pending':
-				content = <PostPlaceholder key={'feed-post-placeholder-' + itemKey} />;
+				content = <PostPlaceholder key={ 'feed-post-placeholder-' + itemKey } />;
 				break;
 			case 'error':
-				content = <PostUnavailable key={'feed-post-unavailable-' + itemKey} post={ post } />;
+				content = <PostUnavailable key={ 'feed-post-unavailable-' + itemKey } post={ post } />;
 				break;
 			default:
 				PostClass = cardClassForPost( post );
@@ -398,6 +400,7 @@ module.exports = React.createClass( {
 						isSelected: isSelected,
 						xPostedTo: this.props.store.getSitesCrossPostedTo( post.URL ),
 						suppressSiteNameLink: this.props.suppressSiteNameLink,
+						showPostHeader: this.props.showPostHeader,
 						showFollowInHeader: this.props.showFollowInHeader,
 						handleClick: this.showFullPost
 					} );
@@ -421,13 +424,13 @@ module.exports = React.createClass( {
 			ref={ ( c ) => this._list = c }
 			className="reader__content"
 			items={ this.state.posts }
-			lastPage={ this.props.store.isLastPage()}
-			fetchingNextPage={ this.props.store.isFetchingNextPage()}
+			lastPage={ this.props.store.isLastPage() }
+			fetchingNextPage={ this.props.store.isFetchingNextPage() }
 			guessedItemHeight={ GUESSED_POST_HEIGHT }
 			fetchNextPage={ this.fetchNextPage }
 			getItemRef= { this.getPostRef }
 			renderItem={ this.renderPost }
-			selectedIndex={ this.props.store.getSelectedIndex()}
+			selectedIndex={ this.props.store.getSelectedIndex() }
 			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
 		}
 
@@ -438,13 +441,10 @@ module.exports = React.createClass( {
 				</MobileBackToSidebar>
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
-
 				{ header }
-
 				{ body }
-
 			</Main>
-			);
+		);
 	}
 
 } );

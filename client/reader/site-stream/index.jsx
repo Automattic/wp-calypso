@@ -141,7 +141,7 @@ const SiteStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent }>
+			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader site={ this.state.site } feed={ this.state.feed }/>
 				{ featuredContent }

@@ -144,7 +144,7 @@ var FeedStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } >
+			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader feed={ feed } site={ this.state.site } />
 			</FollowingStream>

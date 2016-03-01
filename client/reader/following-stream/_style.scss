@@ -2,10 +2,10 @@
 .reader__card.card {
 	padding: 16px;
 	transition: all 0.1s ease-in-out;
-	margin-bottom: 8px;
+	margin-bottom: 15px;
 
 	@include breakpoint( ">480px" ) {
-		padding: 16px 24px 24px;
+		padding: 16px 24px 24px 24px;
 		margin-bottom: 24px;
 
 		&.is-selected,
@@ -15,7 +15,7 @@
 		&.tag-afk.is-selected,
 		&.tag-afk:hover {
 			box-shadow: 0 0 0 1px $gray,
-						0 2px 4px lighten( $gray, 20 );
+						0 2px 4px lighten( $gray, 20% );
 		}
 	}
 
@@ -45,7 +45,7 @@
 		margin: 8px 0;
 		padding: 0;
 		font-size: 14px;
-		color: lighten( $gray, 10 );
+		color: lighten( $gray, 10% );
 
 		.gravatar {
 			height: 16px;
@@ -86,6 +86,20 @@
 
 		a {
 			padding-left: 2px;
+		}
+	}
+
+	&.is-headerless {
+		@include breakpoint( ">480px" ) {
+			padding-top: 25px;
+		}
+
+		.reader__post-title {
+			margin-top: 0;
+		}
+
+		&.has-featured-image {
+			padding-top: 0;
 		}
 	}
 

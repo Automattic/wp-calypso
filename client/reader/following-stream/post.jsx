@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
+const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	assign = require( 'lodash/assign' ),
@@ -18,17 +18,17 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var Card = require( 'components/card' ),
+const Card = require( 'components/card' ),
 	CommentButton = require( 'components/comment-button' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	LikeButton = require( 'reader/like-button' ),
 	ObserveWindowSizeMixin = require( 'lib/mixins/observe-window-resize' ),
+	PostHeader = require( 'reader/post-header' ),
 	PostByline = require( 'reader/post-byline' ),
 	PostImages = require( 'reader/post-images' ),
 	PostOptions = require( 'reader/post-options' ),
 	PostErrors = require( 'reader/post-errors' ),
 	PostExcerpt = require( 'components/post-excerpt' ),
-	Site = require( 'my-sites/site' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	Share = require( 'reader/share' ),
@@ -45,11 +45,10 @@ var Card = require( 'components/card' ),
 	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
 	FeedPostStore = require( 'lib/feed-post-store' ),
-	FollowButton = require( 'reader/follow-button' ),
 	Gridicon = require( 'components/gridicon' ),
 	smartSetState = require( 'lib/react-smart-set-state' );
 
-var Post = React.createClass( {
+const Post = React.createClass( {
 
 	mixins: [ PureRenderMixin, ObserveWindowSizeMixin ],
 
@@ -58,9 +57,10 @@ var Post = React.createClass( {
 		isSelected: React.PropTypes.bool.isRequired,
 		xPostedTo: React.PropTypes.array,
 		suppressSiteNameLink: React.PropTypes.bool,
+		showPostHeader: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		additionalClasses: React.PropTypes.object,
-		handleClick: React.PropTypes.func.isRequired
+		handleClick: React.PropTypes.func.isRequired,
 	},
 
 	smartSetState: smartSetState,
@@ -358,6 +358,10 @@ var Post = React.createClass( {
 			articleClasses[ 'feed-' + post.feed_ID ] = true;
 		}
 
+		if ( ! this.props.showPostHeader ) {
+			articleClasses[ 'is-headerless' ] = true;
+		}
+
 		forOwn( post.tags, ( { slug } ) => {
 			articleClasses[ 'tag-' + slug ] = true;
 		} );
@@ -387,13 +391,7 @@ var Post = React.createClass( {
 
 				<PostErrors post={ post } />
 
-				<div className="reader__post-header">
-					{ this.props.showFollowInHeader ? <FollowButton siteUrl={ post.site_URL } /> : null }
-					<Site site={ site }
-						href={ post.site_URL }
-						onSelect={ this.pickSite }
-						onClick={ this.handleSiteClick } />
-				</div>
+				{ this.props.showPostHeader ? <PostHeader site={ site } siteUrl={ post.site_URL } showFollow={ this.props.showFollowInHeader } onSiteSelect={ this.pickSite } onSiteClick={ this.handleSiteClick } /> : null }
 
 				{ featuredImage }
 
