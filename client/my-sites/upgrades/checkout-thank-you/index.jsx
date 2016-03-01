@@ -174,6 +174,18 @@ const CheckoutThankYou = React.createClass( {
 		return [ GenericDetails ];
 	},
 
+	shouldHideFeaturesHeading() {
+		if ( this.isGenericReceipt() ) {
+			return false;
+		}
+
+		const purchases = getPurchases( this.props );
+
+		return purchases.some( isGoogleApps ) ||
+			purchases.some( isDomainRegistration ) ||
+			purchases.some( isDomainMapping );
+	},
+
 	productRelatedMessages() {
 		const selectedSite = this.props.selectedSite,
 			featuresHeaderClasses = classNames( 'checkout-thank-you__features-header', {
@@ -197,9 +209,6 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		const purchases = getPurchases( this.props ),
-			hideFeaturesHeading = purchases.some( isGoogleApps ) || purchases.some( isDomainRegistration ) || purchases.some( isDomainMapping );
-
 		return (
 			<div>
 				<CheckoutThankYouHeader
@@ -207,7 +216,7 @@ const CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				{ ! hideFeaturesHeading && <div className={ featuresHeaderClasses }>{ this.translate( 'What now?' ) }</div> }
+				{ ! this.shouldHideFeaturesHeading() && <div className={ featuresHeaderClasses }>{ this.translate( 'What now?' ) }</div> }
 
 				<div className="checkout-thank-you__purchase-details-list">
 					<ComponentClass
