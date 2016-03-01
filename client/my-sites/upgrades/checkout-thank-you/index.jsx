@@ -46,13 +46,19 @@ import JetpackPremiumPlanDetails from './jetpack-premium-plan-details';
 import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
+}
+
+function findPurchaseAndDomain( purchases, predicate ) {
+	const purchase = find( purchases, predicate );
+
+	return [ purchase, purchase.meta ];
 }
 
 const CheckoutThankYou = React.createClass( {
@@ -156,12 +162,6 @@ const CheckoutThankYou = React.createClass( {
 	getComponentAndPrimaryPurchaseAndDomain() {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
-
-			const findPurchaseAndDomain = ( purchases, predicate ) => {
-				const purchase = find( purchases, predicate );
-
-				return [ purchase, purchase.meta ];
-			};
 
 			if ( purchases.some( isJetpackPremium ) ) {
 				return [ JetpackPremiumPlanDetails, find( purchases, isJetpackPremium ) ];
