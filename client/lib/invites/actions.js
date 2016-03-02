@@ -117,7 +117,7 @@ export function acceptInvite( invite, callback ) {
 	}
 }
 
-export function sendInvites( siteId, usernamesOrEmails, role, message, callback ) {
+export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) {
 	return dispatch => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.SENDING_INVITES,
@@ -131,6 +131,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, callback 
 				usernamesOrEmails,
 				role,
 				message,
+				formId,
 				data
 			} );
 
@@ -151,7 +152,6 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, callback 
 				) ) );
 				analytics.tracks.recordEvent( 'calypso_invite_send_success' );
 			}
-			callback( error, data );
 		} );
 	}
 }

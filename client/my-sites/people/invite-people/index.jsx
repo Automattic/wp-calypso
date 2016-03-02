@@ -9,6 +9,7 @@ import includes from 'lodash/includes';
 import some from 'lodash/some';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
+import InvitesSentStore from 'lib/invites/stores/invites-sent';
 
 /**
  * Module variables
@@ -37,10 +39,12 @@ const InvitePeople = React.createClass( {
 
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
+		InvitesSentStore.on( 'change', this.refreshFormState );
 	},
 
 	componentWillUnmount() {
 		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
+		InvitesSentStore.off( 'change', this.refreshFormState );
 	},
 
 	componentWillReceiveProps() {
@@ -56,11 +60,20 @@ const InvitePeople = React.createClass( {
 			usernamesOrEmails: [],
 			role: 'follower',
 			message: '',
-			response: false,
 			sendingInvites: false,
 			getTokenStatus: () => {},
 			errorToDisplay: false
 		} );
+	},
+
+	refreshFormState() {
+		const sendInvitesSuccess = InvitesSentStore.getSuccess( this.state.formId );
+
+		if ( sendInvitesSuccess ) {
+			this.setState( this.resetState() );
+		} else {
+			this.setState( { sendingInvites: false } );
+		}
 	},
 
 	onTokensChange( tokens ) {
@@ -139,19 +152,16 @@ const InvitePeople = React.createClass( {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
-		this.setState( { sendingInvites: true } );
-		this.props.sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, ( error, data ) => {
-			if ( error ) {
-				debug( 'Send invite error:' + JSON.stringify( error ) );
-			} else {
-				debug( 'Send invites response: ' + JSON.stringify( data ) );
-			}
+		const formId = uniqueId();
 
-			this.setState( {
-				sendingInvites: false,
-				response: error ? error : data
-			} );
-		} );
+		this.setState( { sendingInvites: true, formId } );
+		this.props.sendInvites(
+			this.props.site.ID,
+			this.state.usernamesOrEmails,
+			this.state.role,
+			this.state.message,
+			formId
+		);
 	},
 
 	isSubmitDisabled() {
