@@ -42,6 +42,19 @@
 	opacity: 1;
 }
 
+.wpcom-site__global-noscript {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 6px;
+
+	color: $white;
+	background: rgba( 46, 68, 83, 0.8 );
+	text-align: center;
+}
+
+
 /* =Global
 ----------------------------------------------- */
 

@@ -56,9 +56,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style.css'])
 
 	body(class=isRTL ? 'rtl' : '')
-		noscript
-			|Please enable JavaScript in your browser to enjoy WordPress.com.
-
 		if layout
 			#wpcom.wpcom-site!= layout
 		else
@@ -132,3 +129,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			if chunk
 				script(src=urls[ chunk + '-min' ])
 		script(type='text/javascript')!='window.AppBoot();'
+
+		noscript.wpcom-site__global-noscript
+			|Please enable JavaScript in your browser to enjoy WordPress.com.
