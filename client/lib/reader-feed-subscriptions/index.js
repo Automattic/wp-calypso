@@ -137,7 +137,7 @@ var FeedSubscriptionStore = {
 		} );
 
 		// Is it the last page?
-		if ( data.number === 0 ) {
+		if ( data.number === 0 || data.page === 40 ) {
 			isLastPage = true;
 		}
 
