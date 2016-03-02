@@ -176,11 +176,6 @@
 		.follow-button {
 			cursor: default;
 			color: lighten( $gray, 20% );
-
-			&:hover,
-			&:active {
-				color: $blue-wordpress;
-			}
 		}
 
 		&.is-valid {
