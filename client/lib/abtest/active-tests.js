@@ -80,7 +80,7 @@ module.exports = {
 		excludeSitesWithPaidPlan: true
 	},
 	domainSearchPlaceholderText: {
-		datestamp: '20000302',
+		datestamp: '20160302',
 		variations: {
 			original: 50,
 			searchForADomain: 50
