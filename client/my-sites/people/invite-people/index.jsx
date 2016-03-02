@@ -28,6 +28,7 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables
@@ -200,7 +201,35 @@ const InvitePeople = React.createClass( {
 		);
 	},
 
+	renderNoJetpackSitesDrake() {
+		const adminUrl = get( this.props, 'site.options.admin_url' );
+
+		let emptyContentProps = {
+			title: this.translate( 'Jetpack Invites are Under Construction' ),
+			line: this.translate( 'In the meantime, please add users from WordPress admin.' ),
+			illustration: '/calypso/images/drake/drake-whoops.svg'
+		};
+
+		if ( adminUrl ) {
+			emptyContentProps = Object.assign( {}, emptyContentProps, {
+				action: this.translate( 'Add people with WP-Admin', { textOnly: true } ),
+				actionURL: adminUrl + 'user-new.php',
+				actionTarget: '_new'
+			} );
+		}
+
+		return (
+			<Main>
+				<EmptyContent { ... emptyContentProps } />
+			</Main>
+		);
+	},
+
 	render() {
+		if ( get( this.props, 'site.jetpack' ) ) {
+			return this.renderNoJetpackSitesDrake();
+		}
+
 		return (
 			<Main>
 				<HeaderCake isCompact onClick={ this.goBack }/>
