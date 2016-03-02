@@ -2,6 +2,11 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import get from 'lodash/get';
+import set from 'lodash/set';
+import omitBy from 'lodash/omitBy';
+import isEqual from 'lodash/isEqual';
+import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
 import merge from 'lodash/merge';
 
@@ -171,6 +176,20 @@ export function queriesLastPage( state = {}, action ) {
  */
 export function edits( state = {}, action ) {
 	switch ( action.type ) {
+		case POSTS_RECEIVE:
+			return reduce( action.posts, ( memoState, post ) => {
+				const postEdits = get( memoState, [ post.site_ID, post.ID ] );
+				if ( ! postEdits ) {
+					return memoState;
+				} else if ( memoState === state ) {
+					memoState = merge( {}, state );
+				}
+
+				return set( memoState, [ post.site_ID, post.ID ], omitBy( postEdits, ( value, key ) => {
+					return isEqual( post[ key ], value );
+				} ) );
+			}, state );
+
 		case POST_EDIT:
 			return merge( {}, state, {
 				[ action.siteId ]: {

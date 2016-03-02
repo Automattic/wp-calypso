@@ -661,6 +661,34 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should should eliminate redundant data on posts received', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						type: 'post'
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} ), {
+				type: POSTS_RECEIVE,
+				posts: [ { ID: 841, site_ID: 2916284, type: 'post' } ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
 		it( 'should not persist state', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
