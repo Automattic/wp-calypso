@@ -143,7 +143,12 @@ const CheckoutThankYou = React.createClass( {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
 			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
 
-			page.redirect( '/design/' + this.props.selectedSite.slug );
+			// If we're coming from the signup funnel, redirect to the frontend
+			if ( getPurchases( this.props )[0].source === 'signup-with-theme' ) {
+				page.redirect( this.props.selectedSite.URL );
+			} else {
+				page.redirect( '/design/' + this.props.selectedSite.slug );
+			}
 		}
 	},
 
