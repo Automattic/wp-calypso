@@ -31,6 +31,7 @@ function canAddGoogleApps( domainName ) {
 	if ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase ) {
 		return false;
 	}
+	return true;
 }
 
 function canRegister( domainName, onComplete ) {
