@@ -163,7 +163,8 @@ const PostOptions = React.createClass( {
 		var post = this.props.post,
 			triggerClasses = [ 'post-options__trigger', 'ignore-click' ],
 			isBlockPossible = false,
-			isEditPossible = PostUtils.userCan( 'edit_post', post );
+			isEditPossible = PostUtils.userCan( 'edit_post', post ),
+			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		if ( this.state.showPopoverMenu ) {
 			triggerClasses.push( 'is-triggered' );
@@ -172,7 +173,7 @@ const PostOptions = React.createClass( {
 		triggerClasses = triggerClasses.join( ' ' );
 
 		// Should we show the 'block' option?
-		if ( post.site_ID && ! post.is_external && ! post.is_jetpack && ! isEditPossible && ! DiscoverHelper.isDiscoverPost( post ) ) {
+		if ( post.site_ID && ! post.is_external && ! post.is_jetpack && ! isEditPossible && ! isDiscoverPost ) {
 			isBlockPossible = true;
 		}
 
@@ -197,9 +198,9 @@ const PostOptions = React.createClass( {
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
-					{ isBlockPossible ? <hr className="post-options__hr" /> : null }
+					{ isBlockPossible || isDiscoverPost ? <hr className="post-options__hr" /> : null }
 					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
-					{ isBlockPossible ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
+					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
 				</PopoverMenu>
 			</span>
 		);
