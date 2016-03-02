@@ -6,66 +6,43 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getDomainManagementUrl } from './utils';
-import { getPrimaryDomain, isSubdomain } from 'lib/domains';
-import { isPlan } from 'lib/products-values';
+import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
 
-export default React.createClass( {
-	getInitialState: function() {
-		return {
-			primaryDomain: null
-		};
-	},
+const DomainMappingDetails = ( { domain } ) => {
+	const description = (
+		<div>
+			<p>
+				{
+					i18n.translate( 'The domain {{em}}%(domain)s{{/em}} still has to be configured to work with WordPress.com.', {
+						args: { domain },
+						components: { em: <em /> }
+					} )
+				}
+			</p>
+			<p>{ i18n.translate( 'You will need to log into your registrar\'s site and change the "Name Servers" to:' ) }</p>
+			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
+				<li>ns1.wordpress.com</li>
+				<li>ns2.wordpress.com</li>
+				<li>ns3.wordpress.com</li>
+			</ul>
+			<p>{ i18n.translate( 'Once you make the change, just wait a few hours and the domain should start loading your site automatically.' ) }</p>
+		</div>
+	);
 
-	componentWillMount: function() {
-		getPrimaryDomain( this.props.selectedSite.ID, ( error, data ) => {
-			if ( ! error && data ) {
-				this.setState( { primaryDomain: data.domain } );
-			}
-		} );
-	},
+	return (
+		<div className="checkout-thank-you__domain-mapping-details">
+			<PurchaseDetail
+				icon="cog"
+				title={ i18n.translate( 'Finish setting up your domain' ) }
+				description={ description }
+				buttonText={ i18n.translate( 'Learn more' ) }
+				href="//support.wordpress.com/map-existing-domain/"
+				target="_blank"
+				requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
+				isRequired />
+		</div>
+	);
+};
 
-	render: function() {
-		let primaryDomainDescription,
-			supportDoc;
-
-		if ( isSubdomain( this.props.domain ) ) {
-			supportDoc = 'https://support.wordpress.com/domains/map-subdomain/';
-		} else {
-			supportDoc = 'https://support.wordpress.com/domains/map-existing-domain/';
-		}
-
-		if ( this.state.primaryDomain === this.props.domain ) {
-			primaryDomainDescription = this.translate( '%(domain)s is your primary domain. Do you want to change it?', { args: { domain: this.props.domain } } );
-		} else {
-			primaryDomainDescription = this.translate( 'Want this to be your primary domain for this site?' );
-		}
-
-		return (
-			<div>
-				<PurchaseDetail
-					icon="time"
-					title={ this.translate( 'Important!' ) }
-					description={ this.translate( "Your domain mapping won't work until you update the DNS settings." ) }
-					buttonText={ this.translate( 'Learn More' ) }
-					href={ supportDoc }
-					target="_blank" />
-
-				<PurchaseDetail
-					icon="globe"
-					title={ this.translate( 'Your Primary Domain' ) }
-					description={ primaryDomainDescription }
-					buttonText={ this.translate( 'Update Settings' ) }
-					href={ getDomainManagementUrl( this.props.selectedSite, this.props.domain ) } />
-
-				{ ! isPlan( this.props.selectedSite.plan ) ? <PurchaseDetail
-					icon="comment"
-					title={ this.translate( 'Upgrade Now' ) }
-					description={ this.translate( 'Take your blog to the next level by upgrading to one of our plans.' ) }
-					buttonText={ this.translate( 'View Plans' ) }
-					href={ '/plans/' + this.props.selectedSite.slug } /> : null }
-			</div>
-		);
-	}
-} );
+export default DomainMappingDetails;

@@ -42,6 +42,18 @@
 	}
 }
 
+.checkout-thank-you__domain-mapping-details .purchase-detail__icon {
+	top: 30%;
+}
+
+.checkout-thank-you__domain-mapping-details-nameservers {
+	border-left: solid 5px lighten( $gray, 25% );
+	list-style: none;
+	padding-left: 15px;
+	margin-left: 0;
+	text-align: left;
+}
+
 .checkout-thank-you__features-header {
 	color: darken( $gray, 20% );
 	font-size: 24px;
