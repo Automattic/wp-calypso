@@ -4,6 +4,7 @@
 import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -36,6 +37,19 @@ export function getPost( state, globalId ) {
 export const getSitePosts = createSelector(
 	( state, siteId ) => filter( state.posts.items, { site_ID: siteId } ),
 	( state ) => [ state.posts.items ]
+);
+
+/**
+ * Returns a post object by site ID, post ID pair.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {String}  postId Post ID
+ * @return {?Object}        Post object
+ */
+export const getSitePost = createSelector(
+	( state, siteId, postId ) => find( getSitePosts( state, siteId ), { ID: postId } ) || null,
+	( state, siteId ) => getSitePosts( state, siteId )
 );
 
 /**
