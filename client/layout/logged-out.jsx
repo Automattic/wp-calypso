@@ -50,7 +50,10 @@ LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
 	tertiary: React.PropTypes.element,
-	section: React.PropTypes.string,
+	section: React.PropTypes.oneOfType( [
+		React.PropTypes.string,
+		React.PropTypes.bool
+	] ),
 	hasSidebar: React.PropTypes.bool,
 	isFullScreen: React.PropTypes.bool
 }
