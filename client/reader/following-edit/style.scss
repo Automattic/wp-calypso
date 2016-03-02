@@ -246,7 +246,6 @@
 	.reader-list-item__title,
 	.reader-list-item__description {
 		padding-left: 12px;
-		margin-left: 80px;
 		margin-right: 100px;
 
 		@include breakpoint( ">660px" ) {
