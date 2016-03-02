@@ -11,7 +11,6 @@ var assign = require( 'lodash/assign' ),
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	user = require( 'lib/user' )();
 
 function getCheckoutUrl( dependencies ) {
@@ -238,19 +237,8 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
-	const headstartFlows = [ 'blog', 'website' ];
-	if ( includes( headstartFlows, flowName ) && 'headstart' === abtest( 'headstart' ) ) {
-		return 'headstart';
-	}
-
-	let isInPreviousTest = false;
-
-	if ( getABTestVariation( 'headstart' ) && getABTestVariation( 'headstart' ) !== 'notTested' ) {
-		isInPreviousTest = true;
-	}
-
 	const freePlansTestFlows = [ 'blog', 'website', 'main' ];
-	if ( includes( freePlansTestFlows, flowName ) && ! isInPreviousTest ) {
+	if ( includes( freePlansTestFlows, flowName ) ) {
 		return 'skipForFree' === abtest( 'freePlansDefault' ) ? 'upgrade' : flowName;
 	}
 
