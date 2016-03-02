@@ -896,5 +896,9 @@ describe( 'post-normalizer', function() {
 		it( 'limits the excerpt to 3 elements after trimming', function( done ) {
 			assertExcerptBecomes( '<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>', '<p>one</p><p>two</p><br>', done );
 		} );
+
+		it( 'only trims top-level breaks', function( done ) {
+			assertExcerptBecomes( '<p></p><p>one<br>two</p>', '<p>one<br>two</p>', done );
+		} );
 	} );
 } );
