@@ -2,8 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:sharing-buttons-list' ),
-	uniq = require( 'lodash/uniq' ),
-	sortBy = require( 'lodash/sortBy' ),
+	uniqBy = require( 'lodash/uniqBy' ),
+	orderBy = require( 'lodash/orderBy' ),
 	findIndex = require( 'lodash/findIndex' );
 
 /**
@@ -149,10 +149,8 @@ SharingButtonsList.prototype.saveAll = function( siteId, buttons, callback ) {
 		// 4. Only take the first value of each ID (#) encountered
 		//   - [ 1Y, 3Y, 2N, 4N, 5N ]
 
-		data.updated = sortBy( data.updated, function( a, b ) {
-			return a.enabled === b.enabled ? 0 : a.enabled ? -1 : 1;
-		} );
-		this.data = uniq( data.updated.concat( this.data ), 'ID' );
+		data.updated = orderBy( data.updated, 'enabled', 'desc' );
+		this.data = uniqBy( data.updated.concat( this.data ), 'ID' );
 		this.emit( 'change' );
 		this.saving = false;
 		callback( null );
