@@ -453,6 +453,7 @@ normalizePost.createBetterExcerpt = function createBetterExcerpt( post, callback
 
 	// Spin up a new DOM for the linebreak markup
 	const dom = document.createElement( 'div' );
+	dom.id = '__better_excerpt__';
 	dom.innerHTML = betterExcerpt;
 
 	// Ditch any photo captions with the wp-caption-text class
@@ -475,7 +476,7 @@ normalizePost.createBetterExcerpt = function createBetterExcerpt( post, callback
 	} );
 
 	// now limit it to the first three elements
-	forEach( dom.querySelectorAll( 'p, br' ), function( element, index ) {
+	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function( element, index ) {
 		if ( index >= 3 ) {
 			element.parentNode && element.parentNode.removeChild( element );
 		}
