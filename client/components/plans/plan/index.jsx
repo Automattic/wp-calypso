@@ -13,6 +13,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	testFeatures = require( 'lib/features-list/test-features' ),
 	Gridicon = require( 'components/gridicon' ),
 	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
+	isPlan = require( 'lib/products-values' ).isPlan,
 	JetpackPlanDetails = require( 'my-sites/plans/jetpack-plan-details' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanHeader = require( 'components/plans/plan-header' ),
@@ -249,6 +250,25 @@ module.exports = React.createClass( {
 		);
 	},
 
+	getFreeDomainMessage: function() {
+		if ( abtest( 'promoteFreeDomain' ) !== 'freeDomain' ) {
+			return null;
+		}
+
+		if ( this.props.plan && isPlan( this.props.plan ) ) {
+			return (
+				<div className="plan__free-domain-message">
+					<Gridicon icon="checkmark" size={ 12 } />
+					{ this.translate( 'Includes a free domain' ) }
+				</div>
+			);
+		}
+
+		return (
+			<div className="plan__free-plan-message">&nbsp;</div>
+		);
+	},
+
 	render: function() {
 		var shouldDisplayFeatureList = this.props.plan && ! isJetpackPlan( this.props.plan ) && abtest( 'plansFeatureList' ) !== 'description';
 		return (
@@ -261,6 +281,7 @@ module.exports = React.createClass( {
 
 					{ this.getImagePlanAction() }
 					{ this.getPlanPrice() }
+					{ this.getFreeDomainMessage() }
 				</PlanHeader>
 				<div className="plan__plan-expand">
 					<div className="plan__plan-details">

@@ -97,6 +97,14 @@
 		border-top: 2px solid lighten( $gray, 20% );
 		float: left;
 	}
+
+	.plan__free-plan-message {
+		display: none;
+	}
+
+	.plan__free-domain-message {
+		padding-left: 40px;
+	}
 }
 
 @mixin plans-in-three-columns() {
@@ -133,6 +141,11 @@
 			flex-wrap: nowrap;
 			justify-content: center;
 	}
+
+	.plan__free-domain-message {
+		margin-top: 5px;
+		text-align: center;
+	}
 }
 
 .plans.has-sidebar {
@@ -168,4 +181,13 @@
 	position: relative;
 		left: -5px;
 		top: 2px;
+}
+
+.plan__free-domain-message {
+	color: $alert-green;
+	font-size: 13px;
+
+	.gridicon {
+		margin-right: 5px;
+	}
 }
