@@ -65,15 +65,6 @@ module.exports = {
 		},
 		defaultVariation: 'description'
 	},
-	headstart: {
-		datestamp: '20160215',
-		variations: {
-			original: 20,
-			notTested: 60,
-			headstart: 20
-		},
-		defaultVariation: 'original'
-	},
 	checkoutFooter: {
 		datestamp: '20160215',
 		variations: {
