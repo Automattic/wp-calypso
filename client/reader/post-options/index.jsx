@@ -1,26 +1,27 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	page = require( 'page' );
-
+import React from 'react';
+import noop from 'lodash/noop';
+import page from 'page';
 import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
-const PopoverMenu = require( 'components/popover/menu' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions/index' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	FeedStore = require( 'lib/feed-store' ),
-	FeedStoreActions = require( 'lib/feed-store/actions' ),
-	SiteBlockStore = require( 'lib/reader-site-blocks/index' ),
-	SiteBlockActions = require( 'lib/reader-site-blocks/actions' ),
-	postUtils = require( 'lib/posts/utils' ),
-	FollowButton = require( 'reader/follow-button' ),
-	stats = require( 'reader/stats' );
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
+import SiteStore from 'lib/reader-site-store';
+import FeedStore from 'lib/feed-store';
+import FeedStoreActions from 'lib/feed-store/actions';
+import SiteBlockStore from 'lib/reader-site-blocks';
+import SiteBlockActions from 'lib/reader-site-blocks/actions';
+import PostUtils from 'lib/posts/utils';
+import FollowButton from 'reader/follow-button';
+import DiscoverHelper from 'reader/discover/helper';
+
+const stats = require( 'reader/stats' );
 
 const PostOptions = React.createClass( {
 
@@ -29,33 +30,33 @@ const PostOptions = React.createClass( {
 		onBlock: React.PropTypes.func
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			onBlock: noop,
 			position: 'top left'
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		var state = this.getStateFromStores();
 		state.popoverPosition = this.props.position;
 		state.showPopoverMenu = false;
 		return state;
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		SiteBlockStore.on( 'change', this.updateState );
 		FeedSubscriptionStore.on( 'change', this.updateState );
 		FeedStore.on( 'change', this.updateState );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		SiteBlockStore.off( 'change', this.updateState );
 		FeedSubscriptionStore.off( 'change', this.updateState );
 		FeedStore.off( 'change', this.updateState );
 	},
 
-	getStateFromStores: function() {
+	getStateFromStores() {
 		const siteId = this.props.post.site_ID,
 			feed = this.getFeed(),
 			followUrl = this.getFollowUrl( feed );
@@ -69,7 +70,7 @@ const PostOptions = React.createClass( {
 		};
 	},
 
-	updateState: function() {
+	updateState() {
 		this.setState( this.getStateFromStores() );
 
 		// Hide the popover menu if there's an error
@@ -79,7 +80,7 @@ const PostOptions = React.createClass( {
 		}
 	},
 
-	blockSite: function() {
+	blockSite() {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrack( 'calypso_reader_block_site', {
@@ -89,7 +90,7 @@ const PostOptions = React.createClass( {
 		this.props.onBlock();
 	},
 
-	reportPost: function() {
+	reportPost() {
 		if ( ! this.props.post || ! this.props.post.URL ) {
 			return;
 		}
@@ -119,7 +120,7 @@ const PostOptions = React.createClass( {
 		return feed;
 	},
 
-	_showPopoverMenu: function() {
+	_showPopoverMenu() {
 		var newState = ! this.state.showPopoverMenu;
 		this.setState( {
 			showPopover: false,
@@ -129,13 +130,13 @@ const PostOptions = React.createClass( {
 		stats.recordGaEvent( newState ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 	},
 
-	_closePopoverMenu: function() {
+	_closePopoverMenu() {
 		if ( this.isMounted() ) {
 			this.setState( { showPopoverMenu: false } );
 		}
 	},
 
-	editPost: function( closeMenu ) {
+	editPost( closeMenu ) {
 		var post = this.props.post,
 			editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/',
 			site = SiteStore.get( this.props.post.site_ID );
@@ -143,7 +144,7 @@ const PostOptions = React.createClass( {
 		closeMenu();
 
 		if ( site && site.get( 'slug' ) ) {
-			editUrl = postUtils.getEditURL( post, site.toJS() );
+			editUrl = PostUtils.getEditURL( post, site.toJS() );
 		}
 
 		stats.recordAction( 'edit_post' );
@@ -158,11 +159,12 @@ const PostOptions = React.createClass( {
 		}, 100 );
 	},
 
-	render: function() {
+	render() {
 		var post = this.props.post,
 			triggerClasses = [ 'post-options__trigger', 'ignore-click' ],
 			isBlockPossible = false,
-			isEditPossible = postUtils.userCan( 'edit_post', post );
+			isEditPossible = PostUtils.userCan( 'edit_post', post ),
+			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		if ( this.state.showPopoverMenu ) {
 			triggerClasses.push( 'is-triggered' );
@@ -171,7 +173,7 @@ const PostOptions = React.createClass( {
 		triggerClasses = triggerClasses.join( ' ' );
 
 		// Should we show the 'block' option?
-		if ( post.site_ID && ! post.is_external && ! post.is_jetpack && ! isEditPossible ) {
+		if ( post.site_ID && ! post.is_external && ! post.is_jetpack && ! isEditPossible && ! isDiscoverPost ) {
 			isBlockPossible = true;
 		}
 
@@ -196,9 +198,9 @@ const PostOptions = React.createClass( {
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
-					{ isBlockPossible ? <hr className="post-options__hr" /> : null }
+					{ isBlockPossible || isDiscoverPost ? <hr className="post-options__hr" /> : null }
 					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
-					{ isBlockPossible ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
+					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
 				</PopoverMenu>
 			</span>
 		);
@@ -206,4 +208,4 @@ const PostOptions = React.createClass( {
 
 } );
 
-module.exports = PostOptions;
+export default PostOptions;
