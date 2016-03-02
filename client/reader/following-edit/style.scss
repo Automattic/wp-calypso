@@ -126,6 +126,7 @@
 	.search__input[type="search"] {
 		height: 50px;
 		border: 1px solid transparent;
+		padding-left: 20px;
 
 		&:focus {
 			border-color: $blue-wordpress;
@@ -135,19 +136,6 @@
 
 	.search-open__icon {
 		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-			top: 13px;
-			left: 18px;
-		fill: $blue-medium;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
-	}
-
-	.gridicons-add-outline {
-		transform: translateX( 30px );
-		transition: all 0.15s ease-in-out;
 	}
 
 	.is-adding & {
