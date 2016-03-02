@@ -54,7 +54,7 @@ var ThemesHelpers = {
 			return site.options.admin_url + 'themes.php?theme=' + theme.id;
 		}
 
-		let baseUrl = ThemesHelpers.oldShowcaseUrl + `${ theme.id }`;
+		let baseUrl = ThemesHelpers.oldShowcaseUrl + theme.id;
 		if ( config.isEnabled( 'manage/themes/details' ) ) {
 			baseUrl = `/theme/${ theme.id }/details`;
 		}
