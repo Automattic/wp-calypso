@@ -166,6 +166,12 @@ var RegisterDomainStep = React.createClass( {
 	},
 
 	searchForm: function() {
+		var placeholderText = this.translate( 'Enter a domain or keyword', { textOnly: true } );
+
+		if ( abtest( 'domainSearchPlaceholderText' ) === 'searchForADomain' ) {
+			placeholderText = this.translate( 'Search for a domain', { textOnly: true } );
+		}
+
 		return (
 			<div className="register-domain-step__search">
 				<SearchCard
@@ -175,7 +181,7 @@ var RegisterDomainStep = React.createClass( {
 					onSearch={ this.onSearch }
 					onSearchChange={ this.onSearchChange }
 					onBlur={ this.save }
-					placeholder={ this.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+					placeholder={ placeholderText }
 					autoFocus={ true }
 					delaySearch={ true }
 					delayTimeout={ 2000 }
