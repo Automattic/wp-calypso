@@ -37,25 +37,13 @@ Errors and warning appear in the normal places – the terminal where you ran `m
 
 ### Debugging
 
-Calypso uses the [debug](https://github.com/visionmedia/debug) module to handle debug messaging. To turn on debug mode for all modules, type the following in the browser console:
-
-```js
-localStorage.setItem( 'debug', '*' );
-```
-
-You can also limit the debugging to a particular scope
-
-```js
-localStorage.setItem( 'debug', 'calypso:*' );
-```
-
-The `node` server uses the `DEBUG` environment variable instead of `localStorage`. `make run` will pass along it’s environment, so you can turn on all debug messages with
+Calypso uses the [debug](https://github.com/visionmedia/debug) module to handle debug messaging. To turn on debug mode for all modules in both browser and the console, start the server with the following command:
 
 ```bash
 DEBUG=* make run
 ```
 
-or limit it as before with
+You can also limit the debugging to a particular scope
 
 ```bash
 DEBUG=calypso:* make run
