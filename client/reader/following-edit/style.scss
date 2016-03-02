@@ -108,15 +108,15 @@
 // Add to Following
 .following-edit__subscribe-form {
 	position: absolute;
-		top: 0;
+		top: 60px;
 		right: 0;
 		left: 0;
 	opacity: 0;
 	pointer-events: none;
 	transition: all 0.15s ease-in-out;
 
-	@include breakpoint( "<480px" ) {
-		top: 62px;
+	@include breakpoint( ">660px" ) {
+		top: 0;
 	}
 
 	.search {
@@ -126,6 +126,7 @@
 	.search__input[type="search"] {
 		height: 50px;
 		border: 1px solid transparent;
+		padding-left: 20px;
 
 		&:focus {
 			border-color: $blue-wordpress;
@@ -135,19 +136,6 @@
 
 	.search-open__icon {
 		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-			top: 13px;
-			left: 18px;
-		fill: $blue-medium;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
-	}
-
-	.gridicons-add-outline {
-		transform: translateX( 30px );
-		transition: all 0.15s ease-in-out;
 	}
 
 	.is-adding & {
@@ -161,13 +149,8 @@
 
 	.card.is-search-result {
 		position: absolute;
-			top: 68px;
+			top: 51px;
 		width: 100%;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
-
-		@include breakpoint( "<480px" ) {
-			top: 59px;
-		}
 
 		.gridicon__follow {
 			fill: lighten( $gray, 20% );
@@ -209,20 +192,15 @@
 // Search Results Placeholder
 .following-edit__subscribe-form-blank {
 	position: absolute;
-		top: 68px;
+		top: 51px;
 	width: 100%;
 	height: 75px;
 	box-sizing: border-box;
-	padding: 26px 32px 0 32px;
+	padding: 26px 32px 0;
 	text-align: center;
-	color: darken( $gray, 10 );
-	background: lighten( $gray, 30 );
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20 ), .5 );
-
-	@include breakpoint( "<480px" ) {
-		padding: 16px 42px 0 42px;
-		top: 59px;
-	}
+	color: darken( $gray, 10% );
+	background: lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 
@@ -252,10 +230,6 @@
 		.reader-list-item__title,
 		.reader-list-item__description {
 			margin-left: 92px;
-
-			@include breakpoint( ">660px" ) {
-				margin-left: 80px;
-			}
 		}
 
 		.following-edit__list-title {
@@ -271,8 +245,8 @@
 	.reader-list-item__title,
 	.reader-list-item__description {
 		padding-left: 12px;
-		margin-left: 80px;
 		margin-right: 100px;
+
 		@include breakpoint( ">660px" ) {
 			padding-left: 0;
 		}
@@ -280,7 +254,6 @@
 
 	.reader-list-item__icon {
 		top: 14px;
-		left: 40px;
 	}
 }
 
@@ -301,6 +274,7 @@
 	&.is-compact {
 		padding-top: 10px;
 		padding-bottom: 10px;
+
 		@include breakpoint( ">660px" ) {
 			padding-left: 105px;
 		}
