@@ -149,13 +149,8 @@
 
 	.card.is-search-result {
 		position: absolute;
-			top: 68px;
+			top: 51px;
 		width: 100%;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
-
-		@include breakpoint( "<480px" ) {
-			top: 59px;
-		}
 
 		.gridicon__follow {
 			fill: lighten( $gray, 20% );
