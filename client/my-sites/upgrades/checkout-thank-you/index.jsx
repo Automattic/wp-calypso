@@ -22,7 +22,6 @@ import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
-import GenericDetails from './generic-details';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import HeaderCake from 'components/header-cake';
@@ -172,7 +171,7 @@ const CheckoutThankYou = React.createClass( {
 			}
 		}
 
-		return [ GenericDetails ];
+		return [];
 	},
 
 	productRelatedMessages() {
@@ -207,11 +206,13 @@ const CheckoutThankYou = React.createClass( {
 					isGenericReceipt={ this.isGenericReceipt() }
 					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
 
-				<div className="checkout-thank-you__purchase-details-list">
-					<ComponentClass
-						selectedSite={ selectedSite }
-						domain={ domain } />
-				</div>
+				{ ComponentClass
+					? <div className="checkout-thank-you__purchase-details-list">
+						<ComponentClass
+							selectedSite={ selectedSite }
+							domain={ domain } />
+					</div>
+					: null }
 			</div>
 		);
 	}

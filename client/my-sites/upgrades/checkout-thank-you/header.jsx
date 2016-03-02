@@ -31,7 +31,7 @@ const CheckoutThankYouHeader = React.createClass( {
 
 	getText() {
 		if ( ! this.props.isDataLoaded || ! this.props.primaryPurchase ) {
-			return this.translate( "You will receive an email confirmation shortly. What's next?" );
+			return this.translate( 'You will receive an email confirmation shortly.' );
 		}
 
 		if ( isFreeTrial( this.props.primaryPurchase ) ) {
