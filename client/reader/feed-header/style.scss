@@ -53,12 +53,12 @@
 			background: none;
 
 			.gridicon {
-				fill: $gray;
+				fill: lighten( $gray, 10% );
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: $gray;
+				color: lighten( $gray, 10% );
 			}
 		}
 	}

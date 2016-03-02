@@ -2,7 +2,7 @@
 .reader__full-post {
 	position: relative;
 	box-sizing: border-box;
-	padding: 56px 16px 48px 16px;
+	padding: 56px 16px 48px;
 	max-width: 700px;
 	margin: 0 auto;
 
@@ -64,6 +64,23 @@
 			top: 0;
 			right: 0;
 
+		.follow-button__label {
+			color: lighten( $gray, 10% );
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: $blue-medium;
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: $blue-medium;
+			}
+		}
+
 		@include breakpoint( "<480px" ) {
 			.follow-button__label {
 				display: none;
@@ -71,8 +88,29 @@
 		}
 	}
 
+	.follow-button.is-following {
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		&:hover {
+			background: none;
+
+			.gridicon {
+				fill: lighten( $gray, 10% );
+			}
+
+			.follow-button__label {
+				cursor: pointer;
+				color: lighten( $gray, 10% );
+			}
+		}
+	}
+
 	.reader__post-time {
-		.reader__post-time-link, .reader__post-time-link:hover {
+
+		.reader__post-time-link,
+		.reader__post-time-link:hover {
 			color: inherit;
 			text-decoration: inherit;
 		}
@@ -127,29 +165,29 @@
 	h1 {
 		font-size: 28px;
 		font-weight: 700;
-		margin: 0 0 16px 0;
+		margin: 0 0 16px;
 	}
 
 	h2 {
 		font-size: 24px;
 		font-weight: 700;
-		margin: 0 0 8px 0;
+		margin: 0 0 8px;
 	}
 
 	h3 {
 		font-size: 20px;
 		font-weight: 700;
-		margin: 0 0 8px 0;
+		margin: 0 0 8px;
 	}
 
 	h4 {
 		font-size: 18px;
 		font-weight: 700;
-		margin: 0 0 8px 0;
+		margin: 0 0 8px;
 	}
 
 	p {
-		margin: 0 0 24px 0;
+		margin: 0 0 24px;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -158,15 +196,15 @@
 
 	blockquote {
 		padding: 16px 24px;
-		margin: 16px 0 32px 0;
-		color: darken( $gray, 20 );
+		margin: 16px 0 32px;
+		color: darken( $gray, 20% );
 		font-weight: normal;
 		font-size: 20px;
 		background: transparent;
 	}
 
 	hr {
-		background: lighten( $gray, 30 );
+		background: lighten( $gray, 30% );
 		margin: 24px -32px;
 	}
 
