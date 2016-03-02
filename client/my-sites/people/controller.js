@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import route from 'lib/route';
+import get from 'lodash/get';
 
 /**
  * Internal Dependencies
@@ -74,15 +75,23 @@ function renderPeopleList( filter, context ) {
 }
 
 function renderInvitePeople( context ) {
+	const site = sites.getSelectedSite();
+	const isJetpack = get( site, 'jetpack' );
+
 	if ( ! sites.initialized ) {
 		sites.once( 'change', () => page( context.path ) );
+	}
+
+	if ( isJetpack ) {
+		layoutFocus.setNext( layoutFocus.getCurrent() );
+		page.redirect( '/people/team/' + site.slug );
 	}
 
 	titleActions.setTitle( i18n.translate( 'Invite People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
 
 	renderWithReduxStore(
 		React.createElement( InvitePeople, {
-			site: sites.getSelectedSite()
+			site: site
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
