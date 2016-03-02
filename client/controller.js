@@ -1,15 +1,37 @@
 /**
  * External Dependencies
  */
+import React from 'react';
 import ReactDom from 'react-dom';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import page from 'page';
+import LayoutLoggedOut from 'layout/logged-out';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:controller' );
+
+/**
+ * @param { object } context -- Middleware context
+ * @param { function } next -- Call next middleware in chain
+ *
+ * Produce a `LayoutLoggedOut` element in `context.layout`, using
+ * `context.primary`, `context.secondary`, and `context.tertiary` to populate it.
+*/
+export function makeLoggedOutLayout( context, next ) {
+	const { store, primary, secondary, tertiary } = context;
+	context.layout = (
+		<ReduxProvider store={ store }>
+			<LayoutLoggedOut primary={ primary }
+				secondary={ secondary }
+				tertiary={ tertiary } />
+		</ReduxProvider>
+	);
+	next();
+};
 
 /**
  * Isomorphic routing helper, client side

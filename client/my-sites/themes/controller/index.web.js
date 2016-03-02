@@ -15,7 +15,7 @@ import { makeElement } from './index.node.js';
 /**
  * Re-export
  */
-export { details, makeLoggedOutLayout } from './index.node.js';
+export { details } from './index.node.js';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;

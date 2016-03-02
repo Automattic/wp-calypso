@@ -2,7 +2,8 @@
  * Internal dependencies
  */
 import config from 'config';
-import { details, makeLoggedOutLayout } from './controller';
+import { makeLoggedOutLayout } from 'controller';
+import { details } from './controller';
 
 // FIXME: These routes will SSR the logged-out Layout even if logged-in.
 // While subsequently replaced by the logged-in Layout on the client-side,

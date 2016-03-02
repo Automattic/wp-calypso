@@ -15,7 +15,6 @@ import buildTitle from 'lib/screen-title/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
-import LayoutLoggedOut from 'layout/logged-out';
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
@@ -28,20 +27,6 @@ export function makeElement( ThemesComponent, Head, store, props ) {
 			</Head>
 		</ReduxProvider>
 	);
-};
-
-// Where do we put this? It's client/server-agnostic, so not in client/controller,
-// which requires ReactDom... Maybe in lib/react-helpers?
-export function makeLoggedOutLayout( context, next ) {
-	const { store, primary, secondary, tertiary } = context;
-	context.layout = (
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
-		</ReduxProvider>
-	);
-	next();
 };
 
 export function details( context, next ) {
