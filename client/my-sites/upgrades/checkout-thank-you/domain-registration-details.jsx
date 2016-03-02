@@ -7,12 +7,10 @@ import React from 'react';
  * Internal dependencies
  */
 import { getDomainManagementUrl } from './utils';
+import GoogleAppsDetails from './google-apps-details';
 import { isGoogleApps } from 'lib/products-values';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
-
-const user = userFactory();
 
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
@@ -31,24 +29,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 					requiredText={ i18n.translate( 'Important! Your action is required.' ) }
 					isRequired />
 
-				{ googleAppsWasPurchased && (
-					<PurchaseDetail
-						icon="cog"
-						title={ i18n.translate( 'Finish setting up your Google Apps account' ) }
-						description={
-							i18n.translate(
-								'We emailed you at %(email)s with login information for your new Google Apps account. ' +
-								'If you can\'t find it, try a global search for "Google Apps".',
-								{
-									args: { email: user.get().email }
-								}
-							)
-						}
-						buttonText={ i18n.translate( 'Learn more about Google Apps' ) }
-						href="//apps.google.com/learning-center/"
-						target="_blank"
-						isRequired />
-				) }
+				{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
 			</div>
 
 			<PurchaseDetail
