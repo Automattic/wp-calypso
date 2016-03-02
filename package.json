@@ -49,6 +49,7 @@
     "immutable": "3.7.5",
     "imports-loader": "0.6.5",
     "inherits": "2.0.1",
+	"interpolate-components": "client/lib/interpolate-components/",
     "jade": "pugjs/jade#29784fd",
     "jed": "1.0.2",
     "jquery": "1.11.3",
