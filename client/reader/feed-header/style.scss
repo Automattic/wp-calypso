@@ -34,12 +34,12 @@
 			background: none;
 
 			.gridicon {
-				fill: $alert-green;
+				fill: $blue-medium;
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: $alert-green;
+				color: $blue-medium;
 			}
 		}
 	}
@@ -53,12 +53,12 @@
 			background: none;
 
 			.gridicon {
-				fill: $gray;
+				fill: lighten( $gray, 10% );
 			}
 
 			.follow-button__label {
 				cursor: pointer;
-				color: $gray;
+				color: lighten( $gray, 10% );
 			}
 		}
 	}
