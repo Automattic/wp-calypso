@@ -15,6 +15,7 @@ import analytics from 'analytics';
 import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
+import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouFooter from './footer';
 import CheckoutThankYouHeader from './header';
 import Dispatcher from 'dispatcher';
@@ -174,23 +175,8 @@ const CheckoutThankYou = React.createClass( {
 		return [ GenericDetails ];
 	},
 
-	shouldHideFeaturesHeading() {
-		if ( this.isGenericReceipt() ) {
-			return false;
-		}
-
-		const purchases = getPurchases( this.props );
-
-		return purchases.some( isGoogleApps ) ||
-			purchases.some( isDomainRegistration ) ||
-			purchases.some( isDomainMapping );
-	},
-
 	productRelatedMessages() {
 		const selectedSite = this.props.selectedSite,
-			featuresHeaderClasses = classNames( 'checkout-thank-you__features-header', {
-				'is-placeholder': ! this.isDataLoaded()
-			} ),
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
@@ -200,7 +186,7 @@ const CheckoutThankYou = React.createClass( {
 						isDataLoaded={ false }
 						selectedSite={ this.props.selectedSite } />
 
-					<div className={ featuresHeaderClasses } />
+					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -216,7 +202,10 @@ const CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				{ ! this.shouldHideFeaturesHeading() && <div className={ featuresHeaderClasses }>{ this.translate( 'What now?' ) }</div> }
+				<CheckoutThankYouFeaturesHeader
+					isDataLoaded={ this.isDataLoaded() }
+					isGenericReceipt={ this.isGenericReceipt() }
+					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
 
 				<div className="checkout-thank-you__purchase-details-list">
 					<ComponentClass
