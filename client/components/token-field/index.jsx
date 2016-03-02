@@ -29,6 +29,7 @@ var TokenField = React.createClass( {
 		onChange: React.PropTypes.func,
 		tokenStatus: React.PropTypes.func,
 		isBorderless: React.PropTypes.bool,
+		maxLength: React.PropTypes.number,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -148,10 +149,12 @@ var TokenField = React.createClass( {
 	},
 
 	_renderInput: function() {
+		const { maxLength, value } = this.props;
 		return (
 			<TokenInput
 				ref="input"
 				key="input"
+				disabled={ maxLength && value.length >= maxLength }
 				value={ this.state.incompleteTokenValue }
 				onChange={ this._onInputChange } />
 		);
