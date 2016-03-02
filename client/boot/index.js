@@ -189,31 +189,17 @@ function reduxStoreReady( reduxStore ) {
 			translatorInvitation: translatorInvitation
 		} );
 	} else {
-		let props = {};
 		analytics.setSuperProps( superProps );
 
-		// TODO(ehg): Delete this mini-router when we have an isomorphic, single render tree routing solution
-		if ( config.isEnabled( 'manage/themes/details' ) ) {
-			const themesRoutes = [
-				{ name: 'design', path: new Path( '/design' ) },
-				{ name: 'themes', path: new Path( '/themes/:theme_slug' ) },
-			];
+		const isRoute = function( path ) {
+			return startsWith( window.location.pathname, path );
+		};
 
-			const matchedRoutes = themesRoutes
-				.map( r => ( Object.assign( {}, r, { match: r.path.partialMatch( window.location.pathname ) } ) ) )
-				.filter( r => r.match !== null );
-
-			if ( matchedRoutes.length ) {
-				props = { routeName: matchedRoutes[0].name, match: matchedRoutes[0].match };
-				Layout = require( 'layout/logged-out' );
-			}
-		} else if ( startsWith( window.location.pathname, '/design' ) ) {
+		if ( isRoute( '/design' ) ||
+			( config.isEnabled( 'manage/themes/details' ) && isRoute( '/theme' ) ) ) {
 			Layout = require( 'layout/logged-out' );
 		}
-
-		layoutElement = React.createElement( Layout, Object.assign( {}, props, {
-			focus: layoutFocus
-		} ) );
+		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
 
 	if ( config.isEnabled( 'perfmon' ) ) {

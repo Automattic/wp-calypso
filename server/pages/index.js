@@ -380,7 +380,7 @@ module.exports = function() {
 	} );
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		app.get( '/themes/:theme_slug/:section?', function( req, res ) {
+		app.get( '/theme/:theme_slug/:section?', function( req, res ) {
 			function updateRenderCache( themeSlug ) {
 				wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
 					if ( error ) {

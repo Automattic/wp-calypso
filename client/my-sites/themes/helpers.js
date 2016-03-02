@@ -50,7 +50,7 @@ var ThemesHelpers = {
 	},
 
 	getDetailsUrl: function( theme, site ) {
-		const baseUrl = config.isEnabled( 'manage/themes/details' ) ? '/themes/' : ThemesHelpers.oldShowcaseUrl;
+		const baseUrl = config.isEnabled( 'manage/themes/details' ) ? '/theme/' : ThemesHelpers.oldShowcaseUrl;
 
 		if ( ! site ) {
 			return baseUrl + theme.id;
