@@ -9163,19 +9163,13 @@
       "version": "0.3.4"
     },
     "xgettext-js": {
-      "version": "0.2.2",
-      "from": "xgettext-js@0.2.2",
-      "resolved": "https://registry.npmjs.org/xgettext-js/-/xgettext-js-0.2.2.tgz",
+      "version": "0.3.0",
       "dependencies": {
         "acorn": {
-          "version": "0.6.0",
-          "from": "acorn@>=0.6.0 <0.7.0",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-0.6.0.tgz"
+          "version": "3.0.4"
         },
         "lodash": {
-          "version": "2.4.2",
-          "from": "lodash@>=2.4.1 <3.0.0",
-          "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.4.2.tgz"
+          "version": "2.4.2"
         }
       }
     },
