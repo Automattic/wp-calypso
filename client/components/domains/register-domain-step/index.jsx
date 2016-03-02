@@ -166,10 +166,10 @@ var RegisterDomainStep = React.createClass( {
 	},
 
 	searchForm: function() {
-		var placeholderText = this.translate( 'Enter a domain or keyword', { textOnly: true } );
+		var placeholderText = this.translate( 'Enter a domain or keyword' );
 
 		if ( abtest( 'domainSearchPlaceholderText' ) === 'searchForADomain' ) {
-			placeholderText = this.translate( 'Search for a domain', { textOnly: true } );
+			placeholderText = this.translate( 'Search for a domain' );
 		}
 
 		return (
