@@ -48,13 +48,7 @@ var PublishMenu = React.createClass( {
 	},
 
 	getDefaultMenuItems: function( site ) {
-		var newPostLink;
-
-		if ( config.isEnabled( 'post-editor' ) ) {
-			newPostLink = site ? '/post/' + site.slug : '/post';
-		} else {
-			newPostLink = site ? '//wordpress.com/post/' + site.ID + '/new' : '//wordpress.com/post';
-		}
+		var newPostLink = site ? '/post/' + site.slug : '/post';
 
 		return [
 			{

@@ -7,7 +7,6 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import paths from 'lib/paths';
-import config from 'config';
 
 /**
  * Retrieves selection, title, and URL from current page and pops
@@ -85,9 +84,8 @@ class PressThisLink extends React.Component {
 	}
 
 	render() {
-		const pressThisLink = config.isEnabled( 'post-editor' ) ? this.buildPressThisLink() : this.pressThisWPAdmin();
 		return (
-			<a {...this.props} href={ pressThisLink }>
+			<a {...this.props} href={ this.buildPressThisLink() }>
 				{ this.props.children }
 			</a>
 		);

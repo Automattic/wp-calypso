@@ -1,13 +1,18 @@
 var config = require( 'config' ),
 	readerPaths;
 
-var sections, editorPaths;
+var sections;
 
 sections = [
 	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'my-sites/customize'
+	},
+	{
+		name: 'post-editor',
+		paths: [ '/post', '/page' ],
+		module: 'post-editor'
 	},
 	{
 		name: 'me',
@@ -119,20 +124,6 @@ if ( config.isEnabled( 'reader' ) ) {
 		name: 'reader',
 		paths: readerPaths,
 		module: 'reader'
-	} );
-}
-
-if ( config.isEnabled( 'post-editor' ) ) {
-	editorPaths = [ '/post' ];
-
-	if ( config.isEnabled( 'post-editor/pages' ) ) {
-		editorPaths.push( '/page' );
-	}
-
-	sections.push( {
-		name: 'post-editor',
-		paths: editorPaths,
-		module: 'post-editor'
 	} );
 }
 

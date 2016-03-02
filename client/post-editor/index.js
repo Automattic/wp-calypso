@@ -11,11 +11,9 @@ var config = require( 'config' ),
 	controller = require( './controller' );
 
 module.exports = function() {
-	if ( config.isEnabled( 'post-editor' ) ) {
-		page( '/post', controller.pressThis, sitesController.siteSelection, sitesController.sites );
-		page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
-		page( '/post/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
-	}
+	page( '/post', controller.pressThis, sitesController.siteSelection, sitesController.sites );
+	page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
+	page( '/post/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
 
 	if ( config.isEnabled( 'post-editor/pages' ) ) {
 		page( '/page', sitesController.siteSelection, sitesController.sites );

@@ -9,21 +9,12 @@ var url = require( 'url' ),
  * Internal dependencies
  */
 var postNormalizer = require( 'lib/post-normalizer' ),
-	config = require( 'config' ),
 	sites = require( 'lib/sites-list' )();
 
 var utils = {
 
 	getEditURL: function( post, site ) {
-		var editURL;
-
-		if ( config.isEnabled( 'post-editor' ) ) {
-			editURL = `/${post.type}/${site.slug}/${post.ID}`;
-		} else {
-			editURL = `//wordpress.com/${post.type}/${site.ID}/${post.ID}/`;
-		}
-
-		return editURL;
+		return `/${post.type}/${site.slug}/${post.ID}`;
 	},
 
 	getPreviewURL: function( post ) {
