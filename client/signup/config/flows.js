@@ -237,11 +237,6 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
-	const freePlansTestFlows = [ 'blog', 'website', 'main' ];
-	if ( includes( freePlansTestFlows, flowName ) ) {
-		return 'skipForFree' === abtest( 'freePlansDefault' ) ? 'upgrade' : flowName;
-	}
-
 	return flowName;
 }
 
