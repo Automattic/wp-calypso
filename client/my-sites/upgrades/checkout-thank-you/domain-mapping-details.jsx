@@ -9,7 +9,8 @@ import React from 'react';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
 
-const DomainMappingDetails = ( { domain } ) => {
+const DomainMappingDetails = ( { domain, registrarSupportUrl } ) => {
+	const registrarSupportLink = registrarSupportUrl ? <a target="_blank" href={ registrarSupportUrl } /> : <span />;
 	const description = (
 		<div>
 			<p>
@@ -20,7 +21,19 @@ const DomainMappingDetails = ( { domain } ) => {
 					} )
 				}
 			</p>
-			<p>{ i18n.translate( 'You will need to log into your registrar\'s site and change the "Name Servers" to:' ) }</p>
+			<p>
+				{
+					i18n.translate(
+						'You will need to log into {{registrarSupportLink}}your registrar\'s site{{/registrarSupportLink}} ' +
+						'and change the "Name Servers" to:',
+						{
+							components: {
+								registrarSupportLink: registrarSupportLink
+							}
+						}
+					)
+				}
+			</p>
 			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
 				<li>ns1.wordpress.com</li>
 				<li>ns2.wordpress.com</li>

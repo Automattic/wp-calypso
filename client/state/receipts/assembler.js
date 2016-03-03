@@ -10,7 +10,8 @@ export function createReceiptObject( data ) {
 				productSlug: purchase.product_slug,
 				productType: purchase.product_type,
 				productName: purchase.product_name,
-				productNameShort: purchase.product_name_short
+				productNameShort: purchase.product_name_short,
+				registrarSupportUrl: purchase.registrar_support_url
 			};
 		} )
 	};
