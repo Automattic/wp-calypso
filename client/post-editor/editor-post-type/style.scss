@@ -1,9 +1,13 @@
 .editor-post-type {
 	color: lighten( $gray, 10% );
 	font-size: 11px;
-	padding: 5px 0;
+	margin: 5px 0;
 	text-align: center;
 	text-transform: uppercase;
+
+	&.is-loading {
+		@include placeholder;
+	}
 }
 
 @include breakpoint( "<480px" ) {

@@ -29,6 +29,8 @@ import {
 	startEditingExisting,
 	EDITING_MODES
 } from 'state/ui/editor/post/actions';
+import { setEditorPostId } from 'state/ui/editor/actions';
+import { editPost } from 'state/posts/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post ) {
@@ -112,6 +114,9 @@ module.exports = {
 			if ( maybeRedirect( context, postType, site ) ) {
 				return;
 			}
+
+			context.store.dispatch( setEditorPostId( postID ) );
+			context.store.dispatch( editPost( { type: postType }, site.ID, postID ) );
 
 			let titleStrings;
 			if ( 'page' === postType ) {

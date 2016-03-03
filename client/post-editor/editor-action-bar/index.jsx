@@ -67,11 +67,7 @@ export default React.createClass( {
 				<div className="editor-action-bar__first-group">
 					{ multiUserSite && <EditorAuthor post={ this.props.post } isNew={ this.props.isNew } /> }
 				</div>
-				<EditorPostType
-					type={ this.props.type }
-					isNew={ this.props.isNew }
-					siteSlug={ this.props.site && this.props.site.slug }
-				/>
+				<EditorPostType />
 				<div className="editor-action-bar__last-group">
 					{ this.renderPostVisibility() }
 					<EditorDeletePost
