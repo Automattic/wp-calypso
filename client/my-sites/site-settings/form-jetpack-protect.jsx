@@ -12,11 +12,8 @@ var formBase = require( './form-base' ),
 	Card = require( 'components/card' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	FormLegend = require( 'components/forms/form-legend' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
-	FormButton = require( 'components/forms/form-button' ),
-	SettingsCardFooter = require( './settings-card-footer' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
@@ -34,7 +31,7 @@ module.exports = React.createClass( {
 		settings.fetchingSettings = site.fetchingSettings;
 
 		if ( site.settings && site.settings.jetpack_protect_whitelist ) {
-			settings.whitelistString = site.settings.jetpack_protect_whitelist.local.join( "\n" );
+			settings.whitelistString = site.settings.jetpack_protect_whitelist.local.join( '\n' );
 		}
 
 		return settings;
@@ -51,9 +48,9 @@ module.exports = React.createClass( {
 	getIP: function() {
 		if ( window.app && window.app.clientIp ) {
 			return window.app.clientIp;
-		} else {
-			return this.translate( 'Unknown IP address' );
 		}
+
+		return this.translate( 'Unknown IP address' );
 	},
 
 	prompt: function() {
@@ -114,7 +111,7 @@ module.exports = React.createClass( {
 
 	// updates the state when an error occurs
 	handleError: function() {
-		this.setState( { submittingForm : false } );
+		this.setState( { submittingForm: false } );
 		this.markSaved();
 	},
 
@@ -170,9 +167,9 @@ module.exports = React.createClass( {
 				</SectionHeader>
 				<Card className="jetpack-protect-settings">
 					{
-						( this.state.enabled ) ?
-						this.settings() :
-						this.prompt()
+						this.state.enabled
+						? this.settings()
+						: this.prompt()
 					}
 				</Card>
 			</div>
