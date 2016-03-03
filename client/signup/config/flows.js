@@ -2,7 +2,6 @@
  * External dependencies
  */
 var assign = require( 'lodash/assign' ),
-	includes = require( 'lodash/includes' ),
 	reject = require( 'lodash/reject' );
 
 /**
@@ -10,7 +9,6 @@ var assign = require( 'lodash/assign' ),
 */
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
-	abtest = require( 'lib/abtest' ).abtest,
 	user = require( 'lib/user' )();
 
 function getCheckoutUrl( dependencies ) {
@@ -106,13 +104,6 @@ const flows = {
 
 	plan: {
 		steps: [ 'themes', 'domains', 'select-plan', 'user' ],
-		destination: getSiteDestination,
-		description: '',
-		lastModified: '2016-02-02'
-	},
-
-	upgrade: {
-		steps: [ 'themes', 'domains', 'select-plan-or-skip', 'user' ],
 		destination: getSiteDestination,
 		description: '',
 		lastModified: '2016-02-02'
