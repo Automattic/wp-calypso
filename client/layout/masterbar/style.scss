@@ -10,10 +10,8 @@ $autobar-height: 20px;
 	display: flex;
 	height: $masterbar-height;
 	margin: 0;
-	position: fixed;
-		left: 0;
-		top: 0;
-	width: 100%;
+	position: relative;
+	flex: 0 0 auto;
 	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 
