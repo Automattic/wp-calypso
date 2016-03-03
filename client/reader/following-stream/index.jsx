@@ -147,6 +147,7 @@ module.exports = React.createClass( {
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'manual';
 		}
+		this._listContext = document.querySelector( '#primary' )
 	},
 
 	componentWillUnmount: function() {
@@ -420,6 +421,7 @@ module.exports = React.createClass( {
 		} else {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
+			context={ this._listContext }
 			className="reader__content"
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage() }
