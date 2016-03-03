@@ -10,12 +10,9 @@ var React = require( 'react' ),
 var config = require( 'config' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormButton = require( 'components/forms/form-button' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	formBase = require( './form-base' ),
-	SettingsCardFooter = require( './settings-card-footer' ),
 	notices = require( 'notices' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
@@ -123,7 +120,7 @@ module.exports = React.createClass( {
 
 	// updates the state when an error occurs
 	handleError: function() {
-		this.setState( { submittingForm : false, togglingModule: false } );
+		this.setState( { submittingForm: false, togglingModule: false } );
 		this.markSaved();
 	},
 
@@ -181,9 +178,9 @@ module.exports = React.createClass( {
 				</SectionHeader>
 				<Card className="jetpack-monitor-settings">
 					{
-						( this.state.enabled ) ?
-						this.settings() :
-						this.prompt()
+						this.state.enabled
+						? this.settings()
+						: this.prompt()
 					}
 				</Card>
 			</div>
