@@ -5,6 +5,7 @@ import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -207,5 +208,5 @@ export function getEditedPost( state, siteId, postId ) {
 		return edits || null;
 	}
 
-	return Object.assign( {}, post, edits );
+	return merge( {}, post, edits );
 }

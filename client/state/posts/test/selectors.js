@@ -451,5 +451,28 @@ describe( 'selectors', () => {
 
 			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World!' } );
 		} );
+
+		it( 'should return revisions merged with original post nested properties', () => {
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true } }
+					}
+				},
+				editor: {
+					posts: {
+						2916284: {
+							841: {
+								discussion: {
+									pings_open: true
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true, pings_open: true } } );
+		} );
 	} );
 } );
