@@ -174,7 +174,7 @@ var RegisterDomainStep = React.createClass( {
 
 			exampleDomains = (
 				<div className="register-domain-step__search-examples">
-					<strong>{ this.translate( 'Example' ) }:</strong> example.com, example.net
+					{ this.translate( 'e.g.' ) } example.com, example.net
 				</div>
 			);
 		}
