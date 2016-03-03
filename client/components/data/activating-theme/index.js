@@ -36,12 +36,9 @@ const ActivatingThemeData = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			isActivating: isActivating( state ),
-			hasActivated: hasActivated( state ),
-			currentTheme: getCurrentTheme( state, props.siteId )
-		}
-	)
+	( state, props ) => ( {
+		isActivating: isActivating( state ),
+		hasActivated: hasActivated( state ),
+		currentTheme: getCurrentTheme( state, props.siteId )
+	} )
 )( ActivatingThemeData );

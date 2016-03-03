@@ -135,17 +135,14 @@ function join( value ) {
 }
 
 export default connect(
-	( state, props ) => Object.assign( {},
-		props,
-		{
-			themes: getFilteredThemes( state, props.search ),
-			lastPage: isLastPage( state ),
-			loading: isFetchingNextPage( state ),
-			lastQuery: {
-				hasSiteChanged: hasSiteChanged( state ),
-				isJetpack: isJetpack( state )
-			}
+	( state, props ) => ( {
+		themes: getFilteredThemes( state, props.search ),
+		lastPage: isLastPage( state ),
+		loading: isFetchingNextPage( state ),
+		lastQuery: {
+			hasSiteChanged: hasSiteChanged( state ),
+			isJetpack: isJetpack( state )
 		}
-	),
+	} ),
 	{ query, fetchNextPage }
 )( ThemesListFetcher );
