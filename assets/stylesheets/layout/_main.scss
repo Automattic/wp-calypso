@@ -599,6 +599,7 @@ html.no-scroll {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
+	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
 	transform: translate3d( 0, 0, 0 );
 	padding: 32px;
