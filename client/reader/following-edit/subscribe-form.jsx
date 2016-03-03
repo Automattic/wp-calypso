@@ -106,6 +106,12 @@ var FollowingEditSubscribeForm = React.createClass( {
 			return false;
 		}
 
+		// Make sure the hostname has at least two parts separated by a dot
+		const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
+		if ( hostnameParts.length < 2 ) {
+			return false;
+		}
+
 		return true;
 	},
 
