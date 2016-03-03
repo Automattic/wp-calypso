@@ -592,3 +592,23 @@ body.newdash div.wordpress-com-extension-promo {
 html.no-scroll {
 	overflow: hidden;
 }
+
+.is-section-sites #primary,
+.is-section-me #primary,
+.is-section-reader #primary {
+	flex: 1 1 auto;
+	align-self: stretch;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	transform: translate3d( 0, 0, 0 );
+	padding: 32px;
+
+	@include breakpoint( "<960px" ) {
+		padding: 24px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 0px;
+	}
+
+}
