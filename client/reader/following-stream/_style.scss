@@ -5,7 +5,7 @@
 	margin-bottom: 15px;
 
 	@include breakpoint( ">480px" ) {
-		padding: 16px 24px 24px 24px;
+		padding: 16px 24px 24px;
 		margin-bottom: 24px;
 
 		&.is-selected,
@@ -25,6 +25,10 @@
 
 	.site__content {
 		padding: 0;
+	}
+
+	.reader__site-and-author-icon {
+		margin-right: 5px;
 	}
 
 	.follow-button {
@@ -130,7 +134,7 @@
 	&.tag-afk {
 		background: transparent;
 		box-shadow: none;
-		padding: 16px 24px;
+		padding: 16px 24px 54px 24px;
 
 		&:hover {
 			cursor: pointer;
@@ -153,11 +157,12 @@
 		}
 
 		.reader__post-title {
+			display: block;
 			font-size: 16px;
 			margin: 0;
 			position: absolute;
 				top: 14px;
-				left: 66px;
+				left: 25px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -168,8 +173,8 @@
 			margin: 0;
 			font-size: 13px;
 			position: absolute;
-				top: 30px;
-				left: 44px;
+				top: 34px;
+				left: 25px;
 		}
 
 		.follow-button {
