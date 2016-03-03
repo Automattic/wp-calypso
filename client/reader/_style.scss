@@ -7,7 +7,8 @@
 		}
 	}
 
-	img.emoji, img.wp-smiley {
+	img.emoji,
+	img.wp-smiley {
 		display: inline;
 		height: 1em;
 		width: 1em;
@@ -30,6 +31,14 @@
 
 	sub {
 		bottom: -0.5em;
+	}
+}
+
+.reader__full-post-content {
+
+	table th,
+	table td {
+		padding: 10px;
 	}
 }
 
@@ -336,7 +345,7 @@
 	}
 
 	.foldable-card__expand .gridicon {
-		transform: rotate(-90deg);
+		transform: rotate( -90deg );
 	    position: absolute;
 	    	top: 24px;
 	    	left: 0;
@@ -344,6 +353,5 @@
 }
 // Make sure it rotates in the right direction
 .following-edit .foldable-card.is-expanded .gridicon {
-	transform: rotate(0deg);
+	transform: rotate( 0deg );
 }
-
