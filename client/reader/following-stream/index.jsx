@@ -150,6 +150,10 @@ module.exports = React.createClass( {
 		this._listContext = document.querySelector( '#primary' )
 	},
 
+	componentWillMount: function() {
+		this._listContext = document.querySelector( '#primary' )
+	},
+
 	componentWillUnmount: function() {
 		this.props.store.off( 'change', this.updateState );
 		PostStore.off( 'change', this.updateState );
