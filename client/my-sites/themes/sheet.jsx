@@ -25,6 +25,7 @@ import { purchase, customize, activate, signup } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import ThemeHelpers from 'my-sites/themes/helpers';
 import i18n from 'lib/mixins/i18n';
+import classNames from 'classnames';
 
 export const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -72,6 +73,19 @@ export const ThemeSheet = React.createClass( {
 		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
 		const themeContentElement = this.getContentElement( section );
 		return { priceElement, themeContentElement };
+	},
+
+	renderScreenshot() {
+		const classes = classNames(
+			'themes__sheet-screenshot',
+			{ 'is-placeholder': ! this.props.screenshot }
+		);
+		const img = <img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />;
+		return (
+			<div className={ classes }>
+				{ this.props.screenshot && img }
+			</div>
+		);
 	},
 
 	render() {
@@ -123,9 +137,7 @@ export const ThemeSheet = React.createClass( {
 					</div>
 					<div className="themes__sheet-column-right">
 						<Card className="themes_sheet-action-bar-spacer"/>
-						<div className="themes__sheet-screenshot">
-							<img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />
-						</div>
+						{ this.renderScreenshot() }
 					</div>
 				</div>
 			</Main>
