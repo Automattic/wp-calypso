@@ -152,30 +152,23 @@
 			cursor: default;
 
 			.gridicon {
+				cursor: default;
 				fill: lighten( $gray, 20% );
 			}
 
 			.follow-button__label {
-				cursor: default;
 				color: lighten( $gray, 20% );
-			}
-
-			&:hover,
-			&:active {
-
-				.gridicon {
-					fill: lighten( $gray, 20% );
-				}
-
-				.follow-button__label {
-					color: lighten( $gray, 20% );
-				}
 			}
 		}
 
 		&.is-valid {
-			.gridicon__follow {
+			.gridicon {
 				fill: $blue-medium;
+
+				&:hover,
+				&:active {
+					cursor: pointer;
+				}
 			}
 
 			.follow-button {
