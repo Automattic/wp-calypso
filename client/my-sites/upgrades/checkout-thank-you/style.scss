@@ -23,11 +23,19 @@
 	font-size: 24px;
 	font-weight: 300;
 	line-height: 32px;
-	padding: 48px 48px 24px 48px;
+	margin: 48px 48px 24px 48px;
 
 	@include breakpoint( ">660px" ) {
 		box-shadow: none;
-		padding-bottom: 0;
+		margin-bottom: 0;
+	}
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+
+		margin-left: auto;
+		margin-right: auto;
+		width: 50%;
 	}
 }
 

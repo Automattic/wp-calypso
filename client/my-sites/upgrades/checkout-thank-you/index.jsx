@@ -15,13 +15,13 @@ import analytics from 'analytics';
 import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
+import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouFooter from './footer';
 import CheckoutThankYouHeader from './header';
 import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
-import GenericDetails from './generic-details';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import HeaderCake from 'components/header-cake';
@@ -171,7 +171,7 @@ const CheckoutThankYou = React.createClass( {
 			}
 		}
 
-		return [ GenericDetails ];
+		return [];
 	},
 
 	productRelatedMessages() {
@@ -184,6 +184,8 @@ const CheckoutThankYou = React.createClass( {
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
 						selectedSite={ this.props.selectedSite } />
+
+					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -199,15 +201,18 @@ const CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				<div className="checkout-thank-you__features-header">
-					{ this.translate( "Get started with your site's new features" ) }
-				</div>
+				<CheckoutThankYouFeaturesHeader
+					isDataLoaded={ this.isDataLoaded() }
+					isGenericReceipt={ this.isGenericReceipt() }
+					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
 
-				<div className="checkout-thank-you__purchase-details-list">
-					<ComponentClass
-						selectedSite={ selectedSite }
-						domain={ domain } />
-				</div>
+				{ ComponentClass
+					? <div className="checkout-thank-you__purchase-details-list">
+						<ComponentClass
+							selectedSite={ selectedSite }
+							domain={ domain } />
+					</div>
+					: null }
 			</div>
 		);
 	}
