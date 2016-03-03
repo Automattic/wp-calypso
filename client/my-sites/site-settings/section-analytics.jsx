@@ -20,9 +20,7 @@ module.exports = React.createClass({
 	render: function() {
 
 		return (
-			<Card className="analytics-settings">
-				<AnalyticsForm site={ this.props.site } />
-			</Card>
+			<AnalyticsForm site={ this.props.site } />
 		);
 
 	}

@@ -18,7 +18,6 @@ var Card = require( 'components/card' ),
 	notices = require( 'notices' ),
 	analytics = require( 'analytics' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
-	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
 	FormInput = require( 'components/forms/form-text-input' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
@@ -151,7 +150,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<FormFieldset className="site-settings__blog-address-container">
+			<FormFieldset className="has-divider">
 				<FormLabel htmlFor="blogaddress">{ this.translate( 'Site Address' ) }</FormLabel>
 				<div className="blogaddress-settings">
 					<FormInput
@@ -396,6 +395,7 @@ module.exports = React.createClass( {
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
+
 				<SectionHeader label={ this.translate( 'Visibility' ) }>
 					<Button
 						compact={ true }
@@ -412,10 +412,30 @@ module.exports = React.createClass( {
 				</SectionHeader>
 				<Card>
 					<form onChange={ this.markChanged }>
-
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
+
+				<SectionHeader label={ this.translate( 'Related Posts' ) }>
+					<Button
+						compact={ true }
+						onClick={ this.submitForm }
+						primary={ true }
+
+						type="submit"
+						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+							{ this.state.submittingForm
+								? this.translate( 'Saving…' )
+								: this.translate( 'Save Settings' )
+							}
+					</Button>
+				</SectionHeader>
+				<Card>
+					<form onChange={ this.markChanged }>
+						{ this.relatedPostsOptions() }
+					</form>
+				</Card>
+
 				{ this.props.site.jetpack
 					? <div>
 						<SectionHeader label={ this.translate( 'Jetpack' ) }>
@@ -446,25 +466,6 @@ module.exports = React.createClass( {
 						</Card>
 					</div>
 					: null }
-				<SectionHeader className="after-compact" label={ this.translate( 'Related Posts' ) }>
-					<Button
-						compact={ true }
-						onClick={ this.submitForm }
-						primary={ true }
-
-						type="submit"
-						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-							{ this.state.submittingForm
-								? this.translate( 'Saving…' )
-								: this.translate( 'Save Settings' )
-							}
-					</Button>
-				</SectionHeader>
-				<Card>
-					<form onChange={ this.markChanged }>
-						{ this.relatedPostsOptions() }
-					</form>
-				</Card>
 			</div>
 		);
 	},

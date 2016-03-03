@@ -17,7 +17,10 @@ var formBase = require( './form-base' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormSelect = require( 'components/forms/form-select' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' );
+	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
+	Card = require( 'components/card' ),
+	Button = require( 'components/button' ),
+	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {
 
@@ -113,8 +116,8 @@ module.exports = React.createClass( {
 
 	otherCommentSettings: function() {
 		return (
-			<FormFieldset>
-				<FormLegend>{ this.translate( 'Other comment settings' ) }</FormLegend>
+			<FormFieldset className="has-divider">
+				<FormLabel>{ this.translate( 'Other comment settings' ) }</FormLabel>
 				<FormLabel>
 					<FormCheckbox
 						name="require_name_email"
@@ -343,7 +346,7 @@ module.exports = React.createClass( {
 
 	commentModerationSettings: function() {
 		return (
-			<FormFieldset>
+			<FormFieldset className="has-divider">
 				<FormLabel htmlFor="moderation_keys">{ this.translate( 'Comment Moderation' ) }</FormLabel>
 				<p>{
 					this.translate( 'Hold a comment in the queue if it contains {{numberOfLinks /}} or more links. (A common characteristic of comment spam is a large number of hyperlinks.)', {
@@ -409,24 +412,23 @@ module.exports = React.createClass( {
 		return (
 
 			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
-				<button
-					type="submit"
-					className="button is-primary"
-					disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-				</button>
-				{ this.defaultArticleSettings() }
-				{ this.otherCommentSettings() }
-				{ this.emailMeSettings() }
-				{ this.beforeCommentSettings() }
-				{ this.commentModerationSettings() }
-				{ this.commentBlacklistSettings() }
-				<button
-					type="submit"
-					className="button is-primary"
-					disabled={ this.state.fetchingSettings || this.state.submittingForm }>
+				<SectionHeader label={ this.translate( 'Discussion Settings' ) }>
+					<Button
+						primary
+						compact
+						disabled={ this.state.fetchingSettings || this.state.submittingForm }
+						onClick={ this.submitForm }>
 						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-				</button>
+					</Button>
+				</SectionHeader>
+				<Card className="discussion-settings">
+					{ this.defaultArticleSettings() }
+					{ this.otherCommentSettings() }
+					{ this.emailMeSettings() }
+					{ this.beforeCommentSettings() }
+					{ this.commentModerationSettings() }
+					{ this.commentBlacklistSettings() }
+				</Card>
 			</form>
 		);
 	}
