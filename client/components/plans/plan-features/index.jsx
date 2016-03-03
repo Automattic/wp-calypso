@@ -12,7 +12,8 @@ var PlanHeader = require( 'components/plans/plan-header' ),
 	PlanFeatureCell = require( 'components/plans/plan-feature-cell' ),
 	PlanActions = require( 'components/plans/plan-actions' ),
 	PlanPrice = require( 'components/plans/plan-price' ),
-	PlanDiscountMessage = require( 'components/plans/plan-discount-message' );
+	PlanDiscountMessage = require( 'components/plans/plan-discount-message' ),
+	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan;
 
 module.exports = React.createClass( {
 	displayName: 'PlanFeatures',
@@ -31,8 +32,12 @@ module.exports = React.createClass( {
 	headerText: function() {
 		return (
 			<span className="header-text">
-				WordPress.com
-				<br />
+				{ ! isJetpackPlan( this.props.plan ) &&
+					<div>
+						WordPress.com
+						<br />
+					</div>
+				}
 				{ this.props.plan.product_name_short }
 			</span>
 		);
