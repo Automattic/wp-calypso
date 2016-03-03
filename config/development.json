@@ -94,7 +94,6 @@
 		"post-editor/contact-form": true,
 		"post-editor/live-image-updates": true,
 		"post-editor/media-advanced": true,
-		"post-editor/post-type-switch": false,
 		"press-this": true,
 		"reader": true,
 		"reader/activities": true,
