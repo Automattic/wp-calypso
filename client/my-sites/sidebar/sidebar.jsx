@@ -12,8 +12,7 @@ var analytics = require( 'analytics' ),
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	AdsUtils = require( 'lib/ads/utils' ),
+var AdsUtils = require( 'lib/ads/utils' ),
 	config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
 	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
@@ -330,30 +329,7 @@ module.exports = React.createClass( {
 			linkClass += ' is-paid-plan';
 		}
 
-		let planName = site.plan.product_name_short,
-			labelClass = 'plan-name';
-
-		const testVariation = abtest( 'plansUpgradeButton' );
-
-		if ( testVariation !== 'original' && productsValues.isFreePlan( site.plan ) ) {
-			labelClass = 'add-new';
-
-			if ( testVariation === 'free' ) {
-				planName = 'Free'; // TODO: translate this string if the test is removed
-			}
-
-			if ( testVariation === 'add' ) {
-				planName = 'Add'; // TODO: translate this string if the test is removed
-			}
-
-			if ( testVariation === 'info' ) {
-				planName = 'Info'; // TODO: translate this string if the test is removed
-			}
-
-			if ( testVariation === 'change' ) {
-				planName = 'Change'; // TODO: translate this string if the test is removed
-			}
-		}
+		let planName = site.plan.product_name_short;
 
 		if ( productsValues.isFreeTrial( site.plan ) ) {
 			planName = this.translate( 'Trial', {
@@ -367,7 +343,7 @@ module.exports = React.createClass( {
 					<Gridicon icon="clipboard" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'Plan', { context: 'noun' } ) }</span>
 				</a>
-				<a href={ planLink } className={ labelClass } onClick={ this.trackUpgradeClick }>{ planName }</a>
+				<a href={ planLink } className="plan-name" onClick={ this.trackUpgradeClick }>{ planName }</a>
 			</li>
 		);
 	},

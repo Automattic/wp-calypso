@@ -45,17 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'yearly'
 	},
-	plansUpgradeButton: {
-		datestamp: '20160212', // Update to the day of deploy
-		variations: {
-			original: 20,
-			free: 20,
-			add: 20,
-			info: 20,
-			change: 20
-		},
-		defaultVariation: 'original'
-	},
 	plansFeatureList: {
 		datestamp: '20160215',
 		variations: {
