@@ -1,5 +1,4 @@
 .following-edit {
-	position: relative;
 
 	ul {
 		list-style-type: none;
@@ -40,7 +39,6 @@
 	}
 }
 
-
 .section-header.following-edit__header {
 	margin-bottom: 24px;
 
@@ -60,7 +58,6 @@
 		}
 	}
 }
-
 
 // More Options
 .following-edit__more-options {
@@ -107,16 +104,14 @@
 
 // Add to Following
 .following-edit__subscribe-form {
-	position: absolute;
-		top: 60px;
-		right: 0;
-		left: 0;
+	position: relative;
+	margin-top: -58px;
 	opacity: 0;
 	pointer-events: none;
 	transition: all 0.15s ease-in-out;
 
-	@include breakpoint( ">660px" ) {
-		top: 0;
+	@include breakpoint( ">480px" ) {
+		margin-top: -74px;
 	}
 
 	.search {
@@ -152,18 +147,27 @@
 			top: 51px;
 		width: 100%;
 
-		.gridicon__follow {
-			fill: lighten( $gray, 20% );
-		}
-
 		.follow-button {
 			cursor: default;
-			color: lighten( $gray, 20% );
+
+			.gridicon {
+				cursor: default;
+				fill: lighten( $gray, 20% );
+			}
+
+			.follow-button__label {
+				color: lighten( $gray, 20% );
+			}
 		}
 
 		&.is-valid {
-			.gridicon__follow {
+			.gridicon {
 				fill: $blue-medium;
+
+				&:hover,
+				&:active {
+					cursor: pointer;
+				}
 			}
 
 			.follow-button {
@@ -182,27 +186,31 @@
 	}
 }
 
-
 // Search Followed Sites
 .following-edit .search-card {
-	margin-bottom: 1px;
-}
+	margin: 30px 0 1px;
 
+	@include breakpoint( ">660px" ) {
+		margin-top: 50px;
+	}
+}
 
 // Search Results Placeholder
 .following-edit__subscribe-form-blank {
 	position: absolute;
 		top: 51px;
 	width: 100%;
-	height: 75px;
 	box-sizing: border-box;
-	padding: 26px 32px 0;
+	padding: 30px 32px;
 	text-align: center;
 	color: darken( $gray, 10% );
 	background: lighten( $gray, 30% );
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
-}
 
+	@include breakpoint( ">480px" ) {
+		padding: 26px 32px;
+	}
+}
 
 // Followed Sites and Search Transitions
 .following-edit__sites,
@@ -269,11 +277,10 @@
 .following-edit__notification-settings-card {
 	background-color: $gray-light;
 	position: relative;
-	color: #2e4453;
+	color: $gray-dark;
 
 	&.is-compact {
-		padding-top: 10px;
-		padding-bottom: 10px;
+		padding: 10px 0;
 
 		@include breakpoint( ">660px" ) {
 			padding-left: 105px;
@@ -299,7 +306,7 @@
 
 	.following-edit__form-toggle-wrapper {
 		position: absolute;
-		right: 16px;
+			right: 16px;
 	}
 
 	.following-edit__form-toggle-status {
@@ -326,15 +333,15 @@
 		left: 0;
 		top: 0;
 	cursor: pointer;
-	padding: 26px 8px 20px 8px;
+	padding: 26px 8px 20px;
 
 	.gridicon {
 		fill: $gray;
-		transform: rotate(0deg);
-		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+		transform: rotate( 0deg );
+		transition: transform .15s cubic-bezier( 0.175, .885, .32, 1.275 ), color .20s ease-in;
 
 		.is-expanded & {
-			transform: rotate(90deg);
+			transform: rotate( 90deg );
 		}
 	}
 }
@@ -342,7 +349,6 @@
 .following-edit__notification-settings-error {
 	margin-top: 12px;
 }
-
 
 @include breakpoint( ">660px" ) {
 	.following-edit {
