@@ -158,10 +158,10 @@ const CheckoutThankYou = React.createClass( {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
-			} else if ( purchases.some( isGoogleApps ) ) {
-				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [ DomainRegistrationDetails, ...findPurchaseAndDomain( purchases, isDomainRegistration ) ];
+			} else if ( purchases.some( isGoogleApps ) ) {
+				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {
@@ -194,6 +194,12 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
+		let purchases;
+
+		if ( ! this.isGenericReceipt() ) {
+			purchases = getPurchases( this.props );
+		}
+
 		return (
 			<div>
 				<CheckoutThankYouHeader
@@ -209,6 +215,7 @@ const CheckoutThankYou = React.createClass( {
 				{ ComponentClass
 					? <div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
+							purchases={ purchases }
 							selectedSite={ selectedSite }
 							domain={ domain } />
 					</div>
