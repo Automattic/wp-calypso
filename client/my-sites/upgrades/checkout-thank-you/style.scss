@@ -187,31 +187,73 @@
 
 // Footer Subcomponent styles
 .checkout-thank-you__footer {
-	color: $gray;
+	padding: 32px;
+	text-align: left;
+
+	@include breakpoint( ">660px" ) {
+		padding: 48px 24px;
+	}
 }
 
 .checkout-thank-you__footer-content {
-	margin: 16px auto;
+	margin-left: auto;
+	margin-right: auto;
 	max-width: 700px;
-	text-align: center;
-
-	@include breakpoint( ">660px" ) {
-		margin: 24px auto;
-		text-align: left;
-	}
-
-	a {
-		border-bottom: 1px solid $blue-medium;
-	}
 }
 
 .checkout-thank-you__footer-heading {
 	color: darken( $gray, 20% );
+	clear: none;
 	font-size: 21px;
 }
 
 .checkout-thank-you__footer-text {
 	color: darken( $gray, 10% );
-	font-size: 16px;
-	margin: 8px 0 0 0;
+	margin-bottom: 16px;
+	margin-top: 16px;
+}
+
+.checkout-thank-you__footer-gravatar {
+	float: right;
+	margin-left: 30px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		margin-right: 37px;
+	}
+
+	.gravatar {
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			height: 68px;
+			width: 68px;
+		}
+	}
+}
+
+.checkout-thank-you__footer-gravatar-name {
+	color: $gray;
+}
+
+.checkout-thank-you__footer-buttons {
+	clear: both;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 6px;
+		text-align: center;
+	}
+
+	.button {
+		@include breakpoint( "<660px" ) {
+			margin-top: 10px;
+			width: 80%;
+		}
+
+		@include breakpoint( ">660px" ) {
+			+ .button {
+				margin-left: 16px;
+			}
+		}
+	}
 }

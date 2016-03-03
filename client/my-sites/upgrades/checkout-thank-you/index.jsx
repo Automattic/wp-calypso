@@ -129,6 +129,12 @@ const CheckoutThankYou = React.createClass( {
 			'is-placeholder': ! this.isDataLoaded()
 		} );
 
+		let purchases = null;
+
+		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+			purchases = getPurchases( this.props );
+		}
+
 		return (
 			<Main className={ classes }>
 				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
@@ -137,9 +143,7 @@ const CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<CheckoutThankYouFooter
-					isDataLoaded={ this.isDataLoaded() }
-					receipt={ this.props.receipt } />
+				<CheckoutThankYouFooter purchases={ purchases } />
 			</Main>
 		);
 	},
