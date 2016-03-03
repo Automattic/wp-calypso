@@ -1,43 +1,45 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	qs = require( 'qs' ),
-	debounce = require( 'lodash/debounce' ),
-	page = require( 'page' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	setSection = require( 'state/ui/actions' ).setSection,
-	EmptyContent = require( 'components/empty-content' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import qs from 'qs';
+import debounce from 'lodash/debounce';
+import page from 'page';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var DocsComponent = require( './main' ),
-	SingleDocComponent = require( './doc' ),
-	DesignAssetsComponent = require( './design' ),
-	AppComponents = require( './design/app-components' ),
-	Typography = require( './design/typography' ),
-	DevWelcome = require( './welcome' ),
-	Sidebar = require( './sidebar' ),
-	FormStateExamplesComponent = require( './form-state-examples' );
+import DocsComponent from './main';
+import SingleDocComponent from './doc';
+import DesignAssetsComponent from './design';
+import AppComponents from './design/app-components';
+import Typography from './design/typography';
+import DevWelcome from './welcome';
+import Sidebar from './sidebar';
+import FormStateExamplesComponent from './form-state-examples';
+import { setSection } from 'state/ui/actions';
+import EmptyContent from 'components/empty-content';
 
-var devdocs = {
+const devdocs = {
 
-	/**
+	/*
 	 * Documentation is rendered on #primary and doesn't expect a sidebar to exist
 	 * so #secondary needs to be cleaned up
 	 */
 	sidebar: function( context, next ) {
 		ReactDom.render(
-			React.createElement( Sidebar, {} ),
+			React.createElement( Sidebar, {
+				path: context.path,
+			} ),
 			document.getElementById( 'secondary' )
 		);
 
 		next();
 	},
 
-	/**
+	/*
 	 * Controller for page listing multiple developer docs
 	 */
 	devdocs: function( context ) {
@@ -68,7 +70,7 @@ var devdocs = {
 		);
 	},
 
-	/**
+	/*
 	 * Controller for single developer document
 	 */
 	singleDoc: function( context ) {
