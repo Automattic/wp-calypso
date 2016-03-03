@@ -26,15 +26,15 @@ module.exports = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			themes: [
-				{ name: 'Boardwalk', slug: 'boardwalk' },
-				{ name: 'Cubic', slug: 'cubic' },
-				{ name: 'Edin', slug: 'edin' },
-				{ name: 'Cols', slug: 'cols' },
-				{ name: 'Minnow', slug: 'minnow' },
-				{ name: 'Sequential', slug: 'sequential' },
+				{ name: 'Dyad', slug: 'dyad' },
+				{ name: 'Independent Publisher', slug: 'independent-publisher' },
+				{ name: 'Sela', slug: 'sela' },
+				{ name: 'Hemingway Rewritten', slug: 'hemingway-rewritten' },
+				{ name: 'Twenty Sixteen', slug: 'twentysixteen' },
 				{ name: 'Penscratch', slug: 'penscratch' },
-				{ name: 'Intergalactic', slug: 'intergalactic' },
-				{ name: 'Eighties', slug: 'eighties' },
+				{ name: 'Edin', slug: 'edin' },
+				{ name: 'Publication', slug: 'publication' },
+				{ name: 'Harmonic', slug: 'harmonic' },
 			],
 
 			useHeadstart: false
