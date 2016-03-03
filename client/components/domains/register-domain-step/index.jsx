@@ -170,11 +170,11 @@ var RegisterDomainStep = React.createClass( {
 			exampleDomains = '';
 
 		if ( ! this.props.isInSigup && abtest( 'domainSearchPlaceholderText' ) === 'searchForADomain' ) {
-			placeholderText = this.translate( 'Search for a domain' );
+			placeholderText = 'Search for a domain';
 
 			exampleDomains = (
 				<div className="register-domain-step__search-examples">
-					{ this.translate( 'e.g.' ) } example.com, example.net
+					e.g. example.com, example.net
 				</div>
 			);
 		}
