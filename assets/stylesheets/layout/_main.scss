@@ -593,9 +593,9 @@ html.no-scroll {
 	overflow: hidden;
 }
 
-.is-section-sites .wp-primary,
-.is-section-me .wp-primary,
-.is-section-reader .wp-primary {
+.layout.is-section-sites .wp-primary,
+.layout.is-section-me .wp-primary,
+.layout.is-section-reader .wp-primary {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
