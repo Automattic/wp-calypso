@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	url = require( 'url' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import url from 'url';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
  */
-const WebPreview = require( 'components/web-preview' );
+import WebPreview from 'components/web-preview';
 
 const EditorPreview = React.createClass( {
 
@@ -79,12 +81,38 @@ const EditorPreview = React.createClass( {
 		return url.format( parsed );
 	},
 
+	detectFocusLoss() {
+		this.activeElement = document.activeElement;
+		while ( this.activeElement && this.activeElement.contentWindow ) {
+			try {
+				this.activeElement = this.activeElement.contentDocument.activeElement;
+			} catch ( e ) {
+				break;
+			}
+		}
+	},
+
+	verifyFocusLoss() {
+		defer( () => {
+			if ( this.activeElement && document.activeElement &&
+					document.activeElement !== this.activeElement &&
+					ReactDom.findDOMNode( this.refs.preview ).contains( document.activeElement ) ) {
+				this.activeElement.focus();
+			}
+
+			delete this.activeElement;
+		} );
+	},
+
 	render() {
 		return (
 			<WebPreview
+				ref="preview"
 				showPreview={ this.props.showPreview }
 				defaultViewportDevice="tablet"
 				onClose={ this.props.onClose }
+				onFrameUrlChange={ this.detectFocusLoss }
+				onFrameLoad={ this.verifyFocusLoss }
 				previewUrl={ this.state.iframeUrl }
 				loadingMessage="Beep beep boop…"
 			/>
