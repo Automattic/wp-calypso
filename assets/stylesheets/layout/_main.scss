@@ -298,7 +298,7 @@ $sidebar-width-min: 228px;
 	flex: 1 1 auto;
 }
 
-#primary {
+.wp-primary {
 	flex: 1 1 auto;
 	position: relative;
 	display: flex;
@@ -309,7 +309,7 @@ $sidebar-width-min: 228px;
 	}
 }
 
-#secondary {
+.wp-secondary {
 	flex: 1 1 auto;
 	order: -1;
 	position: relative;
@@ -593,9 +593,9 @@ html.no-scroll {
 	overflow: hidden;
 }
 
-.is-section-sites #primary,
-.is-section-me #primary,
-.is-section-reader #primary {
+.is-section-sites .wp-primary,
+.is-section-me .wp-primary,
+.is-section-reader .wp-primary {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
