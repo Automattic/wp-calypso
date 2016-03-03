@@ -16,6 +16,14 @@
 			max-height: 22px * 3;
 		}
 
+		p {
+			margin: 0;
+		}
+
+		p[align] {
+			text-align: inherit;
+		}
+
 		&.is-long {
 			&:after {
 				content: '';
