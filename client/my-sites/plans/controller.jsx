@@ -4,7 +4,6 @@
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
 	defer = require( 'lodash/defer' );
 
 /**
@@ -17,6 +16,7 @@ var sites = require( 'lib/sites-list' )(),
 	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
@@ -74,18 +74,17 @@ module.exports = {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		ReactDom.render(
-			<ReduxProvider store={ context.store }>
-				<CartData>
-					<Plans
-						sites={ sites }
-						onSelectPlan={ handlePlanSelect }
-						plans={ plans }
-						context={ context }
-						destinationType={ context.params.destinationType }/>
-				</CartData>
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			<CartData>
+				<Plans
+					sites={ sites }
+					onSelectPlan={ handlePlanSelect }
+					plans={ plans }
+					context={ context }
+					destinationType={ context.params.destinationType } />
+			</CartData>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -116,21 +115,20 @@ module.exports = {
 			siteID: context.params.domain
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			<Main className="plans has-sidebar">
-				<ReduxProvider store={ context.store }>
-					<CartData>
-						<PlansCompare
-							enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
-							selectedSite={ site }
-							onSelectPlan={ handlePlanSelect }
-							plans={ plans }
-							features={ features }
-							productsList={ productsList } />
-					</CartData>
-				</ReduxProvider>
+				<CartData>
+					<PlansCompare
+						enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
+						selectedSite={ site }
+						onSelectPlan={ handlePlanSelect }
+						plans={ plans }
+						features={ features }
+						productsList={ productsList } />
+				</CartData>
 			</Main>,
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

@@ -30,13 +30,9 @@ module.exports = React.createClass( {
 			plans = this.props.plans,
 			isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
 			numberOfPlaceholders = 3,
-			site,
+			site = this.props.site,
 			plansList,
 			currentPlan;
-
-		if ( this.props.sites ) {
-			site = this.props.sites.getSelectedSite();
-		}
 
 		if ( this.props.hideFreePlan || ( site && site.jetpack ) ) {
 			numberOfPlaceholders = 2;

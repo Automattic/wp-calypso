@@ -31,6 +31,10 @@ module.exports = React.createClass( {
 			return this.shouldOfferFreeTrial() ? this.freeTrialActions() : this.upgradeActions();
 		}
 
+		if ( ! this.props.sitePlan ) {
+			return null;
+		}
+
 		if ( this.siteHasThisPlan() ) {
 			if ( this.props.sitePlan.freeTrial ) {
 				return this.upgradeActions();
@@ -261,10 +265,6 @@ module.exports = React.createClass( {
 	},
 
 	getCurrentPlanHint: function() {
-		if ( ! this.props.sitePlan ) {
-			return;
-		}
-
 		return (
 			<div>
 				<span className="plan-actions__current-plan-label" onClick={ this.recordCurrentPlanClick }>
