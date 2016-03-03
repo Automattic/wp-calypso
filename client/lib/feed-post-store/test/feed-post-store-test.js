@@ -10,6 +10,8 @@ var	Dispatcher = require( 'dispatcher' ),
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	FeedPostActionType = require( 'lib/feed-post-store/constants' ).action;
 
+import { action as FeedSubscriptionActionType } from 'lib/reader-feed-subscriptions/constants';
+
 var FeedPostStore = require( '../' );
 
 describe( 'feed-post-store', function() {
@@ -115,7 +117,6 @@ describe( 'feed-post-store', function() {
 			blogId: 4,
 			postId: 3
 		} ) ).to.be.ok;
-
 	} );
 
 	it( 'should accept a post without a feed ID', function() {
@@ -141,4 +142,34 @@ describe( 'feed-post-store', function() {
 		} ) ).to.be.ok;
 	} );
 
+	it( 'should remove posts when a blog is unfollowed', function() {
+		const blogId = 4;
+		Dispatcher.handleServerAction( {
+			type: FeedPostActionType.RECEIVE_FEED_POST,
+			blogId: blogId,
+			postId: 3,
+			data: {
+				ID: 3, // notice this can and will be different for wpcom posts
+				site_ID: 4,
+				title: 'a sample post'
+			},
+			error: null
+		} );
+
+		expect( FeedPostStore.get( {
+			blogId: blogId,
+			postId: 3
+		} ) ).to.be.ok;
+
+		// Fire off the unfollow API response
+		Dispatcher.handleServerAction( {
+			type: FeedSubscriptionActionType.RECEIVE_UNFOLLOW_READER_FEED,
+			blogId: blogId
+		} );
+
+		expect( FeedPostStore.get( {
+			blogId: blogId,
+			postId: 3
+		} ) ).to.be.undefined;
+	} );
 } );

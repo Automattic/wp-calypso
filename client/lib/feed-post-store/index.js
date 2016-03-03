@@ -7,7 +7,8 @@ var assign = require( 'lodash/assign' ),
 	forEach = require( 'lodash/forEach' ),
 	isEqual = require( 'lodash/isEqual' ),
 	forOwn = require( 'lodash/forOwn' ),
-	clone = require( 'lodash/clone' );
+	clone = require( 'lodash/clone' ),
+	filter = require( 'lodash/filter' );
 
 /**
  * Internal dependencies
@@ -19,6 +20,8 @@ var Dispatcher = require( 'dispatcher' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action;
+
+import { action as FeedSubscriptionActionType } from 'lib/reader-feed-subscriptions/constants';
 
 var _posts = {},
 	_postsForBlogs = {},
@@ -110,6 +113,12 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case ReaderSiteBlockActionType.RECEIVE_UNBLOCK_SITE:
 			markBlockedSitePosts( action.siteId, ! ( action.data && action.data.success ) );
 			break;
+
+		case FeedSubscriptionActionType.RECEIVE_UNFOLLOW_READER_FEED:
+			if ( action.blogId ) {
+				_postsForBlogs = removePostsForBlog( action.blogId );
+			}
+			break;
 	}
 } );
 
@@ -189,10 +198,7 @@ function receivePostFromPage( newPost ) {
 	if ( newPost.feed_ID && newPost.ID && ! _posts[ newPost.ID ] ) {
 		// 1.3 style
 		setPost( newPost.ID, assign( {}, newPost, { _state: 'minimal' } ) );
-	} else if ( newPost.site_ID && ! _postsForBlogs[ blogKey( {
-				blogId: newPost.site_ID,
-				postId: newPost.ID
-			} ) ] ) {
+	} else if ( newPost.site_ID && ! _postsForBlogs[ blogKey( { blogId: newPost.site_ID, postId: newPost.ID } ) ] ) {
 		setPost( null, assign( {}, newPost, { _state: 'minimal' } ) );
 	}
 }
@@ -280,6 +286,12 @@ function markBlockedSitePosts( siteId, isSiteBlocked ) {
 			newPost.is_site_blocked = isSiteBlocked;
 			setPost( newPost.feed_item_ID, newPost );
 		}
+	} );
+}
+
+function removePostsForBlog( blogId ) {
+	return filter( _postsForBlogs, function( post ) {
+		return post.site_ID !== blogId;
 	} );
 }
 
