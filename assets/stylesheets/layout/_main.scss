@@ -130,10 +130,15 @@ body.rtl,
 	display: inherit;
 }
 
+html {
+	overflow: none;
+}
+
 body {
 	color: #404040;
 	font-size: 15px;
 	line-height: 1.5;
+	overflow: none;
 }
 
 noscript {
@@ -275,6 +280,16 @@ html.iframed {
 $sidebar-width-max: 272px;
 $sidebar-width-min: 228px;
 
+.wp {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+}
+
 .wp-content {
 	position: relative;
 	display: flex;
@@ -339,7 +354,7 @@ $sidebar-width-min: 228px;
 
 	.wp-secondary .site-selector {
 		opacity: 1;
-		transform: translateX( 272px );
+		transform: translateX( 0 );
 		pointer-events: auto;
 
 		@include breakpoint( "<660px" ) {
@@ -366,15 +381,15 @@ $sidebar-width-min: 228px;
 .wp-secondary .site-selector {
 	background: lighten( $gray, 30% );
 	border-right: 1px solid lighten( $gray, 25% );
-	position: fixed;
-		top: 47px;
+	position: absolute;
+		top: 0;
 		bottom: 0;
-		left: -272px;
-	width: 272px;
+	width: 100%;
 	overflow: hidden;
 	z-index: z-index( 'root', '.wp-secondary .site-selector' );
 	opacity: 0;
 	pointer-events: none;
+	transform: translateX( -100% );
 
 	.search {
 		border-bottom: 1px solid lighten( $gray, 20% );
