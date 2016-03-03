@@ -2,12 +2,19 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import get from 'lodash/get';
+import set from 'lodash/set';
+import omitBy from 'lodash/omitBy';
+import isEqual from 'lodash/isEqual';
+import reduce from 'lodash/reduce';
 import keyBy from 'lodash/keyBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
  */
 import {
+	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -158,10 +165,51 @@ export function queriesLastPage( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns the updated editor posts state after an action has been dispatched.
+ * The state maps site ID, post ID pairing to an object containing revisions
+ * for the post.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function edits( state = {}, action ) {
+	switch ( action.type ) {
+		case POSTS_RECEIVE:
+			return reduce( action.posts, ( memoState, post ) => {
+				const postEdits = get( memoState, [ post.site_ID, post.ID ] );
+				if ( ! postEdits ) {
+					return memoState;
+				} else if ( memoState === state ) {
+					memoState = merge( {}, state );
+				}
+
+				return set( memoState, [ post.site_ID, post.ID ], omitBy( postEdits, ( value, key ) => {
+					return isEqual( post[ key ], value );
+				} ) );
+			}, state );
+
+		case POST_EDIT:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					[ action.postId || '' ]: action.post
+				}
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	items,
 	siteRequests,
 	queryRequests,
 	queries,
-	queriesLastPage
+	queriesLastPage,
+	edits
 } );

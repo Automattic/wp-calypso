@@ -4,6 +4,8 @@
 import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
 import filter from 'lodash/filter';
+import find from 'lodash/find';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -36,6 +38,19 @@ export function getPost( state, globalId ) {
 export const getSitePosts = createSelector(
 	( state, siteId ) => filter( state.posts.items, { site_ID: siteId } ),
 	( state ) => [ state.posts.items ]
+);
+
+/**
+ * Returns a post object by site ID, post ID pair.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {String}  postId Post ID
+ * @return {?Object}        Post object
+ */
+export const getSitePost = createSelector(
+	( state, siteId, postId ) => find( getSitePosts( state, siteId ), { ID: postId } ) || null,
+	( state, siteId ) => getSitePosts( state, siteId )
 );
 
 /**
@@ -172,4 +187,26 @@ export function isRequestingSitePost( state, siteId, postId ) {
 	}
 
 	return !! state.posts.siteRequests[ siteId ][ postId ];
+}
+
+/**
+ * Returns a post object by site ID post ID pairing, with editor revisions.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {Object}        Post object with revisions
+ */
+export function getEditedPost( state, siteId, postId ) {
+	const post = getSitePost( state, siteId, postId );
+	if ( ! state.editor.posts[ siteId ] ) {
+		return post;
+	}
+
+	const edits = state.editor.posts[ siteId ][ postId || '' ];
+	if ( ! postId ) {
+		return edits || null;
+	}
+
+	return merge( {}, post, edits );
 }

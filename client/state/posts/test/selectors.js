@@ -9,13 +9,15 @@ import { expect } from 'chai';
 import {
 	getPost,
 	getSitePosts,
+	getSitePost,
 	getSitePostsForQuery,
 	isRequestingSitePostsForQuery,
 	getSitePostsLastPageForQuery,
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsHierarchyForQueryIgnoringPage,
-	isRequestingSitePost
+	isRequestingSitePost,
+	getEditedPost
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -53,6 +55,39 @@ describe( 'selectors', () => {
 				state.posts.items[ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
 				state.posts.items[ '6c831c187ffef321eb43a67761a525a3' ]
 			] );
+		} );
+	} );
+
+	describe( '#getSitePost()', () => {
+		beforeEach( () => {
+			getSitePosts.memoizedSelector.cache.clear();
+			getSitePost.memoizedSelector.cache.clear();
+		} );
+
+		describe( '#getSitePost()', () => {
+			it( 'should return null if the post is not known for the site', () => {
+				const post = getSitePost( {
+					posts: {
+						items: {}
+					}
+				}, 2916284, 413 );
+
+				expect( post ).to.be.null;
+			} );
+
+			it( 'should return the object for the post site ID, post ID pair', () => {
+				const post = getSitePost( {
+					posts: {
+						items: {
+							'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+							'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
+							'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 77203074, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs' }
+						}
+					}
+				}, 2916284, 413 );
+
+				expect( post ).to.eql( { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' } );
+			} );
 		} );
 	} );
 
@@ -339,6 +374,105 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( '#getEditedPost()', () => {
+		it( 'should return the original post if no revisions exist on site', () => {
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					}
+				},
+				editor: {
+					posts: {}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' } );
+		} );
+
+		it( 'should return revisions for a new draft', () => {
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {}
+				},
+				editor: {
+					posts: {
+						2916284: {
+							'': {
+								title: 'Ribs & Chicken'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( editedPost ).to.eql( { title: 'Ribs & Chicken' } );
+		} );
+
+		it( 'should return revisions for a draft if the original is unknown', () => {
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {}
+				},
+				editor: {
+					posts: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( { title: 'Hello World!' } );
+		} );
+
+		it( 'should return revisions merged with the original post', () => {
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					}
+				},
+				editor: {
+					posts: {
+						2916284: {
+							841: {
+								title: 'Hello World!'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World!' } );
+		} );
+
+		it( 'should return revisions merged with original post nested properties', () => {
+			const editedPost = getEditedPost( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true } }
+					}
+				},
+				editor: {
+					posts: {
+						2916284: {
+							841: {
+								discussion: {
+									pings_open: true
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( editedPost ).to.eql( { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true, pings_open: true } } );
 		} );
 	} );
 } );

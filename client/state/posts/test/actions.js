@@ -10,6 +10,7 @@ import Chai, { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -23,7 +24,8 @@ import {
 	receivePosts,
 	requestSitePosts,
 	requestSitePost,
-	requestPosts
+	requestPosts,
+	editPost
 } from '../actions';
 
 describe( 'actions', () => {
@@ -244,6 +246,34 @@ describe( 'actions', () => {
 					postId: 420,
 					error: sinon.match( { message: 'Unknown post' } )
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#editPost()', () => {
+		it( 'should return an action object for a new post', () => {
+			const action = editPost( {
+				title: 'Hello World'
+			}, 2916284 );
+
+			expect( action ).to.eql( {
+				type: POST_EDIT,
+				siteId: 2916284,
+				postId: undefined,
+				post: { title: 'Hello World' }
+			} );
+		} );
+
+		it( 'should return an action object for an existing post', () => {
+			const action = editPost( {
+				title: 'Hello World'
+			}, 2916284, 413 );
+
+			expect( action ).to.eql( {
+				type: POST_EDIT,
+				siteId: 2916284,
+				postId: 413,
+				post: { title: 'Hello World' }
 			} );
 		} );
 	} );

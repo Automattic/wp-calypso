@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -121,4 +122,22 @@ export function requestSitePost( siteId, postId ) {
  */
 export function requestPosts( query = {} ) {
 	return requestSitePosts( null, query );
+}
+
+/**
+ * Returns an action object to be used in signalling that the specified
+ * post updates should be applied to the set of edits.
+ *
+ * @param  {Object} post   Post attribute updates
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {Object}        Action object
+ */
+export function editPost( post, siteId, postId ) {
+	return {
+		type: POST_EDIT,
+		post,
+		siteId,
+		postId
+	};
 }
