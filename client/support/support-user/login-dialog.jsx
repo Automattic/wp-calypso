@@ -26,28 +26,36 @@ const SupportUserLoginDialog = React.createClass( {
 		}
 	},
 
-	onChangeUser() {
+	onSubmit() {
 		this.props.onChangeUser( this.state.supportUser, this.state.supportPassword );
 		this.setState( { supportPassword: '' } );
+	},
+
+	onEnterKey( event ) {
+		event.preventDefault();
+
+		// Next action depends on which text field is active
+		switch ( event.target.name ) {
+			case 'supportUser':
+				this.supportPasswordInput.focus();
+				break;
+			case 'supportPassword':
+				this.onSubmit();
+				break;
+		}
+	},
+
+	onEscapeKey( event ) {
+		event.preventDefault();
+		this.props.onCloseDialog();
 	},
 
 	onInputKeyDown( event ) {
 		switch ( event.key ) {
 			case 'Enter':
-				event.preventDefault();
-				switch ( event.target.name ) {
-					case 'supportUser':
-						console.log( this.supportPasswordInput );
-						this.supportPasswordInput.focus();
-						break;
-					case 'supportPassword':
-						this.onChangeUser();
-						break;
-				}
-				return;
+				return this.onEnterKey( event );
 			case 'Escape':
-				event.preventDefault();
-				this.props.onCloseDialog();
+				return this.onEscapeKey( event );
 		}
 	},
 
@@ -58,7 +66,7 @@ const SupportUserLoginDialog = React.createClass( {
 			<FormButton
 				key="supportuser"
 				disabled={ isBusy }
-				onClick={ this.onChangeUser }>
+				onClick={ this.onSubmit }>
 					{ isBusy ? 'Switching...' : 'Change user' }
 			</FormButton>,
 			<FormButton
