@@ -218,15 +218,15 @@ const CheckoutThankYou = React.createClass( {
 					isGenericReceipt={ this.isGenericReceipt() }
 					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
 
-				{ ComponentClass
-					? <div className="checkout-thank-you__purchase-details-list">
+				{ ComponentClass && (
+					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
 							domain={ domain } />
 					</div>
-					: null }
+				) }
 			</div>
 		);
 	}
