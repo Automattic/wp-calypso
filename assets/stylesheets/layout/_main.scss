@@ -280,10 +280,10 @@ html.iframed {
 $sidebar-width-max: 272px;
 $sidebar-width-min: 228px;
 
-.wp {
+.layout {
 	display: flex;
 	flex-direction: column;
-	position: fixed;
+	position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
