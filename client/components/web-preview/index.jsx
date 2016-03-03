@@ -39,7 +39,11 @@ const WebPreview = React.createClass( {
 		// Optional loading message to display during loading
 		loadingMessage: React.PropTypes.string,
 		// The iframe's title element, used for accessibility purposes
-		iframeTitle: React.PropTypes.string
+		iframeTitle: React.PropTypes.string,
+		// Function handler to call when IFrame URL changes
+		onFrameUrlChange: React.PropTypes.func,
+		// Function handler to call when IFrame contents load
+		onFrameLoad: React.PropTypes.func
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -48,7 +52,9 @@ const WebPreview = React.createClass( {
 		return {
 			showExternal: true,
 			showDeviceSwitcher: true,
-			previewUrl: 'about:blank'
+			previewUrl: 'about:blank',
+			onFrameUrlChange: () => {},
+			onFrameLoad: () => {}
 		}
 	},
 
@@ -121,6 +127,8 @@ const WebPreview = React.createClass( {
 			loaded: false,
 			iframeUrl: iframeUrl,
 		} );
+
+		this.props.onFrameUrlChange( iframeUrl );
 	},
 
 	shouldRenderIframe() {
@@ -139,6 +147,7 @@ const WebPreview = React.createClass( {
 		}
 		debug( 'preview loaded:', this.state.iframeUrl );
 		this.setState( { loaded: true } );
+		this.props.onFrameLoad();
 	},
 
 	render() {
