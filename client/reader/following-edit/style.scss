@@ -237,9 +237,11 @@
 
 	&.is-placeholder {
 
+		height: 74px;
+
 		.reader-list-item__title,
 		.reader-list-item__description {
-			margin-left: 91px;
+			margin: 1px 0 0 91px;
 
 			@include breakpoint( ">480px" ) {
 				margin-left: 83px;
@@ -357,7 +359,7 @@
 }
 
 .following-edit__notification-settings-error {
-	margin-top: 12px;
+	margin-top: 14px;
 }
 
 @include breakpoint( ">660px" ) {
@@ -369,6 +371,7 @@
 		.reader-list-item__title,
 		.reader-list-item__description {
 			margin-right: 100px;
+			padding-left: 3px;
 		}
 	}
 }
