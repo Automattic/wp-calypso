@@ -10,6 +10,7 @@ import flowRight from 'lodash/flowRight';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
+import SupportUserActiveDialog from './active-dialog';
 import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
 
 import { supportUserToggleDialog } from 'state/support/actions';
@@ -30,14 +31,19 @@ const SupportUser = React.createClass( {
 		// the shortcut key being entered into the field
 		e.preventDefault();
 
-		if ( this.props.isSupportUser ) {
-			this.props.supportUserRestore();
-		} else {
-			this.props.supportUserToggleDialog();
-		}
+		this.props.supportUserToggleDialog();
 	},
 
 	render: function() {
+		if ( this.props.isSupportUser ) {
+			return (
+				<SupportUserActiveDialog
+					isVisible={ this.props.showDialog }
+					onCloseDialog={ this.props.supportUserToggleDialog }
+					onRestoreUser={ this.props.supportUserRestore } />
+			);
+		}
+
 		return (
 			<SupportUserLoginDialog
 				isVisible={ this.props.showDialog }
