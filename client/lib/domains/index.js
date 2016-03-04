@@ -28,10 +28,7 @@ function canAddGoogleApps( domainName ) {
 			return includes( domainName, phrase );
 		} );
 
-	if ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase ) {
-		return false;
-	}
-	return true;
+	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
 function canRegister( domainName, onComplete ) {
@@ -124,7 +121,7 @@ function hasGoogleApps( domain ) {
 
 function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		return ( domain.type === domainTypes.REGISTERED );
+		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.meta ) );
 	} );
 }
 
