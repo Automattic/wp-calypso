@@ -98,7 +98,7 @@ const babelCache = path.join( __dirname, '.caches' );
 jsLoader = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	loaders: [ 'babel-loader?cacheDirectory=' + babelCache + '&optional[]=runtime' ]
+	loaders: [ 'babel-loader?cacheDirectory=' + encodeURIComponent( babelCache ) + '&optional[]=runtime' ]
 };
 
 if ( CALYPSO_ENV === 'development' ) {

@@ -55,7 +55,7 @@ module.exports = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
-				loader: 'babel-loader?optional[]=runtime&cacheDirectory=' + babelCache
+				loader: 'babel-loader?optional[]=runtime&cacheDirectory=' + encodeURIComponent( babelCache )
 			},
 			{
 				test: /\.json$/,
