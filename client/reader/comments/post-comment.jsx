@@ -79,7 +79,7 @@ class PostComment extends React.Component {
 			args: {
 				numOfReplies: commentChildrenIds.length
 			}
-		} ) : translate( 'show 1 reply' );
+		} ) : translate( 'hide 1 reply' );
 
 		return <div>
 			<button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
