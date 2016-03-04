@@ -38,14 +38,19 @@ class PostCommentForm extends React.Component {
 	}
 
 	componentDidMount() {
-		// If it's a reply, give the input focus
-		if ( this.props.parentCommentID ) {
+		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
+		if ( this.props.parentCommentID && this.refs.commentText ) {
 			this.refs.commentText.focus();
 		}
 	}
 
 	componentDidUpdate() {
 		const commentTextNode = this.refs.commentText;
+		// can happen if comments are closed
+		if ( ! commentTextNode ) {
+			return;
+		}
+
 		const commentText = this.getCommentText();
 		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
 
