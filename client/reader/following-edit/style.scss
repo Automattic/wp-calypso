@@ -14,7 +14,8 @@
 		margin-bottom: 13px;
 	}
 
-	.foldable-card.card, .foldable-card.card.is-expanded {
+	.foldable-card.card,
+	.foldable-card.card.is-expanded {
 		margin-bottom: 0;
 	}
 
@@ -237,7 +238,11 @@
 	&.is-placeholder {
 		.reader-list-item__title,
 		.reader-list-item__description {
-			margin-left: 92px;
+			margin-left: 91px;
+
+			@include breakpoint( ">480px" ) {
+				margin-left: 83px;
+			}
 		}
 
 		.following-edit__list-title {
@@ -247,6 +252,10 @@
 		.following-edit__list-url {
 			margin-top: 4px;
 			width: 25%;
+		}
+
+		.reader-list-item__icon {
+			left: 42px;
 		}
 	}
 
