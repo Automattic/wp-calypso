@@ -358,10 +358,16 @@ const PostEditor = React.createClass( {
 									null
 								}
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
-									<SegmentedControlItem selected={ mode === 'tinymce' } onClick={ this.switchEditorMode.bind( this, 'tinymce' ) }>
+									<SegmentedControlItem
+										selected={ mode === 'tinymce' }
+										onClick={ this.switchEditorMode.bind( this, 'tinymce' ) }
+										title={ this.translate( 'Edit with a visual editor' ) }>
 										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
 									</SegmentedControlItem>
-									<SegmentedControlItem selected={ mode === 'html' } onClick={ this.switchEditorMode.bind( this, 'html' ) }>
+									<SegmentedControlItem
+										selected={ mode === 'html' }
+										onClick={ this.switchEditorMode.bind( this, 'html' ) }
+										title={ this.translate( 'Edit the raw HTML code' ) }>
 										HTML
 									</SegmentedControlItem>
 								</SegmentedControl>
