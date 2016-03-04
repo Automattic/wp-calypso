@@ -8,21 +8,19 @@ import sample from 'lodash/sample';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import Gravatar from 'components/gravatar';
-import { isJetpackPlan } from 'lib/products-values';
 import supportUrls from 'lib/url/support';
 
-const CheckoutThankYouFooter = React.createClass( {
+const HappinessSupport = React.createClass( {
 	propTypes: {
-		purchases: React.PropTypes.array
+		isJetpack: React.PropTypes.bool
 	},
 
 	renderContactButton() {
 		let url = '/help/contact',
 			target = '';
 
-		if ( this.props.purchases && this.props.purchases.some( isJetpackPlan ) ) {
+		if ( this.props.isJetpack ) {
 			url = supportUrls.JETPACK_CONTACT_SUPPORT;
 			target = '_blank';
 		}
@@ -43,9 +41,9 @@ const CheckoutThankYouFooter = React.createClass( {
 		] );
 
 		return (
-			<div className="checkout-thank-you__footer-gravatar">
+			<div className="happiness-support__gravatar">
 				<Gravatar user={ user } size={ 80 } />
-				<em className="checkout-thank-you__footer-gravatar-name">
+				<em className="happiness-support__gravatar-name">
 					{ user.display_name }
 				</em>
 			</div>
@@ -55,7 +53,7 @@ const CheckoutThankYouFooter = React.createClass( {
 	renderSupportButton() {
 		let url = supportUrls.SUPPORT_ROOT;
 
-		if ( this.props.purchases && this.props.purchases.some( isJetpackPlan ) ) {
+		if ( this.props.isJetpack ) {
 			url = supportUrls.JETPACK_SUPPORT;
 		}
 
@@ -68,33 +66,31 @@ const CheckoutThankYouFooter = React.createClass( {
 
 	render() {
 		return (
-			<Card className="checkout-thank-you__footer">
-				<div className="checkout-thank-you__footer-content">
-					{ this.renderGravatar() }
+			<div className="happiness-support">
+				{ this.renderGravatar() }
 
-					<h3 className="checkout-thank-you__footer-heading">
-						{ this.translate( 'Enjoy priority support from our Happiness Engineers' ) }
-					</h3>
+				<h3 className="happiness-support__heading">
+					{ this.translate( 'Enjoy priority support from our Happiness Engineers' ) }
+				</h3>
 
-					<p className="checkout-thank-you__footer-text">
-						{ this.translate(
-							'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.',
-							{
-								components: {
-									strong: <strong />
-								}
+				<p className="happiness-support__text">
+					{ this.translate(
+						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.',
+						{
+							components: {
+								strong: <strong />
 							}
-						) }
-					</p>
+						}
+					) }
+				</p>
 
-					<div className="checkout-thank-you__footer-buttons">
-						{ this.renderContactButton() }
-						{ this.renderSupportButton() }
-					</div>
+				<div className="happiness-support__buttons">
+					{ this.renderContactButton() }
+					{ this.renderSupportButton() }
 				</div>
-			</Card>
+			</div>
 		);
 	}
 } );
 
-export default CheckoutThankYouFooter;
+export default HappinessSupport;

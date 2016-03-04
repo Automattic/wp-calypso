@@ -187,73 +187,17 @@
 
 // Footer Subcomponent styles
 .checkout-thank-you__footer {
-	padding: 32px;
+	font-size: 16px;
+	padding: 32px 20px;
 	text-align: left;
 
 	@include breakpoint( ">660px" ) {
-		padding: 48px 24px;
-	}
-}
-
-.checkout-thank-you__footer-content {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 700px;
-}
-
-.checkout-thank-you__footer-heading {
-	color: darken( $gray, 20% );
-	clear: none;
-	font-size: 21px;
-}
-
-.checkout-thank-you__footer-text {
-	color: darken( $gray, 10% );
-	margin-bottom: 16px;
-	margin-top: 16px;
-}
-
-.checkout-thank-you__footer-gravatar {
-	float: right;
-	margin-left: 30px;
-	text-align: center;
-
-	@include breakpoint( ">660px" ) {
-		margin-right: 37px;
+		padding: 60px 24px;
 	}
 
-	.gravatar {
-		display: block;
-
-		@include breakpoint( "<660px" ) {
-			height: 68px;
-			width: 68px;
-		}
-	}
-}
-
-.checkout-thank-you__footer-gravatar-name {
-	color: $gray;
-}
-
-.checkout-thank-you__footer-buttons {
-	clear: both;
-
-	@include breakpoint( "<660px" ) {
-		margin-top: 6px;
-		text-align: center;
-	}
-
-	.button {
-		@include breakpoint( "<660px" ) {
-			margin-top: 10px;
-			width: 80%;
-		}
-
-		@include breakpoint( ">660px" ) {
-			+ .button {
-				margin-left: 16px;
-			}
-		}
+	.happiness-support {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 650px;
 	}
 }

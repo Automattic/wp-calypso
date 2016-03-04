@@ -16,7 +16,6 @@ import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
-import CheckoutThankYouFooter from './footer';
 import CheckoutThankYouHeader from './header';
 import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
@@ -24,6 +23,7 @@ import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
+import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import {
 	isBusiness,
@@ -143,7 +143,9 @@ const CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<CheckoutThankYouFooter purchases={ purchases } />
+				<Card className="checkout-thank-you__footer">
+					<HappinessSupport isJetpack={ purchases && purchases.some( isJetpackPlan ) } />
+				</Card>
 			</Main>
 		);
 	},
