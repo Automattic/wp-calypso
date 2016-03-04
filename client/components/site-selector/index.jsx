@@ -178,7 +178,7 @@ export default React.createClass( {
 		if ( this.shouldShowGroups() && ! this.state.search ) {
 			return (
 				<div>
-					{ user.get().visible_site_count > 12 && this.renderRecentSites() }
+					{ user.get().visible_site_count > 11 && this.renderRecentSites() }
 					{ siteElements }
 				</div>
 			);
