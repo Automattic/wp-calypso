@@ -32,7 +32,8 @@ var Customize = React.createClass( {
 		domain: React.PropTypes.string.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		prevPath: React.PropTypes.string,
-		themeActivated: React.PropTypes.func.isRequired
+		query: React.PropTypes.object,
+		themeActivated: React.PropTypes.func.isRequired,
 	},
 
 	getDefaultProps: function() {

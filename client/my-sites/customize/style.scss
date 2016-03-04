@@ -5,20 +5,13 @@
 	padding: 0;
 	z-index: z-index( 'root', '.main.customize.is-iframe' );
 	-webkit-overflow-scrolling: touch;
-
-	@include breakpoint( "<660px" ) {
-		height: 100vh;
-		position: relative;
-	}
-	@include breakpoint( ">660px" ) {
-		min-height: 0;
-		position: fixed;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			top: 0;
-		width: auto;
-	}
+	min-height: 0;
+	position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		top: 0;
+	width: auto;
 
 	iframe {
 		height: 100%;
