@@ -2,7 +2,7 @@
 .comments {
 	clear: both;
 	margin-top: 32px;
-	border-top: 1px solid lighten( $gray, 30 );
+	border-top: 1px solid lighten( $gray, 30% );
 }
 
 
@@ -40,6 +40,10 @@
 		padding-right: 60px;
 		resize: vertical;
 		font-family: $serif;
+
+		&:focus {
+			min-height: 70px;
+		}
 	}
 
 	button {
@@ -81,7 +85,7 @@
 	margin-bottom: -3px;
 	font-family: $sans;
 	text-align: center;
-	border-top: 1px solid lighten( $gray, 30 );
+	border-top: 1px solid lighten( $gray, 30% );
 	padding-top: 22px;
 	font-size: 14px;
 }
@@ -98,7 +102,7 @@
 
 	&.is-children {
 		margin-left: -2px;
-		border-left: 2px solid lighten( $gray, 10 );
+		border-left: 2px solid lighten( $gray, 10% );
 
 		.comment__author .gravatar {
 			left: -15px;
@@ -113,8 +117,8 @@
 
 // Individual Comment
 .comment {
-	padding: 6px 0 0 0;
-	margin: 24px 0 0 0;
+	padding: 6px 0 0;
+	margin: 24px 0 0;
 	position: relative;
 
 	&.depth-0, &.depth-1, &.depth-2 {
@@ -142,7 +146,7 @@
 
 .comment__author {
 	font-weight: bold;
-	color: darken( $gray, 30 );
+	color: darken( $gray, 30% );
 
 	.gravatar {
 		position: absolute;
@@ -153,7 +157,7 @@
 
 	.gridicon {
 		height: 16px;
-		fill: lighten( $gray, 10 );
+		fill: lighten( $gray, 10% );
 		margin-left: 2px;
 		position: relative;
 			top: 2px;
@@ -171,7 +175,7 @@
 .comment__timestamp a {
 	font-weight: normal;
 	font-size: 13px;
-	color: lighten( $gray, 10 );
+	color: lighten( $gray, 10% );
 	margin-left: 8px;
 	text-decoration: none;
 
@@ -194,7 +198,7 @@
 	line-height: 1.8;
 
 	p {
-		color: darken( $gray, 30 );
+		color: darken( $gray, 30% );
 
 		&:last-child {
 			margin-bottom: 0;
@@ -203,10 +207,10 @@
 
 	blockquote {
 		padding: 8px 16px;
-		margin: 8px 0 16px 0;
+		margin: 8px 0 16px;
 		border-left: 2px solid $gray;
-		color: darken( $gray, 30 );
-		background: lighten( $gray, 30 );
+		color: darken( $gray, 30% );
+		background: lighten( $gray, 30% );
 	}
 }
 
@@ -236,7 +240,7 @@
 				position: relative;
 					top: 4px;
 				margin-right: 4px;
-				transform: rotate(180deg);
+				transform: rotate( 180deg );
 			}
 		}
 
