@@ -9,7 +9,7 @@ import nock from 'nock';
 /**
  * Internal dependencies
  */
-import domEnvSetup from 'lib/react-test-env-setup';
+import { createReduxStore } from '../';
 
 describe( 'state', () => {
 	before( () => {
@@ -24,17 +24,6 @@ describe( 'state', () => {
 	} );
 
 	describe( 'createReduxStore', () => {
-		let createReduxStore;
-
-		before( () => {
-			domEnvSetup();
-			createReduxStore = require( '../' ).createReduxStore;
-		} );
-
-		after( () => {
-			domEnvSetup.cleanup();
-		} );
-
 		it( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
 			const reduxStoreWithEmptyState = createReduxStore( {} ).getState();
