@@ -302,6 +302,7 @@ $sidebar-width-min: 228px;
 
 	@include breakpoint( "<660px" ) {
 		flex: 1 0 auto; // don't let primary shrink
+		width: 100%;
 	}
 }
 
