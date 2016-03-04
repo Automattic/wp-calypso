@@ -72,14 +72,16 @@ const SupportUserLoginDialog = React.createClass( {
 							autoFocus={ true }
 							name="supportUser"
 							id="supportUser"
+							placeholder="Username"
 							valueLink={ this.linkState( 'supportUser' ) } />
 					</FormLabel>
 
 					<FormLabel>
-						<span>User support password</span>
+						<span>Support user password</span>
 						<FormPasswordInput
 							name="supportPassword"
 							id="supportPassword"
+							placeholder="Password"
 							valueLink={ this.linkState( 'supportPassword' ) } />
 					</FormLabel>
 				</FormFieldset>
