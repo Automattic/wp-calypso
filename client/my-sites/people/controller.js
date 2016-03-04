@@ -85,6 +85,7 @@ function renderInvitePeople( context ) {
 	if ( isJetpack ) {
 		layoutFocus.setNext( layoutFocus.getCurrent() );
 		page.redirect( '/people/team/' + site.slug );
+		analytics.tracks.recordEvent( 'calypso_invite_people_controller_redirect_to_team' );
 	}
 
 	titleActions.setTitle( i18n.translate( 'Invite People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );

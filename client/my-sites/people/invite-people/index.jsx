@@ -10,6 +10,7 @@ import some from 'lodash/some';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import uniqueId from 'lodash/uniqueId';
+import groupBy from 'lodash/groupBy';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
+import analytics from 'analytics';
 
 /**
  * Module variables
@@ -71,13 +73,15 @@ const InvitePeople = React.createClass( {
 
 		if ( sendInvitesSuccess ) {
 			this.setState( this.resetState() );
+			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_initial' );
 		} else {
 			this.setState( { sendingInvites: false } );
+			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_retry' );
 		}
 	},
 
 	onTokensChange( tokens ) {
-		const { role, errorToDisplay } = this.state;
+		const { role, errorToDisplay, usernamesOrEmails } = this.state;
 		const filteredTokens = tokens.map( value => {
 			if ( 'object' === typeof value ) {
 				return value.value;
@@ -90,6 +94,12 @@ const InvitePeople = React.createClass( {
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay
 		} );
 		createInviteValidation( this.props.site.ID, filteredTokens, role );
+
+		if ( filteredTokens.length > usernamesOrEmails.length ) {
+			analytics.tracks.recordEvent( 'calypso_invite_people_token_added' );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_invite_people_token_removed' );
+		}
 	},
 
 	onMessageChange( event ) {
@@ -100,6 +110,26 @@ const InvitePeople = React.createClass( {
 		const role = event.target.value;
 		this.setState( { role } );
 		createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
+	},
+
+	onFocusTokenField() {
+		analytics.tracks.recordEvent( 'calypso_invite_people_token_field_focus' );
+	},
+
+	onFocusRoleSelect() {
+		analytics.tracks.recordEvent( 'calypso_invite_people_role_select_focus' );
+	},
+
+	onFocusCustomMessage() {
+		analytics.tracks.recordEvent( 'calypso_invite_people_custom_message_focus' );
+	},
+
+	onClickSendInvites() {
+		analytics.tracks.recordEvent( 'calypso_invite_people_send_invite_button_click' );
+	},
+
+	onClickRoleExplanation() {
+		analytics.tracks.recordEvent( 'calypso_invite_people_role_explanation_link_click' );
 	},
 
 	refreshValidation() {
@@ -113,6 +143,10 @@ const InvitePeople = React.createClass( {
 			errors,
 			success
 		} );
+
+		if ( errorsKeys.length ) {
+			analytics.tracks.recordEvent( 'calypso_invite_people_validation_refreshed_with_error' );
+		}
 	},
 
 	getTooltip( value ) {
@@ -153,15 +187,28 @@ const InvitePeople = React.createClass( {
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
 		const formId = uniqueId();
+		const { usernamesOrEmails, message, role } = this.state;
 
 		this.setState( { sendingInvites: true, formId } );
 		this.props.sendInvites(
 			this.props.site.ID,
-			this.state.usernamesOrEmails,
-			this.state.role,
-			this.state.message,
+			usernamesOrEmails,
+			role,
+			message,
 			formId
 		);
+
+		const groupedInvitees = groupBy( usernamesOrEmails, ( invitee ) => {
+			return includes( invitee, '@' ) ? 'email' : 'username';
+		} );
+
+		analytics.tracks.recordEvent( 'calypso_invite_people_form_submit', {
+			role,
+			numberInvitees: usernamesOrEmails.length,
+			numberUsernameInvitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
+			numberEmailInvitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
+			hasCustomMessage: 'string' === typeof message && !! message.length,
+		} );
 	},
 
 	isSubmitDisabled() {
@@ -194,7 +241,7 @@ const InvitePeople = React.createClass( {
 
 	renderRoleExplanation() {
 		return (
-			<a target="_blank" href="http://en.support.wordpress.com/user-roles/">
+			<a target="_blank" href="http://en.support.wordpress.com/user-roles/" onClick={ this.onClickRoleExplanation }>
 				{ this.translate( 'Learn more about roles' ) }
 			</a>
 		);
@@ -212,7 +259,8 @@ const InvitePeople = React.createClass( {
 								isBorderless
 								maxLength={ 10 }
 								value={ this.getTokensWithStatus() }
-								onChange={ this.onTokensChange } />
+								onChange={ this.onTokensChange }
+								onFocus={ this.onFocusTokenField } />
 							<FormSettingExplanation>
 								{ this.translate(
 									'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
@@ -228,6 +276,7 @@ const InvitePeople = React.createClass( {
 							includeFollower
 							siteId={ this.props.site.ID }
 							onChange={ this.onRoleChange }
+							onFocus={ this.onFocusRoleSelect }
 							value={ this.state.role }
 							disabled={ this.state.sendingInvites }
 							explanation={ this.renderRoleExplanation() }
@@ -242,6 +291,7 @@ const InvitePeople = React.createClass( {
 								maxLength={ 500 }
 								acceptableLength={ 500 }
 								onChange={ this.onMessageChange }
+								onFocus={ this.onFocusCustomMessage }
 								value={ this.state.message }
 								disabled={ this.state.sendingInvites } />
 							<FormSettingExplanation>
@@ -251,7 +301,7 @@ const InvitePeople = React.createClass( {
 							</FormSettingExplanation>
 						</FormFieldset>
 
-						<FormButton disabled={ this.isSubmitDisabled() }>
+						<FormButton disabled={ this.isSubmitDisabled() } onClick={ this.onClickSendInvites } >
 							{ this.translate(
 								'Send Invitation',
 								'Send Invitations', {

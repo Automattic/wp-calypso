@@ -30,6 +30,7 @@ var TokenField = React.createClass( {
 		tokenStatus: React.PropTypes.func,
 		isBorderless: React.PropTypes.bool,
 		maxLength: React.PropTypes.number,
+		onFocus: React.PropTypes.func,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -160,7 +161,7 @@ var TokenField = React.createClass( {
 		);
 	},
 
-	_onFocus: function() {
+	_onFocus: function( event ) {
 		if ( this._blurTimeoutID ) {
 			this._clearBlurTimeout();
 			return;
@@ -169,6 +170,9 @@ var TokenField = React.createClass( {
 		}
 
 		this.setState( { isActive: true } );
+		if ( 'function' === typeof this.props.onFocus ) {
+			this.props.onFocus( event );
+		}
 	},
 
 	_onBlur: function( event ) {
