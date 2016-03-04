@@ -11,6 +11,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import uniqueId from 'lodash/uniqueId';
 import groupBy from 'lodash/groupBy';
+import filter from 'lodash/filter';
+import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
@@ -83,7 +85,7 @@ const InvitePeople = React.createClass( {
 	},
 
 	onTokensChange( tokens ) {
-		const { role, errorToDisplay, usernamesOrEmails } = this.state;
+		const { role, errorToDisplay, usernamesOrEmails, errors, success } = this.state;
 		const filteredTokens = tokens.map( value => {
 			if ( 'object' === typeof value ) {
 				return value.value;
@@ -91,8 +93,18 @@ const InvitePeople = React.createClass( {
 			return value;
 		} );
 
+		const filteredErrors = pickBy( errors, ( error, key ) => {
+			return includes( filteredTokens, key );
+		} );
+
+		const filteredSuccess = filter( success, ( successfulValidation ) => {
+			return includes( filteredTokens, successfulValidation );
+		} );
+
 		this.setState( {
 			usernamesOrEmails: filteredTokens,
+			errors: filteredErrors,
+			success: filteredSuccess,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay
 		} );
 		createInviteValidation( this.props.site.ID, filteredTokens, role );
@@ -270,7 +282,7 @@ const InvitePeople = React.createClass( {
 								value={ this.getTokensWithStatus() }
 								onChange={ this.onTokensChange }
 								onFocus={ this.onFocusTokenField }
-								disabled={ this.state.sendingInvites || this.hasValidationErrors() }/>
+								disabled={ this.state.sendingInvites }/>
 							<FormSettingExplanation>
 								{ this.translate(
 									'Invite up to 10 email addresses and/or WordPress.com usernames. ' +

@@ -53,11 +53,9 @@ export default React.createClass( {
 				<span className="token-field__token-text">
 					{ displayTransform( value ) }
 				</span>
-				{ ! this.props.disabled &&
-					<span
-						className="token-field__remove-token noticon noticon-close-alt"
-						onClick={ this._onClickRemove } />
-				}
+				<span
+					className="token-field__remove-token noticon noticon-close-alt"
+					onClick={ ! this.props.disabled && this._onClickRemove } />
 				{ tooltip &&
 					<Tooltip context={ this } status={ status } isVisible={ true } position="bottom">
 							{ tooltip }
