@@ -1,4 +1,5 @@
-const root = 'https://support.wordpress.com';
+const root = 'https://support.wordpress.com',
+	jetpackRoot = 'https://jetpack.me';
 
 export default {
 	ADDING_GOOGLE_APPS_TO_YOUR_SITE: `${root}/add-email/adding-google-apps-to-your-site`,
@@ -15,6 +16,7 @@ export default {
 	CUSTOM_DNS: `${root}/domains/custom-dns`,
 	DOMAINS: `${root}/domains`,
 	EMAIL_FORWARDING: `${root}/email-forwarding`,
+	EMAIL_VALIDATION_AND_VERIFICATION: `${root}/domains/register-domain/#email-validation-and-verification`,
 	ENABLE_DISABLE_COMMENTS: `${root}/enable-disable-comments`,
 	EVENTBRITE: `${root}/eventbrite`,
 	EVENTBRITE_EVENT_CALENDARLISTING_WIDGET: `${root}/widgets/eventbrite-event-calendarlisting-widget`,
@@ -24,10 +26,13 @@ export default {
 	FOLLOWERS: `${root}/followers`,
 	GETTING_MORE_VIEWS_AND_TRAFFIC: `${root}/getting-more-views-and-traffic`,
 	GOOGLE_ANALYTICS: `${root}/google-analytics`,
+	GOOGLE_APPS_LEARNING_CENTER: 'https://apps.google.com/learning-center/',
 	GOOGLE_PLUS_EMBEDS: `${root}/google-plus-embeds`,
 	GRAVATAR_HOVERCARDS: `${root}/gravatar-hovercards`,
 	IMPORT: `${root}/import`,
 	INSTAGRAM_WIDGET: `${root}/instagram/instagram-widget`,
+	JETPACK_SUPPORT: `${jetpackRoot}/support/`,
+	JETPACK_CONTACT_SUPPORT: `${jetpackRoot}/contact-support/`,
 	LIVE_CHAT: `${root}/live-chat`,
 	MANAGE_PURCHASES: `${root}/manage-purchases`,
 	MAP_EXISTING_DOMAIN: `${root}/domains/map-existing-domain`,
@@ -36,6 +41,7 @@ export default {
 	PUBLICIZE: `${root}/publicize`,
 	PUBLIC_VS_PRIVATE: `${root}/domains/register-domain/#public-versus-private`,
 	REFUNDS: `${root}/refunds`,
+	REGISTER_DOMAIN: `${root}/domains/register-domain/`,
 	SEO_TAGS: `${root}/getting-more-views-and-traffic/#use-appropriate-tags`,
 	SETTING_PRIMARY_DOMAIN: `${root}/domains/#setting-the-primary-domain`,
 	SETTING_UP_PREMIUM_SERVICES: `${root}/setting-up-premium-services`,
