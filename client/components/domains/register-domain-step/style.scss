@@ -26,6 +26,13 @@
 	}
 }
 
+.register-domain-step__search-examples {
+	color: $gray;
+	font-size: 13px;
+	font-style: italic;
+	margin: 8px 0 0 0;
+}
+
 @keyframes shake {
 	0%, 100% {
 	    transform: translate3d( 0, 0, 0 );
