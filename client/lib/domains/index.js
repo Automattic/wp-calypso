@@ -125,12 +125,12 @@ function isMappedDomain( domain ) {
 
 function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.meta ) );
+		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.name ) );
 	} );
 }
 
-function canAddEmail( domains ) {
-	return ( getGoogleAppsSupportedDomains( domains ).length > 0 );
+function hasGoogleAppsSupportedDomain( domains ) {
+	return getGoogleAppsSupportedDomains( domains ).length > 0;
 }
 
 function getSelectedDomain( { domains, selectedDomainName } ) {
@@ -149,8 +149,12 @@ function getMappedDomains( domains ) {
 	return domains.filter( isMappedDomain );
 }
 
+function hasMappedDomain( domains ) {
+	return getMappedDomains( domains ).length > 0;
+}
+
 export {
-	canAddEmail,
+	hasGoogleAppsSupportedDomain,
 	canAddGoogleApps,
 	canMap,
 	canRedirect,
@@ -162,6 +166,7 @@ export {
 	getRegisteredDomains,
 	getMappedDomains,
 	hasGoogleApps,
+	hasMappedDomain,
 	isInitialized,
 	isRegisteredDomain,
 	isSubdomain

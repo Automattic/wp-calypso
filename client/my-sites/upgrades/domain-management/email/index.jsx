@@ -17,7 +17,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import EmptyContent from 'components/empty-content';
 import paths from 'my-sites/upgrades/paths';
-import { hasGoogleApps, canAddEmail, getSelectedDomain } from 'lib/domains';
+import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
 
 const Email = React.createClass( {
 	propTypes: {
@@ -72,7 +72,7 @@ const Email = React.createClass( {
 
 		if ( domainList.some( hasGoogleApps ) ) {
 			return this.googleAppsUsersCard();
-		} else if ( canAddEmail( domainList ) ) {
+		} else if ( hasGoogleAppsSupportedDomain( domainList ) ) {
 			return this.addGoogleAppsCard();
 		}
 		return this.emptyContent();
