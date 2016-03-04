@@ -5,26 +5,12 @@ var express = require( 'express' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
 	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' ),
-	includes = require( 'lodash/includes' ),
-	React = require( 'react' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	pick = require( 'lodash/pick' ),
-	url = require( 'url' );
+	debug = require( 'debug' )( 'calypso:pages' );
 
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sections = require( '../../client/sections' ),
-	LayoutLoggedOut = require( 'layout/logged-out' ),
-	render = require( 'render' ).render,
-	i18n = require( 'lib/mixins/i18n' ),
-	createReduxStore = require( 'state' ).createReduxStore,
-	setSection = require( 'state/ui/actions' ).setSection,
-	ThemeSheet = require( 'my-sites/themes/sheet' ).default,
-	ThemeDetails = require( 'components/data/theme-details' ),
-	wpcom = require( 'lib/wp' ),
-	ThemesActionTypes = require( 'state/themes/action-types' ),
 	isomorphicRouting = require( 'isomorphic-routing' );
 
 var HASH_LENGTH = 10,
@@ -40,8 +26,7 @@ var staticFiles = [
 	{ path: 'style-rtl.css' }
 ];
 
-var chunksByPath = {},
-	themeDetails = new Map();
+var chunksByPath = {};
 
 sections.forEach( function( section ) {
 	section.paths.forEach( function( path ) {
@@ -381,97 +366,7 @@ module.exports = function() {
 	} );
 
 	// Isomorphic Routing for the themes sections
-	// require( 'my-sites/themes' )( isomorphicRouting.serverRouter( app, getDefaultContext ) );
-
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		app.get( '/theme/:theme_slug/:section?', function( req, res ) {
-			function updateRenderCache( themeSlug ) {
-				wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
-					if ( error ) {
-						debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-						return;
-					}
-					const themeData = themeDetails.get( themeSlug );
-					if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
-						debug( 'caching', themeSlug );
-						themeDetails.set( themeSlug, data );
-						// update the render cache
-						renderThemeSheet( data );
-					}
-				} );
-			}
-
-			function renderThemeSheet( theme ) {
-				const context = {};
-				const store = createReduxStore();
-				store.dispatch( {
-					type: ThemesActionTypes.RECEIVE_THEME_DETAILS,
-					themeId: theme.id,
-					themeName: theme.name,
-					themeAuthor: theme.author,
-					themeScreenshot: theme.screenshot,
-					themePrice: theme.price ? theme.price.display : undefined,
-					themeDescription: theme.description,
-					themeDescriptionLong: theme.description_long,
-					themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
-				} );
-
-				store.dispatch( setSection( 'themes', { hasSidebar: false, isFullScreen: true } ) );
-				context.initialReduxState = pick( store.getState(), 'ui', 'themes' );
-
-				const primary = <ThemeDetails id={ theme.id }><ThemeSheet /></ThemeDetails>;
-
-				const element = (
-					<ReduxProvider store={ store }>
-						<LayoutLoggedOut primary={ primary } />
-					</ReduxProvider>
-				);
-				const path = url.parse( req.url ).path;
-				const key = JSON.stringify( element ) + path + JSON.stringify( context.initialReduxState );
-				Object.assign( context, render( element, key ) );
-				return context;
-			};
-
-			const context = getDefaultContext( req );
-			if ( config.isEnabled( 'server-side-rendering' ) ) {
-				const theme = themeDetails.get( req.params.theme_slug );
-				if ( theme ) {
-					Object.assign( context, renderThemeSheet( theme ) );
-					debug( 'found theme!', theme.id );
-				}
-
-				i18n.initialize();
-				req.params.theme_slug && updateRenderCache( req.params.theme_slug ); // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
-			}
-
-			res.render( 'index.jade', context );
-		} );
-	}
-
-	app.get( '/design(/type/:themeTier)?', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			const context = getDefaultContext( req );
-			const tier = includes( [ 'all', 'free', 'premium' ], req.params.themeTier )
-				? req.params.themeTier
-				: 'all';
-
-			if ( config.isEnabled( 'server-side-rendering' ) ) {
-				const store = createReduxStore();
-				i18n.initialize();
-				store.dispatch( setSection( 'design', { hasSidebar: false } ) );
-				context.initialReduxState = pick( store.getState(), 'ui' );
-
-				Object.assign( context,
-					render( <LayoutLoggedOut tier={ tier } store={ store } /> )
-				);
-			}
-
-			res.render( 'index.jade', context );
-		}
-	} );
+	require( 'my-sites/themes' )( isomorphicRouting.serverRouter( app, getDefaultContext ) );
 
 	app.get( '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?', function( req, res ) {
 		if ( req.cookies.wordpress_logged_in ) {

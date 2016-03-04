@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import pick from 'lodash/pick';
-
-/**
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
@@ -37,6 +32,7 @@ function getEnhancedContext( context, req, res ) {
 		query: {},
 		store: createReduxStore(),
 		res,
+		url: req.url,
 	} );
 }
 
@@ -53,6 +49,5 @@ function compose( ...functions ) {
 
 function setUpRoute( context, next ) {
 	i18n.initialize();
-	context.initialReduxState = pick( context.store.getState(), 'ui' );
 	next();
 }

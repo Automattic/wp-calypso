@@ -4,6 +4,7 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import omit from 'lodash/omit';
+import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
@@ -15,6 +16,12 @@ import buildTitle from 'lib/screen-title/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
+import ThemesActionTypes from 'state/themes/action-types';
+import wpcom from 'lib/wp';
+import config from 'config';
+
+const debug = debugFactory( 'calypso:themes' );
+let themeDetailsCache = new Map();
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return(
@@ -28,6 +35,53 @@ export function makeElement( ThemesComponent, Head, store, props ) {
 		</ReduxProvider>
 	);
 };
+
+export function fetchThemeDetailsData( context, next ) {
+	if ( ! config.isEnabled( 'manage/themes/details' ) ) {
+		return next();
+	}
+
+	function updateRenderCache( themeSlug ) {
+		wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
+			if ( error ) {
+				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
+				return;
+			}
+			const themeData = themeDetailsCache.get( themeSlug );
+			if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
+				debug( 'caching', themeSlug );
+				themeDetailsCache.set( themeSlug, data );
+				// update the render cache
+				renderThemeSheet( data );
+			}
+		} );
+	}
+
+	function renderThemeSheet( theme ) {
+		context.store.dispatch( {
+			type: ThemesActionTypes.RECEIVE_THEME_DETAILS,
+			themeId: theme.id,
+			themeName: theme.name,
+			themeAuthor: theme.author,
+			themeScreenshot: theme.screenshot,
+			themePrice: theme.price ? theme.price.display : undefined,
+			themeDescription: theme.description,
+			themeDescriptionLong: theme.description_long,
+			themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
+		} );
+
+		next();
+	};
+
+	const themeSlug = context.params.slug;
+	const theme = themeDetailsCache.get( themeSlug );
+	if ( theme ) {
+		Object.assign( context, renderThemeSheet( theme ) );
+		debug( 'found theme!', theme.id );
+	}
+
+	themeSlug && updateRenderCache( themeSlug ); // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
+}
 
 export function details( context, next ) {
 	const user = getCurrentUser( context.store.getState() );

@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import { makeLoggedOutLayout } from 'controller';
-import { details } from './controller';
+import { details, fetchThemeDetailsData } from './controller';
 
 // FIXME: These routes will SSR the logged-out Layout even if logged-in.
 // While subsequently replaced by the logged-in Layout on the client-side,
@@ -18,7 +18,7 @@ const designRoutes = {
 };
 
 const themesRoutes = {
-	'/theme/:slug/:section?/:site_id?': [ details, makeLoggedOutLayout ]
+	'/theme/:slug/:section?/:site_id?': [ fetchThemeDetailsData, details, makeLoggedOutLayout ]
 };
 
 const routes = Object.assign( {},

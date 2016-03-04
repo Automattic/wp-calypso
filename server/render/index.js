@@ -5,6 +5,8 @@ import ReactDomServer from 'react-dom/server';
 import Helmet from 'react-helmet';
 import superagent from 'superagent';
 import Lru from 'lru-cache';
+import url from 'url';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -14,10 +16,10 @@ import config from 'config';
 const markupCache = new Lru( { max: 1000 } );
 
 function bumpStat( group, name ) {
-	const url = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
+	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
 
 	if ( config( 'env' ) === 'production' ) {
-		superagent.get( url ).end();
+		superagent.get( statUrl ).end();
 	}
 }
 
@@ -68,7 +70,10 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( context ) {
 	if ( config.isEnabled( 'server-side-rendering' ) ) {
-		Object.assign( context, render( context.layout ) );
+		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
+		const path = url.parse( context.url ).path;
+		const key = JSON.stringify( context.renderedLayout ) + path + JSON.stringify( context.initialReduxState );
+		Object.assign( context, render( context.layout, key ) );
 	}
 	context.res.render( 'index.jade', context );
 }
