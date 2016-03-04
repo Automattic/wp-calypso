@@ -35,6 +35,7 @@ describe( 'WPorg Data Actions', function() {
 	} );
 
 	after( function() {
+		mockery.deregisterAll();
 		mockery.disable();
 	} );
 

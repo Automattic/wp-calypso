@@ -5,6 +5,9 @@ BASE_DIR := $(NODE_BIN)/../..
 NODE_PATH := $(BASE_DIR)/client
 
 test:
-	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers jsx:babel/register,js:babel/register --reporter $(REPORTER)
+	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers jsx:babel/register,js:babel/register --reporter $(REPORTER) $(addprefix --grep ,$(GREP))
 
-.PHONY: test
+test-%:
+	@GREP="state $*" make test
+
+.PHONY: test test-%

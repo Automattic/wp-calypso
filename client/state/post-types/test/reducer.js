@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -21,7 +20,6 @@ import { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	before( () => {
-		Chai.use( sinonChai );
 		sinon.stub( console, 'warn' );
 	} );
 

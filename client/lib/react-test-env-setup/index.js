@@ -35,3 +35,13 @@ module.exports = function( markup, features ) {
 		global.XMLHttpRequest = window.XMLHttpRequest;
 	}
 };
+
+module.exports.cleanup = function() {
+	delete global.document;
+	delete global.window;
+	delete global.navigator;
+	delete global.Element;
+	delete global.history;
+	delete global.localStorage;
+	delete global.XMLHttpRequest;
+};

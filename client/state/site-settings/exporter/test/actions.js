@@ -3,8 +3,7 @@
  */
 import nock from 'nock';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -32,11 +31,6 @@ import {
 	SAMPLE_EXPORT_FAILED_RESPONSE,
 } from './sample-data';
 
-/**
- * Test setup
- */
-Chai.use( sinonChai );
-
 describe( 'actions', () => {
 	const spy = sinon.spy();
 	const getState = () => ( {
@@ -63,7 +57,7 @@ describe( 'actions', () => {
 	} );
 
 	after( () => {
-		nock.restore();
+		nock.cleanAll();
 	} );
 
 	describe( '#advancedSettingsFetch()', () => {

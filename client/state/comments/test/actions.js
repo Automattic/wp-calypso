@@ -3,8 +3,7 @@
  */
 import nock from 'nock';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 import Immutable from 'immutable';
 
 /**
@@ -34,8 +33,6 @@ import {
 	NUMBER_OF_COMMENTS_PER_FETCH
 } from '../constants'
 
-Chai.use( sinonChai );
-
 const MANY_COMMENTS_POST = {
 	siteId: 91750058,
 	postId: 287
@@ -44,14 +41,8 @@ const MANY_COMMENTS_POST = {
 const API_DOMAIN = 'https://public-api.wordpress.com:443';
 
 describe( 'actions', () => {
-	before( () => {
-		// make sure all requests are mocked
-		nock.disableNetConnect();
-	} );
-
 	after( () => {
 		nock.cleanAll();
-		nock.enableNetConnect();
 	} );
 
 	describe( '#receivePost()', () => {
