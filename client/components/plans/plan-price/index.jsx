@@ -9,8 +9,7 @@ var React = require( 'react' ),
  */
 import { abtest } from 'lib/abtest';
 
-var JetpackPlanPrice = require( 'my-sites/plans/jetpack-plan-price' ),
-	WpcomPlanPrice = require( 'my-sites/plans/wpcom-plan-price' );
+var WpcomPlanPrice = require( 'my-sites/plans/wpcom-plan-price' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanPrice',
@@ -63,15 +62,6 @@ module.exports = React.createClass( {
 			periodLabel = this.translate( 'per month, billed yearly' );
 		} else {
 			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label
-		}
-
-		if ( site && site.jetpack ) {
-			return (
-				<JetpackPlanPrice
-					getPrice={ this.getPrice }
-					hasDiscount={ hasDiscount }
-					plan={ plan } />
-			);
 		}
 
 		return (
