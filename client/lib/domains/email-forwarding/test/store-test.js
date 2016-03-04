@@ -11,7 +11,7 @@ import Dispatcher from 'dispatcher';
 import { DOMAIN_NAME, EMAIL, EMAIL_FORWARDS, FORWARD_ADDRESS, MAILBOX_NAME } from './data';
 import EmailForwardingStore from './../store';
 
-describe( 'Domains Email Forwarding Store', () => {
+describe( 'store', () => {
 	it( 'should be an object', () => {
 		expect( EmailForwardingStore ).to.be.an( 'object' );
 	} );

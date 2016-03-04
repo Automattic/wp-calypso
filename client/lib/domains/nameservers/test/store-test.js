@@ -10,7 +10,7 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 import Dispatcher from 'dispatcher';
 import NameserversStore from './../store';
 
-describe( 'Domains Namservers Store', () => {
+describe( 'store', () => {
 	const DOMAIN_NAME = 'dummy.com',
 		NAMSERVERS = [
 			'ns1.dummy.com',

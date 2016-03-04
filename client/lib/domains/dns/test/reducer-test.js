@@ -9,10 +9,10 @@ import pick from 'lodash/pick';
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
-import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from 'data';
+import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
 import { reducer } from '../reducer';
 
-describe( 'Domains: DNS reducer', () => {
+describe( 'reducer', () => {
 	it( 'should return the same state when no matching record passed in the delete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
