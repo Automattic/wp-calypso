@@ -92,6 +92,14 @@ describe( 'state', () => {
 		require( '../notices/test/reducer' );
 	} );
 
+	describe( 'plugins', () => {
+		describe( 'wporg', () => {
+			require( '../plugins/wporg/test/reducer' );
+			require( '../plugins/wporg/test/test-actions' );
+			require( '../plugins/wporg/test/test-selectors' );
+		} );
+	} );
+
 	describe( 'post-types', () => {
 		require( '../post-types/test/actions' );
 		require( '../post-types/test/reducer' );
