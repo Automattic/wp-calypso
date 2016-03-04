@@ -219,6 +219,12 @@
 	transition: all 0.2s ease-in-out;
 }
 
+.following-edit .no-results {
+	@include breakpoint( "<660px" ) {
+		text-align: center;
+	}
+}
+
 .is-adding .following-edit__sites,
 .following-edit.is-adding .search-card {
 	opacity: 0.3;
