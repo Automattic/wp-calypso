@@ -1,17 +1,31 @@
-require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import localforage from 'localforage';
+
 /**
  * Internal dependencies
  */
 import config from 'config';
-import createReduxStoreFromPersistedInitialState, { MAX_AGE } from 'state/initial-state';
+import domEnvSetup from 'lib/react-test-env-setup';
 
 describe( 'initial-state', () => {
+	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE;
+
+	before( () => {
+		domEnvSetup();
+
+		localforage = require( 'localforage' );
+		const initialState = require( '../initial-state' );
+		createReduxStoreFromPersistedInitialState = initialState.default;
+		MAX_AGE = initialState.MAX_AGE;
+	} );
+
+	after( () => {
+		domEnvSetup.cleanup();
+	} );
+
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
 		describe( 'persist-redux disabled', () => {
 			describe( 'with recently persisted data and initial server data', () => {
@@ -114,18 +128,6 @@ describe( 'initial-state', () => {
 					consoleSpy,
 					localforageGetItemStub,
 					state,
-					savedState = {
-						currentUser: { id: 123456789 },
-						postTypes: {
-							items: {
-								2916284: {
-									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
-								}
-							}
-						},
-						_timestamp: Date.now() - MAX_AGE
-					},
 					serverState = {
 						postTypes: {
 							items: {
@@ -143,7 +145,18 @@ describe( 'initial-state', () => {
 					localforageGetItemStub = sinon.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
-							resolve( savedState );
+							resolve( {
+								currentUser: { id: 123456789 },
+								postTypes: {
+									items: {
+										2916284: {
+											post: { name: 'post', label: 'Posts' },
+											page: { name: 'page', label: 'Pages' }
+										}
+									}
+								},
+								_timestamp: Date.now() - MAX_AGE - 1
+							} );
 						} )
 					);
 					const reduxReady = function( reduxStore ) {
