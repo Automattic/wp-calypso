@@ -40,6 +40,8 @@ function getExternals() {
 	return externals;
 }
 
+const babelCache = path.join( __dirname, '.caches' );
+
 module.exports = {
 	devtool: 'source-map',
 	entry: 'index.js',
@@ -53,7 +55,7 @@ module.exports = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
-				loader: 'babel-loader?optional[]=runtime'
+				loader: 'babel-loader?optional[]=runtime&cacheDirectory=' + babelCache
 			},
 			{
 				test: /\.json$/,
@@ -80,4 +82,3 @@ module.exports = {
 	],
 	externals: getExternals()
 };
-
