@@ -3,8 +3,7 @@
  */
 import nock from 'nock';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -23,16 +22,12 @@ import {
 describe( 'actions', () => {
 	const spy = sinon.spy();
 
-	before( () => {
-		Chai.use( sinonChai );
-	} );
-
 	beforeEach( () => {
 		spy.reset();
 	} );
 
 	after( () => {
-		nock.restore();
+		nock.cleanAll();
 	} );
 
 	describe( '#receivePostTypes()', () => {
@@ -66,10 +61,6 @@ describe( 'actions', () => {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {

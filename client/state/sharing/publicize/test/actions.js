@@ -3,8 +3,7 @@
  */
 import nock from 'nock';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -19,11 +18,6 @@ import {
 	receiveConnections,
 	failConnectionsRequest
 } from '../actions';
-
-/**
- * Test setup
- */
-Chai.use( sinonChai );
 
 describe( '#fetchConnections()', () => {
 	const spy = sinon.spy();
@@ -49,7 +43,7 @@ describe( '#fetchConnections()', () => {
 	} );
 
 	after( () => {
-		nock.restore();
+		nock.cleanAll();
 	} );
 
 	it( 'should dispatch fetch action when thunk triggered', () => {
