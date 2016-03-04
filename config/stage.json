@@ -34,7 +34,6 @@
 		"manage/people/readers": true,
 		"manage/plans": true,
 		"manage/plugins": true,
-		"manage/plugins/browser": true,
 		"manage/plugins/cache": false,
 		"manage/plugins/setup": false,
 		"manage/posts": true,

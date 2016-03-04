@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import debounce from 'lodash/debounce';
-import config from 'config';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import analytics from 'analytics';
@@ -97,10 +96,6 @@ export default React.createClass( {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
 	},
 
-	canAddNewPlugins() {
-		return config.isEnabled( 'manage/plugins/browser' );
-	},
-
 	canUpdatePlugins() {
 		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
 	},
@@ -137,32 +132,30 @@ export default React.createClass( {
 					</Button>
 				</ButtonGroup>
 			);
-			if ( this.canAddNewPlugins() ) {
-				const selectedSite = this.props.sites.getSelectedSite();
-				const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
+			const selectedSite = this.props.sites.getSelectedSite();
+			const browserUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' );
 
-				rightSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-browser">
-						<Button
-							compact
-							href={ browserUrl }
-							onClick={ this.onBrowserLinkClick }
-							className="plugin-list-header__browser-button"
-							onMouseEnter={ () => this.setState( { addPluginTooltip: true } ) }
-							onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
-							ref="addPluginButton"
-							aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
-							<Tooltip
-								isVisible={ this.state.addPluginTooltip }
-								context={ this.refs && this.refs.addPluginButton }
-								position="bottom">
-								{ this.translate( 'Browse all plugins', { context: 'button tooltip' } ) }
-							</Tooltip>
-						</Button>
-					</ButtonGroup>
-				);
-			}
+			rightSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-browser">
+					<Button
+						compact
+						href={ browserUrl }
+						onClick={ this.onBrowserLinkClick }
+						className="plugin-list-header__browser-button"
+						onMouseEnter={ () => this.setState( { addPluginTooltip: true } ) }
+						onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
+						ref="addPluginButton"
+						aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
+						<Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
+						<Tooltip
+							isVisible={ this.state.addPluginTooltip }
+							context={ this.refs && this.refs.addPluginButton }
+							position="bottom">
+							{ this.translate( 'Browse all plugins', { context: 'button tooltip' } ) }
+						</Tooltip>
+					</Button>
+				</ButtonGroup>
+			);
 		} else {
 			const updateButton = (
 				<Button
