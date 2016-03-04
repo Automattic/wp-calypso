@@ -119,6 +119,10 @@ function hasGoogleApps( domain ) {
 	return domain.googleAppsSubscription.status !== 'no_subscription';
 }
 
+function isMappedDomain( domain ) {
+	return domain.type === domainTypes.MAPPED;
+}
+
 function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
 		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.meta ) );
@@ -137,6 +141,14 @@ function isRegisteredDomain( domain ) {
 	return ( domain.type === domainTypes.REGISTERED );
 }
 
+function getRegisteredDomains( domains ) {
+	return domains.filter( isRegisteredDomain )
+}
+
+function getMappedDomains( domains ) {
+	return domains.filter( isMappedDomain );
+}
+
 export {
 	canAddEmail,
 	canAddGoogleApps,
@@ -147,6 +159,8 @@ export {
 	getGoogleAppsSupportedDomains,
 	getPrimaryDomain,
 	getSelectedDomain,
+	getRegisteredDomains,
+	getMappedDomains,
 	hasGoogleApps,
 	isInitialized,
 	isRegisteredDomain,
