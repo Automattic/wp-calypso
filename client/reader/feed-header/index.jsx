@@ -40,12 +40,12 @@ var FeedHeader = React.createClass( {
 	},
 
 	getFollowerCount: function( feed, site ) {
-		if ( feed && feed.subscribers_count > 0 ) {
-			return feed.subscribers_count;
-		}
-
 		if ( site && site.get( 'subscribers_count' ) ) {
 			return site.get( 'subscribers_count' );
+		}
+
+		if ( feed && feed.subscribers_count > 0 ) {
+			return feed.subscribers_count;
 		}
 
 		return null;
