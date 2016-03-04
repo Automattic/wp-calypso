@@ -140,16 +140,18 @@ const MainComponent = React.createClass( {
 	render() {
 		var headingLabel = this.state.isSubscribed
 								? this.translate( 'You\'re subscribed' )
-								: this.translate( 'We\'ve unsubscribed your email.' ),
+								: this.translate( 'We\'ve unsubscribed your\xa0email.' ),
 			messageLabel = this.state.isSubscribed
-								? this.translate( 'We\'ll send you updates for this mailing list.' )
-								: this.translate( 'You will no longer receive updates for this mailing list.' );
+								? this.translate( 'We\'ll send you updates for this mailing\xa0list.' )
+								: this.translate( 'You will no longer receive updates for this mailing\xa0list.' );
 
 		return(
 			<div className="mailing-lists">
 				<div className="mailing-lists__header">
 					<Gridicon icon="mail" size={ 54 } />
-					<Gridicon icon="cross" size={ 24 } />
+					{ this.state.isSubscribed
+						? null
+						: <Gridicon icon="cross" size={ 24 } /> }
 					<h1>{ headingLabel }</h1>
 					<p>{ messageLabel }</p>
 				</div>
@@ -159,11 +161,10 @@ const MainComponent = React.createClass( {
 					<p>{ this.getCategoryDescription() }</p>
 					{ this.state.isSubscribed
 						? <button className="button is-primary" onClick={ this.onUnsubscribeClick }>{ this.translate( 'Unsubscribe' ) }</button>
-						: <button className="button" onClick={ this.onResubscribeClick }>{ this.translate( 'Resubscribe' ) }</button>
-					}
+						: <button className="button" onClick={ this.onResubscribeClick }>{ this.translate( 'Resubscribe' ) }</button> }
 				</Card>
 
-				<button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.translate( 'Manage all your email subscriptions' ) }</button>
+				<p className="mailing-lists__manage-link"><button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.translate( 'Manage all your email subscriptions' ) }</button></p>
 			</div>
 		);
 	}
