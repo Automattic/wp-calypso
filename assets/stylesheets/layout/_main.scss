@@ -592,6 +592,7 @@ html.no-scroll {
 
 .layout.is-section-sites .wp-primary,
 .layout.is-section-me .wp-primary,
+.layout.is-section-themes .wp-primary,
 .layout.is-section-reader .wp-primary {
 	flex: 1 1 auto;
 	align-self: stretch;
@@ -599,6 +600,11 @@ html.no-scroll {
 	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
 	transform: translate3d( 0, 0, 0 );
+}
+
+.layout.is-section-sites .wp-primary,
+.layout.is-section-me .wp-primary,
+.layout.is-section-reader .wp-primary {
 	padding: 32px;
 
 	@include breakpoint( "<960px" ) {
