@@ -134,7 +134,7 @@
 	&.tag-afk {
 		background: transparent;
 		box-shadow: none;
-		padding: 16px 24px 54px 24px;
+		padding: 16px 24px;
 
 		&:hover {
 			cursor: pointer;
@@ -162,7 +162,7 @@
 			margin: 0;
 			position: absolute;
 				top: 14px;
-				left: 25px;
+				left: 66px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -174,11 +174,22 @@
 			font-size: 13px;
 			position: absolute;
 				top: 34px;
-				left: 25px;
+				left: 44px;
 		}
 
 		.follow-button {
 			display: none;
+		}
+
+		&.is-headerless {
+
+			padding: 16px 24px 54px;
+
+			.reader__post-title,
+			.reader-post-byline {
+				position: absolute;
+					left: 25px;
+			}
 		}
 	}
 }
