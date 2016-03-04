@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import { shouldBoot as shouldBootToSupportUser, boot as supportUserBoot } from 'lib/user/support-user-interop';
+
+/**
  * External dependencies
  */
 var store = require( 'store' ),
@@ -13,7 +18,6 @@ var store = require( 'store' ),
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	userUtils = require( './shared-utils' ),
-	supportUser = require( 'lib/user/support-user-interop' ),
 	getLocalForage = require( 'lib/localforage' ).getLocalForage;
 
 /**
@@ -46,8 +50,8 @@ User.prototype.initialize = function() {
 	this.fetching = false;
 	this.initialized = false;
 
-	if ( supportUser.shouldBootToSupportUser() ) {
-		supportUser.boot();
+	if ( shouldBootToSupportUser() ) {
+		supportUserBoot();
 		this.fetch();
 
 		// We're booting into support user mode, skip initialization of the main user.
