@@ -66,6 +66,14 @@
 	}
 }
 
+.plans-compare__table {
+  @include breakpoint( ">660px" ) {
+    margin-left: -24px;
+    margin-right: -24px;
+    width: calc(100% + 48px);
+  }
+}
+
 .plans-compare__plan-name {
 	color: $blue-wordpress;
 	font-size: 16px;
@@ -81,6 +89,10 @@
 	font-size: 12px;
 	padding: 10px;
 	vertical-align: middle;
+
+	&:first-child {
+    padding-left: 20px;
+  }
 
 	@include breakpoint( "<660px" ) {
 		&:not(.is-selected) {
@@ -99,14 +111,16 @@
 }
 
 .plans-compare__header-cell {
+	padding: 0 10px 10px;
 	text-align: center;
 	width: 25%;
 
 	@include breakpoint( "<660px" ) {
 		display: none;
 
-		.is-selected {
+		&.is-selected {
 			display: table-cell;
+			padding-bottom: 20px;
 		}
 	}
 }
