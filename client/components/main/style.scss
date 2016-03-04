@@ -1,5 +1,7 @@
 .main {
-	margin: auto;
+	// Top margin has to be zero with flexbox, or it'll vertically center
+	margin: 0 auto auto auto;
+	width: 100%;
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
 
