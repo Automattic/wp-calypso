@@ -9,8 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	analytics = require( 'analytics' ),
+var analytics = require( 'analytics' ),
 	cartValues = require( 'lib/cart-values' ),
 	cartItems = cartValues.cartItems,
 	config = require( 'config' ),
@@ -293,7 +292,7 @@ var PlanActions = React.createClass( {
 	},
 
 	freePlanExpiration: function() {
-		if ( ! this.planHasCost() && abtest( 'plansFeatureList' ) !== 'list' ) {
+		if ( ! this.planHasCost() ) {
 			return (
 				<span className="plan-actions__plan-expiration">{ this.translate( 'Never expires', { context: 'Expiration info for free plan in /plans/' } ) }</span>
 			);
