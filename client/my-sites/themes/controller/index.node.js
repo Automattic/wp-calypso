@@ -107,16 +107,13 @@ export function details( context, next ) {
 		isFullScreen: true
 	} ) );
 
-	//TODO: use makeElement()
-	context.primary = (
-		<ReduxProvider store={ context.store } >
-			<Head title={ props.title }>
-				<ThemeDetailsComponent id={ props.themeSlug } section={ props.contentSection } >
-					<ThemeSheetComponent />
-				</ThemeDetailsComponent>
-			</Head>
-		</ReduxProvider>
+	const ConnectedComponent = ( { themeSlug, contentSection } ) => (
+		<ThemeDetailsComponent id={ themeSlug } section={ contentSection } >
+			<ThemeSheetComponent />
+		</ThemeDetailsComponent>
 	);
+
+	context.primary = makeElement( ConnectedComponent, Head, context.store, props );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }
