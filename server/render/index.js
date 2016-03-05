@@ -35,23 +35,23 @@ export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
 
-		let renderedLayout = markupCache.get( key );
-		if ( ! renderedLayout ) {
+		let context = markupCache.get( key );
+		if ( ! context ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
-			renderedLayout = ReactDomServer.renderToString( element );
-			markupCache.set( key, renderedLayout );
-		}
-		let context = { renderedLayout };
-		const rtsTimeMs = Date.now() - startTime;
+			const renderedLayout = ReactDomServer.renderToString( element );
+			context = { renderedLayout };
 
-		if ( Helmet.peek() ) {
-			const helmetData = Helmet.rewind();
-			Object.assign( context, {
-				helmetTitle: helmetData.title,
-				helmetMeta: helmetData.meta,
-				helmetLink: helmetData.link,
-			} );
+			if ( Helmet.peek() ) {
+				const helmetData = Helmet.rewind();
+				Object.assign( context, {
+					helmetTitle: helmetData.title,
+					helmetMeta: helmetData.meta,
+					helmetLink: helmetData.link,
+				} );
+			}
+			markupCache.set( key, context );
 		}
+		const rtsTimeMs = Date.now() - startTime;
 
 		if ( rtsTimeMs > 15 ) {
 			// We think that renderToString should generally
