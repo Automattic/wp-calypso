@@ -1,4 +1,17 @@
 machine:
   node:
     version: 4.3.0
-
+  environment:
+    NODE_ENV: development
+test:
+  pre:
+    - make build
+  override:
+    - ./node_modules/.bin/eslint --quiet:
+        parallel: true
+        files:
+          - client/**/*.js
+          - client/**/*.jsx
+          - server/**/*.js
+          - server/**/*.jsx
+    - make test
