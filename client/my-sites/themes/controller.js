@@ -19,6 +19,7 @@ import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
 import LayoutLoggedOut from 'layout/logged-out';
@@ -127,19 +128,37 @@ export function loggedOut( context, next ) {
 	next();
 }
 
+function getDetailsProps( context ) {
+	const { slug, section } = context.params;
+	const themeName = ( getThemeDetails( context.store.getState(), slug ) || false ).name;
+	const user = getCurrentUser( context.store.getState() );
+	const basePath = '/themes/:slug';
+	const analyticsPageTitle = 'Themes > Details Sheet';
+
+	const runClientAnalytics = function() {
+		analytics.pageView.record( basePath, analyticsPageTitle );
+	};
+
+	return {
+		themeSlug: slug,
+		contentSection: section,
+		title: buildTitle(
+			i18n.translate( '%(theme)s Theme', {
+				args: { theme: themeName },
+				textOnly: true
+			} )
+		),
+		isLoggedIn: !! user,
+		runClientAnalytics
+	}
+}
+
 export function details( context, next ) {
 	const user = getCurrentUser( context.store.getState() );
 	const Head = user
 		? require( 'layout/head' )
 		: require( 'my-sites/themes/head' );
-	const props = {
-		themeSlug: context.params.slug,
-		contentSection: context.params.section,
-		title: buildTitle(
-			i18n.translate( 'Theme Details', { textOnly: true } )
-		),
-		isLoggedIn: !! user
-	};
+	const props = getDetailsProps( context );
 
 	context.store.dispatch( setSection( 'themes', {
 		hasSidebar: false,

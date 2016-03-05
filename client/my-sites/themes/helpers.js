@@ -14,7 +14,7 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import config from 'config';
-import	route from 'lib/route';
+import route from 'lib/route';
 
 var ThemesHelpers = {
 	oldShowcaseUrl: '//wordpress.com/themes/',
@@ -141,8 +141,12 @@ var ThemesHelpers = {
 		let basePath = route.sectionify( path );
 		let analyticsPageTitle = 'Themes';
 
+		if ( tier ) {
+			basePath += '/type/:tier';
+		}
+
 		if ( site_id ) {
-			basePath = basePath + '/:site_id';
+			basePath += '/:site_id';
 			analyticsPageTitle += ' > Single Site';
 		}
 
