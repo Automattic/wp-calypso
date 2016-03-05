@@ -37,3 +37,8 @@ upgradesActions.setPrimaryDomain( 'example.wordpress.com', 'example.com' );
 upgradesActions.enablePrivacyProtection( { 'example.wordpress.com', 'example.com' } );
 upgradesActions.requestTransferCode( { 'example.wordpress.com', 'example.com', true, true } );
 ```
+
+## Unit Tests
+For your tests to be included in the domains library test runner, you must require them in `client/lib/domains/test/index.js`.
+Note that each `describe` block in this file should mirror the folder structure of domains library.
+To run test runner go to `client/lib/domains` folder and execute `make test` command.
