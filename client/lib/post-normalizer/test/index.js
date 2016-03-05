@@ -1,20 +1,16 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-
-// Uncomment this require to use the blanket coverage tests.
-//require( 'blanket' )( {
-//  pattern: /post-normalizer\//
-//} );
-
 const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
+
+require( 'lib/react-test-env-setup' ).auto();
+require( 'test/fake' )( __dirname, 'lib/post-normalizer/test' );
+
 /**
  * Internal dependencies
  */
-let normalizer = require( '../' ),
+const normalizer = require( '../' ),
 	safeImageUrlFake = require( 'lib/safe-image-url' ),
 	allTransforms = [
 		normalizer.decodeEntities,
