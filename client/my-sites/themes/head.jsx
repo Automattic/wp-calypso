@@ -10,9 +10,9 @@ import React from 'react';
  */
 import Head from 'layout/head';
 
-const ThemesHead = ( { isSheet, tier, children } ) => (
+const ThemesHead = ( { title, tier, children } ) => (
 	<Head
-		title={ isSheet ? 'Pineapple Fifteen Theme — WordPress.com' : get( 'title', tier ) }
+		title={ title ? title : get( 'title', tier ) }
 		description={ get( 'description', tier ) }
 		canonicalUrl={ get( 'canonicalUrl', tier ) } >
 		{ children }
@@ -20,7 +20,7 @@ const ThemesHead = ( { isSheet, tier, children } ) => (
 )
 
 ThemesHead.propTypes = {
-	isSheet: React.PropTypes.bool,
+	title: React.PropTypes.string,
 	tier: React.PropTypes.string
 };
 

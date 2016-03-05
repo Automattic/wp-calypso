@@ -105,7 +105,7 @@ export function details( context, next ) {
 	//TODO: use makeElement()
 	context.primary = (
 		<ReduxProvider store={ context.store } >
-			<Head title={ props.title } isSheet>
+			<Head title={ props.title }>
 				<ThemeDetailsComponent id={ props.themeSlug } section={ props.contentSection } >
 					<ThemeSheetComponent />
 				</ThemeDetailsComponent>
