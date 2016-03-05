@@ -16,7 +16,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
-import ThemesActionTypes from 'state/themes/action-types';
+import { receiveThemeDetails } from 'state/themes/actions';
 import wpcom from 'lib/wp';
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
@@ -59,18 +59,7 @@ export function fetchThemeDetailsData( context, next ) {
 	}
 
 	function renderThemeSheet( theme ) {
-		context.store.dispatch( {
-			type: ThemesActionTypes.RECEIVE_THEME_DETAILS,
-			themeId: theme.id,
-			themeName: theme.name,
-			themeAuthor: theme.author,
-			themeScreenshot: theme.screenshot,
-			themePrice: theme.price ? theme.price.display : undefined,
-			themeDescription: theme.description,
-			themeDescriptionLong: theme.description_long,
-			themeSupportDocumentation: theme.extended ? theme.extended.support_documentation : undefined,
-		} );
-
+		context.store.dispatch( receiveThemeDetails( theme ) );
 		next();
 	};
 
