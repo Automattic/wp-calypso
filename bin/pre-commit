@@ -27,7 +27,7 @@ done
 printf "\nValidating .jsx and .js:\n"
 
 for file in ${files}; do
-    ./node_modules/.bin/eslint ${file}
+    ./node_modules/.bin/eslint --cache ${file}
     if [ $? -ne 0 ]; then
         printf "\033[31meslint Failed: %s\033[0m\n" "${file}"
         pass=false

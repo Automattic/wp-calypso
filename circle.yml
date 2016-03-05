@@ -1,4 +1,17 @@
 machine:
   node:
     version: 4.3.0
-
+test:
+  override:
+    - npm run lint -- :
+        parallel: true
+        files:
+          - client/**/*.js
+          - client/**/*.jsx
+          - server/**/*.js
+          - server/**/*.jsx
+    - NODE_ENV=test make client/config/index.js && NODE_ENV=test ./bin/run-tests:
+        parallel: true
+        files:
+          - client/**/Makefile
+          - server/**/Makefile

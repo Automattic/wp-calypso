@@ -43,6 +43,7 @@ describe( 'PluginActivateToggle', function() {
 	} );
 
 	beforeEach( function() {
+		this.timeout( 10 * 1000 );
 		PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' );
 		PluginActivateToggle.prototype.translate = function( str ) {
 			return str;

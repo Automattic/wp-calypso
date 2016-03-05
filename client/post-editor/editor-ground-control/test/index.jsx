@@ -38,6 +38,7 @@ var expect = chai.expect;
 chai.use( sinonChai );
 
 describe( 'EditorGroundControl', function() {
+	this.timeout( 10 * 1000 );
 	before( function() {
 		mockery.enable( {
 			warnOnReplace: false,
