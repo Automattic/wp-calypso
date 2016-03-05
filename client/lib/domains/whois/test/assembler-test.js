@@ -8,7 +8,7 @@ const expect = require( 'chai' ).expect;
  */
 const whoisAssembler = require( './../assembler' );
 
-describe( 'Domains WHOIS assembler', () => {
+describe( 'assembler', () => {
 	const FIRST_NAME = 'First-name',
 		LAST_NAME = 'Last-name',
 		ORGANIZATION = 'Organisation',

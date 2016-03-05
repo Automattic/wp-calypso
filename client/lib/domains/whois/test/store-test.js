@@ -10,7 +10,7 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 import Dispatcher from 'dispatcher';
 import WhoisStore from './../store';
 
-describe( 'Domains WHOIS Store', () => {
+describe( 'store', () => {
 	const DOMAIN_NAME = 'domain.name';
 
 	it( 'should be an object', () => {

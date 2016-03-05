@@ -10,7 +10,7 @@ const assign = require( 'lodash/assign' ),
 const domainsAssembler = require( './../assembler' ),
 	domainTypes = require( './../constants' ).type;
 
-describe( 'Domains assembler', () => {
+describe( 'assembler', () => {
 	const DOMAIN_NAME = 'Name',
 		redirectDataTransferObject = {
 			domain: DOMAIN_NAME,

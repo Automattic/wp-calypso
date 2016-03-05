@@ -11,7 +11,7 @@ import isEmpty from 'lodash/isEmpty';
  */
 import { validateAllFields } from '../';
 
-describe( 'domains/dns', () => {
+describe( 'index', () => {
 	describe( 'validateAllFields', () => {
 		it( 'should return no errors for a valid A record', () => {
 			const initialData = {

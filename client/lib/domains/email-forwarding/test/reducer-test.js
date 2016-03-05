@@ -11,7 +11,7 @@ import { action as ActionTypes } from 'lib/upgrades/constants';
 import { DOMAIN_NAME, EMAIL_FORWARDS, MAILBOX_NAME } from './data';
 import { reducer } from './../reducer';
 
-describe( 'Domains: Email Forwarding Reducer', () => {
+describe( 'reducer', () => {
 	it( 'should return the same state when no matching record passed in the delete complete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
