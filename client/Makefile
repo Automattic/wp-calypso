@@ -5,7 +5,7 @@ BASE_DIR := $(NODE_BIN)/../..
 NODE_PATH := $(BASE_DIR)/client
 
 test:
-	@NODE_ENV=test NODE_PATH=$(NODE_PATH) $(MOCHA) --compilers jsx:babel/register,js:babel/register --reporter $(REPORTER) $(addprefix --grep ,$(GREP)) testsuite.js
+	@NODE_ENV=test NODE_PATH=$(NODE_PATH) node test/runner.js
 
 test-%:
 	@GREP="$*" make test
