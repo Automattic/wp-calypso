@@ -17,17 +17,29 @@ after( () => {
 	nock.restore();
 } );
 
-function requireSuite( module ) {
-	describe( module, function() {
-		require( `${module}/test` );
+function requireTestFiles( config, path = '' ) {
+	Object.keys( config ).map( ( folderName ) => {
+		describe( folderName, () => {
+			const folderConfig = config[ folderName ],
+				folderPath = `${path}${folderName}/`;
+
+			if ( Array.isArray( folderConfig ) ) {
+				folderConfig.forEach( fileName => require( `${folderPath}test/${fileName}.js` ) );
+			} else {
+				requireTestFiles( folderConfig, folderPath );
+			}
+		} );
 	} );
 }
 
-[
-	'lib/domains',
-	'lib/post-formats',
-	'lib/post-normalizer',
-	'lib/post-metadata',
-	'lib/posts',
-	'state'
-].forEach( requireSuite );
+requireTestFiles( {
+	lib: {
+		domains: [ 'index' ],
+		'post-formats': [ 'index' ],
+		'post-normalizer': [ 'index' ],
+		'post-metadata': [ 'index' ],
+		posts: [ 'index' ],
+		store: [ 'index-test' ]
+	},
+	state: [ 'index' ]
+} );
