@@ -46,6 +46,7 @@ class PostComment extends React.Component {
 
 	handleReply() {
 		this.props.onReplyClick( this.props.commentId );
+		this.setState( { showReplies: true } ); // show the comments when replying
 	}
 
 	handleAuthorClick() {
@@ -63,8 +64,7 @@ class PostComment extends React.Component {
 		const commentChildrenIds = this.props.commentsTree.getIn( [ this.props.commentId, 'children' ] ).toJS();
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const showReplies = this.state.showReplies || // use wanted to show comments
-							commentChildrenIds.length < this.props.maxChildrenToShow || // we have less comments than required to hide
-							this.props.activeReplyCommentID === this.props.commentId; // user replying that comment
+				commentChildrenIds.length < this.props.maxChildrenToShow; // we have less comments than required to hide
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
@@ -123,8 +123,8 @@ class PostComment extends React.Component {
 
 		return (
 			<div className="comment__actions">
-				{ showReplyButton ?
-					<button className="comment__actions-reply" onClick={ this.handleReply }>
+				{ showReplyButton
+					? <button className="comment__actions-reply" onClick={ this.handleReply }>
 						<Gridicon icon="reply" size={ 18 } />
 						<span className="comment__actions-reply-label">{ translate( 'Reply' ) }</span>
 					</button>

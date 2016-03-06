@@ -26,8 +26,8 @@ class PostCommentForm extends React.Component {
 		super();
 
 		this.state = {
-			isButtonActive: props.commentText && props.commentText.length > 0,
-			isButtonVisible: props.commentText && props.commentText.length > 0
+			commentText: props.commentText || '',
+			haveFocus: false
 		};
 
 		// bind event handlers to this instance
@@ -37,24 +37,21 @@ class PostCommentForm extends React.Component {
 			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		this.setState( {
+			commentText: nextProps.commentText || ''
+		} );
+	}
+
 	componentDidMount() {
 		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentID && this.refs.commentText ) {
-			this.refs.commentText.focus();
+		if ( this.props.parentCommentID && this._textareaNode ) {
+			this._textareaNode.focus();
 		}
 	}
 
-	componentDidUpdate() {
-		const commentTextNode = this.refs.commentText;
-		// can happen if comments are closed
-		if ( ! commentTextNode ) {
-			return;
-		}
-
-		const commentText = this.getCommentText();
-		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-
-		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
+	handleTextAreaNode( textareaNode ) {
+		this._textareaNode = textareaNode;
 	}
 
 	handleSubmit( event ) {
@@ -80,58 +77,34 @@ class PostCommentForm extends React.Component {
 		}
 	}
 
-	handleKeyUp() {
-		this.updateCommentText();
-	}
-
 	handleFocus() {
-		this.toggleButtonVisibility( true );
+		this.setState( { haveFocus: true } );
 	}
 
 	handleBlur() {
-		if ( ! this.hasCommentText() ) {
-			this.toggleButtonVisibility( false );
-		}
+		this.setState( { haveFocus: false } );
 	}
 
-	toggleButtonVisibility( isVisible ) {
-		this.setState( { isButtonVisible: isVisible } );
-	}
+	handleTextChange( event ) {
+		const commentText = event.target.value;
 
-	updateCommentText() {
-		const commentText = this.getCommentText();
+		this.setState( { commentText } );
 
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( commentText );
-
-		// If there's content, make the button active
-		this.setState( { isButtonActive: this.hasCommentText() } );
 	}
 
 	resetCommentText() {
-		const commentTextNode = this.refs.commentText;
-		commentTextNode.value = '';
-		this.setState( { isButtonActive: false } );
-		this.toggleButtonVisibility( false );
+		this.setState( { commentText: '' } );
 	}
 
 	hasCommentText() {
-		const commentText = this.getCommentText();
-		return ( commentText && commentText.length > 0 );
-	}
-
-	getCommentText() {
-		if ( ! this.refs.commentText ) {
-			return;
-		}
-
-		return this.refs.commentText.value.trim();
+		return this.state.commentText.trim().length > 0;
 	}
 
 	submit() {
 		const post = this.props.post;
-		const commentTextNode = this.refs.commentText;
-		const commentText = commentTextNode.value.trim();
+		const commentText = this.state.commentText.trim();
 
 		if ( ! commentText ) {
 			this.resetCommentText(); // Clean up any newlines
@@ -191,25 +164,37 @@ class PostCommentForm extends React.Component {
 		}
 
 		const buttonClasses = classNames( {
-			'is-active': this.state.isButtonActive,
-			'is-visible': this.state.isButtonVisible
+			'is-active': this.hasCommentText(),
+			'is-visible': this.state.haveFocus || this.hasCommentText()
 		} );
 
+		const expandingAreaClasses = classNames( {
+			focused: this.state.haveFocus,
+			'expanding-area': true
+		} );
+
+		// how auto expand works for that textarea is covered in this article: http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__form" ref="commentForm">
 				<fieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<label>
-						<textarea
-							defaultValue={ this.props.commentText }
-							rows="1"
-							placeholder={ translate( 'Enter your comment here…' ) }
-							ref="commentText"
-							onKeyUp={ this.handleKeyUp }
-							onKeyDown={ this.handleKeyDown }
-							onFocus={ this.handleFocus }
-							onBlur={ this.handleBlur } />
-						<button ref="commentButton" className={ buttonClasses } disabled={ ! this.state.isButtonActive } onClick={ this.handleSubmit }>{ translate( 'Send' ) }</button>
+						<div className={ expandingAreaClasses } >
+							<pre><span>{ this.state.commentText }</span><br/></pre>
+							<textarea
+								value={ this.state.commentText }
+								placeholder={ translate( 'Enter your comment here…' ) }
+								ref={ this.handleTextAreaNode }
+								onKeyUp={ this.handleKeyUp }
+								onKeyDown={ this.handleKeyDown }
+								onFocus={ this.handleFocus }
+								onBlur={ this.handleBlur }
+								onChange={ this.handleTextChange }
+							/>
+						</div>
+						<button ref="commentButton" className={ buttonClasses } disabled={ this.state.commentText.length === 0 } onClick={ this.handleSubmit }>
+							{ translate( 'Send' ) }
+						</button>
 						{ this.renderError() }
 					</label>
 				</fieldset>

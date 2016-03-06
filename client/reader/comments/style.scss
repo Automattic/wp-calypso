@@ -18,7 +18,6 @@
 	position: relative;
 	padding: 0 0 0 48px;
 	margin-top: 24px;
-	margin-bottom: -12px;
 
 	.gravatar {
 		position: absolute;
@@ -27,21 +26,51 @@
 		border-radius: 48px;
 	}
 
-	input, textarea {
+	input {
 		font-size: 14px;
 		padding: 5px 10px;
 	}
 
-	textarea {
-		max-height: 400px;
-		min-height: 33px;
-		height: 33px;
-		padding-right: 60px;
-		resize: vertical;
-		font-family: $serif;
+	// The inner working of these styles is covered here: http://alistapart.com/article/expanding-text-areas-made-elegant
+	.expanding-area {
+		position: relative;
+		$initial-focused-height: 70px;
 
-		&:focus {
-			min-height: 70px;
+		pre,
+		textarea {
+			max-height: 400px;
+			min-height: 33px;
+			margin: 0;
+			padding: 5px 60px 5px 5px;
+			resize: vertical;
+			font-size: 14px;
+			font-family: $serif;
+			line-height: 21px;			
+
+			white-space: pre-wrap;
+			word-wrap: break-word;
+
+			&:focus {
+				min-height: $initial-focused-height;
+			}
+		}
+		
+		textarea {
+			position: absolute;
+				top: 0;
+				left: 0;
+			height: 100%;
+		}
+
+		pre {
+			border: 1px solid $gray;
+			box-sizing: border-box;
+			display: block;
+			visibility: hidden;
+		}
+
+		&.focused {
+			min-height: $initial-focused-height;
 		}
 	}
 
