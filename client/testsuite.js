@@ -24,8 +24,10 @@ function requireSuite( module ) {
 }
 
 [
+	'lib/domains',
 	'lib/post-formats',
 	'lib/post-normalizer',
 	'lib/post-metadata',
-	'lib/posts'
+	'lib/posts',
+	'state'
 ].forEach( requireSuite );

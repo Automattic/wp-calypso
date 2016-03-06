@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -12,17 +10,6 @@ import nock from 'nock';
 import { createReduxStore } from '../';
 
 describe( 'state', () => {
-	before( () => {
-		Chai.use( sinonChai );
-		nock.disableNetConnect();
-	} );
-
-	after( () => {
-		nock.cleanAll();
-		nock.enableNetConnect();
-		nock.restore();
-	} );
-
 	describe( 'createReduxStore', () => {
 		it( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
