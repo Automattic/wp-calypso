@@ -5,7 +5,7 @@ const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
 
 require( 'lib/react-test-env-setup' ).auto();
-require( 'test/fake' )( __dirname, 'lib/post-normalizer/test' );
+require( 'test/fake' )( __dirname );
 
 function identifyTransform( post, callback ) {
 	callback();
