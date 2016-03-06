@@ -1,14 +1,23 @@
 require( 'babel/register' );
 
-const Mocha = require( 'mocha' ),
+const program = require( 'commander' ),
+	Mocha = require( 'mocha' ),
 	Chai = require( 'chai' ),
 	sinonChai = require( 'sinon-chai' ),
 	nock = require( 'nock' ),
 	path = require( 'path' );
 
+program
+	.usage( '[options] [files]' )
+	.option( '-R, --reporter <name>', 'specify the reporter to use', 'spec' );
+
+program.name = 'runner';
+
+program.parse( process.argv );
+
 const mocha = new Mocha( {
 	ui: 'bdd',
-	reporter: 'spec'
+	reporter: program.reporter
 } );
 
 mocha.suite.beforeAll( function() {
@@ -23,8 +32,8 @@ mocha.suite.afterAll( function() {
 } );
 
 // we could also discover all the tests using a glob?
-if ( process.argv.length > 2 ) {
-	process.argv.slice( 2 ).forEach( function( file ) {
+if ( program.args.length ) {
+	program.args.forEach( function( file ) {
 		mocha.addFile( file );
 	} );
 } else {
