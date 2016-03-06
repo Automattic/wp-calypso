@@ -125,7 +125,12 @@ class EditorPermalink extends Component {
 		}
 
 		return (
-			<div className="editor-permalink" onMouseEnter={ this.showTooltip } onMouseLeave={ this.hideTooltip }>
+			<button
+				className="editor-permalink"
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
+				onClick={ this.showPopover }
+			>
 				<Gridicon
 					className="editor-permalink__toggle"
 					icon="link"
@@ -143,6 +148,7 @@ class EditorPermalink extends Component {
 						{ ...pick( this.props, 'path', 'isEditable' ) }
 						onEscEnter={ this.closePopover }
 						instanceName="post-popover"
+						isVisible= { this.state.popoverVisible }
 					/>
 					{ this.renderCopyButton() }
 				</Popover>
@@ -153,7 +159,7 @@ class EditorPermalink extends Component {
 				>
 					{ tooltipMessage }
 				</Tooltip>
-			</div>
+			</button>
 		);
 	}
 }

@@ -27,6 +27,10 @@
 		top: 18px;
 	display: none;
 
+	&:focus {
+		outline: thin dotted;
+	}
+
 	@include breakpoint( ">660px" ) {
 		display: block;
 	}

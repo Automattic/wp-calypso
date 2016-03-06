@@ -6,6 +6,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import defer from 'lodash/defer';
 
 /**
  * Internal Dependencies
@@ -28,7 +29,8 @@ class PostEditorSlug extends Component {
 		instanceName: PropTypes.string,
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
-		postId: PropTypes.number
+		postId: PropTypes.number,
+		isVisible: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -81,6 +83,14 @@ class PostEditorSlug extends Component {
 	focusSlug() {
 		if ( this.props.isEditable ) {
 			ReactDom.findDOMNode( this.refs.slugField ).focus();
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isVisible ) {
+			defer( () => {
+				this.focusSlug();
+			} );
 		}
 	}
 
