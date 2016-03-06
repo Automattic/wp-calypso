@@ -1,10 +1,15 @@
 import mockery from 'mockery';
+import debug from 'debug';
 
-export default function wrap( beforeActions, afterActions ) {
+const log = debug( 'calypso:test:use-mockery' );
+
+export default function useMockery( beforeActions, afterActions ) {
 	before( function() {
+		log( 'turning on mockery' );
 		mockery.enable( {
 			warnOnReplace: false,
-			warnOnUnregistered: false
+			warnOnUnregistered: false,
+			useCleanCache: true // have to use this with a large set of tests
 		} );
 		if ( beforeActions ) {
 			beforeActions();
@@ -12,7 +17,7 @@ export default function wrap( beforeActions, afterActions ) {
 	} );
 
 	after( function() {
-		console.log( 'turning off mockery' );
+		log( 'turning off mockery' );
 		if ( afterActions ) {
 			afterActions();
 		}
