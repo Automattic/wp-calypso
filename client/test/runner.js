@@ -10,7 +10,8 @@ const program = require( 'commander' ),
 
 program
 	.usage( '[options] [files]' )
-	.option( '-R, --reporter <name>', 'specify the reporter to use', 'spec' );
+	.option( '-R, --reporter <name>', 'specify the reporter to use', 'spec' )
+	.option( '-g, --grep <pattern>', 'only run tests matching <pattern>' );
 
 program.name = 'runner';
 
@@ -20,6 +21,10 @@ const mocha = new Mocha( {
 	ui: 'bdd',
 	reporter: program.reporter
 } );
+
+if ( program.grep ) {
+	mocha.grep( new RegExp( program.grep ) );
+}
 
 mocha.suite.beforeAll( function() {
 	Chai.use( sinonChai );
