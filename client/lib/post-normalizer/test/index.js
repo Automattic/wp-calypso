@@ -7,32 +7,6 @@ const assert = require( 'chai' ).assert,
 require( 'lib/react-test-env-setup' ).auto();
 require( 'test/fake' )( __dirname, 'lib/post-normalizer/test' );
 
-/**
- * Internal dependencies
- */
-const normalizer = require( '../' ),
-	safeImageUrlFake = require( 'lib/safe-image-url' ),
-	allTransforms = [
-		normalizer.decodeEntities,
-		normalizer.stripHTML,
-		normalizer.preventWidows,
-		normalizer.makeSiteIDSafeForAPI,
-		normalizer.pickPrimaryTag,
-		normalizer.safeImageProperties( 200 ),
-		normalizer.withContentDOM(),
-		normalizer.withContentDOM( [
-			normalizer.content.removeStyles,
-			normalizer.content.safeContentImages( 300 ),
-			normalizer.content.makeEmbedsSecure,
-			normalizer.content.detectEmbeds,
-			normalizer.content.wordCountAndReadingTime
-		] ),
-		normalizer.createBetterExcerpt,
-		normalizer.waitForImagesToLoad,
-		normalizer.pickCanonicalImage,
-		normalizer.keepValidImages( 1, 1 )
-	];
-
 function identifyTransform( post, callback ) {
 	callback();
 }
@@ -47,6 +21,32 @@ function asyncTransform( post, callback ) {
 }
 
 describe( 'post-normalizer', function() {
+	let normalizer, safeImageUrlFake, allTransforms;
+	before( function() {
+		normalizer = require( '../' );
+		safeImageUrlFake = require( 'lib/safe-image-url' );
+		allTransforms = [
+			normalizer.decodeEntities,
+			normalizer.stripHTML,
+			normalizer.preventWidows,
+			normalizer.makeSiteIDSafeForAPI,
+			normalizer.pickPrimaryTag,
+			normalizer.safeImageProperties( 200 ),
+			normalizer.withContentDOM(),
+			normalizer.withContentDOM( [
+				normalizer.content.removeStyles,
+				normalizer.content.safeContentImages( 300 ),
+				normalizer.content.makeEmbedsSecure,
+				normalizer.content.detectEmbeds,
+				normalizer.content.wordCountAndReadingTime
+			] ),
+			normalizer.createBetterExcerpt,
+			normalizer.waitForImagesToLoad,
+			normalizer.pickCanonicalImage,
+			normalizer.keepValidImages( 1, 1 )
+		];
+	} );
+
 	it( 'should export a function', function() {
 		assert.equal( typeof normalizer, 'function' );
 	} );
