@@ -24,5 +24,6 @@ function requireSuite( module ) {
 }
 
 [
-	'lib/post-normalizer'
+	'lib/post-normalizer',
+	'lib/post-metadata'
 ].forEach( requireSuite );
