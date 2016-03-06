@@ -16,7 +16,7 @@ Creating a new section is composed of five steps:
 2. Setup your section folder.
 3. Create a controller `client/my-sites/my-section/controller.js`.
 4. Setup the entry routes in `client/my-sites/my-section/index.js`.
-5. Register section in `client/sections.js.`
+5. Register section in `client/sections.js`.
 
 ### 1. Add a feature
 
