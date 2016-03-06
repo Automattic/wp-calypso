@@ -362,7 +362,7 @@ FullPostDialog = React.createClass( {
 
 FullPostDialog = connect(
 	( state, ownProps ) => ( {
-		commentCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID )
+		commentCount: ownProps.post ? getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ) : 0
 	} )
 )( FullPostDialog );
 
