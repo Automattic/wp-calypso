@@ -17,7 +17,12 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import EmptyContent from 'components/empty-content';
 import paths from 'my-sites/upgrades/paths';
-import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
+import {
+	hasGoogleApps,
+	hasGoogleAppsSupportedDomain,
+	getSelectedDomain,
+	hasMappedDomain
+} from 'lib/domains';
 
 const Email = React.createClass( {
 	propTypes: {
@@ -79,14 +84,27 @@ const Email = React.createClass( {
 	},
 
 	emptyContent() {
-		let props;
-		if ( this.props.selectedDomainName ) {
-			props = {
+		const {
+			selectedSite,
+			selectedDomainName,
+			domains
+			} = this.props;
+		let emptyContentProps;
+
+		if ( selectedDomainName ) {
+			emptyContentProps = {
 				title: this.translate( 'Google Apps is not supported on this domain' ),
-				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' )
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' ),
+				secondaryAction: this.translate( 'Add Email Forwarding' ),
+				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
 			}
+		} else if ( hasMappedDomain( domains.list ) ) {
+			emptyContentProps = {
+				title: this.translate( 'Google Apps is not supported on mapped domains' ),
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' )
+			};
 		} else {
-			props = {
+			emptyContentProps = {
 				title: this.translate( "You don't have any domains yet." ),
 				line: this.translate(
 					'Add a domain to your site to make it easier ' +
@@ -95,14 +113,14 @@ const Email = React.createClass( {
 				)
 			};
 		}
-		Object.assign( props, {
+		Object.assign( emptyContentProps, {
 			illustration: '/calypso/images/drake/drake-whoops.svg',
 			action: this.translate( 'Add a Custom Domain' ),
 			actionURL: '/domains/add/' + this.props.selectedSite.slug
 		} );
 
 		return (
-			<EmptyContent {...props } />
+			<EmptyContent {...emptyContentProps } />
 		);
 	},
 
