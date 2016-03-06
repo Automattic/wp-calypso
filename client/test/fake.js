@@ -1,19 +1,16 @@
 import wrap from './wrap';
 import glob from 'glob';
 import mockery from 'mockery';
+import path from 'path';
 
-function findQuickMocks( dirpath, mockBase ) {
+function findQuickMocks( dirpath ) {
 	const fakes = glob.sync( '*/**/*.+(js|jsx)', {
 		cwd: dirpath
 	} );
 	fakes.forEach( function( fake ) {
 		const moduleName = fake.substring( fake, fake.lastIndexOf( '.' ) );
-		console.log( 'found quick mock %s => %s', moduleName, `${mockBase}/${moduleName}` );
-		const mock = require( `${mockBase}/${moduleName}` );
-		if ( !mock ) {
-			throw new Error( 'can not find mock ' + `${mockBase}/${moduleName}` );
-		}
-		mockery.registerMock( moduleName, mock );
+		console.log( 'found quick mock %s => %s', moduleName, path.join( dirpath, fake ) );
+		mockery.registerSubstitute( moduleName, path.join( dirpath, fake ) );
 	} );
 }
 
