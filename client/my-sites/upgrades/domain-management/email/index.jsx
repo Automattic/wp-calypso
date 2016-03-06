@@ -134,7 +134,7 @@ const Email = React.createClass( {
 				<AddGoogleAppsCard { ...this.props } />
 				{ this.props.selectedDomainName && <VerticalNav>
 					<VerticalNavItem
-						path={ paths.domainManagementEmailForwarding( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
+						path={ paths.domainManagementEmailForwarding( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 						{ this.translate( 'Email Forwarding' ) }
 					</VerticalNavItem>
 				</VerticalNav> }
@@ -144,9 +144,9 @@ const Email = React.createClass( {
 
 	goToEditOrList() {
 		if ( this.props.selectedDomainName ) {
-			page( paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+			page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 		} else {
-			page( paths.domainManagementList( this.props.selectedSite.domain ) );
+			page( paths.domainManagementList( this.props.selectedSite.slug ) );
 		}
 	}
 } );
