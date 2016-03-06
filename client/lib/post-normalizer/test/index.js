@@ -4,8 +4,6 @@
 const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
 
-require( 'lib/react-test-env-setup' ).auto();
-require( 'test/quick-mock' )( __dirname );
 
 function identifyTransform( post, callback ) {
 	callback();
@@ -22,8 +20,11 @@ function asyncTransform( post, callback ) {
 
 describe( 'post-normalizer', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
+
+	require( 'lib/react-test-env-setup' ).auto();
+	require( 'test/quick-mock' )( __dirname );
+
 	before( function() {
-		console.log( 'running requires' );
 		normalizer = require( '../' );
 		safeImageUrlFake = require( 'lib/safe-image-url' );
 		allTransforms = [
