@@ -14,7 +14,8 @@
 		margin-bottom: 13px;
 	}
 
-	.foldable-card.card, .foldable-card.card.is-expanded {
+	.foldable-card.card,
+	.foldable-card.card.is-expanded {
 		margin-bottom: 0;
 	}
 
@@ -235,9 +236,16 @@
 .following-edit .reader-list-item__card {
 
 	&.is-placeholder {
+
+		height: 74px;
+
 		.reader-list-item__title,
 		.reader-list-item__description {
-			margin-left: 92px;
+			margin: 1px 0 0 91px;
+
+			@include breakpoint( ">480px" ) {
+				margin-left: 83px;
+			}
 		}
 
 		.following-edit__list-title {
@@ -247,6 +255,10 @@
 		.following-edit__list-url {
 			margin-top: 4px;
 			width: 25%;
+		}
+
+		.reader-list-item__icon {
+			left: 42px;
 		}
 	}
 
@@ -347,7 +359,7 @@
 }
 
 .following-edit__notification-settings-error {
-	margin-top: 12px;
+	margin-top: 14px;
 }
 
 @include breakpoint( ">660px" ) {
@@ -359,6 +371,7 @@
 		.reader-list-item__title,
 		.reader-list-item__description {
 			margin-right: 100px;
+			padding-left: 3px;
 		}
 	}
 }
