@@ -23,6 +23,7 @@ function asyncTransform( post, callback ) {
 describe( 'post-normalizer', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 	before( function() {
+		console.log( 'running requires' );
 		normalizer = require( '../' );
 		safeImageUrlFake = require( 'lib/safe-image-url' );
 		allTransforms = [
