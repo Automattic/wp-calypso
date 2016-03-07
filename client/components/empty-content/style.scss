@@ -10,6 +10,12 @@
 		margin-left: 15px;
 		margin-right: 15px;
 	}
+
+	&.has-title-only {
+		.empty-content__title {
+			margin-bottom: 40px;
+		}
+	}
 }
 
 .empty-content__title {

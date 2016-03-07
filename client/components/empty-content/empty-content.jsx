@@ -102,7 +102,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className={ classNames( 'empty-content', this.props.className, { 'is-compact': this.props.isCompact } ) }>
+			<div className={ classNames( 'empty-content', this.props.className, { 'is-compact': this.props.isCompact, 'has-title-only': this.props.title && ! this.props.line } ) }>
 				{ illustration }
 
 				{
