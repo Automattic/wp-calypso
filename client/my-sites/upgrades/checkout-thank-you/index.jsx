@@ -218,6 +218,7 @@ const CheckoutThankYou = React.createClass( {
 					? <div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
 							purchases={ purchases }
+							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
 							domain={ domain } />
 					</div>

@@ -21,7 +21,10 @@ const CheckoutThankYouHeader = React.createClass( {
 	propTypes: {
 		isDataLoaded: React.PropTypes.bool.isRequired,
 		primaryPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.object
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] )
 	},
 
 	getHeading() {

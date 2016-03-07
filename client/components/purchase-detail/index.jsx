@@ -56,7 +56,7 @@ const PurchaseDetail = ( {
 
 				<div className="purchase-detail__text">
 					<h3 className="purchase-detail__title">{ title }</h3>
-					<p className="purchase-detail__description">{ description }</p>
+					<div className="purchase-detail__description">{ description }</div>
 				</div>
 
 				{ buttonElement }
@@ -70,6 +70,7 @@ PurchaseDetail.propTypes = {
 	description: React.PropTypes.oneOfType( [
 		React.PropTypes.array,
 		React.PropTypes.string,
+		React.PropTypes.object
 	] ),
 	href: React.PropTypes.string,
 	icon: React.PropTypes.string,
