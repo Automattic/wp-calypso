@@ -4,7 +4,7 @@ Calypso is the new WordPress.com front-end – a beautiful redesign of the WordP
 
 ![beautiful screenshot](https://developer.wordpress.com/wp-content/themes/a8c/wpcomdev3/calypso/images/speed.png)
 
-It’s built with JavaScript – a very light [node](https://nodejs.org) plus [express](http://expressjs.com) server, [React.js](https://facebook.github.io/react/), [Flux](https://facebook.github.io/flux/), [wpcom.js](http://wpcomjs.com), and many other wonderful libraries on the front-end.
+It’s built with JavaScript – a very light [node](https://nodejs.org) plus [express](http://expressjs.com) server, [React.js](https://facebook.github.io/react/), [Redux](http://redux.js.org/), [wpcom.js](http://wpcomjs.com), and many other wonderful libraries on the front-end.
 
 You can read more about Calypso at [developer.wordpress.com/calypso](https://developer.wordpress.com/calypso/).
 
