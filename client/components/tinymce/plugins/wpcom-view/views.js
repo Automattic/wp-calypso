@@ -13,6 +13,7 @@ import values from 'lodash/values';
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
 import ContactFormView from './views/contact-form';
+import * as VideoView from './views/video';
 
 /**
  * Module variables
@@ -20,7 +21,8 @@ import ContactFormView from './views/contact-form';
 let views = {
 	gallery: GalleryView,
 	embed: new EmbedViewManager(),
-	contactForm: ContactFormView
+	contactForm: ContactFormView,
+	video: VideoView
 };
 
 const components = mapValues( views, ( view ) => {
