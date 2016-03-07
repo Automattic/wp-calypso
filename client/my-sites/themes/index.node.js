@@ -4,16 +4,19 @@
 import config from 'config';
 import { makeLoggedOutLayout } from 'controller';
 import { details, fetchThemeDetailsData } from './controller';
-import { setSection } from 'state/ui/actions';
+import { dispatchSetSectionMiddlewareFactory } from 'lib/react-helpers';
 
-function dispatchSetSection( context, next ) {
-	context.store.dispatch( setSection( {
-		name: 'themes',
-		group: 'sites',
-		secondary: true,
-	} ) );
-	next();
-}
+const dispatchThemesWithSidebar = dispatchSetSectionMiddlewareFactory( {
+	name: 'themes',
+	group: 'sites',
+	secondary: true
+} );
+
+const dispatchThemeNoSidebar = dispatchSetSectionMiddlewareFactory( {
+	name: 'theme',
+	group: 'sites',
+	secondary: false
+} );
 
 // FIXME: These routes will SSR the logged-out Layout even if logged-in.
 // While subsequently replaced by the logged-in Layout on the client-side,
@@ -23,12 +26,12 @@ function dispatchSetSection( context, next ) {
 // the layout.
 // FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
 const designRoutes = {
-	'/design': [ dispatchSetSection, makeLoggedOutLayout ],
-	'/design/type/:tier': [ dispatchSetSection, makeLoggedOutLayout ]
+	'/design': [ dispatchThemesWithSidebar, makeLoggedOutLayout ],
+	'/design/type/:tier': [ dispatchThemesWithSidebar, makeLoggedOutLayout ]
 };
 
 const themesRoutes = {
-	'/theme/:slug/:section?/:site_id?': [ fetchThemeDetailsData, details, makeLoggedOutLayout ]
+	'/theme/:slug/:section?/:site_id?': [ dispatchThemeNoSidebar, fetchThemeDetailsData, details, makeLoggedOutLayout ]
 };
 
 const routes = Object.assign( {},
