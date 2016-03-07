@@ -100,6 +100,7 @@ const SupportUserLoginDialog = React.createClass( {
 						<span>Username</span>
 						<FormTextInput
 							autoFocus={ true }
+							disabled={ isBusy }
 							name="supportUser"
 							id="supportUser"
 							placeholder="Username"
@@ -112,6 +113,7 @@ const SupportUserLoginDialog = React.createClass( {
 						<FormPasswordInput
 							name="supportPassword"
 							id="supportPassword"
+							disabled={ isBusy }
 							placeholder="Password"
 							ref={ supportPasswordRef }
 							onKeyDown={ this.onInputKeyDown }
