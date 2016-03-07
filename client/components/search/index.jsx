@@ -239,10 +239,9 @@ const Search = React.createClass( {
 				! this.props.pinned ||
 				this.props.initialValue;
 
-		const autocorrect = ! this.props.disableAutocorrect && {
+		const autocorrect = this.props.disableAutocorrect && {
 			autoComplete: 'off',
 			autoCorrect: 'off',
-			autoCapitalize: 'off',
 			spellCheck: 'false'
 		};
 
