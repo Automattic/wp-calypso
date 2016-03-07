@@ -11,6 +11,7 @@ import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
 import { supportUserTokenFetch, supportUserActivate, supportUserError } from 'state/support/actions';
+import { clearAll as clearSyncHandler } from 'lib/wp/sync-handler';
 
 /**
  * Connects the Redux store and the low-level support user functions
@@ -54,6 +55,18 @@ export const shouldBoot = () => {
 };
 
 /**
+ * Clear any persisted user specific data so we start from a clean slate
+ */
+export const clearUserData = () => {
+	store.clear();
+
+	if ( config.isEnabled( 'sync-handler' ) ) {
+		debug( 'sync-handler is enabled; clearing' );
+		clearSyncHandler();
+	}
+}
+
+/**
  * Reboot normally as the main user
  */
 export const rebootNormally = () => {
@@ -63,7 +76,7 @@ export const rebootNormally = () => {
 
 	debug( 'Rebooting Calypso normally' );
 
-	store.clear();
+	clearUserData();
 	window.location.reload();
 };
 
@@ -79,6 +92,7 @@ export const rebootWithToken = ( user, token ) => {
 
 	debug( 'Rebooting Calypso with support user' );
 
+	clearUserData();
 	store.set( STORAGE_KEY, { user, token } );
 	window.location.reload();
 };
