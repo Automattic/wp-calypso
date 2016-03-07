@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React from 'react';
 import sample from 'lodash/sample';
 
@@ -69,8 +70,13 @@ const HappinessSupport = React.createClass( {
 	},
 
 	render() {
+		const classes = {
+			'happiness-support': true,
+			'is-placeholder': this.props.isJetpack === undefined || this.props.isJetpack === null
+		};
+
 		return (
-			<div className="happiness-support">
+			<div className={ classNames( classes ) }>
 				{ this.renderGravatar() }
 
 				<h3 className="happiness-support__heading">

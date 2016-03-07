@@ -1,3 +1,28 @@
+.happiness-support.is-placeholder {
+	.happiness-support__heading,
+	.happiness-support__text {
+		@include placeholder( 23% );
+	}
+
+	.happiness-support__heading {
+		width: 78%;
+	}
+
+	.happiness-support__text {
+		width: 82%;
+	}
+
+	.happiness-support__gravatar {
+		display: none;
+	}
+
+	.happiness-support__buttons {
+		.button {
+			@include placeholder( 23% );
+		}
+	}
+}
+
 .happiness-support__heading {
 	color: darken( $gray, 20% );
 	clear: none;
