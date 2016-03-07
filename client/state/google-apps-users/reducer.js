@@ -4,7 +4,6 @@
 
 import { combineReducers } from 'redux';
 import uniqBy from 'lodash/uniqBy';
-import property from 'lodash/property';
 
 /**
  * Internal Dependencies
@@ -20,7 +19,7 @@ import {
 export function items( state = [], action ) {
 	switch ( action.type ) {
 		case GOOGLE_APPS_USERS_FETCH_COMPLETED:
-			return uniqBy( state.concat( action.items ), property( 'email' ) );
+			return uniqBy( state.concat( action.items ), 'email' );
 		case SERIALIZE:
 			return [];
 		case DESERIALIZE:

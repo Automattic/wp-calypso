@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import partial from 'lodash/partial';
 import { connect } from 'react-redux';
 
 /**
@@ -21,7 +20,7 @@ import {
 import {
 	getByDomain,
 	getBySite,
-	getLoaded
+	isLoaded
 } from 'state/google-apps-users/selectors';
 const user = userFactory();
 
@@ -96,27 +95,23 @@ const EmailData = React.createClass( {
 } );
 
 export default connect(
-	( state, ownProps ) => {
-		let usersGetter;
-		if ( ownProps.selectedDomainName ) {
-			usersGetter = partial( getByDomain, state, ownProps.selectedDomainName );
-		} else {
-			usersGetter = partial( getBySite, state, ownProps.sites.getSelectedSite().ID );
-		}
+	( state, { selectedDomainName, sites } ) => {
+		const googleAppsUsers = selectedDomainName
+			? getByDomain( state, selectedDomainName )
+			: getBySite( state, sites.getSelectedSite().ID );
+
 		return {
-			googleAppsUsers: usersGetter(),
-			googleAppsUsersLoaded: getLoaded( state )
+			googleAppsUsers,
+			googleAppsUsersLoaded: isLoaded( state )
 		}
 	},
-	( dispatch, ownProps ) => {
-		let usersFetcher;
-		if ( ownProps.selectedDomainName ) {
-			usersFetcher = partial( fetchByDomain, ownProps.selectedDomainName );
-		} else {
-			usersFetcher = partial( fetchBySiteId, ownProps.sites.getSelectedSite().ID );
-		}
+	( dispatch, { selectedDomainName, sites } ) => {
+		const fetcher = selectedDomainName
+			? () => fetchByDomain( selectedDomainName )
+			: () => fetchBySiteId( sites.getSelectedSite().ID );
+
 		return {
-			fetch: () => dispatch( usersFetcher() )
+			fetch: () => dispatch( fetcher() )
 		}
 	}
 )( EmailData );
