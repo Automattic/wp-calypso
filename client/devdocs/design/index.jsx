@@ -47,6 +47,8 @@ var SearchCard = require( 'components/search-card' ),
 	BulkSelect = require( 'components/bulk-select/docs/example' ),
 	ExternalLink = require( 'components/external-link/docs/example' ),
 	FeatureGate = require( 'components/feature-example/docs/example' ),
+	WordPressLogo = require( 'components/wordpress-logo/docs/example' ),
+	JetpackLogo = require( 'components/jetpack-logo/docs/example' ),
 	Collection,
 	FilterSummary,
 	Hider;
@@ -206,6 +208,8 @@ module.exports = React.createClass( {
 					<SectionNav />
 					<TimezoneDropdown />
 					<FoldableCard />
+					<WordPressLogo />
+					<JetpackLogo />
 				</Collection>
 			</div>
 		);
