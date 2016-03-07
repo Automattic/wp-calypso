@@ -46,7 +46,7 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<Main className="notifications">
+			<Main className="notifications-settings">
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
