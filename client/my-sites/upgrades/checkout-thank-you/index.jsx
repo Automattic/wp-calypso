@@ -68,6 +68,8 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
+
+		window.scrollTo( 0, 0 );
 	},
 
 	componentWillReceiveProps() {
