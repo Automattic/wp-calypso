@@ -26,7 +26,7 @@ var SimpleLikeButtonContainer = React.createClass( {
 			<LikeButton { ...this.props }
 				onLikeToggle={ this.handleLikeToggle }
 				likeCount={ this.state.count }
-				liked={this.state.liked }
+				liked={ this.state.liked }
 			/> );
 	},
 
@@ -52,10 +52,6 @@ var LikeButtons = React.createClass( {
 				<Card>
 					<span>Default:</span>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } />
-				</Card>
-				<Card>
-					<span>Counter shown by default:</span>
-					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } showCount={ true } />
 				</Card>
 				<Card>
 					<span>Liked button:</span>
