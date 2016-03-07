@@ -538,7 +538,7 @@ PostActions = {
 			siteId: siteId
 		} );
 
-		wpcom.site( siteId ).postCounts( options, function( error, data ) {
+		wpcom.undocumented().site( siteId ).postCounts( options, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_COUNTS',
 				error: error,

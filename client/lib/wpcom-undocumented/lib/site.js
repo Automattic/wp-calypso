@@ -2,6 +2,7 @@
  * External dependencies.
  */
 var debug = require( 'debug' )( 'calypso:wpcom-undocumented:site' );
+var merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies.
@@ -182,6 +183,20 @@ UndocumentedSite.prototype.setOption = function( query, callback ) {
 		callback
 	);
 }
+
+UndocumentedSite.prototype.postCounts = function( options, callback ) {
+	var type,
+		query = merge( {
+			type: 'post',
+			apiNamespace: 'wpcom/v2',
+			locale: i18n.getLocaleSlug()
+		}, options );
+
+	type = query.type;
+	delete query.type;
+
+	this.wpcom.req.get( '/sites/' + this._id + '/wpcom/v2/post-counts/' + type, query, callback );
+};
 
 /**
  * Create an `Export` instance
