@@ -41,7 +41,7 @@ const FeedError = React.createClass( {
 				<EmptyContent
 					action={ action }
 					secondaryAction={ secondaryAction }
-					title={ i18n.translate( 'Sorry. We can\'t find that stream.' ) }
+					title={ i18n.translate( 'Sorry, we can\'t find that stream.' ) }
 					illustration={ '/calypso/images/drake/drake-404.svg' }
 					illustrationWidth={ 500 }
 				/>
