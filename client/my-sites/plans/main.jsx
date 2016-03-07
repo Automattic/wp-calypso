@@ -16,6 +16,7 @@ var analytics = require( 'analytics' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
 	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
 	Gridicon = require( 'components/gridicon' ),
+	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
 	isBusiness = require( 'lib/products-values' ).isBusiness,
 	isJpphpBundle = require( 'lib/products-values' ).isJpphpBundle,
 	isPremium = require( 'lib/products-values' ).isPremium,
@@ -24,9 +25,12 @@ var analytics = require( 'analytics' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	paths = require( './paths' ),
 	PlanList = require( 'components/plans/plan-list' ),
+	plansPaths = require( 'my-sites/plans/paths' ),
 	PlanOverview = require( './plan-overview' ),
 	preventWidows = require( 'lib/formatting' ).preventWidows,
+	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+	upgradesActions = require( 'lib/upgrades/actions' ),
 	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
 
 var Plans = React.createClass( {
@@ -35,7 +39,7 @@ var Plans = React.createClass( {
 	mixins: [ observe( 'sites', 'plans' ) ],
 
 	getInitialState: function() {
-		return { openPlan: '' };
+		return { openPlan: '', isSubmitting: false };
 	},
 
 	componentDidMount: function() {
@@ -136,6 +140,30 @@ var Plans = React.createClass( {
 		);
 	},
 
+	handleSelectPlan: function( cartItem ) {
+		var selectedSite;
+
+		if ( this.props.onSelectPlan ) {
+			return this.props.onSelectPlan( cartItem );
+		}
+
+		selectedSite = this.props.sites.getSelectedSite();
+
+		if ( isFreeTrial( cartItem ) ) {
+			upgradesActions.submitFreeTransaction( selectedSite, cartItem, function( error ) {
+				if ( ! error ) {
+					this.props.refreshSitePlans( selectedSite.ID );
+
+					page( plansPaths.plansDestination( selectedSite.slug, 'thank-you' ) );
+				}
+			}.bind( this ) );
+		} else {
+			upgradesActions.addItem( cartItem );
+
+			page( '/checkout/' + selectedSite.slug );
+		}
+	},
+
 	render: function() {
 		var selectedSite = this.props.sites.getSelectedSite(),
 			hasJpphpBundle,
@@ -178,7 +206,7 @@ var Plans = React.createClass( {
 							enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
-							onSelectPlan={ this.props.onSelectPlan }
+							onSelectPlan={ this.handleSelectPlan }
 							cart={ this.props.cart } />
 						{ ! hasJpphpBundle && this.comparePlansLink() }
 					</div>
@@ -200,6 +228,9 @@ module.exports = connect(
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
 				}
+			},
+			refreshSitePlans: function( siteId ) {
+				dispatch( refreshSitePlans( siteId ) );
 			}
 		};
 	}

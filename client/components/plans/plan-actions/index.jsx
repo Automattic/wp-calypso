@@ -2,26 +2,23 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	page = require( 'page' );
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
  */
 var abtest = require( 'lib/abtest' ).abtest,
 	analytics = require( 'analytics' ),
+	cartValues = require( 'lib/cart-values' ),
+	cartItems = cartValues.cartItems,
 	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	puchasesPaths = require( 'me/purchases/paths' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+	puchasesPaths = require( 'me/purchases/paths' );
 
-module.exports = React.createClass( {
-	displayName: 'PlanActions',
-
+var PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
 
 	getButtons: function() {
@@ -145,13 +142,7 @@ module.exports = React.createClass( {
 			}
 		}
 
-		if ( this.props.onSelectPlan ) {
-			this.props.onSelectPlan( cartItem );
-		} else {
-			upgradesActions.addItem( cartItem );
-
-			page( '/checkout/' + this.props.site.slug );
-		}
+		this.props.onSelectPlan( cartItem );
 	},
 
 	canSelectPlan: function() {
@@ -314,3 +305,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = PlanActions;
