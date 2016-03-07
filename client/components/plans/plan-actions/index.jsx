@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	page = require( 'page' );
 
 /**
  * Internal dependencies
@@ -15,7 +16,8 @@ var abtest = require( 'lib/abtest' ).abtest,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
 	cartItems = require( 'lib/cart-values' ).cartItems,
-	puchasesPaths = require( 'me/purchases/paths' );
+	puchasesPaths = require( 'me/purchases/paths' ),
+	upgradesActions = require( 'lib/upgrades/actions' );
 
 module.exports = React.createClass( {
 	displayName: 'PlanActions',
@@ -145,6 +147,10 @@ module.exports = React.createClass( {
 
 		if ( this.props.onSelectPlan ) {
 			this.props.onSelectPlan( cartItem );
+		} else {
+			upgradesActions.addItem( cartItem );
+
+			page( '/checkout/' + this.props.site.slug );
 		}
 	},
 
