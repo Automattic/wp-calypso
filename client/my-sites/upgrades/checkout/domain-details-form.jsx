@@ -21,6 +21,8 @@ import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/
 import analytics from 'analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
+import FormButton from 'components/forms/form-button';
+import { abtest } from 'lib/abtest';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
@@ -129,6 +131,30 @@ export default React.createClass( {
 		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasNlTld( this.props.cart );
 	},
 
+	renderPrivacySection() {
+		return (
+			<PrivacyProtection
+				cart={ this.props.cart }
+				countriesList= { countriesList }
+				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
+				fields={ this.state.form }
+				onButtonSelect={ this.handlePrivacyDialogButtonSelect }
+				onDialogClose={ this.handlePrivacyDialogClose }
+				onDialogOpen={ this.handlePrivacyDialogOpen }
+				onDialogSelect={ this.handlePrivacyDialogSelect }
+				isDialogVisible={ this.state.isDialogVisible }
+				productsList={ this.props.productsList } />
+		);
+	},
+
+	renderSubmitButton() {
+		return (
+			<FormButton>
+				{ this.translate( 'Continue to Checkout' ) }
+			</FormButton>
+		);
+	},
+
 	fields() {
 		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' ),
 			fieldProps = ( name ) => this.getFieldProps( name ),
@@ -183,17 +209,8 @@ export default React.createClass( {
 
 				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
 
-				<PrivacyProtection
-					cart={ this.props.cart }
-					countriesList= { countriesList }
-					disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
-					fields={ this.state.form }
-					onButtonSelect={ this.handlePrivacyDialogButtonSelect }
-					onDialogClose={ this.handlePrivacyDialogClose }
-					onDialogOpen={ this.handlePrivacyDialogOpen }
-					onDialogSelect={ this.handlePrivacyDialogSelect }
-					isDialogVisible={ this.state.isDialogVisible }
-					productsList={ this.props.productsList } />
+				{ ( abtest( 'privacyCheckbox' ) !== 'checkbox' ?
+					this.renderPrivacySection() : this.renderSubmitButton() ) }
 			</div>
 		);
 	},
@@ -269,16 +286,21 @@ export default React.createClass( {
 		} );
 
 		return (
-			<PaymentBox
-				classSet={ classSet }
-				title={ this.translate(
-					'Domain Contact Information',
-					{
-						context: 'Domain contact information page',
-						textOnly: true
-					} ) }>
-				{ this.content() }
-			</PaymentBox>
+			<div>
+				{ ( abtest( 'privacyCheckbox' ) === 'checkbox' ?
+					this.renderPrivacySection() :  null ) }
+
+				<PaymentBox
+					classSet={ classSet }
+					title={ this.translate(
+						'Domain Contact Information',
+						{
+							context: 'Domain contact information page',
+							textOnly: true
+						} ) }>
+					{ this.content() }
+				</PaymentBox>
+			</div>
 		);
 	}
 } );

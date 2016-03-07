@@ -7,7 +7,10 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var cartItems = require( 'lib/cart-values' ).cartItems,
-	PrivacyProtectionDialog = require( './privacy-protection-dialog' );
+	PrivacyProtectionDialog = require( './privacy-protection-dialog' ),
+	Card = require( 'components/card' ),
+	Gridicon = require( 'components/gridicon' ),
+	abtest = require( 'lib/abtest').abtest;
 
 module.exports = React.createClass( {
 	displayName: 'PrivacyProtection',
@@ -71,6 +74,33 @@ module.exports = React.createClass( {
 
 		if ( hasOneFreePrivacy ) {
 			priceForPrivacyText = this.translate( 'Privacy protection keeps your information hidden when these domains are searched for in the public database. You can use it for no extra cost.' );
+		}
+
+		if ( abtest( 'privacyCheckbox' ) === 'checkbox' ) {
+			return (
+				<div>
+					<Card className="privacy-protection-checkbox">
+						<input type="checkbox" />
+						<div className="privacy-protection-checkbox__description">
+							<strong>{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
+							<p>{ priceForPrivacyText }</p>
+							<a href="" onClick={ this.handleDialogOpen }>Learn more about Privacy Protection.</a>
+						</div>
+						<div>
+							<Gridicon icon="lock" size={ 48 } />
+						</div>
+					</Card>
+					<PrivacyProtectionDialog
+						disabled={ this.props.disabled }
+						domain={ this.getFirstDomainToRegister() }
+						cost={ this.getPrivacyProtectionCost() }
+						countriesList={ this.props.countriesList }
+						fields={ this.props.fields }
+						isVisible={ this.props.isDialogVisible }
+						onSelect={ this.handleDialogSelect }
+						onClose={ this.handleDialogClose } />
+				</div>
+			);
 		}
 
 		return (

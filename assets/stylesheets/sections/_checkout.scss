@@ -247,6 +247,10 @@
 		}
 	}
 
+	.form-button {
+		margin-top: 20px;
+	}
+
 	// Payment Boxes
 	// =============================================
 
@@ -655,6 +659,43 @@
 		margin-top: 10px;
 		white-space: normal;
 		width: 100%;
+	}
+}
+
+.privacy-protection-checkbox {
+	&.card {
+		display: flex;
+	}
+
+	.gridicon {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+			background: darken( $gray, 20% );
+			border-radius: 50%;
+			color: $white;
+			display: block;
+			padding: 15px;
+		}
+	}
+
+	.privacy-protection-checkbox__description {
+		font-size: 13px;
+		padding-left: 16px;
+
+		@include breakpoint( ">660px" ) {
+			padding-right: 48px;
+		}
+	}
+
+	strong {
+		font-size: 15px;
+	}
+
+	p {
+		color: $gray;
+		font-style: italic;
+		margin: 4px 0 0 0;
 	}
 }
 
