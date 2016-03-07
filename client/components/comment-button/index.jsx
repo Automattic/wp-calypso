@@ -42,8 +42,8 @@ const CommentButton = React.createClass( {
 			label = this.translate( 'Comment' );
 		} else {
 			label = this.translate(
-				'comment',
-				'comments', {
+				'Comment',
+				'Comments', {
 					count: commentCount,
 				}
 			);

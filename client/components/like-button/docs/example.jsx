@@ -50,11 +50,15 @@ var LikeButtons = React.createClass( {
 					<a href="/devdocs/app-components/like-button">Like button</a>
 				</h2>
 				<Card>
-					<span>Default:</span>
+					<span>No likes:</span>
+					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />
+				</Card>
+				<Card>
+					<span>Has likes, not liked:</span>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } />
 				</Card>
 				<Card>
-					<span>Liked button:</span>
+					<span>Liked:</span>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } liked={ true } />
 				</Card>
 			</div>
