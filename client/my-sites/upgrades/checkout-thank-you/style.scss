@@ -77,7 +77,7 @@
 
 		margin-left: auto;
 		margin-right: auto;
-		width: 50%;
+		width: 20%;
 	}
 }
 
@@ -160,6 +160,14 @@
 }
 
 .checkout-thank-you__header.is-placeholder {
+	@include breakpoint( "<660px" ) {
+		padding-top: 170px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding-left: 190px;
+	}
+
 	.checkout-thank-you__header-icon {
 		display: none;
 	}
@@ -177,11 +185,22 @@
 
 	.checkout-thank-you__header-heading {
 		width: 50%;
+
+		@include breakpoint( "<660px" ) {
+
+		}
 	}
 
 	.checkout-thank-you__header-text {
+		line-height: 2em;
+		margin-bottom: 8px;
 		margin-top: 15px;
-		width: 40%;
+		width: 90%;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 18px;
+			margin-top: 18px;
+		}
 	}
 }
 

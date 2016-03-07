@@ -195,9 +195,11 @@ const CheckoutThankYou = React.createClass( {
 
 					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
+					<div className="checkout-thank-you__purchase-details-list">
+						<PurchaseDetail isPlaceholder />
+						<PurchaseDetail isPlaceholder />
+						<PurchaseDetail isPlaceholder />
+					</div>
 				</div>
 			);
 		}

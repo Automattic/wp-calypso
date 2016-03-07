@@ -33,7 +33,7 @@
 
 		.purchase-detail__button {
 			border: none;
-			width: 50%;
+			width: 40%;
 
 			@include breakpoint( "<660px" ) {
 				margin: 0 auto;
@@ -41,10 +41,12 @@
 		}
 
 		.purchase-detail__description {
-			margin-top: 10px;
+			line-height: 2.5em;
+			margin-top: 15px;
 		}
 
 		.purchase-detail__title {
+			margin-top: 3px;
 			width: 85%;
 
 			@include breakpoint( "<660px" ) {
