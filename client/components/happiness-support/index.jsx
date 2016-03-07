@@ -28,7 +28,7 @@ const HappinessSupport = React.createClass( {
 	},
 
 	renderContactButton() {
-		let url = '/help/contact',
+		let url = supportUrls.CONTACT,
 			target = '';
 
 		if ( this.props.isJetpack ) {
