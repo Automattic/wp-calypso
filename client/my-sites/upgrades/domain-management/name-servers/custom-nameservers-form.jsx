@@ -122,7 +122,7 @@ const CustomNameserversForm = React.createClass( {
 		const classes = classnames( 'button is-primary is-full-width', { disabled: this.props.submitDisabled } );
 
 		if ( ! this.props.nameservers ) {
-			return <div className="custom-nameservers-form is-compact card">{ this.translate( 'Loading…' ) }</div>;
+			return null;
 		}
 
 		return (

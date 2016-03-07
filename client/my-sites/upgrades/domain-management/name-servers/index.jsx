@@ -5,6 +5,7 @@ import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -71,9 +72,17 @@ const NameServers = React.createClass( {
 		this.setState( { nameservers: nextNameservers.list } );
 	},
 
+	isLoading() {
+		return ! this.props.domains.hasLoadedFromServer || ! this.props.nameservers.hasLoadedFromServer;
+	},
+
 	render() {
+		const classes = classNames( 'name-servers', {
+			'is-placeholder': this.isLoading()
+		} );
+
 		return (
-			<Main className="name-servers">
+			<Main className={ classes }>
 				{ this.header() }
 
 				<VerticalNav>
