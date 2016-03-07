@@ -57,4 +57,4 @@ export default connect( ( state ) => {
 	return {
 		siteId: get( getSelectedSite( state ), 'ID' )
 	};
-}, null, null, { pure: false } )( VideoView )
+} )( VideoView )
