@@ -64,6 +64,7 @@ CALYPSO_ENV ?= $(NODE_ENV)
 export NODE_ENV := $(NODE_ENV)
 export CALYPSO_ENV := $(CALYPSO_ENV)
 export NODE_PATH := server$(SEPARATOR)client$(SEPARATOR).
+export BABEL_CACHE_PATH := $(THIS_DIR)/.caches/babel.json
 
 # We use `semver` to check the version of Node.js before installing npm
 # packages or running scripts.  Since this is before npm runs, we need to grab
@@ -159,7 +160,7 @@ server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
 
 build-server: install
-	@mkdir -p build
+	@mkdir -p build .caches
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
 
 build: install build-$(CALYPSO_ENV)
@@ -177,7 +178,7 @@ build-desktop build-desktop-mac-app-store build-horizon build-stage build-produc
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
 clean:
-	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js public/editor.css build/* server/bundler/*.json
+	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js public/editor.css build/* .caches/* server/bundler/*.json
 
 # the `distclean` rule deletes all the files created from `make install`
 distclean:
