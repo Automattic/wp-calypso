@@ -54,6 +54,14 @@ export const shouldBoot = () => {
 };
 
 /**
+ * Ensure the current support token is persisted for the next time Calypso boots
+ * @param {Object} tokenObject The token data that should be persisted
+ */
+export const persistToken = ( tokenObject ) => {
+	store.set( STORAGE_KEY, tokenObject );
+}
+
+/**
  * Reboot normally as the main user
  */
 export const rebootNormally = () => {
@@ -79,7 +87,7 @@ export const rebootWithToken = ( user, token ) => {
 
 	debug( 'Rebooting Calypso with support user' );
 
-	store.set( STORAGE_KEY, { user, token } );
+	persistToken( { user, token } );
 	window.location.reload();
 };
 
@@ -91,6 +99,7 @@ const onTokenError = ( error ) => {
 
 /**
  * Inject the support user token into all following API calls
+ * @return {Object}      The token information
  */
 export const boot = () => {
 	if ( ! isEnabled() ) {
@@ -109,6 +118,8 @@ export const boot = () => {
 	reduxStoreReady.then( ( reduxStore ) => {
 		reduxStore.dispatch( supportUserActivate() );
 	} );
+
+	return { user, token };
 };
 
 export const fetchToken = ( user, password ) => {

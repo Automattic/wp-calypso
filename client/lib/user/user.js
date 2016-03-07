@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { shouldBoot as shouldBootToSupportUser, boot as supportUserBoot } from 'lib/user/support-user-interop';
+import {
+	boot as supportUserBoot,
+	persistToken as supportUserPersistToken,
+	shouldBoot as shouldBootToSupportUser,
+} from 'lib/user/support-user-interop';
 
 /**
  * External dependencies
@@ -51,8 +55,15 @@ User.prototype.initialize = function() {
 	this.initialized = false;
 
 	if ( shouldBootToSupportUser() ) {
-		supportUserBoot();
+		const token = supportUserBoot();
+
 		this.fetch();
+
+		// The store is cleared when the user changes, so we need to persist the token
+		// again for future reloads
+		this.once( 'change', () => {
+			supportUserPersistToken( token );
+		} );
 
 		// We're booting into support user mode, skip initialization of the main user.
 		return;
