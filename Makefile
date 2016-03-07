@@ -115,12 +115,12 @@ test: build
 	@$(BIN)/run-all-tests
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
-	@$(NODE_BIN)/eslint --quiet $(JS_FILES)
+	@$(NPM) run lint
 
 eslint: lint
 
 eslint-branch: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint
-	@git diff --name-only $$(git merge-base $$(git rev-parse --abbrev-ref HEAD) master)..HEAD | grep '\.jsx\?$$' | xargs $(NODE_BIN)/eslint
+	@git diff --name-only $$(git merge-base $$(git rev-parse --abbrev-ref HEAD) master)..HEAD | grep '\.jsx\?$$' | xargs $(NODE_BIN)/eslint --cache
 
 # Skip test directories (with the sed regex) for i18nlint in lieu of proper
 # ignore functionality

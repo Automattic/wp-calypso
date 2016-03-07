@@ -117,7 +117,8 @@
     "npm": "2.14.12"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "lint": "bin/run-lint"
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
