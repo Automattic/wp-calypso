@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var StepHeader = require( 'signup/step-header' ),
-	NavigationLink = require( 'signup/navigation-link' );
+import StepHeader from 'signup/step-header';
+import NavigationLink from 'signup/navigation-link';
+import Button from 'components/button';
+import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StepWrapper',
 
 	renderSkip: function() {
@@ -51,11 +53,16 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		console.log( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) );
 		return (
 			<div className="step-wrapper">
 				<StepHeader
 					headerText={ this.headerText() }
-					subHeaderText={ this.subHeaderText() } />
+					subHeaderText={ this.subHeaderText() }>
+					{ config.isEnabled( 'jetpack/calypso-first-signup-flow' )
+						? ( this.props.headerButton )
+					 	: null }
+				</StepHeader>
 				<div className="is-animated-content">
 					{ this.props.stepContent }
 					<div className="step-wrapper__buttons">

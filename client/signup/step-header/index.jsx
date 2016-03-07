@@ -1,15 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
-var preventWidows = require( 'lib/formatting' ).preventWidows;
+import { preventWidows } from 'lib/formatting';
 
 module.exports = React.createClass( {
 	displayName: 'StepHeader',
+
+	propTypes: {
+		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
+	},
 
 	render: function() {
 		return (

@@ -10,7 +10,8 @@ var React = require( 'react' ),
 var analytics = require( 'analytics' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ThemesList = require( 'components/themes-list' ),
-	StepWrapper = require( 'signup/step-wrapper' );
+	StepWrapper = require( 'signup/step-wrapper' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
@@ -93,6 +94,12 @@ module.exports = React.createClass( {
 		);
 	},
 
+	renderJetpackButton() {
+		return (
+			<Button compact href="/jetpack/connect">{ this.translate( 'Or Install Jetpack on a Self-Hosted Site' ) }</Button>
+		);
+	},
+
 	render: function() {
 		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentyfifteen' } : undefined;
 		return (
@@ -102,6 +109,7 @@ module.exports = React.createClass( {
 				subHeaderText={ this.translate( 'Choose a theme. You can always switch to a different theme later.' ) }
 				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }
+				headerButton={ this.renderJetpackButton() }
 				{ ...this.props } />
 		);
 	}

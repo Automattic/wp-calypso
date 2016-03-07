@@ -147,8 +147,15 @@ export default {
 	},
 
 	jetpackConnect( context ) {
+		context.store.dispatch( setSection( 'jetpackConnect', {
+			hasSidebar: false
+		} ) );
+
 		ReactDom.render(
-			React.createElement( JetpackConnect, {} ),
+			React.createElement( JetpackConnect, {
+				path: context.path,
+				locale: context.params.lang
+			} ),
 			document.getElementById( 'primary' )
 		);
 	}
