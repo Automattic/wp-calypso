@@ -191,6 +191,7 @@ const EditorVisibility = React.createClass( {
 
 			case 'password':
 				postEdits.password = this.props.savedPassword || ' ';
+				this.setState( { passwordIsValid: true } );
 				this.props.setPostPasswordProtected( postEdits.password );
 				break;
 		}
@@ -205,18 +206,9 @@ const EditorVisibility = React.createClass( {
 	},
 
 	onKey( event ) {
-		var password;
-
-		password = ReactDom.findDOMNode( this.refs.postPassword ).value.trim();
-
-		if ( event.key === 'Backspace' &&
-			! password.length ) {
-			this.setState( { passwordIsValid: false } );
-		}
 		if ( includes( [ 'Enter', 'Escape' ], event.key ) ) {
 			this.closePopover();
 		}
-		return;
 	},
 
 	setPostToPrivate() {
@@ -267,12 +259,17 @@ const EditorVisibility = React.createClass( {
 	},
 
 	onPasswordChange( event ) {
-		var newPassword = event.target.value.trim();
+		let newPassword = event.target.value.trim();
+		const passwordIsValid = newPassword.length > 0;
+
+		this.setState( { passwordIsValid } );
+
+		if ( ! passwordIsValid ) {
+			newPassword = ' ';
+		}
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( { password: newPassword } );
-
-		this.setState( { passwordIsValid: newPassword.length > 0 } );
 
 		this.props.setPostPassword( newPassword );
 	},
