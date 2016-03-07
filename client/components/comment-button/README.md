@@ -1,16 +1,16 @@
 Comment Button
 =========
 
-This component is used to display a button with an embedded number indicator
+This component is used to display a button with an embedded number indicator.
 
 #### How to use:
 
 ```js
-const  CommentButton = require( 'components/comment-button' );
+import CommentButton from 'components/comment-button';
 
-render: function() {
+render() {
 	return (
-		<CommentButton />
+		<CommentButton commentCount={ 123 } />
 	);
 }
 ```

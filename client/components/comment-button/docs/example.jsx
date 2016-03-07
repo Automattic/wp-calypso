@@ -1,26 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var CommentButton = require( 'components/comment-button' );
+import CommentButton from 'components/comment-button';
+import Card from 'components/card';
 
-var AddNewButtons = React.createClass( {
-	displayName: 'CommentButton',
+const CommentButtonExample = () => (
+	<div className="design-assets__group">
+		<h2>
+			<a href="/devdocs/app-components/comment-button">Comment Buttons</a>
+		</h2>
+		<Card>
+			<span>No comments:</span>
+			<CommentButton commentCount={ 0 } />
+		</Card>
+		<Card>
+			<span>With comments:</span>
+			<CommentButton commentCount={ 42 } />
+		</Card>
+	</div>
+);
 
-	render: function() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/comment-button">Comment Buttons</a>
-				</h2>
-				<CommentButton commentCount={ 10 } />
-			</div>
-		);
-	}
-} );
-
-module.exports = AddNewButtons;
+export default CommentButtonExample;
