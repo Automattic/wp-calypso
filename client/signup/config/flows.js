@@ -228,6 +228,9 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
+	if ( 'headstart' === flowName && 'production' === config( 'env' ) ) {
+		return 'main';
+	}
 	return flowName;
 }
 
