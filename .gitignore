@@ -11,6 +11,7 @@ node_modules
 /npm-debug.log*
 *.sw?
 !*.swf
+.eslintcache
 
 # script used during docker build that is specific to the environment
 env-config.sh
