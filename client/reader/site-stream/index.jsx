@@ -132,7 +132,7 @@ const SiteStream = React.createClass( {
 		}
 
 		if ( site && site.get( 'state' ) === SiteState.ERROR ) {
-			return <FeedError listName={ title } />;
+			return <FeedError sidebarTitle={ title } />;
 		}
 
 		if ( site && site.get( 'has_featured' ) ) {

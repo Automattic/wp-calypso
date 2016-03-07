@@ -1,30 +1,33 @@
-// External dependencies
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-// Internal dependencies
-var Main = require( 'components/main' ),
-	MobileBackToSidebar = require( 'components/mobile-back-to-sidebar' ),
-	EmptyContent = require( 'components/empty-content' );
+/**
+ * Internal dependencies
+ */
+import Main from 'components/main';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import EmptyContent from 'components/empty-content';
+import i18n from 'lib/mixins/i18n';
 
-var FeedError = React.createClass( {
+const FeedError = ( { sidebarTitle } ) => (
+	<Main>
+		<MobileBackToSidebar>
+			<h1>{ sidebarTitle }</h1>
+		</MobileBackToSidebar>
 
-	render: function() {
-		return (
-			<Main>
-				<MobileBackToSidebar>
-					<h1>{ this.props.listName }</h1>
-				</MobileBackToSidebar>
+		<EmptyContent
+			title={ i18n.translate( 'Sorry. We can\'t find that stream.' ) }
+			illustration={ '/calypso/images/drake/drake-404.svg' }
+			illustrationWidth={ 500 }
+		/>
 
-				<EmptyContent
-					title={ this.translate( 'Sorry. We can\'t find that stream.' ) }
-					illustration={ '/calypso/images/drake/drake-404.svg' }
-					illustrationWidth={ 500 }
-				/>
+	</Main>
+);
 
-			</Main>
-		);
-	}
+FeedError.propTypes = {
+	sidebarTitle: React.PropTypes.string
+};
 
-} );
-
-module.exports = FeedError;
+export default FeedError;
