@@ -11,6 +11,7 @@ import GoogleAppsDetails from './google-apps-details';
 import { isGoogleApps } from 'lib/products-values';
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
+import supportUrls from 'lib/url/support';
 
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
@@ -24,7 +25,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 					title={ i18n.translate( 'Verify your email address' ) }
 					description={ i18n.translate( 'We sent you an email with a request to verify your new domain. Unverified domains may be suspended.' ) }
 					buttonText={ i18n.translate( 'Learn more about verifying your domain' ) }
-					href="//support.wordpress.com/domains/register-domain/#email-validation-and-verification"
+					href={ supportUrls.EMAIL_VALIDATION_AND_VERIFICATION }
 					target="_blank"
 					requiredText={ i18n.translate( 'Important! Your action is required.' ) }
 					isRequired />
@@ -37,7 +38,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 				title={ i18n.translate( 'When will it be ready?' ) }
 				description={ i18n.translate( 'Your domain should start working immediately, but may be unreliable during the first 72 hours.' ) }
 				buttonText={ i18n.translate( 'Learn more about your domain' ) }
-				href="//support.wordpress.com/domains/register-domain/"
+				href={ supportUrls.REGISTER_DOMAIN }
 				target="_blank" />
 
 			{ hasOtherPrimaryDomain && (

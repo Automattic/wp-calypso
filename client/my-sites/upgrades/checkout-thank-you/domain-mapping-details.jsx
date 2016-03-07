@@ -8,6 +8,7 @@ import React from 'react';
  */
 import i18n from 'lib/mixins/i18n';
 import PurchaseDetail from 'components/purchase-detail';
+import supportUrls from 'lib/url/support';
 
 const DomainMappingDetails = ( { domain, registrarSupportUrl } ) => {
 	const registrarSupportLink = registrarSupportUrl ? <a target="_blank" href={ registrarSupportUrl } /> : <span />;
@@ -50,7 +51,7 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl } ) => {
 				title={ i18n.translate( 'Finish setting up your domain' ) }
 				description={ description }
 				buttonText={ i18n.translate( 'Learn more' ) }
-				href="//support.wordpress.com/map-existing-domain/"
+				href={ supportUrls.MAP_EXISTING_DOMAIN }
 				target="_blank"
 				requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
 				isRequired />

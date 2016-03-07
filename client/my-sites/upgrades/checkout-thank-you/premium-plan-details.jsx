@@ -8,6 +8,7 @@ import React from 'react';
  */
 import config from 'config';
 import i18n from 'lib/mixins/i18n';
+import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 
 const PremiumPlanDetails = ( { selectedSite } ) => {
@@ -55,7 +56,7 @@ const PremiumPlanDetails = ( { selectedSite } ) => {
 					)
 				}
 				buttonText={ i18n.translate( 'Start a new post' ) }
-				href={ '/post/' + selectedSite.slug } />
+				href={ paths.newPost( selectedSite ) } />
 
 		</div>
 	);

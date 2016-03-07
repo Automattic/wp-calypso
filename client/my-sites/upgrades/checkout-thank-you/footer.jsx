@@ -8,6 +8,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 import { isJetpackPlan } from 'lib/products-values';
+import supportUrls from 'lib/url/support';
 
 const CheckoutThankYouFooter = React.createClass( {
 	propTypes: {
@@ -26,8 +27,8 @@ const CheckoutThankYouFooter = React.createClass( {
 				'or {{contactLink}}contact us{{/contactLink}}.',
 				{
 					components: {
-						supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-						contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
+						supportDocsLink: <a href={ supportUrls.JETPACK_SUPPORT } target="_blank" />,
+						contactLink: <a href={ supportUrls.JETPACK_CONTACT_SUPPORT } target="_blank" />
 					}
 				}
 			);
@@ -39,7 +40,7 @@ const CheckoutThankYouFooter = React.createClass( {
 			'or {{contactLink}}contact us{{/contactLink}}.',
 			{
 				components: {
-					supportDocsLink: <a href="http://support.wordpress.com" target="_blank" />,
+					supportDocsLink: <a href={ supportUrls.SUPPORT_ROOT } target="_blank" />,
 					forumLink: <a href="http://forums.wordpress.com" target="_blank" />,
 					contactLink: <a href={ '/help/contact' } />
 				}
