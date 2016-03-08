@@ -24,6 +24,11 @@ var Dispatcher = require( 'dispatcher' ),
 var MediaActions = {},
 	_fetching = {};
 
+/**
+ * Constants
+ */
+const ONE_YEAR_IN_MILLISECONDS = 31540000000;
+
 MediaActions.setQuery = function( siteId, query ) {
 	Dispatcher.handleViewAction( {
 		type: 'SET_MEDIA_QUERY',
@@ -84,84 +89,95 @@ MediaActions.fetchNextPage = function( siteId ) {
 	} );
 };
 
-MediaActions.add = function( siteId, file ) {
-	var query = {},
-		isUrl = 'string' === typeof file,
-		addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles',
-		fileUrl, transientMedia;
-
-	if ( Array.isArray( file ) || file instanceof window.FileList ) {
-		Array.prototype.slice.call( file ).forEach( MediaActions.add.bind( null, siteId ) );
-		return;
+MediaActions.add = function( siteId, files ) {
+	if ( files instanceof window.FileList ) {
+		files = [ ...files ];
 	}
 
-	// Generate a fake transient media item that can be rendered into the list
-	// immediately, even before the media has persisted to the server
-	transientMedia = {
-		ID: uniqueId( 'media-' ),
-		date: new Date().toISOString(),
-		transient: true
-	};
-
-	if ( 'string' === typeof file ) {
-		// Generate from string
-		assign( transientMedia, {
-			file: file,
-			extension: path.extname( file ).slice( 1 ),
-			mime_type: MediaUtils.getMimeType( file ),
-			title: path.basename( file )
-		} );
-	} else {
-		// Generate from window.File object
-		fileUrl = window.URL.createObjectURL( file );
-		assign( transientMedia, {
-			URL: fileUrl,
-			guid: fileUrl,
-			file: file.name,
-			extension: path.extname( file.name ).slice( 1 ),
-			mime_type: MediaUtils.getMimeType( file.name ),
-			title: path.basename( file.name ),
-			// Size is not an API media property, though can be useful for
-			// validation purposes if known
-			size: file.size
-		} );
+	if ( ! Array.isArray( files ) ) {
+		files = [ files ];
 	}
 
-	Dispatcher.handleViewAction( {
-		type: 'CREATE_MEDIA_ITEM',
-		siteId: siteId,
-		data: transientMedia
-	} );
+	// We offset the current time when generating a fake date for the transient
+	// media so that the first uploaded media doesn't suddenly become newest in
+	// the set once it finishes uploading. This duration is pretty arbitrary,
+	// but one would hope that it would never take this long to upload an item.
+	const baseTime = Date.now() + ONE_YEAR_IN_MILLISECONDS;
 
-	// Abort upload if file fails to pass validation.
-	if ( MediaValidationStore.getErrors( siteId, transientMedia.ID ).length ) {
-		return;
-	}
-
-	// Assign parent ID if currently editing post
-	const post = PostEditStore.get();
-	if ( post && post.ID && ! isPlainObject( file ) ) {
-		file = {
-			parent_id: post.ID,
-			[ isUrl ? 'url' : 'file' ]: file
+	return files.reduce( ( lastUpload, file, i ) => {
+		// Generate a fake transient media item that can be rendered into the list
+		// immediately, even before the media has persisted to the server
+		const id = uniqueId( 'media-' );
+		const transientMedia = {
+			ID: id,
+			transient: true,
+			// Assign a date such that the first item will be the oldest at the
+			// time of upload, as this is expected order when uploads finish
+			date: new Date( baseTime - ( files.length - i ) ).toISOString()
 		};
-	}
 
-	debug( 'Uploading media to %d from %o', siteId, file );
-	wpcom.site( siteId )[ addHandler ]( query, file, function( error, data ) {
-		var item;
-		if ( data && data.media ) {
-			item = data.media[0];
+		if ( 'string' === typeof file ) {
+			// Generate from string
+			assign( transientMedia, {
+				file: file,
+				extension: path.extname( file ).slice( 1 ),
+				mime_type: MediaUtils.getMimeType( file ),
+				title: path.basename( file )
+			} );
+		} else {
+			// Generate from window.File object
+			const fileUrl = window.URL.createObjectURL( file );
+			assign( transientMedia, {
+				URL: fileUrl,
+				guid: fileUrl,
+				file: file.name,
+				extension: path.extname( file.name ).slice( 1 ),
+				mime_type: MediaUtils.getMimeType( file.name ),
+				title: path.basename( file.name ),
+				// Size is not an API media property, though can be useful for
+				// validation purposes if known
+				size: file.size
+			} );
 		}
 
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_MEDIA_ITEM',
-			error: error,
+		Dispatcher.handleViewAction( {
+			type: 'CREATE_MEDIA_ITEM',
 			siteId: siteId,
-			id: transientMedia.ID,
-			data: item
+			data: transientMedia
 		} );
-	} );
+
+		// Abort upload if file fails to pass validation.
+		if ( MediaValidationStore.getErrors( siteId, id ).length ) {
+			return Promise.resolve();
+		}
+
+		// Determine upload mechanism by object type
+		const isUrl = 'string' === typeof file;
+		const addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles';
+
+		// Assign parent ID if currently editing post
+		const post = PostEditStore.get();
+		if ( post && post.ID && ! isPlainObject( file ) ) {
+			file = {
+				parent_id: post.ID,
+				[ isUrl ? 'url' : 'file' ]: file
+			};
+		}
+
+		debug( 'Uploading media to %d from %o', siteId, file );
+		return lastUpload.then( () => {
+			// Achieve series upload by waiting for the previous promise to
+			// resolve before starting this item's upload
+			const action = { type: 'RECEIVE_MEDIA_ITEM', id, siteId };
+			return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
+				Dispatcher.handleServerAction( Object.assign( action, {
+					data: data.media[ 0 ]
+				} ) );
+			} ).catch( ( error ) => {
+				Dispatcher.handleServerAction( Object.assign( action, { error } ) );
+			} );
+		} );
+	}, Promise.resolve() );
 };
 
 MediaActions.edit = function( siteId, item ) {
