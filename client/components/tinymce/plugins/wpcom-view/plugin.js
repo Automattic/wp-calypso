@@ -249,11 +249,7 @@ function wpview( editor ) {
 			return;
 		}
 
-		content = editor.getContent( {
-			format: 'raw',
-			withMarkers: true
-		} );
-
+		content = editor.getContent( { format: 'raw' } );
 		processedContent = views.setMarkers( content );
 
 		if ( content !== processedContent ) {
@@ -488,7 +484,7 @@ function wpview( editor ) {
 	});
 
 	editor.on( 'GetContent', function( event ) {
-		if ( event.format === 'raw' && event.content && ! event.selection && ! event.withMarkers ) {
+		if ( event.format === 'raw' && event.content && ! event.selection ) {
 			event.content = resetViews( event.content );
 		}
 	} );
