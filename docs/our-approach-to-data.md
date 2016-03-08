@@ -97,7 +97,7 @@ client/state/
 
 For example, the reducer responsible for maintaining the `state.sites` key within the global state can be found in `client/state/sites/reducer.js`. It's quite common that the subject reducer is itself a combined reducer. Just as it helps to split the global state into subdirectories responsible for their own part of the tree, as a subject grows, you may find that it's easier to maintain pieces as nested subdirectories. This ease of composability is one of Redux's strengths.
 
-For your tests to be included in the Redux state test runner, you must require them in `client/state/test/index.js`. Note that each `describe` block in this file should mirror the folder structure of state. If you're only interested in running tests for a single subtree of the global state, suffix the `make test` command with a dash followed by the name of the subtree. For example, to run the sites subtree tests, I would enter `make test-sites` in my Terminal.
+For your tests to be included in the Redux state test runner, you must (temporary) require them in `client/tests.json`. (TODO: Add reference to single runner). If you're only interested in running tests for a single subtree of the global state, use grep option in the `npm run test-client`. For example, to run the sites subtree tests, I would enter `npm run test-client -- --grep "sites"` in my Terminal.
 
 ### Actions
 

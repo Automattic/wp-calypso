@@ -4,27 +4,17 @@ Calypso has a lot of React UI components. (Try for example running `find -name *
 
 ## [Getting started](#getting-started)
 
-To run all current tests, run `make test` in the root source folder. You can also run individual tests by going into their folder and running `make test` there.
+To run all current tests, run `make test` in the root source folder. You can also run individual tests by TODO: figure out how.
 
-An easy way to find existing tests, to see how they were done or otherwise, is to run `find -name Makefile` under the folder from which you want to find the tests. This works because Makefiles are almost exclusively used for setting up a test environment for a folder. Searching the Calypso Github repository also works.
+An easy way to find existing tests, to see how they were done or otherwise, is to run TODO: figure out how to search. Searching the Calypso Github repository also works.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
-Tests are currently set up using Makefiles. If the component you're testing uses jsx syntax (which a lot of the React code uses, read more about it [here](https://facebook.github.io/react/docs/jsx-in-depth.html)) and hence is named .jsx, the --compilers flag with the jsx:jsx-require-extension option is needed. Otherwise you should leave it out.
-```
-REPORTER ?= spec
-MOCHA ?= ../../../node_modules/.bin/mocha
 
-test:
-     @NODE_ENV=test NODE_PATH=test:../../ $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)
+TODO: Add reference to single runner.
 
-.PHONY: test
-```
-
-
-Put this next to your component in a file named Makefile. Then make a test folder next to it and place your tests there. Now your tests should be runnable both from your component's folder and from all folders above it.
-
+...
 
 ### [What to test?](#what-to-test)
 
