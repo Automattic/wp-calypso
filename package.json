@@ -143,6 +143,7 @@
     "lodash-deep": "1.5.3",
     "mixedindentlint": "1.1.1",
     "mocha": "2.3.4",
+    "mocha-junit-reporter": "1.9.1",
     "mockery": "1.4.0",
     "nock": "2.17.0",
     "react-addons-test-utils": "0.14.3",

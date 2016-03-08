@@ -9175,6 +9175,22 @@
     },
     "ms": {
       "version": "0.7.1"
+    },
+    "mocha-junit-reporter": {
+      "version": "1.9.1",
+      "dependencies": {
+        "mkdirp": {
+          "version": "0.5.1",
+          "dependencies": {
+            "minimist": {
+              "version": "0.0.8"
+            }
+          }
+        },
+        "xml": {
+          "version": "1.0.1"
+        }
+      }
     }
   }
 }
