@@ -401,7 +401,7 @@ function onmessage (e) {
     debug('got %o status code for URL: %o', statusCode, xhr.params.path);
   }
 
-  if (body && headers) {
+  if (typeof body === 'object' && headers) {
     body._headers = headers;
   }
 
