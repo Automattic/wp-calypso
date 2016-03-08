@@ -33,6 +33,12 @@ var rule = require( '../../../lib/rules/i18n-no-variables' ),
 		},
 		{
 			code: 'translate( \'A literal key\', { \'context\': "A literal" } );'
+		},
+		{
+			code: 'translate( { original: \'Hello World\' } );'
+		},
+		{
+			code: 'translate( { original: { single: \'Hello World\' } } );'
 		}
 	],
 
@@ -69,6 +75,18 @@ var rule = require( '../../../lib/rules/i18n-no-variables' ),
 		},
 		{
 			code: 'translate( \'Hello \' + name );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
+		{
+			code: 'translate( { original: string } );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
+		{
+			code: 'translate( { original: { single: string } } );',
 			errors: [ {
 				message: rule.ERROR_MESSAGE
 			} ]

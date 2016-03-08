@@ -7,6 +7,12 @@
 'use strict';
 
 //------------------------------------------------------------------------------
+// Constants
+//------------------------------------------------------------------------------
+
+var VERIFY_OPTION_LITERALS = [ 'context', 'comment', 'original', 'single', 'plural' ];
+
+//------------------------------------------------------------------------------
 // Helper Functions
 //------------------------------------------------------------------------------
 
@@ -27,6 +33,29 @@ var rule = module.exports = function( context ) {
 		return 'Literal' === node.type;
 	}
 
+	function validateOptions( options ) {
+		return options.properties.every( function( property ) {
+			var key = property.key.name;
+
+			// `options.original` can be a string value to be validated in this
+			// block, or as an object should validate its nested single and
+			// plural keys
+			if ( property.value.type === 'ObjectExpression' && 'original' === key ) {
+				validateOptions( property.value );
+				return;
+			}
+
+			// Skip keys which we are not concerned with
+			if ( -1 === VERIFY_OPTION_LITERALS.indexOf( key ) ) {
+				return;
+			}
+
+			if ( ! isAcceptableLiteralNode( property.value ) ) {
+				context.report( property.value, rule.ERROR_MESSAGE );
+			}
+		} );
+	}
+
 	return {
 		CallExpression: function( node ) {
 			var options;
@@ -35,9 +64,17 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg, i ) {
+				var isLastArgument = i === node.arguments.length - 1;
+
 				// Ignore last argument in multi-argument translate call, which
 				// should be the object argument
-				if ( i === node.arguments.length - 1 && node.arguments.length > 1 ) {
+				if ( isLastArgument && node.arguments.length > 1 ) {
+					return;
+				}
+
+				// Ignore ObjectExpression-only invocation, as it is valid to
+				// call translate with object options
+				if ( isLastArgument && 'ObjectExpression' === arg.type ) {
 					return;
 				}
 
@@ -46,23 +83,11 @@ var rule = module.exports = function( context ) {
 				}
 			} );
 
-			// Done if no options
+			// Verify that option literals are not variables
 			options = node.arguments[ node.arguments.length - 1 ];
-			if ( ! options || options.type !== 'ObjectExpression' ) {
-				return;
+			if ( options && options.type === 'ObjectExpression' ) {
+				validateOptions( options );
 			}
-
-			// Verify that context and comment are non-variable
-			options.properties.forEach( function( property ) {
-				var key = property.key.name;
-				if ( key !== 'context' && key !== 'comment' ) {
-					return;
-				}
-
-				if ( ! isAcceptableLiteralNode( property.value ) ) {
-					context.report( property.value, rule.ERROR_MESSAGE );
-				}
-			} );
 		}
 	};
 };
