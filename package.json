@@ -117,8 +117,18 @@
     "npm": "2.14.12"
   },
   "scripts": {
-    "test": "make test",
-    "lint": "bin/run-lint"
+    "lint": "node bin/run-lint",
+    "githooks:commit": "cpy ./bin/pre-commit .git/hooks --no-overwrite",
+    "githooks:push": "cpy ./bin/pre-push .git/hooks --no-overwrite",
+    "githooks": "npm-run-all githooks:commit githooks:push",
+    "clean:build": "node cleanup",
+    "clean": "npm run clean:build",
+    "checknode": "node bin/check-node-version",
+    "predependencies": "npm install semver cpy-cli glob rimraf",
+    "runnotice": "echo Bootstrapping npm install...",
+    "finishnotice": "echo Bootstrap operations finished.",
+    "bootstrap": "npm run runnotice && npm install npm-run-all && npm-run-all predependencies checknode githooks clean finishnotice",
+    "test": "make test && npm run clean"
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
