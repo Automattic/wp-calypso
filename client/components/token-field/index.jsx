@@ -32,6 +32,7 @@ var TokenField = React.createClass( {
 		maxLength: React.PropTypes.number,
 		onFocus: React.PropTypes.func,
 		disabled: React.PropTypes.bool,
+		tokenizeOnSpace: React.PropTypes.bool,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -62,7 +63,8 @@ var TokenField = React.createClass( {
 			onChange: function() {},
 			tokenStatus: function() {},
 			isBorderless: false,
-			disabled: false
+			disabled: false,
+			tokenizeOnSpace: false
 		};
 	},
 
@@ -316,6 +318,11 @@ var TokenField = React.createClass( {
 				break;
 			case 46: // delete (to right)
 				preventDefault = this._handleDeleteKey( this._deleteTokenAfterInput );
+				break;
+			case 32: // space
+				if ( this.props.tokenizeOnSpace ) {
+					preventDefault = this._addCurrentToken();
+				}
 				break;
 			default:
 				break;
