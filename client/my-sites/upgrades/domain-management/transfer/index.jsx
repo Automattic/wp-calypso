@@ -30,8 +30,8 @@ const Transfer = React.createClass( {
 	},
 
 	renderSection() {
-		const { locked } = this.props.wapiDomainInfo.data,
-			{ isPendingIcannVerification, transferProhibited } = getSelectedDomain( this.props );
+		const { locked, transferProhibited } = this.props.wapiDomainInfo.data,
+			{ isPendingIcannVerification } = getSelectedDomain( this.props );
 		let section = null;
 
 		if ( transferProhibited ) {
