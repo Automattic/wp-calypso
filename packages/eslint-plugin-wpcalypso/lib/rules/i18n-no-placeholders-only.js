@@ -18,7 +18,7 @@ var RX_INTERPOLATED_COMPONENTS = /(\{\{\/?\s*\w+\s*\/?\}\})/g;
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getSequenceCallee = require( '../util/sequence-callee' );
+var getCallee = require( '../util/get-callee' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -27,7 +27,7 @@ var getSequenceCallee = require( '../util/sequence-callee' );
 var rule = module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
-			if ( 'translate' !== getSequenceCallee( node ).name ) {
+			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 

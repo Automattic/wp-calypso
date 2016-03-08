@@ -17,7 +17,7 @@ var RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:\+
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getSequenceCallee = require( '../util/sequence-callee' );
+var getCallee = require( '../util/get-callee' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -27,7 +27,7 @@ var rule = module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
 			var singular, plural, singularMatch, pluralMatch;
-			if ( 'translate' !== getSequenceCallee( node ).name ) {
+			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 

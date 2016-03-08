@@ -1,14 +1,14 @@
 /**
- * @fileoverview Utility for retrieving first non-sequence callee from a CallExpression node
+ * @fileoverview Utility for retrieving callee identifier node from a CallExpression
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
 
 var assert = require( 'assert' );
-var getSequenceCallee = require( '../../../lib/util/sequence-callee' );
+var getCallee = require( '../../../lib/util/get-callee' );
 
-describe( '#getSequenceCallee', function() {
+describe( '#getCallee', function() {
 	it( 'should return non-sequence callee', function() {
 		var node, callee;
 		node = {
@@ -18,7 +18,7 @@ describe( '#getSequenceCallee', function() {
 				name: 'translate'
 			}
 		};
-		callee = getSequenceCallee( node );
+		callee = getCallee( node );
 
 		assert.equal( callee, node.callee );
 	} );
@@ -38,8 +38,28 @@ describe( '#getSequenceCallee', function() {
 				} ]
 			}
 		};
-		callee = getSequenceCallee( node );
+		callee = getCallee( node );
 
 		assert.equal( callee, node.callee.expressions[ 1 ] );
+	} );
+
+	it( 'should return first non-sequence member property', function() {
+		var node, callee;
+		node = {
+			type: 'CallExpression',
+			callee: {
+				type: 'MemberExpression',
+				object: {
+					type: 'ThisExpression'
+				},
+				property: {
+					type: 'Identifier',
+					value: 'translate'
+				}
+			}
+		};
+		callee = getCallee( node );
+
+		assert.equal( callee, node.callee.property );
 	} );
 } );

@@ -16,7 +16,7 @@ var VERIFY_OPTION_LITERALS = [ 'context', 'comment', 'original', 'single', 'plur
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getSequenceCallee = require( '../util/sequence-callee' );
+var getCallee = require( '../util/get-callee' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -59,7 +59,7 @@ var rule = module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
 			var options;
-			if ( 'translate' !== getSequenceCallee( node ).name ) {
+			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 

@@ -20,6 +20,12 @@ var rule = require( '../../../lib/rules/i18n-ellipsis' ),
 ( new RuleTester() ).run( 'i18n-ellipsis', rule, {
 	valid: [
 		{
+			code: 'this.translate( \'Hello World…\' );'
+		},
+		{
+			code: 'i18n.translate( \'Hello World…\' );'
+		},
+		{
 			code: 'translate( \'Hello World…\' );'
 		},
 		{
@@ -31,6 +37,18 @@ var rule = require( '../../../lib/rules/i18n-ellipsis' ),
 	],
 
 	invalid: [
+		{
+			code: 'this.translate( \'Hello World...\' );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
+		{
+			code: 'i18n.translate( \'Hello World...\' );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
 		{
 			code: 'translate( \'Hello World...\' );',
 			errors: [ {
