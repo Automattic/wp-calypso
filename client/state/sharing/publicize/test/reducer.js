@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -122,18 +123,47 @@ describe( '#connections()', () => {
 	} );
 
 	describe( 'persistence', () => {
-		it( 'does not persist data because this is not implemented yet', () => {
+		before( () => {
+			sinon.stub( console, 'warn' );
+		} );
+		after( () => {
+			console.warn.restore();
+		} );
+
+		it( 'should persist data', () => {
 			const state = deepFreeze( {
 				1: { ID: 1, site_ID: 2916284 },
 				2: { ID: 2, site_ID: 2916284 }
 			} );
 			const persistedState = connections( state, { type: SERIALIZE } );
-			expect( persistedState ).to.eql( {} );
+			expect( persistedState ).to.eql( state );
 		} );
 
-		it( 'does not load persisted data because this is not implemented yet', () => {
+		it( 'should load valid data', () => {
 			const persistedState = deepFreeze( {
 				1: { ID: 1, site_ID: 2916284 },
+				2: { ID: 2, site_ID: 2916284 }
+			} );
+			const state = connections( persistedState, {
+				type: DESERIALIZE
+			} );
+			expect( state ).to.eql( persistedState );
+		} );
+
+		it( 'should ignore loading data with invalid keys', () => {
+			const persistedState = deepFreeze( {
+				foo: { ID: 1, site_ID: 2916284 },
+				bar: { ID: 2, site_ID: 2916284 }
+			} );
+			const state = connections( persistedState, {
+				type: DESERIALIZE
+			} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should ignore loading data with invalid values', () => {
+			const persistedState = deepFreeze( {
+				1: { ID: 1, site_ID: 'foo' },
 				2: { ID: 2, site_ID: 2916284 }
 			} );
 			const state = connections( persistedState, {
