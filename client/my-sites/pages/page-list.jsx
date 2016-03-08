@@ -16,8 +16,7 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus,
-	config = require( 'config' );
+	mapStatus = require( 'lib/route' ).mapPostStatus;
 
 var PageList = React.createClass( {
 
@@ -132,11 +131,7 @@ var Pages = React.createClass({
 			/>;
 		} else {
 
-			if ( config.isEnabled( 'post-editor/pages' ) ) {
-				newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
-			} else {
-				newPageLink = selectedSite ? '//wordpress.com/page/' + selectedSite.ID + '/new' : '//wordpress.com/page';
-			}
+			newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {

@@ -17,7 +17,6 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	helpers = require( './helpers' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	analytics = require( 'analytics' ),
-	config = require( 'config' ),
 	utils = require( 'lib/posts/utils' );
 
 function recordEvent( eventAction ) {
@@ -135,7 +134,7 @@ module.exports = React.createClass( {
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
 		parentHref = utils.userCan( 'edit_post', this.props.page ) ? helpers.editLinkForPage( page.parent, site ) : page.parent.URL;
-		parentLink = <a target={ config.isEnabled( 'post-editor/pages' ) ? null : '_blank' } href={ parentHref }>{ parentTitle }</a>;
+		parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
 		return ( <div className="page__popover-more-info">{
 			this.translate( "Child of {{PageTitle/}}", {
@@ -279,7 +278,6 @@ module.exports = React.createClass( {
 					title={ canEdit ?
 						this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
 						this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
-					target={ config.isEnabled( 'post-editor/pages' ) ? null : '_blank' }
 					onClick={ this.analyticsEvents.pageTitle }
 					>
 					{ depthIndicator }

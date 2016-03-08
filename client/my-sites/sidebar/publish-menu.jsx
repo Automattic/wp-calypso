@@ -41,10 +41,7 @@ var PublishMenu = React.createClass( {
 	},
 
 	getNewPageLink: function( site ) {
-		if ( config.isEnabled( 'post-editor/pages' ) ) {
-			return site ? '/page/' + site.slug : '/page';
-		}
-		return site ? '//wordpress.com/page/' + site.ID + '/new' : '//wordpress.com/page';
+		return site ? '/page/' + site.slug : '/page';
 	},
 
 	getDefaultMenuItems: function( site ) {
