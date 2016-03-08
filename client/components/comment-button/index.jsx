@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import noop from 'lodash/noop';
+
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+import Gridicon from 'components/gridicon';
 
-var CommentButton = React.createClass( {
+const CommentButton = React.createClass( {
 
 	propTypes: {
 		onClick: React.PropTypes.func,
@@ -16,7 +17,7 @@ var CommentButton = React.createClass( {
 		commentCount: React.PropTypes.number.isRequired
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			onClick: noop,
 			tagName: 'li',
@@ -24,18 +25,34 @@ var CommentButton = React.createClass( {
 		};
 	},
 
-	onClick: function( event ) {
+	onClick( event ) {
 		event.preventDefault();
 	},
 
-	onTap: function() {
+	onTap() {
 		this.props.onClick();
 	},
 
-	render: function() {
-		var containerTag = this.props.tagName;
+	render() {
+		let label;
+		const containerTag = this.props.tagName,
+			commentCount = this.props.commentCount;
 
-		var labelElement = ( <span className="comment-button__label">{ this.props.commentCount }</span> );
+		if ( commentCount === 0 ) {
+			label = this.translate( 'Comment' );
+		} else {
+			label = this.translate(
+				'Comment',
+				'Comments', {
+					count: commentCount,
+				}
+			);
+		}
+
+		const labelElement = ( <span className="comment-button__label">
+			{ commentCount > 0 ? <span className="comment-button__label-count">{ commentCount }</span> : null }
+			<span className="comment-button__label-status">{ label }</span>
+		</span> );
 
 		return React.createElement(
 			containerTag, {
@@ -48,4 +65,4 @@ var CommentButton = React.createClass( {
 	}
 } );
 
-module.exports = CommentButton;
+export default CommentButton;

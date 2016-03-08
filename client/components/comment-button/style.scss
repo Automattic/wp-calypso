@@ -3,19 +3,29 @@
 	list-style-type: none;
 	padding: 4px 4px 4px 27px;
 	position: relative;
-	text-transform: uppercase;
 
 	&:hover {
 		color: $blue-light;
 		cursor: pointer;
 	}
+
+	.comment-button__label-count {
+		margin-right: 4px;
+	}
+
+	.comment-button__label-status {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
 }
 
 .comment-button__icon {
-	fill: lighten( $gray, 10 );
+	fill: lighten( $gray, 10% );
 	position: absolute;
 		left: 0;
-		top: 2px;
+		top: 3px;
 
 	&:hover {
 		fill: $blue-light;
