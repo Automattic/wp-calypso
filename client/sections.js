@@ -179,4 +179,12 @@ if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
 	} );
 }
 
+if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+	sections.push( {
+		name: 'posts-custom',
+		paths: [ '/types' ],
+		module: 'my-sites/types'
+	} );
+}
+
 module.exports = sections;
