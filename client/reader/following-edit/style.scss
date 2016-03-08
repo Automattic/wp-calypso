@@ -152,7 +152,7 @@
 		.follow-button {
 			cursor: default;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( "<660px" ) {
 				margin-top: 7px;
 			}
 
