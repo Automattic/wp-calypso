@@ -40,6 +40,7 @@
 	}
 }
 
+
 .section-header.following-edit__header {
 	margin-bottom: 24px;
 
@@ -151,6 +152,10 @@
 		.follow-button {
 			cursor: default;
 
+			@include breakpoint( "<480px" ) {
+				margin-top: 7px;
+			}
+
 			.gridicon {
 				cursor: default;
 				fill: lighten( $gray, 20% );
@@ -158,6 +163,7 @@
 
 			.follow-button__label {
 				color: lighten( $gray, 20% );
+				display: inline-block;
 			}
 		}
 

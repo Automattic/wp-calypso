@@ -24,7 +24,7 @@ var FollowingEditSubscribeFormResult = React.createClass( {
 	render: function() {
 		const message = ! this.props.isValid ?
 			this.translate( 'Not a valid URL' ) :
-			this.translate( 'Click Follow to follow this URL' );
+			this.translate( 'Follow this site' );
 		const classes = classNames( 'is-search-result', { 'is-valid': this.props.isValid } );
 
 		return (
