@@ -7,17 +7,26 @@ import debug from 'debug';
 const log = debug( 'calypso:test:quick-mock' );
 
 function findQuickMocks( dirpath ) {
-	const fakes = glob.sync( '*/**/*.+(js|jsx)', {
-		cwd: dirpath
-	} );
-	fakes.forEach( function( fake ) {
-		const moduleName = fake.substring( fake, fake.lastIndexOf( '.' ) ),
-			fakePath = path.join( dirpath, fake );
-		log( 'registering %s -> %s', moduleName, fakePath );
-		mockery.registerSubstitute( moduleName, fakePath );
+	return new Promise( function( resolve, reject ) {
+		glob( '*/**/*.+(js|jsx)', {
+			cwd: dirpath
+		}, function( err, fakes ) {
+			if ( err ) {
+				reject( err );
+				return;
+			}
+
+			fakes.forEach( function( fake ) {
+				const moduleName = fake.substring( fake, fake.lastIndexOf( '.' ) ),
+					fakePath = path.join( dirpath, fake );
+				log( 'registering %s -> %s', moduleName, fakePath );
+				mockery.registerSubstitute( moduleName, fakePath );
+			} );
+			resolve();
+		} );
 	} );
 }
 
-export default function( dirpath, mockBase ) {
-	useMockery( findQuickMocks.bind( null, dirpath, mockBase ), null );
+export default function( dirpath ) {
+	useMockery( findQuickMocks.bind( null, dirpath ), null );
 }
