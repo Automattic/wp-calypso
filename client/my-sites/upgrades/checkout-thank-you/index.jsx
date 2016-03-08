@@ -21,6 +21,8 @@ import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
+import FreeTrialNudge from './free-trial-nudge'
+import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import HappinessSupport from 'components/happiness-support';
@@ -44,7 +46,11 @@ import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { refreshSitePlans } from 'state/sites/plans/actions';
+import {
+	fetchSitePlans,
+	refreshSitePlans
+} from 'state/sites/plans/actions';
+import { shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
@@ -84,6 +90,9 @@ const CheckoutThankYou = React.createClass( {
 	componentWillReceiveProps() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
+
+		// Fetches site plans only if they weren't refreshed or if they have not been loaded yet
+		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
 	},
 
 	refreshSitesAndSitePlansIfPlanPurchased() {
@@ -239,6 +248,11 @@ const CheckoutThankYou = React.createClass( {
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite } />
+
+						<FreeTrialNudge
+							purchases={ purchases }
+							selectedSite={ selectedSite }
+							sitePlans={ this.props.sitePlans } />
 					</div>
 				) }
 			</div>
@@ -249,7 +263,8 @@ const CheckoutThankYou = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			receipt: getReceiptById( state, props.receiptId )
+			receipt: getReceiptById( state, props.receiptId ),
+			sitePlans: getPlansBySite( state, props.selectedSite )
 		};
 	},
 	( dispatch ) => {
@@ -259,6 +274,11 @@ export default connect(
 			},
 			fetchReceipt: ( receiptId ) => {
 				dispatch( fetchReceipt( receiptId ) );
+			},
+			fetchSitePlans( sitePlans, site ) {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
 			},
 			refreshSitePlans: ( siteId ) => {
 				dispatch( refreshSitePlans( siteId ) );
