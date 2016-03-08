@@ -149,6 +149,10 @@
 			top: 51px;
 		width: 100%;
 
+		&.is-compact {
+			padding: 26px 24px;
+		}
+
 		.follow-button {
 			cursor: default;
 
@@ -276,7 +280,6 @@
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		padding-left: 12px;
 		margin-right: 100px;
 
 		@include breakpoint( ">660px" ) {
