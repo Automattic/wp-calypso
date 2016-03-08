@@ -117,7 +117,6 @@ function deleteEmailForwarding( domainName, mailbox, onComplete ) {
 	} );
 }
 
-let _activefetchDomainsForSite = {};
 function fetchDomains( siteId ) {
 	if ( ! isDomainInitialized( DomainsStore.get(), siteId ) ) {
 		Dispatcher.handleViewAction( {
@@ -126,17 +125,17 @@ function fetchDomains( siteId ) {
 		} );
 	}
 
+	const domains = DomainsStore.getBySite( siteId );
+	if ( domains.isFetching ) {
+		return;
+	}
+
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.DOMAINS_FETCH,
 		siteId
 	} );
 
-	if ( _activefetchDomainsForSite[ siteId ] ) {
-		return;
-	}
-	_activefetchDomainsForSite[ siteId ] = true;
 	wpcom.site( siteId ).domains( function( error, data ) {
-		delete _activefetchDomainsForSite[ siteId ];
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_FAILED,
