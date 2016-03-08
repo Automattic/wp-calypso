@@ -121,6 +121,10 @@ var PlanActions = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Button', 'Product ID', this.props.plan.product_id );
 	},
 
+	getCartItem: function( properties ) {
+		return cartItems.getItemForPlan( this.props.plan, properties );
+	},
+
 	handleSelectPlan: function( event ) {
 		event.preventDefault();
 
@@ -136,7 +140,7 @@ var PlanActions = React.createClass( {
 			this.recordUpgradeNowButton();
 		}
 
-		const cartItem = cartItems.getItemForPlan( this.props.plan );
+		const cartItem = isFreePlan( this.props.plan ) ? null : this.getCartItem();
 
 		if ( this.props.onSelectPlan ) {
 			return this.props.onSelectPlan( cartItem );
@@ -155,6 +159,10 @@ var PlanActions = React.createClass( {
 		}
 
 		this.recordStartFreeTrialClick();
+
+		if ( this.props.onSelectPlan ) {
+			return this.props.onSelectPlan( this.getCartItem( { isFreeTrial: true } ) );
+		}
 
 		upgradesNotices.displaySubmitting( { isFreeCart: true } );
 
@@ -191,7 +199,6 @@ var PlanActions = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
-		// do not offer free trial for the free plan
 		if ( isFreePlan( this.props.plan ) ) {
 			return false;
 		}
