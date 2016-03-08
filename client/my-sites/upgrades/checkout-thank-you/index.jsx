@@ -16,7 +16,6 @@ import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
-import CheckoutThankYouFooter from './footer';
 import CheckoutThankYouHeader from './header';
 import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
@@ -24,6 +23,7 @@ import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
+import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import {
 	isBusiness,
@@ -129,6 +129,12 @@ const CheckoutThankYou = React.createClass( {
 			'is-placeholder': ! this.isDataLoaded()
 		} );
 
+		let purchases = null;
+
+		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+			purchases = getPurchases( this.props );
+		}
+
 		return (
 			<Main className={ classes }>
 				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
@@ -137,9 +143,9 @@ const CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<CheckoutThankYouFooter
-					isDataLoaded={ this.isDataLoaded() }
-					receipt={ this.props.receipt } />
+				<Card className="checkout-thank-you__footer">
+					<HappinessSupport isJetpack={ purchases && purchases.some( isJetpackPlan ) } />
+				</Card>
 			</Main>
 		);
 	},
@@ -189,9 +195,11 @@ const CheckoutThankYou = React.createClass( {
 
 					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
 
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
+					<div className="checkout-thank-you__purchase-details-list">
+						<PurchaseDetail isPlaceholder />
+						<PurchaseDetail isPlaceholder />
+						<PurchaseDetail isPlaceholder />
+					</div>
 				</div>
 			);
 		}
@@ -214,15 +222,15 @@ const CheckoutThankYou = React.createClass( {
 					isGenericReceipt={ this.isGenericReceipt() }
 					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
 
-				{ ComponentClass
-					? <div className="checkout-thank-you__purchase-details-list">
+				{ ComponentClass && (
+					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
 							domain={ domain } />
 					</div>
-					: null }
+				) }
 			</div>
 		);
 	}

@@ -19,6 +19,7 @@ var SearchCard = require( 'components/search-card' ),
 	Theme = require( 'components/theme/docs/example' ),
 	PostSchedule = require( 'components/post-schedule/docs/example' ),
 	HeaderCake = require( 'components/header-cake' ),
+	HappinessSupport = require( 'components/happiness-support/docs/example' ),
 	Collection,
 	FilterSummary,
 	Hider;
@@ -150,6 +151,7 @@ module.exports = React.createClass( {
 					<SitesDropdown />
 					<Theme />
 					<PostSchedule />
+					<HappinessSupport />
 				</Collection>
 			</div>
 		);

@@ -1,0 +1,106 @@
+/**
+ * External dependencies
+ */
+import classNames from 'classnames';
+import React from 'react';
+import sample from 'lodash/sample';
+
+/**
+ * Internal dependencies
+ */
+import Button from 'components/button';
+import Gravatar from 'components/gravatar';
+import supportUrls from 'lib/url/support';
+
+const HappinessSupport = React.createClass( {
+	propTypes: {
+		isJetpack: React.PropTypes.bool
+	},
+
+	getInitialState() {
+		return {
+			user: sample( [
+				{ display_name: 'Andrea', avatar_URL: '//gravatar.com/avatar/e6389004daf6cd236a6fd5a82069b426' },
+				{ display_name: 'Erica', avatar_URL: '//gravatar.com/avatar/066a6509253d682f4e0d05b048b08b2c' },
+				{ display_name: 'Jackie', avatar_URL: '//gravatar.com/avatar/a5eb04ed0c4dbeabf45dc031670ac60f' },
+				{ display_name: 'Siobhan', avatar_URL: '//gravatar.com/avatar/826d5881f45c63c5f7e1271c37e6b2ac' }
+			] )
+		};
+	},
+
+	renderContactButton() {
+		let url = supportUrls.CONTACT,
+			target = '';
+
+		if ( this.props.isJetpack ) {
+			url = supportUrls.JETPACK_CONTACT_SUPPORT;
+			target = '_blank';
+		}
+
+		return (
+			<Button href={ url } target={ target }>
+				{ this.translate( 'Ask a question' ) }
+			</Button>
+		);
+	},
+
+	renderGravatar() {
+		return (
+			<div className="happiness-support__gravatar">
+				<Gravatar user={ this.state.user } size={ 80 } />
+				<em className="happiness-support__gravatar-name">
+					{ this.state.user.display_name }
+				</em>
+			</div>
+		);
+	},
+
+	renderSupportButton() {
+		let url = supportUrls.SUPPORT_ROOT;
+
+		if ( this.props.isJetpack ) {
+			url = supportUrls.JETPACK_SUPPORT;
+		}
+
+		return (
+			<Button href={ url } target="_blank">
+				{ this.translate( 'Search our support site' ) }
+			</Button>
+		);
+	},
+
+	render() {
+		const classes = {
+			'happiness-support': true,
+			'is-placeholder': this.props.isJetpack === undefined || this.props.isJetpack === null
+		};
+
+		return (
+			<div className={ classNames( classes ) }>
+				{ this.renderGravatar() }
+
+				<h3 className="happiness-support__heading">
+					{ this.translate( 'Enjoy priority support from our Happiness Engineers' ) }
+				</h3>
+
+				<p className="happiness-support__text">
+					{ this.translate(
+						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.',
+						{
+							components: {
+								strong: <strong />
+							}
+						}
+					) }
+				</p>
+
+				<div className="happiness-support__buttons">
+					{ this.renderContactButton() }
+					{ this.renderSupportButton() }
+				</div>
+			</div>
+		);
+	}
+} );
+
+export default HappinessSupport;
