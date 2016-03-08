@@ -16,6 +16,10 @@ function emptyCart( siteID ) {
 	return { blog_id: siteID, products: [] };
 }
 
+function emptyTemporaryCart( siteID ) {
+	return { blog_id: siteID, products: [], temporary: true };
+}
+
 function applyCoupon( coupon ) {
 	return function( cart ) {
 		return update( cart, {
@@ -133,6 +137,7 @@ module.exports = {
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,
+	emptyTemporaryCart,
 	fillInAllCartItemAttributes,
 	fillInSingleCartItemAttributes,
 	getNewMessages,

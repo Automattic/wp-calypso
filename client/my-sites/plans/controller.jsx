@@ -3,8 +3,7 @@
  */
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	defer = require( 'lodash/defer' );
+	React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -17,18 +16,7 @@ var sites = require( 'lib/sites-list' )(),
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' );
-
-function handlePlanSelect( cartItem ) {
-	upgradesActions.addItem( cartItem );
-
-	// FIXME: @rads: The `defer` is necessary here to prevent an error with
-	//   React when changing pages, but the root cause is currently unknown.
-	defer( function() {
-		page( '/checkout/' + sites.getSelectedSite().slug );
-	} );
-}
 
 module.exports = {
 
@@ -78,7 +66,6 @@ module.exports = {
 			<CartData>
 				<Plans
 					sites={ sites }
-					onSelectPlan={ handlePlanSelect }
 					plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType } />
@@ -121,7 +108,6 @@ module.exports = {
 					<PlansCompare
 						enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 						selectedSite={ site }
-						onSelectPlan={ handlePlanSelect }
 						plans={ plans }
 						features={ features }
 						productsList={ productsList } />
