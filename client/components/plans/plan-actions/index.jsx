@@ -21,7 +21,8 @@ var abtest = require( 'lib/abtest' ).abtest,
 	plansPaths = require( 'my-sites/plans/paths' ),
 	puchasesPaths = require( 'me/purchases/paths' ),
 	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
-	upgradesActions = require( 'lib/upgrades/actions' );
+	upgradesActions = require( 'lib/upgrades/actions' ),
+	upgradesNotices = require( 'lib/upgrades/notices' );
 
 var PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
@@ -155,14 +156,19 @@ var PlanActions = React.createClass( {
 
 		this.recordStartFreeTrialClick();
 
-		const plan = this.props.plan;
+		upgradesNotices.displaySubmitting( { isFreeCart: true } );
 
-		upgradesActions.startFreeTrial( this.props.site.ID, plan, function( error ) {
-			if ( ! error ) { // TODO: show notice on error
-				this.props.refreshSitePlans( this.props.site.ID );
-
-				page( plansPaths.plansDestination( this.props.site.slug, 'thank-you' ) );
+		upgradesActions.startFreeTrial( this.props.site.ID, this.props.plan, function( error ) {
+			if ( error ) {
+				upgradesNotices.displayError( error );
+				return;
 			}
+
+			upgradesNotices.clear();
+
+			this.props.refreshSitePlans( this.props.site.ID );
+
+			page( plansPaths.plansDestination( this.props.site.slug, 'thank-you' ) );
 		}.bind( this ) );
 	},
 

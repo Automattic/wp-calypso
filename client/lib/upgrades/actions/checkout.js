@@ -43,7 +43,7 @@ function submitTransaction( { cart, transaction }, onComplete ) {
 		} );
 
 		if ( onComplete && step.name === 'received-wpcom-response' ) {
-			onComplete();
+			onComplete( step.error );
 		}
 	} );
 }
