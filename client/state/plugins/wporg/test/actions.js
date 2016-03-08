@@ -17,7 +17,7 @@ const testDispatch = ( test, testCallNumber ) => {
 			test( action );
 		}
 	}
-}
+};
 
 describe( 'WPorg Data Actions', function() {
 	let WPorgActions;

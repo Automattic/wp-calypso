@@ -1,41 +1,9 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-
-// Uncomment this require to use the blanket coverage tests.
-//require( 'blanket' )( {
-//  pattern: /post-normalizer\//
-//} );
-
 const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
-/**
- * Internal dependencies
- */
-let normalizer = require( '../' ),
-	safeImageUrlFake = require( 'lib/safe-image-url' ),
-	allTransforms = [
-		normalizer.decodeEntities,
-		normalizer.stripHTML,
-		normalizer.preventWidows,
-		normalizer.makeSiteIDSafeForAPI,
-		normalizer.pickPrimaryTag,
-		normalizer.safeImageProperties( 200 ),
-		normalizer.withContentDOM(),
-		normalizer.withContentDOM( [
-			normalizer.content.removeStyles,
-			normalizer.content.safeContentImages( 300 ),
-			normalizer.content.makeEmbedsSecure,
-			normalizer.content.detectEmbeds,
-			normalizer.content.wordCountAndReadingTime
-		] ),
-		normalizer.createBetterExcerpt,
-		normalizer.waitForImagesToLoad,
-		normalizer.pickCanonicalImage,
-		normalizer.keepValidImages( 1, 1 )
-	];
+
 
 function identifyTransform( post, callback ) {
 	callback();
@@ -51,6 +19,36 @@ function asyncTransform( post, callback ) {
 }
 
 describe( 'post-normalizer', function() {
+	let normalizer, safeImageUrlFake, allTransforms;
+
+	require( 'lib/react-test-env-setup' ).auto();
+	require( 'test/quick-mock' )( __dirname );
+
+	before( function() {
+		normalizer = require( '../' );
+		safeImageUrlFake = require( 'lib/safe-image-url' );
+		allTransforms = [
+			normalizer.decodeEntities,
+			normalizer.stripHTML,
+			normalizer.preventWidows,
+			normalizer.makeSiteIDSafeForAPI,
+			normalizer.pickPrimaryTag,
+			normalizer.safeImageProperties( 200 ),
+			normalizer.withContentDOM(),
+			normalizer.withContentDOM( [
+				normalizer.content.removeStyles,
+				normalizer.content.safeContentImages( 300 ),
+				normalizer.content.makeEmbedsSecure,
+				normalizer.content.detectEmbeds,
+				normalizer.content.wordCountAndReadingTime
+			] ),
+			normalizer.createBetterExcerpt,
+			normalizer.waitForImagesToLoad,
+			normalizer.pickCanonicalImage,
+			normalizer.keepValidImages( 1, 1 )
+		];
+	} );
+
 	it( 'should export a function', function() {
 		assert.equal( typeof normalizer, 'function' );
 	} );

@@ -1,17 +1,14 @@
 /**
  * External dependencies
  */
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { spy, stub } from 'sinon';
-import sinonChai from 'sinon-chai';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
 import { createReducerStore } from './../index';
-
-chai.use( sinonChai );
 
 describe( 'Store reducer creation', () => {
 	const reducer = state => {

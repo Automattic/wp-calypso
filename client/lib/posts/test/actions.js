@@ -1,45 +1,42 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
 	rewire = require( 'rewire' );
-
-chai.use( sinonChai );
 
 /**
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	PostEditStore = require( '../post-edit-store' ),
-	PostsStore = require( '../posts-store' ),
 	wpcom = require( 'lib/wp' );
 
-/**
- * Internal dependencies (rewire)
- */
-var PostActions = rewire( '../actions' );
-
 describe( 'PostActions', function() {
-	var sandbox;
+	let PostActions, PostEditStore, sandbox;
 
-	before( function() {
+	// TODO: refactor to use auto function
+	require( 'lib/react-test-env-setup' )();
+
+	before( () => {
+		PostEditStore = require( '../post-edit-store' );
+		PostActions = rewire( '../actions' );
+
 		sandbox = sinon.sandbox.create();
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( PostEditStore, 'get' ).returns( {
 			metadata: []
 		} );
 	} );
 
-	afterEach( function() {
+	after( () => {
+		require( 'lib/react-test-env-setup' ).cleanup();
+	} );
+
+	afterEach( () => {
 		sandbox.restore();
 	} );
 
@@ -228,14 +225,14 @@ describe( 'PostActions', function() {
 			sandbox.stub( wpcom, 'site' ).returns( {
 				post: function() {
 					return {
-						add: function( query, changedAttributes, callback ) {
+						add: function( query, attributes, callback ) {
 							callback( null, {} );
 						}
 					};
 				}
 			} );
 
-			PostActions.saveEdited( null, function( error, post ) {
+			PostActions.saveEdited( null, () => {
 				PostActions.__set__( 'normalizeApiAttributes', normalizeOriginal );
 				expect( normalizeSpy ).to.have.been.calledWith( changedAttributes );
 				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
