@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+
+var calypsoPackageJson;
+var failure = false;
+var key;
+var packageJson;
+
+if ( !process.argv[2] ) {
+	console.log( '\x1b[41mThis script requires that you provide arguments\x1b[0m' );
+	process.exit( 0 ); //eslint-disable-line no-process-exit
+}
+
+try {
+	calypsoPackageJson = require( '../package.json' );
+} catch ( e ) {
+	console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
+	process.exit( 0 ); //eslint-disable-line no-process-exit
+}
+
+try {
+	packageJson = require( '../' + process.argv[2] );
+} catch ( e ) {
+	console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
+	process.exit( 0 ); //eslint-disable-line no-process-exit
+}
+
+if ( packageJson.private ) {
+	process.exitCode = 1;
+}
+
+if ( packageJson.dependencies ) {
+	for ( key in packageJson.dependencies ) {
+		if ( !calypsoPackageJson.dependencies[ key ] ) {
+			failure = true;
+			console.log( '\x1b[41mMissing dependency in Calypso package.json:\x1b[0m ', key, ' from ', process.argv[2] );
+			console.log( '\x1b[41mAll dependencies in submodules must specified in the top level package.json\x1b[0m', '\n' );
+		} else if ( calypsoPackageJson.dependencies[ key ] !== packageJson.dependencies[ key ] ) {
+			failure = true;
+			console.log( '\x1b[41mDependency version mismatch:\x1b[0m ', key, ' in ', process.argv[2] );
+			console.log(
+				'Calypso: %s: %s !== %s: %s: %s',
+				key,
+				calypsoPackageJson.dependencies[ key ],
+				packageJson.name,
+				key,
+				packageJson.dependencies[ key ]
+			);
+			console.log( '\x1b[41mSubmodule dependency version must match version in the top level package.json\x1b[0m', '\n' );
+		}
+	}
+}
+
+if ( packageJson.devDependencies ) {
+	for ( key in packageJson.devDependencies ) {
+		if ( !calypsoPackageJson.devDependencies[ key ] ) {
+			failure = true;
+			console.log( '\x1b[41mMissing devDependency in Calypso package.json:\x1b[0m ', key, ' from ', process.argv[2] );
+			console.log( '\x1b[41mAll devDependencies in submodules must specified in the top level package.json\x1b[0m', '\n' );
+		} else if ( calypsoPackageJson.devDependencies[ key ] !== packageJson.devDependencies[ key ] ) {
+			failure = true;
+			console.log( '\x1b[41mDevDependency version mismatch:\x1b[0m ', key, ' in ', process.argv[2] );
+			console.log(
+				'Calypso: %s: %s !== %s: %s: %s',
+				key,
+				calypsoPackageJson.devDependencies[ key ],
+				packageJson.name,
+				key,
+				packageJson.devDependencies[ key ]
+			);
+			console.log( '\x1b[41mSubmodule devDependency version must match version in the top level package.json\x1b[0m', '\n' );
+		}
+	}
+}
+
+if ( failure ) {
+	process.exit( 1 ); //eslint-disable-line no-process-exit
+} else {
+	process.exit( 0 ); //eslint-disable-line no-process-exit
+}

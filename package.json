@@ -49,7 +49,6 @@
     "immutable": "3.7.5",
     "imports-loader": "0.6.5",
     "inherits": "2.0.1",
-	"interpolate-components": "client/lib/interpolate-components/",
     "jade": "pugjs/jade#29784fd",
     "jed": "1.0.2",
     "jquery": "1.11.3",
@@ -122,7 +121,10 @@
     "lint": "bin/run-lint"
   },
   "devDependencies": {
+    "babel": "5.8.12",
+    "babel-core": "5.8.12",
     "babel-eslint": "4.1.8",
+    "babel-runtime": "5.8.12",
     "better-assert": "1.0.2",
     "blanket": "1.1.6",
     "chai": "2.0.0",

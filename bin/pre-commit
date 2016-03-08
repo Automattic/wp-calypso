@@ -44,7 +44,7 @@ if [ "$files" != "" ]; then
   done
 fi
 
-packages=$(find client -type f -print | grep 'package.json')
+packages=$(find . -not -path '*/node_modules/*' -type f -name 'package.json' -print)
 if [ "$packages" != "" ]; then
 	for package in ${packages}; do
 		packagePath=${package%package.json}
@@ -55,10 +55,31 @@ if [ "$packages" != "" ]; then
 				if [ $? -ne 0 ]; then
 					pass=false
 				fi
+				./bin/check-dependency-versions ${package}
+				if [ $? -ne 0 ]; then
+					pass=false
+				fi
 			fi
 		fi
 	done
 fi
+
+packageChanged=$(git diff --cached --name-only package.json)
+if [ "$packageChanged" != "" ]; then
+	packages=$(find . -not -path '*/node_modules/*' -type f -name 'package.json' -print)
+	if [ "$packages" != "" ]; then
+		for package in ${packages}; do
+			packagePath=${package%package.json}
+			if [ "$packagePath" != "" ]; then
+				./bin/check-dependency-versions ${package}
+				if [ $? -ne 0 ]; then
+					pass=false
+				fi
+			fi
+		done
+	fi
+fi
+
 if ! $pass; then
 	printf "\n\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n\n"
 	exit 1
