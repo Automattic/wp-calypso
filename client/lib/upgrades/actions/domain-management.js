@@ -1,4 +1,9 @@
 /**
+ * Externel dependencies
+ */
+import noop from 'lodash/noop';
+
+/**
  * Internal dependencies
  */
 import { action as ActionTypes } from '../constants';
@@ -16,11 +21,15 @@ import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import whoisAssembler from 'lib/domains/whois/assembler';
 import WhoisStore from 'lib/domains/whois/store';
 import wp from 'lib/wp';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'actions:domain-management' );
 
 const sites = sitesFactory(),
 	wpcom = wp.undocumented();
 
-function setPrimaryDomain( siteId, domainName, onComplete ) {
+function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
+	debug( 'setPrimaryDomain', siteId, domainName );
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PRIMARY_DOMAIN_SET,
 		siteId
@@ -29,7 +38,8 @@ function setPrimaryDomain( siteId, domainName, onComplete ) {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
-				error: error && error.message || i18n.translate( 'There was a problem setting the primary domain. Please try again later or contact supprt.' ),
+				error: error && error.message || i18n.translate( 'There was a problem setting the primary domain. Please try' +
+					' again later or contact support.' ),
 				siteId,
 				domainName
 			} );
@@ -50,10 +60,9 @@ function setPrimaryDomain( siteId, domainName, onComplete ) {
 				domainName
 			} );
 
-			onComplete( null, data )
+			onComplete( null, data );
+			fetchDomains( siteId );
 		} );
-
-		fetchDomains( siteId );
 	} );
 }
 
