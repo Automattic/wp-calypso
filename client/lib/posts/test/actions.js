@@ -13,14 +13,13 @@ var Dispatcher = require( 'dispatcher' ),
 	wpcom = require( 'lib/wp' );
 
 describe( 'PostActions', function() {
-	let PostActions, PostEditStore, PostsStore, sandbox;
+	let PostActions, PostEditStore, sandbox;
 
 	// TODO: refactor to use auto function
 	require( 'lib/react-test-env-setup' )();
 
 	before( () => {
 		PostEditStore = require( '../post-edit-store' );
-		PostsStore = require( '../posts-store' );
 		PostActions = rewire( '../actions' );
 
 		sandbox = sinon.sandbox.create();
@@ -226,14 +225,14 @@ describe( 'PostActions', function() {
 			sandbox.stub( wpcom, 'site' ).returns( {
 				post: function() {
 					return {
-						add: function( query, changedAttributes, callback ) {
+						add: function( query, attributes, callback ) {
 							callback( null, {} );
 						}
 					};
 				}
 			} );
 
-			PostActions.saveEdited( null, function( error, post ) {
+			PostActions.saveEdited( null, () => {
 				PostActions.__set__( 'normalizeApiAttributes', normalizeOriginal );
 				expect( normalizeSpy ).to.have.been.calledWith( changedAttributes );
 				expect( normalizeSpy.returnValues[0] ).to.deep.equal( {
