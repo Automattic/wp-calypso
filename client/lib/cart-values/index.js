@@ -10,7 +10,8 @@ var update = require( 'react-addons-update' ),
  * Internal dependencies
  */
 var cartItems = require( './cart-items' ),
-	productsValues = require( 'lib/products-values' );
+	productsValues = require( 'lib/products-values' ),
+	{ abtest } = require( 'lib/abtest' );
 
 function emptyCart( siteID ) {
 	return { blog_id: siteID, products: [] };
@@ -23,6 +24,10 @@ function applyCoupon( coupon ) {
 			is_coupon_applied: { $set: false }
 		} );
 	};
+}
+
+function isSidebarHiddenForCart( cart ) {
+	return cart.hasLoadedFromServer && cart.products.length === 1 && abtest( 'sidebarOnCheckoutOfOneProduct' ) === 'hidden';
 }
 
 function canRemoveFromCart( cart, cartItem ) {
@@ -130,6 +135,7 @@ function isPayPalExpressEnabled( cart ) {
 
 module.exports = {
 	applyCoupon,
+	isSidebarHiddenForCart,
 	canRemoveFromCart,
 	cartItems,
 	emptyCart,

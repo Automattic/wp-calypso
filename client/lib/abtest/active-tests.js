@@ -87,4 +87,12 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	sidebarOnCheckoutOfOneProduct: {
+		datestamp: '20160308',
+		variations: {
+			original: 50,
+			hidden: 50,
+		},
+		defaultVariation: 'original'
+	},
 };

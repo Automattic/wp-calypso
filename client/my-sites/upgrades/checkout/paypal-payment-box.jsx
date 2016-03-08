@@ -14,6 +14,7 @@ var analytics = require( 'analytics' ),
 	Input = require( 'my-sites/upgrades/components/form/input' ),
 	notices = require( 'notices' ),
 	PaymentBox = require( './payment-box' ),
+	CartCoupon = require( 'my-sites/upgrades/cart/cart-coupon' ),
 	SubscriptionText = require( './subscription-text' ),
 	TermsOfService = require( './terms-of-service' ),
 	wpcom = require( 'lib/wp' ).undocumented();
@@ -143,6 +144,8 @@ module.exports = React.createClass( {
 						disabled={ this.state.formDisabled }
 						eventFormName="Checkout Form" />
 				</div>
+
+				{ cartValues.isSidebarHiddenForCart( this.props.cart ) && <CartCoupon cart={ this.props.cart } /> }
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />

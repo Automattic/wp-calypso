@@ -6,11 +6,11 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var CartItems = require( './cart-items'),
+var CartItems = require( './cart-items' ),
 	CartCoupon = require( './cart-coupon' ),
 	CartTotal = require( './cart-total' );
 
-var CartBody = React.createClass({
+var CartBody = React.createClass( {
 	propTypes: {
 		collapse: React.PropTypes.bool
 	},
@@ -45,6 +45,6 @@ var CartBody = React.createClass({
 
 		return <CartCoupon cart={ this.props.cart } />;
 	}
-});
+} );
 
 module.exports = CartBody;
