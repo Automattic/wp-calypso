@@ -167,6 +167,8 @@ describe( 'feed-post-store', function() {
 			blogId: blogId
 		} );
 
+		FeedPostStore.removePostsMarkedForRemoval();
+
 		expect( FeedPostStore.get( {
 			blogId: blogId,
 			postId: 3

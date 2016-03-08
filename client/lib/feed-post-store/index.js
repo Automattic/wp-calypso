@@ -32,7 +32,7 @@ function blogKey( postKey ) {
 }
 
 FeedPostStore = {
-	get: function( postKey ) {
+	get( postKey ) {
 		if ( ! postKey ) {
 			return;
 		}
@@ -42,6 +42,10 @@ FeedPostStore = {
 		} else if ( postKey.feedId && postKey.postId ) {
 			return _posts[ postKey.postId ];
 		}
+	},
+
+	removePostsMarkedForRemoval() {
+		_postsForBlogs = removeBlogPostsMarkedForRemoval();
 	}
 };
 
@@ -116,8 +120,9 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case FeedSubscriptionActionType.RECEIVE_UNFOLLOW_READER_FEED:
 			if ( action.blogId ) {
-				_postsForBlogs = removePostsForBlog( action.blogId );
+				markBlogPostsForRemoval( action.blogId );
 			}
+			debug( _postsForBlogs );
 			break;
 	}
 } );
@@ -289,9 +294,21 @@ function markBlockedSitePosts( siteId, isSiteBlocked ) {
 	} );
 }
 
-function removePostsForBlog( blogId ) {
+// @todo extract property update into a helper method
+function markBlogPostsForRemoval( blogId ) {
+	forOwn( _postsForBlogs, function( post ) {
+		var newPost;
+		if ( post.site_ID === blogId && ! post.is_marked_for_removal ) {
+			newPost = clone( post );
+			newPost.is_marked_for_removal = true;
+			setPost( newPost.feed_item_ID, newPost );
+		}
+	} );
+}
+
+function removeBlogPostsMarkedForRemoval() {
 	return filter( _postsForBlogs, function( post ) {
-		return post.site_ID !== blogId;
+		return ! post.is_marked_for_removal;
 	} );
 }
 

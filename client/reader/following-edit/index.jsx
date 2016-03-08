@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import Main from 'components/main';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
+import FeedPostStore from 'lib/feed-post-store';
 import FeedStore from 'lib/feed-store';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 import EmptyContent from 'components/empty-content';
@@ -94,6 +95,7 @@ const FollowingEdit = React.createClass( {
 		FeedSubscriptionStore.off( 'change', this.handleChange );
 		FeedSubscriptionStore.off( 'remove', this.handleRemove );
 		window.removeEventListener( 'resize', this.handleResize );
+		FeedPostStore.removePostsMarkedForRemoval();
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
