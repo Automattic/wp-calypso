@@ -59,6 +59,15 @@ function findPurchaseAndDomain( purchases, predicate ) {
 }
 
 const CheckoutThankYou = React.createClass( {
+	propTypes: {
+		productsList: React.PropTypes.object.isRequired,
+		receiptId: React.PropTypes.number,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] ).isRequired
+	},
+
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
