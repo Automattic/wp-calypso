@@ -58,7 +58,7 @@ export default React.createClass( {
 					onClick={ ! this.props.disabled && this._onClickRemove } />
 				{ tooltip &&
 					<Tooltip context={ this } status={ status } isVisible={ true } position="bottom">
-							{ tooltip }
+						{ tooltip }
 					</Tooltip>
 				}
 			</span>
