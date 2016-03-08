@@ -1,3 +1,9 @@
+v1.1.3 (March 8, 2016)
+======================
+
+- Fix: i18n-named-placeholders: Account for escaped percentage
+- Fix: Extract callee from MemberExpression (e.g. `this.translate`, `i18n.translate`)
+
 v1.1.2 (March 8, 2016)
 ======================
 
