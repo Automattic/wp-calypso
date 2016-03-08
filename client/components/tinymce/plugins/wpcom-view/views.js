@@ -14,6 +14,7 @@ import config from 'config';
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
 import ContactFormView from './contact-form-view';
+import WpVideoView from './wpvideo-view';
 
 /**
  * Module variables
@@ -25,6 +26,10 @@ let views = {
 
 if ( config.isEnabled( 'post-editor/contact-form' ) ) {
 	views.contact = ContactFormView;
+}
+
+if ( config.isEnabled( 'post-editor/wpvideo-view' ) ) {
+	views.wpvideo = WpVideoView;
 }
 
 const components = mapValues( views, ( view ) => {

@@ -1885,6 +1885,17 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
 	}, advancedSettings, fn );
 };
 
+/*
+ * Get video information
+ *
+ * @param {String}    guid              VideoPress guid
+ * @param {Function}  callback          Callback function
+ * @returns {Promise}                   A promise that resolves when the request completes
+ */
+Undocumented.prototype.videos = function( guid, callback ) {
+	return this.wpcom.req.get( { path: '/videos/' + guid }, callback );
+};
+
 /**
  * Check the status of an export
  *

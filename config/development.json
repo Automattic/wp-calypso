@@ -95,6 +95,7 @@
 		"post-editor/media-advanced": true,
 		"post-editor/pages": true,
 		"post-editor/post-type-switch": false,
+		"post-editor/wpvideo-view": true,
 		"press-this": true,
 		"reader": true,
 		"reader/activities": true,

@@ -190,4 +190,10 @@ describe( 'state', () => {
 		require( '../users/test/reducer' );
 		require( '../users/test/selectors' );
 	} );
+
+	describe( 'videos', () => {
+		require( '../videos/test/actions' );
+		require( '../videos/test/reducer' );
+		require( '../videos/test/selectors' );
+	} );
 } );
