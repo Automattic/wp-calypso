@@ -16,7 +16,6 @@ var abtest = require( 'lib/abtest' ).abtest,
 	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
-	isFreeTrial = productsValues.isFreeTrial,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
 	plansPaths = require( 'my-sites/plans/paths' ),
@@ -73,7 +72,7 @@ var PlanActions = React.createClass( {
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
 					disabled={ this.props.isSubmitting }
-					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
+					onClick={ this.handleSelectPlan }>
 					{ this.translate( 'Select Free Plan' ) }
 				</button>
 			</div>
@@ -102,77 +101,69 @@ var PlanActions = React.createClass( {
 				<button
 					className="button is-primary plan-actions__upgrade-button"
 					disabled={ this.props.isSubmitting }
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
+					onClick={ this.handleSelectPlan }>
 					{ label }
 				</button>
 			</div>
 		);
 	},
 
-	recordStartFreeTrialClick: function( cartItem ) {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Start Free Trial Button', 'Product ID', cartItem.product_id );
+	recordStartFreeTrialClick: function() {
+		analytics.ga.recordEvent( 'Upgrades', 'Clicked Start Free Trial Button', 'Product ID', this.props.plan.product_id );
 	},
 
-	recordUpgradeNowClick: function( cartItem ) {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Link', 'Product ID', cartItem.product_id );
+	recordUpgradeNowClick: function() {
+		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Link', 'Product ID', this.props.plan.product_id );
 	},
 
-	recordUpgradeNowButton: function( cartItem ) {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Button', 'Product ID', cartItem.product_id );
+	recordUpgradeNowButton: function() {
+		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Button', 'Product ID', this.props.plan.product_id );
 	},
 
-	recordUpgradeTrialNowClick: function( cartItem ) {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Upgrade Now Link For Trial', 'Product ID', cartItem.product_id );
-	},
-
-	handleAddToCart: function( cartItem, actionType, event ) {
-		if ( event ) {
-			event.preventDefault();
-		}
+	handleSelectPlan: function( event ) {
+		event.preventDefault();
 
 		if ( this.props.isSubmitting ) {
 			return;
 		}
 
-		if ( cartItem && actionType ) {
-			if ( actionType === 'button' ) {
-				if ( cartItem.free_trial ) {
-					this.recordStartFreeTrialClick( cartItem );
-				}
-				if ( ! cartItem.free_trial ) {
-					this.recordUpgradeNowButton( cartItem );
-				}
-			}
+		const actionType = event.target.tagName === 'A' ? 'link' : 'button';
 
-			if ( actionType === 'link' ) {
-				if ( cartItem.free_trial ) {
-					this.recordUpgradeTrialNowClick( cartItem );
-				}
-				if ( ! cartItem.free_trial ) {
-					this.recordUpgradeNowClick( cartItem );
-				}
-			}
+		if ( 'link' === actionType ) {
+			this.recordUpgradeNowClick();
+		} else {
+			this.recordUpgradeNowButton();
 		}
+
+		const cartItem = cartItems.getItemForPlan( this.props.plan );
 
 		if ( this.props.onSelectPlan ) {
 			return this.props.onSelectPlan( cartItem );
 		}
 
-		if ( isFreeTrial( cartItem ) && ! this.props.isImageButton ) {
-			upgradesActions.submitFreeTransaction( this.props.site, cartItem, function( error ) {
-				if ( ! error ) {
-					this.props.refreshSitePlans( this.props.site.ID );
+		upgradesActions.addItem( cartItem );
 
-					page( plansPaths.plansDestination( this.props.site.slug, 'thank-you' ) );
-				}
-			}.bind( this ) );
+		page( '/checkout/' + this.props.site.slug );
+	},
+
+	handleClickStartTrial: function( event ) {
+		event.preventDefault();
+
+		if ( this.props.isSubmitting ) {
+			return;
 		}
 
-		if ( ! isFreeTrial( cartItem ) ) {
-			upgradesActions.addItem( cartItem );
+		this.recordStartFreeTrialClick();
 
-			page( '/checkout/' + this.props.site.slug );
-		}
+		const plan = this.props.plan;
+
+		upgradesActions.startFreeTrial( this.props.site.ID, plan, function( error ) {
+			if ( ! error ) { // TODO: show notice on error
+				this.props.refreshSitePlans( this.props.site.ID );
+
+				page( plansPaths.plansDestination( this.props.site.slug, 'thank-you' ) );
+			}
+		}.bind( this ) );
 	},
 
 	canSelectPlan: function() {
@@ -194,6 +185,11 @@ var PlanActions = React.createClass( {
 	},
 
 	shouldOfferFreeTrial: function() {
+		// do not offer free trial for the free plan
+		if ( isFreePlan( this.props.plan ) ) {
+			return false;
+		}
+
 		if ( ! this.props.enableFreeTrials ) {
 			return false;
 		}
@@ -216,14 +212,14 @@ var PlanActions = React.createClass( {
 			);
 		}
 
-		if ( isFreePlan( this.props.plan ) ) {
+		if ( this.shouldOfferFreeTrial() ) {
 			return (
-				<div onClick={ this.handleAddToCart.bind( null, null, 'button' ) } className={ classes } />
+				<div onClick={ this.handleClickStartTrial } className={ classes } />
 			);
 		}
 
 		return (
-			<div onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: this.shouldOfferFreeTrial() } ), 'button' ) } className={ classes } />
+			<div onClick={ this.handleSelectPlan } className={ classes } />
 		);
 	},
 
@@ -236,7 +232,7 @@ var PlanActions = React.createClass( {
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
 					disabled={ this.props.isSubmitting }
-					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
+					onClick={ this.handleClickStartTrial }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</button>
 
@@ -245,8 +241,7 @@ var PlanActions = React.createClass( {
 						? this.translate( 'Try it free for 14 days, no credit card needed, or {{a}}upgrade now{{/a}}.', {
 							context: 'Store action',
 							components: {
-								a: <a href="#"
-									onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'link' ) } />
+								a: <a href="#" onClick={ this.handleSelectPlan } />
 							}
 						} )
 						: this.translate( 'Try it free for 14 days, no credit card needed.' )
@@ -254,10 +249,6 @@ var PlanActions = React.createClass( {
 				</small>
 			</div>
 		);
-	},
-
-	cartItem: function( properties ) {
-		return cartItems.getItemForPlan( this.props.plan, properties );
 	},
 
 	downgradeMessage: function() {

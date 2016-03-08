@@ -13,8 +13,20 @@ var cartItems = require( './cart-items' ),
 	productsValues = require( 'lib/products-values' ),
 	{ abtest } = require( 'lib/abtest' );
 
-function emptyCart( siteID ) {
-	return { blog_id: siteID, products: [] };
+/**
+ * Create a new empty cart.
+ *
+ * A cart has at least a `blog_id` and an empty list of `products`
+ * We can give additional attributes and build new types of empty carts.
+ * For instance you may want to create a temporary this way:
+ * `emptyCart( 123456, { temporary: true } )`
+ *
+ * @param {int} [siteId] The Site Id the cart will be associated with
+ * @param {Object} [attributes] Additional attributes for the cart (optional)
+ * @returns {cart} [emptyCart] The new empty cart created
+ */
+function emptyCart( siteId, attributes ) {
+	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
 function applyCoupon( coupon ) {

@@ -2,13 +2,8 @@
  * Internal dependencies
  */
 import { action as ActionTypes } from '../constants';
-import cartValues from 'lib/cart-values';
-import { cartItems } from 'lib/cart-values';
 import Dispatcher from 'dispatcher';
-import productsListFactory from 'lib/products-list';
 import storeTransactions from 'lib/store-transactions';
-
-const productsList = productsListFactory();
 
 function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {
@@ -32,23 +27,6 @@ function setNewCreditCardDetails( options ) {
 		rawDetails,
 		maskedDetails
 	} );
-}
-
-function submitFreeTransaction( site, cartItem, onComplete ) {
-	const addFunction = cartItems.add( cartItem );
-
-	let cart = cartValues.emptyCart( site.ID );
-
-	cart = cartValues.fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
-
-	submitTransaction( {
-		cart,
-		transaction: {
-			payment: {
-				paymentMethod: 'WPCOM_Billing_WPCOM'
-			}
-		}
-	}, onComplete );
 }
 
 function submitTransaction( { cart, transaction }, onComplete ) {
@@ -81,6 +59,5 @@ export {
 	setDomainDetails,
 	setNewCreditCardDetails,
 	setPayment,
-	submitFreeTransaction,
 	submitTransaction
 };
