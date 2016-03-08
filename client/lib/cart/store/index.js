@@ -2,8 +2,6 @@
  * External dependencies
  */
 var assign = require( 'lodash/assign' ),
-	partialRight = require( 'lodash/partialRight' ),
-	flowRight = require( 'lodash/flowRight' ),
 	flow = require( 'lodash/flow' );
 
 /**
@@ -13,14 +11,13 @@ var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	emitter = require( 'lib/mixins/emitter' ),
 	sites = require( 'lib/sites-list' )(),
 	cartSynchronizer = require( './cart-synchronizer' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
 	PollerPool = require( 'lib/data-poller' ),
 	cartAnalytics = require( './cart-analytics' ),
-	productsList = require( 'lib/products-list' )(),
 	Dispatcher = require( 'dispatcher' ),
 	cartValues = require( 'lib/cart-values' ),
 	applyCoupon = cartValues.applyCoupon,
-	cartItems = cartValues.cartItems;
+	cartItems = cartValues.cartItems,
+	cartLib = require( 'lib/cart' );
 
 var POLLING_INTERVAL = 5000;
 
@@ -72,7 +69,7 @@ function setSelectedSite() {
 
 	_selectedSiteID = selectedSite.ID;
 
-	_synchronizer = cartSynchronizer( selectedSite.ID, wpcom );
+	_synchronizer = cartSynchronizer( selectedSite.ID );
 	_synchronizer.on( 'change', emitChange );
 
 	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ), { interval: POLLING_INTERVAL } );
@@ -87,9 +84,9 @@ function update( changeFunction ) {
 		previousCart,
 		nextCart;
 
-	wrappedFunction = flowRight(
-		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
-		changeFunction
+	wrappedFunction = flow(
+		changeFunction,
+		cartLib.fillInAllCartItemAttributes
 	);
 
 	previousCart = CartStore.get();
