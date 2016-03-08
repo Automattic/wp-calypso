@@ -1,45 +1,43 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
 	rewire = require( 'rewire' );
-
-chai.use( sinonChai );
 
 /**
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	PostEditStore = require( '../post-edit-store' ),
-	PostsStore = require( '../posts-store' ),
 	wpcom = require( 'lib/wp' );
 
-/**
- * Internal dependencies (rewire)
- */
-var PostActions = rewire( '../actions' );
-
 describe( 'PostActions', function() {
-	var sandbox;
+	let PostActions, PostEditStore, PostsStore, sandbox;
 
-	before( function() {
+	// TODO: refactor to use auto function
+	require( 'lib/react-test-env-setup' )();
+
+	before( () => {
+		PostEditStore = require( '../post-edit-store' );
+		PostsStore = require( '../posts-store' );
+		PostActions = rewire( '../actions' );
+
 		sandbox = sinon.sandbox.create();
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( PostEditStore, 'get' ).returns( {
 			metadata: []
 		} );
 	} );
 
-	afterEach( function() {
+	after( () => {
+		require( 'lib/react-test-env-setup' ).cleanup();
+	} );
+
+	afterEach( () => {
 		sandbox.restore();
 	} );
 

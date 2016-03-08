@@ -8,22 +8,17 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import config from 'config';
-import domEnvSetup from 'lib/react-test-env-setup';
 
 describe( 'initial-state', () => {
 	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE;
 
-	before( () => {
-		domEnvSetup();
+	require( 'lib/react-test-env-setup' ).auto();
 
+	before( () => {
 		localforage = require( 'localforage' );
 		const initialState = require( '../initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		MAX_AGE = initialState.MAX_AGE;
-	} );
-
-	after( () => {
-		domEnvSetup.cleanup();
 	} );
 
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
