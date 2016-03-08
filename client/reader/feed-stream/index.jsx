@@ -140,7 +140,7 @@ var FeedStream = React.createClass( {
 		}
 
 		if ( feed && feed.state === FeedStoreState.ERROR ) {
-			return <FeedError listName={ this.state.title } />;
+			return <FeedError sidebarTitle={ this.state.title } />;
 		}
 
 		return (

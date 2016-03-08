@@ -1,5 +1,6 @@
 var React = require( 'react' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	includes = require( 'lodash/includes' );
 
 var FeedHeader = require( 'reader/feed-header' ),
 	FeedFeatured = require( './featured' ),
@@ -80,11 +81,11 @@ const SiteStream = React.createClass( {
 			SiteStoreActions.fetch( siteId );
 		}
 
-		if ( site && site.get( 'state' ) !== SiteState.COMPLETE ) {
-			site = null; // don't accept an incomplete or error site
+		if ( site && ! includes( [ SiteState.COMPLETE, SiteState.ERROR ], site.get( 'state' ) ) ) {
+			site = null; // don't accept an incomplete site
 		}
 
-		if ( site && site.get( 'feed_ID' ) ) {
+		if ( site && site.get( 'state' ) === SiteState.COMPLETE && site.get( 'feed_ID' ) ) {
 			feed = FeedStore.get( site.get( 'feed_ID' ) );
 			if ( ! feed ) {
 				setTimeout( () => {
@@ -131,7 +132,7 @@ const SiteStream = React.createClass( {
 		}
 
 		if ( site && site.get( 'state' ) === SiteState.ERROR ) {
-			return <FeedError listName={ title } />;
+			return <FeedError sidebarTitle={ title } />;
 		}
 
 		if ( site && site.get( 'has_featured' ) ) {
