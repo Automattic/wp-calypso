@@ -8,7 +8,6 @@ import React from 'react';
  */
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
-import Button from 'components/button';
 import config from 'config';
 
 export default React.createClass( {
@@ -53,7 +52,6 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		console.log( config.isEnabled( 'jetpack/calypso-first-signup-flow' ) );
 		return (
 			<div className="step-wrapper">
 				<StepHeader
@@ -61,7 +59,7 @@ export default React.createClass( {
 					subHeaderText={ this.subHeaderText() }>
 					{ config.isEnabled( 'jetpack/calypso-first-signup-flow' )
 						? ( this.props.headerButton )
-					 	: null }
+						: null }
 				</StepHeader>
 				<div className="is-animated-content">
 					{ this.props.stepContent }
