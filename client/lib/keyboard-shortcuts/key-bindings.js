@@ -130,6 +130,7 @@ KeyBindings.prototype.get = function() {
 			{
 				eventName: 'open-support-user',
 				keys: [ 's', 'u' ],
+				type: 'sequence',
 				description: {
 					keys: [],
 					text: '',
