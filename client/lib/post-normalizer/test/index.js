@@ -4,6 +4,10 @@
 const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
 
+/**
+ * Internal dependencies
+ */
+import setupDomEnv from 'test/helpers/setup-dom-env';
 
 function identifyTransform( post, callback ) {
 	callback();
@@ -21,7 +25,7 @@ function asyncTransform( post, callback ) {
 describe( 'post-normalizer', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
-	require( 'lib/react-test-env-setup' ).auto();
+	setupDomEnv();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( function() {
