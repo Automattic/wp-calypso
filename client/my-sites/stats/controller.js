@@ -188,7 +188,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		if ( site.post_count <= 2 &&
+		if ( site.post_count <= 1 &&
 				twoWeeksAgo.isBefore( siteCreated ) &&
 				( ! site.jetpack ) ) {
 			isNux = true;
@@ -473,7 +473,7 @@ module.exports = {
 				siteCreated = i18n.moment( currentSite.options.created_at );
 			}
 
-			if ( currentSite.post_count <= 2 &&
+			if ( currentSite.post_count <= 1 &&
 					twoWeeksAgo.isBefore( siteCreated ) &&
 					( ! currentSite.jetpack ) ) {
 				isNux = true;
