@@ -200,9 +200,10 @@ const CheckoutThankYou = React.createClass( {
 				<div>
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
-						selectedSite={ this.props.selectedSite } />
+						selectedSite={ selectedSite } />
 
-					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+					<CheckoutThankYouFeaturesHeader
+						isDataLoaded={ false } />
 
 					<div className="checkout-thank-you__purchase-details-list">
 						<PurchaseDetail isPlaceholder />
@@ -224,12 +225,12 @@ const CheckoutThankYou = React.createClass( {
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ selectedSite } />
 
 				<CheckoutThankYouFeaturesHeader
 					isDataLoaded={ this.isDataLoaded() }
 					isGenericReceipt={ this.isGenericReceipt() }
-					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
+					purchases={ purchases } />
 
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
