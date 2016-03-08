@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import map from 'lodash/map';
-import reject from 'lodash/reject';
 
 const debug = debugFactory( 'calypso:site-plans:actions' );
 
@@ -122,7 +121,7 @@ export function fetchSitePlans( siteId ) {
  * @returns {Object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, data ) {
-	data = reject( data, '_headers' );
+	delete data._headers;
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,

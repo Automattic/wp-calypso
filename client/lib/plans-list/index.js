@@ -102,10 +102,8 @@ PlansList.prototype.initialize = function( plans ) {
  * @return {array} plans
  **/
 PlansList.prototype.parse = function( data ) {
-	/**
-	 * Remove the _headers
-	 */
 	delete data._headers;
+
 	return data;
 };
 
