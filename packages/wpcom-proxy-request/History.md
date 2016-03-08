@@ -1,10 +1,14 @@
 
+1.1.1 / 2016-03-08
+==================
+
+  * fix TypeError on string body 'error' from rest-proxy
+
 1.1.0 / 2016-02-24
 ==================
 
   * support persistent connections e.g. websockets
   * add example for connecting to Pinghub via websocket
-
 
 1.0.5 / 2015-11-22
 ==================
