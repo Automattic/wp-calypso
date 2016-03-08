@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ), // eslint-disable-line no-unused-vars
-	flatten = require( 'lodash/flatten' ),
-	values = require( 'lodash/values' );
+import React from 'react'; // eslint-disable-line no-unused-vars
+import flatten from 'lodash/flatten';
+import values from 'lodash/values';
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	notices = require( 'notices' ),
-	ValidationErrorList = require( 'notices/validation-error-list' );
+import i18n from 'lib/mixins/i18n';
+import notices from 'notices'
+import ValidationErrorList from 'notices/validation-error-list';
 
 function getErrorFromApi( errorMessage ) {
 	if ( errorMessage ) {
@@ -33,7 +33,7 @@ function getErrorFromApi( errorMessage ) {
 	}
 
 	return i18n.translate( 'There was a problem completing the checkout. Please try again.' );
-};
+}
 
 export function displayError( error ) {
 	if ( typeof error.message === 'object' ) {
@@ -41,12 +41,12 @@ export function displayError( error ) {
 	} else {
 		notices.error( getErrorFromApi( error.message ) )
 	}
-};
+}
 
 export function displaySubmitting( { isFreeCart } ) {
 	notices.info( isFreeCart ? i18n.translate( 'Submitting' ) : i18n.translate( 'Submitting payment' ) );
-};
+}
 
 export function clear() {
 	notices.clearNotices( 'notices' );
-};
+}
