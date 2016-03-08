@@ -92,7 +92,11 @@ InstallationFlow.prototype.install = function( slug, next ) {
 	installer.then( ( response ) => {
 		if ( 'undefined' !== typeof response.error ) {
 			// @todo Handle failed installs
-			console.warn( response.error );
+			if ( response.error.name === 'UpdateFailError' ) {
+				console.warn( 'Plugin not up-to-date, cannot continue.' );
+			} else {
+				console.warn( response.error );
+			}
 			return;
 		}
 		this._pushStep( { name: 'configure-plugin', plugin: slug } );
