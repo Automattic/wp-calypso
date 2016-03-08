@@ -53,6 +53,16 @@ export const shouldBoot = () => {
 	return false;
 };
 
+const checkIfTokenChanged = ( event ) => {
+	if ( event.key === STORAGE_KEY && event.oldValue !== event.newValue ) {
+		window.location.reload();
+	}
+}
+
+if ( isEnabled() && window ) {
+	window.addEventListener( 'storage', checkIfTokenChanged );
+}
+
 /**
  * Ensure the current support token is persisted for the next time Calypso boots
  * @param {Object} tokenObject The token data that should be persisted
@@ -72,6 +82,11 @@ export const rebootNormally = () => {
 	debug( 'Rebooting Calypso normally' );
 
 	store.clear();
+
+	// We need to store a blank key to trigger a 'storage' event on other tabs
+	// so they invalidate their sessions
+	store.set( STORAGE_KEY, {} );
+
 	window.location.reload();
 };
 
