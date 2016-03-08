@@ -7,7 +7,6 @@ import { cartItems } from 'lib/cart-values';
 import Dispatcher from 'dispatcher';
 import productsListFactory from 'lib/products-list';
 import storeTransactions from 'lib/store-transactions';
-import wpcom from 'lib/wp';
 
 const productsList = productsListFactory();
 
@@ -42,15 +41,17 @@ function submitFreeTransaction( site, cartItem, onComplete ) {
 
 	cart = cartValues.fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
 
-	wpcom.undocumented().transactions( 'POST', {
+	submitTransaction( {
 		cart,
-		payment: {
-			paymentMethod: 'WPCOM_Billing_WPCOM'
+		transaction: {
+			payment: {
+				paymentMethod: 'WPCOM_Billing_WPCOM'
+			}
 		}
 	}, onComplete );
 }
 
-function submitTransaction( { cart, transaction } ) {
+function submitTransaction( { cart, transaction }, onComplete ) {
 	const steps = storeTransactions.submit( {
 		cart: cart,
 		payment: transaction.payment,
@@ -62,6 +63,10 @@ function submitTransaction( { cart, transaction } ) {
 			type: ActionTypes.TRANSACTION_STEP_SET,
 			step
 		} );
+
+		if ( onComplete && step.name === 'received-wpcom-response' ) {
+			onComplete();
+		}
 	} );
 }
 

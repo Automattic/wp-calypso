@@ -22,7 +22,7 @@ module.exports = {
 
 	plans: function( context ) {
 		var Plans = require( 'my-sites/plans/main' ),
-			CartData = require( 'components/data/cart' ),
+			CheckoutData = require( 'components/data/checkout' ),
 			MainComponent = require( 'components/main' ),
 			EmptyContentComponent = require( 'components/empty-content' ),
 			site = sites.getSelectedSite(),
@@ -63,13 +63,13 @@ module.exports = {
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
-			<CartData>
+			<CheckoutData>
 				<Plans
 					sites={ sites }
 					plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType } />
-			</CartData>,
+			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -78,7 +78,7 @@ module.exports = {
 	plansCompare: function( context ) {
 		var PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
-			CartData = require( 'components/data/cart' ),
+			CheckoutData = require( 'components/data/checkout' ),
 			features = require( 'lib/features-list' )(),
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
@@ -104,14 +104,14 @@ module.exports = {
 
 		renderWithReduxStore(
 			<Main className="plans has-sidebar">
-				<CartData>
+				<CheckoutData>
 					<PlansCompare
 						enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 						selectedSite={ site }
 						plans={ plans }
 						features={ features }
 						productsList={ productsList } />
-				</CartData>
+				</CheckoutData>
 			</Main>,
 			document.getElementById( 'primary' ),
 			context.store

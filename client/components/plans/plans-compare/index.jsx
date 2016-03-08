@@ -239,6 +239,7 @@ var PlansCompare = React.createClass( {
 								site={ this.props.selectedSite }
 								cart={ this.props.cart }
 								enableFreeTrials={ this.props.enableFreeTrials }
+								isSubmitting={ this.props.transaction.step.name === 'submitting-wpcom-request' }
 								isImageButton />
 							<span className="plans-compare__plan-name">
 								{ plan.product_name_short }
@@ -357,6 +358,7 @@ var PlansCompare = React.createClass( {
 						plan={ plan }
 						site={ this.props.selectedSite }
 						sitePlan={ sitePlan }
+						isSubmitting={ this.props.transaction.step.name === 'submitting-wpcom-request' }
 						cart={ this.props.cart } />
 				</td>
 			);

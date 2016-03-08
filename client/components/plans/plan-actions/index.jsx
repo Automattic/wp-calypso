@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	connect = require( 'react-redux' ).connect,
+	page = require( 'page' );
 
 /**
  * Internal dependencies
@@ -14,9 +16,13 @@ var abtest = require( 'lib/abtest' ).abtest,
 	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
 	isFreePlan = productsValues.isFreePlan,
+	isFreeTrial = productsValues.isFreeTrial,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	puchasesPaths = require( 'me/purchases/paths' );
+	plansPaths = require( 'my-sites/plans/paths' ),
+	puchasesPaths = require( 'me/purchases/paths' ),
+	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
+	upgradesActions = require( 'lib/upgrades/actions' );
 
 var PlanActions = React.createClass( {
 	propTypes: { plan: React.PropTypes.object },
@@ -66,6 +72,7 @@ var PlanActions = React.createClass( {
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
+					disabled={ this.props.isSubmitting }
 					onClick={ this.handleAddToCart.bind( null, null, 'button' ) }>
 					{ this.translate( 'Select Free Plan' ) }
 				</button>
@@ -94,6 +101,7 @@ var PlanActions = React.createClass( {
 			<div>
 				<button
 					className="button is-primary plan-actions__upgrade-button"
+					disabled={ this.props.isSubmitting }
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }>
 					{ label }
 				</button>
@@ -122,6 +130,10 @@ var PlanActions = React.createClass( {
 			event.preventDefault();
 		}
 
+		if ( this.props.isSubmitting ) {
+			return;
+		}
+
 		if ( cartItem && actionType ) {
 			if ( actionType === 'button' ) {
 				if ( cartItem.free_trial ) {
@@ -142,7 +154,25 @@ var PlanActions = React.createClass( {
 			}
 		}
 
-		this.props.onSelectPlan( cartItem );
+		if ( this.props.onSelectPlan ) {
+			return this.props.onSelectPlan( cartItem );
+		}
+
+		if ( isFreeTrial( cartItem ) && ! this.props.isImageButton ) {
+			upgradesActions.submitFreeTransaction( this.props.site, cartItem, function( error ) {
+				if ( ! error ) {
+					this.props.refreshSitePlans( this.props.site.ID );
+
+					page( plansPaths.plansDestination( this.props.site.slug, 'thank-you' ) );
+				}
+			}.bind( this ) );
+		}
+
+		if ( ! isFreeTrial( cartItem ) ) {
+			upgradesActions.addItem( cartItem );
+
+			page( '/checkout/' + this.props.site.slug );
+		}
 	},
 
 	canSelectPlan: function() {
@@ -205,6 +235,7 @@ var PlanActions = React.createClass( {
 		return (
 			<div>
 				<button className="button is-primary plan-actions__upgrade-button"
+					disabled={ this.props.isSubmitting }
 					onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: true } ), 'button' ) }>
 						{ this.translate( 'Start Free Trial', { context: 'Store action' } ) }
 				</button>
@@ -306,4 +337,13 @@ var PlanActions = React.createClass( {
 	}
 } );
 
-module.exports = PlanActions;
+module.exports = connect(
+	undefined,
+	function mapDispatchToProps( dispatch ) {
+		return {
+			refreshSitePlans: function( siteId ) {
+				dispatch( refreshSitePlans( siteId ) );
+			}
+		};
+	}
+)( PlanActions );
