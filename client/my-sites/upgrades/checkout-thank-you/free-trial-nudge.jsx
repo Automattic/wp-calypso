@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { getABTestVariation } from 'lib/abtest';
 import {
 	isBusiness,
 	isDomainMapping,
@@ -26,6 +27,10 @@ const FreeTrialNudge = React.createClass( {
 	},
 
 	render() {
+		if ( getABTestVariation( 'freeTrials' ) !== 'offered' ) {
+			return null;
+		}
+
 		if ( ! this.props.purchases.some( isDomainMapping ) && ! this.props.purchases.some( isDomainRegistration ) ) {
 			return null;
 		}
