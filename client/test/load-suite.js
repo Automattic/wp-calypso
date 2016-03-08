@@ -1,5 +1,5 @@
 function requireTestFiles( config, path = '' ) {
-	Object.keys( config ).map( ( folderName ) => {
+	Object.keys( config ).forEach( ( folderName ) => {
 		const folderConfig = config[ folderName ];
 
 		if ( folderName === 'test' ) {
