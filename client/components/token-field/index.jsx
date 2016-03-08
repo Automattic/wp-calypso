@@ -31,6 +31,7 @@ var TokenField = React.createClass( {
 		isBorderless: React.PropTypes.bool,
 		maxLength: React.PropTypes.number,
 		onFocus: React.PropTypes.func,
+		disabled: React.PropTypes.bool,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -60,7 +61,8 @@ var TokenField = React.createClass( {
 			},
 			onChange: function() {},
 			tokenStatus: function() {},
-			isBorderless: false
+			isBorderless: false,
+			disabled: false
 		};
 	},
 
@@ -83,6 +85,15 @@ var TokenField = React.createClass( {
 		}
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.disabled && this.state.isActive ) {
+			this.setState( {
+				isActive: false,
+				incompleteTokenValue: ''
+			} );
+		}
+	},
+
 	componentWillUnmount: function() {
 		debug( 'componentWillUnmount' );
 		this._clearBlurTimeout();
@@ -90,21 +101,30 @@ var TokenField = React.createClass( {
 
 	render: function() {
 		var classes = classNames( 'token-field', {
-			'is-active': this.state.isActive
+			'is-active': this.state.isActive,
+			'is-disabled': this.props.disabled
 		} );
 
+		var tokenFieldProps = {
+			ref: 'main',
+			className: classes,
+			tabIndex: '-1'
+		};
+
+		if ( ! this.props.disabled ) {
+			tokenFieldProps = Object.assign( {}, tokenFieldProps, {
+				onKeyDown: this._onKeyDown,
+				onKeyPress: this._onKeyPress,
+				onBlur: this._onBlur,
+				onFocus: this._onFocus
+			} );
+		}
+
 		return (
-			<div ref="main"
-				className={ classes }
-				tabIndex="-1"
-				onKeyDown={ this._onKeyDown }
-				onKeyPress={ this._onKeyPress }
-				onBlur={ this._onBlur }
-				onFocus={ this._onFocus }
-			>
+			<div { ...tokenFieldProps } >
 				<div ref="tokensAndInput"
 					className="token-field__input-container"
-					onClick={ this._onClick }
+					onClick={ ! this.props.disabled && this._onClick }
 					tabIndex="-1"
 				>
 					{ this._renderTokensAndInput() }
@@ -145,7 +165,8 @@ var TokenField = React.createClass( {
 				onClickRemove={ this._onTokenClickRemove }
 				isBorderless={ this.props.isBorderless }
 				onMouseEnter={ token.onMouseEnter }
-				onMouseLeave={ token.onMouseLeave } />
+				onMouseLeave={ token.onMouseLeave }
+				disabled={ 'error' !== status && this.props.disabled } />
 		);
 	},
 
@@ -155,9 +176,10 @@ var TokenField = React.createClass( {
 			<TokenInput
 				ref="input"
 				key="input"
-				disabled={ maxLength && value.length >= maxLength }
+				disabled={ maxLength && value.length >= maxLength || this.props.disabled }
 				value={ this.state.incompleteTokenValue }
-				onChange={ this._onInputChange } />
+				onChange={ this._onInputChange }
+			/>
 		);
 	},
 

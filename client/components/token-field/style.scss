@@ -15,6 +15,11 @@
 		border-color: lighten( $gray, 10% );
 	}
 
+	&.is-disabled {
+		background: $gray-light;
+		border-color: lighten( $gray, 30% );
+	}
+
 	&.is-active {
 		border-color: $blue-wordpress;
 		box-shadow: 0 0 0 2px $blue-light;
@@ -53,56 +58,71 @@ input[type="text"].token-field__input {
 	font-size: 14px;
 	display: flex;
 	margin: 2px 0 2px 8px;
-	padding: 0;
+	padding: 0 16px 0 0;
 	color: $white;
 	overflow: hidden;
 
 	&.is-success {
-		.token-field__token-text, .token-field__remove-token {
+		.token-field__token-text,
+		.token-field__remove-token {
 			background: $alert-green;
 		}
 	}
 
 	&.is-error {
-		.token-field__token-text, .token-field__remove-token {
+		.token-field__token-text,
+		.token-field__remove-token {
 			background: $alert-red;
 		}
 	}
 
 	&.is-validating {
-		.token-field__token-text, .token-field__remove-token {
+		.token-field__token-text,
+		.token-field__remove-token {
 			background: $gray;
 		}
 	}
-}
 
-.token-field__token.is-borderless {
-	.token-field__token-text {
-		background: transparent;
-		color: $blue-wordpress;
-	}
+	&.is-borderless {
+		position: relative;
 
-	.token-field__remove-token {
-		background: transparent;
-		color: $gray;
-		padding: 0 2px;
-	}
-
-	&.is-success {
 		.token-field__token-text {
-			color: $alert-green;
+			background: transparent;
+			color: $blue-wordpress;
+		}
+
+		.token-field__remove-token {
+			background: transparent;
+			color: $gray;
+			position: absolute;
+			top: 1px;
+			right: 0;
+		}
+
+		&.is-success {
+			.token-field__token-text {
+				color: $alert-green;
+			}
+		}
+
+		&.is-error {
+			.token-field__token-text {
+				color: $alert-red;
+				border-radius: 4px 0 0 4px;
+				padding: 0 4px 0 6px;
+			}
+		}
+
+		&.is-validating {
+			.token-field__token-text {
+				color: $gray-dark;
+			}
 		}
 	}
 
-	&.is-error {
-		.token-field__token-text {
-			color: $alert-red;
-		}
-	}
-
-	&.is-validating {
-		.token-field__token-text {
-			color: $gray-dark;
+	&.is-disabled {
+		.token-field__remove-token {
+			cursor: default;
 		}
 	}
 }

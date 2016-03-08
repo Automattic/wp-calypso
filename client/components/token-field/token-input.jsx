@@ -8,14 +8,16 @@ var TokenInput = React.createClass( {
 	propTypes: {
 		onChange: React.PropTypes.func,
 		onBlur: React.PropTypes.func,
-		value: React.PropTypes.string
+		value: React.PropTypes.string,
+		disabled: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			onChange: function() {},
 			onBlur: function() {},
-			value: ''
+			value: '',
+			disabled: false
 		};
 	},
 
