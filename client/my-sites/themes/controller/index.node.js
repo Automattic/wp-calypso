@@ -42,36 +42,29 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	function updateRenderCache( themeSlug ) {
-		wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
-			if ( error ) {
-				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-				return;
-			}
-			const themeData = themeDetailsCache.get( themeSlug );
-			if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
-				debug( 'caching', themeSlug );
-				themeDetailsCache.set( themeSlug, data );
-				// update the render cache
-				renderThemeSheet( data );
-			}
-		} );
-	}
-
-	function renderThemeSheet( theme ) {
-		context.store.dispatch( receiveThemeDetails( theme ) );
-		next();
-	};
-
 	const themeSlug = context.params.slug;
 	const theme = themeDetailsCache.get( themeSlug );
+
 	if ( theme ) {
-		Object.assign( context, renderThemeSheet( theme ) );
 		debug( 'found theme!', theme.id );
+		context.store.dispatch( receiveThemeDetails( theme ) );
+		next();
 	}
 
-	themeSlug && updateRenderCache( themeSlug ); // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
-}
+	themeSlug && wpcom.undocumented().themeDetails( themeSlug, ( error, data ) => {
+		if ( error ) {
+			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
+			return;
+		}
+		const themeData = themeDetailsCache.get( themeSlug );
+		if ( ! themeData || ( Date( data.date_updated ) > Date( themeData.date_updated ) ) ) {
+			debug( 'caching', themeSlug );
+			themeDetailsCache.set( themeSlug, data );
+			context.store.dispatch( receiveThemeDetails( data ) );
+			next();
+		}
+	} );
+} // TODO(ehg): We don't want to hit the endpoint for every req. Debounce based on theme arg?
 
 export function details( context, next ) {
 	const { slug, section } = context.params;
