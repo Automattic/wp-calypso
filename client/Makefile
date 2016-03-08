@@ -1,10 +1,10 @@
 REPORTER ?= spec
 NODE_BIN := $(shell npm bin)
 BASE_DIR := $(NODE_BIN)/../..
-NODE_PATH := $(BASE_DIR)/client
+NODE_PATH := $(BASE_DIR)/test:$(BASE_DIR)/client
 
 test:
-	@NODE_ENV=development NODE_PATH=$(NODE_PATH) test/runner.js --reporter=$(REPORTER) $(addprefix --grep ,$(GREP))
+	@NODE_ENV=development NODE_PATH=$(NODE_PATH) $(BASE_DIR)/test/runner.js --reporter=$(REPORTER) $(addprefix --grep ,$(GREP))
 
 test-%:
 	@GREP="$*" make test
