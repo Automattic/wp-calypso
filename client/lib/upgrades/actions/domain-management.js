@@ -8,7 +8,6 @@ import DnsStore from 'lib/domains/dns/store';
 import domainsAssembler from 'lib/domains/assembler';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
-import googleAppsUsersAssembler from 'lib/domains/google-apps-users/assembler';
 import i18n from 'lib/mixins/i18n';
 import NameserversStore from 'lib/domains/nameservers/store';
 import sitesFactory from 'lib/sites-list';
@@ -325,26 +324,6 @@ function resendIcannVerification( domainName, onComplete ) {
 	} );
 }
 
-function fetchGoogleAppsUsers( domainName ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.GOOGLE_APPS_USERS_FETCH,
-		domainName
-	} );
-
-	wpcom.googleAppsListAll( domainName, ( error, data ) => {
-		if ( error ) {
-			// TODO: handle error
-			return;
-		}
-
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.GOOGLE_APPS_USERS_FETCH_COMPLETED,
-			domainName,
-			users: googleAppsUsersAssembler.createDomainObject( data )
-		} );
-	} );
-}
-
 function closeSiteRedirectNotice( siteId ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.SITE_REDIRECT_NOTICE_CLOSE,
@@ -555,7 +534,6 @@ export {
 	fetchDns,
 	fetchDomains,
 	fetchEmailForwarding,
-	fetchGoogleAppsUsers,
 	fetchNameservers,
 	fetchSiteRedirect,
 	fetchWapiDomainInfo,

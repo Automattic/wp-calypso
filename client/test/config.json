@@ -41,6 +41,9 @@
 		"current-user": {
 			"test": [ "actions", "reducer", "selectors" ]
 		},
+	  	"google-apps-users": {
+			"test": [ "actions", "reducer", "selectors" ]
+		},
 		"notices": {
 			"test": [ "actions", "reducer" ]
 		},

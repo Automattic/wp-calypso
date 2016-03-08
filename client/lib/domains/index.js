@@ -28,10 +28,7 @@ function canAddGoogleApps( domainName ) {
 			return includes( domainName, phrase );
 		} );
 
-	if ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase ) {
-		return false;
-	}
-	return true;
+	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
 function canRegister( domainName, onComplete ) {
@@ -122,14 +119,18 @@ function hasGoogleApps( domain ) {
 	return domain.googleAppsSubscription.status !== 'no_subscription';
 }
 
+function isMappedDomain( domain ) {
+	return domain.type === domainTypes.MAPPED;
+}
+
 function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		return ( domain.type === domainTypes.REGISTERED );
+		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.name ) );
 	} );
 }
 
-function canAddEmail( domains ) {
-	return ( getGoogleAppsSupportedDomains( domains ).length > 0 );
+function hasGoogleAppsSupportedDomain( domains ) {
+	return getGoogleAppsSupportedDomains( domains ).length > 0;
 }
 
 function getSelectedDomain( { domains, selectedDomainName } ) {
@@ -140,8 +141,20 @@ function isRegisteredDomain( domain ) {
 	return ( domain.type === domainTypes.REGISTERED );
 }
 
+function getRegisteredDomains( domains ) {
+	return domains.filter( isRegisteredDomain )
+}
+
+function getMappedDomains( domains ) {
+	return domains.filter( isMappedDomain );
+}
+
+function hasMappedDomain( domains ) {
+	return getMappedDomains( domains ).length > 0;
+}
+
 export {
-	canAddEmail,
+	hasGoogleAppsSupportedDomain,
 	canAddGoogleApps,
 	canMap,
 	canRedirect,
@@ -150,7 +163,10 @@ export {
 	getGoogleAppsSupportedDomains,
 	getPrimaryDomain,
 	getSelectedDomain,
+	getRegisteredDomains,
+	getMappedDomains,
 	hasGoogleApps,
+	hasMappedDomain,
 	isInitialized,
 	isRegisteredDomain,
 	isSubdomain

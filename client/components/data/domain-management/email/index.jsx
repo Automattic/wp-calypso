@@ -1,47 +1,49 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	GoogleAppsUsersStore = require( 'lib/domains/google-apps-users/store' ),
-	CartStore = require( 'lib/cart/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	userFactory = require( 'lib/user' );
-
+import StoreConnection from 'components/data/store-connection';
+import DomainsStore from 'lib/domains/store';
+import CartStore from 'lib/cart/store';
+import observe from 'lib/mixins/data-observe';
+import { fetchDomains } from 'lib/upgrades/actions';
+import userFactory from 'lib/user';
+import {
+	fetchByDomain,
+	fetchBySiteId
+} from 'state/google-apps-users/actions';
+import {
+	getByDomain,
+	getBySite,
+	isLoaded
+} from 'state/google-apps-users/selectors';
 const user = userFactory();
 
 var stores = [
 	DomainsStore,
-	GoogleAppsUsersStore,
 	CartStore
 ];
 
 function getStateFromStores( props ) {
-	let domains;
-
-	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
-	}
-
 	return {
-		domains,
+		domains: DomainsStore.getBySite( props.selectedSite.ID ) || {},
 		cart: CartStore.get(),
 		context: props.context,
 		products: props.products,
-		googleAppsUsers: GoogleAppsUsersStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
-		user: user.get()
+		user: user.get(),
+		googleAppsUsers: props.googleAppsUsers,
+		googleAppsUsersLoaded: props.googleAppsUsersLoaded
 	};
 }
 
-module.exports = React.createClass( {
+const EmailData = React.createClass( {
 	displayName: 'EmailData',
 
 	propTypes: {
@@ -49,13 +51,16 @@ module.exports = React.createClass( {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired
+		sites: React.PropTypes.object.isRequired,
+		googleAppsUsers: React.PropTypes.array.isRequired,
+		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
 	mixins: [ observe( 'productsList' ) ],
 
 	componentWillMount() {
 		this.loadDomains();
+		this.props.fetch();
 	},
 
 	componentWillUpdate() {
@@ -66,7 +71,7 @@ module.exports = React.createClass( {
 		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( this.prevSelectedSite !== selectedSite ) {
-			upgradesActions.fetchDomains( selectedSite.ID );
+			fetchDomains( selectedSite.ID );
 
 			this.prevSelectedSite = selectedSite;
 		}
@@ -75,6 +80,9 @@ module.exports = React.createClass( {
 	render() {
 		return (
 			<StoreConnection
+				domains={ this.props.domains }
+				googleAppsUsers={ this.props.googleAppsUsers }
+				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
 				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
@@ -85,3 +93,25 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state, { selectedDomainName, sites } ) => {
+		const googleAppsUsers = selectedDomainName
+			? getByDomain( state, selectedDomainName )
+			: getBySite( state, sites.getSelectedSite().ID );
+
+		return {
+			googleAppsUsers,
+			googleAppsUsersLoaded: isLoaded( state )
+		}
+	},
+	( dispatch, { selectedDomainName, sites } ) => {
+		const fetcher = selectedDomainName
+			? () => fetchByDomain( selectedDomainName )
+			: () => fetchBySiteId( sites.getSelectedSite().ID );
+
+		return {
+			fetch: () => dispatch( fetcher() )
+		}
+	}
+)( EmailData );

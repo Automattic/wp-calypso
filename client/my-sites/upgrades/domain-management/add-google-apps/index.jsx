@@ -11,7 +11,7 @@ const Main = require( 'components/main' ),
 	Header = require( 'my-sites/upgrades/domain-management/components/header' ),
 	AddEmailAddressesCard = require( './add-email-addresses-card' ),
 	paths = require( 'my-sites/upgrades/paths' ),
-	{ canAddEmail } = require( 'lib/domains' ),
+	{ hasGoogleAppsSupportedDomain } = require( 'lib/domains' ),
 	SectionHeader = require( 'components/section-header' );
 
 const AddGoogleApps = React.createClass( {
@@ -26,7 +26,7 @@ const AddGoogleApps = React.createClass( {
 	ensureCanAddEmail() {
 		const needsRedirect = (
 			this.props.domains.hasLoadedFromServer &&
-			! canAddEmail( this.props.domains.list )
+			! hasGoogleAppsSupportedDomain( this.props.domains.list )
 		);
 
 		if ( needsRedirect ) {
