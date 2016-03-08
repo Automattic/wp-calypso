@@ -66,9 +66,12 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 };
 
 DomainRegistrationDetails.propTypes = {
+	domain: React.PropTypes.string.isRequired,
 	purchases: React.PropTypes.array.isRequired,
-	selectedSite: React.PropTypes.object.isRequired,
-	domain: React.PropTypes.string.isRequired
+	selectedSite: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object
+	] ).isRequired
 };
 
 export default DomainRegistrationDetails;
