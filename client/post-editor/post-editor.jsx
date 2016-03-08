@@ -717,7 +717,7 @@ const PostEditor = React.createClass( {
 
 	iframePreviewEnabled: function() {
 		var site = this.props.sites.getSelectedSite();
-		return config.isEnabled( 'post-editor/iframe-preview' ) && site && ! site.jetpack;
+		return site && ! site.jetpack;
 	},
 
 	iframePreview: function() {

@@ -65,7 +65,6 @@
 		"perfmon": true,
 		"persist-redux": true,
 		"phone_signup": false,
-		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,

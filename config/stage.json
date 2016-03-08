@@ -62,7 +62,6 @@
 		"olark_use_wpcom_configuration": true,
 		"perfmon": true,
 		"persist-redux": false,
-		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,

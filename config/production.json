@@ -60,7 +60,6 @@
 		"perfmon": true,
 		"persist-redux": false,
 		"post-editor/author-selector": true,
-		"post-editor/iframe-preview": true,
 		"post-editor/live-image-updates": true,
 		"press-this": true,
 		"reader": true,
