@@ -17,6 +17,7 @@
 		"desktop-promo": true,
 		"help": true,
 		"mailing-lists/unsubscribe": true,
+		"manage/add-people": false,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/customize": true,
