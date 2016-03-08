@@ -1,3 +1,13 @@
+v1.1.2 (March 8, 2016)
+======================
+
+- Fix: i18n-no-variables: Account for options passed as first argument
+
+v1.1.1 (March 8, 2016)
+======================
+
+- Fix: Include missing credits for regular expression adaptation
+
 v1.1.0 (March 8, 2016)
 ======================
 
