@@ -7,21 +7,19 @@ Single test runner loads only test files that are listed in config.json file. Co
 Example folder: `client/state/plugins/wporg/test/`
 
 Test files we want to add to the runner:
+* `actions`
+* `selectors`
 * `reducer.js`
-* `test-actions`
-* `test-selectors`
 
 It translates into the following code in the config file:
 ```json
 {
-	...
 	"state": {
 		"plugins": {
 			"wporg": {
-				"test": [ "reducer", "test-actions", "test-selectors" ]
+				"test": [ "actions", "selectors", "reducer" ]
 			}
-		},
-	...
+		}
 }
 ```
 

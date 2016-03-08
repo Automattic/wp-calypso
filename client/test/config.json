@@ -46,7 +46,7 @@
 		},
 		"plugins": {
 			"wporg": {
-				"test": [ "reducer", "test-actions", "test-selectors" ]
+				"test": [ "actions", "selectors", "reducer" ]
 			}
 		},
 		"post-types": {
