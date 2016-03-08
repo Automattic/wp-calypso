@@ -58,7 +58,7 @@ input[type="text"].token-field__input {
 	font-size: 14px;
 	display: flex;
 	margin: 2px 0 2px 8px;
-	padding: 0;
+	padding: 0 16px 0 0;
 	color: $white;
 	overflow: hidden;
 
@@ -84,6 +84,8 @@ input[type="text"].token-field__input {
 	}
 
 	&.is-borderless {
+		position: relative;
+
 		.token-field__token-text {
 			background: transparent;
 			color: $blue-wordpress;
@@ -92,7 +94,9 @@ input[type="text"].token-field__input {
 		.token-field__remove-token {
 			background: transparent;
 			color: $gray;
-			padding: 1px 2px;
+			position: absolute;
+			top: 1px;
+			right: 0;
 		}
 
 		&.is-success {
