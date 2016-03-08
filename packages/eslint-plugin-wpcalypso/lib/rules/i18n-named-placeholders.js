@@ -22,13 +22,13 @@ var RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:\+
 var getCallee = require( '../util/get-callee' );
 
 function hasUnqualifiedPlaceholders( string ) {
-	var placeholders = string.match( RX_PLACEHOLDERS ) || []
+	var placeholders = string.match( RX_PLACEHOLDERS ) || [];
 	if ( placeholders.length <= 1 ) {
 		return false;
 	}
 
 	return placeholders.some( function( placeholder ) {
-		return ! placeholder.match( /[0-9()]/ );
+		return '%%' !== placeholder && ! placeholder.match( /[0-9()]/ );
 	} );
 }
 

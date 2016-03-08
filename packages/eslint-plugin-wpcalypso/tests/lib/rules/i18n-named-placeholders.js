@@ -27,6 +27,9 @@ var rule = require( '../../../lib/rules/i18n-named-placeholders' ),
 		},
 		{
 			code: 'translate( \'%(greeting)s %(toWhom)s\' );'
+		},
+		{
+			code: 'this.translate( \'%(percent)d%% of views\', { args: { percent: 40 } } );'
 		}
 	],
 
