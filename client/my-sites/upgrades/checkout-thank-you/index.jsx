@@ -235,10 +235,10 @@ const CheckoutThankYou = React.createClass( {
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
+							domain={ domain }
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
-							selectedSite={ selectedSite }
-							domain={ domain } />
+							selectedSite={ selectedSite } />
 					</div>
 				) }
 			</div>
@@ -254,8 +254,8 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			activatedTheme: ( meta, selectedSite ) => {
-				dispatch( activated( meta, selectedSite, 'calypstore', true ) );
+			activatedTheme: ( meta, site ) => {
+				dispatch( activated( meta, site, 'calypstore', true ) );
 			},
 			fetchReceipt: ( receiptId ) => {
 				dispatch( fetchReceipt( receiptId ) );
