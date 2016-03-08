@@ -188,7 +188,7 @@ UndocumentedSite.prototype.postCounts = function( options, callback ) {
 	var type,
 		query = merge( {
 			type: 'post',
-			apiNamespace: 'wpcom/v2',
+			apiNamespace: 'wp', // This currently has no bearing on the route, wpcom-xhr-request needs to be updated to remove the namespace whitelist
 			locale: i18n.getLocaleSlug()
 		}, options );
 
