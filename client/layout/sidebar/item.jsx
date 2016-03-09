@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import { isExternal } from 'lib/url';
 import Gridicon from 'components/gridicon';
 import sections from 'sections';
+import analytics from 'analytics';
 
 export default React.createClass( {
 	displayName: 'SidebarItem',
@@ -27,6 +28,11 @@ export default React.createClass( {
 	},
 
 	_preloaded: false,
+
+	onLinkClick() {
+		analytics.mc.bumpStat( 'calypso_sidebar_navigation_click', this.props.className );
+		this.props.onNavigate();
+	},
 
 	renderButton( link ) {
 		if ( ! link ) {
@@ -59,7 +65,7 @@ export default React.createClass( {
 		return (
 			<li className={ classes }>
 				<a
-					onClick={ this.props.onNavigate }
+					onClick={ this.onLinkClick }
 					href={ this.props.link }
 					target={ isExternalLink ? '_blank' : null }
 					onMouseEnter={ this.preload }
