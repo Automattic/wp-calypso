@@ -120,6 +120,6 @@
 		"users": {
 			"test": [ "actions", "reducer", "selectors" ]
 		},
-		"test": [ "index" ]
+		"test": [ "index", "initial-state" ]
 	}
 }

@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
@@ -11,15 +12,24 @@ import config from 'config';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'initial-state', () => {
-	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE;
+	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE,
+		isSwitchedUser = false,
+		shouldBoot = () => isSwitchedUser;
 
 	useFakeDom();
 
 	before( () => {
+		mockery.registerMock( 'lib/user/support-user-interop', { shouldBoot: shouldBoot } );
+		mockery.enable( { warnOnUnregistered: false } );
 		localforage = require( 'localforage' );
 		const initialState = require( '../initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		MAX_AGE = initialState.MAX_AGE;
+	} );
+
+	after( () => {
+		mockery.deregisterAll();
+		mockery.disable();
 	} );
 
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
@@ -57,6 +67,58 @@ describe( 'initial-state', () => {
 			} );
 		} );
 		describe( 'persist-redux enabled', () => {
+			describe( 'switched user', () => {
+				describe( 'with recently persisted data and initial server data', () => {
+					var state,
+						savedState = {
+							postTypes: {
+								items: {
+									2916284: {
+										post: { name: 'post', label: 'Posts' },
+										page: { name: 'page', label: 'Pages' }
+									}
+								}
+							},
+							_timestamp: Date.now()
+						};
+					before( ( done ) => {
+						isSwitchedUser = true;
+						window.initialReduxState = { currentUser: { id: 123456789 } };
+						sinon.stub( config, 'isEnabled' ).withArgs( 'persist-redux' ).returns( true );
+						sinon.spy( console, 'error' );
+						sinon.stub( localforage, 'getItem' )
+							.returns(
+								new Promise( function( resolve ) {
+									resolve( savedState );
+								} )
+							);
+						const reduxReady = function( reduxStore ) {
+							state = reduxStore.getState();
+							done();
+						};
+						createReduxStoreFromPersistedInitialState( reduxReady );
+					} );
+					after( () => {
+						isSwitchedUser = false;
+						window.initialReduxState = null;
+						config.isEnabled.restore();
+						console.error.restore();
+						localforage.getItem.restore();
+					} );
+					it( 'builds store without errors', () => {
+						expect( console.error.called ).to.equal( false );
+					} );
+					it( 'does not build using local forage state', () => {
+						expect( state.postTypes.items[ 2916284 ] ).to.equal( undefined );
+					} );
+					it( 'does not add timestamp to store', () => {
+						expect( state._timestamp ).to.equal( undefined );
+					} );
+					it( 'builds state using server state', () => {
+						expect( state.currentUser.id ).to.equal( 123456789 );
+					} );
+				} );
+			} );
 			describe( 'with recently persisted data and initial server data', () => {
 				var configStub,
 					consoleSpy,
