@@ -22,8 +22,7 @@ describe( 'UserUtils', function() {
 	var always_use_logout_url = false;
 	var mockedConfig = function() {
 		return logout_URL;
-	}
-
+	};
 	mockedConfig.isEnabled = function( feature ) {
 		if ( feature === 'desktop' ) {
 			return false;
@@ -35,6 +34,8 @@ describe( 'UserUtils', function() {
 
 		return true;
 	};
+
+	this.timeout( 10 * 1000 );
 
 	beforeEach( function() {
 		mockery.enable( {
