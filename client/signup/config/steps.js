@@ -50,7 +50,7 @@ module.exports = {
 	survey: {
 		stepName: 'survey',
 		props: {
-			surveySiteType: ( current && current.toString().match( /\/start\/blog/ ) ) ? 'blog' : 'site'
+			surveySiteType: ( current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ) ? 'blog' : 'site'
 		},
 		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
