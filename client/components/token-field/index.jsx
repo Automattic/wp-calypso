@@ -27,7 +27,6 @@ var TokenField = React.createClass( {
 		displayTransform: React.PropTypes.func,
 		saveTransform: React.PropTypes.func,
 		onChange: React.PropTypes.func,
-		tokenStatus: React.PropTypes.func,
 		isBorderless: React.PropTypes.bool,
 		maxLength: React.PropTypes.number,
 		onFocus: React.PropTypes.func,
@@ -61,7 +60,6 @@ var TokenField = React.createClass( {
 				return token.trim();
 			},
 			onChange: function() {},
-			tokenStatus: function() {},
 			isBorderless: false,
 			disabled: false,
 			tokenizeOnSpace: false

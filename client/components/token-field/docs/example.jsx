@@ -7,7 +7,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var TokenField = require( 'components/token-field' );
+var TokenField = require( 'components/token-field' ),
+	Card = require( 'components/card' );
 
 /**
  * Module variables
@@ -27,7 +28,9 @@ var TokenFields = React.createClass( {
 	getInitialState: function() {
 		return {
 			tokenSuggestions: suggestions,
-			tokens: Object.freeze( [ 'foo', 'bar' ] )
+			tokens: Object.freeze( [ 'foo', 'bar' ] ),
+			disabledTokens: [ 'foo', 'bar' ],
+			statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] )
 		};
 	},
 
@@ -37,12 +40,77 @@ var TokenFields = React.createClass( {
 				<h2>
 					<a href="/devdocs/design/token-fields">Token Field</a>
 				</h2>
-				<TokenField
-					suggestions={ this.state.tokenSuggestions }
-					value={ this.state.tokens }
-					onChange={ this._onTokensChange } />
+
+				<p>
+					The <code>TokenField</code> is a field similar to the tags and categories
+					fields in the interim editor chrome, or the "to" field in Mail on OS X.
+					Tokens can be entered by typing them or selecting them from a list of suggested tokens.
+				</p>
+
+				<Card>
+					<h3>Default TokenField with Suggestions</h3>
+					<TokenField
+						isBorderless={ this.state.isBorderless }
+						suggestions={ this.state.tokenSuggestions }
+						value={ this.state.tokens }
+						onChange={ this._onTokensChange } />
+				</Card>
+
+				<Card>
+					<h3>Borderless Tokens with Statuses</h3>
+					<TokenField
+						isBorderless
+						value={ this._getStatusTokens() }
+						onChange={ this._onStatusTokensChange } />
+				</Card>
+
+				<Card>
+					<h3>Borderless and Disabled TokenField</h3>
+					<TokenField
+						disabled
+						isBorderless
+						value={ this.state.disabledTokens } />
+				</Card>
 			</div>
 		);
+	},
+
+	_getStatusTokens() {
+		return this.state.statusTokens.map( ( token ) => {
+			let returnToken;
+			switch ( token ) {
+				case 'error':
+					returnToken = {
+						value: token,
+						status: token,
+						tooltip: 'This token is errored'
+					};
+					break;
+				case 'validating':
+				case 'success':
+					returnToken = {
+						value: token,
+						status: token
+					};
+					break;
+				default:
+					returnToken = token;
+					break;
+			}
+
+			return returnToken;
+		} );
+	},
+
+	_onStatusTokensChange( value ) {
+		const filteredTokens = value.map( ( token ) => {
+			if ( 'object' === typeof token ) {
+				return token.value;
+			}
+			return token;
+		} );
+
+		this.setState( { statusTokens: filteredTokens } );
 	},
 
 	_onTokensChange: function( value ) {

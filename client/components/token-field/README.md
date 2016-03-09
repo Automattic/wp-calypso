@@ -18,7 +18,17 @@ The `value` property is handled in a manner similar to controlled form component
 
 ### Properties
 
-- `value` - An array of strings to display as tokens in the field.
+- `value` - An array of strings or objects to display as tokens in the field. If objects are present in the array, they **must** have a property of `value`. Here is an example object that could be passed in as a value:
+
+	  ```javascript
+	  {
+	    value: '(string) The value of the token.',
+	    status: "(string) One of 'error', 'validating', or 'success'. Applies styles to token."
+	    tooltip: '(string) If not falsey, will add a tooltip to the token.',
+	    onMouserEnter: '(function) Function to call when onMouseEnter event triggered on token.'
+	    onMouseLeave: '(function) Function to call when onMouseLeave is triggered on token.'
+	  }
+	  ```
 - `displayTransform` - Function to call to transform tokens for display.  (In
   the editor, this is needed to decode HTML entities embedded in tags -
   otherwise entities like `&` in tag names are double-encoded like `&amp;`,
@@ -31,10 +41,14 @@ The `value` property is handled in a manner similar to controlled form component
   Otherwise the REST API won't save them.)
 - `onChange` - Function to call when the tokens have changed. An array of new
   tokens is passed to the callback.
+- `onFocus` - Function to call when the TokenField has been focused on. The event is passed to the callback. Useful for analytics.
 - `suggestions` - An array of strings to present to the user as suggested
   tokens.
 - `maxSuggestions` - The maximum number of suggestions to display at a time.
 - `tokenizeOnSpace` - If true, will add a token when `TokenField` is focused and `space` is pressed.
+- `isBorderless` - When true, renders tokens as without a background.
+- `maxLength` - If passed, `TokenField` will disable ability to add new tokens once number of tokens is greater than or equal to `maxLength`.
+- `disabled` - When true, tokens are not able to be added or removed.
 
 ### Example
 
