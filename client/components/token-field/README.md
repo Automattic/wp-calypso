@@ -18,7 +18,17 @@ The `value` property is handled in a manner similar to controlled form component
 
 ### Properties
 
-- `value` - An array of strings or objects to display as tokens in the field. If objects are present in the array, they **must** have a property of `value`. For an example of supported properties, see the `_renderToken` method in `./index.jsx`.
+- `value` - An array of strings or objects to display as tokens in the field. If objects are present in the array, they **must** have a property of `value`. Here is an example object that could be passed in as a value:
+
+	  ```javascript
+	  {
+	    value: '(string) The value of the token.',
+	    status: "(string) One of 'error', 'validating', or 'success'. Applies styles to token."
+	    tooltip: '(string) If not falsey, will add a tooltip to the token.',
+	    onMouserEnter: '(function) Function to call when onMouseEnter event triggered on token.'
+	    onMouseLeave: '(function) Function to call when onMouseLeave is triggered on token.'
+	  }
+	  ```
 - `displayTransform` - Function to call to transform tokens for display.  (In
   the editor, this is needed to decode HTML entities embedded in tags -
   otherwise entities like `&` in tag names are double-encoded like `&amp;`,
