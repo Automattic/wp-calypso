@@ -390,7 +390,7 @@ module.exports = React.createClass( {
 		var site = this.getSelectedSite(),
 			usersLink = '/people/team' + this.siteSuffix(),
 			addPeopleLink = '/people/new' + this.siteSuffix(),
-			addPeopleTarget = '_self',
+			addPeopleTarget = null,
 			addPeopleButton;
 
 		if ( ! site.capabilities ) {
