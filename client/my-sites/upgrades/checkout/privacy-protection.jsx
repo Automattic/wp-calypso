@@ -10,7 +10,7 @@ var cartItems = require( 'lib/cart-values' ).cartItems,
 	PrivacyProtectionDialog = require( './privacy-protection-dialog' ),
 	Card = require( 'components/card' ),
 	Gridicon = require( 'components/gridicon' ),
-	abtest = require( 'lib/abtest').abtest;
+	abtest = require( 'lib/abtest' ).abtest;
 
 module.exports = React.createClass( {
 	displayName: 'PrivacyProtection',

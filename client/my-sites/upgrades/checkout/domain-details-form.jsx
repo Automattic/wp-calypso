@@ -130,6 +130,10 @@ export default React.createClass( {
 		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasNlTld( this.props.cart );
 	},
 
+	allDomainRegistrationsHavePrivacy() {
+		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
+	},
+
 	renderPrivacySection() {
 		return (
 			<PrivacyProtection
@@ -137,11 +141,11 @@ export default React.createClass( {
 				countriesList= { countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
-				isChecked={ cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 }
+				isChecked={ this.allDomainRegistrationsHavePrivacy() }
 				onCheckboxChange={ this.handleCheckboxChange }
 				onButtonSelect={ this.handlePrivacyDialogButtonSelect }
-				onDialogClose={ this.handlePrivacyDialogClose }
-				onDialogOpen={ this.handlePrivacyDialogOpen }
+				onDialogClose={ this.closeDialog }
+				onDialogOpen={ this.openDialog }
 				onDialogSelect={ this.handlePrivacyDialogSelect }
 				isDialogVisible={ this.state.isDialogVisible }
 				productsList={ this.props.productsList } />
@@ -218,18 +222,18 @@ export default React.createClass( {
 	},
 
 	handleCheckboxChange() {
-		if ( cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length > 0 ) {
-			addPrivacyToAllDomains();
-		} else {
+		if ( this.allDomainRegistrationsHavePrivacy() ) {
 			removePrivacyFromAllDomains();
+		} else {
+			addPrivacyToAllDomains();
 		}
 	},
 
-	handlePrivacyDialogClose() {
+	closeDialog() {
 		this.setState( { isDialogVisible: false } );
 	},
 
-	handlePrivacyDialogOpen() {
+	openDialog() {
 		this.setState( { isDialogVisible: true } );
 	},
 
@@ -247,6 +251,11 @@ export default React.createClass( {
 
 	handleSubmitButtonClick( event ) {
 		event.preventDefault();
+
+		if ( ! this.allDomainRegistrationsHavePrivacy() ) {
+			this.openDialog();
+			return;
+		}
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
@@ -274,7 +283,7 @@ export default React.createClass( {
 			} else if ( options.skipPrivacyDialog ) {
 				this.finish( { addPrivacy: false } );
 			} else {
-				this.setState( { isDialogVisible: true } );
+				this.openDialog();
 			}
 		} );
 	},
@@ -287,7 +296,6 @@ export default React.createClass( {
 
 	handlePrivacyDialogSelect( options ) {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
-			this.setState( { isDialogVisible: false } );
 			this.recordSubmit();
 
 			if ( hasErrors ) {
