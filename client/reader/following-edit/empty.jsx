@@ -6,8 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
 import i18n from 'lib/mixins/i18n';
 import { recordAction, recordGaEvent } from 'reader/stats';
@@ -36,7 +34,8 @@ const FollowingEditEmptyContent = React.createClass( {
 			<EmptyContent
 				action={ action }
 				secondaryAction={ secondaryAction }
-				title={ i18n.translate( 'Sorry, we can\'t find that stream.' ) }
+				title={ i18n.translate( 'You haven\'t followed any sites yet' ) }
+				line={ i18n.translate( 'Search for a site above or get recommendations.' ) }
 				illustration={ '/calypso/images/drake/drake-404.svg' }
 				illustrationWidth={ 500 }
 			/>

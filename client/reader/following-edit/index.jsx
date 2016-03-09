@@ -12,7 +12,7 @@ import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
-import EmptyContent from 'components/empty-content';
+import EmptyContent from './empty';
 import NoResults from 'my-sites/no-results';
 import InfiniteList from 'components/infinite-list';
 import SubscriptionPlaceholder from './placeholder';
@@ -322,7 +322,8 @@ const FollowingEdit = React.createClass( {
 	render: function() {
 		let subscriptions = this.state.subscriptions,
 			subscriptionsToDisplay = [],
-			searchPlaceholder = '';
+			searchPlaceholder = '',
+			hasNoSubscriptions = false;
 
 		// We're only interested in showing subscriptions with an ID (i.e. those that came from the API)
 		// At this point we may have some kicking around that just have a URL, such as those added when
@@ -333,11 +334,8 @@ const FollowingEdit = React.createClass( {
 			} ).toArray();
 		}
 
-		if ( ! subscriptionsToDisplay || subscriptionsToDisplay.length < initialLoadFeedCount ) {
-			// If we don't have any data after a fetch has happened, show EmptyContent
-			if ( this.props.isLastPage ) {
-				return ( <EmptyContent title={ this.translate( 'No subscribed feeds found.' ) } /> );
-			}
+		if ( subscriptionsToDisplay.length === 0 && this.state.isLastPage ) {
+			hasNoSubscriptions = true;
 		}
 
 		if ( this.state.windowWidth && this.state.windowWidth > 960 ) {
@@ -359,7 +357,7 @@ const FollowingEdit = React.createClass( {
 				{ this.renderUnfollowError() }
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
 
 					<Button compact primary onClick={ this.toggleAddSite }>
 						{ this.translate( 'Follow Site' ) }
@@ -373,7 +371,7 @@ const FollowingEdit = React.createClass( {
 					initialSearchString={ this.props.initialFollowUrl }
 					ref="feed-search" />
 
-				<SearchCard
+				{ ! hasNoSubscriptions ? <SearchCard
 					key="existingFeedSearch"
 					autoFocus={ true }
 					additionalClasses="following-edit__existing-feed-search"
@@ -381,7 +379,7 @@ const FollowingEdit = React.createClass( {
 					onSearch={ this.doSearch }
 					initialValue={ this.props.search }
 					delaySearch={ true }
-					ref="url-search" />
+					ref="url-search" /> : null }
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading ?
 					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
@@ -396,6 +394,8 @@ const FollowingEdit = React.createClass( {
 					renderItem={ this.renderSubscription }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
 				}
+
+				{ hasNoSubscriptions ? <EmptyContent /> : null }
 			</Main>
 		);
 	}
