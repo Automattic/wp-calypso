@@ -12,7 +12,7 @@ import isEmpty from 'lodash/isEmpty';
 import { validateAllFields } from '../';
 
 describe( 'index', () => {
-	describe( 'validateAllFields', () => {
+	describe( '#validateAllFields', () => {
 		it( 'should return no errors for a valid A record', () => {
 			const initialData = {
 				type: 'A',
