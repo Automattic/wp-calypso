@@ -3,7 +3,6 @@
  */
 var assign = require( 'lodash/assign' ),
 	i18n = require( 'lib/mixins/i18n' ),
-	pick = require( 'lodash/pick' ),
 	omit = require( 'lodash/omit' ),
 	flowRight = require( 'lodash/flowRight' ),
 	Dispatcher = require( 'dispatcher' ),
@@ -13,58 +12,15 @@ var assign = require( 'lodash/assign' ),
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+var Emitter = require( 'lib/mixins/emitter' ),
+	cartLib = require( 'lib/cart' );
 
-function preprocessCartFromServer( cart ) {
-	var newCart = assign( {}, cart, {
-		client_metadata: createClientMetadata(),
-		products: castProductIDsToNumbers( cart.products )
-	} );
-
-	// Get rid of `_headers` data from `wpcom.js` until we actually need to use
-	// it.
-	newCart = omit( newCart, '_headers' );
-
-	return newCart;
-}
-
-// Add a server response date so we can distinguish between carts with the
-// same attributes from the server.
-//
-// NOTE: This object has underscored keys to match the rest of the attributes
-//   in the `CartValue object`.
-function createClientMetadata() {
-	return { last_server_response_date: i18n.moment().toISOString() };
-}
-
-// FIXME: Temporary fix to cast string product IDs to numbers. There is a bug
-//   with the API where it sometimes returns product IDs as strings.
-function castProductIDsToNumbers( cartItems ) {
-	return cartItems.map( function( item ) {
-		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
-	} );
-}
-
-function preprocessCartForServer( cart ) {
-	var newCartItems, newCart;
-
-	newCart = pick( cart, 'products', 'coupon', 'is_coupon_applied', 'currency', 'temporary', 'extra' );
-
-	newCartItems = cart.products.map( function( cartItem ) {
-		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
-	} );
-	newCart = assign( {}, newCart, { products: newCartItems } );
-
-	return newCart;
-}
-
-function CartSynchronizer( siteID, wpcom ) {
+function CartSynchronizer( siteID ) {
 	if ( ! ( this instanceof CartSynchronizer ) ) {
-		return new CartSynchronizer( siteID, wpcom );
+		return new CartSynchronizer( siteID );
 	}
 
 	this._siteID = siteID;
-	this._wpcom = wpcom;
 	this._latestValue = null;
 	this._hasLoadedFromServer = false;
 	this._activeRequest = null;
@@ -154,14 +110,7 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.cart( this._siteID, 'POST', preprocessCartForServer( this._latestValue ), function( error, newValue ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, preprocessCartFromServer( newValue ) );
-	} );
+	cartLib.updateCart( this._latestValue, callback );
 };
 
 CartSynchronizer.prototype._poll = function() {
@@ -173,14 +122,7 @@ CartSynchronizer.prototype.fetch = function() {
 };
 
 CartSynchronizer.prototype._getFromServer = function( callback ) {
-	this._wpcom.cart( this._siteID, 'GET', function( error, newValue ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, preprocessCartFromServer( newValue ) );
-	} );
+	cartLib.getSavedCart( this._siteID, callback );
 };
 
 var requestCounter = 0;

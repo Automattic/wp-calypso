@@ -11,10 +11,14 @@ var abtest = require( 'lib/abtest' ).abtest,
 	analytics = require( 'analytics' ),
 	config = require( 'config' ),
 	productsValues = require( 'lib/products-values' ),
+	freeTransactions = require( 'lib/store-transactions/free-transactions' ),
+	productsList = require( 'lib/products-list' )(),
 	isFreePlan = productsValues.isFreePlan,
 	isBusiness = productsValues.isBusiness,
 	isEnterprise = productsValues.isEnterprise,
-	cartItems = require( 'lib/cart-values' ).cartItems,
+	cartValues = require( 'lib/cart-values' ),
+	cartItems = cartValues.cartItems,
+	plans = require( 'lib/plans-list' )(),
 	puchasesPaths = require( 'me/purchases/paths' );
 
 module.exports = React.createClass( {
@@ -145,6 +149,10 @@ module.exports = React.createClass( {
 
 		if ( this.props.onSelectPlan ) {
 			this.props.onSelectPlan( cartItem );
+		} else if ( cartItem.free_trial ) {
+			freeTransactions.freeTrial( 'premium', ( error, result ) => {
+				console.log( error, result );
+			} );
 		}
 	},
 
