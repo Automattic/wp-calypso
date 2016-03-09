@@ -33,6 +33,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 
 import { isOffline } from 'state/application/selectors';
 
+import DomainDiagnostic from 'components/domain-diagnostic';
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
 }
@@ -161,6 +162,10 @@ Layout = React.createClass( {
 					{ this.renderWelcome() }
 					{ this.renderEmailVerificationNotice() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
+					<DomainDiagnostic domain='donaldjdrumpf.com' />
+					<DomainDiagnostic domain='wordpress.com' />
+					<DomainDiagnostic domain='baconipsum.com' />
+					<DomainDiagnostic domain='arturpiszek.wordpress.com' />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />
 				</div>
