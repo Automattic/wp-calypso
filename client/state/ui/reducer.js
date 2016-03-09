@@ -83,20 +83,11 @@ export function isLoading( state = false, action ) {
 	return state;
 }
 
-export function chunkName( state = false, action ) {
-	switch ( action.type ) {
-		case SET_SECTION:
-			return ( action.chunkName !== undefined ) ? action.chunkName : state;
-	}
-	return state;
-}
-
 const reducer = combineReducers( {
 	section,
 	isLoading,
 	hasSidebar,
 	isFullScreen,
-	chunkName,
 	selectedSiteId,
 	recentlySelectedSiteIds,
 	editor,

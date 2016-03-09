@@ -21,7 +21,7 @@ function getSectionsModule( sections ) {
 		sections.forEach( function( section ) {
 			loadSection += singleEnsure( section.name );
 			section.paths.forEach( function( path ) {
-				sectionLoaders += splitTemplate( path, section.module, section.name );
+				sectionLoaders += splitTemplate( path, section );
 			} );
 		} );
 	} else {
@@ -57,7 +57,7 @@ function getRequires( sections ) {
 	return content;
 }
 
-function splitTemplate( path, module, chunkName ) {
+function splitTemplate( path, section ) {
 	var regex, result;
 	if ( path === '/' ) {
 		path = JSON.stringify( path );
@@ -68,30 +68,31 @@ function splitTemplate( path, module, chunkName ) {
 
 	result = [
 		'page( ' + path + ', function( context, next ) {',
-		'	if ( _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
+		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
+		'		context.store.dispatch( { type: "SET_SECTION", section: ' + JSON.stringify( section ) + ' } );',
 		'		layoutFocus.next();',
 		'		return next();',
 		'	}',
 		'	context.store.dispatch( { type: "SET_SECTION", isLoading: true } );',
-		'	context.store.dispatch( { type: "SET_SECTION", chunkName: ' + JSON.stringify( chunkName ) + ' } );',
+		'	context.store.dispatch( { type: "SET_SECTION", section: ' + JSON.stringify( section ) + ' } );',
 		'	require.ensure([], function( require, error ) {',
 		'		if ( error ) {',
 		'			if ( ! LoadingError.isRetry() ) {',
-		'				LoadingError.retry( ' + JSON.stringify( chunkName ) + ' );',
+		'				LoadingError.retry( ' + JSON.stringify( section.name ) + ' );',
 		'			} else {',
 		'				context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
-		'				LoadingError.show( ' + JSON.stringify( chunkName ) + ' );',
+		'				LoadingError.show( ' + JSON.stringify( section.name ) + ' );',
 		'			}',
 		'			return;',
 		'		}',
 		'		context.store.dispatch( { type: "SET_SECTION", isLoading: false } );',
-		'		if ( ! _loadedSections[ ' + JSON.stringify( module ) + ' ] ) {',
-		'			require( ' + JSON.stringify( module ) + ' )( controller.clientRouter );',
-		'			_loadedSections[ ' + JSON.stringify( module ) + ' ] = true;',
+		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
+		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
+		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
 		'		}',
 		'		layoutFocus.next();',
 		'		next();',
-		'	}, ' + JSON.stringify( chunkName ) + ' );',
+		'	}, ' + JSON.stringify( section.name ) + ' );',
 		'} );\n'
 	];
 
