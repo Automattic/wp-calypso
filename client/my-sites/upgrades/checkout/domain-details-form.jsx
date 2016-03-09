@@ -137,7 +137,8 @@ export default React.createClass( {
 				countriesList= { countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
-				onCheckboxClick={ this.handleCheckboxClick }
+				isChecked={ cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 }
+				onCheckboxChange={ this.handleCheckboxChange }
 				onButtonSelect={ this.handlePrivacyDialogButtonSelect }
 				onDialogClose={ this.handlePrivacyDialogClose }
 				onDialogOpen={ this.handlePrivacyDialogOpen }
@@ -216,8 +217,12 @@ export default React.createClass( {
 		);
 	},
 
-	handleCheckboxClick( event ) {
-		this.setState( { isPrivacySelected: event.target.checked } );
+	handleCheckboxChange() {
+		if ( cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length > 0 ) {
+			addPrivacyToAllDomains();
+		} else {
+			removePrivacyFromAllDomains();
+		}
 	},
 
 	handlePrivacyDialogClose() {
@@ -251,7 +256,7 @@ export default React.createClass( {
 				return;
 			}
 
-			this.finish( { addPrivacy: this.state.isPrivacySelected } );
+			this.finish();
 		} );
 	},
 
@@ -293,10 +298,10 @@ export default React.createClass( {
 		} );
 	},
 
-	finish( options ) {
+	finish( options = {} ) {
 		if ( options.addPrivacy ) {
 			addPrivacyToAllDomains();
-		} else {
+		} else if ( options.addPrivacy === false ) {
 			removePrivacyFromAllDomains();
 		}
 

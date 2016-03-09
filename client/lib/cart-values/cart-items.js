@@ -681,6 +681,7 @@ module.exports = {
 	getAllSorted,
 	getDomainMappings,
 	getDomainRegistrations,
+	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
 	getGoogleApps,
 	getIncludedDomain,
