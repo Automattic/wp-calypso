@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 import { connect } from 'react-redux';
+import includes from 'lodash/includes';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 import get from 'lodash/get';
@@ -10,14 +11,13 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-var SidebarItem = require( 'layout/sidebar/item' ),
-	config = require( 'config' );
+import SidebarItem from 'layout/sidebar/item';
+import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 
-var PublishMenu = React.createClass( {
-
+const PublishMenu = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -36,24 +36,20 @@ var PublishMenu = React.createClass( {
 	},
 
 	// We default to `/my` posts when appropriate
-	getMyParameter: function( selectedSite ) {
-		var sites = this.props.sites;
+	getMyParameter( selectedSite ) {
+		const sites = this.props.sites;
 		if ( ! sites.initialized ) {
 			return '';
 		}
+
 		if ( selectedSite ) {
 			return ( selectedSite.single_user_site || selectedSite.jetpack ) ? '' : '/my';
 		}
+
 		return ( sites.allSingleSites ) ? '' : '/my';
 	},
 
-	getNewPageLink: function( site ) {
-		return site ? '/page/' + site.slug : '/page';
-	},
-
-	getDefaultMenuItems: function( site ) {
-		var newPostLink = site ? '/post/' + site.slug : '/post';
-
+	getDefaultMenuItems() {
 		return [
 			{
 				name: 'post',
@@ -61,9 +57,9 @@ var PublishMenu = React.createClass( {
 				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
-				link: '/posts' + this.getMyParameter( site ),
+				link: '/posts' + this.getMyParameter( this.props.site ),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: newPostLink,
+				buttonLink: this.props.site ? '/post/' + this.props.site.slug : '/post',
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -74,22 +70,14 @@ var PublishMenu = React.createClass( {
 				capability: 'edit_pages',
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: this.getNewPageLink( site ),
+				buttonLink: this.props.site ? '/page/' + this.props.site.slug : '/page',
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			}
 		];
 	},
 
-	renderMenuItem: function( menuItem ) {
-		var className = this.props.itemLinkClass(
-				menuItem.paths ? menuItem.paths : menuItem.link,
-				menuItem.className
-			),
-			isEnabled = config.isEnabled( menuItem.config ),
-			link,
-			icon;
-
+	renderMenuItem( menuItem ) {
 		if ( this.props.site.capabilities && ! this.props.site.capabilities[ menuItem.capability ] ) {
 			return null;
 		}
@@ -101,10 +89,12 @@ var PublishMenu = React.createClass( {
 
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
+		const isEnabled = config.isEnabled( menuItem.config );
 		if ( ! this.props.isSingle && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
 			return null;
 		}
 
+		let link;
 		if ( ! isEnabled && this.props.site.options ) {
 			link = this.props.site.options.admin_url + menuItem.wpAdminLink;
 		} else {
@@ -112,23 +102,27 @@ var PublishMenu = React.createClass( {
 		}
 
 		let preload;
-
-		if ( menuItem.name === 'post' ) {
-			icon = 'posts';
+		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
 			preload = 'posts-pages';
-		} else if ( menuItem.name === 'page' ) {
-			icon = 'pages';
-			preload = 'posts-pages';
-		} else if ( menuItem.name === 'jetpack-portfolio' ) {
-			icon = 'folder';
-		} else if ( menuItem.name === 'jetpack-testimonial' ) {
-			icon = 'quote';
-		} else {
-			icon = 'custom-post-type';
 		}
 
+		let icon;
+		switch ( menuItem.name ) {
+			case 'post': icon = 'posts'; break;
+			case 'page': icon = 'pages'; break;
+			case 'jetpack-portfolio': icon = 'folder'; break;
+			case 'jetpack-testimonial': icon = 'quote'; break;
+			default: icon = 'custom-post-type';
+		}
+
+		const className = this.props.itemLinkClass(
+			menuItem.paths ? menuItem.paths : menuItem.link,
+			menuItem.className
+		);
+
 		return (
-			<SidebarItem key={ menuItem.name }
+			<SidebarItem
+				key={ menuItem.name }
 				label={ menuItem.label }
 				className={ className }
 				link={ link }
@@ -165,9 +159,9 @@ var PublishMenu = React.createClass( {
 		} );
 	},
 
-	render: function() {
+	render() {
 		const menuItems = [
-			...this.getDefaultMenuItems( this.props.site ),
+			...this.getDefaultMenuItems(),
 			...this.getCustomMenuItems()
 		];
 
