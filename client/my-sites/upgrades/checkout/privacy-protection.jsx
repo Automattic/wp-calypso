@@ -79,11 +79,11 @@ module.exports = React.createClass( {
 		if ( abtest( 'privacyCheckbox' ) === 'checkbox' ) {
 			return (
 				<div>
-					<Card className="privacy-protection-checkbox">
+					<Card className="checkout__privacy-protection-checkbox">
 						<input type="checkbox" onClick={ this.props.onCheckboxClick } />
 						<div className="privacy-protection-checkbox__description">
-							<strong>{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
-							<p>{ priceForPrivacyText }</p>
+							<strong className="checkout__privacy-protection-checkbox-heading">{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
+							<p className="checkout__privacy-protection-checkbox-text">{ priceForPrivacyText }</p>
 							<a href="" onClick={ this.handleDialogOpen }>Learn more about Privacy Protection.</a>
 						</div>
 						<div>
