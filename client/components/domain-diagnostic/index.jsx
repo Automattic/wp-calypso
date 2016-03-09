@@ -10,6 +10,8 @@ import NoticeAction from 'components/notice/notice-action';
 
 export default React.createClass( {
 
+	imageChecker: null,
+
 	displayName: 'DomainDiagnostic',
 
 	propTypes: {
@@ -23,11 +25,17 @@ export default React.createClass( {
 
 	componentDidMount() {
 		const self = this;
-		const imageChecker = new Image();
-		imageChecker.onerror = function() {
-			self.setState( { domainDidFail: true } );
+		this.imageChecker = new Image();
+		this.imageChecker.onerror = function() {
+			if ( self.isMounted() ) {
+				self.setState( { domainDidFail: true } );
+			}
 		}
-		imageChecker.src = 'http://' + this.props.domain + '/w32.gif';
+		this.imageChecker.src = 'http://' + this.props.domain + '/w32.gif';
+	},
+
+	componentWillUnmount() {
+		this.imageChecker = null;
 	},
 
 	render() {
