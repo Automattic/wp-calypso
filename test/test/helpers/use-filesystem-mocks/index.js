@@ -1,4 +1,4 @@
-import useMockery from './use-mockery';
+import useMockery from 'test/helpers/use-mockery';
 import glob from 'glob';
 import mockery from 'mockery';
 import path from 'path';

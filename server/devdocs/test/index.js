@@ -5,9 +5,9 @@ import fs from 'fs';
 import fspath from 'path';
 import request from 'superagent';
 import mockery from 'mockery';
-import useMockery from 'test/use-mockery';
+import useMockery from 'test/helpers/use-mockery';
 import { expect } from 'chai';
-import { allowNetworkAccess } from 'test/nock-control';
+import { allowNetworkAccess } from 'test/helpers/nock-control';
 
 /**
  * Internal dependencies
