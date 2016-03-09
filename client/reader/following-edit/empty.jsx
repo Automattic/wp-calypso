@@ -1,46 +1,47 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+/**
+ * Internal dependencies
+ */
+import Main from 'components/main';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import EmptyContent from 'components/empty-content';
+import i18n from 'lib/mixins/i18n';
+import { recordAction, recordGaEvent } from 'reader/stats';
 
-var FollowingEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
-		return false;
+const FollowingEditEmptyContent = React.createClass( {
+	recordAction() {
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
 	},
 
-	recordAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
+	recordSecondaryAction() {
+		recordAction( 'clicked_recommendations_on_empty' );
+		recordGaEvent( 'Clicked Recommendations on EmptyContent' );
 	},
 
-	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_recommendations_on_empty' );
-		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
-	},
-
-	render: function() {
-		var action = discoverHelper.isEnabled()
-		? (
-			<a
-				className="empty-content__action button is-primary"
+	render() {
+		const action = ( <a className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null,
+				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ),
 			secondaryAction = (
-				<a
-					className="empty-content__action button"
+				<a className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
 					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
 
-		return ( <EmptyContent
-			title={ this.translate( 'You haven\t added sites to follow' ) }
-			line={ this.translate( 'Search for a site above or get recommendations.' ) }
-			action={ action }
-			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-all-done.svg' }
-			illustrationWidth={ 500 }
-			/> );
+		return (
+			<EmptyContent
+				action={ action }
+				secondaryAction={ secondaryAction }
+				title={ i18n.translate( 'Sorry, we can\'t find that stream.' ) }
+				illustration={ '/calypso/images/drake/drake-404.svg' }
+				illustrationWidth={ 500 }
+			/>
+		);
 	}
 } );
 
-module.exports = FollowingEmptyContent;
+export default FollowingEditEmptyContent;
