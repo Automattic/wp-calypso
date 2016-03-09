@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import ms from 'ms';
+
 import negate from 'lodash/negate';
 import matchesProperty from 'lodash/matchesProperty';
 import filter from 'lodash/filter';
@@ -12,8 +13,6 @@ import difference from 'lodash/difference';
  * Internal dependencies
  */
 import { getLocalForage } from 'lib/localforage';
-import { generatePageSeriesKey } from './utils';
-import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
 
 /**
  * Module variables
@@ -21,13 +20,17 @@ import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
 const localforage = getLocalForage();
 const debug = debugFactory( 'calypso:sync-handler:cache' );
 
+const RECORDS_LIST_KEY = 'records-list';
+const SYNC_RECORD_REGEX = /^sync-record-\w+$/;
+const LIFETIME = '2 days';
+
 /**
  * Check it the given key is a `sync-record-` key
  *
  * @param {String} key - record key
  * @return {Boolean} `true` if it's a sync-record-<key>
  */
-const isSyncRecordKey = key => key.indexOf( SYNC_RECORD_NAMESPACE ) === 0;
+const isSyncRecordKey = key => SYNC_RECORD_REGEX.test( key );
 
 export const cacheIndex = {
 	getAll() {
@@ -42,7 +45,6 @@ export const cacheIndex = {
 	 * @return {Promise} promise
 	 */
 	getAllExcluding( key ) {
-		debug( 'getAllExcluding()', key );
 		const dropMatches = records => filter( records,
 			negate( matchesProperty( 'key', key ) )
 		);
@@ -61,28 +63,42 @@ export const cacheIndex = {
 	 * If the pair key-timestamp already exists it will be updated.
 	 *
 	 * @param {String} key - record key
-	 * @param {String} [pageSeriesKey] - key for records in a given page-series
 	 * @return {Promise} promise
 	 */
-	addItem( key, pageSeriesKey = null ) {
+	addItem( key ) {
 		return this.getAllExcluding( key ).then( records => {
-			debug( '\n\nadding %o record', key, pageSeriesKey, records );
-			const record = { key, timestamp: Date.now() };
-			if ( pageSeriesKey ) {
-				record.pageSeriesKey = pageSeriesKey
-			}
+			debug( 'adding %o record', key );
 			return localforage.setItem( RECORDS_LIST_KEY, [
 				...records,
-				record
+				{ key, timestamp: Date.now() }
 			] );
 		} );
 	},
 
 	removeItem( key ) {
-		debug( 'removeItem()', key );
 		return this.getAllExcluding( key ).then( records => {
-			debug( '\n\nremoving %o record', key );
+			debug( 'removing %o record', key );
 			return localforage.setItem( RECORDS_LIST_KEY, records );
+		} );
+	},
+
+	dropOlderThan( lifetime ) {
+		const dropElders = records => {
+			const droppedRecords = filter( records, rec => {
+				return Date.now() - lifetime > rec.timestamp;
+			} );
+
+			return {
+				droppedRecords,
+				filteredRecords: difference( records, droppedRecords )
+			}
+		};
+
+		return new Promise( ( resolve, reject ) => {
+			this.getAll()
+			.then( dropElders )
+			.then( resolve )
+			.catch( reject );
 		} );
 	},
 
@@ -103,44 +119,6 @@ export const cacheIndex = {
 		} );
 	},
 
-	removeRecordsByList( data ) {
-		debug( 'removeRecordsByList()', data );
-		return new Promise( ( resolve ) => {
-			const { removedRecords, retainedRecords } = data;
-			if ( ! removedRecords.length ) {
-				debug( 'No records to remove' );
-				resolve();
-			}
-			const droppedPromises = removedRecords.map( item => localforage.removeItem( item.key ) );
-			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainedRecords )
-			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
-			.then( () => {
-				debug( '%o records removed', removedRecords.length )
-				resolve();
-			} );
-		} );
-	},
-
-	dropOlderThan( lifetime ) {
-		const dropElders = records => {
-			const removedRecords = filter( records, rec => {
-				return Date.now() - lifetime > rec.timestamp;
-			} );
-
-			return {
-				removedRecords,
-				retainedRecords: difference( records, removedRecords )
-			}
-		};
-
-		return new Promise( ( resolve, reject ) => {
-			this.getAll()
-			.then( dropElders )
-			.then( resolve )
-			.catch( reject );
-		} );
-	},
-
 	/**
 	 * Prune old records depending of the given lifetime
 	 *
@@ -154,32 +132,17 @@ export const cacheIndex = {
 
 		debug( 'start to prune records older than %s', ms( lifetime, { long: true } ) );
 
-		return this.dropOlderThan( lifetime ).then( this.removeRecordsByList );
-	},
+		return this.dropOlderThan( lifetime ).then( data => {
+			const { droppedRecords, filteredRecords } = data;
 
-	dropPageSeries( pageSeriesKey ) {
-		debug( 'dropPageSeries()' );
-		const pickPageSeries = ( records ) => {
-			const removedRecords = filter( records, record => record.pageSeriesKey === pageSeriesKey );
-			const combinedResponse = {
-				removedRecords,
-				retainedRecords: difference( records, removedRecords ),
-			};
-			debug( 'pickPageSeries()', combinedResponse );
-			return combinedResponse;
-		}
+			if ( ! droppedRecords.length ) {
+				return debug( 'No records to prune' );
+			}
 
-		return new Promise( ( resolve, reject ) => {
-			this.getAll()
-				.then( pickPageSeries )
-				.then( resolve )
-				.catch( reject );
+			const droppedPromises = droppedRecords.map( item => localforage.removeItem( item.key ) );
+			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, filteredRecords )
+			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
+				.then( debug( '%o records removed', droppedRecords.length + 1 ) );
 		} );
-	},
-
-	clearPageSeries( reqParams ) {
-		const pageSeriesKey = generatePageSeriesKey( reqParams );
-		debug( 'clearPageSeries()', pageSeriesKey );
-		return this.dropPageSeries( pageSeriesKey ).then( this.removeRecordsByList );
 	}
 }

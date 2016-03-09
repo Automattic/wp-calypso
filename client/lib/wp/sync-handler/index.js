@@ -2,6 +2,7 @@
  * External dependencies
  */
 import config from 'config';
+import Hashes from 'jshashes';
 import debugFactory from 'debug';
 
 /**
@@ -11,7 +12,6 @@ import warn from 'lib/warn';
 import { getLocalForage } from 'lib/localforage';
 import { isWhitelisted } from './whitelist-handler';
 import { cacheIndex } from './cache-index';
-import { generateKey, generatePageSeriesKey } from './utils';
 
 /**
  * Module variables
@@ -20,19 +20,40 @@ const localforage = getLocalForage();
 const debug = debugFactory( 'calypso:sync-handler' );
 
 /**
+ * Generate a key from the given param object
+ *
+ * @param {Object} params - request parameters
+ * @param {Boolean} applyHash - codificate key when it's true
+ * @return {String} request key
+ */
+export const generateKey = ( params, applyHash = true ) => {
+	var key = `${params.apiVersion || ''}-${params.method}-${params.path}`;
+
+	if ( params.query ) {
+		key += '-' + params.query;
+	}
+
+	if ( applyHash ) {
+		key = new Hashes.SHA1().hex( key );
+	}
+
+	key = 'sync-record-' + key;
+
+	debug( 'key: %o', key );
+	return key;
+}
+
+/**
  * Detect pagination changes in local vs request response bodies
- * @param  {Object} serverResponseBody - response object as passed from promise
+ * @param  {Object} res - response object as passed from promise
  * @param  {Object} localResponseBody - local response body
  * @return {Boolean} returns whether pagination has changed
  */
-export const hasPaginationChanged = ( serverResponseBody, localResponseBody ) => {
-	if ( ! serverResponseBody || ! serverResponseBody.meta || ! serverResponseBody.meta.next_page ) {
+export const hasPaginationChanged = ( res, localResponseBody ) => {
+	if ( ! res || ! res.meta || ! res.meta.next_page ) {
 		return false;
 	}
-	if ( ! localResponseBody ) {
-		return false;
-	}
-	if ( localResponseBody && localResponseBody.meta && localResponseBody.meta.next_page === serverResponseBody.meta.next_page ) {
+	if ( localResponseBody && localResponseBody.meta && localResponseBody.meta.next_page === res.meta.next_page ) {
 		return false;
 	}
 	return true;
@@ -73,6 +94,7 @@ export class SyncHandler {
 
 			// whitelist barrier
 			if ( ! isWhitelisted( params ) ) {
+				debug( 'not whitelisted: skip %o request', path );
 				return handler( params, callback );
 			}
 
@@ -86,11 +108,9 @@ export class SyncHandler {
 			 * getting the data locally (localforage)
 			 *
 			 * @param {Object} localRecord - response stored locally
-			 * @returns {Object} localRecord object
 			 */
 			const localResponseHandler = localRecord => {
 				// let's be optimistic
-				debug( 'localResponseHandler()', localRecord );
 				if ( localRecord ) {
 					debug( 'local callback run => %o, params (%o), response (%o)', path, reqParams, localRecord );
 					// try/catch in case cached record does not match expected schema
@@ -103,7 +123,6 @@ export class SyncHandler {
 				} else {
 					debug( 'No data for [%s] %o - %o', reqParams.method, path, reqParams );
 				}
-				return localRecord;
 			};
 
 			/**
@@ -142,48 +161,10 @@ export class SyncHandler {
 			};
 
 			/**
-			 * clear pageSeries if pagination out of alignment
-			 *
-			 * @param {Object} combinedResponse - object with local and server responses
-			 * @returns {Object} - combinedResponse object
-			 */
-			const adjustPagination = combinedResponse => {
-				debug( 'adjustPagination()', combinedResponse );
-				if ( ! combinedResponse ) {
-					return;
-				}
-				const { serverResponse, localResponse } = combinedResponse;
-				const localResponseBody = localResponse ? localResponse.body : null;
-				if ( hasPaginationChanged( serverResponse, localResponseBody ) ) {
-					debug( 'run clearPageSeries()' );
-					cacheIndex.clearPageSeries( reqParams );
-				} else {
-					debug( 'do not clearPageSeries()' );
-				}
-				return combinedResponse;
-			};
-
-			/**
-			 * Handle response gotten form the
-			 * server-side response
-			 *AzSX
-			 * @param {Error} err - error object
-			 */
-			const networkErrorHandler = err => {
-				if ( err ) {
-					// @TODO improve error handling here
-					warn( err );
-					warn( 'request params: %o', reqParams );
-					callback( err );
-				}
-			};
-
-			/**
 			 * Add/Override the data gotten from the
 			 * WP.com server-side response.
 			 *
 			 * @param {Object} combinedResponse - object with local and server responses
-			 * @returns {Object} - combinedResponse object
 			 */
 			const cacheResponse = combinedResponse => {
 				const { serverResponse } = combinedResponse;
@@ -206,16 +187,39 @@ export class SyncHandler {
 					// @TODO error handling
 					warn( err );
 				} );
-
-				return combinedResponse;
 			};
 
+			/**
+			 * Handle response gotten form the
+			 * server-side response
+			 *
+			 * @param {Error} err - error object
+			 */
+			const networkErrorHandler = err => {
+				if ( err ) {
+					// @TODO improve error handling here
+					warn( err );
+					warn( 'request params: %o', reqParams );
+					callback( err );
+				}
+			};
+
+			const checkPagination = combinedResponse => {
+				if ( ! combinedResponse ) {
+					return;
+				}
+				const { serverResponse, localResponse } = combinedResponse;
+				if ( hasPaginationChanged( serverResponse, localResponse.body ) ) {
+					// clearPageResultsForSite( reqParams )
+				}
+				return serverResponse;
+			};
 			// request/response workflow
-			this.retrieveRecord( key ) // => localforage record
-				.then( localResponseHandler, recordErrorHandler ) // => localforage record
-				.then( networkFetch ) // => combinedResponse { localResponse, serverResponse }
-				.then( adjustPagination, networkErrorHandler ) // => combinedResponse { localResponse, serverResponse }
-				.then( cacheResponse ); // => combinedResponse { localResponse, serverResponse }
+			this.retrieveRecord( key )
+				.then( localResponseHandler, recordErrorHandler )
+				.then( networkFetch )
+				.then( cacheResponse, networkErrorHandler )
+				.then( checkPagination );
 		};
 	}
 
@@ -233,22 +237,18 @@ export class SyncHandler {
 	 */
 	storeRecord( key, data ) {
 		debug( 'storing data in %o key\n', key );
-		let pageSeriesKey;
-		if ( data && data.body && data.body.meta && data.body.meta.next_page ) {
-			pageSeriesKey = generatePageSeriesKey( data.params );
-		}
 
 		// add this record to history
 		return cacheIndex
-			.addItem( key, pageSeriesKey )
-				.then( localforage.setItem( key, data ) );
+			.addItem( key )
+			.then( localforage.setItem( key, data ) );
 	}
 
 	removeRecord( key ) {
 		debug( 'removing %o key\n', key );
 		return localforage
 			.removeItem( key )
-				.then( cacheIndex.removeItem( key ) );
+			.then( cacheIndex.removeItem( key ) );
 	}
 }
 
