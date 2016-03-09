@@ -1,11 +1,16 @@
-import React from 'react';
+/**
+ * External dependencies
+ */
+ import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
-
 
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLInput',
@@ -19,6 +24,10 @@ export default React.createClass( {
 	},
 
 	handleChange( event ) {
+		if ( this.props.isFetching ) {
+			return;
+		}
+
 		this.setState( {
 			value: event.target.value
 		} );
@@ -30,40 +39,14 @@ export default React.createClass( {
 		}
 	},
 
-	spinny() {
-		this.props.onDismissClick();
-		this.setState( { isSpinning: true } );
-		setTimeout( this.spinnyStop, 3000 );
-	},
-
-	spinnyStop() {
-		this.setState( {
-			isSpinning: false
-		} )
-		this.props.onClick();
-	},
-
-	buttonLabel() {
-		if( !this.state.isSpinning ) {
+	renderButtonLabel() {
+		if ( ! this.props.isFetching ) {
 			return( this.translate( 'Connect Now' ) );
-		} else {
-			return( this.translate( 'Connecting…' ) )
 		}
+		return( this.translate( 'Connecting…' ) )
 	},
 
 	render() {
-		const dialogButtons = [ {
-				action: 'cancel',
-				label: this.translate( 'Cancel' )
-			},
-			{
-				action: 'install',
-				label: this.translate( 'Install Now' ),
-				onClick: this.goToPluginInstall,
-				isPrimary: true
-			}
-		];
-
 		return (
 			<div>
 				<FormLabel>{ this.translate( 'Site Address' ) }</FormLabel>
@@ -74,16 +57,15 @@ export default React.createClass( {
 					<FormTextInput
 						value={ this.state.value }
 						onChange={ this.handleChange }
-						disabled={ this.state.isSpinning }
+						disabled={ this.props.isFetching }
 						placeholder={ this.translate( 'http://www.yoursite.com' ) } />
-					{ this.state.isSpinning
+					{ this.props.isFetching
 						? ( <Spinner duration={ 30 } /> )
 						: null }
 				</div>
-				<Button
-					primary
-					disabled={ ( !Boolean( this.state.value ) || this.state.isSpinning ) }
-					onClick={ this.spinny }>{ this.buttonLabel() }</Button>
+				<Button primary
+					disabled={ ( !Boolean( this.state.value ) || this.props.isFetching ) }
+					onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
 			</div>
 		);
 	}
