@@ -278,6 +278,7 @@ const InvitePeople = React.createClass( {
 							<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
 								isBorderless
+								tokenizeOnSpace
 								maxLength={ 10 }
 								value={ this.getTokensWithStatus() }
 								onChange={ this.onTokensChange }

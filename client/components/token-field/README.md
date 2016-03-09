@@ -34,6 +34,7 @@ The `value` property is handled in a manner similar to controlled form component
 - `suggestions` - An array of strings to present to the user as suggested
   tokens.
 - `maxSuggestions` - The maximum number of suggestions to display at a time.
+- `tokenizeOnSpace` - If true, will add a token when `TokenField` is focused and `space` is pressed.
 
 ### Example
 
