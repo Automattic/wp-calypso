@@ -19,18 +19,7 @@ module.exports = {
 	'themes-headstart': {
 		stepName: 'themes-headstart',
 		props: {
-			useHeadstart: true,
-			themes: [
-				{ name: 'Boardwalk', slug: 'boardwalk' },
-				{ name: 'Cubic', slug: 'cubic' },
-				{ name: 'Edin', slug: 'edin' },
-				{ name: 'Cols', slug: 'cols' },
-				{ name: 'Minnow', slug: 'minnow' },
-				{ name: 'Sequential', slug: 'sequential' },
-				{ name: 'Penscratch', slug: 'penscratch' },
-				{ name: 'Intergalactic', slug: 'intergalactic' },
-				{ name: 'Eighties', slug: 'eighties' },
-			],
+			useHeadstart: true
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
