@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import map from 'lodash/map';
 import camelCase from 'lodash/camelCase';
@@ -138,6 +137,7 @@ export default React.createClass( {
 				countriesList= { countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
+				onCheckboxClick={ this.handleCheckboxClick }
 				onButtonSelect={ this.handlePrivacyDialogButtonSelect }
 				onDialogClose={ this.handlePrivacyDialogClose }
 				onDialogOpen={ this.handlePrivacyDialogOpen }
@@ -149,7 +149,7 @@ export default React.createClass( {
 
 	renderSubmitButton() {
 		return (
-			<FormButton>
+			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
 				{ this.translate( 'Continue to Checkout' ) }
 			</FormButton>
 		);
@@ -209,10 +209,15 @@ export default React.createClass( {
 
 				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
 
-				{ ( abtest( 'privacyCheckbox' ) !== 'checkbox' ?
-					this.renderPrivacySection() : this.renderSubmitButton() ) }
+				{ ( abtest( 'privacyCheckbox' ) !== 'checkbox'
+					? this.renderPrivacySection()
+					: this.renderSubmitButton() ) }
 			</div>
 		);
+	},
+
+	handleCheckboxClick( event ) {
+		this.setState( { isPrivacySelected: event.target.checked } );
 	},
 
 	handlePrivacyDialogClose() {
@@ -231,12 +236,31 @@ export default React.createClass( {
 		);
 	},
 
+	focusFirstError() {
+		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
+	},
+
+	handleSubmitButtonClick( event ) {
+		event.preventDefault();
+
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			this.recordSubmit();
+
+			if ( hasErrors ) {
+				this.focusFirstError();
+				return;
+			}
+
+			this.finish( { addPrivacy: this.state.isPrivacySelected } );
+		} );
+	},
+
 	handlePrivacyDialogButtonSelect( options ) {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
 			if ( hasErrors ) {
-				this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
+				this.focusFirstError();
 				return;
 			}
 
@@ -287,8 +311,9 @@ export default React.createClass( {
 
 		return (
 			<div>
-				{ ( abtest( 'privacyCheckbox' ) === 'checkbox' ?
-					this.renderPrivacySection() :  null ) }
+				{ ( abtest( 'privacyCheckbox' ) === 'checkbox'
+					? this.renderPrivacySection()
+					: null ) }
 
 				<PaymentBox
 					classSet={ classSet }

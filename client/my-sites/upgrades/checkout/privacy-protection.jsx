@@ -80,7 +80,7 @@ module.exports = React.createClass( {
 			return (
 				<div>
 					<Card className="privacy-protection-checkbox">
-						<input type="checkbox" />
+						<input type="checkbox" onClick={ this.props.onCheckboxClick } />
 						<div className="privacy-protection-checkbox__description">
 							<strong>{ this.translate( 'Please keep my information private.', { textOnly: true } ) }</strong>
 							<p>{ priceForPrivacyText }</p>
