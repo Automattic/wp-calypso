@@ -32,7 +32,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	NavItem = require( 'components/section-nav/item' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	SectionNav = require( 'components/section-nav' ),
-	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
+	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans,
+	transactionStepTypes = require( 'lib/store-transactions/step-types' );
 
 var PlansCompare = React.createClass( {
 	displayName: 'PlansCompare',
@@ -239,7 +240,7 @@ var PlansCompare = React.createClass( {
 								site={ this.props.selectedSite }
 								cart={ this.props.cart }
 								enableFreeTrials={ this.props.enableFreeTrials }
-								isSubmitting={ this.props.transaction.step.name === 'submitting-wpcom-request' }
+								isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST }
 								isImageButton />
 							<span className="plans-compare__plan-name">
 								{ plan.product_name_short }
@@ -358,7 +359,7 @@ var PlansCompare = React.createClass( {
 						plan={ plan }
 						site={ this.props.selectedSite }
 						sitePlan={ sitePlan }
-						isSubmitting={ this.props.transaction.step.name === 'submitting-wpcom-request' }
+						isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST }
 						cart={ this.props.cart } />
 				</td>
 			);

@@ -10,18 +10,19 @@ var cartValues = require( 'lib/cart-values' ),
 	cartItems = cartValues.cartItems,
 	hasFreeTrial = cartItems.hasFreeTrial,
 	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
-	SubscriptionText = require( './subscription-text' );
+	SubscriptionText = require( './subscription-text' ),
+	transactionStepTypes = require( 'lib/store-transactions/step-types' );
 
 var PayButton = React.createClass( {
 	buttonState: function() {
 		var state;
 
 		switch ( this.props.transactionStep.name ) {
-			case 'before-submit':
+			case transactionStepTypes.BEFORE_SUBMIT:
 				state = this.beforeSubmit();
 				break;
 
-			case 'input-validation':
+			case transactionStepTypes.INPUT_VALIDATION:
 				if ( this.props.transactionStep.error ) {
 					state = this.beforeSubmit();
 				} else {
@@ -29,16 +30,16 @@ var PayButton = React.createClass( {
 				}
 				break;
 
-			case 'submitting-payment-key-request':
-			case 'received-payment-key-response':
+			case transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST:
+			case transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE:
 				state = this.sending();
 				break;
 
-			case 'submitting-wpcom-request':
+			case transactionStepTypes.SUBMITTING_WPCOM_REQUEST:
 				state = this.completing();
 				break;
 
-			case 'received-wpcom-response':
+			case transactionStepTypes.RECEIVED_WPCOM_RESPONSE:
 				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
 					state = this.beforeSubmit();
 				} else {

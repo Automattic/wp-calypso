@@ -25,7 +25,8 @@ var analytics = require( 'analytics' ),
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ setSection } = require( 'state/ui/actions' ),
-	{ abtest } = require( 'lib/abtest' );
+	{ abtest } = require( 'lib/abtest' ),
+	transactionStepTypes = require( 'lib/store-transactions/step-types' );
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'cards', 'productsList' ) ],
@@ -113,7 +114,7 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.transaction.step.name === 'submitting-wpcom-request' ) {
+		if ( this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST ) {
 			return false;
 		}
 

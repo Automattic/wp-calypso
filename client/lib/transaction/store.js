@@ -14,6 +14,7 @@ var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	CartStore = require( 'lib/cart/store' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	Dispatcher = require( 'dispatcher' ),
+	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails;
 
 var _transaction = createInitialTransaction();
@@ -35,7 +36,7 @@ function createInitialTransaction() {
 	return {
 		errors: {},
 		newCardFormFields: {},
-		step: { name: 'before-submit' },
+		step: { name: transactionStepTypes.BEFORE_SUBMIT },
 		domainDetails: null
 	};
 }
