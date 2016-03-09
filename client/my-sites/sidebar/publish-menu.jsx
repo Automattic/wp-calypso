@@ -104,6 +104,8 @@ const PublishMenu = React.createClass( {
 		let preload;
 		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
 			preload = 'posts-pages';
+		} else {
+			preload = 'posts-custom';
 		}
 
 		let icon;
