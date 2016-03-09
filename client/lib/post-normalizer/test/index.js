@@ -22,7 +22,7 @@ describe( 'post-normalizer', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
 	require( 'lib/react-test-env-setup' ).auto();
-	require( 'test/quick-mock' )( __dirname );
+	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( function() {
 		normalizer = require( '../' );
