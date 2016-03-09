@@ -27,6 +27,12 @@
 		"posts": {
 			"test": [ "actions", "post-edit-store", "post-list-store", "utils" ]
 		},
+		"purchases": {
+			"stored-cards": {
+				"test": [ "assembler", "store" ]
+			},
+			"test": [ "assembler", "index", "store" ]
+		},
 		"store": {
 			"test": [ "index-test" ]
 		}

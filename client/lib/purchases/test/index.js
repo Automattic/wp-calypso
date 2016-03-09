@@ -13,11 +13,11 @@ import {
 	DOMAIN_MAPPING_PURCHASE_EXPIRED,
 	SITE_REDIRECT_PURCHASE,
 	SITE_REDIRECT_PURCHASE_EXPIRED
-} from 'data';
+} from './data';
 import { isRemovable } from '../index';
 
-describe( 'Purchases Utils', () => {
-	describe( 'isRemovable', () => {
+describe( 'index', () => {
+	describe( '#isRemovable', () => {
 		it( 'should not be removable when domain registration purchase is not expired', () => {
 			expect( isRemovable( DOMAIN_PURCHASE ) ).to.be.false;
 		} );
