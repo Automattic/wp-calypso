@@ -143,17 +143,15 @@ const PublishMenu = React.createClass( {
 				name: postType.name,
 				label: get( postType.labels, 'menu_name', postType.label ),
 				className: postType.name,
+				config: 'manage/custom-post-types',
 
 				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
 				//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
 				capability: get( postType.capabilities, 'edit_posts' ),
 
-				// Dummy - doesn't exist yet, so wpAdminLink will be used
-				config: 'manage/cpts',
-
 				// Required to build the menu item class name. Must be discernible from other
 				// items' paths in the same section for item highlighting to work properly.
-				link: '/' + postType.name,
+				link: '/types/' + postType.name,
 				buttonLink: '',
 				wpAdminLink: 'edit.php?post_type=' + postType.name,
 				showOnAllMySites: false
