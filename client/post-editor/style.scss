@@ -1,4 +1,4 @@
-.is-section-post::before {
+.is-group-editor::before {
 	content: '';
 	position: fixed;
 		top: 0;
@@ -7,14 +7,14 @@
 		left: 0;
 	background-color: $white;
 	pointer-events: none;
-	z-index: z-index( 'root', '.is-section-post::before' );
+	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
-.is-section-post .wp-content {
+.is-group-editor .wp-content {
 	padding: 0;
 }
 
-.is-section-post .email-verification-notice {
+.is-group-editor .email-verification-notice {
 	margin: 8px;
 
 	@include breakpoint( ">660px" ) {
@@ -57,7 +57,7 @@
 	}
 }
 
-.is-section-post .email-verification-notice,
+.is-group-editor .email-verification-notice,
 .post-editor__content {
 	@include breakpoint( ">660px" ) {
 		margin-left: ( $sidebar-width-min + 1 );

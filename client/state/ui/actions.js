@@ -34,7 +34,6 @@ export function setAllSitesSelected() {
 }
 
 export function setSection( section, options = {} ) {
-	console.log(section);
 	options.type = SET_SECTION;
 	if ( section ) {
 		options.section = section;

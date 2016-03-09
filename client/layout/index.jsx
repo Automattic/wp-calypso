@@ -136,7 +136,6 @@ Layout = React.createClass( {
 	},
 
 	render: function() {
-		console.log(this.props.section);
 		var sectionClass = classnames(
 				'wp',
 				'layout',

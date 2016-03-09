@@ -20,7 +20,6 @@ var actions = require( 'lib/posts/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
-	setSection = require( 'state/ui/actions' ).setSection,
 	analytics = require( 'analytics' );
 
 import {
@@ -46,8 +45,6 @@ function determinePostType( context ) {
 }
 
 function renderEditor( context, postType ) {
-	context.store.dispatch( setSection( 'post' ) );
-
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	ReactDom.render(
 		React.createElement( ReduxProvider, { store: context.store },

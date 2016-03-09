@@ -19,7 +19,6 @@ import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
-import { setSection } from 'state/ui/actions';
 import EmptyContent from 'components/empty-content';
 
 const devdocs = {
@@ -57,8 +56,6 @@ const devdocs = {
 				false );
 		}
 
-		context.store.dispatch( setSection( 'devdocs' ) );
-
 		ReactDom.render(
 			React.createElement( DocsComponent, {
 				term: context.query.term,
@@ -74,8 +71,6 @@ const devdocs = {
 	 * Controller for single developer document
 	 */
 	singleDoc: function( context ) {
-		context.store.dispatch( setSection( 'devdocs' ) );
-
 		ReactDom.render(
 			React.createElement( SingleDocComponent, {
 				path: context.params.path,
@@ -88,8 +83,6 @@ const devdocs = {
 
 	// UI components
 	design: function( context ) {
-		context.store.dispatch( setSection( 'devdocs' ) );
-
 		ReactDom.render(
 			React.createElement( DesignAssetsComponent, {
 				component: context.params.component
@@ -100,8 +93,6 @@ const devdocs = {
 
 	// App components
 	appComponents: function( context ) {
-		context.store.dispatch( setSection( 'devdocs' ) );
-
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( AppComponents, {
@@ -113,8 +104,6 @@ const devdocs = {
 	},
 
 	typography: function( context ) {
-		context.store.dispatch( setSection( 'devdocs' ) );
-
 		ReactDom.render(
 			React.createElement( Typography, {
 				component: context.params.component
@@ -133,10 +122,6 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function( context ) {
-		context.store.dispatch( setSection( 'devdocs-start', {
-			hasSidebar: false
-		} ) );
-
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
 		ReactDom.render(
@@ -155,8 +140,6 @@ const devdocs = {
 
 	// Welcome screen
 	welcome: function( context ) {
-		context.store.dispatch( setSection( 'devdocs' ) );
-
 		ReactDom.render(
 			React.createElement( DevWelcome, {} ),
 			document.getElementById( 'primary' )

@@ -47,8 +47,6 @@ export default React.createClass( {
 	},
 
 	isActive( section ) {
-		console.log(this.props.section);
-		console.log(section);
 		return section === this.props.section && ! this.state.showNotifications;
 	},
 
