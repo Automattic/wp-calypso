@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	TITLE_SET,
 	SELECTED_SITE_SET,
 	SET_SECTION,
 	SERIALIZE,
@@ -14,6 +15,15 @@ import {
 } from 'state/action-types';
 import editor from './editor/reducer';
 import reader from './reader/reducer';
+
+export function title( state = '', action ) {
+	switch ( action.type ) {
+		case TITLE_SET:
+			return action.title;
+	}
+
+	return state;
+}
 
 /**
  * Tracks the currently selected site ID.
@@ -92,6 +102,7 @@ export function chunkName( state = false, action ) {
 }
 
 const reducer = combineReducers( {
+	title,
 	section,
 	isLoading,
 	hasSidebar,

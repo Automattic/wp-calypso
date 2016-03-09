@@ -7,11 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	TITLE_SET,
 	SELECTED_SITE_SET,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { selectedSiteId } from '../reducer';
+import reducer, { title, selectedSiteId } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should refuse to persist any state', () => {
@@ -28,6 +29,23 @@ describe( 'reducer', () => {
 		}, { type: DESERIALIZE } );
 
 		expect( state ).to.eql( {} );
+	} );
+
+	describe( '#title()', () => {
+		it( 'should default to an empty string', () => {
+			const state = title( undefined, {} );
+
+			expect( state ).to.equal( '' );
+		} );
+
+		it( 'should track state as the assigned title', () => {
+			const state = title( undefined, {
+				type: TITLE_SET,
+				title: 'Home'
+			} );
+
+			expect( state ).to.equal( 'Home' );
+		} );
 	} );
 
 	describe( '#selectedSiteId()', () => {
