@@ -92,6 +92,11 @@ module.exports = {
 		'vars-on-top': 1,
 		'yoda': 0,
 		// Custom rules
-		'wpcalypso/no-lodash-import': 2
+		'wpcalypso/no-lodash-import': 2,
+		'wpcalypso/i18n-ellipsis': 1,
+		'wpcalypso/i18n-no-variables': 1,
+		'wpcalypso/i18n-no-placeholders-only': 1,
+		'wpcalypso/i18n-mismatched-placeholders': 1,
+		'wpcalypso/i18n-named-placeholders': 1
 	}
 };

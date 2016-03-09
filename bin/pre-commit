@@ -11,19 +11,6 @@ fi
 
 pass=true
 
-# i18nlinting.  Just have i18nlint issue warnings for now without failing
-printf "\nValidating translatable strings:\n"
-for file in ${files}; do
-    result=$(./bin/i18nlint --color ${file})
-    if [ $? -ne 0 ]; then
-        printf "\033[31mi18nlint Failed: \033[0m%s\n" "$result"
-        printf "\n -----\n"
-        pass=false
-    else
-        printf "\033[32mi18nlint Passed: %s\033[0m\n" "${file}"
-    fi
-done
-
 printf "\nValidating .jsx and .js:\n"
 
 for file in ${files}; do
