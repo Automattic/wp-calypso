@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { shouldBoot as shouldBootToSupportUser, boot as supportUserBoot } from 'lib/user/support-user-interop';
+import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
 
 /**
  * External dependencies
@@ -50,7 +50,7 @@ User.prototype.initialize = function() {
 	this.fetching = false;
 	this.initialized = false;
 
-	if ( shouldBootToSupportUser() ) {
+	if ( isSupportUserSession() ) {
 		supportUserBoot();
 		this.fetch();
 

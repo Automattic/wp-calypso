@@ -14,12 +14,12 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 describe( 'initial-state', () => {
 	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE,
 		isSwitchedUser = false,
-		shouldBoot = () => isSwitchedUser;
+		isSupportUserSession = () => isSwitchedUser;
 
 	useFakeDom();
 
 	before( () => {
-		mockery.registerMock( 'lib/user/support-user-interop', { shouldBoot: shouldBoot } );
+		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
 		mockery.enable( { warnOnUnregistered: false } );
 		localforage = require( 'localforage' );
 		const initialState = require( '../initial-state' );

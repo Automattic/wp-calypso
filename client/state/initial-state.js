@@ -10,7 +10,7 @@ import pick from 'lodash/pick';
 import { createReduxStore, reducer } from 'state';
 import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
 import { getLocalForage } from 'lib/localforage';
-import { shouldBoot } from 'lib/user/support-user-interop';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
 
 /**
@@ -74,7 +74,7 @@ function persistOnChange( reduxStore ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	if ( config.isEnabled( 'persist-redux' ) && ! shouldBoot() ) {
+	if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
 		localforage.getItem( 'redux-state' )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
