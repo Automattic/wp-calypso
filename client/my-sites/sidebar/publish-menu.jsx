@@ -23,7 +23,6 @@ const PublishMenu = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ),
-		siteId: React.PropTypes.number,
 		sites: React.PropTypes.object.isRequired,
 		postTypes: React.PropTypes.object,
 		siteSuffix: React.PropTypes.string,
@@ -170,7 +169,9 @@ const PublishMenu = React.createClass( {
 
 		return (
 			<ul>
-				<QueryPostTypes siteId={ this.props.siteId } />
+				{ this.props.site && (
+					<QueryPostTypes siteId={ this.props.site.ID } />
+				) }
 				{ menuItems.map( this.renderMenuItem ) }
 			</ul>
 		);
@@ -180,7 +181,6 @@ const PublishMenu = React.createClass( {
 export default connect( ( state ) => {
 	const siteId = get( getSelectedSite( state ), 'ID' );
 	return {
-		siteId,
 		postTypes: getPostTypes( state, siteId )
 	};
 }, null, null, { pure: false } )( PublishMenu );
