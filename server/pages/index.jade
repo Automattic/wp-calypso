@@ -56,8 +56,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style.css'])
 
 	body(class=isRTL ? 'rtl' : '')
-		if layout
-			#wpcom.wpcom-site!= layout
+		if renderedLayout
+			#wpcom.wpcom-site!= renderedLayout
 		else
 			#wpcom.wpcom-site
 				.wpcom-site__logo.noticon.noticon-wordpress

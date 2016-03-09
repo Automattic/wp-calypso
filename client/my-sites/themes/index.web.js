@@ -3,8 +3,9 @@
  */
 import config from 'config';
 import userFactory from 'lib/user';;
+import { makeLoggedOutLayout } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, details, makeLoggedOutLayout } from './controller';
+import { singleSite, multiSite, loggedOut, details } from './controller';
 
 const user = userFactory();
 

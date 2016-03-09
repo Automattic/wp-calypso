@@ -38,6 +38,6 @@ When you're satisfied that your component or library will render on the server, 
 
 ### I want to server-side render my components!
 
-Awesome! We currently don't have a framework for this, so you'll likely have to add `renderToString` to the server route directly. In addition, there are a couple of things you'll need to keep in mind: if your components need dynamic data, we'll need to cache; `renderToString` is synchronous, and will affect server response time; you should add a test to `server/pages/test/index.js` to make sure your code doesn't break; our current routing is incompatible with SSR; if you want to SSR something logged in, dependency nightmares will ensue.
+Awesome! Have a look at the [Isomorphic Routing] docs to see how to achieve this. In addition, there are a couple of things you'll need to keep in mind: if your components need dynamic data, we'll need to cache; `renderToString` is synchronous, and will affect server response time; you should add a test to `server/pages/test/index.js` to make sure your code doesn't break; if you want to SSR something logged in, dependency nightmares will ensue.
 
 Please ping @ehg, @mcsf, @ockham, or @seear if you're thinking of doing this, or if you have any questions. :)

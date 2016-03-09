@@ -10,7 +10,6 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
-	Path = require( 'path-parser' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
@@ -190,15 +189,6 @@ function reduxStoreReady( reduxStore ) {
 		} );
 	} else {
 		analytics.setSuperProps( superProps );
-
-		const isRoute = function( path ) {
-			return startsWith( window.location.pathname, path );
-		};
-
-		if ( isRoute( '/design' ) ||
-			( config.isEnabled( 'manage/themes/details' ) && isRoute( '/theme' ) ) ) {
-			Layout = require( 'layout/logged-out' );
-		}
 		layoutElement = React.createElement( Layout, { focus: layoutFocus } );
 	}
 
