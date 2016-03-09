@@ -2,17 +2,17 @@
 	"lib": {
 		"domains": {
 			"dns": {
-				"test": [ "index-test", "reducer-test" ]
+				"test": [ "index", "reducer" ]
 			},
 			"email-forwarding": {
-				"test": [ "reducer-test", "store-test" ]
+				"test": [ "reducer", "store" ]
 			},
 			"nameservers": {
-				"test": [ "store-test" ]
+				"test": [ "store" ]
 			},
-			"test": [ "assembler-test" ],
+			"test": [ "assembler" ],
 			"whois": {
-				"test": [ "assembler-test", "store-test" ]
+				"test": [ "assembler", "store" ]
 			}
 		},
 		"post-formats": {
