@@ -7,57 +7,68 @@ sections = [
 	{
 		name: 'customize',
 		paths: [ '/customize' ],
-		module: 'my-sites/customize'
+		module: 'my-sites/customize',
+		group: 'sites'
 	},
 	{
 		name: 'post-editor',
 		paths: [ '/post', '/page' ],
-		module: 'post-editor'
+		module: 'post-editor',
+		group: 'editor'
 	},
 	{
 		name: 'me',
 		paths: [ '/me', '/purchases' ],
-		module: 'me'
+		module: 'me',
+		group: 'me'
 	},
 	{
 		name: 'media',
 		paths: [ '/media' ],
-		module: 'my-sites/media'
+		module: 'my-sites/media',
+		group: 'sites'
 	},
 	{
 		name: 'menus',
 		paths: [ '/menus' ],
-		module: 'my-sites/menus'
+		module: 'my-sites/menus',
+		group: 'sites'
 	},
 	{
 		name: 'people',
 		paths: [ '/people' ],
-		module: 'my-sites/people'
+		module: 'my-sites/people',
+		group: 'sites'
 	},
 	{
 		name: 'plugins',
 		paths: [ '/plugins' ],
-		module: 'my-sites/plugins'
+		module: 'my-sites/plugins',
+		group: 'sites'
 	},
 	{
 		name: 'posts-pages',
 		paths: [ '/pages' ],
-		module: 'my-sites/pages'
+		module: 'my-sites/pages',
+		group: 'sites'
 	},
 	{
 		name: 'posts-pages',
 		paths: [ '/posts' ],
-		module: 'my-sites/posts'
+		module: 'my-sites/posts',
+		group: 'sites'
 	},
 	{
 		name: 'settings',
 		paths: [ '/settings' ],
-		module: 'my-sites/site-settings'
+		module: 'my-sites/site-settings',
+		group: 'sites'
 	},
 	{
 		name: 'sharing',
 		paths: [ '/sharing' ],
-		module: 'my-sites/sharing'
+		module: 'my-sites/sharing',
+		group: 'sites'
 	},
 	{
 		name: 'signup',
@@ -68,24 +79,28 @@ sections = [
 	{
 		name: 'stats',
 		paths: [ '/stats' ],
-		module: 'my-sites/stats'
+		module: 'my-sites/stats',
+		group: 'sites'
 	},
 	{
 		name: 'themes',
 		paths: [ '/design', '/theme' ],
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
-		routing: config( 'env' ) === 'development' ? 'isomorphic' : ''
+		routing: config( 'env' ) === 'development' ? 'isomorphic' : '',
+		group: 'sites'
 	},
 	{
 		name: 'upgrades',
 		paths: [ '/domains', '/checkout' ],
-		module: 'my-sites/upgrades'
+		module: 'my-sites/upgrades',
+		group: 'sites'
 	},
 	{
 		name: 'upgrades',
 		paths: [ '/plans' ],
-		module: 'my-sites/plans'
+		module: 'my-sites/plans',
+		group: 'sites'
 	}
 ];
 
@@ -93,7 +108,8 @@ if ( config.isEnabled( 'manage/ads' ) ) {
 	sections.push( {
 		name: 'ads',
 		paths: [ '/ads' ],
-		module: 'my-sites/ads'
+		module: 'my-sites/ads',
+		group: 'sites'
 	} );
 }
 
@@ -101,7 +117,8 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 	sections.push( {
 		name: 'posts-pages',
 		paths: [ '/drafts' ],
-		module: 'my-sites/drafts'
+		module: 'my-sites/drafts',
+		group: 'sites'
 	} );
 }
 
@@ -124,7 +141,8 @@ if ( config.isEnabled( 'reader' ) ) {
 	sections.push( {
 		name: 'reader',
 		paths: readerPaths,
-		module: 'reader'
+		module: 'reader',
+		group: 'reader'
 	} );
 }
 
@@ -149,7 +167,8 @@ if ( config.isEnabled( 'help' ) ) {
 	sections.push( {
 		name: 'help',
 		paths: [ '/help' ],
-		module: 'me/help'
+		module: 'me/help',
+		group: 'me'
 	} );
 }
 
@@ -158,7 +177,8 @@ if ( config.isEnabled( 'accept-invite' ) ) {
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
-		enableLoggedOut: true
+		enableLoggedOut: true,
+		group: 'sites'
 	} );
 }
 

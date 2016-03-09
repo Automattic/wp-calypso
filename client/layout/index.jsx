@@ -49,8 +49,8 @@ Layout = React.createClass( {
 	_sitesPoller: null,
 
 	componentWillUpdate: function( nextProps ) {
-		if ( this.props.section !== nextProps.section ) {
-			if ( nextProps.section === 'sites' ) {
+		if ( this.props.section.name !== nextProps.section.name ) {
+			if ( nextProps.section.name === 'sites' ) {
 				setTimeout( function() {
 					if ( ! this.isMounted() || this._sitesPoller ) {
 						return;
@@ -93,7 +93,7 @@ Layout = React.createClass( {
 	},
 
 	renderMasterbar: function() {
-		if ( 'login' === this.props.section ) {
+		if ( 'login' === this.props.section.name ) {
 			return null;
 		}
 
@@ -104,7 +104,7 @@ Layout = React.createClass( {
 		return (
 			<MasterbarLoggedIn
 				user={ this.props.user }
-				section={ this.props.section }
+				section={ this.props.section.group }
 				sites={ this.props.sites } />
 		);
 	},
@@ -123,7 +123,7 @@ Layout = React.createClass( {
 		newestSite = this.newestSite();
 		showInvitation = ! showWelcome &&
 				translatorInvitation.isPending() &&
-				translatorInvitation.isValidSection( this.props.section );
+				translatorInvitation.isValidSection( this.props.section.name );
 
 		return (
 			<span>
@@ -136,10 +136,12 @@ Layout = React.createClass( {
 	},
 
 	render: function() {
+		console.log(this.props.section);
 		var sectionClass = classnames(
 				'wp',
 				'layout',
-				`is-section-${this.props.section}`,
+				`is-group-${this.props.section.group}`,
+				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
@@ -155,12 +157,12 @@ Layout = React.createClass( {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
-				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
 					{ this.renderWelcome() }
 					{ this.renderEmailVerificationNotice() }
-					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
+					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="wp-primary wp-section" />
 					<div id="secondary" className="wp-secondary" />
 				</div>
@@ -182,7 +184,6 @@ export default connect(
 			section,
 			hasSidebar,
 			isFullScreen,
-			chunkName,
 			isOffline: isOffline( state )
 		};
 	}
