@@ -334,7 +334,7 @@ const FollowingEdit = React.createClass( {
 			} ).toArray();
 		}
 
-		if ( subscriptionsToDisplay.length === 0 && this.state.isLastPage ) {
+		if ( subscriptionsToDisplay.length === 0 && this.state.isLastPage && ! this.props.search ) {
 			hasNoSubscriptions = true;
 		}
 
@@ -345,7 +345,8 @@ const FollowingEdit = React.createClass( {
 		}
 
 		const containerClasses = classnames( {
-			'is-adding': this.state.isAddingOpen
+			'is-adding': this.state.isAddingOpen || hasNoSubscriptions,
+			'has-no-subscriptions': hasNoSubscriptions
 		}, 'following-edit' );
 
 		return (
@@ -357,8 +358,7 @@ const FollowingEdit = React.createClass( {
 				{ this.renderUnfollowError() }
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
-
+					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
 					<Button compact primary onClick={ this.toggleAddSite }>
 						{ this.translate( 'Follow Site' ) }
 					</Button>
@@ -369,6 +369,7 @@ const FollowingEdit = React.createClass( {
 					onSearchClose={ this.handleNewSubscriptionSearchClose }
 					onFollow={ this.handleFollow }
 					initialSearchString={ this.props.initialFollowUrl }
+					isSearchOpen={ ! hasNoSubscriptions }
 					ref="feed-search" />
 
 				{ ! hasNoSubscriptions ? <SearchCard
@@ -381,18 +382,17 @@ const FollowingEdit = React.createClass( {
 					delaySearch={ true }
 					ref="url-search" /> : null }
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
-				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading ?
-					<NoResults text={ this.translate( 'No subscriptions match that search.' ) } /> :
-
-				<InfiniteList className="following-edit__sites"
-					items={ subscriptionsToDisplay }
-					lastPage={ this.state.isLastPage }
-					fetchingNextPage={ this.state.isLoading }
-					guessedItemHeight={ 75 }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef= { this.getSubscriptionRef }
-					renderItem={ this.renderSubscription }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
+				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
+					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
+					: <InfiniteList className="following-edit__sites"
+						items={ subscriptionsToDisplay }
+						lastPage={ this.state.isLastPage }
+						fetchingNextPage={ this.state.isLoading }
+						guessedItemHeight={ 75 }
+						fetchNextPage={ this.fetchNextPage }
+						getItemRef= { this.getSubscriptionRef }
+						renderItem={ this.renderSubscription }
+						renderLoadingPlaceholders={ this.renderLoadingPlaceholders } />
 				}
 
 				{ hasNoSubscriptions ? <EmptyContent /> : null }

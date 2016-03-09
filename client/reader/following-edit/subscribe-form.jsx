@@ -18,7 +18,8 @@ var FollowingEditSubscribeForm = React.createClass( {
 		onSearch: React.PropTypes.func,
 		onSearchClose: React.PropTypes.func,
 		onFollow: React.PropTypes.func,
-		initialSearchString: React.PropTypes.string
+		initialSearchString: React.PropTypes.string,
+		isSearchOpen: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -26,7 +27,8 @@ var FollowingEditSubscribeForm = React.createClass( {
 			onSearch: noop,
 			onSearchClose: noop,
 			onFollow: noop,
-			initialSearchString: ''
+			initialSearchString: '',
+			isSearchOpen: true
 		}
 	},
 
@@ -143,7 +145,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 		return (
 			<div className="following-edit__subscribe-form">
 				<Search
-					isOpen={ true }
+					isOpen={ this.props.isSearchOpen }
 					key="newSubscriptionSearch"
 					onSearch={ this.handleSearch }
 					onSearchClose={ this.handleSearchClose }
