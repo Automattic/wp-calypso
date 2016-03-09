@@ -142,17 +142,17 @@ const flows = {
 	},
 
 	'delta-blog': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `main` flow for the Delta email campaigns',
-		lastModified: null
+		description: 'A copy of the `blog` flow for the Delta email campaigns',
+		lastModified: `2016-03-09`
 	},
 
 	'delta-site': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `main` flow for the Delta email campaigns',
-		lastModified: null
+		description: 'A copy of the `website` flow for the Delta email campaigns',
+		lastModified: `2016-03-09`
 	},
 
 	'delta-bloggingu': {
