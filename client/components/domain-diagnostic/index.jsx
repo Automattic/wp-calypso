@@ -32,7 +32,7 @@ export default React.createClass( {
 		if ( this.state.domainDidFail ) {
 			return (
 				<Notice status={ 'is-warning' } showDismiss={ false } text={ 'There seems to be a problem with your "' + this.props.domain + '" domain. Do not panic! Our Domain Helper tool awaits!' }>
-					<NoticeAction external={ true } href={ 'https://en.support.wordpress.com/domain-helper/' } />
+					<NoticeAction external={ true } href={ 'https://en.support.wordpress.com/domain-helper/?host=' + this.props.domain } />
 				</Notice>
 			);
 		} else {
