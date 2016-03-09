@@ -1,15 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	some = require( 'lodash/some' );
+var React = require( 'react' );
+import { connect } from 'react-redux';
+import omit from 'lodash/omit';
+import map from 'lodash/map';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 var SidebarItem = require( 'layout/sidebar/item' ),
-	config = require( 'config' ),
-	postTypesList = require( 'lib/post-types-list' )();
+	config = require( 'config' );
+import { getSelectedSite } from 'state/ui/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
+import QueryPostTypes from 'components/data/query-post-types';
 
 var PublishMenu = React.createClass( {
 
@@ -18,7 +23,9 @@ var PublishMenu = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ),
+		siteId: React.PropTypes.number,
 		sites: React.PropTypes.object.isRequired,
+		postTypes: React.PropTypes.object,
 		siteSuffix: React.PropTypes.string,
 		isSingle: React.PropTypes.oneOfType( [
 			React.PropTypes.string,
@@ -72,36 +79,6 @@ var PublishMenu = React.createClass( {
 				showOnAllMySites: true,
 			}
 		];
-	},
-
-	getPostTypes: function( site ) {
-		if ( ! site ) {
-			return { postTypes: [] };
-		}
-
-		return { postTypes: postTypesList.get( site.ID ) };
-	},
-
-	getInitialState: function() {
-		return this.getPostTypes( this.props.site );
-	},
-
-	componentDidMount: function() {
-		postTypesList.on( 'change', this.update );
-	},
-
-	componentWillUnmount: function() {
-		postTypesList.off( 'change', this.update );
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.site !== nextProps.site ) {
-			this.setState( this.getPostTypes( nextProps.site ) );
-		}
-	},
-
-	update: function() {
-		this.setState( this.getPostTypes( this.props.site ) );
 	},
 
 	renderMenuItem: function( menuItem ) {
@@ -163,24 +140,17 @@ var PublishMenu = React.createClass( {
 		);
 	},
 
-	render: function() {
-		var menuItems = this.getDefaultMenuItems( this.props.site ),
-			customMenuItems,
-			customPostTypes;
-
-		customPostTypes = this.state.postTypes.filter( function( type ) {
-			return ! some( menuItems, { name: type.name } );
-		} );
-
-		customMenuItems = customPostTypes.map( function( postType ) {
+	getCustomMenuItems() {
+		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
+		return map( customPostTypes, function( postType ) {
 			return {
 				name: postType.name,
-				label: postType.labels ? postType.labels.menu_name : postType.label,
+				label: get( postType.labels, 'menu_name', postType.label ),
 				className: postType.name,
 
 				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
 				//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
-				capability: ( postType.capabilities || {} ).edit_posts,
+				capability: get( postType.capabilities, 'edit_posts' ),
 
 				// Dummy - doesn't exist yet, so wpAdminLink will be used
 				config: 'manage/cpts',
@@ -190,18 +160,30 @@ var PublishMenu = React.createClass( {
 				link: '/' + postType.name,
 				buttonLink: '',
 				wpAdminLink: 'edit.php?post_type=' + postType.name,
-				showOnAllMySites: false,
+				showOnAllMySites: false
 			};
 		} );
+	},
 
-		menuItems = menuItems.concat( customMenuItems );
+	render: function() {
+		const menuItems = [
+			...this.getDefaultMenuItems( this.props.site ),
+			...this.getCustomMenuItems()
+		];
 
 		return (
 			<ul>
+				<QueryPostTypes siteId={ this.props.siteId } />
 				{ menuItems.map( this.renderMenuItem ) }
 			</ul>
 		);
 	}
 } );
 
-module.exports = PublishMenu;
+export default connect( ( state ) => {
+	const siteId = get( getSelectedSite( state ), 'ID' );
+	return {
+		siteId,
+		postTypes: getPostTypes( state, siteId )
+	};
+}, null, null, { pure: false } )( PublishMenu );
