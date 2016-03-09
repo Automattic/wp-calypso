@@ -1,0 +1,17 @@
+{
+	"config": {
+		"test": [ "parser" ]
+	},
+	"devdocs": {
+		"test": [ "index" ]
+	},
+	"i18n": {
+		"test": [ "test" ]
+	},
+	"i18nlint": {
+		"test": [ "test-i18nlint" ]
+	},
+	"pages": {
+		"test": [ "index" ]
+	}
+}

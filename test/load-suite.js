@@ -12,4 +12,5 @@ function requireTestFiles( config, path = '' ) {
 	} );
 }
 
-requireTestFiles( require( 'test/config.json' ) );
+// this assumes that there's a tests.json at the root of NODE_PATH
+requireTestFiles( require( 'tests.json' ) );

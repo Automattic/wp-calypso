@@ -11,11 +11,11 @@ var assert = require( 'assert' ),
 var i18n = require( '../' );
 
 // generate whitelist file
-var outputFile = path.join( process.env.PWD, 'test/output.php' ),
+var outputFile = path.join( __dirname, 'output.php' ),
 	output, buildFiles;
 
-buildFiles = [ 'test/out/i18n-test-examples.js', 'test/out/i18n-test-example-second-file.js' ].map( function( file ) {
-	return path.join( process.env.PWD, file );
+buildFiles = [ 'out/i18n-test-examples.js', 'out/i18n-test-example-second-file.js' ].map( function( file ) {
+	return path.join( __dirname, file );
 } );
 
 /**

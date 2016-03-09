@@ -1,4 +1,5 @@
 var assert = require( 'chai' ).assert,
+	path = require( 'path' ),
 	i18nlint = require( '../i18nlint.js' ),
 	auditString = i18nlint.auditStringForUnqualifiedPlaceholders;
 
@@ -37,33 +38,33 @@ describe( 'i18nlint.auditString', function() {
 
 describe( 'i18nlint', function() {
 	it( 'should find problems in testfiles/duplicate-placeholders.js', function() {
-		var warnings = i18nlint.scanFile( 'test/testfiles/duplicate-placeholders.js' );
+		var warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/duplicate-placeholders.js' ) );
 		assert.typeOf( warnings, 'array' );
 		assert.equal( warnings.length, 1 );
 	} );
 
 	it( 'should be ok with testfiles/fine', function() {
-		var warnings = i18nlint.scanFile( 'test/testfiles/fine.js' );
+		var warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/fine.js' ) );
 		assert.typeOf( warnings, 'array' );
 		assert.equal( warnings.length, 0 );
 	} );
 
 	it( 'should find mismatched singular/plural placeholders in testfiles/missing-singular-placeholder.js', function() {
-		var warnings = i18nlint.scanFile( 'test/testfiles/missing-singular-placeholder.js' );
+		var warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/missing-singular-placeholder.js' ) );
 		assert.typeOf( warnings, 'array' );
 		assert.equal( warnings.length, 1, 'Should have 1 warning' );
 		assert.include( warnings[ 0 ].string, missingSingularPlaceholderSnippet );
 	} );
 
 	it( 'should handle node scripts (hashbangs)', function() {
-		var warnings = i18nlint.scanFile( 'test/testfiles/hashbang.js' );
+		var warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/hashbang.js' ) );
 		assert.typeOf( warnings, 'array' );
 		assert.equal( warnings.length, 1, 'warnings.length' );
 		assert.equal( warnings[ 0 ].location.line, '15', 'Hashbangs should not invalidate line numbers' );
 	} );
 
 	it( 'should handle jsx', function() {
-		var warnings = i18nlint.scanFile( 'test/testfiles/testfile.jsx' );
+		var warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/testfile.jsx' ) );
 		assert.typeOf( warnings, 'array' );
 		assert.equal( warnings.length, 1, 'warnings.length should be 1' );
 		assert.equal( warnings[ 0 ].location.line, '35', 'Indicate the correct position in the file' );
@@ -71,7 +72,7 @@ describe( 'i18nlint', function() {
 	} );
 
 	it( 'should find unqualified placeholders through concatenation and quotes', function() {
-		var warnings = i18nlint.scanFile( 'test/testfiles/concatenation-and-quotes.js' );
+		var warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/concatenation-and-quotes.js' ) );
 		assert.typeOf( warnings, 'array' );
 		assert.equal( warnings.length, 1 );
 		assert.include( warnings[ 0 ].string, unqualifiedPlaceholdersSnippet );
@@ -79,7 +80,7 @@ describe( 'i18nlint', function() {
 
 	it( 'should warn about non-literal arguments to translate()', function() {
 		var i, specificProblems,
-			warnings = i18nlint.scanFile( 'test/testfiles/non-literal-translate-arguments.js' ),
+			warnings = i18nlint.scanFile( path.join( __dirname, 'testfiles/non-literal-translate-arguments.js' ) ),
 			// snippets to differentiate error messages
 			args = 'to translate()',
 			context = 'context',

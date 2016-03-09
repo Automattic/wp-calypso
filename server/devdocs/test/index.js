@@ -5,36 +5,19 @@ import fs from 'fs';
 import fspath from 'path';
 import request from 'superagent';
 import mockery from 'mockery';
+import useMockery from 'test/use-mockery';
 import { expect } from 'chai';
-
-/**
- * Test setup
- */
-mockery.enable( {
-	warnOnReplace: false,
-	warnOnUnregistered: false
-} );
-mockery.registerMock( 'config', {
-	isEnabled: () => true
-} );
-// for speed - the real search index is very large
-mockery.registerMock( 'devdocs/search-index', {
-	index: {}
-} );
-mockery.registerMock( 'lunr', {
-	Index: {
-		load: () => null
-	}
-} );
+import { allowNetworkAccess } from 'test/nock-control';
 
 /**
  * Internal dependencies
  */
-const devdocs = require( '../' );
+var devdocs;
 
 /**
  * Module variables
  */
+
 function getDocument( base, path, cb ) {
 	if ( typeof path === 'function' ) {
 		cb = path;
@@ -53,14 +36,29 @@ function getDocument( base, path, cb ) {
 describe( 'devdocs server', () => {
 	let app, server;
 
+	allowNetworkAccess();
+	useMockery();
+
 	before( done => {
+		mockery.registerMock( 'config', {
+			isEnabled: () => true
+		} );
+		// for speed - the real search index is very large
+		mockery.registerMock( 'devdocs/search-index', {
+			index: {}
+		} );
+		mockery.registerMock( 'lunr', {
+			Index: {
+				load: () => null
+			}
+		} );
+
+		devdocs = require( '../' );
 		app = devdocs();
 		server = app.listen( 9993, done );
 	} );
 
 	after( done => {
-		mockery.deregisterAll();
-		mockery.disable();
 		server.close( done );
 	} );
 
