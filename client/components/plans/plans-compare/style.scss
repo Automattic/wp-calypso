@@ -66,22 +66,47 @@
 	}
 }
 
-.plans-compare__table {
-  @include breakpoint( ">660px" ) {
-    margin-left: -24px;
-    margin-right: -24px;
-    width: calc(100% + 48px);
-  }
-}
+@mixin plans-in-three-columns() {
+	.plans-compare__table {
+		margin-left: -24px;
+		margin-right: -24px;
+		width: calc(100% + 48px);
+	}
 
-.plans-compare__plan-name {
-	color: $blue-wordpress;
-	font-size: 16px;
-}
-
-.plans-compare__section-navigation {
-	@include breakpoint( ">660px" ) {
+	.plans-compare__section-navigation {
 		display: none;
+	}
+
+	.plans-compare__feature-title-mobile {
+		display: none;
+	}
+}
+
+
+@mixin plans-collapsed() {
+	.plans-compare__cell {
+		&:not(.is-selected) {
+			display: none;
+		}
+	}
+
+	.plans-compare__cell-content {
+		float: right;
+	}
+
+	.plans-compare__header-cell {
+		display: none;
+
+		&.is-selected {
+			display: table-cell;
+			padding-bottom: 20px;
+		}
+	}
+
+	.plans-compare__action-cell {
+		&:not(.is-selected) {
+			display: none;
+		}
 	}
 }
 
@@ -91,55 +116,29 @@
 	vertical-align: middle;
 
 	&:first-child {
-    padding-left: 20px;
-  }
-
-	@include breakpoint( "<660px" ) {
-		&:not(.is-selected) {
-			display: none;
-		}
+		padding-left: 20px;
 	}
+}
+
+.plans-compare__plan-name {
+	color: $blue-wordpress;
+	font-size: 16px;
 }
 
 .plans-compare__cell-content {
 	font-weight: 600;
 	text-align: center;
-
-	@include breakpoint( "<660px" ) {
-		float: right;
-	}
 }
 
 .plans-compare__header-cell {
 	padding: 0 10px 10px;
 	text-align: center;
 	width: 25%;
-
-	@include breakpoint( "<660px" ) {
-		display: none;
-
-		&.is-selected {
-			display: table-cell;
-			padding-bottom: 20px;
-		}
-	}
-}
-
-.plans-compare__action-cell {
-	@include breakpoint( "<660px" ) {
-		&:not(.is-selected) {
-			display: none;
-		}
-	}
 }
 
 .plans-compare__feature-title-mobile {
 	float: left;
 	opacity: .5;
-
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
 
 	&.is-available {
 		opacity: 1;
@@ -171,4 +170,25 @@
 .plans-compare__table .gridicon {
 	color: $alert-green;
 	vertical-align: middle;
+}
+
+
+.layout:not(.has-no-sidebar) .plans-compare {
+	@include breakpoint( "<960px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.layout.has-no-sidebar .plans-compare {
+	@include breakpoint( "<660px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
 }
