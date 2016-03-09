@@ -40,16 +40,16 @@ var Plans = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.updateSitePlans();
+		this.updateSitePlans( this.props.sitePlans );
 	},
 
-	componentWillReceiveProps: function() {
-		this.updateSitePlans();
+	componentWillReceiveProps: function( nextProps ) {
+		this.updateSitePlans( nextProps.sitePlans );
 	},
 
-	updateSitePlans: function() {
+	updateSitePlans: function( sitePlans ) {
 		var selectedSite = this.props.sites.getSelectedSite();
-		this.props.fetchSitePlans( this.props.sitePlans, selectedSite );
+		this.props.fetchSitePlans( sitePlans, selectedSite );
 	},
 
 	openPlan: function( planId ) {
