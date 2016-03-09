@@ -9,7 +9,7 @@ See: [shrinkwrap docs](https://docs.npmjs.com/cli/shrinkwrap)
 
 We use clingwrap to avoid creating huge diffs in npm-shrinkwrap.json. clingwrap also removes
 `from` and `resolved` fields which is expected. If you need to update a package that is not published with npm, 
-you will need to update the npm-shrinkwrap.json by hand.
+use the `Bumping Sub-Dependencies in all Packages` instructions instead.
 
 - Install [clingwrap](https://github.com/goodeggs/clingwrap) globally: `npm install -g clingwrap`
 - Update your desired package, e.g. `npm install lodash@4.0.0 --save`
@@ -34,11 +34,13 @@ We may also choose to update all package sub-dependencies. This will result in a
 so testing instructions should ensure that a clean install works and Calypso runs and tests correctly. It's very 
 important that your node_modules is deleted before you do this to be sure to pick up the latest versions.
 
+- Install [shonkwrap](https://github.com/skybet/shonkwrap) globally: `npm install -g shonkwrap`. This package attempts
+to remove the from/resolved fields if possible.
 - Run `make distclean` to delete local node_modules
 - Delete your local copy of npm-shrinkwrap.json.
 - Run `npm install`
 - Verify that Calypso works as expected and that tests pass.
-- Run `npm shrinkwrap --dev`
+- Run `shonkwrap --dev`
 - Commit the new npm-shrinkwrap.json
 
 ## Testing
