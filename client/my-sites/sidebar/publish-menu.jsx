@@ -36,20 +36,22 @@ const PublishMenu = React.createClass( {
 	},
 
 	// We default to `/my` posts when appropriate
-	getMyParameter( selectedSite ) {
-		const sites = this.props.sites;
+	getMyParameter() {
+		const { sites, site } = this.props;
 		if ( ! sites.initialized ) {
 			return '';
 		}
 
-		if ( selectedSite ) {
-			return ( selectedSite.single_user_site || selectedSite.jetpack ) ? '' : '/my';
+		if ( site ) {
+			return ( site.single_user_site || site.jetpack ) ? '' : '/my';
 		}
 
 		return ( sites.allSingleSites ) ? '' : '/my';
 	},
 
 	getDefaultMenuItems() {
+		const { site } = this.props;
+
 		return [
 			{
 				name: 'post',
@@ -57,9 +59,9 @@ const PublishMenu = React.createClass( {
 				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
-				link: '/posts' + this.getMyParameter( this.props.site ),
+				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: this.props.site ? '/post/' + this.props.site.slug : '/post',
+				buttonLink: site ? '/post/' + site.slug : '/post',
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -70,7 +72,7 @@ const PublishMenu = React.createClass( {
 				capability: 'edit_pages',
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: this.props.site ? '/page/' + this.props.site.slug : '/page',
+				buttonLink: site ? '/page/' + site.slug : '/page',
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			}
@@ -78,7 +80,8 @@ const PublishMenu = React.createClass( {
 	},
 
 	renderMenuItem( menuItem ) {
-		if ( this.props.site.capabilities && ! this.props.site.capabilities[ menuItem.capability ] ) {
+		const { site } = this.props;
+		if ( site.capabilities && ! site.capabilities[ menuItem.capability ] ) {
 			return null;
 		}
 
@@ -95,7 +98,7 @@ const PublishMenu = React.createClass( {
 		}
 
 		let link;
-		if ( ! isEnabled && this.props.site.options ) {
+		if ( ! isEnabled && site.options ) {
 			link = this.props.site.options.admin_url + menuItem.wpAdminLink;
 		} else {
 			link = menuItem.link + this.props.siteSuffix;
