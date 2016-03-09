@@ -135,7 +135,8 @@ const FollowingEdit = React.createClass( {
 
 	handleAdd: function( newSubscription ) {
 		let newState = {
-			isAttemptingFollow: false
+			isAttemptingFollow: false,
+			isAddingOpen: false
 		};
 
 		// If it's a brand new subscription, re-sort by date followed so
@@ -369,7 +370,7 @@ const FollowingEdit = React.createClass( {
 					onSearchClose={ this.handleNewSubscriptionSearchClose }
 					onFollow={ this.handleFollow }
 					initialSearchString={ this.props.initialFollowUrl }
-					isSearchOpen={ ! hasNoSubscriptions }
+					isSearchOpen={ this.state.isAddingOpen }
 					ref="feed-search" />
 
 				{ ! hasNoSubscriptions ? <SearchCard

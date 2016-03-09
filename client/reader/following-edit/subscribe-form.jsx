@@ -1,5 +1,3 @@
-//const debug = require( 'debug' )( 'calypso:reader:following:edit' );
-
 // External dependencies
 const React = require( 'react' ),
 	url = require( 'url' ),
@@ -28,7 +26,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 			onSearchClose: noop,
 			onFollow: noop,
 			initialSearchString: '',
-			isSearchOpen: true
+			isSearchOpen: false
 		}
 	},
 
