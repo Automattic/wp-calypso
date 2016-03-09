@@ -25,7 +25,7 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
-	if ( typeof window === 'object' && window.initialReduxState ) {
+	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
 		const serverState = reducer( window.initialReduxState, { type: SERVER_DESERIALIZE } );
 		return pick( serverState, Object.keys( window.initialReduxState ) );
 	}

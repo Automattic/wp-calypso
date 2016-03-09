@@ -40,7 +40,7 @@ export const setReduxStore = _setReduxStore;
 // for the remainder of the session. This is needed because the User
 // module clears the store on change; it could return false if called
 // after boot.
-const _isSupportUserSession = () => {
+const _isSupportUserSession = ( () => {
 	if ( ! isEnabled() ) {
 		return false;
 	}
@@ -51,7 +51,7 @@ const _isSupportUserSession = () => {
 	}
 
 	return false;
-}();
+} )();
 
 export const isSupportUserSession = () => _isSupportUserSession;
 
