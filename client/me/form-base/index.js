@@ -70,7 +70,11 @@ module.exports = {
 				debug( 'Error saving settings: ' + JSON.stringify( error ) );
 
 				// handle error case here
-				notices.error( 'There was a problem saving your changes.' );
+				if ( error.message ) {
+					notices.error( error.message );
+				} else {
+					notices.error( this.translate( 'There was a problem saving your changes.' ) );
+				}
 			} else {
 				this.markSaved();
 
