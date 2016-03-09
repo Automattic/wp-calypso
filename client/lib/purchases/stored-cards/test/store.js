@@ -14,7 +14,7 @@ import Dispatcher from 'dispatcher';
 import { STORED_CARDS_FROM_API, STORED_CARDS } from './data';
 import StoredCardsStore from './../store';
 
-describe( 'Stored Cards Store', () => {
+describe( 'store', () => {
 	it( 'should be an object', () => {
 		expect( StoredCardsStore ).to.be.an( 'object' );
 	} );

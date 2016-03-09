@@ -9,7 +9,7 @@ import moment from 'moment';
  */
 import { createPurchasesArray } from '../assembler';
 
-describe( 'Purchases assembler', () => {
+describe( 'assembler', () => {
 	it( 'should be a function', () => {
 		expect( createPurchasesArray ).to.be.an( 'function' );
 	} );

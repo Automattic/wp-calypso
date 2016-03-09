@@ -11,7 +11,7 @@ import defer from 'lodash/defer';
 import { action as actionTypes } from 'lib/upgrades/constants';
 import PurchasesStore from '../store';
 
-describe( 'Purchases Store', () => {
+describe( 'store', () => {
 	const userId = 1337,
 		siteId = 2701;
 

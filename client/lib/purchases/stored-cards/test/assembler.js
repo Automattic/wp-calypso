@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { createStoredCardsArray } from '../assembler.js';
 import { STORED_CARDS_FROM_API, STORED_CARDS } from './data';
 
-describe( 'Stored Cards assembler', () => {
+describe( 'assembler', () => {
 	it( 'should be a function', () => {
 		expect( createStoredCardsArray ).to.be.an( 'function' );
 	} );
