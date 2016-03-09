@@ -10,7 +10,7 @@ import { spy, stub } from 'sinon';
 import Dispatcher from 'dispatcher';
 import { createReducerStore } from './../index';
 
-describe.only( 'index', () => {
+describe( 'index', () => {
 	const reducer = state => {
 		return state;
 	};
