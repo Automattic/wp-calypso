@@ -2,7 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-
+/**
+ * Internal dependencies
+ */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
