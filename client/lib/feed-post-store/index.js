@@ -45,8 +45,9 @@ FeedPostStore = {
 	},
 
 	removePostsMarkedForRemoval() {
-		_postsForBlogs = removeBlogPostsMarkedForRemoval();
-		_posts = removeFeedPostsMarkedForRemoval();
+		_postsForBlogs = removePostsMarkedForRemoval( _postsForBlogs );
+		_posts = removePostsMarkedForRemoval( _posts );
+		FeedPostStore.emit( 'change' );
 	}
 };
 
@@ -296,39 +297,30 @@ function markBlockedSitePosts( siteId, isSiteBlocked ) {
 	} );
 }
 
-// @todo extract property update into a helper method
 function markBlogPostsForRemoval( blogId ) {
 	forOwn( _postsForBlogs, function( post ) {
-		var newPost;
 		if ( post.site_ID === blogId && ! post.is_marked_for_removal ) {
-			newPost = clone( post );
-			newPost.is_marked_for_removal = true;
-			setPost( newPost.feed_item_ID, newPost );
+			markPostForRemoval( post );
 		}
-	} );
-}
-
-function removeBlogPostsMarkedForRemoval() {
-	return filter( _postsForBlogs, function( post ) {
-		return ! post.is_marked_for_removal;
 	} );
 }
 
 function markFeedPostsForRemoval( feedId ) {
 	forOwn( _posts, function( post ) {
-		var newPost;
 		if ( post.feed_ID === feedId && ! post.is_marked_for_removal ) {
-			newPost = clone( post );
-			newPost.is_marked_for_removal = true;
-			setPost( newPost.feed_item_ID, newPost );
+			markPostForRemoval( post );
 		}
 	} );
 }
 
-function removeFeedPostsMarkedForRemoval() {
-	return filter( _posts, function( post ) {
+function markPostForRemoval( post ) {
+	const newPost = assign( {}, post, { is_marked_for_removal: true } );
+	setPost( newPost.feed_item_ID, newPost );
+}
+
+function removePostsMarkedForRemoval( posts ) {
+	return filter( posts, function( post ) {
 		return ! post.is_marked_for_removal;
 	} );
 }
-
 module.exports = FeedPostStore;
