@@ -4,6 +4,7 @@
  */
 
 var uid = require('uid');
+var WPError = require('wp-error');
 var event = require('component-event');
 var ProgressEvent = require('progress-event');
 var debug = require('debug')('wpcom-proxy-request');
@@ -423,12 +424,8 @@ function onmessage (e) {
     resolve(xhr, body);
   } else {
     // any other status code is a failure
-    var err = new Error();
-    err.statusCode = statusCode;
-    for (var i in body) err[i] = body[i];
-    if (body.error) err.name = toTitle(body.error) + 'Error';
-
-    reject(xhr, err);
+    var wpe = WPError(xhr.params, statusCode, body);
+    reject(xhr, wpe);
   }
 }
 
@@ -475,11 +472,4 @@ function reject (xhr, err) {
   var e = new ProgressEvent('error');
   e.error = e.err = err;
   xhr.dispatchEvent(e);
-}
-
-function toTitle (str) {
-  if (!str || 'string' !== typeof str) return '';
-  return str.replace(/((^|_)[a-z])/g, function ($1) {
-    return $1.toUpperCase().replace('_', '');
-  });
 }
