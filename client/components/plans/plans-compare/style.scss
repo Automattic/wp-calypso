@@ -9,7 +9,7 @@
 	font-size: .9em;
 	vertical-align: top;
 
-	.feature-list {
+	&.feature-list {
 		text-align: left;
 	}
 }
@@ -19,4 +19,176 @@
 	font-style: italic;
 	text-align: right;
 	margin-top: 15px;
+
+	@include breakpoint( "<660px" ) {
+		margin: 0;
+	}
+}
+
+.plans-compare {
+	.plan-actions {
+		padding: 16px;
+
+		&.is-image-button {
+			padding: 0;
+		}
+	}
+
+	.plan-actions__illustration {
+		height: 40px;
+		margin: 0 auto 5px auto;
+		width: 40px;
+	}
+
+	.wpcom-plan-price {
+		font-size: 14px;
+		margin-bottom: 5px;
+	}
+
+	.wpcom-plan-price .wpcom-plan-price__billing-period {
+		display: inline;
+		margin-left: 3px;
+	}
+
+	&.is-jetpack-site {
+		.plans-compare__header-cell {
+			width: 33%;
+		}
+	}
+
+	&.is-placeholder {
+		.plans-compare__cell:nth-child(2),
+		.plans-compare__header-cell:nth-child(2) {
+			@include breakpoint( "<660px" ) {
+				display: table-cell;
+			}
+		}
+	}
+}
+
+@mixin plans-in-three-columns() {
+	.plans-compare__table {
+		margin-left: -24px;
+		margin-right: -24px;
+		width: calc(100% + 48px);
+	}
+
+	.plans-compare__section-navigation {
+		display: none;
+	}
+
+	.plans-compare__feature-title-mobile {
+		display: none;
+	}
+}
+
+
+@mixin plans-collapsed() {
+	.plans-compare__cell {
+		&:not(.is-selected) {
+			display: none;
+		}
+	}
+
+	.plans-compare__cell-content {
+		float: right;
+	}
+
+	.plans-compare__header-cell {
+		display: none;
+
+		&.is-selected {
+			display: table-cell;
+			padding-bottom: 20px;
+		}
+	}
+
+	.plans-compare__action-cell {
+		&:not(.is-selected) {
+			display: none;
+		}
+	}
+}
+
+.plans-compare__cell {
+	font-size: 12px;
+	padding: 10px;
+	vertical-align: middle;
+
+	&:first-child {
+		padding-left: 20px;
+	}
+}
+
+.plans-compare__plan-name {
+	color: $blue-wordpress;
+	font-size: 16px;
+}
+
+.plans-compare__cell-content {
+	font-weight: 600;
+	text-align: center;
+}
+
+.plans-compare__header-cell {
+	padding: 0 10px 10px;
+	text-align: center;
+	width: 25%;
+}
+
+.plans-compare__feature-title-mobile {
+	float: left;
+	opacity: .5;
+
+	&.is-available {
+		opacity: 1;
+	}
+}
+
+.plans-compare__row {
+	&:nth-child(odd) {
+		background: $gray-light;
+	}
+}
+
+.plans-compare__cell-placeholder {
+	@include placeholder( 23% );
+
+	&.is-plan-specific {
+		margin: 0 auto;
+		width: 50%;
+	}
+}
+
+.plans-compare__header-cell-placeholder {
+	margin: 0 auto 10px auto;
+	width: 80%;
+
+	@include placeholder( 23% );
+}
+
+.plans-compare__table .gridicon {
+	color: $alert-green;
+	vertical-align: middle;
+}
+
+
+.layout:not(.has-no-sidebar) .plans-compare {
+	@include breakpoint( "<960px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">960px" ) {
+		@include plans-in-three-columns();
+	}
+}
+
+.layout.has-no-sidebar .plans-compare {
+	@include breakpoint( "<660px" ) {
+		@include plans-collapsed();
+	}
+
+	@include breakpoint( ">660px" ) {
+		@include plans-in-three-columns();
+	}
 }

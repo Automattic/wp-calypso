@@ -54,6 +54,7 @@
 			display: block;
 			font-size: 17px;
 			line-height: 16px;
+			text-align: center;
 
 			&:before {
 				left: 10px;
@@ -86,31 +87,6 @@
 	}
 }
 
-.plans-compare {
-	.plan-header {
-		border-bottom: 2px solid lighten( $gray, 20% );
-		height: 3em;
-		padding: 0 15px 0 15px;
-
-		.plan-header__title {
-			text-align: center;
-			color: $gray-dark;
-			font-size: 14px;
-			font-weight: 600;
-			line-height: 18px;
-
-			.header-text {
-				&:first-line {
-					color: $white;
-					font-size: 13px;
-					color: darken( $gray, 10% );
-				}
-
-			}
-		}
-	}
-}
-
 @mixin plans-in-three-columns() {
 	.plan, .plan-feature-column {
 		.plan-header {
@@ -134,7 +110,6 @@
 
 			.plan-header__title {
 				line-height: 20px;
-				text-align: center;
 			}
 		}
 	}
@@ -152,16 +127,6 @@
 			}
 			.plan-actions {
 				display: none;
-			}
-		}
-	}
-
-	.plans-compare {
-		.plan-header {
-			.plan-header__title {
-				.header-text {
-					display: none;
-				}
 			}
 		}
 	}
