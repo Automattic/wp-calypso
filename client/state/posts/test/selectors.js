@@ -118,6 +118,19 @@ describe( 'selectors', () => {
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 			] );
 		} );
+
+		it( 'should omit known query posts where post object is unknown', () => {
+			const sitePosts = getSitePostsForQuery( {
+				posts: {
+					items: {},
+					queries: {
+						'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
+					}
+				}
+			}, 2916284, { search: 'Hello' } );
+
+			expect( sitePosts ).to.eql( [] );
+		} );
 	} );
 
 	describe( '#isRequestingSitePostsForQuery()', () => {
