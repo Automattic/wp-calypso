@@ -383,10 +383,8 @@ describe( 'selectors', () => {
 				posts: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					}
-				},
-				editor: {
-					posts: {}
+					},
+					edits: {}
 				}
 			}, 2916284, 841 );
 
@@ -396,10 +394,8 @@ describe( 'selectors', () => {
 		it( 'should return revisions for a new draft', () => {
 			const editedPost = getEditedPost( {
 				posts: {
-					items: {}
-				},
-				editor: {
-					posts: {
+					items: {},
+					edits: {
 						2916284: {
 							'': {
 								title: 'Ribs & Chicken'
@@ -415,10 +411,8 @@ describe( 'selectors', () => {
 		it( 'should return revisions for a draft if the original is unknown', () => {
 			const editedPost = getEditedPost( {
 				posts: {
-					items: {}
-				},
-				editor: {
-					posts: {
+					items: {},
+					edits: {
 						2916284: {
 							841: {
 								title: 'Hello World!'
@@ -436,10 +430,8 @@ describe( 'selectors', () => {
 				posts: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-					}
-				},
-				editor: {
-					posts: {
+					},
+					edits: {
 						2916284: {
 							841: {
 								title: 'Hello World!'
@@ -457,10 +449,8 @@ describe( 'selectors', () => {
 				posts: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', discussion: { comments_open: true } }
-					}
-				},
-				editor: {
-					posts: {
+					},
+					edits: {
 						2916284: {
 							841: {
 								discussion: {

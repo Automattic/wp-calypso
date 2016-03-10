@@ -1,108 +1,83 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
-import page from 'page';
-import classNames from 'classnames';
+import React, { PropTypes } from 'react';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Gridicon from 'components/gridicon';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import { translate } from 'lib/mixins/i18n';
+import { getEditedPost } from 'state/posts/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getPostType } from 'state/post-types/selectors';
+import QueryPostTypes from 'components/data/query-post-types';
 
-/**
- * Module variables
- */
-const isSwitcherEnabled = config.isEnabled( 'post-editor/post-type-switch' );
-
-export default React.createClass( {
-
-	displayName: 'EditorPostType',
-
-	mixins: [ PureRenderMixin ],
-
-	getDefaultProps() {
-		return {
-			isNew: false,
-			type: 'post'
-		};
-	},
-
-	propTypes: {
-		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		siteSlug: React.PropTypes.string
-	},
-
-	getInitialState() {
-		return {
-			showMenu: false
-		};
-	},
-
-	toggleMenu() {
-		if ( isSwitcherEnabled ) {
-			this.setState( { showMenu: ! this.state.showMenu } );
-		}
-	},
-
-	startNew( type ) {
-		this.setState( { showMenu: false } );
-		page( '/' + type + '/' + this.props.siteSlug );
-	},
-
-	getLabel() {
-		const { type, isNew } = this.props;
-
-		if ( isNew ) {
-			if ( type === 'page') {
-				return this.translate( 'New Page' );
+function EditorPostType( { siteId, isNew, typeSlug, type } ) {
+	let label;
+	switch ( typeSlug ) {
+		case 'page':
+			if ( isNew ) {
+				label = translate( 'New Page' );
 			} else {
-				return this.translate( 'New Post' );
+				label = translate( 'Page', { context: 'noun' } );
 			}
-		} else {
-			if ( type === 'page' ) {
-				return this.translate( 'Page', { context: 'noun' } );
+			break;
+		case 'post':
+			if ( isNew ) {
+				label = translate( 'New Post' );
 			} else {
-				return this.translate( 'Post', { context: 'noun' } );
+				label = translate( 'Post', { context: 'noun' } );
 			}
-		}
-	},
-
-	render() {
-		const classes = classNames( 'editor-post-type', {
-			'is-switcher-enabled': isSwitcherEnabled
-		} );
-
-		return (
-			<span className={ classes } ref="postType" onClick={ this.toggleMenu }>
-				{ this.getLabel() }
-				{ isSwitcherEnabled && (
-					<Gridicon icon="chevron-down" size={ 16 } />
-				) }
-				{ isSwitcherEnabled && (
-					<PopoverMenu
-						className="popover editor-post-type__menu"
-						isVisible={ this.state.showMenu }
-						onClose={ this.toggleMenu }
-						position={ 'bottom' }
-						context={ this.refs && this.refs.postType }
-					>
-						<PopoverMenuItem onClick={ this.startNew.bind( this, 'post' ) }>
-							<Gridicon icon="posts" size={ 18 } />
-							{ this.translate( 'Start a new post' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem onClick={ this.startNew.bind( this, 'page' ) }>
-							<Gridicon icon="pages" size={ 18 } />
-							{ this.translate( 'Start a new page' ) }
-						</PopoverMenuItem>
-					</PopoverMenu>
-				) }
-			</span>
-		);
+			break;
+		default:
+			if ( isNew ) {
+				label = get( type, 'labels.new_item' );
+			} else {
+				label = get( type, 'labels.singular_name' );
+			}
+			break;
 	}
-} );
+
+	const classes = classnames( 'editor-post-type', {
+		'is-loading': ! label
+	} );
+
+	return (
+		<span className={ classes }>
+			{ siteId && 'page' !== typeSlug && 'post' !== typeSlug && (
+				<QueryPostTypes siteId={ siteId } />
+			) }
+			{ label || translate( 'Loading…' ) }
+		</span>
+	);
+}
+
+EditorPostType.propTypes = {
+	siteId: PropTypes.number,
+	isNew: PropTypes.bool,
+	typeSlug: PropTypes.string,
+	type: PropTypes.object
+};
+
+export default connect( ( state ) => {
+	const props = { isNew: isEditorNewPost( state ) };
+	const site = getSelectedSite( state );
+	if ( ! site ) {
+		return props;
+	}
+
+	props.siteId = site.ID;
+	const post = getEditedPost( state, site.ID, getEditorPostId( state ) );
+	if ( ! post ) {
+		return props;
+	}
+
+	return Object.assign( props, {
+		typeSlug: post.type,
+		type: getPostType( state, site.ID, post.type )
+	} );
+} )( EditorPostType );

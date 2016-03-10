@@ -8,7 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	isRequestingPostTypes,
-	getPostTypes
+	getPostTypes,
+	getPostType
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -73,6 +74,44 @@ describe( 'selectors', () => {
 			expect( postTypes ).to.eql( {
 				post: { name: 'post', label: 'Posts' }
 			} )
+		} );
+	} );
+
+	describe( '#getPostType()', () => {
+		it( 'should return null if there are no known post types for the site', () => {
+			const postType = getPostType( {
+				postTypes: {
+					items: {}
+				}
+			}, 2916284, 'post' );
+
+			expect( postType ).to.be.null;
+		} );
+
+		it( 'should return null if the post type slug is unknown for the site', () => {
+			const postType = getPostType( {
+				postTypes: {
+					items: {
+						2916284: {}
+					}
+				}
+			}, 2916284, 'post' );
+
+			expect( postType ).to.be.null;
+		} );
+
+		it( 'should return the post type', () => {
+			const postType = getPostType( {
+				postTypes: {
+					items: {
+						2916284: {
+							post: { name: 'post', label: 'Posts' }
+						}
+					}
+				}
+			}, 2916284, 'post' );
+
+			expect( postType ).to.eql( { name: 'post', label: 'Posts' } );
 		} );
 	} );
 } );

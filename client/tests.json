@@ -107,7 +107,8 @@
 			"editor": {
 				"contact-form": {
 					"test": [ "actions", "reducer" ]
-				}
+				},
+				"test": [ "actions", "reducer", "selectors" ]
 			},
 			"reader": {
 				"fullpost": {
