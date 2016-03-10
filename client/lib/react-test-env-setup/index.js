@@ -45,13 +45,3 @@ module.exports.cleanup = function() {
 	delete global.localStorage;
 	delete global.XMLHttpRequest;
 };
-
-module.exports.auto = function( markup, features ) {
-	before( function() {
-		module.exports( markup, features );
-	} );
-
-	after( function() {
-		module.exports.cleanup();
-	} );
-}

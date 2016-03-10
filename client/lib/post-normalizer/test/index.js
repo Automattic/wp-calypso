@@ -4,6 +4,11 @@
 const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
 
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 function identifyTransform( post, callback ) {
 	callback();
@@ -21,8 +26,8 @@ function asyncTransform( post, callback ) {
 describe( 'post-normalizer', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
-	require( 'lib/react-test-env-setup' ).auto();
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+	useFakeDom();
+	useFilesystemMocks( __dirname );
 
 	before( function() {
 		normalizer = require( '../' );

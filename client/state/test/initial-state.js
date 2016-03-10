@@ -8,11 +8,12 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import config from 'config';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'initial-state', () => {
 	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE;
 
-	require( 'lib/react-test-env-setup' ).auto();
+	useFakeDom();
 
 	before( () => {
 		localforage = require( 'localforage' );
