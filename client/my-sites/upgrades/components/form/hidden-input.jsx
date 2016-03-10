@@ -24,6 +24,13 @@ module.exports = React.createClass( {
 		};
 	},
 
+	componentDidUpdate: function( prevProps, prevState ) {
+		// Focus the input only when the user explicitly clicked the toggle link
+		if ( ! prevState.toggled && this.state.toggled && prevProps.value === this.props.value ) {
+			this.refs.input.focus();
+		}
+	},
+
 	handleClick: function( event ) {
 		event.preventDefault();
 
@@ -35,7 +42,7 @@ module.exports = React.createClass( {
 	render: function() {
 		if ( this.state.toggled ) {
 			return (
-				<Input { ...this.props } autofocus />
+				<Input ref="input" { ...this.props } />
 			);
 		}
 
