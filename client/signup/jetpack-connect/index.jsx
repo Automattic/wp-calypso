@@ -4,7 +4,7 @@
 import React from 'react';
 
 /**
- * internal dependencies
+ * Internal dependencies
  */
 import Card from 'components/card';
 import ConnectHeader from './connect-header';
@@ -27,7 +27,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			showDialog: false,
-			siteStatus: false
+			siteStatus: false,
+			isFetching: false,
 		};
 	},
 
@@ -48,7 +49,7 @@ export default React.createClass( {
 	},
 
 	showNotExistsError() {
-		this.setState( { siteStatus: 'notExist' } );
+		this.setState( { siteStatus: 'notExist', isFetching: false } );
 	},
 
 	checkIfUrlIsReadyForJetpack( url ) {
@@ -67,6 +68,7 @@ export default React.createClass( {
 	},
 
 	onURLEnter() {
+		this.setState( { isFetching: true } );
 		this.checkIfUrlIsReadyForJetpack( this.getCurrentUrl() )
 			.then( this.goToRemoteAuth )
 			.catch( this.showNotExistsError )
@@ -131,7 +133,7 @@ export default React.createClass( {
 							onClick={ this.onURLEnter }
 							onDismissClick={ this.onDismissClick }
 							isError={ this.state.isError }
-							spinnerDuration={ 60000 } />
+							isFetching={ this.state.isFetching } />
 					</Card>
 
 					<LoggedOutFormLinks>
