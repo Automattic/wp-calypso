@@ -43,7 +43,7 @@ var Team = React.createClass( {
 		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ) {
 			return (
 				<NoResults
-					image='/calypso/images/people/mystery-person.svg'
+					image="/calypso/images/people/mystery-person.svg"
 					text={
 						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
@@ -108,7 +108,7 @@ var Team = React.createClass( {
 			<PeopleListItem
 				key={ user.ID }
 				user={ user }
-				type='user'
+				type="user"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing } />
 		);
