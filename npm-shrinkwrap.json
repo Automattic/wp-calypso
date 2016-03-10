@@ -9211,6 +9211,14 @@
           "version": "1.1.0"
         }
       }
+    },
+    "source-map": {
+      "version": "0.1.39",
+      "dependencies": {
+        "amdefine": {
+          "version": "1.0.0"
+        }
+      }
     }
   }
 }
