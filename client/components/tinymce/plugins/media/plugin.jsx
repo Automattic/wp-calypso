@@ -116,6 +116,21 @@ function mediaButton( editor ) {
 		);
 	}
 
+	const loadedImages = ( () => {
+		const loaded = {};
+
+		function isLoaded( url ) {
+			return !! loaded[ url ];
+		}
+
+		function onLoad( url ) {
+			loaded[ url ] = true;
+			updateMedia();
+		}
+
+		return { isLoaded, onLoad };
+	} )();
+
 	updateMedia = debounce( function() {
 		var selectedSite = sites.getSelectedSite(),
 			isTransientDetected = false,
@@ -201,6 +216,19 @@ function mediaButton( editor ) {
 				mode: isVisualEditMode ? 'tinymce' : 'html'
 			};
 			editor.fire( 'BeforeSetWpcomMedia', event );
+
+			// To avoid an undesirable flicker after the image uploads but
+			// hasn't yet been loaded, we preload the image before rendering.
+			const imageUrl = MediaSerialization.deserialize( event.content ).media.URL;
+			if ( ! loadedImages.isLoaded( imageUrl ) ) {
+				const preloadImage = new Image();
+				preloadImage.src = imageUrl;
+				preloadImage.onload = loadedImages.onLoad.bind( null, imageUrl );
+				preloadImage.onerror = preloadImage.onload;
+
+				transients++;
+				return;
+			}
 
 			// The `img` object can be a string or a DOM node. We need a
 			// normalized string to replace the post content markup
