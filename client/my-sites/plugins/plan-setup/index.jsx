@@ -51,7 +51,6 @@ module.exports = React.createClass( {
 	runInstall() {
 		let steps = PluginInstallation.start( {
 			site: this.props.selectedSite,
-			plugins: [ 'akismet', 'vaultpress' ]
 		} );
 
 		steps.on( 'data', ( step ) => {
