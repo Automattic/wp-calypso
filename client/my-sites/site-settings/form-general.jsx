@@ -87,6 +87,14 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	onRecordEvent( eventAction ) {
+		return this.recordEvent.bind( this, eventAction );
+	},
+
+	onRecordEventOnce( key, eventAction ) {
+		return this.recordEventOnce.bind( this, key, eventAction );
+	},
+
 	siteOptions() {
 		return (
 			<div>
@@ -98,8 +106,8 @@ module.exports = React.createClass( {
 						type="text"
 						valueLink={ this.linkState( 'blogname' ) }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Title Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedTitle', 'Typed in Site Title Field' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
+						onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
@@ -109,8 +117,8 @@ module.exports = React.createClass( {
 						id="blogdescription"
 						valueLink={ this.linkState( 'blogdescription' ) }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Site Tagline Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
+						onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
 					<FormSettingExplanation>
 						{ this.translate( 'In a few words, explain what this site is about.' ) }
 					</FormSettingExplanation>
@@ -183,7 +191,7 @@ module.exports = React.createClass( {
 					languages={ config( 'languages' ) }
 					valueLink={ this.linkState( 'lang_id' ) }
 					disabled={ this.state.fetchingSettings }
-					onClick={ this.recordEvent.bind( this, 'Clicked Language Field' ) } />
+					onClick={ this.onRecordEvent( 'Clicked Language Field' ) } />
 				<FormSettingExplanation>
 					{ this.translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
@@ -206,7 +214,7 @@ module.exports = React.createClass( {
 						checked={ 1 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Allow search engines to index this site' ) }</span>
 				</FormLabel>
 
@@ -217,7 +225,7 @@ module.exports = React.createClass( {
 						checked={ 0 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
+						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Discourage search engines from indexing this site' ) }</span>
 					<FormSettingExplanation className="inside-list is-indented">
 						{ this.translate( 'Note: This option does not block access to your site — it is up to search engines to honor your request.' ) }
@@ -232,7 +240,7 @@ module.exports = React.createClass( {
 							checked={ - 1 === parseInt( this.state.blog_public, 10 ) }
 							onChange={ this.handleRadio }
 							disabled={ this.state.fetchingSettings }
-							onClick={ this.recordEvent.bind( this, 'Clicked Site Visibility Radio Button' ) } />
+							onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 						<span>{ this.translate( 'I would like my site to be private, visible only to users I choose' ) }</span>
 					</FormLabel>
 				}
@@ -257,7 +265,7 @@ module.exports = React.createClass( {
 								className="tog"
 								checked={ 0 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) } />
+								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Hide related content after posts' ) }</span>
 						</FormLabel>
 					</li>
@@ -269,7 +277,7 @@ module.exports = React.createClass( {
 								className="tog"
 								checked={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.recordEvent.bind( this, 'Clicked Related Posts Radio Button' ) } />
+								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Show related content after posts' ) }</span>
 						</FormLabel>
 						<ul id="settings-reading-relatedposts-customize" className={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
