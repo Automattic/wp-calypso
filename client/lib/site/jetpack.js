@@ -60,7 +60,9 @@ JetpackSite.prototype.canManage = function() {
 };
 
 JetpackSite.prototype.fetchAvailableUpdates = function() {
-	if ( ! this.hasMinimumJetpackVersion || ! this.capabilities.manage_options ) {
+	if ( ! this.hasMinimumJetpackVersion ||
+		! this.capabilities.manage_options ||
+		! this.canUpdateFiles ) {
 		return;
 	}
 	wpcom.undocumented().getAvailableUpdates( this.ID, function( error, data ) {
