@@ -167,10 +167,10 @@ let InviteAccept = React.createClass( {
 			};
 			switch ( this.state.error.error ) {
 				case 'already_member':
-					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a member of this blog.' ) } /> );
+					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a member of this site.' ) } /> );
 					break;
 				case 'already_subscribed':
-					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a follower on this blog.' ) } /> );
+					return ( <EmptyContent { ... props } title={ this.translate( 'You are already a follower on this site.' ) } /> );
 					break;
 			}
 		}
