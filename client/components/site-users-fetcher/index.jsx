@@ -12,7 +12,8 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var UsersStore = require( 'lib/users/store' ),
-	UsersActions = require( 'lib/users/actions' );
+	UsersActions = require( 'lib/users/actions' ),
+	pollers = require( 'lib/data-poller' );
 
 /**
  * Module variables
@@ -41,10 +42,16 @@ module.exports = React.createClass( {
 		debug( 'Mounting SiteUsersFetcher' );
 		UsersStore.on( 'change', this._updateSiteUsers );
 		this._fetchIfEmpty();
+		this._poller = pollers.add(
+			UsersStore,
+			UsersActions.fetchUsers.bind( UsersActions, this.props.fetchOptions, true ),
+			{ leading: false }
+		);
 	},
 
 	componentWillUnmount: function() {
 		UsersStore.off( 'change', this._updateSiteUsers );
+		pollers.remove( this._poller );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -54,6 +61,11 @@ module.exports = React.createClass( {
 		if ( ! isEqual( this.props.fetchOptions, nextProps.fetchOptions ) ) {
 			this._updateSiteUsers( nextProps.fetchOptions );
 			this._fetchIfEmpty( nextProps.fetchOptions );
+			this._poller = pollers.add(
+				UsersStore,
+				UsersActions.fetchUsers.bind( UsersActions, nextProps.fetchOptions, true ),
+				{ leading: false }
+			);
 		}
 	},
 
@@ -111,8 +123,7 @@ module.exports = React.createClass( {
 			if ( paginationData.fetchingUsers ) {
 				return;
 			}
-			UsersActions.fetchUsers( fetchOptions, 0 );
+			UsersActions.fetchUsers( fetchOptions );
 		}, 0 );
 	}
-
 } );
