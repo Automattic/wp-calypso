@@ -8,10 +8,9 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 import paths from 'my-sites/upgrades/paths';
-import ExternalLink from 'components/external-link';
 import analyticsMixin from 'lib/mixins/analytics';
 import SectionHeader from 'components/section-header';
-import i18n from 'lib/mixins/i18n';
+import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain } from 'lib/domains';
 
 const GoogleAppsUsers = React.createClass( {
@@ -76,35 +75,6 @@ const GoogleAppsUsers = React.createClass( {
 					</ul>
 				</CompactCard>
 			</div>
-		);
-	}
-} );
-
-const GoogleAppsUserItem = React.createClass( {
-	propTypes: {
-		user: React.PropTypes.object.isRequired,
-		onClick: React.PropTypes.func
-	},
-
-	shouldComponentUpdate( nextProps ) {
-		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
-	},
-
-	render() {
-		return (
-			<li>
-				<span className="google-apps-users-card__user-email">
-					{ this.props.user.email }
-				</span>
-
-				<ExternalLink
-					icon
-					className="google-apps-users-card__user-manage-link"
-					href={ `https://admin.google.com/a/${ this.props.user.domain }` }
-					target="_blank">
-					{ i18n.translate( 'Manage', { context: 'Google Apps user item' } ) }
-				</ExternalLink>
-			</li>
 		);
 	}
 } );
