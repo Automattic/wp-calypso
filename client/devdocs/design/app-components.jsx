@@ -1,133 +1,43 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	page = require( 'page' ),
-	toTitleCase = require( 'to-title-case' ),
-	trim = require( 'lodash/trim' );
+import React from 'react';
+import page from 'page';
+import toTitleCase from 'to-title-case';
+import trim from 'lodash/trim';
 
 /**
  * Internal dependencies
  */
-var SearchCard = require( 'components/search-card' ),
-	CommentButtons = require( 'components/comment-button/docs/example' ),
-	PostSelector = require( 'my-sites/post-selector/docs/example' ),
-	LikeButtons = require( 'components/like-button/docs/example' ),
-	FollowButtons = require( 'components/follow-button/docs/example' ),
-	Sites = require( 'lib/sites-list/docs/example' ),
-	SitesDropdown = require( 'components/sites-dropdown/docs/example' ),
-	Theme = require( 'components/theme/docs/example' ),
-	PostSchedule = require( 'components/post-schedule/docs/example' ),
-	HeaderCake = require( 'components/header-cake' ),
-	HappinessSupport = require( 'components/happiness-support/docs/example' ),
-	Collection,
-	FilterSummary,
-	Hider;
+import SearchCard from 'components/search-card';
+import CommentButtons from 'components/comment-button/docs/example';
+import PostSelector from 'my-sites/post-selector/docs/example';
+import LikeButtons from 'components/like-button/docs/example';
+import FollowButtons from 'components/follow-button/docs/example';
+import Sites from 'lib/sites-list/docs/example';
+import SitesDropdown from 'components/sites-dropdown/docs/example';
+import Theme from 'components/theme/docs/example';
+import PostSchedule from 'components/post-schedule/docs/example';
+import HeaderCake from 'components/header-cake';
+import Collection from 'devdocs/design/search-collection';
+import HappinessSupport from 'components/happiness-support/docs/example';
 
-Hider = React.createClass( {
-	displayName: 'Hider',
-
-	propTypes: {
-		hide: React.PropTypes.bool,
-	},
-
-	shouldComponentUpdate: function( nextProps ) {
-		return this.props.hide !== nextProps.hide;
-	},
-
-	render: function() {
-		return (
-			<div style={ this.props.hide ? { display: 'none' } : { } }>
-				{ this.props.children }
-			</div>
-		);
-	}
-} );
-
-Collection = React.createClass( {
-	displayName: 'Collection',
-
-	shouldWeHide: function( example ) {
-		var filter, searchString;
-
-		filter = this.props.filter || '';
-		searchString = example.type.displayName;
-
-		if ( this.props.component ) {
-			return example.type.displayName.toLowerCase() !== this.props.component.replace( /-([a-z])/g, '$1' );
-		}
-
-		if ( example.props.searchKeywords ) {
-			searchString += ' ' + example.props.searchKeywords;
-		}
-
-		return ! ( ! filter || searchString.toLowerCase().indexOf( filter ) > -1 );
-	},
-
-	visibleExamples: function() {
-		return this.props.children.filter( function( child ) {
-			return !child.props.hide;
-		} );
-	},
-
-	render: function() {
-		var summary, examples;
-
-		summary = !this.props.component ? <FilterSummary items={ this.visibleExamples() } total={ this.props.children.length } /> : null;
-
-		examples = this.props.children.map( ( example ) => {
-			return (
-				<Hider hide={ this.shouldWeHide( example ) } key={ 'example-' + example.type.displayName }>
-					{ example }
-				</Hider>
-			);
-		} );
-
-		return (
-			<div className="collection">
-				{ summary }
-				{ examples }
-			</div>
-		);
-	}
-} );
-
-FilterSummary = React.createClass( {
-	render: function() {
-		var names;
-
-		if ( this.props.items.length === 0 ) {
-			return ( <p>No matches found</p> );
-		} else if ( this.props.items.length === this.props.total || this.props.items.length === 1 ) {
-			return null;
-		}
-
-		names = this.props.items.map( function( item ) {
-			return item.props.children.type.displayName;
-		} );
-
-		return (
-			<p>Showing: { names.join( ', ' ) }</p>
-		);
-	}
-} );
-
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'AppComponents',
 
-	getInitialState: function() {
+	getInitialState() {
 		return { filter: '' };
 	},
 
-	onSearch: function( term ) {
+	onSearch( term ) {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
 	},
 
-	backToComponents: function() {
+	backToComponents() {
 		page( '/devdocs/app-components/' );
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="design-assets" role="main">
 				{
@@ -144,14 +54,14 @@ module.exports = React.createClass( {
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
 					<CommentButtons />
-					<PostSelector />
-					<LikeButtons />
 					<FollowButtons />
+					<HappinessSupport />
+					<LikeButtons />
+					<PostSchedule />
+					<PostSelector />
 					<Sites />
 					<SitesDropdown />
 					<Theme />
-					<PostSchedule />
-					<HappinessSupport />
 				</Collection>
 			</div>
 		);
