@@ -70,7 +70,7 @@ export function getSitePostsForQuery( state, siteId, query ) {
 
 	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
 		return getPost( state, globalId );
-	} );
+	} ).filter( Boolean );
 }
 
 /**
