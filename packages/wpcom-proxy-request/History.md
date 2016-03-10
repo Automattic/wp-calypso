@@ -1,4 +1,12 @@
 
+1.2.0 / 2016-03-09
+==================
+
+  * dist: recompile
+  * Use `wp-error` module for common Error handling logic
+  * add missing LICENSE stuff
+  * index: add missing `uninstall()` function
+
 1.1.1 / 2016-03-08
 ==================
 
