@@ -80,12 +80,6 @@ var TokenFields = React.createClass( {
 			let returnToken;
 			switch ( token ) {
 				case 'error':
-					returnToken = {
-						value: token,
-						status: token,
-						tooltip: 'This token is errored'
-					};
-					break;
 				case 'validating':
 				case 'success':
 					returnToken = {
