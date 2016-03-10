@@ -27,6 +27,22 @@ var embedsConfig = {
 			};
 		},
 		urlRegex: /\/\/embed.spotify.com/
+	},
+	soundcloud: {
+		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {
+			var aspectRatio = embed.aspectRatio || 1,
+				height = '100%';
+
+			if ( embed.iframe.indexOf( 'visual=true' ) > -1 ) {
+				height = Math.floor( availableWidth / aspectRatio ) + 'px';
+			}
+
+			return {
+				width: availableWidth + 'px',
+				height: height
+			};
+		},
+		urlRegex: /\/\/w\.soundcloud\.com\/player/
 	}
 };
 
