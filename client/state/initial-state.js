@@ -10,6 +10,7 @@ import pick from 'lodash/pick';
 import { createReduxStore, reducer } from 'state';
 import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
 import { getLocalForage } from 'lib/localforage';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
 
 /**
@@ -24,7 +25,7 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
-	if ( typeof window === 'object' && window.initialReduxState ) {
+	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
 		const serverState = reducer( window.initialReduxState, { type: SERVER_DESERIALIZE } );
 		return pick( serverState, Object.keys( window.initialReduxState ) );
 	}
@@ -73,7 +74,7 @@ function persistOnChange( reduxStore ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	if ( config.isEnabled( 'persist-redux' ) ) {
+	if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
 		localforage.getItem( 'redux-state' )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )

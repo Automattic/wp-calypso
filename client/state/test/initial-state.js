@@ -3,37 +3,44 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'initial-state', () => {
-	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE;
+	let localforage, createReduxStoreFromPersistedInitialState, MAX_AGE,
+		isSwitchedUser = false,
+		isReduxEnabled = false,
+		isEnabled = () => isReduxEnabled,
+		isSupportUserSession = () => isSwitchedUser;
 
 	useFakeDom();
 
-	before( () => {
+	useMockery( () => {
+		const configMock = function() {
+			return 'development'; //needed to mock out lib/warn
+		};
+		configMock.isEnabled = isEnabled;
+		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
+		mockery.registerMock( 'config', configMock );
 		localforage = require( 'localforage' );
-		const initialState = require( '../initial-state' );
+		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		MAX_AGE = initialState.MAX_AGE;
-	} );
+	}, null );
 
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
 		describe( 'persist-redux disabled', () => {
 			describe( 'with recently persisted data and initial server data', () => {
-				var configStub,
-					consoleSpy,
-					state,
+				var state,
 					serverState = { currentUser: { id: 123456789 } };
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					configStub = sinon.stub( config, 'isEnabled' );
-					configStub.withArgs( 'persist-redux' ).returns( false );
-					consoleSpy = sinon.spy( console, 'error' );
+					sinon.spy( console, 'error' );
 					const reduxReady = function( reduxStore ) {
 						state = reduxStore.getState();
 						done();
@@ -41,12 +48,11 @@ describe( 'initial-state', () => {
 					createReduxStoreFromPersistedInitialState( reduxReady );
 				} );
 				after( () => {
+					console.error.restore();
 					window.initialReduxState = null;
-					configStub.restore();
-					consoleSpy.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( consoleSpy.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false );
 				} );
 				it( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
@@ -57,11 +63,60 @@ describe( 'initial-state', () => {
 			} );
 		} );
 		describe( 'persist-redux enabled', () => {
+			describe( 'switched user', () => {
+				describe( 'with recently persisted data and initial server data', () => {
+					var state,
+						savedState = {
+							postTypes: {
+								items: {
+									2916284: {
+										post: { name: 'post', label: 'Posts' },
+										page: { name: 'page', label: 'Pages' }
+									}
+								}
+							},
+							_timestamp: Date.now()
+						};
+					before( ( done ) => {
+						isReduxEnabled = true;
+						isSwitchedUser = true;
+						window.initialReduxState = { currentUser: { id: 123456789 } };
+						sinon.spy( console, 'error' );
+						sinon.stub( localforage, 'getItem' )
+							.returns(
+								new Promise( function( resolve ) {
+									resolve( savedState );
+								} )
+							);
+						const reduxReady = function( reduxStore ) {
+							state = reduxStore.getState();
+							done();
+						};
+						createReduxStoreFromPersistedInitialState( reduxReady );
+					} );
+					after( () => {
+						isReduxEnabled = false;
+						isSwitchedUser = false;
+						window.initialReduxState = null;
+						console.error.restore();
+						localforage.getItem.restore();
+					} );
+					it( 'builds store without errors', () => {
+						expect( console.error.called ).to.equal( false );
+					} );
+					it( 'does not build using local forage state', () => {
+						expect( state.postTypes.items[ 2916284 ] ).to.equal( undefined );
+					} );
+					it( 'does not add timestamp to store', () => {
+						expect( state._timestamp ).to.equal( undefined );
+					} );
+					it( 'does not build state using server state', () => {
+						expect( state.currentUser.id ).to.equal( null );
+					} );
+				} );
+			} );
 			describe( 'with recently persisted data and initial server data', () => {
-				var configStub,
-					consoleSpy,
-					localforageGetItemStub,
-					state,
+				var state,
 					savedState = {
 						currentUser: { id: 123456789 },
 						postTypes: {
@@ -85,10 +140,9 @@ describe( 'initial-state', () => {
 					};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					configStub = sinon.stub( config, 'isEnabled' );
-					configStub.withArgs( 'persist-redux' ).returns( true );
-					consoleSpy = sinon.spy( console, 'error' );
-					localforageGetItemStub = sinon.stub( localforage, 'getItem' )
+					isReduxEnabled = true;
+					sinon.spy( console, 'error' );
+					sinon.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
 							resolve( savedState );
@@ -102,12 +156,12 @@ describe( 'initial-state', () => {
 				} );
 				after( () => {
 					window.initialReduxState = null;
-					configStub.restore();
-					consoleSpy.restore();
-					localforageGetItemStub.restore();
+					isReduxEnabled = false;
+					console.error.restore();
+					localforage.getItem.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( consoleSpy.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false );
 				} );
 				it( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
@@ -120,10 +174,7 @@ describe( 'initial-state', () => {
 				} );
 			} );
 			describe( 'with stale persisted data and initial server data', () => {
-				var configStub,
-					consoleSpy,
-					localforageGetItemStub,
-					state,
+				var state,
 					serverState = {
 						postTypes: {
 							items: {
@@ -135,10 +186,9 @@ describe( 'initial-state', () => {
 					};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					configStub = sinon.stub( config, 'isEnabled' );
-					configStub.withArgs( 'persist-redux' ).returns( true );
-					consoleSpy = sinon.spy( console, 'error' );
-					localforageGetItemStub = sinon.stub( localforage, 'getItem' )
+					isReduxEnabled = true;
+					sinon.spy( console, 'error' );
+					sinon.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
 							resolve( {
@@ -163,12 +213,12 @@ describe( 'initial-state', () => {
 				} );
 				after( () => {
 					window.initialReduxState = null;
-					configStub.restore();
-					consoleSpy.restore();
-					localforageGetItemStub.restore();
+					isReduxEnabled = false;
+					console.error.restore();
+					localforage.getItem.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( consoleSpy.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false );
 				} );
 				it( 'builds using server state', () => {
 					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
@@ -181,10 +231,7 @@ describe( 'initial-state', () => {
 				} );
 			} );
 			describe( 'with recently persisted data and no initial server data', () => {
-				var configStub,
-					consoleSpy,
-					localforageGetItemStub,
-					state,
+				var state,
 					savedState = {
 						currentUser: { id: 123456789 },
 						postTypes: {
@@ -200,10 +247,9 @@ describe( 'initial-state', () => {
 					serverState = {};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					configStub = sinon.stub( config, 'isEnabled' );
-					configStub.withArgs( 'persist-redux' ).returns( true );
-					consoleSpy = sinon.spy( console, 'error' );
-					localforageGetItemStub = sinon.stub( localforage, 'getItem' )
+					isReduxEnabled = true;
+					sinon.spy( console, 'error' );
+					sinon.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
 							resolve( savedState );
@@ -217,12 +263,12 @@ describe( 'initial-state', () => {
 				} );
 				after( () => {
 					window.initialReduxState = null;
-					configStub.restore();
-					consoleSpy.restore();
-					localforageGetItemStub.restore();
+					isReduxEnabled = false;
+					console.error.restore();
+					localforage.getItem.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( consoleSpy.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false );
 				} );
 				it( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );

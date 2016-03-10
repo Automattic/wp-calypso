@@ -36,11 +36,11 @@ const reduxStoreReady = new Promise( ( resolve ) => {
 } );
 export const setReduxStore = _setReduxStore;
 
-/**
- * Check if there's a support user to be activated on boot
- * @return {bool} true if a support user token is waiting to be injected on boot, false otherwise
- */
-export const shouldBoot = () => {
+// Evaluate isSupportUserSession at module startup time, then freeze it
+// for the remainder of the session. This is needed because the User
+// module clears the store on change; it could return false if called
+// after boot.
+const _isSupportUserSession = ( () => {
 	if ( ! isEnabled() ) {
 		return false;
 	}
@@ -51,7 +51,9 @@ export const shouldBoot = () => {
 	}
 
 	return false;
-};
+} )();
+
+export const isSupportUserSession = () => _isSupportUserSession;
 
 /**
  * Reboot normally as the main user
