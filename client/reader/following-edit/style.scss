@@ -40,6 +40,7 @@
 	}
 }
 
+
 .section-header.following-edit__header {
 	margin-bottom: 24px;
 
@@ -148,8 +149,16 @@
 			top: 51px;
 		width: 100%;
 
+		&.is-compact {
+			padding: 16px 24px;
+		}
+
 		.follow-button {
 			cursor: default;
+
+			@include breakpoint( "<660px" ) {
+				margin-top: 7px;
+			}
 
 			.gridicon {
 				cursor: default;
@@ -158,6 +167,7 @@
 
 			.follow-button__label {
 				color: lighten( $gray, 20% );
+				display: inline-block;
 			}
 		}
 
@@ -270,7 +280,6 @@
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		padding-left: 12px;
 		margin-right: 100px;
 
 		@include breakpoint( ">660px" ) {
