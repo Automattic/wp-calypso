@@ -9,8 +9,7 @@ var React = require( 'react' ),
  */
 var FollowButton = require( './button' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ),
-	FeedPostStore = require( 'lib/feed-post-store' );
+	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
 
 var FollowButtonContainer = React.createClass( {
 	propTypes: {
@@ -39,7 +38,6 @@ var FollowButtonContainer = React.createClass( {
 
 	componentWillUnmount: function() {
 		FeedSubscriptionStore.off( 'change', this.onStoreChange );
-		FeedPostStore.removePostsMarkedForRemoval();
 	},
 
 	onStoreChange: function() {
