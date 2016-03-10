@@ -7,6 +7,7 @@ var expect = require( 'chai' ).expect,
 	assign = require( 'lodash/assign' );
 
 var State = require( '../constants' ).state,
+	useMockery = require( 'test/helpers/use-mockery' ),
 	SiteStore, SiteStoreActions;
 
 var readSiteStub,
@@ -106,11 +107,8 @@ var SiteExample = {
 };
 
 describe( 'SiteStore', function() {
+	useMockery();
 	before( function() {
-		mockery.enable( {
-			useCleanCache: true,
-			warnOnUnregistered: false
-		} );
 		mockery.registerAllowable( [ '../', '../actions' ] );
 		mockery.registerMock( 'lib/wp', mockWpcom );
 
@@ -121,7 +119,6 @@ describe( 'SiteStore', function() {
 
 	after( function() {
 		SiteStore.off( 'change', changeSpy );
-		mockery.disable();
 	} );
 
 	beforeEach( function() {

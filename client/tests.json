@@ -33,6 +33,30 @@
 			},
 			"test": [ "assembler", "index", "store" ]
 		},
+		"reader-comment-email-subscriptions": {
+			"test": [ "comment-email-subscription-store-test" ]
+		},
+		"reader-feed-subscriptions": {
+			"test": [ "feed-subscription-store-test" ]
+		},
+		"reader-lists-items": {
+			"test": [ "store-tests" ]
+		},
+		"reader-lists-tags": {
+			"test": [ "store-tests" ]
+		},
+		"reader-post-email-subscriptions": {
+			"test": [ "post-email-subscription-store-test" ]
+		},
+		"reader-site-blocks": {
+			"test": [ "site-block-store-test" ]
+		},
+		"reader-site-store": {
+			"test": [ "reader-site-store-tests" ]
+		},
+		"reader-teams": {
+			"test": [ "team-store-test" ]
+		},
 		"store": {
 			"test": [ "index-test" ]
 		}

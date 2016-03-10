@@ -4,10 +4,7 @@
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	Dispatcher = require( 'dispatcher' ),
-	fromJS = require( 'immutable' ).fromJS,
-	chaiImmutable = require( 'chai-immutable' );
-
-chai.use( chaiImmutable );
+	fromJS = require( 'immutable' ).fromJS;
 
 const PostEmailSubscriptionStore = require( '../index' );
 
@@ -29,7 +26,7 @@ describe( 'post-email-subscription-store', function() {
 			delivery_frequency: 24
 		} );
 
-		expect( PostEmailSubscriptionStore.getSubscription( blogId ) ).to.equal(
+		expect( PostEmailSubscriptionStore.getSubscription( blogId ) ).to.immutablyEqual(
 			fromJS( {
 				blog_id: 123,
 				delivery_frequency: 24,
@@ -78,7 +75,7 @@ describe( 'post-email-subscription-store', function() {
 			}
 		} );
 
-		expect( PostEmailSubscriptionStore.getSubscription( blogId ) ).to.equal( fromJS( {
+		expect( PostEmailSubscriptionStore.getSubscription( blogId ) ).to.immutablyEqual( fromJS( {
 			blog_id: blogId,
 			email_id: 123456,
 			delivery_frequency: 24,
@@ -126,7 +123,7 @@ describe( 'post-email-subscription-store', function() {
 			}
 		} );
 
-		expect( PostEmailSubscriptionStore.getSubscription( blogId ) ).to.equal(
+		expect( PostEmailSubscriptionStore.getSubscription( blogId ) ).to.immutablyEqual(
 			fromJS( {
 				blog_id: 789,
 				delivery_frequency: 168,

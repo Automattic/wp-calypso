@@ -4,10 +4,7 @@
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	Dispatcher = require( 'dispatcher' ),
-	fromJS = require( 'immutable' ).fromJS,
-	chaiImmutable = require( 'chai-immutable' );
-
-chai.use( chaiImmutable );
+	fromJS = require( 'immutable' ).fromJS;
 
 const CommentEmailSubscriptionStore = require( '../index' );
 
@@ -28,7 +25,7 @@ describe( 'comment-email-subscription-store', function() {
 			blog_id: blogId
 		} );
 
-		expect( CommentEmailSubscriptionStore.getSubscription( blogId ) ).to.equal(
+		expect( CommentEmailSubscriptionStore.getSubscription( blogId ) ).to.immutablyEqual(
 			fromJS( {
 				blog_id: 123,
 				state: 'SUBSCRIBED'

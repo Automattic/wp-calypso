@@ -5,6 +5,7 @@ const program = require( 'commander' ),
 	Mocha = require( 'mocha' ),
 	Chai = require( 'chai' ),
 	sinonChai = require( 'sinon-chai' ),
+	immutableChai = require( './test/helpers/immutable-chai' ),
 	nock = require( 'nock' ),
 	path = require( 'path' );
 
@@ -27,6 +28,7 @@ if ( program.grep ) {
 }
 
 mocha.suite.beforeAll( function() {
+	Chai.use( immutableChai );
 	Chai.use( sinonChai );
 	nock.disableNetConnect();
 } );

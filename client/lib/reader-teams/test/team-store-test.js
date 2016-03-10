@@ -1,16 +1,15 @@
 require( 'lib/react-test-env-setup' )();
 
 // External dependencies
-var expect = require( 'chai' ).expect,
+const expect = require( 'chai' ).expect,
 	Dispatcher = require( 'dispatcher' ),
 	sinon = require( 'sinon' );
 
 // Internal dependencies
-var TeamStore = require( '../index' ),
+const TeamStore = require( '../index' ),
 	ActionTypes = require( '../constants' ).action;
 
 describe( 'team-store', function() {
-
 	it( 'should have a dispatch token', function() {
 		expect( TeamStore ).to.have.property( 'dispatchToken' );
 	} );
@@ -22,7 +21,7 @@ describe( 'team-store', function() {
 			error: new Error()
 		} );
 
-		var teams = TeamStore.get();
+		const teams = TeamStore.get();
 		expect( teams ).to.eq( null );
 	} );
 
@@ -33,7 +32,7 @@ describe( 'team-store', function() {
 			error: null
 		} );
 
-		var teams = TeamStore.get();
+		const teams = TeamStore.get();
 		expect( teams[ 0 ].slug ).to.eq( 'huskies' );
 	} );
 
