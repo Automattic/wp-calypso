@@ -174,4 +174,38 @@ describe( 'feed-post-store', function() {
 			postId: 3
 		} ) ).to.be.undefined;
 	} );
+
+	it( 'should remove posts when a feed is unfollowed', function() {
+		const feedId = 123;
+		const postId = 3;
+		Dispatcher.handleServerAction( {
+			type: FeedPostActionType.RECEIVE_FEED_POST,
+			data: {
+				feed_id: feedId,
+				feed_item_ID: postId,
+				title: 'a sample post'
+			},
+			feedId: feedId,
+			postId: postId,
+			error: null
+		} );
+
+		expect( FeedPostStore.get( {
+			feedId: feedId,
+			postId: postId
+		} ) ).to.be.ok;
+
+		// Fire off the unfollow API response
+		Dispatcher.handleServerAction( {
+			type: FeedSubscriptionActionType.RECEIVE_UNFOLLOW_READER_FEED,
+			feedId: feedId
+		} );
+
+		FeedPostStore.removePostsMarkedForRemoval();
+
+		expect( FeedPostStore.get( {
+			feedId: feedId,
+			postId: postId
+		} ) ).to.be.undefined;
+	} );
 } );

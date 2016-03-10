@@ -46,6 +46,7 @@ FeedPostStore = {
 
 	removePostsMarkedForRemoval() {
 		_postsForBlogs = removeBlogPostsMarkedForRemoval();
+		_posts = removeFeedPostsMarkedForRemoval();
 	}
 };
 
@@ -121,8 +122,9 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case FeedSubscriptionActionType.RECEIVE_UNFOLLOW_READER_FEED:
 			if ( action.blogId ) {
 				markBlogPostsForRemoval( action.blogId );
+			} else {
+				markFeedPostsForRemoval( action.feedId );
 			}
-			debug( _postsForBlogs );
 			break;
 	}
 } );
@@ -308,6 +310,23 @@ function markBlogPostsForRemoval( blogId ) {
 
 function removeBlogPostsMarkedForRemoval() {
 	return filter( _postsForBlogs, function( post ) {
+		return ! post.is_marked_for_removal;
+	} );
+}
+
+function markFeedPostsForRemoval( feedId ) {
+	forOwn( _posts, function( post ) {
+		var newPost;
+		if ( post.feed_ID === feedId && ! post.is_marked_for_removal ) {
+			newPost = clone( post );
+			newPost.is_marked_for_removal = true;
+			setPost( newPost.feed_item_ID, newPost );
+		}
+	} );
+}
+
+function removeFeedPostsMarkedForRemoval() {
+	return filter( _posts, function( post ) {
 		return ! post.is_marked_for_removal;
 	} );
 }
