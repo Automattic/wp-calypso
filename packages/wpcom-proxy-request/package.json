@@ -17,6 +17,7 @@
     "Andy Skelton <andy@automattic.com>"
   ],
   "repository": "git://github.com/Automattic/wpcom-proxy-request.git",
+  "license": "MIT",
   "main": "index.js",
   "devDependencies": {
     "browserify": "9.0.3"
