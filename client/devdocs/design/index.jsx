@@ -12,6 +12,7 @@ import trim from 'lodash/trim';
 import SearchCard from 'components/search-card';
 import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
+import GlobalNotices from 'components/global-notices/docs/example';
 import Buttons from 'components/button/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Gridicons from 'components/gridicon/docs/example';
@@ -96,6 +97,7 @@ export default React.createClass( {
 					<FoldableCard />
 					<FormFields searchKeywords="input textbox textarea radio"/>
 					<Gauge />
+					<GlobalNotices />
 					<Gridicons />
 					<Headers />
 					<InfoPopover />
