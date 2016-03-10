@@ -53,6 +53,24 @@ export const shouldBoot = () => {
 	return false;
 };
 
+const checkIfTokenChanged = ( event ) => {
+	if ( event.key === STORAGE_KEY && event.oldValue !== event.newValue ) {
+		window.location.reload();
+	}
+}
+
+if ( isEnabled() && window ) {
+	window.addEventListener( 'storage', checkIfTokenChanged );
+}
+
+/**
+ * Ensure the current support token is persisted for the next time Calypso boots
+ * @param {Object} tokenObject The token data that should be persisted
+ */
+export const persistToken = ( tokenObject ) => {
+	store.set( STORAGE_KEY, tokenObject );
+}
+
 /**
  * Reboot normally as the main user
  */
@@ -64,6 +82,11 @@ export const rebootNormally = () => {
 	debug( 'Rebooting Calypso normally' );
 
 	store.clear();
+
+	// We need to store a blank key to trigger a 'storage' event on other tabs
+	// so they invalidate their sessions
+	store.set( STORAGE_KEY, {} );
+
 	window.location.reload();
 };
 
@@ -79,7 +102,7 @@ export const rebootWithToken = ( user, token ) => {
 
 	debug( 'Rebooting Calypso with support user' );
 
-	store.set( STORAGE_KEY, { user, token } );
+	persistToken( { user, token } );
 	window.location.reload();
 };
 
@@ -91,6 +114,7 @@ const onTokenError = ( error ) => {
 
 /**
  * Inject the support user token into all following API calls
+ * @return {Object}      The token information
  */
 export const boot = () => {
 	if ( ! isEnabled() ) {
@@ -109,6 +133,8 @@ export const boot = () => {
 	reduxStoreReady.then( ( reduxStore ) => {
 		reduxStore.dispatch( supportUserActivate() );
 	} );
+
+	return { user, token };
 };
 
 export const fetchToken = ( user, password ) => {
