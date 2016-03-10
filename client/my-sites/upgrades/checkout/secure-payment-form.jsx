@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var defer = require( 'lodash/defer' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -180,7 +181,10 @@ var SecurePaymentForm = React.createClass( {
 		}
 
 		if ( newPayment ) {
-			upgradesActions.setPayment( newPayment );
+			// we need to defer this because this is mounted after `upgradesActions.setDomainDetails` is called
+			defer( function() {
+				upgradesActions.setPayment( newPayment );
+			} );
 		}
 	},
 
