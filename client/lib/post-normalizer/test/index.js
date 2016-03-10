@@ -7,7 +7,8 @@ const assert = require( 'chai' ).assert,
 /**
  * Internal dependencies
  */
-import setupDomEnv from 'test/helpers/setup-dom-env';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 function identifyTransform( post, callback ) {
 	callback();
@@ -25,8 +26,8 @@ function asyncTransform( post, callback ) {
 describe( 'post-normalizer', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
-	setupDomEnv();
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+	useFakeDom();
+	useFilesystemMocks( __dirname );
 
 	before( function() {
 		normalizer = require( '../' );
