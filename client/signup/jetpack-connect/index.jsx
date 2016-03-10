@@ -52,12 +52,10 @@ export default React.createClass( {
 	},
 
 	checkIfUrlIsReadyForJetpack( url ) {
-		var promise = new Promise( function( resolve, reject ) {
+		return new Promise( function( resolve, reject ) {
 			// we need to develop the backend endpoint for this check. Meanwhile, it always succeed
 			resolve();
 		} );
-
-		return promise;
 	},
 
 	getCurrentUrl() {
