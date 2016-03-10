@@ -18,7 +18,7 @@ function asyncTransform( post, callback ) {
 	process.nextTick( callback );
 }
 
-describe( 'post-normalizer', function() {
+describe( 'index', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
 	require( 'lib/react-test-env-setup' ).auto();

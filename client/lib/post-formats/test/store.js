@@ -16,7 +16,7 @@ var Dispatcher = require( 'dispatcher' );
 var DUMMY_SITE_ID = 1,
 	DUMMY_POST_FORMATS = { image: 'Image' };
 
-describe( 'PostFormatsStore', function() {
+describe( 'store', function() {
 	var PostFormatsStore, handler;
 
 	before( function() {

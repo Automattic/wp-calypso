@@ -13,7 +13,7 @@ import noop from 'lodash/noop';
  */
 import { createReduxStore } from 'state';
 
-describe( 'Server pages:', function() {
+describe( 'index', function() {
 	context( 'when trying to renderToString() LayoutLoggedOut ', function() {
 		useMockery();
 

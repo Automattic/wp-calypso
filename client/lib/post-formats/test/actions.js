@@ -6,10 +6,7 @@
 var chai = require( 'chai' ),
 	expect = chai.expect,
 	sinon = require( 'sinon' ),
-	mockery = require( 'mockery' ),
-	sinonChai = require( 'sinon-chai' );
-
-chai.use( sinonChai );
+	mockery = require( 'mockery' );
 
 /**
  * Internal dependencies
@@ -19,7 +16,7 @@ var Dispatcher = require( 'dispatcher' );
 var DUMMY_SITE_ID = 1,
 	DUMMY_API_RESPONSE = { formats: { image: 'Image' } };
 
-describe( 'PostFormatsActions', function() {
+describe( 'actions', function() {
 	var wpcomPostFormatsList, PostFormatsActions, sandbox;
 
 	before( function() {

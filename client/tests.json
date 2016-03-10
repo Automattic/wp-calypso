@@ -34,7 +34,7 @@
 			"test": [ "assembler", "index", "store" ]
 		},
 		"store": {
-			"test": [ "index-test" ]
+			"test": [ "index" ]
 		}
 	},
 	"state": {

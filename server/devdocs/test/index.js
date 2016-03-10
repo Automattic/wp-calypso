@@ -33,7 +33,7 @@ function getDocument( base, path, cb ) {
 		} );
 }
 
-describe( 'devdocs server', () => {
+describe( 'devdocs', () => {
 	let app, server;
 
 	allowNetworkAccess();
