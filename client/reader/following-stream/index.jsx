@@ -367,13 +367,12 @@ module.exports = React.createClass( {
 		}
 
 		post = PostStore.get( postKey );
-		postState = post._state;
-		itemKey = this.getPostRef( postKey );
-
-		if ( ! post || postState === 'minimal' ) {
+		if ( ! post || post._state === 'minimal' ) {
 			FeedPostStoreActions.fetchPost( postKey );
 			postState = 'pending';
 		}
+
+		itemKey = this.getPostRef( postKey );
 
 		switch ( postState ) {
 			case 'pending':

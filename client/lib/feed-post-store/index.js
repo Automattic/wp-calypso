@@ -319,8 +319,13 @@ function markPostForRemoval( post ) {
 }
 
 function removePostsMarkedForRemoval( posts ) {
+	if ( ! posts ) {
+		return;
+	}
+
 	return filter( posts, function( post ) {
 		return ! post.is_marked_for_removal;
 	} );
 }
+
 module.exports = FeedPostStore;
