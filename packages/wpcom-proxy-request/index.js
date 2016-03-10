@@ -54,7 +54,7 @@ var postStrings = (function (){
  * Gets set in the install() function.
  */
 
-var iframe;
+var iframe = null;
 
 /**
  * Set to `true` upon the iframe's "load" event.
@@ -322,6 +322,19 @@ function install () {
 
   // inject the <iframe> into the <body>
   document.body.appendChild(iframe);
+}
+
+/**
+ * Removes the <iframe> proxy instance from the <body> of the page.
+ *
+ * @api private
+ */
+
+
+function uninstall () {
+  debug('uninstall()');
+  document.body.removeChild(iframe);
+  iframe = null;
 }
 
 /**
