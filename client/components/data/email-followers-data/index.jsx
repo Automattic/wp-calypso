@@ -11,6 +11,7 @@ import debugModule from 'debug';
 import EmailFollowersStore from 'lib/email-followers/store';
 import EmailFollowersActions from 'lib/email-followers/actions';
 import passToChildren from 'lib/react-pass-to-children';
+import pollers from 'lib/data-poller';
 
 /**
  * Module variables
@@ -36,6 +37,11 @@ export default React.createClass( {
 	componentDidMount() {
 		EmailFollowersStore.on( 'change', this.refreshFollowers );
 		this.fetchIfEmpty( this.props.fetchOptions );
+		this._poller = pollers.add(
+			EmailFollowersStore,
+			EmailFollowersActions.fetchFollowers.bind( EmailFollowersActions, this.props.fetchOptions, true ),
+			{ leading: false }
+		);
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -45,6 +51,12 @@ export default React.createClass( {
 		if ( ! isEqual( this.props.fetchOptions, nextProps.fetchOptions ) ) {
 			this.setState( this.getInitialState() );
 			this.fetchIfEmpty( nextProps.fetchOptions );
+			pollers.remove( this._poller );
+			this._poller = pollers.add(
+				EmailFollowersStore,
+				EmailFollowersActions.fetchFollowers.bind( EmailFollowersActions, this.props.fetchOptions, true ),
+				{ leading: false }
+			);
 		}
 	},
 

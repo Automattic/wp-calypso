@@ -11,16 +11,18 @@ var Dispatcher = require( 'dispatcher' ),
 	FollowersStore = require( 'lib/followers/store' );
 
 var FollowersActions = {
-	fetchFollowers: fetchOptions => {
+	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {
 		const paginationData = FollowersStore.getPaginationData( fetchOptions );
 		if ( paginationData.fetchingUsers ) {
 			return;
 		}
 		debug( 'fetchFollowers', fetchOptions );
-		Dispatcher.handleViewAction( {
-			type: 'FETCHING_FOLLOWERS',
-			fetchOptions: fetchOptions
-		} );
+		if ( ! silentUpdate ) {
+			Dispatcher.handleViewAction( {
+				type: 'FETCHING_FOLLOWERS',
+				fetchOptions: fetchOptions
+			} );
+		}
 		wpcom.site( fetchOptions.siteId ).statsFollowers( fetchOptions, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_FOLLOWERS',
