@@ -12,6 +12,7 @@ import Header from 'my-sites/upgrades/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AddGoogleAppsCard from './add-google-apps-card';
 import GoogleAppsUsersCard from './google-apps-users-card';
+import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
@@ -68,7 +69,7 @@ const Email = React.createClass( {
 
 	content() {
 		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded ) ) {
-			return this.translate( 'Loading…' );
+			return <Placeholder />;
 		}
 
 		let domainList = this.props.selectedDomainName

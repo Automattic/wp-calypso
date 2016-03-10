@@ -949,6 +949,23 @@ ul.dns__list {
 	}
 }
 
+.domain-management-email {
+	.is-placeholder {
+		.section-header__label {
+			@include placeholder();
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.google-apps-user-item__email,
+		.google-apps-user-item__manage-link {
+			@include placeholder();
+		}
+	}
+}
+
 .google-apps-users-card.card {
 	padding: 0;
 	@include clear-fix;
