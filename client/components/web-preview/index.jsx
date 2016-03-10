@@ -48,13 +48,13 @@ const WebPreview = React.createClass( {
 		return {
 			showExternal: true,
 			showDeviceSwitcher: true,
-			previewUrl: 'about:blank'
+			previewUrl: null
 		}
 	},
 
 	getInitialState() {
 		return {
-			iframeUrl: 'about:blank',
+			iframeUrl: null,
 			device: this.props.defaultViewportDevice || 'computer',
 			loaded: false
 		};
@@ -67,7 +67,7 @@ const WebPreview = React.createClass( {
 	},
 
 	componentDidMount() {
-		if ( this.props.previewUrl !== 'about:blank' ) {
+		if ( this.props.previewUrl ) {
 			this.setIframeUrl( this.props.previewUrl );
 		}
 	},
@@ -79,7 +79,7 @@ const WebPreview = React.createClass( {
 
 		if ( ! this.shouldRenderIframe() ) {
 			this.setState( {
-				iframeUrl: 'about:blank',
+				iframeUrl: null,
 				loaded: false,
 			} );
 		}
@@ -136,7 +136,7 @@ const WebPreview = React.createClass( {
 	},
 
 	setLoaded() {
-		if ( this.state.iframeUrl === 'about:blank' ) {
+		if ( ! this.state.iframeUrl ) {
 			return;
 		}
 		debug( 'preview loaded:', this.state.iframeUrl );
