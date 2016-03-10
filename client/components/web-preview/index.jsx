@@ -116,7 +116,9 @@ const WebPreview = React.createClass( {
 		if ( iframeUrl === this.state.iframeUrl ) {
 			return;
 		}
+
 		debug( 'setIframeUrl', iframeUrl );
+		this.refs.iframe.contentWindow.location.replace( iframeUrl );
 		this.setState( {
 			loaded: false,
 			iframeUrl: iframeUrl,
@@ -173,8 +175,9 @@ const WebPreview = React.createClass( {
 						}
 						{ this.shouldRenderIframe() &&
 							<iframe
+								ref="iframe"
 								className="web-preview__frame"
-								src={ this.state.iframeUrl }
+								src="about:blank"
 								onLoad={ this.setLoaded }
 								title={ this.props.iframeTitle || this.translate( 'Preview' ) }
 							/>
