@@ -124,6 +124,7 @@
     "better-assert": "1.0.2",
     "blanket": "1.1.6",
     "chai": "2.0.0",
+    "chai-enzyme": "0.4.1",
     "chai-immutable": "^1.4.0",
     "deep-freeze": "0.0.1",
     "enzyme": "1.1.0",
