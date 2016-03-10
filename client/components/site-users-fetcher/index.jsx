@@ -61,6 +61,7 @@ module.exports = React.createClass( {
 		if ( ! isEqual( this.props.fetchOptions, nextProps.fetchOptions ) ) {
 			this._updateSiteUsers( nextProps.fetchOptions );
 			this._fetchIfEmpty( nextProps.fetchOptions );
+			pollers.remove( this._poller );
 			this._poller = pollers.add(
 				UsersStore,
 				UsersActions.fetchUsers.bind( UsersActions, nextProps.fetchOptions, true ),
