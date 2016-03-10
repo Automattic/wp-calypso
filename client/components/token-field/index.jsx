@@ -172,14 +172,22 @@ var TokenField = React.createClass( {
 
 	_renderInput: function() {
 		const { maxLength, value } = this.props;
+
+		let props = {
+			ref: 'input',
+			key: 'input',
+			disabled: this.props.disabled,
+			value: this.state.incompleteTokenValue
+		};
+
+		if ( ! ( maxLength && value.length >= maxLength ) ) {
+			Object.assign( props, {
+				onChange: this._onInputChange
+			} );
+		}
+
 		return (
-			<TokenInput
-				ref="input"
-				key="input"
-				disabled={ maxLength && value.length >= maxLength || this.props.disabled }
-				value={ this.state.incompleteTokenValue }
-				onChange={ this._onInputChange }
-			/>
+			<TokenInput { ...props } />
 		);
 	},
 
