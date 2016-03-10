@@ -34,7 +34,7 @@ export const itemsSchema = {
 				featured_image: { type: 'string' },
 				post_thumbnail: { type: [ 'object', 'string', 'null' ] },
 				format: { type: 'string' },
-				geo: { type: 'boolean' },
+				geo: { type: [ 'object', 'boolean' ] },
 				menu_order: { type: 'integer' },
 				page_template: { type: 'string' },
 				publicize_URLS: { type: 'array' },
