@@ -5,6 +5,7 @@
  */
 
 var uid = require('uid');
+var WPError = require('wp-error');
 var event = require('component-event');
 var ProgressEvent = require('progress-event');
 var debug = require('debug')('wpcom-proxy-request');
@@ -55,7 +56,7 @@ var postStrings = (function (){
  * Gets set in the install() function.
  */
 
-var iframe;
+var iframe = null;
 
 /**
  * Set to `true` upon the iframe's "load" event.
@@ -326,6 +327,19 @@ function install () {
 }
 
 /**
+ * Removes the <iframe> proxy instance from the <body> of the page.
+ *
+ * @api private
+ */
+
+
+function uninstall () {
+  debug('uninstall()');
+  document.body.removeChild(iframe);
+  iframe = null;
+}
+
+/**
  * The proxy <iframe> instance's "load" event callback function.
  *
  * @param {Event} e
@@ -411,12 +425,8 @@ function onmessage (e) {
     resolve(xhr, body);
   } else {
     // any other status code is a failure
-    var err = new Error();
-    err.statusCode = statusCode;
-    for (var i in body) err[i] = body[i];
-    if (body.error) err.name = toTitle(body.error) + 'Error';
-
-    reject(xhr, err);
+    var wpe = WPError(xhr.params, statusCode, body);
+    reject(xhr, wpe);
   }
 }
 
@@ -465,14 +475,7 @@ function reject (xhr, err) {
   xhr.dispatchEvent(e);
 }
 
-function toTitle (str) {
-  if (!str || 'string' !== typeof str) return '';
-  return str.replace(/((^|_)[a-z])/g, function ($1) {
-    return $1.toUpperCase().replace('_', '');
-  });
-}
-
-},{"component-event":2,"debug":3,"progress-event":6,"uid":7}],2:[function(require,module,exports){
+},{"component-event":2,"debug":3,"progress-event":6,"uid":7,"wp-error":8}],2:[function(require,module,exports){
 var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
     unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
     prefix = bind !== 'addEventListener' ? 'on' : '';
@@ -1079,6 +1082,181 @@ function uid(len) {
   len = len || 7;
   return Math.random().toString(35).substr(2, len);
 }
+
+},{}],8:[function(require,module,exports){
+var uppercamelcase = require('uppercamelcase');
+var statusCodes = require('builtin-status-codes');
+
+module.exports = WPError;
+
+function WPError () {
+  var self = new Error();
+
+  for (var i = 0; i < arguments.length; i++) {
+    process(self, arguments[i]);
+  }
+
+  if (typeof Error.captureStackTrace === 'function') {
+    Error.captureStackTrace(self, WPError);
+  }
+
+  return self;
+}
+
+function process ( self, data ) {
+  if (typeof data === 'number') {
+    // just a status code then 1  q
+    setStatusCode( self, data );
+
+  } else {
+    // assume it's a plain 'ol Object with some props to copy over
+    if (data.error) {
+      self.name = toName(data.error);
+    }
+
+    if (data.error_description) {
+      self.message = data.error_description;
+    }
+
+    for (var i in data) {
+      self[i] = data[i];
+    }
+
+    if (self.status && (data.method || data.path)) {
+      setStatusCodeMessage( self );
+    }
+  }
+}
+
+function setStatusCode ( self, code ) {
+  self.name = toName( statusCodes[ code ] );
+  self.status = self.statusCode = code;
+  setStatusCodeMessage( self );
+}
+
+function setStatusCodeMessage ( self ) {
+  var code = self.status;
+  var method = self.method;
+  var path = self.path;
+
+  var m = code + ' status code';
+  var extended = method || path;
+
+  if ( extended ) m += ' for "';
+  if ( method ) m += method;
+  if ( extended ) m += ' ';
+  if ( path ) m += path;
+  if ( extended ) m += '"';
+
+  self.message = m;
+}
+
+function toName ( str ) {
+  return uppercamelcase( String(str).replace(/error$/i, ''), 'error' );
+}
+
+},{"builtin-status-codes":9,"uppercamelcase":10}],9:[function(require,module,exports){
+module.exports = {
+  "100": "Continue",
+  "101": "Switching Protocols",
+  "102": "Processing",
+  "200": "OK",
+  "201": "Created",
+  "202": "Accepted",
+  "203": "Non-Authoritative Information",
+  "204": "No Content",
+  "205": "Reset Content",
+  "206": "Partial Content",
+  "207": "Multi-Status",
+  "208": "Already Reported",
+  "226": "IM Used",
+  "300": "Multiple Choices",
+  "301": "Moved Permanently",
+  "302": "Found",
+  "303": "See Other",
+  "304": "Not Modified",
+  "305": "Use Proxy",
+  "307": "Temporary Redirect",
+  "308": "Permanent Redirect",
+  "400": "Bad Request",
+  "401": "Unauthorized",
+  "402": "Payment Required",
+  "403": "Forbidden",
+  "404": "Not Found",
+  "405": "Method Not Allowed",
+  "406": "Not Acceptable",
+  "407": "Proxy Authentication Required",
+  "408": "Request Timeout",
+  "409": "Conflict",
+  "410": "Gone",
+  "411": "Length Required",
+  "412": "Precondition Failed",
+  "413": "Payload Too Large",
+  "414": "URI Too Long",
+  "415": "Unsupported Media Type",
+  "416": "Range Not Satisfiable",
+  "417": "Expectation Failed",
+  "418": "I'm a teapot",
+  "421": "Misdirected Request",
+  "422": "Unprocessable Entity",
+  "423": "Locked",
+  "424": "Failed Dependency",
+  "425": "Unordered Collection",
+  "426": "Upgrade Required",
+  "428": "Precondition Required",
+  "429": "Too Many Requests",
+  "431": "Request Header Fields Too Large",
+  "500": "Internal Server Error",
+  "501": "Not Implemented",
+  "502": "Bad Gateway",
+  "503": "Service Unavailable",
+  "504": "Gateway Timeout",
+  "505": "HTTP Version Not Supported",
+  "506": "Variant Also Negotiates",
+  "507": "Insufficient Storage",
+  "508": "Loop Detected",
+  "509": "Bandwidth Limit Exceeded",
+  "510": "Not Extended",
+  "511": "Network Authentication Required"
+}
+
+},{}],10:[function(require,module,exports){
+'use strict';
+var camelCase = require('camelcase');
+
+module.exports = function () {
+	var cased = camelCase.apply(camelCase, arguments);
+	return cased.charAt(0).toUpperCase() + cased.slice(1);
+};
+
+},{"camelcase":11}],11:[function(require,module,exports){
+'use strict';
+module.exports = function () {
+	var str = [].map.call(arguments, function (str) {
+		return str.trim();
+	}).filter(function (str) {
+		return str.length;
+	}).join('-');
+
+	if (!str.length) {
+		return '';
+	}
+
+	if (str.length === 1 || !(/[_.\- ]+/).test(str) ) {
+		if (str[0] === str[0].toLowerCase() && str.slice(1) !== str.slice(1).toLowerCase()) {
+			return str;
+		}
+
+		return str.toLowerCase();
+	}
+
+	return str
+	.replace(/^[_.\- ]+/, '')
+	.toLowerCase()
+	.replace(/[_.\- ]+(\w|$)/g, function (m, p1) {
+		return p1.toUpperCase();
+	});
+};
 
 },{}]},{},[1])(1)
 });
