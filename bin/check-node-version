@@ -1,8 +1,61 @@
 #!/usr/bin/env node
-const requiredVersion = require( '../package' ).engines.node,
-	semver = require( process.env.SEMVER_GLOBAL_PATH );
 
-if ( ! semver.satisfies( process.version, requiredVersion ) ) {
-	console.error( 'wp-calypso requires node ' + requiredVersion + '. Please upgrade! See https://nodejs.org for instructions.' );
-	process.exit( 1 );
+function decomposeVersion( v ) {
+	return v.replace( /^[^0-9.]+/, '' )
+		.split( '.' )
+		.map( component => +component );
+}
+
+function versionIsAtLeast( requiredVersion, currentVersion ) {
+	const requiredArray = decomposeVersion( requiredVersion );
+	const currentArray = decomposeVersion( currentVersion);
+
+	if ( currentArray[0] < requiredArray[0] ) {
+		// Major version does not meet requirements
+		return false;
+	} else if ( currentArray[0] > requiredArray[0] ) {
+		// Major version satisfies the requirements by itself
+		return true;
+	}
+
+	if ( currentArray[1] < requiredArray[1] ) {
+		// Minor version does not meet requirements
+		return false;
+	} else if ( currentArray[1] > requiredArray[1] ) {
+		// Major + minor version satisfy the requirements
+		return true;
+	}
+
+	if ( requiredArray.length > 2 && currentArray.length <= 2 ) {
+		// Required version has a patch number but current version doesn't
+		// (not sure if this can ever happen)
+		return false;
+	} else if ( requiredArray.length > 2 && currentArray[2] < requiredArray[2] ) {
+		// Patch version does not meet requirements
+		return false;
+	}
+
+	// If we got here, everything looks OK
+	return true;
+}
+
+if ( global.TEST_VERSION_COMPARE ) {
+	// Export our version compare function for testing
+	module.exports = {
+		versionIsAtLeast: versionIsAtLeast
+	};
+
+} else {
+	// Run the version check normally
+	const requiredVersion = require( '../package' ).engines.node;
+	const currentVersion = process.version;
+
+	if ( ! versionIsAtLeast( requiredVersion, currentVersion ) ) {
+		console.error(
+			'wp-calypso requires node %s (found %s). Please upgrade! See https://nodejs.org for instructions.',
+			requiredVersion,
+			currentVersion
+		);
+		process.exit( 1 );
+	}
 }
