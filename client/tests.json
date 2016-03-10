@@ -191,6 +191,11 @@
 		"store": {
 			"test": [ "index" ]
 		},
+		"support": {
+			"support-user": {
+				"test": [ "localstorage-bypass" ]
+			}
+		},
 		"terms": {
 			"test": [ "actions", "category-store", "store", "tag-store" ]
 		},
