@@ -44,7 +44,8 @@ const EditorDrawer = React.createClass( {
 		post: React.PropTypes.object,
 		postTypes: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
-		setExcerpt: React.PropTypes.func
+		setExcerpt: React.PropTypes.func,
+		type: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {

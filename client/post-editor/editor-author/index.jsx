@@ -19,13 +19,17 @@ import { setAuthor } from 'state/ui/editor/post/actions';
 
 const EditorAuthor = React.createClass( {
 	propTypes: {
+		post: React.PropTypes.object,
+		isNew: React.PropTypes.bool,
 		setAuthor: React.PropTypes.func,
 	},
+
 	getDefaultProps: function() {
 		return {
 			setAuthor: () => {}
 		};
 	},
+
 	render: function() {
 		// if it's not a new post and we are still loading
 		// show a placeholder component
