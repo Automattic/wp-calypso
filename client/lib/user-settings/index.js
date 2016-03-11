@@ -73,12 +73,16 @@ UserSettings.prototype.getSettings = function() {
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
  */
 UserSettings.prototype.fetchSettings = function() {
-	if ( this.fetchingSettings ) {
+	var userIsLoggedIn = Boolean( user.data );
+
+	if ( ! userIsLoggedIn || this.fetchingSettings ) {
 		return;
 	}
 
 	this.fetchingSettings = true;
+
 	debug( 'Fetching user settings' );
+
 	wpcom.me().settings().get( function( error, data ) {
 		if ( ! error ) {
 			this.settings = decodeUserSettingsEntities( data );
