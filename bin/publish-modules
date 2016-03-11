@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+
+var exec = require( 'child-process-promise' ).exec;
+var semver = require( 'semver' );
+var validatePackageName = require( 'validate-npm-package-name' );
+
+function getAllModules() {
+	var command = 'find client -type f -name \'package.json\' -print';
+	return exec( command ).then( function( result ) {
+		return result.stdout.split( /\s+/ );
+	} );
+}
+
+function getPublishableModules( allModules ) {
+	var packageJson;
+
+	return allModules.filter( function( modulePath ) {
+		if ( !modulePath ) {
+			return;
+		}
+		try {
+			packageJson = require( modulePath );
+			if ( !packageJson.private ) {
+				return true;
+			}
+		} catch ( e ) {
+			console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
+		}
+	} );
+}
+
+function publishModule( modulePath ) {
+	return exec( 'make -C ' + modulePath.slice( 0, -12 ) + ' publish' )
+		.progress( function( childProcess ) {
+			childProcess.stdout.on( 'data', function( data ) {
+				console.log( data.toString() );
+			} );
+			childProcess.stderr.on( 'data', function( data ) {
+				console.log( data.toString() );
+			} );
+		} )
+}
+
+function publishModules() {
+	console.log( 'Modules requiring publish:' );
+	getAllModules()
+		.then( getPublishableModules )
+		.then( requiresUpdate );
+}
+
+function requiresUpdate( modules ) {
+	var modulePath;
+	var packageJson;
+	if ( !modules.length ) {
+		process.exit( 0 ); //eslint-disable-line no-process-exit
+	}
+	modulePath = modules.shift();
+	try {
+		packageJson = require( modulePath );
+	} catch ( e ) {
+		console.log( '\x1b[41mFailure requiring package:\x1b[0m ', e );
+	}
+	if ( !validatePackageName( packageJson.name ) ) {
+		console.log( '\x1b[41mPackage name contains spaces and/or invalid characters:\x1b[0m ', packageJson.name );
+		return;
+	}
+	exec( 'npm view ' + packageJson.name + ' version' )
+		.then( function( result ) {
+			if ( !semver.valid( packageJson.version ) ) {
+				console.log( '\x1b[41mPackage version is not valid semver:\x1b[0m ', packageJson.name );
+			} else if ( result.stdout && semver.gt( packageJson.version, result.stdout ) ) {
+				console.log( '\n' );
+				console.log( packageJson.name );
+			}
+			return modulePath;
+		} )
+		.fail( function() {
+			console.log( '\n' );
+			console.log( packageJson.name + ' <--- Not in npm' );
+			return modulePath;
+		} )
+		.then( function() {
+			console.log( 'Would you like to publish this module? Y or N' );
+			shouldPublishModule( modulePath, modules );
+		} );
+};
+
+function shouldPublishModule( modulePath, modules ) {
+	var stdin = process.stdin;
+	stdin.resume();
+	stdin.once( 'data', function( data ) {
+		data = data.toString().trim();
+		if ( /^[yY]{1}$/.test( data ) ) {
+			publishModule( modulePath )
+				.then( function() {
+					requiresUpdate( modules );
+				} );
+		} else if ( /^[nN]{1}$/.test( data ) ) {
+			requiresUpdate( modules )
+		} else {
+			console.log( '\x1b[41mInvalid input.\x1b[0m Y or N' );
+			shouldPublishModule( modulePath, modules );
+		}
+	} );
+}
+
+publishModules();
