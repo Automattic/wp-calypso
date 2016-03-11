@@ -1,5 +1,16 @@
 {
 	"lib": {
+		"cart": {
+			"store": {
+				"test": [ "cart-synchronizer" ]
+			}
+		},
+		"cart-values": {
+			"test": [ "index" ]
+		},
+		"credit-card-details" : {
+			"test": [ "index" ]
+		},
 		"domains": {
 			"dns": {
 				"test": [ "index", "reducer" ]
@@ -14,6 +25,9 @@
 			"whois": {
 				"test": [ "assembler", "store" ]
 			}
+		},
+		"network-connection" : {
+			"test": [ "index" ]
 		},
 		"post-formats": {
 			"test": [ "actions", "store" ]

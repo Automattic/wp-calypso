@@ -12,7 +12,7 @@ function getRandomInt( min, max ) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-describe( 'credit-card-details', function() {
+describe( 'index', function() {
 	describe( 'Validation', function() {
 		describe( 'Discover Card: range 622126-622925', function() {
 			it( 'should return null for 622125', function() {

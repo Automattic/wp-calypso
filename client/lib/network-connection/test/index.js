@@ -1,20 +1,16 @@
 /**
  * External dependencies
  */
-var chai = require( 'chai' ),
-	expect = chai.expect,
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' );
+import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	NetworkConnectionApp = require( 'lib/network-connection' );
+import config from 'config';
+import NetworkConnectionApp from 'lib/network-connection';
 
-chai.use( sinonChai );
-
-describe( 'Network connection', function() {
+describe( 'index', function() {
 	beforeEach( function() {
 		this.configStub = sinon.stub( config, 'isEnabled' ).returns( true );
 	} );

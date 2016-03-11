@@ -1,21 +1,28 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' );
+import assert from 'assert';
+import flow from 'lodash/flow';
 
 /**
  * Internal dependencies
  */
-var cartValues = require( '../' ),
-	cartItems = cartValues.cartItems,
-	flow = require( 'lodash/flow' );
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
-var TEST_BLOG_ID = 1,
-	PREMIUM_PRODUCT = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } ),
-	THEME_PRODUCT = cartItems.themeItem( 'mood' ),
-	DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( { productSlug: 'dotcom_domain' } );
+describe( 'index', function() {
+	const TEST_BLOG_ID = 1;
+	let cartItems, cartValues, DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
 
-describe( 'cart-values', function() {
+	useFilesystemMocks( __dirname );
+
+	before( () => {
+		cartValues = require( 'lib/cart-values' );
+		cartItems = cartValues.cartItems;
+		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( { productSlug: 'dotcom_domain' } );
+		PREMIUM_PRODUCT = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
+		THEME_PRODUCT = cartItems.themeItem( 'mood' );
+	} );
+
 	describe( 'cart change functions', function() {
 		describe( 'flow( changeFunctions... )', function() {
 			it( 'should combine multiple cart operations into a single step', function() {

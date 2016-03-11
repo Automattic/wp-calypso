@@ -1,9 +1,14 @@
-var CartSynchronizer = require( '../cart-synchronizer' ),
-	FakeWPCOM = require( './fake-wpcom' ),
-	cartValues = require( 'lib/cart-values' ),
-	emptyCart = cartValues.emptyCart,
-	applyCoupon = cartValues.applyCoupon,
-	assert = require( 'assert' );
+/**
+ * External dependencies
+ */
+import assert from 'assert';
+
+/**
+ * Internal dependencies
+ */
+import CartSynchronizer from '../cart-synchronizer';
+import FakeWPCOM from './fake-wpcom';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 var TEST_SITE_ID = 91234567890;
 
@@ -11,9 +16,20 @@ var poller = {
 	add: function() {}
 };
 
-describe( 'CartSynchronizer', function() {
+describe( 'cart-synchronizer', function() {
+	let applyCoupon, emptyCart;
+
+	useFilesystemMocks( __dirname );
+
+	before( () => {
+		const cartValues = require( 'lib/cart-values' );
+
+		applyCoupon = cartValues.applyCoupon;
+		emptyCart = cartValues.emptyCart;
+	} );
+
 	describe( '*before* the first fetch from the server', function() {
-		it( 'should *not* allow the value to be read', function() {
+		it( 'shoauld *not* allow the value to be read', function() {
 			var wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_SITE_ID, wpcom, poller );
 
