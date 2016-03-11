@@ -563,7 +563,7 @@ function wpEditImage( editor ) {
 			if ( 'getComputedStyle' in window ) {
 				computedStyle = window.getComputedStyle( child );
 			} else {
-				computedStyle = child.currenStyle;
+				computedStyle = child.currentStyle;
 			}
 
 			if ( 'block' === computedStyle.display ) {
