@@ -21,6 +21,7 @@ import themes from './themes/reducer';
 import users from './users/reducer';
 import currentUser from './current-user/reducer';
 import ui from './ui/reducer';
+import tailor from './tailor/reducer';
 import comments from './comments/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 
@@ -42,8 +43,9 @@ export const reducer = combineReducers( {
 	users,
 	currentUser,
 	ui,
+	tailor,
 	comments,
-	googleAppsUsers
+	googleAppsUsers,
 } );
 
 let middleware = [ thunkMiddleware ];
