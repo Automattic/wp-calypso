@@ -165,6 +165,24 @@ UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback 
 	}, callback );
 };
 
+UndocumentedSite.prototype.setHeaderImage = function( imageData, callback ) {
+	this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/headers/mine',
+		body: { url: imageData.url, attachment_id: imageData.ID, width: imageData.width, height: imageData.height }
+	}, callback );
+}
+
+UndocumentedSite.prototype.removeHeaderImage = function( callback ) {
+	this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/headers/mine',
+		body: { remove: true }
+	}, callback );
+}
+
+UndocumentedSite.prototype.getMuseCustomizations = function( callback ) {
+	this.wpcom.req.get( '/sites/' + this._id + '/customizations', callback );
+};
+
 UndocumentedSite.prototype.setOption = function( query, callback ) {
 	this.wpcom.req.post(
 		'/sites/' + this._id + '/option',
