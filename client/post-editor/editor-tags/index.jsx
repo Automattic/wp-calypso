@@ -103,5 +103,7 @@ const EditorTags = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setTags }, dispatch )
+	dispatch => bindActionCreators( { setTags }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorTags );

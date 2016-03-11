@@ -93,5 +93,7 @@ const EditorPageTemplates = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setPageTemplate }, dispatch )
+	dispatch => bindActionCreators( { setPageTemplate }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorPageTemplates );

@@ -90,5 +90,7 @@ const EditorAuthor = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setAuthor }, dispatch )
+	dispatch => bindActionCreators( { setAuthor }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorAuthor );

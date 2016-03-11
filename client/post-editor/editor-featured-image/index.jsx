@@ -150,5 +150,7 @@ const EditorFeaturedImage = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setFeaturedImage, removeFeaturedImage }, dispatch )
+	dispatch => bindActionCreators( { setFeaturedImage, removeFeaturedImage }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorFeaturedImage );

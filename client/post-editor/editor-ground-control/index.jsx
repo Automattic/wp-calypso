@@ -410,5 +410,7 @@ const EditorGroundControl = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setDate }, dispatch )
+	dispatch => bindActionCreators( { setDate }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorGroundControl );

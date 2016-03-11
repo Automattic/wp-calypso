@@ -310,5 +310,7 @@ export default connect(
 			postTypes: getPostTypes( state, site.ID )
 		};
 	},
-	dispatch => bindActionCreators( { setExcerpt }, dispatch )
+	dispatch => bindActionCreators( { setExcerpt }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorDrawer );
