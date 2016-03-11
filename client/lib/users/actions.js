@@ -11,16 +11,18 @@ const Dispatcher = require( 'dispatcher' ),
 	UsersStore = require( 'lib/users/store' );
 
 const UsersActions = {
-	fetchUsers: fetchOptions => {
+	fetchUsers: ( fetchOptions, silentUpdate = false ) => {
 		const paginationData = UsersStore.getPaginationData( fetchOptions );
 		if ( paginationData.fetchingUsers ) {
 			return;
 		}
 		debug( 'fetchUsers', fetchOptions );
-		Dispatcher.handleViewAction( {
-			type: 'FETCHING_USERS',
-			fetchOptions: fetchOptions
-		} );
+		if ( ! silentUpdate ) {
+			Dispatcher.handleViewAction( {
+				type: 'FETCHING_USERS',
+				fetchOptions: fetchOptions
+			} );
+		}
 
 		wpcom.site( fetchOptions.siteId ).usersList( fetchOptions, ( error, data ) => {
 			Dispatcher.handleServerAction( {
