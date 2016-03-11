@@ -3,6 +3,7 @@
  */
 var assert = require( 'assert' ),
 	path = require( 'path' ),
+	babel = require( 'babel' ),
 	fs = require( 'fs' );
 
 /**
@@ -12,7 +13,11 @@ var i18n = require( '../' );
 
 // generate whitelist file
 var outputFile = path.join( __dirname, 'output.php' ),
-	output, buildFiles;
+	output, buildFiles, sourceFiles;
+
+sourceFiles = [ 'examples/i18n-test-examples.jsx', 'examples/i18n-test-example-second-file.jsx' ].map( function( file ) {
+	return path.join( __dirname, file );
+} );
 
 buildFiles = [ 'out/i18n-test-examples.js', 'out/i18n-test-example-second-file.js' ].map( function( file ) {
 	return path.join( __dirname, file );
@@ -28,11 +33,61 @@ describe( 'index', function() {
 	before( function( done ) {
 		// Work around occasional Circle CI slowness
 		this.timeout( 0 );
-		i18n( outputFile, 'arrayName', buildFiles, function() {
-			fs.readFile( outputFile, 'utf8', function( err, data ) {
-				output = data;
+		// We run babel to compile the files under examples folder to out folder.
+		// This is because i18n is run on babel-generated files.
+		// This process is done in a Makefile previously but we are getting rid of those so here it goes
+		Promise.all( sourceFiles.map( function( sourcePath, index ) {
+			return new Promise( function( resolve, reject ) {
+				babel.transformFile( sourcePath, function( err, result ) {
+					if ( err ) {
+						return reject( err );
+					}
+					// Ensure there's out directory
+					fs.mkdir( path.join( __dirname, 'out' ), function( mkdirErr ) {
+						// If it exists already, all is well
+						if ( mkdirErr && mkdirErr.code !== 'EEXIST' ) {
+							return reject( mkdirErr );
+						}
+						fs.writeFile( buildFiles[ index ], result.code, function( writeErr ) {
+							if ( writeErr ) {
+								return reject( writeErr );
+							}
+							resolve();
+						} );
+					} );
+				} );
+			} );
+		} ) ).then( function() {
+			// Babel finished
+			i18n( outputFile, 'arrayName', buildFiles, function() {
+				fs.readFile( outputFile, 'utf8', function( err, data ) {
+					output = data;
+					done( err );
+				} );
+			} );
+		}, function( error ) {
+			done( error );
+		} );
+	} );
+
+	after( function( done ) {
+		this.timeout( 0 );
+		// Cleanup
+		Promise.all( buildFiles.map( function( buildPath ) {
+			return new Promise( function( resolve, reject ) {
+				fs.unlink( buildPath, function( err ) {
+					if ( err ) {
+						return reject( err );
+					}
+					resolve();
+				} );
+			} );
+		} ) ).then( function() {
+			fs.rmdir( path.join( __dirname, 'out' ), function( err ) {
 				done( err );
 			} );
+		}, function( err ) {
+			done( err );
 		} );
 	} );
 
