@@ -2,7 +2,7 @@
 	color: $gray;
 	font-size: 12px;
 	text-transform: uppercase;
-	margin: 13px 0 12px 18px;
+	margin: 13px 0 12px 17px;
 
 	@include breakpoint( ">480px" ) {
 		margin: 0 0 12px;
