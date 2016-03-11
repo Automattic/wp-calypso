@@ -33,7 +33,9 @@ describe( 'cart-synchronizer', function() {
 			var wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_SITE_ID, wpcom, poller );
 
-			assert.throws(function() { synchronizer.getLatestValue(); }, Error);
+			assert.throws( () => {
+				synchronizer.getLatestValue();
+			}, Error );
 		} );
 
 		it( 'should enqueue local changes and POST them after fetching', function() {
@@ -44,7 +46,9 @@ describe( 'cart-synchronizer', function() {
 			synchronizer.fetch();
 			synchronizer.update( applyCoupon( 'foo' ) );
 
-			assert.throws( function() { synchronizer.getLatestValue(); }, Error );
+			assert.throws( () => {
+				synchronizer.getLatestValue();
+			}, Error );
 			wpcom.resolveRequest( 0, serverCart );
 
 			assert.equal( synchronizer.getLatestValue().coupon, 'foo' );
