@@ -13,7 +13,10 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		headerText: PropTypes.string,
-		subHeaderText: PropTypes.string,
+		subHeaderText: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.array
+		] )
 	},
 
 	render: function() {
