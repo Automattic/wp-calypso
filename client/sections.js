@@ -110,7 +110,7 @@ sections = [
 		group: 'sites'
 	},
 	{
-		name: 'upgrades',
+		name: 'plans',
 		paths: [ '/plans' ],
 		module: 'my-sites/plans',
 		secondary: true,
