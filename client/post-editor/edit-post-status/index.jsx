@@ -252,12 +252,12 @@ const EditPostStatus = React.createClass( {
 	}
 } );
 
-
-
 export default connect(
 	null,
 	dispatch => bindActionCreators( {
 		toggleStickyStatus,
 		togglePendingStatus
-	}, dispatch )
+	}, dispatch ),
+	null,
+	{ pure: false }
 )( EditPostStatus );

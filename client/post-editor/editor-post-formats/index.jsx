@@ -111,5 +111,7 @@ const EditorPostFormats = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setPostFormat }, dispatch )
+	dispatch => bindActionCreators( { setPostFormat }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorPostFormats );

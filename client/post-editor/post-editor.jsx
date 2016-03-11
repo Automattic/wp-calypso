@@ -935,5 +935,7 @@ export default connect(
 		setPostPrivate,
 		setPostPublished,
 		resetRawContent
-	}, dispatch )
+	}, dispatch ),
+	null,
+	{ pure: false }
 )( PostEditor );

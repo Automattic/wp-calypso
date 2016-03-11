@@ -125,5 +125,7 @@ const SharingLikeOptions = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setSharingLikeOption }, dispatch )
+	dispatch => bindActionCreators( { setSharingLikeOption }, dispatch ),
+	null,
+	{ pure: false }
 )( SharingLikeOptions );

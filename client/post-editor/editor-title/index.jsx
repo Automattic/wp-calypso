@@ -137,5 +137,7 @@ const EditorTitle = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setTitle }, dispatch )
+	dispatch => bindActionCreators( { setTitle }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorTitle );

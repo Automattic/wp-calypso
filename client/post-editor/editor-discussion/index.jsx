@@ -117,5 +117,7 @@ const EditorDiscussion = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setDiscussionSettings }, dispatch )
+	dispatch => bindActionCreators( { setDiscussionSettings }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorDiscussion );

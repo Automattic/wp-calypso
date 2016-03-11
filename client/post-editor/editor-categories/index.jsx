@@ -128,5 +128,7 @@ const EditorCategories = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setCategories }, dispatch )
+	dispatch => bindActionCreators( { setCategories }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorCategories );

@@ -120,5 +120,7 @@ const EditorSharingPublicizeConnection = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { addPublicizeConnectionKey, removePublicizeConnectionKey }, dispatch )
+	dispatch => bindActionCreators( { addPublicizeConnectionKey, removePublicizeConnectionKey }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorSharingPublicizeConnection );

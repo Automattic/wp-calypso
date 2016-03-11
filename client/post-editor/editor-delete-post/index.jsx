@@ -110,5 +110,7 @@ const EditorDeletePost = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { trashPost }, dispatch )
+	dispatch => bindActionCreators( { trashPost }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorDeletePost );
