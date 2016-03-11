@@ -1,24 +1,22 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External Dependencies
  */
-var	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	chai = require( 'chai' );
+import { expect } from 'chai';
+import sinon from 'sinon';
+import ReactDom from 'react-dom';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal Dependencies
  */
-var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	DomainProductPrice = require( 'components/domains/domain-product-price' );
-
-chai.use( sinonChai );
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainProductPrice from 'components/domains/domain-product-price';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Domain Suggestion', function() {
+	useFakeDom();
+
 	beforeEach( function() {
 		DomainSuggestion.prototype.__reactAutoBindMap.translate = sinon.stub();
 		DomainProductPrice.prototype.__reactAutoBindMap.translate = sinon.stub();
@@ -33,7 +31,7 @@ describe( 'Domain Suggestion', function() {
 		it( 'should show a checkbox when in cart', function() {
 			var suggestionComponent = TestUtils.renderIntoDocument( <DomainSuggestion isAdded={true} /> );
 
-			chai.expect( suggestionComponent.refs.checkmark ).to.exist;
+			expect( suggestionComponent.refs.checkmark ).to.exist;
 		} );
 
 		it( 'should show the button label when not in cart', function() {
@@ -41,7 +39,7 @@ describe( 'Domain Suggestion', function() {
 				suggestionComponent = TestUtils.renderIntoDocument(
 					<DomainSuggestion isAdded={false} buttonLabel={buttonLabel} />
 				);
-			chai.expect( ReactDom.findDOMNode( suggestionComponent.refs.button ).textContent ).to.equal( buttonLabel );
+			expect( ReactDom.findDOMNode( suggestionComponent.refs.button ).textContent ).to.equal( buttonLabel );
 		} );
 	} );
 } );

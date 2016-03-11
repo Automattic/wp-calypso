@@ -1,21 +1,26 @@
-import setup from 'lib/react-test-env-setup';
-setup();
-
+/**
+ * External dependencies
+ */
+import { assert, expect } from 'chai';
+import identity from 'lodash/identity';
 import moment from 'moment';
-import sinonChai from 'sinon-chai';
 import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import chai from 'chai';
-import identity from 'lodash/identity';
+
+/**
+ * Internal dependencies
+ */
 import i18n from 'lib/mixins/i18n';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
-chai.use( sinonChai );
+describe( 'index', () => {
+	let DomainWarnings, translateFn;
 
-let DomainWarnings, translateFn;
-describe( 'DomainWarnings', () => {
+	useFakeDom();
+
 	beforeEach( () => {
 		translateFn = i18n.translate;
 		i18n.translate = identity;
@@ -37,7 +42,7 @@ describe( 'DomainWarnings', () => {
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings domain={ domain } /> );
 
-		chai.expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' )
+		expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' )
 	} );
 
 	it( 'should render new warning notice if the domain is new', () => {
@@ -51,7 +56,7 @@ describe( 'DomainWarnings', () => {
 		};
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-		chai.expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
+		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
 	} );
 
 	it( 'should render the highest priority notice when there are others', () => {
@@ -66,7 +71,7 @@ describe( 'DomainWarnings', () => {
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		chai.expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
+		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
 	} );
 
 	it( 'should render the multi version of the component if more than two domains match the same rule', () => {
@@ -80,7 +85,7 @@ describe( 'DomainWarnings', () => {
 
 		let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-		chai.expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
+		expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up your new domains for you' );
 	} );
 
 	describe( 'Mutations', () => {
@@ -96,9 +101,9 @@ describe( 'DomainWarnings', () => {
 
 			TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			chai.expect( props.domain.name ).to.equal( '1.com' );
-			chai.assert( props.domain.registrationMoment.isSame( moment( '1999-09-09', 'YYYY-MM-DD' ) ) );
-			chai.assert( props.domain.expirationMoment.isSame( moment( '2000-09-09', 'YYYY-MM-DD' ) ) );
+			expect( props.domain.name ).to.equal( '1.com' );
+			assert( props.domain.registrationMoment.isSame( moment( '1999-09-09', 'YYYY-MM-DD' ) ) );
+			assert( props.domain.expirationMoment.isSame( moment( '2000-09-09', 'YYYY-MM-DD' ) ) );
 		} );
 	} );
 
@@ -110,7 +115,7 @@ describe( 'DomainWarnings', () => {
 			};
 
 			let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-			chai.expect( component.getPipe().length ).to.equal( 0 );
+			expect( component.getPipe().length ).to.equal( 0 );
 		} );
 
 		it( 'should not allow running extra functions other than defined in getPipe()', () => {
@@ -120,7 +125,7 @@ describe( 'DomainWarnings', () => {
 			};
 
 			let component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
-			chai.expect( component.getPipe().length ).to.equal( 0 );
+			expect( component.getPipe().length ).to.equal( 0 );
 		} );
 	} );
 } );

@@ -1,12 +1,25 @@
-global.localStorage = require( 'localStorage' );
+/**
+ * External dependencies
+ */
+import assert from 'assert';
 
-var assert = require( 'assert' );
-
-var PlansList = require( 'lib/plans-list' ),
-	data = require( './data' ),
-	plansMockedData = data.plans;
+/**
+ * Internal dependencies
+ */
+import { plans as plansMockedData } from './data';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'PlansList', function() {
+	let PlansList;
+
+	useFakeDom();
+	useFilesystemMocks( __dirname );
+
+	before( () => {
+		PlansList = require( 'lib/plans-list' )
+	} );
+
 	describe( 'initialize', function() {
 		it( 'should populate the list of plans', function() {
 			var plansList = PlansList();

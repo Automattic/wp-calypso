@@ -1,4 +1,11 @@
 {
+	"components": {
+		"domains": {
+			"domain-suggestion": {
+				"test": [ "index" ]
+			}
+		}
+	},
 	"lib": {
 		"cart": {
 			"store": {
@@ -29,6 +36,9 @@
 		"network-connection" : {
 			"test": [ "index" ]
 		},
+		"plans-list": {
+			"test": [ "index" ]
+		},
 		"post-formats": {
 			"test": [ "actions", "store" ]
 		},
@@ -49,6 +59,18 @@
 		},
 		"store": {
 			"test": [ "index-test" ]
+		}
+	},
+	"my-sites": {
+		"upgrades": {
+			"cart": {
+				"test": [ "cart-buttons" ]
+			},
+			"components": {
+				"domain-warnings": {
+					"test": [ "index" ]
+				}
+			}
 		}
 	},
 	"state": {
