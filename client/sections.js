@@ -10,6 +10,11 @@ sections = [
 		module: 'my-sites/customize'
 	},
 	{
+		name: 'tailor',
+		paths: [ '/tailor' ],
+		module: 'tailor'
+	},
+	{
 		name: 'post-editor',
 		paths: [ '/post', '/page' ],
 		module: 'post-editor'
