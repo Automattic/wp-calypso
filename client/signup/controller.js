@@ -90,10 +90,6 @@ export default {
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
-		context.store.dispatch( setSection( 'signup', {
-			hasSidebar: false
-		} ) );
-
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( SignupComponent, {
