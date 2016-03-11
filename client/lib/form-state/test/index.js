@@ -48,8 +48,8 @@ function testController( options ) {
 	return formState.Controller( assign( defaults, options ) );
 }
 
-describe( 'form', function() {
-	describe( 'Controller', function() {
+describe( 'index', function() {
+	describe( '#Controller', function() {
 		describe( '#getInitialState', function() {
 			it( 'returns disabled fields', function() {
 				var controller = testController( { fieldNames: [ 'firstName' ] } ),

@@ -2,7 +2,7 @@ var deterministicStringify = require( 'lib/deterministic-stringify' );
 
 var assert = require( 'assert' );
 
-describe( 'DeterministicStringify', function() {
+describe( 'index', function() {
 	it( 'should handle boolean', function() {
 		assert.equal( 'true', deterministicStringify( true ) );
 		assert.equal( 'false', deterministicStringify( false ) );

@@ -1,22 +1,19 @@
 /**
  * External dependencies
  */
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 import filter from 'lodash/filter';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
 
 /**
  * Internal dependencies
  */
 import createSelector from '../';
 
-describe( '#createSelector', () => {
+describe( 'index', () => {
 	let selector, getSitePosts;
 
 	before( () => {
-		Chai.use( sinonChai );
-
 		selector = sinon.spy( ( state, siteId ) => {
 			return filter( state.posts, { site_ID: siteId } );
 		} );

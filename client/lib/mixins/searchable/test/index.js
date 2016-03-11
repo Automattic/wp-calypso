@@ -49,8 +49,7 @@ var makeCollection = function() {
 };
 
 
-describe( 'Searchable', function() {
-
+describe( 'index', function() {
 	describe( 'searchNodes as array', function() {
 		it( 'should find node', function() {
 			var Collection = makeCollection(),

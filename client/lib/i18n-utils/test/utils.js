@@ -10,8 +10,8 @@ import { expect } from 'chai';
  */
 import { removeLocaleFromPath, getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
 
-describe( 'i18n-utils', function() {
-	describe( 'removeLocaleFromPath', function() {
+describe( 'utils', function() {
+	describe( '#removeLocaleFromPath', function() {
 		it( 'should remove the :lang part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start/fr' ), '/start' );
 			assert.equal( removeLocaleFromPath( '/start/flow/fr' ), '/start/flow' );
@@ -39,7 +39,7 @@ describe( 'i18n-utils', function() {
 		} );
 	} );
 
-	describe( 'getLocaleFromPath', function() {
+	describe( '#getLocaleFromPath', function() {
 		it( 'should return undefined when no locale at end of path', function() {
 			assert.equal( getLocaleFromPath( '/start' ), undefined );
 		} );
@@ -50,7 +50,7 @@ describe( 'i18n-utils', function() {
 		} );
 	} );
 
-	describe( 'getLanguage', function() {
+	describe( '#getLanguage', function() {
 		it( 'should return a language', function() {
 			expect( getLanguage( 'ja' ).langSlug ).to.equal( 'ja' );
 		} );

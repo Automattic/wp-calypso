@@ -8,7 +8,7 @@ var expect = require( 'chai' ).expect;
  */
 var route = require( '../' );
 
-describe( 'reader/route', function() {
+describe( 'index', function() {
 	describe( 'getStreamUrlFromPost', function() {
 		it( 'should return url for post from feed', function() {
 			expect( route.getStreamUrlFromPost( { feed_ID: 1234 } ) ).to.equal( '/read/feeds/1234' );

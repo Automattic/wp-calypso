@@ -7,6 +7,9 @@
 		}
 	},
 	"lib": {
+		"auth-code-request-store": {
+			"test": [ "index" ]
+		},
 		"cart": {
 			"store": {
 				"test": [ "cart-synchronizer" ]
@@ -16,6 +19,15 @@
 			"test": [ "index" ]
 		},
 		"credit-card-details" : {
+			"test": [ "index" ]
+		},
+		"comment-like-store": {
+			"test": [ "comment-like-store" ]
+		},
+		"create-selector": {
+			"test": [ "index" ]
+		},
+		"deterministic-stringify": {
 			"test": [ "index" ]
 		},
 		"domains": {
@@ -31,6 +43,23 @@
 			"test": [ "assembler" ],
 			"whois": {
 				"test": [ "assembler", "store" ]
+			}
+		},
+		"form-state": {
+			"test": [ "index" ]
+		},
+		"i18n-utils" : {
+			"test": [ "utils" ]
+		},
+		"mixins" : {
+			"pageable": {
+				"test": [ "index" ]
+			},
+			"searchable": {
+				"test": [ "index" ]
+			},
+			"url-search": {
+				"test": [ "build-url" ]
 			}
 		},
 		"network-connection" : {
@@ -95,6 +124,11 @@
 					"test": [ "index" ]
 				}
 			}
+		}
+	},
+	"reader": {
+		"route": {
+			"test": [ "index" ]
 		}
 	},
 	"state": {
