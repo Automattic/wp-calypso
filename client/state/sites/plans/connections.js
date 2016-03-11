@@ -1,6 +1,6 @@
 import wpcom from 'lib/wp';
 import debugFactory from 'debug';
-import map from 'lodash/collection/map';
+import map from 'lodash/map';
 
 import {
 	SITE_PLANS_FETCH_FAILED,

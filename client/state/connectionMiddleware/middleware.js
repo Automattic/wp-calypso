@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import uniqueId from 'lodash/utility/uniqueId';
+import uniqueId from 'lodash/uniqueId';
 import Hashes from 'jshashes';
 
 /**
