@@ -29,7 +29,7 @@ describe( 'Domain Suggestion', function() {
 
 	describe( 'added domain', function() {
 		it( 'should show a checkbox when in cart', function() {
-			var suggestionComponent = TestUtils.renderIntoDocument( <DomainSuggestion isAdded={true} /> );
+			var suggestionComponent = TestUtils.renderIntoDocument( <DomainSuggestion isAdded={ true } /> );
 
 			expect( suggestionComponent.refs.checkmark ).to.exist;
 		} );
@@ -37,7 +37,7 @@ describe( 'Domain Suggestion', function() {
 		it( 'should show the button label when not in cart', function() {
 			var buttonLabel = 'Hello',
 				suggestionComponent = TestUtils.renderIntoDocument(
-					<DomainSuggestion isAdded={false} buttonLabel={buttonLabel} />
+					<DomainSuggestion isAdded={ false } buttonLabel={ buttonLabel } />
 				);
 			expect( ReactDom.findDOMNode( suggestionComponent.refs.button ).textContent ).to.equal( buttonLabel );
 		} );

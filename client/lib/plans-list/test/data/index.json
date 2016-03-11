@@ -1,4 +1,4 @@
-var plans = [
+[
 	{
 		"product_id":1003,
 		"product_name":"WordPress.com Premium",
@@ -99,6 +99,4 @@ var plans = [
 	"bill_period_label":"for life",
 	"price":"$0"
 	}
-];
-
-exports.plans = plans;
+]
