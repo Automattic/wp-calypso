@@ -608,6 +608,22 @@ function mediaButton( editor ) {
 		}
 	}
 
+	function fixCaptionPaste( event ) {
+		// Limit effect to captions, though reasonably this behavior could
+		// probably be applied generally to fix any inline paste.
+		const target = editor.selection.getStart( true );
+		if ( ! editor.dom.hasClass( target, 'wp-caption-dd' ) ) {
+			return;
+		}
+
+		// By default, TinyMCE inserts paste using `editor.insertContent`. We
+		// substitute this with `selection.setContent` and prevent the default.
+		//
+		// See: https://github.com/tinymce/tinymce/blob/e35d1de/js/tinymce/plugins/paste/classes/Clipboard.js#L69-L71
+		editor.selection.setContent( event.node.innerHTML );
+		event.preventDefault();
+	}
+
 	function removeEmptyCaptions( focussed ) {
 		if ( focussed ) {
 			return;
@@ -651,6 +667,8 @@ function mediaButton( editor ) {
 	editor.on( 'click', preventCaptionTripleClick );
 
 	editor.on( 'keydown', preventCaptionBackspaceRemove );
+
+	editor.on( 'PastePostProcess', fixCaptionPaste );
 
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
