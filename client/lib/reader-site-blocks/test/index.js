@@ -6,14 +6,12 @@ var expect = require( 'chai' ).expect,
 
 var SiteBlockStore = require( '../index' );
 
-describe( 'site-block-store', function() {
-
+describe( 'store', function() {
 	it( 'should have a dispatch token', function() {
 		expect( SiteBlockStore ).to.have.property( 'dispatchToken' );
 	} );
 
 	it( 'should not store a block if there is an API error', function() {
-
 		var siteId = 123;
 
 		// The action from the UI - follow should be stored optimistically
@@ -49,5 +47,4 @@ describe( 'site-block-store', function() {
 		expect( SiteBlockStore.getIsBlocked( siteId ) ).to.eq( false );
 		expect( SiteBlockStore.getLastErrorBySite( siteId ).errorType ).to.be.ok;
 	} );
-
 } );

@@ -4,15 +4,12 @@
 const chai = require( 'chai' ),
 	expect = chai.expect,
 	Dispatcher = require( 'dispatcher' ),
-	immutable = require( 'immutable' ),
-	chaiImmutable = require( 'chai-immutable' );
-
-chai.use( chaiImmutable );
+	immutable = require( 'immutable' );
 
 const FeedActionTypes = require( 'lib/feed-store/constants' ).action,
 	FeedSubscriptionStore = require( '../index' );
 
-describe( 'feed-subscription-store', function() {
+describe( 'store', function() {
 	beforeEach( function() {
 		FeedSubscriptionStore.clearSubscriptions();
 	} );
@@ -31,7 +28,7 @@ describe( 'feed-subscription-store', function() {
 			error: null
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.equal( immutable.fromJS(
+		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual( immutable.fromJS(
 			{
 				URL: siteUrl,
 				state: 'SUBSCRIBED'
@@ -83,7 +80,7 @@ describe( 'feed-subscription-store', function() {
 			}
 		} );
 
-		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.equal( immutable.fromJS( {
+		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual( immutable.fromJS( {
 			URL: siteUrl,
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
@@ -156,7 +153,7 @@ describe( 'feed-subscription-store', function() {
 		} );
 
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscription( 'http://www.banana.com' ) ).to.equal( immutable.fromJS( {
+		expect( FeedSubscriptionStore.getSubscription( 'http://www.banana.com' ) ).to.immutablyEqual( immutable.fromJS( {
 			ID: 1,
 			URL: 'http://www.banana.com',
 			feed_ID: 123,
@@ -173,7 +170,7 @@ describe( 'feed-subscription-store', function() {
 
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.feijoa.com' ) ).to.eq( true );
 		expect( FeedSubscriptionStore.getIsFollowingBySiteUrl( 'https://www.dragonfruit.com' ) ).to.eq( true );
-		expect( FeedSubscriptionStore.getSubscription( 'http://www.dragonfruit.com' ) ).to.equal( immutable.fromJS( {
+		expect( FeedSubscriptionStore.getSubscription( 'http://www.dragonfruit.com' ) ).to.immutablyEqual( immutable.fromJS( {
 			ID: 3,
 			URL: 'http://www.dragonfruit.com',
 			feed_ID: 456,

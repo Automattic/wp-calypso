@@ -5,12 +5,12 @@ import reactTestEnvSetup from 'lib/react-test-env-setup';
 const log = debug( 'calypso:test:helpers:setup-dom-env' );
 
 export default function( markup, features ) {
-	before( function() {
+	before( function setupFakeDom() {
 		log( 'setting up dom env' );
 		reactTestEnvSetup( markup, features );
 	} );
 
-	after( function() {
+	after( function cleanupFakeDom() {
 		log( 'cleaning dom env' );
 		reactTestEnvSetup.cleanup();
 	} );

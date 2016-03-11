@@ -57,6 +57,30 @@
 			},
 			"test": [ "assembler", "index", "store" ]
 		},
+		"reader-comment-email-subscriptions": {
+			"test": [ "index" ]
+		},
+		"reader-feed-subscriptions": {
+			"test": [ "index" ]
+		},
+		"reader-lists-items": {
+			"test": [ "store" ]
+		},
+		"reader-lists-tags": {
+			"test": [ "store" ]
+		},
+		"reader-post-email-subscriptions": {
+			"test": [ "index" ]
+		},
+		"reader-site-blocks": {
+			"test": [ "index" ]
+		},
+		"reader-site-store": {
+			"test": [ "index" ]
+		},
+		"reader-teams": {
+			"test": [ "index" ]
+		},
 		"store": {
 			"test": [ "index" ]
 		}

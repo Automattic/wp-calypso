@@ -12,7 +12,7 @@ const log = debug( 'calypso:test:use-mockery' );
  * @param  {[type]} afterActions  A callback invoked just before mockery has been spun down. Called with no params. Can return a Promise to indicate that it's doing async work.
  */
 export default function useMockery( beforeActions, afterActions ) {
-	before( function() {
+	before( function turnOnMockery() {
 		log( 'turning on mockery' );
 		mockery.enable( {
 			warnOnReplace: false,
@@ -24,7 +24,7 @@ export default function useMockery( beforeActions, afterActions ) {
 		}
 	} );
 
-	after( function() {
+	after( function turnOffMockery() {
 		log( 'turning off mockery' );
 		let actionReturn;
 		if ( afterActions ) {
