@@ -1,5 +1,23 @@
 {
+	"components": {
+		"domains": {
+			"domain-suggestion": {
+				"test": [ "index" ]
+			}
+		}
+	},
 	"lib": {
+		"cart": {
+			"store": {
+				"test": [ "cart-synchronizer" ]
+			}
+		},
+		"cart-values": {
+			"test": [ "index" ]
+		},
+		"credit-card-details" : {
+			"test": [ "index" ]
+		},
 		"domains": {
 			"dns": {
 				"test": [ "index", "reducer" ]
@@ -14,6 +32,12 @@
 			"whois": {
 				"test": [ "assembler", "store" ]
 			}
+		},
+		"network-connection" : {
+			"test": [ "index" ]
+		},
+		"plans-list": {
+			"test": [ "index" ]
 		},
 		"post-formats": {
 			"test": [ "actions", "store" ]
@@ -35,6 +59,18 @@
 		},
 		"store": {
 			"test": [ "index" ]
+		}
+	},
+	"my-sites": {
+		"upgrades": {
+			"cart": {
+				"test": [ "cart-buttons" ]
+			},
+			"components": {
+				"domain-warnings": {
+					"test": [ "index" ]
+				}
+			}
 		}
 	},
 	"state": {
