@@ -21,15 +21,15 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import Gridicon from 'components/gridicon'
 import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
-
-const PRIMARY_DOMAIN_CHANGE_SUCCESS = Symbol(),
-	PRIMARY_DOMAIN_CHANGE_FAIL = Symbol(),
-	PRIMARY_DOMAIN_REVERT_SUCCESS = Symbol(),
-	PRIMARY_DOMAIN_REVERT_FAIL = Symbol();
+import DomainListNotice from './domain-list-notice';
+import {
+	PRIMARY_DOMAIN_CHANGE_SUCCESS,
+	PRIMARY_DOMAIN_CHANGE_FAIL,
+	PRIMARY_DOMAIN_REVERT_FAIL,
+	PRIMARY_DOMAIN_REVERT_SUCCESS
+} from './constants';
 
 const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -90,63 +90,14 @@ const List = React.createClass( {
 			return null;
 		}
 
-		const { type, error, domainName } = notice,
-			props = {
-				className: 'domain-management-list__notice',
-				showDismiss: false,
-				onDismissClick: this.hideNotice
-			};
-
-		let errorMessage;
-
-		switch ( type ) {
-			case PRIMARY_DOMAIN_CHANGE_SUCCESS:
-				Object.assign( props, {
-					text: <span key="text">{ this.translate( 'Primary Domain changed: All domains will redirect to' +
-						' {{em}}%(domainName)s{{/em}}.', { args: { domainName }, components: { em: <em/> } } ) }</span>,
-					status: 'is-success',
-					children: (
-						<NoticeAction
-							icon="refresh"
-							key="undo-btn"
-							onClick={ this.undoSetPrimaryDomain }>
-							{ this.translate( 'Undo' ) }
-						</NoticeAction>
-					)
-				} );
-				break;
-			case PRIMARY_DOMAIN_CHANGE_FAIL:
-				errorMessage = error && error.message || this.translate( 'Something went wrong and we couldn\'t change your' +
-			' Primary Domain.' );
-				Object.assign( props, {
-					text: errorMessage,
-					status: 'is-error',
-					showDismiss: true
-				} );
-				break;
-			case PRIMARY_DOMAIN_REVERT_SUCCESS:
-				Object.assign( props, {
-					text: <span key="text">{ this.translate( 'No worries, your Primary Domain has been set back to' +
-						' {{em}}%(domainName)s{{/em}}.', { args: { domainName }, components: { em: <em/> } } ) }</span>,
-					status: 'is-success',
-					showDismiss: true,
-					duration: 10000
-				} );
-				break;
-			case PRIMARY_DOMAIN_REVERT_FAIL:
-				errorMessage = error && error.message || this.translate( 'Something went wrong and we couldn\'t revert the' +
-						' changes' );
-				Object.assign( props, {
-					text: <span>{ errorMessage }</span>,
-					status: 'is-error',
-					showDismiss: true
-				} );
-				break
-		}
-
 		return (
-			<Notice { ...props } />
-		);
+			<DomainListNotice
+				type={ notice.type }
+				errorMessage={ notice.error && notice.error.message }
+				onDismissClick={ this.hideNotice }
+				onUndoClick={ this.undoSetPrimaryDomain }
+				domainName={ notice.domainName }
+			/> );
 	},
 
 	undoSetPrimaryDomain() {
@@ -285,6 +236,7 @@ const List = React.createClass( {
 			this.setState( {
 				changePrimaryDomainModeEnabled: false
 			} );
+			return;
 		}
 
 		this.setState( {
