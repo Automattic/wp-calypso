@@ -119,10 +119,22 @@ body.rtl,
 		&.gridicons-chevron-left,
 		&.gridicons-chevron-right,
 		&.gridicons-arrow-left,
-		&.gridicons-arrow-right {
+		&.gridicons-arrow-right,
+		&.gridicons-external,
+		&.gridicons-cart {
 			transform: scaleX( -1 );
 		}
+	}
 
+	.noticon {
+		&.noticon-chevron-left,
+		&.noticon-chevron-right,
+		&.noticon-arrow-left,
+		&.noticon-arrow-right,
+		&.noticon-external,
+		&.noticon-cart {
+			transform: scaleX( -1 );
+		}
 	}
 }
 
@@ -186,7 +198,6 @@ blockquote {
 	margin: 10px 0 0 0;
 	background: #f7f7f7;
 	padding: 10px 10px 1px;
-	margin: 10px 0 0 0;
 	border-radius: 2px;
 }
 address {
