@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
+import { isSupportUserSession, boot as supportUserBoot } from 'lib/support/support-user/support-user-interop';
 
 /**
  * External dependencies

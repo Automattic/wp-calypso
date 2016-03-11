@@ -25,7 +25,7 @@ describe( 'initial-state', () => {
 			return 'development'; //needed to mock out lib/warn
 		};
 		configMock.isEnabled = isEnabled;
-		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
+		mockery.registerMock( 'lib/support/support-user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
 		mockery.registerMock( 'config', configMock );
 		localforage = require( 'localforage' );
 		const initialState = require( 'state/initial-state' );

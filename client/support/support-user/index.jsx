@@ -10,7 +10,7 @@ import flowRight from 'lodash/flowRight';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
-import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
+import { fetchToken, rebootNormally } from 'lib/support/support-user/support-user-interop';
 
 import { supportUserToggleDialog } from 'state/support/actions';
 

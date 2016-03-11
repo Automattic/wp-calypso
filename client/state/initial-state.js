@@ -10,7 +10,7 @@ import pick from 'lodash/pick';
 import { createReduxStore, reducer } from 'state';
 import { SERIALIZE, DESERIALIZE, SERVER_DESERIALIZE } from 'state/action-types'
 import { getLocalForage } from 'lib/localforage';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { isSupportUserSession } from 'lib/support/support-user/support-user-interop';
 import config from 'config';
 
 /**
