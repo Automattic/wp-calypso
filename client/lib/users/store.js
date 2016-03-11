@@ -13,12 +13,13 @@ var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' );
 
-var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
-	_usersBySite = {}, // store user objects
-	_totalUsersByNamespace = {}, // store total found for params
-	_usersFetchedByNamespace = {}, // store fetch progress
-	_offsetByNamespace = {}, // store fetch progress
-	_userIDsByNamespace = {}; // store user order
+var _fetchingUsersByNamespace = {},        // store fetching state (boolean)
+	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
+	_usersBySite = {},                     // store user objects
+	_totalUsersByNamespace = {},           // store total found for params
+	_usersFetchedByNamespace = {},         // store fetch progress
+	_offsetByNamespace = {},               // store fetch progress
+	_userIDsByNamespace = {};              // store user order
 
 var UsersStore = {
 	// This data can help manage infinite scroll
@@ -66,6 +67,16 @@ var UsersStore = {
 	getUserByLogin: function( siteId, login ) {
 		return find( _usersBySite[ siteId ], function( user ) {
 			return user.login === login;
+		} );
+	},
+
+	getUpdatedParams( fetchOptions ) {
+		const namespace = getNamespace( fetchOptions );
+		const requestNumber = _usersFetchedByNamespace[ namespace ] || fetchOptions.number;
+
+		return Object.assign( {}, fetchOptions, {
+			offset: 0,
+			number: Math.min( requestNumber, 1000 )
 		} );
 	},
 
@@ -168,6 +179,15 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 
 			break;
+		case 'RECEIVE_UPDATED_USERS':
+			namespace = getNamespace( action.fetchOptions );
+			_fetchingUpdatedUsersByNamespace[ namespace ] = false;
+
+			if ( ! action.error ) {
+				updateUsers( action.fetchOptions, action.data.users, action.data.found );
+				UsersStore.emitChange();
+			}
+			break;
 		case 'UPDATE_SITE_USER':
 			updateUser( action.siteId, action.user.ID, action.user );
 			UsersStore.emitChange();
@@ -192,6 +212,11 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'FETCHING_USERS':
 			namespace = getNamespace( action.fetchOptions );
 			_fetchingUsersByNamespace[ namespace ] = true;
+			UsersStore.emitChange();
+			break;
+		case 'FETCHING_UPDATED_USERS':
+			namespace = getNamespace( action.fetchOptions );
+			_fetchingUpdatedUsersByNamespace[ namespace ] = true;
 			UsersStore.emitChange();
 			break;
 		case 'RECEIVE_SINGLE_USER':

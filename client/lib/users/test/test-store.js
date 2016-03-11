@@ -106,6 +106,30 @@ describe( 'Users Store', function() {
 		} );
 	} );
 
+	describe( 'Polling updated users', function() {
+		beforeEach( function() {
+			Dispatcher.handleServerAction( actions.fetched );
+			Dispatcher.handleServerAction( actions.fetchMoreUsers );
+			Dispatcher.handleServerAction( actions.receiveUpdatedUsers );
+		} );
+
+		it( 'getUpdatedParams returns correct params', function() {
+			var updatedParams = UsersStore.getUpdatedParams( options );
+			assert.equal( updatedParams.offset, 0 );
+			assert.equal( updatedParams.number, usersData.found )
+		} );
+
+		it( 'Polling updates expected users', function() {
+			var updatedUsers = UsersStore.getUsers( options );
+			assert.equal( updatedUsers.length, usersData.found );
+
+			// The last two users should have a 'contributor' role
+			updatedUsers.slice( -2, 2 ).forEach( function( user ) {
+				assert.equal( user.roles[0], 'contributor' );
+			} );
+		} );
+	} );
+
 	describe( 'Update a user', function() {
 		beforeEach( function() {
 			Dispatcher.handleServerAction( actions.fetched );

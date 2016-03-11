@@ -44,7 +44,7 @@ module.exports = React.createClass( {
 		this._fetchIfEmpty();
 		this._poller = pollers.add(
 			UsersStore,
-			UsersActions.fetchUsers.bind( UsersActions, this.props.fetchOptions, true ),
+			UsersActions.fetchUpdated.bind( UsersActions, this.props.fetchOptions, true ),
 			{ leading: false }
 		);
 	},
@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 			pollers.remove( this._poller );
 			this._poller = pollers.add(
 				UsersStore,
-				UsersActions.fetchUsers.bind( UsersActions, nextProps.fetchOptions, true ),
+				UsersActions.fetchUpdated.bind( UsersActions, nextProps.fetchOptions, true ),
 				{ leading: false }
 			);
 		}
