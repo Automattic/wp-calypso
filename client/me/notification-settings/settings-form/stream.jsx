@@ -52,21 +52,23 @@ export default React.createClass( {
 		return { stream, settings };
 	},
 
+	renderDeviceSelector() {
+		if ( this.props.devices ) {
+			return <DeviceSelector
+				devices={ this.props.devices }
+				selectedDeviceIndex={ this.state.selectedDeviceIndex }
+				onChange={ event => this.setState( { selectedDeviceIndex: parseInt( event.target.value, 10 ) } ) } />;
+		}
+
+		return <StreamHeader stream={ this.props.stream } />;
+	},
+
 	render() {
 		const { stream, settings } = this.getStreamSettings();
 
 		return (
 			<div className={ classNames( 'notification-settings-form-stream', this.props.className ) }>
-				{ () => {
-					if ( this.props.devices ) {
-						return <DeviceSelector
-							devices={ this.props.devices }
-							selectedDeviceIndex={ this.state.selectedDeviceIndex }
-							onChange={ event => this.setState( { selectedDeviceIndex: parseInt( event.target.value, 10 ) } ) } />;
-					}
-
-					return ( <StreamHeader stream={ this.props.stream } /> );
-				}() }
+				{ this.renderDeviceSelector() }
 				<StreamOptions
 					blogId={ this.props.blogId }
 					stream={ stream }

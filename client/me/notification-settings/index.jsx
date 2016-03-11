@@ -66,6 +66,7 @@ const NotificationSettings = React.createClass( {
 				<BlogsSettings
 					blogs={ this.props.blogs }
 					devices={ this.props.devices }
+					search={ this.props.search }
 					settings={ this.state.settings }
 					hasUnsavedChanges={ this.state.hasUnsavedChanges }
 					onToggle={ ( source, stream, setting ) => toggle( source, stream, setting ) }

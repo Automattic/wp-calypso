@@ -7,7 +7,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import { getLabelForStream } from './locales'
+import { getLabelForStream } from './locales';
+import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormHeader',
@@ -27,7 +28,7 @@ export default React.createClass( {
 		return (
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
-					{ this.props.stream === 'timeline' ? <span className="noticon noticon-bell"></span> : this.renderTitle() }
+					{ this.props.stream === 'timeline' ? <Gridicon icon="bell" size={ 18 } /> : this.renderTitle() }
 				</div>
 			</div>
 		);

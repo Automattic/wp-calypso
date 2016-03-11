@@ -53,6 +53,20 @@ export default React.createClass( {
 			.find( device => device.get( 'device_id' ) === parseInt( this.state.selectedStream, 10 ) );
 	},
 
+	renderDeviceStreams() {
+		if ( this.props.devices && this.props.devices.initialized && this.props.devices.get().length > 0 ) {
+			return <Stream
+				key={ streams.DEVICES }
+				blogId={ this.props.blogId }
+				devices={ this.props.devices }
+				settingKeys={ this.props.settingKeys }
+				settings={ this.props.settings.get( streams.DEVICES ) }
+				onToggle={ this.props.onToggle } />
+		}
+
+		return null;
+	},
+
 	render() {
 		const selectedStreamSettings = this.getSelectedStreamSettings();
 
@@ -79,17 +93,7 @@ export default React.createClass( {
 						settingKeys={ this.props.settingKeys }
 						settings={ this.props.settings.get( streams.EMAIL ) }
 						onToggle={ this.props.onToggle } />
-					{ () => {
-						if ( this.props.devices && this.props.devices.initialized && this.props.devices.get().length > 0 ) {
-							return <Stream
-								key={ streams.DEVICES }
-								blogId={ this.props.blogId }
-								devices={ this.props.devices }
-								settingKeys={ this.props.settingKeys }
-								settings={ this.props.settings.get( streams.DEVICES ) }
-								onToggle={ this.props.onToggle } />
-						}
-					}() }
+					{ this.renderDeviceStreams() }
 					<Stream
 						key={ 'selected-stream' }
 						className={ 'selected-stream' }

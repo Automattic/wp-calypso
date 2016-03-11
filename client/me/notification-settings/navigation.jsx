@@ -15,7 +15,7 @@ export default React.createClass( {
 	displayName: 'NotificationSettingsNavigation',
 
 	render() {
-		var navItems = [
+		const navItems = [
 			this.navItem( '/me/notifications' ),
 			this.navItem( '/me/notifications/comments' ),
 			this.navItem( '/me/notifications/updates' ),
@@ -24,7 +24,7 @@ export default React.createClass( {
 
 		return (
 			<SectionNav selectedText={ this.getSelectedText() }>
-				<NavTabs label='Section' selectedText={ this.getSelectedText() }>
+				<NavTabs label="Section" selectedText={ this.getSelectedText() }>
 					{ navItems }
 				</NavTabs>
 			</SectionNav>
@@ -41,10 +41,18 @@ export default React.createClass( {
 	},
 
 	navItem( path ) {
+		const isSelectedItem = currentPath => {
+			const basePathLowerCase = this.props.path.split( '?' )[0].toLowerCase();
+			const currentPathLowerCase = currentPath.toLowerCase();
+
+			return basePathLowerCase === currentPathLowerCase;
+		}
+
 		return (
-			<NavItem path={ path }
+			<NavItem
+					path={ path }
 					key={ path }
-					selected={ this.props.path === path }>
+					selected={ isSelectedItem( path ) }>
 				{ this.itemLabels()[ path ] }
 			</NavItem>
 		);
@@ -52,5 +60,5 @@ export default React.createClass( {
 
 	getSelectedText() {
 		return this.itemLabels()[ this.props.path ];
-	},
+	}
 } );
