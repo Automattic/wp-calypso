@@ -179,7 +179,7 @@ function candidateForCanonicalImage( image ) {
 		return false;
 	}
 
-	if ( ( image.naturalHeight * image.naturalHeight ) < 30000 ) {
+	if ( ( image.naturalWidth * image.naturalHeight ) < 30000 ) {
 		debug( ( image && image.src ), ': not enough area' );
 		return false;
 	}
@@ -560,17 +560,26 @@ normalizePost.content = {
 			// push everything, including tracking pixels, over to a safe URL
 			forEach( images, function( image ) {
 				let imgSource = image.getAttribute( 'src' ),
-					hostName = url.parse( imgSource, false, true ).hostname;
+					parsedImgSrc = url.parse( imgSource, false, true ),
+					hostName = parsedImgSrc.hostname;
 
 				let safeSource;
 				// if imgSource is relative, prepend post domain so it isn't relative to calypso
 				if ( ! hostName ) {
 					imgSource = url.resolve( post.URL, imgSource );
+					parsedImgSrc = url.parse( imgSource, false, true );
+				}
+
+				safeSource = safeImageURL( imgSource );
+				if ( ! safeSource && parsedImgSrc.search ) {
+					// we can't make externals with a querystring safe.
+					// try stripping it and retry
+					parsedImgSrc.search = null;
+					parsedImgSrc.query = null;
+					safeSource = safeImageURL( url.format( parsedImgSrc ) );
 				}
 
 				removeUnsafeAttributes( image );
-
-				safeSource = safeImageURL( imgSource );
 
 				if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
 					image.parentNode.removeChild( image );
