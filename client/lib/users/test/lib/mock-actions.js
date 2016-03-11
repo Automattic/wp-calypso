@@ -3,7 +3,8 @@ var site = require( './mock-site' ),
 	moreUsersData = require( './mock-more-users-data' ),
 	deletedUserData = require( './mock-deleted-user-data' ),
 	updatedUserData = require( './mock-updated-single-user' ),
-	singleUserData = require( './mock-single-user' );
+	singleUserData = require( './mock-single-user' ),
+	pollingUsersData = require( './mock-polling-users-data' );
 
 module.exports = {
 	fetched: {
@@ -79,6 +80,17 @@ module.exports = {
 			siteId: site.ID
 		},
 		user: singleUserData,
+		error: null
+	},
+
+	receiveUpdatedUsers: {
+		type: 'RECEIVE_UDPATED_USERS',
+		fetchOptions: {
+			siteId: site.ID,
+			offset: 0,
+			number: 7
+		},
+		data: pollingUsersData,
 		error: null
 	}
 };
