@@ -20,6 +20,7 @@ var user = require( 'lib/user' )(),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	siteStatsStickyTabActions = require( 'lib/site-stats-sticky-tab/actions' ),
+	utils = require( 'lib/site/utils' ),
 	trackScrollPage = require( 'lib/track-scroll-page' );
 
 /**
@@ -121,9 +122,8 @@ module.exports = {
 			if ( sites.initialized ) {
 				redirectToPrimary();
 				return;
-			} else {
-				sites.once( 'change', redirectToPrimary );
 			}
+			sites.once( 'change', redirectToPrimary );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
@@ -206,7 +206,7 @@ module.exports = {
 			var site = sites.getSite( siteFragment );
 			if ( ! site ) {
 				sites.once( 'change', checkSiteShouldFetch );
-			} else if ( site.jetpack && site.user_can_manage ) {
+			} else if ( site.jetpack && utils.userCan( 'manage_options', site ) ) {
 				site.fetchSettings();
 			}
 		}

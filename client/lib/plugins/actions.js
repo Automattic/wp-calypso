@@ -8,6 +8,7 @@ var debug = require( 'debug' )( 'calypso:my-sites:plugins:actions' ),
  */
 var analytics = require( 'analytics' ),
 	Dispatcher = require( 'dispatcher' ),
+	utils = require( 'lib/site/utils' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 
 var _actionsQueueBySite = {},
@@ -85,7 +86,11 @@ function recordEvent( eventType, plugin, site, error ) {
 }
 
 function processAutoupdates( site, plugins ) {
-	if ( site.canAutoupdateFiles && site.jetpack && site.canManage() && site.user_can_manage ) {
+	if ( site.canAutoupdateFiles &&
+		site.jetpack &&
+		site.canManage() &&
+		utils.userCan( 'manage_options', site )
+	) {
 		plugins.forEach( function( plugin ) {
 			if ( plugin.update && plugin.autoupdate ) {
 				autoupdatePlugin( site, plugin );
@@ -132,7 +137,7 @@ PluginsActions = {
 	},
 
 	fetchSitePlugins: function( site ) {
-		if ( ! site.user_can_manage || ! site.jetpack ) {
+		if ( ! utils.userCan( 'manage_options', site ) || ! site.jetpack ) {
 			defer( () => {
 				Dispatcher.handleViewAction( {
 					type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
@@ -198,7 +203,7 @@ PluginsActions = {
 			return getRejectedPromise( 'Error: Can\'t update files on the site' )
 		}
 
-		if ( ! site.user_can_manage ) {
+		if ( ! utils.userCan( 'manage_options', site ) ) {
 			return getRejectedPromise( 'Error: User can\'t manage the site' )
 		}
 
@@ -276,7 +281,7 @@ PluginsActions = {
 	removePlugin: function( site, plugin ) {
 		var remove, deactivate, disableAutoupdate, dispatchMessage;
 
-		if ( ! site.canUpdateFiles || ! site.user_can_manage ) {
+		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
 			return;
 		}
 		Dispatcher.handleViewAction( {
@@ -408,7 +413,7 @@ PluginsActions = {
 	},
 
 	togglePluginActivation: function( site, plugin ) {
-		if ( ! site.user_can_manage ) {
+		if ( ! utils.userCan( 'manage_options', site ) ) {
 			return;
 		}
 
@@ -421,7 +426,7 @@ PluginsActions = {
 	},
 
 	enableAutoUpdatesPlugin: function( site, plugin ) {
-		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
 		Dispatcher.handleViewAction( {
@@ -449,7 +454,7 @@ PluginsActions = {
 	},
 
 	disableAutoUpdatesPlugin: function( site, plugin ) {
-		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
 		Dispatcher.handleViewAction( {
@@ -474,7 +479,7 @@ PluginsActions = {
 	},
 
 	togglePluginAutoUpdate: function( site, plugin ) {
-		if ( ! site.user_can_manage || ! site.canAutoupdateFiles ) {
+		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
 		if ( ! plugin.autoupdate ) {

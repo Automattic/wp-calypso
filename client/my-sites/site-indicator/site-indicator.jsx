@@ -13,6 +13,7 @@ import Gridicon from 'components/gridicon';
 import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import analytics from 'analytics';
+import { userCan } from 'lib/site/utils';
 
 export default React.createClass( {
 	displayName: 'SiteIndicator',
@@ -64,7 +65,9 @@ export default React.createClass( {
 
 	showIndicator() {
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		return this.props.site.user_can_manage && this.props.site.jetpack && ( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError );
+		return userCan( 'manage_options', this.props.site ) &&
+			this.props.site.jetpack &&
+			( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError );
 	},
 
 	toggleExpand() {

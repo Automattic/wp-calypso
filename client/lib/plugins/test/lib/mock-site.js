@@ -3,7 +3,9 @@ module.exports = {
 	ID: 91234567890,
 	URL: 'http://example.com/site1',
 	canUpdateFiles: true,
-	capabilities: {},
+	capabilities: {
+		manage_options: true
+	},
 	description: 'Just another Sandbox Sites site',
 	domain: 'example.com/site1',
 	hasJetpackProtect: true,

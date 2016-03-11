@@ -14,7 +14,8 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'analytics' ),
 	titlecase = require( 'to-title-case' ),
 	AdsUtils = require( 'lib/ads/utils' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	titleActions = require( 'lib/screen-title/actions' ),
+	utils = require( 'lib/site/utils' );
 
 function _recordPageView( context, analyticsPageTitle ) {
 	var basePath = route.sectionify( context.path );
@@ -50,7 +51,7 @@ module.exports = {
 
 		titleActions.setTitle( layoutTitle, { siteID: context.params.site_id } );
 
-		if ( ! site.user_can_manage ) {
+		if ( ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' + pathSuffix );
 			return;
 		}
