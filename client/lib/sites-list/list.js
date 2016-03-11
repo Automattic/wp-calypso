@@ -72,18 +72,24 @@ SitesList.prototype.get = function() {
  * @api public
  */
 SitesList.prototype.fetch = function() {
-	if ( this.fetching ) {
+	var userIsLoggedIn = Boolean( user.data );
+
+	if ( ! userIsLoggedIn || this.fetching ) {
 		return;
 	}
 
 	this.fetching = true;
+
 	debug( 'getting SitesList from api' );
+
 	wpcom.me().sites( { site_visibility: 'all' }, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
 			this.fetching = false;
+
 			return;
 		}
+
 		this.sync( data );
 		this.fetching = false;
 	}.bind( this ) );
