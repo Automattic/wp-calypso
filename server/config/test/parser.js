@@ -10,7 +10,7 @@ import useMockery from 'test/helpers/use-mockery';
  */
 import mocks from './data/mocks';
 
-describe( 'config/parser', () => {
+describe( 'parser', () => {
 	let parser;
 
 	useMockery();

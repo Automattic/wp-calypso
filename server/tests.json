@@ -6,7 +6,7 @@
 		"test": [ "index" ]
 	},
 	"i18n": {
-		"test": [ "test" ]
+		"test": [ "index" ]
 	},
 	"pages": {
 		"test": [ "index" ]

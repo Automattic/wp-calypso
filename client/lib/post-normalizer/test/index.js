@@ -23,7 +23,7 @@ function asyncTransform( post, callback ) {
 	process.nextTick( callback );
 }
 
-describe( 'post-normalizer', function() {
+describe( 'index', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
 	useFakeDom();

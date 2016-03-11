@@ -24,7 +24,7 @@ buildFiles = [ 'out/i18n-test-examples.js', 'out/i18n-test-example-second-file.j
  * and saving it into output.php. We then check to make sure
  * the output file contains what we expect.
  */
-describe( 'i18n', function() {
+describe( 'index', function() {
 	before( function( done ) {
 		// Work around occasional Circle CI slowness
 		this.timeout( 0 );
