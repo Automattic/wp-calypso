@@ -616,6 +616,14 @@ function mediaButton( editor ) {
 			return;
 		}
 
+		// If the entire caption is selected (e.g. on double-click select), a
+		// paste may remove the caption inadvertedly. If this is the case,
+		// change selection to the contents of the caption.
+		const startContainer = editor.selection.getRng().startContainer;
+		if ( editor.dom.hasClass( startContainer, 'wp-caption' ) ) {
+			editor.selection.select( target, true );
+		}
+
 		// By default, TinyMCE inserts paste using `editor.insertContent`. We
 		// substitute this with `selection.setContent` and prevent the default.
 		//
