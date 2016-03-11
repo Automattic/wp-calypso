@@ -70,6 +70,10 @@ const WebPreview = React.createClass( {
 		if ( this.props.previewUrl !== 'about:blank' ) {
 			this.setIframeUrl( this.props.previewUrl );
 		}
+
+		if ( this.props.showPreview ) {
+			document.documentElement.classList.add( 'no-scroll' );
+		}
 	},
 
 	componentDidUpdate( prevProps ) {
@@ -90,13 +94,16 @@ const WebPreview = React.createClass( {
 		}
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
+			document.documentElement.classList.add( 'no-scroll' );
 		} else {
 			window.removeEventListener( 'keydown', this.keyDown );
+			document.documentElement.classList.remove( 'no-scroll' );
 		}
 	},
 
 	componentWillUnmount() {
 		window.removeEventListener( 'keydown', this.keyDown );
+		document.documentElement.classList.remove( 'no-scroll' );
 	},
 
 	keyDown( event ) {
