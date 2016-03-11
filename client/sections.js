@@ -95,11 +95,21 @@ sections = [
 		group: 'sites'
 	},
 	{
-		name: 'themes',
-		paths: [ '/design', '/theme' ],
+		name: 'theme',
+		paths: [ '/theme' ],
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
 		routing: config( 'env' ) === 'development' ? 'isomorphic' : '',
+		secondary: false,
+		group: 'sites'
+	},
+	{
+		name: 'themes',
+		paths: [ '/design' ],
+		module: 'my-sites/themes',
+		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
+		routing: config( 'env' ) === 'development' ? 'isomorphic' : '',
+		secondary: true,
 		group: 'sites'
 	},
 	{
