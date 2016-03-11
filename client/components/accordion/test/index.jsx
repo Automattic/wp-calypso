@@ -4,10 +4,19 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	ReactDom = require( 'react-dom' ),
+var chai = require( 'chai' ),
+	expect = chai.expect,
+	chaiEnzyme = require( 'chai-enzyme' ),
 	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' );
+	sinon = require( 'sinon' ),
+	sinonChai = require( 'sinon-chai' );
+
+var Enzyme = require( 'enzyme' ),
+	shallow = Enzyme.shallow,
+	mount = Enzyme.mount;
+
+chai.use( chaiEnzyme() );
+chai.use( sinonChai );
 
 require( 'react-tap-event-plugin' )();
 
@@ -17,74 +26,52 @@ require( 'react-tap-event-plugin' )();
 var Accordion = require( '../' );
 
 describe( 'Accordion', function() {
-	afterEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
-	} );
-
 	it( 'should render as expected with a title and content', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section">Content</Accordion> ),
-			node = ReactDom.findDOMNode( tree );
-
-		expect( node.className ).to.equal( 'accordion' );
-		expect( tree.state.isExpanded ).to.not.be.ok;
-		expect( node.querySelector( '.accordion__header:not( .has-icon ):not( .has-subtitle )' ) ).to.be.an.instanceof( window.Element );
-		expect( node.querySelector( '.accordion__icon' ) ).to.be.null;
-		expect( node.querySelector( '.accordion__title' ).textContent ).to.equal( 'Section' );
-		expect( node.querySelector( '.accordion__subtitle' ) ).to.be.null;
-		expect( ReactDom.findDOMNode( tree.refs.content ).textContent ).to.equal( 'Content' );
+		const wrapper = mount( <Accordion title="Section">Content</Accordion> );
+		expect( wrapper ).to.have.className( 'accordion' );
+		expect( wrapper ).to.not.have.state( 'isExpanded' );
+		expect( wrapper.find( '.accordion__header' ) ).to.exist
+			.and.not.have.className( 'has-icon' )
+			.and.not.have.className( 'has-subtitle' );
+		expect( wrapper.find( '.accordion__icon' ) ).to.not.exist;
+		expect( wrapper.find( '.accordion__title' ) ).to.have.text( 'Section' );
+		expect( wrapper.find( '.accordion__subtitle' ) ).to.not.exist;
+		expect( wrapper.ref( 'content' ) ).to.exist.and.have.text( 'Content' );
 	} );
 
 	it( 'should accept an icon prop to be rendered as a noticon', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section" icon="time">Content</Accordion> ),
-			node = ReactDom.findDOMNode( tree );
-
-		expect( node.querySelector( '.accordion__header.has-icon:not( .has-subtitle )' ) ).to.be.an.instanceof( window.Element );
-		expect( node.querySelector( '.accordion__icon' ) ).to.be.an.instanceof( window.Element );
+		const wrapper = shallow( <Accordion title="Section" icon="time">Content</Accordion> );
+		expect( wrapper.find( '.accordion__header' ) ).to.exist
+			.and.have.className( 'has-icon' )
+			.and.not.have.className( 'has-subtitle' );
+		expect( wrapper.find( '.accordion__icon' ) ).to.exist;
 	} );
 
 	it( 'should accept a subtitle prop to be rendered aside the title', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section" subtitle="Subtitle">Content</Accordion> ),
-			node = ReactDom.findDOMNode( tree );
-
-		expect( node.querySelector( '.accordion__header.has-subtitle:not( .has-icon )' ) ).to.be.an.instanceof( window.Element );
-		expect( node.querySelector( '.accordion__subtitle' ).textContent ).to.equal( 'Subtitle' );
+		const wrapper = shallow( <Accordion title="Section" subtitle="Subtitle">Content</Accordion> );
+		expect( wrapper.find( '.accordion__header' ) ).to.exist
+			.and.have.className( 'has-subtitle' )
+			.and.not.have.className( 'has-icon' );
+		expect( wrapper.find( '.accordion__subtitle' ) ).to.have.text( 'Subtitle' );
 	} );
 
 	it( 'should toggle when clicked', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section">Content</Accordion> );
-
-		TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
-
-		expect( tree.state.isExpanded ).to.be.ok;
+		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
+		wrapper.find( '.accordion__toggle' ).simulate( 'touchTap' );
+		expect( wrapper ).to.have.state( 'isExpanded' );
 	} );
 
-	it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
-
-		TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
-
-		function finishTest( isExpanded ) {
-			expect( isExpanded ).to.be.ok;
-
-			process.nextTick( function() {
-				expect( tree.state.isExpanded ).to.be.ok;
-				done();
-			} );
-		}
+	it( 'should accept onToggle function handler to be invoked when toggled', function( ) {
+		const onToggleCallback = sinon.spy();
+		const wrapper = shallow( <Accordion title="Section" onToggle={ onToggleCallback }>Content</Accordion> );
+		wrapper.find( '.accordion__toggle' ).simulate( 'touchTap' );
+		expect( onToggleCallback ).to.be.calledWith( true );
 	} );
 
-	it( 'should always use the initialExpanded prop, if specified', function( done ) {
-		var tree = TestUtils.renderIntoDocument( <Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion> );
-
-		TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
-
-		function finishTest( isExpanded ) {
-			expect( isExpanded ).to.not.be.ok;
-
-			process.nextTick( function() {
-				expect( tree.state.isExpanded ).to.not.be.ok;
-				done();
-			} );
-		}
+	it( 'should always use the initialExpanded prop, if specified', function() {
+		const onToggleCallback = sinon.spy();
+		const wrapper = shallow( <Accordion initialExpanded={ true } title="Section" onToggle={ onToggleCallback }>Content</Accordion> );
+		wrapper.find( '.accordion__toggle' ).simulate( 'touchTap' );
+		expect( onToggleCallback ).to.be.calledWith( false );
 	} );
 } );
