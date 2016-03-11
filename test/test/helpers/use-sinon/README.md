@@ -5,7 +5,6 @@ A set of helpers for folks using sinon to fake, mock, spy and bend time
 
 ### Fake Clock
 ```js
-
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( function() {
@@ -13,11 +12,22 @@ describe( function() {
 		yearInMillis = 1000 * 60 * 60 * 24 * 365;
 	useFakeTimers( aLongTimeAgo );
 
-	it( 'can access the fake clock', function() {
-		assert.equals( Date.now().valueOf(), aLongTimeAgo );
-		this.clock.tick( 1000 * 60 * 24 * 365 );
-		assert.equals( Date.now().valueOf(), aLongTimeAgo + yearInMillis );
-	})
+	it( 'can access the fake clock via this', function() {
+		assert.equals( Date.now(), aLongTimeAgo );
+		this.clock.tick( yearInMillis );
+		assert.equals( Date.now(), aLongTimeAgo + yearInMillis );
+	} );
+
+	context( 'if I want to use arrow functions', () => {
+		let clock;
+		useFakeTimers( Date.now() ) newClock => {
+			clock = newClock;
+		} );
+
+		it( 'can use the clock via closure', () => {
+			clock.tick( -5 );
+		} );
+	} );
 } )
 
 ```
