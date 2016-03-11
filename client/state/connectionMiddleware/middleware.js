@@ -8,8 +8,7 @@ import Hashes from 'jshashes';
  * Internal dependencies
  */
 import {
-	isOffline,
-	isOnline
+	isOffline
 } from 'state/application/selectors';
 import {
 	OFFLINE_QUEUE_ADD,
@@ -58,9 +57,6 @@ function fireNextQueuedAction( store ) {
 	const firstAction = getFirstAction( store.getState() );
 
 	if ( ! isOffline( store.getState() ) && firstAction ) {
-		//for testing:
-		firstAction.action.noQueue = true;
-
 		store.dispatch( removeAction( firstAction.id ) );
 		setTimeout( fireNextQueuedAction.bind( null, store ), ACTION_TIMEOUT );
 		fireAction( firstAction.action, store );
@@ -92,7 +88,7 @@ function shouldQueueAction( action ) {
 
 const offlineQueue = store => next => action => {
 	if (
-		//isOffline( store.getState() ) &&
+		isOffline( store.getState() ) &&
 		! action.noQueue &&
 		shouldQueueAction( action )
 	) {
@@ -105,11 +101,6 @@ const offlineQueue = store => next => action => {
 		next( action );
 	} else {
 		next( action );
-	}
-
-	//for testing:
-	window.testReplay = () => {
-		fireNextQueuedAction( store );
 	}
 };
 
