@@ -5,6 +5,7 @@ import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 import debugModule from 'debug';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -30,10 +31,16 @@ const WebPreview = React.createClass( {
 		showDeviceSwitcher: React.PropTypes.bool,
 		// The URL that should be displayed in the iframe
 		previewUrl: React.PropTypes.string,
+		// The markup to display in the iframe
+		previewMarkup: React.PropTypes.string,
 		// The viewport device to show initially
 		defaultViewportDevice: React.PropTypes.string,
 		// Elements to render on the right side of the toolbar
 		children: React.PropTypes.node,
+		// The function to call when the iframe is loaded. Will be passed the iframe document object.
+		onLoad: React.PropTypes.func,
+		// The function to call when an element is clicked. Will be passed the event.
+		onClick: React.PropTypes.func,
 		// Called when the preview is closed, either via the 'X' button or the escape key
 		onClose: React.PropTypes.func,
 		// Optional loading message to display during loading
@@ -48,7 +55,11 @@ const WebPreview = React.createClass( {
 		return {
 			showExternal: true,
 			showDeviceSwitcher: true,
-			previewUrl: null
+			previewUrl: null,
+			previewMarkup: null,
+			onClick: noop,
+			onLoad: noop,
+			onClose: noop,
 		}
 	},
 
@@ -70,7 +81,9 @@ const WebPreview = React.createClass( {
 		if ( this.props.previewUrl ) {
 			this.setIframeUrl( this.props.previewUrl );
 		}
-
+		if ( this.props.previewMarkup ) {
+			this.setIframeMarkup( this.props.previewMarkup );
+		}
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll' );
 		}
@@ -86,6 +99,15 @@ const WebPreview = React.createClass( {
 				iframeUrl: null,
 				loaded: false,
 			} );
+		}
+		// If the previewMarkup changes, re-render the iframe contents
+		if ( this.props.previewMarkup && this.props.previewMarkup !== prevProps.previewMarkup ) {
+			this.setIframeMarkup( this.props.previewMarkup );
+		}
+		// If the previewMarkup is erased, remove the iframe contents
+		if ( ! this.props.previewMarkup && prevProps.previewMarkup ) {
+			debug( 'removing iframe contents' );
+			this.setIframeMarkup( '' );
 		}
 
 		// add/remove listener if showPreview has changed
@@ -111,6 +133,22 @@ const WebPreview = React.createClass( {
 			this.props.onClose();
 			event.preventDefault();
 		}
+	},
+
+	setIframeMarkup( content ) {
+		if ( ! this.refs.iframe ) {
+			debug( 'no iframe to update' );
+			return;
+		}
+		debug( 'adding markup to iframe', content.length );
+		this.refs.iframe.contentDocument.open();
+		this.refs.iframe.contentDocument.write( content );
+		this.refs.iframe.contentDocument.close();
+	},
+
+	handleClick( event ) {
+		debug( 'click detected for element', event.target );
+		return this.props.onClick( event );
 	},
 
 	setIframeUrl( iframeUrl ) {
@@ -143,10 +181,13 @@ const WebPreview = React.createClass( {
 	},
 
 	setLoaded() {
-		if ( ! this.state.iframeUrl ) {
+		if ( ! this.state.iframeUrl && ! this.props.previewMarkup ) {
+			debug( 'preview loaded, but nothing to show' );
 			return;
 		}
 		debug( 'preview loaded:', this.state.iframeUrl );
+		this.props.onLoad( this.refs.iframe.contentDocument );
+		this.refs.iframe.contentDocument.body.onclick = this.handleClick;
 		this.setState( { loaded: true } );
 	},
 
