@@ -122,6 +122,7 @@ function request (params, fn) {
   var id = uid();
   params.callback = id;
   params.supports_args = true; // supports receiving variable amount of arguments
+  params.supports_error_obj = true; // better Error object info
   params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
 
   // force uppercase "method" since that's what the <iframe> is expecting
