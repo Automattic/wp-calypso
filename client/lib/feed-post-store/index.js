@@ -203,7 +203,7 @@ function receivePostFromPage( newPost ) {
 }
 
 function receivePost( feedId, postId, post ) {
-	if ( post.errors ) {
+	if ( post.errors || post.status_code === 404 ) {
 		receiveError( feedId, postId, post );
 	} else {
 		normalizePost( feedId, postId, post );
@@ -211,7 +211,7 @@ function receivePost( feedId, postId, post ) {
 }
 
 function receiveBlogPost( blogId, postId, post ) {
-	if ( post.errors ) {
+	if ( post.errors || post.status_code === 404 ) {
 		post.site_ID = blogId;
 		post.ID = postId;
 		post.is_external = false;
@@ -225,8 +225,11 @@ function receiveError( feedId, postId, error ) {
 	var statusCode, errorCode, message;
 	if ( error.status_code ) {
 		statusCode = error.status_code;
-		errorCode = error.errors.error;
-		message = error.errors.message;
+
+		if ( error.errors ) {
+			errorCode = error.errors.error;
+			message = error.errors.message;
+		}
 	} else {
 		// find the key in the Error
 		errorCode = Object.keys( error.errors )[ 0 ];

@@ -88,8 +88,8 @@ assign( PostBatchFetcher.prototype, {
 					return;
 				}
 
-				containerId = +match[ 1 ];
-				postId = +match[ 2 ];
+				containerId = match[ 1 ];
+				postId = match[ 2 ];
 
 				if ( ! ( containerId && postId ) ) {
 					return;

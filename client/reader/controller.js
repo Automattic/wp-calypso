@@ -24,6 +24,7 @@ import {
 	getPrettySiteUrl
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
+import FeedError from 'reader/feed-error';
 
 const analyticsPageTitle = 'Reader';
 
@@ -46,6 +47,13 @@ pageNotifier( function removeFullPostOnLeave( newContext, oldContext ) {
 
 function removeFullPostDialog() {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
+}
+
+function renderPostNotFound() {
+	ReactDom.render(
+		<FeedError />,
+		document.getElementById( 'primary' )
+	);
 }
 
 function userHasHistory( context ) {
@@ -292,7 +300,8 @@ module.exports = {
 					onClose: function() {
 						page.back( context.lastRoute || '/' );
 					},
-					onClosed: removeFullPostDialog
+					onClosed: removeFullPostDialog,
+					onPostNotFound: renderPostNotFound
 				} )
 			),
 			document.getElementById( 'tertiary' )
@@ -330,7 +339,8 @@ module.exports = {
 					onClose: function() {
 						page.back( context.lastRoute || '/' );
 					},
-					onClosed: removeFullPostDialog
+					onClosed: removeFullPostDialog,
+					onPostNotFound: renderPostNotFound
 				} )
 			),
 			document.getElementById( 'tertiary' )

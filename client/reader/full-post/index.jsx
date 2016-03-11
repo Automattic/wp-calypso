@@ -488,6 +488,10 @@ FullPostContainer = React.createClass( {
 		PostStore.off( 'change', this._onChange );
 		SiteStore.off( 'change', this._onChange );
 		FeedStore.off( 'change', this._onChange );
+		
+		if ( utils.isPostNotFound( this.state.post ) ) {
+			this.props.onPostNotFound();
+		}
 	},
 
 	_onChange: function() {
@@ -498,7 +502,8 @@ FullPostContainer = React.createClass( {
 	},
 
 	render: function() {
-		var passedProps = omit( this.props, [ 'postId', 'feedId' ] );
+		var passedProps = omit( this.props, [ 'postId', 'feedId' ] ),
+			post = this.state.post;
 
 		if ( this.props.setPageTitle && this.props.isVisible ) { // only set the title if we're visible
 			this.props.setPageTitle( this.state.title );
@@ -507,8 +512,8 @@ FullPostContainer = React.createClass( {
 		return (
 
 			<FullPostDialog {...passedProps }
-				isVisible={ this.props.isVisible }
-				post={ this.state.post }
+				isVisible={ utils.isPostNotFound( post ) ? false : this.props.isVisible }
+				post={ post }
 				site={ this.state.site }
 				feed={ this.state.feed }/>
 		);

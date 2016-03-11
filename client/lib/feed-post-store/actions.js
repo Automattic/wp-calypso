@@ -15,7 +15,7 @@ feedPostBatcher = new PostBatcher( {
 	buildUrl: function( postKey ) {
 		return '/read/feed/' + encodeURIComponent( postKey.feedId ) + '/posts/' + encodeURIComponent( postKey.postId );
 	},
-	resultKeyRegex: /\/read\/feed\/(\d+)\/posts\/(\d+)/,
+	resultKeyRegex: /\/read\/feed\/(\w+)\/posts\/(\w+)/,
 	onFetch: function( postKey ) {
 		Dispatcher.handleViewAction( {
 			type: ACTION.FETCH_FEED_POST,
@@ -43,7 +43,7 @@ blogPostBatcher = new PostBatcher( {
 	buildUrl: function( postKey ) {
 		return '/read/sites/' + encodeURIComponent( postKey.blogId ) + '/posts/' + encodeURIComponent( postKey.postId );
 	},
-	resultKeyRegex: /\/read\/sites\/(\d+)\/posts\/(\d+)/,
+	resultKeyRegex: /\/read\/sites\/(\w+)\/posts\/(\w+)/,
 	onFetch: function( postKey ) {
 		Dispatcher.handleViewAction( {
 			type: ACTION.FETCH_FEED_POST,
