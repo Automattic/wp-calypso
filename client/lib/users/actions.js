@@ -11,22 +11,44 @@ const Dispatcher = require( 'dispatcher' ),
 	UsersStore = require( 'lib/users/store' );
 
 const UsersActions = {
-	fetchUsers: ( fetchOptions, silentUpdate = false ) => {
+	fetchUsers: fetchOptions => {
 		const paginationData = UsersStore.getPaginationData( fetchOptions );
 		if ( paginationData.fetchingUsers ) {
 			return;
 		}
 		debug( 'fetchUsers', fetchOptions );
-		if ( ! silentUpdate ) {
-			Dispatcher.handleViewAction( {
-				type: 'FETCHING_USERS',
-				fetchOptions: fetchOptions
-			} );
-		}
+		Dispatcher.handleViewAction( {
+			type: 'FETCHING_USERS',
+			fetchOptions: fetchOptions
+		} );
 
 		wpcom.site( fetchOptions.siteId ).usersList( fetchOptions, ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_USERS',
+				fetchOptions: fetchOptions,
+				data: data,
+				error: error
+			} );
+		} );
+	},
+
+	fetchUpdated: fetchOptions => {
+		const paginationData = UsersStore.getPaginationData( fetchOptions );
+		if ( paginationData.fetchingUsers ) {
+			return;
+		}
+
+		Dispatcher.handleViewAction( {
+			type: 'FETCHING_UPDATED_USERS',
+			fetchOptions: fetchOptions
+		} );
+
+		const updatedFetchOptions = UsersStore.getUpdatedParams( fetchOptions );
+		debug( 'Updated fetchOptions: ' + JSON.stringify( updatedFetchOptions ) );
+
+		wpcom.site( fetchOptions.siteId ).usersList( updatedFetchOptions, ( error, data ) => {
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_UPDATED_USERS',
 				fetchOptions: fetchOptions,
 				data: data,
 				error: error
