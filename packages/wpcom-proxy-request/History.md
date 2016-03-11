@@ -1,4 +1,9 @@
 
+2.0.0 / 2016-03-11
+==================
+
+  * index: opt-in to `supports_error_obj` better Errors
+
 1.2.0 / 2016-03-09
 ==================
 
