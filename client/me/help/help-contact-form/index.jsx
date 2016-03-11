@@ -138,7 +138,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="help-contact-form__selection">
-				<SegmentedControl>
+				<SegmentedControl primary>
 					{ options.map( option => <ControlItem { ...option.props }>{ option.label }{ option.subtext }</ControlItem> ) }
 				</SegmentedControl>
 				<SelectDropdown selectedText={ selectedItem ? selectedItem.label : this.translate( 'Select an option' ) }>
