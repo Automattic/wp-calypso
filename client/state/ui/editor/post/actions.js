@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { EDITOR_POST_CURRENT_ID } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:ui:editor:post:actions' );
 
@@ -12,182 +13,190 @@ export function setEditingMode( mode, modeTitle, site ) {
 
 export function startEditingNew( site, postOptions ) {
 	debug( 'startEditingNew', site, postOptions );
-	return { type: 'TODO' };
+	return {
+		type: EDITOR_POST_CURRENT_ID,
+		siteId: site.ID,
+		postId: null
+	};
 }
 
 export function startEditingExisting( site, postID ) {
 	debug( 'startEditingExisting', site, postID );
+	return {
+		type: EDITOR_POST_CURRENT_ID,
+		siteId: site.ID,
+		postId: postID
+	};
+}
+
+export function toggleStickyStatus( siteId, postId, currentStatus ) {
+	debug( 'toggleStickyStatus', siteId, postId, currentStatus );
 	return { type: 'TODO' };
 }
 
-export function toggleStickyStatus( currentStatus ) {
-	debug( 'toggleStickyStatus', currentStatus );
+export function togglePendingStatus( siteId, postId, currentStatus ) {
+	debug( 'togglePendingStatus', siteId, postId, currentStatus );
 	return { type: 'TODO' };
 }
 
-export function togglePendingStatus( currentStatus ) {
-	debug( 'togglePendingStatus', currentStatus );
+export function setAuthor( siteId, postId, newAuthor ) {
+	debug( 'setAuthor', siteId, postId, newAuthor );
 	return { type: 'TODO' };
 }
 
-export function setAuthor( newAuthor ) {
-	debug( 'setAuthor', newAuthor );
+export function setCategories( siteId, postId, newCategories ) {
+	debug( 'setCategories', siteId, postId, newCategories );
 	return { type: 'TODO' };
 }
 
-export function setCategories( newCategories ) {
-	debug( 'setCategories', newCategories );
+export function trashPost( siteId, postId, callback ) {
+	debug( 'trashPost', siteId, postId, callback );
 	return { type: 'TODO' };
 }
 
-export function trashPost( post, callback ) {
-	debug( 'trashPost', post, callback );
+export function setDiscussionSettings( siteId, postId, newSettings ) {
+	debug( 'setDiscussionSettings', siteId, postId, newSettings );
 	return { type: 'TODO' };
 }
 
-export function setDiscussionSettings( newSettings ) {
-	debug( 'setDiscussionSettings', newSettings );
+export function setExcerpt( siteId, postId, newExcerpt ) {
+	debug( 'setExcerpt', siteId, postId, newExcerpt );
 	return { type: 'TODO' };
 }
 
-export function setExcerpt( newExcerpt ) {
-	debug( 'setExcerpt', newExcerpt );
+export function setFeaturedImage( siteId, postId, newImage ) {
+	debug( 'setFeaturedImage', siteId, postId, newImage );
 	return { type: 'TODO' };
 }
 
-export function setFeaturedImage( newImage ) {
-	debug( 'setFeaturedImage', newImage );
+export function removeFeaturedImage( siteId, postId ) {
+	debug( 'removeFeaturedImage', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function removeFeaturedImage() {
-	debug( 'removeFeaturedImage' );
-	return { type: 'TODO' };
-}
-
-export function setDate( postDate ) {
+export function setDate( siteId, postId, postDate ) {
 	//Previous action was sending it formatted
 	debug( 'setDate', postDate, ( postDate ? postDate.format() : null ) );
 	return { type: 'TODO' };
 }
 
-export function setLocation( latitude, longitude ) {
-	debug( 'setLocation', latitude, longitude );
+export function setLocation( siteId, postId, latitude, longitude ) {
+	debug( 'setLocation', siteId, postId, latitude, longitude );
 	return { type: 'TODO' };
 }
 
-export function removeLocation() {
-	debug( 'removeLocation' );
+export function removeLocation( siteId, postId ) {
+	debug( 'removeLocation', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setMenuOrder( newOrder ) {
-	debug( 'setMenuOrder', newOrder );
+export function setMenuOrder( siteId, postId, newOrder ) {
+	debug( 'setMenuOrder', siteId, postId, newOrder );
 	return { type: 'TODO' };
 }
 
-export function setPageParent( newParentId ) {
-	debug( 'setPageParent', newParentId );
+export function setPageParent( siteId, postId, newParentId ) {
+	debug( 'setPageParent', siteId, postId, newParentId );
 	return { type: 'TODO' };
 }
 
-export function setPageTemplate( newTemplate ) {
-	debug( 'setPageTemplate', newTemplate );
+export function setPageTemplate( siteId, postId, newTemplate ) {
+	debug( 'setPageTemplate', siteId, postId, newTemplate );
 	return { type: 'TODO' };
 }
 
-export function setPostFormat( newFormat ) {
-	debug( 'setPostFormat', newFormat );
+export function setPostFormat( siteId, postId, newFormat ) {
+	debug( 'setPostFormat', siteId, postId, newFormat );
 	return { type: 'TODO' };
 }
 
-export function addPublicizeConnectionKey( newKeyID ) {
-	debug( 'addPublicizeConnectionKey', newKeyID );
+export function addPublicizeConnectionKey( siteId, postId, newKeyID ) {
+	debug( 'addPublicizeConnectionKey', siteId, postId, newKeyID );
 	return { type: 'TODO' };
 }
 
-export function removePublicizeConnectionKey() {
-	debug( 'removePublicizeConnectionKey' );
+export function removePublicizeConnectionKey( siteId, postId ) {
+	debug( 'removePublicizeConnectionKey', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setPublicizeMessage( newMessage ) {
-	debug( 'setPublicizeMessage', newMessage );
+export function setPublicizeMessage( siteId, postId, newMessage ) {
+	debug( 'setPublicizeMessage', siteId, postId, newMessage );
 	return { type: 'TODO' };
 }
 
-export function setSharingLikeOption( optionKey, optionValue ) {
-	debug( 'setSharingLikeOption', optionKey, optionValue );
+export function setSharingLikeOption( siteId, postId, optionKey, optionValue ) {
+	debug( 'setSharingLikeOption', siteId, postId, optionKey, optionValue );
 	return { type: 'TODO' };
 }
 
-export function setSlug( newSlug ) {
-	debug( 'setSlug', newSlug );
+export function setSlug( siteId, postId, newSlug ) {
+	debug( 'setSlug', siteId, postId, newSlug );
 	return { type: 'TODO' };
 }
 
-export function setTags( newTags ) {
-	debug( 'setTags', newTags );
+export function setTags( siteId, postId, newTags ) {
+	debug( 'setTags', siteId, postId, newTags );
 	return { type: 'TODO' };
 }
 
-export function setTitle( newTitle ) {
-	debug( 'setTitle', newTitle );
+export function setTitle( siteId, postId, newTitle ) {
+	debug( 'setTitle', siteId, postId, newTitle );
 	return { type: 'TODO' };
 }
 
-export function setPostPublic() {
-	debug( 'setPostPublic' );
+export function setPostPublic( siteId, postId ) {
+	debug( 'setPostPublic', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setPostPrivate() {
-	debug( 'setPostPrivate' );
+export function setPostPrivate( siteId, postId ) {
+	debug( 'setPostPrivate', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function setPostPassword( newPassword ) {
-	debug( 'setPostPassword', newPassword );
+export function setPostPassword( siteId, postId, newPassword ) {
+	debug( 'setPostPassword', siteId, postId, newPassword );
 	return { type: 'TODO' };
 }
 
-export function setPostPasswordProtected( newPassword ) {
+export function setPostPasswordProtected( siteId, postId, newPassword ) {
 	debug( 'setPostPasswordProtected', newPassword );
 	return { type: 'TODO' };
 }
 
-export function setContent( newContent ) {
-	debug( 'setContent', newContent );
+export function setContent( siteId, postId, newContent ) {
+	debug( 'setContent', siteId, postId, newContent );
 	return { type: 'TODO' };
 }
 
-export function setRawContent( htmlContent ) {
-	debug( 'setRawContent', htmlContent );
+export function setRawContent( siteId, postId, htmlContent ) {
+	debug( 'setRawContent', siteId, postId, htmlContent );
 	return { type: 'TODO' };
 }
 
-export function resetRawContent() {
-	debug( 'resetRawContent' );
+export function resetRawContent( siteId, postId ) {
+	debug( 'resetRawContent', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function stopEditing() {
-	debug( 'stopEditing' );
+export function stopEditing( siteId, postId ) {
+	debug( 'stopEditing', siteId, postId );
 	return { type: 'TODO' };
 }
 
-export function save( callback ) {
-	debug( 'save', callback );
+export function save( siteId, postId, callback ) {
+	debug( 'save', siteId, postId, callback );
 	return { type: 'TODO' };
 }
 
-export function autosave( callback ) {
-	debug( 'autosave', callback );
+export function autosave( siteId, postId, callback ) {
+	debug( 'autosave', siteId, postId, callback );
 	return { type: 'TODO' };
 }
 
-export function setPostPublished() {
-	debug( 'setPostPublished' );
+export function setPostPublished( siteId, postId ) {
+	debug( 'setPostPublished', siteId, postId );
 	return { type: 'TODO' };
 }
 

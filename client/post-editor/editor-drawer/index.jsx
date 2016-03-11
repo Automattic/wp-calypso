@@ -49,6 +49,8 @@ const EditorDrawer = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			site: {},
+			post: {},
 			setExcerpt: () => {}
 		};
 	},
@@ -56,7 +58,7 @@ const EditorDrawer = React.createClass( {
 	onExcerptChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
-		this.props.setExcerpt( event.target.value );
+		this.props.setExcerpt( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), event.target.value );
 	},
 
 	currentPostTypeSupportsAll: function() {
@@ -118,7 +120,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
+			<PostFormatsData siteId={ get( this, 'props.site.ID' ) }>
 				<PostFormatsAccordion
 					site={ this.props.site }
 					post={ this.props.post }
@@ -258,7 +260,7 @@ const EditorDrawer = React.createClass( {
 								parent={ this.props.post.parent_id ? this.props.post.parent_id : 0 }
 							/>
 							<PageTemplatesData siteId={ this.props.site.ID } >
-								<PageTemplates post={ this.props.post } />
+								<PageTemplates siteId={ this.props.site.ID } post={ this.props.post } />
 							</PageTemplatesData>
 						</div>
 					: null }

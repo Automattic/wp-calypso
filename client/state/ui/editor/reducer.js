@@ -9,6 +9,7 @@ import { combineReducers } from 'redux';
 import { EDITOR_POST_ID_SET } from 'state/action-types';
 import media from './media/reducer';
 import contactForm from './contact-form/reducer';
+import post from './post/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
@@ -30,5 +31,6 @@ export function postId( state = null, action ) {
 export default combineReducers( {
 	postId,
 	media,
-	contactForm
+	contactForm,
+	post
 } );

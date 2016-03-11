@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import omit from 'lodash/omit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -39,6 +40,8 @@ const EditorTitle = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			site: {},
+			post: {},
 			isNew: true,
 			onChange: () => {},
 			setTitle: () => {},
@@ -74,7 +77,7 @@ const EditorTitle = React.createClass( {
 			title: event.target.value
 		} );
 
-		this.props.setTitle( event.target.value );
+		this.props.setTitle( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), event.target.value );
 		onChange( event );
 	},
 

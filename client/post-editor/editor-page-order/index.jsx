@@ -14,6 +14,7 @@ import TextInput from 'components/forms/form-text-input';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import { setMenuOrder } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const EditorPageOrder = React.createClass( {
 	displayName: 'EditorPageOrder',
@@ -21,6 +22,8 @@ const EditorPageOrder = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
 		setMenuOrder: PropTypes.func,
 		menuOrder: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -30,6 +33,8 @@ const EditorPageOrder = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			siteId: null,
+			postId: null,
 			setMenuOrder: () => {},
 			menuOrder: 0
 		};
@@ -64,7 +69,7 @@ const EditorPageOrder = React.createClass( {
 			postActions.edit( {
 				menu_order: newOrder
 			} );
-			this.props.setMenuOrder( newOrder );
+			this.props.setMenuOrder( this.props.siteId, this.props.postId, newOrder );
 		}
 	},
 
@@ -81,6 +86,9 @@ const EditorPageOrder = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( { setMenuOrder }, dispatch )
 )( EditorPageOrder );

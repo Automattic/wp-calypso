@@ -17,6 +17,7 @@ import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { setSlug } from 'state/ui/editor/post/actions';
+import { getSelectedSiteId, getCurrentEditedPostId } from 'state/ui/selectors';
 
 const PostEditorSlug = React.createClass( {
 	displayName: 'PostEditorSlug',
@@ -24,6 +25,8 @@ const PostEditorSlug = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
 		setSlug: PropTypes.func,
 		path: PropTypes.string,
 		slug: PropTypes.string,
@@ -36,6 +39,8 @@ const PostEditorSlug = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			siteId: null,
+			postId: null,
 			setSlug: () => {},
 			onEscEnter: noop,
 			isEditable: true
@@ -52,7 +57,7 @@ const PostEditorSlug = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { slug: event.target.value } );
 
-		this.props.setSlug( event.target.value );
+		this.props.setSlug( this.props.siteId, this.props.postId, event.target.value );
 	},
 
 	onSlugKeyDown( event ) {
@@ -137,6 +142,9 @@ const PostEditorSlug = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getCurrentEditedPostId( state )
+	} ),
 	dispatch => bindActionCreators( { setSlug }, dispatch )
 )( PostEditorSlug );

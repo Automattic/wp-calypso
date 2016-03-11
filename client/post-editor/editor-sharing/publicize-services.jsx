@@ -42,6 +42,7 @@ module.exports = React.createClass( {
 			return (
 				<EditorSharingPublicizeConnection
 					key={ connection.ID }
+					siteId={ this.props.siteId }
 					post={ this.props.post }
 					connection={ connection }
 					onRefresh={ this.props.newConnectionPopup } />

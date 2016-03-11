@@ -5,6 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -118,7 +119,7 @@ const EditorSharingAccordion = React.createClass( {
 				icon={ <Gridicon icon="share" /> }
 				className={ classes }>
 				{ this.props.site && (
-					<QueryPublicizeConnections siteId={ this.props.site.ID } />
+					<QueryPublicizeConnections siteId={ get( this, 'props.site.ID' ) } />
 				) }
 				<AccordionSection>
 					{ ! hideSharing && (

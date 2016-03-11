@@ -6,6 +6,7 @@ const noop = require( 'lodash/noop' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -80,7 +81,7 @@ const EditorGroundControl = React.createClass( {
 	setPostDate: function( date ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( { date: date ? date.format() : null } );
-		this.props.setDate( date );
+		this.props.setDate( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), date );
 	},
 
 	setCurrentMonth: function( date ) {
@@ -204,7 +205,7 @@ const EditorGroundControl = React.createClass( {
 					{ postUtils.isPage( this.props.post )
 						? postScheduler
 						: <PostListFetcher
-							siteID={ this.props.site.ID }
+							siteID={ get( this, 'props.site.ID' ) }
 							status="publish,future"
 							before={ this.state.lastDayOfTheMonth.format() }
 							after={ this.state.firstDayOfTheMonth.format() }

@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -28,6 +29,8 @@ const EditorDeletePost = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			site: {},
+			post: {},
 			trashPost: () => {}
 		};
 	},
@@ -51,7 +54,7 @@ const EditorDeletePost = React.createClass( {
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			this.props.trashPost( this.props.post, handleTrashingPost );
+			this.props.trashPost( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), handleTrashingPost );
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.trash( this.props.post, handleTrashingPost );
 		}

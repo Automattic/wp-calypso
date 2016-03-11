@@ -7,11 +7,20 @@
  * @return {?Object}        Selected site
  */
 export function getSelectedSite( state ) {
-	if ( ! state.ui.selectedSiteId ) {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
 		return null;
 	}
 
-	return state.sites.items[ state.ui.selectedSiteId ];
+	return state.sites.items[ siteId ];
+}
+
+export function getSelectedSiteId( state ) {
+	return state.ui.selectedSiteId;
+}
+
+export function getCurrentEditedPostId( state ) {
+	return state.ui.editor.post.currentEditedPostId;
 }
 
 export function getIsFullScreen( state ) {

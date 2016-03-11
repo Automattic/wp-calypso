@@ -6,6 +6,7 @@ import unescapeString from 'lodash/unescape';
 import _debug from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -24,8 +25,11 @@ const EditorTags = React.createClass( {
 	displayName: 'EditorTags',
 
 	propTypes: {
+		siteId: React.PropTypes.number,
+		postId: React.PropTypes.number,
 		setTags: React.PropTypes.func,
 		post: React.PropTypes.object,
+		site: React.PropTypes.object,
 		tags: React.PropTypes.arrayOf( React.PropTypes.object ),
 		tagsHasNextPage: React.PropTypes.bool,
 		tagsFetchingNextPage: React.PropTypes.bool
@@ -33,6 +37,8 @@ const EditorTags = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			post: {},
+			site: {},
 			setTags: () => {},
 		};
 	},
@@ -59,7 +65,7 @@ const EditorTags = React.createClass( {
 			tags: selectedTags
 		} );
 
-		this.props.setTags( selectedTags );
+		this.props.setTags( get( this, 'props.site.ID' ), get( this, 'props.post.ID' ), selectedTags );
 	},
 
 	getPostTags: function() {
