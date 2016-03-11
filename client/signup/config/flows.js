@@ -62,7 +62,7 @@ const flows = {
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
 		lastModified: '2016-01-21'
 	},
-	
+
 	free: {
 		steps: [ 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
@@ -219,7 +219,7 @@ const flows = {
 
 if ( config.isEnabled( 'jetpack-connect' ) ) {
 	flows['jetpack-connect'] = {
-		steps: [ 'user', 'authorize-site' ],
+		steps: [ 'jetpack-user', 'authorize-site' ],
 		destination: '/'
 	};
 }

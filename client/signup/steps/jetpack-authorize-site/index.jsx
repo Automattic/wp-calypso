@@ -26,18 +26,15 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getHeaderText() {
-		return this.translate( 'Howdy! Jetpack would like to connect to your WordPress.com account.' );
-	},
-
-	getSubHeaderText() {
-		return this.translate( 'Because Jetpack is awesome.' );
-	},
-
 	handleSubmit() {
 		const { queryObject } = this.props;
 		debug( 'trying jetpack login', queryObject );
 		this.setState( { isSubmitting: true, authorizeError: false } );
+
+		if ( 1 === this.props.positionInFlow ) {
+			queryObject._wp_nonce = this.props.signupDependencies._wp_nonce;
+		}
+
 		wpcom.undocumented().jetpackLogin( queryObject, this.handleJetpackLoginComplete );
 	},
 
@@ -91,8 +88,9 @@ module.exports = React.createClass( {
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.getSubHeaderText() }
+				headerText={ this.translate( 'Howdy! Jetpack would like to connect to your WordPress.com account.' ) }
+				subHeaderText={ this.translate( 'You\'re moments away from connecting Jetpack' ) }
+				fallbackHeaderText={ this.translate( 'Allow Wordpress.com to access your site.' ) }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgressStore={ this.props.signupProgressStore }
 				stepContent={ this.renderForm() } />
