@@ -57,7 +57,7 @@ export default class FilePickers extends React.Component {
 					<Button>Directory</Button>
 				</FilePicker>
 
-				<h4>Select a image file:</h4>
+				<h4>Select an image file:</h4>
 				<FilePicker accept="image/*" onPick={ this.onSingle } >
 					<Button>JPEG / PNG / GIF</Button>
 				</FilePicker>
