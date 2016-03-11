@@ -37,6 +37,13 @@ describe( 'PreferencesActions', function() {
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 
 		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
+
+		mockery.registerMock( 'lib/user', function() {
+			return {
+				data: {}
+			}
+		} );
+
 		mockery.registerMock( 'lib/wp', {
 			undocumented: function() {
 				return {
