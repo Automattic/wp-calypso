@@ -2,7 +2,6 @@
  * External dependencies.
  */
 var debug = require( 'debug' )( 'calypso:wpcom-undocumented:site' );
-var merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies.
@@ -185,17 +184,15 @@ UndocumentedSite.prototype.setOption = function( query, callback ) {
 }
 
 UndocumentedSite.prototype.postCounts = function( options, callback ) {
-	var type,
-		query = merge( {
-			type: 'post',
-			apiNamespace: 'wp', // This currently has no bearing on the route, wpcom-xhr-request needs to be updated to remove the namespace whitelist
-			locale: i18n.getLocaleSlug()
-		}, options );
+	let query = Object.assign( {
+		type: 'post',
+		apiNamespace: 'wp' // This currently has no bearing on the route, wpcom-xhr-request needs to be updated to remove the namespace whitelist
+	}, options );
 
-	type = query.type;
+	const type = query.type;
 	delete query.type;
 
-	this.wpcom.req.get( '/sites/' + this._id + '/wpcom/v2/post-counts/' + type, query, callback );
+	return this.wpcom.req.get( '/sites/' + this._id + '/wpcom/v2/post-counts/' + type, query, callback );
 };
 
 /**

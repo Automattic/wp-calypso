@@ -533,12 +533,19 @@ PostActions = {
 	},
 
 	fetchCounts: function( siteId, options ) {
+		var wpcomInterface = wpcom;
+
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_POST_COUNTS',
 			siteId: siteId
 		} );
 
-		wpcom.undocumented().site( siteId ).postCounts( options, function( error, data ) {
+		// Only pass 20%ish of requests to WP-API for now.
+		if ( 0 === ( siteId % 5 ) ) {
+			wpcomInterface = wpcom.undocumented();
+		}
+
+		wpcomInterface.site( siteId ).postCounts( options, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_COUNTS',
 				error: error,
