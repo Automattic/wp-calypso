@@ -1,11 +1,11 @@
 // External dependencies
 const expect = require( 'chai' ).expect,
-	Dispatcher = require( 'dispatcher' ),
-	sinon = require( 'sinon' );
+	Dispatcher = require( 'dispatcher' );
 
 // Internal dependencies
 const TeamStore = require( '../index' ),
-	ActionTypes = require( '../constants' ).action;
+	ActionTypes = require( '../constants' ).action,
+	useFakeTimers = require( 'test/helpers/use-sinon' ).useFakeTimers;
 
 describe( 'store', function() {
 	it( 'should have a dispatch token', function() {
@@ -34,34 +34,38 @@ describe( 'store', function() {
 		expect( teams[ 0 ].slug ).to.eq( 'huskies' );
 	} );
 
-	it( 'should know if a recent error has occurred', function() {
-		var clock, errorResponse;
+	context( 'recent errors', function() {
+		useFakeTimers( Date.now().valueOf() );
 
-		TeamStore._reset();
+		it( 'should know if a recent error has occurred', function() {
+			var errorResponse;
 
-		// No errors yet
-		expect( TeamStore.hasRecentError() ).to.eq( false );
+			TeamStore._reset();
 
-		// Roll back the clock so we can create an error that's 5 minutes old
-		clock = sinon.useFakeTimers( Date.now() - ( 5 * 60 * 1000 ) );
+			// No errors yet
+			expect( TeamStore.hasRecentError() ).to.eq( false );
 
-		errorResponse = {
-			type: ActionTypes.RECEIVE_TEAMS,
-			data: [ { slug: 'blah' } ],
-			error: new Error()
-		};
+			// Roll back the clock so we can create an error that's 5 minutes old
+			this.clock.tick( -5 * 60 * 1000 );
 
-		Dispatcher.handleServerAction( errorResponse );
+			errorResponse = {
+				type: ActionTypes.RECEIVE_TEAMS,
+				data: [ { slug: 'blah' } ],
+				error: new Error()
+			};
 
-		// Restore the correct date
-		clock.restore();
+			Dispatcher.handleServerAction( errorResponse );
 
-		// Old error, created five minutes ago
-		expect( TeamStore.hasRecentError() ).to.eq( false );
+			// roll the clock back forward
+			this.clock.tick( 5 * 60 * 1000 );
 
-		Dispatcher.handleServerAction( errorResponse );
+			// Old error, created five minutes ago
+			expect( TeamStore.hasRecentError() ).to.eq( false );
 
-		// New error, created just now
-		expect( TeamStore.hasRecentError() ).to.eq( true );
+			Dispatcher.handleServerAction( errorResponse );
+
+			// New error, created just now
+			expect( TeamStore.hasRecentError() ).to.eq( true );
+		} );
 	} );
 } );

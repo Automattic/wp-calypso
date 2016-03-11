@@ -1,11 +1,11 @@
 import nock from 'nock';
 
 export function allowNetworkAccess() {
-	before( () => {
+	before( function enableNockNetworkConnect() {
 		nock.enableNetConnect();
 	} );
 
-	after( () => {
+	after( function disableNockNetworkConnect() {
 		nock.disableNetConnect();
 	} );
 }
