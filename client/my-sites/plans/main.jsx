@@ -27,7 +27,8 @@ var analytics = require( 'analytics' ),
 	PlanOverview = require( './plan-overview' ),
 	preventWidows = require( 'lib/formatting' ).preventWidows,
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
+	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
+	transactionStepTypes = require( 'lib/store-transactions/step-types' );
 
 var Plans = React.createClass( {
 	displayName: 'Plans',
@@ -179,7 +180,8 @@ var Plans = React.createClass( {
 							sitePlans={ this.props.sitePlans }
 							onOpen={ this.openPlan }
 							onSelectPlan={ this.props.onSelectPlan }
-							cart={ this.props.cart } />
+							cart={ this.props.cart }
+							isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST } />
 						{ ! hasJpphpBundle && this.comparePlansLink() }
 					</div>
 				</Main>

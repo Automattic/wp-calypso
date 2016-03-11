@@ -231,7 +231,8 @@ module.exports = React.createClass( {
 				site={ this.props.site }
 				cart={ this.props.cart }
 				enableFreeTrials={ this.props.enableFreeTrials }
-				isPlaceholder={ this.isPlaceholder() }/>
+				isPlaceholder={ this.isPlaceholder() }
+				isSubmitting={ this.props.isSubmitting } />
 		);
 	},
 
@@ -246,6 +247,7 @@ module.exports = React.createClass( {
 				cart={ this.props.cart }
 				enableFreeTrials={ this.props.enableFreeTrials }
 				isPlaceholder={ this.isPlaceholder() }
+				isSubmitting={ this.props.isSubmitting }
 				isImageButton />
 		);
 	},

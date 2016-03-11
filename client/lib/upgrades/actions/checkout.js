@@ -29,7 +29,7 @@ function setNewCreditCardDetails( options ) {
 	} );
 }
 
-function submitTransaction( { cart, transaction } ) {
+function submitTransaction( { cart, transaction }, onComplete ) {
 	const steps = storeTransactions.submit( {
 		cart: cart,
 		payment: transaction.payment,
@@ -41,6 +41,10 @@ function submitTransaction( { cart, transaction } ) {
 			type: ActionTypes.TRANSACTION_STEP_SET,
 			step
 		} );
+
+		if ( onComplete && step.name === 'received-wpcom-response' ) {
+			onComplete( step.error );
+		}
 	} );
 }
 

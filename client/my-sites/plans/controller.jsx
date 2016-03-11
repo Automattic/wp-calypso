@@ -3,8 +3,7 @@
  */
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	defer = require( 'lodash/defer' );
+	React = require( 'react' );
 
 /**
  * Internal Dependencies
@@ -17,24 +16,13 @@ var sites = require( 'lib/sites-list' )(),
 	plans = require( 'lib/plans-list' )(),
 	config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
-	upgradesActions = require( 'lib/upgrades/actions' ),
 	titleActions = require( 'lib/screen-title/actions' );
-
-function handlePlanSelect( cartItem ) {
-	upgradesActions.addItem( cartItem );
-
-	// FIXME: @rads: The `defer` is necessary here to prevent an error with
-	//   React when changing pages, but the root cause is currently unknown.
-	defer( function() {
-		page( '/checkout/' + sites.getSelectedSite().slug );
-	} );
-}
 
 module.exports = {
 
 	plans: function( context ) {
 		var Plans = require( 'my-sites/plans/main' ),
-			CartData = require( 'components/data/cart' ),
+			CheckoutData = require( 'components/data/checkout' ),
 			MainComponent = require( 'components/main' ),
 			EmptyContentComponent = require( 'components/empty-content' ),
 			site = sites.getSelectedSite(),
@@ -75,14 +63,13 @@ module.exports = {
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
-			<CartData>
+			<CheckoutData>
 				<Plans
 					sites={ sites }
-					onSelectPlan={ handlePlanSelect }
 					plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType } />
-			</CartData>,
+			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -91,7 +78,7 @@ module.exports = {
 	plansCompare: function( context ) {
 		var PlansCompare = require( 'components/plans/plans-compare' ),
 			Main = require( 'components/main' ),
-			CartData = require( 'components/data/cart' ),
+			CheckoutData = require( 'components/data/checkout' ),
 			features = require( 'lib/features-list' )(),
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
@@ -117,15 +104,14 @@ module.exports = {
 
 		renderWithReduxStore(
 			<Main className="plans has-sidebar">
-				<CartData>
+				<CheckoutData>
 					<PlansCompare
 						enableFreeTrials={ getABTestVariation( 'freeTrials' ) === 'offered' }
 						selectedSite={ site }
-						onSelectPlan={ handlePlanSelect }
 						plans={ plans }
 						features={ features }
 						productsList={ productsList } />
-				</CartData>
+				</CheckoutData>
 			</Main>,
 			document.getElementById( 'primary' ),
 			context.store
