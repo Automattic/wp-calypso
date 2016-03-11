@@ -9,7 +9,6 @@ import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from '../helpers';
-import { setSection } from 'state/ui/actions';
 import { makeElement } from './index.node.js';
 
 /**
@@ -59,14 +58,6 @@ export function singleSite( context, next ) {
 	props.key = siteId;
 	props.siteId = siteId;
 
-	const section = {
-		name: 'themes',
-		group: 'sites',
-		secondary: true,
-	};
-
-	context.store.dispatch( setSection( section, {} ) );
-
 	context.primary = makeElement( SingleSiteComponent, Head, context.store, props );
 	next();
 }
@@ -75,14 +66,6 @@ export function multiSite( context, next ) {
 	const Head = require( 'layout/head' );
 	const props = getProps( context );
 
-	const section = {
-		name: 'themes',
-		group: 'sites',
-		secondary: true,
-	};
-
-	context.store.dispatch( setSection( section, {} ) );
-
 	context.primary = makeElement( MultiSiteComponent, Head, context.store, props );
 	next();
 }
@@ -90,14 +73,6 @@ export function multiSite( context, next ) {
 export function loggedOut( context, next ) {
 	const Head = require( 'my-sites/themes/head' );
 	const props = getProps( context );
-
-	const section = {
-		name: 'themes',
-		group: 'sites',
-		secondary: false,
-	};
-
-	context.store.dispatch( setSection( section, {} ) );
 
 	context.primary = makeElement( LoggedOutComponent, Head, context.store, props );
 	next();

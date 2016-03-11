@@ -21,7 +21,7 @@ const LayoutLoggedOut = ( {
 	const classes = classNames( 'wp layout', {
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': ! section.secondary
+		'has-no-sidebar': true,
 	} );
 
 	return (
@@ -48,12 +48,10 @@ LayoutLoggedOut.propTypes = {
 	secondary: React.PropTypes.element,
 	tertiary: React.PropTypes.element,
 	section: React.PropTypes.object,
-	hasSidebar: React.PropTypes.bool,
 }
 
 export default connect(
 	state => ( {
 		section: state.ui.section,
-		hasSidebar: state.ui.hasSidebar,
 	} )
 )( LayoutLoggedOut );
