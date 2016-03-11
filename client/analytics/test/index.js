@@ -1,29 +1,54 @@
-var expect = require( 'chai' ).expect,
+const expect = require( 'chai' ).expect,
 	url = require( 'url' );
 
-require( 'lib/react-test-env-setup' )();
+const useFakeDom = require( 'test/helpers/use-fake-dom' ),
+	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
 
-var imagesLoaded = [];
-global.Image = function() {
-	this._src = '';
-};
+function logImageLoads() {
+	var imagesLoaded = [],
+		originalImage;
 
-Object.defineProperty( global.Image.prototype, 'src', {
-	get: function() {
-		return this._src;
-	},
-	set: function( value ) {
-		this._src = value;
-		imagesLoaded.push( url.parse( value, true, true ) );
-	}
-} );
+	before( function spyOnImage() {
+		imagesLoaded.length = 0;
+		originalImage = global.Image;
 
-var analytics = require( '../' );
+		global.Image = function() {
+			this._src = '';
+		};
+
+		Object.defineProperty( global.Image.prototype, 'src', {
+			get: function() {
+				return this._src;
+			},
+			set: function( value ) {
+				console.log( 'setting', value );
+				this._src = value;
+				imagesLoaded.push( url.parse( value, true, true ) );
+			}
+		} );
+	} );
+
+	after( function tearDownSpy() {
+		global.Image = originalImage;
+	} );
+
+	return imagesLoaded;
+}
 
 describe( 'Analytics', function() {
+	useFakeDom();
+	useFilesystemMocks( __dirname );
+	const imagesLoaded = logImageLoads();
+
+	// can't require this until the fake DOM is present
+	let analytics;
+	before( () => {
+		analytics = require( '../' );
+	} );
 
 	beforeEach( function() {
-		imagesLoaded = [];
+		// this seems really weird. but we need to keep the same array reference, but trim the array
+		imagesLoaded.length = 0;
 	} );
 
 	describe( 'mc', function() {
@@ -62,7 +87,5 @@ describe( 'Analytics', function() {
 			expect( imagesLoaded[ 0 ].query.another ).to.eql( 'one' );
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
-
 	} );
-
 } );

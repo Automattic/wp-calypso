@@ -1,4 +1,7 @@
 {
+	"analytics": {
+		"test": [ "index" ]
+	},
 	"components": {
 		"domains": {
 			"domain-suggestion": {

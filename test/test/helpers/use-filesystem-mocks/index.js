@@ -17,7 +17,7 @@ function findQuickMocks( dirpath ) {
 			}
 
 			fakes.forEach( function( fake ) {
-				const moduleName = fake.substring( fake, fake.lastIndexOf( '.' ) ),
+				const moduleName = fake.substring( fake, fake.lastIndexOf( '.' ) ).replace( /\/index$/, '' ),
 					fakePath = path.join( dirpath, fake );
 				log( 'registering %s -> %s', moduleName, fakePath );
 				mockery.registerSubstitute( moduleName, fakePath );
