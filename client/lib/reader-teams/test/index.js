@@ -7,7 +7,7 @@ const expect = require( 'chai' ).expect,
 const TeamStore = require( '../index' ),
 	ActionTypes = require( '../constants' ).action;
 
-describe( 'team-store', function() {
+describe( 'store', function() {
 	it( 'should have a dispatch token', function() {
 		expect( TeamStore ).to.have.property( 'dispatchToken' );
 	} );

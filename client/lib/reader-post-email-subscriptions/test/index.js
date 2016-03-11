@@ -8,7 +8,7 @@ var chai = require( 'chai' ),
 
 const PostEmailSubscriptionStore = require( '../index' );
 
-describe( 'post-email-subscription-store', function() {
+describe( 'store', function() {
 	beforeEach( function() {
 		PostEmailSubscriptionStore.clearSubscriptions();
 	} );

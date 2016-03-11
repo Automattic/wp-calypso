@@ -106,7 +106,7 @@ var SiteExample = {
 	user_can_manage: true
 };
 
-describe( 'SiteStore', function() {
+describe( 'store', function() {
 	useMockery();
 	before( function() {
 		mockery.registerAllowable( [ '../', '../actions' ] );

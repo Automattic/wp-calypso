@@ -9,7 +9,7 @@ const chai = require( 'chai' ),
 const FeedActionTypes = require( 'lib/feed-store/constants' ).action,
 	FeedSubscriptionStore = require( '../index' );
 
-describe( 'feed-subscription-store', function() {
+describe( 'store', function() {
 	beforeEach( function() {
 		FeedSubscriptionStore.clearSubscriptions();
 	} );

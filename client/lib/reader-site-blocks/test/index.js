@@ -6,7 +6,7 @@ var expect = require( 'chai' ).expect,
 
 var SiteBlockStore = require( '../index' );
 
-describe( 'site-block-store', function() {
+describe( 'store', function() {
 	it( 'should have a dispatch token', function() {
 		expect( SiteBlockStore ).to.have.property( 'dispatchToken' );
 	} );

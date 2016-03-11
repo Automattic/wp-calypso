@@ -4,7 +4,7 @@ import Dispatcher from 'dispatcher';
 import { action } from '../constants';
 import store from '../store';
 
-describe( 'Reader Lists Tags Store', function() {
+describe( 'store', function() {
 	it( 'picks up tags from a successful response', function() {
 		const listId = 1;
 		const foundTag = {

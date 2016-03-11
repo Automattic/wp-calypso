@@ -8,7 +8,7 @@ var chai = require( 'chai' ),
 
 const CommentEmailSubscriptionStore = require( '../index' );
 
-describe( 'comment-email-subscription-store', function() {
+describe( 'store', function() {
 	beforeEach( function() {
 		CommentEmailSubscriptionStore.clearSubscriptions();
 	} );

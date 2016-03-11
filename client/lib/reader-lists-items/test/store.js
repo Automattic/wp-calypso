@@ -4,7 +4,7 @@ import Dispatcher from 'dispatcher';
 import { action } from '../constants';
 import store from '../store';
 
-describe( 'Reader Lists Items Store', function() {
+describe( 'store', function() {
 	it( 'picks up items from a successful response', function() {
 		const listId = 1;
 		const foundItem = {
@@ -32,7 +32,7 @@ describe( 'Reader Lists Items Store', function() {
 		expect( itemsForList ).to.have.length( 1 );
 		expect( itemsForList[0].toJS() ).to.eql( foundItem );
 
-		// Receive a second page
+		// Rreceive a second page
 		Dispatcher.handleServerAction( {
 			type: action.ACTION_RECEIVE_READER_LIST_ITEMS,
 			data: {

@@ -34,28 +34,28 @@
 			"test": [ "assembler", "index", "store" ]
 		},
 		"reader-comment-email-subscriptions": {
-			"test": [ "comment-email-subscription-store-test" ]
+			"test": [ "index" ]
 		},
 		"reader-feed-subscriptions": {
-			"test": [ "feed-subscription-store-test" ]
+			"test": [ "index" ]
 		},
 		"reader-lists-items": {
-			"test": [ "store-tests" ]
+			"test": [ "store" ]
 		},
 		"reader-lists-tags": {
-			"test": [ "store-tests" ]
+			"test": [ "store" ]
 		},
 		"reader-post-email-subscriptions": {
-			"test": [ "post-email-subscription-store-test" ]
+			"test": [ "index" ]
 		},
 		"reader-site-blocks": {
-			"test": [ "site-block-store-test" ]
+			"test": [ "index" ]
 		},
 		"reader-site-store": {
-			"test": [ "reader-site-store-tests" ]
+			"test": [ "index" ]
 		},
 		"reader-teams": {
-			"test": [ "team-store-test" ]
+			"test": [ "index" ]
 		},
 		"store": {
 			"test": [ "index-test" ]
