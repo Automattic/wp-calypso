@@ -48,6 +48,7 @@ import Version from 'components/version/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ExternalLink from 'components/external-link/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
+import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
 
 export default React.createClass( {
@@ -94,6 +95,7 @@ export default React.createClass( {
 					<DropZones searchKeywords="drag" />
 					<ExternalLink />
 					<FeatureGate />
+					<FilePickers />
 					<FoldableCard />
 					<FormFields searchKeywords="input textbox textarea radio"/>
 					<Gauge />
