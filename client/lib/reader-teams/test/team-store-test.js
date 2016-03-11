@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 // External dependencies
 const expect = require( 'chai' ).expect,
 	Dispatcher = require( 'dispatcher' ),
