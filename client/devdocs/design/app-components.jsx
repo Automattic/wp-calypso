@@ -40,6 +40,8 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className="design-assets" role="main">
+				<h1>App Components</h1>
+				<p>A visual reference for all application components used in Calypso.</p>
 				{
 					this.props.component
 					? <HeaderCake onClick={ this.backToComponents } backText="All App Components">
