@@ -18,7 +18,9 @@ const ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-const Card = require( 'components/card' ),
+const
+	abtest = require( 'lib/abtest' ).abtest,
+	Card = require( 'components/card' ),
 	CommentButton = require( 'components/comment-button' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	LikeButton = require( 'reader/like-button' ),
@@ -124,6 +126,10 @@ const Post = React.createClass( {
 		};
 	},
 
+	componentWillMount: function() {
+		this.maxImageHeightVariaton = abtest( 'readerShorterFeatures' );
+	},
+
 	componentDidMount: function() {
 		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
@@ -156,7 +162,10 @@ const Post = React.createClass( {
 
 	getFeaturedSize: function( available ) {
 		available = available || this.getMaxFeaturedWidthSize();
-		return this.featuredSizingStrategy( available );
+		if ( this.featuredSizingStrategy ) {
+			return this.featuredSizingStrategy( available );
+		}
+		return {};
 	},
 
 	featuredImageComponent: function( post ) {
@@ -195,9 +204,21 @@ const Post = React.createClass( {
 			featuredSize = this.getFeaturedSize( maxWidth );
 		}
 
+		let featuredImageClasses = classnames( 'reader__post-featured-image' );
+
+		const maxImageHeight = ( {
+			fifty: '50vh',
+			twentyfive: '25vh',
+			original: null
+		} ) [ this.maxImageHeightVariaton ];
+
+		if ( maxImageHeight ) {
+			featuredImageClasses = classnames( featuredImageClasses, 'is-shorter-abtest' );
+		}
+
 		return useFeaturedEmbed ?
 			<div ref="featuredEmbed" className="reader__post-featured-video" key="featuredVideo" dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } /> : //eslint-disable-line react/no-danger
-			<div className="reader__post-featured-image" onClick={ this.handlePermalinkClick }>
+			<div className={ featuredImageClasses } onClick={ this.handlePermalinkClick } style={ { maxHeight: maxImageHeight } }>
 				{ featuredSize ?
 					<img className="reader__post-featured-image-image"
 						ref="featuredImage"
