@@ -50,10 +50,10 @@
 			white-space: pre-wrap;
 			word-wrap: break-word;
 
-                        // thats needed to handle the scenario of user clicking reply
-                        // on another comment, since we will change height according to focus
-                        // the "click" will misse the other button
-                        transition-property: min-height;
+			// thats needed to handle the scenario of user clicking reply
+			// on another comment, since we will change height according to focus
+			// the "click" will misse the other button
+			transition-property: min-height;
 			transition-delay: 0.2s;
 			min-height: 0px;
 
