@@ -19,10 +19,9 @@ const FollowingImportButton = React.createClass( {
 		};
 	},
 
-	onPick(files) {
+	onPick( files ) {
 		// we only care about the first file in the list
 		const file = files[0];
-		console.log(file);
 
 		const req = wpcom.undocumented().importReaderFeed( file, this.onFeedImport );
 		req.upload.onprogress = this.onFeedImportProgress;
@@ -30,19 +29,21 @@ const FollowingImportButton = React.createClass( {
 		this.setState( { disabled: true } );
 	},
 
-	onFeedImport(err, data) {
-		if (err) return console.log(err.stack);
-		console.log(data);
+	onFeedImport( err, data ) {
+		if ( err ) {
+			return console.log( err.stack );
+		}
+		console.log( 'feed import started', data );
 		this.setState( { disabled: false } );
 	},
 
-	onFeedImportProgress(event) {
-		console.log('onprogress', event);
+	onFeedImportProgress( event ) {
+		console.log( 'onprogress', event );
 	},
 
 	render() {
 		return (
-			<FilePicker accept='text/xml' onPick={ this.onPick } >
+			<FilePicker accept="text/xml" onPick={ this.onPick } >
 				<Button compact disabled={ this.state.disabled } >
 					{ this.translate( 'Import' ) }
 				</Button>
