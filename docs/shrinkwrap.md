@@ -1,9 +1,14 @@
 Shrinkwrap
 ============
-We use `npm shrinkwrap --dev` to lock down our dependency versions. This allows us to
-freeze all dependencies at the exact version we have installed in our node_modules.
+We use
+[`npm-shrinkwrap.json`](https://github.com/Automattic/wp-calypso/blob/master/npm-shrinkwrap.json)
+to lock down our dependency versions. This allows us to freeze all dependencies at the
+exact version we have installed in our node_modules. Note that we use a couple of other
+tools rather than running `npm shrinkwrap` directly, since we have a mirror `npm` registry
+and therefore need to avoid adding the `from` and `resolved` fields that `npm shrinkwrap`
+[uses by default](https://github.com/npm/npm/issues/6444).
 
-See: [shrinkwrap docs](https://docs.npmjs.com/cli/shrinkwrap)
+See also: [shrinkwrap docs](https://docs.npmjs.com/cli/shrinkwrap)
 
 ## Modifying Dependencies
 
