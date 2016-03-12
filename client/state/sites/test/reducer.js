@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { items } from '../reducer';
+import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
 	before( function() {
@@ -18,6 +18,15 @@ describe( 'reducer', () => {
 	after( function() {
 		console.warn.restore();
 	} );
+
+	it( 'should export expected reducer keys', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'items',
+			'mediaStorage',
+			'plans'
+		] );
+	} );
+
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );

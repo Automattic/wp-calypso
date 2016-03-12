@@ -168,7 +168,7 @@ UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback 
 
 UndocumentedSite.prototype.getMuseCustomizations = function( callback ) {
 	this.wpcom.req.get( '/sites/' + this._id + '/customizations', callback );
-}
+};
 
 UndocumentedSite.prototype.setOption = function( query, callback ) {
 	this.wpcom.req.post(
@@ -181,7 +181,7 @@ UndocumentedSite.prototype.setOption = function( query, callback ) {
 		{ option_value: query.option_value },
 		callback
 	);
-}
+};
 
 UndocumentedSite.prototype.postCounts = function( options, callback ) {
 	let query = Object.assign( {
@@ -214,6 +214,17 @@ UndocumentedSite.prototype.export = function( id ) {
 UndocumentedSite.prototype.newExport = function( fn ) {
 	var exportObject = new Export( null, this._id, this.wpcom );
 	return exportObject.new( fn );
+};
+
+/**
+ * Returns media storage limits and space used for a given site. If site has
+ * unlimited storage or is a jetpack site, values returned will be -1.
+ *
+ * @param {Function} callback - called on completion of the GET request
+ * @return {Object} promise - resolves on completion of the GET request
+ */
+UndocumentedSite.prototype.mediaStorage = function( callback ) {
+	return this.wpcom.req.get( '/sites/' + this._id + '/media-storage', callback );
 };
 
 /**

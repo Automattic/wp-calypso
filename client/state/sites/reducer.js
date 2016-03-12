@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import mediaStorage from './media-storage/reducer';
 import { SITE_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 /**
@@ -32,5 +33,6 @@ export function items( state = {}, action ) {
 
 export default combineReducers( {
 	items,
+	mediaStorage,
 	plans
 } );
