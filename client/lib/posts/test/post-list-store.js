@@ -43,6 +43,32 @@ const OMITTED_POST_PAYLOAD = {
 		global_ID: 780
 	} ]
 };
+const THREE_POST_PAYLOAD_LOCAL = {
+	__sync: {
+		requestKey: 'UNIQUE_KEY',
+		responseSource: 'local',
+	},
+	found: 2,
+	posts: [ {
+		global_ID: 778
+	}, {
+		global_ID: 779
+	}, {
+		global_ID: 780
+	} ]
+}
+const OMIT_INITIAL_POST_PAYLOAD_SERVER = {
+	__sync: {
+		requestKey: 'UNIQUE_KEY',
+		responseSource: 'server',
+	},
+	found: 2,
+	posts: [ {
+		global_ID: 779
+	}, {
+		global_ID: 780
+	} ]
+};
 const DEFAULT_POST_LIST_ID = 'default';
 
 function dispatchReceivePostsPage( id, postListStoreId, data ) {
@@ -54,18 +80,18 @@ function dispatchReceivePostsPage( id, postListStoreId, data ) {
 	};
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_POSTS_PAGE',
-		id: id,
-		postListStoreId: postListStoreId,
 		data: data || mockData,
-		error: null
+		error: null,
+		id,
+		postListStoreId,
 	} );
 }
 
 function dispatchQueryPosts( postListStoreId, options ) {
 	Dispatcher.handleViewAction( {
 		type: 'QUERY_POSTS',
-		options: options,
-		postListStoreId: postListStoreId
+		options,
+		postListStoreId,
 	} );
 	// have to dispatch this to get it into cache
 	Dispatcher.handleViewAction( {
@@ -92,8 +118,9 @@ describe( 'post-list-store', () => {
 
 	beforeEach( () => {
 		postListStoreFactory._reset();
-		require( 'lib/posts/post-list-cache-store' )._reset();
-		defaultPostListStore = postListStoreFactory();
+		const postListCacheStore = require( 'lib/posts/post-list-cache-store' ).default;
+		postListCacheStore._reset();
+		defaultPostListStore = postListStoreFactory( DEFAULT_POST_LIST_ID );
 	} );
 
 	afterEach( () => {
@@ -256,6 +283,13 @@ describe( 'post-list-store', () => {
 			assert.equal( defaultPostListStore.getAll().length, 2 );
 		} );
 
+		it( 'should remove posts omitted in a follow-up server response', () => {
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, THREE_POST_PAYLOAD_LOCAL );
+			assert.equal( defaultPostListStore.getAll().length, 3 );
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, OMIT_INITIAL_POST_PAYLOAD_SERVER );
+			assert.equal( defaultPostListStore.getAll().length, 2 );
+		} );
+
 		it( 'should add only unique post.global_IDs postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
 			assert.equal( defaultPostListStore.getAll().length, 1 );
@@ -284,6 +318,7 @@ describe( 'post-list-store', () => {
 	describe( 'QUERY_POSTS', () => {
 		it( 'should not change cached list if query does not change', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
+			dispatchReceivePostsPage( DEFAULT_POST_LIST_ID );
 			const currentCacheId = defaultPostListStore.getID();
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
 			assert.equal( currentCacheId, defaultPostListStore.getID() );

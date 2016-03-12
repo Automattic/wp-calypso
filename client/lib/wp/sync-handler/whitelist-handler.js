@@ -15,7 +15,7 @@ export const isWhitelisted = params => {
 	const { path } = params;
 
 	if ( params.method && 'get' !== params.method.toLowerCase() ) {
-		debug( 'No allow %o request', params.method );
+		debug( 'Do not allow %o request', params.method, params );
 		return false;
 	};
 

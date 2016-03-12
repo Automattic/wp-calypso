@@ -17,7 +17,13 @@ import some from 'lodash/some';
 import Dispatcher from 'dispatcher';
 import treeConvert from 'lib/tree-convert';
 import PostsStore from './posts-store';
-import PostListCacheStore from './post-list-cache-store';
+import PostListCacheStore,
+	{
+		getCacheKey,
+		getCanonicalList,
+		setCanonicalList,
+		deleteCanonicalList
+	} from './post-list-cache-store';
 
 /**
  * Module Variables
@@ -79,7 +85,7 @@ export default function( id ) {
 		nextPageHandle: false,
 		isLastPage: false,
 		isFetchingNextPage: false,
-		isFetchingUpdated: false
+		isFetchingUpdated: false,
 	};
 
 	function queryPosts( options ) {
@@ -93,7 +99,8 @@ export default function( id ) {
 			query.orderBy = 'modified';
 		}
 
-		let list = PostListCacheStore.get( query );
+		const listKey = getCacheKey( query );
+		let list = PostListCacheStore.get( listKey );
 
 		if ( list ) {
 			_activeList = list;
@@ -102,13 +109,13 @@ export default function( id ) {
 				id: _nextId,
 				postIds: [],
 				errors: [],
-				query: query,
 				page: 0,
 				isLastPage: false,
 				isFetchingNextPage: false,
-				isFetchingUpdated: false
+				isFetchingUpdated: false,
+				query,
+				listKey,
 			};
-
 			_nextId++;
 		}
 	}
@@ -157,9 +164,15 @@ export default function( id ) {
 
 	// Process a new page of data and concatenate to the end of the list
 	function receivePage( listId, error, data ) {
-		const found = data && data.found;
-		let posts;
-		let postIds;
+		if ( error || ! data || typeof data !== 'object' ) {
+			error = error || { message: 'Error fetching PostsList: empty data response' };
+			debug( 'Error fetching PostsList from api:', error );
+			error.timestamp = Date.now();
+			_activeList.errors.push( error );
+			return;
+		}
+		const { found, meta, posts, __sync } = data;
+		const { responseSource, requestKey } = __sync || {};
 
 		if ( listId !== _activeList.id ) {
 			return;
@@ -167,45 +180,50 @@ export default function( id ) {
 
 		_activeList.isFetchingNextPage = false;
 
-		if ( error ) {
-			debug( 'Error fetching PostsList from api:', error );
-			error.timestamp = Date.now();
-			_activeList.errors.push( error );
-			return;
-		}
-
-		if ( ! found ) {
-			_activeList.isLastPage = true;
-			return;
-		}
-
 		// if we got a next page handle, cache it for the next page
-		_activeList.nextPageHandle = data.meta && data.meta.next_page;
+		_activeList.nextPageHandle = meta && meta.next_page;
 
-		if ( ! _activeList.nextPageHandle ) {
+		if ( ! _activeList.nextPageHandle || ! found ) {
 			_activeList.isLastPage = true;
 		}
 
-		posts = data.posts;
-
-		postIds = posts.map( function( post ) {
+		const responsePostIDs = posts.map( function( post ) {
 			return post.global_ID;
 		} );
 
-		if ( postIds.length ) {
-			// were some posts missing from the response?
-			const removedPosts = getRemovedPosts( _activeList.postIds, postIds );
-			if ( removedPosts.length ) {
-				_activeList.postIds = difference( _activeList.postIds, removedPosts );
-			}
-			// did we find any new posts?
-			postIds = difference( postIds, _activeList.postIds );
-			if ( postIds.length ) {
-				_activeList.postIds = _activeList.postIds.concat( postIds );
-				sort();
-				_activeList.page++;
+		let priorList = _activeList.postIds.slice( 0 );
+
+		if ( responseSource === 'local' && requestKey ) {
+			// store canonicalList before applying localResponse
+			// so we can apply the serverResponse to the original
+			// canonicalList
+			setCanonicalList( _activeList.listKey, requestKey, priorList );
+		} else {
+			// use canonicalList to process server response
+			const canonicalList = getCanonicalList( _activeList.listKey, requestKey );
+			if ( canonicalList ) {
+				debug( 'canonicalList found (%o)', canonicalList );
+				priorList = canonicalList;
+				deleteCanonicalList( _activeList.listKey, requestKey );
 			}
 		}
+
+		// were some posts missing from the response?
+		const removedPosts = getRemovedPosts( priorList, responsePostIDs );
+		if ( removedPosts.length ) {
+			debug( 'removePosts (%o)', removedPosts );
+			priorList = difference( priorList, removedPosts );
+		}
+
+		// did we find any new posts?
+		const newPosts = difference( responsePostIDs, priorList );
+		if ( newPosts.length ) {
+			debug( 'newPosts (%o)', newPosts );
+			priorList = priorList.concat( newPosts );
+			_activeList.page++;
+		}
+		_activeList.postIds = priorList;
+		sort();
 	}
 
 	// Merge updated posts
