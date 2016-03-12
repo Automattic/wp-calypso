@@ -37,5 +37,6 @@ const GlobalNotices = () => (
 		</ButtonGroup>
 	</div>
 );
+GlobalNotices.displayName = 'GlobalNotices';
 
 module.exports = GlobalNotices;
