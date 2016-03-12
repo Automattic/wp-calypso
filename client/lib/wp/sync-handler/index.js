@@ -186,6 +186,11 @@ export class SyncHandler {
 			 * @returns {Object} - combinedResponse object
 			 */
 			const cacheResponse = combinedResponse => {
+				debug( 'cacheResponse()', combinedResponse );
+				if ( ! combinedResponse || ! combinedResponse.serverResponse ) {
+					return;
+				}
+
 				const { serverResponse } = combinedResponse;
 				// get response object without _headers property
 				let responseWithoutHeaders = Object.assign( {}, serverResponse );
