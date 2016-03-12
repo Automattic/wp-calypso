@@ -3,6 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import delay from 'lodash/delay';
 
 // Internal dependencies
 import { translate } from 'lib/mixins/i18n';
@@ -82,7 +83,11 @@ class PostCommentForm extends React.Component {
 	}
 
 	handleBlur() {
-		this.setState( { haveFocus: false } );
+		// thats needed to handle the scenario of user clicking reply
+		// on another comment, since we will change height according to focus
+		// the "click" will misse the other button
+
+		delay( () => this.setState( { haveFocus: false } ), 200 );
 	}
 
 	handleTextChange( event ) {
@@ -96,6 +101,9 @@ class PostCommentForm extends React.Component {
 
 	resetCommentText() {
 		this.setState( { commentText: '' } );
+
+                // Update the comment text in the container's state
+		this.props.onUpdateCommentText( '' );
 	}
 
 	hasCommentText() {
