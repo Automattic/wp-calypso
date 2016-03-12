@@ -76,8 +76,8 @@ export class SyncHandler {
 				return handler( params, callback );
 			}
 
-			// generate an unique resource key
-			const key = generateKey( reqParams );
+			// generate an unique resource requestKey
+			const requestKey = generateKey( reqParams );
 
 			debug( 'starting to get resource ...' );
 
@@ -91,13 +91,14 @@ export class SyncHandler {
 			const localResponseHandler = localRecord => {
 				// let's be optimistic
 				debug( 'localResponseHandler()', localRecord );
-				if ( localRecord ) {
+				if ( localRecord && localRecord.body ) {
 					debug( 'local callback run => %o, params (%o), response (%o)', path, reqParams, localRecord );
 					// try/catch in case cached record does not match expected schema
+					localRecord.body.__sync = { requestKey, responseSource: 'local'};
 					try {
 						callback( null, localRecord.body );
 					} catch ( error ) {
-						this.removeRecord( key );
+						this.removeRecord( requestKey );
 						debug( 'Callback failed with localRecord (%o), deleting record.', localRecord, error );
 					}
 				} else {
@@ -136,6 +137,9 @@ export class SyncHandler {
 						} );
 
 						debug( 'server callback run => %o, params (%o), response (%o)', path, reqParams, res );
+						if ( res ) {
+							res.__sync = { requestKey, responseSource: 'server' };
+						}
 						callback( null, res );
 					} );
 				} );
@@ -198,7 +202,7 @@ export class SyncHandler {
 
 				let storingData = {
 					__sync: {
-						key,
+						requestKey,
 						synced: Date.now(),
 						syncing: false
 					},
@@ -207,7 +211,7 @@ export class SyncHandler {
 				};
 
 				// add/override gotten data from server-side
-				this.storeRecord( key, storingData ).catch( err => {
+				this.storeRecord( requestKey, storingData ).catch( err => {
 					// @TODO error handling
 					warn( err );
 				} );
@@ -216,7 +220,7 @@ export class SyncHandler {
 			};
 
 			// request/response workflow
-			this.retrieveRecord( key ) // => localforage record
+			this.retrieveRecord( requestKey ) // => localforage record
 				.then( localResponseHandler, recordErrorHandler ) // => localforage record
 				.then( networkFetch ) // => combinedResponse { localResponse, serverResponse }
 				.then( adjustPagination, networkErrorHandler ) // => combinedResponse { localResponse, serverResponse }
@@ -224,20 +228,20 @@ export class SyncHandler {
 		};
 	}
 
-	retrieveRecord( key ) {
-		debug( 'getting data from %o key\n', key );
-		return localforage.getItem( key );
+	retrieveRecord( requestKey ) {
+		debug( 'getting data from %o requestKey\n', requestKey );
+		return localforage.getItem( requestKey );
 	}
 
 	/**
 	 * Add/Override a record.
 	 *
-	 * @param {String} key - record key identifier
+	 * @param {String} requestKey - record requestKey identifier
 	 * @param {Object} data - data to store
 	 * @return {Promise} native ES6 promise
 	 */
-	storeRecord( key, data ) {
-		debug( 'storing data in %o key\n', key );
+	storeRecord( requestKey, data ) {
+		debug( 'storing data in %o requestKey\n', requestKey );
 		let pageSeriesKey;
 		if ( data && data.body && data.body.meta && data.body.meta.next_page ) {
 			pageSeriesKey = generatePageSeriesKey( data.params );
@@ -245,15 +249,15 @@ export class SyncHandler {
 
 		// add this record to history
 		return cacheIndex
-			.addItem( key, pageSeriesKey )
-				.then( localforage.setItem( key, data ) );
+			.addItem( requestKey, pageSeriesKey )
+				.then( localforage.setItem( requestKey, data ) );
 	}
 
-	removeRecord( key ) {
-		debug( 'removing %o key\n', key );
+	removeRecord( requestKey ) {
+		debug( 'removing %o requestKey\n', requestKey );
 		return localforage
-			.removeItem( key )
-				.then( cacheIndex.removeItem( key ) );
+			.removeItem( requestKey )
+				.then( cacheIndex.removeItem( requestKey ) );
 	}
 }
 
