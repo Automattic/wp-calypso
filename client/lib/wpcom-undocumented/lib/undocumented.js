@@ -1962,6 +1962,29 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 }
 
 /**
+ * Imports given XML file into the user's Reader feed.
+ * XML file is expected to be in OPML format.
+ *
+ * @param {File}     file         The File object to upload
+ * @param {Function} fn           The callback function
+ */
+
+Undocumented.prototype.importReaderFeed = function( file, fn ) {
+	const params = {
+		path: '/read/following/mine/import',
+		formData: [
+			[ 'import', file ]
+		]
+	};
+	// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
+  // *and* pass a `body` of null for this to work properly…
+	const query = {
+		apiVersion: '1.2',
+	};
+	return this.wpcom.req.post( params, query, null, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
