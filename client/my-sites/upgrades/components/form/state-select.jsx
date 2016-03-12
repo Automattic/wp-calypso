@@ -48,11 +48,10 @@ module.exports = React.createClass( {
 		options.push( { key: '', label: this.translate( 'Select State' ), disabled: 'disabled' } );
 
 		options = options.concat( statesList.map( function( state ) {
-			if ( isEmpty( state.code ) ) {
+			if ( ! state.code ) {
 				return { key: '--', label: '', disabled: 'disabled' };
-			} else {
-				return { key: state.code, label: state.name };
 			}
+			return { key: state.code, label: state.name };
 		} ) );
 
 		return (
