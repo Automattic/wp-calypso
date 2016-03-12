@@ -1,9 +1,7 @@
 Shrinkwrap
 ============
-We use `npm shrinkwrap --dev` to lock down our dependency versions. This allows us to
-freeze all dependencies at the exact version we have installed in our node_modules.
-
-See: [shrinkwrap docs](https://docs.npmjs.com/cli/shrinkwrap)
+We use a [npm-shrinkwrap.json](https://docs.npmjs.com/cli/shrinkwrap) file to lock down our dependency versions. 
+This allows us to freeze all dependencies at the exact version we have installed in our node_modules.
 
 ## Modifying Dependencies
 
