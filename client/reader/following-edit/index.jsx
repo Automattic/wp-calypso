@@ -346,7 +346,7 @@ const FollowingEdit = React.createClass( {
 		}
 
 		const containerClasses = classnames( {
-			'is-adding': this.state.isAddingOpen || hasNoSubscriptions,
+			'is-adding': this.state.isAddingOpen,
 			'has-no-subscriptions': hasNoSubscriptions
 		}, 'following-edit' );
 
@@ -359,7 +359,7 @@ const FollowingEdit = React.createClass( {
 				{ this.renderUnfollowError() }
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
 					<Button compact primary onClick={ this.toggleAddSite }>
 						{ this.translate( 'Follow Site' ) }
 					</Button>
