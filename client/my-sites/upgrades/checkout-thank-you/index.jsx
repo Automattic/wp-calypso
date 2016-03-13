@@ -251,8 +251,7 @@ const CheckoutThankYou = React.createClass( {
 
 						<FreeTrialNudge
 							purchases={ purchases }
-							selectedSite={ selectedSite }
-							sitePlans={ this.props.sitePlans } />
+							selectedSite={ selectedSite } />
 					</div>
 				) }
 			</div>

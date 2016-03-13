@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import find from 'lodash/find';
 import React from 'react';
 
@@ -8,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { getABTestVariation } from 'lib/abtest';
+import { getPlansBySite } from 'state/sites/plans/selectors';
 import {
 	isBusiness,
 	isDomainMapping,
@@ -60,4 +62,10 @@ const FreeTrialNudge = React.createClass( {
 	}
 } );
 
-export default FreeTrialNudge;
+export default connect(
+	( state, props ) => {
+		return {
+			sitePlans: getPlansBySite( state, props.selectedSite )
+		};
+	}
+)( FreeTrialNudge );
