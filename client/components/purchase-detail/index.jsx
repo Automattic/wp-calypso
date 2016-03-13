@@ -17,6 +17,7 @@ const PurchaseDetail = ( {
 	icon,
 	isPlaceholder,
 	isRequired,
+	isSubmitting,
 	onClick,
 	requiredText,
 	target,
@@ -32,6 +33,7 @@ const PurchaseDetail = ( {
 		buttonElement = (
 			<Button
 				className="purchase-detail__button"
+				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
 				target={ target }
@@ -78,6 +80,7 @@ PurchaseDetail.propTypes = {
 	icon: React.PropTypes.string,
 	isPlaceholder: React.PropTypes.bool,
 	isRequired: React.PropTypes.bool,
+	isSubmitting: React.PropTypes.bool,
 	onClick: React.PropTypes.func,
 	requiredText: React.PropTypes.string,
 	target: React.PropTypes.string,

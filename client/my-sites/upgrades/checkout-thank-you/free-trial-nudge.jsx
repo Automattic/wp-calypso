@@ -34,11 +34,21 @@ const FreeTrialNudge = React.createClass( {
 		sitePlans: React.PropTypes.object.isRequired
 	},
 
+	getInitialState() {
+		return {
+			isSubmitting: false
+		};
+	},
+
 	startFreeTrial() {
 		upgradesNotices.clear();
 
+		this.setState( { isSubmitting: true } );
+
 		startFreeTrial( this.props.selectedSite.ID, cartItems.planItem( 'value_bundle' ), ( error ) => {
 			if ( error ) {
+				this.setState( { isSubmitting: false } );
+
 				upgradesNotices.displayError( error );
 			} else {
 				this.props.refreshSitePlans( this.props.selectedSite.ID );
@@ -77,7 +87,8 @@ const FreeTrialNudge = React.createClass( {
 				title={ this.translate( 'Try WordPress.com Premium free for 14 days' ) }
 				description={ this.translate( 'Go beyond basic with a supercharged WordPress.com website. The same easy-to-use platform, now with more features and more customization.' ) }
 				buttonText={ this.translate( 'Try Premium for Free' ) }
-				onClick={ this.startFreeTrial } />
+				onClick={ this.startFreeTrial }
+				isSubmitting={ this.state.isSubmitting } />
 		);
 	}
 } );
