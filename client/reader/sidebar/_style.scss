@@ -10,7 +10,11 @@
 			.menu-link-icon,
 			.sidebar__menu-action .gridicon,
 			.sidebar-dynamic-menu-action-icon {
-				fill: $white;
+				fill: $gray;
+
+				@include breakpoint( ">480px" ) {
+					fill: $white;
+				}
 			}
 
 			.sidebar-streams__edit-icon {
@@ -33,6 +37,10 @@
 				background-color: darken( $gray, 10% );
 				color: $white;
 			}
+		}
+
+		.sidebar-streams__team {
+			margin-top: -1px; // Removes extra top border in team subs for <480px
 		}
 	}
 
