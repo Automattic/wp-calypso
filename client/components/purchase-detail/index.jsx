@@ -17,6 +17,7 @@ const PurchaseDetail = ( {
 	icon,
 	isPlaceholder,
 	isRequired,
+	onClick,
 	requiredText,
 	target,
 	title
@@ -32,6 +33,7 @@ const PurchaseDetail = ( {
 			<Button
 				className="purchase-detail__button"
 				href={ href }
+				onClick={ onClick }
 				target={ target }
 				primary>
 				{ buttonText }
@@ -76,6 +78,7 @@ PurchaseDetail.propTypes = {
 	icon: React.PropTypes.string,
 	isPlaceholder: React.PropTypes.bool,
 	isRequired: React.PropTypes.bool,
+	onClick: React.PropTypes.func,
 	requiredText: React.PropTypes.string,
 	target: React.PropTypes.string,
 	title: React.PropTypes.string
