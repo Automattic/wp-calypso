@@ -8553,6 +8553,14 @@
     },
     "semver": {
       "version": "5.1.0"
+    },
+    "component-file-picker": {
+      "version": "0.2.1",
+      "dependencies": {
+        "component-event": {
+          "version": "0.1.4"
+        }
+      }
     }
   }
 }
