@@ -176,9 +176,9 @@ Layout = React.createClass( {
 				{ this.props.section === 'sites' &&
 					<WebPreview
 						className="layout__design"
+						showExternal={ false }
 						showPreview={ this.props.focus.getCurrent() === 'design' }
 						onClose={ this.onClosePreview }
-						previewUrl={ this.props.sites.getSelectedSite().URL + '?demo=true&iframe=true&theme_preview=true' }
 					/>
 				}
 			</div>

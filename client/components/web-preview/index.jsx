@@ -14,6 +14,7 @@ import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import Spinner from 'components/spinner';
+import updatePreviewWithChanges from 'lib/tailor/preview';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -33,6 +34,8 @@ const WebPreview = React.createClass( {
 		previewUrl: React.PropTypes.string,
 		// The markup to display in the iframe
 		previewMarkup: React.PropTypes.string,
+		// Optional changes to make to the markup
+		customizations: React.PropTypes.object,
 		// The viewport device to show initially
 		defaultViewportDevice: React.PropTypes.string,
 		// Elements to render on the right side of the toolbar
@@ -102,6 +105,9 @@ const WebPreview = React.createClass( {
 		}
 		if ( this.props.previewMarkup && this.props.previewMarkup !== prevProps.previewMarkup ) {
 			this.setIframeMarkup( this.props.previewMarkup );
+		}
+		if ( this.props.customizations && this.refs.iframe ) {
+			updatePreviewWithChanges( this.refs.iframe.contentDocument, this.props.customizations );
 		}
 
 		// add/remove listener if showPreview has changed
