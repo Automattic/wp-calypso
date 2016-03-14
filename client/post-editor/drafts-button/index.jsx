@@ -13,7 +13,6 @@ export default React.createClass( {
 	displayName: 'EditorDraftsButton',
 
 	propTypes: {
-		site: PropTypes.object,
 		count: PropTypes.number,
 		onClick: PropTypes.func
 	},
@@ -26,10 +25,6 @@ export default React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.site ) {
-			return null;
-		}
-
 		return (
 			<Button
 				compact borderless
