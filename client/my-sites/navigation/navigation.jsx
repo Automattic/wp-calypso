@@ -9,6 +9,7 @@ import React from 'react';
 import observe from 'lib/mixins/data-observe';
 import SitePicker from 'my-sites/picker';
 import Sidebar from 'my-sites/sidebar';
+import DesignMenu from 'my-sites/design-menu';
 
 module.exports = React.createClass( {
 	displayName: 'MySitesNavigation',
@@ -41,6 +42,7 @@ module.exports = React.createClass( {
 					siteBasePath={ this.props.siteBasePath }
 					user={ this.props.user }
 				/>
+				<DesignMenu />
 			</div>
 		);
 	}
