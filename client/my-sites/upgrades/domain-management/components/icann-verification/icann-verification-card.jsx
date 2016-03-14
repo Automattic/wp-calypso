@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import IcannVerification from './icann-verification';
-import paths from 'my-sites/upgrades/paths';
+import support from 'lib/url/support';
 
 let IcannVerificationCard = React.createClass( {
 	propTypes: {
@@ -25,7 +25,7 @@ let IcannVerificationCard = React.createClass( {
 		}
 
 		return this.translate(
-			'Urgent! Please verify your address through the verification email as soon as possible, or you may lose this domain forever.'
+			'Urgent. Please verify your address through the verification email as soon as possible, or your domain may be suspended.'
 		);
 	},
 
@@ -42,9 +42,11 @@ let IcannVerificationCard = React.createClass( {
 				<div className="icann-verification__explanation">
 					{ this.translate(
 						'Use this button to resend the verification email. It contains a link to verify your address. ' +
-						'To update your email address, go to {{a}}Contacts and Privacy{{/a}}.', {
+						'{{learnMoreLink}}Learn more{{/learnMoreLink}}.', {
 							components: {
-								a: <a href={ paths.domainManagementEditContactInfo( this.props.selectedSite.slug, this.props.selectedDomainName ) } />
+								learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
+									target="_blank"
+								/>
 							}
 						}
 					) }
