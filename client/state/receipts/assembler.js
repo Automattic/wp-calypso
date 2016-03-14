@@ -11,8 +11,9 @@ export function createReceiptObject( data ) {
 				productType: purchase.product_type,
 				productName: purchase.product_name,
 				productNameShort: purchase.product_name_short,
-				registrarSupportUrl: purchase.registrar_support_url
+				registrarSupportUrl: purchase.registrar_support_url,
+				isEmailVerified: Boolean( purchase.is_email_verified )
 			};
 		} )
 	};
-};
+}
