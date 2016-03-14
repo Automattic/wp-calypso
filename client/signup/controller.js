@@ -21,7 +21,7 @@ import JetpackConnect from './jetpack-connect';
 import utils from './utils';
 import userModule from 'lib/user';
 import titleActions from 'lib/screen-title/actions';
-import { setSection } from 'state/ui/actions';
+import { removeSidebar } from 'lib/react-helpers';
 const user = userModule();
 
 /**
@@ -85,14 +85,11 @@ export default {
 
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		removeSidebar( context, { section: 'signup' } );
+
 		layoutFocus.set( 'content' );
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
-
-		context.store.dispatch( setSection( 'signup', {
-			hasSidebar: false
-		} ) );
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },

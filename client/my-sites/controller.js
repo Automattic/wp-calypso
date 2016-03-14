@@ -20,7 +20,8 @@ var user = require( 'lib/user' )(),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	siteStatsStickyTabActions = require( 'lib/site-stats-sticky-tab/actions' ),
-	trackScrollPage = require( 'lib/track-scroll-page' );
+	trackScrollPage = require( 'lib/track-scroll-page' ),
+	removeSidebar = require( 'lib/react-helpers' ).removeSidebar;
 
 /**
  * The main navigation of My Sites consists of a component with
@@ -43,18 +44,10 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 	);
 }
 
-function removeSidebar( context ) {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-	context.store.dispatch( uiActions.setSection( 'sites', {
-		hasSidebar: false
-	} ) );
-}
-
 function renderEmptySites( context ) {
 	var NoSitesMessage = require( 'components/empty-content/no-sites-message' );
 
-	removeSidebar( context );
+	removeSidebar( context, { section: 'sites' } );
 
 	ReactDom.render(
 		React.createElement( NoSitesMessage ),
@@ -67,7 +60,7 @@ function renderNoVisibleSites( context ) {
 		currentUser = user.get(),
 		hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 
-	removeSidebar( context );
+	removeSidebar( context, { section: 'sites' } );
 
 	ReactDom.render(
 		React.createElement( EmptyContentComponent, {
@@ -271,10 +264,8 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 * so section needs to be set explicitly and #secondary cleaned up
 		 */
-		context.store.dispatch( uiActions.setSection( 'sites', {
-			hasSidebar: false
-		} ) );
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		removeSidebar( context, { section: 'sites' } );
+
 		layoutFocus.set( 'content' );
 
 		// This path sets the URL to be visited once a site is selected

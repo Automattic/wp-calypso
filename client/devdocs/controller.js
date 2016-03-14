@@ -21,6 +21,7 @@ import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import { setSection } from 'state/ui/actions';
 import EmptyContent from 'components/empty-content';
+import { removeSidebar } from 'lib/react-helpers';
 
 const devdocs = {
 
@@ -133,11 +134,7 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function( context ) {
-		context.store.dispatch( setSection( 'devdocs-start', {
-			hasSidebar: false
-		} ) );
-
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		removeSidebar( context, { section: 'devdocs-start' } );
 
 		ReactDom.render(
 			React.createElement( EmptyContent, {
