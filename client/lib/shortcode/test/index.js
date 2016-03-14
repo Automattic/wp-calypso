@@ -90,9 +90,9 @@ describe( 'index', function() {
 
 		it( 'should explicitly return an object of already split attributes', function() {
 			var attributes = {
-				named: { bar: 'baz' },
-				numeric: [ 'qux' ]
-			}, result = normalizeAttributes( attributes );
+					named: { bar: 'baz' },
+					numeric: [ 'qux' ]
+				}, result = normalizeAttributes( attributes );
 
 			expect( result ).to.eql( attributes );
 		} );
