@@ -17,14 +17,12 @@ const LayoutLoggedOut = ( {
 	secondary,
 	tertiary,
 	section,
-	hasSidebar = true,
-	isFullScreen = false
 } ) => {
 	const classes = classNames( 'wp layout', {
-		[ 'is-section-' + section ]: !! section,
+		[ 'is-group-' + section.group ]: !! section,
+		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': ! hasSidebar,
-		'full-screen': isFullScreen,
+		'has-no-sidebar': true,
 	} );
 
 	return (
@@ -50,18 +48,11 @@ LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
 	tertiary: React.PropTypes.element,
-	section: React.PropTypes.oneOfType( [
-		React.PropTypes.string,
-		React.PropTypes.bool
-	] ),
-	hasSidebar: React.PropTypes.bool,
-	isFullScreen: React.PropTypes.bool
+	section: React.PropTypes.object,
 }
 
 export default connect(
 	state => ( {
 		section: state.ui.section,
-		hasSidebar: state.ui.hasSidebar,
-		isFullScreen: state.ui.isFullScreen,
 	} )
 )( LayoutLoggedOut );

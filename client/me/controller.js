@@ -20,7 +20,6 @@ import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { setSection } from 'state/ui/actions';
 
 const ANALYTICS_PAGE_TITLE = 'Me',
 	devices = devicesFactory(),
@@ -39,8 +38,6 @@ export default {
 			document.getElementById( 'secondary' ),
 			context.store
 		);
-
-		context.store.dispatch( setSection( 'me' ) );
 
 		next();
 	},
@@ -333,7 +330,6 @@ export default {
 
 		if ( isWelcome ) {
 			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );

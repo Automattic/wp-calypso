@@ -300,7 +300,7 @@
 	opacity: 0;
 }
 
-.is-section-reader .main .empty-content {
+.is-group-reader .main .empty-content {
 	margin-top: -120px;
 	padding-top: 0;
 
@@ -317,7 +317,7 @@
 	}
 }
 
-.is-section-reader .empty-content__action {
+.is-group-reader .empty-content__action {
 	@include breakpoint( "<480px" ) {
 		margin-bottom: 10px;
 	}

@@ -7,9 +7,10 @@ import { details, fetchThemeDetailsData } from './controller';
 import { setSection } from 'state/ui/actions';
 
 function dispatchSetSection( context, next ) {
-	context.store.dispatch( setSection( 'themes', {
-		hasSidebar: false,
-		isFullScreen: true
+	context.store.dispatch( setSection( {
+		name: 'themes',
+		group: 'sites',
+		secondary: true,
 	} ) );
 	next();
 }

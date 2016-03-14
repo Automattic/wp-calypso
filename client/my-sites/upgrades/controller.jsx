@@ -172,13 +172,9 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
-		context.store.dispatch( setSection( 'checkout' ) );
-
 		titleActions.setTitle( i18n.translate( 'Checkout' ), {
 			siteID: context.params.domain
 		} );
-
-		context.store.dispatch( setSection( null, { hasSidebar: true } ) );
 
 		renderWithReduxStore(
 			(
@@ -211,6 +207,7 @@ module.exports = {
 			receiptId = Number( context.params.receiptId );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
+
 		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
 
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );

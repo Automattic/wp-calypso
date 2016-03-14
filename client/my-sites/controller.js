@@ -27,8 +27,6 @@ var user = require( 'lib/user' )(),
  * the site selector list and the sidebar section items
  */
 function renderNavigation( context, allSitesPath, siteBasePath ) {
-	context.store.dispatch( uiActions.setSection( 'sites' ) );
-
 	// Render the My Sites navigation in #secondary
 	ReactDom.render(
 		React.createElement( NavigationComponent, {
@@ -45,10 +43,6 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 
 function removeSidebar( context ) {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-	context.store.dispatch( uiActions.setSection( 'sites', {
-		hasSidebar: false
-	} ) );
 }
 
 function renderEmptySites( context ) {
@@ -271,9 +265,6 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 * so section needs to be set explicitly and #secondary cleaned up
 		 */
-		context.store.dispatch( uiActions.setSection( 'sites', {
-			hasSidebar: false
-		} ) );
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );
 
