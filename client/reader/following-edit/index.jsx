@@ -382,6 +382,7 @@ const FollowingEdit = React.createClass( {
 					initialValue={ this.props.search }
 					delaySearch={ true }
 					ref="url-search" /> : null }
+
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
 				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
 					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
