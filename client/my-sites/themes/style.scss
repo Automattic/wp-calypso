@@ -160,25 +160,30 @@
 	position: absolute;
 	top: 90px;
 	width: 49%;
+	box-shadow: 0px 2px 8px 0px rgba(46,68,83,0.45);
+}
 
-	&.is-placeholder {
-		// 4:3 screenshot ratio (based on 50% width)
-		padding-top: 37.5%;
-		background-color: lighten( $gray, 20% );
-		animation: loading-fade 1.6s ease-in-out infinite;
-		border: none;
-	}
+.themes__sheet-screenshot:before {
+	content: "";
+	display: block;
+	// 4:3 screenshot ratio
+	padding-top: 75%;
+	background-color: transparentize( white, 0.5 );
 }
 
 .themes__sheet-img {
+	position: absolute;
+		top: 0;
+		left: 0;
+	width: 100%;
+	height: 100%;
 	border: 1px solid $gray;
-	box-shadow: 0px 2px 8px 0px rgba(46,68,83,0.45);
 }
 
 .themes__sheet-content {
 	padding: 20px;
 	// whilst loading
-	min-height: 600px;
+	min-height: 900px;
 }
 
 .themes__sheet-placeholder {
@@ -204,11 +209,6 @@
 		position: relative;
 		top: 0;
 		width: 100%;
-
-		&.is-placeholder {
-			// 4:3 screenshot ratio
-			padding-top: 75%;
-		}
 	}
 
 	.themes_sheet-action-bar-spacer {

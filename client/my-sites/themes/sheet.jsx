@@ -89,13 +89,9 @@ export const ThemeSheet = React.createClass( {
 	},
 
 	renderScreenshot() {
-		const classes = classNames(
-			'themes__sheet-screenshot',
-			{ 'is-placeholder': ! this.props.screenshot }
-		);
 		const img = <img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />;
 		return (
-			<div className={ classes }>
+			<div className="themes__sheet-screenshot">
 				{ this.props.screenshot && img }
 			</div>
 		);
