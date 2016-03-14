@@ -179,6 +179,7 @@ module.exports = {
 		ensureStoreLoading( followingStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+		stats.recordTrack( 'calypso_reader_following_loaded' );
 
 		setPageTitle( i18n.translate( 'Following' ) );
 
