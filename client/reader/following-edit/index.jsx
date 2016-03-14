@@ -8,6 +8,7 @@ import classnames from 'classnames';
 
 // Internal dependencies
 import Main from 'components/main';
+import Gridicon from 'components/gridicon';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
@@ -28,7 +29,6 @@ import escapeRegexp from 'escape-string-regexp';
 import FollowingEditSortControls from './sort-controls';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 const stats = require( 'reader/stats' );
 
 const initialLoadFeedCount = 20;
@@ -45,7 +45,7 @@ const FollowingEdit = React.createClass( {
 
 	getInitialState: function() {
 		return Object.assign( {
-			isAddingOpen: false
+			isSearching: false
 		}, this.getStateFromStores() );
 	},
 
@@ -311,14 +311,31 @@ const FollowingEdit = React.createClass( {
 		);
 	},
 
-	toggleAddSite: function() {
-		this.setState( {
-			isAddingOpen: ! this.state.isAddingOpen
-		} );
+	renderFeedImportError( error ) {
+		return (
+			<Notice
+				status="is-error"
+				showDismiss={ true }
+				//onDismissClick={ this.dismissError }
+				>
+				{ error.message }
+			</Notice>
+		);
+	},
 
-		if ( ! this.state.isAddingOpen ) {
-			this.refs['feed-search'].focus();
-		}
+	toggleAddSite: function() {
+		this.refs['feed-search'].focus();
+	},
+
+	toggleSearching() {
+		this.setState( {
+			isSearching: ! this.state.isSearching
+		} );
+		this.refs['url-search'].focus();
+	},
+
+	onExistingSearchBlur() {
+		console.log('blur!');
 	},
 
 	render: function() {
@@ -347,7 +364,7 @@ const FollowingEdit = React.createClass( {
 		}
 
 		const containerClasses = classnames( {
-			'is-adding': this.state.isAddingOpen,
+			'is-searching': this.state.isSearching,
 			'has-no-subscriptions': hasNoSubscriptions
 		}, 'following-edit' );
 
@@ -359,13 +376,6 @@ const FollowingEdit = React.createClass( {
 				{ this.renderFollowError() }
 				{ this.renderUnfollowError() }
 
-				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
-					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
-					<Button compact primary onClick={ this.toggleAddSite }>
-						{ this.translate( 'Follow Site' ) }
-					</Button>
-				</SectionHeader>
-
 				<FollowingEditSubscribeForm
 					onSearch={ this.handleNewSubscriptionSearch }
 					onSearchClose={ this.handleNewSubscriptionSearchClose }
@@ -374,12 +384,20 @@ const FollowingEdit = React.createClass( {
 					isSearchOpen={ this.state.isAddingOpen }
 					ref="feed-search" />
 
+				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
+					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
+					<Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
+				</SectionHeader>
+
 				{ ! hasNoSubscriptions ? <SearchCard
+					isOpen={ true }
 					key="existingFeedSearch"
-					autoFocus={ true }
+					autoFocus={ false }
 					additionalClasses="following-edit__existing-feed-search"
 					placeholder={ searchPlaceholder }
 					onSearch={ this.doSearch }
+					onSearchClose={ this.toggleSearching }
+					onBlur={ this.onExistingSearchBlur }
 					initialValue={ this.props.search }
 					delaySearch={ true }
 					ref="url-search" /> : null }
