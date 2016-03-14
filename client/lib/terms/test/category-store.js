@@ -1,25 +1,22 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var rewire = require( 'rewire' ),
+const rewire = require( 'rewire' ),
 	assert = require( 'chai' ).assert,
-	includes = require( 'lodash/includes' ),
-	Dispatcher = require( 'dispatcher' );
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
  */
-var common = require( './common' ),
+const common = require( './common' ),
 	data = require( './data' ),
 	ActionTypes = require( '../constants' ).action;
 
 describe( 'category-store', function() {
-	var CategoryStoreFactory, defaultCategoryStore;
+	let CategoryStoreFactory, Dispatcher, defaultCategoryStore;
 	before( function() {
 		CategoryStoreFactory = rewire( '../category-store-factory' );
+		Dispatcher = require( 'dispatcher' );
 	} );
 
 	beforeEach( function() {
@@ -32,7 +29,6 @@ describe( 'category-store', function() {
 			Dispatcher.unregister( defaultCategoryStore.dispatchToken );
 		}
 	} );
-
 
 	describe( '#found', function() {
 		it( 'should set found', function() {

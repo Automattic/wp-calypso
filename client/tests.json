@@ -143,6 +143,9 @@
 		"store": {
 			"test": [ "index" ]
 		},
+		"terms": {
+			"test": [ "actions" ]
+		},
 		"text-utils": {
 			"test": [ "index" ]
 		},

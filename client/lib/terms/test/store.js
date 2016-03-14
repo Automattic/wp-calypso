@@ -1,26 +1,28 @@
-require( 'lib/react-test-env-setup' )();
 
 /**
  * External dependencies
  */
-var assert = require('chai').assert,
-	Dispatcher = require( 'dispatcher' );
+var assert = require( 'chai' ).assert,
+	mockery = require( 'mockery' );
 
 /**
  * Internal dependencies
  */
-var TermStore = require( '../store' ),
-	data = require( './data' );
+var data = require( './data' ),
+	useMockery = require( 'test/helpers/use-mockery' );
 
 var TEST_SITE_ID = 777,
 	TEST_CATEGORY_ID = 1,
 	TEMPORARY_ID = 'category-0';
 
 describe( 'term-store', function() {
+	var TermStore, Dispatcher;
+	useMockery();
 
 	beforeEach( function() {
-		delete require.cache[ require.resolve( '../store' ) ];
+		mockery.resetCache();
 		TermStore = require( '../store' );
+		Dispatcher = require( 'dispatcher' );
 	} );
 
 	function dispatchReceiveTerms() {
@@ -87,17 +89,16 @@ describe( 'term-store', function() {
 
 	it( '#all()', function() {
 		dispatchReceiveTerms();
-		var categoryData = TermStore.all( TEST_SITE_ID );
+		const categoryData = TermStore.all( TEST_SITE_ID );
 
 		assert.equal( categoryData[0].name, 'a cat' );
 		assert.equal( categoryData.length, data.treeList.length );
-
 	} );
 
 	it( '#get()', function() {
 		dispatchReceiveTerms();
 
-		var category = TermStore.get( TEST_SITE_ID, TEST_CATEGORY_ID );
+		const category = TermStore.get( TEST_SITE_ID, TEST_CATEGORY_ID );
 		assert.equal( category.name, 'a cat' );
 	} );
 
