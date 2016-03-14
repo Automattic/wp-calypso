@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -33,19 +34,21 @@ const SiteTitleControl = React.createClass( {
 	},
 
 	onChangeSiteTitle( event ) {
+		const blogdescription = this.state.blogdescription;
 		const blogname = event.target.value;
 		// Update our UI
 		this.setState( { blogname } );
 		// Update the state
-		this.props.onChange( { blogname } );
+		this.props.onChange( { blogname, blogdescription } );
 	},
 
 	onChangeDescription( event ) {
+		const blogname = this.state.blogname;
 		const blogdescription = event.target.value;
 		// Update our UI
 		this.setState( { blogdescription } );
 		// Update the state
-		this.props.onChange( { blogdescription } );
+		this.props.onChange( { blogname, blogdescription } );
 	},
 
 	render() {
@@ -64,4 +67,14 @@ const SiteTitleControl = React.createClass( {
 	}
 } );
 
-export default SiteTitleControl;
+function mapStateToProps( state ) {
+	const { ui, tailor } = state;
+	const siteId = ui.selectedSiteId;
+	const selectedSite = state.sites.items[ siteId ] || {};
+	if ( tailor.customizations.siteTitle ) {
+		return tailor.customizations.siteTitle;
+	}
+	return { blogname: selectedSite.title, blogdescription: selectedSite.description };
+}
+
+export default connect( mapStateToProps )( SiteTitleControl );

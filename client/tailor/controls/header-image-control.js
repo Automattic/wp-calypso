@@ -2,6 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import get from 'lodash/get';
+import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
@@ -15,7 +18,7 @@ import EditorMediaModal from 'post-editor/media-modal';
 
 const HeaderImageControl = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
+		site: React.PropTypes.object.isRequired,
 		headerImageUrl: React.PropTypes.string,
 		onChange: React.PropTypes.func.isRequired,
 	},
@@ -101,4 +104,18 @@ const HeaderImageControl = React.createClass( {
 	}
 } );
 
-export default HeaderImageControl;
+function mapStateToProps( state ) {
+	const { ui, tailor } = state;
+	const siteId = ui.selectedSiteId;
+	const selectedSite = state.sites.items[ siteId ] || {};
+	if ( tailor.customizations.headerImage ) {
+		return assign( { site: selectedSite }, tailor.customizations.headerImage );
+	}
+	const headerImagePostId = get( selectedSite, 'options.header_image.attachment_id' );
+	const headerImageUrl = get( selectedSite, 'options.header_image.url' );
+	const headerImageWidth = get( selectedSite, 'options.header_image.width' );
+	const headerImageHeight = get( selectedSite, 'options.header_image.height' );
+	return { site: selectedSite, headerImagePostId, headerImageUrl, headerImageWidth, headerImageHeight };
+}
+
+export default connect( mapStateToProps )( HeaderImageControl );
