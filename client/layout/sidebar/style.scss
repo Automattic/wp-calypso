@@ -275,6 +275,30 @@
 			fill: $blue-medium;
 		}
 	}
+
+	@include breakpoint( "<660px" ) {
+		background-color: $gray-light;
+
+		a {
+			color: $blue-medium;
+
+			&:first-child:after {
+				background: linear-gradient(
+					to right,
+					rgba( $gray-light, 0 ),
+					rgba( $gray-light, 1 ) 50% );
+			}
+
+			&.add-new {
+				background-color: $white;
+				color: $gray-dark;
+			}
+		}
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+	}
 }
 
 .notouch .sidebar__menu li:not(.selected) a {
