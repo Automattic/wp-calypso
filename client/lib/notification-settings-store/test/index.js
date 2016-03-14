@@ -5,11 +5,16 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import mockery from 'mockery';
 
-describe( 'Notification Settings Store', () => {
-	var NotificationSettingsStore,
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
+
+describe( 'index', () => {
+	let NotificationSettingsStore,
 		NotificationSettingsStoreActions,
-		getNotificationSettingsStub,
-		wpcomMock = {
+		getNotificationSettingsStub;
+	const wpcomMock = {
 			undocumented: () => {
 				return { me: () => {
 					return { getNotificationSettings: getNotificationSettingsStub };
@@ -18,11 +23,9 @@ describe( 'Notification Settings Store', () => {
 		},
 		changeSpy = sinon.spy();
 
+	useMockery();
+
 	before( () => {
-		mockery.enable( {
-			useCleanCache: true,
-			warnOnUnregistered: false
-		} );
 		mockery.registerAllowable( [ '../', '../actions' ] );
 		mockery.registerMock( 'lib/wp', wpcomMock );
 
@@ -33,7 +36,6 @@ describe( 'Notification Settings Store', () => {
 
 	after( () => {
 		NotificationSettingsStore.off( 'change', changeSpy );
-		mockery.disable();
 	} );
 
 	beforeEach( () => {

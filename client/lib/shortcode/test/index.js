@@ -9,7 +9,7 @@ var expect = require( 'chai' ).expect,
  */
 var Shortcode = rewire( '../' );
 
-describe( 'Shortcode', function() {
+describe( 'index', function() {
 	describe( '#parseAttributes()', function() {
 		var parseAttributes = Shortcode.__get__( 'parseAttributes' );
 

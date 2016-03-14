@@ -8,7 +8,7 @@ const expect = require( 'chai' ).expect;
  */
 const safeImage = require( '../' );
 
-describe( 'safe-image-url', function() {
+describe( 'index', function() {
 	it( 'should ignore a relative url', function() {
 		expect( safeImage( '/foo' ) ).to.eql( '/foo' );
 	} );

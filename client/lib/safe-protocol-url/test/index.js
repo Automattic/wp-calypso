@@ -8,7 +8,7 @@ var expect = require( 'chai' ).expect;
  */
 var safeProtocolUrl = require( '../' );
 
-describe( 'safe-protocol-url', function() {
+describe( 'index', function() {
 	it( 'should ignore a relative url', function() {
 		expect( safeProtocolUrl( '/foo' ) ).to.eql( '/foo' );
 	} );

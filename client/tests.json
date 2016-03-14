@@ -65,6 +65,15 @@
 		"network-connection" : {
 			"test": [ "index" ]
 		},
+		"notification-settings-store" : {
+			"test": [ "index" ]
+		},
+		"olark-store" : {
+			"test": [ "index" ]
+		},
+		"paths" : {
+			"test": [ "index" ]
+		},
 		"plans-list": {
 			"test": [ "index" ]
 		},
@@ -85,6 +94,9 @@
 				"test": [ "assembler", "store" ]
 			},
 			"test": [ "assembler", "index", "store" ]
+		},
+		"react-pass-to-children": {
+			"test": [ "index" ]
 		},
 		"reader-comment-email-subscriptions": {
 			"test": [ "index" ]
@@ -110,7 +122,33 @@
 		"reader-teams": {
 			"test": [ "index" ]
 		},
+		"recommended-sites-store": {
+			"test": [ "actions", "store" ]
+		},
+		"resize-image-url": {
+			"test": [ "index" ]
+		},
+		"safe-image-url": {
+			"test": [ "index" ]
+		},
+		"safe-protocol-url": {
+			"test": [ "index" ]
+		},
+		"shortcode": {
+			"test": [ "index" ]
+		},
 		"store": {
+			"test": [ "index" ]
+		},
+		"text-utils": {
+			"test": [ "index" ]
+		},
+		"wp": {
+			"localization": {
+				"test": [ "index" ]
+			}
+		},
+		"wpcom-xhr-wrapper": {
 			"test": [ "index" ]
 		}
 	},

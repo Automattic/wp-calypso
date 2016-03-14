@@ -16,7 +16,7 @@ var DUMMY_SITE = {
 	slug: 'settingstestsite.wordpress.com'
 };
 
-describe( 'paths', function() {
+describe( 'index', function() {
 	describe( '#newPost()', function() {
 		it( 'should return the Calypso root post path no site', function() {
 			var url = paths.newPost();

@@ -23,7 +23,7 @@ PassThrough = React.createClass( {
 	}
 } );
 
-describe( '#passToChildren()', function() {
+describe( 'index', function() {
 	var renderer;
 
 	beforeEach( function() {

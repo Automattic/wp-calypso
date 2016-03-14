@@ -11,8 +11,8 @@ import textUtils from '../';
 // Adapted from TinyMCE word count tests:
 // https://github.com/tinymce/tinymce/blob/4.2.6/tests/plugins/wordcount.js
 
-describe( 'textUtils', () => {
-	describe( 'wordCount', () => {
+describe( 'index', () => {
+	describe( '#wordCount', () => {
 		it( 'should return 0 for blank content', () => {
 			expect( textUtils.countWords(
 				''

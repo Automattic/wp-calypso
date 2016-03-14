@@ -11,7 +11,7 @@ var mockSites = null,
 	},
 	actions;
 
-describe( 'Recommended Site Store Actions', function() {
+describe( 'actions', function() {
 	before( function() {
 		mockery.enable( {
 			useCleanCache: true,

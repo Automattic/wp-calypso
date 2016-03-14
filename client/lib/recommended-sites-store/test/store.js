@@ -5,7 +5,7 @@ import { ACTION_RECEIVE_SITE_RECOMMENDATIONS, ACTION_RECEIVE_SITE_RECOMMENDATION
 import store from '../store';
 
 
-describe( 'Recommended Sites Store', function() {
+describe( 'store', function() {
 	beforeEach( function() {
 		store._reset();
 	} );

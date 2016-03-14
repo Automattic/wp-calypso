@@ -4,7 +4,7 @@
 import { assert } from 'chai';
 import olarkStore from 'lib/olark-store';
 
-describe( 'olark-store', function() {
+describe( 'index', function() {
 	it( 'Olark store data should be an object', function() {
 		const data = olarkStore.get();
 		assert.isObject( data );
