@@ -35,3 +35,30 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
 		}
 	} );
 }
+
+/**
+ * Use a full sinon sandbox for this test block
+ *
+ * See http://sinonjs.org/docs/#sandbox
+ *
+ * @param  {Object|Function} config The configuration to use, or a callback that is invoked with the sandbox instance
+ * @param  {Function} sandboxCallback A callback function that is invoked with the sandbox instance
+ */
+export function useSandbox( config, sandboxCallback = noop ) {
+	if ( isFunction( config ) && sandboxCallback === noop ) {
+		sandboxCallback = config;
+		config = undefined;
+	}
+
+	before( function() {
+		this.sandbox = sinon.sandbox.create( config );
+		sandboxCallback( this.sandbox );
+	} );
+
+	after( function() {
+		if ( this.sandbox ) {
+			this.sandbox.restore();
+			this.sandbox = null;
+		}
+	} );
+}
