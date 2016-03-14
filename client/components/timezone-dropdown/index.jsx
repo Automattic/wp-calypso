@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -11,19 +10,16 @@ import noop from 'lodash/noop';
 import Dropdown from 'components/select-dropdown';
 import i18n from 'lib/mixins/i18n';
 
-export default React.createClass( {
-	displayName: 'TimezoneDropdown',
+const { Component, PropTypes } = React;
+const noop = () => {};
 
-	propTypes: {
-		selectedZone: React.PropTypes.string,
-		onSelect: React.PropTypes.func
-	},
+class TimezoneDropdown extends Component {
+	constructor() {
+		super();
 
-	getDefaultProps() {
-		return {
-			onSelect: noop
-		};
-	},
+		// bound methods
+		this.onSelect = this.onSelect.bind( this );
+	}
 
 	getTimezoneNames() {
 		return i18n.moment.tz.names().map( zone => {
@@ -32,21 +28,33 @@ export default React.createClass( {
 				value: zone
 			} );
 		} );
-	},
+	}
 
 	onSelect( zone ) {
 		this.setState( { selectedZone: zone.value } );
 		this.props.onSelect( zone.value );
-	},
+	}
 
 	render() {
 		return (
 			<Dropdown
 				className="timezone-dropdown"
+				valueLink={ this.props.valueLink }
 				options={ this.getTimezoneNames() }
 				selectedText={ this.props.selectedZone }
 				onSelect={ this.onSelect }
 			/>
 		);
-	},
-} );
+	}
+};
+
+TimezoneDropdown.defaultProps = {
+	onSelect: noop
+};
+
+TimezoneDropdown.propTypes = {
+	selectedZone: PropTypes.string,
+	onSelect: PropTypes.func
+}
+
+export default TimezoneDropdown;
