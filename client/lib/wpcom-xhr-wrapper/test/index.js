@@ -9,28 +9,20 @@ var expect = require( 'chai' ).expect,
 /**
  * Internal dependencies
  */
-var testError,
-	testResponse;
+import useMockery from 'test/helpers/use-mockery';
 
-function testRequest( params, callback ) {
-	callback( testError, testResponse );
-}
+describe( 'index', function() {
+	let testError, testResponse, xhr;
 
-describe( 'wpcom-xhr-wrapper', function() {
-	var xhr;
+	function testRequest( params, callback ) {
+		callback( testError, testResponse );
+	}
+
+	useMockery();
 
 	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-
 		mockery.registerMock( 'wpcom-xhr-request', testRequest );
 		xhr = require( 'lib/wpcom-xhr-wrapper' );
-	} );
-
-	after( function() {
-		mockery.deregisterMock( 'wpcom-xhr-request' );
 	} );
 
 	it( 'should still return a valid response', function( done ) {

@@ -9,15 +9,14 @@ var assert = require( 'assert' );
 var Searchable = require( '../' );
 
 var makeCollection = function() {
-
 	var Collection = function() {
 		this.items = [
 			{
 				title: 'this title',
 				author: 'bob ralian',
 				urls: {
-					'public': 'wordpress.com',
-					'private': 'notwordpress.com'
+					public: 'wordpress.com',
+					private: 'notwordpress.com'
 				},
 				editor: {
 					primary: 'Susan',
@@ -28,8 +27,8 @@ var makeCollection = function() {
 				title: 'another title',
 				author: 'Jill',
 				urls: {
-					'public': 'test.com',
-					'private': 'blah.com'
+					public: 'test.com',
+					private: 'blah.com'
 				},
 				editor: {
 					primary: 'Edith',
@@ -37,7 +36,6 @@ var makeCollection = function() {
 				}
 			}
 		];
-
 	};
 
 	Collection.prototype.get = function() {
@@ -45,12 +43,9 @@ var makeCollection = function() {
 	};
 
 	return Collection;
-
 };
 
-
-describe( 'Searchable', function() {
-
+describe( 'index', function() {
 	describe( 'searchNodes as array', function() {
 		it( 'should find node', function() {
 			var Collection = makeCollection(),
@@ -68,9 +63,8 @@ describe( 'Searchable', function() {
 			Searchable( Collection.prototype, [ 'title', 'author' ] );
 			collection = new Collection();
 			assert.equal( collection.search( 'foo' ).length, 0 );
-
 		} );
-	});
+	} );
 
 	describe( 'searchNodes as string', function() {
 		it( 'should find node', function() {
@@ -89,7 +83,7 @@ describe( 'Searchable', function() {
 			collection = new Collection();
 			assert.equal( collection.search( 'foo' ).length, 0 );
 		} );
-	});
+	} );
 
 	describe( 'searchNodes as object', function() {
 		it( 'should find node', function() {
@@ -117,6 +111,5 @@ describe( 'Searchable', function() {
 			collection = new Collection();
 			assert.equal( collection.search( 'Kyle' ).length, 0 );
 		} );
-	});
-
-});
+	} );
+} );

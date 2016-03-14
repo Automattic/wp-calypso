@@ -1,11 +1,10 @@
 import { expect } from 'chai';
 import Dispatcher from 'dispatcher';
 
-import { ACTION_RECEIVE_SITE_RECOMMENDATIONS, ACTION_RECEIVE_SITE_RECOMMENDATIONS_ERROR } from '../constants';
+import { ACTION_RECEIVE_SITE_RECOMMENDATIONS } from '../constants';
 import store from '../store';
 
-
-describe( 'Recommended Sites Store', function() {
+describe( 'store', function() {
 	beforeEach( function() {
 		store._reset();
 	} );
@@ -27,7 +26,7 @@ describe( 'Recommended Sites Store', function() {
 		} );
 
 		expect( store.get() ).to.have.length( 1 );
-		expect( store.get()[0] ).to.eql( foundBlog );
+		expect( store.get()[ 0 ] ).to.eql( foundBlog );
 		expect( store.isLastPage() ).to.eql( false );
 	} );
 
@@ -35,7 +34,7 @@ describe( 'Recommended Sites Store', function() {
 		Dispatcher.handleServerAction( {
 			type: ACTION_RECEIVE_SITE_RECOMMENDATIONS,
 			data: {
-				blogs: [ ]
+				blogs: []
 			}
 		} );
 
@@ -45,7 +44,7 @@ describe( 'Recommended Sites Store', function() {
 	it( 'sets last page flag if maximum recommendations are reached', function() {
 		const tooManyBlogs = [];
 
-		for (let i = 0; i < store.maxRecommendations(); i++) {
+		for ( let i = 0; i < store.maxRecommendations(); i ++ ) {
 			tooManyBlogs.push( {
 				blog_id: i,
 				follow_reco_id: 'freshly_pressed',

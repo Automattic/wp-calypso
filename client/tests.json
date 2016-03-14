@@ -7,6 +7,9 @@
 		}
 	},
 	"lib": {
+		"auth-code-request-store": {
+			"test": [ "index" ]
+		},
 		"cart": {
 			"store": {
 				"test": [ "cart-synchronizer" ]
@@ -16,6 +19,15 @@
 			"test": [ "index" ]
 		},
 		"credit-card-details" : {
+			"test": [ "index" ]
+		},
+		"comment-like-store": {
+			"test": [ "comment-like-store" ]
+		},
+		"create-selector": {
+			"test": [ "index" ]
+		},
+		"deterministic-stringify": {
 			"test": [ "index" ]
 		},
 		"domains": {
@@ -33,7 +45,33 @@
 				"test": [ "assembler", "store" ]
 			}
 		},
+		"form-state": {
+			"test": [ "index" ]
+		},
+		"i18n-utils" : {
+			"test": [ "utils" ]
+		},
+		"mixins" : {
+			"pageable": {
+				"test": [ "index" ]
+			},
+			"searchable": {
+				"test": [ "index" ]
+			},
+			"url-search": {
+				"test": [ "build-url" ]
+			}
+		},
 		"network-connection" : {
+			"test": [ "index" ]
+		},
+		"notification-settings-store" : {
+			"test": [ "index" ]
+		},
+		"olark-store" : {
+			"test": [ "index" ]
+		},
+		"paths" : {
 			"test": [ "index" ]
 		},
 		"plans-list": {
@@ -56,6 +94,9 @@
 				"test": [ "assembler", "store" ]
 			},
 			"test": [ "assembler", "index", "store" ]
+		},
+		"react-pass-to-children": {
+			"test": [ "index" ]
 		},
 		"reader-comment-email-subscriptions": {
 			"test": [ "index" ]
@@ -81,7 +122,33 @@
 		"reader-teams": {
 			"test": [ "index" ]
 		},
+		"recommended-sites-store": {
+			"test": [ "actions", "store" ]
+		},
+		"resize-image-url": {
+			"test": [ "index" ]
+		},
+		"safe-image-url": {
+			"test": [ "index" ]
+		},
+		"safe-protocol-url": {
+			"test": [ "index" ]
+		},
+		"shortcode": {
+			"test": [ "index" ]
+		},
 		"store": {
+			"test": [ "index" ]
+		},
+		"text-utils": {
+			"test": [ "index" ]
+		},
+		"wp": {
+			"localization": {
+				"test": [ "index" ]
+			}
+		},
+		"wpcom-xhr-wrapper": {
 			"test": [ "index" ]
 		}
 	},
@@ -95,6 +162,11 @@
 					"test": [ "index" ]
 				}
 			}
+		}
+	},
+	"reader": {
+		"route": {
+			"test": [ "index" ]
 		}
 	},
 	"state": {

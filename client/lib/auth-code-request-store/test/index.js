@@ -5,7 +5,7 @@ import { actions as ActionTypes } from '../constants'
 
 const debug = require( 'debug' )( 'calypso:comment-store:test' ); //eslint-disable-line no-unused-vars
 
-describe( 'auth-request-store', () => {
+describe( 'index', () => {
 	beforeEach( function() {
 		Dispatcher.handleViewAction( { type: ActionTypes.AUTH_CODE_REQUEST_RESET } );
 	} );
@@ -16,7 +16,7 @@ describe( 'auth-request-store', () => {
 			errorLevel: false,
 			errorMessage: false
 		} )
-	} )
+	} );
 
 	it( 'is in progress when requesting code', () => {
 		Dispatcher.handleViewAction( { type: ActionTypes.AUTH_CODE_REQUEST } );

@@ -9,7 +9,7 @@ var expect = require( 'chai' ).expect,
  */
 var Shortcode = rewire( '../' );
 
-describe( 'Shortcode', function() {
+describe( 'index', function() {
 	describe( '#parseAttributes()', function() {
 		var parseAttributes = Shortcode.__get__( 'parseAttributes' );
 
@@ -90,9 +90,9 @@ describe( 'Shortcode', function() {
 
 		it( 'should explicitly return an object of already split attributes', function() {
 			var attributes = {
-				named: { bar: 'baz' },
-				numeric: [ 'qux' ]
-			}, result = normalizeAttributes( attributes );
+					named: { bar: 'baz' },
+					numeric: [ 'qux' ]
+				}, result = normalizeAttributes( attributes );
 
 			expect( result ).to.eql( attributes );
 		} );

@@ -6,16 +6,19 @@ import rewire from 'rewire';
 import mockery from 'mockery';
 import sinon from 'sinon';
 
-describe( 'localization', () => {
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
+
+describe( 'index', () => {
 	let localization, addLocaleQueryParam, injectLocalization, bindState;
 	let getCurrentUserLocaleMock = sinon.stub();
 
+	useMockery();
+
 	before( () => {
 		// Mock user locale state selector
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
 		mockery.registerMock( 'state/current-user/selectors', {
 			getCurrentUserLocale: () => getCurrentUserLocaleMock()
 		} );
@@ -29,10 +32,6 @@ describe( 'localization', () => {
 
 	beforeEach( () => {
 		localization.__set__( 'locale', undefined );
-	} );
-
-	after( function() {
-		mockery.disable();
 	} );
 
 	describe( '#addLocaleQueryParam()', () => {

@@ -48,8 +48,8 @@ function testController( options ) {
 	return formState.Controller( assign( defaults, options ) );
 }
 
-describe( 'form', function() {
-	describe( 'Controller', function() {
+describe( 'index', function() {
+	describe( '#Controller', function() {
 		describe( '#getInitialState', function() {
 			it( 'returns disabled fields', function() {
 				var controller = testController( { fieldNames: [ 'firstName' ] } ),
@@ -60,15 +60,14 @@ describe( 'form', function() {
 		} );
 
 		it( 'enables the fields on the first event', function( done ) {
-			var onNewState,
-				controller;
+			var onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
 				done();
 			} );
 
-			controller = testController( {
+			testController( {
 				fieldNames: [ 'firstName' ],
 				onNewState: onNewState
 			} );
