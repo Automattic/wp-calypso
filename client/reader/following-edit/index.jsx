@@ -27,6 +27,7 @@ import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import smartSetState from 'lib/react-smart-set-state';
 import escapeRegexp from 'escape-string-regexp';
 import FollowingEditSortControls from './sort-controls';
+import FollowingExportButton from './export-button';
 import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
@@ -386,6 +387,7 @@ const FollowingEdit = React.createClass( {
 					ref="feed-search" />
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
+					<FollowingExportButton />
 					<FollowingImportButton />
 					{ ! hasNoSubscriptions ? <FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } /> : null }
 					<Gridicon icon="search" className="following-edit__search" onClick={ this.toggleSearching } />
