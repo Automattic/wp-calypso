@@ -1,13 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
+import PostTypeList from 'my-sites/post-type-list';
 
-export default function Types() {
-	return <Main>Custom Post Type Listing</Main>;
+export default function Types( { type } ) {
+	return (
+		<Main>
+			<PostTypeList type={ type } />
+		</Main>
+	);
 }
+
+Types.propTypes = {
+	type: PropTypes.string.isRequired
+};
