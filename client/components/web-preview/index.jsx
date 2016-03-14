@@ -28,6 +28,8 @@ const WebPreview = React.createClass( {
 		showPreview: React.PropTypes.bool,
 		// Show external link button
 		showExternal: React.PropTypes.bool,
+		// Show close button
+		showClose: React.PropTypes.bool,
 		// Show device viewport switcher
 		showDeviceSwitcher: React.PropTypes.bool,
 		// The URL that should be displayed in the iframe
@@ -57,6 +59,7 @@ const WebPreview = React.createClass( {
 	getDefaultProps() {
 		return {
 			showExternal: true,
+			showClose: true,
 			showDeviceSwitcher: true,
 			previewMarkup: null,
 			onClick: noop,
