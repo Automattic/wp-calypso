@@ -49,8 +49,8 @@ describe( 'my time dependent test', function() {
 
 describe( 'my time dependent test that use a sandbox and arrow functions', () => {
 	let clock;
-	
-	useFakeTimers( Date.now() ) newClock => {
+
+	useFakeTimers( Date.now(), newClock => {
 		clock = newClock;
 	} );
 
