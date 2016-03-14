@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 
 /**
@@ -19,16 +20,25 @@ export function redirect() {
 
 export function list( context ) {
 	const siteId = getSiteFragment( context.path );
+	const sectionedPath = sectionify( context.path );
 
 	// [TODO]: Translate title text when settled upon
 	setTitle( 'Custom Post Type', { siteId: siteId } );
 
-	let baseAnalyticsPath = sectionify( context.path );
+	// Analytics
+	let baseAnalyticsPath = sectionedPath;
 	if ( siteId ) {
 		baseAnalyticsPath += '/:site';
 	}
-
 	pageView.record( baseAnalyticsPath, 'Custom Post Type' );
 
-	ReactDom.render( <Types />, document.getElementById( 'primary' ) );
+	// Derive type
+	const type = sectionedPath.replace( /^\/types\//, '' );
+
+	ReactDom.render(
+		<ReduxProvider store={ context.store }>
+			<Types type={ type } />
+		</ReduxProvider>,
+		document.getElementById( 'primary' )
+	);
 }
