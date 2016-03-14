@@ -32,6 +32,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
+import WebPreview from 'components/web-preview';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -135,6 +136,10 @@ Layout = React.createClass( {
 		);
 	},
 
+	onClosePreview() {
+		this.props.focus.set( 'sidebar' );
+	},
+
 	render: function() {
 		var sectionClass = classnames(
 				'wp',
@@ -168,6 +173,14 @@ Layout = React.createClass( {
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
+				{ this.props.section === 'sites' &&
+					<WebPreview
+						className="layout__design"
+						showPreview={ this.props.focus.getCurrent() === 'design' }
+						onClose={ this.onClosePreview }
+						previewUrl={ this.props.sites.getSelectedSite().URL }
+					/>
+				}
 			</div>
 		);
 	}
