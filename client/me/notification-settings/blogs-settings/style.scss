@@ -5,7 +5,33 @@
 	align-items: center;
 }
 
-.notification-settings-blog-settings,
+.notification-settings-blog-settings {
+	.search-card {
+		margin-bottom: 1px;
+	}
+
+	// Override the display: flex; here to avoid breaking
+	// the positioning of the fadeoverlay.
+	.foldable-card {
+		.foldable-card__header {
+			padding: 0 0 0 25px;
+			display: block;
+		}
+
+		.foldable-card__main {
+			display: block;
+		}
+
+		&.is-expanded {
+			.foldable-card__content {
+				border-top: none;
+				padding-top: 0;
+			}
+		}
+	}
+}
+
+.notification-settings-blog-settings-blog,
 .notification-settings-blog-settings-placeholder {
 	&.is-expanded {
 		margin-top: 16px;
@@ -19,12 +45,9 @@
 
 .notification-settings-blog-settings-header,
 .notification-settings-blog-settings-placeholder__header {
+	width: 100%;
 	display: flex;
 	color: $gray;
-
-	@include breakpoint( ">480px" ) {
-		cursor: pointer;
-	}
 
 	.site__content {
 		padding-left: 0;

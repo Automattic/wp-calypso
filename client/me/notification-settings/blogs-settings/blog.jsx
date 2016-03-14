@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import FoldableCard from 'components/foldable-card';
 import Header from './header';
 import SettingsForm from 'me/notification-settings/settings-form';
 
@@ -26,33 +26,32 @@ export default React.createClass( {
 		onSaveToAll: PropTypes.func.isRequired
 	},
 
-	getInitialState() {
-		return {
-			isExpanded: false
-		};
-	},
-
 	render() {
 		const { blog, blog: { ID: sourceId }, settings, disableToggle, devices, hasUnsavedChanges, onToggle, onSave, onSaveToAll } = this.props;
-		const { isExpanded } = this.state;
-		const styles = classNames( 'notification-settings-blog-settings', {
-			'is-compact': ! isExpanded,
-			'is-expanded': isExpanded
-		} );
+		const header = <Header { ...{ blog, settings } } />;
+		const settingsForm = (
+			<SettingsForm
+				{ ...{ sourceId, devices, settings, hasUnsavedChanges, isApplyAllVisible: ! disableToggle, onToggle, onSave, onSaveToAll } }
+				settingKeys={ [ 'new_comment', 'comment_like', 'post_like', 'follow', 'achievement', 'mentions' ] } />
+		);
+
+		if ( disableToggle ) {
+			return (
+				<Card className="notification-settings-blog-settings-blog is-compact">
+					{ header }
+					{ settingsForm }
+				</Card>
+			);
+		}
 
 		return (
-			<Card className={ styles }>
-				<Header
-					{ ...{ blog, settings, disableToggle } }
-					onToggle={ () => this.setState( { isExpanded: ! isExpanded } ) } />
-				{ () => {
-					if ( isExpanded || disableToggle ) {
-						return <SettingsForm
-							{ ...{ sourceId, devices, settings, hasUnsavedChanges, isApplyAllVisible: ! disableToggle, onToggle, onSave, onSaveToAll } }
-							settingKeys={ [ 'new_comment', 'comment_like', 'post_like', 'follow', 'achievement', 'mentions' ] } />;
-					}
-				}() }
-			</Card>
+			<FoldableCard
+				className="notification-settings-blog-settings-blog"
+				compact={ true }
+				clickableHeader={ true }
+				header={ header } >
+				{ settingsForm }
+			</FoldableCard>
 		);
 	}
 } );

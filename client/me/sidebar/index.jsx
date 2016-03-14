@@ -73,7 +73,7 @@ module.exports = React.createClass( {
 		if ( filterMap[ filteredPath ] ) {
 			selected = filterMap[ filteredPath ];
 		} else {
-			selected = context.path.split( '/' ).pop();
+			selected = context.path.split( '/' ).pop().split( '?' )[0];
 		}
 
 		return (

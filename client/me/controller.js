@@ -200,7 +200,8 @@ export default {
 				userSettings: userSettings,
 				blogs: sites,
 				devices: devices,
-				path: context.path
+				path: context.path,
+				search: context.query.s
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
