@@ -1970,11 +1970,10 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
  */
 Undocumented.prototype.exportReaderFeed = function( fn ) {
 	debug( '/read/following/mine/export' );
-	const params = {
+	const query = {
 		apiVersion: '1.2',
-		path: '/read/following/mine/export'
 	};
-	this.wpcom.req.get( params, fn );
+	this.wpcom.req.get( '/read/following/mine/export', query, fn );
 };
 
 /**
