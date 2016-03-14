@@ -60,15 +60,14 @@ describe( 'index', function() {
 		} );
 
 		it( 'enables the fields on the first event', function( done ) {
-			var onNewState,
-				controller;
+			var onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
 				done();
 			} );
 
-			controller = testController( {
+			testController( {
 				fieldNames: [ 'firstName' ],
 				onNewState: onNewState
 			} );

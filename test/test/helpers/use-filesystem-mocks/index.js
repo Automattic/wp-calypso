@@ -27,6 +27,6 @@ function findQuickMocks( dirpath ) {
 	} );
 }
 
-export default function( dirpath = __dirname ) {
+export default function( dirpath ) {
 	useMockery( findQuickMocks.bind( null, dirpath ), null );
 }

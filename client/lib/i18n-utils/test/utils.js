@@ -80,6 +80,5 @@ describe( 'utils', function() {
 		it( 'should return a language with a three letter country code', function() {
 			expect( getLanguage( 'ast' ).langSlug ).to.equal( 'ast' );
 		} );
-
 	} );
 } );
