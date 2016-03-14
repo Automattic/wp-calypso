@@ -65,6 +65,7 @@ ABTest.prototype.init = function( name ) {
 	this.excludeJetpackSites = testConfig.excludeJetpackSites === true;
 	this.excludeSitesWithPaidPlan = testConfig.excludeSitesWithPaidPlan === true;
 	this.allowAnyLocale = testConfig.allowAnyLocale === true;
+	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
 
 ABTest.prototype.getVariationAndSetAsNeeded = function() {
@@ -76,14 +77,14 @@ ABTest.prototype.getVariationAndSetAsNeeded = function() {
 		return this.defaultVariation;
 	}
 
-	if ( ! this.isEligibleForAbTest() ) {
-		debug( '%s: User is ineligible to participate in A/B test', this.experimentId );
-		return this.defaultVariation;
-	}
-
 	if ( savedVariation && includes( this.variationNames, savedVariation ) ) {
 		debug( '%s: existing variation: "%s"', this.experimentId, savedVariation );
 		return savedVariation;
+	}
+
+	if ( ! this.isEligibleForAbTest() ) {
+		debug( '%s: User is ineligible to participate in A/B test', this.experimentId );
+		return this.defaultVariation;
 	}
 
 	newVariation = this.assignVariation();
@@ -125,8 +126,8 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		return false;
 	}
 
-	//limit the test to new users
-	if ( this.hasRegisteredBeforeTestBegan() ) {
+	// limit the test to new users unless the test explicitly allows anyone
+	if ( this.hasRegisteredBeforeTestBegan() && ! this.allowExistingUsers ) {
 		debug( '%s: User was registered before the test began', this.experimentId );
 		return false;
 	}
