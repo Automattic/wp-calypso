@@ -173,6 +173,14 @@ var PlansCompare = React.createClass( {
 		}
 	},
 
+	isSubmitting: function() {
+		if ( ! this.props.transaction ) {
+			return false;
+		}
+
+		return this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST
+	},
+
 	getColumnCount: function() {
 		if ( ! this.props.selectedSite ) {
 			return 4;
@@ -240,7 +248,7 @@ var PlansCompare = React.createClass( {
 								site={ this.props.selectedSite }
 								cart={ this.props.cart }
 								enableFreeTrials={ this.props.enableFreeTrials }
-								isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST }
+								isSubmitting={ this.isSubmitting() }
 								isImageButton />
 							<span className="plans-compare__plan-name">
 								{ plan.product_name_short }
@@ -359,7 +367,7 @@ var PlansCompare = React.createClass( {
 						plan={ plan }
 						site={ this.props.selectedSite }
 						sitePlan={ sitePlan }
-						isSubmitting={ this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST }
+						isSubmitting={ this.isSubmitting() }
 						cart={ this.props.cart } />
 				</td>
 			);
