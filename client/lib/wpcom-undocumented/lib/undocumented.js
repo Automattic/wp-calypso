@@ -1212,13 +1212,6 @@ Undocumented.prototype.unfollowReaderFeed = function( query, fn ) {
 	this.wpcom.req.post( '/read/following/mine/delete', query, {}, fn );
 };
 
-Undocumented.prototype.exportReaderFeed = function( query, fn ) {
-	var params = omit( query, [] );
-	debug( '/read/following/mine/export' );
-	params.apiVersion = '1.2';
-	this.wpcom.req.get( '/read/following/mine/export', params, fn );
-};
-
 Undocumented.prototype.readTeams = function( fn ) {
 	debug( '/read/teams' );
 	this.wpcom.req.get( '/read/teams', { apiVersion: '1.2' }, fn );
@@ -1967,6 +1960,22 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 		}, resolver );
 	} );
 }
+
+/**
+ * Exports the user's Reader feed as an OPML XML file.
+ * A JSON object is returned with the XML given as a String
+ * in the `opml` field.
+ *
+ * @param {Function} fn           The callback function
+ */
+Undocumented.prototype.exportReaderFeed = function( fn ) {
+	debug( '/read/following/mine/export' );
+	const params = {
+		apiVersion: '1.2',
+		path: '/read/following/mine/export'
+	};
+	this.wpcom.req.get( params, fn );
+};
 
 /**
  * Imports given XML file into the user's Reader feed.
