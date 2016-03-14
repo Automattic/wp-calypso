@@ -3,6 +3,7 @@
  */
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
+	Provider = require( 'react-redux' ).Provider,
 	React = require( 'react' );
 
 /**
@@ -31,14 +32,16 @@ function renderNavigation( context, allSitesPath, siteBasePath ) {
 
 	// Render the My Sites navigation in #secondary
 	ReactDom.render(
-		React.createElement( NavigationComponent, {
-			layoutFocus: layoutFocus,
-			path: context.path,
-			allSitesPath: allSitesPath,
-			siteBasePath: siteBasePath,
-			user: user,
-			sites: sites
-		} ),
+		React.createElement( Provider, { store: context.store },
+			React.createElement( NavigationComponent, {
+				layoutFocus: layoutFocus,
+				path: context.path,
+				allSitesPath: allSitesPath,
+				siteBasePath: siteBasePath,
+				user: user,
+				sites: sites
+			} )
+		),
 		document.getElementById( 'secondary' )
 	);
 }
