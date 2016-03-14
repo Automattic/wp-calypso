@@ -39,6 +39,7 @@ import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
 import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
+import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 
 [
 	wpcomPlugin,
@@ -55,7 +56,8 @@ import contactFormPlugin from './plugins/contact-form/plugin';
 	touchScrollToolbarPlugin,
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
-	contactFormPlugin
+	contactFormPlugin,
+	afterTheDeadlinePlugin
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -105,6 +107,7 @@ const PLUGINS = [
 	'wpcom',
 	'wpeditimage',
 	'wplink',
+	'AtD',
 	'wpcom/autoresize',
 	'wpcom/media',
 	'wpcom/advanced',
@@ -270,6 +273,10 @@ module.exports = React.createClass( {
 			resize: false,
 			menubar: false,
 			indent: false,
+
+			// AfterTheDeadline Configuration
+			atd_rpc_id: 'https://wordpress.com',
+			atd_ignore_enable: true,
 
 			// Try to find a suitable minimum size based on the viewport height
 			// minus the surrounding editor chrome to avoid scrollbars. In the

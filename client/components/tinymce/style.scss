@@ -334,6 +334,7 @@
 /* TinyMCE menus */
 .mce-container.mce-menu,
 .mce-container .mce-floatpanel.mce-popover {
+	z-index: auto !important;
 	background-color: $white;
 	border: 1px solid lighten( $gray, 20% );
 	border-radius: 0 0 4px 4px;
@@ -352,7 +353,6 @@
 
 .mce-menu .mce-container-body {
 	min-width: 160px;
-	margin-bottom: -1px;
 }
 
 .mce-menu-item {
