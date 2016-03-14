@@ -4,7 +4,7 @@ const React = require( 'react' ),
 	noop = require( 'lodash/noop' );
 
 // Internal dependencies
-const Search = require( 'components/search' ),
+const SearchCard = require( 'components/search-card' ),
 	FollowingEditSubscribeFormResult = require( './subscribe-form-result' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' );
 
@@ -115,12 +115,8 @@ var FollowingEditSubscribeForm = React.createClass( {
 		return true;
 	},
 
-	blankSearch: function() {
-		return ( <div className="following-edit__subscribe-form-blank">{ this.translate( 'Follow any site by adding its URL above.' ) }</div> );
-	},
-
 	render: function() {
-		var searchResult = this.blankSearch(),
+		var searchResult = null,
 			handleFollowToggle = noop;
 
 		const searchString = this.state.searchString,
@@ -142,8 +138,9 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		return (
 			<div className="following-edit__subscribe-form">
-				<Search
+				<SearchCard
 					isOpen={ this.props.isSearchOpen }
+					autoFocus={ true }
 					key="newSubscriptionSearch"
 					onSearch={ this.handleSearch }
 					onSearchClose={ this.handleSearchClose }
