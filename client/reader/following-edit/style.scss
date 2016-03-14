@@ -296,16 +296,16 @@
 
 	&.is-placeholder {
 		.reader-list-item__icon {
-			left: 16px;
-
-			@include breakpoint( ">480px" ) {
-				left: 23px;
-			}
+			left: 17px;
 		}
 
 		.reader-list-item__title,
 		.reader-list-item__description {
-			margin-left: 66px;
+			margin-left: 68px;
+
+			@include breakpoint( ">480px" ) {
+				margin-left: 55px;
+			}
 		}
 	}
 }
