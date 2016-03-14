@@ -16,7 +16,6 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 const actions = require( 'lib/posts/actions' ),
-	config = require( 'config' ),
 	route = require( 'lib/route' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
