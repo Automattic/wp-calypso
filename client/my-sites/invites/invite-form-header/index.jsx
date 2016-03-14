@@ -258,7 +258,7 @@ export default React.createClass( {
 				break;
 			case 'follower':
 				explanation = this.translate(
-					'As a follower, you will receive updates every time there is a new post on %(siteName)s.', {
+					'As a follower, you can read the latest posts from %(siteName)s in the WordPress.com Reader.', {
 						args: {
 							siteName: this.getSiteName()
 						}
