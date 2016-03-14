@@ -622,9 +622,15 @@ const PostEditor = React.createClass( {
 	},
 
 	getAllPostsUrl: function() {
-		var type = this.props.type,
-			path = type === 'page' ? '/pages' : '/posts',
-			site = this.props.sites.getSelectedSite();
+		const { type, sites } = this.props;
+		const site = sites.getSelectedSite();
+
+		let path;
+		switch ( type ) {
+			case 'page': path = '/pages'; break;
+			case 'post': path = '/posts'; break;
+			default: path = `/types/${ type }`;
+		}
 
 		if ( type === 'post' && site && ! site.jetpack && ! site.single_user_site ) {
 			path += '/my';
