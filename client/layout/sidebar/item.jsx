@@ -19,6 +19,7 @@ export default React.createClass( {
 		className: React.PropTypes.string,
 		link: React.PropTypes.string.isRequired,
 		buttonLink: React.PropTypes.string,
+		onButtonClick: React.PropTypes.func,
 		buttonLabel: React.PropTypes.string,
 		onNavigate: React.PropTypes.func,
 		icon: React.PropTypes.string,
@@ -36,7 +37,7 @@ export default React.createClass( {
 		return (
 			<a
 				rel={ isExternal( link ) ? 'external' : null }
-				onClick={ this.props.onNavigate }
+				onClick={ this.props.onButtonClick || this.props.onNavigate }
 				href={ link }
 				target={ isExternal( link ) ? '_blank' : null }
 				className="add-new">
