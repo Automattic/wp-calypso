@@ -32,6 +32,12 @@ export default React.createClass( {
 		} );
 	},
 
+	componentWillMount() {
+		if ( this.props.includeFollower ) {
+			this.refreshRoles();
+		}
+	},
+
 	componentDidMount() {
 		RolesStore.on( 'change', this.refreshRoles );
 		this.fetchRoles();
