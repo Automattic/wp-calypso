@@ -47,7 +47,7 @@ const FollowingEdit = React.createClass( {
 
 	getInitialState: function() {
 		return Object.assign( {
-			isSearching: false
+			isSearching: !! this.props.search
 		}, this.getStateFromStores() );
 	},
 
@@ -330,14 +330,19 @@ const FollowingEdit = React.createClass( {
 	},
 
 	toggleSearching() {
+		var isSearching = ! this.state.isSearching;
 		this.setState( {
-			isSearching: ! this.state.isSearching
+			isSearching: isSearching
 		} );
-		this.refs['url-search'].focus();
+		if ( isSearching ) {
+			this.refs['url-search'].focus();
+		}
 	},
 
-	onExistingSearchBlur() {
-		console.log('blur!');
+	onExistingFeedBlur() {
+		if ( ! this.props.search ) {
+			this.toggleSearching();
+		}
 	},
 
 	render: function() {
@@ -401,7 +406,7 @@ const FollowingEdit = React.createClass( {
 					placeholder={ searchPlaceholder }
 					onSearch={ this.doSearch }
 					onSearchClose={ this.toggleSearching }
-					onBlur={ this.onExistingSearchBlur }
+					onBlur={ this.onExistingFeedBlur }
 					initialValue={ this.props.search }
 					delaySearch={ true }
 					ref="url-search" /> : null }
