@@ -7,7 +7,13 @@ import React from 'react';
  * Internal dependencies
  */
 import Main from 'components/main';
+import QueryTitle from 'components/data/query-title';
 
 export default function Types() {
-	return <Main>Custom Post Type Listing</Main>;
+	return (
+		<Main>
+			<QueryTitle title="Custom Post Type" />
+			Custom Post Type Listing
+		</Main>
+	);
 }

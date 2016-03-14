@@ -2,9 +2,24 @@
  * Internal dependencies
  */
 import {
+	TITLE_SET,
 	SELECTED_SITE_SET,
 	SET_SECTION
 } from 'state/action-types';
+
+/**
+ * Returns an action object to be used in signalling that the current page
+ * title should be set to the specified value.
+ *
+ * @param  {String} title Page title
+ * @return {Object}       Action object
+ */
+export function setTitle( title ) {
+	return {
+		type: TITLE_SET,
+		title
+	};
+}
 
 /**
  * Returns an action object to be used in signalling that a site has been set
