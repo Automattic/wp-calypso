@@ -149,7 +149,7 @@ const WebPreview = React.createClass( {
 	},
 
 	render() {
-		const className = classnames( 'web-preview', {
+		const className = classnames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',
