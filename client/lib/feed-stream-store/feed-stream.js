@@ -236,8 +236,9 @@ assign( FeedStream.prototype, {
 
 		do {
 			key = this.postKeys[ i ];
-			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+			let post = FeedPostStore.get( key );
+			if ( ! key.isGap && post ) {
+				date = post[ this.dateProperty ];
 			}
 			++i;
 		} while ( ! date && i < this.postKeys.length );

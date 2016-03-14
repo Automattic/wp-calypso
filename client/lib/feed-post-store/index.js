@@ -8,7 +8,7 @@ var assign = require( 'lodash/assign' ),
 	isEqual = require( 'lodash/isEqual' ),
 	forOwn = require( 'lodash/forOwn' ),
 	clone = require( 'lodash/clone' ),
-	filter = require( 'lodash/filter' );
+	pickBy = require( 'lodash/pickBy' );
 
 /**
  * Internal dependencies
@@ -299,7 +299,9 @@ function markBlockedSitePosts( siteId, isSiteBlocked ) {
 
 function markBlogPostsForRemoval( blogId ) {
 	forOwn( _postsForBlogs, function( post ) {
-		if ( post.site_ID === blogId && ! post.is_marked_for_removal ) {
+		if ( +post.site_ID === +blogId && ! post.is_marked_for_removal ) {
+			debug( 'marking blog post for removal' );
+			debug( post );
 			markPostForRemoval( post );
 		}
 	} );
@@ -307,7 +309,9 @@ function markBlogPostsForRemoval( blogId ) {
 
 function markFeedPostsForRemoval( feedId ) {
 	forOwn( _posts, function( post ) {
-		if ( post.feed_ID === feedId && ! post.is_marked_for_removal ) {
+		if ( +post.feed_id === +feedId && ! post.is_marked_for_removal ) {
+			debug( 'marking feed post for removal' );
+			debug( post );
 			markPostForRemoval( post );
 		}
 	} );
@@ -319,13 +323,9 @@ function markPostForRemoval( post ) {
 }
 
 function removePostsMarkedForRemoval( posts ) {
-	if ( ! posts ) {
-		return;
-	}
-
-	return filter( posts, function( post ) {
+	return pickBy( posts, function( post ) {
 		return ! post.is_marked_for_removal;
 	} );
 }
 
-module.exports = FeedPostStore;
+export default FeedPostStore;
