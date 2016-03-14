@@ -399,6 +399,13 @@ $sidebar-width-min: 228px;
 	z-index: 10;
 }
 
+.design-menu__sidebar-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px;
+}
+
 .layout__design.web-preview.is-visible,
 .layout__design.web-preview {
 	left: 273px;

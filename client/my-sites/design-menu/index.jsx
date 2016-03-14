@@ -20,12 +20,15 @@ const DesignMenu = React.createClass( {
 	render() {
 		return (
 			<div className="design-menu">
-				<span className="current-site__switch-sites">
+				<div className="design-menu__sidebar-actions">
 					<Button compact borderless onClick={ this.onBack }>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ this.translate( 'Back' ) }
 					</Button>
-				</span>
+					<Button compact borderless href="/design">
+						{ this.translate( 'Themes' ) } <Gridicon icon="themes" size={ 18 } />
+					</Button>
+				</div>
 				<Card>
 					Design Tools!
 				</Card>
