@@ -72,14 +72,18 @@ let Viewers = React.createClass( {
 	},
 
 	renderViewer( viewer ) {
+		const removeThisViewer = () => {
+			this.removeViewer( viewer );
+		};
+
 		return (
 			<PeopleListItem
 				key={ viewer.ID }
 				user={ viewer }
-				type='viewer'
+				type="viewer"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
-				onRemove={ this.removeViewer.bind( this, viewer ) }
+				onRemove={ removeThisViewer }
 			/>
 		);
 	},
@@ -99,9 +103,9 @@ let Viewers = React.createClass( {
 	render() {
 		var viewers,
 			emptyContentArgs = {
-				title: this.props.site && this.props.site.jetpack ?
-					this.translate( "Oops, Jetpack sites don't support viewers." ) :
-					this.translate( "You don't have any viewers yet." )
+				title: this.props.site && this.props.site.jetpack
+					? this.translate( "Oops, Jetpack sites don't support viewers." )
+					: this.translate( "You don't have any viewers yet." )
 			},
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null;
 
