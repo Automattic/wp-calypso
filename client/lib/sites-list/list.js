@@ -19,7 +19,8 @@ var wpcom = require( 'lib/wp' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	PreferencesActions = require( 'lib/preferences/actions' ),
 	PreferencesStore = require( 'lib/preferences/store' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	userUtils = require( 'lib/user/utils' );
 
 /**
  * SitesList component
@@ -72,9 +73,7 @@ SitesList.prototype.get = function() {
  * @api public
  */
 SitesList.prototype.fetch = function() {
-	var userIsLoggedIn = Boolean( user.data );
-
-	if ( ! userIsLoggedIn || this.fetching ) {
+	if ( ! userUtils.isLoggedIn() || this.fetching ) {
 		return;
 	}
 
