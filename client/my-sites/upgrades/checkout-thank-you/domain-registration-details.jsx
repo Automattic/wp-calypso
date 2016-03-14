@@ -16,7 +16,7 @@ import supportUrls from 'lib/url/support';
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
 		domainContactEmailVerified = purchases.some( purchase => purchase.isEmailVerified ),
-		hasOtherPrimaryDomain = selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;
+		hasOtherPrimaryDomain = selectedSite.options && selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;
 
 	return (
 		<div>
