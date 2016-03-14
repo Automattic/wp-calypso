@@ -1,0 +1,15 @@
+
+.sites-navigation {
+	position: relative;
+	flex: 1 1 auto;
+	align-self: stretch;
+	display: flex;
+}
+
+@include breakpoint( "<660px" ) {
+
+	.sites-navigation {
+		width: 0;
+	}
+
+}
