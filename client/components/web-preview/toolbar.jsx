@@ -17,6 +17,8 @@ const PreviewToolbar = React.createClass( {
 		showDeviceSwitcher: React.PropTypes.bool,
 		// Show external link button
 		showExternal: React.PropTypes.bool,
+		// Show close button
+		showClose: React.PropTypes.bool,
 		// The device to display, used for setting preview dimensions
 		device: React.PropTypes.string,
 		// Elements to render on the right side of the toolbar
@@ -49,13 +51,15 @@ const PreviewToolbar = React.createClass( {
 	render() {
 		return (
 			<div className="web-preview__toolbar">
-				<button
-					className="web-preview__close"
-					onClick={ this.props.onClose }
-					aria-label={ this.translate( 'Close preview' ) }
-				>
-					<Gridicon icon="cross" />
-				</button>
+				{ this.props.showClose &&
+					<button
+						className="web-preview__close"
+						onClick={ this.props.onClose }
+						aria-label={ this.translate( 'Close preview' ) }
+					>
+						<Gridicon icon="cross" />
+					</button>
+				}
 				{ this.props.showExternal &&
 					<a className="web-preview__external" href={ this.props.previewUrl } target="_blank">
 						<Gridicon icon="external" />
