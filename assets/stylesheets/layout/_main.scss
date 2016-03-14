@@ -332,7 +332,8 @@ $sidebar-width-min: 228px;
 .sidebar,
 .wp-secondary .site-selector,
 .current-site,
-.sidebar__menu {
+.sidebar__menu,
+.design-menu {
 	transform: translateX( 0 );
 	transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
 }
@@ -364,8 +365,53 @@ $sidebar-width-min: 228px;
 	}
 }
 
+.focus-design {
+	.wp-primary {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+
+	.wp-secondary .design-menu {
+		opacity: 1;
+		transform: translateX( 272px );
+		pointer-events: auto;
+	}
+
+	.sidebar,
+	.wp-secondary .site-selector {
+		pointer-events: none;
+	}
+}
+
 .focus-sidebar {
 	overflow: hidden;
+}
+
+.design-menu {
+	background: lighten( $gray, 30% );
+	position: fixed;
+		top: 47px;
+		bottom: 0;
+		left: -272px;
+	width: 272px;
+	overflow: hidden;
+	opacity: 0.8;
+	z-index: 10;
+}
+
+.layout__design.web-preview.is-visible,
+.layout__design.web-preview {
+	left: 273px;
+	.web-preview__content {
+		top: 0;
+		transform: scale( 1 );
+	}
+}
+
+.layout__design.web-preview.is-visible {
+	.web-preview__content {
+		transform: scale( 1 );
+	}
 }
 
 // site selector in the sidebar
