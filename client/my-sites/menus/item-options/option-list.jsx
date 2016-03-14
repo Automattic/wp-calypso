@@ -25,6 +25,7 @@ var SCROLL_THROTTLE_TIME_MS = 400,
  */
 var Search = React.createClass( {
 	propTypes: {
+		itemType: React.PropTypes.string,
 		searchTerm: React.PropTypes.string,
 		onSearch: React.PropTypes.func.isRequired
 	},
@@ -96,6 +97,7 @@ var OptionList = React.createClass( {
 					{ this.props.children }
 					{ this.props.isLoading && <LoadingPlaceholder/> }
 					{ this.props.isEmpty &&
+						this.props.itemType === 'page' &&
 						<EmptyPlaceholder isSearch={ !! ( this.state.searchTerm && this.state.searchTerm.length ) }
 							createLink={ this.props.itemType.createLink }
 							typeName={ this.props.itemType.name } />

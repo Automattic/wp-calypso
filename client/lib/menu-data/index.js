@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-var MenuData = require( './menu-data' );
+import MenuData from './menu-data';
 
 /**
  * Singleton instance
  */
-var instance = new MenuData();
+const instance = new MenuData();
 
-module.exports = instance;
+export default instance;
