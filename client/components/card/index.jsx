@@ -3,31 +3,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import assign from 'lodash/assign';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Card',
 
 	propTypes: {
 		className: React.PropTypes.string,
 		href: React.PropTypes.string,
 		tagName: React.PropTypes.string,
-		target: React.PropTypes.string
+		target: React.PropTypes.string,
+		compact: React.PropTypes.bool
 	},
 
 	render: function() {
-		var element = this.props.tagName || 'div',
-			linkClassName = this.props.href ? 'is-card-link' : null,
-			props = assign( {}, this.props, { className: classnames( this.props.className, 'card', linkClassName ) } ),
-			linkIndicator = null;
+		const className = classnames( 'card', this.props.className, {
+			'is-card-link': !! this.props.href,
+			'is-compact': this.props.compact
+		} );
 
+		let element = this.props.tagName || 'div';
+		let linkIndicator;
 		if ( this.props.href ) {
 			element = 'a';
 			linkIndicator = <Gridicon
@@ -37,7 +40,7 @@ module.exports = React.createClass( {
 
 		return React.createElement(
 			element,
-			props,
+			assign( {}, this.props, { className } ),
 			this.props.href ? linkIndicator : null,
 			this.props.children
 		);
