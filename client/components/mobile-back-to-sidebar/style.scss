@@ -5,6 +5,7 @@
 	position: relative;
 	background: $white;
 	border-bottom: 1px solid lighten( $gray, 20% );
+	cursor: pointer;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
