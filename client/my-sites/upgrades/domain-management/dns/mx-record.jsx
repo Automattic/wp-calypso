@@ -12,6 +12,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormSettingExplanation from 'components/forms/form-setting-explanation' ;
 
 const MxRecord = React.createClass( {
 	statics: {
@@ -61,6 +62,20 @@ const MxRecord = React.createClass( {
 						value={ this.props.fieldValues.data }
 						placeholder={ this.translate( 'e.g. mail.your-provider.com', { context: 'MX DNS Record', textOnly: true } ) } />
 					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid Mail Server' ) } isError={ true } /> : null }
+					<FormSettingExplanation>
+						{ this.translate(
+							'Please use a domain name here (e.g. %(domain)s) - an IP address (e.g. %(ipAddress)s) will {{strong}}not{{/strong}} work.', {
+								args: {
+									domain: 'mail.your-provider.com',
+									ipAddress: '123.45.78.9'
+								},
+								components: {
+									strong: <strong />
+								},
+								context: 'Hint for the \'Handled by\' field of a MX record'
+							}
+						) }
+					</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormFieldset>
