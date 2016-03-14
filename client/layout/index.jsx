@@ -178,7 +178,7 @@ Layout = React.createClass( {
 						className="layout__design"
 						showPreview={ this.props.focus.getCurrent() === 'design' }
 						onClose={ this.onClosePreview }
-						previewUrl={ this.props.sites.getSelectedSite().URL }
+						previewUrl={ this.props.sites.getSelectedSite().URL + '?demo=true&iframe=true&theme_preview=true' }
 					/>
 				}
 			</div>
