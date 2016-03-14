@@ -1,8 +1,10 @@
 ## Single test runner
 
-Single test runner loads only test files that are listed in config.json file. Configuration reflects folders structure.
+Single test runner loads only test files that are listed in `tests.json` file in top level directory. Configuration reflects folders structure.
 
-### Extending config.json
+### Extending tests.json
+
+Config file location: `client/tests.json`
 
 Example folder: `client/state/plugins/wporg/test/`
 
@@ -36,6 +38,25 @@ state
 			test-selectors
 				√ Test name
 ...
+```
+
+### How to run single test runner
+
+We provide two single test runners because of different node path rules applied. They contain files located in:
+* `client/` folder
+* `server/` folder
+
+To execute one of the single test runners go to its top folder and execute `make test` command.
+
+Example for client:
+
+```bash
+> cd `client`
+> make test
+> # if you want to use different test reporter
+> env REPORTER=dot make test
+> # runner knows about Mocha --grep flag
+> make test-post-norm
 ```
 
 ### How to run specified suite or test-case
