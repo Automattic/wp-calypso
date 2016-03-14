@@ -1199,6 +1199,13 @@ Undocumented.prototype.unfollowReaderFeed = function( query, fn ) {
 	this.wpcom.req.post( '/read/following/mine/delete', query, {}, fn );
 };
 
+Undocumented.prototype.exportReaderFeed = function( query, fn ) {
+	var params = omit( query, [] );
+	debug( '/read/following/mine/export' );
+	params.apiVersion = '1.2';
+	this.wpcom.req.get( '/read/following/mine/export', params, fn );
+};
+
 Undocumented.prototype.readTeams = function( fn ) {
 	debug( '/read/teams' );
 	this.wpcom.req.get( '/read/teams', { apiVersion: '1.2' }, fn );

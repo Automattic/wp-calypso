@@ -26,6 +26,7 @@ import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import smartSetState from 'lib/react-smart-set-state';
 import escapeRegexp from 'escape-string-regexp';
 import FollowingEditSortControls from './sort-controls';
+import FollowingExportButton from './export-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
@@ -360,6 +361,8 @@ const FollowingEdit = React.createClass( {
 
 				<SectionHeader className="following-edit__header" label={ this.translate( 'Sites' ) } count={ this.state.totalSubscriptions }>
 					<FollowingEditSortControls onSelectChange={ this.handleSortOrderChange } sortOrder={ this.state.sortOrder } />
+
+					<FollowingExportButton />
 
 					<Button compact primary onClick={ this.toggleAddSite }>
 						{ this.translate( 'Follow Site' ) }
