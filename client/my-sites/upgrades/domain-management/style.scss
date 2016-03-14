@@ -949,6 +949,23 @@ ul.dns__list {
 	}
 }
 
+.domain-management-email {
+	.is-placeholder {
+		.section-header__label {
+			@include placeholder();
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.google-apps-user-item__email,
+		.google-apps-user-item__manage-link {
+			@include placeholder();
+		}
+	}
+}
+
 .google-apps-users-card.card {
 	padding: 0;
 	@include clear-fix;
@@ -997,11 +1014,11 @@ ul.dns__list {
 	}
 }
 
-.google-apps-users-card__user-email {
+.google-apps-user-item__email {
 	float: left;
 }
 
-.google-apps-users-card__user-manage-link {
+.google-apps-user-item__manage-link {
 	float: right;
 	font-size: 13px;
 }
