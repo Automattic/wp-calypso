@@ -9,7 +9,8 @@ var React = require( 'react' ),
  */
 var SidebarItem = require( 'layout/sidebar/item' ),
 	config = require( 'config' ),
-	postTypesList = require( 'lib/post-types-list' )();
+	postTypesList = require( 'lib/post-types-list' )(),
+	analytics = require( 'analytics' );
 
 var PublishMenu = React.createClass( {
 
@@ -104,6 +105,15 @@ var PublishMenu = React.createClass( {
 		this.setState( this.getPostTypes( this.props.site ) );
 	},
 
+	maybeRecordPostTypeStats: function( className ) {
+		var excludeFromStats = [ 'posts', 'pages' ];
+
+		if ( excludeFromStats.indexOf( className ) === -1 ) {
+			analytics.mc.bumpStat( 'calypso_publish_menu_click', className );
+		}
+		this.props.onNavigate();
+	},
+
 	renderMenuItem: function( menuItem ) {
 		var className = this.props.itemLinkClass(
 				menuItem.paths ? menuItem.paths : menuItem.link,
@@ -156,7 +166,7 @@ var PublishMenu = React.createClass( {
 				className={ className }
 				link={ link }
 				buttonLink={ menuItem.buttonLink }
-				onNavigate={ this.props.onNavigate }
+				onNavigate={ this.maybeRecordPostTypeStats }
 				icon={ icon }
 				preloadSectionName={ preload }
 			/>
