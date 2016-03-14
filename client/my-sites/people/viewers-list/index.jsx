@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' ),
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
 	ViewersActions = require( 'lib/viewers/actions' ),
 	ViewersStore = require( 'lib/viewers/store' ),
 	InfiniteList = require( 'components/infinite-list' ),
@@ -147,7 +147,10 @@ let Viewers = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.props.label } count={ this.props.fetching ? undefined : this.props.totalViewers }/>
+				<PeopleListSectionHeader
+					label={ this.props.label }
+					site={ this.props.site }
+					count={ this.props.fetching ? null : this.props.totalViewers }/>
 				<Card className={ listClass }>
 					{ viewers }
 				</Card>

@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' ),
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
 	FollowersActions = require( 'lib/followers/actions' ),
 	EmailFollowersActions = require( 'lib/email-followers/actions' ),
 	InfiniteList = require( 'components/infinite-list' ),
@@ -203,7 +203,11 @@ let Followers = React.createClass( {
 		}
 		return (
 			<div>
-				<SectionHeader label={ headerText } count={ this.props.fetching || this.props.fetchOptions.search ? undefined : this.props.totalFollowers } />
+				<PeopleListSectionHeader
+					isFollower
+					label={ headerText }
+					site={ this.props.site }
+					count={ this.props.fetching || this.props.fetchOptions.search ? null : this.props.totalFollowers } />
 				<Card className={ listClass }>
 					{ followers }
 				</Card>
