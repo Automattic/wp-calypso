@@ -19,8 +19,15 @@ sections = [
 	},
 	{
 		name: 'me',
-		paths: [ '/me', '/purchases' ],
+		paths: [ '/me' ],
 		module: 'me',
+		group: 'me',
+		secondary: true
+	},
+	{
+		name: 'purchases',
+		paths: [ '/purchases' ],
+		module: 'me/purchases',
 		group: 'me',
 		secondary: true
 	},
