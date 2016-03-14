@@ -32,7 +32,8 @@ var Main = require( 'components/main' ),
 	CommentStore = require( 'lib/comment-store/comment-store' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+	XPostHelper = require( 'reader/xpost-helper' ),
+	FeedPostStore = require( 'lib/feed-post-store' );
 
 const GUESSED_POST_HEIGHT = 600,
 	HEADER_OFFSET_TOP = 46;
@@ -162,6 +163,8 @@ module.exports = React.createClass( {
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'auto';
 		}
+
+		FeedPostStore.removePostsMarkedForRemoval();
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -364,13 +367,12 @@ module.exports = React.createClass( {
 		}
 
 		post = PostStore.get( postKey );
-		postState = post._state;
-		itemKey = this.getPostRef( postKey );
-
-		if ( ! post || postState === 'minimal' ) {
+		if ( ! post || post._state === 'minimal' ) {
 			FeedPostStoreActions.fetchPost( postKey );
 			postState = 'pending';
 		}
+
+		itemKey = this.getPostRef( postKey );
 
 		switch ( postState ) {
 			case 'pending':

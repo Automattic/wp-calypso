@@ -7,7 +7,8 @@ var assign = require( 'lodash/assign' ),
 	forEach = require( 'lodash/forEach' ),
 	isEqual = require( 'lodash/isEqual' ),
 	forOwn = require( 'lodash/forOwn' ),
-	clone = require( 'lodash/clone' );
+	clone = require( 'lodash/clone' ),
+	pickBy = require( 'lodash/pickBy' );
 
 /**
  * Internal dependencies
@@ -20,6 +21,8 @@ var Dispatcher = require( 'dispatcher' ),
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action;
 
+import { action as FeedSubscriptionActionType } from 'lib/reader-feed-subscriptions/constants';
+
 var _posts = {},
 	_postsForBlogs = {},
 	FeedPostStore;
@@ -29,7 +32,7 @@ function blogKey( postKey ) {
 }
 
 FeedPostStore = {
-	get: function( postKey ) {
+	get( postKey ) {
 		if ( ! postKey ) {
 			return;
 		}
@@ -39,6 +42,12 @@ FeedPostStore = {
 		} else if ( postKey.feedId && postKey.postId ) {
 			return _posts[ postKey.postId ];
 		}
+	},
+
+	removePostsMarkedForRemoval() {
+		_postsForBlogs = removePostsMarkedForRemoval( _postsForBlogs );
+		_posts = removePostsMarkedForRemoval( _posts );
+		FeedPostStore.emit( 'change' );
 	}
 };
 
@@ -109,6 +118,14 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 		case ReaderSiteBlockActionType.RECEIVE_UNBLOCK_SITE:
 			markBlockedSitePosts( action.siteId, ! ( action.data && action.data.success ) );
+			break;
+
+		case FeedSubscriptionActionType.RECEIVE_UNFOLLOW_READER_FEED:
+			if ( action.blogId ) {
+				markBlogPostsForRemoval( action.blogId );
+			} else {
+				markFeedPostsForRemoval( action.feedId );
+			}
 			break;
 	}
 } );
@@ -189,10 +206,7 @@ function receivePostFromPage( newPost ) {
 	if ( newPost.feed_ID && newPost.ID && ! _posts[ newPost.ID ] ) {
 		// 1.3 style
 		setPost( newPost.ID, assign( {}, newPost, { _state: 'minimal' } ) );
-	} else if ( newPost.site_ID && ! _postsForBlogs[ blogKey( {
-				blogId: newPost.site_ID,
-				postId: newPost.ID
-			} ) ] ) {
+	} else if ( newPost.site_ID && ! _postsForBlogs[ blogKey( { blogId: newPost.site_ID, postId: newPost.ID } ) ] ) {
 		setPost( null, assign( {}, newPost, { _state: 'minimal' } ) );
 	}
 }
@@ -283,4 +297,35 @@ function markBlockedSitePosts( siteId, isSiteBlocked ) {
 	} );
 }
 
-module.exports = FeedPostStore;
+function markBlogPostsForRemoval( blogId ) {
+	forOwn( _postsForBlogs, function( post ) {
+		if ( +post.site_ID === +blogId && ! post.is_marked_for_removal ) {
+			debug( 'marking blog post for removal' );
+			debug( post );
+			markPostForRemoval( post );
+		}
+	} );
+}
+
+function markFeedPostsForRemoval( feedId ) {
+	forOwn( _posts, function( post ) {
+		if ( +post.feed_id === +feedId && ! post.is_marked_for_removal ) {
+			debug( 'marking feed post for removal' );
+			debug( post );
+			markPostForRemoval( post );
+		}
+	} );
+}
+
+function markPostForRemoval( post ) {
+	const newPost = assign( {}, post, { is_marked_for_removal: true } );
+	setPost( newPost.feed_item_ID, newPost );
+}
+
+function removePostsMarkedForRemoval( posts ) {
+	return pickBy( posts, function( post ) {
+		return ! post.is_marked_for_removal;
+	} );
+}
+
+export default FeedPostStore;

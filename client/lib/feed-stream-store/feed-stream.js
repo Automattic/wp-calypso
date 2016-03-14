@@ -204,7 +204,7 @@ assign( FeedStream.prototype, {
 	},
 
 	getLastItemWithDate: function() {
-		var i, key, date;
+		var i, key, date, post;
 
 		i = this.postKeys.length - 1;
 		if ( i === -1 ) {
@@ -214,7 +214,10 @@ assign( FeedStream.prototype, {
 		do {
 			key = this.postKeys[ i ];
 			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+				post = FeedPostStore.get( key );
+				if ( post ) {
+					date = post[ this.dateProperty ];
+				}
 			}
 			--i;
 		} while ( ! date && i !== -1 );
@@ -233,8 +236,9 @@ assign( FeedStream.prototype, {
 
 		do {
 			key = this.postKeys[ i ];
-			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+			let post = FeedPostStore.get( key );
+			if ( ! key.isGap && post ) {
+				date = post[ this.dateProperty ];
 			}
 			++i;
 		} while ( ! date && i < this.postKeys.length );
