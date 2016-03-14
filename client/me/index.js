@@ -8,7 +8,6 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import removeOverlay from 'lib/remove-overlay';
 
 export default function() {
 	if ( config.isEnabled( 'me/my-profile' ) ) {
@@ -18,11 +17,6 @@ export default function() {
 		// Redirect previous URLs
 		page( '/me/profile', controller.profileRedirect );
 		page( '/me/public-profile', controller.profileRedirect );
-	}
-
-	if ( config.isEnabled( 'me/billing-history' ) ) {
-		page( '/me/billing', removeOverlay, controller.sidebar, controller.billingHistory );
-		page( '/me/billing/:transaction_id', controller.sidebar, controller.billingHistory );
 	}
 
 	if ( config.isEnabled( 'me/next-steps' ) ) {
