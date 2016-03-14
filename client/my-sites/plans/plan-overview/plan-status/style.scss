@@ -72,3 +72,16 @@
 		font-size: 21px;
 	}
 }
+
+.plan-status__nudge {
+	color: $alert-green;
+	font-style: italic;
+
+	del {
+		color: initial;
+	}
+
+	+ .notice {
+		margin-top: 8px;
+	}
+}
