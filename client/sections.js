@@ -99,7 +99,6 @@ sections = [
 		paths: [ '/theme' ],
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
-		routing: config( 'env' ) === 'development' ? 'isomorphic' : '',
 		secondary: false,
 		group: 'sites'
 	},
@@ -108,7 +107,6 @@ sections = [
 		paths: [ '/design' ],
 		module: 'my-sites/themes',
 		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
-		routing: config( 'env' ) === 'development' ? 'isomorphic' : '',
 		secondary: true,
 		group: 'sites'
 	},
