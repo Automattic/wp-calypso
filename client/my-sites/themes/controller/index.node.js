@@ -14,6 +14,7 @@ import ThemeDetailsComponent from 'components/data/theme-details';
 import i18n from 'lib/mixins/i18n';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
 import { receiveThemeDetails } from 'state/themes/actions';
 import wpcom from 'lib/wp';
@@ -83,6 +84,12 @@ export function details( context, next ) {
 		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
 		isLoggedIn: !! user
 	};
+
+	context.store.dispatch( setSection( {
+		name: 'theme',
+		group: 'sites',
+		secondary: false,
+	} ) );
 
 	const ConnectedComponent = ( { themeSlug, contentSection } ) => (
 		<ThemeDetailsComponent id={ themeSlug } section={ contentSection } >

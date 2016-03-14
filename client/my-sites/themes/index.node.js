@@ -4,6 +4,16 @@
 import config from 'config';
 import { makeLoggedOutLayout } from 'controller';
 import { details, fetchThemeDetailsData } from './controller';
+import { setSection } from 'state/ui/actions';
+
+function dispatchSetSection( context, next ) {
+	context.store.dispatch( setSection( {
+		name: 'themes',
+		group: 'sites',
+		secondary: true,
+	} ) );
+	next();
+}
 
 // FIXME: These routes will SSR the logged-out Layout even if logged-in.
 // While subsequently replaced by the logged-in Layout on the client-side,
@@ -13,8 +23,8 @@ import { details, fetchThemeDetailsData } from './controller';
 // the layout.
 // FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
 const designRoutes = {
-	'/design': [ makeLoggedOutLayout ],
-	'/design/type/:tier': [ makeLoggedOutLayout ]
+	'/design': [ dispatchSetSection, makeLoggedOutLayout ],
+	'/design/type/:tier': [ dispatchSetSection, makeLoggedOutLayout ]
 };
 
 const themesRoutes = {
