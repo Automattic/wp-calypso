@@ -16,6 +16,7 @@ import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import analytics from 'analytics';
 
 const PublishMenu = React.createClass( {
 	propTypes: {
@@ -78,6 +79,14 @@ const PublishMenu = React.createClass( {
 		];
 	},
 
+	onNavigate( postType ) {
+		if ( ! includes( [ 'post', 'page' ], postType ) ) {
+			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
+		}
+
+		this.props.onNavigate();
+	},
+
 	renderMenuItem( menuItem ) {
 		const { site } = this.props;
 		if ( site.capabilities && ! site.capabilities[ menuItem.capability ] ) {
@@ -131,7 +140,7 @@ const PublishMenu = React.createClass( {
 				className={ className }
 				link={ link }
 				buttonLink={ menuItem.buttonLink }
-				onNavigate={ this.props.onNavigate }
+				onNavigate={ this.onNavigate.bind( this, menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
 			/>
