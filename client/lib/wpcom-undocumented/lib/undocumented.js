@@ -1983,9 +1983,11 @@ Undocumented.prototype.exportReaderFeed = function( fn ) {
  *
  * @param {File}     file         The File object to upload
  * @param {Function} fn           The callback function
+ * @returns {XMLHttpRequest} The XHR instance, to attach `progress`
+ *   listeners to, etc.
  */
-
 Undocumented.prototype.importReaderFeed = function( file, fn ) {
+	debug( '/read/following/mine/import' );
 	const params = {
 		path: '/read/following/mine/import',
 		formData: [
@@ -1993,7 +1995,7 @@ Undocumented.prototype.importReaderFeed = function( file, fn ) {
 		]
 	};
 	// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
-  // *and* pass a `body` of null for this to work properly…
+	// *and* pass a `body` of null for this to work properly…
 	const query = {
 		apiVersion: '1.2',
 	};
