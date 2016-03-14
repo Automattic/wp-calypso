@@ -183,6 +183,18 @@ UndocumentedSite.prototype.setOption = function( query, callback ) {
 	);
 }
 
+UndocumentedSite.prototype.postCounts = function( options, callback ) {
+	let query = Object.assign( {
+		type: 'post',
+		apiNamespace: 'wp' // This currently has no bearing on the route, wpcom-xhr-request needs to be updated to remove the namespace whitelist
+	}, options );
+
+	const type = query.type;
+	delete query.type;
+
+	return this.wpcom.req.get( '/sites/' + this._id + '/wpcom/v2/post-counts/' + type, query, callback );
+};
+
 /**
  * Create an `Export` instance
  *
