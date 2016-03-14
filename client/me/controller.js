@@ -15,7 +15,6 @@ import i18n from 'lib/mixins/i18n';
 import notices from 'notices';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
-import purchasesController from './purchases/controller';
 import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
@@ -317,8 +316,6 @@ export default {
 			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Billing History' );
 		}
 	},
-
-	purchases: purchasesController,
 
 	nextSteps( context ) {
 		const analyticsBasePath = route.sectionify( context.path ),
