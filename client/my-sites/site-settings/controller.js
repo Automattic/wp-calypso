@@ -17,6 +17,7 @@ var sites = require( 'lib/sites-list' )(),
 	SiteSettingsComponent = require( 'my-sites/site-settings/main' ),
 	DeleteSite = require( './delete-site' ),
 	StartOver = require( './start-over' ),
+	utils = require( 'lib/site/utils' ),
 	titleActions = require( 'lib/screen-title/actions' );
 
 function canDeleteSite( site ) {
@@ -42,7 +43,7 @@ module.exports = {
 		site = sites.getSelectedSite();
 
 		// if site loaded, but user cannot manage site, redirect
-		if ( 'undefined' !== typeof site.user_can_manage && ! site.user_can_manage ) {
+		if ( ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' );
 			return;
 		}

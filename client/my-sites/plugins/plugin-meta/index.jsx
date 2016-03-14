@@ -24,6 +24,7 @@ import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSettingsLink from 'my-sites/plugins/plugin-settings-link';
 import PluginInformation from 'my-sites/plugins/plugin-information';
+import { userCan } from 'lib/site/utils';
 
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -209,7 +210,7 @@ export default React.createClass( {
 	hasInstallButton() {
 		if ( this.props.selectedSite ) {
 			return ! this.props.isInstalledOnSite &&
-				this.props.selectedSite.user_can_manage &&
+				userCan( 'manage_options', this.props.selectedSite ) &&
 				this.props.selectedSite.jetpack;
 		}
 	},

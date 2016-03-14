@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import config from 'config';
+import { userCan } from 'lib/site/utils';
 
 module.exports = {
 
@@ -14,7 +15,7 @@ module.exports = {
 		if ( config.isEnabled( 'manage/ads' ) ) {
 			return site.options &&
 				site.options.wordads &&
-				site.user_can_manage &&
+				userCan( 'manage_options', site ) &&
 				( ! site.jetpack || config.isEnabled( 'manage/ads/jetpack' ) );
 		}
 

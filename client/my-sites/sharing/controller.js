@@ -10,6 +10,7 @@ var page = require( 'page' ),
  */
 var sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
+	utils = require( 'lib/site/utils' ),
 	i18n = require( 'lib/mixins/i18n' ),
 	notices = require( 'notices' ),
 	route = require( 'lib/route' ),
@@ -25,7 +26,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Sharing', { textOnly: true } ), { siteID: siteUrl } );
 
-		if ( site && ! site.settings && site.user_can_manage ) {
+		if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
 			site.fetchSettings();
 		}
 
@@ -52,7 +53,7 @@ module.exports = {
 			baseAnalyticsPath = basePath;
 		}
 
-		if ( site && site.capabilities && ! site.capabilities.publish_posts ) {
+		if ( site && ! utils.userCan( 'publish_posts', site ) ) {
 			notices.error( i18n.translate( 'You are not authorized to manage sharing settings for this site.' ) );
 		}
 
@@ -90,7 +91,7 @@ module.exports = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Sharing Buttons' );
 
-		if ( site && ! site.user_can_manage ) {
+		if ( site && ! utils.userCan( 'manage_options', site ) ) {
 			notices.error( i18n.translate( 'You are not authorized to manage sharing settings for this site.' ) );
 		}
 
