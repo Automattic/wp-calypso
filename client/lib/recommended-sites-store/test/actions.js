@@ -1,22 +1,26 @@
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 import mockery from 'mockery';
+import noop from 'lodash/noop';
 import sinon from 'sinon';
 
-var mockSites = null,
-	fetchResponder = function( callback ) {
-		callback();
-	},
-	serverActionHandler = function( payload ) {
-		console.log( payload );
-	},
-	actions;
+/**
+ * Internal dependencies
+ */
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'actions', function() {
+	let actions, mockSites,
+		fetchResponder = function( callback ) {
+			callback();
+		},
+		serverActionHandler = noop;
+
+	useMockery();
+
 	before( function() {
-		mockery.enable( {
-			useCleanCache: true,
-			warnOnUnregistered: false
-		} );
 		mockery.registerAllowable( '../actions' );
 		mockery.registerMock( '../store', {
 			get: function() {
@@ -47,10 +51,6 @@ describe( 'actions', function() {
 
 	beforeEach( function() {
 		mockSites = [];
-	} );
-
-	after( function() {
-		mockery.disable();
 	} );
 
 	it( 'mock took', function() {
