@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -13,6 +14,17 @@ import Button from 'components/button';
 import FilePicker from 'components/file-picker';
 
 const FollowingImportButton = React.createClass( {
+	propTypes: {
+		onProgress: React.PropTypes.func,
+		onError: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			onError: noop
+		};
+	},
+
 	getInitialState() {
 		return {
 			disabled: false
@@ -22,23 +34,29 @@ const FollowingImportButton = React.createClass( {
 	onPick( files ) {
 		// we only care about the first file in the list
 		const file = files[0];
+		if ( ! file ) return;
 
 		const req = wpcom.undocumented().importReaderFeed( file, this.onFeedImport );
 		req.upload.onprogress = this.onFeedImportProgress;
 
-		this.setState( { disabled: true } );
+		this.setState( {
+			disabled: true
+		} );
 	},
 
 	onFeedImport( err, data ) {
+		this.setState( {
+			disabled: false
+		} );
+
 		if ( err ) {
-			return console.log( err.stack );
+			this.props.onError( err );
 		}
 		console.log( 'feed import started', data );
-		this.setState( { disabled: false } );
 	},
 
 	onFeedImportProgress( event ) {
-		console.log( 'onprogress', event );
+		this.props.onProgress( event );
 	},
 
 	render() {
