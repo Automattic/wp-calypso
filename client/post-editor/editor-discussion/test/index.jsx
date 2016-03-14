@@ -4,15 +4,13 @@ require( 'lib/react-test-env-setup' )();
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	mockery = require( 'mockery' ),
-	chai = require( 'chai' ),
-	noop = require( 'lodash/noop' ),
-	expect = chai.expect;
+import mockery from 'mockery';
+import React from 'react';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
+import chai, { expect } from 'chai';
+import noop from 'lodash/noop';
+import { mount, shallow } from 'enzyme';
 
 chai.use( sinonChai );
 const MOCK_COMPONENT = React.createClass( {
@@ -52,21 +50,14 @@ describe( 'EditorDiscussion', function() {
 		EditorDiscussion.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
 	} );
 
-	beforeEach( function() {
-		ReactDom.unmountComponentAtNode( document.body );
-	} );
-
 	after( function() {
 		delete EditorDiscussion.prototype.__reactAutoBindMap.translate;
 	} );
 
 	describe( '#getDiscussionSetting()', function() {
 		it( 'should return an empty object if both post and site are unknown', function() {
-			var tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion />
-			);
-
-			expect( tree.getDiscussionSetting() ).to.eql( {} );
+			const wrapper = mount( <EditorDiscussion /> );
+			expect( wrapper.node.getDiscussionSetting() ).to.eql( {} );
 		} );
 
 		it( 'should return the site default comments open if site exists and post is new', function() {
@@ -75,13 +66,11 @@ describe( 'EditorDiscussion', function() {
 					default_comment_status: true,
 					default_ping_status: false
 				}
-			}, tree;
+			};
 
-			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion site={ site } isNew />
-			);
+			const wrapper = mount( <EditorDiscussion site={ site } isNew /> );
 
-			expect( tree.getDiscussionSetting() ).to.eql( {
+			expect( wrapper.node.getDiscussionSetting() ).to.eql( {
 				comment_status: 'open',
 				ping_status: 'closed'
 			} );
@@ -93,13 +82,11 @@ describe( 'EditorDiscussion', function() {
 					default_comment_status: false,
 					default_ping_status: true
 				}
-			}, tree;
+			};
 
-			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion site={ site } isNew />
-			);
+			const wrapper = mount( <EditorDiscussion site={ site } isNew /> );
 
-			expect( tree.getDiscussionSetting() ).to.eql( {
+			expect( wrapper.node.getDiscussionSetting() ).to.eql( {
 				comment_status: 'closed',
 				ping_status: 'open'
 			} );
@@ -111,40 +98,36 @@ describe( 'EditorDiscussion', function() {
 					comment_status: 'open',
 					ping_status: 'closed'
 				}
-			}, tree;
+			};
+			const wrapper = mount( <EditorDiscussion post={ post } site={ DUMMY_SITE } /> );
 
-			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion post={ post } site={ DUMMY_SITE } />
-			);
-
-			expect( tree.getDiscussionSetting() ).to.equal( post.discussion );
+			expect( wrapper.node.getDiscussionSetting() ).to.equal( post.discussion );
 		} );
 	} );
 
 	describe( '#onChange', function() {
-		var post = {
-			discussion: {
-				comment_status: 'closed',
-				comments_open: false,
-				ping_status: 'open',
-				pings_open: true
-			}
-		};
+		var FormCheckbox = require( 'components/forms/form-checkbox' ),
+			post = {
+				discussion: {
+					comment_status: 'closed',
+					comments_open: false,
+					ping_status: 'open',
+					pings_open: true
+				}
+			};
 
 		it( 'should include modified comment status on the post object', function() {
-			var tree, checkbox;
+			var wrapper = shallow( <EditorDiscussion post={ post } site={ DUMMY_SITE } setDiscussionSettings={ function() {} } /> );
 
-			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion post={ post } site={ DUMMY_SITE } setDiscussionSettings={ function() {} } />
-			);
-
-			checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
-			TestUtils.Simulate.change( checkbox, {
-				target: {
-					name: 'comment_status',
-					checked: true
-				}
-			} );
+			wrapper
+				.find( FormCheckbox )
+				.filterWhere( n => n.prop( 'name' ) === 'ping_status' )
+				.simulate( 'change', {
+					target: {
+						name: 'comment_status',
+						checked: true
+					}
+				} );
 
 			expect( editPost ).to.have.been.calledWith( {
 				discussion: {
@@ -155,19 +138,17 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		it( 'should include modified ping status on the post object', function() {
-			var tree, checkbox;
+			var wrapper = shallow( <EditorDiscussion post={ post } site={ DUMMY_SITE } setDiscussionSettings={ function() {} } /> );
 
-			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion post={ post } site={ DUMMY_SITE } setDiscussionSettings={ function() {} } />
-			);
-
-			checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
-			TestUtils.Simulate.change( checkbox, {
-				target: {
-					name: 'ping_status',
-					checked: false
-				}
-			} );
+			wrapper
+				.find( FormCheckbox )
+				.filterWhere( n => n.prop( 'name' ) === 'ping_status' )
+				.simulate( 'change', {
+					target: {
+						name: 'ping_status',
+						checked: false
+					}
+				} );
 
 			expect( editPost ).to.have.been.calledWith( {
 				discussion: {
