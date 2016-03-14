@@ -75,6 +75,19 @@ export const ThemeSheet = React.createClass( {
 		return { priceElement, themeContentElement };
 	},
 
+	renderBar() {
+		const placeholder = <span className="themes__sheet-placeholder">loading.....</span>;
+		const title = this.props.name || placeholder;
+		const tag = this.props.author ? 'by ' + this.props.author : placeholder;
+
+		return (
+			<div className="themes__sheet-bar">
+				<span className="themes__sheet-bar-title">{ title }</span>
+				<span className="themes__sheet-bar-tag">{ tag }</span>
+			</div>
+		)
+	},
+
 	renderScreenshot() {
 		const classes = classNames(
 			'themes__sheet-screenshot',
@@ -111,10 +124,7 @@ export const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="themes__sheet">
-				<div className="themes__sheet-bar">
-					<span className="themes__sheet-bar-title">{ this.props.name }</span>
-					<span className="themes__sheet-bar-tag">by { this.props.author }</span>
-				</div>
+				{ this.renderBar() }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>

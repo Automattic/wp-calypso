@@ -96,7 +96,7 @@
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
-	padding-left: 25px
+	padding-left: 25px;
 }
 
 .themes__sheet-columns {
@@ -116,7 +116,6 @@
 	width: 50%;
 	flex-direction: column;
 }
-
 
 .themes__sheet-action-bar {
 	height: 50px;
@@ -180,6 +179,12 @@
 	padding: 20px;
 	// whilst loading
 	min-height: 600px;
+}
+
+.themes__sheet-placeholder {
+	color: transparent;
+	background-color: white;
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
 @include breakpoint( "<660px" ) {
