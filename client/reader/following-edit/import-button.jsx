@@ -21,6 +21,7 @@ const FollowingImportButton = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			onProgress: noop,
 			onError: noop
 		};
 	},
@@ -51,8 +52,9 @@ const FollowingImportButton = React.createClass( {
 
 		if ( err ) {
 			this.props.onError( err );
+		} else {
+			console.log( 'feed import started', data );
 		}
-		console.log( 'feed import started', data );
 	},
 
 	onFeedImportProgress( event ) {
