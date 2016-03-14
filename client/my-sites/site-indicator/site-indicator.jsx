@@ -55,7 +55,9 @@ export default React.createClass( {
 			if ( site.callingHome ) {
 				return false;
 			} else if ( typeof site.unreachable === 'undefined' ) {
-				site.callHome();
+				if ( 'function' === typeof site.callHome ) {
+					site.callHome();
+				}
 				return false;
 			}
 			return true;
