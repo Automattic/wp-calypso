@@ -28,6 +28,16 @@ export default React.createClass( {
 
 	_preloaded: false,
 
+	getDefaultProps() {
+		return {
+			onNavigate: () => {}
+		};
+	},
+
+	onLinkClick() {
+		this.props.onNavigate( this.props.className );
+	},
+
 	renderButton( link ) {
 		if ( ! link ) {
 			return null;
@@ -59,7 +69,7 @@ export default React.createClass( {
 		return (
 			<li className={ classes }>
 				<a
-					onClick={ this.props.onNavigate }
+					onClick={ this.onLinkClick }
 					href={ this.props.link }
 					target={ isExternalLink ? '_blank' : null }
 					onMouseEnter={ this.preload }
