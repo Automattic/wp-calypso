@@ -256,34 +256,6 @@ export default {
 		);
 	},
 
-	billingHistory( context ) {
-		const BillingHistoryComponent = require( './billing-history' ),
-			ViewReceiptModal = require( './billing-history/view-receipt-modal' ),
-			billingData = require( 'lib/billing-history-data' ),
-			transactionId = context.params.transaction_id,
-			basePath = route.sectionify( context.path );
-
-		titleActions.setTitle( i18n.translate( 'Billing History', { textOnly: true } ) );
-
-		renderWithReduxStore(
-			React.createElement( BillingHistoryComponent, { billingData: billingData, sites: sites } ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-
-		if ( transactionId ) {
-			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
-
-			renderWithReduxStore(
-				React.createElement( ViewReceiptModal, { transaction: billingData.getTransaction( transactionId ) } ),
-				document.getElementById( 'tertiary' ),
-				context.store
-			);
-		} else {
-			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Billing History' );
-		}
-	},
-
 	nextSteps( context ) {
 		const analyticsBasePath = route.sectionify( context.path ),
 			NextSteps = require( './next-steps' ),

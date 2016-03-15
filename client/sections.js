@@ -39,6 +39,13 @@ sections = [
 		secondary: true
 	},
 	{
+		name: 'billing',
+		paths: [ '/me/billing' ],
+		module: 'me/billing-history',
+		group: 'me',
+		secondary: true
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
