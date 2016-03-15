@@ -25,6 +25,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import TimezoneDropdown from 'components/timezone-dropdown';
 
 module.exports = React.createClass( {
 
@@ -33,9 +34,9 @@ module.exports = React.createClass( {
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite( site ) {
-		var settings;
 		site = site || this.props.site;
-		settings = {
+
+		const settings = {
 			blogname: site.name,
 			blogdescription: site.description,
 			fetchingSettings: site.fetchingSettings
@@ -45,6 +46,7 @@ module.exports = React.createClass( {
 			settings.lang_id = site.settings.lang_id;
 			settings.blog_public = site.settings.blog_public;
 			settings.admin_url = site.settings.admin_url;
+			settings.timezone_string = site.settings.timezone_string;
 			settings.jetpack_relatedposts_allowed = site.settings.jetpack_relatedposts_allowed;
 			settings.jetpack_sync_non_public_post_stati = site.settings.jetpack_sync_non_public_post_stati;
 
@@ -76,6 +78,7 @@ module.exports = React.createClass( {
 			blogname: '',
 			blogdescription: '',
 			lang_id: '',
+			timezone_string: '',
 			blog_public: '',
 			admin_url: '',
 			jetpack_relatedposts_allowed: false,
@@ -85,6 +88,10 @@ module.exports = React.createClass( {
 			jetpack_sync_non_public_post_stati: false,
 			holidaysnow: false
 		} );
+	},
+
+	onTimezoneSelect( timezone ) {
+		this.setState( { timezone_string: timezone.value } );
 	},
 
 	onRecordEvent( eventAction ) {
@@ -109,6 +116,7 @@ module.exports = React.createClass( {
 						onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
 						onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
 				</FormFieldset>
+
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
 					<FormInput
@@ -121,6 +129,23 @@ module.exports = React.createClass( {
 						onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
 					<FormSettingExplanation>
 						{ this.translate( 'In a few words, explain what this site is about.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="blogtimezone">
+						{ this.translate( 'Site Timezone' ) }
+					</FormLabel>
+
+					<TimezoneDropdown
+						valueLink={ this.linkState( 'timezone_string' ) }
+						selectedZone={ this.linkState( 'timezone_string' ).value }
+						disabled={ this.state.fetchingSettings }
+						onSelect={ this.onTimezoneSelect }
+					/>
+
+					<FormSettingExplanation>
+						{ this.translate( 'Choose a city in your timezone.' ) };
 					</FormSettingExplanation>
 				</FormFieldset>
 			</div>
