@@ -59,6 +59,7 @@ const PublishMenu = React.createClass( {
 				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
+				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
 				buttonLink: site ? '/post/' + site.slug : '/post',
@@ -70,6 +71,7 @@ const PublishMenu = React.createClass( {
 				label: this.translate( 'Pages' ),
 				className: 'pages',
 				capability: 'edit_pages',
+				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
 				buttonLink: site ? '/page/' + site.slug : '/page',
@@ -106,7 +108,7 @@ const PublishMenu = React.createClass( {
 		}
 
 		let link;
-		if ( ! isEnabled && site.options ) {
+		if ( ( ! isEnabled || ! menuItem.queryable ) && site.options ) {
 			link = this.props.site.options.admin_url + menuItem.wpAdminLink;
 		} else {
 			link = menuItem.link + this.props.siteSuffix;
@@ -155,6 +157,7 @@ const PublishMenu = React.createClass( {
 				label: get( postType.labels, 'menu_name', postType.label ),
 				className: postType.name,
 				config: 'manage/custom-post-types',
+				queryable: postType.api_queryable,
 
 				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
 				//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
