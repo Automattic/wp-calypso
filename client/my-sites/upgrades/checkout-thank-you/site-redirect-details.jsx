@@ -40,8 +40,11 @@ const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 };
 
 SiteRedirectDetails.propTypes = {
-	selectedSite: React.PropTypes.object.isRequired,
-	domain: React.PropTypes.string.isRequired
+	domain: React.PropTypes.string.isRequired,
+	selectedSite: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object
+	] ).isRequired
 };
 
 export default SiteRedirectDetails;

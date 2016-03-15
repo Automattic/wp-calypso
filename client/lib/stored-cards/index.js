@@ -93,10 +93,8 @@ StoredCards.prototype.initialize = function( storedCards ) {
  * @return {array} stored cards
  **/
 StoredCards.prototype.parse = function( data ) {
-	/**
-	 * Remove the _headers
-	 */
 	delete data._headers;
+
 	return data;
 };
 

@@ -16,7 +16,7 @@ import supportUrls from 'lib/url/support';
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
 		domainContactEmailVerified = purchases.some( purchase => purchase.isEmailVerified ),
-		hasOtherPrimaryDomain = selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;
+		hasOtherPrimaryDomain = selectedSite.options && selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;
 
 	return (
 		<div>
@@ -66,9 +66,12 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 };
 
 DomainRegistrationDetails.propTypes = {
+	domain: React.PropTypes.string.isRequired,
 	purchases: React.PropTypes.array.isRequired,
-	selectedSite: React.PropTypes.object.isRequired,
-	domain: React.PropTypes.string.isRequired
+	selectedSite: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object
+	] ).isRequired
 };
 
 export default DomainRegistrationDetails;

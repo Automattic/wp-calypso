@@ -106,9 +106,6 @@ ProductsList.prototype.initialize = function( productsList ) {
  * @return {array}
  **/
 ProductsList.prototype.parse = function( data ) {
-	/**
-	 * Remove the _headers
-	 */
 	delete data._headers;
 
 	return data;

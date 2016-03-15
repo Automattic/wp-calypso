@@ -63,7 +63,10 @@ const PremiumPlanDetails = ( { selectedSite } ) => {
 };
 
 PremiumPlanDetails.propTypes = {
-	selectedSite: React.PropTypes.object.isRequired
+	selectedSite: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object
+	] ).isRequired
 };
 
 export default PremiumPlanDetails;

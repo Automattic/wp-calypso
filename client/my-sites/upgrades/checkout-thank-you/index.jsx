@@ -21,6 +21,8 @@ import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
+import FreeTrialNudge from './free-trial-nudge'
+import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import HappinessSupport from 'components/happiness-support';
@@ -59,6 +61,15 @@ function findPurchaseAndDomain( purchases, predicate ) {
 }
 
 const CheckoutThankYou = React.createClass( {
+	propTypes: {
+		productsList: React.PropTypes.object.isRequired,
+		receiptId: React.PropTypes.number,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object
+		] ).isRequired
+	},
+
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
@@ -183,7 +194,7 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	productRelatedMessages() {
-		const selectedSite = this.props.selectedSite,
+		const { selectedSite } = this.props,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
@@ -191,9 +202,10 @@ const CheckoutThankYou = React.createClass( {
 				<div>
 					<CheckoutThankYouHeader
 						isDataLoaded={ false }
-						selectedSite={ this.props.selectedSite } />
+						selectedSite={ selectedSite } />
 
-					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+					<CheckoutThankYouFeaturesHeader
+						isDataLoaded={ false } />
 
 					<div className="checkout-thank-you__purchase-details-list">
 						<PurchaseDetail isPlaceholder />
@@ -215,20 +227,24 @@ const CheckoutThankYou = React.createClass( {
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ selectedSite } />
 
 				<CheckoutThankYouFeaturesHeader
 					isDataLoaded={ this.isDataLoaded() }
 					isGenericReceipt={ this.isGenericReceipt() }
-					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
+					purchases={ purchases } />
 
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
+							domain={ domain }
 							purchases={ purchases }
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
-							selectedSite={ selectedSite }
-							domain={ domain } />
+							selectedSite={ selectedSite } />
+
+						<FreeTrialNudge
+							purchases={ purchases }
+							selectedSite={ selectedSite } />
 					</div>
 				) }
 			</div>
@@ -244,8 +260,8 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			activatedTheme: ( meta, selectedSite ) => {
-				dispatch( activated( meta, selectedSite, 'calypstore', true ) );
+			activatedTheme: ( meta, site ) => {
+				dispatch( activated( meta, site, 'calypstore', true ) );
 			},
 			fetchReceipt: ( receiptId ) => {
 				dispatch( fetchReceipt( receiptId ) );

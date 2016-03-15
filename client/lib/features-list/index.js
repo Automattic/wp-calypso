@@ -93,10 +93,8 @@ FeaturesList.prototype.initialize = function( features ) {
  * @return {array} features
  **/
 FeaturesList.prototype.parse = function( data ) {
-	/**
-	 * Remove the _headers
-	 */
 	delete data._headers;
+
 	return data;
 };
 
