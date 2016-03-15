@@ -58,16 +58,19 @@ function getRequires( sections ) {
 }
 
 function splitTemplate( path, section ) {
-	var regex, result;
-	if ( path === '/' ) {
-		path = JSON.stringify( path );
+	var regex, result,
+		mainPath = path.main,
+		redirects = path.redirects;
+
+	if ( mainPath === '/' ) {
+		mainPath = JSON.stringify( mainPath );
 	} else {
-		regex = utils.pathToRegExp( path );
-		path = '/' + regex.toString().slice( 1, -1 ) + '/';
+		regex = utils.pathToRegExp( mainPath );
+		mainPath = '/' + regex.toString().slice( 1, -1 ) + '/';
 	}
 
 	result = [
-		'page( ' + path + ', function( context, next ) {',
+		'page( ' + mainPath + ', function( context, next ) {',
 		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'		context.store.dispatch( { type: "SET_SECTION", section: ' + JSON.stringify( section ) + ' } );',
 		'		layoutFocus.next();',
@@ -95,6 +98,25 @@ function splitTemplate( path, section ) {
 		'	}, ' + JSON.stringify( section.name ) + ' );',
 		'} );\n'
 	];
+
+	result.push( redirectsTemplate( path.main, redirects ) );
+
+	return result.join( '\n' );
+}
+
+function redirectsTemplate( mainPath, redirects ) {
+	var result, regex, redirectPath;
+
+	result = redirects.reduce( function( acc, redirect ) {
+		regex = utils.pathToRegExp( redirect );
+		redirectPath = '/' + regex.toString().slice( 1, -1 ) + '/';
+
+		return acc.concat( [
+			'page( ' + redirectPath + ', function( context, next ) {',
+			'	page.redirect( "' + mainPath + '" );',
+			'} );\n'
+		] );
+	}, [] );
 
 	return result.join( '\n' );
 }
