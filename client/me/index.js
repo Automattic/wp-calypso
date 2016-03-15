@@ -13,7 +13,6 @@ import removeOverlay from 'lib/remove-overlay';
 export default function() {
 	if ( config.isEnabled( 'me/my-profile' ) ) {
 		page( '/me', controller.sidebar, controller.profile );
-		page( '/me/account', controller.sidebar, controller.account );
 
 		// Redirect previous URLs
 		page( '/me/profile', controller.profileRedirect );
