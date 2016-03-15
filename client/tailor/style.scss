@@ -1,25 +1,5 @@
 $border-color: #ddd;
 
-.tailor {
-	background-color: $gray-light;
-	margin: 0;
-	overflow-y: scroll;
-	padding: 0;
-	z-index: z-index( 'root', '.main.customize.is-iframe' );
-	-webkit-overflow-scrolling: touch;
-	min-height: 0;
-	position: fixed;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-	width: auto;
-	display: flex;
-}
-
-.tailor__loading {
-}
-
 .tailor-controls {
 	width: 299px;
 	height: 100%;
@@ -90,23 +70,6 @@ $border-color: #ddd;
 .tailor-controls__control-button__arrow {
 	margin-left: auto;
 	color: #a8bece;
-}
-
-.tailor .web-preview {
-	height: 100%;
-	display: inline-block;
-	flex-grow: 1;
-	position: relative;
-}
-
-.tailor .web-preview__frame {
-	top: 0;
-}
-
-.tailor .web-preview__content {
-	height: 100vh;
-	position: relative;
-	top: 0;
 }
 
 .tailor-controls__control {
