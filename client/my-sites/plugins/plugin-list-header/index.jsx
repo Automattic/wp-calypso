@@ -146,7 +146,7 @@ export default React.createClass( {
 						onMouseLeave={ () => this.setState( { addPluginTooltip: false } ) }
 						ref="addPluginButton"
 						aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
-						<Gridicon key="plus-icon" icon="plus-small" size={ 12 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
+						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
 						<Tooltip
 							isVisible={ this.state.addPluginTooltip }
 							context={ this.refs && this.refs.addPluginButton }

@@ -33,7 +33,7 @@ module.exports = React.createClass( {
 					disabled={ this.props.showingForm }
 					onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
 				>
-					<Gridicon icon="plus-small" size={ 12 } />
+					<Gridicon icon="plus-small" size={ 18 } />
 					{ this.translate( 'Add URL' ) }
 				</Button>
 
@@ -44,7 +44,7 @@ module.exports = React.createClass( {
 					className="add-buttons__add-wp-site"
 					onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) }
 				>
-					<Gridicon icon="plus-small" size={ 12 } />
+					<Gridicon icon="plus-small" size={ 18 } />
 					{ this.translate( 'Add WordPress Site' ) }
 				</Button>
 			</div>

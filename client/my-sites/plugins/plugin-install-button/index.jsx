@@ -175,7 +175,7 @@ module.exports = React.createClass( {
 					{ this.props.isInstalling
 						? <span className="plugin-install-button__installing">{ label }</span>
 						: <Button compact={ true } onClick={ this.installAction } >
-							<Gridicon key="plus-icon" icon="plus-small" size={ 11 } /><Gridicon icon="plugins" size={ 18 } /> { this.translate( 'Install' ) }
+							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon icon="plugins" size={ 18 } /> { this.translate( 'Install' ) }
 						</Button>
 					}
 				</span>

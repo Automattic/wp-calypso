@@ -12,21 +12,8 @@
 		margin-right: 16px;
 	}
 
-	.button {
-		position: relative;
-	}
-
 	.button-group {
 		margin-left: 8px;
-	}
-
-	.gridicons-plus-small {
-		height: 12px;
-		left: 4px;
-		margin-left: 0;
-		position: absolute;
-		top: 8px;
-		width: 12px;
 	}
 
 	&.is-placeholder {
@@ -94,8 +81,4 @@
 	align-items: center;
 	display: none;
 	flex-grow: 1;
-}
-
-.plugin-list-header__browser-button.button.is-compact {
-	padding-left: 12px;
 }

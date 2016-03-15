@@ -6,35 +6,6 @@
 	display: flex;
 	align-items: center;
 
-	.button {
-		position: relative;
-
-		.gridicons-plus-small {
-			position: absolute;
-			top: 9px;
-			left: 0px;
-			margin-left: 4px;
-			height: 12px;
-			width: 12px;
-		}
-		&:active .gridicons-plus-small {
-			top: 9.5px;
-		}
-	}
-	.gridicon {
-		margin-left: 4px;
-		margin-right: 4px;
-	}
-
-	.gridicons-plus-small {
-		position: absolute;
-		top: 9px;
-		left: 0px;
-		margin-left: 4px;
-		height: 12px;
-		width: 12px;
-	}
-
 	&.embed {
 			color: $gray;
 			height: 100%;
@@ -67,7 +38,7 @@
 		align-content: space-between;
 
 		a {
-			font-size: 10px;
+			font-size: 11px;
 			text-transform: uppercase;
 		}
 	}
@@ -75,7 +46,7 @@
 
 .plugin-install-button__warning {
 	margin-right: 8px;
-	font-size: 10px;
+	font-size: 11px;
 	color:  $gray;
 	text-transform: uppercase;
 	white-space: nowrap;
