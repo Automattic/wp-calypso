@@ -25,6 +25,13 @@ sections = [
 		secondary: true
 	},
 	{
+		name: 'account',
+		paths: [ '/me/account' ],
+		module: 'me/account',
+		group: 'me',
+		secondary: true
+	},
+	{
 		name: 'purchases',
 		paths: [ '/purchases' ],
 		module: 'me/purchases',
