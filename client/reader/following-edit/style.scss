@@ -292,6 +292,24 @@
 	}
 }
 
+.following-edit.has-no-subscriptions .reader-list-item__card {
+
+	&.is-placeholder {
+		.reader-list-item__icon {
+			left: 17px;
+		}
+
+		.reader-list-item__title,
+		.reader-list-item__description {
+			margin-left: 68px;
+
+			@include breakpoint( ">480px" ) {
+				margin-left: 55px;
+			}
+		}
+	}
+}
+
 .following-edit-navigation {
 	min-height: 25px;
 	margin-bottom: 0.5em;
@@ -389,4 +407,8 @@
 			padding-left: 3px;
 		}
 	}
+}
+
+.is-section-reader .main.following-edit .empty-content {
+	margin-top: -40px;
 }

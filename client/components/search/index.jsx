@@ -89,6 +89,10 @@ const Search = React.createClass( {
 				? debounce( this.props.onSearch, this.props.delayTimeout )
 				: this.props.onSearch;
 		}
+
+		if ( nextProps.isOpen ) {
+			this.setState( { isOpen: nextProps.isOpen } );
+		}
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
