@@ -8,17 +8,23 @@ import React from 'react';
  */
 import EmptyContent from 'components/empty-content';
 import i18n from 'lib/mixins/i18n';
-import { recordAction, recordGaEvent } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 const FollowingEditEmptyContent = React.createClass( {
+	componentDidMount() {
+		recordTrack( 'calypso_reader_empty_manage_following_loaded' );
+	},
+
 	recordAction() {
-		recordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordAction( 'clicked_discover_on_empty_manage_following' );
+		recordGaEvent( 'Clicked Discover on EmptyContent in Manage Following' );
+		recordTrack( 'calypso_reader_discover_on_empty_manage_following_clicked' );
 	},
 
 	recordSecondaryAction() {
-		recordAction( 'clicked_recommendations_on_empty' );
-		recordGaEvent( 'Clicked Recommendations on EmptyContent' );
+		recordAction( 'clicked_recommendations_on_empty_manage_following' );
+		recordGaEvent( 'Clicked Recommendations on EmptyContent in Manage Following' );
+		recordTrack( 'calypso_reader_recommendations_on_empty_manage_following_clicked' );
 	},
 
 	render() {
