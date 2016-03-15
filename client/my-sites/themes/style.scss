@@ -96,7 +96,7 @@
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
-	padding-left: 25px
+	padding-left: 25px;
 }
 
 .themes__sheet-columns {
@@ -117,7 +117,6 @@
 	flex-direction: column;
 }
 
-
 .themes__sheet-action-bar {
 	height: 50px;
 	width: 100%;
@@ -133,10 +132,14 @@
 	margin: 2px;
 }
 
+.themes__sheet-button-placeholder {
+	color: transparent;
+}
+
 .themes__sheet-action-bar-cost {
 	font-weight: 600;
 	color: #4AB866;
-	margin-right: 10px;
+	margin-left: 10px;
 	display: inline-block;
 	max-width: 50%;
 }
@@ -156,19 +159,41 @@
 	width: 0;
 }
 
-.themes__sheet-img {
+.themes__sheet-screenshot {
 	display: block;
-	max-width: 49%;
 	position: absolute;
 	top: 90px;
-	height: auto;
-	width: auto;
-	border: 1px solid $gray;
+	width: 49%;
 	box-shadow: 0px 2px 8px 0px rgba(46,68,83,0.45);
+}
+
+.themes__sheet-screenshot:before {
+	content: "";
+	display: block;
+	// 4:3 screenshot ratio
+	padding-top: 75%;
+	background-color: transparentize( white, 0.5 );
+}
+
+.themes__sheet-img {
+	position: absolute;
+		top: 0;
+		left: 0;
+	width: 100%;
+	height: 100%;
+	border: 1px solid $gray;
 }
 
 .themes__sheet-content {
 	padding: 20px;
+	// whilst loading
+	min-height: 900px;
+}
+
+.themes__sheet-placeholder {
+	color: transparent;
+	background-color: rgba(255, 255, 255, 0.4);
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
 @include breakpoint( "<660px" ) {
@@ -184,14 +209,21 @@
 		width: 100%;
 	}
 
-	.themes__sheet-img {
+	.themes__sheet-screenshot {
 		position: relative;
 		top: 0;
-		max-width: 100%;
-
+		width: 100%;
 	}
 
 	.themes_sheet-action-bar-spacer {
 		display: none;
+	}
+
+	.themes__sheet-screenshot {
+		box-shadow: none;
+	}
+
+	.themes__sheet-screenshot:before {
+		background: linear-gradient( to bottom, transparentize( white, 0.5 ), transparent );
 	}
 }

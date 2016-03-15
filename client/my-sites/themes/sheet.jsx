@@ -14,7 +14,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'components/main';
-import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
@@ -74,58 +73,82 @@ export const ThemeSheet = React.createClass( {
 		return { priceElement, themeContentElement };
 	},
 
-	render() {
-		let actionTitle;
-		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
-			actionTitle = i18n.translate( 'Customize' );
-		} else if ( this.props.isLoggedIn ) {
-			actionTitle = ThemeHelpers.isPremium( this.props ) && ! this.props.purchased //FIXME: purchased ENOENT
-				? i18n.translate( 'Purchase & Activate' )
-				: i18n.translate( 'Activate' );
-		} else {
-			actionTitle = i18n.translate( 'Start with this design' );
-		}
+	renderBar() {
+		const placeholder = <span className="themes__sheet-placeholder">loading.....</span>;
+		const title = this.props.name || placeholder;
+		const tag = this.props.author ? i18n.translate( 'by ' ) + this.props.author : placeholder;
 
-		const section = this.props.section || 'details';
+		return (
+			<div className="themes__sheet-bar">
+				<span className="themes__sheet-bar-title">{ title }</span>
+				<span className="themes__sheet-bar-tag">{ tag }</span>
+			</div>
+		)
+	},
+
+	renderScreenshot() {
+		const img = <img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />;
+		return (
+			<div className="themes__sheet-screenshot">
+				{ this.props.screenshot && img }
+			</div>
+		);
+	},
+
+	renderSectionNav( section ) {
 		const filterStrings = {
 			details: i18n.translate( 'Details', { context: 'Filter label for theme content' } ),
 			documentation: i18n.translate( 'Documentation', { context: 'Filter label for theme content' } ),
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
+		const nav = (
+			<NavTabs label="Details" >
+				<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
+			</NavTabs>
+		);
+
+		return (
+			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
+				{ this.props.name && nav }
+			</SectionNav>
+		);
+	},
+
+	render() {
+		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
+		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
+			actionTitle = i18n.translate( 'Customize' );
+		} else if ( this.props.name ) {
+			actionTitle = i18n.translate( 'Pick this design' );
+		}
+
+		const section = this.props.section || 'details';
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
 
 		return (
 			<Main className="themes__sheet">
-				<div className="themes__sheet-bar">
-					<span className="themes__sheet-bar-title">{ this.props.name }</span>
-					<span className="themes__sheet-bar-tag">by { this.props.author }</span>
-				</div>
+				{ this.renderBar() }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
 							<div className="themes__sheet-action-bar-container">
-								{ priceElement }
-								<Button secondary >{ i18n.translate( 'Download' ) }</Button>
-								<Button primary icon onClick={ this.onPrimaryClick }><Gridicon icon="checkmark"/>{ actionTitle }</Button>
+								<Button onClick={ this.onPrimaryClick }>
+									{ actionTitle }
+									{ priceElement }
+								</Button>
 							</div>
 						</HeaderCake>
 						<div className="themes__sheet-content">
-							<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
-								<NavTabs label="Details" >
-									<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
-									<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
-									<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
-								</NavTabs>
-							</SectionNav>
+							{ this.renderSectionNav( section ) }
 							<Card className="themes__sheet-content">{ themeContentElement }</Card>
 						</div>
 					</div>
 					<div className="themes__sheet-column-right">
 						<Card className="themes_sheet-action-bar-spacer"/>
-						<div className="themes__sheet-screenshot">
-							<img className="themes__sheet-img" src={ this.props.screenshot + '?=w680' } />
-						</div>
+						{ this.renderScreenshot() }
 					</div>
 				</div>
 			</Main>
