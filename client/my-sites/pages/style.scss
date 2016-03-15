@@ -57,11 +57,9 @@
 	font-family: $serif;
 	margin-right: 33px;
 
-	.noticon-home:before {
+	.gridicon {
 		color: $gray;
-		font-size: 24px;
-		margin-left: -3px;
-		margin-right: 4px;
+		margin: 2px 8px -2px 0;
 	}
 }
 

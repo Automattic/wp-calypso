@@ -19,6 +19,8 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	CompactCard = require( 'components/card/compact' ),
 	mapStatus = require( 'lib/route' ).mapPostStatus;
 
+import Gridicon from 'components/gridicon';
+
 var PageList = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
@@ -202,11 +204,11 @@ var Pages = React.createClass({
 		return (
 			<CompactCard className="page" key="blog-posts-page">
 				<span className="page__title" href="">
-					<span className="noticon noticon-home" />
+					<Gridicon icon="house" size={ 18 } />
 					{ this.translate( 'Blog Posts' ) }
 				</span>
 				<span className="page__info">
-					Showing latest posts in the frontpage.
+					{ this.translate( 'Showing latest posts in the frontpage.' ) }
 				</span>
 			</CompactCard>
 		);
