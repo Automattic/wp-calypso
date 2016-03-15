@@ -208,7 +208,7 @@ var Pages = React.createClass({
 					{ this.translate( 'Blog Posts' ) }
 				</span>
 				<span className="page__info">
-					{ this.translate( 'Showing latest posts in the frontpage.' ) }
+					{ this.translate( 'Your latest posts' ) }
 				</span>
 			</CompactCard>
 		);
