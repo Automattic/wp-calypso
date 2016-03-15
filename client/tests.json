@@ -205,6 +205,11 @@
 		"receipts": {
 			"test": [ "reducer" ]
 		},
+		"reader": {
+			"lists": {
+				"test": [ "actions" ]
+			}
+		},
 		"sharing": {
 			"publicize": {
 				"test": [ "actions", "reducer", "selectors" ]
