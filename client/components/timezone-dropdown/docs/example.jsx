@@ -34,7 +34,7 @@ export default React.createClass( {
 					<a href="/devdocs/design/timezone-dropdown">TimezoneDropdown</a>
 				</h2>
 
-				<Card style={ { width: '300px', height: '350px', margin: 0 } }>
+				<Card style={ { width: '300px', height: '320px', margin: 0 } }>
 					<TimezoneDropdown
 						selectedZone={ this.state.timezone }
 						onSelect={ this.onTimezoneSelect }
