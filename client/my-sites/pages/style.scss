@@ -91,6 +91,14 @@
 	text-align: left;
 }
 
+.page__info {
+	color: $gray;
+	font-size: 12px;
+	max-width: 300px;
+	float: right;
+	line-height: 24px;
+}
+
 .page__delete-item.popover__menu-item {
 	&:hover,
 	&:focus {
