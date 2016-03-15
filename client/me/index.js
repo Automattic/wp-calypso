@@ -22,16 +22,6 @@ export default function() {
 		page( '/me/next/:welcome?', controller.sidebar, controller.nextStepsWelcomeRedirect, controller.nextSteps );
 	}
 
-	if ( config.isEnabled( 'me/security' ) ) {
-		page( '/me/security', controller.sidebar, controller.password );
-		page( '/me/security/two-step', controller.sidebar, controller.twoStep );
-		page( '/me/security/connected-applications', controller.sidebar, controller.connectedApplications );
-		page( '/me/security/connected-applications/:application_id', controller.sidebar, controller.connectedApplication );
-		if ( config.isEnabled( 'me/security/checkup' ) ) {
-			page( '/me/security/checkup', controller.sidebar, controller.securityCheckup );
-		}
-	}
-
 	// Trophies and Find-Friends only exist in Atlas
 	// Using a reverse config flag here to try to reflect that
 	// If they're "not enabled", then the router should not redirect them, so they will be handled in Atlas
