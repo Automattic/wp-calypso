@@ -20,7 +20,11 @@ import {
 } from 'lib/products-values';
 import paths from 'my-sites/plans/paths';
 import PurchaseDetail from 'components/purchase-detail';
-import { refreshSitePlans } from 'state/sites/plans/actions';
+import {
+	fetchSitePlans,
+	refreshSitePlans
+} from 'state/sites/plans/actions';
+import { shouldFetchSitePlans } from 'lib/plans';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import * as upgradesNotices from 'lib/upgrades/notices';
 
@@ -32,6 +36,10 @@ const FreeTrialNudge = React.createClass( {
 			React.PropTypes.object
 		] ).isRequired,
 		sitePlans: React.PropTypes.object.isRequired
+	},
+
+	componentWillMount() {
+		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
 	},
 
 	getInitialState() {
@@ -64,6 +72,10 @@ const FreeTrialNudge = React.createClass( {
 		}
 
 		if ( ! this.props.purchases.some( isDomainMapping ) && ! this.props.purchases.some( isDomainRegistration ) ) {
+			return null;
+		}
+
+		if ( ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -101,6 +113,11 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
+			fetchSitePlans( sitePlans, site ) {
+				if ( shouldFetchSitePlans( sitePlans, site ) ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
+			},
 			refreshSitePlans: ( siteId ) => {
 				dispatch( refreshSitePlans( siteId ) );
 			}

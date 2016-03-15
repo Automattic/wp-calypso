@@ -46,11 +46,7 @@ import Main from 'components/main';
 import plansPaths from 'my-sites/plans/paths';
 import PremiumPlanDetails from './premium-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
-import {
-	fetchSitePlans,
-	refreshSitePlans
-} from 'state/sites/plans/actions';
-import { shouldFetchSitePlans } from 'lib/plans';
+import { refreshSitePlans } from 'state/sites/plans/actions';
 import SiteRedirectDetails from './site-redirect-details';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
@@ -90,9 +86,6 @@ const CheckoutThankYou = React.createClass( {
 	componentWillReceiveProps() {
 		this.redirectIfThemePurchased();
 		this.refreshSitesAndSitePlansIfPlanPurchased();
-
-		// Fetches site plans only if they weren't refreshed or if they have not been loaded yet
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
 	},
 
 	refreshSitesAndSitePlansIfPlanPurchased() {
@@ -201,7 +194,7 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	productRelatedMessages() {
-		const selectedSite = this.props.selectedSite,
+		const { selectedSite } = this.props,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
@@ -262,8 +255,7 @@ const CheckoutThankYou = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			receipt: getReceiptById( state, props.receiptId ),
-			sitePlans: getPlansBySite( state, props.selectedSite )
+			receipt: getReceiptById( state, props.receiptId )
 		};
 	},
 	( dispatch ) => {
@@ -273,11 +265,6 @@ export default connect(
 			},
 			fetchReceipt: ( receiptId ) => {
 				dispatch( fetchReceipt( receiptId ) );
-			},
-			fetchSitePlans( sitePlans, site ) {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
 			},
 			refreshSitePlans: ( siteId ) => {
 				dispatch( refreshSitePlans( siteId ) );
