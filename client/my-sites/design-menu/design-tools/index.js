@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 import { translate } from 'lib/mixins/i18n';
-import SiteTitleControl from 'tailor/controls/site-title-control';
-import HeaderImageControl from 'tailor/controls/header-image-control';
-import ControlList from 'tailor/control-list';
+import SiteTitleControl from './site-title-control';
+import HeaderImageControl from './header-image-control';
+import ControlList from './control-list';
 
 const designToolsById = {
 	default: {
