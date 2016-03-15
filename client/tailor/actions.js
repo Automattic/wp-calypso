@@ -41,12 +41,17 @@ export function leaveControl() {
 	return { type: ActionTypes.TAILOR_CONTROL_LEAVE };
 }
 
+export function customizationsSaved() {
+	return { type: ActionTypes.TAILOR_CUSTOMIZATIONS_SAVED };
+}
+
 export function saveCustomizations() {
 	return function( dispatch, getState ) {
 		const { tailor, ui } = getState();
 		const siteId = ui.selectedSiteId;
 		debug( 'saving customizations', tailor.customizations );
 		Object.keys( tailor.customizations ).map( id => saveCustomizationsFor( id, tailor.customizations[ id ], siteId, dispatch ) );
+		dispatch( customizationsSaved() );
 	}
 }
 
