@@ -108,6 +108,8 @@ node_modules: package.json | node-version
 
 # run `make test` in all discovered Makefiles
 test: build
+	@npm run test-client
+	@npm run test-server
 	@$(BIN)/run-all-tests
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint

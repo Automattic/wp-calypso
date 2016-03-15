@@ -15,3 +15,8 @@ test:
         files:
           - client/**/Makefile
           - server/**/Makefile
+    - case $CIRCLE_NODE_INDEX in 0) NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results.xml npm run test-client -- --reporter=mocha-junit-reporter ;; 1) NODE_ENV=test make client/config/index.js && MOCHA_FILE=./test-results.xml npm run test-server -- --reporter=mocha-junit-reporter ;; esac:
+        parallel: true
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -name "test-results.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
+        parallel: true

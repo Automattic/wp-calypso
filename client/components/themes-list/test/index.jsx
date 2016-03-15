@@ -15,6 +15,8 @@ function mockComponent( displayName ) {
 };
 
 describe( 'ThemesList', function() {
+	this.timeout( 10 * 1000 );
+
 	before( function() {
 		mockery.registerMock( './more-button', mockComponent() );
 
