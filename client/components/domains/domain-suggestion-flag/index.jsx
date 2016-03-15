@@ -15,7 +15,7 @@ const DomainSuggestionFlag = React.createClass( {
 	},
 
 	render() {
-		let newTLDs = ['.live'];
+		const newTLDs = [];
 
 		if ( newTLDs.some( function( tld ) {
 				return endsWith( this.props.domain, tld );
