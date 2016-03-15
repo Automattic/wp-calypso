@@ -10,6 +10,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
@@ -38,6 +39,10 @@ const WebPreview = React.createClass( {
 		previewMarkup: React.PropTypes.string,
 		// Optional changes to make to the markup
 		customizations: React.PropTypes.object,
+		// False if customizations are unsaved
+		isCustomizationsSaved: React.PropTypes.bool,
+		// Actions we can take
+		actions: React.PropTypes.object,
 		// The viewport device to show initially
 		defaultViewportDevice: React.PropTypes.string,
 		// Elements to render on the right side of the toolbar
@@ -62,6 +67,7 @@ const WebPreview = React.createClass( {
 			showClose: true,
 			showDeviceSwitcher: true,
 			previewMarkup: null,
+			isCustomizationsSaved: true,
 			onClick: noop,
 			onLoad: noop,
 			onClose: noop,
@@ -189,6 +195,19 @@ const WebPreview = React.createClass( {
 		this.setState( { loaded: true } );
 	},
 
+	saveCustomizations() {
+		if ( this.props.actions.saveCustomizations ) {
+			this.props.actions.saveCustomizations();
+		}
+	},
+
+	renderToolBarButtons() {
+		if ( this.props.customizations && this.props.actions.saveCustomizations ) {
+			const saveButtonText = this.props.isCustomizationsSaved ? this.translate( 'Saved' ) : this.translate( 'Save & Publish' );
+			return <Button compact primary disabled={ this.props.isCustomizationsSaved } onClick={ this.saveCustomizations } >{ saveButtonText }</Button>;
+		}
+	},
+
 	render() {
 		const className = classnames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
@@ -207,7 +226,9 @@ const WebPreview = React.createClass( {
 						device={ this.state.device }
 						{ ...this.props }
 						showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
-					/>
+					>
+						{ this.renderToolBarButtons() }
+					</Toolbar>
 					<div className="web-preview__placeholder">
 						{ ! this.state.loaded &&
 							<div>

@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
 	classnames = require( 'classnames' ),
 	property = require( 'lodash/property' ),
 	sortBy = require( 'lodash/sortBy' );
@@ -33,6 +34,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 
 import { isOffline } from 'state/application/selectors';
 import WebPreview from 'components/web-preview';
+import * as TailorActions from 'tailor/actions';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -181,6 +183,8 @@ Layout = React.createClass( {
 						showPreview={ this.props.focus.getCurrent() === 'design' }
 						previewMarkup={ this.props.previewMarkup }
 						customizations={ this.props.customizations }
+						actions={ this.props.tailorActions }
+						isCustomizationsSaved={ this.props.isCustomizationsSaved }
 						onClose={ this.onClosePreview }
 					/>
 				}
@@ -189,20 +193,30 @@ Layout = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state ) => {
-		const { previewMarkup, customizations } = state.tailor;
-		const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
-		return {
-			isLoading,
-			isSupportUser: state.support.isSupportUser,
-			section,
-			hasSidebar,
-			isFullScreen,
-			chunkName,
-			previewMarkup,
-			customizations,
-			isOffline: isOffline( state )
-		};
+function mapStateToProps( state ) {
+	const { previewMarkup, customizations, isSaved } = state.tailor;
+	const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
+	return {
+		isLoading,
+		isSupportUser: state.support.isSupportUser,
+		section,
+		hasSidebar,
+		isFullScreen,
+		chunkName,
+		previewMarkup,
+		customizations,
+		isCustomizationsSaved: isSaved,
+		isOffline: isOffline( state )
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return {
+		tailorActions: bindActionCreators( TailorActions, dispatch ),
 	}
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
 )( Layout );
