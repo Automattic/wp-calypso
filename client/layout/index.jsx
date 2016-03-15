@@ -177,7 +177,9 @@ Layout = React.createClass( {
 					<WebPreview
 						className="layout__design"
 						showExternal={ false }
+						showClose={ false }
 						showPreview={ this.props.focus.getCurrent() === 'design' }
+						previewMarkup={ this.props.previewMarkup }
 						onClose={ this.onClosePreview }
 					/>
 				}
@@ -188,6 +190,7 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const { previewMarkup } = state.tailor;
 		const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
 		return {
 			isLoading,
@@ -196,6 +199,7 @@ export default connect(
 			hasSidebar,
 			isFullScreen,
 			chunkName,
+			previewMarkup,
 			isOffline: isOffline( state )
 		};
 	}
