@@ -652,6 +652,13 @@ function mediaButton( editor ) {
 
 	editor.on( 'keydown', preventCaptionBackspaceRemove );
 
+	// send contextmenu event up to desktop app
+	if ( config.isEnabled( 'desktop' ) ) {
+		editor.on( 'contextmenu', function( ev ) {
+			ipc.send( 'mce-context-menu', ev );
+		} );
+	}
+
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function() {
