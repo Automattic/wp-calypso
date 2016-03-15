@@ -9,8 +9,8 @@ var store = require( 'store' ),
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( './constants' );
-
+	PreferencesConstants = require( './constants' ),
+	userUtils = require( 'lib/user/utils' );
 /**
  * Module variables
  */
@@ -37,6 +37,10 @@ function mergePreferencesToLocalStorage( preferences ) {
 
 PreferencesActions.fetch = function() {
 	var localStorage = getLocalStorage();
+
+	if ( ! userUtils.isLoggedIn() ) {
+		return;
+	}
 
 	Dispatcher.handleViewAction( {
 		type: 'FETCH_ME_SETTINGS'

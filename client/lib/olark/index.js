@@ -67,8 +67,8 @@ const olark = {
 	},
 
 	handleError: function( error ) {
-		// error.error === 'authorization_required' when the user is logged out
-		// when https://github.com/Automattic/wp-calypso/issues/289 is fixed then we can remove this condition
+		// Hides notices for authorization errors as they should be legitimate (e.g. we use this error code to check
+		// whether the user is logged in when fetching the user profile)
 		if ( error && error.message && error.error !== 'authorization_required' ) {
 			notices.error( error.message );
 		}

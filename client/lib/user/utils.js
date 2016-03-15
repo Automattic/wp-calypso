@@ -52,6 +52,10 @@ var userUtils = {
 
 	getLocaleSlug: function() {
 		return user.get().localeSlug;
+	},
+
+	isLoggedIn: function() {
+		return Boolean( user.data );
 	}
 };
 
