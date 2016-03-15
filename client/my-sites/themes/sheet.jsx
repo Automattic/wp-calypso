@@ -20,12 +20,10 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
-import { purchase, customize, activate, signup } from 'state/themes/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import ThemeHelpers from 'my-sites/themes/helpers';
+import { signup } from 'state/themes/actions';
 import i18n from 'lib/mixins/i18n';
 
-export const ThemeSheet = React.createClass( {
+const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
 
 	propTypes: {
@@ -48,19 +46,7 @@ export const ThemeSheet = React.createClass( {
 	},
 
 	onPrimaryClick() {
-		let action;
-
-		if ( ThemeHelpers.isPremium( this.props ) && ! this.props.purchased && this.props.isLoggedIn ) { //FIXME: purchased ENOENT
-			action = purchase( this.props, this.props.selectedSite, 'showcase-sheet' );
-		} else if ( this.props.active ) { //FIXME: active ENOENT
-			action = customize( this.props, this.props.selectedSite );
-		} else if ( this.props.isLoggedIn ) {
-			action = activate( this.props, this.props.selectedSite, 'showcase-sheet' );
-		} else {
-			action = signup( this.props );
-		}
-
-		this.props.dispatch( action );
+		this.props.dispatch( signup( this.props ) );
 	},
 
 	getContentElement( section ) {
@@ -167,8 +153,4 @@ export const ThemeSheet = React.createClass( {
 	}
 } )
 
-export default connect(
-	state => ( {
-		selectedSite: getSelectedSite( state ) || false,
-	} )
-)( ThemeSheet );
+export default connect()( ThemeSheet );
