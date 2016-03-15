@@ -16,8 +16,8 @@ app.TodoItem = React.createClass( {
     mixins: [ dirtyLinkedState ],
     render() {
       return ( 
-      	<input type="text" valueLink={ this.linkState( 'blogname' ) } />
-      	<input type="text" valueLink={ this.linkState( 'blogdescription' ) } /> 
+        <input type="text" valueLink={ this.linkState( 'blogname' ) } />
+        <input type="text" valueLink={ this.linkState( 'blogdescription' ) } /> 
       );
     }
 ```
@@ -42,5 +42,3 @@ After typing:
 	dirtyFields[ 'blogname' ]
 }
 ```
-
-
