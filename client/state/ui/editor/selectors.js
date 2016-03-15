@@ -17,3 +17,13 @@ export function getEditorPostId( state ) {
 export function isEditorNewPost( state ) {
 	return ! getEditorPostId( state );
 }
+
+/**
+ * Returns whether the editor drafts drawer is visible.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean}       Whether drafts are visible
+ */
+export function isEditorDraftsVisible( state ) {
+	return state.ui.editor.showDrafts;
+}

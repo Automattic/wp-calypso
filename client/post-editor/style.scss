@@ -22,25 +22,6 @@
 	}
 }
 
-// Row of buttons
-.post-editor__sidebar-header {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	padding: 8px;
-
-	@include breakpoint( ">660px" ) {
-		justify-content: space-between;
-	}
-}
-
-.post-editor__toggle-sidebar {
-	margin-left: 16px;
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
-}
-
 .post-editor__inner {
 	position: relative;
 }
@@ -89,19 +70,6 @@
 
 	@include breakpoint( ">1040px" ) {
 		padding: 0;
-	}
-}
-
-.post-editor__close.button.is-compact.is-borderless {
-	display: none;
-	align-self: center;
-	line-height: 12px;
-	padding: 8px;
-	white-space: nowrap;
-	max-width: 50%;
-
-	@include breakpoint( ">660px" ) {
-		display: block;
 	}
 }
 

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getEditorPostId, isEditorNewPost } from '../selectors';
+import { getEditorPostId, isEditorNewPost, isEditorDraftsVisible } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {
@@ -46,6 +46,20 @@ describe( 'selectors', () => {
 			} );
 
 			expect( isNew ).to.be.true;
+		} );
+	} );
+
+	describe( '#isEditorDraftsVisible()', () => {
+		it( 'should return the current drafts visible state', () => {
+			const showDrafts = isEditorDraftsVisible( {
+				ui: {
+					editor: {
+						showDrafts: true
+					}
+				}
+			} );
+
+			expect( showDrafts ).to.be.true;
 		} );
 	} );
 } );

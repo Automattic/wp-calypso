@@ -16,7 +16,6 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 const actions = require( 'lib/posts/actions' ),
-	config = require( 'config' ),
 	route = require( 'lib/route' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
@@ -25,8 +24,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	Button = require( 'components/button' ),
-	Gridicon = require( 'components/gridicon' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
 	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
@@ -39,8 +36,6 @@ const actions = require( 'lib/posts/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
-	DraftsButton = require( 'post-editor/drafts-button' ),
-	PostCountsData = require( 'components/data/post-counts-data' ),
 	PreferencesActions = require( 'lib/preferences/actions' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
@@ -62,6 +57,9 @@ import {
 	setPostPublished,
 	resetRawContent
 } from 'state/ui/editor/post/actions';
+import { isEditorDraftsVisible } from 'state/ui/editor/selectors';
+import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 
 const messages = {
 	post: {
@@ -101,9 +99,6 @@ const messages = {
 		},
 		view: function() {
 			return i18n.translate( 'View Post' );
-		},
-		allPosts: function() {
-			return i18n.translate( 'Posts' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -157,9 +152,6 @@ const messages = {
 		},
 		view: function() {
 			return i18n.translate( 'View Page' );
-		},
-		allPosts: function() {
-			return i18n.translate( 'Pages' );
 		},
 		updated: function() {
 			var site = this.props.sites.getSelectedSite();
@@ -223,7 +215,6 @@ const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: false,
-			showDrafts: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
 			isTitleFocused: false
@@ -270,6 +261,7 @@ const PostEditor = React.createClass( {
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
+		this.hideDrafts();
 	},
 
 	renderNotice: function() {
@@ -300,11 +292,14 @@ const PostEditor = React.createClass( {
 	},
 
 	toggleSidebar: function() {
+		this.hideDrafts();
 		layoutFocus.set( 'content' );
 	},
 
-	toggleDrafts: function() {
-		this.setState( { showDrafts: ! this.state.showDrafts } );
+	hideDrafts() {
+		if ( this.props.showDrafts ) {
+			this.props.toggleDrafts();
+		}
 	},
 
 	render: function() {
@@ -398,36 +393,10 @@ const PostEditor = React.createClass( {
 						: null }
 					</div>
 					<div className="post-editor__sidebar">
-						<div className="post-editor__sidebar-header">
-							{ this.state.showDrafts ?
-								<Button
-									compact borderless
-									className="post-editor__close"
-									onClick={ this.toggleDrafts }
-									aria-label={ this.translate( 'Close drafts list' ) }
-								>
-									<Gridicon icon="cross" /> <span>{ this.translate( 'Close' ) }</span>
-								</Button>
-							:
-								<Button
-									compact borderless
-									className="post-editor__close"
-									href={ this.getAllPostsUrl() }
-									aria-label={ this.translate( 'View list of posts' ) }
-								>
-									<Gridicon icon="arrow-left" size={ 18 } /> <span>{ this.getMessage( 'allPosts' ) }</span>
-								</Button>
-							}
-							{ this.props.type === 'post' && site ?
-								<PostCountsData siteId={ site.ID } status="draft">
-									<DraftsButton onClick={ this.toggleDrafts } site={ site } />
-								</PostCountsData>
-							: null }
-							<button onClick={ this.toggleSidebar } className="button post-editor__toggle-sidebar">
-								<span>{ this.translate( 'Write' ) }</span>
-							</button>
-						</div>
-						{ this.state.showDrafts ?
+						<EditorSidebarHeader
+							allPostsUrl={ this.getAllPostsUrl() }
+							toggleSidebar={ this.toggleSidebar } />
+						{ this.props.showDrafts ?
 							<DraftList { ...this.props }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
@@ -623,9 +592,15 @@ const PostEditor = React.createClass( {
 	},
 
 	getAllPostsUrl: function() {
-		var type = this.props.type,
-			path = type === 'page' ? '/pages' : '/posts',
-			site = this.props.sites.getSelectedSite();
+		const { type, sites } = this.props;
+		const site = sites.getSelectedSite();
+
+		let path;
+		switch ( type ) {
+			case 'page': path = '/pages'; break;
+			case 'post': path = '/posts'; break;
+			default: path = `/types/${ type }`;
+		}
 
 		if ( type === 'post' && site && ! site.jetpack && ! site.single_user_site ) {
 			path += '/my';
@@ -647,7 +622,7 @@ const PostEditor = React.createClass( {
 	},
 
 	onSaveTrashed: function( status, callback ) {
-		this.setState( { showDrafts: false } );
+		this.hideDrafts();
 		this.onSave( status, callback );
 	},
 
@@ -929,19 +904,26 @@ const PostEditor = React.createClass( {
 } );
 
 export default connect(
-	null,
-	dispatch => bindActionCreators( {
-		setContent,
-		setExcerpt,
-		stopEditing,
-		setTitle,
-		setRawContent,
-		save,
-		autosave,
-		setPostPrivate,
-		setPostPublished,
-		resetRawContent
-	}, dispatch ),
+	( state ) => {
+		return {
+			showDrafts: isEditorDraftsVisible( state )
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			toggleDrafts: toggleEditorDraftsVisible,
+			setContent,
+			setExcerpt,
+			stopEditing,
+			setTitle,
+			setRawContent,
+			save,
+			autosave,
+			setPostPrivate,
+			setPostPublished,
+			resetRawContent
+		}, dispatch );
+	},
 	null,
 	{ pure: false }
 )( PostEditor );

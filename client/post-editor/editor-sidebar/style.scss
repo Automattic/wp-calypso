@@ -1,0 +1,36 @@
+.editor-sidebar__header {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 8px;
+
+	@include breakpoint( ">660px" ) {
+		justify-content: space-between;
+	}
+}
+
+.editor-sidebar__close.button.is-compact.is-borderless {
+	display: none;
+	align-self: center;
+	line-height: 12px;
+	padding: 8px;
+	white-space: nowrap;
+	max-width: 50%;
+
+	@include breakpoint( ">660px" ) {
+		display: block;
+	}
+}
+
+.editor-sidebar__header.is-loading:not( .is-drafts-visible ) .editor-sidebar__close {
+	@include placeholder( $lighten-percentage: 20% );
+	padding: 4px;
+	margin: 4px;
+}
+
+.editor-sidebar__toggle-sidebar {
+	margin-left: 16px;
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+}
