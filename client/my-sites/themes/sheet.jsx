@@ -76,7 +76,7 @@ export const ThemeSheet = React.createClass( {
 	renderBar() {
 		const placeholder = <span className="themes__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
-		const tag = this.props.author ? 'by ' + this.props.author : placeholder;
+		const tag = this.props.author ? i18n.translate( 'by ' ) + this.props.author : placeholder;
 
 		return (
 			<div className="themes__sheet-bar">
