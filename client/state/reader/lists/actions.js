@@ -34,17 +34,19 @@ export function requestSubscribedLists() {
 			type: READER_LISTS_REQUEST,
 		} );
 
-		return wpcom.undocumented().readLists().then( ( { lists } ) => {
-			dispatch( receiveLists( lists ) );
-			dispatch( {
-				type: READER_LISTS_REQUEST_SUCCESS,
-				lists
-			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: READER_LISTS_REQUEST_FAILURE,
-				error
-			} );
+		return wpcom.undocumented().readLists( function( error, data ) {
+			if ( error ) {
+				dispatch( {
+					type: READER_LISTS_REQUEST_FAILURE,
+					error
+				} );
+			} else {
+				dispatch( receiveLists( data ) );
+				dispatch( {
+					type: READER_LISTS_REQUEST_SUCCESS,
+					data
+				} );
+			}
 		} );
 	};
 }

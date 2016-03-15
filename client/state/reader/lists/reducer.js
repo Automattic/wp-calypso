@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-//import keyBy from 'lodash/keyBy';
+import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
@@ -25,8 +25,7 @@ import {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			//return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
-			return state;
+			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
 		case SERIALIZE:
 			return state;
 		case DESERIALIZE:

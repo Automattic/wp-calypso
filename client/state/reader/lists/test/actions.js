@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 import {
 	receiveLists,
-	requestedSubscribedLists
+	requestSubscribedLists
 } from '../actions';
 
 describe( 'actions', () => {
