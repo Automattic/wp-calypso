@@ -218,4 +218,12 @@
 	.themes_sheet-action-bar-spacer {
 		display: none;
 	}
+
+	.themes__sheet-screenshot {
+		box-shadow: none;
+	}
+
+	.themes__sheet-screenshot:before {
+		background: linear-gradient( to bottom, transparentize( white, 0.5 ), transparent );
+	}
 }
