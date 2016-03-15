@@ -75,13 +75,13 @@ module.exports = React.createClass( {
 	getPostTypeLabel: function( postType ) {
 		var label;
 
-		switch ( postType.name ) {
+		switch ( postType.slug ) {
 			case 'index': label = this.translate( 'Front Page, Archive Pages, and Search Results', { context: 'jetpack' } ); break;
 			case 'post': label = this.translate( 'Posts' ); break;
 			case 'page': label = this.translate( 'Pages' ); break;
 			case 'attachment': label = this.translate( 'Media' ); break;
 			case 'portfolio': label = this.translate( 'Portfolio Items' ); break;
-			default: label = postType.label;
+			default: label = postType.name;
 		}
 
 		return label;
@@ -92,7 +92,7 @@ module.exports = React.createClass( {
 			{ name: 'index' }
 		].concat( this.props.postTypes ).map( function( postType ) {
 			return {
-				value: postType.name,
+				value: postType.slug,
 				label: this.getPostTypeLabel( postType )
 			};
 		}, this );
