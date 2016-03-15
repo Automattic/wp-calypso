@@ -71,10 +71,9 @@ export default React.createClass( {
 		return (
 			<Main className="design-assets">
 				<div className="design-assets__group">
-					<h2>
-						<a href="/devdocs/design/typography">Typography</a>
-					</h2>
-					<h3>Interface Typography</h3>
+					<h1>Typography Reference</h1>
+					<p>A visual reference for all typography used in the Calypso UI.</p>
+					<h2>Interface Typography</h2>
 					<Card>
 						<p style={ interfaceTitle }>Quick foxes jump nightly above wizards.</p>
 						<p style={ interfaceSubtitle }>Pack my box with five dozen liquor jugs</p>
@@ -82,7 +81,7 @@ export default React.createClass( {
 						<p style={ interfaceLabel }>Site description</p>
 						<p style={ interfaceCaption }>Views per page</p>
 					</Card>
-					<h3>Content Typography</h3>
+					<h2>Content Typography</h2>
 					<Card>
 						<p style={ contentTitle }>Quick foxes jump nightly above wizards.</p>
 						<p style={ contentSubtitle }>Pack my box with five dozen liquor jugs</p>

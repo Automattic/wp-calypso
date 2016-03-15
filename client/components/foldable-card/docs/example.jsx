@@ -56,7 +56,7 @@ export default React.createClass( {
 				</p>
 				<p>
 					<FoldableCard
-						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
+						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & an expanded summary component</small></div></div> }
 						summary={ <button className="button">Update</button> }
 						expandedSummary={ <button className="button">Update</button> }>
 						Nothing to see here. Keep walking!
@@ -64,7 +64,7 @@ export default React.createClass( {
 				</p>
 				<p>
 					<FoldableCard
-						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
+						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & an expanded summary component</small></div></div> }
 						summary={ <Button compact scary>Update</Button> }
 						expandedSummary={ <Button compact scary>Update</Button> }>
 						Nothing to see here. Keep walking!
