@@ -95,6 +95,28 @@ export const ThemeSheet = React.createClass( {
 		);
 	},
 
+	renderSectionNav( section ) {
+		const filterStrings = {
+			details: i18n.translate( 'Details', { context: 'Filter label for theme content' } ),
+			documentation: i18n.translate( 'Documentation', { context: 'Filter label for theme content' } ),
+			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
+		};
+
+		const nav = (
+			<NavTabs label="Details" >
+				<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
+				<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
+			</NavTabs>
+		);
+
+		return (
+			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
+				{ this.props.name && nav }
+			</SectionNav>
+		);
+	},
+
 	render() {
 		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
@@ -104,12 +126,6 @@ export const ThemeSheet = React.createClass( {
 		}
 
 		const section = this.props.section || 'details';
-		const filterStrings = {
-			details: i18n.translate( 'Details', { context: 'Filter label for theme content' } ),
-			documentation: i18n.translate( 'Documentation', { context: 'Filter label for theme content' } ),
-			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
-		};
-
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
 
 		return (
@@ -126,13 +142,7 @@ export const ThemeSheet = React.createClass( {
 							</div>
 						</HeaderCake>
 						<div className="themes__sheet-content">
-							<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[section] }>
-								<NavTabs label="Details" >
-									<NavItem path={ `/theme/${ this.props.id }/details` } selected={ section === 'details' } >{ i18n.translate( 'Details' ) }</NavItem>
-									<NavItem path={ `/theme/${ this.props.id }/documentation` } selected={ section === 'documentation' } >{ i18n.translate( 'Documentation' ) }</NavItem>
-									<NavItem path={ `/theme/${ this.props.id }/support` } selected={ section === 'support' } >{ i18n.translate( 'Support' ) }</NavItem>
-								</NavTabs>
-							</SectionNav>
+							{ this.renderSectionNav( section ) }
 							<Card className="themes__sheet-content">{ themeContentElement }</Card>
 						</div>
 					</div>
