@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' ),
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
 	ViewersActions = require( 'lib/viewers/actions' ),
 	ViewersStore = require( 'lib/viewers/store' ),
 	InfiniteList = require( 'components/infinite-list' ),
@@ -72,14 +72,18 @@ let Viewers = React.createClass( {
 	},
 
 	renderViewer( viewer ) {
+		const removeThisViewer = () => {
+			this.removeViewer( viewer );
+		};
+
 		return (
 			<PeopleListItem
 				key={ viewer.ID }
 				user={ viewer }
-				type='viewer'
+				type="viewer"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
-				onRemove={ this.removeViewer.bind( this, viewer ) }
+				onRemove={ removeThisViewer }
 			/>
 		);
 	},
@@ -99,9 +103,9 @@ let Viewers = React.createClass( {
 	render() {
 		var viewers,
 			emptyContentArgs = {
-				title: this.props.site && this.props.site.jetpack ?
-					this.translate( "Oops, Jetpack sites don't support viewers." ) :
-					this.translate( "You don't have any viewers yet." )
+				title: this.props.site && this.props.site.jetpack
+					? this.translate( "Oops, Jetpack sites don't support viewers." )
+					: this.translate( "You don't have any viewers yet." )
 			},
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null;
 
@@ -147,7 +151,10 @@ let Viewers = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.props.label } count={ this.props.fetching ? undefined : this.props.totalViewers }/>
+				<PeopleListSectionHeader
+					label={ this.props.label }
+					site={ this.props.site }
+					count={ this.props.fetching ? null : this.props.totalViewers }/>
 				<Card className={ listClass }>
 					{ viewers }
 				</Card>

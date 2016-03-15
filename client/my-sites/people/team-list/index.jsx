@@ -9,14 +9,14 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' ),
 	PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	SiteUsersFetcher = require( 'components/site-users-fetcher' ),
 	UsersActions = require( 'lib/users/actions' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	NoResults = require( 'my-sites/no-results' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'analytics' ),
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
 
 /**
  * Module Variables
@@ -94,7 +94,10 @@ var Team = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ headerText } count={ this.props.fetchingUsers || this.props.fetchOptions.search ? undefined : this.props.totalUsers } />
+				<PeopleListSectionHeader
+					label={ headerText }
+					site={ this.props.site }
+					count={ this.props.fetchingUsers || this.props.fetchOptions.search ? null : this.props.totalUsers } />
 				<Card className={ listClass }>
 					{ people }
 				</Card>
