@@ -110,6 +110,7 @@ const WebPreview = React.createClass( {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
 		if ( this.props.customizations && this.refs.iframe ) {
+			debug( 'updating preview with customizations', this.props.customizations );
 			updatePreviewWithChanges( this.refs.iframe.contentDocument, this.props.customizations );
 		}
 

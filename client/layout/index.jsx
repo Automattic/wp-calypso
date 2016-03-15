@@ -180,6 +180,7 @@ Layout = React.createClass( {
 						showClose={ false }
 						showPreview={ this.props.focus.getCurrent() === 'design' }
 						previewMarkup={ this.props.previewMarkup }
+						customizations={ this.props.customizations }
 						onClose={ this.onClosePreview }
 					/>
 				}
@@ -190,7 +191,7 @@ Layout = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const { previewMarkup } = state.tailor;
+		const { previewMarkup, customizations } = state.tailor;
 		const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
 		return {
 			isLoading,
@@ -200,6 +201,7 @@ export default connect(
 			isFullScreen,
 			chunkName,
 			previewMarkup,
+			customizations,
 			isOffline: isOffline( state )
 		};
 	}
