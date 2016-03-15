@@ -132,10 +132,14 @@
 	margin: 2px;
 }
 
+.themes__sheet-button-placeholder {
+	color: transparent;
+}
+
 .themes__sheet-action-bar-cost {
 	font-weight: 600;
 	color: #4AB866;
-	margin-right: 10px;
+	margin-left: 10px;
 	display: inline-block;
 	max-width: 50%;
 }

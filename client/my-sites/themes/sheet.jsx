@@ -14,7 +14,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'components/main';
-import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
@@ -25,7 +24,6 @@ import { purchase, customize, activate, signup } from 'state/themes/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import ThemeHelpers from 'my-sites/themes/helpers';
 import i18n from 'lib/mixins/i18n';
-import classNames from 'classnames';
 
 export const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -98,15 +96,11 @@ export const ThemeSheet = React.createClass( {
 	},
 
 	render() {
-		let actionTitle;
+		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
 		if ( this.props.isLoggedIn && this.props.active ) { //FIXME: active ENOENT
 			actionTitle = i18n.translate( 'Customize' );
-		} else if ( this.props.isLoggedIn ) {
-			actionTitle = ThemeHelpers.isPremium( this.props ) && ! this.props.purchased //FIXME: purchased ENOENT
-				? i18n.translate( 'Purchase & Activate' )
-				: i18n.translate( 'Activate' );
-		} else {
-			actionTitle = i18n.translate( 'Start with this design' );
+		} else if ( this.props.name ) {
+			actionTitle = i18n.translate( 'Pick this design' );
 		}
 
 		const section = this.props.section || 'details';
@@ -125,9 +119,10 @@ export const ThemeSheet = React.createClass( {
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
 							<div className="themes__sheet-action-bar-container">
-								{ priceElement }
-								<Button secondary >{ i18n.translate( 'Download' ) }</Button>
-								<Button primary icon onClick={ this.onPrimaryClick }><Gridicon icon="checkmark"/>{ actionTitle }</Button>
+								<Button onClick={ this.onPrimaryClick }>
+									{ actionTitle }
+									{ priceElement }
+								</Button>
 							</div>
 						</HeaderCake>
 						<div className="themes__sheet-content">
