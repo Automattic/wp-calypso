@@ -43,9 +43,5 @@ export default function() {
 		page( '/me/find-friends', controller.findFriendsRedirect );
 	}
 
-	page( '/me/notifications', controller.sidebar, controller.notifications );
-	page( '/me/notifications/comments', controller.sidebar, controller.comments );
-	page( '/me/notifications/updates', controller.sidebar, controller.updates );
-	page( '/me/notifications/subscriptions', controller.sidebar, controller.notificationSubscriptions );
 	page( '/me/get-apps', controller.sidebar, controller.apps );
 };
