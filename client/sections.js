@@ -46,6 +46,13 @@ sections = [
 		secondary: true
 	},
 	{
+		name: 'notification-settings',
+		paths: [ '/me/notifications' ],
+		module: 'me/notification-settings',
+		group: 'me',
+		secondary: true
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
