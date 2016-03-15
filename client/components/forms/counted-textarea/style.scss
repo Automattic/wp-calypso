@@ -4,7 +4,9 @@
 
 	&.is-exceeding-acceptable-length {
 		background: $alert-red;
-		.counted-textarea__count-panel {
+
+		.counted-textarea__count-panel,
+		.gridicons-info-outline {
 			color: $white;
 		}
 	}
