@@ -540,8 +540,8 @@ PostActions = {
 			siteId: siteId
 		} );
 
-		// Only pass 20%ish of requests to WP-API for now.
-		if ( 0 === ( siteId % 5 ) ) {
+		// Only pass 50%ish of requests to WP-API for now.
+		if ( 0 === ( siteId % 2 ) ) {
 			wpcomInterface = wpcom.undocumented();
 		}
 
