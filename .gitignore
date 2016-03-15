@@ -12,6 +12,7 @@ node_modules
 *.sw?
 !*.swf
 .eslintcache
+test-results*.xml
 
 # script used during docker build that is specific to the environment
 env-config.sh
