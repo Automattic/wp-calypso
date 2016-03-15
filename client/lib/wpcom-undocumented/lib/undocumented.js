@@ -7,7 +7,8 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
 	omit = require( 'lodash/omit' ),
 	camelCase = require( 'lodash/camelCase' ),
 	snakeCase = require( 'lodash/snakeCase' ),
-	pick = require( 'lodash/pick' );
+	pick = require( 'lodash/pick' ),
+	url = require( 'url' );
 
 /**
  * Internal dependencies.
@@ -1923,6 +1924,29 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
+}
+
+/**
+ * Check different info about WordPress and Jetpack status on a url
+ *
+ * @param {String}    targetUrl          The url of the site to check
+ * @param {String}    filters            Comma separated string with the filters to run
+ * @returns {Promise}
+ */
+Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
+	return new Promise( ( resolve, reject ) => {
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
+		const parsedUrl = url.parse( targetUrl );
+		const endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
+
+		this.wpcom.req.get( `${ endpointUrl }`, {
+			filters: filters,
+			path: parsedUrl.path,
+			apiVersion: '1.1',
+		}, resolver );
+	} );
 }
 
 /**
