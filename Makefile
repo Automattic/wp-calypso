@@ -68,10 +68,10 @@ ifeq ($(OS),Windows_NT)
 # On Windows, the npm global install path is under AppData:
 # http://stackoverflow.com/a/26894197
 # `semver` is in the base `node_modules` folder for the `node` installation.
-export SEMVER_GLOBAL_PATH := $(dir $(shell which $(NODE)))/node_modules/npm/node_modules/semver
+export SEMVER_GLOBAL_PATH := $(dir $(shell which $(NODE)))node_modules/npm/node_modules/semver
 else
 # On OS X and Linux, npm is just a globally installed npm package.
-export SEMVER_GLOBAL_PATH := $(shell $(NPM) -g root)/npm/node_modules/semver
+export SEMVER_GLOBAL_PATH := $(dir $(shell which $(NPM)))../lib/node_modules/npm/node_modules/semver
 endif
 
 .DEFAULT_GOAL := install
