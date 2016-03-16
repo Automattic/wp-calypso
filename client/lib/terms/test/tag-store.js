@@ -1,11 +1,8 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 var rewire = require( 'rewire' ),
-	assert = require( 'chai' ).assert,
-	Dispatcher = require( 'dispatcher' );
+	assert = require( 'chai' ).assert;
 
 /**
  * Internal dependencies
@@ -18,9 +15,11 @@ var TEST_SITE_ID = 777,
 	TEST_NUM_TAGS = data.tagList.length;
 
 describe( 'tag-store', function() {
-	var TagStore;
+	let TagStore, Dispatcher;
+
 	before( function() {
 		TagStore = rewire( '../tag-store' );
+		Dispatcher = require( 'dispatcher' );
 	} );
 
 	beforeEach( function() {

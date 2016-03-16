@@ -4,6 +4,7 @@ require( 'babel/register' );
 const program = require( 'commander' ),
 	Mocha = require( 'mocha' ),
 	Chai = require( 'chai' ),
+	sinon = require( 'sinon' ),
 	sinonChai = require( 'sinon-chai' ),
 	immutableChai = require( './test/helpers/immutable-chai' ),
 	nock = require( 'nock' ),
@@ -30,6 +31,7 @@ if ( program.grep ) {
 mocha.suite.beforeAll( function() {
 	Chai.use( immutableChai );
 	Chai.use( sinonChai );
+	sinon.assert.expose( Chai.assert, { prefix: '' } );
 	nock.disableNetConnect();
 } );
 

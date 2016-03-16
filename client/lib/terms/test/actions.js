@@ -1,11 +1,7 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
 var rewire = require( 'rewire' ),
-	chai = require( 'chai' ),
 	assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
 	mockery = require( 'mockery' );
@@ -13,12 +9,9 @@ var rewire = require( 'rewire' ),
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	TagStore = require( '../tag-store' ),
+var useMockery = require( 'test/helpers/use-mockery' ),
 	data = require( './data' ),
 	TermsConstants = require( '../constants' );
-
-sinon.assert.expose( chai.assert, { prefix: '' } );
 
 var ActionTypes = TermsConstants.action,
 	TEST_SITE_ID = 777,
@@ -45,11 +38,12 @@ var ActionTypes = TermsConstants.action,
 		found: 2
 	};
 
-describe( 'TermActions', function() {
-	var TermActions, sandbox, getCategories, getTags, addCategory;
+describe( 'actions', function() {
+	let TermActions, Dispatcher, sandbox, getCategories, getTags, addCategory;
+
+	useMockery();
 
 	before( function() {
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
 		mockery.registerMock( 'lib/wp', {
 			site: function() {
 				return {
@@ -64,10 +58,13 @@ describe( 'TermActions', function() {
 			}
 		} );
 		TermActions = rewire( '../actions' );
+		// have to require dispatcher after turning on mockery because we get a different instance after mockery cleans out the cache.
+		// yay singletons that are not single
+		Dispatcher = require( 'dispatcher' );
 	} );
 
 	beforeEach( function() {
-		TermActions.__set__( 'temporaryIdCount', 0 );
+		this.revertTermActions = TermActions.__set__( 'temporaryIdCount', 0 );
 		sandbox = sinon.sandbox.create();
 
 		getCategories = sandbox.stub().callsArgWithAsync( 1, null, CATEGORY_API_RESPONSE );
@@ -77,12 +74,8 @@ describe( 'TermActions', function() {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 	} );
 
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
-	} );
-
 	afterEach( function() {
+		this.revertTermActions();
 		sandbox.restore();
 	} );
 

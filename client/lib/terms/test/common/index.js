@@ -7,8 +7,8 @@ var Dispatcher = require( 'dispatcher' ),
 /**
  * Internal dependencies
  */
-var data = require( './data' ),
-	ActionTypes = require( '../constants' ).action;
+var data = require( '../data' ),
+	ActionTypes = require( '../../constants' ).action;
 
 /**
  * Module variables
