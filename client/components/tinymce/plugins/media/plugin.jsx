@@ -652,6 +652,14 @@ function mediaButton( editor ) {
 
 	editor.on( 'keydown', preventCaptionBackspaceRemove );
 
+	// send contextmenu event up to desktop app
+	if ( config.isEnabled( 'desktop' ) ) {
+		const ipc = require( 'electron' ).ipcRenderer; // From Electron
+		editor.on( 'contextmenu', function( ev ) {
+			ipc.send( 'mce-contextmenu', ev );
+		} );
+	}
+
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function() {
