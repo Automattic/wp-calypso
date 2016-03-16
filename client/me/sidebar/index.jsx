@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 
 	onSignOut: function() {
 		const currentUser = this.props.user.get();
-		
+
 		// If user is using en locale, redirect to app promo page on sign out
 		const isEnLocale = ( currentUser && currentUser.localeSlug === 'en' );
 		let redirect = null;
@@ -104,6 +104,7 @@ module.exports = React.createClass( {
 							label={ this.translate( 'Account Settings' ) }
 							icon="cog"
 							onNavigate={ this.onNavigate }
+							preloadSectionName="account"
 						/>
 
 						<SidebarItem
@@ -112,6 +113,7 @@ module.exports = React.createClass( {
 							label={ this.translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }
+							preloadSectionName="purchases"
 						/>
 
 						<SidebarItem
@@ -120,6 +122,7 @@ module.exports = React.createClass( {
 							label={ this.translate( 'Security' ) }
 							icon="lock"
 							onNavigate={ this.onNavigate }
+							preloadSectionName="security"
 						/>
 
 						<SidebarItem
@@ -128,6 +131,7 @@ module.exports = React.createClass( {
 							label={ this.translate( 'Notifications' ) }
 							icon="bell"
 							onNavigate={ this.onNavigate }
+							preloadSectionName="notification-settings"
 						/>
 
 					</ul>
@@ -150,6 +154,7 @@ module.exports = React.createClass( {
 							external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
 							icon="help-outline"
 							onNavigate={ this.onNavigate }
+							preloadSectionName="help"
 						/>
 					</ul>
 				</SidebarMenu>
