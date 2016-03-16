@@ -92,8 +92,8 @@ export function details( context, next ) {
 	} ) );
 
 	const ConnectedComponent = ( { themeSlug, contentSection } ) => (
-		<ThemeDetailsComponent id={ themeSlug } section={ contentSection } >
-			<ThemeSheetComponent />
+		<ThemeDetailsComponent id={ themeSlug } >
+			<ThemeSheetComponent section={ contentSection } />
 		</ThemeDetailsComponent>
 	);
 

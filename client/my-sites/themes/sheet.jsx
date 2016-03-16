@@ -39,6 +39,10 @@ export const ThemeSheet = React.createClass( {
 		supportDocumentation: React.PropTypes.string,
 	},
 
+	getDefaultProps() {
+		return { section: 'details' };
+	},
+
 	onBackClick() {
 		page.back();
 	},
@@ -71,6 +75,13 @@ export const ThemeSheet = React.createClass( {
 		const priceElement = <span className="themes__sheet-action-bar-cost" dangerouslySetInnerHTML={ { __html: this.props.price } } />;
 		const themeContentElement = this.getContentElement( section );
 		return { priceElement, themeContentElement };
+	},
+
+	validateSection( section ) {
+		if ( [ 'details', 'support', 'documentation' ].indexOf( section ) === -1 ) {
+			return 'details';
+		}
+		return section;
 	},
 
 	renderBar() {
@@ -125,7 +136,7 @@ export const ThemeSheet = React.createClass( {
 			actionTitle = i18n.translate( 'Pick this design' );
 		}
 
-		const section = this.props.section || 'details';
+		const section = this.validateSection( this.props.section );
 		const { themeContentElement, priceElement } = this.getDangerousElements( section );
 
 		return (
