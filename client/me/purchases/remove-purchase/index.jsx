@@ -22,8 +22,9 @@ const RemovePurchase = React.createClass( {
 		selectedPurchase: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
+			React.PropTypes.bool,
+			React.PropTypes.undefined
+		] ),
 		user: React.PropTypes.object.isRequired
 	},
 
