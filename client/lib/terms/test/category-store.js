@@ -14,6 +14,7 @@ const common = require( './common' ),
 
 describe( 'category-store', function() {
 	let CategoryStoreFactory, Dispatcher, defaultCategoryStore;
+
 	before( function() {
 		CategoryStoreFactory = rewire( '../category-store-factory' );
 		Dispatcher = require( 'dispatcher' );

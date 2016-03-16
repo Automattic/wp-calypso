@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -15,8 +14,9 @@ var TEST_SITE_ID = 777,
 	TEST_CATEGORY_ID = 1,
 	TEMPORARY_ID = 'category-0';
 
-describe( 'term-store', function() {
-	var TermStore, Dispatcher;
+describe( 'store', function() {
+	let TermStore, Dispatcher;
+
 	useMockery();
 
 	beforeEach( function() {

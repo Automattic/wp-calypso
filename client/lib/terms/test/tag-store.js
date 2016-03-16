@@ -15,7 +15,7 @@ var TEST_SITE_ID = 777,
 	TEST_NUM_TAGS = data.tagList.length;
 
 describe( 'tag-store', function() {
-	var TagStore, Dispatcher;
+	let TagStore, Dispatcher;
 
 	before( function() {
 		TagStore = rewire( '../tag-store' );

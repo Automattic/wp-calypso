@@ -1,4 +1,3 @@
-/* eslint-disable vars-on-top */
 /**
  * External dependencies
  */
@@ -39,8 +38,8 @@ var ActionTypes = TermsConstants.action,
 		found: 2
 	};
 
-describe( 'TermActions', function() {
-	var TermActions, Dispatcher, sandbox, getCategories, getTags, addCategory;
+describe( 'actions', function() {
+	let TermActions, Dispatcher, sandbox, getCategories, getTags, addCategory;
 
 	useMockery();
 
