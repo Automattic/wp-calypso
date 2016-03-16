@@ -276,13 +276,13 @@ PluginsActions = {
 		if ( site.isMainNetworkSite() ) {
 			return install()
 				.then( autoupdate )
-				.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
+				.then( manageSuccess )
 				.catch( manageError );
 		}
 		return install()
 			.then( activate )
 			.then( autoupdate )
-			.then( responseData => dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData ) )
+			.then( manageSuccess )
 			.catch( manageError );
 	},
 
