@@ -100,8 +100,9 @@ InstallationFlow.prototype.install = function( slug, key, next ) {
 	installer.then( ( response ) => {
 		if ( 'undefined' !== typeof response.error ) {
 			// @todo Handle failed installs
-			if ( response.error.name === 'UpdateFailError' ) {
+			if ( response.error === 'update_fail' ) {
 				console.warn( 'Plugin not up-to-date, cannot continue.' );
+				next();
 			} else {
 				console.warn( response.error );
 			}
