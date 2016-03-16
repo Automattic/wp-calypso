@@ -6,6 +6,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:sync-handler:whitelist' );
 
 const whitelist = [
+	/^\/wpcom\/v\d\/timezones/,
 	/^\/me\/posts$/,
 	/^\/me\/settings/,
 	/^\/sites\/[\w.]+\/posts$/
@@ -25,6 +26,8 @@ export const isWhitelisted = params => {
 			return true;
 		}
 	}
+
+	debug( '%o is not whitelisted', path );
 
 	return false;
 }
