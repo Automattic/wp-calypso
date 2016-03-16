@@ -141,7 +141,7 @@ module.exports = React.createClass( {
 				className={ this.itemLinkClass( '/ads', 'ads' ) }
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
-				icon={ 'speaker' } />
+				icon="speaker" />
 		);
 	},
 
@@ -205,20 +205,20 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<li className={ this.itemLinkClass( '/menus', 'menus' ) }>
-				<a onClick={ this.onNavigate } href={ menusLink } target={ showClassicLink ? '_blank' : null }>
-					<Gridicon icon="menus" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Menus' ) }</span>
-					{ showClassicLink ? <span className="noticon noticon-external" /> : null }
-				</a>
-			</li>
+			<SidebarItem
+				label={ this.translate( 'Menus' ) }
+				className={ this.itemLinkClass( '/menus', 'menus' ) }
+				link={ menusLink }
+				onNavigate={ this.onNavigate }
+				icon="menus"
+				preloadSectionName="menus" />
 		);
 	},
 
 	plugins: function() {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
-			addPluginsButton,
+			addPluginsLink,
 			noticon,
 			target;
 
@@ -244,18 +244,19 @@ module.exports = React.createClass( {
 		}
 
 		if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
-			addPluginsButton = <a onClick={ this.onNavigate } href={ '/plugins/browse' + this.siteSuffix() } className="add-new">{ this.translate( 'Add' ) }</a>;
+			addPluginsLink = '/plugins/browse' + this.siteSuffix();
 		}
 
 		return (
-			<li className={ this.itemLinkClass( '/plugins', 'plugins' ) }>
-				<a onClick={ this.onNavigate } href={ pluginsLink } target={ target }>
-					<Gridicon icon="plugins" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Plugins' ) }</span>
-					{ noticon }
-				</a>
-				{ addPluginsButton }
-			</li>
+			<SidebarItem
+				label={ this.translate( 'Plugins' ) }
+				className={ this.itemLinkClass( '/plugins', 'plugins' ) }
+				link={ pluginsLink }
+				buttonLink={ addPluginsLink }
+				buttonLabel={ this.translate( 'Add' ) }
+				onNavigate={ this.onNavigate }
+				icon="plugins"
+				preloadSectionName="plugins" />
 		);
 	},
 
@@ -285,18 +286,14 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-			addDomainButton = <a onClick={ this.onNavigate } href={ addDomainLink } className="add-new">{ this.translate( 'Add' ) }</a>;
-		}
-
 		return (
-			<li className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }>
-				<a onClick={ this.onNavigate } href={ domainsLink }>
-					<Gridicon icon="globe" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Domains' ) }</span>
-				</a>
-				{ addDomainButton }
-			</li>
+			<SidebarItem
+				label={ this.translate( 'Domains' ) }
+				className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }
+				link={ domainsLink }
+				onNavigate={ this.onNavigate }
+				icon="globe"
+				preloadSectionName="upgrades" />
 		);
 	},
 
@@ -376,13 +373,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<li className={ this.itemLinkClass( '/sharing', 'sharing' ) }>
-				<a onClick={ this.onNavigate } href={ sharingLink } target={ ! config.isEnabled( 'manage/sharing' ) ? '_blank' : null }>
-					<Gridicon icon="share" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Sharing' ) }</span>
-					{ ! config.isEnabled( 'manage/sharing' ) ? <span className="noticon noticon-external" /> : null }
-				</a>
-			</li>
+			<SidebarItem
+				label={ this.translate( 'Sharing' ) }
+				className={ this.itemLinkClass( '/sharing', 'sharing' ) }
+				link={ sharingLink }
+				onNavigate={ this.onNavigate }
+				icon="share"
+				preloadSectionName="sharing" />
 		);
 	},
 
@@ -416,19 +413,16 @@ module.exports = React.createClass( {
 			addPeopleTarget = '_blank';
 		}
 
-		if ( config.isEnabled( 'manage/people' ) ) {
-			addPeopleButton = <a onClick={ this.onNavigate } href={ addPeopleLink } className="add-new" target={ addPeopleTarget }>{ this.translate( 'Add' ) }</a>;
-		}
-
 		return (
-			<li className={ this.itemLinkClass( '/people', 'users' ) }>
-				<a onClick={ this.onNavigate } href={ usersLink } target={ ! config.isEnabled( 'manage/people' ) ? '_blank' : null }>
-					<Gridicon icon="user" size={ 24 } />
-					<span className="menu-link-text">{ ! config.isEnabled( 'manage/people' ) ? this.translate( 'Users' ) : this.translate( 'People' ) }</span>
-					{ ! config.isEnabled( 'manage/people' ) ? <span className="noticon noticon-external" /> : null }
-				</a>
-				{ addPeopleButton }
-			</li>
+			<SidebarItem
+				label={ this.translate( 'People' ) }
+				className={ this.itemLinkClass( '/people', 'users' ) }
+				link={ usersLink }
+				buttonLink={ addPeopleLink }
+				buttonLabel={ this.translate( 'Add' ) }
+				onNavigate={ this.onNavigate }
+				icon="user"
+				preloadSectionName="people" />
 		);
 	},
 
@@ -449,12 +443,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<li className={ this.itemLinkClass( '/settings', 'settings' ) }>
-				<a onClick={ this.onNavigate } href={ siteSettingsLink }>
-					<Gridicon icon="cog" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Settings' ) }</span>
-				</a>
-			</li>
+			<SidebarItem
+				label={ this.translate( 'Settings' ) }
+				className={ this.itemLinkClass( '/settings', 'settings' ) }
+				link={ siteSettingsLink }
+				onNavigate={ this.onNavigate }
+				icon="cog"
+				preloadSectionName="settings" />
 		);
 	},
 
