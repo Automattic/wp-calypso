@@ -17,18 +17,20 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			position: 'top'
+			position: 'top',
+			showOnMobile: false
 		};
 	},
 
 	propTypes: {
 		isVisible: React.PropTypes.bool,
 		position: React.PropTypes.string,
-		status: React.PropTypes.string
+		status: React.PropTypes.string,
+		showOnMobile: React.PropTypes.bool
 	},
 
 	render() {
-		if ( viewport.isMobile() ) {
+		if ( ! this.props.showOnMobile && viewport.isMobile() ) {
 			return null;
 		}
 
