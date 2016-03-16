@@ -34,16 +34,22 @@ export function requestSubscribedLists() {
 			type: READER_LISTS_REQUEST,
 		} );
 
-		return wpcom.undocumented().readLists().then( data => {
-			dispatch( receiveLists( data.lists ) );
-			dispatch( {
-				type: READER_LISTS_REQUEST_SUCCESS,
-				lists: data.lists
-			} );
-		}, ( error ) => {
-			dispatch( {
-				type: READER_LISTS_REQUEST_FAILURE,
-				error
+		return new Promise( ( resolve, reject ) => {
+			wpcom.undocumented().readLists( ( error, data ) => {
+				if ( error ) {
+					dispatch( {
+						type: READER_LISTS_REQUEST_FAILURE,
+						error
+					} );
+					reject();
+				} else {
+					dispatch( receiveLists( data.lists ) );
+					dispatch( {
+						type: READER_LISTS_REQUEST_SUCCESS,
+						data
+					} );
+					resolve();
+				}
 			} );
 		} );
 	};
