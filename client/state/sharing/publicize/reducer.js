@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import omitBy from 'lodash/omitBy';
 import keyBy from 'lodash/keyBy';
 
 /**
@@ -55,13 +56,17 @@ export function fetchingConnections( state = {}, action ) {
 export function connections( state = {}, action ) {
 	switch ( action.type ) {
 		case PUBLICIZE_CONNECTIONS_RECEIVE:
-			return Object.assign( {}, state, keyBy( action.data.connections, 'ID' ) );
+			state = omitBy( state, { site_ID: action.siteId } );
+			return Object.assign( state, keyBy( action.data.connections, 'ID' ) );
+
 		case SERIALIZE:
 			return state;
+
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, connectionsSchema ) ) {
 				return state;
 			}
+
 			return {};
 	}
 

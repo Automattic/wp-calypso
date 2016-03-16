@@ -66,9 +66,11 @@ module.exports = React.createClass( {
 		}
 
 		this.connectionPopupMonitor.open( href );
-		this.connectionPopupMonitor.once( 'close', () => {
-			this.props.fetchConnections( this.props.site.ID )
-		} );
+		this.connectionPopupMonitor.once( 'close', this.onNewConnectionPopupClosed );
+	},
+
+	onNewConnectionPopupClosed() {
+		this.props.fetchConnections( this.props.site.ID );
 	},
 
 	newConnection: function() {
