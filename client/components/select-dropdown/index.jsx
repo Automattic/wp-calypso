@@ -3,90 +3,70 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	find = require( 'lodash/find' ),
-	filter = require( 'lodash/filter' ),
-	findIndex = require( 'lodash/findIndex' ),
-	map = require( 'lodash/map' ),
-	result = require( 'lodash/result' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import find from 'lodash/find';
+import filter from 'lodash/filter';
+import findIndex from 'lodash/findIndex';
+import map from 'lodash/map';
+import result from 'lodash/result';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var DropdownItem = require( 'components/select-dropdown/item' ),
-	DropdownSeparator = require( 'components/select-dropdown/separator' ),
-	Count = require( 'components/count' );
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownSeparator from 'components/select-dropdown/separator';
+import DropdownLabel from 'components/select-dropdown/label';
+import Count from 'components/count';
 
+/**
+ * Module variables
+ */
+const { Component, PropTypes } = React;
 var noop = () => {};
 
 /**
  * SelectDropdown
  */
-var SelectDropdown = React.createClass( {
 
-	propTypes: {
-		selectedText: React.PropTypes.string,
-		selectedCount: React.PropTypes.number,
-		initialSelected: React.PropTypes.string,
-		className: React.PropTypes.string,
-		style: React.PropTypes.object,
-		onSelect: React.PropTypes.func,
-		onToggle: React.PropTypes.func,
-		focusSibling: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		options: React.PropTypes.arrayOf(
-			React.PropTypes.shape( {
-				value: React.PropTypes.string.isRequired,
-				label: React.PropTypes.string.isRequired,
-				path: React.PropTypes.string
-			} )
-		)
-	},
+class SelectDropdown extends Component {
+	constructor( props ) {
+		super( props );
 
-	statics: {
-		instances: 0
-	},
+		// bounds
+		this.navigateItem = this.navigateItem.bind( this );
+		this.toggleDropdown = this.toggleDropdown.bind( this );
+		this.handleOutsideClick = this.handleOutsideClick.bind( this );
 
-	getDefaultProps: function() {
-		return {
-			onSelect: noop,
-			onToggle: noop,
-			style: {}
-		};
-	},
+		// state
+		let initialState = { isOpen: false };
 
-	getInitialState: function() {
-		var initialState = {
-			isOpen: false
-		};
-
-		if ( this.props.options ) {
+		if ( props.options.length ) {
 			initialState.selected = this.props.initialSelected ||
-				this.props.options[ 0 ].value;
+				props.options[ 0 ].value;
 		}
 
-		return initialState;
-	},
+		this.state = initialState;
+	}
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.setState( {
 			instanceId: ++SelectDropdown.instances
 		} );
-	},
+	}
 
-	componentWillReceiveProps: function() {
+	componentWillReceiveProps() {
 		if ( this.state.isOpen ) {
 			this.closeDropdown();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
-	},
+	}
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isOpen ) {
 			window.addEventListener( 'click', this.handleOutsideClick );
 		} else {
@@ -99,10 +79,12 @@ var SelectDropdown = React.createClass( {
 				open: this.state.isOpen
 			} );
 		}
-	},
+	}
 
-	dropdownOptions: function() {
+	dropdownOptions() {
 		var refIndex = 0;
+		var self = this;
+
 		if ( this.props.children ) {
 			// add keys and refs to children
 			return React.Children.map( this.props.children, function( child, index ) {
@@ -114,11 +96,11 @@ var SelectDropdown = React.createClass( {
 					ref: ( child.type === DropdownItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: function( event ) {
-						this.refs.dropdownContainer.focus();
+						self.refs.dropdownContainer.focus();
 						if ( typeof child.props.onClick === 'function' ) {
 							child.props.onClick( event );
 						}
-					}.bind( this )
+					}
 				} );
 
 				if ( child.type === DropdownItem ) {
@@ -138,12 +120,22 @@ var SelectDropdown = React.createClass( {
 				);
 			}
 
+			if ( item.isLabel ) {
+				return (
+					<DropdownLabel
+						key={ 'dropdown-label-' + this.state.instanceId + '-' + index }
+					>
+						{ item.label }
+					</DropdownLabel>
+				);
+			}
+
 			let dropdownItem = (
 				<DropdownItem
 					key={ 'dropdown-item-' + this.state.instanceId + '-' + item.value }
 					ref={ 'item-' + refIndex }
 					selected={ this.state.selected === item.value }
-					onClick={ this.selectItem.bind( this, item ) }
+					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
 				>
 					{ item.label }
@@ -154,9 +146,9 @@ var SelectDropdown = React.createClass( {
 
 			return dropdownItem;
 		}, this );
-	},
+	}
 
-	render: function() {
+	render() {
 		const dropdownClasses = {
 			'select-dropdown': true,
 			'is-compact': this.props.compact,
@@ -181,6 +173,7 @@ var SelectDropdown = React.createClass( {
 				<div
 					ref="dropdownContainer"
 					className="select-dropdown__container"
+					valueLink={ this.props.valueLink }
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-haspopup="true"
@@ -214,30 +207,34 @@ var SelectDropdown = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	toggleDropdown: function() {
+	toggleDropdown() {
 		this.setState( {
 			isOpen: ! this.state.isOpen
 		} );
-	},
+	}
 
-	openDropdown: function() {
+	openDropdown() {
 		this.setState( {
 			isOpen: true
 		} );
-	},
+	}
 
-	closeDropdown: function() {
+	closeDropdown() {
 		if ( this.state.isOpen ) {
 			delete this.focused;
 			this.setState( {
 				isOpen: false
 			} );
 		}
-	},
+	}
 
-	selectItem: function( option ) {
+	onSelectItem( option ) {
+		return this.selectItem.bind( this, option );
+	}
+
+	selectItem( option ) {
 		if ( ! option ) {
 			return;
 		}
@@ -251,9 +248,9 @@ var SelectDropdown = React.createClass( {
 		} );
 
 		this.refs.dropdownContainer.focus();
-	},
+	}
 
-	navigateItem: function( event ) {
+	navigateItem( event ) {
 		switch ( event.keyCode ) {
 			case 9: //tab
 				this.navigateItemByTabKey( event );
@@ -279,9 +276,9 @@ var SelectDropdown = React.createClass( {
 				this.refs.dropdownContainer.focus();
 				break;
 		}
-	},
+	}
 
-	navigateItemByTabKey: function( event ) {
+	navigateItemByTabKey( event ) {
 		var direction;
 		if ( ! this.state.isOpen ) {
 			return;
@@ -289,16 +286,16 @@ var SelectDropdown = React.createClass( {
 		event.preventDefault();
 		direction = ( event.shiftKey ) ? 'previous' : 'next';
 		this.focusSibling( direction );
-	},
+	}
 
-	activateItem: function() {
+	activateItem() {
 		if ( ! this.state.isOpen ) {
 			return this.openDropdown();
 		}
 		document.activeElement.click();
-	},
+	}
 
-	focusSibling: function( direction ) {
+	focusSibling( direction ) {
 		var increment, items, focusedIndex, newIndex;
 
 		// the initial up-arrow/down-arrow should only open the menu
@@ -306,8 +303,11 @@ var SelectDropdown = React.createClass( {
 			return;
 		}
 
-		if ( this.props.options ) {
-			items = filter( map( this.props.options, 'value' ), Boolean );
+		if ( this.props.options.length ) {
+			items = map( filter( this.props.options, item => {
+				return item && ! item.isLabel;
+			} ), 'value' );
+
 			focusedIndex = typeof this.focused === 'number'
 				? this.focused
 				: items.indexOf( this.state.selected );
@@ -315,6 +315,7 @@ var SelectDropdown = React.createClass( {
 			items = filter( this.props.children, function( item ) {
 				return item.type === DropdownItem;
 			} );
+
 			focusedIndex = typeof this.focused === 'number'
 				? this.focused
 				: findIndex( items, function( item ) {
@@ -331,13 +332,42 @@ var SelectDropdown = React.createClass( {
 
 		ReactDom.findDOMNode( this.refs[ 'item-' + newIndex ].refs.itemLink ).focus();
 		this.focused = newIndex;
-	},
+	}
 
-	handleOutsideClick: function( event ) {
+	handleOutsideClick( event ) {
 		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
 			this.closeDropdown();
 		}
-	},
-} );
+	}
+};
 
-module.exports = SelectDropdown;
+SelectDropdown.defaultProps = {
+	options: [],
+	onSelect: noop,
+	onToggle: noop,
+	style: {}
+};
+
+SelectDropdown.propTypes = {
+	selectedText: PropTypes.string,
+	selectedCount: PropTypes.number,
+	initialSelected: PropTypes.string,
+	className: PropTypes.string,
+	style: PropTypes.object,
+	onSelect: PropTypes.func,
+	onToggle: PropTypes.func,
+	focusSibling: PropTypes.func,
+	tabIndex: PropTypes.number,
+	options: PropTypes.arrayOf(
+		PropTypes.shape( {
+			value: PropTypes.string.isRequired,
+			label: PropTypes.string.isRequired,
+			path: PropTypes.string
+		} )
+	)
+};
+
+// statics
+SelectDropdown.instances = 0;
+
+export default SelectDropdown;
