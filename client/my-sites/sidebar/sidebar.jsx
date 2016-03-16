@@ -158,7 +158,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		if ( site.jetpack && ! jetpackEnabled && site.options ) {
+		if ( site && site.jetpack && ! jetpackEnabled && site.options ) {
 			themesLink = site.options.admin_url + 'themes.php';
 		} else if ( this.isSingle() ) {
 			themesLink = '/design' + this.siteSuffix();
