@@ -110,7 +110,7 @@
     "webpack-dev-middleware": "1.2.0",
     "wpcom-proxy-request": "1.0.5",
     "wpcom-unpublished": "1.0.10",
-    "wpcom-xhr-request": "0.3.4",
+    "wpcom-xhr-request": "0.4.1",
     "xgettext-js": "0.3.0"
   },
   "engines": {

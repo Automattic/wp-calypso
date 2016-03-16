@@ -8538,7 +8538,25 @@
       }
     },
     "wpcom-xhr-request": {
-      "version": "0.3.4"
+      "version": "0.4.1",
+      "dependencies": {
+        "wp-error": {
+          "version": "1.1.0",
+          "dependencies": {
+            "builtin-status-codes": {
+              "version": "2.0.0"
+            },
+            "uppercamelcase": {
+              "version": "1.1.0",
+              "dependencies": {
+                "camelcase": {
+                  "version": "1.2.1"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "xgettext-js": {
       "version": "0.3.0",
