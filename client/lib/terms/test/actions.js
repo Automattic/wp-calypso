@@ -77,7 +77,6 @@ describe( 'actions', function() {
 	afterEach( function() {
 		this.revertTermActions();
 		sandbox.restore();
-		console.log( 'restored dispatcher' );
 	} );
 
 	describe( '#addCategory', function() {
