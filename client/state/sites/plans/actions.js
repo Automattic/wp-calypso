@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import map from 'lodash/map';
+import omit from 'lodash/omit';
 
 const debug = debugFactory( 'calypso:site-plans:actions' );
 
@@ -121,7 +122,7 @@ export function fetchSitePlans( siteId ) {
  * @returns {Object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, data ) {
-	delete data._headers;
+	data = omit( data, '_headers' );
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
