@@ -40,6 +40,10 @@ var PlanActions = React.createClass( {
 			return null;
 		}
 
+		if ( this.props.site && ! this.props.site.isUpgradeable() ) {
+			return null;
+		}
+
 		if ( this.siteHasThisPlan() ) {
 			if ( this.props.sitePlan.freeTrial ) {
 				return this.upgradeActions();
@@ -129,6 +133,10 @@ var PlanActions = React.createClass( {
 		event.preventDefault();
 
 		if ( this.props.isSubmitting ) {
+			return;
+		}
+
+		if ( this.props.site && ! this.props.site.isUpgradeable() ) {
 			return;
 		}
 
